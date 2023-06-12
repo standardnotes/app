@@ -1,7 +1,6 @@
 import { ProtocolVersion } from '@standardnotes/common'
 import { PkcKeyPair, PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import {
-  ClientRawSigningData,
   DecryptedPayloadInterface,
   ItemsKeyInterface,
   KeySystemItemsKeyInterface,
@@ -10,10 +9,9 @@ import {
 } from '@standardnotes/models'
 import { CreateConsistentBase64JsonPayloadUseCase } from '../Utils/CreateConsistentBase64JsonPayload'
 import { doesPayloadRequireSigning } from '../../V004AlgorithmHelpers'
-import { EncryptedParameters } from '../../../../Types/EncryptedParameters'
+import { EncryptedOutputParameters } from '../../../../Types/EncryptedParameters'
 import { GenerateAuthenticatedDataForPayloadUseCase } from './GenerateAuthenticatedDataForPayload'
 import { GenerateEncryptedProtocolStringUseCase } from './GenerateEncryptedProtocolString'
-import { GenerateRawClientSigningDataUseCase } from './GenerateRawClientSigningData'
 import { GenerateSymmetricAdditionalDataUseCase } from './GenerateSymmetricAdditionalData'
 import { isItemsKey } from '../../../../Keys/ItemsKey/ItemsKey'
 import { isKeySystemItemsKey } from '../../../../Keys/KeySystemItemsKey/KeySystemItemsKey'
@@ -26,7 +24,6 @@ export class GenerateEncryptedParametersUseCase {
   private generateAuthenticatedDataUseCase = new GenerateAuthenticatedDataForPayloadUseCase()
   private generateAdditionalDataUseCase = new GenerateSymmetricAdditionalDataUseCase(this.crypto)
   private encodeBase64DataUsecase = new CreateConsistentBase64JsonPayloadUseCase(this.crypto)
-  private generatePersistentClientSignatureUseCase = new GenerateRawClientSigningDataUseCase()
 
   constructor(private readonly crypto: PureCryptoInterface) {}
 
@@ -34,7 +31,7 @@ export class GenerateEncryptedParametersUseCase {
     payload: DecryptedPayloadInterface,
     key: ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface | RootKeyInterface,
     signingKeyPair?: PkcKeyPair,
-  ): EncryptedParameters {
+  ): EncryptedOutputParameters {
     if (doesPayloadRequireSigning(payload) && !signingKeyPair) {
       throw Error('Payload requires signing but no signing key pair was provided.')
     }
@@ -47,7 +44,7 @@ export class GenerateEncryptedParametersUseCase {
       signingKeyPair,
     )
 
-    const { encryptedContent, persistentClientSignature } = this.generateEncryptedContentAndPersistentClientSignature(
+    const { encryptedContent } = this.generateEncryptedContent(
       payload,
       key,
       contentKey,
@@ -64,11 +61,10 @@ export class GenerateEncryptedParametersUseCase {
       version: ProtocolVersion.V004,
       key_system_identifier: payload.key_system_identifier,
       shared_vault_uuid: payload.shared_vault_uuid,
-      rawSigningDataClientOnly: persistentClientSignature,
     }
   }
 
-  private generateEncryptedContentAndPersistentClientSignature(
+  private generateEncryptedContent(
     payload: DecryptedPayloadInterface,
     key: ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface | RootKeyInterface,
     contentKey: string,
@@ -76,15 +72,10 @@ export class GenerateEncryptedParametersUseCase {
     signingKeyPair?: PkcKeyPair,
   ): {
     encryptedContent: string
-    persistentClientSignature: ClientRawSigningData | undefined
   } {
     const content = JSON.stringify(payload.content)
 
-    const { additionalData, plaintextHash } = this.generateAdditionalDataUseCase.execute(
-      content,
-      key.itemsKey,
-      signingKeyPair,
-    )
+    const { additionalData } = this.generateAdditionalDataUseCase.execute(content, key.itemsKey, signingKeyPair)
 
     const encryptedContent = this.generateProtocolStringUseCase.execute(
       content,
@@ -93,17 +84,8 @@ export class GenerateEncryptedParametersUseCase {
       this.encodeBase64DataUsecase.execute<AdditionalData>(additionalData),
     )
 
-    const persistentClientSignature = additionalData.signingData
-      ? this.generatePersistentClientSignatureUseCase.execute(
-          additionalData.signingData,
-          payload.rawSigningDataClientOnly,
-          plaintextHash,
-        )
-      : undefined
-
     return {
       encryptedContent,
-      persistentClientSignature,
     }
   }
 

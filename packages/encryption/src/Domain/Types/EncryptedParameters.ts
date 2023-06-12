@@ -1,12 +1,8 @@
 import { ContentType, ProtocolVersion } from '@standardnotes/common'
-import {
-  EncryptedPayloadInterface,
-  ItemContent,
-  ClientRawSigningData,
-  DecryptedPayloadInterface,
-} from '@standardnotes/models'
+import { EncryptedPayloadInterface, DecryptedPayloadInterface, PersistentSignatureResult } from '@standardnotes/models'
+import { DecryptedParameters } from './DecryptedParameters'
 
-export type EncryptedParameters = {
+export type EncryptedOutputParameters = {
   uuid: string
   content: string
   content_type: ContentType
@@ -15,30 +11,13 @@ export type EncryptedParameters = {
   version: ProtocolVersion
   key_system_identifier: string | undefined
   shared_vault_uuid: string | undefined
-  rawSigningDataClientOnly?: ClientRawSigningData
 
   /** @deprecated */
   auth_hash?: string
 }
 
-export type DecryptedParameters<C extends ItemContent = ItemContent> = {
-  uuid: string
-  content: C
-  signature:
-    | {
-        required: true
-        result: {
-          passes: boolean
-          publicKey: string
-        }
-      }
-    | {
-        required: false
-        result?: {
-          passes: boolean
-          publicKey: string
-        }
-      }
+export type EncryptedInputParameters = EncryptedOutputParameters & {
+  signatureResult: PersistentSignatureResult | undefined
 }
 
 export type ErrorDecryptingParameters = {
@@ -49,7 +28,7 @@ export type ErrorDecryptingParameters = {
 
 export function isErrorDecryptingParameters(
   x:
-    | EncryptedParameters
+    | EncryptedOutputParameters
     | DecryptedParameters
     | ErrorDecryptingParameters
     | DecryptedPayloadInterface
@@ -58,7 +37,7 @@ export function isErrorDecryptingParameters(
   return (x as ErrorDecryptingParameters).errorDecrypting
 }
 
-export function encryptedParametersFromPayload(payload: EncryptedPayloadInterface): EncryptedParameters {
+export function encryptedInputParametersFromPayload(payload: EncryptedPayloadInterface): EncryptedInputParameters {
   return {
     uuid: payload.uuid,
     content: payload.content,
@@ -69,6 +48,6 @@ export function encryptedParametersFromPayload(payload: EncryptedPayloadInterfac
     auth_hash: payload.auth_hash,
     key_system_identifier: payload.key_system_identifier,
     shared_vault_uuid: payload.shared_vault_uuid,
-    rawSigningDataClientOnly: payload.rawSigningDataClientOnly,
+    signatureResult: payload.signatureResult,
   }
 }

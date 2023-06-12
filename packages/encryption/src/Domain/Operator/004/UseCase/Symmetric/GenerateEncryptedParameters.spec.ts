@@ -152,7 +152,7 @@ describe('generate encrypted parameters usecase', () => {
 
       const result = usecase.execute(decrypted, itemsKey, signingKeyPair)
 
-      expect(result.rawSigningDataClientOnly).toEqual({
+      expect(result.previous_signature_result).toEqual({
         plaintextHash: expect.any(String),
         signature: expect.any(String),
         signerPublicKey: signingKeyPair.publicKey,

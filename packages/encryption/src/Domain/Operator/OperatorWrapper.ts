@@ -8,11 +8,11 @@ import {
   KeySystemRootKeyInterface,
 } from '@standardnotes/models'
 import {
-  DecryptedParameters,
-  EncryptedParameters,
-  encryptedParametersFromPayload,
+  EncryptedOutputParameters,
+  encryptedInputParametersFromPayload,
   ErrorDecryptingParameters,
 } from '../Types/EncryptedParameters'
+import { DecryptedParameters } from '../Types/DecryptedParameters'
 import { OperatorManager } from './OperatorManager'
 import { PkcKeyPair } from '@standardnotes/sncrypto-common'
 
@@ -21,7 +21,7 @@ export async function encryptPayload(
   key: ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface | RootKeyInterface,
   operatorManager: OperatorManager,
   signingKeyPair: PkcKeyPair | undefined,
-): Promise<EncryptedParameters> {
+): Promise<EncryptedOutputParameters> {
   const operator = operatorManager.operatorForVersion(key.keyVersion)
   const encryptionParameters = operator.generateEncryptedParameters(payload, key, signingKeyPair)
 
@@ -40,7 +40,7 @@ export async function decryptPayload<C extends ItemContent = ItemContent>(
   const operator = operatorManager.operatorForVersion(payload.version)
 
   try {
-    return operator.generateDecryptedParameters(encryptedParametersFromPayload(payload), key)
+    return operator.generateDecryptedParameters(encryptedInputParametersFromPayload(payload), key)
   } catch (e) {
     console.error('Error decrypting payload', payload, e)
     return {

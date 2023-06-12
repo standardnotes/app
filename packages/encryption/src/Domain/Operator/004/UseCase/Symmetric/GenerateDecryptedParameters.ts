@@ -9,22 +9,23 @@ import {
 } from '@standardnotes/models'
 import { StringToAuthenticatedDataUseCase } from '../Utils/StringToAuthenticatedData'
 import { CreateConsistentBase64JsonPayloadUseCase } from '../Utils/CreateConsistentBase64JsonPayload'
-import { VerifySymmetricPayloadSignatureUseCase } from './VerifySymmetricPayloadSignature'
+import { GenerateSymmetricPayloadSignatureResultUseCase } from './GenerateSymmetricPayloadSignatureResult'
 import {
-  DecryptedParameters,
-  EncryptedParameters,
+  EncryptedInputParameters,
+  EncryptedOutputParameters,
   ErrorDecryptingParameters,
-} from '../../../../Types/EncryptedParameters'
+} from './../../../../Types/EncryptedParameters'
+import { DecryptedParameters } from '../../../../Types/DecryptedParameters'
 
 export class GenerateDecryptedParametersUseCase {
   private base64DataUsecase = new CreateConsistentBase64JsonPayloadUseCase(this.crypto)
   private stringToAuthenticatedDataUseCase = new StringToAuthenticatedDataUseCase(this.crypto)
-  private signingVerificationUseCase = new VerifySymmetricPayloadSignatureUseCase(this.crypto)
+  private signingVerificationUseCase = new GenerateSymmetricPayloadSignatureResultUseCase(this.crypto)
 
   constructor(private readonly crypto: PureCryptoInterface) {}
 
   execute<C extends ItemContent = ItemContent>(
-    encrypted: EncryptedParameters,
+    encrypted: EncryptedInputParameters,
     key: ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface | RootKeyInterface,
   ): DecryptedParameters<C> | ErrorDecryptingParameters {
     const contentKeyResult = this.decryptContentKey(encrypted, key)
@@ -60,11 +61,11 @@ export class GenerateDecryptedParametersUseCase {
     return {
       uuid: encrypted.uuid,
       content: JSON.parse(contentResult.content),
-      signature: signatureVerificationResult,
+      signature_result: signatureVerificationResult,
     }
   }
 
-  private decryptContent(encrypted: EncryptedParameters, contentKey: string) {
+  private decryptContent(encrypted: EncryptedOutputParameters, contentKey: string) {
     const contentComponents = deconstructEncryptedPayloadString(encrypted.content)
 
     const contentAuthenticatedData = this.stringToAuthenticatedDataUseCase.execute(
@@ -98,7 +99,7 @@ export class GenerateDecryptedParametersUseCase {
   }
 
   private decryptContentKey(
-    encrypted: EncryptedParameters,
+    encrypted: EncryptedOutputParameters,
     key: ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface | RootKeyInterface,
   ) {
     const contentKeyComponents = deconstructEncryptedPayloadString(encrypted.enc_item_key)

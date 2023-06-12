@@ -8,6 +8,7 @@ import {
   Predicate,
   TrustedContactMutator,
   TrustedContactPublicKey,
+  DecryptedItemInterface,
 } from '@standardnotes/models'
 import { ContentType } from '@standardnotes/common'
 import { AbstractService } from '../Service/AbstractService'
@@ -244,6 +245,19 @@ export class ContactService extends AbstractService<ContactServiceEvent> impleme
       publicKey: contact.content.publicKey.encryption,
       signingPublicKey: contact.content.publicKey.signing,
     })
+  }
+
+  isItemSignedByAuthenticUser(item: DecryptedItemInterface): 'not-applicable' | 'yes' | 'no' {
+    if(item.signatureResult) {
+
+    }
+
+    const uuidOfLastEditor = item.last_edited_by_uuid
+    if (!uuidOfLastEditor) {
+      return 'not-applicable'
+    }
+
+    const contact = this.findTrustedContact(uuidOfLastEditor)
   }
 
   override deinit(): void {

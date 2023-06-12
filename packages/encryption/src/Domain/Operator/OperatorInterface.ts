@@ -10,7 +10,8 @@ import {
   KeySystemIdentifier,
 } from '@standardnotes/models'
 import { SNRootKeyParams } from '../Keys/RootKey/RootKeyParams'
-import { DecryptedParameters, EncryptedParameters, ErrorDecryptingParameters } from '../Types/EncryptedParameters'
+import { EncryptedOutputParameters, ErrorDecryptingParameters } from '../Types/EncryptedParameters'
+import { DecryptedParameters } from '../Types/DecryptedParameters'
 import { ItemAuthenticatedData } from '../Types/ItemAuthenticatedData'
 import { LegacyAttachedData } from '../Types/LegacyAttachedData'
 import { RootKeyEncryptedAuthenticatedData } from '../Types/RootKeyEncryptedAuthenticatedData'
@@ -46,7 +47,7 @@ export interface OperatorInterface {
    * non-decrypted, ciphertext state.
    */
   getPayloadAuthenticatedDataForExternalUse(
-    encrypted: EncryptedParameters,
+    encrypted: EncryptedOutputParameters,
   ): RootKeyEncryptedAuthenticatedData | ItemAuthenticatedData | LegacyAttachedData | undefined
 
   /**
@@ -83,10 +84,10 @@ export interface OperatorInterface {
     payload: DecryptedPayloadInterface,
     key: ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface | RootKeyInterface,
     signingKeyPair?: PkcKeyPair,
-  ): EncryptedParameters
+  ): EncryptedOutputParameters
 
   generateDecryptedParameters<C extends ItemContent = ItemContent>(
-    encrypted: EncryptedParameters,
+    encrypted: EncryptedOutputParameters,
     key: ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface | RootKeyInterface,
   ): DecryptedParameters<C> | ErrorDecryptingParameters
 

@@ -3,7 +3,7 @@ import { ContentType } from '@standardnotes/common'
 import { ItemContent } from '../../Content/ItemContent'
 import { TransferPayload } from '../../TransferPayload/Interfaces/TransferPayload'
 import { PayloadSource } from '../Types/PayloadSource'
-import { ClientRawSigningData } from '../../../Runtime/Encryption/ClientRawSigningData'
+import { PersistentSignatureData } from '../../../Runtime/Encryption/PersistentSignatureData'
 
 export interface PayloadInterface<T extends TransferPayload = TransferPayload, C extends ItemContent = ItemContent> {
   readonly source: PayloadSource
@@ -23,8 +23,7 @@ export interface PayloadInterface<T extends TransferPayload = TransferPayload, C
   readonly dirtyIndex?: number
   readonly globalDirtyIndexAtLastSync?: number
   readonly dirty?: boolean
-  readonly rawSigningDataClientOnly?: ClientRawSigningData
-  readonly signatureVerified?: boolean
+  readonly signatureResult?: PersistentSignatureData
 
   readonly lastSyncBegan?: Date
   readonly lastSyncEnd?: Date

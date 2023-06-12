@@ -2,9 +2,7 @@ import {
   AsymmetricallyDecryptMessageResult,
   CreateAnyKeyParams,
   CreateEncryptionSplitWithKeyLookup,
-  DecryptedParameters,
-  EncryptedParameters,
-  encryptedParametersFromPayload,
+  encryptedInputParametersFromPayload,
   EncryptionProviderInterface,
   ErrorDecryptingParameters,
   findDefaultItemsKey,
@@ -25,6 +23,7 @@ import {
   V001Algorithm,
   V002Algorithm,
   PublicKeySet,
+  EncryptedInputParameters,
 } from '@standardnotes/encryption'
 import {
   BackupFile,
@@ -77,6 +76,7 @@ import { SyncEvent } from '../Event/SyncEvent'
 import { RootKeyEncryptionService } from './RootKeyEncryption'
 import { DecryptBackupFile } from './BackupFileDecryptor'
 import { EncryptionServiceEvent } from './EncryptionServiceEvent'
+import { DecryptedParameters } from '@standardnotes/encryption/src/Domain/Types/DecryptedParameters'
 
 /**
  * The encryption service is responsible for the encryption and decryption of payloads, and
@@ -281,7 +281,7 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
   }
 
   public async encryptSplit(split: KeyedEncryptionSplit): Promise<EncryptedPayloadInterface[]> {
-    const allEncryptedParams: EncryptedParameters[] = []
+    const allEncryptedParams: EncryptedInputParameters[] = []
 
     const {
       usesRootKey,
@@ -783,7 +783,7 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     }
     const operator = this.operatorManager.operatorForVersion(version)
     const authenticatedData = operator.getPayloadAuthenticatedDataForExternalUse(
-      encryptedParametersFromPayload(payload),
+      encryptedInputParametersFromPayload(payload),
     )
     return authenticatedData
   }

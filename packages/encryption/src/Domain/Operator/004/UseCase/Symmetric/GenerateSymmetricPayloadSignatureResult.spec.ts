@@ -1,23 +1,23 @@
-import { EncryptedParameters } from './../../../../Types/EncryptedParameters'
+import { EncryptedOutputParameters } from '../../../../Types/EncryptedParameters'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 
 import { getMockedCrypto } from '../../MockedCrypto'
-import { VerifySymmetricPayloadSignatureUseCase } from './VerifySymmetricPayloadSignature'
+import { GenerateSymmetricPayloadSignatureResultUseCase } from './GenerateSymmetricPayloadSignatureResult'
 import { GenerateSymmetricAdditionalDataUseCase } from './GenerateSymmetricAdditionalData'
 import { CreateConsistentBase64JsonPayloadUseCase } from '../Utils/CreateConsistentBase64JsonPayload'
 import { doesPayloadRequireSigning } from '../../V004AlgorithmHelpers'
 
 describe('generate symmetric signing data usecase', () => {
   let crypto: PureCryptoInterface
-  let usecase: VerifySymmetricPayloadSignatureUseCase
+  let usecase: GenerateSymmetricPayloadSignatureResultUseCase
 
   beforeEach(() => {
     crypto = getMockedCrypto()
-    usecase = new VerifySymmetricPayloadSignatureUseCase(crypto)
+    usecase = new GenerateSymmetricPayloadSignatureResultUseCase(crypto)
   })
 
   it('payload with shared vault uuid should require signature', () => {
-    const payload: Partial<EncryptedParameters> = {
+    const payload: Partial<EncryptedOutputParameters> = {
       shared_vault_uuid: '456',
     }
 
@@ -25,7 +25,7 @@ describe('generate symmetric signing data usecase', () => {
   })
 
   it('payload with key system identifier only should not require signature', () => {
-    const payload: Partial<EncryptedParameters> = {
+    const payload: Partial<EncryptedOutputParameters> = {
       key_system_identifier: '123',
     }
 
@@ -33,7 +33,7 @@ describe('generate symmetric signing data usecase', () => {
   })
 
   it('payload without key system identifier or shared vault uuid should not require signature', () => {
-    const payload: Partial<EncryptedParameters> = {
+    const payload: Partial<EncryptedOutputParameters> = {
       key_system_identifier: undefined,
       shared_vault_uuid: undefined,
     }
@@ -42,7 +42,7 @@ describe('generate symmetric signing data usecase', () => {
   })
 
   it('signature should be verified with correct parameters', () => {
-    const payload: Partial<EncryptedParameters> = {
+    const payload: Partial<EncryptedOutputParameters> = {
       key_system_identifier: '123',
       shared_vault_uuid: '456',
     }
@@ -89,7 +89,7 @@ describe('generate symmetric signing data usecase', () => {
   })
 
   it('should return required false with no result if no signing data is provided and signing is not required', () => {
-    const payloadWithOptionalSigning: Partial<EncryptedParameters> = {
+    const payloadWithOptionalSigning: Partial<EncryptedOutputParameters> = {
       key_system_identifier: undefined,
       shared_vault_uuid: undefined,
     }
@@ -127,7 +127,7 @@ describe('generate symmetric signing data usecase', () => {
   })
 
   it('should return required true with fail result if no signing data is provided and signing is required', () => {
-    const payloadWithRequiredSigning: Partial<EncryptedParameters> = {
+    const payloadWithRequiredSigning: Partial<EncryptedOutputParameters> = {
       key_system_identifier: '123',
       shared_vault_uuid: '456',
     }
@@ -169,7 +169,7 @@ describe('generate symmetric signing data usecase', () => {
   })
 
   it('should fail if content public key differs from contentKey public key', () => {
-    const payload: Partial<EncryptedParameters> = {
+    const payload: Partial<EncryptedOutputParameters> = {
       key_system_identifier: '123',
       shared_vault_uuid: '456',
     }
@@ -214,5 +214,97 @@ describe('generate symmetric signing data usecase', () => {
         publicKey: '',
       },
     })
+  })
+
+  let additionalDataUsecase: GenerateSymmetricAdditionalDataUseCase
+  it('should return new client signature if previous signing data is not supplied', () => {
+    const payloadPlaintext = 'foobar'
+    const payloadEncryptionKey = 'secret-123'
+    const signingKeyPair = crypto.sodiumCryptoSignSeedKeypair('seedling')
+
+    const { additionalData, plaintextHash } = additionalDataUsecase.execute(
+      payloadPlaintext,
+      payloadEncryptionKey,
+      signingKeyPair,
+    )
+
+    const signignData = additionalData.signingData!
+
+    const result = usecase.execute(signignData, undefined, plaintextHash)
+    expect(result).toEqual({
+      plaintextHash,
+      signature: signignData.signature,
+      signerPublicKey: signignData.publicKey,
+    })
+  })
+
+  it('should return new raw signing data if content hash has changed and previous signing data is supplied', () => {
+    const signingKeyPair = crypto.sodiumCryptoSignSeedKeypair('seedling')
+
+    const previousPayloadPlaintext = 'foobar'
+    const payloadEncryptionKey = 'secret-123'
+
+    const previousAdditionlDataResult = additionalDataUsecase.execute(
+      previousPayloadPlaintext,
+      payloadEncryptionKey,
+      signingKeyPair,
+    )
+
+    const previousRawSigningData = usecase.execute(
+      previousAdditionlDataResult.additionalData.signingData!,
+      undefined,
+      previousAdditionlDataResult.plaintextHash,
+    )
+
+    const newPayloadPlaintext = 'foobar2'
+
+    const newAdditionalDataResult = additionalDataUsecase.execute(
+      newPayloadPlaintext,
+      payloadEncryptionKey,
+      signingKeyPair,
+    )
+
+    const newRawSigningData = usecase.execute(
+      newAdditionalDataResult.additionalData.signingData!,
+      previousRawSigningData,
+      newAdditionalDataResult.plaintextHash,
+    )
+
+    expect(newRawSigningData).not.toEqual(previousRawSigningData)
+  })
+
+  it('should return previous raw signing data if content hash has not changed', () => {
+    const signingKeyPair = crypto.sodiumCryptoSignSeedKeypair('seedling')
+
+    const previousPayloadPlaintext = 'foobar'
+    const payloadEncryptionKey = 'secret-123'
+
+    const previousAdditionlDataResult = additionalDataUsecase.execute(
+      previousPayloadPlaintext,
+      payloadEncryptionKey,
+      signingKeyPair,
+    )
+
+    const previousRawSigningData = usecase.execute(
+      previousAdditionlDataResult.additionalData.signingData!,
+      undefined,
+      previousAdditionlDataResult.plaintextHash,
+    )
+
+    const newPayloadPlaintext = previousPayloadPlaintext
+
+    const newAdditionalDataResult = additionalDataUsecase.execute(
+      newPayloadPlaintext,
+      payloadEncryptionKey,
+      signingKeyPair,
+    )
+
+    const newRawSigningData = usecase.execute(
+      newAdditionalDataResult.additionalData.signingData!,
+      previousRawSigningData,
+      newAdditionalDataResult.plaintextHash,
+    )
+
+    expect(newRawSigningData).toEqual(previousRawSigningData)
   })
 })

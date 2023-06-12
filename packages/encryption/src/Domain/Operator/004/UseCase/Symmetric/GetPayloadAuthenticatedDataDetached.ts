@@ -1,5 +1,5 @@
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
-import { EncryptedParameters } from '../../../../Types/EncryptedParameters'
+import { EncryptedOutputParameters } from '../../../../Types/EncryptedParameters'
 import { RootKeyEncryptedAuthenticatedData } from '../../../../Types/RootKeyEncryptedAuthenticatedData'
 import { ItemAuthenticatedData } from '../../../../Types/ItemAuthenticatedData'
 import { LegacyAttachedData } from '../../../../Types/LegacyAttachedData'
@@ -12,7 +12,7 @@ export class GetPayloadAuthenticatedDataDetachedUseCase {
   constructor(private readonly crypto: PureCryptoInterface) {}
 
   execute(
-    encrypted: EncryptedParameters,
+    encrypted: EncryptedOutputParameters,
   ): RootKeyEncryptedAuthenticatedData | ItemAuthenticatedData | LegacyAttachedData | undefined {
     const itemKeyComponents = deconstructEncryptedPayloadString(encrypted.enc_item_key)
 

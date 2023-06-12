@@ -9,7 +9,8 @@ import { CreateNewRootKey } from '../../Keys/RootKey/Functions'
 import { Create002KeyParams } from '../../Keys/RootKey/KeyParamsFunctions'
 import { SNRootKey } from '../../Keys/RootKey/RootKey'
 import { SNRootKeyParams } from '../../Keys/RootKey/RootKeyParams'
-import { DecryptedParameters, EncryptedParameters, ErrorDecryptingParameters } from '../../Types/EncryptedParameters'
+import { EncryptedOutputParameters, ErrorDecryptingParameters } from '../../Types/EncryptedParameters'
+import { DecryptedParameters } from '../../Types/DecryptedParameters'
 import { ItemAuthenticatedData } from '../../Types/ItemAuthenticatedData'
 import { LegacyAttachedData } from '../../Types/LegacyAttachedData'
 import { RootKeyEncryptedAuthenticatedData } from '../../Types/RootKeyEncryptedAuthenticatedData'
@@ -145,7 +146,7 @@ export class SNProtocolOperator002 extends SNProtocolOperator001 {
   }
 
   public override getPayloadAuthenticatedDataForExternalUse(
-    encrypted: EncryptedParameters,
+    encrypted: EncryptedOutputParameters,
   ): RootKeyEncryptedAuthenticatedData | ItemAuthenticatedData | LegacyAttachedData | undefined {
     const itemKeyComponents = this.encryptionComponentsFromString002(encrypted.enc_item_key)
     const authenticatedData = itemKeyComponents.keyParams
@@ -164,7 +165,7 @@ export class SNProtocolOperator002 extends SNProtocolOperator001 {
   public override async generateEncryptedParametersAsync(
     payload: Models.DecryptedPayloadInterface,
     key: Models.ItemsKeyInterface | SNRootKey,
-  ): Promise<EncryptedParameters> {
+  ): Promise<EncryptedOutputParameters> {
     /**
      * Generate new item key that is double the key size.
      * Will be split to create encryption key and authentication key.
@@ -203,7 +204,7 @@ export class SNProtocolOperator002 extends SNProtocolOperator001 {
   }
 
   public override async generateDecryptedParametersAsync<C extends ItemContent = ItemContent>(
-    encrypted: EncryptedParameters,
+    encrypted: EncryptedOutputParameters,
     key: Models.ItemsKeyInterface | SNRootKey,
   ): Promise<DecryptedParameters<C> | ErrorDecryptingParameters> {
     if (!encrypted.enc_item_key) {
@@ -258,7 +259,7 @@ export class SNProtocolOperator002 extends SNProtocolOperator001 {
       return {
         uuid: encrypted.uuid,
         content: JSON.parse(content),
-        signature: { required: false },
+        signature_result: { required: false },
       }
     }
   }

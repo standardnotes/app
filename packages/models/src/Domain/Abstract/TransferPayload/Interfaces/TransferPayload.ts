@@ -1,6 +1,6 @@
 import { ContentType } from '@standardnotes/common'
 import { ItemContent } from '../../Content/ItemContent'
-import { ClientRawSigningData } from '../../../Runtime/Encryption/ClientRawSigningData'
+import { PersistentSignatureData } from '../../../Runtime/Encryption/PersistentSignatureData'
 
 export interface TransferPayload<C extends ItemContent = ItemContent> {
   uuid: string
@@ -16,8 +16,7 @@ export interface TransferPayload<C extends ItemContent = ItemContent> {
   dirtyIndex?: number
   globalDirtyIndexAtLastSync?: number
   dirty?: boolean
-  encryptedRawSigningData?: string
-  rawSigningDataClientOnly?: ClientRawSigningData
+  signatureResult?: PersistentSignatureData
 
   lastSyncBegan?: Date
   lastSyncEnd?: Date
@@ -29,6 +28,4 @@ export interface TransferPayload<C extends ItemContent = ItemContent> {
   shared_vault_uuid?: string | undefined
 
   last_edited_by_uuid?: string
-
-  signatureVerified?: boolean
 }

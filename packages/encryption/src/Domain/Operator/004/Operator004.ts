@@ -17,7 +17,8 @@ import { ContentType, KeyParamsOrigination, ProtocolVersion } from '@standardnot
 import { HexString, PkcKeyPair, PureCryptoInterface, Utf8String } from '@standardnotes/sncrypto-common'
 import { V004Algorithm } from '../../Algorithm'
 import { SNRootKeyParams } from '../../Keys/RootKey/RootKeyParams'
-import { DecryptedParameters, EncryptedParameters, ErrorDecryptingParameters } from '../../Types/EncryptedParameters'
+import { EncryptedOutputParameters, ErrorDecryptingParameters } from '../../Types/EncryptedParameters'
+import { DecryptedParameters } from '../../Types/DecryptedParameters'
 import { ItemAuthenticatedData } from '../../Types/ItemAuthenticatedData'
 import { LegacyAttachedData } from '../../Types/LegacyAttachedData'
 import { RootKeyEncryptedAuthenticatedData } from '../../Types/RootKeyEncryptedAuthenticatedData'
@@ -114,7 +115,7 @@ export class SNProtocolOperator004 implements OperatorInterface {
   }
 
   public getPayloadAuthenticatedDataForExternalUse(
-    encrypted: EncryptedParameters,
+    encrypted: EncryptedOutputParameters,
   ): RootKeyEncryptedAuthenticatedData | ItemAuthenticatedData | LegacyAttachedData | undefined {
     const usecase = new GetPayloadAuthenticatedDataDetachedUseCase(this.crypto)
     return usecase.execute(encrypted)
@@ -124,13 +125,13 @@ export class SNProtocolOperator004 implements OperatorInterface {
     payload: DecryptedPayloadInterface,
     key: ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface | RootKeyInterface,
     signingKeyPair?: PkcKeyPair,
-  ): EncryptedParameters {
+  ): EncryptedOutputParameters {
     const usecase = new GenerateEncryptedParametersUseCase(this.crypto)
     return usecase.execute(payload, key, signingKeyPair)
   }
 
   public generateDecryptedParameters<C extends ItemContent = ItemContent>(
-    encrypted: EncryptedParameters,
+    encrypted: EncryptedOutputParameters,
     key: ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface | RootKeyInterface,
   ): DecryptedParameters<C> | ErrorDecryptingParameters {
     const usecase = new GenerateDecryptedParametersUseCase(this.crypto)

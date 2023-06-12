@@ -22,7 +22,8 @@ import { CreateNewRootKey } from '../../Keys/RootKey/Functions'
 import { Create001KeyParams } from '../../Keys/RootKey/KeyParamsFunctions'
 import { SNRootKey } from '../../Keys/RootKey/RootKey'
 import { SNRootKeyParams } from '../../Keys/RootKey/RootKeyParams'
-import { DecryptedParameters, EncryptedParameters, ErrorDecryptingParameters } from '../../Types/EncryptedParameters'
+import { EncryptedOutputParameters, ErrorDecryptingParameters } from '../../Types/EncryptedParameters'
+import { DecryptedParameters } from '../../Types/DecryptedParameters'
 import { ItemAuthenticatedData } from '../../Types/ItemAuthenticatedData'
 import { LegacyAttachedData } from '../../Types/LegacyAttachedData'
 import { RootKeyEncryptedAuthenticatedData } from '../../Types/RootKeyEncryptedAuthenticatedData'
@@ -98,7 +99,7 @@ export class SNProtocolOperator001 implements OperatorInterface {
   }
 
   public getPayloadAuthenticatedDataForExternalUse(
-    _encrypted: EncryptedParameters,
+    _encrypted: EncryptedOutputParameters,
   ): RootKeyEncryptedAuthenticatedData | ItemAuthenticatedData | LegacyAttachedData | undefined {
     return undefined
   }
@@ -118,7 +119,7 @@ export class SNProtocolOperator001 implements OperatorInterface {
   public async generateEncryptedParametersAsync(
     payload: DecryptedPayloadInterface,
     key: ItemsKeyInterface | SNRootKey,
-  ): Promise<EncryptedParameters> {
+  ): Promise<EncryptedOutputParameters> {
     /**
      * Generate new item key that is double the key size.
      * Will be split to create encryption key and authentication key.
@@ -151,7 +152,7 @@ export class SNProtocolOperator001 implements OperatorInterface {
   }
 
   public async generateDecryptedParametersAsync<C extends ItemContent = ItemContent>(
-    encrypted: EncryptedParameters,
+    encrypted: EncryptedOutputParameters,
     key: ItemsKeyInterface | SNRootKey,
   ): Promise<DecryptedParameters<C> | ErrorDecryptingParameters> {
     if (!encrypted.enc_item_key) {
@@ -188,7 +189,7 @@ export class SNProtocolOperator001 implements OperatorInterface {
       return {
         uuid: encrypted.uuid,
         content: JSON.parse(content),
-        signature: { required: false },
+        signature_result: { required: false },
       }
     }
   }
@@ -247,12 +248,12 @@ export class SNProtocolOperator001 implements OperatorInterface {
     _payload: DecryptedPayloadInterface<ItemContent>,
     _key: ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface | RootKeyInterface,
     _signingKeyPair?: PkcKeyPair | undefined,
-  ): EncryptedParameters {
+  ): EncryptedOutputParameters {
     throw new Error('Method not implemented.')
   }
 
   generateDecryptedParameters<C extends ItemContent = ItemContent>(
-    _encrypted: EncryptedParameters,
+    _encrypted: EncryptedOutputParameters,
     _key: ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface | RootKeyInterface,
   ): ErrorDecryptingParameters | DecryptedParameters<C> {
     throw new Error('Method not implemented.')
