@@ -10,7 +10,6 @@ import { BlocksEditor } from '../SuperEditor/BlocksEditor'
 import { BlocksEditorComposer } from '../SuperEditor/BlocksEditorComposer'
 import { useLinkingController } from '@/Controllers/LinkingControllerProvider'
 import LinkedItemBubblesContainer from '../LinkedItems/LinkedItemBubblesContainer'
-import { StringUtils, Strings } from '@/Constants/Strings'
 import { confirmDialog } from '@standardnotes/ui-services'
 import { useListKeyboardNavigation } from '@/Hooks/useListKeyboardNavigation'
 import { useNoteAttributes } from '../NotesOptions/NoteAttributes'
@@ -29,14 +28,17 @@ import {
 import Popover from '../Popover/Popover'
 import Icon from '../Icon/Icon'
 import Button from '../Button/Button'
+import Spinner from '../Spinner/Spinner'
 
 const ConflictListItem = ({
   isSelected,
   onClick,
   title,
   note,
+  disabled,
 }: {
   isSelected: boolean
+  disabled: boolean
   onClick: MouseEventHandler<HTMLButtonElement>
   title: string
   note: SNNote
@@ -48,11 +50,15 @@ const ConflictListItem = ({
     <button
       tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
       className={classNames(
-        'flex w-full cursor-pointer flex-col border-l-2 bg-transparent px-3 py-2.5 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none',
+        'flex w-full flex-col border-l-2 bg-transparent px-3 py-2.5 text-left text-sm text-text',
         isSelected ? 'border-info bg-info-backdrop' : 'border-transparent',
+        disabled
+          ? 'cursor-not-allowed opacity-75'
+          : 'cursor-pointer hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none',
       )}
       onClick={onClick}
       data-selected={isSelected}
+      disabled={disabled}
     >
       <div className="mb-1.5 flex items-center gap-2">
         <CheckIndicator checked={isSelected} />
@@ -176,60 +182,70 @@ const NoteConflictResolutionModal = ({
   }, [allVersions, selectedVersions])
 
   const trashNote = useCallback(
-    async (note: SNNote, silent = false) => {
-      const confirmDialogTitle = Strings.trashItemsTitle
-      const confirmDialogText = StringUtils.deleteNotes(false, 1, `'${note.title}'`)
-
-      if (
-        silent ||
-        (await confirmDialog({
-          title: confirmDialogTitle,
-          text: confirmDialogText,
-          confirmButtonStyle: 'danger',
-        }))
-      ) {
-        await application.mutator
-          .changeItem(note, (mutator) => {
-            mutator.trashed = true
-            mutator.conflictOf = undefined
-          })
-          .catch(console.error)
-        setSelectedVersions([allVersions[0].uuid])
-      }
+    async (note: SNNote) => {
+      await application.mutator
+        .changeItem(note, (mutator) => {
+          mutator.trashed = true
+          mutator.conflictOf = undefined
+        })
+        .catch(console.error)
+      setSelectedVersions([allVersions[0].uuid])
     },
     [allVersions, application.mutator],
   )
 
-  const trashSelectedNote = useCallback(async () => {
-    if (selectedNotes.length !== 1) {
-      return
-    }
+  const deleteNotePermanently = useCallback(
+    async (note: SNNote) => {
+      await application.mutator
+        .deleteItem(note)
+        .catch(console.error)
+        .then(() => {
+          setSelectedVersions([allVersions[0].uuid])
+        })
+    },
+    [allVersions, application.mutator],
+  )
 
-    trashNote(selectedNotes[0]).catch(console.error)
-  }, [selectedNotes, trashNote])
+  const [selectedAction, setSelectionAction] = useState<ConflictAction>('move-to-trash')
+  const selectStore = useSelectStore({
+    value: selectedAction,
+    setValue: (value) => setSelectionAction(value as ConflictAction),
+  })
+  const [isPerformingAction, setIsPerformingAction] = useState(false)
 
   const keepOnlySelectedNote = useCallback(async () => {
     if (selectedNotes.length !== 1) {
       return
     }
 
+    const shouldDeletePermanently = selectedAction === 'delete-permanently'
+
+    const confirmDialogText = `This will keep only the selected version and ${
+      shouldDeletePermanently ? 'delete the other versions permanently.' : 'move the other versions to trash.'
+    } Are you sure?`
+
     if (
       await confirmDialog({
         title: 'Keep only selected version?',
-        text: 'This will keep only the selected version and move all other versions to the trash. Are you sure?',
+        text: confirmDialogText,
         confirmButtonStyle: 'danger',
       })
     ) {
-      const notesToTrash = allVersions.filter((note) => note.uuid !== selectedNotes[0].uuid)
-      await Promise.all(notesToTrash.map((note) => trashNote(note, true)))
+      const nonSelectedNotes = allVersions.filter((note) => note.uuid !== selectedNotes[0].uuid)
+      selectStore.hide()
+      setIsPerformingAction(true)
+      await Promise.all(
+        nonSelectedNotes.map((note) => (shouldDeletePermanently ? deleteNotePermanently(note) : trashNote(note))),
+      )
       await application.mutator.changeItem(selectedNotes[0], (mutator) => {
         mutator.conflictOf = undefined
       })
+      setIsPerformingAction(false)
       void application.getViewControllerManager().selectionController.selectItem(selectedNotes[0].uuid, true)
       void application.sync.sync()
       close()
     }
-  }, [allVersions, application, close, selectedNotes, trashNote])
+  }, [allVersions, application, close, deleteNotePermanently, selectStore, selectedAction, selectedNotes, trashNote])
 
   const isMobileScreen = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
   const actions = useMemo(
@@ -250,11 +266,6 @@ const NoteConflictResolutionModal = ({
   const [selectedMobileTab, setSelectedMobileTab] = useState<'list' | 'content'>('list')
 
   const toolbarStore = useToolbarStore()
-  const [selectedAction, setSelectionAction] = useState<ConflictAction>('move-to-trash')
-  const selectStore = useSelectStore({
-    value: selectedAction,
-    setValue: (value) => setSelectionAction(value as ConflictAction),
-  })
   const isSelectOpen = selectStore.useState('open')
   const [selectAnchor, setSelectAnchor] = useState<HTMLButtonElement | null>(null)
 
@@ -269,27 +280,31 @@ const NoteConflictResolutionModal = ({
       close={close}
       customFooter={
         <ModalDialogButtons>
-          <Button className="mr-auto" onClick={close}>
+          <Button className="mr-auto" onClick={close} disabled={isPerformingAction}>
             Cancel
           </Button>
           {selectedNotes.length === 1 && (
             <Toolbar className="flex items-stretch text-info-contrast" store={toolbarStore}>
               <ToolbarItem
-                onClick={() => {
-                  if (selectedAction === 'move-to-trash') {
-                    trashSelectedNote().catch(console.error)
-                  } else {
-                    keepOnlySelectedNote().catch(console.error)
-                  }
-                }}
+                onClick={keepOnlySelectedNote}
                 className="rounded rounded-r-none bg-info px-3 py-1.5 text-base font-bold hover:brightness-110 focus-visible:brightness-110 lg:text-sm"
+                disabled={isPerformingAction}
               >
-                Keep selected, {selectedAction === 'move-to-trash' ? 'trash others' : 'delete others'}
+                {isPerformingAction ? (
+                  <>
+                    <Spinner className="h-4 w-4 border-info-contrast" />
+                  </>
+                ) : (
+                  <>Keep selected, {selectedAction === 'move-to-trash' ? 'trash others' : 'delete others'}</>
+                )}
               </ToolbarItem>
               <Select
                 ref={setSelectAnchor}
                 render={
-                  <ToolbarItem className="rounded rounded-l-none border-l border-border bg-info py-1.5 px-3 hover:brightness-110 focus-visible:brightness-110">
+                  <ToolbarItem
+                    className="rounded rounded-l-none border-l border-border bg-info py-1.5 px-3 hover:brightness-110 focus-visible:brightness-110"
+                    disabled={isPerformingAction}
+                  >
                     <SelectArrow className={isSelectOpen ? 'block rotate-180' : ''} />
                   </ToolbarItem>
                 }
@@ -361,6 +376,7 @@ const NoteConflictResolutionModal = ({
       >
         {allVersions.map((note, index) => (
           <ConflictListItem
+            disabled={isPerformingAction}
             isSelected={selectedVersions.includes(note.uuid)}
             onClick={(event) => {
               if (event.ctrlKey || event.metaKey) {
