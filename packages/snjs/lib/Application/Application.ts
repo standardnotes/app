@@ -176,6 +176,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   private contactService!: ExternalServices.ContactServiceInterface
   private sharedVaultService!: ExternalServices.SharedVaultServiceInterface
   private userEventService!: ExternalServices.UserEventService
+  private asymmetricMessageService!: ExternalServices.AsymmetricMessageService
 
   private declare sessionStorageMapper: MapperInterface<Session, Record<string, unknown>>
   private declare legacySessionStorageMapper: MapperInterface<LegacySession, Record<string, unknown>>
@@ -1217,6 +1218,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.createContactService()
     this.createVaultService()
     this.createSharedVaultService()
+    this.createAsymmetricMessageService()
   }
 
   private clearServices() {
@@ -1277,6 +1279,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     ;(this.contactService as unknown) = undefined
     ;(this.sharedVaultService as unknown) = undefined
     ;(this.userEventService as unknown) = undefined
+    ;(this.asymmetricMessageService as unknown) = undefined
 
     this.services = []
   }
@@ -1301,6 +1304,18 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   private createUserEventService(): void {
     this.userEventService = new ExternalServices.UserEventService(this.internalEventBus)
     this.services.push(this.userEventService)
+  }
+
+  private createAsymmetricMessageService() {
+    this.asymmetricMessageService = new ExternalServices.AsymmetricMessageService(
+      this.httpService,
+      this.protocolService,
+      this.contacts,
+      this.itemManager,
+      this.syncService,
+      this.internalEventBus,
+    )
+    this.services.push(this.asymmetricMessageService)
   }
 
   private createContactService(): void {

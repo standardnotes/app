@@ -40,7 +40,7 @@ export interface SharedVaultServiceInterface
   getOutboundInvites(vaultUuid?: string): Promise<SharedVaultInviteServerHash[] | ClientDisplayableError>
   isInviteTrusted(invite: SharedVaultInviteServerHash): Promise<boolean>
   acceptPendingSharedVaultInvite(pendingInvite: PendingSharedVaultInviteRecord): Promise<void>
-  getCachedPendingInvites(): PendingSharedVaultInviteRecord[]
+  getCachedPendingInviteRecords(): PendingSharedVaultInviteRecord[]
   getInvitableContactsForSharedVault(sharedVault: SharedVaultDisplayListing): Promise<TrustedContactInterface[]>
   deleteInvite(invite: SharedVaultInviteServerHash): Promise<ClientDisplayableError | void>
 }

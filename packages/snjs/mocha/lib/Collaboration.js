@@ -18,6 +18,7 @@ export const createTrustedContactForUserOfContext = async (
   const contact = await contextAddingNewContact.application.contactService.createOrEditTrustedContact({
     name: 'John Doe',
     publicKey: contextImportingContactInfoFrom.publicKey,
+    signingPublicKey: contextImportingContactInfoFrom.signingPublicKey,
     contactUuid: contextImportingContactInfoFrom.userUuid,
   })
 
@@ -25,12 +26,9 @@ export const createTrustedContactForUserOfContext = async (
 }
 
 export const acceptAllInvites = async (context) => {
-  const invites = context.sharedVaults.getCachedPendingInvites()
-  for (const invite of invites) {
-    const result = await context.sharedVaults.acceptPendingSharedVaultInvite(invite)
-    if (!result) {
-      throw new Error('[e2e] Failed to accept invite')
-    }
+  const inviteRecords = context.sharedVaults.getCachedPendingInviteRecords()
+  for (const record of inviteRecords) {
+    await context.sharedVaults.acceptPendingSharedVaultInvite(record)
   }
 }
 
@@ -70,11 +68,10 @@ export const createSharedVaultWithUnacceptedButTrustedInvite = async (
 
   const { contactContext, deinitContactContext } = await createContactContext()
   const contact = await createTrustedContactForUserOfContext(context, contactContext)
+  await createTrustedContactForUserOfContext(contactContext, context)
 
   const invite = await context.sharedVaults.inviteContactToSharedVault(sharedVault, contact, permissions)
   await contactContext.sync()
-
-  await createTrustedContactForUserOfContext(contactContext, context)
 
   return { sharedVault, contact, contactContext, deinitContactContext, invite }
 }

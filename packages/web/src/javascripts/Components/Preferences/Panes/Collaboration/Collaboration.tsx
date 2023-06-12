@@ -45,7 +45,7 @@ const Collaboration = () => {
 
   const fetchInvites = useCallback(async () => {
     await vaultService.downloadInboundInvites()
-    const invites = vaultService.getCachedPendingInvites()
+    const invites = vaultService.getCachedPendingInviteRecords()
     setInvites(invites)
   }, [vaultService])
 

@@ -81,6 +81,10 @@ export class AppContext {
     return this.sessions.getPublicKey()
   }
 
+  get signingPublicKey() {
+    return this.sessions.getSigningPublicKey()
+  }
+
   get privateKey() {
     return this.encryption.getKeyPair().privateKey
   }
@@ -333,9 +337,9 @@ export class AppContext {
   resolveWhenSharedVaultChangeInvitesAreSent(sharedVaultUuid) {
     return new Promise((resolve) => {
       const objectToSpy = this.sharedVaults
-      sinon.stub(objectToSpy, 'updateInvitesAfterKeySystemRootKeyChange').callsFake(async (params) => {
-        objectToSpy.updateInvitesAfterKeySystemRootKeyChange.restore()
-        const result = await objectToSpy.updateInvitesAfterKeySystemRootKeyChange(params)
+      sinon.stub(objectToSpy, 'updateInvitesAndShareKeyAfterKeySystemRootKeyChange').callsFake(async (params) => {
+        objectToSpy.updateInvitesAndShareKeyAfterKeySystemRootKeyChange.restore()
+        const result = await objectToSpy.updateInvitesAndShareKeyAfterKeySystemRootKeyChange(params)
         if (params.sharedVault.sharedVaultUuid === sharedVaultUuid) {
           resolve()
         }

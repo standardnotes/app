@@ -30,6 +30,7 @@ import {
   VaultDisplayListing,
   isSharedVaultDisplayListing,
   AsymmetricMessageSharedVaultRootKeyChanged,
+  AsymmetricMessageSharedVaultInvite,
 } from '@standardnotes/models'
 import { SharedVaultServiceInterface } from './SharedVaultServiceInterface'
 import { SharedVaultServiceEvent, SharedVaultServiceEventPayload } from './SharedVaultServiceEvent'
@@ -249,7 +250,7 @@ export class SharedVaultService
     return this.findSureSharedVault(sharedVault.sharedVaultUuid)
   }
 
-  public getCachedPendingInvites(): PendingSharedVaultInviteRecord[] {
+  public getCachedPendingInviteRecords(): PendingSharedVaultInviteRecord[] {
     return Object.values(this.pendingInvites)
   }
 
@@ -364,7 +365,7 @@ export class SharedVaultService
     }
 
     for (const invite of invites) {
-      const trustedMessageUseCase = new GetAsymmetricMessageTrustedPayload<AsymmetricMessageSharedVaultRootKeyChanged>(
+      const trustedMessageUseCase = new GetAsymmetricMessageTrustedPayload<AsymmetricMessageSharedVaultInvite>(
         this.encryption,
         this.contacts,
       )
@@ -384,8 +385,9 @@ export class SharedVaultService
         continue
       }
 
-      const untrustedMessageUseCase =
-        new GetAsymmetricMessageUntrustedPayload<AsymmetricMessageSharedVaultRootKeyChanged>(this.encryption)
+      const untrustedMessageUseCase = new GetAsymmetricMessageUntrustedPayload<AsymmetricMessageSharedVaultInvite>(
+        this.encryption,
+      )
 
       const untrustedMessage = untrustedMessageUseCase.execute({
         message: invite,
@@ -422,7 +424,12 @@ export class SharedVaultService
       throw new Error('Cannot accept untrusted invite')
     }
 
-    const useCase = new AcceptTrustedSharedVaultInvite(this.sharedVaultInvitesServer, this.items, this.sync)
+    const useCase = new AcceptTrustedSharedVaultInvite(
+      this.sharedVaultInvitesServer,
+      this.items,
+      this.sync,
+      this.contacts,
+    )
     const result = await useCase.execute({ invite: pendingInvite.invite, message: pendingInvite.message })
 
     delete this.pendingInvites[pendingInvite.invite.uuid]

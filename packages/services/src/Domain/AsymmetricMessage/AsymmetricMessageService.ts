@@ -68,7 +68,12 @@ export class AsymmetricMessageService extends AbstractService implements Interna
   }
 
   async handleRemoteReceivedAsymmetricMessages(messages: AsymmetricMessageServerHash[]): Promise<void> {
+    if (messages.length === 0) {
+      return
+    }
+
     const useCase = new GetAsymmetricMessageTrustedPayload(this.encryption, this.contacts)
+
     for (const message of messages) {
       const trustedMessagePayload = useCase.execute({
         privateKey: this.encryption.getKeyPair().privateKey,
