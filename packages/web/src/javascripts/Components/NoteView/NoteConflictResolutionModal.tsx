@@ -29,6 +29,8 @@ import Popover from '../Popover/Popover'
 import Icon from '../Icon/Icon'
 import Button from '../Button/Button'
 import Spinner from '../Spinner/Spinner'
+import Switch from '../Switch/Switch'
+import diff from 'fast-diff'
 
 const ConflictListItem = ({
   isSelected,
@@ -161,7 +163,42 @@ const NoteContent = ({ note }: { note: SNNote }) => {
   )
 }
 
+const DiffView = ({ selectedNotes }: { selectedNotes: SNNote[] }) => {
+  const [results, setResults] = useState<diff.Diff[]>([])
+
+  useEffect(() => {
+    const first = selectedNotes[0].text
+    const second = selectedNotes[1].text
+
+    const results = diff(first, second, undefined, true)
+
+    setResults(results)
+  }, [selectedNotes])
+
+  return (
+    <div className="flex-grow overflow-hidden">
+      <pre className="h-full w-full overflow-y-auto whitespace-pre-wrap p-4">
+        {results.map(([state, text], index) => {
+          return (
+            <span
+              className={classNames(
+                'whitespace-pre-wrap',
+                state === diff.INSERT && 'bg-success text-success-contrast',
+                state === diff.DELETE && 'bg-danger text-danger-contrast',
+              )}
+              key={index}
+            >
+              {text}
+            </span>
+          )
+        })}
+      </pre>
+    </div>
+  )
+}
+
 type ConflictAction = 'move-to-trash' | 'delete-permanently'
+type MultipleSelectionMode = 'preview' | 'diff'
 
 const NoteConflictResolutionModal = ({
   currentNote,
@@ -269,12 +306,20 @@ const NoteConflictResolutionModal = ({
   const isSelectOpen = selectStore.useState('open')
   const [selectAnchor, setSelectAnchor] = useState<HTMLButtonElement | null>(null)
 
+  const [multipleSelectionMode, setMultipleSelectionMode] = useState<MultipleSelectionMode>('preview')
+  const isPreviewMode = multipleSelectionMode === 'preview'
+  useEffect(() => {
+    if (selectedNotes.length !== 2) {
+      setMultipleSelectionMode('preview')
+    }
+  }, [selectedNotes.length])
+
   return (
     <Modal
       title="Resolve conflicts"
       className={{
         content: 'md:h-full md:w-[70vw]',
-        description: 'flex flex-col md:flex-row',
+        description: 'flex flex-col overflow-x-hidden md:flex-row',
       }}
       actions={actions}
       close={close}
@@ -398,16 +443,33 @@ const NoteConflictResolutionModal = ({
           />
         ))}
       </div>
-      <div
-        className={classNames(
-          'w-full flex-grow divide-x divide-border pb-0.5',
-          isMobileScreen ? (selectedMobileTab === 'content' ? 'flex' : 'hidden md:flex') : 'grid grid-rows-1',
+      <div className="flex w-full flex-grow flex-col overflow-hidden">
+        {isPreviewMode && (
+          <div
+            className={classNames(
+              'w-full flex-grow divide-x divide-border pb-0.5',
+              isMobileScreen ? (selectedMobileTab === 'content' ? 'flex' : 'hidden md:flex') : 'grid grid-rows-1',
+            )}
+            style={!isMobileScreen ? { gridTemplateColumns: `repeat(${selectedNotes.length}, 1fr)` } : undefined}
+          >
+            {selectedNotes.map((note) => (
+              <NoteContent note={note} key={note.uuid} />
+            ))}
+          </div>
         )}
-        style={!isMobileScreen ? { gridTemplateColumns: `repeat(${selectedNotes.length}, 1fr)` } : undefined}
-      >
-        {selectedNotes.map((note) => (
-          <NoteContent note={note} key={note.uuid} />
-        ))}
+        {!isPreviewMode && selectedNotes.length === 2 && <DiffView selectedNotes={selectedNotes} />}
+        {selectedNotes.length === 2 && (
+          <div className="flex items-center justify-center gap-2 border-t border-border px-4 py-1.5">
+            <div>Preview Mode</div>
+            <Switch
+              checked={!isPreviewMode}
+              onChange={function (checked: boolean): void {
+                setMultipleSelectionMode(checked ? 'diff' : 'preview')
+              }}
+            />
+            <div>Diff Mode</div>
+          </div>
+        )}
       </div>
     </Modal>
   )
