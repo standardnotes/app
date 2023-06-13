@@ -3,7 +3,7 @@ import { FOCUSABLE_BUT_NOT_TABBABLE, TAG_FOLDERS_FEATURE_NAME } from '@/Constant
 import { KeyboardKey } from '@standardnotes/ui-services'
 import { FeaturesController } from '@/Controllers/FeaturesController'
 import { NavigationController } from '@/Controllers/Navigation/NavigationController'
-import { IconType, SNTag } from '@standardnotes/snjs'
+import { IconType, SNNote, SNTag } from '@standardnotes/snjs'
 import { computed } from 'mobx'
 import { observer } from 'mobx-react-lite'
 import {
@@ -23,8 +23,9 @@ import { useFileDragNDrop } from '../FileDragNDropProvider'
 import { LinkingController } from '@/Controllers/LinkingController'
 import { TagListSectionType } from './TagListSection'
 import { log, LoggingDomain } from '@/Logging'
-import { TagDragDataFormat } from './DragNDrop'
+import { NoteDragDataFormat, TagDragDataFormat } from './DragNDrop'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
+import { useApplication } from '../ApplicationProvider'
 
 type Props = {
   tag: SNTag
@@ -40,7 +41,9 @@ const PADDING_BASE_PX = 14
 const PADDING_PER_LEVEL_PX = 21
 
 export const TagsListItem: FunctionComponent<Props> = observer(
-  ({ tag, type, features, navigationController: navigationController, level, onContextMenu, linkingController }) => {
+  ({ tag, type, features, navigationController, level, onContextMenu, linkingController }) => {
+    const application = useApplication()
+
     const [title, setTitle] = useState(tag.title || '')
     const [subtagTitle, setSubtagTitle] = useState('')
     const inputRef = useRef<HTMLInputElement>(null)
@@ -200,7 +203,10 @@ export const TagsListItem: FunctionComponent<Props> = observer(
     )
 
     const onDragEnter: DragEventHandler<HTMLDivElement> = useCallback((event): void => {
-      if (event.dataTransfer.types.includes(TagDragDataFormat)) {
+      if (
+        event.dataTransfer.types.includes(TagDragDataFormat) ||
+        event.dataTransfer.types.includes(NoteDragDataFormat)
+      ) {
         event.preventDefault()
         setIsBeingDraggedOver(true)
       }
@@ -211,30 +217,42 @@ export const TagsListItem: FunctionComponent<Props> = observer(
     }, [])
 
     const onDragOver: DragEventHandler<HTMLDivElement> = useCallback((event): void => {
-      if (event.dataTransfer.types.includes(TagDragDataFormat)) {
+      if (
+        event.dataTransfer.types.includes(TagDragDataFormat) ||
+        event.dataTransfer.types.includes(NoteDragDataFormat)
+      ) {
         event.preventDefault()
       }
     }, [])
 
     const onDrop: DragEventHandler<HTMLDivElement> = useCallback(
-      (event): void => {
+      async (event) => {
         setIsBeingDraggedOver(false)
         const draggedTagUuid = event.dataTransfer.getData(TagDragDataFormat)
-        if (!draggedTagUuid) {
-          return
-        }
-        if (!navigationController.isValidTagParent(tag, { uuid: draggedTagUuid } as SNTag)) {
-          return
-        }
-        if (!hasFolders) {
-          premiumModal.activate(TAG_FOLDERS_FEATURE_NAME)
-          return
-        }
+        const draggedNoteUuid = event.dataTransfer.getData(NoteDragDataFormat)
         if (draggedTagUuid) {
+          if (!navigationController.isValidTagParent(tag, { uuid: draggedTagUuid } as SNTag)) {
+            return
+          }
+          if (!hasFolders) {
+            premiumModal.activate(TAG_FOLDERS_FEATURE_NAME)
+            return
+          }
+
           void navigationController.assignParent(draggedTagUuid, tag.uuid)
+          return
+        } else if (draggedNoteUuid) {
+          const currentTag = navigationController.selected
+          const shouldSwapTags = currentTag instanceof SNTag && currentTag.uuid !== tag.uuid
+          const note = application.items.findSureItem<SNNote>(draggedNoteUuid)
+          await linkingController.linkItems(note, tag)
+          if (shouldSwapTags) {
+            await linkingController.unlinkItems(note, currentTag)
+          }
+          return
         }
       },
-      [hasFolders, navigationController, premiumModal, tag],
+      [application.items, hasFolders, linkingController, navigationController, premiumModal, tag],
     )
 
     return (

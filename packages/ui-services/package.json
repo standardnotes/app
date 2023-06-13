@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/ui-services",
-  "version": "1.26.12",
+  "version": "1.26.14",
   "engines": {
     "node": ">=16.0.0 <17.0.0"
   },
