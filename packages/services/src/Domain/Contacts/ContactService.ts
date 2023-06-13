@@ -5,10 +5,9 @@ import {
   TrustedContactContentSpecialized,
   TrustedContactInterface,
   FillItemContent,
-  Predicate,
   TrustedContactMutator,
-  TrustedContactPublicKey,
   DecryptedItemInterface,
+  ContactPublicKeySet,
 } from '@standardnotes/models'
 import { ContentType } from '@standardnotes/common'
 import { AbstractService } from '../Service/AbstractService'
@@ -20,6 +19,9 @@ import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface
 import { UserClientInterface } from '../User/UserClientInterface'
 import { CollaborationIDData } from './CollaborationID'
 import { EncryptionProviderInterface } from '@standardnotes/encryption'
+import { ValidateItemSignerUseCase } from './UseCase/ValidateItemSigner'
+import { ValidateItemSignerResult } from './UseCase/ValidateItemSignerResult'
+import { FindTrustedContactUseCase } from './UseCase/FindTrustedContact'
 
 const Version1CollaborationId = '1'
 const UnknownContactName = 'Unnamed contact'
@@ -109,7 +111,7 @@ export class ContactService extends AbstractService<ContactServiceEvent> impleme
       (mutator) => {
         mutator.name = params.name
 
-        if (publicKey !== contact.publicKey.encryption || signingPublicKey !== contact.publicKey.signing) {
+        if (publicKey !== contact.publicKeySet.encryption || signingPublicKey !== contact.publicKeySet.signing) {
           mutator.addPublicKey({
             encryption: publicKey,
             signing: signingPublicKey,
@@ -134,8 +136,8 @@ export class ContactService extends AbstractService<ContactServiceEvent> impleme
       (mutator) => {
         mutator.name = params.name
         if (
-          params.publicKey !== contact.publicKey.encryption ||
-          params.signingPublicKey !== contact.publicKey.signing
+          params.publicKey !== contact.publicKeySet.encryption ||
+          params.signingPublicKey !== contact.publicKeySet.signing
         ) {
           mutator.addPublicKey({
             encryption: params.publicKey,
@@ -190,7 +192,7 @@ export class ContactService extends AbstractService<ContactServiceEvent> impleme
 
     const content: TrustedContactContentSpecialized = {
       name: params.name ?? UnknownContactName,
-      publicKey: TrustedContactPublicKey.FromJson({
+      publicKey: ContactPublicKeySet.FromJson({
         encryption: params.publicKey,
         signing: params.signingPublicKey,
         timestamp: new Date(),
@@ -224,10 +226,8 @@ export class ContactService extends AbstractService<ContactServiceEvent> impleme
   }
 
   findTrustedContact(userUuid: string): TrustedContactInterface | undefined {
-    return this.items.itemsMatchingPredicate<TrustedContactInterface>(
-      ContentType.TrustedContact,
-      new Predicate<TrustedContactInterface>('contactUuid', '=', userUuid),
-    )[0]
+    const usecase = new FindTrustedContactUseCase(this.items)
+    return usecase.execute({ userUuid })
   }
 
   findTrustedContactForServerUser(user: SharedVaultUserServerHash): TrustedContactInterface | undefined {
@@ -247,17 +247,9 @@ export class ContactService extends AbstractService<ContactServiceEvent> impleme
     })
   }
 
-  isItemSignedByAuthenticUser(item: DecryptedItemInterface): 'not-applicable' | 'yes' | 'no' {
-    if(item.signatureResult) {
-
-    }
-
-    const uuidOfLastEditor = item.last_edited_by_uuid
-    if (!uuidOfLastEditor) {
-      return 'not-applicable'
-    }
-
-    const contact = this.findTrustedContact(uuidOfLastEditor)
+  isItemAuthenticallySigned(item: DecryptedItemInterface): ValidateItemSignerResult {
+    const usecase = new ValidateItemSignerUseCase(this.items)
+    return usecase.execute(item)
   }
 
   override deinit(): void {

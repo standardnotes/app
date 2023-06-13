@@ -44,8 +44,8 @@ export class HandleTrustedSharedVaultInviteMessage {
       await this.contacts.createOrEditTrustedContact({
         name: contact.name,
         contactUuid: contact.contactUuid,
-        publicKey: contact.publicKey.encryption,
-        signingPublicKey: contact.publicKey.signing,
+        publicKey: contact.publicKeySet.encryption,
+        signingPublicKey: contact.publicKeySet.signing,
       })
     }
 

@@ -13,7 +13,7 @@ export type PersistentSignatureData =
       contentHash: string
       result?: {
         passes: boolean
-        publicKey?: string
-        signature?: string
+        publicKey: string
+        signature: string
       }
     }

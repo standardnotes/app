@@ -1,10 +1,10 @@
 import { ItemContent } from '../../Abstract/Content/ItemContent'
-import { TrustedContactPublicKeyInterface } from './TrustedContactPublicKeyInterface'
+import { ContactPublicKeySetInterface } from './PublicKeySet/ContactPublicKeySetInterface'
 
 export type TrustedContactContentSpecialized = {
   name: string
   contactUuid: string
-  publicKey: TrustedContactPublicKeyInterface
+  publicKey: ContactPublicKeySetInterface
 }
 
 export type TrustedContactContent = TrustedContactContentSpecialized & ItemContent

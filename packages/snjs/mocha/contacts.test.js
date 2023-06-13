@@ -33,8 +33,8 @@ describe('contacts', function () {
 
     expect(contact).to.not.be.undefined
     expect(contact.name).to.equal('John Doe')
-    expect(contact.publicKey.encryption).to.equal('my_public_key')
-    expect(contact.publicKey.signing).to.equal('my_signing_public_key')
+    expect(contact.publicKeySet.encryption).to.equal('my_public_key')
+    expect(contact.publicKeySet.signing).to.equal('my_signing_public_key')
     expect(contact.contactUuid).to.equal('123')
   })
 

@@ -1,0 +1,14 @@
+export interface ContactPublicKeySetInterface {
+  encryption: string
+  signing: string
+  timestamp: Date
+  previousKeySet?: ContactPublicKeySetInterface
+
+  findKeySet(params: {
+    targetEncryptionPublicKey: string
+    targetSigningPublicKey: string
+  }): ContactPublicKeySetInterface | undefined
+
+  findKeySetWithPublicKey(publicKey: string): ContactPublicKeySetInterface | undefined
+  findKeySetWithSigningKey(signingKey: string): ContactPublicKeySetInterface | undefined
+}

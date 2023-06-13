@@ -23,24 +23,6 @@ describe.only('shared vault crypto', function () {
     await context.register()
   })
 
-  describe('asymmetric messages', () => {
-    it('encrypted strings should include sender signing public key and signature', async () => {
-      console.error('TODO')
-    })
-
-    it('embedded signature verification should fail if embedded signing key is altered', async () => {
-      console.error('TODO')
-    })
-
-    it('decrypting asymmetric message without trusted signer key should result in non-trusted result', async () => {
-      console.error('TODO')
-    })
-
-    it('decrypting asymmetric message with trusted signer key should result in trusted result', async () => {
-      console.error('TODO')
-    })
-  })
-
   describe('root key', () => {
     it('root key loaded from disk should have keypairs', async () => {
       const appIdentifier = context.identifier
@@ -149,14 +131,6 @@ describe.only('shared vault crypto', function () {
   })
 
   describe('symmetrically encrypted items', () => {
-    it('should require asymmetric signature if item keySystemIdentifier or sharedVaultUuid is specified', async () => {
-      console.error('TODO')
-    })
-
-    it('should allow asymmetric signature if item is not shared or belongs to key system if user root key has signing key pair', async () => {
-      console.error('TODO')
-    })
-
     it('should allow client verification of authenticity of shared item changes', async () => {
       console.error('TODO')
     })

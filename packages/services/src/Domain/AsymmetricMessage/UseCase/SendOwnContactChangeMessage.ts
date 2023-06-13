@@ -31,7 +31,7 @@ export class SendOwnContactChangeMessage {
       message: message,
       senderKeyPair: params.senderOldKeyPair,
       senderSigningKeyPair: params.senderOldSigningKeyPair,
-      recipientPublicKey: params.contact.publicKey.encryption,
+      recipientPublicKey: params.contact.publicKeySet.encryption,
     })
 
     const sendMessageUseCase = new SendAsymmetricMessageUseCase(this.messageServer)

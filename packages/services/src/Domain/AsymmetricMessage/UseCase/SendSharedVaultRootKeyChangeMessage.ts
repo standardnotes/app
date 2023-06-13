@@ -39,7 +39,7 @@ export class SendSharedVaultRootKeyChangeMessage {
       message: message,
       senderKeyPair: params.senderKeyPair,
       senderSigningKeyPair: params.senderSigningKeyPair,
-      recipientPublicKey: params.contact.publicKey.encryption,
+      recipientPublicKey: params.contact.publicKeySet.encryption,
     })
 
     const replaceabilityIdentifier = `${AsymmetricMessagePayloadType.SharedVaultRootKeyChanged}:${params.sharedVaultUuid}:${params.keySystemIdentifier}`

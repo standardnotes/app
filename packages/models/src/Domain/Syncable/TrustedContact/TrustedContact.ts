@@ -2,36 +2,57 @@ import { ConflictStrategy, DecryptedItem, DecryptedItemInterface } from '../../A
 import { DecryptedPayloadInterface } from '../../Abstract/Payload'
 import { HistoryEntryInterface } from '../../Runtime/History'
 import { TrustedContactContent } from './TrustedContactContent'
-import { FindPublicKeyResult, TrustedContactInterface } from './TrustedContactInterface'
-import { TrustedContactPublicKey } from './TrustedContactPublicKey'
-import { TrustedContactPublicKeyInterface } from './TrustedContactPublicKeyInterface'
+import { TrustedContactInterface } from './TrustedContactInterface'
+import { FindPublicKeySetResult } from './PublicKeySet/FindPublicKeySetResult'
+import { ContactPublicKeySet } from './PublicKeySet/ContactPublicKeySet'
+import { ContactPublicKeySetInterface } from './PublicKeySet/ContactPublicKeySetInterface'
 
 export class TrustedContact extends DecryptedItem<TrustedContactContent> implements TrustedContactInterface {
   name: string
   contactUuid: string
-  publicKey: TrustedContactPublicKeyInterface
+  publicKeySet: ContactPublicKeySetInterface
 
   constructor(payload: DecryptedPayloadInterface<TrustedContactContent>) {
     super(payload)
 
     this.name = payload.content.name
     this.contactUuid = payload.content.contactUuid
-    this.publicKey = TrustedContactPublicKey.FromJson(payload.content.publicKey)
+    this.publicKeySet = ContactPublicKeySet.FromJson(payload.content.publicKey)
   }
 
-  public findPublicKey(params: {
+  public findKeySet(params: {
     targetEncryptionPublicKey: string
     targetSigningPublicKey: string
-  }): FindPublicKeyResult {
-    const publicKey = this.publicKey.findPublicKey(params)
-    if (!publicKey) {
+  }): FindPublicKeySetResult {
+    const set = this.publicKeySet.findKeySet(params)
+    if (!set) {
       return undefined
     }
 
     return {
-      publicKey,
-      current: publicKey === this.publicKey,
+      publicKeySet: set,
+      current: set === this.publicKeySet,
     }
+  }
+
+  isPublicKeyTrusted(encryptionPublicKey: string): boolean {
+    const keySet = this.publicKeySet.findKeySetWithPublicKey(encryptionPublicKey)
+
+    if (keySet) {
+      return true
+    }
+
+    return false
+  }
+
+  isSigningKeyTrusted(signingKey: string): boolean {
+    const keySet = this.publicKeySet.findKeySetWithSigningKey(signingKey)
+
+    if (keySet) {
+      return true
+    }
+
+    return false
   }
 
   override strategyWhenConflictingWithItem(

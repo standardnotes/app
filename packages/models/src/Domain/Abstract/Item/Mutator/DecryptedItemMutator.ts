@@ -44,6 +44,7 @@ export class DecryptedItemMutator<
       dirty: true,
       dirtyIndex: getIncrementedDirtyIndex(),
       signatureResult: undefined,
+      last_edited_by_uuid: undefined,
     })
 
     return result
