@@ -54,6 +54,12 @@ window.onload = () => {
   void loadAndStartApplication()
 }
 
+window.onunload = () => {
+  if (window.device) {
+    void window.device.stopServer()
+  }
+}
+
 /** @returns whether the keychain structure is up to date or not */
 async function migrateKeychain(remoteBridge: CrossProcessBridge): Promise<boolean> {
   if (!remoteBridge.useNativeKeychain) {
