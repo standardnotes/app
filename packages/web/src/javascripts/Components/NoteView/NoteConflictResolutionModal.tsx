@@ -201,6 +201,7 @@ const DiffView = ({ selectedNotes }: { selectedNotes: SNNote[] }) => {
     }
 
     diffVisualizer.innerHTML = ''
+    const preElementRect = preElement.getBoundingClientRect()
     const diffVisualizerRect = diffVisualizer.getBoundingClientRect()
 
     const diffs = preElement.querySelectorAll('[data-diff]')
@@ -214,7 +215,7 @@ const DiffView = ({ selectedNotes }: { selectedNotes: SNNote[] }) => {
 
       const rect = diff.getBoundingClientRect()
 
-      const topAsPercent = rect.top / preElement.scrollHeight
+      const topAsPercent = (rect.top - preElementRect.top) / preElement.scrollHeight
       const topAdjustedForDiffVisualizer = diffVisualizerRect.height * topAsPercent
 
       const heightAsPercent = rect.height / preElement.scrollHeight
