@@ -43,6 +43,7 @@ export class DecryptedItemMutator<
       content: this.mutableContent,
       dirty: true,
       dirtyIndex: getIncrementedDirtyIndex(),
+      signatureResult: undefined,
     })
 
     return result

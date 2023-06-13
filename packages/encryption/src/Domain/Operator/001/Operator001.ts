@@ -189,7 +189,7 @@ export class SNProtocolOperator001 implements OperatorInterface {
       return {
         uuid: encrypted.uuid,
         content: JSON.parse(content),
-        signature_result: { required: false, contentHash: '' },
+        signatureResult: { required: false, contentHash: '' },
       }
     }
   }

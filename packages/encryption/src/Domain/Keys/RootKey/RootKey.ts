@@ -92,6 +92,8 @@ export class SNRootKey extends DecryptedItem<RootKeyContent> implements RootKeyI
     const values: NamespacedRootKeyInKeychain = {
       version: this.keyVersion,
       masterKey: this.masterKey,
+      encryptionKeyPair: this.encryptionKeyPair,
+      signingKeyPair: this.signingKeyPair,
     }
 
     if (this.dataAuthenticationKey) {

@@ -17,14 +17,14 @@ import {
   CreateAnyKeyParams,
   SNRootKey,
   isErrorDecryptingParameters,
-  EncryptedParameters,
-  DecryptedParameters,
   ErrorDecryptingParameters,
   findDefaultItemsKey,
   ItemsKeyMutator,
   encryptPayload,
   decryptPayload,
   ItemContentTypeUsesKeySystemRootKeyEncryption,
+  EncryptedOutputParameters,
+  DecryptedParameters,
 } from '@standardnotes/encryption'
 import {
   CreateDecryptedItemFromPayload,
@@ -155,7 +155,7 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
     if (this.hasAccount()) {
       return this.getSureUserVersion()
     } else if (this.hasPasscode()) {
-      const passcodeParams = await this.getSureRootKeyWrapperKeyParams()
+      const passcodeParams = this.getSureRootKeyWrapperKeyParams()
       return passcodeParams.version
     }
 
@@ -181,7 +181,7 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
       return undefined
     }
 
-    const keyParams = await this.getSureRootKeyParams()
+    const keyParams = this.getSureRootKeyParams()
 
     return CreateNewRootKey({
       ...rawKey,
@@ -316,10 +316,12 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
    */
   private async wrapAndPersistRootKey(wrappingKey: SNRootKey) {
     const rootKey = this.getSureRootKey()
+
     const value: DecryptedTransferPayload = {
       ...rootKey.payload.ejected(),
       content: FillItemContentSpecialized(rootKey.persistableValueWhenWrapping()),
     }
+
     const payload = new DecryptedPayload(value)
 
     const wrappedKey = await this.encryptPayload(payload, wrappingKey)
@@ -501,7 +503,7 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
   private async encrypPayloadWithKeyLookup(
     payload: DecryptedPayloadInterface,
     signingKeyPair?: PkcKeyPair,
-  ): Promise<EncryptedParameters> {
+  ): Promise<EncryptedOutputParameters> {
     let key: RootKeyInterface | KeySystemRootKeyInterface | undefined
     if (payload.key_system_identifier || ItemContentTypeUsesKeySystemRootKeyEncryption(payload.content_type)) {
       if (!payload.key_system_identifier) {
@@ -524,7 +526,7 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
   public async encryptPayloadsWithKeyLookup(
     payloads: DecryptedPayloadInterface[],
     signingKeyPair?: PkcKeyPair,
-  ): Promise<EncryptedParameters[]> {
+  ): Promise<EncryptedOutputParameters[]> {
     return Promise.all(payloads.map((payload) => this.encrypPayloadWithKeyLookup(payload, signingKeyPair)))
   }
 
@@ -532,7 +534,7 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
     payload: DecryptedPayloadInterface,
     key: RootKeyInterface | KeySystemRootKeyInterface,
     signingKeyPair?: PkcKeyPair,
-  ): Promise<EncryptedParameters> {
+  ): Promise<EncryptedOutputParameters> {
     return encryptPayload(payload, key, this.operatorManager, signingKeyPair)
   }
 

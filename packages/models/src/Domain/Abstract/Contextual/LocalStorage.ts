@@ -3,6 +3,7 @@ import { ItemContent } from '../Content/ItemContent'
 import { DecryptedPayloadInterface, DeletedPayloadInterface, EncryptedPayloadInterface } from '../Payload'
 import { useBoolean } from '@standardnotes/utils'
 import { EncryptedTransferPayload, isEncryptedTransferPayload } from '../TransferPayload'
+import { PersistentSignatureData } from '../../Runtime/Encryption/PersistentSignatureData'
 
 export function isEncryptedLocalStoragePayload(
   p: LocalStorageEncryptedContextualPayload | LocalStorageDecryptedContextualPayload,
@@ -25,6 +26,7 @@ export interface LocalStorageEncryptedContextualPayload extends ContextPayload {
   updated_at_timestamp: number
   updated_at: Date
   waitingForKey: boolean
+  signatureResult?: PersistentSignatureData
 }
 
 export interface LocalStorageDecryptedContextualPayload<C extends ItemContent = ItemContent> extends ContextPayload {
@@ -36,6 +38,7 @@ export interface LocalStorageDecryptedContextualPayload<C extends ItemContent = 
   duplicate_of?: string
   updated_at_timestamp: number
   updated_at: Date
+  signatureResult?: PersistentSignatureData
 }
 
 export interface LocalStorageDeletedContextualPayload extends ContextPayload {
@@ -47,6 +50,7 @@ export interface LocalStorageDeletedContextualPayload extends ContextPayload {
   duplicate_of?: string
   updated_at_timestamp: number
   updated_at: Date
+  signatureResult?: PersistentSignatureData
 }
 
 export function CreateEncryptedLocalStorageContextPayload(
@@ -72,6 +76,7 @@ export function CreateEncryptedLocalStorageContextPayload(
     key_system_identifier: fromPayload.key_system_identifier,
     shared_vault_uuid: fromPayload.shared_vault_uuid,
     last_edited_by_uuid: fromPayload.last_edited_by_uuid,
+    signatureResult: fromPayload.signatureResult,
   }
 }
 
@@ -93,6 +98,7 @@ export function CreateDecryptedLocalStorageContextPayload(
     key_system_identifier: fromPayload.key_system_identifier,
     shared_vault_uuid: fromPayload.shared_vault_uuid,
     last_edited_by_uuid: fromPayload.last_edited_by_uuid,
+    signatureResult: fromPayload.signatureResult,
   }
 }
 
@@ -114,5 +120,6 @@ export function CreateDeletedLocalStorageContextPayload(
     key_system_identifier: fromPayload.key_system_identifier,
     shared_vault_uuid: fromPayload.shared_vault_uuid,
     last_edited_by_uuid: fromPayload.last_edited_by_uuid,
+    signatureResult: fromPayload.signatureResult,
   }
 }

@@ -23,7 +23,7 @@ import {
   V001Algorithm,
   V002Algorithm,
   PublicKeySet,
-  EncryptedInputParameters,
+  EncryptedOutputParameters,
 } from '@standardnotes/encryption'
 import {
   BackupFile,
@@ -281,7 +281,7 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
   }
 
   public async encryptSplit(split: KeyedEncryptionSplit): Promise<EncryptedPayloadInterface[]> {
-    const allEncryptedParams: EncryptedInputParameters[] = []
+    const allEncryptedParams: EncryptedOutputParameters[] = []
 
     const {
       usesRootKey,
@@ -667,7 +667,7 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
       items: ejected,
     }
 
-    const keyParams = await this.getRootKeyParams()
+    const keyParams = this.getRootKeyParams()
     data.keyParams = keyParams?.getPortableValue()
     return data
   }
@@ -716,7 +716,7 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
    * Wrapping key params are read from disk.
    */
   public async computeWrappingKey(passcode: string) {
-    const keyParams = await this.rootKeyEncryption.getSureRootKeyWrapperKeyParams()
+    const keyParams = this.rootKeyEncryption.getSureRootKeyWrapperKeyParams()
     const key = await this.computeRootKey(passcode, keyParams)
     return key
   }
@@ -897,7 +897,7 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
        * we end up with 0 items keys, create a new one. This covers the case when you open
        * the app offline and it creates an 004 key, and then you sign into an 003 account.
        */
-      const rootKeyParams = await this.getRootKeyParams()
+      const rootKeyParams = this.getRootKeyParams()
       if (rootKeyParams) {
         /** If neverSynced.version != rootKey.version, delete. */
         const toDelete = neverSyncedKeys.filter((itemsKey) => {

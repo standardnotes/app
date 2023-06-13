@@ -39,8 +39,11 @@ export * from './Split/Functions'
 export * from './Split/KeyedDecryptionSplit'
 export * from './Split/KeyedEncryptionSplit'
 export * from './StandardException'
+
 export * from './Types/EncryptedParameters'
+export * from './Types/DecryptedParameters'
 export * from './Types/ItemAuthenticatedData'
 export * from './Types/LegacyAttachedData'
 export * from './Types/RootKeyEncryptedAuthenticatedData'
+
 export * from './Username/PrivateUsername'
