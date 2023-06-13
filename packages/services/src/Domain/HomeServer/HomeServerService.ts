@@ -120,8 +120,7 @@ export class HomeServerService extends AbstractService implements HomeServerServ
         break
       }
       case ApplicationStage.Launched_10: {
-        void this.automaticallyEnableTextBackupsIfPreferenceNotSet()
-        void this.setHomeServerDataLocationOnDevice()
+        await this.setHomeServerDataLocationOnDevice()
         await this.startHomeServerIfItIsEnabled()
         break
       }
@@ -132,14 +131,6 @@ export class HomeServerService extends AbstractService implements HomeServerServ
     const homeServerIsEnabled = this.storageService.getValue(StorageKey.HomeServerEnabled, undefined, false)
     if (homeServerIsEnabled) {
       await this.desktopDevice.startServer()
-    }
-  }
-
-  private async automaticallyEnableTextBackupsIfPreferenceNotSet(): Promise<void> {
-    if (this.storageService.getValue(StorageKey.HomeServerDataLocation) === undefined) {
-      const location = `${await this.desktopDevice.getUserDocumentsDirectory()}/${this.HOME_SERVER_DATA_DIRECTORY_NAME}`
-
-      this.storageService.setValue(StorageKey.HomeServerDataLocation, location)
     }
   }
 
@@ -159,6 +150,14 @@ export class HomeServerService extends AbstractService implements HomeServerServ
   }
 
   private async setHomeServerDataLocationOnDevice(): Promise<void> {
-    await this.desktopDevice.setHomeServerDataLocation(this.storageService.getValue(StorageKey.HomeServerDataLocation))
+    let location = this.storageService.getValue<string>(StorageKey.HomeServerDataLocation)
+    if (!location) {
+      const documentsDirectory = await this.desktopDevice.getUserDocumentsDirectory()
+      location = `${documentsDirectory}/${this.HOME_SERVER_DATA_DIRECTORY_NAME}`
+    }
+
+    this.storageService.setValue(StorageKey.HomeServerDataLocation, location)
+
+    await this.desktopDevice.setHomeServerDataLocation(location)
   }
 }

@@ -76,7 +76,7 @@ export class HomeServerManager implements HomeServerManagerInterface {
       this.logs = []
 
       if (!this.homeServerConfiguration) {
-        this.homeServerConfiguration = this.generateHomeServerConfiguration()
+        await this.setHomeServerConfiguration(JSON.stringify(this.generateHomeServerConfiguration()))
       }
 
       if (!this.homeServerDataLocation) {
@@ -93,7 +93,7 @@ export class HomeServerManager implements HomeServerManagerInterface {
         logLevel,
         databaseEngine,
         mysqlConfiguration,
-      } = this.homeServerConfiguration
+      } = this.homeServerConfiguration as HomeServerEnvironmentConfiguration
 
       const environment: { [name: string]: string } = {
         JWT_SECRET: jwtSecret,
@@ -179,8 +179,6 @@ export class HomeServerManager implements HomeServerManagerInterface {
       port,
       databaseEngine: 'sqlite',
     }
-
-    this.webContents.send(MessageToWebApp.HomeServerConfigurationChanged, JSON.stringify(configuration))
 
     return configuration
   }
