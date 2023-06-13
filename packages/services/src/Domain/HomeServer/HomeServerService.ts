@@ -91,7 +91,7 @@ export class HomeServerService extends AbstractService implements HomeServerServ
   async changeHomeServerDataLocation(): Promise<string | undefined> {
     const oldLocation = this.getHomeServerDataLocation()
     const newLocation = await this.fileBackupsDevice.presentDirectoryPickerForLocationChangeAndTransferOld(
-      '',
+      this.HOME_SERVER_DATA_DIRECTORY_NAME,
       oldLocation,
     )
 
