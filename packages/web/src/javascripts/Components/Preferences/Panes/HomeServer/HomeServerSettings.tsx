@@ -7,6 +7,8 @@ import { HomeServerStatus } from '@standardnotes/snjs'
 import EncryptionStatusItem from '../Security/EncryptionStatusItem'
 import Icon from '@/Components/Icon/Icon'
 import OfflineSubscription from '../General/Advanced/OfflineSubscription'
+import EnvironmentConfiguration from './EnvironmentConfiguration'
+import DatabaseConfiguration from './DatabaseConfiguration'
 
 const HomeServerSettings = () => {
   const application = useApplication()
@@ -21,6 +23,7 @@ const HomeServerSettings = () => {
   const [showLogs, setShowLogs] = useState(false)
   const [logs, setLogs] = useState<string[]>([])
   const [status, setStatus] = useState<HomeServerStatus>()
+  const [error, setError] = useState<string | null>(null)
   const [homeServerDataLocation, setHomeServerDataLocation] = useState(homeServerService.getHomeServerDataLocation())
   const [isAPremiumUser, setIsAPremiumUser] = useState(false)
   const [isSignedIn, setIsSignedIn] = useState(false)
@@ -31,6 +34,7 @@ const HomeServerSettings = () => {
     if (desktopDevice) {
       const result = await desktopDevice.homeServerStatus()
       setStatus(result)
+      setError(result.errorMessage || null)
     }
   }, [desktopDevice])
 
@@ -124,12 +128,13 @@ const HomeServerSettings = () => {
   }, [logs, isAtBottom])
 
   const getStatusString = useCallback(() => {
+    let statusString = <Text>Status unavailable</Text>
     if (!status) {
-      return undefined
+      return statusString
     }
 
     if (status.status === 'on') {
-      return (
+      statusString = (
         <Text>
           Accessible on local network via{' '}
           <a target="_blank" className="font-bold text-info" href={status.url}>
@@ -139,13 +144,25 @@ const HomeServerSettings = () => {
         </Text>
       )
     } else if (status.status === 'off') {
-      return <Text>Not started</Text>
+      statusString = <Text>Not started</Text>
     }
-  }, [status])
+
+    return (
+      <>
+        {statusString}
+        {error && (
+          <>
+            <HorizontalSeparator classes="my-4" />
+            <Text className="bg-danger text-danger-contrast">Error: {error}</Text>
+          </>
+        )}
+      </>
+    )
+  }, [status, error])
 
   return (
     <div>
-      {status ? getStatusString() : <Text>Status unavailable</Text>}
+      {getStatusString()}
 
       <HorizontalSeparator classes="my-4" />
 
@@ -196,6 +213,10 @@ const HomeServerSettings = () => {
         </div>
       )}
       <div className="h-2 w-full" />
+      <HorizontalSeparator classes="my-4" />
+      <EnvironmentConfiguration setErrorMessageCallback={setError} />
+      <HorizontalSeparator classes="my-4" />
+      <DatabaseConfiguration setErrorMessageCallback={setError} />
     </div>
   )
 }

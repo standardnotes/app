@@ -9,10 +9,9 @@ export interface HomeServerServiceInterface {
   getHomeServerDataLocation(): string | undefined
   enableHomeServer(): Promise<void>
   disableHomeServer(): Promise<void>
-  restartHomeServer(): Promise<void>
+  restartHomeServer(): Promise<string | undefined>
   changeHomeServerDataLocation(): Promise<string | undefined>
   openHomeServerDataLocation(): Promise<void>
   getHomeServerConfiguration(): HomeServerEnvironmentConfiguration | undefined
   setHomeServerConfiguration(config: HomeServerEnvironmentConfiguration): Promise<void>
-  getLastServerErrorMessage(): string | undefined
 }

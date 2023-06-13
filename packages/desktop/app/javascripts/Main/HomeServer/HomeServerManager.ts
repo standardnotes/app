@@ -13,7 +13,7 @@ const os = require('os')
 export class HomeServerManager implements HomeServerManagerInterface {
   private homeServerConfiguration: HomeServerEnvironmentConfiguration | undefined
   private homeServerDataLocation: string | undefined
-  private lastError: Error | undefined
+  private lastErrorMessage: string | undefined
   private logs: string[] = []
 
   private readonly LOGS_BUFFER_SIZE = 1000
@@ -26,14 +26,12 @@ export class HomeServerManager implements HomeServerManagerInterface {
     return status.status === 'on'
   }
 
-  async activatePremiumFeatures(username: string): Promise<string | null> {
+  async activatePremiumFeatures(username: string): Promise<string | undefined> {
     const result = await this.homeServer.activatePremiumFeatures(username)
 
     if (result.isFailed()) {
       return result.getError()
     }
-
-    return null
   }
 
   getHomeServerConfiguration(): HomeServerEnvironmentConfiguration | undefined {
@@ -58,16 +56,17 @@ export class HomeServerManager implements HomeServerManagerInterface {
     await this.homeServer.stop()
   }
 
-  async restartHomeServer(): Promise<void> {
+  async restartHomeServer(): Promise<string | undefined> {
     await this.stopHomeServer()
-    await this.startHomeServer()
+
+    return this.startHomeServer()
   }
 
   async homeServerStatus(): Promise<HomeServerStatus> {
     const isHomeServerRunning = await this.homeServer.isRunning()
 
     if (!isHomeServerRunning) {
-      return { status: 'off' }
+      return { status: 'off', errorMessage: this.lastErrorMessage }
     }
 
     return {
@@ -76,9 +75,9 @@ export class HomeServerManager implements HomeServerManagerInterface {
     }
   }
 
-  async startHomeServer(): Promise<void> {
+  async startHomeServer(): Promise<string | undefined> {
     try {
-      this.lastError = undefined
+      this.lastErrorMessage = undefined
       this.logs = []
 
       if (!this.homeServerConfiguration) {
@@ -86,7 +85,9 @@ export class HomeServerManager implements HomeServerManagerInterface {
       }
 
       if (!this.homeServerDataLocation) {
-        return
+        this.lastErrorMessage = 'Home server data location is not set.'
+
+        return this.lastErrorMessage
       }
 
       const {
@@ -124,19 +125,23 @@ export class HomeServerManager implements HomeServerManagerInterface {
         environment.DB_DATABASE = mysqlConfiguration.database
       }
 
-      await this.homeServer.start({
+      const result = await this.homeServer.start({
         dataDirectoryPath: this.homeServerDataLocation,
         environment,
       })
+
+      if (result.isFailed()) {
+        this.lastErrorMessage = result.getError()
+
+        return this.lastErrorMessage
+      }
 
       this.webContents.send(MessageToWebApp.HomeServerStarted, this.getServerUrl())
 
       const logStream = this.homeServer.logs()
       logStream.on('data', this.appendLogs.bind(this))
     } catch (error) {
-      console.error(`Could not start home server: ${(error as Error).message}`)
-
-      this.lastError = error as Error
+      return (error as Error).message
     }
   }
 
@@ -191,9 +196,5 @@ export class HomeServerManager implements HomeServerManagerInterface {
 
   private getServerUrl(): string {
     return `http://${this.getLocalIP()}:${(this.homeServerConfiguration as HomeServerEnvironmentConfiguration).port}`
-  }
-
-  getLastHomeServerErrorMessage(): string | undefined {
-    return this.lastError?.message
   }
 }

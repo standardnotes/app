@@ -9,22 +9,6 @@ export interface WebClientRequiresDesktopMethods extends FileBackupsDevice {
   get extensionsServerHost(): string
 
   askForMediaAccess(type: 'camera' | 'microphone'): Promise<boolean>
-
-  setHomeServerConfiguration(configurationJSONString: string): Promise<void>
-
-  setHomeServerDataLocation(location: string): Promise<void>
-
-  startHomeServer(): Promise<void>
-
-  stopHomeServer(): Promise<void>
-
-  isHomeServerRunning(): Promise<boolean>
-
-  activatePremiumFeatures(username: string): Promise<string | null>
-
-  getHomeServerLogs(): Promise<string[]>
-
-  getLastHomeServerErrorMessage(): string | undefined
 }
 
 export interface DesktopClientRequiresWebMethods {

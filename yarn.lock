@@ -5835,7 +5835,7 @@ __metadata:
     "@babel/preset-env": "*"
     "@electron/remote": ^2.0.9
     "@standardnotes/electron-clear-data": 1.1.1
-    "@standardnotes/home-server": ^1.11.3
+    "@standardnotes/home-server": ^1.11.4
     "@standardnotes/web": "workspace:*"
     "@types/fs-extra": ^11.0.1
     "@types/lodash": ^4.14.189
@@ -6113,9 +6113,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/home-server@npm:^1.11.3":
-  version: 1.11.3
-  resolution: "@standardnotes/home-server@npm:1.11.3"
+"@standardnotes/home-server@npm:^1.11.4":
+  version: 1.11.4
+  resolution: "@standardnotes/home-server@npm:1.11.4"
   dependencies:
     "@standardnotes/api-gateway": ^1.64.1
     "@standardnotes/auth-server": ^1.119.1
@@ -6134,7 +6134,7 @@ __metadata:
     prettyjson: ^1.2.5
     reflect-metadata: 0.1.13
     winston: ^3.8.1
-  checksum: d1edd189533b6707bc5c1af89332b302bd55d5f512790251dee3afbb811cd0ab241c1e105b3f45324ae2bd9762f24b9d9198c008320e17b3b05f91a7a13ed7a0
+  checksum: b9ec073a0e482ed10413f3b56eec33f35a077ffd8d71a48f4060e1752f99853f1d7cd3119421cbc906533fda81c02e99f774d7f6237238b5d95142cdef80434e
   languageName: node
   linkType: hard
 

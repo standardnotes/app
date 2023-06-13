@@ -31,20 +31,17 @@ export class HomeServerService extends AbstractService implements HomeServerServ
   async activatePremiumFeatures(username: string): Promise<Result<string>> {
     const result = await this.desktopDevice.activatePremiumFeatures(username)
 
-    if (result !== null) {
+    if (result !== undefined) {
       return Result.fail(result)
     }
 
     return Result.ok('Premium features activated')
   }
 
-  getLastServerErrorMessage(): string | undefined {
-    return this.desktopDevice.getLastHomeServerErrorMessage()
-  }
-
-  async restartHomeServer(): Promise<void> {
+  async restartHomeServer(): Promise<string | undefined> {
     await this.desktopDevice.stopHomeServer()
-    await this.desktopDevice.startHomeServer()
+
+    return this.desktopDevice.startHomeServer()
   }
 
   async setHomeServerConfiguration(config: HomeServerEnvironmentConfiguration): Promise<void> {

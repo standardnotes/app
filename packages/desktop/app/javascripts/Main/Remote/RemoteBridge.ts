@@ -86,7 +86,6 @@ export class RemoteBridge implements CrossProcessBridge {
       joinPaths: this.joinPaths.bind(this),
       setHomeServerConfiguration: this.setHomeServerConfiguration.bind(this),
       setHomeServerDataLocation: this.setHomeServerDataLocation.bind(this),
-      getLastHomeServerErrorMessage: this.getLastHomeServerErrorMessage.bind(this),
       activatePremiumFeatures: this.activatePremiumFeatures.bind(this),
       isHomeServerRunning: this.isHomeServerRunning.bind(this),
       getHomeServerLogs: this.getHomeServerLogs.bind(this),
@@ -257,7 +256,7 @@ export class RemoteBridge implements CrossProcessBridge {
     return this.media.askForMediaAccess(type)
   }
 
-  startHomeServer(): Promise<void> {
+  startHomeServer(): Promise<string | undefined> {
     return this.homeServerManager.startHomeServer()
   }
 
@@ -265,7 +264,7 @@ export class RemoteBridge implements CrossProcessBridge {
     return this.homeServerManager.stopHomeServer()
   }
 
-  restartHomeServer(): Promise<void> {
+  restartHomeServer(): Promise<string | undefined> {
     return this.homeServerManager.restartHomeServer()
   }
 
@@ -281,11 +280,7 @@ export class RemoteBridge implements CrossProcessBridge {
     return this.homeServerManager.setHomeServerDataLocation(location)
   }
 
-  getLastHomeServerErrorMessage(): string | undefined {
-    return this.homeServerManager.getLastHomeServerErrorMessage()
-  }
-
-  async activatePremiumFeatures(username: string): Promise<string | null> {
+  async activatePremiumFeatures(username: string): Promise<string | undefined> {
     return this.homeServerManager.activatePremiumFeatures(username)
   }
 

@@ -30,12 +30,8 @@ export class DesktopDevice extends WebOrDesktopDevice implements DesktopDeviceIn
     return this.remoteBridge.isHomeServerRunning()
   }
 
-  async activatePremiumFeatures(username: string): Promise<string | null> {
+  async activatePremiumFeatures(username: string): Promise<string | undefined> {
     return this.remoteBridge.activatePremiumFeatures(username)
-  }
-
-  getLastHomeServerErrorMessage(): string | undefined {
-    return this.remoteBridge.getLastHomeServerErrorMessage()
   }
 
   async setHomeServerConfiguration(configurationJSONString: string): Promise<void> {
@@ -46,7 +42,7 @@ export class DesktopDevice extends WebOrDesktopDevice implements DesktopDeviceIn
     return this.remoteBridge.setHomeServerDataLocation(location)
   }
 
-  startHomeServer(): Promise<void> {
+  startHomeServer(): Promise<string | undefined> {
     return this.remoteBridge.startHomeServer()
   }
 
@@ -58,7 +54,7 @@ export class DesktopDevice extends WebOrDesktopDevice implements DesktopDeviceIn
     return this.remoteBridge.getHomeServerLogs()
   }
 
-  restartHomeServer(): Promise<void> {
+  restartHomeServer(): Promise<string | undefined> {
     return this.remoteBridge.restartHomeServer()
   }
 

@@ -3,39 +3,25 @@ import PreferencesPane from '../../PreferencesComponents/PreferencesPane'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 import { useApplication } from '@/Components/ApplicationProvider'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 import AccountMigration from './AccountMigration'
 import Switch from '@/Components/Switch/Switch'
 import HomeServerSettings from './HomeServerSettings'
-import EnvironmentConfiguration from './EnvironmentConfiguration'
-import DatabaseConfiguration from './DatabaseConfiguration'
 
 const HomeServer = () => {
   const application = useApplication()
   const desktopDevice = application.desktopDevice
   const homeServerService = application.homeServer
   const [homeServerEnabled, setHomeServerEnabled] = useState(homeServerService.isHomeServerEnabled())
-  const [error, setError] = useState<string | null>(null)
-
-  useEffect(() => {
-    const lastErrorMessage = homeServerService.getLastServerErrorMessage()
-    if (lastErrorMessage) {
-      setError(lastErrorMessage)
-    }
-  }, [homeServerService, setError])
 
   const toggleHomeServer = useCallback(async () => {
-    try {
-      if (homeServerEnabled) {
-        await homeServerService.disableHomeServer()
-      } else {
-        await homeServerService.enableHomeServer()
-      }
-
-      setHomeServerEnabled(homeServerService.isHomeServerEnabled())
-    } catch (error) {
-      setError((error as Error).message)
+    if (homeServerEnabled) {
+      await homeServerService.disableHomeServer()
+    } else {
+      await homeServerService.enableHomeServer()
     }
+
+    setHomeServerEnabled(homeServerService.isHomeServerEnabled())
   }, [homeServerEnabled, homeServerService])
 
   return (
@@ -50,17 +36,9 @@ const HomeServer = () => {
               </div>
               <Switch onChange={toggleHomeServer} checked={homeServerEnabled} />
             </div>
-            {error && <Text className="bg-danger text-danger-contrast">Error: {error}</Text>}
             {homeServerEnabled && <HomeServerSettings />}
           </PreferencesSegment>
         </PreferencesGroup>
-      )}
-
-      {homeServerEnabled && (
-        <>
-          <EnvironmentConfiguration />
-          <DatabaseConfiguration />
-        </>
       )}
 
       <PreferencesGroup>

@@ -10,7 +10,11 @@ import Dropdown from '@/Components/Dropdown/Dropdown'
 import { Subtitle } from '../../PreferencesComponents/Content'
 import DecoratedInput from '@/Components/Input/DecoratedInput'
 
-const DatabaseConfiguration = () => {
+type Props = {
+  setErrorMessageCallback: (message: string) => void
+}
+
+const DatabaseConfiguration = ({ setErrorMessageCallback }: Props) => {
   const application = useApplication()
   const homeServerService = application.homeServer
 
@@ -67,29 +71,40 @@ const DatabaseConfiguration = () => {
   }, [selectedDatabaseEngine, homeServerConfiguration])
 
   const handleConfigurationChange = useCallback(async () => {
-    if (!homeServerConfiguration) {
-      return
-    }
+    try {
+      if (!homeServerConfiguration) {
+        setErrorMessageCallback('Home server configuration not found')
 
-    homeServerConfiguration.databaseEngine = selectedDatabaseEngine as 'sqlite' | 'mysql'
-    if (selectedDatabaseEngine === 'mysql') {
-      homeServerConfiguration.mysqlConfiguration = {
-        username: mysqlUsernameInputRef.current?.value ?? '',
-        password: mysqlPasswordInputRef.current?.value ?? '',
-        host: mysqlHostInputRef.current?.value ?? '',
-        port: mysqlPortInputRef.current?.value ? +mysqlPortInputRef.current?.value : 3306,
-        database: mysqlDatabaseInputRef.current?.value ?? '',
+        return
       }
+
+      homeServerConfiguration.databaseEngine = selectedDatabaseEngine as 'sqlite' | 'mysql'
+      if (selectedDatabaseEngine === 'mysql') {
+        homeServerConfiguration.mysqlConfiguration = {
+          username: mysqlUsernameInputRef.current?.value ?? '',
+          password: mysqlPasswordInputRef.current?.value ?? '',
+          host: mysqlHostInputRef.current?.value ?? '',
+          port: mysqlPortInputRef.current?.value ? +mysqlPortInputRef.current?.value : 3306,
+          database: mysqlDatabaseInputRef.current?.value ?? '',
+        }
+      }
+
+      setHomeServerConfiguration(homeServerConfiguration)
+
+      await homeServerService.setHomeServerConfiguration(homeServerConfiguration)
+
+      const result = await homeServerService.restartHomeServer()
+      if (result !== undefined) {
+        setErrorMessageCallback(result)
+
+        return
+      }
+
+      setValuesChanged(false)
+    } catch (error) {
+      setErrorMessageCallback((error as Error).message)
     }
-
-    setHomeServerConfiguration(homeServerConfiguration)
-
-    await homeServerService.setHomeServerConfiguration(homeServerConfiguration)
-
-    await homeServerService.restartHomeServer()
-
-    setValuesChanged(false)
-  }, [homeServerConfiguration, homeServerService, selectedDatabaseEngine])
+  }, [homeServerConfiguration, homeServerService, selectedDatabaseEngine, setErrorMessageCallback])
 
   const handleDatabaseEngineChange = useCallback(
     (engine: string) => {

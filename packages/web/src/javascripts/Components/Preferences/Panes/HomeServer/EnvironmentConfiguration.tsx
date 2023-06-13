@@ -8,7 +8,11 @@ import DecoratedInput from '@/Components/Input/DecoratedInput'
 import Button from '@/Components/Button/Button'
 import { useCallback, useRef, useState } from 'react'
 
-const EnvironmentConfiguration = () => {
+type Props = {
+  setErrorMessageCallback: (message: string) => void
+}
+
+const EnvironmentConfiguration = ({ setErrorMessageCallback }: Props) => {
   const application = useApplication()
   const homeServerService = application.homeServer
 
@@ -41,28 +45,39 @@ const EnvironmentConfiguration = () => {
     setValuesChanged(anyOfTheValuesHaveChanged)
   }, [homeServerConfiguration])
 
-  const handleConfigurationChange = () => {
-    if (!homeServerConfiguration) {
-      return
+  const handleConfigurationChange = useCallback(async () => {
+    try {
+      if (!homeServerConfiguration) {
+        setErrorMessageCallback('Home server configuration not found')
+
+        return
+      }
+
+      homeServerConfiguration.authJwtSecret = authJWTInputRef.current?.value || homeServerConfiguration.authJwtSecret
+      homeServerConfiguration.jwtSecret = jwtInputRef.current?.value || homeServerConfiguration.jwtSecret
+      homeServerConfiguration.encryptionServerKey =
+        encryptionServerKeyInputRef.current?.value || homeServerConfiguration.encryptionServerKey
+      homeServerConfiguration.pseudoKeyParamsKey =
+        pseudoParamsKeyInputRef.current?.value || homeServerConfiguration.pseudoKeyParamsKey
+      homeServerConfiguration.valetTokenSecret =
+        valetTokenSecretInputRef.current?.value || homeServerConfiguration.valetTokenSecret
+      homeServerConfiguration.port = parseInt(portInputRef.current?.value || homeServerConfiguration.port.toString())
+      homeServerConfiguration.logLevel = logLevelInputRef.current?.value || homeServerConfiguration.logLevel
+
+      await homeServerService.setHomeServerConfiguration(homeServerConfiguration)
+
+      const result = await homeServerService.restartHomeServer()
+      if (result !== undefined) {
+        setErrorMessageCallback(result)
+
+        return
+      }
+
+      setValuesChanged(false)
+    } catch (error) {
+      setErrorMessageCallback((error as Error).message)
     }
-
-    homeServerConfiguration.authJwtSecret = authJWTInputRef.current?.value || homeServerConfiguration.authJwtSecret
-    homeServerConfiguration.jwtSecret = jwtInputRef.current?.value || homeServerConfiguration.jwtSecret
-    homeServerConfiguration.encryptionServerKey =
-      encryptionServerKeyInputRef.current?.value || homeServerConfiguration.encryptionServerKey
-    homeServerConfiguration.pseudoKeyParamsKey =
-      pseudoParamsKeyInputRef.current?.value || homeServerConfiguration.pseudoKeyParamsKey
-    homeServerConfiguration.valetTokenSecret =
-      valetTokenSecretInputRef.current?.value || homeServerConfiguration.valetTokenSecret
-    homeServerConfiguration.port = parseInt(portInputRef.current?.value || homeServerConfiguration.port.toString())
-    homeServerConfiguration.logLevel = logLevelInputRef.current?.value || homeServerConfiguration.logLevel
-
-    void homeServerService.setHomeServerConfiguration(homeServerConfiguration)
-
-    void homeServerService.restartHomeServer()
-
-    setValuesChanged(false)
-  }
+  }, [homeServerConfiguration, homeServerService, setErrorMessageCallback])
 
   return (
     <PreferencesGroup>

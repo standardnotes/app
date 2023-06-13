@@ -21,7 +21,4 @@ export interface CrossProcessBridge extends FileBackupsDevice, HomeServerManager
   onSearch(text: string): void
   destroyAllData(): void
   askForMediaAccess(type: 'camera' | 'microphone'): Promise<boolean>
-  setHomeServerConfiguration(configurationJSONString: string): Promise<void>
-  setHomeServerDataLocation(location: string): Promise<void>
-  activatePremiumFeatures(username: string): Promise<string | null>
 }
