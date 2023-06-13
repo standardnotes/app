@@ -1,19 +1,27 @@
-import { EncryptedOutputParameters } from '../../../../Types/EncryptedParameters'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
-
 import { getMockedCrypto } from '../../MockedCrypto'
+import { EncryptedInputParameters, EncryptedOutputParameters } from '../../../../Types/EncryptedParameters'
 import { GenerateSymmetricPayloadSignatureResultUseCase } from './GenerateSymmetricPayloadSignatureResult'
 import { GenerateSymmetricAdditionalDataUseCase } from './GenerateSymmetricAdditionalData'
 import { CreateConsistentBase64JsonPayloadUseCase } from '../Utils/CreateConsistentBase64JsonPayload'
 import { doesPayloadRequireSigning } from '../../V004AlgorithmHelpers'
+import { PersistentSignatureData } from '@standardnotes/models'
+import { HashStringUseCase } from '../Hash/HashString'
+import { HashingKey } from '../Hash/HashingKey'
 
 describe('generate symmetric signing data usecase', () => {
   let crypto: PureCryptoInterface
   let usecase: GenerateSymmetricPayloadSignatureResultUseCase
+  let hashUsecase: HashStringUseCase
+  let additionalDataUseCase: GenerateSymmetricAdditionalDataUseCase
+  let encodeUseCase: CreateConsistentBase64JsonPayloadUseCase
 
   beforeEach(() => {
     crypto = getMockedCrypto()
     usecase = new GenerateSymmetricPayloadSignatureResultUseCase(crypto)
+    hashUsecase = new HashStringUseCase(crypto)
+    additionalDataUseCase = new GenerateSymmetricAdditionalDataUseCase(crypto)
+    encodeUseCase = new CreateConsistentBase64JsonPayloadUseCase(crypto)
   })
 
   it('payload with shared vault uuid should require signature', () => {
@@ -42,33 +50,24 @@ describe('generate symmetric signing data usecase', () => {
   })
 
   it('signature should be verified with correct parameters', () => {
-    const payload: Partial<EncryptedOutputParameters> = {
+    const payload = {
       key_system_identifier: '123',
       shared_vault_uuid: '456',
-    }
-    const payloadEncryptionKey = 'payloadencryptionkey'
+    } as jest.Mocked<EncryptedInputParameters>
+
+    const hashingKey: HashingKey = { key: 'secret-123' }
     const content = 'contentplaintext'
     const contentKey = 'contentkeysecret'
 
     const keypair = crypto.sodiumCryptoSignSeedKeypair('seedling')
-    const generateAdditionalDataUseCase = new GenerateSymmetricAdditionalDataUseCase(crypto)
 
-    const contentAdditionalDataResultResult = generateAdditionalDataUseCase.execute(
-      content,
-      payloadEncryptionKey,
-      keypair,
-    )
-    const contentKeyAdditionalDataResultResult = generateAdditionalDataUseCase.execute(
-      contentKey,
-      payloadEncryptionKey,
-      keypair,
-    )
+    const contentAdditionalDataResultResult = additionalDataUseCase.execute(content, hashingKey, keypair)
 
-    const encodeUseCase = new CreateConsistentBase64JsonPayloadUseCase(crypto)
+    const contentKeyAdditionalDataResultResult = additionalDataUseCase.execute(contentKey, hashingKey, keypair)
 
     const result = usecase.execute(
       payload,
-      payloadEncryptionKey,
+      hashingKey,
       {
         additionalData: encodeUseCase.execute(contentKeyAdditionalDataResultResult.additionalData),
         plaintext: contentKey,
@@ -81,36 +80,31 @@ describe('generate symmetric signing data usecase', () => {
 
     expect(result).toEqual({
       required: true,
+      contentHash: expect.any(String),
       result: {
         passes: true,
         publicKey: keypair.publicKey,
+        signature: expect.any(String),
       },
     })
   })
 
   it('should return required false with no result if no signing data is provided and signing is not required', () => {
-    const payloadWithOptionalSigning: Partial<EncryptedOutputParameters> = {
+    const payloadWithOptionalSigning = {
       key_system_identifier: undefined,
       shared_vault_uuid: undefined,
-    }
-    const payloadEncryptionKey = 'payloadencryptionkey'
+    } as jest.Mocked<EncryptedInputParameters>
+
+    const hashingKey: HashingKey = { key: 'secret-123' }
     const content = 'contentplaintext'
     const contentKey = 'contentkeysecret'
 
-    const generateAdditionalDataUseCase = new GenerateSymmetricAdditionalDataUseCase(crypto)
-
-    const contentAdditionalDataResult = generateAdditionalDataUseCase.execute(content, payloadEncryptionKey, undefined)
-    const contentKeyAdditionalDataResult = generateAdditionalDataUseCase.execute(
-      contentKey,
-      payloadEncryptionKey,
-      undefined,
-    )
-
-    const encodeUseCase = new CreateConsistentBase64JsonPayloadUseCase(crypto)
+    const contentAdditionalDataResult = additionalDataUseCase.execute(content, hashingKey, undefined)
+    const contentKeyAdditionalDataResult = additionalDataUseCase.execute(contentKey, hashingKey, undefined)
 
     const result = usecase.execute(
       payloadWithOptionalSigning,
-      payloadEncryptionKey,
+      hashingKey,
       {
         additionalData: encodeUseCase.execute(contentKeyAdditionalDataResult.additionalData),
         plaintext: contentKey,
@@ -123,32 +117,26 @@ describe('generate symmetric signing data usecase', () => {
 
     expect(result).toEqual({
       required: false,
+      contentHash: expect.any(String),
     })
   })
 
   it('should return required true with fail result if no signing data is provided and signing is required', () => {
-    const payloadWithRequiredSigning: Partial<EncryptedOutputParameters> = {
+    const payloadWithRequiredSigning = {
       key_system_identifier: '123',
       shared_vault_uuid: '456',
-    }
-    const payloadEncryptionKey = 'payloadencryptionkey'
+    } as jest.Mocked<EncryptedInputParameters>
+
+    const hashingKey: HashingKey = { key: 'secret-123' }
     const content = 'contentplaintext'
     const contentKey = 'contentkeysecret'
 
-    const generateAdditionalDataUseCase = new GenerateSymmetricAdditionalDataUseCase(crypto)
-
-    const contentAdditionalDataResult = generateAdditionalDataUseCase.execute(content, payloadEncryptionKey, undefined)
-    const contentKeyAdditionalDataResult = generateAdditionalDataUseCase.execute(
-      contentKey,
-      payloadEncryptionKey,
-      undefined,
-    )
-
-    const encodeUseCase = new CreateConsistentBase64JsonPayloadUseCase(crypto)
+    const contentAdditionalDataResult = additionalDataUseCase.execute(content, hashingKey, undefined)
+    const contentKeyAdditionalDataResult = additionalDataUseCase.execute(contentKey, hashingKey, undefined)
 
     const result = usecase.execute(
       payloadWithRequiredSigning,
-      payloadEncryptionKey,
+      hashingKey,
       {
         additionalData: encodeUseCase.execute(contentKeyAdditionalDataResult.additionalData),
         plaintext: contentKey,
@@ -161,42 +149,34 @@ describe('generate symmetric signing data usecase', () => {
 
     expect(result).toEqual({
       required: true,
+      contentHash: expect.any(String),
       result: {
         passes: false,
         publicKey: '',
+        signature: '',
       },
     })
   })
 
   it('should fail if content public key differs from contentKey public key', () => {
-    const payload: Partial<EncryptedOutputParameters> = {
+    const payload = {
       key_system_identifier: '123',
       shared_vault_uuid: '456',
-    }
-    const payloadEncryptionKey = 'payloadencryptionkey'
+    } as jest.Mocked<EncryptedInputParameters>
+
+    const hashingKey: HashingKey = { key: 'secret-123' }
     const content = 'contentplaintext'
     const contentKey = 'contentkeysecret'
 
     const contentKeyPair = crypto.sodiumCryptoSignSeedKeypair('contentseed')
     const contentKeyKeyPair = crypto.sodiumCryptoSignSeedKeypair('contentkeyseed')
-    const generateAdditionalDataUseCase = new GenerateSymmetricAdditionalDataUseCase(crypto)
 
-    const contentAdditionalDataResult = generateAdditionalDataUseCase.execute(
-      content,
-      payloadEncryptionKey,
-      contentKeyPair,
-    )
-    const contentKeyAdditionalDataResult = generateAdditionalDataUseCase.execute(
-      contentKey,
-      payloadEncryptionKey,
-      contentKeyKeyPair,
-    )
-
-    const encodeUseCase = new CreateConsistentBase64JsonPayloadUseCase(crypto)
+    const contentAdditionalDataResult = additionalDataUseCase.execute(content, hashingKey, contentKeyPair)
+    const contentKeyAdditionalDataResult = additionalDataUseCase.execute(contentKey, hashingKey, contentKeyKeyPair)
 
     const result = usecase.execute(
       payload,
-      payloadEncryptionKey,
+      hashingKey,
       {
         additionalData: encodeUseCase.execute(contentKeyAdditionalDataResult.additionalData),
         plaintext: contentKey,
@@ -209,102 +189,115 @@ describe('generate symmetric signing data usecase', () => {
 
     expect(result).toEqual({
       required: true,
+      contentHash: expect.any(String),
       result: {
         passes: false,
         publicKey: '',
+        signature: '',
       },
     })
   })
 
-  let additionalDataUsecase: GenerateSymmetricAdditionalDataUseCase
-  it('should return new client signature if previous signing data is not supplied', () => {
-    const payloadPlaintext = 'foobar'
-    const payloadEncryptionKey = 'secret-123'
-    const signingKeyPair = crypto.sodiumCryptoSignSeedKeypair('seedling')
+  it('if content hash has not changed and previous failing signature is supplied, new result should also be failing', () => {
+    const hashingKey: HashingKey = { key: 'secret-123' }
+    const content = 'contentplaintext'
+    const contentKey = 'contentkeysecret'
+    const contentHash = hashUsecase.execute(content, hashingKey)
 
-    const { additionalData, plaintextHash } = additionalDataUsecase.execute(
-      payloadPlaintext,
-      payloadEncryptionKey,
-      signingKeyPair,
+    const previousResult: PersistentSignatureData = {
+      required: true,
+      contentHash: contentHash,
+      result: {
+        passes: false,
+        publicKey: '',
+        signature: '',
+      },
+    }
+
+    const payload = {
+      key_system_identifier: '123',
+      shared_vault_uuid: '456',
+      signatureResult: previousResult,
+    } as jest.Mocked<EncryptedInputParameters>
+
+    const keypair = crypto.sodiumCryptoSignSeedKeypair('seedling')
+
+    const contentAdditionalDataResultResult = additionalDataUseCase.execute(content, hashingKey, keypair)
+
+    const contentKeyAdditionalDataResultResult = additionalDataUseCase.execute(contentKey, hashingKey, keypair)
+
+    const result = usecase.execute(
+      payload,
+      hashingKey,
+      {
+        additionalData: encodeUseCase.execute(contentKeyAdditionalDataResultResult.additionalData),
+        plaintext: contentKey,
+      },
+      {
+        additionalData: encodeUseCase.execute(contentAdditionalDataResultResult.additionalData),
+        plaintext: content,
+      },
     )
 
-    const signignData = additionalData.signingData!
-
-    const result = usecase.execute(signignData, undefined, plaintextHash)
     expect(result).toEqual({
-      plaintextHash,
-      signature: signignData.signature,
-      signerPublicKey: signignData.publicKey,
+      required: true,
+      contentHash: contentHash,
+      result: {
+        passes: false,
+        publicKey: keypair.publicKey,
+        signature: expect.any(String),
+      },
     })
   })
 
-  it('should return new raw signing data if content hash has changed and previous signing data is supplied', () => {
-    const signingKeyPair = crypto.sodiumCryptoSignSeedKeypair('seedling')
+  it('previous failing signature should be ignored if content hash has changed', () => {
+    const hashingKey: HashingKey = { key: 'secret-123' }
+    const content = 'contentplaintext'
+    const contentKey = 'contentkeysecret'
 
-    const previousPayloadPlaintext = 'foobar'
-    const payloadEncryptionKey = 'secret-123'
+    const previousResult: PersistentSignatureData = {
+      required: true,
+      contentHash: 'different hash',
+      result: {
+        passes: false,
+        publicKey: '',
+        signature: '',
+      },
+    }
 
-    const previousAdditionlDataResult = additionalDataUsecase.execute(
-      previousPayloadPlaintext,
-      payloadEncryptionKey,
-      signingKeyPair,
+    const payload = {
+      key_system_identifier: '123',
+      shared_vault_uuid: '456',
+      signatureResult: previousResult,
+    } as jest.Mocked<EncryptedInputParameters>
+
+    const keypair = crypto.sodiumCryptoSignSeedKeypair('seedling')
+
+    const contentAdditionalDataResultResult = additionalDataUseCase.execute(content, hashingKey, keypair)
+
+    const contentKeyAdditionalDataResultResult = additionalDataUseCase.execute(contentKey, hashingKey, keypair)
+
+    const result = usecase.execute(
+      payload,
+      hashingKey,
+      {
+        additionalData: encodeUseCase.execute(contentKeyAdditionalDataResultResult.additionalData),
+        plaintext: contentKey,
+      },
+      {
+        additionalData: encodeUseCase.execute(contentAdditionalDataResultResult.additionalData),
+        plaintext: content,
+      },
     )
 
-    const previousRawSigningData = usecase.execute(
-      previousAdditionlDataResult.additionalData.signingData!,
-      undefined,
-      previousAdditionlDataResult.plaintextHash,
-    )
-
-    const newPayloadPlaintext = 'foobar2'
-
-    const newAdditionalDataResult = additionalDataUsecase.execute(
-      newPayloadPlaintext,
-      payloadEncryptionKey,
-      signingKeyPair,
-    )
-
-    const newRawSigningData = usecase.execute(
-      newAdditionalDataResult.additionalData.signingData!,
-      previousRawSigningData,
-      newAdditionalDataResult.plaintextHash,
-    )
-
-    expect(newRawSigningData).not.toEqual(previousRawSigningData)
-  })
-
-  it('should return previous raw signing data if content hash has not changed', () => {
-    const signingKeyPair = crypto.sodiumCryptoSignSeedKeypair('seedling')
-
-    const previousPayloadPlaintext = 'foobar'
-    const payloadEncryptionKey = 'secret-123'
-
-    const previousAdditionlDataResult = additionalDataUsecase.execute(
-      previousPayloadPlaintext,
-      payloadEncryptionKey,
-      signingKeyPair,
-    )
-
-    const previousRawSigningData = usecase.execute(
-      previousAdditionlDataResult.additionalData.signingData!,
-      undefined,
-      previousAdditionlDataResult.plaintextHash,
-    )
-
-    const newPayloadPlaintext = previousPayloadPlaintext
-
-    const newAdditionalDataResult = additionalDataUsecase.execute(
-      newPayloadPlaintext,
-      payloadEncryptionKey,
-      signingKeyPair,
-    )
-
-    const newRawSigningData = usecase.execute(
-      newAdditionalDataResult.additionalData.signingData!,
-      previousRawSigningData,
-      newAdditionalDataResult.plaintextHash,
-    )
-
-    expect(newRawSigningData).toEqual(previousRawSigningData)
+    expect(result).toEqual({
+      required: true,
+      contentHash: expect.any(String),
+      result: {
+        passes: true,
+        publicKey: keypair.publicKey,
+        signature: expect.any(String),
+      },
+    })
   })
 })

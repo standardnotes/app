@@ -39,5 +39,9 @@ describe('shared vault crypto', function () {
     it('should allow asymmetric signature if item is not shared or belongs to key system if user root key has signing key pair', async () => {})
 
     it('should allow client verification of authenticity of shared item changes', async () => {})
+
+    it('encrypting an item into storage then loading it should verify authenticity of original content rather than most recent symmetric signature', async () => {
+
+    })
   })
 })

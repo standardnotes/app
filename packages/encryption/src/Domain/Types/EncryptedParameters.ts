@@ -1,5 +1,5 @@
 import { ContentType, ProtocolVersion } from '@standardnotes/common'
-import { EncryptedPayloadInterface, DecryptedPayloadInterface, PersistentSignatureResult } from '@standardnotes/models'
+import { EncryptedPayloadInterface, DecryptedPayloadInterface, PersistentSignatureData } from '@standardnotes/models'
 import { DecryptedParameters } from './DecryptedParameters'
 
 export type EncryptedOutputParameters = {
@@ -17,7 +17,7 @@ export type EncryptedOutputParameters = {
 }
 
 export type EncryptedInputParameters = EncryptedOutputParameters & {
-  signatureResult: PersistentSignatureResult | undefined
+  signatureResult: PersistentSignatureData | undefined
 }
 
 export type ErrorDecryptingParameters = {

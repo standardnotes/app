@@ -1,6 +1,7 @@
 import { PkcKeyPair, PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { AdditionalData } from '../../../../Types/EncryptionAdditionalData'
 import { HashStringUseCase } from '../Hash/HashString'
+import { HashingKey } from '../Hash/HashingKey'
 
 export class GenerateSymmetricAdditionalDataUseCase {
   private hashUseCase = new HashStringUseCase(this.crypto)
@@ -9,10 +10,10 @@ export class GenerateSymmetricAdditionalDataUseCase {
 
   execute(
     payloadPlaintext: string,
-    payloadEncryptionKey: string,
+    hashingKey: HashingKey,
     signingKeyPair?: PkcKeyPair,
   ): { additionalData: AdditionalData; plaintextHash: string } {
-    const plaintextHash = this.hashUseCase.execute(payloadPlaintext, payloadEncryptionKey)
+    const plaintextHash = this.hashUseCase.execute(payloadPlaintext, hashingKey)
 
     if (!signingKeyPair) {
       return {

@@ -49,11 +49,15 @@ export enum V004Algorithm {
 
   AsymmetricEncryptionNonceLength = 192,
 
-  EncryptionKeyPairSubKeyNumber = 1,
-  EncryptionKeyPairSubKeyContext = 'sn-pkc-e',
-  EncryptionKeyPairSubKeyLength = SodiumConstant.crypto_box_SEEDBYTES,
+  MasterKeyEncryptionKeyPairSubKeyNumber = 1,
+  MasterKeyEncryptionKeyPairSubKeyContext = 'sn-pkc-e',
+  MasterKeyEncryptionKeyPairSubKeyLength = SodiumConstant.crypto_box_SEEDBYTES,
 
-  SigningKeyPairSubKeyNumber = 2,
-  SigningKeyPairSubKeyContext = 'sn-pkc-s',
-  SigningKeyPairSubKeyLength = SodiumConstant.crypto_sign_SEEDBYTES,
+  MasterKeySigningKeyPairSubKeyNumber = 2,
+  MasterKeySigningKeyPairSubKeyContext = 'sn-pkc-s',
+  MasterKeySigningKeyPairSubKeyLength = SodiumConstant.crypto_sign_SEEDBYTES,
+
+  PayloadKeyHashingKeySubKeyNumber = 1,
+  PayloadKeyHashingKeySubKeyContext = 'sn-sym-h',
+  PayloadKeyHashingKeySubKeyLength = SodiumConstant.crypto_generichash_KEYBYTES,
 }

@@ -133,30 +133,5 @@ describe('generate encrypted parameters usecase', () => {
         },
       })
     })
-
-    it('should include raw signing data', () => {
-      const decrypted = {
-        uuid: '123',
-        content: {
-          title: 'title',
-          text: 'text',
-        },
-        content_type: ContentType.Note,
-      } as unknown as jest.Mocked<DecryptedPayloadInterface>
-
-      const itemsKey = {
-        uuid: 'items-key-id',
-        itemsKey: 'items-key',
-        content_type: ContentType.ItemsKey,
-      } as jest.Mocked<ItemsKeyInterface>
-
-      const result = usecase.execute(decrypted, itemsKey, signingKeyPair)
-
-      expect(result.previous_signature_result).toEqual({
-        plaintextHash: expect.any(String),
-        signature: expect.any(String),
-        signerPublicKey: signingKeyPair.publicKey,
-      })
-    })
   })
 })

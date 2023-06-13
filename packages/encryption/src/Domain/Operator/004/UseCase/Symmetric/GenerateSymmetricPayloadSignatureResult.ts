@@ -5,6 +5,7 @@ import { ParseConsistentBase64JsonPayloadUseCase } from '../Utils/ParseConsisten
 import { SymmetricItemAdditionalData } from '../../../../Types/EncryptionAdditionalData'
 import { HashStringUseCase } from '../Hash/HashString'
 import { PersistentSignatureData } from '@standardnotes/models'
+import { HashingKey } from '../Hash/HashingKey'
 
 /**
  * Embedded signatures check the signature on the symmetric string, but this string can change every time we encrypt
@@ -24,7 +25,7 @@ export class GenerateSymmetricPayloadSignatureResultUseCase {
 
   execute(
     payload: EncryptedInputParameters,
-    payloadEncryptionKey: string,
+    hashingKey: HashingKey,
     contentKeyParameters: {
       additionalData: string
       plaintext: string
@@ -34,9 +35,9 @@ export class GenerateSymmetricPayloadSignatureResultUseCase {
       plaintext: string
     },
   ): PersistentSignatureData {
-    const contentKeyHash = this.hashUseCase.execute(contentKeyParameters.plaintext, payloadEncryptionKey)
+    const contentKeyHash = this.hashUseCase.execute(contentKeyParameters.plaintext, hashingKey)
 
-    const contentHash = this.hashUseCase.execute(contentParameters.plaintext, payloadEncryptionKey)
+    const contentHash = this.hashUseCase.execute(contentParameters.plaintext, hashingKey)
 
     const contentKeyAdditionalData = this.parseBase64Usecase.execute<SymmetricItemAdditionalData>(
       contentKeyParameters.additionalData,
@@ -96,8 +97,13 @@ export class GenerateSymmetricPayloadSignatureResultUseCase {
     const previousSignatureResult = payload.signatureResult
     if (previousSignatureResult) {
       const previousSignatureStillApplicable = previousSignatureResult.contentHash === contentHash
+
       if (previousSignatureStillApplicable) {
-        passesStickyContentVerification = previousSignatureResult.result.passes
+        if (previousSignatureResult.required) {
+          passesStickyContentVerification = previousSignatureResult.result.passes
+        } else if (previousSignatureResult.result) {
+          passesStickyContentVerification = previousSignatureResult.result.passes
+        }
       }
     }
 

@@ -26,17 +26,17 @@ export class DeriveRootKeyUseCase {
 
     const encryptionKeyPairSeed = this.crypto.sodiumCryptoKdfDeriveFromKey(
       masterKey,
-      V004Algorithm.EncryptionKeyPairSubKeyNumber,
-      V004Algorithm.EncryptionKeyPairSubKeyLength,
-      V004Algorithm.EncryptionKeyPairSubKeyContext,
+      V004Algorithm.MasterKeyEncryptionKeyPairSubKeyNumber,
+      V004Algorithm.MasterKeyEncryptionKeyPairSubKeyLength,
+      V004Algorithm.MasterKeyEncryptionKeyPairSubKeyContext,
     )
     const encryptionKeyPair = this.crypto.sodiumCryptoBoxSeedKeypair(encryptionKeyPairSeed)
 
     const signingKeyPairSeed = this.crypto.sodiumCryptoKdfDeriveFromKey(
       masterKey,
-      V004Algorithm.SigningKeyPairSubKeyNumber,
-      V004Algorithm.SigningKeyPairSubKeyLength,
-      V004Algorithm.SigningKeyPairSubKeyContext,
+      V004Algorithm.MasterKeySigningKeyPairSubKeyNumber,
+      V004Algorithm.MasterKeySigningKeyPairSubKeyLength,
+      V004Algorithm.MasterKeySigningKeyPairSubKeyContext,
     )
     const signingKeyPair = this.crypto.sodiumCryptoSignSeedKeypair(signingKeyPairSeed)
 

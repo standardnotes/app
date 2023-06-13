@@ -1,7 +1,7 @@
-import { ItemContent, PersistentSignatureResult } from '@standardnotes/models'
+import { ItemContent, PersistentSignatureData } from '@standardnotes/models'
 
 export type DecryptedParameters<C extends ItemContent = ItemContent> = {
   uuid: string
   content: C
-  signature_result: PersistentSignatureResult
+  signature_result: PersistentSignatureData
 }

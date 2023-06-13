@@ -17,7 +17,11 @@ import { ContentType, KeyParamsOrigination, ProtocolVersion } from '@standardnot
 import { HexString, PkcKeyPair, PureCryptoInterface, Utf8String } from '@standardnotes/sncrypto-common'
 import { V004Algorithm } from '../../Algorithm'
 import { SNRootKeyParams } from '../../Keys/RootKey/RootKeyParams'
-import { EncryptedOutputParameters, ErrorDecryptingParameters } from '../../Types/EncryptedParameters'
+import {
+  EncryptedInputParameters,
+  EncryptedOutputParameters,
+  ErrorDecryptingParameters,
+} from '../../Types/EncryptedParameters'
 import { DecryptedParameters } from '../../Types/DecryptedParameters'
 import { ItemAuthenticatedData } from '../../Types/ItemAuthenticatedData'
 import { LegacyAttachedData } from '../../Types/LegacyAttachedData'
@@ -131,7 +135,7 @@ export class SNProtocolOperator004 implements OperatorInterface {
   }
 
   public generateDecryptedParameters<C extends ItemContent = ItemContent>(
-    encrypted: EncryptedOutputParameters,
+    encrypted: EncryptedInputParameters,
     key: ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface | RootKeyInterface,
   ): DecryptedParameters<C> | ErrorDecryptingParameters {
     const usecase = new GenerateDecryptedParametersUseCase(this.crypto)

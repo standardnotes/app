@@ -2,6 +2,7 @@ import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 
 import { getMockedCrypto } from '../../MockedCrypto'
 import { GenerateSymmetricAdditionalDataUseCase } from './GenerateSymmetricAdditionalData'
+import { HashingKey } from '../Hash/HashingKey'
 
 describe('generate symmetric additional data usecase', () => {
   let crypto: PureCryptoInterface
@@ -14,10 +15,10 @@ describe('generate symmetric additional data usecase', () => {
 
   it('should generate signing data with signing keypair', () => {
     const payloadPlaintext = 'foo'
-    const payloadEncryptionkey = 'secret-123'
+    const hashingKey: HashingKey = { key: 'secret-123' }
     const signingKeyPair = crypto.sodiumCryptoSignSeedKeypair('seedling')
 
-    const { additionalData, plaintextHash } = usecase.execute(payloadPlaintext, payloadEncryptionkey, signingKeyPair)
+    const { additionalData, plaintextHash } = usecase.execute(payloadPlaintext, hashingKey, signingKeyPair)
 
     expect(additionalData).toEqual({
       signingData: {
@@ -26,17 +27,17 @@ describe('generate symmetric additional data usecase', () => {
       },
     })
 
-    expect(plaintextHash).toEqual(crypto.sodiumCryptoGenericHash(payloadPlaintext, payloadEncryptionkey))
+    expect(plaintextHash).toEqual(crypto.sodiumCryptoGenericHash(payloadPlaintext, hashingKey.key))
   })
 
   it('should generate empty signing data without signing keypair', () => {
     const payloadPlaintext = 'foo'
-    const payloadEncryptionkey = 'secret-123'
+    const hashingKey: HashingKey = { key: 'secret-123' }
 
-    const { additionalData, plaintextHash } = usecase.execute(payloadPlaintext, payloadEncryptionkey, undefined)
+    const { additionalData, plaintextHash } = usecase.execute(payloadPlaintext, hashingKey, undefined)
 
     expect(additionalData).toEqual({})
 
-    expect(plaintextHash).toEqual(crypto.sodiumCryptoGenericHash(payloadPlaintext, payloadEncryptionkey))
+    expect(plaintextHash).toEqual(crypto.sodiumCryptoGenericHash(payloadPlaintext, hashingKey.key))
   })
 })

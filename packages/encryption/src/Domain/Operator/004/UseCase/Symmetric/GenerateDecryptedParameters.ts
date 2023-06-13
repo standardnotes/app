@@ -16,11 +16,13 @@ import {
   ErrorDecryptingParameters,
 } from './../../../../Types/EncryptedParameters'
 import { DecryptedParameters } from '../../../../Types/DecryptedParameters'
+import { DeriveHashingKeyUseCase } from '../Hash/DeriveHashingKey'
 
 export class GenerateDecryptedParametersUseCase {
   private base64DataUsecase = new CreateConsistentBase64JsonPayloadUseCase(this.crypto)
   private stringToAuthenticatedDataUseCase = new StringToAuthenticatedDataUseCase(this.crypto)
   private signingVerificationUseCase = new GenerateSymmetricPayloadSignatureResultUseCase(this.crypto)
+  private deriveHashingKeyUseCase = new DeriveHashingKeyUseCase(this.crypto)
 
   constructor(private readonly crypto: PureCryptoInterface) {}
 
@@ -45,9 +47,11 @@ export class GenerateDecryptedParametersUseCase {
       }
     }
 
+    const hashingKey = this.deriveHashingKeyUseCase.execute(key)
+
     const signatureVerificationResult = this.signingVerificationUseCase.execute(
       encrypted,
-      key.itemsKey,
+      hashingKey,
       {
         additionalData: contentKeyResult.components.additionalData,
         plaintext: contentKeyResult.contentKey,

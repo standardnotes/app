@@ -10,4 +10,5 @@ export enum SodiumConstant {
   CRYPTO_SECRETSTREAM_XCHACHA20POLY1305_MESSAGEBYTES_MAX = 0x3fffffff80,
   crypto_box_SEEDBYTES = 32,
   crypto_sign_SEEDBYTES = 32,
+  crypto_generichash_KEYBYTES = 32,
 }

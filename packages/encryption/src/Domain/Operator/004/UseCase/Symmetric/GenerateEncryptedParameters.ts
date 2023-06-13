@@ -18,12 +18,15 @@ import { isKeySystemItemsKey } from '../../../../Keys/KeySystemItemsKey/KeySyste
 import { ItemAuthenticatedData } from '../../../../Types/ItemAuthenticatedData'
 import { V004Algorithm } from '../../../../Algorithm'
 import { AdditionalData } from '../../../../Types/EncryptionAdditionalData'
+import { HashingKey } from '../Hash/HashingKey'
+import { DeriveHashingKeyUseCase } from '../Hash/DeriveHashingKey'
 
 export class GenerateEncryptedParametersUseCase {
   private generateProtocolStringUseCase = new GenerateEncryptedProtocolStringUseCase(this.crypto)
   private generateAuthenticatedDataUseCase = new GenerateAuthenticatedDataForPayloadUseCase()
   private generateAdditionalDataUseCase = new GenerateSymmetricAdditionalDataUseCase(this.crypto)
   private encodeBase64DataUsecase = new CreateConsistentBase64JsonPayloadUseCase(this.crypto)
+  private deriveHashingKeyUseCase = new DeriveHashingKeyUseCase(this.crypto)
 
   constructor(private readonly crypto: PureCryptoInterface) {}
 
@@ -38,15 +41,18 @@ export class GenerateEncryptedParametersUseCase {
 
     const commonAuthenticatedData = this.generateAuthenticatedDataUseCase.execute(payload, key)
 
+    const hashingKey = this.deriveHashingKeyUseCase.execute(key)
+
     const { contentKey, encryptedContentKey } = this.generateEncryptedContentKey(
       key,
+      hashingKey,
       commonAuthenticatedData,
       signingKeyPair,
     )
 
     const { encryptedContent } = this.generateEncryptedContent(
       payload,
-      key,
+      hashingKey,
       contentKey,
       commonAuthenticatedData,
       signingKeyPair,
@@ -66,7 +72,7 @@ export class GenerateEncryptedParametersUseCase {
 
   private generateEncryptedContent(
     payload: DecryptedPayloadInterface,
-    key: ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface | RootKeyInterface,
+    hashingKey: HashingKey,
     contentKey: string,
     commonAuthenticatedData: ItemAuthenticatedData,
     signingKeyPair?: PkcKeyPair,
@@ -75,7 +81,7 @@ export class GenerateEncryptedParametersUseCase {
   } {
     const content = JSON.stringify(payload.content)
 
-    const { additionalData } = this.generateAdditionalDataUseCase.execute(content, key.itemsKey, signingKeyPair)
+    const { additionalData } = this.generateAdditionalDataUseCase.execute(content, hashingKey, signingKeyPair)
 
     const encryptedContent = this.generateProtocolStringUseCase.execute(
       content,
@@ -91,12 +97,13 @@ export class GenerateEncryptedParametersUseCase {
 
   private generateEncryptedContentKey(
     key: ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface | RootKeyInterface,
+    hashingKey: HashingKey,
     commonAuthenticatedData: ItemAuthenticatedData,
     signingKeyPair?: PkcKeyPair,
   ) {
     const contentKey = this.crypto.generateRandomKey(V004Algorithm.EncryptionKeyLength)
 
-    const { additionalData } = this.generateAdditionalDataUseCase.execute(contentKey, key.itemsKey, signingKeyPair)
+    const { additionalData } = this.generateAdditionalDataUseCase.execute(contentKey, hashingKey, signingKeyPair)
 
     const encryptedContentKey = this.generateProtocolStringUseCase.execute(
       contentKey,
