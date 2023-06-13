@@ -30,7 +30,7 @@ import Icon from '../Icon/Icon'
 import Button from '../Button/Button'
 import Spinner from '../Spinner/Spinner'
 import Switch from '../Switch/Switch'
-import diff from 'fast-diff'
+import fastdiff from 'fast-diff'
 
 const ConflictListItem = ({
   isSelected,
@@ -164,27 +164,87 @@ const NoteContent = ({ note }: { note: SNNote }) => {
 }
 
 const DiffView = ({ selectedNotes }: { selectedNotes: SNNote[] }) => {
-  const [results, setResults] = useState<diff.Diff[]>([])
+  const [results, setResults] = useState<fastdiff.Diff[]>([])
 
   useEffect(() => {
     const first = selectedNotes[0].text
     const second = selectedNotes[1].text
 
-    const results = diff(first, second, undefined, true)
+    const results = fastdiff(first, second, undefined, true)
 
     setResults(results)
   }, [selectedNotes])
 
+  const [preElement, setPreElement] = useState<HTMLPreElement | null>(null)
+  const [diffVisualizer, setDiffVisualizer] = useState<HTMLDivElement | null>(null)
+  const [hasOverflow, setHasOverflow] = useState(false)
+
+  useEffect(() => {
+    if (!preElement) {
+      return
+    }
+
+    setHasOverflow(preElement.scrollHeight > preElement.clientHeight)
+  }, [preElement, results])
+
+  useEffect(() => {
+    if (!preElement || !diffVisualizer) {
+      return
+    }
+
+    if (!hasOverflow) {
+      return
+    }
+
+    if (!results.length) {
+      return
+    }
+
+    diffVisualizer.innerHTML = ''
+    const diffVisualizerRect = diffVisualizer.getBoundingClientRect()
+
+    const diffs = preElement.querySelectorAll('[data-diff]')
+
+    diffs.forEach((diff) => {
+      const state = diff.getAttribute('data-diff')
+      if (!state) {
+        return
+      }
+      const parsedState = parseInt(state)
+
+      const rect = diff.getBoundingClientRect()
+
+      const topAsPercent = rect.top / preElement.scrollHeight
+      const topAdjustedForDiffVisualizer = diffVisualizerRect.height * topAsPercent
+
+      const heightAsPercent = rect.height / preElement.scrollHeight
+      const heightAdjustedForDiffVisualizer = diffVisualizerRect.height * heightAsPercent
+
+      const div = document.createElement('div')
+      div.className = `absolute top-0 left-0 w-full bg-${
+        parsedState === fastdiff.INSERT ? 'success' : 'danger'
+      } opacity-50`
+      div.style.height = `${heightAdjustedForDiffVisualizer}px`
+      div.style.top = `${topAdjustedForDiffVisualizer}px`
+
+      diffVisualizer.appendChild(div)
+    })
+  }, [preElement, hasOverflow, results, diffVisualizer])
+
   return (
-    <div className="flex-grow overflow-hidden">
-      <pre className="h-full w-full overflow-y-auto whitespace-pre-wrap p-4">
+    <div className="relative flex-grow overflow-hidden">
+      <pre
+        className="h-full w-full overflow-y-auto whitespace-pre-wrap p-4 [&::-webkit-scrollbar]:bg-transparent"
+        ref={setPreElement}
+      >
         {results.map(([state, text], index) => {
           return (
             <span
+              data-diff={state !== fastdiff.EQUAL ? state : undefined}
               className={classNames(
                 'whitespace-pre-wrap',
-                state === diff.INSERT && 'bg-success text-success-contrast',
-                state === diff.DELETE && 'bg-danger text-danger-contrast',
+                state === fastdiff.INSERT && 'bg-success text-success-contrast',
+                state === fastdiff.DELETE && 'bg-danger text-danger-contrast',
               )}
               key={index}
             >
@@ -193,6 +253,9 @@ const DiffView = ({ selectedNotes }: { selectedNotes: SNNote[] }) => {
           )
         })}
       </pre>
+      {hasOverflow && (
+        <div className="absolute top-0 right-0 z-[-1] h-full w-[19px] border-l border-border" ref={setDiffVisualizer} />
+      )}
     </div>
   )
 }
