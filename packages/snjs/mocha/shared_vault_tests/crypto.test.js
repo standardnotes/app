@@ -37,7 +37,7 @@ describe.only('shared vault crypto', function () {
   })
 
   describe('persistent content signature', () => {
-    it('storage payloads should include signatureResult', async () => {
+    it('storage payloads should include signatureData', async () => {
       const { note, contactContext, deinitContactContext } =
         await Collaboration.createSharedVaultWithAcceptedInviteAndNote(context)
 
@@ -47,12 +47,12 @@ describe.only('shared vault crypto', function () {
       const rawPayloads = await context.application.diskStorageService.getAllRawPayloads()
       const noteRawPayload = rawPayloads.find((payload) => payload.uuid === note.uuid)
 
-      expect(noteRawPayload.signatureResult).to.not.be.undefined
+      expect(noteRawPayload.signatureData).to.not.be.undefined
 
       await deinitContactContext()
     })
 
-    it('changing item content should erase existing signatureResult', async () => {
+    it('changing item content should erase existing signatureData', async () => {
       const { note, contactContext, deinitContactContext } =
         await Collaboration.createSharedVaultWithAcceptedInviteAndNote(context)
 
@@ -63,7 +63,7 @@ describe.only('shared vault crypto', function () {
       await context.changeNoteTitleAndSync(updatedNote, 'new title 2')
 
       updatedNote = context.items.findItem(note.uuid)
-      expect(updatedNote.signatureResult).to.be.undefined
+      expect(updatedNote.signatureData).to.be.undefined
 
       await deinitContactContext()
     })
@@ -85,10 +85,10 @@ describe.only('shared vault crypto', function () {
         const payload = decryptedPayloads[0]
         const mutatedPayload = new DecryptedPayload({
           ...payload.ejected(),
-          signatureResult: {
-            ...payload.signatureResult,
+          signatureData: {
+            ...payload.signatureData,
             result: {
-              ...payload.signatureResult.result,
+              ...payload.signatureData.result,
               passes: false,
             },
           },
@@ -100,7 +100,7 @@ describe.only('shared vault crypto', function () {
 
       let updatedNote = context.items.findItem(note.uuid)
       expect(updatedNote.content.title).to.equal('new title')
-      expect(updatedNote.signatureResult.result.passes).to.equal(false)
+      expect(updatedNote.signatureData.result.passes).to.equal(false)
 
       const appIdentifier = context.identifier
       await context.deinit()
@@ -109,12 +109,12 @@ describe.only('shared vault crypto', function () {
       await recreatedContext.launch()
 
       updatedNote = recreatedContext.items.findItem(note.uuid)
-      expect(updatedNote.signatureResult.result.passes).to.equal(false)
+      expect(updatedNote.signatureData.result.passes).to.equal(false)
 
       /** Changing the content now should clear failing signature */
       await recreatedContext.changeNoteTitleAndSync(updatedNote, 'new title 2')
       updatedNote = recreatedContext.items.findItem(note.uuid)
-      expect(updatedNote.signatureResult).to.be.undefined
+      expect(updatedNote.signatureData).to.be.undefined
 
       await recreatedContext.deinit()
 
@@ -123,7 +123,7 @@ describe.only('shared vault crypto', function () {
 
       /** Decrypting from storage will now verify current user symmetric signature only */
       updatedNote = recreatedContext.items.findItem(note.uuid)
-      expect(updatedNote.signatureResult.result.passes).to.equal(true)
+      expect(updatedNote.signatureData.result.passes).to.equal(true)
 
       await recreatedContext.deinit()
       await deinitContactContext()

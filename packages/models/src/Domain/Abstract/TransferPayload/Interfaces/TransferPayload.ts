@@ -16,7 +16,7 @@ export interface TransferPayload<C extends ItemContent = ItemContent> {
   dirtyIndex?: number
   globalDirtyIndexAtLastSync?: number
   dirty?: boolean
-  signatureResult?: PersistentSignatureData
+  signatureData?: PersistentSignatureData
 
   lastSyncBegan?: Date
   lastSyncEnd?: Date

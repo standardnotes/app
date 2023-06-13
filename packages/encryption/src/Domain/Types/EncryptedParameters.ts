@@ -17,7 +17,7 @@ export type EncryptedOutputParameters = {
 }
 
 export type EncryptedInputParameters = EncryptedOutputParameters & {
-  signatureResult: PersistentSignatureData | undefined
+  signatureData: PersistentSignatureData | undefined
 }
 
 export type ErrorDecryptingParameters = {
@@ -48,6 +48,6 @@ export function encryptedInputParametersFromPayload(payload: EncryptedPayloadInt
     auth_hash: payload.auth_hash,
     key_system_identifier: payload.key_system_identifier,
     shared_vault_uuid: payload.shared_vault_uuid,
-    signatureResult: payload.signatureResult,
+    signatureData: payload.signatureData,
   }
 }

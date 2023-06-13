@@ -60,8 +60,8 @@ export abstract class GenericItem<P extends PayloadInterface = PayloadInterface>
     return this.payload.last_edited_by_uuid
   }
 
-  get signatureResult(): PersistentSignatureData | undefined {
-    return this.payload.signatureResult
+  get signatureData(): PersistentSignatureData | undefined {
+    return this.payload.signatureData
   }
 
   /**

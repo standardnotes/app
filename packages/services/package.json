@@ -13,7 +13,7 @@
     "tsc": "tsc --project tsconfig.json",
     "lint": "eslint src --ext .ts && yarn tsc",
     "lint:fix": "eslint src --ext .ts --fix",
-    "test": "jest --coverage"
+    "test": "jest"
   },
   "dependencies": {
     "@standardnotes/api": "workspace:^",

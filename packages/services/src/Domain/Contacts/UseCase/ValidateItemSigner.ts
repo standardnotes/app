@@ -11,17 +11,63 @@ export class ValidateItemSignerUseCase {
 
   execute(item: DecryptedItemInterface): ValidateItemSignerResult {
     const uuidOfLastEditor = item.last_edited_by_uuid
-    if (!uuidOfLastEditor) {
-      return this.validateSignatureWithNoLastEditedByUuid(item)
-    } else {
+    if (uuidOfLastEditor) {
       return this.validateSignatureWithLastEditedByUuid(item, uuidOfLastEditor)
+    } else {
+      return this.validateSignatureWithNoLastEditedByUuid(item)
     }
   }
 
-  private validateSignatureWithNoLastEditedByUuid(item: DecryptedItemInterface): ValidateItemSignerResult {
-    const requiresSignature = doesPayloadRequireSigning(item.payload)
+  private validateSignatureWithLastEditedByUuid(
+    item: DecryptedItemInterface,
+    uuidOfLastEditor: string,
+  ): ValidateItemSignerResult {
+    const requiresSignature = doesPayloadRequireSigning(item)
 
-    if (!item.signatureResult) {
+    const trustedContact = this.findContactUseCase.execute({ userUuid: uuidOfLastEditor })
+    if (!trustedContact) {
+      if (requiresSignature) {
+        return 'no'
+      } else {
+        return 'not-applicable'
+      }
+    }
+
+    if (!item.signatureData) {
+      if (requiresSignature) {
+        return 'no'
+      } else {
+        return 'not-applicable'
+      }
+    }
+
+    const signatureData = item.signatureData
+    if (!signatureData.result) {
+      if (signatureData.required) {
+        return 'no'
+      }
+      return 'not-applicable'
+    }
+
+    const signatureResult = signatureData.result
+
+    if (!signatureResult.passes) {
+      return 'no'
+    }
+
+    const signerPublicKey = signatureResult.publicKey
+
+    if (trustedContact.isSigningKeyTrusted(signerPublicKey)) {
+      return 'yes'
+    }
+
+    return 'no'
+  }
+
+  private validateSignatureWithNoLastEditedByUuid(item: DecryptedItemInterface): ValidateItemSignerResult {
+    const requiresSignature = doesPayloadRequireSigning(item)
+
+    if (!item.signatureData) {
       if (requiresSignature) {
         return 'no'
       }
@@ -29,7 +75,7 @@ export class ValidateItemSignerUseCase {
       return 'not-applicable'
     }
 
-    const signatureData = item.signatureResult
+    const signatureData = item.signatureData
     if (!signatureData.result) {
       if (signatureData.required) {
         return 'no'
@@ -47,52 +93,7 @@ export class ValidateItemSignerUseCase {
 
     const trustedContact = this.findContactUseCase.execute({ signingPublicKey: signerPublicKey })
 
-    if (!trustedContact) {
-      return 'no'
-    }
-
-    return 'yes'
-  }
-
-  private validateSignatureWithLastEditedByUuid(
-    item: DecryptedItemInterface,
-    uuidOfLastEditor: string,
-  ): ValidateItemSignerResult {
-    const requiresSignature = doesPayloadRequireSigning(item.payload)
-    const trustedContact = this.findContactUseCase.execute({ userUuid: uuidOfLastEditor })
-    if (!trustedContact) {
-      if (requiresSignature) {
-        return 'no'
-      } else {
-        return 'not-applicable'
-      }
-    }
-
-    if (!item.signatureResult) {
-      if (requiresSignature) {
-        return 'no'
-      } else {
-        return 'not-applicable'
-      }
-    }
-
-    const signatureData = item.signatureResult
-    if (!signatureData.result) {
-      if (signatureData.required) {
-        return 'no'
-      }
-      return 'not-applicable'
-    }
-
-    const signatureResult = signatureData.result
-
-    if (!signatureResult.passes) {
-      return 'no'
-    }
-
-    const signerPublicKey = signatureResult.publicKey
-
-    if (trustedContact.isSigningKeyTrusted(signerPublicKey)) {
+    if (trustedContact) {
       return 'yes'
     }
 

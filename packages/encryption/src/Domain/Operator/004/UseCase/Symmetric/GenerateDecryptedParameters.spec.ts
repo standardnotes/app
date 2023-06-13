@@ -44,7 +44,7 @@ describe('generate decrypted parameters usecase', () => {
       expect(result).toEqual({
         uuid: expect.any(String),
         content: expect.any(Object),
-        signatureResult: {
+        signatureData: {
           required: false,
           contentHash: expect.any(String),
         },
@@ -65,7 +65,7 @@ describe('generate decrypted parameters usecase', () => {
       expect(result).toEqual({
         uuid: expect.any(String),
         content: expect.any(Object),
-        signatureResult: {
+        signatureData: {
           required: false,
           contentHash: expect.any(String),
           result: {

@@ -259,7 +259,7 @@ export class SNProtocolOperator002 extends SNProtocolOperator001 {
       return {
         uuid: encrypted.uuid,
         content: JSON.parse(content),
-        signatureResult: { required: false, contentHash: '' },
+        signatureData: { required: false, contentHash: '' },
       }
     }
   }

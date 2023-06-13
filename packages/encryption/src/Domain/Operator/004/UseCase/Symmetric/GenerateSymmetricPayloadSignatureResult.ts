@@ -94,7 +94,7 @@ export class GenerateSymmetricPayloadSignatureResultUseCase {
     )
 
     let passesStickyContentVerification = true
-    const previousSignatureResult = payload.signatureResult
+    const previousSignatureResult = payload.signatureData
     if (previousSignatureResult) {
       const previousSignatureStillApplicable = previousSignatureResult.contentHash === contentHash
 

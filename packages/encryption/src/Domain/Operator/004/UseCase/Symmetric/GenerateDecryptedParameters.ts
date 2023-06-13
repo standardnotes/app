@@ -65,7 +65,7 @@ export class GenerateDecryptedParametersUseCase {
     return {
       uuid: encrypted.uuid,
       content: JSON.parse(contentResult.content),
-      signatureResult: signatureVerificationResult,
+      signatureData: signatureVerificationResult,
     }
   }
 

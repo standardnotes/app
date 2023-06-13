@@ -39,7 +39,7 @@ export abstract class PurePayload<T extends TransferPayload<C>, C extends ItemCo
   readonly shared_vault_uuid?: string | undefined
   readonly last_edited_by_uuid?: string
 
-  readonly signatureResult?: PersistentSignatureData
+  readonly signatureData?: PersistentSignatureData
 
   constructor(rawPayload: T, source = PayloadSource.Constructor) {
     this.source = source
@@ -79,7 +79,7 @@ export abstract class PurePayload<T extends TransferPayload<C>, C extends ItemCo
     this.shared_vault_uuid = rawPayload.shared_vault_uuid
     this.last_edited_by_uuid = rawPayload.last_edited_by_uuid
 
-    this.signatureResult = rawPayload.signatureResult
+    this.signatureData = rawPayload.signatureData
 
     const timeToAllowSubclassesToFinishConstruction = 0
     setTimeout(() => {
@@ -107,7 +107,7 @@ export abstract class PurePayload<T extends TransferPayload<C>, C extends ItemCo
       user_uuid: this.user_uuid,
       shared_vault_uuid: this.shared_vault_uuid,
       last_edited_by_uuid: this.last_edited_by_uuid,
-      signatureResult: this.signatureResult,
+      signatureData: this.signatureData,
     }
 
     return comprehensive

@@ -217,7 +217,7 @@ describe('generate symmetric signing data usecase', () => {
     const payload = {
       key_system_identifier: '123',
       shared_vault_uuid: '456',
-      signatureResult: previousResult,
+      signatureData: previousResult,
     } as jest.Mocked<EncryptedInputParameters>
 
     const keypair = crypto.sodiumCryptoSignSeedKeypair('seedling')
@@ -268,7 +268,7 @@ describe('generate symmetric signing data usecase', () => {
     const payload = {
       key_system_identifier: '123',
       shared_vault_uuid: '456',
-      signatureResult: previousResult,
+      signatureData: previousResult,
     } as jest.Mocked<EncryptedInputParameters>
 
     const keypair = crypto.sodiumCryptoSignSeedKeypair('seedling')
