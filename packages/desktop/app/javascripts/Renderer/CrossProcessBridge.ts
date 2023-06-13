@@ -23,8 +23,5 @@ export interface CrossProcessBridge extends FileBackupsDevice, HomeServerManager
   askForMediaAccess(type: 'camera' | 'microphone'): Promise<boolean>
   setHomeServerConfiguration(configurationJSONString: string): Promise<void>
   setHomeServerDataLocation(location: string): Promise<void>
-  getLastServerErrorMessage(): string | undefined
   activatePremiumFeatures(username: string): Promise<string | null>
-  isServerRunning(): Promise<boolean>
-  getServerLogs(): Promise<string[]>
 }

@@ -20,6 +20,12 @@ export class HomeServerManager implements HomeServerManagerInterface {
 
   constructor(private homeServer: HomeServerInterface, private webContents: WebContents) {}
 
+  async isHomeServerRunning(): Promise<boolean> {
+    const status = await this.homeServerStatus()
+
+    return status.status === 'on'
+  }
+
   async activatePremiumFeatures(username: string): Promise<string | null> {
     const result = await this.homeServer.activatePremiumFeatures(username)
 
@@ -48,16 +54,16 @@ export class HomeServerManager implements HomeServerManagerInterface {
     this.homeServerDataLocation = location
   }
 
-  async stopServer(): Promise<void> {
+  async stopHomeServer(): Promise<void> {
     await this.homeServer.stop()
   }
 
-  async restartServer(): Promise<void> {
-    await this.stopServer()
-    await this.startServer()
+  async restartHomeServer(): Promise<void> {
+    await this.stopHomeServer()
+    await this.startHomeServer()
   }
 
-  async serverStatus(): Promise<HomeServerStatus> {
+  async homeServerStatus(): Promise<HomeServerStatus> {
     const isHomeServerRunning = await this.homeServer.isRunning()
 
     if (!isHomeServerRunning) {
@@ -70,7 +76,7 @@ export class HomeServerManager implements HomeServerManagerInterface {
     }
   }
 
-  async startServer(): Promise<void> {
+  async startHomeServer(): Promise<void> {
     try {
       this.lastError = undefined
       this.logs = []
@@ -134,7 +140,7 @@ export class HomeServerManager implements HomeServerManagerInterface {
     }
   }
 
-  async getServerLogs(): Promise<string[]> {
+  async getHomeServerLogs(): Promise<string[]> {
     return this.logs
   }
 
@@ -187,7 +193,7 @@ export class HomeServerManager implements HomeServerManagerInterface {
     return `http://${this.getLocalIP()}:${(this.homeServerConfiguration as HomeServerEnvironmentConfiguration).port}`
   }
 
-  getLastServerErrorMessage(): string | undefined {
+  getLastHomeServerErrorMessage(): string | undefined {
     return this.lastError?.message
   }
 }

@@ -66,10 +66,10 @@ export class RemoteBridge implements CrossProcessBridge {
       getFileBackupReadToken: this.getFileBackupReadToken.bind(this),
       readNextChunk: this.readNextChunk.bind(this),
       askForMediaAccess: this.askForMediaAccess.bind(this),
-      startServer: this.startServer.bind(this),
-      stopServer: this.stopServer.bind(this),
-      restartServer: this.restartServer.bind(this),
-      serverStatus: this.serverStatus.bind(this),
+      startHomeServer: this.startHomeServer.bind(this),
+      stopHomeServer: this.stopHomeServer.bind(this),
+      restartHomeServer: this.restartHomeServer.bind(this),
+      homeServerStatus: this.homeServerStatus.bind(this),
       wasLegacyTextBackupsExplicitlyDisabled: this.wasLegacyTextBackupsExplicitlyDisabled.bind(this),
       getLegacyTextBackupsLocation: this.getLegacyTextBackupsLocation.bind(this),
       saveTextBackupData: this.saveTextBackupData.bind(this),
@@ -86,10 +86,10 @@ export class RemoteBridge implements CrossProcessBridge {
       joinPaths: this.joinPaths.bind(this),
       setHomeServerConfiguration: this.setHomeServerConfiguration.bind(this),
       setHomeServerDataLocation: this.setHomeServerDataLocation.bind(this),
-      getLastServerErrorMessage: this.getLastServerErrorMessage.bind(this),
+      getLastHomeServerErrorMessage: this.getLastHomeServerErrorMessage.bind(this),
       activatePremiumFeatures: this.activatePremiumFeatures.bind(this),
-      isServerRunning: this.isServerRunning.bind(this),
-      getServerLogs: this.getServerLogs.bind(this),
+      isHomeServerRunning: this.isHomeServerRunning.bind(this),
+      getHomeServerLogs: this.getHomeServerLogs.bind(this),
     }
   }
 
@@ -257,20 +257,20 @@ export class RemoteBridge implements CrossProcessBridge {
     return this.media.askForMediaAccess(type)
   }
 
-  startServer(): Promise<void> {
-    return this.homeServerManager.startServer()
+  startHomeServer(): Promise<void> {
+    return this.homeServerManager.startHomeServer()
   }
 
-  stopServer(): Promise<void> {
-    return this.homeServerManager.stopServer()
+  stopHomeServer(): Promise<void> {
+    return this.homeServerManager.stopHomeServer()
   }
 
-  restartServer(): Promise<void> {
-    return this.homeServerManager.restartServer()
+  restartHomeServer(): Promise<void> {
+    return this.homeServerManager.restartHomeServer()
   }
 
-  serverStatus(): Promise<HomeServerStatus> {
-    return this.homeServerManager.serverStatus()
+  homeServerStatus(): Promise<HomeServerStatus> {
+    return this.homeServerManager.homeServerStatus()
   }
 
   async setHomeServerConfiguration(configurationJSONString: string): Promise<void> {
@@ -281,21 +281,19 @@ export class RemoteBridge implements CrossProcessBridge {
     return this.homeServerManager.setHomeServerDataLocation(location)
   }
 
-  getLastServerErrorMessage(): string | undefined {
-    return this.homeServerManager.getLastServerErrorMessage()
+  getLastHomeServerErrorMessage(): string | undefined {
+    return this.homeServerManager.getLastHomeServerErrorMessage()
   }
 
   async activatePremiumFeatures(username: string): Promise<string | null> {
     return this.homeServerManager.activatePremiumFeatures(username)
   }
 
-  async isServerRunning(): Promise<boolean> {
-    const status = await this.homeServerManager.serverStatus()
-
-    return status.status === 'on'
+  async isHomeServerRunning(): Promise<boolean> {
+    return this.homeServerManager.isHomeServerRunning()
   }
 
-  async getServerLogs(): Promise<string[]> {
-    return this.homeServerManager.getServerLogs()
+  async getHomeServerLogs(): Promise<string[]> {
+    return this.homeServerManager.getHomeServerLogs()
   }
 }

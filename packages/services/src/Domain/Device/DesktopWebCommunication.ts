@@ -14,17 +14,17 @@ export interface WebClientRequiresDesktopMethods extends FileBackupsDevice {
 
   setHomeServerDataLocation(location: string): Promise<void>
 
-  startServer(): Promise<void>
+  startHomeServer(): Promise<void>
 
-  stopServer(): Promise<void>
+  stopHomeServer(): Promise<void>
 
-  isServerRunning(): Promise<boolean>
+  isHomeServerRunning(): Promise<boolean>
 
   activatePremiumFeatures(username: string): Promise<string | null>
 
-  getServerLogs(): Promise<string[]>
+  getHomeServerLogs(): Promise<string[]>
 
-  getLastServerErrorMessage(): string | undefined
+  getLastHomeServerErrorMessage(): string | undefined
 }
 
 export interface DesktopClientRequiresWebMethods {

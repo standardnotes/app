@@ -56,7 +56,7 @@ window.onload = () => {
 
 window.onunload = () => {
   if (window.device) {
-    void window.device.stopServer()
+    void window.device.stopHomeServer()
   }
 }
 

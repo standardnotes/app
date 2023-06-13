@@ -29,7 +29,7 @@ const HomeServerSettings = () => {
 
   const refreshStatus = useCallback(async () => {
     if (desktopDevice) {
-      const result = await desktopDevice.serverStatus()
+      const result = await desktopDevice.homeServerStatus()
       setStatus(result)
     }
   }, [desktopDevice])
@@ -43,10 +43,10 @@ const HomeServerSettings = () => {
       return
     }
 
-    setLogs(await desktopDevice.getServerLogs())
+    setLogs(await desktopDevice.getHomeServerLogs())
 
     const interval = setInterval(async () => {
-      setLogs(await desktopDevice.getServerLogs())
+      setLogs(await desktopDevice.getHomeServerLogs())
     }, 5000)
     setLogsIntervalRef(interval)
   }, [desktopDevice, logsIntervalRef])
@@ -60,10 +60,10 @@ const HomeServerSettings = () => {
   }, [featuresService, sessionsService, desktopDevice, showLogs, refreshStatus])
 
   const changeHomeServerDataLocation = useCallback(async () => {
-    await desktopDevice?.stopServer()
+    await desktopDevice?.stopHomeServer()
     const newLocation = await homeServerService.changeHomeServerDataLocation()
     setHomeServerDataLocation(newLocation)
-    await desktopDevice?.startServer()
+    await desktopDevice?.startHomeServer()
   }, [homeServerService, desktopDevice])
 
   const openHomeServerDataLocation = useCallback(async () => {

@@ -25,7 +25,7 @@ export class HomeServerService extends AbstractService implements HomeServerServ
   }
 
   async isHomeServerRunning(): Promise<boolean> {
-    return this.desktopDevice.isServerRunning()
+    return this.desktopDevice.isHomeServerRunning()
   }
 
   async activatePremiumFeatures(username: string): Promise<Result<string>> {
@@ -39,12 +39,12 @@ export class HomeServerService extends AbstractService implements HomeServerServ
   }
 
   getLastServerErrorMessage(): string | undefined {
-    return this.desktopDevice.getLastServerErrorMessage()
+    return this.desktopDevice.getLastHomeServerErrorMessage()
   }
 
   async restartHomeServer(): Promise<void> {
-    await this.desktopDevice.stopServer()
-    await this.desktopDevice.startServer()
+    await this.desktopDevice.stopHomeServer()
+    await this.desktopDevice.startHomeServer()
   }
 
   async setHomeServerConfiguration(config: HomeServerEnvironmentConfiguration): Promise<void> {
@@ -62,7 +62,7 @@ export class HomeServerService extends AbstractService implements HomeServerServ
   async enableHomeServer(): Promise<void> {
     this.storageService.setValue(StorageKey.HomeServerEnabled, true)
 
-    await this.desktopDevice.startServer()
+    await this.desktopDevice.startHomeServer()
   }
 
   isHomeServerEnabled(): boolean {
@@ -76,7 +76,7 @@ export class HomeServerService extends AbstractService implements HomeServerServ
   async disableHomeServer(): Promise<void> {
     this.storageService.setValue(StorageKey.HomeServerEnabled, false)
 
-    await this.desktopDevice.stopServer()
+    await this.desktopDevice.stopHomeServer()
   }
 
   getHomeServerConfiguration(): HomeServerEnvironmentConfiguration | undefined {
@@ -130,7 +130,7 @@ export class HomeServerService extends AbstractService implements HomeServerServ
   private async startHomeServerIfItIsEnabled(): Promise<void> {
     const homeServerIsEnabled = this.storageService.getValue(StorageKey.HomeServerEnabled, undefined, false)
     if (homeServerIsEnabled) {
-      await this.desktopDevice.startServer()
+      await this.desktopDevice.startHomeServer()
     }
   }
 

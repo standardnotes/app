@@ -26,16 +26,16 @@ export class DesktopDevice extends WebOrDesktopDevice implements DesktopDeviceIn
     super(appVersion)
   }
 
-  async isServerRunning(): Promise<boolean> {
-    return this.remoteBridge.isServerRunning()
+  async isHomeServerRunning(): Promise<boolean> {
+    return this.remoteBridge.isHomeServerRunning()
   }
 
   async activatePremiumFeatures(username: string): Promise<string | null> {
     return this.remoteBridge.activatePremiumFeatures(username)
   }
 
-  getLastServerErrorMessage(): string | undefined {
-    return this.remoteBridge.getLastServerErrorMessage()
+  getLastHomeServerErrorMessage(): string | undefined {
+    return this.remoteBridge.getLastHomeServerErrorMessage()
   }
 
   async setHomeServerConfiguration(configurationJSONString: string): Promise<void> {
@@ -46,24 +46,24 @@ export class DesktopDevice extends WebOrDesktopDevice implements DesktopDeviceIn
     return this.remoteBridge.setHomeServerDataLocation(location)
   }
 
-  startServer(): Promise<void> {
-    return this.remoteBridge.startServer()
+  startHomeServer(): Promise<void> {
+    return this.remoteBridge.startHomeServer()
   }
 
-  stopServer(): Promise<void> {
-    return this.remoteBridge.stopServer()
+  stopHomeServer(): Promise<void> {
+    return this.remoteBridge.stopHomeServer()
   }
 
-  getServerLogs(): Promise<string[]> {
-    return this.remoteBridge.getServerLogs()
+  getHomeServerLogs(): Promise<string[]> {
+    return this.remoteBridge.getHomeServerLogs()
   }
 
-  restartServer(): Promise<void> {
-    return this.remoteBridge.restartServer()
+  restartHomeServer(): Promise<void> {
+    return this.remoteBridge.restartHomeServer()
   }
 
-  serverStatus(): Promise<HomeServerStatus> {
-    return this.remoteBridge.serverStatus()
+  homeServerStatus(): Promise<HomeServerStatus> {
+    return this.remoteBridge.homeServerStatus()
   }
 
   openLocation(path: string): Promise<void> {
