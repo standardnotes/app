@@ -1,5 +1,5 @@
-import * as Factory from './lib/factory.js'
-import * as Collaboration from './lib/Collaboration.js'
+import * as Factory from '../lib/factory.js'
+import * as Collaboration from '../lib/Collaboration.js'
 
 chai.use(chaiAsPromised)
 const expect = chai.expect
@@ -58,7 +58,45 @@ describe('contacts', function () {
     await deinitContactContext()
   })
 
+  it.only('should create self contact on registration', async () => {
+    const selfContact = context.contacts.getSelfContact()
+
+    expect(selfContact).to.not.be.undefined
+
+    expect(selfContact.publicKeySet.encryption).to.equal(context.publicKey)
+    expect(selfContact.publicKeySet.signing).to.equal(context.signingPublicKey)
+  })
+
+  it.only('should create self contact on sign in if it does not exist', async () => {
+    let selfContact = context.contacts.getSelfContact()
+    await context.items.setItemToBeDeleted(selfContact)
+    await context.sync()
+    await context.signout()
+
+    await context.signIn()
+    selfContact = context.contacts.getSelfContact()
+    expect(selfContact).to.not.be.undefined
+  })
+
+  it.only('should update self contact on password change', async () => {
+    const selfContact = context.contacts.getSelfContact()
+
+    await context.changePassword('new_password')
+
+    const updatedSelfContact = context.contacts.getSelfContact()
+
+    expect(updatedSelfContact.publicKeySet.encryption).to.not.equal(selfContact.publicKeySet.encryption)
+    expect(updatedSelfContact.publicKeySet.signing).to.not.equal(selfContact.publicKeySet.signing)
+
+    expect(updatedSelfContact.publicKeySet.encryption).to.equal(context.publicKey)
+    expect(updatedSelfContact.publicKeySet.signing).to.equal(context.signingPublicKey)
+  })
+
   it('should delete contact', async () => {
+    console.error('TODO: implement test case')
+  })
+
+  it('should not be able to delete self contact', async () => {
     console.error('TODO: implement test case')
   })
 })

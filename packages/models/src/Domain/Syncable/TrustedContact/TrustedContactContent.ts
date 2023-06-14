@@ -4,7 +4,8 @@ import { ContactPublicKeySetInterface } from './PublicKeySet/ContactPublicKeySet
 export type TrustedContactContentSpecialized = {
   name: string
   contactUuid: string
-  publicKey: ContactPublicKeySetInterface
+  publicKeySet: ContactPublicKeySetInterface
+  isMe: boolean
 }
 
 export type TrustedContactContent = TrustedContactContentSpecialized & ItemContent

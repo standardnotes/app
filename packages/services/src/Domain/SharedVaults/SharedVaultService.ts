@@ -74,8 +74,6 @@ export class SharedVaultService
   private sharedVaultInvitesServer: SharedVaultInvitesServerInterface
   private messageServer: AsymmetricMessageServerInterface
 
-  private eventDisposers: (() => void)[] = []
-
   private pendingInvites: Record<string, PendingSharedVaultInviteRecord> = {}
 
   constructor(
@@ -648,9 +646,5 @@ export class SharedVaultService
     ;(this.sharedVaultServer as unknown) = undefined
     ;(this.contacts as unknown) = undefined
     ;(this.files as unknown) = undefined
-    for (const disposer of this.eventDisposers) {
-      disposer()
-    }
-    this.eventDisposers = []
   }
 }

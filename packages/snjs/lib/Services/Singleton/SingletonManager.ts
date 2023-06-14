@@ -10,10 +10,16 @@ import {
   PayloadEmitSource,
   PayloadTimestampDefaults,
   getIncrementedDirtyIndex,
+  Predicate,
 } from '@standardnotes/models'
 import { arrayByRemovingFromIndex, extendArray, UuidGenerator } from '@standardnotes/utils'
 import { SNSyncService } from '../Sync/SyncService'
-import { AbstractService, InternalEventBusInterface, SyncEvent } from '@standardnotes/services'
+import {
+  AbstractService,
+  InternalEventBusInterface,
+  SingletonManagerInterface,
+  SyncEvent,
+} from '@standardnotes/services'
 
 /**
  * The singleton manager allow consumers to ensure that only 1 item exists of a certain
@@ -26,7 +32,7 @@ import { AbstractService, InternalEventBusInterface, SyncEvent } from '@standard
  * 2. Items can override isSingleton, singletonPredicate, and strategyWhenConflictingWithItem (optional)
  *    to automatically gain singleton resolution.
  */
-export class SNSingletonManager extends AbstractService {
+export class SNSingletonManager extends AbstractService implements SingletonManagerInterface {
   private resolveQueue: DecryptedItemInterface[] = []
 
   private removeItemObserver!: () => void
@@ -210,6 +216,65 @@ export class SNSingletonManager extends AbstractService {
 
     if (errorDecrypting.length) {
       await this.payloadManager.deleteErroredPayloads(errorDecrypting)
+    }
+
+    /** Safe to create */
+    const dirtyPayload = new DecryptedPayload({
+      uuid: UuidGenerator.GenerateUuid(),
+      content_type: contentType,
+      content: createContent,
+      dirty: true,
+      dirtyIndex: getIncrementedDirtyIndex(),
+      ...PayloadTimestampDefaults(),
+    })
+
+    const item = await this.itemManager.emitItemFromPayload(dirtyPayload, PayloadEmitSource.LocalInserted)
+
+    void this.syncService.sync({ sourceDescription: 'After find or create singleton' })
+
+    return item as T
+  }
+
+  public async findOrCreateSingleton<
+    C extends ItemContent = ItemContent,
+    T extends DecryptedItemInterface<C> = DecryptedItemInterface<C>,
+  >(predicate: Predicate<T>, contentType: ContentType, createContent: ItemContent): Promise<T> {
+    const existingItems = this.itemManager.itemsMatchingPredicate<T>(contentType, predicate)
+    if (existingItems.length > 0) {
+      return existingItems[0]
+    }
+
+    /** Item not found, safe to create after full sync has completed */
+    if (!this.syncService.getLastSyncDate()) {
+      /**
+       * Add a temporary observer in case of long-running sync request, where
+       * the item we're looking for ends up resolving early or in the middle.
+       */
+      let matchingItem: DecryptedItemInterface | undefined
+
+      const removeObserver = this.itemManager.addObserver(contentType, ({ inserted }) => {
+        if (inserted.length > 0) {
+          const matchingItems = inserted.filter((i) => i.satisfiesPredicate(predicate))
+
+          if (matchingItems.length > 0) {
+            matchingItem = matchingItems[0]
+          }
+        }
+      })
+
+      await this.syncService.sync({ sourceDescription: 'Find or create singleton, before any sync has completed' })
+
+      removeObserver()
+
+      if (matchingItem) {
+        return matchingItem as T
+      }
+
+      /** Check again */
+      const refreshedItems = this.itemManager.itemsMatchingPredicate<T>(contentType, predicate)
+      if (refreshedItems.length > 0) {
+        return refreshedItems[0] as T
+      }
     }
 
     /** Safe to create */

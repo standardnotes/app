@@ -131,6 +131,7 @@ export class VaultService
   async addItemToVault(vault: VaultDisplayListing, item: DecryptedItemInterface): Promise<DecryptedItemInterface> {
     const useCase = new AddItemToVaultUseCase(this.items, this.sync, this.files)
     await useCase.execute({ vault, item })
+
     return this.items.findSureItem(item.uuid)
   }
 

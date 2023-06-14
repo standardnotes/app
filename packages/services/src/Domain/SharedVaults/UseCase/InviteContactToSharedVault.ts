@@ -36,7 +36,7 @@ export class InviteContactToSharedVaultUseCase {
       },
       senderKeyPair: params.senderKeyPair,
       senderSigningKeyPair: params.senderSigningKeyPair,
-      recipientPublicKey: params.recipient.publicKey.encryption,
+      recipientPublicKey: params.recipient.publicKeySet.encryption,
     })
 
     const createInviteUseCase = new SendSharedVaultInviteUseCase(this.sharedVaultInviteServer)

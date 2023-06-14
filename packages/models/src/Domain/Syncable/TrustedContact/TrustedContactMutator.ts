@@ -16,10 +16,10 @@ export class TrustedContactMutator extends DecryptedItemMutator<TrustedContactCo
       this.immutableItem.publicKeySet,
     )
 
-    this.mutableContent.publicKey = newKey
+    this.mutableContent.publicKeySet = newKey
   }
 
-  replacePublicKey(publicKey: ContactPublicKeySet): void {
-    this.mutableContent.publicKey = publicKey
+  replacePublicKeySet(publicKeySet: ContactPublicKeySet): void {
+    this.mutableContent.publicKeySet = publicKeySet
   }
 }

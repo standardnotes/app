@@ -1,3 +1,9 @@
+import { ApplicationStage } from './../Application/ApplicationStage'
+import { SingletonManagerInterface } from './../Singleton/SingletonManagerInterface'
+import { SuccessfullyChangedCredentialsEventData } from './../Session/SuccessfullyChangedCredentialsEventData'
+import { SessionEvent } from './../Session/SessionEvent'
+import { InternalEventInterface } from './../Internal/InternalEventInterface'
+import { InternalEventHandlerInterface } from './../Internal/InternalEventHandlerInterface'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { SharedVaultInviteServerHash, SharedVaultUserServerHash } from '@standardnotes/responses'
 import {
@@ -18,15 +24,21 @@ import { ContactServiceEvent, ContactServiceInterface } from '../Contacts/Contac
 import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
 import { UserClientInterface } from '../User/UserClientInterface'
 import { CollaborationIDData } from './CollaborationID'
-import { EncryptionProviderInterface } from '@standardnotes/encryption'
+import { EncryptionProviderInterface, PublicKeySet } from '@standardnotes/encryption'
 import { ValidateItemSignerUseCase } from './UseCase/ValidateItemSigner'
 import { ValidateItemSignerResult } from './UseCase/ValidateItemSignerResult'
 import { FindTrustedContactUseCase } from './UseCase/FindTrustedContact'
+import { SelfContactManager } from './Managers/SelfContactManager'
 
 const Version1CollaborationId = '1'
 const UnknownContactName = 'Unnamed contact'
 
-export class ContactService extends AbstractService<ContactServiceEvent> implements ContactServiceInterface {
+export class ContactService
+  extends AbstractService<ContactServiceEvent>
+  implements ContactServiceInterface, InternalEventHandlerInterface
+{
+  private selfContactManager: SelfContactManager
+
   constructor(
     private sync: SyncServiceInterface,
     private items: ItemManagerInterface,
@@ -34,13 +46,47 @@ export class ContactService extends AbstractService<ContactServiceEvent> impleme
     private crypto: PureCryptoInterface,
     private user: UserClientInterface,
     private encryption: EncryptionProviderInterface,
+    singletons: SingletonManagerInterface,
     eventBus: InternalEventBusInterface,
   ) {
     super(eventBus)
+
+    this.selfContactManager = new SelfContactManager(sync, items, session, singletons)
+
+    eventBus.addEventHandler(this, SessionEvent.SuccessfullyChangedCredentials)
+  }
+
+  public override async handleApplicationStage(stage: ApplicationStage): Promise<void> {
+    await super.handleApplicationStage(stage)
+    await this.selfContactManager.handleApplicationStage(stage)
+  }
+
+  async handleEvent(event: InternalEventInterface): Promise<void> {
+    if (event.type === SessionEvent.SuccessfullyChangedCredentials) {
+      const data = event.payload as SuccessfullyChangedCredentialsEventData
+
+      await this.updateSelfContactWithPublicKeySet({
+        encryption: data.newKeyPair.publicKey,
+        signing: data.newSigningKeyPair.publicKey,
+      })
+    }
+  }
+
+  private async updateSelfContactWithPublicKeySet(publicKeySet: PublicKeySet): Promise<void> {
+    await this.createOrEditTrustedContact({
+      name: 'Me',
+      contactUuid: this.session.getSureUser().uuid,
+      publicKey: publicKeySet.encryption,
+      signingPublicKey: publicKeySet.signing,
+    })
+  }
+
+  getSelfContact(): TrustedContactInterface | undefined {
+    return this.selfContactManager.selfContact
   }
 
   public isCollaborationEnabled(): boolean {
-    return !!this.session.getPublicKey()
+    return !this.session.isUserMissingKeyPair()
   }
 
   public async enableCollaboration(): Promise<void> {
@@ -161,7 +207,7 @@ export class ContactService extends AbstractService<ContactServiceEvent> impleme
     if (contact) {
       contact = await this.items.changeItem<TrustedContactMutator, TrustedContactInterface>(contact, (mutator) => {
         mutator.name = data.name
-        mutator.replacePublicKey(data.publicKey)
+        mutator.replacePublicKeySet(data.publicKeySet)
       })
     } else {
       contact = await this.items.createItem<TrustedContactInterface>(
@@ -183,6 +229,7 @@ export class ContactService extends AbstractService<ContactServiceEvent> impleme
     contactUuid: string
     publicKey: string
     signingPublicKey: string
+    isMe?: boolean
   }): Promise<TrustedContactInterface | undefined> {
     const existingContact = this.findTrustedContact(params.contactUuid)
     if (existingContact) {
@@ -192,12 +239,13 @@ export class ContactService extends AbstractService<ContactServiceEvent> impleme
 
     const content: TrustedContactContentSpecialized = {
       name: params.name ?? UnknownContactName,
-      publicKey: ContactPublicKeySet.FromJson({
+      publicKeySet: ContactPublicKeySet.FromJson({
         encryption: params.publicKey,
         signing: params.signingPublicKey,
         timestamp: new Date(),
       }),
       contactUuid: params.contactUuid,
+      isMe: params.isMe ?? false,
     }
 
     const contact = await this.items.createItem<TrustedContactInterface>(
@@ -242,8 +290,8 @@ export class ContactService extends AbstractService<ContactServiceEvent> impleme
     return this.buildCollaborationId({
       version: Version1CollaborationId,
       userUuid: contact.content.contactUuid,
-      publicKey: contact.content.publicKey.encryption,
-      signingPublicKey: contact.content.publicKey.signing,
+      publicKey: contact.content.publicKeySet.encryption,
+      signingPublicKey: contact.content.publicKeySet.signing,
     })
   }
 
@@ -254,7 +302,9 @@ export class ContactService extends AbstractService<ContactServiceEvent> impleme
 
   override deinit(): void {
     super.deinit()
+    this.selfContactManager.deinit()
     ;(this.sync as unknown) = undefined
     ;(this.items as unknown) = undefined
+    ;(this.selfContactManager as unknown) = undefined
   }
 }

@@ -7,6 +7,7 @@ export interface TrustedContactInterface extends DecryptedItemInterface<TrustedC
   name: string
   contactUuid: string
   publicKeySet: ContactPublicKeySetInterface
+  isMe: boolean
 
   findKeySet(params: { targetEncryptionPublicKey: string; targetSigningPublicKey: string }): FindPublicKeySetResult
 

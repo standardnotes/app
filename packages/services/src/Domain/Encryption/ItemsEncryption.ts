@@ -1,7 +1,6 @@
 import { ContentType, ProtocolVersion } from '@standardnotes/common'
 import {
   DecryptedParameters,
-  EncryptedParameters,
   ErrorDecryptingParameters,
   findDefaultItemsKey,
   isErrorDecryptingParameters,
@@ -9,6 +8,7 @@ import {
   StandardException,
   encryptPayload,
   decryptPayload,
+  EncryptedOutputParameters,
 } from '@standardnotes/encryption'
 import {
   DecryptedPayload,
@@ -139,7 +139,7 @@ export class ItemsEncryptionService extends AbstractService {
   public async encryptPayloadWithKeyLookup(
     payload: DecryptedPayloadInterface,
     signingKeyPair?: PkcKeyPair,
-  ): Promise<EncryptedParameters> {
+  ): Promise<EncryptedOutputParameters> {
     const key = this.keyToUseForItemEncryption(payload)
 
     if (key instanceof StandardException) {
@@ -153,7 +153,7 @@ export class ItemsEncryptionService extends AbstractService {
     payload: DecryptedPayloadInterface,
     key: ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface,
     signingKeyPair?: PkcKeyPair,
-  ): Promise<EncryptedParameters> {
+  ): Promise<EncryptedOutputParameters> {
     if (isEncryptedPayload(payload)) {
       throw Error('Attempting to encrypt already encrypted payload.')
     }
@@ -171,14 +171,14 @@ export class ItemsEncryptionService extends AbstractService {
     payloads: DecryptedPayloadInterface[],
     key: ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface,
     signingKeyPair?: PkcKeyPair,
-  ): Promise<EncryptedParameters[]> {
+  ): Promise<EncryptedOutputParameters[]> {
     return Promise.all(payloads.map((payload) => this.encryptPayload(payload, key, signingKeyPair)))
   }
 
   public async encryptPayloadsWithKeyLookup(
     payloads: DecryptedPayloadInterface[],
     signingKeyPair?: PkcKeyPair,
-  ): Promise<EncryptedParameters[]> {
+  ): Promise<EncryptedOutputParameters[]> {
     return Promise.all(payloads.map((payload) => this.encryptPayloadWithKeyLookup(payload, signingKeyPair)))
   }
 

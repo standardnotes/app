@@ -32,6 +32,8 @@ export * from './SharedVaults/SharedVaultServiceInterface'
 export * from './SharedVaults/SharedVaultService'
 export * from './SharedVaults/SharedVaultServiceEvent'
 
+export * from './Singleton/SingletonManagerInterface'
+
 export * from './Vaults/VaultService'
 export * from './Vaults/VaultServiceInterface'
 export * from './Vaults/VaultServiceEvent'

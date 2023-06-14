@@ -15,6 +15,8 @@ export abstract class AbstractService<EventName = string, EventData = unknown>
   public loggingEnabled = false
   private criticalPromises: Promise<unknown>[] = []
 
+  protected eventDisposers: (() => void)[] = []
+
   constructor(protected internalEventBus: InternalEventBusInterface) {}
 
   public addEventObserver(observer: EventObserver<EventName, EventData>): () => void {
@@ -71,6 +73,11 @@ export abstract class AbstractService<EventName = string, EventData = unknown>
     this.eventObservers.length = 0
     ;(this.internalEventBus as unknown) = undefined
     ;(this.criticalPromises as unknown) = undefined
+
+    for (const disposer of this.eventDisposers) {
+      disposer()
+    }
+    this.eventDisposers = []
   }
 
   /**

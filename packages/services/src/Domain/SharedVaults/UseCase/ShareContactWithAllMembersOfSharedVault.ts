@@ -53,7 +53,7 @@ export class ShareContactWithAllMembersOfSharedVaultUseCase {
         },
         senderKeyPair: params.senderKeyPair,
         senderSigningKeyPair: params.senderSigningKeyPair,
-        recipientPublicKey: vaultUserAsContact.publicKey.encryption,
+        recipientPublicKey: vaultUserAsContact.publicKeySet.encryption,
       })
 
       await messageSendUseCase.execute({

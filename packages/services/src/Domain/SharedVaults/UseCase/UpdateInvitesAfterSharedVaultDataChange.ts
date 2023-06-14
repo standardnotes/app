@@ -111,7 +111,7 @@ export class UpdateInvitesAfterSharedVaultDataChangeUseCase {
       message: params.message,
       senderKeyPair: params.senderKeyPair,
       senderSigningKeyPair: params.senderSigningKeyPair,
-      recipientPublicKey: trustedContact.publicKey.encryption,
+      recipientPublicKey: trustedContact.publicKeySet.encryption,
     })
   }
 }

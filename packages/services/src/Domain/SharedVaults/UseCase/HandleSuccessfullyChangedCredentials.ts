@@ -92,7 +92,7 @@ export class HandleSuccessfullyChangedCredentials {
       message: { type: AsymmetricMessagePayloadType.SharedVaultRootKeyChanged, data: keySystemRootKey.content },
       senderKeyPair: params.newKeyPair,
       senderSigningKeyPair: params.newSigningKeyPair,
-      recipientPublicKey: trustedContact.publicKey.encryption,
+      recipientPublicKey: trustedContact.publicKeySet.encryption,
     })
 
     const updateInviteResponse = await this.sharedVaultInvitesServer.updateInvite({

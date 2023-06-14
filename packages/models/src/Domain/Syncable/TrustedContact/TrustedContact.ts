@@ -6,18 +6,31 @@ import { TrustedContactInterface } from './TrustedContactInterface'
 import { FindPublicKeySetResult } from './PublicKeySet/FindPublicKeySetResult'
 import { ContactPublicKeySet } from './PublicKeySet/ContactPublicKeySet'
 import { ContactPublicKeySetInterface } from './PublicKeySet/ContactPublicKeySetInterface'
+import { Predicate } from '../../Runtime/Predicate/Predicate'
 
 export class TrustedContact extends DecryptedItem<TrustedContactContent> implements TrustedContactInterface {
+  static singletonPredicate = new Predicate<TrustedContact>('isMe', '=', true)
+
   name: string
   contactUuid: string
   publicKeySet: ContactPublicKeySetInterface
+  isMe: boolean
 
   constructor(payload: DecryptedPayloadInterface<TrustedContactContent>) {
     super(payload)
 
     this.name = payload.content.name
     this.contactUuid = payload.content.contactUuid
-    this.publicKeySet = ContactPublicKeySet.FromJson(payload.content.publicKey)
+    this.publicKeySet = ContactPublicKeySet.FromJson(payload.content.publicKeySet)
+    this.isMe = payload.content.isMe
+  }
+
+  override get isSingleton(): true {
+    return true
+  }
+
+  override singletonPredicate(): Predicate<TrustedContact> {
+    return TrustedContact.singletonPredicate
   }
 
   public findKeySet(params: {

@@ -36,6 +36,7 @@ export interface ContactServiceInterface extends AbstractService<ContactServiceE
   deleteContact(contact: TrustedContactInterface): Promise<void>
 
   getAllContacts(): TrustedContactInterface[]
+  getSelfContact(): TrustedContactInterface | undefined
   findTrustedContact(userUuid: string): TrustedContactInterface | undefined
   findTrustedContactForServerUser(user: SharedVaultUserServerHash): TrustedContactInterface | undefined
   findTrustedContactForInvite(invite: SharedVaultInviteServerHash): TrustedContactInterface | undefined

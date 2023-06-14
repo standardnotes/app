@@ -130,9 +130,24 @@ describe.only('shared vault crypto', function () {
     })
   })
 
-  describe('symmetrically encrypted items', () => {
+  describe.only('symmetrically encrypted items', () => {
     it('should allow client verification of authenticity of shared item changes', async () => {
-      console.error('TODO')
+      const { note, contactContext, deinitContactContext } =
+        await Collaboration.createSharedVaultWithAcceptedInviteAndNote(context)
+
+      expect(context.contacts.isItemAuthenticallySigned(note)).to.equal('yes')
+
+      const contactNote = contactContext.items.findItem(note.uuid)
+
+      expect(contactContext.contacts.isItemAuthenticallySigned(contactNote)).to.equal('yes')
+
+      await contactContext.changeNoteTitleAndSync(contactNote, 'new title')
+
+      let updatedNote = context.items.findItem(note.uuid)
+
+      expect(context.contacts.isItemAuthenticallySigned(updatedNote)).to.equal('yes')
+
+      await deinitContactContext()
     })
   })
 })
