@@ -58,7 +58,7 @@ const getClassName = (
   let colors = primary ? getColorsForPrimaryVariant(style) : getColorsForNormalVariant(style)
 
   let focusHoverStates = primary
-    ? 'hover:brightness-110 focus:outline-none focus:brightness-110'
+    ? 'hover:brightness-125 focus:outline-none focus:brightness-125'
     : 'focus:bg-contrast focus:outline-none hover:border-info hover:text-info hover:bg-contrast'
 
   if (disabled) {
