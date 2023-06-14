@@ -64,14 +64,27 @@ const HomeServerSettings = () => {
   }, [featuresService, sessionsService, desktopDevice, showLogs, refreshStatus])
 
   const changeHomeServerDataLocation = useCallback(async () => {
-    await desktopDevice?.stopHomeServer()
-    const newLocation = await homeServerService.changeHomeServerDataLocation()
-    setHomeServerDataLocation(newLocation)
-    await desktopDevice?.startHomeServer()
+    try {
+      await desktopDevice?.stopHomeServer()
+
+      const newLocation = await homeServerService.changeHomeServerDataLocation()
+      setHomeServerDataLocation(newLocation)
+
+      const result = await desktopDevice?.startHomeServer()
+      if (result !== undefined) {
+        setError(result)
+      }
+    } catch (error) {
+      setError((error as Error).message)
+    }
   }, [homeServerService, desktopDevice])
 
   const openHomeServerDataLocation = useCallback(async () => {
-    await homeServerService.openHomeServerDataLocation()
+    try {
+      await homeServerService.openHomeServerDataLocation()
+    } catch (error) {
+      setError((error as Error).message)
+    }
   }, [homeServerService])
 
   const handleShowLogs = () => {
