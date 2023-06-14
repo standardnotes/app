@@ -130,18 +130,43 @@ describe.only('shared vault crypto', function () {
     })
   })
 
-  describe.only('symmetrically encrypted items', () => {
+  describe('symmetrically encrypted items', () => {
+    it('created items with a payload source of remote saved should not have signature data', async () => {
+      const note = await context.createSyncedNote()
+
+      expect(note.payload.source).to.equal(PayloadSource.RemoteSaved)
+
+      expect(note.signatureData).to.be.undefined
+    })
+
+    it('retrieved items that are then remote saved should have their signature data cleared', async () => {
+      const { note, contactContext, deinitContactContext } =
+        await Collaboration.createSharedVaultWithAcceptedInviteAndNote(context)
+
+      await contactContext.changeNoteTitleAndSync(contactContext.items.findItem(note.uuid), 'new title')
+
+      await context.sync()
+      expect(context.items.findItem(note.uuid).signatureData).to.not.be.undefined
+
+      await context.changeNoteTitleAndSync(context.items.findItem(note.uuid), 'new title')
+      expect(context.items.findItem(note.uuid).signatureData).to.be.undefined
+
+      await deinitContactContext()
+    })
+
     it('should allow client verification of authenticity of shared item changes', async () => {
       const { note, contactContext, deinitContactContext } =
         await Collaboration.createSharedVaultWithAcceptedInviteAndNote(context)
 
-      expect(context.contacts.isItemAuthenticallySigned(note)).to.equal('yes')
+      expect(context.contacts.isItemAuthenticallySigned(note)).to.equal('not-applicable')
 
       const contactNote = contactContext.items.findItem(note.uuid)
 
       expect(contactContext.contacts.isItemAuthenticallySigned(contactNote)).to.equal('yes')
 
       await contactContext.changeNoteTitleAndSync(contactNote, 'new title')
+
+      await context.sync()
 
       let updatedNote = context.items.findItem(note.uuid)
 

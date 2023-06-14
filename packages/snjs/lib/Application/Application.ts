@@ -1326,6 +1326,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       this.options.crypto,
       this.user,
       this.protocolService,
+      this.singletonManager,
       this.internalEventBus,
     )
 

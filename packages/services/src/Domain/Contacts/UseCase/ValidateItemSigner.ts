@@ -1,6 +1,6 @@
 import { ItemManagerInterface } from './../../Item/ItemManagerInterface'
 import { doesPayloadRequireSigning } from '@standardnotes/encryption/src/Domain/Operator/004/V004AlgorithmHelpers'
-import { DecryptedItemInterface } from '@standardnotes/models'
+import { DecryptedItemInterface, PayloadSource } from '@standardnotes/models'
 import { ValidateItemSignerResult } from './ValidateItemSignerResult'
 import { FindTrustedContactUseCase } from './FindTrustedContact'
 
@@ -16,6 +16,14 @@ export class ValidateItemSignerUseCase {
     } else {
       return this.validateSignatureWithNoLastEditedByUuid(item)
     }
+  }
+
+  private isItemLocallyCreatedAndDoesNotRequireSignature(item: DecryptedItemInterface): boolean {
+    return item.payload.source === PayloadSource.Constructor
+  }
+
+  private isItemResutOfRemoteSaveAndDoesNotRequireSignature(item: DecryptedItemInterface): boolean {
+    return item.payload.source === PayloadSource.RemoteSaved
   }
 
   private validateSignatureWithLastEditedByUuid(
@@ -34,11 +42,16 @@ export class ValidateItemSignerUseCase {
     }
 
     if (!item.signatureData) {
-      if (requiresSignature) {
-        return 'no'
-      } else {
+      if (
+        this.isItemLocallyCreatedAndDoesNotRequireSignature(item) ||
+        this.isItemResutOfRemoteSaveAndDoesNotRequireSignature(item)
+      ) {
         return 'not-applicable'
       }
+      if (requiresSignature) {
+        return 'no'
+      }
+      return 'not-applicable'
     }
 
     const signatureData = item.signatureData
@@ -68,6 +81,13 @@ export class ValidateItemSignerUseCase {
     const requiresSignature = doesPayloadRequireSigning(item)
 
     if (!item.signatureData) {
+      if (
+        this.isItemLocallyCreatedAndDoesNotRequireSignature(item) ||
+        this.isItemResutOfRemoteSaveAndDoesNotRequireSignature(item)
+      ) {
+        return 'not-applicable'
+      }
+
       if (requiresSignature) {
         return 'no'
       }

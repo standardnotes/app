@@ -58,7 +58,7 @@ describe('contacts', function () {
     await deinitContactContext()
   })
 
-  it.only('should create self contact on registration', async () => {
+  it('should create self contact on registration', async () => {
     const selfContact = context.contacts.getSelfContact()
 
     expect(selfContact).to.not.be.undefined
@@ -67,7 +67,7 @@ describe('contacts', function () {
     expect(selfContact.publicKeySet.signing).to.equal(context.signingPublicKey)
   })
 
-  it.only('should create self contact on sign in if it does not exist', async () => {
+  it('should create self contact on sign in if it does not exist', async () => {
     let selfContact = context.contacts.getSelfContact()
     await context.items.setItemToBeDeleted(selfContact)
     await context.sync()
@@ -78,7 +78,7 @@ describe('contacts', function () {
     expect(selfContact).to.not.be.undefined
   })
 
-  it.only('should update self contact on password change', async () => {
+  it('should update self contact on password change', async () => {
     const selfContact = context.contacts.getSelfContact()
 
     await context.changePassword('new_password')

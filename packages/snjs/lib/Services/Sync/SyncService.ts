@@ -282,7 +282,7 @@ export class SNSyncService
 
     const createPayloadFromEntry = (entry: FullyFormedTransferPayload) => {
       try {
-        return CreatePayload(entry, PayloadSource.Constructor)
+        return CreatePayload(entry, PayloadSource.LocalDatabaseLoaded)
       } catch (e) {
         console.error('Creating payload failed', e)
         return undefined
@@ -320,7 +320,7 @@ export class SNSyncService
       const payloads = dbEntries
         .map((entry) => {
           try {
-            return CreatePayload(entry, PayloadSource.Constructor)
+            return CreatePayload(entry, PayloadSource.LocalDatabaseLoaded)
           } catch (e) {
             console.error('Creating payload failed', e)
             return undefined
