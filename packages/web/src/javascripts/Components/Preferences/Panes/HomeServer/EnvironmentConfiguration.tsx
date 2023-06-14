@@ -7,10 +7,10 @@ import { useApplication } from '@/Components/ApplicationProvider'
 import { Subtitle } from '../../PreferencesComponents/Content'
 import DecoratedInput from '@/Components/Input/DecoratedInput'
 import Button from '@/Components/Button/Button'
-import { NoteStatus } from '@/Components/StatusIndicator/StatusIndicator'
+import { Status } from '@/Components/StatusIndicator/Status'
 
 type Props = {
-  setServerStatusCallback: (status: NoteStatus) => void
+  setServerStatusCallback: (status: Status) => void
 }
 
 const EnvironmentConfiguration = ({ setServerStatusCallback }: Props) => {

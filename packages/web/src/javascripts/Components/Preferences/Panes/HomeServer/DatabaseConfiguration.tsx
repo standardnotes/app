@@ -9,10 +9,10 @@ import Button from '@/Components/Button/Button'
 import Dropdown from '@/Components/Dropdown/Dropdown'
 import { Subtitle } from '../../PreferencesComponents/Content'
 import DecoratedInput from '@/Components/Input/DecoratedInput'
-import { NoteStatus } from '@/Components/StatusIndicator/StatusIndicator'
+import { Status } from '@/Components/StatusIndicator/Status'
 
 type Props = {
-  setServerStatusCallback: (status: NoteStatus) => void
+  setServerStatusCallback: (status: Status) => void
 }
 
 const DatabaseConfiguration = ({ setServerStatusCallback }: Props) => {
