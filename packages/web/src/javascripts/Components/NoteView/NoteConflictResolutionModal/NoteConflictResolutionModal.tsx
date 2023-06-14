@@ -1,20 +1,14 @@
-import { ContentType, NoteType, SNNote, classNames } from '@standardnotes/snjs'
-import Modal, { ModalAction } from '../Modal/Modal'
+import { NoteType, SNNote, classNames } from '@standardnotes/snjs'
+import Modal, { ModalAction } from '../../Modal/Modal'
 import { MouseEventHandler, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
-import { useApplication } from '../ApplicationProvider'
-import ComponentView from '../ComponentView/ComponentView'
-import { ErrorBoundary } from '@/Utils/ErrorBoundary'
-import { BlocksEditor } from '../SuperEditor/BlocksEditor'
-import { BlocksEditorComposer } from '../SuperEditor/BlocksEditorComposer'
-import { useLinkingController } from '@/Controllers/LinkingControllerProvider'
-import LinkedItemBubblesContainer from '../LinkedItems/LinkedItemBubblesContainer'
+import { useApplication } from '../../ApplicationProvider'
 import { confirmDialog } from '@standardnotes/ui-services'
 import { useListKeyboardNavigation } from '@/Hooks/useListKeyboardNavigation'
-import { useNoteAttributes } from '../NotesOptions/NoteAttributes'
-import CheckIndicator from '../Checkbox/CheckIndicator'
-import ModalDialogButtons from '../Modal/ModalDialogButtons'
+import { useNoteAttributes } from '../../NotesOptions/NoteAttributes'
+import CheckIndicator from '../../Checkbox/CheckIndicator'
+import ModalDialogButtons from '../../Modal/ModalDialogButtons'
 import {
   Select,
   SelectArrow,
@@ -25,14 +19,14 @@ import {
   useSelectStore,
   useToolbarStore,
 } from '@ariakit/react'
-import Popover from '../Popover/Popover'
-import Icon from '../Icon/Icon'
-import Button from '../Button/Button'
-import Spinner from '../Spinner/Spinner'
-import Switch from '../Switch/Switch'
-import fastdiff from 'fast-diff'
-import { HeadlessSuperConverter } from '../SuperEditor/Tools/HeadlessSuperConverter'
-import StyledTooltip from '../StyledTooltip/StyledTooltip'
+import Popover from '../../Popover/Popover'
+import Icon from '../../Icon/Icon'
+import Button from '../../Button/Button'
+import Spinner from '../../Spinner/Spinner'
+import Switch from '../../Switch/Switch'
+import StyledTooltip from '../../StyledTooltip/StyledTooltip'
+import { DiffView } from './DiffView'
+import { NoteContent } from './NoteContent'
 
 const ConflictListItem = ({
   isSelected,
@@ -85,195 +79,6 @@ const ConflictListItem = ({
         </div>
       </div>
     </button>
-  )
-}
-
-const NoteContent = ({ note }: { note: SNNote }) => {
-  const application = useApplication()
-  const linkingController = useLinkingController()
-
-  const isMobileScreen = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
-
-  const componentViewer = useMemo(() => {
-    const editorForCurrentNote = note ? application.componentManager.editorForNote(note) : undefined
-
-    if (!editorForCurrentNote) {
-      return undefined
-    }
-
-    const templateNoteForRevision = application.mutator.createTemplateItem(ContentType.Note, note.content) as SNNote
-
-    const componentViewer = application.componentManager.createComponentViewer(editorForCurrentNote)
-    componentViewer.setReadonly(true)
-    componentViewer.lockReadonly = true
-    componentViewer.overrideContextItem = templateNoteForRevision
-    return componentViewer
-  }, [application.componentManager, application.mutator, note])
-
-  useEffect(() => {
-    return () => {
-      if (componentViewer) {
-        application.componentManager.destroyComponentViewer(componentViewer)
-      }
-    }
-  }, [application, componentViewer])
-
-  return (
-    <div className="flex h-full flex-grow flex-col overflow-hidden">
-      <div className="w-full px-4 pt-4 text-base font-bold">
-        <div className="title">{note.title}</div>
-      </div>
-      <LinkedItemBubblesContainer
-        item={note}
-        linkingController={linkingController}
-        readonly
-        className={{ base: 'mt-2 px-4', withToggle: '!mt-1 !pt-0' }}
-        isCollapsedByDefault={isMobileScreen}
-      />
-      {componentViewer ? (
-        <div className="component-view">
-          <ComponentView key={componentViewer.identifier} componentViewer={componentViewer} application={application} />
-        </div>
-      ) : note?.noteType === NoteType.Super ? (
-        <ErrorBoundary>
-          <div className="w-full flex-grow overflow-hidden overflow-y-auto">
-            <BlocksEditorComposer readonly initialValue={note.text}>
-              <BlocksEditor
-                readonly
-                className="blocks-editor relative h-full resize-none p-4 text-base focus:shadow-none focus:outline-none"
-                spellcheck={note.spellcheck}
-              ></BlocksEditor>
-            </BlocksEditorComposer>
-          </div>
-        </ErrorBoundary>
-      ) : (
-        <div className="relative mt-3 min-h-0 flex-grow overflow-hidden">
-          {note.text.length ? (
-            <textarea
-              readOnly={true}
-              className="font-editor h-full w-full resize-none border-0 bg-default p-4 pt-0 text-editor text-text"
-              value={note.text}
-            />
-          ) : (
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-passive-0">
-              Empty note.
-            </div>
-          )}
-        </div>
-      )}
-    </div>
-  )
-}
-
-const DiffView = ({
-  selectedNotes,
-  convertSuperToMarkdown,
-}: {
-  selectedNotes: SNNote[]
-  convertSuperToMarkdown: boolean
-}) => {
-  const [results, setResults] = useState<fastdiff.Diff[]>([])
-
-  useEffect(() => {
-    const firstNote = selectedNotes[0]
-    const first =
-      firstNote.noteType === NoteType.Super && convertSuperToMarkdown
-        ? new HeadlessSuperConverter().convertString(firstNote.text, 'md')
-        : firstNote.text
-    const secondNote = selectedNotes[1]
-    const second =
-      secondNote.noteType === NoteType.Super && convertSuperToMarkdown
-        ? new HeadlessSuperConverter().convertString(secondNote.text, 'md')
-        : secondNote.text
-
-    const results = fastdiff(first, second, undefined, true)
-
-    setResults(results)
-  }, [convertSuperToMarkdown, selectedNotes])
-
-  const [preElement, setPreElement] = useState<HTMLPreElement | null>(null)
-  const [diffVisualizer, setDiffVisualizer] = useState<HTMLDivElement | null>(null)
-  const [hasOverflow, setHasOverflow] = useState(false)
-
-  useEffect(() => {
-    if (!preElement) {
-      return
-    }
-
-    setHasOverflow(preElement.scrollHeight > preElement.clientHeight)
-  }, [preElement, results])
-
-  useEffect(() => {
-    if (!preElement || !diffVisualizer) {
-      return
-    }
-
-    if (!hasOverflow) {
-      return
-    }
-
-    if (!results.length) {
-      return
-    }
-
-    diffVisualizer.innerHTML = ''
-    const preElementRect = preElement.getBoundingClientRect()
-    const diffVisualizerRect = diffVisualizer.getBoundingClientRect()
-
-    const diffs = preElement.querySelectorAll('[data-diff]')
-
-    diffs.forEach((diff) => {
-      const state = diff.getAttribute('data-diff')
-      if (!state) {
-        return
-      }
-      const parsedState = parseInt(state)
-
-      const rect = diff.getBoundingClientRect()
-
-      const topAsPercent = (rect.top - preElementRect.top) / preElement.scrollHeight
-      const topAdjustedForDiffVisualizer = diffVisualizerRect.height * topAsPercent
-
-      const heightAsPercent = rect.height / preElement.scrollHeight
-      const heightAdjustedForDiffVisualizer = diffVisualizerRect.height * heightAsPercent
-
-      const div = document.createElement('div')
-      div.className = `absolute top-0 left-0 w-full bg-${
-        parsedState === fastdiff.INSERT ? 'success' : 'danger'
-      } opacity-50`
-      div.style.height = `${heightAdjustedForDiffVisualizer}px`
-      div.style.top = `${topAdjustedForDiffVisualizer}px`
-
-      diffVisualizer.appendChild(div)
-    })
-  }, [preElement, hasOverflow, results, diffVisualizer])
-
-  return (
-    <div className="relative flex-grow overflow-hidden">
-      <pre
-        className="h-full w-full overflow-y-auto whitespace-pre-wrap p-4 [&::-webkit-scrollbar]:bg-transparent"
-        ref={setPreElement}
-      >
-        {results.map(([state, text], index) => {
-          return (
-            <span
-              data-diff={state !== fastdiff.EQUAL ? state : undefined}
-              className={classNames(
-                'whitespace-pre-wrap',
-                state === fastdiff.INSERT && 'bg-success text-success-contrast',
-                state === fastdiff.DELETE && 'bg-danger text-danger-contrast',
-              )}
-              key={index}
-            >
-              {text}
-            </span>
-          )
-        })}
-      </pre>
-      {hasOverflow && (
-        <div className="absolute top-0 right-0 z-[-1] h-full w-[19px] border-l border-border" ref={setDiffVisualizer} />
-      )}
-    </div>
   )
 }
 

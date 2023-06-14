@@ -47,7 +47,7 @@ import { PlainEditor, PlainEditorInterface } from './PlainEditor/PlainEditor'
 import { EditorMargins, EditorMaxWidths } from '../EditorWidthSelectionModal/EditorWidths'
 import Button from '../Button/Button'
 import ModalOverlay from '../Modal/ModalOverlay'
-import NoteConflictResolutionModal from './NoteConflictResolutionModal'
+import NoteConflictResolutionModal from './NoteConflictResolutionModal/NoteConflictResolutionModal'
 import Icon from '../Icon/Icon'
 
 const MinimumStatusDuration = 400
