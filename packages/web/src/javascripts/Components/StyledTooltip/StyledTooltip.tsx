@@ -33,7 +33,7 @@ const StyledTooltip = ({
   ...props
 }: {
   children: ReactNode
-  label: string
+  label: NonNullable<ReactNode>
   className?: string
   showOnMobile?: boolean
 } & Partial<TooltipOptions>) => {
