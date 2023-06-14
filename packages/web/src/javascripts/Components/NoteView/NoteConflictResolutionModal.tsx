@@ -172,19 +172,18 @@ const DiffView = ({
   selectedNotes: SNNote[]
   convertSuperToMarkdown: boolean
 }) => {
-  const headlessSuperConverter = useRef(new HeadlessSuperConverter())
   const [results, setResults] = useState<fastdiff.Diff[]>([])
 
   useEffect(() => {
     const firstNote = selectedNotes[0]
     const first =
       firstNote.noteType === NoteType.Super && convertSuperToMarkdown
-        ? headlessSuperConverter.current.convertString(firstNote.text, 'md')
+        ? new HeadlessSuperConverter().convertString(firstNote.text, 'md')
         : firstNote.text
-    const secondNote = selectedNotes[0]
+    const secondNote = selectedNotes[1]
     const second =
       secondNote.noteType === NoteType.Super && convertSuperToMarkdown
-        ? headlessSuperConverter.current.convertString(secondNote.text, 'md')
+        ? new HeadlessSuperConverter().convertString(secondNote.text, 'md')
         : secondNote.text
 
     const results = fastdiff(first, second, undefined, true)
