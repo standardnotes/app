@@ -530,7 +530,7 @@ const NoteConflictResolutionModal = ({
         {isPreviewMode && (
           <div
             className={classNames(
-              'w-full flex-grow divide-x divide-border pb-0.5',
+              'min-h-0 w-full flex-grow divide-x divide-border pb-0.5',
               isMobileScreen ? (selectedMobileTab === 'content' ? 'flex' : 'hidden md:flex') : 'grid grid-rows-1',
             )}
             style={!isMobileScreen ? { gridTemplateColumns: `repeat(${selectedNotes.length}, 1fr)` } : undefined}
