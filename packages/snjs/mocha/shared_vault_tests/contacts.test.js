@@ -92,11 +92,9 @@ describe('contacts', function () {
     expect(updatedSelfContact.publicKeySet.signing).to.equal(context.signingPublicKey)
   })
 
-  it('should delete contact', async () => {
-    console.error('TODO: implement test case')
-  })
+  it.only('should not be able to delete self contact', async () => {
+    const selfContact = context.contacts.getSelfContact()
 
-  it('should not be able to delete self contact', async () => {
-    console.error('TODO: implement test case')
+    await Factory.expectThrowsAsync(() => context.contacts.deleteContact(selfContact), 'Cannot delete self')
   })
 })

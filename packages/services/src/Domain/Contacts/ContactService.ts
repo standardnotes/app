@@ -262,8 +262,11 @@ export class ContactService
   }
 
   async deleteContact(contact: TrustedContactInterface): Promise<void> {
-    await this.items.setItemToBeDeleted(contact)
+    if (contact.isMe) {
+      throw new Error('Cannot delete self')
+    }
 
+    await this.items.setItemToBeDeleted(contact)
     await this.sync.sync()
 
     void this.notifyEvent(ContactServiceEvent.ContactsChanged)

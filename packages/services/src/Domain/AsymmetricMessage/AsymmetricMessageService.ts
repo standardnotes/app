@@ -21,6 +21,7 @@ import { AsymmetricMessageServer, HttpServiceInterface } from '@standardnotes/ap
 import { SuccessfullyChangedCredentialsEventData } from '../Session/SuccessfullyChangedCredentialsEventData'
 import { SendOwnContactChangeMessage } from './UseCase/SendOwnContactChangeMessage'
 import { GetOutboundAsymmetricMessages } from './UseCase/GetOutboundAsymmetricMessages'
+import { GetInboundAsymmetricMessages } from './UseCase/GetInboundAsymmetricMessages'
 
 export class AsymmetricMessageService extends AbstractService implements InternalEventHandlerInterface {
   private messageServer: AsymmetricMessageServer
@@ -54,6 +55,11 @@ export class AsymmetricMessageService extends AbstractService implements Interna
 
   public async getOutboundMessages(): Promise<AsymmetricMessageServerHash[] | ClientDisplayableError> {
     const usecase = new GetOutboundAsymmetricMessages(this.messageServer)
+    return usecase.execute()
+  }
+
+  public async getInboundMessages(): Promise<AsymmetricMessageServerHash[] | ClientDisplayableError> {
+    const usecase = new GetInboundAsymmetricMessages(this.messageServer)
     return usecase.execute()
   }
 
@@ -103,7 +109,13 @@ export class AsymmetricMessageService extends AbstractService implements Interna
       } else if (trustedMessagePayload.type === AsymmetricMessagePayloadType.SharedVaultInvite) {
         throw new Error('Shared vault invites payloads are not handled as part of asymmetric messages')
       }
+
+      await this.deleteMessageAfterProcessing(message)
     }
+  }
+
+  private async deleteMessageAfterProcessing(message: AsymmetricMessageServerHash): Promise<void> {
+    await this.messageServer.deleteMessage({ messageUuid: message.uuid })
   }
 
   private async handleTrustedContactShareMessage(
