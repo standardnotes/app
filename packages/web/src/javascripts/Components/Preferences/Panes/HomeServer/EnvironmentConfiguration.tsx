@@ -1,18 +1,19 @@
-import AccordionItem from '@/Components/Shared/AccordionItem'
+import { useCallback, useRef, useState } from 'react'
 
+import AccordionItem from '@/Components/Shared/AccordionItem'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 import { useApplication } from '@/Components/ApplicationProvider'
 import { Subtitle } from '../../PreferencesComponents/Content'
 import DecoratedInput from '@/Components/Input/DecoratedInput'
 import Button from '@/Components/Button/Button'
-import { useCallback, useRef, useState } from 'react'
+import { NoteStatus } from '@/Components/StatusIndicator/StatusIndicator'
 
 type Props = {
-  setErrorMessageCallback: (message: string) => void
+  setServerStatusCallback: (status: NoteStatus) => void
 }
 
-const EnvironmentConfiguration = ({ setErrorMessageCallback }: Props) => {
+const EnvironmentConfiguration = ({ setServerStatusCallback }: Props) => {
   const application = useApplication()
   const homeServerService = application.homeServer
 
@@ -47,8 +48,10 @@ const EnvironmentConfiguration = ({ setErrorMessageCallback }: Props) => {
 
   const handleConfigurationChange = useCallback(async () => {
     try {
+      setServerStatusCallback({ type: 'saving', message: 'Applying changes & restarting...' })
+
       if (!homeServerConfiguration) {
-        setErrorMessageCallback('Home server configuration not found')
+        setServerStatusCallback({ type: 'error', message: 'Home server configuration not found' })
 
         return
       }
@@ -64,20 +67,24 @@ const EnvironmentConfiguration = ({ setErrorMessageCallback }: Props) => {
       homeServerConfiguration.port = parseInt(portInputRef.current?.value || homeServerConfiguration.port.toString())
       homeServerConfiguration.logLevel = logLevelInputRef.current?.value || homeServerConfiguration.logLevel
 
+      await homeServerService.stopHomeServer()
+
       await homeServerService.setHomeServerConfiguration(homeServerConfiguration)
 
-      const result = await homeServerService.restartHomeServer()
+      const result = await homeServerService.startHomeServer()
       if (result !== undefined) {
-        setErrorMessageCallback(result)
+        setServerStatusCallback({ type: 'error', message: result })
 
         return
       }
 
       setValuesChanged(false)
+
+      setServerStatusCallback({ type: 'saved', message: 'Online' })
     } catch (error) {
-      setErrorMessageCallback((error as Error).message)
+      setServerStatusCallback({ type: 'error', message: (error as Error).message })
     }
-  }, [homeServerConfiguration, homeServerService, setErrorMessageCallback])
+  }, [homeServerConfiguration, homeServerService, setServerStatusCallback])
 
   return (
     <PreferencesGroup>

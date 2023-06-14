@@ -41,8 +41,6 @@ export class HomeServerManager implements HomeServerManagerInterface {
   async setHomeServerConfiguration(configurationJSONString: string): Promise<void> {
     try {
       this.homeServerConfiguration = JSON.parse(configurationJSONString)
-
-      this.webContents.send(MessageToWebApp.HomeServerConfigurationChanged, configurationJSONString)
     } catch (error) {
       console.error(`Could not parse home server configuration: ${(error as Error).message}`)
     }
@@ -54,12 +52,6 @@ export class HomeServerManager implements HomeServerManagerInterface {
 
   async stopHomeServer(): Promise<void> {
     await this.homeServer.stop()
-  }
-
-  async restartHomeServer(): Promise<string | undefined> {
-    await this.stopHomeServer()
-
-    return this.startHomeServer()
   }
 
   async homeServerStatus(): Promise<HomeServerStatus> {
@@ -135,6 +127,11 @@ export class HomeServerManager implements HomeServerManagerInterface {
 
         return this.lastErrorMessage
       }
+
+      this.webContents.send(
+        MessageToWebApp.HomeServerConfigurationChanged,
+        JSON.stringify(this.homeServerConfiguration),
+      )
 
       this.webContents.send(MessageToWebApp.HomeServerStarted, this.getServerUrl())
 

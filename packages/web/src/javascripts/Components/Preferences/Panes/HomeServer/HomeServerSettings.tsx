@@ -3,12 +3,13 @@ import Button from '@/Components/Button/Button'
 import { Text } from '@/Components/Preferences/PreferencesComponents/Content'
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import { useApplication } from '@/Components/ApplicationProvider'
-import { HomeServerStatus } from '@standardnotes/snjs'
 import EncryptionStatusItem from '../Security/EncryptionStatusItem'
 import Icon from '@/Components/Icon/Icon'
 import OfflineSubscription from '../General/Advanced/OfflineSubscription'
 import EnvironmentConfiguration from './EnvironmentConfiguration'
 import DatabaseConfiguration from './DatabaseConfiguration'
+import { Status } from '@/Components/StatusIndicator/Status'
+import StatusIndicator from '@/Components/StatusIndicator/StatusIndicator'
 
 const HomeServerSettings = () => {
   const application = useApplication()
@@ -22,8 +23,7 @@ const HomeServerSettings = () => {
   const [isAtBottom, setIsAtBottom] = useState(true)
   const [showLogs, setShowLogs] = useState(false)
   const [logs, setLogs] = useState<string[]>([])
-  const [status, setStatus] = useState<HomeServerStatus>()
-  const [error, setError] = useState<string | null>(null)
+  const [status, setStatus] = useState<Status>()
   const [homeServerDataLocation, setHomeServerDataLocation] = useState(homeServerService.getHomeServerDataLocation())
   const [isAPremiumUser, setIsAPremiumUser] = useState(false)
   const [isSignedIn, setIsSignedIn] = useState(false)
@@ -33,8 +33,14 @@ const HomeServerSettings = () => {
   const refreshStatus = useCallback(async () => {
     if (desktopDevice) {
       const result = await desktopDevice.homeServerStatus()
-      setStatus(result)
-      setError(result.errorMessage || null)
+      setStatus({
+        type: result.status === 'on' ? 'saved' : result.errorMessage ? 'error' : 'saving',
+        message: result.status === 'on' ? 'Online' : result.errorMessage ? 'Offline' : 'Starting...',
+        desc:
+          result.status === 'on'
+            ? `Accessible on local network via: ${result.url}`
+            : result.errorMessage ?? 'Your home server is offline.',
+      })
     }
   }, [desktopDevice])
 
@@ -72,10 +78,10 @@ const HomeServerSettings = () => {
 
       const result = await desktopDevice?.startHomeServer()
       if (result !== undefined) {
-        setError(result)
+        setStatus({ type: 'error', message: result })
       }
     } catch (error) {
-      setError((error as Error).message)
+      setStatus({ type: 'error', message: (error as Error).message })
     }
   }, [homeServerService, desktopDevice])
 
@@ -83,7 +89,7 @@ const HomeServerSettings = () => {
     try {
       await homeServerService.openHomeServerDataLocation()
     } catch (error) {
-      setError((error as Error).message)
+      setStatus({ type: 'error', message: (error as Error).message })
     }
   }, [homeServerService])
 
@@ -141,37 +147,13 @@ const HomeServerSettings = () => {
   }, [logs, isAtBottom])
 
   const getStatusString = useCallback(() => {
-    let statusString = <Text>Status unavailable</Text>
-    if (!status) {
-      return statusString
-    }
-
-    if (status.status === 'on') {
-      statusString = (
-        <Text>
-          Accessible on local network via{' '}
-          <a target="_blank" className="font-bold text-info" href={status.url}>
-            {status.url}
-          </a>
-          {'.'}
-        </Text>
-      )
-    } else if (status.status === 'off') {
-      statusString = <Text>Not started</Text>
-    }
-
     return (
       <>
-        {statusString}
-        {error && (
-          <>
-            <HorizontalSeparator classes="my-4" />
-            <Text className="bg-danger text-danger-contrast">Error: {error}</Text>
-          </>
-        )}
+        <Text>Status: </Text>
+        <StatusIndicator status={status} syncTakingTooLong={false} updateSavingIndicator={true} />
       </>
     )
-  }, [status, error])
+  }, [status])
 
   return (
     <div>
@@ -227,9 +209,9 @@ const HomeServerSettings = () => {
       )}
       <div className="h-2 w-full" />
       <HorizontalSeparator classes="my-4" />
-      <EnvironmentConfiguration setErrorMessageCallback={setError} />
+      <EnvironmentConfiguration setServerStatusCallback={setStatus} />
       <HorizontalSeparator classes="my-4" />
-      <DatabaseConfiguration setErrorMessageCallback={setError} />
+      <DatabaseConfiguration setServerStatusCallback={setStatus} />
     </div>
   )
 }

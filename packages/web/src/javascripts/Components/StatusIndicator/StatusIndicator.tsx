@@ -1,16 +1,13 @@
+import { ReactNode, useCallback, useState } from 'react'
+import { classNames } from '@standardnotes/utils'
+import { IconType, PrefKey } from '@standardnotes/snjs'
+
 import { ElementIds } from '@/Constants/ElementIDs'
 import { PrefDefaults } from '@/Constants/PrefDefaults'
-import { classNames } from '@standardnotes/utils'
-import { ReactNode, useCallback, useState } from 'react'
-import { IconType, PrefKey } from '@standardnotes/snjs'
+
 import Icon from '../Icon/Icon'
 import { useApplication } from '../ApplicationProvider'
-
-export type NoteStatus = {
-  type: 'saving' | 'saved' | 'error'
-  message: string
-  desc?: string
-}
+import { Status } from './Status'
 
 const IndicatorWithTooltip = ({
   className,
@@ -37,7 +34,7 @@ const IndicatorWithTooltip = ({
       aria-describedby={ElementIds.NoteStatusTooltip}
     >
       <Icon className={animateIcon ? 'animate-spin' : ''} type={icon} size="small" />
-      <span className="sr-only">Note sync status</span>
+      <span className="sr-only">Sync status</span>
     </button>
     <div
       id={ElementIds.NoteStatusTooltip}
@@ -53,12 +50,12 @@ const IndicatorWithTooltip = ({
 )
 
 type Props = {
-  status: NoteStatus | undefined
+  status: Status | undefined
   syncTakingTooLong: boolean
   updateSavingIndicator?: boolean
 }
 
-const NoteStatusIndicator = ({
+const StatusIndicator = ({
   status,
   syncTakingTooLong,
   updateSavingIndicator = PrefDefaults[PrefKey.UpdateSavingStatusIndicator],
@@ -139,10 +136,10 @@ const NoteStatusIndicator = ({
       icon="info"
       isTooltipVisible={isTooltipVisible}
     >
-      <div className="text-sm font-bold">Note status updates are disabled</div>
+      <div className="text-sm font-bold">Status updates are disabled</div>
       <div className="mt-0.5">Click to enable.</div>
     </IndicatorWithTooltip>
   )
 }
 
-export default NoteStatusIndicator
+export default StatusIndicator

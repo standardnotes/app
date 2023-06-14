@@ -54,10 +54,6 @@ export class DesktopDevice extends WebOrDesktopDevice implements DesktopDeviceIn
     return this.remoteBridge.getHomeServerLogs()
   }
 
-  restartHomeServer(): Promise<string | undefined> {
-    return this.remoteBridge.restartHomeServer()
-  }
-
   homeServerStatus(): Promise<HomeServerStatus> {
     return this.remoteBridge.homeServerStatus()
   }

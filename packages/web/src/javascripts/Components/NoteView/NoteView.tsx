@@ -34,7 +34,6 @@ import LinkedItemsButton from '../LinkedItems/LinkedItemsButton'
 import MobileItemsListButton from '../NoteGroupView/MobileItemsListButton'
 import EditingDisabledBanner from './EditingDisabledBanner'
 import { reloadFont } from './FontFunctions'
-import NoteStatusIndicator, { NoteStatus } from './NoteStatusIndicator'
 import NoteViewFileDropTarget from './NoteViewFileDropTarget'
 import { NoteViewProps } from './NoteViewProps'
 import {
@@ -45,6 +44,8 @@ import { SuperEditorContentId } from '../SuperEditor/Constants'
 import { NoteViewController } from './Controller/NoteViewController'
 import { PlainEditor, PlainEditorInterface } from './PlainEditor/PlainEditor'
 import { EditorMargins, EditorMaxWidths } from '../EditorWidthSelectionModal/EditorWidths'
+import { Status } from '../StatusIndicator/Status'
+import StatusIndicator from '../StatusIndicator/StatusIndicator'
 
 const MinimumStatusDuration = 400
 
@@ -61,7 +62,7 @@ type State = {
   isDesktop?: boolean
   editorLineWidth: EditorLineWidth
   noteLocked: boolean
-  noteStatus?: NoteStatus
+  noteStatus?: Status
   saveError?: boolean
   showProtectedWarning: boolean
   spellcheck: boolean
@@ -521,7 +522,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
     })
   }
 
-  showErrorStatus(error?: NoteStatus) {
+  showErrorStatus(error?: Status) {
     if (!error) {
       error = {
         type: 'error',
@@ -536,7 +537,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
     this.setStatus(error)
   }
 
-  setStatus(status: NoteStatus, wait = true) {
+  setStatus(status: Status, wait = true) {
     if (this.statusTimeout) {
       clearTimeout(this.statusTimeout)
     }
@@ -844,7 +845,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
                     autoComplete="off"
                   />
                 </div>
-                <NoteStatusIndicator
+                <StatusIndicator
                   status={this.state.noteStatus}
                   syncTakingTooLong={this.state.syncTakingTooLong}
                   updateSavingIndicator={this.state.updateSavingIndicator}

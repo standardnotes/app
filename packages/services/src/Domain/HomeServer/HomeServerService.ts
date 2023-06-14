@@ -24,6 +24,14 @@ export class HomeServerService extends AbstractService implements HomeServerServ
     super(internalEventBus)
   }
 
+  async startHomeServer(): Promise<string | undefined> {
+    return this.desktopDevice.startHomeServer()
+  }
+
+  async stopHomeServer(): Promise<void> {
+    return this.desktopDevice.stopHomeServer()
+  }
+
   async isHomeServerRunning(): Promise<boolean> {
     return this.desktopDevice.isHomeServerRunning()
   }
@@ -36,12 +44,6 @@ export class HomeServerService extends AbstractService implements HomeServerServ
     }
 
     return Result.ok('Premium features activated')
-  }
-
-  async restartHomeServer(): Promise<string | undefined> {
-    await this.desktopDevice.stopHomeServer()
-
-    return this.desktopDevice.startHomeServer()
   }
 
   async setHomeServerConfiguration(config: HomeServerEnvironmentConfiguration): Promise<void> {
@@ -59,7 +61,7 @@ export class HomeServerService extends AbstractService implements HomeServerServ
   async enableHomeServer(): Promise<void> {
     this.storageService.setValue(StorageKey.HomeServerEnabled, true)
 
-    await this.desktopDevice.startHomeServer()
+    await this.startHomeServer()
   }
 
   isHomeServerEnabled(): boolean {
@@ -73,7 +75,7 @@ export class HomeServerService extends AbstractService implements HomeServerServ
   async disableHomeServer(): Promise<void> {
     this.storageService.setValue(StorageKey.HomeServerEnabled, false)
 
-    await this.desktopDevice.stopHomeServer()
+    await this.stopHomeServer()
   }
 
   getHomeServerConfiguration(): HomeServerEnvironmentConfiguration | undefined {
@@ -127,7 +129,7 @@ export class HomeServerService extends AbstractService implements HomeServerServ
   private async startHomeServerIfItIsEnabled(): Promise<void> {
     const homeServerIsEnabled = this.storageService.getValue(StorageKey.HomeServerEnabled, undefined, false)
     if (homeServerIsEnabled) {
-      await this.desktopDevice.startHomeServer()
+      await this.startHomeServer()
     }
   }
 

@@ -68,7 +68,6 @@ export class RemoteBridge implements CrossProcessBridge {
       askForMediaAccess: this.askForMediaAccess.bind(this),
       startHomeServer: this.startHomeServer.bind(this),
       stopHomeServer: this.stopHomeServer.bind(this),
-      restartHomeServer: this.restartHomeServer.bind(this),
       homeServerStatus: this.homeServerStatus.bind(this),
       wasLegacyTextBackupsExplicitlyDisabled: this.wasLegacyTextBackupsExplicitlyDisabled.bind(this),
       getLegacyTextBackupsLocation: this.getLegacyTextBackupsLocation.bind(this),
@@ -262,10 +261,6 @@ export class RemoteBridge implements CrossProcessBridge {
 
   stopHomeServer(): Promise<void> {
     return this.homeServerManager.stopHomeServer()
-  }
-
-  restartHomeServer(): Promise<string | undefined> {
-    return this.homeServerManager.restartHomeServer()
   }
 
   homeServerStatus(): Promise<HomeServerStatus> {
