@@ -31,6 +31,8 @@ import Button from '../Button/Button'
 import Spinner from '../Spinner/Spinner'
 import Switch from '../Switch/Switch'
 import fastdiff from 'fast-diff'
+import { HeadlessSuperConverter } from '../SuperEditor/Tools/HeadlessSuperConverter'
+import StyledTooltip from '../StyledTooltip/StyledTooltip'
 
 const ConflictListItem = ({
   isSelected,
@@ -52,7 +54,7 @@ const ConflictListItem = ({
     <button
       tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
       className={classNames(
-        'flex w-full flex-col border-l-2 bg-transparent px-3 py-2.5 text-left text-sm text-text',
+        'flex w-full select-none flex-col border-l-2 bg-transparent px-3 py-2.5 text-left text-sm text-text',
         isSelected ? 'border-info bg-info-backdrop' : 'border-transparent',
         disabled
           ? 'cursor-not-allowed opacity-75'
@@ -164,11 +166,20 @@ const NoteContent = ({ note }: { note: SNNote }) => {
 }
 
 const DiffView = ({ selectedNotes }: { selectedNotes: SNNote[] }) => {
+  const headlessSuperConverter = useRef(new HeadlessSuperConverter())
   const [results, setResults] = useState<fastdiff.Diff[]>([])
 
   useEffect(() => {
-    const first = selectedNotes[0].text
-    const second = selectedNotes[1].text
+    const firstNote = selectedNotes[0]
+    const first =
+      firstNote.noteType === NoteType.Super
+        ? headlessSuperConverter.current.convertString(firstNote.text, 'md')
+        : firstNote.text
+    const secondNote = selectedNotes[0]
+    const second =
+      secondNote.noteType === NoteType.Super
+        ? headlessSuperConverter.current.convertString(secondNote.text, 'md')
+        : secondNote.text
 
     const results = fastdiff(first, second, undefined, true)
 
@@ -377,6 +388,7 @@ const NoteConflictResolutionModal = ({
       setMultipleSelectionMode('preview')
     }
   }, [selectedNotes.length])
+  const showSuperConversionInfo = selectedNotes.some((note) => note.noteType === NoteType.Super) && !isPreviewMode
 
   return (
     <Modal
@@ -523,8 +535,8 @@ const NoteConflictResolutionModal = ({
         )}
         {!isPreviewMode && selectedNotes.length === 2 && <DiffView selectedNotes={selectedNotes} />}
         {selectedNotes.length === 2 && (
-          <div className="flex items-center justify-center gap-2 border-t border-border px-4 py-1.5">
-            <div>Preview Mode</div>
+          <div className="flex min-h-11 items-center justify-center gap-2 border-t border-border px-4 py-1.5">
+            <div className={showSuperConversionInfo ? 'ml-9' : ''}>Preview Mode</div>
             <Switch
               checked={!isPreviewMode}
               onChange={function (checked: boolean): void {
@@ -532,6 +544,18 @@ const NoteConflictResolutionModal = ({
               }}
             />
             <div>Diff Mode</div>
+            {showSuperConversionInfo && (
+              <StyledTooltip
+                className="!z-modal !max-w-[50ch]"
+                label="Super notes use JSON under the hood to create rich and flexible documents. While neatly organized, it's not ideal to read or compare manually. Instead, this diff compares a Markdown rendition of the notes."
+                showOnMobile
+                portal={false}
+              >
+                <button className="rounded-full p-1 hover:bg-contrast">
+                  <Icon type="info" className="text-neutral" />
+                </button>
+              </StyledTooltip>
+            )}
           </div>
         )}
       </div>
