@@ -5666,9 +5666,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/auth-server@npm:^1.119.1":
-  version: 1.119.1
-  resolution: "@standardnotes/auth-server@npm:1.119.1"
+"@standardnotes/auth-server@npm:^1.119.2":
+  version: 1.119.2
+  resolution: "@standardnotes/auth-server@npm:1.119.2"
   dependencies:
     "@aws-sdk/client-sns": ^3.332.0
     "@aws-sdk/client-sqs": ^3.332.0
@@ -5717,7 +5717,7 @@ __metadata:
       optional: true
     newrelic:
       optional: true
-  checksum: 8f19a7b778dfcf3e0907fbae0c284804d7b5b3019e744ec3d7bba70a1abdfcb6459bb86ba1bb031d705eb1a36ee25bf927bf07b3fadc5fc9f8c7ba780bd4821b
+  checksum: e561d1a9d2b8951c90cf3f0821a8fc98506e13f399b76178b338bebe713c4e4d0cf30c6f5185e1bf59fd7fa3e1b5ec3af091bcb7f77216ba86cf35fdd593c22c
   languageName: node
   linkType: hard
 
@@ -5835,7 +5835,7 @@ __metadata:
     "@babel/preset-env": "*"
     "@electron/remote": ^2.0.9
     "@standardnotes/electron-clear-data": 1.1.1
-    "@standardnotes/home-server": ^1.11.4
+    "@standardnotes/home-server": ^1.11.5
     "@standardnotes/web": "workspace:*"
     "@types/fs-extra": ^11.0.1
     "@types/lodash": ^4.14.189
@@ -6113,17 +6113,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/home-server@npm:^1.11.4":
-  version: 1.11.4
-  resolution: "@standardnotes/home-server@npm:1.11.4"
+"@standardnotes/home-server@npm:^1.11.5":
+  version: 1.11.5
+  resolution: "@standardnotes/home-server@npm:1.11.5"
   dependencies:
     "@standardnotes/api-gateway": ^1.64.1
-    "@standardnotes/auth-server": ^1.119.1
+    "@standardnotes/auth-server": ^1.119.2
     "@standardnotes/domain-core": ^1.18.0
     "@standardnotes/domain-events-infra": ^1.12.5
     "@standardnotes/files-server": ^1.18.2
-    "@standardnotes/revisions-server": ^1.23.0
-    "@standardnotes/syncing-server": ^1.44.0
+    "@standardnotes/revisions-server": ^1.23.1
+    "@standardnotes/syncing-server": ^1.44.1
     cors: 2.8.5
     dotenv: ^16.0.1
     express: ^4.18.2
@@ -6134,7 +6134,7 @@ __metadata:
     prettyjson: ^1.2.5
     reflect-metadata: 0.1.13
     winston: ^3.8.1
-  checksum: b9ec073a0e482ed10413f3b56eec33f35a077ffd8d71a48f4060e1752f99853f1d7cd3119421cbc906533fda81c02e99f774d7f6237238b5d95142cdef80434e
+  checksum: 859816c6b4e4d1b0b7ad9ab7fd19f7a6be57ed6ae8e573f5e62b0a2b1768f9088df6e68aa5cf516a17219d1b203d5eb8d8be96e370abddd29767ed8b1b0e1d3e
   languageName: node
   linkType: hard
 
@@ -6342,9 +6342,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/revisions-server@npm:^1.23.0":
-  version: 1.23.0
-  resolution: "@standardnotes/revisions-server@npm:1.23.0"
+"@standardnotes/revisions-server@npm:^1.23.1":
+  version: 1.23.1
+  resolution: "@standardnotes/revisions-server@npm:1.23.1"
   dependencies:
     "@aws-sdk/client-s3": ^3.332.0
     "@aws-sdk/client-sqs": ^3.332.0
@@ -6376,7 +6376,7 @@ __metadata:
       optional: true
     newrelic:
       optional: true
-  checksum: b87dc6fc1033264ae244f8cbd950ce9ed5d8347afcd8749c5f0f4459518ca5e7dd4879c44e0dea50dd58ad6738cbc9d91971f968ca98888469c1b1db542d356b
+  checksum: 9fc23679888e972e6adb18c30d3e0f5873f9e3ba474597c0e48548d27db2ff8aaa6822ce3037695a65ea586afaf2170b866b2c53976d31bdd96a5a0a110c3ab8
   languageName: node
   linkType: hard
 
@@ -6633,9 +6633,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/syncing-server@npm:^1.44.0":
-  version: 1.44.0
-  resolution: "@standardnotes/syncing-server@npm:1.44.0"
+"@standardnotes/syncing-server@npm:^1.44.1":
+  version: 1.44.1
+  resolution: "@standardnotes/syncing-server@npm:1.44.1"
   dependencies:
     "@aws-sdk/client-s3": ^3.332.0
     "@aws-sdk/client-sns": ^3.332.0
@@ -6676,7 +6676,7 @@ __metadata:
       optional: true
     newrelic:
       optional: true
-  checksum: b3f29da1a7e23f1419f2f1a4964748e03ab67f78d09f515799aced90e2231f97be52634efb5f2324ad10e8820eb1aec3215b391bc9ca2cb0e6de6e6934de26a7
+  checksum: 4120c4aa057c35106aae9e1af61a72cbf50db6ef4c425b43b57d40d36aeb82046022a80d383efbc796e6dbc7423de35d409a5e1e964b27dffb31eebd28125ed9
   languageName: node
   linkType: hard
 
