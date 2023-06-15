@@ -1,5 +1,4 @@
 import * as Factory from '../lib/factory.js'
-import * as Collaboration from '../lib/Collaboration.js'
 
 chai.use(chaiAsPromised)
 const expect = chai.expect
@@ -36,26 +35,6 @@ describe('contacts', function () {
     expect(contact.publicKeySet.encryption).to.equal('my_public_key')
     expect(contact.publicKeySet.signing).to.equal('my_signing_public_key')
     expect(contact.contactUuid).to.equal('123')
-  })
-
-  it('when a sender keypair changes, it should accept the change if the message is signed by the current trusted keys', async () => {
-    const { contactContext, deinitContactContext } = await Collaboration.createContactContext()
-    await Collaboration.createTrustedContactForUserOfContext(context, contactContext)
-    await Collaboration.createTrustedContactForUserOfContext(contactContext, context)
-    const originalContact = contactContext.contacts.findTrustedContact(context.userUuid)
-
-    await context.changePassword('new_password')
-    await contactContext.sync()
-
-    const updatedContact = contactContext.contacts.findTrustedContact(context.userUuid)
-
-    expect(updatedContact.publicKey.encryption).to.not.equal(originalContact.publicKey.encryption)
-    expect(updatedContact.publicKey.signing).to.not.equal(originalContact.publicKey.signing)
-
-    expect(updatedContact.publicKey.encryption).to.equal(context.publicKey)
-    expect(updatedContact.publicKey.signing).to.equal(context.signingPublicKey)
-
-    await deinitContactContext()
   })
 
   it('should create self contact on registration', async () => {
@@ -96,5 +75,9 @@ describe('contacts', function () {
     const selfContact = context.contacts.getSelfContact()
 
     await Factory.expectThrowsAsync(() => context.contacts.deleteContact(selfContact), 'Cannot delete self')
+  })
+
+  it('should not be able to delete a trusted contact if it belongs to a vault I administer', async () => {
+    console.error('TODO: implement test')
   })
 })

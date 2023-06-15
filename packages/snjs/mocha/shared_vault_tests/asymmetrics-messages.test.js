@@ -4,7 +4,7 @@ import * as Collaboration from '../lib/Collaboration.js'
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
-describe.only('asymmetric messages', function () {
+describe('asymmetric messages', function () {
   this.timeout(Factory.TwentySecondTimeout)
 
   let context
@@ -65,8 +65,6 @@ describe.only('asymmetric messages', function () {
 
     await Collaboration.acceptAllInvites(thirdPartyContext)
 
-    contactContext.lockSyncing()
-
     const sendContactSharePromise = context.resolveWhenSharedVaultServiceSendsContactShareMessage()
 
     await context.contacts.createOrEditTrustedContact({
@@ -79,7 +77,7 @@ describe.only('asymmetric messages', function () {
     await sendContactSharePromise
 
     const completedProcessingMessagesPromise = contactContext.resolveWhenAsymmetricMessageProcessingCompletes()
-    contactContext.unlockSyncing()
+
     await contactContext.sync()
     await completedProcessingMessagesPromise
 
@@ -195,6 +193,29 @@ describe.only('asymmetric messages', function () {
     const contact = contactContext.contacts.findTrustedContact(context.userUuid)
     expect(contact.publicKeySet.encryption).to.equal(context.publicKey)
     expect(contact.publicKeySet.signing).to.equal(context.signingPublicKey)
+
+    await deinitContactContext()
+  })
+
+  it('should process sender keypair changed message', async () => {
+    const { contactContext, deinitContactContext } = await Collaboration.createContactContext()
+    await Collaboration.createTrustedContactForUserOfContext(context, contactContext)
+    await Collaboration.createTrustedContactForUserOfContext(contactContext, context)
+    const originalContact = contactContext.contacts.findTrustedContact(context.userUuid)
+
+    await context.changePassword('new_password')
+
+    const completedProcessingMessagesPromise = contactContext.resolveWhenAsymmetricMessageProcessingCompletes()
+    await contactContext.sync()
+    await completedProcessingMessagesPromise
+
+    const updatedContact = contactContext.contacts.findTrustedContact(context.userUuid)
+
+    expect(updatedContact.publicKeySet.encryption).to.not.equal(originalContact.publicKeySet.encryption)
+    expect(updatedContact.publicKeySet.signing).to.not.equal(originalContact.publicKeySet.signing)
+
+    expect(updatedContact.publicKeySet.encryption).to.equal(context.publicKey)
+    expect(updatedContact.publicKeySet.signing).to.equal(context.signingPublicKey)
 
     await deinitContactContext()
   })

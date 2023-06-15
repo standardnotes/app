@@ -33,7 +33,7 @@ export class ShareContactWithAllMembersOfSharedVaultUseCase {
       return ClientDisplayableError.FromString('Cannot share contact; shared vault users not found')
     }
 
-    const users = usersResponse.data.users.filter((user) => user.user_uuid !== params.senderUserUuid)
+    const users = usersResponse.data.users
     if (users.length === 0) {
       return
     }
@@ -41,6 +41,14 @@ export class ShareContactWithAllMembersOfSharedVaultUseCase {
     const messageSendUseCase = new SendAsymmetricMessageUseCase(this.messageServer)
 
     for (const vaultUser of users) {
+      if (vaultUser.user_uuid === params.senderUserUuid) {
+        continue
+      }
+
+      if (vaultUser.user_uuid === params.contactToShare.contactUuid) {
+        continue
+      }
+
       const vaultUserAsContact = this.contacts.findTrustedContact(vaultUser.user_uuid)
       if (!vaultUserAsContact) {
         continue

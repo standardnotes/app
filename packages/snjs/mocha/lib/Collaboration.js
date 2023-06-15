@@ -76,7 +76,7 @@ export const createSharedVaultWithUnacceptedButTrustedInvite = async (
   return { sharedVault, contact, contactContext, deinitContactContext, invite }
 }
 
-export const createSharedVaultWithUnaccepteAndUntrustedInvite = async (
+export const createSharedVaultWithUnacceptedAndUntrustedInvite = async (
   context,
   permissions = SharedVaultPermission.Write,
 ) => {
@@ -100,7 +100,10 @@ export const inviteThirdPartyToSharedVault = async (
     await createContactContext()
 
   const thirdPartyContact = await createTrustedContactForUserOfContext(context, thirdPartyContext)
+  await createTrustedContactForUserOfContext(thirdPartyContext, context)
   await context.sharedVaults.inviteContactToSharedVault(sharedVault, thirdPartyContact, permissions)
+
+  await thirdPartyContext.sync()
 
   return { thirdPartyContext, thirdPartyContact, deinitThirdPartyContext }
 }
