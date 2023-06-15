@@ -8,11 +8,13 @@ import Icon from '@/Components/Icon/Icon'
 import OfflineSubscription from '../General/Advanced/OfflineSubscription'
 import EnvironmentConfiguration from './Settings/EnvironmentConfiguration'
 import DatabaseConfiguration from './Settings/DatabaseConfiguration'
-import { HomeServerEnvironmentConfiguration } from '@standardnotes/snjs'
+import { HomeServerEnvironmentConfiguration, sleep } from '@standardnotes/snjs'
 import StatusIndicator from './Status/StatusIndicator'
 import { Status } from './Status/Status'
 
 const HomeServerSettings = () => {
+  const SERVER_CHANGE_INTERVAL = 5000
+
   const application = useApplication()
   const desktopDevice = application.desktopDevice
   const homeServerService = application.homeServer
@@ -96,6 +98,8 @@ const HomeServerSettings = () => {
 
         await homeServerService.stopHomeServer()
 
+        await sleep(SERVER_CHANGE_INTERVAL)
+
         await homeServerService.setHomeServerConfiguration(changedServerConfiguration)
 
         const result = await homeServerService.startHomeServer()
@@ -113,19 +117,30 @@ const HomeServerSettings = () => {
 
   const changeHomeServerDataLocation = useCallback(async () => {
     try {
-      await desktopDevice?.stopHomeServer()
+      await homeServerService.stopHomeServer()
 
       const newLocation = await homeServerService.changeHomeServerDataLocation()
+
+      if (!newLocation) {
+        return
+      }
+
+      setStatus({ state: 'restarting', message: 'Applying changes & restarting...' })
+
+      await sleep(SERVER_CHANGE_INTERVAL)
+
       setHomeServerDataLocation(newLocation)
 
-      const result = await desktopDevice?.startHomeServer()
+      const result = await homeServerService.startHomeServer()
       if (result !== undefined) {
         setStatus({ state: 'error', message: result })
       }
+
+      setStatus({ state: 'online', message: 'Online' })
     } catch (error) {
       setStatus({ state: 'error', message: (error as Error).message })
     }
-  }, [homeServerService, desktopDevice])
+  }, [homeServerService, setStatus, setHomeServerDataLocation])
 
   const openHomeServerDataLocation = useCallback(async () => {
     try {
