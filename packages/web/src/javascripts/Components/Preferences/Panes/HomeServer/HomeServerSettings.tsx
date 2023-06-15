@@ -6,10 +6,11 @@ import { useApplication } from '@/Components/ApplicationProvider'
 import EncryptionStatusItem from '../Security/EncryptionStatusItem'
 import Icon from '@/Components/Icon/Icon'
 import OfflineSubscription from '../General/Advanced/OfflineSubscription'
-import EnvironmentConfiguration from './EnvironmentConfiguration'
-import DatabaseConfiguration from './DatabaseConfiguration'
+import EnvironmentConfiguration from './Settings/EnvironmentConfiguration'
+import DatabaseConfiguration from './Settings/DatabaseConfiguration'
 import { Status } from '@/Components/StatusIndicator/Status'
 import StatusIndicator from '@/Components/StatusIndicator/StatusIndicator'
+import { HomeServerEnvironmentConfiguration } from '@standardnotes/snjs'
 
 const HomeServerSettings = () => {
   const application = useApplication()
@@ -20,6 +21,7 @@ const HomeServerSettings = () => {
   const viewControllerManager = application.getViewControllerManager()
 
   const logsTextarea = useRef<HTMLTextAreaElement>(null)
+
   const [isAtBottom, setIsAtBottom] = useState(true)
   const [showLogs, setShowLogs] = useState(false)
   const [logs, setLogs] = useState<string[]>([])
@@ -29,20 +31,25 @@ const HomeServerSettings = () => {
   const [isSignedIn, setIsSignedIn] = useState(false)
   const [showOfflineSubscriptionActivation, setShowOfflineSubscriptionActivation] = useState(false)
   const [logsIntervalRef, setLogsIntervalRef] = useState<NodeJS.Timer | null>(null)
+  const [homeServerConfiguration, setHomeServerConfiguration] = useState<HomeServerEnvironmentConfiguration | null>(
+    null,
+  )
 
   const refreshStatus = useCallback(async () => {
-    if (desktopDevice) {
-      const result = await desktopDevice.homeServerStatus()
-      setStatus({
-        type: result.status === 'on' ? 'saved' : result.errorMessage ? 'error' : 'saving',
-        message: result.status === 'on' ? 'Online' : result.errorMessage ? 'Offline' : 'Starting...',
-        desc:
-          result.status === 'on'
-            ? `Accessible on local network via: ${result.url}`
-            : result.errorMessage ?? 'Your home server is offline.',
-      })
+    if (!desktopDevice) {
+      return
     }
-  }, [desktopDevice])
+
+    const result = await desktopDevice.homeServerStatus()
+    setStatus({
+      type: result.status === 'on' ? 'saved' : result.errorMessage ? 'error' : 'saving',
+      message: result.status === 'on' ? 'Online' : result.errorMessage ? 'Offline' : 'Starting...',
+      desc:
+        result.status === 'on'
+          ? `Accessible on local network via: ${result.url}`
+          : result.errorMessage ?? 'Your home server is offline.',
+    })
+  }, [desktopDevice, setStatus])
 
   const setupLogsRefresh = useCallback(async () => {
     if (logsIntervalRef !== null) {
@@ -61,13 +68,48 @@ const HomeServerSettings = () => {
     setLogsIntervalRef(interval)
   }, [desktopDevice, logsIntervalRef])
 
+  const initialyLoadHomeServerConfiguration = useCallback(async () => {
+    if (!homeServerConfiguration) {
+      const homeServerConfiguration = homeServerService.getHomeServerConfiguration()
+      if (homeServerConfiguration) {
+        setHomeServerConfiguration(homeServerConfiguration)
+      }
+    }
+  }, [homeServerConfiguration, homeServerService])
+
   useEffect(() => {
     setIsAPremiumUser(featuresService.hasOfflineRepo())
 
     setIsSignedIn(sessionsService.isSignedIn())
 
+    void initialyLoadHomeServerConfiguration()
+
     void refreshStatus()
-  }, [featuresService, sessionsService, desktopDevice, showLogs, refreshStatus])
+  }, [featuresService, sessionsService, refreshStatus, initialyLoadHomeServerConfiguration])
+
+  const handleHomeServerConfigurationChange = useCallback(
+    async (changedServerConfiguration: HomeServerEnvironmentConfiguration) => {
+      try {
+        setStatus({ type: 'saving', message: 'Applying changes & restarting...' })
+
+        setHomeServerConfiguration(changedServerConfiguration)
+
+        await homeServerService.stopHomeServer()
+
+        await homeServerService.setHomeServerConfiguration(changedServerConfiguration)
+
+        const result = await homeServerService.startHomeServer()
+        if (result !== undefined) {
+          setStatus({ type: 'error', message: result })
+        }
+
+        setStatus({ type: 'saved', message: 'Online' })
+      } catch (error) {
+        setStatus({ type: 'error', message: (error as Error).message })
+      }
+    },
+    [homeServerService, setStatus, setHomeServerConfiguration],
+  )
 
   const changeHomeServerDataLocation = useCallback(async () => {
     try {
@@ -208,10 +250,20 @@ const HomeServerSettings = () => {
         </div>
       )}
       <div className="h-2 w-full" />
-      <HorizontalSeparator classes="my-4" />
-      <EnvironmentConfiguration setServerStatusCallback={setStatus} />
-      <HorizontalSeparator classes="my-4" />
-      <DatabaseConfiguration setServerStatusCallback={setStatus} />
+      {homeServerConfiguration && (
+        <>
+          <HorizontalSeparator classes="my-4" />
+          <EnvironmentConfiguration
+            homeServerConfiguration={homeServerConfiguration}
+            setHomeServerConfigurationChangedCallback={handleHomeServerConfigurationChange}
+          />
+          <HorizontalSeparator classes="my-4" />
+          <DatabaseConfiguration
+            homeServerConfiguration={homeServerConfiguration}
+            setHomeServerConfigurationChangedCallback={handleHomeServerConfigurationChange}
+          />
+        </>
+      )}
     </div>
   )
 }
