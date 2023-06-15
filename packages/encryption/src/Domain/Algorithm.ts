@@ -51,13 +51,13 @@ export enum V004Algorithm {
 
   MasterKeyEncryptionKeyPairSubKeyNumber = 1,
   MasterKeyEncryptionKeyPairSubKeyContext = 'sn-pkc-e',
-  MasterKeyEncryptionKeyPairSubKeyLength = SodiumConstant.crypto_box_SEEDBYTES,
+  MasterKeyEncryptionKeyPairSubKeyBytes = SodiumConstant.crypto_box_SEEDBYTES,
 
   MasterKeySigningKeyPairSubKeyNumber = 2,
   MasterKeySigningKeyPairSubKeyContext = 'sn-pkc-s',
-  MasterKeySigningKeyPairSubKeyLength = SodiumConstant.crypto_sign_SEEDBYTES,
+  MasterKeySigningKeyPairSubKeyBytes = SodiumConstant.crypto_sign_SEEDBYTES,
 
   PayloadKeyHashingKeySubKeyNumber = 1,
   PayloadKeyHashingKeySubKeyContext = 'sn-sym-h',
-  PayloadKeyHashingKeySubKeyLength = SodiumConstant.crypto_generichash_KEYBYTES,
+  PayloadKeyHashingKeySubKeyBytes = SodiumConstant.crypto_generichash_KEYBYTES,
 }

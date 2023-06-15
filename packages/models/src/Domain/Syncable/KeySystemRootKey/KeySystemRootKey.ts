@@ -5,31 +5,34 @@ import { HistoryEntryInterface } from '../../Runtime/History'
 import { KeySystemRootKeyContent } from './KeySystemRootKeyContent'
 import { KeySystemRootKeyInterface } from './KeySystemRootKeyInterface'
 import { KeySystemIdentifier } from './KeySystemIdentifier'
+import { KeySystemRootKeyParamsInterface } from '../../Local/KeyParams/KeySystemRootKeyParamsInterface'
 
 export function isKeySystemRootKey(x: { content_type: ContentType }): x is KeySystemRootKey {
   return x.content_type === ContentType.KeySystemRootKey
 }
 
 export class KeySystemRootKey extends DecryptedItem<KeySystemRootKeyContent> implements KeySystemRootKeyInterface {
+  keyParams: KeySystemRootKeyParamsInterface
   systemIdentifier: KeySystemIdentifier
 
   systemName: string
   systemDescription?: string
 
   key: string
-  keyTimestamp: number
   keyVersion: ProtocolVersion
+  itemsKeyAnchor: string
 
   constructor(payload: DecryptedPayloadInterface<KeySystemRootKeyContent>) {
     super(payload)
 
+    this.keyParams = payload.content.keyParams
     this.systemIdentifier = payload.content.systemIdentifier
     this.systemName = payload.content.systemName
     this.systemDescription = payload.content.systemDescription
 
     this.key = payload.content.key
-    this.keyTimestamp = payload.content.keyTimestamp
     this.keyVersion = payload.content.keyVersion
+    this.itemsKeyAnchor = payload.content.itemsKeyAnchor
   }
 
   override strategyWhenConflictingWithItem(

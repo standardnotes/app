@@ -11,7 +11,8 @@ export class DeriveRootKeyUseCase {
   constructor(private readonly crypto: PureCryptoInterface) {}
 
   async execute<K extends RootKeyInterface>(password: string, keyParams: SNRootKeyParams): Promise<K> {
-    const salt = await this.generateSalt(keyParams.content004.identifier, keyParams.content004.pw_nonce)
+    const seed = keyParams.content004.pw_nonce
+    const salt = await this.generateSalt(keyParams.content004.identifier, seed)
     const derivedKey = this.crypto.argon2(
       password,
       salt,
@@ -27,7 +28,7 @@ export class DeriveRootKeyUseCase {
     const encryptionKeyPairSeed = this.crypto.sodiumCryptoKdfDeriveFromKey(
       masterKey,
       V004Algorithm.MasterKeyEncryptionKeyPairSubKeyNumber,
-      V004Algorithm.MasterKeyEncryptionKeyPairSubKeyLength,
+      V004Algorithm.MasterKeyEncryptionKeyPairSubKeyBytes,
       V004Algorithm.MasterKeyEncryptionKeyPairSubKeyContext,
     )
     const encryptionKeyPair = this.crypto.sodiumCryptoBoxSeedKeypair(encryptionKeyPairSeed)
@@ -35,7 +36,7 @@ export class DeriveRootKeyUseCase {
     const signingKeyPairSeed = this.crypto.sodiumCryptoKdfDeriveFromKey(
       masterKey,
       V004Algorithm.MasterKeySigningKeyPairSubKeyNumber,
-      V004Algorithm.MasterKeySigningKeyPairSubKeyLength,
+      V004Algorithm.MasterKeySigningKeyPairSubKeyBytes,
       V004Algorithm.MasterKeySigningKeyPairSubKeyContext,
     )
     const signingKeyPair = this.crypto.sodiumCryptoSignSeedKeypair(signingKeyPairSeed)

@@ -36,6 +36,7 @@ export * from './Device/Environment'
 export * from './Device/Platform'
 
 export * from './Local/KeyParams/RootKeyParamsInterface'
+export * from './Local/KeyParams/KeySystemRootKeyParamsInterface'
 export * from './Local/RootKey/KeychainTypes'
 export * from './Local/RootKey/RootKeyContent'
 export * from './Local/RootKey/RootKeyInterface'

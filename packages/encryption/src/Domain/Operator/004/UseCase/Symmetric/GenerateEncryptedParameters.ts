@@ -10,7 +10,7 @@ import {
 import { CreateConsistentBase64JsonPayloadUseCase } from '../Utils/CreateConsistentBase64JsonPayload'
 import { doesPayloadRequireSigning } from '../../V004AlgorithmHelpers'
 import { EncryptedOutputParameters } from '../../../../Types/EncryptedParameters'
-import { GenerateAuthenticatedDataForPayloadUseCase } from './GenerateAuthenticatedDataForPayload'
+import { GenerateAuthenticatedDataUseCase } from './GenerateAuthenticatedData'
 import { GenerateEncryptedProtocolStringUseCase } from './GenerateEncryptedProtocolString'
 import { GenerateSymmetricAdditionalDataUseCase } from './GenerateSymmetricAdditionalData'
 import { isItemsKey } from '../../../../Keys/ItemsKey/ItemsKey'
@@ -23,7 +23,7 @@ import { DeriveHashingKeyUseCase } from '../Hash/DeriveHashingKey'
 
 export class GenerateEncryptedParametersUseCase {
   private generateProtocolStringUseCase = new GenerateEncryptedProtocolStringUseCase(this.crypto)
-  private generateAuthenticatedDataUseCase = new GenerateAuthenticatedDataForPayloadUseCase()
+  private generateAuthenticatedDataUseCase = new GenerateAuthenticatedDataUseCase()
   private generateAdditionalDataUseCase = new GenerateSymmetricAdditionalDataUseCase(this.crypto)
   private encodeBase64DataUsecase = new CreateConsistentBase64JsonPayloadUseCase(this.crypto)
   private deriveHashingKeyUseCase = new DeriveHashingKeyUseCase(this.crypto)

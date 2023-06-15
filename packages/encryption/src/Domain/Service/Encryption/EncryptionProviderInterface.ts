@@ -3,23 +3,22 @@ import {
   BackupFile,
   DecryptedPayloadInterface,
   EncryptedPayloadInterface,
-  KeySystemRootKeyContentSpecialized,
   ItemContent,
   ItemsKeyInterface,
   RootKeyInterface,
   KeySystemIdentifier,
   KeySystemItemsKeyInterface,
   AsymmetricMessagePayload,
+  KeySystemRootKeyInterface,
 } from '@standardnotes/models'
 import { ClientDisplayableError } from '@standardnotes/responses'
 import { SNRootKeyParams } from '../../Keys/RootKey/RootKeyParams'
 import { KeyedDecryptionSplit } from '../../Split/KeyedDecryptionSplit'
 import { KeyedEncryptionSplit } from '../../Split/KeyedEncryptionSplit'
 import { ItemAuthenticatedData } from '../../Types/ItemAuthenticatedData'
-import { LegacyAttachedData } from '../../Types/LegacyAttachedData'
-import { RootKeyEncryptedAuthenticatedData } from '../../Types/RootKeyEncryptedAuthenticatedData'
 import { PkcKeyPair } from '@standardnotes/sncrypto-common'
 import { PublicKeySet } from '../../Operator/PublicKeySet'
+import { KeySystemKeyManagerInterface } from '../KeySystemKeyManagerInterface'
 
 export type AsymmetricallyDecryptMessageResult = {
   message: AsymmetricMessagePayload
@@ -33,6 +32,8 @@ export type AsymmetricallyDecryptMessageResult = {
 }
 
 export interface EncryptionProviderInterface {
+  keySystemKeyManager: KeySystemKeyManagerInterface
+
   encryptSplitSingle(split: KeyedEncryptionSplit): Promise<EncryptedPayloadInterface>
   encryptSplit(split: KeyedEncryptionSplit): Promise<EncryptedPayloadInterface[]>
   decryptSplitSingle<
@@ -48,9 +49,9 @@ export interface EncryptionProviderInterface {
     split: KeyedDecryptionSplit,
   ): Promise<(P | EncryptedPayloadInterface)[]>
 
-  getEmbeddedPayloadAuthenticatedData(
+  getEmbeddedPayloadAuthenticatedData<D extends ItemAuthenticatedData>(
     payload: EncryptedPayloadInterface,
-  ): RootKeyEncryptedAuthenticatedData | ItemAuthenticatedData | LegacyAttachedData | undefined
+  ): D | undefined
   getKeyEmbeddedKeyParamsFromItemsKey(key: EncryptedPayloadInterface): SNRootKeyParams | undefined
 
   supportedVersions(): ProtocolVersion[]
@@ -93,15 +94,24 @@ export interface EncryptionProviderInterface {
   getRootKeyParams(): SNRootKeyParams | undefined
   setNewRootKeyWrapper(wrappingKey: RootKeyInterface): Promise<void>
 
+  createRandomizedKeySystemRootKey(dto: {
+    systemIdentifier: KeySystemIdentifier
+    systemName: string
+    systemDescription?: string
+  }): KeySystemRootKeyInterface
+
+  createUserInputtedKeySystemRootKey(dto: {
+    systemIdentifier: KeySystemIdentifier
+    systemName: string
+    systemDescription?: string
+    userInputtedPassword: string
+  }): KeySystemRootKeyInterface
+
   createKeySystemItemsKey(
     uuid: string,
     keySystemIdentifier: KeySystemIdentifier,
     sharedVaultUuid: string | undefined,
   ): KeySystemItemsKeyInterface
-  createKeySystemRootKeyContent(params: {
-    systemIdentifier: KeySystemIdentifier
-    systemName: string
-  }): KeySystemRootKeyContentSpecialized
 
   createNewItemsKeyWithRollback(): Promise<() => Promise<void>>
   reencryptItemsKeys(): Promise<void>

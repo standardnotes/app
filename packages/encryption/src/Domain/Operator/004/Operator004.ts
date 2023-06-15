@@ -7,7 +7,6 @@ import {
   DecryptedPayloadInterface,
   KeySystemItemsKeyInterface,
   KeySystemRootKeyInterface,
-  KeySystemRootKeyContentSpecialized,
   FillItemContentSpecialized,
   ItemsKeyContentSpecialized,
   KeySystemIdentifier,
@@ -42,6 +41,8 @@ import { UuidGenerator } from '@standardnotes/utils'
 import { CreateKeySystemItemsKeyUseCase } from './UseCase/KeySystem/CreateKeySystemItemsKey'
 import { AsymmetricDecryptResult } from '../AsymmetricDecryptResult'
 import { PublicKeySet } from '../PublicKeySet'
+import { CreateRandomKeySystemRootKey } from './UseCase/KeySystem/CreateRandomKeySystemRootKey'
+import { CreateUserInputKeySystemRootKey } from './UseCase/KeySystem/CreateUserInputKeySystemRootKey'
 
 export class SNProtocolOperator004 implements OperatorInterface {
   constructor(protected readonly crypto: PureCryptoInterface) {}
@@ -63,19 +64,6 @@ export class SNProtocolOperator004 implements OperatorInterface {
     return response
   }
 
-  public createKeySystemRootKeyContent(params: {
-    systemIdentifier: KeySystemIdentifier
-    systemName: string
-  }): KeySystemRootKeyContentSpecialized {
-    return {
-      systemName: params.systemName,
-      systemIdentifier: params.systemIdentifier,
-      key: this.crypto.generateRandomKey(V004Algorithm.EncryptionKeyLength),
-      keyTimestamp: new Date().getTime(),
-      keyVersion: ProtocolVersion.V004,
-    }
-  }
-
   /**
    * Creates a new random items key to use for item encryption.
    * The consumer must save/sync this item.
@@ -90,6 +78,25 @@ export class SNProtocolOperator004 implements OperatorInterface {
       ...PayloadTimestampDefaults(),
     })
     return CreateDecryptedItemFromPayload(payload)
+  }
+
+  createRandomizedKeySystemRootKey(dto: {
+    systemIdentifier: KeySystemIdentifier
+    systemName: string
+    systemDescription?: string
+  }): KeySystemRootKeyInterface {
+    const usecase = new CreateRandomKeySystemRootKey(this.crypto)
+    return usecase.execute(dto)
+  }
+
+  createUserInputtedKeySystemRootKey(dto: {
+    systemIdentifier: KeySystemIdentifier
+    systemName: string
+    systemDescription?: string
+    userInputtedPassword: string
+  }): KeySystemRootKeyInterface {
+    const usecase = new CreateUserInputKeySystemRootKey(this.crypto)
+    return usecase.execute(dto)
   }
 
   public createKeySystemItemsKey(

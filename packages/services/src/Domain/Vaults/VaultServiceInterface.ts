@@ -10,7 +10,7 @@ import { VaultServiceEvent, VaultServiceEventPayload } from './VaultServiceEvent
 
 export interface VaultServiceInterface
   extends AbstractService<VaultServiceEvent, VaultServiceEventPayload[VaultServiceEvent]> {
-  createVault(name: string, description?: string): Promise<VaultDisplayListing | ClientDisplayableError>
+  createRandomizedVault(name: string, description?: string): Promise<VaultDisplayListing | ClientDisplayableError>
   getVaults(): VaultDisplayListing[]
   getVault(keySystemIdentifier: KeySystemIdentifier): VaultDisplayListing | undefined
   deleteVault(vault: VaultDisplayListing): Promise<boolean>

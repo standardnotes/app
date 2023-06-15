@@ -96,7 +96,7 @@ describe('shared vault key rotation', function () {
 
     await vaults.rotateVaultRootKey(sharedVault)
 
-    const keySystemItemsKeys = context.items
+    const keySystemItemsKeys = context.encryption.keySystemKeyManager
       .getAllKeySystemItemsKeys()
       .filter((key) => key.key_system_identifier === sharedVault.systemIdentifier)
 

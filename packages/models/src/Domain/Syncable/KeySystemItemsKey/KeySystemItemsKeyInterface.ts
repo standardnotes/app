@@ -7,4 +7,5 @@ export interface KeySystemItemsKeyInterface extends DecryptedItemInterface<KeySy
 
   get keyVersion(): ProtocolVersion
   get itemsKey(): string
+  get keyAnchor(): string | undefined
 }

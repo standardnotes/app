@@ -17,12 +17,7 @@ import {
 import { isItemsKey } from '../../../../Keys/ItemsKey/ItemsKey'
 import { isKeySystemItemsKey } from '../../../../Keys/KeySystemItemsKey/KeySystemItemsKey'
 
-/**
- * For items that are encrypted with a root key, we append the root key's key params, so
- * that in the event the user loses a reference to their root key, they may still
- * decrypt data by regenerating the key based on the attached key params.
- */
-export class GenerateAuthenticatedDataForPayloadUseCase {
+export class GenerateAuthenticatedDataUseCase {
   execute(
     payload: DecryptedPayloadInterface,
     key: ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface | RootKeyInterface,
@@ -53,8 +48,7 @@ export class GenerateAuthenticatedDataForPayloadUseCase {
       }
       return {
         ...baseData,
-        keyTimestamp: key.keyTimestamp,
-        keyVersion: key.keyVersion,
+        kp: key.keyParams,
       }
     } else {
       if (!isItemsKey(key) && !isKeySystemItemsKey(key)) {

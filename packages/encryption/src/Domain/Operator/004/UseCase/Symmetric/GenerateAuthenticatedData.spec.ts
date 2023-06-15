@@ -1,14 +1,14 @@
 import { CreateAnyKeyParams } from '../../../../Keys/RootKey/KeyParamsFunctions'
 import { AnyKeyParamsContent, ContentType, ProtocolVersion } from '@standardnotes/common'
-import { GenerateAuthenticatedDataForPayloadUseCase } from './GenerateAuthenticatedDataForPayload'
+import { GenerateAuthenticatedDataUseCase } from './GenerateAuthenticatedData'
 import { DecryptedPayloadInterface, ItemsKeyInterface, KeySystemRootKey, RootKeyInterface } from '@standardnotes/models'
 import { KeySystemItemsKey } from '../../../../Keys/KeySystemItemsKey/KeySystemItemsKey'
 
 describe('generate authenticated data use case', () => {
-  let usecase: GenerateAuthenticatedDataForPayloadUseCase
+  let usecase: GenerateAuthenticatedDataUseCase
 
   beforeEach(() => {
-    usecase = new GenerateAuthenticatedDataForPayloadUseCase()
+    usecase = new GenerateAuthenticatedDataUseCase()
   })
 
   it('should include key params if payload being encrypted is an items key', () => {

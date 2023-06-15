@@ -4,7 +4,6 @@ import {
   KeySystemRootKeyInterface,
   KeySystemRootKeyMutator,
   KeySystemIdentifier,
-  isDecryptedItem,
   VaultDisplayListing,
   isSharedVaultDisplayListing,
 } from '@standardnotes/models'
@@ -25,6 +24,7 @@ import { SharedVaultServiceEvent } from '../SharedVaults/SharedVaultServiceEvent
 
 import { RotateKeySystemRootKeyUseCase } from './UseCase/RotateKeySystemRootKey'
 import { FilesClientInterface } from '@standardnotes/files'
+import { GetVaultsUseCase } from './UseCase/GetVaults'
 
 export class VaultService
   extends AbstractService<VaultServiceEvent, VaultServiceEventPayload[VaultServiceEvent]>
@@ -53,49 +53,8 @@ export class VaultService
   }
 
   getVaults(): VaultDisplayListing[] {
-    const listings: VaultDisplayListing[] = []
-    const handledIdentifiers = new Set()
-    const keySystemItemsKeys = this.items.getAllKeySystemItemsKeys()
-
-    for (const keySystemItemsKey of keySystemItemsKeys) {
-      const systemIdentifier = keySystemItemsKey.key_system_identifier
-      if (!systemIdentifier) {
-        throw new Error('Key system items key does not have vault system identifier')
-      }
-
-      if (handledIdentifiers.has(systemIdentifier)) {
-        continue
-      }
-
-      handledIdentifiers.add(systemIdentifier)
-
-      if (isDecryptedItem(keySystemItemsKey)) {
-        const primaryRootKey = this.items.getPrimaryKeySystemRootKey(systemIdentifier)
-        if (!primaryRootKey) {
-          throw new Error('Key system does not have primary items key')
-        }
-        listings.push({
-          systemIdentifier,
-          sharedVaultUuid: keySystemItemsKey.shared_vault_uuid,
-          ownerUserUuid: keySystemItemsKey.user_uuid,
-          decrypted: {
-            name: primaryRootKey.systemName,
-            description: primaryRootKey.systemDescription,
-          },
-        })
-      } else {
-        listings.push({
-          systemIdentifier,
-          sharedVaultUuid: keySystemItemsKey.shared_vault_uuid,
-          ownerUserUuid: keySystemItemsKey.user_uuid,
-          encrypted: {
-            label: systemIdentifier,
-          },
-        })
-      }
-    }
-
-    return listings
+    const usecase = new GetVaultsUseCase(this.items, this.encryption)
+    return usecase.execute()
   }
 
   public getVault(keySystemIdentifier: KeySystemIdentifier): VaultDisplayListing | undefined {
@@ -111,11 +70,31 @@ export class VaultService
     return vault
   }
 
-  async createVault(name: string, description?: string): Promise<VaultDisplayListing | ClientDisplayableError> {
+  async createRandomizedVault(
+    name: string,
+    description?: string,
+  ): Promise<VaultDisplayListing | ClientDisplayableError> {
+    return this.createVaultWithParameters({ name, description, userInputtedPassword: undefined })
+  }
+
+  async createUserInputtedPasswordVault(dto: {
+    name: string
+    description?: string
+    userInputtedPassword: string
+  }): Promise<VaultDisplayListing | ClientDisplayableError> {
+    return this.createVaultWithParameters(dto)
+  }
+
+  private async createVaultWithParameters(dto: {
+    name: string
+    description?: string
+    userInputtedPassword: string | undefined
+  }): Promise<VaultDisplayListing | ClientDisplayableError> {
     const createVault = new CreateVaultUseCase(this.items, this.encryption)
     const result = await createVault.execute({
-      vaultName: name,
-      vaultDescription: description,
+      vaultName: dto.name,
+      vaultDescription: dto.description,
+      userInputtedPassword: dto.userInputtedPassword,
     })
 
     this.notifyVaultsChangedEvent()
@@ -186,6 +165,7 @@ export class VaultService
     await useCase.execute({
       keySystemIdentifier: vault.systemIdentifier,
       sharedVaultUuid: isSharedVaultDisplayListing(vault) ? vault.sharedVaultUuid : undefined,
+      userInputtedPassword: undefined,
     })
 
     this.notifyVaultsChangedEvent()

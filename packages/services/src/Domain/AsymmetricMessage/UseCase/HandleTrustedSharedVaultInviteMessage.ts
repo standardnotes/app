@@ -4,9 +4,12 @@ import {
   KeySystemRootKeyInterface,
   KeySystemRootKeyMutator,
   AsymmetricMessageSharedVaultInvite,
+  KeySystemRootKeyContent,
+  FillItemContent,
 } from '@standardnotes/models'
-import { CreateKeySystemRootKeyUseCase } from '../../Vaults/UseCase/CreateKeySystemRootKey'
+
 import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
+import { ContentType } from '@standardnotes/common'
 
 export class HandleTrustedSharedVaultInviteMessage {
   constructor(
@@ -16,19 +19,19 @@ export class HandleTrustedSharedVaultInviteMessage {
   ) {}
 
   async execute(message: AsymmetricMessageSharedVaultInvite): Promise<'inserted' | 'changed'> {
-    const { rootKey, trustedContacts } = message.data
+    const { rootKey: rootKeyContent, trustedContacts } = message.data
 
-    const existingKeySystemRootKey = this.items.getKeySystemRootKeyMatchingTimestamp(
-      rootKey.systemIdentifier,
-      rootKey.keyTimestamp,
+    const existingKeySystemRootKey = this.items.getKeySystemRootKeyMatchingAnchor(
+      rootKeyContent.systemIdentifier,
+      rootKeyContent.keyTimestamp,
     )
 
     if (existingKeySystemRootKey) {
       await this.items.changeItem<KeySystemRootKeyMutator, KeySystemRootKeyInterface>(
         existingKeySystemRootKey,
         (mutator) => {
-          mutator.systemName = rootKey.systemName
-          mutator.systemDescription = rootKey.systemDescription
+          mutator.systemName = rootKeyContent.systemName
+          mutator.systemDescription = rootKeyContent.systemDescription
         },
       )
 
@@ -37,8 +40,11 @@ export class HandleTrustedSharedVaultInviteMessage {
       return 'changed'
     }
 
-    const createKeySystemRootKey = new CreateKeySystemRootKeyUseCase(this.items)
-    await createKeySystemRootKey.execute(rootKey)
+    await this.items.createItem<KeySystemRootKeyInterface>(
+      ContentType.KeySystemRootKey,
+      FillItemContent<KeySystemRootKeyContent>(rootKeyContent),
+      true,
+    )
 
     for (const contact of trustedContacts) {
       await this.contacts.createOrEditTrustedContact({

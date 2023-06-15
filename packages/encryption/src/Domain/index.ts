@@ -29,9 +29,11 @@ export * from './Operator/OperatorWrapper'
 export * from './Operator/PublicKeySet'
 
 export * from './Service/Encryption/EncryptionProviderInterface'
+export * from './Service/KeySystemKeyManagerInterface'
 export * from './Service/Functions'
 export * from './Service/RootKey/KeyMode'
 export * from './Service/RootKey/RootKeyServiceEvent'
+
 export * from './Split/AbstractKeySplit'
 export * from './Split/EncryptionSplit'
 export * from './Split/EncryptionTypeSplit'

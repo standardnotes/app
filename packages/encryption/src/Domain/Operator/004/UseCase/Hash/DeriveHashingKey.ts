@@ -17,7 +17,7 @@ export class DeriveHashingKeyUseCase {
     const hashingKey = this.crypto.sodiumCryptoKdfDeriveFromKey(
       key.itemsKey,
       V004Algorithm.PayloadKeyHashingKeySubKeyNumber,
-      V004Algorithm.PayloadKeyHashingKeySubKeyLength,
+      V004Algorithm.PayloadKeyHashingKeySubKeyBytes,
       V004Algorithm.PayloadKeyHashingKeySubKeyContext,
     )
 

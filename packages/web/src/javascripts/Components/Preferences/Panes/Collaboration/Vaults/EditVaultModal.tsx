@@ -57,7 +57,7 @@ const EditVaultModal: FunctionComponent<Props> = ({ onCloseDialog, existingVault
       })
       handleDialogClose()
     } else {
-      const vault = await application.vaults.createVault(name, description)
+      const vault = await application.vaults.createRandomizedVault(name, description)
       if (vault) {
         handleDialogClose()
       } else {

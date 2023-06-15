@@ -213,7 +213,7 @@ export class SharedVaultService
   }
 
   async createSharedVault(name: string, description?: string): Promise<VaultDisplayListing | ClientDisplayableError> {
-    const privateVault = await this.vaults.createVault(name, description)
+    const privateVault = await this.vaults.createRandomizedVault(name, description)
     if (isClientDisplayableError(privateVault)) {
       return privateVault
     }

@@ -26,7 +26,7 @@ describe('vaults', function () {
 
   describe('offline', function () {
     it('should be able to create an offline vault', async () => {
-      const vault = await vaults.createVault()
+      const vault = await vaults.createRandomizedVault()
 
       expect(vault.systemIdentifier).to.not.be.undefined
       expect(typeof vault.systemIdentifier).to.equal('string')
@@ -39,7 +39,7 @@ describe('vaults', function () {
     })
 
     it('should add item to offline vault', async () => {
-      const vault = await vaults.createVault()
+      const vault = await vaults.createRandomizedVault()
       const item = await context.createSyncedNote()
 
       await vaults.addItemToVault(vault, item)
@@ -50,7 +50,7 @@ describe('vaults', function () {
 
     it('should load data in the correct order at startup to allow vault items and their keys to decrypt', async () => {
       const appIdentifier = context.identifier
-      const vault = await vaults.createVault()
+      const vault = await vaults.createRandomizedVault()
       const note = await context.createSyncedNote('foo', 'bar')
       await vaults.addItemToVault(vault, note)
       await context.deinit()
@@ -68,7 +68,7 @@ describe('vaults', function () {
     describe('porting from offline to online', () => {
       it('should maintain vault system identifiers across items after registration', async () => {
         const appIdentifier = context.identifier
-        const vault = await vaults.createVault()
+        const vault = await vaults.createRandomizedVault()
         const note = await context.createSyncedNote('foo', 'bar')
         await vaults.addItemToVault(vault, note)
 
@@ -93,7 +93,7 @@ describe('vaults', function () {
 
       it('should decrypt vault items', async () => {
         const appIdentifier = context.identifier
-        const vault = await vaults.createVault()
+        const vault = await vaults.createRandomizedVault()
         const note = await context.createSyncedNote('foo', 'bar')
         await vaults.addItemToVault(vault, note)
 
@@ -120,7 +120,7 @@ describe('vaults', function () {
     })
 
     it('should create a vault', async () => {
-      const vault = await vaults.createVault()
+      const vault = await vaults.createRandomizedVault()
       expect(vault).to.not.be.undefined
 
       const keySystemItemsKeys = context.items.getKeySystemItemsKeys(vault.systemIdentifier)
@@ -133,7 +133,7 @@ describe('vaults', function () {
 
     it('should add item to vault', async () => {
       const note = await context.createSyncedNote('foo', 'bar')
-      const vault = await vaults.createVault()
+      const vault = await vaults.createRandomizedVault()
 
       await vaults.addItemToVault(vault, note)
 
@@ -144,7 +144,7 @@ describe('vaults', function () {
     describe('client timing', () => {
       it('should load data in the correct order at startup to allow vault items and their keys to decrypt', async () => {
         const appIdentifier = context.identifier
-        const vault = await vaults.createVault()
+        const vault = await vaults.createRandomizedVault()
         const note = await context.createSyncedNote('foo', 'bar')
         await vaults.addItemToVault(vault, note)
         await context.deinit()
@@ -162,7 +162,7 @@ describe('vaults', function () {
 
     describe('key system root key rotation', () => {
       it('rotating a key system root key should create a new vault items key', async () => {
-        const vault = await vaults.createVault()
+        const vault = await vaults.createRandomizedVault()
 
         const keySystemItemsKey = context.items.getKeySystemItemsKeys(vault.systemIdentifier)[0]
 
@@ -175,7 +175,7 @@ describe('vaults', function () {
       })
 
       it('should keep key system root key with greater keyTimestamp if conflict', async () => {
-        const vault = await vaults.createVault()
+        const vault = await vaults.createRandomizedVault()
         const keySystemRootKey = context.items.getPrimaryKeySystemRootKey(vault.systemIdentifier)
 
         const otherClient = await Factory.createAppContextWithRealCrypto()
@@ -222,7 +222,7 @@ describe('vaults', function () {
       })
 
       it('deleting a vault should delete all its items', async () => {
-        const vault = await vaults.createVault()
+        const vault = await vaults.createRandomizedVault()
         const note = await context.createSyncedNote('foo', 'bar')
         await vaults.addItemToVault(vault, note)
 

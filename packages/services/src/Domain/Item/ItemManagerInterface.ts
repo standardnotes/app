@@ -13,10 +13,8 @@ import {
   PredicateInterface,
   DecryptedPayload,
   SNTag,
-  KeySystemItemsKeyInterface,
   ItemInterface,
   AnyItemInterface,
-  KeySystemRootKeyInterface,
   KeySystemIdentifier,
   VaultDisplayListing,
 } from '@standardnotes/models'
@@ -58,9 +56,10 @@ export interface ItemManagerInterface extends AbstractService {
     isUserModified?: boolean,
   ): Promise<DecryptedItemInterface[]>
   get items(): DecryptedItemInterface[]
-  insertItem<T extends DecryptedItemInterface>(item: DecryptedItemInterface): Promise<T>
+  insertItem<T extends DecryptedItemInterface>(item: DecryptedItemInterface, setDirty?: boolean): Promise<T>
   emitItemFromPayload(payload: DecryptedPayloadInterface, source: PayloadEmitSource): Promise<DecryptedItemInterface>
   getItems<T extends DecryptedItemInterface>(contentType: ContentType | ContentType[]): T[]
+  get invalidItems(): EncryptedItemInterface[]
   allTrackedItems(): ItemInterface[]
   getDisplayableItemsKeys(): ItemsKeyInterface[]
   createItem<T extends DecryptedItemInterface, C extends ItemContent = ItemContent>(
@@ -119,14 +118,5 @@ export interface ItemManagerInterface extends AbstractService {
   findItem<T extends DecryptedItemInterface = DecryptedItemInterface>(uuid: string): T | undefined
   findSureItem<T extends DecryptedItemInterface = DecryptedItemInterface>(uuid: string): T
 
-  getAllKeySystemItemsKeys(): (KeySystemItemsKeyInterface | EncryptedItemInterface)[]
-  getKeySystemItemsKeys(systemIdentifier: KeySystemIdentifier): KeySystemItemsKeyInterface[]
-  getPrimaryKeySystemItemsKey(systemIdentifier: KeySystemIdentifier): KeySystemItemsKeyInterface
-  getAllKeySystemRootKeysForVault(systemIdentifier: KeySystemIdentifier): KeySystemRootKeyInterface[]
-  getKeySystemRootKeyMatchingTimestamp(
-    systemIdentifier: KeySystemIdentifier,
-    timestamp: number,
-  ): KeySystemRootKeyInterface | undefined
-  getPrimaryKeySystemRootKey(systemIdentifier: KeySystemIdentifier): KeySystemRootKeyInterface | undefined
   itemsBelongingToKeySystem(systemIdentifier: KeySystemIdentifier): DecryptedItemInterface[]
 }

@@ -6,7 +6,6 @@ import {
   DecryptedPayloadInterface,
   ItemContent,
   KeySystemRootKeyInterface,
-  KeySystemRootKeyContentSpecialized,
   KeySystemIdentifier,
 } from '@standardnotes/models'
 import { SNRootKeyParams } from '../Keys/RootKey/RootKeyParams'
@@ -36,6 +35,20 @@ export interface OperatorInterface {
   readonly version: string
 
   createItemsKey(): ItemsKeyInterface
+
+  createRandomizedKeySystemRootKey(dto: {
+    systemIdentifier: KeySystemIdentifier
+    systemName: string
+    systemDescription?: string
+  }): KeySystemRootKeyInterface
+
+  createUserInputtedKeySystemRootKey(dto: {
+    systemIdentifier: KeySystemIdentifier
+    systemName: string
+    systemDescription?: string
+    userInputtedPassword: string
+  }): KeySystemRootKeyInterface
+
   createKeySystemItemsKey(
     uuid: string,
     keySystemIdentifier: KeySystemIdentifier,
@@ -67,11 +80,6 @@ export interface OperatorInterface {
     password: string,
     origination: KeyParamsOrigination,
   ): Promise<K>
-
-  createKeySystemRootKeyContent(params: {
-    systemIdentifier: KeySystemIdentifier
-    systemName: string
-  }): KeySystemRootKeyContentSpecialized
 
   /**
    * Converts a bare payload into an encrypted one in the desired format.

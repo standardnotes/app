@@ -1,21 +1,29 @@
+import { ItemManagerInterface } from './../../Item/ItemManagerInterface'
 import { SyncServiceInterface } from '../../Sync/SyncServiceInterface'
 import {
   KeySystemRootKeyInterface,
   KeySystemRootKeyMutator,
   AsymmetricMessageSharedVaultRootKeyChanged,
+  FillItemContent,
+  KeySystemRootKeyContent,
 } from '@standardnotes/models'
-import { CreateKeySystemRootKeyUseCase } from '../../Vaults/UseCase/CreateKeySystemRootKey'
-import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
+
+import { ContentType } from '@standardnotes/common'
+import { EncryptionProviderInterface } from '@standardnotes/encryption'
 
 export class HandleTrustedSharedVaultRootKeyChangedMessage {
-  constructor(private items: ItemManagerInterface, private sync: SyncServiceInterface) {}
+  constructor(
+    private items: ItemManagerInterface,
+    private encryption: EncryptionProviderInterface,
+    private sync: SyncServiceInterface,
+  ) {}
 
   async execute(message: AsymmetricMessageSharedVaultRootKeyChanged): Promise<'inserted' | 'changed'> {
     const keyContent = message.data
 
-    const existingKeySystemRootKey = this.items.getKeySystemRootKeyMatchingTimestamp(
+    const existingKeySystemRootKey = this.encryption.keySystemKeyManager.getKeySystemRootKeyMatchingAnchor(
       keyContent.systemIdentifier,
-      keyContent.keyTimestamp,
+      keyContent.itemsKeyAnchor,
     )
 
     if (existingKeySystemRootKey) {
@@ -32,8 +40,11 @@ export class HandleTrustedSharedVaultRootKeyChangedMessage {
       return 'changed'
     }
 
-    const createKeySystemRootKey = new CreateKeySystemRootKeyUseCase(this.items)
-    await createKeySystemRootKey.execute(keyContent)
+    await this.items.createItem<KeySystemRootKeyInterface>(
+      ContentType.KeySystemRootKey,
+      FillItemContent<KeySystemRootKeyContent>(keyContent),
+      true,
+    )
 
     await this.sync.sync()
     return 'inserted'

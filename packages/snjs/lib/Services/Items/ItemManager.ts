@@ -822,8 +822,12 @@ export class ItemManager
     return !this.findItem(item.uuid)
   }
 
-  public async insertItem<T extends Models.DecryptedItemInterface>(item: Models.DecryptedItemInterface): Promise<T> {
-    return this.emitItemFromPayload(item.payload, Models.PayloadEmitSource.LocalChanged)
+  public async insertItem<T extends Models.DecryptedItemInterface>(
+    item: Models.DecryptedItemInterface,
+    setDirty = false,
+  ): Promise<T> {
+    const payload = setDirty ? item.payload.copy({ dirty: true }) : item.payload
+    return this.emitItemFromPayload(payload, Models.PayloadEmitSource.LocalChanged)
   }
 
   public async insertItems(
@@ -1411,65 +1415,6 @@ export class ItemManager
       : itemBReferencesItemA
       ? ItemRelationshipDirection.BReferencesA
       : ItemRelationshipDirection.NoRelationship
-  }
-
-  public getAllKeySystemItemsKeys(): (Models.KeySystemItemsKeyInterface | Models.EncryptedItemInterface)[] {
-    const decryptedItems = this.getItems<Models.KeySystemItemsKeyInterface>(ContentType.KeySystemItemsKey)
-    const encryptedItems = this.invalidItems.filter((item) => item.content_type === ContentType.KeySystemItemsKey)
-    return [...decryptedItems, ...encryptedItems]
-  }
-
-  public getKeySystemItemsKeys(systemIdentifier: Models.KeySystemIdentifier): Models.KeySystemItemsKeyInterface[] {
-    return this.getItems<Models.KeySystemItemsKeyInterface>(ContentType.KeySystemItemsKey).filter(
-      (key) => key.key_system_identifier === systemIdentifier,
-    )
-  }
-
-  public getPrimaryKeySystemItemsKey(systemIdentifier: Models.KeySystemIdentifier): Models.KeySystemItemsKeyInterface {
-    const allKeys = this.getKeySystemItemsKeys(systemIdentifier)
-
-    const sortedByNewestFirst = allKeys.sort((a, b) => b.keyTimestamp - a.keyTimestamp)
-    return sortedByNewestFirst[0]
-  }
-
-  getAllKeySystemRootKeysForVault(systemIdentifier: Models.KeySystemIdentifier): Models.KeySystemRootKeyInterface[] {
-    const keys = this.itemsMatchingPredicate<Models.KeySystemRootKeyInterface>(
-      ContentType.KeySystemRootKey,
-      new Models.Predicate<Models.KeySystemRootKeyInterface>('systemIdentifier', '=', systemIdentifier),
-    )
-
-    return keys
-  }
-
-  getKeySystemRootKeyMatchingTimestamp(
-    systemIdentifier: Models.KeySystemIdentifier,
-    timestamp: number,
-  ): Models.KeySystemRootKeyInterface | undefined {
-    const keys = this.itemsMatchingPredicate<Models.KeySystemRootKeyInterface>(
-      ContentType.KeySystemRootKey,
-      new Models.CompoundPredicate('and', [
-        new Models.Predicate<Models.KeySystemRootKeyInterface>('systemIdentifier', '=', systemIdentifier),
-        new Models.Predicate<Models.KeySystemRootKeyInterface>('keyTimestamp', '=', timestamp),
-      ]),
-    )
-
-    if (keys.length > 1) {
-      throw new Error('Multiple synced key system root keys found for timestamp')
-    }
-
-    return keys[0]
-  }
-
-  getPrimaryKeySystemRootKey(
-    systemIdentifier: Models.KeySystemIdentifier,
-  ): Models.KeySystemRootKeyInterface | undefined {
-    const keys = this.itemsMatchingPredicate<Models.KeySystemRootKeyInterface>(
-      ContentType.KeySystemRootKey,
-      new Models.Predicate<Models.KeySystemRootKeyInterface>('systemIdentifier', '=', systemIdentifier),
-    )
-
-    const sortedByNewestFirst = keys.sort((a, b) => b.keyTimestamp - a.keyTimestamp)
-    return sortedByNewestFirst[0]
   }
 
   itemsBelongingToKeySystem(systemIdentifier: Models.KeySystemIdentifier): Models.DecryptedItemInterface[] {

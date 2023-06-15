@@ -1,7 +1,13 @@
+import {
+  KeySystemRootKeyParamsInterface,
+  KeySystemRootKeyPasswordType,
+} from '../../Local/KeyParams/KeySystemRootKeyParamsInterface'
 import { KeySystemIdentifier } from '../../Syncable/KeySystemRootKey/KeySystemIdentifier'
 
 type CommonVaultDisplayListing = {
   systemIdentifier: KeySystemIdentifier
+  passwordType: KeySystemRootKeyPasswordType
+  keyParams: KeySystemRootKeyParamsInterface
   decrypted?: {
     name: string
     description?: string

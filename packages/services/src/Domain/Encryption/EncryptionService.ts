@@ -24,6 +24,7 @@ import {
   V002Algorithm,
   PublicKeySet,
   EncryptedOutputParameters,
+  KeySystemKeyManagerInterface,
 } from '@standardnotes/encryption'
 import {
   BackupFile,
@@ -33,7 +34,6 @@ import {
   DecryptedPayloadInterface,
   EncryptedPayload,
   EncryptedPayloadInterface,
-  KeySystemRootKeyContentSpecialized,
   isDecryptedPayload,
   isEncryptedPayload,
   ItemContent,
@@ -42,6 +42,7 @@ import {
   KeySystemItemsKeyInterface,
   KeySystemIdentifier,
   AsymmetricMessagePayload,
+  KeySystemRootKeyInterface,
 } from '@standardnotes/models'
 import { ClientDisplayableError } from '@standardnotes/responses'
 import { PkcKeyPair, PureCryptoInterface } from '@standardnotes/sncrypto-common'
@@ -77,6 +78,7 @@ import { RootKeyEncryptionService } from './RootKeyEncryption'
 import { DecryptBackupFile } from './BackupFileDecryptor'
 import { EncryptionServiceEvent } from './EncryptionServiceEvent'
 import { DecryptedParameters } from '@standardnotes/encryption/src/Domain/Types/DecryptedParameters'
+import { KeySystemKeyManager } from '../KeySystem/KeySystemKeyManager'
 
 /**
  * The encryption service is responsible for the encryption and decryption of payloads, and
@@ -111,6 +113,8 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
   private readonly rootKeyEncryption: RootKeyEncryptionService
   private rootKeyObserverDisposer: () => void
 
+  public readonly keySystemKeyManager: KeySystemKeyManagerInterface
+
   constructor(
     private itemManager: ItemManagerInterface,
     private payloadManager: PayloadManagerInterface,
@@ -124,6 +128,8 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     this.crypto = crypto
 
     this.operatorManager = new OperatorManager(crypto)
+
+    this.keySystemKeyManager = new KeySystemKeyManager(itemManager)
 
     this.itemsEncryption = new ItemsEncryptionService(
       itemManager,
@@ -554,11 +560,21 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     return this.rootKeyEncryption.createRootKey(identifier, password, origination, version)
   }
 
-  createKeySystemRootKeyContent(params: {
+  createRandomizedKeySystemRootKey(dto: {
     systemIdentifier: KeySystemIdentifier
     systemName: string
-  }): KeySystemRootKeyContentSpecialized {
-    return this.operatorManager.defaultOperator().createKeySystemRootKeyContent(params)
+    systemDescription?: string
+  }): KeySystemRootKeyInterface {
+    return this.operatorManager.defaultOperator().createRandomizedKeySystemRootKey(dto)
+  }
+
+  createUserInputtedKeySystemRootKey(dto: {
+    systemIdentifier: KeySystemIdentifier
+    systemName: string
+    systemDescription?: string
+    userInputtedPassword: string
+  }): KeySystemRootKeyInterface {
+    return this.operatorManager.defaultOperator().createRandomizedKeySystemRootKey(dto)
   }
 
   createKeySystemItemsKey(
@@ -781,18 +797,21 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     return this.rootKeyEncryption.validatePasscode(passcode)
   }
 
-  public getEmbeddedPayloadAuthenticatedData(
+  public getEmbeddedPayloadAuthenticatedData<D extends ItemAuthenticatedData>(
     payload: EncryptedPayloadInterface,
-  ): RootKeyEncryptedAuthenticatedData | ItemAuthenticatedData | LegacyAttachedData | undefined {
+  ): D | undefined {
     const version = payload.version
     if (!version) {
       return undefined
     }
+
     const operator = this.operatorManager.operatorForVersion(version)
+
     const authenticatedData = operator.getPayloadAuthenticatedDataForExternalUse(
       encryptedInputParametersFromPayload(payload),
     )
-    return authenticatedData
+
+    return authenticatedData as D
   }
 
   /** Returns the key params attached to this key's encrypted payload */
@@ -802,7 +821,7 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
       return undefined
     }
     if (isVersionLessThanOrEqualTo(key.version, ProtocolVersion.V003)) {
-      const rawKeyParams = authenticatedData as LegacyAttachedData
+      const rawKeyParams = authenticatedData as unknown as LegacyAttachedData
       return this.createKeyParams(rawKeyParams)
     } else {
       const rawKeyParams = (authenticatedData as RootKeyEncryptedAuthenticatedData).kp

@@ -4,7 +4,6 @@ import {
   DecryptedPayload,
   DecryptedPayloadInterface,
   FillItemContent,
-  KeySystemRootKeyContentSpecialized,
   ItemContent,
   ItemsKeyContent,
   ItemsKeyInterface,
@@ -225,18 +224,23 @@ export class SNProtocolOperator001 implements OperatorInterface {
     })
   }
 
+  createRandomizedKeySystemRootKey(_dto: { systemIdentifier: string; systemName: string }): KeySystemRootKeyInterface {
+    throw new Error('Method not implemented.')
+  }
+
+  createUserInputtedKeySystemRootKey(_dto: {
+    systemIdentifier: string
+    systemName: string
+    userInputtedPassword: string
+  }): KeySystemRootKeyInterface {
+    throw new Error('Method not implemented.')
+  }
+
   createKeySystemItemsKey(
     _uuid: string,
     _keySystemIdentifier: KeySystemIdentifier,
     _sharedVaultUuid: string | undefined,
   ): KeySystemItemsKeyInterface {
-    throw new Error('Method not implemented.')
-  }
-
-  createKeySystemRootKeyContent(_params: {
-    systemIdentifier: KeySystemIdentifier
-    systemName: string
-  }): KeySystemRootKeyContentSpecialized {
     throw new Error('Method not implemented.')
   }
 
