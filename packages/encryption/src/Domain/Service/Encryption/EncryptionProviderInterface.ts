@@ -120,6 +120,7 @@ export interface EncryptionProviderInterface {
   }): string
   asymmetricallyDecryptMessage(dto: {
     encryptedString: string
+    trustedSenderPublicKey: string | undefined
     trustedSenderSigningPublicKey: string | undefined
     privateKey: string
   }): AsymmetricallyDecryptMessageResult | undefined

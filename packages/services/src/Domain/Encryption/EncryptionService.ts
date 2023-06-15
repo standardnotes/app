@@ -587,6 +587,7 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
 
   asymmetricallyDecryptMessage(dto: {
     encryptedString: string
+    trustedSenderPublicKey: string | undefined
     trustedSenderSigningPublicKey: string | undefined
     privateKey: string
   }): AsymmetricallyDecryptMessageResult | undefined {
@@ -604,6 +605,12 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
 
     if (!decryptedResult.signatureVerified) {
       return undefined
+    }
+
+    if (dto.trustedSenderPublicKey) {
+      if (decryptedResult.senderPublicKey !== dto.trustedSenderPublicKey) {
+        return undefined
+      }
     }
 
     if (dto.trustedSenderSigningPublicKey) {

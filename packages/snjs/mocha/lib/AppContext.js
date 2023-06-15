@@ -324,6 +324,31 @@ export class AppContext {
     })
   }
 
+  resolveWhenAsymmetricMessageProcessingCompletes() {
+    return new Promise((resolve) => {
+      const objectToSpy = this.asymmetric
+      sinon.stub(objectToSpy, 'handleRemoteReceivedAsymmetricMessages').callsFake(async (messages) => {
+        objectToSpy.handleRemoteReceivedAsymmetricMessages.restore()
+        const result = await objectToSpy.handleRemoteReceivedAsymmetricMessages(messages)
+        resolve()
+        return result
+      })
+    })
+  }
+
+  resolveWhenSharedVaultServiceSendsContactShareMessage() {
+    return new Promise((resolve) => {
+      const objectToSpy = this.sharedVaults
+      sinon.stub(objectToSpy, 'shareContactWithUserAdministeredSharedVaults').callsFake(async (contact) => {
+        objectToSpy.shareContactWithUserAdministeredSharedVaults.restore()
+        const result = await objectToSpy.shareContactWithUserAdministeredSharedVaults(contact)
+        resolve()
+        return result
+      })
+    })
+  }
+
+
   resolveWhenSharedVaultKeyRotationInvitesGetSent(targetVault) {
     return new Promise((resolve) => {
       const objectToSpy = this.sharedVaults

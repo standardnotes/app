@@ -99,10 +99,7 @@ export const inviteThirdPartyToSharedVault = async (
   const { contactContext: thirdPartyContext, deinitContactContext: deinitThirdPartyContext } =
     await createContactContext()
 
-  const thirdPartyContact = await Collaboration.createTrustedContactForUserOfContext(
-    context,
-    thirdPartyContext.contactContext,
-  )
+  const thirdPartyContact = await createTrustedContactForUserOfContext(context, thirdPartyContext)
   await context.sharedVaults.inviteContactToSharedVault(sharedVault, thirdPartyContact, permissions)
 
   return { thirdPartyContext, thirdPartyContact, deinitThirdPartyContext }

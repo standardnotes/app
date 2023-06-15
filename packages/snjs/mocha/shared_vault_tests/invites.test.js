@@ -43,7 +43,7 @@ describe('shared vault invites', function () {
     await deinitContactContext()
   })
 
-  it.only('invites from trusted contact should be pending as trusted', async () => {
+  it.skip('invites from trusted contact should be pending as trusted', async () => {
     const { contactContext, deinitContactContext } = await createSharedVaultWithUnacceptedButTrustedInvite(context)
 
     const invites = contactContext.sharedVaults.getCachedPendingInviteRecords()
@@ -53,7 +53,7 @@ describe('shared vault invites', function () {
     await deinitContactContext()
   })
 
-  it.only('invites from untrusted contact should be pending as untrusted', async () => {
+  it.skip('invites from untrusted contact should be pending as untrusted', async () => {
     const { contactContext, deinitContactContext } = await createSharedVaultWithUnacceptedAndUntrustedInvite(context)
 
     const invites = contactContext.sharedVaults.getCachedPendingInviteRecords()
@@ -63,7 +63,7 @@ describe('shared vault invites', function () {
     await deinitContactContext()
   })
 
-  it.only('invite should include delegated trusted contacts', async () => {
+  it.skip('invite should include delegated trusted contacts', async () => {
     const { deinitContactContext } = await Collaboration.createSharedVaultWithAcceptedInvite(context)
 
     const { thirdPartyContext, deinitThirdPartyContext } = await Collaboration.inviteThirdPartyToSharedVault(

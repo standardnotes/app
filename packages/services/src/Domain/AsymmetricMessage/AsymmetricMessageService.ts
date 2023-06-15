@@ -12,6 +12,7 @@ import {
   AsymmetricMessagePayloadType,
   AsymmetricMessageSenderKeypairChanged,
   AsymmetricMessageTrustedContactShare,
+  AsymmetricMessagePayload,
 } from '@standardnotes/models'
 import { HandleTrustedSharedVaultRootKeyChangedMessage } from './UseCase/HandleTrustedSharedVaultRootKeyChangedMessage'
 import { ItemManagerInterface } from '../Item/ItemManagerInterface'
@@ -88,14 +89,10 @@ export class AsymmetricMessageService extends AbstractService implements Interna
       return
     }
 
-    const useCase = new GetAsymmetricMessageTrustedPayload(this.encryption, this.contacts)
+    const sortedMessages = messages.slice().sort((a, b) => a.created_at_timestamp - b.created_at_timestamp)
 
-    for (const message of messages) {
-      const trustedMessagePayload = useCase.execute({
-        privateKey: this.encryption.getKeyPair().privateKey,
-        message,
-      })
-
+    for (const message of sortedMessages) {
+      const trustedMessagePayload = this.getTrustedMessagePayload(message)
       if (!trustedMessagePayload) {
         continue
       }
@@ -114,11 +111,20 @@ export class AsymmetricMessageService extends AbstractService implements Interna
     }
   }
 
+  getTrustedMessagePayload(message: AsymmetricMessageServerHash): AsymmetricMessagePayload | undefined {
+    const useCase = new GetAsymmetricMessageTrustedPayload(this.encryption, this.contacts)
+
+    return useCase.execute({
+      privateKey: this.encryption.getKeyPair().privateKey,
+      message,
+    })
+  }
+
   private async deleteMessageAfterProcessing(message: AsymmetricMessageServerHash): Promise<void> {
     await this.messageServer.deleteMessage({ messageUuid: message.uuid })
   }
 
-  private async handleTrustedContactShareMessage(
+  async handleTrustedContactShareMessage(
     _message: AsymmetricMessageServerHash,
     trustedPayload: AsymmetricMessageTrustedContactShare,
   ): Promise<void> {

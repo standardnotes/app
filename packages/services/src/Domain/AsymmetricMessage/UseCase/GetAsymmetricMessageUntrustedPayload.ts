@@ -8,6 +8,7 @@ export class GetAsymmetricMessageUntrustedPayload<M extends AsymmetricMessagePay
   execute(dto: { privateKey: string; message: AsymmetricMessageServerHash }): M | undefined {
     const decryptionResult = this.encryption.asymmetricallyDecryptMessage({
       encryptedString: dto.message.encrypted_message,
+      trustedSenderPublicKey: undefined,
       trustedSenderSigningPublicKey: undefined,
       privateKey: dto.privateKey,
     })

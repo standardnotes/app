@@ -14,6 +14,7 @@ export class GetAsymmetricMessageTrustedPayload<M extends AsymmetricMessagePaylo
 
     const decryptionResult = this.encryption.asymmetricallyDecryptMessage({
       encryptedString: dto.message.encrypted_message,
+      trustedSenderPublicKey: trustedContact.publicKeySet.encryption,
       trustedSenderSigningPublicKey: trustedContact.publicKeySet.signing,
       privateKey: dto.privateKey,
     })
@@ -23,10 +24,6 @@ export class GetAsymmetricMessageTrustedPayload<M extends AsymmetricMessagePaylo
     }
 
     if (!decryptionResult.signing.trustedSenderSignaturePasses) {
-      return undefined
-    }
-
-    if (decryptionResult.senderPublicKey !== trustedContact.publicKeySet.encryption) {
       return undefined
     }
 

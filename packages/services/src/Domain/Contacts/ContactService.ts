@@ -72,10 +72,14 @@ export class ContactService
     }
   }
 
+  private get userUuid(): string {
+    return this.session.getSureUser().uuid
+  }
+
   private async updateSelfContactWithPublicKeySet(publicKeySet: PublicKeySet): Promise<void> {
     await this.createOrEditTrustedContact({
       name: 'Me',
-      contactUuid: this.session.getSureUser().uuid,
+      contactUuid: this.userUuid,
       publicKey: publicKeySet.encryption,
       signingPublicKey: publicKeySet.signing,
     })
@@ -203,6 +207,10 @@ export class ContactService
   async createOrUpdateTrustedContactFromContactShare(
     data: TrustedContactContentSpecialized,
   ): Promise<TrustedContactInterface> {
+    if (data.contactUuid === this.userUuid) {
+      throw new Error('Cannot receive self from contact share')
+    }
+
     let contact = this.findTrustedContact(data.contactUuid)
     if (contact) {
       contact = await this.items.changeItem<TrustedContactMutator, TrustedContactInterface>(contact, (mutator) => {
