@@ -79,7 +79,7 @@ const EnvironmentConfiguration = ({ setHomeServerConfigurationChangedCallback, h
           <div className="flex flex-row items-center">
             <div className="flex max-w-full flex-grow flex-col">
               <PreferencesSegment>
-                <Subtitle>Auth JWT Secret</Subtitle>
+                <Subtitle className={'mt-2'}>Auth JWT Secret</Subtitle>
                 <div className={'mt-2'}>
                   <DecoratedInput
                     placeholder={'Auth JWT Secret'}
@@ -89,7 +89,7 @@ const EnvironmentConfiguration = ({ setHomeServerConfigurationChangedCallback, h
                 </div>
               </PreferencesSegment>
               <PreferencesSegment>
-                <Subtitle>JWT Secret</Subtitle>
+                <Subtitle className={'mt-2'}>JWT Secret</Subtitle>
                 <div className={'mt-2'}>
                   <DecoratedInput
                     placeholder={'JWT Secret'}
@@ -99,7 +99,7 @@ const EnvironmentConfiguration = ({ setHomeServerConfigurationChangedCallback, h
                 </div>
               </PreferencesSegment>
               <PreferencesSegment>
-                <Subtitle>Encryption Server Key</Subtitle>
+                <Subtitle className={'mt-2'}>Encryption Server Key</Subtitle>
                 <div className={'mt-2'}>
                   <DecoratedInput
                     placeholder={'Encryption Server Key'}
@@ -109,7 +109,7 @@ const EnvironmentConfiguration = ({ setHomeServerConfigurationChangedCallback, h
                 </div>
               </PreferencesSegment>
               <PreferencesSegment>
-                <Subtitle>Pseudo Params Key</Subtitle>
+                <Subtitle className={'mt-2'}>Pseudo Params Key</Subtitle>
                 <div className={'mt-2'}>
                   <DecoratedInput
                     placeholder={'Pseudo Params Key'}
@@ -119,7 +119,7 @@ const EnvironmentConfiguration = ({ setHomeServerConfigurationChangedCallback, h
                 </div>
               </PreferencesSegment>
               <PreferencesSegment>
-                <Subtitle>Valet Token Secret</Subtitle>
+                <Subtitle className={'mt-2'}>Valet Token Secret</Subtitle>
                 <div className={'mt-2'}>
                   <DecoratedInput
                     placeholder={'Valet Token Secret'}
@@ -129,7 +129,7 @@ const EnvironmentConfiguration = ({ setHomeServerConfigurationChangedCallback, h
                 </div>
               </PreferencesSegment>
               <PreferencesSegment>
-                <Subtitle>Port</Subtitle>
+                <Subtitle className={'mt-2'}>Port</Subtitle>
                 <div className={'mt-2'}>
                   <DecoratedInput
                     placeholder={'Port'}
@@ -139,7 +139,7 @@ const EnvironmentConfiguration = ({ setHomeServerConfigurationChangedCallback, h
                 </div>
               </PreferencesSegment>
               <PreferencesSegment>
-                <Subtitle>Log Level</Subtitle>
+                <Subtitle className={'mt-2'}>Log Level</Subtitle>
                 <div className={'mt-2'}>
                   <Dropdown
                     label="Log level"

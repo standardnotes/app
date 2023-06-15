@@ -101,7 +101,7 @@ const DatabaseConfiguration = ({ setHomeServerConfigurationChangedCallback, home
               {isMySQLSelected && (
                 <>
                   <PreferencesSegment>
-                    <Subtitle>Database Username</Subtitle>
+                    <Subtitle className={'mt-2'}>Database Username</Subtitle>
                     <div className={'mt-2'}>
                       <DecoratedInput
                         placeholder={'username'}
@@ -111,7 +111,7 @@ const DatabaseConfiguration = ({ setHomeServerConfigurationChangedCallback, home
                     </div>
                   </PreferencesSegment>
                   <PreferencesSegment>
-                    <Subtitle>Database Password</Subtitle>
+                    <Subtitle className={'mt-2'}>Database Password</Subtitle>
                     <div className={'mt-2'}>
                       <DecoratedInput
                         placeholder={'password'}
@@ -121,7 +121,7 @@ const DatabaseConfiguration = ({ setHomeServerConfigurationChangedCallback, home
                     </div>
                   </PreferencesSegment>
                   <PreferencesSegment>
-                    <Subtitle>Database Host</Subtitle>
+                    <Subtitle className={'mt-2'}>Database Host</Subtitle>
                     <div className={'mt-2'}>
                       <DecoratedInput
                         placeholder={'host'}
@@ -131,7 +131,7 @@ const DatabaseConfiguration = ({ setHomeServerConfigurationChangedCallback, home
                     </div>
                   </PreferencesSegment>
                   <PreferencesSegment>
-                    <Subtitle>Database Port</Subtitle>
+                    <Subtitle className={'mt-2'}>Database Port</Subtitle>
                     <div className={'mt-2'}>
                       <DecoratedInput
                         placeholder={'port'}
@@ -145,7 +145,7 @@ const DatabaseConfiguration = ({ setHomeServerConfigurationChangedCallback, home
                     </div>
                   </PreferencesSegment>
                   <PreferencesSegment>
-                    <Subtitle>Database Name</Subtitle>
+                    <Subtitle className={'mt-2'}>Database Name</Subtitle>
                     <div className={'mt-2'}>
                       <DecoratedInput
                         placeholder={'name'}
