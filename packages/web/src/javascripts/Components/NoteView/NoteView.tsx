@@ -44,8 +44,7 @@ import { SuperEditorContentId } from '../SuperEditor/Constants'
 import { NoteViewController } from './Controller/NoteViewController'
 import { PlainEditor, PlainEditorInterface } from './PlainEditor/PlainEditor'
 import { EditorMargins, EditorMaxWidths } from '../EditorWidthSelectionModal/EditorWidths'
-import { Status } from '../StatusIndicator/Status'
-import StatusIndicator from '../StatusIndicator/StatusIndicator'
+import NoteStatusIndicator, { NoteStatus } from './NoteStatusIndicator'
 
 const MinimumStatusDuration = 400
 
@@ -62,7 +61,7 @@ type State = {
   isDesktop?: boolean
   editorLineWidth: EditorLineWidth
   noteLocked: boolean
-  noteStatus?: Status
+  noteStatus?: NoteStatus
   saveError?: boolean
   showProtectedWarning: boolean
   spellcheck: boolean
@@ -522,7 +521,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
     })
   }
 
-  showErrorStatus(error?: Status) {
+  showErrorStatus(error?: NoteStatus) {
     if (!error) {
       error = {
         type: 'error',
@@ -537,7 +536,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
     this.setStatus(error)
   }
 
-  setStatus(status: Status, wait = true) {
+  setStatus(status: NoteStatus, wait = true) {
     if (this.statusTimeout) {
       clearTimeout(this.statusTimeout)
     }
@@ -845,7 +844,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
                     autoComplete="off"
                   />
                 </div>
-                <StatusIndicator
+                <NoteStatusIndicator
                   status={this.state.noteStatus}
                   syncTakingTooLong={this.state.syncTakingTooLong}
                   updateSavingIndicator={this.state.updateSavingIndicator}
