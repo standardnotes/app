@@ -30,12 +30,14 @@ const StyledTooltip = ({
   className,
   label,
   showOnMobile = false,
+  showOnHover = true,
   ...props
 }: {
   children: ReactNode
   label: NonNullable<ReactNode>
   className?: string
   showOnMobile?: boolean
+  showOnHover?: boolean
 } & Partial<TooltipOptions>) => {
   const [forceOpen, setForceOpen] = useState<boolean | undefined>()
 
@@ -56,12 +58,12 @@ const StyledTooltip = ({
         onBlur={() => setForceOpen(undefined)}
         store={tooltip}
         as={Slot}
-        showOnHover={false}
+        showOnHover={showOnHover}
       >
         {children}
       </TooltipAnchor>
       <Tooltip
-        autoFocusOnShow
+        autoFocusOnShow={!showOnHover}
         store={tooltip}
         className={classNames(
           'z-tooltip max-w-max rounded border border-border bg-contrast py-1.5 px-3 text-sm text-foreground shadow',

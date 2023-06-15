@@ -10,6 +10,7 @@ import { useNoteAttributes } from '../../NotesOptions/NoteAttributes'
 import CheckIndicator from '../../Checkbox/CheckIndicator'
 import ModalDialogButtons from '../../Modal/ModalDialogButtons'
 import {
+  Checkbox,
   Select,
   SelectArrow,
   SelectItem,
@@ -207,6 +208,9 @@ const NoteConflictResolutionModal = ({
   const showSuperConversionInfo = selectedNotes.some((note) => note.noteType === NoteType.Super) && !isPreviewMode
   const [compareSuperMarkdown, setCompareSuperMarkdown] = useState(true)
 
+  const [comparisonScrollPos, setComparisonScrollPos] = useState(0)
+  const [shouldSyncComparisonScroll, setShouldSyncComparisonScroll] = useState(true)
+
   return (
     <Modal
       title="Resolve conflicts"
@@ -351,7 +355,13 @@ const NoteConflictResolutionModal = ({
             style={!isMobileScreen ? { gridTemplateColumns: `repeat(${selectedNotes.length}, 1fr)` } : undefined}
           >
             {selectedNotes.map((note) => (
-              <NoteContent note={note} key={note.uuid} />
+              <NoteContent
+                note={note}
+                key={note.uuid}
+                scrollPos={comparisonScrollPos}
+                shouldSyncScroll={shouldSyncComparisonScroll}
+                onScroll={(event) => setComparisonScrollPos((event.target as HTMLElement).scrollTop)}
+              />
             ))}
           </div>
         )}
@@ -360,6 +370,23 @@ const NoteConflictResolutionModal = ({
         )}
         {selectedNotes.length === 2 && (
           <div className="flex min-h-11 items-center justify-center gap-2 border-t border-border px-4 py-1.5">
+            {isPreviewMode && (
+              <StyledTooltip
+                className="!z-modal !max-w-[50ch]"
+                label={shouldSyncComparisonScroll ? 'Scrolling is synced' : 'Scrolling is not synced. Click to sync.'}
+                showOnMobile
+                portal={false}
+              >
+                <div className="relative rounded-full p-1 hover:bg-contrast">
+                  <Icon type={shouldSyncComparisonScroll ? 'link' : 'link-off'} className="text-neutral" />
+                  <Checkbox
+                    className="absolute top-0 left-0 right-0 bottom-0 cursor-pointer opacity-0"
+                    checked={shouldSyncComparisonScroll}
+                    onChange={() => setShouldSyncComparisonScroll((shouldSync) => !shouldSync)}
+                  />
+                </div>
+              </StyledTooltip>
+            )}
             {!isMobileScreen && (
               <>
                 <div className={showSuperConversionInfo ? 'ml-9' : ''}>Preview Mode</div>
@@ -371,7 +398,7 @@ const NoteConflictResolutionModal = ({
                 />
               </>
             )}
-            <div>Diff Mode</div>
+            <div className={isPreviewMode ? 'mr-9' : ''}>Diff Mode</div>
             {showSuperConversionInfo && (
               <StyledTooltip
                 className="!z-modal !max-w-[50ch]"
@@ -392,6 +419,7 @@ const NoteConflictResolutionModal = ({
                   </>
                 }
                 showOnMobile
+                showOnHover={false}
                 portal={false}
               >
                 <button className="rounded-full p-1 hover:bg-contrast">

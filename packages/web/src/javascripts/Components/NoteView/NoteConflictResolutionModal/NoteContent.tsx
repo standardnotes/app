@@ -1,5 +1,5 @@
 import { ContentType, NoteType, SNNote } from '@standardnotes/snjs'
-import { useEffect, useMemo } from 'react'
+import { UIEventHandler, useEffect, useMemo, useRef } from 'react'
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 import { useApplication } from '../../ApplicationProvider'
 import ComponentView from '../../ComponentView/ComponentView'
@@ -9,7 +9,17 @@ import { BlocksEditorComposer } from '../../SuperEditor/BlocksEditorComposer'
 import { useLinkingController } from '@/Controllers/LinkingControllerProvider'
 import LinkedItemBubblesContainer from '../../LinkedItems/LinkedItemBubblesContainer'
 
-export const NoteContent = ({ note }: { note: SNNote }) => {
+export const NoteContent = ({
+  note,
+  scrollPos,
+  shouldSyncScroll,
+  onScroll,
+}: {
+  note: SNNote
+  scrollPos: number
+  shouldSyncScroll: boolean
+  onScroll: UIEventHandler
+}) => {
   const application = useApplication()
   const linkingController = useLinkingController()
 
@@ -39,8 +49,30 @@ export const NoteContent = ({ note }: { note: SNNote }) => {
     }
   }, [application, componentViewer])
 
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!shouldSyncScroll) {
+      return
+    }
+
+    if (!containerRef.current) {
+      return
+    }
+
+    const scroller = containerRef.current.querySelector('textarea, .ContentEditable__root')
+
+    if (!scroller) {
+      return
+    }
+
+    scroller.scrollTo({
+      top: scrollPos,
+    })
+  }, [scrollPos, shouldSyncScroll])
+
   return (
-    <div className="flex h-full flex-grow flex-col overflow-hidden">
+    <div className="flex h-full flex-grow flex-col overflow-hidden" ref={containerRef}>
       <div className="w-full px-4 pt-4 text-base font-bold">
         <div className="title">{note.title}</div>
       </div>
@@ -63,6 +95,7 @@ export const NoteContent = ({ note }: { note: SNNote }) => {
                 readonly
                 className="blocks-editor relative h-full resize-none p-4 text-base focus:shadow-none focus:outline-none"
                 spellcheck={note.spellcheck}
+                onScroll={onScroll}
               ></BlocksEditor>
             </BlocksEditorComposer>
           </div>
@@ -74,6 +107,7 @@ export const NoteContent = ({ note }: { note: SNNote }) => {
               readOnly={true}
               className="font-editor h-full w-full resize-none border-0 bg-default p-4 pt-0 text-editor text-text"
               value={note.text}
+              onScroll={onScroll}
             />
           ) : (
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-passive-0">
