@@ -191,13 +191,19 @@ const NoteConflictResolutionModal = ({
   const isSelectOpen = selectStore.useState('open')
   const [selectAnchor, setSelectAnchor] = useState<HTMLButtonElement | null>(null)
 
-  const [multipleSelectionMode, setMultipleSelectionMode] = useState<MultipleSelectionMode>('preview')
+  const [multipleSelectionMode, setMultipleSelectionMode] = useState<MultipleSelectionMode>(
+    isMobileScreen ? 'diff' : 'preview',
+  )
   const isPreviewMode = multipleSelectionMode === 'preview'
   useEffect(() => {
     if (selectedNotes.length !== 2) {
       setMultipleSelectionMode('preview')
     }
-  }, [selectedNotes.length])
+
+    if (isMobileScreen && selectedNotes.length === 2) {
+      setMultipleSelectionMode('diff')
+    }
+  }, [isMobileScreen, selectedNotes.length])
   const showSuperConversionInfo = selectedNotes.some((note) => note.noteType === NoteType.Super) && !isPreviewMode
   const [compareSuperMarkdown, setCompareSuperMarkdown] = useState(true)
 
@@ -211,7 +217,7 @@ const NoteConflictResolutionModal = ({
       actions={actions}
       close={close}
       customFooter={
-        <ModalDialogButtons>
+        <ModalDialogButtons className={selectedNotes.length > 1 ? 'hidden md:flex' : ''}>
           <Button className="mr-auto hidden md:inline-block" onClick={close} disabled={isPerformingAction}>
             Cancel
           </Button>
@@ -311,7 +317,7 @@ const NoteConflictResolutionModal = ({
             disabled={isPerformingAction}
             isSelected={selectedVersions.includes(note.uuid)}
             onClick={(event) => {
-              if (event.ctrlKey || event.metaKey) {
+              if (event.ctrlKey || event.metaKey || isMobileScreen) {
                 setSelectedVersions((versions) => {
                   if (!versions.includes(note.uuid)) {
                     return versions.length > 1 ? versions.slice(1).concat(note.uuid) : versions.concat(note.uuid)
@@ -330,12 +336,17 @@ const NoteConflictResolutionModal = ({
           />
         ))}
       </div>
-      <div className="flex w-full flex-grow flex-col overflow-hidden">
+      <div
+        className={classNames(
+          'flex w-full flex-grow flex-col overflow-hidden',
+          selectedMobileTab !== 'content' && 'hidden md:flex',
+        )}
+      >
         {isPreviewMode && (
           <div
             className={classNames(
               'min-h-0 w-full flex-grow divide-x divide-border pb-0.5',
-              isMobileScreen ? (selectedMobileTab === 'content' ? 'flex' : 'hidden md:flex') : 'grid grid-rows-1',
+              isMobileScreen ? 'flex' : 'grid grid-rows-1',
             )}
             style={!isMobileScreen ? { gridTemplateColumns: `repeat(${selectedNotes.length}, 1fr)` } : undefined}
           >
@@ -349,13 +360,17 @@ const NoteConflictResolutionModal = ({
         )}
         {selectedNotes.length === 2 && (
           <div className="flex min-h-11 items-center justify-center gap-2 border-t border-border px-4 py-1.5">
-            <div className={showSuperConversionInfo ? 'ml-9' : ''}>Preview Mode</div>
-            <Switch
-              checked={!isPreviewMode}
-              onChange={function (checked: boolean): void {
-                setMultipleSelectionMode(checked ? 'diff' : 'preview')
-              }}
-            />
+            {!isMobileScreen && (
+              <>
+                <div className={showSuperConversionInfo ? 'ml-9' : ''}>Preview Mode</div>
+                <Switch
+                  checked={!isPreviewMode}
+                  onChange={function (checked: boolean): void {
+                    setMultipleSelectionMode(checked ? 'diff' : 'preview')
+                  }}
+                />
+              </>
+            )}
             <div>Diff Mode</div>
             {showSuperConversionInfo && (
               <StyledTooltip
