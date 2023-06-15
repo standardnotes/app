@@ -8,9 +8,9 @@ import Icon from '@/Components/Icon/Icon'
 import OfflineSubscription from '../General/Advanced/OfflineSubscription'
 import EnvironmentConfiguration from './Settings/EnvironmentConfiguration'
 import DatabaseConfiguration from './Settings/DatabaseConfiguration'
-import { Status } from '@/Components/StatusIndicator/Status'
-import StatusIndicator from '@/Components/StatusIndicator/StatusIndicator'
 import { HomeServerEnvironmentConfiguration } from '@standardnotes/snjs'
+import StatusIndicator from './Status/StatusIndicator'
+import { Status } from './Status/Status'
 
 const HomeServerSettings = () => {
   const application = useApplication()
@@ -42,9 +42,9 @@ const HomeServerSettings = () => {
 
     const result = await desktopDevice.homeServerStatus()
     setStatus({
-      type: result.status === 'on' ? 'saved' : result.errorMessage ? 'error' : 'saving',
+      state: result.status === 'on' ? 'online' : result.errorMessage ? 'error' : 'restarting',
       message: result.status === 'on' ? 'Online' : result.errorMessage ? 'Offline' : 'Starting...',
-      desc:
+      description:
         result.status === 'on'
           ? `Accessible on local network via: ${result.url}`
           : result.errorMessage ?? 'Your home server is offline.',
@@ -90,7 +90,7 @@ const HomeServerSettings = () => {
   const handleHomeServerConfigurationChange = useCallback(
     async (changedServerConfiguration: HomeServerEnvironmentConfiguration) => {
       try {
-        setStatus({ type: 'saving', message: 'Applying changes & restarting...' })
+        setStatus({ state: 'restarting', message: 'Applying changes & restarting...' })
 
         setHomeServerConfiguration(changedServerConfiguration)
 
@@ -100,12 +100,12 @@ const HomeServerSettings = () => {
 
         const result = await homeServerService.startHomeServer()
         if (result !== undefined) {
-          setStatus({ type: 'error', message: result })
+          setStatus({ state: 'error', message: result })
         }
 
-        setStatus({ type: 'saved', message: 'Online' })
+        setStatus({ state: 'online', message: 'Online' })
       } catch (error) {
-        setStatus({ type: 'error', message: (error as Error).message })
+        setStatus({ state: 'error', message: (error as Error).message })
       }
     },
     [homeServerService, setStatus, setHomeServerConfiguration],
@@ -120,10 +120,10 @@ const HomeServerSettings = () => {
 
       const result = await desktopDevice?.startHomeServer()
       if (result !== undefined) {
-        setStatus({ type: 'error', message: result })
+        setStatus({ state: 'error', message: result })
       }
     } catch (error) {
-      setStatus({ type: 'error', message: (error as Error).message })
+      setStatus({ state: 'error', message: (error as Error).message })
     }
   }, [homeServerService, desktopDevice])
 
@@ -131,7 +131,7 @@ const HomeServerSettings = () => {
     try {
       await homeServerService.openHomeServerDataLocation()
     } catch (error) {
-      setStatus({ type: 'error', message: (error as Error).message })
+      setStatus({ state: 'error', message: (error as Error).message })
     }
   }, [homeServerService])
 
@@ -188,21 +188,21 @@ const HomeServerSettings = () => {
     }
   }, [logs, isAtBottom])
 
-  const getStatusString = useCallback(() => {
+  const statusIndicator = () => {
     return (
-      <>
-        <Text>Status: </Text>
-        <StatusIndicator status={status} syncTakingTooLong={false} updateSavingIndicator={true} />
-      </>
+      <div className="mt-2.5 flex flex-row">
+        <StatusIndicator className={'mr-3'} status={status} />
+        <Text className={'mr-3'}>{status?.message}</Text>
+        <Text className={'mr-3'}>{status?.description}</Text>
+      </div>
     )
-  }, [status])
+  }
 
   return (
     <div>
-      {getStatusString()}
+      {statusIndicator()}
 
       <HorizontalSeparator classes="my-4" />
-
       <>
         <Text className="mb-3">Home server is enabled and all data is stored at:</Text>
 
@@ -217,9 +217,7 @@ const HomeServerSettings = () => {
           <Button label="Change Location" className={'mr-3 text-xs'} onClick={changeHomeServerDataLocation} />
         </div>
       </>
-
       <HorizontalSeparator classes="my-4" />
-
       {isSignedIn && !isAPremiumUser && (
         <div className="mt-3 flex flex-row flex-wrap gap-3">
           <Button
@@ -233,7 +231,6 @@ const HomeServerSettings = () => {
       {showOfflineSubscriptionActivation && (
         <OfflineSubscription application={application} viewControllerManager={viewControllerManager} />
       )}
-
       <div className="mt-3 flex flex-row flex-wrap gap-3">
         <Button label={showLogs ? 'Hide Logs' : 'Show Logs'} onClick={handleShowLogs} />
       </div>
