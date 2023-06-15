@@ -3,6 +3,8 @@ import fs, { PathLike } from 'fs'
 import { debounce } from 'lodash'
 import path from 'path'
 import yauzl from 'yauzl'
+import { Result } from '@standardnotes/domain-core'
+
 import { removeFromArray } from '../Utils/Utils'
 
 import fse from 'fs-extra'
@@ -163,30 +165,31 @@ export async function moveDirectory(dir: string, destination: string): Promise<v
   }
 }
 
-export async function moveDirContents(srcDir: string, destDir: string): Promise<void> {
-  let fileNames: string[]
+export async function moveDirContents(srcDir: string, destDir: string): Promise<Result<string>> {
   try {
+    let fileNames: string[]
+
     fileNames = await fs.promises.readdir(srcDir)
-  } catch (error) {
-    console.error(error)
-    return
-  }
-  await ensureDirectoryExists(destDir)
 
-  if (isChildOfDir(srcDir, destDir)) {
-    fileNames = fileNames.filter((name) => {
-      return !isChildOfDir(destDir, path.join(srcDir, name))
-    })
-    removeFromArray(fileNames, path.basename(destDir))
-  }
+    await ensureDirectoryExists(destDir)
 
-  try {
+    if (isChildOfDir(srcDir, destDir)) {
+      fileNames = fileNames.filter((name) => {
+        return !isChildOfDir(destDir, path.join(srcDir, name))
+      })
+      removeFromArray(fileNames, path.basename(destDir))
+    }
+
     await moveFiles(
       fileNames.map((fileName) => path.join(srcDir, fileName)),
       destDir,
     )
+
+    return Result.ok('Directory contents moved successfully')
   } catch (error) {
     console.error(error)
+
+    return Result.fail(`Could not move directory contentes: ${(error as Error).message}`)
   }
 }
 

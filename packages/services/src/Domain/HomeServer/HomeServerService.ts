@@ -87,7 +87,7 @@ export class HomeServerService extends AbstractService implements HomeServerServ
     return JSON.parse(config as string) as HomeServerEnvironmentConfiguration
   }
 
-  async changeHomeServerDataLocation(): Promise<string | undefined> {
+  async changeHomeServerDataLocation(): Promise<Result<string>> {
     const oldLocation = this.getHomeServerDataLocation()
     const newLocation = await this.fileBackupsDevice.presentDirectoryPickerForLocationChangeAndTransferOld(
       this.HOME_SERVER_DATA_DIRECTORY_NAME,
@@ -95,12 +95,14 @@ export class HomeServerService extends AbstractService implements HomeServerServ
     )
 
     if (!newLocation) {
-      return undefined
+      const lastErrorMessage = await this.fileBackupsDevice.getLastErrorMessage()
+
+      return Result.fail(lastErrorMessage ?? 'No location selected')
     }
 
     this.storageService.setValue(StorageKey.HomeServerDataLocation, newLocation)
 
-    return newLocation
+    return Result.ok(newLocation)
   }
 
   async openHomeServerDataLocation(): Promise<void> {

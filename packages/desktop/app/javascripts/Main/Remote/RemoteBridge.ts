@@ -76,6 +76,7 @@ export class RemoteBridge implements CrossProcessBridge {
       openLocation: this.openLocation.bind(this),
       presentDirectoryPickerForLocationChangeAndTransferOld:
         this.presentDirectoryPickerForLocationChangeAndTransferOld.bind(this),
+      getLastErrorMessage: this.getLastErrorMessage.bind(this),
       getPlaintextBackupsMappingFile: this.getPlaintextBackupsMappingFile.bind(this),
       persistPlaintextBackupsMappingFile: this.persistPlaintextBackupsMappingFile.bind(this),
       getTextBackupsCount: this.getTextBackupsCount.bind(this),
@@ -221,6 +222,10 @@ export class RemoteBridge implements CrossProcessBridge {
     oldLocation?: string | undefined,
   ): Promise<string | undefined> {
     return this.fileBackups.presentDirectoryPickerForLocationChangeAndTransferOld(appendPath, oldLocation)
+  }
+
+  getLastErrorMessage(): Promise<string | undefined> {
+    return this.fileBackups.getLastErrorMessage()
   }
 
   getPlaintextBackupsMappingFile(location: string): Promise<PlaintextBackupsMapping> {

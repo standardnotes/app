@@ -33,6 +33,8 @@ export interface FileBackupsDevice
   ): Promise<string | undefined>
 
   monitorPlaintextBackupsLocationForChanges(backupsDirectory: string): Promise<void>
+
+  getLastErrorMessage(): Promise<string | undefined>
 }
 
 export type FileBackupReadToken = string

@@ -69,6 +69,10 @@ export class DesktopDevice extends WebOrDesktopDevice implements DesktopDeviceIn
     return this.remoteBridge.presentDirectoryPickerForLocationChangeAndTransferOld(appendPath, oldLocation)
   }
 
+  getLastErrorMessage(): Promise<string | undefined> {
+    return this.remoteBridge.getLastErrorMessage()
+  }
+
   getFilesBackupsMappingFile(location: string): Promise<FileBackupsMapping> {
     return this.remoteBridge.getFilesBackupsMappingFile(location)
   }

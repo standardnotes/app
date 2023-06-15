@@ -38,8 +38,13 @@ export const FileBackupsConstantsV1 = {
 export class FilesBackupManager implements FileBackupsDevice {
   private readOperations: Map<string, FileReadOperation> = new Map()
   private plaintextMappingCache?: PlaintextBackupsMapping
+  private lastErrorMessage: string | undefined
 
   constructor(private appState: AppState, private webContents: WebContents) {}
+
+  async getLastErrorMessage(): Promise<string | undefined> {
+    return this.lastErrorMessage
+  }
 
   private async findUuidForPlaintextBackupFileName(
     backupsDirectory: string,
@@ -115,21 +120,34 @@ export class FilesBackupManager implements FileBackupsDevice {
     appendPath: string,
     oldLocation?: string,
   ): Promise<string | undefined> {
-    const selectedDirectory = await openDirectoryPicker('Select')
+    try {
+      this.lastErrorMessage = undefined
 
-    if (!selectedDirectory) {
+      const selectedDirectory = await openDirectoryPicker('Select')
+
+      if (!selectedDirectory) {
+        return undefined
+      }
+
+      const newPath = path.join(selectedDirectory, path.normalize(appendPath))
+
+      await ensureDirectoryExists(newPath)
+
+      if (oldLocation) {
+        const result = await moveDirContents(path.normalize(oldLocation), newPath)
+        if (result.isFailed()) {
+          this.lastErrorMessage = result.getError()
+
+          return undefined
+        }
+      }
+
+      return newPath
+    } catch (error) {
+      this.lastErrorMessage = (error as Error).message
+
       return undefined
     }
-
-    const newPath = path.join(selectedDirectory, path.normalize(appendPath))
-
-    await ensureDirectoryExists(newPath)
-
-    if (oldLocation) {
-      await moveDirContents(path.normalize(oldLocation), newPath)
-    }
-
-    return newPath
   }
 
   private getFileBackupsMappingFilePath(backupsLocation: string): string {

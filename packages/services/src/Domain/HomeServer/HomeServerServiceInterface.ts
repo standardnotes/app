@@ -11,7 +11,7 @@ export interface HomeServerServiceInterface {
   disableHomeServer(): Promise<void>
   startHomeServer(): Promise<string | undefined>
   stopHomeServer(): Promise<void>
-  changeHomeServerDataLocation(): Promise<string | undefined>
+  changeHomeServerDataLocation(): Promise<Result<string>>
   openHomeServerDataLocation(): Promise<void>
   getHomeServerConfiguration(): HomeServerEnvironmentConfiguration | undefined
   setHomeServerConfiguration(config: HomeServerEnvironmentConfiguration): Promise<void>

@@ -5834,6 +5834,7 @@ __metadata:
     "@babel/core": "*"
     "@babel/preset-env": "*"
     "@electron/remote": ^2.0.9
+    "@standardnotes/domain-core": ^1.18.0
     "@standardnotes/electron-clear-data": 1.1.1
     "@standardnotes/home-server": ^1.11.5
     "@standardnotes/web": "workspace:*"
