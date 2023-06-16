@@ -103,6 +103,8 @@ export class AsymmetricMessageService extends AbstractService implements Interna
         await this.handleTrustedSenderKeypairChangedMessage(message, trustedMessagePayload)
       } else if (trustedMessagePayload.type === AsymmetricMessagePayloadType.SharedVaultRootKeyChanged) {
         await this.handleTrustedSharedVaultRootKeyChangedMessage(message, trustedMessagePayload)
+      } else if (trustedMessagePayload.type === AsymmetricMessagePayloadType.SharedVaultMetadataChanged) {
+        throw new Error('Not implemented')
       } else if (trustedMessagePayload.type === AsymmetricMessagePayloadType.SharedVaultInvite) {
         throw new Error('Shared vault invites payloads are not handled as part of asymmetric messages')
       }

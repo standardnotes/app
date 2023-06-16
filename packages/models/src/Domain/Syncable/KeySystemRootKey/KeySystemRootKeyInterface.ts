@@ -12,6 +12,19 @@ export interface KeySystemRootKeyInterface extends DecryptedItemInterface<KeySys
   key: string
   keyVersion: ProtocolVersion
 
+  /**
+   * A token is passed to all items keys created while this root key was active.
+   * When determining which items key a client should use to encrypt new items or new changes,
+   * it should look for items keys which have the current root key itemsKeyToken. This prevents
+   * the server from dictating which items key a client should use, and also prevents a server from withholding
+   * items keys from sync results, which would otherwise compel a client to choose between its available items keys,
+   * which may be old or rotated.
+   *
+   * This token is part of the encrypted payload of both the root key and corresponding items keys. While not
+   * necessarily destructive if leaked, it prevents a malicious server from creating a compromised items key for a vault.
+   */
+  token: string
+
   get itemsKey(): string
 
   /**

@@ -21,6 +21,7 @@ import { AddItemToVaultUseCase } from './UseCase/AddItemToVault'
 import { RotateKeySystemRootKeyUseCase } from './UseCase/RotateKeySystemRootKey'
 import { FilesClientInterface } from '@standardnotes/files'
 import { ContentType } from '@standardnotes/common'
+import { GetVaultUseCase } from './UseCase/GetVault'
 
 export class VaultService
   extends AbstractService<VaultServiceEvent, VaultServiceEventPayload[VaultServiceEvent]>
@@ -41,7 +42,8 @@ export class VaultService
   }
 
   public getVault(keySystemIdentifier: KeySystemIdentifier): VaultListingInterface | undefined {
-    return this.getVaults().find((listing) => listing.systemIdentifier === keySystemIdentifier)
+    const usecase = new GetVaultUseCase(this.items)
+    return usecase.execute({ keySystemIdentifier })
   }
 
   public getSureVault(keySystemIdentifier: KeySystemIdentifier): VaultListingInterface {

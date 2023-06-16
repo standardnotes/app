@@ -21,13 +21,11 @@ export class KeySystemKeyManager implements KeySystemKeyManagerInterface {
     return keys
   }
 
-  getKeySystemRootKeyWithKeyIdentifier(
+  getKeySystemRootKeyWithToken(
     systemIdentifier: KeySystemIdentifier,
-    keyIdentifier: string,
+    rootKeyToken: string,
   ): KeySystemRootKeyInterface | undefined {
-    const keys = this.getAllKeySystemRootKeysForVault(systemIdentifier).filter(
-      (key) => key.keyParams.rootKeyIdentifier === keyIdentifier,
-    )
+    const keys = this.getAllKeySystemRootKeysForVault(systemIdentifier).filter((key) => key.token === rootKeyToken)
 
     if (keys.length > 1) {
       throw new Error('Multiple synced key system root keys found for timestamp')
@@ -61,11 +59,11 @@ export class KeySystemKeyManager implements KeySystemKeyManagerInterface {
       throw new Error('No primary key system root key found')
     }
 
-    const matchingKeys = this.getKeySystemItemsKeys(systemIdentifier).filter(
-      (key) => key.keyAnchor === rootKey.itemsKeyAnchor,
+    const matchingItemsKeys = this.getKeySystemItemsKeys(systemIdentifier).filter(
+      (key) => key.rootKeyToken === rootKey.token,
     )
 
-    const sortedByNewestFirst = matchingKeys.sort((a, b) => b.keyTimestamp - a.keyTimestamp)
+    const sortedByNewestFirst = matchingItemsKeys.sort((a, b) => b.keyTimestamp - a.keyTimestamp)
     return sortedByNewestFirst[0]
   }
 }

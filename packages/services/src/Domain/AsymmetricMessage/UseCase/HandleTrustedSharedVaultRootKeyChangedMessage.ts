@@ -19,19 +19,19 @@ export class HandleTrustedSharedVaultRootKeyChangedMessage {
   ) {}
 
   async execute(message: AsymmetricMessageSharedVaultRootKeyChanged): Promise<'inserted' | 'changed'> {
-    const keyContent = message.data
+    const rootKeyContent = message.data
 
-    const existingKeySystemRootKey = this.encryption.keySystemKeyManager.getKeySystemRootKeyWithKeyIdentifier(
-      keyContent.systemIdentifier,
-      keyContent.keyParams.rootKeyIdentifier,
+    const existingKeySystemRootKey = this.encryption.keySystemKeyManager.getKeySystemRootKeyWithToken(
+      rootKeyContent.systemIdentifier,
+      rootKeyContent.token,
     )
 
     if (existingKeySystemRootKey) {
       await this.items.changeItem<KeySystemRootKeyMutator, KeySystemRootKeyInterface>(
         existingKeySystemRootKey,
         (mutator) => {
-          mutator.systemName = keyContent.systemName
-          mutator.systemDescription = keyContent.systemDescription
+          mutator.systemName = rootKeyContent.systemName
+          mutator.systemDescription = rootKeyContent.systemDescription
         },
       )
 
@@ -42,7 +42,7 @@ export class HandleTrustedSharedVaultRootKeyChangedMessage {
 
     await this.items.createItem<KeySystemRootKeyInterface>(
       ContentType.KeySystemRootKey,
-      FillItemContent<KeySystemRootKeyContent>(keyContent),
+      FillItemContent<KeySystemRootKeyContent>(rootKeyContent),
       true,
     )
 

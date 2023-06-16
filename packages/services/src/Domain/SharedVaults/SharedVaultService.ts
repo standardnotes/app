@@ -32,7 +32,7 @@ import { SharedVaultServiceInterface } from './SharedVaultServiceInterface'
 import { SharedVaultServiceEvent, SharedVaultServiceEventPayload } from './SharedVaultServiceEvent'
 import { EncryptionProviderInterface } from '@standardnotes/encryption'
 import { ContentType } from '@standardnotes/common'
-import { HandleSuccessfullyChangedCredentials } from './UseCase/HandleSuccessfullyChangedCredentials'
+import { ReuploadAllOutboundInvitesAfterCredentialsChange } from './UseCase/ReuploadAllOutboundInvitesAfterCredentialsChange'
 import { SuccessfullyChangedCredentialsEventData } from '../Session/SuccessfullyChangedCredentialsEventData'
 import { GetSharedVaultUsersUseCase } from './UseCase/GetSharedVaultUsers'
 import { RemoveVaultMemberUseCase } from './UseCase/RemoveSharedVaultMember'
@@ -61,6 +61,7 @@ import { ShareContactWithAllMembersOfSharedVaultUseCase } from './UseCase/ShareC
 import { GetSharedVaultTrustedContacts } from './UseCase/GetSharedVaultTrustedContacts'
 import { NotifySharedVaultUsersOfRootKeyRotationUseCase } from './UseCase/NotifySharedVaultUsersOfRootKeyRotation'
 import { CreateSharedVaultUseCase } from './UseCase/CreateSharedVault'
+import { SendSharedVaultMetadataChangedMessageToAll } from './UseCase/SendSharedVaultMetadataChangedMessageToAll'
 
 export class SharedVaultService
   extends AbstractService<SharedVaultServiceEvent, SharedVaultServiceEventPayload>
@@ -127,13 +128,14 @@ export class SharedVaultService
 
   async handleEvent(event: InternalEventInterface): Promise<void> {
     if (event.type === SessionEvent.SuccessfullyChangedCredentials) {
-      const handler = new HandleSuccessfullyChangedCredentials(
-        this.sharedVaultInvitesServer,
+      const handler = new ReuploadAllOutboundInvitesAfterCredentialsChange(
         this.encryption,
         this.contacts,
+        this.items,
+        this.sharedVaultInvitesServer,
+        this.sharedVaultUsersServer,
       )
       await handler.execute({
-        sharedVaults: this.getAllSharedVaults(),
         eventData: event.payload as SuccessfullyChangedCredentialsEventData,
       })
     } else if (event.type === UserEventServiceEvent.UserEventReceived) {
@@ -248,7 +250,19 @@ export class SharedVaultService
         continue
       }
 
-      await this.handleVaultRootKeyRotatedEvent(vault)
+      const usecase = new SendSharedVaultMetadataChangedMessageToAll(
+        this.encryption,
+        this.contacts,
+        this.sharedVaultUsersServer,
+        this.messageServer,
+      )
+
+      await usecase.execute({
+        vault,
+        senderUuid: this.session.getSureUser().uuid,
+        senderEncryptionKeyPair: this.encryption.getKeyPair(),
+        senderSigningKeyPair: this.encryption.getSigningKeyPair(),
+      })
     }
   }
 
@@ -386,6 +400,7 @@ export class SharedVaultService
       this.items,
       this.sync,
       this.contacts,
+      this.encryption,
     )
     const result = await useCase.execute({ invite: pendingInvite.invite, message: pendingInvite.message })
 

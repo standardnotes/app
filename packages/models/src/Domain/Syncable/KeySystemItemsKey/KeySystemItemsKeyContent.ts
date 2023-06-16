@@ -5,7 +5,7 @@ export interface KeySystemItemsKeyContentSpecialized extends SpecializedContent 
   version: ProtocolVersion
   keyTimestamp: number
   itemsKey: string
-  keyAnchor?: string | undefined
+  rootKeyToken: string
 }
 
 export type KeySystemItemsKeyContent = KeySystemItemsKeyContentSpecialized & ItemContent

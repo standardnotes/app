@@ -10,18 +10,20 @@ import {
 
 import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
 import { ContentType } from '@standardnotes/common'
+import { EncryptionProviderInterface } from '@standardnotes/encryption'
 
 export class HandleTrustedSharedVaultInviteMessage {
   constructor(
     private items: ItemManagerInterface,
     private sync: SyncServiceInterface,
     private contacts: ContactServiceInterface,
+    private encryption: EncryptionProviderInterface,
   ) {}
 
   async execute(message: AsymmetricMessageSharedVaultInvite): Promise<'inserted' | 'changed'> {
     const { rootKey: rootKeyContent, trustedContacts } = message.data
 
-    const existingKeySystemRootKey = this.items.getKeySystemRootKeyWithKeyIdentifier(
+    const existingKeySystemRootKey = this.encryption.keySystemKeyManager.getKeySystemRootKeyWithToken(
       rootKeyContent.systemIdentifier,
       rootKeyContent.keyTimestamp,
     )

@@ -61,14 +61,3 @@ export enum V004Algorithm {
   PayloadKeyHashingKeySubKeyContext = 'sn-sym-h',
   PayloadKeyHashingKeySubKeyBytes = SodiumConstant.crypto_generichash_KEYBYTES,
 }
-
-export enum V004KeySystemAlgorithm {
-  ArgonSaltSeedLength = 256,
-  ArgonSaltLength = 128,
-  ArgonIterations = 5,
-  ArgonMemLimit = 67108864,
-  ArgonOutputKeyBytes = 32,
-
-  EncryptionKeyLength = 256,
-  EncryptionNonceLength = 192,
-}

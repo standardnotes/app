@@ -4,8 +4,8 @@ import { KeySystemItemsKeyContent } from './KeySystemItemsKeyContent'
 
 export interface KeySystemItemsKeyInterface extends DecryptedItemInterface<KeySystemItemsKeyContent> {
   readonly keyTimestamp: number
+  readonly rootKeyToken: string
 
   get keyVersion(): ProtocolVersion
   get itemsKey(): string
-  get keyAnchor(): string | undefined
 }

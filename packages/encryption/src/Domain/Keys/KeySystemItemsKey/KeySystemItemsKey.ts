@@ -20,6 +20,7 @@ export class KeySystemItemsKey extends DecryptedItem<KeySystemItemsKeyContent> i
   keyTimestamp: number
   keyVersion: ProtocolVersion
   itemsKey: string
+  rootKeyToken: string
 
   constructor(payload: DecryptedPayloadInterface<KeySystemItemsKeyContent>) {
     super(payload)
@@ -27,6 +28,7 @@ export class KeySystemItemsKey extends DecryptedItem<KeySystemItemsKeyContent> i
     this.keyTimestamp = payload.content.keyTimestamp
     this.keyVersion = payload.content.version
     this.itemsKey = this.payload.content.itemsKey
+    this.rootKeyToken = this.payload.content.rootKeyToken
   }
 
   /** Do not duplicate vault items keys. Always keep original */

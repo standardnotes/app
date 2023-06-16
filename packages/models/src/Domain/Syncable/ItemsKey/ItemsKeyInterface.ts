@@ -7,7 +7,6 @@ export interface ItemsKeyContentSpecialized extends SpecializedContent {
   isDefault?: boolean | undefined
   itemsKey: string
   dataAuthenticationKey?: string
-  keyAnchor?: string | undefined
 }
 
 export type ItemsKeyContent = ItemsKeyContentSpecialized & ItemContent

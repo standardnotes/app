@@ -9,6 +9,8 @@ export type KeySystemRootKeyContentSpecialized = {
 
   key: string
   keyVersion: ProtocolVersion
+
+  token: string
 }
 
 export type KeySystemRootKeyContent = KeySystemRootKeyContentSpecialized & ItemContent

@@ -7,7 +7,7 @@ import { EncryptionProviderInterface } from '@standardnotes/encryption'
 import { ContactServiceInterface } from '../../Contacts/ContactServiceInterface'
 import { SharedVaultListingInterface } from '@standardnotes/models'
 import { ClientDisplayableError } from '@standardnotes/responses'
-import { UpdateInvitesAfterSharedVaultDataChangeUseCase } from './UpdateInvitesAfterSharedVaultDataChange'
+import { ReuploadSharedVaultInvitesAfterKeyRotationUseCase } from './ReuploadSharedVaultInvitesAfterKeyRotation'
 import { SendSharedVaultRootKeyChangedMessageToAll } from './SendSharedVaultRootKeyChangedMessageToAll'
 
 export class NotifySharedVaultUsersOfRootKeyRotationUseCase {
@@ -24,7 +24,7 @@ export class NotifySharedVaultUsersOfRootKeyRotationUseCase {
     userUuid: string
   }): Promise<ClientDisplayableError[]> {
     const errors: ClientDisplayableError[] = []
-    const updatePendingInvitesUseCase = new UpdateInvitesAfterSharedVaultDataChangeUseCase(
+    const updatePendingInvitesUseCase = new ReuploadSharedVaultInvitesAfterKeyRotationUseCase(
       this.encryption,
       this.contacts,
       this.sharedVaultInvitesServer,

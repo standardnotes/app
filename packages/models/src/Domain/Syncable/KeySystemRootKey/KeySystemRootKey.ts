@@ -17,6 +17,7 @@ export class KeySystemRootKey extends DecryptedItem<KeySystemRootKeyContent> imp
 
   key: string
   keyVersion: ProtocolVersion
+  token: string
 
   constructor(payload: DecryptedPayloadInterface<KeySystemRootKeyContent>) {
     super(payload)
@@ -26,6 +27,7 @@ export class KeySystemRootKey extends DecryptedItem<KeySystemRootKeyContent> imp
 
     this.key = payload.content.key
     this.keyVersion = payload.content.keyVersion
+    this.token = payload.content.token
   }
 
   override strategyWhenConflictingWithItem(
