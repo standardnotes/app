@@ -35,7 +35,7 @@ describe('shared vault items', function () {
 
     const updatedNote = context.items.findItem(note.uuid)
     expect(updatedNote.key_system_identifier).to.equal(sharedVault.systemIdentifier)
-    expect(updatedNote.shared_vault_uuid).to.equal(sharedVault.sharedVaultUuid)
+    expect(updatedNote.shared_vault_uuid).to.equal(sharedVault.sharing.sharedVaultUuid)
   })
 
   it('should add item to shared vault with contact', async () => {

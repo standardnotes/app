@@ -1,6 +1,10 @@
 import { EncryptionProviderInterface } from '@standardnotes/encryption'
 import { ClientDisplayableError, isErrorResponse } from '@standardnotes/responses'
-import { TrustedContactInterface, SharedVaultDisplayListing, AsymmetricMessagePayloadType } from '@standardnotes/models'
+import {
+  TrustedContactInterface,
+  SharedVaultListingInterface,
+  AsymmetricMessagePayloadType,
+} from '@standardnotes/models'
 import { AsymmetricMessageServerInterface, SharedVaultUsersServerInterface } from '@standardnotes/api'
 import { PkcKeyPair } from '@standardnotes/sncrypto-common'
 import { ContactServiceInterface } from '../../Contacts/ContactServiceInterface'
@@ -18,15 +22,15 @@ export class ShareContactWithAllMembersOfSharedVaultUseCase {
     senderKeyPair: PkcKeyPair
     senderSigningKeyPair: PkcKeyPair
     senderUserUuid: string
-    sharedVault: SharedVaultDisplayListing
+    sharedVault: SharedVaultListingInterface
     contactToShare: TrustedContactInterface
   }): Promise<void | ClientDisplayableError> {
-    if (params.sharedVault.ownerUserUuid !== params.senderUserUuid) {
+    if (params.sharedVault.sharing.ownerUserUuid !== params.senderUserUuid) {
       return ClientDisplayableError.FromString('Cannot share contact; user is not the owner of the shared vault')
     }
 
     const usersResponse = await this.sharedVaultUsersServer.getSharedVaultUsers({
-      sharedVaultUuid: params.sharedVault.sharedVaultUuid,
+      sharedVaultUuid: params.sharedVault.sharing.sharedVaultUuid,
     })
 
     if (isErrorResponse(usersResponse)) {

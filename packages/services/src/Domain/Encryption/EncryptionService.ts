@@ -25,6 +25,7 @@ import {
   PublicKeySet,
   EncryptedOutputParameters,
   KeySystemKeyManagerInterface,
+  AsymmetricSignatureVerificationDetachedResult,
 } from '@standardnotes/encryption'
 import {
   BackupFile,
@@ -79,6 +80,7 @@ import { DecryptBackupFile } from './BackupFileDecryptor'
 import { EncryptionServiceEvent } from './EncryptionServiceEvent'
 import { DecryptedParameters } from '@standardnotes/encryption/src/Domain/Types/DecryptedParameters'
 import { KeySystemKeyManager } from '../KeySystem/KeySystemKeyManager'
+import { AsymmetricallyEncryptedString } from '@standardnotes/encryption/src/Domain/Operator/Types'
 
 /**
  * The encryption service is responsible for the encryption and decryption of payloads, and
@@ -590,7 +592,7 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     senderKeyPair: PkcKeyPair
     senderSigningKeyPair: PkcKeyPair
     recipientPublicKey: string
-  }): string {
+  }): AsymmetricallyEncryptedString {
     const operator = this.operatorManager.defaultOperator()
     const encrypted = operator.asymmetricEncrypt({
       stringToEncrypt: JSON.stringify(dto.message),
@@ -602,7 +604,7 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
   }
 
   asymmetricallyDecryptMessage(dto: {
-    encryptedString: string
+    encryptedString: AsymmetricallyEncryptedString
     trustedSenderPublicKey: string | undefined
     trustedSenderSigningPublicKey: string | undefined
     privateKey: string
@@ -650,7 +652,16 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     }
   }
 
-  getSenderPublicKeySetFromAsymmetricallyEncryptedString(string: string): PublicKeySet {
+  asymmetricSignatureVerifyDetached(
+    encryptedString: AsymmetricallyEncryptedString,
+  ): AsymmetricSignatureVerificationDetachedResult {
+    const defaultOperator = this.operatorManager.defaultOperator()
+    const version = defaultOperator.versionForAsymmetricallyEncryptedString(encryptedString)
+    const keyOperator = this.operatorManager.operatorForVersion(version)
+    return keyOperator.asymmetricSignatureVerifyDetached(encryptedString)
+  }
+
+  getSenderPublicKeySetFromAsymmetricallyEncryptedString(string: AsymmetricallyEncryptedString): PublicKeySet {
     const defaultOperator = this.operatorManager.defaultOperator()
     const version = defaultOperator.versionForAsymmetricallyEncryptedString(string)
 

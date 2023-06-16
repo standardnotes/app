@@ -15,32 +15,25 @@ export class KeySystemRootKey extends DecryptedItem<KeySystemRootKeyContent> imp
   keyParams: KeySystemRootKeyParamsInterface
   systemIdentifier: KeySystemIdentifier
 
-  systemName: string
-  systemDescription?: string
-
   key: string
   keyVersion: ProtocolVersion
-  itemsKeyAnchor: string
 
   constructor(payload: DecryptedPayloadInterface<KeySystemRootKeyContent>) {
     super(payload)
 
     this.keyParams = payload.content.keyParams
     this.systemIdentifier = payload.content.systemIdentifier
-    this.systemName = payload.content.systemName
-    this.systemDescription = payload.content.systemDescription
 
     this.key = payload.content.key
     this.keyVersion = payload.content.keyVersion
-    this.itemsKeyAnchor = payload.content.itemsKeyAnchor
   }
 
   override strategyWhenConflictingWithItem(
     item: KeySystemRootKey,
     _previousRevision?: HistoryEntryInterface,
   ): ConflictStrategy {
-    const baseKeyTimestamp = this.keyTimestamp
-    const incomingKeyTimestamp = item.keyTimestamp
+    const baseKeyTimestamp = this.keyParams.creationTimestamp
+    const incomingKeyTimestamp = item.keyParams.creationTimestamp
 
     return incomingKeyTimestamp > baseKeyTimestamp ? ConflictStrategy.KeepApply : ConflictStrategy.KeepBase
   }

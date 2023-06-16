@@ -3,8 +3,7 @@ import { EncryptionProviderInterface } from '@standardnotes/encryption'
 import { ClientDisplayableError, SharedVaultInviteServerHash, isErrorResponse } from '@standardnotes/responses'
 import { ContactServiceInterface } from '../../Contacts/ContactServiceInterface'
 import { SuccessfullyChangedCredentialsEventData } from '../../Session/SuccessfullyChangedCredentialsEventData'
-import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
-import { SharedVaultDisplayListing, AsymmetricMessagePayloadType } from '@standardnotes/models'
+import { SharedVaultListingInterface, AsymmetricMessagePayloadType } from '@standardnotes/models'
 import { PkcKeyPair } from '@standardnotes/sncrypto-common'
 
 /**
@@ -17,12 +16,11 @@ export class HandleSuccessfullyChangedCredentials {
     private sharedVaultInvitesServer: SharedVaultInvitesServerInterface,
     private encryption: EncryptionProviderInterface,
     private contacts: ContactServiceInterface,
-    private items: ItemManagerInterface,
   ) {}
 
   async execute(dto: {
     eventData: SuccessfullyChangedCredentialsEventData
-    sharedVaults: SharedVaultDisplayListing[]
+    sharedVaults: SharedVaultListingInterface[]
   }): Promise<ClientDisplayableError[]> {
     await this.sharedVaultInvitesServer.deleteAllInboundInvites()
 
@@ -37,7 +35,7 @@ export class HandleSuccessfullyChangedCredentials {
   private async updateAllOutboundInvites(params: {
     newKeyPair: PkcKeyPair
     newSigningKeyPair: PkcKeyPair
-    sharedVaults: SharedVaultDisplayListing[]
+    sharedVaults: SharedVaultListingInterface[]
   }): Promise<ClientDisplayableError[]> {
     const getOutboundInvitesResponse = await this.sharedVaultInvitesServer.getOutboundUserInvites()
 
@@ -50,7 +48,7 @@ export class HandleSuccessfullyChangedCredentials {
     const outboundInvites = getOutboundInvitesResponse.data.invites
     for (const invite of outboundInvites) {
       const sharedVault = params.sharedVaults.find(
-        (sharedVault) => sharedVault.sharedVaultUuid === invite.shared_vault_uuid,
+        (sharedVault) => sharedVault.sharing.sharedVaultUuid === invite.shared_vault_uuid,
       )
       if (!sharedVault) {
         errors.push(ClientDisplayableError.FromString('Failed to find sharedVault for invite'))
@@ -74,11 +72,13 @@ export class HandleSuccessfullyChangedCredentials {
 
   private async updateOutboundInvite(params: {
     invite: SharedVaultInviteServerHash
-    sharedVault: SharedVaultDisplayListing
+    sharedVault: SharedVaultListingInterface
     newKeyPair: PkcKeyPair
     newSigningKeyPair: PkcKeyPair
   }): Promise<ClientDisplayableError | undefined> {
-    const keySystemRootKey = this.items.getPrimaryKeySystemRootKey(params.sharedVault.systemIdentifier)
+    const keySystemRootKey = this.encryption.keySystemKeyManager.getPrimaryKeySystemRootKey(
+      params.sharedVault.systemIdentifier,
+    )
     if (!keySystemRootKey) {
       return ClientDisplayableError.FromString('Failed to find key system root key for invite')
     }

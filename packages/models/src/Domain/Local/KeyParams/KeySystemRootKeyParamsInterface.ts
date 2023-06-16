@@ -12,9 +12,10 @@ export enum KeySystemRootKeyPasswordType {
  * previously.
  */
 export interface KeySystemRootKeyParamsInterface {
-  identifier: KeySystemIdentifier
+  systemIdentifier: KeySystemIdentifier
+  rootKeyIdentifier: string
   seed: string
   version: ProtocolVersion
   passwordType: KeySystemRootKeyPasswordType
-  createdTimestamp: number
+  creationTimestamp: number
 }

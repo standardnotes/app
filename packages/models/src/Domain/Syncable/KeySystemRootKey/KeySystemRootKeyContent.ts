@@ -6,12 +6,9 @@ import { KeySystemRootKeyParamsInterface } from '../../Local/KeyParams/KeySystem
 export type KeySystemRootKeyContentSpecialized = {
   keyParams: KeySystemRootKeyParamsInterface
   systemIdentifier: KeySystemIdentifier
-  systemName: string
-  systemDescription?: string
 
   key: string
   keyVersion: ProtocolVersion
-  itemsKeyAnchor: string
 }
 
 export type KeySystemRootKeyContent = KeySystemRootKeyContentSpecialized & ItemContent

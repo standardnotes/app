@@ -27,6 +27,7 @@ export * from './Operator/OperatorInterface'
 export * from './Operator/OperatorManager'
 export * from './Operator/OperatorWrapper'
 export * from './Operator/PublicKeySet'
+export * from './Operator/AsymmetricSignatureVerificationDetachedResult'
 
 export * from './Service/Encryption/EncryptionProviderInterface'
 export * from './Service/KeySystemKeyManagerInterface'

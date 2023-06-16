@@ -1,117 +1,150 @@
 import {
-  AsymmetricMessagePayload,
-  AsymmetricMessagePayloadType,
-  KeySystemIdentifier,
   KeySystemRootKeyContentSpecialized,
+  SharedVaultListingInterface,
+  TrustedContactInterface,
 } from '@standardnotes/models'
 import { EncryptionProviderInterface } from '@standardnotes/encryption'
-import { ClientDisplayableError, isClientDisplayableError, isErrorResponse } from '@standardnotes/responses'
-import { SharedVaultInvitesServerInterface } from '@standardnotes/api'
-import { UpdateSharedVaultInviteUseCase } from './UpdateSharedVaultInvite'
+import {
+  ClientDisplayableError,
+  SharedVaultInviteServerHash,
+  isClientDisplayableError,
+  isErrorResponse,
+} from '@standardnotes/responses'
+import { SharedVaultInvitesServerInterface, SharedVaultUsersServerInterface } from '@standardnotes/api'
 import { ContactServiceInterface } from '../../Contacts/ContactServiceInterface'
-import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
 import { PkcKeyPair } from '@standardnotes/sncrypto-common'
+import { InviteContactToSharedVaultUseCase } from './InviteContactToSharedVault'
+import { GetSharedVaultTrustedContacts } from './GetSharedVaultTrustedContacts'
 
 export class UpdateInvitesAfterSharedVaultDataChangeUseCase {
   constructor(
     private encryption: EncryptionProviderInterface,
-    private vaultInvitesServer: SharedVaultInvitesServerInterface,
     private contacts: ContactServiceInterface,
-    private items: ItemManagerInterface,
+    private vaultInvitesServer: SharedVaultInvitesServerInterface,
+    private vaultUserServer: SharedVaultUsersServerInterface,
   ) {}
 
   async execute(params: {
-    keySystemIdentifier: KeySystemIdentifier
-    sharedVaultUuid: string
+    sharedVault: SharedVaultListingInterface
     senderUuid: string
     senderEncryptionKeyPair: PkcKeyPair
     senderSigningKeyPair: PkcKeyPair
   }): Promise<ClientDisplayableError[]> {
-    const keySystemRootKey = this.items.getPrimaryKeySystemRootKey(params.keySystemIdentifier)
+    const keySystemRootKey = this.encryption.keySystemKeyManager.getPrimaryKeySystemRootKey(
+      params.sharedVault.systemIdentifier,
+    )
     if (!keySystemRootKey) {
-      throw new Error(`Vault key not found for keySystemIdentifier ${params.keySystemIdentifier}`)
+      throw new Error(`Vault key not found for keySystemIdentifier ${params.sharedVault.systemIdentifier}`)
+    }
+
+    const existingInvites = await this.getExistingInvites(params.sharedVault.sharing.sharedVaultUuid)
+    if (isClientDisplayableError(existingInvites)) {
+      return [existingInvites]
+    }
+
+    const deleteResult = await this.deleteExistingInvites(params.sharedVault.sharing.sharedVaultUuid)
+    if (isClientDisplayableError(deleteResult)) {
+      return [deleteResult]
+    }
+
+    const vaultContacts = await this.getVaultContacts(params.sharedVault)
+    if (vaultContacts.length === 0) {
+      return []
     }
 
     const errors: ClientDisplayableError[] = []
 
-    const reuploadErrors = await this.reuploadExistingInvites({
-      sharedVaultUuid: params.sharedVaultUuid,
-      keySystemRootKeyData: keySystemRootKey.content,
-      senderUuid: params.senderUuid,
-      senderEncryptionKeyPair: params.senderEncryptionKeyPair,
-      senderSigningKeyPair: params.senderSigningKeyPair,
-    })
-    errors.push(...reuploadErrors)
+    for (const invite of existingInvites) {
+      const contact = this.contacts.findTrustedContact(invite.user_uuid)
+      if (!contact) {
+        errors.push(ClientDisplayableError.FromString(`Contact not found for invite ${invite.user_uuid}`))
+        continue
+      }
+
+      const result = await this.sendNewInvite({
+        contact: contact,
+        previousInvite: invite,
+        sharedVault: params.sharedVault,
+        keySystemRootKeyData: keySystemRootKey.content,
+        sharedVaultContacts: vaultContacts,
+        senderUuid: params.senderUuid,
+        senderEncryptionKeyPair: params.senderEncryptionKeyPair,
+        senderSigningKeyPair: params.senderSigningKeyPair,
+      })
+
+      if (isClientDisplayableError(result)) {
+        errors.push(result)
+      }
+    }
 
     return errors
   }
 
-  private async reuploadExistingInvites(params: {
-    sharedVaultUuid: string
-    keySystemRootKeyData: KeySystemRootKeyContentSpecialized
-    senderUuid: string
-    senderEncryptionKeyPair: PkcKeyPair
-    senderSigningKeyPair: PkcKeyPair
-  }): Promise<ClientDisplayableError[]> {
+  private async getVaultContacts(sharedVault: SharedVaultListingInterface): Promise<TrustedContactInterface[]> {
+    const usecase = new GetSharedVaultTrustedContacts(this.contacts, this.vaultUserServer)
+    const contacts = await usecase.execute(sharedVault)
+    if (!contacts) {
+      return []
+    }
+
+    return contacts
+  }
+
+  private async getExistingInvites(
+    sharedVaultUuid: string,
+  ): Promise<SharedVaultInviteServerHash[] | ClientDisplayableError> {
     const response = await this.vaultInvitesServer.getOutboundUserInvites()
 
     if (isErrorResponse(response)) {
-      return [ClientDisplayableError.FromString(`Failed to get outbound user invites ${response}`)]
+      return ClientDisplayableError.FromString(`Failed to get outbound user invites ${response}`)
     }
 
     const invites = response.data.invites
 
-    const existingSharedVaultInvites = invites.filter((invite) => invite.shared_vault_uuid === params.sharedVaultUuid)
-
-    const errors: ClientDisplayableError[] = []
-
-    for (const invite of existingSharedVaultInvites) {
-      const encryptedMessage = this.encryptVaultMessageForRecipient({
-        message: { type: AsymmetricMessagePayloadType.SharedVaultRootKeyChanged, data: params.keySystemRootKeyData },
-        senderKeyPair: params.senderEncryptionKeyPair,
-        senderSigningKeyPair: params.senderSigningKeyPair,
-        recipientUuid: invite.user_uuid,
-      })
-
-      if (!encryptedMessage) {
-        errors.push(
-          ClientDisplayableError.FromString(`Failed to encrypt key system root key for user ${invite.user_uuid}`),
-        )
-        continue
-      }
-
-      const updateInviteUseCase = new UpdateSharedVaultInviteUseCase(this.vaultInvitesServer)
-      const updateInviteResult = await updateInviteUseCase.execute({
-        sharedVaultUuid: params.sharedVaultUuid,
-        inviteUuid: invite.uuid,
-        encryptedMessage,
-        permissions: invite.permissions,
-      })
-
-      if (isClientDisplayableError(updateInviteResult)) {
-        errors.push(updateInviteResult)
-      }
-    }
-
-    return errors
+    return invites.filter((invite) => invite.shared_vault_uuid === sharedVaultUuid)
   }
 
-  private encryptVaultMessageForRecipient(params: {
-    message: AsymmetricMessagePayload
-    senderKeyPair: PkcKeyPair
+  private async deleteExistingInvites(sharedVaultUuid: string): Promise<ClientDisplayableError | void> {
+    const response = await this.vaultInvitesServer.deleteAllSharedVaultInvites({
+      sharedVaultUuid: sharedVaultUuid,
+    })
+
+    if (isErrorResponse(response)) {
+      return ClientDisplayableError.FromString(`Failed to delete existing invites ${response}`)
+    }
+  }
+
+  private async sendNewInvite(params: {
+    contact: TrustedContactInterface
+    previousInvite: SharedVaultInviteServerHash
+    sharedVault: SharedVaultListingInterface
+    keySystemRootKeyData: KeySystemRootKeyContentSpecialized
+    sharedVaultContacts: TrustedContactInterface[]
+    senderUuid: string
+    senderEncryptionKeyPair: PkcKeyPair
     senderSigningKeyPair: PkcKeyPair
-    recipientUuid: string
-  }): string | undefined {
-    const trustedContact = this.contacts.findTrustedContact(params.recipientUuid)
-    if (!trustedContact) {
-      return
+  }): Promise<ClientDisplayableError | void> {
+    const signatureResult = this.encryption.asymmetricSignatureVerifyDetached(params.previousInvite.encrypted_message)
+    if (!signatureResult.signatureVerified) {
+      return ClientDisplayableError.FromString('Failed to verify signature of previous invite')
     }
 
-    return this.encryption.asymmetricallyEncryptMessage({
-      message: params.message,
-      senderKeyPair: params.senderKeyPair,
+    if (signatureResult.senderPublicKey !== params.senderSigningKeyPair.publicKey) {
+      return ClientDisplayableError.FromString('Sender public key does not match signature')
+    }
+
+    const usecase = new InviteContactToSharedVaultUseCase(this.encryption, this.vaultInvitesServer)
+    const result = await usecase.execute({
+      senderKeyPair: params.senderEncryptionKeyPair,
       senderSigningKeyPair: params.senderSigningKeyPair,
-      recipientPublicKey: trustedContact.publicKeySet.encryption,
+      sharedVault: params.sharedVault,
+      sharedVaultContacts: params.sharedVaultContacts,
+      recipient: params.contact,
+      permissions: params.previousInvite.permissions,
     })
+
+    if (isClientDisplayableError(result)) {
+      return result
+    }
   }
 }

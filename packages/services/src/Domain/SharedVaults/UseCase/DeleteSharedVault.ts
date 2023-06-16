@@ -1,7 +1,7 @@
 import { ClientDisplayableError, isErrorResponse } from '@standardnotes/responses'
 import { SharedVaultServerInterface } from '@standardnotes/api'
 import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
-import { SharedVaultDisplayListing } from '@standardnotes/models'
+import { SharedVaultListingInterface } from '@standardnotes/models'
 import { SyncServiceInterface } from '../../Sync/SyncServiceInterface'
 
 export class DeleteSharedVaultUseCase {
@@ -11,9 +11,9 @@ export class DeleteSharedVaultUseCase {
     private sync: SyncServiceInterface,
   ) {}
 
-  async execute(params: { sharedVault: SharedVaultDisplayListing }): Promise<ClientDisplayableError | void> {
+  async execute(params: { sharedVault: SharedVaultListingInterface }): Promise<ClientDisplayableError | void> {
     const response = await this.sharedVaultServer.deleteSharedVault({
-      sharedVaultUuid: params.sharedVault.sharedVaultUuid,
+      sharedVaultUuid: params.sharedVault.sharing.sharedVaultUuid,
     })
 
     if (isErrorResponse(response)) {

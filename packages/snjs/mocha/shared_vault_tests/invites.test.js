@@ -33,7 +33,7 @@ describe('shared vault invites', function () {
     const vaultInvite = await sharedVaults.inviteContactToSharedVault(sharedVault, contact, SharedVaultPermission.Write)
 
     expect(vaultInvite).to.not.be.undefined
-    expect(vaultInvite.shared_vault_uuid).to.equal(sharedVault.sharedVaultUuid)
+    expect(vaultInvite.shared_vault_uuid).to.equal(sharedVault.sharing.sharedVaultUuid)
     expect(vaultInvite.user_uuid).to.equal(contact.contactUuid)
     expect(vaultInvite.encrypted_message).to.not.be.undefined
     expect(vaultInvite.permissions).to.equal(SharedVaultPermission.Write)

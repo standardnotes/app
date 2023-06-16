@@ -1,12 +1,7 @@
 import { SyncServiceInterface } from '@standardnotes/services'
 import { ClientDisplayableError } from '@standardnotes/responses'
 import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
-import {
-  DecryptedItemInterface,
-  FileItem,
-  VaultDisplayListing,
-  isSharedVaultDisplayListing,
-} from '@standardnotes/models'
+import { DecryptedItemInterface, FileItem, VaultListingInterface } from '@standardnotes/models'
 import { FilesClientInterface } from '@standardnotes/files'
 import { ContentType } from '@standardnotes/common'
 
@@ -19,16 +14,16 @@ export class AddItemToVaultUseCase {
 
   async execute(dto: {
     item: DecryptedItemInterface
-    vault: VaultDisplayListing
+    vault: VaultListingInterface
   }): Promise<ClientDisplayableError | void> {
     await this.items.changeItem(dto.item, (mutator) => {
       mutator.key_system_identifier = dto.vault.systemIdentifier
-      mutator.shared_vault_uuid = isSharedVaultDisplayListing(dto.vault) ? dto.vault.sharedVaultUuid : undefined
+      mutator.shared_vault_uuid = dto.vault.isSharedVaultListing() ? dto.vault.sharing.sharedVaultUuid : undefined
     })
 
     await this.sync.sync()
 
-    if (dto.item.content_type === ContentType.File && isSharedVaultDisplayListing(dto.vault)) {
+    if (dto.item.content_type === ContentType.File && dto.vault.isSharedVaultListing()) {
       await this.files.moveFileToSharedVault(dto.item as FileItem, dto.vault)
     }
   }

@@ -1,13 +1,11 @@
-import { VaultDisplayListing } from '@standardnotes/models'
+import { VaultListingInterface } from '@standardnotes/models'
 
 export enum VaultServiceEvent {
-  VaultsChanged = 'VaultsChanged',
-  VaultRootKeyChanged = 'VaultRootKeyChanged',
+  VaultRootKeyRotated = 'VaultRootKeyRotated',
 }
 
 export type VaultServiceEventPayload = {
-  [VaultServiceEvent.VaultsChanged]: undefined
-  [VaultServiceEvent.VaultRootKeyChanged]: {
-    vault: VaultDisplayListing
+  [VaultServiceEvent.VaultRootKeyRotated]: {
+    vault: VaultListingInterface
   }
 }

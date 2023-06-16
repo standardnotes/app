@@ -8,21 +8,9 @@ export interface KeySystemRootKeyInterface extends DecryptedItemInterface<KeySys
   keyParams: KeySystemRootKeyParamsInterface
 
   systemIdentifier: KeySystemIdentifier
-  systemName: string
-  systemDescription?: string
 
   key: string
   keyVersion: ProtocolVersion
-
-  /**
-   * An items key anchor is passed to all items keys created while this root key was active.
-   * When determining which items key a client should use to encrypt new items or new changes,
-   * it should look for items keys which have the current root key itemsKeyAnchor. This prevents
-   * the server from dictating which items key a client should use, and also prevents a server from withholding
-   * items keys from sync results, which would otherwise compel a client to choose between its available items keys,
-   * which may be old or rotated.
-   */
-  itemsKeyAnchor: string
 
   get itemsKey(): string
 

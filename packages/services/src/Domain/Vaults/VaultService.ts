@@ -1,34 +1,30 @@
 import { ClientDisplayableError, isClientDisplayableError } from '@standardnotes/responses'
 import {
   DecryptedItemInterface,
-  KeySystemRootKeyInterface,
-  KeySystemRootKeyMutator,
   KeySystemIdentifier,
-  VaultDisplayListing,
-  isSharedVaultDisplayListing,
+  KeySystemRootKeyStorageType,
+  VaultListingInterface,
+  VaultListingMutator,
 } from '@standardnotes/models'
 import { VaultServiceInterface } from './VaultServiceInterface'
 import { VaultServiceEvent, VaultServiceEventPayload } from './VaultServiceEvent'
 import { EncryptionProviderInterface } from '@standardnotes/encryption'
 import { CreateVaultUseCase } from './UseCase/CreateVault'
 import { AbstractService } from '../Service/AbstractService'
-import { InternalEventHandlerInterface } from '../Internal/InternalEventHandlerInterface'
 import { SyncServiceInterface } from '../Sync/SyncServiceInterface'
 import { ItemManagerInterface } from '../Item/ItemManagerInterface'
 import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
-import { InternalEventInterface } from '../Internal/InternalEventInterface'
 import { RemoveItemFromVault } from './UseCase/RemoveItemFromVault'
 import { DeleteVaultUseCase } from './UseCase/DeleteVault'
 import { AddItemToVaultUseCase } from './UseCase/AddItemToVault'
-import { SharedVaultServiceEvent } from '../SharedVaults/SharedVaultServiceEvent'
 
 import { RotateKeySystemRootKeyUseCase } from './UseCase/RotateKeySystemRootKey'
 import { FilesClientInterface } from '@standardnotes/files'
-import { GetVaultsUseCase } from './UseCase/GetVaults'
+import { ContentType } from '@standardnotes/common'
 
 export class VaultService
   extends AbstractService<VaultServiceEvent, VaultServiceEventPayload[VaultServiceEvent]>
-  implements VaultServiceInterface, InternalEventHandlerInterface
+  implements VaultServiceInterface
 {
   constructor(
     private sync: SyncServiceInterface,
@@ -38,50 +34,39 @@ export class VaultService
     eventBus: InternalEventBusInterface,
   ) {
     super(eventBus)
-
-    eventBus.addEventHandler(this, SharedVaultServiceEvent.SharedVaultStatusChanged)
   }
 
-  private notifyVaultsChangedEvent(): void {
-    void this.notifyEvent(VaultServiceEvent.VaultsChanged)
+  getVaults(): VaultListingInterface[] {
+    return this.items.getItems(ContentType.VaultListing)
   }
 
-  async handleEvent(event: InternalEventInterface): Promise<void> {
-    if (event.type === SharedVaultServiceEvent.SharedVaultStatusChanged) {
-      this.notifyVaultsChangedEvent()
-    }
+  public getVault(keySystemIdentifier: KeySystemIdentifier): VaultListingInterface | undefined {
+    return this.getVaults().find((listing) => listing.systemIdentifier === keySystemIdentifier)
   }
 
-  getVaults(): VaultDisplayListing[] {
-    const usecase = new GetVaultsUseCase(this.items, this.encryption)
-    return usecase.execute()
-  }
-
-  public getVault(keySystemIdentifier: KeySystemIdentifier): VaultDisplayListing | undefined {
-    const listings = this.getVaults()
-    return listings.find((listing) => listing.systemIdentifier === keySystemIdentifier)
-  }
-
-  public getSureVault(keySystemIdentifier: KeySystemIdentifier): VaultDisplayListing {
+  public getSureVault(keySystemIdentifier: KeySystemIdentifier): VaultListingInterface {
     const vault = this.getVault(keySystemIdentifier)
     if (!vault) {
       throw new Error('Vault not found')
     }
+
     return vault
   }
 
   async createRandomizedVault(
     name: string,
     description?: string,
-  ): Promise<VaultDisplayListing | ClientDisplayableError> {
-    return this.createVaultWithParameters({ name, description, userInputtedPassword: undefined })
+    storagePreference?: KeySystemRootKeyStorageType,
+  ): Promise<VaultListingInterface | ClientDisplayableError> {
+    return this.createVaultWithParameters({ name, description, userInputtedPassword: undefined, storagePreference })
   }
 
   async createUserInputtedPasswordVault(dto: {
     name: string
     description?: string
     userInputtedPassword: string
-  }): Promise<VaultDisplayListing | ClientDisplayableError> {
+    storagePreference?: KeySystemRootKeyStorageType
+  }): Promise<VaultListingInterface | ClientDisplayableError> {
     return this.createVaultWithParameters(dto)
   }
 
@@ -89,25 +74,20 @@ export class VaultService
     name: string
     description?: string
     userInputtedPassword: string | undefined
-  }): Promise<VaultDisplayListing | ClientDisplayableError> {
-    const createVault = new CreateVaultUseCase(this.items, this.encryption)
+    storagePreference?: KeySystemRootKeyStorageType
+  }): Promise<VaultListingInterface | ClientDisplayableError> {
+    const createVault = new CreateVaultUseCase(this.items, this.encryption, this.sync)
     const result = await createVault.execute({
       vaultName: dto.name,
       vaultDescription: dto.description,
       userInputtedPassword: dto.userInputtedPassword,
+      storagePreference: dto.storagePreference ?? KeySystemRootKeyStorageType.Synced,
     })
 
-    this.notifyVaultsChangedEvent()
-
-    if (!isClientDisplayableError(result)) {
-      await this.sync.sync()
-      return this.getSureVault(result)
-    } else {
-      return result
-    }
+    return result
   }
 
-  async addItemToVault(vault: VaultDisplayListing, item: DecryptedItemInterface): Promise<DecryptedItemInterface> {
+  async addItemToVault(vault: VaultListingInterface, item: DecryptedItemInterface): Promise<DecryptedItemInterface> {
     const useCase = new AddItemToVaultUseCase(this.items, this.sync, this.files)
     await useCase.execute({ vault, item })
 
@@ -120,57 +100,41 @@ export class VaultService
     return this.items.findSureItem(item.uuid)
   }
 
-  async deleteVault(vault: VaultDisplayListing): Promise<boolean> {
-    const useCase = new DeleteVaultUseCase(this.items)
+  async deleteVault(vault: VaultListingInterface): Promise<boolean> {
+    const useCase = new DeleteVaultUseCase(this.items, this.encryption)
     const error = await useCase.execute(vault)
 
     if (isClientDisplayableError(error)) {
       return false
     }
 
-    this.notifyVaultsChangedEvent()
-
     await this.sync.sync()
     return true
   }
 
   async changeVaultNameAndDescription(
-    vault: VaultDisplayListing,
+    vault: VaultListingInterface,
     params: { name: string; description?: string },
-  ): Promise<KeySystemRootKeyInterface> {
-    const keySystemRootKey = this.items.getPrimaryKeySystemRootKey(vault.systemIdentifier)
-    if (!keySystemRootKey) {
-      throw new Error('Cannot change vault metadata; key system root key not found')
-    }
-
-    const updatedKeySystemRootKey = await this.items.changeItem<KeySystemRootKeyMutator, KeySystemRootKeyInterface>(
-      keySystemRootKey,
-      (mutator) => {
-        mutator.systemName = params.name
-        mutator.systemDescription = params.description
-      },
-    )
-
-    await this.notifyEventSync(VaultServiceEvent.VaultRootKeyChanged, { vault })
+  ): Promise<VaultListingInterface> {
+    const updatedVault = await this.items.changeItem<VaultListingMutator, VaultListingInterface>(vault, (mutator) => {
+      mutator.name = params.name
+      mutator.description = params.description
+    })
 
     await this.sync.sync()
 
-    this.notifyVaultsChangedEvent()
-
-    return updatedKeySystemRootKey
+    return updatedVault
   }
 
-  async rotateVaultRootKey(vault: VaultDisplayListing): Promise<void> {
+  async rotateVaultRootKey(vault: VaultListingInterface): Promise<void> {
     const useCase = new RotateKeySystemRootKeyUseCase(this.items, this.encryption)
     await useCase.execute({
       keySystemIdentifier: vault.systemIdentifier,
-      sharedVaultUuid: isSharedVaultDisplayListing(vault) ? vault.sharedVaultUuid : undefined,
+      sharedVaultUuid: vault.isSharedVaultListing() ? vault.sharing.sharedVaultUuid : undefined,
       userInputtedPassword: undefined,
     })
 
-    this.notifyVaultsChangedEvent()
-
-    await this.notifyEventSync(VaultServiceEvent.VaultRootKeyChanged, { vault })
+    await this.notifyEventSync(VaultServiceEvent.VaultRootKeyRotated, { vault })
 
     await this.sync.sync()
   }

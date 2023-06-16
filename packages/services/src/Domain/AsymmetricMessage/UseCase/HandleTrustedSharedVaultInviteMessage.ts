@@ -21,7 +21,7 @@ export class HandleTrustedSharedVaultInviteMessage {
   async execute(message: AsymmetricMessageSharedVaultInvite): Promise<'inserted' | 'changed'> {
     const { rootKey: rootKeyContent, trustedContacts } = message.data
 
-    const existingKeySystemRootKey = this.items.getKeySystemRootKeyMatchingAnchor(
+    const existingKeySystemRootKey = this.items.getKeySystemRootKeyWithKeyIdentifier(
       rootKeyContent.systemIdentifier,
       rootKeyContent.keyTimestamp,
     )

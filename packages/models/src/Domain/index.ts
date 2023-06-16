@@ -63,8 +63,10 @@ export * from './Runtime/Predicate/NotPredicate'
 export * from './Runtime/Predicate/Operator'
 export * from './Runtime/Predicate/Predicate'
 export * from './Runtime/Predicate/Utils'
-export * from './Runtime/Vaults/VaultDisplayListing'
-export * from './Runtime/AsymmetricMessage/AsymmetricMessage'
+
+export * from './Runtime/AsymmetricMessage/AsymmetricMessagePayload'
+export * from './Runtime/AsymmetricMessage/AsymmetricMessagePayloadType'
+
 export * from './Runtime/Encryption/PersistentSignatureData'
 
 export * from './Syncable/ActionsExtension'
@@ -91,10 +93,17 @@ export * from './Syncable/KeySystemRootKey/KeySystemRootKey'
 export * from './Syncable/KeySystemRootKey/KeySystemRootKeyMutator'
 export * from './Syncable/KeySystemRootKey/KeySystemRootKeyContent'
 export * from './Syncable/KeySystemRootKey/KeySystemRootKeyInterface'
+export * from './Syncable/KeySystemRootKey/KeySystemRootKeyStorageType'
 
 export * from './Syncable/KeySystemItemsKey/KeySystemItemsKeyInterface'
 export * from './Syncable/KeySystemItemsKey/KeySystemItemsKeyContent'
 export * from './Syncable/KeySystemItemsKey/KeySystemItemsKeyMutatorInterface'
+
+export * from './Syncable/VaultListing/VaultListing'
+export * from './Syncable/VaultListing/VaultListingContent'
+export * from './Syncable/VaultListing/VaultListingInterface'
+export * from './Syncable/VaultListing/VaultListingMutator'
+export * from './Syncable/VaultListing/VaultListingSharingInfo'
 
 export * from './Utilities/Icon/IconType'
 export * from './Utilities/Item/FindItem'

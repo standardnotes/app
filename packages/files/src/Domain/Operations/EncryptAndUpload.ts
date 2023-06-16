@@ -3,7 +3,7 @@ import { FileUploadResult } from '../Types/FileUploadResult'
 import { FileUploader } from '../UseCase/FileUploader'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { FileEncryptor } from '../UseCase/FileEncryptor'
-import { FileContent, VaultDisplayListing, isSharedVaultDisplayListing } from '@standardnotes/models'
+import { FileContent, VaultListingInterface } from '@standardnotes/models'
 import { FilesApiInterface } from '../Api/FilesApiInterface'
 
 export class EncryptAndUploadFileOperation {
@@ -25,7 +25,7 @@ export class EncryptAndUploadFileOperation {
     private valetToken: string,
     private crypto: PureCryptoInterface,
     private api: FilesApiInterface,
-    public readonly vault?: VaultDisplayListing,
+    public readonly vault?: VaultListingInterface,
   ) {
     this.encryptor = new FileEncryptor(file, this.crypto)
     this.uploader = new FileUploader(this.api)
@@ -82,7 +82,7 @@ export class EncryptAndUploadFileOperation {
   private async uploadBytes(encryptedBytes: Uint8Array, chunkId: number): Promise<boolean> {
     const success = await this.uploader.uploadBytes(
       encryptedBytes,
-      this.vault && isSharedVaultDisplayListing(this.vault) ? 'shared-vault' : 'user',
+      this.vault && this.vault.sharing ? 'shared-vault' : 'user',
       chunkId,
       this.valetToken,
     )

@@ -348,13 +348,12 @@ export class AppContext {
     })
   }
 
-
   resolveWhenSharedVaultKeyRotationInvitesGetSent(targetVault) {
     return new Promise((resolve) => {
       const objectToSpy = this.sharedVaults
-      sinon.stub(objectToSpy, 'handleChangeInVaultRootKey').callsFake(async (vault) => {
-        objectToSpy.handleChangeInVaultRootKey.restore()
-        const result = await objectToSpy.handleChangeInVaultRootKey(vault)
+      sinon.stub(objectToSpy, 'handleVaultRootKeyRotatedEvent').callsFake(async (vault) => {
+        objectToSpy.handleVaultRootKeyRotatedEvent.restore()
+        const result = await objectToSpy.handleVaultRootKeyRotatedEvent(vault)
         if (vault.systemIdentifier === targetVault.systemIdentifier) {
           resolve()
         }
@@ -366,10 +365,10 @@ export class AppContext {
   resolveWhenSharedVaultChangeInvitesAreSent(sharedVaultUuid) {
     return new Promise((resolve) => {
       const objectToSpy = this.sharedVaults
-      sinon.stub(objectToSpy, 'updateInvitesAndShareKeyAfterKeySystemRootKeyChange').callsFake(async (params) => {
-        objectToSpy.updateInvitesAndShareKeyAfterKeySystemRootKeyChange.restore()
-        const result = await objectToSpy.updateInvitesAndShareKeyAfterKeySystemRootKeyChange(params)
-        if (params.sharedVault.sharedVaultUuid === sharedVaultUuid) {
+      sinon.stub(objectToSpy, 'handleVaultRootKeyRotatedEvent').callsFake(async (vault) => {
+        objectToSpy.handleVaultRootKeyRotatedEvent.restore()
+        const result = await objectToSpy.handleVaultRootKeyRotatedEvent(vault)
+        if (vault.sharing.sharedVaultUuid === sharedVaultUuid) {
           resolve()
         }
         return result

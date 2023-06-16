@@ -21,9 +21,9 @@ export class HandleTrustedSharedVaultRootKeyChangedMessage {
   async execute(message: AsymmetricMessageSharedVaultRootKeyChanged): Promise<'inserted' | 'changed'> {
     const keyContent = message.data
 
-    const existingKeySystemRootKey = this.encryption.keySystemKeyManager.getKeySystemRootKeyMatchingAnchor(
+    const existingKeySystemRootKey = this.encryption.keySystemKeyManager.getKeySystemRootKeyWithKeyIdentifier(
       keyContent.systemIdentifier,
-      keyContent.itemsKeyAnchor,
+      keyContent.keyParams.rootKeyIdentifier,
     )
 
     if (existingKeySystemRootKey) {

@@ -16,7 +16,7 @@ import {
   ItemInterface,
   AnyItemInterface,
   KeySystemIdentifier,
-  VaultDisplayListing,
+  VaultListingInterface,
 } from '@standardnotes/models'
 import { AbstractService } from '../Service/AbstractService'
 
@@ -66,7 +66,7 @@ export interface ItemManagerInterface extends AbstractService {
     contentType: ContentType,
     content: C,
     needsSync?: boolean,
-    vault?: VaultDisplayListing,
+    vault?: VaultListingInterface,
   ): Promise<T>
   createTemplateItem<
     C extends ItemContent = ItemContent,

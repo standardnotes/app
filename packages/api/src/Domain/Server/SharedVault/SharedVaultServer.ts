@@ -19,7 +19,6 @@ export class SharedVaultServer implements SharedVaultServerInterface {
 
   createSharedVault(params: CreateSharedVaultParams): Promise<HttpResponse<CreateSharedVaultResponse>> {
     return this.httpService.post(SharedVaultsPaths.createSharedVault, {
-      specified_items_key_uuid: params.specifiedItemsKeyUuid,
       key_system_identifier: params.keySystemIdentifier,
     })
   }

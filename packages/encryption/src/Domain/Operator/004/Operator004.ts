@@ -43,6 +43,8 @@ import { AsymmetricDecryptResult } from '../AsymmetricDecryptResult'
 import { PublicKeySet } from '../PublicKeySet'
 import { CreateRandomKeySystemRootKey } from './UseCase/KeySystem/CreateRandomKeySystemRootKey'
 import { CreateUserInputKeySystemRootKey } from './UseCase/KeySystem/CreateUserInputKeySystemRootKey'
+import { AsymmetricSignatureVerificationDetachedResult } from '../AsymmetricSignatureVerificationDetachedResult'
+import { AsymmetricSignatureVerificationDetachedUseCase } from './UseCase/Asymmetric/AsymmetricSignatureVerificationDetached'
 
 export class SNProtocolOperator004 implements OperatorInterface {
   constructor(protected readonly crypto: PureCryptoInterface) {}
@@ -165,6 +167,13 @@ export class SNProtocolOperator004 implements OperatorInterface {
   }): AsymmetricDecryptResult | null {
     const usecase = new AsymmetricDecryptUseCase(this.crypto)
     return usecase.execute(dto)
+  }
+
+  asymmetricSignatureVerifyDetached(
+    encryptedString: AsymmetricallyEncryptedString,
+  ): AsymmetricSignatureVerificationDetachedResult {
+    const usecase = new AsymmetricSignatureVerificationDetachedUseCase(this.crypto)
+    return usecase.execute({ encryptedString })
   }
 
   getSenderPublicKeySetFromAsymmetricallyEncryptedString(string: AsymmetricallyEncryptedString): PublicKeySet {

@@ -23,13 +23,6 @@ import { NoteMutator } from '../../Syncable/Note/NoteMutator'
 import { DecryptedItemInterface } from '../../Abstract/Item/Interfaces/DecryptedItem'
 import { ItemContent } from '../../Abstract/Content/ItemContent'
 import { DecryptedItemMutator } from '../../Abstract/Item/Mutator/DecryptedItemMutator'
-import {
-  DeletedPayloadInterface,
-  EncryptedPayloadInterface,
-  isDecryptedPayload,
-  isDeletedPayload,
-  isEncryptedPayload,
-} from '../../Abstract/Payload'
 import { DeletedItem } from '../../Abstract/Item/Implementations/DeletedItem'
 import { EncryptedItemInterface } from '../../Abstract/Item/Interfaces/EncryptedItem'
 import { DeletedItemInterface } from '../../Abstract/Item/Interfaces/DeletedItem'
@@ -38,6 +31,15 @@ import { TrustedContact } from '../../Syncable/TrustedContact/TrustedContact'
 import { TrustedContactMutator } from '../../Syncable/TrustedContact/TrustedContactMutator'
 import { KeySystemRootKey } from '../../Syncable/KeySystemRootKey/KeySystemRootKey'
 import { KeySystemRootKeyMutator } from '../../Syncable/KeySystemRootKey/KeySystemRootKeyMutator'
+import { VaultListing } from '../../Syncable/VaultListing/VaultListing'
+import { VaultListingMutator } from '../../Syncable/VaultListing/VaultListingMutator'
+import {
+  DeletedPayloadInterface,
+  EncryptedPayloadInterface,
+  isDecryptedPayload,
+  isDeletedPayload,
+  isEncryptedPayload,
+} from '../../Abstract/Payload'
 
 type ItemClass<C extends ItemContent = ItemContent> = new (payload: DecryptedPayloadInterface<C>) => DecryptedItem<C>
 
@@ -59,6 +61,7 @@ const ContentTypeClassMapping: Partial<Record<ContentType, MappingEntry>> = {
   [ContentType.Component]: { itemClass: SNComponent, mutatorClass: ComponentMutator },
   [ContentType.KeySystemRootKey]: { itemClass: KeySystemRootKey, mutatorClass: KeySystemRootKeyMutator },
   [ContentType.TrustedContact]: { itemClass: TrustedContact, mutatorClass: TrustedContactMutator },
+  [ContentType.VaultListing]: { itemClass: VaultListing, mutatorClass: VaultListingMutator },
   [ContentType.Editor]: { itemClass: SNEditor },
   [ContentType.ExtensionRepo]: { itemClass: SNFeatureRepo },
   [ContentType.File]: { itemClass: FileItem, mutatorClass: FileMutator },

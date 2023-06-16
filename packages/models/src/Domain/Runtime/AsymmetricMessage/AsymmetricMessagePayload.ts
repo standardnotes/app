@@ -1,16 +1,18 @@
 import { KeySystemRootKeyContentSpecialized } from '../../Syncable/KeySystemRootKey/KeySystemRootKeyContent'
 import { TrustedContactContentSpecialized } from '../../Syncable/TrustedContact/TrustedContactContent'
-
-export enum AsymmetricMessagePayloadType {
-  ContactShare = 'contact-share',
-  SharedVaultRootKeyChanged = 'shared-vault-root-key-changed',
-  SenderKeypairChanged = 'sender-keypair-changed',
-  SharedVaultInvite = 'shared-vault-invite',
-}
+import { AsymmetricMessagePayloadType } from './AsymmetricMessagePayloadType'
 
 export type AsymmetricMessageSharedVaultRootKeyChanged = {
   type: AsymmetricMessagePayloadType.SharedVaultRootKeyChanged
   data: KeySystemRootKeyContentSpecialized
+}
+
+export type AsymmetricMessageSharedVaultMetadataChanged = {
+  type: AsymmetricMessagePayloadType.SharedVaultMetadataChanged
+  data: {
+    name: string
+    description?: string
+  }
 }
 
 export type AsymmetricMessageTrustedContactShare = {
@@ -31,6 +33,10 @@ export type AsymmetricMessageSharedVaultInvite = {
   data: {
     rootKey: KeySystemRootKeyContentSpecialized
     trustedContacts: TrustedContactContentSpecialized[]
+    metadata: {
+      name: string
+      description?: string
+    }
   }
 }
 
@@ -39,3 +45,4 @@ export type AsymmetricMessagePayload =
   | AsymmetricMessageTrustedContactShare
   | AsymmetricMessageSenderKeypairChanged
   | AsymmetricMessageSharedVaultInvite
+  | AsymmetricMessageSharedVaultMetadataChanged

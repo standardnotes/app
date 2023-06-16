@@ -11,5 +11,6 @@ export const SharedVaultInvitesPaths = {
   getSharedVaultInvites: (sharedVaultUuid: string) => `/v1/shared-vaults/${sharedVaultUuid}/invites`,
   deleteInvite: (sharedVaultUuid: string, inviteUuid: string) =>
     `/v1/shared-vaults/${sharedVaultUuid}/invites/${inviteUuid}`,
+  deleteAllSharedVaultInvites: (sharedVaultUuid: string) => `/v1/shared-vaults/${sharedVaultUuid}/invites`,
   deleteAllInboundInvites: '/v1/shared-vaults/invites/inbound',
 }

@@ -10,9 +10,9 @@ export interface KeySystemKeyManagerInterface {
   getKeySystemItemsKeys(systemIdentifier: KeySystemIdentifier): KeySystemItemsKeyInterface[]
   getPrimaryKeySystemItemsKey(systemIdentifier: KeySystemIdentifier): KeySystemItemsKeyInterface
   getAllKeySystemRootKeysForVault(systemIdentifier: KeySystemIdentifier): KeySystemRootKeyInterface[]
-  getKeySystemRootKeyMatchingAnchor(
+  getKeySystemRootKeyWithKeyIdentifier(
     systemIdentifier: KeySystemIdentifier,
-    itemsKeyAnchor: string,
+    keyIdentifier: string,
   ): KeySystemRootKeyInterface | undefined
   getPrimaryKeySystemRootKey(systemIdentifier: KeySystemIdentifier): KeySystemRootKeyInterface | undefined
 }

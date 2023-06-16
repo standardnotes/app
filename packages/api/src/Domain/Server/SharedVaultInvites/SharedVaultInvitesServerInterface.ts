@@ -12,6 +12,8 @@ import { GetSharedVaultInvitesResponse } from '../../Response/SharedVaultInvites
 import { GetUserInvitesResponse } from '../../Response/SharedVaultInvites/GetUserInvitesResponse'
 import { UpdateSharedVaultInviteParams } from '../../Request/SharedVaultInvites/UpdateSharedVaultInviteParams'
 import { UpdateSharedVaultInviteResponse } from '../../Response/SharedVaultInvites/UpdateSharedVaultInviteResponse'
+import { DeleteAllSharedVaultInvitesRequestParams } from '../../Request/SharedVaultInvites/DeleteAllSharedVaultInvitesRequestParams'
+import { DeleteAllSharedVaultInvitesResponse } from '../../Response/SharedVaultInvites/DeleteAllSharedVaultInvitesResponse'
 
 export interface SharedVaultInvitesServerInterface {
   createInvite(params: CreateSharedVaultInviteParams): Promise<HttpResponse<CreateSharedVaultInviteResponse>>
@@ -25,6 +27,9 @@ export interface SharedVaultInvitesServerInterface {
     params: GetSharedVaultInvitesRequestParams,
   ): Promise<HttpResponse<GetSharedVaultInvitesResponse>>
 
+  deleteAllSharedVaultInvites(
+    params: DeleteAllSharedVaultInvitesRequestParams,
+  ): Promise<HttpResponse<DeleteAllSharedVaultInvitesResponse>>
   deleteInvite(params: DeleteInviteRequestParams): Promise<HttpResponse<DeleteInviteResponse>>
   deleteAllInboundInvites(): Promise<HttpResponse<{ success: boolean }>>
 }

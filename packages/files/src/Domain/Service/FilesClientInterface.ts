@@ -1,5 +1,5 @@
 import { EncryptAndUploadFileOperation } from '../Operations/EncryptAndUpload'
-import { FileItem, FileMetadata, SharedVaultDisplayListing, VaultDisplayListing } from '@standardnotes/models'
+import { FileItem, FileMetadata, VaultListingInterface, SharedVaultListingInterface } from '@standardnotes/models'
 import { ClientDisplayableError } from '@standardnotes/responses'
 import { FileDownloadProgress } from '../Types/FileDownloadProgress'
 import { FileSystemApi } from '../Api/FileSystemApi'
@@ -12,7 +12,7 @@ export interface FilesClientInterface {
 
   beginNewFileUpload(
     sizeInBytes: number,
-    vault?: VaultDisplayListing,
+    vault?: VaultListingInterface,
   ): Promise<EncryptAndUploadFileOperation | ClientDisplayableError>
   pushBytesForUpload(
     operation: EncryptAndUploadFileOperation,
@@ -32,7 +32,10 @@ export interface FilesClientInterface {
 
   deleteFile(file: FileItem): Promise<ClientDisplayableError | undefined>
 
-  moveFileToSharedVault(file: FileItem, sharedVault: SharedVaultDisplayListing): Promise<void | ClientDisplayableError>
+  moveFileToSharedVault(
+    file: FileItem,
+    sharedVault: SharedVaultListingInterface,
+  ): Promise<void | ClientDisplayableError>
   moveFileOutOfSharedVault(file: FileItem): Promise<void | ClientDisplayableError>
 
   selectFile(fileSystem: FileSystemApi): Promise<FileHandleRead | FileSystemNoSelection>

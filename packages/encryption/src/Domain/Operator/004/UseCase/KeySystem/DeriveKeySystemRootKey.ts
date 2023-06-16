@@ -1,7 +1,7 @@
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
-import { UuidGenerator, splitString, truncateHexString } from '@standardnotes/utils'
+import { UuidGenerator, truncateHexString } from '@standardnotes/utils'
 import { V004PartitionCharacter } from '../../V004AlgorithmTypes'
-import { V004Algorithm } from '../../../../Algorithm'
+import { V004Algorithm, V004KeySystemAlgorithm } from '../../../../Algorithm'
 import {
   DecryptedPayload,
   FillItemContentSpecialized,
@@ -24,30 +24,24 @@ export class DeriveKeySystemRootKeyUseCase {
     systemDescription?: string
   }): KeySystemRootKeyInterface {
     const seed = dto.keyParams.seed
-    const salt = this.generateSalt(dto.keyParams.identifier, seed)
+    const salt = this.generateSalt(dto.keyParams.systemIdentifier, seed)
     const derivedKey = this.crypto.argon2(
       dto.password,
       salt,
-      V004Algorithm.ArgonIterations,
-      V004Algorithm.ArgonMemLimit,
-      V004Algorithm.ArgonOutputKeyBytes,
+      V004KeySystemAlgorithm.ArgonIterations,
+      V004KeySystemAlgorithm.ArgonMemLimit,
+      V004KeySystemAlgorithm.ArgonOutputKeyBytes,
     )
-
-    const partitions = splitString(derivedKey, 2)
-    const key = partitions[0]
-    const itemsKeyAnchor = partitions[1]
 
     const uuid = UuidGenerator.GenerateUuid()
 
     const content: KeySystemRootKeyContentSpecialized = {
       systemName: dto.systemName,
-      systemIdentifier: dto.keyParams.identifier,
+      systemIdentifier: dto.keyParams.systemIdentifier,
       systemDescription: dto.systemDescription,
-      key: key,
-      keyTimestamp: new Date().getTime(),
+      key: derivedKey,
       keyVersion: ProtocolVersion.V004,
       keyParams: dto.keyParams,
-      itemsKeyAnchor: itemsKeyAnchor,
     }
 
     const payload = new DecryptedPayload<KeySystemRootKeyContent>({

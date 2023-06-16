@@ -1,3 +1,4 @@
+import { AsymmetricSignatureVerificationDetachedResult } from './../../Operator/AsymmetricSignatureVerificationDetachedResult'
 import { KeyParamsOrigination, ProtocolVersion } from '@standardnotes/common'
 import {
   BackupFile,
@@ -19,6 +20,7 @@ import { ItemAuthenticatedData } from '../../Types/ItemAuthenticatedData'
 import { PkcKeyPair } from '@standardnotes/sncrypto-common'
 import { PublicKeySet } from '../../Operator/PublicKeySet'
 import { KeySystemKeyManagerInterface } from '../KeySystemKeyManagerInterface'
+import { AsymmetricallyEncryptedString } from '../../Operator/Types'
 
 export type AsymmetricallyDecryptMessageResult = {
   message: AsymmetricMessagePayload
@@ -134,5 +136,8 @@ export interface EncryptionProviderInterface {
     trustedSenderSigningPublicKey: string | undefined
     privateKey: string
   }): AsymmetricallyDecryptMessageResult | undefined
+  asymmetricSignatureVerifyDetached(
+    encryptedString: AsymmetricallyEncryptedString,
+  ): AsymmetricSignatureVerificationDetachedResult
   getSenderPublicKeySetFromAsymmetricallyEncryptedString(string: string): PublicKeySet
 }

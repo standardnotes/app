@@ -103,7 +103,7 @@ describe('shared vault key rotation', function () {
     expect(keySystemItemsKeys.length).to.equal(2)
 
     for (const key of keySystemItemsKeys) {
-      expect(key.shared_vault_uuid).to.equal(sharedVault.sharedVaultUuid)
+      expect(key.shared_vault_uuid).to.equal(sharedVault.sharing.sharedVaultUuid)
     }
   })
 

@@ -1,5 +1,4 @@
 import {
-  CompoundPredicate,
   EncryptedItemInterface,
   KeySystemIdentifier,
   KeySystemItemsKeyInterface,
@@ -12,6 +11,37 @@ import { KeySystemKeyManagerInterface } from '@standardnotes/encryption'
 
 export class KeySystemKeyManager implements KeySystemKeyManagerInterface {
   constructor(private readonly items: ItemManagerInterface) {}
+
+  getAllKeySystemRootKeysForVault(systemIdentifier: KeySystemIdentifier): KeySystemRootKeyInterface[] {
+    const keys = this.items.itemsMatchingPredicate<KeySystemRootKeyInterface>(
+      ContentType.KeySystemRootKey,
+      new Predicate<KeySystemRootKeyInterface>('systemIdentifier', '=', systemIdentifier),
+    )
+
+    return keys
+  }
+
+  getKeySystemRootKeyWithKeyIdentifier(
+    systemIdentifier: KeySystemIdentifier,
+    keyIdentifier: string,
+  ): KeySystemRootKeyInterface | undefined {
+    const keys = this.getAllKeySystemRootKeysForVault(systemIdentifier).filter(
+      (key) => key.keyParams.rootKeyIdentifier === keyIdentifier,
+    )
+
+    if (keys.length > 1) {
+      throw new Error('Multiple synced key system root keys found for timestamp')
+    }
+
+    return keys[0]
+  }
+
+  getPrimaryKeySystemRootKey(systemIdentifier: KeySystemIdentifier): KeySystemRootKeyInterface | undefined {
+    const keys = this.getAllKeySystemRootKeysForVault(systemIdentifier)
+
+    const sortedByNewestFirst = keys.sort((a, b) => b.keyParams.creationTimestamp - a.keyParams.creationTimestamp)
+    return sortedByNewestFirst[0]
+  }
 
   public getAllKeySystemItemsKeys(): (KeySystemItemsKeyInterface | EncryptedItemInterface)[] {
     const decryptedItems = this.items.getItems<KeySystemItemsKeyInterface>(ContentType.KeySystemItemsKey)
@@ -36,44 +66,6 @@ export class KeySystemKeyManager implements KeySystemKeyManagerInterface {
     )
 
     const sortedByNewestFirst = matchingKeys.sort((a, b) => b.keyTimestamp - a.keyTimestamp)
-    return sortedByNewestFirst[0]
-  }
-
-  getAllKeySystemRootKeysForVault(systemIdentifier: KeySystemIdentifier): KeySystemRootKeyInterface[] {
-    const keys = this.items.itemsMatchingPredicate<KeySystemRootKeyInterface>(
-      ContentType.KeySystemRootKey,
-      new Predicate<KeySystemRootKeyInterface>('systemIdentifier', '=', systemIdentifier),
-    )
-
-    return keys
-  }
-
-  getKeySystemRootKeyMatchingAnchor(
-    systemIdentifier: KeySystemIdentifier,
-    itemsKeyAnchor: string,
-  ): KeySystemRootKeyInterface | undefined {
-    const keys = this.items.itemsMatchingPredicate<KeySystemRootKeyInterface>(
-      ContentType.KeySystemRootKey,
-      new CompoundPredicate('and', [
-        new Predicate<KeySystemRootKeyInterface>('systemIdentifier', '=', systemIdentifier),
-        new Predicate<KeySystemRootKeyInterface>('itemsKeyAnchor', '=', itemsKeyAnchor),
-      ]),
-    )
-
-    if (keys.length > 1) {
-      throw new Error('Multiple synced key system root keys found for timestamp')
-    }
-
-    return keys[0]
-  }
-
-  getPrimaryKeySystemRootKey(systemIdentifier: KeySystemIdentifier): KeySystemRootKeyInterface | undefined {
-    const keys = this.items.itemsMatchingPredicate<KeySystemRootKeyInterface>(
-      ContentType.KeySystemRootKey,
-      new Predicate<KeySystemRootKeyInterface>('systemIdentifier', '=', systemIdentifier),
-    )
-
-    const sortedByNewestFirst = keys.sort((a, b) => b.keyParams.createdTimestamp - a.keyParams.createdTimestamp)
     return sortedByNewestFirst[0]
   }
 }

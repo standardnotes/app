@@ -7,8 +7,9 @@ import {
 import {
   DecryptedItemInterface,
   TrustedContactInterface,
-  SharedVaultDisplayListing,
-  VaultDisplayListing,
+  SharedVaultListingInterface,
+  VaultListingInterface,
+  KeySystemRootKeyStorageType,
 } from '@standardnotes/models'
 import { AbstractService } from '../Service/AbstractService'
 import { SharedVaultServiceEvent, SharedVaultServiceEventPayload } from './SharedVaultServiceEvent'
@@ -16,22 +17,28 @@ import { PendingSharedVaultInviteRecord } from './PendingSharedVaultInviteRecord
 
 export interface SharedVaultServiceInterface
   extends AbstractService<SharedVaultServiceEvent, SharedVaultServiceEventPayload> {
-  createSharedVault(name: string, description?: string): Promise<VaultDisplayListing | ClientDisplayableError>
-  deleteSharedVault(sharedVault: SharedVaultDisplayListing): Promise<ClientDisplayableError | void>
+  createSharedVault(dto: {
+    name: string
+    description?: string
+    userInputtedPassword: string | undefined
+    storagePreference?: KeySystemRootKeyStorageType
+  }): Promise<VaultListingInterface | ClientDisplayableError>
+
+  deleteSharedVault(sharedVault: SharedVaultListingInterface): Promise<ClientDisplayableError | void>
 
   inviteContactToSharedVault(
-    sharedVault: SharedVaultDisplayListing,
+    sharedVault: SharedVaultListingInterface,
     contact: TrustedContactInterface,
     permissions: SharedVaultPermission,
   ): Promise<SharedVaultInviteServerHash | ClientDisplayableError>
   removeUserFromSharedVault(
-    sharedVault: SharedVaultDisplayListing,
+    sharedVault: SharedVaultListingInterface,
     userUuid: string,
   ): Promise<ClientDisplayableError | void>
-  leaveSharedVault(sharedVault: SharedVaultDisplayListing): Promise<ClientDisplayableError | void>
-  getSharedVaultUsers(sharedVault: SharedVaultDisplayListing): Promise<SharedVaultUserServerHash[] | undefined>
+  leaveSharedVault(sharedVault: SharedVaultListingInterface): Promise<ClientDisplayableError | void>
+  getSharedVaultUsers(sharedVault: SharedVaultListingInterface): Promise<SharedVaultUserServerHash[] | undefined>
   isSharedVaultUserSharedVaultOwner(user: SharedVaultUserServerHash): boolean
-  isCurrentUserSharedVaultAdmin(sharedVault: SharedVaultDisplayListing): boolean
+  isCurrentUserSharedVaultAdmin(sharedVault: SharedVaultListingInterface): boolean
 
   getItemLastEditedBy(item: DecryptedItemInterface): TrustedContactInterface | undefined
   getItemSharedBy(item: DecryptedItemInterface): TrustedContactInterface | undefined
@@ -40,6 +47,6 @@ export interface SharedVaultServiceInterface
   getOutboundInvites(vaultUuid?: string): Promise<SharedVaultInviteServerHash[] | ClientDisplayableError>
   acceptPendingSharedVaultInvite(pendingInvite: PendingSharedVaultInviteRecord): Promise<void>
   getCachedPendingInviteRecords(): PendingSharedVaultInviteRecord[]
-  getInvitableContactsForSharedVault(sharedVault: SharedVaultDisplayListing): Promise<TrustedContactInterface[]>
+  getInvitableContactsForSharedVault(sharedVault: SharedVaultListingInterface): Promise<TrustedContactInterface[]>
   deleteInvite(invite: SharedVaultInviteServerHash): Promise<ClientDisplayableError | void>
 }

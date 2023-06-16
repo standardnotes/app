@@ -1,7 +1,7 @@
 import {
   AsymmetricMessagePayloadType,
-  AsymmetricMessageSharedVaultRootKeyChanged,
-  KeySystemIdentifier,
+  AsymmetricMessageSharedVaultMetadataChanged,
+  SharedVaultListingInterface,
   TrustedContactInterface,
 } from '@standardnotes/models'
 import { EncryptionProviderInterface } from '@standardnotes/encryption'
@@ -12,7 +12,7 @@ import { ContactServiceInterface } from '../../Contacts/ContactServiceInterface'
 import { PkcKeyPair } from '@standardnotes/sncrypto-common'
 import { SendAsymmetricMessageUseCase } from '../../AsymmetricMessage/UseCase/SendAsymmetricMessageUseCase'
 
-export class SendSharedVaultRootKeyChangedMessageToAll {
+export class SendSharedVaultMetadataChangedMessageToAll {
   constructor(
     private encryption: EncryptionProviderInterface,
     private contacts: ContactServiceInterface,
@@ -21,8 +21,7 @@ export class SendSharedVaultRootKeyChangedMessageToAll {
   ) {}
 
   async execute(params: {
-    keySystemIdentifier: KeySystemIdentifier
-    sharedVaultUuid: string
+    vault: SharedVaultListingInterface
     senderUuid: string
     senderEncryptionKeyPair: PkcKeyPair
     senderSigningKeyPair: PkcKeyPair
@@ -30,9 +29,9 @@ export class SendSharedVaultRootKeyChangedMessageToAll {
     const errors: ClientDisplayableError[] = []
 
     const getUsersUseCase = new GetSharedVaultUsersUseCase(this.vaultUsersServer)
-    const users = await getUsersUseCase.execute({ sharedVaultUuid: params.sharedVaultUuid })
+    const users = await getUsersUseCase.execute({ sharedVaultUuid: params.vault.sharing.sharedVaultUuid })
     if (!users) {
-      return [ClientDisplayableError.FromString('Cannot send root key changed message; users not found')]
+      return [ClientDisplayableError.FromString('Cannot send metadata changed message; users not found')]
     }
 
     for (const user of users) {
@@ -46,8 +45,7 @@ export class SendSharedVaultRootKeyChangedMessageToAll {
       }
 
       const sendMessageResult = await this.sendToContact({
-        keySystemIdentifier: params.keySystemIdentifier,
-        sharedVaultUuid: params.sharedVaultUuid,
+        vault: params.vault,
         senderKeyPair: params.senderEncryptionKeyPair,
         senderSigningKeyPair: params.senderSigningKeyPair,
         contact: trustedContact,
@@ -62,20 +60,17 @@ export class SendSharedVaultRootKeyChangedMessageToAll {
   }
 
   private async sendToContact(params: {
-    keySystemIdentifier: KeySystemIdentifier
-    sharedVaultUuid: string
+    vault: SharedVaultListingInterface
     senderKeyPair: PkcKeyPair
     senderSigningKeyPair: PkcKeyPair
     contact: TrustedContactInterface
   }): Promise<AsymmetricMessageServerHash | ClientDisplayableError> {
-    const keySystemRootKey = this.encryption.keySystemKeyManager.getPrimaryKeySystemRootKey(params.keySystemIdentifier)
-    if (!keySystemRootKey) {
-      throw new Error(`Vault key not found for keySystemIdentifier ${params.keySystemIdentifier}`)
-    }
-
-    const message: AsymmetricMessageSharedVaultRootKeyChanged = {
-      type: AsymmetricMessagePayloadType.SharedVaultRootKeyChanged,
-      data: keySystemRootKey.content,
+    const message: AsymmetricMessageSharedVaultMetadataChanged = {
+      type: AsymmetricMessagePayloadType.SharedVaultMetadataChanged,
+      data: {
+        name: params.vault.name,
+        description: params.vault.description,
+      },
     }
 
     const encryptedMessage = this.encryption.asymmetricallyEncryptMessage({
@@ -86,9 +81,9 @@ export class SendSharedVaultRootKeyChangedMessageToAll {
     })
 
     const replaceabilityIdentifier = [
-      AsymmetricMessagePayloadType.SharedVaultRootKeyChanged,
-      params.sharedVaultUuid,
-      params.keySystemIdentifier,
+      AsymmetricMessagePayloadType.SharedVaultMetadataChanged,
+      params.vault.sharing.sharedVaultUuid,
+      params.vault.systemIdentifier,
     ].join(':')
 
     const sendMessageUseCase = new SendAsymmetricMessageUseCase(this.messageServer)
