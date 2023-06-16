@@ -5,9 +5,10 @@ import AccordionItem from '@/Components/Shared/AccordionItem'
 import PreferencesGroup from '../../../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../../../PreferencesComponents/PreferencesSegment'
 import Button from '@/Components/Button/Button'
-import Dropdown from '@/Components/Dropdown/Dropdown'
 import { Subtitle } from '../../../PreferencesComponents/Content'
 import DecoratedInput from '@/Components/Input/DecoratedInput'
+import RadioButtonGroup from '@/Components/RadioButtonGroup/RadioButtonGroup'
+import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 
 type Props = {
   homeServerConfiguration: HomeServerEnvironmentConfiguration
@@ -89,8 +90,7 @@ const DatabaseConfiguration = ({ setHomeServerConfigurationChangedCallback, home
         <AccordionItem title={'Database'}>
           <div className="flex flex-row items-center">
             <div className="flex max-w-full flex-grow flex-col">
-              <Dropdown
-                label="Database engine"
+              <RadioButtonGroup
                 items={[
                   { label: 'SQLite', value: 'sqlite' },
                   { label: 'MySQL', value: 'mysql' },
@@ -100,6 +100,14 @@ const DatabaseConfiguration = ({ setHomeServerConfigurationChangedCallback, home
               />
               {isMySQLSelected && (
                 <>
+                  <div className={'mt-2'}>
+                    In order to connect to a MySQL database please ensure that your system has MySQL installed. For
+                    detailed instructions please head over to{' '}
+                    <a className="text-info" href="https://dev.mysql.com/doc/mysql-installation-excerpt/8.0/en/">
+                      MySQL website
+                    </a>
+                  </div>
+                  <HorizontalSeparator classes="my-4" />
                   <PreferencesSegment>
                     <Subtitle className={'mt-2'}>Database Username</Subtitle>
                     <div className={'mt-2'}>
