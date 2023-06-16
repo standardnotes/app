@@ -167,17 +167,35 @@ export async function moveDirectory(dir: string, destination: string): Promise<v
 
 export async function moveDirContents(srcDir: string, destDir: string): Promise<Result<string>> {
   try {
-    let fileNames: string[]
-
-    fileNames = await fs.promises.readdir(srcDir)
+    let srcDirectoryContents = await fs.promises.readdir(srcDir)
 
     await ensureDirectoryExists(destDir)
 
     if (isChildOfDir(srcDir, destDir)) {
-      fileNames = fileNames.filter((name) => {
+      srcDirectoryContents = srcDirectoryContents.filter((name) => {
         return !isChildOfDir(destDir, path.join(srcDir, name))
       })
-      removeFromArray(fileNames, path.basename(destDir))
+      removeFromArray(srcDirectoryContents, path.basename(destDir))
+    }
+
+    const directoryNames = []
+    const fileNames = []
+    for (const contentName of srcDirectoryContents) {
+      const stats = await fs.promises.lstat(path.join(srcDir, contentName))
+      if (stats.isDirectory()) {
+        directoryNames.push(contentName)
+
+        continue
+      }
+
+      fileNames.push(contentName)
+    }
+
+    for (const directoryName of directoryNames) {
+      const result = await moveDirContents(path.join(srcDir, directoryName), path.join(destDir, directoryName))
+      if (result.isFailed()) {
+        return result
+      }
     }
 
     await moveFiles(
