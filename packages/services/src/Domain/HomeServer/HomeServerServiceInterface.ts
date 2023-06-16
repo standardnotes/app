@@ -8,9 +8,9 @@ export interface HomeServerServiceInterface {
   isHomeServerEnabled(): boolean
   getHomeServerDataLocation(): string | undefined
   enableHomeServer(): Promise<void>
-  disableHomeServer(): Promise<void>
+  disableHomeServer(): Promise<Result<string>>
   startHomeServer(): Promise<string | undefined>
-  stopHomeServer(): Promise<void>
+  stopHomeServer(): Promise<string | undefined>
   changeHomeServerDataLocation(): Promise<Result<string>>
   openHomeServerDataLocation(): Promise<void>
   getHomeServerConfiguration(): HomeServerEnvironmentConfiguration | undefined

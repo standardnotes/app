@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import Button from '@/Components/Button/Button'
-import { Text } from '@/Components/Preferences/PreferencesComponents/Content'
+import { Subtitle, Text, Title } from '@/Components/Preferences/PreferencesComponents/Content'
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import { useApplication } from '@/Components/ApplicationProvider'
 import EncryptionStatusItem from '../Security/EncryptionStatusItem'
@@ -12,6 +12,7 @@ import { HomeServerEnvironmentConfiguration, classNames, sleep } from '@standard
 import StatusIndicator from './Status/StatusIndicator'
 import { Status } from './Status/Status'
 import { PremiumFeatureIconClass, PremiumFeatureIconName } from '@/Components/Icon/PremiumFeatureIcon'
+import Switch from '@/Components/Switch/Switch'
 
 const HomeServerSettings = () => {
   const SERVER_CHANGE_INTERVAL = 5000
@@ -37,6 +38,7 @@ const HomeServerSettings = () => {
   const [homeServerConfiguration, setHomeServerConfiguration] = useState<HomeServerEnvironmentConfiguration | null>(
     null,
   )
+  const [homeServerEnabled, setHomeServerEnabled] = useState(homeServerService.isHomeServerEnabled())
 
   const refreshStatus = useCallback(async () => {
     if (!desktopDevice) {
@@ -45,7 +47,7 @@ const HomeServerSettings = () => {
 
     const result = await desktopDevice.homeServerStatus()
     setStatus({
-      state: result.status === 'on' ? 'online' : result.errorMessage ? 'error' : 'restarting',
+      state: result.status === 'on' ? 'online' : result.errorMessage ? 'error' : 'offline',
       message: result.status === 'on' ? 'Online' : result.errorMessage ? 'Offline' : 'Starting...',
       description:
         result.status === 'on'
@@ -53,6 +55,40 @@ const HomeServerSettings = () => {
           : result.errorMessage ?? 'Your home server is offline.',
     })
   }, [desktopDevice, setStatus])
+
+  const toggleHomeServer = useCallback(async () => {
+    if (status?.state === 'restarting') {
+      return
+    }
+
+    if (homeServerEnabled) {
+      setStatus({ state: 'restarting', message: 'Shutting down...' })
+
+      const result = await homeServerService.disableHomeServer()
+
+      await sleep(SERVER_CHANGE_INTERVAL)
+
+      if (result.isFailed()) {
+        setStatus({ state: 'error', message: result.getError() })
+
+        return
+      }
+
+      await refreshStatus()
+
+      setHomeServerEnabled(homeServerService.isHomeServerEnabled())
+    } else {
+      setStatus({ state: 'restarting', message: 'Starting...' })
+
+      await homeServerService.enableHomeServer()
+
+      setHomeServerEnabled(homeServerService.isHomeServerEnabled())
+
+      await sleep(SERVER_CHANGE_INTERVAL)
+
+      await refreshStatus()
+    }
+  }, [homeServerEnabled, homeServerService, status, refreshStatus])
 
   const setupLogsRefresh = useCallback(async () => {
     if (logsIntervalRef !== null) {
@@ -227,89 +263,103 @@ const HomeServerSettings = () => {
   }
 
   return (
-    <div>
-      {statusIndicator()}
-
-      <HorizontalSeparator classes="my-4" />
-      {isSignedIn && !isAPremiumUser && (
-        <div className={'mt-2 grid grid-cols-1 rounded-md border border-border p-4'}>
-          <div className="flex items-center">
-            <Icon className={classNames('mr-1 -ml-1 h-5 w-5', PremiumFeatureIconClass)} type={PremiumFeatureIconName} />
-            <h1 className="sk-h3 m-0 text-sm font-semibold">Activate Premium Features</h1>
-          </div>
-          <p className="col-start-1 col-end-3 m-0 mt-1 text-sm">
-            Enter your purchased offline subscription code to activate all the features offered by the home server.
-          </p>
-          <Button
-            primary
-            small
-            className="col-start-1 col-end-3 mt-3 justify-self-start uppercase"
-            onClick={() => {
-              setShowOfflineSubscriptionActivation(!showOfflineSubscriptionActivation)
-            }}
-          >
-            Activate Premium Features
-          </Button>
+    <>
+      <Title>Home Server</Title>
+      <div className="flex items-center justify-between">
+        <div className="mr-10 flex flex-col">
+          <Subtitle>Enable home server to sync your data to your local computer only.</Subtitle>
         </div>
-      )}
-      {showOfflineSubscriptionActivation && (
-        <OfflineSubscription application={application} viewControllerManager={viewControllerManager} />
-      )}
+        <Switch disabled={status?.state === 'restarting'} onChange={toggleHomeServer} checked={homeServerEnabled} />
+      </div>
+      {homeServerEnabled && (
+        <div>
+          {statusIndicator()}
 
-      {status?.state !== 'restarting' && (
-        <>
           <HorizontalSeparator classes="my-4" />
-          <>
-            <Text className="mb-3">Home server is enabled and all data is stored at:</Text>
-
-            <EncryptionStatusItem
-              status={homeServerDataLocation || 'Not Set'}
-              icon={<Icon type="attachment-file" className="min-h-5 min-w-5" />}
-              checkmark={false}
-            />
-
-            <div className="mt-2.5 flex flex-row">
-              <Button label="Open Location" className={'mr-3 text-xs'} onClick={openHomeServerDataLocation} />
+          {isSignedIn && !isAPremiumUser && (
+            <div className={'mt-2 grid grid-cols-1 rounded-md border border-border p-4'}>
+              <div className="flex items-center">
+                <Icon
+                  className={classNames('mr-1 -ml-1 h-5 w-5', PremiumFeatureIconClass)}
+                  type={PremiumFeatureIconName}
+                />
+                <h1 className="sk-h3 m-0 text-sm font-semibold">Activate Premium Features</h1>
+              </div>
+              <p className="col-start-1 col-end-3 m-0 mt-1 text-sm">
+                Enter your purchased offline subscription code to activate all the features offered by the home server.
+              </p>
               <Button
-                label="Change Location"
-                className={'mr-3 text-xs'}
-                onClick={() => changeHomeServerDataLocation()}
-              />
-            </div>
-          </>
-          <div className="mt-3 flex flex-row flex-wrap gap-3">
-            <Button label={showLogs ? 'Hide Logs' : 'Show Logs'} onClick={handleShowLogs} />
-          </div>
-          {showLogs && (
-            <div className="flex flex-col">
-              <HorizontalSeparator classes="mt-3" />
-              <textarea
-                ref={logsTextarea}
-                disabled={true}
-                className="h-[500px] overflow-y-auto whitespace-pre-wrap bg-contrast p-2"
-                value={logs.join('\n')}
-              />
-              <HorizontalSeparator classes="mb-3" />
+                primary
+                small
+                className="col-start-1 col-end-3 mt-3 justify-self-start uppercase"
+                onClick={() => {
+                  setShowOfflineSubscriptionActivation(!showOfflineSubscriptionActivation)
+                }}
+              >
+                Activate Premium Features
+              </Button>
             </div>
           )}
-          <div className="h-2 w-full" />
-          {homeServerConfiguration && (
+          {showOfflineSubscriptionActivation && (
+            <OfflineSubscription application={application} viewControllerManager={viewControllerManager} />
+          )}
+
+          {status?.state !== 'restarting' && (
             <>
               <HorizontalSeparator classes="my-4" />
-              <EnvironmentConfiguration
-                homeServerConfiguration={homeServerConfiguration}
-                setHomeServerConfigurationChangedCallback={handleHomeServerConfigurationChange}
-              />
-              <HorizontalSeparator classes="my-4" />
-              <DatabaseConfiguration
-                homeServerConfiguration={homeServerConfiguration}
-                setHomeServerConfigurationChangedCallback={handleHomeServerConfigurationChange}
-              />
+              <>
+                <Text className="mb-3">Home server is enabled and all data is stored at:</Text>
+
+                <EncryptionStatusItem
+                  status={homeServerDataLocation || 'Not Set'}
+                  icon={<Icon type="attachment-file" className="min-h-5 min-w-5" />}
+                  checkmark={false}
+                />
+
+                <div className="mt-2.5 flex flex-row">
+                  <Button label="Open Location" className={'mr-3 text-xs'} onClick={openHomeServerDataLocation} />
+                  <Button
+                    label="Change Location"
+                    className={'mr-3 text-xs'}
+                    onClick={() => changeHomeServerDataLocation()}
+                  />
+                </div>
+              </>
+              <div className="mt-3 flex flex-row flex-wrap gap-3">
+                <Button label={showLogs ? 'Hide Logs' : 'Show Logs'} onClick={handleShowLogs} />
+              </div>
+              {showLogs && (
+                <div className="flex flex-col">
+                  <HorizontalSeparator classes="mt-3" />
+                  <textarea
+                    ref={logsTextarea}
+                    disabled={true}
+                    className="h-[500px] overflow-y-auto whitespace-pre-wrap bg-contrast p-2"
+                    value={logs.join('\n')}
+                  />
+                  <HorizontalSeparator classes="mb-3" />
+                </div>
+              )}
+              <div className="h-2 w-full" />
+              {homeServerConfiguration && (
+                <>
+                  <HorizontalSeparator classes="my-4" />
+                  <EnvironmentConfiguration
+                    homeServerConfiguration={homeServerConfiguration}
+                    setHomeServerConfigurationChangedCallback={handleHomeServerConfigurationChange}
+                  />
+                  <HorizontalSeparator classes="my-4" />
+                  <DatabaseConfiguration
+                    homeServerConfiguration={homeServerConfiguration}
+                    setHomeServerConfigurationChangedCallback={handleHomeServerConfigurationChange}
+                  />
+                </>
+              )}
             </>
           )}
-        </>
+        </div>
       )}
-    </div>
+    </>
   )
 }
 

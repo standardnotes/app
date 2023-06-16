@@ -4,7 +4,7 @@ export interface HomeServerManagerInterface {
   startHomeServer(): Promise<string | undefined>
   setHomeServerConfiguration(configurationJSONString: string): Promise<void>
   setHomeServerDataLocation(location: string): Promise<void>
-  stopHomeServer(): Promise<void>
+  stopHomeServer(): Promise<string | undefined>
   homeServerStatus(): Promise<HomeServerStatus>
   activatePremiumFeatures(username: string): Promise<string | undefined>
   getHomeServerLogs(): Promise<string[]>

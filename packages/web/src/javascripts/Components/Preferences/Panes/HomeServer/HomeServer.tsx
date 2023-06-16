@@ -2,43 +2,16 @@ import { Subtitle, Text, Title } from '@/Components/Preferences/PreferencesCompo
 import PreferencesPane from '../../PreferencesComponents/PreferencesPane'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
-import { useApplication } from '@/Components/ApplicationProvider'
-import { useCallback, useState } from 'react'
-import Switch from '@/Components/Switch/Switch'
 import HomeServerSettings from './HomeServerSettings'
 
 const HomeServer = () => {
-  const application = useApplication()
-  const desktopDevice = application.desktopDevice
-  const homeServerService = application.homeServer
-  const [homeServerEnabled, setHomeServerEnabled] = useState(homeServerService.isHomeServerEnabled())
-
-  const toggleHomeServer = useCallback(async () => {
-    if (homeServerEnabled) {
-      await homeServerService.disableHomeServer()
-    } else {
-      await homeServerService.enableHomeServer()
-    }
-
-    setHomeServerEnabled(homeServerService.isHomeServerEnabled())
-  }, [homeServerEnabled, homeServerService])
-
   return (
     <PreferencesPane>
-      {desktopDevice && (
-        <PreferencesGroup>
-          <PreferencesSegment>
-            <Title>Home Server</Title>
-            <div className="flex items-center justify-between">
-              <div className="mr-10 flex flex-col">
-                <Subtitle>Enable home server to sync your data to your local computer only.</Subtitle>
-              </div>
-              <Switch onChange={toggleHomeServer} checked={homeServerEnabled} />
-            </div>
-            {homeServerEnabled && <HomeServerSettings />}
-          </PreferencesSegment>
-        </PreferencesGroup>
-      )}
+      <PreferencesGroup>
+        <PreferencesSegment>
+          <HomeServerSettings />
+        </PreferencesSegment>
+      </PreferencesGroup>
 
       <PreferencesGroup>
         <Title>Remote Access</Title>

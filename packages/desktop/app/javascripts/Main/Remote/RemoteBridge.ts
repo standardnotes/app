@@ -265,7 +265,7 @@ export class RemoteBridge implements CrossProcessBridge {
     return this.homeServerManager.startHomeServer()
   }
 
-  stopHomeServer(): Promise<void> {
+  stopHomeServer(): Promise<string | undefined> {
     return this.homeServerManager.stopHomeServer()
   }
 

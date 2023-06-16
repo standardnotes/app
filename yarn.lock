@@ -5836,7 +5836,7 @@ __metadata:
     "@electron/remote": ^2.0.9
     "@standardnotes/domain-core": ^1.18.0
     "@standardnotes/electron-clear-data": 1.1.1
-    "@standardnotes/home-server": ^1.11.5
+    "@standardnotes/home-server": ^1.11.6
     "@standardnotes/web": "workspace:*"
     "@types/fs-extra": ^11.0.1
     "@types/lodash": ^4.14.189
@@ -6114,9 +6114,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/home-server@npm:^1.11.5":
-  version: 1.11.5
-  resolution: "@standardnotes/home-server@npm:1.11.5"
+"@standardnotes/home-server@npm:^1.11.6":
+  version: 1.11.6
+  resolution: "@standardnotes/home-server@npm:1.11.6"
   dependencies:
     "@standardnotes/api-gateway": ^1.64.1
     "@standardnotes/auth-server": ^1.119.2
@@ -6135,7 +6135,7 @@ __metadata:
     prettyjson: ^1.2.5
     reflect-metadata: 0.1.13
     winston: ^3.8.1
-  checksum: 859816c6b4e4d1b0b7ad9ab7fd19f7a6be57ed6ae8e573f5e62b0a2b1768f9088df6e68aa5cf516a17219d1b203d5eb8d8be96e370abddd29767ed8b1b0e1d3e
+  checksum: c61d9eb390d594ccb1618d929ebddc8a59b0516b36ac0388195c419dd1f027eb09c6401cfb3ca32152b49c4d3b22b47d5b163ee3809d6cbb01cbde2bcf683ed0
   languageName: node
   linkType: hard
 

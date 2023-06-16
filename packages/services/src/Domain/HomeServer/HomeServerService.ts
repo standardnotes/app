@@ -32,7 +32,7 @@ export class HomeServerService extends AbstractService implements HomeServerServ
     return this.desktopDevice.startHomeServer()
   }
 
-  async stopHomeServer(): Promise<void> {
+  async stopHomeServer(): Promise<string | undefined> {
     return this.desktopDevice.stopHomeServer()
   }
 
@@ -76,10 +76,15 @@ export class HomeServerService extends AbstractService implements HomeServerServ
     return this.storageService.getValue(StorageKey.HomeServerDataLocation)
   }
 
-  async disableHomeServer(): Promise<void> {
+  async disableHomeServer(): Promise<Result<string>> {
     this.storageService.setValue(StorageKey.HomeServerEnabled, false)
 
-    await this.stopHomeServer()
+    const result = await this.stopHomeServer()
+    if (result !== undefined) {
+      return Result.fail(result)
+    }
+
+    return Result.ok('Home server disabled')
   }
 
   getHomeServerConfiguration(): HomeServerEnvironmentConfiguration | undefined {

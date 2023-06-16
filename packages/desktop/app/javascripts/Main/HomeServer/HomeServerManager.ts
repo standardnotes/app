@@ -58,8 +58,13 @@ export class HomeServerManager implements HomeServerManagerInterface {
     this.homeServerDataLocation = location
   }
 
-  async stopHomeServer(): Promise<void> {
-    await this.homeServer.stop()
+  async stopHomeServer(): Promise<string | undefined> {
+    const result = await this.homeServer.stop()
+    if (result.isFailed()) {
+      return result.getError()
+    }
+
+    return undefined
   }
 
   async homeServerStatus(): Promise<HomeServerStatus> {
