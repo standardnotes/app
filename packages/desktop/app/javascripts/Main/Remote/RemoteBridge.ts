@@ -89,6 +89,7 @@ export class RemoteBridge implements CrossProcessBridge {
       activatePremiumFeatures: this.activatePremiumFeatures.bind(this),
       isHomeServerRunning: this.isHomeServerRunning.bind(this),
       getHomeServerLogs: this.getHomeServerLogs.bind(this),
+      getHomeServerUrl: this.getHomeServerUrl.bind(this),
     }
   }
 
@@ -290,5 +291,9 @@ export class RemoteBridge implements CrossProcessBridge {
 
   async getHomeServerLogs(): Promise<string[]> {
     return this.homeServerManager.getHomeServerLogs()
+  }
+
+  async getHomeServerUrl(): Promise<string | undefined> {
+    return this.homeServerManager.getHomeServerUrl()
   }
 }

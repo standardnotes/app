@@ -20,6 +20,14 @@ export class HomeServerManager implements HomeServerManagerInterface {
 
   constructor(private homeServer: HomeServerInterface, private webContents: WebContents) {}
 
+  async getHomeServerUrl(): Promise<string | undefined> {
+    if (!this.homeServerConfiguration) {
+      return undefined
+    }
+
+    return `http://${this.getLocalIP()}:${this.homeServerConfiguration.port}`
+  }
+
   async isHomeServerRunning(): Promise<boolean> {
     const status = await this.homeServerStatus()
 
@@ -63,7 +71,7 @@ export class HomeServerManager implements HomeServerManagerInterface {
 
     return {
       status: 'on',
-      url: this.getServerUrl(),
+      url: await this.getHomeServerUrl(),
     }
   }
 
@@ -100,7 +108,7 @@ export class HomeServerManager implements HomeServerManagerInterface {
         ENCRYPTION_SERVER_KEY: encryptionServerKey,
         PSEUDO_KEY_PARAMS_KEY: pseudoKeyParamsKey,
         VALET_TOKEN_SECRET: valetTokenSecret,
-        FILES_SERVER_URL: this.getServerUrl(),
+        FILES_SERVER_URL: (await this.getHomeServerUrl()) as string,
         LOG_LEVEL: logLevel ?? 'info',
         VERSION: 'desktop',
         PORT: port.toString(),
@@ -133,7 +141,7 @@ export class HomeServerManager implements HomeServerManagerInterface {
         JSON.stringify(this.homeServerConfiguration),
       )
 
-      this.webContents.send(MessageToWebApp.HomeServerStarted, this.getServerUrl())
+      this.webContents.send(MessageToWebApp.HomeServerStarted, await this.getHomeServerUrl())
 
       const logStream = this.homeServer.logs()
       logStream.on('data', this.appendLogs.bind(this))
@@ -189,9 +197,5 @@ export class HomeServerManager implements HomeServerManagerInterface {
     }
 
     return configuration
-  }
-
-  private getServerUrl(): string {
-    return `http://${this.getLocalIP()}:${(this.homeServerConfiguration as HomeServerEnvironmentConfiguration).port}`
   }
 }

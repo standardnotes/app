@@ -24,6 +24,10 @@ export class HomeServerService extends AbstractService implements HomeServerServ
     super(internalEventBus)
   }
 
+  async getHomeServerUrl(): Promise<string | undefined> {
+    return this.desktopDevice.getHomeServerUrl()
+  }
+
   async startHomeServer(): Promise<string | undefined> {
     return this.desktopDevice.startHomeServer()
   }

@@ -378,6 +378,21 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return this.homeServerService
   }
 
+  async isUsingHomeServer(): Promise<boolean> {
+    if (!this.homeServerService) {
+      return false
+    }
+
+    const isHomeServerRunning = await this.homeServerService.isHomeServerRunning()
+    if (!isHomeServerRunning) {
+      return false
+    }
+
+    const homeServerUrl = await this.homeServerService.getHomeServerUrl()
+
+    return this.getHost() === homeServerUrl
+  }
+
   public computePrivateUsername(username: string): Promise<string | undefined> {
     return ComputePrivateUsername(this.options.crypto, username)
   }

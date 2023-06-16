@@ -9,4 +9,5 @@ export interface HomeServerManagerInterface {
   activatePremiumFeatures(username: string): Promise<string | undefined>
   getHomeServerLogs(): Promise<string[]>
   isHomeServerRunning(): Promise<boolean>
+  getHomeServerUrl(): Promise<string | undefined>
 }

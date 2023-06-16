@@ -15,4 +15,5 @@ export interface HomeServerServiceInterface {
   openHomeServerDataLocation(): Promise<void>
   getHomeServerConfiguration(): HomeServerEnvironmentConfiguration | undefined
   setHomeServerConfiguration(config: HomeServerEnvironmentConfiguration): Promise<void>
+  getHomeServerUrl(): Promise<string | undefined>
 }

@@ -26,6 +26,10 @@ export class DesktopDevice extends WebOrDesktopDevice implements DesktopDeviceIn
     super(appVersion)
   }
 
+  async getHomeServerUrl(): Promise<string | undefined> {
+    return this.remoteBridge.getHomeServerUrl()
+  }
+
   async isHomeServerRunning(): Promise<boolean> {
     return this.remoteBridge.isHomeServerRunning()
   }
