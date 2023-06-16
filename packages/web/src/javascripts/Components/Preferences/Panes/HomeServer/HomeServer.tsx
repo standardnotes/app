@@ -4,7 +4,6 @@ import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 import { useApplication } from '@/Components/ApplicationProvider'
 import { useCallback, useState } from 'react'
-import AccountMigration from './AccountMigration'
 import Switch from '@/Components/Switch/Switch'
 import HomeServerSettings from './HomeServerSettings'
 
@@ -78,8 +77,6 @@ const HomeServer = () => {
           read your notes or files.
         </Text>
       </PreferencesGroup>
-
-      <AccountMigration />
     </PreferencesPane>
   )
 }
