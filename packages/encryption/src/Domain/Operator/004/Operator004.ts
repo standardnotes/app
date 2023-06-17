@@ -11,6 +11,7 @@ import {
   ItemsKeyContentSpecialized,
   KeySystemIdentifier,
   RootKeyInterface,
+  KeySystemRootKeyParamsInterface,
 } from '@standardnotes/models'
 import { ContentType, KeyParamsOrigination, ProtocolVersion } from '@standardnotes/common'
 import { HexString, PkcKeyPair, PureCryptoInterface, Utf8String } from '@standardnotes/sncrypto-common'
@@ -45,6 +46,7 @@ import { CreateRandomKeySystemRootKey } from './UseCase/KeySystem/CreateRandomKe
 import { CreateUserInputKeySystemRootKey } from './UseCase/KeySystem/CreateUserInputKeySystemRootKey'
 import { AsymmetricSignatureVerificationDetachedResult } from '../AsymmetricSignatureVerificationDetachedResult'
 import { AsymmetricSignatureVerificationDetachedUseCase } from './UseCase/Asymmetric/AsymmetricSignatureVerificationDetached'
+import { DeriveKeySystemRootKeyUseCase } from './UseCase/KeySystem/DeriveKeySystemRootKey'
 
 export class SNProtocolOperator004 implements OperatorInterface {
   constructor(protected readonly crypto: PureCryptoInterface) {}
@@ -89,12 +91,21 @@ export class SNProtocolOperator004 implements OperatorInterface {
 
   createUserInputtedKeySystemRootKey(dto: {
     systemIdentifier: KeySystemIdentifier
-    systemName: string
-    systemDescription?: string
     userInputtedPassword: string
   }): KeySystemRootKeyInterface {
     const usecase = new CreateUserInputKeySystemRootKey(this.crypto)
     return usecase.execute(dto)
+  }
+
+  deriveUserInputtedKeySystemRootKey(dto: {
+    keyParams: KeySystemRootKeyParamsInterface
+    userInputtedPassword: string
+  }): KeySystemRootKeyInterface {
+    const usecase = new DeriveKeySystemRootKeyUseCase(this.crypto)
+    return usecase.execute({
+      keyParams: dto.keyParams,
+      password: dto.userInputtedPassword,
+    })
   }
 
   public createKeySystemItemsKey(

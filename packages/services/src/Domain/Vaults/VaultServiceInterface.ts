@@ -19,4 +19,6 @@ export interface VaultServiceInterface
     vault: VaultListingInterface,
     params: { name: string; description: string },
   ): Promise<VaultListingInterface>
+
+  unlockNonPersistentVault(vault: VaultListingInterface, password: string): void
 }

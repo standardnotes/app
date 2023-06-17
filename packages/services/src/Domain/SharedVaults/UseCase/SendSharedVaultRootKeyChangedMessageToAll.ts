@@ -68,7 +68,7 @@ export class SendSharedVaultRootKeyChangedMessageToAll {
     senderSigningKeyPair: PkcKeyPair
     contact: TrustedContactInterface
   }): Promise<AsymmetricMessageServerHash | ClientDisplayableError> {
-    const keySystemRootKey = this.encryption.keySystemKeyManager.getPrimaryKeySystemRootKey(params.keySystemIdentifier)
+    const keySystemRootKey = this.encryption.keys.getPrimaryKeySystemRootKey(params.keySystemIdentifier)
     if (!keySystemRootKey) {
       throw new Error(`Vault key not found for keySystemIdentifier ${params.keySystemIdentifier}`)
     }

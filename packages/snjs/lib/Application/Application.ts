@@ -177,6 +177,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   private sharedVaultService!: ExternalServices.SharedVaultServiceInterface
   private userEventService!: ExternalServices.UserEventService
   private asymmetricMessageService!: ExternalServices.AsymmetricMessageService
+  private keySystemKeyManager!: ExternalServices.KeySystemKeyManager
 
   private declare sessionStorageMapper: MapperInterface<Session, Record<string, unknown>>
   private declare legacySessionStorageMapper: MapperInterface<LegacySession, Record<string, unknown>>
@@ -1172,7 +1173,10 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.createUserEventService()
 
     this.createInMemoryStorageManager()
+
+    this.createKeySystemKeyManager()
     this.createProtocolService()
+
     this.diskStorageService.provideEncryptionProvider(this.protocolService)
     this.createChallengeService()
     this.createLegacyHttpManager()
@@ -1280,6 +1284,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     ;(this.sharedVaultService as unknown) = undefined
     ;(this.userEventService as unknown) = undefined
     ;(this.asymmetricMessageService as unknown) = undefined
+    ;(this.keySystemKeyManager as unknown) = undefined
 
     this.services = []
   }
@@ -1626,6 +1631,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       this.payloadManager,
       this.deviceInterface,
       this.diskStorageService,
+      this.keySystemKeyManager,
       this.identifier,
       this.options.crypto,
       this.internalEventBus,
@@ -1638,6 +1644,16 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       }),
     )
     this.services.push(this.protocolService)
+  }
+
+  private createKeySystemKeyManager() {
+    this.keySystemKeyManager = new ExternalServices.KeySystemKeyManager(
+      this.itemManager,
+      this.storage,
+      this.internalEventBus,
+    )
+
+    this.services.push(this.keySystemKeyManager)
   }
 
   private createKeyRecoveryService() {

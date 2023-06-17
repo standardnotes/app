@@ -44,6 +44,7 @@ import {
   KeySystemIdentifier,
   AsymmetricMessagePayload,
   KeySystemRootKeyInterface,
+  KeySystemRootKeyParamsInterface,
 } from '@standardnotes/models'
 import { ClientDisplayableError } from '@standardnotes/responses'
 import { PkcKeyPair, PureCryptoInterface } from '@standardnotes/sncrypto-common'
@@ -79,7 +80,6 @@ import { RootKeyEncryptionService } from './RootKeyEncryption'
 import { DecryptBackupFile } from './BackupFileDecryptor'
 import { EncryptionServiceEvent } from './EncryptionServiceEvent'
 import { DecryptedParameters } from '@standardnotes/encryption/src/Domain/Types/DecryptedParameters'
-import { KeySystemKeyManager } from '../KeySystem/KeySystemKeyManager'
 import { AsymmetricallyEncryptedString } from '@standardnotes/encryption/src/Domain/Operator/Types'
 
 /**
@@ -115,13 +115,12 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
   private readonly rootKeyEncryption: RootKeyEncryptionService
   private rootKeyObserverDisposer: () => void
 
-  public readonly keySystemKeyManager: KeySystemKeyManagerInterface
-
   constructor(
     private itemManager: ItemManagerInterface,
     private payloadManager: PayloadManagerInterface,
     public deviceInterface: DeviceInterface,
     private storageService: StorageServiceInterface,
+    public readonly keys: KeySystemKeyManagerInterface,
     private identifier: ApplicationIdentifier,
     public crypto: PureCryptoInterface,
     protected override internalEventBus: InternalEventBusInterface,
@@ -131,14 +130,12 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
 
     this.operatorManager = new OperatorManager(crypto)
 
-    this.keySystemKeyManager = new KeySystemKeyManager(itemManager)
-
     this.itemsEncryption = new ItemsEncryptionService(
       itemManager,
       payloadManager,
       storageService,
       this.operatorManager,
-      this.keySystemKeyManager,
+      keys,
       internalEventBus,
     )
 
@@ -148,7 +145,7 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
       this.deviceInterface,
       this.storageService,
       this.payloadManager,
-      this.keySystemKeyManager,
+      keys,
       this.identifier,
       this.internalEventBus,
     )
@@ -579,6 +576,13 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     userInputtedPassword: string
   }): KeySystemRootKeyInterface {
     return this.operatorManager.defaultOperator().createRandomizedKeySystemRootKey(dto)
+  }
+
+  deriveUserInputtedKeySystemRootKey(dto: {
+    keyParams: KeySystemRootKeyParamsInterface
+    userInputtedPassword: string
+  }): KeySystemRootKeyInterface {
+    return this.operatorManager.defaultOperator().deriveUserInputtedKeySystemRootKey(dto)
   }
 
   createKeySystemItemsKey(

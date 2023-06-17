@@ -10,12 +10,10 @@ export class DeleteVaultUseCase {
     if (!vault.systemIdentifier) {
       throw new Error('Vault system identifier is missing')
     }
-    const keySystemRootKeys = this.encryption.keySystemKeyManager.getAllKeySystemRootKeysForVault(
-      vault.systemIdentifier,
-    )
-    await this.items.setItemsToBeDeleted(keySystemRootKeys)
 
-    const keySystemItemsKeys = this.encryption.keySystemKeyManager.getKeySystemItemsKeys(vault.systemIdentifier)
+    await this.encryption.keys.deleteAllKeySystemRootKeysForVault(vault.systemIdentifier)
+
+    const keySystemItemsKeys = this.encryption.keys.getKeySystemItemsKeys(vault.systemIdentifier)
     await this.items.setItemsToBeDeleted(keySystemItemsKeys)
 
     const vaultItems = this.items.itemsBelongingToKeySystem(vault.systemIdentifier)

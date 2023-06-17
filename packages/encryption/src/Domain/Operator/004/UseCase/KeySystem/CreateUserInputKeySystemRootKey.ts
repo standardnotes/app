@@ -12,12 +12,7 @@ import { DeriveKeySystemRootKeyUseCase } from './DeriveKeySystemRootKey'
 export class CreateUserInputKeySystemRootKey {
   constructor(private readonly crypto: PureCryptoInterface) {}
 
-  execute(dto: {
-    systemIdentifier: KeySystemIdentifier
-    systemName: string
-    systemDescription?: string
-    userInputtedPassword: string
-  }): KeySystemRootKeyInterface {
+  execute(dto: { systemIdentifier: KeySystemIdentifier; userInputtedPassword: string }): KeySystemRootKeyInterface {
     const version = ProtocolVersion.V004
 
     const seed = this.crypto.generateRandomKey(V004Algorithm.ArgonSaltSeedLength)

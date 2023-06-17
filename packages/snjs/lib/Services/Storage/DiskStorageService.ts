@@ -292,6 +292,14 @@ export class DiskStorageService extends Services.AbstractService implements Serv
     return value != undefined ? (value as T) : (defaultValue as T)
   }
 
+  public getAllKeys(mode = Services.StorageValueModes.Default): string[] {
+    if (!this.values) {
+      throw Error('Attempting to get all keys before loading local storage.')
+    }
+
+    return Object.keys(this.values[this.domainKeyForMode(mode)])
+  }
+
   public async removeValue(key: string, mode = Services.StorageValueModes.Default): Promise<void> {
     if (!this.values) {
       throw Error(`Attempting to remove storage key ${key} before loading local storage.`)

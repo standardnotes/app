@@ -7,6 +7,7 @@ import {
   ItemContent,
   KeySystemRootKeyInterface,
   KeySystemIdentifier,
+  KeySystemRootKeyParamsInterface,
 } from '@standardnotes/models'
 import { SNRootKeyParams } from '../Keys/RootKey/RootKeyParams'
 import { EncryptedOutputParameters, ErrorDecryptingParameters } from '../Types/EncryptedParameters'
@@ -36,20 +37,6 @@ export interface OperatorInterface {
   readonly version: string
 
   createItemsKey(): ItemsKeyInterface
-
-  createRandomizedKeySystemRootKey(dto: { systemIdentifier: KeySystemIdentifier }): KeySystemRootKeyInterface
-
-  createUserInputtedKeySystemRootKey(dto: {
-    systemIdentifier: KeySystemIdentifier
-    userInputtedPassword: string
-  }): KeySystemRootKeyInterface
-
-  createKeySystemItemsKey(
-    uuid: string,
-    keySystemIdentifier: KeySystemIdentifier,
-    sharedVaultUuid: string | undefined,
-    rootKeyToken: string,
-  ): KeySystemItemsKeyInterface
 
   /**
    * Returns the payload's authenticated data. The passed payload must be in a
@@ -94,6 +81,25 @@ export interface OperatorInterface {
     encrypted: EncryptedOutputParameters,
     key: ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface | RootKeyInterface,
   ): DecryptedParameters<C> | ErrorDecryptingParameters
+
+  createRandomizedKeySystemRootKey(dto: { systemIdentifier: KeySystemIdentifier }): KeySystemRootKeyInterface
+
+  createUserInputtedKeySystemRootKey(dto: {
+    systemIdentifier: KeySystemIdentifier
+    userInputtedPassword: string
+  }): KeySystemRootKeyInterface
+
+  deriveUserInputtedKeySystemRootKey(dto: {
+    keyParams: KeySystemRootKeyParamsInterface
+    userInputtedPassword: string
+  }): KeySystemRootKeyInterface
+
+  createKeySystemItemsKey(
+    uuid: string,
+    keySystemIdentifier: KeySystemIdentifier,
+    sharedVaultUuid: string | undefined,
+    rootKeyToken: string,
+  ): KeySystemItemsKeyInterface
 
   asymmetricEncrypt(dto: {
     stringToEncrypt: HexString

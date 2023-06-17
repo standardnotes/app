@@ -23,7 +23,7 @@ export class InviteContactToSharedVaultUseCase {
     recipient: TrustedContactInterface
     permissions: SharedVaultPermission
   }): Promise<SharedVaultInviteServerHash | ClientDisplayableError> {
-    const keySystemRootKey = this.encryption.keySystemKeyManager.getPrimaryKeySystemRootKey(
+    const keySystemRootKey = this.encryption.keys.getPrimaryKeySystemRootKey(
       params.sharedVault.systemIdentifier,
     )
     if (!keySystemRootKey) {

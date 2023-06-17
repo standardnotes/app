@@ -28,6 +28,8 @@ export * from './Component/ComponentViewerInterface'
 export * from './Contacts/ContactServiceInterface'
 export * from './Contacts/ContactService'
 
+export * from './KeySystem/KeySystemKeyManager'
+
 export * from './SharedVaults/SharedVaultServiceInterface'
 export * from './SharedVaults/SharedVaultService'
 export * from './SharedVaults/SharedVaultServiceEvent'

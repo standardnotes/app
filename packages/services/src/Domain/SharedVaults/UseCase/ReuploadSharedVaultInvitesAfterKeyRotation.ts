@@ -32,7 +32,7 @@ export class ReuploadSharedVaultInvitesAfterKeyRotationUseCase {
   ) {}
 
   async execute(params: ReuploadAllSharedVaultInvitesDTO): Promise<ClientDisplayableError[]> {
-    const keySystemRootKey = this.encryption.keySystemKeyManager.getPrimaryKeySystemRootKey(
+    const keySystemRootKey = this.encryption.keys.getPrimaryKeySystemRootKey(
       params.sharedVault.systemIdentifier,
     )
     if (!keySystemRootKey) {

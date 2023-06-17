@@ -2,6 +2,7 @@ import { ClientDisplayableError, isClientDisplayableError } from '@standardnotes
 import {
   DecryptedItemInterface,
   KeySystemIdentifier,
+  KeySystemRootKeyPasswordType,
   KeySystemRootKeyStorageType,
   VaultListingInterface,
   VaultListingMutator,
@@ -143,6 +144,23 @@ export class VaultService
 
   isItemInVault(item: DecryptedItemInterface): boolean {
     return item.key_system_identifier !== undefined
+  }
+
+  unlockNonPersistentVault(vault: VaultListingInterface, password: string): void {
+    if (vault.rootKeyPasswordType !== KeySystemRootKeyPasswordType.UserInputted) {
+      throw new Error('Vault uses randomized password and cannot be unlocked with user inputted password')
+    }
+
+    if (vault.rootKeyStorage === KeySystemRootKeyStorageType.Synced) {
+      throw new Error('Vault uses synced root key and cannot be unlocked with user inputted password')
+    }
+
+    const rootKey = this.encryption.deriveUserInputtedKeySystemRootKey({
+      keyParams: vault.rootKeyParams,
+      userInputtedPassword: password,
+    })
+
+    this.encryption.keys.intakeNonPersistentKeySystemRootKey(rootKey, vault.rootKeyStorage)
   }
 
   override deinit(): void {

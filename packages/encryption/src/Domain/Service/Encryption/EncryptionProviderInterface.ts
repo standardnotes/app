@@ -11,6 +11,7 @@ import {
   KeySystemItemsKeyInterface,
   AsymmetricMessagePayload,
   KeySystemRootKeyInterface,
+  KeySystemRootKeyParamsInterface,
 } from '@standardnotes/models'
 import { ClientDisplayableError } from '@standardnotes/responses'
 import { SNRootKeyParams } from '../../Keys/RootKey/RootKeyParams'
@@ -34,7 +35,7 @@ export type AsymmetricallyDecryptMessageResult = {
 }
 
 export interface EncryptionProviderInterface {
-  keySystemKeyManager: KeySystemKeyManagerInterface
+  keys: KeySystemKeyManagerInterface
 
   encryptSplitSingle(split: KeyedEncryptionSplit): Promise<EncryptedPayloadInterface>
   encryptSplit(split: KeyedEncryptionSplit): Promise<EncryptedPayloadInterface[]>
@@ -96,10 +97,19 @@ export interface EncryptionProviderInterface {
   getRootKeyParams(): SNRootKeyParams | undefined
   setNewRootKeyWrapper(wrappingKey: RootKeyInterface): Promise<void>
 
+  createNewItemsKeyWithRollback(): Promise<() => Promise<void>>
+  reencryptItemsKeys(): Promise<void>
+  getSureDefaultItemsKey(): ItemsKeyInterface
+
   createRandomizedKeySystemRootKey(dto: { systemIdentifier: KeySystemIdentifier }): KeySystemRootKeyInterface
 
   createUserInputtedKeySystemRootKey(dto: {
     systemIdentifier: KeySystemIdentifier
+    userInputtedPassword: string
+  }): KeySystemRootKeyInterface
+
+  deriveUserInputtedKeySystemRootKey(dto: {
+    keyParams: KeySystemRootKeyParamsInterface
     userInputtedPassword: string
   }): KeySystemRootKeyInterface
 
@@ -109,10 +119,6 @@ export interface EncryptionProviderInterface {
     sharedVaultUuid: string | undefined,
     rootKeyToken: string,
   ): KeySystemItemsKeyInterface
-
-  createNewItemsKeyWithRollback(): Promise<() => Promise<void>>
-  reencryptItemsKeys(): Promise<void>
-  getSureDefaultItemsKey(): ItemsKeyInterface
 
   reencryptKeySystemItemsKeysForVault(keySystemIdentifier: KeySystemIdentifier): Promise<void>
 

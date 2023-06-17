@@ -12,7 +12,7 @@ export class RotateKeySystemRootKeyUseCase {
     sharedVaultUuid: string | undefined
     userInputtedPassword: string | undefined
   }): Promise<undefined | ClientDisplayableError[]> {
-    const currentRootKey = this.encryption.keySystemKeyManager.getPrimaryKeySystemRootKey(params.keySystemIdentifier)
+    const currentRootKey = this.encryption.keys.getPrimaryKeySystemRootKey(params.keySystemIdentifier)
     if (!currentRootKey) {
       throw new Error('Cannot rotate key system root key; key system root key not found')
     }
