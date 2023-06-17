@@ -9,6 +9,7 @@ import {
   encryptPayload,
   decryptPayload,
   EncryptedOutputParameters,
+  KeySystemKeyManagerInterface,
 } from '@standardnotes/encryption'
 import {
   DecryptedPayload,
@@ -39,6 +40,7 @@ export class ItemsEncryptionService extends AbstractService {
     private payloadManager: PayloadManagerInterface,
     private storageService: StorageServiceInterface,
     private operatorManager: OperatorManager,
+    private keys: KeySystemKeyManagerInterface,
     protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)
@@ -54,6 +56,8 @@ export class ItemsEncryptionService extends AbstractService {
     ;(this.itemManager as unknown) = undefined
     ;(this.payloadManager as unknown) = undefined
     ;(this.storageService as unknown) = undefined
+    ;(this.operatorManager as unknown) = undefined
+    ;(this.keys as unknown) = undefined
     this.removeItemsObserver()
     ;(this.removeItemsObserver as unknown) = undefined
     super.deinit()
@@ -93,7 +97,7 @@ export class ItemsEncryptionService extends AbstractService {
     payload: DecryptedPayloadInterface,
   ): ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface | StandardException {
     if (payload.key_system_identifier) {
-      const keySystemItemsKey = this.itemManager.getPrimaryKeySystemItemsKey(payload.key_system_identifier)
+      const keySystemItemsKey = this.keys.getPrimaryKeySystemItemsKey(payload.key_system_identifier)
       if (!keySystemItemsKey) {
         return new StandardException('Cannot find key system items key to use for encryption')
       }

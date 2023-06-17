@@ -82,11 +82,7 @@ export class SNProtocolOperator004 implements OperatorInterface {
     return CreateDecryptedItemFromPayload(payload)
   }
 
-  createRandomizedKeySystemRootKey(dto: {
-    systemIdentifier: KeySystemIdentifier
-    systemName: string
-    systemDescription?: string
-  }): KeySystemRootKeyInterface {
+  createRandomizedKeySystemRootKey(dto: { systemIdentifier: KeySystemIdentifier }): KeySystemRootKeyInterface {
     const usecase = new CreateRandomKeySystemRootKey(this.crypto)
     return usecase.execute(dto)
   }
@@ -105,9 +101,10 @@ export class SNProtocolOperator004 implements OperatorInterface {
     uuid: string,
     keySystemIdentifier: KeySystemIdentifier,
     sharedVaultUuid: string | undefined,
+    rootKeyToken: string,
   ): KeySystemItemsKeyInterface {
     const usecase = new CreateKeySystemItemsKeyUseCase(this.crypto)
-    return usecase.execute(uuid, keySystemIdentifier, sharedVaultUuid)
+    return usecase.execute({ uuid, keySystemIdentifier, sharedVaultUuid, rootKeyToken })
   }
 
   public async computeRootKey<K extends RootKeyInterface>(

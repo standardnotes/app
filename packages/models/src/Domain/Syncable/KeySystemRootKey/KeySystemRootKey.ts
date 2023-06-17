@@ -47,4 +47,8 @@ export class KeySystemRootKey extends DecryptedItem<KeySystemRootKeyContent> imp
   override get key_system_identifier(): undefined {
     return undefined
   }
+
+  override get shared_vault_uuid(): undefined {
+    return undefined
+  }
 }

@@ -3,7 +3,7 @@ import { ItemContent, SpecializedContent } from '../../Abstract/Content/ItemCont
 
 export interface KeySystemItemsKeyContentSpecialized extends SpecializedContent {
   version: ProtocolVersion
-  keyTimestamp: number
+  creationTimestamp: number
   itemsKey: string
   rootKeyToken: string
 }

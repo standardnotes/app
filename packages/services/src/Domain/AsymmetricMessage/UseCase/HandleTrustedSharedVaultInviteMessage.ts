@@ -2,45 +2,44 @@ import { ContactServiceInterface } from './../../Contacts/ContactServiceInterfac
 import { SyncServiceInterface } from '../../Sync/SyncServiceInterface'
 import {
   KeySystemRootKeyInterface,
-  KeySystemRootKeyMutator,
   AsymmetricMessageSharedVaultInvite,
   KeySystemRootKeyContent,
   FillItemContent,
+  FillItemContentSpecialized,
+  VaultListingContentSpecialized,
+  KeySystemRootKeyStorageType,
 } from '@standardnotes/models'
-
 import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
 import { ContentType } from '@standardnotes/common'
-import { EncryptionProviderInterface } from '@standardnotes/encryption'
 
 export class HandleTrustedSharedVaultInviteMessage {
   constructor(
     private items: ItemManagerInterface,
     private sync: SyncServiceInterface,
     private contacts: ContactServiceInterface,
-    private encryption: EncryptionProviderInterface,
   ) {}
 
-  async execute(message: AsymmetricMessageSharedVaultInvite): Promise<'inserted' | 'changed'> {
-    const { rootKey: rootKeyContent, trustedContacts } = message.data
+  async execute(
+    message: AsymmetricMessageSharedVaultInvite,
+    sharedVaultUuid: string,
+    senderUuid: string,
+  ): Promise<'inserted' | 'changed'> {
+    const { rootKey: rootKeyContent, trustedContacts, metadata } = message.data
 
-    const existingKeySystemRootKey = this.encryption.keySystemKeyManager.getKeySystemRootKeyWithToken(
-      rootKeyContent.systemIdentifier,
-      rootKeyContent.keyTimestamp,
-    )
-
-    if (existingKeySystemRootKey) {
-      await this.items.changeItem<KeySystemRootKeyMutator, KeySystemRootKeyInterface>(
-        existingKeySystemRootKey,
-        (mutator) => {
-          mutator.systemName = rootKeyContent.systemName
-          mutator.systemDescription = rootKeyContent.systemDescription
-        },
-      )
-
-      await this.sync.sync()
-
-      return 'changed'
+    const content: VaultListingContentSpecialized = {
+      systemIdentifier: rootKeyContent.systemIdentifier,
+      rootKeyPasswordType: rootKeyContent.keyParams.passwordType,
+      rootKeyParams: rootKeyContent.keyParams,
+      rootKeyStorage: KeySystemRootKeyStorageType.Synced,
+      name: metadata.name,
+      description: metadata.description,
+      sharing: {
+        sharedVaultUuid: sharedVaultUuid,
+        ownerUserUuid: senderUuid,
+      },
     }
+
+    await this.items.createItem(ContentType.VaultListing, FillItemContentSpecialized(content), true)
 
     await this.items.createItem<KeySystemRootKeyInterface>(
       ContentType.KeySystemRootKey,

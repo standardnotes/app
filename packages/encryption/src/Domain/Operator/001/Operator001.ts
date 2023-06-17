@@ -29,6 +29,7 @@ import { RootKeyEncryptedAuthenticatedData } from '../../Types/RootKeyEncryptedA
 import { OperatorInterface } from '../OperatorInterface'
 import { PublicKeySet } from '../PublicKeySet'
 import { AsymmetricDecryptResult } from '../AsymmetricDecryptResult'
+import { AsymmetricSignatureVerificationDetachedResult } from '../AsymmetricSignatureVerificationDetachedResult'
 
 const NO_IV = '00000000000000000000000000000000'
 
@@ -224,7 +225,7 @@ export class SNProtocolOperator001 implements OperatorInterface {
     })
   }
 
-  createRandomizedKeySystemRootKey(_dto: { systemIdentifier: string; systemName: string }): KeySystemRootKeyInterface {
+  createRandomizedKeySystemRootKey(_dto: { systemIdentifier: string }): KeySystemRootKeyInterface {
     throw new Error('Method not implemented.')
   }
 
@@ -273,6 +274,10 @@ export class SNProtocolOperator001 implements OperatorInterface {
   }
 
   asymmetricDecrypt(_dto: { stringToDecrypt: string; recipientSecretKey: string }): AsymmetricDecryptResult | null {
+    throw new Error('Method not implemented.')
+  }
+
+  asymmetricSignatureVerifyDetached(_encryptedString: string): AsymmetricSignatureVerificationDetachedResult {
     throw new Error('Method not implemented.')
   }
 

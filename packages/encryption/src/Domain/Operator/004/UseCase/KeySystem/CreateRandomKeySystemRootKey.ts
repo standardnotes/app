@@ -11,11 +11,7 @@ import { DeriveKeySystemRootKeyUseCase } from './DeriveKeySystemRootKey'
 export class CreateRandomKeySystemRootKey {
   constructor(private readonly crypto: PureCryptoInterface) {}
 
-  execute(dto: {
-    systemIdentifier: string
-    systemName: string
-    systemDescription?: string
-  }): KeySystemRootKeyInterface {
+  execute(dto: { systemIdentifier: string }): KeySystemRootKeyInterface {
     const version = ProtocolVersion.V004
 
     const seed = this.crypto.generateRandomKey(V004Algorithm.ArgonSaltSeedLength)
@@ -23,8 +19,9 @@ export class CreateRandomKeySystemRootKey {
     const randomPassword = this.crypto.generateRandomKey(32)
 
     const keyParams: KeySystemRootKeyParamsInterface = {
-      identifier: dto.systemIdentifier,
+      systemIdentifier: dto.systemIdentifier,
       passwordType: KeySystemRootKeyPasswordType.Randomized,
+      creationTimestamp: new Date().getTime(),
       seed,
       version,
     }
@@ -33,8 +30,6 @@ export class CreateRandomKeySystemRootKey {
     return usecase.execute({
       password: randomPassword,
       keyParams,
-      systemName: dto.systemName,
-      systemDescription: dto.systemDescription,
     })
   }
 }

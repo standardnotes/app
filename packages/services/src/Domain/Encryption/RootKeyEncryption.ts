@@ -25,6 +25,7 @@ import {
   ItemContentTypeUsesKeySystemRootKeyEncryption,
   EncryptedOutputParameters,
   DecryptedParameters,
+  KeySystemKeyManagerInterface,
 } from '@standardnotes/encryption'
 import {
   CreateDecryptedItemFromPayload,
@@ -70,6 +71,7 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
     public deviceInterface: DeviceInterface,
     private storageService: StorageServiceInterface,
     private payloadManager: PayloadManagerInterface,
+    private keys: KeySystemKeyManagerInterface,
     private identifier: ApplicationIdentifier,
     protected override internalEventBus: InternalEventBusInterface,
   ) {
@@ -511,7 +513,7 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
           `Attempting to encrypt vaulted payload ${payload.content_type} but the payload is missing a key_system_identifier`,
         )
       }
-      key = this.items.getPrimaryKeySystemRootKey(payload.key_system_identifier)
+      key = this.keys.getPrimaryKeySystemRootKey(payload.key_system_identifier)
     } else {
       key = this.getRootKey()
     }
@@ -554,7 +556,7 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
       if (!ItemContentTypeUsesKeySystemRootKeyEncryption(payload.content_type)) {
         throw Error('Attempting to decrypt payload that is not a vault items key with key system root key.')
       }
-      key = this.items.getPrimaryKeySystemRootKey(payload.key_system_identifier)
+      key = this.keys.getPrimaryKeySystemRootKey(payload.key_system_identifier)
     } else {
       key = this.getRootKey()
     }
@@ -640,7 +642,7 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
    * keys with this new key system root key (by simply re-syncing).
    */
   public async reencryptKeySystemItemsKeysForVault(keySystemIdentifier: KeySystemIdentifier): Promise<void> {
-    const keySystemItemsKeys = this.items.getKeySystemItemsKeys(keySystemIdentifier)
+    const keySystemItemsKeys = this.keys.getKeySystemItemsKeys(keySystemIdentifier)
 
     if (keySystemItemsKeys.length > 0) {
       await this.items.setItemsDirty(keySystemItemsKeys)

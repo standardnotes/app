@@ -37,16 +37,10 @@ export interface OperatorInterface {
 
   createItemsKey(): ItemsKeyInterface
 
-  createRandomizedKeySystemRootKey(dto: {
-    systemIdentifier: KeySystemIdentifier
-    systemName: string
-    systemDescription?: string
-  }): KeySystemRootKeyInterface
+  createRandomizedKeySystemRootKey(dto: { systemIdentifier: KeySystemIdentifier }): KeySystemRootKeyInterface
 
   createUserInputtedKeySystemRootKey(dto: {
     systemIdentifier: KeySystemIdentifier
-    systemName: string
-    systemDescription?: string
     userInputtedPassword: string
   }): KeySystemRootKeyInterface
 
@@ -54,6 +48,7 @@ export interface OperatorInterface {
     uuid: string,
     keySystemIdentifier: KeySystemIdentifier,
     sharedVaultUuid: string | undefined,
+    rootKeyToken: string,
   ): KeySystemItemsKeyInterface
 
   /**

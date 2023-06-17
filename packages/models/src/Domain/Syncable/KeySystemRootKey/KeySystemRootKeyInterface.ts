@@ -34,4 +34,5 @@ export interface KeySystemRootKeyInterface extends DecryptedItemInterface<KeySys
    * bind the item to a specific vault system's cryptographic keys.
    */
   get key_system_identifier(): undefined
+  get shared_vault_uuid(): undefined
 }

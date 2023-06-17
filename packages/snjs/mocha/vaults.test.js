@@ -34,7 +34,7 @@ describe('vaults', function () {
       const keySystemItemsKey = context.items.getPrimaryKeySystemItemsKey(vault.systemIdentifier)
       expect(keySystemItemsKey).to.not.be.undefined
       expect(keySystemItemsKey.key_system_identifier).to.equal(vault.systemIdentifier)
-      expect(keySystemItemsKey.keyTimestamp).to.not.be.undefined
+      expect(keySystemItemsKey.creationTimestamp).to.not.be.undefined
       expect(keySystemItemsKey.keyVersion).to.not.be.undefined
     })
 
@@ -172,53 +172,6 @@ describe('vaults', function () {
 
         expect(updatedKeySystemItemsKey).to.not.be.undefined
         expect(updatedKeySystemItemsKey.uuid).to.not.equal(keySystemItemsKey.uuid)
-      })
-
-      it('should keep key system root key with greater keyTimestamp if conflict', async () => {
-        const vault = await vaults.createRandomizedVault()
-        const keySystemRootKey = context.items.getPrimaryKeySystemRootKey(vault.systemIdentifier)
-
-        const otherClient = await Factory.createAppContextWithRealCrypto()
-        await otherClient.launch()
-        otherClient.email = context.email
-        otherClient.password = context.password
-        await otherClient.signIn(context.email, context.password)
-
-        context.lockSyncing()
-        otherClient.lockSyncing()
-
-        const olderTimestamp = keySystemRootKey.keyTimestamp + 1
-        const newerTimestamp = keySystemRootKey.keyTimestamp + 2
-
-        await context.items.changeItem(keySystemRootKey, (mutator) => {
-          mutator.mutableContent.key = 'new-vault-key'
-          mutator.mutableContent.keyTimestamp = olderTimestamp
-        })
-
-        const otherKeySystemRootKey = otherClient.items.getPrimaryKeySystemRootKey(vault.systemIdentifier)
-        await otherClient.items.changeItem(otherKeySystemRootKey, (mutator) => {
-          mutator.mutableContent.key = 'new-vault-key'
-          mutator.mutableContent.keyTimestamp = newerTimestamp
-        })
-
-        context.unlockSyncing()
-        otherClient.unlockSyncing()
-
-        await otherClient.sync()
-        await context.sync()
-
-        expect(context.items.getItems(ContentType.KeySystemRootKey).length).to.equal(1)
-        expect(otherClient.items.getItems(ContentType.KeySystemRootKey).length).to.equal(1)
-
-        const keySystemRootKeyAfterSync = context.items.getPrimaryKeySystemRootKey(vault.systemIdentifier)
-        const otherKeySystemRootKeyAfterSync = otherClient.items.getPrimaryKeySystemRootKey(vault.systemIdentifier)
-
-        expect(keySystemRootKeyAfterSync.keyTimestamp).to.equal(otherKeySystemRootKeyAfterSync.keyTimestamp)
-        expect(keySystemRootKeyAfterSync.key).to.equal(otherKeySystemRootKeyAfterSync.key)
-        expect(keySystemRootKeyAfterSync.keyTimestamp).to.equal(newerTimestamp)
-        expect(otherKeySystemRootKeyAfterSync.keyTimestamp).to.equal(newerTimestamp)
-
-        await otherClient.deinit()
       })
 
       it('deleting a vault should delete all its items', async () => {

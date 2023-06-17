@@ -23,8 +23,9 @@ export class CreateUserInputKeySystemRootKey {
     const seed = this.crypto.generateRandomKey(V004Algorithm.ArgonSaltSeedLength)
 
     const keyParams: KeySystemRootKeyParamsInterface = {
-      identifier: dto.systemIdentifier,
+      systemIdentifier: dto.systemIdentifier,
       passwordType: KeySystemRootKeyPasswordType.UserInputted,
+      creationTimestamp: new Date().getTime(),
       seed,
       version,
     }
@@ -33,8 +34,6 @@ export class CreateUserInputKeySystemRootKey {
     return usecase.execute({
       password: dto.userInputtedPassword,
       keyParams,
-      systemName: dto.systemName,
-      systemDescription: dto.systemDescription,
     })
   }
 }

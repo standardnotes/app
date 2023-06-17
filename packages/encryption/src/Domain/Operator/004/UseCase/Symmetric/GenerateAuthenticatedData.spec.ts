@@ -1,7 +1,12 @@
 import { CreateAnyKeyParams } from '../../../../Keys/RootKey/KeyParamsFunctions'
 import { AnyKeyParamsContent, ContentType, ProtocolVersion } from '@standardnotes/common'
 import { GenerateAuthenticatedDataUseCase } from './GenerateAuthenticatedData'
-import { DecryptedPayloadInterface, ItemsKeyInterface, KeySystemRootKey, RootKeyInterface } from '@standardnotes/models'
+import {
+  DecryptedPayloadInterface,
+  ItemsKeyInterface,
+  KeySystemRootKeyInterface,
+  RootKeyInterface,
+} from '@standardnotes/models'
 import { KeySystemItemsKey } from '../../../../Keys/KeySystemItemsKey/KeySystemItemsKey'
 
 describe('generate authenticated data use case', () => {
@@ -43,10 +48,10 @@ describe('generate authenticated data use case', () => {
     } as jest.Mocked<DecryptedPayloadInterface>
 
     const keySystemRootKey = {
-      keyTimestamp: 123,
       keyVersion: ProtocolVersion.V004,
       content_type: ContentType.KeySystemRootKey,
-    } as jest.Mocked<KeySystemRootKey>
+      token: '123',
+    } as jest.Mocked<KeySystemRootKeyInterface>
 
     const authenticatedData = usecase.execute(payload, keySystemRootKey)
 
@@ -55,7 +60,6 @@ describe('generate authenticated data use case', () => {
       v: ProtocolVersion.V004,
       ksi: payload.key_system_identifier,
       svu: payload.shared_vault_uuid,
-      keyTimestamp: keySystemRootKey.keyTimestamp,
       keyVersion: keySystemRootKey.keyVersion,
     })
   })
@@ -69,7 +73,7 @@ describe('generate authenticated data use case', () => {
     } as jest.Mocked<DecryptedPayloadInterface>
 
     const itemsKey = {
-      keyTimestamp: 123,
+      creationTimestamp: 123,
       keyVersion: ProtocolVersion.V004,
       content_type: ContentType.KeySystemItemsKey,
     } as jest.Mocked<KeySystemItemsKey>

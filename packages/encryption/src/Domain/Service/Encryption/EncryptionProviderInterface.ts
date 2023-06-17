@@ -96,16 +96,10 @@ export interface EncryptionProviderInterface {
   getRootKeyParams(): SNRootKeyParams | undefined
   setNewRootKeyWrapper(wrappingKey: RootKeyInterface): Promise<void>
 
-  createRandomizedKeySystemRootKey(dto: {
-    systemIdentifier: KeySystemIdentifier
-    systemName: string
-    systemDescription?: string
-  }): KeySystemRootKeyInterface
+  createRandomizedKeySystemRootKey(dto: { systemIdentifier: KeySystemIdentifier }): KeySystemRootKeyInterface
 
   createUserInputtedKeySystemRootKey(dto: {
     systemIdentifier: KeySystemIdentifier
-    systemName: string
-    systemDescription?: string
     userInputtedPassword: string
   }): KeySystemRootKeyInterface
 
@@ -113,6 +107,7 @@ export interface EncryptionProviderInterface {
     uuid: string,
     keySystemIdentifier: KeySystemIdentifier,
     sharedVaultUuid: string | undefined,
+    rootKeyToken: string,
   ): KeySystemItemsKeyInterface
 
   createNewItemsKeyWithRollback(): Promise<() => Promise<void>>

@@ -3,7 +3,7 @@ import { DecryptedItemInterface } from '../../Abstract/Item/Interfaces/Decrypted
 import { KeySystemItemsKeyContent } from './KeySystemItemsKeyContent'
 
 export interface KeySystemItemsKeyInterface extends DecryptedItemInterface<KeySystemItemsKeyContent> {
-  readonly keyTimestamp: number
+  readonly creationTimestamp: number
   readonly rootKeyToken: string
 
   get keyVersion(): ProtocolVersion

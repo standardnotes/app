@@ -63,7 +63,7 @@ export class KeySystemKeyManager implements KeySystemKeyManagerInterface {
       (key) => key.rootKeyToken === rootKey.token,
     )
 
-    const sortedByNewestFirst = matchingItemsKeys.sort((a, b) => b.keyTimestamp - a.keyTimestamp)
+    const sortedByNewestFirst = matchingItemsKeys.sort((a, b) => b.creationTimestamp - a.creationTimestamp)
     return sortedByNewestFirst[0]
   }
 }

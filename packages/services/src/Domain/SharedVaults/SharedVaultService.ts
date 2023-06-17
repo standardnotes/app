@@ -400,7 +400,6 @@ export class SharedVaultService
       this.items,
       this.sync,
       this.contacts,
-      this.encryption,
     )
     const result = await useCase.execute({ invite: pendingInvite.invite, message: pendingInvite.message })
 

@@ -163,7 +163,7 @@ describe('shared vault key rotation', function () {
 
     const newKeySystemRootKey = context.items.getPrimaryKeySystemRootKey(sharedVault.systemIdentifier)
 
-    expect(newKeySystemRootKey.keyTimestamp).to.be.greaterThan(originalKeySystemRootKey.keyTimestamp)
+    expect(newKeySystemRootKey.creationTimestamp).to.be.greaterThan(originalKeySystemRootKey.creationTimestamp)
     expect(newKeySystemRootKey.key).to.not.equal(originalKeySystemRootKey.key)
 
     await deinitContactContext()

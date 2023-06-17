@@ -17,7 +17,7 @@ export function isKeySystemItemsKey(x: unknown): x is KeySystemItemsKeyInterface
  * A key used to encrypt other items. Items keys are synced and persisted.
  */
 export class KeySystemItemsKey extends DecryptedItem<KeySystemItemsKeyContent> implements KeySystemItemsKeyInterface {
-  keyTimestamp: number
+  creationTimestamp: number
   keyVersion: ProtocolVersion
   itemsKey: string
   rootKeyToken: string
@@ -25,7 +25,7 @@ export class KeySystemItemsKey extends DecryptedItem<KeySystemItemsKeyContent> i
   constructor(payload: DecryptedPayloadInterface<KeySystemItemsKeyContent>) {
     super(payload)
 
-    this.keyTimestamp = payload.content.keyTimestamp
+    this.creationTimestamp = payload.content.creationTimestamp
     this.keyVersion = payload.content.version
     this.itemsKey = this.payload.content.itemsKey
     this.rootKeyToken = this.payload.content.rootKeyToken

@@ -789,7 +789,7 @@ export class ItemManager
       content_type: contentType,
       content: Models.FillItemContent<C>(content),
       key_system_identifier: vault?.systemIdentifier,
-      shared_vault_uuid: vault && Models.isSharedVaultListing(vault) ? vault.sharedVaultUuid : undefined,
+      shared_vault_uuid: vault && vault.isSharedVaultListing() ? vault.sharing.sharedVaultUuid : undefined,
       dirty: needsSync,
       ...Models.PayloadTimestampDefaults(),
     })

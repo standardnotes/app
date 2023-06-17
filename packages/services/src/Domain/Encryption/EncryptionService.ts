@@ -138,6 +138,7 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
       payloadManager,
       storageService,
       this.operatorManager,
+      this.keySystemKeyManager,
       internalEventBus,
     )
 
@@ -147,6 +148,7 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
       this.deviceInterface,
       this.storageService,
       this.payloadManager,
+      this.keySystemKeyManager,
       this.identifier,
       this.internalEventBus,
     )
@@ -583,8 +585,11 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     uuid: string,
     keySystemIdentifier: KeySystemIdentifier,
     sharedVaultUuid: string | undefined,
+    rootKeyToken: string,
   ): KeySystemItemsKeyInterface {
-    return this.operatorManager.defaultOperator().createKeySystemItemsKey(uuid, keySystemIdentifier, sharedVaultUuid)
+    return this.operatorManager
+      .defaultOperator()
+      .createKeySystemItemsKey(uuid, keySystemIdentifier, sharedVaultUuid, rootKeyToken)
   }
 
   asymmetricallyEncryptMessage(dto: {

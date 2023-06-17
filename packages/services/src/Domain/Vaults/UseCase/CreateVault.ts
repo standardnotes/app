@@ -28,14 +28,14 @@ export class CreateVaultUseCase {
   }): Promise<VaultListingInterface> {
     const keySystemIdentifier = UuidGenerator.GenerateUuid()
 
-    await this.createKeySystemItemsKey(keySystemIdentifier)
-
     const rootKey = await this.createKeySystemRootKey({
       keySystemIdentifier,
       vaultName: dto.vaultName,
       vaultDescription: dto.vaultDescription,
       userInputtedPassword: dto.userInputtedPassword,
     })
+
+    await this.createKeySystemItemsKey(keySystemIdentifier, rootKey.token)
 
     const vaultListing = await this.createVaultListing({
       keySystemIdentifier,
@@ -73,11 +73,12 @@ export class CreateVaultUseCase {
     return this.items.createItem(ContentType.VaultListing, FillItemContentSpecialized(content), true)
   }
 
-  private async createKeySystemItemsKey(keySystemIdentifier: string): Promise<void> {
+  private async createKeySystemItemsKey(keySystemIdentifier: string, rootKeyToken: string): Promise<void> {
     const keySystemItemsKey = this.encryption.createKeySystemItemsKey(
       UuidGenerator.GenerateUuid(),
       keySystemIdentifier,
       undefined,
+      rootKeyToken,
     )
 
     await this.items.insertItem(keySystemItemsKey)
@@ -92,9 +93,7 @@ export class CreateVaultUseCase {
     if (dto.userInputtedPassword) {
       const newRootKey = this.encryption.createUserInputtedKeySystemRootKey({
         systemIdentifier: dto.keySystemIdentifier,
-        systemName: dto.vaultName,
         userInputtedPassword: dto.userInputtedPassword,
-        systemDescription: dto.vaultDescription,
       })
 
       await this.items.insertItem(newRootKey, true)
@@ -104,8 +103,6 @@ export class CreateVaultUseCase {
 
     const newRootKey = this.encryption.createRandomizedKeySystemRootKey({
       systemIdentifier: dto.keySystemIdentifier,
-      systemName: dto.vaultName,
-      systemDescription: dto.vaultDescription,
     })
 
     await this.items.insertItem(newRootKey, true)

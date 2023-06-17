@@ -5,7 +5,6 @@ import { SharedVaultInviteServerHash } from '@standardnotes/responses'
 import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
 import { HandleTrustedSharedVaultInviteMessage } from '../../AsymmetricMessage/UseCase/HandleTrustedSharedVaultInviteMessage'
 import { ContactServiceInterface } from '../../Contacts/ContactServiceInterface'
-import { EncryptionProviderInterface } from '@standardnotes/encryption'
 
 export class AcceptTrustedSharedVaultInvite {
   constructor(
@@ -13,15 +12,14 @@ export class AcceptTrustedSharedVaultInvite {
     private items: ItemManagerInterface,
     private sync: SyncServiceInterface,
     private contacts: ContactServiceInterface,
-    private encryption: EncryptionProviderInterface,
   ) {}
 
   async execute(dto: {
     invite: SharedVaultInviteServerHash
     message: AsymmetricMessageSharedVaultInvite
   }): Promise<'inserted' | 'changed'> {
-    const useCase = new HandleTrustedSharedVaultInviteMessage(this.items, this.sync, this.contacts, this.encryption)
-    const modificationType = await useCase.execute(dto.message)
+    const useCase = new HandleTrustedSharedVaultInviteMessage(this.items, this.sync, this.contacts)
+    const modificationType = await useCase.execute(dto.message, dto.invite.shared_vault_uuid, dto.invite.sender_uuid)
 
     await this.vaultInvitesServer.acceptInvite({
       sharedVaultUuid: dto.invite.shared_vault_uuid,
