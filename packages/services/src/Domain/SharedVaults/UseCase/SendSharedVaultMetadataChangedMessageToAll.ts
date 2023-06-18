@@ -68,6 +68,7 @@ export class SendSharedVaultMetadataChangedMessageToAll {
     const message: AsymmetricMessageSharedVaultMetadataChanged = {
       type: AsymmetricMessagePayloadType.SharedVaultMetadataChanged,
       data: {
+        recipientUuid: params.contact.contactUuid,
         name: params.vault.name,
         description: params.vault.description,
       },

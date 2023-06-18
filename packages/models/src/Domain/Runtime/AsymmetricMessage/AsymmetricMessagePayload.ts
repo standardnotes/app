@@ -2,14 +2,18 @@ import { KeySystemRootKeyContentSpecialized } from '../../Syncable/KeySystemRoot
 import { TrustedContactContentSpecialized } from '../../Syncable/TrustedContact/TrustedContactContent'
 import { AsymmetricMessagePayloadType } from './AsymmetricMessagePayloadType'
 
+type DataCommon = {
+  recipientUuid: string
+}
+
 export type AsymmetricMessageSharedVaultRootKeyChanged = {
   type: AsymmetricMessagePayloadType.SharedVaultRootKeyChanged
-  data: KeySystemRootKeyContentSpecialized
+  data: DataCommon & { rootKey: KeySystemRootKeyContentSpecialized }
 }
 
 export type AsymmetricMessageSharedVaultMetadataChanged = {
   type: AsymmetricMessagePayloadType.SharedVaultMetadataChanged
-  data: {
+  data: DataCommon & {
     name: string
     description?: string
   }
@@ -17,12 +21,12 @@ export type AsymmetricMessageSharedVaultMetadataChanged = {
 
 export type AsymmetricMessageTrustedContactShare = {
   type: AsymmetricMessagePayloadType.ContactShare
-  data: TrustedContactContentSpecialized
+  data: DataCommon & { trustedContact: TrustedContactContentSpecialized }
 }
 
 export type AsymmetricMessageSenderKeypairChanged = {
   type: AsymmetricMessagePayloadType.SenderKeypairChanged
-  data: {
+  data: DataCommon & {
     newEncryptionPublicKey: string
     newSigningPublicKey: string
   }
@@ -30,7 +34,7 @@ export type AsymmetricMessageSenderKeypairChanged = {
 
 export type AsymmetricMessageSharedVaultInvite = {
   type: AsymmetricMessagePayloadType.SharedVaultInvite
-  data: {
+  data: DataCommon & {
     rootKey: KeySystemRootKeyContentSpecialized
     trustedContacts: TrustedContactContentSpecialized[]
     metadata: {

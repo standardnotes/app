@@ -75,7 +75,7 @@ export class SendSharedVaultRootKeyChangedMessageToAll {
 
     const message: AsymmetricMessageSharedVaultRootKeyChanged = {
       type: AsymmetricMessagePayloadType.SharedVaultRootKeyChanged,
-      data: keySystemRootKey.content,
+      data: { recipientUuid: params.contact.contactUuid, rootKey: keySystemRootKey.content },
     }
 
     const encryptedMessage = this.encryption.asymmetricallyEncryptMessage({

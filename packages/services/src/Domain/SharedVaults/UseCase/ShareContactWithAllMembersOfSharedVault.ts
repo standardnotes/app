@@ -61,7 +61,7 @@ export class ShareContactWithAllMembersOfSharedVaultUseCase {
       const encryptedMessage = this.encryption.asymmetricallyEncryptMessage({
         message: {
           type: AsymmetricMessagePayloadType.ContactShare,
-          data: params.contactToShare.content,
+          data: { recipientUuid: vaultUserAsContact.contactUuid, trustedContact: params.contactToShare.content },
         },
         senderKeyPair: params.senderKeyPair,
         senderSigningKeyPair: params.senderSigningKeyPair,

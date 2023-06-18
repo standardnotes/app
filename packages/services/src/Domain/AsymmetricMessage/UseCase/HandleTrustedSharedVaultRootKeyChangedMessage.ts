@@ -13,7 +13,7 @@ export class HandleTrustedSharedVaultRootKeyChangedMessage {
   constructor(private items: ItemManagerInterface, private sync: SyncServiceInterface) {}
 
   async execute(message: AsymmetricMessageSharedVaultRootKeyChanged): Promise<'inserted' | 'changed'> {
-    const rootKeyContent = message.data
+    const rootKeyContent = message.data.rootKey
 
     await this.items.createItem<KeySystemRootKeyInterface>(
       ContentType.KeySystemRootKey,

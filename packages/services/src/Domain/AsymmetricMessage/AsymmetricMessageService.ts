@@ -97,6 +97,10 @@ export class AsymmetricMessageService extends AbstractService implements Interna
         continue
       }
 
+      if (trustedMessagePayload.data.recipientUuid !== message.user_uuid) {
+        continue
+      }
+
       if (trustedMessagePayload.type === AsymmetricMessagePayloadType.ContactShare) {
         await this.handleTrustedContactShareMessage(message, trustedMessagePayload)
       } else if (trustedMessagePayload.type === AsymmetricMessagePayloadType.SenderKeypairChanged) {
@@ -130,7 +134,7 @@ export class AsymmetricMessageService extends AbstractService implements Interna
     _message: AsymmetricMessageServerHash,
     trustedPayload: AsymmetricMessageTrustedContactShare,
   ): Promise<void> {
-    await this.contacts.createOrUpdateTrustedContactFromContactShare(trustedPayload.data)
+    await this.contacts.createOrUpdateTrustedContactFromContactShare(trustedPayload.data.trustedContact)
   }
 
   private async handleTrustedSenderKeypairChangedMessage(

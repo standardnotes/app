@@ -22,6 +22,7 @@ export class SendOwnContactChangeMessage {
     const message: AsymmetricMessageSenderKeypairChanged = {
       type: AsymmetricMessagePayloadType.SenderKeypairChanged,
       data: {
+        recipientUuid: params.contact.contactUuid,
         newEncryptionPublicKey: params.senderNewKeyPair.publicKey,
         newSigningPublicKey: params.senderNewSigningKeyPair.publicKey,
       },
