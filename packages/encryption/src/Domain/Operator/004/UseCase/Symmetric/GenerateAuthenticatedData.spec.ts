@@ -39,7 +39,7 @@ describe('generate authenticated data use case', () => {
     })
   })
 
-  it('should include key system key timestamp and version if payload is a key system items key', () => {
+  it('should include root key params if payload is a key system items key', () => {
     const payload = {
       uuid: '123',
       content_type: ContentType.KeySystemItemsKey,
@@ -49,6 +49,9 @@ describe('generate authenticated data use case', () => {
 
     const keySystemRootKey = {
       keyVersion: ProtocolVersion.V004,
+      keyParams: {
+        seed: 'seed-123',
+      },
       content_type: ContentType.KeySystemRootKey,
       token: '123',
     } as jest.Mocked<KeySystemRootKeyInterface>
@@ -58,9 +61,9 @@ describe('generate authenticated data use case', () => {
     expect(authenticatedData).toEqual({
       u: payload.uuid,
       v: ProtocolVersion.V004,
+      kp: keySystemRootKey.keyParams,
       ksi: payload.key_system_identifier,
       svu: payload.shared_vault_uuid,
-      keyVersion: keySystemRootKey.keyVersion,
     })
   })
 

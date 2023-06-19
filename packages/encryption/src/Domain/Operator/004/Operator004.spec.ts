@@ -3,6 +3,7 @@ import { DecryptedPayload, ItemContent, ItemsKeyContent, PayloadTimestampDefault
 import { SNItemsKey } from '../../Keys/ItemsKey/ItemsKey'
 import { SNProtocolOperator004 } from './Operator004'
 import { getMockedCrypto } from './MockedCrypto'
+import { deconstructEncryptedPayloadString } from './V004AlgorithmHelpers'
 
 describe('operator 004', () => {
   const crypto = getMockedCrypto()
@@ -14,16 +15,17 @@ describe('operator 004', () => {
   })
 
   it('should deconstructEncryptedPayloadString', () => {
-    // const string = '004:noncy:<e>foo<e>:eyJ1IjoiMTIzIiwidiI6IjAwNCJ9'
+    const string = '004:noncy:<e>foo<e>:eyJ1IjoiMTIzIiwidiI6IjAwNCJ9'
 
-    // const result = operator.deconstructEncryptedPayloadString(string)
+    const result = deconstructEncryptedPayloadString(string)
 
-    // expect(result).toEqual({
-    //   version: '004',
-    //   nonce: 'noncy',
-    //   ciphertext: '<e>foo<e>',
-    //   authenticatedData: 'eyJ1IjoiMTIzIiwidiI6IjAwNCJ9',
-    // })
+    expect(result).toEqual({
+      version: '004',
+      nonce: 'noncy',
+      ciphertext: '<e>foo<e>',
+      authenticatedData: 'eyJ1IjoiMTIzIiwidiI6IjAwNCJ9',
+      additionalData: 'e30=',
+    })
   })
 
   it('should generateEncryptedParameters', () => {
@@ -51,8 +53,11 @@ describe('operator 004', () => {
     expect(result).toEqual({
       uuid: '123',
       items_key_id: 'key-456',
-      content: '004:random-string:<e>{"foo":"bar"}<e>:eyJ1IjoiMTIzIiwidiI6IjAwNCJ9',
-      enc_item_key: '004:random-string:<e>random-string<e>:eyJ1IjoiMTIzIiwidiI6IjAwNCJ9',
+      key_system_identifier: undefined,
+      shared_vault_uuid: undefined,
+      content: '004:random-string:<e>{"foo"|"bar"}<e>:base64-{"u"|"123","v"|"004"}:base64-{}',
+      content_type: ContentType.Note,
+      enc_item_key: '004:random-string:<e>random-string<e>:base64-{"u"|"123","v"|"004"}:base64-{}',
       version: '004',
     })
   })
