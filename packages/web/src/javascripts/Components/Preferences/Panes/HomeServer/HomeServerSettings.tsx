@@ -278,30 +278,33 @@ const HomeServerSettings = () => {
         <div>
           {statusIndicator()}
 
-          <HorizontalSeparator classes="my-4" />
           {isSignedIn && !isAPremiumUser && (
-            <div className={'mt-2 grid grid-cols-1 rounded-md border border-border p-4'}>
-              <div className="flex items-center">
-                <Icon
-                  className={classNames('mr-1 -ml-1 h-5 w-5', PremiumFeatureIconClass)}
-                  type={PremiumFeatureIconName}
-                />
-                <h1 className="sk-h3 m-0 text-sm font-semibold">Activate Premium Features</h1>
+            <>
+              <HorizontalSeparator classes="my-4" />
+              <div className={'mt-2 grid grid-cols-1 rounded-md border border-border p-4'}>
+                <div className="flex items-center">
+                  <Icon
+                    className={classNames('mr-1 -ml-1 h-5 w-5', PremiumFeatureIconClass)}
+                    type={PremiumFeatureIconName}
+                  />
+                  <h1 className="sk-h3 m-0 text-sm font-semibold">Activate Premium Features</h1>
+                </div>
+                <p className="col-start-1 col-end-3 m-0 mt-1 text-sm">
+                  Enter your purchased offline subscription code to activate all the features offered by the home
+                  server.
+                </p>
+                <Button
+                  primary
+                  small
+                  className="col-start-1 col-end-3 mt-3 justify-self-start uppercase"
+                  onClick={() => {
+                    setShowOfflineSubscriptionActivation(!showOfflineSubscriptionActivation)
+                  }}
+                >
+                  Activate Premium Features
+                </Button>
               </div>
-              <p className="col-start-1 col-end-3 m-0 mt-1 text-sm">
-                Enter your purchased offline subscription code to activate all the features offered by the home server.
-              </p>
-              <Button
-                primary
-                small
-                className="col-start-1 col-end-3 mt-3 justify-self-start uppercase"
-                onClick={() => {
-                  setShowOfflineSubscriptionActivation(!showOfflineSubscriptionActivation)
-                }}
-              >
-                Activate Premium Features
-              </Button>
-            </div>
+            </>
           )}
           {showOfflineSubscriptionActivation && (
             <OfflineSubscription application={application} viewControllerManager={viewControllerManager} />
