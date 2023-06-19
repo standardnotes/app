@@ -102,6 +102,7 @@ import { GetRevision } from '@Lib/Domain/UseCase/GetRevision/GetRevision'
 import { DeleteRevision } from '@Lib/Domain/UseCase/DeleteRevision/DeleteRevision'
 import { GetAuthenticatorAuthenticationResponse } from '@Lib/Domain/UseCase/GetAuthenticatorAuthenticationResponse/GetAuthenticatorAuthenticationResponse'
 import { GetAuthenticatorAuthenticationOptions } from '@Lib/Domain/UseCase/GetAuthenticatorAuthenticationOptions/GetAuthenticatorAuthenticationOptions'
+import { APPLICATION_DEFAULT_HOSTS } from '@Lib/Hosts'
 
 /** How often to automatically sync, in milliseconds */
 const DEFAULT_AUTO_SYNC_INTERVAL = 30_000
@@ -378,19 +379,10 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return this.homeServerService
   }
 
-  async isUsingHomeServer(): Promise<boolean> {
-    if (!this.homeServerService) {
-      return false
-    }
+  isUsingThirdPartyServer(): boolean {
+    const hostsWithProtocol = APPLICATION_DEFAULT_HOSTS.map((host) => `https://${host}`)
 
-    const isHomeServerRunning = await this.homeServerService.isHomeServerRunning()
-    if (!isHomeServerRunning) {
-      return false
-    }
-
-    const homeServerUrl = await this.homeServerService.getHomeServerUrl()
-
-    return this.getHost() === homeServerUrl
+    return !hostsWithProtocol.includes(this.getHost())
   }
 
   public computePrivateUsername(username: string): Promise<string | undefined> {
@@ -702,7 +694,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     await this.apiService.setHost(host)
   }
 
-  public getHost(): string | undefined {
+  public getHost(): string {
     return this.apiService.getHost()
   }
 

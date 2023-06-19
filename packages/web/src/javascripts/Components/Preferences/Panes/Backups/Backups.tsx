@@ -15,15 +15,15 @@ type Props = {
 }
 
 const Backups: FunctionComponent<Props> = ({ application, viewControllerManager }) => {
-  const [isUsingHomeServer, setIsUsingHomeServer] = useState(false)
+  const [isUsingThirdPartyServer, setIsUsingThirdPartyServer] = useState(false)
 
-  const checkIfApplicationUsesHomeServer = useCallback(async () => {
-    setIsUsingHomeServer(await application.isUsingHomeServer())
+  const checkIfApplicationUsesThirdPartyServer = useCallback(async () => {
+    setIsUsingThirdPartyServer(application.isUsingThirdPartyServer())
   }, [application])
 
   useEffect(() => {
-    void checkIfApplicationUsesHomeServer()
-  }, [checkIfApplicationUsesHomeServer])
+    void checkIfApplicationUsesThirdPartyServer()
+  }, [checkIfApplicationUsesThirdPartyServer])
 
   return (
     <PreferencesPane>
@@ -31,7 +31,7 @@ const Backups: FunctionComponent<Props> = ({ application, viewControllerManager 
       <TextBackupsCrossPlatform application={application} />
       <PlaintextBackupsCrossPlatform />
       <FileBackupsCrossPlatform application={application} />
-      {!isUsingHomeServer && <EmailBackups application={application} />}
+      {!isUsingThirdPartyServer && <EmailBackups application={application} />}
     </PreferencesPane>
   )
 }

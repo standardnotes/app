@@ -20,15 +20,15 @@ type Props = {
 }
 
 const AccountPreferences = ({ application, viewControllerManager }: Props) => {
-  const [isUsingHomeServer, setIsUsingHomeServer] = useState(false)
+  const [isUsingThirdPartyServer, setIsUsingThirdPartyServer] = useState(false)
 
-  const checkIfApplicationUsesHomeServer = useCallback(async () => {
-    setIsUsingHomeServer(await application.isUsingHomeServer())
+  const checkIfApplicationUsesThirdPartyServer = useCallback(async () => {
+    setIsUsingThirdPartyServer(application.isUsingThirdPartyServer())
   }, [application])
 
   useEffect(() => {
-    void checkIfApplicationUsesHomeServer()
-  }, [checkIfApplicationUsesHomeServer])
+    void checkIfApplicationUsesThirdPartyServer()
+  }, [checkIfApplicationUsesThirdPartyServer])
 
   return (
     <PreferencesPane>
@@ -45,7 +45,7 @@ const AccountPreferences = ({ application, viewControllerManager }: Props) => {
       {application.hasAccount() && viewControllerManager.featuresController.entitledToFiles && (
         <FilesSection application={application} />
       )}
-      {application.hasAccount() && !isUsingHomeServer && <Email application={application} />}
+      {application.hasAccount() && !isUsingThirdPartyServer && <Email application={application} />}
       <SignOutWrapper application={application} viewControllerManager={viewControllerManager} />
       <DeleteAccount application={application} viewControllerManager={viewControllerManager} />
     </PreferencesPane>

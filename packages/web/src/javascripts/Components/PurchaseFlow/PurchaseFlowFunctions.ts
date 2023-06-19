@@ -7,7 +7,7 @@ export const getPurchaseFlowUrl = async (application: WebApplication): Promise<s
   const currentUrl = window.location.origin
   const successUrl = isDesktopApplication() ? 'standardnotes://' : currentUrl
 
-  if (application.noAccount() || (await application.isUsingHomeServer())) {
+  if (application.noAccount() || application.isUsingThirdPartyServer()) {
     return `${window.purchaseUrl}/offline?&success_url=${successUrl}`
   }
 
