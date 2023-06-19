@@ -53,9 +53,16 @@ const HomeServerSettings = () => {
       state: result.status === 'on' ? 'online' : result.errorMessage ? 'error' : 'offline',
       message: result.status === 'on' ? 'Online' : result.errorMessage ? 'Offline' : 'Starting...',
       description:
-        result.status === 'on'
-          ? `Accessible on local network via: ${result.url}`
-          : result.errorMessage ?? 'Your home server is offline.',
+        result.status === 'on' ? (
+          <div>
+            Accessible on local network via:{' '}
+            <a href={result.url} className="font-bold text-info" target="_blank">
+              {result.url}
+            </a>
+          </div>
+        ) : (
+          result.errorMessage ?? 'Your home server is offline.'
+        ),
     })
   }, [desktopDevice, setStatus])
 
@@ -147,12 +154,12 @@ const HomeServerSettings = () => {
           setStatus({ state: 'error', message: result })
         }
 
-        setStatus({ state: 'online', message: 'Online' })
+        void refreshStatus()
       } catch (error) {
         setStatus({ state: 'error', message: (error as Error).message })
       }
     },
-    [homeServerService, setStatus, setHomeServerConfiguration],
+    [homeServerService, setStatus, setHomeServerConfiguration, refreshStatus],
   )
 
   const changeHomeServerDataLocation = useCallback(
@@ -186,12 +193,12 @@ const HomeServerSettings = () => {
           setStatus({ state: 'error', message: result })
         }
 
-        setStatus({ state: 'online', message: 'Online' })
+        void refreshStatus()
       } catch (error) {
         setStatus({ state: 'error', message: (error as Error).message })
       }
     },
-    [homeServerService, setStatus, setHomeServerDataLocation],
+    [homeServerService, setStatus, setHomeServerDataLocation, refreshStatus],
   )
 
   const openHomeServerDataLocation = useCallback(async () => {

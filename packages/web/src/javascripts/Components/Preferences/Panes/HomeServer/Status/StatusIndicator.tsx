@@ -34,7 +34,6 @@ const StatusIndicator = ({ status, className }: Props) => {
         aria-describedby={ElementIds.NoteStatusTooltip}
       >
         <Icon className={status?.state === 'restarting' ? 'animate-spin' : ''} type={icon} size="small" />
-        <span className="sr-only">Note sync status</span>
       </div>
     </div>
   )
