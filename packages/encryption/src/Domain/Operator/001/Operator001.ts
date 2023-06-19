@@ -12,6 +12,7 @@ import {
   KeySystemIdentifier,
   KeySystemRootKeyInterface,
   RootKeyInterface,
+  KeySystemRootKeyParamsInterface,
 } from '@standardnotes/models'
 import { PkcKeyPair, PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { firstHalfOfString, secondHalfOfString, splitString, UuidGenerator } from '@standardnotes/utils'
@@ -232,6 +233,13 @@ export class SNProtocolOperator001 implements OperatorInterface {
   createUserInputtedKeySystemRootKey(_dto: {
     systemIdentifier: string
     systemName: string
+    userInputtedPassword: string
+  }): KeySystemRootKeyInterface {
+    throw new Error('Method not implemented.')
+  }
+
+  deriveUserInputtedKeySystemRootKey(_dto: {
+    keyParams: KeySystemRootKeyParamsInterface
     userInputtedPassword: string
   }): KeySystemRootKeyInterface {
     throw new Error('Method not implemented.')

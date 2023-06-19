@@ -23,9 +23,7 @@ export class InviteContactToSharedVaultUseCase {
     recipient: TrustedContactInterface
     permissions: SharedVaultPermission
   }): Promise<SharedVaultInviteServerHash | ClientDisplayableError> {
-    const keySystemRootKey = this.encryption.keys.getPrimaryKeySystemRootKey(
-      params.sharedVault.systemIdentifier,
-    )
+    const keySystemRootKey = this.encryption.keys.getPrimaryKeySystemRootKey(params.sharedVault.systemIdentifier)
     if (!keySystemRootKey) {
       return ClientDisplayableError.FromString('Cannot add contact; key system root key not found')
     }
@@ -34,6 +32,7 @@ export class InviteContactToSharedVaultUseCase {
       message: {
         type: AsymmetricMessagePayloadType.SharedVaultInvite,
         data: {
+          recipientUuid: params.recipient.contactUuid,
           rootKey: keySystemRootKey.content,
           trustedContacts: params.sharedVaultContacts.map((contact) => contact.content),
           metadata: {

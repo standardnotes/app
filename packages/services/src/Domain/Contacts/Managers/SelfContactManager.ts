@@ -68,6 +68,7 @@ export class SelfContactManager {
       publicKeySet: ContactPublicKeySet.FromJson({
         encryption: this.session.getPublicKey(),
         signing: this.session.getSigningPublicKey(),
+        isRevoked: false,
         timestamp: new Date(),
       }),
     }

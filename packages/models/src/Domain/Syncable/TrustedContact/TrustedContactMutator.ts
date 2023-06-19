@@ -13,6 +13,7 @@ export class TrustedContactMutator extends DecryptedItemMutator<TrustedContactCo
       params.encryption,
       params.signing,
       new Date(),
+      false,
       this.immutableItem.publicKeySet,
     )
 

@@ -17,15 +17,13 @@ export class AcceptTrustedSharedVaultInvite {
   async execute(dto: {
     invite: SharedVaultInviteServerHash
     message: AsymmetricMessageSharedVaultInvite
-  }): Promise<'inserted' | 'changed'> {
+  }): Promise<void> {
     const useCase = new HandleTrustedSharedVaultInviteMessage(this.items, this.sync, this.contacts)
-    const modificationType = await useCase.execute(dto.message, dto.invite.shared_vault_uuid, dto.invite.sender_uuid)
+    await useCase.execute(dto.message, dto.invite.shared_vault_uuid, dto.invite.sender_uuid)
 
     await this.vaultInvitesServer.acceptInvite({
       sharedVaultUuid: dto.invite.shared_vault_uuid,
       inviteUuid: dto.invite.uuid,
     })
-
-    return modificationType
   }
 }

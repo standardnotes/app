@@ -379,7 +379,7 @@ export class SharedVaultService
     }
 
     const useCase = new AcceptTrustedSharedVaultInvite(this.invitesServer, this.items, this.sync, this.contacts)
-    const result = await useCase.execute({ invite: pendingInvite.invite, message: pendingInvite.message })
+    await useCase.execute({ invite: pendingInvite.invite, message: pendingInvite.message })
 
     delete this.pendingInvites[pendingInvite.invite.uuid]
 
@@ -387,9 +387,7 @@ export class SharedVaultService
 
     await this.decryptErroredItemsAfterInviteAccept()
 
-    if (result === 'inserted') {
-      await this.sync.syncSharedVaultsFromScratch([pendingInvite.invite.shared_vault_uuid])
-    }
+    await this.sync.syncSharedVaultsFromScratch([pendingInvite.invite.shared_vault_uuid])
   }
 
   private async decryptErroredItemsAfterInviteAccept(): Promise<void> {
