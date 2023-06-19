@@ -66,6 +66,15 @@ const HomeServerSettings = () => {
     })
   }, [desktopDevice, setStatus])
 
+  const initialyLoadHomeServerConfiguration = useCallback(async () => {
+    if (!homeServerConfiguration) {
+      const homeServerConfiguration = homeServerService.getHomeServerConfiguration()
+      if (homeServerConfiguration) {
+        setHomeServerConfiguration(homeServerConfiguration)
+      }
+    }
+  }, [homeServerConfiguration, homeServerService])
+
   const toggleHomeServer = useCallback(async () => {
     if (status?.state === 'restarting') {
       return
@@ -84,9 +93,9 @@ const HomeServerSettings = () => {
         return
       }
 
-      await refreshStatus()
-
       setHomeServerEnabled(homeServerService.isHomeServerEnabled())
+
+      await refreshStatus()
     } else {
       setStatus({ state: 'restarting', message: 'Starting...' })
 
@@ -97,8 +106,10 @@ const HomeServerSettings = () => {
       await sleep(SERVER_CHANGE_INTERVAL)
 
       await refreshStatus()
+
+      void initialyLoadHomeServerConfiguration()
     }
-  }, [homeServerEnabled, homeServerService, status, refreshStatus])
+  }, [homeServerEnabled, homeServerService, status, refreshStatus, initialyLoadHomeServerConfiguration])
 
   const setupLogsRefresh = useCallback(async () => {
     if (logsIntervalRef !== null) {
@@ -116,15 +127,6 @@ const HomeServerSettings = () => {
     }, 5000)
     setLogsIntervalRef(interval)
   }, [desktopDevice, logsIntervalRef])
-
-  const initialyLoadHomeServerConfiguration = useCallback(async () => {
-    if (!homeServerConfiguration) {
-      const homeServerConfiguration = homeServerService.getHomeServerConfiguration()
-      if (homeServerConfiguration) {
-        setHomeServerConfiguration(homeServerConfiguration)
-      }
-    }
-  }, [homeServerConfiguration, homeServerService])
 
   useEffect(() => {
     setIsAPremiumUser(featuresService.hasOfflineRepo())

@@ -50,7 +50,7 @@ export class DesktopDevice extends WebOrDesktopDevice implements DesktopDeviceIn
     return this.remoteBridge.startHomeServer()
   }
 
-  stopHomeServer(): Promise<void> {
+  stopHomeServer(): Promise<string | undefined> {
     return this.remoteBridge.stopHomeServer()
   }
 
