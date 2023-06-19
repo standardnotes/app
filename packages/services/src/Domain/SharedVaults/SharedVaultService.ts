@@ -109,7 +109,7 @@ export class SharedVaultService
         if (source === PayloadEmitSource.LocalChanged && inserted.length > 0) {
           void this.handleCreationOfNewTrustedContacts(inserted)
         }
-        if (source === PayloadEmitSource.RemoteSaved && changed.length > 0) {
+        if (source === PayloadEmitSource.LocalChanged && changed.length > 0) {
           void this.handleTrustedContactsChange(changed)
         }
       }),
@@ -117,7 +117,7 @@ export class SharedVaultService
 
     this.eventDisposers.push(
       items.addObserver<VaultListingInterface>(ContentType.VaultListing, ({ changed, source }) => {
-        if (source === PayloadEmitSource.RemoteSaved && changed.length > 0) {
+        if (source === PayloadEmitSource.LocalChanged && changed.length > 0) {
           void this.handleVaultListingsChange(changed)
         }
       }),

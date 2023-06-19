@@ -69,12 +69,6 @@ export type ConflictSharedVaultInsufficientPermissionsErrorParams<T = ServerItem
   unsaved_item: T
 }
 
-export type ConflictSharedVaultInvalidItemsKeyParams<T = ServerItemResponse> = BaseConflictParams<T> & {
-  type: ConflictType.SharedVaultInvalidItemsKey
-  unsaved_item: T
-  server_item?: T
-}
-
 export function conflictParamsHasServerItemAndUnsavedItem<T = ServerItemResponse>(
   params: BaseConflictParams<T>,
 ): params is ConflictParamsWithServerAndUnsavedItem<T> {
@@ -102,4 +96,3 @@ export type ConflictParams<T = ServerItemResponse> =
   | ConflictUuidErrorParams<T>
   | ConflictSharedVaultNotMemberErrorParams<T>
   | ConflictSharedVaultInsufficientPermissionsErrorParams<T>
-  | ConflictSharedVaultInvalidItemsKeyParams<T>

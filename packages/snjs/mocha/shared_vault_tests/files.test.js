@@ -131,6 +131,7 @@ describe('shared vault files', function () {
 
   it('should not be able to delete vault file as read user', async () => {
     context.anticipateConsoleError('Could not create valet token')
+
     const { sharedVault, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithAcceptedInvite(context, SharedVaultPermission.Read)
     const response = await fetch('/mocha/assets/small_file.md')
@@ -172,6 +173,7 @@ describe('shared vault files', function () {
 
   it('should not be able to download file after being removed from vault', async () => {
     context.anticipateConsoleError('Could not create valet token')
+
     const { sharedVault, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithAcceptedInvite(context)
     const response = await fetch('/mocha/assets/small_file.md')

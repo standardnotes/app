@@ -4,8 +4,6 @@ import { SharedVaultServerInterface } from './SharedVaultServerInterface'
 import { CreateSharedVaultParams } from '../../Request/SharedVault/CreateSharedVaultParams'
 import { SharedVaultsPaths } from './Paths'
 import { CreateSharedVaultResponse } from '../../Response/SharedVault/CreateSharedVaultResponse'
-import { UpdateSharedVaultParams } from '../../Request/SharedVault/UpdateSharedVaultParams'
-import { UpdateSharedVaultResponse } from '../../Response/SharedVault/UpdateSharedVaultResponse'
 import { GetSharedVaultsResponse } from '../../Response/SharedVault/GetSharedVaultsResponse'
 import { CreateSharedVaultValetTokenResponse } from '../../Response/SharedVault/CreateSharedVaultValetTokenResponse'
 import { CreateSharedVaultValetTokenParams } from '../../Request/SharedVault/CreateSharedVaultValetTokenParams'
@@ -25,12 +23,6 @@ export class SharedVaultServer implements SharedVaultServerInterface {
 
   deleteSharedVault(params: { sharedVaultUuid: string }): Promise<HttpResponse<boolean>> {
     return this.httpService.delete(SharedVaultsPaths.deleteSharedVault(params.sharedVaultUuid))
-  }
-
-  updateSharedVault(params: UpdateSharedVaultParams): Promise<HttpResponse<UpdateSharedVaultResponse>> {
-    return this.httpService.patch(SharedVaultsPaths.updateSharedVault(params.sharedVaultUuid), {
-      specified_items_key_uuid: params.specifiedItemsKeyUuid,
-    })
   }
 
   createSharedVaultFileValetToken(

@@ -138,38 +138,6 @@ describe('shared vault conflicts', function () {
     expect(conflicts[0].unsaved_item.content_type).to.equal(ContentType.Note)
   })
 
-  it('attempting to save item using an old vault items key should result in SharedVaultInvalidItemsKey conflict', async () => {
-    context.anticipateConsoleError(
-      'Error decrypting contentKey from parameters',
-      'An invalid items key is being assigned to an item',
-    )
-
-    const { sharedVault, note } = await Collaboration.createSharedVaultWithNote(context)
-
-    const oldKeySystemItemsKey = context.keys.getKeySystemItemsKeys(sharedVault.systemIdentifier)[0]
-
-    await context.vaults.rotateVaultRootKey(sharedVault)
-
-    const objectToSpy = context.application.sync
-    sinon.stub(objectToSpy, 'payloadsByPreparingForServer').callsFake(async (params) => {
-      objectToSpy.payloadsByPreparingForServer.restore()
-      const payloads = await objectToSpy.payloadsByPreparingForServer(params)
-      for (const payload of payloads) {
-        payload.items_key_id = oldKeySystemItemsKey.uuid
-      }
-
-      return payloads
-    })
-
-    const promise = context.resolveWithConflicts()
-    await context.changeNoteTitleAndSync(note, 'new title')
-    const conflicts = await promise
-
-    expect(conflicts.length).to.equal(1)
-    expect(conflicts[0].type).to.equal(ConflictType.SharedVaultInvalidItemsKey)
-    expect(conflicts[0].unsaved_item.content_type).to.equal(ContentType.Note)
-  })
-
   it('should create a non-vaulted copy if attempting to move item from vault to user and item belongs to someone else', async () => {
     const { note, sharedVault, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithAcceptedInviteAndNote(context)

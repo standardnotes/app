@@ -14,6 +14,7 @@ export type AsymmetricMessageSharedVaultRootKeyChanged = {
 export type AsymmetricMessageSharedVaultMetadataChanged = {
   type: AsymmetricMessagePayloadType.SharedVaultMetadataChanged
   data: DataCommon & {
+    sharedVaultUuid: string
     name: string
     description?: string
   }

@@ -30,22 +30,22 @@ describe('shared vaults', function () {
     const { sharedVault, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithAcceptedInvite(context)
 
-    const promise = context.resolveWhenSharedVaultChangeInvitesAreSent(sharedVault.sharing.sharedVaultUuid)
     await vaults.changeVaultNameAndDescription(sharedVault, {
       name: 'new vault name',
       description: 'new vault description',
     })
-    await promise
 
     const updatedVault = vaults.getVault(sharedVault.systemIdentifier)
-    expect(updatedVault.decrypted.name).to.equal('new vault name')
-    expect(updatedVault.decrypted.description).to.equal('new vault description')
+    expect(updatedVault.name).to.equal('new vault name')
+    expect(updatedVault.description).to.equal('new vault description')
 
+    const promise = contactContext.resolveWhenAsymmetricMessageProcessingCompletes()
     await contactContext.sync()
+    await promise
 
     const contactVault = contactContext.vaults.getVault(sharedVault.systemIdentifier)
-    expect(contactVault.decrypted.name).to.equal('new vault name')
-    expect(contactVault.decrypted.description).to.equal('new vault description')
+    expect(contactVault.name).to.equal('new vault name')
+    expect(contactVault.description).to.equal('new vault description')
 
     await deinitContactContext()
   })

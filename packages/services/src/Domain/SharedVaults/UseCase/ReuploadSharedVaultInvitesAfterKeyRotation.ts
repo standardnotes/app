@@ -123,7 +123,7 @@ export class ReuploadSharedVaultInvitesAfterKeyRotationUseCase {
       return ClientDisplayableError.FromString('Failed to verify signature of previous invite')
     }
 
-    if (signatureResult.senderPublicKey !== params.usecaseDTO.senderSigningKeyPair.publicKey) {
+    if (signatureResult.signaturePublicKey !== params.usecaseDTO.senderSigningKeyPair.publicKey) {
       return ClientDisplayableError.FromString('Sender public key does not match signature')
     }
 

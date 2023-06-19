@@ -87,32 +87,6 @@ describe('shared vault permissions', function () {
     await deinitContactContext()
   })
 
-  it("vault user should not be able to change an item using an items key that does not match the vault's specified items key", async () => {
-    const { sharedVault, contactContext, deinitContactContext } =
-      await Collaboration.createSharedVaultWithAcceptedInvite(context)
-
-    const note = await context.createSyncedNote('foo', 'bar')
-    await Collaboration.addItemToVault(context, sharedVault, note)
-    await contactContext.sync()
-
-    const newItemsKeyUuid = UuidGenerator.GenerateUuid()
-    const newItemsKey = contactContext.encryption.createKeySystemItemsKey(newItemsKeyUuid, sharedVault.systemIdentifier)
-    await contactContext.items.insertItem(newItemsKey)
-
-    await contactContext.items.changeItem({ uuid: note.uuid }, (mutator) => {
-      mutator.title = 'new title'
-    })
-
-    const promise = contactContext.resolveWithConflicts()
-    await contactContext.sync()
-    const conflicts = await promise
-
-    expect(conflicts.length).to.equal(1)
-    expect(conflicts.find((conflict) => conflict.unsaved_item.content_type === ContentType.Note)).to.not.be.undefined
-
-    await deinitContactContext()
-  })
-
   it('read user should not be able to make changes to items', async () => {
     const { sharedVault, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithAcceptedInvite(context, SharedVaultPermission.Read)

@@ -152,7 +152,7 @@ describe('asymmetric messages', function () {
     await deinitContactContext()
   })
 
-  it('should send shared vault root key change message after shared vault name change', async () => {
+  it('should send shared vault metadata change message after shared vault name change', async () => {
     const { sharedVault, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithAcceptedInvite(context)
 
@@ -161,8 +161,8 @@ describe('asymmetric messages', function () {
       description: 'New Description',
     })
 
-    const firstPartySpy = sinon.spy(context.asymmetric, 'handleTrustedSharedVaultRootKeyChangedMessage')
-    const secondPartySpy = sinon.spy(contactContext.asymmetric, 'handleTrustedSharedVaultRootKeyChangedMessage')
+    const firstPartySpy = sinon.spy(context.asymmetric, 'handleVaultMetadataChangedMessage')
+    const secondPartySpy = sinon.spy(contactContext.asymmetric, 'handleVaultMetadataChangedMessage')
 
     await context.sync()
     await contactContext.sync()
@@ -171,8 +171,8 @@ describe('asymmetric messages', function () {
     expect(secondPartySpy.callCount).to.equal(1)
 
     const updatedVault = contactContext.vaults.getVault(sharedVault.systemIdentifier)
-    expect(updatedVault.decrypted.name).to.equal('New Name')
-    expect(updatedVault.decrypted.description).to.equal('New Description')
+    expect(updatedVault.name).to.equal('New Name')
+    expect(updatedVault.description).to.equal('New Description')
 
     await deinitContactContext()
   })

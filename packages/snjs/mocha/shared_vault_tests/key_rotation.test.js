@@ -52,7 +52,7 @@ describe('shared vault key rotation', function () {
     await deinitContactContext()
   })
 
-  it("rotating a vault's key with a pending invite should update that invite rather than creating a key-change invite ", async () => {
+  it("rotating a vault's key with a pending invite should create new invite and delete old", async () => {
     const { sharedVault, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithUnacceptedButTrustedInvite(context)
     contactContext.lockSyncing()
@@ -80,7 +80,7 @@ describe('shared vault key rotation', function () {
 
     await vaults.rotateVaultRootKey(sharedVault)
 
-    const keySystemItemsKeys = context.encryption.keySystemKeyManager
+    const keySystemItemsKeys = context.keys
       .getAllKeySystemItemsKeys()
       .filter((key) => key.key_system_identifier === sharedVault.systemIdentifier)
 
@@ -141,13 +141,15 @@ describe('shared vault key rotation', function () {
     const { sharedVault, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithAcceptedInvite(context)
 
-    const originalKeySystemRootKey = context.items.getPrimaryKeySystemRootKey(sharedVault.systemIdentifier)
+    const originalKeySystemRootKey = context.keys.getPrimaryKeySystemRootKey(sharedVault.systemIdentifier)
 
     await sharedVaults.removeUserFromSharedVault(sharedVault, contactContext.userUuid)
 
-    const newKeySystemRootKey = context.items.getPrimaryKeySystemRootKey(sharedVault.systemIdentifier)
+    const newKeySystemRootKey = context.keys.getPrimaryKeySystemRootKey(sharedVault.systemIdentifier)
 
-    expect(newKeySystemRootKey.creationTimestamp).to.be.greaterThan(originalKeySystemRootKey.creationTimestamp)
+    expect(newKeySystemRootKey.keyParams.creationTimestamp).to.be.greaterThan(
+      originalKeySystemRootKey.keyParams.creationTimestamp,
+    )
     expect(newKeySystemRootKey.key).to.not.equal(originalKeySystemRootKey.key)
 
     await deinitContactContext()

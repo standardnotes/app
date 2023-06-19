@@ -13,6 +13,8 @@ import {
   AsymmetricMessageSenderKeypairChanged,
   AsymmetricMessageTrustedContactShare,
   AsymmetricMessagePayload,
+  AsymmetricMessageSharedVaultMetadataChanged,
+  VaultListingMutator,
 } from '@standardnotes/models'
 import { HandleTrustedSharedVaultRootKeyChangedMessage } from './UseCase/HandleTrustedSharedVaultRootKeyChangedMessage'
 import { ItemManagerInterface } from '../Item/ItemManagerInterface'
@@ -23,6 +25,7 @@ import { SuccessfullyChangedCredentialsEventData } from '../Session/Successfully
 import { SendOwnContactChangeMessage } from './UseCase/SendOwnContactChangeMessage'
 import { GetOutboundAsymmetricMessages } from './UseCase/GetOutboundAsymmetricMessages'
 import { GetInboundAsymmetricMessages } from './UseCase/GetInboundAsymmetricMessages'
+import { GetVaultUseCase } from '../Vaults/UseCase/GetVault'
 
 export class AsymmetricMessageService extends AbstractService implements InternalEventHandlerInterface {
   private messageServer: AsymmetricMessageServer
@@ -108,7 +111,7 @@ export class AsymmetricMessageService extends AbstractService implements Interna
       } else if (trustedMessagePayload.type === AsymmetricMessagePayloadType.SharedVaultRootKeyChanged) {
         await this.handleTrustedSharedVaultRootKeyChangedMessage(message, trustedMessagePayload)
       } else if (trustedMessagePayload.type === AsymmetricMessagePayloadType.SharedVaultMetadataChanged) {
-        throw new Error('Not implemented')
+        await this.handleVaultMetadataChangedMessage(message, trustedMessagePayload)
       } else if (trustedMessagePayload.type === AsymmetricMessagePayloadType.SharedVaultInvite) {
         throw new Error('Shared vault invites payloads are not handled as part of asymmetric messages')
       }
@@ -128,6 +131,21 @@ export class AsymmetricMessageService extends AbstractService implements Interna
 
   private async deleteMessageAfterProcessing(message: AsymmetricMessageServerHash): Promise<void> {
     await this.messageServer.deleteMessage({ messageUuid: message.uuid })
+  }
+
+  async handleVaultMetadataChangedMessage(
+    _message: AsymmetricMessageServerHash,
+    trustedPayload: AsymmetricMessageSharedVaultMetadataChanged,
+  ): Promise<void> {
+    const vault = new GetVaultUseCase(this.items).execute({ sharedVaultUuid: trustedPayload.data.sharedVaultUuid })
+    if (!vault) {
+      return
+    }
+
+    await this.items.changeItem<VaultListingMutator>(vault, (mutator) => {
+      mutator.name = trustedPayload.data.name
+      mutator.description = trustedPayload.data.description
+    })
   }
 
   async handleTrustedContactShareMessage(
