@@ -18,7 +18,11 @@ import { AnyTag } from '@/Controllers/Navigation/AnyTagType'
 import { PreferenceMode } from './PreferenceMode'
 import dayjs from 'dayjs'
 import dayjsAdvancedFormat from 'dayjs/plugin/advancedFormat'
+import dayjsUTC from 'dayjs/plugin/utc'
+import dayjsTimezone from 'dayjs/plugin/timezone'
 dayjs.extend(dayjsAdvancedFormat)
+dayjs.extend(dayjsUTC)
+dayjs.extend(dayjsTimezone)
 import { EditorOption, getDropdownItemsForAllEditors } from '@/Utils/DropdownItemsForEditors'
 import { classNames } from '@standardnotes/utils'
 import { NoteTitleFormatOptions } from './NoteTitleFormatOptions'
