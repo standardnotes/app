@@ -188,4 +188,9 @@ describe('shared vault invites', function () {
 
     await deinitContactContext()
   })
+
+  it('should delete all inbound invites after changing user password', async () => {
+    /** Invites to user are encrypted with old keypair and are no longer decryptable */
+    console.error('TODO: implement test')
+  })
 })

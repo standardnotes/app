@@ -67,9 +67,9 @@ export class SharedVaultService
   extends AbstractService<SharedVaultServiceEvent, SharedVaultServiceEventPayload>
   implements SharedVaultServiceInterface, InternalEventHandlerInterface
 {
-  private sharedVaultServer: SharedVaultServerInterface
-  private sharedVaultUsersServer: SharedVaultUsersServerInterface
-  private sharedVaultInvitesServer: SharedVaultInvitesServerInterface
+  private server: SharedVaultServerInterface
+  private usersServer: SharedVaultUsersServerInterface
+  private invitesServer: SharedVaultInvitesServerInterface
   private messageServer: AsymmetricMessageServerInterface
 
   private pendingInvites: Record<string, PendingSharedVaultInviteRecord> = {}
@@ -91,9 +91,9 @@ export class SharedVaultService
     eventBus.addEventHandler(this, UserEventServiceEvent.UserEventReceived)
     eventBus.addEventHandler(this, VaultServiceEvent.VaultRootKeyRotated)
 
-    this.sharedVaultServer = new SharedVaultServer(http)
-    this.sharedVaultUsersServer = new SharedVaultUsersServer(http)
-    this.sharedVaultInvitesServer = new SharedVaultInvitesServer(http)
+    this.server = new SharedVaultServer(http)
+    this.usersServer = new SharedVaultUsersServer(http)
+    this.invitesServer = new SharedVaultInvitesServer(http)
     this.messageServer = new AsymmetricMessageServer(http)
 
     this.eventDisposers.push(
@@ -128,12 +128,13 @@ export class SharedVaultService
 
   async handleEvent(event: InternalEventInterface): Promise<void> {
     if (event.type === SessionEvent.SuccessfullyChangedCredentials) {
+      void this.invitesServer.deleteAllInboundInvites()
       const handler = new ReuploadAllOutboundInvitesAfterCredentialsChange(
         this.encryption,
         this.contacts,
         this.items,
-        this.sharedVaultInvitesServer,
-        this.sharedVaultUsersServer,
+        this.invitesServer,
+        this.usersServer,
       )
       await handler.execute({
         eventData: event.payload as SuccessfullyChangedCredentialsEventData,
@@ -168,8 +169,8 @@ export class SharedVaultService
     }
 
     const usecase = new NotifySharedVaultUsersOfRootKeyRotationUseCase(
-      this.sharedVaultUsersServer,
-      this.sharedVaultInvitesServer,
+      this.usersServer,
+      this.invitesServer,
       this.messageServer,
       this.encryption,
       this.contacts,
@@ -184,13 +185,7 @@ export class SharedVaultService
     userInputtedPassword: string | undefined
     storagePreference?: KeySystemRootKeyStorageType
   }): Promise<VaultListingInterface | ClientDisplayableError> {
-    const usecase = new CreateSharedVaultUseCase(
-      this.encryption,
-      this.items,
-      this.sync,
-      this.files,
-      this.sharedVaultServer,
-    )
+    const usecase = new CreateSharedVaultUseCase(this.encryption, this.items, this.sync, this.files, this.server)
 
     return usecase.execute({
       vaultName: dto.name,
@@ -253,7 +248,7 @@ export class SharedVaultService
       const usecase = new SendSharedVaultMetadataChangedMessageToAll(
         this.encryption,
         this.contacts,
-        this.sharedVaultUsersServer,
+        this.usersServer,
         this.messageServer,
       )
 
@@ -267,7 +262,7 @@ export class SharedVaultService
   }
 
   public async downloadInboundInvites(): Promise<ClientDisplayableError | SharedVaultInviteServerHash[]> {
-    const response = await this.sharedVaultInvitesServer.getInboundUserInvites()
+    const response = await this.invitesServer.getInboundUserInvites()
 
     if (isErrorResponse(response)) {
       return ClientDisplayableError.FromString(`Failed to get inbound user invites ${response}`)
@@ -283,7 +278,7 @@ export class SharedVaultService
   public async getOutboundInvites(
     sharedVaultUuid?: string,
   ): Promise<SharedVaultInviteServerHash[] | ClientDisplayableError> {
-    const response = await this.sharedVaultInvitesServer.getOutboundUserInvites()
+    const response = await this.invitesServer.getOutboundUserInvites()
 
     if (isErrorResponse(response)) {
       return ClientDisplayableError.FromString(`Failed to get outbound user invites ${response}`)
@@ -297,7 +292,7 @@ export class SharedVaultService
   }
 
   public async deleteInvite(invite: SharedVaultInviteServerHash): Promise<ClientDisplayableError | void> {
-    const response = await this.sharedVaultInvitesServer.deleteInvite({
+    const response = await this.invitesServer.deleteInvite({
       sharedVaultUuid: invite.shared_vault_uuid,
       inviteUuid: invite.uuid,
     })
@@ -310,7 +305,7 @@ export class SharedVaultService
   }
 
   public async deleteSharedVault(sharedVault: SharedVaultListingInterface): Promise<ClientDisplayableError | void> {
-    const useCase = new DeleteSharedVaultUseCase(this.sharedVaultServer, this.items, this.sync)
+    const useCase = new DeleteSharedVaultUseCase(this.server, this.items, this.sync)
     return useCase.execute({ sharedVault })
   }
 
@@ -395,12 +390,7 @@ export class SharedVaultService
       throw new Error('Cannot accept untrusted invite')
     }
 
-    const useCase = new AcceptTrustedSharedVaultInvite(
-      this.sharedVaultInvitesServer,
-      this.items,
-      this.sync,
-      this.contacts,
-    )
+    const useCase = new AcceptTrustedSharedVaultInvite(this.invitesServer, this.items, this.sync, this.contacts)
     const result = await useCase.execute({ invite: pendingInvite.invite, message: pendingInvite.message })
 
     delete this.pendingInvites[pendingInvite.invite.uuid]
@@ -434,7 +424,7 @@ export class SharedVaultService
   }
 
   private async getSharedVaultContacts(sharedVault: SharedVaultListingInterface): Promise<TrustedContactInterface[]> {
-    const usecase = new GetSharedVaultTrustedContacts(this.contacts, this.sharedVaultUsersServer)
+    const usecase = new GetSharedVaultTrustedContacts(this.contacts, this.usersServer)
     const contacts = await usecase.execute(sharedVault)
     if (!contacts) {
       return []
@@ -450,7 +440,7 @@ export class SharedVaultService
   ): Promise<SharedVaultInviteServerHash | ClientDisplayableError> {
     const sharedVaultContacts = await this.getSharedVaultContacts(sharedVault)
 
-    const useCase = new InviteContactToSharedVaultUseCase(this.encryption, this.sharedVaultInvitesServer)
+    const useCase = new InviteContactToSharedVaultUseCase(this.encryption, this.invitesServer)
 
     const result = await useCase.execute({
       senderKeyPair: this.encryption.getKeyPair(),
@@ -476,7 +466,7 @@ export class SharedVaultService
       throw new Error('Only vault admins can remove users')
     }
 
-    const useCase = new RemoveVaultMemberUseCase(this.sharedVaultUsersServer)
+    const useCase = new RemoveVaultMemberUseCase(this.usersServer)
     const result = await useCase.execute({ sharedVaultUuid: sharedVault.sharing.sharedVaultUuid, userUuid })
     if (isClientDisplayableError(result)) {
       return result
@@ -488,7 +478,7 @@ export class SharedVaultService
   }
 
   async leaveSharedVault(sharedVault: SharedVaultListingInterface): Promise<ClientDisplayableError | void> {
-    const useCase = new LeaveVaultUseCase(this.sharedVaultUsersServer, this.items)
+    const useCase = new LeaveVaultUseCase(this.usersServer, this.items)
     const result = await useCase.execute({
       sharedVaultUuid: sharedVault.sharing.sharedVaultUuid,
       userUuid: this.session.getSureUser().uuid,
@@ -504,7 +494,7 @@ export class SharedVaultService
   async getSharedVaultUsers(
     sharedVault: SharedVaultListingInterface,
   ): Promise<SharedVaultUserServerHash[] | undefined> {
-    const useCase = new GetSharedVaultUsersUseCase(this.sharedVaultUsersServer)
+    const useCase = new GetSharedVaultUsersUseCase(this.usersServer)
     return useCase.execute({ sharedVaultUuid: sharedVault.sharing.sharedVaultUuid })
   }
 
@@ -514,7 +504,7 @@ export class SharedVaultService
     const useCase = new ShareContactWithAllMembersOfSharedVaultUseCase(
       this.contacts,
       this.encryption,
-      this.sharedVaultUsersServer,
+      this.usersServer,
       this.messageServer,
     )
 
@@ -555,12 +545,16 @@ export class SharedVaultService
 
   override deinit(): void {
     super.deinit()
-    ;(this.sync as unknown) = undefined
-    ;(this.encryption as unknown) = undefined
-    ;(this.items as unknown) = undefined
-    ;(this.session as unknown) = undefined
-    ;(this.sharedVaultServer as unknown) = undefined
     ;(this.contacts as unknown) = undefined
+    ;(this.encryption as unknown) = undefined
     ;(this.files as unknown) = undefined
+    ;(this.invitesServer as unknown) = undefined
+    ;(this.items as unknown) = undefined
+    ;(this.messageServer as unknown) = undefined
+    ;(this.server as unknown) = undefined
+    ;(this.session as unknown) = undefined
+    ;(this.sync as unknown) = undefined
+    ;(this.usersServer as unknown) = undefined
+    ;(this.vaults as unknown) = undefined
   }
 }
