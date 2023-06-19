@@ -6,17 +6,12 @@ export class GetAsymmetricMessageUntrustedPayload<M extends AsymmetricMessagePay
   constructor(private encryption: EncryptionProviderInterface) {}
 
   execute(dto: { privateKey: string; message: AsymmetricMessageServerHash }): M | undefined {
-    const decryptionResult = this.encryption.asymmetricallyDecryptMessage({
+    const decryptionResult = this.encryption.asymmetricallyDecryptMessage<M>({
       encryptedString: dto.message.encrypted_message,
-      trustedSenderPublicKey: undefined,
-      trustedSenderSigningPublicKey: undefined,
+      trustedSender: undefined,
       privateKey: dto.privateKey,
     })
 
-    if (!decryptionResult) {
-      return undefined
-    }
-
-    return decryptionResult.message as M
+    return decryptionResult
   }
 }

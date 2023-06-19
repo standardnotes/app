@@ -23,7 +23,7 @@ export class HandleTrustedSharedVaultInviteMessage {
     message: AsymmetricMessageSharedVaultInvite,
     sharedVaultUuid: string,
     senderUuid: string,
-  ): Promise<'inserted' | 'changed'> {
+  ): Promise<void> {
     const { rootKey: rootKeyContent, trustedContacts, metadata } = message.data
 
     const content: VaultListingContentSpecialized = {
@@ -57,6 +57,5 @@ export class HandleTrustedSharedVaultInviteMessage {
     }
 
     await this.sync.sync()
-    return 'inserted'
   }
 }

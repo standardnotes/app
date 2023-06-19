@@ -12,7 +12,7 @@ import { ContentType } from '@standardnotes/common'
 export class HandleTrustedSharedVaultRootKeyChangedMessage {
   constructor(private items: ItemManagerInterface, private sync: SyncServiceInterface) {}
 
-  async execute(message: AsymmetricMessageSharedVaultRootKeyChanged): Promise<'inserted' | 'changed'> {
+  async execute(message: AsymmetricMessageSharedVaultRootKeyChanged): Promise<void> {
     const rootKeyContent = message.data.rootKey
 
     await this.items.createItem<KeySystemRootKeyInterface>(
@@ -22,6 +22,5 @@ export class HandleTrustedSharedVaultRootKeyChangedMessage {
     )
 
     await this.sync.sync()
-    return 'inserted'
   }
 }

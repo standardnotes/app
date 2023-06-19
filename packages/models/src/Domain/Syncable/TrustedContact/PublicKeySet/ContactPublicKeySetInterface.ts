@@ -2,6 +2,7 @@ export interface ContactPublicKeySetInterface {
   encryption: string
   signing: string
   timestamp: Date
+  isRevoked: boolean
   previousKeySet?: ContactPublicKeySetInterface
 
   findKeySet(params: {

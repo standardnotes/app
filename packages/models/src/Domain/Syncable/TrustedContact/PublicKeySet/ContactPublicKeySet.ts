@@ -5,12 +5,20 @@ export class ContactPublicKeySet implements ContactPublicKeySetInterface {
   encryption: string
   signing: string
   timestamp: Date
+  isRevoked: boolean
   previousKeySet?: ContactPublicKeySet
 
-  constructor(encryption: string, signing: string, timestamp: Date, previousKeySet: ContactPublicKeySet | undefined) {
+  constructor(
+    encryption: string,
+    signing: string,
+    timestamp: Date,
+    isRevoked: boolean,
+    previousKeySet: ContactPublicKeySet | undefined,
+  ) {
     this.encryption = encryption
     this.signing = signing
     this.timestamp = timestamp
+    this.isRevoked = isRevoked
     this.previousKeySet = previousKeySet
   }
 
@@ -58,6 +66,7 @@ export class ContactPublicKeySet implements ContactPublicKeySetInterface {
       json.encryption,
       json.signing,
       new Date(json.timestamp),
+      json.isRevoked,
       json.previousKeySet ? ContactPublicKeySet.FromJson(json.previousKeySet) : undefined,
     )
   }

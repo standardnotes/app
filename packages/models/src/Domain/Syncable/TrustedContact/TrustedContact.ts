@@ -51,7 +51,7 @@ export class TrustedContact extends DecryptedItem<TrustedContactContent> impleme
   isPublicKeyTrusted(encryptionPublicKey: string): boolean {
     const keySet = this.publicKeySet.findKeySetWithPublicKey(encryptionPublicKey)
 
-    if (keySet) {
+    if (keySet && !keySet.isRevoked) {
       return true
     }
 
@@ -61,7 +61,7 @@ export class TrustedContact extends DecryptedItem<TrustedContactContent> impleme
   isSigningKeyTrusted(signingKey: string): boolean {
     const keySet = this.publicKeySet.findKeySetWithSigningKey(signingKey)
 
-    if (keySet) {
+    if (keySet && !keySet.isRevoked) {
       return true
     }
 

@@ -12,6 +12,7 @@ import {
   AsymmetricMessagePayload,
   KeySystemRootKeyInterface,
   KeySystemRootKeyParamsInterface,
+  TrustedContactInterface,
 } from '@standardnotes/models'
 import { ClientDisplayableError } from '@standardnotes/responses'
 import { SNRootKeyParams } from '../../Keys/RootKey/RootKeyParams'
@@ -22,17 +23,6 @@ import { PkcKeyPair } from '@standardnotes/sncrypto-common'
 import { PublicKeySet } from '../../Operator/PublicKeySet'
 import { KeySystemKeyManagerInterface } from '../KeySystemKeyManagerInterface'
 import { AsymmetricallyEncryptedString } from '../../Operator/Types'
-
-export type AsymmetricallyDecryptMessageResult = {
-  message: AsymmetricMessagePayload
-  senderPublicKey: string
-  signing: {
-    builtInSignaturePasses: boolean
-    builtInSignaturePublicKey: string
-    trustedSenderVerificationPerformed: boolean
-    trustedSenderSignaturePasses: boolean
-  }
-}
 
 export interface EncryptionProviderInterface {
   keys: KeySystemKeyManagerInterface
@@ -131,12 +121,11 @@ export interface EncryptionProviderInterface {
     senderSigningKeyPair: PkcKeyPair
     recipientPublicKey: string
   }): string
-  asymmetricallyDecryptMessage(dto: {
-    encryptedString: string
-    trustedSenderPublicKey: string | undefined
-    trustedSenderSigningPublicKey: string | undefined
+  asymmetricallyDecryptMessage<M extends AsymmetricMessagePayload>(dto: {
+    encryptedString: AsymmetricallyEncryptedString
+    trustedSender: TrustedContactInterface | undefined
     privateKey: string
-  }): AsymmetricallyDecryptMessageResult | undefined
+  }): M | undefined
   asymmetricSignatureVerifyDetached(
     encryptedString: AsymmetricallyEncryptedString,
   ): AsymmetricSignatureVerificationDetachedResult

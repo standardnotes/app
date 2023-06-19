@@ -32,8 +32,6 @@ import { SharedVaultServiceInterface } from './SharedVaultServiceInterface'
 import { SharedVaultServiceEvent, SharedVaultServiceEventPayload } from './SharedVaultServiceEvent'
 import { EncryptionProviderInterface } from '@standardnotes/encryption'
 import { ContentType } from '@standardnotes/common'
-import { ReuploadAllOutboundInvitesAfterCredentialsChange } from './UseCase/ReuploadAllOutboundInvitesAfterCredentialsChange'
-import { SuccessfullyChangedCredentialsEventData } from '../Session/SuccessfullyChangedCredentialsEventData'
 import { GetSharedVaultUsersUseCase } from './UseCase/GetSharedVaultUsers'
 import { RemoveVaultMemberUseCase } from './UseCase/RemoveSharedVaultMember'
 import { AbstractService } from '../Service/AbstractService'
@@ -129,16 +127,6 @@ export class SharedVaultService
   async handleEvent(event: InternalEventInterface): Promise<void> {
     if (event.type === SessionEvent.SuccessfullyChangedCredentials) {
       void this.invitesServer.deleteAllInboundInvites()
-      const handler = new ReuploadAllOutboundInvitesAfterCredentialsChange(
-        this.encryption,
-        this.contacts,
-        this.items,
-        this.invitesServer,
-        this.usersServer,
-      )
-      await handler.execute({
-        eventData: event.payload as SuccessfullyChangedCredentialsEventData,
-      })
     } else if (event.type === UserEventServiceEvent.UserEventReceived) {
       await this.handleUserEvent(event.payload as UserEventServiceEventPayload)
     } else if (event.type === VaultServiceEvent.VaultRootKeyRotated) {

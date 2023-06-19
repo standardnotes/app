@@ -12,21 +12,12 @@ export class GetAsymmetricMessageTrustedPayload<M extends AsymmetricMessagePaylo
       return undefined
     }
 
-    const decryptionResult = this.encryption.asymmetricallyDecryptMessage({
+    const decryptionResult = this.encryption.asymmetricallyDecryptMessage<M>({
       encryptedString: dto.message.encrypted_message,
-      trustedSenderPublicKey: trustedContact.publicKeySet.encryption,
-      trustedSenderSigningPublicKey: trustedContact.publicKeySet.signing,
+      trustedSender: trustedContact,
       privateKey: dto.privateKey,
     })
 
-    if (!decryptionResult) {
-      return undefined
-    }
-
-    if (!decryptionResult.signing.trustedSenderSignaturePasses) {
-      return undefined
-    }
-
-    return decryptionResult.message as M
+    return decryptionResult
   }
 }

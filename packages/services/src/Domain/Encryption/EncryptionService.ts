@@ -1,5 +1,4 @@
 import {
-  AsymmetricallyDecryptMessageResult,
   CreateAnyKeyParams,
   CreateEncryptionSplitWithKeyLookup,
   encryptedInputParametersFromPayload,
@@ -45,6 +44,7 @@ import {
   AsymmetricMessagePayload,
   KeySystemRootKeyInterface,
   KeySystemRootKeyParamsInterface,
+  TrustedContactInterface,
 } from '@standardnotes/models'
 import { ClientDisplayableError } from '@standardnotes/responses'
 import { PkcKeyPair, PureCryptoInterface } from '@standardnotes/sncrypto-common'
@@ -612,12 +612,11 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     return encrypted
   }
 
-  asymmetricallyDecryptMessage(dto: {
+  asymmetricallyDecryptMessage<M extends AsymmetricMessagePayload>(dto: {
     encryptedString: AsymmetricallyEncryptedString
-    trustedSenderPublicKey: string | undefined
-    trustedSenderSigningPublicKey: string | undefined
+    trustedSender: TrustedContactInterface | undefined
     privateKey: string
-  }): AsymmetricallyDecryptMessageResult | undefined {
+  }): M | undefined {
     const defaultOperator = this.operatorManager.defaultOperator()
     const version = defaultOperator.versionForAsymmetricallyEncryptedString(dto.encryptedString)
     const keyOperator = this.operatorManager.operatorForVersion(version)
@@ -634,31 +633,17 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
       return undefined
     }
 
-    if (dto.trustedSenderPublicKey) {
-      if (decryptedResult.senderPublicKey !== dto.trustedSenderPublicKey) {
+    if (dto.trustedSender) {
+      if (!dto.trustedSender.isPublicKeyTrusted(decryptedResult.senderPublicKey)) {
+        return undefined
+      }
+
+      if (!dto.trustedSender.isSigningKeyTrusted(decryptedResult.signaturePublicKey)) {
         return undefined
       }
     }
 
-    if (dto.trustedSenderSigningPublicKey) {
-      if (decryptedResult.signaturePublicKey !== dto.trustedSenderSigningPublicKey) {
-        return undefined
-      }
-    }
-
-    return {
-      message: JSON.parse(decryptedResult.plaintext),
-      senderPublicKey: decryptedResult.senderPublicKey,
-      signing: {
-        builtInSignaturePasses: decryptedResult.signatureVerified,
-        builtInSignaturePublicKey: decryptedResult.signaturePublicKey,
-        trustedSenderVerificationPerformed: dto.trustedSenderSigningPublicKey != undefined,
-        trustedSenderSignaturePasses:
-          decryptedResult.signaturePublicKey != undefined &&
-          dto.trustedSenderSigningPublicKey != undefined &&
-          decryptedResult.signaturePublicKey === dto.trustedSenderSigningPublicKey,
-      },
-    }
+    return JSON.parse(decryptedResult.plaintext)
   }
 
   asymmetricSignatureVerifyDetached(

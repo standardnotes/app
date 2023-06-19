@@ -32,26 +32,6 @@ describe('shared vault key rotation', function () {
     console.error('TODO: implement')
   })
 
-  it('should reupload all outbound invites when inviter keypair changes', async () => {
-    const sharedVault = await Collaboration.createSharedVault(context)
-    const { contactContext, deinitContactContext } = await Collaboration.createContactContext()
-    const contact = await Collaboration.createTrustedContactForUserOfContext(context, contactContext)
-    await sharedVaults.inviteContactToSharedVault(sharedVault, contact, SharedVaultPermission.Write)
-    await contactContext.sync()
-
-    const originalInviteRecord = contactContext.sharedVaults.getCachedPendingInviteRecords()[0]
-
-    await context.changePassword('new-password')
-    await context.sync()
-
-    await contactContext.sync()
-
-    const updatedInviteRecord = contactContext.sharedVaults.getCachedPendingInviteRecords()[0]
-    expect(updatedInviteRecord.encrypted_message).to.not.equal(originalInviteRecord.invite.encrypted_message)
-
-    await deinitContactContext()
-  })
-
   it("rotating a vault's key should send an asymmetric message to all members", async () => {
     const { sharedVault, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithAcceptedInvite(context)
