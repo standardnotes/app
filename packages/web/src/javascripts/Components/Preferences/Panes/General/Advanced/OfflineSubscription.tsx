@@ -12,9 +12,10 @@ import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 type Props = {
   application: WebApplication
   viewControllerManager: ViewControllerManager
+  onSuccess?: () => void
 }
 
-const OfflineSubscription: FunctionComponent<Props> = ({ application }) => {
+const OfflineSubscription: FunctionComponent<Props> = ({ application, onSuccess }) => {
   const [activationCode, setActivationCode] = useState('')
   const [isSuccessfullyActivated, setIsSuccessfullyActivated] = useState(false)
   const [isSuccessfullyRemoved, setIsSuccessfullyRemoved] = useState(false)
@@ -64,6 +65,9 @@ const OfflineSubscription: FunctionComponent<Props> = ({ application }) => {
     setIsSuccessfullyActivated(true)
     setHasUserPreviouslyStoredCode(true)
     setIsSuccessfullyRemoved(false)
+    if (onSuccess) {
+      onSuccess()
+    }
   }
 
   const handleRemoveOfflineKey = async () => {

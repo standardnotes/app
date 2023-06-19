@@ -54,12 +54,12 @@ const HomeServerSettings = () => {
       message: result.status === 'on' ? 'Online' : result.errorMessage ? 'Offline' : 'Starting...',
       description:
         result.status === 'on' ? (
-          <div>
+          <>
             Accessible on local network via:{' '}
             <a href={result.url} className="font-bold text-info" target="_blank">
               {result.url}
             </a>
-          </div>
+          </>
         ) : (
           result.errorMessage ?? 'Your home server is offline.'
         ),
@@ -308,13 +308,20 @@ const HomeServerSettings = () => {
                     setShowOfflineSubscriptionActivation(!showOfflineSubscriptionActivation)
                   }}
                 >
-                  Activate Premium Features
+                  {showOfflineSubscriptionActivation ? 'Close' : 'Activate Premium Features'}
                 </Button>
               </div>
             </>
           )}
           {showOfflineSubscriptionActivation && (
-            <OfflineSubscription application={application} viewControllerManager={viewControllerManager} />
+            <OfflineSubscription
+              application={application}
+              viewControllerManager={viewControllerManager}
+              onSuccess={() => {
+                setIsAPremiumUser(true)
+                setShowOfflineSubscriptionActivation(false)
+              }}
+            />
           )}
 
           {status?.state !== 'restarting' && (
