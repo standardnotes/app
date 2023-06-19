@@ -78,7 +78,7 @@ const HomeServerSettings = () => {
 
       await sleep(SERVER_CHANGE_INTERVAL)
 
-      if (result.isFailed()) {
+      if (result.isFailed() && (await homeServerService.isHomeServerRunning())) {
         setStatus({ state: 'error', message: result.getError() })
 
         return
