@@ -125,6 +125,7 @@ const DatabaseConfiguration = ({ setHomeServerConfigurationChangedCallback, home
                         placeholder={'password'}
                         defaultValue={homeServerConfiguration?.mysqlConfiguration?.password}
                         onChange={setMysqlPassword}
+                        type="password"
                       />
                     </div>
                   </PreferencesSegment>
