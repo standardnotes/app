@@ -13,7 +13,7 @@ import { HomeServerEnvironmentConfiguration } from './HomeServerEnvironmentConfi
 import { Result } from '@standardnotes/domain-core'
 
 export class HomeServerService extends AbstractService implements HomeServerServiceInterface {
-  private readonly HOME_SERVER_DATA_DIRECTORY_NAME = 'Standard Notes Home Server'
+  private readonly HOME_SERVER_DATA_DIRECTORY_NAME = '.homeserver'
 
   constructor(
     private desktopDevice: DesktopDeviceInterface,
