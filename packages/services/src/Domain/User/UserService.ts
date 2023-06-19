@@ -598,7 +598,7 @@ export class UserService
     }
 
     const rollback = await this.protocolService.createNewItemsKeyWithRollback()
-    await this.protocolService.reencryptItemsKeys()
+    await this.protocolService.reencryptApplicableItemsAfterUserRootKeyChange()
     await this.syncService.sync({ awaitAll: true })
 
     const defaultItemsKey = this.protocolService.getSureDefaultItemsKey()
@@ -610,7 +610,7 @@ export class UserService
         newRootKey: currentRootKey,
         wrappingKey,
       })
-      await this.protocolService.reencryptItemsKeys()
+      await this.protocolService.reencryptApplicableItemsAfterUserRootKeyChange()
       await rollback()
       await this.syncService.sync({ awaitAll: true })
 

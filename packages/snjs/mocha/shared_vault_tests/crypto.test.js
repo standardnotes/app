@@ -34,6 +34,14 @@ describe('shared vault crypto', function () {
       expect(recreatedContext.encryption.getKeyPair()).to.not.be.undefined
       expect(recreatedContext.encryption.getSigningKeyPair()).to.not.be.undefined
     })
+
+    it('changing user password should re-encrypt all key system root keys', async () => {
+      console.error('TODO: implement')
+    })
+
+    it('changing user password should re-encrypt all trusted contacts', async () => {
+      console.error('TODO: implement')
+    })
   })
 
   describe('persistent content signature', () => {

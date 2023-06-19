@@ -98,7 +98,7 @@ export interface EncryptionProviderInterface {
   setNewRootKeyWrapper(wrappingKey: RootKeyInterface): Promise<void>
 
   createNewItemsKeyWithRollback(): Promise<() => Promise<void>>
-  reencryptItemsKeys(): Promise<void>
+  reencryptApplicableItemsAfterUserRootKeyChange(): Promise<void>
   getSureDefaultItemsKey(): ItemsKeyInterface
 
   createRandomizedKeySystemRootKey(dto: { systemIdentifier: KeySystemIdentifier }): KeySystemRootKeyInterface

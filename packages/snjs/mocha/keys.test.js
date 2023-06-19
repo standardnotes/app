@@ -748,7 +748,7 @@ describe('keys', function () {
         currentServerPassword: currentRootKey.serverPassword,
         newRootKey,
       })
-      await this.application.protocolService.reencryptItemsKeys()
+      await this.application.protocolService.reencryptApplicableItemsAfterUserRootKeyChange()
       /** Note: this may result in a deadlock if features_service syncs and results in an error */
       await this.application.sync.sync({ awaitAll: true })
 

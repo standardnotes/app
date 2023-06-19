@@ -67,6 +67,10 @@ export class KeySystemKeyManager extends AbstractService implements KeySystemKey
     }
   }
 
+  public getAllSyncedKeySystemRootKeys(): KeySystemRootKeyInterface[] {
+    return this.items.getItems(ContentType.KeySystemRootKey)
+  }
+
   private getSyncedKeySystemRootKeysForVault(systemIdentifier: KeySystemIdentifier): KeySystemRootKeyInterface[] {
     return this.items.itemsMatchingPredicate<KeySystemRootKeyInterface>(
       ContentType.KeySystemRootKey,

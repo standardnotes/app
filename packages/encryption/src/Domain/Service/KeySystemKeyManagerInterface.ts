@@ -10,6 +10,8 @@ export interface KeySystemKeyManagerInterface {
   getAllKeySystemItemsKeys(): (KeySystemItemsKeyInterface | EncryptedItemInterface)[]
   getKeySystemItemsKeys(systemIdentifier: KeySystemIdentifier): KeySystemItemsKeyInterface[]
   getPrimaryKeySystemItemsKey(systemIdentifier: KeySystemIdentifier): KeySystemItemsKeyInterface
+
+  getAllSyncedKeySystemRootKeys(): KeySystemRootKeyInterface[]
   getKeySystemRootKeyWithToken(
     systemIdentifier: KeySystemIdentifier,
     keyIdentifier: string,

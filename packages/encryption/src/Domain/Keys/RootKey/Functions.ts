@@ -39,12 +39,18 @@ export function FillRootKeyContent(content: Partial<RootKeyContentSpecialized>):
   return FillItemContentSpecialized(content)
 }
 
+export function ContentTypesUsingRootKeyEncryption(): ContentType[] {
+  return [
+    ContentType.RootKey,
+    ContentType.ItemsKey,
+    ContentType.EncryptedStorage,
+    ContentType.TrustedContact,
+    ContentType.KeySystemRootKey,
+  ]
+}
+
 export function ContentTypeUsesRootKeyEncryption(contentType: ContentType): boolean {
-  return (
-    contentType === ContentType.RootKey ||
-    contentType === ContentType.ItemsKey ||
-    contentType === ContentType.EncryptedStorage
-  )
+  return ContentTypesUsingRootKeyEncryption().includes(contentType)
 }
 
 export function ItemContentTypeUsesRootKeyEncryption(contentType: ContentType): boolean {

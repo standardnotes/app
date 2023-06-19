@@ -26,6 +26,10 @@ describe('asymmetric messages', function () {
     service = context.asymmetric
   })
 
+  it('should not trust message if the trusted payload data recipientUuid does not match the message user uuid', async () => {
+    console.error('TODO: implement')
+  })
+
   it('should delete message after processing it', async () => {
     const { contactContext, deinitContactContext } = await Collaboration.createSharedVaultWithAcceptedInvite(context)
 

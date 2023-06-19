@@ -28,6 +28,10 @@ describe('shared vault key rotation', function () {
     sharedVaults = context.sharedVaults
   })
 
+  it('should reencrypt all items keys belonging to key system', async () => {
+    console.error('TODO: implement')
+  })
+
   it('should reupload all outbound invites when inviter keypair changes', async () => {
     const sharedVault = await Collaboration.createSharedVault(context)
     const { contactContext, deinitContactContext } = await Collaboration.createContactContext()

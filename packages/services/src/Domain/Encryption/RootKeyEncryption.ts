@@ -26,6 +26,7 @@ import {
   EncryptedOutputParameters,
   DecryptedParameters,
   KeySystemKeyManagerInterface,
+  ContentTypesUsingRootKeyEncryption,
 } from '@standardnotes/encryption'
 import {
   CreateDecryptedItemFromPayload,
@@ -383,7 +384,7 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
     if (this.keyMode === KeyMode.WrapperOnly || this.keyMode === KeyMode.RootKeyPlusWrapper) {
       if (this.keyMode === KeyMode.WrapperOnly) {
         this.setRootKeyInstance(wrappingKey)
-        await this.reencryptItemsKeys()
+        await this.reencryptApplicableItemsAfterUserRootKeyChange()
       } else {
         await this.wrapAndPersistRootKey(wrappingKey)
       }
@@ -621,29 +622,26 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
   }
 
   /**
-   * When the root key changes (non-null only), we must re-encrypt all items
-   * keys with this new root key (by simply re-syncing).
+   * When the root key changes, we must re-encrypt all relevant items with this new root key (by simply re-syncing).
    */
-  public async reencryptItemsKeys(): Promise<void> {
-    const itemsKeys = this.getItemsKeys()
-
-    if (itemsKeys.length > 0) {
+  public async reencryptApplicableItemsAfterUserRootKeyChange(): Promise<void> {
+    const items = this.items.getItems(ContentTypesUsingRootKeyEncryption())
+    if (items.length > 0) {
       /**
        * Do not call sync after marking dirty.
        * Re-encrypting items keys is called by consumers who have specific flows who
        * will sync on their own timing
        */
-      await this.items.setItemsDirty(itemsKeys)
+      await this.items.setItemsDirty(items)
     }
   }
 
   /**
-   * When the key system root key changes, we must re-encrypt all vault items
-   * keys with this new key system root key (by simply re-syncing).
+   * When the key system root key changes, we must re-encrypt all vault items keys
+   * with this new key system root key (by simply re-syncing).
    */
   public async reencryptKeySystemItemsKeysForVault(keySystemIdentifier: KeySystemIdentifier): Promise<void> {
     const keySystemItemsKeys = this.keys.getKeySystemItemsKeys(keySystemIdentifier)
-
     if (keySystemItemsKeys.length > 0) {
       await this.items.setItemsDirty(keySystemItemsKeys)
     }

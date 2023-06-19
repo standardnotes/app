@@ -253,8 +253,8 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     return this.itemsEncryption.repersistAllItems()
   }
 
-  public async reencryptItemsKeys(): Promise<void> {
-    await this.rootKeyEncryption.reencryptItemsKeys()
+  public async reencryptApplicableItemsAfterUserRootKeyChange(): Promise<void> {
+    await this.rootKeyEncryption.reencryptApplicableItemsAfterUserRootKeyChange()
   }
 
   public reencryptKeySystemItemsKeysForVault(keySystemIdentifier: KeySystemIdentifier): Promise<void> {
