@@ -96,6 +96,16 @@ import { DecryptedServerConflictMap, TrustedServerConflictMap } from './Account/
 const DEFAULT_MAJOR_CHANGE_THRESHOLD = 15
 const INVALID_SESSION_RESPONSE_STATUS = 401
 
+/** Content types appearing first are always mapped first */
+const ContentTypeLocalLoadPriorty = [
+  ContentType.ItemsKey,
+  ContentType.KeySystemRootKey,
+  ContentType.KeySystemItemsKey,
+  ContentType.UserPrefs,
+  ContentType.Component,
+  ContentType.Theme,
+]
+
 /**
  * The sync service orchestrates with the model manager, api service, and storage service
  * to ensure consistent state between the three. When a change is made to an item, consumers
@@ -133,16 +143,6 @@ export class SNSyncService
 
   public lastSyncInvokationPromise?: Promise<unknown>
   public currentSyncRequestPromise?: Promise<void>
-
-  /** Content types appearing first are always mapped first */
-  private readonly localLoadPriorty = [
-    ContentType.ItemsKey,
-    ContentType.KeySystemRootKey,
-    ContentType.KeySystemItemsKey,
-    ContentType.UserPrefs,
-    ContentType.Component,
-    ContentType.Theme,
-  ]
 
   constructor(
     private itemManager: ItemManager,
@@ -262,7 +262,7 @@ export class SNSyncService
     const chunks = await this.device.getDatabaseLoadChunks(
       {
         batchSize: this.options.loadBatchSize,
-        contentTypePriority: this.localLoadPriorty,
+        contentTypePriority: ContentTypeLocalLoadPriorty,
         uuidPriority: this.launchPriorityUuids,
       },
       this.identifier,
@@ -360,13 +360,10 @@ export class SNSyncService
       }
     }
 
-    const split: KeyedDecryptionSplit = {
-      usesItemsKeyWithKeyLookup: {
-        items: encrypted,
-      },
-    }
+    const encryptionSplit = SplitPayloadsByEncryptionType(encrypted)
+    const decryptionSplit = CreateDecryptionSplitWithKeyLookup(encryptionSplit)
 
-    const results = await this.protocolService.decryptSplit(split)
+    const results = await this.protocolService.decryptSplit(decryptionSplit)
 
     await this.payloadManager.emitPayloads([...nonencrypted, ...results], PayloadEmitSource.LocalDatabaseLoaded)
 

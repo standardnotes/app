@@ -146,7 +146,7 @@ describe('shared vault conflicts', function () {
 
     const { sharedVault, note } = await Collaboration.createSharedVaultWithNote(context)
 
-    const oldKeySystemItemsKey = context.items.getKeySystemItemsKeys(sharedVault.systemIdentifier)[0]
+    const oldKeySystemItemsKey = context.keys.getKeySystemItemsKeys(sharedVault.systemIdentifier)[0]
 
     await context.vaults.rotateVaultRootKey(sharedVault)
 

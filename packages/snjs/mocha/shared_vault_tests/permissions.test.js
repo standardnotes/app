@@ -73,7 +73,7 @@ describe('shared vault permissions', function () {
     const { sharedVault, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithAcceptedInvite(context)
 
-    const keySystemItemsKey = contactContext.items.getKeySystemItemsKeys(sharedVault.systemIdentifier)[0]
+    const keySystemItemsKey = contactContext.keys.getKeySystemItemsKeys(sharedVault.systemIdentifier)[0]
 
     await contactContext.items.changeItem(keySystemItemsKey, () => {})
     const promise = contactContext.resolveWithConflicts()

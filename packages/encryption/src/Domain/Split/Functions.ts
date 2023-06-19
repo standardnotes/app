@@ -1,8 +1,5 @@
 import { DecryptedPayloadInterface, EncryptedPayloadInterface } from '@standardnotes/models'
-import {
-  ItemContentTypeUsesKeySystemRootKeyEncryption,
-  ItemContentTypeUsesRootKeyEncryption,
-} from '../Keys/RootKey/Functions'
+import { ContentTypeUsesKeySystemRootKeyEncryption, ContentTypeUsesRootKeyEncryption } from '../Keys/RootKey/Functions'
 import { EncryptionTypeSplit } from './EncryptionTypeSplit'
 
 export function SplitPayloadsByEncryptionType<T extends EncryptedPayloadInterface | DecryptedPayloadInterface>(
@@ -13,9 +10,9 @@ export function SplitPayloadsByEncryptionType<T extends EncryptedPayloadInterfac
   const usesKeySystemRootKey: T[] = []
 
   for (const item of payloads) {
-    if (ItemContentTypeUsesRootKeyEncryption(item.content_type)) {
+    if (ContentTypeUsesRootKeyEncryption(item.content_type)) {
       usesRootKey.push(item)
-    } else if (ItemContentTypeUsesKeySystemRootKeyEncryption(item.content_type)) {
+    } else if (ContentTypeUsesKeySystemRootKeyEncryption(item.content_type)) {
       usesKeySystemRootKey.push(item)
     } else {
       usesItemsKey.push(item)

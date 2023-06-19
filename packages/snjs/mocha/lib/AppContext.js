@@ -77,6 +77,10 @@ export class AppContext {
     return this.application.fileService
   }
 
+  get keys() {
+    return this.application.keySystemKeyManager
+  }
+
   get asymmetric() {
     return this.application.asymmetricMessageService
   }

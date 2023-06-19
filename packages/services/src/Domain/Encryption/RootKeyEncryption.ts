@@ -22,7 +22,7 @@ import {
   ItemsKeyMutator,
   encryptPayload,
   decryptPayload,
-  ItemContentTypeUsesKeySystemRootKeyEncryption,
+  ContentTypeUsesKeySystemRootKeyEncryption,
   EncryptedOutputParameters,
   DecryptedParameters,
   KeySystemKeyManagerInterface,
@@ -508,7 +508,7 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
     signingKeyPair?: PkcKeyPair,
   ): Promise<EncryptedOutputParameters> {
     let key: RootKeyInterface | KeySystemRootKeyInterface | undefined
-    if (payload.key_system_identifier || ItemContentTypeUsesKeySystemRootKeyEncryption(payload.content_type)) {
+    if (payload.key_system_identifier || ContentTypeUsesKeySystemRootKeyEncryption(payload.content_type)) {
       if (!payload.key_system_identifier) {
         throw Error(
           `Attempting to encrypt vaulted payload ${payload.content_type} but the payload is missing a key_system_identifier`,
@@ -554,7 +554,7 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
   ): Promise<DecryptedParameters<C> | ErrorDecryptingParameters> {
     let key: RootKeyInterface | KeySystemRootKeyInterface | undefined
     if (payload.key_system_identifier) {
-      if (!ItemContentTypeUsesKeySystemRootKeyEncryption(payload.content_type)) {
+      if (!ContentTypeUsesKeySystemRootKeyEncryption(payload.content_type)) {
         throw Error('Attempting to decrypt payload that is not a vault items key with key system root key.')
       }
       key = this.keys.getPrimaryKeySystemRootKey(payload.key_system_identifier)

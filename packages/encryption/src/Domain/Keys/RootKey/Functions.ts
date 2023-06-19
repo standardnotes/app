@@ -53,10 +53,6 @@ export function ContentTypeUsesRootKeyEncryption(contentType: ContentType): bool
   return ContentTypesUsingRootKeyEncryption().includes(contentType)
 }
 
-export function ItemContentTypeUsesRootKeyEncryption(contentType: ContentType): boolean {
-  return contentType === ContentType.ItemsKey
-}
-
-export function ItemContentTypeUsesKeySystemRootKeyEncryption(contentType: ContentType): boolean {
+export function ContentTypeUsesKeySystemRootKeyEncryption(contentType: ContentType): boolean {
   return contentType === ContentType.KeySystemItemsKey
 }

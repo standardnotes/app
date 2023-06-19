@@ -31,7 +31,7 @@ describe('vaults', function () {
       expect(vault.systemIdentifier).to.not.be.undefined
       expect(typeof vault.systemIdentifier).to.equal('string')
 
-      const keySystemItemsKey = context.items.getPrimaryKeySystemItemsKey(vault.systemIdentifier)
+      const keySystemItemsKey = context.keys.getPrimaryKeySystemItemsKey(vault.systemIdentifier)
       expect(keySystemItemsKey).to.not.be.undefined
       expect(keySystemItemsKey.key_system_identifier).to.equal(vault.systemIdentifier)
       expect(keySystemItemsKey.creationTimestamp).to.not.be.undefined
@@ -123,7 +123,7 @@ describe('vaults', function () {
       const vault = await vaults.createRandomizedVault()
       expect(vault).to.not.be.undefined
 
-      const keySystemItemsKeys = context.items.getKeySystemItemsKeys(vault.systemIdentifier)
+      const keySystemItemsKeys = context.keys.getKeySystemItemsKeys(vault.systemIdentifier)
       expect(keySystemItemsKeys.length).to.equal(1)
 
       const keySystemItemsKey = keySystemItemsKeys[0]
@@ -164,11 +164,11 @@ describe('vaults', function () {
       it('rotating a key system root key should create a new vault items key', async () => {
         const vault = await vaults.createRandomizedVault()
 
-        const keySystemItemsKey = context.items.getKeySystemItemsKeys(vault.systemIdentifier)[0]
+        const keySystemItemsKey = context.keys.getKeySystemItemsKeys(vault.systemIdentifier)[0]
 
         await vaults.rotateVaultRootKey(vault)
 
-        const updatedKeySystemItemsKey = context.items.getKeySystemItemsKeys(vault.systemIdentifier)[0]
+        const updatedKeySystemItemsKey = context.keys.getKeySystemItemsKeys(vault.systemIdentifier)[0]
 
         expect(updatedKeySystemItemsKey).to.not.be.undefined
         expect(updatedKeySystemItemsKey.uuid).to.not.equal(keySystemItemsKey.uuid)

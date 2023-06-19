@@ -69,7 +69,7 @@ describe('shared vault items', function () {
     await Collaboration.acceptAllInvites(contactContext)
     await promise
 
-    const receivedItemsKey = contactContext.items.getPrimaryKeySystemItemsKey(sharedVault.systemIdentifier)
+    const receivedItemsKey = contactContext.keys.getPrimaryKeySystemItemsKey(sharedVault.systemIdentifier)
     expect(receivedItemsKey).to.not.be.undefined
     expect(receivedItemsKey.itemsKey).to.not.be.undefined
 

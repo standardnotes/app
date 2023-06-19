@@ -12,7 +12,7 @@ import { KeySystemItemsKeyAuthenticatedData } from '../../../../Types/KeySystemI
 import { ProtocolVersion } from '@standardnotes/common'
 import {
   ContentTypeUsesRootKeyEncryption,
-  ItemContentTypeUsesKeySystemRootKeyEncryption,
+  ContentTypeUsesKeySystemRootKeyEncryption,
 } from '../../../../Keys/RootKey/Functions'
 import { isItemsKey } from '../../../../Keys/ItemsKey/ItemsKey'
 import { isKeySystemItemsKey } from '../../../../Keys/KeySystemItemsKey/KeySystemItemsKey'
@@ -40,7 +40,7 @@ export class GenerateAuthenticatedDataUseCase {
         ...baseData,
         kp: (key as RootKeyInterface).keyParams.content,
       }
-    } else if (ItemContentTypeUsesKeySystemRootKeyEncryption(payload.content_type)) {
+    } else if (ContentTypeUsesKeySystemRootKeyEncryption(payload.content_type)) {
       if (!isKeySystemRootKey(key)) {
         throw Error(
           `Attempting to use non-key system root key ${key.content_type} for item content type ${payload.content_type}`,
