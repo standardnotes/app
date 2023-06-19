@@ -18,7 +18,7 @@ import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 
 const HomeServerSettings = () => {
-  const SERVER_CHANGE_INTERVAL = 5000
+  const SERVER_CHANGE_INTERVAL = 3000
 
   const application = useApplication()
   const desktopDevice = application.desktopDevice
