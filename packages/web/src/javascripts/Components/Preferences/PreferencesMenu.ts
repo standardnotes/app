@@ -56,10 +56,10 @@ export class PreferencesMenu {
   private _extensionLatestVersions: PackageProvider = new PackageProvider(new Map())
 
   constructor(private application: WebApplication, private readonly _enableUnfinishedFeatures: boolean) {
-    const menuItems = this._enableUnfinishedFeatures ? PREFERENCES_MENU_ITEMS : READY_PREFERENCES_MENU_ITEMS
+    let menuItems = this._enableUnfinishedFeatures ? PREFERENCES_MENU_ITEMS : READY_PREFERENCES_MENU_ITEMS
 
     if (isDesktopApplication()) {
-      menuItems.push(...DESKTOP_PREFERENCES_MENU_ITEMS)
+      menuItems = [...menuItems, ...DESKTOP_PREFERENCES_MENU_ITEMS]
     }
 
     this._menu = menuItems.sort((a, b) => a.order - b.order)
