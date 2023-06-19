@@ -13,6 +13,9 @@ import StatusIndicator from './Status/StatusIndicator'
 import { Status } from './Status/Status'
 import { PremiumFeatureIconClass, PremiumFeatureIconName } from '@/Components/Icon/PremiumFeatureIcon'
 import Switch from '@/Components/Switch/Switch'
+import AccordionItem from '@/Components/Shared/AccordionItem'
+import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
+import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 
 const HomeServerSettings = () => {
   const SERVER_CHANGE_INTERVAL = 5000
@@ -325,22 +328,23 @@ const HomeServerSettings = () => {
                   />
                 </div>
               </>
-              <div className="mt-3 flex flex-row flex-wrap gap-3">
-                <Button label={showLogs ? 'Hide Logs' : 'Show Logs'} onClick={handleShowLogs} />
-              </div>
-              {showLogs && (
-                <div className="flex flex-col">
-                  <HorizontalSeparator classes="mt-3" />
-                  <textarea
-                    ref={logsTextarea}
-                    disabled={true}
-                    className="h-[500px] overflow-y-auto whitespace-pre-wrap bg-contrast p-2"
-                    value={logs.join('\n')}
-                  />
-                  <HorizontalSeparator classes="mb-3" />
-                </div>
-              )}
-              <div className="h-2 w-full" />
+              <HorizontalSeparator classes="my-4" />
+              <PreferencesGroup>
+                <PreferencesSegment>
+                  <AccordionItem title={'Logs'} onClick={handleShowLogs}>
+                    <div className="flex flex-row items-center">
+                      <div className="flex max-w-full flex-grow flex-col">
+                        <textarea
+                          ref={logsTextarea}
+                          disabled={true}
+                          className="h-[500px] overflow-y-auto whitespace-pre-wrap bg-contrast p-2"
+                          value={logs.join('\n')}
+                        />
+                      </div>
+                    </div>
+                  </AccordionItem>
+                </PreferencesSegment>
+              </PreferencesGroup>
               {homeServerConfiguration && (
                 <>
                   <HorizontalSeparator classes="my-4" />
