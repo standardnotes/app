@@ -71,6 +71,10 @@ export class HomeServerManager implements HomeServerManagerInterface {
     }
 
     const encryptedConfiguration: HomeServerEnvironmentConfiguration = homeServerConfiguration.configuration
+    if (!this.safeStorage.isEncryptionAvailable()) {
+      return JSON.stringify(encryptedConfiguration)
+    }
+
     let decryptedConfiguration = {}
     for (const key of Object.keys(encryptedConfiguration)) {
       const configKey = key as keyof HomeServerEnvironmentConfiguration
@@ -97,17 +101,22 @@ export class HomeServerManager implements HomeServerManagerInterface {
 
       await this.filesManager.ensureDirectoryExists(this.homeServerDataLocation)
 
-      let encryptedConfiguration = {}
-      for (const key of Object.keys(homeServerConfiguration)) {
-        const configKey = key as keyof HomeServerEnvironmentConfiguration
-        const value = homeServerConfiguration[configKey]
+      let persistableConfiguration = homeServerConfiguration
+      if (this.safeStorage.isEncryptionAvailable()) {
+        let encryptedConfiguration = {}
+        for (const key of Object.keys(homeServerConfiguration)) {
+          const configKey = key as keyof HomeServerEnvironmentConfiguration
+          const value = homeServerConfiguration[configKey]
 
-        const encryptedValue = this.encryptValue(value)
+          const encryptedValue = this.encryptValue(value)
 
-        encryptedConfiguration = {
-          ...encryptedConfiguration,
-          [key]: encryptedValue,
+          encryptedConfiguration = {
+            ...encryptedConfiguration,
+            [key]: encryptedValue,
+          }
         }
+
+        persistableConfiguration = encryptedConfiguration as HomeServerEnvironmentConfiguration
       }
 
       const configurationFile: HomeServerConfigurationFile = {
@@ -118,7 +127,7 @@ export class HomeServerManager implements HomeServerManagerInterface {
             'The values below are encrypted with your user key derived from the OS that the desktop app operates on.',
           instructions: 'Put this file into your home server data location to restore your home server configuration.',
         },
-        configuration: encryptedConfiguration as HomeServerEnvironmentConfiguration,
+        configuration: persistableConfiguration,
       }
 
       await this.filesManager.writeJSONFile(
