@@ -22,6 +22,10 @@ import {
   isFile,
   isSmartView,
   isSystemView,
+  StorageKey,
+  VaultListingInterface,
+  VaultDisplayOptions,
+  VaultDisplayOptionsPersistable,
 } from '@standardnotes/snjs'
 import { action, computed, makeObservable, observable, reaction, runInAction } from 'mobx'
 import { WebApplication } from '../../Application/WebApplication'
@@ -206,6 +210,13 @@ export class ItemListController extends AbstractViewController implements Intern
       setShowDisplayOptionsMenu: action,
       onFilterEnter: action,
       handleFilterTextChanged: action,
+
+      isVaultExplicitelyExcluded: observable,
+      isVaultExclusivelyShown: observable,
+      hideVault: action,
+      unhideVault: action,
+      showOnlyVault: action,
+      setVaultSelectionOptions: action,
 
       optionsSubtitle: computed,
       activeControllerItem: computed,
@@ -492,6 +503,7 @@ export class ItemListController extends AbstractViewController implements Intern
     const criteria: DisplayOptions = {
       sortBy: this.displayOptions.sortBy,
       sortDirection: this.displayOptions.sortDirection,
+      vaults: this.displayOptions.vaults,
       tags: tag instanceof SNTag ? [tag] : [],
       views: tag instanceof SmartView ? [tag] : [],
       includeArchived,
@@ -507,6 +519,72 @@ export class ItemListController extends AbstractViewController implements Intern
     this.application.items.setPrimaryItemDisplayOptions(criteria)
   }
 
+  isVaultExplicitelyExcluded = (vault: VaultListingInterface): boolean => {
+    const vaultOptions = this.displayOptions.vaults
+    return vaultOptions?.isVaultExplicitelyExcluded(vault) ?? false
+  }
+
+  isVaultExclusivelyShown = (vault: VaultListingInterface): boolean => {
+    const vaultOptions = this.displayOptions.vaults
+    if (!vaultOptions) {
+      return false
+    }
+
+    return vaultOptions.exclusive?.uuid === vault.uuid
+  }
+
+  hideVault = (vault: VaultListingInterface) => {
+    const vaultOptions = this.displayOptions.vaults
+
+    if (!vaultOptions) {
+      const newOptions = new VaultDisplayOptions({ exclude: [vault] })
+      this.setVaultSelectionOptions(newOptions)
+    } else {
+      const newOptions = vaultOptions.newOptionsByExcludingVault(vault)
+      this.setVaultSelectionOptions(newOptions)
+    }
+  }
+
+  unhideVault = (vault: VaultListingInterface) => {
+    const vaultOptions = this.displayOptions.vaults
+
+    if (!vaultOptions) {
+      const newOptions = new VaultDisplayOptions({ exclude: [] })
+      this.setVaultSelectionOptions(newOptions)
+    } else {
+      const newOptions = vaultOptions.newOptionsByUnexcludingVault(vault)
+      this.setVaultSelectionOptions(newOptions)
+    }
+  }
+
+  showOnlyVault = (vault: VaultListingInterface) => {
+    const newOptions = new VaultDisplayOptions({ exclusive: vault })
+    this.setVaultSelectionOptions(newOptions)
+  }
+
+  setVaultSelectionOptions = (options: VaultDisplayOptions) => {
+    this.displayOptions = {
+      ...this.displayOptions,
+      vaults: options,
+    }
+    this.application.setValue(StorageKey.VaultSelectionOptions, options.getPersistableValue())
+    void this.reloadDisplayPreferences({ userTriggered: true })
+  }
+
+  getVaultSelectionOptionsFromDisk = (): VaultDisplayOptions | undefined => {
+    if (!this.application.isLaunched()) {
+      return undefined
+    }
+
+    const raw = this.application.getValue<VaultDisplayOptionsPersistable>(StorageKey.VaultSelectionOptions)
+    if (!raw) {
+      return undefined
+    }
+
+    const vaults = this.application.items.getItems<VaultListingInterface>(ContentType.VaultListing)
+    return VaultDisplayOptions.FromPersistableValue(raw, vaults)
+  }
+
   reloadDisplayPreferences = async ({
     userTriggered,
   }: {
@@ -514,6 +592,7 @@ export class ItemListController extends AbstractViewController implements Intern
   }): Promise<{ didReloadItems: boolean }> => {
     const newDisplayOptions = {} as DisplayOptions
     const newWebDisplayOptions = {} as WebDisplayOptions
+
     const selectedTag = this.navigationController.selected
     const isSystemTag = selectedTag && isSmartView(selectedTag) && isSystemView(selectedTag)
     const selectedTagPreferences = isSystemTag
@@ -530,6 +609,10 @@ export class ItemListController extends AbstractViewController implements Intern
       sortBy = CollectionSort.UpdatedAt
     }
     newDisplayOptions.sortBy = sortBy
+
+    newDisplayOptions.vaults = !this.displayOptions.vaults
+      ? this.getVaultSelectionOptionsFromDisk()
+      : this.displayOptions.vaults
 
     const currentSortDirection = this.displayOptions.sortDirection
     newDisplayOptions.sortDirection =
@@ -581,6 +664,7 @@ export class ItemListController extends AbstractViewController implements Intern
     )
 
     const displayOptionsChanged =
+      newDisplayOptions.vaults?.getPersistableValue() !== this.displayOptions.vaults?.getPersistableValue() ||
       newDisplayOptions.sortBy !== this.displayOptions.sortBy ||
       newDisplayOptions.sortDirection !== this.displayOptions.sortDirection ||
       newDisplayOptions.includePinned !== this.displayOptions.includePinned ||

@@ -41,6 +41,7 @@ import { CrossControllerEvent } from './CrossControllerEvent'
 import { EventObserverInterface } from '@/Event/EventObserverInterface'
 import { ApplicationEventObserver } from '@/Event/ApplicationEventObserver'
 import { ImportModalController } from './ImportModalController'
+import { VaultSelectionController } from './VaultSelectionController'
 
 export class ViewControllerManager implements InternalEventHandlerInterface {
   readonly enableUnfinishedFeatures: boolean = window?.enabledUnfinishedFeatures
@@ -60,6 +61,7 @@ export class ViewControllerManager implements InternalEventHandlerInterface {
   readonly preferencesController: PreferencesController
   readonly purchaseFlowController: PurchaseFlowController
   readonly quickSettingsMenuController: QuickSettingsController
+  readonly vaultSelectionController: VaultSelectionController
   readonly searchOptionsController: SearchOptionsController
   readonly subscriptionController: SubscriptionController
   readonly syncStatusController = new SyncStatusController()
@@ -92,6 +94,8 @@ export class ViewControllerManager implements InternalEventHandlerInterface {
     this.filePreviewModalController = new FilePreviewModalController(application)
 
     this.quickSettingsMenuController = new QuickSettingsController(application, this.eventBus)
+
+    this.vaultSelectionController = new VaultSelectionController(application, this.eventBus)
 
     this.paneController = new PaneController(application, this.eventBus)
 
@@ -210,6 +214,7 @@ export class ViewControllerManager implements InternalEventHandlerInterface {
     ;(this.filePreviewModalController as unknown) = undefined
     ;(this.preferencesController as unknown) = undefined
     ;(this.quickSettingsMenuController as unknown) = undefined
+    ;(this.vaultSelectionController as unknown) = undefined
     ;(this.syncStatusController as unknown) = undefined
 
     this.persistenceService.deinit()

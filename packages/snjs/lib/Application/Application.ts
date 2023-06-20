@@ -847,8 +847,8 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return this.diskStorageService.setValue(key, value, mode)
   }
 
-  public getValue(key: string, mode?: ExternalServices.StorageValueModes): unknown {
-    return this.diskStorageService.getValue(key, mode)
+  public getValue<T>(key: string, mode?: ExternalServices.StorageValueModes): T {
+    return this.diskStorageService.getValue<T>(key, mode)
   }
 
   public async removeValue(key: string, mode?: ExternalServices.StorageValueModes): Promise<void> {

@@ -32,7 +32,7 @@ export interface ApplicationInterface {
   lock(): Promise<void>
   softLockBiometrics(): void
   setValue(key: string, value: unknown, mode?: StorageValueModes): void
-  getValue(key: string, mode?: StorageValueModes): unknown
+  getValue<T>(key: string, mode?: StorageValueModes): T
   removeValue(key: string, mode?: StorageValueModes): Promise<void>
   isLocked(): Promise<boolean>
   getPreference<K extends PrefKey>(key: K): PrefValue[K] | undefined
