@@ -68,7 +68,7 @@ const HomeServerSettings = () => {
 
   const initialyLoadHomeServerConfiguration = useCallback(async () => {
     if (!homeServerConfiguration) {
-      const homeServerConfiguration = homeServerService.getHomeServerConfiguration()
+      const homeServerConfiguration = await homeServerService.getHomeServerConfiguration()
       if (homeServerConfiguration) {
         setHomeServerConfiguration(homeServerConfiguration)
       }

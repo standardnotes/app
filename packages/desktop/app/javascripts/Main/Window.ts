@@ -207,7 +207,7 @@ async function createWindowServices(window: Electron.BrowserWindow, appState: Ap
   const homeServer = new HomeServer()
   const filesManager = new FilesManager()
 
-  const homeServerManager = new HomeServerManager(homeServer, window.webContents)
+  const homeServerManager = new HomeServerManager(homeServer, window.webContents, filesManager)
 
   if (isTesting()) {
     handleTestMessage(MessageType.SpellCheckerManager, () => spellcheckerManager)

@@ -13,7 +13,7 @@ export interface HomeServerServiceInterface {
   stopHomeServer(): Promise<string | undefined>
   changeHomeServerDataLocation(): Promise<Result<string>>
   openHomeServerDataLocation(): Promise<void>
-  getHomeServerConfiguration(): HomeServerEnvironmentConfiguration | undefined
+  getHomeServerConfiguration(): Promise<HomeServerEnvironmentConfiguration | undefined>
   setHomeServerConfiguration(config: HomeServerEnvironmentConfiguration): Promise<void>
   getHomeServerUrl(): Promise<string | undefined>
 }

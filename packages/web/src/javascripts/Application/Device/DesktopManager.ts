@@ -1,5 +1,5 @@
 import { HeadlessSuperConverter } from '@/Components/SuperEditor/Tools/HeadlessSuperConverter'
-import { StorageKey, StorageServiceInterface } from '@standardnotes/services'
+import { StorageServiceInterface } from '@standardnotes/services'
 import {
   SNComponent,
   ComponentMutator,
@@ -48,10 +48,6 @@ export class DesktopManager
 
   async handleWatchedDirectoriesChanges(changes: DesktopWatchedDirectoriesChanges): Promise<void> {
     void this.backups.importWatchedDirectoryChanges(changes)
-  }
-
-  async handleHomeServerConfigurationChanged(configJSON: string): Promise<void> {
-    this.storageService.setValue(StorageKey.HomeServerEnvironmentConfiguration, configJSON)
   }
 
   async handleHomeServerStarted(serverUrl: string): Promise<void> {

@@ -24,6 +24,29 @@ export class HomeServerService extends AbstractService implements HomeServerServ
     super(internalEventBus)
   }
 
+  override deinit() {
+    ;(this.desktopDevice as unknown) = undefined
+    ;(this.storageService as unknown) = undefined
+    super.deinit()
+  }
+
+  override async handleApplicationStage(stage: ApplicationStage) {
+    await super.handleApplicationStage(stage)
+
+    switch (stage) {
+      case ApplicationStage.StorageDecrypted_09: {
+        console.log('setting home server data location on device')
+        await this.setHomeServerDataLocationOnDevice()
+        break
+      }
+      case ApplicationStage.Launched_10: {
+        console.log('starting home server if it is enabled')
+        await this.startHomeServerIfItIsEnabled()
+        break
+      }
+    }
+  }
+
   async getHomeServerUrl(): Promise<string | undefined> {
     return this.desktopDevice.getHomeServerUrl()
   }
@@ -51,15 +74,21 @@ export class HomeServerService extends AbstractService implements HomeServerServ
   }
 
   async setHomeServerConfiguration(config: HomeServerEnvironmentConfiguration): Promise<void> {
-    this.storageService.setValue(StorageKey.HomeServerEnvironmentConfiguration, JSON.stringify(config))
+    const isDesktopEnvironment = this.desktopDevice.environment === Environment.Desktop
+    if (!isDesktopEnvironment) {
+      return
+    }
 
-    await this.setHomeServerConfigurationOnTheDevice()
+    await this.desktopDevice.setHomeServerConfiguration(JSON.stringify(config))
   }
 
-  override deinit() {
-    ;(this.desktopDevice as unknown) = undefined
-    ;(this.storageService as unknown) = undefined
-    super.deinit()
+  async getHomeServerConfiguration(): Promise<HomeServerEnvironmentConfiguration | undefined> {
+    const configurationJSONString = await this.desktopDevice.getHomeServerConfiguration()
+    if (!configurationJSONString) {
+      return undefined
+    }
+
+    return JSON.parse(configurationJSONString) as HomeServerEnvironmentConfiguration
   }
 
   async enableHomeServer(): Promise<void> {
@@ -87,15 +116,6 @@ export class HomeServerService extends AbstractService implements HomeServerServ
     return Result.ok('Home server disabled')
   }
 
-  getHomeServerConfiguration(): HomeServerEnvironmentConfiguration | undefined {
-    const config = this.storageService.getValue(StorageKey.HomeServerEnvironmentConfiguration)
-    if (!config) {
-      return undefined
-    }
-
-    return JSON.parse(config as string) as HomeServerEnvironmentConfiguration
-  }
-
   async changeHomeServerDataLocation(): Promise<Result<string>> {
     const oldLocation = this.getHomeServerDataLocation()
     const newLocation = await this.fileBackupsDevice.presentDirectoryPickerForLocationChangeAndTransferOld(
@@ -121,41 +141,10 @@ export class HomeServerService extends AbstractService implements HomeServerServ
     }
   }
 
-  override async handleApplicationStage(stage: ApplicationStage) {
-    await super.handleApplicationStage(stage)
-
-    switch (stage) {
-      case ApplicationStage.StorageDecrypted_09: {
-        void this.setHomeServerConfigurationOnTheDevice()
-        break
-      }
-      case ApplicationStage.Launched_10: {
-        await this.setHomeServerDataLocationOnDevice()
-        await this.startHomeServerIfItIsEnabled()
-        break
-      }
-    }
-  }
-
   private async startHomeServerIfItIsEnabled(): Promise<void> {
     const homeServerIsEnabled = this.storageService.getValue(StorageKey.HomeServerEnabled, undefined, false)
     if (homeServerIsEnabled) {
       await this.startHomeServer()
-    }
-  }
-
-  private async setHomeServerConfigurationOnTheDevice(): Promise<void> {
-    const isDesktopEnvironment = this.desktopDevice.environment === Environment.Desktop
-    if (!isDesktopEnvironment) {
-      return
-    }
-
-    const homeServerConfiguration = this.storageService.getValue(StorageKey.HomeServerEnvironmentConfiguration) as
-      | string
-      | undefined
-
-    if (homeServerConfiguration !== undefined) {
-      await this.desktopDevice.setHomeServerConfiguration(homeServerConfiguration)
     }
   }
 

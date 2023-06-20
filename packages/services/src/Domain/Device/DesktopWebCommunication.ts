@@ -22,7 +22,5 @@ export interface DesktopClientRequiresWebMethods {
 
   handleWatchedDirectoriesChanges(changes: DesktopWatchedDirectoriesChanges): Promise<void>
 
-  handleHomeServerConfigurationChanged(configJSON: string): Promise<void>
-
   handleHomeServerStarted(serverUrl: string): Promise<void>
 }

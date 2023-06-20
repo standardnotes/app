@@ -20,9 +20,6 @@ process.once('loaded', function () {
     setInstallComponentCompleteHandler: (handler: MainEventHandler) =>
       ipcRenderer.on(MessageToWebApp.InstallComponentComplete, handler),
 
-    setHomeServerConfigurationChangedHandler: (handler: MainEventHandler) =>
-      ipcRenderer.on(MessageToWebApp.HomeServerConfigurationChanged, handler),
-
     setHomeServerStartedHandler: (handler: MainEventHandler) =>
       ipcRenderer.on(MessageToWebApp.HomeServerStarted, handler),
   }

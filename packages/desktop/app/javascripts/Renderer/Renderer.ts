@@ -158,10 +158,6 @@ window.electronMainEvents.setWatchedDirectoriesChangeHandler((_: IpcRendererEven
   void window.webClient.handleWatchedDirectoriesChanges(changes as DesktopWatchedDirectoriesChanges)
 })
 
-window.electronMainEvents.setHomeServerConfigurationChangedHandler((_: IpcRendererEvent, config: unknown) => {
-  void window.webClient.handleHomeServerConfigurationChanged(config as string)
-})
-
 window.electronMainEvents.setHomeServerStartedHandler((_: IpcRendererEvent, serverUrl: unknown) => {
   void window.webClient.handleHomeServerStarted(serverUrl as string)
 })
