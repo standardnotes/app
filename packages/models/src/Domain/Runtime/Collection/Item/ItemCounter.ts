@@ -9,7 +9,7 @@ import { isDecryptedItem, ItemInterface } from '../../../Abstract/Item'
 type AllNotesUuidSignifier = undefined
 export type TagItemCountChangeObserver = (tagUuid: string | AllNotesUuidSignifier) => void
 
-export class TagItemsIndex implements SNIndex {
+export class ItemCounter implements SNIndex {
   private tagToItemsMap: Partial<Record<string, Set<string>>> = {}
   private allCountableItems = new Set<string>()
   private countableItemsByType = new Map<ContentType, Set<string>>()

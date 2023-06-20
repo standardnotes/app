@@ -30,7 +30,7 @@ export class ItemManager
   private observers: ItemsChangeObserver[] = []
   private collection!: Models.ItemCollection
   private systemSmartViews: Models.SmartView[]
-  private tagItemsIndex!: Models.TagItemsIndex
+  private itemCounter!: Models.ItemCounter
 
   private navigationDisplayController!: Models.ItemDisplayController<Models.SNNote | Models.FileItem>
   private tagDisplayController!: Models.ItemDisplayController<Models.SNTag>
@@ -93,7 +93,7 @@ export class ItemManager
       sortDirection: 'asc',
     })
 
-    this.tagItemsIndex = new Models.TagItemsIndex(this.collection, this.tagItemsIndex?.observers)
+    this.itemCounter = new Models.ItemCounter(this.collection, this.itemCounter?.observers)
   }
 
   private get allDisplayControllers(): Models.ItemDisplayController<Models.DisplayItem>[] {
@@ -209,7 +209,7 @@ export class ItemManager
     ;(this.unsubChangeObserver as unknown) = undefined
     ;(this.payloadManager as unknown) = undefined
     ;(this.collection as unknown) = undefined
-    ;(this.tagItemsIndex as unknown) = undefined
+    ;(this.itemCounter as unknown) = undefined
     ;(this.tagDisplayController as unknown) = undefined
     ;(this.navigationDisplayController as unknown) = undefined
     ;(this.itemsKeyDisplayController as unknown) = undefined
@@ -275,26 +275,26 @@ export class ItemManager
   }
 
   public addNoteCountChangeObserver(observer: Models.TagItemCountChangeObserver): () => void {
-    return this.tagItemsIndex.addCountChangeObserver(observer)
+    return this.itemCounter.addCountChangeObserver(observer)
   }
 
   public allCountableNotesCount(): number {
-    return this.tagItemsIndex.allCountableNotesCount()
+    return this.itemCounter.allCountableNotesCount()
   }
 
   public allCountableFilesCount(): number {
-    return this.tagItemsIndex.allCountableFilesCount()
+    return this.itemCounter.allCountableFilesCount()
   }
 
   public countableNotesForTag(tag: Models.SNTag | Models.SmartView): number {
     if (tag instanceof Models.SmartView) {
       if (tag.uuid === Models.SystemViewId.AllNotes) {
-        return this.tagItemsIndex.allCountableNotesCount()
+        return this.itemCounter.allCountableNotesCount()
       }
 
       throw Error('countableItemsForTag is not meant to be used for smart views.')
     }
-    return this.tagItemsIndex.countableItemsForTag(tag)
+    return this.itemCounter.countableItemsForTag(tag)
   }
 
   public getNoteCount(): number {
@@ -400,7 +400,7 @@ export class ItemManager
     }
 
     this.collection.onChange(delta)
-    this.tagItemsIndex.onChange(delta)
+    this.itemCounter.onChange(delta)
 
     const affectedContentTypesArray = Array.from(affectedContentTypes.values())
     for (const controller of this.allDisplayControllers) {

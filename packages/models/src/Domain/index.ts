@@ -43,7 +43,7 @@ export * from './Local/RootKey/RootKeyInterface'
 
 export * from './Runtime/Collection/CollectionSort'
 export * from './Runtime/Collection/Item/ItemCollection'
-export * from './Runtime/Collection/Item/TagItemsIndex'
+export * from './Runtime/Collection/Item/ItemCounter'
 export * from './Runtime/Collection/Payload/ImmutablePayloadCollection'
 export * from './Runtime/Collection/Payload/PayloadCollection'
 export * from './Runtime/Deltas'

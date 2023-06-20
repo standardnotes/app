@@ -1,10 +1,10 @@
+import { ItemCounter } from './ItemCounter'
 import { NoteContent } from '../../../Syncable/Note/NoteContent'
 import { ContentType } from '@standardnotes/common'
 import { DecryptedItem, EncryptedItem } from '../../../Abstract/Item'
 import { DecryptedPayload, EncryptedPayload, PayloadTimestampDefaults } from '../../../Abstract/Payload'
 import { ItemCollection } from './ItemCollection'
 import { FillItemContent } from '../../../Abstract/Content/ItemContent'
-import { TagItemsIndex } from './TagItemsIndex'
 import { ItemDelta } from '../../Index/ItemDelta'
 import { AnyItemInterface } from '../../../Abstract/Item/Interfaces/UnionTypes'
 
@@ -48,7 +48,7 @@ describe('tag notes index', () => {
 
   it('should count both notes and files', () => {
     const collection = new ItemCollection()
-    const index = new TagItemsIndex(collection)
+    const index = new ItemCounter(collection)
 
     const decryptedNote = createDecryptedItem('note')
     const decryptedFile = createDecryptedItem('file')
@@ -61,7 +61,7 @@ describe('tag notes index', () => {
 
   it('should decrement count after decrypted note becomes errored', () => {
     const collection = new ItemCollection()
-    const index = new TagItemsIndex(collection)
+    const index = new ItemCounter(collection)
 
     const decryptedItem = createDecryptedItem()
     collection.set(decryptedItem)
