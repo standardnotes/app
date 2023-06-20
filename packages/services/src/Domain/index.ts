@@ -91,7 +91,6 @@ export * from './Internal/InternalEventPublishStrategy'
 export * from './Internal/InternalEventType'
 
 export * from './Item/StaticItemCounter'
-export * from './Item/ItemCounterInterface'
 export * from './Item/ItemManagerInterface'
 export * from './Item/ItemRelationshipDirection'
 export * from './Item/ItemsClientInterface'

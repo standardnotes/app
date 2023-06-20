@@ -1,8 +1,9 @@
-import { DisplayItem, DisplayControllerCustomFilter } from '../Types'
+import { DecryptedItemInterface } from '../../../Abstract/Item'
+import { DisplayControllerCustomFilter } from '../Types'
 import { CriteriaValidatorInterface } from './CriteriaValidatorInterface'
 
-export class CustomFilterCriteriaValidator<I extends DisplayItem> implements CriteriaValidatorInterface {
-  constructor(private customFilter: DisplayControllerCustomFilter, private element: I) {}
+export class CustomFilterCriteriaValidator implements CriteriaValidatorInterface {
+  constructor(private customFilter: DisplayControllerCustomFilter, private element: DecryptedItemInterface) {}
 
   public passes(): boolean {
     return this.customFilter(this.element)

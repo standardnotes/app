@@ -4,7 +4,14 @@ import { isTag, SNTag } from '../../../Syncable/Tag/Tag'
 import { SNIndex } from '../../Index/SNIndex'
 import { ItemCollection } from './ItemCollection'
 import { ItemDelta } from '../../Index/ItemDelta'
-import { isDecryptedItem, ItemInterface } from '../../../Abstract/Item'
+import { DecryptedItemInterface, isDecryptedItem, ItemInterface } from '../../../Abstract/Item'
+import { DisplayOptions } from '../../Display'
+import { CriteriaValidatorInterface } from '../../Display/Validator/CriteriaValidatorInterface'
+import { CollectionCriteriaValidator } from '../../Display/Validator/CollectionCriteriaValidator'
+import { ExcludeVaultsCriteriaValidator } from '../../Display/Validator/ExcludeVaultsCriteriaValidator'
+import { ExclusiveVaultCriteriaValidator } from '../../Display/Validator/ExclusiveVaultCriteriaValidator'
+import { HiddenContentCriteriaValidator } from '../../Display/Validator/HiddenContentCriteriaValidator'
+import { CustomFilterCriteriaValidator } from '../../Display/Validator/CustomFilterCriteriaValidator'
 
 type AllNotesUuidSignifier = undefined
 export type TagItemCountChangeObserver = (tagUuid: string | AllNotesUuidSignifier) => void
@@ -13,15 +20,9 @@ export class ItemCounter implements SNIndex {
   private tagToItemsMap: Partial<Record<string, Set<string>>> = {}
   private allCountableItems = new Set<string>()
   private countableItemsByType = new Map<ContentType, Set<string>>()
+  private displayOptions?: DisplayOptions
 
   constructor(private collection: ItemCollection, public observers: TagItemCountChangeObserver[] = []) {}
-
-  private isItemCountable = (item: ItemInterface) => {
-    if (isDecryptedItem(item)) {
-      return !item.archived && !item.trashed
-    }
-    return false
-  }
 
   public addCountChangeObserver(observer: TagItemCountChangeObserver): () => void {
     this.observers.push(observer)
@@ -32,10 +33,9 @@ export class ItemCounter implements SNIndex {
     }
   }
 
-  private notifyObservers(tagUuid: string | undefined) {
-    for (const observer of this.observers) {
-      observer(tagUuid)
-    }
+  public setDisplayOptions(options: DisplayOptions) {
+    this.displayOptions = options
+    this.receiveItemChanges(this.collection.all())
   }
 
   public allCountableItemsCount(): number {
@@ -62,6 +62,48 @@ export class ItemCounter implements SNIndex {
 
     this.receiveItemChanges(items)
     this.receiveTagChanges(tags)
+  }
+
+  private passesAllFilters(element: DecryptedItemInterface): boolean {
+    if (!this.displayOptions) {
+      return true
+    }
+
+    const filters: CriteriaValidatorInterface[] = [new CollectionCriteriaValidator(this.collection, element)]
+
+    if (this.displayOptions.vaults) {
+      if (this.displayOptions.vaults.exclude) {
+        filters.push(new ExcludeVaultsCriteriaValidator(this.displayOptions.vaults.exclude, element))
+      } else if (this.displayOptions.vaults.exclusive) {
+        filters.push(new ExclusiveVaultCriteriaValidator(this.displayOptions.vaults.exclusive, element))
+      } else {
+        throw new Error('Invalid vaults option')
+      }
+    }
+
+    if (this.displayOptions.hiddenContentTypes) {
+      filters.push(new HiddenContentCriteriaValidator(this.displayOptions.hiddenContentTypes, element))
+    }
+
+    if (this.displayOptions.customFilter) {
+      filters.push(new CustomFilterCriteriaValidator(this.displayOptions.customFilter, element))
+    }
+
+    return filters.every((f) => f.passes())
+  }
+
+  private isItemCountable = (item: ItemInterface) => {
+    if (isDecryptedItem(item)) {
+      const passesFilters = this.passesAllFilters(item)
+      return passesFilters && !item.archived && !item.trashed
+    }
+    return false
+  }
+
+  private notifyObservers(tagUuid: string | undefined) {
+    for (const observer of this.observers) {
+      observer(tagUuid)
+    }
   }
 
   private receiveTagChanges(tags: SNTag[]): void {

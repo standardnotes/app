@@ -1,9 +1,9 @@
-import { DisplayItem } from '../Types'
 import { VaultListingInterface } from '../../../Syncable/VaultListing/VaultListingInterface'
 import { CriteriaValidatorInterface } from './CriteriaValidatorInterface'
+import { DecryptedItemInterface } from '../../../Abstract/Item'
 
-export class ExcludeVaultsCriteriaValidator<I extends DisplayItem> implements CriteriaValidatorInterface {
-  constructor(private excludeVaults: VaultListingInterface[], private element: I) {}
+export class ExcludeVaultsCriteriaValidator implements CriteriaValidatorInterface {
+  constructor(private excludeVaults: VaultListingInterface[], private element: DecryptedItemInterface) {}
 
   public passes(): boolean {
     const doesElementBelongToExcludedVault = this.excludeVaults.some(

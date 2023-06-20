@@ -7,10 +7,10 @@ import { sortTwoItems } from './SortTwoItems'
 import { UuidToSortedPositionMap, DisplayItem, ReadonlyItemCollection } from './Types'
 import { CriteriaValidatorInterface } from './Validator/CriteriaValidatorInterface'
 import { CollectionCriteriaValidator } from './Validator/CollectionCriteriaValidator'
-import { HiddenContentCriteriaValidator } from './Validator/HiddenContentCriteriaValidator'
 import { CustomFilterCriteriaValidator } from './Validator/CustomFilterCriteriaValidator'
 import { ExcludeVaultsCriteriaValidator } from './Validator/ExcludeVaultsCriteriaValidator'
 import { ExclusiveVaultCriteriaValidator } from './Validator/ExclusiveVaultCriteriaValidator'
+import { HiddenContentCriteriaValidator } from './Validator/HiddenContentCriteriaValidator'
 
 export class ItemDisplayController<I extends DisplayItem> {
   private sortMap: UuidToSortedPositionMap = {}

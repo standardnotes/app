@@ -176,6 +176,8 @@ export class ItemManager
       customFilter: Models.computeUnifiedFilterForDisplayOptions(updatedOptions, this.collection),
       ...updatedOptions,
     })
+
+    this.itemCounter.setDisplayOptions(updatedOptions)
   }
 
   public getDisplayableNotes(): Models.SNNote[] {
