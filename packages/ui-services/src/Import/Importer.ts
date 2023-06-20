@@ -1,5 +1,5 @@
 import { parseFileName } from '@standardnotes/filepicker'
-import { FeatureStatus, WebApplicationInterface } from '@standardnotes/services'
+import { FeatureStatus } from '@standardnotes/services'
 import { FeatureIdentifier } from '@standardnotes/features'
 import { AegisToAuthenticatorConverter } from './AegisConverter/AegisToAuthenticatorConverter'
 import { EvernoteConverter } from './EvernoteConverter/EvernoteConverter'
@@ -8,6 +8,7 @@ import { PlaintextConverter } from './PlaintextConverter/PlaintextConverter'
 import { SimplenoteConverter } from './SimplenoteConverter/SimplenoteConverter'
 import { readFileAsText } from './Utils'
 import { DecryptedTransferPayload, NoteContent } from '@standardnotes/models'
+import { WebApplicationInterface } from '../WebApplication/WebApplicationInterface'
 
 export type NoteImportType = 'plaintext' | 'evernote' | 'google-keep' | 'simplenote' | 'aegis'
 

@@ -3,7 +3,7 @@ import {
   ApplicationEvent,
   ClientDisplayableError,
   convertTimestampToMilliseconds,
-  InternalEventBus,
+  InternalEventBusInterface,
   Invitation,
   InvitationStatus,
   SubscriptionClientInterface,
@@ -34,7 +34,7 @@ export class SubscriptionController extends AbstractViewController {
 
   constructor(
     application: WebApplication,
-    eventBus: InternalEventBus,
+    eventBus: InternalEventBusInterface,
     private subscriptionManager: SubscriptionClientInterface,
   ) {
     super(application, eventBus)

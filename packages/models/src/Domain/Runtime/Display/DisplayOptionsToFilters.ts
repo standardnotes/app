@@ -5,10 +5,10 @@ import { CompoundPredicate } from '../Predicate/CompoundPredicate'
 import { ItemWithTags } from './Search/ItemWithTags'
 import { itemMatchesQuery, itemPassesFilters } from './Search/SearchUtilities'
 import { ItemFilter, ReferenceLookupCollection, SearchableDecryptedItem } from './Search/Types'
-import { FilterDisplayOptions } from './DisplayOptions'
+import { NotesAndFilesDisplayOptions } from './DisplayOptions'
 
 export function computeUnifiedFilterForDisplayOptions(
-  options: FilterDisplayOptions,
+  options: NotesAndFilesDisplayOptions,
   collection: ReferenceLookupCollection,
 ): ItemFilter {
   const filters = computeFiltersForDisplayOptions(options, collection)
@@ -19,7 +19,7 @@ export function computeUnifiedFilterForDisplayOptions(
 }
 
 export function computeFiltersForDisplayOptions(
-  options: FilterDisplayOptions,
+  options: NotesAndFilesDisplayOptions,
   collection: ReferenceLookupCollection,
 ): ItemFilter[] {
   const filters: ItemFilter[] = []

@@ -21,7 +21,7 @@ import {
   ClientDisplayableError,
   ContentType,
   FileItem,
-  InternalEventBus,
+  InternalEventBusInterface,
   isFile,
   Platform,
 } from '@standardnotes/snjs'
@@ -68,7 +68,7 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
     application: WebApplication,
     private notesController: NotesController,
     private filePreviewModalController: FilePreviewModalController,
-    eventBus: InternalEventBus,
+    eventBus: InternalEventBusInterface,
   ) {
     super(application, eventBus)
 

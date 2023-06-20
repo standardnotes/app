@@ -5,13 +5,13 @@ import { SNIndex } from '../../Index/SNIndex'
 import { ItemCollection } from './ItemCollection'
 import { ItemDelta } from '../../Index/ItemDelta'
 import { DecryptedItemInterface, isDecryptedItem, ItemInterface } from '../../../Abstract/Item'
-import { DisplayOptions } from '../../Display'
 import { CriteriaValidatorInterface } from '../../Display/Validator/CriteriaValidatorInterface'
 import { CollectionCriteriaValidator } from '../../Display/Validator/CollectionCriteriaValidator'
 import { ExcludeVaultsCriteriaValidator } from '../../Display/Validator/ExcludeVaultsCriteriaValidator'
 import { ExclusiveVaultCriteriaValidator } from '../../Display/Validator/ExclusiveVaultCriteriaValidator'
 import { HiddenContentCriteriaValidator } from '../../Display/Validator/HiddenContentCriteriaValidator'
 import { CustomFilterCriteriaValidator } from '../../Display/Validator/CustomFilterCriteriaValidator'
+import { AnyDisplayOptions, VaultDisplayOptions } from '../../Display'
 
 type AllNotesUuidSignifier = undefined
 export type TagItemCountChangeObserver = (tagUuid: string | AllNotesUuidSignifier) => void
@@ -20,7 +20,8 @@ export class ItemCounter implements SNIndex {
   private tagToItemsMap: Partial<Record<string, Set<string>>> = {}
   private allCountableItems = new Set<string>()
   private countableItemsByType = new Map<ContentType, Set<string>>()
-  private displayOptions?: DisplayOptions
+  private displayOptions?: AnyDisplayOptions
+  private vaultDisplayOptions?: VaultDisplayOptions
 
   constructor(private collection: ItemCollection, public observers: TagItemCountChangeObserver[] = []) {}
 
@@ -33,8 +34,13 @@ export class ItemCounter implements SNIndex {
     }
   }
 
-  public setDisplayOptions(options: DisplayOptions) {
+  public setDisplayOptions(options: AnyDisplayOptions) {
     this.displayOptions = options
+    this.receiveItemChanges(this.collection.all())
+  }
+
+  public setVaultDisplayOptions(options: VaultDisplayOptions) {
+    this.vaultDisplayOptions = options
     this.receiveItemChanges(this.collection.all())
   }
 
@@ -71,21 +77,21 @@ export class ItemCounter implements SNIndex {
 
     const filters: CriteriaValidatorInterface[] = [new CollectionCriteriaValidator(this.collection, element)]
 
-    if (this.displayOptions.vaults) {
-      if (this.displayOptions.vaults.exclude) {
-        filters.push(new ExcludeVaultsCriteriaValidator(this.displayOptions.vaults.exclude, element))
-      } else if (this.displayOptions.vaults.exclusive) {
-        filters.push(new ExclusiveVaultCriteriaValidator(this.displayOptions.vaults.exclusive, element))
+    if (this.vaultDisplayOptions) {
+      if (this.vaultDisplayOptions.exclude) {
+        filters.push(new ExcludeVaultsCriteriaValidator(this.vaultDisplayOptions.exclude, element))
+      } else if (this.vaultDisplayOptions.exclusive) {
+        filters.push(new ExclusiveVaultCriteriaValidator(this.vaultDisplayOptions.exclusive, element))
       } else {
         throw new Error('Invalid vaults option')
       }
     }
 
-    if (this.displayOptions.hiddenContentTypes) {
+    if ('hiddenContentTypes' in this.displayOptions && this.displayOptions.hiddenContentTypes) {
       filters.push(new HiddenContentCriteriaValidator(this.displayOptions.hiddenContentTypes, element))
     }
 
-    if (this.displayOptions.customFilter) {
+    if ('customFilter' in this.displayOptions && this.displayOptions.customFilter) {
       filters.push(new CustomFilterCriteriaValidator(this.displayOptions.customFilter, element))
     }
 

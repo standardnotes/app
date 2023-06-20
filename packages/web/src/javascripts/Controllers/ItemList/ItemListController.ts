@@ -10,8 +10,6 @@ import {
   SNNote,
   SNTag,
   SystemViewId,
-  DisplayOptions,
-  InternalEventBus,
   InternalEventHandlerInterface,
   InternalEventInterface,
   FileItem,
@@ -26,6 +24,8 @@ import {
   VaultListingInterface,
   VaultDisplayOptions,
   VaultDisplayOptionsPersistable,
+  NotesAndFilesDisplayControllerOptions,
+  InternalEventBusInterface,
 } from '@standardnotes/snjs'
 import { action, computed, makeObservable, observable, reaction, runInAction } from 'mobx'
 import { WebApplication } from '../../Application/WebApplication'
@@ -37,16 +37,18 @@ import { SelectedItemsController } from '../SelectedItemsController'
 import { NotesController } from '../NotesController/NotesController'
 import { formatDateAndTimeForNote } from '@/Utils/DateUtils'
 import { PrefDefaults } from '@/Constants/PrefDefaults'
+
 import dayjs from 'dayjs'
 import dayjsAdvancedFormat from 'dayjs/plugin/advancedFormat'
 dayjs.extend(dayjsAdvancedFormat)
-import { LinkingController } from '../LinkingController'
+
 import { AbstractViewController } from '../Abstract/AbstractViewController'
 import { log, LoggingDomain } from '@/Logging'
 import { NoteViewController } from '@/Components/NoteView/Controller/NoteViewController'
 import { FileViewController } from '@/Components/NoteView/Controller/FileViewController'
 import { TemplateNoteViewAutofocusBehavior } from '@/Components/NoteView/Controller/TemplateNoteViewControllerOptions'
 import { ItemsReloadSource } from './ItemsReloadSource'
+import { VaultDisplayServiceEvent } from '@standardnotes/ui-services'
 
 const MinNoteCellHeight = 51.0
 const DefaultListNumNotes = 20
@@ -63,7 +65,7 @@ export class ItemListController extends AbstractViewController implements Intern
   renderedItems: ListableContentItem[] = []
   searchSubmitted = false
   showDisplayOptionsMenu = false
-  displayOptions: DisplayOptions = {
+  displayOptions: NotesAndFilesDisplayControllerOptions = {
     sortBy: CollectionSort.CreatedAt,
     sortDirection: 'dsc',
     includePinned: true,
@@ -100,13 +102,13 @@ export class ItemListController extends AbstractViewController implements Intern
     private searchOptionsController: SearchOptionsController,
     private selectionController: SelectedItemsController,
     private notesController: NotesController,
-    private linkingController: LinkingController,
-    eventBus: InternalEventBus,
+    eventBus: InternalEventBusInterface,
   ) {
     super(application, eventBus)
 
     eventBus.addEventHandler(this, CrossControllerEvent.TagChanged)
     eventBus.addEventHandler(this, CrossControllerEvent.ActiveEditorChanged)
+    eventBus.addEventHandler(this, VaultDisplayServiceEvent.VaultDisplayOptionsChanged)
 
     this.resetPagination()
 
@@ -211,13 +213,6 @@ export class ItemListController extends AbstractViewController implements Intern
       onFilterEnter: action,
       handleFilterTextChanged: action,
 
-      isVaultExplicitelyExcluded: observable,
-      isVaultExclusivelyShown: observable,
-      hideVault: action,
-      unhideVault: action,
-      showOnlyVault: action,
-      setVaultSelectionOptions: action,
-
       optionsSubtitle: computed,
       activeControllerItem: computed,
     })
@@ -233,6 +228,8 @@ export class ItemListController extends AbstractViewController implements Intern
       await this.handleTagChange(payload.userTriggered)
     } else if (event.type === CrossControllerEvent.ActiveEditorChanged) {
       this.handleEditorChange().catch(console.error)
+    } else if (event.type === VaultDisplayServiceEvent.VaultDisplayOptionsChanged) {
+      void this.reloadItems(ItemsReloadSource.DisplayOptionsChange)
     }
   }
 
@@ -500,10 +497,9 @@ export class ItemListController extends AbstractViewController implements Intern
       includeTrashed = this.displayOptions.includeTrashed ?? false
     }
 
-    const criteria: DisplayOptions = {
+    const criteria: NotesAndFilesDisplayControllerOptions = {
       sortBy: this.displayOptions.sortBy,
       sortDirection: this.displayOptions.sortDirection,
-      vaults: this.displayOptions.vaults,
       tags: tag instanceof SNTag ? [tag] : [],
       views: tag instanceof SmartView ? [tag] : [],
       includeArchived,
@@ -517,58 +513,6 @@ export class ItemListController extends AbstractViewController implements Intern
     }
 
     this.application.items.setPrimaryItemDisplayOptions(criteria)
-  }
-
-  isVaultExplicitelyExcluded = (vault: VaultListingInterface): boolean => {
-    const vaultOptions = this.displayOptions.vaults
-    return vaultOptions?.isVaultExplicitelyExcluded(vault) ?? false
-  }
-
-  isVaultExclusivelyShown = (vault: VaultListingInterface): boolean => {
-    const vaultOptions = this.displayOptions.vaults
-    if (!vaultOptions) {
-      return false
-    }
-
-    return vaultOptions.exclusive?.uuid === vault.uuid
-  }
-
-  hideVault = (vault: VaultListingInterface) => {
-    const vaultOptions = this.displayOptions.vaults
-
-    if (!vaultOptions) {
-      const newOptions = new VaultDisplayOptions({ exclude: [vault] })
-      this.setVaultSelectionOptions(newOptions)
-    } else {
-      const newOptions = vaultOptions.newOptionsByExcludingVault(vault)
-      this.setVaultSelectionOptions(newOptions)
-    }
-  }
-
-  unhideVault = (vault: VaultListingInterface) => {
-    const vaultOptions = this.displayOptions.vaults
-
-    if (!vaultOptions) {
-      const newOptions = new VaultDisplayOptions({ exclude: [] })
-      this.setVaultSelectionOptions(newOptions)
-    } else {
-      const newOptions = vaultOptions.newOptionsByUnexcludingVault(vault)
-      this.setVaultSelectionOptions(newOptions)
-    }
-  }
-
-  showOnlyVault = (vault: VaultListingInterface) => {
-    const newOptions = new VaultDisplayOptions({ exclusive: vault })
-    this.setVaultSelectionOptions(newOptions)
-  }
-
-  setVaultSelectionOptions = (options: VaultDisplayOptions) => {
-    this.displayOptions = {
-      ...this.displayOptions,
-      vaults: options,
-    }
-    this.application.setValue(StorageKey.VaultSelectionOptions, options.getPersistableValue())
-    void this.reloadDisplayPreferences({ userTriggered: true })
   }
 
   getVaultSelectionOptionsFromDisk = (): VaultDisplayOptions | undefined => {
@@ -590,7 +534,7 @@ export class ItemListController extends AbstractViewController implements Intern
   }: {
     userTriggered: boolean
   }): Promise<{ didReloadItems: boolean }> => {
-    const newDisplayOptions = {} as DisplayOptions
+    const newDisplayOptions = {} as NotesAndFilesDisplayControllerOptions
     const newWebDisplayOptions = {} as WebDisplayOptions
 
     const selectedTag = this.navigationController.selected
@@ -609,10 +553,6 @@ export class ItemListController extends AbstractViewController implements Intern
       sortBy = CollectionSort.UpdatedAt
     }
     newDisplayOptions.sortBy = sortBy
-
-    newDisplayOptions.vaults = !this.displayOptions.vaults
-      ? this.getVaultSelectionOptionsFromDisk()
-      : this.displayOptions.vaults
 
     const currentSortDirection = this.displayOptions.sortDirection
     newDisplayOptions.sortDirection =
@@ -664,7 +604,6 @@ export class ItemListController extends AbstractViewController implements Intern
     )
 
     const displayOptionsChanged =
-      newDisplayOptions.vaults?.getPersistableValue() !== this.displayOptions.vaults?.getPersistableValue() ||
       newDisplayOptions.sortBy !== this.displayOptions.sortBy ||
       newDisplayOptions.sortDirection !== this.displayOptions.sortDirection ||
       newDisplayOptions.includePinned !== this.displayOptions.includePinned ||

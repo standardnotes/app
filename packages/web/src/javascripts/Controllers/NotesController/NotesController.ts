@@ -7,10 +7,10 @@ import {
   NoteMutator,
   ContentType,
   SNTag,
-  InternalEventBus,
   PrefKey,
   ApplicationEvent,
   EditorLineWidth,
+  InternalEventBusInterface,
 } from '@standardnotes/snjs'
 import { makeObservable, observable, action, computed, runInAction } from 'mobx'
 import { WebApplication } from '../../Application/WebApplication'
@@ -48,7 +48,7 @@ export class NotesController extends AbstractViewController implements NotesCont
     application: WebApplication,
     private selectionController: SelectedItemsController,
     private navigationController: NavigationController,
-    eventBus: InternalEventBus,
+    eventBus: InternalEventBusInterface,
   ) {
     super(application, eventBus)
 

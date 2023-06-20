@@ -14,10 +14,11 @@ import {
   DecryptedItemInterface,
   SNComponent,
   SNTheme,
-  DisplayOptions,
   ItemsKeyInterface,
   ItemContent,
   DecryptedPayload,
+  NotesAndFilesDisplayControllerOptions,
+  VaultDisplayOptions,
 } from '@standardnotes/models'
 
 export interface ItemsClientInterface {
@@ -49,7 +50,8 @@ export interface ItemsClientInterface {
 
   get trashedItems(): SNNote[]
 
-  setPrimaryItemDisplayOptions(options: DisplayOptions): void
+  setPrimaryItemDisplayOptions(options: NotesAndFilesDisplayControllerOptions): void
+  setVaultDisplayOptions(options: VaultDisplayOptions): void
 
   getDisplayableNotes(): SNNote[]
 

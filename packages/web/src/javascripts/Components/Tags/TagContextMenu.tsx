@@ -26,7 +26,9 @@ const TagContextMenu = ({ navigationController, isEntitledToFolders, selectedTag
   const { contextMenuOpen, contextMenuClickLocation, application } = navigationController
 
   const contextMenuRef = useRef<HTMLDivElement>(null)
-  useCloseOnClickOutside(contextMenuRef, () => navigationController.setContextMenuOpen(false))
+
+  /** @TODO Needs fixing to handle clicking on the vault selection sub menu */
+  // useCloseOnClickOutside(contextMenuRef, () => navigationController.setContextMenuOpen(false))
 
   const onClickAddSubtag = useCallback(() => {
     if (!isEntitledToFolders) {

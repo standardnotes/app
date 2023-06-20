@@ -1,6 +1,6 @@
 import { ContentType } from '@standardnotes/common'
 import { SNTag } from '../../../Syncable/Tag'
-import { FilterDisplayOptions } from '../DisplayOptions'
+import { NotesAndFilesDisplayOptions } from '../DisplayOptions'
 import { computeFiltersForDisplayOptions } from '../DisplayOptionsToFilters'
 import { SearchableItem } from './SearchableItem'
 import { ReferenceLookupCollection, ItemFilter, SearchQuery, SearchableDecryptedItem } from './Types'
@@ -13,8 +13,8 @@ enum MatchResult {
   Uuid = 5,
 }
 
-export function itemsMatchingOptions(
-  options: FilterDisplayOptions,
+export function notesAndFilesMatchingOptions(
+  options: NotesAndFilesDisplayOptions,
   fromItems: SearchableDecryptedItem[],
   collection: ReferenceLookupCollection,
 ): SearchableItem[] {

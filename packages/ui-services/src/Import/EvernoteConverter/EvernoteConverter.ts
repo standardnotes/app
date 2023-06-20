@@ -1,10 +1,10 @@
 import { ContentType } from '@standardnotes/common'
-import { WebApplicationInterface } from '@standardnotes/services'
 import { DecryptedTransferPayload, NoteContent, TagContent } from '@standardnotes/models'
 import { readFileAsText } from '../Utils'
 import dayjs from 'dayjs'
 import customParseFormat from 'dayjs/plugin/customParseFormat'
 import utc from 'dayjs/plugin/utc'
+import { WebApplicationInterface } from '../../WebApplication/WebApplicationInterface'
 dayjs.extend(customParseFormat)
 dayjs.extend(utc)
 

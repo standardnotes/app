@@ -12,7 +12,9 @@ type Props = {
 export const ShouldPersistNoteStateKey = 'ShouldPersistNoteState'
 
 const Persistence = ({ application }: Props) => {
-  const [shouldPersistNoteState, setShouldPersistNoteState] = useState(application.getValue(ShouldPersistNoteStateKey))
+  const [shouldPersistNoteState, setShouldPersistNoteState] = useState(
+    application.getValue<boolean>(ShouldPersistNoteStateKey),
+  )
 
   const toggleStatePersistence = (shouldPersist: boolean) => {
     application.setValue(ShouldPersistNoteStateKey, shouldPersist)

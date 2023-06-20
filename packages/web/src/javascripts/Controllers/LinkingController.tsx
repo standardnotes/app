@@ -9,13 +9,13 @@ import {
   ApplicationEvent,
   ContentType,
   FileItem,
-  InternalEventBus,
   naturalSort,
   PrefKey,
   SNNote,
   SNTag,
   isFile,
   isNote,
+  InternalEventBusInterface,
 } from '@standardnotes/snjs'
 import { action, computed, makeObservable, observable } from 'mobx'
 import { AbstractViewController } from './Abstract/AbstractViewController'
@@ -37,7 +37,7 @@ export class LinkingController extends AbstractViewController {
     application: WebApplication,
     private navigationController: NavigationController,
     private selectionController: SelectedItemsController,
-    eventBus: InternalEventBus,
+    eventBus: InternalEventBusInterface,
   ) {
     super(application, eventBus)
 

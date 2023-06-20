@@ -8,20 +8,19 @@ import { observer } from 'mobx-react-lite'
 const SingleVaultSelectionMenu: FunctionComponent = () => {
   const application = useApplication()
   const vaults = application.vaults.getVaults()
-  const itemListController = application.getViewControllerManager().itemListController
 
   const isVaultVisible = useCallback(
     (vault: VaultListingInterface) => {
-      return itemListController.isVaultExclusivelyShown(vault)
+      return application.vaultDisplayService.isVaultExclusivelyShown(vault)
     },
-    [itemListController],
+    [application],
   )
 
   const selectVault = useCallback(
     (vault: VaultListingInterface) => {
-      itemListController.showOnlyVault(vault)
+      application.vaultDisplayService.showOnlyVault(vault)
     },
-    [itemListController],
+    [application],
   )
 
   return (

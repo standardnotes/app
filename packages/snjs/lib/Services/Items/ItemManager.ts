@@ -32,8 +32,11 @@ export class ItemManager
   private systemSmartViews: Models.SmartView[]
   private itemCounter!: Models.ItemCounter
 
-  private navigationDisplayController!: Models.ItemDisplayController<Models.SNNote | Models.FileItem>
-  private tagDisplayController!: Models.ItemDisplayController<Models.SNTag>
+  private navigationDisplayController!: Models.ItemDisplayController<
+    Models.SNNote | Models.FileItem,
+    Models.NotesAndFilesDisplayOptions
+  >
+  private tagDisplayController!: Models.ItemDisplayController<Models.SNTag, Models.TagsDisplayOptions>
   private itemsKeyDisplayController!: Models.ItemDisplayController<SNItemsKey>
   private componentDisplayController!: Models.ItemDisplayController<Models.SNComponent>
   private themeDisplayController!: Models.ItemDisplayController<Models.SNTheme>
@@ -51,7 +54,7 @@ export class ItemManager
     this.unsubChangeObserver = this.payloadManager.addObserver(ContentType.Any, this.setPayloads.bind(this))
   }
 
-  private rebuildSystemSmartViews(criteria: Models.FilterDisplayOptions): Models.SmartView[] {
+  private rebuildSystemSmartViews(criteria: Models.NotesAndFilesDisplayOptions): Models.SmartView[] {
     this.systemSmartViews = Models.BuildSmartViews(criteria)
     return this.systemSmartViews
   }
@@ -120,8 +123,8 @@ export class ItemManager
     return new Models.DecryptedPayload(object)
   }
 
-  public setPrimaryItemDisplayOptions(options: Models.DisplayOptions): void {
-    const override: Models.FilterDisplayOptions = {}
+  public setPrimaryItemDisplayOptions(options: Models.NotesAndFilesDisplayControllerOptions): void {
+    const override: Models.NotesAndFilesDisplayOptions = {}
 
     if (options.views && options.views.find((view) => view.uuid === Models.SystemViewId.AllNotes)) {
       if (options.includeArchived === undefined) {
@@ -159,7 +162,7 @@ export class ItemManager
       })
       .filter((view) => view != undefined)
 
-    const updatedOptions: Models.DisplayOptions = {
+    const updatedOptions: Models.DisplayControllerDisplayOptions & Models.NotesAndFilesDisplayOptions = {
       ...options,
       ...override,
       ...{
@@ -178,6 +181,12 @@ export class ItemManager
     })
 
     this.itemCounter.setDisplayOptions(updatedOptions)
+  }
+
+  public setVaultDisplayOptions(options: Models.VaultDisplayOptions): void {
+    this.navigationDisplayController.setVaultDisplayOptions(options)
+    this.tagDisplayController.setVaultDisplayOptions(options)
+    this.itemCounter.setVaultDisplayOptions(options)
   }
 
   public getDisplayableNotes(): Models.SNNote[] {
@@ -1275,11 +1284,11 @@ export class ItemManager
   }
 
   public notesMatchingSmartView(view: Models.SmartView): Models.SNNote[] {
-    const criteria: Models.FilterDisplayOptions = {
+    const criteria: Models.NotesAndFilesDisplayOptions = {
       views: [view],
     }
 
-    return Models.itemsMatchingOptions(
+    return Models.notesAndFilesMatchingOptions(
       criteria,
       this.collection.allDecrypted(ContentType.Note),
       this.collection,

@@ -38,7 +38,7 @@ describe('note display criteria', function () {
       includePinned: false,
     }
     expect(
-      itemsMatchingOptions(criteria, this.itemManager.collection.all(ContentType.Note), this.itemManager.collection)
+      notesAndFilesMatchingOptions(criteria, this.itemManager.collection.all(ContentType.Note), this.itemManager.collection)
         .length,
     ).to.equal(1)
   })
@@ -51,7 +51,7 @@ describe('note display criteria', function () {
     })
     const criteria = { includePinned: true }
     expect(
-      itemsMatchingOptions(criteria, this.itemManager.collection.all(ContentType.Note), this.itemManager.collection)
+      notesAndFilesMatchingOptions(criteria, this.itemManager.collection.all(ContentType.Note), this.itemManager.collection)
         .length,
     ).to.equal(2)
   })
@@ -64,7 +64,7 @@ describe('note display criteria', function () {
     })
     const criteria = { includeTrashed: false }
     expect(
-      itemsMatchingOptions(criteria, this.itemManager.collection.all(ContentType.Note), this.itemManager.collection)
+      notesAndFilesMatchingOptions(criteria, this.itemManager.collection.all(ContentType.Note), this.itemManager.collection)
         .length,
     ).to.equal(1)
   })
@@ -77,7 +77,7 @@ describe('note display criteria', function () {
     })
     const criteria = { includeTrashed: true }
     expect(
-      itemsMatchingOptions(criteria, this.itemManager.collection.all(ContentType.Note), this.itemManager.collection)
+      notesAndFilesMatchingOptions(criteria, this.itemManager.collection.all(ContentType.Note), this.itemManager.collection)
         .length,
     ).to.equal(2)
   })
@@ -90,7 +90,7 @@ describe('note display criteria', function () {
     })
     const criteria = { includeArchived: false }
     expect(
-      itemsMatchingOptions(criteria, this.itemManager.collection.all(ContentType.Note), this.itemManager.collection)
+      notesAndFilesMatchingOptions(criteria, this.itemManager.collection.all(ContentType.Note), this.itemManager.collection)
         .length,
     ).to.equal(1)
   })
@@ -105,7 +105,7 @@ describe('note display criteria', function () {
       includeArchived: true,
     }
     expect(
-      itemsMatchingOptions(criteria, this.itemManager.collection.all(ContentType.Note), this.itemManager.collection)
+      notesAndFilesMatchingOptions(criteria, this.itemManager.collection.all(ContentType.Note), this.itemManager.collection)
         .length,
     ).to.equal(2)
   })
@@ -118,7 +118,7 @@ describe('note display criteria', function () {
     })
     const criteria = { includeProtected: false }
     expect(
-      itemsMatchingOptions(criteria, this.itemManager.collection.all(ContentType.Note), this.itemManager.collection)
+      notesAndFilesMatchingOptions(criteria, this.itemManager.collection.all(ContentType.Note), this.itemManager.collection)
         .length,
     ).to.equal(1)
   })
@@ -133,7 +133,7 @@ describe('note display criteria', function () {
       includeProtected: true,
     }
     expect(
-      itemsMatchingOptions(criteria, this.itemManager.collection.all(ContentType.Note), this.itemManager.collection)
+      notesAndFilesMatchingOptions(criteria, this.itemManager.collection.all(ContentType.Note), this.itemManager.collection)
         .length,
     ).to.equal(2)
   })
@@ -147,7 +147,7 @@ describe('note display criteria', function () {
       searchQuery: { query: 'world', includeProtectedNoteText: false },
     }
     expect(
-      itemsMatchingOptions(criteria, this.itemManager.collection.all(ContentType.Note), this.itemManager.collection)
+      notesAndFilesMatchingOptions(criteria, this.itemManager.collection.all(ContentType.Note), this.itemManager.collection)
         .length,
     ).to.equal(0)
   })
@@ -161,7 +161,7 @@ describe('note display criteria', function () {
       searchQuery: { query: 'world', includeProtectedNoteText: true },
     }
     expect(
-      itemsMatchingOptions(criteria, this.itemManager.collection.all(ContentType.Note), this.itemManager.collection)
+      notesAndFilesMatchingOptions(criteria, this.itemManager.collection.all(ContentType.Note), this.itemManager.collection)
         .length,
     ).to.equal(1)
   })
@@ -175,7 +175,7 @@ describe('note display criteria', function () {
       tags: [tag],
     }
     expect(
-      itemsMatchingOptions(
+      notesAndFilesMatchingOptions(
         matchingCriteria,
         this.itemManager.collection.all(ContentType.Note),
         this.itemManager.collection,
@@ -186,7 +186,7 @@ describe('note display criteria', function () {
       tags: [looseTag],
     }
     expect(
-      itemsMatchingOptions(
+      notesAndFilesMatchingOptions(
         nonmatchingCriteria,
         this.itemManager.collection.all(ContentType.Note),
         this.itemManager.collection,
@@ -198,7 +198,7 @@ describe('note display criteria', function () {
     it('normal note', async function () {
       await this.createNote()
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.allNotesSmartView],
           },
@@ -208,7 +208,7 @@ describe('note display criteria', function () {
       ).to.equal(1)
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.trashSmartView],
           },
@@ -218,7 +218,7 @@ describe('note display criteria', function () {
       ).to.equal(0)
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.archivedSmartView],
           },
@@ -235,7 +235,7 @@ describe('note display criteria', function () {
       })
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.allNotesSmartView],
             includeTrashed: false,
@@ -246,7 +246,7 @@ describe('note display criteria', function () {
       ).to.equal(0)
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.trashSmartView],
           },
@@ -256,7 +256,7 @@ describe('note display criteria', function () {
       ).to.equal(1)
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.archivedSmartView],
           },
@@ -273,7 +273,7 @@ describe('note display criteria', function () {
         mutator.archived = true
       })
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.allNotesSmartView],
             includeArchived: false,
@@ -284,7 +284,7 @@ describe('note display criteria', function () {
       ).to.equal(0)
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.trashSmartView],
           },
@@ -294,7 +294,7 @@ describe('note display criteria', function () {
       ).to.equal(0)
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.archivedSmartView],
           },
@@ -312,7 +312,7 @@ describe('note display criteria', function () {
       })
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.allNotesSmartView],
           },
@@ -322,7 +322,7 @@ describe('note display criteria', function () {
       ).to.equal(1)
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.trashSmartView],
           },
@@ -332,7 +332,7 @@ describe('note display criteria', function () {
       ).to.equal(1)
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.archivedSmartView],
           },
@@ -348,7 +348,7 @@ describe('note display criteria', function () {
       await this.createNote()
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.allNotesSmartView],
             includeTrashed: true,
@@ -359,7 +359,7 @@ describe('note display criteria', function () {
       ).to.equal(1)
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.trashSmartView],
             includeTrashed: true,
@@ -378,7 +378,7 @@ describe('note display criteria', function () {
       })
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.allNotesSmartView],
             includeTrashed: false,
@@ -389,7 +389,7 @@ describe('note display criteria', function () {
       ).to.equal(0)
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.allNotesSmartView],
             includeTrashed: true,
@@ -400,7 +400,7 @@ describe('note display criteria', function () {
       ).to.equal(1)
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.trashSmartView],
             includeTrashed: true,
@@ -411,7 +411,7 @@ describe('note display criteria', function () {
       ).to.equal(1)
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.archivedSmartView],
             includeTrashed: true,
@@ -431,7 +431,7 @@ describe('note display criteria', function () {
       })
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.allNotesSmartView],
           },
@@ -441,7 +441,7 @@ describe('note display criteria', function () {
       ).to.equal(1)
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.trashSmartView],
           },
@@ -451,7 +451,7 @@ describe('note display criteria', function () {
       ).to.equal(1)
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.archivedSmartView],
           },
@@ -467,7 +467,7 @@ describe('note display criteria', function () {
       await this.createNote()
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.allNotesSmartView],
             includeArchived: true,
@@ -478,7 +478,7 @@ describe('note display criteria', function () {
       ).to.equal(1)
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.trashSmartView],
             includeArchived: true,
@@ -496,7 +496,7 @@ describe('note display criteria', function () {
       })
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.allNotesSmartView],
             includeArchived: false,
@@ -507,7 +507,7 @@ describe('note display criteria', function () {
       ).to.equal(0)
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.allNotesSmartView],
             includeArchived: true,
@@ -518,7 +518,7 @@ describe('note display criteria', function () {
       ).to.equal(1)
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.trashSmartView],
             includeArchived: true,
@@ -529,7 +529,7 @@ describe('note display criteria', function () {
       ).to.equal(0)
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.archivedSmartView],
             includeArchived: false,
@@ -548,7 +548,7 @@ describe('note display criteria', function () {
       })
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.allNotesSmartView],
             includeArchived: true,
@@ -559,7 +559,7 @@ describe('note display criteria', function () {
       ).to.equal(1)
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.trashSmartView],
             includeArchived: true,
@@ -570,7 +570,7 @@ describe('note display criteria', function () {
       ).to.equal(1)
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.archivedSmartView],
             includeArchived: true,
@@ -587,7 +587,7 @@ describe('note display criteria', function () {
       await this.createNote()
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [
               this.itemManager.allNotesSmartView,
@@ -601,7 +601,7 @@ describe('note display criteria', function () {
       ).to.equal(1)
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.trashSmartView],
           },
@@ -618,7 +618,7 @@ describe('note display criteria', function () {
       })
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.allNotesSmartView],
             includeArchived: false,
@@ -629,7 +629,7 @@ describe('note display criteria', function () {
       ).to.equal(0)
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.allNotesSmartView],
             includeArchived: true,
@@ -640,7 +640,7 @@ describe('note display criteria', function () {
       ).to.equal(1)
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.trashSmartView],
             includeArchived: true,
@@ -651,7 +651,7 @@ describe('note display criteria', function () {
       ).to.equal(0)
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.archivedSmartView],
             includeArchived: false,
@@ -670,7 +670,7 @@ describe('note display criteria', function () {
       })
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.allNotesSmartView],
             includeArchived: true,
@@ -681,7 +681,7 @@ describe('note display criteria', function () {
       ).to.equal(0)
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.trashSmartView],
             includeArchived: true,
@@ -692,7 +692,7 @@ describe('note display criteria', function () {
       ).to.equal(1)
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.archivedSmartView],
             includeArchived: true,

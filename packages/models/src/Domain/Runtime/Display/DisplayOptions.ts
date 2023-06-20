@@ -4,24 +4,29 @@ import { SNTag } from '../../Syncable/Tag'
 import { CollectionSortDirection, CollectionSortProperty } from '../Collection/CollectionSort'
 import { SearchQuery } from './Search/Types'
 import { DisplayControllerCustomFilter } from './Types'
-import { VaultDisplayOptions } from './VaultDisplayOptions'
 
-export type DisplayOptions = FilterDisplayOptions & DisplayControllerOptions
-
-export interface FilterDisplayOptions {
-  tags?: SNTag[]
-  views?: SmartView[]
-  vaults?: VaultDisplayOptions
-  searchQuery?: SearchQuery
+export interface GenericDisplayOptions {
   includePinned?: boolean
   includeProtected?: boolean
   includeTrashed?: boolean
   includeArchived?: boolean
 }
 
-export interface DisplayControllerOptions {
-  sortBy: CollectionSortProperty
-  sortDirection: CollectionSortDirection
+export interface NotesAndFilesDisplayOptions extends GenericDisplayOptions {
+  tags?: SNTag[]
+  views?: SmartView[]
+  searchQuery?: SearchQuery
   hiddenContentTypes?: ContentType[]
   customFilter?: DisplayControllerCustomFilter
 }
+
+export type TagsDisplayOptions = GenericDisplayOptions
+
+export interface DisplayControllerDisplayOptions extends GenericDisplayOptions {
+  sortBy: CollectionSortProperty
+  sortDirection: CollectionSortDirection
+}
+
+export type NotesAndFilesDisplayControllerOptions = NotesAndFilesDisplayOptions & DisplayControllerDisplayOptions
+export type TagsDisplayControllerOptions = TagsDisplayOptions & DisplayControllerDisplayOptions
+export type AnyDisplayOptions = NotesAndFilesDisplayOptions | TagsDisplayOptions | GenericDisplayOptions

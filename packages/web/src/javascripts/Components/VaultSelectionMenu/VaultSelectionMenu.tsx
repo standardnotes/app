@@ -16,9 +16,9 @@ type SettingsMode = 'many' | 'single'
 const VaultSelectionMenu: FunctionComponent<MenuProps> = () => {
   const application = useApplication()
 
-  const { displayOptions } = application.getViewControllerManager().itemListController
-
-  const [mode, setMode] = useState<SettingsMode>(displayOptions.vaults?.exclusive ? 'single' : 'many')
+  const [mode, setMode] = useState<SettingsMode>(
+    application.vaultDisplayService.getOptions().exclusive ? 'single' : 'many',
+  )
 
   return (
     <Menu a11yLabel="Vault selection menu" isOpen>

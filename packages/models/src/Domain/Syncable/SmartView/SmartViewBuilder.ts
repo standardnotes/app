@@ -9,10 +9,10 @@ import { FillItemContent } from '../../Abstract/Content/ItemContent'
 import { Predicate } from '../../Runtime/Predicate/Predicate'
 import { CompoundPredicate } from '../../Runtime/Predicate/CompoundPredicate'
 import { PayloadTimestampDefaults } from '../../Abstract/Payload'
-import { FilterDisplayOptions } from '../../Runtime/Display'
+import { NotesAndFilesDisplayOptions } from '../../Runtime/Display'
 import { FileItem } from '../File'
 
-export function BuildSmartViews(options: FilterDisplayOptions): SmartView[] {
+export function BuildSmartViews(options: NotesAndFilesDisplayOptions): SmartView[] {
   const notes = new SmartView(
     new DecryptedPayload({
       uuid: SystemViewId.AllNotes,
@@ -88,7 +88,7 @@ export function BuildSmartViews(options: FilterDisplayOptions): SmartView[] {
   return [notes, files, starred, archived, trash, untagged]
 }
 
-function allNotesPredicate(options: FilterDisplayOptions) {
+function allNotesPredicate(options: NotesAndFilesDisplayOptions) {
   const subPredicates: Predicate<SNNote>[] = [new Predicate('content_type', '=', ContentType.Note)]
 
   if (options.includeTrashed === false) {
@@ -108,7 +108,7 @@ function allNotesPredicate(options: FilterDisplayOptions) {
   return predicate
 }
 
-function filesPredicate(options: FilterDisplayOptions) {
+function filesPredicate(options: NotesAndFilesDisplayOptions) {
   const subPredicates: Predicate<FileItem>[] = [new Predicate('content_type', '=', ContentType.File)]
 
   if (options.includeTrashed === false) {
@@ -128,7 +128,7 @@ function filesPredicate(options: FilterDisplayOptions) {
   return predicate
 }
 
-function archivedNotesPredicate(options: FilterDisplayOptions) {
+function archivedNotesPredicate(options: NotesAndFilesDisplayOptions) {
   const subPredicates: Predicate<SNNote>[] = [
     new Predicate('archived', '=', true),
     new Predicate('content_type', '=', ContentType.Note),
@@ -147,7 +147,7 @@ function archivedNotesPredicate(options: FilterDisplayOptions) {
   return predicate
 }
 
-function trashedNotesPredicate(options: FilterDisplayOptions) {
+function trashedNotesPredicate(options: NotesAndFilesDisplayOptions) {
   const subPredicates: Predicate<SNNote>[] = [
     new Predicate('trashed', '=', true),
     new Predicate('content_type', '=', ContentType.Note),
@@ -166,7 +166,7 @@ function trashedNotesPredicate(options: FilterDisplayOptions) {
   return predicate
 }
 
-function untaggedNotesPredicate(options: FilterDisplayOptions) {
+function untaggedNotesPredicate(options: NotesAndFilesDisplayOptions) {
   const subPredicates = [
     new Predicate('content_type', '=', ContentType.Note),
     new Predicate<ItemWithTags>('tagsCount', '=', 0),
@@ -185,7 +185,7 @@ function untaggedNotesPredicate(options: FilterDisplayOptions) {
   return predicate
 }
 
-function starredNotesPredicate(options: FilterDisplayOptions) {
+function starredNotesPredicate(options: NotesAndFilesDisplayOptions) {
   const subPredicates: Predicate<SNNote>[] = [
     new Predicate('starred', '=', true),
     new Predicate('content_type', '=', ContentType.Note),

@@ -13,7 +13,6 @@ import { destroyAllObjectProperties } from '@/Utils'
 import {
   DeinitSource,
   WebOrDesktopDeviceInterface,
-  InternalEventBus,
   SubscriptionClientInterface,
   InternalEventHandlerInterface,
   InternalEventInterface,
@@ -75,52 +74,52 @@ export class ViewControllerManager implements InternalEventHandlerInterface {
   public isSessionsModalVisible = false
 
   private appEventObserverRemovers: (() => void)[] = []
-  private eventBus: InternalEventBus
+
   private subscriptionManager: SubscriptionClientInterface
   private persistenceService: PersistenceService
   private applicationEventObserver: EventObserverInterface
   private toastService: ToastServiceInterface
 
   constructor(public application: WebApplication, private device: WebOrDesktopDeviceInterface) {
-    this.eventBus = new InternalEventBus()
+    const eventBus = application.internalEventBus
 
-    this.persistenceService = new PersistenceService(application, this.eventBus)
+    this.persistenceService = new PersistenceService(application, eventBus)
 
-    this.eventBus.addEventHandler(this, CrossControllerEvent.HydrateFromPersistedValues)
-    this.eventBus.addEventHandler(this, CrossControllerEvent.RequestValuePersistence)
+    eventBus.addEventHandler(this, CrossControllerEvent.HydrateFromPersistedValues)
+    eventBus.addEventHandler(this, CrossControllerEvent.RequestValuePersistence)
 
     this.subscriptionManager = application.subscriptions
 
     this.filePreviewModalController = new FilePreviewModalController(application)
 
-    this.quickSettingsMenuController = new QuickSettingsController(application, this.eventBus)
+    this.quickSettingsMenuController = new QuickSettingsController(application, eventBus)
 
-    this.vaultSelectionController = new VaultSelectionController(application, this.eventBus)
+    this.vaultSelectionController = new VaultSelectionController(application, eventBus)
 
-    this.paneController = new PaneController(application, this.eventBus)
+    this.paneController = new PaneController(application, eventBus)
 
-    this.preferencesController = new PreferencesController(application, this.eventBus)
+    this.preferencesController = new PreferencesController(application, eventBus)
 
-    this.selectionController = new SelectedItemsController(application, this.eventBus)
+    this.selectionController = new SelectedItemsController(application, eventBus)
 
-    this.featuresController = new FeaturesController(application, this.eventBus)
+    this.featuresController = new FeaturesController(application, eventBus)
 
-    this.navigationController = new NavigationController(application, this.featuresController, this.eventBus)
+    this.navigationController = new NavigationController(application, this.featuresController, eventBus)
 
     this.notesController = new NotesController(
       application,
       this.selectionController,
       this.navigationController,
-      this.eventBus,
+      eventBus,
     )
 
-    this.searchOptionsController = new SearchOptionsController(application, this.eventBus)
+    this.searchOptionsController = new SearchOptionsController(application, eventBus)
 
     this.linkingController = new LinkingController(
       application,
       this.navigationController,
       this.selectionController,
-      this.eventBus,
+      eventBus,
     )
 
     this.itemListController = new ItemListController(
@@ -129,26 +128,25 @@ export class ViewControllerManager implements InternalEventHandlerInterface {
       this.searchOptionsController,
       this.selectionController,
       this.notesController,
-      this.linkingController,
-      this.eventBus,
+      eventBus,
     )
 
     this.notesController.setServicesPostConstruction(this.itemListController)
     this.selectionController.setServicesPostConstruction(this.itemListController)
 
-    this.noAccountWarningController = new NoAccountWarningController(application, this.eventBus)
+    this.noAccountWarningController = new NoAccountWarningController(application, eventBus)
 
-    this.accountMenuController = new AccountMenuController(application, this.eventBus)
+    this.accountMenuController = new AccountMenuController(application, eventBus)
 
-    this.subscriptionController = new SubscriptionController(application, this.eventBus, this.subscriptionManager)
+    this.subscriptionController = new SubscriptionController(application, eventBus, this.subscriptionManager)
 
-    this.purchaseFlowController = new PurchaseFlowController(application, this.eventBus)
+    this.purchaseFlowController = new PurchaseFlowController(application, eventBus)
 
     this.filesController = new FilesController(
       application,
       this.notesController,
       this.filePreviewModalController,
-      this.eventBus,
+      eventBus,
     )
 
     this.linkingController.setServicesPostConstruction(
@@ -157,7 +155,7 @@ export class ViewControllerManager implements InternalEventHandlerInterface {
       this.subscriptionController,
     )
 
-    this.historyModalController = new HistoryModalController(this.application, this.eventBus, this.notesController)
+    this.historyModalController = new HistoryModalController(this.application, eventBus, this.notesController)
 
     this.importModalController = new ImportModalController(this.application, this.navigationController)
 

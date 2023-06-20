@@ -1,4 +1,9 @@
-import { confirmDialog, CREATE_NEW_TAG_COMMAND, NavigationControllerPersistableValue } from '@standardnotes/ui-services'
+import {
+  confirmDialog,
+  CREATE_NEW_TAG_COMMAND,
+  NavigationControllerPersistableValue,
+  VaultDisplayServiceEvent,
+} from '@standardnotes/ui-services'
 import { STRING_DELETE_TAG } from '@/Constants/Strings'
 import { MAX_MENU_SIZE_MULTIPLIER, MENU_MARGIN_FROM_APP_BORDER, SMART_TAGS_FEATURE_NAME } from '@/Constants/Constants'
 import {
@@ -10,11 +15,13 @@ import {
   isSystemView,
   FindItem,
   SystemViewId,
-  InternalEventBus,
   InternalEventPublishStrategy,
   VectorIconNameOrEmoji,
   isTag,
   PrefKey,
+  InternalEventBusInterface,
+  InternalEventHandlerInterface,
+  InternalEventInterface,
 } from '@standardnotes/snjs'
 import { action, computed, makeAutoObservable, makeObservable, observable, reaction, runInAction } from 'mobx'
 import { WebApplication } from '../../Application/WebApplication'
@@ -30,7 +37,7 @@ import { PaneLayout } from '../PaneController/PaneLayout'
 
 export class NavigationController
   extends AbstractViewController
-  implements Persistable<NavigationControllerPersistableValue>
+  implements Persistable<NavigationControllerPersistableValue>, InternalEventHandlerInterface
 {
   tags: SNTag[] = []
   smartViews: SmartView[] = []
@@ -54,8 +61,14 @@ export class NavigationController
 
   private readonly tagsCountsState: TagsCountsState
 
-  constructor(application: WebApplication, private featuresController: FeaturesController, eventBus: InternalEventBus) {
+  constructor(
+    application: WebApplication,
+    private featuresController: FeaturesController,
+    eventBus: InternalEventBusInterface,
+  ) {
     super(application, eventBus)
+
+    eventBus.addEventHandler(this, VaultDisplayServiceEvent.VaultDisplayOptionsChanged)
 
     this.tagsCountsState = new TagsCountsState(this.application)
     this.smartViews = this.application.items.getSmartViews()
@@ -110,9 +123,7 @@ export class NavigationController
     this.disposers.push(
       this.application.streamItems([ContentType.Tag, ContentType.SmartView], ({ changed, removed }) => {
         runInAction(() => {
-          this.tags = this.application.items.getDisplayableTags()
-          this.starredTags = this.tags.filter((tag) => tag.starred)
-          this.smartViews = this.application.items.getSmartViews()
+          this.reloadTags()
 
           const currentSelectedTag = this.selected_
 
@@ -171,6 +182,18 @@ export class NavigationController
         },
       }),
     )
+  }
+
+  private reloadTags(): void {
+    this.tags = this.application.items.getDisplayableTags()
+    this.starredTags = this.tags.filter((tag) => tag.starred)
+    this.smartViews = this.application.items.getSmartViews()
+  }
+
+  async handleEvent(event: InternalEventInterface): Promise<void> {
+    if (event.type === VaultDisplayServiceEvent.VaultDisplayOptionsChanged) {
+      this.reloadTags()
+    }
   }
 
   private findAndSetTag = (uuid: UuidString) => {

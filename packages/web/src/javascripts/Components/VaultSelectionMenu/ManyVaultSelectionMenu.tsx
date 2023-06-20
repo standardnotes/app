@@ -10,25 +10,22 @@ const ManyVaultSelectionMenu: FunctionComponent = () => {
   const application = useApplication()
   const vaults = application.vaults.getVaults()
 
-  const { isVaultExplicitelyExcluded, hideVault, unhideVault } =
-    application.getViewControllerManager().itemListController
-
   const isVaultVisible = useCallback(
     (vault: VaultListingInterface) => {
-      return !isVaultExplicitelyExcluded(vault)
+      return !application.vaultDisplayService.isVaultExplicitelyExcluded(vault)
     },
-    [isVaultExplicitelyExcluded],
+    [application],
   )
 
   const toggleVault = useCallback(
     (vault: VaultListingInterface) => {
       if (isVaultVisible(vault)) {
-        hideVault(vault)
+        application.vaultDisplayService.hideVault(vault)
       } else {
-        unhideVault(vault)
+        application.vaultDisplayService.unhideVault(vault)
       }
     },
-    [isVaultVisible, hideVault, unhideVault],
+    [isVaultVisible, application],
   )
 
   return (

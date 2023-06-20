@@ -22,7 +22,9 @@
     "@standardnotes/services": "workspace:^",
     "@standardnotes/styles": "workspace:^",
     "@standardnotes/toast": "workspace:^",
-    "@standardnotes/utils": "workspace:^"
+    "@standardnotes/utils": "workspace:^",
+    "mobx": "^6.8.0",
+    "mobx-react-lite": "^3.4.2"
   },
   "devDependencies": {
     "@types/jest": "^29.2.3",

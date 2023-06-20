@@ -13,11 +13,11 @@ import {
   assert,
   DesktopClientRequiresWebMethods,
   DesktopDeviceInterface,
-  WebApplicationInterface,
   WebAppEvent,
   BackupServiceInterface,
   DesktopWatchedDirectoriesChanges,
 } from '@standardnotes/snjs'
+import { WebApplicationInterface } from '@standardnotes/ui-services'
 
 export class DesktopManager
   extends ApplicationService

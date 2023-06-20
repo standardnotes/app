@@ -1,4 +1,4 @@
-import { InternalEventBus } from '@standardnotes/snjs'
+import { InternalEventBusInterface } from '@standardnotes/snjs'
 import { action, computed, makeObservable, observable } from 'mobx'
 import { PreferenceId, RootQueryParam } from '@standardnotes/ui-services'
 import { AbstractViewController } from './Abstract/AbstractViewController'
@@ -10,7 +10,7 @@ export class PreferencesController extends AbstractViewController {
   private _open = false
   currentPane: PreferenceId = DEFAULT_PANE
 
-  constructor(application: WebApplication, eventBus: InternalEventBus) {
+  constructor(application: WebApplication, eventBus: InternalEventBusInterface) {
     super(application, eventBus)
 
     makeObservable<PreferencesController, '_open'>(this, {

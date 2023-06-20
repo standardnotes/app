@@ -14,7 +14,6 @@ import {
   ContentType,
   DecryptedItemInterface,
   WebAppEvent,
-  WebApplicationInterface,
   MobileDeviceInterface,
   MobileUnlockTiming,
   DecryptedItem,
@@ -38,7 +37,10 @@ import {
   RouteService,
   RouteServiceInterface,
   ThemeManager,
+  VaultDisplayService,
+  VaultDisplayServiceInterface,
   WebAlertService,
+  WebApplicationInterface,
 } from '@standardnotes/ui-services'
 import { MobileWebReceiver, NativeMobileEventListener } from '../NativeMobileWeb/MobileWebReceiver'
 import { AndroidBackHandler } from '@/NativeMobileWeb/AndroidBackHandler'
@@ -114,6 +116,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
       this.webServices.viewControllerManager.filesController,
       this.internalEventBus,
     )
+    this.webServices.vaultDisplayService = new VaultDisplayService(this, this.internalEventBus)
 
     if (this.isNativeMobileWeb()) {
       this.mobileWebReceiver = new MobileWebReceiver(this)
@@ -192,6 +195,10 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     }
 
     this.notifyWebEvent(WebAppEvent.PanelResized, data)
+  }
+
+  public get vaultDisplayService(): VaultDisplayServiceInterface {
+    return this.webServices.vaultDisplayService
   }
 
   public getViewControllerManager(): ViewControllerManager {

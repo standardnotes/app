@@ -2,7 +2,7 @@ import { ContentType } from '@standardnotes/common'
 import { compareValues } from '@standardnotes/utils'
 import { isDeletedItem, isEncryptedItem } from '../../Abstract/Item'
 import { ItemDelta } from '../Index/ItemDelta'
-import { DisplayOptions } from './DisplayOptions'
+import { AnyDisplayOptions, DisplayControllerDisplayOptions, GenericDisplayOptions } from './DisplayOptions'
 import { sortTwoItems } from './SortTwoItems'
 import { UuidToSortedPositionMap, DisplayItem, ReadonlyItemCollection } from './Types'
 import { CriteriaValidatorInterface } from './Validator/CriteriaValidatorInterface'
@@ -11,8 +11,9 @@ import { CustomFilterCriteriaValidator } from './Validator/CustomFilterCriteriaV
 import { ExcludeVaultsCriteriaValidator } from './Validator/ExcludeVaultsCriteriaValidator'
 import { ExclusiveVaultCriteriaValidator } from './Validator/ExclusiveVaultCriteriaValidator'
 import { HiddenContentCriteriaValidator } from './Validator/HiddenContentCriteriaValidator'
+import { VaultDisplayOptions } from './VaultDisplayOptions'
 
-export class ItemDisplayController<I extends DisplayItem> {
+export class ItemDisplayController<I extends DisplayItem, O extends AnyDisplayOptions = GenericDisplayOptions> {
   private sortMap: UuidToSortedPositionMap = {}
   private sortedItems: I[] = []
   private needsSort = true
@@ -20,7 +21,8 @@ export class ItemDisplayController<I extends DisplayItem> {
   constructor(
     private readonly collection: ReadonlyItemCollection,
     public readonly contentTypes: ContentType[],
-    private options: DisplayOptions,
+    private options: DisplayControllerDisplayOptions & O,
+    private vaultOptions?: VaultDisplayOptions,
   ) {
     this.filterThenSortElements(this.collection.all(this.contentTypes) as I[])
   }
@@ -29,11 +31,18 @@ export class ItemDisplayController<I extends DisplayItem> {
     return this.sortedItems
   }
 
-  public getDisplayOptions(): DisplayOptions {
+  public getDisplayOptions(): DisplayControllerDisplayOptions & O {
     return this.options
   }
 
-  setDisplayOptions(displayOptions: Partial<DisplayOptions>): void {
+  setVaultDisplayOptions(vaultOptions?: VaultDisplayOptions): void {
+    this.vaultOptions = vaultOptions
+    this.needsSort = true
+
+    this.filterThenSortElements(this.collection.all(this.contentTypes) as I[])
+  }
+
+  setDisplayOptions(displayOptions: Partial<DisplayControllerDisplayOptions & O>): void {
     this.options = { ...this.options, ...displayOptions }
     this.needsSort = true
 
@@ -50,21 +59,21 @@ export class ItemDisplayController<I extends DisplayItem> {
   private passesAllFilters(element: I): boolean {
     const filters: CriteriaValidatorInterface[] = [new CollectionCriteriaValidator(this.collection, element)]
 
-    if (this.options.vaults) {
-      if (this.options.vaults.exclude) {
-        filters.push(new ExcludeVaultsCriteriaValidator(this.options.vaults.exclude, element))
-      } else if (this.options.vaults.exclusive) {
-        filters.push(new ExclusiveVaultCriteriaValidator(this.options.vaults.exclusive, element))
+    if (this.vaultOptions) {
+      if (this.vaultOptions.exclude) {
+        filters.push(new ExcludeVaultsCriteriaValidator(this.vaultOptions.exclude, element))
+      } else if (this.vaultOptions.exclusive) {
+        filters.push(new ExclusiveVaultCriteriaValidator(this.vaultOptions.exclusive, element))
       } else {
         throw new Error('Invalid vaults option')
       }
     }
 
-    if (this.options.hiddenContentTypes) {
+    if ('hiddenContentTypes' in this.options && this.options.hiddenContentTypes) {
       filters.push(new HiddenContentCriteriaValidator(this.options.hiddenContentTypes, element))
     }
 
-    if (this.options.customFilter) {
+    if ('customFilter' in this.options && this.options.customFilter) {
       filters.push(new CustomFilterCriteriaValidator(this.options.customFilter, element))
     }
 

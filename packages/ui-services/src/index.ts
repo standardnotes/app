@@ -33,3 +33,9 @@ export * from './Toast/ToastService'
 export * from './Toast/ToastServiceInterface'
 export * from './StatePersistence/StatePersistence'
 export * from './Import'
+
+export * from './Vaults/VaultDisplayService'
+export * from './Vaults/VaultDisplayServiceEvent'
+export * from './Vaults/VaultDisplayServiceInterface'
+
+export * from './WebApplication/WebApplicationInterface'

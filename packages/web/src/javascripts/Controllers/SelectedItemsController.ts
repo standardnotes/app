@@ -8,10 +8,10 @@ import {
   FileItem,
   SNNote,
   UuidString,
-  InternalEventBus,
   isFile,
   Uuids,
   isNote,
+  InternalEventBusInterface,
 } from '@standardnotes/snjs'
 import { SelectionControllerPersistableValue } from '@standardnotes/ui-services'
 import { action, computed, makeObservable, observable, reaction, runInAction } from 'mobx'
@@ -36,7 +36,7 @@ export class SelectedItemsController
     ;(this.itemListController as unknown) = undefined
   }
 
-  constructor(application: WebApplication, eventBus: InternalEventBus) {
+  constructor(application: WebApplication, eventBus: InternalEventBusInterface) {
     super(application, eventBus)
 
     makeObservable(this, {

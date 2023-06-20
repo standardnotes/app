@@ -2,9 +2,9 @@
  * @jest-environment jsdom
  */
 
-import { WebApplicationInterface } from '@standardnotes/services'
 import { jsonTestData, htmlTestData } from './testData'
 import { GoogleKeepConverter } from './GoogleKeepConverter'
+import { WebApplicationInterface } from '../../WebApplication/WebApplicationInterface'
 
 describe('GoogleKeepConverter', () => {
   let application: WebApplicationInterface

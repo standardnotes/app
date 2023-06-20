@@ -1,8 +1,8 @@
 import { ContentType } from '@standardnotes/common'
 import { parseFileName } from '@standardnotes/filepicker'
 import { DecryptedTransferPayload, NoteContent } from '@standardnotes/models'
-import { WebApplicationInterface } from '@standardnotes/services'
 import { readFileAsText } from '../Utils'
+import { WebApplicationInterface } from '../../WebApplication/WebApplicationInterface'
 
 export class PlaintextConverter {
   constructor(protected application: WebApplicationInterface) {}

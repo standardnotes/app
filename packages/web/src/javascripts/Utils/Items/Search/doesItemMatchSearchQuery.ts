@@ -1,4 +1,5 @@
-import { WebApplicationInterface, DecryptedItemInterface, ItemContent, isNote, isTag } from '@standardnotes/snjs'
+import { DecryptedItemInterface, ItemContent, isNote, isTag } from '@standardnotes/snjs'
+import { WebApplicationInterface } from '@standardnotes/ui-services'
 
 export function getItemTitleInContextOfLinkBubble(item: DecryptedItemInterface<ItemContent>) {
   return item.title && item.title.length > 0 ? item.title : isNote(item) ? item.preview_plain : ''

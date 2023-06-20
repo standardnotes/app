@@ -7,7 +7,6 @@ export * from './Application/ApplicationStage'
 export * from './Application/DeinitCallback'
 export * from './Application/DeinitMode'
 export * from './Application/DeinitSource'
-export * from './Application/WebApplicationInterface'
 
 export * from './AsymmetricMessage/AsymmetricMessageService'
 
