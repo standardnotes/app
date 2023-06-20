@@ -60,6 +60,7 @@ import { GetSharedVaultTrustedContacts } from './UseCase/GetSharedVaultTrustedCo
 import { NotifySharedVaultUsersOfRootKeyRotationUseCase } from './UseCase/NotifySharedVaultUsersOfRootKeyRotation'
 import { CreateSharedVaultUseCase } from './UseCase/CreateSharedVault'
 import { SendSharedVaultMetadataChangedMessageToAll } from './UseCase/SendSharedVaultMetadataChangedMessageToAll'
+import { ConvertToSharedVaultUseCase } from './UseCase/ConvertToSharedVault'
 
 export class SharedVaultService
   extends AbstractService<SharedVaultServiceEvent, SharedVaultServiceEventPayload>
@@ -181,6 +182,14 @@ export class SharedVaultService
       userInputtedPassword: dto.userInputtedPassword,
       storagePreference: dto.storagePreference ?? KeySystemRootKeyStorageType.Synced,
     })
+  }
+
+  async convertVaultToSharedVault(
+    vault: VaultListingInterface,
+  ): Promise<SharedVaultListingInterface | ClientDisplayableError> {
+    const usecase = new ConvertToSharedVaultUseCase(this.items, this.sync, this.files, this.server)
+
+    return usecase.execute({ vault })
   }
 
   public getCachedPendingInviteRecords(): PendingSharedVaultInviteRecord[] {

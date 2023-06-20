@@ -66,7 +66,8 @@ describe('shared vault invites', function () {
   })
 
   it('invite should include delegated trusted contacts', async () => {
-    const { sharedVault, deinitContactContext } = await Collaboration.createSharedVaultWithAcceptedInvite(context)
+    const { sharedVault, contactContext, deinitContactContext } =
+      await Collaboration.createSharedVaultWithAcceptedInvite(context)
 
     const { thirdPartyContext, deinitThirdPartyContext } = await Collaboration.inviteThirdPartyToSharedVault(
       context,
@@ -77,7 +78,8 @@ describe('shared vault invites', function () {
 
     const message = invites[0].message
     const delegatedContacts = message.data.trustedContacts
-    expect(delegatedContacts.length).to.equal(2)
+    expect(delegatedContacts.length).to.equal(1)
+    expect(delegatedContacts[0].contactUuid).to.equal(contactContext.userUuid)
 
     await deinitThirdPartyContext()
     await deinitContactContext()

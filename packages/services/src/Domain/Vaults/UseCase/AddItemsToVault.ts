@@ -5,7 +5,7 @@ import { DecryptedItemInterface, FileItem, VaultListingInterface } from '@standa
 import { FilesClientInterface } from '@standardnotes/files'
 import { ContentType } from '@standardnotes/common'
 
-export class AddItemToVaultUseCase {
+export class AddItemsToVaultUseCase {
   constructor(
     private items: ItemManagerInterface,
     private sync: SyncServiceInterface,
@@ -13,18 +13,22 @@ export class AddItemToVaultUseCase {
   ) {}
 
   async execute(dto: {
-    item: DecryptedItemInterface
+    items: DecryptedItemInterface[]
     vault: VaultListingInterface
   }): Promise<ClientDisplayableError | void> {
-    await this.items.changeItem(dto.item, (mutator) => {
-      mutator.key_system_identifier = dto.vault.systemIdentifier
-      mutator.shared_vault_uuid = dto.vault.isSharedVaultListing() ? dto.vault.sharing.sharedVaultUuid : undefined
-    })
+    for (const item of dto.items) {
+      await this.items.changeItem(item, (mutator) => {
+        mutator.key_system_identifier = dto.vault.systemIdentifier
+        mutator.shared_vault_uuid = dto.vault.isSharedVaultListing() ? dto.vault.sharing.sharedVaultUuid : undefined
+      })
+    }
 
     await this.sync.sync()
 
-    if (dto.item.content_type === ContentType.File && dto.vault.isSharedVaultListing()) {
-      await this.files.moveFileToSharedVault(dto.item as FileItem, dto.vault)
+    for (const item of dto.items) {
+      if (item.content_type === ContentType.File && dto.vault.isSharedVaultListing()) {
+        await this.files.moveFileToSharedVault(item as FileItem, dto.vault)
+      }
     }
   }
 }

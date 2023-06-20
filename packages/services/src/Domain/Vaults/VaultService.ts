@@ -17,7 +17,7 @@ import { ItemManagerInterface } from '../Item/ItemManagerInterface'
 import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
 import { RemoveItemFromVault } from './UseCase/RemoveItemFromVault'
 import { DeleteVaultUseCase } from './UseCase/DeleteVault'
-import { AddItemToVaultUseCase } from './UseCase/AddItemToVault'
+import { AddItemsToVaultUseCase } from './UseCase/AddItemsToVault'
 
 import { RotateKeySystemRootKeyUseCase } from './UseCase/RotateKeySystemRootKey'
 import { FilesClientInterface } from '@standardnotes/files'
@@ -39,7 +39,9 @@ export class VaultService
   }
 
   getVaults(): VaultListingInterface[] {
-    return this.items.getItems(ContentType.VaultListing)
+    return this.items.getItems<VaultListingInterface>(ContentType.VaultListing).sort((a, b) => {
+      return a.name.localeCompare(b.name)
+    })
   }
 
   public getVault(keySystemIdentifier: KeySystemIdentifier): VaultListingInterface | undefined {
@@ -91,8 +93,8 @@ export class VaultService
   }
 
   async addItemToVault(vault: VaultListingInterface, item: DecryptedItemInterface): Promise<DecryptedItemInterface> {
-    const useCase = new AddItemToVaultUseCase(this.items, this.sync, this.files)
-    await useCase.execute({ vault, item })
+    const useCase = new AddItemsToVaultUseCase(this.items, this.sync, this.files)
+    await useCase.execute({ vault, items: [item] })
 
     return this.items.findSureItem(item.uuid)
   }

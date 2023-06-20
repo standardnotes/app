@@ -75,9 +75,9 @@ const EditVaultModal: FunctionComponent<Props> = ({ onCloseDialog, existingVault
   }, [existingVault, application.vaults, application.alertService, name, description, handleDialogClose])
 
   const removeMemberFromVault = useCallback(
-    async (member: SharedVaultUserServerHash) => {
+    async (memberItem: SharedVaultUserServerHash) => {
       if (existingVault?.isSharedVaultListing()) {
-        await application.sharedVaults.removeUserFromSharedVault(existingVault, member.uuid)
+        await application.sharedVaults.removeUserFromSharedVault(existingVault, memberItem.user_uuid)
         await reloadVaultInfo()
       }
     },
@@ -116,9 +116,7 @@ const EditVaultModal: FunctionComponent<Props> = ({ onCloseDialog, existingVault
         <div className="flex w-full flex-col">
           <div className="mb-3">
             <div className="text-lg">Vault Info</div>
-            <div className="mt-1">
-              A vault's name and description are end-to-end encrypted and can only be seen by its members.
-            </div>
+            <div className="mt-1">The vault name and description are end-to-end encrypted.</div>
 
             <DecoratedInput
               className={{ container: 'mt-4' }}
@@ -151,7 +149,10 @@ const EditVaultModal: FunctionComponent<Props> = ({ onCloseDialog, existingVault
 
                 const contact = application.contacts.findTrustedContactForServerUser(member)
                 return (
-                  <div className="bg-gray-100 flex flex-row gap-3.5 rounded-lg py-2.5 px-3.5 shadow-md">
+                  <div
+                    key={contact?.uuid || member.user_uuid}
+                    className="bg-gray-100 flex flex-row gap-3.5 rounded-lg py-2.5 px-3.5 shadow-md"
+                  >
                     <Icon type={'user'} size="custom" className="mt-2.5 h-5.5 w-5.5 flex-shrink-0" />
                     <div className="flex flex-col gap-2 py-1.5">
                       <span className="mr-auto overflow-hidden text-ellipsis text-base font-bold">

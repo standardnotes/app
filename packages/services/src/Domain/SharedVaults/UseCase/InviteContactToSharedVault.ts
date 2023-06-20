@@ -28,13 +28,17 @@ export class InviteContactToSharedVaultUseCase {
       return ClientDisplayableError.FromString('Cannot add contact; key system root key not found')
     }
 
+    const delegatedContacts = params.sharedVaultContacts.filter(
+      (contact) => !contact.isMe && contact.contactUuid !== params.recipient.contactUuid,
+    )
+
     const encryptedMessage = this.encryption.asymmetricallyEncryptMessage({
       message: {
         type: AsymmetricMessagePayloadType.SharedVaultInvite,
         data: {
           recipientUuid: params.recipient.contactUuid,
           rootKey: keySystemRootKey.content,
-          trustedContacts: params.sharedVaultContacts.map((contact) => contact.content),
+          trustedContacts: delegatedContacts.map((contact) => contact.content),
           metadata: {
             name: params.sharedVault.name,
             description: params.sharedVault.description,

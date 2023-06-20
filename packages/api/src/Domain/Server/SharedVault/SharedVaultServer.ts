@@ -1,7 +1,6 @@
 import { HttpResponse } from '@standardnotes/responses'
 import { HttpServiceInterface } from '../../Http'
 import { SharedVaultServerInterface } from './SharedVaultServerInterface'
-import { CreateSharedVaultParams } from '../../Request/SharedVault/CreateSharedVaultParams'
 import { SharedVaultsPaths } from './Paths'
 import { CreateSharedVaultResponse } from '../../Response/SharedVault/CreateSharedVaultResponse'
 import { GetSharedVaultsResponse } from '../../Response/SharedVault/GetSharedVaultsResponse'
@@ -15,10 +14,8 @@ export class SharedVaultServer implements SharedVaultServerInterface {
     return this.httpService.get(SharedVaultsPaths.getSharedVaults)
   }
 
-  createSharedVault(params: CreateSharedVaultParams): Promise<HttpResponse<CreateSharedVaultResponse>> {
-    return this.httpService.post(SharedVaultsPaths.createSharedVault, {
-      key_system_identifier: params.keySystemIdentifier,
-    })
+  createSharedVault(): Promise<HttpResponse<CreateSharedVaultResponse>> {
+    return this.httpService.post(SharedVaultsPaths.createSharedVault)
   }
 
   deleteSharedVault(params: { sharedVaultUuid: string }): Promise<HttpResponse<boolean>> {

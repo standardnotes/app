@@ -13,7 +13,7 @@ export class LeaveVaultUseCase {
     })
 
     if (isErrorResponse(response)) {
-      return ClientDisplayableError.FromString(`Failed to leave vault ${response}`)
+      return ClientDisplayableError.FromString(`Failed to leave vault ${JSON.stringify(response)}`)
     }
 
     const removeLocalItems = new RemoveSharedVaultItemsLocallyUseCase(this.items)

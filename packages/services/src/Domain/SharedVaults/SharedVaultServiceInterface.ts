@@ -23,8 +23,9 @@ export interface SharedVaultServiceInterface
     userInputtedPassword: string | undefined
     storagePreference?: KeySystemRootKeyStorageType
   }): Promise<VaultListingInterface | ClientDisplayableError>
-
   deleteSharedVault(sharedVault: SharedVaultListingInterface): Promise<ClientDisplayableError | void>
+
+  convertVaultToSharedVault(vault: VaultListingInterface): Promise<SharedVaultListingInterface | ClientDisplayableError>
 
   inviteContactToSharedVault(
     sharedVault: SharedVaultListingInterface,

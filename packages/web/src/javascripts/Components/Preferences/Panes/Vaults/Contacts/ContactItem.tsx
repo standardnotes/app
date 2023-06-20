@@ -31,7 +31,11 @@ const ContactItem = ({ contact }: Props) => {
       <div className="bg-gray-100 flex flex-row gap-3.5 rounded-lg py-2.5 px-3.5 shadow-md">
         <Icon type={'user'} size="custom" className="mt-2.5 h-5.5 w-5.5 flex-shrink-0" />
         <div className="flex flex-col gap-2 py-1.5">
-          <span className="mr-auto overflow-hidden text-ellipsis text-base font-bold">{contact.name}</span>
+          <span
+            className={`mr-auto overflow-hidden text-ellipsis text-base font-bold ${contact.isMe ? 'text-info' : ''}`}
+          >
+            {contact.name}
+          </span>
           <span className="mr-auto overflow-hidden text-ellipsis text-sm">{collaborationID}</span>
 
           <div className="mt-2.5 flex flex-row">

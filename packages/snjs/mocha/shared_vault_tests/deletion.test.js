@@ -112,6 +112,9 @@ describe('shared vault deletion', function () {
     const updatedContactNote = contactContext.items.findItem(note.uuid)
     expect(updatedContactNote).to.be.undefined
 
+    const vault = await context.vaults.getVault(sharedVault.systemIdentifier)
+    expect(vault).to.be.undefined
+
     await deinitContactContext()
   })
 
@@ -147,5 +150,9 @@ describe('shared vault deletion', function () {
     expect(updatedSharedVaultUsers.length).to.equal(1)
 
     await deinitContactContext()
+  })
+
+  it('being removed from a shared vault should delete respective vault listing', async () => {
+    console.error('TODO: implement test')
   })
 })

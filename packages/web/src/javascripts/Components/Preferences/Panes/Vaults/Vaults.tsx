@@ -36,13 +36,6 @@ const Vaults = () => {
   const sharedVaultService = application.sharedVaults
   const contactService = application.contacts
 
-  useEffect(() => {
-    return application.streamItems(ContentType.VaultListing, () => {
-      void fetchVaults()
-      void fetchInvites()
-    })
-  })
-
   const fetchVaults = useCallback(async () => {
     setVaults(vaultService.getVaults())
   }, [vaultService])
@@ -57,6 +50,14 @@ const Vaults = () => {
     const contacts = contactService.getAllContacts()
     setContacts(contacts)
   }, [contactService])
+
+  useEffect(() => {
+    return application.streamItems([ContentType.VaultListing, ContentType.TrustedContact], () => {
+      void fetchVaults()
+      void fetchInvites()
+      void fetchContacts()
+    })
+  }, [application, fetchVaults, fetchInvites, fetchContacts])
 
   const createNewVault = useCallback(async () => {
     setIsVaultModalOpen(true)

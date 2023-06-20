@@ -48,6 +48,10 @@ export class HandleTrustedSharedVaultInviteMessage {
     )
 
     for (const contact of trustedContacts) {
+      if (contact.isMe) {
+        throw new Error('Should not receive isMe contact from invite')
+      }
+
       await this.contacts.createOrEditTrustedContact({
         name: contact.name,
         contactUuid: contact.contactUuid,

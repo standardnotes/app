@@ -1,40 +1,23 @@
 import { SyncServiceInterface } from './../../Sync/SyncServiceInterface'
-import {
-  KeySystemRootKeyStorageType,
-  SharedVaultListingInterface,
-  VaultListingInterface,
-  VaultListingMutator,
-} from '@standardnotes/models'
+import { SharedVaultListingInterface, VaultListingInterface, VaultListingMutator } from '@standardnotes/models'
 import { ClientDisplayableError, isErrorResponse } from '@standardnotes/responses'
-import { EncryptionProviderInterface } from '@standardnotes/encryption'
 import { SharedVaultServerInterface } from '@standardnotes/api'
 import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
-import { CreateVaultUseCase } from '../../Vaults/UseCase/CreateVault'
 import { AddItemsToVaultUseCase } from '../../Vaults/UseCase/AddItemsToVault'
 import { FilesClientInterface } from '@standardnotes/files'
 
-export class CreateSharedVaultUseCase {
+export class ConvertToSharedVaultUseCase {
   constructor(
-    private encryption: EncryptionProviderInterface,
     private items: ItemManagerInterface,
     private sync: SyncServiceInterface,
     private files: FilesClientInterface,
     private sharedVaultServer: SharedVaultServerInterface,
   ) {}
 
-  async execute(dto: {
-    vaultName: string
-    vaultDescription?: string
-    userInputtedPassword: string | undefined
-    storagePreference: KeySystemRootKeyStorageType
-  }): Promise<SharedVaultListingInterface | ClientDisplayableError> {
-    const usecase = new CreateVaultUseCase(this.items, this.encryption, this.sync)
-    const privateVault = await usecase.execute({
-      vaultName: dto.vaultName,
-      vaultDescription: dto.vaultDescription,
-      userInputtedPassword: dto.userInputtedPassword,
-      storagePreference: dto.storagePreference,
-    })
+  async execute(dto: { vault: VaultListingInterface }): Promise<SharedVaultListingInterface | ClientDisplayableError> {
+    if (dto.vault.isSharedVaultListing()) {
+      throw new Error('Cannot convert a shared vault to a shared vault')
+    }
 
     const serverResult = await this.sharedVaultServer.createSharedVault()
     if (isErrorResponse(serverResult)) {
@@ -44,7 +27,7 @@ export class CreateSharedVaultUseCase {
     const serverVaultHash = serverResult.data.sharedVault
 
     const sharedVaultListing = await this.items.changeItem<VaultListingMutator, VaultListingInterface>(
-      privateVault,
+      dto.vault,
       (mutator) => {
         mutator.sharing = {
           sharedVaultUuid: serverVaultHash.uuid,

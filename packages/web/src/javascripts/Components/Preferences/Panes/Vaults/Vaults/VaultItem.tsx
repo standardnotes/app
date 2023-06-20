@@ -40,6 +40,10 @@ const VaultItem = ({ vault }: Props) => {
     }
   }, [application.alertService, application.sharedVaults, vault])
 
+  const convertToSharedVault = useCallback(async () => {
+    await application.sharedVaults.convertVaultToSharedVault(vault)
+  }, [application.sharedVaults, vault])
+
   return (
     <>
       {vault.isSharedVaultListing() && (
@@ -59,13 +63,32 @@ const VaultItem = ({ vault }: Props) => {
           <span className="mr-auto overflow-hidden text-ellipsis text-sm">{vault.description}</span>
           <span className="mr-auto overflow-hidden text-ellipsis text-sm">Vault ID: {vault.systemIdentifier}</span>
 
-          <div className="mt-2.5 flex flex-row">
-            <Button label="Edit" className={'mr-3 text-xs'} onClick={() => setIsVaultModalOpen(true)} />
-            <Button label="Invite Contacts" className={'mr-3 text-xs'} onClick={() => setIsAddContactModalOpen(true)} />
-            {isAdmin && <Button label="Delete Vault" className={'mr-3 text-xs'} onClick={deleteVault} />}
-            {!isAdmin && vault.isSharedVaultListing() && (
-              <Button label="Leave Vault" className={'mr-3 text-xs'} onClick={leaveVault} />
-            )}
+          <div className="mt-2.5 flex w-full flex-row justify-between">
+            <div className="mt-2.5 flex flex-row">
+              <Button label="Edit" className={'mr-3 text-xs'} onClick={() => setIsVaultModalOpen(true)} />
+              {isAdmin && (
+                <Button colorStyle="danger" label="Delete" className={'mr-3 text-xs'} onClick={deleteVault} />
+              )}
+              {!isAdmin && vault.isSharedVaultListing() && (
+                <Button label="Leave Vault" className={'mr-3 text-xs'} onClick={leaveVault} />
+              )}
+            </div>
+            <div className="mt-2.5 flex flex-row">
+              {vault.isSharedVaultListing() ? (
+                <Button
+                  label="Invite Contacts"
+                  className={'mr-3 text-xs'}
+                  onClick={() => setIsAddContactModalOpen(true)}
+                />
+              ) : (
+                <Button
+                  colorStyle="info"
+                  label="Enable Sharing"
+                  className={'mr-3 text-xs'}
+                  onClick={convertToSharedVault}
+                />
+              )}
+            </div>
           </div>
         </div>
       </div>

@@ -50,6 +50,10 @@ describe('shared vaults', function () {
     await deinitContactContext()
   })
 
+  it('should convert a vault to a shared vault', async () => {
+    console.error('TODO')
+  })
+
   it('should send metadata change message when changing name or description', async () => {
     console.error('TODO')
   })
