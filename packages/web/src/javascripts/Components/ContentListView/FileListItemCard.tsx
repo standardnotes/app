@@ -14,7 +14,7 @@ import { getIconForFileType } from '@/Utils/Items/Icons/getIconForFileType'
 import { useApplication } from '../ApplicationProvider'
 import Icon from '../Icon/Icon'
 import { PaneLayout } from '@/Controllers/PaneController/PaneLayout'
-import ListItemCollaborationInfo from './ListItemCollaborationInfo'
+import ListItemVaultInfo from './ListItemVaultInfo'
 
 const FileListItemCard: FunctionComponent<DisplayableListItemProps<FileItem>> = ({
   filesController,
@@ -107,7 +107,7 @@ const FileListItemCard: FunctionComponent<DisplayableListItemProps<FileItem>> = 
             <ListItemMetadata item={file} hideDate={hideDate} sortBy={sortBy} />
             <ListItemTags hideTags={hideTags} tags={tags} />
             <ListItemConflictIndicator item={file} />
-            <ListItemCollaborationInfo item={file} />
+            <ListItemVaultInfo item={file} />
           </div>
         </div>
         <div

@@ -249,7 +249,7 @@ const NotesOptions = ({
           linkingController={linkingController}
         />
       )}
-      <AddToVaultOption iconClassName={iconClass} selectedItems={notes} />
+      <AddToVaultOption iconClassName={iconClass} items={notes} />
       <MenuItem
         onClick={() => {
           notesController.setStarSelectedNotes(!starred)

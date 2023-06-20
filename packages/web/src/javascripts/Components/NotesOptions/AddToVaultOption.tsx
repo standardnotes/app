@@ -10,49 +10,49 @@ import Menu from '../Menu/Menu'
 
 type Props = {
   iconClassName: string
-  selectedItems: DecryptedItemInterface[]
+  items: DecryptedItemInterface[]
 }
 
-const AddToVaultOption: FunctionComponent<Props> = ({ iconClassName, selectedItems }) => {
+const AddToVaultOption: FunctionComponent<Props> = ({ iconClassName, items }) => {
   const application = useApplication()
   const menuContainerRef = useRef<HTMLDivElement>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
 
   const vaults = application.vaults.getVaults()
 
-  const [isOpen, setIsOpen] = useState(false)
+  const [isSubMenuOpen, setIsSubMenuOpen] = useState(false)
 
-  const toggleMenu = useCallback(() => {
-    setIsOpen((isOpen) => !isOpen)
+  const toggleSubMenu = useCallback(() => {
+    setIsSubMenuOpen((isOpen) => !isOpen)
   }, [])
 
   const addItemsToVault = useCallback(
     async (vault: VaultListingInterface) => {
-      for (const item of selectedItems) {
+      for (const item of items) {
         await application.vaults.addItemToVault(vault, item)
       }
     },
-    [application.vaults, selectedItems],
+    [application.vaults, items],
   )
 
   const removeItemsFromVault = useCallback(async () => {
-    for (const item of selectedItems) {
+    for (const item of items) {
       await application.vaults.removeItemFromVault(item)
     }
-  }, [application.vaults, selectedItems])
+  }, [application.vaults, items])
 
   const doesVaultContainItems = (vault: VaultListingInterface) => {
-    return selectedItems.every((item) => item.key_system_identifier === vault.systemIdentifier)
+    return items.every((item) => item.key_system_identifier === vault.systemIdentifier)
   }
 
   return (
     <div ref={menuContainerRef}>
       <MenuItem
         className="justify-between"
-        onClick={toggleMenu}
+        onClick={toggleSubMenu}
         onKeyDown={(event) => {
           if (event.key === KeyboardKey.Escape) {
-            setIsOpen(false)
+            setIsSubMenuOpen(false)
           }
         }}
         ref={buttonRef}
@@ -65,15 +65,15 @@ const AddToVaultOption: FunctionComponent<Props> = ({ iconClassName, selectedIte
       </MenuItem>
       <Popover
         title="Move to vault"
-        togglePopover={toggleMenu}
+        togglePopover={toggleSubMenu}
         anchorElement={buttonRef.current}
-        open={isOpen}
+        open={isSubMenuOpen}
         side="right"
         align="start"
         className="py-2"
         overrideZIndex="z-modal"
       >
-        <Menu a11yLabel="Vault selection menu" isOpen={isOpen}>
+        <Menu a11yLabel="Vault selection menu" isOpen={isSubMenuOpen}>
           {vaults.map((vault) => {
             return (
               <MenuItem

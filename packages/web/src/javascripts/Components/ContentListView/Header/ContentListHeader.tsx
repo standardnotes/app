@@ -14,6 +14,7 @@ import { FilesController } from '@/Controllers/FilesController'
 import SearchButton from './SearchButton'
 import { ItemListController } from '@/Controllers/ItemList/ItemListController'
 import { PaneController } from '@/Controllers/PaneController/PaneController'
+import ListItemVaultInfo from '../ListItemVaultInfo'
 
 type Props = {
   application: WebApplication
@@ -162,15 +163,16 @@ const ContentListHeader = ({
               )}
             />
           )}
-          <div className="flex min-w-0 flex-grow flex-col break-words">
+          <div className="mr-2 flex min-w-0 flex-col break-words">
             <div className="text-2xl font-semibold text-text md:text-lg">{panelTitle}</div>
             {showSyncSubtitle && <div className="-mt-1 text-xs text-passive-0 md:mt-0">{syncSubtitle}</div>}
             {optionsSubtitle && <div className="text-xs text-passive-0">{optionsSubtitle}</div>}
           </div>
+          <ListItemVaultInfo item={selectedTag} />
         </div>
       </div>
     )
-  }, [optionsSubtitle, showSyncSubtitle, icon, panelTitle, syncSubtitle])
+  }, [optionsSubtitle, selectedTag, showSyncSubtitle, icon, panelTitle, syncSubtitle])
 
   const PhoneAndDesktopLayout = useMemo(() => {
     return (

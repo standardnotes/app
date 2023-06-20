@@ -98,7 +98,7 @@ const FileMenuOptions: FunctionComponent<Props> = ({
         selectedItems={selectedFiles}
         iconClassName={`text-neutral mr-2 ${MenuItemIconSize}`}
       />
-      <AddToVaultOption iconClassName={iconClass} selectedItems={selectedFiles} />
+      <AddToVaultOption iconClassName={iconClass} items={selectedFiles} />
       <MenuSwitchButtonItem
         checked={hasProtectedFiles}
         onChange={(hasProtectedFiles) => {

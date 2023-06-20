@@ -12,6 +12,7 @@ import { formatDateForContextMenu } from '@/Utils/DateUtils'
 import { PremiumFeatureIconClass, PremiumFeatureIconName } from '../Icon/PremiumFeatureIcon'
 import Popover from '../Popover/Popover'
 import IconPicker from '../Icon/IconPicker'
+import AddToVaultOption from '../NotesOptions/AddToVaultOption'
 
 type ContextMenuProps = {
   navigationController: NavigationController
@@ -88,6 +89,7 @@ const TagContextMenu = ({ navigationController, isEntitledToFolders, selectedTag
               {selectedTag.starred ? 'Unfavorite' : 'Favorite'}
             </div>
           </MenuItem>
+          <AddToVaultOption iconClassName="mr-2 text-neutral" items={[selectedTag]} />
           <MenuItem className={'justify-between py-1.5'} onClick={onClickAddSubtag}>
             <div className="flex items-center">
               <Icon type="add" className="mr-2 text-neutral" />
