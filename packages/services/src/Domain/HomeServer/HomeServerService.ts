@@ -35,12 +35,10 @@ export class HomeServerService extends AbstractService implements HomeServerServ
 
     switch (stage) {
       case ApplicationStage.StorageDecrypted_09: {
-        console.log('setting home server data location on device')
         await this.setHomeServerDataLocationOnDevice()
         break
       }
       case ApplicationStage.Launched_10: {
-        console.log('starting home server if it is enabled')
         await this.startHomeServerIfItIsEnabled()
         break
       }

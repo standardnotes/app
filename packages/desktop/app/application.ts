@@ -1,4 +1,4 @@
-import { App, Shell } from 'electron'
+import { App, SafeStorage, Shell } from 'electron'
 import { AppState } from './AppState'
 import { createExtensionsServer } from './javascripts/Main/ExtensionsServer'
 import { Keychain } from './javascripts/Main/Keychain/Keychain'
@@ -71,6 +71,7 @@ function registerAppEventListeners(args: {
   ipcMain: Electron.IpcMain
   shell: Shell
   state: AppState
+  safeStorage: SafeStorage
 }) {
   const { app, state } = args
 
@@ -114,7 +115,17 @@ async function setupDeepLinking(app: Electron.App) {
   }
 }
 
-async function finishApplicationInitialization({ app, shell, state }: { app: App; shell: Shell; state: AppState }) {
+async function finishApplicationInitialization({
+  app,
+  shell,
+  state,
+  safeStorage,
+}: {
+  app: App
+  shell: Shell
+  state: AppState
+  safeStorage: SafeStorage
+}) {
   const keychainWindow = await Keychain.ensureKeychainAccess(state.store)
 
   initializeStrings(app.getLocale())
@@ -126,6 +137,7 @@ async function finishApplicationInitialization({ app, shell, state }: { app: App
     teardown() {
       state.windowState = undefined
     },
+    safeStorage,
   })
 
   if (state.isRunningVersionForFirstTime()) {
