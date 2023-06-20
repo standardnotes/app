@@ -1,4 +1,4 @@
-import { app, ipcMain, shell } from 'electron'
+import { app, ipcMain, shell, safeStorage } from 'electron'
 import log from 'electron-log'
 import fs from 'fs-extra'
 import path from 'path'
@@ -53,6 +53,7 @@ initializeApplication({
   app,
   shell,
   ipcMain,
+  safeStorage,
 })
 
 /**

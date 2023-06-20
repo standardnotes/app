@@ -26,6 +26,7 @@ import { isTesting, lowercaseDriveLetter } from './Utils/Utils'
 import { initializeZoomManager } from './ZoomManager'
 import { HomeServerManager } from './HomeServer/HomeServerManager'
 import { HomeServer } from '@standardnotes/home-server'
+import { FilesManager } from './File/FilesManager'
 
 const WINDOW_DEFAULT_WIDTH = 1100
 const WINDOW_DEFAULT_HEIGHT = 800
@@ -204,6 +205,7 @@ async function createWindowServices(window: Electron.BrowserWindow, appState: Ap
   const spellcheckerManager = createSpellcheckerManager(appState.store, window.webContents, appLocale)
   const mediaManager = new MediaManager()
   const homeServer = new HomeServer()
+  const filesManager = new FilesManager()
 
   const homeServerManager = new HomeServerManager(homeServer, window.webContents)
 
@@ -219,7 +221,7 @@ async function createWindowServices(window: Electron.BrowserWindow, appState: Ap
     spellcheckerManager,
   })
 
-  const fileBackupsManager = new FilesBackupManager(appState, window.webContents)
+  const fileBackupsManager = new FilesBackupManager(appState, window.webContents, filesManager)
 
   return {
     updateManager,

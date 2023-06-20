@@ -10,7 +10,12 @@ import { createWindowState } from './javascripts/Main/Window'
 
 const deepLinkScheme = 'standardnotes'
 
-export function initializeApplication(args: { app: Electron.App; ipcMain: Electron.IpcMain; shell: Shell }): void {
+export function initializeApplication(args: {
+  app: Electron.App
+  ipcMain: Electron.IpcMain
+  shell: Shell
+  safeStorage: Electron.SafeStorage
+}): void {
   const { app } = args
 
   app.name = AppName
