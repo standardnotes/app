@@ -74,14 +74,9 @@ export class HomeServerManager implements HomeServerManagerInterface {
     let decryptedConfiguration = {}
     for (const key of Object.keys(encryptedConfiguration)) {
       const configKey = key as keyof HomeServerEnvironmentConfiguration
-      const value = encryptedConfiguration[configKey]
+      const value = encryptedConfiguration[configKey] as string
 
-      let decryptedValue: string | number = this.safeStorage.decryptString(Buffer.from(value as string, 'hex'))
-
-      const propertyType = typeof encryptedConfiguration[configKey]
-      if (propertyType === 'number') {
-        decryptedValue = parseInt(decryptedValue)
-      }
+      const decryptedValue = this.decryptValue(value)
 
       decryptedConfiguration = {
         ...decryptedConfiguration,
@@ -105,17 +100,13 @@ export class HomeServerManager implements HomeServerManagerInterface {
       let encryptedConfiguration = {}
       for (const key of Object.keys(homeServerConfiguration)) {
         const configKey = key as keyof HomeServerEnvironmentConfiguration
-        let value = homeServerConfiguration[configKey]
+        const value = homeServerConfiguration[configKey]
 
-        if (typeof value === 'number') {
-          value = value.toString()
-        }
-
-        const encryptedValue = this.safeStorage.encryptString(value as string)
+        const encryptedValue = this.encryptValue(value)
 
         encryptedConfiguration = {
           ...encryptedConfiguration,
-          [key]: encryptedValue.toString('hex'),
+          [key]: encryptedValue,
         }
       }
 
@@ -299,5 +290,49 @@ export class HomeServerManager implements HomeServerManagerInterface {
     }
 
     return configuration
+  }
+
+  private encryptValue(value: string | number | object | undefined): string | object | undefined {
+    switch (typeof value) {
+      case 'string':
+        return this.safeStorage.encryptString(value).toString('hex')
+      case 'number':
+        return this.safeStorage.encryptString(value.toString()).toString('hex')
+      case 'object': {
+        const encryptedObject: { [key: string]: string | object | undefined } = {}
+        for (const key of Object.keys(value)) {
+          const objectKey = key as keyof typeof value
+          const objectValue = value[objectKey]
+          encryptedObject[key] = this.encryptValue(objectValue)
+        }
+
+        return encryptedObject
+      }
+      default:
+        return undefined
+    }
+  }
+
+  private decryptValue(value: string | object | undefined): string | number | object | undefined {
+    switch (typeof value) {
+      case 'string': {
+        const decryptedValue = this.safeStorage.decryptString(Buffer.from(value, 'hex'))
+
+        return decryptedValue
+      }
+      case 'object': {
+        const decryptedObject: { [key: string]: string | number | object | undefined } = {}
+        for (const key of Object.keys(value)) {
+          const objectKey = key as keyof typeof value
+          const objectValue = value[objectKey]
+
+          decryptedObject[key] = this.decryptValue(objectValue)
+        }
+
+        return decryptedObject
+      }
+      default:
+        return undefined
+    }
   }
 }
