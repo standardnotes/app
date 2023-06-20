@@ -11,13 +11,7 @@ export enum StoreKeys {
   UseNativeKeychain = 'useNativeKeychain',
   LastRunVersion = 'LastRunVersion',
 
-  HomeServerAuthJWTSecret = 'HomeServerAuthJWTSecret',
   HomeServerDataLocation = 'HomeServerDataLocation',
-  HomeServerEncryptionServerKey = 'HomeServerEncryptionServerKey',
-  HomeServerJWTSecret = 'HomeServerJWTSecret',
-  HomeServerPseudoKeyParamsKey = 'HomeServerPseudoKeyParamsKey',
-  HomeServerValetTokenSecret = 'HomeServerValetTokenSecret',
-  HomeServerPort = 'HomeServerPort',
 
   LegacyTextBackupsLocation = 'backupsLocation',
   LegacyTextBackupsDisabled = 'backupsDisabled',
@@ -36,14 +30,6 @@ export interface StoreData {
   [StoreKeys.ZoomFactor]: number
   [StoreKeys.SelectedSpellCheckerLanguageCodes]: Set<Language> | null
   [StoreKeys.LastRunVersion]: string
-
-  [StoreKeys.HomeServerAuthJWTSecret]: string
-  [StoreKeys.HomeServerDataLocation]: string
-  [StoreKeys.HomeServerEncryptionServerKey]: string
-  [StoreKeys.HomeServerJWTSecret]: string
-  [StoreKeys.HomeServerPseudoKeyParamsKey]: string
-  [StoreKeys.HomeServerValetTokenSecret]: string
-  [StoreKeys.HomeServerPort]: number
 
   [StoreKeys.LegacyTextBackupsLocation]: string
   [StoreKeys.LegacyTextBackupsDisabled]: boolean

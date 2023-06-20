@@ -21,14 +21,6 @@ export function createSanitizedStoreData(data: any = {}): StoreData {
     ),
     [StoreKeys.LastRunVersion]: data[StoreKeys.LastRunVersion],
 
-    [StoreKeys.HomeServerAuthJWTSecret]: data[StoreKeys.HomeServerAuthJWTSecret],
-    [StoreKeys.HomeServerDataLocation]: data[StoreKeys.HomeServerDataLocation],
-    [StoreKeys.HomeServerEncryptionServerKey]: data[StoreKeys.HomeServerEncryptionServerKey],
-    [StoreKeys.HomeServerJWTSecret]: data[StoreKeys.HomeServerJWTSecret],
-    [StoreKeys.HomeServerPseudoKeyParamsKey]: data[StoreKeys.HomeServerPseudoKeyParamsKey],
-    [StoreKeys.HomeServerValetTokenSecret]: data[StoreKeys.HomeServerValetTokenSecret],
-    [StoreKeys.HomeServerPort]: data[StoreKeys.HomeServerPort],
-
     [StoreKeys.LegacyTextBackupsLocation]: data[StoreKeys.LegacyTextBackupsLocation],
     [StoreKeys.LegacyTextBackupsDisabled]: data[StoreKeys.LegacyTextBackupsDisabled],
     [StoreKeys.LegacyFileBackupsEnabled]: data[StoreKeys.LegacyFileBackupsEnabled],
