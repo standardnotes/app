@@ -1,5 +1,4 @@
 import { HeadlessSuperConverter } from '@/Components/SuperEditor/Tools/HeadlessSuperConverter'
-import { StorageServiceInterface } from '@standardnotes/services'
 import {
   SNComponent,
   ComponentMutator,
@@ -38,7 +37,6 @@ export class DesktopManager
     application: WebApplicationInterface,
     private device: DesktopDeviceInterface,
     private backups: BackupServiceInterface,
-    private storageService: StorageServiceInterface,
   ) {
     super(application, new InternalEventBus())
 
