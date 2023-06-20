@@ -18,7 +18,7 @@ export interface BackupServiceInterface {
   getFilesBackupsLocation(): string | undefined
   openFilesBackupsLocation(): Promise<void>
   openFileBackup(record: FileBackupRecord): Promise<void>
-  getFileBackupAbsolutePath(record: FileBackupRecord): string
+  getFileBackupAbsolutePath(record: FileBackupRecord): Promise<string>
 
   isTextBackupsEnabled(): boolean
   enableTextBackups(): Promise<void>

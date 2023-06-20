@@ -48,6 +48,7 @@ describe('backup service', () => {
     device = {} as jest.Mocked<FileBackupsDevice>
     device.getFileBackupReadToken = jest.fn()
     device.readNextChunk = jest.fn()
+    device.joinPaths = jest.fn()
 
     session = {} as jest.Mocked<SessionsClientInterface>
 
@@ -84,6 +85,7 @@ describe('backup service', () => {
       history,
       internalEventBus,
     )
+    backupService.getFilesBackupsLocation = jest.fn().mockReturnValue('/')
 
     crypto.xchacha20StreamInitDecryptor = jest.fn().mockReturnValue({
       state: {},

@@ -1,6 +1,56 @@
 {
   "versions": [
     {
+      "version": "3.161.2",
+      "title": "[3.161.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.161.1...@standardnotes/web@3.161.2) (2023-06-16)",
+      "date": null,
+      "body": "**Note:** Version bump only for package @standardnotes/web",
+      "parsed": {
+        "_": [
+          "Note: Version bump only for package @standardnotes/web"
+        ]
+      }
+    },
+    {
+      "version": "3.161.1",
+      "title": "[3.161.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.161.0...@standardnotes/web@3.161.1) (2023-06-06)",
+      "date": null,
+      "body": "**Note:** Version bump only for package @standardnotes/web",
+      "parsed": {
+        "_": [
+          "Note: Version bump only for package @standardnotes/web"
+        ]
+      }
+    },
+    {
+      "version": "3.161.0",
+      "title": "[3.161.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.160.19...@standardnotes/web@3.161.0) (2023-06-02)",
+      "date": null,
+      "body": "### Features\n\n* You can now drag-n-drop notes onto tags to move them from one tag to another ([#2334](https://github.com/standardnotes/app/issues/2334)) ([08c38fc](https://github.com/standardnotes/app/commit/08c38fc7cfbce96c5de269073f5f0117000066a8))",
+      "parsed": {
+        "_": [
+          "You can now drag-n-drop notes onto tags to move them from one tag to another (#2334) (08c38fc)"
+        ],
+        "Features": [
+          "You can now drag-n-drop notes onto tags to move them from one tag to another (#2334) (08c38fc)"
+        ]
+      }
+    },
+    {
+      "version": "3.160.19",
+      "title": "[3.160.19](https://github.com/standardnotes/app/compare/@standardnotes/web@3.160.18...@standardnotes/web@3.160.19) (2023-05-31)",
+      "date": null,
+      "body": "### Bug Fixes\n\n* **desktop:** Fixed issue where local backup location would default to \"[object Promise]\" ([7d691aa](https://github.com/standardnotes/app/commit/7d691aa409af3636ad795491b8b817d9eb7a980d))",
+      "parsed": {
+        "_": [
+          "desktop: Fixed issue where local backup location would default to \"object Promise]\" ([7d691aa)"
+        ],
+        "Bug Fixes": [
+          "desktop: Fixed issue where local backup location would default to \"object Promise]\" ([7d691aa)"
+        ]
+      }
+    },
+    {
       "version": "3.160.18",
       "title": "[3.160.18](https://github.com/standardnotes/app/compare/@standardnotes/web@3.160.17...@standardnotes/web@3.160.18) (2023-05-30)",
       "date": null,

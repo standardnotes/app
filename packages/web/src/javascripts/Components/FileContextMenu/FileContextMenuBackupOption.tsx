@@ -9,10 +9,19 @@ export const FileContextMenuBackupOption: FunctionComponent<{ file: FileItem }> 
   const application = useApplication()
 
   const [backupInfo, setBackupInfo] = useState<FileBackupRecord | undefined>(undefined)
+  const [backupAbsolutePath, setBackupAbsolutePath] = useState<string | undefined>(undefined)
 
   useEffect(() => {
     void application.fileBackups?.getFileBackupInfo(file).then(setBackupInfo)
   }, [application, file])
+
+  useEffect(() => {
+    if (!backupInfo) {
+      return
+    }
+
+    void application.fileBackups?.getFileBackupAbsolutePath(backupInfo).then(setBackupAbsolutePath)
+  }, [backupInfo, application])
 
   const openFileBackup = useCallback(() => {
     if (backupInfo) {
@@ -35,7 +44,7 @@ export const FileContextMenuBackupOption: FunctionComponent<{ file: FileItem }> 
         >
           <div className="ml-2">
             <div className="font-semibold text-success">Backed up on {dateToStringStyle1(backupInfo.backedUpOn)}</div>
-            <div className="text-xs text-neutral">{application.fileBackups?.getFileBackupAbsolutePath(backupInfo)}</div>
+            <div className="text-xs text-neutral">{backupAbsolutePath}</div>
           </div>
         </MenuItem>
       )}

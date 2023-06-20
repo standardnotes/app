@@ -14,6 +14,8 @@ import { log, LoggingDomain } from '@/Logging'
 import { classNames } from '@standardnotes/utils'
 import { getIconAndTintForNoteType } from '@/Utils/Items/Icons/getIconAndTintForNoteType'
 import ListItemCollaborationInfo from './ListItemCollaborationInfo'
+import { NoteDragDataFormat } from '../Tags/DragNDrop'
+import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 
 const NoteListItem: FunctionComponent<DisplayableListItemProps<SNNote>> = ({
   application,
@@ -71,6 +73,34 @@ const NoteListItem: FunctionComponent<DisplayableListItemProps<SNNote>> = ({
 
   const hasOffsetBorder = !isNextItemTiled
 
+  const isMobileScreen = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
+  const dragPreview = useRef<HTMLDivElement>()
+
+  const createDragPreview = () => {
+    if (!listItemRef.current) {
+      throw new Error('List item ref is not set')
+    }
+
+    const element = listItemRef.current.cloneNode(true)
+    // Only keep icon & title in drag preview
+    Array.from(element.childNodes[1].childNodes).forEach((node, key) => {
+      if (key !== 0) {
+        node.remove()
+      }
+    })
+    element.childNodes[2].remove()
+    if (element instanceof HTMLDivElement) {
+      element.style.width = `${listItemRef.current.clientWidth}px`
+      element.style.position = 'absolute'
+      element.style.top = '0'
+      element.style.left = '0'
+      element.style.zIndex = '-100000'
+      document.body.appendChild(element)
+      dragPreview.current = element
+    }
+    return element as HTMLDivElement
+  }
+
   return (
     <div
       ref={listItemRef}
@@ -82,6 +112,23 @@ const NoteListItem: FunctionComponent<DisplayableListItemProps<SNNote>> = ({
       )}
       id={item.uuid}
       onClick={onClick}
+      draggable={!isMobileScreen}
+      onDragStart={(event) => {
+        if (!listItemRef.current) {
+          return
+        }
+
+        const { dataTransfer } = event
+
+        const element = createDragPreview()
+        dataTransfer.setDragImage(element, 0, 0)
+        dataTransfer.setData(NoteDragDataFormat, item.uuid)
+      }}
+      onDragLeave={() => {
+        if (dragPreview.current) {
+          dragPreview.current.remove()
+        }
+      }}
     >
       {!hideIcon ? (
         <div className="mr-0 flex flex-col items-center justify-between gap-2 p-4 pr-4">
