@@ -1,9 +1,9 @@
 import { ContentType } from '@standardnotes/common'
 import { SNNote, SNTag } from '@standardnotes/models'
-import { ItemCounter } from './ItemCounter'
+import { StaticItemCounter } from './StaticItemCounter'
 
 describe('ItemCounter', () => {
-  const createCounter = () => new ItemCounter()
+  const createCounter = () => new StaticItemCounter()
 
   it('should count distinct item counts', () => {
     const items = [

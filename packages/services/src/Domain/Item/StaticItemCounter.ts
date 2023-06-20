@@ -1,9 +1,7 @@
 import { ContentType } from '@standardnotes/common'
 import { SNNote, SNTag, ItemCounts } from '@standardnotes/models'
 
-import { ItemCounterInterface } from './ItemCounterInterface'
-
-export class ItemCounter implements ItemCounterInterface {
+export class StaticItemCounter {
   countNotesAndTags(items: Array<SNNote | SNTag>): ItemCounts {
     const counts: ItemCounts = {
       notes: 0,
