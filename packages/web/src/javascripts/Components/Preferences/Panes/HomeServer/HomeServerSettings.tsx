@@ -312,18 +312,19 @@ const HomeServerSettings = () => {
                 >
                   {showOfflineSubscriptionActivation ? 'Close' : 'Activate Premium Features'}
                 </Button>
+
+                {showOfflineSubscriptionActivation && (
+                  <OfflineSubscription
+                    application={application}
+                    viewControllerManager={viewControllerManager}
+                    onSuccess={() => {
+                      setIsAPremiumUser(true)
+                      setShowOfflineSubscriptionActivation(false)
+                    }}
+                  />
+                )}
               </div>
             </>
-          )}
-          {showOfflineSubscriptionActivation && (
-            <OfflineSubscription
-              application={application}
-              viewControllerManager={viewControllerManager}
-              onSuccess={() => {
-                setIsAPremiumUser(true)
-                setShowOfflineSubscriptionActivation(false)
-              }}
-            />
           )}
 
           {status?.state !== 'restarting' && (
