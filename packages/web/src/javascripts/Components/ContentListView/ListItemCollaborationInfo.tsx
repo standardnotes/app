@@ -9,14 +9,13 @@ type Props = {
 
 const ListItemCollaborationInfo: FunctionComponent<Props> = ({ item }) => {
   const application = useApplication()
-  const vaultInfo = application.vaults.getVaultInfoForItem(item)
-
-  if (!vaultInfo) {
+  const vault = application.vaults.getItemVault(item)
+  if (!vault) {
     return null
   }
 
-  const vaultNameDisplay = vaultInfo.vaultName || vaultInfo.vaultUuid.split('-')[0]
-  const sharedByContact = application.vaults.getItemSharedBy(item)
+  const vaultNameDisplay = vault.name || vault.systemIdentifier.split('-')[0]
+  const sharedByContact = application.sharedVaults.getItemSharedBy(item)
 
   return (
     <div className="mt-0.5 flex flex-wrap items-center gap-2">

@@ -2,56 +2,64 @@ import { FunctionComponent, useCallback, useEffect, useMemo, useState } from 're
 import Modal, { ModalAction } from '@/Components/Modal/Modal'
 import DecoratedInput from '@/Components/Input/DecoratedInput'
 import { useApplication } from '@/Components/ApplicationProvider'
-import { SharedVaultInviteServerHash, SharedVaultUserServerHash, isClientDisplayableError } from '@standardnotes/snjs'
+import {
+  SharedVaultInviteServerHash,
+  SharedVaultUserServerHash,
+  VaultListingInterface,
+  isClientDisplayableError,
+} from '@standardnotes/snjs'
 import Icon from '@/Components/Icon/Icon'
 import Button from '@/Components/Button/Button'
 
 type Props = {
-  existingVaultUuid?: string
+  existingVault?: VaultListingInterface
   onCloseDialog: () => void
 }
 
-const EditVaultModal: FunctionComponent<Props> = ({ onCloseDialog, existingVaultUuid }) => {
+const EditVaultModal: FunctionComponent<Props> = ({ onCloseDialog, existingVault }) => {
   const application = useApplication()
 
   const [name, setName] = useState<string>('')
   const [description, setDescription] = useState<string>('')
   const [members, setMembers] = useState<SharedVaultUserServerHash[]>([])
   const [invites, setInvites] = useState<SharedVaultInviteServerHash[]>([])
-  const [isAdmin, setIsAdmin] = useState<boolean>(false)
+  const [isAdmin, setIsAdmin] = useState<boolean>(true)
 
   const reloadVaultInfo = useCallback(async () => {
-    if (existingVaultUuid) {
-      const vaultInfo = application.vaults.getVaultInfo(existingVaultUuid)
-      setName(vaultInfo?.vaultName ?? '')
-      setDescription(vaultInfo?.vaultDescription ?? '')
-      setIsAdmin(application.vaults.isUserGroupAdmin(existingVaultUuid))
+    if (existingVault) {
+      setName(existingVault.name ?? '')
+      setDescription(existingVault.description ?? '')
+      if (existingVault.isSharedVaultListing()) {
+        setIsAdmin(
+          existingVault.isSharedVaultListing() && application.sharedVaults.isCurrentUserSharedVaultAdmin(existingVault),
+        )
 
-      const users = await application.vaults.getSharedVaultUsers(existingVaultUuid)
-      if (users) {
-        setMembers(users)
-      }
+        const users = await application.sharedVaults.getSharedVaultUsers(existingVault)
+        if (users) {
+          setMembers(users)
+        }
 
-      const invites = await application.vaults.getOutboundInvites(existingVaultUuid)
-      if (!isClientDisplayableError(invites)) {
-        setInvites(invites)
+        const invites = await application.sharedVaults.getOutboundInvites(existingVault)
+        if (!isClientDisplayableError(invites)) {
+          setInvites(invites)
+        }
       }
     }
-  }, [application.vaults, existingVaultUuid])
+  }, [application.sharedVaults, existingVault])
 
   useEffect(() => {
-    if (existingVaultUuid) {
+    if (existingVault) {
       void reloadVaultInfo()
     }
-  }, [application.vaults, existingVaultUuid, reloadVaultInfo])
+  }, [application.vaults, existingVault, reloadVaultInfo])
 
   const handleDialogClose = useCallback(() => {
     onCloseDialog()
   }, [onCloseDialog])
 
   const handleSubmit = useCallback(async () => {
-    if (existingVaultUuid) {
-      await application.vaults.changeVaultNameAndDescription(existingVaultUuid, {
+    if (existingVault) {
+      await application.vaults.changeVaultNameAndDescription(existingVault, {
         name: name,
         description: description,
       })
@@ -64,30 +72,30 @@ const EditVaultModal: FunctionComponent<Props> = ({ onCloseDialog, existingVault
         void application.alertService.alert('Unable to create vault. Please try again.')
       }
     }
-  }, [existingVaultUuid, application.vaults, application.alertService, name, description, handleDialogClose])
+  }, [existingVault, application.vaults, application.alertService, name, description, handleDialogClose])
 
   const removeMemberFromVault = useCallback(
     async (member: SharedVaultUserServerHash) => {
-      if (existingVaultUuid) {
-        await application.vaults.removeUserFromGroup(existingVaultUuid, member.uuid)
+      if (existingVault?.isSharedVaultListing()) {
+        await application.sharedVaults.removeUserFromSharedVault(existingVault, member.uuid)
         await reloadVaultInfo()
       }
     },
-    [application.vaults, existingVaultUuid, reloadVaultInfo],
+    [application.sharedVaults, existingVault, reloadVaultInfo],
   )
 
   const deleteInvite = useCallback(
     async (invite: SharedVaultInviteServerHash) => {
-      await application.vaults.deleteInvite(invite)
+      await application.sharedVaults.deleteInvite(invite)
       await reloadVaultInfo()
     },
-    [application.vaults, reloadVaultInfo],
+    [application.sharedVaults, reloadVaultInfo],
   )
 
   const modalActions = useMemo(
     (): ModalAction[] => [
       {
-        label: existingVaultUuid ? 'Save Vault' : 'Create Vault',
+        label: existingVault ? 'Save Vault' : 'Create Vault',
         onClick: handleSubmit,
         type: 'primary',
         mobileSlot: 'right',
@@ -99,15 +107,11 @@ const EditVaultModal: FunctionComponent<Props> = ({ onCloseDialog, existingVault
         mobileSlot: 'left',
       },
     ],
-    [existingVaultUuid, handleDialogClose, handleSubmit],
+    [existingVault, handleDialogClose, handleSubmit],
   )
 
   return (
-    <Modal
-      title={existingVaultUuid ? 'Edit Vault' : 'Create New Vault'}
-      close={handleDialogClose}
-      actions={modalActions}
-    >
+    <Modal title={existingVault ? 'Edit Vault' : 'Create New Vault'} close={handleDialogClose} actions={modalActions}>
       <div className="px-4.5 pt-4 pb-1.5">
         <div className="flex w-full flex-col">
           <div className="mb-3">
@@ -137,11 +141,11 @@ const EditVaultModal: FunctionComponent<Props> = ({ onCloseDialog, existingVault
             />
           </div>
 
-          {existingVaultUuid && (
+          {existingVault && (
             <div className="mb-3">
               <div className="mb-3 text-lg">Vault Members</div>
               {members.map((member) => {
-                if (application.vaults.isSharedVaultUserGroupOwner(member)) {
+                if (application.sharedVaults.isSharedVaultUserSharedVaultOwner(member)) {
                   return null
                 }
 
@@ -176,7 +180,7 @@ const EditVaultModal: FunctionComponent<Props> = ({ onCloseDialog, existingVault
             </div>
           )}
 
-          {existingVaultUuid && (
+          {existingVault && (
             <div className="mb-3">
               <div className="mb-3 text-lg">Pending Invites</div>
               {invites.map((invite) => {

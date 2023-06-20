@@ -13,6 +13,7 @@ export interface VaultServiceInterface
   addItemToVault(vault: VaultListingInterface, item: DecryptedItemInterface): Promise<DecryptedItemInterface>
   removeItemFromVault(item: DecryptedItemInterface): Promise<DecryptedItemInterface>
   isItemInVault(item: DecryptedItemInterface): boolean
+  getItemVault(item: DecryptedItemInterface): VaultListingInterface | undefined
 
   rotateVaultRootKey(vault: VaultListingInterface): Promise<void>
   changeVaultNameAndDescription(

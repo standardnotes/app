@@ -9,22 +9,21 @@ import EditContactModal from './Contacts/EditContactModal'
 import { useCallback, useEffect, useState } from 'react'
 import {
   ContactServiceEvent,
-  SharedVaultInviteServerHash,
-  VaultInterface,
+  VaultListingInterface,
   TrustedContactInterface,
-  isClientDisplayableError,
+  PendingSharedVaultInviteRecord,
+  ContentType,
 } from '@standardnotes/snjs'
 import VaultItem from './Vaults/VaultItem'
 import Button from '@/Components/Button/Button'
 import InviteItem from './Invites/InviteItem'
 import EditVaultModal from './Vaults/EditVaultModal'
-import { VaultServiceEvent } from '@standardnotes/services'
 
-const Collaboration = () => {
+const Vaults = () => {
   const application = useApplication()
 
-  const [vaults, setVaults] = useState<VaultInterface[]>([])
-  const [invites, setInvites] = useState<SharedVaultInviteServerHash[]>([])
+  const [vaults, setVaults] = useState<VaultListingInterface[]>([])
+  const [invites, setInvites] = useState<PendingSharedVaultInviteRecord[]>([])
   const [contacts, setContacts] = useState<TrustedContactInterface[]>([])
 
   const [isAddContactModalOpen, setIsAddContactModalOpen] = useState(false)
@@ -34,20 +33,25 @@ const Collaboration = () => {
   const closeVaultModal = () => setIsVaultModalOpen(false)
 
   const vaultService = application.vaults
+  const sharedVaultService = application.sharedVaults
   const contactService = application.contacts
 
+  useEffect(() => {
+    return application.streamItems(ContentType.VaultListing, () => {
+      void fetchVaults()
+      void fetchInvites()
+    })
+  })
+
   const fetchVaults = useCallback(async () => {
-    const vaults = await application.vaults.reloadRemoteGroups()
-    if (!isClientDisplayableError(vaults)) {
-      setVaults(vaults)
-    }
-  }, [application.vaults])
+    setVaults(vaultService.getVaults())
+  }, [vaultService])
 
   const fetchInvites = useCallback(async () => {
-    await vaultService.downloadInboundInvites()
-    const invites = vaultService.getCachedPendingInviteRecords()
+    await sharedVaultService.downloadInboundInvites()
+    const invites = sharedVaultService.getCachedPendingInviteRecords()
     setInvites(invites)
-  }, [vaultService])
+  }, [sharedVaultService])
 
   const fetchContacts = useCallback(async () => {
     const contacts = contactService.getAllContacts()
@@ -71,15 +75,6 @@ const Collaboration = () => {
   }, [contactService, fetchContacts])
 
   useEffect(() => {
-    return vaultService.addEventObserver((event) => {
-      if (event === VaultServiceEvent.VaultsChanged) {
-        void fetchVaults()
-        void fetchInvites()
-      }
-    })
-  }, [fetchVaults, fetchInvites, vaultService])
-
-  useEffect(() => {
     void fetchVaults()
     void fetchInvites()
     void fetchContacts()
@@ -100,7 +95,7 @@ const Collaboration = () => {
           <Title>Incoming Invites</Title>
           <div className="my-2 flex flex-col">
             {invites.map((invite) => {
-              return <InviteItem invite={invite} key={invite.uuid} />
+              return <InviteItem invite={invite} key={invite.invite.uuid} />
             })}
           </div>
         </PreferencesSegment>
@@ -125,7 +120,7 @@ const Collaboration = () => {
           <Title>Vaults</Title>
           <div className="my-2 flex flex-col">
             {vaults.map((vault) => {
-              return <VaultItem vault={vault} key={vaultSystemIdentifier} />
+              return <VaultItem vault={vault} key={vault.uuid} />
             })}
           </div>
           <div className="mt-2.5 flex flex-row">
@@ -147,7 +142,7 @@ const Collaboration = () => {
           ) : (
             <div className="mt-2.5 flex flex-row">
               <Button
-                label="Enable Collaboration"
+                label="Enable Vault Sharing"
                 className={'mr-3 text-xs'}
                 onClick={() => contactService.enableCollaboration()}
               />
@@ -159,4 +154,4 @@ const Collaboration = () => {
   )
 }
 
-export default observer(Collaboration)
+export default observer(Vaults)

@@ -33,6 +33,7 @@ export * from './KeySystem/KeySystemKeyManager'
 export * from './SharedVaults/SharedVaultServiceInterface'
 export * from './SharedVaults/SharedVaultService'
 export * from './SharedVaults/SharedVaultServiceEvent'
+export * from './SharedVaults/PendingSharedVaultInviteRecord'
 
 export * from './Singleton/SingletonManagerInterface'
 

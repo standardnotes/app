@@ -10,7 +10,7 @@ import Listed from './Panes/Listed/Listed'
 import HelpAndFeedback from './Panes/HelpFeedback'
 import { PreferencesProps } from './PreferencesProps'
 import WhatsNew from './Panes/WhatsNew/WhatsNew'
-import Collaboration from './Panes/Collaboration/Collaboration'
+import Vaults from './Panes/Vaults/Vaults'
 
 const PaneSelector: FunctionComponent<PreferencesProps & { menu: PreferencesMenu }> = ({
   menu,
@@ -41,8 +41,8 @@ const PaneSelector: FunctionComponent<PreferencesProps & { menu: PreferencesMenu
           application={application}
         />
       )
-    case 'collaboration':
-      return <Collaboration />
+    case 'vaults':
+      return <Vaults />
     case 'backups':
       return <Backups application={application} viewControllerManager={viewControllerManager} />
     case 'listed':

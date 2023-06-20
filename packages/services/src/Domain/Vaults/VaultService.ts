@@ -146,6 +146,14 @@ export class VaultService
     return item.key_system_identifier !== undefined
   }
 
+  getItemVault(item: DecryptedItemInterface): VaultListingInterface | undefined {
+    if (!item.key_system_identifier) {
+      return undefined
+    }
+
+    return this.getVault(item.key_system_identifier)
+  }
+
   unlockNonPersistentVault(vault: VaultListingInterface, password: string): void {
     if (vault.rootKeyPasswordType !== KeySystemRootKeyPasswordType.UserInputted) {
       throw new Error('Vault uses randomized password and cannot be unlocked with user inputted password')

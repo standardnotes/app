@@ -101,6 +101,8 @@ const ContentTypeLocalLoadPriorty = [
   ContentType.ItemsKey,
   ContentType.KeySystemRootKey,
   ContentType.KeySystemItemsKey,
+  ContentType.VaultListing,
+  ContentType.TrustedContact,
   ContentType.UserPrefs,
   ContentType.Component,
   ContentType.Theme,

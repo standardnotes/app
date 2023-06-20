@@ -44,7 +44,9 @@ export interface SharedVaultServiceInterface
   getItemSharedBy(item: DecryptedItemInterface): TrustedContactInterface | undefined
 
   downloadInboundInvites(): Promise<ClientDisplayableError | SharedVaultInviteServerHash[]>
-  getOutboundInvites(vaultUuid?: string): Promise<SharedVaultInviteServerHash[] | ClientDisplayableError>
+  getOutboundInvites(
+    sharedVault?: SharedVaultListingInterface,
+  ): Promise<SharedVaultInviteServerHash[] | ClientDisplayableError>
   acceptPendingSharedVaultInvite(pendingInvite: PendingSharedVaultInviteRecord): Promise<void>
   getCachedPendingInviteRecords(): PendingSharedVaultInviteRecord[]
   getInvitableContactsForSharedVault(sharedVault: SharedVaultListingInterface): Promise<TrustedContactInterface[]>

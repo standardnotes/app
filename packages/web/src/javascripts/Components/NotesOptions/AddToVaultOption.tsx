@@ -1,9 +1,9 @@
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent, useCallback, useEffect, useRef, useState } from 'react'
+import { FunctionComponent, useCallback, useRef, useState } from 'react'
 import Icon from '@/Components/Icon/Icon'
 import { KeyboardKey } from '@standardnotes/ui-services'
 import Popover from '../Popover/Popover'
-import { classNames, DecryptedItemInterface, VaultInterface, isClientDisplayableError } from '@standardnotes/snjs'
+import { classNames, DecryptedItemInterface, VaultListingInterface } from '@standardnotes/snjs'
 import { useApplication } from '../ApplicationProvider'
 import MenuItem from '../Menu/MenuItem'
 import Menu from '../Menu/Menu'
@@ -18,18 +18,7 @@ const AddToVaultOption: FunctionComponent<Props> = ({ iconClassName, selectedIte
   const menuContainerRef = useRef<HTMLDivElement>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
 
-  const [vaults, setVaults] = useState<VaultInterface[]>([])
-
-  useEffect(() => {
-    const reloadRemoteGroups = async () => {
-      const vaults = await application.vaults.reloadRemoteGroups()
-      if (!isClientDisplayableError(vaults)) {
-        setVaults(vaults)
-      }
-    }
-    setVaults(application.vaults.getVaults())
-    void reloadRemoteGroups()
-  }, [application.vaults])
+  const vaults = application.vaults.getVaults()
 
   const [isOpen, setIsOpen] = useState(false)
 
@@ -38,9 +27,9 @@ const AddToVaultOption: FunctionComponent<Props> = ({ iconClassName, selectedIte
   }, [])
 
   const addItemsToVault = useCallback(
-    async (vault: VaultInterface) => {
+    async (vault: VaultListingInterface) => {
       for (const item of selectedItems) {
-        await application.vaults.addItemToVault(vaultSystemIdentifier, item)
+        await application.vaults.addItemToVault(vault, item)
       }
     },
     [application.vaults, selectedItems],
@@ -48,12 +37,12 @@ const AddToVaultOption: FunctionComponent<Props> = ({ iconClassName, selectedIte
 
   const removeItemsFromVault = useCallback(async () => {
     for (const item of selectedItems) {
-      await application.vaults.moveItemFromVaultToUser(item)
+      await application.vaults.removeItemFromVault(item)
     }
   }, [application.vaults, selectedItems])
 
-  const doesVaultContainItems = (vault: VaultInterface) => {
-    return selectedItems.every((item) => item.vault_system_identifier === vaultSystemIdentifier)
+  const doesVaultContainItems = (vault: VaultListingInterface) => {
+    return selectedItems.every((item) => item.key_system_identifier === vault.systemIdentifier)
   }
 
   return (
@@ -86,10 +75,9 @@ const AddToVaultOption: FunctionComponent<Props> = ({ iconClassName, selectedIte
       >
         <Menu a11yLabel="Vault selection menu" isOpen={isOpen}>
           {vaults.map((vault) => {
-            const vaultKeyData = application.vaults.getVaultInfo(vaultSystemIdentifier)
             return (
               <MenuItem
-                key={vaultSystemIdentifier}
+                key={vault.uuid}
                 onClick={() => {
                   doesVaultContainItems(vault) ? void removeItemsFromVault() : void addItemsToVault(vault)
                 }}
@@ -100,7 +88,7 @@ const AddToVaultOption: FunctionComponent<Props> = ({ iconClassName, selectedIte
                     doesVaultContainItems(vault) ? 'font-bold' : '',
                   )}
                 >
-                  {vaultKeyData?.vaultName || vaultSystemIdentifier}
+                  {vault.name || vault.systemIdentifier}
                 </span>
               </MenuItem>
             )

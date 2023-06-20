@@ -264,7 +264,7 @@ export class SharedVaultService
   }
 
   public async getOutboundInvites(
-    sharedVaultUuid?: string,
+    sharedVault?: SharedVaultListingInterface,
   ): Promise<SharedVaultInviteServerHash[] | ClientDisplayableError> {
     const response = await this.invitesServer.getOutboundUserInvites()
 
@@ -272,8 +272,8 @@ export class SharedVaultService
       return ClientDisplayableError.FromString(`Failed to get outbound user invites ${response}`)
     }
 
-    if (sharedVaultUuid) {
-      return response.data.invites.filter((invite) => invite.shared_vault_uuid === sharedVaultUuid)
+    if (sharedVault) {
+      return response.data.invites.filter((invite) => invite.shared_vault_uuid === sharedVault.sharing.sharedVaultUuid)
     }
 
     return response.data.invites

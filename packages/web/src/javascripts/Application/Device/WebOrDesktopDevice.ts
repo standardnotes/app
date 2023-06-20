@@ -111,8 +111,8 @@ export abstract class WebOrDesktopDevice implements WebOrDesktopDeviceInterface 
 
     const {
       itemsKeyPayloads,
-      vaultKeyPayloads,
-      vaultItemsKeyPayloads,
+      keySystemRootKeyPayloads,
+      keySystemItemsKeyPayloads,
       contentTypePriorityPayloads,
       remainingPayloads,
     } = GetSortedPayloadsByPriority(entries, options)
@@ -121,12 +121,12 @@ export abstract class WebOrDesktopDevice implements WebOrDesktopDeviceInterface 
       entries: itemsKeyPayloads,
     }
 
-    const vaultKeysChunk: DatabaseFullEntryLoadChunk = {
-      entries: vaultKeyPayloads,
+    const keySystemRootKeysChunk: DatabaseFullEntryLoadChunk = {
+      entries: keySystemRootKeyPayloads,
     }
 
-    const vaultItemsKeysChunk: DatabaseFullEntryLoadChunk = {
-      entries: vaultItemsKeyPayloads,
+    const keySystemItemsKeysChunk: DatabaseFullEntryLoadChunk = {
+      entries: keySystemItemsKeyPayloads,
     }
 
     const contentTypePriorityChunk: DatabaseFullEntryLoadChunk = {
@@ -143,8 +143,8 @@ export abstract class WebOrDesktopDevice implements WebOrDesktopDeviceInterface 
     const result: DatabaseFullEntryLoadChunkResponse = {
       fullEntries: {
         itemsKeys: itemsKeysChunk,
-        vaultKeys: vaultKeysChunk,
-        vaultItemsKeys: vaultItemsKeysChunk,
+        keySystemRootKeys: keySystemRootKeysChunk,
+        keySystemItemsKeys: keySystemItemsKeysChunk,
         remainingChunks: [contentTypePriorityChunk, ...remainingPayloadsChunks],
       },
       remainingChunksItemCount: contentTypePriorityPayloads.length + remainingPayloads.length,
