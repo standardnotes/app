@@ -51,9 +51,9 @@ export class ItemDisplayController<I extends DisplayItem> {
     const filters: CriteriaValidatorInterface[] = [new CollectionCriteriaValidator(this.collection, element)]
 
     if (this.options.vaults) {
-      if ('exclude' in this.options.vaults) {
+      if (this.options.vaults.exclude) {
         filters.push(new ExcludeVaultsCriteriaValidator(this.options.vaults.exclude, element))
-      } else if ('exclusive' in this.options.vaults) {
+      } else if (this.options.vaults.exclusive) {
         filters.push(new ExclusiveVaultCriteriaValidator(this.options.vaults.exclusive, element))
       } else {
         throw new Error('Invalid vaults option')
