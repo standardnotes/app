@@ -229,7 +229,7 @@ const NoteConflictResolutionModal = ({
             <Toolbar className="flex w-full items-stretch text-info-contrast md:w-auto" store={toolbarStore}>
               <ToolbarItem
                 onClick={keepOnlySelectedNote}
-                className="flex-grow rounded rounded-r-none bg-info px-3 py-1.5 text-base font-bold hover:brightness-110 focus-visible:brightness-110 lg:text-sm"
+                className="flex-grow rounded rounded-r-none bg-info px-3 py-1.5 text-base font-bold ring-info ring-offset-2 ring-offset-default hover:brightness-110 focus:ring-0 focus-visible:ring-2 focus-visible:brightness-110 lg:text-sm"
                 disabled={isPerformingAction}
               >
                 {isPerformingAction ? (
@@ -244,10 +244,10 @@ const NoteConflictResolutionModal = ({
                 ref={setSelectAnchor}
                 render={
                   <ToolbarItem
-                    className="rounded rounded-l-none border-l border-border bg-info py-1.5 px-3 hover:brightness-110 focus-visible:brightness-110"
+                    className="rounded rounded-l-none border-l border-border bg-info py-1.5 px-3 ring-info ring-offset-2 ring-offset-default hover:brightness-110 focus:ring-0 focus-visible:ring-2 focus-visible:brightness-110"
                     disabled={isPerformingAction}
                   >
-                    <SelectArrow className={isSelectOpen ? 'block rotate-180' : ''} />
+                    <SelectArrow className="block rotate-180" />
                   </ToolbarItem>
                 }
                 store={selectStore}
