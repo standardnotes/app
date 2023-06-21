@@ -1,7 +1,7 @@
 import { ApplicationEvent, ServiceInterface } from '@standardnotes/services'
-import { VaultDisplayServiceEvent } from '../Vaults/VaultDisplayServiceEvent'
 
-export interface AbstractUIServiceInterface extends ServiceInterface<VaultDisplayServiceEvent, unknown> {
+export interface AbstractUIServiceInterface<EventName = string, EventData = unknown>
+  extends ServiceInterface<EventName, EventData> {
   onAppStart(): Promise<void>
   onAppEvent(event: ApplicationEvent): Promise<void>
 }

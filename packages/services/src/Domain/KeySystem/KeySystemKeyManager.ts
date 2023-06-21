@@ -71,14 +71,14 @@ export class KeySystemKeyManager extends AbstractService implements KeySystemKey
     return this.items.getItems(ContentType.KeySystemRootKey)
   }
 
-  private getSyncedKeySystemRootKeysForVault(systemIdentifier: KeySystemIdentifier): KeySystemRootKeyInterface[] {
+  public getSyncedKeySystemRootKeysForVault(systemIdentifier: KeySystemIdentifier): KeySystemRootKeyInterface[] {
     return this.items.itemsMatchingPredicate<KeySystemRootKeyInterface>(
       ContentType.KeySystemRootKey,
       new Predicate<KeySystemRootKeyInterface>('systemIdentifier', '=', systemIdentifier),
     )
   }
 
-  private getAllKeySystemRootKeysForVault(systemIdentifier: KeySystemIdentifier): KeySystemRootKeyInterface[] {
+  public getAllKeySystemRootKeysForVault(systemIdentifier: KeySystemIdentifier): KeySystemRootKeyInterface[] {
     const synced = this.getSyncedKeySystemRootKeysForVault(systemIdentifier)
     const memory = this.rootKeyMemoryCache[systemIdentifier] ? [this.rootKeyMemoryCache[systemIdentifier]] : []
     return [...synced, ...memory]
@@ -91,6 +91,11 @@ export class KeySystemKeyManager extends AbstractService implements KeySystemKey
     delete this.rootKeyMemoryCache[systemIdentifier]
 
     await this.storage.removeValue(this.storageKeyForRootKey(systemIdentifier))
+  }
+
+  public async deleteAllSyncedKeySystemRootKeys(systemIdentifier: KeySystemIdentifier): Promise<void> {
+    const keys = this.getSyncedKeySystemRootKeysForVault(systemIdentifier)
+    await this.items.setItemsToBeDeleted(keys)
   }
 
   public getKeySystemRootKeyWithToken(

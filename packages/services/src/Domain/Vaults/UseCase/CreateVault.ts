@@ -33,6 +33,7 @@ export class CreateVaultUseCase {
       vaultName: dto.vaultName,
       vaultDescription: dto.vaultDescription,
       userInputtedPassword: dto.userInputtedPassword,
+      storagePreference: dto.storagePreference,
     })
 
     await this.createKeySystemItemsKey(keySystemIdentifier, rootKey.token)
@@ -89,23 +90,26 @@ export class CreateVaultUseCase {
     vaultName: string
     vaultDescription?: string
     userInputtedPassword: string | undefined
+    storagePreference: KeySystemRootKeyStorageType
   }): Promise<KeySystemRootKeyInterface> {
+    let newRootKey: KeySystemRootKeyInterface | undefined
+
     if (dto.userInputtedPassword) {
-      const newRootKey = this.encryption.createUserInputtedKeySystemRootKey({
+      newRootKey = this.encryption.createUserInputtedKeySystemRootKey({
         systemIdentifier: dto.keySystemIdentifier,
         userInputtedPassword: dto.userInputtedPassword,
       })
-
-      await this.items.insertItem(newRootKey, true)
-
-      return newRootKey
+    } else {
+      newRootKey = this.encryption.createRandomizedKeySystemRootKey({
+        systemIdentifier: dto.keySystemIdentifier,
+      })
     }
 
-    const newRootKey = this.encryption.createRandomizedKeySystemRootKey({
-      systemIdentifier: dto.keySystemIdentifier,
-    })
-
-    await this.items.insertItem(newRootKey, true)
+    if (dto.storagePreference === KeySystemRootKeyStorageType.Synced) {
+      await this.items.insertItem(newRootKey, true)
+    } else {
+      this.encryption.keys.intakeNonPersistentKeySystemRootKey(newRootKey, dto.storagePreference)
+    }
 
     return newRootKey
   }

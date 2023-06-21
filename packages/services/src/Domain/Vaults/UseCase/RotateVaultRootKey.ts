@@ -2,17 +2,23 @@ import { UuidGenerator } from '@standardnotes/utils'
 import { EncryptionProviderInterface } from '@standardnotes/encryption'
 import { ClientDisplayableError, isClientDisplayableError } from '@standardnotes/responses'
 import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
-import { KeySystemIdentifier, KeySystemRootKeyInterface, KeySystemRootKeyPasswordType } from '@standardnotes/models'
+import {
+  KeySystemIdentifier,
+  KeySystemRootKeyInterface,
+  KeySystemRootKeyPasswordType,
+  KeySystemRootKeyStorageType,
+  VaultListingInterface,
+} from '@standardnotes/models'
 
-export class RotateKeySystemRootKeyUseCase {
+export class RotateVaultRootKeyUseCase {
   constructor(private items: ItemManagerInterface, private encryption: EncryptionProviderInterface) {}
 
   async execute(params: {
-    keySystemIdentifier: KeySystemIdentifier
+    vault: VaultListingInterface
     sharedVaultUuid: string | undefined
     userInputtedPassword: string | undefined
   }): Promise<undefined | ClientDisplayableError[]> {
-    const currentRootKey = this.encryption.keys.getPrimaryKeySystemRootKey(params.keySystemIdentifier)
+    const currentRootKey = this.encryption.keys.getPrimaryKeySystemRootKey(params.vault.systemIdentifier)
     if (!currentRootKey) {
       throw new Error('Cannot rotate key system root key; key system root key not found')
     }
@@ -25,12 +31,12 @@ export class RotateKeySystemRootKeyUseCase {
       }
 
       newRootKey = this.encryption.createUserInputtedKeySystemRootKey({
-        systemIdentifier: params.keySystemIdentifier,
+        systemIdentifier: params.vault.systemIdentifier,
         userInputtedPassword: params.userInputtedPassword,
       })
     } else if (currentRootKey.keyParams.passwordType === KeySystemRootKeyPasswordType.Randomized) {
       newRootKey = this.encryption.createRandomizedKeySystemRootKey({
-        systemIdentifier: params.keySystemIdentifier,
+        systemIdentifier: params.vault.systemIdentifier,
       })
     }
 
@@ -38,12 +44,16 @@ export class RotateKeySystemRootKeyUseCase {
       throw new Error('Cannot rotate key system root key; new root key not created')
     }
 
-    await this.items.insertItem(newRootKey, true)
+    if (params.vault.rootKeyStorage === KeySystemRootKeyStorageType.Synced) {
+      await this.items.insertItem(newRootKey, true)
+    } else {
+      this.encryption.keys.intakeNonPersistentKeySystemRootKey(newRootKey, params.vault.rootKeyStorage)
+    }
 
     const errors: ClientDisplayableError[] = []
 
     const updateKeySystemItemsKeyResult = await this.createNewKeySystemItemsKey({
-      keySystemIdentifier: params.keySystemIdentifier,
+      keySystemIdentifier: params.vault.systemIdentifier,
       sharedVaultUuid: params.sharedVaultUuid,
       rootKeyToken: newRootKey.token,
     })
@@ -52,7 +62,7 @@ export class RotateKeySystemRootKeyUseCase {
       errors.push(updateKeySystemItemsKeyResult)
     }
 
-    await this.encryption.reencryptKeySystemItemsKeysForVault(params.keySystemIdentifier)
+    await this.encryption.reencryptKeySystemItemsKeysForVault(params.vault.systemIdentifier)
 
     return errors
   }

@@ -4,7 +4,7 @@ import { WebApplicationInterface } from '../WebApplication/WebApplicationInterfa
 
 export class AbstractUIServicee<EventName = string, EventData = unknown>
   extends AbstractService<EventName, EventData>
-  implements AbstractUIServiceInterface
+  implements AbstractUIServiceInterface<EventName, EventData>
 {
   private unsubApp!: () => void
 

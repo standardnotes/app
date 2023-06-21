@@ -30,11 +30,17 @@ export interface VaultServiceInterface
   isItemInVault(item: DecryptedItemInterface): boolean
   getItemVault(item: DecryptedItemInterface): VaultListingInterface | undefined
 
-  rotateVaultRootKey(vault: VaultListingInterface): Promise<void>
   changeVaultNameAndDescription(
     vault: VaultListingInterface,
     params: { name: string; description: string },
   ): Promise<VaultListingInterface>
+  rotateVaultRootKey(vault: VaultListingInterface): Promise<void>
+  changeVaultKeyStoragePreference(vault: VaultListingInterface, preference: KeySystemRootKeyStorageType): Promise<void>
+  changeVaultPasswordTypeFromRandomizedToUserInputted(
+    vault: VaultListingInterface,
+    userInputtedPassword: string,
+  ): Promise<void>
+  changeVaultPasswordTypeFromUserInputtedToRandomized(vault: VaultListingInterface): Promise<void>
 
   unlockNonPersistentVault(vault: VaultListingInterface, password: string): void
 }

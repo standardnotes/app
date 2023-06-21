@@ -32,7 +32,7 @@ const EditVaultModal: FunctionComponent<Props> = ({ onCloseDialog, existingVault
     KeySystemRootKeyPasswordType.Randomized,
   )
   const [keyStorageType, setKeyStorageType] = useState<KeySystemRootKeyStorageType>(KeySystemRootKeyStorageType.Synced)
-  const [customKey, setCustomKey] = useState<string>('')
+  const [customKey, setCustomKey] = useState<string | undefined>(undefined)
 
   const reloadVaultInfo = useCallback(async () => {
     if (existingVault) {
@@ -71,16 +71,39 @@ const EditVaultModal: FunctionComponent<Props> = ({ onCloseDialog, existingVault
 
   const saveExistingVault = useCallback(
     async (vault: VaultListingInterface) => {
-      await application.vaults.changeVaultNameAndDescription(vault, {
-        name: name,
-        description: description,
-      })
+      if (vault.name !== name || vault.description !== description) {
+        await application.vaults.changeVaultNameAndDescription(vault, {
+          name: name,
+          description: description,
+        })
+      }
+
+      if (vault.rootKeyStorage !== keyStorageType) {
+        await application.vaults.changeVaultKeyStoragePreference(vault, keyStorageType)
+      }
+
+      if (vault.rootKeyParams.passwordType !== passwordType) {
+        if (passwordType === KeySystemRootKeyPasswordType.Randomized) {
+          if (customKey) {
+            throw new Error('Custom key should not be set')
+          }
+          await application.vaults.changeVaultPasswordTypeFromUserInputtedToRandomized(vault)
+        } else if (passwordType === KeySystemRootKeyPasswordType.UserInputted) {
+          if (!customKey) {
+            throw new Error('Custom key is not set')
+          }
+          await application.vaults.changeVaultPasswordTypeFromRandomizedToUserInputted(vault, customKey)
+        }
+      }
     },
-    [application.vaults, description, name],
+    [application.vaults, customKey, description, keyStorageType, name, passwordType],
   )
 
   const createNewVault = useCallback(async () => {
     if (passwordType === KeySystemRootKeyPasswordType.UserInputted) {
+      if (!customKey) {
+        throw new Error('Custom key is not set')
+      }
       await application.vaults.createUserInputtedPasswordVault({
         name,
         description,

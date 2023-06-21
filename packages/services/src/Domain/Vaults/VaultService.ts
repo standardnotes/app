@@ -1,4 +1,4 @@
-import { ClientDisplayableError, isClientDisplayableError } from '@standardnotes/responses'
+import { isClientDisplayableError } from '@standardnotes/responses'
 import {
   DecryptedItemInterface,
   KeySystemIdentifier,
@@ -19,10 +19,12 @@ import { RemoveItemFromVault } from './UseCase/RemoveItemFromVault'
 import { DeleteVaultUseCase } from './UseCase/DeleteVault'
 import { AddItemsToVaultUseCase } from './UseCase/AddItemsToVault'
 
-import { RotateKeySystemRootKeyUseCase } from './UseCase/RotateKeySystemRootKey'
+import { RotateVaultRootKeyUseCase } from './UseCase/RotateVaultRootKey'
 import { FilesClientInterface } from '@standardnotes/files'
 import { ContentType } from '@standardnotes/common'
 import { GetVaultUseCase } from './UseCase/GetVault'
+import { ChangeKeyStorageUseCase } from './UseCase/ChangeKeyStorage'
+import { ChangeKeyPasswordTypeUseCase } from './UseCase/ChangeKeyPasswordType'
 
 export class VaultService
   extends AbstractService<VaultServiceEvent, VaultServiceEventPayload[VaultServiceEvent]>
@@ -137,9 +139,9 @@ export class VaultService
   }
 
   async rotateVaultRootKey(vault: VaultListingInterface): Promise<void> {
-    const useCase = new RotateKeySystemRootKeyUseCase(this.items, this.encryption)
+    const useCase = new RotateVaultRootKeyUseCase(this.items, this.encryption)
     await useCase.execute({
-      keySystemIdentifier: vault.systemIdentifier,
+      vault,
       sharedVaultUuid: vault.isSharedVaultListing() ? vault.sharing.sharedVaultUuid : undefined,
       userInputtedPassword: undefined,
     })
@@ -161,13 +163,37 @@ export class VaultService
     return this.getVault(item.key_system_identifier)
   }
 
-  async setVaultKeyStoragePreference(
+  async changeVaultKeyStoragePreference(
     vault: VaultListingInterface,
     preference: KeySystemRootKeyStorageType,
   ): Promise<void> {
-    if (vault.rootKeyParams.passwordType !== KeySystemRootKeyPasswordType.UserInputted) {
-      throw new Error('Vault uses randomized password and cannot change its storage preference')
-    }
+    const usecase = new ChangeKeyStorageUseCase(this.items, this.sync, this.encryption.keys)
+    await usecase.execute({ vault, preference })
+  }
+
+  async changeVaultPasswordTypeFromRandomizedToUserInputted(
+    vault: VaultListingInterface,
+    userInputtedPassword: string,
+  ): Promise<void> {
+    const usecase = new ChangeKeyPasswordTypeUseCase(this.items, this.sync, this.encryption)
+    await usecase.execute({
+      vault,
+      userInputtedPassword,
+      newType: KeySystemRootKeyPasswordType.UserInputted,
+    })
+
+    await this.notifyEventSync(VaultServiceEvent.VaultRootKeyRotated, { vault })
+  }
+
+  async changeVaultPasswordTypeFromUserInputtedToRandomized(vault: VaultListingInterface): Promise<void> {
+    const usecase = new ChangeKeyPasswordTypeUseCase(this.items, this.sync, this.encryption)
+    await usecase.execute({
+      vault,
+      userInputtedPassword: undefined,
+      newType: KeySystemRootKeyPasswordType.Randomized,
+    })
+
+    await this.notifyEventSync(VaultServiceEvent.VaultRootKeyRotated, { vault })
   }
 
   unlockNonPersistentVault(vault: VaultListingInterface, password: string): void {
