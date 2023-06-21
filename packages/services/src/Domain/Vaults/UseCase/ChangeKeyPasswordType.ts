@@ -1,6 +1,11 @@
 import { SyncServiceInterface } from '@standardnotes/services'
 import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
-import { KeySystemRootKeyPasswordType, KeySystemRootKeyStorageType, VaultListingInterface } from '@standardnotes/models'
+import {
+  KeySystemRootKeyPasswordType,
+  KeySystemRootKeyStorageType,
+  VaultListingInterface,
+  VaultListingMutator,
+} from '@standardnotes/models'
 import { EncryptionProviderInterface } from '@standardnotes/encryption'
 
 export class ChangeKeyPasswordTypeUseCase {
@@ -49,6 +54,10 @@ export class ChangeKeyPasswordTypeUseCase {
       this.encryption.keys.intakeNonPersistentKeySystemRootKey(newRootKey, vault.rootKeyStorage)
     }
 
+    await this.items.changeItem<VaultListingMutator>(vault, (mutator) => {
+      mutator.rootKeyParams = newRootKey.keyParams
+    })
+
     await this.encryption.reencryptKeySystemItemsKeysForVault(vault.systemIdentifier)
   }
 
@@ -60,6 +69,10 @@ export class ChangeKeyPasswordTypeUseCase {
     if (vault.rootKeyStorage !== KeySystemRootKeyStorageType.Synced) {
       throw new Error('Cannot change to randomized password if root key storage is not synced')
     }
+
+    await this.items.changeItem<VaultListingMutator>(vault, (mutator) => {
+      mutator.rootKeyParams = newRootKey.keyParams
+    })
 
     await this.items.insertItem(newRootKey, true)
 

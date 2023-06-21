@@ -11,7 +11,6 @@ import { DecryptedItemInterface } from '../../Abstract/Item'
 export interface VaultListingInterface extends DecryptedItemInterface<VaultListingContent> {
   systemIdentifier: KeySystemIdentifier
 
-  rootKeyPasswordType: KeySystemRootKeyPasswordType
   rootKeyParams: KeySystemRootKeyParamsInterface
   rootKeyStorage: KeySystemRootKeyStorageType
 
@@ -20,6 +19,7 @@ export interface VaultListingInterface extends DecryptedItemInterface<VaultListi
 
   sharing?: VaultListingSharingInfo
 
+  get rootKeyPasswordType(): KeySystemRootKeyPasswordType
   isSharedVaultListing(): this is SharedVaultListingInterface
 
   get key_system_identifier(): undefined

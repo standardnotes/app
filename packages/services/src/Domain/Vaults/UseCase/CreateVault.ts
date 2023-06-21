@@ -64,7 +64,6 @@ export class CreateVaultUseCase {
   }): Promise<VaultListingInterface> {
     const content: VaultListingContentSpecialized = {
       systemIdentifier: dto.keySystemIdentifier,
-      rootKeyPasswordType: dto.passwordType,
       rootKeyParams: dto.rootKeyParams,
       rootKeyStorage: dto.storage,
       name: dto.vaultName,

@@ -53,7 +53,7 @@ const VaultItem = ({ vault }: Props) => {
       )}
 
       <ModalOverlay isOpen={isVaultModalOpen} close={closeVaultModal}>
-        <EditVaultModal existingVault={vault} onCloseDialog={closeVaultModal} />
+        <EditVaultModal existingVaultUuid={vault.uuid} onCloseDialog={closeVaultModal} />
       </ModalOverlay>
 
       <div className="bg-gray-100 flex flex-row gap-3.5 rounded-lg py-2.5 px-3.5 shadow-md">

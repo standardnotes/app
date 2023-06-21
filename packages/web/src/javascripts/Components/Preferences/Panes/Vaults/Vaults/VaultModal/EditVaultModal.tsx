@@ -14,14 +14,17 @@ import { VaultModalMembers } from './VaultModalMembers'
 import { VaultModalInvites } from './VaultModalInvites'
 import { PasswordTypePreference } from './PasswordTypePreference'
 import { KeyStoragePreference } from './KeyStoragePreference'
+import useItem from '@/Hooks/useItem'
 
 type Props = {
-  existingVault?: VaultListingInterface
+  existingVaultUuid?: string
   onCloseDialog: () => void
 }
 
-const EditVaultModal: FunctionComponent<Props> = ({ onCloseDialog, existingVault }) => {
+const EditVaultModal: FunctionComponent<Props> = ({ onCloseDialog, existingVaultUuid }) => {
   const application = useApplication()
+
+  const existingVault = useItem<VaultListingInterface>(existingVaultUuid)
 
   const [name, setName] = useState<string>('')
   const [description, setDescription] = useState<string>('')
@@ -34,36 +37,40 @@ const EditVaultModal: FunctionComponent<Props> = ({ onCloseDialog, existingVault
   const [keyStorageType, setKeyStorageType] = useState<KeySystemRootKeyStorageType>(KeySystemRootKeyStorageType.Synced)
   const [customKey, setCustomKey] = useState<string | undefined>(undefined)
 
-  const reloadVaultInfo = useCallback(async () => {
+  useEffect(() => {
     if (existingVault) {
       setName(existingVault.name ?? '')
       setDescription(existingVault.description ?? '')
       setPasswordType(existingVault.rootKeyParams.passwordType)
       setKeyStorageType(existingVault.rootKeyStorage)
+    }
+  }, [existingVault])
 
-      if (existingVault.isSharedVaultListing()) {
-        setIsAdmin(
-          existingVault.isSharedVaultListing() && application.sharedVaults.isCurrentUserSharedVaultAdmin(existingVault),
-        )
+  const reloadVaultInfo = useCallback(async () => {
+    if (!existingVault) {
+      return
+    }
 
-        const users = await application.sharedVaults.getSharedVaultUsers(existingVault)
-        if (users) {
-          setMembers(users)
-        }
+    if (existingVault.isSharedVaultListing()) {
+      setIsAdmin(
+        existingVault.isSharedVaultListing() && application.sharedVaults.isCurrentUserSharedVaultAdmin(existingVault),
+      )
 
-        const invites = await application.sharedVaults.getOutboundInvites(existingVault)
-        if (!isClientDisplayableError(invites)) {
-          setInvites(invites)
-        }
+      const users = await application.sharedVaults.getSharedVaultUsers(existingVault)
+      if (users) {
+        setMembers(users)
+      }
+
+      const invites = await application.sharedVaults.getOutboundInvites(existingVault)
+      if (!isClientDisplayableError(invites)) {
+        setInvites(invites)
       }
     }
   }, [application.sharedVaults, existingVault])
 
   useEffect(() => {
-    if (existingVault) {
-      void reloadVaultInfo()
-    }
-  }, [application.vaults, existingVault, reloadVaultInfo])
+    void reloadVaultInfo()
+  }, [application.vaults, reloadVaultInfo])
 
   const handleDialogClose = useCallback(() => {
     onCloseDialog()
@@ -82,7 +89,7 @@ const EditVaultModal: FunctionComponent<Props> = ({ onCloseDialog, existingVault
         await application.vaults.changeVaultKeyStoragePreference(vault, keyStorageType)
       }
 
-      if (vault.rootKeyParams.passwordType !== passwordType) {
+      if (vault.rootKeyPasswordType !== passwordType) {
         if (passwordType === KeySystemRootKeyPasswordType.Randomized) {
           if (customKey) {
             throw new Error('Custom key should not be set')

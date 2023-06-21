@@ -1,4 +1,4 @@
-import { UuidGenerator } from '@standardnotes/utils'
+import { UuidGenerator, assert } from '@standardnotes/utils'
 import { EncryptionProviderInterface } from '@standardnotes/encryption'
 import { ClientDisplayableError, isClientDisplayableError } from '@standardnotes/responses'
 import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
@@ -8,6 +8,7 @@ import {
   KeySystemRootKeyPasswordType,
   KeySystemRootKeyStorageType,
   VaultListingInterface,
+  VaultListingMutator,
 } from '@standardnotes/models'
 
 export class RotateVaultRootKeyUseCase {
@@ -49,6 +50,11 @@ export class RotateVaultRootKeyUseCase {
     } else {
       this.encryption.keys.intakeNonPersistentKeySystemRootKey(newRootKey, params.vault.rootKeyStorage)
     }
+
+    await this.items.changeItem<VaultListingMutator>(params.vault, (mutator) => {
+      assert(newRootKey)
+      mutator.rootKeyParams = newRootKey.keyParams
+    })
 
     const errors: ClientDisplayableError[] = []
 

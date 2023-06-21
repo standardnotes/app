@@ -1,6 +1,11 @@
 import { SyncServiceInterface } from '@standardnotes/services'
 import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
-import { KeySystemRootKeyPasswordType, KeySystemRootKeyStorageType, VaultListingInterface } from '@standardnotes/models'
+import {
+  KeySystemRootKeyPasswordType,
+  KeySystemRootKeyStorageType,
+  VaultListingInterface,
+  VaultListingMutator,
+} from '@standardnotes/models'
 import { KeySystemKeyManagerInterface } from '@standardnotes/encryption'
 
 export class ChangeKeyStorageUseCase {
@@ -40,6 +45,11 @@ export class ChangeKeyStorageUseCase {
 
     this.keys.intakeNonPersistentKeySystemRootKey(primaryKey, preference)
     await this.keys.deleteAllSyncedKeySystemRootKeys(vault.systemIdentifier)
+
+    await this.items.changeItem<VaultListingMutator>(vault, (mutator) => {
+      mutator.rootKeyStorage = preference
+    })
+
     await this.sync.sync()
   }
 
@@ -55,5 +65,9 @@ export class ChangeKeyStorageUseCase {
 
       await this.items.insertItem(key)
     }
+
+    await this.items.changeItem<VaultListingMutator>(vault, (mutator) => {
+      mutator.rootKeyStorage = KeySystemRootKeyStorageType.Synced
+    })
   }
 }

@@ -19,7 +19,7 @@ const options: PasswordTypePreference[] = [
     value: KeySystemRootKeyPasswordType.UserInputted,
     label: 'Custom (Advanced)',
     description:
-      'Choose your own key for your vault. This is an advanced option and is not recommended, as keeping track of multiple keys can be difficult.',
+      'Choose your own key for your vault. This is an advanced option and is not recommended for most users.',
   },
 ]
 
@@ -61,11 +61,13 @@ export const PasswordTypePreference = ({
         <div>
           <div className="text-gray-500 mt-3 text-sm">{options[1].description}</div>
 
-          <label htmlFor="key-input" className="mb-1 block">
-            Current Password
-          </label>
-
-          <DecoratedPasswordInput id="key-input" value={customKey} onChange={onKeyInputChange} type="password" />
+          <DecoratedPasswordInput
+            placeholder="Choose a password"
+            id="key-input"
+            value={customKey}
+            onChange={onKeyInputChange}
+            type="password"
+          />
         </div>
       )}
     </div>

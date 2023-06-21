@@ -1,12 +1,12 @@
 import { DecryptedItemInterface } from '@standardnotes/models'
-import { SNApplication } from './Application'
+import { ApplicationInterface } from '@standardnotes/services'
 
 /** Keeps an item reference up to date with changes */
 export class LiveItem<T extends DecryptedItemInterface> {
   public item: T
   private removeObserver: () => void
 
-  constructor(uuid: string, application: SNApplication, onChange?: (item: T) => void) {
+  constructor(uuid: string, application: ApplicationInterface, onChange?: (item: T) => void) {
     this.item = application.items.findSureItem(uuid)
 
     onChange && onChange(this.item)

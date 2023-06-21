@@ -28,7 +28,6 @@ export class HandleTrustedSharedVaultInviteMessage {
 
     const content: VaultListingContentSpecialized = {
       systemIdentifier: rootKeyContent.systemIdentifier,
-      rootKeyPasswordType: rootKeyContent.keyParams.passwordType,
       rootKeyParams: rootKeyContent.keyParams,
       rootKeyStorage: KeySystemRootKeyStorageType.Synced,
       name: metadata.name,

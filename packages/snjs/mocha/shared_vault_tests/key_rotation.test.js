@@ -155,6 +155,10 @@ describe('shared vault key rotation', function () {
     await deinitContactContext()
   })
 
+  it('rotating a vault key should update vault display listing with new key params', async () => {
+    console.error('TODO: implement')
+  })
+
   it('should respect storage preference when rotating key system root key', async () => {
     console.error('TODO: implement')
   })

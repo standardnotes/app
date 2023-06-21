@@ -1,4 +1,6 @@
 import { DecryptedItemMutator } from '../../Abstract/Item'
+import { KeySystemRootKeyParamsInterface } from '../../Local/KeyParams/KeySystemRootKeyParamsInterface'
+import { KeySystemRootKeyStorageType } from '../KeySystemRootKey/KeySystemRootKeyStorageType'
 import { VaultListingContent } from './VaultListingContent'
 import { VaultListingSharingInfo } from './VaultListingSharingInfo'
 
@@ -13,5 +15,13 @@ export class VaultListingMutator extends DecryptedItemMutator<VaultListingConten
 
   set sharing(sharing: VaultListingSharingInfo | undefined) {
     this.mutableContent.sharing = sharing
+  }
+
+  set rootKeyParams(rootKeyParams: KeySystemRootKeyParamsInterface) {
+    this.mutableContent.rootKeyParams = rootKeyParams
+  }
+
+  set rootKeyStorage(rootKeyStorage: KeySystemRootKeyStorageType) {
+    this.mutableContent.rootKeyStorage = rootKeyStorage
   }
 }

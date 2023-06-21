@@ -575,7 +575,7 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     systemDescription?: string
     userInputtedPassword: string
   }): KeySystemRootKeyInterface {
-    return this.operatorManager.defaultOperator().createRandomizedKeySystemRootKey(dto)
+    return this.operatorManager.defaultOperator().createUserInputtedKeySystemRootKey(dto)
   }
 
   deriveUserInputtedKeySystemRootKey(dto: {
