@@ -101,8 +101,8 @@ const DatabaseConfiguration = ({ setHomeServerConfigurationChangedCallback, home
               {isMySQLSelected && (
                 <>
                   <div className={'mt-2'}>
-                    In order to connect to a MySQL database please ensure that your system has MySQL installed. For
-                    detailed instructions please head over to{' '}
+                    In order to connect to a MySQL database, ensure that your system has MySQL installed. For detailed
+                    instructions, visit the{' '}
                     <a className="text-info" href="https://dev.mysql.com/doc/mysql-installation-excerpt/8.0/en/">
                       MySQL website
                     </a>

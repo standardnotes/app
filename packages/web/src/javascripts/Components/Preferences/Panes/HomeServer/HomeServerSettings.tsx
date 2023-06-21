@@ -279,7 +279,7 @@ const HomeServerSettings = () => {
       <Title>Home Server</Title>
       <div className="flex items-center justify-between">
         <div className="mr-10 flex flex-col">
-          <Subtitle>Enable home server to sync your data to your local computer only.</Subtitle>
+          <Subtitle>Sync your data on a cloud running on your home computer.</Subtitle>
         </div>
         <Switch disabled={status?.state === 'restarting'} onChange={toggleHomeServer} checked={homeServerEnabled} />
       </div>
