@@ -256,25 +256,37 @@ const NoteConflictResolutionModal = ({
                 title="Conflict options"
                 open={isSelectOpen}
                 anchorElement={selectAnchor}
-                className="z-modal py-1"
-                offset={0}
+                className="z-modal border border-border py-1"
+                side="top"
+                offset={4}
               >
-                <SelectList className="cursor-pointer" store={selectStore}>
-                  <SelectItem className="px-2.5 py-1.5 hover:bg-contrast" value="move-to-trash">
-                    <div className="flex items-center gap-1 font-bold">
-                      {selectedAction === 'move-to-trash' && <Icon type="check-bold" size="small" />}
+                <SelectList
+                  className="cursor-pointer divide-y divide-border [&>[data-active-item]]:bg-contrast"
+                  store={selectStore}
+                >
+                  <SelectItem className="px-2.5 py-2 hover:bg-contrast" value="move-to-trash">
+                    <div className="flex items-center gap-1 text-sm font-bold">
+                      {selectedAction === 'move-to-trash' ? (
+                        <Icon type="check-bold" size="small" />
+                      ) : (
+                        <div className="h-3.5 w-3.5" />
+                      )}
                       Move others to trash
                     </div>
-                    <div className="text-neutral">
+                    <div className="ml-4.5 text-neutral">
                       Only the selected version will be kept; others will be moved to trash.
                     </div>
                   </SelectItem>
-                  <SelectItem className="px-2.5 py-1.5 hover:bg-contrast" value="delete-permanently">
-                    <div className="flex items-center gap-1 font-bold">
-                      {selectedAction === 'delete-permanently' && <Icon type="check-bold" size="small" />}
+                  <SelectItem className="px-2.5 py-2 hover:bg-contrast" value="delete-permanently">
+                    <div className="flex items-center gap-1 text-sm font-bold">
+                      {selectedAction === 'delete-permanently' ? (
+                        <Icon type="check-bold" size="small" />
+                      ) : (
+                        <div className="h-3.5 w-3.5" />
+                      )}
                       Delete others permanently
                     </div>
-                    <div className="text-neutral">
+                    <div className="ml-4.5 text-neutral">
                       Only the selected version will be kept; others will be deleted permanently.
                     </div>
                   </SelectItem>
