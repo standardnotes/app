@@ -18,7 +18,7 @@ import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 
 const HomeServerSettings = () => {
-  const SERVER_CHANGE_INTERVAL = 3000
+  const SERVER_SYNTHEIC_CHANGE_DELAY = 1500
 
   const application = useApplication()
   const desktopDevice = application.desktopDevice
@@ -85,7 +85,7 @@ const HomeServerSettings = () => {
 
       const result = await homeServerService.disableHomeServer()
 
-      await sleep(SERVER_CHANGE_INTERVAL)
+      await sleep(SERVER_SYNTHEIC_CHANGE_DELAY)
 
       if (result.isFailed() && (await homeServerService.isHomeServerRunning())) {
         setStatus({ state: 'error', message: result.getError() })
@@ -103,7 +103,7 @@ const HomeServerSettings = () => {
 
       setHomeServerEnabled(homeServerService.isHomeServerEnabled())
 
-      await sleep(SERVER_CHANGE_INTERVAL)
+      await sleep(SERVER_SYNTHEIC_CHANGE_DELAY)
 
       await refreshStatus()
 
@@ -147,7 +147,7 @@ const HomeServerSettings = () => {
 
         await homeServerService.stopHomeServer()
 
-        await sleep(SERVER_CHANGE_INTERVAL)
+        await sleep(SERVER_SYNTHEIC_CHANGE_DELAY)
 
         await homeServerService.setHomeServerConfiguration(changedServerConfiguration)
 
@@ -175,7 +175,7 @@ const HomeServerSettings = () => {
           if (newLocationOrError.isFailed()) {
             setStatus({ state: 'error', message: newLocationOrError.getError() })
 
-            await sleep(SERVER_CHANGE_INTERVAL)
+            await sleep(SERVER_SYNTHEIC_CHANGE_DELAY)
 
             await changeHomeServerDataLocation(oldLocation)
 
@@ -186,7 +186,7 @@ const HomeServerSettings = () => {
 
         setStatus({ state: 'restarting', message: 'Applying changes & restarting...' })
 
-        await sleep(SERVER_CHANGE_INTERVAL)
+        await sleep(SERVER_SYNTHEIC_CHANGE_DELAY)
 
         setHomeServerDataLocation(location)
 
