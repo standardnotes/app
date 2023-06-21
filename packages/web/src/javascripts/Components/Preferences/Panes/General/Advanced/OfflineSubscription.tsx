@@ -46,7 +46,12 @@ const OfflineSubscription: FunctionComponent<Props> = ({ application, onSuccess 
         return
       }
 
-      const serverActivationResult = await homeServer.activatePremiumFeatures(application.getUser()?.email as string)
+      const signedInUser = application.getUser()
+      if (!signedInUser) {
+        return
+      }
+
+      const serverActivationResult = await homeServer.activatePremiumFeatures(signedInUser.email)
       if (serverActivationResult.isFailed()) {
         await application.alertService.alert(serverActivationResult.getError())
 
