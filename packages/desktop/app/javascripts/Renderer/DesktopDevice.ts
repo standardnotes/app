@@ -6,7 +6,6 @@ import {
   FileBackupReadChunkResponse,
   FileBackupsMapping,
   PlaintextBackupsMapping,
-  HomeServerStatus,
 } from '@web/Application/Device/DesktopSnjsExports'
 import { WebOrDesktopDevice } from '@web/Application/Device/WebOrDesktopDevice'
 import { Component } from '../Main/Packages/PackageManagerInterface'
@@ -28,6 +27,10 @@ export class DesktopDevice extends WebOrDesktopDevice implements DesktopDeviceIn
 
   async getHomeServerUrl(): Promise<string | undefined> {
     return this.remoteBridge.getHomeServerUrl()
+  }
+
+  async getHomeServerLastErrorMessage(): Promise<string | undefined> {
+    return this.remoteBridge.getHomeServerLastErrorMessage()
   }
 
   async isHomeServerRunning(): Promise<boolean> {
@@ -60,10 +63,6 @@ export class DesktopDevice extends WebOrDesktopDevice implements DesktopDeviceIn
 
   getHomeServerLogs(): Promise<string[]> {
     return this.remoteBridge.getHomeServerLogs()
-  }
-
-  homeServerStatus(): Promise<HomeServerStatus> {
-    return this.remoteBridge.homeServerStatus()
   }
 
   openLocation(path: string): Promise<void> {

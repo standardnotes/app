@@ -21,7 +21,6 @@ const HomeServerSettings = () => {
   const SERVER_SYNTHEIC_CHANGE_DELAY = 1500
 
   const application = useApplication()
-  const desktopDevice = application.desktopDevice
   const homeServerService = application.homeServer as HomeServerServiceInterface
   const featuresService = application.features
   const sessionsService = application.sessions
@@ -44,11 +43,7 @@ const HomeServerSettings = () => {
   const [homeServerEnabled, setHomeServerEnabled] = useState(homeServerService.isHomeServerEnabled())
 
   const refreshStatus = useCallback(async () => {
-    if (!desktopDevice) {
-      return
-    }
-
-    const result = await desktopDevice.homeServerStatus()
+    const result = await homeServerService.getHomeServerStatus()
     setStatus({
       state: result.status === 'on' ? 'online' : result.errorMessage ? 'error' : 'offline',
       message: result.status === 'on' ? 'Online' : result.errorMessage ? 'Offline' : 'Starting...',
@@ -64,7 +59,7 @@ const HomeServerSettings = () => {
           result.errorMessage ?? 'Your home server is offline.'
         ),
     })
-  }, [desktopDevice, setStatus])
+  }, [homeServerService, setStatus])
 
   const initialyLoadHomeServerConfiguration = useCallback(async () => {
     if (!homeServerConfiguration) {
@@ -116,17 +111,13 @@ const HomeServerSettings = () => {
       clearInterval(logsIntervalRef)
     }
 
-    if (!desktopDevice) {
-      return
-    }
-
-    setLogs(await desktopDevice.getHomeServerLogs())
+    setLogs(await homeServerService.getHomeServerLogs())
 
     const interval = setInterval(async () => {
-      setLogs(await desktopDevice.getHomeServerLogs())
+      setLogs(await homeServerService.getHomeServerLogs())
     }, 5000)
     setLogsIntervalRef(interval)
-  }, [desktopDevice, logsIntervalRef])
+  }, [homeServerService, logsIntervalRef])
 
   useEffect(() => {
     setIsAPremiumUser(featuresService.hasOfflineRepo())

@@ -11,7 +11,6 @@ import {
   FileBackupReadToken,
   FileBackupReadChunkResponse,
   HomeServerManagerInterface,
-  HomeServerStatus,
   PlaintextBackupsMapping,
 } from '@web/Application/Device/DesktopSnjsExports'
 import { app, BrowserWindow } from 'electron'
@@ -68,7 +67,6 @@ export class RemoteBridge implements CrossProcessBridge {
       askForMediaAccess: this.askForMediaAccess.bind(this),
       startHomeServer: this.startHomeServer.bind(this),
       stopHomeServer: this.stopHomeServer.bind(this),
-      homeServerStatus: this.homeServerStatus.bind(this),
       wasLegacyTextBackupsExplicitlyDisabled: this.wasLegacyTextBackupsExplicitlyDisabled.bind(this),
       getLegacyTextBackupsLocation: this.getLegacyTextBackupsLocation.bind(this),
       saveTextBackupData: this.saveTextBackupData.bind(this),
@@ -91,6 +89,7 @@ export class RemoteBridge implements CrossProcessBridge {
       isHomeServerRunning: this.isHomeServerRunning.bind(this),
       getHomeServerLogs: this.getHomeServerLogs.bind(this),
       getHomeServerUrl: this.getHomeServerUrl.bind(this),
+      getHomeServerLastErrorMessage: this.getHomeServerLastErrorMessage.bind(this),
     }
   }
 
@@ -262,16 +261,12 @@ export class RemoteBridge implements CrossProcessBridge {
     return this.media.askForMediaAccess(type)
   }
 
-  startHomeServer(): Promise<string | undefined> {
+  async startHomeServer(): Promise<string | undefined> {
     return this.homeServerManager.startHomeServer()
   }
 
-  stopHomeServer(): Promise<string | undefined> {
+  async stopHomeServer(): Promise<string | undefined> {
     return this.homeServerManager.stopHomeServer()
-  }
-
-  homeServerStatus(): Promise<HomeServerStatus> {
-    return this.homeServerManager.homeServerStatus()
   }
 
   async setHomeServerConfiguration(configurationJSONString: string): Promise<void> {
@@ -300,5 +295,9 @@ export class RemoteBridge implements CrossProcessBridge {
 
   async getHomeServerUrl(): Promise<string | undefined> {
     return this.homeServerManager.getHomeServerUrl()
+  }
+
+  async getHomeServerLastErrorMessage(): Promise<string | undefined> {
+    return this.homeServerManager.getHomeServerLastErrorMessage()
   }
 }

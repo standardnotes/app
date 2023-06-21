@@ -2,7 +2,6 @@ import path from 'path'
 
 import {
   HomeServerManagerInterface,
-  HomeServerStatus,
   HomeServerEnvironmentConfiguration,
 } from '@web/Application/Device/DesktopSnjsExports'
 import { HomeServerInterface } from '@standardnotes/home-server'
@@ -41,9 +40,11 @@ export class HomeServerManager implements HomeServerManagerInterface {
   }
 
   async isHomeServerRunning(): Promise<boolean> {
-    const status = await this.homeServerStatus()
+    return this.homeServer.isRunning()
+  }
 
-    return status.status === 'on'
+  async getHomeServerLastErrorMessage(): Promise<string | undefined> {
+    return this.lastErrorMessage
   }
 
   async activatePremiumFeatures(username: string): Promise<string | undefined> {
@@ -153,19 +154,6 @@ export class HomeServerManager implements HomeServerManagerInterface {
     }
 
     return undefined
-  }
-
-  async homeServerStatus(): Promise<HomeServerStatus> {
-    const isHomeServerRunning = await this.homeServer.isRunning()
-
-    if (!isHomeServerRunning) {
-      return { status: 'off', errorMessage: this.lastErrorMessage }
-    }
-
-    return {
-      status: 'on',
-      url: await this.getHomeServerUrl(),
-    }
   }
 
   async startHomeServer(): Promise<string | undefined> {

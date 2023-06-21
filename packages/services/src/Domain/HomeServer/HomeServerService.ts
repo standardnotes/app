@@ -10,6 +10,7 @@ import { StorageServiceInterface } from '../Storage/StorageServiceInterface'
 import { HomeServerServiceInterface } from './HomeServerServiceInterface'
 import { HomeServerEnvironmentConfiguration } from './HomeServerEnvironmentConfiguration'
 import { Result } from '@standardnotes/domain-core'
+import { HomeServerStatus } from './HomeServerStatus'
 
 export class HomeServerService extends AbstractService implements HomeServerServiceInterface {
   private readonly HOME_SERVER_DATA_DIRECTORY_NAME = '.homeserver'
@@ -42,6 +43,23 @@ export class HomeServerService extends AbstractService implements HomeServerServ
         break
       }
     }
+  }
+
+  async getHomeServerStatus(): Promise<HomeServerStatus> {
+    const isHomeServerRunning = await this.desktopDevice.isHomeServerRunning()
+
+    if (!isHomeServerRunning) {
+      return { status: 'off', errorMessage: await this.desktopDevice.getHomeServerLastErrorMessage() }
+    }
+
+    return {
+      status: 'on',
+      url: await this.getHomeServerUrl(),
+    }
+  }
+
+  async getHomeServerLogs(): Promise<string[]> {
+    return this.desktopDevice.getHomeServerLogs()
   }
 
   async getHomeServerUrl(): Promise<string | undefined> {
