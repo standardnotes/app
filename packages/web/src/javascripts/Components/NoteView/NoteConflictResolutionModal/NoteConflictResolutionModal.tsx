@@ -144,7 +144,7 @@ const NoteConflictResolutionModal = ({
     const shouldDeletePermanently = selectedAction === 'delete-permanently'
 
     const confirmDialogText = `This will keep only the selected version and ${
-      shouldDeletePermanently ? 'delete the other versions permanently.' : 'move the other versions to trash.'
+      shouldDeletePermanently ? 'delete the other versions permanently.' : 'move the other versions to the trash.'
     } Are you sure?`
 
     if (
