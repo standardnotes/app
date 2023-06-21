@@ -10,23 +10,29 @@ export const DiffView = ({
   selectedNotes: SNNote[]
   convertSuperToMarkdown: boolean
 }) => {
-  const [results, setResults] = useState<fastdiff.Diff[]>([])
+  const [titleDiff, setTitleDiff] = useState<fastdiff.Diff[]>([])
+  const [textDiff, setTextDiff] = useState<fastdiff.Diff[]>([])
 
   useEffect(() => {
     const firstNote = selectedNotes[0]
-    const first =
+    const firstTitle = firstNote.title
+    const firstText =
       firstNote.noteType === NoteType.Super && convertSuperToMarkdown
         ? new HeadlessSuperConverter().convertString(firstNote.text, 'md')
         : firstNote.text
+
     const secondNote = selectedNotes[1]
-    const second =
+    const secondTitle = secondNote.title
+    const secondText =
       secondNote.noteType === NoteType.Super && convertSuperToMarkdown
         ? new HeadlessSuperConverter().convertString(secondNote.text, 'md')
         : secondNote.text
 
-    const results = fastdiff(first, second, undefined, true)
+    const titleDiff = fastdiff(firstTitle, secondTitle, undefined, true)
+    const textDiff = fastdiff(firstText, secondText, undefined, true)
 
-    setResults(results)
+    setTitleDiff(titleDiff)
+    setTextDiff(textDiff)
   }, [convertSuperToMarkdown, selectedNotes])
 
   const [preElement, setPreElement] = useState<HTMLPreElement | null>(null)
@@ -39,7 +45,7 @@ export const DiffView = ({
     }
 
     setHasOverflow(preElement.scrollHeight > preElement.clientHeight)
-  }, [preElement, results])
+  }, [preElement, textDiff])
 
   useEffect(() => {
     if (!preElement || !diffVisualizer) {
@@ -50,7 +56,7 @@ export const DiffView = ({
       return
     }
 
-    if (!results.length) {
+    if (!textDiff.length) {
       return
     }
 
@@ -84,15 +90,32 @@ export const DiffView = ({
 
       diffVisualizer.appendChild(div)
     })
-  }, [preElement, hasOverflow, results, diffVisualizer])
+  }, [preElement, hasOverflow, textDiff, diffVisualizer])
 
   return (
-    <div className="relative flex-grow overflow-hidden">
+    <div className="relative flex flex-col flex-grow overflow-hidden">
+      <div className="w-full px-4 py-4 text-base font-bold">
+        {titleDiff.map(([state, text], index) => {
+          return (
+            <span
+              data-diff={state !== fastdiff.EQUAL ? state : undefined}
+              className={classNames(
+                'whitespace-pre-wrap',
+                state === fastdiff.INSERT && 'bg-success text-success-contrast',
+                state === fastdiff.DELETE && 'bg-danger text-danger-contrast',
+              )}
+              key={index}
+            >
+              {text}
+            </span>
+          )
+        })}
+      </div>
       <pre
-        className="h-full w-full overflow-y-auto whitespace-pre-wrap p-4 [&::-webkit-scrollbar]:bg-transparent"
+        className="flex-grow min-h-0 w-full font-editor text-editor overflow-y-auto whitespace-pre-wrap p-4 pt-0 [&::-webkit-scrollbar]:bg-transparent"
         ref={setPreElement}
       >
-        {results.map(([state, text], index) => {
+        {textDiff.map(([state, text], index) => {
           return (
             <span
               data-diff={state !== fastdiff.EQUAL ? state : undefined}
