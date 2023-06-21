@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import Button from '@/Components/Button/Button'
-import { Subtitle, Text, Title } from '@/Components/Preferences/PreferencesComponents/Content'
+import { Pill, Subtitle, Text, Title } from '@/Components/Preferences/PreferencesComponents/Content'
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import { useApplication } from '@/Components/ApplicationProvider'
 import EncryptionStatusItem from '../Security/EncryptionStatusItem'
@@ -268,7 +268,12 @@ const HomeServerSettings = () => {
 
   return (
     <>
-      <Title>Home Server</Title>
+      <div className="flex items-center justify-between">
+        <div className="flex items-start">
+          <Title>Home Server</Title>
+          <Pill style={'success'}>Labs</Pill>
+        </div>
+      </div>
       <div className="flex items-center justify-between">
         <div className="mr-10 flex flex-col">
           <Subtitle>Sync your data on a cloud running on your home computer.</Subtitle>
