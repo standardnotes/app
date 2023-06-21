@@ -9,6 +9,7 @@
     "selfReferences": true
   },
   "dependencies": {
+    "@standardnotes/home-server": "^1.11.6",
     "keytar": "^7.9.0"
   }
 }

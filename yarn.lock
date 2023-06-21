@@ -5836,7 +5836,6 @@ __metadata:
     "@electron/remote": ^2.0.9
     "@standardnotes/domain-core": ^1.18.0
     "@standardnotes/electron-clear-data": 1.1.1
-    "@standardnotes/home-server": ^1.11.6
     "@standardnotes/web": "workspace:*"
     "@types/fs-extra": ^11.0.1
     "@types/lodash": ^4.14.189
@@ -6169,6 +6168,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@standardnotes/inner-desktop@workspace:packages/desktop/app"
   dependencies:
+    "@standardnotes/home-server": ^1.11.6
     keytar: ^7.9.0
   languageName: unknown
   linkType: soft
