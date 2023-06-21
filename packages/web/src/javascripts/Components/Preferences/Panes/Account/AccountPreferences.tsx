@@ -1,5 +1,4 @@
 import { observer } from 'mobx-react-lite'
-import { useState, useCallback, useEffect } from 'react'
 
 import { WebApplication } from '@/Application/WebApplication'
 import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
@@ -20,15 +19,7 @@ type Props = {
 }
 
 const AccountPreferences = ({ application, viewControllerManager }: Props) => {
-  const [isUsingThirdPartyServer, setIsUsingThirdPartyServer] = useState(false)
-
-  const checkIfApplicationUsesThirdPartyServer = useCallback(async () => {
-    setIsUsingThirdPartyServer(application.isUsingThirdPartyServer())
-  }, [application])
-
-  useEffect(() => {
-    void checkIfApplicationUsesThirdPartyServer()
-  }, [checkIfApplicationUsesThirdPartyServer])
+  const isUsingThirdPartyServer = application.isUsingThirdPartyServer()
 
   return (
     <PreferencesPane>

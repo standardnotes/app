@@ -1,6 +1,6 @@
 import { WebApplication } from '@/Application/WebApplication'
 import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
-import { FunctionComponent, useCallback, useEffect, useState } from 'react'
+import { FunctionComponent } from 'react'
 import PreferencesPane from '@/Components/Preferences/PreferencesComponents/PreferencesPane'
 import DataBackups from './DataBackups'
 import EmailBackups from './EmailBackups'
@@ -15,15 +15,7 @@ type Props = {
 }
 
 const Backups: FunctionComponent<Props> = ({ application, viewControllerManager }) => {
-  const [isUsingThirdPartyServer, setIsUsingThirdPartyServer] = useState(false)
-
-  const checkIfApplicationUsesThirdPartyServer = useCallback(async () => {
-    setIsUsingThirdPartyServer(application.isUsingThirdPartyServer())
-  }, [application])
-
-  useEffect(() => {
-    void checkIfApplicationUsesThirdPartyServer()
-  }, [checkIfApplicationUsesThirdPartyServer])
+  const isUsingThirdPartyServer = application.isUsingThirdPartyServer()
 
   return (
     <PreferencesPane>
