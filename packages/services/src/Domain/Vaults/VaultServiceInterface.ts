@@ -1,11 +1,26 @@
-import { ClientDisplayableError } from '@standardnotes/responses'
-import { DecryptedItemInterface, KeySystemIdentifier, VaultListingInterface } from '@standardnotes/models'
+import {
+  DecryptedItemInterface,
+  KeySystemIdentifier,
+  KeySystemRootKeyStorageType,
+  VaultListingInterface,
+} from '@standardnotes/models'
 import { AbstractService } from '../Service/AbstractService'
 import { VaultServiceEvent, VaultServiceEventPayload } from './VaultServiceEvent'
 
 export interface VaultServiceInterface
   extends AbstractService<VaultServiceEvent, VaultServiceEventPayload[VaultServiceEvent]> {
-  createRandomizedVault(name: string, description?: string): Promise<VaultListingInterface | ClientDisplayableError>
+  createRandomizedVault(dto: {
+    name: string
+    description?: string
+    storagePreference: KeySystemRootKeyStorageType
+  }): Promise<VaultListingInterface>
+  createUserInputtedPasswordVault(dto: {
+    name: string
+    description?: string
+    userInputtedPassword: string
+    storagePreference: KeySystemRootKeyStorageType
+  }): Promise<VaultListingInterface>
+
   getVaults(): VaultListingInterface[]
   getVault(keySystemIdentifier: KeySystemIdentifier): VaultListingInterface | undefined
   deleteVault(vault: VaultListingInterface): Promise<boolean>

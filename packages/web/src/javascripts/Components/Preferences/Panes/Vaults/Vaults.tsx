@@ -17,7 +17,7 @@ import {
 import VaultItem from './Vaults/VaultItem'
 import Button from '@/Components/Button/Button'
 import InviteItem from './Invites/InviteItem'
-import EditVaultModal from './Vaults/EditVaultModal'
+import EditVaultModal from './Vaults/VaultModal/EditVaultModal'
 
 const Vaults = () => {
   const application = useApplication()

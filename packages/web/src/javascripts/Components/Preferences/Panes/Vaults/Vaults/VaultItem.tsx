@@ -5,7 +5,7 @@ import ModalOverlay from '@/Components/Modal/ModalOverlay'
 import { VaultListingInterface } from '@standardnotes/snjs'
 import { useCallback, useState } from 'react'
 import ContactInviteModal from '../Invites/ContactInviteModal'
-import EditVaultModal from './EditVaultModal'
+import EditVaultModal from './VaultModal/EditVaultModal'
 
 type Props = {
   vault: VaultListingInterface

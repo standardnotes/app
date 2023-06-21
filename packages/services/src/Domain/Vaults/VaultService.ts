@@ -58,20 +58,25 @@ export class VaultService
     return vault
   }
 
-  async createRandomizedVault(
-    name: string,
-    description?: string,
-    storagePreference?: KeySystemRootKeyStorageType,
-  ): Promise<VaultListingInterface | ClientDisplayableError> {
-    return this.createVaultWithParameters({ name, description, userInputtedPassword: undefined, storagePreference })
+  async createRandomizedVault(dto: {
+    name: string
+    description?: string
+    storagePreference: KeySystemRootKeyStorageType
+  }): Promise<VaultListingInterface> {
+    return this.createVaultWithParameters({
+      name: dto.name,
+      description: dto.description,
+      userInputtedPassword: undefined,
+      storagePreference: dto.storagePreference,
+    })
   }
 
   async createUserInputtedPasswordVault(dto: {
     name: string
     description?: string
     userInputtedPassword: string
-    storagePreference?: KeySystemRootKeyStorageType
-  }): Promise<VaultListingInterface | ClientDisplayableError> {
+    storagePreference: KeySystemRootKeyStorageType
+  }): Promise<VaultListingInterface> {
     return this.createVaultWithParameters(dto)
   }
 
@@ -79,14 +84,14 @@ export class VaultService
     name: string
     description?: string
     userInputtedPassword: string | undefined
-    storagePreference?: KeySystemRootKeyStorageType
-  }): Promise<VaultListingInterface | ClientDisplayableError> {
+    storagePreference: KeySystemRootKeyStorageType
+  }): Promise<VaultListingInterface> {
     const createVault = new CreateVaultUseCase(this.items, this.encryption, this.sync)
     const result = await createVault.execute({
       vaultName: dto.name,
       vaultDescription: dto.description,
       userInputtedPassword: dto.userInputtedPassword,
-      storagePreference: dto.storagePreference ?? KeySystemRootKeyStorageType.Synced,
+      storagePreference: dto.storagePreference,
     })
 
     return result
@@ -154,6 +159,15 @@ export class VaultService
     }
 
     return this.getVault(item.key_system_identifier)
+  }
+
+  async setVaultKeyStoragePreference(
+    vault: VaultListingInterface,
+    preference: KeySystemRootKeyStorageType,
+  ): Promise<void> {
+    if (vault.rootKeyParams.passwordType !== KeySystemRootKeyPasswordType.UserInputted) {
+      throw new Error('Vault uses randomized password and cannot change its storage preference')
+    }
   }
 
   unlockNonPersistentVault(vault: VaultListingInterface, password: string): void {
