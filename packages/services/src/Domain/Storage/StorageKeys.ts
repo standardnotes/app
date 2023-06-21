@@ -47,12 +47,12 @@ export enum StorageKey {
   PlaintextBackupsLocation = 'plaintext_backups_location',
   FileBackupsEnabled = 'file_backups_enabled',
   FileBackupsLocation = 'file_backups_location',
-  HomeServerEnabled = 'home_server_enabled',
-  HomeServerDataLocation = 'home_serve_data_location',
 }
 
 export enum NonwrappedStorageKey {
   MobileFirstRun = 'first_run',
+  HomeServerEnabled = 'home_server_enabled',
+  HomeServerDataLocation = 'home_serve_data_location',
 }
 
 export function namespacedKey(namespace: string, key: string) {

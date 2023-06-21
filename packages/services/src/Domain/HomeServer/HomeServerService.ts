@@ -1,13 +1,15 @@
+import { Result } from '@standardnotes/domain-core'
+
 import { ApplicationStage } from '../Application/ApplicationStage'
 import { DesktopDeviceInterface } from '../Device/DesktopDeviceInterface'
 import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
 import { AbstractService } from '../Service/AbstractService'
-import { StorageKey } from '../Storage/StorageKeys'
+import { NonwrappedStorageKey } from '../Storage/StorageKeys'
 import { StorageServiceInterface } from '../Storage/StorageServiceInterface'
+import { StorageValueModes } from '../Storage/StorageTypes'
 
 import { HomeServerServiceInterface } from './HomeServerServiceInterface'
 import { HomeServerEnvironmentConfiguration } from './HomeServerEnvironmentConfiguration'
-import { Result } from '@standardnotes/domain-core'
 import { HomeServerStatus } from './HomeServerStatus'
 
 export class HomeServerService extends AbstractService implements HomeServerServiceInterface {
@@ -99,21 +101,21 @@ export class HomeServerService extends AbstractService implements HomeServerServ
   }
 
   async enableHomeServer(): Promise<void> {
-    this.storageService.setValue(StorageKey.HomeServerEnabled, true)
+    this.storageService.setValue(NonwrappedStorageKey.HomeServerEnabled, true, StorageValueModes.Nonwrapped)
 
     await this.startHomeServer()
   }
 
   isHomeServerEnabled(): boolean {
-    return this.storageService.getValue(StorageKey.HomeServerEnabled, undefined, false)
+    return this.storageService.getValue(NonwrappedStorageKey.HomeServerEnabled, StorageValueModes.Nonwrapped, false)
   }
 
   getHomeServerDataLocation(): string | undefined {
-    return this.storageService.getValue(StorageKey.HomeServerDataLocation)
+    return this.storageService.getValue(NonwrappedStorageKey.HomeServerDataLocation, StorageValueModes.Nonwrapped)
   }
 
   async disableHomeServer(): Promise<Result<string>> {
-    this.storageService.setValue(StorageKey.HomeServerEnabled, false)
+    this.storageService.setValue(NonwrappedStorageKey.HomeServerEnabled, false, StorageValueModes.Nonwrapped)
 
     const result = await this.stopHomeServer()
     if (result !== undefined) {
@@ -136,7 +138,7 @@ export class HomeServerService extends AbstractService implements HomeServerServ
       return Result.fail(lastErrorMessage ?? 'No location selected')
     }
 
-    this.storageService.setValue(StorageKey.HomeServerDataLocation, newLocation)
+    this.storageService.setValue(NonwrappedStorageKey.HomeServerDataLocation, newLocation, StorageValueModes.Nonwrapped)
 
     return Result.ok(newLocation)
   }
@@ -149,20 +151,27 @@ export class HomeServerService extends AbstractService implements HomeServerServ
   }
 
   private async startHomeServerIfItIsEnabled(): Promise<void> {
-    const homeServerIsEnabled = this.storageService.getValue(StorageKey.HomeServerEnabled, undefined, false)
+    const homeServerIsEnabled = this.storageService.getValue(
+      NonwrappedStorageKey.HomeServerEnabled,
+      StorageValueModes.Nonwrapped,
+      false,
+    )
     if (homeServerIsEnabled) {
       await this.startHomeServer()
     }
   }
 
   private async setHomeServerDataLocationOnDevice(): Promise<void> {
-    let location = this.storageService.getValue<string>(StorageKey.HomeServerDataLocation)
+    let location = this.storageService.getValue<string>(
+      NonwrappedStorageKey.HomeServerDataLocation,
+      StorageValueModes.Nonwrapped,
+    )
     if (!location) {
       const documentsDirectory = await this.desktopDevice.getUserDocumentsDirectory()
       location = `${documentsDirectory}/${this.HOME_SERVER_DATA_DIRECTORY_NAME}`
     }
 
-    this.storageService.setValue(StorageKey.HomeServerDataLocation, location)
+    this.storageService.setValue(NonwrappedStorageKey.HomeServerDataLocation, location, StorageValueModes.Nonwrapped)
 
     await this.desktopDevice.setHomeServerDataLocation(location)
   }
