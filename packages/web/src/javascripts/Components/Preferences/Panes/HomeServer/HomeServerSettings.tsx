@@ -8,7 +8,7 @@ import Icon from '@/Components/Icon/Icon'
 import OfflineSubscription from '../General/Advanced/OfflineSubscription'
 import EnvironmentConfiguration from './Settings/EnvironmentConfiguration'
 import DatabaseConfiguration from './Settings/DatabaseConfiguration'
-import { HomeServerEnvironmentConfiguration, classNames, sleep } from '@standardnotes/snjs'
+import { HomeServerEnvironmentConfiguration, HomeServerServiceInterface, classNames, sleep } from '@standardnotes/snjs'
 import StatusIndicator from './Status/StatusIndicator'
 import { Status } from './Status/Status'
 import { PremiumFeatureIconClass, PremiumFeatureIconName } from '@/Components/Icon/PremiumFeatureIcon'
@@ -22,7 +22,7 @@ const HomeServerSettings = () => {
 
   const application = useApplication()
   const desktopDevice = application.desktopDevice
-  const homeServerService = application.homeServer
+  const homeServerService = application.homeServer as HomeServerServiceInterface
   const featuresService = application.features
   const sessionsService = application.sessions
   const viewControllerManager = application.getViewControllerManager()

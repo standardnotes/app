@@ -1,4 +1,3 @@
-import { Environment } from '@standardnotes/models'
 import { FileBackupsDevice } from '@standardnotes/files'
 
 import { ApplicationStage } from '../Application/ApplicationStage'
@@ -72,11 +71,6 @@ export class HomeServerService extends AbstractService implements HomeServerServ
   }
 
   async setHomeServerConfiguration(config: HomeServerEnvironmentConfiguration): Promise<void> {
-    const isDesktopEnvironment = this.desktopDevice.environment === Environment.Desktop
-    if (!isDesktopEnvironment) {
-      return
-    }
-
     await this.desktopDevice.setHomeServerConfiguration(JSON.stringify(config))
   }
 

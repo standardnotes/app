@@ -177,7 +177,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   private declare authenticatorManager: AuthenticatorClientInterface
   private declare authManager: AuthClientInterface
   private declare revisionManager: RevisionClientInterface
-  private declare homeServerService: ExternalServices.HomeServerService
+  private homeServerService?: ExternalServices.HomeServerService
 
   private declare _signInWithRecoveryCodes: SignInWithRecoveryCodes
   private declare _getRecoveryCodes: GetRecoveryCodes
@@ -375,7 +375,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return this.challengeService
   }
 
-  get homeServer(): ExternalServices.HomeServerServiceInterface {
+  get homeServer(): ExternalServices.HomeServerServiceInterface | undefined {
     return this.homeServerService
   }
 

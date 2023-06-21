@@ -56,7 +56,7 @@ export interface ApplicationInterface {
   get subscriptions(): SubscriptionClientInterface
   get fileBackups(): BackupServiceInterface | undefined
   get sessions(): SessionsClientInterface
-  get homeServer(): HomeServerServiceInterface
+  get homeServer(): HomeServerServiceInterface | undefined
   readonly identifier: ApplicationIdentifier
   readonly platform: Platform
   deviceInterface: DeviceInterface
