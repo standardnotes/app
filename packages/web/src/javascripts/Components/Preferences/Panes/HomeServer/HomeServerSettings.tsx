@@ -19,6 +19,7 @@ import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 
 const HomeServerSettings = () => {
   const SERVER_SYNTHEIC_CHANGE_DELAY = 1500
+  const LOGS_REFRESH_INTERVAL = 5000
 
   const application = useApplication()
   const homeServerService = application.homeServer as HomeServerServiceInterface
@@ -115,7 +116,7 @@ const HomeServerSettings = () => {
 
     const interval = setInterval(async () => {
       setLogs(await homeServerService.getHomeServerLogs())
-    }, 5000)
+    }, LOGS_REFRESH_INTERVAL)
     setLogsIntervalRef(interval)
   }, [homeServerService, logsIntervalRef])
 
