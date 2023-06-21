@@ -1,5 +1,3 @@
-import { FileBackupsDevice } from '@standardnotes/files'
-
 import { ApplicationStage } from '../Application/ApplicationStage'
 import { DesktopDeviceInterface } from '../Device/DesktopDeviceInterface'
 import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
@@ -17,7 +15,6 @@ export class HomeServerService extends AbstractService implements HomeServerServ
 
   constructor(
     private desktopDevice: DesktopDeviceInterface,
-    private fileBackupsDevice: FileBackupsDevice,
     private storageService: StorageServiceInterface,
     protected override internalEventBus: InternalEventBusInterface,
   ) {
@@ -128,13 +125,13 @@ export class HomeServerService extends AbstractService implements HomeServerServ
 
   async changeHomeServerDataLocation(): Promise<Result<string>> {
     const oldLocation = this.getHomeServerDataLocation()
-    const newLocation = await this.fileBackupsDevice.presentDirectoryPickerForLocationChangeAndTransferOld(
+    const newLocation = await this.desktopDevice.presentDirectoryPickerForLocationChangeAndTransferOld(
       this.HOME_SERVER_DATA_DIRECTORY_NAME,
       oldLocation,
     )
 
     if (!newLocation) {
-      const lastErrorMessage = await this.fileBackupsDevice.getLastErrorMessage()
+      const lastErrorMessage = await this.desktopDevice.getDirectoryManagerLastErrorMessage()
 
       return Result.fail(lastErrorMessage ?? 'No location selected')
     }
@@ -147,7 +144,7 @@ export class HomeServerService extends AbstractService implements HomeServerServ
   async openHomeServerDataLocation(): Promise<void> {
     const location = this.getHomeServerDataLocation()
     if (location) {
-      void this.fileBackupsDevice.openLocation(location)
+      void this.desktopDevice.openLocation(location)
     }
   }
 

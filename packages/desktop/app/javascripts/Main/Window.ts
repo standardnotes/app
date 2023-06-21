@@ -27,6 +27,7 @@ import { initializeZoomManager } from './ZoomManager'
 import { HomeServerManager } from './HomeServer/HomeServerManager'
 import { HomeServer } from '@standardnotes/home-server'
 import { FilesManager } from './File/FilesManager'
+import { DirectoryManager } from './Directory/DirectoryManager'
 
 const WINDOW_DEFAULT_WIDTH = 1100
 const WINDOW_DEFAULT_HEIGHT = 800
@@ -78,6 +79,7 @@ export async function createWindowState({
     services.fileBackupsManager,
     services.mediaManager,
     services.homeServerManager,
+    services.directoryManager,
   )
 
   const shouldOpenUrl = (url: string) => url.startsWith('http') || url.startsWith('mailto')
@@ -213,6 +215,7 @@ async function createWindowServices(
   const mediaManager = new MediaManager()
   const homeServer = new HomeServer()
   const filesManager = new FilesManager()
+  const directoryManager = new DirectoryManager(filesManager)
 
   const homeServerManager = new HomeServerManager(homeServer, window.webContents, filesManager, safeStorage)
 
@@ -240,6 +243,7 @@ async function createWindowServices(
     fileBackupsManager,
     mediaManager,
     homeServerManager,
+    directoryManager,
   }
 }
 

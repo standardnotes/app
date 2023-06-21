@@ -12,6 +12,7 @@ import {
   FileBackupReadChunkResponse,
   HomeServerManagerInterface,
   PlaintextBackupsMapping,
+  DirectoryManagerInterface,
 } from '@web/Application/Device/DesktopSnjsExports'
 import { app, BrowserWindow } from 'electron'
 import { KeychainInterface } from '../Keychain/KeychainInterface'
@@ -36,6 +37,7 @@ export class RemoteBridge implements CrossProcessBridge {
     private fileBackups: FileBackupsDevice,
     private media: MediaManagerInterface,
     private homeServerManager: HomeServerManagerInterface,
+    private directoryManager: DirectoryManagerInterface,
   ) {}
 
   get exposableValue(): CrossProcessBridge {
@@ -74,7 +76,7 @@ export class RemoteBridge implements CrossProcessBridge {
       openLocation: this.openLocation.bind(this),
       presentDirectoryPickerForLocationChangeAndTransferOld:
         this.presentDirectoryPickerForLocationChangeAndTransferOld.bind(this),
-      getLastErrorMessage: this.getLastErrorMessage.bind(this),
+      getDirectoryManagerLastErrorMessage: this.getDirectoryManagerLastErrorMessage.bind(this),
       getPlaintextBackupsMappingFile: this.getPlaintextBackupsMappingFile.bind(this),
       persistPlaintextBackupsMappingFile: this.persistPlaintextBackupsMappingFile.bind(this),
       getTextBackupsCount: this.getTextBackupsCount.bind(this),
@@ -214,19 +216,19 @@ export class RemoteBridge implements CrossProcessBridge {
     return this.fileBackups.savePlaintextNoteBackup(location, uuid, name, tags, data)
   }
 
-  openLocation(path: string): Promise<void> {
-    return this.fileBackups.openLocation(path)
+  async openLocation(path: string): Promise<void> {
+    return this.directoryManager.openLocation(path)
   }
 
-  presentDirectoryPickerForLocationChangeAndTransferOld(
+  async presentDirectoryPickerForLocationChangeAndTransferOld(
     appendPath: string,
     oldLocation?: string | undefined,
   ): Promise<string | undefined> {
-    return this.fileBackups.presentDirectoryPickerForLocationChangeAndTransferOld(appendPath, oldLocation)
+    return this.directoryManager.presentDirectoryPickerForLocationChangeAndTransferOld(appendPath, oldLocation)
   }
 
-  getLastErrorMessage(): Promise<string | undefined> {
-    return this.fileBackups.getLastErrorMessage()
+  async getDirectoryManagerLastErrorMessage(): Promise<string | undefined> {
+    return this.directoryManager.getDirectoryManagerLastErrorMessage()
   }
 
   getPlaintextBackupsMappingFile(location: string): Promise<PlaintextBackupsMapping> {

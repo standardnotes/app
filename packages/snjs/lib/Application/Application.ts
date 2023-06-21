@@ -70,7 +70,12 @@ import {
   RevisionManager,
   ApiServiceEvent,
 } from '@standardnotes/services'
-import { BackupServiceInterface, FilesClientInterface } from '@standardnotes/files'
+import {
+  BackupServiceInterface,
+  DirectoryManagerInterface,
+  FileBackupsDevice,
+  FilesClientInterface,
+} from '@standardnotes/files'
 import { ComputePrivateUsername } from '@standardnotes/encryption'
 import { useBoolean } from '@standardnotes/utils'
 import {
@@ -1541,7 +1546,6 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   private createHomeServerService(device: ExternalServices.DesktopDeviceInterface) {
     this.homeServerService = new ExternalServices.HomeServerService(
       device,
-      device,
       this.diskStorageService,
       this.internalEventBus,
     )
@@ -1776,13 +1780,14 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       this.itemManager,
       this.apiService,
       this.protocolService,
-      device,
+      device as FileBackupsDevice,
       this.statusService,
       this.options.crypto,
       this.storage,
       this.sessions,
       this.payloadManager,
       this.historyManager,
+      device as DirectoryManagerInterface,
       this.internalEventBus,
     )
     this.services.push(this.filesBackupService)

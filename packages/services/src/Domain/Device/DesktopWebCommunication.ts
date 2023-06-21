@@ -1,7 +1,7 @@
 import { DecryptedTransferPayload } from '@standardnotes/models'
-import { DesktopWatchedDirectoriesChanges, FileBackupsDevice } from '@standardnotes/files'
+import { DesktopWatchedDirectoriesChanges, DirectoryManagerInterface, FileBackupsDevice } from '@standardnotes/files'
 
-export interface WebClientRequiresDesktopMethods extends FileBackupsDevice {
+export interface WebClientRequiresDesktopMethods extends FileBackupsDevice, DirectoryManagerInterface {
   syncComponents(payloads: unknown[]): void
 
   onSearch(text?: string): void

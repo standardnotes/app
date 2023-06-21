@@ -76,8 +76,8 @@ export class DesktopDevice extends WebOrDesktopDevice implements DesktopDeviceIn
     return this.remoteBridge.presentDirectoryPickerForLocationChangeAndTransferOld(appendPath, oldLocation)
   }
 
-  getLastErrorMessage(): Promise<string | undefined> {
-    return this.remoteBridge.getLastErrorMessage()
+  getDirectoryManagerLastErrorMessage(): Promise<string | undefined> {
+    return this.remoteBridge.getDirectoryManagerLastErrorMessage()
   }
 
   getFilesBackupsMappingFile(location: string): Promise<FileBackupsMapping> {

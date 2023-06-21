@@ -16,4 +16,5 @@ export {
   DesktopWatchedDirectoriesChanges,
   DesktopWatchedDirectoriesChange,
   HomeServerEnvironmentConfiguration,
+  DirectoryManagerInterface,
 } from '@standardnotes/snjs'

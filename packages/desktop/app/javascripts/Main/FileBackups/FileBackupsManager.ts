@@ -9,7 +9,7 @@ import {
 } from '@web/Application/Device/DesktopSnjsExports'
 import { AppState } from 'app/AppState'
 import { promises as fs, existsSync } from 'fs'
-import { WebContents, shell } from 'electron'
+import { WebContents } from 'electron'
 import { StoreKeys } from '../Store/StoreKeys'
 import path from 'path'
 import { FileDownloader } from './FileDownloader'
@@ -29,17 +29,12 @@ export const FileBackupsConstantsV1 = {
 export class FilesBackupManager implements FileBackupsDevice {
   private readOperations: Map<string, FileReadOperation> = new Map()
   private plaintextMappingCache?: PlaintextBackupsMapping
-  private lastErrorMessage: string | undefined
 
   constructor(
     private appState: AppState,
     private webContents: WebContents,
     private filesManager: FilesManagerInterface,
   ) {}
-
-  async getLastErrorMessage(): Promise<string | undefined> {
-    return this.lastErrorMessage
-  }
 
   private async findUuidForPlaintextBackupFileName(
     backupsDirectory: string,
@@ -111,40 +106,6 @@ export class FilesBackupManager implements FileBackupsDevice {
     return path.join(Paths.homeDir, LegacyTextBackupsDirectory)
   }
 
-  public async presentDirectoryPickerForLocationChangeAndTransferOld(
-    appendPath: string,
-    oldLocation?: string,
-  ): Promise<string | undefined> {
-    try {
-      this.lastErrorMessage = undefined
-
-      const selectedDirectory = await this.filesManager.openDirectoryPicker('Select')
-
-      if (!selectedDirectory) {
-        return undefined
-      }
-
-      const newPath = path.join(selectedDirectory, path.normalize(appendPath))
-
-      await this.filesManager.ensureDirectoryExists(newPath)
-
-      if (oldLocation) {
-        const result = await this.filesManager.moveDirContents(path.normalize(oldLocation), newPath)
-        if (result.isFailed()) {
-          this.lastErrorMessage = result.getError()
-
-          return undefined
-        }
-      }
-
-      return newPath
-    } catch (error) {
-      this.lastErrorMessage = (error as Error).message
-
-      return undefined
-    }
-  }
-
   private getFileBackupsMappingFilePath(backupsLocation: string): string {
     return path.join(backupsLocation, '.settings', 'info.json')
   }
@@ -169,10 +130,6 @@ export class FilesBackupManager implements FileBackupsDevice {
     }
 
     return data
-  }
-
-  async openLocation(location: string): Promise<void> {
-    void shell.openPath(location)
   }
 
   private async saveFilesBackupsMappingFile(location: string, file: FileBackupsMapping): Promise<'success' | 'failed'> {
