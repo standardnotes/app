@@ -104,7 +104,7 @@ const DatabaseConfiguration = ({ setHomeServerConfigurationChangedCallback, home
                     In order to connect to a MySQL database, ensure that your system has MySQL installed. For detailed
                     instructions, visit the{' '}
                     <a className="text-info" href="https://dev.mysql.com/doc/mysql-installation-excerpt/8.0/en/">
-                      MySQL website
+                      MySQL website.
                     </a>
                   </div>
                   <HorizontalSeparator classes="my-4" />

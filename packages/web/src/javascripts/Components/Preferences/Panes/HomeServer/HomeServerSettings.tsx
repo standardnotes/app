@@ -51,7 +51,7 @@ const HomeServerSettings = () => {
       description:
         result.status === 'on' ? (
           <>
-            Accessible on local network via:{' '}
+            Accessible on local network at{' '}
             <a href={result.url} className="font-bold text-info" target="_blank">
               {result.url}
             </a>
@@ -133,7 +133,7 @@ const HomeServerSettings = () => {
   const handleHomeServerConfigurationChange = useCallback(
     async (changedServerConfiguration: HomeServerEnvironmentConfiguration) => {
       try {
-        setStatus({ state: 'restarting', message: 'Applying changes & restarting...' })
+        setStatus({ state: 'restarting', message: 'Applying changes and restarting...' })
 
         setHomeServerConfiguration(changedServerConfiguration)
 
@@ -176,7 +176,7 @@ const HomeServerSettings = () => {
           location = newLocationOrError.getValue()
         }
 
-        setStatus({ state: 'restarting', message: 'Applying changes & restarting...' })
+        setStatus({ state: 'restarting', message: 'Applying changes and restarting...' })
 
         await sleep(SERVER_SYNTHEIC_CHANGE_DELAY)
 
@@ -258,10 +258,12 @@ const HomeServerSettings = () => {
 
   const statusIndicator = () => {
     return (
-      <div className="mt-2.5 flex flex-row">
+      <div className="mt-2.5 flex flex-row items-center">
         <StatusIndicator className={'mr-3'} status={status} />
-        <Text className={'mr-3'}>{status?.message}</Text>
-        <Text className={'mr-3'}>{status?.description}</Text>
+        <div>
+          <Text className={'mr-3 font-bold'}>{status?.message}</Text>
+          <Text className={'mr-3'}>{status?.description}</Text>
+        </div>
       </div>
     )
   }
@@ -276,7 +278,7 @@ const HomeServerSettings = () => {
       </div>
       <div className="flex items-center justify-between">
         <div className="mr-10 flex flex-col">
-          <Subtitle>Sync your data on a cloud running on your home computer.</Subtitle>
+          <Subtitle>Sync your data on a private cloud running on your home computer.</Subtitle>
         </div>
         <Switch disabled={status?.state === 'restarting'} onChange={toggleHomeServer} checked={homeServerEnabled} />
       </div>
@@ -284,51 +286,11 @@ const HomeServerSettings = () => {
         <div>
           {statusIndicator()}
 
-          {isSignedIn && !isAPremiumUser && (
-            <>
-              <HorizontalSeparator classes="my-4" />
-              <div className={'mt-2 grid grid-cols-1 rounded-md border border-border p-4'}>
-                <div className="flex items-center">
-                  <Icon
-                    className={classNames('mr-1 -ml-1 h-5 w-5', PremiumFeatureIconClass)}
-                    type={PremiumFeatureIconName}
-                  />
-                  <h1 className="sk-h3 m-0 text-sm font-semibold">Activate Premium Features</h1>
-                </div>
-                <p className="col-start-1 col-end-3 m-0 mt-1 text-sm">
-                  Enter your purchased offline subscription code to activate all the features offered by the home
-                  server.
-                </p>
-                <Button
-                  primary
-                  small
-                  className="col-start-1 col-end-3 mt-3 justify-self-start uppercase"
-                  onClick={() => {
-                    setShowOfflineSubscriptionActivation(!showOfflineSubscriptionActivation)
-                  }}
-                >
-                  {showOfflineSubscriptionActivation ? 'Close' : 'Activate Premium Features'}
-                </Button>
-
-                {showOfflineSubscriptionActivation && (
-                  <OfflineSubscription
-                    application={application}
-                    viewControllerManager={viewControllerManager}
-                    onSuccess={() => {
-                      setIsAPremiumUser(true)
-                      setShowOfflineSubscriptionActivation(false)
-                    }}
-                  />
-                )}
-              </div>
-            </>
-          )}
-
           {status?.state !== 'restarting' && (
             <>
               <HorizontalSeparator classes="my-4" />
               <>
-                <Text className="mb-3">Home server is enabled and all data is stored at:</Text>
+                <Text className="mb-3">Home server is enabled. All data is stored at:</Text>
 
                 <EncryptionStatusItem
                   status={homeServerDataLocation || 'Not Set'}
@@ -365,15 +327,55 @@ const HomeServerSettings = () => {
               {homeServerConfiguration && (
                 <>
                   <HorizontalSeparator classes="my-4" />
-                  <EnvironmentConfiguration
-                    homeServerConfiguration={homeServerConfiguration}
-                    setHomeServerConfigurationChangedCallback={handleHomeServerConfigurationChange}
-                  />
-                  <HorizontalSeparator classes="my-4" />
                   <DatabaseConfiguration
                     homeServerConfiguration={homeServerConfiguration}
                     setHomeServerConfigurationChangedCallback={handleHomeServerConfigurationChange}
                   />
+                  <HorizontalSeparator classes="my-4" />
+                  <EnvironmentConfiguration
+                    homeServerConfiguration={homeServerConfiguration}
+                    setHomeServerConfigurationChangedCallback={handleHomeServerConfigurationChange}
+                  />
+                </>
+              )}
+
+              {isSignedIn && !isAPremiumUser && (
+                <>
+                  <HorizontalSeparator classes="my-4" />
+                  <div className={'mt-2 grid grid-cols-1 rounded-md border border-border p-4'}>
+                    <div className="flex items-center">
+                      <Icon
+                        className={classNames('mr-1 -ml-1 h-5 w-5', PremiumFeatureIconClass)}
+                        type={PremiumFeatureIconName}
+                      />
+                      <h1 className="sk-h3 m-0 text-sm font-semibold">Activate Premium Features</h1>
+                    </div>
+                    <p className="col-start-1 col-end-3 m-0 mt-1 text-sm">
+                      Enter your purchased offline subscription code to activate all the features offered by the home
+                      server.
+                    </p>
+                    <Button
+                      primary
+                      small
+                      className="col-start-1 col-end-3 mt-3 justify-self-start uppercase"
+                      onClick={() => {
+                        setShowOfflineSubscriptionActivation(!showOfflineSubscriptionActivation)
+                      }}
+                    >
+                      {showOfflineSubscriptionActivation ? 'Close' : 'Activate Premium Features'}
+                    </Button>
+
+                    {showOfflineSubscriptionActivation && (
+                      <OfflineSubscription
+                        application={application}
+                        viewControllerManager={viewControllerManager}
+                        onSuccess={() => {
+                          setIsAPremiumUser(true)
+                          setShowOfflineSubscriptionActivation(false)
+                        }}
+                      />
+                    )}
+                  </div>
                 </>
               )}
             </>

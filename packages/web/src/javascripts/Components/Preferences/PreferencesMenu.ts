@@ -47,7 +47,7 @@ const READY_PREFERENCES_MENU_ITEMS: PreferencesMenuItem[] = [
 ]
 
 const DESKTOP_PREFERENCES_MENU_ITEMS: PreferencesMenuItem[] = [
-  { id: 'home-server', label: 'Home Server', icon: 'folder', order: 2 },
+  { id: 'home-server', label: 'Home Server', icon: 'server', order: 5 },
 ]
 
 export class PreferencesMenu {

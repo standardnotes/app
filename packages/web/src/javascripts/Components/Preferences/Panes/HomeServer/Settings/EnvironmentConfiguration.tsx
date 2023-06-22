@@ -130,6 +130,7 @@ const EnvironmentConfiguration = ({ setHomeServerConfigurationChangedCallback, h
               </PreferencesSegment>
               <PreferencesSegment>
                 <Subtitle className={'mt-2'}>Port</Subtitle>
+                <div className="text-xs">Changing the port will require you to sign out of all existing sessions.</div>
                 <div className={'mt-2'}>
                   <DecoratedInput
                     placeholder={'Port'}
