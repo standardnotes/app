@@ -136,31 +136,27 @@ const NoteConflictResolutionModal = ({
   })
   const [isPerformingAction, setIsPerformingAction] = useState(false)
 
-  const keepOnlySelectedNote = useCallback(async () => {
-    if (selectedNotes.length !== 1) {
-      return
-    }
-
+  const keepOnlySelected = useCallback(async () => {
     const shouldDeletePermanently = selectedAction === 'delete-permanently'
 
-    const confirmDialogText = `This will keep only the selected version and ${
+    const confirmDialogText = `This will keep only the selected versions and ${
       shouldDeletePermanently ? 'delete the other versions permanently.' : 'move the other versions to the trash.'
     } Are you sure?`
 
     if (
       await confirmDialog({
-        title: 'Keep only selected version?',
+        title: 'Keep only selected versions?',
         text: confirmDialogText,
         confirmButtonStyle: 'danger',
       })
     ) {
-      const nonSelectedNotes = allVersions.filter((note) => note.uuid !== selectedNotes[0].uuid)
+      const nonSelectedNotes = allVersions.filter((note) => !selectedVersions.includes(note.uuid))
       selectStore.hide()
       setIsPerformingAction(true)
       await Promise.all(
         nonSelectedNotes.map((note) => (shouldDeletePermanently ? deleteNotePermanently(note) : trashNote(note))),
       )
-      await application.mutator.changeItem(selectedNotes[0], (mutator) => {
+      await application.mutator.changeItems(selectedNotes, (mutator) => {
         mutator.conflictOf = undefined
       })
       setIsPerformingAction(false)
@@ -168,7 +164,17 @@ const NoteConflictResolutionModal = ({
       void application.sync.sync()
       close()
     }
-  }, [allVersions, application, close, deleteNotePermanently, selectStore, selectedAction, selectedNotes, trashNote])
+  }, [
+    allVersions,
+    application,
+    close,
+    deleteNotePermanently,
+    selectStore,
+    selectedAction,
+    selectedNotes,
+    selectedVersions,
+    trashNote,
+  ])
 
   const isMobileScreen = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
   const actions = useMemo(
@@ -225,79 +231,77 @@ const NoteConflictResolutionModal = ({
           <Button className="mr-auto hidden md:inline-block" onClick={close} disabled={isPerformingAction}>
             Cancel
           </Button>
-          {selectedNotes.length === 1 && (
-            <Toolbar className="flex w-full items-stretch text-info-contrast md:w-auto" store={toolbarStore}>
-              <ToolbarItem
-                onClick={keepOnlySelectedNote}
-                className="flex-grow rounded rounded-r-none bg-info px-3 py-1.5 text-base font-bold ring-info ring-offset-2 ring-offset-default hover:brightness-110 focus:ring-0 focus-visible:ring-2 focus-visible:brightness-110 lg:text-sm"
-                disabled={isPerformingAction}
-              >
-                {isPerformingAction ? (
-                  <>
-                    <Spinner className="h-4 w-4 border-info-contrast" />
-                  </>
-                ) : (
-                  <>Keep selected, {selectedAction === 'move-to-trash' ? 'trash others' : 'delete others'}</>
-                )}
-              </ToolbarItem>
-              <Select
-                ref={setSelectAnchor}
-                render={
-                  <ToolbarItem
-                    className="relative rounded rounded-l-none bg-info py-1.5 px-3 ring-info hover:brightness-110 focus:ring-0 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-default focus-visible:brightness-110"
-                    disabled={isPerformingAction}
-                  >
-                    <SelectArrow className="block rotate-180" />
-                    <div className="absolute top-0 left-0 h-full w-[2px] bg-info brightness-[.85]" />
-                  </ToolbarItem>
-                }
-                store={selectStore}
-              />
-              <Popover
-                title="Conflict options"
-                open={isSelectOpen}
-                togglePopover={selectStore.toggle}
-                anchorElement={selectAnchor}
-                className="!fixed z-modal border border-border py-1"
-                side="top"
-                align="end"
-                offset={4}
-                hideOnClickInModal
-              >
-                <SelectList
-                  className="cursor-pointer divide-y divide-border [&>[data-active-item]]:bg-passive-5"
-                  store={selectStore}
+          <Toolbar className="flex w-full items-stretch text-info-contrast md:w-auto" store={toolbarStore}>
+            <ToolbarItem
+              onClick={keepOnlySelected}
+              className="flex-grow rounded rounded-r-none bg-info px-3 py-1.5 text-base font-bold ring-info ring-offset-2 ring-offset-default hover:brightness-110 focus:ring-0 focus-visible:ring-2 focus-visible:brightness-110 lg:text-sm"
+              disabled={isPerformingAction}
+            >
+              {isPerformingAction ? (
+                <>
+                  <Spinner className="h-4 w-4 border-info-contrast" />
+                </>
+              ) : (
+                <>Keep selected, {selectedAction === 'move-to-trash' ? 'trash others' : 'delete others'}</>
+              )}
+            </ToolbarItem>
+            <Select
+              ref={setSelectAnchor}
+              render={
+                <ToolbarItem
+                  className="relative rounded rounded-l-none bg-info py-1.5 px-3 ring-info hover:brightness-110 focus:ring-0 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-default focus-visible:brightness-110"
+                  disabled={isPerformingAction}
                 >
-                  <SelectItem className="px-2.5 py-2 hover:bg-passive-5" value="move-to-trash">
-                    <div className="flex items-center gap-1 text-sm font-bold text-text">
-                      {selectedAction === 'move-to-trash' ? (
-                        <Icon type="check-bold" size="small" />
-                      ) : (
-                        <div className="h-3.5 w-3.5" />
-                      )}
-                      Move others to trash
-                    </div>
-                    <div className="ml-4.5 text-neutral">
-                      Only the selected version will be kept; others will be moved to trash.
-                    </div>
-                  </SelectItem>
-                  <SelectItem className="px-2.5 py-2 hover:bg-passive-5" value="delete-permanently">
-                    <div className="flex items-center gap-1 text-sm font-bold text-text">
-                      {selectedAction === 'delete-permanently' ? (
-                        <Icon type="check-bold" size="small" />
-                      ) : (
-                        <div className="h-3.5 w-3.5" />
-                      )}
-                      Delete others permanently
-                    </div>
-                    <div className="ml-4.5 text-neutral">
-                      Only the selected version will be kept; others will be deleted permanently.
-                    </div>
-                  </SelectItem>
-                </SelectList>
-              </Popover>
-            </Toolbar>
-          )}
+                  <SelectArrow className="block rotate-180" />
+                  <div className="absolute top-0 left-0 h-full w-[2px] bg-info brightness-[.85]" />
+                </ToolbarItem>
+              }
+              store={selectStore}
+            />
+            <Popover
+              title="Conflict options"
+              open={isSelectOpen}
+              togglePopover={selectStore.toggle}
+              anchorElement={selectAnchor}
+              className="!fixed z-modal border border-border py-1"
+              side="top"
+              align="end"
+              offset={4}
+              hideOnClickInModal
+            >
+              <SelectList
+                className="cursor-pointer divide-y divide-border [&>[data-active-item]]:bg-passive-5"
+                store={selectStore}
+              >
+                <SelectItem className="px-2.5 py-2 hover:bg-passive-5" value="move-to-trash">
+                  <div className="flex items-center gap-1 text-sm font-bold text-text">
+                    {selectedAction === 'move-to-trash' ? (
+                      <Icon type="check-bold" size="small" />
+                    ) : (
+                      <div className="h-3.5 w-3.5" />
+                    )}
+                    Move others to trash
+                  </div>
+                  <div className="ml-4.5 text-neutral">
+                    Only the selected version will be kept; others will be moved to trash.
+                  </div>
+                </SelectItem>
+                <SelectItem className="px-2.5 py-2 hover:bg-passive-5" value="delete-permanently">
+                  <div className="flex items-center gap-1 text-sm font-bold text-text">
+                    {selectedAction === 'delete-permanently' ? (
+                      <Icon type="check-bold" size="small" />
+                    ) : (
+                      <div className="h-3.5 w-3.5" />
+                    )}
+                    Delete others permanently
+                  </div>
+                  <div className="ml-4.5 text-neutral">
+                    Only the selected version will be kept; others will be deleted permanently.
+                  </div>
+                </SelectItem>
+              </SelectList>
+            </Popover>
+          </Toolbar>
         </ModalDialogButtons>
       }
     >
