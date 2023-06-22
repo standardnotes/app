@@ -186,7 +186,7 @@ const NoteConflictResolutionModal = ({
   const listRef = useRef<HTMLDivElement>(null)
   useListKeyboardNavigation(listRef)
 
-  const [selectedMobileTab, setSelectedMobileTab] = useState<'list' | 'content'>('list')
+  const [selectedMobileTab, setSelectedMobileTab] = useState<'list' | 'preview'>('list')
 
   const toolbarStore = useToolbarStore()
   const isSelectOpen = selectStore.useState('open')
@@ -316,13 +316,13 @@ const NoteConflictResolutionModal = ({
         <button
           className={classNames(
             'relative cursor-pointer border-0 bg-default px-3 py-2.5 text-sm focus:shadow-inner',
-            selectedMobileTab === 'content' ? 'font-medium text-info shadow-bottom' : 'text-text',
+            selectedMobileTab === 'preview' ? 'font-medium text-info shadow-bottom' : 'text-text',
           )}
           onClick={() => {
-            setSelectedMobileTab('content')
+            setSelectedMobileTab('preview')
           }}
         >
-          Content
+          Preview
         </button>
       </div>
       <div
@@ -348,7 +348,7 @@ const NoteConflictResolutionModal = ({
               } else {
                 setSelectedVersions([note.uuid])
               }
-              setSelectedMobileTab('content')
+              setSelectedMobileTab('preview')
             }}
             key={note.uuid}
             title={index === 0 ? 'Current version' : `Version ${index + 1}`}
@@ -359,7 +359,7 @@ const NoteConflictResolutionModal = ({
       <div
         className={classNames(
           'flex w-full flex-grow flex-col overflow-hidden',
-          selectedMobileTab !== 'content' && 'hidden md:flex',
+          selectedMobileTab !== 'preview' && 'hidden md:flex',
         )}
       >
         {isPreviewMode && (
