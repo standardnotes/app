@@ -51,11 +51,11 @@ const StyledTooltip = ({
           className,
         )}
         updatePosition={() => {
-          const { popoverElement, anchorElement } = tooltip.getState()
+          const { popoverElement, anchorElement, open } = tooltip.getState()
 
           const documentElement = document.querySelector('.main-ui-view')
 
-          if (!popoverElement || !anchorElement || !documentElement) {
+          if (!popoverElement || !anchorElement || !documentElement || !open) {
             return
           }
 
