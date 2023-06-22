@@ -107,10 +107,21 @@ const HomeServerSettings = () => {
     }
   }, [homeServerEnabled, homeServerService, status, refreshStatus, initialyLoadHomeServerConfiguration])
 
+  const clearLogs = useCallback(
+    (hideLogs = false) => {
+      if (logsIntervalRef !== null) {
+        clearInterval(logsIntervalRef)
+      }
+      if (hideLogs) {
+        setShowLogs(false)
+      }
+      setLogs([])
+    },
+    [setLogs, logsIntervalRef],
+  )
+
   const setupLogsRefresh = useCallback(async () => {
-    if (logsIntervalRef !== null) {
-      clearInterval(logsIntervalRef)
-    }
+    clearLogs()
 
     setLogs(await homeServerService.getHomeServerLogs())
 
@@ -118,7 +129,7 @@ const HomeServerSettings = () => {
       setLogs(await homeServerService.getHomeServerLogs())
     }, LOGS_REFRESH_INTERVAL)
     setLogsIntervalRef(interval)
-  }, [homeServerService, logsIntervalRef])
+  }, [homeServerService, clearLogs])
 
   useEffect(() => {
     setIsAPremiumUser(featuresService.hasOfflineRepo())
@@ -143,6 +154,8 @@ const HomeServerSettings = () => {
 
         await homeServerService.setHomeServerConfiguration(changedServerConfiguration)
 
+        clearLogs(true)
+
         const result = await homeServerService.startHomeServer()
         if (result !== undefined) {
           setStatus({ state: 'error', message: result })
@@ -153,7 +166,7 @@ const HomeServerSettings = () => {
         setStatus({ state: 'error', message: (error as Error).message })
       }
     },
-    [homeServerService, setStatus, setHomeServerConfiguration, refreshStatus],
+    [homeServerService, setStatus, setHomeServerConfiguration, refreshStatus, clearLogs],
   )
 
   const changeHomeServerDataLocation = useCallback(
@@ -182,6 +195,8 @@ const HomeServerSettings = () => {
 
         setHomeServerDataLocation(location)
 
+        clearLogs(true)
+
         const result = await homeServerService.startHomeServer()
         if (result !== undefined) {
           setStatus({ state: 'error', message: result })
@@ -192,7 +207,7 @@ const HomeServerSettings = () => {
         setStatus({ state: 'error', message: (error as Error).message })
       }
     },
-    [homeServerService, setStatus, setHomeServerDataLocation, refreshStatus],
+    [homeServerService, setStatus, setHomeServerDataLocation, refreshStatus, clearLogs],
   )
 
   const openHomeServerDataLocation = useCallback(async () => {
@@ -247,8 +262,11 @@ const HomeServerSettings = () => {
       if (textArea) {
         textArea.removeEventListener('scroll', handleScroll)
       }
+      if (logsIntervalRef !== null) {
+        clearInterval(logsIntervalRef)
+      }
     }
-  }, [])
+  }, [logsIntervalRef])
 
   useEffect(() => {
     if (logsTextarea.current && isAtBottom) {

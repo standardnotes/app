@@ -210,6 +210,7 @@ export class HomeServerManager implements HomeServerManagerInterface {
       const result = await this.homeServer.start({
         dataDirectoryPath: this.homeServerDataLocation,
         environment,
+        logStreamCallback: this.appendLogs.bind(this),
       })
 
       if (result.isFailed()) {
@@ -219,9 +220,6 @@ export class HomeServerManager implements HomeServerManagerInterface {
       }
 
       this.webContents.send(MessageToWebApp.HomeServerStarted, await this.getHomeServerUrl())
-
-      const logStream = this.homeServer.logs()
-      logStream.on('data', this.appendLogs.bind(this))
     } catch (error) {
       return (error as Error).message
     }
@@ -231,8 +229,8 @@ export class HomeServerManager implements HomeServerManagerInterface {
     return this.logs
   }
 
-  private appendLogs(log: Uint8Array): void {
-    this.logs.push(new TextDecoder().decode(log))
+  private appendLogs(log: Buffer): void {
+    this.logs.push(log.toString())
 
     if (this.logs.length > this.LOGS_BUFFER_SIZE) {
       this.logs.shift()
