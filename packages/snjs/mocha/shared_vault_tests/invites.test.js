@@ -69,7 +69,7 @@ describe('shared vault invites', function () {
     const { sharedVault, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithAcceptedInvite(context)
 
-    const { thirdPartyContext, deinitThirdPartyContext } = await Collaboration.inviteThirdPartyToSharedVault(
+    const { thirdPartyContext, deinitThirdPartyContext } = await Collaboration.inviteNewPartyToSharedVault(
       context,
       sharedVault,
     )
@@ -198,5 +198,32 @@ describe('shared vault invites', function () {
   it('should delete all inbound invites after changing user password', async () => {
     /** Invites to user are encrypted with old keypair and are no longer decryptable */
     console.error('TODO: implement test')
+  })
+
+  it.only('sharing a vault with user inputted and ephemeral password should share the key as synced for the recipient', async () => {
+    const privateVault = await context.vaults.createUserInputtedPasswordVault({
+      name: 'My Private Vault',
+      userInputtedPassword: 'password',
+      storagePreference: KeySystemRootKeyStorageMode.Ephemeral,
+    })
+
+    const note = await context.createSyncedNote('foo', 'bar')
+    await context.vaults.addItemToVault(privateVault, note)
+
+    const sharedVault = await context.sharedVaults.convertVaultToSharedVault(privateVault)
+
+    const { thirdPartyContext, deinitThirdPartyContext } = await Collaboration.inviteNewPartyToSharedVault(
+      context,
+      sharedVault,
+    )
+
+    await Collaboration.acceptAllInvites(thirdPartyContext)
+
+    const contextNote = thirdPartyContext.items.findItem(note.uuid)
+    expect(contextNote).to.not.be.undefined
+    expect(contextNote.title).to.equal('foo')
+    expect(contextNote.text).to.equal(note.text)
+
+    await deinitThirdPartyContext()
   })
 })

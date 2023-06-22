@@ -461,6 +461,10 @@ export class SharedVaultService
       throw new Error('Only vault admins can remove users')
     }
 
+    if (this.vaults.isVaultLocked(sharedVault)) {
+      throw new Error('Cannot remove user from locked vault')
+    }
+
     const useCase = new RemoveVaultMemberUseCase(this.usersServer)
     const result = await useCase.execute({ sharedVaultUuid: sharedVault.sharing.sharedVaultUuid, userUuid })
     if (isClientDisplayableError(result)) {

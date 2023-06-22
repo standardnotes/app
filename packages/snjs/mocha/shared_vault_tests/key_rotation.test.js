@@ -186,4 +186,8 @@ describe('shared vault key rotation', function () {
   it('should change password type from randomized to user inputted', async () => {
     console.error('TODO: implement')
   })
+
+  it('should not be able to change storage mode of third party vault', async () => {
+    console.error('TODO: implement')
+  })
 })

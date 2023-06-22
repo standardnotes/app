@@ -24,7 +24,7 @@ const VaultItem = ({ vault }: Props) => {
 
   const deleteVault = useCallback(async () => {
     const confirm = await application.alerts.confirm(
-      'Deleting a vault will permanently delete all its items and files',
+      'Deleting a vault will permanently delete all its items and files.',
       'Are you sure you want to delete this vault?',
       undefined,
       ButtonType.Danger,
@@ -45,7 +45,7 @@ const VaultItem = ({ vault }: Props) => {
     }
 
     const confirm = await application.alerts.confirm(
-      'All items and files in this vault will be removed from your account',
+      'All items and files in this vault will be removed from your account.',
       'Are you sure you want to leave this vault?',
       undefined,
       ButtonType.Danger,
@@ -63,6 +63,30 @@ const VaultItem = ({ vault }: Props) => {
   const convertToSharedVault = useCallback(async () => {
     await application.sharedVaults.convertVaultToSharedVault(vault)
   }, [application.sharedVaults, vault])
+
+  const ensureVaultIsUnlocked = useCallback(async () => {
+    if (!application.vaults.isVaultLocked(vault)) {
+      return true
+    }
+    const unlocked = await application.vaultDisplayService.unlockVault(vault)
+    return unlocked
+  }, [application.vaultDisplayService, application.vaults, vault])
+
+  const openEditModal = useCallback(async () => {
+    if (!(await ensureVaultIsUnlocked())) {
+      return
+    }
+
+    setIsVaultModalOpen(true)
+  }, [ensureVaultIsUnlocked])
+
+  const openInviteModal = useCallback(async () => {
+    if (!(await ensureVaultIsUnlocked())) {
+      return
+    }
+
+    setIsAddContactModalOpen(true)
+  }, [ensureVaultIsUnlocked])
 
   return (
     <>
@@ -85,7 +109,7 @@ const VaultItem = ({ vault }: Props) => {
 
           <div className="mt-2.5 flex w-full flex-row justify-between">
             <div className="mt-2.5 flex flex-row">
-              <Button label="Edit" className={'mr-3 text-xs'} onClick={() => setIsVaultModalOpen(true)} />
+              <Button label="Edit" className={'mr-3 text-xs'} onClick={openEditModal} />
               {isAdmin && (
                 <Button colorStyle="danger" label="Delete" className={'mr-3 text-xs'} onClick={deleteVault} />
               )}
@@ -95,11 +119,7 @@ const VaultItem = ({ vault }: Props) => {
             </div>
             <div className="mt-2.5 flex flex-row">
               {vault.isSharedVaultListing() ? (
-                <Button
-                  label="Invite Contacts"
-                  className={'mr-3 text-xs'}
-                  onClick={() => setIsAddContactModalOpen(true)}
-                />
+                <Button label="Invite Contacts" className={'mr-3 text-xs'} onClick={openInviteModal} />
               ) : (
                 <Button
                   colorStyle="info"

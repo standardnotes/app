@@ -45,7 +45,7 @@ const EditVaultModal: FunctionComponent<Props> = ({ onCloseDialog, existingVault
       setPasswordType(existingVault.rootKeyParams.passwordType)
       setKeyStorageMode(existingVault.keyStorageMode)
     }
-  }, [existingVault])
+  }, [application.vaults, existingVault])
 
   const reloadVaultInfo = useCallback(async () => {
     if (!existingVault) {
@@ -168,6 +168,10 @@ const EditVaultModal: FunctionComponent<Props> = ({ onCloseDialog, existingVault
     ],
     [existingVault, handleDialogClose, handleSubmit],
   )
+
+  if (existingVault && application.vaults.isVaultLocked(existingVault)) {
+    return <div>Vault is locked.</div>
+  }
 
   return (
     <Modal title={existingVault ? 'Edit Vault' : 'Create New Vault'} close={handleDialogClose} actions={modalActions}>

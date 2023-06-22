@@ -156,6 +156,10 @@ export class VaultService
   }
 
   async rotateVaultRootKey(vault: VaultListingInterface): Promise<void> {
+    if (this.isVaultLocked(vault)) {
+      throw new Error('Cannot rotate root key of locked vault')
+    }
+
     const useCase = new RotateVaultRootKeyUseCase(this.items, this.encryption)
     await useCase.execute({
       vault,
@@ -229,6 +233,8 @@ export class VaultService
       this.encryption.keys.undoIntakeNonPersistentKeySystemRootKey(vault.systemIdentifier)
       return false
     }
+
+    void this.notifyEventSync(VaultServiceEvent.VaultUnlocked, { vault })
 
     return true
   }

@@ -91,7 +91,7 @@ export const createSharedVaultWithUnacceptedAndUntrustedInvite = async (
   return { sharedVault, contact, contactContext, deinitContactContext, invite }
 }
 
-export const inviteThirdPartyToSharedVault = async (
+export const inviteNewPartyToSharedVault = async (
   context,
   sharedVault,
   permissions = SharedVaultPermission.Write,
