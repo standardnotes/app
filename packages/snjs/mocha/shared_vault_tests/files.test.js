@@ -5,7 +5,7 @@ import * as Collaboration from '../lib/Collaboration.js'
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
-describe('shared vault files', function () {
+describe.only('shared vault files', function () {
   this.timeout(Factory.TwentySecondTimeout)
 
   let context
@@ -26,6 +26,23 @@ describe('shared vault files', function () {
 
     vaults = context.vaults
     await context.publicMockSubscriptionPurchaseEvent()
+  })
+
+  describe.only('private vaults', () => {
+    it('should be able to upload and download file to vault as owner', async () => {
+      const vault = await Collaboration.createPrivateVault(context)
+      const response = await fetch('/mocha/assets/small_file.md')
+      const buffer = new Uint8Array(await response.arrayBuffer())
+      const uploadedFile = await Files.uploadFile(context.files, buffer, 'my-file', 'md', 1000, vault)
+
+      const file = context.items.findItem(uploadedFile.uuid)
+      expect(file).to.not.be.undefined
+      expect(file.remoteIdentifier).to.equal(file.remoteIdentifier)
+      expect(file.key_system_identifier).to.equal(vault.systemIdentifier)
+
+      const downloadedBytes = await Files.downloadFile(context.files, file)
+      expect(downloadedBytes).to.eql(buffer)
+    })
   })
 
   it('should be able to upload and download file to vault as owner', async () => {

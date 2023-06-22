@@ -37,7 +37,7 @@ import ModalOverlay from '../Modal/ModalOverlay'
 import SuperExportModal from './SuperExportModal'
 import { useApplication } from '../ApplicationProvider'
 import { MutuallyExclusiveMediaQueryBreakpoints } from '@/Hooks/useMediaQuery'
-import AddToVaultOption from './AddToVaultOption'
+import AddToVaultMenuOption from '../Vaults/AddToVaultMenuOption'
 
 const iconSize = MenuItemIconSize
 const iconClassDanger = `text-danger mr-2 ${iconSize}`
@@ -241,6 +241,7 @@ const NotesOptions = ({
         </>
       )}
       <HorizontalSeparator classes="my-2" />
+      <AddToVaultMenuOption iconClassName={iconClass} items={notes} />
       {navigationController.tagsCount > 0 && (
         <AddTagOption
           iconClassName={iconClass}
@@ -249,7 +250,6 @@ const NotesOptions = ({
           linkingController={linkingController}
         />
       )}
-      <AddToVaultOption iconClassName={iconClass} items={notes} />
       <MenuItem
         onClick={() => {
           notesController.setStarSelectedNotes(!starred)

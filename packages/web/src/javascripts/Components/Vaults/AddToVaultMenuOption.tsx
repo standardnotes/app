@@ -13,7 +13,7 @@ type Props = {
   items: DecryptedItemInterface[]
 }
 
-const AddToVaultOption: FunctionComponent<Props> = ({ iconClassName, items }) => {
+const AddToVaultMenuOption: FunctionComponent<Props> = ({ iconClassName, items }) => {
   const application = useApplication()
   const menuContainerRef = useRef<HTMLDivElement>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
@@ -28,22 +28,44 @@ const AddToVaultOption: FunctionComponent<Props> = ({ iconClassName, items }) =>
 
   const addItemsToVault = useCallback(
     async (vault: VaultListingInterface) => {
+      if (application.vaults.isVaultLocked(vault)) {
+        const unlocked = await application.vaultDisplayService.unlockVault(vault)
+        if (!unlocked) {
+          return
+        }
+      }
+
       for (const item of items) {
         await application.vaults.addItemToVault(vault, item)
       }
     },
-    [application.vaults, items],
+    [application.vaultDisplayService, application.vaults, items],
   )
 
   const removeItemsFromVault = useCallback(async () => {
     for (const item of items) {
+      const vault = application.vaults.getItemVault(item)
+      if (!vault) {
+        continue
+      }
+
+      if (application.vaults.isVaultLocked(vault)) {
+        const unlocked = await application.vaultDisplayService.unlockVault(vault)
+        if (!unlocked) {
+          return
+        }
+      }
       await application.vaults.removeItemFromVault(item)
     }
-  }, [application.vaults, items])
+  }, [application.vaultDisplayService, application.vaults, items])
 
   const doesVaultContainItems = (vault: VaultListingInterface) => {
     return items.every((item) => item.key_system_identifier === vault.systemIdentifier)
   }
+
+  const doSomeItemsBelongToVault = items.some((item) => application.vaults.isItemInVault(item))
+
+  const singleItemVault = items.length === 1 ? application.vaults.getItemVault(items[0]) : undefined
 
   return (
     <div ref={menuContainerRef}>
@@ -74,7 +96,25 @@ const AddToVaultOption: FunctionComponent<Props> = ({ iconClassName, items }) =>
         overrideZIndex="z-modal"
       >
         <Menu a11yLabel="Vault selection menu" isOpen={isSubMenuOpen}>
+          {doSomeItemsBelongToVault && (
+            <MenuItem
+              onClick={() => {
+                void removeItemsFromVault()
+              }}
+            >
+              <span className="flex overflow-hidden overflow-ellipsis whitespace-nowrap">
+                <Icon type="close" className="mr-2 text-neutral" />
+                <div className="flex w-full items-center gap-1">
+                  Move out of {singleItemVault ? singleItemVault.name : 'vaults'}
+                </div>
+              </span>
+            </MenuItem>
+          )}
           {vaults.map((vault) => {
+            if (singleItemVault) {
+              return null
+            }
+
             return (
               <MenuItem
                 key={vault.uuid}
@@ -84,11 +124,19 @@ const AddToVaultOption: FunctionComponent<Props> = ({ iconClassName, items }) =>
               >
                 <span
                   className={classNames(
-                    'overflow-hidden overflow-ellipsis whitespace-nowrap',
+                    'flex overflow-ellipsis whitespace-nowrap',
                     doesVaultContainItems(vault) ? 'font-bold' : '',
                   )}
                 >
-                  {vault.name || vault.systemIdentifier}
+                  <Icon
+                    type="safe-square"
+                    size="large"
+                    className={`mr-2 text-neutral ${doesVaultContainItems(vault) ? 'text-info' : ''}`}
+                  />
+                  <div className="flex w-full items-center">
+                    {vault.name}
+                    {application.vaults.isVaultLocked(vault) && <Icon className="ml-1" type="lock" size={'small'} />}
+                  </div>
                 </span>
               </MenuItem>
             )
@@ -99,4 +147,4 @@ const AddToVaultOption: FunctionComponent<Props> = ({ iconClassName, items }) =>
   )
 }
 
-export default observer(AddToVaultOption)
+export default observer(AddToVaultMenuOption)

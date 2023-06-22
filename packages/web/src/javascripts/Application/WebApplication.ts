@@ -26,7 +26,7 @@ import {
 import { makeObservable, observable } from 'mobx'
 import { startAuthentication, startRegistration } from '@simplewebauthn/browser'
 import { PanelResizedData } from '@/Types/PanelResizedData'
-import { isAndroid, isDesktopApplication, isIOS } from '@/Utils'
+import { isAndroid, isDesktopApplication, isDev, isIOS } from '@/Utils'
 import { DesktopManager } from './Device/DesktopManager'
 import {
   ArchiveManager,
@@ -51,6 +51,7 @@ import { FeatureName } from '@/Controllers/FeatureName'
 import { ItemGroupController } from '@/Components/NoteView/Controller/ItemGroupController'
 import { VisibilityObserver } from './VisibilityObserver'
 import { MomentsService } from '@/Controllers/Moments/MomentsService'
+import { purchaseMockSubscription } from '@/Utils/Dev/PurchaseMockSubscription'
 
 export type WebEventObserver = (event: WebAppEvent, data?: unknown) => void
 
@@ -456,5 +457,13 @@ export class WebApplication extends SNApplication implements WebApplicationInter
 
   generateUUID(): string {
     return this.options.crypto.generateUUID()
+  }
+
+  dev__purchaseMockSubscription() {
+    if (!isDev) {
+      throw new Error('This method is only available in dev mode')
+    }
+
+    void purchaseMockSubscription(this.getUser()?.email as string, 2000)
   }
 }

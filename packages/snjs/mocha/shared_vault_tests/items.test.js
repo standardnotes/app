@@ -114,4 +114,8 @@ describe('shared vault items', function () {
 
     await deinitContactContext()
   })
+
+  it('adding item to vault while belonging to other vault should move the item to new vault', async () => {
+    console.error('TODO: implement test')
+  })
 })

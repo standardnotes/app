@@ -108,8 +108,22 @@ export const inviteThirdPartyToSharedVault = async (
   return { thirdPartyContext, thirdPartyContact, deinitThirdPartyContext }
 }
 
+export const createPrivateVault = async (context) => {
+  const privateVault = await context.vaults.createRandomizedVault({
+    name: 'My Private Vault',
+    storagePreference: KeySystemRootKeyStorageMode.Synced,
+  })
+
+  return privateVault
+}
+
 export const createSharedVault = async (context) => {
   const sharedVault = await context.sharedVaults.createSharedVault('My Shared Vault')
+
+  if (isClientDisplayableError(sharedVault)) {
+    throw new Error(sharedVault.text)
+  }
+
   return sharedVault
 }
 

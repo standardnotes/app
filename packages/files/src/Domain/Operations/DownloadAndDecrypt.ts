@@ -22,7 +22,7 @@ export class DownloadAndDecryptFileOperation {
   constructor(
     private readonly file: {
       uuid: string
-      key_system_identifier: string | undefined
+      shared_vault_uuid: string | undefined
       encryptedChunkSizes: FileContent['encryptedChunkSizes']
       encryptionHeader: FileContent['encryptionHeader']
       remoteIdentifier: FileContent['remoteIdentifier']

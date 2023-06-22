@@ -104,6 +104,10 @@ export class VaultService
       throw new Error('Attempting to add item to locked vault')
     }
 
+    if (this.getItemVault(item)) {
+      await this.removeItemFromVault(item)
+    }
+
     const useCase = new AddItemsToVaultUseCase(this.items, this.sync, this.files)
     await useCase.execute({ vault, items: [item] })
 

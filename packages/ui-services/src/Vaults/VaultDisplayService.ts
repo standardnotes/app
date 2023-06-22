@@ -98,7 +98,7 @@ export class VaultDisplayService
     this.setVaultSelectionOptions(newOptions)
   }
 
-  private async unlockVault(vault: VaultListingInterface): Promise<boolean> {
+  async unlockVault(vault: VaultListingInterface): Promise<boolean> {
     if (!this.application.vaults.isVaultLocked(vault)) {
       throw new Error('Attempting to unlock a vault that is not locked.')
     }

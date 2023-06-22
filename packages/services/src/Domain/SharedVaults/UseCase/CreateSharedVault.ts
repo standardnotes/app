@@ -38,7 +38,7 @@ export class CreateSharedVaultUseCase {
 
     const serverResult = await this.sharedVaultServer.createSharedVault()
     if (isErrorResponse(serverResult)) {
-      return ClientDisplayableError.FromString(`Failed to create shared vault ${serverResult}`)
+      return ClientDisplayableError.FromString(`Failed to create shared vault ${JSON.stringify(serverResult)}`)
     }
 
     const serverVaultHash = serverResult.data.sharedVault

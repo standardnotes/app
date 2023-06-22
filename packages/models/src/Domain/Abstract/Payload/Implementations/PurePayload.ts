@@ -74,10 +74,10 @@ export abstract class PurePayload<T extends TransferPayload<C>, C extends ItemCo
       throw new Error('Vault key copy payload should not have vault system identifier')
     }
 
-    this.user_uuid = rawPayload.user_uuid
-    this.key_system_identifier = rawPayload.key_system_identifier
-    this.shared_vault_uuid = rawPayload.shared_vault_uuid
-    this.last_edited_by_uuid = rawPayload.last_edited_by_uuid
+    this.user_uuid = rawPayload.user_uuid ?? undefined
+    this.key_system_identifier = rawPayload.key_system_identifier ?? undefined
+    this.shared_vault_uuid = rawPayload.shared_vault_uuid ?? undefined
+    this.last_edited_by_uuid = rawPayload.last_edited_by_uuid ?? undefined
 
     this.signatureData = rawPayload.signatureData
 

@@ -8,4 +8,5 @@ export interface VaultDisplayServiceInterface extends AbstractUIServiceInterface
   hideVault: (vault: VaultListingInterface) => void
   unhideVault: (vault: VaultListingInterface) => void
   showOnlyVault: (vault: VaultListingInterface) => void
+  unlockVault(vault: VaultListingInterface): Promise<boolean>
 }

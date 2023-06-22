@@ -15,7 +15,7 @@ import AddTagOption from '../NotesOptions/AddTagOption'
 import { MenuItemIconSize } from '@/Constants/TailwindClassNames'
 import { LinkingController } from '@/Controllers/LinkingController'
 import { NavigationController } from '@/Controllers/Navigation/NavigationController'
-import AddToVaultOption from '../NotesOptions/AddToVaultOption'
+import AddToVaultMenuOption from '../Vaults/AddToVaultMenuOption'
 import { iconClass } from '../NotesOptions/ClassNames'
 
 type Props = {
@@ -92,13 +92,13 @@ const FileMenuOptions: FunctionComponent<Props> = ({
           ) : null}
         </>
       )}
+      <AddToVaultMenuOption iconClassName={iconClass} items={selectedFiles} />
       <AddTagOption
         navigationController={navigationController}
         linkingController={linkingController}
         selectedItems={selectedFiles}
         iconClassName={`text-neutral mr-2 ${MenuItemIconSize}`}
       />
-      <AddToVaultOption iconClassName={iconClass} items={selectedFiles} />
       <MenuSwitchButtonItem
         checked={hasProtectedFiles}
         onChange={(hasProtectedFiles) => {
