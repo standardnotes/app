@@ -255,6 +255,7 @@ const NoteConflictResolutionModal = ({
               <Popover
                 title="Conflict options"
                 open={isSelectOpen}
+                togglePopover={selectStore.toggle}
                 anchorElement={selectAnchor}
                 className="z-modal border border-border py-1"
                 side="top"
