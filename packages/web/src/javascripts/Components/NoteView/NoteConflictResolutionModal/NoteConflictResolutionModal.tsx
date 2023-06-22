@@ -261,10 +261,10 @@ const NoteConflictResolutionModal = ({
                 offset={4}
               >
                 <SelectList
-                  className="cursor-pointer divide-y divide-border [&>[data-active-item]]:bg-contrast"
+                  className="cursor-pointer divide-y divide-border [&>[data-active-item]]:bg-passive-5"
                   store={selectStore}
                 >
-                  <SelectItem className="px-2.5 py-2 hover:bg-contrast" value="move-to-trash">
+                  <SelectItem className="px-2.5 py-2 hover:bg-passive-5" value="move-to-trash">
                     <div className="flex items-center gap-1 text-sm font-bold">
                       {selectedAction === 'move-to-trash' ? (
                         <Icon type="check-bold" size="small" />
@@ -277,7 +277,7 @@ const NoteConflictResolutionModal = ({
                       Only the selected version will be kept; others will be moved to trash.
                     </div>
                   </SelectItem>
-                  <SelectItem className="px-2.5 py-2 hover:bg-contrast" value="delete-permanently">
+                  <SelectItem className="px-2.5 py-2 hover:bg-passive-5" value="delete-permanently">
                     <div className="flex items-center gap-1 text-sm font-bold">
                       {selectedAction === 'delete-permanently' ? (
                         <Icon type="check-bold" size="small" />
