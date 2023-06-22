@@ -19,7 +19,7 @@ type Props = {
 }
 
 const AccountPreferences = ({ application, viewControllerManager }: Props) => {
-  const isUsingThirdPartyServer = application.isUsingThirdPartyServer()
+  const isUsingThirdPartyServer = application.isThirdPartyHostUsed()
 
   return (
     <PreferencesPane>

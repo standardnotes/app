@@ -15,7 +15,7 @@ type Props = {
 }
 
 const Backups: FunctionComponent<Props> = ({ application, viewControllerManager }) => {
-  const isUsingThirdPartyServer = application.isUsingThirdPartyServer()
+  const isUsingThirdPartyServer = application.isThirdPartyHostUsed()
 
   return (
     <PreferencesPane>
