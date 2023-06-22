@@ -257,9 +257,11 @@ const NoteConflictResolutionModal = ({
                 open={isSelectOpen}
                 togglePopover={selectStore.toggle}
                 anchorElement={selectAnchor}
-                className="z-modal border border-border py-1"
+                className="!fixed z-modal border border-border py-1"
                 side="top"
+                align="end"
                 offset={4}
+                portal={false}
               >
                 <SelectList
                   className="cursor-pointer divide-y divide-border [&>[data-active-item]]:bg-passive-5"

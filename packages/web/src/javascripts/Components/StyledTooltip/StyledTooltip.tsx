@@ -4,26 +4,7 @@ import { Tooltip, TooltipAnchor, TooltipOptions, useTooltipStore } from '@ariaki
 import { Slot } from '@radix-ui/react-slot'
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 import { getPositionedPopoverStyles } from '../Popover/GetPositionedPopoverStyles'
-
-function getAbsolutePositionedParent(element: HTMLElement | null): HTMLElement | null {
-  if (!element) {
-    return null
-  }
-
-  const parent = element.parentElement
-
-  if (!parent) {
-    return null
-  }
-
-  const position = window.getComputedStyle(parent).getPropertyValue('position')
-
-  if (position === 'absolute') {
-    return parent
-  }
-
-  return getAbsolutePositionedParent(parent)
-}
+import { getAdjustedStylesForNonPortalPopover } from '../Popover/Utils/getAdjustedStylesForNonPortal'
 
 const StyledTooltip = ({
   children,
@@ -101,22 +82,9 @@ const StyledTooltip = ({
           popoverElement.style.setProperty('--translate-y', styles['--translate-y'])
 
           if (!props.portal) {
-            const translateX = parseInt(styles['--translate-x'])
-            const translateY = parseInt(styles['--translate-y'])
-
-            const absolutePositionedParent = getAbsolutePositionedParent(popoverElement)
-
-            if (!absolutePositionedParent) {
-              return
-            }
-
-            const parentRect = absolutePositionedParent.getBoundingClientRect()
-
-            const adjustedTranslateX = translateX - parentRect.left
-            const adjustedTranslateY = translateY - parentRect.top
-
-            popoverElement.style.setProperty('--translate-x', `${adjustedTranslateX}px`)
-            popoverElement.style.setProperty('--translate-y', `${adjustedTranslateY}px`)
+            const adjustedStyles = getAdjustedStylesForNonPortalPopover(popoverElement, styles)
+            popoverElement.style.setProperty('--translate-x', adjustedStyles['--translate-x'])
+            popoverElement.style.setProperty('--translate-y', adjustedStyles['--translate-y'])
           }
         }}
         {...props}

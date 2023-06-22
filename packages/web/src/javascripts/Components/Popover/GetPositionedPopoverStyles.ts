@@ -7,7 +7,7 @@ import { getAppRect, getPopoverMaxHeight, getPositionedPopoverRect } from './Uti
 
 const percentOf = (percent: number, value: number) => (percent / 100) * value
 
-type PopoverCSSProperties = CSSProperties & {
+export type PopoverCSSProperties = CSSProperties & {
   '--translate-x': string
   '--translate-y': string
 }

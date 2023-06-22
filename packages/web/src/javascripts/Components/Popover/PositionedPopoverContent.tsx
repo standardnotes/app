@@ -1,14 +1,15 @@
 import { useDocumentRect } from '@/Hooks/useDocumentRect'
 import { useAutoElementRect } from '@/Hooks/useElementRect'
 import { classNames } from '@standardnotes/utils'
-import { useCallback, useLayoutEffect, useState } from 'react'
+import { CSSProperties, useCallback, useLayoutEffect, useState } from 'react'
 import Portal from '../Portal/Portal'
-import { getPositionedPopoverStyles } from './GetPositionedPopoverStyles'
+import { PopoverCSSProperties, getPositionedPopoverStyles } from './GetPositionedPopoverStyles'
 import { PopoverContentProps } from './Types'
 import { usePopoverCloseOnClickOutside } from './Utils/usePopoverCloseOnClickOutside'
 import { useDisableBodyScrollOnMobile } from '@/Hooks/useDisableBodyScrollOnMobile'
 import { MediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 import { KeyboardKey } from '@standardnotes/ui-services'
+import { getAdjustedStylesForNonPortalPopover } from './Utils/getAdjustedStylesForNonPortal'
 
 const PositionedPopoverContent = ({
   align = 'end',
@@ -51,6 +52,12 @@ const PositionedPopoverContent = ({
     offset,
   })
 
+  let adjustedStyles: PopoverCSSProperties | undefined = undefined
+
+  if (!portal && popoverElement && styles) {
+    adjustedStyles = getAdjustedStylesForNonPortalPopover(popoverElement, styles)
+  }
+
   usePopoverCloseOnClickOutside({
     popoverElement,
     anchorElement,
@@ -85,9 +92,12 @@ const PositionedPopoverContent = ({
           isDesktopScreen || disableMobileFullscreenTakeover ? 'invisible' : '',
           className,
         )}
-        style={{
-          ...styles,
-        }}
+        style={
+          {
+            ...styles,
+            ...adjustedStyles,
+          } as CSSProperties
+        }
         ref={setPopoverElement}
         data-popover={id}
         onKeyDown={(event) => {
