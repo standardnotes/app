@@ -265,4 +265,8 @@ export abstract class Collection<
     remove(array, { uuid: element.uuid as never })
     this.typedMap[element.content_type] = array
   }
+
+  public numberOfItemsWithConflicts(): number {
+    return this.conflictMap.directMapSize
+  }
 }

@@ -1416,6 +1416,6 @@ export class ItemManager
   }
 
   numberOfNotesWithConflicts(): number {
-    return this.collection.conflictMap.directMapSize
+    return this.collection.numberOfItemsWithConflicts()
   }
 }
