@@ -168,5 +168,5 @@ export interface ItemsClientInterface {
     iconString?: string,
   ): Promise<SmartView>
 
-  conflictsCount(): number
+  numberOfNotesWithConflicts(): number
 }

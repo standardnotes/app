@@ -1415,7 +1415,7 @@ export class ItemManager
     })
   }
 
-  conflictsCount(): number {
+  numberOfNotesWithConflicts(): number {
     return this.collection.all(ContentType.Note).filter((note) => this.collection.conflictsOf(note.uuid).length > 0)
       .length
   }

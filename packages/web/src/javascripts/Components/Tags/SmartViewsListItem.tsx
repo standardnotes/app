@@ -102,7 +102,7 @@ const SmartViewsListItem: FunctionComponent<Props> = ({ view, tagsState, setEdit
     }
 
     return application.streamItems(ContentType.Note, () => {
-      setConflictsCount(application.items.conflictsCount())
+      setConflictsCount(application.items.numberOfNotesWithConflicts())
     })
   }, [application, view])
 
