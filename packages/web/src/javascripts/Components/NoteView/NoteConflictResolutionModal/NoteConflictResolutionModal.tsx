@@ -49,7 +49,7 @@ const ConflictListItem = ({
     <button
       tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
       className={classNames(
-        'flex w-full select-none flex-col border-l-2 bg-transparent px-3 py-2.5 text-left text-sm text-text',
+        'flex w-full select-none flex-col border-l-2 bg-transparent px-3 py-2.5 pl-4 text-left text-sm text-text',
         isSelected ? 'border-info bg-info-backdrop' : 'border-transparent',
         disabled
           ? 'cursor-not-allowed opacity-75'
