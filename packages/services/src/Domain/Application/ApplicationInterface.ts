@@ -1,3 +1,5 @@
+import { ChallengeServiceInterface } from './../Challenge/ChallengeServiceInterface'
+import { VaultServiceInterface } from './../Vaults/VaultServiceInterface'
 import { ApplicationIdentifier, ContentType } from '@standardnotes/common'
 import { BackupFile, DecryptedItemInterface, ItemStream, Platform, PrefKey, PrefValue } from '@standardnotes/models'
 import { BackupServiceInterface, FilesClientInterface } from '@standardnotes/files'
@@ -53,6 +55,9 @@ export interface ApplicationInterface {
   get subscriptions(): SubscriptionClientInterface
   get fileBackups(): BackupServiceInterface | undefined
   get sessions(): SessionsClientInterface
+  get vaults(): VaultServiceInterface
+  get challenges(): ChallengeServiceInterface
+  get alerts(): AlertService
   readonly identifier: ApplicationIdentifier
   readonly platform: Platform
   deviceInterface: DeviceInterface

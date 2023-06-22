@@ -67,6 +67,11 @@ export class KeySystemKeyManager extends AbstractService implements KeySystemKey
     }
   }
 
+  public undoIntakeNonPersistentKeySystemRootKey(systemIdentifier: KeySystemIdentifier): void {
+    delete this.rootKeyMemoryCache[systemIdentifier]
+    void this.storage.removeValue(this.storageKeyForRootKey(systemIdentifier))
+  }
+
   public getAllSyncedKeySystemRootKeys(): KeySystemRootKeyInterface[] {
     return this.items.getItems(ContentType.KeySystemRootKey)
   }

@@ -2,7 +2,7 @@ import { useApplication } from '@/Components/ApplicationProvider'
 import Button from '@/Components/Button/Button'
 import Icon from '@/Components/Icon/Icon'
 import ModalOverlay from '@/Components/Modal/ModalOverlay'
-import { VaultListingInterface } from '@standardnotes/snjs'
+import { ButtonType, VaultListingInterface } from '@standardnotes/snjs'
 import { useCallback, useState } from 'react'
 import ContactInviteModal from '../Invites/ContactInviteModal'
 import EditVaultModal from './VaultModal/EditVaultModal'
@@ -23,22 +23,42 @@ const VaultItem = ({ vault }: Props) => {
   const isAdmin = !vault.isSharedVaultListing() ? true : application.sharedVaults.isCurrentUserSharedVaultAdmin(vault)
 
   const deleteVault = useCallback(async () => {
+    const confirm = await application.alerts.confirm(
+      'Deleting a vault will permanently delete all its items and files',
+      'Are you sure you want to delete this vault?',
+      undefined,
+      ButtonType.Danger,
+    )
+    if (!confirm) {
+      return
+    }
+
     const success = await application.vaults.deleteVault(vault)
     if (!success) {
-      void application.alertService.alert('Unable to delete vault. Please try again.')
+      void application.alerts.alert('Unable to delete vault. Please try again.')
     }
-  }, [application.alertService, application.vaults, vault])
+  }, [application.alerts, application.vaults, vault])
 
   const leaveVault = useCallback(async () => {
     if (!vault.isSharedVaultListing()) {
       return
     }
 
+    const confirm = await application.alerts.confirm(
+      'All items and files in this vault will be removed from your account',
+      'Are you sure you want to leave this vault?',
+      undefined,
+      ButtonType.Danger,
+    )
+    if (!confirm) {
+      return
+    }
+
     const success = await application.sharedVaults.leaveSharedVault(vault)
     if (!success) {
-      void application.alertService.alert('Unable to leave vault. Please try again.')
+      void application.alerts.alert('Unable to leave vault. Please try again.')
     }
-  }, [application.alertService, application.sharedVaults, vault])
+  }, [application.alerts, application.sharedVaults, vault])
 
   const convertToSharedVault = useCallback(async () => {
     await application.sharedVaults.convertVaultToSharedVault(vault)
@@ -83,7 +103,7 @@ const VaultItem = ({ vault }: Props) => {
               ) : (
                 <Button
                   colorStyle="info"
-                  label="Enable Sharing"
+                  label="Enable Collaboration"
                   className={'mr-3 text-xs'}
                   onClick={convertToSharedVault}
                 />

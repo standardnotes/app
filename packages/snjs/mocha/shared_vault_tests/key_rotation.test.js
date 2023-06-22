@@ -155,6 +155,10 @@ describe('shared vault key rotation', function () {
     await deinitContactContext()
   })
 
+  it('should throw if attempting to change password of locked vault', async () => {
+    console.error('TODO: implement')
+  })
+
   it('rotating a vault key should update vault display listing with new key params', async () => {
     console.error('TODO: implement')
   })

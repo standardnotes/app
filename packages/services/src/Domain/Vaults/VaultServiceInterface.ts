@@ -38,5 +38,6 @@ export interface VaultServiceInterface
   rotateVaultRootKey(vault: VaultListingInterface): Promise<void>
   changeVaultOptions(dto: ChangeVaultOptionsDTO): Promise<void>
 
-  unlockNonPersistentVault(vault: VaultListingInterface, password: string): void
+  isVaultLocked(vault: VaultListingInterface): boolean
+  unlockNonPersistentVault(vault: VaultListingInterface, password: string): Promise<boolean>
 }

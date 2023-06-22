@@ -1,3 +1,5 @@
+import { ChallengeArtifacts } from './Types/ChallengeArtifacts'
+import { ChallengeValue } from './Types/ChallengeValue'
 import { RootKeyInterface } from '@standardnotes/models'
 
 import { AbstractService } from '../Service/AbstractService'
@@ -5,6 +7,7 @@ import { ChallengeInterface } from './ChallengeInterface'
 import { ChallengePromptInterface } from './Prompt/ChallengePromptInterface'
 import { ChallengeResponseInterface } from './ChallengeResponseInterface'
 import { ChallengeReason } from './Types/ChallengeReason'
+import { ChallengeObserver } from './Types/ChallengeObserver'
 
 export interface ChallengeServiceInterface extends AbstractService {
   /**
@@ -35,4 +38,11 @@ export interface ChallengeServiceInterface extends AbstractService {
         canceled?: undefined
       }
   >
+  addChallengeObserver(challenge: ChallengeInterface, observer: ChallengeObserver): () => void
+  setValidationStatusForChallenge(
+    challenge: ChallengeInterface,
+    value: ChallengeValue,
+    valid: boolean,
+    artifacts?: ChallengeArtifacts,
+  ): void
 }

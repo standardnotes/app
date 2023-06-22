@@ -24,6 +24,14 @@ describe('vaults', function () {
     vaults = context.vaults
   })
 
+  it('should throw if attempting to add item to locked vault', async () => {
+    console.error('TODO: implement')
+  })
+
+  it('should throw if attempting to remove item from locked vault', async () => {
+    console.error('TODO: implement')
+  })
+
   describe('offline', function () {
     it('should be able to create an offline vault', async () => {
       const vault = await vaults.createRandomizedVault({

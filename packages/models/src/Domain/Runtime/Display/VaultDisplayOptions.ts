@@ -36,10 +36,14 @@ export class VaultDisplayOptions {
   }
 
   newOptionsByExcludingVault(vault: VaultListingInterface): VaultDisplayOptions {
+    return this.newOptionsByExcludingVaults([vault])
+  }
+
+  newOptionsByExcludingVaults(vaults: VaultListingInterface[]): VaultDisplayOptions {
     if (this.exclude) {
-      return new VaultDisplayOptions({ exclude: [...this.exclude, vault] })
+      return new VaultDisplayOptions({ exclude: [...this.exclude, ...vaults] })
     } else if (this.exclusive) {
-      return new VaultDisplayOptions({ exclude: [vault] })
+      return new VaultDisplayOptions({ exclude: vaults })
     }
 
     throw new Error('Invalid vault display options')

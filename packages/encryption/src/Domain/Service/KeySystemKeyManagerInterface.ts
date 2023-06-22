@@ -22,6 +22,7 @@ export interface KeySystemKeyManagerInterface {
   getPrimaryKeySystemRootKey(systemIdentifier: KeySystemIdentifier): KeySystemRootKeyInterface | undefined
 
   intakeNonPersistentKeySystemRootKey(key: KeySystemRootKeyInterface, storage: KeySystemRootKeyStorageMode): void
+  undoIntakeNonPersistentKeySystemRootKey(systemIdentifier: KeySystemIdentifier): void
 
   deleteAllKeySystemRootKeysForVault(systemIdentifier: KeySystemIdentifier): Promise<void>
   deleteAllSyncedKeySystemRootKeys(systemIdentifier: KeySystemIdentifier): Promise<void>

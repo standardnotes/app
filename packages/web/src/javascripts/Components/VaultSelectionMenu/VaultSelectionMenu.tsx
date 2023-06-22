@@ -24,11 +24,12 @@ const VaultSelectionMenu: FunctionComponent<MenuProps> = () => {
     <Menu a11yLabel="Vault selection menu" isOpen>
       <RadioButtonGroup
         items={[
-          { label: 'Many', value: 'many' },
-          { label: 'Single', value: 'single' },
+          { label: 'Multiple', value: 'many' },
+          { label: 'One', value: 'single' },
         ]}
         value={mode}
         onChange={(value) => setMode(value as SettingsMode)}
+        className="m-3 mt-1"
       />
 
       {mode === 'many' && <ManyVaultSelectionMenu />}

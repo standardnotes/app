@@ -100,6 +100,10 @@ export class VaultService
   }
 
   async addItemToVault(vault: VaultListingInterface, item: DecryptedItemInterface): Promise<DecryptedItemInterface> {
+    if (this.isVaultLocked(vault)) {
+      throw new Error('Attempting to add item to locked vault')
+    }
+
     const useCase = new AddItemsToVaultUseCase(this.items, this.sync, this.files)
     await useCase.execute({ vault, items: [item] })
 
@@ -107,6 +111,15 @@ export class VaultService
   }
 
   async removeItemFromVault(item: DecryptedItemInterface): Promise<DecryptedItemInterface> {
+    const vault = this.getItemVault(item)
+    if (!vault) {
+      throw new Error('Item does not belong to any vault')
+    }
+
+    if (this.isVaultLocked(vault)) {
+      throw new Error('Attempting to remove item from locked vault')
+    }
+
     const useCase = new RemoveItemFromVault(this.items, this.sync, this.files)
     await useCase.execute({ item })
     return this.items.findSureItem(item.uuid)
@@ -162,7 +175,12 @@ export class VaultService
 
     return this.getVault(item.key_system_identifier)
   }
+
   async changeVaultOptions(dto: ChangeVaultOptionsDTO): Promise<void> {
+    if (this.isVaultLocked(dto.vault)) {
+      throw new Error('Attempting to change vault options on a locked vault')
+    }
+
     const usecase = new ChangeVaultKeyOptionsUseCase(this.items, this.sync, this.encryption)
     await usecase.execute(dto)
 
@@ -171,7 +189,21 @@ export class VaultService
     }
   }
 
-  unlockNonPersistentVault(vault: VaultListingInterface, password: string): void {
+  isVaultLocked(vault: VaultListingInterface): boolean {
+    const rootKey = this.encryption.keys.getPrimaryKeySystemRootKey(vault.systemIdentifier)
+    if (!rootKey) {
+      return true
+    }
+
+    const itemsKey = this.encryption.keys.getPrimaryKeySystemItemsKey(vault.systemIdentifier)
+    if (!itemsKey) {
+      return true
+    }
+
+    return false
+  }
+
+  public async unlockNonPersistentVault(vault: VaultListingInterface, password: string): Promise<boolean> {
     if (vault.keyPasswordType !== KeySystemRootKeyPasswordType.UserInputted) {
       throw new Error('Vault uses randomized password and cannot be unlocked with user inputted password')
     }
@@ -180,12 +212,21 @@ export class VaultService
       throw new Error('Vault uses synced root key and cannot be unlocked with user inputted password')
     }
 
-    const rootKey = this.encryption.deriveUserInputtedKeySystemRootKey({
+    const derivedRootKey = this.encryption.deriveUserInputtedKeySystemRootKey({
       keyParams: vault.rootKeyParams,
       userInputtedPassword: password,
     })
 
-    this.encryption.keys.intakeNonPersistentKeySystemRootKey(rootKey, vault.keyStorageMode)
+    this.encryption.keys.intakeNonPersistentKeySystemRootKey(derivedRootKey, vault.keyStorageMode)
+
+    await this.encryption.decryptErroredPayloads()
+
+    if (this.isVaultLocked(vault)) {
+      this.encryption.keys.undoIntakeNonPersistentKeySystemRootKey(vault.systemIdentifier)
+      return false
+    }
+
+    return true
   }
 
   override deinit(): void {

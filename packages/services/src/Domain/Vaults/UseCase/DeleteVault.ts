@@ -18,5 +18,7 @@ export class DeleteVaultUseCase {
 
     const vaultItems = this.items.itemsBelongingToKeySystem(vault.systemIdentifier)
     await this.items.setItemsToBeDeleted(vaultItems)
+
+    await this.items.setItemToBeDeleted(vault)
   }
 }
