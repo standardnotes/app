@@ -188,7 +188,7 @@ export class SubscriptionController extends AbstractViewController {
         this.setAvailableSubscriptions(subscriptions)
       }
     } catch (error) {
-      console.error(error)
+      void error
     }
   }
 

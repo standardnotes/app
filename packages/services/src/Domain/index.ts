@@ -39,6 +39,7 @@ export * from './Singleton/SingletonManagerInterface'
 export * from './Vaults/VaultService'
 export * from './Vaults/VaultServiceInterface'
 export * from './Vaults/VaultServiceEvent'
+export * from './Vaults/ChangeVaultOptionsDTO'
 
 export * from './Device/DatabaseItemMetadata'
 export * from './Device/DatabaseLoadOptions'

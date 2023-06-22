@@ -3,7 +3,7 @@ import {
   KeySystemIdentifier,
   KeySystemItemsKeyInterface,
   KeySystemRootKeyInterface,
-  KeySystemRootKeyStorageType,
+  KeySystemRootKeyStorageMode,
 } from '@standardnotes/models'
 
 export interface KeySystemKeyManagerInterface {
@@ -21,7 +21,7 @@ export interface KeySystemKeyManagerInterface {
   ): KeySystemRootKeyInterface | undefined
   getPrimaryKeySystemRootKey(systemIdentifier: KeySystemIdentifier): KeySystemRootKeyInterface | undefined
 
-  intakeNonPersistentKeySystemRootKey(key: KeySystemRootKeyInterface, storage: KeySystemRootKeyStorageType): void
+  intakeNonPersistentKeySystemRootKey(key: KeySystemRootKeyInterface, storage: KeySystemRootKeyStorageMode): void
 
   deleteAllKeySystemRootKeysForVault(systemIdentifier: KeySystemIdentifier): Promise<void>
   deleteAllSyncedKeySystemRootKeys(systemIdentifier: KeySystemIdentifier): Promise<void>

@@ -657,6 +657,9 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   public async getAvailableSubscriptions(): Promise<
     Responses.AvailableSubscriptions | Responses.ClientDisplayableError
   > {
+    if (this.isThirdPartyHostUsed()) {
+      return ClientDisplayableError.FromString('Third party hosts do not support subscriptions.')
+    }
     return this.sessionManager.getAvailableSubscriptions()
   }
 

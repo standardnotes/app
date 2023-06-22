@@ -9,7 +9,7 @@ import {
   TrustedContactInterface,
   SharedVaultListingInterface,
   VaultListingInterface,
-  KeySystemRootKeyStorageType,
+  KeySystemRootKeyStorageMode,
 } from '@standardnotes/models'
 import { AbstractService } from '../Service/AbstractService'
 import { SharedVaultServiceEvent, SharedVaultServiceEventPayload } from './SharedVaultServiceEvent'
@@ -21,7 +21,7 @@ export interface SharedVaultServiceInterface
     name: string
     description?: string
     userInputtedPassword: string | undefined
-    storagePreference?: KeySystemRootKeyStorageType
+    storagePreference?: KeySystemRootKeyStorageMode
   }): Promise<VaultListingInterface | ClientDisplayableError>
   deleteSharedVault(sharedVault: SharedVaultListingInterface): Promise<ClientDisplayableError | void>
 

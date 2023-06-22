@@ -10,7 +10,7 @@ import {
   KeySystemRootKey,
   KeySystemRootKeyContent,
   KeySystemRootKeyInterface,
-  KeySystemRootKeyStorageType,
+  KeySystemRootKeyStorageMode,
   Predicate,
 } from '@standardnotes/models'
 import { ItemManagerInterface } from './../Item/ItemManagerInterface'
@@ -58,11 +58,11 @@ export class KeySystemKeyManager extends AbstractService implements KeySystemKey
 
   public intakeNonPersistentKeySystemRootKey(
     key: KeySystemRootKeyInterface,
-    storage: KeySystemRootKeyStorageType,
+    storage: KeySystemRootKeyStorageMode,
   ): void {
     this.rootKeyMemoryCache[key.systemIdentifier] = key
 
-    if (storage === KeySystemRootKeyStorageType.Local) {
+    if (storage === KeySystemRootKeyStorageMode.Local) {
       this.storage.setValue(this.storageKeyForRootKey(key.systemIdentifier), key.payload.ejected())
     }
   }

@@ -26,7 +26,7 @@ import {
   SharedVaultListingInterface,
   VaultListingInterface,
   AsymmetricMessageSharedVaultInvite,
-  KeySystemRootKeyStorageType,
+  KeySystemRootKeyStorageMode,
 } from '@standardnotes/models'
 import { SharedVaultServiceInterface } from './SharedVaultServiceInterface'
 import { SharedVaultServiceEvent, SharedVaultServiceEventPayload } from './SharedVaultServiceEvent'
@@ -172,7 +172,7 @@ export class SharedVaultService
     name: string
     description?: string
     userInputtedPassword: string | undefined
-    storagePreference?: KeySystemRootKeyStorageType
+    storagePreference?: KeySystemRootKeyStorageMode
   }): Promise<VaultListingInterface | ClientDisplayableError> {
     const usecase = new CreateSharedVaultUseCase(this.encryption, this.items, this.sync, this.files, this.server)
 
@@ -180,7 +180,7 @@ export class SharedVaultService
       vaultName: dto.name,
       vaultDescription: dto.description,
       userInputtedPassword: dto.userInputtedPassword,
-      storagePreference: dto.storagePreference ?? KeySystemRootKeyStorageType.Synced,
+      storagePreference: dto.storagePreference ?? KeySystemRootKeyStorageMode.Synced,
     })
   }
 

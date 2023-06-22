@@ -3,11 +3,12 @@ import {
   DecryptedItemInterface,
   KeySystemIdentifier,
   KeySystemRootKeyPasswordType,
-  KeySystemRootKeyStorageType,
+  KeySystemRootKeyStorageMode,
   VaultListingInterface,
   VaultListingMutator,
 } from '@standardnotes/models'
 import { VaultServiceInterface } from './VaultServiceInterface'
+import { ChangeVaultOptionsDTO } from './ChangeVaultOptionsDTO'
 import { VaultServiceEvent, VaultServiceEventPayload } from './VaultServiceEvent'
 import { EncryptionProviderInterface } from '@standardnotes/encryption'
 import { CreateVaultUseCase } from './UseCase/CreateVault'
@@ -23,8 +24,7 @@ import { RotateVaultRootKeyUseCase } from './UseCase/RotateVaultRootKey'
 import { FilesClientInterface } from '@standardnotes/files'
 import { ContentType } from '@standardnotes/common'
 import { GetVaultUseCase } from './UseCase/GetVault'
-import { ChangeKeyStorageUseCase } from './UseCase/ChangeKeyStorage'
-import { ChangeKeyPasswordTypeUseCase } from './UseCase/ChangeKeyPasswordType'
+import { ChangeVaultKeyOptionsUseCase } from './UseCase/ChangeVaultKeyOptions'
 
 export class VaultService
   extends AbstractService<VaultServiceEvent, VaultServiceEventPayload[VaultServiceEvent]>
@@ -63,7 +63,7 @@ export class VaultService
   async createRandomizedVault(dto: {
     name: string
     description?: string
-    storagePreference: KeySystemRootKeyStorageType
+    storagePreference: KeySystemRootKeyStorageMode
   }): Promise<VaultListingInterface> {
     return this.createVaultWithParameters({
       name: dto.name,
@@ -77,7 +77,7 @@ export class VaultService
     name: string
     description?: string
     userInputtedPassword: string
-    storagePreference: KeySystemRootKeyStorageType
+    storagePreference: KeySystemRootKeyStorageMode
   }): Promise<VaultListingInterface> {
     return this.createVaultWithParameters(dto)
   }
@@ -86,7 +86,7 @@ export class VaultService
     name: string
     description?: string
     userInputtedPassword: string | undefined
-    storagePreference: KeySystemRootKeyStorageType
+    storagePreference: KeySystemRootKeyStorageMode
   }): Promise<VaultListingInterface> {
     const createVault = new CreateVaultUseCase(this.items, this.encryption, this.sync)
     const result = await createVault.execute({
@@ -162,46 +162,21 @@ export class VaultService
 
     return this.getVault(item.key_system_identifier)
   }
+  async changeVaultOptions(dto: ChangeVaultOptionsDTO): Promise<void> {
+    const usecase = new ChangeVaultKeyOptionsUseCase(this.items, this.sync, this.encryption)
+    await usecase.execute(dto)
 
-  async changeVaultKeyStoragePreference(
-    vault: VaultListingInterface,
-    preference: KeySystemRootKeyStorageType,
-  ): Promise<void> {
-    const usecase = new ChangeKeyStorageUseCase(this.items, this.sync, this.encryption.keys)
-    await usecase.execute({ vault, preference })
-  }
-
-  async changeVaultPasswordTypeFromRandomizedToUserInputted(
-    vault: VaultListingInterface,
-    userInputtedPassword: string,
-  ): Promise<void> {
-    const usecase = new ChangeKeyPasswordTypeUseCase(this.items, this.sync, this.encryption)
-    await usecase.execute({
-      vault,
-      userInputtedPassword,
-      newType: KeySystemRootKeyPasswordType.UserInputted,
-    })
-
-    await this.notifyEventSync(VaultServiceEvent.VaultRootKeyRotated, { vault })
-  }
-
-  async changeVaultPasswordTypeFromUserInputtedToRandomized(vault: VaultListingInterface): Promise<void> {
-    const usecase = new ChangeKeyPasswordTypeUseCase(this.items, this.sync, this.encryption)
-    await usecase.execute({
-      vault,
-      userInputtedPassword: undefined,
-      newType: KeySystemRootKeyPasswordType.Randomized,
-    })
-
-    await this.notifyEventSync(VaultServiceEvent.VaultRootKeyRotated, { vault })
+    if (dto.newPasswordType) {
+      await this.notifyEventSync(VaultServiceEvent.VaultRootKeyRotated, { vault: dto.vault })
+    }
   }
 
   unlockNonPersistentVault(vault: VaultListingInterface, password: string): void {
-    if (vault.rootKeyPasswordType !== KeySystemRootKeyPasswordType.UserInputted) {
+    if (vault.keyPasswordType !== KeySystemRootKeyPasswordType.UserInputted) {
       throw new Error('Vault uses randomized password and cannot be unlocked with user inputted password')
     }
 
-    if (vault.rootKeyStorage === KeySystemRootKeyStorageType.Synced) {
+    if (vault.keyStorageMode === KeySystemRootKeyStorageMode.Synced) {
       throw new Error('Vault uses synced root key and cannot be unlocked with user inputted password')
     }
 
@@ -210,7 +185,7 @@ export class VaultService
       userInputtedPassword: password,
     })
 
-    this.encryption.keys.intakeNonPersistentKeySystemRootKey(rootKey, vault.rootKeyStorage)
+    this.encryption.keys.intakeNonPersistentKeySystemRootKey(rootKey, vault.keyStorageMode)
   }
 
   override deinit(): void {

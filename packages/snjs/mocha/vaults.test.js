@@ -28,7 +28,7 @@ describe('vaults', function () {
     it('should be able to create an offline vault', async () => {
       const vault = await vaults.createRandomizedVault({
         name: 'My Vault',
-        storagePreference: KeySystemRootKeyStorageType.Synced,
+        storagePreference: KeySystemRootKeyStorageMode.Synced,
       })
 
       expect(vault.systemIdentifier).to.not.be.undefined
@@ -44,7 +44,7 @@ describe('vaults', function () {
     it('should add item to offline vault', async () => {
       const vault = await vaults.createRandomizedVault({
         name: 'My Vault',
-        storagePreference: KeySystemRootKeyStorageType.Synced,
+        storagePreference: KeySystemRootKeyStorageMode.Synced,
       })
       const item = await context.createSyncedNote()
 
@@ -58,7 +58,7 @@ describe('vaults', function () {
       const appIdentifier = context.identifier
       const vault = await vaults.createRandomizedVault({
         name: 'My Vault',
-        storagePreference: KeySystemRootKeyStorageType.Synced,
+        storagePreference: KeySystemRootKeyStorageMode.Synced,
       })
       const note = await context.createSyncedNote('foo', 'bar')
       await vaults.addItemToVault(vault, note)
@@ -79,7 +79,7 @@ describe('vaults', function () {
         const appIdentifier = context.identifier
         const vault = await vaults.createRandomizedVault({
           name: 'My Vault',
-          storagePreference: KeySystemRootKeyStorageType.Synced,
+          storagePreference: KeySystemRootKeyStorageMode.Synced,
         })
         const note = await context.createSyncedNote('foo', 'bar')
         await vaults.addItemToVault(vault, note)
@@ -107,7 +107,7 @@ describe('vaults', function () {
         const appIdentifier = context.identifier
         const vault = await vaults.createRandomizedVault({
           name: 'My Vault',
-          storagePreference: KeySystemRootKeyStorageType.Synced,
+          storagePreference: KeySystemRootKeyStorageMode.Synced,
         })
         const note = await context.createSyncedNote('foo', 'bar')
         await vaults.addItemToVault(vault, note)
@@ -137,7 +137,7 @@ describe('vaults', function () {
     it('should create a vault', async () => {
       const vault = await vaults.createRandomizedVault({
         name: 'My Vault',
-        storagePreference: KeySystemRootKeyStorageType.Synced,
+        storagePreference: KeySystemRootKeyStorageMode.Synced,
       })
       expect(vault).to.not.be.undefined
 
@@ -153,7 +153,7 @@ describe('vaults', function () {
       const note = await context.createSyncedNote('foo', 'bar')
       const vault = await vaults.createRandomizedVault({
         name: 'My Vault',
-        storagePreference: KeySystemRootKeyStorageType.Synced,
+        storagePreference: KeySystemRootKeyStorageMode.Synced,
       })
 
       await vaults.addItemToVault(vault, note)
@@ -167,7 +167,7 @@ describe('vaults', function () {
         const appIdentifier = context.identifier
         const vault = await vaults.createRandomizedVault({
           name: 'My Vault',
-          storagePreference: KeySystemRootKeyStorageType.Synced,
+          storagePreference: KeySystemRootKeyStorageMode.Synced,
         })
         const note = await context.createSyncedNote('foo', 'bar')
         await vaults.addItemToVault(vault, note)
@@ -188,7 +188,7 @@ describe('vaults', function () {
       it('rotating a key system root key should create a new vault items key', async () => {
         const vault = await vaults.createRandomizedVault({
           name: 'My Vault',
-          storagePreference: KeySystemRootKeyStorageType.Synced,
+          storagePreference: KeySystemRootKeyStorageMode.Synced,
         })
 
         const keySystemItemsKey = context.keys.getKeySystemItemsKeys(vault.systemIdentifier)[0]
@@ -204,7 +204,7 @@ describe('vaults', function () {
       it('deleting a vault should delete all its items', async () => {
         const vault = await vaults.createRandomizedVault({
           name: 'My Vault',
-          storagePreference: KeySystemRootKeyStorageType.Synced,
+          storagePreference: KeySystemRootKeyStorageMode.Synced,
         })
         const note = await context.createSyncedNote('foo', 'bar')
         await vaults.addItemToVault(vault, note)

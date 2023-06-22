@@ -7,7 +7,7 @@ import {
 } from '../../Local/KeyParams/KeySystemRootKeyParamsInterface'
 import { SharedVaultListingInterface, VaultListingInterface } from './VaultListingInterface'
 import { VaultListingContent } from './VaultListingContent'
-import { KeySystemRootKeyStorageType } from '../KeySystemRootKey/KeySystemRootKeyStorageType'
+import { KeySystemRootKeyStorageMode } from '../KeySystemRootKey/KeySystemRootKeyStorageMode'
 import { VaultListingSharingInfo } from './VaultListingSharingInfo'
 import { KeySystemIdentifier } from '../KeySystemRootKey/KeySystemIdentifier'
 
@@ -15,7 +15,7 @@ export class VaultListing extends DecryptedItem<VaultListingContent> implements 
   systemIdentifier: KeySystemIdentifier
 
   rootKeyParams: KeySystemRootKeyParamsInterface
-  rootKeyStorage: KeySystemRootKeyStorageType
+  keyStorageMode: KeySystemRootKeyStorageMode
 
   name: string
   description?: string
@@ -28,7 +28,7 @@ export class VaultListing extends DecryptedItem<VaultListingContent> implements 
     this.systemIdentifier = payload.content.systemIdentifier
 
     this.rootKeyParams = payload.content.rootKeyParams
-    this.rootKeyStorage = payload.content.rootKeyStorage
+    this.keyStorageMode = payload.content.keyStorageMode
 
     this.name = payload.content.name
     this.description = payload.content.description
@@ -46,7 +46,7 @@ export class VaultListing extends DecryptedItem<VaultListingContent> implements 
     return incomingKeyTimestamp > baseKeyTimestamp ? ConflictStrategy.KeepApply : ConflictStrategy.KeepBase
   }
 
-  get rootKeyPasswordType(): KeySystemRootKeyPasswordType {
+  get keyPasswordType(): KeySystemRootKeyPasswordType {
     return this.rootKeyParams.passwordType
   }
 

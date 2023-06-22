@@ -1,14 +1,14 @@
 import { ItemContent, SpecializedContent } from '../../Abstract/Content/ItemContent'
 import { KeySystemIdentifier } from '../KeySystemRootKey/KeySystemIdentifier'
 import { KeySystemRootKeyParamsInterface } from '../../Local/KeyParams/KeySystemRootKeyParamsInterface'
-import { KeySystemRootKeyStorageType } from '../KeySystemRootKey/KeySystemRootKeyStorageType'
+import { KeySystemRootKeyStorageMode } from '../KeySystemRootKey/KeySystemRootKeyStorageMode'
 import { VaultListingSharingInfo } from './VaultListingSharingInfo'
 
 export interface VaultListingContentSpecialized extends SpecializedContent {
   systemIdentifier: KeySystemIdentifier
 
   rootKeyParams: KeySystemRootKeyParamsInterface
-  rootKeyStorage: KeySystemRootKeyStorageType
+  keyStorageMode: KeySystemRootKeyStorageMode
 
   name: string
   description?: string

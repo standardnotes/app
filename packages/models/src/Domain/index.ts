@@ -93,7 +93,7 @@ export * from './Syncable/KeySystemRootKey/KeySystemRootKey'
 export * from './Syncable/KeySystemRootKey/KeySystemRootKeyMutator'
 export * from './Syncable/KeySystemRootKey/KeySystemRootKeyContent'
 export * from './Syncable/KeySystemRootKey/KeySystemRootKeyInterface'
-export * from './Syncable/KeySystemRootKey/KeySystemRootKeyStorageType'
+export * from './Syncable/KeySystemRootKey/KeySystemRootKeyStorageMode'
 
 export * from './Syncable/KeySystemItemsKey/KeySystemItemsKeyInterface'
 export * from './Syncable/KeySystemItemsKey/KeySystemItemsKeyContent'

@@ -6,7 +6,7 @@ import {
   KeySystemIdentifier,
   KeySystemRootKeyInterface,
   KeySystemRootKeyPasswordType,
-  KeySystemRootKeyStorageType,
+  KeySystemRootKeyStorageMode,
   VaultListingInterface,
   VaultListingMutator,
 } from '@standardnotes/models'
@@ -45,10 +45,10 @@ export class RotateVaultRootKeyUseCase {
       throw new Error('Cannot rotate key system root key; new root key not created')
     }
 
-    if (params.vault.rootKeyStorage === KeySystemRootKeyStorageType.Synced) {
+    if (params.vault.keyStorageMode === KeySystemRootKeyStorageMode.Synced) {
       await this.items.insertItem(newRootKey, true)
     } else {
-      this.encryption.keys.intakeNonPersistentKeySystemRootKey(newRootKey, params.vault.rootKeyStorage)
+      this.encryption.keys.intakeNonPersistentKeySystemRootKey(newRootKey, params.vault.keyStorageMode)
     }
 
     await this.items.changeItem<VaultListingMutator>(params.vault, (mutator) => {

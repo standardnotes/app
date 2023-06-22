@@ -1,4 +1,4 @@
-export enum KeySystemRootKeyStorageType {
+export enum KeySystemRootKeyStorageMode {
   Synced = 'synced',
   Local = 'local',
   Ephemeral = 'ephemeral',

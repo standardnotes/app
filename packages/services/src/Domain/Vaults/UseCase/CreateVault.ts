@@ -7,7 +7,7 @@ import {
   KeySystemRootKeyPasswordType,
   VaultListingContentSpecialized,
   VaultListingInterface,
-  KeySystemRootKeyStorageType,
+  KeySystemRootKeyStorageMode,
   FillItemContentSpecialized,
   KeySystemRootKeyInterface,
 } from '@standardnotes/models'
@@ -24,7 +24,7 @@ export class CreateVaultUseCase {
     vaultName: string
     vaultDescription?: string
     userInputtedPassword: string | undefined
-    storagePreference: KeySystemRootKeyStorageType
+    storagePreference: KeySystemRootKeyStorageMode
   }): Promise<VaultListingInterface> {
     const keySystemIdentifier = UuidGenerator.GenerateUuid()
 
@@ -60,12 +60,12 @@ export class CreateVaultUseCase {
     vaultDescription?: string
     passwordType: KeySystemRootKeyPasswordType
     rootKeyParams: KeySystemRootKeyParamsInterface
-    storage: KeySystemRootKeyStorageType
+    storage: KeySystemRootKeyStorageMode
   }): Promise<VaultListingInterface> {
     const content: VaultListingContentSpecialized = {
       systemIdentifier: dto.keySystemIdentifier,
       rootKeyParams: dto.rootKeyParams,
-      rootKeyStorage: dto.storage,
+      keyStorageMode: dto.storage,
       name: dto.vaultName,
       description: dto.vaultDescription,
     }
@@ -89,7 +89,7 @@ export class CreateVaultUseCase {
     vaultName: string
     vaultDescription?: string
     userInputtedPassword: string | undefined
-    storagePreference: KeySystemRootKeyStorageType
+    storagePreference: KeySystemRootKeyStorageMode
   }): Promise<KeySystemRootKeyInterface> {
     let newRootKey: KeySystemRootKeyInterface | undefined
 
@@ -104,7 +104,7 @@ export class CreateVaultUseCase {
       })
     }
 
-    if (dto.storagePreference === KeySystemRootKeyStorageType.Synced) {
+    if (dto.storagePreference === KeySystemRootKeyStorageMode.Synced) {
       await this.items.insertItem(newRootKey, true)
     } else {
       this.encryption.keys.intakeNonPersistentKeySystemRootKey(newRootKey, dto.storagePreference)

@@ -1,6 +1,6 @@
 import { SyncServiceInterface } from './../../Sync/SyncServiceInterface'
 import {
-  KeySystemRootKeyStorageType,
+  KeySystemRootKeyStorageMode,
   SharedVaultListingInterface,
   VaultListingInterface,
   VaultListingMutator,
@@ -26,7 +26,7 @@ export class CreateSharedVaultUseCase {
     vaultName: string
     vaultDescription?: string
     userInputtedPassword: string | undefined
-    storagePreference: KeySystemRootKeyStorageType
+    storagePreference: KeySystemRootKeyStorageMode
   }): Promise<SharedVaultListingInterface | ClientDisplayableError> {
     const usecase = new CreateVaultUseCase(this.items, this.encryption, this.sync)
     const privateVault = await usecase.execute({

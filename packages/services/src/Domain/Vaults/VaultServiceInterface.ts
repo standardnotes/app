@@ -1,24 +1,25 @@
 import {
   DecryptedItemInterface,
   KeySystemIdentifier,
-  KeySystemRootKeyStorageType,
+  KeySystemRootKeyStorageMode,
   VaultListingInterface,
 } from '@standardnotes/models'
 import { AbstractService } from '../Service/AbstractService'
 import { VaultServiceEvent, VaultServiceEventPayload } from './VaultServiceEvent'
+import { ChangeVaultOptionsDTO } from './ChangeVaultOptionsDTO'
 
 export interface VaultServiceInterface
   extends AbstractService<VaultServiceEvent, VaultServiceEventPayload[VaultServiceEvent]> {
   createRandomizedVault(dto: {
     name: string
     description?: string
-    storagePreference: KeySystemRootKeyStorageType
+    storagePreference: KeySystemRootKeyStorageMode
   }): Promise<VaultListingInterface>
   createUserInputtedPasswordVault(dto: {
     name: string
     description?: string
     userInputtedPassword: string
-    storagePreference: KeySystemRootKeyStorageType
+    storagePreference: KeySystemRootKeyStorageMode
   }): Promise<VaultListingInterface>
 
   getVaults(): VaultListingInterface[]
@@ -35,12 +36,7 @@ export interface VaultServiceInterface
     params: { name: string; description: string },
   ): Promise<VaultListingInterface>
   rotateVaultRootKey(vault: VaultListingInterface): Promise<void>
-  changeVaultKeyStoragePreference(vault: VaultListingInterface, preference: KeySystemRootKeyStorageType): Promise<void>
-  changeVaultPasswordTypeFromRandomizedToUserInputted(
-    vault: VaultListingInterface,
-    userInputtedPassword: string,
-  ): Promise<void>
-  changeVaultPasswordTypeFromUserInputtedToRandomized(vault: VaultListingInterface): Promise<void>
+  changeVaultOptions(dto: ChangeVaultOptionsDTO): Promise<void>
 
   unlockNonPersistentVault(vault: VaultListingInterface, password: string): void
 }

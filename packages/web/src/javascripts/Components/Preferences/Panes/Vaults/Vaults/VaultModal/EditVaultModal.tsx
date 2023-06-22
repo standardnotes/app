@@ -3,8 +3,9 @@ import Modal, { ModalAction } from '@/Components/Modal/Modal'
 import DecoratedInput from '@/Components/Input/DecoratedInput'
 import { useApplication } from '@/Components/ApplicationProvider'
 import {
+  ChangeVaultOptionsDTO,
   KeySystemRootKeyPasswordType,
-  KeySystemRootKeyStorageType,
+  KeySystemRootKeyStorageMode,
   SharedVaultInviteServerHash,
   SharedVaultUserServerHash,
   VaultListingInterface,
@@ -34,15 +35,15 @@ const EditVaultModal: FunctionComponent<Props> = ({ onCloseDialog, existingVault
   const [passwordType, setPasswordType] = useState<KeySystemRootKeyPasswordType>(
     KeySystemRootKeyPasswordType.Randomized,
   )
-  const [keyStorageType, setKeyStorageType] = useState<KeySystemRootKeyStorageType>(KeySystemRootKeyStorageType.Synced)
-  const [customKey, setCustomKey] = useState<string | undefined>(undefined)
+  const [keyStorageMode, setKeyStorageMode] = useState<KeySystemRootKeyStorageMode>(KeySystemRootKeyStorageMode.Synced)
+  const [customPassword, setCustomPassword] = useState<string | undefined>(undefined)
 
   useEffect(() => {
     if (existingVault) {
       setName(existingVault.name ?? '')
       setDescription(existingVault.description ?? '')
       setPasswordType(existingVault.rootKeyParams.passwordType)
-      setKeyStorageType(existingVault.rootKeyStorage)
+      setKeyStorageMode(existingVault.keyStorageMode)
     }
   }, [existingVault])
 
@@ -85,48 +86,61 @@ const EditVaultModal: FunctionComponent<Props> = ({ onCloseDialog, existingVault
         })
       }
 
-      if (vault.rootKeyStorage !== keyStorageType) {
-        await application.vaults.changeVaultKeyStoragePreference(vault, keyStorageType)
-      }
+      const isChangingPasswordType = vault.keyPasswordType !== passwordType
+      const isChangingKeyStorageMode = vault.keyStorageMode !== keyStorageMode
 
-      if (vault.rootKeyPasswordType !== passwordType) {
-        if (passwordType === KeySystemRootKeyPasswordType.Randomized) {
-          if (customKey) {
-            throw new Error('Custom key should not be set')
+      const getPasswordTypeParams = (): ChangeVaultOptionsDTO['newPasswordType'] => {
+        if (!isChangingPasswordType) {
+          throw new Error('Password type is not changing')
+        }
+
+        if (passwordType === KeySystemRootKeyPasswordType.UserInputted) {
+          if (!customPassword) {
+            throw new Error('Custom password is not set')
           }
-          await application.vaults.changeVaultPasswordTypeFromUserInputtedToRandomized(vault)
-        } else if (passwordType === KeySystemRootKeyPasswordType.UserInputted) {
-          if (!customKey) {
-            throw new Error('Custom key is not set')
+          return {
+            passwordType,
+            userInputtedPassword: customPassword,
           }
-          await application.vaults.changeVaultPasswordTypeFromRandomizedToUserInputted(vault, customKey)
+        } else {
+          return {
+            passwordType,
+          }
         }
       }
+
+      if (isChangingPasswordType || isChangingKeyStorageMode) {
+        await application.vaults.changeVaultOptions({
+          vault,
+          newPasswordType: isChangingPasswordType ? getPasswordTypeParams() : undefined,
+          newKeyStorageMode: isChangingKeyStorageMode ? keyStorageMode : undefined,
+        })
+      }
     },
-    [application.vaults, customKey, description, keyStorageType, name, passwordType],
+    [application.vaults, customPassword, description, keyStorageMode, name, passwordType],
   )
 
   const createNewVault = useCallback(async () => {
     if (passwordType === KeySystemRootKeyPasswordType.UserInputted) {
-      if (!customKey) {
+      if (!customPassword) {
         throw new Error('Custom key is not set')
       }
       await application.vaults.createUserInputtedPasswordVault({
         name,
         description,
-        storagePreference: keyStorageType,
-        userInputtedPassword: customKey,
+        storagePreference: keyStorageMode,
+        userInputtedPassword: customPassword,
       })
     } else {
       await application.vaults.createRandomizedVault({
         name,
         description,
-        storagePreference: keyStorageType,
+        storagePreference: keyStorageMode,
       })
     }
 
     handleDialogClose()
-  }, [application.vaults, customKey, description, handleDialogClose, keyStorageType, name, passwordType])
+  }, [application.vaults, customPassword, description, handleDialogClose, keyStorageMode, name, passwordType])
 
   const handleSubmit = useCallback(async () => {
     if (existingVault) {
@@ -190,9 +204,13 @@ const EditVaultModal: FunctionComponent<Props> = ({ onCloseDialog, existingVault
 
           {existingVault && <VaultModalInvites invites={invites} onChange={reloadVaultInfo} isAdmin={isAdmin} />}
 
-          <PasswordTypePreference value={passwordType} onChange={setPasswordType} onCustomKeyChange={setCustomKey} />
+          <PasswordTypePreference
+            value={passwordType}
+            onChange={setPasswordType}
+            onCustomKeyChange={setCustomPassword}
+          />
 
-          <KeyStoragePreference value={keyStorageType} onChange={setKeyStorageType} />
+          <KeyStoragePreference value={keyStorageMode} onChange={setKeyStorageMode} />
         </div>
       </div>
     </Modal>

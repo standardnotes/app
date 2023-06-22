@@ -7,7 +7,7 @@ import {
   FillItemContent,
   FillItemContentSpecialized,
   VaultListingContentSpecialized,
-  KeySystemRootKeyStorageType,
+  KeySystemRootKeyStorageMode,
 } from '@standardnotes/models'
 import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
 import { ContentType } from '@standardnotes/common'
@@ -29,7 +29,7 @@ export class HandleTrustedSharedVaultInviteMessage {
     const content: VaultListingContentSpecialized = {
       systemIdentifier: rootKeyContent.systemIdentifier,
       rootKeyParams: rootKeyContent.keyParams,
-      rootKeyStorage: KeySystemRootKeyStorageType.Synced,
+      keyStorageMode: KeySystemRootKeyStorageMode.Synced,
       name: metadata.name,
       description: metadata.description,
       sharing: {
