@@ -17,7 +17,6 @@ type Props = {
 const EnvironmentConfiguration = ({ setHomeServerConfigurationChangedCallback, homeServerConfiguration }: Props) => {
   const [authJWT, setAuthJWT] = useState(homeServerConfiguration.authJwtSecret)
   const [jwt, setJWT] = useState(homeServerConfiguration.jwtSecret)
-  const [encryptionServerKey, setEncryptionServerKey] = useState(homeServerConfiguration.encryptionServerKey)
   const [pseudoParamsKey, setPseudoParamsKey] = useState(homeServerConfiguration.pseudoKeyParamsKey)
   const [valetTokenSecret, setValetTokenSecret] = useState(homeServerConfiguration.valetTokenSecret)
   const [port, setPort] = useState(homeServerConfiguration.port)
@@ -29,7 +28,6 @@ const EnvironmentConfiguration = ({ setHomeServerConfigurationChangedCallback, h
     const anyOfTheValuesHaveChanged =
       homeServerConfiguration.authJwtSecret !== authJWT ||
       homeServerConfiguration.jwtSecret !== jwt ||
-      homeServerConfiguration.encryptionServerKey !== encryptionServerKey ||
       homeServerConfiguration.pseudoKeyParamsKey !== pseudoParamsKey ||
       homeServerConfiguration.valetTokenSecret !== valetTokenSecret ||
       homeServerConfiguration.port !== port ||
@@ -41,7 +39,6 @@ const EnvironmentConfiguration = ({ setHomeServerConfigurationChangedCallback, h
     selectedLogLevel,
     authJWT,
     jwt,
-    encryptionServerKey,
     pseudoParamsKey,
     valetTokenSecret,
     port,
@@ -51,7 +48,6 @@ const EnvironmentConfiguration = ({ setHomeServerConfigurationChangedCallback, h
   const handleConfigurationChange = useCallback(async () => {
     homeServerConfiguration.authJwtSecret = authJWT
     homeServerConfiguration.jwtSecret = jwt
-    homeServerConfiguration.encryptionServerKey = encryptionServerKey
     homeServerConfiguration.pseudoKeyParamsKey = pseudoParamsKey
     homeServerConfiguration.valetTokenSecret = valetTokenSecret
     homeServerConfiguration.port = port
@@ -66,7 +62,6 @@ const EnvironmentConfiguration = ({ setHomeServerConfigurationChangedCallback, h
     selectedLogLevel,
     authJWT,
     jwt,
-    encryptionServerKey,
     pseudoParamsKey,
     valetTokenSecret,
     port,
@@ -104,7 +99,7 @@ const EnvironmentConfiguration = ({ setHomeServerConfigurationChangedCallback, h
                   <DecoratedInput
                     placeholder={'Encryption Server Key'}
                     defaultValue={homeServerConfiguration?.encryptionServerKey}
-                    onChange={setEncryptionServerKey}
+                    disabled={true}
                   />
                 </div>
               </PreferencesSegment>
