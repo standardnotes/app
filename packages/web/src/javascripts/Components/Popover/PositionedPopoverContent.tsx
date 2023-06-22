@@ -27,6 +27,7 @@ const PositionedPopoverContent = ({
   maxHeight,
   portal = true,
   offset,
+  hideOnClickInModal = false,
 }: PopoverContentProps) => {
   const [popoverElement, setPopoverElement] = useState<HTMLDivElement | null>(null)
   const popoverRect = useAutoElementRect(popoverElement)
@@ -63,6 +64,7 @@ const PositionedPopoverContent = ({
     anchorElement,
     togglePopover,
     childPopovers,
+    hideOnClickInModal,
     disabled: disableClickOutside,
   })
 

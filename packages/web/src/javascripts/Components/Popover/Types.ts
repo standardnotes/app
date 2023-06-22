@@ -43,6 +43,7 @@ type CommonPopoverProps = {
   title: string
   portal?: boolean
   offset?: number
+  hideOnClickInModal?: boolean
 }
 
 export type PopoverContentProps = CommonPopoverProps & {

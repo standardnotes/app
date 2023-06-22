@@ -262,6 +262,7 @@ const NoteConflictResolutionModal = ({
                 side="top"
                 align="end"
                 offset={4}
+                hideOnClickInModal
               >
                 <SelectList
                   className="cursor-pointer divide-y divide-border [&>[data-active-item]]:bg-passive-5"
