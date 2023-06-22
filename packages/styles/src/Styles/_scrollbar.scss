@@ -1,7 +1,8 @@
 .windows-web,
 .windows-desktop,
 .linux-web,
-.linux-desktop {
+.linux-desktop,
+.force-custom-scrollbar {
   $thumb-width: 4px;
 
   ::-webkit-scrollbar {

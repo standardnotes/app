@@ -93,7 +93,7 @@ export const DiffView = ({
   }, [preElement, hasOverflow, textDiff, diffVisualizer])
 
   return (
-    <div className="relative flex flex-grow flex-col overflow-hidden">
+    <div className="force-custom-scrollbar relative flex flex-grow flex-col overflow-hidden">
       <div className="w-full px-4 py-4 text-base font-bold">
         {titleDiff.map(([state, text], index) => {
           return (
