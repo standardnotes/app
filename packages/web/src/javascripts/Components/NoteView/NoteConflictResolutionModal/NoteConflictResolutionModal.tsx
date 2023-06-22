@@ -261,14 +261,13 @@ const NoteConflictResolutionModal = ({
                 side="top"
                 align="end"
                 offset={4}
-                portal={false}
               >
                 <SelectList
                   className="cursor-pointer divide-y divide-border [&>[data-active-item]]:bg-passive-5"
                   store={selectStore}
                 >
                   <SelectItem className="px-2.5 py-2 hover:bg-passive-5" value="move-to-trash">
-                    <div className="flex items-center gap-1 text-sm font-bold">
+                    <div className="flex items-center gap-1 text-sm font-bold text-text">
                       {selectedAction === 'move-to-trash' ? (
                         <Icon type="check-bold" size="small" />
                       ) : (
@@ -281,7 +280,7 @@ const NoteConflictResolutionModal = ({
                     </div>
                   </SelectItem>
                   <SelectItem className="px-2.5 py-2 hover:bg-passive-5" value="delete-permanently">
-                    <div className="flex items-center gap-1 text-sm font-bold">
+                    <div className="flex items-center gap-1 text-sm font-bold text-text">
                       {selectedAction === 'delete-permanently' ? (
                         <Icon type="check-bold" size="small" />
                       ) : (
