@@ -2,7 +2,7 @@ import { useApplication } from '@/Components/ApplicationProvider'
 import Button from '@/Components/Button/Button'
 import Icon from '@/Components/Icon/Icon'
 import ModalOverlay from '@/Components/Modal/ModalOverlay'
-import { ButtonType, VaultListingInterface } from '@standardnotes/snjs'
+import { ButtonType, VaultListingInterface, isClientDisplayableError } from '@standardnotes/snjs'
 import { useCallback, useState } from 'react'
 import ContactInviteModal from '../Invites/ContactInviteModal'
 import EditVaultModal from './VaultModal/EditVaultModal'
@@ -33,11 +33,18 @@ const VaultItem = ({ vault }: Props) => {
       return
     }
 
-    const success = await application.vaults.deleteVault(vault)
-    if (!success) {
-      void application.alerts.alert('Unable to delete vault. Please try again.')
+    if (vault.isSharedVaultListing()) {
+      const result = await application.sharedVaults.deleteSharedVault(vault)
+      if (isClientDisplayableError(result)) {
+        void application.alerts.showErrorAlert(result)
+      }
+    } else {
+      const success = await application.vaults.deleteVault(vault)
+      if (!success) {
+        void application.alerts.alert('Unable to delete vault. Please try again.')
+      }
     }
-  }, [application.alerts, application.vaults, vault])
+  }, [application.alerts, application.sharedVaults, application.vaults, vault])
 
   const leaveVault = useCallback(async () => {
     if (!vault.isSharedVaultListing()) {

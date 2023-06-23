@@ -21,6 +21,6 @@ export class HandleTrustedSharedVaultRootKeyChangedMessage {
       true,
     )
 
-    await this.sync.sync()
+    void this.sync.sync({ sourceDescription: 'Not awaiting due to this event handler running from sync response' })
   }
 }

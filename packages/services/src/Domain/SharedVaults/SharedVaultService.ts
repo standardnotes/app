@@ -1,3 +1,4 @@
+import { StorageServiceInterface } from './../Storage/StorageServiceInterface'
 import { InviteContactToSharedVaultUseCase } from './UseCase/InviteContactToSharedVault'
 import {
   ClientDisplayableError,
@@ -48,7 +49,7 @@ import { FilesClientInterface } from '@standardnotes/files'
 import { LeaveVaultUseCase } from './UseCase/LeaveSharedVault'
 import { VaultServiceInterface } from '../Vaults/VaultServiceInterface'
 import { UserEventServiceEvent, UserEventServiceEventPayload } from '../UserEvent/UserEventServiceEvent'
-import { RemoveSharedVaultItemsLocallyUseCase } from './UseCase/RemoveSharedVaultItemsLocally'
+import { DeleteExternalSharedVaultUseCase } from './UseCase/DeleteExternalSharedVault'
 import { DeleteSharedVaultUseCase } from './UseCase/DeleteSharedVault'
 import { VaultServiceEvent, VaultServiceEventPayload } from '../Vaults/VaultServiceEvent'
 import { AcceptTrustedSharedVaultInvite } from './UseCase/AcceptTrustedSharedVaultInvite'
@@ -61,6 +62,7 @@ import { NotifySharedVaultUsersOfRootKeyRotationUseCase } from './UseCase/Notify
 import { CreateSharedVaultUseCase } from './UseCase/CreateSharedVault'
 import { SendSharedVaultMetadataChangedMessageToAll } from './UseCase/SendSharedVaultMetadataChangedMessageToAll'
 import { ConvertToSharedVaultUseCase } from './UseCase/ConvertToSharedVault'
+import { GetVaultUseCase } from '../Vaults/UseCase/GetVault'
 
 export class SharedVaultService
   extends AbstractService<SharedVaultServiceEvent, SharedVaultServiceEventPayload>
@@ -82,6 +84,7 @@ export class SharedVaultService
     private contacts: ContactServiceInterface,
     private files: FilesClientInterface,
     private vaults: VaultServiceInterface,
+    private storage: StorageServiceInterface,
     eventBus: InternalEventBusInterface,
   ) {
     super(eventBus)
@@ -138,8 +141,11 @@ export class SharedVaultService
 
   private async handleUserEvent(event: UserEventServiceEventPayload): Promise<void> {
     if (event.eventPayload.eventType === UserEventType.RemovedFromSharedVault) {
-      const useCase = new RemoveSharedVaultItemsLocallyUseCase(this.items)
-      await useCase.execute({ sharedVaultUuids: [event.eventPayload.sharedVaultUuid] })
+      const vault = new GetVaultUseCase(this.items).execute({ sharedVaultUuid: event.eventPayload.sharedVaultUuid })
+      if (vault) {
+        const useCase = new DeleteExternalSharedVaultUseCase(this.items, this.encryption, this.storage, this.sync)
+        await useCase.execute(vault)
+      }
     } else if (event.eventPayload.eventType === UserEventType.SharedVaultItemRemoved) {
       const item = this.items.findItem(event.eventPayload.itemUuid)
       if (item) {
@@ -302,7 +308,7 @@ export class SharedVaultService
   }
 
   public async deleteSharedVault(sharedVault: SharedVaultListingInterface): Promise<ClientDisplayableError | void> {
-    const useCase = new DeleteSharedVaultUseCase(this.server, this.items, this.sync)
+    const useCase = new DeleteSharedVaultUseCase(this.server, this.items, this.sync, this.encryption)
     return useCase.execute({ sharedVault })
   }
 
@@ -477,9 +483,9 @@ export class SharedVaultService
   }
 
   async leaveSharedVault(sharedVault: SharedVaultListingInterface): Promise<ClientDisplayableError | void> {
-    const useCase = new LeaveVaultUseCase(this.usersServer, this.items)
+    const useCase = new LeaveVaultUseCase(this.usersServer, this.items, this.encryption, this.storage, this.sync)
     const result = await useCase.execute({
-      sharedVaultUuid: sharedVault.sharing.sharedVaultUuid,
+      sharedVault: sharedVault,
       userUuid: this.session.getSureUser().uuid,
     })
 

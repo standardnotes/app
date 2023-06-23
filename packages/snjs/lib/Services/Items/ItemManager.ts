@@ -281,6 +281,7 @@ export class ItemManager
     return this.collection.nondeletedElements().filter(Models.isDecryptedItem)
   }
 
+  /** Unlock .items, this function includes error decrypting items */
   allTrackedItems(): Models.ItemInterface[] {
     return this.collection.all()
   }
@@ -1366,10 +1367,16 @@ export class ItemManager
     this.payloadManager.resetState()
   }
 
+  /**
+   * Important: Caller must coordinate with storage service separately to delete item from persistent database.
+   */
   public removeItemLocally(item: Models.AnyItemInterface): void {
     this.removeItemsLocally([item])
   }
 
+  /**
+   * Important: Caller must coordinate with storage service separately to delete item from persistent database.
+   */
   public removeItemsLocally(items: Models.AnyItemInterface[]): void {
     this.collection.discard(items)
     this.payloadManager.removePayloadLocally(items.map((item) => item.payload))

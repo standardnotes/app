@@ -26,6 +26,6 @@ export interface KeySystemKeyManagerInterface {
   undoIntakeNonPersistentKeySystemRootKey(systemIdentifier: KeySystemIdentifier): void
 
   clearMemoryOfKeysRelatedToVault(vault: VaultListingInterface): void
-  deleteAllKeySystemRootKeysForVault(systemIdentifier: KeySystemIdentifier): Promise<void>
+  deleteNonPersistentSystemRootKeysForVault(systemIdentifier: KeySystemIdentifier): Promise<void>
   deleteAllSyncedKeySystemRootKeys(systemIdentifier: KeySystemIdentifier): Promise<void>
 }

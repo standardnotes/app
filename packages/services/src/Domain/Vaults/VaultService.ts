@@ -57,13 +57,13 @@ export class VaultService
     return vaults.filter((vault) => this.isVaultLocked(vault))
   }
 
-  public getVault(keySystemIdentifier: KeySystemIdentifier): VaultListingInterface | undefined {
+  public getVault(dto: { keySystemIdentifier: KeySystemIdentifier }): VaultListingInterface | undefined {
     const usecase = new GetVaultUseCase(this.items)
-    return usecase.execute({ keySystemIdentifier })
+    return usecase.execute(dto)
   }
 
-  public getSureVault(keySystemIdentifier: KeySystemIdentifier): VaultListingInterface {
-    const vault = this.getVault(keySystemIdentifier)
+  public getSureVault(dto: { keySystemIdentifier: KeySystemIdentifier }): VaultListingInterface {
+    const vault = this.getVault(dto)
     if (!vault) {
       throw new Error('Vault not found')
     }
@@ -141,6 +141,10 @@ export class VaultService
   }
 
   async deleteVault(vault: VaultListingInterface): Promise<boolean> {
+    if (vault.isSharedVaultListing()) {
+      throw new Error('Shared vault must be deleted through SharedVaultService')
+    }
+
     const useCase = new DeleteVaultUseCase(this.items, this.encryption)
     const error = await useCase.execute(vault)
 
@@ -192,7 +196,7 @@ export class VaultService
       return undefined
     }
 
-    return this.getVault(item.key_system_identifier)
+    return this.getVault({ keySystemIdentifier: item.key_system_identifier })
   }
 
   async changeVaultOptions(dto: ChangeVaultOptionsDTO): Promise<void> {

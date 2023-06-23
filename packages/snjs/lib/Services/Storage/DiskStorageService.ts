@@ -1,10 +1,9 @@
 import { ContentType } from '@standardnotes/common'
-import { Copy, extendArray, UuidGenerator } from '@standardnotes/utils'
+import { Copy, extendArray, UuidGenerator, Uuids } from '@standardnotes/utils'
 import { SNLog } from '../../Log'
 import { isErrorDecryptingParameters, SNRootKey } from '@standardnotes/encryption'
 import * as Encryption from '@standardnotes/encryption'
 import * as Services from '@standardnotes/services'
-import { DiagnosticInfo } from '@standardnotes/services'
 import {
   CreateDecryptedLocalStorageContextPayload,
   CreateDeletedLocalStorageContextPayload,
@@ -397,7 +396,9 @@ export class DiskStorageService extends Services.AbstractService implements Serv
       }
     }
 
-    await this.deletePayloads(discardable)
+    if (discardable.length > 0) {
+      await this.deletePayloads(discardable)
+    }
 
     const encryptableSplit = Encryption.SplitPayloadsByEncryptionType(encryptable)
 
@@ -420,16 +421,18 @@ export class DiskStorageService extends Services.AbstractService implements Serv
   }
 
   public async deletePayloads(payloads: DeletedPayloadInterface[]) {
-    await Promise.all(payloads.map((payload) => this.deletePayloadWithId(payload.uuid)))
+    await this.deletePayloadsWithUuids(Uuids(payloads))
   }
 
-  public async forceDeletePayloads(payloads: FullyFormedPayloadInterface[]) {
-    await Promise.all(payloads.map((payload) => this.deletePayloadWithId(payload.uuid)))
+  public async deletePayloadsWithUuids(uuids: string[]): Promise<void> {
+    await this.executeCriticalFunction(async () => {
+      await Promise.all(uuids.map((uuid) => this.deviceInterface.removeDatabaseEntry(uuid, this.identifier)))
+    })
   }
 
-  public async deletePayloadWithId(uuid: string) {
+  public async deletePayloadWithUuid(uuid: string) {
     return this.executeCriticalFunction(async () => {
-      return this.deviceInterface.removeDatabaseEntry(uuid, this.identifier)
+      await this.deviceInterface.removeDatabaseEntry(uuid, this.identifier)
     })
   }
 
@@ -450,18 +453,5 @@ export class DiskStorageService extends Services.AbstractService implements Serv
 
       await this.deviceInterface.removeRawStorageValue(this.getPersistenceKey())
     })
-  }
-
-  override async getDiagnostics(): Promise<DiagnosticInfo | undefined> {
-    return {
-      storage: {
-        storagePersistable: this.storagePersistable,
-        persistencePolicy: Services.StoragePersistencePolicies[this.persistencePolicy],
-        needsPersist: this.needsPersist,
-        currentPersistPromise: this.currentPersistPromise != undefined,
-        isStorageWrapped: this.isStorageWrapped(),
-        allRawPayloadsCount: (await this.getAllRawPayloads()).length,
-      },
-    }
   }
 }

@@ -17,6 +17,7 @@ export interface StorageServiceInterface {
   removeValue(key: string, mode?: StorageValueModes): Promise<void>
   setPersistencePolicy(persistencePolicy: StoragePersistencePolicies): Promise<void>
   clearAllData(): Promise<void>
-  forceDeletePayloads(payloads: FullyFormedPayloadInterface[]): Promise<void>
+  deletePayloads(payloads: FullyFormedPayloadInterface[]): Promise<void>
+  deletePayloadsWithUuids(uuids: string[]): Promise<void>
   clearAllPayloads(): Promise<void>
 }

@@ -35,7 +35,7 @@ describe('shared vaults', function () {
       description: 'new vault description',
     })
 
-    const updatedVault = vaults.getVault(sharedVault.systemIdentifier)
+    const updatedVault = vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })
     expect(updatedVault.name).to.equal('new vault name')
     expect(updatedVault.description).to.equal('new vault description')
 
@@ -43,11 +43,65 @@ describe('shared vaults', function () {
     await contactContext.sync()
     await promise
 
-    const contactVault = contactContext.vaults.getVault(sharedVault.systemIdentifier)
+    const contactVault = contactContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })
     expect(contactVault.name).to.equal('new vault name')
     expect(contactVault.description).to.equal('new vault description')
 
     await deinitContactContext()
+  })
+
+  it('being removed from a shared vault should remove the vault', async () => {
+    const { sharedVault, contactContext, deinitContactContext } =
+      await Collaboration.createSharedVaultWithAcceptedInvite(context)
+
+    const result = await context.sharedVaults.removeUserFromSharedVault(sharedVault, contactContext.userUuid)
+
+    expect(result).to.be.undefined
+
+    const promise = contactContext.resolveWhenUserMessagesProcessingCompletes()
+    await contactContext.sync()
+    await promise
+
+    expect(contactContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })).to.be.undefined
+    expect(contactContext.encryption.keys.getPrimaryKeySystemRootKey(sharedVault.systemIdentifier)).to.be.undefined
+    expect(contactContext.encryption.keys.getKeySystemItemsKeys(sharedVault.systemIdentifier)).to.be.empty
+
+    const recreatedContext = await Factory.createAppContextWithRealCrypto(contactContext.identifier)
+    await recreatedContext.launch()
+
+    expect(recreatedContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })).to.be.undefined
+    expect(recreatedContext.encryption.keys.getPrimaryKeySystemRootKey(sharedVault.systemIdentifier)).to.be.undefined
+    expect(recreatedContext.encryption.keys.getKeySystemItemsKeys(sharedVault.systemIdentifier)).to.be.empty
+
+    await deinitContactContext()
+    await recreatedContext.deinit()
+  })
+
+  it.only('deleting a shared vault should remove vault from contact context', async () => {
+    const { sharedVault, contactContext, deinitContactContext } =
+      await Collaboration.createSharedVaultWithAcceptedInvite(context)
+
+    const result = await context.sharedVaults.deleteSharedVault(sharedVault)
+
+    expect(result).to.be.undefined
+
+    const promise = contactContext.resolveWhenUserMessagesProcessingCompletes()
+    await contactContext.sync()
+    await promise
+
+    expect(contactContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })).to.be.undefined
+    expect(contactContext.encryption.keys.getPrimaryKeySystemRootKey(sharedVault.systemIdentifier)).to.be.undefined
+    expect(contactContext.encryption.keys.getKeySystemItemsKeys(sharedVault.systemIdentifier)).to.be.empty
+
+    const recreatedContext = await Factory.createAppContextWithRealCrypto(contactContext.identifier)
+    await recreatedContext.launch()
+
+    expect(recreatedContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })).to.be.undefined
+    expect(recreatedContext.encryption.keys.getPrimaryKeySystemRootKey(sharedVault.systemIdentifier)).to.be.undefined
+    expect(recreatedContext.encryption.keys.getKeySystemItemsKeys(sharedVault.systemIdentifier)).to.be.empty
+
+    await deinitContactContext()
+    await recreatedContext.deinit()
   })
 
   it('should convert a vault to a shared vault', async () => {

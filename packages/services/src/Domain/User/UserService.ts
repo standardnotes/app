@@ -526,7 +526,7 @@ export class UserService
   private async rewriteItemsKeys(): Promise<void> {
     const itemsKeys = this.itemManager.getDisplayableItemsKeys()
     const payloads = itemsKeys.map((key) => key.payloadRepresentation())
-    await this.storageService.forceDeletePayloads(payloads)
+    await this.storageService.deletePayloads(payloads)
     await this.syncService.persistPayloads(payloads)
   }
 

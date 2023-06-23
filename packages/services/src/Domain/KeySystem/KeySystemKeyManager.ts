@@ -97,10 +97,7 @@ export class KeySystemKeyManager extends AbstractService implements KeySystemKey
     return [...synced, ...memory]
   }
 
-  public async deleteAllKeySystemRootKeysForVault(systemIdentifier: KeySystemIdentifier): Promise<void> {
-    const syncedKeys = this.getSyncedKeySystemRootKeysForVault(systemIdentifier)
-    await this.items.setItemsToBeDeleted(syncedKeys)
-
+  public async deleteNonPersistentSystemRootKeysForVault(systemIdentifier: KeySystemIdentifier): Promise<void> {
     delete this.rootKeyMemoryCache[systemIdentifier]
 
     await this.storage.removeValue(this.storageKeyForRootKey(systemIdentifier))

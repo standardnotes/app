@@ -181,7 +181,9 @@ export class VaultDisplayService
     this.options = options
 
     if (this.isInExclusiveDisplayMode()) {
-      this.exclusivelyShownVault = this.application.vaults.getVault(this.options.getExclusivelyShownVault())
+      this.exclusivelyShownVault = this.application.vaults.getVault({
+        keySystemIdentifier: this.options.getExclusivelyShownVault(),
+      })
     } else {
       this.exclusivelyShownVault = undefined
     }

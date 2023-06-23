@@ -170,7 +170,7 @@ describe('asymmetric messages', function () {
     expect(firstPartySpy.callCount).to.equal(0)
     expect(secondPartySpy.callCount).to.equal(1)
 
-    const updatedVault = contactContext.vaults.getVault(sharedVault.systemIdentifier)
+    const updatedVault = contactContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })
     expect(updatedVault.name).to.equal('New Name')
     expect(updatedVault.description).to.equal('New Description')
 

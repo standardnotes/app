@@ -200,7 +200,7 @@ describe('shared vault invites', function () {
     console.error('TODO: implement test')
   })
 
-  it.only('sharing a vault with user inputted and ephemeral password should share the key as synced for the recipient', async () => {
+  it('sharing a vault with user inputted and ephemeral password should share the key as synced for the recipient', async () => {
     const privateVault = await context.vaults.createUserInputtedPasswordVault({
       name: 'My Private Vault',
       userInputtedPassword: 'password',
