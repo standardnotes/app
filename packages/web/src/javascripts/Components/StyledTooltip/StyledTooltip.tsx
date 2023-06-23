@@ -70,7 +70,7 @@ const StyledTooltip = ({
             popoverRect,
             documentRect,
             disableMobileFullscreenTakeover: true,
-            offset: 6,
+            offset: props.gutter ? props.gutter : 6,
           })
 
           if (!styles) {

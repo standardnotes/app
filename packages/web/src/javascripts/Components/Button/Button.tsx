@@ -68,7 +68,7 @@ const getClassName = (
       : 'focus:bg-default focus:outline-none hover:bg-default'
   }
 
-  return `${rounded} font-bold ${width} ${padding} ${textSize} ${colors} ${borders} ${focusHoverStates} ${cursor}`
+  return `${rounded} font-bold select-none ${width} ${padding} ${textSize} ${colors} ${borders} ${focusHoverStates} ${cursor}`
 }
 
 interface ButtonProps extends ComponentPropsWithoutRef<'button'> {

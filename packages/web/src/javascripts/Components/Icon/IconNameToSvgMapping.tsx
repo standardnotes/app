@@ -127,6 +127,7 @@ export const IconNameToSvgMapping = {
   superscript: icons.SuperscriptIcon,
   sync: icons.SyncIcon,
   tasks: icons.TasksIcon,
+  text: icons.TextIcon,
   themes: icons.ThemesIcon,
   trash: icons.TrashIcon,
   tune: icons.TuneIcon,
