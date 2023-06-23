@@ -284,18 +284,14 @@ const NoteConflictResolutionModal = ({
           <ConflictListItem
             disabled={isPerformingAction}
             isSelected={selectedVersions.includes(note.uuid)}
-            onClick={(event) => {
-              if (event.ctrlKey || event.metaKey || isMobileScreen) {
-                setSelectedVersions((versions) => {
-                  if (!versions.includes(note.uuid)) {
-                    return versions.length > 1 ? versions.slice(1).concat(note.uuid) : versions.concat(note.uuid)
-                  }
+            onClick={() => {
+              setSelectedVersions((versions) => {
+                if (!versions.includes(note.uuid)) {
+                  return versions.length > 1 ? versions.slice(1).concat(note.uuid) : versions.concat(note.uuid)
+                }
 
-                  return versions.length > 1 ? versions.filter((version) => version !== note.uuid) : versions
-                })
-              } else {
-                setSelectedVersions([note.uuid])
-              }
+                return versions.length > 1 ? versions.filter((version) => version !== note.uuid) : versions
+              })
               setSelectedMobileTab('preview')
             }}
             key={note.uuid}
