@@ -40,7 +40,7 @@ import { CrossControllerEvent } from './CrossControllerEvent'
 import { EventObserverInterface } from '@/Event/EventObserverInterface'
 import { ApplicationEventObserver } from '@/Event/ApplicationEventObserver'
 import { ImportModalController } from './ImportModalController'
-import { VaultSelectionController } from './VaultSelectionController'
+import { VaultSelectionMenuController } from './VaultSelectionMenuController'
 
 export class ViewControllerManager implements InternalEventHandlerInterface {
   readonly enableUnfinishedFeatures: boolean = window?.enabledUnfinishedFeatures
@@ -60,7 +60,7 @@ export class ViewControllerManager implements InternalEventHandlerInterface {
   readonly preferencesController: PreferencesController
   readonly purchaseFlowController: PurchaseFlowController
   readonly quickSettingsMenuController: QuickSettingsController
-  readonly vaultSelectionController: VaultSelectionController
+  readonly vaultSelectionController: VaultSelectionMenuController
   readonly searchOptionsController: SearchOptionsController
   readonly subscriptionController: SubscriptionController
   readonly syncStatusController = new SyncStatusController()
@@ -94,7 +94,7 @@ export class ViewControllerManager implements InternalEventHandlerInterface {
 
     this.quickSettingsMenuController = new QuickSettingsController(application, eventBus)
 
-    this.vaultSelectionController = new VaultSelectionController(application, eventBus)
+    this.vaultSelectionController = new VaultSelectionMenuController(application, eventBus)
 
     this.paneController = new PaneController(application, eventBus)
 

@@ -554,6 +554,11 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     for (const service of this.services) {
       await service.handleApplicationStage(stage)
     }
+
+    this.internalEventBus.publish({
+      type: ApplicationEvent.ApplicationStageChanged,
+      payload: { stage } as ExternalServices.ApplicationStageChangedEventPayload,
+    })
   }
 
   /**
@@ -607,11 +612,13 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     } else if (event === ApplicationEvent.Launched) {
       this.onLaunch()
     }
+
     for (const observer of this.eventHandlers.slice()) {
       if ((observer.singleEvent && observer.singleEvent === event) || !observer.singleEvent) {
         await observer.callback(event, data || {})
       }
     }
+
     void this.migrationService.handleApplicationEvent(event)
   }
 
@@ -886,7 +893,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     }
   }
 
-  public addChallengeObserver(challenge: Challenge, observer: InternalServices.ChallengeObserver): () => void {
+  public addChallengeObserver(challenge: Challenge, observer: ExternalServices.ChallengeObserver): () => void {
     return this.challengeService.addChallengeObserver(challenge, observer)
   }
 

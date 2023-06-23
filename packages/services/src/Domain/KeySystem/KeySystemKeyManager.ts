@@ -12,6 +12,7 @@ import {
   KeySystemRootKeyInterface,
   KeySystemRootKeyStorageMode,
   Predicate,
+  VaultListingInterface,
 } from '@standardnotes/models'
 import { ItemManagerInterface } from './../Item/ItemManagerInterface'
 import { ContentType } from '@standardnotes/common'
@@ -74,6 +75,13 @@ export class KeySystemKeyManager extends AbstractService implements KeySystemKey
 
   public getAllSyncedKeySystemRootKeys(): KeySystemRootKeyInterface[] {
     return this.items.getItems(ContentType.KeySystemRootKey)
+  }
+
+  public clearMemoryOfKeysRelatedToVault(vault: VaultListingInterface): void {
+    delete this.rootKeyMemoryCache[vault.systemIdentifier]
+
+    const itemsKeys = this.getKeySystemItemsKeys(vault.systemIdentifier)
+    this.items.removeItemsLocally(itemsKeys)
   }
 
   public getSyncedKeySystemRootKeysForVault(systemIdentifier: KeySystemIdentifier): KeySystemRootKeyInterface[] {

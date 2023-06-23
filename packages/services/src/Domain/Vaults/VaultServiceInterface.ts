@@ -24,6 +24,7 @@ export interface VaultServiceInterface
 
   getVaults(): VaultListingInterface[]
   getVault(keySystemIdentifier: KeySystemIdentifier): VaultListingInterface | undefined
+  getLockedvaults(): VaultListingInterface[]
   deleteVault(vault: VaultListingInterface): Promise<boolean>
 
   addItemToVault(vault: VaultListingInterface, item: DecryptedItemInterface): Promise<DecryptedItemInterface>

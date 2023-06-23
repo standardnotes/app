@@ -375,22 +375,25 @@ class Footer extends AbstractComponent<Props, State> {
                 viewControllerManager={this.viewControllerManager}
               />
             </div>
+
             <div className="relative z-footer-bar-item select-none">
               <PreferencesButton openPreferences={this.openPreferences} />
             </div>
-            <div className="relative z-footer-bar-item select-none">
-              <VaultSelectionButton
-                isOpen={this.state.showVaultSelectionMenu}
-                toggleMenu={this.vaultSelectionClickHandler}
-                controller={this.viewControllerManager.vaultSelectionController}
-              />
-            </div>
+
             <div className="relative z-footer-bar-item select-none">
               <QuickSettingsButton
                 isOpen={this.state.showQuickSettingsMenu}
                 toggleMenu={this.quickSettingsClickHandler}
                 application={this.application}
                 quickSettingsMenuController={this.viewControllerManager.quickSettingsMenuController}
+              />
+            </div>
+
+            <div className="relative z-footer-bar-item  ml-1.5 select-none">
+              <VaultSelectionButton
+                isOpen={this.state.showVaultSelectionMenu}
+                toggleMenu={this.vaultSelectionClickHandler}
+                controller={this.viewControllerManager.vaultSelectionController}
               />
             </div>
             <UpgradeNow

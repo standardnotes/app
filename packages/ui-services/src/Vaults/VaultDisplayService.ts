@@ -1,15 +1,19 @@
 import {
   ApplicationEvent,
+  ApplicationStage,
+  ApplicationStageChangedEventPayload,
   Challenge,
   ChallengePrompt,
   ChallengeReason,
   ChallengeStrings,
   ChallengeValidation,
   InternalEventBusInterface,
+  InternalEventHandlerInterface,
+  InternalEventInterface,
   StorageKey,
+  VaultServiceEvent,
 } from '@standardnotes/services'
 import { VaultDisplayOptions, VaultDisplayOptionsPersistable, VaultListingInterface } from '@standardnotes/models'
-import { ContentType } from '@standardnotes/common'
 import { VaultDisplayServiceEvent } from './VaultDisplayServiceEvent'
 import { AbstractUIServicee } from '../Abstract/AbstractUIService'
 import { WebApplicationInterface } from '../WebApplication/WebApplicationInterface'
@@ -18,24 +22,27 @@ import { action, makeObservable, observable } from 'mobx'
 
 export class VaultDisplayService
   extends AbstractUIServicee<VaultDisplayServiceEvent>
-  implements VaultDisplayServiceInterface
+  implements VaultDisplayServiceInterface, InternalEventHandlerInterface
 {
   options: VaultDisplayOptions
 
+  public exclusivelyShownVault: VaultListingInterface | undefined = undefined
+
   constructor(application: WebApplicationInterface, internalEventBus: InternalEventBusInterface) {
     super(application, internalEventBus)
-    this.options = new VaultDisplayOptions({ exclude: [] })
-    this.eventDisposers.push(
-      application.streamItems<VaultListingInterface>(ContentType.VaultListing, () => {
-        this.handleVaultListingStreamUpdate()
-      }),
-    )
+
+    this.options = new VaultDisplayOptions({ exclude: [], locked: [] })
+
+    internalEventBus.addEventHandler(this, VaultServiceEvent.VaultLocked)
+    internalEventBus.addEventHandler(this, VaultServiceEvent.VaultUnlocked)
+    internalEventBus.addEventHandler(this, ApplicationEvent.ApplicationStageChanged)
 
     makeObservable(this, {
       options: observable,
 
       isVaultExplicitelyExcluded: observable,
       isVaultExclusivelyShown: observable,
+      exclusivelyShownVault: observable,
 
       hideVault: action,
       unhideVault: action,
@@ -43,11 +50,21 @@ export class VaultDisplayService
     })
   }
 
-  private handleVaultListingStreamUpdate(): void {
-    const vaults = this.application.items.getItems<VaultListingInterface>(ContentType.VaultListing)
-    const lockedVaults = vaults.filter((vault) => this.application.vaults.isVaultLocked(vault))
+  async handleEvent(event: InternalEventInterface): Promise<void> {
+    if (event.type === VaultServiceEvent.VaultLocked || event.type === VaultServiceEvent.VaultUnlocked) {
+      this.handleVaultLockingStatusChanged()
+    } else if (event.type === ApplicationEvent.ApplicationStageChanged) {
+      const stage = (event.payload as ApplicationStageChangedEventPayload).stage
+      if (stage === ApplicationStage.StorageDecrypted_09) {
+        void this.loadVaultSelectionOptionsFromDisk()
+      }
+    }
+  }
 
-    const options = this.options.newOptionsByExcludingVaults(lockedVaults)
+  private handleVaultLockingStatusChanged(): void {
+    const lockedVaults = this.application.vaults.getLockedvaults()
+
+    const options = this.options.newOptionsByIntakingLockedVaults(lockedVaults)
     this.setVaultSelectionOptions(options)
   }
 
@@ -55,22 +72,39 @@ export class VaultDisplayService
     return this.options
   }
 
-  override async onAppEvent(event: ApplicationEvent): Promise<void> {
-    if (event === ApplicationEvent.StorageReady) {
-      void this.loadVaultSelectionOptionsFromDisk()
-    }
-  }
-
   isVaultExplicitelyExcluded = (vault: VaultListingInterface): boolean => {
     return this.options.isVaultExplicitelyExcluded(vault) ?? false
   }
 
+  isVaultDisabledOrLocked(vault: VaultListingInterface): boolean {
+    return this.options.isVaultDisabledOrLocked(vault)
+  }
+
   isVaultExclusivelyShown = (vault: VaultListingInterface): boolean => {
-    return this.options.exclusive?.uuid === vault.uuid
+    return this.options.isVaultExclusivelyShown(vault)
+  }
+
+  isInExclusiveDisplayMode(): boolean {
+    return this.options.isInExclusiveDisplayMode()
+  }
+
+  changeToMultipleVaultDisplayMode(): void {
+    const vaults = this.application.vaults.getVaults()
+    const lockedVaults = this.application.vaults.getLockedvaults()
+
+    const newOptions = new VaultDisplayOptions({
+      exclude: vaults
+        .map((vault) => vault.systemIdentifier)
+        .filter((identifier) => identifier !== this.exclusivelyShownVault?.systemIdentifier),
+      locked: lockedVaults.map((vault) => vault.systemIdentifier),
+    })
+
+    this.setVaultSelectionOptions(newOptions)
   }
 
   hideVault = (vault: VaultListingInterface) => {
-    const newOptions = this.options.newOptionsByExcludingVault(vault)
+    const lockedVaults = this.application.vaults.getLockedvaults()
+    const newOptions = this.options.newOptionsByExcludingVault(vault, lockedVaults)
     this.setVaultSelectionOptions(newOptions)
   }
 
@@ -82,7 +116,8 @@ export class VaultDisplayService
       }
     }
 
-    const newOptions = this.options.newOptionsByUnexcludingVault(vault)
+    const lockedVaults = this.application.vaults.getLockedvaults()
+    const newOptions = this.options.newOptionsByUnexcludingVault(vault, lockedVaults)
     this.setVaultSelectionOptions(newOptions)
   }
 
@@ -94,7 +129,7 @@ export class VaultDisplayService
       }
     }
 
-    const newOptions = new VaultDisplayOptions({ exclusive: vault })
+    const newOptions = new VaultDisplayOptions({ exclusive: vault.systemIdentifier })
     this.setVaultSelectionOptions(newOptions)
   }
 
@@ -145,6 +180,12 @@ export class VaultDisplayService
   private setVaultSelectionOptions = (options: VaultDisplayOptions) => {
     this.options = options
 
+    if (this.isInExclusiveDisplayMode()) {
+      this.exclusivelyShownVault = this.application.vaults.getVault(this.options.getExclusivelyShownVault())
+    } else {
+      this.exclusivelyShownVault = undefined
+    }
+
     this.application.items.setVaultDisplayOptions(options)
 
     void this.notifyEvent(VaultDisplayServiceEvent.VaultDisplayOptionsChanged, options)
@@ -155,22 +196,19 @@ export class VaultDisplayService
   }
 
   private loadVaultSelectionOptionsFromDisk = (): void => {
-    if (!this.application.isLaunched()) {
-      return
-    }
-
     const raw = this.application.getValue<VaultDisplayOptionsPersistable>(StorageKey.VaultSelectionOptions)
     if (!raw) {
       return
     }
 
-    const vaults = this.application.items.getItems<VaultListingInterface>(ContentType.VaultListing)
-    let options = VaultDisplayOptions.FromPersistableValue(raw, vaults)
-
-    const lockedVaults = vaults.filter((vault) => this.application.vaults.isVaultLocked(vault))
-    options = options.newOptionsByExcludingVaults(lockedVaults)
+    const options = VaultDisplayOptions.FromPersistableValue(raw)
 
     this.options = options
     void this.notifyEvent(VaultDisplayServiceEvent.VaultDisplayOptionsChanged, options)
+  }
+
+  override deinit(): void {
+    ;(this.options as unknown) = undefined
+    super.deinit()
   }
 }

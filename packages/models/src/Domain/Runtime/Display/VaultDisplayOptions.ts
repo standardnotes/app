@@ -1,81 +1,109 @@
 import { VaultListingInterface } from '../../Syncable/VaultListing/VaultListingInterface'
-import { isNotUndefined } from '@standardnotes/utils'
+import { uniqueArray } from '@standardnotes/utils'
+import {
+  ExclusioanaryOptions,
+  ExclusiveOptions,
+  VaultDisplayOptionsPersistable,
+  isExclusioanaryOptionsValue,
+} from './VaultDisplayOptionsTypes'
+import { KeySystemIdentifier } from '../../Syncable/KeySystemRootKey/KeySystemIdentifier'
 
-export type VaultDisplayOptionsPersistable = { exclude: string[] } | { exclusive: string }
+function KeySystemIdentifiers(vaults: VaultListingInterface[]): KeySystemIdentifier[] {
+  return vaults.map((vault) => vault.systemIdentifier)
+}
 
 export class VaultDisplayOptions {
-  public readonly exclude?: VaultListingInterface[]
-  public readonly exclusive?: VaultListingInterface
+  constructor(private readonly options: ExclusioanaryOptions | ExclusiveOptions) {}
 
-  constructor(options: { exclude: VaultListingInterface[] } | { exclusive: VaultListingInterface }) {
-    if ('exclude' in options) {
-      this.exclude = options.exclude
-    } else {
-      this.exclusive = options.exclusive
+  public getOptions(): ExclusioanaryOptions | ExclusiveOptions {
+    return this.options
+  }
+
+  public getExclusivelyShownVault(): KeySystemIdentifier {
+    if (isExclusioanaryOptionsValue(this.options)) {
+      throw new Error('Not in exclusive display mode')
     }
+
+    return this.options.exclusive
+  }
+
+  public isInExclusiveDisplayMode(): boolean {
+    return !isExclusioanaryOptionsValue(this.options)
   }
 
   public isVaultExplicitelyExcluded(vault: VaultListingInterface): boolean {
-    if (this.exclude) {
-      return this.exclude.some((excludedVault) => excludedVault.uuid === vault.uuid)
-    } else if (this.exclusive) {
-      return this.exclusive.uuid !== vault.uuid
+    if (isExclusioanaryOptionsValue(this.options)) {
+      return this.options.exclude.some((excludedVault) => excludedVault === vault.systemIdentifier)
+    } else if (this.options.exclusive) {
+      return this.options.exclusive !== vault.systemIdentifier
     }
 
     throw new Error('Invalid vault display options')
+  }
+
+  isVaultExclusivelyShown(vault: VaultListingInterface): boolean {
+    return !isExclusioanaryOptionsValue(this.options) && this.options.exclusive === vault.systemIdentifier
+  }
+
+  isVaultDisabledOrLocked(vault: VaultListingInterface): boolean {
+    if (isExclusioanaryOptionsValue(this.options)) {
+      const matchingLocked = this.options.locked.find((lockedVault) => lockedVault === vault.systemIdentifier)
+      if (matchingLocked) {
+        return true
+      }
+    }
+
+    return this.isVaultExplicitelyExcluded(vault)
   }
 
   getPersistableValue(): VaultDisplayOptionsPersistable {
-    if (this.exclude) {
-      return { exclude: this.exclude.map((vault) => vault.uuid) }
-    } else if (this.exclusive) {
-      return { exclusive: this.exclusive.uuid }
+    return this.options
+  }
+
+  newOptionsByIntakingLockedVaults(lockedVaults: VaultListingInterface[]): VaultDisplayOptions {
+    if (isExclusioanaryOptionsValue(this.options)) {
+      return new VaultDisplayOptions({ exclude: this.options.exclude, locked: KeySystemIdentifiers(lockedVaults) })
+    } else {
+      return new VaultDisplayOptions({ exclusive: this.options.exclusive })
     }
-
-    throw new Error('Invalid vault display options')
   }
 
-  newOptionsByExcludingVault(vault: VaultListingInterface): VaultDisplayOptions {
-    return this.newOptionsByExcludingVaults([vault])
+  newOptionsByExcludingVault(vault: VaultListingInterface, lockedVaults: VaultListingInterface[]): VaultDisplayOptions {
+    return this.newOptionsByExcludingVaults([vault], lockedVaults)
   }
 
-  newOptionsByExcludingVaults(vaults: VaultListingInterface[]): VaultDisplayOptions {
-    if (this.exclude) {
-      return new VaultDisplayOptions({ exclude: [...this.exclude, ...vaults] })
-    } else if (this.exclusive) {
-      return new VaultDisplayOptions({ exclude: vaults })
-    }
-
-    throw new Error('Invalid vault display options')
-  }
-
-  newOptionsByUnexcludingVault(vault: VaultListingInterface): VaultDisplayOptions {
-    if (this.exclude) {
-      return new VaultDisplayOptions({
-        exclude: this.exclude.filter((excludedVault) => excludedVault.uuid !== vault.uuid),
-      })
-    } else if (this.exclusive) {
-      return new VaultDisplayOptions({ exclude: [] })
-    }
-
-    throw new Error('Invalid vault display options')
-  }
-
-  static FromPersistableValue(
-    value: VaultDisplayOptionsPersistable,
+  newOptionsByExcludingVaults(
     vaults: VaultListingInterface[],
+    lockedVaults: VaultListingInterface[],
   ): VaultDisplayOptions {
-    if ('exclude' in value) {
-      const exclude = value.exclude.map((uuid) => vaults.find((vault) => vault.uuid === uuid)).filter(isNotUndefined)
-      return new VaultDisplayOptions({ exclude })
-    } else if ('exclusive' in value) {
-      const exclusive = vaults.find((vault) => vault.uuid === value.exclusive)
-      if (!exclusive) {
-        throw new Error('Invalid vault display options')
-      }
-      return new VaultDisplayOptions({ exclusive })
+    if (isExclusioanaryOptionsValue(this.options)) {
+      return new VaultDisplayOptions({
+        exclude: uniqueArray([...this.options.exclude, ...KeySystemIdentifiers(vaults)]),
+        locked: KeySystemIdentifiers(lockedVaults),
+      })
+    } else {
+      return new VaultDisplayOptions({
+        exclude: KeySystemIdentifiers(vaults),
+        locked: KeySystemIdentifiers(lockedVaults),
+      })
     }
+  }
 
-    throw new Error('Invalid vault display options')
+  newOptionsByUnexcludingVault(
+    vault: VaultListingInterface,
+    lockedVaults: VaultListingInterface[],
+  ): VaultDisplayOptions {
+    if (isExclusioanaryOptionsValue(this.options)) {
+      return new VaultDisplayOptions({
+        exclude: this.options.exclude.filter((excludedVault) => excludedVault !== vault.systemIdentifier),
+        locked: KeySystemIdentifiers(lockedVaults),
+      })
+    } else {
+      return new VaultDisplayOptions({ exclude: [], locked: KeySystemIdentifiers(lockedVaults) })
+    }
+  }
+
+  static FromPersistableValue(value: VaultDisplayOptionsPersistable): VaultDisplayOptions {
+    return new VaultDisplayOptions(value)
   }
 }

@@ -12,7 +12,7 @@ const ManyVaultSelectionMenu: FunctionComponent = () => {
 
   const isVaultVisible = useCallback(
     (vault: VaultListingInterface) => {
-      return !application.vaultDisplayService.isVaultExplicitelyExcluded(vault)
+      return !application.vaultDisplayService.isVaultDisabledOrLocked(vault)
     },
     [application],
   )

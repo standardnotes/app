@@ -30,6 +30,8 @@ export class VaultService
   extends AbstractService<VaultServiceEvent, VaultServiceEventPayload[VaultServiceEvent]>
   implements VaultServiceInterface
 {
+  private lockMap = new Map<VaultListingInterface['uuid'], boolean>()
+
   constructor(
     private sync: SyncServiceInterface,
     private items: ItemManagerInterface,
@@ -38,12 +40,21 @@ export class VaultService
     eventBus: InternalEventBusInterface,
   ) {
     super(eventBus)
+
+    items.addObserver([ContentType.KeySystemItemsKey, ContentType.KeySystemRootKey, ContentType.VaultListing], () => {
+      void this.recomputeAllVaultsLockingState()
+    })
   }
 
   getVaults(): VaultListingInterface[] {
     return this.items.getItems<VaultListingInterface>(ContentType.VaultListing).sort((a, b) => {
       return a.name.localeCompare(b.name)
     })
+  }
+
+  getLockedvaults(): VaultListingInterface[] {
+    const vaults = this.getVaults()
+    return vaults.filter((vault) => this.isVaultLocked(vault))
   }
 
   public getVault(keySystemIdentifier: KeySystemIdentifier): VaultListingInterface | undefined {
@@ -156,7 +167,7 @@ export class VaultService
   }
 
   async rotateVaultRootKey(vault: VaultListingInterface): Promise<void> {
-    if (this.isVaultLocked(vault)) {
+    if (this.computeVaultLockState(vault) === 'locked') {
       throw new Error('Cannot rotate root key of locked vault')
     }
 
@@ -197,18 +208,19 @@ export class VaultService
     }
   }
 
-  isVaultLocked(vault: VaultListingInterface): boolean {
-    const rootKey = this.encryption.keys.getPrimaryKeySystemRootKey(vault.systemIdentifier)
-    if (!rootKey) {
-      return true
+  public isVaultLocked(vault: VaultListingInterface): boolean {
+    return this.lockMap.get(vault.uuid) === true
+  }
+
+  public async lockNonPersistentVault(vault: VaultListingInterface): Promise<void> {
+    if (vault.keyStorageMode === KeySystemRootKeyStorageMode.Synced) {
+      throw new Error('Vault uses synced root key and cannot be locked')
     }
 
-    const itemsKey = this.encryption.keys.getPrimaryKeySystemItemsKey(vault.systemIdentifier)
-    if (!itemsKey) {
-      return true
-    }
+    this.encryption.keys.clearMemoryOfKeysRelatedToVault(vault)
 
-    return false
+    this.lockMap.set(vault.uuid, true)
+    void this.notifyEventSync(VaultServiceEvent.VaultLocked, { vault })
   }
 
   public async unlockNonPersistentVault(vault: VaultListingInterface, password: string): Promise<boolean> {
@@ -229,14 +241,47 @@ export class VaultService
 
     await this.encryption.decryptErroredPayloads()
 
-    if (this.isVaultLocked(vault)) {
+    if (this.computeVaultLockState(vault) === 'locked') {
       this.encryption.keys.undoIntakeNonPersistentKeySystemRootKey(vault.systemIdentifier)
       return false
     }
 
+    this.lockMap.set(vault.uuid, false)
     void this.notifyEventSync(VaultServiceEvent.VaultUnlocked, { vault })
 
     return true
+  }
+
+  private recomputeAllVaultsLockingState = async (): Promise<void> => {
+    const vaults = this.getVaults()
+
+    for (const vault of vaults) {
+      const locked = this.computeVaultLockState(vault) === 'locked'
+
+      if (this.lockMap.get(vault.uuid) !== locked) {
+        this.lockMap.set(vault.uuid, locked)
+
+        if (locked) {
+          void this.notifyEvent(VaultServiceEvent.VaultLocked, { vault })
+        } else {
+          void this.notifyEvent(VaultServiceEvent.VaultUnlocked, { vault })
+        }
+      }
+    }
+  }
+
+  private computeVaultLockState(vault: VaultListingInterface): 'locked' | 'unlocked' {
+    const rootKey = this.encryption.keys.getPrimaryKeySystemRootKey(vault.systemIdentifier)
+    if (!rootKey) {
+      return 'locked'
+    }
+
+    const itemsKey = this.encryption.keys.getPrimaryKeySystemItemsKey(vault.systemIdentifier)
+    if (!itemsKey) {
+      return 'locked'
+    }
+
+    return 'unlocked'
   }
 
   override deinit(): void {

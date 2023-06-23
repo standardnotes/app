@@ -1,14 +1,14 @@
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useState } from 'react'
 import Menu from '../Menu/Menu'
-import { VaultSelectionController } from '@/Controllers/VaultSelectionController'
+import { VaultSelectionMenuController } from '@/Controllers/VaultSelectionMenuController'
 import RadioButtonGroup from '@/Components/RadioButtonGroup/RadioButtonGroup'
 import ManyVaultSelectionMenu from './ManyVaultSelectionMenu'
 import SingleVaultSelectionMenu from './SingleVaultSelectionMenu'
 import { useApplication } from '../ApplicationProvider'
 
 type MenuProps = {
-  controller: VaultSelectionController
+  controller: VaultSelectionMenuController
 }
 
 type SettingsMode = 'many' | 'single'
@@ -17,8 +17,18 @@ const VaultSelectionMenu: FunctionComponent<MenuProps> = () => {
   const application = useApplication()
 
   const [mode, setMode] = useState<SettingsMode>(
-    application.vaultDisplayService.getOptions().exclusive ? 'single' : 'many',
+    application.vaultDisplayService.isInExclusiveDisplayMode() ? 'single' : 'many',
   )
+
+  const changeSelectionMode = (mode: SettingsMode) => {
+    setMode(mode)
+
+    if (mode === 'many') {
+      if (application.vaultDisplayService.exclusivelyShownVault) {
+        application.vaultDisplayService.changeToMultipleVaultDisplayMode()
+      }
+    }
+  }
 
   return (
     <Menu a11yLabel="Vault selection menu" isOpen>
@@ -28,7 +38,7 @@ const VaultSelectionMenu: FunctionComponent<MenuProps> = () => {
           { label: 'One', value: 'single' },
         ]}
         value={mode}
-        onChange={(value) => setMode(value as SettingsMode)}
+        onChange={(value) => changeSelectionMode(value as SettingsMode)}
         className="m-3 mt-1"
       />
 

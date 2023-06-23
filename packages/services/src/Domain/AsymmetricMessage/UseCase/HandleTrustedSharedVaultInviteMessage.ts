@@ -38,13 +38,13 @@ export class HandleTrustedSharedVaultInviteMessage {
       },
     }
 
-    await this.items.createItem(ContentType.VaultListing, FillItemContentSpecialized(content), true)
-
     await this.items.createItem<KeySystemRootKeyInterface>(
       ContentType.KeySystemRootKey,
       FillItemContent<KeySystemRootKeyContent>(rootKeyContent),
       true,
     )
+
+    await this.items.createItem(ContentType.VaultListing, FillItemContentSpecialized(content), true)
 
     for (const contact of trustedContacts) {
       if (contact.isMe) {

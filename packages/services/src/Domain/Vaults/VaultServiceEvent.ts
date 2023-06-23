@@ -3,6 +3,7 @@ import { VaultListingInterface } from '@standardnotes/models'
 export enum VaultServiceEvent {
   VaultRootKeyRotated = 'VaultRootKeyRotated',
   VaultUnlocked = 'VaultUnlocked',
+  VaultLocked = 'VaultLocked',
 }
 
 export type VaultServiceEventPayload = {
@@ -10,6 +11,9 @@ export type VaultServiceEventPayload = {
     vault: VaultListingInterface
   }
   [VaultServiceEvent.VaultUnlocked]: {
+    vault: VaultListingInterface
+  }
+  [VaultServiceEvent.VaultLocked]: {
     vault: VaultListingInterface
   }
 }

@@ -4,6 +4,7 @@ import {
   KeySystemItemsKeyInterface,
   KeySystemRootKeyInterface,
   KeySystemRootKeyStorageMode,
+  VaultListingInterface,
 } from '@standardnotes/models'
 
 export interface KeySystemKeyManagerInterface {
@@ -24,6 +25,7 @@ export interface KeySystemKeyManagerInterface {
   intakeNonPersistentKeySystemRootKey(key: KeySystemRootKeyInterface, storage: KeySystemRootKeyStorageMode): void
   undoIntakeNonPersistentKeySystemRootKey(systemIdentifier: KeySystemIdentifier): void
 
+  clearMemoryOfKeysRelatedToVault(vault: VaultListingInterface): void
   deleteAllKeySystemRootKeysForVault(systemIdentifier: KeySystemIdentifier): Promise<void>
   deleteAllSyncedKeySystemRootKeys(systemIdentifier: KeySystemIdentifier): Promise<void>
 }

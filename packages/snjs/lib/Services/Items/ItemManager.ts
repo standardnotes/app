@@ -115,6 +115,10 @@ export class ItemManager
     return this.collection.invalidElements()
   }
 
+  public get invalidNonVaultedItems(): Models.EncryptedItemInterface[] {
+    return this.invalidItems.filter((item) => !item.key_system_identifier)
+  }
+
   public createItemFromPayload(payload: Models.DecryptedPayloadInterface): Models.DecryptedItemInterface {
     return Models.CreateDecryptedItemFromPayload(payload)
   }

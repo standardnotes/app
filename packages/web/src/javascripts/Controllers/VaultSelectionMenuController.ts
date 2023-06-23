@@ -3,7 +3,7 @@ import { WebApplication } from '@/Application/WebApplication'
 import { action, makeObservable, observable } from 'mobx'
 import { AbstractViewController } from './Abstract/AbstractViewController'
 
-export class VaultSelectionController extends AbstractViewController {
+export class VaultSelectionMenuController extends AbstractViewController {
   open = false
   shouldAnimateCloseMenu = false
 

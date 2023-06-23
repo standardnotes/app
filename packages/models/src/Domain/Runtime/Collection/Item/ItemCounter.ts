@@ -12,6 +12,7 @@ import { ExclusiveVaultCriteriaValidator } from '../../Display/Validator/Exclusi
 import { HiddenContentCriteriaValidator } from '../../Display/Validator/HiddenContentCriteriaValidator'
 import { CustomFilterCriteriaValidator } from '../../Display/Validator/CustomFilterCriteriaValidator'
 import { AnyDisplayOptions, VaultDisplayOptions } from '../../Display'
+import { isExclusioanaryOptionsValue } from '../../Display/VaultDisplayOptionsTypes'
 
 type AllNotesUuidSignifier = undefined
 export type TagItemCountChangeObserver = (tagUuid: string | AllNotesUuidSignifier) => void
@@ -78,12 +79,11 @@ export class ItemCounter implements SNIndex {
     const filters: CriteriaValidatorInterface[] = [new CollectionCriteriaValidator(this.collection, element)]
 
     if (this.vaultDisplayOptions) {
-      if (this.vaultDisplayOptions.exclude) {
-        filters.push(new ExcludeVaultsCriteriaValidator(this.vaultDisplayOptions.exclude, element))
-      } else if (this.vaultDisplayOptions.exclusive) {
-        filters.push(new ExclusiveVaultCriteriaValidator(this.vaultDisplayOptions.exclusive, element))
+      const options = this.vaultDisplayOptions.getOptions()
+      if (isExclusioanaryOptionsValue(options)) {
+        filters.push(new ExcludeVaultsCriteriaValidator([...options.exclude, ...options.locked], element))
       } else {
-        throw new Error('Invalid vaults option')
+        filters.push(new ExclusiveVaultCriteriaValidator(options.exclusive, element))
       }
     }
 
