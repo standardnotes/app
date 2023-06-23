@@ -13,6 +13,7 @@ import {
   TrustedContactInterface,
   PendingSharedVaultInviteRecord,
   ContentType,
+  SharedVaultServiceEvent,
 } from '@standardnotes/snjs'
 import VaultItem from './Vaults/VaultItem'
 import Button from '@/Components/Button/Button'
@@ -36,7 +37,7 @@ const Vaults = () => {
   const sharedVaultService = application.sharedVaults
   const contactService = application.contacts
 
-  const fetchVaults = useCallback(async () => {
+  const updateVaults = useCallback(async () => {
     setVaults(vaultService.getVaults())
   }, [vaultService])
 
@@ -46,18 +47,25 @@ const Vaults = () => {
     setInvites(invites)
   }, [sharedVaultService])
 
-  const fetchContacts = useCallback(async () => {
-    const contacts = contactService.getAllContacts()
-    setContacts(contacts)
+  const updateContacts = useCallback(async () => {
+    setContacts(contactService.getAllContacts())
   }, [contactService])
 
   useEffect(() => {
-    return application.streamItems([ContentType.VaultListing, ContentType.TrustedContact], () => {
-      void fetchVaults()
-      void fetchInvites()
-      void fetchContacts()
+    return application.sharedVaults.addEventObserver((event) => {
+      if (event === SharedVaultServiceEvent.SharedVaultStatusChanged) {
+        void fetchInvites()
+      }
     })
-  }, [application, fetchVaults, fetchInvites, fetchContacts])
+  })
+
+  useEffect(() => {
+    return application.streamItems([ContentType.VaultListing, ContentType.TrustedContact], () => {
+      void updateVaults()
+      void fetchInvites()
+      void updateContacts()
+    })
+  }, [application, updateVaults, fetchInvites, updateContacts])
 
   const createNewVault = useCallback(async () => {
     setIsVaultModalOpen(true)
@@ -70,16 +78,16 @@ const Vaults = () => {
   useEffect(() => {
     return contactService.addEventObserver((event) => {
       if (event === ContactServiceEvent.ContactsChanged) {
-        void fetchContacts()
+        void updateContacts()
       }
     })
-  }, [contactService, fetchContacts])
+  }, [contactService, updateContacts])
 
   useEffect(() => {
-    void fetchVaults()
+    void updateVaults()
     void fetchInvites()
-    void fetchContacts()
-  }, [fetchContacts, fetchVaults, fetchInvites])
+    void updateContacts()
+  }, [updateContacts, updateVaults, fetchInvites])
 
   return (
     <>
