@@ -42,6 +42,8 @@ type CommonPopoverProps = {
   disableMobileFullscreenTakeover?: boolean
   title: string
   portal?: boolean
+  offset?: number
+  hideOnClickInModal?: boolean
 }
 
 export type PopoverContentProps = CommonPopoverProps & {

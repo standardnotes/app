@@ -8,6 +8,7 @@ export const SmartViewIcons: Record<SystemViewId, IconType> = {
   [SystemViewId.TrashedNotes]: 'trash',
   [SystemViewId.UntaggedNotes]: 'hashtag-off',
   [SystemViewId.StarredNotes]: 'star-filled',
+  [SystemViewId.Conflicts]: 'merge',
 }
 
 export function systemViewIcon(id: SystemViewId): IconType {

@@ -123,6 +123,7 @@ export class ItemManager
 
   public setPrimaryItemDisplayOptions(options: Models.DisplayOptions): void {
     const override: Models.FilterDisplayOptions = {}
+    const additionalFilters: Models.ItemFilter[] = []
 
     if (options.views && options.views.find((view) => view.uuid === Models.SystemViewId.AllNotes)) {
       if (options.includeArchived === undefined) {
@@ -141,6 +142,9 @@ export class ItemManager
       if (!options.includeArchived) {
         override.includeArchived = true
       }
+    }
+    if (options.views && options.views.find((view) => view.uuid === Models.SystemViewId.Conflicts)) {
+      additionalFilters.push((item) => this.collection.conflictsOf(item.uuid).length > 0)
     }
 
     this.rebuildSystemSmartViews({ ...options, ...override })
@@ -174,7 +178,7 @@ export class ItemManager
     }
 
     this.navigationDisplayController.setDisplayOptions({
-      customFilter: Models.computeUnifiedFilterForDisplayOptions(updatedOptions, this.collection),
+      customFilter: Models.computeUnifiedFilterForDisplayOptions(updatedOptions, this.collection, additionalFilters),
       ...updatedOptions,
     })
   }
@@ -1409,5 +1413,9 @@ export class ItemManager
         allIds: Uuids(this.collection.all()),
       },
     })
+  }
+
+  numberOfNotesWithConflicts(): number {
+    return this.collection.numberOfItemsWithConflicts()
   }
 }

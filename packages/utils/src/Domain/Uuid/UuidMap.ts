@@ -10,6 +10,14 @@ export class UuidMap {
   /** uuid to uuids that have a relationship with us */
   private inverseMap: Partial<Record<string, string[]>> = {}
 
+  public get directMapSize(): number {
+    return Object.keys(this.directMap).length
+  }
+
+  public get inverseMapSize(): number {
+    return Object.keys(this.inverseMap).length
+  }
+
   public makeCopy(): UuidMap {
     const copy = new UuidMap()
     copy.directMap = Object.assign({}, this.directMap)

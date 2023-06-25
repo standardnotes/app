@@ -1,7 +1,7 @@
 import Icon from '@/Components/Icon/Icon'
 import { FeaturesController } from '@/Controllers/FeaturesController'
 import { NavigationController } from '@/Controllers/Navigation/NavigationController'
-import { SmartView, SystemViewId, isSystemView } from '@standardnotes/snjs'
+import { ContentType, SmartView, SystemViewId, isSystemView } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import {
   FormEventHandler,
@@ -14,6 +14,7 @@ import {
 } from 'react'
 import { classNames } from '@standardnotes/utils'
 import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
+import { useApplication } from '../ApplicationProvider'
 
 type Props = {
   view: SmartView
@@ -34,6 +35,8 @@ const getIconClass = (view: SmartView, isSelected: boolean): string => {
 }
 
 const SmartViewsListItem: FunctionComponent<Props> = ({ view, tagsState, setEditingSmartView }) => {
+  const application = useApplication()
+
   const [title, setTitle] = useState(view.title || '')
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -91,6 +94,22 @@ const SmartViewsListItem: FunctionComponent<Props> = ({ view, tagsState, setEdit
   const isFaded = false
   const iconClass = getIconClass(view, isSelected)
 
+  const [conflictsCount, setConflictsCount] = useState(0)
+
+  useEffect(() => {
+    if (view.uuid !== SystemViewId.Conflicts) {
+      return
+    }
+
+    return application.streamItems(ContentType.Note, () => {
+      setConflictsCount(application.items.numberOfNotesWithConflicts())
+    })
+  }, [application, view])
+
+  if (view.uuid === SystemViewId.Conflicts && !conflictsCount) {
+    return null
+  }
+
   return (
     <>
       <div
@@ -138,6 +157,7 @@ const SmartViewsListItem: FunctionComponent<Props> = ({ view, tagsState, setEdit
           <div className={'count text-base lg:text-sm'}>
             {view.uuid === SystemViewId.AllNotes && tagsState.allNotesCount}
             {view.uuid === SystemViewId.Files && tagsState.allFilesCount}
+            {view.uuid === SystemViewId.Conflicts && conflictsCount}
           </div>
         </div>
 
