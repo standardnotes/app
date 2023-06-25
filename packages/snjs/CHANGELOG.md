@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.169.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.168.20...@standardnotes/snjs@2.169.0) (2023-06-25)
+
+### Features
+
+* Added a conflict resolution dialog and a Conflicts view for easier management of conflicts ([#2337](https://github.com/standardnotes/app/issues/2337)) ([e0e9249](https://github.com/standardnotes/app/commit/e0e92493342b18560e7e55ece22518e738824df0))
+
 ## [2.168.20](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.168.19...@standardnotes/snjs@2.168.20) (2023-06-06)
 
 **Note:** Version bump only for package @standardnotes/snjs

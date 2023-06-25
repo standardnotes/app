@@ -1,6 +1,20 @@
 {
   "versions": [
     {
+      "version": "3.162.0",
+      "title": "[3.162.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.161.3...@standardnotes/web@3.162.0) (2023-06-25)",
+      "date": null,
+      "body": "### Features\n\n* Added a conflict resolution dialog and a Conflicts view for easier management of conflicts ([#2337](https://github.com/standardnotes/app/issues/2337)) ([e0e9249](https://github.com/standardnotes/app/commit/e0e92493342b18560e7e55ece22518e738824df0))",
+      "parsed": {
+        "_": [
+          "Added a conflict resolution dialog and a Conflicts view for easier management of conflicts (#2337) (e0e9249)"
+        ],
+        "Features": [
+          "Added a conflict resolution dialog and a Conflicts view for easier management of conflicts (#2337) (e0e9249)"
+        ]
+      }
+    },
+    {
       "version": "3.161.3",
       "title": "[3.161.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.161.2...@standardnotes/web@3.161.3) (2023-06-23)",
       "date": null,
