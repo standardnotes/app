@@ -103,6 +103,7 @@ const NoteListItem: FunctionComponent<DisplayableListItemProps<SNNote>> = ({
   return (
     <div
       ref={listItemRef}
+      role="button"
       className={classNames(
         'content-list-item flex w-full cursor-pointer items-stretch text-text',
         selected && `selected border-l-2 border-solid border-accessory-tint-${tint}`,
