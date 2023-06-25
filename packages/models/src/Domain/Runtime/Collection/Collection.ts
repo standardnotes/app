@@ -187,7 +187,16 @@ export abstract class Collection<
         const conflictOf = element.content.conflict_of
         if (conflictOf) {
           this.conflictMap.establishRelationship(conflictOf, element.uuid)
-        } else if (this.conflictMap.getInverseRelationships(element.uuid).length > 0) {
+        }
+
+        const isInConflictMapButIsNotConflictOf =
+          !conflictOf && this.conflictMap.getInverseRelationships(element.uuid).length > 0
+
+        const isInConflictMapButDoesNotHaveConflicts =
+          this.conflictMap.existsInDirectMap(element.uuid) &&
+          this.conflictMap.getDirectRelationships(element.uuid).length === 0
+
+        if (isInConflictMapButIsNotConflictOf || isInConflictMapButDoesNotHaveConflicts) {
           this.conflictMap.removeFromMap(element.uuid)
         }
 
@@ -205,7 +214,7 @@ export abstract class Collection<
 
       if (element.deleted) {
         this.nondeletedIndex.delete(element.uuid)
-        if (this.conflictMap.getInverseRelationships(element.uuid).length > 0) {
+        if (this.conflictMap.existsInDirectMap(element.uuid) || this.conflictMap.existsInInverseMap(element.uuid)) {
           this.conflictMap.removeFromMap(element.uuid)
         }
       } else {

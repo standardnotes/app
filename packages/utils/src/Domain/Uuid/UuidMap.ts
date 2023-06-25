@@ -25,6 +25,14 @@ export class UuidMap {
     return copy
   }
 
+  public existsInDirectMap(uuid: string): boolean {
+    return uuid in this.directMap
+  }
+
+  public existsInInverseMap(uuid: string): boolean {
+    return uuid in this.inverseMap
+  }
+
   public getDirectRelationships(uuid: string): string[] {
     return this.directMap[uuid] || []
   }
