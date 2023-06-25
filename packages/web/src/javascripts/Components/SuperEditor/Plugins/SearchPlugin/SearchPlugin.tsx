@@ -1,5 +1,5 @@
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
-import { $getNearestNodeFromDOMNode, TextNode } from 'lexical'
+import { $getNearestNodeFromDOMNode, TextNode, $createRangeSelection, $setSelection, $isTextNode } from 'lexical'
 import { useCallback, useEffect, useLayoutEffect, useMemo } from 'react'
 import { createSearchHighlightElement } from './createSearchHighlightElement'
 import { useSuperSearchContext } from './Context'
@@ -285,11 +285,31 @@ export const SearchPlugin = () => {
     }
   }, [editor])
 
+  const selectCurrentResult = useCallback(() => {
+    if (results.length === 0) {
+      return
+    }
+    const result = results[currentResultIndex]
+    if (!result) {
+      return
+    }
+    editor.update(() => {
+      const rangeSelection = $createRangeSelection()
+      $setSelection(rangeSelection)
+
+      const lexicalNode = $getNearestNodeFromDOMNode(result.node)
+      if ($isTextNode(lexicalNode)) {
+        lexicalNode.select(result.startIndex, result.endIndex)
+      }
+    })
+  }, [currentResultIndex, editor, results])
+
   return (
     <>
       <SearchDialog
         open={isSearchActive}
         closeDialog={() => {
+          selectCurrentResult()
           dispatch({ type: 'toggle-search' })
           dispatch({ type: 'reset-search' })
           editor.focus()
