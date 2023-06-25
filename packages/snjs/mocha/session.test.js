@@ -105,6 +105,28 @@ describe('server session', function () {
     expect(sessionAfterSync.accessToken.expiresAt).to.be.greaterThan(Date.now())
   })
 
+  it('should not deadlock while renewing session', async function () {
+    this.timeout(Factory.TwentySecondTimeout)
+
+    await Factory.registerUserToApplication({
+      application: this.application,
+      email: this.email,
+      password: this.password,
+    })
+
+    await sleepUntilSessionExpires(this.application)
+
+    // Apply a latency simulation so that ` this.inProgressRefreshSessionPromise = this.refreshSession()` does
+    // not have the chance to complete before it is assigned to the variable. This test came along with a fix
+    // where runHttp does not await a pending refreshSession promise if the request being made is itself a refreshSession request.
+    this.application.httpService.__latencySimulatorMs = 1000
+    await this.application.sync.sync(syncOptions)
+
+    const sessionAfterSync = this.application.apiService.getSession()
+
+    expect(sessionAfterSync.accessToken.expiresAt).to.be.greaterThan(Date.now())
+  })
+
   it('should succeed when a sync request is perfomed after signing into an ephemeral session', async function () {
     await Factory.registerUserToApplication({
       application: this.application,
