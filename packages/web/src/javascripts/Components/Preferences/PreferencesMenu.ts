@@ -67,7 +67,7 @@ export class PreferencesMenu {
   }
 
   private loadLatestVersions(): void {
-    PackageProvider.load(this.application)
+    PackageProvider.load()
       .then((versions) => {
         if (versions) {
           this._extensionLatestVersions = versions
