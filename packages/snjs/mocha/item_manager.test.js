@@ -355,7 +355,7 @@ describe('item manager', function () {
   it('find or create tag by title', async function () {
     const title = 'foo'
 
-    expect(await this.itemManager.findOrCreateTagByTitle(title)).to.be.ok
+    expect(await this.itemManager.findOrCreateTagByTitle({ title: title })).to.be.ok
   })
 
   it('note count', async function () {
@@ -441,15 +441,15 @@ describe('item manager', function () {
 
   describe('searchTags', async function () {
     it('should return tag with query matching title', async function () {
-      const tag = await this.itemManager.findOrCreateTagByTitle('tag')
+      const tag = await this.itemManager.findOrCreateTagByTitle({ title: 'tag' })
 
       const results = this.itemManager.searchTags('tag')
       expect(results).lengthOf(1)
       expect(results[0].title).to.equal(tag.title)
     })
     it('should return all tags with query partially matching title', async function () {
-      const firstTag = await this.itemManager.findOrCreateTagByTitle('tag one')
-      const secondTag = await this.itemManager.findOrCreateTagByTitle('tag two')
+      const firstTag = await this.itemManager.findOrCreateTagByTitle({ title: 'tag one' })
+      const secondTag = await this.itemManager.findOrCreateTagByTitle({ title: 'tag two' })
 
       const results = this.itemManager.searchTags('tag')
       expect(results).lengthOf(2)
@@ -457,21 +457,21 @@ describe('item manager', function () {
       expect(results[1].title).to.equal(secondTag.title)
     })
     it('should be case insensitive', async function () {
-      const tag = await this.itemManager.findOrCreateTagByTitle('Tag')
+      const tag = await this.itemManager.findOrCreateTagByTitle({ title: 'Tag' })
 
       const results = this.itemManager.searchTags('tag')
       expect(results).lengthOf(1)
       expect(results[0].title).to.equal(tag.title)
     })
     it('should return tag with query matching delimiter separated component', async function () {
-      const tag = await this.itemManager.findOrCreateTagByTitle('parent.child')
+      const tag = await this.itemManager.findOrCreateTagByTitle({ title: 'parent.child' })
 
       const results = this.itemManager.searchTags('child')
       expect(results).lengthOf(1)
       expect(results[0].title).to.equal(tag.title)
     })
     it('should return tags with matching query including delimiter', async function () {
-      const tag = await this.itemManager.findOrCreateTagByTitle('parent.child')
+      const tag = await this.itemManager.findOrCreateTagByTitle({ title: 'parent.child' })
 
       const results = this.itemManager.searchTags('parent.chi')
       expect(results).lengthOf(1)
@@ -479,10 +479,10 @@ describe('item manager', function () {
     })
 
     it('should return tags in natural order', async function () {
-      const firstTag = await this.itemManager.findOrCreateTagByTitle('tag 100')
-      const secondTag = await this.itemManager.findOrCreateTagByTitle('tag 2')
-      const thirdTag = await this.itemManager.findOrCreateTagByTitle('tag b')
-      const fourthTag = await this.itemManager.findOrCreateTagByTitle('tag a')
+      const firstTag = await this.itemManager.findOrCreateTagByTitle({ title: 'tag 100' })
+      const secondTag = await this.itemManager.findOrCreateTagByTitle({ title: 'tag 2' })
+      const thirdTag = await this.itemManager.findOrCreateTagByTitle({ title: 'tag b' })
+      const fourthTag = await this.itemManager.findOrCreateTagByTitle({ title: 'tag a' })
 
       const results = this.itemManager.searchTags('tag')
       expect(results).lengthOf(4)
@@ -493,8 +493,8 @@ describe('item manager', function () {
     })
 
     it('should not return tags associated with note', async function () {
-      const firstTag = await this.itemManager.findOrCreateTagByTitle('tag one')
-      const secondTag = await this.itemManager.findOrCreateTagByTitle('tag two')
+      const firstTag = await this.itemManager.findOrCreateTagByTitle({ title: 'tag one' })
+      const secondTag = await this.itemManager.findOrCreateTagByTitle({ title: 'tag two' })
 
       const note = await this.createNote()
       await this.itemManager.changeItem(firstTag, (mutator) => {
@@ -556,10 +556,10 @@ describe('item manager', function () {
   describe('getSortedTagsForNote', async function () {
     it('should return tags associated with a note in natural order', async function () {
       const tags = [
-        await this.itemManager.findOrCreateTagByTitle('tag 100'),
-        await this.itemManager.findOrCreateTagByTitle('tag 2'),
-        await this.itemManager.findOrCreateTagByTitle('tag b'),
-        await this.itemManager.findOrCreateTagByTitle('tag a'),
+        await this.itemManager.findOrCreateTagByTitle({ title: 'tag 100' }),
+        await this.itemManager.findOrCreateTagByTitle({ title: 'tag 2' }),
+        await this.itemManager.findOrCreateTagByTitle({ title: 'tag b' }),
+        await this.itemManager.findOrCreateTagByTitle({ title: 'tag a' }),
       ]
 
       const note = await this.createNote()
@@ -583,10 +583,10 @@ describe('item manager', function () {
   describe('getTagParentChain', function () {
     it('should return parent tags for a tag', async function () {
       const [parent, child, grandchild, _other] = await Promise.all([
-        this.itemManager.findOrCreateTagByTitle('parent'),
-        this.itemManager.findOrCreateTagByTitle('parent.child'),
-        this.itemManager.findOrCreateTagByTitle('parent.child.grandchild'),
-        this.itemManager.findOrCreateTagByTitle('some other tag'),
+        this.itemManager.findOrCreateTagByTitle({ title: 'parent' }),
+        this.itemManager.findOrCreateTagByTitle({ title: 'parent.child' }),
+        this.itemManager.findOrCreateTagByTitle({ title: 'parent.child.grandchild' }),
+        this.itemManager.findOrCreateTagByTitle({ title: 'some other tag' }),
       ])
 
       await this.itemManager.setTagParent(parent, child)

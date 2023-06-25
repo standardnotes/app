@@ -19,6 +19,7 @@ import {
   DecryptedPayload,
   NotesAndFilesDisplayControllerOptions,
   VaultDisplayOptions,
+  VaultListingInterface,
 } from '@standardnotes/models'
 
 export interface ItemsClientInterface {
@@ -165,9 +166,10 @@ export interface ItemsClientInterface {
    */
   isTemplateItem(item: DecryptedItemInterface): boolean
 
-  createSmartView<T extends DecryptedItemInterface<ItemContent>>(
-    title: string,
-    predicate: PredicateInterface<T>,
-    iconString?: string,
-  ): Promise<SmartView>
+  createSmartView<T extends DecryptedItemInterface>(dto: {
+    title: string
+    predicate: PredicateInterface<T>
+    iconString?: string
+    vault?: VaultListingInterface
+  }): Promise<SmartView>
 }

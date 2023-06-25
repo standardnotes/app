@@ -23,7 +23,7 @@ import {
   InternalEventHandlerInterface,
   InternalEventInterface,
 } from '@standardnotes/snjs'
-import { action, computed, makeAutoObservable, makeObservable, observable, reaction, runInAction } from 'mobx'
+import { action, computed, makeObservable, observable, reaction, runInAction } from 'mobx'
 import { WebApplication } from '../../Application/WebApplication'
 import { FeaturesController } from '../FeaturesController'
 import { destroyAllObjectProperties } from '@/Utils'
@@ -34,6 +34,7 @@ import { AbstractViewController } from '../Abstract/AbstractViewController'
 import { Persistable } from '../Abstract/Persistable'
 import { TagListSectionType } from '@/Components/Tags/TagListSection'
 import { PaneLayout } from '../PaneController/PaneLayout'
+import { TagsCountsState } from './TagsCountsState'
 
 export class NavigationController
   extends AbstractViewController
@@ -255,7 +256,10 @@ export class NavigationController
       return
     }
 
-    const createdTag = (await this.application.mutator.createTagOrSmartView(title)) as SNTag
+    const createdTag = await this.application.mutator.createTagOrSmartView<SNTag>(
+      title,
+      this.application.vaultDisplayService.exclusivelyShownVault,
+    )
 
     const futureSiblings = this.application.items.getTagChildren(parent)
 
@@ -658,36 +662,18 @@ export class NavigationController
         }
       }
 
-      const insertedTag = await this.application.mutator.createTagOrSmartView(newTitle)
+      const insertedTag = await this.application.mutator.createTagOrSmartView<SNTag>(
+        newTitle,
+        this.application.vaultDisplayService.exclusivelyShownVault,
+      )
       this.application.sync.sync().catch(console.error)
       runInAction(() => {
-        void this.setSelectedTag(insertedTag as SNTag, this.selectedLocation || 'views')
+        void this.setSelectedTag(insertedTag, this.selectedLocation || 'views')
       })
     } else {
       await this.application.mutator.changeAndSaveItem<TagMutator>(tag, (mutator) => {
         mutator.title = newTitle
       })
     }
-  }
-}
-
-class TagsCountsState {
-  public counts: { [uuid: string]: number } = {}
-
-  public constructor(private application: WebApplication) {
-    makeAutoObservable(this, {
-      counts: observable.ref,
-      update: action,
-    })
-  }
-
-  public update(tags: SNTag[]) {
-    const newCounts: { [uuid: string]: number } = Object.assign({}, this.counts)
-
-    tags.forEach((tag) => {
-      newCounts[tag.uuid] = this.application.items.countableNotesForTag(tag)
-    })
-
-    this.counts = newCounts
   }
 }

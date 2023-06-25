@@ -45,6 +45,7 @@ import {
   SNNote,
   SNTag,
   TransactionalMutation,
+  VaultListingInterface,
 } from '@standardnotes/models'
 
 export class MutatorService extends AbstractService implements MutatorClientInterface {
@@ -281,13 +282,16 @@ export class MutatorService extends AbstractService implements MutatorClientInte
     await this.itemManager.unsetTagParent(childTag)
   }
 
-  public async findOrCreateTag(title: string): Promise<SNTag> {
-    return this.itemManager.findOrCreateTagByTitle(title)
+  public async findOrCreateTag(title: string, createInVault?: VaultListingInterface): Promise<SNTag> {
+    return this.itemManager.findOrCreateTagByTitle({ title, createInVault })
   }
 
   /** Creates and returns the tag but does not run sync. Callers must perform sync. */
-  public async createTagOrSmartView(title: string): Promise<SNTag | SmartView> {
-    return this.itemManager.createTagOrSmartView(title)
+  public async createTagOrSmartView<T extends SNTag | SmartView>(
+    title: string,
+    vault?: VaultListingInterface,
+  ): Promise<T> {
+    return this.itemManager.createTagOrSmartView(title, vault)
   }
 
   public async toggleComponent(component: SNComponent): Promise<void> {

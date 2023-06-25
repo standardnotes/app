@@ -26,6 +26,7 @@ export interface ApplicationInterface {
   isStarted(): boolean
   isLaunched(): boolean
   addEventObserver(callback: ApplicationEventCallback, singleEvent?: ApplicationEvent): () => void
+  addSingleEventObserver(event: ApplicationEvent, callback: ApplicationEventCallback): () => void
   hasProtectionSources(): boolean
   createEncryptedBackupFileForAutomatedDesktopBackups(): Promise<BackupFile | undefined>
   createEncryptedBackupFile(): Promise<BackupFile | undefined>

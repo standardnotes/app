@@ -190,6 +190,9 @@ export class ItemManager
   public setVaultDisplayOptions(options: Models.VaultDisplayOptions): void {
     this.navigationDisplayController.setVaultDisplayOptions(options)
     this.tagDisplayController.setVaultDisplayOptions(options)
+    this.smartViewDisplayController.setVaultDisplayOptions(options)
+    this.fileDisplayController.setVaultDisplayOptions(options)
+
     this.itemCounter.setVaultDisplayOptions(options)
   }
 
@@ -804,9 +807,8 @@ export class ItemManager
       uuid: UuidGenerator.GenerateUuid(),
       content_type: contentType,
       content: Models.FillItemContent<C>(content),
-      key_system_identifier: vault?.systemIdentifier,
-      shared_vault_uuid: vault && vault.isSharedVaultListing() ? vault.sharing.sharedVaultUuid : undefined,
       dirty: needsSync,
+      ...Models.PayloadVaultOverrides(vault),
       ...Models.PayloadTimestampDefaults(),
     })
 
@@ -1040,7 +1042,7 @@ export class ItemManager
     let current: Models.SNTag | undefined = undefined
 
     for (const title of titlesHierarchy) {
-      current = await this.findOrCreateTagByTitle(title, current)
+      current = await this.findOrCreateTagByTitle({ title, parentItemToLookupUuidFor: current })
     }
 
     if (!current) {
@@ -1219,15 +1221,20 @@ export class ItemManager
     )
   }
 
-  public async createTag(title: string, parentItemToLookupUuidFor?: Models.SNTag): Promise<Models.SNTag> {
+  public async createTag(dto: {
+    title: string
+    parentItemToLookupUuidFor?: Models.SNTag
+    createInVault?: Models.VaultListingInterface
+  }): Promise<Models.SNTag> {
     const newTag = await this.createItem<Models.SNTag>(
       ContentType.Tag,
-      Models.FillItemContent<Models.TagContent>({ title }),
+      Models.FillItemContent<Models.TagContent>({ title: dto.title }),
       true,
+      dto.createInVault,
     )
 
-    if (parentItemToLookupUuidFor) {
-      const parentTag = this.findItem<Models.SNTag>(parentItemToLookupUuidFor.uuid)
+    if (dto.parentItemToLookupUuidFor) {
+      const parentTag = this.findItem<Models.SNTag>(dto.parentItemToLookupUuidFor.uuid)
       if (!parentTag) {
         throw new Error('Invalid parent tag')
       }
@@ -1239,23 +1246,28 @@ export class ItemManager
     return newTag
   }
 
-  public async createSmartView<T extends Models.DecryptedItemInterface>(
-    title: string,
-    predicate: Models.PredicateInterface<T>,
-    iconString?: string,
-  ): Promise<Models.SmartView> {
+  public async createSmartView<T extends Models.DecryptedItemInterface>(dto: {
+    title: string
+    predicate: Models.PredicateInterface<T>
+    iconString?: string
+    vault?: Models.VaultListingInterface
+  }): Promise<Models.SmartView> {
     return this.createItem(
       ContentType.SmartView,
       Models.FillItemContent({
-        title,
-        predicate: predicate.toJson(),
-        iconString: iconString || Models.SmartViewDefaultIconName,
+        title: dto.title,
+        predicate: dto.predicate.toJson(),
+        iconString: dto.iconString || Models.SmartViewDefaultIconName,
       } as Models.SmartViewContent),
       true,
+      dto.vault,
     ) as Promise<Models.SmartView>
   }
 
-  public async createSmartViewFromDSL<T extends Models.DecryptedItemInterface>(dsl: string): Promise<Models.SmartView> {
+  public async createSmartViewFromDSL<T extends Models.DecryptedItemInterface>(
+    dsl: string,
+    vault?: Models.VaultListingInterface,
+  ): Promise<Models.SmartView> {
     let components = null
     try {
       components = JSON.parse(dsl.substring(1, dsl.length))
@@ -1265,14 +1277,17 @@ export class ItemManager
 
     const title = components[0]
     const predicate = Models.predicateFromDSLString<T>(dsl)
-    return this.createSmartView(title, predicate)
+    return this.createSmartView({ title, predicate, vault })
   }
 
-  public async createTagOrSmartView(title: string): Promise<Models.SNTag | Models.SmartView> {
+  public async createTagOrSmartView<T extends Models.SNTag | Models.SmartView>(
+    title: string,
+    vault?: Models.VaultListingInterface,
+  ): Promise<T> {
     if (this.isSmartViewTitle(title)) {
-      return this.createSmartViewFromDSL(title)
+      return this.createSmartViewFromDSL(title, vault) as Promise<T>
     } else {
-      return this.createTag(title)
+      return this.createTag({ title, createInVault: vault }) as Promise<T>
     }
   }
 
@@ -1280,12 +1295,13 @@ export class ItemManager
     return title.startsWith(Models.SMART_TAG_DSL_PREFIX)
   }
 
-  /**
-   * Finds or creates a tag with a given title
-   */
-  public async findOrCreateTagByTitle(title: string, parentItemToLookupUuidFor?: Models.SNTag): Promise<Models.SNTag> {
-    const tag = this.findTagByTitleAndParent(title, parentItemToLookupUuidFor)
-    return tag || this.createTag(title, parentItemToLookupUuidFor)
+  public async findOrCreateTagByTitle(dto: {
+    title: string
+    parentItemToLookupUuidFor?: Models.SNTag
+    createInVault?: Models.VaultListingInterface
+  }): Promise<Models.SNTag> {
+    const tag = this.findTagByTitleAndParent(dto.title, dto.parentItemToLookupUuidFor)
+    return tag || this.createTag(dto)
   }
 
   public notesMatchingSmartView(view: Models.SmartView): Models.SNNote[] {

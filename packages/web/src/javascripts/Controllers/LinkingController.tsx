@@ -1,4 +1,3 @@
-import { WebApplication } from '@/Application/WebApplication'
 import { FileItemActionType } from '@/Components/AttachedFilesPopover/PopoverFileItemAction'
 import { NoteViewController } from '@/Components/NoteView/Controller/NoteViewController'
 import { AppPaneId } from '@/Components/Panes/AppPaneMetadata'
@@ -25,6 +24,7 @@ import { ItemListController } from './ItemList/ItemListController'
 import { NavigationController } from './Navigation/NavigationController'
 import { SelectedItemsController } from './SelectedItemsController'
 import { SubscriptionController } from './Subscription/SubscriptionController'
+import { WebApplication } from '@/Application/WebApplication'
 
 export class LinkingController extends AbstractViewController {
   shouldLinkToParentFolders: boolean
@@ -248,8 +248,12 @@ export class LinkingController extends AbstractViewController {
 
   createAndAddNewTag = async (title: string): Promise<SNTag> => {
     await this.ensureActiveItemIsInserted()
+
+    const vault = this.application.vaultDisplayService.exclusivelyShownVault
+
+    const newTag = await this.application.mutator.findOrCreateTag(title, vault)
+
     const activeItem = this.activeItem
-    const newTag = await this.application.mutator.findOrCreateTag(title)
     if (activeItem) {
       await this.addTagToItem(newTag, activeItem)
     }

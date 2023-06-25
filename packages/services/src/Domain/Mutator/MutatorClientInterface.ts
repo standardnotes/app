@@ -13,6 +13,7 @@ import {
   SNNote,
   SNTag,
   TransactionalMutation,
+  VaultListingInterface,
 } from '@standardnotes/models'
 import { ClientDisplayableError } from '@standardnotes/responses'
 
@@ -153,10 +154,10 @@ export interface MutatorClientInterface {
    */
   unsetTagParent(childTag: SNTag): Promise<void>
 
-  findOrCreateTag(title: string): Promise<SNTag>
+  findOrCreateTag(title: string, createInVault?: VaultListingInterface): Promise<SNTag>
 
   /** Creates and returns the tag but does not run sync. Callers must perform sync. */
-  createTagOrSmartView(title: string): Promise<SNTag | SmartView>
+  createTagOrSmartView<T extends SNTag | SmartView>(title: string, vault?: VaultListingInterface): Promise<T>
 
   /**
    * Activates or deactivates a component, depending on its

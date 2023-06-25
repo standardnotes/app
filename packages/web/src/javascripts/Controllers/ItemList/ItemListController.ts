@@ -20,10 +20,6 @@ import {
   isFile,
   isSmartView,
   isSystemView,
-  StorageKey,
-  VaultListingInterface,
-  VaultDisplayOptions,
-  VaultDisplayOptionsPersistable,
   NotesAndFilesDisplayControllerOptions,
   InternalEventBusInterface,
 } from '@standardnotes/snjs'
@@ -515,20 +511,6 @@ export class ItemListController extends AbstractViewController implements Intern
     this.application.items.setPrimaryItemDisplayOptions(criteria)
   }
 
-  getVaultSelectionOptionsFromDisk = (): VaultDisplayOptions | undefined => {
-    if (!this.application.isLaunched()) {
-      return undefined
-    }
-
-    const raw = this.application.getValue<VaultDisplayOptionsPersistable>(StorageKey.VaultSelectionOptions)
-    if (!raw) {
-      return undefined
-    }
-
-    const vaults = this.application.items.getItems<VaultListingInterface>(ContentType.VaultListing)
-    return VaultDisplayOptions.FromPersistableValue(raw, vaults)
-  }
-
   reloadDisplayPreferences = async ({
     userTriggered,
   }: {
@@ -654,6 +636,7 @@ export class ItemListController extends AbstractViewController implements Intern
         tag: activeRegularTagUuid,
         createdAt,
         autofocusBehavior,
+        vault: this.application.vaultDisplayService.exclusivelyShownVault,
       },
     })
   }

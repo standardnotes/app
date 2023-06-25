@@ -276,10 +276,10 @@ describe('itemManager', () => {
       await itemManager.insertItems([parent, child])
       await itemManager.setTagParent(parent, child)
 
-      const childA = await itemManager.findOrCreateTagByTitle('child')
-      const childB = await itemManager.findOrCreateTagByTitle('child', parent)
-      const childC = await itemManager.findOrCreateTagByTitle('child-bis', parent)
-      const childD = await itemManager.findOrCreateTagByTitle('child-bis', parent)
+      const childA = await itemManager.findOrCreateTagByTitle({ title: 'child' })
+      const childB = await itemManager.findOrCreateTagByTitle({ title: 'child', parentItemToLookupUuidFor: parent })
+      const childC = await itemManager.findOrCreateTagByTitle({ title: 'child-bis', parentItemToLookupUuidFor: parent })
+      const childD = await itemManager.findOrCreateTagByTitle({ title: 'child-bis', parentItemToLookupUuidFor: parent })
 
       expect(childA.uuid).not.toEqual(child.uuid)
       expect(childB.uuid).toEqual(child.uuid)
@@ -448,7 +448,7 @@ describe('itemManager', () => {
       itemManager = createService()
       setupRandomUuid()
 
-      const tag = await itemManager.createTag('this is my new tag')
+      const tag = await itemManager.createTag({ title: 'this is my new tag' })
 
       expect(tag).toBeTruthy()
       expect(itemManager.isTemplateItem(tag)).toEqual(false)
@@ -458,13 +458,13 @@ describe('itemManager', () => {
       itemManager = createService()
       setupRandomUuid()
 
-      const foo = await itemManager.createTag('foo[')
-      const foobar = await itemManager.createTag('foo[bar]')
-      const bar = await itemManager.createTag('bar[')
-      const barfoo = await itemManager.createTag('bar[foo]')
-      const fooDelimiter = await itemManager.createTag('bar.foo')
-      const barFooDelimiter = await itemManager.createTag('baz.bar.foo')
-      const fooAttached = await itemManager.createTag('Foo')
+      const foo = await itemManager.createTag({ title: 'foo[' })
+      const foobar = await itemManager.createTag({ title: 'foo[bar]' })
+      const bar = await itemManager.createTag({ title: 'bar[' })
+      const barfoo = await itemManager.createTag({ title: 'bar[foo]' })
+      const fooDelimiter = await itemManager.createTag({ title: 'bar.foo' })
+      const barFooDelimiter = await itemManager.createTag({ title: 'baz.bar.foo' })
+      const fooAttached = await itemManager.createTag({ title: 'Foo' })
       const note = createNoteWithTitle('note')
       await itemManager.insertItems([foo, foobar, bar, barfoo, fooDelimiter, barFooDelimiter, fooAttached, note])
       await itemManager.addTagToNote(note, fooAttached, false)
@@ -539,9 +539,9 @@ describe('itemManager', () => {
       setupRandomUuid()
 
       const [view1, view2, view3] = await Promise.all([
-        itemManager.createSmartView('Not Pinned', NotPinnedPredicate),
-        itemManager.createSmartView('Last Day', LastDayPredicate),
-        itemManager.createSmartView('Long', LongTextPredicate),
+        itemManager.createSmartView({ title: 'Not Pinned', predicate: NotPinnedPredicate }),
+        itemManager.createSmartView({ title: 'Last Day', predicate: LastDayPredicate }),
+        itemManager.createSmartView({ title: 'Long', predicate: LongTextPredicate }),
       ])
 
       expect(view1).toBeTruthy()
@@ -557,7 +557,7 @@ describe('itemManager', () => {
       itemManager = createService()
       setupRandomUuid()
 
-      const view = await itemManager.createSmartView('Not Pinned', NotPinnedPredicate)
+      const view = await itemManager.createSmartView({ title: 'Not Pinned', predicate: NotPinnedPredicate })
 
       const notes = itemManager.notesMatchingSmartView(view)
 
@@ -611,7 +611,7 @@ describe('itemManager', () => {
     itemManager = createService()
     setupRandomUuid()
 
-    const tag = await itemManager.createSmartView('Not Pinned', NotPinnedPredicate)
+    const tag = await itemManager.createSmartView({ title: 'Not Pinned', predicate: NotPinnedPredicate })
 
     await itemManager.changeItem<Models.TagMutator>(tag, (m) => {
       m.title = 'New Title'
@@ -628,7 +628,7 @@ describe('itemManager', () => {
     itemManager = createService()
     setupRandomUuid()
 
-    const tag = await itemManager.createSmartView('Not Pinned', NotPinnedPredicate)
+    const tag = await itemManager.createSmartView({ title: 'Not Pinned', predicate: NotPinnedPredicate })
 
     const view = itemManager.findItem(tag.uuid) as Models.SmartView
 

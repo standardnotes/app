@@ -1,6 +1,14 @@
 import { WebApplication } from '@/Application/WebApplication'
 import { noteTypeForEditorIdentifier } from '@standardnotes/features'
-import { SNNote, SNTag, NoteContent, DecryptedItemInterface, PayloadEmitSource, PrefKey } from '@standardnotes/models'
+import {
+  SNNote,
+  SNTag,
+  NoteContent,
+  DecryptedItemInterface,
+  PayloadEmitSource,
+  PrefKey,
+  PayloadVaultOverrides,
+} from '@standardnotes/models'
 import { UuidString } from '@standardnotes/snjs'
 import { removeFromArray } from '@standardnotes/utils'
 import { ContentType } from '@standardnotes/common'
@@ -101,6 +109,7 @@ export class NoteViewController implements ItemViewControllerInterface {
         },
         {
           created_at: this.templateNoteOptions?.createdAt || new Date(),
+          ...PayloadVaultOverrides(this.templateNoteOptions?.vault),
         },
       )
 
