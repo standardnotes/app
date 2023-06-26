@@ -216,7 +216,7 @@ function starredNotesPredicate(options: NotesAndFilesDisplayOptions) {
   return predicate
 }
 
-function conflictsPredicate(options: FilterDisplayOptions) {
+function conflictsPredicate(options: NotesAndFilesDisplayOptions) {
   const subPredicates: Predicate<SNNote>[] = [new Predicate('content_type', '=', ContentType.Note)]
 
   if (options.includeTrashed === false) {
