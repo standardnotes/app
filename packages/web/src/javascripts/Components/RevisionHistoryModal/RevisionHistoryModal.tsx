@@ -9,7 +9,6 @@ import { useModalAnimation } from '../Modal/useModalAnimation'
 const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> = ({
   application,
   historyModalController,
-  notesController,
   selectionController,
   subscriptionController,
 }) => {
@@ -49,7 +48,6 @@ const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> = ({
           application={application}
           dismissModal={historyModalController.dismissModal}
           note={historyModalController.note}
-          notesController={notesController}
           selectionController={selectionController}
           subscriptionController={subscriptionController}
         />

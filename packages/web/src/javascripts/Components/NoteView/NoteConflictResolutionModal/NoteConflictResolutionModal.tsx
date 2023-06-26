@@ -24,7 +24,7 @@ import Spinner from '../../Spinner/Spinner'
 import Switch from '../../Switch/Switch'
 import StyledTooltip from '../../StyledTooltip/StyledTooltip'
 import { DiffView } from './DiffView'
-import { NoteContent } from './NoteContent'
+import { ReadonlyNoteContent } from '../ReadonlyNoteContent'
 import { ConflictListItem } from './ConflictListItem'
 
 type ConflictAction = 'move-to-trash' | 'delete-permanently'
@@ -315,8 +315,9 @@ const NoteConflictResolutionModal = ({
             style={!isMobileScreen ? { gridTemplateColumns: `repeat(${selectedNotes.length}, 1fr)` } : undefined}
           >
             {selectedNotes.map((note) => (
-              <NoteContent
+              <ReadonlyNoteContent
                 note={note}
+                content={note.content}
                 key={note.uuid}
                 scrollPos={comparisonScrollPos}
                 shouldSyncScroll={shouldSyncComparisonScroll}
