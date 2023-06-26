@@ -524,6 +524,7 @@ export class AppContext {
 
   async deleteItemAndSync(item) {
     await this.application.mutator.deleteItem(item)
+    await this.sync()
   }
 
   async changeNoteTitle(note, title) {

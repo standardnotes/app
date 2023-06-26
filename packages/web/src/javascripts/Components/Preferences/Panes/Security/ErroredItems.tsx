@@ -44,7 +44,9 @@ const ErroredItems: FunctionComponent<Props> = ({ viewControllerManager }: Props
       return
     }
 
-    void app.mutator.deleteItems(items)
+    void app.mutator.deleteItems(items).then(() => {
+      void app.sync.sync()
+    })
 
     setErroredItems(app.items.invalidItems)
   }

@@ -1,7 +1,6 @@
 import { SyncServiceInterface } from './../../Sync/SyncServiceInterface'
 import { EncryptionProviderInterface } from '@standardnotes/encryption'
 import { UuidGenerator } from '@standardnotes/utils'
-import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
 import {
   KeySystemRootKeyParamsInterface,
   KeySystemRootKeyPasswordType,
@@ -12,10 +11,11 @@ import {
   KeySystemRootKeyInterface,
 } from '@standardnotes/models'
 import { ContentType } from '@standardnotes/common'
+import { MutatorClientInterface } from '../../Mutator/MutatorClientInterface'
 
 export class CreateVaultUseCase {
   constructor(
-    private items: ItemManagerInterface,
+    private mutator: MutatorClientInterface,
     private encryption: EncryptionProviderInterface,
     private sync: SyncServiceInterface,
   ) {}
@@ -70,7 +70,7 @@ export class CreateVaultUseCase {
       description: dto.vaultDescription,
     }
 
-    return this.items.createItem(ContentType.VaultListing, FillItemContentSpecialized(content), true)
+    return this.mutator.createItem(ContentType.VaultListing, FillItemContentSpecialized(content), true)
   }
 
   private async createKeySystemItemsKey(keySystemIdentifier: string, rootKeyToken: string): Promise<void> {
@@ -81,7 +81,7 @@ export class CreateVaultUseCase {
       rootKeyToken,
     )
 
-    await this.items.insertItem(keySystemItemsKey)
+    await this.mutator.insertItem(keySystemItemsKey)
   }
 
   private async createKeySystemRootKey(dto: {
@@ -105,7 +105,7 @@ export class CreateVaultUseCase {
     }
 
     if (dto.storagePreference === KeySystemRootKeyStorageMode.Synced) {
-      await this.items.insertItem(newRootKey, true)
+      await this.mutator.insertItem(newRootKey, true)
     } else {
       this.encryption.keys.intakeNonPersistentKeySystemRootKey(newRootKey, dto.storagePreference)
     }

@@ -1,3 +1,4 @@
+import { MutatorClientInterface } from './../Mutator/MutatorClientInterface'
 import { StorageServiceInterface } from './../Storage/StorageServiceInterface'
 import { InviteContactToSharedVaultUseCase } from './UseCase/InviteContactToSharedVault'
 import {
@@ -79,6 +80,7 @@ export class SharedVaultService
     http: HttpServiceInterface,
     private sync: SyncServiceInterface,
     private items: ItemManagerInterface,
+    private mutator: MutatorClientInterface,
     private encryption: EncryptionProviderInterface,
     private session: SessionsClientInterface,
     private contacts: ContactServiceInterface,
@@ -143,7 +145,13 @@ export class SharedVaultService
     if (event.eventPayload.eventType === UserEventType.RemovedFromSharedVault) {
       const vault = new GetVaultUseCase(this.items).execute({ sharedVaultUuid: event.eventPayload.sharedVaultUuid })
       if (vault) {
-        const useCase = new DeleteExternalSharedVaultUseCase(this.items, this.encryption, this.storage, this.sync)
+        const useCase = new DeleteExternalSharedVaultUseCase(
+          this.items,
+          this.mutator,
+          this.encryption,
+          this.storage,
+          this.sync,
+        )
         await useCase.execute(vault)
       }
     } else if (event.eventPayload.eventType === UserEventType.SharedVaultItemRemoved) {
@@ -180,7 +188,14 @@ export class SharedVaultService
     userInputtedPassword: string | undefined
     storagePreference?: KeySystemRootKeyStorageMode
   }): Promise<VaultListingInterface | ClientDisplayableError> {
-    const usecase = new CreateSharedVaultUseCase(this.encryption, this.items, this.sync, this.files, this.server)
+    const usecase = new CreateSharedVaultUseCase(
+      this.encryption,
+      this.items,
+      this.mutator,
+      this.sync,
+      this.files,
+      this.server,
+    )
 
     return usecase.execute({
       vaultName: dto.name,
@@ -193,7 +208,7 @@ export class SharedVaultService
   async convertVaultToSharedVault(
     vault: VaultListingInterface,
   ): Promise<SharedVaultListingInterface | ClientDisplayableError> {
-    const usecase = new ConvertToSharedVaultUseCase(this.items, this.sync, this.files, this.server)
+    const usecase = new ConvertToSharedVaultUseCase(this.items, this.mutator, this.sync, this.files, this.server)
 
     return usecase.execute({ vault })
   }
@@ -308,7 +323,7 @@ export class SharedVaultService
   }
 
   public async deleteSharedVault(sharedVault: SharedVaultListingInterface): Promise<ClientDisplayableError | void> {
-    const useCase = new DeleteSharedVaultUseCase(this.server, this.items, this.sync, this.encryption)
+    const useCase = new DeleteSharedVaultUseCase(this.server, this.items, this.mutator, this.sync, this.encryption)
     return useCase.execute({ sharedVault })
   }
 
@@ -393,7 +408,7 @@ export class SharedVaultService
       throw new Error('Cannot accept untrusted invite')
     }
 
-    const useCase = new AcceptTrustedSharedVaultInvite(this.invitesServer, this.items, this.sync, this.contacts)
+    const useCase = new AcceptTrustedSharedVaultInvite(this.invitesServer, this.mutator, this.sync, this.contacts)
     await useCase.execute({ invite: pendingInvite.invite, message: pendingInvite.message })
 
     delete this.pendingInvites[pendingInvite.invite.uuid]
@@ -483,7 +498,14 @@ export class SharedVaultService
   }
 
   async leaveSharedVault(sharedVault: SharedVaultListingInterface): Promise<ClientDisplayableError | void> {
-    const useCase = new LeaveVaultUseCase(this.usersServer, this.items, this.encryption, this.storage, this.sync)
+    const useCase = new LeaveVaultUseCase(
+      this.usersServer,
+      this.items,
+      this.mutator,
+      this.encryption,
+      this.storage,
+      this.sync,
+    )
     const result = await useCase.execute({
       sharedVault: sharedVault,
       userUuid: this.session.getSureUser().uuid,

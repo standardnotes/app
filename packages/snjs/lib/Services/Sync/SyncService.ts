@@ -3,6 +3,7 @@ import { log, LoggingDomain } from './../../Logging'
 import { AccountSyncOperation } from '@Lib/Services/Sync/Account/Operation'
 import { ContentType } from '@standardnotes/common'
 import {
+  Uuids,
   extendArray,
   isNotUndefined,
   isNullOrUndefined,
@@ -58,6 +59,9 @@ import {
   KeySystemItemsKeyContent,
   KeySystemItemsKeyInterface,
   FullyFormedTransferPayload,
+  ItemMutator,
+  isDecryptedOrDeletedItem,
+  MutationType,
 } from '@standardnotes/models'
 import {
   AbstractService,
@@ -654,10 +658,39 @@ export class SNSyncService
      * Setting this value means the item was 100% sent to the server.
      */
     if (items.length > 0) {
-      return this.itemManager.setLastSyncBeganForItems(items, beginDate, frozenDirtyIndex)
+      return this.setLastSyncBeganForItems(items, beginDate, frozenDirtyIndex)
     } else {
       return items
     }
+  }
+
+  private async setLastSyncBeganForItems(
+    itemsToLookupUuidsFor: (DecryptedItemInterface | DeletedItemInterface)[],
+    date: Date,
+    globalDirtyIndex: number,
+  ): Promise<(DecryptedItemInterface | DeletedItemInterface)[]> {
+    const uuids = Uuids(itemsToLookupUuidsFor)
+
+    const items = this.itemManager.getCollection().findAll(uuids).filter(isDecryptedOrDeletedItem)
+
+    const payloads: (DecryptedPayloadInterface | DeletedPayloadInterface)[] = []
+
+    for (const item of items) {
+      const mutator = new ItemMutator<DecryptedPayloadInterface | DeletedPayloadInterface>(
+        item,
+        MutationType.NonDirtying,
+      )
+
+      mutator.setBeginSync(date, globalDirtyIndex)
+
+      const payload = mutator.getResult()
+
+      payloads.push(payload)
+    }
+
+    await this.payloadManager.emitPayloads(payloads, PayloadEmitSource.PreSyncSave)
+
+    return this.itemManager.findAnyItems(uuids) as (DecryptedItemInterface | DeletedItemInterface)[]
   }
 
   /**

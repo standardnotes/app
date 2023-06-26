@@ -1,7 +1,18 @@
+import { SyncOptions } from './../Sync/SyncOptions'
+import { ImportDataReturnType } from './../Mutator/ImportDataUseCase'
 import { ChallengeServiceInterface } from './../Challenge/ChallengeServiceInterface'
 import { VaultServiceInterface } from './../Vaults/VaultServiceInterface'
 import { ApplicationIdentifier, ContentType } from '@standardnotes/common'
-import { BackupFile, DecryptedItemInterface, ItemStream, Platform, PrefKey, PrefValue } from '@standardnotes/models'
+import {
+  BackupFile,
+  DecryptedItemInterface,
+  DecryptedItemMutator,
+  ItemStream,
+  PayloadEmitSource,
+  Platform,
+  PrefKey,
+  PrefValue,
+} from '@standardnotes/models'
 import { BackupServiceInterface, FilesClientInterface } from '@standardnotes/files'
 
 import { AlertService } from '../Alert/AlertService'
@@ -11,7 +22,7 @@ import { ApplicationEventCallback } from '../Event/ApplicationEventCallback'
 import { FeaturesClientInterface } from '../Feature/FeaturesClientInterface'
 import { SubscriptionClientInterface } from '../Subscription/SubscriptionClientInterface'
 import { DeviceInterface } from '../Device/DeviceInterface'
-import { ItemsClientInterface } from '../Item/ItemsClientInterface'
+import { ItemManagerInterface } from '../Item/ItemManagerInterface'
 import { MutatorClientInterface } from '../Mutator/MutatorClientInterface'
 import { StorageValueModes } from '../Storage/StorageTypes'
 
@@ -47,9 +58,33 @@ export interface ApplicationInterface {
     stream: ItemStream<I>,
   ): () => void
   hasAccount(): boolean
+
+  importData(data: BackupFile, awaitSync?: boolean): Promise<ImportDataReturnType>
+  /**
+   * Mutates a pre-existing item, marks it as dirty, and syncs it
+   */
+  changeAndSaveItem<M extends DecryptedItemMutator = DecryptedItemMutator>(
+    itemToLookupUuidFor: DecryptedItemInterface,
+    mutate: (mutator: M) => void,
+    updateTimestamps?: boolean,
+    emitSource?: PayloadEmitSource,
+    syncOptions?: SyncOptions,
+  ): Promise<DecryptedItemInterface | undefined>
+
+  /**
+   * Mutates pre-existing items, marks them as dirty, and syncs
+   */
+  changeAndSaveItems<M extends DecryptedItemMutator = DecryptedItemMutator>(
+    itemsToLookupUuidsFor: DecryptedItemInterface[],
+    mutate: (mutator: M) => void,
+    updateTimestamps?: boolean,
+    emitSource?: PayloadEmitSource,
+    syncOptions?: SyncOptions,
+  ): Promise<void>
+
   get features(): FeaturesClientInterface
   get componentManager(): ComponentManagerInterface
-  get items(): ItemsClientInterface
+  get items(): ItemManagerInterface
   get mutator(): MutatorClientInterface
   get user(): UserClientInterface
   get files(): FilesClientInterface

@@ -53,6 +53,7 @@ const PackagesPreferencesSection: FunctionComponent<Props> = ({
       .then(async (shouldRemove: boolean) => {
         if (shouldRemove) {
           await application.mutator.deleteItem(extension)
+          await application.sync.sync()
           setExtensions(loadExtensions(application))
         }
       })

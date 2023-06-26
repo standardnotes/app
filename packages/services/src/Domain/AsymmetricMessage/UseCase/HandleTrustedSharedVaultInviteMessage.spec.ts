@@ -1,3 +1,4 @@
+import { MutatorClientInterface } from './../../Mutator/MutatorClientInterface'
 import { HandleTrustedSharedVaultInviteMessage } from './HandleTrustedSharedVaultInviteMessage'
 import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
 import { SyncServiceInterface } from '../../Sync/SyncServiceInterface'
@@ -10,12 +11,12 @@ import {
 } from '@standardnotes/models'
 
 describe('HandleTrustedSharedVaultInviteMessage', () => {
-  let itemsMock: jest.Mocked<ItemManagerInterface>
+  let mutatorMock: jest.Mocked<MutatorClientInterface>
   let syncServiceMock: jest.Mocked<SyncServiceInterface>
   let contactServiceMock: jest.Mocked<ContactServiceInterface>
 
   beforeEach(() => {
-    itemsMock = {
+    mutatorMock = {
       createItem: jest.fn(),
     } as any
 
@@ -30,7 +31,7 @@ describe('HandleTrustedSharedVaultInviteMessage', () => {
 
   it('should create root key before creating vault listing so that propagated vault listings do not appear as locked', async () => {
     const handleTrustedSharedVaultInviteMessage = new HandleTrustedSharedVaultInviteMessage(
-      itemsMock,
+      mutatorMock,
       syncServiceMock,
       contactServiceMock,
     )
@@ -54,11 +55,11 @@ describe('HandleTrustedSharedVaultInviteMessage', () => {
 
     await handleTrustedSharedVaultInviteMessage.execute(testMessage, sharedVaultUuid, senderUuid)
 
-    const keySystemRootKeyCallIndex = itemsMock.createItem.mock.calls.findIndex(
+    const keySystemRootKeyCallIndex = mutatorMock.createItem.mock.calls.findIndex(
       ([contentType]) => contentType === ContentType.KeySystemRootKey,
     )
 
-    const vaultListingCallIndex = itemsMock.createItem.mock.calls.findIndex(
+    const vaultListingCallIndex = mutatorMock.createItem.mock.calls.findIndex(
       ([contentType]) => contentType === ContentType.VaultListing,
     )
 

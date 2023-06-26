@@ -1,3 +1,4 @@
+import { MutatorClientInterface } from './../Mutator/MutatorClientInterface'
 import { ContactServiceInterface } from './../Contacts/ContactServiceInterface'
 import { AsymmetricMessageServerHash, ClientDisplayableError } from '@standardnotes/responses'
 import { SyncEvent, SyncEventReceivedAsymmetricMessagesData } from '../Event/SyncEvent'
@@ -35,6 +36,7 @@ export class AsymmetricMessageService extends AbstractService implements Interna
     private encryption: EncryptionProviderInterface,
     private contacts: ContactServiceInterface,
     private items: ItemManagerInterface,
+    private mutator: MutatorClientInterface,
     private sync: SyncServiceInterface,
     eventBus: InternalEventBusInterface,
   ) {
@@ -142,7 +144,7 @@ export class AsymmetricMessageService extends AbstractService implements Interna
       return
     }
 
-    await this.items.changeItem<VaultListingMutator>(vault, (mutator) => {
+    await this.mutator.changeItem<VaultListingMutator>(vault, (mutator) => {
       mutator.name = trustedPayload.data.name
       mutator.description = trustedPayload.data.description
     })
@@ -170,7 +172,7 @@ export class AsymmetricMessageService extends AbstractService implements Interna
     _message: AsymmetricMessageServerHash,
     trustedPayload: AsymmetricMessageSharedVaultRootKeyChanged,
   ): Promise<void> {
-    const useCase = new HandleTrustedSharedVaultRootKeyChangedMessage(this.items, this.sync)
+    const useCase = new HandleTrustedSharedVaultRootKeyChangedMessage(this.mutator, this.sync)
     await useCase.execute(trustedPayload)
   }
 }

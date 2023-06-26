@@ -1,71 +1,93 @@
 import { ContentType } from '@standardnotes/common'
 import {
-  BackupFile,
+  ComponentMutator,
   DecryptedItemInterface,
   DecryptedItemMutator,
   DecryptedPayload,
+  DecryptedPayloadInterface,
   EncryptedItemInterface,
+  FeatureRepoMutator,
   FileItem,
   ItemContent,
+  ItemsKeyInterface,
+  ItemsKeyMutatorInterface,
+  MutationType,
   PayloadEmitSource,
+  PredicateInterface,
   SmartView,
   SNComponent,
+  SNFeatureRepo,
   SNNote,
   SNTag,
   TransactionalMutation,
   VaultListingInterface,
 } from '@standardnotes/models'
-import { ClientDisplayableError } from '@standardnotes/responses'
-
-import { ChallengeReason } from '../Challenge/Types/ChallengeReason'
-import { SyncOptions } from '../Sync/SyncOptions'
 
 export interface MutatorClientInterface {
   /**
    * Inserts the input item by its payload properties, and marks the item as dirty.
    * A sync is not performed after an item is inserted. This must be handled by the caller.
    */
-  insertItem(item: DecryptedItemInterface): Promise<DecryptedItemInterface>
+  insertItem<T extends DecryptedItemInterface>(item: DecryptedItemInterface, setDirty?: boolean): Promise<T>
+  emitItemFromPayload(payload: DecryptedPayloadInterface, source: PayloadEmitSource): Promise<DecryptedItemInterface>
 
-  /**
-   * Mutates a pre-existing item, marks it as dirty, and syncs it
-   */
-  changeAndSaveItem<M extends DecryptedItemMutator = DecryptedItemMutator>(
-    itemToLookupUuidFor: DecryptedItemInterface,
-    mutate: (mutator: M) => void,
-    updateTimestamps?: boolean,
-    emitSource?: PayloadEmitSource,
-    syncOptions?: SyncOptions,
-  ): Promise<DecryptedItemInterface | undefined>
-
-  /**
-   * Mutates pre-existing items, marks them as dirty, and syncs
-   */
-  changeAndSaveItems<M extends DecryptedItemMutator = DecryptedItemMutator>(
+  setItemToBeDeleted(itemToLookupUuidFor: DecryptedItemInterface, source?: PayloadEmitSource): Promise<void>
+  setItemsToBeDeleted(itemsToLookupUuidsFor: DecryptedItemInterface[]): Promise<void>
+  setItemsDirty(
     itemsToLookupUuidsFor: DecryptedItemInterface[],
-    mutate: (mutator: M) => void,
-    updateTimestamps?: boolean,
+    isUserModified?: boolean,
+  ): Promise<DecryptedItemInterface[]>
+  createItem<T extends DecryptedItemInterface, C extends ItemContent = ItemContent>(
+    contentType: ContentType,
+    content: C,
+    needsSync?: boolean,
+    vault?: VaultListingInterface,
+  ): Promise<T>
+
+  changeItem<
+    M extends DecryptedItemMutator = DecryptedItemMutator,
+    I extends DecryptedItemInterface = DecryptedItemInterface,
+  >(
+    itemToLookupUuidFor: I,
+    mutate?: (mutator: M) => void,
+    mutationType?: MutationType,
     emitSource?: PayloadEmitSource,
-    syncOptions?: SyncOptions,
-  ): Promise<void>
+    payloadSourceKey?: string,
+  ): Promise<I>
+  changeItems<
+    M extends DecryptedItemMutator = DecryptedItemMutator,
+    I extends DecryptedItemInterface = DecryptedItemInterface,
+  >(
+    itemsToLookupUuidsFor: I[],
+    mutate?: (mutator: M) => void,
+    mutationType?: MutationType,
+    emitSource?: PayloadEmitSource,
+    payloadSourceKey?: string,
+  ): Promise<I[]>
 
-  /**
-   * Mutates a pre-existing item and marks it as dirty. Does not sync changes.
-   */
-  changeItem<M extends DecryptedItemMutator>(
-    itemToLookupUuidFor: DecryptedItemInterface,
-    mutate: (mutator: M) => void,
-    updateTimestamps?: boolean,
-  ): Promise<DecryptedItemInterface | undefined>
+  changeItemsKey(
+    itemToLookupUuidFor: ItemsKeyInterface,
+    mutate: (mutator: ItemsKeyMutatorInterface) => void,
+    mutationType?: MutationType,
+    emitSource?: PayloadEmitSource,
+    payloadSourceKey?: string,
+  ): Promise<ItemsKeyInterface>
 
-  /**
-   * Mutates a pre-existing items and marks them as dirty. Does not sync changes.
-   */
-  changeItems<M extends DecryptedItemMutator = DecryptedItemMutator>(
-    itemsToLookupUuidsFor: DecryptedItemInterface[],
-    mutate: (mutator: M) => void,
-    updateTimestamps?: boolean,
-  ): Promise<(DecryptedItemInterface | undefined)[]>
+  changeComponent(
+    itemToLookupUuidFor: SNComponent,
+    mutate: (mutator: ComponentMutator) => void,
+    mutationType?: MutationType,
+    emitSource?: PayloadEmitSource,
+    payloadSourceKey?: string,
+  ): Promise<SNComponent>
+
+  changeFeatureRepo(
+    itemToLookupUuidFor: SNFeatureRepo,
+    mutate: (mutator: FeatureRepoMutator) => void,
+    mutationType?: MutationType,
+    emitSource?: PayloadEmitSource,
+    payloadSourceKey?: string,
+  ): Promise<SNFeatureRepo>
 
   /**
    * Run unique mutations per each item in the array, then only propagate all changes
@@ -83,27 +105,6 @@ export interface MutatorClientInterface {
     emitSource?: PayloadEmitSource,
     payloadSourceKey?: string,
   ): Promise<DecryptedItemInterface | undefined>
-
-  protectItems<_M extends DecryptedItemMutator<ItemContent>, I extends DecryptedItemInterface<ItemContent>>(
-    items: I[],
-  ): Promise<I[]>
-
-  unprotectItems<_M extends DecryptedItemMutator<ItemContent>, I extends DecryptedItemInterface<ItemContent>>(
-    items: I[],
-    reason: ChallengeReason,
-  ): Promise<I[] | undefined>
-
-  protectNote(note: SNNote): Promise<SNNote>
-
-  unprotectNote(note: SNNote): Promise<SNNote | undefined>
-
-  protectNotes(notes: SNNote[]): Promise<SNNote[]>
-
-  unprotectNotes(notes: SNNote[]): Promise<SNNote[]>
-
-  protectFile(file: FileItem): Promise<FileItem>
-
-  unprotectFile(file: FileItem): Promise<FileItem | undefined>
 
   /**
    * Takes the values of the input item and emits it onto global state.
@@ -136,7 +137,13 @@ export interface MutatorClientInterface {
 
   emptyTrash(): Promise<void>
 
-  duplicateItem<T extends DecryptedItemInterface>(item: T, additionalContent?: Partial<T['content']>): Promise<T>
+  duplicateItem<T extends DecryptedItemInterface>(
+    itemToLookupUuidFor: T,
+    isConflict?: boolean,
+    additionalContent?: Partial<T['content']>,
+  ): Promise<T>
+
+  addTagToNote(note: SNNote, tag: SNTag, addHierarchy: boolean): Promise<SNTag[]>
 
   /**
    * Migrates any tags containing a '.' character to sa chema-based heirarchy, removing
@@ -147,41 +154,35 @@ export interface MutatorClientInterface {
   /**
    * Establishes a hierarchical relationship between two tags.
    */
-  setTagParent(parentTag: SNTag, childTag: SNTag): Promise<void>
+  setTagParent(parentTag: SNTag, childTag: SNTag): Promise<SNTag>
 
   /**
    * Remove the tag parent.
    */
-  unsetTagParent(childTag: SNTag): Promise<void>
+  unsetTagParent(childTag: SNTag): Promise<SNTag>
 
   findOrCreateTag(title: string, createInVault?: VaultListingInterface): Promise<SNTag>
 
   /** Creates and returns the tag but does not run sync. Callers must perform sync. */
   createTagOrSmartView<T extends SNTag | SmartView>(title: string, vault?: VaultListingInterface): Promise<T>
+  findOrCreateTagParentChain(titlesHierarchy: string[]): Promise<SNTag>
 
-  /**
-   * Activates or deactivates a component, depending on its
-   * current state, and syncs.
-   */
-  toggleComponent(component: SNComponent): Promise<void>
+  associateFileWithNote(file: FileItem, note: SNNote): Promise<FileItem>
 
-  toggleTheme(theme: SNComponent): Promise<void>
+  disassociateFileWithNote(file: FileItem, note: SNNote): Promise<FileItem>
+  renameFile(file: FileItem, name: string): Promise<FileItem>
 
-  /**
-   * @returns
-   * .affectedItems: Items that were either created or dirtied by this import
-   * .errorCount: The number of items that were not imported due to failure to decrypt.
-   */
-  importData(
-    data: BackupFile,
-    awaitSync?: boolean,
-  ): Promise<
-    | {
-        affectedItems: DecryptedItemInterface[]
-        errorCount: number
-      }
-    | {
-        error: ClientDisplayableError
-      }
-  >
+  unlinkItems(
+    itemA: DecryptedItemInterface<ItemContent>,
+    itemB: DecryptedItemInterface<ItemContent>,
+  ): Promise<DecryptedItemInterface<ItemContent>>
+  createSmartView<T extends DecryptedItemInterface>(dto: {
+    title: string
+    predicate: PredicateInterface<T>
+    iconString?: string
+    vault?: VaultListingInterface
+  }): Promise<SmartView>
+  linkNoteToNote(note: SNNote, otherNote: SNNote): Promise<SNNote>
+  linkFileToFile(file: FileItem, otherFile: FileItem): Promise<FileItem>
+  addTagToFile(file: FileItem, tag: SNTag, addHierarchy: boolean): Promise<SNTag[]>
 }

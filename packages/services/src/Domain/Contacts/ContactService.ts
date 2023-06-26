@@ -1,3 +1,4 @@
+import { MutatorClientInterface } from './../Mutator/MutatorClientInterface'
 import { ApplicationStage } from './../Application/ApplicationStage'
 import { SingletonManagerInterface } from './../Singleton/SingletonManagerInterface'
 import { SuccessfullyChangedCredentialsEventData } from './../Session/SuccessfullyChangedCredentialsEventData'
@@ -42,6 +43,7 @@ export class ContactService
   constructor(
     private sync: SyncServiceInterface,
     private items: ItemManagerInterface,
+    private mutator: MutatorClientInterface,
     private session: SessionsClientInterface,
     private crypto: PureCryptoInterface,
     private user: UserClientInterface,
@@ -156,7 +158,7 @@ export class ContactService
       throw new Error("Collaboration ID's user uuid does not match contact UUID")
     }
 
-    const updatedContact = await this.items.changeItem<TrustedContactMutator, TrustedContactInterface>(
+    const updatedContact = await this.mutator.changeItem<TrustedContactMutator, TrustedContactInterface>(
       contact,
       (mutator) => {
         mutator.name = params.name
@@ -181,7 +183,7 @@ export class ContactService
     contact: TrustedContactInterface,
     params: { name: string; publicKey: string; signingPublicKey: string },
   ): Promise<TrustedContactInterface> {
-    const updatedContact = await this.items.changeItem<TrustedContactMutator, TrustedContactInterface>(
+    const updatedContact = await this.mutator.changeItem<TrustedContactMutator, TrustedContactInterface>(
       contact,
       (mutator) => {
         mutator.name = params.name
@@ -213,12 +215,12 @@ export class ContactService
 
     let contact = this.findTrustedContact(data.contactUuid)
     if (contact) {
-      contact = await this.items.changeItem<TrustedContactMutator, TrustedContactInterface>(contact, (mutator) => {
+      contact = await this.mutator.changeItem<TrustedContactMutator, TrustedContactInterface>(contact, (mutator) => {
         mutator.name = data.name
         mutator.replacePublicKeySet(data.publicKeySet)
       })
     } else {
-      contact = await this.items.createItem<TrustedContactInterface>(
+      contact = await this.mutator.createItem<TrustedContactInterface>(
         ContentType.TrustedContact,
         FillItemContent<TrustedContactContent>(data),
         true,
@@ -257,7 +259,7 @@ export class ContactService
       isMe: params.isMe ?? false,
     }
 
-    const contact = await this.items.createItem<TrustedContactInterface>(
+    const contact = await this.mutator.createItem<TrustedContactInterface>(
       ContentType.TrustedContact,
       FillItemContent<TrustedContactContent>(content),
       true,
@@ -275,7 +277,7 @@ export class ContactService
       throw new Error('Cannot delete self')
     }
 
-    await this.items.setItemToBeDeleted(contact)
+    await this.mutator.setItemToBeDeleted(contact)
     await this.sync.sync()
 
     void this.notifyEvent(ContactServiceEvent.ContactsChanged)

@@ -12,11 +12,13 @@ import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
 import { CreateVaultUseCase } from '../../Vaults/UseCase/CreateVault'
 import { AddItemsToVaultUseCase } from '../../Vaults/UseCase/AddItemsToVault'
 import { FilesClientInterface } from '@standardnotes/files'
+import { MutatorClientInterface } from '../../Mutator/MutatorClientInterface'
 
 export class CreateSharedVaultUseCase {
   constructor(
     private encryption: EncryptionProviderInterface,
     private items: ItemManagerInterface,
+    private mutator: MutatorClientInterface,
     private sync: SyncServiceInterface,
     private files: FilesClientInterface,
     private sharedVaultServer: SharedVaultServerInterface,
@@ -28,7 +30,7 @@ export class CreateSharedVaultUseCase {
     userInputtedPassword: string | undefined
     storagePreference: KeySystemRootKeyStorageMode
   }): Promise<SharedVaultListingInterface | ClientDisplayableError> {
-    const usecase = new CreateVaultUseCase(this.items, this.encryption, this.sync)
+    const usecase = new CreateVaultUseCase(this.mutator, this.encryption, this.sync)
     const privateVault = await usecase.execute({
       vaultName: dto.vaultName,
       vaultDescription: dto.vaultDescription,
@@ -43,7 +45,7 @@ export class CreateSharedVaultUseCase {
 
     const serverVaultHash = serverResult.data.sharedVault
 
-    const sharedVaultListing = await this.items.changeItem<VaultListingMutator, VaultListingInterface>(
+    const sharedVaultListing = await this.mutator.changeItem<VaultListingMutator, VaultListingInterface>(
       privateVault,
       (mutator) => {
         mutator.sharing = {
@@ -54,7 +56,7 @@ export class CreateSharedVaultUseCase {
     )
 
     const vaultItems = this.items.itemsBelongingToKeySystem(sharedVaultListing.systemIdentifier)
-    const addToVaultUsecase = new AddItemsToVaultUseCase(this.items, this.sync, this.files)
+    const addToVaultUsecase = new AddItemsToVaultUseCase(this.mutator, this.sync, this.files)
     await addToVaultUsecase.execute({ vault: sharedVaultListing, items: vaultItems })
 
     return sharedVaultListing as SharedVaultListingInterface

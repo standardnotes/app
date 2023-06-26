@@ -343,7 +343,7 @@ describe('online syncing', function () {
     expect(note.dirty).to.equal(false)
     expect(this.application.itemManager.items.length).to.equal(this.expectedItemCount)
 
-    await this.application.itemManager.setItemToBeDeleted(note)
+    await this.application.mutator.setItemToBeDeleted(note)
     note = this.application.items.findAnyItem(note.uuid)
     expect(note.dirty).to.equal(true)
     this.expectedItemCount--
@@ -370,7 +370,7 @@ describe('online syncing', function () {
     expect(this.application.itemManager.items.length).to.equal(this.expectedItemCount)
 
     // client A
-    await this.application.itemManager.setItemToBeDeleted(note)
+    await this.application.mutator.setItemToBeDeleted(note)
     await this.application.syncService.sync(syncOptions)
 
     // Subtract 1
@@ -427,7 +427,7 @@ describe('online syncing', function () {
 
     await Factory.sleep(0.1)
 
-    await this.application.itemManager.setItemToBeDeleted(note)
+    await this.application.mutator.setItemToBeDeleted(note)
 
     this.expectedItemCount--
 
@@ -445,7 +445,7 @@ describe('online syncing', function () {
   it('items that are never synced and deleted should not be uploaded to server', async function () {
     const note = await Factory.createMappedNote(this.application)
     await this.application.itemManager.setItemDirty(note)
-    await this.application.itemManager.setItemToBeDeleted(note)
+    await this.application.mutator.setItemToBeDeleted(note)
 
     let success = true
     let didCompleteRelevantSync = false
@@ -481,7 +481,7 @@ describe('online syncing', function () {
     let beginCheckingResponse = false
     this.application.syncService.addEventObserver(async (eventName, data) => {
       if (eventName === SyncEvent.DownloadFirstSyncCompleted) {
-        await this.application.itemManager.setItemToBeDeleted(note)
+        await this.application.mutator.setItemToBeDeleted(note)
         beginCheckingResponse = true
       }
       if (!beginCheckingResponse) {
@@ -610,7 +610,7 @@ describe('online syncing', function () {
   it('saving an item after sync should persist it with content property', async function () {
     const note = await Factory.createMappedNote(this.application)
     const text = Factory.randomString(10000)
-    await this.application.mutator.changeAndSaveItem(
+    await this.application.changeAndSaveItem(
       note,
       (mutator) => {
         mutator.text = text
@@ -916,6 +916,7 @@ describe('online syncing', function () {
     const note = await Factory.createSyncedNote(this.application)
     const preDeleteSyncToken = await this.application.syncService.getLastSyncToken()
     await this.application.mutator.deleteItem(note)
+    await this.application.sync.sync()
     await this.application.syncService.setLastSyncToken(preDeleteSyncToken)
     await this.application.sync.sync(syncOptions)
     expect(this.application.itemManager.items.length).to.equal(this.expectedItemCount)
@@ -1032,6 +1033,7 @@ describe('online syncing', function () {
 
     const note = await Factory.createSyncedNote(this.application)
     await this.application.mutator.deleteItem(note)
+    await this.application.sync.sync()
 
     expect(conditionMet).to.equal(true)
   })

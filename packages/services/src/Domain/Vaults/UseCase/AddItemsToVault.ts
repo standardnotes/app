@@ -1,13 +1,12 @@
-import { SyncServiceInterface } from '@standardnotes/services'
+import { MutatorClientInterface, SyncServiceInterface } from '@standardnotes/services'
 import { ClientDisplayableError } from '@standardnotes/responses'
-import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
 import { DecryptedItemInterface, FileItem, VaultListingInterface } from '@standardnotes/models'
 import { FilesClientInterface } from '@standardnotes/files'
 import { ContentType } from '@standardnotes/common'
 
 export class AddItemsToVaultUseCase {
   constructor(
-    private items: ItemManagerInterface,
+    private mutator: MutatorClientInterface,
     private sync: SyncServiceInterface,
     private files: FilesClientInterface,
   ) {}
@@ -17,7 +16,7 @@ export class AddItemsToVaultUseCase {
     vault: VaultListingInterface
   }): Promise<ClientDisplayableError | void> {
     for (const item of dto.items) {
-      await this.items.changeItem(item, (mutator) => {
+      await this.mutator.changeItem(item, (mutator) => {
         mutator.key_system_identifier = dto.vault.systemIdentifier
         mutator.shared_vault_uuid = dto.vault.isSharedVaultListing() ? dto.vault.sharing.sharedVaultUuid : undefined
       })

@@ -24,7 +24,7 @@ const NoteViewFileDropTarget = ({ note, linkingController, noteViewElement, file
         tooltipText: 'Drop your files to upload and link them to the current note',
         callback: async (uploadedFile) => {
           await linkingController.linkItems(note, uploadedFile)
-          void application.mutator.changeAndSaveItem(uploadedFile, (mutator) => {
+          void application.changeAndSaveItem(uploadedFile, (mutator) => {
             mutator.protected = note.protected
           })
           filesController.notifyObserversOfUploadedFileLinkingToCurrentNote(uploadedFile.uuid)

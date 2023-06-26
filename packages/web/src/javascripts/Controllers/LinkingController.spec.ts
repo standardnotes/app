@@ -9,7 +9,7 @@ import {
   FileToNoteReference,
   InternalEventBus,
   SNNote,
-  ItemsClientInterface,
+  ItemManagerInterface,
   VaultListingInterface,
   ItemInterface,
 } from '@standardnotes/snjs'
@@ -59,6 +59,7 @@ describe('LinkingController', () => {
       vaults: {} as jest.Mocked<WebApplication['vaults']>,
       alerts: {} as jest.Mocked<WebApplication['alerts']>,
       sync: {} as jest.Mocked<WebApplication['sync']>,
+      mutator: {} as jest.Mocked<WebApplication['mutator']>,
     } as unknown as jest.Mocked<WebApplication>
 
     application.getPreference = jest.fn()
@@ -67,7 +68,7 @@ describe('LinkingController', () => {
     application.itemControllerGroup = {} as jest.Mocked<WebApplication['itemControllerGroup']>
     application.sync.sync = jest.fn()
 
-    Object.defineProperty(application, 'items', { value: {} as jest.Mocked<ItemsClientInterface> })
+    Object.defineProperty(application, 'items', { value: {} as jest.Mocked<ItemManagerInterface> })
 
     navigationController = {} as jest.Mocked<NavigationController>
 
@@ -227,7 +228,7 @@ describe('LinkingController', () => {
 
   describe('linkItems', () => {
     it('attempting to link file and note should not be allowed if items belong to different vaults', async () => {
-      application.items.associateFileWithNote = jest.fn()
+      application.mutator.associateFileWithNote = jest.fn()
 
       const note = createNote('test', {
         uuid: 'note',
@@ -263,8 +264,8 @@ describe('LinkingController', () => {
     })
 
     it('should move file to same vault as note if file does not belong to any vault', async () => {
-      application.items.associateFileWithNote = jest.fn()
-      const addToVaultSPy = (application.vaults.addItemToVault = jest.fn())
+      application.mutator.associateFileWithNote = jest.fn()
+      const addToVaultSpy = (application.vaults.addItemToVault = jest.fn())
 
       const note = createNote('test', {
         uuid: 'note',
@@ -289,7 +290,45 @@ describe('LinkingController', () => {
 
       await linkingController.linkItems(note, file)
 
-      expect(addToVaultSPy).toHaveBeenCalled()
+      expect(addToVaultSpy).toHaveBeenCalled()
     })
+
+    it('attempting to link vaulted tag with non vaulted note should not be permissble', async () => {
+      application.mutator.associateFileWithNote = jest.fn()
+
+      const note = createNote('test', {
+        uuid: 'note',
+        references: [],
+      })
+
+      const file = createFile('test', {
+        uuid: 'file',
+        references: [],
+      })
+
+      const noteVault = {
+        uuid: 'note-vault',
+      } as jest.Mocked<VaultListingInterface>
+
+      const fileVault = {
+        uuid: 'file-vault',
+      } as jest.Mocked<VaultListingInterface>
+
+      application.vaults.getItemVault = jest.fn().mockImplementation((item: ItemInterface) => {
+        if (item.uuid === note.uuid) {
+          return noteVault
+        } else if (item.uuid === file.uuid) {
+          return fileVault
+        }
+      })
+
+      const alertSpy = (application.alerts.alert = jest.fn())
+
+      await linkingController.linkItems(note, file)
+
+      expect(alertSpy).toHaveBeenCalled()
+    })
+
+    it('attempting to link vaulted tag with note belonging to different vault should not be permisslbe', async () => {})
   })
 })

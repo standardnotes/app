@@ -175,7 +175,7 @@ export class DesktopManager
       return
     }
 
-    const updatedComponent = await this.application.mutator.changeAndSaveItem(
+    const updatedComponent = await this.application.changeAndSaveItem(
       component,
       (m) => {
         const mutator = m as ComponentMutator

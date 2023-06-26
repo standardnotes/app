@@ -1,16 +1,14 @@
-import { SNHistoryManager } from './../History/HistoryManager'
-import { NoteContent, SNNote, FillItemContent, DecryptedPayload, PayloadTimestampDefaults } from '@standardnotes/models'
-import { ContentType } from '@standardnotes/common'
-import { EncryptionService, InternalEventBusInterface } from '@standardnotes/services'
 import {
-  ChallengeService,
-  MutatorService,
-  PayloadManager,
-  SNComponentManager,
-  SNProtectionService,
-  ItemManager,
-  SNSyncService,
-} from '../'
+  NoteContent,
+  SNNote,
+  FillItemContent,
+  DecryptedPayload,
+  PayloadTimestampDefaults,
+  MutationType,
+} from '@standardnotes/models'
+import { ContentType } from '@standardnotes/common'
+import { InternalEventBusInterface } from '@standardnotes/services'
+import { MutatorService, PayloadManager, ItemManager } from '../'
 import { UuidGenerator } from '@standardnotes/utils'
 
 const setupRandomUuid = () => {
@@ -21,12 +19,6 @@ describe('mutator service', () => {
   let mutatorService: MutatorService
   let payloadManager: PayloadManager
   let itemManager: ItemManager
-  let syncService: SNSyncService
-  let protectionService: SNProtectionService
-  let protocolService: EncryptionService
-  let challengeService: ChallengeService
-  let componentManager: SNComponentManager
-  let historyService: SNHistoryManager
 
   let internalEventBus: InternalEventBusInterface
 
@@ -38,17 +30,7 @@ describe('mutator service', () => {
     payloadManager = new PayloadManager(internalEventBus)
     itemManager = new ItemManager(payloadManager, internalEventBus)
 
-    mutatorService = new MutatorService(
-      itemManager,
-      syncService,
-      protectionService,
-      protocolService,
-      payloadManager,
-      challengeService,
-      componentManager,
-      historyService,
-      internalEventBus,
-    )
+    mutatorService = new MutatorService(itemManager, payloadManager, internalEventBus)
   })
 
   const insertNote = (title: string) => {
@@ -73,7 +55,7 @@ describe('mutator service', () => {
         (mutator) => {
           mutator.pinned = true
         },
-        false,
+        MutationType.NoUpdateUserTimestamps,
       )
 
       expect(note.userModifiedDate).toEqual(pinnedNote?.userModifiedDate)

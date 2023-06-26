@@ -1,3 +1,4 @@
+import { MutatorClientInterface } from './../Mutator/MutatorClientInterface'
 import {
   ApplicationIdentifier,
   ProtocolVersionLatest,
@@ -68,6 +69,7 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
 
   constructor(
     private items: ItemManagerInterface,
+    private mutator: MutatorClientInterface,
     private operatorManager: OperatorManager,
     public deviceInterface: DeviceInterface,
     private storageService: StorageServiceInterface,
@@ -632,7 +634,7 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
        * Re-encrypting items keys is called by consumers who have specific flows who
        * will sync on their own timing
        */
-      await this.items.setItemsDirty(items)
+      await this.mutator.setItemsDirty(items)
     }
   }
 
@@ -643,7 +645,7 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
   public async reencryptKeySystemItemsKeysForVault(keySystemIdentifier: KeySystemIdentifier): Promise<void> {
     const keySystemItemsKeys = this.keys.getKeySystemItemsKeys(keySystemIdentifier)
     if (keySystemItemsKeys.length > 0) {
-      await this.items.setItemsDirty(keySystemItemsKeys)
+      await this.mutator.setItemsDirty(keySystemItemsKeys)
     }
   }
 
@@ -681,14 +683,14 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
     })
 
     for (const key of defaultKeys) {
-      await this.items.changeItemsKey(key, (mutator) => {
+      await this.mutator.changeItemsKey(key, (mutator) => {
         mutator.isDefault = false
       })
     }
 
-    const itemsKey = (await this.items.insertItem(itemTemplate)) as ItemsKeyInterface
+    const itemsKey = (await this.mutator.insertItem(itemTemplate)) as ItemsKeyInterface
 
-    await this.items.changeItemsKey(itemsKey, (mutator) => {
+    await this.mutator.changeItemsKey(itemsKey, (mutator) => {
       mutator.isDefault = true
     })
 
@@ -700,10 +702,10 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
     const newDefaultItemsKey = await this.createNewDefaultItemsKey()
 
     const rollback = async () => {
-      await this.items.setItemToBeDeleted(newDefaultItemsKey)
+      await this.mutator.setItemToBeDeleted(newDefaultItemsKey)
 
       if (currentDefaultItemsKey) {
-        await this.items.changeItem<ItemsKeyMutator>(currentDefaultItemsKey, (mutator) => {
+        await this.mutator.changeItem<ItemsKeyMutator>(currentDefaultItemsKey, (mutator) => {
           mutator.isDefault = true
         })
       }

@@ -17,6 +17,7 @@ import { SNSyncService } from '../Sync/SyncService'
 import {
   AbstractService,
   InternalEventBusInterface,
+  MutatorClientInterface,
   SingletonManagerInterface,
   SyncEvent,
 } from '@standardnotes/services'
@@ -40,6 +41,7 @@ export class SNSingletonManager extends AbstractService implements SingletonMana
 
   constructor(
     private itemManager: ItemManager,
+    private mutator: MutatorClientInterface,
     private payloadManager: PayloadManager,
     private syncService: SNSyncService,
     protected override internalEventBus: InternalEventBusInterface,
@@ -50,6 +52,7 @@ export class SNSingletonManager extends AbstractService implements SingletonMana
 
   public override deinit(): void {
     ;(this.syncService as unknown) = undefined
+    ;(this.mutator as unknown) = undefined
     ;(this.itemManager as unknown) = undefined
     ;(this.payloadManager as unknown) = undefined
 
@@ -154,7 +157,7 @@ export class SNSingletonManager extends AbstractService implements SingletonMana
     })
 
     const deleteItems = arrayByRemovingFromIndex(earliestFirst, 0)
-    await this.itemManager.setItemsToBeDeleted(deleteItems)
+    await this.mutator.setItemsToBeDeleted(deleteItems)
   }
 
   public findSingleton<T extends DecryptedItemInterface>(
@@ -228,7 +231,7 @@ export class SNSingletonManager extends AbstractService implements SingletonMana
       ...PayloadTimestampDefaults(),
     })
 
-    const item = await this.itemManager.emitItemFromPayload(dirtyPayload, PayloadEmitSource.LocalInserted)
+    const item = await this.mutator.emitItemFromPayload(dirtyPayload, PayloadEmitSource.LocalInserted)
 
     void this.syncService.sync({ sourceDescription: 'After find or create singleton' })
 
@@ -287,7 +290,7 @@ export class SNSingletonManager extends AbstractService implements SingletonMana
       ...PayloadTimestampDefaults(),
     })
 
-    const item = await this.itemManager.emitItemFromPayload(dirtyPayload, PayloadEmitSource.LocalInserted)
+    const item = await this.mutator.emitItemFromPayload(dirtyPayload, PayloadEmitSource.LocalInserted)
 
     void this.syncService.sync({ sourceDescription: 'After find or create singleton' })
 

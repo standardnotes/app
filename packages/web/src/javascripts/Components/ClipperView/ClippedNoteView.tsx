@@ -64,6 +64,7 @@ const ClippedNoteView = ({
       setIsDiscarding(true)
       application.mutator
         .deleteItem(note)
+        .then(() => application.sync.sync())
         .then(() => {
           if (isFirefoxPopup) {
             window.close()
@@ -73,7 +74,7 @@ const ClippedNoteView = ({
         .catch(console.error)
         .finally(() => setIsDiscarding(false))
     }
-  }, [application.mutator, clearClip, isFirefoxPopup, note])
+  }, [application.mutator, application.sync, clearClip, isFirefoxPopup, note])
 
   return (
     <div className="">

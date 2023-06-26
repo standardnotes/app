@@ -106,7 +106,7 @@ describe('notes and tags', () => {
     expect(note.payload.references.length).to.equal(0)
     expect(tag.noteCount).to.equal(1)
 
-    await this.application.itemManager.setItemToBeDeleted(note)
+    await this.application.mutator.setItemToBeDeleted(note)
 
     tag = this.application.itemManager.getDisplayableTags()[0]
 
@@ -184,7 +184,7 @@ describe('notes and tags', () => {
     expect(note.content.references.length).to.equal(0)
     expect(tag.content.references.length).to.equal(1)
 
-    tag = await this.application.mutator.changeAndSaveItem(
+    tag = await this.application.changeAndSaveItem(
       tag,
       (mutator) => {
         mutator.removeItemAsRelationship(note)
@@ -204,7 +204,7 @@ describe('notes and tags', () => {
     let note = this.application.itemManager.getDisplayableNotes()[0]
     let tag = this.application.itemManager.getDisplayableTags()[0]
 
-    const duplicateTag = await this.application.itemManager.duplicateItem(tag, true)
+    const duplicateTag = await this.application.mutator.duplicateItem(tag, true)
     await this.application.syncService.sync(syncOptions)
 
     note = this.application.itemManager.findItem(note.uuid)
@@ -234,7 +234,7 @@ describe('notes and tags', () => {
     const tagPayload = pair[1]
     await this.application.itemManager.emitItemsFromPayloads([notePayload, tagPayload], PayloadEmitSource.LocalChanged)
     const note = this.application.itemManager.getItems([ContentType.Note])[0]
-    const duplicateNote = await this.application.itemManager.duplicateItem(note, true)
+    const duplicateNote = await this.application.mutator.duplicateItem(note, true)
     expect(note.uuid).to.not.equal(duplicateNote.uuid)
 
     expect(this.application.itemManager.itemsReferencingItem(duplicateNote).length).to.equal(
@@ -256,7 +256,7 @@ describe('notes and tags', () => {
     expect(note.content.references.length).to.equal(0)
     expect(this.application.itemManager.itemsReferencingItem(note).length).to.equal(1)
 
-    await this.application.itemManager.setItemToBeDeleted(tag)
+    await this.application.mutator.setItemToBeDeleted(tag)
     tag = this.application.itemManager.findItem(tag.uuid)
     expect(tag).to.not.be.ok
   })
@@ -265,7 +265,7 @@ describe('notes and tags', () => {
     const notePayload = Factory.createNotePayload()
     await this.application.itemManager.emitItemsFromPayloads([notePayload], PayloadEmitSource.LocalChanged)
     let note = this.application.itemManager.getItems([ContentType.Note])[0]
-    note = await this.application.mutator.changeAndSaveItem(
+    note = await this.application.changeAndSaveItem(
       note,
       (mutator) => {
         mutator.mutableContent.title = Math.random()
@@ -290,7 +290,7 @@ describe('notes and tags', () => {
     let tag = this.application.itemManager.getItems([ContentType.Tag])[0]
 
     await this.application.syncService.sync(syncOptions)
-    await this.application.itemManager.setItemToBeDeleted(tag)
+    await this.application.mutator.setItemToBeDeleted(tag)
 
     note = this.application.itemManager.findItem(note.uuid)
     this.application.itemManager.findItem(tag.uuid)

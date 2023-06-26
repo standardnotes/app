@@ -1,3 +1,4 @@
+import { MutatorClientInterface } from './../Mutator/MutatorClientInterface'
 import {
   ClientDisplayableError,
   ValetTokenOperation,
@@ -43,7 +44,6 @@ import {
 import { AlertService, ButtonType } from '../Alert/AlertService'
 import { ChallengeServiceInterface } from '../Challenge'
 import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
-import { ItemManagerInterface } from '../Item/ItemManagerInterface'
 import { AbstractService } from '../Service/AbstractService'
 import { SyncServiceInterface } from '../Sync/SyncServiceInterface'
 import { DecryptItemsKeyWithUserFallback } from '../Encryption/Functions'
@@ -54,7 +54,6 @@ import {
   SharedVaultServerInterface,
   HttpServiceInterface,
 } from '@standardnotes/api'
-import { SessionsClientInterface } from '../Session/SessionsClientInterface'
 
 const OneHundredMb = 100 * 1_000_000
 
@@ -64,11 +63,10 @@ export class FileService extends AbstractService implements FilesClientInterface
 
   constructor(
     private api: FilesApiInterface,
-    private itemManager: ItemManagerInterface,
+    private mutator: MutatorClientInterface,
     private syncService: SyncServiceInterface,
     private encryptor: EncryptionProviderInterface,
     private challengor: ChallengeServiceInterface,
-    private sessions: SessionsClientInterface,
     http: HttpServiceInterface,
     private alertService: AlertService,
     private crypto: PureCryptoInterface,
@@ -85,12 +83,10 @@ export class FileService extends AbstractService implements FilesClientInterface
     this.encryptedCache.clear()
     ;(this.encryptedCache as unknown) = undefined
     ;(this.api as unknown) = undefined
-    ;(this.itemManager as unknown) = undefined
     ;(this.encryptor as unknown) = undefined
     ;(this.syncService as unknown) = undefined
     ;(this.alertService as unknown) = undefined
     ;(this.challengor as unknown) = undefined
-    ;(this.sessions as unknown) = undefined
     ;(this.crypto as unknown) = undefined
   }
 
@@ -268,7 +264,7 @@ export class FileService extends AbstractService implements FilesClientInterface
       remoteIdentifier: result.remoteIdentifier,
     }
 
-    const file = await this.itemManager.createItem<FileItem>(
+    const file = await this.mutator.createItem<FileItem>(
       ContentType.File,
       FillItemContentSpecialized(fileContent),
       true,
@@ -405,7 +401,7 @@ export class FileService extends AbstractService implements FilesClientInterface
       }
     }
 
-    await this.itemManager.setItemToBeDeleted(file)
+    await this.mutator.setItemToBeDeleted(file)
     await this.syncService.sync()
 
     return undefined

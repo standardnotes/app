@@ -4,10 +4,12 @@ import { EncryptionProviderInterface } from '@standardnotes/encryption'
 import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
 import { AnyItemInterface, VaultListingInterface } from '@standardnotes/models'
 import { Uuids } from '@standardnotes/utils'
+import { MutatorClientInterface } from '../../Mutator/MutatorClientInterface'
 
 export class DeleteExternalSharedVaultUseCase {
   constructor(
     private items: ItemManagerInterface,
+    private mutator: MutatorClientInterface,
     private encryption: EncryptionProviderInterface,
     private storage: StorageServiceInterface,
     private sync: SyncServiceInterface,
@@ -39,8 +41,8 @@ export class DeleteExternalSharedVaultUseCase {
 
   private async deleteDataOwnedByThisUser(vault: VaultListingInterface): Promise<void> {
     const rootKeys = this.encryption.keys.getSyncedKeySystemRootKeysForVault(vault.systemIdentifier)
-    await this.items.setItemsToBeDeleted(rootKeys)
+    await this.mutator.setItemsToBeDeleted(rootKeys)
 
-    await this.items.setItemToBeDeleted(vault)
+    await this.mutator.setItemToBeDeleted(vault)
   }
 }

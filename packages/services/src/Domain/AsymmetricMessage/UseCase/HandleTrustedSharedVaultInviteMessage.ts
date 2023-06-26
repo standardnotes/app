@@ -9,12 +9,12 @@ import {
   VaultListingContentSpecialized,
   KeySystemRootKeyStorageMode,
 } from '@standardnotes/models'
-import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
 import { ContentType } from '@standardnotes/common'
+import { MutatorClientInterface } from '../../Mutator/MutatorClientInterface'
 
 export class HandleTrustedSharedVaultInviteMessage {
   constructor(
-    private items: ItemManagerInterface,
+    private mutator: MutatorClientInterface,
     private sync: SyncServiceInterface,
     private contacts: ContactServiceInterface,
   ) {}
@@ -38,13 +38,13 @@ export class HandleTrustedSharedVaultInviteMessage {
       },
     }
 
-    await this.items.createItem<KeySystemRootKeyInterface>(
+    await this.mutator.createItem<KeySystemRootKeyInterface>(
       ContentType.KeySystemRootKey,
       FillItemContent<KeySystemRootKeyContent>(rootKeyContent),
       true,
     )
 
-    await this.items.createItem(ContentType.VaultListing, FillItemContentSpecialized(content), true)
+    await this.mutator.createItem(ContentType.VaultListing, FillItemContentSpecialized(content), true)
 
     for (const contact of trustedContacts) {
       if (contact.isMe) {

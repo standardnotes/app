@@ -109,7 +109,7 @@ const DataBackups = ({ application, viewControllerManager }: Props) => {
   const performImport = async (data: BackupFile) => {
     setIsImportDataLoading(true)
 
-    const result = await application.mutator.importData(data)
+    const result = await application.importData(data)
 
     setIsImportDataLoading(false)
 

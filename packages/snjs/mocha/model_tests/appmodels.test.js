@@ -190,7 +190,7 @@ describe('app models', () => {
 
   it('properly duplicates item with no relationships', async function () {
     const item = await Factory.createMappedNote(this.application)
-    const duplicate = await this.application.itemManager.duplicateItem(item)
+    const duplicate = await this.application.mutator.duplicateItem(item)
     expect(duplicate.uuid).to.not.equal(item.uuid)
     expect(item.isItemContentEqualWith(duplicate)).to.equal(true)
     expect(item.created_at.toISOString()).to.equal(duplicate.created_at.toISOString())
@@ -207,7 +207,7 @@ describe('app models', () => {
 
     expect(refreshedItem1.content.references.length).to.equal(1)
 
-    const duplicate = await this.application.itemManager.duplicateItem(item1)
+    const duplicate = await this.application.mutator.duplicateItem(item1)
     expect(duplicate.uuid).to.not.equal(item1.uuid)
     expect(duplicate.content.references.length).to.equal(1)
 
@@ -345,7 +345,7 @@ describe('app models', () => {
 
     expect(refreshedTag.content.references.length).to.equal(1)
 
-    const noteCopy = await this.application.itemManager.duplicateItem(note)
+    const noteCopy = await this.application.mutator.duplicateItem(note)
     expect(note.uuid).to.not.equal(noteCopy.uuid)
 
     expect(this.application.itemManager.getDisplayableNotes().length).to.equal(2)
@@ -369,7 +369,7 @@ describe('app models', () => {
 
     expect(this.application.componentManager.editorForNote(note).uuid).to.equal(editor.uuid)
 
-    const duplicate = await this.application.itemManager.duplicateItem(note, true)
+    const duplicate = await this.application.mutator.duplicateItem(note, true)
     expect(this.application.componentManager.editorForNote(duplicate).uuid).to.equal(editor.uuid)
   })
 })

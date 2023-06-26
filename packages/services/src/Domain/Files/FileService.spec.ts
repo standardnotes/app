@@ -3,16 +3,18 @@ import { FileItem } from '@standardnotes/models'
 import { EncryptionProviderInterface } from '@standardnotes/encryption'
 import { ItemManagerInterface } from '../Item/ItemManagerInterface'
 import { ChallengeServiceInterface } from '../Challenge'
-import { InternalEventBusInterface } from '..'
+import { InternalEventBusInterface, MutatorClientInterface } from '..'
 import { AlertService } from '../Alert/AlertService'
 import { ApiServiceInterface } from '../Api/ApiServiceInterface'
 import { SyncServiceInterface } from '../Sync/SyncServiceInterface'
 import { FileService } from './FileService'
 import { BackupServiceInterface } from '@standardnotes/files'
+import { HttpServiceInterface } from '@standardnotes/api'
 
 describe('fileService', () => {
   let apiService: ApiServiceInterface
   let itemManager: ItemManagerInterface
+  let mutator: MutatorClientInterface
   let syncService: SyncServiceInterface
   let alertService: AlertService
   let crypto: PureCryptoInterface
@@ -21,6 +23,7 @@ describe('fileService', () => {
   let encryptor: EncryptionProviderInterface
   let internalEventBus: InternalEventBusInterface
   let backupService: BackupServiceInterface
+  let http: HttpServiceInterface
 
   beforeEach(() => {
     apiService = {} as jest.Mocked<ApiServiceInterface>
@@ -49,11 +52,13 @@ describe('fileService', () => {
       )
 
     itemManager = {} as jest.Mocked<ItemManagerInterface>
-    itemManager.createItem = jest.fn()
     itemManager.createTemplateItem = jest.fn().mockReturnValue({})
-    itemManager.setItemToBeDeleted = jest.fn()
     itemManager.addObserver = jest.fn()
-    itemManager.changeItem = jest.fn()
+
+    mutator = {} as jest.Mocked<MutatorClientInterface>
+    mutator.createItem = jest.fn()
+    mutator.setItemToBeDeleted = jest.fn()
+    mutator.changeItem = jest.fn()
 
     challengor = {} as jest.Mocked<ChallengeServiceInterface>
 
@@ -75,12 +80,15 @@ describe('fileService', () => {
     backupService.readEncryptedFileFromBackup = jest.fn()
     backupService.getFileBackupInfo = jest.fn()
 
+    http = {} as jest.Mocked<HttpServiceInterface>
+
     fileService = new FileService(
       apiService,
-      itemManager,
+      mutator,
       syncService,
       encryptor,
       challengor,
+      http,
       alertService,
       crypto,
       internalEventBus,
@@ -152,7 +160,7 @@ describe('fileService', () => {
     } as jest.Mocked<FileItem>
 
     const alertMock = (alertService.confirm = jest.fn().mockReturnValue(true))
-    const deleteItemMock = (itemManager.setItemToBeDeleted = jest.fn())
+    const deleteItemMock = (mutator.setItemToBeDeleted = jest.fn())
 
     apiService.deleteFile = jest.fn().mockReturnValue({ data: { error: true } })
 

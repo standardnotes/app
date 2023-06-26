@@ -145,8 +145,9 @@ const NotesOptions = ({
 
   const duplicateSelectedItems = useCallback(async () => {
     await Promise.all(notes.map((note) => application.mutator.duplicateItem(note).catch(console.error)))
+    void application.sync.sync()
     closeMenuAndToggleNotesList()
-  }, [application.mutator, closeMenuAndToggleNotesList, notes])
+  }, [application.mutator, application.sync, closeMenuAndToggleNotesList, notes])
 
   const openRevisionHistoryModal = useCallback(() => {
     historyModalController.openModal(notesController.firstSelectedNote)
@@ -376,6 +377,7 @@ const NotesOptions = ({
           <MenuItem
             onClick={async () => {
               await notesController.emptyTrash()
+              await application.sync.sync()
               closeMenuAndToggleNotesList()
             }}
           >

@@ -247,7 +247,7 @@ const AttachedToCell = ({ item }: { item: DecryptedItemInterface }) => {
         link={allLinks[0]}
         key={allLinks[0].id}
         unlinkItem={async (itemToUnlink) => {
-          void application.items.unlinkItems(item, itemToUnlink)
+          void application.mutator.unlinkItems(item, itemToUnlink)
         }}
         isBidirectional={false}
       />
@@ -314,7 +314,7 @@ const ContentTableView = ({
         return
       }
 
-      await application.mutator.changeAndSaveItem<TagMutator>(selectedTag, (mutator) => {
+      await application.changeAndSaveItem<TagMutator>(selectedTag, (mutator) => {
         mutator.preferences = {
           ...mutator.preferences,
           sortBy,

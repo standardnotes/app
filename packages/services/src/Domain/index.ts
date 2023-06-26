@@ -93,10 +93,10 @@ export * from './Internal/InternalEventType'
 export * from './Item/StaticItemCounter'
 export * from './Item/ItemManagerInterface'
 export * from './Item/ItemRelationshipDirection'
-export * from './Item/ItemsClientInterface'
 export * from './Item/ItemsServerInterface'
 
 export * from './Mutator/MutatorClientInterface'
+export * from './Mutator/ImportDataUseCase'
 
 export * from './Payloads/PayloadManagerInterface'
 

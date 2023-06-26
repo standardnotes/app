@@ -14,6 +14,7 @@ import {
   FeaturesEvent,
   FeatureStatus,
   InternalEventBusInterface,
+  MutatorClientInterface,
   StorageKey,
   UserService,
 } from '@standardnotes/services'
@@ -25,6 +26,7 @@ describe('featuresService', () => {
   let storageService: DiskStorageService
   let apiService: SNApiService
   let itemManager: ItemManager
+  let mutator: MutatorClientInterface
   let webSocketsService: SNWebSocketsService
   let settingsService: SNSettingsService
   let userService: UserService
@@ -46,6 +48,7 @@ describe('featuresService', () => {
       storageService,
       apiService,
       itemManager,
+      mutator,
       webSocketsService,
       settingsService,
       userService,
@@ -95,13 +98,15 @@ describe('featuresService', () => {
 
     itemManager = {} as jest.Mocked<ItemManager>
     itemManager.getItems = jest.fn().mockReturnValue(items)
-    itemManager.createItem = jest.fn()
     itemManager.createTemplateItem = jest.fn().mockReturnValue({})
-    itemManager.changeComponent = jest.fn().mockReturnValue({} as jest.Mocked<ItemInterface>)
-    itemManager.setItemsToBeDeleted = jest.fn()
     itemManager.addObserver = jest.fn()
-    itemManager.changeItem = jest.fn()
-    itemManager.changeFeatureRepo = jest.fn()
+
+    mutator = {} as jest.Mocked<MutatorClientInterface>
+    mutator.createItem = jest.fn()
+    mutator.changeComponent = jest.fn().mockReturnValue({} as jest.Mocked<ItemInterface>)
+    mutator.setItemsToBeDeleted = jest.fn()
+    mutator.changeItem = jest.fn()
+    mutator.changeFeatureRepo = jest.fn()
 
     webSocketsService = {} as jest.Mocked<SNWebSocketsService>
     webSocketsService.addEventObserver = jest.fn()
@@ -173,7 +178,7 @@ describe('featuresService', () => {
       const { didChangeRoles } = await featuresService.updateOnlineRoles(newRoles)
       await featuresService.fetchFeatures('123', didChangeRoles)
 
-      expect(itemManager.createItem).not.toHaveBeenCalled()
+      expect(mutator.createItem).not.toHaveBeenCalled()
     })
 
     it('does create a component for enabled experimental feature', async () => {
@@ -196,7 +201,7 @@ describe('featuresService', () => {
       const { didChangeRoles } = await featuresService.updateOnlineRoles(newRoles)
       await featuresService.fetchFeatures('123', didChangeRoles)
 
-      expect(itemManager.createItem).toHaveBeenCalled()
+      expect(mutator.createItem).toHaveBeenCalled()
     })
   })
 
@@ -300,8 +305,8 @@ describe('featuresService', () => {
       const { didChangeRoles } = await featuresService.updateOnlineRoles(newRoles)
       await featuresService.fetchFeatures('123', didChangeRoles)
 
-      expect(itemManager.createItem).toHaveBeenCalledTimes(2)
-      expect(itemManager.createItem).toHaveBeenCalledWith(
+      expect(mutator.createItem).toHaveBeenCalledTimes(2)
+      expect(mutator.createItem).toHaveBeenCalledWith(
         ContentType.Theme,
         expect.objectContaining({
           package_info: expect.objectContaining({
@@ -312,7 +317,7 @@ describe('featuresService', () => {
         }),
         true,
       )
-      expect(itemManager.createItem).toHaveBeenCalledWith(
+      expect(mutator.createItem).toHaveBeenCalledWith(
         ContentType.Component,
         expect.objectContaining({
           package_info: expect.objectContaining({
@@ -346,7 +351,7 @@ describe('featuresService', () => {
       const { didChangeRoles } = await featuresService.updateOnlineRoles(newRoles)
       await featuresService.fetchFeatures('123', didChangeRoles)
 
-      expect(itemManager.changeComponent).toHaveBeenCalledWith(existingItem, expect.any(Function))
+      expect(mutator.changeComponent).toHaveBeenCalledWith(existingItem, expect.any(Function))
     })
 
     it('creates items for expired components if they do not exist', async () => {
@@ -373,7 +378,7 @@ describe('featuresService', () => {
       const { didChangeRoles } = await featuresService.updateOnlineRoles(newRoles)
       await featuresService.fetchFeatures('123', didChangeRoles)
 
-      expect(itemManager.createItem).toHaveBeenCalledWith(
+      expect(mutator.createItem).toHaveBeenCalledWith(
         ContentType.Component,
         expect.objectContaining({
           package_info: expect.objectContaining({
@@ -403,7 +408,7 @@ describe('featuresService', () => {
       const now = new Date()
       const yesterday = now.setDate(now.getDate() - 1)
 
-      itemManager.changeComponent = jest.fn().mockReturnValue(existingItem)
+      mutator.changeComponent = jest.fn().mockReturnValue(existingItem)
       storageService.getValue = jest.fn().mockReturnValue(roles)
       itemManager.getItems = jest.fn().mockReturnValue([existingItem])
       apiService.getUserFeatures = jest.fn().mockReturnValue({
@@ -422,7 +427,7 @@ describe('featuresService', () => {
       const { didChangeRoles } = await featuresService.updateOnlineRoles(newRoles)
       await featuresService.fetchFeatures('123', didChangeRoles)
 
-      expect(itemManager.setItemsToBeDeleted).toHaveBeenCalledWith([existingItem])
+      expect(mutator.setItemsToBeDeleted).toHaveBeenCalledWith([existingItem])
     })
 
     it('does not create an item for a feature without content type', async () => {
@@ -447,7 +452,7 @@ describe('featuresService', () => {
       const { didChangeRoles } = await featuresService.updateOnlineRoles(newRoles)
       await featuresService.fetchFeatures('123', didChangeRoles)
 
-      expect(itemManager.createItem).not.toHaveBeenCalled()
+      expect(mutator.createItem).not.toHaveBeenCalled()
     })
 
     it('does not create an item for deprecated features', async () => {
@@ -472,7 +477,7 @@ describe('featuresService', () => {
       const { didChangeRoles } = await featuresService.updateOnlineRoles(newRoles)
       await featuresService.fetchFeatures('123', didChangeRoles)
 
-      expect(itemManager.createItem).not.toHaveBeenCalled()
+      expect(mutator.createItem).not.toHaveBeenCalled()
     })
 
     it('does nothing after initial update if roles have not changed', async () => {

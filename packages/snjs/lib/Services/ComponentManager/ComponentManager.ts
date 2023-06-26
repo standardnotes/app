@@ -39,6 +39,7 @@ import {
   AlertService,
   DeviceInterface,
   isMobileDevice,
+  MutatorClientInterface,
 } from '@standardnotes/services'
 
 const DESKTOP_URL_PREFIX = 'sn://'
@@ -78,6 +79,7 @@ export class SNComponentManager
 
   constructor(
     private itemManager: ItemManager,
+    private mutator: MutatorClientInterface,
     private syncService: SNSyncService,
     private featuresService: SNFeaturesService,
     private preferencesSerivce: SNPreferencesService,
@@ -162,6 +164,7 @@ export class SNComponentManager
     const viewer = new ComponentViewer(
       component,
       this.itemManager,
+      this.mutator,
       this.syncService,
       this.alertService,
       this.preferencesSerivce,
@@ -482,7 +485,7 @@ export class SNComponentManager
             }
           }
 
-          await this.itemManager.changeItem(component, (m) => {
+          await this.mutator.changeItem(component, (m) => {
             const mutator = m as ComponentMutator
             mutator.permissions = componentPermissions
           })
@@ -546,14 +549,14 @@ export class SNComponentManager
 
     const theme = this.findComponent(uuid) as SNTheme
     if (theme.active) {
-      await this.itemManager.changeComponent(theme, (mutator) => {
+      await this.mutator.changeComponent(theme, (mutator) => {
         mutator.active = false
       })
     } else {
       const activeThemes = this.getActiveThemes()
 
       /* Activate current before deactivating others, so as not to flicker */
-      await this.itemManager.changeComponent(theme, (mutator) => {
+      await this.mutator.changeComponent(theme, (mutator) => {
         mutator.active = true
       })
 
@@ -562,13 +565,15 @@ export class SNComponentManager
         await sleep(10)
         for (const candidate of activeThemes) {
           if (candidate && !candidate.isLayerable()) {
-            await this.itemManager.changeComponent(candidate, (mutator) => {
+            await this.mutator.changeComponent(candidate, (mutator) => {
               mutator.active = false
             })
           }
         }
       }
     }
+
+    void this.syncService.sync()
   }
 
   async toggleComponent(uuid: UuidString): Promise<void> {
@@ -580,9 +585,11 @@ export class SNComponentManager
       return
     }
 
-    await this.itemManager.changeComponent(component, (mutator) => {
+    await this.mutator.changeComponent(component, (mutator) => {
       mutator.active = !(mutator.getItem() as SNComponent).active
     })
+
+    void this.syncService.sync()
   }
 
   isComponentActive(component: SNComponent): boolean {

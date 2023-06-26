@@ -298,7 +298,7 @@ describe('online conflict handling', function () {
     await this.application.itemManager.setItemDirty(note)
     this.expectedItemCount++
 
-    await this.application.mutator.changeAndSaveItem(
+    await this.application.changeAndSaveItem(
       note,
       (mutator) => {
         // client A
@@ -332,7 +332,7 @@ describe('online conflict handling', function () {
     await this.application.itemManager.setItemDirty(note)
     this.expectedItemCount++
 
-    await this.application.mutator.changeAndSaveItem(
+    await this.application.changeAndSaveItem(
       note,
       (mutator) => {
         // client A
@@ -374,7 +374,7 @@ describe('online conflict handling', function () {
     expect(this.application.itemManager.items.length).to.equal(this.expectedItemCount)
 
     // client A
-    await this.application.itemManager.setItemToBeDeleted(note)
+    await this.application.mutator.setItemToBeDeleted(note)
     await this.application.syncService.sync(syncOptions)
     this.expectedItemCount--
     expect(this.application.itemManager.items.length).to.equal(this.expectedItemCount)
@@ -599,7 +599,7 @@ describe('online conflict handling', function () {
      */
     let tag = await Factory.createMappedTag(this.application)
     let note = await Factory.createMappedNote(this.application)
-    tag = await this.application.mutator.changeAndSaveItem(
+    tag = await this.application.changeAndSaveItem(
       tag,
       (mutator) => {
         mutator.e2ePendingRefactor_addItemAsRelationship(note)
@@ -786,7 +786,7 @@ describe('online conflict handling', function () {
       password: password,
     })
     Factory.handlePasswordChallenges(newApp, password)
-    await newApp.mutator.importData(backupFile, true)
+    await newApp.importData(backupFile, true)
     expect(newApp.itemManager.getDisplayableTags().length).to.equal(1)
     expect(newApp.itemManager.getDisplayableNotes().length).to.equal(1)
     await Factory.safeDeinit(newApp)
@@ -801,7 +801,7 @@ describe('online conflict handling', function () {
     await createSyncedNoteWithTag(this.application)
     const tag = this.application.itemManager.getDisplayableTags()[0]
     const note2 = await Factory.createMappedNote(this.application)
-    await this.application.mutator.changeAndSaveItem(tag, (mutator) => {
+    await this.application.changeAndSaveItem(tag, (mutator) => {
       mutator.e2ePendingRefactor_addItemAsRelationship(note2)
     })
     let backupFile = await this.application.createEncryptedBackupFileForAutomatedDesktopBackups()
@@ -821,7 +821,7 @@ describe('online conflict handling', function () {
       password: password,
     })
     Factory.handlePasswordChallenges(newApp, password)
-    await newApp.mutator.importData(backupFile, true)
+    await newApp.importData(backupFile, true)
     const newTag = newApp.itemManager.getDisplayableTags()[0]
     const notes = newApp.items.referencesForItem(newTag)
     expect(notes.length).to.equal(2)

@@ -1,3 +1,4 @@
+import { MutatorClientInterface } from './../Mutator/MutatorClientInterface'
 import {
   CreateAnyKeyParams,
   CreateEncryptionSplitWithKeyLookup,
@@ -117,6 +118,7 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
 
   constructor(
     private itemManager: ItemManagerInterface,
+    private mutator: MutatorClientInterface,
     private payloadManager: PayloadManagerInterface,
     public deviceInterface: DeviceInterface,
     private storageService: StorageServiceInterface,
@@ -141,6 +143,7 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
 
     this.rootKeyEncryption = new RootKeyEncryptionService(
       this.itemManager,
+      this.mutator,
       this.operatorManager,
       this.deviceInterface,
       this.storageService,
@@ -919,7 +922,7 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     const hasSyncedItemsKey = !isNullOrUndefined(defaultSyncedKey)
     if (hasSyncedItemsKey) {
       /** Delete all never synced keys */
-      await this.itemManager.setItemsToBeDeleted(neverSyncedKeys)
+      await this.mutator.setItemsToBeDeleted(neverSyncedKeys)
     } else {
       /**
        * No previous synced items key.
@@ -935,7 +938,7 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
           return itemsKey.keyVersion !== rootKeyParams.version
         })
         if (toDelete.length > 0) {
-          await this.itemManager.setItemsToBeDeleted(toDelete)
+          await this.mutator.setItemsToBeDeleted(toDelete)
         }
 
         if (this.itemsEncryption.getItemsKeys().length === 0) {
@@ -977,7 +980,7 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
 
     const unsyncedKeys = this.itemsEncryption.getItemsKeys().filter((key) => key.neverSynced && !key.dirty)
     if (unsyncedKeys.length > 0) {
-      void this.itemManager.setItemsDirty(unsyncedKeys)
+      void this.mutator.setItemsDirty(unsyncedKeys)
     }
   }
 }

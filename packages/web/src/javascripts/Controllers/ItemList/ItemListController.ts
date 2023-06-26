@@ -789,7 +789,7 @@ export class ItemListController extends AbstractViewController implements Intern
     const activeNote = this.application.itemControllerGroup.activeItemViewController?.item
 
     if (activeNote && activeNote.conflictOf) {
-      this.application.mutator
+      this.application
         .changeAndSaveItem(activeNote, (mutator) => {
           mutator.conflictOf = undefined
         })

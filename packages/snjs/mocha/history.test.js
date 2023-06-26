@@ -35,7 +35,7 @@ describe('history manager', () => {
     })
 
     function setTextAndSync(application, item, text) {
-      return application.mutator.changeAndSaveItem(
+      return application.changeAndSaveItem(
         item,
         (mutator) => {
           mutator.text = text
@@ -59,7 +59,7 @@ describe('history manager', () => {
       expect(this.historyManager.sessionHistoryForItem(item).length).to.equal(0)
 
       /** Sync with different contents, should create new entry */
-      await this.application.mutator.changeAndSaveItem(
+      await this.application.changeAndSaveItem(
         item,
         (mutator) => {
           mutator.title = Math.random()
@@ -79,7 +79,7 @@ describe('history manager', () => {
       const context = await Factory.createAppContext({ identifier })
       await context.launch()
       expect(context.application.historyManager.sessionHistoryForItem(item).length).to.equal(0)
-      await context.application.mutator.changeAndSaveItem(
+      await context.application.changeAndSaveItem(
         item,
         (mutator) => {
           mutator.title = Math.random()
@@ -103,7 +103,7 @@ describe('history manager', () => {
       await context.application.mutator.insertItem(item)
       expect(context.application.historyManager.sessionHistoryForItem(item).length).to.equal(0)
 
-      await context.application.mutator.changeAndSaveItem(
+      await context.application.changeAndSaveItem(
         item,
         (mutator) => {
           mutator.title = Math.random()
@@ -243,7 +243,7 @@ describe('history manager', () => {
       const payload = Factory.createNotePayload()
       await this.application.itemManager.emitItemFromPayload(payload, PayloadEmitSource.LocalChanged)
       const item = this.application.items.findItem(payload.uuid)
-      await this.application.mutator.changeAndSaveItem(
+      await this.application.changeAndSaveItem(
         item,
         (mutator) => {
           mutator.title = Math.random()
@@ -306,7 +306,7 @@ describe('history manager', () => {
       expect(itemHistory.length).to.equal(1)
 
       /** Sync with different contents, should not create a new entry */
-      await this.application.mutator.changeAndSaveItem(
+      await this.application.changeAndSaveItem(
         item,
         (mutator) => {
           mutator.title = Math.random()
@@ -327,7 +327,7 @@ describe('history manager', () => {
       await Factory.sleep(Factory.ServerRevisionFrequency)
       /** Sync with different contents, should create new entry */
       const newTitleAfterFirstChange = `The title should be: ${Math.random()}`
-      await this.application.mutator.changeAndSaveItem(
+      await this.application.changeAndSaveItem(
         item,
         (mutator) => {
           mutator.title = newTitleAfterFirstChange
@@ -359,7 +359,7 @@ describe('history manager', () => {
     it('duplicate revisions should not have the originals uuid', async function () {
       const note = await Factory.createSyncedNote(this.application)
       await Factory.markDirtyAndSyncItem(this.application, note)
-      const dupe = await this.application.itemManager.duplicateItem(note, true)
+      const dupe = await this.application.mutator.duplicateItem(note, true)
       await Factory.markDirtyAndSyncItem(this.application, dupe)
 
       await Factory.sleep(Factory.ServerRevisionCreationDelay)
@@ -384,7 +384,7 @@ describe('history manager', () => {
       await Factory.sleep(Factory.ServerRevisionFrequency)
       await Factory.markDirtyAndSyncItem(this.application, note)
 
-      const dupe = await this.application.itemManager.duplicateItem(note, true)
+      const dupe = await this.application.mutator.duplicateItem(note, true)
       await Factory.markDirtyAndSyncItem(this.application, dupe)
 
       await Factory.sleep(Factory.ServerRevisionCreationDelay)
@@ -405,12 +405,12 @@ describe('history manager', () => {
       await Factory.sleep(Factory.ServerRevisionFrequency)
 
       const changedText = `${Math.random()}`
-      await this.application.mutator.changeAndSaveItem(note, (mutator) => {
+      await this.application.changeAndSaveItem(note, (mutator) => {
         mutator.title = changedText
       })
       await Factory.markDirtyAndSyncItem(this.application, note)
 
-      const dupe = await this.application.itemManager.duplicateItem(note, true)
+      const dupe = await this.application.mutator.duplicateItem(note, true)
       await Factory.markDirtyAndSyncItem(this.application, dupe)
 
       await Factory.sleep(Factory.ServerRevisionCreationDelay)

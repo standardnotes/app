@@ -19,6 +19,7 @@ import {
   InternalEventBusInterface,
   AlertService,
   DeviceInterface,
+  MutatorClientInterface,
 } from '@standardnotes/services'
 import { ItemManager } from '@Lib/Services/Items/ItemManager'
 import { SNFeaturesService } from '@Lib/Services/Features/FeaturesService'
@@ -27,6 +28,7 @@ import { SNSyncService } from '../Sync/SyncService'
 
 describe('featuresService', () => {
   let itemManager: ItemManager
+  let mutator: MutatorClientInterface
   let featureService: SNFeaturesService
   let alertService: AlertService
   let syncService: SNSyncService
@@ -52,6 +54,7 @@ describe('featuresService', () => {
 
     const manager = new SNComponentManager(
       itemManager,
+      mutator,
       syncService,
       featureService,
       prefsService,
@@ -71,12 +74,14 @@ describe('featuresService', () => {
 
     itemManager = {} as jest.Mocked<ItemManager>
     itemManager.getItems = jest.fn().mockReturnValue([])
-    itemManager.createItem = jest.fn()
-    itemManager.changeComponent = jest.fn().mockReturnValue({} as jest.Mocked<GenericItem>)
-    itemManager.setItemsToBeDeleted = jest.fn()
     itemManager.addObserver = jest.fn()
-    itemManager.changeItem = jest.fn()
-    itemManager.changeFeatureRepo = jest.fn()
+
+    mutator = {} as jest.Mocked<MutatorClientInterface>
+    mutator.createItem = jest.fn()
+    mutator.changeComponent = jest.fn().mockReturnValue({} as jest.Mocked<GenericItem>)
+    mutator.setItemsToBeDeleted = jest.fn()
+    mutator.changeItem = jest.fn()
+    mutator.changeFeatureRepo = jest.fn()
 
     featureService = {} as jest.Mocked<SNFeaturesService>
 

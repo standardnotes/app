@@ -321,7 +321,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return this.featuresService
   }
 
-  public get items(): ExternalServices.ItemsClientInterface {
+  public get items(): ExternalServices.ItemManagerInterface {
     return this.itemManager
   }
 
@@ -1010,6 +1010,53 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     })
   }
 
+  public async changeAndSaveItem<M extends Models.DecryptedItemMutator = Models.DecryptedItemMutator>(
+    itemToLookupUuidFor: DecryptedItemInterface,
+    mutate: (mutator: M) => void,
+    updateTimestamps = true,
+    emitSource?: Models.PayloadEmitSource,
+    syncOptions?: ExternalServices.SyncOptions,
+  ): Promise<DecryptedItemInterface | undefined> {
+    await this.mutator.changeItems(
+      [itemToLookupUuidFor],
+      mutate,
+      updateTimestamps ? Models.MutationType.UpdateUserTimestamps : Models.MutationType.NoUpdateUserTimestamps,
+      emitSource,
+    )
+    await this.syncService.sync(syncOptions)
+    return this.itemManager.findItem(itemToLookupUuidFor.uuid)
+  }
+
+  public async changeAndSaveItems<M extends Models.DecryptedItemMutator = Models.DecryptedItemMutator>(
+    itemsToLookupUuidsFor: DecryptedItemInterface[],
+    mutate: (mutator: M) => void,
+    updateTimestamps = true,
+    emitSource?: Models.PayloadEmitSource,
+    syncOptions?: ExternalServices.SyncOptions,
+  ): Promise<void> {
+    await this.mutator.changeItems(
+      itemsToLookupUuidsFor,
+      mutate,
+      updateTimestamps ? Models.MutationType.UpdateUserTimestamps : Models.MutationType.NoUpdateUserTimestamps,
+      emitSource,
+    )
+    await this.syncService.sync(syncOptions)
+  }
+
+  public async importData(data: BackupFile, awaitSync = false): Promise<ExternalServices.ImportDataReturnType> {
+    const usecase = new ExternalServices.ImportDataUseCase(
+      this.itemManager,
+      this.syncService,
+      this.protectionService,
+      this.protocolService,
+      this.payloadManager,
+      this.challengeService,
+      this.historyManager,
+    )
+
+    return usecase.execute(data, awaitSync)
+  }
+
   private async handleRevokedSession(): Promise<void> {
     /**
      * Because multiple API requests can come back at the same time
@@ -1178,6 +1225,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.createMappers()
     this.createPayloadManager()
     this.createItemManager()
+    this.createMutatorService()
 
     this.createDiskStorageManager()
     this.createUserEventService()
@@ -1221,7 +1269,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.createFileService()
 
     this.createIntegrityService()
-    this.createMutatorService()
+
     this.createListedService()
     this.createActionsManager()
     this.createAuthenticatorManager()
@@ -1327,6 +1375,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       this.protocolService,
       this.contacts,
       this.itemManager,
+      this.mutator,
       this.syncService,
       this.internalEventBus,
     )
@@ -1337,6 +1386,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.contactService = new ExternalServices.ContactService(
       this.syncService,
       this.itemManager,
+      this.mutator,
       this.sessionManager,
       this.options.crypto,
       this.user,
@@ -1353,6 +1403,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       this.httpService,
       this.syncService,
       this.itemManager,
+      this.mutator,
       this.protocolService,
       this.sessions,
       this.contactService,
@@ -1368,6 +1419,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.vaultService = new ExternalServices.VaultService(
       this.syncService,
       this.itemManager,
+      this.mutator,
       this.protocolService,
       this.files,
       this.internalEventBus,
@@ -1384,6 +1436,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       this.deprecatedHttpService,
       this.protectionService,
       this.mutator,
+      this.sync,
       this.internalEventBus,
     )
     this.services.push(this.listedService)
@@ -1392,11 +1445,10 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   private createFileService() {
     this.fileService = new FileService(
       this.apiService,
-      this.itemManager,
+      this.mutator,
       this.syncService,
       this.protocolService,
       this.challengeService,
-      this.sessions,
       this.httpService,
       this.alertService,
       this.options.crypto,
@@ -1423,6 +1475,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       this.diskStorageService,
       this.apiService,
       this.itemManager,
+      this.mutator,
       this.webSocketsService,
       this.settingsService,
       this.userService,
@@ -1474,6 +1527,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       sessionManager: this.sessionManager,
       challengeService: this.challengeService,
       itemManager: this.itemManager,
+      mutator: this.mutator,
       singletonManager: this.singletonManager,
       featuresService: this.featuresService,
       environment: this.environment,
@@ -1561,6 +1615,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   private createComponentManager() {
     this.componentManagerService = new InternalServices.SNComponentManager(
       this.itemManager,
+      this.mutator,
       this.syncService,
       this.featuresService,
       this.preferencesService,
@@ -1616,6 +1671,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   private createSingletonManager() {
     this.singletonManager = new InternalServices.SNSingletonManager(
       this.itemManager,
+      this.mutator,
       this.payloadManager,
       this.syncService,
       this.internalEventBus,
@@ -1639,6 +1695,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   private createProtocolService() {
     this.protocolService = new EncryptionService(
       this.itemManager,
+      this.mutator,
       this.payloadManager,
       this.deviceInterface,
       this.diskStorageService,
@@ -1660,6 +1717,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   private createKeySystemKeyManager() {
     this.keySystemKeyManager = new ExternalServices.KeySystemKeyManager(
       this.itemManager,
+      this.mutator,
       this.storage,
       this.internalEventBus,
     )
@@ -1776,6 +1834,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   private createProtectionService() {
     this.protectionService = new InternalServices.SNProtectionService(
       this.protocolService,
+      this.mutator,
       this.challengeService,
       this.diskStorageService,
       this.internalEventBus,
@@ -1822,6 +1881,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.preferencesService = new InternalServices.SNPreferencesService(
       this.singletonManager,
       this.itemManager,
+      this.mutator,
       this.syncService,
       this.internalEventBus,
     )
@@ -1855,13 +1915,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   private createMutatorService() {
     this.mutatorService = new InternalServices.MutatorService(
       this.itemManager,
-      this.syncService,
-      this.protectionService,
-      this.protocolService,
       this.payloadManager,
-      this.challengeService,
-      this.componentManagerService,
-      this.historyManager,
       this.internalEventBus,
     )
     this.services.push(this.mutatorService)

@@ -1,7 +1,6 @@
 import { UuidGenerator, assert } from '@standardnotes/utils'
 import { EncryptionProviderInterface } from '@standardnotes/encryption'
 import { ClientDisplayableError, isClientDisplayableError } from '@standardnotes/responses'
-import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
 import {
   KeySystemIdentifier,
   KeySystemRootKeyInterface,
@@ -10,9 +9,10 @@ import {
   VaultListingInterface,
   VaultListingMutator,
 } from '@standardnotes/models'
+import { MutatorClientInterface } from '../../Mutator/MutatorClientInterface'
 
 export class RotateVaultRootKeyUseCase {
-  constructor(private items: ItemManagerInterface, private encryption: EncryptionProviderInterface) {}
+  constructor(private mutator: MutatorClientInterface, private encryption: EncryptionProviderInterface) {}
 
   async execute(params: {
     vault: VaultListingInterface
@@ -46,12 +46,12 @@ export class RotateVaultRootKeyUseCase {
     }
 
     if (params.vault.keyStorageMode === KeySystemRootKeyStorageMode.Synced) {
-      await this.items.insertItem(newRootKey, true)
+      await this.mutator.insertItem(newRootKey, true)
     } else {
       this.encryption.keys.intakeNonPersistentKeySystemRootKey(newRootKey, params.vault.keyStorageMode)
     }
 
-    await this.items.changeItem<VaultListingMutator>(params.vault, (mutator) => {
+    await this.mutator.changeItem<VaultListingMutator>(params.vault, (mutator) => {
       assert(newRootKey)
       mutator.rootKeyParams = newRootKey.keyParams
     })
@@ -85,6 +85,6 @@ export class RotateVaultRootKeyUseCase {
       params.sharedVaultUuid,
       params.rootKeyToken,
     )
-    await this.items.insertItem(newItemsKey)
+    await this.mutator.insertItem(newItemsKey)
   }
 }

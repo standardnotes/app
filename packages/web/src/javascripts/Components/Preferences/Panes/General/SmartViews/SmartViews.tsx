@@ -47,7 +47,10 @@ const SmartViews = ({ application, featuresController }: Props) => {
         confirmButtonStyle: 'danger',
       })
       if (shouldDelete) {
-        application.mutator.deleteItem(view).catch(console.error)
+        application.mutator
+          .deleteItem(view)
+          .then(() => application.sync.sync())
+          .catch(console.error)
       }
     },
     [application.mutator],

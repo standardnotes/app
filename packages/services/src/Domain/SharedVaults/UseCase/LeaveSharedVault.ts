@@ -1,3 +1,4 @@
+import { MutatorClientInterface } from './../../Mutator/MutatorClientInterface'
 import { SyncServiceInterface } from './../../Sync/SyncServiceInterface'
 import { StorageServiceInterface } from './../../Storage/StorageServiceInterface'
 import { ClientDisplayableError, isErrorResponse } from '@standardnotes/responses'
@@ -11,6 +12,7 @@ export class LeaveVaultUseCase {
   constructor(
     private vaultUserServer: SharedVaultUsersServerInterface,
     private items: ItemManagerInterface,
+    private mutator: MutatorClientInterface,
     private encryption: EncryptionProviderInterface,
     private storage: StorageServiceInterface,
     private sync: SyncServiceInterface,
@@ -29,7 +31,13 @@ export class LeaveVaultUseCase {
       return ClientDisplayableError.FromString(`Failed to leave vault ${JSON.stringify(response)}`)
     }
 
-    const removeLocalItems = new DeleteExternalSharedVaultUseCase(this.items, this.encryption, this.storage, this.sync)
+    const removeLocalItems = new DeleteExternalSharedVaultUseCase(
+      this.items,
+      this.mutator,
+      this.encryption,
+      this.storage,
+      this.sync,
+    )
     await removeLocalItems.execute(params.sharedVault)
   }
 }

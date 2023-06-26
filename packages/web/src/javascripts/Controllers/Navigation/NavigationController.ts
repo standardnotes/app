@@ -481,7 +481,7 @@ export class NavigationController
   }
 
   public async setPanelWidthForTag(tag: SNTag, width: number): Promise<void> {
-    await this.application.mutator.changeAndSaveItem<TagMutator>(tag, (mutator) => {
+    await this.application.changeAndSaveItem<TagMutator>(tag, (mutator) => {
       mutator.preferences = {
         ...mutator.preferences,
         panelWidth: width,
@@ -495,7 +495,7 @@ export class NavigationController
     { userTriggered } = { userTriggered: false },
   ) {
     if (tag && tag.conflictOf) {
-      this.application.mutator
+      this.application
         .changeAndSaveItem(tag, (mutator) => {
           mutator.conflictOf = undefined
         })
@@ -556,7 +556,7 @@ export class NavigationController
       return
     }
 
-    this.application.mutator
+    this.application
       .changeAndSaveItem<TagMutator>(tag, (mutator) => {
         mutator.expanded = expanded
       })
@@ -564,7 +564,7 @@ export class NavigationController
   }
 
   public async setFavorite(tag: SNTag, favorite: boolean) {
-    return this.application.mutator
+    return this.application
       .changeAndSaveItem<TagMutator>(tag, (mutator) => {
         mutator.starred = favorite
       })
@@ -572,7 +572,7 @@ export class NavigationController
   }
 
   public setIcon(tag: SNTag, icon: VectorIconNameOrEmoji) {
-    this.application.mutator
+    this.application
       .changeAndSaveItem<TagMutator>(tag, (mutator) => {
         mutator.iconString = icon as string
       })
@@ -620,7 +620,10 @@ export class NavigationController
       })
     }
     if (shouldDelete) {
-      this.application.mutator.deleteItem(tag).catch(console.error)
+      this.application.mutator
+        .deleteItem(tag)
+        .then(() => this.application.sync.sync())
+        .catch(console.error)
       await this.setSelectedTag(this.smartViews[0], 'views')
     }
   }
@@ -671,7 +674,7 @@ export class NavigationController
         void this.setSelectedTag(insertedTag, this.selectedLocation || 'views')
       })
     } else {
-      await this.application.mutator.changeAndSaveItem<TagMutator>(tag, (mutator) => {
+      await this.application.changeAndSaveItem<TagMutator>(tag, (mutator) => {
         mutator.title = newTitle
       })
     }

@@ -119,7 +119,7 @@ export class NoteViewController implements ItemViewControllerInterface {
 
       if (this.defaultTagUuid) {
         const tag = this.application.items.findItem(this.defaultTagUuid) as SNTag
-        await this.application.items.addTagToNote(note, tag, addTagHierarchy)
+        await this.application.mutator.addTagToNote(note, tag, addTagHierarchy)
       }
 
       this.notifyObservers(this.item, PayloadEmitSource.InitialObserverRegistrationPush)

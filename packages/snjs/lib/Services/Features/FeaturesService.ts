@@ -48,6 +48,7 @@ import {
   SetOfflineFeaturesFunctionResponse,
   StorageKey,
   UserService,
+  MutatorClientInterface,
 } from '@standardnotes/services'
 import { FeatureIdentifier } from '@standardnotes/features'
 
@@ -72,7 +73,8 @@ export class SNFeaturesService
     private storageService: DiskStorageService,
     private apiService: SNApiService,
     private itemManager: ItemManager,
-    private webSocketsService: SNWebSocketsService,
+    private mutator: MutatorClientInterface,
+    webSocketsService: SNWebSocketsService,
     private settingsService: SNSettingsService,
     private userService: UserService,
     private syncService: SNSyncService,
@@ -188,7 +190,7 @@ export class SNFeaturesService
       if (existingItem) {
         const hasChange = JSON.stringify(feature) !== JSON.stringify(existingItem.package_info)
         if (hasChange) {
-          await this.itemManager.changeComponent(existingItem, (mutator) => {
+          await this.mutator.changeComponent(existingItem, (mutator) => {
             mutator.package_info = feature
           })
         }
@@ -196,7 +198,7 @@ export class SNFeaturesService
         continue
       }
 
-      await this.itemManager.createItem(
+      await this.mutator.createItem(
         feature.content_type,
         this.componentContentForNativeFeatureDescription(feature),
         true,
@@ -230,7 +232,7 @@ export class SNFeaturesService
       return
     }
 
-    void this.itemManager.setItemToBeDeleted(component).then(() => {
+    void this.mutator.setItemToBeDeleted(component).then(() => {
       void this.syncService.sync()
     })
     void this.notifyEvent(FeaturesEvent.FeaturesUpdated)
@@ -270,7 +272,7 @@ export class SNFeaturesService
         return result
       }
 
-      const offlineRepo = (await this.itemManager.createItem(
+      const offlineRepo = (await this.mutator.createItem(
         ContentType.ExtensionRepo,
         FillItemContent({
           offlineFeaturesUrl: result.featuresUrl,
@@ -298,7 +300,7 @@ export class SNFeaturesService
   public async deleteOfflineFeatureRepo(): Promise<void> {
     const repo = this.getOfflineRepo()
     if (repo) {
-      await this.itemManager.setItemToBeDeleted(repo)
+      await this.mutator.setItemToBeDeleted(repo)
       void this.syncService.sync()
     }
     await this.storageService.removeValue(StorageKey.UserFeatures)
@@ -346,7 +348,7 @@ export class SNFeaturesService
             userKey,
             true,
           )
-          await this.itemManager.changeFeatureRepo(item, (m) => {
+          await this.mutator.changeFeatureRepo(item, (m) => {
             m.migratedToUserSetting = true
           })
         }
@@ -371,7 +373,7 @@ export class SNFeaturesService
         const userKeyMatch = repoUrl.match(/\w{32,64}/)
         if (userKeyMatch && userKeyMatch.length > 0) {
           const userKey = userKeyMatch[0]
-          const updatedRepo = await this.itemManager.changeFeatureRepo(item, (m) => {
+          const updatedRepo = await this.mutator.changeFeatureRepo(item, (m) => {
             m.offlineFeaturesUrl = PROD_OFFLINE_FEATURES_URL
             m.offlineKey = userKey
             m.migratedToOfflineEntitlements = true
@@ -647,7 +649,7 @@ export class SNFeaturesService
       }
     }
 
-    await this.itemManager.setItemsToBeDeleted(itemsToDelete)
+    await this.mutator.setItemsToBeDeleted(itemsToDelete)
 
     if (hasChanges) {
       void this.syncService.sync()
@@ -704,7 +706,7 @@ export class SNFeaturesService
       const hasChange = hasChangeInPackageInfo || hasChangeInExpiration
 
       if (hasChange) {
-        resultingItem = await this.itemManager.changeComponent(existingItem, (mutator) => {
+        resultingItem = await this.mutator.changeComponent(existingItem, (mutator) => {
           mutator.package_info = feature
           mutator.valid_until = featureExpiresAt
         })
@@ -714,7 +716,7 @@ export class SNFeaturesService
         resultingItem = existingItem
       }
     } else if (!expired || feature.content_type === ContentType.Component) {
-      resultingItem = (await this.itemManager.createItem(
+      resultingItem = (await this.mutator.createItem(
         feature.content_type,
         this.componentContentForNativeFeatureDescription(feature),
         true,
@@ -835,7 +837,6 @@ export class SNFeaturesService
     ;(this.storageService as unknown) = undefined
     ;(this.apiService as unknown) = undefined
     ;(this.itemManager as unknown) = undefined
-    ;(this.webSocketsService as unknown) = undefined
     ;(this.settingsService as unknown) = undefined
     ;(this.userService as unknown) = undefined
     ;(this.syncService as unknown) = undefined

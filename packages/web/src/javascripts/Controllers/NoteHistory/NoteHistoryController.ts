@@ -330,7 +330,7 @@ export class NoteHistoryController {
     }
 
     if (didConfirm) {
-      void this.application.mutator.changeAndSaveItem(
+      void this.application.changeAndSaveItem(
         originalNote,
         (mutator) => {
           mutator.setCustomContent(revision.payload.content)
@@ -344,10 +344,12 @@ export class NoteHistoryController {
   restoreRevisionAsCopy = async (revision: NonNullable<SelectedRevision>) => {
     const originalNote = this.application.items.findSureItem<SNNote>(revision.payload.uuid)
 
-    const duplicatedItem = await this.application.mutator.duplicateItem(originalNote, {
+    const duplicatedItem = await this.application.mutator.duplicateItem(originalNote, false, {
       ...revision.payload.content,
       title: revision.payload.content.title ? revision.payload.content.title + ' (copy)' : undefined,
     })
+
+    void this.application.sync.sync()
 
     this.selectionController.selectItem(duplicatedItem.uuid).catch(console.error)
   }

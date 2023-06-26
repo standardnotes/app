@@ -1,4 +1,4 @@
-import { SyncServiceInterface } from '@standardnotes/services'
+import { MutatorClientInterface, SyncServiceInterface } from '@standardnotes/services'
 import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
 import {
   KeySystemRootKeyPasswordType,
@@ -14,6 +14,7 @@ import { assert } from '@standardnotes/utils'
 export class ChangeVaultKeyOptionsUseCase {
   constructor(
     private items: ItemManagerInterface,
+    private mutator: MutatorClientInterface,
     private sync: SyncServiceInterface,
     private encryption: EncryptionProviderInterface,
   ) {}
@@ -77,12 +78,12 @@ export class ChangeVaultKeyOptionsUseCase {
     })
 
     if (storageMode === KeySystemRootKeyStorageMode.Synced) {
-      await this.items.insertItem(newRootKey, true)
+      await this.mutator.insertItem(newRootKey, true)
     } else {
       this.encryption.keys.intakeNonPersistentKeySystemRootKey(newRootKey, storageMode)
     }
 
-    await this.items.changeItem<VaultListingMutator>(vault, (mutator) => {
+    await this.mutator.changeItem<VaultListingMutator>(vault, (mutator) => {
       mutator.rootKeyParams = newRootKey.keyParams
     })
 
@@ -101,11 +102,11 @@ export class ChangeVaultKeyOptionsUseCase {
       throw new Error('Cannot change to randomized password if root key storage is not synced')
     }
 
-    await this.items.changeItem<VaultListingMutator>(vault, (mutator) => {
+    await this.mutator.changeItem<VaultListingMutator>(vault, (mutator) => {
       mutator.rootKeyParams = newRootKey.keyParams
     })
 
-    await this.items.insertItem(newRootKey, true)
+    await this.mutator.insertItem(newRootKey, true)
 
     await this.encryption.reencryptKeySystemItemsKeysForVault(vault.systemIdentifier)
   }
@@ -122,7 +123,7 @@ export class ChangeVaultKeyOptionsUseCase {
     this.keys.intakeNonPersistentKeySystemRootKey(primaryKey, newKeyStorageMode)
     await this.keys.deleteAllSyncedKeySystemRootKeys(vault.systemIdentifier)
 
-    await this.items.changeItem<VaultListingMutator>(vault, (mutator) => {
+    await this.mutator.changeItem<VaultListingMutator>(vault, (mutator) => {
       mutator.keyStorageMode = newKeyStorageMode
     })
 
@@ -139,10 +140,10 @@ export class ChangeVaultKeyOptionsUseCase {
         continue
       }
 
-      await this.items.insertItem(key)
+      await this.mutator.insertItem(key)
     }
 
-    await this.items.changeItem<VaultListingMutator>(vault, (mutator) => {
+    await this.mutator.changeItem<VaultListingMutator>(vault, (mutator) => {
       mutator.keyStorageMode = KeySystemRootKeyStorageMode.Synced
     })
   }

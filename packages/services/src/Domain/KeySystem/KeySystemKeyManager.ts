@@ -1,3 +1,4 @@
+import { MutatorClientInterface } from './../Mutator/MutatorClientInterface'
 import { ApplicationStage } from './../Application/ApplicationStage'
 import { InternalEventBusInterface } from './../Internal/InternalEventBusInterface'
 import { StorageServiceInterface } from './../Storage/StorageServiceInterface'
@@ -26,6 +27,7 @@ export class KeySystemKeyManager extends AbstractService implements KeySystemKey
 
   constructor(
     private readonly items: ItemManagerInterface,
+    private readonly mutator: MutatorClientInterface,
     private readonly storage: StorageServiceInterface,
     eventBus: InternalEventBusInterface,
   ) {
@@ -105,7 +107,7 @@ export class KeySystemKeyManager extends AbstractService implements KeySystemKey
 
   public async deleteAllSyncedKeySystemRootKeys(systemIdentifier: KeySystemIdentifier): Promise<void> {
     const keys = this.getSyncedKeySystemRootKeysForVault(systemIdentifier)
-    await this.items.setItemsToBeDeleted(keys)
+    await this.mutator.setItemsToBeDeleted(keys)
   }
 
   public getKeySystemRootKeyWithToken(

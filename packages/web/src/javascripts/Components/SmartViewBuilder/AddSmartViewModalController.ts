@@ -90,7 +90,7 @@ export class AddSmartViewModalController {
         : this.predicateController.toJson()
     const predicate = predicateFromJson(predicateJson as PredicateJsonForm)
 
-    await this.application.items.createSmartView({
+    await this.application.mutator.createSmartView({
       title: this.title,
       predicate,
       iconString: this.icon as string,

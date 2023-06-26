@@ -683,7 +683,10 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
   }
 
   performNoteDeletion(note: SNNote) {
-    this.application.mutator.deleteItem(note).catch(console.error)
+    this.application.mutator
+      .deleteItem(note)
+      .then(() => this.application.sync.sync())
+      .catch(console.error)
   }
 
   onPanelResizeFinish = async (width: number, left: number, isMaxWidth: boolean) => {

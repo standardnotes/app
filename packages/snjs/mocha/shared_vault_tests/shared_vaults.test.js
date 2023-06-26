@@ -77,7 +77,7 @@ describe('shared vaults', function () {
     await recreatedContext.deinit()
   })
 
-  it.only('deleting a shared vault should remove vault from contact context', async () => {
+  it('deleting a shared vault should remove vault from contact context', async () => {
     const { sharedVault, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithAcceptedInvite(context)
 

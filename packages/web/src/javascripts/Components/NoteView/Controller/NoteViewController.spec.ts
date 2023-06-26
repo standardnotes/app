@@ -5,10 +5,11 @@ import {
   SNComponentManager,
   SNComponent,
   SNTag,
-  ItemsClientInterface,
   SNNote,
   Deferred,
   SyncServiceInterface,
+  ItemManagerInterface,
+  MutatorClientInterface,
 } from '@standardnotes/snjs'
 import { FeatureIdentifier, NoteType } from '@standardnotes/features'
 import { NoteViewController } from './NoteViewController'
@@ -24,7 +25,8 @@ describe('note view controller', () => {
     application.noAccount = jest.fn().mockReturnValue(false)
     application.isNativeMobileWeb = jest.fn().mockReturnValue(false)
 
-    Object.defineProperty(application, 'items', { value: {} as jest.Mocked<ItemsClientInterface> })
+    Object.defineProperty(application, 'items', { value: {} as jest.Mocked<ItemManagerInterface> })
+    Object.defineProperty(application, 'mutator', { value: {} as jest.Mocked<MutatorClientInterface> })
 
     Object.defineProperty(application, 'sync', { value: {} as jest.Mocked<SyncServiceInterface> })
     application.sync.sync = jest.fn().mockReturnValue(Promise.resolve())
@@ -80,13 +82,13 @@ describe('note view controller', () => {
     } as jest.Mocked<SNTag>
 
     application.items.findItem = jest.fn().mockReturnValue(tag)
-    application.items.addTagToNote = jest.fn()
+    application.mutator.addTagToNote = jest.fn()
 
     const controller = new NoteViewController(application, undefined, { tag: tag.uuid })
     await controller.initialize()
 
     expect(controller['defaultTag']).toEqual(tag)
-    expect(application.items.addTagToNote).toHaveBeenCalledWith(expect.anything(), tag, expect.anything())
+    expect(application.mutator.addTagToNote).toHaveBeenCalledWith(expect.anything(), tag, expect.anything())
   })
 
   it('should wait until item finishes saving locally before deiniting', async () => {

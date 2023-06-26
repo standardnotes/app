@@ -166,7 +166,7 @@ export class LinkingController extends AbstractViewController {
   }
 
   unlinkItems = async (item: LinkableItem, itemToUnlink: LinkableItem) => {
-    await this.application.items.unlinkItems(item, itemToUnlink)
+    await this.application.mutator.unlinkItems(item, itemToUnlink)
 
     void this.application.sync.sync()
   }
@@ -201,7 +201,7 @@ export class LinkingController extends AbstractViewController {
         return
       }
 
-      await this.application.items.associateFileWithNote(file, note)
+      await this.application.mutator.associateFileWithNote(file, note)
 
       if (noteVault) {
         await this.application.vaults.addItemToVault(noteVault, file)
@@ -209,11 +209,11 @@ export class LinkingController extends AbstractViewController {
     }
 
     const linkFileAndFile = async (file1: FileItem, file2: FileItem) => {
-      await this.application.items.linkFileToFile(file1, file2)
+      await this.application.mutator.linkFileToFile(file1, file2)
     }
 
     const linkNoteToNote = async (note1: SNNote, note2: SNNote) => {
-      await this.application.items.linkNoteToNote(note1, note2)
+      await this.application.mutator.linkNoteToNote(note1, note2)
     }
 
     const linkTagToNote = async (tag: SNTag, note: SNNote) => {
@@ -299,9 +299,9 @@ export class LinkingController extends AbstractViewController {
 
   addTagToItem = async (tag: SNTag, item: FileItem | SNNote) => {
     if (item instanceof SNNote) {
-      await this.application.items.addTagToNote(item, tag, this.shouldLinkToParentFolders)
+      await this.application.mutator.addTagToNote(item, tag, this.shouldLinkToParentFolders)
     } else if (item instanceof FileItem) {
-      await this.application.items.addTagToFile(item, tag, this.shouldLinkToParentFolders)
+      await this.application.mutator.addTagToFile(item, tag, this.shouldLinkToParentFolders)
     }
 
     this.application.sync.sync().catch(console.error)

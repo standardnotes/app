@@ -1,4 +1,4 @@
-import { ItemManagerInterface } from './../../Item/ItemManagerInterface'
+import { MutatorClientInterface } from './../../Mutator/MutatorClientInterface'
 import { SyncServiceInterface } from '../../Sync/SyncServiceInterface'
 import {
   KeySystemRootKeyInterface,
@@ -10,12 +10,12 @@ import {
 import { ContentType } from '@standardnotes/common'
 
 export class HandleTrustedSharedVaultRootKeyChangedMessage {
-  constructor(private items: ItemManagerInterface, private sync: SyncServiceInterface) {}
+  constructor(private mutator: MutatorClientInterface, private sync: SyncServiceInterface) {}
 
   async execute(message: AsymmetricMessageSharedVaultRootKeyChanged): Promise<void> {
     const rootKeyContent = message.data.rootKey
 
-    await this.items.createItem<KeySystemRootKeyInterface>(
+    await this.mutator.createItem<KeySystemRootKeyInterface>(
       ContentType.KeySystemRootKey,
       FillItemContent<KeySystemRootKeyContent>(rootKeyContent),
       true,

@@ -5,10 +5,12 @@ import { SharedVaultServerInterface } from '@standardnotes/api'
 import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
 import { AddItemsToVaultUseCase } from '../../Vaults/UseCase/AddItemsToVault'
 import { FilesClientInterface } from '@standardnotes/files'
+import { MutatorClientInterface } from '../../Mutator/MutatorClientInterface'
 
 export class ConvertToSharedVaultUseCase {
   constructor(
     private items: ItemManagerInterface,
+    private mutator: MutatorClientInterface,
     private sync: SyncServiceInterface,
     private files: FilesClientInterface,
     private sharedVaultServer: SharedVaultServerInterface,
@@ -26,7 +28,7 @@ export class ConvertToSharedVaultUseCase {
 
     const serverVaultHash = serverResult.data.sharedVault
 
-    const sharedVaultListing = await this.items.changeItem<VaultListingMutator, VaultListingInterface>(
+    const sharedVaultListing = await this.mutator.changeItem<VaultListingMutator, VaultListingInterface>(
       dto.vault,
       (mutator) => {
         mutator.sharing = {
@@ -37,7 +39,7 @@ export class ConvertToSharedVaultUseCase {
     )
 
     const vaultItems = this.items.itemsBelongingToKeySystem(sharedVaultListing.systemIdentifier)
-    const addToVaultUsecase = new AddItemsToVaultUseCase(this.items, this.sync, this.files)
+    const addToVaultUsecase = new AddItemsToVaultUseCase(this.mutator, this.sync, this.files)
     await addToVaultUsecase.execute({ vault: sharedVaultListing, items: vaultItems })
 
     return sharedVaultListing as SharedVaultListingInterface

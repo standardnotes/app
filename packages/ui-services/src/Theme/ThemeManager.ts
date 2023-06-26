@@ -128,7 +128,7 @@ export class ThemeManager extends AbstractUIServicee {
       const status = this.application.features.getFeatureStatus(theme.identifier)
       if (status !== FeatureStatus.Entitled) {
         if (theme.active) {
-          this.application.mutator.toggleTheme(theme).catch(console.error)
+          this.application.componentManager.toggleTheme(theme.uuid).catch(console.error)
         } else {
           this.deactivateTheme(theme.uuid)
         }
@@ -204,7 +204,7 @@ export class ThemeManager extends AbstractUIServicee {
 
     const toggleActiveTheme = () => {
       if (activeTheme) {
-        void this.application.mutator.toggleTheme(activeTheme)
+        void this.application.componentManager.toggleTheme(activeTheme.uuid)
       }
     }
 
@@ -214,7 +214,7 @@ export class ThemeManager extends AbstractUIServicee {
       } else {
         const theme = themes.find((theme) => theme.package_info.identifier === themeIdentifier)
         if (theme && !theme.active) {
-          this.application.mutator.toggleTheme(theme).catch(console.error)
+          this.application.componentManager.toggleTheme(theme.uuid).catch(console.error)
         }
       }
     }

@@ -25,6 +25,7 @@ import { FilesClientInterface } from '@standardnotes/files'
 import { ContentType } from '@standardnotes/common'
 import { GetVaultUseCase } from './UseCase/GetVault'
 import { ChangeVaultKeyOptionsUseCase } from './UseCase/ChangeVaultKeyOptions'
+import { MutatorClientInterface } from '../Mutator/MutatorClientInterface'
 
 export class VaultService
   extends AbstractService<VaultServiceEvent, VaultServiceEventPayload[VaultServiceEvent]>
@@ -35,6 +36,7 @@ export class VaultService
   constructor(
     private sync: SyncServiceInterface,
     private items: ItemManagerInterface,
+    private mutator: MutatorClientInterface,
     private encryption: EncryptionProviderInterface,
     private files: FilesClientInterface,
     eventBus: InternalEventBusInterface,
@@ -99,7 +101,7 @@ export class VaultService
     userInputtedPassword: string | undefined
     storagePreference: KeySystemRootKeyStorageMode
   }): Promise<VaultListingInterface> {
-    const createVault = new CreateVaultUseCase(this.items, this.encryption, this.sync)
+    const createVault = new CreateVaultUseCase(this.mutator, this.encryption, this.sync)
     const result = await createVault.execute({
       vaultName: dto.name,
       vaultDescription: dto.description,
@@ -119,7 +121,7 @@ export class VaultService
       await this.removeItemFromVault(item)
     }
 
-    const useCase = new AddItemsToVaultUseCase(this.items, this.sync, this.files)
+    const useCase = new AddItemsToVaultUseCase(this.mutator, this.sync, this.files)
     await useCase.execute({ vault, items: [item] })
 
     return this.items.findSureItem(item.uuid)
@@ -135,7 +137,7 @@ export class VaultService
       throw new Error('Attempting to remove item from locked vault')
     }
 
-    const useCase = new RemoveItemFromVault(this.items, this.sync, this.files)
+    const useCase = new RemoveItemFromVault(this.mutator, this.sync, this.files)
     await useCase.execute({ item })
     return this.items.findSureItem(item.uuid)
   }
@@ -145,7 +147,7 @@ export class VaultService
       throw new Error('Shared vault must be deleted through SharedVaultService')
     }
 
-    const useCase = new DeleteVaultUseCase(this.items, this.encryption)
+    const useCase = new DeleteVaultUseCase(this.items, this.mutator, this.encryption)
     const error = await useCase.execute(vault)
 
     if (isClientDisplayableError(error)) {
@@ -160,7 +162,7 @@ export class VaultService
     vault: VaultListingInterface,
     params: { name: string; description?: string },
   ): Promise<VaultListingInterface> {
-    const updatedVault = await this.items.changeItem<VaultListingMutator, VaultListingInterface>(vault, (mutator) => {
+    const updatedVault = await this.mutator.changeItem<VaultListingMutator, VaultListingInterface>(vault, (mutator) => {
       mutator.name = params.name
       mutator.description = params.description
     })
@@ -175,7 +177,7 @@ export class VaultService
       throw new Error('Cannot rotate root key of locked vault')
     }
 
-    const useCase = new RotateVaultRootKeyUseCase(this.items, this.encryption)
+    const useCase = new RotateVaultRootKeyUseCase(this.mutator, this.encryption)
     await useCase.execute({
       vault,
       sharedVaultUuid: vault.isSharedVaultListing() ? vault.sharing.sharedVaultUuid : undefined,
@@ -204,7 +206,7 @@ export class VaultService
       throw new Error('Attempting to change vault options on a locked vault')
     }
 
-    const usecase = new ChangeVaultKeyOptionsUseCase(this.items, this.sync, this.encryption)
+    const usecase = new ChangeVaultKeyOptionsUseCase(this.items, this.mutator, this.sync, this.encryption)
     await usecase.execute(dto)
 
     if (dto.newPasswordType) {
