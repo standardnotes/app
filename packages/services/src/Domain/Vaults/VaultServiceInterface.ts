@@ -27,7 +27,7 @@ export interface VaultServiceInterface
   getLockedvaults(): VaultListingInterface[]
   deleteVault(vault: VaultListingInterface): Promise<boolean>
 
-  addItemToVault(vault: VaultListingInterface, item: DecryptedItemInterface): Promise<DecryptedItemInterface>
+  moveItemToVault(vault: VaultListingInterface, item: DecryptedItemInterface): Promise<DecryptedItemInterface>
   removeItemFromVault(item: DecryptedItemInterface): Promise<DecryptedItemInterface>
   isItemInVault(item: DecryptedItemInterface): boolean
   getItemVault(item: DecryptedItemInterface): VaultListingInterface | undefined

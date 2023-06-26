@@ -190,21 +190,14 @@ export class LinkingController extends AbstractViewController {
 
   linkItems = async (item: LinkableItem, itemToLink: LinkableItem) => {
     const linkNoteAndFile = async (note: SNNote, file: FileItem) => {
-      const noteVault = this.application.vaults.getItemVault(note)
-      const fileVault = this.application.vaults.getItemVault(file)
+      const updatedFile = await this.application.mutator.associateFileWithNote(file, note)
 
-      const isVaultConflict = noteVault && fileVault && noteVault !== fileVault
-      if (isVaultConflict) {
-        void this.application.alerts.alert(
-          'The items you are trying to link belong to different vaults and cannot be linked',
-        )
-        return
-      }
-
-      await this.application.mutator.associateFileWithNote(file, note)
-
-      if (noteVault) {
-        await this.application.vaults.addItemToVault(noteVault, file)
+      if (updatedFile) {
+        const noteVault = this.application.vaults.getItemVault(note)
+        const fileVault = this.application.vaults.getItemVault(updatedFile)
+        if (noteVault && !fileVault) {
+          await this.application.vaults.moveItemToVault(noteVault, file)
+        }
       }
     }
 

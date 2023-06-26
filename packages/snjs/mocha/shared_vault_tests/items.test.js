@@ -31,7 +31,7 @@ describe('shared vault items', function () {
 
     const sharedVault = await Collaboration.createSharedVault(context)
 
-    await Collaboration.addItemToVault(context, sharedVault, note)
+    await Collaboration.moveItemToVault(context, sharedVault, note)
 
     const updatedNote = context.items.findItem(note.uuid)
     expect(updatedNote.key_system_identifier).to.equal(sharedVault.systemIdentifier)
@@ -43,7 +43,7 @@ describe('shared vault items', function () {
 
     const { sharedVault, deinitContactContext } = await Collaboration.createSharedVaultWithAcceptedInvite(context)
 
-    await Collaboration.addItemToVault(context, sharedVault, note)
+    await Collaboration.moveItemToVault(context, sharedVault, note)
 
     const updatedNote = context.items.findItem(note.uuid)
     expect(updatedNote.key_system_identifier).to.equal(sharedVault.systemIdentifier)
@@ -61,7 +61,7 @@ describe('shared vault items', function () {
 
     contactContext.lockSyncing()
     await sharedVaults.inviteContactToSharedVault(sharedVault, currentContextContact, SharedVaultPermission.Write)
-    await Collaboration.addItemToVault(context, sharedVault, note)
+    await Collaboration.moveItemToVault(context, sharedVault, note)
 
     const promise = contactContext.awaitNextSyncSharedVaultFromScratchEvent()
     contactContext.unlockSyncing()
@@ -84,7 +84,7 @@ describe('shared vault items', function () {
     const { sharedVault, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithAcceptedInvite(context)
     const note = await context.createSyncedNote('foo', 'bar')
-    await Collaboration.addItemToVault(context, sharedVault, note)
+    await Collaboration.moveItemToVault(context, sharedVault, note)
     await contactContext.sync()
 
     await contactContext.items.changeItem({ uuid: note.uuid }, (mutator) => {
@@ -104,7 +104,7 @@ describe('shared vault items', function () {
       await Collaboration.createSharedVaultWithAcceptedInviteAndNote(context)
 
     const newNote = await contactContext.createSyncedNote('new note', 'new note text')
-    await Collaboration.addItemToVault(contactContext, sharedVault, newNote)
+    await Collaboration.moveItemToVault(contactContext, sharedVault, newNote)
 
     await context.sync()
 

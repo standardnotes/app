@@ -164,7 +164,7 @@ describe('shared vault conflicts', function () {
       await Collaboration.createSharedVaultWithAcceptedInvite(context)
 
     const note = await contactContext.createSyncedNote('foo', 'bar')
-    await Collaboration.addItemToVault(contactContext, sharedVault, note)
+    await Collaboration.moveItemToVault(contactContext, sharedVault, note)
     await context.sync()
 
     const promise = context.resolveWithConflicts()

@@ -54,7 +54,7 @@ export const createSharedVaultWithAcceptedInviteAndNote = async (
     permissions,
   )
   const note = await context.createSyncedNote('foo', 'bar')
-  const updatedNote = await addItemToVault(context, sharedVault, note)
+  const updatedNote = await moveItemToVault(context, sharedVault, note)
   await contactContext.sync()
 
   return { sharedVault, note: updatedNote, contact, contactContext, deinitContactContext }
@@ -130,13 +130,13 @@ export const createSharedVault = async (context) => {
 export const createSharedVaultWithNote = async (context) => {
   const sharedVault = await createSharedVault(context)
   const note = await context.createSyncedNote()
-  const updatedNote = await addItemToVault(context, sharedVault, note)
+  const updatedNote = await moveItemToVault(context, sharedVault, note)
   return { sharedVault, note: updatedNote }
 }
 
-export const addItemToVault = async (context, sharedVault, item) => {
+export const moveItemToVault = async (context, sharedVault, item) => {
   const promise = context.resolveWhenItemCompletesAddingToVault(item)
-  const updatedItem = await context.vaults.addItemToVault(sharedVault, item)
+  const updatedItem = await context.vaults.moveItemToVault(sharedVault, item)
   await promise
   return updatedItem
 }

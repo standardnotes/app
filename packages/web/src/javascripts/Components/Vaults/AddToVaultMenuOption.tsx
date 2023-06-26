@@ -36,7 +36,7 @@ const AddToVaultMenuOption: FunctionComponent<Props> = ({ iconClassName, items }
       }
 
       for (const item of items) {
-        await application.vaults.addItemToVault(vault, item)
+        await application.vaults.moveItemToVault(vault, item)
       }
     },
     [application.vaultDisplayService, application.vaults, items],

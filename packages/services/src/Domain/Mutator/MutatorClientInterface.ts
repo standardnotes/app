@@ -143,7 +143,7 @@ export interface MutatorClientInterface {
     additionalContent?: Partial<T['content']>,
   ): Promise<T>
 
-  addTagToNote(note: SNNote, tag: SNTag, addHierarchy: boolean): Promise<SNTag[]>
+  addTagToNote(note: SNNote, tag: SNTag, addHierarchy: boolean): Promise<SNTag[] | undefined>
 
   /**
    * Migrates any tags containing a '.' character to sa chema-based heirarchy, removing
@@ -167,7 +167,7 @@ export interface MutatorClientInterface {
   createTagOrSmartView<T extends SNTag | SmartView>(title: string, vault?: VaultListingInterface): Promise<T>
   findOrCreateTagParentChain(titlesHierarchy: string[]): Promise<SNTag>
 
-  associateFileWithNote(file: FileItem, note: SNNote): Promise<FileItem>
+  associateFileWithNote(file: FileItem, note: SNNote): Promise<FileItem | undefined>
 
   disassociateFileWithNote(file: FileItem, note: SNNote): Promise<FileItem>
   renameFile(file: FileItem, name: string): Promise<FileItem>
@@ -184,5 +184,5 @@ export interface MutatorClientInterface {
   }): Promise<SmartView>
   linkNoteToNote(note: SNNote, otherNote: SNNote): Promise<SNNote>
   linkFileToFile(file: FileItem, otherFile: FileItem): Promise<FileItem>
-  addTagToFile(file: FileItem, tag: SNTag, addHierarchy: boolean): Promise<SNTag[]>
+  addTagToFile(file: FileItem, tag: SNTag, addHierarchy: boolean): Promise<SNTag[] | undefined>
 }

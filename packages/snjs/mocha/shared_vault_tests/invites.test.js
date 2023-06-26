@@ -89,7 +89,7 @@ describe('shared vault invites', function () {
     const sharedVault = await Collaboration.createSharedVault(context)
 
     const note = await context.createSyncedNote('foo', 'bar')
-    await Collaboration.addItemToVault(context, sharedVault, note)
+    await Collaboration.moveItemToVault(context, sharedVault, note)
 
     /** Create a mutually trusted contact */
     const { contactContext, deinitContactContext } = await Collaboration.createContactContext()
@@ -208,7 +208,7 @@ describe('shared vault invites', function () {
     })
 
     const note = await context.createSyncedNote('foo', 'bar')
-    await context.vaults.addItemToVault(privateVault, note)
+    await context.vaults.moveItemToVault(privateVault, note)
 
     const sharedVault = await context.sharedVaults.convertVaultToSharedVault(privateVault)
 

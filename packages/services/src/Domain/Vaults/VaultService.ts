@@ -18,7 +18,7 @@ import { ItemManagerInterface } from '../Item/ItemManagerInterface'
 import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
 import { RemoveItemFromVault } from './UseCase/RemoveItemFromVault'
 import { DeleteVaultUseCase } from './UseCase/DeleteVault'
-import { AddItemsToVaultUseCase } from './UseCase/AddItemsToVault'
+import { MoveItemsToVaultUseCase } from './UseCase/MoveItemsToVault'
 
 import { RotateVaultRootKeyUseCase } from './UseCase/RotateVaultRootKey'
 import { FilesClientInterface } from '@standardnotes/files'
@@ -112,7 +112,7 @@ export class VaultService
     return result
   }
 
-  async addItemToVault(vault: VaultListingInterface, item: DecryptedItemInterface): Promise<DecryptedItemInterface> {
+  async moveItemToVault(vault: VaultListingInterface, item: DecryptedItemInterface): Promise<DecryptedItemInterface> {
     if (this.isVaultLocked(vault)) {
       throw new Error('Attempting to add item to locked vault')
     }
@@ -121,7 +121,7 @@ export class VaultService
       await this.removeItemFromVault(item)
     }
 
-    const useCase = new AddItemsToVaultUseCase(this.mutator, this.sync, this.files)
+    const useCase = new MoveItemsToVaultUseCase(this.mutator, this.sync, this.files)
     await useCase.execute({ vault, items: [item] })
 
     return this.items.findSureItem(item.uuid)

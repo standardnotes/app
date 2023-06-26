@@ -91,7 +91,7 @@ describe('shared vault permissions', function () {
     const { sharedVault, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithAcceptedInvite(context, SharedVaultPermission.Read)
     const note = await context.createSyncedNote('foo', 'bar')
-    await Collaboration.addItemToVault(context, sharedVault, note)
+    await Collaboration.moveItemToVault(context, sharedVault, note)
     await contactContext.sync()
 
     await contactContext.items.changeItem({ uuid: note.uuid }, (mutator) => {
@@ -113,7 +113,7 @@ describe('shared vault permissions', function () {
       await Collaboration.createSharedVaultWithAcceptedInvite(context)
 
     const note = await contactContext.createSyncedNote('foo', 'bar')
-    await Collaboration.addItemToVault(contactContext, sharedVault, note)
+    await Collaboration.moveItemToVault(contactContext, sharedVault, note)
     await contactContext.sync()
 
     const promise = contactContext.resolveWithConflicts()

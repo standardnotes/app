@@ -1,8 +1,8 @@
 import { ContentType } from '@standardnotes/common'
-import { InternalEventBusInterface, ItemRelationshipDirection } from '@standardnotes/services'
+import { AlertService, InternalEventBusInterface, ItemRelationshipDirection } from '@standardnotes/services'
 import { ItemManager } from './ItemManager'
 import { PayloadManager } from '../Payloads/PayloadManager'
-import { UuidGenerator } from '@standardnotes/utils'
+import { UuidGenerator, assert } from '@standardnotes/utils'
 import * as Models from '@standardnotes/models'
 import {
   DecryptedPayload,
@@ -58,7 +58,7 @@ describe('itemManager', () => {
     payloadManager = new PayloadManager(internalEventBus)
     itemManager = new ItemManager(payloadManager, internalEventBus)
 
-    mutator = new MutatorService(itemManager, payloadManager, internalEventBus)
+    mutator = new MutatorService(itemManager, payloadManager, {} as jest.Mocked<AlertService>, internalEventBus)
   })
 
   const createTag = (title: string) => {
@@ -713,6 +713,7 @@ describe('itemManager', () => {
       await mutator.insertItems([note, file])
 
       const resultingFile = await mutator.associateFileWithNote(file, note)
+      assert(resultingFile)
       const references = resultingFile.references
 
       expect(references).toHaveLength(1)
@@ -725,6 +726,7 @@ describe('itemManager', () => {
       await mutator.insertItems([note, file])
 
       const associatedFile = await mutator.associateFileWithNote(file, note)
+      assert(associatedFile)
       const disassociatedFile = await mutator.disassociateFileWithNote(associatedFile, note)
       const references = disassociatedFile.references
 

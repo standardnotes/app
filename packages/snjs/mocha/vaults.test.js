@@ -62,7 +62,7 @@ describe('vaults', function () {
       })
       const item = await context.createSyncedNote()
 
-      await vaults.addItemToVault(vault, item)
+      await vaults.moveItemToVault(vault, item)
 
       const updatedItem = context.items.findItem(item.uuid)
       expect(updatedItem.key_system_identifier).to.equal(vault.systemIdentifier)
@@ -75,7 +75,7 @@ describe('vaults', function () {
         storagePreference: KeySystemRootKeyStorageMode.Synced,
       })
       const note = await context.createSyncedNote('foo', 'bar')
-      await vaults.addItemToVault(vault, note)
+      await vaults.moveItemToVault(vault, note)
       await context.deinit()
 
       const recreatedContext = await Factory.createAppContextWithRealCrypto(appIdentifier)
@@ -96,7 +96,7 @@ describe('vaults', function () {
           storagePreference: KeySystemRootKeyStorageMode.Synced,
         })
         const note = await context.createSyncedNote('foo', 'bar')
-        await vaults.addItemToVault(vault, note)
+        await vaults.moveItemToVault(vault, note)
 
         await context.register()
         await context.sync()
@@ -124,7 +124,7 @@ describe('vaults', function () {
           storagePreference: KeySystemRootKeyStorageMode.Synced,
         })
         const note = await context.createSyncedNote('foo', 'bar')
-        await vaults.addItemToVault(vault, note)
+        await vaults.moveItemToVault(vault, note)
 
         await context.register()
         await context.sync()
@@ -170,7 +170,7 @@ describe('vaults', function () {
         storagePreference: KeySystemRootKeyStorageMode.Synced,
       })
 
-      await vaults.addItemToVault(vault, note)
+      await vaults.moveItemToVault(vault, note)
 
       const updatedNote = context.items.findItem(note.uuid)
       expect(updatedNote.key_system_identifier).to.equal(vault.systemIdentifier)
@@ -184,7 +184,7 @@ describe('vaults', function () {
           storagePreference: KeySystemRootKeyStorageMode.Synced,
         })
         const note = await context.createSyncedNote('foo', 'bar')
-        await vaults.addItemToVault(vault, note)
+        await vaults.moveItemToVault(vault, note)
         await context.deinit()
 
         const recreatedContext = await Factory.createAppContextWithRealCrypto(appIdentifier)
@@ -221,7 +221,7 @@ describe('vaults', function () {
           storagePreference: KeySystemRootKeyStorageMode.Synced,
         })
         const note = await context.createSyncedNote('foo', 'bar')
-        await vaults.addItemToVault(vault, note)
+        await vaults.moveItemToVault(vault, note)
 
         await vaults.deleteVault(vault)
 

@@ -3,6 +3,7 @@ import {
   InternalEventBusInterface,
   MutatorClientInterface,
   ItemRelationshipDirection,
+  AlertService,
 } from '@standardnotes/services'
 import { ItemsKeyMutator, SNItemsKey } from '@standardnotes/encryption'
 import { ContentType } from '@standardnotes/common'
@@ -53,6 +54,7 @@ export class MutatorService extends AbstractService implements MutatorClientInte
   constructor(
     private itemManager: ItemManager,
     private payloadManager: PayloadManager,
+    private alerts: AlertService,
     protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)
@@ -604,7 +606,17 @@ export class MutatorService extends AbstractService implements MutatorClientInte
     })
   }
 
-  public async associateFileWithNote(file: FileItem, note: SNNote): Promise<FileItem> {
+  public async associateFileWithNote(file: FileItem, note: SNNote): Promise<FileItem | undefined> {
+    const isVaultConflict =
+      file.key_system_identifier &&
+      note.key_system_identifier &&
+      file.key_system_identifier !== note.key_system_identifier
+
+    if (isVaultConflict) {
+      void this.alerts.alert('The items you are trying to link belong to different vaults and cannot be linked')
+      return undefined
+    }
+
     return this.changeItem<FileMutator, FileItem>(file, (mutator) => {
       mutator.addNote(note)
     })
@@ -616,7 +628,12 @@ export class MutatorService extends AbstractService implements MutatorClientInte
     })
   }
 
-  public async addTagToNote(note: SNNote, tag: SNTag, addHierarchy: boolean): Promise<SNTag[]> {
+  public async addTagToNote(note: SNNote, tag: SNTag, addHierarchy: boolean): Promise<SNTag[] | undefined> {
+    if (tag.key_system_identifier !== note.key_system_identifier) {
+      void this.alerts.alert('The items you are trying to link belong to different vaults and cannot be linked')
+      return undefined
+    }
+
     let tagsToAdd = [tag]
 
     if (addHierarchy) {
@@ -633,7 +650,12 @@ export class MutatorService extends AbstractService implements MutatorClientInte
     )
   }
 
-  public async addTagToFile(file: FileItem, tag: SNTag, addHierarchy: boolean): Promise<SNTag[]> {
+  public async addTagToFile(file: FileItem, tag: SNTag, addHierarchy: boolean): Promise<SNTag[] | undefined> {
+    if (tag.key_system_identifier !== file.key_system_identifier) {
+      void this.alerts.alert('The items you are trying to link belong to different vaults and cannot be linked')
+      return undefined
+    }
+
     let tagsToAdd = [tag]
 
     if (addHierarchy) {

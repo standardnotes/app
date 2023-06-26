@@ -303,9 +303,9 @@ export class AppContext {
   resolveWhenItemCompletesAddingToVault(targetItem) {
     return new Promise((resolve) => {
       const objectToSpy = this.vaults
-      sinon.stub(objectToSpy, 'addItemToVault').callsFake(async (vault, item) => {
-        objectToSpy.addItemToVault.restore()
-        const result = await objectToSpy.addItemToVault(vault, item)
+      sinon.stub(objectToSpy, 'moveItemToVault').callsFake(async (vault, item) => {
+        objectToSpy.moveItemToVault.restore()
+        const result = await objectToSpy.moveItemToVault(vault, item)
         if (!targetItem || item.uuid === targetItem.uuid) {
           resolve()
         }

@@ -67,7 +67,7 @@ describe('shared vault files', function () {
     const uploadedFile = await Files.uploadFile(context.files, buffer, 'my-file', 'md', 1000)
 
     const sharedVault = await Collaboration.createSharedVault(context)
-    const addedFile = await vaults.addItemToVault(sharedVault, uploadedFile)
+    const addedFile = await vaults.moveItemToVault(sharedVault, uploadedFile)
 
     const downloadedBytes = await Files.downloadFile(context.files, addedFile)
     expect(downloadedBytes).to.eql(buffer)
@@ -174,7 +174,7 @@ describe('shared vault files', function () {
     const response = await fetch('/mocha/assets/small_file.md')
     const buffer = new Uint8Array(await response.arrayBuffer())
     const uploadedFile = await Files.uploadFile(context.files, buffer, 'my-file', 'md', 1000)
-    const addedFile = await vaults.addItemToVault(sharedVault, uploadedFile)
+    const addedFile = await vaults.moveItemToVault(sharedVault, uploadedFile)
 
     await contactContext.sync()
 

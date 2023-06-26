@@ -1916,6 +1916,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.mutatorService = new InternalServices.MutatorService(
       this.itemManager,
       this.payloadManager,
+      this.alertService,
       this.internalEventBus,
     )
     this.services.push(this.mutatorService)

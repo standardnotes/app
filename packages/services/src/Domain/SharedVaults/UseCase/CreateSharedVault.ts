@@ -10,7 +10,7 @@ import { EncryptionProviderInterface } from '@standardnotes/encryption'
 import { SharedVaultServerInterface } from '@standardnotes/api'
 import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
 import { CreateVaultUseCase } from '../../Vaults/UseCase/CreateVault'
-import { AddItemsToVaultUseCase } from '../../Vaults/UseCase/AddItemsToVault'
+import { MoveItemsToVaultUseCase } from '../../Vaults/UseCase/MoveItemsToVault'
 import { FilesClientInterface } from '@standardnotes/files'
 import { MutatorClientInterface } from '../../Mutator/MutatorClientInterface'
 
@@ -56,8 +56,8 @@ export class CreateSharedVaultUseCase {
     )
 
     const vaultItems = this.items.itemsBelongingToKeySystem(sharedVaultListing.systemIdentifier)
-    const addToVaultUsecase = new AddItemsToVaultUseCase(this.mutator, this.sync, this.files)
-    await addToVaultUsecase.execute({ vault: sharedVaultListing, items: vaultItems })
+    const moveToVaultUsecase = new MoveItemsToVaultUseCase(this.mutator, this.sync, this.files)
+    await moveToVaultUsecase.execute({ vault: sharedVaultListing, items: vaultItems })
 
     return sharedVaultListing as SharedVaultListingInterface
   }
