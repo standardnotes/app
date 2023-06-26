@@ -114,11 +114,11 @@ export class HttpService implements HttpServiceInterface {
 
     const response = await this.runRequest<T>(request, this.createRequestBody(httpRequest))
 
-    if (response.meta) {
+    if (response.meta && !httpRequest.external) {
       this.updateMetaCallback?.(response.meta)
     }
 
-    if (response.status === HttpStatusCode.ExpiredAccessToken && !isRefreshRequest) {
+    if (response.status === HttpStatusCode.ExpiredAccessToken && !isRefreshRequest && !httpRequest.external) {
       if (this.inProgressRefreshSessionPromise) {
         await this.inProgressRefreshSessionPromise
       } else {
