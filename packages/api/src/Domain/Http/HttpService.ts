@@ -120,7 +120,12 @@ export class HttpService implements HttpServiceInterface {
   }
 
   async runHttp<T>(httpRequest: HttpRequest): Promise<HttpResponse<T>> {
-    if (this.inProgressRefreshSessionPromise) {
+    if (this.__latencySimulatorMs) {
+      await sleep(this.__latencySimulatorMs, true)
+    }
+
+    const isRefreshRequest = httpRequest.url === joinPaths(this.host, Paths.v1.refreshSession)
+    if (this.inProgressRefreshSessionPromise && !isRefreshRequest) {
       await this.inProgressRefreshSessionPromise
 
       httpRequest.authentication = this.session?.accessToken.value
@@ -128,17 +133,13 @@ export class HttpService implements HttpServiceInterface {
 
     const request = this.createXmlRequest(httpRequest)
 
-    if (this.__latencySimulatorMs) {
-      await sleep(this.__latencySimulatorMs, true)
-    }
-
     const response = await this.runRequest<T>(request, this.createRequestBody(httpRequest))
 
     if (response.meta && !httpRequest.external) {
       this.updateMetaCallback?.(response.meta)
     }
 
-    if (response.status === HttpStatusCode.ExpiredAccessToken && !httpRequest.external) {
+    if (response.status === HttpStatusCode.ExpiredAccessToken && !isRefreshRequest && !httpRequest.external) {
       if (this.inProgressRefreshSessionPromise) {
         await this.inProgressRefreshSessionPromise
       } else {

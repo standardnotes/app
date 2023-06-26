@@ -101,7 +101,7 @@ export class ItemCounter implements SNIndex {
   private isItemCountable = (item: ItemInterface) => {
     if (isDecryptedItem(item)) {
       const passesFilters = this.passesAllFilters(item)
-      return passesFilters && !item.archived && !item.trashed
+      return passesFilters && !item.archived && !item.trashed && !item.conflictOf
     }
     return false
   }

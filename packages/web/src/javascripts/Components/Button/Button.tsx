@@ -58,7 +58,7 @@ const getClassName = (
   let colors = primary ? getColorsForPrimaryVariant(style) : getColorsForNormalVariant(style)
 
   let focusHoverStates = primary
-    ? 'hover:brightness-125 focus:outline-none focus:brightness-125'
+    ? 'hover:brightness-125 focus:outline-none focus-visible:brightness-125'
     : 'focus:bg-contrast focus:outline-none hover:border-info hover:text-info hover:bg-contrast'
 
   if (disabled) {
@@ -68,7 +68,7 @@ const getClassName = (
       : 'focus:bg-default focus:outline-none hover:bg-default'
   }
 
-  return `${rounded} font-bold ${width} ${padding} ${textSize} ${colors} ${borders} ${focusHoverStates} ${cursor}`
+  return `${rounded} font-bold select-none ${width} ${padding} ${textSize} ${colors} ${borders} ${focusHoverStates} ${cursor}`
 }
 
 interface ButtonProps extends ComponentPropsWithoutRef<'button'> {

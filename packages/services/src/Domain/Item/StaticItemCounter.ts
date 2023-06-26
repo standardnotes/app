@@ -21,7 +21,7 @@ export class StaticItemCounter {
 
         continue
       }
-      if (item.content_type === ContentType.Note) {
+      if (item.content_type === ContentType.Note && !item.conflictOf) {
         counts.notes++
 
         continue

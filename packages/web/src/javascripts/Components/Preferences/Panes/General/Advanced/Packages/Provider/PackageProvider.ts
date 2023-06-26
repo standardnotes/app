@@ -1,19 +1,14 @@
-import { WebApplication } from '@/Application/WebApplication'
-import { ClientDisplayableError, FeatureDescription } from '@standardnotes/snjs'
+import { GetFeatures } from '@standardnotes/snjs'
 import { makeAutoObservable, observable } from 'mobx'
 import { AnyPackageType } from '../Types/AnyPackageType'
 
 export class PackageProvider {
-  static async load(application: WebApplication): Promise<PackageProvider | undefined> {
-    const response = await application.getAvailableSubscriptions()
-
-    if (!response || response instanceof ClientDisplayableError) {
-      return undefined
-    }
-
+  static async load(): Promise<PackageProvider | undefined> {
     const versionMap: Map<string, string> = new Map()
-    collectFeatures(response.PLUS_PLAN?.features as FeatureDescription[], versionMap)
-    collectFeatures(response.PRO_PLAN?.features as FeatureDescription[], versionMap)
+
+    GetFeatures().forEach((feature) => {
+      versionMap.set(feature.identifier, 'Latest')
+    })
 
     return new PackageProvider(versionMap)
   }
@@ -26,15 +21,5 @@ export class PackageProvider {
 
   getVersion(extension: AnyPackageType): string | undefined {
     return this.latestVersionsMap.get(extension.package_info.identifier)
-  }
-}
-
-function collectFeatures(features: FeatureDescription[] | undefined, versionMap: Map<string, string>) {
-  if (features == undefined) {
-    return
-  }
-
-  for (const feature of features) {
-    versionMap.set(feature.identifier, 'Latest')
   }
 }

@@ -3,6 +3,26 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.169.3](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.169.2...@standardnotes/snjs@2.169.3) (2023-06-25)
+
+### Bug Fixes
+
+* fixes issue where a renewed session would in some cases would not save to disk, causing a reauthentication prompt to occur ([bb804ff](https://github.com/standardnotes/app/commit/bb804fff45328eef3c66ec3a48dc000c21e37020))
+
+## [2.169.2](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.169.1...@standardnotes/snjs@2.169.2) (2023-06-25)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.169.1](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.169.0...@standardnotes/snjs@2.169.1) (2023-06-25)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+# [2.169.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.168.20...@standardnotes/snjs@2.169.0) (2023-06-25)
+
+### Features
+
+* Added a conflict resolution dialog and a Conflicts view for easier management of conflicts ([#2337](https://github.com/standardnotes/app/issues/2337)) ([e0e9249](https://github.com/standardnotes/app/commit/e0e92493342b18560e7e55ece22518e738824df0))
+
 ## [2.168.20](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.168.19...@standardnotes/snjs@2.168.20) (2023-06-06)
 
 **Note:** Version bump only for package @standardnotes/snjs

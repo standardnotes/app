@@ -189,6 +189,17 @@ export abstract class Collection<
           this.conflictMap.establishRelationship(conflictOf, element.uuid)
         }
 
+        const isInConflictMapButIsNotConflictOf =
+          !conflictOf && this.conflictMap.getInverseRelationships(element.uuid).length > 0
+
+        const isInConflictMapButDoesNotHaveConflicts =
+          this.conflictMap.existsInDirectMap(element.uuid) &&
+          this.conflictMap.getDirectRelationships(element.uuid).length === 0
+
+        if (isInConflictMapButIsNotConflictOf || isInConflictMapButDoesNotHaveConflicts) {
+          this.conflictMap.removeFromMap(element.uuid)
+        }
+
         this.referenceMap.setAllRelationships(
           element.uuid,
           element.references.map((r) => r.uuid),
@@ -203,6 +214,9 @@ export abstract class Collection<
 
       if (element.deleted) {
         this.nondeletedIndex.delete(element.uuid)
+        if (this.conflictMap.existsInDirectMap(element.uuid) || this.conflictMap.existsInInverseMap(element.uuid)) {
+          this.conflictMap.removeFromMap(element.uuid)
+        }
       } else {
         this.nondeletedIndex.add(element.uuid)
       }
@@ -259,5 +273,9 @@ export abstract class Collection<
     const array = this.typedMap[element.content_type] || []
     remove(array, { uuid: element.uuid as never })
     this.typedMap[element.content_type] = array
+  }
+
+  public numberOfItemsWithConflicts(): number {
+    return this.conflictMap.directMapSize
   }
 }

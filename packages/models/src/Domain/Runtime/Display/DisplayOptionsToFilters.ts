@@ -10,8 +10,9 @@ import { NotesAndFilesDisplayOptions } from './DisplayOptions'
 export function computeUnifiedFilterForDisplayOptions(
   options: NotesAndFilesDisplayOptions,
   collection: ReferenceLookupCollection,
+  additionalFilters: ItemFilter[] = [],
 ): ItemFilter {
-  const filters = computeFiltersForDisplayOptions(options, collection)
+  const filters = computeFiltersForDisplayOptions(options, collection).concat(additionalFilters)
 
   return (item: SearchableDecryptedItem) => {
     return itemPassesFilters(item, filters)
@@ -72,6 +73,10 @@ export function computeFiltersForDisplayOptions(
   if (options.searchQuery) {
     const query = options.searchQuery
     filters.push((item) => itemMatchesQuery(item, query, collection))
+  }
+
+  if (!viewsPredicate?.keypathIncludesString('conflict_of')) {
+    filters.push((item) => !item.conflictOf)
   }
 
   return filters

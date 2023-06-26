@@ -85,7 +85,19 @@ export function BuildSmartViews(options: NotesAndFilesDisplayOptions): SmartView
     }),
   )
 
-  return [notes, files, starred, archived, trash, untagged]
+  const conflicts = new SmartView(
+    new DecryptedPayload({
+      uuid: SystemViewId.Conflicts,
+      content_type: ContentType.SmartView,
+      ...PayloadTimestampDefaults(),
+      content: FillItemContent<SmartViewContent>({
+        title: 'Conflicts',
+        predicate: conflictsPredicate(options).toJson(),
+      }),
+    }),
+  )
+
+  return [notes, files, starred, archived, trash, untagged, conflicts]
 }
 
 function allNotesPredicate(options: NotesAndFilesDisplayOptions) {
@@ -201,5 +213,28 @@ function starredNotesPredicate(options: NotesAndFilesDisplayOptions) {
   }
   const predicate = new CompoundPredicate('and', subPredicates)
 
+  return predicate
+}
+
+function conflictsPredicate(options: FilterDisplayOptions) {
+  const subPredicates: Predicate<SNNote>[] = [new Predicate('content_type', '=', ContentType.Note)]
+
+  if (options.includeTrashed === false) {
+    subPredicates.push(new Predicate('trashed', '=', false))
+  }
+
+  if (options.includeArchived === false) {
+    subPredicates.push(new Predicate('archived', '=', false))
+  }
+
+  if (options.includeProtected === false) {
+    subPredicates.push(new Predicate('protected', '=', false))
+  }
+
+  if (options.includePinned === false) {
+    subPredicates.push(new Predicate('pinned', '=', false))
+  }
+
+  const predicate = new CompoundPredicate('and', subPredicates)
   return predicate
 }

@@ -23,6 +23,7 @@ type Props = {
   isBidirectional: boolean
   inlineFlex?: boolean
   className?: string
+  readonly?: boolean
 }
 
 const LinkedItemBubble = ({
@@ -36,6 +37,7 @@ const LinkedItemBubble = ({
   isBidirectional,
   inlineFlex,
   className,
+  readonly,
 }: Props) => {
   const ref = useRef<HTMLButtonElement>(null)
   const application = useApplication()
@@ -60,6 +62,9 @@ const LinkedItemBubble = ({
   const onClick: MouseEventHandler = (event) => {
     if (wasClicked && event.target !== unlinkButtonRef.current) {
       setWasClicked(false)
+      if (readonly) {
+        return
+      }
       void activateItem?.(link.item)
     } else {
       setWasClicked(true)
@@ -112,7 +117,7 @@ const LinkedItemBubble = ({
       onKeyDown={onKeyDown}
     >
       <Icon type={icon} className={classNames('mr-1 flex-shrink-0', iconClassName)} size="small" />
-      <span className="max-w-290px flex items-center overflow-hidden overflow-ellipsis whitespace-nowrap">
+      <span className="flex items-center overflow-hidden overflow-ellipsis whitespace-nowrap">
         {tagTitle && <span className="text-passive-1">{tagTitle.titlePrefix}</span>}
         <span className="flex items-center gap-1">
           {link.type === 'linked-by' && link.item.content_type !== ContentType.Tag && (
@@ -121,7 +126,7 @@ const LinkedItemBubble = ({
           {getItemTitleInContextOfLinkBubble(link.item)}
         </span>
       </span>
-      {showUnlinkButton && (
+      {showUnlinkButton && !readonly && (
         <a
           ref={unlinkButtonRef}
           role="button"

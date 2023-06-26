@@ -28,7 +28,7 @@ const RevisionContentLocked: FunctionComponent<Props> = ({ subscriptionControlle
 
   return (
     <div className="flex h-full w-full items-center justify-center">
-      <div className="max-w-40% flex flex-col items-center text-center">
+      <div className="max-w-40% flex flex-col items-center px-8 text-center">
         <HistoryLockedIllustration />
         <div className="mt-2 mb-1 text-lg font-bold">Can't access this version</div>
         <div className="leading-140% mb-4 text-passive-0">

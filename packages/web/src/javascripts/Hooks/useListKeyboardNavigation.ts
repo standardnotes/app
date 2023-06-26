@@ -110,6 +110,12 @@ export const useListKeyboardNavigation = (
   }, [setInitialFocus, shouldAutoFocus])
 
   useEffect(() => {
+    if (listItems.current.length > 0) {
+      listItems.current[0].tabIndex = 0
+    }
+  }, [])
+
+  useEffect(() => {
     const containerElement = container.current
     containerElement?.addEventListener('keydown', keyDownHandler)
 

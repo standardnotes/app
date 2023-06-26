@@ -5,4 +5,5 @@ export enum SystemViewId {
   TrashedNotes = 'trashed-notes',
   UntaggedNotes = 'untagged-notes',
   StarredNotes = 'starred-notes',
+  Conflicts = 'conflicts',
 }

@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite'
 import ItemLinkAutocompleteInput from './ItemLinkAutocompleteInput'
 import { LinkingController } from '@/Controllers/LinkingController'
 import LinkedItemBubble from './LinkedItemBubble'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useResponsiveAppPane } from '../Panes/ResponsivePaneProvider'
 import { ElementIds } from '@/Constants/ElementIDs'
 import { classNames } from '@standardnotes/utils'
@@ -18,9 +18,22 @@ type Props = {
   linkingController: LinkingController
   item: DecryptedItemInterface
   hideToggle?: boolean
+  readonly?: boolean
+  className?: {
+    base?: string
+    withToggle?: string
+  }
+  isCollapsedByDefault?: boolean
 }
 
-const LinkedItemBubblesContainer = ({ item, linkingController, hideToggle = false }: Props) => {
+const LinkedItemBubblesContainer = ({
+  item,
+  linkingController,
+  hideToggle = false,
+  readonly = false,
+  className = {},
+  isCollapsedByDefault = false,
+}: Props) => {
   const { toggleAppPane } = useResponsiveAppPane()
 
   const commandService = useCommandService()
@@ -106,55 +119,66 @@ const LinkedItemBubblesContainer = ({ item, linkingController, hideToggle = fals
     )
   }
 
-  const [isCollapsed, setIsCollapsed] = useState(false)
+  const [isCollapsed, setIsCollapsed] = useState(() => isCollapsedByDefault)
 
   const itemsToDisplay = allItemsLinkedToItem.concat(notesLinkingToItem).concat(filesLinkingToItem)
   const visibleItems = isCollapsed ? itemsToDisplay.slice(0, 5) : itemsToDisplay
   const nonVisibleItems = itemsToDisplay.length - visibleItems.length
 
-  const [canShowContainerToggle, setCanShowContainerToggle] = useState(false)
-  const linkInputRef = useRef<HTMLInputElement>(null)
-  const linkContainerRef = useRef<HTMLDivElement>(null)
+  const [canShowContainerToggle, setCanShowContainerToggle] = useState(true)
+  const [linkContainer, setLinkContainer] = useState<HTMLDivElement | null>(null)
   useEffect(() => {
-    const container = linkContainerRef.current
-    const linkInput = linkInputRef.current
-
-    if (!container || !linkInput) {
+    const container = linkContainer
+    if (!container) {
       return
     }
 
     const resizeObserver = new ResizeObserver(() => {
-      if (container.clientHeight > linkInput.clientHeight) {
+      const firstChild = container.firstElementChild
+      if (!firstChild) {
+        return
+      }
+
+      const threshold = firstChild.clientHeight + 4
+      const didWrap = container.clientHeight > threshold
+
+      if (didWrap) {
         setCanShowContainerToggle(true)
       } else {
         setCanShowContainerToggle(false)
       }
     })
 
-    resizeObserver.observe(linkContainerRef.current)
+    resizeObserver.observe(container)
 
     return () => {
       resizeObserver.disconnect()
     }
-  }, [])
+  }, [linkContainer])
 
   const shouldHideToggle = hideToggle || (!canShowContainerToggle && !isCollapsed)
+
+  if (readonly && itemsToDisplay.length === 0) {
+    return null
+  }
 
   return (
     <div
       className={classNames(
-        'flex w-full justify-between',
-        itemsToDisplay.length > 0 && !shouldHideToggle && 'pt-2',
+        'flex w-full flex-wrap justify-between md:flex-nowrap',
+        itemsToDisplay.length > 0 && !shouldHideToggle ? 'pt-2 ' + className.withToggle : undefined,
         isCollapsed ? 'gap-4' : 'gap-1',
+        className.base,
       )}
     >
       <div
         className={classNames(
-          'note-view-linking-container flex min-w-80 max-w-full items-center gap-2 bg-transparent md:-mr-2',
+          'note-view-linking-container flex min-w-80 max-w-full items-center gap-2 bg-transparent',
           allItemsLinkedToItem.length || notesLinkingToItem.length ? 'mt-1' : 'mt-0.5',
           isCollapsed ? 'overflow-hidden' : 'flex-wrap',
+          !shouldHideToggle && 'mr-2',
         )}
-        ref={linkContainerRef}
+        ref={setLinkContainer}
       >
         {visibleItems.map((link) => (
           <LinkedItemBubble
@@ -167,18 +191,20 @@ const LinkedItemBubblesContainer = ({ item, linkingController, hideToggle = fals
             focusedId={focusedId}
             setFocusedId={setFocusedId}
             isBidirectional={isItemBidirectionallyLinked(link)}
+            readonly={readonly}
           />
         ))}
         {isCollapsed && nonVisibleItems > 0 && <span className="flex-shrink-0">and {nonVisibleItems} more...</span>}
-        <ItemLinkAutocompleteInput
-          focusedId={focusedId}
-          linkingController={linkingController}
-          focusPreviousItem={focusPreviousItem}
-          setFocusedId={setFocusedId}
-          hoverLabel={`Focus input to add a link (${shortcut})`}
-          item={item}
-          ref={linkInputRef}
-        />
+        {!readonly && (
+          <ItemLinkAutocompleteInput
+            focusedId={focusedId}
+            linkingController={linkingController}
+            focusPreviousItem={focusPreviousItem}
+            setFocusedId={setFocusedId}
+            hoverLabel={`Focus input to add a link (${shortcut})`}
+            item={item}
+          />
+        )}
       </div>
       {itemsToDisplay.length > 0 && !shouldHideToggle && (
         <RoundIconButton

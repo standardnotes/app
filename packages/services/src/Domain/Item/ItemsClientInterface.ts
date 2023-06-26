@@ -172,4 +172,6 @@ export interface ItemsClientInterface {
     iconString?: string
     vault?: VaultListingInterface
   }): Promise<SmartView>
+
+  numberOfNotesWithConflicts(): number
 }

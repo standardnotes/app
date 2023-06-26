@@ -187,6 +187,7 @@ import SubtractIcon from './ic-subtract.svg'
 import SuperscriptIcon from './ic-superscript.svg'
 import SyncIcon from './ic-sync.svg'
 import TasksIcon from './ic-tasks.svg'
+import TextIcon from './ic-text.svg'
 import TextCircleIcon from './ic-text-circle.svg'
 import TextParagraphLongIcon from './ic-text-paragraph-long.svg'
 import ThemesFilledIcon from './ic-themes-filled.svg'
@@ -394,6 +395,7 @@ export {
   SuperscriptIcon,
   SyncIcon,
   TasksIcon,
+  TextIcon,
   TextCircleIcon,
   TextParagraphLongIcon,
   ThemesFilledIcon,

@@ -82,14 +82,14 @@ describe('item manager', function () {
     const note = await this.createNote()
     const tag = await this.createTag([note])
 
-    expect(this.itemManager.collection.referenceMap.directMap[tag.uuid]).to.eql([note.uuid])
+    expect(this.itemManager.collection.referenceMap.directMap.get(tag.uuid)).to.eql([note.uuid])
   })
 
   it('inverse reference map', async function () {
     const note = await this.createNote()
     const tag = await this.createTag([note])
 
-    expect(this.itemManager.collection.referenceMap.inverseMap[note.uuid]).to.eql([tag.uuid])
+    expect(this.itemManager.collection.referenceMap.inverseMap.get(note.uuid)).to.eql([tag.uuid])
   })
 
   it('inverse reference map should not have duplicates', async function () {
@@ -97,7 +97,7 @@ describe('item manager', function () {
     const tag = await this.createTag([note])
     await this.itemManager.changeItem(tag)
 
-    expect(this.itemManager.collection.referenceMap.inverseMap[note.uuid]).to.eql([tag.uuid])
+    expect(this.itemManager.collection.referenceMap.inverseMap.get(note.uuid)).to.eql([tag.uuid])
   })
 
   it('deleting from reference map', async function () {
@@ -105,8 +105,8 @@ describe('item manager', function () {
     const tag = await this.createTag([note])
     await this.itemManager.setItemToBeDeleted(note)
 
-    expect(this.itemManager.collection.referenceMap.directMap[tag.uuid]).to.eql([])
-    expect(this.itemManager.collection.referenceMap.inverseMap[note.uuid].length).to.equal(0)
+    expect(this.itemManager.collection.referenceMap.directMap.get(tag.uuid)).to.eql([])
+    expect(this.itemManager.collection.referenceMap.inverseMap.get(note.uuid).length).to.equal(0)
   })
 
   it('deleting referenced item should update referencing item references', async function () {
@@ -125,8 +125,8 @@ describe('item manager', function () {
       mutator.removeItemAsRelationship(note)
     })
 
-    expect(this.itemManager.collection.referenceMap.directMap[tag.uuid]).to.eql([])
-    expect(this.itemManager.collection.referenceMap.inverseMap[note.uuid]).to.eql([])
+    expect(this.itemManager.collection.referenceMap.directMap.get(tag.uuid)).to.eql([])
+    expect(this.itemManager.collection.referenceMap.inverseMap.get(note.uuid)).to.eql([])
   })
 
   it('emitting discardable payload should remove it from our collection', async function () {
