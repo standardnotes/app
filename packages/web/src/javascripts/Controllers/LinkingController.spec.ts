@@ -10,6 +10,8 @@ import {
   InternalEventBus,
   SNNote,
   ItemsClientInterface,
+  VaultListingInterface,
+  ItemInterface,
 } from '@standardnotes/snjs'
 import { FilesController } from './FilesController'
 import { ItemListController } from './ItemList/ItemListController'
@@ -53,10 +55,17 @@ describe('LinkingController', () => {
   let subscriptionController: SubscriptionController
 
   beforeEach(() => {
-    application = {} as jest.Mocked<WebApplication>
+    application = {
+      vaults: {} as jest.Mocked<WebApplication['vaults']>,
+      alerts: {} as jest.Mocked<WebApplication['alerts']>,
+      sync: {} as jest.Mocked<WebApplication['sync']>,
+    } as unknown as jest.Mocked<WebApplication>
+
     application.getPreference = jest.fn()
     application.addSingleEventObserver = jest.fn()
     application.streamItems = jest.fn()
+    application.itemControllerGroup = {} as jest.Mocked<WebApplication['itemControllerGroup']>
+    application.sync.sync = jest.fn()
 
     Object.defineProperty(application, 'items', { value: {} as jest.Mocked<ItemsClientInterface> })
 
@@ -181,38 +190,106 @@ describe('LinkingController', () => {
     })
 
     it('should be true if active item & result are different content type & active item references result', () => {
-      const activeFile = createNote('test', {
-        uuid: 'active-file',
+      const activeNote = createNote('test', {
+        uuid: 'active-note',
         references: [
           {
             reference_type: ContentReferenceType.FileToNote,
-            uuid: 'note-result',
+            uuid: 'file-result',
           } as FileToNoteReference,
         ],
       })
 
-      const noteResult = createFile('test', {
-        uuid: 'note-result',
+      const fileResult = createFile('test', {
+        uuid: 'file-result',
         references: [],
       })
 
-      const isNoteResultAlreadyLinked = isSearchResultAlreadyLinkedToItem(noteResult, activeFile)
+      const isNoteResultAlreadyLinked = isSearchResultAlreadyLinkedToItem(fileResult, activeNote)
       expect(isNoteResultAlreadyLinked).toBeTruthy()
     })
 
     it('should be false if active item & result are different content type & neither references the other', () => {
-      const activeFile = createNote('test', {
+      const activeNote = createNote('test', {
         uuid: 'active-file',
         references: [],
       })
 
-      const noteResult = createFile('test', {
+      const fileResult = createFile('test', {
         uuid: 'note-result',
         references: [],
       })
 
-      const isNoteResultAlreadyLinked = isSearchResultAlreadyLinkedToItem(noteResult, activeFile)
+      const isNoteResultAlreadyLinked = isSearchResultAlreadyLinkedToItem(fileResult, activeNote)
       expect(isNoteResultAlreadyLinked).toBeFalsy()
+    })
+  })
+
+  describe('linkItems', () => {
+    it('attempting to link file and note should not be allowed if items belong to different vaults', async () => {
+      application.items.associateFileWithNote = jest.fn()
+
+      const note = createNote('test', {
+        uuid: 'note',
+        references: [],
+      })
+
+      const file = createFile('test', {
+        uuid: 'file',
+        references: [],
+      })
+
+      const noteVault = {
+        uuid: 'note-vault',
+      } as jest.Mocked<VaultListingInterface>
+
+      const fileVault = {
+        uuid: 'file-vault',
+      } as jest.Mocked<VaultListingInterface>
+
+      application.vaults.getItemVault = jest.fn().mockImplementation((item: ItemInterface) => {
+        if (item.uuid === note.uuid) {
+          return noteVault
+        } else if (item.uuid === file.uuid) {
+          return fileVault
+        }
+      })
+
+      const alertSpy = (application.alerts.alert = jest.fn())
+
+      await linkingController.linkItems(note, file)
+
+      expect(alertSpy).toHaveBeenCalled()
+    })
+
+    it('should move file to same vault as note if file does not belong to any vault', async () => {
+      application.items.associateFileWithNote = jest.fn()
+      const addToVaultSPy = (application.vaults.addItemToVault = jest.fn())
+
+      const note = createNote('test', {
+        uuid: 'note',
+        references: [],
+      })
+
+      const file = createFile('test', {
+        uuid: 'file',
+        references: [],
+      })
+
+      const noteVault = {
+        uuid: 'note-vault',
+      } as jest.Mocked<VaultListingInterface>
+
+      application.vaults.getItemVault = jest.fn().mockImplementation((item: ItemInterface) => {
+        if (item.uuid === note.uuid) {
+          return noteVault
+        }
+        return undefined
+      })
+
+      await linkingController.linkItems(note, file)
+
+      expect(addToVaultSPy).toHaveBeenCalled()
     })
   })
 })

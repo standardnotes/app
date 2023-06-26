@@ -15,6 +15,7 @@ import {
   isFile,
   isNote,
   InternalEventBusInterface,
+  isTag,
 } from '@standardnotes/snjs'
 import { action, computed, makeObservable, observable } from 'mobx'
 import { AbstractViewController } from './Abstract/AbstractViewController'
@@ -188,8 +189,43 @@ export class LinkingController extends AbstractViewController {
   }
 
   linkItems = async (item: LinkableItem, itemToLink: LinkableItem) => {
-    if (item instanceof SNNote) {
-      if (itemToLink instanceof SNNote && !this.isEntitledToNoteLinking) {
+    const linkNoteAndFile = async (note: SNNote, file: FileItem) => {
+      const noteVault = this.application.vaults.getItemVault(note)
+      const fileVault = this.application.vaults.getItemVault(file)
+
+      const isVaultConflict = noteVault && fileVault && noteVault !== fileVault
+      if (isVaultConflict) {
+        void this.application.alerts.alert(
+          'The items you are trying to link belong to different vaults and cannot be linked',
+        )
+        return
+      }
+
+      await this.application.items.associateFileWithNote(file, note)
+
+      if (noteVault) {
+        await this.application.vaults.addItemToVault(noteVault, file)
+      }
+    }
+
+    const linkFileAndFile = async (file1: FileItem, file2: FileItem) => {
+      await this.application.items.linkFileToFile(file1, file2)
+    }
+
+    const linkNoteToNote = async (note1: SNNote, note2: SNNote) => {
+      await this.application.items.linkNoteToNote(note1, note2)
+    }
+
+    const linkTagToNote = async (tag: SNTag, note: SNNote) => {
+      await this.addTagToItem(tag, note)
+    }
+
+    const linkTagToFile = async (tag: SNTag, file: FileItem) => {
+      await this.addTagToItem(tag, file)
+    }
+
+    if (isNote(item)) {
+      if (isNote(itemToLink) && !this.isEntitledToNoteLinking) {
         void this.publishCrossControllerEventSync(CrossControllerEvent.DisplayPremiumModal, {
           featureName: 'Note linking',
         })
@@ -200,22 +236,22 @@ export class LinkingController extends AbstractViewController {
         await this.ensureActiveItemIsInserted()
       }
 
-      if (itemToLink instanceof FileItem) {
-        await this.application.items.associateFileWithNote(itemToLink, item)
-      } else if (itemToLink instanceof SNNote) {
-        await this.application.items.linkNoteToNote(item, itemToLink)
-      } else if (itemToLink instanceof SNTag) {
-        await this.addTagToItem(itemToLink, item)
+      if (isFile(itemToLink)) {
+        await linkNoteAndFile(item, itemToLink)
+      } else if (isNote(itemToLink)) {
+        await linkNoteToNote(item, itemToLink)
+      } else if (isTag(itemToLink)) {
+        await linkTagToNote(itemToLink, item)
       } else {
         throw Error('Invalid item type')
       }
-    } else if (item instanceof FileItem) {
-      if (itemToLink instanceof SNNote) {
-        await this.application.items.associateFileWithNote(item, itemToLink)
-      } else if (itemToLink instanceof FileItem) {
-        await this.application.items.linkFileToFile(item, itemToLink)
-      } else if (itemToLink instanceof SNTag) {
-        await this.addTagToItem(itemToLink, item)
+    } else if (isFile(item)) {
+      if (isNote(itemToLink)) {
+        await linkNoteAndFile(itemToLink, item)
+      } else if (isFile(itemToLink)) {
+        await linkFileAndFile(item, itemToLink)
+      } else if (isTag(itemToLink)) {
+        await linkTagToFile(itemToLink, item)
       } else {
         throw Error('Invalid item to link')
       }
