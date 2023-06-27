@@ -1,5 +1,5 @@
 import { HexString, PkcKeyPair, PureCryptoInterface, Utf8String } from '@standardnotes/sncrypto-common'
-import { AsymmetricallyEncryptedString } from '../../../Types'
+import { AsymmetricallyEncryptedString } from '../../../Types/Types'
 import { V004Algorithm } from '../../../../Algorithm'
 import { V004AsymmetricCiphertextPrefix, V004AsymmetricStringComponents } from '../../V004AlgorithmTypes'
 import { CreateConsistentBase64JsonPayloadUseCase } from '../Utils/CreateConsistentBase64JsonPayload'

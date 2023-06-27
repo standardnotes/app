@@ -92,7 +92,7 @@ describe('auth fringe cases', () => {
       const newApplication = await Factory.signOutApplicationAndReturnNew(context.application)
 
       /** Create same note but now offline */
-      await newApplication.itemManager.emitItemFromPayload(firstVersionOfNote.payload)
+      await newApplication.mutator.emitItemFromPayload(firstVersionOfNote.payload)
 
       /** Sign in and merge local data */
       await newApplication.signIn(context.email, context.password, undefined, undefined, true, true)

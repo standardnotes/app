@@ -227,7 +227,7 @@ describe('app models', () => {
       mutator.e2ePendingRefactor_addItemAsRelationship(item2)
     })
 
-    const refreshedItem1_2 = await this.application.itemManager.emitItemFromPayload(
+    const refreshedItem1_2 = await this.application.mutator.emitItemFromPayload(
       refreshedItem1.payloadRepresentation({
         deleted: true,
         content: {
@@ -290,7 +290,7 @@ describe('app models', () => {
       waitingForKey: true,
     })
 
-    await this.application.itemManager.emitItemFromPayload(errored)
+    await this.application.mutator.emitItemFromPayload(errored)
 
     expect(this.application.payloadManager.findOne(item1.uuid).errorDecrypting).to.equal(true)
     expect(this.application.payloadManager.findOne(item1.uuid).items_key_id).to.equal(itemsKey.uuid)
@@ -358,7 +358,7 @@ describe('app models', () => {
   })
 
   it('maintains editor reference when duplicating note', async function () {
-    const editor = await this.application.itemManager.createItem(
+    const editor = await this.application.mutator.createItem(
       ContentType.Component,
       { area: ComponentArea.Editor, package_info: { identifier: 'foo-editor' } },
       true,

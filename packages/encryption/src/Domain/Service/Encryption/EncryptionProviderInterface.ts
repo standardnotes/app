@@ -1,4 +1,4 @@
-import { AsymmetricSignatureVerificationDetachedResult } from './../../Operator/AsymmetricSignatureVerificationDetachedResult'
+import { AsymmetricSignatureVerificationDetachedResult } from '../../Operator/Types/AsymmetricSignatureVerificationDetachedResult'
 import { KeyParamsOrigination, ProtocolVersion } from '@standardnotes/common'
 import {
   BackupFile,
@@ -20,9 +20,9 @@ import { KeyedDecryptionSplit } from '../../Split/KeyedDecryptionSplit'
 import { KeyedEncryptionSplit } from '../../Split/KeyedEncryptionSplit'
 import { ItemAuthenticatedData } from '../../Types/ItemAuthenticatedData'
 import { PkcKeyPair } from '@standardnotes/sncrypto-common'
-import { PublicKeySet } from '../../Operator/PublicKeySet'
+import { PublicKeySet } from '../../Operator/Types/PublicKeySet'
 import { KeySystemKeyManagerInterface } from '../KeySystemKeyManagerInterface'
-import { AsymmetricallyEncryptedString } from '../../Operator/Types'
+import { AsymmetricallyEncryptedString } from '../../Operator/Types/Types'
 
 export interface EncryptionProviderInterface {
   keys: KeySystemKeyManagerInterface

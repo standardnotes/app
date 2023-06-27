@@ -154,7 +154,7 @@ describe('backups', function () {
       errorDecrypting: true,
     })
 
-    await this.application.itemManager.emitItemFromPayload(errored)
+    await this.application.mutator.emitItemFromPayload(errored)
 
     const erroredItem = this.application.itemManager.findAnyItem(errored.uuid)
 

@@ -105,7 +105,7 @@ describe('importing', function () {
      */
     await setup({ fakeCrypto: true })
     const notePayload = Factory.createNotePayload()
-    await application.itemManager.emitItemFromPayload(notePayload, PayloadEmitSource.LocalChanged)
+    await application.mutator.emitItemFromPayload(notePayload, PayloadEmitSource.LocalChanged)
     expectedItemCount++
     const mutatedNote = new DecryptedPayload({
       ...notePayload,
@@ -449,7 +449,7 @@ describe('importing', function () {
       version: oldVersion,
     })
 
-    const noteItem = await application.itemManager.createItem(ContentType.Note, {
+    const noteItem = await application.mutator.createItem(ContentType.Note, {
       title: 'Encrypted note',
       text: 'On protocol version 003.',
     })
@@ -530,7 +530,7 @@ describe('importing', function () {
       password: password,
     })
 
-    const noteItem = await application.itemManager.createItem(ContentType.Note, {
+    const noteItem = await application.mutator.createItem(ContentType.Note, {
       title: 'Encrypted note',
       text: 'On protocol version 004.',
     })
@@ -560,7 +560,7 @@ describe('importing', function () {
       password: password,
     })
 
-    const noteItem = await application.itemManager.createItem(ContentType.Note, {
+    const noteItem = await application.mutator.createItem(ContentType.Note, {
       title: 'This is a valid, encrypted note',
       text: 'On protocol version 004.',
     })
@@ -598,7 +598,7 @@ describe('importing', function () {
       version: oldVersion,
     })
 
-    await application.itemManager.createItem(ContentType.Note, {
+    await application.mutator.createItem(ContentType.Note, {
       title: 'Encrypted note',
       text: 'On protocol version 003.',
     })
@@ -635,7 +635,7 @@ describe('importing', function () {
       password: password,
     })
 
-    await application.itemManager.createItem(ContentType.Note, {
+    await application.mutator.createItem(ContentType.Note, {
       title: 'This is a valid, encrypted note',
       text: 'On protocol version 004.',
     })
@@ -666,7 +666,7 @@ describe('importing', function () {
       password: password,
     })
 
-    await application.itemManager.createItem(ContentType.Note, {
+    await application.mutator.createItem(ContentType.Note, {
       title: 'Encrypted note',
       text: 'On protocol version 004.',
     })
@@ -691,7 +691,7 @@ describe('importing', function () {
     })
     Factory.handlePasswordChallenges(application, password)
 
-    await application.itemManager.createItem(ContentType.Note, {
+    await application.mutator.createItem(ContentType.Note, {
       title: 'Encrypted note',
       text: 'On protocol version 004.',
     })

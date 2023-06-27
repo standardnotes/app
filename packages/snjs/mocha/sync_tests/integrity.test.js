@@ -44,7 +44,7 @@ describe('sync integrity', () => {
   })
 
   it('should detect when out of sync', async function () {
-    const item = await this.application.itemManager.emitItemFromPayload(
+    const item = await this.application.mutator.emitItemFromPayload(
       Factory.createNotePayload(),
       PayloadEmitSource.LocalChanged,
     )
@@ -60,7 +60,7 @@ describe('sync integrity', () => {
   })
 
   it('should self heal after out of sync', async function () {
-    const item = await this.application.itemManager.emitItemFromPayload(
+    const item = await this.application.mutator.emitItemFromPayload(
       Factory.createNotePayload(),
       PayloadEmitSource.LocalChanged,
     )

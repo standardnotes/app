@@ -4,9 +4,9 @@ import { SNProtocolOperator001 } from '../Operator/001/Operator001'
 import { SNProtocolOperator002 } from '../Operator/002/Operator002'
 import { SNProtocolOperator003 } from '../Operator/003/Operator003'
 import { SNProtocolOperator004 } from '../Operator/004/Operator004'
-import { OperatorInterface } from './OperatorInterface'
+import { AnyOperatorInterface } from './OperatorInterface/TypeCheck'
 
-export function createOperatorForVersion(version: ProtocolVersion, crypto: PureCryptoInterface): OperatorInterface {
+export function createOperatorForVersion(version: ProtocolVersion, crypto: PureCryptoInterface): AnyOperatorInterface {
   if (version === ProtocolVersion.V001) {
     return new SNProtocolOperator001(crypto)
   } else if (version === ProtocolVersion.V002) {

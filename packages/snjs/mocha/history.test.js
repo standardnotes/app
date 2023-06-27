@@ -172,7 +172,7 @@ describe('history manager', () => {
           text: Factory.randomString(100),
         }),
       )
-      let item = await this.application.itemManager.emitItemFromPayload(payload, PayloadEmitSource.LocalChanged)
+      let item = await this.application.mutator.emitItemFromPayload(payload, PayloadEmitSource.LocalChanged)
       await this.application.itemManager.setItemDirty(item)
       await this.application.syncService.sync(syncOptions)
       /** It should keep the first and last by default */
@@ -202,7 +202,7 @@ describe('history manager', () => {
         }),
       )
 
-      let item = await this.application.itemManager.emitItemFromPayload(payload, PayloadEmitSource.LocalChanged)
+      let item = await this.application.mutator.emitItemFromPayload(payload, PayloadEmitSource.LocalChanged)
 
       await this.application.itemManager.setItemDirty(item)
       await this.application.syncService.sync(syncOptions)
@@ -241,7 +241,7 @@ describe('history manager', () => {
 
     it('unsynced entries should use payload created_at for preview titles', async function () {
       const payload = Factory.createNotePayload()
-      await this.application.itemManager.emitItemFromPayload(payload, PayloadEmitSource.LocalChanged)
+      await this.application.mutator.emitItemFromPayload(payload, PayloadEmitSource.LocalChanged)
       const item = this.application.items.findItem(payload.uuid)
       await this.application.changeAndSaveItem(
         item,

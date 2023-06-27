@@ -898,7 +898,7 @@ describe('online syncing', function () {
           dirtyIndex: changed[0].payload.globalDirtyIndexAtLastSync + 1,
         })
 
-        await this.application.itemManager.emitItemFromPayload(mutated)
+        await this.application.mutator.emitItemFromPayload(mutated)
       }
     })
 
@@ -939,7 +939,7 @@ describe('online syncing', function () {
       dirty: true,
     })
 
-    await this.application.itemManager.emitItemFromPayload(errored)
+    await this.application.mutator.emitItemFromPayload(errored)
     await this.application.sync.sync(syncOptions)
 
     const updatedNote = this.application.items.findAnyItem(note.uuid)

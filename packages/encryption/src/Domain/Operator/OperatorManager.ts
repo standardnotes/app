@@ -1,10 +1,10 @@
 import { ProtocolVersion, ProtocolVersionLatest } from '@standardnotes/common'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { createOperatorForVersion } from './Functions'
-import { OperatorInterface } from './OperatorInterface'
+import { AnyOperatorInterface } from './OperatorInterface/TypeCheck'
 
 export class OperatorManager {
-  private operators: Record<string, OperatorInterface> = {}
+  private operators: Record<string, AnyOperatorInterface> = {}
 
   constructor(private crypto: PureCryptoInterface) {
     this.crypto = crypto
@@ -15,7 +15,7 @@ export class OperatorManager {
     this.operators = {}
   }
 
-  public operatorForVersion(version: ProtocolVersion): OperatorInterface {
+  public operatorForVersion(version: ProtocolVersion): AnyOperatorInterface {
     const operatorKey = version
     let operator = this.operators[operatorKey]
     if (!operator) {
@@ -28,7 +28,7 @@ export class OperatorManager {
   /**
    * Returns the operator corresponding to the latest protocol version
    */
-  public defaultOperator(): OperatorInterface {
+  public defaultOperator(): AnyOperatorInterface {
     return this.operatorForVersion(ProtocolVersionLatest)
   }
 }

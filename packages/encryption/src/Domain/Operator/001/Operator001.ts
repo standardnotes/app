@@ -27,10 +27,11 @@ import { DecryptedParameters } from '../../Types/DecryptedParameters'
 import { ItemAuthenticatedData } from '../../Types/ItemAuthenticatedData'
 import { LegacyAttachedData } from '../../Types/LegacyAttachedData'
 import { RootKeyEncryptedAuthenticatedData } from '../../Types/RootKeyEncryptedAuthenticatedData'
-import { OperatorInterface } from '../OperatorInterface'
-import { PublicKeySet } from '../PublicKeySet'
-import { AsymmetricDecryptResult } from '../AsymmetricDecryptResult'
-import { AsymmetricSignatureVerificationDetachedResult } from '../AsymmetricSignatureVerificationDetachedResult'
+import { OperatorInterface } from '../OperatorInterface/OperatorInterface'
+import { PublicKeySet } from '../Types/PublicKeySet'
+import { AsymmetricDecryptResult } from '../Types/AsymmetricDecryptResult'
+import { AsymmetricSignatureVerificationDetachedResult } from '../Types/AsymmetricSignatureVerificationDetachedResult'
+import { AsyncOperatorInterface } from '../OperatorInterface/AsyncOperatorInterface'
 
 const NO_IV = '00000000000000000000000000000000'
 
@@ -38,7 +39,7 @@ const NO_IV = '00000000000000000000000000000000'
  * @deprecated
  * A legacy operator no longer used to generate new accounts
  */
-export class SNProtocolOperator001 implements OperatorInterface {
+export class SNProtocolOperator001 implements OperatorInterface, AsyncOperatorInterface {
   protected readonly crypto: PureCryptoInterface
 
   constructor(crypto: PureCryptoInterface) {
@@ -254,21 +255,6 @@ export class SNProtocolOperator001 implements OperatorInterface {
   }
 
   versionForAsymmetricallyEncryptedString(_encryptedString: string): ProtocolVersion {
-    throw new Error('Method not implemented.')
-  }
-
-  generateEncryptedParameters(
-    _payload: DecryptedPayloadInterface<ItemContent>,
-    _key: ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface | RootKeyInterface,
-    _signingKeyPair?: PkcKeyPair | undefined,
-  ): EncryptedOutputParameters {
-    throw new Error('Method not implemented.')
-  }
-
-  generateDecryptedParameters<C extends ItemContent = ItemContent>(
-    _encrypted: EncryptedOutputParameters,
-    _key: ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface | RootKeyInterface,
-  ): ErrorDecryptingParameters | DecryptedParameters<C> {
     throw new Error('Method not implemented.')
   }
 

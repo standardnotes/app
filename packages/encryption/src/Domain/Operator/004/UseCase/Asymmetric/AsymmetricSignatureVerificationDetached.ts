@@ -1,9 +1,9 @@
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
-import { AsymmetricallyEncryptedString } from '../../../Types'
+import { AsymmetricallyEncryptedString } from '../../../Types/Types'
 import { V004AsymmetricStringComponents } from '../../V004AlgorithmTypes'
 import { ParseConsistentBase64JsonPayloadUseCase } from '../Utils/ParseConsistentBase64JsonPayload'
 import { AsymmetricItemAdditionalData } from '../../../../Types/EncryptionAdditionalData'
-import { AsymmetricSignatureVerificationDetachedResult } from '../../../AsymmetricSignatureVerificationDetachedResult'
+import { AsymmetricSignatureVerificationDetachedResult } from '../../../Types/AsymmetricSignatureVerificationDetachedResult'
 
 export class AsymmetricSignatureVerificationDetachedUseCase {
   private parseBase64Usecase = new ParseConsistentBase64JsonPayloadUseCase(this.crypto)

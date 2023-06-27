@@ -62,7 +62,7 @@ describe('singletons', function () {
     ])
 
     this.createExtMgr = () => {
-      return this.application.itemManager.createItem(
+      return this.application.mutator.createItem(
         ContentType.Component,
         {
           package_info: {
@@ -327,7 +327,7 @@ describe('singletons', function () {
 
   it('alternating the uuid of a singleton should return correct result', async function () {
     const payload = createPrefsPayload()
-    const item = await this.application.itemManager.emitItemFromPayload(payload, PayloadEmitSource.LocalChanged)
+    const item = await this.application.mutator.emitItemFromPayload(payload, PayloadEmitSource.LocalChanged)
     await this.application.syncService.sync(syncOptions)
     const predicate = new Predicate('content_type', '=', item.content_type)
     let resolvedItem = await this.application.singletonManager.findOrCreateContentTypeSingleton(

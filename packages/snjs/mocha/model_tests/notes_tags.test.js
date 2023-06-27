@@ -25,7 +25,7 @@ describe('notes and tags', () => {
 
   it('uses proper class for note', async function () {
     const payload = Factory.createNotePayload()
-    await this.application.itemManager.emitItemFromPayload(payload, PayloadEmitSource.LocalChanged)
+    await this.application.mutator.emitItemFromPayload(payload, PayloadEmitSource.LocalChanged)
     const note = this.application.itemManager.getItems([ContentType.Note])[0]
     expect(note.constructor === SNNote).to.equal(true)
   })

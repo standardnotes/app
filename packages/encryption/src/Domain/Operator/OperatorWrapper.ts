@@ -15,6 +15,7 @@ import {
 import { DecryptedParameters } from '../Types/DecryptedParameters'
 import { OperatorManager } from './OperatorManager'
 import { PkcKeyPair } from '@standardnotes/sncrypto-common'
+import { isAsyncOperator } from './OperatorInterface/TypeCheck'
 
 export async function encryptPayload(
   payload: DecryptedPayloadInterface,
@@ -23,13 +24,19 @@ export async function encryptPayload(
   signingKeyPair: PkcKeyPair | undefined,
 ): Promise<EncryptedOutputParameters> {
   const operator = operatorManager.operatorForVersion(key.keyVersion)
-  const encryptionParameters = operator.generateEncryptedParameters(payload, key, signingKeyPair)
+  let result: EncryptedOutputParameters | undefined = undefined
 
-  if (!encryptionParameters) {
+  if (isAsyncOperator(operator)) {
+    result = await operator.generateEncryptedParametersAsync(payload, key)
+  } else {
+    result = operator.generateEncryptedParameters(payload, key, signingKeyPair)
+  }
+
+  if (!result) {
     throw 'Unable to generate encryption parameters'
   }
 
-  return encryptionParameters
+  return result
 }
 
 export async function decryptPayload<C extends ItemContent = ItemContent>(
@@ -40,7 +47,11 @@ export async function decryptPayload<C extends ItemContent = ItemContent>(
   const operator = operatorManager.operatorForVersion(payload.version)
 
   try {
-    return operator.generateDecryptedParameters(encryptedInputParametersFromPayload(payload), key)
+    if (isAsyncOperator(operator)) {
+      return await operator.generateDecryptedParametersAsync(encryptedInputParametersFromPayload(payload), key)
+    } else {
+      return operator.generateDecryptedParameters(encryptedInputParametersFromPayload(payload), key)
+    }
   } catch (e) {
     console.error('Error decrypting payload', payload, e)
     return {

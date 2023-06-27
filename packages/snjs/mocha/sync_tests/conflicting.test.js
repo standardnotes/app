@@ -64,7 +64,7 @@ describe('online conflict handling', function () {
   it('components should not be duplicated under any circumstances', async function () {
     const payload = createDirtyPayload(ContentType.Component)
 
-    const item = await this.application.itemManager.emitItemFromPayload(payload, PayloadEmitSource.LocalChanged)
+    const item = await this.application.mutator.emitItemFromPayload(payload, PayloadEmitSource.LocalChanged)
 
     this.expectedItemCount++
 
@@ -91,7 +91,7 @@ describe('online conflict handling', function () {
 
   it('items keys should not be duplicated under any circumstances', async function () {
     const payload = createDirtyPayload(ContentType.ItemsKey)
-    const item = await this.application.itemManager.emitItemFromPayload(payload, PayloadEmitSource.LocalChanged)
+    const item = await this.application.mutator.emitItemFromPayload(payload, PayloadEmitSource.LocalChanged)
     this.expectedItemCount++
     await this.application.syncService.sync(syncOptions)
     /** First modify the item without saving so that
@@ -669,7 +669,7 @@ describe('online conflict handling', function () {
     await this.application.sync.sync()
 
     /** Simulate a dropped response by reverting the note back its post-change, pre-sync state */
-    const retroNote = await this.application.itemManager.emitItemFromPayload(noteAfterChange.payload)
+    const retroNote = await this.application.mutator.emitItemFromPayload(noteAfterChange.payload)
     expect(retroNote.serverUpdatedAt.getTime()).to.equal(noteAfterChange.serverUpdatedAt.getTime())
 
     /** Change the item to its final title and sync */
@@ -855,7 +855,7 @@ describe('online conflict handling', function () {
       },
       dirty: true,
     })
-    await this.application.itemManager.emitItemFromPayload(modified)
+    await this.application.mutator.emitItemFromPayload(modified)
     await this.application.sync.sync()
     expect(this.application.itemManager.getDisplayableNotes().length).to.equal(1)
     await this.sharedFinalAssertions()
@@ -879,7 +879,7 @@ describe('online conflict handling', function () {
       dirty: true,
     })
     this.expectedItemCount++
-    await this.application.itemManager.emitItemFromPayload(modified)
+    await this.application.mutator.emitItemFromPayload(modified)
     await this.application.sync.sync()
     expect(this.application.itemManager.getDisplayableNotes().length).to.equal(2)
     await this.sharedFinalAssertions()
@@ -911,7 +911,7 @@ describe('online conflict handling', function () {
       dirty: true,
     })
     this.expectedItemCount++
-    await this.application.itemManager.emitItemFromPayload(modified)
+    await this.application.mutator.emitItemFromPayload(modified)
     await this.application.sync.sync()
     expect(this.application.itemManager.getDisplayableNotes().length).to.equal(2)
     await this.sharedFinalAssertions()

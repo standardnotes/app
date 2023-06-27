@@ -26,8 +26,8 @@ import { DecryptedParameters } from '../../Types/DecryptedParameters'
 import { ItemAuthenticatedData } from '../../Types/ItemAuthenticatedData'
 import { LegacyAttachedData } from '../../Types/LegacyAttachedData'
 import { RootKeyEncryptedAuthenticatedData } from '../../Types/RootKeyEncryptedAuthenticatedData'
-import { OperatorInterface } from '../OperatorInterface'
-import { AsymmetricallyEncryptedString } from '../Types'
+import { OperatorInterface } from '../OperatorInterface/OperatorInterface'
+import { AsymmetricallyEncryptedString } from '../Types/Types'
 import { AsymmetricItemAdditionalData } from '../../Types/EncryptionAdditionalData'
 import { V004AsymmetricStringComponents } from './V004AlgorithmTypes'
 import { AsymmetricEncryptUseCase } from './UseCase/Asymmetric/AsymmetricEncrypt'
@@ -40,15 +40,16 @@ import { GetPayloadAuthenticatedDataDetachedUseCase } from './UseCase/Symmetric/
 import { CreateRootKeyUseCase } from './UseCase/RootKey/CreateRootKey'
 import { UuidGenerator } from '@standardnotes/utils'
 import { CreateKeySystemItemsKeyUseCase } from './UseCase/KeySystem/CreateKeySystemItemsKey'
-import { AsymmetricDecryptResult } from '../AsymmetricDecryptResult'
-import { PublicKeySet } from '../PublicKeySet'
+import { AsymmetricDecryptResult } from '../Types/AsymmetricDecryptResult'
+import { PublicKeySet } from '../Types/PublicKeySet'
 import { CreateRandomKeySystemRootKey } from './UseCase/KeySystem/CreateRandomKeySystemRootKey'
 import { CreateUserInputKeySystemRootKey } from './UseCase/KeySystem/CreateUserInputKeySystemRootKey'
-import { AsymmetricSignatureVerificationDetachedResult } from '../AsymmetricSignatureVerificationDetachedResult'
+import { AsymmetricSignatureVerificationDetachedResult } from '../Types/AsymmetricSignatureVerificationDetachedResult'
 import { AsymmetricSignatureVerificationDetachedUseCase } from './UseCase/Asymmetric/AsymmetricSignatureVerificationDetached'
 import { DeriveKeySystemRootKeyUseCase } from './UseCase/KeySystem/DeriveKeySystemRootKey'
+import { SyncOperatorInterface } from '../OperatorInterface/SyncOperatorInterface'
 
-export class SNProtocolOperator004 implements OperatorInterface {
+export class SNProtocolOperator004 implements OperatorInterface, SyncOperatorInterface {
   constructor(protected readonly crypto: PureCryptoInterface) {}
 
   public getEncryptionDisplayName(): string {

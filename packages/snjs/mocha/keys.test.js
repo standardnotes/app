@@ -780,7 +780,7 @@ describe('keys', function () {
     expect(this.application.protocolService.getSureDefaultItemsKey()).to.not.be.ok
     const protocol003 = new SNProtocolOperator003(new SNWebCrypto())
     const key = await protocol003.createItemsKey()
-    await this.application.itemManager.emitItemFromPayload(
+    await this.application.mutator.emitItemFromPayload(
       key.payload.copy({
         content: {
           ...key.payload.content,
@@ -801,7 +801,7 @@ describe('keys', function () {
   it('having unsynced items keys should resync them upon download first sync completion', async function () {
     await Factory.registerUserToApplication({ application: this.application })
     const itemsKey = this.application.itemManager.getDisplayableItemsKeys()[0]
-    await this.application.itemManager.emitItemFromPayload(
+    await this.application.mutator.emitItemFromPayload(
       itemsKey.payload.copy({
         dirty: false,
         updated_at: new Date(0),

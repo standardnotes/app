@@ -170,17 +170,17 @@ export function itemToStoragePayload(item) {
 
 export function createMappedNote(application, title, text, dirty = true) {
   const payload = createNotePayload(title, text, dirty)
-  return application.itemManager.emitItemFromPayload(payload, PayloadEmitSource.LocalChanged)
+  return application.mutator.emitItemFromPayload(payload, PayloadEmitSource.LocalChanged)
 }
 
 export async function createMappedTag(application, tagParams = {}) {
   const payload = createStorageItemTagPayload(tagParams)
-  return application.itemManager.emitItemFromPayload(payload, PayloadEmitSource.LocalChanged)
+  return application.mutator.emitItemFromPayload(payload, PayloadEmitSource.LocalChanged)
 }
 
 export async function createSyncedNote(application, title, text) {
   const payload = createNotePayload(title, text)
-  const item = await application.itemManager.emitItemFromPayload(payload, PayloadEmitSource.LocalChanged)
+  const item = await application.mutator.emitItemFromPayload(payload, PayloadEmitSource.LocalChanged)
   await application.itemManager.setItemDirty(item)
   await application.syncService.sync(syncOptions)
   const note = application.items.findItem(payload.uuid)
@@ -388,7 +388,7 @@ export function pinNote(application, note) {
 }
 
 export async function insertItemWithOverride(application, contentType, content, needsSync = false, errorDecrypting) {
-  const item = await application.itemManager.createItem(contentType, content, needsSync)
+  const item = await application.mutator.createItem(contentType, content, needsSync)
 
   if (errorDecrypting) {
     const encrypted = new EncryptedPayload({
@@ -397,12 +397,12 @@ export async function insertItemWithOverride(application, contentType, content, 
       errorDecrypting,
     })
 
-    await application.itemManager.emitItemFromPayload(encrypted)
+    await application.mutator.emitItemFromPayload(encrypted)
   } else {
     const decrypted = new DecryptedPayload({
       ...item.payload.ejected(),
     })
-    await application.itemManager.emitItemFromPayload(decrypted)
+    await application.mutator.emitItemFromPayload(decrypted)
   }
 
   return application.itemManager.findAnyItem(item.uuid)
@@ -449,7 +449,7 @@ export async function changePayloadTimeStamp(application, payload, timestamp, co
     updated_at_timestamp: timestamp,
   })
 
-  await application.itemManager.emitItemFromPayload(changedPayload)
+  await application.mutator.emitItemFromPayload(changedPayload)
 
   return application.itemManager.findAnyItem(payload.uuid)
 }
@@ -463,7 +463,7 @@ export async function changePayloadUpdatedAt(application, payload, updatedAt) {
     updated_at: updatedAt,
   })
 
-  await application.itemManager.emitItemFromPayload(changedPayload)
+  await application.mutator.emitItemFromPayload(changedPayload)
 
   return application.itemManager.findAnyItem(payload.uuid)
 }
@@ -479,6 +479,6 @@ export async function changePayloadTimeStampDeleteAndSync(application, payload, 
     updated_at_timestamp: timestamp,
   })
 
-  await application.itemManager.emitItemFromPayload(changedPayload)
+  await application.mutator.emitItemFromPayload(changedPayload)
   await application.sync.sync(syncOptions)
 }

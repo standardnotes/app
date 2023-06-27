@@ -6,9 +6,10 @@ describe('note display criteria', function () {
   beforeEach(async function () {
     this.payloadManager = new PayloadManager()
     this.itemManager = new ItemManager(this.payloadManager)
+    this.mutator = new MutatorService(this.itemManager, this.payloadManager)
 
     this.createNote = async (title = 'hello', text = 'world') => {
-      return this.itemManager.createItem(ContentType.Note, {
+      return this.mutator.createItem(ContentType.Note, {
         title: title,
         text: text,
       })
@@ -21,7 +22,7 @@ describe('note display criteria', function () {
           content_type: note.content_type,
         }
       })
-      return this.itemManager.createItem(ContentType.Tag, {
+      return this.mutator.createItem(ContentType.Tag, {
         title: title,
         references: references,
       })
@@ -38,8 +39,11 @@ describe('note display criteria', function () {
       includePinned: false,
     }
     expect(
-      notesAndFilesMatchingOptions(criteria, this.itemManager.collection.all(ContentType.Note), this.itemManager.collection)
-        .length,
+      notesAndFilesMatchingOptions(
+        criteria,
+        this.itemManager.collection.all(ContentType.Note),
+        this.itemManager.collection,
+      ).length,
     ).to.equal(1)
   })
 
@@ -51,8 +55,11 @@ describe('note display criteria', function () {
     })
     const criteria = { includePinned: true }
     expect(
-      notesAndFilesMatchingOptions(criteria, this.itemManager.collection.all(ContentType.Note), this.itemManager.collection)
-        .length,
+      notesAndFilesMatchingOptions(
+        criteria,
+        this.itemManager.collection.all(ContentType.Note),
+        this.itemManager.collection,
+      ).length,
     ).to.equal(2)
   })
 
@@ -64,8 +71,11 @@ describe('note display criteria', function () {
     })
     const criteria = { includeTrashed: false }
     expect(
-      notesAndFilesMatchingOptions(criteria, this.itemManager.collection.all(ContentType.Note), this.itemManager.collection)
-        .length,
+      notesAndFilesMatchingOptions(
+        criteria,
+        this.itemManager.collection.all(ContentType.Note),
+        this.itemManager.collection,
+      ).length,
     ).to.equal(1)
   })
 
@@ -77,8 +87,11 @@ describe('note display criteria', function () {
     })
     const criteria = { includeTrashed: true }
     expect(
-      notesAndFilesMatchingOptions(criteria, this.itemManager.collection.all(ContentType.Note), this.itemManager.collection)
-        .length,
+      notesAndFilesMatchingOptions(
+        criteria,
+        this.itemManager.collection.all(ContentType.Note),
+        this.itemManager.collection,
+      ).length,
     ).to.equal(2)
   })
 
@@ -90,8 +103,11 @@ describe('note display criteria', function () {
     })
     const criteria = { includeArchived: false }
     expect(
-      notesAndFilesMatchingOptions(criteria, this.itemManager.collection.all(ContentType.Note), this.itemManager.collection)
-        .length,
+      notesAndFilesMatchingOptions(
+        criteria,
+        this.itemManager.collection.all(ContentType.Note),
+        this.itemManager.collection,
+      ).length,
     ).to.equal(1)
   })
 
@@ -105,8 +121,11 @@ describe('note display criteria', function () {
       includeArchived: true,
     }
     expect(
-      notesAndFilesMatchingOptions(criteria, this.itemManager.collection.all(ContentType.Note), this.itemManager.collection)
-        .length,
+      notesAndFilesMatchingOptions(
+        criteria,
+        this.itemManager.collection.all(ContentType.Note),
+        this.itemManager.collection,
+      ).length,
     ).to.equal(2)
   })
 
@@ -118,8 +137,11 @@ describe('note display criteria', function () {
     })
     const criteria = { includeProtected: false }
     expect(
-      notesAndFilesMatchingOptions(criteria, this.itemManager.collection.all(ContentType.Note), this.itemManager.collection)
-        .length,
+      notesAndFilesMatchingOptions(
+        criteria,
+        this.itemManager.collection.all(ContentType.Note),
+        this.itemManager.collection,
+      ).length,
     ).to.equal(1)
   })
 
@@ -133,8 +155,11 @@ describe('note display criteria', function () {
       includeProtected: true,
     }
     expect(
-      notesAndFilesMatchingOptions(criteria, this.itemManager.collection.all(ContentType.Note), this.itemManager.collection)
-        .length,
+      notesAndFilesMatchingOptions(
+        criteria,
+        this.itemManager.collection.all(ContentType.Note),
+        this.itemManager.collection,
+      ).length,
     ).to.equal(2)
   })
 
@@ -147,8 +172,11 @@ describe('note display criteria', function () {
       searchQuery: { query: 'world', includeProtectedNoteText: false },
     }
     expect(
-      notesAndFilesMatchingOptions(criteria, this.itemManager.collection.all(ContentType.Note), this.itemManager.collection)
-        .length,
+      notesAndFilesMatchingOptions(
+        criteria,
+        this.itemManager.collection.all(ContentType.Note),
+        this.itemManager.collection,
+      ).length,
     ).to.equal(0)
   })
 
@@ -161,8 +189,11 @@ describe('note display criteria', function () {
       searchQuery: { query: 'world', includeProtectedNoteText: true },
     }
     expect(
-      notesAndFilesMatchingOptions(criteria, this.itemManager.collection.all(ContentType.Note), this.itemManager.collection)
-        .length,
+      notesAndFilesMatchingOptions(
+        criteria,
+        this.itemManager.collection.all(ContentType.Note),
+        this.itemManager.collection,
+      ).length,
     ).to.equal(1)
   })
 
