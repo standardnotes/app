@@ -5,6 +5,8 @@ import {
   DecryptedPayload,
   PayloadTimestampDefaults,
   MutationType,
+  FileItem,
+  SNTag,
 } from '@standardnotes/models'
 import { ContentType } from '@standardnotes/common'
 import { AlertService, InternalEventBusInterface } from '@standardnotes/services'
@@ -30,7 +32,10 @@ describe('mutator service', () => {
     payloadManager = new PayloadManager(internalEventBus)
     itemManager = new ItemManager(payloadManager, internalEventBus)
 
-    mutatorService = new MutatorService(itemManager, payloadManager, {} as jest.Mocked<AlertService>, internalEventBus)
+    const alerts = {} as jest.Mocked<AlertService>
+    alerts.alert = jest.fn()
+
+    mutatorService = new MutatorService(itemManager, payloadManager, alerts, internalEventBus)
   })
 
   const insertNote = (title: string) => {
@@ -64,43 +69,51 @@ describe('mutator service', () => {
 
   describe('linking', () => {
     it('attempting to link file and note should not be allowed if items belong to different vaults', async () => {
-      application.mutator.associateFileWithNote = jest.fn()
-
-      const note = createNote('test', {
+      const note = {
         uuid: 'note',
-        references: [],
-      })
+        key_system_identifier: '123',
+      } as jest.Mocked<SNNote>
 
-      const file = createFile('test', {
+      const file = {
         uuid: 'file',
-        references: [],
-      })
+        key_system_identifier: '456',
+      } as jest.Mocked<FileItem>
 
-      const noteVault = {
-        uuid: 'note-vault',
-      } as jest.Mocked<VaultListingInterface>
+      const result = await mutatorService.associateFileWithNote(file, note)
 
-      const fileVault = {
-        uuid: 'file-vault',
-      } as jest.Mocked<VaultListingInterface>
-
-      application.vaults.getItemVault = jest.fn().mockImplementation((item: ItemInterface) => {
-        if (item.uuid === note.uuid) {
-          return noteVault
-        } else if (item.uuid === file.uuid) {
-          return fileVault
-        }
-      })
-
-      const alertSpy = (application.alerts.alert = jest.fn())
-
-      await linkingController.linkItems(note, file)
-
-      expect(alertSpy).toHaveBeenCalled()
+      expect(result).toBeUndefined()
     })
 
-    it('attempting to link vaulted tag with non vaulted note should not be permissble', async () => {})
+    it('attempting to link vaulted tag with non vaulted note should not be permissable', async () => {
+      const note = {
+        uuid: 'note',
+        key_system_identifier: undefined,
+      } as jest.Mocked<SNNote>
 
-    it('attempting to link vaulted tag with note belonging to different vault should not be permisslbe', async () => {})
+      const tag = {
+        uuid: 'tag',
+        key_system_identifier: '456',
+      } as jest.Mocked<SNTag>
+
+      const result = await mutatorService.addTagToNote(note, tag, true)
+
+      expect(result).toBeUndefined()
+    })
+
+    it('attempting to link vaulted tag with note belonging to different vault should not be perpermissable', async () => {
+      const note = {
+        uuid: 'note',
+        key_system_identifier: '123',
+      } as jest.Mocked<SNNote>
+
+      const tag = {
+        uuid: 'tag',
+        key_system_identifier: '456',
+      } as jest.Mocked<SNTag>
+
+      const result = await mutatorService.addTagToNote(note, tag, true)
+
+      expect(result).toBeUndefined()
+    })
   })
 })
