@@ -8,8 +8,8 @@ export const setCustomViewportHeight = (height: number, suffix: 'px' | 'vh', for
 
   log(LoggingDomain.Viewport, `setCustomViewportHeight: ${value}`)
 
-  document.body.style.height = value
   document.documentElement.style.setProperty('--ios-viewport-height', value)
+  document.body.style.height = 'var(--ios-viewport-height)'
 
   if (forceTriggerResizeEvent) {
     window.dispatchEvent(new Event('resize'))

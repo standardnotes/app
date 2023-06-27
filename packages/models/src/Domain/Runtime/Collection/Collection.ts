@@ -185,9 +185,12 @@ export abstract class Collection<
 
       if (this.isDecryptedElement(element)) {
         const conflictOf = element.content.conflict_of
-        if (conflictOf) {
+
+        if (conflictOf && !element.content.trashed) {
           this.conflictMap.establishRelationship(conflictOf, element.uuid)
         }
+
+        const isConflictOfButTrashed = conflictOf && element.content.trashed
 
         const isInConflictMapButIsNotConflictOf =
           !conflictOf && this.conflictMap.getInverseRelationships(element.uuid).length > 0
@@ -196,7 +199,7 @@ export abstract class Collection<
           this.conflictMap.existsInDirectMap(element.uuid) &&
           this.conflictMap.getDirectRelationships(element.uuid).length === 0
 
-        if (isInConflictMapButIsNotConflictOf || isInConflictMapButDoesNotHaveConflicts) {
+        if (isInConflictMapButIsNotConflictOf || isInConflictMapButDoesNotHaveConflicts || isConflictOfButTrashed) {
           this.conflictMap.removeFromMap(element.uuid)
         }
 

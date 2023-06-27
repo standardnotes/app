@@ -857,7 +857,11 @@ export class ItemManager extends Services.AbstractService implements Services.It
     return this.items.filter((item) => item.key_system_identifier === systemIdentifier)
   }
 
-  numberOfNotesWithConflicts(): number {
+  public conflictsOf(uuid: string) {
+    return this.collection.conflictsOf(uuid)
+  }
+
+  public numberOfNotesWithConflicts(): number {
     return this.collection.numberOfItemsWithConflicts()
   }
 

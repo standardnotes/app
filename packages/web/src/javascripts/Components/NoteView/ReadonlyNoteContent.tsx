@@ -1,24 +1,28 @@
-import { ContentType, NoteType, SNNote } from '@standardnotes/snjs'
+import { ContentType, NoteContent, NoteType, SNNote, classNames } from '@standardnotes/snjs'
 import { UIEventHandler, useEffect, useMemo, useRef } from 'react'
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
-import { useApplication } from '../../ApplicationProvider'
-import ComponentView from '../../ComponentView/ComponentView'
+import { useApplication } from '../ApplicationProvider'
+import ComponentView from '../ComponentView/ComponentView'
 import { ErrorBoundary } from '@/Utils/ErrorBoundary'
-import { BlocksEditor } from '../../SuperEditor/BlocksEditor'
-import { BlocksEditorComposer } from '../../SuperEditor/BlocksEditorComposer'
+import { BlocksEditor } from '../SuperEditor/BlocksEditor'
+import { BlocksEditorComposer } from '../SuperEditor/BlocksEditorComposer'
 import { useLinkingController } from '@/Controllers/LinkingControllerProvider'
-import LinkedItemBubblesContainer from '../../LinkedItems/LinkedItemBubblesContainer'
+import LinkedItemBubblesContainer from '../LinkedItems/LinkedItemBubblesContainer'
 
-export const NoteContent = ({
+export const ReadonlyNoteContent = ({
   note,
+  content,
+  showLinkedItems = true,
   scrollPos,
   shouldSyncScroll,
   onScroll,
 }: {
   note: SNNote
-  scrollPos: number
-  shouldSyncScroll: boolean
-  onScroll: UIEventHandler
+  content: NoteContent
+  showLinkedItems?: boolean
+  scrollPos?: number
+  shouldSyncScroll?: boolean
+  onScroll?: UIEventHandler
 }) => {
   const application = useApplication()
   const linkingController = useLinkingController()
@@ -73,28 +77,30 @@ export const NoteContent = ({
 
   return (
     <div className="flex h-full flex-grow flex-col overflow-hidden" ref={containerRef}>
-      <div className="w-full px-4 pt-4 text-base font-bold">
-        <div className="title">{note.title}</div>
+      <div className={classNames('w-full px-4 pt-4 text-base font-bold', componentViewer && 'pb-4')}>
+        <div className="title">{content.title}</div>
       </div>
-      <LinkedItemBubblesContainer
-        item={note}
-        linkingController={linkingController}
-        readonly
-        className={{ base: 'mt-2 px-4', withToggle: '!mt-1 !pt-0' }}
-        isCollapsedByDefault={isMobileScreen}
-      />
+      {showLinkedItems && (
+        <LinkedItemBubblesContainer
+          item={note}
+          linkingController={linkingController}
+          readonly
+          className={{ base: 'mt-2 px-4', withToggle: '!mt-1 !pt-0' }}
+          isCollapsedByDefault={isMobileScreen}
+        />
+      )}
       {componentViewer ? (
         <div className="component-view">
           <ComponentView key={componentViewer.identifier} componentViewer={componentViewer} application={application} />
         </div>
-      ) : note?.noteType === NoteType.Super ? (
+      ) : content.noteType === NoteType.Super ? (
         <ErrorBoundary>
           <div className="w-full flex-grow overflow-hidden overflow-y-auto">
-            <BlocksEditorComposer readonly initialValue={note.text}>
+            <BlocksEditorComposer readonly initialValue={content.text}>
               <BlocksEditor
                 readonly
                 className="blocks-editor relative h-full resize-none p-4 text-base focus:shadow-none focus:outline-none"
-                spellcheck={note.spellcheck}
+                spellcheck={content.spellcheck}
                 onScroll={onScroll}
               ></BlocksEditor>
             </BlocksEditorComposer>
@@ -102,11 +108,11 @@ export const NoteContent = ({
         </ErrorBoundary>
       ) : (
         <div className="relative mt-3 min-h-0 flex-grow overflow-hidden">
-          {note.text.length ? (
+          {content.text.length ? (
             <textarea
               readOnly={true}
               className="font-editor h-full w-full resize-none border-0 bg-default p-4 pt-0 text-editor text-text"
-              value={note.text}
+              value={content.text}
               onScroll={onScroll}
             />
           ) : (

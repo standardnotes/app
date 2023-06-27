@@ -25,8 +25,8 @@ export const usePopoverCloseOnClickOutside = ({
       const isAnchorElement = anchorElement ? anchorElement === event.target || anchorElement.contains(target) : false
       const closestPopoverId = target.closest('[data-popover]')?.getAttribute('data-popover')
       const isDescendantOfChildPopover = closestPopoverId && childPopovers.has(closestPopoverId)
-      const isPopoverInModal = popoverElement?.closest('[data-dialog]')
-      const isDescendantOfModal = isPopoverInModal ? false : !!target.closest('[data-dialog]')
+      const isPopoverInModal = popoverElement?.closest('[data-dialog], .sk-modal')
+      const isDescendantOfModal = isPopoverInModal ? false : !!target.closest('[data-dialog], .sk-modal')
 
       if (
         !isDescendantOfMenu &&

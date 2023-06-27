@@ -126,4 +126,5 @@ export interface ItemManagerInterface extends AbstractService {
   setPrimaryItemDisplayOptions(options: NotesAndFilesDisplayControllerOptions): void
   getTagPrefixTitle(tag: SNTag): string | undefined
   getNoteLinkedFiles(note: SNNote): FileItem[]
+  conflictsOf(uuid: string): AnyItemInterface[]
 }

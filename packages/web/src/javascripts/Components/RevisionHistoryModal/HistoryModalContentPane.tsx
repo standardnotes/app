@@ -1,26 +1,19 @@
 import RevisionContentLocked from './RevisionContentLocked'
-import SelectedRevisionContent from './SelectedRevisionContent'
 import { observer } from 'mobx-react-lite'
-import { WebApplication } from '@/Application/WebApplication'
-import { NotesController } from '@/Controllers/NotesController/NotesController'
 import { SubscriptionController } from '@/Controllers/Subscription/SubscriptionController'
 import { NoteHistoryController, RevisionContentState } from '@/Controllers/NoteHistory/NoteHistoryController'
 import Spinner from '@/Components/Spinner/Spinner'
+import { ReadonlyNoteContent } from '../NoteView/ReadonlyNoteContent'
+import { SNNote } from '@standardnotes/snjs'
 
 type Props = {
-  application: WebApplication
   noteHistoryController: NoteHistoryController
-  notesController: NotesController
+  note: SNNote
   subscriptionController: SubscriptionController
 }
 
-const HistoryModalContentPane = ({
-  application,
-  noteHistoryController,
-  notesController,
-  subscriptionController,
-}: Props) => {
-  const { contentState } = noteHistoryController
+const HistoryModalContentPane = ({ noteHistoryController, subscriptionController, note }: Props) => {
+  const { selectedRevision, contentState } = noteHistoryController
 
   switch (contentState) {
     case RevisionContentState.Idle:
@@ -32,13 +25,10 @@ const HistoryModalContentPane = ({
     case RevisionContentState.Loading:
       return <Spinner className="absolute top-1/2 left-1/2 h-5 w-5 -translate-x-1/2 -translate-y-1/2" />
     case RevisionContentState.Loaded:
-      return (
-        <SelectedRevisionContent
-          application={application}
-          notesController={notesController}
-          noteHistoryController={noteHistoryController}
-        />
-      )
+      if (!selectedRevision) {
+        return null
+      }
+      return <ReadonlyNoteContent note={note} content={selectedRevision.payload.content} showLinkedItems={false} />
     case RevisionContentState.NotEntitled:
       return <RevisionContentLocked subscriptionController={subscriptionController} />
     default:

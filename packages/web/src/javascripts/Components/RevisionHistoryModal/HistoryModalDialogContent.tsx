@@ -15,7 +15,6 @@ import MobileModalHeader from '../Modal/MobileModalHeader'
 const HistoryModalDialogContent = ({
   application,
   dismissModal,
-  notesController,
   subscriptionController,
   note,
   selectionController,
@@ -89,9 +88,8 @@ const HistoryModalDialogContent = ({
           )}
         >
           <HistoryModalContentPane
-            application={application}
             noteHistoryController={noteHistoryController}
-            notesController={notesController}
+            note={note}
             subscriptionController={subscriptionController}
           />
         </div>
