@@ -25,6 +25,9 @@ export class AsymmetricDecryptUseCase {
         additionalData.senderPublicKey,
         dto.recipientSecretKey,
       )
+      if (!plaintext) {
+        return null
+      }
 
       const signatureVerified = this.crypto.sodiumCryptoSignVerify(
         ciphertext,

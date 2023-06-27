@@ -241,7 +241,7 @@ describe('online syncing', function () {
     expect(this.application.itemManager.getDisplayableItemsKeys().length).to.equal(1)
     const note = await Factory.createMappedNote(this.application)
     this.expectedItemCount++
-    await this.application.itemManager.setItemDirty(note)
+    await this.application.mutator.setItemDirty(note)
     await this.application.syncService.sync(syncOptions)
     const rawPayloads = await this.application.diskStorageService.getAllRawPayloads()
     const notePayload = noteObjectsFromObjects(rawPayloads)
@@ -283,7 +283,7 @@ describe('online syncing', function () {
 
     const originalTitle = note.content.title
 
-    await this.application.itemManager.setItemDirty(note)
+    await this.application.mutator.setItemDirty(note)
     await this.application.syncService.sync(syncOptions)
 
     const encrypted = CreateEncryptedServerSyncPushPayload(
@@ -299,7 +299,7 @@ describe('online syncing', function () {
       errorDecrypting: true,
     })
 
-    const items = await this.application.itemManager.emitItemsFromPayloads([errorred], PayloadEmitSource.LocalChanged)
+    const items = await this.application.mutator.emitItemsFromPayloads([errorred], PayloadEmitSource.LocalChanged)
 
     const mappedItem = this.application.itemManager.findAnyItem(errorred.uuid)
 
@@ -311,7 +311,7 @@ describe('online syncing', function () {
       },
     })
 
-    const mappedItems2 = await this.application.itemManager.emitItemsFromPayloads(
+    const mappedItems2 = await this.application.mutator.emitItemsFromPayloads(
       [decryptedPayload],
       PayloadEmitSource.LocalChanged,
     )
@@ -336,7 +336,7 @@ describe('online syncing', function () {
     let note = await Factory.createMappedNote(this.application)
     this.expectedItemCount++
 
-    await this.application.itemManager.setItemDirty(note)
+    await this.application.mutator.setItemDirty(note)
     await this.application.syncService.sync(syncOptions)
 
     note = this.application.items.findItem(note.uuid)
@@ -361,7 +361,7 @@ describe('online syncing', function () {
 
   it('retrieving item with no content should correctly map local state', async function () {
     const note = await Factory.createMappedNote(this.application)
-    await this.application.itemManager.setItemDirty(note)
+    await this.application.mutator.setItemDirty(note)
     await this.application.syncService.sync(syncOptions)
 
     const syncToken = await this.application.syncService.getLastSyncToken()
@@ -399,7 +399,7 @@ describe('online syncing', function () {
 
     await Factory.sleep(0.1)
 
-    await this.application.itemManager.changeItem(note, (mutator) => {
+    await this.application.mutator.changeItem(note, (mutator) => {
       mutator.title = 'latest title'
     })
 
@@ -444,7 +444,7 @@ describe('online syncing', function () {
 
   it('items that are never synced and deleted should not be uploaded to server', async function () {
     const note = await Factory.createMappedNote(this.application)
-    await this.application.itemManager.setItemDirty(note)
+    await this.application.mutator.setItemDirty(note)
     await this.application.mutator.setItemToBeDeleted(note)
 
     let success = true
@@ -474,7 +474,7 @@ describe('online syncing', function () {
   it('items that are deleted after download first sync complete should not be uploaded to server', async function () {
     /** The singleton manager may delete items are download first. We dont want those uploaded to server. */
     const note = await Factory.createMappedNote(this.application)
-    await this.application.itemManager.setItemDirty(note)
+    await this.application.mutator.setItemDirty(note)
 
     let success = true
     let didCompleteRelevantSync = false
@@ -527,7 +527,7 @@ describe('online syncing', function () {
 
     const decryptionResults = await this.application.protocolService.decryptSplit(keyedSplit)
 
-    await this.application.itemManager.emitItemsFromPayloads(decryptionResults, PayloadEmitSource.LocalChanged)
+    await this.application.mutator.emitItemsFromPayloads(decryptionResults, PayloadEmitSource.LocalChanged)
 
     expect(this.application.itemManager.allTrackedItems().length).to.equal(this.expectedItemCount)
 
@@ -543,7 +543,7 @@ describe('online syncing', function () {
     const largeItemCount = SyncUpDownLimit + 10
     for (let i = 0; i < largeItemCount; i++) {
       const note = await Factory.createMappedNote(this.application)
-      await this.application.itemManager.setItemDirty(note)
+      await this.application.mutator.setItemDirty(note)
     }
 
     this.expectedItemCount += largeItemCount
@@ -558,7 +558,7 @@ describe('online syncing', function () {
     const largeItemCount = SyncUpDownLimit + 10
     for (let i = 0; i < largeItemCount; i++) {
       const note = await Factory.createMappedNote(this.application)
-      await this.application.itemManager.setItemDirty(note)
+      await this.application.mutator.setItemDirty(note)
     }
     /** Upload */
     this.application.syncService.sync({ awaitAll: true, checkIntegrity: false })
@@ -583,7 +583,7 @@ describe('online syncing', function () {
 
   it('syncing an item should storage it encrypted', async function () {
     const note = await Factory.createMappedNote(this.application)
-    await this.application.itemManager.setItemDirty(note)
+    await this.application.mutator.setItemDirty(note)
     await this.application.syncService.sync(syncOptions)
     this.expectedItemCount++
     const rawPayloads = await this.application.diskStorageService.getAllRawPayloads()
@@ -593,7 +593,7 @@ describe('online syncing', function () {
 
   it('syncing an item before data load should storage it encrypted', async function () {
     const note = await Factory.createMappedNote(this.application)
-    await this.application.itemManager.setItemDirty(note)
+    await this.application.mutator.setItemDirty(note)
     this.expectedItemCount++
 
     /** Simulate database not loaded */
@@ -634,7 +634,7 @@ describe('online syncing', function () {
     expect(this.application.itemManager.getDirtyItems().length).to.equal(0)
 
     let note = await Factory.createMappedNote(this.application)
-    note = await this.application.itemManager.changeItem(note, (mutator) => {
+    note = await this.application.mutator.changeItem(note, (mutator) => {
       mutator.text = `${Math.random()}`
     })
     /** This sync request should exit prematurely as we called ut_setDatabaseNotLoaded */
@@ -705,13 +705,13 @@ describe('online syncing', function () {
 
   it('valid sync date tracking', async function () {
     let note = await Factory.createMappedNote(this.application)
-    note = await this.application.itemManager.setItemDirty(note)
+    note = await this.application.mutator.setItemDirty(note)
     this.expectedItemCount++
 
     expect(note.dirty).to.equal(true)
     expect(note.payload.dirtyIndex).to.be.at.most(getCurrentDirtyIndex())
 
-    note = await this.application.itemManager.changeItem(note, (mutator) => {
+    note = await this.application.mutator.changeItem(note, (mutator) => {
       mutator.text = `${Math.random()}`
     })
     const sync = this.application.sync.sync(syncOptions)
@@ -748,7 +748,7 @@ describe('online syncing', function () {
      * It will do based on comparing whether item.dirtyIndex > item.globalDirtyIndexAtLastSync
      */
     let note = await Factory.createMappedNote(this.application)
-    await this.application.itemManager.setItemDirty(note)
+    await this.application.mutator.setItemDirty(note)
     this.expectedItemCount++
 
     // client A. Don't await, we want to do other stuff.
@@ -759,12 +759,12 @@ describe('online syncing', function () {
 
     // While that sync is going on, we want to modify this item many times.
     const text = `${Math.random()}`
-    note = await this.application.itemManager.changeItem(note, (mutator) => {
+    note = await this.application.mutator.changeItem(note, (mutator) => {
       mutator.text = text
     })
-    await this.application.itemManager.setItemDirty(note)
-    await this.application.itemManager.setItemDirty(note)
-    await this.application.itemManager.setItemDirty(note)
+    await this.application.mutator.setItemDirty(note)
+    await this.application.mutator.setItemDirty(note)
+    await this.application.mutator.setItemDirty(note)
     expect(note.payload.dirtyIndex).to.be.above(note.payload.globalDirtyIndexAtLastSync)
 
     // Now do a regular sync with no latency.
@@ -817,7 +817,7 @@ describe('online syncing', function () {
 
     setTimeout(
       async function () {
-        await this.application.itemManager.changeItem(note, (mutator) => {
+        await this.application.mutator.changeItem(note, (mutator) => {
           mutator.text = newText
         })
       }.bind(this),
@@ -864,7 +864,7 @@ describe('online syncing', function () {
     this.application.syncService.addEventObserver(async (eventName) => {
       if (eventName === SyncEvent.SyncDidBeginProcessing && !didPerformMutatation) {
         didPerformMutatation = true
-        await this.application.itemManager.changeItem(note, (mutator) => {
+        await this.application.mutator.changeItem(note, (mutator) => {
           mutator.text = newText
         })
       }
@@ -996,7 +996,7 @@ describe('online syncing', function () {
       content: {},
     })
     this.expectedItemCount++
-    await this.application.itemManager.emitItemsFromPayloads([payload])
+    await this.application.mutator.emitItemsFromPayloads([payload])
     await this.application.sync.sync(syncOptions)
 
     /** Item should no longer be dirty, otherwise it would keep syncing */

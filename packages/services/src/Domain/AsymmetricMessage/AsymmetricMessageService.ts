@@ -79,6 +79,10 @@ export class AsymmetricMessageService extends AbstractService implements Interna
     const contacts = this.contacts.getAllContacts()
 
     for (const contact of contacts) {
+      if (contact.isMe) {
+        continue
+      }
+
       await useCase.execute({
         senderOldKeyPair: data.oldKeyPair,
         senderOldSigningKeyPair: data.oldSigningKeyPair,

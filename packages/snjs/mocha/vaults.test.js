@@ -55,6 +55,23 @@ describe('vaults', function () {
       expect(keySystemItemsKey.keyVersion).to.not.be.undefined
     })
 
+    it('should be able to create an offline vault with app passcode', async () => {
+      await context.application.addPasscode('123')
+      const vault = await vaults.createRandomizedVault({
+        name: 'My Vault',
+        storagePreference: KeySystemRootKeyStorageMode.Synced,
+      })
+
+      expect(vault.systemIdentifier).to.not.be.undefined
+      expect(typeof vault.systemIdentifier).to.equal('string')
+
+      const keySystemItemsKey = context.keys.getPrimaryKeySystemItemsKey(vault.systemIdentifier)
+      expect(keySystemItemsKey).to.not.be.undefined
+      expect(keySystemItemsKey.key_system_identifier).to.equal(vault.systemIdentifier)
+      expect(keySystemItemsKey.creationTimestamp).to.not.be.undefined
+      expect(keySystemItemsKey.keyVersion).to.not.be.undefined
+    })
+
     it('should add item to offline vault', async () => {
       const vault = await vaults.createRandomizedVault({
         name: 'My Vault',

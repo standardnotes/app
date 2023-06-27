@@ -645,8 +645,6 @@ export class SNSessionManager
       newServerPassword: parameters.newRootKey.serverPassword as string,
       newKeyParams: parameters.newRootKey.keyParams,
       newEmail: parameters.newEmail,
-      newPublicKey: parameters.newRootKey.encryptionKeyPair.publicKey,
-      newSigningPublicKey: parameters.newRootKey.signingKeyPair.publicKey,
     })
 
     let oldKeyPair: PkcKeyPair | undefined

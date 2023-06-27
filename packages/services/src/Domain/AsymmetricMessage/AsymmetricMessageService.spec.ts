@@ -1,3 +1,4 @@
+import { MutatorClientInterface } from './../Mutator/MutatorClientInterface'
 import { HttpServiceInterface } from '@standardnotes/api'
 import { AsymmetricMessageService } from './AsymmetricMessageService'
 import { ContactServiceInterface } from './../Contacts/ContactServiceInterface'
@@ -19,11 +20,12 @@ describe('AsymmetricMessageService', () => {
     const contacts = {} as jest.Mocked<ContactServiceInterface>
     const items = {} as jest.Mocked<ItemManagerInterface>
     const sync = {} as jest.Mocked<SyncServiceInterface>
+    const mutator = {} as jest.Mocked<MutatorClientInterface>
 
     const eventBus = {} as jest.Mocked<InternalEventBusInterface>
     eventBus.addEventHandler = jest.fn()
 
-    service = new AsymmetricMessageService(http, encryption, contacts, items, sync, eventBus)
+    service = new AsymmetricMessageService(http, encryption, contacts, items, mutator, sync, eventBus)
   })
 
   it('should process incoming messages oldest first', async () => {

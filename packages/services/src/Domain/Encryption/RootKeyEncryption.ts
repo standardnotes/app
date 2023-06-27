@@ -688,8 +688,7 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
       })
     }
 
-    const itemsKey = (await this.mutator.insertItem(itemTemplate)) as ItemsKeyInterface
-
+    const itemsKey = await this.mutator.insertItem<ItemsKeyInterface>(itemTemplate)
     await this.mutator.changeItemsKey(itemsKey, (mutator) => {
       mutator.isDefault = true
     })

@@ -20,7 +20,7 @@ describe('model manager mapping', () => {
 
   it('mapping nonexistent item creates it', async function () {
     const payload = Factory.createNotePayload()
-    await this.application.itemManager.emitItemsFromPayloads([payload], PayloadEmitSource.LocalChanged)
+    await this.application.mutator.emitItemsFromPayloads([payload], PayloadEmitSource.LocalChanged)
     this.expectedItemCount++
     expect(this.application.itemManager.items.length).to.equal(this.expectedItemCount)
   })
@@ -37,7 +37,7 @@ describe('model manager mapping', () => {
 
   it('mapping and deleting nonexistent item creates and deletes it', async function () {
     const payload = Factory.createNotePayload()
-    await this.application.itemManager.emitItemsFromPayloads([payload], PayloadEmitSource.LocalChanged)
+    await this.application.mutator.emitItemsFromPayloads([payload], PayloadEmitSource.LocalChanged)
 
     this.expectedItemCount++
 
@@ -51,7 +51,7 @@ describe('model manager mapping', () => {
 
     this.expectedItemCount--
 
-    await this.application.itemManager.emitItemsFromPayloads([changedParams], PayloadEmitSource.LocalChanged)
+    await this.application.mutator.emitItemsFromPayloads([changedParams], PayloadEmitSource.LocalChanged)
 
     expect(this.application.itemManager.items.length).to.equal(this.expectedItemCount)
   })
@@ -59,7 +59,7 @@ describe('model manager mapping', () => {
   it('mapping deleted but dirty item should not delete it', async function () {
     const payload = Factory.createNotePayload()
 
-    const [item] = await this.application.itemManager.emitItemsFromPayloads([payload], PayloadEmitSource.LocalChanged)
+    const [item] = await this.application.mutator.emitItemsFromPayloads([payload], PayloadEmitSource.LocalChanged)
 
     this.expectedItemCount++
 
@@ -67,14 +67,14 @@ describe('model manager mapping', () => {
 
     const payload2 = new DeletedPayload(this.application.payloadManager.findOne(payload.uuid).ejected())
 
-    await this.application.itemManager.emitItemsFromPayloads([payload2], PayloadEmitSource.LocalChanged)
+    await this.application.mutator.emitItemsFromPayloads([payload2], PayloadEmitSource.LocalChanged)
 
     expect(this.application.payloadManager.collection.all().length).to.equal(this.expectedItemCount)
   })
 
   it('mapping existing item updates its properties', async function () {
     const payload = Factory.createNotePayload()
-    await this.application.itemManager.emitItemsFromPayloads([payload], PayloadEmitSource.LocalChanged)
+    await this.application.mutator.emitItemsFromPayloads([payload], PayloadEmitSource.LocalChanged)
 
     const newTitle = 'updated title'
     const mutated = new DecryptedPayload({
@@ -84,7 +84,7 @@ describe('model manager mapping', () => {
         title: newTitle,
       },
     })
-    await this.application.itemManager.emitItemsFromPayloads([mutated], PayloadEmitSource.LocalChanged)
+    await this.application.mutator.emitItemsFromPayloads([mutated], PayloadEmitSource.LocalChanged)
     const item = this.application.itemManager.getDisplayableNotes()[0]
 
     expect(item.content.title).to.equal(newTitle)
@@ -92,9 +92,9 @@ describe('model manager mapping', () => {
 
   it('setting an item dirty should retrieve it in dirty items', async function () {
     const payload = Factory.createNotePayload()
-    await this.application.itemManager.emitItemsFromPayloads([payload], PayloadEmitSource.LocalChanged)
+    await this.application.mutator.emitItemsFromPayloads([payload], PayloadEmitSource.LocalChanged)
     const note = this.application.itemManager.getDisplayableNotes()[0]
-    await this.application.itemManager.setItemDirty(note)
+    await this.application.mutator.setItemDirty(note)
     const dirtyItems = this.application.itemManager.getDirtyItems()
     expect(Uuids(dirtyItems).includes(note.uuid))
   })
@@ -106,7 +106,7 @@ describe('model manager mapping', () => {
     for (let i = 0; i < count; i++) {
       payloads.push(Factory.createNotePayload())
     }
-    await this.application.itemManager.emitItemsFromPayloads(payloads, PayloadEmitSource.LocalChanged)
+    await this.application.mutator.emitItemsFromPayloads(payloads, PayloadEmitSource.LocalChanged)
     await this.application.syncService.markAllItemsAsNeedingSyncAndPersist()
 
     const dirtyItems = this.application.itemManager.getDirtyItems()
@@ -115,14 +115,14 @@ describe('model manager mapping', () => {
 
   it('sync observers should be notified of changes', async function () {
     const payload = Factory.createNotePayload()
-    await this.application.itemManager.emitItemsFromPayloads([payload], PayloadEmitSource.LocalChanged)
+    await this.application.mutator.emitItemsFromPayloads([payload], PayloadEmitSource.LocalChanged)
     const item = this.application.itemManager.items[0]
     return new Promise((resolve) => {
       this.application.itemManager.addObserver(ContentType.Any, ({ changed }) => {
         expect(changed[0].uuid === item.uuid)
         resolve()
       })
-      this.application.itemManager.emitItemsFromPayloads([payload], PayloadEmitSource.LocalChanged)
+      this.application.mutator.emitItemsFromPayloads([payload], PayloadEmitSource.LocalChanged)
     })
   })
 })

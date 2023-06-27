@@ -22,11 +22,11 @@ describe('items', () => {
 
   it('setting an item as dirty should update its client updated at', async function () {
     const params = Factory.createNotePayload()
-    await this.application.itemManager.emitItemsFromPayloads([params], PayloadEmitSource.LocalChanged)
+    await this.application.mutator.emitItemsFromPayloads([params], PayloadEmitSource.LocalChanged)
     const item = this.application.itemManager.items[0]
     const prevDate = item.userModifiedDate.getTime()
     await Factory.sleep(0.1)
-    await this.application.itemManager.setItemDirty(item, true)
+    await this.application.mutator.setItemDirty(item, true)
     const refreshedItem = this.application.itemManager.findItem(item.uuid)
     const newDate = refreshedItem.userModifiedDate.getTime()
     expect(prevDate).to.not.equal(newDate)
@@ -34,18 +34,18 @@ describe('items', () => {
 
   it('setting an item as dirty with option to skip client updated at', async function () {
     const params = Factory.createNotePayload()
-    await this.application.itemManager.emitItemsFromPayloads([params], PayloadEmitSource.LocalChanged)
+    await this.application.mutator.emitItemsFromPayloads([params], PayloadEmitSource.LocalChanged)
     const item = this.application.itemManager.items[0]
     const prevDate = item.userModifiedDate.getTime()
     await Factory.sleep(0.1)
-    await this.application.itemManager.setItemDirty(item)
+    await this.application.mutator.setItemDirty(item)
     const newDate = item.userModifiedDate.getTime()
     expect(prevDate).to.equal(newDate)
   })
 
   it('properly pins, archives, and locks', async function () {
     const params = Factory.createNotePayload()
-    await this.application.itemManager.emitItemsFromPayloads([params], PayloadEmitSource.LocalChanged)
+    await this.application.mutator.emitItemsFromPayloads([params], PayloadEmitSource.LocalChanged)
 
     const item = this.application.itemManager.items[0]
     expect(item.pinned).to.not.be.ok
@@ -69,7 +69,7 @@ describe('items', () => {
   it('properly compares item equality', async function () {
     const params1 = Factory.createNotePayload()
     const params2 = Factory.createNotePayload()
-    await this.application.itemManager.emitItemsFromPayloads([params1, params2], PayloadEmitSource.LocalChanged)
+    await this.application.mutator.emitItemsFromPayloads([params1, params2], PayloadEmitSource.LocalChanged)
 
     let item1 = this.application.itemManager.getDisplayableNotes()[0]
     let item2 = this.application.itemManager.getDisplayableNotes()[1]
@@ -174,7 +174,7 @@ describe('items', () => {
   it('content equality should not have side effects', async function () {
     const params1 = Factory.createNotePayload()
     const params2 = Factory.createNotePayload()
-    await this.application.itemManager.emitItemsFromPayloads([params1, params2], PayloadEmitSource.LocalChanged)
+    await this.application.mutator.emitItemsFromPayloads([params1, params2], PayloadEmitSource.LocalChanged)
 
     let item1 = this.application.itemManager.getDisplayableNotes()[0]
     const item2 = this.application.itemManager.getDisplayableNotes()[1]

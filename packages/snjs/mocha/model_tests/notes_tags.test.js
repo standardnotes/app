@@ -73,7 +73,7 @@ describe('notes and tags', () => {
       },
     })
 
-    await this.application.itemManager.emitItemsFromPayloads([mutatedNote, mutatedTag], PayloadEmitSource.LocalChanged)
+    await this.application.mutator.emitItemsFromPayloads([mutatedNote, mutatedTag], PayloadEmitSource.LocalChanged)
     const note = this.application.itemManager.getItems([ContentType.Note])[0]
     const tag = this.application.itemManager.getItems([ContentType.Tag])[0]
 
@@ -89,7 +89,7 @@ describe('notes and tags', () => {
     expect(notePayload.content.references.length).to.equal(0)
     expect(tagPayload.content.references.length).to.equal(1)
 
-    await this.application.itemManager.emitItemsFromPayloads([notePayload, tagPayload], PayloadEmitSource.LocalChanged)
+    await this.application.mutator.emitItemsFromPayloads([notePayload, tagPayload], PayloadEmitSource.LocalChanged)
     let note = this.application.itemManager.getDisplayableNotes()[0]
     let tag = this.application.itemManager.getDisplayableTags()[0]
 
@@ -130,7 +130,7 @@ describe('notes and tags', () => {
     const notePayload = pair[0]
     const tagPayload = pair[1]
 
-    await this.application.itemManager.emitItemsFromPayloads(pair, PayloadEmitSource.LocalChanged)
+    await this.application.mutator.emitItemsFromPayloads(pair, PayloadEmitSource.LocalChanged)
     let note = this.application.itemManager.getItems([ContentType.Note])[0]
     let tag = this.application.itemManager.getItems([ContentType.Tag])[0]
 
@@ -147,7 +147,7 @@ describe('notes and tags', () => {
         references: [],
       },
     })
-    await this.application.itemManager.emitItemsFromPayloads([mutatedTag], PayloadEmitSource.LocalChanged)
+    await this.application.mutator.emitItemsFromPayloads([mutatedTag], PayloadEmitSource.LocalChanged)
 
     note = this.application.itemManager.findItem(note.uuid)
     tag = this.application.itemManager.findItem(tag.uuid)
@@ -177,7 +177,7 @@ describe('notes and tags', () => {
     const notePayload = pair[0]
     const tagPayload = pair[1]
 
-    await this.application.itemManager.emitItemsFromPayloads([notePayload, tagPayload], PayloadEmitSource.LocalChanged)
+    await this.application.mutator.emitItemsFromPayloads([notePayload, tagPayload], PayloadEmitSource.LocalChanged)
     const note = this.application.itemManager.getItems([ContentType.Note])[0]
     let tag = this.application.itemManager.getItems([ContentType.Tag])[0]
 
@@ -200,7 +200,7 @@ describe('notes and tags', () => {
 
   it('properly handles tag duplication', async function () {
     const pair = createRelatedNoteTagPairPayload()
-    await this.application.itemManager.emitItemsFromPayloads(pair, PayloadEmitSource.LocalChanged)
+    await this.application.mutator.emitItemsFromPayloads(pair, PayloadEmitSource.LocalChanged)
     let note = this.application.itemManager.getDisplayableNotes()[0]
     let tag = this.application.itemManager.getDisplayableTags()[0]
 
@@ -232,7 +232,7 @@ describe('notes and tags', () => {
     const pair = createRelatedNoteTagPairPayload()
     const notePayload = pair[0]
     const tagPayload = pair[1]
-    await this.application.itemManager.emitItemsFromPayloads([notePayload, tagPayload], PayloadEmitSource.LocalChanged)
+    await this.application.mutator.emitItemsFromPayloads([notePayload, tagPayload], PayloadEmitSource.LocalChanged)
     const note = this.application.itemManager.getItems([ContentType.Note])[0]
     const duplicateNote = await this.application.mutator.duplicateItem(note, true)
     expect(note.uuid).to.not.equal(duplicateNote.uuid)
@@ -246,7 +246,7 @@ describe('notes and tags', () => {
     const pair = createRelatedNoteTagPairPayload()
     const notePayload = pair[0]
     const tagPayload = pair[1]
-    await this.application.itemManager.emitItemsFromPayloads([notePayload, tagPayload], PayloadEmitSource.LocalChanged)
+    await this.application.mutator.emitItemsFromPayloads([notePayload, tagPayload], PayloadEmitSource.LocalChanged)
     const note = this.application.itemManager.getItems([ContentType.Note])[0]
     let tag = this.application.itemManager.getItems([ContentType.Tag])[0]
 
@@ -263,7 +263,7 @@ describe('notes and tags', () => {
 
   it('modifying item content should not modify payload content', async function () {
     const notePayload = Factory.createNotePayload()
-    await this.application.itemManager.emitItemsFromPayloads([notePayload], PayloadEmitSource.LocalChanged)
+    await this.application.mutator.emitItemsFromPayloads([notePayload], PayloadEmitSource.LocalChanged)
     let note = this.application.itemManager.getItems([ContentType.Note])[0]
     note = await this.application.changeAndSaveItem(
       note,
@@ -285,7 +285,7 @@ describe('notes and tags', () => {
     const notePayload = pair[0]
     const tagPayload = pair[1]
 
-    await this.application.itemManager.emitItemsFromPayloads([notePayload, tagPayload], PayloadEmitSource.LocalChanged)
+    await this.application.mutator.emitItemsFromPayloads([notePayload, tagPayload], PayloadEmitSource.LocalChanged)
     let note = this.application.itemManager.getItems([ContentType.Note])[0]
     let tag = this.application.itemManager.getItems([ContentType.Tag])[0]
 
@@ -794,7 +794,7 @@ describe('notes and tags', () => {
     const notePayload3 = Factory.createNotePayload('Bar')
     const notePayload4 = Factory.createNotePayload('Testing')
 
-    await this.application.itemManager.emitItemsFromPayloads(
+    await this.application.mutator.emitItemsFromPayloads(
       [notePayload1, notePayload2, notePayload3, notePayload4, tagPayload1],
       PayloadEmitSource.LocalChanged,
     )
@@ -824,7 +824,7 @@ describe('notes and tags', () => {
     const notePayload3 = Factory.createNotePayload('Testing FOO (Bar)')
     const notePayload4 = Factory.createNotePayload('This should not match')
 
-    await this.application.itemManager.emitItemsFromPayloads(
+    await this.application.mutator.emitItemsFromPayloads(
       [notePayload1, notePayload2, notePayload3, notePayload4, tagPayload1],
       PayloadEmitSource.LocalChanged,
     )

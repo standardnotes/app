@@ -129,7 +129,7 @@ describe('features', () => {
       await application.sync.sync()
       // Timeout since we don't await for features update
       await new Promise((resolve) => setTimeout(resolve, 1000))
-      expect(application.itemManager.changeComponent.callCount).to.equal(1)
+      expect(application.mutator.changeComponent.callCount).to.equal(1)
       const themeItems = application.items.getItems(ContentType.Theme)
       expect(themeItems).to.have.lengthOf(1)
       expect(themeItems[0].content).to.containSubset(
@@ -172,7 +172,7 @@ describe('features', () => {
 
       // Timeout since we don't await for features update
       await new Promise((resolve) => setTimeout(resolve, 1000))
-      expect(application.itemManager.setItemsToBeDeleted.calledWith([sinon.match({ uuid: themeItem.uuid })])).to.equal(
+      expect(application.mutator.setItemsToBeDeleted.calledWith([sinon.match({ uuid: themeItem.uuid })])).to.equal(
         true,
       )
 

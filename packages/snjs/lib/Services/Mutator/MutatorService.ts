@@ -378,7 +378,13 @@ export class MutatorService extends AbstractService implements MutatorClientInte
   ): Promise<T> {
     await this.payloadManager.emitPayload(payload, emitSource)
 
-    return this.itemManager.findSureItem<T>(payload.uuid)
+    const result = this.itemManager.findSureItem<T>(payload.uuid)
+
+    if (!result) {
+      throw Error("Emitted item can't be found")
+    }
+
+    return result
   }
 
   public async emitItemsFromPayloads(

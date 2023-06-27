@@ -177,7 +177,10 @@ export class AppContext {
       },
     })
 
-    return this.application.syncService.handleSuccessServerResponse({ payloadsSavedOrSaving: [] }, response)
+    return this.application.syncService.handleSuccessServerResponse(
+      { payloadsSavedOrSaving: [], options: {} },
+      response,
+    )
   }
 
   resolveWhenKeyRecovered(uuid) {

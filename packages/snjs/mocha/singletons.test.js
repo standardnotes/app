@@ -93,7 +93,7 @@ describe('singletons', function () {
     const prefs2 = createPrefsPayload()
     const prefs3 = createPrefsPayload()
 
-    const items = await this.application.itemManager.emitItemsFromPayloads(
+    const items = await this.application.mutator.emitItemsFromPayloads(
       [prefs1, prefs2, prefs3],
       PayloadEmitSource.LocalChanged,
     )

@@ -26,6 +26,7 @@ import {
   EncryptedOutputParameters,
   KeySystemKeyManagerInterface,
   AsymmetricSignatureVerificationDetachedResult,
+  AsymmetricallyEncryptedString,
 } from '@standardnotes/encryption'
 import {
   BackupFile,
@@ -81,7 +82,6 @@ import { RootKeyEncryptionService } from './RootKeyEncryption'
 import { DecryptBackupFile } from './BackupFileDecryptor'
 import { EncryptionServiceEvent } from './EncryptionServiceEvent'
 import { DecryptedParameters } from '@standardnotes/encryption/src/Domain/Types/DecryptedParameters'
-import { AsymmetricallyEncryptedString } from '@standardnotes/encryption/src/Domain/Operator/Types'
 
 /**
  * The encryption service is responsible for the encryption and decryption of payloads, and

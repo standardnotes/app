@@ -55,7 +55,7 @@ export class SelfContactManager {
       return
     }
 
-    if (this.session.isUserMissingKeyPair()) {
+    if (!this.session.isSignedIn() || this.session.isUserMissingKeyPair()) {
       return
     }
 

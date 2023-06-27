@@ -71,7 +71,7 @@ describe('importing', function () {
     const notePayload = pair[0]
     const tagPayload = pair[1]
 
-    await application.itemManager.emitItemsFromPayloads([notePayload, tagPayload], PayloadEmitSource.LocalChanged)
+    await application.mutator.emitItemsFromPayloads([notePayload, tagPayload], PayloadEmitSource.LocalChanged)
     expectedItemCount += 2
     const note = application.itemManager.getItems([ContentType.Note])[0]
     const tag = application.itemManager.getItems([ContentType.Tag])[0]
@@ -130,7 +130,7 @@ describe('importing', function () {
     await setup({ fakeCrypto: true })
     const pair = createRelatedNoteTagPairPayload()
     const tagPayload = pair[1]
-    await application.itemManager.emitItemsFromPayloads(pair, PayloadEmitSource.LocalChanged)
+    await application.mutator.emitItemsFromPayloads(pair, PayloadEmitSource.LocalChanged)
     const mutatedTag = new DecryptedPayload({
       ...tagPayload,
       content: {
@@ -153,7 +153,7 @@ describe('importing', function () {
     const pair = createRelatedNoteTagPairPayload()
     const notePayload = pair[0]
     const tagPayload = pair[1]
-    await application.itemManager.emitItemsFromPayloads(pair, PayloadEmitSource.LocalChanged)
+    await application.mutator.emitItemsFromPayloads(pair, PayloadEmitSource.LocalChanged)
     expectedItemCount += 2
     const note = application.itemManager.getDisplayableNotes()[0]
     const tag = application.itemManager.getDisplayableTags()[0]
@@ -217,7 +217,7 @@ describe('importing', function () {
     const tag = await Factory.createMappedTag(application)
     expectedItemCount += 2
 
-    await application.itemManager.changeItem(tag, (mutator) => {
+    await application.mutator.changeItem(tag, (mutator) => {
       mutator.e2ePendingRefactor_addItemAsRelationship(note)
     })
 
@@ -850,7 +850,7 @@ describe('importing', function () {
     Factory.handlePasswordChallenges(application, password)
 
     const pair = createRelatedNoteTagPairPayload()
-    await application.itemManager.emitItemsFromPayloads(pair, PayloadEmitSource.LocalChanged)
+    await application.mutator.emitItemsFromPayloads(pair, PayloadEmitSource.LocalChanged)
 
     await application.sync.sync()
 

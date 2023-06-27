@@ -33,7 +33,7 @@ describe('notes + tags syncing', function () {
 
   it('syncing an item then downloading it should include items_key_id', async function () {
     const note = await Factory.createMappedNote(this.application)
-    await this.application.itemManager.setItemDirty(note)
+    await this.application.mutator.setItemDirty(note)
     await this.application.syncService.sync(syncOptions)
     await this.application.payloadManager.resetState()
     await this.application.itemManager.resetState()
@@ -52,7 +52,7 @@ describe('notes + tags syncing', function () {
     const notePayload = pair[0]
     const tagPayload = pair[1]
 
-    await this.application.itemManager.emitItemsFromPayloads([notePayload, tagPayload], PayloadEmitSource.LocalChanged)
+    await this.application.mutator.emitItemsFromPayloads([notePayload, tagPayload], PayloadEmitSource.LocalChanged)
     const note = this.application.itemManager.getItems([ContentType.Note])[0]
     const tag = this.application.itemManager.getItems([ContentType.Tag])[0]
     expect(this.application.itemManager.getDisplayableNotes().length).to.equal(1)
@@ -76,7 +76,7 @@ describe('notes + tags syncing', function () {
     const pair = createRelatedNoteTagPairPayload()
     const notePayload = pair[0]
     const tagPayload = pair[1]
-    await this.application.itemManager.emitItemsFromPayloads([notePayload, tagPayload], PayloadEmitSource.LocalChanged)
+    await this.application.mutator.emitItemsFromPayloads([notePayload, tagPayload], PayloadEmitSource.LocalChanged)
     const originalNote = this.application.itemManager.getDisplayableNotes()[0]
     const originalTag = this.application.itemManager.getDisplayableTags()[0]
     await this.application.itemManager.setItemsDirty([originalNote, originalTag])
@@ -109,7 +109,7 @@ describe('notes + tags syncing', function () {
     const pair = createRelatedNoteTagPairPayload()
     const notePayload = pair[0]
     const tagPayload = pair[1]
-    await this.application.itemManager.emitItemsFromPayloads([notePayload, tagPayload], PayloadEmitSource.LocalChanged)
+    await this.application.mutator.emitItemsFromPayloads([notePayload, tagPayload], PayloadEmitSource.LocalChanged)
     let note = this.application.itemManager.getDisplayableNotes()[0]
     let tag = this.application.itemManager.getDisplayableTags()[0]
     expect(this.application.itemManager.itemsReferencingItem(note).length).to.equal(1)

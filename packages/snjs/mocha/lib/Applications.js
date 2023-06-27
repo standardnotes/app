@@ -4,6 +4,9 @@ import * as Defaults from './Defaults.js'
 
 export const BaseItemCounts = {
   DefaultItems: ['ItemsKey', 'UserPreferences', 'DarkTheme'].length,
+  DefaultItemsWithAccount: ['ItemsKey', 'UserPreferences', 'DarkTheme', 'TrustedSelfContact'].length,
+  DefaultItemsWithAccountWithoutItemsKey: ['UserPreferences', 'DarkTheme', 'TrustedSelfContact'].length,
+  DefaultItemsNoAccounNoItemsKey: ['UserPreferences', 'DarkTheme'].length,
 }
 
 export function createApplicationWithOptions({ identifier, environment, platform, host, crypto, device }) {

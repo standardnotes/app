@@ -1,5 +1,6 @@
 import * as Factory from './lib/factory.js'
 import * as Files from './lib/Files.js'
+import * as Events from './lib/Events.js'
 
 chai.use(chaiAsPromised)
 const expect = chai.expect
@@ -98,26 +99,43 @@ describe('settings service', function () {
   })
 
   it('reads a nonexistent sensitive setting', async () => {
-    const setting = await application.settings.getDoesSensitiveSettingExist(SettingName.create(SettingName.NAMES.MfaSecret).getValue())
+    const setting = await application.settings.getDoesSensitiveSettingExist(
+      SettingName.create(SettingName.NAMES.MfaSecret).getValue(),
+    )
     expect(setting).to.equal(false)
   })
 
   it('creates and reads a sensitive setting', async () => {
-    await application.settings.updateSetting(SettingName.create(SettingName.NAMES.MfaSecret).getValue(), 'fake_secret', true)
-    const setting = await application.settings.getDoesSensitiveSettingExist(SettingName.create(SettingName.NAMES.MfaSecret).getValue())
+    await application.settings.updateSetting(
+      SettingName.create(SettingName.NAMES.MfaSecret).getValue(),
+      'fake_secret',
+      true,
+    )
+    const setting = await application.settings.getDoesSensitiveSettingExist(
+      SettingName.create(SettingName.NAMES.MfaSecret).getValue(),
+    )
     expect(setting).to.equal(true)
   })
 
   it('creates and lists a sensitive setting', async () => {
-    await application.settings.updateSetting(SettingName.create(SettingName.NAMES.MfaSecret).getValue(), 'fake_secret', true)
-    await application.settings.updateSetting(SettingName.create(SettingName.NAMES.MuteFailedBackupsEmails).getValue(), MuteFailedBackupsEmailsOption.Muted)
+    await application.settings.updateSetting(
+      SettingName.create(SettingName.NAMES.MfaSecret).getValue(),
+      'fake_secret',
+      true,
+    )
+    await application.settings.updateSetting(
+      SettingName.create(SettingName.NAMES.MuteFailedBackupsEmails).getValue(),
+      MuteFailedBackupsEmailsOption.Muted,
+    )
     const settings = await application.settings.listSettings()
-    expect(settings.getSettingValue(SettingName.create(SettingName.NAMES.MuteFailedBackupsEmails).getValue())).to.eql(MuteFailedBackupsEmailsOption.Muted)
+    expect(settings.getSettingValue(SettingName.create(SettingName.NAMES.MuteFailedBackupsEmails).getValue())).to.eql(
+      MuteFailedBackupsEmailsOption.Muted,
+    )
     expect(settings.getSettingValue(SettingName.create(SettingName.NAMES.MfaSecret).getValue())).to.not.be.ok
   })
 
   it('reads a subscription setting - @paidfeature', async () => {
-    await Factory.publishMockedEvent('SUBSCRIPTION_PURCHASED', {
+    await Events.publishMockedEvent('SUBSCRIPTION_PURCHASED', {
       userEmail: context.email,
       subscriptionId: subscriptionId++,
       subscriptionName: 'PRO_PLAN',
@@ -130,19 +148,21 @@ describe('settings service', function () {
       totalActiveSubscriptionsCount: 1,
       userRegisteredAt: 1,
       billingFrequency: 12,
-      payAmount: 59.00
+      payAmount: 59.0,
     })
 
     await Factory.sleep(2)
 
-    const setting = await application.settings.getSubscriptionSetting(SettingName.create(SettingName.NAMES.FileUploadBytesLimit).getValue())
+    const setting = await application.settings.getSubscriptionSetting(
+      SettingName.create(SettingName.NAMES.FileUploadBytesLimit).getValue(),
+    )
     expect(setting).to.be.a('string')
   })
 
   it('persist irreplaceable subscription settings between subsequent subscriptions - @paidfeature', async () => {
     await reInitializeApplicationWithRealCrypto()
 
-    await Factory.publishMockedEvent('SUBSCRIPTION_PURCHASED', {
+    await Events.publishMockedEvent('SUBSCRIPTION_PURCHASED', {
       userEmail: context.email,
       subscriptionId: subscriptionId,
       subscriptionName: 'PRO_PLAN',
@@ -155,7 +175,7 @@ describe('settings service', function () {
       totalActiveSubscriptionsCount: 1,
       userRegisteredAt: 1,
       billingFrequency: 12,
-      payAmount: 59.00
+      payAmount: 59.0,
     })
     await Factory.sleep(1)
 
@@ -166,13 +186,17 @@ describe('settings service', function () {
 
     await Factory.sleep(1)
 
-    const limitSettingBefore = await application.settings.getSubscriptionSetting(SettingName.create(SettingName.NAMES.FileUploadBytesLimit).getValue())
+    const limitSettingBefore = await application.settings.getSubscriptionSetting(
+      SettingName.create(SettingName.NAMES.FileUploadBytesLimit).getValue(),
+    )
     expect(limitSettingBefore).to.equal('107374182400')
 
-    const usedSettingBefore = await application.settings.getSubscriptionSetting(SettingName.create(SettingName.NAMES.FileUploadBytesUsed).getValue())
+    const usedSettingBefore = await application.settings.getSubscriptionSetting(
+      SettingName.create(SettingName.NAMES.FileUploadBytesUsed).getValue(),
+    )
     expect(usedSettingBefore).to.equal('196')
 
-    await Factory.publishMockedEvent('SUBSCRIPTION_EXPIRED', {
+    await Events.publishMockedEvent('SUBSCRIPTION_EXPIRED', {
       userEmail: context.email,
       subscriptionId: subscriptionId++,
       subscriptionName: 'PRO_PLAN',
@@ -181,11 +205,11 @@ describe('settings service', function () {
       totalActiveSubscriptionsCount: 1,
       userExistingSubscriptionsCount: 1,
       billingFrequency: 12,
-      payAmount: 59.00
+      payAmount: 59.0,
     })
     await Factory.sleep(1)
 
-    await Factory.publishMockedEvent('SUBSCRIPTION_PURCHASED', {
+    await Events.publishMockedEvent('SUBSCRIPTION_PURCHASED', {
       userEmail: context.email,
       subscriptionId: subscriptionId++,
       subscriptionName: 'PRO_PLAN',
@@ -198,14 +222,18 @@ describe('settings service', function () {
       totalActiveSubscriptionsCount: 2,
       userRegisteredAt: 1,
       billingFrequency: 12,
-      payAmount: 59.00
+      payAmount: 59.0,
     })
     await Factory.sleep(1)
 
-    const limitSettingAfter = await application.settings.getSubscriptionSetting(SettingName.create(SettingName.NAMES.FileUploadBytesLimit).getValue())
+    const limitSettingAfter = await application.settings.getSubscriptionSetting(
+      SettingName.create(SettingName.NAMES.FileUploadBytesLimit).getValue(),
+    )
     expect(limitSettingAfter).to.equal(limitSettingBefore)
 
-    const usedSettingAfter = await application.settings.getSubscriptionSetting(SettingName.create(SettingName.NAMES.FileUploadBytesUsed).getValue())
+    const usedSettingAfter = await application.settings.getSubscriptionSetting(
+      SettingName.create(SettingName.NAMES.FileUploadBytesUsed).getValue(),
+    )
     expect(usedSettingAfter).to.equal(usedSettingBefore)
   })
 })

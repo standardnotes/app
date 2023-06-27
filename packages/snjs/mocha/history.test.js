@@ -173,7 +173,7 @@ describe('history manager', () => {
         }),
       )
       let item = await this.application.mutator.emitItemFromPayload(payload, PayloadEmitSource.LocalChanged)
-      await this.application.itemManager.setItemDirty(item)
+      await this.application.mutator.setItemDirty(item)
       await this.application.syncService.sync(syncOptions)
       /** It should keep the first and last by default */
       item = await setTextAndSync(this.application, item, item.content.text)
@@ -204,7 +204,7 @@ describe('history manager', () => {
 
       let item = await this.application.mutator.emitItemFromPayload(payload, PayloadEmitSource.LocalChanged)
 
-      await this.application.itemManager.setItemDirty(item)
+      await this.application.mutator.setItemDirty(item)
       await this.application.syncService.sync(syncOptions)
 
       item = await setTextAndSync(this.application, item, item.content.text + Factory.randomString(1))

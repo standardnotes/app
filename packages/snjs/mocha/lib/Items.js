@@ -63,7 +63,7 @@ export function createRelatedNoteTagPairPayload({ noteTitle, noteText, tagTitle,
 
 export async function createSyncedNoteWithTag(application) {
   const payloads = createRelatedNoteTagPairPayload()
-  await application.itemManager.emitItemsFromPayloads(payloads)
+  await application.mutator.emitItemsFromPayloads(payloads)
   return application.sync.sync(MaximumSyncOptions)
 }
 

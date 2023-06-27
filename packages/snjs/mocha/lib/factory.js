@@ -136,7 +136,7 @@ export async function registerOldUser({ application, email, password, version })
     keyParams: accountKey.keyParams,
   })
   /** Mark all existing items as dirty. */
-  await application.itemManager.changeItems(application.itemManager.items, (m) => {
+  await application.mutator.changeItems(application.itemManager.items, (m) => {
     m.dirty = true
   })
   await application.sessionManager.handleSuccessAuthResponse(response, accountKey)
@@ -181,7 +181,7 @@ export async function createMappedTag(application, tagParams = {}) {
 export async function createSyncedNote(application, title, text) {
   const payload = createNotePayload(title, text)
   const item = await application.mutator.emitItemFromPayload(payload, PayloadEmitSource.LocalChanged)
-  await application.itemManager.setItemDirty(item)
+  await application.mutator.setItemDirty(item)
   await application.syncService.sync(syncOptions)
   const note = application.items.findItem(payload.uuid)
   return note
@@ -200,7 +200,7 @@ export async function createManyMappedNotes(application, count) {
   const createdNotes = []
   for (let i = 0; i < count; i++) {
     const note = await createMappedNote(application)
-    await application.itemManager.setItemDirty(note)
+    await application.mutator.setItemDirty(note)
     createdNotes.push(note)
   }
   return createdNotes
@@ -423,7 +423,7 @@ export async function markDirtyAndSyncItem(application, itemToLookupUuidFor) {
     throw Error('Attempting to save non-inserted item')
   }
   if (!item.dirty) {
-    await application.itemManager.changeItem(item, undefined, MutationType.NoUpdateUserTimestamps)
+    await application.mutator.changeItem(item, undefined, MutationType.NoUpdateUserTimestamps)
   }
   await application.sync.sync()
 }
