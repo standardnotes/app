@@ -166,8 +166,31 @@ export default class FakeWebCrypto {
     return btoa(JSON.stringify(data))
   }
 
+  sodiumCryptoKdfDeriveFromKey(key, subkeyNumber, subkeyLength, context) {
+    return btoa(key + subkeyNumber + subkeyLength + context)
+  }
+
+  sodiumCryptoGenericHash(message, key) {
+    return btoa(message + key)
+  }
+
   sodiumCryptoSignVerify(message, signature, publicKey) {
     return true
+  }
+
+  sodiumCryptoBoxSeedKeypair(seed) {
+    return {
+      privateKey: seed,
+      publicKey: seed,
+    }
+  }
+
+
+  sodiumCryptoSignSeedKeypair(seed) {
+    return {
+      privateKey: seed,
+      publicKey: seed,
+    }
   }
 
   generateOtpSecret() {

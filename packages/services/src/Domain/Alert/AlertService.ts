@@ -18,7 +18,17 @@ export abstract class AlertService {
     cancelButtonText?: string,
   ): Promise<boolean>
 
+  abstract confirmV2(dto: {
+    text: string
+    title?: string
+    confirmButtonText?: string
+    confirmButtonType?: ButtonType
+    cancelButtonText?: string
+  }): Promise<boolean>
+
   abstract alert(text: string, title?: string, closeButtonText?: string): Promise<void>
+
+  abstract alertV2(dto: { text: string; title?: string; closeButtonText?: string }): Promise<void>
 
   abstract blockingDialog(text: string, title?: string): DismissBlockingDialog | Promise<DismissBlockingDialog>
 

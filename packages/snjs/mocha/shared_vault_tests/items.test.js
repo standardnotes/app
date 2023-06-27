@@ -87,7 +87,7 @@ describe('shared vault items', function () {
     await Collaboration.moveItemToVault(context, sharedVault, note)
     await contactContext.sync()
 
-    await contactContext.items.changeItem({ uuid: note.uuid }, (mutator) => {
+    await contactContext.mutator.changeItem({ uuid: note.uuid }, (mutator) => {
       mutator.title = 'new title'
     })
     await contactContext.sync()

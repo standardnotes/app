@@ -25,8 +25,17 @@ export class MoveItemsToVaultUseCase {
     await this.sync.sync()
 
     for (const item of dto.items) {
-      if (item.content_type === ContentType.File && dto.vault.isSharedVaultListing()) {
+      if (item.content_type !== ContentType.File) {
+        continue
+      }
+
+      if (dto.vault.isSharedVaultListing()) {
         await this.files.moveFileToSharedVault(item as FileItem, dto.vault)
+      } else {
+        const itemPreviouslyBelongedToSharedVault = item.shared_vault_uuid
+        if (itemPreviouslyBelongedToSharedVault) {
+          await this.files.moveFileOutOfSharedVault(item as FileItem)
+        }
       }
     }
   }

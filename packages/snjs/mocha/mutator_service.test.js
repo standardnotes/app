@@ -1,10 +1,11 @@
 /* eslint-disable no-unused-expressions */
 /* eslint-disable no-undef */
 import * as Factory from './lib/factory.js'
+import { BaseItemCounts } from './lib/Applications.js'
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
-describe.only('mutator service', function () {
+describe('mutator service', function () {
   this.timeout(Factory.TwentySecondTimeout)
 
   let context
@@ -162,7 +163,7 @@ describe.only('mutator service', function () {
       const originalNote = application.items.getDisplayableNotes()[0]
       const duplicatedNote = application.items.getDisplayableNotes()[1]
 
-      expect(application.items.items.length).to.equal(2)
+      expect(application.items.items.length).to.equal(2 + BaseItemCounts.DefaultItems)
       expect(application.items.getDisplayableNotes().length).to.equal(2)
       expect(originalNote.uuid).to.not.equal(duplicatedNote.uuid)
       expect(originalNote.uuid).to.equal(duplicatedNote.duplicateOf)
@@ -179,7 +180,7 @@ describe.only('mutator service', function () {
       const originalNote = application.items.getDisplayableNotes()[0]
       const duplicatedNote = application.items.getDisplayableNotes()[1]
 
-      expect(application.items.items.length).to.equal(2)
+      expect(application.items.items.length).to.equal(2 + BaseItemCounts.DefaultItems)
       expect(application.items.getDisplayableNotes().length).to.equal(2)
       expect(originalNote.uuid).to.not.equal(duplicatedNote.uuid)
       expect(originalNote.uuid).to.equal(duplicatedNote.duplicateOf)
@@ -194,7 +195,7 @@ describe.only('mutator service', function () {
       const duplicate = await mutator.duplicateItem(tag)
 
       expect(duplicate.content.references).to.have.length(1)
-      expect(application.items.items).to.have.length(3)
+      expect(application.items.items).to.have.length(3 + BaseItemCounts.DefaultItems)
       expect(application.items.getDisplayableTags()).to.have.length(2)
     })
 
@@ -231,13 +232,13 @@ describe.only('mutator service', function () {
     /** Items should never be mutated directly */
     expect(note.deleted).to.not.be.ok
 
-    const latestVersion = this.payloadManager.findOne(note.uuid)
+    const latestVersion = context.payloads.findOne(note.uuid)
     expect(latestVersion.deleted).to.equal(true)
     expect(latestVersion.dirty).to.equal(true)
     expect(latestVersion.content).to.not.be.ok
 
     /** Deleted items do not show up in item manager's public interface */
-    expect(application.items.items.length).to.equal(0)
+    expect(application.items.items.length).to.equal(BaseItemCounts.DefaultItems)
     expect(application.items.getDisplayableNotes().length).to.equal(0)
   })
 
@@ -252,11 +253,11 @@ describe.only('mutator service', function () {
     expect(versionTwo.dirty).to.equal(true)
     expect(versionTwo.content).to.be.ok
 
-    expect(application.items.items.length).to.equal(1)
+    expect(application.items.items.length).to.equal(1 + BaseItemCounts.DefaultItems)
     expect(application.items.trashedItems.length).to.equal(1)
 
-    await application.items.emptyTrash()
-    const versionThree = this.payloadManager.findOne(note.uuid)
+    await application.mutator.emptyTrash()
+    const versionThree = context.payloads.findOne(note.uuid)
     expect(versionThree.deleted).to.equal(true)
     expect(application.items.trashedItems.length).to.equal(0)
   })

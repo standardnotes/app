@@ -1,10 +1,12 @@
 /* eslint-disable no-unused-expressions */
 /* eslint-disable no-undef */
 import * as Factory from './lib/factory.js'
+import { BaseItemCounts } from './lib/Applications.js'
+
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
-describe.only('item manager', function () {
+describe('item manager', function () {
   let context
   let application
 
@@ -64,7 +66,7 @@ describe.only('item manager', function () {
   it('item state', async function () {
     await createNote()
 
-    expect(application.items.items.length).to.equal(1)
+    expect(application.items.items.length).to.equal(1 + BaseItemCounts.DefaultItems)
     expect(application.items.getDisplayableNotes().length).to.equal(1)
   })
 
@@ -92,7 +94,7 @@ describe.only('item manager', function () {
   it('inverse reference map should not have duplicates', async function () {
     const note = await createNote()
     const tag = await createTag([note])
-    await application.items.changeItem(tag)
+    await application.mutator.changeItem(tag)
 
     expect(application.items.collection.referenceMap.inverseMap.get(note.uuid)).to.eql([tag.uuid])
   })
@@ -123,14 +125,14 @@ describe.only('item manager', function () {
   })
 
   it('dirty items should not include errored items', async function () {
-    const note = await application.items.setItemDirty(await createNote())
+    const note = await application.mutator.setItemDirty(await createNote())
     const errorred = new EncryptedPayload({
       ...note.payload,
       content: '004:...',
       errorDecrypting: true,
     })
 
-    await application.items.emitItemsFromPayloads([errorred], PayloadEmitSource.LocalChanged)
+    await application.mutator.emitItemsFromPayloads([errorred], PayloadEmitSource.LocalChanged)
 
     const dirtyItems = application.items.getDirtyItems()
 
@@ -138,7 +140,7 @@ describe.only('item manager', function () {
   })
 
   it('dirty items should include errored items if they are being deleted', async function () {
-    const note = await application.items.setItemDirty(await createNote())
+    const note = await application.mutator.setItemDirty(await createNote())
     const errorred = new DeletedPayload({
       ...note.payload,
       content: undefined,
@@ -146,7 +148,7 @@ describe.only('item manager', function () {
       deleted: true,
     })
 
-    await application.items.emitItemsFromPayloads([errorred], PayloadEmitSource.LocalChanged)
+    await application.mutator.emitItemsFromPayloads([errorred], PayloadEmitSource.LocalChanged)
 
     const dirtyItems = application.items.getDirtyItems()
 
@@ -172,7 +174,7 @@ describe.only('item manager', function () {
   it('find or create tag by title', async function () {
     const title = 'foo'
 
-    expect(await application.items.findOrCreateTagByTitle({ title: title })).to.be.ok
+    expect(await application.mutator.findOrCreateTagByTitle({ title: title })).to.be.ok
   })
 
   it('note count', async function () {
@@ -228,25 +230,25 @@ describe.only('item manager', function () {
             title: changedTitle,
           },
         })
-        application.items.emitItemFromPayload(changedPayload)
+        application.mutator.emitItemFromPayload(changedPayload)
       }
       latestVersion = all[0]
     })
-    await application.items.emitItemFromPayload(payload)
+    await application.mutator.emitItemFromPayload(payload)
     expect(latestVersion.title).to.equal(changedTitle)
   })
 
   describe('searchTags', async function () {
     it('should return tag with query matching title', async function () {
-      const tag = await application.items.findOrCreateTagByTitle({ title: 'tag' })
+      const tag = await application.mutator.findOrCreateTagByTitle({ title: 'tag' })
 
       const results = application.items.searchTags('tag')
       expect(results).lengthOf(1)
       expect(results[0].title).to.equal(tag.title)
     })
     it('should return all tags with query partially matching title', async function () {
-      const firstTag = await application.items.findOrCreateTagByTitle({ title: 'tag one' })
-      const secondTag = await application.items.findOrCreateTagByTitle({ title: 'tag two' })
+      const firstTag = await application.mutator.findOrCreateTagByTitle({ title: 'tag one' })
+      const secondTag = await application.mutator.findOrCreateTagByTitle({ title: 'tag two' })
 
       const results = application.items.searchTags('tag')
       expect(results).lengthOf(2)
@@ -254,21 +256,21 @@ describe.only('item manager', function () {
       expect(results[1].title).to.equal(secondTag.title)
     })
     it('should be case insensitive', async function () {
-      const tag = await application.items.findOrCreateTagByTitle({ title: 'Tag' })
+      const tag = await application.mutator.findOrCreateTagByTitle({ title: 'Tag' })
 
       const results = application.items.searchTags('tag')
       expect(results).lengthOf(1)
       expect(results[0].title).to.equal(tag.title)
     })
     it('should return tag with query matching delimiter separated component', async function () {
-      const tag = await application.items.findOrCreateTagByTitle({ title: 'parent.child' })
+      const tag = await application.mutator.findOrCreateTagByTitle({ title: 'parent.child' })
 
       const results = application.items.searchTags('child')
       expect(results).lengthOf(1)
       expect(results[0].title).to.equal(tag.title)
     })
     it('should return tags with matching query including delimiter', async function () {
-      const tag = await application.items.findOrCreateTagByTitle({ title: 'parent.child' })
+      const tag = await application.mutator.findOrCreateTagByTitle({ title: 'parent.child' })
 
       const results = application.items.searchTags('parent.chi')
       expect(results).lengthOf(1)
@@ -276,10 +278,10 @@ describe.only('item manager', function () {
     })
 
     it('should return tags in natural order', async function () {
-      const firstTag = await application.items.findOrCreateTagByTitle({ title: 'tag 100' })
-      const secondTag = await application.items.findOrCreateTagByTitle({ title: 'tag 2' })
-      const thirdTag = await application.items.findOrCreateTagByTitle({ title: 'tag b' })
-      const fourthTag = await application.items.findOrCreateTagByTitle({ title: 'tag a' })
+      const firstTag = await application.mutator.findOrCreateTagByTitle({ title: 'tag 100' })
+      const secondTag = await application.mutator.findOrCreateTagByTitle({ title: 'tag 2' })
+      const thirdTag = await application.mutator.findOrCreateTagByTitle({ title: 'tag b' })
+      const fourthTag = await application.mutator.findOrCreateTagByTitle({ title: 'tag a' })
 
       const results = application.items.searchTags('tag')
       expect(results).lengthOf(4)
@@ -290,11 +292,11 @@ describe.only('item manager', function () {
     })
 
     it('should not return tags associated with note', async function () {
-      const firstTag = await application.items.findOrCreateTagByTitle({ title: 'tag one' })
-      const secondTag = await application.items.findOrCreateTagByTitle({ title: 'tag two' })
+      const firstTag = await application.mutator.findOrCreateTagByTitle({ title: 'tag one' })
+      const secondTag = await application.mutator.findOrCreateTagByTitle({ title: 'tag two' })
 
       const note = await createNote()
-      await application.items.changeItem(firstTag, (mutator) => {
+      await application.mutator.changeItem(firstTag, (mutator) => {
         mutator.e2ePendingRefactor_addItemAsRelationship(note)
       })
 
@@ -308,7 +310,7 @@ describe.only('item manager', function () {
     it('all view should not include archived notes by default', async function () {
       const normal = await createNote()
 
-      await application.items.changeItem(normal, (mutator) => {
+      await application.mutator.changeItem(normal, (mutator) => {
         mutator.archived = true
       })
 
@@ -322,7 +324,7 @@ describe.only('item manager', function () {
     it('archived view should not include trashed notes by default', async function () {
       const normal = await createNote()
 
-      await application.items.changeItem(normal, (mutator) => {
+      await application.mutator.changeItem(normal, (mutator) => {
         mutator.archived = true
         mutator.trashed = true
       })
@@ -337,7 +339,7 @@ describe.only('item manager', function () {
     it('trashed view should include archived notes by default', async function () {
       const normal = await createNote()
 
-      await application.items.changeItem(normal, (mutator) => {
+      await application.mutator.changeItem(normal, (mutator) => {
         mutator.archived = true
         mutator.trashed = true
       })
@@ -353,16 +355,16 @@ describe.only('item manager', function () {
   describe('getSortedTagsForNote', async function () {
     it('should return tags associated with a note in natural order', async function () {
       const tags = [
-        await application.items.findOrCreateTagByTitle({ title: 'tag 100' }),
-        await application.items.findOrCreateTagByTitle({ title: 'tag 2' }),
-        await application.items.findOrCreateTagByTitle({ title: 'tag b' }),
-        await application.items.findOrCreateTagByTitle({ title: 'tag a' }),
+        await application.mutator.findOrCreateTagByTitle({ title: 'tag 100' }),
+        await application.mutator.findOrCreateTagByTitle({ title: 'tag 2' }),
+        await application.mutator.findOrCreateTagByTitle({ title: 'tag b' }),
+        await application.mutator.findOrCreateTagByTitle({ title: 'tag a' }),
       ]
 
       const note = await createNote()
 
       tags.map(async (tag) => {
-        await application.items.changeItem(tag, (mutator) => {
+        await application.mutator.changeItem(tag, (mutator) => {
           mutator.e2ePendingRefactor_addItemAsRelationship(note)
         })
       })
@@ -380,14 +382,14 @@ describe.only('item manager', function () {
   describe('getTagParentChain', function () {
     it('should return parent tags for a tag', async function () {
       const [parent, child, grandchild, _other] = await Promise.all([
-        application.items.findOrCreateTagByTitle({ title: 'parent' }),
-        application.items.findOrCreateTagByTitle({ title: 'parent.child' }),
-        application.items.findOrCreateTagByTitle({ title: 'parent.child.grandchild' }),
-        application.items.findOrCreateTagByTitle({ title: 'some other tag' }),
+        application.mutator.findOrCreateTagByTitle({ title: 'parent' }),
+        application.mutator.findOrCreateTagByTitle({ title: 'parent.child' }),
+        application.mutator.findOrCreateTagByTitle({ title: 'parent.child.grandchild' }),
+        application.mutator.findOrCreateTagByTitle({ title: 'some other tag' }),
       ])
 
-      await application.items.setTagParent(parent, child)
-      await application.items.setTagParent(child, grandchild)
+      await application.mutator.setTagParent(parent, child)
+      await application.mutator.setTagParent(child, grandchild)
 
       const results = application.items.getTagParentChain(grandchild)
 

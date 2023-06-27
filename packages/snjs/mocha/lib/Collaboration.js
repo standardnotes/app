@@ -91,11 +91,7 @@ export const createSharedVaultWithUnacceptedAndUntrustedInvite = async (
   return { sharedVault, contact, contactContext, deinitContactContext, invite }
 }
 
-export const inviteNewPartyToSharedVault = async (
-  context,
-  sharedVault,
-  permissions = SharedVaultPermission.Write,
-) => {
+export const inviteNewPartyToSharedVault = async (context, sharedVault, permissions = SharedVaultPermission.Write) => {
   const { contactContext: thirdPartyContext, deinitContactContext: deinitThirdPartyContext } =
     await createContactContext()
 
@@ -118,7 +114,7 @@ export const createPrivateVault = async (context) => {
 }
 
 export const createSharedVault = async (context) => {
-  const sharedVault = await context.sharedVaults.createSharedVault('My Shared Vault')
+  const sharedVault = await context.sharedVaults.createSharedVault({ name: 'My Shared Vault' })
 
   if (isClientDisplayableError(sharedVault)) {
     throw new Error(sharedVault.text)

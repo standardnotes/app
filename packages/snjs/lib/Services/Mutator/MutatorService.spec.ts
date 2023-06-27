@@ -100,6 +100,22 @@ describe('mutator service', () => {
       expect(result).toBeUndefined()
     })
 
+    it('attempting to link vaulted tag with non vaulted file should not be permissable', async () => {
+      const tag = {
+        uuid: 'tag',
+        key_system_identifier: '456',
+      } as jest.Mocked<SNTag>
+
+      const file = {
+        uuid: 'file',
+        key_system_identifier: undefined,
+      } as jest.Mocked<FileItem>
+
+      const result = await mutatorService.addTagToFile(file, tag, true)
+
+      expect(result).toBeUndefined()
+    })
+
     it('attempting to link vaulted tag with note belonging to different vault should not be perpermissable', async () => {
       const note = {
         uuid: 'note',

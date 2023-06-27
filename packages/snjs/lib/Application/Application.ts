@@ -1422,6 +1422,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       this.mutator,
       this.protocolService,
       this.files,
+      this.alertService,
       this.internalEventBus,
     )
 

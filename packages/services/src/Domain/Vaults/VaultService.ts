@@ -1,11 +1,13 @@
 import { isClientDisplayableError } from '@standardnotes/responses'
 import {
   DecryptedItemInterface,
+  FileItem,
   KeySystemIdentifier,
   KeySystemRootKeyPasswordType,
   KeySystemRootKeyStorageMode,
   VaultListingInterface,
   VaultListingMutator,
+  isNote,
 } from '@standardnotes/models'
 import { VaultServiceInterface } from './VaultServiceInterface'
 import { ChangeVaultOptionsDTO } from './ChangeVaultOptionsDTO'
@@ -26,6 +28,7 @@ import { ContentType } from '@standardnotes/common'
 import { GetVaultUseCase } from './UseCase/GetVault'
 import { ChangeVaultKeyOptionsUseCase } from './UseCase/ChangeVaultKeyOptions'
 import { MutatorClientInterface } from '../Mutator/MutatorClientInterface'
+import { AlertService } from '../Alert/AlertService'
 
 export class VaultService
   extends AbstractService<VaultServiceEvent, VaultServiceEventPayload[VaultServiceEvent]>
@@ -39,6 +42,7 @@ export class VaultService
     private mutator: MutatorClientInterface,
     private encryption: EncryptionProviderInterface,
     private files: FilesClientInterface,
+    private alerts: AlertService,
     eventBus: InternalEventBusInterface,
   ) {
     super(eventBus)
@@ -112,17 +116,35 @@ export class VaultService
     return result
   }
 
-  async moveItemToVault(vault: VaultListingInterface, item: DecryptedItemInterface): Promise<DecryptedItemInterface> {
+  async moveItemToVault(
+    vault: VaultListingInterface,
+    item: DecryptedItemInterface,
+  ): Promise<DecryptedItemInterface | undefined> {
     if (this.isVaultLocked(vault)) {
       throw new Error('Attempting to add item to locked vault')
     }
 
-    if (this.getItemVault(item)) {
-      await this.removeItemFromVault(item)
+    let linkedFiles: FileItem[] = []
+    if (isNote(item)) {
+      linkedFiles = this.items.getNoteLinkedFiles(item)
+
+      if (linkedFiles.length > 0) {
+        const confirmed = await this.alerts.confirmV2({
+          title: 'Linked files will be moved to vault',
+          text: `This note has ${linkedFiles.length} linked files. They will also be moved to the vault. Do you want to continue?`,
+        })
+        if (!confirmed) {
+          return undefined
+        }
+      }
     }
 
+    // if (this.getItemVault(item)) {
+    //   await this.removeItemFromVault(item)
+    // }
+
     const useCase = new MoveItemsToVaultUseCase(this.mutator, this.sync, this.files)
-    await useCase.execute({ vault, items: [item] })
+    await useCase.execute({ vault, items: [item, ...linkedFiles] })
 
     return this.items.findSureItem(item.uuid)
   }

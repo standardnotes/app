@@ -75,7 +75,7 @@ describe('shared vault permissions', function () {
 
     const keySystemItemsKey = contactContext.keys.getKeySystemItemsKeys(sharedVault.systemIdentifier)[0]
 
-    await contactContext.items.changeItem(keySystemItemsKey, () => {})
+    await contactContext.mutator.changeItem(keySystemItemsKey, () => {})
     const promise = contactContext.resolveWithConflicts()
     await contactContext.sync()
 
@@ -94,7 +94,7 @@ describe('shared vault permissions', function () {
     await Collaboration.moveItemToVault(context, sharedVault, note)
     await contactContext.sync()
 
-    await contactContext.items.changeItem({ uuid: note.uuid }, (mutator) => {
+    await contactContext.mutator.changeItem({ uuid: note.uuid }, (mutator) => {
       mutator.title = 'new title'
     })
 

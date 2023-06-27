@@ -61,6 +61,14 @@ export class AppContext {
     return this.application.items
   }
 
+  get mutator() {
+    return this.application.mutator
+  }
+
+  get payloads() {
+    return this.application.payloadManager
+  }
+
   get encryption() {
     return this.application.protocolService
   }
@@ -506,8 +514,8 @@ export class AppContext {
 
   async createSyncedNote(title = 'foo', text = 'bar') {
     const payload = createNotePayload(title, text)
-    const item = await this.application.items.emitItemFromPayload(payload, PayloadEmitSource.LocalChanged)
-    await this.application.items.setItemDirty(item)
+    const item = await this.application.mutator.emitItemFromPayload(payload, PayloadEmitSource.LocalChanged)
+    await this.application.mutator.setItemDirty(item)
     await this.application.syncService.sync(MaximumSyncOptions)
     const note = this.application.items.findItem(payload.uuid)
 
