@@ -18,6 +18,7 @@ import {
   ItemsKeyInterface,
   ItemContent,
   DecryptedPayload,
+  AnyItemInterface,
 } from '@standardnotes/models'
 
 export interface ItemsClientInterface {
@@ -168,5 +169,6 @@ export interface ItemsClientInterface {
     iconString?: string,
   ): Promise<SmartView>
 
+  conflictsOf(uuid: string): AnyItemInterface[]
   numberOfNotesWithConflicts(): number
 }

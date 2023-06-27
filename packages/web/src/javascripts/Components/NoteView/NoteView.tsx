@@ -432,36 +432,11 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
       this.debounceReloadEditorComponent()
     })
 
-    this.removeNoteStreamObserver = this.application.streamItems<SNNote>(
-      ContentType.Note,
-      async ({ inserted, changed, removed }) => {
-        const insertedOrChanged = inserted.concat(changed)
-
-        for (const note of insertedOrChanged) {
-          if (note.conflictOf === this.note.uuid && !note.trashed) {
-            this.setState((state) => ({
-              conflictedNotes: state.conflictedNotes
-                .filter((conflictedNote) => conflictedNote.uuid !== note.uuid)
-                .concat([note]),
-            }))
-          } else {
-            this.setState((state) => {
-              return {
-                conflictedNotes: state.conflictedNotes.filter((conflictedNote) => conflictedNote.uuid !== note.uuid),
-              }
-            })
-          }
-        }
-
-        for (const note of removed) {
-          this.setState((state) => {
-            return {
-              conflictedNotes: state.conflictedNotes.filter((conflictedNote) => conflictedNote.uuid !== note.uuid),
-            }
-          })
-        }
-      },
-    )
+    this.removeNoteStreamObserver = this.application.streamItems<SNNote>(ContentType.Note, async () => {
+      this.setState({
+        conflictedNotes: this.application.items.conflictsOf(this.note.uuid) as SNNote[],
+      })
+    })
   }
 
   private createComponentViewer(component: SNComponent) {

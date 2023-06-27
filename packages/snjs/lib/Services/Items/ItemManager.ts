@@ -1415,7 +1415,11 @@ export class ItemManager
     })
   }
 
-  numberOfNotesWithConflicts(): number {
+  public conflictsOf(uuid: string) {
+    return this.collection.conflictsOf(uuid)
+  }
+
+  public numberOfNotesWithConflicts(): number {
     return this.collection.numberOfItemsWithConflicts()
   }
 }
