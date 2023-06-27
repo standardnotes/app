@@ -15,7 +15,7 @@ describe('online syncing', function () {
 
   beforeEach(async function () {
     localStorage.clear()
-    this.expectedItemCount = BaseItemCounts.DefaultItems
+    this.expectedItemCount = BaseItemCounts.DefaultItemsWithAccount
 
     this.context = await Factory.createAppContext()
     await this.context.launch()
@@ -43,8 +43,10 @@ describe('online syncing', function () {
 
   afterEach(async function () {
     expect(this.application.syncService.isOutOfSync()).to.equal(false)
+
     const items = this.application.itemManager.allTrackedItems()
     expect(items.length).to.equal(this.expectedItemCount)
+
     const rawPayloads = await this.application.diskStorageService.getAllRawPayloads()
     expect(rawPayloads.length).to.equal(this.expectedItemCount)
     await Factory.safeDeinit(this.application)
@@ -118,18 +120,6 @@ describe('online syncing', function () {
     /** Allow any unwaited syncs in for loop to complete */
     await Factory.sleep(0.5)
   }).timeout(20000)
-
-  it('uuid alternation should delete original payload', async function () {
-    this.application = await Factory.signOutApplicationAndReturnNew(this.application)
-    const note = await Factory.createMappedNote(this.application)
-    this.expectedItemCount++
-    await Factory.alternateUuidForItem(this.application, note.uuid)
-    await this.application.sync.sync(syncOptions)
-
-    const notes = this.application.itemManager.getDisplayableNotes()
-    expect(notes.length).to.equal(1)
-    expect(notes[0].uuid).to.not.equal(note.uuid)
-  })
 
   it('having offline data then signing in should not alternate uuid and merge with account', async function () {
     this.application = await Factory.signOutApplicationAndReturnNew(this.application)
@@ -939,7 +929,7 @@ describe('online syncing', function () {
       dirty: true,
     })
 
-    await this.application.mutator.emitItemFromPayload(errored)
+    await this.application.payloadManager.emitPayload(errored)
     await this.application.sync.sync(syncOptions)
 
     const updatedNote = this.application.items.findAnyItem(note.uuid)
@@ -967,7 +957,7 @@ describe('online syncing', function () {
       },
     })
 
-    await this.application.syncService.handleSuccessServerResponse({ payloadsSavedOrSaving: [] }, response)
+    await this.application.syncService.handleSuccessServerResponse({ payloadsSavedOrSaving: [], options: {} }, response)
 
     expect(this.application.payloadManager.findOne(invalidPayload.uuid)).to.not.be.ok
     expect(this.application.payloadManager.findOne(validPayload.uuid)).to.be.ok

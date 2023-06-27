@@ -279,7 +279,7 @@ describe('storage manager', function () {
     })
 
     await Factory.createSyncedNote(this.application)
-    expect(await Factory.storagePayloadCount(this.application)).to.equal(BaseItemCounts.DefaultItems + 1)
+    expect(await Factory.storagePayloadCount(this.application)).to.equal(BaseItemCounts.DefaultItemsWithAccount + 1)
     this.application = await Factory.signOutApplicationAndReturnNew(this.application)
     await Factory.sleep(0.1, 'Allow all untrackable singleton syncs to complete')
     expect(await Factory.storagePayloadCount(this.application)).to.equal(BaseItemCounts.DefaultItems)

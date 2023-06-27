@@ -348,10 +348,7 @@ export class MutatorService extends AbstractService implements MutatorClientInte
     return this.itemManager.findSureItem<T>(payload.uuid)
   }
 
-  public async insertItem<T extends DecryptedItemInterface>(
-    item: DecryptedItemInterface,
-    setDirty = false,
-  ): Promise<T> {
+  public async insertItem<T extends DecryptedItemInterface>(item: DecryptedItemInterface, setDirty = true): Promise<T> {
     if (setDirty) {
       const mutator = CreateDecryptedMutatorForItem(item, MutationType.UpdateUserTimestamps)
       const dirtiedPayload = mutator.getResult()
@@ -576,7 +573,7 @@ export class MutatorService extends AbstractService implements MutatorClientInte
   /**
    * @returns The changed child tag
    */
-  public setTagParent(parentTag: SNTag, childTag: SNTag): Promise<SNTag> {
+  public async setTagParent(parentTag: SNTag, childTag: SNTag): Promise<SNTag> {
     if (parentTag.uuid === childTag.uuid) {
       throw new Error('Can not set a tag parent of itself')
     }

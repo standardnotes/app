@@ -397,12 +397,12 @@ export async function insertItemWithOverride(application, contentType, content, 
       errorDecrypting,
     })
 
-    await application.mutator.emitItemFromPayload(encrypted)
+    await application.payloadManager.emitPayload(encrypted)
   } else {
     const decrypted = new DecryptedPayload({
       ...item.payload.ejected(),
     })
-    await application.mutator.emitItemFromPayload(decrypted)
+    await application.payloadManager.emitPayload(decrypted)
   }
 
   return application.itemManager.findAnyItem(item.uuid)
@@ -478,6 +478,6 @@ export async function changePayloadTimeStampDeleteAndSync(application, payload, 
     updated_at_timestamp: timestamp,
   })
 
-  await application.mutator.emitItemFromPayload(changedPayload)
+  await application.payloadManager.emitPayload(changedPayload)
   await application.sync.sync(syncOptions)
 }

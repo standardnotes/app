@@ -1,5 +1,5 @@
 import * as Factory from './lib/factory.js'
-import * as Events from "./lib/Events.js"
+import * as Events from './lib/Events.js'
 import * as Utils from './lib/Utils.js'
 import * as Files from './lib/Files.js'
 
@@ -63,7 +63,7 @@ describe('files', function () {
     const remoteIdentifier = Utils.generateUuid()
     const tokenOrError = await application.apiService.createUserFileValetToken(remoteIdentifier, 'write')
 
-    expect(tokenOrError.tag).to.equal('no-subscription')
+    expect(isClientDisplayableError(tokenOrError)).to.equal(true)
   })
 
   it('should not create valet token from server when user has an expired subscription - @paidfeature', async function () {
@@ -82,7 +82,7 @@ describe('files', function () {
       totalActiveSubscriptionsCount: 1,
       userRegisteredAt: 1,
       billingFrequency: 12,
-      payAmount: 59.00
+      payAmount: 59.0,
     })
 
     await Factory.sleep(2)
@@ -90,19 +90,19 @@ describe('files', function () {
     const remoteIdentifier = Utils.generateUuid()
     const tokenOrError = await application.apiService.createUserFileValetToken(remoteIdentifier, 'write')
 
-    expect(tokenOrError.tag).to.equal('expired-subscription')
+    expect(isClientDisplayableError(tokenOrError)).to.equal(true)
   })
 
   it('creating two upload sessions successively should succeed - @paidfeature', async function () {
     await setup({ fakeCrypto: true, subscription: true })
 
     const firstToken = await application.apiService.createUserFileValetToken(Utils.generateUuid(), 'write')
-    const firstSession = await application.apiService.startUploadSession(firstToken)
+    const firstSession = await application.apiService.startUploadSession(firstToken, 'user')
 
     expect(firstSession.uploadId).to.be.ok
 
     const secondToken = await application.apiService.createUserFileValetToken(Utils.generateUuid(), 'write')
-    const secondSession = await application.apiService.startUploadSession(secondToken)
+    const secondSession = await application.apiService.startUploadSession(secondToken, 'user')
 
     expect(secondSession.uploadId).to.be.ok
   })

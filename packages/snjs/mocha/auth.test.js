@@ -15,7 +15,7 @@ describe('basic auth', function () {
 
   beforeEach(async function () {
     localStorage.clear()
-    this.expectedItemCount = BaseItemCounts.DefaultItems
+    this.expectedItemCount = BaseItemCounts.DefaultItemsWithAccount
     this.context = await Factory.createAppContext()
     await this.context.launch()
     this.application = this.context.application

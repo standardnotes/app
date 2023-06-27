@@ -15,7 +15,7 @@ describe('sync integrity', () => {
   })
 
   beforeEach(async function () {
-    this.expectedItemCount = BaseItemCounts.DefaultItems
+    this.expectedItemCount = BaseItemCounts.DefaultItemsWithAccount
     this.application = await Factory.createInitAppWithFakeCrypto()
     this.email = UuidGenerator.GenerateUuid()
     this.password = UuidGenerator.GenerateUuid()

@@ -38,7 +38,9 @@ describe('singletons', function () {
 
     this.email = UuidGenerator.GenerateUuid()
     this.password = UuidGenerator.GenerateUuid()
+
     this.registerUser = async () => {
+      this.expectedItemCount = BaseItemCounts.DefaultItemsWithAccount
       await Factory.registerUserToApplication({
         application: this.application,
         email: this.email,

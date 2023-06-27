@@ -539,7 +539,7 @@ export class AppContext {
   }
 
   async changeNoteTitle(note, title) {
-    return this.application.items.changeNote(note, (mutator) => {
+    return this.application.mutator.changeNote(note, (mutator) => {
       mutator.title = title
     })
   }

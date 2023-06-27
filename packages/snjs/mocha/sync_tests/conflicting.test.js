@@ -16,7 +16,7 @@ describe('online conflict handling', function () {
 
   beforeEach(async function () {
     localStorage.clear()
-    this.expectedItemCount = BaseItemCounts.DefaultItems
+    this.expectedItemCount = BaseItemCounts.DefaultItemsWithAccount
 
     this.context = await Factory.createAppContextWithFakeCrypto('AppA')
     await this.context.launch()
@@ -128,11 +128,11 @@ describe('online conflict handling', function () {
     const dirtyValue = `${Math.random()}`
 
     /** Modify nonsense first to get around strategyWhenConflictingWithItem with previousRevision check  */
-    await this.application.itemManager.changeNote(note, (mutator) => {
+    await this.application.mutator.changeNote(note, (mutator) => {
       mutator.title = 'any'
     })
 
-    await this.application.itemManager.changeNote(note, (mutator) => {
+    await this.application.mutator.changeNote(note, (mutator) => {
       // modify this item locally to have differing contents from server
       mutator.title = dirtyValue
       // Intentionally don't change updated_at. We want to simulate a chaotic case where

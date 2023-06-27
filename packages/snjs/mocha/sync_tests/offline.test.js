@@ -31,6 +31,21 @@ describe('offline syncing', () => {
     localStorage.clear()
   })
 
+  it('uuid alternation should delete original payload', async function () {
+    const note = await Factory.createMappedNote(this.application)
+    this.expectedItemCount++
+
+    await Factory.alternateUuidForItem(this.application, note.uuid)
+    await this.application.sync.sync(syncOptions)
+
+    const notes = this.application.itemManager.getDisplayableNotes()
+    expect(notes.length).to.equal(1)
+    expect(notes[0].uuid).to.not.equal(note.uuid)
+
+    const items = this.application.itemManager.allTrackedItems()
+    expect(items.length).to.equal(this.expectedItemCount)
+  })
+
   it('should sync item with no passcode', async function () {
     let note = await Factory.createMappedNote(this.application)
     expect(Uuids(this.application.itemManager.getDirtyItems()).includes(note.uuid))

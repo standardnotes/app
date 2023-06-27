@@ -555,7 +555,7 @@ describe('notes and tags', () => {
       expect(matches[0].uuid).to.equal(longNote.uuid)
     })
 
-    it.only('"updated_at", ">", "1.days.ago"', async function () {
+    it('"updated_at", ">", "1.days.ago"', async function () {
       await Factory.registerUserToApplication({
         application: this.application,
         email: Utils.generateUuid(),
@@ -566,6 +566,7 @@ describe('notes and tags', () => {
         await this.application.items.createTemplateItem(ContentType.Note, {
           title: 'A',
         }),
+        true,
       )
 
       await this.application.sync.sync()
@@ -575,6 +576,7 @@ describe('notes and tags', () => {
           title: 'B',
           text: 'b',
         }),
+        true,
       )
 
       const threeDays = 3 * 24 * 60 * 60 * 1000

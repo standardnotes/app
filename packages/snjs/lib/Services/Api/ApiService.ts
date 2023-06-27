@@ -210,7 +210,7 @@ export class SNApiService
   }
 
   private errorResponseWithFallbackMessage(response: HttpErrorResponse, message: string): HttpErrorResponse {
-    if (!response.data.error.message) {
+    if (response.data.error && !response.data.error.message) {
       response.data.error.message = message
     }
 

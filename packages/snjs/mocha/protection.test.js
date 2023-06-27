@@ -48,7 +48,7 @@ describe('protections', function () {
     })
 
     let note = await Factory.createMappedNote(application)
-    note = await application.mutator.protectNote(note)
+    note = await application.protections.protectNote(note)
 
     expect(await application.authorizeNoteAccess(note)).to.be.true
     expect(challengePrompts).to.equal(1)
@@ -57,7 +57,7 @@ describe('protections', function () {
   it('sets `note.protected` to true', async function () {
     application = await Factory.createInitAppWithFakeCrypto()
     let note = await Factory.createMappedNote(application)
-    note = await application.mutator.protectNote(note)
+    note = await application.protections.protectNote(note)
     expect(note.protected).to.be.true
   })
 
@@ -87,7 +87,7 @@ describe('protections', function () {
 
     await application.addPasscode(passcode)
     let note = await Factory.createMappedNote(application)
-    note = await application.mutator.protectNote(note)
+    note = await application.protections.protectNote(note)
 
     expect(await application.authorizeNoteAccess(note)).to.be.true
     expect(challengePrompts).to.equal(1)
@@ -120,8 +120,8 @@ describe('protections', function () {
     await application.addPasscode(passcode)
     let note = await Factory.createMappedNote(application)
     const uuid = note.uuid
-    note = await application.mutator.protectNote(note)
-    note = await application.mutator.unprotectNote(note)
+    note = await application.protections.protectNote(note)
+    note = await application.protections.unprotectNote(note)
     expect(note.uuid).to.equal(uuid)
     expect(note.protected).to.equal(false)
     expect(challengePrompts).to.equal(1)
@@ -142,8 +142,8 @@ describe('protections', function () {
 
     await application.addPasscode(passcode)
     let note = await Factory.createMappedNote(application)
-    note = await application.mutator.protectNote(note)
-    const result = await application.mutator.unprotectNote(note)
+    note = await application.protections.protectNote(note)
+    const result = await application.protections.unprotectNote(note)
     expect(result).to.be.undefined
     expect(challengePrompts).to.equal(1)
   })
@@ -174,7 +174,7 @@ describe('protections', function () {
 
     await application.addPasscode(passcode)
     let note = await Factory.createMappedNote(application)
-    note = await application.mutator.protectNote(note)
+    note = await application.protections.protectNote(note)
 
     expect(await application.authorizeNoteAccess(note)).to.be.true
     expect(await application.authorizeNoteAccess(note)).to.be.true
@@ -226,7 +226,7 @@ describe('protections', function () {
     application = await Factory.createInitAppWithFakeCrypto()
 
     let note = await Factory.createMappedNote(application)
-    note = await application.mutator.protectNote(note)
+    note = await application.protections.protectNote(note)
 
     expect(await application.authorizeNoteAccess(note)).to.be.true
   })
@@ -431,8 +431,8 @@ describe('protections', function () {
       const NOTE_COUNT = 3
       let notes = await Factory.createManyMappedNotes(application, NOTE_COUNT)
 
-      notes[0] = await application.mutator.protectNote(notes[0])
-      notes[1] = await application.mutator.protectNote(notes[1])
+      notes[0] = await application.protections.protectNote(notes[0])
+      notes[1] = await application.protections.protectNote(notes[1])
 
       expect(await application.authorizeProtectedActionForNotes(notes, ChallengeReason.SelectProtectedNote)).lengthOf(
         NOTE_COUNT,
@@ -468,8 +468,8 @@ describe('protections', function () {
 
       const NOTE_COUNT = 3
       let notes = await Factory.createManyMappedNotes(application, NOTE_COUNT)
-      notes[0] = await application.mutator.protectNote(notes[0])
-      notes[1] = await application.mutator.protectNote(notes[1])
+      notes[0] = await application.protections.protectNote(notes[0])
+      notes[1] = await application.protections.protectNote(notes[1])
 
       expect(await application.authorizeProtectedActionForNotes(notes, ChallengeReason.SelectProtectedNote)).lengthOf(
         NOTE_COUNT,
@@ -493,8 +493,8 @@ describe('protections', function () {
 
       const NOTE_COUNT = 3
       let notes = await Factory.createManyMappedNotes(application, NOTE_COUNT)
-      notes[0] = await application.mutator.protectNote(notes[0])
-      notes[1] = await application.mutator.protectNote(notes[1])
+      notes[0] = await application.protections.protectNote(notes[0])
+      notes[1] = await application.protections.protectNote(notes[1])
 
       expect(await application.authorizeProtectedActionForNotes(notes, ChallengeReason.SelectProtectedNote)).lengthOf(1)
       expect(challengePrompts).to.equal(1)
@@ -513,7 +513,7 @@ describe('protections', function () {
 
       const NOTE_COUNT = 3
       let notes = await Factory.createManyMappedNotes(application, NOTE_COUNT)
-      notes = await application.mutator.protectNotes(notes)
+      notes = await application.protections.protectNotes(notes)
 
       for (const note of notes) {
         expect(note.protected).to.be.true
@@ -550,8 +550,8 @@ describe('protections', function () {
 
       const NOTE_COUNT = 3
       let notes = await Factory.createManyMappedNotes(application, NOTE_COUNT)
-      notes = await application.mutator.protectNotes(notes)
-      notes = await application.mutator.unprotectNotes(notes)
+      notes = await application.protections.protectNotes(notes)
+      notes = await application.protections.unprotectNotes(notes)
 
       for (const note of notes) {
         expect(note.protected).to.be.false
@@ -587,8 +587,8 @@ describe('protections', function () {
 
       const NOTE_COUNT = 3
       let notes = await Factory.createManyMappedNotes(application, NOTE_COUNT)
-      notes = await application.mutator.protectNotes(notes)
-      notes = await application.mutator.unprotectNotes(notes)
+      notes = await application.protections.protectNotes(notes)
+      notes = await application.protections.unprotectNotes(notes)
 
       for (const note of notes) {
         expect(note.protected).to.be.false
@@ -612,8 +612,8 @@ describe('protections', function () {
 
       const NOTE_COUNT = 3
       let notes = await Factory.createManyMappedNotes(application, NOTE_COUNT)
-      notes = await application.mutator.protectNotes(notes)
-      notes = await application.mutator.unprotectNotes(notes)
+      notes = await application.protections.protectNotes(notes)
+      notes = await application.protections.unprotectNotes(notes)
 
       for (const note of notes) {
         expect(note.protected).to.be(true)

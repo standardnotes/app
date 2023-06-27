@@ -75,8 +75,8 @@ describe('tags as folders', () => {
     const note2 = await Factory.createMappedNote(this.application, 'my second note')
 
     // ## The user add a note to the child tag
-    await this.application.items.addTagToNote(note1, tags.child, true)
-    await this.application.items.addTagToNote(note2, tags.another, true)
+    await this.application.mutator.addTagToNote(note1, tags.child, true)
+    await this.application.mutator.addTagToNote(note2, tags.another, true)
 
     // ## The note has been added to other tags
     const note1Tags = await this.application.items.getSortedTagsForItem(note1)
