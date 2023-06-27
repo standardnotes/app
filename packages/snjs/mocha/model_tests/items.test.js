@@ -203,7 +203,7 @@ describe('items', () => {
     // There was an issue where calling that function would modify values directly to omit keys
     // in contentKeysToIgnoreWhenCheckingEquality.
 
-    await this.application.itemManager.setItemsDirty([item1, item2])
+    await this.application.mutator.setItemsDirty([item1, item2])
 
     expect(item1.userModifiedDate).to.be.ok
     expect(item2.userModifiedDate).to.be.ok

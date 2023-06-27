@@ -59,7 +59,7 @@ describe('notes + tags syncing', function () {
     expect(this.application.itemManager.getDisplayableTags().length).to.equal(1)
 
     for (let i = 0; i < 9; i++) {
-      await this.application.itemManager.setItemsDirty([note, tag])
+      await this.application.mutator.setItemsDirty([note, tag])
       await this.application.syncService.sync(syncOptions)
       this.application.syncService.clearSyncPositionTokens()
       expect(tag.content.references.length).to.equal(1)
@@ -79,7 +79,7 @@ describe('notes + tags syncing', function () {
     await this.application.mutator.emitItemsFromPayloads([notePayload, tagPayload], PayloadEmitSource.LocalChanged)
     const originalNote = this.application.itemManager.getDisplayableNotes()[0]
     const originalTag = this.application.itemManager.getDisplayableTags()[0]
-    await this.application.itemManager.setItemsDirty([originalNote, originalTag])
+    await this.application.mutator.setItemsDirty([originalNote, originalTag])
 
     await this.application.syncService.sync(syncOptions)
 
@@ -114,7 +114,7 @@ describe('notes + tags syncing', function () {
     let tag = this.application.itemManager.getDisplayableTags()[0]
     expect(this.application.itemManager.itemsReferencingItem(note).length).to.equal(1)
 
-    await this.application.itemManager.setItemsDirty([note, tag])
+    await this.application.mutator.setItemsDirty([note, tag])
     await this.application.syncService.sync(syncOptions)
     await this.application.syncService.clearSyncPositionTokens()
 

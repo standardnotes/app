@@ -3,7 +3,6 @@ import {
   ComponentMutator,
   DecryptedItemInterface,
   DecryptedItemMutator,
-  DecryptedPayload,
   DecryptedPayloadInterface,
   EncryptedItemInterface,
   FeatureRepoMutator,
@@ -110,18 +109,6 @@ export interface MutatorClientInterface {
    * Takes the values of the input item and emits it onto global state.
    */
   mergeItem(item: DecryptedItemInterface, source: PayloadEmitSource): Promise<DecryptedItemInterface>
-
-  /**
-   * Creates an unmanaged item that can be added later.
-   */
-  createTemplateItem<
-    C extends ItemContent = ItemContent,
-    I extends DecryptedItemInterface<C> = DecryptedItemInterface<C>,
-  >(
-    contentType: ContentType,
-    content?: C,
-    override?: Partial<DecryptedPayload<C>>,
-  ): I
 
   /**
    * @param isUserModified  Whether to change the modified date the user

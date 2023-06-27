@@ -46,7 +46,7 @@ describe('note view controller', () => {
     const controller = new NoteViewController(application)
     await controller.initialize()
 
-    expect(application.mutator.createTemplateItem).toHaveBeenCalledWith(
+    expect(application.items.createTemplateItem).toHaveBeenCalledWith(
       ContentType.Note,
       expect.objectContaining({ noteType: NoteType.Plain }),
       expect.anything(),
@@ -67,7 +67,7 @@ describe('note view controller', () => {
     const controller = new NoteViewController(application)
     await controller.initialize()
 
-    expect(application.mutator.createTemplateItem).toHaveBeenCalledWith(
+    expect(application.items.createTemplateItem).toHaveBeenCalledWith(
       ContentType.Note,
       expect.objectContaining({ noteType: NoteType.Markdown }),
       expect.anything(),

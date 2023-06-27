@@ -79,7 +79,7 @@ import { StorageServiceInterface } from '../Storage/StorageServiceInterface'
 import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
 import { SyncEvent } from '../Event/SyncEvent'
 import { RootKeyEncryptionService } from './RootKeyEncryption'
-import { DecryptBackupFile } from './BackupFileDecryptor'
+import { DecryptBackupFileUseCase } from './DecryptBackupFileUseCase'
 import { EncryptionServiceEvent } from './EncryptionServiceEvent'
 import { DecryptedParameters } from '@standardnotes/encryption/src/Domain/Types/DecryptedParameters'
 
@@ -670,7 +670,8 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     file: BackupFile,
     password?: string,
   ): Promise<ClientDisplayableError | (EncryptedPayloadInterface | DecryptedPayloadInterface<ItemContent>)[]> {
-    const result = await DecryptBackupFile(file, this, password)
+    const usecase = new DecryptBackupFileUseCase(this)
+    const result = await usecase.execute(file, password)
     return result
   }
 

@@ -54,7 +54,7 @@ export * from './Device/WebOrDesktopDeviceInterface'
 
 export * from './Diagnostics/ServiceDiagnostics'
 
-export * from './Encryption/BackupFileDecryptor'
+export * from './Encryption/DecryptBackupFileUseCase'
 export * from './Encryption/EncryptionService'
 export * from './Encryption/EncryptionServiceEvent'
 export * from './Encryption/Functions'

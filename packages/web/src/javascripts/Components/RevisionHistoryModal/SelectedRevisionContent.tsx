@@ -32,7 +32,7 @@ const SelectedRevisionContent: FunctionComponent<SelectedRevisionContentProps> =
       return undefined
     }
 
-    const templateNoteForRevision = application.mutator.createTemplateItem(
+    const templateNoteForRevision = application.items.createTemplateItem(
       ContentType.Note,
       selectedRevision?.payload.content,
     ) as SNNote

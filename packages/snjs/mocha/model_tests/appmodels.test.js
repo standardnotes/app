@@ -290,12 +290,12 @@ describe('app models', () => {
       waitingForKey: true,
     })
 
-    await this.application.mutator.emitItemFromPayload(errored)
+    await this.application.payloadManager.emitPayload(errored)
 
     expect(this.application.payloadManager.findOne(item1.uuid).errorDecrypting).to.equal(true)
     expect(this.application.payloadManager.findOne(item1.uuid).items_key_id).to.equal(itemsKey.uuid)
 
-    sinon.stub(this.application.protocolService.itemsEncryption, 'decryptErroredPayloads').callsFake(() => {
+    sinon.stub(this.application.protocolService.itemsEncryption, 'decryptErroredItemPayloads').callsFake(() => {
       // prevent auto decryption
     })
 

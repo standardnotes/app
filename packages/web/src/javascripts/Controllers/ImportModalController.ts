@@ -149,7 +149,7 @@ export class ImportModalController {
       }
     }
     const currentDate = new Date()
-    const importTagItem = this.application.mutator.createTemplateItem<TagContent, SNTag>(ContentType.Tag, {
+    const importTagItem = this.application.items.createTemplateItem<TagContent, SNTag>(ContentType.Tag, {
       title: `Imported on ${currentDate.toLocaleString()}`,
       expanded: false,
       iconString: '',

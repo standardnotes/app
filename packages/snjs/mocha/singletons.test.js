@@ -97,7 +97,7 @@ describe('singletons', function () {
       [prefs1, prefs2, prefs3],
       PayloadEmitSource.LocalChanged,
     )
-    await this.application.itemManager.setItemsDirty(items)
+    await this.application.mutator.setItemsDirty(items)
     await this.application.syncService.sync(syncOptions)
     expect(this.application.itemManager.items.length).to.equal(this.expectedItemCount)
   })

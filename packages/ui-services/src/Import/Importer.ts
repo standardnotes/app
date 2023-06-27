@@ -83,7 +83,7 @@ export class Importer {
     const insertedItems = await Promise.all(
       payloads.map(async (payload) => {
         const content = payload.content as NoteContent
-        const note = this.application.mutator.createTemplateItem(
+        const note = this.application.items.createTemplateItem(
           payload.content_type,
           {
             text: content.text,

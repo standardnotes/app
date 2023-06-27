@@ -31,7 +31,7 @@ describe('model manager mapping', () => {
       dirty: false,
       deleted: true,
     })
-    await this.application.mutator.emitItemFromPayload(payload, PayloadEmitSource.LocalChanged)
+    await this.application.payloadManager.emitPayload(payload, PayloadEmitSource.LocalChanged)
     expect(this.application.itemManager.items.length).to.equal(this.expectedItemCount)
   })
 
@@ -63,11 +63,11 @@ describe('model manager mapping', () => {
 
     this.expectedItemCount++
 
-    await this.application.mutator.emitItemFromPayload(new DeleteItemMutator(item).getDeletedResult())
+    await this.application.payloadManager.emitPayload(new DeleteItemMutator(item).getDeletedResult())
 
     const payload2 = new DeletedPayload(this.application.payloadManager.findOne(payload.uuid).ejected())
 
-    await this.application.mutator.emitItemsFromPayloads([payload2], PayloadEmitSource.LocalChanged)
+    await this.application.payloadManager.emitPayloads([payload2], PayloadEmitSource.LocalChanged)
 
     expect(this.application.payloadManager.collection.all().length).to.equal(this.expectedItemCount)
   })

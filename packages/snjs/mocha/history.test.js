@@ -97,7 +97,7 @@ describe('history manager', () => {
     it('creating new item and making 1 change should create 0 revisions', async function () {
       const context = await Factory.createAppContext()
       await context.launch()
-      const item = await context.application.mutator.createTemplateItem(ContentType.Note, {
+      const item = await context.application.items.createTemplateItem(ContentType.Note, {
         references: [],
       })
       await context.application.mutator.insertItem(item)

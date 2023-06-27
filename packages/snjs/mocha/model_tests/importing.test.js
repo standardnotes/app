@@ -706,8 +706,11 @@ describe('importing', function () {
     const result = await application.importData(backupData, true)
 
     expect(result).to.not.be.undefined
-    expect(result.affectedItems.length).to.be.eq(0)
-    expect(result.errorCount).to.be.eq(backupData.items.length)
+
+    const onlyRootKeyEncryptedItemsShouldBeImported = 1
+    expect(result.affectedItems.length).to.equal(onlyRootKeyEncryptedItemsShouldBeImported)
+
+    expect(result.errorCount).to.be.eq(backupData.items.length - onlyRootKeyEncryptedItemsShouldBeImported)
     expect(application.itemManager.getDisplayableNotes().length).to.equal(0)
   })
 
@@ -788,7 +791,14 @@ describe('importing', function () {
 
     await application.prepareForLaunch({
       receiveChallenge: (challenge) => {
-        if (challenge.prompts.length === 2) {
+        if (challenge.reason === ChallengeReason.Custom) {
+          return
+        }
+
+        if (
+          challenge.reason === ChallengeReason.DecryptEncryptedFile ||
+          challenge.reason === ChallengeReason.ImportFile
+        ) {
           application.submitValuesForChallenge(
             challenge,
             challenge.prompts.map((prompt) =>
@@ -800,9 +810,6 @@ describe('importing', function () {
               ),
             ),
           )
-        } else {
-          const prompt = challenge.prompts[0]
-          application.submitValuesForChallenge(challenge, [CreateChallengeValue(prompt, password)])
         }
       },
     })
@@ -875,5 +882,9 @@ describe('importing', function () {
     const importedTag = application.itemManager.getDisplayableTags()[0]
     expect(application.itemManager.referencesForItem(importedTag).length).to.equal(1)
     expect(application.itemManager.itemsReferencingItem(importedNote).length).to.equal(1)
+  })
+
+  it('should decrypt backup file which contains a vaulted note without a synced key system root key', async () => {
+    console.error('TODO: Implement this test')
   })
 })

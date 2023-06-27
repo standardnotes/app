@@ -32,7 +32,7 @@ export const NoteContent = ({
       return undefined
     }
 
-    const templateNoteForRevision = application.mutator.createTemplateItem(ContentType.Note, note.content) as SNNote
+    const templateNoteForRevision = application.items.createTemplateItem(ContentType.Note, note.content) as SNNote
 
     const componentViewer = application.componentManager.createComponentViewer(editorForCurrentNote)
     componentViewer.setReadonly(true)

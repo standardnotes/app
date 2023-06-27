@@ -98,7 +98,7 @@ export class NoteViewController implements ItemViewControllerInterface {
 
       const noteType = noteTypeForEditorIdentifier(editorIdentifier)
 
-      const note = this.application.mutator.createTemplateItem<NoteContent, SNNote>(
+      const note = this.application.items.createTemplateItem<NoteContent, SNNote>(
         ContentType.Note,
         {
           text: '',
