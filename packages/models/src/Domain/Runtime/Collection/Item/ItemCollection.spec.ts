@@ -61,4 +61,33 @@ describe('item collection', () => {
       false,
     )
   })
+
+  it('should remove conflicted copy from conflictMap if not conflicted anymore', () => {
+    const collection = new ItemCollection()
+
+    const mainItem = new DecryptedItem(createDecryptedPayload())
+    const conflictedItem = new DecryptedItem(
+      createDecryptedPayload(undefined, {
+        conflict_of: mainItem.uuid,
+      }),
+    )
+
+    collection.set([mainItem, conflictedItem])
+
+    console.log(collection.conflictMap)
+
+    expect(collection.conflictMap.existsInInverseMap(conflictedItem.uuid)).toBe(true)
+
+    const updatedConflictedItem = new DecryptedItem(
+      conflictedItem.payload.copy({
+        content: { conflict_of: undefined } as unknown as jest.Mocked<ItemContent>,
+      }),
+    )
+
+    collection.set([mainItem, updatedConflictedItem])
+
+    console.log(collection.conflictMap)
+
+    expect(collection.conflictMap.existsInInverseMap(conflictedItem.uuid)).toBe(false)
+  })
 })
