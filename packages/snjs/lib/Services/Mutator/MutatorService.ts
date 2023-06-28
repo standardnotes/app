@@ -404,7 +404,6 @@ export class MutatorService extends AbstractService implements MutatorClientInte
       .uuidsThatReferenceUuid(itemToLookupUuidFor.uuid)
 
     const item = this.itemManager.findAnyItem(itemToLookupUuidFor.uuid)
-
     if (!item) {
       return
     }

@@ -42,7 +42,9 @@ export const createSharedVaultWithAcceptedInvite = async (context, permissions =
 
   await promise
 
-  return { sharedVault, contact, contactContext, deinitContactContext }
+  const contactVault = contactContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })
+
+  return { sharedVault, contact, contactVault, contactContext, deinitContactContext }
 }
 
 export const createSharedVaultWithAcceptedInviteAndNote = async (

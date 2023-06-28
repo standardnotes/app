@@ -139,10 +139,6 @@ export class VaultService
       }
     }
 
-    // if (this.getItemVault(item)) {
-    //   await this.removeItemFromVault(item)
-    // }
-
     const useCase = new MoveItemsToVaultUseCase(this.mutator, this.sync, this.files)
     await useCase.execute({ vault, items: [item, ...linkedFiles] })
 
@@ -152,7 +148,7 @@ export class VaultService
   async removeItemFromVault(item: DecryptedItemInterface): Promise<DecryptedItemInterface> {
     const vault = this.getItemVault(item)
     if (!vault) {
-      throw new Error('Item does not belong to any vault')
+      throw new Error('Cannot find vault to remove item from')
     }
 
     if (this.isVaultLocked(vault)) {
@@ -216,11 +212,16 @@ export class VaultService
   }
 
   getItemVault(item: DecryptedItemInterface): VaultListingInterface | undefined {
-    if (!item.key_system_identifier) {
+    const latestItem = this.items.findItem(item.uuid)
+    if (!latestItem) {
+      throw new Error('Cannot find latest version of item to get vault for')
+    }
+
+    if (!latestItem.key_system_identifier) {
       return undefined
     }
 
-    return this.getVault({ keySystemIdentifier: item.key_system_identifier })
+    return this.getVault({ keySystemIdentifier: latestItem.key_system_identifier })
   }
 
   async changeVaultOptions(dto: ChangeVaultOptionsDTO): Promise<void> {

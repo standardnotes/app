@@ -29,12 +29,26 @@ describe('shared vault key rotation', function () {
   })
 
   it('should reencrypt all items keys belonging to key system', async () => {
-    console.error('TODO: implement')
+    const { sharedVault, contactContext, deinitContactContext } =
+      await Collaboration.createSharedVaultWithAcceptedInvite(context)
+
+    contactContext.lockSyncing()
+
+    const spy = sinon.spy(context.encryption, 'reencryptKeySystemItemsKeysForVault')
+
+    const promise = context.resolveWhenSharedVaultKeyRotationInvitesGetSent(sharedVault)
+    await vaults.rotateVaultRootKey(sharedVault)
+    await promise
+
+    expect(spy.callCount).to.equal(1)
+
+    deinitContactContext()
   })
 
   it("rotating a vault's key should send an asymmetric message to all members", async () => {
     const { sharedVault, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithAcceptedInvite(context)
+
     contactContext.lockSyncing()
 
     const promise = context.resolveWhenSharedVaultKeyRotationInvitesGetSent(sharedVault)
@@ -42,12 +56,70 @@ describe('shared vault key rotation', function () {
     await promise
 
     const outboundMessages = await context.asymmetric.getOutboundMessages()
-    expect(outboundMessages.length).to.equal(1)
+    const expectedMessages = ['root key change', 'vault metadata change']
+    expect(outboundMessages.length).to.equal(expectedMessages.length)
 
-    const keyChangeMessage = outboundMessages[0]
-    expect(keyChangeMessage).to.not.be.undefined
-    expect(keyChangeMessage.user_uuid).to.equal(contactContext.userUuid)
-    expect(keyChangeMessage.encrypted_message).to.not.be.undefined
+    const message = outboundMessages[0]
+    expect(message).to.not.be.undefined
+    expect(message.user_uuid).to.equal(contactContext.userUuid)
+    expect(message.encrypted_message).to.not.be.undefined
+
+    await deinitContactContext()
+  })
+
+  it('should update recipient vault display listing with new key params', async () => {
+    const { sharedVault, contactContext, deinitContactContext } =
+      await Collaboration.createSharedVaultWithAcceptedInvite(context)
+
+    contactContext.anticipateConsoleError(
+      '(2x) Error decrypting contentKey from parameters',
+      'Items keys are encrypted with new root key and are later decrypted in the test',
+    )
+
+    contactContext.lockSyncing()
+
+    const promise = context.resolveWhenSharedVaultKeyRotationInvitesGetSent(sharedVault)
+    await vaults.rotateVaultRootKey(sharedVault)
+    await promise
+
+    const rootKey = context.keys.getPrimaryKeySystemRootKey(sharedVault.systemIdentifier)
+
+    contactContext.unlockSyncing()
+    await contactContext.sync()
+
+    const vault = await contactContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })
+    expect(vault.rootKeyParams).to.eql(rootKey.keyParams)
+
+    await deinitContactContext()
+  })
+
+  it('should receive new key system items key', async () => {
+    const { sharedVault, contactContext, deinitContactContext } =
+      await Collaboration.createSharedVaultWithAcceptedInvite(context)
+
+    contactContext.anticipateConsoleError(
+      '(2x) Error decrypting contentKey from parameters',
+      'Items keys are encrypted with new root key and are later decrypted in the test',
+    )
+    contactContext.lockSyncing()
+
+    const previousPrimaryItemsKey = contactContext.keys.getPrimaryKeySystemItemsKey(sharedVault.systemIdentifier)
+    expect(previousPrimaryItemsKey).to.not.be.undefined
+
+    const promise = context.resolveWhenSharedVaultKeyRotationInvitesGetSent(sharedVault)
+    await vaults.rotateVaultRootKey(sharedVault)
+    await promise
+
+    const contactPromise = contactContext.resolveWhenAsymmetricMessageProcessingCompletes()
+    contactContext.unlockSyncing()
+    await contactContext.sync()
+    await contactPromise
+
+    const newPrimaryItemsKey = contactContext.keys.getPrimaryKeySystemItemsKey(sharedVault.systemIdentifier)
+    expect(newPrimaryItemsKey).to.not.be.undefined
+
+    expect(newPrimaryItemsKey.uuid).to.not.equal(previousPrimaryItemsKey.uuid)
+    expect(newPrimaryItemsKey.itemsKey).to.not.eql(previousPrimaryItemsKey.itemsKey)
 
     await deinitContactContext()
   })
@@ -94,6 +166,7 @@ describe('shared vault key rotation', function () {
   it('should update existing key-change messages instead of creating new ones', async () => {
     const { sharedVault, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithAcceptedInvite(context)
+
     contactContext.lockSyncing()
 
     const firstPromise = context.resolveWhenSharedVaultKeyRotationInvitesGetSent(sharedVault)
@@ -101,7 +174,9 @@ describe('shared vault key rotation', function () {
     await firstPromise
 
     const asymmetricMessageAfterFirstChange = await context.asymmetric.getOutboundMessages()
-    expect(asymmetricMessageAfterFirstChange.length).to.equal(1)
+    const expectedMessages = ['root key change', 'vault metadata change']
+    expect(asymmetricMessageAfterFirstChange.length).to.equal(expectedMessages.length)
+
     const messageAfterFirstChange = asymmetricMessageAfterFirstChange[0]
 
     const secondPromise = context.resolveWhenSharedVaultKeyRotationInvitesGetSent(sharedVault)
@@ -109,9 +184,9 @@ describe('shared vault key rotation', function () {
     await secondPromise
 
     const asymmetricMessageAfterSecondChange = await context.asymmetric.getOutboundMessages()
-    expect(asymmetricMessageAfterSecondChange.length).to.equal(1)
-    const messageAfterSecondChange = asymmetricMessageAfterSecondChange[0]
+    expect(asymmetricMessageAfterSecondChange.length).to.equal(expectedMessages.length)
 
+    const messageAfterSecondChange = asymmetricMessageAfterSecondChange[0]
     expect(messageAfterSecondChange.encrypted_message).to.not.equal(messageAfterFirstChange.encrypted_message)
     expect(messageAfterSecondChange.uuid).to.not.equal(messageAfterFirstChange.uuid)
 
@@ -121,6 +196,11 @@ describe('shared vault key rotation', function () {
   it('key change messages should be automatically processed by trusted contacts', async () => {
     const { sharedVault, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithAcceptedInvite(context)
+
+    contactContext.anticipateConsoleError(
+      '(2x) Error decrypting contentKey from parameters',
+      'Items keys are encrypted with new root key and are later decrypted in the test',
+    )
     contactContext.lockSyncing()
 
     const promise = context.resolveWhenSharedVaultKeyRotationInvitesGetSent(sharedVault)
@@ -156,10 +236,6 @@ describe('shared vault key rotation', function () {
   })
 
   it('should throw if attempting to change password of locked vault', async () => {
-    console.error('TODO: implement')
-  })
-
-  it('rotating a vault key should update vault display listing with new key params', async () => {
     console.error('TODO: implement')
   })
 

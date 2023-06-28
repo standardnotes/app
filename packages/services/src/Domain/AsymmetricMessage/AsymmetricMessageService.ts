@@ -176,7 +176,12 @@ export class AsymmetricMessageService extends AbstractService implements Interna
     _message: AsymmetricMessageServerHash,
     trustedPayload: AsymmetricMessageSharedVaultRootKeyChanged,
   ): Promise<void> {
-    const useCase = new HandleTrustedSharedVaultRootKeyChangedMessage(this.mutator, this.sync)
+    const useCase = new HandleTrustedSharedVaultRootKeyChangedMessage(
+      this.mutator,
+      this.items,
+      this.sync,
+      this.encryption,
+    )
     await useCase.execute(trustedPayload)
   }
 }

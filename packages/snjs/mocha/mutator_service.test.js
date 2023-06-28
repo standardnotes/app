@@ -62,6 +62,13 @@ describe('mutator service', function () {
     expect(appData[DecryptedItem.DefaultAppDomain()][AppDataField.UserModifiedDate]).to.be.ok
   })
 
+  it('deleting an item should make it immediately unfindable', async () => {
+    const note = await context.createSyncedNote()
+    await mutator.setItemToBeDeleted(note)
+    const foundNote = application.items.findItem(note.uuid)
+    expect(foundNote).to.not.be.ok
+  })
+
   it('deleting from reference map', async function () {
     const note = await createNote()
     const tag = await createTag([note])

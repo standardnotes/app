@@ -1,3 +1,4 @@
+import { ItemManagerInterface } from './../../Item/ItemManagerInterface'
 import { MutatorClientInterface } from './../../Mutator/MutatorClientInterface'
 import { SyncServiceInterface } from '../../Sync/SyncServiceInterface'
 import {
@@ -5,12 +6,20 @@ import {
   AsymmetricMessageSharedVaultRootKeyChanged,
   FillItemContent,
   KeySystemRootKeyContent,
+  VaultListingMutator,
 } from '@standardnotes/models'
 
 import { ContentType } from '@standardnotes/common'
+import { GetVaultUseCase } from '../../Vaults/UseCase/GetVault'
+import { EncryptionProviderInterface } from '@standardnotes/encryption'
 
 export class HandleTrustedSharedVaultRootKeyChangedMessage {
-  constructor(private mutator: MutatorClientInterface, private sync: SyncServiceInterface) {}
+  constructor(
+    private mutator: MutatorClientInterface,
+    private items: ItemManagerInterface,
+    private sync: SyncServiceInterface,
+    private encryption: EncryptionProviderInterface,
+  ) {}
 
   async execute(message: AsymmetricMessageSharedVaultRootKeyChanged): Promise<void> {
     const rootKeyContent = message.data.rootKey
@@ -20,6 +29,15 @@ export class HandleTrustedSharedVaultRootKeyChangedMessage {
       FillItemContent<KeySystemRootKeyContent>(rootKeyContent),
       true,
     )
+
+    const vault = new GetVaultUseCase(this.items).execute({ keySystemIdentifier: rootKeyContent.systemIdentifier })
+    if (vault) {
+      await this.mutator.changeItem<VaultListingMutator>(vault, (mutator) => {
+        mutator.rootKeyParams = rootKeyContent.keyParams
+      })
+    }
+
+    await this.encryption.decryptErroredPayloads()
 
     void this.sync.sync({ sourceDescription: 'Not awaiting due to this event handler running from sync response' })
   }

@@ -59,10 +59,10 @@ describe('shared vault permissions', function () {
   })
 
   it('should be able to leave shared vault as added admin', async () => {
-    const { sharedVault, contactContext, deinitContactContext } =
+    const { contactVault, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithAcceptedInvite(context, SharedVaultPermission.Admin)
 
-    const result = await contactContext.sharedVaults.leaveSharedVault(sharedVault)
+    const result = await contactContext.sharedVaults.leaveSharedVault(contactVault)
 
     expect(isClientDisplayableError(result)).to.be.false
 

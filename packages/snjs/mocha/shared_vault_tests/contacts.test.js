@@ -48,7 +48,7 @@ describe('contacts', function () {
 
   it('should create self contact on sign in if it does not exist', async () => {
     let selfContact = context.contacts.getSelfContact()
-    await context.items.setItemToBeDeleted(selfContact)
+    await context.mutator.setItemToBeDeleted(selfContact)
     await context.sync()
     await context.signout()
 

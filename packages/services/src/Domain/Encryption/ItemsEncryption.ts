@@ -10,6 +10,7 @@ import {
   decryptPayload,
   EncryptedOutputParameters,
   KeySystemKeyManagerInterface,
+  ContentTypeUsesKeySystemRootKeyEncryption,
 } from '@standardnotes/encryption'
 import {
   DecryptedPayload,
@@ -230,17 +231,19 @@ export class ItemsEncryptionService extends AbstractService {
   }
 
   public async decryptErroredItemPayloads(): Promise<void> {
-    const payloads = this.payloadManager.invalidPayloads.filter(
-      (i) => ![ContentType.ItemsKey, ContentType.KeySystemItemsKey].includes(i.content_type),
+    const erroredItemPayloads = this.payloadManager.invalidPayloads.filter(
+      (i) =>
+        !ContentTypeUsesKeySystemRootKeyEncryption(i.content_type) &&
+        !ContentTypeUsesKeySystemRootKeyEncryption(i.content_type),
     )
-    if (payloads.length === 0) {
+    if (erroredItemPayloads.length === 0) {
       return
     }
 
-    const resultParams = await this.decryptPayloadsWithKeyLookup(payloads)
+    const resultParams = await this.decryptPayloadsWithKeyLookup(erroredItemPayloads)
 
     const decryptedPayloads = resultParams.map((params) => {
-      const original = SureFindPayload(payloads, params.uuid)
+      const original = SureFindPayload(erroredItemPayloads, params.uuid)
       if (isErrorDecryptingParameters(params)) {
         return new EncryptedPayload({
           ...original.ejected(),

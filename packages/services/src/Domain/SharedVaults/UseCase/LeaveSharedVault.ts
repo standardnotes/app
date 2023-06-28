@@ -22,8 +22,13 @@ export class LeaveVaultUseCase {
     sharedVault: SharedVaultListingInterface
     userUuid: string
   }): Promise<ClientDisplayableError | void> {
+    const latestVaultListing = this.items.findItem<SharedVaultListingInterface>(params.sharedVault.uuid)
+    if (!latestVaultListing) {
+      throw new Error(`LeaveVaultUseCase: Could not find vault ${params.sharedVault.uuid}`)
+    }
+
     const response = await this.vaultUserServer.deleteSharedVaultUser({
-      sharedVaultUuid: params.sharedVault.uuid,
+      sharedVaultUuid: latestVaultListing.sharing.sharedVaultUuid,
       userUuid: params.userUuid,
     })
 
@@ -38,6 +43,6 @@ export class LeaveVaultUseCase {
       this.storage,
       this.sync,
     )
-    await removeLocalItems.execute(params.sharedVault)
+    await removeLocalItems.execute(latestVaultListing)
   }
 }

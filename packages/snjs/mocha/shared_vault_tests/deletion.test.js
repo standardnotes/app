@@ -31,7 +31,7 @@ describe('shared vault deletion', function () {
       await Collaboration.createSharedVaultWithAcceptedInviteAndNote(context)
 
     const promise = context.resolveWhenSavedSyncPayloadsIncludesItemUuid(note.uuid)
-    await context.items.setItemToBeDeleted(note)
+    await context.mutator.setItemToBeDeleted(note)
     await context.sync()
     await contactContext.sync()
     await promise
@@ -51,8 +51,8 @@ describe('shared vault deletion', function () {
 
     const promise = context.resolveWhenSavedSyncPayloadsIncludesItemUuid(note.uuid)
 
-    await context.items.setItemToBeDeleted(note)
-    await contactContext.items.setItemToBeDeleted(note)
+    await context.mutator.setItemToBeDeleted(note)
+    await contactContext.mutator.setItemToBeDeleted(note)
 
     await context.sync()
     await contactContext.sync()
@@ -107,12 +107,13 @@ describe('shared vault deletion', function () {
     const originalNote = contactContext.items.findItem(note.uuid)
     expect(originalNote).to.not.be.undefined
 
-    await contactContext.sharedVaults.leaveSharedVault(sharedVault)
+    const contactVault = contactContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })
+    await contactContext.sharedVaults.leaveSharedVault(contactVault)
 
     const updatedContactNote = contactContext.items.findItem(note.uuid)
     expect(updatedContactNote).to.be.undefined
 
-    const vault = await context.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })
+    const vault = await contactContext.vaults.getVault({ keySystemIdentifier: contactVault.systemIdentifier })
     expect(vault).to.be.undefined
 
     await deinitContactContext()
