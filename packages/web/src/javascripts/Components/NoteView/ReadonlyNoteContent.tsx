@@ -43,7 +43,7 @@ export const ReadonlyNoteContent = ({
     componentViewer.lockReadonly = true
     componentViewer.overrideContextItem = templateNoteForRevision
     return componentViewer
-  }, [application.componentManager, application.mutator, note])
+  }, [application.componentManager, application.items, note])
 
   useEffect(() => {
     return () => {

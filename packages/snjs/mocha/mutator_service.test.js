@@ -110,7 +110,7 @@ describe('mutator service', function () {
 
     expect(payload.discardable).to.equal(true)
 
-    await mutator.emitItemFromPayload(payload)
+    await context.payloads.emitPayload(payload)
 
     expect(application.items.findItem(note.uuid)).to.not.be.ok
   })

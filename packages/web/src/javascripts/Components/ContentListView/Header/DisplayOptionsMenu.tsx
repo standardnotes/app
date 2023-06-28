@@ -189,7 +189,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
         })
       }
     },
-    [currentMode, isSystemTag, changeGlobalPreferences, changeSystemViewPreferences, application.mutator, selectedTag],
+    [currentMode, isSystemTag, changeGlobalPreferences, changeSystemViewPreferences, application, selectedTag],
   )
 
   const resetTagPreferences = useCallback(async () => {

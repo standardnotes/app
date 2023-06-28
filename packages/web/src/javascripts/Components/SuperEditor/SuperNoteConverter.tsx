@@ -66,7 +66,7 @@ const SuperNoteConverter = ({
     componentViewer.lockReadonly = true
     componentViewer.overrideContextItem = templateNoteForRevision
     return componentViewer
-  }, [application.componentManager, application.mutator, component, convertedContent, note.references, note.title])
+  }, [application.componentManager, application.items, component, convertedContent, note.references, note.title])
 
   useEffect(() => {
     return () => {

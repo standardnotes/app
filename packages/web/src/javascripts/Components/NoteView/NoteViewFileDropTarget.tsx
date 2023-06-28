@@ -37,7 +37,16 @@ const NoteViewFileDropTarget = ({ note, linkingController, noteViewElement, file
         removeDragTarget(target)
       }
     }
-  }, [addDragTarget, linkingController, note, noteViewElement, removeDragTarget, filesController, application.mutator])
+  }, [
+    addDragTarget,
+    linkingController,
+    note,
+    noteViewElement,
+    removeDragTarget,
+    filesController,
+    application.mutator,
+    application,
+  ])
 
   return isDraggingFiles ? (
     // Required to block drag events to editor iframe

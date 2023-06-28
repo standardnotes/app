@@ -76,7 +76,7 @@ export default function FilePlugin({ currentNote }: { currentNote: SNNote }): JS
         COMMAND_PRIORITY_NORMAL,
       ),
     )
-  }, [application.mutator, currentNote.protected, editor, filesController, linkingController])
+  }, [application, application.mutator, currentNote.protected, editor, filesController, linkingController])
 
   useEffect(() => {
     const disposer = filesController.addEventObserver((event, data) => {

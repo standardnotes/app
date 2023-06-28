@@ -53,7 +53,7 @@ const SmartViews = ({ application, featuresController }: Props) => {
           .catch(console.error)
       }
     },
-    [application.mutator],
+    [application.mutator, application.sync],
   )
 
   return (
