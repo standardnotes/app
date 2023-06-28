@@ -14,14 +14,8 @@ export interface UserApiServiceInterface {
     serverPassword: string
     keyParams: RootKeyParamsInterface
     ephemeral: boolean
-    publicKey: string
-    signingPublicKey: string
   }): Promise<HttpResponse<UserRegistrationResponseBody>>
-  updateUser(updateDTO: {
-    userUuid: string
-    publicKey: string
-    signingPublicKey: string
-  }): Promise<HttpResponse<UserUpdateResponse>>
+  updateUser(updateDTO: { userUuid: string }): Promise<HttpResponse<UserUpdateResponse>>
 
   submitUserRequest(dto: {
     userUuid: string

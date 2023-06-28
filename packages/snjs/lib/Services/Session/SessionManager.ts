@@ -424,8 +424,6 @@ export class SNSessionManager
       serverPassword,
       keyParams,
       ephemeral,
-      publicKey: rootKey.encryptionKeyPair.publicKey,
-      signingPublicKey: rootKey.signingKeyPair.publicKey,
     })
 
     if ('error' in registerResponse.data) {

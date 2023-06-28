@@ -79,8 +79,6 @@ export class UserApiService implements UserApiServiceInterface {
     serverPassword: string
     keyParams: RootKeyParamsInterface
     ephemeral: boolean
-    publicKey: string
-    signingPublicKey: string
   }): Promise<HttpResponse<UserRegistrationResponseBody>> {
     this.lockOperation(UserApiOperations.Registering)
 
@@ -90,8 +88,6 @@ export class UserApiService implements UserApiServiceInterface {
         password: registerDTO.serverPassword,
         email: registerDTO.email,
         ephemeral: registerDTO.ephemeral,
-        public_key: registerDTO.publicKey,
-        signing_public_key: registerDTO.signingPublicKey,
         ...registerDTO.keyParams.getPortableValue(),
       })
 
@@ -103,19 +99,13 @@ export class UserApiService implements UserApiServiceInterface {
     }
   }
 
-  async updateUser(updateDTO: {
-    userUuid: string
-    publicKey: string
-    signingPublicKey: string
-  }): Promise<HttpResponse<UserUpdateResponse>> {
+  async updateUser(updateDTO: { userUuid: string }): Promise<HttpResponse<UserUpdateResponse>> {
     this.lockOperation(UserApiOperations.UpdatingUser)
 
     try {
       const response = await this.userServer.update({
         [ApiEndpointParam.ApiVersion]: ApiVersion.v0,
         user_uuid: updateDTO.userUuid,
-        public_key: updateDTO.publicKey,
-        signing_public_key: updateDTO.signingPublicKey,
       })
 
       this.unlockOperation(UserApiOperations.UpdatingUser)
