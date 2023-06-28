@@ -6,6 +6,8 @@ export enum RawStorageKey {
   StorageObject = 'storage',
   DescriptorRecord = 'descriptors',
   SnjsVersion = 'snjs_version',
+  HomeServerEnabled = 'home_server_enabled',
+  HomeServerDataLocation = 'home_serve_data_location',
 }
 
 /**
@@ -51,8 +53,6 @@ export enum StorageKey {
 
 export enum NonwrappedStorageKey {
   MobileFirstRun = 'first_run',
-  HomeServerEnabled = 'home_server_enabled',
-  HomeServerDataLocation = 'home_serve_data_location',
 }
 
 export function namespacedKey(namespace: string, key: string) {

@@ -33,7 +33,7 @@ const HomeServerSettings = () => {
   const [showLogs, setShowLogs] = useState(false)
   const [logs, setLogs] = useState<string[]>([])
   const [status, setStatus] = useState<Status>()
-  const [homeServerDataLocation, setHomeServerDataLocation] = useState(homeServerService.getHomeServerDataLocation())
+  const [homeServerDataLocation, setHomeServerDataLocation] = useState('')
   const [isAPremiumUser, setIsAPremiumUser] = useState(false)
   const [isSignedIn, setIsSignedIn] = useState(false)
   const [showOfflineSubscriptionActivation, setShowOfflineSubscriptionActivation] = useState(false)
@@ -41,7 +41,7 @@ const HomeServerSettings = () => {
   const [homeServerConfiguration, setHomeServerConfiguration] = useState<HomeServerEnvironmentConfiguration | null>(
     null,
   )
-  const [homeServerEnabled, setHomeServerEnabled] = useState(homeServerService.isHomeServerEnabled())
+  const [homeServerEnabled, setHomeServerEnabled] = useState(false)
 
   const refreshStatus = useCallback(async () => {
     const result = await homeServerService.getHomeServerStatus()
@@ -89,7 +89,7 @@ const HomeServerSettings = () => {
         return
       }
 
-      setHomeServerEnabled(homeServerService.isHomeServerEnabled())
+      setHomeServerEnabled(await homeServerService.isHomeServerEnabled())
 
       await refreshStatus()
     } else {
@@ -97,7 +97,7 @@ const HomeServerSettings = () => {
 
       await homeServerService.enableHomeServer()
 
-      setHomeServerEnabled(homeServerService.isHomeServerEnabled())
+      setHomeServerEnabled(await homeServerService.isHomeServerEnabled())
 
       await sleep(SERVER_SYNTHEIC_CHANGE_DELAY)
 
@@ -132,6 +132,21 @@ const HomeServerSettings = () => {
   }, [homeServerService, clearLogs])
 
   useEffect(() => {
+    async function updateHomeServerDataLocation() {
+      const location = await homeServerService.getHomeServerDataLocation()
+      if (location) {
+        setHomeServerDataLocation(location)
+      }
+    }
+
+    void updateHomeServerDataLocation()
+
+    async function updateHomeServerEnabled() {
+      setHomeServerEnabled(await homeServerService.isHomeServerEnabled())
+    }
+
+    void updateHomeServerEnabled()
+
     setIsAPremiumUser(featuresService.hasOfflineRepo())
 
     setIsSignedIn(sessionsService.isSignedIn())
@@ -139,7 +154,7 @@ const HomeServerSettings = () => {
     void initialyLoadHomeServerConfiguration()
 
     void refreshStatus()
-  }, [featuresService, sessionsService, refreshStatus, initialyLoadHomeServerConfiguration])
+  }, [featuresService, sessionsService, homeServerService, refreshStatus, initialyLoadHomeServerConfiguration])
 
   const handleHomeServerConfigurationChange = useCallback(
     async (changedServerConfiguration: HomeServerEnvironmentConfiguration) => {
@@ -175,7 +190,7 @@ const HomeServerSettings = () => {
         await homeServerService.stopHomeServer()
 
         if (location === undefined) {
-          const oldLocation = homeServerService.getHomeServerDataLocation()
+          const oldLocation = await homeServerService.getHomeServerDataLocation()
           const newLocationOrError = await homeServerService.changeHomeServerDataLocation()
           if (newLocationOrError.isFailed()) {
             setStatus({ state: 'error', message: newLocationOrError.getError() })

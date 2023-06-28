@@ -1537,11 +1537,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   }
 
   private createHomeServerService(device: ExternalServices.DesktopDeviceInterface) {
-    this.homeServerService = new ExternalServices.HomeServerService(
-      device,
-      this.diskStorageService,
-      this.internalEventBus,
-    )
+    this.homeServerService = new ExternalServices.HomeServerService(device, this.internalEventBus)
 
     this.services.push(this.homeServerService)
   }
