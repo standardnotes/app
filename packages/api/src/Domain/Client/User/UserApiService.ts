@@ -14,7 +14,6 @@ import { UserRequestServerInterface } from '../../Server/UserRequest/UserRequest
 
 import { UserApiOperations } from './UserApiOperations'
 import { UserApiServiceInterface } from './UserApiServiceInterface'
-import { UserGetUserResponse } from '../../Response/User/UserGetPkcCredentialsResponse'
 import { UserUpdateResponse } from '../../Response/User/UserUpdateResponse'
 
 export class UserApiService implements UserApiServiceInterface {
@@ -33,20 +32,6 @@ export class UserApiService implements UserApiServiceInterface {
       })
 
       this.unlockOperation(UserApiOperations.DeletingAccount)
-
-      return response
-    } catch (error) {
-      throw new ApiCallError(ErrorMessage.GenericFail)
-    }
-  }
-
-  async getCurrentUser(userUuid: string): Promise<HttpResponse<UserGetUserResponse>> {
-    this.lockOperation(UserApiOperations.GettingUser)
-
-    try {
-      const response = await this.userServer.getCurrentUser(userUuid)
-
-      this.unlockOperation(UserApiOperations.GettingUser)
 
       return response
     } catch (error) {

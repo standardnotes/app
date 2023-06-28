@@ -8,7 +8,6 @@ import { UserRegistrationResponseBody } from '../../Response/User/UserRegistrati
 import { Paths } from './Paths'
 import { UserServerInterface } from './UserServerInterface'
 import { UserUpdateRequestParams } from '../../Request/User/UserUpdateRequestParams'
-import { UserGetUserResponse } from '../../Response/User/UserGetPkcCredentialsResponse'
 
 export class UserServer implements UserServerInterface {
   constructor(private httpService: HttpServiceInterface) {}
@@ -23,9 +22,5 @@ export class UserServer implements UserServerInterface {
 
   async update(params: UserUpdateRequestParams): Promise<HttpResponse<UserUpdateResponse>> {
     return this.httpService.patch(Paths.v1.updateAccount(params.user_uuid), params)
-  }
-
-  async getCurrentUser(userUuid: string): Promise<HttpResponse<UserGetUserResponse>> {
-    return this.httpService.get(Paths.v1.getCurrentUser(userUuid))
   }
 }

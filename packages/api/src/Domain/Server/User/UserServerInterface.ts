@@ -5,11 +5,9 @@ import { UserDeletionResponseBody } from '../../Response/User/UserDeletionRespon
 import { UserRegistrationResponseBody } from '../../Response/User/UserRegistrationResponseBody'
 import { UserUpdateResponse } from '../../Response/User/UserUpdateResponse'
 import { UserUpdateRequestParams } from '../../Request/User/UserUpdateRequestParams'
-import { UserGetUserResponse } from '../../Response/User/UserGetPkcCredentialsResponse'
 
 export interface UserServerInterface {
   register(params: UserRegistrationRequestParams): Promise<HttpResponse<UserRegistrationResponseBody>>
   deleteAccount(params: UserDeletionRequestParams): Promise<HttpResponse<UserDeletionResponseBody>>
   update(params: UserUpdateRequestParams): Promise<HttpResponse<UserUpdateResponse>>
-  getCurrentUser(userUuid: string): Promise<HttpResponse<UserGetUserResponse>>
 }
