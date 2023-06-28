@@ -202,7 +202,7 @@ describe('itemManager', () => {
       const tag = createTag('tag')
       await mutator.insertItems([tag])
 
-      expect(() => mutator.setTagParent(tag, tag)).toThrow()
+      await expect(mutator.setTagParent(tag, tag)).rejects.toThrow()
       expect(itemManager.getTagParent(tag)).toBeUndefined()
     })
 
@@ -215,7 +215,7 @@ describe('itemManager', () => {
       await mutator.setTagParent(parent, child)
       await mutator.setTagParent(grandParent, parent)
 
-      expect(() => mutator.setTagParent(child, grandParent)).toThrow()
+      await expect(mutator.setTagParent(child, grandParent)).rejects.toThrow()
       expect(itemManager.getTagParent(grandParent)).toBeUndefined()
     })
 

@@ -48,7 +48,7 @@ describe('AsymmetricMessageService', () => {
       },
     ]
 
-    const trustedPayloadMock = { type: AsymmetricMessagePayloadType.ContactShare }
+    const trustedPayloadMock = { type: AsymmetricMessagePayloadType.ContactShare, data: { recipientUuid: '1' } }
 
     service.getTrustedMessagePayload = jest.fn().mockReturnValue(trustedPayloadMock)
 

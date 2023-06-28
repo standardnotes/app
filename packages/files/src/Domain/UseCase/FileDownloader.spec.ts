@@ -6,6 +6,8 @@ describe('file downloader', () => {
   let apiService: FilesApiInterface
   let downloader: FileDownloader
   let file: {
+    uuid: string
+    shared_vault_uuid: string | undefined
     encryptedChunkSizes: FileContent['encryptedChunkSizes']
     remoteIdentifier: FileContent['remoteIdentifier']
   }
@@ -18,16 +20,16 @@ describe('file downloader', () => {
     apiService.downloadFile = jest
       .fn()
       .mockImplementation(
-        (
-          _file: string,
-          _chunkIndex: number,
-          _apiToken: string,
-          _rangeStart: number,
-          onBytesReceived: (bytes: Uint8Array) => void,
-        ) => {
+        (params: {
+          _file: string
+          _chunkIndex: number
+          _apiToken: string
+          _rangeStart: number
+          onBytesReceived: (bytes: Uint8Array) => void
+        }) => {
           return new Promise<void>((resolve) => {
             for (let i = 0; i < numChunks; i++) {
-              onBytesReceived(Uint8Array.from([0xaa]))
+              params.onBytesReceived(Uint8Array.from([0xaa]))
             }
 
             resolve()
@@ -36,6 +38,8 @@ describe('file downloader', () => {
       )
 
     file = {
+      uuid: '123',
+      shared_vault_uuid: undefined,
       encryptedChunkSizes: [100_000],
       remoteIdentifier: '123',
     }
@@ -44,7 +48,7 @@ describe('file downloader', () => {
   it('should pass back bytes as they are received', async () => {
     let receivedBytes = new Uint8Array()
 
-    downloader = new FileDownloader(file, apiService)
+    downloader = new FileDownloader(file, apiService, 'valet-token')
 
     expect(receivedBytes.length).toBe(0)
 

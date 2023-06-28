@@ -25,8 +25,9 @@ describe('note view controller', () => {
     application.noAccount = jest.fn().mockReturnValue(false)
     application.isNativeMobileWeb = jest.fn().mockReturnValue(false)
 
-    Object.defineProperty(application, 'items', { value: {} as jest.Mocked<ItemManagerInterface> })
-    Object.defineProperty(application, 'mutator', { value: {} as jest.Mocked<MutatorClientInterface> })
+    const items = {} as jest.Mocked<ItemManagerInterface>
+    items.createTemplateItem = jest.fn().mockReturnValue({} as SNNote)
+    Object.defineProperty(application, 'items', { value: items })
 
     Object.defineProperty(application, 'sync', { value: {} as jest.Mocked<SyncServiceInterface> })
     application.sync.sync = jest.fn().mockReturnValue(Promise.resolve())
@@ -35,8 +36,7 @@ describe('note view controller', () => {
     componentManager.legacyGetDefaultEditor = jest.fn()
     Object.defineProperty(application, 'componentManager', { value: componentManager })
 
-    const mutator = {} as jest.Mocked<MutatorService>
-    mutator.createTemplateItem = jest.fn().mockReturnValue({} as SNNote)
+    const mutator = {} as jest.Mocked<MutatorClientInterface>
     Object.defineProperty(application, 'mutator', { value: mutator })
   })
 

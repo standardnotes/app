@@ -34,16 +34,17 @@ describe('fileService', () => {
     apiService.downloadFile = jest
       .fn()
       .mockImplementation(
-        (
-          _file: string,
-          _chunkIndex: number,
-          _apiToken: string,
-          _rangeStart: number,
-          onBytesReceived: (bytes: Uint8Array) => void,
-        ) => {
+        (params: {
+          _file: string
+          _chunkIndex: number
+          _apiToken: string
+          _ownershipType: string
+          _rangeStart: number
+          onBytesReceived: (bytes: Uint8Array) => void
+        }) => {
           return new Promise<void>((resolve) => {
             for (let i = 0; i < numChunks; i++) {
-              onBytesReceived(Uint8Array.from([0xaa]))
+              params.onBytesReceived(Uint8Array.from([0xaa]))
             }
 
             resolve()

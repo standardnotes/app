@@ -228,7 +228,8 @@ describe('LinkingController', () => {
 
   describe('linkItems', () => {
     it('should move file to same vault as note if file does not belong to any vault', async () => {
-      application.mutator.associateFileWithNote = jest.fn()
+      application.mutator.associateFileWithNote = jest.fn().mockReturnValue({})
+
       const moveToVaultSpy = (application.vaults.moveItemToVault = jest.fn())
 
       const note = createNote('test', {
