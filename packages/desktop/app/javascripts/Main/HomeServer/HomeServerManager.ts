@@ -124,10 +124,11 @@ export class HomeServerManager implements HomeServerManagerInterface {
       this.lastErrorMessage = undefined
       this.logs = []
 
-      const homeServerConfiguration = await this.getHomeServerConfigurationObject()
+      let homeServerConfiguration = await this.getHomeServerConfigurationObject()
       if (!homeServerConfiguration) {
-        await this.setHomeServerConfiguration(JSON.stringify(this.generateHomeServerConfiguration()))
+        homeServerConfiguration = this.generateHomeServerConfiguration()
       }
+      await this.setHomeServerConfiguration(JSON.stringify(homeServerConfiguration))
 
       if (!this.homeServerDataLocation) {
         this.lastErrorMessage = 'Home server data location is not set.'
