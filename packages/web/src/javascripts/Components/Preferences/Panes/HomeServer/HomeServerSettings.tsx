@@ -184,46 +184,33 @@ const HomeServerSettings = () => {
     [homeServerService, setStatus, setHomeServerConfiguration, refreshStatus, clearLogs],
   )
 
-  const changeHomeServerDataLocation = useCallback(
-    async (location?: string) => {
-      try {
-        await homeServerService.stopHomeServer()
-
-        if (location === undefined) {
-          const oldLocation = await homeServerService.getHomeServerDataLocation()
-          const newLocationOrError = await homeServerService.changeHomeServerDataLocation()
-          if (newLocationOrError.isFailed()) {
-            setStatus({ state: 'error', message: newLocationOrError.getError() })
-
-            await sleep(SERVER_SYNTHEIC_CHANGE_DELAY)
-
-            await changeHomeServerDataLocation(oldLocation)
-
-            return
-          }
-          location = newLocationOrError.getValue()
-        }
-
-        setStatus({ state: 'restarting', message: 'Applying changes and restarting...' })
-
-        await sleep(SERVER_SYNTHEIC_CHANGE_DELAY)
-
-        setHomeServerDataLocation(location)
-
-        clearLogs(true)
-
-        const result = await homeServerService.startHomeServer()
-        if (result !== undefined) {
-          setStatus({ state: 'error', message: result })
-        }
-
-        void refreshStatus()
-      } catch (error) {
-        setStatus({ state: 'error', message: (error as Error).message })
+  const changeHomeServerDataLocation = useCallback(async () => {
+    try {
+      const newLocationOrError = await homeServerService.changeHomeServerDataLocation()
+      if (newLocationOrError.isFailed()) {
+        return
       }
-    },
-    [homeServerService, setStatus, setHomeServerDataLocation, refreshStatus, clearLogs],
-  )
+
+      await homeServerService.stopHomeServer()
+
+      setStatus({ state: 'restarting', message: 'Applying changes and restarting...' })
+
+      await sleep(SERVER_SYNTHEIC_CHANGE_DELAY)
+
+      setHomeServerDataLocation(newLocationOrError.getValue())
+
+      clearLogs(true)
+
+      const result = await homeServerService.startHomeServer()
+      if (result !== undefined) {
+        setStatus({ state: 'error', message: result })
+      }
+
+      void refreshStatus()
+    } catch (error) {
+      setStatus({ state: 'error', message: (error as Error).message })
+    }
+  }, [homeServerService, setStatus, setHomeServerDataLocation, refreshStatus, clearLogs])
 
   const openHomeServerDataLocation = useCallback(async () => {
     try {
