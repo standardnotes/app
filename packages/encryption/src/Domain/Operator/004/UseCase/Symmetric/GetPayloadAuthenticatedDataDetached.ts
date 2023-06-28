@@ -4,10 +4,10 @@ import { RootKeyEncryptedAuthenticatedData } from '../../../../Types/RootKeyEncr
 import { ItemAuthenticatedData } from '../../../../Types/ItemAuthenticatedData'
 import { LegacyAttachedData } from '../../../../Types/LegacyAttachedData'
 import { deconstructEncryptedPayloadString } from '../../V004AlgorithmHelpers'
-import { StringToAuthenticatedDataUseCase } from '../Utils/StringToAuthenticatedData'
+import { ParseConsistentBase64JsonPayloadUseCase } from '../Utils/ParseConsistentBase64JsonPayload'
 
 export class GetPayloadAuthenticatedDataDetachedUseCase {
-  private stringToAuthenticatedDataUseCase = new StringToAuthenticatedDataUseCase(this.crypto)
+  private parseStringUseCase = new ParseConsistentBase64JsonPayloadUseCase(this.crypto)
 
   constructor(private readonly crypto: PureCryptoInterface) {}
 
@@ -18,12 +18,9 @@ export class GetPayloadAuthenticatedDataDetachedUseCase {
 
     const authenticatedDataString = itemKeyComponents.authenticatedData
 
-    const result = this.stringToAuthenticatedDataUseCase.execute(authenticatedDataString, {
-      u: encrypted.uuid,
-      v: encrypted.version,
-      ksi: encrypted.key_system_identifier,
-      svu: encrypted.shared_vault_uuid,
-    })
+    const result = this.parseStringUseCase.execute<
+      RootKeyEncryptedAuthenticatedData | ItemAuthenticatedData | LegacyAttachedData
+    >(authenticatedDataString)
 
     return result
   }
