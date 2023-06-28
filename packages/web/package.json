@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/web",
-  "version": "3.162.7",
+  "version": "3.162.8",
   "license": "AGPL-3.0-or-later",
   "main": "dist/app.js",
   "author": "Standard Notes",
@@ -51,7 +51,7 @@
     "@standardnotes/sncrypto-web": "workspace:*",
     "@standardnotes/snjs": "workspace:*",
     "@standardnotes/solarized-dark-theme": "^1.4.6",
-    "@standardnotes/spreadsheets": "^1.7.0",
+    "@standardnotes/spreadsheets": "^1.8.0",
     "@standardnotes/styles": "workspace:*",
     "@standardnotes/titanium-theme": "^1.4.7",
     "@standardnotes/toast": "workspace:*",
