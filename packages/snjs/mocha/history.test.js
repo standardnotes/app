@@ -343,7 +343,10 @@ describe('history manager', () => {
       expect(itemHistory.length).to.equal(2)
 
       const oldestEntry = lastElement(itemHistory)
-      let revisionFromServerOrError = await this.application.getRevision.execute({ itemUuid: item.uuid, revisionUuid: oldestEntry.uuid })
+      let revisionFromServerOrError = await this.application.getRevision.execute({
+        itemUuid: item.uuid,
+        revisionUuid: oldestEntry.uuid,
+      })
       const revisionFromServer = revisionFromServerOrError.getValue()
       expect(revisionFromServer).to.be.ok
 
@@ -367,7 +370,10 @@ describe('history manager', () => {
       const dupeHistoryOrError = await this.application.listRevisions.execute({ itemUuid: dupe.uuid })
       const dupeHistory = dupeHistoryOrError.getValue()
 
-      const dupeRevisionOrError = await this.application.getRevision.execute({ itemUuid: dupe.uuid, revisionUuid: dupeHistory[0].uuid })
+      const dupeRevisionOrError = await this.application.getRevision.execute({
+        itemUuid: dupe.uuid,
+        revisionUuid: dupeHistory[0].uuid,
+      })
       const dupeRevision = dupeRevisionOrError.getValue()
       expect(dupeRevision.payload.uuid).to.equal(dupe.uuid)
     })
@@ -420,7 +426,10 @@ describe('history manager', () => {
       expect(itemHistory.length).to.be.above(1)
       const newestRevision = itemHistory[0]
 
-      const fetchedOrError = await this.application.getRevision.execute({ itemUuid: dupe.uuid, revisionUuid: newestRevision.uuid })
+      const fetchedOrError = await this.application.getRevision.execute({
+        itemUuid: dupe.uuid,
+        revisionUuid: newestRevision.uuid,
+      })
       const fetched = fetchedOrError.getValue()
       expect(fetched.payload.errorDecrypting).to.not.be.ok
       expect(fetched.payload.content.title).to.equal(changedText)

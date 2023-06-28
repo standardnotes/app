@@ -52,6 +52,7 @@ export class GetRevision implements UseCaseInterface<HistoryEntry> {
       updated_at: new Date(revision.updated_at),
       created_at: new Date(revision.created_at),
       key_system_identifier: revision.key_system_identifier ?? undefined,
+      shared_vault_uuid: revision.shared_vault_uuid ?? undefined,
       waitingForKey: false,
       errorDecrypting: false,
     })
