@@ -25,6 +25,7 @@
     "@standardnotes/common": "^1.48.3",
     "@standardnotes/features": "workspace:*",
     "@standardnotes/responses": "workspace:*",
+    "@standardnotes/sncrypto-common": "workspace:^",
     "@standardnotes/utils": "workspace:^",
     "lodash": "^4.17.21"
   },

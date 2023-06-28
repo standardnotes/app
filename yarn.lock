@@ -4415,6 +4415,7 @@ __metadata:
     "@standardnotes/common": ^1.48.3
     "@standardnotes/features": "workspace:*"
     "@standardnotes/responses": "workspace:*"
+    "@standardnotes/sncrypto-common": "workspace:^"
     "@standardnotes/utils": "workspace:^"
     "@types/jest": ^29.2.3
     "@types/lodash": ^4.14.189
