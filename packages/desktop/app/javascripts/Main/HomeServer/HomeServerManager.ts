@@ -6,7 +6,7 @@ import {
 } from '@web/Application/Device/DesktopSnjsExports'
 import { HomeServerInterface } from '@standardnotes/home-server'
 
-import { SafeStorage, WebContents } from 'electron'
+import { WebContents } from 'electron'
 import { MessageToWebApp } from '../../Shared/IpcMessages'
 import { FilesManagerInterface } from '../File/FilesManagerInterface'
 import { HomeServerConfigurationFile } from './HomeServerConfigurationFile'
@@ -27,7 +27,6 @@ export class HomeServerManager implements HomeServerManagerInterface {
     private homeServer: HomeServerInterface,
     private webContents: WebContents,
     private filesManager: FilesManagerInterface,
-    private safeStorage: SafeStorage,
   ) {}
 
   async getHomeServerUrl(): Promise<string | undefined> {
@@ -71,25 +70,7 @@ export class HomeServerManager implements HomeServerManagerInterface {
       return undefined
     }
 
-    const encryptedConfiguration: HomeServerEnvironmentConfiguration = homeServerConfiguration.configuration
-    if (!this.safeStorage.isEncryptionAvailable()) {
-      return JSON.stringify(encryptedConfiguration)
-    }
-
-    let decryptedConfiguration = {}
-    for (const key of Object.keys(encryptedConfiguration)) {
-      const configKey = key as keyof HomeServerEnvironmentConfiguration
-      const value = encryptedConfiguration[configKey] as string
-
-      const decryptedValue = this.decryptValue(value)
-
-      decryptedConfiguration = {
-        ...decryptedConfiguration,
-        [key]: decryptedValue,
-      }
-    }
-
-    return JSON.stringify(decryptedConfiguration)
+    return JSON.stringify(homeServerConfiguration.configuration)
   }
 
   async setHomeServerConfiguration(configurationJSONString: string): Promise<void> {
@@ -102,24 +83,6 @@ export class HomeServerManager implements HomeServerManagerInterface {
 
       await this.filesManager.ensureDirectoryExists(this.homeServerDataLocation)
 
-      let persistableConfiguration = homeServerConfiguration
-      if (this.safeStorage.isEncryptionAvailable()) {
-        let encryptedConfiguration = {}
-        for (const key of Object.keys(homeServerConfiguration)) {
-          const configKey = key as keyof HomeServerEnvironmentConfiguration
-          const value = homeServerConfiguration[configKey]
-
-          const encryptedValue = this.encryptValue(value)
-
-          encryptedConfiguration = {
-            ...encryptedConfiguration,
-            [key]: encryptedValue,
-          }
-        }
-
-        persistableConfiguration = encryptedConfiguration as HomeServerEnvironmentConfiguration
-      }
-
       const configurationFile: HomeServerConfigurationFile = {
         version: '1.0.0',
         info: {
@@ -129,7 +92,7 @@ export class HomeServerManager implements HomeServerManagerInterface {
           instructions:
             'Put this file inside your home server data location to restore your home server configuration.',
         },
-        configuration: persistableConfiguration,
+        configuration: homeServerConfiguration,
       }
 
       await this.filesManager.writeJSONFile(
@@ -286,49 +249,5 @@ export class HomeServerManager implements HomeServerManagerInterface {
     }
 
     return configuration
-  }
-
-  private encryptValue(value: string | number | object | undefined): string | object | undefined {
-    switch (typeof value) {
-      case 'string':
-        return this.safeStorage.encryptString(value).toString('hex')
-      case 'number':
-        return this.safeStorage.encryptString(value.toString()).toString('hex')
-      case 'object': {
-        const encryptedObject: { [key: string]: string | object | undefined } = {}
-        for (const key of Object.keys(value)) {
-          const objectKey = key as keyof typeof value
-          const objectValue = value[objectKey]
-          encryptedObject[key] = this.encryptValue(objectValue)
-        }
-
-        return encryptedObject
-      }
-      default:
-        return undefined
-    }
-  }
-
-  private decryptValue(value: string | object | undefined): string | number | object | undefined {
-    switch (typeof value) {
-      case 'string': {
-        const decryptedValue = this.safeStorage.decryptString(Buffer.from(value, 'hex'))
-
-        return decryptedValue
-      }
-      case 'object': {
-        const decryptedObject: { [key: string]: string | number | object | undefined } = {}
-        for (const key of Object.keys(value)) {
-          const objectKey = key as keyof typeof value
-          const objectValue = value[objectKey]
-
-          decryptedObject[key] = this.decryptValue(objectValue)
-        }
-
-        return decryptedObject
-      }
-      default:
-        return undefined
-    }
   }
 }

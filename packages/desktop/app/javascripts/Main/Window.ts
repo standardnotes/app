@@ -1,5 +1,5 @@
 import { clearSensitiveDirectories } from '@standardnotes/electron-clear-data'
-import { BrowserWindow, Rectangle, SafeStorage, screen, Shell } from 'electron'
+import { BrowserWindow, Rectangle, screen, Shell } from 'electron'
 import fs from 'fs'
 import { debounce } from 'lodash'
 import path from 'path'
@@ -51,17 +51,15 @@ export async function createWindowState({
   appState,
   appLocale,
   teardown,
-  safeStorage,
 }: {
   shell: Shell
   appLocale: string
   appState: AppState
   teardown: () => void
-  safeStorage: SafeStorage
 }): Promise<WindowState> {
   const window = await createWindow(appState.store)
 
-  const services = await createWindowServices(window, appState, appLocale, safeStorage)
+  const services = await createWindowServices(window, appState, appLocale)
 
   require('@electron/remote/main').enable(window.webContents)
   ;(global as any).RemoteBridge = new RemoteBridge(
@@ -199,12 +197,7 @@ async function createWindow(store: Store): Promise<Electron.BrowserWindow> {
   return window
 }
 
-async function createWindowServices(
-  window: Electron.BrowserWindow,
-  appState: AppState,
-  appLocale: string,
-  safeStorage: SafeStorage,
-) {
+async function createWindowServices(window: Electron.BrowserWindow, appState: AppState, appLocale: string) {
   const packageManager = await initializePackageManager(window.webContents)
   const searchManager = initializeSearchManager(window.webContents)
   initializeZoomManager(window, appState.store)
@@ -217,7 +210,7 @@ async function createWindowServices(
   const filesManager = new FilesManager()
   const directoryManager = new DirectoryManager(filesManager)
 
-  const homeServerManager = new HomeServerManager(homeServer, window.webContents, filesManager, safeStorage)
+  const homeServerManager = new HomeServerManager(homeServer, window.webContents, filesManager)
 
   if (isTesting()) {
     handleTestMessage(MessageType.SpellCheckerManager, () => spellcheckerManager)
