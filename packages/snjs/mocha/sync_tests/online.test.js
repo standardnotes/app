@@ -5,7 +5,7 @@ import * as Utils from '../lib/Utils.js'
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
-describe.only('online syncing', function () {
+describe('online syncing', function () {
   this.timeout(Factory.TenSecondTimeout)
 
   const syncOptions = {
