@@ -6,6 +6,7 @@ type Options = {
   togglePopover?: () => void
   childPopovers: Set<string>
   disabled?: boolean
+  hideOnClickInModal?: boolean
 }
 
 export const usePopoverCloseOnClickOutside = ({
@@ -14,6 +15,7 @@ export const usePopoverCloseOnClickOutside = ({
   togglePopover,
   childPopovers,
   disabled,
+  hideOnClickInModal = false,
 }: Options) => {
   useEffect(() => {
     const closeIfClickedOutside = (event: MouseEvent) => {
@@ -23,10 +25,15 @@ export const usePopoverCloseOnClickOutside = ({
       const isAnchorElement = anchorElement ? anchorElement === event.target || anchorElement.contains(target) : false
       const closestPopoverId = target.closest('[data-popover]')?.getAttribute('data-popover')
       const isDescendantOfChildPopover = closestPopoverId && childPopovers.has(closestPopoverId)
-      const isPopoverInModal = popoverElement?.closest('[data-dialog]')
-      const isDescendantOfModal = isPopoverInModal ? false : !!target.closest('[data-dialog]')
+      const isPopoverInModal = popoverElement?.closest('[data-dialog], .sk-modal')
+      const isDescendantOfModal = isPopoverInModal ? false : !!target.closest('[data-dialog], .sk-modal')
 
-      if (!isDescendantOfMenu && !isAnchorElement && !isDescendantOfChildPopover && !isDescendantOfModal) {
+      if (
+        !isDescendantOfMenu &&
+        !isAnchorElement &&
+        !isDescendantOfChildPopover &&
+        (!isDescendantOfModal || (isDescendantOfModal && hideOnClickInModal))
+      ) {
         if (!disabled) {
           togglePopover?.()
         }
@@ -39,5 +46,5 @@ export const usePopoverCloseOnClickOutside = ({
       document.removeEventListener('click', closeIfClickedOutside, { capture: true })
       document.removeEventListener('contextmenu', closeIfClickedOutside, { capture: true })
     }
-  }, [anchorElement, childPopovers, popoverElement, togglePopover, disabled])
+  }, [anchorElement, childPopovers, popoverElement, togglePopover, disabled, hideOnClickInModal])
 }

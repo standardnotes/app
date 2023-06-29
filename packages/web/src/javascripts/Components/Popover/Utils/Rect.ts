@@ -95,25 +95,25 @@ export const getPositionedPopoverRect = (
   if (side === 'top' || side === 'bottom') {
     switch (align) {
       case 'start':
-        positionPopoverRect.x = buttonRect.left - finalOffset
+        positionPopoverRect.x = buttonRect.left
         break
       case 'center':
-        positionPopoverRect.x = buttonRect.left - width / 2 + buttonRect.width / 2 - finalOffset
+        positionPopoverRect.x = buttonRect.left - width / 2 + buttonRect.width / 2
         break
       case 'end':
-        positionPopoverRect.x = buttonRect.right - width + finalOffset
+        positionPopoverRect.x = buttonRect.right - width
         break
     }
   } else {
     switch (align) {
       case 'start':
-        positionPopoverRect.y = buttonRect.top - finalOffset
+        positionPopoverRect.y = buttonRect.top
         break
       case 'center':
-        positionPopoverRect.y = buttonRect.top - height / 2 + buttonRect.height / 2 - finalOffset
+        positionPopoverRect.y = buttonRect.top - height / 2 + buttonRect.height / 2
         break
       case 'end':
-        positionPopoverRect.y = buttonRect.bottom - height + finalOffset
+        positionPopoverRect.y = buttonRect.bottom - height
         break
     }
   }

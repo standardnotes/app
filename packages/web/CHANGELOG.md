@@ -3,6 +3,56 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.162.9](https://github.com/standardnotes/app/compare/@standardnotes/web@3.162.8...@standardnotes/web@3.162.9) (2023-06-29)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.162.8](https://github.com/standardnotes/app/compare/@standardnotes/web@3.162.7...@standardnotes/web@3.162.8) (2023-06-27)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.162.7](https://github.com/standardnotes/app/compare/@standardnotes/web@3.162.6...@standardnotes/web@3.162.7) (2023-06-27)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.162.6](https://github.com/standardnotes/app/compare/@standardnotes/web@3.162.5...@standardnotes/web@3.162.6) (2023-06-26)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.162.5](https://github.com/standardnotes/app/compare/@standardnotes/web@3.162.4...@standardnotes/web@3.162.5) (2023-06-26)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.162.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.162.3...@standardnotes/web@3.162.4) (2023-06-26)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.162.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.162.2...@standardnotes/web@3.162.3) (2023-06-25)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.162.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.162.1...@standardnotes/web@3.162.2) (2023-06-25)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.162.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.162.0...@standardnotes/web@3.162.1) (2023-06-25)
+
+**Note:** Version bump only for package @standardnotes/web
+
+# [3.162.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.161.3...@standardnotes/web@3.162.0) (2023-06-25)
+
+### Features
+
+* Added a conflict resolution dialog and a Conflicts view for easier management of conflicts ([#2337](https://github.com/standardnotes/app/issues/2337)) ([e0e9249](https://github.com/standardnotes/app/commit/e0e92493342b18560e7e55ece22518e738824df0))
+
+## [3.161.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.161.2...@standardnotes/web@3.161.3) (2023-06-23)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.161.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.161.1...@standardnotes/web@3.161.2) (2023-06-16)
+
+**Note:** Version bump only for package @standardnotes/web
+
 ## [3.161.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.161.0...@standardnotes/web@3.161.1) (2023-06-06)
 
 **Note:** Version bump only for package @standardnotes/web

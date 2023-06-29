@@ -3,6 +3,30 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.46.4](https://github.com/standardnotes/app/compare/@standardnotes/models@1.46.3...@standardnotes/models@1.46.4) (2023-06-29)
+
+### Bug Fixes
+
+* Fixed issue where Conflicts view is shown but the list is empty ([69de0e4](https://github.com/standardnotes/app/commit/69de0e448fc8098b89fa1382c27d0d88c99b6600))
+
+## [1.46.3](https://github.com/standardnotes/app/compare/@standardnotes/models@1.46.2...@standardnotes/models@1.46.3) (2023-06-27)
+
+**Note:** Version bump only for package @standardnotes/models
+
+## [1.46.2](https://github.com/standardnotes/app/compare/@standardnotes/models@1.46.1...@standardnotes/models@1.46.2) (2023-06-25)
+
+**Note:** Version bump only for package @standardnotes/models
+
+## [1.46.1](https://github.com/standardnotes/app/compare/@standardnotes/models@1.46.0...@standardnotes/models@1.46.1) (2023-06-25)
+
+**Note:** Version bump only for package @standardnotes/models
+
+# [1.46.0](https://github.com/standardnotes/app/compare/@standardnotes/models@1.45.5...@standardnotes/models@1.46.0) (2023-06-25)
+
+### Features
+
+* Added a conflict resolution dialog and a Conflicts view for easier management of conflicts ([#2337](https://github.com/standardnotes/app/issues/2337)) ([e0e9249](https://github.com/standardnotes/app/commit/e0e92493342b18560e7e55ece22518e738824df0))
+
 ## [1.45.5](https://github.com/standardnotes/app/compare/@standardnotes/models@1.45.4...@standardnotes/models@1.45.5) (2023-05-22)
 
 **Note:** Version bump only for package @standardnotes/models

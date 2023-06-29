@@ -236,7 +236,6 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
                     <RevisionHistoryModal
                       application={application}
                       historyModalController={viewControllerManager.historyModalController}
-                      notesController={viewControllerManager.notesController}
                       selectionController={viewControllerManager.selectionController}
                       subscriptionController={viewControllerManager.subscriptionController}
                     />

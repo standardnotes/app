@@ -9,7 +9,7 @@ import { PrefDefaults } from '@/Constants/PrefDefaults'
 import { StringDeleteNote, STRING_DELETE_LOCKED_ATTEMPT, STRING_DELETE_PLACEHOLDER_ATTEMPT } from '@/Constants/Strings'
 import { log, LoggingDomain } from '@/Logging'
 import { debounce, isDesktopApplication, isMobileScreen } from '@/Utils'
-import { classNames } from '@standardnotes/utils'
+import { classNames, pluralize } from '@standardnotes/utils'
 import {
   ApplicationEvent,
   ComponentArea,
@@ -45,6 +45,10 @@ import { NoteViewController } from './Controller/NoteViewController'
 import { PlainEditor, PlainEditorInterface } from './PlainEditor/PlainEditor'
 import { EditorMargins, EditorMaxWidths } from '../EditorWidthSelectionModal/EditorWidths'
 import NoteStatusIndicator, { NoteStatus } from './NoteStatusIndicator'
+import Button from '../Button/Button'
+import ModalOverlay from '../Modal/ModalOverlay'
+import NoteConflictResolutionModal from './NoteConflictResolutionModal/NoteConflictResolutionModal'
+import Icon from '../Icon/Icon'
 
 const MinimumStatusDuration = 400
 
@@ -74,6 +78,9 @@ type State = {
   updateSavingIndicator?: boolean
   editorFeatureIdentifier?: string
   noteType?: NoteType
+
+  conflictedNotes: SNNote[]
+  showConflictResolutionModal: boolean
 }
 
 class NoteView extends AbstractComponent<NoteViewProps, State> {
@@ -84,6 +91,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
 
   private removeTrashKeyObserver?: () => void
   private removeComponentStreamObserver?: () => void
+  private removeNoteStreamObserver?: () => void
   private removeComponentManagerObserver?: () => void
   private removeInnerNoteObserver?: () => void
 
@@ -120,6 +128,8 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
       syncTakingTooLong: false,
       editorFeatureIdentifier: this.controller.item.editorIdentifier,
       noteType: this.controller.item.noteType,
+      conflictedNotes: [],
+      showConflictResolutionModal: false,
     }
 
     this.noteViewElementRef = createRef<HTMLDivElement>()
@@ -132,6 +142,9 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
 
     this.removeComponentStreamObserver?.()
     ;(this.removeComponentStreamObserver as unknown) = undefined
+
+    this.removeNoteStreamObserver?.()
+    ;(this.removeNoteStreamObserver as unknown) = undefined
 
     this.removeInnerNoteObserver?.()
     ;(this.removeInnerNoteObserver as unknown) = undefined
@@ -417,6 +430,12 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
 
       await this.reloadStackComponents()
       this.debounceReloadEditorComponent()
+    })
+
+    this.removeNoteStreamObserver = this.application.streamItems<SNNote>(ContentType.Note, async () => {
+      this.setState({
+        conflictedNotes: this.application.items.conflictsOf(this.note.uuid) as SNNote[],
+      })
     })
   }
 
@@ -776,6 +795,12 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
     this.setState({ plainEditorFocused: false })
   }
 
+  toggleConflictResolutionModal = () => {
+    this.setState((state) => ({
+      showConflictResolutionModal: !state.showConflictResolutionModal,
+    }))
+  }
+
   override render() {
     if (this.controller.dealloced) {
       return null
@@ -803,6 +828,8 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
         ? 'component'
         : 'plain'
 
+    const shouldShowConflictsButton = this.state.conflictedNotes.length > 0
+
     return (
       <div aria-label="Note" className="section editor sn-component h-full md:max-h-full" ref={this.noteViewElementRef}>
         {this.note && (
@@ -826,7 +853,12 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
             id="editor-title-bar"
             className="content-title-bar section-title-bar z-editor-title-bar w-full bg-default pt-4"
           >
-            <div className="mb-2 flex flex-wrap items-start justify-between gap-2 md:mb-0 md:flex-nowrap md:gap-4 xl:items-center">
+            <div
+              className={classNames(
+                'mb-2 flex flex-wrap justify-between gap-2 md:mb-0 md:flex-nowrap md:gap-4 xl:items-center',
+                shouldShowConflictsButton ? 'items-center' : 'items-start',
+              )}
+            >
               <div className={classNames(this.state.noteLocked && 'locked', 'flex flex-grow items-center')}>
                 <MobileItemsListButton />
                 <div className="title flex-grow overflow-auto">
@@ -850,6 +882,19 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
                   updateSavingIndicator={this.state.updateSavingIndicator}
                 />
               </div>
+              {shouldShowConflictsButton && (
+                <Button
+                  className="flex items-center"
+                  primary
+                  colorStyle="warning"
+                  small
+                  onClick={this.toggleConflictResolutionModal}
+                >
+                  <Icon type="merge" size="small" className="mr-2" />
+                  {this.state.conflictedNotes.length}{' '}
+                  {pluralize(this.state.conflictedNotes.length, 'conflict', 'conflicts')}
+                </Button>
+              )}
               {renderHeaderOptions && (
                 <div className="note-view-options-buttons flex items-center gap-3">
                   <LinkedItemsButton
@@ -979,6 +1024,14 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
             })}
           </div>
         </div>
+
+        <ModalOverlay isOpen={this.state.showConflictResolutionModal} close={this.toggleConflictResolutionModal}>
+          <NoteConflictResolutionModal
+            currentNote={this.note}
+            conflictedNotes={this.state.conflictedNotes}
+            close={this.toggleConflictResolutionModal}
+          />
+        </ModalOverlay>
       </div>
     )
   }

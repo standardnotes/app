@@ -6,12 +6,14 @@ import { ItemWithTags } from './Search/ItemWithTags'
 import { itemMatchesQuery, itemPassesFilters } from './Search/SearchUtilities'
 import { ItemFilter, ReferenceLookupCollection, SearchableDecryptedItem } from './Search/Types'
 import { FilterDisplayOptions } from './DisplayOptions'
+import { SystemViewId } from '../../Syncable/SmartView'
 
 export function computeUnifiedFilterForDisplayOptions(
   options: FilterDisplayOptions,
   collection: ReferenceLookupCollection,
+  additionalFilters: ItemFilter[] = [],
 ): ItemFilter {
-  const filters = computeFiltersForDisplayOptions(options, collection)
+  const filters = computeFiltersForDisplayOptions(options, collection).concat(additionalFilters)
 
   return (item: SearchableDecryptedItem) => {
     return itemPassesFilters(item, filters)
@@ -72,6 +74,13 @@ export function computeFiltersForDisplayOptions(
   if (options.searchQuery) {
     const query = options.searchQuery
     filters.push((item) => itemMatchesQuery(item, query, collection))
+  }
+
+  if (
+    !viewsPredicate?.keypathIncludesString('conflict_of') &&
+    !options.views?.some((v) => v.uuid === SystemViewId.TrashedNotes)
+  ) {
+    filters.push((item) => !item.conflictOf)
   }
 
   return filters
