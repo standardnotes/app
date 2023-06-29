@@ -862,7 +862,7 @@ export class ItemManager extends Services.AbstractService implements Services.It
   }
 
   public numberOfNotesWithConflicts(): number {
-    return this.collection.numberOfItemsWithConflicts()
+    return this.findItems(this.collection.uuidsOfItemsWithConflicts()).filter(Models.isNote).length
   }
 
   getNoteLinkedFiles(note: Models.SNNote): Models.FileItem[] {

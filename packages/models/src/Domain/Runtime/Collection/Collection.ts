@@ -278,7 +278,7 @@ export abstract class Collection<
     this.typedMap[element.content_type] = array
   }
 
-  public numberOfItemsWithConflicts(): number {
-    return this.conflictMap.directMapSize
+  public uuidsOfItemsWithConflicts(): string[] {
+    return this.conflictMap.getAllDirectKeys()
   }
 }

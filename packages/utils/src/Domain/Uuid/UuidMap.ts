@@ -37,6 +37,10 @@ export class UuidMap {
     return this.directMap.get(uuid) || []
   }
 
+  public getAllDirectKeys(): string[] {
+    return Array.from(this.directMap.keys())
+  }
+
   public getInverseRelationships(uuid: string): string[] {
     return this.inverseMap.get(uuid) || []
   }
