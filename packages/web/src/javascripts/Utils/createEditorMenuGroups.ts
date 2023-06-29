@@ -149,7 +149,6 @@ const createBaselineMap = (application: WebApplication): NoteTypeToEditorRowsMap
         name: SuperEditorMetadata.name,
         isEntitled: application.features.getFeatureStatus(FeatureIdentifier.SuperEditor) === FeatureStatus.Entitled,
         noteType: NoteType.Super,
-        isLabs: true,
         description: FindNativeFeature(FeatureIdentifier.SuperEditor)?.description,
       },
     ],
