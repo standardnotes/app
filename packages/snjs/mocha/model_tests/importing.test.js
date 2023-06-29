@@ -707,10 +707,9 @@ describe('importing', function () {
 
     expect(result).to.not.be.undefined
 
-    const onlyRootKeyEncryptedItemsShouldBeImported = 1
-    expect(result.affectedItems.length).to.equal(onlyRootKeyEncryptedItemsShouldBeImported)
+    expect(result.affectedItems.length).to.equal(BaseItemCounts.BackupFileRootKeyEncryptedItems)
 
-    expect(result.errorCount).to.be.eq(backupData.items.length - onlyRootKeyEncryptedItemsShouldBeImported)
+    expect(result.errorCount).to.be.eq(backupData.items.length - BaseItemCounts.BackupFileRootKeyEncryptedItems)
     expect(application.itemManager.getDisplayableNotes().length).to.equal(0)
   })
 

@@ -17,12 +17,6 @@
     Object.assign(window, SNCrypto);
     Object.assign(window, SNLibrary);
 
-    import MainRegistry from './TestRegistry/MainRegistry.js'
-
-    const InternalFeatureStatus = {
-      [InternalFeature.Vaults]: { enabled: false, exclusive: false },
-    }
-
     SNLog.onLog = (message) => {
       console.log(message);
     };
@@ -30,31 +24,6 @@
     SNLog.onError = (error) => {
       console.error(error);
     };
-
-    const loadTest = (fileName) => {
-      const script = document.createElement('script');
-      script.type = 'module';
-      script.src = fileName;
-      document.head.appendChild(script);
-    }
-
-    const loadTests = (fileNames) => {
-      fileNames.map(loadTest);
-    }
-
-    if (InternalFeatureStatus[InternalFeature.Vaults].enabled) {
-      InternalFeatureService.get().enableFeature(InternalFeature.Vaults);
-      loadTests(MainRegistry.VaultTests);
-    }
-
-    if (!InternalFeatureStatus[InternalFeature.Vaults].exclusive) {
-      loadTests(MainRegistry.BaseTests);
-    }
-
-    setTimeout(() => {
-      mocha.run()
-    }, 250);
-
 
     const urlParams = new URLSearchParams(window.location.search);
     const bail = urlParams.get('bail') === 'false' ? false : true;
@@ -68,6 +37,43 @@
     if (skipPaidFeatures) {
       mocha.grep('@paidfeature').invert();
     }
+  </script>
+
+  <script type="module">
+    import MainRegistry from './TestRegistry/MainRegistry.js'
+
+    const InternalFeatureStatus = {
+      [InternalFeature.Vaults]: { enabled: false, exclusive: false },
+    }
+
+    const loadTest = (fileName) => {
+      return new Promise((resolve) => {
+        const script = document.createElement('script');
+        script.type = 'module';
+        script.src = fileName;
+        script.async = false;
+        script.defer = false;
+        script.addEventListener('load', resolve);
+        document.head.append(script);
+      })
+    }
+
+    const loadTests = async (fileNames) => {
+      for (const fileName of fileNames) {
+        await loadTest(fileName);
+      }
+    }
+
+    if (InternalFeatureStatus[InternalFeature.Vaults].enabled) {
+      InternalFeatureService.get().enableFeature(InternalFeature.Vaults);
+      await loadTests(MainRegistry.VaultTests);
+    }
+
+    if (!InternalFeatureStatus[InternalFeature.Vaults].exclusive) {
+      await loadTests(MainRegistry.BaseTests);
+    }
+
+    mocha.run()
   </script>
 </head>
 

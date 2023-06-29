@@ -1,30 +1,35 @@
 const ExpectedItemCountsWithVaultFeatureEnabled = {
-  DefaultItems: ['ItemsKey', 'UserPreferences', 'DarkTheme'].length,
-  DefaultItemsWithAccount: ['ItemsKey', 'UserPreferences', 'DarkTheme', 'TrustedSelfContact'].length,
-  DefaultItemsWithAccountWithoutItemsKey: ['UserPreferences', 'DarkTheme', 'TrustedSelfContact'].length,
-  DefaultItemsNoAccounNoItemsKey: ['UserPreferences', 'DarkTheme'].length,
+  Items: ['ItemsKey', 'UserPreferences', 'DarkTheme'].length,
+  ItemsWithAccount: ['ItemsKey', 'UserPreferences', 'DarkTheme', 'TrustedSelfContact'].length,
+  ItemsWithAccountWithoutItemsKey: ['UserPreferences', 'DarkTheme', 'TrustedSelfContact'].length,
+  ItemsNoAccounNoItemsKey: ['UserPreferences', 'DarkTheme'].length,
+  BackupFileRootKeyEncryptedItems: ['TrustedSelfContact'].length,
 }
 
 const ExpectedItemCountsWithVaultFeatureDisabled = {
-  DefaultItems: ['ItemsKey', 'UserPreferences', 'DarkTheme'].length,
-  DefaultItemsWithAccount: ['ItemsKey', 'UserPreferences', 'DarkTheme'].length,
-  DefaultItemsWithAccountWithoutItemsKey: ['UserPreferences', 'DarkTheme'].length,
-  DefaultItemsNoAccounNoItemsKey: ['UserPreferences', 'DarkTheme'].length,
+  Items: ['ItemsKey', 'UserPreferences', 'DarkTheme'].length,
+  ItemsWithAccount: ['ItemsKey', 'UserPreferences', 'DarkTheme'].length,
+  ItemsWithAccountWithoutItemsKey: ['UserPreferences', 'DarkTheme'].length,
+  ItemsNoAccounNoItemsKey: ['UserPreferences', 'DarkTheme'].length,
+  BackupFileRootKeyEncryptedItems: [].length,
 }
 
 const isVaultsEnabled = InternalFeatureService.get().isFeatureEnabled(InternalFeature.Vaults)
 
 export const BaseItemCounts = {
   DefaultItems: isVaultsEnabled
-    ? ExpectedItemCountsWithVaultFeatureEnabled.DefaultItems
-    : ExpectedItemCountsWithVaultFeatureDisabled.DefaultItems,
+    ? ExpectedItemCountsWithVaultFeatureEnabled.Items
+    : ExpectedItemCountsWithVaultFeatureDisabled.Items,
   DefaultItemsWithAccount: isVaultsEnabled
-    ? ExpectedItemCountsWithVaultFeatureEnabled.DefaultItemsWithAccount
-    : ExpectedItemCountsWithVaultFeatureDisabled.DefaultItemsWithAccount,
+    ? ExpectedItemCountsWithVaultFeatureEnabled.ItemsWithAccount
+    : ExpectedItemCountsWithVaultFeatureDisabled.ItemsWithAccount,
   DefaultItemsWithAccountWithoutItemsKey: isVaultsEnabled
-    ? ExpectedItemCountsWithVaultFeatureEnabled.DefaultItemsWithAccountWithoutItemsKey
-    : ExpectedItemCountsWithVaultFeatureDisabled.DefaultItemsWithAccountWithoutItemsKey,
+    ? ExpectedItemCountsWithVaultFeatureEnabled.ItemsWithAccountWithoutItemsKey
+    : ExpectedItemCountsWithVaultFeatureDisabled.ItemsWithAccountWithoutItemsKey,
   DefaultItemsNoAccounNoItemsKey: isVaultsEnabled
-    ? ExpectedItemCountsWithVaultFeatureEnabled.DefaultItemsNoAccounNoItemsKey
-    : ExpectedItemCountsWithVaultFeatureDisabled.DefaultItemsNoAccounNoItemsKey,
+    ? ExpectedItemCountsWithVaultFeatureEnabled.ItemsNoAccounNoItemsKey
+    : ExpectedItemCountsWithVaultFeatureDisabled.ItemsNoAccounNoItemsKey,
+  BackupFileRootKeyEncryptedItems: isVaultsEnabled
+    ? ExpectedItemCountsWithVaultFeatureEnabled.BackupFileRootKeyEncryptedItems
+    : ExpectedItemCountsWithVaultFeatureDisabled.BackupFileRootKeyEncryptedItems,
 }
