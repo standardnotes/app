@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.169.6](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.169.5...@standardnotes/snjs@2.169.6) (2023-06-29)
+
+### Bug Fixes
+
+* Fixed issue where Conflicts view is shown but the list is empty ([69de0e4](https://github.com/standardnotes/app/commit/69de0e448fc8098b89fa1382c27d0d88c99b6600))
+
 ## [2.169.5](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.169.4...@standardnotes/snjs@2.169.5) (2023-06-27)
 
 **Note:** Version bump only for package @standardnotes/snjs
