@@ -16,15 +16,11 @@ const ContactItem = ({ contact }: Props) => {
   const [isContactModalOpen, setIsContactModalOpen] = useState(false)
   const closeContactModal = () => setIsContactModalOpen(false)
 
-  const deleteContact = useCallback(async () => {
-    void application.contacts?.deleteContact(contact)
-  }, [application.contacts, contact])
-
-  if (!application.contacts) {
-    return null
-  }
-
   const collaborationID = application.contacts.getCollaborationIDForTrustedContact(contact)
+
+  const deleteContact = useCallback(async () => {
+    void application.contacts.deleteContact(contact)
+  }, [application.contacts, contact])
 
   return (
     <>

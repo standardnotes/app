@@ -4,7 +4,7 @@ import { WebApplication } from '@/Application/WebApplication'
 import { PackageProvider } from './Panes/General/Advanced/Packages/Provider/PackageProvider'
 import { securityPrefsHasBubble } from './Panes/Security/securityPrefsHasBubble'
 import { PreferenceId } from '@standardnotes/ui-services'
-import { FeatureTrunkName, featureTrunkEnabled } from '@/WebFeatureTrunk'
+import { FeatureTrunkName, featureTrunkEnabled } from '@/FeatureTrunk'
 
 interface PreferencesMenuItem {
   readonly id: PreferenceId

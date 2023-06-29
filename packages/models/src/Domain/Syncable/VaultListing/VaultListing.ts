@@ -1,7 +1,9 @@
 import { ConflictStrategy, DecryptedItem } from '../../Abstract/Item'
 import { DecryptedPayloadInterface } from '../../Abstract/Payload'
 import { HistoryEntryInterface } from '../../Runtime/History'
-import { KeySystemRootKeyParamsInterface } from '../../Local/KeyParams/KeySystemRootKeyParamsInterface'
+import {
+  KeySystemRootKeyParamsInterface,
+} from '../../Local/KeyParams/KeySystemRootKeyParamsInterface'
 import { KeySystemRootKeyPasswordType } from '../../Local/KeyParams/KeySystemRootKeyPasswordType'
 import { SharedVaultListingInterface, VaultListingInterface } from './VaultListingInterface'
 import { VaultListingContent } from './VaultListingContent'

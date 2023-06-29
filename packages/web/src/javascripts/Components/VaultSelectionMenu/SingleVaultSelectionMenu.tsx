@@ -8,18 +8,18 @@ import Icon from '../Icon/Icon'
 
 const SingleVaultSelectionMenu: FunctionComponent = () => {
   const application = useApplication()
-  const vaults = application.vaults?.getVaults() ?? []
+  const vaults = application.vaults.getVaults()
 
   const isVaultVisible = useCallback(
     (vault: VaultListingInterface) => {
-      return application.vaultDisplayService?.isVaultExclusivelyShown(vault) ?? false
+      return application.vaultDisplayService.isVaultExclusivelyShown(vault)
     },
     [application],
   )
 
   const selectVault = useCallback(
     (vault: VaultListingInterface) => {
-      application.vaultDisplayService?.showOnlyVault(vault)
+      application.vaultDisplayService.showOnlyVault(vault)
     },
     [application],
   )
@@ -30,7 +30,7 @@ const SingleVaultSelectionMenu: FunctionComponent = () => {
         <MenuRadioButtonItem key={vault.uuid} checked={isVaultVisible(vault)} onClick={() => selectVault(vault)}>
           <div className="flex w-full items-center gap-1">
             {vault.name}
-            {application.vaults?.isVaultLocked(vault) && <Icon className="ml-1" type="lock" size={'small'} />}
+            {application.vaults.isVaultLocked(vault) && <Icon className="ml-1" type="lock" size={'small'} />}
           </div>
         </MenuRadioButtonItem>
       ))}

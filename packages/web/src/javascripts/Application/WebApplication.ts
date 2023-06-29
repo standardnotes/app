@@ -52,7 +52,6 @@ import { ItemGroupController } from '@/Components/NoteView/Controller/ItemGroupC
 import { VisibilityObserver } from './VisibilityObserver'
 import { MomentsService } from '@/Controllers/Moments/MomentsService'
 import { purchaseMockSubscription } from '@/Utils/Dev/PurchaseMockSubscription'
-import { FeatureTrunkName, featureTrunkEnabled } from '@/WebFeatureTrunk'
 
 export type WebEventObserver = (event: WebAppEvent, data?: unknown) => void
 
@@ -118,10 +117,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
       this.webServices.viewControllerManager.filesController,
       this.internalEventBus,
     )
-
-    if (featureTrunkEnabled(FeatureTrunkName.Vaults)) {
-      this.webServices.vaultDisplayService = new VaultDisplayService(this, this.internalEventBus)
-    }
+    this.webServices.vaultDisplayService = new VaultDisplayService(this, this.internalEventBus)
 
     if (this.isNativeMobileWeb()) {
       this.mobileWebReceiver = new MobileWebReceiver(this)
@@ -202,7 +198,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     this.notifyWebEvent(WebAppEvent.PanelResized, data)
   }
 
-  public get vaultDisplayService(): VaultDisplayServiceInterface | undefined {
+  public get vaultDisplayService(): VaultDisplayServiceInterface {
     return this.webServices.vaultDisplayService
   }
 

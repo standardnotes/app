@@ -22,16 +22,8 @@ const InviteItem = ({ invite }: Props) => {
   }, [])
 
   const acceptInvite = useCallback(async () => {
-    if (!application.sharedVaults) {
-      return
-    }
-
     await application.sharedVaults.acceptPendingSharedVaultInvite(invite)
   }, [application.sharedVaults, invite])
-
-  if (!application.contacts) {
-    return null
-  }
 
   const closeAddContactModal = () => setIsAddContactModalOpen(false)
   const collaborationId = application.contacts.getCollaborationIDFromInvite(invite.invite)

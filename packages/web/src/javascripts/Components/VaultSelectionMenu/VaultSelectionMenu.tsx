@@ -17,14 +17,14 @@ const VaultSelectionMenu: FunctionComponent<MenuProps> = () => {
   const application = useApplication()
 
   const [mode, setMode] = useState<SettingsMode>(
-    application.vaultDisplayService?.isInExclusiveDisplayMode() ? 'single' : 'many',
+    application.vaultDisplayService.isInExclusiveDisplayMode() ? 'single' : 'many',
   )
 
   const changeSelectionMode = (mode: SettingsMode) => {
     setMode(mode)
 
     if (mode === 'many') {
-      if (application.vaultDisplayService?.exclusivelyShownVault) {
+      if (application.vaultDisplayService.exclusivelyShownVault) {
         application.vaultDisplayService.changeToMultipleVaultDisplayMode()
       }
     }

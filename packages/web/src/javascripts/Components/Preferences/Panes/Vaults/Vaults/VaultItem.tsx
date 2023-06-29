@@ -20,7 +20,7 @@ const VaultItem = ({ vault }: Props) => {
   const [isVaultModalOpen, setIsVaultModalOpen] = useState(false)
   const closeVaultModal = () => setIsVaultModalOpen(false)
 
-  const isAdmin = !vault.isSharedVaultListing() ? true : application.sharedVaults?.isCurrentUserSharedVaultAdmin(vault)
+  const isAdmin = !vault.isSharedVaultListing() ? true : application.sharedVaults.isCurrentUserSharedVaultAdmin(vault)
 
   const deleteVault = useCallback(async () => {
     const confirm = await application.alerts.confirm(
@@ -34,12 +34,12 @@ const VaultItem = ({ vault }: Props) => {
     }
 
     if (vault.isSharedVaultListing()) {
-      const result = await application.sharedVaults?.deleteSharedVault(vault)
+      const result = await application.sharedVaults.deleteSharedVault(vault)
       if (isClientDisplayableError(result)) {
         void application.alerts.showErrorAlert(result)
       }
     } else {
-      const success = await application.vaults?.deleteVault(vault)
+      const success = await application.vaults.deleteVault(vault)
       if (!success) {
         void application.alerts.alert('Unable to delete vault. Please try again.')
       }
@@ -61,22 +61,21 @@ const VaultItem = ({ vault }: Props) => {
       return
     }
 
-    const success = await application.sharedVaults?.leaveSharedVault(vault)
+    const success = await application.sharedVaults.leaveSharedVault(vault)
     if (!success) {
       void application.alerts.alert('Unable to leave vault. Please try again.')
     }
   }, [application.alerts, application.sharedVaults, vault])
 
   const convertToSharedVault = useCallback(async () => {
-    await application.sharedVaults?.convertVaultToSharedVault(vault)
+    await application.sharedVaults.convertVaultToSharedVault(vault)
   }, [application.sharedVaults, vault])
 
   const ensureVaultIsUnlocked = useCallback(async () => {
-    if (!application.vaults?.isVaultLocked(vault)) {
+    if (!application.vaults.isVaultLocked(vault)) {
       return true
     }
-    /** @FeatureTrunk - Vaults */
-    const unlocked = await application.vaultDisplayService?.unlockVault(vault)
+    const unlocked = await application.vaultDisplayService.unlockVault(vault)
     return unlocked
   }, [application.vaultDisplayService, application.vaults, vault])
 

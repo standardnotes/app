@@ -15,7 +15,7 @@ export interface KeySystemRootKeyInterface extends DecryptedItemInterface<KeySys
   /**
    * A token is passed to all items keys created while this root key was active.
    * When determining which items key a client should use to encrypt new items or new changes,
-   * it should look for items keys which have the current root key token. This prevents
+   * it should look for items keys which have the current root key itemsKeyToken. This prevents
    * the server from dictating which items key a client should use, and also prevents a server from withholding
    * items keys from sync results, which would otherwise compel a client to choose between its available items keys,
    * which may be old or rotated.
@@ -28,9 +28,9 @@ export interface KeySystemRootKeyInterface extends DecryptedItemInterface<KeySys
   get itemsKey(): string
 
   /**
-   * Key system root keys pertain to a key system, but they are not actually encrypted inside a key system, but rather
-   * saved as a normal item in the user's account. An item's key_system_identifier tells the cryptographic system which
-   * keys to use to encrypt, but a key system rootkey's systemIdentifier is just a reference to that identifier that doesn't
+   * Vault key copies pertain to a vault system, but they are not actually encrypted inside a vault system, but rather
+   * saved as a normal item in the user's account. An item's vauly_system_identifier tells the cryptographic system which
+   * keys to use to encrypt, but a vaultCopy's keySystemIdentifier is just a reference to that identifier that doesn't
    * bind the item to a specific vault system's cryptographic keys.
    */
   get key_system_identifier(): undefined

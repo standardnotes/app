@@ -33,40 +33,31 @@ const Vaults = () => {
   const [isVaultModalOpen, setIsVaultModalOpen] = useState(false)
   const closeVaultModal = () => setIsVaultModalOpen(false)
 
+  const vaultService = application.vaults
+  const sharedVaultService = application.sharedVaults
+  const contactService = application.contacts
+
   const updateVaults = useCallback(async () => {
-    if (!application.vaults) {
-      return
-    }
-    setVaults(application.vaults.getVaults())
-  }, [application.vaults])
+    setVaults(vaultService.getVaults())
+  }, [vaultService])
 
   const fetchInvites = useCallback(async () => {
-    if (!application.sharedVaults) {
-      return
-    }
-
-    await application.sharedVaults.downloadInboundInvites()
-    const invites = application.sharedVaults.getCachedPendingInviteRecords()
+    await sharedVaultService.downloadInboundInvites()
+    const invites = sharedVaultService.getCachedPendingInviteRecords()
     setInvites(invites)
-  }, [application.sharedVaults])
+  }, [sharedVaultService])
 
   const updateContacts = useCallback(async () => {
-    if (!application.contacts) {
-      return
-    }
-    setContacts(application.contacts.getAllContacts())
-  }, [application.contacts])
+    setContacts(contactService.getAllContacts())
+  }, [contactService])
 
   useEffect(() => {
-    if (!application.sharedVaults) {
-      return
-    }
     return application.sharedVaults.addEventObserver((event) => {
       if (event === SharedVaultServiceEvent.SharedVaultStatusChanged) {
         void fetchInvites()
       }
     })
-  }, [application.sharedVaults, fetchInvites])
+  })
 
   useEffect(() => {
     return application.streamItems([ContentType.VaultListing, ContentType.TrustedContact], () => {
@@ -85,22 +76,18 @@ const Vaults = () => {
   }, [])
 
   useEffect(() => {
-    return application.contacts?.addEventObserver((event) => {
+    return contactService.addEventObserver((event) => {
       if (event === ContactServiceEvent.ContactsChanged) {
         void updateContacts()
       }
     })
-  }, [application.contacts, updateContacts])
+  }, [contactService, updateContacts])
 
   useEffect(() => {
     void updateVaults()
     void fetchInvites()
     void updateContacts()
   }, [updateContacts, updateVaults, fetchInvites])
-
-  if (!application.contacts) {
-    return null
-  }
 
   return (
     <>
@@ -155,10 +142,10 @@ const Vaults = () => {
         <PreferencesSegment>
           <Title>CollaborationID</Title>
           <Subtitle>Share your CollaborationID with collaborators to join their vaults.</Subtitle>
-          {application.contacts.isCollaborationEnabled() ? (
+          {contactService.isCollaborationEnabled() ? (
             <div className="mt-2.5 flex flex-row">
               <code>
-                <pre>{application.contacts.getCollaborationID()}</pre>
+                <pre>{contactService.getCollaborationID()}</pre>
               </code>
             </div>
           ) : (
@@ -166,7 +153,7 @@ const Vaults = () => {
               <Button
                 label="Enable Vault Sharing"
                 className={'mr-3 text-xs'}
-                onClick={() => application.contacts?.enableCollaboration()}
+                onClick={() => contactService.enableCollaboration()}
               />
             </div>
           )}

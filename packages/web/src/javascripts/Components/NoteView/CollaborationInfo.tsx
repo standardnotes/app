@@ -2,7 +2,7 @@ import { FunctionComponent } from 'react'
 import Icon from '../Icon/Icon'
 import { useApplication } from '../ApplicationProvider'
 import { DecryptedItemInterface } from '@standardnotes/snjs'
-import { FeatureTrunkName, featureTrunkEnabled } from '@/WebFeatureTrunk'
+import { FeatureTrunkName, featureTrunkEnabled } from '@/FeatureTrunk'
 
 type Props = {
   item: DecryptedItemInterface
@@ -16,10 +16,6 @@ const CollaborationInfoHUD: FunctionComponent<Props> = ({ item }) => {
   }
 
   if (application.items.isTemplateItem(item)) {
-    return null
-  }
-
-  if (!application.vaults || !application.sharedVaults) {
     return null
   }
 

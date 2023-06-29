@@ -12,7 +12,6 @@ import {
   InternalEventInterface,
   StorageKey,
   VaultServiceEvent,
-  VaultServiceInterface,
 } from '@standardnotes/services'
 import { VaultDisplayOptions, VaultDisplayOptionsPersistable, VaultListingInterface } from '@standardnotes/models'
 import { VaultDisplayServiceEvent } from './VaultDisplayServiceEvent'
@@ -29,17 +28,8 @@ export class VaultDisplayService
 
   public exclusivelyShownVault: VaultListingInterface | undefined = undefined
 
-  private vaults: VaultServiceInterface
-
   constructor(application: WebApplicationInterface, internalEventBus: InternalEventBusInterface) {
-    /** @FeatureTrunk - Vaults */
-    if (!application.vaults) {
-      throw new Error('VaultDisplayService requires VaultService')
-    }
-
     super(application, internalEventBus)
-
-    this.vaults = application.vaults
 
     this.options = new VaultDisplayOptions({ exclude: [], locked: [] })
 
@@ -72,7 +62,7 @@ export class VaultDisplayService
   }
 
   private handleVaultLockingStatusChanged(): void {
-    const lockedVaults = this.vaults.getLockedvaults()
+    const lockedVaults = this.application.vaults.getLockedvaults()
 
     const options = this.options.newOptionsByIntakingLockedVaults(lockedVaults)
     this.setVaultSelectionOptions(options)
@@ -99,8 +89,8 @@ export class VaultDisplayService
   }
 
   changeToMultipleVaultDisplayMode(): void {
-    const vaults = this.vaults.getVaults()
-    const lockedVaults = this.vaults.getLockedvaults()
+    const vaults = this.application.vaults.getVaults()
+    const lockedVaults = this.application.vaults.getLockedvaults()
 
     const newOptions = new VaultDisplayOptions({
       exclude: vaults
@@ -113,26 +103,26 @@ export class VaultDisplayService
   }
 
   hideVault = (vault: VaultListingInterface) => {
-    const lockedVaults = this.vaults.getLockedvaults()
+    const lockedVaults = this.application.vaults.getLockedvaults()
     const newOptions = this.options.newOptionsByExcludingVault(vault, lockedVaults)
     this.setVaultSelectionOptions(newOptions)
   }
 
   unhideVault = async (vault: VaultListingInterface) => {
-    if (this.vaults.isVaultLocked(vault)) {
+    if (this.application.vaults.isVaultLocked(vault)) {
       const unlocked = await this.unlockVault(vault)
       if (!unlocked) {
         return
       }
     }
 
-    const lockedVaults = this.vaults.getLockedvaults()
+    const lockedVaults = this.application.vaults.getLockedvaults()
     const newOptions = this.options.newOptionsByUnexcludingVault(vault, lockedVaults)
     this.setVaultSelectionOptions(newOptions)
   }
 
   showOnlyVault = async (vault: VaultListingInterface) => {
-    if (this.vaults.isVaultLocked(vault)) {
+    if (this.application.vaults.isVaultLocked(vault)) {
       const unlocked = await this.unlockVault(vault)
       if (!unlocked) {
         return
@@ -144,7 +134,7 @@ export class VaultDisplayService
   }
 
   async unlockVault(vault: VaultListingInterface): Promise<boolean> {
-    if (!this.vaults.isVaultLocked(vault)) {
+    if (!this.application.vaults.isVaultLocked(vault)) {
       throw new Error('Attempting to unlock a vault that is not locked.')
     }
 
@@ -171,7 +161,7 @@ export class VaultDisplayService
 
           const password = value.value as string
 
-          const unlocked = await this.vaults.unlockNonPersistentVault(vault, password)
+          const unlocked = await this.application.vaults.unlockNonPersistentVault(vault, password)
           if (!unlocked) {
             this.application.challenges.setValidationStatusForChallenge(challenge, value, false)
             resolve(false)
@@ -191,7 +181,7 @@ export class VaultDisplayService
     this.options = options
 
     if (this.isInExclusiveDisplayMode()) {
-      this.exclusivelyShownVault = this.vaults.getVault({
+      this.exclusivelyShownVault = this.application.vaults.getVault({
         keySystemIdentifier: this.options.getExclusivelyShownVault(),
       })
     } else {

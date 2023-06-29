@@ -8,11 +8,11 @@ import { observer } from 'mobx-react-lite'
 
 const ManyVaultSelectionMenu: FunctionComponent = () => {
   const application = useApplication()
-  const vaults = application.vaults?.getVaults() ?? []
+  const vaults = application.vaults.getVaults()
 
   const isVaultVisible = useCallback(
     (vault: VaultListingInterface) => {
-      return !application.vaultDisplayService?.isVaultDisabledOrLocked(vault)
+      return !application.vaultDisplayService.isVaultDisabledOrLocked(vault)
     },
     [application],
   )
@@ -20,9 +20,9 @@ const ManyVaultSelectionMenu: FunctionComponent = () => {
   const toggleVault = useCallback(
     (vault: VaultListingInterface) => {
       if (isVaultVisible(vault)) {
-        application.vaultDisplayService?.hideVault(vault)
+        application.vaultDisplayService.hideVault(vault)
       } else {
-        application.vaultDisplayService?.unhideVault(vault)
+        application.vaultDisplayService.unhideVault(vault)
       }
     },
     [isVaultVisible, application],
@@ -41,7 +41,7 @@ const ManyVaultSelectionMenu: FunctionComponent = () => {
           <Icon type="safe-square" className="mr-2 text-neutral" />
           <div className="flex w-full items-center gap-1">
             {vault.name}
-            {application.vaults?.isVaultLocked(vault) && <Icon className="ml-1" type="lock" size={'small'} />}
+            {application.vaults.isVaultLocked(vault) && <Icon className="ml-1" type="lock" size={'small'} />}
           </div>
         </MenuSwitchButtonItem>
       ))}

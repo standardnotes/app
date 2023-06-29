@@ -17,9 +17,6 @@ export const VaultModalInvites = ({
 
   const deleteInvite = useCallback(
     async (invite: SharedVaultInviteServerHash) => {
-      if (!application.sharedVaults) {
-        return
-      }
       await application.sharedVaults.deleteInvite(invite)
       onChange()
     },
@@ -30,7 +27,7 @@ export const VaultModalInvites = ({
     <div className="mb-3">
       <div className="mb-3 text-lg">Pending Invites</div>
       {invites.map((invite) => {
-        const contact = application.contacts?.findTrustedContactForInvite(invite)
+        const contact = application.contacts.findTrustedContactForInvite(invite)
 
         return (
           <div className="bg-gray-100 flex flex-row gap-3.5 rounded-lg py-2.5 px-3.5 shadow-md">

@@ -19,5 +19,5 @@ export type WebServices = {
   keyboardService: KeyboardService
   changelogService: ChangelogServiceInterface
   momentsService: MomentsService
-  vaultDisplayService: VaultDisplayServiceInterface | undefined
+  vaultDisplayService: VaultDisplayServiceInterface
 }
