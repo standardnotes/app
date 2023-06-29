@@ -1420,6 +1420,6 @@ export class ItemManager
   }
 
   public numberOfNotesWithConflicts(): number {
-    return this.collection.numberOfItemsWithConflicts()
+    return this.findItems(this.collection.uuidsOfItemsWithConflicts()).filter(Models.isNote).length
   }
 }
