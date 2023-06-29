@@ -1,13 +1,11 @@
 import { isDev } from '@/Utils'
 
 export enum FeatureTrunkName {
-  Super,
-  ImportTools,
+  Vaults,
 }
 
 const FeatureTrunkStatus: Record<FeatureTrunkName, boolean> = {
-  [FeatureTrunkName.Super]: isDev && true,
-  [FeatureTrunkName.ImportTools]: isDev && true,
+  [FeatureTrunkName.Vaults]: isDev && false,
 }
 
 export function featureTrunkEnabled(trunk: FeatureTrunkName): boolean {

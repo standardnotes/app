@@ -10,6 +10,10 @@ type Props = {
 
 const ListItemVaultInfo: FunctionComponent<Props> = ({ item }) => {
   const application = useApplication()
+  if (application.items.isTemplateItem(item)) {
+    return null
+  }
+
   const vault = application.vaults.getItemVault(item)
   if (!vault) {
     return null

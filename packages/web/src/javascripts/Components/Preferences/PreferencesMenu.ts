@@ -4,6 +4,7 @@ import { WebApplication } from '@/Application/WebApplication'
 import { PackageProvider } from './Panes/General/Advanced/Packages/Provider/PackageProvider'
 import { securityPrefsHasBubble } from './Panes/Security/securityPrefsHasBubble'
 import { PreferenceId } from '@standardnotes/ui-services'
+import { FeatureTrunkName, featureTrunkEnabled } from '@/FeatureTrunk'
 
 interface PreferencesMenuItem {
   readonly id: PreferenceId
@@ -24,7 +25,6 @@ const PREFERENCES_MENU_ITEMS: PreferencesMenuItem[] = [
   { id: 'account', label: 'Account', icon: 'user' },
   { id: 'general', label: 'General', icon: 'settings' },
   { id: 'security', label: 'Security', icon: 'security' },
-  { id: 'vaults', label: 'Vaults', icon: 'safe-square' },
   { id: 'backups', label: 'Backups', icon: 'restore' },
   { id: 'appearance', label: 'Appearance', icon: 'themes' },
   { id: 'listed', label: 'Listed', icon: 'listed' },
@@ -39,12 +39,16 @@ const READY_PREFERENCES_MENU_ITEMS: PreferencesMenuItem[] = [
   { id: 'account', label: 'Account', icon: 'user' },
   { id: 'general', label: 'General', icon: 'settings' },
   { id: 'security', label: 'Security', icon: 'security' },
-  { id: 'vaults', label: 'Vaults', icon: 'safe-square' },
   { id: 'backups', label: 'Backups', icon: 'restore' },
   { id: 'appearance', label: 'Appearance', icon: 'themes' },
   { id: 'listed', label: 'Listed', icon: 'listed' },
   { id: 'help-feedback', label: 'Help & feedback', icon: 'help' },
 ]
+
+if (featureTrunkEnabled(FeatureTrunkName.Vaults)) {
+  PREFERENCES_MENU_ITEMS.splice(3, 0, { id: 'vaults', label: 'Vaults', icon: 'safe-square' })
+  READY_PREFERENCES_MENU_ITEMS.splice(3, 0, { id: 'vaults', label: 'Vaults', icon: 'safe-square' })
+}
 
 export class PreferencesMenu {
   private _selectedPane: PreferenceId = 'vaults'

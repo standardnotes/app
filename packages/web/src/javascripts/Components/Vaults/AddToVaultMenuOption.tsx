@@ -7,6 +7,7 @@ import { classNames, DecryptedItemInterface, VaultListingInterface } from '@stan
 import { useApplication } from '../ApplicationProvider'
 import MenuItem from '../Menu/MenuItem'
 import Menu from '../Menu/Menu'
+import { FeatureTrunkName, featureTrunkEnabled } from '@/FeatureTrunk'
 
 type Props = {
   iconClassName: string
@@ -66,6 +67,10 @@ const AddToVaultMenuOption: FunctionComponent<Props> = ({ iconClassName, items }
   const doSomeItemsBelongToVault = items.some((item) => application.vaults.isItemInVault(item))
 
   const singleItemVault = items.length === 1 ? application.vaults.getItemVault(items[0]) : undefined
+
+  if (!featureTrunkEnabled(FeatureTrunkName.Vaults)) {
+    return null
+  }
 
   return (
     <div ref={menuContainerRef}>
