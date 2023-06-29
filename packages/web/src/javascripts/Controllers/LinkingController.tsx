@@ -192,7 +192,7 @@ export class LinkingController extends AbstractViewController {
     const linkNoteAndFile = async (note: SNNote, file: FileItem) => {
       const updatedFile = await this.application.mutator.associateFileWithNote(file, note)
 
-      if (updatedFile) {
+      if (updatedFile && this.application.vaults) {
         const noteVault = this.application.vaults.getItemVault(note)
         const fileVault = this.application.vaults.getItemVault(updatedFile)
         if (noteVault && !fileVault) {
@@ -278,7 +278,7 @@ export class LinkingController extends AbstractViewController {
   createAndAddNewTag = async (title: string): Promise<SNTag> => {
     await this.ensureActiveItemIsInserted()
 
-    const vault = this.application.vaultDisplayService.exclusivelyShownVault
+    const vault = this.application.vaultDisplayService?.exclusivelyShownVault
 
     const newTag = await this.application.mutator.findOrCreateTag(title, vault)
 

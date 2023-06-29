@@ -379,7 +379,7 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
 
       const operation = await this.application.files.beginNewFileUpload(
         fileToUpload.size,
-        this.application.vaultDisplayService.exclusivelyShownVault,
+        this.application.vaultDisplayService?.exclusivelyShownVault,
       )
 
       if (operation instanceof ClientDisplayableError) {

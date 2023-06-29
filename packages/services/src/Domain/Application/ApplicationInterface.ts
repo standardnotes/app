@@ -91,7 +91,7 @@ export interface ApplicationInterface {
   get subscriptions(): SubscriptionClientInterface
   get fileBackups(): BackupServiceInterface | undefined
   get sessions(): SessionsClientInterface
-  get vaults(): VaultServiceInterface
+  get vaults(): VaultServiceInterface | undefined
   get challenges(): ChallengeServiceInterface
   get alerts(): AlertService
   readonly identifier: ApplicationIdentifier

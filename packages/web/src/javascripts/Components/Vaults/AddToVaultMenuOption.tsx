@@ -7,7 +7,7 @@ import { classNames, DecryptedItemInterface, VaultListingInterface } from '@stan
 import { useApplication } from '../ApplicationProvider'
 import MenuItem from '../Menu/MenuItem'
 import Menu from '../Menu/Menu'
-import { FeatureTrunkName, featureTrunkEnabled } from '@/FeatureTrunk'
+import { FeatureTrunkName, featureTrunkEnabled } from '@/WebFeatureTrunk'
 
 type Props = {
   iconClassName: string
@@ -19,7 +19,7 @@ const AddToVaultMenuOption: FunctionComponent<Props> = ({ iconClassName, items }
   const menuContainerRef = useRef<HTMLDivElement>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
 
-  const vaults = application.vaults.getVaults()
+  const vaults = application.vaults?.getVaults() ?? []
 
   const [isSubMenuOpen, setIsSubMenuOpen] = useState(false)
 
@@ -29,8 +29,12 @@ const AddToVaultMenuOption: FunctionComponent<Props> = ({ iconClassName, items }
 
   const addItemsToVault = useCallback(
     async (vault: VaultListingInterface) => {
+      if (!application.vaults) {
+        return
+      }
       if (application.vaults.isVaultLocked(vault)) {
-        const unlocked = await application.vaultDisplayService.unlockVault(vault)
+        /** @FeatureTrunk - Vaults */
+        const unlocked = await application.vaultDisplayService?.unlockVault(vault)
         if (!unlocked) {
           return
         }
@@ -44,6 +48,9 @@ const AddToVaultMenuOption: FunctionComponent<Props> = ({ iconClassName, items }
   )
 
   const removeItemsFromVault = useCallback(async () => {
+    if (!application.vaults) {
+      return
+    }
     for (const item of items) {
       const vault = application.vaults.getItemVault(item)
       if (!vault) {
@@ -51,7 +58,8 @@ const AddToVaultMenuOption: FunctionComponent<Props> = ({ iconClassName, items }
       }
 
       if (application.vaults.isVaultLocked(vault)) {
-        const unlocked = await application.vaultDisplayService.unlockVault(vault)
+        /** @FeatureTrunk - Vaults */
+        const unlocked = await application.vaultDisplayService?.unlockVault(vault)
         if (!unlocked) {
           return
         }
@@ -60,17 +68,21 @@ const AddToVaultMenuOption: FunctionComponent<Props> = ({ iconClassName, items }
     }
   }, [application.vaultDisplayService, application.vaults, items])
 
+  if (!featureTrunkEnabled(FeatureTrunkName.Vaults)) {
+    return null
+  }
+
+  if (!application.vaults) {
+    return null
+  }
+
   const doesVaultContainItems = (vault: VaultListingInterface) => {
     return items.every((item) => item.key_system_identifier === vault.systemIdentifier)
   }
 
-  const doSomeItemsBelongToVault = items.some((item) => application.vaults.isItemInVault(item))
+  const doSomeItemsBelongToVault = items.some((item) => application.vaults?.isItemInVault(item))
 
   const singleItemVault = items.length === 1 ? application.vaults.getItemVault(items[0]) : undefined
-
-  if (!featureTrunkEnabled(FeatureTrunkName.Vaults)) {
-    return null
-  }
 
   return (
     <div ref={menuContainerRef}>
@@ -140,7 +152,7 @@ const AddToVaultMenuOption: FunctionComponent<Props> = ({ iconClassName, items }
                   />
                   <div className="flex w-full items-center">
                     {vault.name}
-                    {application.vaults.isVaultLocked(vault) && <Icon className="ml-1" type="lock" size={'small'} />}
+                    {application.vaults?.isVaultLocked(vault) && <Icon className="ml-1" type="lock" size={'small'} />}
                   </div>
                 </span>
               </MenuItem>

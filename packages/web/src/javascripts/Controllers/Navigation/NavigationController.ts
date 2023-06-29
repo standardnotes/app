@@ -258,7 +258,7 @@ export class NavigationController
 
     const createdTag = await this.application.mutator.createTagOrSmartView<SNTag>(
       title,
-      this.application.vaultDisplayService.exclusivelyShownVault,
+      this.application.vaultDisplayService?.exclusivelyShownVault,
     )
 
     const futureSiblings = this.application.items.getTagChildren(parent)
@@ -667,7 +667,7 @@ export class NavigationController
 
       const insertedTag = await this.application.mutator.createTagOrSmartView<SNTag>(
         newTitle,
-        this.application.vaultDisplayService.exclusivelyShownVault,
+        this.application.vaultDisplayService?.exclusivelyShownVault,
       )
       this.application.sync.sync().catch(console.error)
       runInAction(() => {

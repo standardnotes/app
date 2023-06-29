@@ -102,6 +102,7 @@ import { GetRevision } from '@Lib/Domain/UseCase/GetRevision/GetRevision'
 import { DeleteRevision } from '@Lib/Domain/UseCase/DeleteRevision/DeleteRevision'
 import { GetAuthenticatorAuthenticationResponse } from '@Lib/Domain/UseCase/GetAuthenticatorAuthenticationResponse/GetAuthenticatorAuthenticationResponse'
 import { GetAuthenticatorAuthenticationOptions } from '@Lib/Domain/UseCase/GetAuthenticatorAuthenticationOptions/GetAuthenticatorAuthenticationOptions'
+import { featureTrunkEnabled, FeatureTrunkName } from '@Lib/SnjsFeatureTrunk'
 
 /** How often to automatically sync, in milliseconds */
 const DEFAULT_AUTO_SYNC_INTERVAL = 30_000
@@ -381,15 +382,15 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return this.challengeService
   }
 
-  public get vaults(): ExternalServices.VaultServiceInterface {
+  public get vaults(): ExternalServices.VaultServiceInterface | undefined {
     return this.vaultService
   }
 
-  public get contacts(): ExternalServices.ContactServiceInterface {
+  public get contacts(): ExternalServices.ContactServiceInterface | undefined {
     return this.contactService
   }
 
-  public get sharedVaults(): ExternalServices.SharedVaultServiceInterface {
+  public get sharedVaults(): ExternalServices.SharedVaultServiceInterface | undefined {
     return this.sharedVaultService
   }
 
@@ -1277,10 +1278,13 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.createRevisionManager()
 
     this.createUseCases()
-    this.createContactService()
-    this.createVaultService()
-    this.createSharedVaultService()
-    this.createAsymmetricMessageService()
+
+    if (featureTrunkEnabled(FeatureTrunkName.Vaults)) {
+      this.createContactService()
+      this.createVaultService()
+      this.createSharedVaultService()
+      this.createAsymmetricMessageService()
+    }
   }
 
   private clearServices() {
@@ -1373,7 +1377,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.asymmetricMessageService = new ExternalServices.AsymmetricMessageService(
       this.httpService,
       this.protocolService,
-      this.contacts,
+      this.contactService,
       this.itemManager,
       this.mutator,
       this.syncService,
@@ -1408,7 +1412,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       this.sessions,
       this.contactService,
       this.files,
-      this.vaults,
+      this.vaultService,
       this.storage,
       this.internalEventBus,
     )

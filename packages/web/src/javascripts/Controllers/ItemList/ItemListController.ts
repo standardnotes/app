@@ -636,7 +636,7 @@ export class ItemListController extends AbstractViewController implements Intern
         tag: activeRegularTagUuid,
         createdAt,
         autofocusBehavior,
-        vault: this.application.vaultDisplayService.exclusivelyShownVault,
+        vault: this.application.vaultDisplayService?.exclusivelyShownVault,
       },
     })
   }

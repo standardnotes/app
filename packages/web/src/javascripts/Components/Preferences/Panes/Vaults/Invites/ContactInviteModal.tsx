@@ -16,6 +16,9 @@ const ContactInviteModal: FunctionComponent<Props> = ({ vault, onCloseDialog }) 
 
   useEffect(() => {
     const loadContacts = async () => {
+      if (!application.sharedVaults) {
+        return
+      }
       const contacts = await application.sharedVaults.getInvitableContactsForSharedVault(vault)
       setContacts(contacts)
     }
@@ -27,6 +30,9 @@ const ContactInviteModal: FunctionComponent<Props> = ({ vault, onCloseDialog }) 
   }, [onCloseDialog])
 
   const inviteSelectedContacts = useCallback(async () => {
+    if (!application.sharedVaults) {
+      return
+    }
     for (const contact of selectedContacts) {
       await application.sharedVaults.inviteContactToSharedVault(vault, contact, SharedVaultPermission.Write)
     }

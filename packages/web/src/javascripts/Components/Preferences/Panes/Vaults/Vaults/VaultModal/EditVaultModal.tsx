@@ -52,6 +52,10 @@ const EditVaultModal: FunctionComponent<Props> = ({ onCloseDialog, existingVault
       return
     }
 
+    if (!application.sharedVaults) {
+      return
+    }
+
     if (existingVault.isSharedVaultListing()) {
       setIsAdmin(
         existingVault.isSharedVaultListing() && application.sharedVaults.isCurrentUserSharedVaultAdmin(existingVault),
@@ -79,6 +83,10 @@ const EditVaultModal: FunctionComponent<Props> = ({ onCloseDialog, existingVault
 
   const saveExistingVault = useCallback(
     async (vault: VaultListingInterface) => {
+      if (!application.vaults) {
+        return
+      }
+
       if (vault.name !== name || vault.description !== description) {
         await application.vaults.changeVaultNameAndDescription(vault, {
           name: name,
@@ -121,6 +129,9 @@ const EditVaultModal: FunctionComponent<Props> = ({ onCloseDialog, existingVault
   )
 
   const createNewVault = useCallback(async () => {
+    if (!application.vaults) {
+      return
+    }
     if (passwordType === KeySystemRootKeyPasswordType.UserInputted) {
       if (!customPassword) {
         throw new Error('Custom key is not set')
@@ -168,6 +179,10 @@ const EditVaultModal: FunctionComponent<Props> = ({ onCloseDialog, existingVault
     ],
     [existingVault, handleDialogClose, handleSubmit],
   )
+
+  if (!application.vaults) {
+    return null
+  }
 
   if (existingVault && application.vaults.isVaultLocked(existingVault)) {
     return <div>Vault is locked.</div>

@@ -23,12 +23,18 @@ const EditContactModal: FunctionComponent<Props> = ({ onCloseDialog, fromInvite,
   }, [onCloseDialog])
 
   useEffect(() => {
+    if (!application.contacts) {
+      return
+    }
     if (fromInvite) {
       setCollaborationID(application.contacts.getCollaborationIDFromInvite(fromInvite.invite))
     }
   }, [application.contacts, fromInvite])
 
   useEffect(() => {
+    if (!application.contacts) {
+      return
+    }
     if (editContactUuid) {
       const contact = application.contacts.findTrustedContact(editContactUuid)
       if (!contact) {
@@ -42,6 +48,9 @@ const EditContactModal: FunctionComponent<Props> = ({ onCloseDialog, fromInvite,
   }, [application.contacts, application.vaults, editContactUuid])
 
   const handleSubmit = useCallback(async () => {
+    if (!application.contacts) {
+      return
+    }
     if (editingContact) {
       void application.contacts.editTrustedContactFromCollaborationID(editingContact, { name, collaborationID })
       handleDialogClose()

@@ -3,7 +3,7 @@ import { useApplication } from '../ApplicationProvider'
 import Icon from '../Icon/Icon'
 import { DecryptedItemInterface } from '@standardnotes/snjs'
 import VaultNameBadge from '../Vaults/VaultNameBadge'
-import { FeatureTrunkName, featureTrunkEnabled } from '@/FeatureTrunk'
+import { FeatureTrunkName, featureTrunkEnabled } from '@/WebFeatureTrunk'
 
 type Props = {
   item: DecryptedItemInterface
@@ -17,6 +17,10 @@ const ListItemVaultInfo: FunctionComponent<Props> = ({ item }) => {
   }
 
   if (application.items.isTemplateItem(item)) {
+    return null
+  }
+
+  if (!application.vaults || !application.sharedVaults) {
     return null
   }
 

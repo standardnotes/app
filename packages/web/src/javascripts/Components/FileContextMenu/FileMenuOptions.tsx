@@ -17,6 +17,7 @@ import { LinkingController } from '@/Controllers/LinkingController'
 import { NavigationController } from '@/Controllers/Navigation/NavigationController'
 import AddToVaultMenuOption from '../Vaults/AddToVaultMenuOption'
 import { iconClass } from '../NotesOptions/ClassNames'
+import { FeatureTrunkName, featureTrunkEnabled } from '@/WebFeatureTrunk'
 
 type Props = {
   closeMenu: () => void
@@ -92,7 +93,9 @@ const FileMenuOptions: FunctionComponent<Props> = ({
           ) : null}
         </>
       )}
-      <AddToVaultMenuOption iconClassName={iconClass} items={selectedFiles} />
+      {featureTrunkEnabled(FeatureTrunkName.Vaults) && (
+        <AddToVaultMenuOption iconClassName={iconClass} items={selectedFiles} />
+      )}
       <AddTagOption
         navigationController={navigationController}
         linkingController={linkingController}

@@ -38,6 +38,7 @@ import SuperExportModal from './SuperExportModal'
 import { useApplication } from '../ApplicationProvider'
 import { MutuallyExclusiveMediaQueryBreakpoints } from '@/Hooks/useMediaQuery'
 import AddToVaultMenuOption from '../Vaults/AddToVaultMenuOption'
+import { FeatureTrunkName, featureTrunkEnabled } from '@/WebFeatureTrunk'
 
 const iconSize = MenuItemIconSize
 const iconClassDanger = `text-danger mr-2 ${iconSize}`
@@ -242,7 +243,7 @@ const NotesOptions = ({
         </>
       )}
       <HorizontalSeparator classes="my-2" />
-      <AddToVaultMenuOption iconClassName={iconClass} items={notes} />
+      {featureTrunkEnabled(FeatureTrunkName.Vaults) && <AddToVaultMenuOption iconClassName={iconClass} items={notes} />}
       {navigationController.tagsCount > 0 && (
         <AddTagOption
           iconClassName={iconClass}

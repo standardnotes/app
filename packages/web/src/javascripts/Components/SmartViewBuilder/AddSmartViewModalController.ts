@@ -94,7 +94,7 @@ export class AddSmartViewModalController {
       title: this.title,
       predicate,
       iconString: this.icon as string,
-      vault: this.application.vaultDisplayService.exclusivelyShownVault,
+      vault: this.application.vaultDisplayService?.exclusivelyShownVault,
     })
 
     this.setIsSaving(false)

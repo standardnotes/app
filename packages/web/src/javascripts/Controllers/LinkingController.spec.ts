@@ -230,7 +230,7 @@ describe('LinkingController', () => {
     it('should move file to same vault as note if file does not belong to any vault', async () => {
       application.mutator.associateFileWithNote = jest.fn().mockReturnValue({})
 
-      const moveToVaultSpy = (application.vaults.moveItemToVault = jest.fn())
+      const moveToVaultSpy = (application.vaults!.moveItemToVault = jest.fn())
 
       const note = createNote('test', {
         uuid: 'note',
@@ -246,7 +246,7 @@ describe('LinkingController', () => {
         uuid: 'note-vault',
       } as jest.Mocked<VaultListingInterface>
 
-      application.vaults.getItemVault = jest.fn().mockImplementation((item: ItemInterface) => {
+      application.vaults!.getItemVault = jest.fn().mockImplementation((item: ItemInterface) => {
         if (item.uuid === note.uuid) {
           return noteVault
         }
