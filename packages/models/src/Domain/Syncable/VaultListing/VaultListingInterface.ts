@@ -1,8 +1,8 @@
 import { KeySystemIdentifier } from '../KeySystemRootKey/KeySystemIdentifier'
 import {
   KeySystemRootKeyParamsInterface,
-  KeySystemRootKeyPasswordType,
 } from '../../Local/KeyParams/KeySystemRootKeyParamsInterface'
+import { KeySystemRootKeyPasswordType } from '../../Local/KeyParams/KeySystemRootKeyPasswordType'
 import { KeySystemRootKeyStorageMode } from '../KeySystemRootKey/KeySystemRootKeyStorageMode'
 import { VaultListingSharingInfo } from './VaultListingSharingInfo'
 import { VaultListingContent } from './VaultListingContent'

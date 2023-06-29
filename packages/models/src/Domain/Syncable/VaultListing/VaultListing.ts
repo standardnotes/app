@@ -3,8 +3,8 @@ import { DecryptedPayloadInterface } from '../../Abstract/Payload'
 import { HistoryEntryInterface } from '../../Runtime/History'
 import {
   KeySystemRootKeyParamsInterface,
-  KeySystemRootKeyPasswordType,
 } from '../../Local/KeyParams/KeySystemRootKeyParamsInterface'
+import { KeySystemRootKeyPasswordType } from '../../Local/KeyParams/KeySystemRootKeyPasswordType'
 import { SharedVaultListingInterface, VaultListingInterface } from './VaultListingInterface'
 import { VaultListingContent } from './VaultListingContent'
 import { KeySystemRootKeyStorageMode } from '../KeySystemRootKey/KeySystemRootKeyStorageMode'

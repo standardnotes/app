@@ -37,9 +37,11 @@ export * from './Device/Platform'
 
 export * from './Local/KeyParams/RootKeyParamsInterface'
 export * from './Local/KeyParams/KeySystemRootKeyParamsInterface'
+export * from './Local/KeyParams/KeySystemRootKeyPasswordType'
 export * from './Local/RootKey/KeychainTypes'
 export * from './Local/RootKey/RootKeyContent'
 export * from './Local/RootKey/RootKeyInterface'
+export * from './Local/RootKey/RootKeyWithKeyPairsInterface'
 
 export * from './Runtime/Collection/CollectionSort'
 export * from './Runtime/Collection/Item/ItemCollection'
@@ -66,6 +68,11 @@ export * from './Runtime/Predicate/Utils'
 
 export * from './Runtime/AsymmetricMessage/AsymmetricMessagePayload'
 export * from './Runtime/AsymmetricMessage/AsymmetricMessagePayloadType'
+export * from './Runtime/AsymmetricMessage/MessageTypes/AsymmetricMessageSenderKeypairChanged'
+export * from './Runtime/AsymmetricMessage/MessageTypes/AsymmetricMessageSharedVaultInvite'
+export * from './Runtime/AsymmetricMessage/MessageTypes/AsymmetricMessageSharedVaultMetadataChanged'
+export * from './Runtime/AsymmetricMessage/MessageTypes/AsymmetricMessageSharedVaultRootKeyChanged'
+export * from './Runtime/AsymmetricMessage/MessageTypes/AsymmetricMessageTrustedContactShare'
 
 export * from './Runtime/Encryption/PersistentSignatureData'
 export * from './Runtime/Encryption/ContentTypeUsesRootKeyEncryption'

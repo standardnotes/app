@@ -1,10 +1,6 @@
 import { ProtocolVersion } from '@standardnotes/common'
 import { KeySystemIdentifier } from '../../Syncable/KeySystemRootKey/KeySystemIdentifier'
-
-export enum KeySystemRootKeyPasswordType {
-  UserInputted = 'user_inputted',
-  Randomized = 'randomized',
-}
+import { KeySystemRootKeyPasswordType } from './KeySystemRootKeyPasswordType'
 
 /**
  * Key params are public data that contain information about how a root key was created.

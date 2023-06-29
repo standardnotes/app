@@ -21,8 +21,3 @@ export interface RootKeyInterface extends DecryptedItemInterface<RootKeyContent>
   persistableValueWhenWrapping(): RootKeyContentInStorage
   getKeychainValue(): NamespacedRootKeyInKeychain
 }
-
-export interface RootKeyWithKeyPairsInterface extends RootKeyInterface {
-  get encryptionKeyPair(): PkcKeyPair
-  get signingKeyPair(): PkcKeyPair
-}
