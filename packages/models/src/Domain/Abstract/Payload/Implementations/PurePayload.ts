@@ -6,6 +6,7 @@ import { TransferPayload } from '../../TransferPayload/Interfaces/TransferPayloa
 import { ItemContent } from '../../Content/ItemContent'
 import { SyncResolvedParams, SyncResolvedPayload } from '../../../Runtime/Deltas/Utilities/SyncResolvedPayload'
 import { PersistentSignatureData } from '../../../Runtime/Encryption/PersistentSignatureData'
+import { ContentTypeUsesRootKeyEncryption } from '../../../Runtime/Encryption/ContentTypeUsesRootKeyEncryption'
 
 type RequiredKeepUndefined<T> = { [K in keyof T]-?: [T[K]] } extends infer U
   ? U extends Record<keyof U, [unknown]>
@@ -42,15 +43,19 @@ export abstract class PurePayload<T extends TransferPayload<C>, C extends ItemCo
   readonly signatureData?: PersistentSignatureData
 
   constructor(rawPayload: T, source = PayloadSource.Constructor) {
-    this.source = source
-    this.uuid = rawPayload.uuid
-
-    if (!this.uuid) {
+    if (!rawPayload.uuid) {
       throw Error(
         `Attempting to construct payload with null uuid
         Content type: ${rawPayload.content_type}`,
       )
     }
+
+    if (rawPayload.key_system_identifier && ContentTypeUsesRootKeyEncryption(rawPayload.content_type)) {
+      throw new Error('Rootkey-encrypted payload should not have a key system identifier')
+    }
+
+    this.source = source
+    this.uuid = rawPayload.uuid
 
     this.content = rawPayload.content
     this.content_type = rawPayload.content_type
@@ -69,10 +74,6 @@ export abstract class PurePayload<T extends TransferPayload<C>, C extends ItemCo
 
     this.dirtyIndex = rawPayload.dirtyIndex
     this.globalDirtyIndexAtLastSync = rawPayload.globalDirtyIndexAtLastSync
-
-    if (rawPayload.key_system_identifier && rawPayload.content_type === ContentType.KeySystemRootKey) {
-      throw new Error('Vault key copy payload should not have vault system identifier')
-    }
 
     this.user_uuid = rawPayload.user_uuid ?? undefined
     this.key_system_identifier = rawPayload.key_system_identifier ?? undefined
