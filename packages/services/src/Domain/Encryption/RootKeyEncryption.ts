@@ -23,14 +23,14 @@ import {
   ItemsKeyMutator,
   encryptPayload,
   decryptPayload,
-  ContentTypeUsesKeySystemRootKeyEncryption,
   EncryptedOutputParameters,
   DecryptedParameters,
   KeySystemKeyManagerInterface,
-  ContentTypesUsingRootKeyEncryption,
-  ContentTypeUsesRootKeyEncryption,
 } from '@standardnotes/encryption'
 import {
+  ContentTypeUsesKeySystemRootKeyEncryption,
+  ContentTypesUsingRootKeyEncryption,
+  ContentTypeUsesRootKeyEncryption,
   CreateDecryptedItemFromPayload,
   DecryptedPayload,
   DecryptedPayloadInterface,

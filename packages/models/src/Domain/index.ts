@@ -68,6 +68,9 @@ export * from './Runtime/AsymmetricMessage/AsymmetricMessagePayload'
 export * from './Runtime/AsymmetricMessage/AsymmetricMessagePayloadType'
 
 export * from './Runtime/Encryption/PersistentSignatureData'
+export * from './Runtime/Encryption/ContentTypeUsesRootKeyEncryption'
+export * from './Runtime/Encryption/ContentTypesUsingRootKeyEncryption'
+export * from './Runtime/Encryption/ContentTypeUsesKeySystemRootKeyEncryption'
 
 export * from './Syncable/ActionsExtension'
 export * from './Syncable/Component'

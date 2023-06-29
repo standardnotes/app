@@ -1,5 +1,9 @@
-import { DecryptedPayloadInterface, EncryptedPayloadInterface } from '@standardnotes/models'
-import { ContentTypeUsesKeySystemRootKeyEncryption, ContentTypeUsesRootKeyEncryption } from '../Keys/RootKey/Functions'
+import {
+  DecryptedPayloadInterface,
+  EncryptedPayloadInterface,
+  ContentTypeUsesKeySystemRootKeyEncryption,
+  ContentTypeUsesRootKeyEncryption,
+} from '@standardnotes/models'
 import { EncryptionTypeSplit } from './EncryptionTypeSplit'
 
 export function SplitPayloadsByEncryptionType<T extends EncryptedPayloadInterface | DecryptedPayloadInterface>(

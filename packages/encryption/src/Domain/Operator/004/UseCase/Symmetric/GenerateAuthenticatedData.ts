@@ -5,15 +5,13 @@ import {
   KeySystemRootKeyInterface,
   RootKeyInterface,
   isKeySystemRootKey,
+  ContentTypeUsesRootKeyEncryption,
+  ContentTypeUsesKeySystemRootKeyEncryption,
 } from '@standardnotes/models'
 import { ItemAuthenticatedData } from '../../../../Types/ItemAuthenticatedData'
 import { RootKeyEncryptedAuthenticatedData } from '../../../../Types/RootKeyEncryptedAuthenticatedData'
 import { KeySystemItemsKeyAuthenticatedData } from '../../../../Types/KeySystemItemsKeyAuthenticatedData'
 import { ProtocolVersion } from '@standardnotes/common'
-import {
-  ContentTypeUsesRootKeyEncryption,
-  ContentTypeUsesKeySystemRootKeyEncryption,
-} from '../../../../Keys/RootKey/Functions'
 import { isItemsKey } from '../../../../Keys/ItemsKey/ItemsKey'
 import { isKeySystemItemsKey } from '../../../../Keys/KeySystemItemsKey/KeySystemItemsKey'
 

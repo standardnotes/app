@@ -7,8 +7,6 @@ import {
 } from '@standardnotes/common'
 import {
   BackupFileType,
-  ContentTypeUsesKeySystemRootKeyEncryption,
-  ContentTypeUsesRootKeyEncryption,
   CreateAnyKeyParams,
   isItemsKey,
   isKeySystemItemsKey,
@@ -16,6 +14,8 @@ import {
   SplitPayloadsByEncryptionType,
 } from '@standardnotes/encryption'
 import {
+  ContentTypeUsesKeySystemRootKeyEncryption,
+  ContentTypeUsesRootKeyEncryption,
   BackupFile,
   CreateDecryptedItemFromPayload,
   CreatePayloadSplit,

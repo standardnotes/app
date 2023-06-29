@@ -10,9 +10,9 @@ import {
   decryptPayload,
   EncryptedOutputParameters,
   KeySystemKeyManagerInterface,
-  ContentTypeUsesKeySystemRootKeyEncryption,
 } from '@standardnotes/encryption'
 import {
+  ContentTypeUsesKeySystemRootKeyEncryption,
   DecryptedPayload,
   DecryptedPayloadInterface,
   EncryptedPayload,

@@ -1,5 +1,10 @@
 import { AnyKeyParamsContent, KeyParamsContent004 } from '@standardnotes/common'
-import { EncryptedPayload, EncryptedTransferPayload, isErrorDecryptingPayload } from '@standardnotes/models'
+import {
+  EncryptedPayload,
+  EncryptedTransferPayload,
+  isErrorDecryptingPayload,
+  ContentTypeUsesRootKeyEncryption,
+} from '@standardnotes/models'
 import { PreviousSnjsVersion1_0_0, PreviousSnjsVersion2_0_0, SnjsVersion } from '../Version'
 import { Migration } from '@Lib/Migrations/Migration'
 import {
@@ -16,7 +21,6 @@ import {
 import { assert } from '@standardnotes/utils'
 import { CreateReader } from './StorageReaders/Functions'
 import { StorageReader } from './StorageReaders/Reader'
-import { ContentTypeUsesRootKeyEncryption } from '@standardnotes/encryption'
 
 /** A key that was briefly present in Snjs version 2.0.0 but removed in 2.0.1 */
 const LastMigrationTimeStampKey2_0_0 = 'last_migration_timestamp'
