@@ -7,7 +7,7 @@ import { VaultSelectionMenuController } from '@/Controllers/VaultSelectionMenuCo
 import VaultSelectionMenu from '../VaultSelectionMenu/VaultSelectionMenu'
 import { useApplication } from '../ApplicationProvider'
 import { observer } from 'mobx-react-lite'
-import { FeatureTrunkName, featureTrunkEnabled } from '@/FeatureTrunk'
+import { featureTrunkVaultsEnabled } from '@/FeatureTrunk'
 
 type Props = {
   isOpen: boolean
@@ -20,7 +20,7 @@ const VaultSelectionButton = ({ isOpen, toggleMenu, controller }: Props) => {
   const buttonRef = useRef<HTMLButtonElement>(null)
   const exclusivelyShownVault = application.vaultDisplayService.exclusivelyShownVault
 
-  if (!featureTrunkEnabled(FeatureTrunkName.Vaults)) {
+  if (!featureTrunkVaultsEnabled()) {
     return null
   }
 

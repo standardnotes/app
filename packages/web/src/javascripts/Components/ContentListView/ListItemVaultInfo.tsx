@@ -3,7 +3,7 @@ import { useApplication } from '../ApplicationProvider'
 import Icon from '../Icon/Icon'
 import { DecryptedItemInterface } from '@standardnotes/snjs'
 import VaultNameBadge from '../Vaults/VaultNameBadge'
-import { FeatureTrunkName, featureTrunkEnabled } from '@/FeatureTrunk'
+import { featureTrunkVaultsEnabled } from '@/FeatureTrunk'
 
 type Props = {
   item: DecryptedItemInterface
@@ -12,7 +12,7 @@ type Props = {
 const ListItemVaultInfo: FunctionComponent<Props> = ({ item }) => {
   const application = useApplication()
 
-  if (!featureTrunkEnabled(FeatureTrunkName.Vaults)) {
+  if (!featureTrunkVaultsEnabled()) {
     return null
   }
 

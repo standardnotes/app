@@ -2,7 +2,7 @@ import { FunctionComponent } from 'react'
 import Icon from '../Icon/Icon'
 import { useApplication } from '../ApplicationProvider'
 import { DecryptedItemInterface } from '@standardnotes/snjs'
-import { FeatureTrunkName, featureTrunkEnabled } from '@/FeatureTrunk'
+import { featureTrunkVaultsEnabled } from '@/FeatureTrunk'
 
 type Props = {
   item: DecryptedItemInterface
@@ -11,7 +11,7 @@ type Props = {
 const CollaborationInfoHUD: FunctionComponent<Props> = ({ item }) => {
   const application = useApplication()
 
-  if (!featureTrunkEnabled(FeatureTrunkName.Vaults)) {
+  if (!featureTrunkVaultsEnabled()) {
     return null
   }
 

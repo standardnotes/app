@@ -12,6 +12,8 @@ import {
   ItemManagerInterface,
   VaultListingInterface,
   ItemInterface,
+  InternalFeatureService,
+  InternalFeature,
 } from '@standardnotes/snjs'
 import { FilesController } from './FilesController'
 import { ItemListController } from './ItemList/ItemListController'
@@ -228,6 +230,8 @@ describe('LinkingController', () => {
 
   describe('linkItems', () => {
     it('should move file to same vault as note if file does not belong to any vault', async () => {
+      InternalFeatureService.get().enableFeature(InternalFeature.Vaults)
+
       application.mutator.associateFileWithNote = jest.fn().mockReturnValue({})
 
       const moveToVaultSpy = (application.vaults.moveItemToVault = jest.fn())
