@@ -1,4 +1,4 @@
-import * as Factory from './lib/factory.js'
+import * as Factory from '../lib/factory.js'
 
 chai.use(chaiAsPromised)
 const expect = chai.expect

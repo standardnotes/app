@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-expressions */
 /* eslint-disable no-undef */
-import { BaseItemCounts } from './lib/Applications.js'
+import { BaseItemCounts } from './lib/BaseItemCounts.js'
 import * as Factory from './lib/factory.js'
 chai.use(chaiAsPromised)
 const expect = chai.expect
@@ -75,7 +75,7 @@ describe('application instances', () => {
     /** Recreate app with different host */
     const recreatedContext = await Factory.createAppContext({
       identifier: 'app',
-      host: 'http://nonsense.host'
+      host: 'http://nonsense.host',
     })
     await recreatedContext.launch()
 

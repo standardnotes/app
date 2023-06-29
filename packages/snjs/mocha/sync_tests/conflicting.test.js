@@ -1,5 +1,5 @@
 /* eslint-disable no-undef */
-import { BaseItemCounts } from '../lib/Applications.js'
+import { BaseItemCounts } from '../lib/BaseItemCounts.js'
 import * as Factory from '../lib/factory.js'
 import { createSyncedNoteWithTag } from '../lib/Items.js'
 import * as Utils from '../lib/Utils.js'

@@ -12,15 +12,16 @@
   <script src="https://unpkg.com/sinon@13.0.2/pkg/sinon.js"></script>
   <script src="./vendor/sncrypto-web.js"></script>
   <script src="../dist/snjs.js"></script>
-  <script>
-    const urlParams = new URLSearchParams(window.location.search);
-    const syncServerHostName = urlParams.get('sync_server_host_name') ?? 'syncing-server-proxy';
-    const bail = urlParams.get('bail') === 'false' ? false : true;
-    const skipPaidFeatures = urlParams.get('skip_paid_features') === 'true' ? true : false;
 
+  <script type="module">
     Object.assign(window, SNCrypto);
-
     Object.assign(window, SNLibrary);
+
+    import MainRegistry from './TestRegistry/MainRegistry.js'
+
+    const InternalFeatureStatus = {
+      [InternalFeature.Vaults]: { enabled: false, exclusive: false },
+    }
 
     SNLog.onLog = (message) => {
       console.log(message);
@@ -30,6 +31,35 @@
       console.error(error);
     };
 
+    const loadTest = (fileName) => {
+      const script = document.createElement('script');
+      script.type = 'module';
+      script.src = fileName;
+      document.head.appendChild(script);
+    }
+
+    const loadTests = (fileNames) => {
+      fileNames.map(loadTest);
+    }
+
+    if (InternalFeatureStatus[InternalFeature.Vaults].enabled) {
+      InternalFeatureService.get().enableFeature(InternalFeature.Vaults);
+      loadTests(MainRegistry.VaultTests);
+    }
+
+    if (!InternalFeatureStatus[InternalFeature.Vaults].exclusive) {
+      loadTests(MainRegistry.BaseTests);
+    }
+
+    setTimeout(() => {
+      mocha.run()
+    }, 250);
+
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const bail = urlParams.get('bail') === 'false' ? false : true;
+    const skipPaidFeatures = urlParams.get('skip_paid_features') === 'true' ? true : false;
+
     mocha.setup({
       ui: 'bdd',
       timeout: 5000,
@@ -38,79 +68,6 @@
     if (skipPaidFeatures) {
       mocha.grep('@paidfeature').invert();
     }
-  </script>
-  <script type="module" src="memory.test.js"></script>
-  <script type="module" src="protocol.test.js"></script>
-  <script type="module" src="utils.test.js"></script>
-  <script type="module" src="000.test.js"></script>
-  <script type="module" src="001.test.js"></script>
-  <script type="module" src="002.test.js"></script>
-  <script type="module" src="003.test.js"></script>
-  <script type="module" src="004.test.js"></script>
-  <script type="module" src="username.test.js"></script>
-  <script type="module" src="app-group.test.js"></script>
-  <script type="module" src="application.test.js"></script>
-  <script type="module" src="payload.test.js"></script>
-  <script type="module" src="payload_encryption.test.js"></script>
-  <script type="module" src="item.test.js"></script>
-  <script type="module" src="item_manager.test.js"></script>
-  <script type="module" src="features.test.js"></script>
-  <script type="module" src="settings.test.js"></script>
-  <script type="module" src="mfa_service.test.js"></script>
-  <script type="module" src="mutator.test.js"></script>
-  <script type="module" src="mutator_service.test.js"></script>
-  <script type="module" src="payload_manager.test.js"></script>
-  <script type="module" src="collections.test.js"></script>
-  <script type="module" src="note_display_criteria.test.js"></script>
-  <script type="module" src="keys.test.js"></script>
-  <script type="module" src="key_params.test.js"></script>
-  <script type="module" src="key_recovery_service.test.js"></script>
-  <script type="module" src="backups.test.js"></script>
-  <script type="module" src="upgrading.test.js"></script>
-  <script type="module" src="model_tests/importing.test.js"></script>
-  <script type="module" src="model_tests/appmodels.test.js"></script>
-  <script type="module" src="model_tests/items.test.js"></script>
-  <script type="module" src="model_tests/mapping.test.js"></script>
-  <script type="module" src="model_tests/notes_smart_tags.test.js"></script>
-  <script type="module" src="model_tests/notes_tags.test.js"></script>
-  <script type="module" src="model_tests/notes_tags_folders.test.js"></script>
-  <script type="module" src="model_tests/performance.test.js"></script>
-  <script type="module" src="sync_tests/offline.test.js"></script>
-  <script type="module" src="sync_tests/notes_tags.test.js"></script>
-  <script type="module" src="sync_tests/online.test.js"></script>
-  <script type="module" src="sync_tests/conflicting.test.js"></script>
-  <script type="module" src="sync_tests/integrity.test.js"></script>
-  <script type="module" src="auth-fringe-cases.test.js"></script>
-  <script type="module" src="auth.test.js"></script>
-  <script type="module" src="device_auth.test.js"></script>
-  <script type="module" src="storage.test.js"></script>
-  <script type="module" src="protection.test.js"></script>
-  <script type="module" src="singletons.test.js"></script>
-  <script type="module" src="migrations/migration.test.js"></script>
-  <script type="module" src="migrations/tags-to-folders.test.js"></script>
-  <script type="module" src="history.test.js"></script>
-  <script type="module" src="actions.test.js"></script>
-  <script type="module" src="preferences.test.js"></script>
-  <script type="module" src="files.test.js"></script>
-  <script type="module" src="session.test.js"></script>
-  <script type="module" src="subscriptions.test.js"></script>
-  <script type="module" src="recovery.test.js"></script>
-
-  <!-- <script type="module" src="vaults.test.js"></script>
-  <script type="module" src="pkc.test.js"></script>
-  <script type="module" src="shared_vault_tests/contacts.test.js"></script>
-  <script type="module" src="shared_vault_tests/crypto.test.js"></script>
-  <script type="module" src="shared_vault_tests/asymmetric-messages.test.js"></script>
-  <script type="module" src="shared_vault_tests/shared_vaults.test.js"></script>
-  <script type="module" src="shared_vault_tests/invites.test.js"></script>
-  <script type="module" src="shared_vault_tests/items.test.js"></script>
-  <script type="module" src="shared_vault_tests/conflicts.test.js"></script>
-  <script type="module" src="shared_vault_tests/deletion.test.js"></script>
-  <script type="module" src="shared_vault_tests/permissions.test.js"></script>
-  <script type="module" src="shared_vault_tests/key_rotation.test.js"></script>
-  <script type="module" src="shared_vault_tests/files.test.js"></script> -->
-  <script type="module">
-    mocha.run();
   </script>
 </head>
 

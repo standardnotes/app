@@ -65,7 +65,6 @@ import {
   UserApiServiceInterface,
   UserRegistrationResponseBody,
 } from '@standardnotes/api'
-import { FeatureTrunkName, featureTrunkEnabled } from '@Lib/SnjsFeatureTrunk'
 
 export const MINIMUM_PASSWORD_LENGTH = 8
 export const MissingAccountParams = 'missing-params'
@@ -196,10 +195,6 @@ export class SNSessionManager
   }
 
   isUserMissingKeyPair(): boolean {
-    if (!featureTrunkEnabled(FeatureTrunkName.Vaults)) {
-      return true
-    }
-
     try {
       return this.getPublicKey() == undefined
     } catch (error) {

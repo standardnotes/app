@@ -90,6 +90,10 @@ export * from './Internal/InternalEventInterface'
 export * from './Internal/InternalEventPublishStrategy'
 export * from './Internal/InternalEventType'
 
+export * from './InternalFeatures/InternalFeature'
+export * from './InternalFeatures/InternalFeatureService'
+export * from './InternalFeatures/InternalFeatureServiceInterface'
+
 export * from './Item/StaticItemCounter'
 export * from './Item/ItemManagerInterface'
 export * from './Item/ItemRelationshipDirection'

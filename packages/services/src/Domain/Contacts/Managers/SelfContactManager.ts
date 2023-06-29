@@ -1,3 +1,5 @@
+import { InternalFeature } from './../../InternalFeatures/InternalFeature'
+import { InternalFeatureService } from '../../InternalFeatures/InternalFeatureService'
 import { ApplicationStage } from './../../Application/ApplicationStage'
 import { SingletonManagerInterface } from './../../Singleton/SingletonManagerInterface'
 import { SyncEvent } from './../../Event/SyncEvent'
@@ -51,6 +53,10 @@ export class SelfContactManager {
   }
 
   private async reloadSelfContact() {
+    if (!InternalFeatureService.get().isFeatureEnabled(InternalFeature.Vaults)) {
+      return
+    }
+
     if (!this.shouldReloadSelfContact || this.isReloadingSelfContact) {
       return
     }

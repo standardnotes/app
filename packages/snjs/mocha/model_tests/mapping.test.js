@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-expressions */
 /* eslint-disable no-undef */
-import { BaseItemCounts } from '../lib/Applications.js'
+import { BaseItemCounts } from '../lib/BaseItemCounts.js'
 import * as Factory from '../lib/factory.js'
 import { createNoteParams } from '../lib/Items.js'
 chai.use(chaiAsPromised)

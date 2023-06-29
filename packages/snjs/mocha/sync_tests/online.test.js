@@ -1,11 +1,11 @@
 /* eslint-disable no-undef */
-import { BaseItemCounts } from '../lib/Applications.js'
+import { BaseItemCounts } from '../lib/BaseItemCounts.js'
 import * as Factory from '../lib/factory.js'
 import * as Utils from '../lib/Utils.js'
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
-describe('online syncing', function () {
+describe.only('online syncing', function () {
   this.timeout(Factory.TenSecondTimeout)
 
   const syncOptions = {

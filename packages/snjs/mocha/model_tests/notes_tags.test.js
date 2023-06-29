@@ -2,7 +2,7 @@
 import * as Factory from '../lib/factory.js'
 import * as Utils from '../lib/Utils.js'
 import { createRelatedNoteTagPairPayload } from '../lib/Items.js'
-import { BaseItemCounts } from '../lib/Applications.js'
+import { BaseItemCounts } from '../lib/BaseItemCounts.js'
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
