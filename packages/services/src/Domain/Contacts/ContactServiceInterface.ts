@@ -7,9 +7,7 @@ import { AbstractService } from '../Service/AbstractService'
 import { SharedVaultInviteServerHash, SharedVaultUserServerHash } from '@standardnotes/responses'
 import { ValidateItemSignerResult } from './UseCase/ValidateItemSignerResult'
 
-export enum ContactServiceEvent {
-  ContactsChanged = 'ContactsChanged',
-}
+export enum ContactServiceEvent {}
 
 export interface ContactServiceInterface extends AbstractService<ContactServiceEvent> {
   isCollaborationEnabled(): boolean

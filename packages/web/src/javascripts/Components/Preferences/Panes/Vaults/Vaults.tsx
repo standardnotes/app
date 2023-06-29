@@ -8,7 +8,6 @@ import ModalOverlay from '@/Components/Modal/ModalOverlay'
 import EditContactModal from './Contacts/EditContactModal'
 import { useCallback, useEffect, useState } from 'react'
 import {
-  ContactServiceEvent,
   VaultListingInterface,
   TrustedContactInterface,
   PendingSharedVaultInviteRecord,
@@ -74,14 +73,6 @@ const Vaults = () => {
   const createNewContact = useCallback(() => {
     setIsAddContactModalOpen(true)
   }, [])
-
-  useEffect(() => {
-    return contactService.addEventObserver((event) => {
-      if (event === ContactServiceEvent.ContactsChanged) {
-        void updateContacts()
-      }
-    })
-  }, [contactService, updateContacts])
 
   useEffect(() => {
     void updateVaults()

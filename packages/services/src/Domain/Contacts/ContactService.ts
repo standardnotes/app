@@ -14,7 +14,6 @@ import {
   FillItemContent,
   TrustedContactMutator,
   DecryptedItemInterface,
-  ContactPublicKeySet,
 } from '@standardnotes/models'
 import { ContentType } from '@standardnotes/common'
 import { AbstractService } from '../Service/AbstractService'
@@ -24,15 +23,14 @@ import { SessionsClientInterface } from '../Session/SessionsClientInterface'
 import { ContactServiceEvent, ContactServiceInterface } from '../Contacts/ContactServiceInterface'
 import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
 import { UserClientInterface } from '../User/UserClientInterface'
-import { CollaborationIDData } from './CollaborationID'
-import { EncryptionProviderInterface, PublicKeySet } from '@standardnotes/encryption'
+import { CollaborationIDData, Version1CollaborationId } from './CollaborationID'
+import { EncryptionProviderInterface } from '@standardnotes/encryption'
 import { ValidateItemSignerUseCase } from './UseCase/ValidateItemSigner'
 import { ValidateItemSignerResult } from './UseCase/ValidateItemSignerResult'
 import { FindTrustedContactUseCase } from './UseCase/FindTrustedContact'
 import { SelfContactManager } from './Managers/SelfContactManager'
-
-const Version1CollaborationId = '1'
-const UnknownContactName = 'Unnamed contact'
+import { CreateOrEditTrustedContactUseCase } from './UseCase/CreateOrEditTrustedContact'
+import { UpdateTrustedContactUseCase } from './UseCase/UpdateTrustedContact'
 
 export class ContactService
   extends AbstractService<ContactServiceEvent>
@@ -53,7 +51,7 @@ export class ContactService
   ) {
     super(eventBus)
 
-    this.selfContactManager = new SelfContactManager(sync, items, session, singletons)
+    this.selfContactManager = new SelfContactManager(sync, items, mutator, session, singletons)
 
     eventBus.addEventHandler(this, SessionEvent.SuccessfullyChangedCredentials)
   }
@@ -67,7 +65,7 @@ export class ContactService
     if (event.type === SessionEvent.SuccessfullyChangedCredentials) {
       const data = event.payload as SuccessfullyChangedCredentialsEventData
 
-      await this.updateSelfContactWithPublicKeySet({
+      await this.selfContactManager.updateWithNewPublicKeySet({
         encryption: data.newKeyPair.publicKey,
         signing: data.newSigningKeyPair.publicKey,
       })
@@ -76,15 +74,6 @@ export class ContactService
 
   private get userUuid(): string {
     return this.session.getSureUser().uuid
-  }
-
-  private async updateSelfContactWithPublicKeySet(publicKeySet: PublicKeySet): Promise<void> {
-    await this.createOrEditTrustedContact({
-      name: 'Me',
-      contactUuid: this.userUuid,
-      publicKey: publicKeySet.encryption,
-      signingPublicKey: publicKeySet.signing,
-    })
   }
 
   getSelfContact(): TrustedContactInterface | undefined {
@@ -172,8 +161,6 @@ export class ContactService
       },
     )
 
-    void this.notifyEvent(ContactServiceEvent.ContactsChanged)
-
     await this.sync.sync()
 
     return updatedContact
@@ -183,25 +170,8 @@ export class ContactService
     contact: TrustedContactInterface,
     params: { name: string; publicKey: string; signingPublicKey: string },
   ): Promise<TrustedContactInterface> {
-    const updatedContact = await this.mutator.changeItem<TrustedContactMutator, TrustedContactInterface>(
-      contact,
-      (mutator) => {
-        mutator.name = params.name
-        if (
-          params.publicKey !== contact.publicKeySet.encryption ||
-          params.signingPublicKey !== contact.publicKeySet.signing
-        ) {
-          mutator.addPublicKey({
-            encryption: params.publicKey,
-            signing: params.signingPublicKey,
-          })
-        }
-      },
-    )
-
-    void this.notifyEvent(ContactServiceEvent.ContactsChanged)
-
-    await this.sync.sync()
+    const usecase = new UpdateTrustedContactUseCase(this.mutator, this.sync)
+    const updatedContact = await usecase.execute(contact, params)
 
     return updatedContact
   }
@@ -227,8 +197,6 @@ export class ContactService
       )
     }
 
-    void this.notifyEvent(ContactServiceEvent.ContactsChanged)
-
     await this.sync.sync()
 
     return contact
@@ -241,34 +209,8 @@ export class ContactService
     signingPublicKey: string
     isMe?: boolean
   }): Promise<TrustedContactInterface | undefined> {
-    const existingContact = this.findTrustedContact(params.contactUuid)
-    if (existingContact) {
-      await this.updateTrustedContact(existingContact, { ...params, name: params.name ?? existingContact.name })
-      return existingContact
-    }
-
-    const content: TrustedContactContentSpecialized = {
-      name: params.name ?? UnknownContactName,
-      publicKeySet: ContactPublicKeySet.FromJson({
-        encryption: params.publicKey,
-        signing: params.signingPublicKey,
-        isRevoked: false,
-        timestamp: new Date(),
-      }),
-      contactUuid: params.contactUuid,
-      isMe: params.isMe ?? false,
-    }
-
-    const contact = await this.mutator.createItem<TrustedContactInterface>(
-      ContentType.TrustedContact,
-      FillItemContent<TrustedContactContent>(content),
-      true,
-    )
-
-    void this.notifyEvent(ContactServiceEvent.ContactsChanged)
-
-    await this.sync.sync()
-
+    const usecase = new CreateOrEditTrustedContactUseCase(this.items, this.mutator, this.sync)
+    const contact = await usecase.execute(params)
     return contact
   }
 
@@ -279,8 +221,6 @@ export class ContactService
 
     await this.mutator.setItemToBeDeleted(contact)
     await this.sync.sync()
-
-    void this.notifyEvent(ContactServiceEvent.ContactsChanged)
   }
 
   getAllContacts(): TrustedContactInterface[] {

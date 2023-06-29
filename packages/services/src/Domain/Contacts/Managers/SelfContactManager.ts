@@ -1,3 +1,4 @@
+import { MutatorClientInterface } from './../../Mutator/MutatorClientInterface'
 import { InternalFeature } from './../../InternalFeatures/InternalFeature'
 import { InternalFeatureService } from '../../InternalFeatures/InternalFeatureService'
 import { ApplicationStage } from './../../Application/ApplicationStage'
@@ -15,6 +16,8 @@ import {
   TrustedContactInterface,
 } from '@standardnotes/models'
 import { ContentType } from '@standardnotes/common'
+import { CreateOrEditTrustedContactUseCase } from '../UseCase/CreateOrEditTrustedContact'
+import { PublicKeySet } from '@standardnotes/encryption'
 
 export class SelfContactManager {
   public selfContact?: TrustedContactInterface
@@ -23,8 +26,9 @@ export class SelfContactManager {
   private eventDisposers: (() => void)[] = []
 
   constructor(
-    sync: SyncServiceInterface,
-    items: ItemManagerInterface,
+    private sync: SyncServiceInterface,
+    private items: ItemManagerInterface,
+    private mutator: MutatorClientInterface,
     private session: SessionsClientInterface,
     private singletons: SingletonManagerInterface,
   ) {
@@ -50,6 +54,24 @@ export class SelfContactManager {
         TrustedContact.singletonPredicate,
       )
     }
+  }
+
+  public async updateWithNewPublicKeySet(publicKeySet: PublicKeySet) {
+    if (!InternalFeatureService.get().isFeatureEnabled(InternalFeature.Vaults)) {
+      return
+    }
+
+    if (!this.selfContact) {
+      return
+    }
+
+    const usecase = new CreateOrEditTrustedContactUseCase(this.items, this.mutator, this.sync)
+    await usecase.execute({
+      name: 'Me',
+      contactUuid: this.selfContact.contactUuid,
+      publicKey: publicKeySet.encryption,
+      signingPublicKey: publicKeySet.signing,
+    })
   }
 
   private async reloadSelfContact() {
@@ -98,5 +120,10 @@ export class SelfContactManager {
 
   deinit() {
     this.eventDisposers.forEach((disposer) => disposer())
+    ;(this.sync as unknown) = undefined
+    ;(this.items as unknown) = undefined
+    ;(this.mutator as unknown) = undefined
+    ;(this.session as unknown) = undefined
+    ;(this.singletons as unknown) = undefined
   }
 }
