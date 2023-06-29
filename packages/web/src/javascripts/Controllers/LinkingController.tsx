@@ -26,6 +26,7 @@ import { NavigationController } from './Navigation/NavigationController'
 import { SelectedItemsController } from './SelectedItemsController'
 import { SubscriptionController } from './Subscription/SubscriptionController'
 import { WebApplication } from '@/Application/WebApplication'
+import { featureTrunkVaultsEnabled } from '@/FeatureTrunk'
 
 export class LinkingController extends AbstractViewController {
   shouldLinkToParentFolders: boolean
@@ -192,7 +193,7 @@ export class LinkingController extends AbstractViewController {
     const linkNoteAndFile = async (note: SNNote, file: FileItem) => {
       const updatedFile = await this.application.mutator.associateFileWithNote(file, note)
 
-      if (updatedFile) {
+      if (updatedFile && featureTrunkVaultsEnabled()) {
         const noteVault = this.application.vaults.getItemVault(note)
         const fileVault = this.application.vaults.getItemVault(updatedFile)
         if (noteVault && !fileVault) {

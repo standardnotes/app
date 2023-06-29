@@ -11,3 +11,7 @@ const FeatureTrunkStatus: Record<FeatureTrunkName, boolean> = {
 export function featureTrunkEnabled(trunk: FeatureTrunkName): boolean {
   return FeatureTrunkStatus[trunk]
 }
+
+export function featureTrunkVaultsEnabled(): boolean {
+  return featureTrunkEnabled(FeatureTrunkName.Vaults)
+}
