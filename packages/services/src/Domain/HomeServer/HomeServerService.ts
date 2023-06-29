@@ -138,6 +138,8 @@ export class HomeServerService extends AbstractService implements HomeServerServ
 
     await this.desktopDevice.setRawStorageValue(RawStorageKey.HomeServerDataLocation, newLocation)
 
+    await this.desktopDevice.setHomeServerDataLocation(newLocation)
+
     return Result.ok(newLocation)
   }
 

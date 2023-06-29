@@ -193,9 +193,12 @@ const HomeServerSettings = () => {
           const oldLocation = await homeServerService.getHomeServerDataLocation()
           const newLocationOrError = await homeServerService.changeHomeServerDataLocation()
           if (newLocationOrError.isFailed()) {
-            setStatus({ state: 'error', message: newLocationOrError.getError() })
+            setStatus({
+              state: 'error',
+              message: `${newLocationOrError.getError()}. Restoring to initial location in a moment...`,
+            })
 
-            await sleep(SERVER_SYNTHEIC_CHANGE_DELAY)
+            await sleep(2 * SERVER_SYNTHEIC_CHANGE_DELAY)
 
             await changeHomeServerDataLocation(oldLocation)
 

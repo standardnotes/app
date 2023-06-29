@@ -100,17 +100,14 @@ export class FilesManager implements FilesManagerInterface {
     }
   }
 
-  async deleteDir(dirPath: string): Promise<void> {
+  async deleteDir(dirPath: string): Promise<Result<string>> {
     try {
-      await this.deleteDirContents(dirPath)
-    } catch (error: any) {
-      if (error.code === FileErrorCodes.FileDoesNotExist) {
-        /** Directory has already been deleted. */
-        return
-      }
-      throw error
+      fse.removeSync(dirPath)
+
+      return Result.ok('Directory deleted successfully')
+    } catch (error) {
+      return Result.fail((error as Error).message)
     }
-    await fs.promises.rmdir(dirPath)
   }
 
   async deleteDirContents(dirPath: string): Promise<void> {
@@ -150,11 +147,13 @@ export class FilesManager implements FilesManagerInterface {
     return !!relative && !relative.startsWith('..') && !path.isAbsolute(relative)
   }
 
-  async moveDirectory(dir: string, destination: string): Promise<void> {
+  async moveDirectory(dir: string, destination: string): Promise<Result<string>> {
     try {
-      await fse.move(dir, destination)
+      await fse.move(dir, destination, { overwrite: true })
+
+      return Result.ok('Directory moved successfully')
     } catch (error) {
-      console.error(error)
+      return Result.fail((error as Error).message)
     }
   }
 

@@ -399,6 +399,8 @@ async function uninstallComponent(mapping: MappingFileHandler, uuid: string) {
     /** No mapping for component */
     return
   }
-  await new FilesManager().deleteDir(path.join(Paths.userDataDir, componentMapping.location))
-  mapping.remove(uuid)
+  const result = await new FilesManager().deleteDir(path.join(Paths.userDataDir, componentMapping.location))
+  if (!result.isFailed()) {
+    mapping.remove(uuid)
+  }
 }

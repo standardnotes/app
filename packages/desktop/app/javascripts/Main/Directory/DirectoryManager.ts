@@ -27,9 +27,16 @@ export class DirectoryManager implements DirectoryManagerInterface {
       await this.filesManager.ensureDirectoryExists(newPath)
 
       if (oldLocation) {
-        const result = await this.filesManager.moveDirContents(path.normalize(oldLocation), newPath)
+        const result = await this.filesManager.moveDirectory(path.normalize(oldLocation), newPath)
         if (result.isFailed()) {
           this.lastErrorMessage = result.getError()
+
+          return undefined
+        }
+
+        const deletingDirectoryResult = await this.filesManager.deleteDir(path.normalize(oldLocation))
+        if (deletingDirectoryResult.isFailed()) {
+          this.lastErrorMessage = deletingDirectoryResult.getError()
 
           return undefined
         }

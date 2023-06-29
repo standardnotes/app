@@ -10,10 +10,10 @@ export interface FilesManagerInterface {
   writeFile(filepath: string, data: string): Promise<void>
   writeJSONFileSync(filepath: string, data: unknown): void
   ensureDirectoryExists(dirPath: string): Promise<void>
-  deleteDir(dirPath: string): Promise<void>
+  deleteDir(dirPath: string): Promise<Result<string>>
   deleteDirContents(dirPath: string): Promise<void>
   isChildOfDir(parent: string, potentialChild: string): boolean
-  moveDirectory(dir: string, destination: string): Promise<void>
+  moveDirectory(dir: string, destination: string): Promise<Result<string>>
   moveDirContents(srcDir: string, destDir: string): Promise<Result<string>>
   extractZip(source: string, dest: string): Promise<void>
   moveFiles(sources: string[], destDir: string): Promise<void[]>
