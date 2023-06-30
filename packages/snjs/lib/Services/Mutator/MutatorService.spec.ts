@@ -1,16 +1,16 @@
-import { SNHistoryManager } from './../History/HistoryManager'
-import { NoteContent, SNNote, FillItemContent, DecryptedPayload, PayloadTimestampDefaults } from '@standardnotes/models'
-import { ContentType } from '@standardnotes/common'
-import { EncryptionService, InternalEventBusInterface } from '@standardnotes/services'
 import {
-  ChallengeService,
-  MutatorService,
-  PayloadManager,
-  SNComponentManager,
-  SNProtectionService,
-  ItemManager,
-  SNSyncService,
-} from '../'
+  NoteContent,
+  SNNote,
+  FillItemContent,
+  DecryptedPayload,
+  PayloadTimestampDefaults,
+  MutationType,
+  FileItem,
+  SNTag,
+} from '@standardnotes/models'
+import { ContentType } from '@standardnotes/common'
+import { AlertService, InternalEventBusInterface } from '@standardnotes/services'
+import { MutatorService, PayloadManager, ItemManager } from '../'
 import { UuidGenerator } from '@standardnotes/utils'
 
 const setupRandomUuid = () => {
@@ -21,12 +21,6 @@ describe('mutator service', () => {
   let mutatorService: MutatorService
   let payloadManager: PayloadManager
   let itemManager: ItemManager
-  let syncService: SNSyncService
-  let protectionService: SNProtectionService
-  let protocolService: EncryptionService
-  let challengeService: ChallengeService
-  let componentManager: SNComponentManager
-  let historyService: SNHistoryManager
 
   let internalEventBus: InternalEventBusInterface
 
@@ -38,17 +32,10 @@ describe('mutator service', () => {
     payloadManager = new PayloadManager(internalEventBus)
     itemManager = new ItemManager(payloadManager, internalEventBus)
 
-    mutatorService = new MutatorService(
-      itemManager,
-      syncService,
-      protectionService,
-      protocolService,
-      payloadManager,
-      challengeService,
-      componentManager,
-      historyService,
-      internalEventBus,
-    )
+    const alerts = {} as jest.Mocked<AlertService>
+    alerts.alert = jest.fn()
+
+    mutatorService = new MutatorService(itemManager, payloadManager, alerts, internalEventBus)
   })
 
   const insertNote = (title: string) => {
@@ -73,10 +60,76 @@ describe('mutator service', () => {
         (mutator) => {
           mutator.pinned = true
         },
-        false,
+        MutationType.NoUpdateUserTimestamps,
       )
 
       expect(note.userModifiedDate).toEqual(pinnedNote?.userModifiedDate)
+    })
+  })
+
+  describe('linking', () => {
+    it('attempting to link file and note should not be allowed if items belong to different vaults', async () => {
+      const note = {
+        uuid: 'note',
+        key_system_identifier: '123',
+      } as jest.Mocked<SNNote>
+
+      const file = {
+        uuid: 'file',
+        key_system_identifier: '456',
+      } as jest.Mocked<FileItem>
+
+      const result = await mutatorService.associateFileWithNote(file, note)
+
+      expect(result).toBeUndefined()
+    })
+
+    it('attempting to link vaulted tag with non vaulted note should not be permissable', async () => {
+      const note = {
+        uuid: 'note',
+        key_system_identifier: undefined,
+      } as jest.Mocked<SNNote>
+
+      const tag = {
+        uuid: 'tag',
+        key_system_identifier: '456',
+      } as jest.Mocked<SNTag>
+
+      const result = await mutatorService.addTagToNote(note, tag, true)
+
+      expect(result).toBeUndefined()
+    })
+
+    it('attempting to link vaulted tag with non vaulted file should not be permissable', async () => {
+      const tag = {
+        uuid: 'tag',
+        key_system_identifier: '456',
+      } as jest.Mocked<SNTag>
+
+      const file = {
+        uuid: 'file',
+        key_system_identifier: undefined,
+      } as jest.Mocked<FileItem>
+
+      const result = await mutatorService.addTagToFile(file, tag, true)
+
+      expect(result).toBeUndefined()
+    })
+
+    it('attempting to link vaulted tag with note belonging to different vault should not be perpermissable', async () => {
+      const note = {
+        uuid: 'note',
+        key_system_identifier: '123',
+      } as jest.Mocked<SNNote>
+
+      const tag = {
+        uuid: 'tag',
+        key_system_identifier: '456',
+      } as jest.Mocked<SNTag>
+
+      const result = await mutatorService.addTagToNote(note, tag, true)
+
+      expect(result).toBeUndefined()
     })
   })
 })

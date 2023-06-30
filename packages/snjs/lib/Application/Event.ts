@@ -5,7 +5,7 @@ export function applicationEventForSyncEvent(syncEvent: SyncEvent) {
   return (
     {
       [SyncEvent.SyncCompletedWithAllItemsUploaded]: ApplicationEvent.CompletedFullSync,
-      [SyncEvent.SingleRoundTripSyncCompleted]: ApplicationEvent.CompletedIncrementalSync,
+      [SyncEvent.PaginatedSyncRequestCompleted]: ApplicationEvent.CompletedIncrementalSync,
       [SyncEvent.SyncError]: ApplicationEvent.FailedSync,
       [SyncEvent.SyncTakingTooLong]: ApplicationEvent.HighLatencySync,
       [SyncEvent.EnterOutOfSync]: ApplicationEvent.EnteredOutOfSync,
@@ -14,7 +14,7 @@ export function applicationEventForSyncEvent(syncEvent: SyncEvent) {
       [SyncEvent.MajorDataChange]: ApplicationEvent.MajorDataChange,
       [SyncEvent.LocalDataIncrementalLoad]: ApplicationEvent.LocalDataIncrementalLoad,
       [SyncEvent.StatusChanged]: ApplicationEvent.SyncStatusChanged,
-      [SyncEvent.SyncWillBegin]: ApplicationEvent.WillSync,
+      [SyncEvent.SyncDidBeginProcessing]: ApplicationEvent.WillSync,
       [SyncEvent.InvalidSession]: ApplicationEvent.InvalidSyncSession,
       [SyncEvent.DatabaseReadError]: ApplicationEvent.LocalDatabaseReadError,
       [SyncEvent.DatabaseWriteError]: ApplicationEvent.LocalDatabaseWriteError,

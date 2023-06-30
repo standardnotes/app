@@ -23,6 +23,16 @@ import { NoteMutator } from '../../Syncable/Note/NoteMutator'
 import { DecryptedItemInterface } from '../../Abstract/Item/Interfaces/DecryptedItem'
 import { ItemContent } from '../../Abstract/Content/ItemContent'
 import { DecryptedItemMutator } from '../../Abstract/Item/Mutator/DecryptedItemMutator'
+import { DeletedItem } from '../../Abstract/Item/Implementations/DeletedItem'
+import { EncryptedItemInterface } from '../../Abstract/Item/Interfaces/EncryptedItem'
+import { DeletedItemInterface } from '../../Abstract/Item/Interfaces/DeletedItem'
+import { SmartViewMutator } from '../../Syncable/SmartView'
+import { TrustedContact } from '../../Syncable/TrustedContact/TrustedContact'
+import { TrustedContactMutator } from '../../Syncable/TrustedContact/TrustedContactMutator'
+import { KeySystemRootKey } from '../../Syncable/KeySystemRootKey/KeySystemRootKey'
+import { KeySystemRootKeyMutator } from '../../Syncable/KeySystemRootKey/KeySystemRootKeyMutator'
+import { VaultListing } from '../../Syncable/VaultListing/VaultListing'
+import { VaultListingMutator } from '../../Syncable/VaultListing/VaultListingMutator'
 import {
   DeletedPayloadInterface,
   EncryptedPayloadInterface,
@@ -30,10 +40,6 @@ import {
   isDeletedPayload,
   isEncryptedPayload,
 } from '../../Abstract/Payload'
-import { DeletedItem } from '../../Abstract/Item/Implementations/DeletedItem'
-import { EncryptedItemInterface } from '../../Abstract/Item/Interfaces/EncryptedItem'
-import { DeletedItemInterface } from '../../Abstract/Item/Interfaces/DeletedItem'
-import { SmartViewMutator } from '../../Syncable/SmartView'
 
 type ItemClass<C extends ItemContent = ItemContent> = new (payload: DecryptedPayloadInterface<C>) => DecryptedItem<C>
 
@@ -53,6 +59,9 @@ const ContentTypeClassMapping: Partial<Record<ContentType, MappingEntry>> = {
     mutatorClass: ActionsExtensionMutator,
   },
   [ContentType.Component]: { itemClass: SNComponent, mutatorClass: ComponentMutator },
+  [ContentType.KeySystemRootKey]: { itemClass: KeySystemRootKey, mutatorClass: KeySystemRootKeyMutator },
+  [ContentType.TrustedContact]: { itemClass: TrustedContact, mutatorClass: TrustedContactMutator },
+  [ContentType.VaultListing]: { itemClass: VaultListing, mutatorClass: VaultListingMutator },
   [ContentType.Editor]: { itemClass: SNEditor },
   [ContentType.ExtensionRepo]: { itemClass: SNFeatureRepo },
   [ContentType.File]: { itemClass: FileItem, mutatorClass: FileMutator },
@@ -65,13 +74,13 @@ const ContentTypeClassMapping: Partial<Record<ContentType, MappingEntry>> = {
 
 export function CreateDecryptedMutatorForItem<
   I extends DecryptedItemInterface,
-  M extends DecryptedItemMutator = DecryptedItemMutator,
+  M extends DecryptedItemMutator<ItemContent, I> = DecryptedItemMutator<ItemContent, I>,
 >(item: I, type: MutationType): M {
   const lookupValue = ContentTypeClassMapping[item.content_type]?.mutatorClass
   if (lookupValue) {
     return new lookupValue(item, type) as M
   } else {
-    return new DecryptedItemMutator(item, type) as M
+    return new DecryptedItemMutator<ItemContent, I>(item, type) as M
   }
 }
 

@@ -4,6 +4,7 @@ import { WebApplication } from '@/Application/WebApplication'
 import { PackageProvider } from './Panes/General/Advanced/Packages/Provider/PackageProvider'
 import { securityPrefsHasBubble } from './Panes/Security/securityPrefsHasBubble'
 import { PreferenceId } from '@standardnotes/ui-services'
+import { featureTrunkVaultsEnabled } from '@/FeatureTrunk'
 
 interface PreferencesMenuItem {
   readonly id: PreferenceId
@@ -43,6 +44,11 @@ const READY_PREFERENCES_MENU_ITEMS: PreferencesMenuItem[] = [
   { id: 'listed', label: 'Listed', icon: 'listed' },
   { id: 'help-feedback', label: 'Help & feedback', icon: 'help' },
 ]
+
+if (featureTrunkVaultsEnabled()) {
+  PREFERENCES_MENU_ITEMS.splice(3, 0, { id: 'vaults', label: 'Vaults', icon: 'safe-square' })
+  READY_PREFERENCES_MENU_ITEMS.splice(3, 0, { id: 'vaults', label: 'Vaults', icon: 'safe-square' })
+}
 
 export class PreferencesMenu {
   private _selectedPane: PreferenceId = 'account'

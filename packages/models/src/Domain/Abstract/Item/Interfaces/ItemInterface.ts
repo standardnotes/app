@@ -5,6 +5,7 @@ import { PredicateInterface } from '../../../Runtime/Predicate/Interface'
 import { HistoryEntryInterface } from '../../../Runtime/History'
 import { ConflictStrategy } from '../Types/ConflictStrategy'
 import { SingletonStrategy } from '../Types/SingletonStrategy'
+import { PersistentSignatureData } from '../../../Runtime/Encryption/PersistentSignatureData'
 
 export interface ItemInterface<P extends PayloadInterface = PayloadInterface> {
   payload: P
@@ -14,6 +15,11 @@ export interface ItemInterface<P extends PayloadInterface = PayloadInterface> {
   readonly updatedAtString?: string
 
   uuid: string
+  get key_system_identifier(): string | undefined
+  get user_uuid(): string | undefined
+  get shared_vault_uuid(): string | undefined
+  get last_edited_by_uuid(): string | undefined
+  get signatureData(): PersistentSignatureData | undefined
 
   content_type: ContentType
   created_at: Date

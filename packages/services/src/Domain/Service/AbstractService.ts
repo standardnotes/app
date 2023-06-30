@@ -8,12 +8,14 @@ import { ApplicationStage } from '../Application/ApplicationStage'
 import { InternalEventPublishStrategy } from '../Internal/InternalEventPublishStrategy'
 import { DiagnosticInfo } from '../Diagnostics/ServiceDiagnostics'
 
-export abstract class AbstractService<EventName = string, EventData = undefined>
+export abstract class AbstractService<EventName = string, EventData = unknown>
   implements ServiceInterface<EventName, EventData>
 {
   private eventObservers: EventObserver<EventName, EventData>[] = []
   public loggingEnabled = false
   private criticalPromises: Promise<unknown>[] = []
+
+  protected eventDisposers: (() => void)[] = []
 
   constructor(protected internalEventBus: InternalEventBusInterface) {}
 
@@ -71,6 +73,11 @@ export abstract class AbstractService<EventName = string, EventData = undefined>
     this.eventObservers.length = 0
     ;(this.internalEventBus as unknown) = undefined
     ;(this.criticalPromises as unknown) = undefined
+
+    for (const disposer of this.eventDisposers) {
+      disposer()
+    }
+    this.eventDisposers = []
   }
 
   /**

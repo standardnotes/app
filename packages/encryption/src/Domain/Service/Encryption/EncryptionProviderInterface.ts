@@ -1,3 +1,4 @@
+import { AsymmetricSignatureVerificationDetachedResult } from '../../Operator/Types/AsymmetricSignatureVerificationDetachedResult'
 import { KeyParamsOrigination, ProtocolVersion } from '@standardnotes/common'
 import {
   BackupFile,
@@ -6,17 +7,26 @@ import {
   ItemContent,
   ItemsKeyInterface,
   RootKeyInterface,
+  KeySystemIdentifier,
+  KeySystemItemsKeyInterface,
+  AsymmetricMessagePayload,
+  KeySystemRootKeyInterface,
+  KeySystemRootKeyParamsInterface,
+  TrustedContactInterface,
 } from '@standardnotes/models'
 import { ClientDisplayableError } from '@standardnotes/responses'
-
 import { SNRootKeyParams } from '../../Keys/RootKey/RootKeyParams'
 import { KeyedDecryptionSplit } from '../../Split/KeyedDecryptionSplit'
 import { KeyedEncryptionSplit } from '../../Split/KeyedEncryptionSplit'
 import { ItemAuthenticatedData } from '../../Types/ItemAuthenticatedData'
-import { LegacyAttachedData } from '../../Types/LegacyAttachedData'
-import { RootKeyEncryptedAuthenticatedData } from '../../Types/RootKeyEncryptedAuthenticatedData'
+import { PkcKeyPair } from '@standardnotes/sncrypto-common'
+import { PublicKeySet } from '../../Operator/Types/PublicKeySet'
+import { KeySystemKeyManagerInterface } from '../KeySystemKeyManagerInterface'
+import { AsymmetricallyEncryptedString } from '../../Operator/Types/Types'
 
 export interface EncryptionProviderInterface {
+  keys: KeySystemKeyManagerInterface
+
   encryptSplitSingle(split: KeyedEncryptionSplit): Promise<EncryptedPayloadInterface>
   encryptSplit(split: KeyedEncryptionSplit): Promise<EncryptedPayloadInterface[]>
   decryptSplitSingle<
@@ -31,29 +41,24 @@ export interface EncryptionProviderInterface {
   >(
     split: KeyedDecryptionSplit,
   ): Promise<(P | EncryptedPayloadInterface)[]>
-  hasRootKeyEncryptionSource(): boolean
-  getKeyEmbeddedKeyParams(key: EncryptedPayloadInterface): SNRootKeyParams | undefined
-  computeRootKey(password: string, keyParams: SNRootKeyParams): Promise<RootKeyInterface>
+
+  getEmbeddedPayloadAuthenticatedData<D extends ItemAuthenticatedData>(
+    payload: EncryptedPayloadInterface,
+  ): D | undefined
+  getKeyEmbeddedKeyParamsFromItemsKey(key: EncryptedPayloadInterface): SNRootKeyParams | undefined
+
   supportedVersions(): ProtocolVersion[]
   isVersionNewerThanLibraryVersion(version: ProtocolVersion): boolean
   platformSupportsKeyDerivation(keyParams: SNRootKeyParams): boolean
-  computeWrappingKey(passcode: string): Promise<RootKeyInterface>
-  getUserVersion(): ProtocolVersion | undefined
+
   decryptBackupFile(
     file: BackupFile,
     password?: string,
   ): Promise<ClientDisplayableError | (EncryptedPayloadInterface | DecryptedPayloadInterface)[]>
+
+  getUserVersion(): ProtocolVersion | undefined
   hasAccount(): boolean
-  decryptErroredPayloads(): Promise<void>
-  deleteWorkspaceSpecificKeyStateFromDevice(): Promise<void>
   hasPasscode(): boolean
-  createRootKey(
-    identifier: string,
-    password: string,
-    origination: KeyParamsOrigination,
-    version?: ProtocolVersion,
-  ): Promise<RootKeyInterface>
-  setNewRootKeyWrapper(wrappingKey: RootKeyInterface): Promise<void>
   removePasscode(): Promise<void>
   validateAccountPassword(password: string): Promise<
     | {
@@ -66,11 +71,63 @@ export interface EncryptionProviderInterface {
         valid: boolean
       }
   >
+
+  decryptErroredPayloads(): Promise<void>
+  deleteWorkspaceSpecificKeyStateFromDevice(): Promise<void>
+
+  computeRootKey(password: string, keyParams: SNRootKeyParams): Promise<RootKeyInterface>
+  computeWrappingKey(passcode: string): Promise<RootKeyInterface>
+  hasRootKeyEncryptionSource(): boolean
+  createRootKey<K extends RootKeyInterface>(
+    identifier: string,
+    password: string,
+    origination: KeyParamsOrigination,
+    version?: ProtocolVersion,
+  ): Promise<K>
+  getRootKeyParams(): SNRootKeyParams | undefined
+  setNewRootKeyWrapper(wrappingKey: RootKeyInterface): Promise<void>
+
   createNewItemsKeyWithRollback(): Promise<() => Promise<void>>
-  reencryptItemsKeys(): Promise<void>
+  reencryptApplicableItemsAfterUserRootKeyChange(): Promise<void>
   getSureDefaultItemsKey(): ItemsKeyInterface
-  getRootKeyParams(): Promise<SNRootKeyParams | undefined>
-  getEmbeddedPayloadAuthenticatedData(
-    payload: EncryptedPayloadInterface,
-  ): RootKeyEncryptedAuthenticatedData | ItemAuthenticatedData | LegacyAttachedData | undefined
+
+  createRandomizedKeySystemRootKey(dto: { systemIdentifier: KeySystemIdentifier }): KeySystemRootKeyInterface
+
+  createUserInputtedKeySystemRootKey(dto: {
+    systemIdentifier: KeySystemIdentifier
+    userInputtedPassword: string
+  }): KeySystemRootKeyInterface
+
+  deriveUserInputtedKeySystemRootKey(dto: {
+    keyParams: KeySystemRootKeyParamsInterface
+    userInputtedPassword: string
+  }): KeySystemRootKeyInterface
+
+  createKeySystemItemsKey(
+    uuid: string,
+    keySystemIdentifier: KeySystemIdentifier,
+    sharedVaultUuid: string | undefined,
+    rootKeyToken: string,
+  ): KeySystemItemsKeyInterface
+
+  reencryptKeySystemItemsKeysForVault(keySystemIdentifier: KeySystemIdentifier): Promise<void>
+
+  getKeyPair(): PkcKeyPair
+  getSigningKeyPair(): PkcKeyPair
+
+  asymmetricallyEncryptMessage(dto: {
+    message: AsymmetricMessagePayload
+    senderKeyPair: PkcKeyPair
+    senderSigningKeyPair: PkcKeyPair
+    recipientPublicKey: string
+  }): string
+  asymmetricallyDecryptMessage<M extends AsymmetricMessagePayload>(dto: {
+    encryptedString: AsymmetricallyEncryptedString
+    trustedSender: TrustedContactInterface | undefined
+    privateKey: string
+  }): M | undefined
+  asymmetricSignatureVerifyDetached(
+    encryptedString: AsymmetricallyEncryptedString,
+  ): AsymmetricSignatureVerificationDetachedResult
+  getSenderPublicKeySetFromAsymmetricallyEncryptedString(string: string): PublicKeySet
 }

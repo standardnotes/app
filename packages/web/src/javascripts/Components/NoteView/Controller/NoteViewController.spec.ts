@@ -5,10 +5,11 @@ import {
   SNComponentManager,
   SNComponent,
   SNTag,
-  ItemsClientInterface,
   SNNote,
   Deferred,
   SyncServiceInterface,
+  ItemManagerInterface,
+  MutatorClientInterface,
 } from '@standardnotes/snjs'
 import { FeatureIdentifier, NoteType } from '@standardnotes/features'
 import { NoteViewController } from './NoteViewController'
@@ -24,7 +25,9 @@ describe('note view controller', () => {
     application.noAccount = jest.fn().mockReturnValue(false)
     application.isNativeMobileWeb = jest.fn().mockReturnValue(false)
 
-    Object.defineProperty(application, 'items', { value: {} as jest.Mocked<ItemsClientInterface> })
+    const items = {} as jest.Mocked<ItemManagerInterface>
+    items.createTemplateItem = jest.fn().mockReturnValue({} as SNNote)
+    Object.defineProperty(application, 'items', { value: items })
 
     Object.defineProperty(application, 'sync', { value: {} as jest.Mocked<SyncServiceInterface> })
     application.sync.sync = jest.fn().mockReturnValue(Promise.resolve())
@@ -33,8 +36,7 @@ describe('note view controller', () => {
     componentManager.legacyGetDefaultEditor = jest.fn()
     Object.defineProperty(application, 'componentManager', { value: componentManager })
 
-    const mutator = {} as jest.Mocked<MutatorService>
-    mutator.createTemplateItem = jest.fn().mockReturnValue({} as SNNote)
+    const mutator = {} as jest.Mocked<MutatorClientInterface>
     Object.defineProperty(application, 'mutator', { value: mutator })
   })
 
@@ -44,7 +46,7 @@ describe('note view controller', () => {
     const controller = new NoteViewController(application)
     await controller.initialize()
 
-    expect(application.mutator.createTemplateItem).toHaveBeenCalledWith(
+    expect(application.items.createTemplateItem).toHaveBeenCalledWith(
       ContentType.Note,
       expect.objectContaining({ noteType: NoteType.Plain }),
       expect.anything(),
@@ -65,7 +67,7 @@ describe('note view controller', () => {
     const controller = new NoteViewController(application)
     await controller.initialize()
 
-    expect(application.mutator.createTemplateItem).toHaveBeenCalledWith(
+    expect(application.items.createTemplateItem).toHaveBeenCalledWith(
       ContentType.Note,
       expect.objectContaining({ noteType: NoteType.Markdown }),
       expect.anything(),
@@ -80,13 +82,13 @@ describe('note view controller', () => {
     } as jest.Mocked<SNTag>
 
     application.items.findItem = jest.fn().mockReturnValue(tag)
-    application.items.addTagToNote = jest.fn()
+    application.mutator.addTagToNote = jest.fn()
 
     const controller = new NoteViewController(application, undefined, { tag: tag.uuid })
     await controller.initialize()
 
     expect(controller['defaultTag']).toEqual(tag)
-    expect(application.items.addTagToNote).toHaveBeenCalledWith(expect.anything(), tag, expect.anything())
+    expect(application.mutator.addTagToNote).toHaveBeenCalledWith(expect.anything(), tag, expect.anything())
   })
 
   it('should wait until item finishes saving locally before deiniting', async () => {

@@ -1,4 +1,4 @@
-import { Environment, Platform } from '@standardnotes/snjs'
+import { Environment, Platform } from '@standardnotes/models'
 import { isMacPlatform } from './platformCheck'
 import {
   CREATE_NEW_NOTE_KEYBOARD_COMMAND,

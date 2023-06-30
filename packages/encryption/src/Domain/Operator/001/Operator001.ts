@@ -8,8 +8,13 @@ import {
   ItemsKeyContent,
   ItemsKeyInterface,
   PayloadTimestampDefaults,
+  KeySystemItemsKeyInterface,
+  KeySystemIdentifier,
+  KeySystemRootKeyInterface,
+  RootKeyInterface,
+  KeySystemRootKeyParamsInterface,
 } from '@standardnotes/models'
-import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
+import { PkcKeyPair, PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { firstHalfOfString, secondHalfOfString, splitString, UuidGenerator } from '@standardnotes/utils'
 import { V001Algorithm } from '../../Algorithm'
 import { isItemsKey } from '../../Keys/ItemsKey/ItemsKey'
@@ -17,11 +22,16 @@ import { CreateNewRootKey } from '../../Keys/RootKey/Functions'
 import { Create001KeyParams } from '../../Keys/RootKey/KeyParamsFunctions'
 import { SNRootKey } from '../../Keys/RootKey/RootKey'
 import { SNRootKeyParams } from '../../Keys/RootKey/RootKeyParams'
-import { DecryptedParameters, EncryptedParameters, ErrorDecryptingParameters } from '../../Types/EncryptedParameters'
+import { EncryptedOutputParameters, ErrorDecryptingParameters } from '../../Types/EncryptedParameters'
+import { DecryptedParameters } from '../../Types/DecryptedParameters'
 import { ItemAuthenticatedData } from '../../Types/ItemAuthenticatedData'
 import { LegacyAttachedData } from '../../Types/LegacyAttachedData'
 import { RootKeyEncryptedAuthenticatedData } from '../../Types/RootKeyEncryptedAuthenticatedData'
-import { AsynchronousOperator } from '../Operator'
+import { OperatorInterface } from '../OperatorInterface/OperatorInterface'
+import { PublicKeySet } from '../Types/PublicKeySet'
+import { AsymmetricDecryptResult } from '../Types/AsymmetricDecryptResult'
+import { AsymmetricSignatureVerificationDetachedResult } from '../Types/AsymmetricSignatureVerificationDetachedResult'
+import { AsyncOperatorInterface } from '../OperatorInterface/AsyncOperatorInterface'
 
 const NO_IV = '00000000000000000000000000000000'
 
@@ -29,7 +39,7 @@ const NO_IV = '00000000000000000000000000000000'
  * @deprecated
  * A legacy operator no longer used to generate new accounts
  */
-export class SNProtocolOperator001 implements AsynchronousOperator {
+export class SNProtocolOperator001 implements OperatorInterface, AsyncOperatorInterface {
   protected readonly crypto: PureCryptoInterface
 
   constructor(crypto: PureCryptoInterface) {
@@ -68,11 +78,11 @@ export class SNProtocolOperator001 implements AsynchronousOperator {
     return CreateDecryptedItemFromPayload(payload)
   }
 
-  public async createRootKey(
+  public async createRootKey<K extends RootKeyInterface>(
     identifier: string,
     password: string,
     origination: KeyParamsOrigination,
-  ): Promise<SNRootKey> {
+  ): Promise<K> {
     const pwCost = V001Algorithm.PbkdfMinCost as number
     const pwNonce = this.crypto.generateRandomKey(V001Algorithm.SaltSeedLength)
     const pwSalt = await this.crypto.unsafeSha1(identifier + 'SN' + pwNonce)
@@ -90,13 +100,13 @@ export class SNProtocolOperator001 implements AsynchronousOperator {
     return this.deriveKey(password, keyParams)
   }
 
-  public getPayloadAuthenticatedData(
-    _encrypted: EncryptedParameters,
+  public getPayloadAuthenticatedDataForExternalUse(
+    _encrypted: EncryptedOutputParameters,
   ): RootKeyEncryptedAuthenticatedData | ItemAuthenticatedData | LegacyAttachedData | undefined {
     return undefined
   }
 
-  public async computeRootKey(password: string, keyParams: SNRootKeyParams): Promise<SNRootKey> {
+  public async computeRootKey<K extends RootKeyInterface>(password: string, keyParams: SNRootKeyParams): Promise<K> {
     return this.deriveKey(password, keyParams)
   }
 
@@ -111,7 +121,7 @@ export class SNProtocolOperator001 implements AsynchronousOperator {
   public async generateEncryptedParametersAsync(
     payload: DecryptedPayloadInterface,
     key: ItemsKeyInterface | SNRootKey,
-  ): Promise<EncryptedParameters> {
+  ): Promise<EncryptedOutputParameters> {
     /**
      * Generate new item key that is double the key size.
      * Will be split to create encryption key and authentication key.
@@ -132,16 +142,19 @@ export class SNProtocolOperator001 implements AsynchronousOperator {
 
     return {
       uuid: payload.uuid,
+      content_type: payload.content_type,
       items_key_id: isItemsKey(key) ? key.uuid : undefined,
       content: ciphertext,
       enc_item_key: encItemKey,
       auth_hash: authHash,
       version: this.version,
+      key_system_identifier: payload.key_system_identifier,
+      shared_vault_uuid: payload.shared_vault_uuid,
     }
   }
 
   public async generateDecryptedParametersAsync<C extends ItemContent = ItemContent>(
-    encrypted: EncryptedParameters,
+    encrypted: EncryptedOutputParameters,
     key: ItemsKeyInterface | SNRootKey,
   ): Promise<DecryptedParameters<C> | ErrorDecryptingParameters> {
     if (!encrypted.enc_item_key) {
@@ -178,6 +191,7 @@ export class SNProtocolOperator001 implements AsynchronousOperator {
       return {
         uuid: encrypted.uuid,
         content: JSON.parse(content),
+        signatureData: { required: false, contentHash: '' },
       }
     }
   }
@@ -191,7 +205,7 @@ export class SNProtocolOperator001 implements AsynchronousOperator {
     }
   }
 
-  protected async deriveKey(password: string, keyParams: SNRootKeyParams): Promise<SNRootKey> {
+  protected async deriveKey<K extends RootKeyInterface>(password: string, keyParams: SNRootKeyParams): Promise<K> {
     const derivedKey = await this.crypto.pbkdf2(
       password,
       keyParams.content001.pw_salt,
@@ -205,11 +219,63 @@ export class SNProtocolOperator001 implements AsynchronousOperator {
 
     const partitions = splitString(derivedKey, 2)
 
-    return CreateNewRootKey({
+    return CreateNewRootKey<K>({
       serverPassword: partitions[0],
       masterKey: partitions[1],
       version: ProtocolVersion.V001,
       keyParams: keyParams.getPortableValue(),
     })
+  }
+
+  createRandomizedKeySystemRootKey(_dto: { systemIdentifier: string }): KeySystemRootKeyInterface {
+    throw new Error('Method not implemented.')
+  }
+
+  createUserInputtedKeySystemRootKey(_dto: {
+    systemIdentifier: string
+    systemName: string
+    userInputtedPassword: string
+  }): KeySystemRootKeyInterface {
+    throw new Error('Method not implemented.')
+  }
+
+  deriveUserInputtedKeySystemRootKey(_dto: {
+    keyParams: KeySystemRootKeyParamsInterface
+    userInputtedPassword: string
+  }): KeySystemRootKeyInterface {
+    throw new Error('Method not implemented.')
+  }
+
+  createKeySystemItemsKey(
+    _uuid: string,
+    _keySystemIdentifier: KeySystemIdentifier,
+    _sharedVaultUuid: string | undefined,
+  ): KeySystemItemsKeyInterface {
+    throw new Error('Method not implemented.')
+  }
+
+  versionForAsymmetricallyEncryptedString(_encryptedString: string): ProtocolVersion {
+    throw new Error('Method not implemented.')
+  }
+
+  asymmetricEncrypt(_dto: {
+    stringToEncrypt: string
+    senderKeyPair: PkcKeyPair
+    senderSigningKeyPair: PkcKeyPair
+    recipientPublicKey: string
+  }): string {
+    throw new Error('Method not implemented.')
+  }
+
+  asymmetricDecrypt(_dto: { stringToDecrypt: string; recipientSecretKey: string }): AsymmetricDecryptResult | null {
+    throw new Error('Method not implemented.')
+  }
+
+  asymmetricSignatureVerifyDetached(_encryptedString: string): AsymmetricSignatureVerificationDetachedResult {
+    throw new Error('Method not implemented.')
+  }
+
+  getSenderPublicKeySetFromAsymmetricallyEncryptedString(_string: string): PublicKeySet {
+    throw new Error('Method not implemented.')
   }
 }

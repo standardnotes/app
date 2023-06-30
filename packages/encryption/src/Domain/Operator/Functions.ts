@@ -4,12 +4,9 @@ import { SNProtocolOperator001 } from '../Operator/001/Operator001'
 import { SNProtocolOperator002 } from '../Operator/002/Operator002'
 import { SNProtocolOperator003 } from '../Operator/003/Operator003'
 import { SNProtocolOperator004 } from '../Operator/004/Operator004'
-import { AsynchronousOperator, SynchronousOperator } from '../Operator/Operator'
+import { AnyOperatorInterface } from './OperatorInterface/TypeCheck'
 
-export function createOperatorForVersion(
-  version: ProtocolVersion,
-  crypto: PureCryptoInterface,
-): AsynchronousOperator | SynchronousOperator {
+export function createOperatorForVersion(version: ProtocolVersion, crypto: PureCryptoInterface): AnyOperatorInterface {
   if (version === ProtocolVersion.V001) {
     return new SNProtocolOperator001(crypto)
   } else if (version === ProtocolVersion.V002) {
@@ -21,10 +18,4 @@ export function createOperatorForVersion(
   } else {
     throw Error(`Unable to find operator for version ${version}`)
   }
-}
-
-export function isAsyncOperator(
-  operator: AsynchronousOperator | SynchronousOperator,
-): operator is AsynchronousOperator {
-  return (operator as AsynchronousOperator).generateDecryptedParametersAsync !== undefined
 }

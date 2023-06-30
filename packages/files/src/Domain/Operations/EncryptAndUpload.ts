@@ -3,7 +3,7 @@ import { FileUploadResult } from '../Types/FileUploadResult'
 import { FileUploader } from '../UseCase/FileUploader'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { FileEncryptor } from '../UseCase/FileEncryptor'
-import { FileContent } from '@standardnotes/models'
+import { FileContent, VaultListingInterface } from '@standardnotes/models'
 import { FilesApiInterface } from '../Api/FilesApiInterface'
 
 export class EncryptAndUploadFileOperation {
@@ -22,9 +22,10 @@ export class EncryptAndUploadFileOperation {
       key: FileContent['key']
       remoteIdentifier: FileContent['remoteIdentifier']
     },
-    private apiToken: string,
+    private valetToken: string,
     private crypto: PureCryptoInterface,
     private api: FilesApiInterface,
+    public readonly vault?: VaultListingInterface,
   ) {
     this.encryptor = new FileEncryptor(file, this.crypto)
     this.uploader = new FileUploader(this.api)
@@ -32,8 +33,8 @@ export class EncryptAndUploadFileOperation {
     this.encryptionHeader = this.encryptor.initializeHeader()
   }
 
-  public getApiToken(): string {
-    return this.apiToken
+  public getValetToken(): string {
+    return this.valetToken
   }
 
   public getProgress(): FileUploadProgress {
@@ -79,7 +80,12 @@ export class EncryptAndUploadFileOperation {
   }
 
   private async uploadBytes(encryptedBytes: Uint8Array, chunkId: number): Promise<boolean> {
-    const success = await this.uploader.uploadBytes(encryptedBytes, chunkId, this.apiToken)
+    const success = await this.uploader.uploadBytes(
+      encryptedBytes,
+      this.vault && this.vault.sharing ? 'shared-vault' : 'user',
+      chunkId,
+      this.valetToken,
+    )
 
     return success
   }

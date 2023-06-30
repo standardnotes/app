@@ -35,7 +35,7 @@ describe('history manager', () => {
     })
 
     function setTextAndSync(application, item, text) {
-      return application.mutator.changeAndSaveItem(
+      return application.changeAndSaveItem(
         item,
         (mutator) => {
           mutator.text = text
@@ -59,7 +59,7 @@ describe('history manager', () => {
       expect(this.historyManager.sessionHistoryForItem(item).length).to.equal(0)
 
       /** Sync with different contents, should create new entry */
-      await this.application.mutator.changeAndSaveItem(
+      await this.application.changeAndSaveItem(
         item,
         (mutator) => {
           mutator.title = Math.random()
@@ -79,7 +79,7 @@ describe('history manager', () => {
       const context = await Factory.createAppContext({ identifier })
       await context.launch()
       expect(context.application.historyManager.sessionHistoryForItem(item).length).to.equal(0)
-      await context.application.mutator.changeAndSaveItem(
+      await context.application.changeAndSaveItem(
         item,
         (mutator) => {
           mutator.title = Math.random()
@@ -97,13 +97,13 @@ describe('history manager', () => {
     it('creating new item and making 1 change should create 0 revisions', async function () {
       const context = await Factory.createAppContext()
       await context.launch()
-      const item = await context.application.mutator.createTemplateItem(ContentType.Note, {
+      const item = await context.application.items.createTemplateItem(ContentType.Note, {
         references: [],
       })
       await context.application.mutator.insertItem(item)
       expect(context.application.historyManager.sessionHistoryForItem(item).length).to.equal(0)
 
-      await context.application.mutator.changeAndSaveItem(
+      await context.application.changeAndSaveItem(
         item,
         (mutator) => {
           mutator.title = Math.random()
@@ -172,8 +172,8 @@ describe('history manager', () => {
           text: Factory.randomString(100),
         }),
       )
-      let item = await this.application.itemManager.emitItemFromPayload(payload, PayloadEmitSource.LocalChanged)
-      await this.application.itemManager.setItemDirty(item)
+      let item = await this.application.mutator.emitItemFromPayload(payload, PayloadEmitSource.LocalChanged)
+      await this.application.mutator.setItemDirty(item)
       await this.application.syncService.sync(syncOptions)
       /** It should keep the first and last by default */
       item = await setTextAndSync(this.application, item, item.content.text)
@@ -202,9 +202,9 @@ describe('history manager', () => {
         }),
       )
 
-      let item = await this.application.itemManager.emitItemFromPayload(payload, PayloadEmitSource.LocalChanged)
+      let item = await this.application.mutator.emitItemFromPayload(payload, PayloadEmitSource.LocalChanged)
 
-      await this.application.itemManager.setItemDirty(item)
+      await this.application.mutator.setItemDirty(item)
       await this.application.syncService.sync(syncOptions)
 
       item = await setTextAndSync(this.application, item, item.content.text + Factory.randomString(1))
@@ -241,9 +241,9 @@ describe('history manager', () => {
 
     it('unsynced entries should use payload created_at for preview titles', async function () {
       const payload = Factory.createNotePayload()
-      await this.application.itemManager.emitItemFromPayload(payload, PayloadEmitSource.LocalChanged)
+      await this.application.mutator.emitItemFromPayload(payload, PayloadEmitSource.LocalChanged)
       const item = this.application.items.findItem(payload.uuid)
-      await this.application.mutator.changeAndSaveItem(
+      await this.application.changeAndSaveItem(
         item,
         (mutator) => {
           mutator.title = Math.random()
@@ -306,7 +306,7 @@ describe('history manager', () => {
       expect(itemHistory.length).to.equal(1)
 
       /** Sync with different contents, should not create a new entry */
-      await this.application.mutator.changeAndSaveItem(
+      await this.application.changeAndSaveItem(
         item,
         (mutator) => {
           mutator.title = Math.random()
@@ -327,7 +327,7 @@ describe('history manager', () => {
       await Factory.sleep(Factory.ServerRevisionFrequency)
       /** Sync with different contents, should create new entry */
       const newTitleAfterFirstChange = `The title should be: ${Math.random()}`
-      await this.application.mutator.changeAndSaveItem(
+      await this.application.changeAndSaveItem(
         item,
         (mutator) => {
           mutator.title = newTitleAfterFirstChange
@@ -343,7 +343,10 @@ describe('history manager', () => {
       expect(itemHistory.length).to.equal(2)
 
       const oldestEntry = lastElement(itemHistory)
-      let revisionFromServerOrError = await this.application.getRevision.execute({ itemUuid: item.uuid, revisionUuid: oldestEntry.uuid })
+      let revisionFromServerOrError = await this.application.getRevision.execute({
+        itemUuid: item.uuid,
+        revisionUuid: oldestEntry.uuid,
+      })
       const revisionFromServer = revisionFromServerOrError.getValue()
       expect(revisionFromServer).to.be.ok
 
@@ -359,7 +362,7 @@ describe('history manager', () => {
     it('duplicate revisions should not have the originals uuid', async function () {
       const note = await Factory.createSyncedNote(this.application)
       await Factory.markDirtyAndSyncItem(this.application, note)
-      const dupe = await this.application.itemManager.duplicateItem(note, true)
+      const dupe = await this.application.mutator.duplicateItem(note, true)
       await Factory.markDirtyAndSyncItem(this.application, dupe)
 
       await Factory.sleep(Factory.ServerRevisionCreationDelay)
@@ -367,7 +370,10 @@ describe('history manager', () => {
       const dupeHistoryOrError = await this.application.listRevisions.execute({ itemUuid: dupe.uuid })
       const dupeHistory = dupeHistoryOrError.getValue()
 
-      const dupeRevisionOrError = await this.application.getRevision.execute({ itemUuid: dupe.uuid, revisionUuid: dupeHistory[0].uuid })
+      const dupeRevisionOrError = await this.application.getRevision.execute({
+        itemUuid: dupe.uuid,
+        revisionUuid: dupeHistory[0].uuid,
+      })
       const dupeRevision = dupeRevisionOrError.getValue()
       expect(dupeRevision.payload.uuid).to.equal(dupe.uuid)
     })
@@ -384,7 +390,7 @@ describe('history manager', () => {
       await Factory.sleep(Factory.ServerRevisionFrequency)
       await Factory.markDirtyAndSyncItem(this.application, note)
 
-      const dupe = await this.application.itemManager.duplicateItem(note, true)
+      const dupe = await this.application.mutator.duplicateItem(note, true)
       await Factory.markDirtyAndSyncItem(this.application, dupe)
 
       await Factory.sleep(Factory.ServerRevisionCreationDelay)
@@ -405,12 +411,12 @@ describe('history manager', () => {
       await Factory.sleep(Factory.ServerRevisionFrequency)
 
       const changedText = `${Math.random()}`
-      await this.application.mutator.changeAndSaveItem(note, (mutator) => {
+      await this.application.changeAndSaveItem(note, (mutator) => {
         mutator.title = changedText
       })
       await Factory.markDirtyAndSyncItem(this.application, note)
 
-      const dupe = await this.application.itemManager.duplicateItem(note, true)
+      const dupe = await this.application.mutator.duplicateItem(note, true)
       await Factory.markDirtyAndSyncItem(this.application, dupe)
 
       await Factory.sleep(Factory.ServerRevisionCreationDelay)
@@ -420,7 +426,10 @@ describe('history manager', () => {
       expect(itemHistory.length).to.be.above(1)
       const newestRevision = itemHistory[0]
 
-      const fetchedOrError = await this.application.getRevision.execute({ itemUuid: dupe.uuid, revisionUuid: newestRevision.uuid })
+      const fetchedOrError = await this.application.getRevision.execute({
+        itemUuid: dupe.uuid,
+        revisionUuid: newestRevision.uuid,
+      })
       const fetched = fetchedOrError.getValue()
       expect(fetched.payload.errorDecrypting).to.not.be.ok
       expect(fetched.payload.content.title).to.equal(changedText)

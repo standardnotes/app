@@ -3,7 +3,6 @@ import {
   AbstractService,
   InternalEventBusInterface,
   StorageKey,
-  DiagnosticInfo,
   ChallengePrompt,
   ChallengeValidation,
   ChallengeKeyboardType,
@@ -26,8 +25,12 @@ import {
   InternalEventInterface,
   ApiServiceEvent,
   SessionRefreshedData,
+  SessionEvent,
+  UserKeyPairChangedEventData,
+  InternalFeatureService,
+  InternalFeature,
 } from '@standardnotes/services'
-import { Base64String } from '@standardnotes/sncrypto-common'
+import { Base64String, PkcKeyPair } from '@standardnotes/sncrypto-common'
 import {
   ClientDisplayableError,
   SessionBody,
@@ -43,7 +46,7 @@ import {
   SessionListResponse,
   HttpSuccessResponse,
 } from '@standardnotes/responses'
-import { CopyPayloadWithContentOverride } from '@standardnotes/models'
+import { CopyPayloadWithContentOverride, RootKeyWithKeyPairsInterface } from '@standardnotes/models'
 import { LegacySession, MapperInterface, Result, Session, SessionToken } from '@standardnotes/domain-core'
 import { KeyParamsFromApiResponse, SNRootKeyParams, SNRootKey } from '@standardnotes/encryption'
 import { Subscription } from '@standardnotes/security'
@@ -56,7 +59,7 @@ import { DiskStorageService } from '../Storage/DiskStorageService'
 import { SNWebSocketsService } from '../Api/WebsocketsService'
 import { Strings } from '@Lib/Strings'
 import { UuidString } from '@Lib/Types/UuidString'
-import { ChallengeService } from '../Challenge'
+import { ChallengeResponse, ChallengeService } from '../Challenge'
 import {
   ApiCallError,
   ErrorMessage,
@@ -70,11 +73,6 @@ export const MissingAccountParams = 'missing-params'
 
 const cleanedEmailString = (email: string) => {
   return email.trim().toLowerCase()
-}
-
-export enum SessionEvent {
-  Restored = 'SessionRestored',
-  Revoked = 'SessionRevoked',
 }
 
 /**
@@ -139,18 +137,19 @@ export class SNSessionManager
     }
   }
 
-  private setUser(user?: User) {
+  private memoizeUser(user?: User) {
     this.user = user
+
     this.apiService.setUser(user)
   }
 
   async initializeFromDisk() {
-    this.setUser(this.diskStorageService.getValue(StorageKey.User))
+    this.memoizeUser(this.diskStorageService.getValue(StorageKey.User))
 
     if (!this.user) {
       const legacyUuidLookup = this.diskStorageService.getValue<string>(StorageKey.LegacyUuid)
       if (legacyUuidLookup) {
-        this.setUser({ uuid: legacyUuidLookup, email: legacyUuidLookup })
+        this.memoizeUser({ uuid: legacyUuidLookup, email: legacyUuidLookup })
       }
     }
 
@@ -193,6 +192,36 @@ export class SNSessionManager
     return this.user
   }
 
+  public getSureUser(): User {
+    return this.user as User
+  }
+
+  isUserMissingKeyPair(): boolean {
+    try {
+      return this.getPublicKey() == undefined
+    } catch (error) {
+      return true
+    }
+  }
+
+  public getPublicKey(): string {
+    return this.protocolService.getKeyPair().publicKey
+  }
+
+  public getSigningPublicKey(): string {
+    return this.protocolService.getSigningKeyPair().publicKey
+  }
+
+  public get userUuid(): string {
+    const user = this.getUser()
+
+    if (!user) {
+      throw Error('Attempting to access userUuid when user is undefined')
+    }
+
+    return user.uuid
+  }
+
   isCurrentSessionReadOnly(): boolean | undefined {
     if (this.session === undefined) {
       return undefined
@@ -205,16 +234,13 @@ export class SNSessionManager
     return this.session.isReadOnly()
   }
 
-  public getSureUser() {
-    return this.user as User
-  }
-
   public getSession() {
     return this.apiService.getSession()
   }
 
   public async signOut() {
-    this.setUser(undefined)
+    this.memoizeUser(undefined)
+
     const session = this.apiService.getSession()
     if (session && session instanceof Session) {
       await this.apiService.signOut()
@@ -268,7 +294,11 @@ export class SNSessionManager
             currentKeyParams?.version,
           )
           if (isErrorResponse(response)) {
-            this.challengeService.setValidationStatusForChallenge(challenge, challengeResponse!.values[1], false)
+            this.challengeService.setValidationStatusForChallenge(
+              challenge,
+              (challengeResponse as ChallengeResponse).values[1],
+              false,
+            )
             onResponse?.(response)
           } else {
             resolve()
@@ -373,11 +403,20 @@ export class SNSessionManager
 
     email = cleanedEmailString(email)
 
-    const rootKey = await this.protocolService.createRootKey(email, password, Common.KeyParamsOrigination.Registration)
+    const rootKey = await this.protocolService.createRootKey<RootKeyWithKeyPairsInterface>(
+      email,
+      password,
+      Common.KeyParamsOrigination.Registration,
+    )
     const serverPassword = rootKey.serverPassword as string
     const keyParams = rootKey.keyParams
 
-    const registerResponse = await this.userApiService.register({ email, serverPassword, keyParams, ephemeral })
+    const registerResponse = await this.userApiService.register({
+      email,
+      serverPassword,
+      keyParams,
+      ephemeral,
+    })
 
     if ('error' in registerResponse.data) {
       throw new ApiCallError(registerResponse.data.error.message)
@@ -485,7 +524,7 @@ export class SNSessionManager
         response: paramsResult.response,
       }
     }
-    const keyParams = paramsResult.keyParams!
+    const keyParams = paramsResult.keyParams as SNRootKeyParams
     if (!this.protocolService.supportedVersions().includes(keyParams.version)) {
       if (this.protocolService.isVersionNewerThanLibraryVersion(keyParams.version)) {
         return {
@@ -563,7 +602,7 @@ export class SNSessionManager
 
     const signInResponse = await this.apiService.signIn({
       email,
-      serverPassword: rootKey.serverPassword!,
+      serverPassword: rootKey.serverPassword as string,
       ephemeral,
     })
 
@@ -585,20 +624,49 @@ export class SNSessionManager
 
   public async changeCredentials(parameters: {
     currentServerPassword: string
-    newRootKey: SNRootKey
+    newRootKey: RootKeyWithKeyPairsInterface
     wrappingKey?: SNRootKey
     newEmail?: string
   }): Promise<SessionManagerResponse> {
-    const userUuid = this.user!.uuid
-    const response = await this.apiService.changeCredentials({
+    const userUuid = this.getSureUser().uuid
+    const rawResponse = await this.apiService.changeCredentials({
       userUuid,
       currentServerPassword: parameters.currentServerPassword,
-      newServerPassword: parameters.newRootKey.serverPassword!,
+      newServerPassword: parameters.newRootKey.serverPassword as string,
       newKeyParams: parameters.newRootKey.keyParams,
       newEmail: parameters.newEmail,
     })
 
-    return this.processChangeCredentialsResponse(response, parameters.newRootKey, parameters.wrappingKey)
+    let oldKeyPair: PkcKeyPair | undefined
+    let oldSigningKeyPair: PkcKeyPair | undefined
+
+    try {
+      oldKeyPair = this.protocolService.getKeyPair()
+      oldSigningKeyPair = this.protocolService.getSigningKeyPair()
+    } catch (error) {
+      void error
+    }
+
+    const processedResponse = await this.processChangeCredentialsResponse(
+      rawResponse,
+      parameters.newRootKey,
+      parameters.wrappingKey,
+    )
+
+    if (!isErrorResponse(rawResponse)) {
+      if (InternalFeatureService.get().isFeatureEnabled(InternalFeature.Vaults)) {
+        const eventData: UserKeyPairChangedEventData = {
+          oldKeyPair,
+          oldSigningKeyPair,
+          newKeyPair: parameters.newRootKey.encryptionKeyPair,
+          newSigningKeyPair: parameters.newRootKey.signingKeyPair,
+        }
+
+        void this.notifyEvent(SessionEvent.UserKeyPairChanged, eventData)
+      }
+    }
+
+    return processedResponse
   }
 
   public async getSessionsList(): Promise<HttpResponse<SessionListEntry[]>> {
@@ -669,12 +737,10 @@ export class SNSessionManager
   ) {
     await this.protocolService.setRootKey(rootKey, wrappingKey)
 
-    this.setUser(user)
-
+    this.memoizeUser(user)
     this.diskStorageService.setValue(StorageKey.User, user)
 
     void this.apiService.setHost(host)
-
     this.httpService.setHost(host)
 
     this.setSession(session)
@@ -776,17 +842,5 @@ export class SNSessionManager
     }
 
     return Result.ok(sessionOrError.getValue())
-  }
-
-  override getDiagnostics(): Promise<DiagnosticInfo | undefined> {
-    return Promise.resolve({
-      session: {
-        isSessionRenewChallengePresented: this.isSessionRenewChallengePresented,
-        online: this.online(),
-        offline: this.offline(),
-        isSignedIn: this.isSignedIn(),
-        isSignedIntoFirstPartyServer: this.isSignedIntoFirstPartyServer(),
-      },
-    })
   }
 }

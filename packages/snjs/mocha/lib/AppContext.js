@@ -2,6 +2,7 @@ import FakeWebCrypto from './fake_web_crypto.js'
 import * as Applications from './Applications.js'
 import * as Utils from './Utils.js'
 import * as Defaults from './Defaults.js'
+import * as Events from './Events.js'
 import { createNotePayload } from './Items.js'
 
 UuidGenerator.SetGenerator(new FakeWebCrypto().generateUUID)
@@ -10,6 +11,8 @@ const MaximumSyncOptions = {
   checkIntegrity: true,
   awaitAll: true,
 }
+
+let GlobalSubscriptionIdCounter = 1001
 
 export class AppContext {
   constructor({ identifier, crypto, email, password, passcode, host } = {}) {
@@ -44,6 +47,62 @@ export class AppContext {
       this.host,
       this.crypto || new FakeWebCrypto(),
     )
+  }
+
+  get vaults() {
+    return this.application.vaultService
+  }
+
+  get sessions() {
+    return this.application.sessions
+  }
+
+  get items() {
+    return this.application.items
+  }
+
+  get mutator() {
+    return this.application.mutator
+  }
+
+  get payloads() {
+    return this.application.payloadManager
+  }
+
+  get encryption() {
+    return this.application.protocolService
+  }
+
+  get contacts() {
+    return this.application.contactService
+  }
+
+  get sharedVaults() {
+    return this.application.sharedVaultService
+  }
+
+  get files() {
+    return this.application.fileService
+  }
+
+  get keys() {
+    return this.application.keySystemKeyManager
+  }
+
+  get asymmetric() {
+    return this.application.asymmetricMessageService
+  }
+
+  get publicKey() {
+    return this.sessions.getPublicKey()
+  }
+
+  get signingPublicKey() {
+    return this.sessions.getSigningPublicKey()
+  }
+
+  get privateKey() {
+    return this.encryption.getKeyPair().privateKey
   }
 
   ignoreChallenges() {
@@ -118,13 +177,26 @@ export class AppContext {
       },
     })
 
-    return this.application.syncService.handleSuccessServerResponse({ payloadsSavedOrSaving: [] }, response)
+    return this.application.syncService.handleSuccessServerResponse(
+      { payloadsSavedOrSaving: [], options: {} },
+      response,
+    )
   }
 
   resolveWhenKeyRecovered(uuid) {
     return new Promise((resolve) => {
       this.application.keyRecoveryService.addEventObserver((_eventName, keys) => {
         if (Uuids(keys).includes(uuid)) {
+          resolve()
+        }
+      })
+    })
+  }
+
+  resolveWhenSharedVaultUserKeysResolved() {
+    return new Promise((resolve) => {
+      this.application.vaultService.collaboration.addEventObserver((eventName) => {
+        if (eventName === SharedVaultServiceEvent.SharedVaultStatusChanged) {
           resolve()
         }
       })
@@ -182,6 +254,155 @@ export class AppContext {
     })
   }
 
+  awaitNextSyncSharedVaultFromScratchEvent() {
+    return new Promise((resolve) => {
+      const removeObserver = this.application.syncService.addEventObserver((event, data) => {
+        if (event === SyncEvent.PaginatedSyncRequestCompleted && data?.options?.sharedVaultUuids) {
+          removeObserver()
+          resolve(data)
+        }
+      })
+    })
+  }
+
+  resolveWithUploadedPayloads() {
+    return new Promise((resolve) => {
+      this.application.syncService.addEventObserver((event, data) => {
+        if (event === SyncEvent.PaginatedSyncRequestCompleted) {
+          resolve(data.uploadedPayloads)
+        }
+      })
+    })
+  }
+
+  resolveWithConflicts() {
+    return new Promise((resolve) => {
+      this.application.syncService.addEventObserver((event, response) => {
+        if (event === SyncEvent.PaginatedSyncRequestCompleted) {
+          resolve(response.rawConflictObjects)
+        }
+      })
+    })
+  }
+
+  resolveWhenSavedSyncPayloadsIncludesItemUuid(uuid) {
+    return new Promise((resolve) => {
+      this.application.syncService.addEventObserver((event, response) => {
+        if (event === SyncEvent.PaginatedSyncRequestCompleted) {
+          const savedPayload = response.savedPayloads.find((payload) => payload.uuid === uuid)
+          if (savedPayload) {
+            resolve()
+          }
+        }
+      })
+    })
+  }
+
+  resolveWhenSavedSyncPayloadsIncludesItemThatIsDuplicatedOf(uuid) {
+    return new Promise((resolve) => {
+      this.application.syncService.addEventObserver((event, response) => {
+        if (event === SyncEvent.PaginatedSyncRequestCompleted) {
+          const savedPayload = response.savedPayloads.find((payload) => payload.duplicate_of === uuid)
+          if (savedPayload) {
+            resolve()
+          }
+        }
+      })
+    })
+  }
+
+  resolveWhenItemCompletesAddingToVault(targetItem) {
+    return new Promise((resolve) => {
+      const objectToSpy = this.vaults
+      sinon.stub(objectToSpy, 'moveItemToVault').callsFake(async (vault, item) => {
+        objectToSpy.moveItemToVault.restore()
+        const result = await objectToSpy.moveItemToVault(vault, item)
+        if (!targetItem || item.uuid === targetItem.uuid) {
+          resolve()
+        }
+        return result
+      })
+    })
+  }
+
+  resolveWhenItemCompletesRemovingFromVault(targetItem) {
+    return new Promise((resolve) => {
+      const objectToSpy = this.vaults
+      sinon.stub(objectToSpy, 'removeItemFromVault').callsFake(async (item) => {
+        objectToSpy.removeItemFromVault.restore()
+        const result = await objectToSpy.removeItemFromVault(item)
+        if (item.uuid === targetItem.uuid) {
+          resolve()
+        }
+        return result
+      })
+    })
+  }
+
+  resolveWhenAsymmetricMessageProcessingCompletes() {
+    return new Promise((resolve) => {
+      const objectToSpy = this.asymmetric
+      sinon.stub(objectToSpy, 'handleRemoteReceivedAsymmetricMessages').callsFake(async (messages) => {
+        objectToSpy.handleRemoteReceivedAsymmetricMessages.restore()
+        const result = await objectToSpy.handleRemoteReceivedAsymmetricMessages(messages)
+        resolve()
+        return result
+      })
+    })
+  }
+
+  resolveWhenUserMessagesProcessingCompletes() {
+    return new Promise((resolve) => {
+      const objectToSpy = this.application.userEventService
+      sinon.stub(objectToSpy, 'handleReceivedUserEvents').callsFake(async (params) => {
+        objectToSpy.handleReceivedUserEvents.restore()
+        const result = await objectToSpy.handleReceivedUserEvents(params)
+        resolve()
+        return result
+      })
+    })
+  }
+
+  resolveWhenSharedVaultServiceSendsContactShareMessage() {
+    return new Promise((resolve) => {
+      const objectToSpy = this.sharedVaults
+      sinon.stub(objectToSpy, 'shareContactWithUserAdministeredSharedVaults').callsFake(async (contact) => {
+        objectToSpy.shareContactWithUserAdministeredSharedVaults.restore()
+        const result = await objectToSpy.shareContactWithUserAdministeredSharedVaults(contact)
+        resolve()
+        return result
+      })
+    })
+  }
+
+  resolveWhenSharedVaultKeyRotationInvitesGetSent(targetVault) {
+    return new Promise((resolve) => {
+      const objectToSpy = this.sharedVaults
+      sinon.stub(objectToSpy, 'handleVaultRootKeyRotatedEvent').callsFake(async (vault) => {
+        objectToSpy.handleVaultRootKeyRotatedEvent.restore()
+        const result = await objectToSpy.handleVaultRootKeyRotatedEvent(vault)
+        if (vault.systemIdentifier === targetVault.systemIdentifier) {
+          resolve()
+        }
+        return result
+      })
+    })
+  }
+
+  resolveWhenSharedVaultChangeInvitesAreSent(sharedVaultUuid) {
+    return new Promise((resolve) => {
+      const objectToSpy = this.sharedVaults
+      sinon.stub(objectToSpy, 'handleVaultRootKeyRotatedEvent').callsFake(async (vault) => {
+        objectToSpy.handleVaultRootKeyRotatedEvent.restore()
+        const result = await objectToSpy.handleVaultRootKeyRotatedEvent(vault)
+        if (vault.sharing.sharedVaultUuid === sharedVaultUuid) {
+          resolve()
+        }
+        return result
+      })
+    })
+  }
+
   awaitUserPrefsSingletonCreation() {
     const preferences = this.application.preferencesService.preferences
     if (preferences) {
@@ -230,6 +451,10 @@ export class AppContext {
 
   async sync(options) {
     await this.application.sync.sync(options || { awaitAll: true })
+  }
+
+  async clearSyncPositionTokens() {
+    await this.application.sync.clearSyncPositionTokens()
   }
 
   async maximumSync() {
@@ -290,22 +515,31 @@ export class AppContext {
     })
   }
 
-  async createSyncedNote(title, text) {
+  async createSyncedNote(title = 'foo', text = 'bar') {
     const payload = createNotePayload(title, text)
-    const item = await this.application.items.emitItemFromPayload(payload, PayloadEmitSource.LocalChanged)
-    await this.application.items.setItemDirty(item)
+    const item = await this.application.mutator.emitItemFromPayload(payload, PayloadEmitSource.LocalChanged)
+    await this.application.mutator.setItemDirty(item)
     await this.application.syncService.sync(MaximumSyncOptions)
     const note = this.application.items.findItem(payload.uuid)
 
     return note
   }
 
+  lockSyncing() {
+    this.application.syncService.lockSyncing()
+  }
+
+  unlockSyncing() {
+    this.application.syncService.unlockSyncing()
+  }
+
   async deleteItemAndSync(item) {
     await this.application.mutator.deleteItem(item)
+    await this.sync()
   }
 
   async changeNoteTitle(note, title) {
-    return this.application.items.changeNote(note, (mutator) => {
+    return this.application.mutator.changeNote(note, (mutator) => {
       mutator.title = title
     })
   }
@@ -325,6 +559,10 @@ export class AppContext {
     return this.application.items.getDisplayableNotes().length
   }
 
+  get notes() {
+    return this.application.items.getDisplayableNotes()
+  }
+
   async createConflictedNotes(otherContext) {
     const note = await this.createSyncedNote()
 
@@ -340,5 +578,42 @@ export class AppContext {
       original: note,
       conflict: this.findNoteByTitle('title-2'),
     }
+  }
+
+  findDuplicateNote(duplicateOfUuid) {
+    const items = this.items.getDisplayableNotes()
+    return items.find((note) => note.duplicateOf === duplicateOfUuid)
+  }
+
+  get userUuid() {
+    return this.application.sessions.user.uuid
+  }
+
+  sleep(seconds) {
+    return Utils.sleep(seconds)
+  }
+
+  anticipateConsoleError(message, _reason) {
+    console.warn('Anticipating a console error with message:', message)
+  }
+
+  async publicMockSubscriptionPurchaseEvent() {
+    await Events.publishMockedEvent('SUBSCRIPTION_PURCHASED', {
+      userEmail: this.email,
+      subscriptionId: GlobalSubscriptionIdCounter++,
+      subscriptionName: 'PRO_PLAN',
+      subscriptionExpiresAt: (new Date().getTime() + 3_600_000) * 1_000,
+      timestamp: Date.now(),
+      offline: false,
+      discountCode: null,
+      limitedDiscountPurchased: false,
+      newSubscriber: true,
+      totalActiveSubscriptionsCount: 1,
+      userRegisteredAt: 1,
+      billingFrequency: 12,
+      payAmount: 59.0,
+    })
+
+    await Utils.sleep(2)
   }
 }

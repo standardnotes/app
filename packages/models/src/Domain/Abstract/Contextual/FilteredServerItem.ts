@@ -5,7 +5,7 @@ export interface FilteredServerItem extends ServerItemResponse {
   __passed_filter__: true
 }
 
-export function CreateFilteredServerItem(item: ServerItemResponse): FilteredServerItem {
+function CreateFilteredServerItem(item: ServerItemResponse): FilteredServerItem {
   return {
     ...item,
     __passed_filter__: true,

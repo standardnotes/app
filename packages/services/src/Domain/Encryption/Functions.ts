@@ -49,7 +49,7 @@ export async function DecryptItemsKeyByPromptingUser(
   | 'aborted'
 > {
   if (!keyParams) {
-    keyParams = encryptor.getKeyEmbeddedKeyParams(itemsKey)
+    keyParams = encryptor.getKeyEmbeddedKeyParamsFromItemsKey(itemsKey)
   }
 
   if (!keyParams) {

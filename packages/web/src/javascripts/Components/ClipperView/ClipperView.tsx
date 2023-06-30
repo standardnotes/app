@@ -217,7 +217,7 @@ const ClipperView = ({
         references: [],
       })
 
-      const insertedNote = await application.items.insertItem(note)
+      const insertedNote = await application.mutator.insertItem(note)
 
       if (defaultTagRef.current) {
         await application.linkingController.linkItems(insertedNote, defaultTagRef.current)
@@ -237,6 +237,7 @@ const ClipperView = ({
   }, [
     application.items,
     application.linkingController,
+    application.mutator,
     application.sync,
     clipPayload,
     defaultTagRef,

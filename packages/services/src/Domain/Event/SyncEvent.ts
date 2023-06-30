@@ -1,3 +1,10 @@
+import {
+  AsymmetricMessageServerHash,
+  SharedVaultInviteServerHash,
+  SharedVaultServerHash,
+  UserEventServerHash,
+} from '@standardnotes/responses'
+
 /* istanbul ignore file */
 export enum SyncEvent {
   /**
@@ -7,8 +14,8 @@ export enum SyncEvent {
    */
   SyncCompletedWithAllItemsUploaded = 'SyncCompletedWithAllItemsUploaded',
   SyncCompletedWithAllItemsUploadedAndDownloaded = 'SyncCompletedWithAllItemsUploadedAndDownloaded',
-  SingleRoundTripSyncCompleted = 'SingleRoundTripSyncCompleted',
-  SyncWillBegin = 'sync:will-begin',
+  PaginatedSyncRequestCompleted = 'PaginatedSyncRequestCompleted',
+  SyncDidBeginProcessing = 'sync:did-begin-processing',
   DownloadFirstSyncCompleted = 'sync:download-first-completed',
   SyncTakingTooLong = 'sync:taking-too-long',
   SyncError = 'sync:error',
@@ -22,4 +29,13 @@ export enum SyncEvent {
   DatabaseWriteError = 'database-write-error',
   DatabaseReadError = 'database-read-error',
   SyncRequestsIntegrityCheck = 'sync:requests-integrity-check',
+  ReceivedRemoteSharedVaults = 'received-shared-vaults',
+  ReceivedSharedVaultInvites = 'received-shared-vault-invites',
+  ReceivedUserEvents = 'received-user-events',
+  ReceivedAsymmetricMessages = 'received-asymmetric-messages',
 }
+
+export type SyncEventReceivedRemoteSharedVaultsData = SharedVaultServerHash[]
+export type SyncEventReceivedSharedVaultInvitesData = SharedVaultInviteServerHash[]
+export type SyncEventReceivedAsymmetricMessagesData = AsymmetricMessageServerHash[]
+export type SyncEventReceivedUserEventsData = UserEventServerHash[]

@@ -1,3 +1,4 @@
+import { MutatorClientInterface } from '@standardnotes/services'
 import { SNTag, TagMutator, TagFolderDelimitter } from '@standardnotes/models'
 import { ItemManager } from '@Lib/Services'
 import { lastElement, sortByKey, withoutLastElement } from '@standardnotes/utils'
@@ -15,7 +16,7 @@ export class TagsToFoldersMigrationApplicator {
     return false
   }
 
-  public static async run(itemManager: ItemManager): Promise<void> {
+  public static async run(itemManager: ItemManager, mutator: MutatorClientInterface): Promise<void> {
     const tags = itemManager.getItems(ContentType.Tag) as SNTag[]
     const sortedTags = sortByKey(tags, 'title')
 
@@ -36,9 +37,9 @@ export class TagsToFoldersMigrationApplicator {
         return
       }
 
-      const parent = await itemManager.findOrCreateTagParentChain(parents)
+      const parent = await mutator.findOrCreateTagParentChain(parents)
 
-      await itemManager.changeItem(tag, (mutator: TagMutator) => {
+      await mutator.changeItem(tag, (mutator: TagMutator) => {
         mutator.title = newTitle
 
         if (parent) {

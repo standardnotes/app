@@ -18,7 +18,7 @@ type Props = { viewControllerManager: ViewControllerManager }
 const ErroredItems: FunctionComponent<Props> = ({ viewControllerManager }: Props) => {
   const app = viewControllerManager.application
 
-  const [erroredItems, setErroredItems] = useState(app.items.invalidItems)
+  const [erroredItems, setErroredItems] = useState(app.items.invalidNonVaultedItems)
 
   const getContentTypeDisplay = (item: EncryptedItemInterface): string => {
     const display = DisplayStringForContentType(item.content_type)
@@ -44,7 +44,9 @@ const ErroredItems: FunctionComponent<Props> = ({ viewControllerManager }: Props
       return
     }
 
-    void app.mutator.deleteItems(items)
+    void app.mutator.deleteItems(items).then(() => {
+      void app.sync.sync()
+    })
 
     setErroredItems(app.items.invalidItems)
   }

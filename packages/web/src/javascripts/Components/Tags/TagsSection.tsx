@@ -45,6 +45,7 @@ const TagsSection: FunctionComponent<Props> = ({ viewControllerManager }) => {
       viewControllerManager.application.mutator
         .migrateTagsToFolders()
         .then(() => {
+          void viewControllerManager.application.sync.sync()
           checkIfMigrationNeeded()
         })
         .catch(console.error)

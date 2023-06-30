@@ -6,12 +6,12 @@ import {
   ItemsKeyContent,
   ItemsKeyInterface,
   PayloadTimestampDefaults,
+  RootKeyInterface,
 } from '@standardnotes/models'
 import { splitString, UuidGenerator } from '@standardnotes/utils'
 import { V003Algorithm } from '../../Algorithm'
 import { CreateNewRootKey } from '../../Keys/RootKey/Functions'
 import { Create003KeyParams } from '../../Keys/RootKey/KeyParamsFunctions'
-import { SNRootKey } from '../../Keys/RootKey/RootKey'
 import { SNRootKeyParams } from '../../Keys/RootKey/RootKeyParams'
 import { SNProtocolOperator002 } from '../002/Operator002'
 
@@ -53,11 +53,17 @@ export class SNProtocolOperator003 extends SNProtocolOperator002 {
     return CreateDecryptedItemFromPayload(payload)
   }
 
-  public override async computeRootKey(password: string, keyParams: SNRootKeyParams): Promise<SNRootKey> {
+  public override async computeRootKey<K extends RootKeyInterface>(
+    password: string,
+    keyParams: SNRootKeyParams,
+  ): Promise<K> {
     return this.deriveKey(password, keyParams)
   }
 
-  protected override async deriveKey(password: string, keyParams: SNRootKeyParams): Promise<SNRootKey> {
+  protected override async deriveKey<K extends RootKeyInterface>(
+    password: string,
+    keyParams: SNRootKeyParams,
+  ): Promise<K> {
     const salt = await this.generateSalt(
       keyParams.content003.identifier,
       ProtocolVersion.V003,
@@ -78,7 +84,7 @@ export class SNProtocolOperator003 extends SNProtocolOperator002 {
 
     const partitions = splitString(derivedKey, 3)
 
-    return CreateNewRootKey({
+    return CreateNewRootKey<K>({
       serverPassword: partitions[0],
       masterKey: partitions[1],
       dataAuthenticationKey: partitions[2],
@@ -87,11 +93,11 @@ export class SNProtocolOperator003 extends SNProtocolOperator002 {
     })
   }
 
-  public override async createRootKey(
+  public override async createRootKey<K extends RootKeyInterface>(
     identifier: string,
     password: string,
     origination: KeyParamsOrigination,
-  ): Promise<SNRootKey> {
+  ): Promise<K> {
     const version = ProtocolVersion.V003
     const pwNonce = this.crypto.generateRandomKey(V003Algorithm.SaltSeedLength)
     const keyParams = Create003KeyParams({

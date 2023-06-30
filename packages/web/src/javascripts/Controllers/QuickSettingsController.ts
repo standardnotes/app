@@ -1,4 +1,4 @@
-import { InternalEventBus } from '@standardnotes/snjs'
+import { InternalEventBusInterface } from '@standardnotes/snjs'
 import { WebApplication } from '@/Application/WebApplication'
 import { action, makeObservable, observable } from 'mobx'
 import { AbstractViewController } from './Abstract/AbstractViewController'
@@ -7,7 +7,7 @@ export class QuickSettingsController extends AbstractViewController {
   open = false
   shouldAnimateCloseMenu = false
 
-  constructor(application: WebApplication, eventBus: InternalEventBus) {
+  constructor(application: WebApplication, eventBus: InternalEventBusInterface) {
     super(application, eventBus)
 
     makeObservable(this, {

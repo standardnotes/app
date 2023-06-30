@@ -3,10 +3,10 @@
  */
 
 import { ContentType } from '@standardnotes/common'
-import { WebApplicationInterface } from '@standardnotes/services'
 import { DecryptedTransferPayload, NoteContent, TagContent } from '@standardnotes/models'
 import { EvernoteConverter } from './EvernoteConverter'
 import data from './testData'
+import { WebApplicationInterface } from '../../WebApplication/WebApplicationInterface'
 
 // Mock dayjs so dayjs.extend() doesn't throw an error in EvernoteConverter.ts
 jest.mock('dayjs', () => {

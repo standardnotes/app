@@ -39,6 +39,7 @@ import { HistoryModalController } from '@/Controllers/NoteHistory/HistoryModalCo
 import { useItemLinks } from '@/Hooks/useItemLinks'
 import { ItemLink } from '@/Utils/Items/Search/ItemLink'
 import { ItemListController } from '@/Controllers/ItemList/ItemListController'
+import ListItemVaultInfo from '../ContentListView/ListItemVaultInfo'
 
 const ContextMenuCell = ({
   items,
@@ -213,6 +214,7 @@ const ItemNameCell = ({ item, hideIcon }: { item: DecryptedItemInterface; hideIc
         )}
       </span>
       <span className="overflow-hidden text-ellipsis whitespace-nowrap text-sm font-medium">{item.title}</span>
+      <ListItemVaultInfo item={item} />
       {item.protected && (
         <span className="flex items-center" title="File is protected">
           <Icon ariaLabel="File is protected" type="lock-filled" className="h-3.5 w-3.5 text-passive-1" size="custom" />
@@ -245,7 +247,7 @@ const AttachedToCell = ({ item }: { item: DecryptedItemInterface }) => {
         link={allLinks[0]}
         key={allLinks[0].id}
         unlinkItem={async (itemToUnlink) => {
-          void application.items.unlinkItems(item, itemToUnlink)
+          void application.mutator.unlinkItems(item, itemToUnlink)
         }}
         isBidirectional={false}
       />
@@ -312,7 +314,7 @@ const ContentTableView = ({
         return
       }
 
-      await application.mutator.changeAndSaveItem<TagMutator>(selectedTag, (mutator) => {
+      await application.changeAndSaveItem<TagMutator>(selectedTag, (mutator) => {
         mutator.preferences = {
           ...mutator.preferences,
           sortBy,

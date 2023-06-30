@@ -1,3 +1,4 @@
+import { SyncClientInterface } from './../Sync/SyncClientInterface'
 import { isString, lastElement, sleep } from '@standardnotes/utils'
 import { UuidString } from '@Lib/Types/UuidString'
 import { ContentType } from '@standardnotes/common'
@@ -19,7 +20,8 @@ export class ListedService extends AbstractService implements ListedClientInterf
     private settingsService: SNSettingsService,
     private httpSerivce: DeprecatedHttpService,
     private protectionService: SNProtectionService,
-    private mutatorService: MutatorClientInterface,
+    private mutator: MutatorClientInterface,
+    private sync: SyncClientInterface,
     protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)
@@ -31,7 +33,7 @@ export class ListedService extends AbstractService implements ListedClientInterf
     ;(this.apiService as unknown) = undefined
     ;(this.httpSerivce as unknown) = undefined
     ;(this.protectionService as unknown) = undefined
-    ;(this.mutatorService as unknown) = undefined
+    ;(this.mutator as unknown) = undefined
     super.deinit()
   }
 
@@ -49,9 +51,11 @@ export class ListedService extends AbstractService implements ListedClientInterf
       return false
     }
 
-    await this.mutatorService.changeAndSaveItem<NoteMutator>(note, (mutator) => {
+    await this.mutator.changeItem<NoteMutator>(note, (mutator) => {
       mutator.authorizedForListed = true
     })
+
+    void this.sync.sync()
 
     return true
   }

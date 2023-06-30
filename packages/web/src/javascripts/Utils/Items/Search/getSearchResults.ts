@@ -1,10 +1,11 @@
-import { WebApplicationInterface, naturalSort, ContentType } from '@standardnotes/snjs'
+import { naturalSort, ContentType } from '@standardnotes/snjs'
 import { createLinkFromItem } from './createLinkFromItem'
 import { doesItemMatchSearchQuery } from './doesItemMatchSearchQuery'
 import { isSearchResultAlreadyLinkedToItem } from './isSearchResultAlreadyLinkedToItem'
 import { isSearchResultExistingTag } from './isSearchResultExistingTag'
 import { ItemLink } from './ItemLink'
 import { LinkableItem } from './LinkableItem'
+import { WebApplicationInterface } from '@standardnotes/ui-services'
 
 const MaxLinkedResults = 50
 

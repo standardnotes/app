@@ -1,5 +1,7 @@
+import { ValetTokenOperation } from './ValetTokenOperation'
+
 export type CreateValetTokenPayload = {
-  operation: 'read' | 'write' | 'delete'
+  operation: ValetTokenOperation
   resources: Array<{
     remoteIdentifier: string
     unencryptedFileSize?: number

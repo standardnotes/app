@@ -1,5 +1,5 @@
-export async function uploadFile(fileService, buffer, name, ext, chunkSize) {
-  const operation = await fileService.beginNewFileUpload(buffer.byteLength)
+export async function uploadFile(fileService, buffer, name, ext, chunkSize, vault) {
+  const operation = await fileService.beginNewFileUpload(buffer.byteLength, vault)
 
   let chunkId = 1
   for (let i = 0; i < buffer.length; i += chunkSize) {
@@ -18,14 +18,16 @@ export async function uploadFile(fileService, buffer, name, ext, chunkSize) {
   return file
 }
 
-export async function downloadFile(fileService, itemManager, remoteIdentifier) {
-  const file = itemManager.getItems(ContentType.File).find((file) => file.remoteIdentifier === remoteIdentifier)
-
+export async function downloadFile(fileService, file) {
   let receivedBytes = new Uint8Array()
 
-  await fileService.downloadFile(file, (decryptedBytes) => {
+  const error = await fileService.downloadFile(file, (decryptedBytes) => {
     receivedBytes = new Uint8Array([...receivedBytes, ...decryptedBytes])
   })
+
+  if (error) {
+    throw new Error('Could not download file', error.text)
+  }
 
   return receivedBytes
 }

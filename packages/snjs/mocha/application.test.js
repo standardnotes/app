@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-expressions */
 /* eslint-disable no-undef */
-import { BaseItemCounts } from './lib/Applications.js'
+import { BaseItemCounts } from './lib/BaseItemCounts.js'
 import * as Factory from './lib/factory.js'
 chai.use(chaiAsPromised)
 const expect = chai.expect
@@ -75,7 +75,7 @@ describe('application instances', () => {
     /** Recreate app with different host */
     const recreatedContext = await Factory.createAppContext({
       identifier: 'app',
-      host: 'http://nonsense.host'
+      host: 'http://nonsense.host',
     })
     await recreatedContext.launch()
 
@@ -134,7 +134,7 @@ describe('application instances', () => {
     })
 
     it('shows confirmation dialog when there are unsaved changes', async () => {
-      await testSNApp.itemManager.setItemDirty(testNote1)
+      await testSNApp.mutator.setItemDirty(testNote1)
       await testSNApp.user.signOut()
 
       const expectedConfirmMessage = signOutConfirmMessage(1)
@@ -154,7 +154,7 @@ describe('application instances', () => {
     })
 
     it('does not show confirmation dialog when there are unsaved changes and the "force" option is set to true', async () => {
-      await testSNApp.itemManager.setItemDirty(testNote1)
+      await testSNApp.mutator.setItemDirty(testNote1)
       await testSNApp.user.signOut(true)
 
       expect(confirmAlert.callCount).to.equal(0)
@@ -166,7 +166,7 @@ describe('application instances', () => {
       confirmAlert.restore()
       confirmAlert = sinon.stub(testSNApp.alertService, 'confirm').callsFake((_message) => false)
 
-      await testSNApp.itemManager.setItemDirty(testNote1)
+      await testSNApp.mutator.setItemDirty(testNote1)
       await testSNApp.user.signOut()
 
       const expectedConfirmMessage = signOutConfirmMessage(1)

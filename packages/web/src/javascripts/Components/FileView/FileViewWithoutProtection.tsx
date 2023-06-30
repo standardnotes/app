@@ -34,7 +34,7 @@ const FileViewWithoutProtection = ({ application, viewControllerManager, file }:
       const syncDebounceMs = shouldNotDebounce ? SyncTimeoutNoDebounceMs : SyncTimeoutDebounceMs
 
       syncTimeoutRef.current = window.setTimeout(async () => {
-        await application.items.renameFile(file, event.target.value)
+        await application.mutator.renameFile(file, event.target.value)
         void application.sync.sync()
       }, syncDebounceMs)
     },

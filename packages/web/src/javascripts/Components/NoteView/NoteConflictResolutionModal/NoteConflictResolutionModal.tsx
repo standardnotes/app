@@ -65,12 +65,13 @@ const NoteConflictResolutionModal = ({
     async (note: SNNote) => {
       await application.mutator
         .deleteItem(note)
+        .then(() => application.sync.sync())
         .catch(console.error)
         .then(() => {
           setSelectedVersions([allVersions[0].uuid])
         })
     },
-    [allVersions, application.mutator],
+    [allVersions, application.mutator, application.sync],
   )
 
   const [selectedAction, setSelectionAction] = useState<ConflictAction>('move-to-trash')

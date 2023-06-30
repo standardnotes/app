@@ -5,6 +5,7 @@ import {
   FeatureStatus,
   FeaturesEvent,
   AlertService,
+  MutatorClientInterface,
 } from '@standardnotes/services'
 import { SNFeaturesService } from '@Lib/Services'
 import {
@@ -109,6 +110,7 @@ export class ComponentViewer implements ComponentViewerInterface {
   constructor(
     public readonly component: SNComponent,
     private itemManager: ItemManager,
+    private mutator: MutatorClientInterface,
     private syncService: SNSyncService,
     private alertService: AlertService,
     private preferencesSerivce: SNPreferencesService,
@@ -719,7 +721,7 @@ export class ComponentViewer implements ComponentViewerInterface {
               ...contextualPayload,
             })
             const template = CreateDecryptedItemFromPayload(payload)
-            await this.itemManager.insertItem(template)
+            await this.mutator.insertItem(template)
           } else {
             if (contextualPayload.content_type !== item.content_type) {
               throw Error('Extension is trying to modify content type of item.')
@@ -727,7 +729,7 @@ export class ComponentViewer implements ComponentViewerInterface {
           }
         }
 
-        await this.itemManager.changeItems(
+        await this.mutator.changeItems(
           items.filter(isNotUndefined),
           (mutator) => {
             const contextualPayload = sureSearchArray(contextualPayloads, {
@@ -798,9 +800,9 @@ export class ComponentViewer implements ComponentViewerInterface {
         })
 
         const template = CreateDecryptedItemFromPayload(payload)
-        const item = await this.itemManager.insertItem(template)
+        const item = await this.mutator.insertItem(template)
 
-        await this.itemManager.changeItem(
+        await this.mutator.changeItem(
           item,
           (mutator) => {
             if (responseItem.clientData) {
@@ -857,7 +859,7 @@ export class ComponentViewer implements ComponentViewerInterface {
             void this.alertService.alert('The item you are trying to delete cannot be found.')
             continue
           }
-          await this.itemManager.setItemToBeDeleted(item, PayloadEmitSource.ComponentRetrieved)
+          await this.mutator.setItemToBeDeleted(item, PayloadEmitSource.ComponentRetrieved)
         }
 
         void this.syncService.sync()
@@ -875,7 +877,7 @@ export class ComponentViewer implements ComponentViewerInterface {
   handleSetComponentDataMessage(message: ComponentMessage): void {
     const noPermissionsRequired: ComponentPermission[] = []
     this.componentManagerFunctions.runWithPermissions(this.component.uuid, noPermissionsRequired, async () => {
-      await this.itemManager.changeComponent(this.component, (mutator) => {
+      await this.mutator.changeComponent(this.component, (mutator) => {
         mutator.componentData = message.data.componentData || {}
       })
 

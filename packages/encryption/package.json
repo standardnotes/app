@@ -5,22 +5,15 @@
     "node": ">=16.0.0 <17.0.0"
   },
   "description": "Payload encryption used in SNJS library",
-  "main": "dist/index.js",
+  "main": "./src/index.ts",
+  "private": true,
   "author": "Standard Notes",
-  "types": "dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
   "license": "AGPL-3.0-or-later",
   "scripts": {
-    "clean": "rm -fr dist",
-    "prestart": "yarn clean",
-    "start": "tsc -p tsconfig.json --watch",
-    "prebuild": "yarn clean",
-    "build": "tsc -p tsconfig.json",
     "lint": "eslint src --ext .ts",
     "format": "prettier --write src",
-    "test": "jest"
+    "test": "jest",
+    "build": "echo 'Empty build script required for yarn topological install'"
   },
   "devDependencies": {
     "@standardnotes/config": "2.4.3",
@@ -35,7 +28,7 @@
     "typescript": "*"
   },
   "dependencies": {
-    "@standardnotes/common": "^1.46.6",
+    "@standardnotes/common": "^1.48.3",
     "@standardnotes/models": "workspace:*",
     "@standardnotes/responses": "workspace:*",
     "@standardnotes/sncrypto-common": "workspace:*",

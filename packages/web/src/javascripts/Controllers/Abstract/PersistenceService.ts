@@ -1,6 +1,6 @@
 import { WebApplication } from '@/Application/WebApplication'
 import { ShouldPersistNoteStateKey } from '@/Components/Preferences/Panes/General/Persistence'
-import { ApplicationEvent, ContentType, InternalEventBus } from '@standardnotes/snjs'
+import { ApplicationEvent, ContentType, InternalEventBusInterface } from '@standardnotes/snjs'
 import { PersistedStateValue, StorageKey } from '@standardnotes/ui-services'
 import { CrossControllerEvent } from '../CrossControllerEvent'
 
@@ -8,7 +8,7 @@ export class PersistenceService {
   private unsubAppEventObserver: () => void
   private didHydrateOnce = false
 
-  constructor(private application: WebApplication, private eventBus: InternalEventBus) {
+  constructor(private application: WebApplication, private eventBus: InternalEventBusInterface) {
     this.unsubAppEventObserver = this.application.addEventObserver(async (eventName) => {
       if (!this.application) {
         return

@@ -141,7 +141,8 @@ describe('keys', function () {
   })
 
   it('should use items key for encryption of note', async function () {
-    const keyToUse = await this.application.protocolService.itemsEncryption.keyToUseForItemEncryption()
+    const notePayload = Factory.createNotePayload()
+    const keyToUse = await this.application.protocolService.itemsEncryption.keyToUseForItemEncryption(notePayload)
     expect(keyToUse.content_type).to.equal(ContentType.ItemsKey)
   })
 
@@ -153,7 +154,7 @@ describe('keys', function () {
       },
     })
 
-    const itemsKey = this.application.protocolService.itemsKeyForPayload(encryptedPayload)
+    const itemsKey = this.application.protocolService.itemsKeyForEncryptedPayload(encryptedPayload)
     expect(itemsKey).to.be.ok
   })
 
@@ -166,7 +167,7 @@ describe('keys', function () {
       },
     })
 
-    const itemsKey = this.application.protocolService.itemsKeyForPayload(encryptedPayload)
+    const itemsKey = this.application.protocolService.itemsKeyForEncryptedPayload(encryptedPayload)
     expect(itemsKey).to.be.ok
 
     const decryptedPayload = await this.application.protocolService.decryptSplitSingle({
@@ -187,7 +188,7 @@ describe('keys', function () {
       },
     })
 
-    const itemsKey = this.application.protocolService.itemsKeyForPayload(encryptedPayload)
+    const itemsKey = this.application.protocolService.itemsKeyForEncryptedPayload(encryptedPayload)
 
     await this.application.itemManager.removeItemLocally(itemsKey)
 
@@ -197,14 +198,14 @@ describe('keys', function () {
       },
     })
 
-    await this.application.itemManager.emitItemsFromPayloads([erroredPayload], PayloadEmitSource.LocalChanged)
+    await this.application.mutator.emitItemsFromPayloads([erroredPayload], PayloadEmitSource.LocalChanged)
 
     const note = this.application.itemManager.findAnyItem(notePayload.uuid)
     expect(note.errorDecrypting).to.equal(true)
     expect(note.waitingForKey).to.equal(true)
 
     const keyPayload = new DecryptedPayload(itemsKey.payload.ejected())
-    await this.application.itemManager.emitItemsFromPayloads([keyPayload], PayloadEmitSource.LocalChanged)
+    await this.application.mutator.emitItemsFromPayloads([keyPayload], PayloadEmitSource.LocalChanged)
 
     /**
      * Sleeping is required to trigger asyncronous protocolService.decryptItemsWaitingForKeys,
@@ -238,7 +239,7 @@ describe('keys', function () {
       },
     })
 
-    await this.application.syncService.handleSuccessServerResponse({ payloadsSavedOrSaving: [] }, response)
+    await this.application.syncService.handleSuccessServerResponse({ payloadsSavedOrSaving: [], options: {} }, response)
 
     const refreshedKey = this.application.payloadManager.findOne(itemsKey.uuid)
 
@@ -273,10 +274,8 @@ describe('keys', function () {
     const rawPayloads = await this.application.diskStorageService.getAllRawPayloads()
     const itemsKeyRawPayload = rawPayloads.find((p) => p.uuid === itemsKey.uuid)
     const itemsKeyPayload = new EncryptedPayload(itemsKeyRawPayload)
-    const operator = this.application.protocolService.operatorManager.operatorForVersion(ProtocolVersion.V004)
-    const comps = operator.deconstructEncryptedPayloadString(itemsKeyPayload.content)
-    const rawAuthenticatedData = comps.authenticatedData
-    const authenticatedData = await operator.stringToAuthenticatedData(rawAuthenticatedData)
+
+    const authenticatedData = this.context.encryption.getEmbeddedPayloadAuthenticatedData(itemsKeyPayload)
     const rootKeyParams = await this.application.protocolService.getRootKeyParams()
 
     expect(authenticatedData.kp).to.be.ok
@@ -649,7 +648,7 @@ describe('keys', function () {
     await contextB.deinit()
   })
 
-  describe('changing password on 003 client while signed into 004 client should', function () {
+  describe('changing password on 003 client while signed into 004 client', function () {
     /**
      * When an 004 client signs into 003 account, it creates a root key based items key.
      * Then, if the 003 client changes its account password, and the 004 client
@@ -658,7 +657,7 @@ describe('keys', function () {
      * items sync to the 004 client, it can't decrypt them with its existing items key
      * because its based on the old root key.
      */
-    it.skip('add new items key', async function () {
+    it.skip('should add new items key', async function () {
       this.timeout(Factory.TwentySecondTimeout * 3)
       let oldClient = this.application
 
@@ -718,7 +717,13 @@ describe('keys', function () {
       await Factory.safeDeinit(oldClient)
     })
 
-    it('add new items key from migration if pw change already happened', async function () {
+    it('should add new items key from migration if pw change already happened', async function () {
+      this.context.anticipateConsoleError('Shared vault network errors due to not accepting JWT-based token')
+      this.context.anticipateConsoleError(
+        'Cannot find items key to use for encryption',
+        'No items keys being created in this test',
+      )
+
       /** Register an 003 account */
       await Factory.registerOldUser({
         application: this.application,
@@ -734,7 +739,15 @@ describe('keys', function () {
         await this.application.protocolService.getRootKeyParams(),
       )
       const operator = this.application.protocolService.operatorManager.operatorForVersion(ProtocolVersion.V003)
-      const newRootKey = await operator.createRootKey(this.email, this.password)
+      const newRootKeyTemplate = await operator.createRootKey(this.email, this.password)
+      const newRootKey = CreateNewRootKey({
+        ...newRootKeyTemplate.content,
+        ...{
+          encryptionKeyPair: {},
+          signingKeyPair: {},
+        },
+      })
+
       Object.defineProperty(this.application.apiService, 'apiVersion', {
         get: function () {
           return '20190520'
@@ -748,7 +761,7 @@ describe('keys', function () {
         currentServerPassword: currentRootKey.serverPassword,
         newRootKey,
       })
-      await this.application.protocolService.reencryptItemsKeys()
+      await this.application.protocolService.reencryptApplicableItemsAfterUserRootKeyChange()
       /** Note: this may result in a deadlock if features_service syncs and results in an error */
       await this.application.sync.sync({ awaitAll: true })
 
@@ -776,11 +789,16 @@ describe('keys', function () {
      * The corrective action was to do a final check in protocolService.handleDownloadFirstSyncCompletion
      * to ensure there exists an items key corresponding to the user's account version.
      */
+    const promise = this.context.awaitNextSucessfulSync()
+    await this.context.sync()
+    await promise
+
     await this.application.itemManager.removeAllItemsFromMemory()
     expect(this.application.protocolService.getSureDefaultItemsKey()).to.not.be.ok
+
     const protocol003 = new SNProtocolOperator003(new SNWebCrypto())
     const key = await protocol003.createItemsKey()
-    await this.application.itemManager.emitItemFromPayload(
+    await this.application.mutator.emitItemFromPayload(
       key.payload.copy({
         content: {
           ...key.payload.content,
@@ -791,17 +809,21 @@ describe('keys', function () {
         updated_at: Date.now(),
       }),
     )
+
     const defaultKey = this.application.protocolService.getSureDefaultItemsKey()
     expect(defaultKey.keyVersion).to.equal(ProtocolVersion.V003)
     expect(defaultKey.uuid).to.equal(key.uuid)
+
     await Factory.registerUserToApplication({ application: this.application })
-    expect(await this.application.protocolService.itemsEncryption.keyToUseForItemEncryption()).to.be.ok
+
+    const notePayload = Factory.createNotePayload()
+    expect(await this.application.protocolService.itemsEncryption.keyToUseForItemEncryption(notePayload)).to.be.ok
   })
 
   it('having unsynced items keys should resync them upon download first sync completion', async function () {
     await Factory.registerUserToApplication({ application: this.application })
     const itemsKey = this.application.itemManager.getDisplayableItemsKeys()[0]
-    await this.application.itemManager.emitItemFromPayload(
+    await this.application.mutator.emitItemFromPayload(
       itemsKey.payload.copy({
         dirty: false,
         updated_at: new Date(0),

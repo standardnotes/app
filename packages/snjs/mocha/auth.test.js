@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-expressions */
 /* eslint-disable no-undef */
-import { BaseItemCounts } from './lib/Applications.js'
+import { BaseItemCounts } from './lib/BaseItemCounts.js'
 import * as Factory from './lib/factory.js'
 chai.use(chaiAsPromised)
 const expect = chai.expect
@@ -15,7 +15,7 @@ describe('basic auth', function () {
 
   beforeEach(async function () {
     localStorage.clear()
-    this.expectedItemCount = BaseItemCounts.DefaultItems
+    this.expectedItemCount = BaseItemCounts.DefaultItemsWithAccount
     this.context = await Factory.createAppContext()
     await this.context.launch()
     this.application = this.context.application
@@ -262,7 +262,7 @@ describe('basic auth', function () {
       if (!didCompleteDownloadFirstSync) {
         return
       }
-      if (!didCompletePostDownloadFirstSync && eventName === SyncEvent.SingleRoundTripSyncCompleted) {
+      if (!didCompletePostDownloadFirstSync && eventName === SyncEvent.PaginatedSyncRequestCompleted) {
         didCompletePostDownloadFirstSync = true
         /** Should be in sync */
         outOfSync = this.application.syncService.isOutOfSync()

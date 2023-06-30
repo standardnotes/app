@@ -1,4 +1,4 @@
-import { ServerSyncSavedContextualPayload } from './../../Abstract/Contextual/ServerSyncSaved'
+import { ServerSyncSavedContextualPayload } from '../../Abstract/Contextual/ServerSyncSaved'
 import { DeletedPayload } from './../../Abstract/Payload/Implementations/DeletedPayload'
 import { ImmutablePayloadCollection } from '../Collection/Payload/ImmutablePayloadCollection'
 import { PayloadSource } from '../../Abstract/Payload/Types/PayloadSource'

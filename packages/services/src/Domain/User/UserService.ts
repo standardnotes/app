@@ -1,9 +1,15 @@
 import { Base64String } from '@standardnotes/sncrypto-common'
 import { EncryptionProviderInterface, SNRootKey, SNRootKeyParams } from '@standardnotes/encryption'
-import { HttpResponse, SignInResponse, User, HttpError, isErrorResponse } from '@standardnotes/responses'
-import { Either, KeyParamsOrigination, UserRequestType } from '@standardnotes/common'
+import { HttpResponse, SignInResponse, User, isErrorResponse } from '@standardnotes/responses'
+import { KeyParamsOrigination, UserRequestType } from '@standardnotes/common'
 import { UuidGenerator } from '@standardnotes/utils'
 import { UserApiServiceInterface, UserRegistrationResponseBody } from '@standardnotes/api'
+import {
+  AccountEventData,
+  AccountEvent,
+  SignedInOrRegisteredEventPayload,
+  CredentialsChangeFunctionResponse,
+} from '@standardnotes/services'
 
 import * as Messages from '../Strings/Messages'
 import { InfoStrings } from '../Strings/InfoStrings'
@@ -27,28 +33,6 @@ import { SessionsClientInterface } from '../Session/SessionsClientInterface'
 import { ProtectionsClientInterface } from '../Protection/ProtectionClientInterface'
 import { InternalEventHandlerInterface } from '../Internal/InternalEventHandlerInterface'
 import { InternalEventInterface } from '../Internal/InternalEventInterface'
-
-export type CredentialsChangeFunctionResponse = { error?: HttpError }
-
-export enum AccountEvent {
-  SignedInOrRegistered = 'SignedInOrRegistered',
-  SignedOut = 'SignedOut',
-}
-
-export interface SignedInOrRegisteredEventPayload {
-  ephemeral: boolean
-  mergeLocal: boolean
-  awaitSync: boolean
-  checkIntegrity: boolean
-}
-
-export interface SignedOutEventPayload {
-  source: DeinitSource
-}
-
-export interface AccountEventData {
-  payload: Either<SignedInOrRegisteredEventPayload, SignedOutEventPayload>
-}
 
 export class UserService
   extends AbstractService<AccountEvent, AccountEventData>
@@ -123,6 +107,10 @@ export class UserService
     ;(this.challengeService as unknown) = undefined
     ;(this.protectionService as unknown) = undefined
     ;(this.userApiService as unknown) = undefined
+  }
+
+  isSignedIn(): boolean {
+    return this.sessionManager.isSignedIn()
   }
 
   /**
@@ -352,6 +340,20 @@ export class UserService
     }
   }
 
+  async updateAccountWithFirstTimeKeyPair(): Promise<{
+    success?: true
+    canceled?: true
+    error?: { message: string }
+  }> {
+    if (!this.sessionManager.isUserMissingKeyPair()) {
+      throw Error('Cannot update account with first time keypair if user already has a keypair')
+    }
+
+    const result = await this.performProtocolUpgrade()
+
+    return result
+  }
+
   public async performProtocolUpgrade(): Promise<{
     success?: true
     canceled?: true
@@ -524,7 +526,7 @@ export class UserService
   private async rewriteItemsKeys(): Promise<void> {
     const itemsKeys = this.itemManager.getDisplayableItemsKeys()
     const payloads = itemsKeys.map((key) => key.payloadRepresentation())
-    await this.storageService.forceDeletePayloads(payloads)
+    await this.storageService.deletePayloads(payloads)
     await this.syncService.persistPayloads(payloads)
   }
 
@@ -571,7 +573,7 @@ export class UserService
 
     const user = this.sessionManager.getUser() as User
     const currentEmail = user.email
-    const rootKeys = await this.recomputeRootKeysForCredentialChange({
+    const { currentRootKey, newRootKey } = await this.recomputeRootKeysForCredentialChange({
       currentPassword: parameters.currentPassword,
       currentEmail,
       origination: parameters.origination,
@@ -583,8 +585,8 @@ export class UserService
 
     /** Now, change the credentials on the server. Roll back on failure */
     const { response } = await this.sessionManager.changeCredentials({
-      currentServerPassword: rootKeys.currentRootKey.serverPassword as string,
-      newRootKey: rootKeys.newRootKey,
+      currentServerPassword: currentRootKey.serverPassword as string,
+      newRootKey: newRootKey,
       wrappingKey,
       newEmail: parameters.newEmail,
     })
@@ -596,7 +598,7 @@ export class UserService
     }
 
     const rollback = await this.protocolService.createNewItemsKeyWithRollback()
-    await this.protocolService.reencryptItemsKeys()
+    await this.protocolService.reencryptApplicableItemsAfterUserRootKeyChange()
     await this.syncService.sync({ awaitAll: true })
 
     const defaultItemsKey = this.protocolService.getSureDefaultItemsKey()
@@ -604,11 +606,11 @@ export class UserService
 
     if (!itemsKeyWasSynced) {
       await this.sessionManager.changeCredentials({
-        currentServerPassword: rootKeys.newRootKey.serverPassword as string,
-        newRootKey: rootKeys.currentRootKey,
+        currentServerPassword: newRootKey.serverPassword as string,
+        newRootKey: currentRootKey,
         wrappingKey,
       })
-      await this.protocolService.reencryptItemsKeys()
+      await this.protocolService.reencryptApplicableItemsAfterUserRootKeyChange()
       await rollback()
       await this.syncService.sync({ awaitAll: true })
 

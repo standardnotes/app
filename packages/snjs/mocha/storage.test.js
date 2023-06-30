@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-expressions */
 /* eslint-disable no-undef */
-import { BaseItemCounts } from './lib/Applications.js'
+import { BaseItemCounts } from './lib/BaseItemCounts.js'
 import * as Factory from './lib/factory.js'
 chai.use(chaiAsPromised)
 const expect = chai.expect
@@ -279,7 +279,7 @@ describe('storage manager', function () {
     })
 
     await Factory.createSyncedNote(this.application)
-    expect(await Factory.storagePayloadCount(this.application)).to.equal(BaseItemCounts.DefaultItems + 1)
+    expect(await Factory.storagePayloadCount(this.application)).to.equal(BaseItemCounts.DefaultItemsWithAccount + 1)
     this.application = await Factory.signOutApplicationAndReturnNew(this.application)
     await Factory.sleep(0.1, 'Allow all untrackable singleton syncs to complete')
     expect(await Factory.storagePayloadCount(this.application)).to.equal(BaseItemCounts.DefaultItems)

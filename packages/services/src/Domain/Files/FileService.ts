@@ -1,4 +1,10 @@
-import { ClientDisplayableError, isErrorResponse } from '@standardnotes/responses'
+import { MutatorClientInterface } from './../Mutator/MutatorClientInterface'
+import {
+  ClientDisplayableError,
+  ValetTokenOperation,
+  isClientDisplayableError,
+  isErrorResponse,
+} from '@standardnotes/responses'
 import { ContentType } from '@standardnotes/common'
 import {
   FileItem,
@@ -9,6 +15,8 @@ import {
   FileContent,
   EncryptedPayload,
   isEncryptedPayload,
+  VaultListingInterface,
+  SharedVaultListingInterface,
 } from '@standardnotes/models'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { spaceSeparatedStrings, UuidGenerator } from '@standardnotes/utils'
@@ -36,29 +44,37 @@ import {
 import { AlertService, ButtonType } from '../Alert/AlertService'
 import { ChallengeServiceInterface } from '../Challenge'
 import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
-import { ItemManagerInterface } from '../Item/ItemManagerInterface'
 import { AbstractService } from '../Service/AbstractService'
 import { SyncServiceInterface } from '../Sync/SyncServiceInterface'
 import { DecryptItemsKeyWithUserFallback } from '../Encryption/Functions'
 import { log, LoggingDomain } from '../Logging'
+import {
+  SharedVaultMoveType,
+  SharedVaultServer,
+  SharedVaultServerInterface,
+  HttpServiceInterface,
+} from '@standardnotes/api'
 
 const OneHundredMb = 100 * 1_000_000
 
 export class FileService extends AbstractService implements FilesClientInterface {
   private encryptedCache: FileMemoryCache = new FileMemoryCache(OneHundredMb)
+  private sharedVault: SharedVaultServerInterface
 
   constructor(
     private api: FilesApiInterface,
-    private itemManager: ItemManagerInterface,
+    private mutator: MutatorClientInterface,
     private syncService: SyncServiceInterface,
     private encryptor: EncryptionProviderInterface,
     private challengor: ChallengeServiceInterface,
+    http: HttpServiceInterface,
     private alertService: AlertService,
     private crypto: PureCryptoInterface,
     protected override internalEventBus: InternalEventBusInterface,
     private backupsService?: BackupServiceInterface,
   ) {
     super(internalEventBus)
+    this.sharedVault = new SharedVaultServer(http)
   }
 
   override deinit(): void {
@@ -67,7 +83,6 @@ export class FileService extends AbstractService implements FilesClientInterface
     this.encryptedCache.clear()
     ;(this.encryptedCache as unknown) = undefined
     ;(this.api as unknown) = undefined
-    ;(this.itemManager as unknown) = undefined
     ;(this.encryptor as unknown) = undefined
     ;(this.syncService as unknown) = undefined
     ;(this.alertService as unknown) = undefined
@@ -79,14 +94,109 @@ export class FileService extends AbstractService implements FilesClientInterface
     return 5_000_000
   }
 
+  private async createUserValetToken(
+    remoteIdentifier: string,
+    operation: ValetTokenOperation,
+    unencryptedFileSizeForUpload?: number | undefined,
+  ): Promise<string | ClientDisplayableError> {
+    return this.api.createUserFileValetToken(remoteIdentifier, operation, unencryptedFileSizeForUpload)
+  }
+
+  private async createSharedVaultValetToken(params: {
+    sharedVaultUuid: string
+    remoteIdentifier: string
+    operation: ValetTokenOperation
+    fileUuidRequiredForExistingFiles?: string
+    unencryptedFileSizeForUpload?: number | undefined
+    moveOperationType?: SharedVaultMoveType
+    sharedVaultToSharedVaultMoveTargetUuid?: string
+  }): Promise<string | ClientDisplayableError> {
+    if (params.operation !== 'write' && !params.fileUuidRequiredForExistingFiles) {
+      throw new Error('File UUID is required for for non-write operations')
+    }
+
+    const valetTokenResponse = await this.sharedVault.createSharedVaultFileValetToken({
+      sharedVaultUuid: params.sharedVaultUuid,
+      fileUuid: params.fileUuidRequiredForExistingFiles,
+      remoteIdentifier: params.remoteIdentifier,
+      operation: params.operation,
+      unencryptedFileSize: params.unencryptedFileSizeForUpload,
+      moveOperationType: params.moveOperationType,
+      sharedVaultToSharedVaultMoveTargetUuid: params.sharedVaultToSharedVaultMoveTargetUuid,
+    })
+
+    if (isErrorResponse(valetTokenResponse)) {
+      return new ClientDisplayableError('Could not create valet token')
+    }
+
+    return valetTokenResponse.data.valetToken
+  }
+
+  public async moveFileToSharedVault(
+    file: FileItem,
+    sharedVault: SharedVaultListingInterface,
+  ): Promise<void | ClientDisplayableError> {
+    const valetTokenResult = await this.createSharedVaultValetToken({
+      sharedVaultUuid: file.shared_vault_uuid ? file.shared_vault_uuid : sharedVault.sharing.sharedVaultUuid,
+      remoteIdentifier: file.remoteIdentifier,
+      operation: 'move',
+      fileUuidRequiredForExistingFiles: file.uuid,
+      moveOperationType: file.shared_vault_uuid ? 'shared-vault-to-shared-vault' : 'user-to-shared-vault',
+      sharedVaultToSharedVaultMoveTargetUuid: file.shared_vault_uuid ? sharedVault.sharing.sharedVaultUuid : undefined,
+    })
+
+    if (isClientDisplayableError(valetTokenResult)) {
+      return valetTokenResult
+    }
+
+    const moveResult = await this.api.moveFile(valetTokenResult)
+
+    if (!moveResult) {
+      return new ClientDisplayableError('Could not move file')
+    }
+  }
+
+  public async moveFileOutOfSharedVault(file: FileItem): Promise<void | ClientDisplayableError> {
+    if (!file.shared_vault_uuid) {
+      return new ClientDisplayableError('File is not in a shared vault')
+    }
+
+    const valetTokenResult = await this.createSharedVaultValetToken({
+      sharedVaultUuid: file.shared_vault_uuid,
+      remoteIdentifier: file.remoteIdentifier,
+      operation: 'move',
+      fileUuidRequiredForExistingFiles: file.uuid,
+      moveOperationType: 'shared-vault-to-user',
+    })
+
+    if (isClientDisplayableError(valetTokenResult)) {
+      return valetTokenResult
+    }
+
+    const moveResult = await this.api.moveFile(valetTokenResult)
+
+    if (!moveResult) {
+      return new ClientDisplayableError('Could not move file')
+    }
+  }
+
   public async beginNewFileUpload(
     sizeInBytes: number,
+    vault?: VaultListingInterface,
   ): Promise<EncryptAndUploadFileOperation | ClientDisplayableError> {
     const remoteIdentifier = UuidGenerator.GenerateUuid()
-    const tokenResult = await this.api.createFileValetToken(remoteIdentifier, 'write', sizeInBytes)
+    const valetTokenResult =
+      vault && vault.isSharedVaultListing()
+        ? await this.createSharedVaultValetToken({
+            sharedVaultUuid: vault.sharing.sharedVaultUuid,
+            remoteIdentifier,
+            operation: 'write',
+            unencryptedFileSizeForUpload: sizeInBytes,
+          })
+        : await this.createUserValetToken(remoteIdentifier, 'write', sizeInBytes)
 
-    if (tokenResult instanceof ClientDisplayableError) {
-      return tokenResult
+    if (valetTokenResult instanceof ClientDisplayableError) {
+      return valetTokenResult
     }
 
     const key = this.crypto.generateRandomKey(FileProtocolV1Constants.KeySize)
@@ -97,9 +207,18 @@ export class FileService extends AbstractService implements FilesClientInterface
       decryptedSize: sizeInBytes,
     }
 
-    const uploadOperation = new EncryptAndUploadFileOperation(fileParams, tokenResult, this.crypto, this.api)
+    const uploadOperation = new EncryptAndUploadFileOperation(
+      fileParams,
+      valetTokenResult,
+      this.crypto,
+      this.api,
+      vault,
+    )
 
-    const uploadSessionStarted = await this.api.startUploadSession(tokenResult)
+    const uploadSessionStarted = await this.api.startUploadSession(
+      valetTokenResult,
+      vault && vault.isSharedVaultListing() ? 'shared-vault' : 'user',
+    )
 
     if (isErrorResponse(uploadSessionStarted) || !uploadSessionStarted.data.uploadId) {
       return new ClientDisplayableError('Could not start upload session')
@@ -127,7 +246,10 @@ export class FileService extends AbstractService implements FilesClientInterface
     operation: EncryptAndUploadFileOperation,
     fileMetadata: FileMetadata,
   ): Promise<FileItem | ClientDisplayableError> {
-    const uploadSessionClosed = await this.api.closeUploadSession(operation.getApiToken())
+    const uploadSessionClosed = await this.api.closeUploadSession(
+      operation.getValetToken(),
+      operation.vault && operation.vault.isSharedVaultListing() ? 'shared-vault' : 'user',
+    )
 
     if (!uploadSessionClosed) {
       return new ClientDisplayableError('Could not close upload session')
@@ -145,10 +267,11 @@ export class FileService extends AbstractService implements FilesClientInterface
       remoteIdentifier: result.remoteIdentifier,
     }
 
-    const file = await this.itemManager.createItem<FileItem>(
+    const file = await this.mutator.createItem<FileItem>(
       ContentType.File,
       FillItemContentSpecialized(fileContent),
       true,
+      operation.vault,
     )
 
     await this.syncService.sync()
@@ -215,7 +338,20 @@ export class FileService extends AbstractService implements FilesClientInterface
 
       let cacheEntryAggregate = new Uint8Array()
 
-      const operation = new DownloadAndDecryptFileOperation(file, this.crypto, this.api)
+      const tokenResult = file.shared_vault_uuid
+        ? await this.createSharedVaultValetToken({
+            sharedVaultUuid: file.shared_vault_uuid,
+            remoteIdentifier: file.remoteIdentifier,
+            operation: 'read',
+            fileUuidRequiredForExistingFiles: file.uuid,
+          })
+        : await this.createUserValetToken(file.remoteIdentifier, 'read')
+
+      if (tokenResult instanceof ClientDisplayableError) {
+        return tokenResult
+      }
+
+      const operation = new DownloadAndDecryptFileOperation(file, this.crypto, this.api, tokenResult)
 
       const result = await operation.run(async ({ decrypted, encrypted, progress }): Promise<void> => {
         if (addToCache) {
@@ -235,13 +371,20 @@ export class FileService extends AbstractService implements FilesClientInterface
   public async deleteFile(file: FileItem): Promise<ClientDisplayableError | undefined> {
     this.encryptedCache.remove(file.uuid)
 
-    const tokenResult = await this.api.createFileValetToken(file.remoteIdentifier, 'delete')
+    const tokenResult = file.shared_vault_uuid
+      ? await this.createSharedVaultValetToken({
+          sharedVaultUuid: file.shared_vault_uuid,
+          remoteIdentifier: file.remoteIdentifier,
+          operation: 'delete',
+          fileUuidRequiredForExistingFiles: file.uuid,
+        })
+      : await this.createUserValetToken(file.remoteIdentifier, 'delete')
 
     if (tokenResult instanceof ClientDisplayableError) {
       return tokenResult
     }
 
-    const result = await this.api.deleteFile(tokenResult)
+    const result = await this.api.deleteFile(tokenResult, file.shared_vault_uuid ? 'shared-vault' : 'user')
 
     if (result.data?.error) {
       const deleteAnyway = await this.alertService.confirm(
@@ -261,7 +404,7 @@ export class FileService extends AbstractService implements FilesClientInterface
       }
     }
 
-    await this.itemManager.setItemToBeDeleted(file)
+    await this.mutator.setItemToBeDeleted(file)
     await this.syncService.sync()
 
     return undefined

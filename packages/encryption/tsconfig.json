@@ -1,13 +1,11 @@
 {
-  "extends": "../../node_modules/@standardnotes/config/src/tsconfig.json",
+  "extends": "../../UILib.tsconfig.json",
   "compilerOptions": {
     "skipLibCheck": true,
     "rootDir": "./src",
     "outDir": "./dist",
+    "noEmit": true
   },
-  "include": [
-    "src/**/*"
-  ],
-  "references": [],
-  "exclude": ["**/*.spec.ts", "dist", "node_modules"]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"]
 }

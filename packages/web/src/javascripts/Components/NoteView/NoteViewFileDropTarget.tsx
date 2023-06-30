@@ -24,7 +24,7 @@ const NoteViewFileDropTarget = ({ note, linkingController, noteViewElement, file
         tooltipText: 'Drop your files to upload and link them to the current note',
         callback: async (uploadedFile) => {
           await linkingController.linkItems(note, uploadedFile)
-          void application.mutator.changeAndSaveItem(uploadedFile, (mutator) => {
+          void application.changeAndSaveItem(uploadedFile, (mutator) => {
             mutator.protected = note.protected
           })
           filesController.notifyObserversOfUploadedFileLinkingToCurrentNote(uploadedFile.uuid)
@@ -37,7 +37,7 @@ const NoteViewFileDropTarget = ({ note, linkingController, noteViewElement, file
         removeDragTarget(target)
       }
     }
-  }, [addDragTarget, linkingController, note, noteViewElement, removeDragTarget, filesController, application.mutator])
+  }, [addDragTarget, linkingController, note, noteViewElement, removeDragTarget, filesController, application])
 
   return isDraggingFiles ? (
     // Required to block drag events to editor iframe

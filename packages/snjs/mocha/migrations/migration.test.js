@@ -68,7 +68,7 @@ describe('migrations', () => {
         }),
       }),
     )
-    await application.mutator.insertItem(mfaItem)
+    await application.mutator.insertItem(mfaItem, true)
     await application.sync.sync()
 
     expect(application.items.getItems('SF|MFA').length).to.equal(1)

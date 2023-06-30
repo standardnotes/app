@@ -5,6 +5,8 @@ import { PayloadSource } from '../Types/PayloadSource'
 import { TransferPayload } from '../../TransferPayload/Interfaces/TransferPayload'
 import { ItemContent } from '../../Content/ItemContent'
 import { SyncResolvedParams, SyncResolvedPayload } from '../../../Runtime/Deltas/Utilities/SyncResolvedPayload'
+import { PersistentSignatureData } from '../../../Runtime/Encryption/PersistentSignatureData'
+import { ContentTypeUsesRootKeyEncryption } from '../../../Runtime/Encryption/ContentTypeUsesRootKeyEncryption'
 
 type RequiredKeepUndefined<T> = { [K in keyof T]-?: [T[K]] } extends infer U
   ? U extends Record<keyof U, [unknown]>
@@ -33,17 +35,27 @@ export abstract class PurePayload<T extends TransferPayload<C>, C extends ItemCo
   readonly lastSyncEnd?: Date
 
   readonly duplicate_of?: string
+  readonly user_uuid?: string
+  readonly key_system_identifier?: string | undefined
+  readonly shared_vault_uuid?: string | undefined
+  readonly last_edited_by_uuid?: string
+
+  readonly signatureData?: PersistentSignatureData
 
   constructor(rawPayload: T, source = PayloadSource.Constructor) {
-    this.source = source
-    this.uuid = rawPayload.uuid
-
-    if (!this.uuid) {
+    if (!rawPayload.uuid) {
       throw Error(
         `Attempting to construct payload with null uuid
         Content type: ${rawPayload.content_type}`,
       )
     }
+
+    if (rawPayload.key_system_identifier && ContentTypeUsesRootKeyEncryption(rawPayload.content_type)) {
+      throw new Error('Rootkey-encrypted payload should not have a key system identifier')
+    }
+
+    this.source = source
+    this.uuid = rawPayload.uuid
 
     this.content = rawPayload.content
     this.content_type = rawPayload.content_type
@@ -62,6 +74,13 @@ export abstract class PurePayload<T extends TransferPayload<C>, C extends ItemCo
 
     this.dirtyIndex = rawPayload.dirtyIndex
     this.globalDirtyIndexAtLastSync = rawPayload.globalDirtyIndexAtLastSync
+
+    this.user_uuid = rawPayload.user_uuid ?? undefined
+    this.key_system_identifier = rawPayload.key_system_identifier ?? undefined
+    this.shared_vault_uuid = rawPayload.shared_vault_uuid ?? undefined
+    this.last_edited_by_uuid = rawPayload.last_edited_by_uuid ?? undefined
+
+    this.signatureData = rawPayload.signatureData
 
     const timeToAllowSubclassesToFinishConstruction = 0
     setTimeout(() => {
@@ -85,6 +104,11 @@ export abstract class PurePayload<T extends TransferPayload<C>, C extends ItemCo
       globalDirtyIndexAtLastSync: this.globalDirtyIndexAtLastSync,
       lastSyncBegan: this.lastSyncBegan,
       lastSyncEnd: this.lastSyncEnd,
+      key_system_identifier: this.key_system_identifier,
+      user_uuid: this.user_uuid,
+      shared_vault_uuid: this.shared_vault_uuid,
+      last_edited_by_uuid: this.last_edited_by_uuid,
+      signatureData: this.signatureData,
     }
 
     return comprehensive

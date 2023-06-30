@@ -22,5 +22,5 @@ export interface HttpSuccessResponse<T = AnySuccessRecord> extends HttpResponseB
 export type HttpResponse<T = AnySuccessRecord> = HttpErrorResponse | HttpSuccessResponse<T>
 
 export function isErrorResponse<T>(response: HttpResponse<T>): response is HttpErrorResponse {
-  return (response.data as HttpErrorResponseBody)?.error != undefined
+  return (response.data as HttpErrorResponseBody)?.error != undefined || response.status >= 400
 }

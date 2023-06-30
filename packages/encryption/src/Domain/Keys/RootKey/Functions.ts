@@ -5,11 +5,12 @@ import {
   PayloadTimestampDefaults,
   RootKeyContent,
   RootKeyContentSpecialized,
+  RootKeyInterface,
 } from '@standardnotes/models'
 import { UuidGenerator } from '@standardnotes/utils'
 import { SNRootKey } from './RootKey'
 
-export function CreateNewRootKey(content: RootKeyContentSpecialized): SNRootKey {
+export function CreateNewRootKey<K extends RootKeyInterface>(content: RootKeyContentSpecialized): K {
   const uuid = UuidGenerator.GenerateUuid()
 
   const payload = new DecryptedPayload<RootKeyContent>({
@@ -19,7 +20,7 @@ export function CreateNewRootKey(content: RootKeyContentSpecialized): SNRootKey 
     ...PayloadTimestampDefaults(),
   })
 
-  return new SNRootKey(payload)
+  return new SNRootKey(payload) as K
 }
 
 export function FillRootKeyContent(content: Partial<RootKeyContentSpecialized>): RootKeyContent {
@@ -36,16 +37,4 @@ export function FillRootKeyContent(content: Partial<RootKeyContentSpecialized>):
   }
 
   return FillItemContentSpecialized(content)
-}
-
-export function ContentTypeUsesRootKeyEncryption(contentType: ContentType): boolean {
-  return (
-    contentType === ContentType.RootKey ||
-    contentType === ContentType.ItemsKey ||
-    contentType === ContentType.EncryptedStorage
-  )
-}
-
-export function ItemContentTypeUsesRootKeyEncryption(contentType: ContentType): boolean {
-  return contentType === ContentType.ItemsKey
 }

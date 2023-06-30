@@ -37,7 +37,7 @@ export default function FilePlugin({ currentNote }: { currentNote: SNNote }): JS
           if (uploadedFile) {
             editor.dispatchCommand(INSERT_FILE_COMMAND, uploadedFile.uuid)
             void linkingController.linkItemToSelectedItem(uploadedFile)
-            void application.mutator.changeAndSaveItem(uploadedFile, (mutator) => {
+            void application.changeAndSaveItem(uploadedFile, (mutator) => {
               mutator.protected = currentNote.protected
             })
           }
@@ -76,7 +76,7 @@ export default function FilePlugin({ currentNote }: { currentNote: SNNote }): JS
         COMMAND_PRIORITY_NORMAL,
       ),
     )
-  }, [application.mutator, currentNote.protected, editor, filesController, linkingController])
+  }, [application, currentNote.protected, editor, filesController, linkingController])
 
   useEffect(() => {
     const disposer = filesController.addEventObserver((event, data) => {

@@ -4,49 +4,53 @@ import {
   RootKeyInterface,
   ItemContent,
   EncryptedPayloadInterface,
+  KeySystemItemsKeyInterface,
+  KeySystemRootKeyInterface,
 } from '@standardnotes/models'
 import {
-  DecryptedParameters,
-  EncryptedParameters,
-  encryptedParametersFromPayload,
+  EncryptedOutputParameters,
+  encryptedInputParametersFromPayload,
   ErrorDecryptingParameters,
 } from '../Types/EncryptedParameters'
-import { isAsyncOperator } from './Functions'
+import { DecryptedParameters } from '../Types/DecryptedParameters'
 import { OperatorManager } from './OperatorManager'
+import { PkcKeyPair } from '@standardnotes/sncrypto-common'
+import { isAsyncOperator } from './OperatorInterface/TypeCheck'
 
 export async function encryptPayload(
   payload: DecryptedPayloadInterface,
-  key: ItemsKeyInterface | RootKeyInterface,
+  key: ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface | RootKeyInterface,
   operatorManager: OperatorManager,
-): Promise<EncryptedParameters> {
+  signingKeyPair: PkcKeyPair | undefined,
+): Promise<EncryptedOutputParameters> {
   const operator = operatorManager.operatorForVersion(key.keyVersion)
-  let encryptionParameters
+  let result: EncryptedOutputParameters | undefined = undefined
 
   if (isAsyncOperator(operator)) {
-    encryptionParameters = await operator.generateEncryptedParametersAsync(payload, key)
+    result = await operator.generateEncryptedParametersAsync(payload, key)
   } else {
-    encryptionParameters = operator.generateEncryptedParametersSync(payload, key)
+    result = operator.generateEncryptedParameters(payload, key, signingKeyPair)
   }
 
-  if (!encryptionParameters) {
+  if (!result) {
     throw 'Unable to generate encryption parameters'
   }
 
-  return encryptionParameters
+  return result
 }
 
 export async function decryptPayload<C extends ItemContent = ItemContent>(
   payload: EncryptedPayloadInterface,
-  key: ItemsKeyInterface | RootKeyInterface,
+  key: ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface | RootKeyInterface,
   operatorManager: OperatorManager,
 ): Promise<DecryptedParameters<C> | ErrorDecryptingParameters> {
   const operator = operatorManager.operatorForVersion(payload.version)
 
   try {
     if (isAsyncOperator(operator)) {
-      return await operator.generateDecryptedParametersAsync(encryptedParametersFromPayload(payload), key)
+      return await operator.generateDecryptedParametersAsync(encryptedInputParametersFromPayload(payload), key)
     } else {
-      return operator.generateDecryptedParametersSync(encryptedParametersFromPayload(payload), key)
+      return operator.generateDecryptedParameters(encryptedInputParametersFromPayload(payload), key)
     }
   } catch (e) {
     console.error('Error decrypting payload', payload, e)

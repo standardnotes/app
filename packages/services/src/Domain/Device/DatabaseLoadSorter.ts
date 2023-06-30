@@ -83,17 +83,25 @@ export function GetSortedPayloadsByPriority<T extends DatabaseItemMetadata = Dat
   options: DatabaseLoadOptions,
 ): {
   itemsKeyPayloads: T[]
+  keySystemRootKeyPayloads: T[]
+  keySystemItemsKeyPayloads: T[]
   contentTypePriorityPayloads: T[]
   remainingPayloads: T[]
 } {
   const itemsKeyPayloads: T[] = []
+  const keySystemRootKeyPayloads: T[] = []
+  const keySystemItemsKeyPayloads: T[] = []
   const contentTypePriorityPayloads: T[] = []
   const remainingPayloads: T[] = []
 
   for (let index = 0; index < payloads.length; index++) {
     const payload = payloads[index]
 
-    if (payload.content_type === ContentType.ItemsKey) {
+    if (payload.content_type === ContentType.KeySystemRootKey) {
+      keySystemRootKeyPayloads.push(payload)
+    } else if (payload.content_type === ContentType.KeySystemItemsKey) {
+      keySystemItemsKeyPayloads.push(payload)
+    } else if (payload.content_type === ContentType.ItemsKey) {
       itemsKeyPayloads.push(payload)
     } else if (options.contentTypePriority.includes(payload.content_type)) {
       contentTypePriorityPayloads.push(payload)
@@ -104,6 +112,8 @@ export function GetSortedPayloadsByPriority<T extends DatabaseItemMetadata = Dat
 
   return {
     itemsKeyPayloads,
+    keySystemRootKeyPayloads,
+    keySystemItemsKeyPayloads,
     contentTypePriorityPayloads: SortPayloadsByRecentAndContentPriority(
       contentTypePriorityPayloads,
       options.contentTypePriority,

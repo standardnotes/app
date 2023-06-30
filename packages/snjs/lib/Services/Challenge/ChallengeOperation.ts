@@ -1,7 +1,6 @@
-import { Challenge, ChallengeValue, ChallengeArtifacts } from '@standardnotes/services'
+import { Challenge, ChallengeValue, ChallengeArtifacts, ChallengeValueCallback } from '@standardnotes/services'
 import { ChallengeResponse } from './ChallengeResponse'
 import { removeFromArray } from '@standardnotes/utils'
-import { ValueCallback } from './ChallengeService'
 
 /**
  * A challenge operation stores user-submitted values and callbacks.
@@ -15,8 +14,8 @@ export class ChallengeOperation {
 
   constructor(
     public challenge: Challenge,
-    public onValidValue: ValueCallback,
-    public onInvalidValue: ValueCallback,
+    public onValidValue: ChallengeValueCallback,
+    public onInvalidValue: ChallengeValueCallback,
     public onNonvalidatedSubmit: (response: ChallengeResponse) => void,
     public onComplete: (response: ChallengeResponse) => void,
     public onCancel: () => void,

@@ -1,14 +1,14 @@
 import { ErrorMessage } from '../../Error/ErrorMessage'
 import { ApiCallError } from '../../Error/ApiCallError'
 import { ApiVersion } from '../../Api/ApiVersion'
-import { ApiEndpointParam } from '../../Request/ApiEndpointParam'
+
 import { SubscriptionServerInterface } from '../../Server/Subscription/SubscriptionServerInterface'
 import { AppleIAPConfirmResponseBody } from './../../Response/Subscription/AppleIAPConfirmResponseBody'
 import { SubscriptionInviteAcceptResponseBody } from '../../Response/Subscription/SubscriptionInviteAcceptResponseBody'
 import { SubscriptionInviteCancelResponseBody } from '../../Response/Subscription/SubscriptionInviteCancelResponseBody'
 import { SubscriptionInviteListResponseBody } from '../../Response/Subscription/SubscriptionInviteListResponseBody'
 import { SubscriptionInviteResponseBody } from '../../Response/Subscription/SubscriptionInviteResponseBody'
-import { HttpResponse } from '@standardnotes/responses'
+import { HttpResponse, ApiEndpointParam } from '@standardnotes/responses'
 
 import { SubscriptionApiServiceInterface } from './SubscriptionApiServiceInterface'
 import { SubscriptionApiOperations } from './SubscriptionApiOperations'

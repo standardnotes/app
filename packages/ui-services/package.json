@@ -15,13 +15,16 @@
     "test": "jest spec"
   },
   "dependencies": {
-    "@standardnotes/common": "^1.46.6",
+    "@standardnotes/common": "^1.48.3",
     "@standardnotes/features": "workspace:^",
     "@standardnotes/filepicker": "workspace:^",
+    "@standardnotes/models": "workspace:^",
     "@standardnotes/services": "workspace:^",
     "@standardnotes/styles": "workspace:^",
     "@standardnotes/toast": "workspace:^",
-    "@standardnotes/utils": "workspace:^"
+    "@standardnotes/utils": "workspace:^",
+    "mobx": "^6.8.0",
+    "mobx-react-lite": "^3.4.2"
   },
   "devDependencies": {
     "@types/jest": "^29.2.3",

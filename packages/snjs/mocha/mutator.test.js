@@ -4,7 +4,7 @@ import * as Factory from './lib/factory.js'
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
-describe('mutator', () => {
+describe('item mutator', () => {
   beforeEach(async function () {
     this.createBarePayload = () => {
       return new DecryptedPayload({

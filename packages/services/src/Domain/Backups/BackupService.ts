@@ -515,7 +515,7 @@ export class FilesBackupService extends AbstractService implements BackupService
       },
     })
 
-    const token = await this.api.createFileValetToken(file.remoteIdentifier, 'read')
+    const token = await this.api.createUserFileValetToken(file.remoteIdentifier, 'read')
 
     if (token instanceof ClientDisplayableError) {
       this.status.removeMessage(messageId)
@@ -536,9 +536,11 @@ export class FilesBackupService extends AbstractService implements BackupService
 
     const metaFileAsString = JSON.stringify(metaFile, null, 2)
 
+    const downloadType = !file.user_uuid || file.user_uuid === this.session.getSureUser().uuid ? 'user' : 'shared-vault'
+
     const result = await this.device.saveFilesBackupsFile(location, file.uuid, metaFileAsString, {
       chunkSizes: file.encryptedChunkSizes,
-      url: this.api.getFilesDownloadUrl(),
+      url: this.api.getFilesDownloadUrl(downloadType),
       valetToken: token,
     })
 

@@ -6,7 +6,7 @@ import {
   ApplicationEvent,
   FeatureIdentifier,
   FeatureStatus,
-  InternalEventBus,
+  InternalEventBusInterface,
   InternalEventInterface,
 } from '@standardnotes/snjs'
 import { action, makeObservable, observable, runInAction, when } from 'mobx'
@@ -33,7 +33,7 @@ export class FeaturesController extends AbstractViewController {
     destroyAllObjectProperties(this)
   }
 
-  constructor(application: WebApplication, eventBus: InternalEventBus) {
+  constructor(application: WebApplication, eventBus: InternalEventBusInterface) {
     super(application, eventBus)
 
     this.hasFolders = this.isEntitledToFolders()

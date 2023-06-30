@@ -14,7 +14,6 @@ import {
   ContentType,
   DecryptedItemInterface,
   WebAppEvent,
-  WebApplicationInterface,
   MobileDeviceInterface,
   MobileUnlockTiming,
   DecryptedItem,
@@ -27,7 +26,7 @@ import {
 import { makeObservable, observable } from 'mobx'
 import { startAuthentication, startRegistration } from '@simplewebauthn/browser'
 import { PanelResizedData } from '@/Types/PanelResizedData'
-import { isAndroid, isDesktopApplication, isIOS } from '@/Utils'
+import { isAndroid, isDesktopApplication, isDev, isIOS } from '@/Utils'
 import { DesktopManager } from './Device/DesktopManager'
 import {
   ArchiveManager,
@@ -38,7 +37,10 @@ import {
   RouteService,
   RouteServiceInterface,
   ThemeManager,
+  VaultDisplayService,
+  VaultDisplayServiceInterface,
   WebAlertService,
+  WebApplicationInterface,
 } from '@standardnotes/ui-services'
 import { MobileWebReceiver, NativeMobileEventListener } from '../NativeMobileWeb/MobileWebReceiver'
 import { AndroidBackHandler } from '@/NativeMobileWeb/AndroidBackHandler'
@@ -49,6 +51,7 @@ import { FeatureName } from '@/Controllers/FeatureName'
 import { ItemGroupController } from '@/Components/NoteView/Controller/ItemGroupController'
 import { VisibilityObserver } from './VisibilityObserver'
 import { MomentsService } from '@/Controllers/Moments/MomentsService'
+import { purchaseMockSubscription } from '@/Utils/Dev/PurchaseMockSubscription'
 
 export type WebEventObserver = (event: WebAppEvent, data?: unknown) => void
 
@@ -114,6 +117,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
       this.webServices.viewControllerManager.filesController,
       this.internalEventBus,
     )
+    this.webServices.vaultDisplayService = new VaultDisplayService(this, this.internalEventBus)
 
     if (this.isNativeMobileWeb()) {
       this.mobileWebReceiver = new MobileWebReceiver(this)
@@ -192,6 +196,10 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     }
 
     this.notifyWebEvent(WebAppEvent.PanelResized, data)
+  }
+
+  public get vaultDisplayService(): VaultDisplayServiceInterface {
+    return this.webServices.vaultDisplayService
   }
 
   public getViewControllerManager(): ViewControllerManager {
@@ -449,5 +457,13 @@ export class WebApplication extends SNApplication implements WebApplicationInter
 
   generateUUID(): string {
     return this.options.crypto.generateUUID()
+  }
+
+  dev__purchaseMockSubscription() {
+    if (!isDev) {
+      throw new Error('This method is only available in dev mode')
+    }
+
+    void purchaseMockSubscription(this.getUser()?.email as string, 2000)
   }
 }

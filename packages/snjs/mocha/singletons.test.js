@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-expressions */
 /* eslint-disable no-undef */
-import { BaseItemCounts } from './lib/Applications.js'
+import { BaseItemCounts } from './lib/BaseItemCounts.js'
 import * as Factory from './lib/factory.js'
 import WebDeviceInterface from './lib/web_device_interface.js'
 chai.use(chaiAsPromised)
@@ -38,7 +38,9 @@ describe('singletons', function () {
 
     this.email = UuidGenerator.GenerateUuid()
     this.password = UuidGenerator.GenerateUuid()
+
     this.registerUser = async () => {
+      this.expectedItemCount = BaseItemCounts.DefaultItemsWithAccount
       await Factory.registerUserToApplication({
         application: this.application,
         email: this.email,
@@ -62,7 +64,7 @@ describe('singletons', function () {
     ])
 
     this.createExtMgr = () => {
-      return this.application.itemManager.createItem(
+      return this.application.mutator.createItem(
         ContentType.Component,
         {
           package_info: {
@@ -93,11 +95,11 @@ describe('singletons', function () {
     const prefs2 = createPrefsPayload()
     const prefs3 = createPrefsPayload()
 
-    const items = await this.application.itemManager.emitItemsFromPayloads(
+    const items = await this.application.mutator.emitItemsFromPayloads(
       [prefs1, prefs2, prefs3],
       PayloadEmitSource.LocalChanged,
     )
-    await this.application.itemManager.setItemsDirty(items)
+    await this.application.mutator.setItemsDirty(items)
     await this.application.syncService.sync(syncOptions)
     expect(this.application.itemManager.items.length).to.equal(this.expectedItemCount)
   })
@@ -192,7 +194,7 @@ describe('singletons', function () {
       if (!beginCheckingResponse) {
         return
       }
-      if (!didCompleteRelevantSync && eventName === SyncEvent.SingleRoundTripSyncCompleted) {
+      if (!didCompleteRelevantSync && eventName === SyncEvent.PaginatedSyncRequestCompleted) {
         didCompleteRelevantSync = true
         const saved = data.savedPayloads
         expect(saved.length).to.equal(1)
@@ -327,7 +329,7 @@ describe('singletons', function () {
 
   it('alternating the uuid of a singleton should return correct result', async function () {
     const payload = createPrefsPayload()
-    const item = await this.application.itemManager.emitItemFromPayload(payload, PayloadEmitSource.LocalChanged)
+    const item = await this.application.mutator.emitItemFromPayload(payload, PayloadEmitSource.LocalChanged)
     await this.application.syncService.sync(syncOptions)
     const predicate = new Predicate('content_type', '=', item.content_type)
     let resolvedItem = await this.application.singletonManager.findOrCreateContentTypeSingleton(

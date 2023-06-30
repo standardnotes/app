@@ -1,4 +1,9 @@
-import { confirmDialog, CREATE_NEW_TAG_COMMAND, NavigationControllerPersistableValue } from '@standardnotes/ui-services'
+import {
+  confirmDialog,
+  CREATE_NEW_TAG_COMMAND,
+  NavigationControllerPersistableValue,
+  VaultDisplayServiceEvent,
+} from '@standardnotes/ui-services'
 import { STRING_DELETE_TAG } from '@/Constants/Strings'
 import { MAX_MENU_SIZE_MULTIPLIER, MENU_MARGIN_FROM_APP_BORDER, SMART_TAGS_FEATURE_NAME } from '@/Constants/Constants'
 import {
@@ -10,13 +15,15 @@ import {
   isSystemView,
   FindItem,
   SystemViewId,
-  InternalEventBus,
   InternalEventPublishStrategy,
   VectorIconNameOrEmoji,
   isTag,
   PrefKey,
+  InternalEventBusInterface,
+  InternalEventHandlerInterface,
+  InternalEventInterface,
 } from '@standardnotes/snjs'
-import { action, computed, makeAutoObservable, makeObservable, observable, reaction, runInAction } from 'mobx'
+import { action, computed, makeObservable, observable, reaction, runInAction } from 'mobx'
 import { WebApplication } from '../../Application/WebApplication'
 import { FeaturesController } from '../FeaturesController'
 import { destroyAllObjectProperties } from '@/Utils'
@@ -27,10 +34,11 @@ import { AbstractViewController } from '../Abstract/AbstractViewController'
 import { Persistable } from '../Abstract/Persistable'
 import { TagListSectionType } from '@/Components/Tags/TagListSection'
 import { PaneLayout } from '../PaneController/PaneLayout'
+import { TagsCountsState } from './TagsCountsState'
 
 export class NavigationController
   extends AbstractViewController
-  implements Persistable<NavigationControllerPersistableValue>
+  implements Persistable<NavigationControllerPersistableValue>, InternalEventHandlerInterface
 {
   tags: SNTag[] = []
   smartViews: SmartView[] = []
@@ -54,8 +62,14 @@ export class NavigationController
 
   private readonly tagsCountsState: TagsCountsState
 
-  constructor(application: WebApplication, private featuresController: FeaturesController, eventBus: InternalEventBus) {
+  constructor(
+    application: WebApplication,
+    private featuresController: FeaturesController,
+    eventBus: InternalEventBusInterface,
+  ) {
     super(application, eventBus)
+
+    eventBus.addEventHandler(this, VaultDisplayServiceEvent.VaultDisplayOptionsChanged)
 
     this.tagsCountsState = new TagsCountsState(this.application)
     this.smartViews = this.application.items.getSmartViews()
@@ -109,11 +123,9 @@ export class NavigationController
 
     this.disposers.push(
       this.application.streamItems([ContentType.Tag, ContentType.SmartView], ({ changed, removed }) => {
-        runInAction(() => {
-          this.tags = this.application.items.getDisplayableTags()
-          this.starredTags = this.tags.filter((tag) => tag.starred)
-          this.smartViews = this.application.items.getSmartViews()
+        this.reloadTags()
 
+        runInAction(() => {
           const currentSelectedTag = this.selected_
 
           if (!currentSelectedTag) {
@@ -171,6 +183,20 @@ export class NavigationController
         },
       }),
     )
+  }
+
+  private reloadTags(): void {
+    runInAction(() => {
+      this.tags = this.application.items.getDisplayableTags()
+      this.starredTags = this.tags.filter((tag) => tag.starred)
+      this.smartViews = this.application.items.getSmartViews()
+    })
+  }
+
+  async handleEvent(event: InternalEventInterface): Promise<void> {
+    if (event.type === VaultDisplayServiceEvent.VaultDisplayOptionsChanged) {
+      this.reloadTags()
+    }
   }
 
   private findAndSetTag = (uuid: UuidString) => {
@@ -232,7 +258,10 @@ export class NavigationController
       return
     }
 
-    const createdTag = (await this.application.mutator.createTagOrSmartView(title)) as SNTag
+    const createdTag = await this.application.mutator.createTagOrSmartView<SNTag>(
+      title,
+      this.application.vaultDisplayService.exclusivelyShownVault,
+    )
 
     const futureSiblings = this.application.items.getTagChildren(parent)
 
@@ -454,7 +483,7 @@ export class NavigationController
   }
 
   public async setPanelWidthForTag(tag: SNTag, width: number): Promise<void> {
-    await this.application.mutator.changeAndSaveItem<TagMutator>(tag, (mutator) => {
+    await this.application.changeAndSaveItem<TagMutator>(tag, (mutator) => {
       mutator.preferences = {
         ...mutator.preferences,
         panelWidth: width,
@@ -468,7 +497,7 @@ export class NavigationController
     { userTriggered } = { userTriggered: false },
   ) {
     if (tag && tag.conflictOf) {
-      this.application.mutator
+      this.application
         .changeAndSaveItem(tag, (mutator) => {
           mutator.conflictOf = undefined
         })
@@ -529,7 +558,7 @@ export class NavigationController
       return
     }
 
-    this.application.mutator
+    this.application
       .changeAndSaveItem<TagMutator>(tag, (mutator) => {
         mutator.expanded = expanded
       })
@@ -537,7 +566,7 @@ export class NavigationController
   }
 
   public async setFavorite(tag: SNTag, favorite: boolean) {
-    return this.application.mutator
+    return this.application
       .changeAndSaveItem<TagMutator>(tag, (mutator) => {
         mutator.starred = favorite
       })
@@ -545,7 +574,7 @@ export class NavigationController
   }
 
   public setIcon(tag: SNTag, icon: VectorIconNameOrEmoji) {
-    this.application.mutator
+    this.application
       .changeAndSaveItem<TagMutator>(tag, (mutator) => {
         mutator.iconString = icon as string
       })
@@ -570,7 +599,7 @@ export class NavigationController
       return
     }
 
-    const newTag = this.application.mutator.createTemplateItem(ContentType.Tag) as SNTag
+    const newTag = this.application.items.createTemplateItem(ContentType.Tag) as SNTag
 
     runInAction(() => {
       this.selectedLocation = 'all'
@@ -593,7 +622,10 @@ export class NavigationController
       })
     }
     if (shouldDelete) {
-      this.application.mutator.deleteItem(tag).catch(console.error)
+      this.application.mutator
+        .deleteItem(tag)
+        .then(() => this.application.sync.sync())
+        .catch(console.error)
       await this.setSelectedTag(this.smartViews[0], 'views')
     }
   }
@@ -635,36 +667,18 @@ export class NavigationController
         }
       }
 
-      const insertedTag = await this.application.mutator.createTagOrSmartView(newTitle)
+      const insertedTag = await this.application.mutator.createTagOrSmartView<SNTag>(
+        newTitle,
+        this.application.vaultDisplayService.exclusivelyShownVault,
+      )
       this.application.sync.sync().catch(console.error)
       runInAction(() => {
-        void this.setSelectedTag(insertedTag as SNTag, this.selectedLocation || 'views')
+        void this.setSelectedTag(insertedTag, this.selectedLocation || 'views')
       })
     } else {
-      await this.application.mutator.changeAndSaveItem<TagMutator>(tag, (mutator) => {
+      await this.application.changeAndSaveItem<TagMutator>(tag, (mutator) => {
         mutator.title = newTitle
       })
     }
-  }
-}
-
-class TagsCountsState {
-  public counts: { [uuid: string]: number } = {}
-
-  public constructor(private application: WebApplication) {
-    makeAutoObservable(this, {
-      counts: observable.ref,
-      update: action,
-    })
-  }
-
-  public update(tags: SNTag[]) {
-    const newCounts: { [uuid: string]: number } = Object.assign({}, this.counts)
-
-    tags.forEach((tag) => {
-      newCounts[tag.uuid] = this.application.items.countableNotesForTag(tag)
-    })
-
-    this.counts = newCounts
   }
 }

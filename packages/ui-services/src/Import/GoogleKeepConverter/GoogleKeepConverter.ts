@@ -1,7 +1,7 @@
-import { WebApplicationInterface } from '@standardnotes/services'
 import { ContentType } from '@standardnotes/common'
 import { DecryptedTransferPayload, NoteContent } from '@standardnotes/models'
 import { readFileAsText } from '../Utils'
+import { WebApplicationInterface } from '../../WebApplication/WebApplicationInterface'
 
 type GoogleKeepJsonNote = {
   color: string

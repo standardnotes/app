@@ -200,7 +200,9 @@ describe('key recovery service', function () {
     const receiveChallenge = (challenge) => {
       totalPromptCount++
       /** Give unassociated password when prompted */
-      application.submitValuesForChallenge(challenge, [CreateChallengeValue(challenge.prompts[0], unassociatedPassword)])
+      application.submitValuesForChallenge(challenge, [
+        CreateChallengeValue(challenge.prompts[0], unassociatedPassword),
+      ])
     }
     await application.prepareForLaunch({ receiveChallenge })
     await application.launch(true)
@@ -272,7 +274,9 @@ describe('key recovery service', function () {
     expect(result.error).to.not.be.ok
     expect(contextB.application.items.getAnyItems(ContentType.ItemsKey).length).to.equal(2)
 
-    const newItemsKey = contextB.application.items.getDisplayableItemsKeys().find((k) => k.uuid !== originalItemsKey.uuid)
+    const newItemsKey = contextB.application.items
+      .getDisplayableItemsKeys()
+      .find((k) => k.uuid !== originalItemsKey.uuid)
 
     const note = await Factory.createSyncedNote(contextB.application)
 
@@ -432,6 +436,7 @@ describe('key recovery service', function () {
     expect(decryptedKey.content.itemsKey).to.equal(correctItemsKey.content.itemsKey)
 
     expect(application.syncService.isOutOfSync()).to.equal(false)
+
     await context.deinit()
   })
 
@@ -456,6 +461,8 @@ describe('key recovery service', function () {
       errorDecrypting: true,
       updated_at: newUpdated,
     })
+
+    context.disableKeyRecovery()
 
     await context.receiveServerResponse({ retrievedItems: [errored.ejected()] })
 
@@ -567,7 +574,9 @@ describe('key recovery service', function () {
     const application = context.application
     const receiveChallenge = (challenge) => {
       /** Give unassociated password when prompted */
-      application.submitValuesForChallenge(challenge, [CreateChallengeValue(challenge.prompts[0], unassociatedPassword)])
+      application.submitValuesForChallenge(challenge, [
+        CreateChallengeValue(challenge.prompts[0], unassociatedPassword),
+      ])
     }
     await application.prepareForLaunch({ receiveChallenge })
     await application.launch(true)
@@ -667,13 +676,15 @@ describe('key recovery service', function () {
     const stored = (await appA.deviceInterface.getAllDatabaseEntries(appA.identifier)).find(
       (payload) => payload.uuid === newDefaultKey.uuid,
     )
-    const storedParams = await appA.protocolService.getKeyEmbeddedKeyParams(new EncryptedPayload(stored))
+    const storedParams = await appA.protocolService.getKeyEmbeddedKeyParamsFromItemsKey(new EncryptedPayload(stored))
 
     const correctStored = (await appB.deviceInterface.getAllDatabaseEntries(appB.identifier)).find(
       (payload) => payload.uuid === newDefaultKey.uuid,
     )
 
-    const correctParams = await appB.protocolService.getKeyEmbeddedKeyParams(new EncryptedPayload(correctStored))
+    const correctParams = await appB.protocolService.getKeyEmbeddedKeyParamsFromItemsKey(
+      new EncryptedPayload(correctStored),
+    )
 
     expect(storedParams).to.eql(correctParams)
 

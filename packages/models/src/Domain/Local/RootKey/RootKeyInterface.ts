@@ -1,3 +1,4 @@
+import { PkcKeyPair } from '@standardnotes/sncrypto-common'
 import { ProtocolVersion } from '@standardnotes/common'
 import { DecryptedItemInterface } from '../../Abstract/Item/Interfaces/DecryptedItem'
 import { RootKeyParamsInterface } from '../KeyParams/RootKeyParamsInterface'
@@ -6,11 +7,16 @@ import { RootKeyContent } from './RootKeyContent'
 
 export interface RootKeyInterface extends DecryptedItemInterface<RootKeyContent> {
   readonly keyParams: RootKeyParamsInterface
+
   get keyVersion(): ProtocolVersion
   get itemsKey(): string
   get masterKey(): string
   get serverPassword(): string | undefined
   get dataAuthenticationKey(): string | undefined
+
+  get encryptionKeyPair(): PkcKeyPair | undefined
+  get signingKeyPair(): PkcKeyPair | undefined
+
   compare(otherKey: RootKeyInterface): boolean
   persistableValueWhenWrapping(): RootKeyContentInStorage
   getKeychainValue(): NamespacedRootKeyInKeychain

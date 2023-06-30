@@ -50,7 +50,7 @@ export class DecryptedItem<C extends ItemContent = ItemContent>
     return this.payload.content.references || []
   }
 
-  public isReferencingItem(item: DecryptedItemInterface): boolean {
+  public isReferencingItem(item: { uuid: string }): boolean {
     return this.references.find((r) => r.uuid === item.uuid) != undefined
   }
 

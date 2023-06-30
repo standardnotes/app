@@ -14,6 +14,7 @@ import { PaneLayout } from '@/Controllers/PaneController/PaneLayout'
 import { usePaneSwipeGesture } from '../Panes/usePaneGesture'
 import { mergeRefs } from '@/Hooks/mergeRefs'
 import { useAvailableSafeAreaPadding } from '@/Hooks/useSafeAreaPadding'
+import { featureTrunkVaultsEnabled } from '@/FeatureTrunk'
 
 type Props = {
   application: WebApplication
@@ -136,6 +137,16 @@ const Navigation = forwardRef<HTMLDivElement, Props>(({ application, className, 
           label="Go to quick settings menu"
           icon="themes"
         />
+        {featureTrunkVaultsEnabled() && (
+          <RoundIconButton
+            className="ml-2.5 bg-default"
+            onClick={() => {
+              viewControllerManager.vaultSelectionController.toggle()
+            }}
+            label="Go to vaults menu"
+            icon="safe-square"
+          />
+        )}
       </div>
       {children}
     </div>

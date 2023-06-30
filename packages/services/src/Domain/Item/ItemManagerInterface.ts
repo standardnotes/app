@@ -1,11 +1,7 @@
 import { ContentType } from '@standardnotes/common'
 import {
-  MutationType,
   ItemsKeyInterface,
-  ItemsKeyMutatorInterface,
   DecryptedItemInterface,
-  DecryptedItemMutator,
-  DecryptedPayloadInterface,
   PayloadEmitSource,
   EncryptedItemInterface,
   DeletedItemInterface,
@@ -13,6 +9,20 @@ import {
   PredicateInterface,
   DecryptedPayload,
   SNTag,
+  ItemInterface,
+  AnyItemInterface,
+  KeySystemIdentifier,
+  ItemCollection,
+  SNNote,
+  SmartView,
+  TagItemCountChangeObserver,
+  SNComponent,
+  SNTheme,
+  DecryptedPayloadInterface,
+  DecryptedTransferPayload,
+  FileItem,
+  VaultDisplayOptions,
+  NotesAndFilesDisplayControllerOptions,
 } from '@standardnotes/models'
 import { AbstractService } from '../Service/AbstractService'
 
@@ -41,26 +51,20 @@ export type ItemManagerChangeObserverCallback<I extends DecryptedItemInterface =
 ) => void
 
 export interface ItemManagerInterface extends AbstractService {
+  getCollection(): ItemCollection
+
   addObserver<I extends DecryptedItemInterface = DecryptedItemInterface>(
     contentType: ContentType | ContentType[],
     callback: ItemManagerChangeObserverCallback<I>,
   ): () => void
-  setItemToBeDeleted(itemToLookupUuidFor: DecryptedItemInterface, source?: PayloadEmitSource): Promise<void>
-  setItemsToBeDeleted(itemsToLookupUuidsFor: DecryptedItemInterface[]): Promise<void>
-  setItemsDirty(
-    itemsToLookupUuidsFor: DecryptedItemInterface[],
-    isUserModified?: boolean,
-  ): Promise<DecryptedItemInterface[]>
+
   get items(): DecryptedItemInterface[]
-  insertItem(item: DecryptedItemInterface): Promise<DecryptedItemInterface>
-  emitItemFromPayload(payload: DecryptedPayloadInterface, source: PayloadEmitSource): Promise<DecryptedItemInterface>
+
   getItems<T extends DecryptedItemInterface>(contentType: ContentType | ContentType[]): T[]
+  get invalidItems(): EncryptedItemInterface[]
+  allTrackedItems(): ItemInterface[]
   getDisplayableItemsKeys(): ItemsKeyInterface[]
-  createItem<T extends DecryptedItemInterface, C extends ItemContent = ItemContent>(
-    contentType: ContentType,
-    content: C,
-    needsSync?: boolean,
-  ): Promise<T>
+
   createTemplateItem<
     C extends ItemContent = ItemContent,
     I extends DecryptedItemInterface<C> = DecryptedItemInterface<C>,
@@ -69,23 +73,7 @@ export interface ItemManagerInterface extends AbstractService {
     content?: C,
     override?: Partial<DecryptedPayload<C>>,
   ): I
-  changeItem<
-    M extends DecryptedItemMutator = DecryptedItemMutator,
-    I extends DecryptedItemInterface = DecryptedItemInterface,
-  >(
-    itemToLookupUuidFor: I,
-    mutate?: (mutator: M) => void,
-    mutationType?: MutationType,
-    emitSource?: PayloadEmitSource,
-    payloadSourceKey?: string,
-  ): Promise<I>
-  changeItemsKey(
-    itemToLookupUuidFor: ItemsKeyInterface,
-    mutate: (mutator: ItemsKeyMutatorInterface) => void,
-    mutationType?: MutationType,
-    emitSource?: PayloadEmitSource,
-    payloadSourceKey?: string,
-  ): Promise<ItemsKeyInterface>
+
   itemsMatchingPredicate<T extends DecryptedItemInterface>(
     contentType: ContentType,
     predicate: PredicateInterface<T>,
@@ -96,12 +84,47 @@ export interface ItemManagerInterface extends AbstractService {
   ): T[]
   subItemsMatchingPredicates<T extends DecryptedItemInterface>(items: T[], predicates: PredicateInterface<T>[]): T[]
   removeAllItemsFromMemory(): Promise<void>
+  removeItemsLocally(items: AnyItemInterface[]): void
   getDirtyItems(): (DecryptedItemInterface | DeletedItemInterface)[]
   getTagLongTitle(tag: SNTag): string
   getSortedTagsForItem(item: DecryptedItemInterface<ItemContent>): SNTag[]
+  itemsReferencingItem<I extends DecryptedItemInterface = DecryptedItemInterface>(
+    itemToLookupUuidFor: { uuid: string },
+    contentType?: ContentType,
+  ): I[]
   referencesForItem<I extends DecryptedItemInterface = DecryptedItemInterface>(
     itemToLookupUuidFor: DecryptedItemInterface,
     contentType?: ContentType,
   ): I[]
   findItem<T extends DecryptedItemInterface = DecryptedItemInterface>(uuid: string): T | undefined
+  findItems<T extends DecryptedItemInterface>(uuids: string[]): T[]
+  findSureItem<T extends DecryptedItemInterface = DecryptedItemInterface>(uuid: string): T
+  get trashedItems(): SNNote[]
+  itemsBelongingToKeySystem(systemIdentifier: KeySystemIdentifier): DecryptedItemInterface[]
+  hasTagsNeedingFoldersMigration(): boolean
+  get invalidNonVaultedItems(): EncryptedItemInterface[]
+  isTemplateItem(item: DecryptedItemInterface): boolean
+  getSmartViews(): SmartView[]
+  addNoteCountChangeObserver(observer: TagItemCountChangeObserver): () => void
+  allCountableNotesCount(): number
+  allCountableFilesCount(): number
+  countableNotesForTag(tag: SNTag | SmartView): number
+  getNoteCount(): number
+  getDisplayableTags(): SNTag[]
+  getTagChildren(itemToLookupUuidFor: SNTag): SNTag[]
+  getTagParent(itemToLookupUuidFor: SNTag): SNTag | undefined
+  isValidTagParent(parentTagToLookUpUuidFor: SNTag, childToLookUpUuidFor: SNTag): boolean
+  isSmartViewTitle(title: string): boolean
+  getDisplayableComponents(): (SNComponent | SNTheme)[]
+  createItemFromPayload(payload: DecryptedPayloadInterface): DecryptedItemInterface
+  createPayloadFromObject(object: DecryptedTransferPayload): DecryptedPayloadInterface
+  getDisplayableFiles(): FileItem[]
+  setVaultDisplayOptions(options: VaultDisplayOptions): void
+  numberOfNotesWithConflicts(): number
+  getDisplayableNotes(): SNNote[]
+  getDisplayableNotesAndFiles(): (SNNote | FileItem)[]
+  setPrimaryItemDisplayOptions(options: NotesAndFilesDisplayControllerOptions): void
+  getTagPrefixTitle(tag: SNTag): string | undefined
+  getNoteLinkedFiles(note: SNNote): FileItem[]
+  conflictsOf(uuid: string): AnyItemInterface[]
 }

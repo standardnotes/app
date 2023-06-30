@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-expressions */
 /* eslint-disable no-undef */
-import { BaseItemCounts } from './lib/Applications.js'
+import { BaseItemCounts } from './lib/BaseItemCounts.js'
 import * as Factory from './lib/factory.js'
 chai.use(chaiAsPromised)
 const expect = chai.expect
@@ -85,14 +85,14 @@ describe('auth fringe cases', () => {
 
       const serverText = 'server text'
 
-      await context.application.mutator.changeAndSaveItem(firstVersionOfNote, (mutator) => {
+      await context.application.changeAndSaveItem(firstVersionOfNote, (mutator) => {
         mutator.text = serverText
       })
 
       const newApplication = await Factory.signOutApplicationAndReturnNew(context.application)
 
       /** Create same note but now offline */
-      await newApplication.itemManager.emitItemFromPayload(firstVersionOfNote.payload)
+      await newApplication.mutator.emitItemFromPayload(firstVersionOfNote.payload)
 
       /** Sign in and merge local data */
       await newApplication.signIn(context.email, context.password, undefined, undefined, true, true)

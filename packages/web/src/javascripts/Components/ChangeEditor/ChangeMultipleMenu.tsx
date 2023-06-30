@@ -42,12 +42,12 @@ const ChangeMultipleMenu = ({ application, notes, setDisableClickOutside }: Prop
   const selectComponent = useCallback(
     async (component: SNComponent, note: SNNote) => {
       if (component.conflictOf) {
-        void application.mutator.changeAndSaveItem(component, (mutator) => {
+        void application.changeAndSaveItem(component, (mutator) => {
           mutator.conflictOf = undefined
         })
       }
 
-      await application.mutator.changeAndSaveItem(note, (mutator) => {
+      await application.changeAndSaveItem(note, (mutator) => {
         const noteMutator = mutator as NoteMutator
         noteMutator.noteType = component.noteType
         noteMutator.editorIdentifier = component.identifier
@@ -58,7 +58,7 @@ const ChangeMultipleMenu = ({ application, notes, setDisableClickOutside }: Prop
 
   const selectNonComponent = useCallback(
     async (item: EditorMenuItem, note: SNNote) => {
-      await application.mutator.changeAndSaveItem(note, (mutator) => {
+      await application.changeAndSaveItem(note, (mutator) => {
         const noteMutator = mutator as NoteMutator
         noteMutator.noteType = item.noteType
         noteMutator.editorIdentifier = undefined

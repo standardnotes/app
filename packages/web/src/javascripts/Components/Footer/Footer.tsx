@@ -21,6 +21,7 @@ import AccountMenuButton from './AccountMenuButton'
 import StyledTooltip from '../StyledTooltip/StyledTooltip'
 import UpgradeNow from './UpgradeNow'
 import PreferencesButton from './PreferencesButton'
+import VaultSelectionButton from './VaultSelectionButton'
 
 type Props = {
   application: WebApplication
@@ -37,6 +38,7 @@ type State = {
   newUpdateAvailable: boolean
   showAccountMenu: boolean
   showQuickSettingsMenu: boolean
+  showVaultSelectionMenu: boolean
   offline: boolean
   hasError: boolean
   arbitraryStatusMessage?: string
@@ -64,6 +66,7 @@ class Footer extends AbstractComponent<Props, State> {
       newUpdateAvailable: false,
       showAccountMenu: false,
       showQuickSettingsMenu: false,
+      showVaultSelectionMenu: false,
     }
 
     this.webEventListenerDestroyer = props.application.addWebEventObserver((event, data) => {
@@ -125,6 +128,7 @@ class Footer extends AbstractComponent<Props, State> {
         showBetaWarning: showBetaWarning,
         showAccountMenu: this.viewControllerManager.accountMenuController.show,
         showQuickSettingsMenu: this.viewControllerManager.quickSettingsMenuController.open,
+        showVaultSelectionMenu: this.viewControllerManager.vaultSelectionController.open,
       })
     })
   }
@@ -296,6 +300,10 @@ class Footer extends AbstractComponent<Props, State> {
     this.viewControllerManager.quickSettingsMenuController.toggle()
   }
 
+  vaultSelectionClickHandler = () => {
+    this.viewControllerManager.vaultSelectionController.toggle()
+  }
+
   syncResolutionClickHandler = () => {
     this.setState({
       showSyncResolution: !this.state.showSyncResolution,
@@ -367,15 +375,25 @@ class Footer extends AbstractComponent<Props, State> {
                 viewControllerManager={this.viewControllerManager}
               />
             </div>
+
             <div className="relative z-footer-bar-item select-none">
               <PreferencesButton openPreferences={this.openPreferences} />
             </div>
+
             <div className="relative z-footer-bar-item select-none">
               <QuickSettingsButton
                 isOpen={this.state.showQuickSettingsMenu}
                 toggleMenu={this.quickSettingsClickHandler}
                 application={this.application}
                 quickSettingsMenuController={this.viewControllerManager.quickSettingsMenuController}
+              />
+            </div>
+
+            <div className="relative z-footer-bar-item  ml-1.5 select-none">
+              <VaultSelectionButton
+                isOpen={this.state.showVaultSelectionMenu}
+                toggleMenu={this.vaultSelectionClickHandler}
+                controller={this.viewControllerManager.vaultSelectionController}
               />
             </div>
             <UpgradeNow

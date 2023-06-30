@@ -7,16 +7,16 @@ const expect = chai.expect
 describe('004 protocol operations', function () {
   const _identifier = 'hello@test.com'
   const _password = 'password'
-  let _keyParams
-  let _key
+  let rootKeyParams
+  let rootKey
 
   const application = Factory.createApplicationWithRealCrypto()
   const protocol004 = new SNProtocolOperator004(new SNWebCrypto())
 
   before(async function () {
     await Factory.initializeApplication(application)
-    _key = await protocol004.createRootKey(_identifier, _password, KeyParamsOrigination.Registration)
-    _keyParams = _key.keyParams
+    rootKey = await protocol004.createRootKey(_identifier, _password, KeyParamsOrigination.Registration)
+    rootKeyParams = rootKey.keyParams
   })
 
   after(async function () {
@@ -69,43 +69,58 @@ describe('004 protocol operations', function () {
   })
 
   it('properly encrypts and decrypts', async function () {
-    const text = 'hello world'
-    const rawKey = _key.masterKey
-    const nonce = await application.protocolService.crypto.generateRandomKey(192)
+    const payload = new DecryptedPayload({
+      uuid: '123',
+      content_type: ContentType.ItemsKey,
+      content: FillItemContent({
+        title: 'foo',
+        text: 'bar',
+      }),
+    })
+
     const operator = application.protocolService.operatorManager.operatorForVersion(ProtocolVersion.V004)
-    const authenticatedData = { foo: 'bar' }
-    const encString = await operator.encryptString004(text, rawKey, nonce, authenticatedData)
-    const decString = await operator.decryptString004(
-      encString,
-      rawKey,
-      nonce,
-      await operator.authenticatedDataToString(authenticatedData),
-    )
-    expect(decString).to.equal(text)
+
+    const encrypted = await operator.generateEncryptedParameters(payload, rootKey)
+    const decrypted = await operator.generateDecryptedParameters(encrypted, rootKey)
+
+    expect(decrypted.content.title).to.equal('foo')
+    expect(decrypted.content.text).to.equal('bar')
   })
 
   it('fails to decrypt non-matching aad', async function () {
-    const text = 'hello world'
-    const rawKey = _key.masterKey
-    const nonce = await application.protocolService.crypto.generateRandomKey(192)
+    const payload = new DecryptedPayload({
+      uuid: '123',
+      content_type: ContentType.ItemsKey,
+      content: FillItemContent({
+        title: 'foo',
+        text: 'bar',
+      }),
+    })
+
     const operator = application.protocolService.operatorManager.operatorForVersion(ProtocolVersion.V004)
-    const aad = { foo: 'bar' }
-    const nonmatchingAad = { foo: 'rab' }
-    const encString = await operator.encryptString004(text, rawKey, nonce, aad)
-    const decString = await operator.decryptString004(encString, rawKey, nonce, nonmatchingAad)
-    expect(decString).to.not.be.ok
+
+    const encrypted = await operator.generateEncryptedParameters(payload, rootKey)
+    const decrypted = await operator.generateDecryptedParameters(
+      {
+        ...encrypted,
+        uuid: 'nonmatching',
+      },
+      rootKey,
+    )
+
+    expect(decrypted.errorDecrypting).to.equal(true)
   })
 
   it('generates existing keys for key params', async function () {
-    const key = await application.protocolService.computeRootKey(_password, _keyParams)
-    expect(key.compare(_key)).to.be.true
+    const key = await application.protocolService.computeRootKey(_password, rootKeyParams)
+    expect(key.compare(rootKey)).to.be.true
   })
 
   it('can decrypt encrypted params', async function () {
     const payload = Factory.createNotePayload()
     const key = await protocol004.createItemsKey()
-    const params = await protocol004.generateEncryptedParametersSync(payload, key)
-    const decrypted = await protocol004.generateDecryptedParametersSync(params, key)
+    const params = await protocol004.generateEncryptedParameters(payload, key)
+    const decrypted = await protocol004.generateDecryptedParameters(params, key)
     expect(decrypted.errorDecrypting).to.not.be.ok
     expect(decrypted.content).to.eql(payload.content)
   })
@@ -113,9 +128,9 @@ describe('004 protocol operations', function () {
   it('modifying the uuid of the payload should fail to decrypt', async function () {
     const payload = Factory.createNotePayload()
     const key = await protocol004.createItemsKey()
-    const params = await protocol004.generateEncryptedParametersSync(payload, key)
+    const params = await protocol004.generateEncryptedParameters(payload, key)
     params.uuid = 'foo'
-    const result = await protocol004.generateDecryptedParametersSync(params, key)
+    const result = await protocol004.generateDecryptedParameters(params, key)
     expect(result.errorDecrypting).to.equal(true)
   })
 })

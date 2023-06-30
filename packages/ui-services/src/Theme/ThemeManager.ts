@@ -8,41 +8,31 @@ import {
   SNTheme,
 } from '@standardnotes/models'
 import { removeFromArray } from '@standardnotes/utils'
-import {
-  AbstractService,
-  WebApplicationInterface,
-  InternalEventBusInterface,
-  ApplicationEvent,
-  StorageValueModes,
-  FeatureStatus,
-} from '@standardnotes/services'
+import { InternalEventBusInterface, ApplicationEvent, StorageValueModes, FeatureStatus } from '@standardnotes/services'
 import { FeatureIdentifier } from '@standardnotes/features'
+import { WebApplicationInterface } from '../WebApplication/WebApplicationInterface'
+import { AbstractUIServicee } from '../Abstract/AbstractUIService'
 
 const CachedThemesKey = 'cachedThemes'
 const TimeBeforeApplyingColorScheme = 5
 const DefaultThemeIdentifier = 'Default'
 
-export class ThemeManager extends AbstractService {
+export class ThemeManager extends AbstractUIServicee {
   private activeThemes: string[] = []
   private unregisterDesktop?: () => void
   private unregisterStream!: () => void
   private lastUseDeviceThemeSettings = false
-  private unsubApp!: () => void
 
-  constructor(
-    protected application: WebApplicationInterface,
-    protected override internalEventBus: InternalEventBusInterface,
-  ) {
-    super(internalEventBus)
-    this.addAppEventObserverAfterSubclassesFinishConstructing()
+  constructor(application: WebApplicationInterface, internalEventBus: InternalEventBusInterface) {
+    super(application, internalEventBus)
     this.colorSchemeEventHandler = this.colorSchemeEventHandler.bind(this)
   }
 
-  async onAppStart() {
+  override async onAppStart() {
     this.registerObservers()
   }
 
-  async onAppEvent(event: ApplicationEvent) {
+  override async onAppEvent(event: ApplicationEvent) {
     switch (event) {
       case ApplicationEvent.SignedOut: {
         this.deactivateAllThemes()
@@ -76,25 +66,6 @@ export class ThemeManager extends AbstractService {
     }
   }
 
-  addAppEventObserverAfterSubclassesFinishConstructing() {
-    setTimeout(() => {
-      this.addAppEventObserver()
-    }, 0)
-  }
-
-  addAppEventObserver() {
-    if (this.application.isStarted()) {
-      void this.onAppStart()
-    }
-
-    this.unsubApp = this.application.addEventObserver(async (event: ApplicationEvent) => {
-      await this.onAppEvent(event)
-      if (event === ApplicationEvent.Started) {
-        void this.onAppStart()
-      }
-    })
-  }
-
   async handleMobileColorSchemeChangeEvent() {
     const useDeviceThemeSettings = this.application.getPreference(PrefKey.UseSystemColorScheme, false)
 
@@ -124,10 +95,6 @@ export class ThemeManager extends AbstractService {
     }
   }
 
-  get webApplication() {
-    return this.application as WebApplicationInterface
-  }
-
   override deinit() {
     this.activeThemes.length = 0
 
@@ -142,11 +109,6 @@ export class ThemeManager extends AbstractService {
     } else {
       mq.removeListener(this.colorSchemeEventHandler)
     }
-
-    ;(this.application as unknown) = undefined
-
-    this.unsubApp()
-    ;(this.unsubApp as unknown) = undefined
 
     super.deinit()
   }
@@ -166,7 +128,7 @@ export class ThemeManager extends AbstractService {
       const status = this.application.features.getFeatureStatus(theme.identifier)
       if (status !== FeatureStatus.Entitled) {
         if (theme.active) {
-          this.application.mutator.toggleTheme(theme).catch(console.error)
+          this.application.componentManager.toggleTheme(theme.uuid).catch(console.error)
         } else {
           this.deactivateTheme(theme.uuid)
         }
@@ -242,7 +204,7 @@ export class ThemeManager extends AbstractService {
 
     const toggleActiveTheme = () => {
       if (activeTheme) {
-        void this.application.mutator.toggleTheme(activeTheme)
+        void this.application.componentManager.toggleTheme(activeTheme.uuid)
       }
     }
 
@@ -252,7 +214,7 @@ export class ThemeManager extends AbstractService {
       } else {
         const theme = themes.find((theme) => theme.package_info.identifier === themeIdentifier)
         if (theme && !theme.active) {
-          this.application.mutator.toggleTheme(theme).catch(console.error)
+          this.application.componentManager.toggleTheme(theme.uuid).catch(console.error)
         }
       }
     }
@@ -272,7 +234,7 @@ export class ThemeManager extends AbstractService {
   }
 
   private registerObservers() {
-    this.unregisterDesktop = this.webApplication.getDesktopService()?.registerUpdateObserver((component) => {
+    this.unregisterDesktop = this.application.getDesktopService()?.registerUpdateObserver((component) => {
       if (component.active && component.isTheme()) {
         this.deactivateTheme(component.uuid)
         setTimeout(() => {

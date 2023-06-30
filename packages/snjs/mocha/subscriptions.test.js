@@ -1,4 +1,5 @@
 import * as Factory from './lib/factory.js'
+import * as Events from './lib/Events.js'
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
@@ -31,7 +32,7 @@ describe('subscriptions', function () {
       password: context.password,
     })
 
-    await Factory.publishMockedEvent('SUBSCRIPTION_PURCHASED', {
+    await Events.publishMockedEvent('SUBSCRIPTION_PURCHASED', {
       userEmail: context.email,
       subscriptionId: subscriptionId++,
       subscriptionName: 'PRO_PLAN',

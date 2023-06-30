@@ -88,7 +88,7 @@ export class EditSmartViewModalController {
 
     this.setIsSaving(true)
 
-    await this.application.mutator.changeAndSaveItem<SmartViewMutator>(this.view, (mutator) => {
+    await this.application.changeAndSaveItem<SmartViewMutator>(this.view, (mutator) => {
       mutator.title = this.title
       mutator.iconString = (this.icon as string) || SmartViewDefaultIconName
       mutator.predicate = JSON.parse(this.predicateJson) as PredicateJsonForm
@@ -111,7 +111,10 @@ export class EditSmartViewModalController {
       confirmButtonStyle: 'danger',
     })
     if (shouldDelete) {
-      this.application.mutator.deleteItem(view).catch(console.error)
+      this.application.mutator
+        .deleteItem(view)
+        .then(() => this.application.sync.sync())
+        .catch(console.error)
     }
   }
 

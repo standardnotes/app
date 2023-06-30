@@ -34,7 +34,7 @@ const PackageEntry: FunctionComponent<PackageEntryProps> = ({ application, exten
   const toggleOfflineOnly = () => {
     const newOfflineOnly = !offlineOnly
     setOfflineOnly(newOfflineOnly)
-    application.mutator
+    application
       .changeAndSaveItem<ComponentMutator>(extension, (mutator) => {
         mutator.offlineOnly = newOfflineOnly
       })
@@ -49,7 +49,7 @@ const PackageEntry: FunctionComponent<PackageEntryProps> = ({ application, exten
 
   const changeExtensionName = (newName: string) => {
     setExtensionName(newName)
-    application.mutator
+    application
       .changeAndSaveItem<ComponentMutator>(extension, (mutator) => {
         mutator.name = newName
       })

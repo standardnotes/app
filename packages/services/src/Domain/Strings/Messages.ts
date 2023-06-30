@@ -167,6 +167,8 @@ export const ChallengeStrings = {
   DisableMfa: 'Authentication is required to disable two-factor authentication',
   DeleteAccount: 'Authentication is required to delete your account',
   ListedAuthorization: 'Authentication is required to approve this note for Listed',
+  UnlockVault: (vaultName: string) => `Unlock ${vaultName}`,
+  EnterVaultPassword: 'Enter the password for this vault',
 }
 
 export const ErrorAlertStrings = {

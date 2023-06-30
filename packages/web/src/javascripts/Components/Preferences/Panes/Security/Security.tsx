@@ -30,7 +30,7 @@ const Security: FunctionComponent<SecurityProps> = (props) => {
   return (
     <PreferencesPane>
       <Encryption viewControllerManager={props.viewControllerManager} />
-      {props.application.items.invalidItems.length > 0 && (
+      {props.application.items.invalidNonVaultedItems.length > 0 && (
         <ErroredItems viewControllerManager={props.viewControllerManager} />
       )}
       <Protections application={props.application} />

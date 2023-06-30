@@ -21,10 +21,13 @@ export class FileDownloader {
 
   constructor(
     private file: {
+      uuid: string
+      shared_vault_uuid: string | undefined
       encryptedChunkSizes: FileContent['encryptedChunkSizes']
       remoteIdentifier: FileContent['remoteIdentifier']
     },
     private readonly api: FilesApiInterface,
+    private readonly valetToken: string,
   ) {}
 
   private getProgress(): FileDownloadProgress {
@@ -40,22 +43,10 @@ export class FileDownloader {
   }
 
   public async run(onEncryptedBytes: OnEncryptedBytes): Promise<FileDownloaderResult> {
-    const tokenResult = await this.getValetToken()
-
-    if (tokenResult instanceof ClientDisplayableError) {
-      return tokenResult
-    }
-
-    return this.performDownload(tokenResult, onEncryptedBytes)
+    return this.performDownload(onEncryptedBytes)
   }
 
-  private async getValetToken(): Promise<string | ClientDisplayableError> {
-    const tokenResult = await this.api.createFileValetToken(this.file.remoteIdentifier, 'read')
-
-    return tokenResult
-  }
-
-  private async performDownload(valetToken: string, onEncryptedBytes: OnEncryptedBytes): Promise<FileDownloaderResult> {
+  private async performDownload(onEncryptedBytes: OnEncryptedBytes): Promise<FileDownloaderResult> {
     const chunkIndex = 0
     const startRange = 0
 
@@ -69,7 +60,14 @@ export class FileDownloader {
       await onEncryptedBytes(bytes, this.getProgress(), this.abort)
     }
 
-    const downloadPromise = this.api.downloadFile(this.file, chunkIndex, valetToken, startRange, onRemoteBytesReceived)
+    const downloadPromise = this.api.downloadFile({
+      file: this.file,
+      chunkIndex,
+      valetToken: this.valetToken,
+      contentRangeStart: startRange,
+      onBytesReceived: onRemoteBytesReceived,
+      ownershipType: this.file.shared_vault_uuid ? 'shared-vault' : 'user',
+    })
 
     const result = await Promise.race([this.abortDeferred.promise, downloadPromise])
 

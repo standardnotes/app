@@ -1,7 +1,6 @@
 import { ContentType, ProtocolVersion } from '@standardnotes/common'
 import {
   DecryptedParameters,
-  EncryptedParameters,
   ErrorDecryptingParameters,
   findDefaultItemsKey,
   isErrorDecryptingParameters,
@@ -9,26 +8,30 @@ import {
   StandardException,
   encryptPayload,
   decryptPayload,
+  EncryptedOutputParameters,
+  KeySystemKeyManagerInterface,
 } from '@standardnotes/encryption'
 import {
+  ContentTypeUsesKeySystemRootKeyEncryption,
   DecryptedPayload,
   DecryptedPayloadInterface,
   EncryptedPayload,
   EncryptedPayloadInterface,
+  KeySystemRootKeyInterface,
   isEncryptedPayload,
   ItemContent,
   ItemsKeyInterface,
   PayloadEmitSource,
+  KeySystemItemsKeyInterface,
   SureFindPayload,
+  ContentTypeUsesRootKeyEncryption,
 } from '@standardnotes/models'
-import { Uuids } from '@standardnotes/utils'
-
-import { DiagnosticInfo } from '../Diagnostics/ServiceDiagnostics'
 import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
 import { ItemManagerInterface } from '../Item/ItemManagerInterface'
 import { PayloadManagerInterface } from '../Payloads/PayloadManagerInterface'
 import { AbstractService } from '../Service/AbstractService'
 import { StorageServiceInterface } from '../Storage/StorageServiceInterface'
+import { PkcKeyPair } from '@standardnotes/sncrypto-common'
 
 export class ItemsEncryptionService extends AbstractService {
   private removeItemsObserver!: () => void
@@ -39,13 +42,14 @@ export class ItemsEncryptionService extends AbstractService {
     private payloadManager: PayloadManagerInterface,
     private storageService: StorageServiceInterface,
     private operatorManager: OperatorManager,
+    private keys: KeySystemKeyManagerInterface,
     protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)
 
     this.removeItemsObserver = this.itemManager.addObserver([ContentType.ItemsKey], ({ changed, inserted }) => {
       if (changed.concat(inserted).length > 0) {
-        void this.decryptErroredPayloads()
+        void this.decryptErroredItemPayloads()
       }
     })
   }
@@ -54,6 +58,8 @@ export class ItemsEncryptionService extends AbstractService {
     ;(this.itemManager as unknown) = undefined
     ;(this.payloadManager as unknown) = undefined
     ;(this.storageService as unknown) = undefined
+    ;(this.operatorManager as unknown) = undefined
+    ;(this.keys as unknown) = undefined
     this.removeItemsObserver()
     ;(this.removeItemsObserver as unknown) = undefined
     super.deinit()
@@ -70,12 +76,17 @@ export class ItemsEncryptionService extends AbstractService {
     return this.storageService.savePayloads(payloads)
   }
 
-  public getItemsKeys() {
+  public getItemsKeys(): ItemsKeyInterface[] {
     return this.itemManager.getDisplayableItemsKeys()
   }
 
-  public itemsKeyForPayload(payload: EncryptedPayloadInterface): ItemsKeyInterface | undefined {
-    return this.getItemsKeys().find(
+  public itemsKeyForEncryptedPayload(
+    payload: EncryptedPayloadInterface,
+  ): ItemsKeyInterface | KeySystemItemsKeyInterface | undefined {
+    const itemsKeys = this.getItemsKeys()
+    const keySystemItemsKeys = this.itemManager.getItems<KeySystemItemsKeyInterface>(ContentType.KeySystemItemsKey)
+
+    return [...itemsKeys, ...keySystemItemsKeys].find(
       (key) => key.uuid === payload.items_key_id || key.duplicateOf === payload.items_key_id,
     )
   }
@@ -84,8 +95,20 @@ export class ItemsEncryptionService extends AbstractService {
     return findDefaultItemsKey(this.getItemsKeys())
   }
 
-  private keyToUseForItemEncryption(): ItemsKeyInterface | StandardException {
+  private keyToUseForItemEncryption(
+    payload: DecryptedPayloadInterface,
+  ): ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface | StandardException {
+    if (payload.key_system_identifier) {
+      const keySystemItemsKey = this.keys.getPrimaryKeySystemItemsKey(payload.key_system_identifier)
+      if (!keySystemItemsKey) {
+        return new StandardException('Cannot find key system items key to use for encryption')
+      }
+
+      return keySystemItemsKey
+    }
+
     const defaultKey = this.getDefaultItemsKey()
+
     let result: ItemsKeyInterface | undefined = undefined
 
     if (this.userVersion && this.userVersion !== defaultKey?.keyVersion) {
@@ -107,9 +130,11 @@ export class ItemsEncryptionService extends AbstractService {
     return result
   }
 
-  private keyToUseForDecryptionOfPayload(payload: EncryptedPayloadInterface): ItemsKeyInterface | undefined {
+  private keyToUseForDecryptionOfPayload(
+    payload: EncryptedPayloadInterface,
+  ): ItemsKeyInterface | KeySystemItemsKeyInterface | undefined {
     if (payload.items_key_id) {
-      const itemsKey = this.itemsKeyForPayload(payload)
+      const itemsKey = this.itemsKeyForEncryptedPayload(payload)
       return itemsKey
     }
 
@@ -117,20 +142,24 @@ export class ItemsEncryptionService extends AbstractService {
     return defaultKey
   }
 
-  public async encryptPayloadWithKeyLookup(payload: DecryptedPayloadInterface): Promise<EncryptedParameters> {
-    const key = this.keyToUseForItemEncryption()
+  public async encryptPayloadWithKeyLookup(
+    payload: DecryptedPayloadInterface,
+    signingKeyPair?: PkcKeyPair,
+  ): Promise<EncryptedOutputParameters> {
+    const key = this.keyToUseForItemEncryption(payload)
 
     if (key instanceof StandardException) {
       throw Error(key.message)
     }
 
-    return this.encryptPayload(payload, key)
+    return this.encryptPayload(payload, key, signingKeyPair)
   }
 
   public async encryptPayload(
     payload: DecryptedPayloadInterface,
-    key: ItemsKeyInterface,
-  ): Promise<EncryptedParameters> {
+    key: ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface,
+    signingKeyPair?: PkcKeyPair,
+  ): Promise<EncryptedOutputParameters> {
     if (isEncryptedPayload(payload)) {
       throw Error('Attempting to encrypt already encrypted payload.')
     }
@@ -141,18 +170,22 @@ export class ItemsEncryptionService extends AbstractService {
       throw Error('Attempting to encrypt payload with no UuidGenerator.')
     }
 
-    return encryptPayload(payload, key, this.operatorManager)
+    return encryptPayload(payload, key, this.operatorManager, signingKeyPair)
   }
 
   public async encryptPayloads(
     payloads: DecryptedPayloadInterface[],
-    key: ItemsKeyInterface,
-  ): Promise<EncryptedParameters[]> {
-    return Promise.all(payloads.map((payload) => this.encryptPayload(payload, key)))
+    key: ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface,
+    signingKeyPair?: PkcKeyPair,
+  ): Promise<EncryptedOutputParameters[]> {
+    return Promise.all(payloads.map((payload) => this.encryptPayload(payload, key, signingKeyPair)))
   }
 
-  public async encryptPayloadsWithKeyLookup(payloads: DecryptedPayloadInterface[]): Promise<EncryptedParameters[]> {
-    return Promise.all(payloads.map((payload) => this.encryptPayloadWithKeyLookup(payload)))
+  public async encryptPayloadsWithKeyLookup(
+    payloads: DecryptedPayloadInterface[],
+    signingKeyPair?: PkcKeyPair,
+  ): Promise<EncryptedOutputParameters[]> {
+    return Promise.all(payloads.map((payload) => this.encryptPayloadWithKeyLookup(payload, signingKeyPair)))
   }
 
   public async decryptPayloadWithKeyLookup<C extends ItemContent = ItemContent>(
@@ -173,7 +206,7 @@ export class ItemsEncryptionService extends AbstractService {
 
   public async decryptPayload<C extends ItemContent = ItemContent>(
     payload: EncryptedPayloadInterface,
-    key: ItemsKeyInterface,
+    key: ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface,
   ): Promise<DecryptedParameters<C> | ErrorDecryptingParameters> {
     if (!payload.content) {
       return {
@@ -193,21 +226,24 @@ export class ItemsEncryptionService extends AbstractService {
 
   public async decryptPayloads<C extends ItemContent = ItemContent>(
     payloads: EncryptedPayloadInterface[],
-    key: ItemsKeyInterface,
+    key: ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface,
   ): Promise<(DecryptedParameters<C> | ErrorDecryptingParameters)[]> {
     return Promise.all(payloads.map((payload) => this.decryptPayload<C>(payload, key)))
   }
 
-  public async decryptErroredPayloads(): Promise<void> {
-    const payloads = this.payloadManager.invalidPayloads.filter((i) => i.content_type !== ContentType.ItemsKey)
-    if (payloads.length === 0) {
+  public async decryptErroredItemPayloads(): Promise<void> {
+    const erroredItemPayloads = this.payloadManager.invalidPayloads.filter(
+      (i) =>
+        !ContentTypeUsesRootKeyEncryption(i.content_type) && !ContentTypeUsesKeySystemRootKeyEncryption(i.content_type),
+    )
+    if (erroredItemPayloads.length === 0) {
       return
     }
 
-    const resultParams = await this.decryptPayloadsWithKeyLookup(payloads)
+    const resultParams = await this.decryptPayloadsWithKeyLookup(erroredItemPayloads)
 
     const decryptedPayloads = resultParams.map((params) => {
-      const original = SureFindPayload(payloads, params.uuid)
+      const original = SureFindPayload(erroredItemPayloads, params.uuid)
       if (isErrorDecryptingParameters(params)) {
         return new EncryptedPayload({
           ...original.ejected(),
@@ -246,16 +282,5 @@ export class ItemsEncryptionService extends AbstractService {
     return searchKeys.find((key) => {
       return key.keyVersion === version
     })
-  }
-
-  override async getDiagnostics(): Promise<DiagnosticInfo | undefined> {
-    const keyForItems = this.keyToUseForItemEncryption()
-    return {
-      itemsEncryption: {
-        itemsKeysIds: Uuids(this.getItemsKeys()),
-        defaultItemsKeyId: this.getDefaultItemsKey()?.uuid,
-        keyToUseForItemEncryptionId: keyForItems instanceof StandardException ? undefined : keyForItems.uuid,
-      },
-    }
   }
 }

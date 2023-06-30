@@ -9,10 +9,12 @@ describe('download and decrypt', () => {
   let apiService: FilesApiInterface
   let operation: DownloadAndDecryptFileOperation
   let file: {
+    uuid: string
     encryptedChunkSizes: FileContent['encryptedChunkSizes']
     encryptionHeader: FileContent['encryptionHeader']
     remoteIdentifier: FileContent['remoteIdentifier']
     key: FileContent['key']
+    shared_vault_uuid: string | undefined
   }
   let crypto: PureCryptoInterface
 
@@ -26,16 +28,16 @@ describe('download and decrypt', () => {
     apiService.downloadFile = jest
       .fn()
       .mockImplementation(
-        (
-          _file: string,
-          _chunkIndex: number,
-          _apiToken: string,
-          _rangeStart: number,
-          onBytesReceived: (bytes: Uint8Array) => void,
-        ) => {
+        (params: {
+          _file: string
+          _chunkIndex: number
+          _apiToken: string
+          _rangeStart: number
+          onBytesReceived: (bytes: Uint8Array) => void
+        }) => {
           const receiveFile = async () => {
             for (let i = 0; i < NumChunks; i++) {
-              onBytesReceived(chunkOfSize(size))
+              params.onBytesReceived(chunkOfSize(size))
 
               await sleep(100, false)
             }
@@ -50,7 +52,7 @@ describe('download and decrypt', () => {
 
   beforeEach(() => {
     apiService = {} as jest.Mocked<FilesApiInterface>
-    apiService.createFileValetToken = jest.fn()
+    apiService.createUserFileValetToken = jest.fn()
     downloadChunksOfSize(5)
 
     crypto = {} as jest.Mocked<PureCryptoInterface>
@@ -62,17 +64,19 @@ describe('download and decrypt', () => {
     crypto.xchacha20StreamDecryptorPush = jest.fn().mockReturnValue({ message: new Uint8Array([0xaa]), tag: 0 })
 
     file = {
+      uuid: '123',
       encryptedChunkSizes: [100_000],
       remoteIdentifier: '123',
       key: 'secret',
       encryptionHeader: 'some-header',
+      shared_vault_uuid: undefined,
     }
   })
 
   it('run should resolve when operation is complete', async () => {
     let receivedBytes = new Uint8Array()
 
-    operation = new DownloadAndDecryptFileOperation(file, crypto, apiService)
+    operation = new DownloadAndDecryptFileOperation(file, crypto, apiService, 'own')
 
     await operation.run(async (result) => {
       if (result) {
@@ -87,15 +91,17 @@ describe('download and decrypt', () => {
 
   it('should correctly report progress', async () => {
     file = {
+      uuid: '123',
       encryptedChunkSizes: [100_000, 200_000, 200_000],
       remoteIdentifier: '123',
       key: 'secret',
       encryptionHeader: 'some-header',
+      shared_vault_uuid: undefined,
     }
 
     downloadChunksOfSize(100_000)
 
-    operation = new DownloadAndDecryptFileOperation(file, crypto, apiService)
+    operation = new DownloadAndDecryptFileOperation(file, crypto, apiService, 'own')
 
     const progress: FileDownloadProgress = await new Promise((resolve) => {
       // eslint-disable-next-line @typescript-eslint/require-await

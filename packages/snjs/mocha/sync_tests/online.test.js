@@ -1,5 +1,5 @@
 /* eslint-disable no-undef */
-import { BaseItemCounts } from '../lib/Applications.js'
+import { BaseItemCounts } from '../lib/BaseItemCounts.js'
 import * as Factory from '../lib/factory.js'
 import * as Utils from '../lib/Utils.js'
 chai.use(chaiAsPromised)
@@ -15,7 +15,7 @@ describe('online syncing', function () {
 
   beforeEach(async function () {
     localStorage.clear()
-    this.expectedItemCount = BaseItemCounts.DefaultItems
+    this.expectedItemCount = BaseItemCounts.DefaultItemsWithAccount
 
     this.context = await Factory.createAppContext()
     await this.context.launch()
@@ -43,8 +43,10 @@ describe('online syncing', function () {
 
   afterEach(async function () {
     expect(this.application.syncService.isOutOfSync()).to.equal(false)
+
     const items = this.application.itemManager.allTrackedItems()
     expect(items.length).to.equal(this.expectedItemCount)
+
     const rawPayloads = await this.application.diskStorageService.getAllRawPayloads()
     expect(rawPayloads.length).to.equal(this.expectedItemCount)
     await Factory.safeDeinit(this.application)
@@ -118,18 +120,6 @@ describe('online syncing', function () {
     /** Allow any unwaited syncs in for loop to complete */
     await Factory.sleep(0.5)
   }).timeout(20000)
-
-  it('uuid alternation should delete original payload', async function () {
-    this.application = await Factory.signOutApplicationAndReturnNew(this.application)
-    const note = await Factory.createMappedNote(this.application)
-    this.expectedItemCount++
-    await Factory.alternateUuidForItem(this.application, note.uuid)
-    await this.application.sync.sync(syncOptions)
-
-    const notes = this.application.itemManager.getDisplayableNotes()
-    expect(notes.length).to.equal(1)
-    expect(notes[0].uuid).to.not.equal(note.uuid)
-  })
 
   it('having offline data then signing in should not alternate uuid and merge with account', async function () {
     this.application = await Factory.signOutApplicationAndReturnNew(this.application)
@@ -222,7 +212,7 @@ describe('online syncing', function () {
     this.application = await Factory.signOutApplicationAndReturnNew(this.application)
     const promise = new Promise((resolve) => {
       this.application.syncService.addEventObserver(async (event) => {
-        if (event === SyncEvent.SingleRoundTripSyncCompleted) {
+        if (event === SyncEvent.PaginatedSyncRequestCompleted) {
           const note = this.application.items.findItem(originalNote.uuid)
           if (note) {
             expect(note.dirty).to.not.be.ok
@@ -241,7 +231,7 @@ describe('online syncing', function () {
     expect(this.application.itemManager.getDisplayableItemsKeys().length).to.equal(1)
     const note = await Factory.createMappedNote(this.application)
     this.expectedItemCount++
-    await this.application.itemManager.setItemDirty(note)
+    await this.application.mutator.setItemDirty(note)
     await this.application.syncService.sync(syncOptions)
     const rawPayloads = await this.application.diskStorageService.getAllRawPayloads()
     const notePayload = noteObjectsFromObjects(rawPayloads)
@@ -283,7 +273,7 @@ describe('online syncing', function () {
 
     const originalTitle = note.content.title
 
-    await this.application.itemManager.setItemDirty(note)
+    await this.application.mutator.setItemDirty(note)
     await this.application.syncService.sync(syncOptions)
 
     const encrypted = CreateEncryptedServerSyncPushPayload(
@@ -299,7 +289,7 @@ describe('online syncing', function () {
       errorDecrypting: true,
     })
 
-    const items = await this.application.itemManager.emitItemsFromPayloads([errorred], PayloadEmitSource.LocalChanged)
+    const items = await this.application.mutator.emitItemsFromPayloads([errorred], PayloadEmitSource.LocalChanged)
 
     const mappedItem = this.application.itemManager.findAnyItem(errorred.uuid)
 
@@ -311,7 +301,7 @@ describe('online syncing', function () {
       },
     })
 
-    const mappedItems2 = await this.application.itemManager.emitItemsFromPayloads(
+    const mappedItems2 = await this.application.mutator.emitItemsFromPayloads(
       [decryptedPayload],
       PayloadEmitSource.LocalChanged,
     )
@@ -336,14 +326,14 @@ describe('online syncing', function () {
     let note = await Factory.createMappedNote(this.application)
     this.expectedItemCount++
 
-    await this.application.itemManager.setItemDirty(note)
+    await this.application.mutator.setItemDirty(note)
     await this.application.syncService.sync(syncOptions)
 
     note = this.application.items.findItem(note.uuid)
     expect(note.dirty).to.equal(false)
     expect(this.application.itemManager.items.length).to.equal(this.expectedItemCount)
 
-    await this.application.itemManager.setItemToBeDeleted(note)
+    await this.application.mutator.setItemToBeDeleted(note)
     note = this.application.items.findAnyItem(note.uuid)
     expect(note.dirty).to.equal(true)
     this.expectedItemCount--
@@ -361,7 +351,7 @@ describe('online syncing', function () {
 
   it('retrieving item with no content should correctly map local state', async function () {
     const note = await Factory.createMappedNote(this.application)
-    await this.application.itemManager.setItemDirty(note)
+    await this.application.mutator.setItemDirty(note)
     await this.application.syncService.sync(syncOptions)
 
     const syncToken = await this.application.syncService.getLastSyncToken()
@@ -370,7 +360,7 @@ describe('online syncing', function () {
     expect(this.application.itemManager.items.length).to.equal(this.expectedItemCount)
 
     // client A
-    await this.application.itemManager.setItemToBeDeleted(note)
+    await this.application.mutator.setItemToBeDeleted(note)
     await this.application.syncService.sync(syncOptions)
 
     // Subtract 1
@@ -399,7 +389,7 @@ describe('online syncing', function () {
 
     await Factory.sleep(0.1)
 
-    await this.application.itemManager.changeItem(note, (mutator) => {
+    await this.application.mutator.changeItem(note, (mutator) => {
       mutator.title = 'latest title'
     })
 
@@ -427,7 +417,7 @@ describe('online syncing', function () {
 
     await Factory.sleep(0.1)
 
-    await this.application.itemManager.setItemToBeDeleted(note)
+    await this.application.mutator.setItemToBeDeleted(note)
 
     this.expectedItemCount--
 
@@ -444,8 +434,8 @@ describe('online syncing', function () {
 
   it('items that are never synced and deleted should not be uploaded to server', async function () {
     const note = await Factory.createMappedNote(this.application)
-    await this.application.itemManager.setItemDirty(note)
-    await this.application.itemManager.setItemToBeDeleted(note)
+    await this.application.mutator.setItemDirty(note)
+    await this.application.mutator.setItemToBeDeleted(note)
 
     let success = true
     let didCompleteRelevantSync = false
@@ -457,7 +447,7 @@ describe('online syncing', function () {
       if (!beginCheckingResponse) {
         return
       }
-      if (!didCompleteRelevantSync && eventName === SyncEvent.SingleRoundTripSyncCompleted) {
+      if (!didCompleteRelevantSync && eventName === SyncEvent.PaginatedSyncRequestCompleted) {
         didCompleteRelevantSync = true
         const response = data
         const matching = response.savedPayloads.find((p) => p.uuid === note.uuid)
@@ -474,20 +464,20 @@ describe('online syncing', function () {
   it('items that are deleted after download first sync complete should not be uploaded to server', async function () {
     /** The singleton manager may delete items are download first. We dont want those uploaded to server. */
     const note = await Factory.createMappedNote(this.application)
-    await this.application.itemManager.setItemDirty(note)
+    await this.application.mutator.setItemDirty(note)
 
     let success = true
     let didCompleteRelevantSync = false
     let beginCheckingResponse = false
     this.application.syncService.addEventObserver(async (eventName, data) => {
       if (eventName === SyncEvent.DownloadFirstSyncCompleted) {
-        await this.application.itemManager.setItemToBeDeleted(note)
+        await this.application.mutator.setItemToBeDeleted(note)
         beginCheckingResponse = true
       }
       if (!beginCheckingResponse) {
         return
       }
-      if (!didCompleteRelevantSync && eventName === SyncEvent.SingleRoundTripSyncCompleted) {
+      if (!didCompleteRelevantSync && eventName === SyncEvent.PaginatedSyncRequestCompleted) {
         didCompleteRelevantSync = true
         const response = data
         const matching = response.savedPayloads.find((p) => p.uuid === note.uuid)
@@ -527,7 +517,7 @@ describe('online syncing', function () {
 
     const decryptionResults = await this.application.protocolService.decryptSplit(keyedSplit)
 
-    await this.application.itemManager.emitItemsFromPayloads(decryptionResults, PayloadEmitSource.LocalChanged)
+    await this.application.mutator.emitItemsFromPayloads(decryptionResults, PayloadEmitSource.LocalChanged)
 
     expect(this.application.itemManager.allTrackedItems().length).to.equal(this.expectedItemCount)
 
@@ -543,7 +533,7 @@ describe('online syncing', function () {
     const largeItemCount = SyncUpDownLimit + 10
     for (let i = 0; i < largeItemCount; i++) {
       const note = await Factory.createMappedNote(this.application)
-      await this.application.itemManager.setItemDirty(note)
+      await this.application.mutator.setItemDirty(note)
     }
 
     this.expectedItemCount += largeItemCount
@@ -558,7 +548,7 @@ describe('online syncing', function () {
     const largeItemCount = SyncUpDownLimit + 10
     for (let i = 0; i < largeItemCount; i++) {
       const note = await Factory.createMappedNote(this.application)
-      await this.application.itemManager.setItemDirty(note)
+      await this.application.mutator.setItemDirty(note)
     }
     /** Upload */
     this.application.syncService.sync({ awaitAll: true, checkIntegrity: false })
@@ -583,7 +573,7 @@ describe('online syncing', function () {
 
   it('syncing an item should storage it encrypted', async function () {
     const note = await Factory.createMappedNote(this.application)
-    await this.application.itemManager.setItemDirty(note)
+    await this.application.mutator.setItemDirty(note)
     await this.application.syncService.sync(syncOptions)
     this.expectedItemCount++
     const rawPayloads = await this.application.diskStorageService.getAllRawPayloads()
@@ -593,7 +583,7 @@ describe('online syncing', function () {
 
   it('syncing an item before data load should storage it encrypted', async function () {
     const note = await Factory.createMappedNote(this.application)
-    await this.application.itemManager.setItemDirty(note)
+    await this.application.mutator.setItemDirty(note)
     this.expectedItemCount++
 
     /** Simulate database not loaded */
@@ -610,7 +600,7 @@ describe('online syncing', function () {
   it('saving an item after sync should persist it with content property', async function () {
     const note = await Factory.createMappedNote(this.application)
     const text = Factory.randomString(10000)
-    await this.application.mutator.changeAndSaveItem(
+    await this.application.changeAndSaveItem(
       note,
       (mutator) => {
         mutator.text = text
@@ -634,7 +624,7 @@ describe('online syncing', function () {
     expect(this.application.itemManager.getDirtyItems().length).to.equal(0)
 
     let note = await Factory.createMappedNote(this.application)
-    note = await this.application.itemManager.changeItem(note, (mutator) => {
+    note = await this.application.mutator.changeItem(note, (mutator) => {
       mutator.text = `${Math.random()}`
     })
     /** This sync request should exit prematurely as we called ut_setDatabaseNotLoaded */
@@ -705,13 +695,13 @@ describe('online syncing', function () {
 
   it('valid sync date tracking', async function () {
     let note = await Factory.createMappedNote(this.application)
-    note = await this.application.itemManager.setItemDirty(note)
+    note = await this.application.mutator.setItemDirty(note)
     this.expectedItemCount++
 
     expect(note.dirty).to.equal(true)
     expect(note.payload.dirtyIndex).to.be.at.most(getCurrentDirtyIndex())
 
-    note = await this.application.itemManager.changeItem(note, (mutator) => {
+    note = await this.application.mutator.changeItem(note, (mutator) => {
       mutator.text = `${Math.random()}`
     })
     const sync = this.application.sync.sync(syncOptions)
@@ -748,7 +738,7 @@ describe('online syncing', function () {
      * It will do based on comparing whether item.dirtyIndex > item.globalDirtyIndexAtLastSync
      */
     let note = await Factory.createMappedNote(this.application)
-    await this.application.itemManager.setItemDirty(note)
+    await this.application.mutator.setItemDirty(note)
     this.expectedItemCount++
 
     // client A. Don't await, we want to do other stuff.
@@ -759,12 +749,12 @@ describe('online syncing', function () {
 
     // While that sync is going on, we want to modify this item many times.
     const text = `${Math.random()}`
-    note = await this.application.itemManager.changeItem(note, (mutator) => {
+    note = await this.application.mutator.changeItem(note, (mutator) => {
       mutator.text = text
     })
-    await this.application.itemManager.setItemDirty(note)
-    await this.application.itemManager.setItemDirty(note)
-    await this.application.itemManager.setItemDirty(note)
+    await this.application.mutator.setItemDirty(note)
+    await this.application.mutator.setItemDirty(note)
+    await this.application.mutator.setItemDirty(note)
     expect(note.payload.dirtyIndex).to.be.above(note.payload.globalDirtyIndexAtLastSync)
 
     // Now do a regular sync with no latency.
@@ -817,7 +807,7 @@ describe('online syncing', function () {
 
     setTimeout(
       async function () {
-        await this.application.itemManager.changeItem(note, (mutator) => {
+        await this.application.mutator.changeItem(note, (mutator) => {
           mutator.text = newText
         })
       }.bind(this),
@@ -862,9 +852,9 @@ describe('online syncing', function () {
     const newText = `${Math.random()}`
 
     this.application.syncService.addEventObserver(async (eventName) => {
-      if (eventName === SyncEvent.SyncWillBegin && !didPerformMutatation) {
+      if (eventName === SyncEvent.SyncDidBeginProcessing && !didPerformMutatation) {
         didPerformMutatation = true
-        await this.application.itemManager.changeItem(note, (mutator) => {
+        await this.application.mutator.changeItem(note, (mutator) => {
           mutator.text = newText
         })
       }
@@ -898,7 +888,7 @@ describe('online syncing', function () {
           dirtyIndex: changed[0].payload.globalDirtyIndexAtLastSync + 1,
         })
 
-        await this.application.itemManager.emitItemFromPayload(mutated)
+        await this.application.mutator.emitItemFromPayload(mutated)
       }
     })
 
@@ -916,6 +906,7 @@ describe('online syncing', function () {
     const note = await Factory.createSyncedNote(this.application)
     const preDeleteSyncToken = await this.application.syncService.getLastSyncToken()
     await this.application.mutator.deleteItem(note)
+    await this.application.sync.sync()
     await this.application.syncService.setLastSyncToken(preDeleteSyncToken)
     await this.application.sync.sync(syncOptions)
     expect(this.application.itemManager.items.length).to.equal(this.expectedItemCount)
@@ -938,7 +929,7 @@ describe('online syncing', function () {
       dirty: true,
     })
 
-    await this.application.itemManager.emitItemFromPayload(errored)
+    await this.application.payloadManager.emitPayload(errored)
     await this.application.sync.sync(syncOptions)
 
     const updatedNote = this.application.items.findAnyItem(note.uuid)
@@ -966,7 +957,7 @@ describe('online syncing', function () {
       },
     })
 
-    await this.application.syncService.handleSuccessServerResponse({ payloadsSavedOrSaving: [] }, response)
+    await this.application.syncService.handleSuccessServerResponse({ payloadsSavedOrSaving: [], options: {} }, response)
 
     expect(this.application.payloadManager.findOne(invalidPayload.uuid)).to.not.be.ok
     expect(this.application.payloadManager.findOne(validPayload.uuid)).to.be.ok
@@ -995,7 +986,7 @@ describe('online syncing', function () {
       content: {},
     })
     this.expectedItemCount++
-    await this.application.itemManager.emitItemsFromPayloads([payload])
+    await this.application.mutator.emitItemsFromPayloads([payload])
     await this.application.sync.sync(syncOptions)
 
     /** Item should no longer be dirty, otherwise it would keep syncing */
@@ -1006,7 +997,7 @@ describe('online syncing', function () {
   it('should call onPresyncSave before sync begins', async function () {
     const events = []
     this.application.syncService.addEventObserver((event) => {
-      if (event === SyncEvent.SyncWillBegin) {
+      if (event === SyncEvent.SyncDidBeginProcessing) {
         events.push('sync-will-begin')
       }
     })
@@ -1032,6 +1023,7 @@ describe('online syncing', function () {
 
     const note = await Factory.createSyncedNote(this.application)
     await this.application.mutator.deleteItem(note)
+    await this.application.sync.sync()
 
     expect(conditionMet).to.equal(true)
   })
