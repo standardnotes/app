@@ -1,6 +1,20 @@
 {
   "versions": [
     {
+      "version": "3.162.10",
+      "title": "[3.162.10](https://github.com/standardnotes/app/compare/@standardnotes/web@3.162.9...@standardnotes/web@3.162.10) (2023-06-30)",
+      "date": null,
+      "body": "### Bug Fixes\n\n* Fixed issue where clicking in file dialog context menu closed the dialog ([89849c9](https://github.com/standardnotes/app/commit/89849c9f90e8b66fc75c68e42a430dfcdbd5d798))",
+      "parsed": {
+        "_": [
+          "Fixed issue where clicking in file dialog context menu closed the dialog (89849c9)"
+        ],
+        "Bug Fixes": [
+          "Fixed issue where clicking in file dialog context menu closed the dialog (89849c9)"
+        ]
+      }
+    },
+    {
       "version": "3.162.9",
       "title": "[3.162.9](https://github.com/standardnotes/app/compare/@standardnotes/web@3.162.8...@standardnotes/web@3.162.9) (2023-06-29)",
       "date": null,

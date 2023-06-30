@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.162.10](https://github.com/standardnotes/app/compare/@standardnotes/web@3.162.9...@standardnotes/web@3.162.10) (2023-06-30)
+
+### Bug Fixes
+
+* Fixed issue where clicking in file dialog context menu closed the dialog ([89849c9](https://github.com/standardnotes/app/commit/89849c9f90e8b66fc75c68e42a430dfcdbd5d798))
+
 ## [3.162.9](https://github.com/standardnotes/app/compare/@standardnotes/web@3.162.8...@standardnotes/web@3.162.9) (2023-06-29)
 
 **Note:** Version bump only for package @standardnotes/web

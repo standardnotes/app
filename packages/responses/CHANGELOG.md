@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.13.25](https://github.com/standardnotes/app/compare/@standardnotes/responses@1.13.24...@standardnotes/responses@1.13.25) (2023-06-30)
+
+**Note:** Version bump only for package @standardnotes/responses
+
 ## [1.13.24](https://github.com/standardnotes/app/compare/@standardnotes/responses@1.13.23...@standardnotes/responses@1.13.24) (2023-05-22)
 
 **Note:** Version bump only for package @standardnotes/responses
