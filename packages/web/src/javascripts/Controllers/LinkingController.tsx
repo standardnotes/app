@@ -167,7 +167,11 @@ export class LinkingController extends AbstractViewController {
   }
 
   unlinkItems = async (item: LinkableItem, itemToUnlink: LinkableItem) => {
-    await this.application.mutator.unlinkItems(item, itemToUnlink)
+    try {
+      await this.application.mutator.unlinkItems(item, itemToUnlink)
+    } catch (error) {
+      console.error(error)
+    }
 
     void this.application.sync.sync()
   }
