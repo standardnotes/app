@@ -55,12 +55,23 @@ const ContentListHeader = ({
   const isTablet = matchesMd && isTouchScreen
 
   const [syncSubtitle, setSyncSubtitle] = useState('')
-  const showSyncSubtitle = isMobileScreen && !!syncSubtitle
+  const [outOfSync, setOutOfSync] = useState(false)
+  const showSyncSubtitle = isMobileScreen && (!!syncSubtitle || outOfSync)
 
   useEffect(() => {
     return application.addEventObserver(async (event) => {
       if (event === ApplicationEvent.CompletedInitialSync) {
         setSyncSubtitle('')
+        return
+      }
+
+      if (event === ApplicationEvent.EnteredOutOfSync) {
+        setOutOfSync(true)
+        return
+      }
+
+      if (event === ApplicationEvent.ExitedOutOfSync) {
+        setOutOfSync(false)
         return
       }
 
@@ -165,14 +176,18 @@ const ContentListHeader = ({
           )}
           <div className="mr-2 flex min-w-0 flex-col break-words">
             <div className="text-2xl font-semibold text-text md:text-lg">{panelTitle}</div>
-            {showSyncSubtitle && <div className="-mt-1 text-xs text-passive-0 md:mt-0">{syncSubtitle}</div>}
+            {showSyncSubtitle && (
+              <div className={classNames('-mt-1 text-xs md:mt-0', outOfSync ? 'text-warning' : 'text-passive-0')}>
+                {outOfSync ? 'Potentially Out of Sync' : syncSubtitle}
+              </div>
+            )}
             {optionsSubtitle && <div className="text-xs text-passive-0">{optionsSubtitle}</div>}
           </div>
           <ListItemVaultInfo item={selectedTag} />
         </div>
       </div>
     )
-  }, [optionsSubtitle, selectedTag, showSyncSubtitle, icon, panelTitle, syncSubtitle])
+  }, [optionsSubtitle, showSyncSubtitle, icon, panelTitle, outOfSync, syncSubtitle, selectedTag])
 
   const PhoneAndDesktopLayout = useMemo(() => {
     return (
