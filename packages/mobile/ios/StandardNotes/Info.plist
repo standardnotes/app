@@ -66,7 +66,7 @@
 		</dict>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string>Camera is optionally used to upload images and videos and scan QR codes using the TokenVault extension.</string>
+	<string>Camera is optionally used to upload images and videos and scan QR codes using the Authenticator extension.</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>Face ID is required to unlock your notes.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
