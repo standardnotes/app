@@ -1,7 +1,7 @@
 import { MutatorClientInterface } from './../Mutator/MutatorClientInterface'
 import { ApplicationStage } from './../Application/ApplicationStage'
 import { SingletonManagerInterface } from './../Singleton/SingletonManagerInterface'
-import { SuccessfullyChangedCredentialsEventData } from './../Session/SuccessfullyChangedCredentialsEventData'
+import { UserKeyPairChangedEventData } from './../Session/UserKeyPairChangedEventData'
 import { SessionEvent } from './../Session/SessionEvent'
 import { InternalEventInterface } from './../Internal/InternalEventInterface'
 import { InternalEventHandlerInterface } from './../Internal/InternalEventHandlerInterface'
@@ -53,7 +53,7 @@ export class ContactService
 
     this.selfContactManager = new SelfContactManager(sync, items, mutator, session, singletons)
 
-    eventBus.addEventHandler(this, SessionEvent.SuccessfullyChangedCredentials)
+    eventBus.addEventHandler(this, SessionEvent.UserKeyPairChanged)
   }
 
   public override async handleApplicationStage(stage: ApplicationStage): Promise<void> {
@@ -62,8 +62,8 @@ export class ContactService
   }
 
   async handleEvent(event: InternalEventInterface): Promise<void> {
-    if (event.type === SessionEvent.SuccessfullyChangedCredentials) {
-      const data = event.payload as SuccessfullyChangedCredentialsEventData
+    if (event.type === SessionEvent.UserKeyPairChanged) {
+      const data = event.payload as UserKeyPairChangedEventData
 
       await this.selfContactManager.updateWithNewPublicKeySet({
         encryption: data.newKeyPair.publicKey,

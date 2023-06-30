@@ -1,6 +1,6 @@
 import { PkcKeyPair } from '@standardnotes/sncrypto-common'
 
-export type SuccessfullyChangedCredentialsEventData = {
+export type UserKeyPairChangedEventData = {
   oldKeyPair: PkcKeyPair | undefined
   oldSigningKeyPair: PkcKeyPair | undefined
 

@@ -119,7 +119,7 @@ export * from './Service/ServiceInterface'
 export * from './Session/SessionManagerResponse'
 export * from './Session/SessionsClientInterface'
 export * from './Session/SessionEvent'
-export * from './Session/SuccessfullyChangedCredentialsEventData'
+export * from './Session/UserKeyPairChangedEventData'
 
 export * from './Status/StatusService'
 export * from './Status/StatusServiceInterface'

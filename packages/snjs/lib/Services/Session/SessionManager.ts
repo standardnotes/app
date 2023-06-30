@@ -26,7 +26,9 @@ import {
   ApiServiceEvent,
   SessionRefreshedData,
   SessionEvent,
-  SuccessfullyChangedCredentialsEventData,
+  UserKeyPairChangedEventData,
+  InternalFeatureService,
+  InternalFeature,
 } from '@standardnotes/services'
 import { Base64String, PkcKeyPair } from '@standardnotes/sncrypto-common'
 import {
@@ -652,14 +654,16 @@ export class SNSessionManager
     )
 
     if (!isErrorResponse(rawResponse)) {
-      const eventData: SuccessfullyChangedCredentialsEventData = {
-        oldKeyPair,
-        oldSigningKeyPair,
-        newKeyPair: parameters.newRootKey.encryptionKeyPair,
-        newSigningKeyPair: parameters.newRootKey.signingKeyPair,
-      }
+      if (InternalFeatureService.get().isFeatureEnabled(InternalFeature.Vaults)) {
+        const eventData: UserKeyPairChangedEventData = {
+          oldKeyPair,
+          oldSigningKeyPair,
+          newKeyPair: parameters.newRootKey.encryptionKeyPair,
+          newSigningKeyPair: parameters.newRootKey.signingKeyPair,
+        }
 
-      void this.notifyEvent(SessionEvent.SuccessfullyChangedCredentials, eventData)
+        void this.notifyEvent(SessionEvent.UserKeyPairChanged, eventData)
+      }
     }
 
     return processedResponse
@@ -724,16 +728,6 @@ export class SNSessionManager
     await this.signIn(sharePayload.email, sharePayload.password, false, true)
   }
 
-  private persistUserInfoChange(user: User) {
-    const rootKey = this.protocolService.getRootKey()
-    if (!rootKey) {
-      throw Error('Cannot persist user info change without root key')
-    }
-
-    this.memoizeUser(user)
-    this.diskStorageService.setValue(StorageKey.User, user)
-  }
-
   private async populateSession(
     rootKey: SNRootKey,
     user: User,
@@ -743,7 +737,8 @@ export class SNSessionManager
   ) {
     await this.protocolService.setRootKey(rootKey, wrappingKey)
 
-    this.persistUserInfoChange(user)
+    this.memoizeUser(user)
+    this.diskStorageService.setValue(StorageKey.User, user)
 
     void this.apiService.setHost(host)
     this.httpService.setHost(host)

@@ -123,9 +123,9 @@ export class NavigationController
 
     this.disposers.push(
       this.application.streamItems([ContentType.Tag, ContentType.SmartView], ({ changed, removed }) => {
-        runInAction(() => {
-          this.reloadTags()
+        this.reloadTags()
 
+        runInAction(() => {
           const currentSelectedTag = this.selected_
 
           if (!currentSelectedTag) {
@@ -186,9 +186,11 @@ export class NavigationController
   }
 
   private reloadTags(): void {
-    this.tags = this.application.items.getDisplayableTags()
-    this.starredTags = this.tags.filter((tag) => tag.starred)
-    this.smartViews = this.application.items.getSmartViews()
+    runInAction(() => {
+      this.tags = this.application.items.getDisplayableTags()
+      this.starredTags = this.tags.filter((tag) => tag.starred)
+      this.smartViews = this.application.items.getSmartViews()
+    })
   }
 
   async handleEvent(event: InternalEventInterface): Promise<void> {

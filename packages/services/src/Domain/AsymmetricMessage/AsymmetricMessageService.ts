@@ -22,7 +22,7 @@ import { ItemManagerInterface } from '../Item/ItemManagerInterface'
 import { SyncServiceInterface } from '../Sync/SyncServiceInterface'
 import { SessionEvent } from '../Session/SessionEvent'
 import { AsymmetricMessageServer, HttpServiceInterface } from '@standardnotes/api'
-import { SuccessfullyChangedCredentialsEventData } from '../Session/SuccessfullyChangedCredentialsEventData'
+import { UserKeyPairChangedEventData } from '../Session/UserKeyPairChangedEventData'
 import { SendOwnContactChangeMessage } from './UseCase/SendOwnContactChangeMessage'
 import { GetOutboundAsymmetricMessages } from './UseCase/GetOutboundAsymmetricMessages'
 import { GetInboundAsymmetricMessages } from './UseCase/GetInboundAsymmetricMessages'
@@ -45,13 +45,13 @@ export class AsymmetricMessageService extends AbstractService implements Interna
     this.messageServer = new AsymmetricMessageServer(http)
 
     eventBus.addEventHandler(this, SyncEvent.ReceivedAsymmetricMessages)
-    eventBus.addEventHandler(this, SessionEvent.SuccessfullyChangedCredentials)
+    eventBus.addEventHandler(this, SessionEvent.UserKeyPairChanged)
   }
 
   async handleEvent(event: InternalEventInterface): Promise<void> {
-    if (event.type === SessionEvent.SuccessfullyChangedCredentials) {
+    if (event.type === SessionEvent.UserKeyPairChanged) {
       void this.messageServer.deleteAllInboundMessages()
-      void this.sendOwnContactChangeEventToAllContacts(event.payload as SuccessfullyChangedCredentialsEventData)
+      void this.sendOwnContactChangeEventToAllContacts(event.payload as UserKeyPairChangedEventData)
     }
 
     if (event.type === SyncEvent.ReceivedAsymmetricMessages) {
@@ -69,7 +69,7 @@ export class AsymmetricMessageService extends AbstractService implements Interna
     return usecase.execute()
   }
 
-  async sendOwnContactChangeEventToAllContacts(data: SuccessfullyChangedCredentialsEventData): Promise<void> {
+  async sendOwnContactChangeEventToAllContacts(data: UserKeyPairChangedEventData): Promise<void> {
     if (!data.oldKeyPair || !data.oldSigningKeyPair) {
       return
     }

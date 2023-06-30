@@ -1775,7 +1775,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
             await this.handleRevokedSession()
             break
           }
-          case ExternalServices.SessionEvent.SuccessfullyChangedCredentials:
+          case ExternalServices.SessionEvent.UserKeyPairChanged:
             break
           default: {
             Utils.assertUnreachable(event)

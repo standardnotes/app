@@ -88,6 +88,7 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
     ;(this.deviceInterface as unknown) = undefined
     ;(this.storageService as unknown) = undefined
     ;(this.payloadManager as unknown) = undefined
+    ;(this.keys as unknown) = undefined
 
     this.rootKey = undefined
     this.memoizedRootKeyParams = undefined
@@ -506,16 +507,14 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
     return this.items.getDisplayableItemsKeys()
   }
 
-  private async encrypPayloadWithKeyLookup(
+  private async encryptPayloadWithKeyLookup(
     payload: DecryptedPayloadInterface,
     signingKeyPair?: PkcKeyPair,
   ): Promise<EncryptedOutputParameters> {
     let key: RootKeyInterface | KeySystemRootKeyInterface | undefined
-    if (payload.key_system_identifier || ContentTypeUsesKeySystemRootKeyEncryption(payload.content_type)) {
+    if (ContentTypeUsesKeySystemRootKeyEncryption(payload.content_type)) {
       if (!payload.key_system_identifier) {
-        throw Error(
-          `Attempting to encrypt vaulted payload ${payload.content_type} but the payload is missing a key_system_identifier`,
-        )
+        throw Error(`Key system-encrypted payload ${payload.content_type}is missing a key_system_identifier`)
       }
       key = this.keys.getPrimaryKeySystemRootKey(payload.key_system_identifier)
     } else {
@@ -533,7 +532,7 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
     payloads: DecryptedPayloadInterface[],
     signingKeyPair?: PkcKeyPair,
   ): Promise<EncryptedOutputParameters[]> {
-    return Promise.all(payloads.map((payload) => this.encrypPayloadWithKeyLookup(payload, signingKeyPair)))
+    return Promise.all(payloads.map((payload) => this.encryptPayloadWithKeyLookup(payload, signingKeyPair)))
   }
 
   public async encryptPayload(
@@ -556,9 +555,9 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
     payload: EncryptedPayloadInterface,
   ): Promise<DecryptedParameters<C> | ErrorDecryptingParameters> {
     let key: RootKeyInterface | KeySystemRootKeyInterface | undefined
-    if (payload.key_system_identifier) {
-      if (!ContentTypeUsesKeySystemRootKeyEncryption(payload.content_type)) {
-        throw Error('Attempting to decrypt payload that is not a vault items key with key system root key.')
+    if (ContentTypeUsesKeySystemRootKeyEncryption(payload.content_type)) {
+      if (!payload.key_system_identifier) {
+        throw Error('Key system root key encrypted payload is missing key_system_identifier')
       }
       key = this.keys.getPrimaryKeySystemRootKey(payload.key_system_identifier)
     } else {

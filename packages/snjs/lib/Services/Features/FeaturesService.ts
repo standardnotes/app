@@ -837,6 +837,7 @@ export class SNFeaturesService
     ;(this.storageService as unknown) = undefined
     ;(this.apiService as unknown) = undefined
     ;(this.itemManager as unknown) = undefined
+    ;(this.mutator as unknown) = undefined
     ;(this.settingsService as unknown) = undefined
     ;(this.userService as unknown) = undefined
     ;(this.syncService as unknown) = undefined

@@ -265,7 +265,7 @@ export class NotesController extends AbstractViewController implements NotesCont
       this.selectionController.selectNextItem()
       if (permanently) {
         await this.application.mutator.deleteItems(this.getSelectedNotesList())
-        await this.application.sync.sync()
+        void this.application.sync.sync()
       } else {
         await this.changeSelectedNotes((mutator) => {
           mutator.trashed = true
@@ -416,7 +416,7 @@ export class NotesController extends AbstractViewController implements NotesCont
         confirmButtonStyle: 'danger',
       })
     ) {
-      this.application.mutator.emptyTrash().catch(console.error)
+      await this.application.mutator.emptyTrash()
       this.application.sync.sync().catch(console.error)
     }
   }

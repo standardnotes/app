@@ -51,7 +51,7 @@ if (featureTrunkVaultsEnabled()) {
 }
 
 export class PreferencesMenu {
-  private _selectedPane: PreferenceId = 'vaults'
+  private _selectedPane: PreferenceId = 'account'
   private _menu: PreferencesMenuItem[]
   private _extensionLatestVersions: PackageProvider = new PackageProvider(new Map())
 

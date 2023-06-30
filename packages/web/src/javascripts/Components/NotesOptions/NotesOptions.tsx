@@ -380,7 +380,6 @@ const NotesOptions = ({
           <MenuItem
             onClick={async () => {
               await notesController.emptyTrash()
-              await application.sync.sync()
               closeMenuAndToggleNotesList()
             }}
           >

@@ -24,6 +24,7 @@ import {
   PayloadEmitSource,
   KeySystemItemsKeyInterface,
   SureFindPayload,
+  ContentTypeUsesRootKeyEncryption,
 } from '@standardnotes/models'
 import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
 import { ItemManagerInterface } from '../Item/ItemManagerInterface'
@@ -233,8 +234,7 @@ export class ItemsEncryptionService extends AbstractService {
   public async decryptErroredItemPayloads(): Promise<void> {
     const erroredItemPayloads = this.payloadManager.invalidPayloads.filter(
       (i) =>
-        !ContentTypeUsesKeySystemRootKeyEncryption(i.content_type) &&
-        !ContentTypeUsesKeySystemRootKeyEncryption(i.content_type),
+        !ContentTypeUsesRootKeyEncryption(i.content_type) && !ContentTypeUsesKeySystemRootKeyEncryption(i.content_type),
     )
     if (erroredItemPayloads.length === 0) {
       return

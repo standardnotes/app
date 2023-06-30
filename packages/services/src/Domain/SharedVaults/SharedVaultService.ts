@@ -91,7 +91,7 @@ export class SharedVaultService
   ) {
     super(eventBus)
 
-    eventBus.addEventHandler(this, SessionEvent.SuccessfullyChangedCredentials)
+    eventBus.addEventHandler(this, SessionEvent.UserKeyPairChanged)
     eventBus.addEventHandler(this, UserEventServiceEvent.UserEventReceived)
     eventBus.addEventHandler(this, VaultServiceEvent.VaultRootKeyRotated)
 
@@ -131,7 +131,7 @@ export class SharedVaultService
   }
 
   async handleEvent(event: InternalEventInterface): Promise<void> {
-    if (event.type === SessionEvent.SuccessfullyChangedCredentials) {
+    if (event.type === SessionEvent.UserKeyPairChanged) {
       void this.invitesServer.deleteAllInboundInvites()
     } else if (event.type === UserEventServiceEvent.UserEventReceived) {
       await this.handleUserEvent(event.payload as UserEventServiceEventPayload)
