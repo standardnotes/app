@@ -263,11 +263,11 @@ export class ViewControllerManager implements InternalEventHandlerInterface {
     destroyAllObjectProperties(this)
   }
 
-  openSessionsModal(): void {
+  openSessionsModal = () => {
     this.isSessionsModalVisible = true
   }
 
-  closeSessionsModal(): void {
+  closeSessionsModal = () => {
     this.isSessionsModalVisible = false
   }
 
