@@ -4,7 +4,7 @@ import { PreferenceId, RootQueryParam } from '@standardnotes/ui-services'
 import { AbstractViewController } from './Abstract/AbstractViewController'
 import { WebApplication } from '@/Application/WebApplication'
 
-const DEFAULT_PANE: PreferenceId = 'vaults'
+const DEFAULT_PANE: PreferenceId = 'account'
 
 export class PreferencesController extends AbstractViewController {
   private _open = false
