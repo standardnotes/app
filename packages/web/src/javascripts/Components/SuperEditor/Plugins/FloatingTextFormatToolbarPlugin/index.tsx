@@ -266,13 +266,13 @@ function TextFormatFloatingToolbar({
           ) : (
             <div className="flex items-center gap-1">
               <a
-                className="mr-1 flex flex-grow items-center gap-2 underline"
+                className="mr-1 flex flex-grow items-center gap-2 overflow-hidden whitespace-nowrap underline"
                 href={linkUrl}
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <Icon type="open-in" className="ml-1" />
-                {linkUrl}
+                <Icon type="open-in" className="ml-1 flex-shrink-0" />
+                <div className="max-w-[35ch] overflow-hidden text-ellipsis">{linkUrl}</div>
               </a>
               <ToolbarButton
                 onClick={() => {
