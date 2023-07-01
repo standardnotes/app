@@ -90,6 +90,7 @@ const ToolbarButton = ({ active, ...props }: { active?: boolean } & ComponentPro
 
 function TextFormatFloatingToolbar({
   editor,
+  isText,
   isLink,
   isBold,
   isItalic,
@@ -103,6 +104,7 @@ function TextFormatFloatingToolbar({
 }: {
   editor: LexicalEditor
   anchorElem: HTMLElement
+  isText: boolean
   isBold: boolean
   isCode: boolean
   isItalic: boolean
@@ -221,7 +223,7 @@ function TextFormatFloatingToolbar({
   return (
     <div
       ref={popupCharStylesEditorRef}
-      className="absolute bottom-4 left-1/2 -translate-x-1/2 rounded-lg border border-border bg-default py-1 px-2 drop-shadow-sm"
+      className="absolute bottom-4 left-1/2 -translate-x-1/2 rounded-lg border border-border bg-default py-1 px-2 shadow shadow-contrast"
     >
       {isLink && (
         <>
@@ -264,12 +266,12 @@ function TextFormatFloatingToolbar({
           ) : (
             <div className="flex items-center gap-1">
               <a
-                className="flex flex-grow items-center gap-2 underline"
+                className="mr-1 flex flex-grow items-center gap-2 underline"
                 href={linkUrl}
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <Icon type="open-in" />
+                <Icon type="open-in" className="ml-1" />
                 {linkUrl}
               </a>
               <ToolbarButton
@@ -294,105 +296,107 @@ function TextFormatFloatingToolbar({
               </ToolbarButton>
             </div>
           )}
-          <div role="presentation" className="my-1 h-px bg-border" />
         </>
       )}
-      <div className="flex gap-1">
-        <ToolbarButton
-          active={isBold}
-          onClick={() => {
-            editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'bold')
-          }}
-          aria-label="Format text as bold"
-        >
-          <IconComponent size={IconSize}>
-            <BoldIcon />
-          </IconComponent>
-        </ToolbarButton>
-        <ToolbarButton
-          onClick={() => {
-            editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'italic')
-          }}
-          active={isItalic}
-          aria-label="Format text as italics"
-        >
-          <IconComponent size={IconSize}>
-            <ItalicIcon />
-          </IconComponent>
-        </ToolbarButton>
-        <ToolbarButton
-          onClick={() => {
-            editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'underline')
-          }}
-          active={isUnderline}
-          aria-label="Format text to underlined"
-        >
-          <IconComponent size={IconSize + 1}>
-            <UnderlineIcon />
-          </IconComponent>
-        </ToolbarButton>
-        <ToolbarButton
-          onClick={() => {
-            editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'strikethrough')
-          }}
-          active={isStrikethrough}
-          aria-label="Format text with a strikethrough"
-        >
-          <IconComponent size={IconSize}>
-            <StrikethroughIcon />
-          </IconComponent>
-        </ToolbarButton>
-        <ToolbarButton
-          onClick={() => {
-            editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'subscript')
-          }}
-          active={isSubscript}
-          title="Subscript"
-          aria-label="Format Subscript"
-        >
-          <IconComponent paddingTop={4} size={IconSize - 2}>
-            <SubscriptIcon />
-          </IconComponent>
-        </ToolbarButton>
-        <ToolbarButton
-          onClick={() => {
-            editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'superscript')
-          }}
-          active={isSuperscript}
-          title="Superscript"
-          aria-label="Format Superscript"
-        >
-          <IconComponent paddingTop={1} size={IconSize - 2}>
-            <SuperscriptIcon />
-          </IconComponent>
-        </ToolbarButton>
-        <ToolbarButton
-          onClick={() => {
-            editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'code')
-          }}
-          active={isCode}
-          aria-label="Insert code block"
-        >
-          <IconComponent size={IconSize}>
-            <CodeIcon />
-          </IconComponent>
-        </ToolbarButton>
-        <ToolbarButton onClick={insertLink} active={isLink} aria-label="Insert link">
-          <IconComponent size={IconSize}>
-            <LinkIcon />
-          </IconComponent>
-        </ToolbarButton>
-        <ToolbarButton onClick={formatBulletList} active={isBulletedList} aria-label="Insert bulleted list">
-          <IconComponent size={IconSize}>
-            <ListBulleted />
-          </IconComponent>
-        </ToolbarButton>
-        <ToolbarButton onClick={formatNumberedList} active={isNumberedList} aria-label="Insert numbered list">
-          <IconComponent size={IconSize}>
-            <ListNumbered />
-          </IconComponent>
-        </ToolbarButton>
-      </div>
+      {isText && isLink && <div role="presentation" className="mt-0.5 mb-1.5 h-px bg-border" />}
+      {isText && (
+        <div className="flex gap-1">
+          <ToolbarButton
+            active={isBold}
+            onClick={() => {
+              editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'bold')
+            }}
+            aria-label="Format text as bold"
+          >
+            <IconComponent size={IconSize}>
+              <BoldIcon />
+            </IconComponent>
+          </ToolbarButton>
+          <ToolbarButton
+            onClick={() => {
+              editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'italic')
+            }}
+            active={isItalic}
+            aria-label="Format text as italics"
+          >
+            <IconComponent size={IconSize}>
+              <ItalicIcon />
+            </IconComponent>
+          </ToolbarButton>
+          <ToolbarButton
+            onClick={() => {
+              editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'underline')
+            }}
+            active={isUnderline}
+            aria-label="Format text to underlined"
+          >
+            <IconComponent size={IconSize + 1}>
+              <UnderlineIcon />
+            </IconComponent>
+          </ToolbarButton>
+          <ToolbarButton
+            onClick={() => {
+              editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'strikethrough')
+            }}
+            active={isStrikethrough}
+            aria-label="Format text with a strikethrough"
+          >
+            <IconComponent size={IconSize}>
+              <StrikethroughIcon />
+            </IconComponent>
+          </ToolbarButton>
+          <ToolbarButton
+            onClick={() => {
+              editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'subscript')
+            }}
+            active={isSubscript}
+            title="Subscript"
+            aria-label="Format Subscript"
+          >
+            <IconComponent paddingTop={4} size={IconSize - 2}>
+              <SubscriptIcon />
+            </IconComponent>
+          </ToolbarButton>
+          <ToolbarButton
+            onClick={() => {
+              editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'superscript')
+            }}
+            active={isSuperscript}
+            title="Superscript"
+            aria-label="Format Superscript"
+          >
+            <IconComponent paddingTop={1} size={IconSize - 2}>
+              <SuperscriptIcon />
+            </IconComponent>
+          </ToolbarButton>
+          <ToolbarButton
+            onClick={() => {
+              editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'code')
+            }}
+            active={isCode}
+            aria-label="Insert code block"
+          >
+            <IconComponent size={IconSize}>
+              <CodeIcon />
+            </IconComponent>
+          </ToolbarButton>
+          <ToolbarButton onClick={insertLink} active={isLink} aria-label="Insert link">
+            <IconComponent size={IconSize}>
+              <LinkIcon />
+            </IconComponent>
+          </ToolbarButton>
+          <ToolbarButton onClick={formatBulletList} active={isBulletedList} aria-label="Insert bulleted list">
+            <IconComponent size={IconSize}>
+              <ListBulleted />
+            </IconComponent>
+          </ToolbarButton>
+          <ToolbarButton onClick={formatNumberedList} active={isNumberedList} aria-label="Insert numbered list">
+            <IconComponent size={IconSize}>
+              <ListNumbered />
+            </IconComponent>
+          </ToolbarButton>
+        </div>
+      )}
     </div>
   )
 }
@@ -519,7 +523,7 @@ function useFloatingTextFormatToolbar(editor: LexicalEditor, anchorElem: HTMLEle
     )
   }, [editor, updatePopup])
 
-  if (!isText) {
+  if (!isText && !isLink) {
     return null
   }
 
@@ -527,6 +531,7 @@ function useFloatingTextFormatToolbar(editor: LexicalEditor, anchorElem: HTMLEle
     <TextFormatFloatingToolbar
       editor={editor}
       anchorElem={anchorElem}
+      isText={isText}
       isLink={isLink}
       isBold={isBold}
       isItalic={isItalic}

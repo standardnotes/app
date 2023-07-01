@@ -139,7 +139,7 @@ function FloatingLinkEditor({ editor, anchorElem }: { editor: LexicalEditor; anc
   }, [isEditMode])
 
   return (
-    <div ref={editorRef} className="link-editor">
+    <div ref={editorRef} className="link-editor md:hidden">
       {isEditMode ? (
         <input
           ref={inputRef}
