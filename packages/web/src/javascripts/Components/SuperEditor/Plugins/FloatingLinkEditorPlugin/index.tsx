@@ -22,14 +22,15 @@ import {
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 
-import LinkPreview from '../../Lexical/UI/LinkPreview'
 import { getSelectedNode } from '../../Lexical/Utils/getSelectedNode'
 import { sanitizeUrl } from '../../Lexical/Utils/sanitizeUrl'
-import { setFloatingElemPosition } from '../../Lexical/Utils/setFloatingElemPosition'
-import { LexicalPencilFill } from '@standardnotes/icons'
+import { CloseIcon, PencilFilledIcon, TrashFilledIcon } from '@standardnotes/icons'
 import { IconComponent } from '../../Lexical/../Lexical/Theme/IconComponent'
 import { getDOMRangeRect } from '../../Lexical/Utils/getDOMRangeRect'
 import { KeyboardKey } from '@standardnotes/ui-services'
+import Icon from '@/Components/Icon/Icon'
+import { getPositionedPopoverStyles } from '@/Components/Popover/GetPositionedPopoverStyles'
+import { getAdjustedStylesForNonPortalPopover } from '@/Components/Popover/Utils/getAdjustedStylesForNonPortal'
 
 function FloatingLinkEditor({ editor, anchorElem }: { editor: LexicalEditor; anchorElem: HTMLElement }): JSX.Element {
   const editorRef = useRef<HTMLDivElement | null>(null)
@@ -67,21 +68,37 @@ function FloatingLinkEditor({ editor, anchorElem }: { editor: LexicalEditor; anc
       rootElement !== null &&
       rootElement.contains(nativeSelection.anchorNode)
     ) {
+      setLastSelection(selection)
+
       const rect = getDOMRangeRect(nativeSelection, rootElement)
 
-      setFloatingElemPosition(rect, editorElem, anchorElem)
-      setLastSelection(selection)
-    } else if (!activeElement || activeElement.className !== 'link-input') {
-      if (rootElement !== null) {
-        setFloatingElemPosition(null, editorElem, anchorElem)
+      const editorRect = editorElem.getBoundingClientRect()
+      const rootElementRect = rootElement.getBoundingClientRect()
+
+      const calculatedStyles = getPositionedPopoverStyles({
+        align: 'start',
+        side: 'top',
+        anchorRect: rect,
+        popoverRect: editorRect,
+        documentRect: rootElementRect,
+        offset: 8,
+        disableMobileFullscreenTakeover: true,
+      })
+
+      if (calculatedStyles) {
+        Object.assign(editorElem.style, calculatedStyles)
+        const adjustedStyles = getAdjustedStylesForNonPortalPopover(editorElem, calculatedStyles, rootElement)
+        editorElem.style.setProperty('--translate-x', adjustedStyles['--translate-x'])
+        editorElem.style.setProperty('--translate-y', adjustedStyles['--translate-y'])
       }
+    } else if (!activeElement || activeElement.id !== 'link-input') {
       setLastSelection(null)
       setEditMode(false)
       setLinkUrl('')
     }
 
     return true
-  }, [anchorElem, editor])
+  }, [editor])
 
   useEffect(() => {
     const scrollerElem = anchorElem.parentElement
@@ -139,52 +156,81 @@ function FloatingLinkEditor({ editor, anchorElem }: { editor: LexicalEditor; anc
   }, [isEditMode])
 
   return (
-    <div ref={editorRef} className="link-editor md:hidden">
+    <div
+      ref={editorRef}
+      className="absolute top-0 left-0 max-w-[100vw] rounded-lg border border-border bg-default py-1 px-2 shadow shadow-contrast md:hidden"
+    >
       {isEditMode ? (
-        <input
-          ref={inputRef}
-          className="link-input"
-          value={linkUrl}
-          onChange={(event) => {
-            setLinkUrl(event.target.value)
-          }}
-          onKeyDown={(event) => {
-            if (event.key === KeyboardKey.Enter) {
-              event.preventDefault()
-              if (lastSelection !== null) {
-                if (linkUrl !== '') {
-                  editor.dispatchCommand(TOGGLE_LINK_COMMAND, sanitizeUrl(linkUrl))
+        <div className="flex items-center gap-2">
+          <input
+            id="link-input"
+            ref={inputRef}
+            value={linkUrl}
+            onChange={(event) => {
+              setLinkUrl(event.target.value)
+            }}
+            onKeyDown={(event) => {
+              if (event.key === KeyboardKey.Enter) {
+                event.preventDefault()
+                if (lastSelection !== null) {
+                  if (linkUrl !== '') {
+                    editor.dispatchCommand(TOGGLE_LINK_COMMAND, sanitizeUrl(linkUrl))
+                  }
+                  setEditMode(false)
                 }
+              } else if (event.key === KeyboardKey.Escape) {
+                event.preventDefault()
                 setEditMode(false)
               }
-            } else if (event.key === KeyboardKey.Escape) {
-              event.preventDefault()
+            }}
+            className="flex-grow rounded-sm bg-contrast p-1 text-text"
+          />
+          <button
+            className="flex rounded-lg p-3 hover:bg-contrast hover:text-text disabled:cursor-not-allowed"
+            onClick={() => {
               setEditMode(false)
-            }
-          }}
-        />
+            }}
+            aria-label="Cancel editing link"
+          >
+            <IconComponent size={15}>
+              <CloseIcon />
+            </IconComponent>
+          </button>
+        </div>
       ) : (
-        <>
-          <div className="link-input">
-            <a href={linkUrl} target="_blank" rel="noopener noreferrer">
-              {linkUrl}
-            </a>
-            <div
-              className="link-edit"
-              role="button"
-              tabIndex={0}
-              onMouseDown={(event) => event.preventDefault()}
-              onClick={() => {
-                setEditMode(true)
-              }}
-            >
-              <IconComponent size={15}>
-                <LexicalPencilFill />
-              </IconComponent>
-            </div>
-          </div>
-          <LinkPreview url={linkUrl} />
-        </>
+        <div className="flex items-center gap-1">
+          <a
+            className="mr-1 flex flex-grow items-center gap-2 overflow-hidden whitespace-nowrap underline"
+            href={linkUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Icon type="open-in" className="ml-1 flex-shrink-0" />
+            <div className="max-w-[35ch] overflow-hidden text-ellipsis">{linkUrl}</div>
+          </a>
+          <button
+            className="flex rounded-lg p-3 hover:bg-contrast hover:text-text disabled:cursor-not-allowed"
+            onClick={() => {
+              setEditMode(true)
+            }}
+            aria-label="Edit link"
+          >
+            <IconComponent size={15}>
+              <PencilFilledIcon />
+            </IconComponent>
+          </button>
+          <button
+            className="flex rounded-lg p-3 hover:bg-contrast hover:text-text disabled:cursor-not-allowed"
+            onClick={() => {
+              editor.dispatchCommand(TOGGLE_LINK_COMMAND, null)
+            }}
+            aria-label="Remove link"
+          >
+            <IconComponent size={15}>
+              <TrashFilledIcon />
+            </IconComponent>
+          </button>
+        </div>
       )}
     </div>
   )
