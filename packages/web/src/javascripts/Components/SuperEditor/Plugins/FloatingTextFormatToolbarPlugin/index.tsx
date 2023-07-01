@@ -90,6 +90,7 @@ const ToolbarButton = ({ active, ...props }: { active?: boolean } & ComponentPro
 
 function TextFormatFloatingToolbar({
   editor,
+  anchorElem,
   isText,
   isLink,
   isBold,
@@ -187,6 +188,28 @@ function TextFormatFloatingToolbar({
 
     return true
   }, [editor])
+
+  useEffect(() => {
+    const scrollerElem = anchorElem.parentElement
+
+    const update = () => {
+      editor.getEditorState().read(() => {
+        updateToolbar()
+      })
+    }
+
+    window.addEventListener('resize', update)
+    if (scrollerElem) {
+      scrollerElem.addEventListener('scroll', update)
+    }
+
+    return () => {
+      window.removeEventListener('resize', update)
+      if (scrollerElem) {
+        scrollerElem.removeEventListener('scroll', update)
+      }
+    }
+  }, [editor, anchorElem, updateToolbar])
 
   useEffect(() => {
     editor.getEditorState().read(() => {
