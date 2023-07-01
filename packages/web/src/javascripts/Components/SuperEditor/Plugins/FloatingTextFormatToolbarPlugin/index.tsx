@@ -56,6 +56,9 @@ import { sanitizeUrl } from '../../Lexical/Utils/sanitizeUrl'
 import { classNames } from '@standardnotes/snjs'
 import Icon from '@/Components/Icon/Icon'
 import { KeyboardKey } from '@standardnotes/ui-services'
+import { getDOMRangeRect } from '../../Lexical/Utils/getDOMRangeRect'
+import { getPositionedPopoverStyles } from '@/Components/Popover/GetPositionedPopoverStyles'
+import { getAdjustedStylesForNonPortalPopover } from '@/Components/Popover/Utils/getAdjustedStylesForNonPortal'
 
 const blockTypeToBlockName = {
   bullet: 'Bulleted List',
@@ -117,7 +120,7 @@ function TextFormatFloatingToolbar({
   isBulletedList: boolean
   isNumberedList: boolean
 }) {
-  const popupCharStylesEditorRef = useRef<HTMLDivElement | null>(null)
+  const toolbarRef = useRef<HTMLDivElement | null>(null)
 
   const [linkUrl, setLinkUrl] = useState('')
   const [isLinkEditMode, setIsLinkEditMode] = useState(false)
@@ -169,6 +172,12 @@ function TextFormatFloatingToolbar({
       }
     }
 
+    const toolbarElement = toolbarRef.current
+
+    if (!toolbarElement) {
+      return
+    }
+
     const nativeSelection = window.getSelection()
     const activeElement = document.activeElement
     const rootElement = editor.getRootElement()
@@ -180,6 +189,26 @@ function TextFormatFloatingToolbar({
       rootElement.contains(nativeSelection.anchorNode)
     ) {
       setLastSelection(selection)
+
+      const rangeRect = getDOMRangeRect(nativeSelection, rootElement)
+      const toolbarRect = toolbarElement.getBoundingClientRect()
+      const rootElementRect = rootElement.getBoundingClientRect()
+
+      const calculatedStyles = getPositionedPopoverStyles({
+        align: 'start',
+        side: 'top',
+        anchorRect: rangeRect,
+        popoverRect: toolbarRect,
+        documentRect: rootElementRect,
+        offset: 8,
+      })
+
+      if (calculatedStyles) {
+        Object.assign(toolbarElement.style, calculatedStyles)
+        const adjustedStyles = getAdjustedStylesForNonPortalPopover(toolbarElement, calculatedStyles, rootElement)
+        toolbarElement.style.setProperty('--translate-x', adjustedStyles['--translate-x'])
+        toolbarElement.style.setProperty('--translate-y', adjustedStyles['--translate-y'])
+      }
     } else if (!activeElement || activeElement.id !== 'link-input') {
       setLastSelection(null)
       setIsLinkEditMode(false)
@@ -233,6 +262,10 @@ function TextFormatFloatingToolbar({
     )
   }, [editor, updateToolbar])
 
+  useEffect(() => {
+    editor.getEditorState().read(() => updateToolbar())
+  }, [editor, isLink, isText, updateToolbar])
+
   const focusInput = useCallback((input: HTMLInputElement | null) => {
     if (input) {
       input.focus()
@@ -245,8 +278,8 @@ function TextFormatFloatingToolbar({
 
   return (
     <div
-      ref={popupCharStylesEditorRef}
-      className="absolute bottom-4 left-1/2 -translate-x-1/2 rounded-lg border border-border bg-default py-1 px-2 shadow shadow-contrast"
+      ref={toolbarRef}
+      className="absolute top-0 left-0 rounded-lg border border-border bg-default py-1 px-2 shadow shadow-contrast"
     >
       {isLink && (
         <>
