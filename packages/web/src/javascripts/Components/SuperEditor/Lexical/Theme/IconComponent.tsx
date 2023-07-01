@@ -8,7 +8,7 @@ export const IconComponent = ({
   paddingTop?: number
 }) => {
   return (
-    <span className="svg-icon" style={{ width: size, height: size, paddingTop }}>
+    <span className="svg-icon [&>svg]:fill-current" style={{ width: size, height: size, paddingTop }}>
       {children}
     </span>
   )

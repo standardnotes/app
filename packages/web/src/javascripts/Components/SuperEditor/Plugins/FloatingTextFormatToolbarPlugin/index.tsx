@@ -6,8 +6,6 @@
  *
  */
 
-import './index.css'
-
 import { $isCodeHighlightNode } from '@lexical/code'
 import { $isLinkNode, TOGGLE_LINK_COMMAND } from '@lexical/link'
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
@@ -16,12 +14,15 @@ import {
   $getSelection,
   $isRangeSelection,
   $isTextNode,
-  COMMAND_PRIORITY_LOW,
   FORMAT_TEXT_COMMAND,
   LexicalEditor,
   SELECTION_CHANGE_COMMAND,
   $isRootOrShadowRoot,
   COMMAND_PRIORITY_CRITICAL,
+  COMMAND_PRIORITY_LOW,
+  RangeSelection,
+  GridSelection,
+  NodeSelection,
 } from 'lexical'
 import { $isHeadingNode } from '@lexical/rich-text'
 import {
@@ -31,12 +32,10 @@ import {
   ListNode,
   INSERT_ORDERED_LIST_COMMAND,
 } from '@lexical/list'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { ComponentPropsWithoutRef, useCallback, useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 
-import { getDOMRangeRect } from '../../Lexical/Utils/getDOMRangeRect'
 import { getSelectedNode } from '../../Lexical/Utils/getSelectedNode'
-import { setFloatingElemPosition } from '../../Lexical/Utils/setFloatingElemPosition'
 import {
   BoldIcon,
   ItalicIcon,
@@ -48,9 +47,15 @@ import {
   SubscriptIcon,
   ListBulleted,
   ListNumbered,
+  TrashFilledIcon,
+  PencilFilledIcon,
+  CloseIcon,
 } from '@standardnotes/icons'
 import { IconComponent } from '../../Lexical/Theme/IconComponent'
 import { sanitizeUrl } from '../../Lexical/Utils/sanitizeUrl'
+import { classNames } from '@standardnotes/snjs'
+import Icon from '@/Components/Icon/Icon'
+import { KeyboardKey } from '@standardnotes/ui-services'
 
 const blockTypeToBlockName = {
   bullet: 'Bulleted List',
@@ -69,9 +74,22 @@ const blockTypeToBlockName = {
 
 const IconSize = 15
 
+const ToolbarButton = ({ active, ...props }: { active?: boolean } & ComponentPropsWithoutRef<'button'>) => {
+  return (
+    <button
+      className={classNames(
+        'flex rounded-lg p-3 hover:bg-contrast hover:text-text disabled:cursor-not-allowed',
+        active && 'bg-info text-info-contrast',
+      )}
+      {...props}
+    >
+      {props.children}
+    </button>
+  )
+}
+
 function TextFormatFloatingToolbar({
   editor,
-  anchorElem,
   isLink,
   isBold,
   isItalic,
@@ -95,8 +113,12 @@ function TextFormatFloatingToolbar({
   isUnderline: boolean
   isBulletedList: boolean
   isNumberedList: boolean
-}): JSX.Element {
+}) {
   const popupCharStylesEditorRef = useRef<HTMLDivElement | null>(null)
+
+  const [linkUrl, setLinkUrl] = useState('')
+  const [isLinkEditMode, setIsLinkEditMode] = useState(false)
+  const [lastSelection, setLastSelection] = useState<RangeSelection | GridSelection | NodeSelection | null>(null)
 
   const insertLink = useCallback(() => {
     if (!isLink) {
@@ -130,186 +152,247 @@ function TextFormatFloatingToolbar({
     }
   }, [editor, isNumberedList])
 
-  const updateTextFormatFloatingToolbar = useCallback(() => {
+  const updateToolbar = useCallback(() => {
     const selection = $getSelection()
-
-    const popupCharStylesEditorElem = popupCharStylesEditorRef.current
-    const nativeSelection = window.getSelection()
-
-    if (popupCharStylesEditorElem === null) {
-      return
+    if ($isRangeSelection(selection)) {
+      const node = getSelectedNode(selection)
+      const parent = node.getParent()
+      if ($isLinkNode(parent)) {
+        setLinkUrl(parent.getURL())
+      } else if ($isLinkNode(node)) {
+        setLinkUrl(node.getURL())
+      } else {
+        setLinkUrl('')
+      }
     }
 
+    const nativeSelection = window.getSelection()
+    const activeElement = document.activeElement
     const rootElement = editor.getRootElement()
+
     if (
       selection !== null &&
       nativeSelection !== null &&
-      !nativeSelection.isCollapsed &&
       rootElement !== null &&
       rootElement.contains(nativeSelection.anchorNode)
     ) {
-      const rangeRect = getDOMRangeRect(nativeSelection, rootElement)
-
-      setFloatingElemPosition(rangeRect, popupCharStylesEditorElem, anchorElem)
-    }
-  }, [editor, anchorElem])
-
-  useEffect(() => {
-    const scrollerElem = anchorElem.parentElement
-
-    const update = () => {
-      editor.getEditorState().read(() => {
-        updateTextFormatFloatingToolbar()
-      })
+      setLastSelection(selection)
+    } else if (!activeElement || activeElement.id !== 'link-input') {
+      setLastSelection(null)
+      setIsLinkEditMode(false)
+      setLinkUrl('')
     }
 
-    window.addEventListener('resize', update)
-    if (scrollerElem) {
-      scrollerElem.addEventListener('scroll', update)
-    }
-
-    return () => {
-      window.removeEventListener('resize', update)
-      if (scrollerElem) {
-        scrollerElem.removeEventListener('scroll', update)
-      }
-    }
-  }, [editor, updateTextFormatFloatingToolbar, anchorElem])
+    return true
+  }, [editor])
 
   useEffect(() => {
     editor.getEditorState().read(() => {
-      updateTextFormatFloatingToolbar()
+      updateToolbar()
     })
     return mergeRegister(
       editor.registerUpdateListener(({ editorState }) => {
         editorState.read(() => {
-          updateTextFormatFloatingToolbar()
+          updateToolbar()
         })
       }),
 
       editor.registerCommand(
         SELECTION_CHANGE_COMMAND,
         () => {
-          updateTextFormatFloatingToolbar()
+          updateToolbar()
           return false
         },
         COMMAND_PRIORITY_LOW,
       ),
     )
-  }, [editor, updateTextFormatFloatingToolbar])
+  }, [editor, updateToolbar])
+
+  const focusInput = useCallback((input: HTMLInputElement | null) => {
+    if (input) {
+      input.focus()
+    }
+  }, [])
+
+  if (!editor.isEditable()) {
+    return null
+  }
 
   return (
-    <div ref={popupCharStylesEditorRef} className="floating-text-format-popup">
-      {editor.isEditable() && (
+    <div
+      ref={popupCharStylesEditorRef}
+      className="absolute bottom-4 left-1/2 -translate-x-1/2 rounded-lg border border-border bg-default py-1 px-2 drop-shadow-sm"
+    >
+      {isLink && (
         <>
-          <button
-            onClick={() => {
-              editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'bold')
-            }}
-            className={'popup-item spaced ' + (isBold ? 'active' : '')}
-            aria-label="Format text as bold"
-          >
-            <IconComponent size={IconSize}>
-              <BoldIcon />
-            </IconComponent>
-          </button>
-          <button
-            onClick={() => {
-              editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'italic')
-            }}
-            className={'popup-item spaced ' + (isItalic ? 'active' : '')}
-            aria-label="Format text as italics"
-          >
-            <IconComponent size={IconSize}>
-              <ItalicIcon />
-            </IconComponent>
-          </button>
-          <button
-            onClick={() => {
-              editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'underline')
-            }}
-            className={'popup-item spaced ' + (isUnderline ? 'active' : '')}
-            aria-label="Format text to underlined"
-          >
-            <IconComponent size={IconSize + 1}>
-              <UnderlineIcon />
-            </IconComponent>
-          </button>
-          <button
-            onClick={() => {
-              editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'strikethrough')
-            }}
-            className={'popup-item spaced ' + (isStrikethrough ? 'active' : '')}
-            aria-label="Format text with a strikethrough"
-          >
-            <IconComponent size={IconSize}>
-              <StrikethroughIcon />
-            </IconComponent>
-          </button>
-          <button
-            onClick={() => {
-              editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'subscript')
-            }}
-            className={'popup-item spaced ' + (isSubscript ? 'active' : '')}
-            title="Subscript"
-            aria-label="Format Subscript"
-          >
-            <IconComponent paddingTop={4} size={IconSize - 2}>
-              <SubscriptIcon />
-            </IconComponent>
-          </button>
-          <button
-            onClick={() => {
-              editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'superscript')
-            }}
-            className={'popup-item spaced ' + (isSuperscript ? 'active' : '')}
-            title="Superscript"
-            aria-label="Format Superscript"
-          >
-            <IconComponent paddingTop={1} size={IconSize - 2}>
-              <SuperscriptIcon />
-            </IconComponent>
-          </button>
-          <button
-            onClick={() => {
-              editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'code')
-            }}
-            className={'popup-item spaced ' + (isCode ? 'active' : '')}
-            aria-label="Insert code block"
-          >
-            <IconComponent size={IconSize}>
-              <CodeIcon />
-            </IconComponent>
-          </button>
-          <button
-            onClick={insertLink}
-            className={'popup-item spaced ' + (isLink ? 'active' : '')}
-            aria-label="Insert link"
-          >
-            <IconComponent size={IconSize}>
-              <LinkIcon />
-            </IconComponent>
-          </button>
-          <button
-            onClick={formatBulletList}
-            className={'popup-item spaced ' + (isBulletedList ? 'active' : '')}
-            aria-label="Insert bulleted list"
-          >
-            <IconComponent size={IconSize}>
-              <ListBulleted />
-            </IconComponent>
-          </button>
-          <button
-            onClick={formatNumberedList}
-            className={'popup-item spaced ' + (isNumberedList ? 'active' : '')}
-            aria-label="Insert numbered list"
-          >
-            <IconComponent size={IconSize}>
-              <ListNumbered />
-            </IconComponent>
-          </button>
+          {isLinkEditMode ? (
+            <div className="flex items-center gap-2">
+              <input
+                id="link-input"
+                ref={focusInput}
+                value={linkUrl}
+                onChange={(event) => {
+                  setLinkUrl(event.target.value)
+                }}
+                onKeyDown={(event) => {
+                  if (event.key === KeyboardKey.Enter) {
+                    event.preventDefault()
+                    if (lastSelection !== null) {
+                      if (linkUrl !== '') {
+                        editor.dispatchCommand(TOGGLE_LINK_COMMAND, sanitizeUrl(linkUrl))
+                      }
+                      setIsLinkEditMode(false)
+                    }
+                  } else if (event.key === KeyboardKey.Escape) {
+                    event.preventDefault()
+                    setIsLinkEditMode(false)
+                  }
+                }}
+                className="flex-grow rounded-sm bg-contrast p-1 text-text"
+              />
+              <ToolbarButton
+                onClick={() => {
+                  setIsLinkEditMode(false)
+                }}
+                aria-label="Cancel editing link"
+              >
+                <IconComponent size={IconSize}>
+                  <CloseIcon />
+                </IconComponent>
+              </ToolbarButton>
+            </div>
+          ) : (
+            <div className="flex items-center gap-1">
+              <a
+                className="flex flex-grow items-center gap-2 underline"
+                href={linkUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Icon type="open-in" />
+                {linkUrl}
+              </a>
+              <ToolbarButton
+                onClick={() => {
+                  setIsLinkEditMode(true)
+                }}
+                aria-label="Edit link"
+              >
+                <IconComponent size={IconSize}>
+                  <PencilFilledIcon />
+                </IconComponent>
+              </ToolbarButton>
+              <ToolbarButton
+                onClick={() => {
+                  editor.dispatchCommand(TOGGLE_LINK_COMMAND, null)
+                }}
+                aria-label="Remove link"
+              >
+                <IconComponent size={IconSize}>
+                  <TrashFilledIcon />
+                </IconComponent>
+              </ToolbarButton>
+            </div>
+          )}
+          <div role="presentation" className="my-1 h-px bg-border" />
         </>
       )}
+      <div className="flex gap-1">
+        <ToolbarButton
+          active={isBold}
+          onClick={() => {
+            editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'bold')
+          }}
+          aria-label="Format text as bold"
+        >
+          <IconComponent size={IconSize}>
+            <BoldIcon />
+          </IconComponent>
+        </ToolbarButton>
+        <ToolbarButton
+          onClick={() => {
+            editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'italic')
+          }}
+          active={isItalic}
+          aria-label="Format text as italics"
+        >
+          <IconComponent size={IconSize}>
+            <ItalicIcon />
+          </IconComponent>
+        </ToolbarButton>
+        <ToolbarButton
+          onClick={() => {
+            editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'underline')
+          }}
+          active={isUnderline}
+          aria-label="Format text to underlined"
+        >
+          <IconComponent size={IconSize + 1}>
+            <UnderlineIcon />
+          </IconComponent>
+        </ToolbarButton>
+        <ToolbarButton
+          onClick={() => {
+            editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'strikethrough')
+          }}
+          active={isStrikethrough}
+          aria-label="Format text with a strikethrough"
+        >
+          <IconComponent size={IconSize}>
+            <StrikethroughIcon />
+          </IconComponent>
+        </ToolbarButton>
+        <ToolbarButton
+          onClick={() => {
+            editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'subscript')
+          }}
+          active={isSubscript}
+          title="Subscript"
+          aria-label="Format Subscript"
+        >
+          <IconComponent paddingTop={4} size={IconSize - 2}>
+            <SubscriptIcon />
+          </IconComponent>
+        </ToolbarButton>
+        <ToolbarButton
+          onClick={() => {
+            editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'superscript')
+          }}
+          active={isSuperscript}
+          title="Superscript"
+          aria-label="Format Superscript"
+        >
+          <IconComponent paddingTop={1} size={IconSize - 2}>
+            <SuperscriptIcon />
+          </IconComponent>
+        </ToolbarButton>
+        <ToolbarButton
+          onClick={() => {
+            editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'code')
+          }}
+          active={isCode}
+          aria-label="Insert code block"
+        >
+          <IconComponent size={IconSize}>
+            <CodeIcon />
+          </IconComponent>
+        </ToolbarButton>
+        <ToolbarButton onClick={insertLink} active={isLink} aria-label="Insert link">
+          <IconComponent size={IconSize}>
+            <LinkIcon />
+          </IconComponent>
+        </ToolbarButton>
+        <ToolbarButton onClick={formatBulletList} active={isBulletedList} aria-label="Insert bulleted list">
+          <IconComponent size={IconSize}>
+            <ListBulleted />
+          </IconComponent>
+        </ToolbarButton>
+        <ToolbarButton onClick={formatNumberedList} active={isNumberedList} aria-label="Insert numbered list">
+          <IconComponent size={IconSize}>
+            <ListNumbered />
+          </IconComponent>
+        </ToolbarButton>
+      </div>
     </div>
   )
 }
@@ -436,7 +519,7 @@ function useFloatingTextFormatToolbar(editor: LexicalEditor, anchorElem: HTMLEle
     )
   }, [editor, updatePopup])
 
-  if (!isText || isLink) {
+  if (!isText) {
     return null
   }
 
