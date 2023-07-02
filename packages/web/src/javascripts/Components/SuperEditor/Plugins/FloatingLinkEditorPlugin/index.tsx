@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-import { $isAutoLinkNode, $isLinkNode, TOGGLE_LINK_COMMAND } from '@lexical/link'
+import { $isAutoLinkNode, $isLinkNode } from '@lexical/link'
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
 import { $findMatchingParent, mergeRegister } from '@lexical/utils'
 import {
@@ -22,18 +22,14 @@ import {
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 
-import LinkPreview from '../../Lexical/UI/LinkPreview'
 import { getSelectedNode } from '../../Lexical/Utils/getSelectedNode'
-import { sanitizeUrl } from '../../Lexical/Utils/sanitizeUrl'
-import { setFloatingElemPosition } from '../../Lexical/Utils/setFloatingElemPosition'
-import { LexicalPencilFill } from '@standardnotes/icons'
-import { IconComponent } from '../../Lexical/../Lexical/Theme/IconComponent'
 import { getDOMRangeRect } from '../../Lexical/Utils/getDOMRangeRect'
-import { KeyboardKey } from '@standardnotes/ui-services'
+import { getPositionedPopoverStyles } from '@/Components/Popover/GetPositionedPopoverStyles'
+import { getAdjustedStylesForNonPortalPopover } from '@/Components/Popover/Utils/getAdjustedStylesForNonPortal'
+import LinkEditor from './LinkEditor'
 
 function FloatingLinkEditor({ editor, anchorElem }: { editor: LexicalEditor; anchorElem: HTMLElement }): JSX.Element {
   const editorRef = useRef<HTMLDivElement | null>(null)
-  const inputRef = useRef<HTMLInputElement>(null)
   const [linkUrl, setLinkUrl] = useState('')
   const [isEditMode, setEditMode] = useState(false)
   const [lastSelection, setLastSelection] = useState<RangeSelection | GridSelection | NodeSelection | null>(null)
@@ -67,21 +63,36 @@ function FloatingLinkEditor({ editor, anchorElem }: { editor: LexicalEditor; anc
       rootElement !== null &&
       rootElement.contains(nativeSelection.anchorNode)
     ) {
+      setLastSelection(selection)
+
       const rect = getDOMRangeRect(nativeSelection, rootElement)
 
-      setFloatingElemPosition(rect, editorElem, anchorElem)
-      setLastSelection(selection)
-    } else if (!activeElement || activeElement.className !== 'link-input') {
-      if (rootElement !== null) {
-        setFloatingElemPosition(null, editorElem, anchorElem)
+      const editorRect = editorElem.getBoundingClientRect()
+      const rootElementRect = rootElement.getBoundingClientRect()
+
+      const calculatedStyles = getPositionedPopoverStyles({
+        align: 'start',
+        side: 'top',
+        anchorRect: rect,
+        popoverRect: editorRect,
+        documentRect: rootElementRect,
+        offset: 8,
+        disableMobileFullscreenTakeover: true,
+      })
+
+      if (calculatedStyles) {
+        Object.assign(editorElem.style, calculatedStyles)
+        const adjustedStyles = getAdjustedStylesForNonPortalPopover(editorElem, calculatedStyles, rootElement)
+        editorElem.style.setProperty('--translate-x', adjustedStyles['--translate-x'])
+        editorElem.style.setProperty('--translate-y', adjustedStyles['--translate-y'])
       }
+    } else if (!activeElement || activeElement.id !== 'link-input') {
       setLastSelection(null)
       setEditMode(false)
-      setLinkUrl('')
     }
 
     return true
-  }, [anchorElem, editor])
+  }, [editor])
 
   useEffect(() => {
     const scrollerElem = anchorElem.parentElement
@@ -132,60 +143,18 @@ function FloatingLinkEditor({ editor, anchorElem }: { editor: LexicalEditor; anc
     })
   }, [editor, updateLinkEditor])
 
-  useEffect(() => {
-    if (isEditMode && inputRef.current) {
-      inputRef.current.focus()
-    }
-  }, [isEditMode])
-
   return (
-    <div ref={editorRef} className="link-editor">
-      {isEditMode ? (
-        <input
-          ref={inputRef}
-          className="link-input"
-          value={linkUrl}
-          onChange={(event) => {
-            setLinkUrl(event.target.value)
-          }}
-          onKeyDown={(event) => {
-            if (event.key === KeyboardKey.Enter) {
-              event.preventDefault()
-              if (lastSelection !== null) {
-                if (linkUrl !== '') {
-                  editor.dispatchCommand(TOGGLE_LINK_COMMAND, sanitizeUrl(linkUrl))
-                }
-                setEditMode(false)
-              }
-            } else if (event.key === KeyboardKey.Escape) {
-              event.preventDefault()
-              setEditMode(false)
-            }
-          }}
-        />
-      ) : (
-        <>
-          <div className="link-input">
-            <a href={linkUrl} target="_blank" rel="noopener noreferrer">
-              {linkUrl}
-            </a>
-            <div
-              className="link-edit"
-              role="button"
-              tabIndex={0}
-              onMouseDown={(event) => event.preventDefault()}
-              onClick={() => {
-                setEditMode(true)
-              }}
-            >
-              <IconComponent size={15}>
-                <LexicalPencilFill />
-              </IconComponent>
-            </div>
-          </div>
-          <LinkPreview url={linkUrl} />
-        </>
-      )}
+    <div
+      ref={editorRef}
+      className="absolute top-0 left-0 max-w-[100vw] rounded-lg border border-border bg-default py-1 px-2 shadow shadow-contrast md:hidden"
+    >
+      <LinkEditor
+        linkUrl={linkUrl}
+        isEditMode={isEditMode}
+        setEditMode={setEditMode}
+        editor={editor}
+        lastSelection={lastSelection}
+      />
     </div>
   )
 }
@@ -210,14 +179,21 @@ function useFloatingLinkEditorToolbar(editor: LexicalEditor, anchorElem: HTMLEle
   }, [])
 
   useEffect(() => {
-    return editor.registerCommand(
-      SELECTION_CHANGE_COMMAND,
-      (_payload, newEditor) => {
-        updateToolbar()
-        setActiveEditor(newEditor)
-        return false
-      },
-      COMMAND_PRIORITY_CRITICAL,
+    return mergeRegister(
+      editor.registerUpdateListener(({ editorState }) => {
+        editorState.read(() => {
+          updateToolbar()
+        })
+      }),
+      editor.registerCommand(
+        SELECTION_CHANGE_COMMAND,
+        (_payload, newEditor) => {
+          updateToolbar()
+          setActiveEditor(newEditor)
+          return false
+        },
+        COMMAND_PRIORITY_CRITICAL,
+      ),
     )
   }, [editor, updateToolbar])
 
