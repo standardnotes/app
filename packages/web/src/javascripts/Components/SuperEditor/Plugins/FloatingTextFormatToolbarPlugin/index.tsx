@@ -47,19 +47,14 @@ import {
   SubscriptIcon,
   ListBulleted,
   ListNumbered,
-  TrashFilledIcon,
-  PencilFilledIcon,
-  CloseIcon,
-  CheckIcon,
 } from '@standardnotes/icons'
 import { IconComponent } from '../../Lexical/Theme/IconComponent'
 import { sanitizeUrl } from '../../Lexical/Utils/sanitizeUrl'
 import { classNames } from '@standardnotes/snjs'
-import Icon from '@/Components/Icon/Icon'
-import { KeyboardKey } from '@standardnotes/ui-services'
 import { getDOMRangeRect } from '../../Lexical/Utils/getDOMRangeRect'
 import { getPositionedPopoverStyles } from '@/Components/Popover/GetPositionedPopoverStyles'
 import { getAdjustedStylesForNonPortalPopover } from '@/Components/Popover/Utils/getAdjustedStylesForNonPortal'
+import LinkEditor from '../FloatingLinkEditorPlugin/LinkEditor'
 
 const blockTypeToBlockName = {
   bullet: 'Bulleted List',
@@ -124,7 +119,6 @@ function TextFormatFloatingToolbar({
   const toolbarRef = useRef<HTMLDivElement | null>(null)
 
   const [linkUrl, setLinkUrl] = useState('')
-  const [editedLinkUrl, setEditedLinkUrl] = useState('')
   const [isLinkEditMode, setIsLinkEditMode] = useState(false)
   const [lastSelection, setLastSelection] = useState<RangeSelection | GridSelection | NodeSelection | null>(null)
 
@@ -268,21 +262,6 @@ function TextFormatFloatingToolbar({
     editor.getEditorState().read(() => updateToolbar())
   }, [editor, isLink, isText, updateToolbar])
 
-  const focusInput = useCallback((input: HTMLInputElement | null) => {
-    if (input) {
-      input.focus()
-    }
-  }, [])
-
-  const handleLinkSubmission = () => {
-    if (lastSelection !== null) {
-      if (linkUrl !== '') {
-        editor.dispatchCommand(TOGGLE_LINK_COMMAND, sanitizeUrl(editedLinkUrl))
-      }
-      setIsLinkEditMode(false)
-    }
-  }
-
   if (!editor.isEditable()) {
     return null
   }
@@ -293,79 +272,13 @@ function TextFormatFloatingToolbar({
       className="absolute top-0 left-0 rounded-lg border border-border bg-default py-1 px-2 shadow shadow-contrast"
     >
       {isLink && (
-        <>
-          {isLinkEditMode ? (
-            <div className="flex items-center gap-2">
-              <input
-                id="link-input"
-                ref={focusInput}
-                value={editedLinkUrl}
-                onChange={(event) => {
-                  setEditedLinkUrl(event.target.value)
-                }}
-                onKeyDown={(event) => {
-                  if (event.key === KeyboardKey.Enter) {
-                    event.preventDefault()
-                    handleLinkSubmission()
-                  } else if (event.key === KeyboardKey.Escape) {
-                    event.preventDefault()
-                    setIsLinkEditMode(false)
-                  }
-                }}
-                className="min-w-[40ch] flex-grow rounded-sm bg-contrast p-1 text-text"
-              />
-              <ToolbarButton
-                onClick={() => {
-                  setIsLinkEditMode(false)
-                  editor.focus()
-                }}
-                aria-label="Cancel editing link"
-              >
-                <IconComponent size={IconSize}>
-                  <CloseIcon />
-                </IconComponent>
-              </ToolbarButton>
-              <ToolbarButton onClick={handleLinkSubmission} aria-label="Save link">
-                <IconComponent size={15}>
-                  <CheckIcon />
-                </IconComponent>
-              </ToolbarButton>
-            </div>
-          ) : (
-            <div className="flex items-center gap-1">
-              <a
-                className="mr-1 flex flex-grow items-center gap-2 overflow-hidden whitespace-nowrap underline"
-                href={linkUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Icon type="open-in" className="ml-1 flex-shrink-0" />
-                <div className="max-w-[35ch] overflow-hidden text-ellipsis">{linkUrl}</div>
-              </a>
-              <ToolbarButton
-                onClick={() => {
-                  setIsLinkEditMode(true)
-                  setEditedLinkUrl(linkUrl)
-                }}
-                aria-label="Edit link"
-              >
-                <IconComponent size={IconSize}>
-                  <PencilFilledIcon />
-                </IconComponent>
-              </ToolbarButton>
-              <ToolbarButton
-                onClick={() => {
-                  editor.dispatchCommand(TOGGLE_LINK_COMMAND, null)
-                }}
-                aria-label="Remove link"
-              >
-                <IconComponent size={IconSize}>
-                  <TrashFilledIcon />
-                </IconComponent>
-              </ToolbarButton>
-            </div>
-          )}
-        </>
+        <LinkEditor
+          linkUrl={linkUrl}
+          isEditMode={isLinkEditMode}
+          setEditMode={setIsLinkEditMode}
+          editor={editor}
+          lastSelection={lastSelection}
+        />
       )}
       {isText && isLink && <div role="presentation" className="mt-0.5 mb-1.5 h-px bg-border" />}
       {isText && (

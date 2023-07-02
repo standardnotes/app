@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-import { $isAutoLinkNode, $isLinkNode, TOGGLE_LINK_COMMAND } from '@lexical/link'
+import { $isAutoLinkNode, $isLinkNode } from '@lexical/link'
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
 import { $findMatchingParent, mergeRegister } from '@lexical/utils'
 import {
@@ -23,20 +23,14 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 
 import { getSelectedNode } from '../../Lexical/Utils/getSelectedNode'
-import { sanitizeUrl } from '../../Lexical/Utils/sanitizeUrl'
-import { CheckIcon, CloseIcon, PencilFilledIcon, TrashFilledIcon } from '@standardnotes/icons'
-import { IconComponent } from '../../Lexical/../Lexical/Theme/IconComponent'
 import { getDOMRangeRect } from '../../Lexical/Utils/getDOMRangeRect'
-import { KeyboardKey } from '@standardnotes/ui-services'
-import Icon from '@/Components/Icon/Icon'
 import { getPositionedPopoverStyles } from '@/Components/Popover/GetPositionedPopoverStyles'
 import { getAdjustedStylesForNonPortalPopover } from '@/Components/Popover/Utils/getAdjustedStylesForNonPortal'
+import LinkEditor from './LinkEditor'
 
 function FloatingLinkEditor({ editor, anchorElem }: { editor: LexicalEditor; anchorElem: HTMLElement }): JSX.Element {
   const editorRef = useRef<HTMLDivElement | null>(null)
-  const inputRef = useRef<HTMLInputElement>(null)
   const [linkUrl, setLinkUrl] = useState('')
-  const [editedLinkUrl, setEditedLinkUrl] = useState('')
   const [isEditMode, setEditMode] = useState(false)
   const [lastSelection, setLastSelection] = useState<RangeSelection | GridSelection | NodeSelection | null>(null)
 
@@ -149,108 +143,18 @@ function FloatingLinkEditor({ editor, anchorElem }: { editor: LexicalEditor; anc
     })
   }, [editor, updateLinkEditor])
 
-  useEffect(() => {
-    if (isEditMode && inputRef.current) {
-      inputRef.current.focus()
-    }
-  }, [isEditMode])
-
-  const handleLinkSubmission = () => {
-    if (lastSelection !== null) {
-      if (linkUrl !== '') {
-        editor.dispatchCommand(TOGGLE_LINK_COMMAND, sanitizeUrl(editedLinkUrl))
-      }
-      setEditMode(false)
-    }
-  }
-
   return (
     <div
       ref={editorRef}
       className="absolute top-0 left-0 max-w-[100vw] rounded-lg border border-border bg-default py-1 px-2 shadow shadow-contrast md:hidden"
     >
-      {isEditMode ? (
-        <div className="flex items-center gap-2">
-          <input
-            id="link-input"
-            ref={inputRef}
-            value={editedLinkUrl}
-            onChange={(event) => {
-              setEditedLinkUrl(event.target.value)
-            }}
-            onKeyDown={(event) => {
-              if (event.key === KeyboardKey.Enter) {
-                event.preventDefault()
-                handleLinkSubmission()
-              } else if (event.key === KeyboardKey.Escape) {
-                event.preventDefault()
-                setEditMode(false)
-              }
-            }}
-            className="flex-grow rounded-sm bg-contrast p-1 text-text"
-          />
-          <button
-            className="flex rounded-lg p-3 hover:bg-contrast hover:text-text disabled:cursor-not-allowed"
-            onClick={() => {
-              setEditMode(false)
-              editor.focus()
-            }}
-            aria-label="Cancel editing link"
-            onMouseDown={(event) => event.preventDefault()}
-          >
-            <IconComponent size={15}>
-              <CloseIcon />
-            </IconComponent>
-          </button>
-          <button
-            className="flex rounded-lg p-3 hover:bg-contrast hover:text-text disabled:cursor-not-allowed"
-            onClick={handleLinkSubmission}
-            aria-label="Save link"
-            onMouseDown={(event) => event.preventDefault()}
-          >
-            <IconComponent size={15}>
-              <CheckIcon />
-            </IconComponent>
-          </button>
-        </div>
-      ) : (
-        <div className="flex items-center gap-1">
-          <a
-            className="mr-1 flex flex-grow items-center gap-2 overflow-hidden whitespace-nowrap underline"
-            href={linkUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Icon type="open-in" className="ml-1 flex-shrink-0" />
-            <div className="max-w-[35ch] overflow-hidden text-ellipsis">{linkUrl}</div>
-          </a>
-          <button
-            className="flex rounded-lg p-3 hover:bg-contrast hover:text-text disabled:cursor-not-allowed"
-            onClick={() => {
-              setEditedLinkUrl(linkUrl)
-              setEditMode(true)
-            }}
-            aria-label="Edit link"
-            onMouseDown={(event) => event.preventDefault()}
-          >
-            <IconComponent size={15}>
-              <PencilFilledIcon />
-            </IconComponent>
-          </button>
-          <button
-            className="flex rounded-lg p-3 hover:bg-contrast hover:text-text disabled:cursor-not-allowed"
-            onClick={() => {
-              editor.dispatchCommand(TOGGLE_LINK_COMMAND, null)
-            }}
-            aria-label="Remove link"
-            onMouseDown={(event) => event.preventDefault()}
-          >
-            <IconComponent size={15}>
-              <TrashFilledIcon />
-            </IconComponent>
-          </button>
-        </div>
-      )}
+      <LinkEditor
+        linkUrl={linkUrl}
+        isEditMode={isEditMode}
+        setEditMode={setEditMode}
+        editor={editor}
+        lastSelection={lastSelection}
+      />
     </div>
   )
 }
