@@ -6,6 +6,7 @@ import { sanitizeUrl } from '../../Lexical/Utils/sanitizeUrl'
 import { TOGGLE_LINK_COMMAND } from '@lexical/link'
 import { useCallback, useState } from 'react'
 import { GridSelection, LexicalEditor, NodeSelection, RangeSelection } from 'lexical'
+import { classNames } from '@standardnotes/snjs'
 
 type Props = {
   linkUrl: string
@@ -13,9 +14,10 @@ type Props = {
   setEditMode: (isEditMode: boolean) => void
   editor: LexicalEditor
   lastSelection: RangeSelection | GridSelection | NodeSelection | null
+  isAutoLink: boolean
 }
 
-const LinkEditor = ({ linkUrl, isEditMode, setEditMode, editor, lastSelection }: Props) => {
+const LinkEditor = ({ linkUrl, isEditMode, setEditMode, editor, lastSelection, isAutoLink }: Props) => {
   const [editedLinkUrl, setEditedLinkUrl] = useState('')
 
   const handleLinkSubmission = () => {
@@ -80,7 +82,10 @@ const LinkEditor = ({ linkUrl, isEditMode, setEditMode, editor, lastSelection }:
   ) : (
     <div className="flex items-center gap-1">
       <a
-        className="mr-1 flex flex-grow items-center gap-2 overflow-hidden whitespace-nowrap underline"
+        className={classNames(
+          'mr-1 flex flex-grow items-center gap-2 overflow-hidden whitespace-nowrap underline',
+          isAutoLink && 'py-2.5',
+        )}
         href={linkUrl}
         target="_blank"
         rel="noopener noreferrer"
@@ -88,31 +93,35 @@ const LinkEditor = ({ linkUrl, isEditMode, setEditMode, editor, lastSelection }:
         <Icon type="open-in" className="ml-1 flex-shrink-0" />
         <div className="max-w-[35ch] overflow-hidden text-ellipsis">{linkUrl}</div>
       </a>
-      <button
-        className="flex rounded-lg p-3 hover:bg-contrast hover:text-text disabled:cursor-not-allowed"
-        onClick={() => {
-          setEditedLinkUrl(linkUrl)
-          setEditMode(true)
-        }}
-        aria-label="Edit link"
-        onMouseDown={(event) => event.preventDefault()}
-      >
-        <IconComponent size={15}>
-          <PencilFilledIcon />
-        </IconComponent>
-      </button>
-      <button
-        className="flex rounded-lg p-3 hover:bg-contrast hover:text-text disabled:cursor-not-allowed"
-        onClick={() => {
-          editor.dispatchCommand(TOGGLE_LINK_COMMAND, null)
-        }}
-        aria-label="Remove link"
-        onMouseDown={(event) => event.preventDefault()}
-      >
-        <IconComponent size={15}>
-          <TrashFilledIcon />
-        </IconComponent>
-      </button>
+      {!isAutoLink && (
+        <>
+          <button
+            className="flex rounded-lg p-3 hover:bg-contrast hover:text-text disabled:cursor-not-allowed"
+            onClick={() => {
+              setEditedLinkUrl(linkUrl)
+              setEditMode(true)
+            }}
+            aria-label="Edit link"
+            onMouseDown={(event) => event.preventDefault()}
+          >
+            <IconComponent size={15}>
+              <PencilFilledIcon />
+            </IconComponent>
+          </button>
+          <button
+            className="flex rounded-lg p-3 hover:bg-contrast hover:text-text disabled:cursor-not-allowed"
+            onClick={() => {
+              editor.dispatchCommand(TOGGLE_LINK_COMMAND, null)
+            }}
+            aria-label="Remove link"
+            onMouseDown={(event) => event.preventDefault()}
+          >
+            <IconComponent size={15}>
+              <TrashFilledIcon />
+            </IconComponent>
+          </button>
+        </>
+      )}
     </div>
   )
 }

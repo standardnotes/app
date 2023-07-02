@@ -7,7 +7,7 @@
  */
 
 import { $isCodeHighlightNode } from '@lexical/code'
-import { $isLinkNode, TOGGLE_LINK_COMMAND } from '@lexical/link'
+import { $isLinkNode, $isAutoLinkNode, TOGGLE_LINK_COMMAND } from '@lexical/link'
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
 import { mergeRegister, $findMatchingParent, $getNearestNodeOfType } from '@lexical/utils'
 import {
@@ -92,6 +92,7 @@ function TextFormatFloatingToolbar({
   anchorElem,
   isText,
   isLink,
+  isAutoLink,
   isBold,
   isItalic,
   isUnderline,
@@ -109,6 +110,7 @@ function TextFormatFloatingToolbar({
   isCode: boolean
   isItalic: boolean
   isLink: boolean
+  isAutoLink: boolean
   isStrikethrough: boolean
   isSubscript: boolean
   isSuperscript: boolean
@@ -276,6 +278,7 @@ function TextFormatFloatingToolbar({
           linkUrl={linkUrl}
           isEditMode={isLinkEditMode}
           setEditMode={setIsLinkEditMode}
+          isAutoLink={isAutoLink}
           editor={editor}
           lastSelection={lastSelection}
         />
@@ -387,6 +390,7 @@ function useFloatingTextFormatToolbar(editor: LexicalEditor, anchorElem: HTMLEle
   const [activeEditor, setActiveEditor] = useState(editor)
   const [isText, setIsText] = useState(false)
   const [isLink, setIsLink] = useState(false)
+  const [isAutoLink, setIsAutoLink] = useState(false)
   const [isBold, setIsBold] = useState(false)
   const [isItalic, setIsItalic] = useState(false)
   const [isUnderline, setIsUnderline] = useState(false)
@@ -471,6 +475,11 @@ function useFloatingTextFormatToolbar(editor: LexicalEditor, anchorElem: HTMLEle
       } else {
         setIsLink(false)
       }
+      if ($isAutoLinkNode(parent) || $isAutoLinkNode(node)) {
+        setIsAutoLink(true)
+      } else {
+        setIsAutoLink(false)
+      }
 
       if (!$isCodeHighlightNode(selection.anchor.getNode()) && selection.getTextContent() !== '') {
         setIsText($isTextNode(node))
@@ -515,6 +524,7 @@ function useFloatingTextFormatToolbar(editor: LexicalEditor, anchorElem: HTMLEle
       anchorElem={anchorElem}
       isText={isText}
       isLink={isLink}
+      isAutoLink={isAutoLink}
       isBold={isBold}
       isItalic={isItalic}
       isStrikethrough={isStrikethrough}

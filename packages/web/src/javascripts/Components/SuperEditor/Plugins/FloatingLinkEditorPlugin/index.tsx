@@ -28,7 +28,15 @@ import { getPositionedPopoverStyles } from '@/Components/Popover/GetPositionedPo
 import { getAdjustedStylesForNonPortalPopover } from '@/Components/Popover/Utils/getAdjustedStylesForNonPortal'
 import LinkEditor from './LinkEditor'
 
-function FloatingLinkEditor({ editor, anchorElem }: { editor: LexicalEditor; anchorElem: HTMLElement }): JSX.Element {
+function FloatingLinkEditor({
+  editor,
+  anchorElem,
+  isAutoLink,
+}: {
+  editor: LexicalEditor
+  anchorElem: HTMLElement
+  isAutoLink: boolean
+}): JSX.Element {
   const editorRef = useRef<HTMLDivElement | null>(null)
   const [linkUrl, setLinkUrl] = useState('')
   const [isEditMode, setEditMode] = useState(false)
@@ -154,6 +162,7 @@ function FloatingLinkEditor({ editor, anchorElem }: { editor: LexicalEditor; anc
         setEditMode={setEditMode}
         editor={editor}
         lastSelection={lastSelection}
+        isAutoLink={isAutoLink}
       />
     </div>
   )
@@ -162,6 +171,7 @@ function FloatingLinkEditor({ editor, anchorElem }: { editor: LexicalEditor; anc
 function useFloatingLinkEditorToolbar(editor: LexicalEditor, anchorElem: HTMLElement): JSX.Element | null {
   const [activeEditor, setActiveEditor] = useState(editor)
   const [isLink, setIsLink] = useState(false)
+  const [isAutoLink, setIsAutoLink] = useState(false)
 
   const updateToolbar = useCallback(() => {
     const selection = $getSelection()
@@ -170,10 +180,16 @@ function useFloatingLinkEditorToolbar(editor: LexicalEditor, anchorElem: HTMLEle
       const linkParent = $findMatchingParent(node, $isLinkNode)
       const autoLinkParent = $findMatchingParent(node, $isAutoLinkNode)
 
-      if (linkParent != null && autoLinkParent == null) {
+      if (linkParent != null) {
         setIsLink(true)
       } else {
         setIsLink(false)
+      }
+
+      if (autoLinkParent != null) {
+        setIsAutoLink(true)
+      } else {
+        setIsAutoLink(false)
       }
     }
   }, [])
@@ -197,7 +213,12 @@ function useFloatingLinkEditorToolbar(editor: LexicalEditor, anchorElem: HTMLEle
     )
   }, [editor, updateToolbar])
 
-  return isLink ? createPortal(<FloatingLinkEditor editor={activeEditor} anchorElem={anchorElem} />, anchorElem) : null
+  return isLink
+    ? createPortal(
+        <FloatingLinkEditor editor={activeEditor} anchorElem={anchorElem} isAutoLink={isAutoLink} />,
+        anchorElem,
+      )
+    : null
 }
 
 export default function FloatingLinkEditorPlugin({
