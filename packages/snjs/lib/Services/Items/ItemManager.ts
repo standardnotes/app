@@ -177,6 +177,7 @@ export class ItemManager extends Services.AbstractService implements Services.It
       ...{
         tags: mostRecentVersionOfTags,
         views: mostRecentVersionOfViews,
+        hiddenContentTypes: [ContentType.Tag],
       },
     }
 
