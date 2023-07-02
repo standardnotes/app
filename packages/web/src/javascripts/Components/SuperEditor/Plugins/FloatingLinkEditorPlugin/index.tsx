@@ -24,7 +24,7 @@ import { createPortal } from 'react-dom'
 
 import { getSelectedNode } from '../../Lexical/Utils/getSelectedNode'
 import { sanitizeUrl } from '../../Lexical/Utils/sanitizeUrl'
-import { CloseIcon, PencilFilledIcon, TrashFilledIcon } from '@standardnotes/icons'
+import { CheckIcon, CloseIcon, PencilFilledIcon, TrashFilledIcon } from '@standardnotes/icons'
 import { IconComponent } from '../../Lexical/../Lexical/Theme/IconComponent'
 import { getDOMRangeRect } from '../../Lexical/Utils/getDOMRangeRect'
 import { KeyboardKey } from '@standardnotes/ui-services'
@@ -36,6 +36,7 @@ function FloatingLinkEditor({ editor, anchorElem }: { editor: LexicalEditor; anc
   const editorRef = useRef<HTMLDivElement | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   const [linkUrl, setLinkUrl] = useState('')
+  const [editedLinkUrl, setEditedLinkUrl] = useState('')
   const [isEditMode, setEditMode] = useState(false)
   const [lastSelection, setLastSelection] = useState<RangeSelection | GridSelection | NodeSelection | null>(null)
 
@@ -94,7 +95,6 @@ function FloatingLinkEditor({ editor, anchorElem }: { editor: LexicalEditor; anc
     } else if (!activeElement || activeElement.id !== 'link-input') {
       setLastSelection(null)
       setEditMode(false)
-      setLinkUrl('')
     }
 
     return true
@@ -155,6 +155,15 @@ function FloatingLinkEditor({ editor, anchorElem }: { editor: LexicalEditor; anc
     }
   }, [isEditMode])
 
+  const handleLinkSubmission = () => {
+    if (lastSelection !== null) {
+      if (linkUrl !== '') {
+        editor.dispatchCommand(TOGGLE_LINK_COMMAND, sanitizeUrl(editedLinkUrl))
+      }
+      setEditMode(false)
+    }
+  }
+
   return (
     <div
       ref={editorRef}
@@ -165,19 +174,14 @@ function FloatingLinkEditor({ editor, anchorElem }: { editor: LexicalEditor; anc
           <input
             id="link-input"
             ref={inputRef}
-            value={linkUrl}
+            value={editedLinkUrl}
             onChange={(event) => {
-              setLinkUrl(event.target.value)
+              setEditedLinkUrl(event.target.value)
             }}
             onKeyDown={(event) => {
               if (event.key === KeyboardKey.Enter) {
                 event.preventDefault()
-                if (lastSelection !== null) {
-                  if (linkUrl !== '') {
-                    editor.dispatchCommand(TOGGLE_LINK_COMMAND, sanitizeUrl(linkUrl))
-                  }
-                  setEditMode(false)
-                }
+                handleLinkSubmission()
               } else if (event.key === KeyboardKey.Escape) {
                 event.preventDefault()
                 setEditMode(false)
@@ -189,11 +193,23 @@ function FloatingLinkEditor({ editor, anchorElem }: { editor: LexicalEditor; anc
             className="flex rounded-lg p-3 hover:bg-contrast hover:text-text disabled:cursor-not-allowed"
             onClick={() => {
               setEditMode(false)
+              editor.focus()
             }}
             aria-label="Cancel editing link"
+            onMouseDown={(event) => event.preventDefault()}
           >
             <IconComponent size={15}>
               <CloseIcon />
+            </IconComponent>
+          </button>
+          <button
+            className="flex rounded-lg p-3 hover:bg-contrast hover:text-text disabled:cursor-not-allowed"
+            onClick={handleLinkSubmission}
+            aria-label="Save link"
+            onMouseDown={(event) => event.preventDefault()}
+          >
+            <IconComponent size={15}>
+              <CheckIcon />
             </IconComponent>
           </button>
         </div>
@@ -211,9 +227,11 @@ function FloatingLinkEditor({ editor, anchorElem }: { editor: LexicalEditor; anc
           <button
             className="flex rounded-lg p-3 hover:bg-contrast hover:text-text disabled:cursor-not-allowed"
             onClick={() => {
+              setEditedLinkUrl(linkUrl)
               setEditMode(true)
             }}
             aria-label="Edit link"
+            onMouseDown={(event) => event.preventDefault()}
           >
             <IconComponent size={15}>
               <PencilFilledIcon />
@@ -225,6 +243,7 @@ function FloatingLinkEditor({ editor, anchorElem }: { editor: LexicalEditor; anc
               editor.dispatchCommand(TOGGLE_LINK_COMMAND, null)
             }}
             aria-label="Remove link"
+            onMouseDown={(event) => event.preventDefault()}
           >
             <IconComponent size={15}>
               <TrashFilledIcon />
@@ -256,14 +275,21 @@ function useFloatingLinkEditorToolbar(editor: LexicalEditor, anchorElem: HTMLEle
   }, [])
 
   useEffect(() => {
-    return editor.registerCommand(
-      SELECTION_CHANGE_COMMAND,
-      (_payload, newEditor) => {
-        updateToolbar()
-        setActiveEditor(newEditor)
-        return false
-      },
-      COMMAND_PRIORITY_CRITICAL,
+    return mergeRegister(
+      editor.registerUpdateListener(({ editorState }) => {
+        editorState.read(() => {
+          updateToolbar()
+        })
+      }),
+      editor.registerCommand(
+        SELECTION_CHANGE_COMMAND,
+        (_payload, newEditor) => {
+          updateToolbar()
+          setActiveEditor(newEditor)
+          return false
+        },
+        COMMAND_PRIORITY_CRITICAL,
+      ),
     )
   }, [editor, updateToolbar])
 

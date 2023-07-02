@@ -50,6 +50,7 @@ import {
   TrashFilledIcon,
   PencilFilledIcon,
   CloseIcon,
+  CheckIcon,
 } from '@standardnotes/icons'
 import { IconComponent } from '../../Lexical/Theme/IconComponent'
 import { sanitizeUrl } from '../../Lexical/Utils/sanitizeUrl'
@@ -123,6 +124,7 @@ function TextFormatFloatingToolbar({
   const toolbarRef = useRef<HTMLDivElement | null>(null)
 
   const [linkUrl, setLinkUrl] = useState('')
+  const [editedLinkUrl, setEditedLinkUrl] = useState('')
   const [isLinkEditMode, setIsLinkEditMode] = useState(false)
   const [lastSelection, setLastSelection] = useState<RangeSelection | GridSelection | NodeSelection | null>(null)
 
@@ -272,6 +274,15 @@ function TextFormatFloatingToolbar({
     }
   }, [])
 
+  const handleLinkSubmission = () => {
+    if (lastSelection !== null) {
+      if (linkUrl !== '') {
+        editor.dispatchCommand(TOGGLE_LINK_COMMAND, sanitizeUrl(editedLinkUrl))
+      }
+      setIsLinkEditMode(false)
+    }
+  }
+
   if (!editor.isEditable()) {
     return null
   }
@@ -288,34 +299,35 @@ function TextFormatFloatingToolbar({
               <input
                 id="link-input"
                 ref={focusInput}
-                value={linkUrl}
+                value={editedLinkUrl}
                 onChange={(event) => {
-                  setLinkUrl(event.target.value)
+                  setEditedLinkUrl(event.target.value)
                 }}
                 onKeyDown={(event) => {
                   if (event.key === KeyboardKey.Enter) {
                     event.preventDefault()
-                    if (lastSelection !== null) {
-                      if (linkUrl !== '') {
-                        editor.dispatchCommand(TOGGLE_LINK_COMMAND, sanitizeUrl(linkUrl))
-                      }
-                      setIsLinkEditMode(false)
-                    }
+                    handleLinkSubmission()
                   } else if (event.key === KeyboardKey.Escape) {
                     event.preventDefault()
                     setIsLinkEditMode(false)
                   }
                 }}
-                className="flex-grow rounded-sm bg-contrast p-1 text-text"
+                className="min-w-[40ch] flex-grow rounded-sm bg-contrast p-1 text-text"
               />
               <ToolbarButton
                 onClick={() => {
                   setIsLinkEditMode(false)
+                  editor.focus()
                 }}
                 aria-label="Cancel editing link"
               >
                 <IconComponent size={IconSize}>
                   <CloseIcon />
+                </IconComponent>
+              </ToolbarButton>
+              <ToolbarButton onClick={handleLinkSubmission} aria-label="Save link">
+                <IconComponent size={15}>
+                  <CheckIcon />
                 </IconComponent>
               </ToolbarButton>
             </div>
@@ -333,6 +345,7 @@ function TextFormatFloatingToolbar({
               <ToolbarButton
                 onClick={() => {
                   setIsLinkEditMode(true)
+                  setEditedLinkUrl(linkUrl)
                 }}
                 aria-label="Edit link"
               >
