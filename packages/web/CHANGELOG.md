@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.163.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.162.12...@standardnotes/web@3.163.0) (2023-07-02)
+
+### Features
+
+* Link and formatting toolbars for super are now unified on web/desktop to allow formatting existing links and updated link editor on mobile ([#2342](https://github.com/standardnotes/app/issues/2342)) ([9296421](https://github.com/standardnotes/app/commit/929642195d3fabbe4c0cb01dea07868c096e00c4))
+
 ## [3.162.12](https://github.com/standardnotes/app/compare/@standardnotes/web@3.162.11...@standardnotes/web@3.162.12) (2023-06-30)
 
 **Note:** Version bump only for package @standardnotes/web
