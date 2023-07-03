@@ -17,6 +17,7 @@ on:
       - 'packages/sncrypto-web/**'
       - 'packages/snjs/**'
       - 'packages/utils/**'
+  workflow_dispatch:
 
 jobs:
   test:
