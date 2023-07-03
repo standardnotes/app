@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.201.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.200.2...@standardnotes/snjs@2.201.0) (2023-07-03)
+
+### Features
+
+* New one-click Home Server, now in Labs. Launch your own self-hosted server instance with just 1 click from the Preferences window. ([#2341](https://github.com/standardnotes/app/issues/2341)) ([96f4264](https://github.com/standardnotes/app/commit/96f42643a98586052bfb5262ca797fd029c1e925))
+
 ## [2.200.2](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.200.1...@standardnotes/snjs@2.200.2) (2023-07-02)
 
 ### Bug Fixes

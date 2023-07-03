@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.27.0](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.26.22...@standardnotes/ui-services@1.27.0) (2023-07-03)
+
+### Features
+
+* New one-click Home Server, now in Labs. Launch your own self-hosted server instance with just 1 click from the Preferences window. ([#2341](https://github.com/standardnotes/app/issues/2341)) ([96f4264](https://github.com/standardnotes/app/commit/96f42643a98586052bfb5262ca797fd029c1e925))
+
 ## [1.26.22](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.26.21...@standardnotes/ui-services@1.26.22) (2023-06-30)
 
 **Note:** Version bump only for package @standardnotes/ui-services
