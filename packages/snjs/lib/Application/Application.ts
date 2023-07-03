@@ -1154,6 +1154,14 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return this.apiService.isThirdPartyHostUsed()
   }
 
+  async isUsingHomeServer(): Promise<boolean> {
+    if (!this.homeServerService) {
+      return false
+    }
+
+    return this.getHost() === (await this.homeServerService.getHomeServerUrl())
+  }
+
   private constructServices() {
     this.createMappers()
     this.createPayloadManager()

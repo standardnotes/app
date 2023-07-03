@@ -47,6 +47,7 @@ export interface ApplicationInterface {
   hasAccount(): boolean
   setCustomHost(host: string): Promise<void>
   isThirdPartyHostUsed(): boolean
+  isUsingHomeServer(): Promise<boolean>
   get features(): FeaturesClientInterface
   get componentManager(): ComponentManagerInterface
   get items(): ItemsClientInterface

@@ -292,18 +292,6 @@ const HomeServerSettings = () => {
     }
   }, [logs, isAtBottom])
 
-  const statusIndicator = () => {
-    return (
-      <div className="mt-2.5 flex flex-row items-center">
-        <StatusIndicator className={'mr-3'} status={status} />
-        <div>
-          <Text className={'mr-3 font-bold'}>{status?.message}</Text>
-          <Text className={'mr-3'}>{status?.description}</Text>
-        </div>
-      </div>
-    )
-  }
-
   return (
     <>
       <div className="flex items-center justify-between">
@@ -320,7 +308,7 @@ const HomeServerSettings = () => {
       </div>
       {homeServerEnabled && (
         <div>
-          {statusIndicator()}
+          <StatusIndicator className={'mr-3'} status={status} homeServerService={homeServerService} />
 
           {status?.state !== 'restarting' && (
             <>
