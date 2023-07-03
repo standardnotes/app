@@ -6,8 +6,9 @@ import {
   RootKeyInterface,
 } from '@standardnotes/models'
 import { PkcKeyPair } from '@standardnotes/sncrypto-common'
-import { RootKeyManager } from '../RootKeyManager'
+
 import { RootKeyEncryptPayloadUseCase } from './EncryptPayload'
+import { RootKeyManager } from '../../RootKey/RootKeyManager'
 
 export class RootKeyEncryptPayloadWithKeyLookupUseCase {
   constructor(
@@ -16,7 +17,10 @@ export class RootKeyEncryptPayloadWithKeyLookupUseCase {
     private rootKeyManager: RootKeyManager,
   ) {}
 
-  async execute(payload: DecryptedPayloadInterface, signingKeyPair?: PkcKeyPair): Promise<EncryptedOutputParameters> {
+  async executeOne(
+    payload: DecryptedPayloadInterface,
+    signingKeyPair?: PkcKeyPair,
+  ): Promise<EncryptedOutputParameters> {
     let key: RootKeyInterface | KeySystemRootKeyInterface | undefined
     if (ContentTypeUsesKeySystemRootKeyEncryption(payload.content_type)) {
       if (!payload.key_system_identifier) {
@@ -32,6 +36,13 @@ export class RootKeyEncryptPayloadWithKeyLookupUseCase {
     }
 
     const usecase = new RootKeyEncryptPayloadUseCase(this.operatorManager)
-    return usecase.execute(payload, key, signingKeyPair)
+    return usecase.executeOne(payload, key, signingKeyPair)
+  }
+
+  async executeMany(
+    payloads: DecryptedPayloadInterface[],
+    signingKeyPair?: PkcKeyPair,
+  ): Promise<EncryptedOutputParameters[]> {
+    return Promise.all(payloads.map((payload) => this.executeOne(payload, signingKeyPair)))
   }
 }

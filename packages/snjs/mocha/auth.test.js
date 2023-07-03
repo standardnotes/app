@@ -60,7 +60,7 @@ describe('basic auth', function () {
     this.application = await Factory.signOutApplicationAndReturnNew(this.application)
 
     expect(await this.application.protocolService.getRootKey()).to.not.be.ok
-    expect(this.application.protocolService.rootKeyEncryption.keyMode).to.equal(KeyMode.RootKeyNone)
+    expect(this.application.protocolService.rootKeyManager.getKeyMode()).to.equal(KeyMode.RootKeyNone)
   })
 
   it('successfully signs in to registered account', async function () {

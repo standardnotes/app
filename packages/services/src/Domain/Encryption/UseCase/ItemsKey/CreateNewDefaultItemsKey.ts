@@ -1,5 +1,4 @@
 import { OperatorManager } from '@standardnotes/encryption'
-import { RootKeyManager } from '../RootKeyManager'
 import {
   ContentType,
   ProtocolVersionLastNonrootItemsKey,
@@ -18,6 +17,7 @@ import {
 import { UuidGenerator } from '@standardnotes/utils'
 import { MutatorClientInterface } from '../../../Mutator/MutatorClientInterface'
 import { ItemManagerInterface } from '../../../Item/ItemManagerInterface'
+import { RootKeyManager } from '../../RootKey/RootKeyManager'
 
 /**
  * Creates a new random items key to use for item encryption, and adds it to model management.

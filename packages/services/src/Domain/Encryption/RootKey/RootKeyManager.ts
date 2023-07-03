@@ -1,4 +1,10 @@
-import { AnyKeyParamsContent, ApplicationIdentifier } from '@standardnotes/common'
+import {
+  AnyKeyParamsContent,
+  ApplicationIdentifier,
+  KeyParamsOrigination,
+  ProtocolVersion,
+  ProtocolVersionLatest,
+} from '@standardnotes/common'
 import {
   KeyMode,
   SNRootKeyParams,
@@ -18,21 +24,19 @@ import {
   NamespacedRootKeyInKeychain,
   RootKeyContent,
   RootKeyInterface,
+  RootKeyParamsInterface,
 } from '@standardnotes/models'
 import { DeviceInterface } from '../../Device/DeviceInterface'
 import { InternalEventBusInterface } from '../../Internal/InternalEventBusInterface'
 import { StorageKey } from '../../Storage/StorageKeys'
 import { StorageServiceInterface } from '../../Storage/StorageServiceInterface'
 import { StorageValueModes } from '../../Storage/StorageTypes'
-import { RootKeyEncryptPayloadUseCase } from './UseCase/EncryptPayload'
-import { RootKeyDecryptPayloadUseCase } from './UseCase/DecryptPayload'
+import { RootKeyEncryptPayloadUseCase } from '../UseCase/RootEncryption/EncryptPayload'
+import { RootKeyDecryptPayloadUseCase } from '../UseCase/RootEncryption/DecryptPayload'
 import { AbstractService } from '../../Service/AbstractService'
 import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
 import { MutatorClientInterface } from '../../Mutator/MutatorClientInterface'
-
-export enum RootKeyManagerEvent {
-  RootKeyStatusChanged = 'RootKeyStatusChanged',
-}
+import { RootKeyManagerEvent } from './RootKeyManagerEvent'
 
 export class RootKeyManager extends AbstractService<RootKeyManagerEvent> {
   private rootKey?: RootKeyInterface
@@ -47,7 +51,7 @@ export class RootKeyManager extends AbstractService<RootKeyManagerEvent> {
     private mutator: MutatorClientInterface,
     private operatorManager: OperatorManager,
     private identifier: ApplicationIdentifier,
-    private eventBus: InternalEventBusInterface,
+    eventBus: InternalEventBusInterface,
   ) {
     super(eventBus)
   }
@@ -82,6 +86,14 @@ export class RootKeyManager extends AbstractService<RootKeyManagerEvent> {
     }
   }
 
+  public getMemoizedRootKeyParams(): RootKeyParamsInterface | undefined {
+    return this.memoizedRootKeyParams
+  }
+
+  public getKeyMode(): KeyMode {
+    return this.keyMode
+  }
+
   public async hasRootKeyWrapper() {
     const wrapper = this.getRootKeyWrapperKeyParams()
     return wrapper != undefined
@@ -97,9 +109,110 @@ export class RootKeyManager extends AbstractService<RootKeyManagerEvent> {
     return CreateAnyKeyParams(rawKeyParams as AnyKeyParamsContent)
   }
 
+  public async passcodeUpgradeAvailable() {
+    const passcodeParams = this.getRootKeyWrapperKeyParams()
+    if (!passcodeParams) {
+      return false
+    }
+    return passcodeParams.version !== ProtocolVersionLatest
+  }
+
+  public hasAccount() {
+    switch (this.keyMode) {
+      case KeyMode.RootKeyNone:
+      case KeyMode.WrapperOnly:
+        return false
+      case KeyMode.RootKeyOnly:
+      case KeyMode.RootKeyPlusWrapper:
+        return true
+      default:
+        throw Error(`Unhandled keyMode value '${this.keyMode}'.`)
+    }
+  }
+
+  public getUserVersion(): ProtocolVersion | undefined {
+    const keyParams = this.memoizedRootKeyParams
+    return keyParams?.version
+  }
+
+  public hasRootKeyEncryptionSource(): boolean {
+    return this.hasAccount() || this.hasPasscode()
+  }
+
+  public async computeRootKey<K extends RootKeyInterface>(password: string, keyParams: SNRootKeyParams): Promise<K> {
+    const version = keyParams.version
+    const operator = this.operatorManager.operatorForVersion(version)
+    return operator.computeRootKey(password, keyParams)
+  }
+
+  /**
+   * Deletes root key and wrapper from keychain. Used when signing out of application.
+   */
+  public async deleteWorkspaceSpecificKeyStateFromDevice() {
+    await this.device.clearNamespacedKeychainValue(this.identifier)
+    await this.storage.removeValue(StorageKey.WrappedRootKey, StorageValueModes.Nonwrapped)
+    await this.storage.removeValue(StorageKey.RootKeyWrapperKeyParams, StorageValueModes.Nonwrapped)
+    await this.storage.removeValue(StorageKey.RootKeyParams, StorageValueModes.Nonwrapped)
+    this.keyMode = KeyMode.RootKeyNone
+    this.setRootKeyInstance(undefined)
+
+    await this.notifyEvent(RootKeyManagerEvent.RootKeyManagerKeyStatusChanged)
+  }
+
+  public async createRootKey<K extends RootKeyInterface>(
+    identifier: string,
+    password: string,
+    origination: KeyParamsOrigination,
+    version?: ProtocolVersion,
+  ): Promise<K> {
+    const operator = version ? this.operatorManager.operatorForVersion(version) : this.operatorManager.defaultOperator()
+    return operator.createRootKey(identifier, password, origination)
+  }
+
+  public async validateAccountPassword(password: string) {
+    const key = await this.computeRootKey(password, this.memoizedRootKeyParams as SNRootKeyParams)
+    const valid = this.getSureRootKey().compare(key)
+    if (valid) {
+      return { valid, artifacts: { rootKey: key } }
+    } else {
+      return { valid: false }
+    }
+  }
+
+  public async validatePasscode(passcode: string) {
+    const keyParams = this.getSureRootKeyWrapperKeyParams()
+    const key = await this.computeRootKey(passcode, keyParams)
+    const valid = await this.validateWrappingKey(key)
+    if (valid) {
+      return { valid, artifacts: { wrappingKey: key } }
+    } else {
+      return { valid: false }
+    }
+  }
+
+  public async getEncryptionSourceVersion(): Promise<ProtocolVersion> {
+    if (this.hasAccount()) {
+      return this.getSureUserVersion()
+    } else if (this.hasPasscode()) {
+      const passcodeParams = this.getSureRootKeyWrapperKeyParams()
+      return passcodeParams.version
+    }
+
+    throw Error('Attempting to access encryption source version without source')
+  }
+
+  public getSureUserVersion(): ProtocolVersion {
+    const keyParams = this.memoizedRootKeyParams as SNRootKeyParams
+    return keyParams.version
+  }
+
   private async handleKeyStatusChange() {
     this.recomputeAccountKeyParams()
-    void this.eventBus.publish({ type: RootKeyManagerEvent.RootKeyStatusChanged, payload: undefined })
+    void (await this.notifyEvent(RootKeyManagerEvent.RootKeyManagerKeyStatusChanged))
+  }
+
+  public hasPasscode(): boolean {
+    return this.keyMode === KeyMode.WrapperOnly || this.keyMode === KeyMode.RootKeyPlusWrapper
   }
 
   public recomputeAccountKeyParams(): SNRootKeyParams | undefined {
@@ -111,6 +224,10 @@ export class RootKeyManager extends AbstractService<RootKeyManagerEvent> {
 
     this.memoizedRootKeyParams = CreateAnyKeyParams(rawKeyParams as AnyKeyParamsContent)
     return this.memoizedRootKeyParams
+  }
+
+  public getSureRootKeyWrapperKeyParams() {
+    return this.getRootKeyWrapperKeyParams() as SNRootKeyParams
   }
 
   /**
@@ -128,7 +245,7 @@ export class RootKeyManager extends AbstractService<RootKeyManagerEvent> {
     const payload = new DecryptedPayload(value)
 
     const usecase = new RootKeyEncryptPayloadUseCase(this.operatorManager)
-    const wrappedKey = await usecase.execute(payload, wrappingKey)
+    const wrappedKey = await usecase.executeOne(payload, wrappingKey)
     const wrappedKeyPayload = new EncryptedPayload({
       ...payload.ejected(),
       ...wrappedKey,
@@ -152,7 +269,7 @@ export class RootKeyManager extends AbstractService<RootKeyManagerEvent> {
     const wrappedKey = this.getWrappedRootKey()
     const payload = new EncryptedPayload(wrappedKey)
     const usecase = new RootKeyDecryptPayloadUseCase(this.operatorManager)
-    const decrypted = await usecase.execute<RootKeyContent>(payload, wrappingKey)
+    const decrypted = await usecase.executeOne<RootKeyContent>(payload, wrappingKey)
 
     if (isErrorDecryptingParameters(decrypted)) {
       throw Error('Unable to decrypt root key with provided wrapping key.')
@@ -327,7 +444,7 @@ export class RootKeyManager extends AbstractService<RootKeyManagerEvent> {
        */
       const wrappedKeyPayload = new EncryptedPayload(wrappedRootKey)
       const usecase = new RootKeyDecryptPayloadUseCase(this.operatorManager)
-      const decrypted = await usecase.execute(wrappedKeyPayload, wrappingKey)
+      const decrypted = await usecase.executeOne(wrappedKeyPayload, wrappingKey)
       return !isErrorDecryptingParameters(decrypted)
     } else {
       throw 'Unhandled case in validateWrappingKey'

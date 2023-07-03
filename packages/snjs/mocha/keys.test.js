@@ -67,7 +67,7 @@ describe('keys', function () {
     await this.application.addPasscode(password)
 
     /** We should be able to decrypt wrapped root key with passcode */
-    const wrappingKeyParams = await this.application.protocolService.rootKeyEncryption.getRootKeyWrapperKeyParams()
+    const wrappingKeyParams = await this.application.protocolService.rootKeyManager.getRootKeyWrapperKeyParams()
     const wrappingKey = await this.application.protocolService.computeRootKey(password, wrappingKeyParams)
     await this.application.protocolService.unwrapRootKey(wrappingKey).catch((error) => {
       expect(error).to.not.be.ok
@@ -480,7 +480,7 @@ describe('keys', function () {
 
   it('loading the keychain root key should also load its key params', async function () {
     await Factory.registerUserToApplication({ application: this.application })
-    const rootKey = await this.application.protocolService.rootKeyEncryption.getRootKeyFromKeychain()
+    const rootKey = await this.application.protocolService.rootKeyManager.getRootKeyFromKeychain()
     expect(rootKey.keyParams).to.be.ok
   })
 

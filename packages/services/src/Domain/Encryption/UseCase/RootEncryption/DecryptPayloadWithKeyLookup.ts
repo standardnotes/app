@@ -12,8 +12,8 @@ import {
   RootKeyInterface,
 } from '@standardnotes/models'
 
-import { RootKeyManager } from '../RootKeyManager'
 import { RootKeyDecryptPayloadUseCase } from './DecryptPayload'
+import { RootKeyManager } from '../../RootKey/RootKeyManager'
 
 export class RootKeyDecryptPayloadWithKeyLookupUseCase {
   constructor(
@@ -22,7 +22,7 @@ export class RootKeyDecryptPayloadWithKeyLookupUseCase {
     private rootKeyManager: RootKeyManager,
   ) {}
 
-  async execute<C extends ItemContent = ItemContent>(
+  async executeOne<C extends ItemContent = ItemContent>(
     payload: EncryptedPayloadInterface,
   ): Promise<DecryptedParameters<C> | ErrorDecryptingParameters> {
     let key: RootKeyInterface | KeySystemRootKeyInterface | undefined
@@ -45,6 +45,12 @@ export class RootKeyDecryptPayloadWithKeyLookupUseCase {
 
     const usecase = new RootKeyDecryptPayloadUseCase(this.operatorManager)
 
-    return usecase.execute(payload, key)
+    return usecase.executeOne(payload, key)
+  }
+
+  async executeMany<C extends ItemContent = ItemContent>(
+    payloads: EncryptedPayloadInterface[],
+  ): Promise<(DecryptedParameters<C> | ErrorDecryptingParameters)[]> {
+    return Promise.all(payloads.map((payload) => this.executeOne<C>(payload)))
   }
 }

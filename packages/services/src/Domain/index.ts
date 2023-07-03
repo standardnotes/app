@@ -61,7 +61,6 @@ export * from './Encryption/EncryptionService'
 export * from './Encryption/EncryptionServiceEvent'
 export * from './Encryption/Functions'
 export * from './Encryption/ItemsEncryption'
-export * from './Encryption/RootKey/RootKeyEncryption'
 
 export * from './Event/ApplicationEvent'
 export * from './Event/ApplicationEventCallback'

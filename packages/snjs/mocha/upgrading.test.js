@@ -92,7 +92,7 @@ describe('upgrading', () => {
       version: oldVersion,
     })
 
-    expect((await this.application.protocolService.rootKeyEncryption.getRootKeyWrapperKeyParams()).version).to.equal(
+    expect((await this.application.protocolService.rootKeyManager.getRootKeyWrapperKeyParams()).version).to.equal(
       oldVersion,
     )
     expect((await this.application.protocolService.getRootKeyParams()).version).to.equal(oldVersion)
@@ -104,11 +104,11 @@ describe('upgrading', () => {
     const result = await this.application.upgradeProtocolVersion()
     expect(result).to.deep.equal({ success: true })
 
-    const wrappedRootKey = await this.application.protocolService.rootKeyEncryption.getWrappedRootKey()
+    const wrappedRootKey = await this.application.protocolService.rootKeyManager.getWrappedRootKey()
     const payload = new EncryptedPayload(wrappedRootKey)
     expect(payload.version).to.equal(newVersion)
 
-    expect((await this.application.protocolService.rootKeyEncryption.getRootKeyWrapperKeyParams()).version).to.equal(
+    expect((await this.application.protocolService.rootKeyManager.getRootKeyWrapperKeyParams()).version).to.equal(
       newVersion,
     )
     expect((await this.application.protocolService.getRootKeyParams()).version).to.equal(newVersion)
@@ -247,14 +247,14 @@ describe('upgrading', () => {
       this.application.setLaunchCallback({
         receiveChallenge: this.receiveChallenge,
       })
-      expect((await this.application.protocolService.rootKeyEncryption.getRootKeyWrapperKeyParams()).version).to.equal(
+      expect((await this.application.protocolService.rootKeyManager.getRootKeyWrapperKeyParams()).version).to.equal(
         oldVersion,
       )
       const errors = await this.application.upgradeProtocolVersion()
       expect(errors).to.not.be.empty
 
       /** Ensure we're still on 003 */
-      expect((await this.application.protocolService.rootKeyEncryption.getRootKeyWrapperKeyParams()).version).to.equal(
+      expect((await this.application.protocolService.rootKeyManager.getRootKeyWrapperKeyParams()).version).to.equal(
         oldVersion,
       )
       expect((await this.application.protocolService.getRootKeyParams()).version).to.equal(oldVersion)
@@ -268,14 +268,14 @@ describe('upgrading', () => {
       this.application.setLaunchCallback({
         receiveChallenge: this.receiveChallenge,
       })
-      expect((await this.application.protocolService.rootKeyEncryption.getRootKeyWrapperKeyParams()).version).to.equal(
+      expect((await this.application.protocolService.rootKeyManager.getRootKeyWrapperKeyParams()).version).to.equal(
         oldVersion,
       )
       const errors = await this.application.upgradeProtocolVersion()
       expect(errors).to.not.be.empty
 
       /** Ensure we're still on 003 */
-      expect((await this.application.protocolService.rootKeyEncryption.getRootKeyWrapperKeyParams()).version).to.equal(
+      expect((await this.application.protocolService.rootKeyManager.getRootKeyWrapperKeyParams()).version).to.equal(
         oldVersion,
       )
       expect((await this.application.protocolService.getRootKeyParams()).version).to.equal(oldVersion)

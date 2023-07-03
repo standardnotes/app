@@ -201,7 +201,7 @@ describe('storage manager', function () {
     })
 
     /** Should not be wrapped root key yet */
-    expect(await this.application.protocolService.rootKeyEncryption.getWrappedRootKey()).to.not.be.ok
+    expect(await this.application.protocolService.rootKeyManager.getWrappedRootKey()).to.not.be.ok
 
     const passcode = '123'
     Factory.handlePasswordChallenges(this.application, this.password)
@@ -209,12 +209,12 @@ describe('storage manager', function () {
     await this.application.diskStorageService.setValueAndAwaitPersist('bar', 'foo')
 
     /** Root key should now be wrapped */
-    expect(await this.application.protocolService.rootKeyEncryption.getWrappedRootKey()).to.be.ok
+    expect(await this.application.protocolService.rootKeyManager.getWrappedRootKey()).to.be.ok
 
     const accountKey = await this.application.protocolService.getRootKey()
     expect(await this.application.diskStorageService.canDecryptWithKey(accountKey)).to.equal(true)
     const passcodeKey = await this.application.protocolService.computeWrappingKey(passcode)
-    const wrappedRootKey = await this.application.protocolService.rootKeyEncryption.getWrappedRootKey()
+    const wrappedRootKey = await this.application.protocolService.rootKeyManager.getWrappedRootKey()
     /** Expect that we can decrypt wrapped root key with passcode key */
     const payload = new EncryptedPayload(wrappedRootKey)
     const decrypted = await this.application.protocolService.decryptSplitSingle({
