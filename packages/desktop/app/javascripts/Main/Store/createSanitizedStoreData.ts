@@ -1,9 +1,9 @@
 import fs from 'fs'
 import { Language } from '../SpellcheckerManager'
-import { FileDoesNotExist } from '../Utils/FileUtils'
 import { ensureIsBoolean, isBoolean } from '../Utils/Utils'
 import { StoreData, StoreKeys } from './StoreKeys'
 import { logError } from './Store'
+import { FileErrorCodes } from '../File/FileErrorCodes'
 
 export function createSanitizedStoreData(data: any = {}): StoreData {
   return {
@@ -69,7 +69,7 @@ export function parseDataFile(filePath: string) {
     return createSanitizedStoreData(userData)
   } catch (error: any) {
     console.log('Error reading store file', error)
-    if (error.code !== FileDoesNotExist) {
+    if (error.code !== FileErrorCodes.FileDoesNotExist) {
       logError(error)
     }
 

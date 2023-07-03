@@ -12,6 +12,7 @@ export interface SessionsClientInterface {
   populateSessionFromDemoShareToken(token: Base64String): Promise<void>
 
   getUser(): User | undefined
+  isSignedIn(): boolean
   get userUuid(): string
   getSureUser(): User
 
@@ -24,7 +25,6 @@ export interface SessionsClientInterface {
     ephemeral: boolean,
     minAllowedVersion?: ProtocolVersion,
   ): Promise<SessionManagerResponse>
-  isSignedIn(): boolean
   bypassChecksAndSignInWithRootKey(
     email: string,
     rootKey: RootKeyInterface,

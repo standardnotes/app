@@ -12,6 +12,9 @@ import {
   GetSortedPayloadsByPriority,
   DatabaseFullEntryLoadChunk,
   DatabaseFullEntryLoadChunkResponse,
+  ApplicationInterface,
+  namespacedKey,
+  RawStorageKey,
 } from '@standardnotes/snjs'
 import { Database } from '../Database'
 
@@ -28,6 +31,12 @@ export abstract class WebOrDesktopDevice implements WebOrDesktopDeviceInterface 
     const database = new Database(application.identifier, application.alertService)
 
     this.databases.push(database)
+  }
+
+  removeApplication(application: ApplicationInterface): void {
+    const database = this.databaseForIdentifier(application.identifier)
+    database.deinit()
+    this.databases = this.databases.filter((db) => db !== database)
   }
 
   public async getJsonParsedRawStorageValue(key: string): Promise<unknown | undefined> {
@@ -85,6 +94,11 @@ export abstract class WebOrDesktopDevice implements WebOrDesktopDeviceInterface 
 
   async removeAllRawStorageValues() {
     localStorage.clear()
+  }
+
+  async removeRawStorageValuesForIdentifier(identifier: ApplicationIdentifier) {
+    await this.removeRawStorageValue(namespacedKey(identifier, RawStorageKey.SnjsVersion))
+    await this.removeRawStorageValue(namespacedKey(identifier, RawStorageKey.StorageObject))
   }
 
   async openDatabase(identifier: ApplicationIdentifier) {

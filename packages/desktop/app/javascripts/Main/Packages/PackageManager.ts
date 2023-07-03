@@ -5,19 +5,12 @@ import path from 'path'
 import { MessageToWebApp } from '../../Shared/IpcMessages'
 import { AppName } from '../Strings'
 import { Paths } from '../Types/Paths'
-import {
-  debouncedJSONDiskWriter,
-  deleteDir,
-  deleteDirContents,
-  ensureDirectoryExists,
-  extractZip,
-  FileDoesNotExist,
-  moveDirContents,
-  readJSONFile,
-} from '../Utils/FileUtils'
 import { timeout } from '../Utils/Utils'
 import { downloadFile, getJSON } from './Networking'
 import { Component, MappingFile, PackageInfo, PackageManagerInterface, SyncTask } from './PackageManagerInterface'
+import { FilesManagerInterface } from '../File/FilesManagerInterface'
+import { FilesManager } from '../File/FilesManager'
+import { FileErrorCodes } from '../File/FileErrorCodes'
 
 function logMessage(...message: any) {
   log.info('PackageManager[Info]:', ...message)
@@ -33,26 +26,27 @@ function logError(...message: any) {
 class MappingFileHandler {
   static async create() {
     let mapping: MappingFile
+    const filesManager = new FilesManager()
 
     try {
-      const result = await readJSONFile<MappingFile>(Paths.extensionsMappingJson)
+      const result = await filesManager.readJSONFile<MappingFile>(Paths.extensionsMappingJson)
       mapping = result || {}
     } catch (error: any) {
       /**
        * Mapping file might be absent (first start, corrupted data)
        */
-      if (error.code === FileDoesNotExist) {
-        await ensureDirectoryExists(path.dirname(Paths.extensionsMappingJson))
+      if (error.code === FileErrorCodes.FileDoesNotExist) {
+        await filesManager.ensureDirectoryExists(path.dirname(Paths.extensionsMappingJson))
       } else {
         logError(error)
       }
       mapping = {}
     }
 
-    return new MappingFileHandler(mapping)
+    return new MappingFileHandler(mapping, filesManager)
   }
 
-  constructor(private mapping: MappingFile) {}
+  constructor(private mapping: MappingFile, private filesManager: FilesManagerInterface) {}
 
   get = (componendId: string) => {
     return this.mapping[componendId]
@@ -63,12 +57,14 @@ class MappingFileHandler {
       location,
       version,
     }
-    this.writeToDisk()
+
+    this.filesManager.debouncedJSONDiskWriter(100, Paths.extensionsMappingJson, () => this.mapping)
   }
 
   remove = (componentId: string) => {
     delete this.mapping[componentId]
-    this.writeToDisk()
+
+    this.filesManager.debouncedJSONDiskWriter(100, Paths.extensionsMappingJson, () => this.mapping)
   }
 
   getInstalledVersionForComponent = async (component: Component): Promise<string> => {
@@ -83,15 +79,13 @@ class MappingFileHandler {
      */
     const paths = pathsForComponent(component)
     const packagePath = path.join(paths.absolutePath, 'package.json')
-    const response = await readJSONFile<{ version: string }>(packagePath)
+    const response = await this.filesManager.readJSONFile<{ version: string }>(packagePath)
     if (!response) {
       return ''
     }
     this.set(component.uuid, paths.relativePath, response.version)
     return response.version
   }
-
-  private writeToDisk = debouncedJSONDiskWriter(100, Paths.extensionsMappingJson, () => this.mapping)
 }
 
 export async function initializePackageManager(webContents: Electron.WebContents): Promise<PackageManagerInterface> {
@@ -230,7 +224,7 @@ async function syncComponents(webContents: Electron.WebContents, mapping: Mappin
             await checkForUpdate(webContents, mapping, component)
           }
         } catch (error: any) {
-          if (error.code === FileDoesNotExist) {
+          if (error.code === FileErrorCodes.FileDoesNotExist) {
             /** We have a component but no content. Install the component */
             await installComponent(webContents, mapping, component, component.content.package_info, version)
           } else {
@@ -289,7 +283,7 @@ async function unnestLegacyStructure(dir: string) {
   const sourceDir = path.join(dir, fileNames[0])
   const destDir = dir
 
-  await moveDirContents(sourceDir, destDir)
+  await new FilesManager().moveDirContents(sourceDir, destDir)
 }
 
 async function installComponent(
@@ -331,13 +325,15 @@ async function installComponent(
       downloadFile(downloadUrl, paths.downloadPath),
       (async () => {
         /** Clear the component's directory before extracting the zip. */
-        await ensureDirectoryExists(paths.absolutePath)
-        await deleteDirContents(paths.absolutePath)
+        const filesManager = new FilesManager()
+        await filesManager.ensureDirectoryExists(paths.absolutePath)
+        await filesManager.deleteDirContents(paths.absolutePath)
       })(),
     ])
 
     logMessage('Extracting', paths.downloadPath, 'to', paths.absolutePath)
-    await extractZip(paths.downloadPath, paths.absolutePath)
+    const filesManager = new FilesManager()
+    await filesManager.extractZip(paths.downloadPath, paths.absolutePath)
 
     const legacyStructure = await usesLegacyNestedFolderStructure(paths.absolutePath)
     if (legacyStructure) {
@@ -348,7 +344,7 @@ async function installComponent(
     try {
       /** Try to read 'sn.main' field from 'package.json' file */
       const packageJsonPath = path.join(paths.absolutePath, 'package.json')
-      const packageJson = await readJSONFile<{
+      const packageJson = await filesManager.readJSONFile<{
         sn?: { main?: string }
         version?: string
       }>(packageJsonPath)
@@ -403,6 +399,8 @@ async function uninstallComponent(mapping: MappingFileHandler, uuid: string) {
     /** No mapping for component */
     return
   }
-  await deleteDir(path.join(Paths.userDataDir, componentMapping.location))
-  mapping.remove(uuid)
+  const result = await new FilesManager().deleteDir(path.join(Paths.userDataDir, componentMapping.location))
+  if (!result.isFailed()) {
+    mapping.remove(uuid)
+  }
 }

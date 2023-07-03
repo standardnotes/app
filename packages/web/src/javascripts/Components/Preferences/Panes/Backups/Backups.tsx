@@ -15,13 +15,15 @@ type Props = {
 }
 
 const Backups: FunctionComponent<Props> = ({ application, viewControllerManager }) => {
+  const isUsingThirdPartyServer = application.isThirdPartyHostUsed()
+
   return (
     <PreferencesPane>
       <DataBackups application={application} viewControllerManager={viewControllerManager} />
       <TextBackupsCrossPlatform application={application} />
       <PlaintextBackupsCrossPlatform />
       <FileBackupsCrossPlatform application={application} />
-      <EmailBackups application={application} />
+      {!isUsingThirdPartyServer && <EmailBackups application={application} />}
     </PreferencesPane>
   )
 }

@@ -9,23 +9,14 @@ import {
 } from '@web/Application/Device/DesktopSnjsExports'
 import { AppState } from 'app/AppState'
 import { promises as fs, existsSync } from 'fs'
-import { WebContents, shell } from 'electron'
+import { WebContents } from 'electron'
 import { StoreKeys } from '../Store/StoreKeys'
 import path from 'path'
-import {
-  deleteFileIfExists,
-  ensureDirectoryExists,
-  moveDirContents,
-  moveFile,
-  openDirectoryPicker,
-  readJSONFile,
-  writeFile,
-  writeJSONFile,
-} from '../Utils/FileUtils'
 import { FileDownloader } from './FileDownloader'
 import { FileReadOperation } from './FileReadOperation'
 import { Paths } from '../Types/Paths'
 import { MessageToWebApp } from '../../Shared/IpcMessages'
+import { FilesManagerInterface } from '../File/FilesManagerInterface'
 
 const TextBackupFileExtension = '.txt'
 
@@ -39,7 +30,11 @@ export class FilesBackupManager implements FileBackupsDevice {
   private readOperations: Map<string, FileReadOperation> = new Map()
   private plaintextMappingCache?: PlaintextBackupsMapping
 
-  constructor(private appState: AppState, private webContents: WebContents) {}
+  constructor(
+    private appState: AppState,
+    private webContents: WebContents,
+    private filesManager: FilesManagerInterface,
+  ) {}
 
   private async findUuidForPlaintextBackupFileName(
     backupsDirectory: string,
@@ -72,16 +67,16 @@ export class FilesBackupManager implements FileBackupsDevice {
       return
     }
 
-    await ensureDirectoryExists(newLocation)
+    await this.filesManager.ensureDirectoryExists(newLocation)
 
     const legacyMappingLocation = path.join(legacyLocation, 'info.json')
     const newMappingLocation = this.getFileBackupsMappingFilePath(newLocation)
-    await ensureDirectoryExists(path.dirname(newMappingLocation))
+    await this.filesManager.ensureDirectoryExists(path.dirname(newMappingLocation))
     if (existsSync(legacyMappingLocation)) {
-      await moveFile(legacyMappingLocation, newMappingLocation)
+      await this.filesManager.moveFile(legacyMappingLocation, newMappingLocation)
     }
 
-    await moveDirContents(legacyLocation, newLocation)
+    await this.filesManager.moveDirContents(legacyLocation, newLocation)
   }
 
   public async isLegacyFilesBackupsEnabled(): Promise<boolean> {
@@ -111,33 +106,12 @@ export class FilesBackupManager implements FileBackupsDevice {
     return path.join(Paths.homeDir, LegacyTextBackupsDirectory)
   }
 
-  public async presentDirectoryPickerForLocationChangeAndTransferOld(
-    appendPath: string,
-    oldLocation?: string,
-  ): Promise<string | undefined> {
-    const selectedDirectory = await openDirectoryPicker('Select')
-
-    if (!selectedDirectory) {
-      return undefined
-    }
-
-    const newPath = path.join(selectedDirectory, path.normalize(appendPath))
-
-    await ensureDirectoryExists(newPath)
-
-    if (oldLocation) {
-      await moveDirContents(path.normalize(oldLocation), newPath)
-    }
-
-    return newPath
-  }
-
   private getFileBackupsMappingFilePath(backupsLocation: string): string {
     return path.join(backupsLocation, '.settings', 'info.json')
   }
 
   private async getFileBackupsMappingFileFromDisk(backupsLocation: string): Promise<FileBackupsMapping | undefined> {
-    return readJSONFile<FileBackupsMapping>(this.getFileBackupsMappingFilePath(backupsLocation))
+    return this.filesManager.readJSONFile<FileBackupsMapping>(this.getFileBackupsMappingFilePath(backupsLocation))
   }
 
   private defaulFileBackupstMappingFileValue(): FileBackupsMapping {
@@ -158,12 +132,8 @@ export class FilesBackupManager implements FileBackupsDevice {
     return data
   }
 
-  async openLocation(location: string): Promise<void> {
-    void shell.openPath(location)
-  }
-
   private async saveFilesBackupsMappingFile(location: string, file: FileBackupsMapping): Promise<'success' | 'failed'> {
-    await writeJSONFile(this.getFileBackupsMappingFilePath(location), file)
+    await this.filesManager.writeJSONFile(this.getFileBackupsMappingFilePath(location), file)
 
     return 'success'
   }
@@ -182,9 +152,9 @@ export class FilesBackupManager implements FileBackupsDevice {
     const metaFilePath = path.join(fileDir, FileBackupsConstantsV1.MetadataFileName)
     const binaryPath = path.join(fileDir, FileBackupsConstantsV1.BinaryFileName)
 
-    await ensureDirectoryExists(fileDir)
+    await this.filesManager.ensureDirectoryExists(fileDir)
 
-    await writeFile(metaFilePath, metaFile)
+    await this.filesManager.writeFile(metaFilePath, metaFile)
 
     const downloader = new FileDownloader(
       downloadRequest.chunkSizes,
@@ -247,7 +217,7 @@ export class FilesBackupManager implements FileBackupsDevice {
     let success: boolean
 
     try {
-      await ensureDirectoryExists(location)
+      await this.filesManager.ensureDirectoryExists(location)
       const name = `${new Date().toISOString().replace(/:/g, '-')}${TextBackupFileExtension}`
       const filePath = path.join(location, name)
       await fs.writeFile(filePath, data)
@@ -262,7 +232,7 @@ export class FilesBackupManager implements FileBackupsDevice {
 
   async copyDecryptScript(location: string) {
     try {
-      await ensureDirectoryExists(location)
+      await this.filesManager.ensureDirectoryExists(location)
       await fs.copyFile(Paths.decryptScript, path.join(location, path.basename(Paths.decryptScript)))
     } catch (error) {
       console.error(error)
@@ -274,14 +244,14 @@ export class FilesBackupManager implements FileBackupsDevice {
   }
 
   private async getPlaintextMappingFileFromDisk(location: string): Promise<PlaintextBackupsMapping | undefined> {
-    return readJSONFile<PlaintextBackupsMapping>(this.getPlaintextMappingFilePath(location))
+    return this.filesManager.readJSONFile<PlaintextBackupsMapping>(this.getPlaintextMappingFilePath(location))
   }
 
   private async savePlaintextBackupsMappingFile(
     location: string,
     file: PlaintextBackupsMapping,
   ): Promise<'success' | 'failed'> {
-    await writeJSONFile(this.getPlaintextMappingFilePath(location), file)
+    await this.filesManager.writeJSONFile(this.getPlaintextMappingFilePath(location), file)
 
     return 'success'
   }
@@ -324,7 +294,7 @@ export class FilesBackupManager implements FileBackupsDevice {
       const records = mapping.files[uuid]
       for (const record of records) {
         const filePath = path.join(location, record.path)
-        await deleteFileIfExists(filePath)
+        await this.filesManager.deleteFileIfExists(filePath)
       }
       mapping.files[uuid] = []
     }
@@ -337,12 +307,12 @@ export class FilesBackupManager implements FileBackupsDevice {
         return records.find((record) => record.tag === tag)
       }
 
-      await ensureDirectoryExists(absolutePath)
+      await this.filesManager.ensureDirectoryExists(absolutePath)
 
       const relativePath = forTag ?? ''
       const filenameWithSlashesEscaped = filename.replace(/\//g, '\u2215')
       const fileAbsolutePath = path.join(absolutePath, relativePath, filenameWithSlashesEscaped)
-      await writeFile(fileAbsolutePath, data)
+      await this.filesManager.writeFile(fileAbsolutePath, data)
 
       const existingRecord = findMappingRecord(forTag)
       if (!existingRecord) {
@@ -385,6 +355,10 @@ export class FilesBackupManager implements FileBackupsDevice {
       const watcher = fs.watch(backupsDirectory, { recursive: true })
       for await (const event of watcher) {
         const { eventType, filename } = event
+        if (!filename) {
+          continue
+        }
+
         if (eventType !== 'change' && eventType !== 'rename') {
           continue
         }

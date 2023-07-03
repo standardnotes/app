@@ -51,7 +51,9 @@ export * from './Device/DeviceInterface'
 export * from './Device/MobileDeviceInterface'
 export * from './Device/TypeCheck'
 export * from './Device/WebOrDesktopDeviceInterface'
-
+export * from './Device/DatabaseLoadOptions'
+export * from './Device/DatabaseItemMetadata'
+export * from './Device/DatabaseLoadSorter'
 export * from './Diagnostics/ServiceDiagnostics'
 
 export * from './Encryption/DecryptBackupFileUseCase'
@@ -77,7 +79,11 @@ export * from './Feature/SetOfflineFeaturesFunctionResponse'
 export * from './Files/FileService'
 
 export * from './History/HistoryServiceInterface'
-
+export * from './HomeServer/HomeServerEnvironmentConfiguration'
+export * from './HomeServer/HomeServerManagerInterface'
+export * from './HomeServer/HomeServerService'
+export * from './HomeServer/HomeServerServiceInterface'
+export * from './HomeServer/HomeServerStatus'
 export * from './Integrity/IntegrityApiInterface'
 export * from './Integrity/IntegrityEvent'
 export * from './Integrity/IntegrityEventPayload'
@@ -114,8 +120,7 @@ export * from './Revision/RevisionClientInterface'
 export * from './Revision/RevisionManager'
 
 export * from './Service/AbstractService'
-export * from './Service/ServiceInterface'
-
+export * from './Service/ApplicationServiceInterface'
 export * from './Session/SessionManagerResponse'
 export * from './Session/SessionsClientInterface'
 export * from './Session/SessionEvent'

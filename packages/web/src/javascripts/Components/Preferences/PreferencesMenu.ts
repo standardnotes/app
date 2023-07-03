@@ -4,12 +4,14 @@ import { WebApplication } from '@/Application/WebApplication'
 import { PackageProvider } from './Panes/General/Advanced/Packages/Provider/PackageProvider'
 import { securityPrefsHasBubble } from './Panes/Security/securityPrefsHasBubble'
 import { PreferenceId } from '@standardnotes/ui-services'
+import { isDesktopApplication } from '@/Utils'
 import { featureTrunkVaultsEnabled } from '@/FeatureTrunk'
 
 interface PreferencesMenuItem {
   readonly id: PreferenceId
   readonly icon: IconType
   readonly label: string
+  readonly order: number
   readonly hasBubble?: boolean
 }
 
@@ -21,28 +23,32 @@ interface SelectableMenuItem extends PreferencesMenuItem {
  * Items are in order of appearance
  */
 const PREFERENCES_MENU_ITEMS: PreferencesMenuItem[] = [
-  { id: 'whats-new', label: "What's New", icon: 'asterisk' },
-  { id: 'account', label: 'Account', icon: 'user' },
-  { id: 'general', label: 'General', icon: 'settings' },
-  { id: 'security', label: 'Security', icon: 'security' },
-  { id: 'backups', label: 'Backups', icon: 'restore' },
-  { id: 'appearance', label: 'Appearance', icon: 'themes' },
-  { id: 'listed', label: 'Listed', icon: 'listed' },
-  { id: 'shortcuts', label: 'Shortcuts', icon: 'keyboard' },
-  { id: 'accessibility', label: 'Accessibility', icon: 'accessibility' },
-  { id: 'get-free-month', label: 'Get a free month', icon: 'star' },
-  { id: 'help-feedback', label: 'Help & feedback', icon: 'help' },
+  { id: 'whats-new', label: "What's New", icon: 'asterisk', order: 0 },
+  { id: 'account', label: 'Account', icon: 'user', order: 1 },
+  { id: 'general', label: 'General', icon: 'settings', order: 3 },
+  { id: 'security', label: 'Security', icon: 'security', order: 4 },
+  { id: 'backups', label: 'Backups', icon: 'restore', order: 5 },
+  { id: 'appearance', label: 'Appearance', icon: 'themes', order: 6 },
+  { id: 'listed', label: 'Listed', icon: 'listed', order: 7 },
+  { id: 'shortcuts', label: 'Shortcuts', icon: 'keyboard', order: 8 },
+  { id: 'accessibility', label: 'Accessibility', icon: 'accessibility', order: 9 },
+  { id: 'get-free-month', label: 'Get a free month', icon: 'star', order: 10 },
+  { id: 'help-feedback', label: 'Help & feedback', icon: 'help', order: 11 },
 ]
 
 const READY_PREFERENCES_MENU_ITEMS: PreferencesMenuItem[] = [
-  { id: 'whats-new', label: "What's New", icon: 'asterisk' },
-  { id: 'account', label: 'Account', icon: 'user' },
-  { id: 'general', label: 'General', icon: 'settings' },
-  { id: 'security', label: 'Security', icon: 'security' },
-  { id: 'backups', label: 'Backups', icon: 'restore' },
-  { id: 'appearance', label: 'Appearance', icon: 'themes' },
-  { id: 'listed', label: 'Listed', icon: 'listed' },
-  { id: 'help-feedback', label: 'Help & feedback', icon: 'help' },
+  { id: 'whats-new', label: "What's New", icon: 'asterisk', order: 0 },
+  { id: 'account', label: 'Account', icon: 'user', order: 1 },
+  { id: 'general', label: 'General', icon: 'settings', order: 3 },
+  { id: 'security', label: 'Security', icon: 'security', order: 4 },
+  { id: 'backups', label: 'Backups', icon: 'restore', order: 5 },
+  { id: 'appearance', label: 'Appearance', icon: 'themes', order: 6 },
+  { id: 'listed', label: 'Listed', icon: 'listed', order: 7 },
+  { id: 'help-feedback', label: 'Help & feedback', icon: 'help', order: 11 },
+]
+
+const DESKTOP_PREFERENCES_MENU_ITEMS: PreferencesMenuItem[] = [
+  { id: 'home-server', label: 'Home Server', icon: 'server', order: 5 },
 ]
 
 export class PreferencesMenu {
@@ -52,9 +58,17 @@ export class PreferencesMenu {
 
   constructor(private application: WebApplication, private readonly _enableUnfinishedFeatures: boolean) {
     if (featureTrunkVaultsEnabled()) {
-      PREFERENCES_MENU_ITEMS.splice(3, 0, { id: 'vaults', label: 'Vaults', icon: 'safe-square' })
-      READY_PREFERENCES_MENU_ITEMS.splice(3, 0, { id: 'vaults', label: 'Vaults', icon: 'safe-square' })
+      PREFERENCES_MENU_ITEMS.splice(3, 0, { id: 'vaults', label: 'Vaults', icon: 'safe-square', order: 5 })
+      READY_PREFERENCES_MENU_ITEMS.splice(3, 0, { id: 'vaults', label: 'Vaults', icon: 'safe-square', order: 5 })
     }
+
+    let menuItems = this._enableUnfinishedFeatures ? PREFERENCES_MENU_ITEMS : READY_PREFERENCES_MENU_ITEMS
+
+    if (isDesktopApplication()) {
+      menuItems = [...menuItems, ...DESKTOP_PREFERENCES_MENU_ITEMS]
+    }
+
+    this._menu = menuItems.sort((a, b) => a.order - b.order)
 
     this._menu = this._enableUnfinishedFeatures ? PREFERENCES_MENU_ITEMS : READY_PREFERENCES_MENU_ITEMS
 

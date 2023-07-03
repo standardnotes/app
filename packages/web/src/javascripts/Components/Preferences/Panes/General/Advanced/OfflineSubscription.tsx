@@ -12,9 +12,10 @@ import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 type Props = {
   application: WebApplication
   viewControllerManager: ViewControllerManager
+  onSuccess?: () => void
 }
 
-const OfflineSubscription: FunctionComponent<Props> = ({ application }) => {
+const OfflineSubscription: FunctionComponent<Props> = ({ application, onSuccess }) => {
   const [activationCode, setActivationCode] = useState('')
   const [isSuccessfullyActivated, setIsSuccessfullyActivated] = useState(false)
   const [isSuccessfullyRemoved, setIsSuccessfullyRemoved] = useState(false)
@@ -33,14 +34,44 @@ const OfflineSubscription: FunctionComponent<Props> = ({ application }) => {
   const handleSubscriptionCodeSubmit = async (event: React.FormEvent) => {
     event.preventDefault()
 
+    const homeServer = application.homeServer
+
+    const homeServerEnabled = homeServer && homeServer.isHomeServerEnabled()
+    const homeServerIsRunning = homeServerEnabled && (await homeServer.isHomeServerRunning())
+
+    if (homeServerEnabled) {
+      if (!homeServerIsRunning) {
+        await application.alertService.alert('Please start your home server before activating offline features.')
+
+        return
+      }
+
+      const signedInUser = application.getUser()
+      if (!signedInUser) {
+        return
+      }
+
+      const serverActivationResult = await homeServer.activatePremiumFeatures(signedInUser.email)
+      if (serverActivationResult.isFailed()) {
+        await application.alertService.alert(serverActivationResult.getError())
+
+        return
+      }
+    }
+
     const result = await application.features.setOfflineFeaturesCode(activationCode)
 
     if (result instanceof ClientDisplayableError) {
       await application.alertService.alert(result.text)
-    } else {
-      setIsSuccessfullyActivated(true)
-      setHasUserPreviouslyStoredCode(true)
-      setIsSuccessfullyRemoved(false)
+
+      return
+    }
+
+    setIsSuccessfullyActivated(true)
+    setHasUserPreviouslyStoredCode(true)
+    setIsSuccessfullyRemoved(false)
+    if (onSuccess) {
+      onSuccess()
     }
   }
 

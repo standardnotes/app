@@ -9,5 +9,7 @@ test/data/tmp/
 .idea
 .env
 
+data/*
+
 codeqldb
 yarn-error.log

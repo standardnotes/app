@@ -10,6 +10,7 @@ import Listed from './Panes/Listed/Listed'
 import HelpAndFeedback from './Panes/HelpFeedback'
 import { PreferencesProps } from './PreferencesProps'
 import WhatsNew from './Panes/WhatsNew/WhatsNew'
+import HomeServer from './Panes/HomeServer/HomeServer'
 import Vaults from './Panes/Vaults/Vaults'
 
 const PaneSelector: FunctionComponent<PreferencesProps & { menu: PreferencesMenu }> = ({
@@ -32,6 +33,8 @@ const PaneSelector: FunctionComponent<PreferencesProps & { menu: PreferencesMenu
       return <AccountPreferences application={application} viewControllerManager={viewControllerManager} />
     case 'appearance':
       return <Appearance application={application} />
+    case 'home-server':
+      return <HomeServer />
     case 'security':
       return (
         <Security

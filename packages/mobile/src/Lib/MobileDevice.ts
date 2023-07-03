@@ -3,13 +3,16 @@ import {
   AppleIAPProductId,
   AppleIAPReceipt,
   ApplicationIdentifier,
+  ApplicationInterface,
   DatabaseKeysLoadChunkResponse,
   DatabaseLoadOptions,
   Environment,
   MobileDeviceInterface,
+  namespacedKey,
   NamespacedRootKeyInKeychain,
   Platform as SNPlatform,
   RawKeychainValue,
+  RawStorageKey,
   removeFromArray,
   TransferPayload,
   UuidString,
@@ -71,6 +74,19 @@ export class MobileDevice implements MobileDeviceInterface {
     private androidBackHandlerService?: AndroidBackHandlerService,
     private colorSchemeService?: ColorSchemeObserverService,
   ) {}
+
+  async removeRawStorageValuesForIdentifier(identifier: string): Promise<void> {
+    await this.removeRawStorageValue(namespacedKey(identifier, RawStorageKey.SnjsVersion))
+    await this.removeRawStorageValue(namespacedKey(identifier, RawStorageKey.StorageObject))
+  }
+
+  setApplication(_application: ApplicationInterface): void {
+    throw new Error('Method not implemented.')
+  }
+
+  removeApplication(_application: ApplicationInterface): void {
+    throw new Error('Method not implemented.')
+  }
 
   async authenticateWithU2F(authenticationOptionsJSONString: string): Promise<Record<string, unknown> | null> {
     const { Fido2ApiModule } = NativeModules

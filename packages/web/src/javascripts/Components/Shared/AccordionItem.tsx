@@ -7,9 +7,10 @@ type Props = {
   title: string | JSX.Element
   className?: string
   children?: ReactNode
+  onClick?: (expanded: boolean) => void
 }
 
-const AccordionItem: FunctionComponent<Props> = ({ title, className = '', children }) => {
+const AccordionItem: FunctionComponent<Props> = ({ title, className = '', children, onClick }) => {
   const elementRef = useRef<HTMLDivElement>(null)
   const [isExpanded, setIsExpanded] = useState(false)
 
@@ -19,6 +20,9 @@ const AccordionItem: FunctionComponent<Props> = ({ title, className = '', childr
         className="relative flex cursor-pointer items-center justify-between hover:underline"
         onClick={() => {
           setIsExpanded(!isExpanded)
+          if (onClick) {
+            onClick(!isExpanded)
+          }
         }}
       >
         <Title>{title}</Title>

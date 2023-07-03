@@ -106,7 +106,11 @@ const ChallengeModal: FunctionComponent<Props> = ({
      */
     setTimeout(() => {
       if (valuesToProcess.length > 0) {
-        application.submitValuesForChallenge(challenge, valuesToProcess).catch(console.error)
+        if (challenge.customHandler) {
+          void challenge.customHandler(challenge, valuesToProcess)
+        } else {
+          application.submitValuesForChallenge(challenge, valuesToProcess).catch(console.error)
+        }
       } else {
         setIsProcessing(false)
       }

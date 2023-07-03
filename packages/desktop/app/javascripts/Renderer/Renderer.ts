@@ -54,6 +54,12 @@ window.onload = () => {
   void loadAndStartApplication()
 }
 
+window.onunload = () => {
+  if (window.device) {
+    void window.device.stopHomeServer()
+  }
+}
+
 /** @returns whether the keychain structure is up to date or not */
 async function migrateKeychain(remoteBridge: CrossProcessBridge): Promise<boolean> {
   if (!remoteBridge.useNativeKeychain) {
@@ -150,4 +156,8 @@ window.electronMainEvents.setInstallComponentCompleteHandler((_: IpcRendererEven
 
 window.electronMainEvents.setWatchedDirectoriesChangeHandler((_: IpcRendererEvent, changes: unknown) => {
   void window.webClient.handleWatchedDirectoriesChanges(changes as DesktopWatchedDirectoriesChanges)
+})
+
+window.electronMainEvents.setHomeServerStartedHandler((_: IpcRendererEvent, serverUrl: unknown) => {
+  void window.webClient.handleHomeServerStarted(serverUrl as string)
 })

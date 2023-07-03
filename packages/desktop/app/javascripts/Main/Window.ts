@@ -24,6 +24,10 @@ import { checkForUpdate, setupUpdates } from './UpdateManager'
 import { handleTestMessage, send } from './Utils/Testing'
 import { isTesting, lowercaseDriveLetter } from './Utils/Utils'
 import { initializeZoomManager } from './ZoomManager'
+import { HomeServerManager } from './HomeServer/HomeServerManager'
+import { HomeServer } from '@standardnotes/home-server'
+import { FilesManager } from './File/FilesManager'
+import { DirectoryManager } from './Directory/DirectoryManager'
 
 const WINDOW_DEFAULT_WIDTH = 1100
 const WINDOW_DEFAULT_HEIGHT = 800
@@ -72,6 +76,8 @@ export async function createWindowState({
     services.menuManager,
     services.fileBackupsManager,
     services.mediaManager,
+    services.homeServerManager,
+    services.directoryManager,
   )
 
   const shouldOpenUrl = (url: string) => url.startsWith('http') || url.startsWith('mailto')
@@ -200,6 +206,11 @@ async function createWindowServices(window: Electron.BrowserWindow, appState: Ap
   const trayManager = createTrayManager(window, appState.store)
   const spellcheckerManager = createSpellcheckerManager(appState.store, window.webContents, appLocale)
   const mediaManager = new MediaManager()
+  const homeServer = new HomeServer()
+  const filesManager = new FilesManager()
+  const directoryManager = new DirectoryManager(filesManager)
+
+  const homeServerManager = new HomeServerManager(homeServer, window.webContents, filesManager)
 
   if (isTesting()) {
     handleTestMessage(MessageType.SpellCheckerManager, () => spellcheckerManager)
@@ -213,7 +224,7 @@ async function createWindowServices(window: Electron.BrowserWindow, appState: Ap
     spellcheckerManager,
   })
 
-  const fileBackupsManager = new FilesBackupManager(appState, window.webContents)
+  const fileBackupsManager = new FilesBackupManager(appState, window.webContents, filesManager)
 
   return {
     updateManager,
@@ -224,6 +235,8 @@ async function createWindowServices(window: Electron.BrowserWindow, appState: Ap
     searchManager,
     fileBackupsManager,
     mediaManager,
+    homeServerManager,
+    directoryManager,
   }
 }
 

@@ -70,7 +70,12 @@ import {
   RevisionManager,
   ApiServiceEvent,
 } from '@standardnotes/services'
-import { BackupServiceInterface, FilesClientInterface } from '@standardnotes/files'
+import {
+  BackupServiceInterface,
+  DirectoryManagerInterface,
+  FileBackupsDevice,
+  FilesClientInterface,
+} from '@standardnotes/files'
 import { ComputePrivateUsername } from '@standardnotes/encryption'
 import { useBoolean } from '@standardnotes/utils'
 import {
@@ -133,14 +138,14 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
    */
   private deprecatedHttpService!: InternalServices.DeprecatedHttpService
   private declare httpService: HttpServiceInterface
-  private payloadManager!: InternalServices.PayloadManager
+  public payloadManager!: InternalServices.PayloadManager
   public protocolService!: EncryptionService
   private diskStorageService!: InternalServices.DiskStorageService
   private inMemoryStore!: ExternalServices.KeyValueStoreInterface<string>
   /**
    * @deprecated will be fully replaced by @standardnotes/api services
    */
-  private apiService!: InternalServices.SNApiService
+  public apiService!: InternalServices.SNApiService
   private declare userApiService: UserApiServiceInterface
   private declare userServer: UserServerInterface
   private declare userRequestServer: UserRequestServerInterface
@@ -152,7 +157,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
 
   private sessionManager!: InternalServices.SNSessionManager
   private syncService!: InternalServices.SNSyncService
-  private challengeService!: InternalServices.ChallengeService
+  public challengeService!: InternalServices.ChallengeService
   public singletonManager!: InternalServices.SNSingletonManager
   public componentManagerService!: InternalServices.SNComponentManager
   public protectionService!: InternalServices.SNProtectionService
@@ -184,6 +189,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   private declare authenticatorManager: AuthenticatorClientInterface
   private declare authManager: AuthClientInterface
   private declare revisionManager: RevisionClientInterface
+  private homeServerService?: ExternalServices.HomeServerService
 
   private declare _signInWithRecoveryCodes: SignInWithRecoveryCodes
   private declare _getRecoveryCodes: GetRecoveryCodes
@@ -200,7 +206,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
 
   private eventHandlers: ApplicationObserver[] = []
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private services: ExternalServices.ServiceInterface<any, any>[] = []
+  private services: ExternalServices.ApplicationServiceInterface<any, any>[] = []
   private streamRemovers: ObserverRemover[] = []
   private serviceObservers: ObserverRemover[] = []
   private managedSubscribers: ObserverRemover[] = []
@@ -379,6 +385,10 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
 
   public get challenges(): ExternalServices.ChallengeServiceInterface {
     return this.challengeService
+  }
+
+  get homeServer(): ExternalServices.HomeServerServiceInterface | undefined {
+    return this.homeServerService
   }
 
   public get vaults(): ExternalServices.VaultServiceInterface {
@@ -712,7 +722,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     await this.apiService.setHost(host)
   }
 
-  public getHost(): string | undefined {
+  public getHost(): string {
     return this.apiService.getHost()
   }
 
@@ -1221,6 +1231,14 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return this.apiService.isThirdPartyHostUsed()
   }
 
+  async isUsingHomeServer(): Promise<boolean> {
+    if (!this.homeServerService) {
+      return false
+    }
+
+    return this.getHost() === (await this.homeServerService.getHomeServerUrl())
+  }
+
   private constructServices() {
     this.createMappers()
     this.createPayloadManager()
@@ -1264,6 +1282,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.createStatusService()
     if (isDesktopDevice(this.deviceInterface)) {
       this.createFilesBackupService(this.deviceInterface)
+      this.createHomeServerService(this.deviceInterface)
     }
     this.createMigrationService()
     this.createFileService()
@@ -1328,6 +1347,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     ;(this.authenticatorManager as unknown) = undefined
     ;(this.authManager as unknown) = undefined
     ;(this.revisionManager as unknown) = undefined
+    ;(this.homeServerService as unknown) = undefined
     ;(this._signInWithRecoveryCodes as unknown) = undefined
     ;(this._getRecoveryCodes as unknown) = undefined
     ;(this._addAuthenticator as unknown) = undefined
@@ -1689,6 +1709,12 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.services.push(this.diskStorageService)
   }
 
+  private createHomeServerService(device: ExternalServices.DesktopDeviceInterface) {
+    this.homeServerService = new ExternalServices.HomeServerService(device, this.internalEventBus)
+
+    this.services.push(this.homeServerService)
+  }
+
   private createInMemoryStorageManager() {
     this.inMemoryStore = new ExternalServices.InMemoryStore()
   }
@@ -1928,13 +1954,14 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       this.itemManager,
       this.apiService,
       this.protocolService,
-      device,
+      device as FileBackupsDevice,
       this.statusService,
       this.options.crypto,
       this.storage,
       this.sessions,
       this.payloadManager,
       this.historyManager,
+      device as DirectoryManagerInterface,
       this.internalEventBus,
     )
     this.services.push(this.filesBackupService)

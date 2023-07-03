@@ -11,6 +11,8 @@ export enum StoreKeys {
   UseNativeKeychain = 'useNativeKeychain',
   LastRunVersion = 'LastRunVersion',
 
+  HomeServerDataLocation = 'HomeServerDataLocation',
+
   LegacyTextBackupsLocation = 'backupsLocation',
   LegacyTextBackupsDisabled = 'backupsDisabled',
 

@@ -24,7 +24,7 @@ describe('web application', () => {
   SNLog.onLog = console.log
   SNLog.onError = console.error
 
-  beforeEach(() => {
+  beforeEach(async () => {
     const identifier = '123'
 
     window.matchMedia = jest.fn().mockReturnValue({ matches: false, addListener: jest.fn() })
@@ -34,7 +34,7 @@ describe('web application', () => {
       appVersion: '1.2.3',
       setApplication: jest.fn(),
       openDatabase: jest.fn().mockReturnValue(Promise.resolve()),
-      getRawStorageValue: jest.fn().mockImplementation((key) => {
+      getRawStorageValue: jest.fn().mockImplementation(async (key) => {
         if (key === namespacedKey(identifier, RawStorageKey.SnjsVersion)) {
           return '10.0.0'
         }
@@ -49,7 +49,7 @@ describe('web application', () => {
     componentManager.legacyGetDefaultEditor = jest.fn()
     Object.defineProperty(application, 'componentManager', { value: componentManager })
 
-    application.prepareForLaunch({ receiveChallenge: jest.fn() })
+    await application.prepareForLaunch({ receiveChallenge: jest.fn() })
   })
 
   describe('geDefaultEditorIdentifier', () => {

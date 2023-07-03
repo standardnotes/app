@@ -6,6 +6,8 @@ export enum RawStorageKey {
   StorageObject = 'storage',
   DescriptorRecord = 'descriptors',
   SnjsVersion = 'snjs_version',
+  HomeServerEnabled = 'home_server_enabled',
+  HomeServerDataLocation = 'home_serve_data_location',
 }
 
 /**

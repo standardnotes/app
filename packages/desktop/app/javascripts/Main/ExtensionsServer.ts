@@ -5,8 +5,8 @@ import path from 'path'
 import { URL } from 'url'
 import { extensions as str } from './Strings'
 import { Paths } from './Types/Paths'
-import { FileDoesNotExist } from './Utils/FileUtils'
 import { app } from 'electron'
+import { FileErrorCodes } from './File/FileErrorCodes'
 
 const Protocol = 'http'
 
@@ -80,7 +80,7 @@ function onRequestError(error: Error | { code: string }, response: ServerRespons
   let responseCode: number
   let message: string
 
-  if ('code' in error && error.code === FileDoesNotExist) {
+  if ('code' in error && error.code === FileErrorCodes.FileDoesNotExist) {
     responseCode = 404
     message = str().missingExtension
   } else {

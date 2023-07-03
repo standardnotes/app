@@ -1,4 +1,5 @@
 import { observer } from 'mobx-react-lite'
+
 import { WebApplication } from '@/Application/WebApplication'
 import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import Authentication from './Authentication'
@@ -17,25 +18,29 @@ type Props = {
   viewControllerManager: ViewControllerManager
 }
 
-const AccountPreferences = ({ application, viewControllerManager }: Props) => (
-  <PreferencesPane>
-    {!application.hasAccount() ? (
-      <Authentication application={application} viewControllerManager={viewControllerManager} />
-    ) : (
-      <>
-        <Credentials application={application} viewControllerManager={viewControllerManager} />
-        <Sync application={application} />
-      </>
-    )}
-    <Subscription application={application} viewControllerManager={viewControllerManager} />
-    <SubscriptionSharing application={application} viewControllerManager={viewControllerManager} />
-    {application.hasAccount() && viewControllerManager.featuresController.entitledToFiles && (
-      <FilesSection application={application} />
-    )}
-    {application.hasAccount() && <Email application={application} />}
-    <SignOutWrapper application={application} viewControllerManager={viewControllerManager} />
-    <DeleteAccount application={application} viewControllerManager={viewControllerManager} />
-  </PreferencesPane>
-)
+const AccountPreferences = ({ application, viewControllerManager }: Props) => {
+  const isUsingThirdPartyServer = application.isThirdPartyHostUsed()
+
+  return (
+    <PreferencesPane>
+      {!application.hasAccount() ? (
+        <Authentication application={application} viewControllerManager={viewControllerManager} />
+      ) : (
+        <>
+          <Credentials application={application} viewControllerManager={viewControllerManager} />
+          <Sync application={application} />
+        </>
+      )}
+      <Subscription application={application} viewControllerManager={viewControllerManager} />
+      <SubscriptionSharing application={application} viewControllerManager={viewControllerManager} />
+      {application.hasAccount() && viewControllerManager.featuresController.entitledToFiles && (
+        <FilesSection application={application} />
+      )}
+      {application.hasAccount() && !isUsingThirdPartyServer && <Email application={application} />}
+      <SignOutWrapper application={application} viewControllerManager={viewControllerManager} />
+      <DeleteAccount application={application} viewControllerManager={viewControllerManager} />
+    </PreferencesPane>
+  )
+}
 
 export default observer(AccountPreferences)

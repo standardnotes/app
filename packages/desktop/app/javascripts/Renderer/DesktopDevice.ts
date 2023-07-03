@@ -25,6 +25,46 @@ export class DesktopDevice extends WebOrDesktopDevice implements DesktopDeviceIn
     super(appVersion)
   }
 
+  async getHomeServerUrl(): Promise<string | undefined> {
+    return this.remoteBridge.getHomeServerUrl()
+  }
+
+  async getHomeServerLastErrorMessage(): Promise<string | undefined> {
+    return this.remoteBridge.getHomeServerLastErrorMessage()
+  }
+
+  async isHomeServerRunning(): Promise<boolean> {
+    return this.remoteBridge.isHomeServerRunning()
+  }
+
+  async activatePremiumFeatures(username: string): Promise<string | undefined> {
+    return this.remoteBridge.activatePremiumFeatures(username)
+  }
+
+  async setHomeServerConfiguration(configurationJSONString: string): Promise<void> {
+    return this.remoteBridge.setHomeServerConfiguration(configurationJSONString)
+  }
+
+  async getHomeServerConfiguration(): Promise<string | undefined> {
+    return this.remoteBridge.getHomeServerConfiguration()
+  }
+
+  async setHomeServerDataLocation(location: string): Promise<void> {
+    return this.remoteBridge.setHomeServerDataLocation(location)
+  }
+
+  startHomeServer(): Promise<string | undefined> {
+    return this.remoteBridge.startHomeServer()
+  }
+
+  stopHomeServer(): Promise<string | undefined> {
+    return this.remoteBridge.stopHomeServer()
+  }
+
+  getHomeServerLogs(): Promise<string[]> {
+    return this.remoteBridge.getHomeServerLogs()
+  }
+
   openLocation(path: string): Promise<void> {
     return this.remoteBridge.openLocation(path)
   }
@@ -34,6 +74,10 @@ export class DesktopDevice extends WebOrDesktopDevice implements DesktopDeviceIn
     oldLocation?: string | undefined,
   ): Promise<string | undefined> {
     return this.remoteBridge.presentDirectoryPickerForLocationChangeAndTransferOld(appendPath, oldLocation)
+  }
+
+  getDirectoryManagerLastErrorMessage(): Promise<string | undefined> {
+    return this.remoteBridge.getDirectoryManagerLastErrorMessage()
   }
 
   getFilesBackupsMappingFile(location: string): Promise<FileBackupsMapping> {

@@ -30,6 +30,7 @@ import { DeinitMode } from './DeinitMode'
 import { DeinitSource } from './DeinitSource'
 import { UserClientInterface } from '../User/UserClientInterface'
 import { SessionsClientInterface } from '../Session/SessionsClientInterface'
+import { HomeServerServiceInterface } from '../HomeServer/HomeServerServiceInterface'
 import { User } from '@standardnotes/responses'
 
 export interface ApplicationInterface {
@@ -61,6 +62,9 @@ export interface ApplicationInterface {
 
   getUser(): User | undefined
   hasAccount(): boolean
+  setCustomHost(host: string): Promise<void>
+  isThirdPartyHostUsed(): boolean
+  isUsingHomeServer(): Promise<boolean>
 
   importData(data: BackupFile, awaitSync?: boolean): Promise<ImportDataReturnType>
   /**
@@ -94,6 +98,7 @@ export interface ApplicationInterface {
   get subscriptions(): SubscriptionClientInterface
   get fileBackups(): BackupServiceInterface | undefined
   get sessions(): SessionsClientInterface
+  get homeServer(): HomeServerServiceInterface | undefined
   get vaults(): VaultServiceInterface
   get challenges(): ChallengeServiceInterface
   get alerts(): AlertService

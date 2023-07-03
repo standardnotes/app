@@ -10,7 +10,11 @@ export {
   FileBackupReadToken,
   FileBackupReadChunkResponse,
   FileDownloadProgress,
+  HomeServerManagerInterface,
+  HomeServerStatus,
   PlaintextBackupsMapping,
   DesktopWatchedDirectoriesChanges,
   DesktopWatchedDirectoriesChange,
+  HomeServerEnvironmentConfiguration,
+  DirectoryManagerInterface,
 } from '@standardnotes/snjs'

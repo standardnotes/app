@@ -8,4 +8,5 @@ export interface ElectronMainEvents {
   setWindowFocusedHandler(handler: MainEventHandler): void
   setInstallComponentCompleteHandler(handler: MainEventHandler): void
   setWatchedDirectoriesChangeHandler(handler: MainEventHandler): void
+  setHomeServerStartedHandler(handler: MainEventHandler): void
 }

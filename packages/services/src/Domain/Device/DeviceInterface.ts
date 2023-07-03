@@ -1,3 +1,4 @@
+import { ApplicationInterface } from './../Application/ApplicationInterface'
 import { ApplicationIdentifier } from '@standardnotes/common'
 import {
   FullyFormedTransferPayload,
@@ -30,6 +31,11 @@ export interface DeviceInterface {
   removeRawStorageValue(key: string): Promise<void>
 
   removeAllRawStorageValues(): Promise<void>
+
+  removeRawStorageValuesForIdentifier(identifier: ApplicationIdentifier): Promise<void>
+
+  setApplication(application: ApplicationInterface): void
+  removeApplication(application: ApplicationInterface): void
 
   /**
    * On web platforms, databased created may be new.

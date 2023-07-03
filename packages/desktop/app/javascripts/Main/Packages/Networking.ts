@@ -4,9 +4,9 @@ import path from 'path'
 import { pipeline as pipelineFn } from 'stream'
 import { promisify } from 'util'
 import { MessageType } from '../../../../test/TestIpcMessage'
-import { ensureDirectoryExists } from '../Utils/FileUtils'
 import { handleTestMessage } from '../Utils/Testing'
 import { isTesting } from '../Utils/Utils'
+import { FilesManager } from '../File/FilesManager'
 
 const pipeline = promisify(pipelineFn)
 
@@ -21,7 +21,7 @@ if (isTesting()) {
  * not exist)
  */
 export async function downloadFile(url: string, filePath: string): Promise<void> {
-  await ensureDirectoryExists(path.dirname(filePath))
+  await new FilesManager().ensureDirectoryExists(path.dirname(filePath))
   const response = await get(url)
   await pipeline(
     /**

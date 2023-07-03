@@ -4,6 +4,7 @@ export enum MessageToWebApp {
   WindowFocused = 'window-focused',
   InstallComponentComplete = 'install-component-complete',
   WatchedDirectoriesChanges = 'watched-directories-changes',
+  HomeServerStarted = 'home-server-started',
 }
 
 export enum MessageToMainProcess {

@@ -66,6 +66,7 @@ export class FeaturesController extends AbstractViewController {
           case ApplicationEvent.FeaturesUpdated:
           case ApplicationEvent.Launched:
           case ApplicationEvent.LocalDataLoaded:
+          case ApplicationEvent.UserRolesChanged:
             runInAction(() => {
               this.hasFolders = this.isEntitledToFolders()
               this.hasSmartViews = this.isEntitledToSmartViews()
