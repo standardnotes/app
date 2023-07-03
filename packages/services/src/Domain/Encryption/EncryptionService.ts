@@ -17,8 +17,6 @@ import {
   LegacyAttachedData,
   OperatorManager,
   RootKeyEncryptedAuthenticatedData,
-  SNRootKey,
-  SNRootKeyParams,
   SplitPayloadsByEncryptionType,
   V001Algorithm,
   V002Algorithm,
@@ -47,6 +45,7 @@ import {
   KeySystemRootKeyInterface,
   KeySystemRootKeyParamsInterface,
   TrustedContactInterface,
+  RootKeyParamsInterface,
 } from '@standardnotes/models'
 import { ClientDisplayableError } from '@standardnotes/responses'
 import { PkcKeyPair, PureCryptoInterface } from '@standardnotes/sncrypto-common'
@@ -91,6 +90,8 @@ import { RootKeyDecryptPayloadWithKeyLookupUseCase } from './UseCase/RootEncrypt
 import { RootKeyEncryptPayloadWithKeyLookupUseCase } from './UseCase/RootEncryption/EncryptPayloadWithKeyLookup'
 import { RootKeyEncryptPayloadUseCase } from './UseCase/RootEncryption/EncryptPayload'
 import { InternalEventInterface } from '@standardnotes/snjs'
+import { ValidateAccountPasswordResult } from './RootKey/ValidateAccountPasswordResult'
+import { ValidatePasscodeResult } from './RootKey/ValidatePasscodeResult'
 
 /**
  * The encryption service is responsible for the encryption and decryption of payloads, and
@@ -547,7 +548,7 @@ export class EncryptionService
    * Determines whether the current environment is capable of supporting
    * key derivation.
    */
-  public platformSupportsKeyDerivation(keyParams: SNRootKeyParams) {
+  public platformSupportsKeyDerivation(keyParams: RootKeyParamsInterface) {
     /**
      * If the version is 003 or lower, key derivation is supported unless the browser is
      * IE or Edge (or generally, where WebCrypto is not available) or React Native environment is detected.
@@ -596,7 +597,10 @@ export class EncryptionService
    * Computes a root key given a password and key params.
    * Delegates computation to respective protocol operator.
    */
-  public async computeRootKey<K extends RootKeyInterface>(password: string, keyParams: SNRootKeyParams): Promise<K> {
+  public async computeRootKey<K extends RootKeyInterface>(
+    password: string,
+    keyParams: RootKeyParamsInterface,
+  ): Promise<K> {
     return this.rootKeyManager.computeRootKey(password, keyParams)
   }
 
@@ -816,7 +820,7 @@ export class EncryptionService
    * payloads in the keychain. If the root key is not wrapped, it is stored
    * in plain form in the user's secure keychain.
    */
-  public async setNewRootKeyWrapper(wrappingKey: SNRootKey) {
+  public async setNewRootKeyWrapper(wrappingKey: RootKeyInterface) {
     return this.rootKeyManager.setNewRootKeyWrapper(wrappingKey)
   }
 
@@ -824,7 +828,7 @@ export class EncryptionService
     await this.rootKeyManager.removeRootKeyWrapper()
   }
 
-  public async setRootKey(key: RootKeyInterface, wrappingKey?: SNRootKey) {
+  public async setRootKey(key: RootKeyInterface, wrappingKey?: RootKeyInterface) {
     await this.rootKeyManager.setRootKey(key, wrappingKey)
   }
 
@@ -846,11 +850,11 @@ export class EncryptionService
     await this.rootKeyManager.deleteWorkspaceSpecificKeyStateFromDevice()
   }
 
-  public async validateAccountPassword(password: string) {
+  public async validateAccountPassword(password: string): Promise<ValidateAccountPasswordResult> {
     return this.rootKeyManager.validateAccountPassword(password)
   }
 
-  public async validatePasscode(passcode: string) {
+  public async validatePasscode(passcode: string): Promise<ValidatePasscodeResult> {
     return this.rootKeyManager.validatePasscode(passcode)
   }
 
@@ -872,7 +876,7 @@ export class EncryptionService
   }
 
   /** Returns the key params attached to this key's encrypted payload */
-  public getKeyEmbeddedKeyParamsFromItemsKey(key: EncryptedPayloadInterface): SNRootKeyParams | undefined {
+  public getKeyEmbeddedKeyParamsFromItemsKey(key: EncryptedPayloadInterface): RootKeyParamsInterface | undefined {
     const authenticatedData = this.getEmbeddedPayloadAuthenticatedData(key)
     if (!authenticatedData) {
       return undefined

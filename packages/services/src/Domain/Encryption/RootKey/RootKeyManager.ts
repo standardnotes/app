@@ -7,7 +7,6 @@ import {
 } from '@standardnotes/common'
 import {
   KeyMode,
-  SNRootKeyParams,
   CreateNewRootKey,
   CreateAnyKeyParams,
   SNRootKey,
@@ -37,12 +36,13 @@ import { AbstractService } from '../../Service/AbstractService'
 import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
 import { MutatorClientInterface } from '../../Mutator/MutatorClientInterface'
 import { RootKeyManagerEvent } from './RootKeyManagerEvent'
+import { ValidatePasscodeResult } from './ValidatePasscodeResult'
+import { ValidateAccountPasswordResult } from './ValidateAccountPasswordResult'
 
 export class RootKeyManager extends AbstractService<RootKeyManagerEvent> {
   private rootKey?: RootKeyInterface
-
-  public keyMode = KeyMode.RootKeyNone
-  public memoizedRootKeyParams?: SNRootKeyParams
+  private keyMode = KeyMode.RootKeyNone
+  private memoizedRootKeyParams?: RootKeyParamsInterface
 
   constructor(
     private device: DeviceInterface,
@@ -62,7 +62,7 @@ export class RootKeyManager extends AbstractService<RootKeyManagerEvent> {
     this.memoizedRootKeyParams = undefined
   }
 
-  public async initialize() {
+  public async initialize(): Promise<void> {
     const wrappedRootKey = this.getWrappedRootKey()
     const accountKeyParams = this.recomputeAccountKeyParams()
     const hasWrapper = await this.hasRootKeyWrapper()
@@ -94,12 +94,12 @@ export class RootKeyManager extends AbstractService<RootKeyManagerEvent> {
     return this.keyMode
   }
 
-  public async hasRootKeyWrapper() {
+  public async hasRootKeyWrapper(): Promise<boolean> {
     const wrapper = this.getRootKeyWrapperKeyParams()
     return wrapper != undefined
   }
 
-  public getRootKeyWrapperKeyParams(): SNRootKeyParams | undefined {
+  public getRootKeyWrapperKeyParams(): RootKeyParamsInterface | undefined {
     const rawKeyParams = this.storage.getValue(StorageKey.RootKeyWrapperKeyParams, StorageValueModes.Nonwrapped)
 
     if (!rawKeyParams) {
@@ -109,7 +109,7 @@ export class RootKeyManager extends AbstractService<RootKeyManagerEvent> {
     return CreateAnyKeyParams(rawKeyParams as AnyKeyParamsContent)
   }
 
-  public async passcodeUpgradeAvailable() {
+  public async passcodeUpgradeAvailable(): Promise<boolean> {
     const passcodeParams = this.getRootKeyWrapperKeyParams()
     if (!passcodeParams) {
       return false
@@ -117,7 +117,7 @@ export class RootKeyManager extends AbstractService<RootKeyManagerEvent> {
     return passcodeParams.version !== ProtocolVersionLatest
   }
 
-  public hasAccount() {
+  public hasAccount(): boolean {
     switch (this.keyMode) {
       case KeyMode.RootKeyNone:
       case KeyMode.WrapperOnly:
@@ -139,7 +139,10 @@ export class RootKeyManager extends AbstractService<RootKeyManagerEvent> {
     return this.hasAccount() || this.hasPasscode()
   }
 
-  public async computeRootKey<K extends RootKeyInterface>(password: string, keyParams: SNRootKeyParams): Promise<K> {
+  public async computeRootKey<K extends RootKeyInterface>(
+    password: string,
+    keyParams: RootKeyParamsInterface,
+  ): Promise<K> {
     const version = keyParams.version
     const operator = this.operatorManager.operatorForVersion(version)
     return operator.computeRootKey(password, keyParams)
@@ -148,7 +151,7 @@ export class RootKeyManager extends AbstractService<RootKeyManagerEvent> {
   /**
    * Deletes root key and wrapper from keychain. Used when signing out of application.
    */
-  public async deleteWorkspaceSpecificKeyStateFromDevice() {
+  public async deleteWorkspaceSpecificKeyStateFromDevice(): Promise<void> {
     await this.device.clearNamespacedKeychainValue(this.identifier)
     await this.storage.removeValue(StorageKey.WrappedRootKey, StorageValueModes.Nonwrapped)
     await this.storage.removeValue(StorageKey.RootKeyWrapperKeyParams, StorageValueModes.Nonwrapped)
@@ -169,8 +172,8 @@ export class RootKeyManager extends AbstractService<RootKeyManagerEvent> {
     return operator.createRootKey(identifier, password, origination)
   }
 
-  public async validateAccountPassword(password: string) {
-    const key = await this.computeRootKey(password, this.memoizedRootKeyParams as SNRootKeyParams)
+  public async validateAccountPassword(password: string): Promise<ValidateAccountPasswordResult> {
+    const key = await this.computeRootKey(password, this.memoizedRootKeyParams as RootKeyParamsInterface)
     const valid = this.getSureRootKey().compare(key)
     if (valid) {
       return { valid, artifacts: { rootKey: key } }
@@ -179,7 +182,7 @@ export class RootKeyManager extends AbstractService<RootKeyManagerEvent> {
     }
   }
 
-  public async validatePasscode(passcode: string) {
+  public async validatePasscode(passcode: string): Promise<ValidatePasscodeResult> {
     const keyParams = this.getSureRootKeyWrapperKeyParams()
     const key = await this.computeRootKey(passcode, keyParams)
     const valid = await this.validateWrappingKey(key)
@@ -202,11 +205,11 @@ export class RootKeyManager extends AbstractService<RootKeyManagerEvent> {
   }
 
   public getSureUserVersion(): ProtocolVersion {
-    const keyParams = this.memoizedRootKeyParams as SNRootKeyParams
+    const keyParams = this.memoizedRootKeyParams as RootKeyParamsInterface
     return keyParams.version
   }
 
-  private async handleKeyStatusChange() {
+  private async handleKeyStatusChange(): Promise<void> {
     this.recomputeAccountKeyParams()
     void (await this.notifyEvent(RootKeyManagerEvent.RootKeyManagerKeyStatusChanged))
   }
@@ -215,7 +218,7 @@ export class RootKeyManager extends AbstractService<RootKeyManagerEvent> {
     return this.keyMode === KeyMode.WrapperOnly || this.keyMode === KeyMode.RootKeyPlusWrapper
   }
 
-  public recomputeAccountKeyParams(): SNRootKeyParams | undefined {
+  public recomputeAccountKeyParams(): RootKeyParamsInterface | undefined {
     const rawKeyParams = this.storage.getValue(StorageKey.RootKeyParams, StorageValueModes.Nonwrapped)
 
     if (!rawKeyParams) {
@@ -227,14 +230,14 @@ export class RootKeyManager extends AbstractService<RootKeyManagerEvent> {
   }
 
   public getSureRootKeyWrapperKeyParams() {
-    return this.getRootKeyWrapperKeyParams() as SNRootKeyParams
+    return this.getRootKeyWrapperKeyParams() as RootKeyParamsInterface
   }
 
   /**
    * Wraps the current in-memory root key value using the wrappingKey,
    * then persists the wrapped value to disk.
    */
-  public async wrapAndPersistRootKey(wrappingKey: SNRootKey) {
+  public async wrapAndPersistRootKey(wrappingKey: RootKeyInterface): Promise<void> {
     const rootKey = this.getSureRootKey()
 
     const value: DecryptedTransferPayload = {
@@ -256,7 +259,7 @@ export class RootKeyManager extends AbstractService<RootKeyManagerEvent> {
     this.storage.setValue(StorageKey.WrappedRootKey, wrappedKeyPayload.ejected(), StorageValueModes.Nonwrapped)
   }
 
-  public async unwrapRootKey(wrappingKey: RootKeyInterface) {
+  public async unwrapRootKey(wrappingKey: RootKeyInterface): Promise<void> {
     if (this.keyMode === KeyMode.WrapperOnly) {
       this.setRootKeyInstance(wrappingKey)
       return
@@ -267,6 +270,10 @@ export class RootKeyManager extends AbstractService<RootKeyManagerEvent> {
     }
 
     const wrappedKey = this.getWrappedRootKey()
+    if (!wrappedKey) {
+      throw 'Attempting to unwrap root key when none is wrapped.'
+    }
+
     const payload = new EncryptedPayload(wrappedKey)
     const usecase = new RootKeyDecryptPayloadUseCase(this.operatorManager)
     const decrypted = await usecase.executeOne<RootKeyContent>(payload, wrappingKey)
@@ -288,7 +295,7 @@ export class RootKeyManager extends AbstractService<RootKeyManagerEvent> {
    * payloads in the keychain. If the root key is not wrapped, it is stored
    * in plain form in the user's secure keychain.
    */
-  public async setNewRootKeyWrapper(wrappingKey: SNRootKey) {
+  public async setNewRootKeyWrapper(wrappingKey: RootKeyInterface) {
     if (this.keyMode === KeyMode.RootKeyNone) {
       this.keyMode = KeyMode.WrapperOnly
     } else if (this.keyMode === KeyMode.RootKeyOnly) {
@@ -359,7 +366,7 @@ export class RootKeyManager extends AbstractService<RootKeyManagerEvent> {
     await this.handleKeyStatusChange()
   }
 
-  public async setRootKey(key: SNRootKey, wrappingKey?: SNRootKey) {
+  public async setRootKey(key: RootKeyInterface, wrappingKey?: RootKeyInterface) {
     if (!key.keyParams) {
       throw Error('keyParams must be supplied if setting root key.')
     }
@@ -395,7 +402,7 @@ export class RootKeyManager extends AbstractService<RootKeyManagerEvent> {
     await this.handleKeyStatusChange()
   }
 
-  public getRootKeyParams(): SNRootKeyParams | undefined {
+  public getRootKeyParams(): RootKeyParamsInterface | undefined {
     if (this.keyMode === KeyMode.WrapperOnly) {
       return this.getRootKeyWrapperKeyParams()
     } else if (this.keyMode === KeyMode.RootKeyOnly || this.keyMode === KeyMode.RootKeyPlusWrapper) {
@@ -407,8 +414,8 @@ export class RootKeyManager extends AbstractService<RootKeyManagerEvent> {
     }
   }
 
-  public getSureRootKeyParams(): SNRootKeyParams {
-    return this.getRootKeyParams() as SNRootKeyParams
+  public getSureRootKeyParams(): RootKeyParamsInterface {
+    return this.getRootKeyParams() as RootKeyParamsInterface
   }
 
   public async saveRootKeyToKeychain() {
@@ -430,8 +437,11 @@ export class RootKeyManager extends AbstractService<RootKeyManagerEvent> {
    * We know a wrappingKey is correct if it correctly decrypts
    * wrapped root key.
    */
-  public async validateWrappingKey(wrappingKey: SNRootKey) {
+  public async validateWrappingKey(wrappingKey: RootKeyInterface): Promise<boolean> {
     const wrappedRootKey = this.getWrappedRootKey()
+    if (!wrappedRootKey) {
+      throw 'Attempting to validate wrapping key when no wrapped key is present.'
+    }
 
     /** If wrapper only, storage is encrypted directly with wrappingKey */
     if (this.keyMode === KeyMode.WrapperOnly) {
@@ -451,7 +461,7 @@ export class RootKeyManager extends AbstractService<RootKeyManagerEvent> {
     }
   }
 
-  public getWrappedRootKey() {
+  public getWrappedRootKey(): EncryptedTransferPayload | undefined {
     return this.storage.getValue<EncryptedTransferPayload>(StorageKey.WrappedRootKey, StorageValueModes.Nonwrapped)
   }
 
@@ -467,7 +477,7 @@ export class RootKeyManager extends AbstractService<RootKeyManagerEvent> {
     return this.rootKey as RootKeyInterface
   }
 
-  public async getRootKeyFromKeychain() {
+  public async getRootKeyFromKeychain(): Promise<RootKeyInterface | undefined> {
     const rawKey = (await this.device.getNamespacedKeychainValue(this.identifier)) as
       | NamespacedRootKeyInKeychain
       | undefined
