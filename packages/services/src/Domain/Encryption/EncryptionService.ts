@@ -1,3 +1,4 @@
+import { InternalEventInterface } from './../Internal/InternalEventInterface'
 import { InternalEventHandlerInterface } from './../Internal/InternalEventHandlerInterface'
 import { MutatorClientInterface } from './../Mutator/MutatorClientInterface'
 import {
@@ -89,7 +90,6 @@ import { RootKeyDecryptPayloadUseCase } from './UseCase/RootEncryption/DecryptPa
 import { RootKeyDecryptPayloadWithKeyLookupUseCase } from './UseCase/RootEncryption/DecryptPayloadWithKeyLookup'
 import { RootKeyEncryptPayloadWithKeyLookupUseCase } from './UseCase/RootEncryption/EncryptPayloadWithKeyLookup'
 import { RootKeyEncryptPayloadUseCase } from './UseCase/RootEncryption/EncryptPayload'
-import { InternalEventInterface } from '@standardnotes/snjs'
 import { ValidateAccountPasswordResult } from './RootKey/ValidateAccountPasswordResult'
 import { ValidatePasscodeResult } from './RootKey/ValidatePasscodeResult'
 
