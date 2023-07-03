@@ -152,6 +152,10 @@ export class WebApplication extends SNApplication implements WebApplicationInter
   override deinit(mode: DeinitMode, source: DeinitSource): void {
     super.deinit(mode, source)
 
+    if (!this.isNativeMobileWeb()) {
+      this.webOrDesktopDevice().removeApplication(this)
+    }
+
     try {
       for (const service of Object.values(this.webServices)) {
         if (!service) {
@@ -276,6 +280,10 @@ export class WebApplication extends SNApplication implements WebApplicationInter
       throw Error('Attempting to access device as mobile device on non mobile platform')
     }
     return this.deviceInterface as MobileDeviceInterface
+  }
+
+  webOrDesktopDevice(): WebOrDesktopDevice {
+    return this.deviceInterface as WebOrDesktopDevice
   }
 
   public getThemeService() {

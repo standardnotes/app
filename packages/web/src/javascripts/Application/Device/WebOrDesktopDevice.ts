@@ -35,8 +35,19 @@ export abstract class WebOrDesktopDevice implements WebOrDesktopDeviceInterface 
 
   removeApplication(application: ApplicationInterface): void {
     const database = this.databaseForIdentifier(application.identifier)
-    database.deinit()
-    this.databases = this.databases.filter((db) => db !== database)
+
+    if (database) {
+      database.deinit()
+      this.databases = this.databases.filter((db) => db !== database)
+    }
+  }
+
+  deinit() {
+    for (const database of this.databases) {
+      database.deinit()
+    }
+
+    this.databases = []
   }
 
   public async getJsonParsedRawStorageValue(key: string): Promise<unknown | undefined> {
@@ -64,14 +75,6 @@ export abstract class WebOrDesktopDevice implements WebOrDesktopDeviceInterface 
     await Database.deleteAll(workspaceIdentifiers)
 
     return { killsApplication: false }
-  }
-
-  deinit() {
-    for (const database of this.databases) {
-      database.deinit()
-    }
-
-    this.databases = []
   }
 
   async getRawStorageValue(key: string): Promise<string | undefined> {
