@@ -159,7 +159,7 @@ export class RootKeyManager extends AbstractService<RootKeyManagerEvent> {
     this.keyMode = KeyMode.RootKeyNone
     this.setRootKeyInstance(undefined)
 
-    await this.notifyEvent(RootKeyManagerEvent.RootKeyManagerKeyStatusChanged)
+    await this.handleKeyStatusChange()
   }
 
   public async createRootKey<K extends RootKeyInterface>(
@@ -211,7 +211,7 @@ export class RootKeyManager extends AbstractService<RootKeyManagerEvent> {
 
   private async handleKeyStatusChange(): Promise<void> {
     this.recomputeAccountKeyParams()
-    void (await this.notifyEvent(RootKeyManagerEvent.RootKeyManagerKeyStatusChanged))
+    void this.notifyEvent(RootKeyManagerEvent.RootKeyManagerKeyStatusChanged)
   }
 
   public hasPasscode(): boolean {
