@@ -23,11 +23,9 @@ export class HomeServerManager implements HomeServerManagerInterface {
 
   private readonly LOGS_BUFFER_SIZE = 1000
 
-  constructor(
-    private homeServer: HomeServerInterface,
-    private webContents: WebContents,
-    private filesManager: FilesManagerInterface,
-  ) {}
+  private homeServer?: HomeServerInterface
+
+  constructor(private webContents: WebContents, private filesManager: FilesManagerInterface) {}
 
   async getHomeServerUrl(): Promise<string | undefined> {
     const homeServerConfiguration = await this.getHomeServerConfigurationObject()
@@ -39,7 +37,7 @@ export class HomeServerManager implements HomeServerManagerInterface {
   }
 
   async isHomeServerRunning(): Promise<boolean> {
-    return this.homeServer.isRunning()
+    return this.homeServer?.isRunning() ?? false
   }
 
   async getHomeServerLastErrorMessage(): Promise<string | undefined> {
@@ -47,6 +45,10 @@ export class HomeServerManager implements HomeServerManagerInterface {
   }
 
   async activatePremiumFeatures(username: string): Promise<string | undefined> {
+    if (!this.homeServer) {
+      return
+    }
+
     const result = await this.homeServer.activatePremiumFeatures(username)
 
     if (result.isFailed()) {
@@ -111,6 +113,10 @@ export class HomeServerManager implements HomeServerManagerInterface {
   }
 
   async stopHomeServer(): Promise<string | undefined> {
+    if (!this.homeServer) {
+      return
+    }
+
     const result = await this.homeServer.stop()
     if (result.isFailed()) {
       return result.getError()
@@ -120,6 +126,10 @@ export class HomeServerManager implements HomeServerManagerInterface {
   }
 
   async startHomeServer(): Promise<string | undefined> {
+    if (!this.homeServer) {
+      return
+    }
+
     try {
       this.lastErrorMessage = undefined
       this.logs = []

@@ -7,7 +7,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Features
 
-* New one-click Home Server, now in Labs. Launch your own self-hosted server instance with just 1 click from the Preferences window. ([#2341](https://github.com/standardnotes/app/issues/2341)) ([96f4264](https://github.com/standardnotes/app/commit/96f42643a98586052bfb5262ca797fd029c1e925))
+**Note:** Version bump only for package @standardnotes/web
 
 ## [3.163.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.163.2...@standardnotes/web@3.163.3) (2023-07-02)
 
