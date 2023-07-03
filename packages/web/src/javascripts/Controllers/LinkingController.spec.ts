@@ -62,12 +62,12 @@ describe('LinkingController', () => {
       alerts: {} as jest.Mocked<WebApplication['alerts']>,
       sync: {} as jest.Mocked<WebApplication['sync']>,
       mutator: {} as jest.Mocked<WebApplication['mutator']>,
+      itemControllerGroup: {} as jest.Mocked<WebApplication['itemControllerGroup']>,
     } as unknown as jest.Mocked<WebApplication>
 
     application.getPreference = jest.fn()
     application.addSingleEventObserver = jest.fn()
     application.streamItems = jest.fn()
-    application.itemControllerGroup = {} as jest.Mocked<WebApplication['itemControllerGroup']>
     application.sync.sync = jest.fn()
 
     Object.defineProperty(application, 'items', { value: {} as jest.Mocked<ItemManagerInterface> })

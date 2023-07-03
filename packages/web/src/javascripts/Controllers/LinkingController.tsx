@@ -197,11 +197,13 @@ export class LinkingController extends AbstractViewController {
     const linkNoteAndFile = async (note: SNNote, file: FileItem) => {
       const updatedFile = await this.application.mutator.associateFileWithNote(file, note)
 
-      if (updatedFile && featureTrunkVaultsEnabled()) {
-        const noteVault = this.application.vaults.getItemVault(note)
-        const fileVault = this.application.vaults.getItemVault(updatedFile)
-        if (noteVault && !fileVault) {
-          await this.application.vaults.moveItemToVault(noteVault, file)
+      if (featureTrunkVaultsEnabled()) {
+        if (updatedFile) {
+          const noteVault = this.application.vaults.getItemVault(note)
+          const fileVault = this.application.vaults.getItemVault(updatedFile)
+          if (noteVault && !fileVault) {
+            await this.application.vaults.moveItemToVault(noteVault, file)
+          }
         }
       }
     }

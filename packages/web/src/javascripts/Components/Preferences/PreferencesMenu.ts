@@ -51,17 +51,17 @@ const DESKTOP_PREFERENCES_MENU_ITEMS: PreferencesMenuItem[] = [
   { id: 'home-server', label: 'Home Server', icon: 'server', order: 5 },
 ]
 
-if (featureTrunkVaultsEnabled()) {
-  PREFERENCES_MENU_ITEMS.splice(3, 0, { id: 'vaults', label: 'Vaults', icon: 'safe-square', order: 5 })
-  READY_PREFERENCES_MENU_ITEMS.splice(3, 0, { id: 'vaults', label: 'Vaults', icon: 'safe-square', order: 5 })
-}
-
 export class PreferencesMenu {
   private _selectedPane: PreferenceId = 'account'
   private _menu: PreferencesMenuItem[]
   private _extensionLatestVersions: PackageProvider = new PackageProvider(new Map())
 
   constructor(private application: WebApplication, private readonly _enableUnfinishedFeatures: boolean) {
+    if (featureTrunkVaultsEnabled()) {
+      PREFERENCES_MENU_ITEMS.splice(3, 0, { id: 'vaults', label: 'Vaults', icon: 'safe-square', order: 5 })
+      READY_PREFERENCES_MENU_ITEMS.splice(3, 0, { id: 'vaults', label: 'Vaults', icon: 'safe-square', order: 5 })
+    }
+
     let menuItems = this._enableUnfinishedFeatures ? PREFERENCES_MENU_ITEMS : READY_PREFERENCES_MENU_ITEMS
 
     if (isDesktopApplication()) {
@@ -69,6 +69,8 @@ export class PreferencesMenu {
     }
 
     this._menu = menuItems.sort((a, b) => a.order - b.order)
+
+    this._menu = this._enableUnfinishedFeatures ? PREFERENCES_MENU_ITEMS : READY_PREFERENCES_MENU_ITEMS
 
     this.loadLatestVersions()
 

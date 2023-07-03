@@ -31,6 +31,7 @@ import { DeinitSource } from './DeinitSource'
 import { UserClientInterface } from '../User/UserClientInterface'
 import { SessionsClientInterface } from '../Session/SessionsClientInterface'
 import { HomeServerServiceInterface } from '../HomeServer/HomeServerServiceInterface'
+import { User } from '@standardnotes/responses'
 
 export interface ApplicationInterface {
   deinit(mode: DeinitMode, source: DeinitSource): void
@@ -58,6 +59,8 @@ export interface ApplicationInterface {
     contentType: ContentType | ContentType[],
     stream: ItemStream<I>,
   ): () => void
+
+  getUser(): User | undefined
   hasAccount(): boolean
   setCustomHost(host: string): Promise<void>
   isThirdPartyHostUsed(): boolean

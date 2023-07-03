@@ -9,7 +9,7 @@ import PreferencesViewWrapper from '@/Components/Preferences/PreferencesViewWrap
 import ChallengeModal from '@/Components/ChallengeModal/ChallengeModal'
 import NotesContextMenu from '@/Components/NotesContextMenu/NotesContextMenu'
 import PurchaseFlowWrapper from '@/Components/PurchaseFlow/PurchaseFlowWrapper'
-import { FunctionComponent, useCallback, useEffect, useMemo, useState, lazy } from 'react'
+import { FunctionComponent, useCallback, useEffect, useMemo, useState, lazy, useRef } from 'react'
 import RevisionHistoryModal from '@/Components/RevisionHistoryModal/RevisionHistoryModal'
 import PremiumModalProvider from '@/Hooks/usePremiumModal'
 import ConfirmSignoutContainer from '@/Components/ConfirmSignoutModal/ConfirmSignoutModal'
@@ -43,6 +43,9 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
   const [launched, setLaunched] = useState(false)
   const [needsUnlock, setNeedsUnlock] = useState(true)
   const [challenges, setChallenges] = useState<Challenge[]>([])
+
+  const currentWriteErrorDialog = useRef<Promise<void> | null>(null)
+  const currentLoadErrorDialog = useRef<Promise<void> | null>(null)
 
   const viewControllerManager = application.getViewControllerManager()
 
@@ -120,13 +123,25 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
       } else if (eventName === ApplicationEvent.Launched) {
         onAppLaunch()
       } else if (eventName === ApplicationEvent.LocalDatabaseReadError) {
-        alertDialog({
-          text: 'Unable to load local database. Please restart the app and try again.',
-        }).catch(console.error)
+        if (!currentLoadErrorDialog.current) {
+          alertDialog({
+            text: 'Unable to load local database. Please restart the app and try again.',
+          })
+            .then(() => {
+              currentLoadErrorDialog.current = null
+            })
+            .catch(console.error)
+        }
       } else if (eventName === ApplicationEvent.LocalDatabaseWriteError) {
-        alertDialog({
-          text: 'Unable to write to local database. Please restart the app and try again.',
-        }).catch(console.error)
+        if (!currentWriteErrorDialog.current) {
+          currentWriteErrorDialog.current = alertDialog({
+            text: 'Unable to write to local database. Please restart the app and try again.',
+          })
+            .then(() => {
+              currentWriteErrorDialog.current = null
+            })
+            .catch(console.error)
+        }
       } else if (eventName === ApplicationEvent.BiometricsSoftLockEngaged) {
         setNeedsUnlock(true)
       } else if (eventName === ApplicationEvent.BiometricsSoftLockDisengaged) {
