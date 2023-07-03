@@ -51,18 +51,21 @@ import { FeatureName } from '@/Controllers/FeatureName'
 import { ItemGroupController } from '@/Components/NoteView/Controller/ItemGroupController'
 import { VisibilityObserver } from './VisibilityObserver'
 import { MomentsService } from '@/Controllers/Moments/MomentsService'
-import { purchaseMockSubscription } from '@/Utils/Dev/PurchaseMockSubscription'
+import { DevMode } from './DevMode'
 
 export type WebEventObserver = (event: WebAppEvent, data?: unknown) => void
 
 export class WebApplication extends SNApplication implements WebApplicationInterface {
-  private webServices!: WebServices
-  private webEventObservers: WebEventObserver[] = []
-  public itemControllerGroup: ItemGroupController
-  private mobileWebReceiver?: MobileWebReceiver
-  private androidBackHandler?: AndroidBackHandler
+  public readonly itemControllerGroup: ItemGroupController
   public readonly routeService: RouteServiceInterface
-  private visibilityObserver?: VisibilityObserver
+
+  private readonly webServices!: WebServices
+  private readonly webEventObservers: WebEventObserver[] = []
+  private readonly mobileWebReceiver?: MobileWebReceiver
+  private readonly androidBackHandler?: AndroidBackHandler
+  private readonly visibilityObserver?: VisibilityObserver
+
+  public readonly devMode?: DevMode
 
   constructor(
     deviceInterface: WebOrDesktopDevice,
@@ -90,6 +93,10 @@ export class WebApplication extends SNApplication implements WebApplicationInter
       u2fAuthenticatorRegistrationPromptFunction: startRegistration,
       u2fAuthenticatorVerificationPromptFunction: startAuthentication,
     })
+
+    if (isDev) {
+      this.devMode = new DevMode(this)
+    }
 
     makeObservable(this, {
       dealloced: observable,
@@ -152,7 +159,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
         ;(service as { application?: WebApplication }).application = undefined
       }
 
-      this.webServices = {} as WebServices
+      ;(this.webServices as unknown) = undefined
 
       this.itemControllerGroup.deinit()
       ;(this.itemControllerGroup as unknown) = undefined
@@ -165,7 +172,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
 
       if (this.visibilityObserver) {
         this.visibilityObserver.deinit()
-        this.visibilityObserver = undefined
+        ;(this.visibilityObserver as unknown) = undefined
       }
     } catch (error) {
       console.error('Error while deiniting application', error)
@@ -457,13 +464,5 @@ export class WebApplication extends SNApplication implements WebApplicationInter
 
   generateUUID(): string {
     return this.options.crypto.generateUUID()
-  }
-
-  dev__purchaseMockSubscription() {
-    if (!isDev) {
-      throw new Error('This method is only available in dev mode')
-    }
-
-    void purchaseMockSubscription(this.getUser()?.email as string, 2000)
   }
 }

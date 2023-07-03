@@ -30,6 +30,7 @@ import { DeinitMode } from './DeinitMode'
 import { DeinitSource } from './DeinitSource'
 import { UserClientInterface } from '../User/UserClientInterface'
 import { SessionsClientInterface } from '../Session/SessionsClientInterface'
+import { User } from '@standardnotes/responses'
 
 export interface ApplicationInterface {
   deinit(mode: DeinitMode, source: DeinitSource): void
@@ -57,6 +58,8 @@ export interface ApplicationInterface {
     contentType: ContentType | ContentType[],
     stream: ItemStream<I>,
   ): () => void
+
+  getUser(): User | undefined
   hasAccount(): boolean
 
   importData(data: BackupFile, awaitSync?: boolean): Promise<ImportDataReturnType>

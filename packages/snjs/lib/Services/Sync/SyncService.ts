@@ -432,7 +432,15 @@ export class SNSyncService
     })
 
     await this.payloadManager.emitPayloads(payloads, PayloadEmitSource.LocalChanged)
-    await this.persistPayloads(payloads)
+
+    /**
+     * When signing into an 003 account (or an account that is not the latest), the temporary items key will be 004
+     * and will not match user account version, triggering a key not found exception. This error resolves once the
+     * download first sync completes and the correct key is downloaded. We suppress any persistence
+     * exceptions here to avoid showing an error to the user.
+     */
+    const hidePersistErrorDueToWaitingOnKeyDownload = true
+    await this.persistPayloads(payloads, { throwError: !hidePersistErrorDueToWaitingOnKeyDownload })
   }
 
   /**
@@ -579,7 +587,8 @@ export class SNSyncService
 
     const payloadsNeedingSave = this.popPayloadsNeedingPreSyncSave(decryptedPayloads)
 
-    await this.persistPayloads(payloadsNeedingSave)
+    const hidePersistErrorDueToWaitingOnKeyDownload = options.mode === SyncMode.DownloadFirst
+    await this.persistPayloads(payloadsNeedingSave, { throwError: !hidePersistErrorDueToWaitingOnKeyDownload })
 
     if (options.onPresyncSave) {
       options.onPresyncSave()
@@ -1336,14 +1345,19 @@ export class SNSyncService
     await this.persistPayloads(payloads)
   }
 
-  public async persistPayloads(payloads: FullyFormedPayloadInterface[]) {
+  public async persistPayloads(
+    payloads: FullyFormedPayloadInterface[],
+    options: { throwError: boolean } = { throwError: true },
+  ) {
     if (payloads.length === 0 || this.dealloced) {
       return
     }
 
     return this.storageService.savePayloads(payloads).catch((error) => {
-      void this.notifyEvent(SyncEvent.DatabaseWriteError, error)
-      SNLog.error(error)
+      if (options.throwError) {
+        void this.notifyEvent(SyncEvent.DatabaseWriteError, error)
+        SNLog.error(error)
+      }
     })
   }
 

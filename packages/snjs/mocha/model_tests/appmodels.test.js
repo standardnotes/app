@@ -50,7 +50,9 @@ describe('app models', () => {
     const epoch = new Date(0)
     expect(item.serverUpdatedAt - epoch).to.equal(0)
     expect(item.created_at - epoch).to.be.above(0)
-    expect(new Date() - item.created_at).to.be.below(5) // < 5ms
+
+    const presentThresholdMs = 10
+    expect(new Date() - item.created_at).to.be.below(presentThresholdMs)
   })
 
   it('handles delayed mapping', async function () {

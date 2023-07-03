@@ -63,7 +63,7 @@ describe('IntegrityService', () => {
               uuid: '1-2-3',
             },
           ],
-          source: 5,
+          source: "AfterDownloadFirst",
         },
         type: 'IntegrityCheckCompleted',
       },
@@ -90,7 +90,7 @@ describe('IntegrityService', () => {
       {
         payload: {
           rawPayloads: [],
-          source: 5,
+          source: "AfterDownloadFirst",
         },
         type: 'IntegrityCheckCompleted',
       },
@@ -140,7 +140,7 @@ describe('IntegrityService', () => {
       {
         payload: {
           rawPayloads: [],
-          source: 5,
+          source: "AfterDownloadFirst",
         },
         type: 'IntegrityCheckCompleted',
       },
