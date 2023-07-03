@@ -78,7 +78,7 @@ import { DeviceInterface } from '../Device/DeviceInterface'
 import { StorageServiceInterface } from '../Storage/StorageServiceInterface'
 import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
 import { SyncEvent } from '../Event/SyncEvent'
-import { RootKeyEncryptionService } from './RootKeyEncryption'
+import { RootKeyEncryptionService } from './RootKey/RootKeyEncryption'
 import { DecryptBackupFileUseCase } from './DecryptBackupFileUseCase'
 import { EncryptionServiceEvent } from './EncryptionServiceEvent'
 import { DecryptedParameters } from '@standardnotes/encryption/src/Domain/Types/DecryptedParameters'
@@ -740,7 +740,7 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
   }
 
   public getAccountKeyParams() {
-    return this.rootKeyEncryption.memoizedRootKeyParams
+    return this.rootKeyEncryption.getMemoizedRootKeyParams()
   }
 
   /**
@@ -962,7 +962,7 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     const currentItemsKey = findDefaultItemsKey(this.itemsEncryption.getItemsKeys())
     if (!currentItemsKey) {
       await this.rootKeyEncryption.createNewDefaultItemsKey()
-      if (this.rootKeyEncryption.keyMode === KeyMode.WrapperOnly) {
+      if (this.rootKeyEncryption.getKeyMode() === KeyMode.WrapperOnly) {
         return this.itemsEncryption.repersistAllItems()
       }
     }
