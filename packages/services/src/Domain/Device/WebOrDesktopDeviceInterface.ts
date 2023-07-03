@@ -1,3 +1,4 @@
+import { ApplicationInterface } from './../Application/ApplicationInterface'
 import { DeviceInterface } from './DeviceInterface'
 import { RawKeychainValue } from '@standardnotes/models'
 
@@ -7,4 +8,7 @@ export interface WebOrDesktopDeviceInterface extends DeviceInterface {
   getKeychainValue(): Promise<RawKeychainValue>
 
   setKeychainValue(value: RawKeychainValue): Promise<void>
+
+  setApplication(application: ApplicationInterface): void
+  removeApplication(application: ApplicationInterface): void
 }

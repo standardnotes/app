@@ -3,7 +3,6 @@ import {
   AppleIAPProductId,
   AppleIAPReceipt,
   ApplicationIdentifier,
-  ApplicationInterface,
   DatabaseKeysLoadChunkResponse,
   DatabaseLoadOptions,
   Environment,
@@ -78,14 +77,6 @@ export class MobileDevice implements MobileDeviceInterface {
   async removeRawStorageValuesForIdentifier(identifier: string): Promise<void> {
     await this.removeRawStorageValue(namespacedKey(identifier, RawStorageKey.SnjsVersion))
     await this.removeRawStorageValue(namespacedKey(identifier, RawStorageKey.StorageObject))
-  }
-
-  setApplication(_application: ApplicationInterface): void {
-    throw new Error('Method not implemented.')
-  }
-
-  removeApplication(_application: ApplicationInterface): void {
-    throw new Error('Method not implemented.')
   }
 
   async authenticateWithU2F(authenticationOptionsJSONString: string): Promise<Record<string, unknown> | null> {

@@ -106,7 +106,9 @@ export class WebApplication extends SNApplication implements WebApplicationInter
       dealloced: observable,
     })
 
-    deviceInterface.setApplication(this)
+    if (!this.isNativeMobileWeb()) {
+      deviceInterface.setApplication(this)
+    }
 
     this.itemControllerGroup = new ItemGroupController(this)
     this.routeService = new RouteService(this, this.internalEventBus)

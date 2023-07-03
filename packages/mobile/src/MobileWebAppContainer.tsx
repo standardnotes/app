@@ -156,8 +156,6 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
       this.messageSender = messageSender
     }
 
-    setApplication() {}
-
     askReactNativeToInvokeInterfaceMethod(functionName, args) {
       return this.messageSender.askReactNativeToInvokeInterfaceMethod(functionName, args)
     }

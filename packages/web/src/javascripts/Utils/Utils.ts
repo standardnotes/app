@@ -15,7 +15,11 @@ export function getPlatformString() {
   try {
     const platform = navigator.platform.toLowerCase()
     let trimmed = ''
-    if (platform.includes('mac')) {
+    if (platform.includes('iphone')) {
+      trimmed = 'ios'
+    } else if (platform.includes('android')) {
+      trimmed = 'android'
+    } else if (platform.includes('mac')) {
       trimmed = 'mac'
     } else if (platform.includes('win')) {
       trimmed = 'windows'
@@ -27,7 +31,7 @@ export function getPlatformString() {
     }
     return trimmed + (isDesktopApplication() ? '-desktop' : '-web')
   } catch (e) {
-    return 'linux-web'
+    return 'unknown-platform'
   }
 }
 
