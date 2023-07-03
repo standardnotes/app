@@ -11,7 +11,7 @@ import { InternalEventBusInterface } from '..'
 import { AlertService } from '../Alert/AlertService'
 import { ApiServiceInterface } from '../Api/ApiServiceInterface'
 import { SyncServiceInterface } from '../Sync/SyncServiceInterface'
-import { FileBackupsDevice } from '@standardnotes/files'
+import { DirectoryManagerInterface, FileBackupsDevice } from '@standardnotes/files'
 
 describe('backup service', () => {
   let apiService: ApiServiceInterface
@@ -23,7 +23,7 @@ describe('backup service', () => {
   let encryptor: EncryptionProviderInterface
   let internalEventBus: InternalEventBusInterface
   let backupService: FilesBackupService
-  let device: FileBackupsDevice
+  let device: FileBackupsDevice & DirectoryManagerInterface
   let session: SessionsClientInterface
   let storage: StorageServiceInterface
   let payloads: PayloadManagerInterface
@@ -42,7 +42,7 @@ describe('backup service', () => {
 
     status = {} as jest.Mocked<StatusServiceInterface>
 
-    device = {} as jest.Mocked<FileBackupsDevice>
+    device = {} as jest.Mocked<FileBackupsDevice & DirectoryManagerInterface>
     device.getFileBackupReadToken = jest.fn()
     device.readNextChunk = jest.fn()
     device.joinPaths = jest.fn()
@@ -80,6 +80,7 @@ describe('backup service', () => {
       session,
       payloads,
       history,
+      device,
       internalEventBus,
     )
     backupService.getFilesBackupsLocation = jest.fn().mockReturnValue('/')
