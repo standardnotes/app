@@ -124,16 +124,16 @@ export class EncryptionService
   extends AbstractService<EncryptionServiceEvent>
   implements EncryptionProviderInterface, InternalEventHandlerInterface
 {
-  private operatorManager: OperatorManager
+  private operators: OperatorManager
   private readonly itemsEncryption: ItemsEncryptionService
   private readonly rootKeyManager: RootKeyManager
 
   constructor(
-    private itemManager: ItemManagerInterface,
+    private items: ItemManagerInterface,
     private mutator: MutatorClientInterface,
-    private payloadManager: PayloadManagerInterface,
-    public deviceInterface: DeviceInterface,
-    private storageService: StorageServiceInterface,
+    private payloads: PayloadManagerInterface,
+    public device: DeviceInterface,
+    private storage: StorageServiceInterface,
     public readonly keys: KeySystemKeyManagerInterface,
     identifier: ApplicationIdentifier,
     public crypto: PureCryptoInterface,
@@ -142,28 +142,21 @@ export class EncryptionService
     super(internalEventBus)
     this.crypto = crypto
 
-    this.operatorManager = new OperatorManager(crypto)
+    this.operators = new OperatorManager(crypto)
 
     this.rootKeyManager = new RootKeyManager(
-      deviceInterface,
-      storageService,
-      itemManager,
+      device,
+      storage,
+      items,
       mutator,
-      this.operatorManager,
+      this.operators,
       identifier,
       internalEventBus,
     )
 
     internalEventBus.addEventHandler(this, RootKeyManagerEvent.RootKeyManagerKeyStatusChanged)
 
-    this.itemsEncryption = new ItemsEncryptionService(
-      itemManager,
-      payloadManager,
-      storageService,
-      this.operatorManager,
-      keys,
-      internalEventBus,
-    )
+    this.itemsEncryption = new ItemsEncryptionService(items, payloads, storage, this.operators, keys, internalEventBus)
 
     UuidGenerator.SetGenerator(this.crypto.generateUUID)
   }
@@ -182,12 +175,12 @@ export class EncryptionService
   }
 
   public override deinit(): void {
-    ;(this.itemManager as unknown) = undefined
-    ;(this.payloadManager as unknown) = undefined
-    ;(this.deviceInterface as unknown) = undefined
-    ;(this.storageService as unknown) = undefined
+    ;(this.items as unknown) = undefined
+    ;(this.payloads as unknown) = undefined
+    ;(this.device as unknown) = undefined
+    ;(this.storage as unknown) = undefined
     ;(this.crypto as unknown) = undefined
-    ;(this.operatorManager as unknown) = undefined
+    ;(this.operators as unknown) = undefined
 
     this.itemsEncryption.deinit()
     ;(this.itemsEncryption as unknown) = undefined
@@ -235,7 +228,7 @@ export class EncryptionService
     const version = await this.rootKeyManager.getEncryptionSourceVersion()
 
     if (version) {
-      return this.operatorManager.operatorForVersion(version).getEncryptionDisplayName()
+      return this.operators.operatorForVersion(version).getEncryptionDisplayName()
     }
 
     throw Error('Attempting to access encryption display name wtihout source')
@@ -289,20 +282,15 @@ export class EncryptionService
   public async createNewItemsKeyWithRollback(): Promise<() => Promise<void>> {
     const usecase = new CreateNewItemsKeyWithRollbackUseCase(
       this.mutator,
-      this.itemManager,
-      this.operatorManager,
+      this.items,
+      this.operators,
       this.rootKeyManager,
     )
     return usecase.execute()
   }
 
   public async decryptErroredPayloads(): Promise<void> {
-    const usecase = new DecryptErroredRootPayloadsUseCase(
-      this.payloadManager,
-      this.operatorManager,
-      this.keys,
-      this.rootKeyManager,
-    )
+    const usecase = new DecryptErroredRootPayloadsUseCase(this.payloads, this.operators, this.keys, this.rootKeyManager)
     await usecase.execute()
 
     await this.itemsEncryption.decryptErroredItemPayloads()
@@ -338,12 +326,12 @@ export class EncryptionService
     } = split
 
     const rootKeyEncryptWithKeyLookupUsecase = new RootKeyEncryptPayloadWithKeyLookupUseCase(
-      this.operatorManager,
+      this.operators,
       this.keys,
       this.rootKeyManager,
     )
 
-    const rootKeyEncryptUsecase = new RootKeyEncryptPayloadUseCase(this.operatorManager)
+    const rootKeyEncryptUsecase = new RootKeyEncryptPayloadUseCase(this.operators)
 
     const signingKeyPair = this.hasSigningKeyPair() ? this.getSigningKeyPair() : undefined
 
@@ -434,10 +422,10 @@ export class EncryptionService
       usesKeySystemRootKeyWithKeyLookup,
     } = split
 
-    const rootKeyDecryptUseCase = new RootKeyDecryptPayloadUseCase(this.operatorManager)
+    const rootKeyDecryptUseCase = new RootKeyDecryptPayloadUseCase(this.operators)
 
     const rootKeyDecryptWithKeyLookupUsecase = new RootKeyDecryptPayloadWithKeyLookupUseCase(
-      this.operatorManager,
+      this.operators,
       this.keys,
       this.rootKeyManager,
     )
@@ -621,7 +609,7 @@ export class EncryptionService
     systemName: string
     systemDescription?: string
   }): KeySystemRootKeyInterface {
-    return this.operatorManager.defaultOperator().createRandomizedKeySystemRootKey(dto)
+    return this.operators.defaultOperator().createRandomizedKeySystemRootKey(dto)
   }
 
   createUserInputtedKeySystemRootKey(dto: {
@@ -630,14 +618,14 @@ export class EncryptionService
     systemDescription?: string
     userInputtedPassword: string
   }): KeySystemRootKeyInterface {
-    return this.operatorManager.defaultOperator().createUserInputtedKeySystemRootKey(dto)
+    return this.operators.defaultOperator().createUserInputtedKeySystemRootKey(dto)
   }
 
   deriveUserInputtedKeySystemRootKey(dto: {
     keyParams: KeySystemRootKeyParamsInterface
     userInputtedPassword: string
   }): KeySystemRootKeyInterface {
-    return this.operatorManager.defaultOperator().deriveUserInputtedKeySystemRootKey(dto)
+    return this.operators.defaultOperator().deriveUserInputtedKeySystemRootKey(dto)
   }
 
   createKeySystemItemsKey(
@@ -646,7 +634,7 @@ export class EncryptionService
     sharedVaultUuid: string | undefined,
     rootKeyToken: string,
   ): KeySystemItemsKeyInterface {
-    return this.operatorManager
+    return this.operators
       .defaultOperator()
       .createKeySystemItemsKey(uuid, keySystemIdentifier, sharedVaultUuid, rootKeyToken)
   }
@@ -657,7 +645,7 @@ export class EncryptionService
     senderSigningKeyPair: PkcKeyPair
     recipientPublicKey: string
   }): AsymmetricallyEncryptedString {
-    const operator = this.operatorManager.defaultOperator()
+    const operator = this.operators.defaultOperator()
     const encrypted = operator.asymmetricEncrypt({
       stringToEncrypt: JSON.stringify(dto.message),
       senderKeyPair: dto.senderKeyPair,
@@ -672,9 +660,9 @@ export class EncryptionService
     trustedSender: TrustedContactInterface | undefined
     privateKey: string
   }): M | undefined {
-    const defaultOperator = this.operatorManager.defaultOperator()
+    const defaultOperator = this.operators.defaultOperator()
     const version = defaultOperator.versionForAsymmetricallyEncryptedString(dto.encryptedString)
-    const keyOperator = this.operatorManager.operatorForVersion(version)
+    const keyOperator = this.operators.operatorForVersion(version)
     const decryptedResult = keyOperator.asymmetricDecrypt({
       stringToDecrypt: dto.encryptedString,
       recipientSecretKey: dto.privateKey,
@@ -704,17 +692,17 @@ export class EncryptionService
   asymmetricSignatureVerifyDetached(
     encryptedString: AsymmetricallyEncryptedString,
   ): AsymmetricSignatureVerificationDetachedResult {
-    const defaultOperator = this.operatorManager.defaultOperator()
+    const defaultOperator = this.operators.defaultOperator()
     const version = defaultOperator.versionForAsymmetricallyEncryptedString(encryptedString)
-    const keyOperator = this.operatorManager.operatorForVersion(version)
+    const keyOperator = this.operators.operatorForVersion(version)
     return keyOperator.asymmetricSignatureVerifyDetached(encryptedString)
   }
 
   getSenderPublicKeySetFromAsymmetricallyEncryptedString(string: AsymmetricallyEncryptedString): PublicKeySet {
-    const defaultOperator = this.operatorManager.defaultOperator()
+    const defaultOperator = this.operators.defaultOperator()
     const version = defaultOperator.versionForAsymmetricallyEncryptedString(string)
 
-    const keyOperator = this.operatorManager.operatorForVersion(version)
+    const keyOperator = this.operators.operatorForVersion(version)
     return keyOperator.getSenderPublicKeySetFromAsymmetricallyEncryptedString(string)
   }
 
@@ -736,7 +724,7 @@ export class EncryptionService
   }
 
   public async createEncryptedBackupFile(): Promise<BackupFile> {
-    const payloads = this.itemManager.items.map((item) => item.payload)
+    const payloads = this.items.items.map((item) => item.payload)
 
     const split = SplitPayloadsByEncryptionType(payloads)
 
@@ -757,7 +745,7 @@ export class EncryptionService
   }
 
   public createDecryptedBackupFile(): BackupFile {
-    const payloads = this.payloadManager.nonDeletedItems.filter((item) => item.content_type !== ContentType.ItemsKey)
+    const payloads = this.payloads.nonDeletedItems.filter((item) => item.content_type !== ContentType.ItemsKey)
 
     const data: BackupFile = {
       version: ProtocolVersionLatest,
@@ -866,7 +854,7 @@ export class EncryptionService
       return undefined
     }
 
-    const operator = this.operatorManager.operatorForVersion(version)
+    const operator = this.operators.operatorForVersion(version)
 
     const authenticatedData = operator.getPayloadAuthenticatedDataForExternalUse(
       encryptedInputParametersFromPayload(payload),
@@ -924,12 +912,7 @@ export class EncryptionService
   }
 
   public async createNewDefaultItemsKey(): Promise<ItemsKeyInterface> {
-    const usecase = new CreateNewDefaultItemsKeyUseCase(
-      this.mutator,
-      this.itemManager,
-      this.operatorManager,
-      this.rootKeyManager,
-    )
+    const usecase = new CreateNewDefaultItemsKeyUseCase(this.mutator, this.items, this.operators, this.rootKeyManager)
     return usecase.execute()
   }
 

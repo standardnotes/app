@@ -49,7 +49,7 @@ export class RootKeyManager extends AbstractService<RootKeyManagerEvent> {
     private storage: StorageServiceInterface,
     private items: ItemManagerInterface,
     private mutator: MutatorClientInterface,
-    private operatorManager: OperatorManager,
+    private operators: OperatorManager,
     private identifier: ApplicationIdentifier,
     eventBus: InternalEventBusInterface,
   ) {
@@ -144,7 +144,7 @@ export class RootKeyManager extends AbstractService<RootKeyManagerEvent> {
     keyParams: RootKeyParamsInterface,
   ): Promise<K> {
     const version = keyParams.version
-    const operator = this.operatorManager.operatorForVersion(version)
+    const operator = this.operators.operatorForVersion(version)
     return operator.computeRootKey(password, keyParams)
   }
 
@@ -168,7 +168,7 @@ export class RootKeyManager extends AbstractService<RootKeyManagerEvent> {
     origination: KeyParamsOrigination,
     version?: ProtocolVersion,
   ): Promise<K> {
-    const operator = version ? this.operatorManager.operatorForVersion(version) : this.operatorManager.defaultOperator()
+    const operator = version ? this.operators.operatorForVersion(version) : this.operators.defaultOperator()
     return operator.createRootKey(identifier, password, origination)
   }
 
@@ -247,7 +247,7 @@ export class RootKeyManager extends AbstractService<RootKeyManagerEvent> {
 
     const payload = new DecryptedPayload(value)
 
-    const usecase = new RootKeyEncryptPayloadUseCase(this.operatorManager)
+    const usecase = new RootKeyEncryptPayloadUseCase(this.operators)
     const wrappedKey = await usecase.executeOne(payload, wrappingKey)
     const wrappedKeyPayload = new EncryptedPayload({
       ...payload.ejected(),
@@ -275,7 +275,7 @@ export class RootKeyManager extends AbstractService<RootKeyManagerEvent> {
     }
 
     const payload = new EncryptedPayload(wrappedKey)
-    const usecase = new RootKeyDecryptPayloadUseCase(this.operatorManager)
+    const usecase = new RootKeyDecryptPayloadUseCase(this.operators)
     const decrypted = await usecase.executeOne<RootKeyContent>(payload, wrappingKey)
 
     if (isErrorDecryptingParameters(decrypted)) {
@@ -453,7 +453,7 @@ export class RootKeyManager extends AbstractService<RootKeyManagerEvent> {
        * by attempting to decrypt account keys.
        */
       const wrappedKeyPayload = new EncryptedPayload(wrappedRootKey)
-      const usecase = new RootKeyDecryptPayloadUseCase(this.operatorManager)
+      const usecase = new RootKeyDecryptPayloadUseCase(this.operators)
       const decrypted = await usecase.executeOne(wrappedKeyPayload, wrappingKey)
       return !isErrorDecryptingParameters(decrypted)
     } else {
