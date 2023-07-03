@@ -1,10 +1,9 @@
 import { ContentType } from '@standardnotes/common'
-import { Copy, extendArray, UuidGenerator } from '@standardnotes/utils'
+import { Copy, extendArray, UuidGenerator, Uuids } from '@standardnotes/utils'
 import { SNLog } from '../../Log'
 import { isErrorDecryptingParameters, SNRootKey } from '@standardnotes/encryption'
 import * as Encryption from '@standardnotes/encryption'
 import * as Services from '@standardnotes/services'
-import { DiagnosticInfo } from '@standardnotes/services'
 import {
   CreateDecryptedLocalStorageContextPayload,
   CreateDeletedLocalStorageContextPayload,
@@ -254,7 +253,7 @@ export class DiskStorageService extends Services.AbstractService implements Serv
     return rawContent as Services.StorageValuesObject
   }
 
-  public setValue(key: string, value: unknown, mode = Services.StorageValueModes.Default): void {
+  public setValue<T>(key: string, value: T, mode = Services.StorageValueModes.Default): void {
     this.setValueWithNoPersist(key, value, mode)
 
     void this.persistValuesToDisk()
@@ -292,6 +291,14 @@ export class DiskStorageService extends Services.AbstractService implements Serv
     const value = this.values[this.domainKeyForMode(mode)][key]
 
     return value != undefined ? (value as T) : (defaultValue as T)
+  }
+
+  public getAllKeys(mode = Services.StorageValueModes.Default): string[] {
+    if (!this.values) {
+      throw Error('Attempting to get all keys before loading local storage.')
+    }
+
+    return Object.keys(this.values[this.domainKeyForMode(mode)])
   }
 
   public async removeValue(key: string, mode = Services.StorageValueModes.Default): Promise<void> {
@@ -372,20 +379,28 @@ export class DiskStorageService extends Services.AbstractService implements Serv
     const encryptable: DecryptedPayloadInterface[] = []
     const unencryptable: DecryptedPayloadInterface[] = []
 
-    const split = Encryption.SplitPayloadsByEncryptionType(decrypted)
-    if (split.itemsKeyEncryption) {
-      extendArray(encryptable, split.itemsKeyEncryption)
+    const { rootKeyEncryption, keySystemRootKeyEncryption, itemsKeyEncryption } =
+      Encryption.SplitPayloadsByEncryptionType(decrypted)
+
+    if (itemsKeyEncryption) {
+      extendArray(encryptable, itemsKeyEncryption)
     }
 
-    if (split.rootKeyEncryption) {
+    if (keySystemRootKeyEncryption) {
+      extendArray(encryptable, keySystemRootKeyEncryption)
+    }
+
+    if (rootKeyEncryption) {
       if (!rootKeyEncryptionAvailable) {
-        extendArray(unencryptable, split.rootKeyEncryption)
+        extendArray(unencryptable, rootKeyEncryption)
       } else {
-        extendArray(encryptable, split.rootKeyEncryption)
+        extendArray(encryptable, rootKeyEncryption)
       }
     }
 
-    await this.deletePayloads(discardable)
+    if (discardable.length > 0) {
+      await this.deletePayloads(discardable)
+    }
 
     const encryptableSplit = Encryption.SplitPayloadsByEncryptionType(encryptable)
 
@@ -408,16 +423,18 @@ export class DiskStorageService extends Services.AbstractService implements Serv
   }
 
   public async deletePayloads(payloads: DeletedPayloadInterface[]) {
-    await Promise.all(payloads.map((payload) => this.deletePayloadWithId(payload.uuid)))
+    await this.deletePayloadsWithUuids(Uuids(payloads))
   }
 
-  public async forceDeletePayloads(payloads: FullyFormedPayloadInterface[]) {
-    await Promise.all(payloads.map((payload) => this.deletePayloadWithId(payload.uuid)))
+  public async deletePayloadsWithUuids(uuids: string[]): Promise<void> {
+    await this.executeCriticalFunction(async () => {
+      await Promise.all(uuids.map((uuid) => this.deviceInterface.removeDatabaseEntry(uuid, this.identifier)))
+    })
   }
 
-  public async deletePayloadWithId(uuid: string) {
+  public async deletePayloadWithUuid(uuid: string) {
     return this.executeCriticalFunction(async () => {
-      return this.deviceInterface.removeDatabaseEntry(uuid, this.identifier)
+      await this.deviceInterface.removeDatabaseEntry(uuid, this.identifier)
     })
   }
 
@@ -438,18 +455,5 @@ export class DiskStorageService extends Services.AbstractService implements Serv
 
       await this.deviceInterface.removeRawStorageValue(this.getPersistenceKey())
     })
-  }
-
-  override async getDiagnostics(): Promise<DiagnosticInfo | undefined> {
-    return {
-      storage: {
-        storagePersistable: this.storagePersistable,
-        persistencePolicy: Services.StoragePersistencePolicies[this.persistencePolicy],
-        needsPersist: this.needsPersist,
-        currentPersistPromise: this.currentPersistPromise != undefined,
-        isStorageWrapped: this.isStorageWrapped(),
-        allRawPayloadsCount: (await this.getAllRawPayloads()).length,
-      },
-    }
   }
 }

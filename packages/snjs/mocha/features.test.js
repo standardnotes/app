@@ -31,9 +31,9 @@ describe('features', () => {
       expires_at: tomorrow,
     }
 
-    sinon.spy(application.itemManager, 'createItem')
-    sinon.spy(application.itemManager, 'changeComponent')
-    sinon.spy(application.itemManager, 'setItemsToBeDeleted')
+    sinon.spy(application.mutator, 'createItem')
+    sinon.spy(application.mutator, 'changeComponent')
+    sinon.spy(application.mutator, 'setItemsToBeDeleted')
 
     getUserFeatures = sinon.stub(application.apiService, 'getUserFeatures').callsFake(() => {
       return Promise.resolve({
@@ -82,7 +82,7 @@ describe('features', () => {
 
     it('should fetch user features and create items for features with content type', async () => {
       expect(application.apiService.getUserFeatures.callCount).to.equal(1)
-      expect(application.itemManager.createItem.callCount).to.equal(2)
+      expect(application.mutator.createItem.callCount).to.equal(2)
 
       const themeItems = application.items.getItems(ContentType.Theme)
       const systemThemeCount = 1
@@ -117,7 +117,7 @@ describe('features', () => {
       // Wipe roles from initial sync
       await application.featuresService.setOnlineRoles([])
       // Create pre-existing item for theme without all the info
-      await application.itemManager.createItem(
+      await application.mutator.createItem(
         ContentType.Theme,
         FillItemContent({
           package_info: {
@@ -129,7 +129,7 @@ describe('features', () => {
       await application.sync.sync()
       // Timeout since we don't await for features update
       await new Promise((resolve) => setTimeout(resolve, 1000))
-      expect(application.itemManager.changeComponent.callCount).to.equal(1)
+      expect(application.mutator.changeComponent.callCount).to.equal(1)
       const themeItems = application.items.getItems(ContentType.Theme)
       expect(themeItems).to.have.lengthOf(1)
       expect(themeItems[0].content).to.containSubset(
@@ -172,7 +172,7 @@ describe('features', () => {
 
       // Timeout since we don't await for features update
       await new Promise((resolve) => setTimeout(resolve, 1000))
-      expect(application.itemManager.setItemsToBeDeleted.calledWith([sinon.match({ uuid: themeItem.uuid })])).to.equal(
+      expect(application.mutator.setItemsToBeDeleted.calledWith([sinon.match({ uuid: themeItem.uuid })])).to.equal(
         true,
       )
 
@@ -202,7 +202,7 @@ describe('features', () => {
         sinon.stub(application.featuresService, 'migrateFeatureRepoToUserSetting').callsFake(resolve)
       })
 
-      await application.itemManager.createItem(
+      await application.mutator.createItem(
         ContentType.ExtensionRepo,
         FillItemContent({
           url: `https://extensions.standardnotes.org/${extensionKey}`,
@@ -224,7 +224,7 @@ describe('features', () => {
         // eslint-disable-next-line @typescript-eslint/no-empty-function
         .callsFake(() => {})
       const extensionKey = UuidGenerator.GenerateUuid().split('-').join('')
-      await application.itemManager.createItem(
+      await application.mutator.createItem(
         ContentType.ExtensionRepo,
         FillItemContent({
           url: `https://extensions.standardnotes.org/${extensionKey}`,
@@ -255,7 +255,7 @@ describe('features', () => {
         return false
       })
       const extensionKey = UuidGenerator.GenerateUuid().split('-').join('')
-      await application.itemManager.createItem(
+      await application.mutator.createItem(
         ContentType.ExtensionRepo,
         FillItemContent({
           url: `https://extensions.standardnotes.org/${extensionKey}`,
@@ -290,7 +290,7 @@ describe('features', () => {
           }
         })
       })
-      await application.itemManager.createItem(
+      await application.mutator.createItem(
         ContentType.ExtensionRepo,
         FillItemContent({
           url: `https://extensions.standardnotes.org/${extensionKey}`,
@@ -304,7 +304,7 @@ describe('features', () => {
     it('previous extension repo should be migrated to offline feature repo', async () => {
       application = await Factory.signOutApplicationAndReturnNew(application)
       const extensionKey = UuidGenerator.GenerateUuid().split('-').join('')
-      await application.itemManager.createItem(
+      await application.mutator.createItem(
         ContentType.ExtensionRepo,
         FillItemContent({
           url: `https://extensions.standardnotes.org/${extensionKey}`,

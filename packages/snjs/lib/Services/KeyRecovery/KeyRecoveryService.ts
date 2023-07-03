@@ -312,7 +312,7 @@ export class SNKeyRecoveryService extends AbstractService<KeyRecoveryEvent, Decr
 
   private addKeysToQueue(keys: EncryptedPayloadInterface[]) {
     for (const key of keys) {
-      const keyParams = this.protocolService.getKeyEmbeddedKeyParams(key)
+      const keyParams = this.protocolService.getKeyEmbeddedKeyParamsFromItemsKey(key)
       if (!keyParams) {
         continue
       }

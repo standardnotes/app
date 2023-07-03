@@ -1,4 +1,3 @@
-import { WebApplication } from '@/Application/WebApplication'
 import { FileItemActionType } from '@/Components/AttachedFilesPopover/PopoverFileItemAction'
 import { NoteViewController } from '@/Components/NoteView/Controller/NoteViewController'
 import { AppPaneId } from '@/Components/Panes/AppPaneMetadata'
@@ -9,13 +8,14 @@ import {
   ApplicationEvent,
   ContentType,
   FileItem,
-  InternalEventBus,
   naturalSort,
   PrefKey,
   SNNote,
   SNTag,
   isFile,
   isNote,
+  InternalEventBusInterface,
+  isTag,
 } from '@standardnotes/snjs'
 import { action, computed, makeObservable, observable } from 'mobx'
 import { AbstractViewController } from './Abstract/AbstractViewController'
@@ -25,6 +25,8 @@ import { ItemListController } from './ItemList/ItemListController'
 import { NavigationController } from './Navigation/NavigationController'
 import { SelectedItemsController } from './SelectedItemsController'
 import { SubscriptionController } from './Subscription/SubscriptionController'
+import { WebApplication } from '@/Application/WebApplication'
+import { featureTrunkVaultsEnabled } from '@/FeatureTrunk'
 
 export class LinkingController extends AbstractViewController {
   shouldLinkToParentFolders: boolean
@@ -37,7 +39,7 @@ export class LinkingController extends AbstractViewController {
     application: WebApplication,
     private navigationController: NavigationController,
     private selectionController: SelectedItemsController,
-    eventBus: InternalEventBus,
+    eventBus: InternalEventBusInterface,
   ) {
     super(application, eventBus)
 
@@ -165,7 +167,11 @@ export class LinkingController extends AbstractViewController {
   }
 
   unlinkItems = async (item: LinkableItem, itemToUnlink: LinkableItem) => {
-    await this.application.items.unlinkItems(item, itemToUnlink)
+    try {
+      await this.application.mutator.unlinkItems(item, itemToUnlink)
+    } catch (error) {
+      console.error(error)
+    }
 
     void this.application.sync.sync()
   }
@@ -188,8 +194,36 @@ export class LinkingController extends AbstractViewController {
   }
 
   linkItems = async (item: LinkableItem, itemToLink: LinkableItem) => {
-    if (item instanceof SNNote) {
-      if (itemToLink instanceof SNNote && !this.isEntitledToNoteLinking) {
+    const linkNoteAndFile = async (note: SNNote, file: FileItem) => {
+      const updatedFile = await this.application.mutator.associateFileWithNote(file, note)
+
+      if (updatedFile && featureTrunkVaultsEnabled()) {
+        const noteVault = this.application.vaults.getItemVault(note)
+        const fileVault = this.application.vaults.getItemVault(updatedFile)
+        if (noteVault && !fileVault) {
+          await this.application.vaults.moveItemToVault(noteVault, file)
+        }
+      }
+    }
+
+    const linkFileAndFile = async (file1: FileItem, file2: FileItem) => {
+      await this.application.mutator.linkFileToFile(file1, file2)
+    }
+
+    const linkNoteToNote = async (note1: SNNote, note2: SNNote) => {
+      await this.application.mutator.linkNoteToNote(note1, note2)
+    }
+
+    const linkTagToNote = async (tag: SNTag, note: SNNote) => {
+      await this.addTagToItem(tag, note)
+    }
+
+    const linkTagToFile = async (tag: SNTag, file: FileItem) => {
+      await this.addTagToItem(tag, file)
+    }
+
+    if (isNote(item)) {
+      if (isNote(itemToLink) && !this.isEntitledToNoteLinking) {
         void this.publishCrossControllerEventSync(CrossControllerEvent.DisplayPremiumModal, {
           featureName: 'Note linking',
         })
@@ -200,22 +234,22 @@ export class LinkingController extends AbstractViewController {
         await this.ensureActiveItemIsInserted()
       }
 
-      if (itemToLink instanceof FileItem) {
-        await this.application.items.associateFileWithNote(itemToLink, item)
-      } else if (itemToLink instanceof SNNote) {
-        await this.application.items.linkNoteToNote(item, itemToLink)
-      } else if (itemToLink instanceof SNTag) {
-        await this.addTagToItem(itemToLink, item)
+      if (isFile(itemToLink)) {
+        await linkNoteAndFile(item, itemToLink)
+      } else if (isNote(itemToLink)) {
+        await linkNoteToNote(item, itemToLink)
+      } else if (isTag(itemToLink)) {
+        await linkTagToNote(itemToLink, item)
       } else {
         throw Error('Invalid item type')
       }
-    } else if (item instanceof FileItem) {
-      if (itemToLink instanceof SNNote) {
-        await this.application.items.associateFileWithNote(item, itemToLink)
-      } else if (itemToLink instanceof FileItem) {
-        await this.application.items.linkFileToFile(item, itemToLink)
-      } else if (itemToLink instanceof SNTag) {
-        await this.addTagToItem(itemToLink, item)
+    } else if (isFile(item)) {
+      if (isNote(itemToLink)) {
+        await linkNoteAndFile(itemToLink, item)
+      } else if (isFile(itemToLink)) {
+        await linkFileAndFile(item, itemToLink)
+      } else if (isTag(itemToLink)) {
+        await linkTagToFile(itemToLink, item)
       } else {
         throw Error('Invalid item to link')
       }
@@ -248,8 +282,12 @@ export class LinkingController extends AbstractViewController {
 
   createAndAddNewTag = async (title: string): Promise<SNTag> => {
     await this.ensureActiveItemIsInserted()
+
+    const vault = this.application.vaultDisplayService.exclusivelyShownVault
+
+    const newTag = await this.application.mutator.findOrCreateTag(title, vault)
+
     const activeItem = this.activeItem
-    const newTag = await this.application.mutator.findOrCreateTag(title)
     if (activeItem) {
       await this.addTagToItem(newTag, activeItem)
     }
@@ -259,9 +297,9 @@ export class LinkingController extends AbstractViewController {
 
   addTagToItem = async (tag: SNTag, item: FileItem | SNNote) => {
     if (item instanceof SNNote) {
-      await this.application.items.addTagToNote(item, tag, this.shouldLinkToParentFolders)
+      await this.application.mutator.addTagToNote(item, tag, this.shouldLinkToParentFolders)
     } else if (item instanceof FileItem) {
-      await this.application.items.addTagToFile(item, tag, this.shouldLinkToParentFolders)
+      await this.application.mutator.addTagToFile(item, tag, this.shouldLinkToParentFolders)
     }
 
     this.application.sync.sync().catch(console.error)

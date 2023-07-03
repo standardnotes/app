@@ -5,9 +5,10 @@ type Props = {
   items: { label: string; value: string }[]
   value: string
   onChange: (value: string) => void
+  className?: string
 }
 
-const RadioButtonGroup = ({ value, items, onChange }: Props) => {
+const RadioButtonGroup = ({ value, items, onChange, className }: Props) => {
   const radio = useRadioStore({
     value,
     orientation: 'horizontal',
@@ -17,7 +18,7 @@ const RadioButtonGroup = ({ value, items, onChange }: Props) => {
   })
 
   return (
-    <RadioGroup store={radio} className="flex divide-x divide-border rounded border border-border">
+    <RadioGroup store={radio} className={`flex divide-x divide-border rounded border border-border ${className ?? ''}`}>
       {items.map(({ label, value: itemValue }) => (
         <label
           className={classNames(

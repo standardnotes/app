@@ -154,6 +154,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   private declare subscriptionManager: SubscriptionClientInterface
   private declare webSocketApiService: WebSocketApiServiceInterface
   private declare webSocketServer: WebSocketServerInterface
+
   private sessionManager!: InternalServices.SNSessionManager
   private syncService!: InternalServices.SNSyncService
   public challengeService!: InternalServices.ChallengeService
@@ -176,6 +177,13 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   private integrityService!: ExternalServices.IntegrityService
   private statusService!: ExternalServices.StatusService
   private filesBackupService?: FilesBackupService
+  private vaultService!: ExternalServices.VaultServiceInterface
+  private contactService!: ExternalServices.ContactServiceInterface
+  private sharedVaultService!: ExternalServices.SharedVaultServiceInterface
+  private userEventService!: ExternalServices.UserEventService
+  private asymmetricMessageService!: ExternalServices.AsymmetricMessageService
+  private keySystemKeyManager!: ExternalServices.KeySystemKeyManager
+
   private declare sessionStorageMapper: MapperInterface<Session, Record<string, unknown>>
   private declare legacySessionStorageMapper: MapperInterface<LegacySession, Record<string, unknown>>
   private declare authenticatorManager: AuthenticatorClientInterface
@@ -319,7 +327,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return this.featuresService
   }
 
-  public get items(): ExternalServices.ItemsClientInterface {
+  public get items(): ExternalServices.ItemManagerInterface {
     return this.itemManager
   }
 
@@ -381,6 +389,18 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
 
   get homeServer(): ExternalServices.HomeServerServiceInterface | undefined {
     return this.homeServerService
+  }
+
+  public get vaults(): ExternalServices.VaultServiceInterface {
+    return this.vaultService
+  }
+
+  public get contacts(): ExternalServices.ContactServiceInterface {
+    return this.contactService
+  }
+
+  public get sharedVaults(): ExternalServices.SharedVaultServiceInterface {
+    return this.sharedVaultService
   }
 
   public computePrivateUsername(username: string): Promise<string | undefined> {
@@ -544,6 +564,11 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     for (const service of this.services) {
       await service.handleApplicationStage(stage)
     }
+
+    this.internalEventBus.publish({
+      type: ApplicationEvent.ApplicationStageChanged,
+      payload: { stage } as ExternalServices.ApplicationStageChangedEventPayload,
+    })
   }
 
   /**
@@ -597,11 +622,13 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     } else if (event === ApplicationEvent.Launched) {
       this.onLaunch()
     }
+
     for (const observer of this.eventHandlers.slice()) {
       if ((observer.singleEvent && observer.singleEvent === event) || !observer.singleEvent) {
         await observer.callback(event, data || {})
       }
     }
+
     void this.migrationService.handleApplicationEvent(event)
   }
 
@@ -647,6 +674,9 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   public async getAvailableSubscriptions(): Promise<
     Responses.AvailableSubscriptions | Responses.ClientDisplayableError
   > {
+    if (this.isThirdPartyHostUsed()) {
+      return ClientDisplayableError.FromString('Third party hosts do not support subscriptions.')
+    }
     return this.sessionManager.getAvailableSubscriptions()
   }
 
@@ -837,8 +867,8 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return this.diskStorageService.setValue(key, value, mode)
   }
 
-  public getValue(key: string, mode?: ExternalServices.StorageValueModes): unknown {
-    return this.diskStorageService.getValue(key, mode)
+  public getValue<T>(key: string, mode?: ExternalServices.StorageValueModes): T {
+    return this.diskStorageService.getValue<T>(key, mode)
   }
 
   public async removeValue(key: string, mode?: ExternalServices.StorageValueModes): Promise<void> {
@@ -873,7 +903,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     }
   }
 
-  public addChallengeObserver(challenge: Challenge, observer: InternalServices.ChallengeObserver): () => void {
+  public addChallengeObserver(challenge: Challenge, observer: ExternalServices.ChallengeObserver): () => void {
     return this.challengeService.addChallengeObserver(challenge, observer)
   }
 
@@ -988,6 +1018,53 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       origination,
       validateNewPasswordStrength,
     })
+  }
+
+  public async changeAndSaveItem<M extends Models.DecryptedItemMutator = Models.DecryptedItemMutator>(
+    itemToLookupUuidFor: DecryptedItemInterface,
+    mutate: (mutator: M) => void,
+    updateTimestamps = true,
+    emitSource?: Models.PayloadEmitSource,
+    syncOptions?: ExternalServices.SyncOptions,
+  ): Promise<DecryptedItemInterface | undefined> {
+    await this.mutator.changeItems(
+      [itemToLookupUuidFor],
+      mutate,
+      updateTimestamps ? Models.MutationType.UpdateUserTimestamps : Models.MutationType.NoUpdateUserTimestamps,
+      emitSource,
+    )
+    await this.syncService.sync(syncOptions)
+    return this.itemManager.findItem(itemToLookupUuidFor.uuid)
+  }
+
+  public async changeAndSaveItems<M extends Models.DecryptedItemMutator = Models.DecryptedItemMutator>(
+    itemsToLookupUuidsFor: DecryptedItemInterface[],
+    mutate: (mutator: M) => void,
+    updateTimestamps = true,
+    emitSource?: Models.PayloadEmitSource,
+    syncOptions?: ExternalServices.SyncOptions,
+  ): Promise<void> {
+    await this.mutator.changeItems(
+      itemsToLookupUuidsFor,
+      mutate,
+      updateTimestamps ? Models.MutationType.UpdateUserTimestamps : Models.MutationType.NoUpdateUserTimestamps,
+      emitSource,
+    )
+    await this.syncService.sync(syncOptions)
+  }
+
+  public async importData(data: BackupFile, awaitSync = false): Promise<ExternalServices.ImportDataReturnType> {
+    const usecase = new ExternalServices.ImportDataUseCase(
+      this.itemManager,
+      this.syncService,
+      this.protectionService,
+      this.protocolService,
+      this.payloadManager,
+      this.challengeService,
+      this.historyManager,
+    )
+
+    return usecase.execute(data, awaitSync)
   }
 
   private async handleRevokedSession(): Promise<void> {
@@ -1166,9 +1243,16 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.createMappers()
     this.createPayloadManager()
     this.createItemManager()
+    this.createMutatorService()
+
     this.createDiskStorageManager()
+    this.createUserEventService()
+
     this.createInMemoryStorageManager()
+
+    this.createKeySystemKeyManager()
     this.createProtocolService()
+
     this.diskStorageService.provideEncryptionProvider(this.protocolService)
     this.createChallengeService()
     this.createLegacyHttpManager()
@@ -1204,7 +1288,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.createFileService()
 
     this.createIntegrityService()
-    this.createMutatorService()
+
     this.createListedService()
     this.createActionsManager()
     this.createAuthenticatorManager()
@@ -1212,6 +1296,10 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.createRevisionManager()
 
     this.createUseCases()
+    this.createContactService()
+    this.createVaultService()
+    this.createSharedVaultService()
+    this.createAsymmetricMessageService()
   }
 
   private clearServices() {
@@ -1269,6 +1357,12 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     ;(this._listRevisions as unknown) = undefined
     ;(this._getRevision as unknown) = undefined
     ;(this._deleteRevision as unknown) = undefined
+    ;(this.vaultService as unknown) = undefined
+    ;(this.contactService as unknown) = undefined
+    ;(this.sharedVaultService as unknown) = undefined
+    ;(this.userEventService as unknown) = undefined
+    ;(this.asymmetricMessageService as unknown) = undefined
+    ;(this.keySystemKeyManager as unknown) = undefined
 
     this.services = []
   }
@@ -1290,6 +1384,71 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     ;(this.internalEventBus as unknown) = undefined
   }
 
+  private createUserEventService(): void {
+    this.userEventService = new ExternalServices.UserEventService(this.internalEventBus)
+    this.services.push(this.userEventService)
+  }
+
+  private createAsymmetricMessageService() {
+    this.asymmetricMessageService = new ExternalServices.AsymmetricMessageService(
+      this.httpService,
+      this.protocolService,
+      this.contacts,
+      this.itemManager,
+      this.mutator,
+      this.syncService,
+      this.internalEventBus,
+    )
+    this.services.push(this.asymmetricMessageService)
+  }
+
+  private createContactService(): void {
+    this.contactService = new ExternalServices.ContactService(
+      this.syncService,
+      this.itemManager,
+      this.mutator,
+      this.sessionManager,
+      this.options.crypto,
+      this.user,
+      this.protocolService,
+      this.singletonManager,
+      this.internalEventBus,
+    )
+
+    this.services.push(this.contactService)
+  }
+
+  private createSharedVaultService(): void {
+    this.sharedVaultService = new ExternalServices.SharedVaultService(
+      this.httpService,
+      this.syncService,
+      this.itemManager,
+      this.mutator,
+      this.protocolService,
+      this.sessions,
+      this.contactService,
+      this.files,
+      this.vaults,
+      this.storage,
+      this.internalEventBus,
+    )
+    this.services.push(this.sharedVaultService)
+  }
+
+  private createVaultService(): void {
+    this.vaultService = new ExternalServices.VaultService(
+      this.syncService,
+      this.itemManager,
+      this.mutator,
+      this.protocolService,
+      this.files,
+      this.alertService,
+      this.internalEventBus,
+    )
+
+    this.services.push(this.vaultService)
+  }
+
   private createListedService(): void {
     this.listedService = new InternalServices.ListedService(
       this.apiService,
@@ -1298,6 +1457,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       this.deprecatedHttpService,
       this.protectionService,
       this.mutator,
+      this.sync,
       this.internalEventBus,
     )
     this.services.push(this.listedService)
@@ -1306,10 +1466,11 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   private createFileService() {
     this.fileService = new FileService(
       this.apiService,
-      this.itemManager,
+      this.mutator,
       this.syncService,
       this.protocolService,
       this.challengeService,
+      this.httpService,
       this.alertService,
       this.options.crypto,
       this.internalEventBus,
@@ -1335,6 +1496,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       this.diskStorageService,
       this.apiService,
       this.itemManager,
+      this.mutator,
       this.webSocketsService,
       this.settingsService,
       this.userService,
@@ -1386,6 +1548,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       sessionManager: this.sessionManager,
       challengeService: this.challengeService,
       itemManager: this.itemManager,
+      mutator: this.mutator,
       singletonManager: this.singletonManager,
       featuresService: this.featuresService,
       environment: this.environment,
@@ -1473,6 +1636,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   private createComponentManager() {
     this.componentManagerService = new InternalServices.SNComponentManager(
       this.itemManager,
+      this.mutator,
       this.syncService,
       this.featuresService,
       this.preferencesService,
@@ -1528,6 +1692,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   private createSingletonManager() {
     this.singletonManager = new InternalServices.SNSingletonManager(
       this.itemManager,
+      this.mutator,
       this.payloadManager,
       this.syncService,
       this.internalEventBus,
@@ -1557,9 +1722,11 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   private createProtocolService() {
     this.protocolService = new EncryptionService(
       this.itemManager,
+      this.mutator,
       this.payloadManager,
       this.deviceInterface,
       this.diskStorageService,
+      this.keySystemKeyManager,
       this.identifier,
       this.options.crypto,
       this.internalEventBus,
@@ -1572,6 +1739,17 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       }),
     )
     this.services.push(this.protocolService)
+  }
+
+  private createKeySystemKeyManager() {
+    this.keySystemKeyManager = new ExternalServices.KeySystemKeyManager(
+      this.itemManager,
+      this.mutator,
+      this.storage,
+      this.internalEventBus,
+    )
+
+    this.services.push(this.keySystemKeyManager)
   }
 
   private createKeyRecoveryService() {
@@ -1608,7 +1786,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.serviceObservers.push(
       this.sessionManager.addEventObserver(async (event) => {
         switch (event) {
-          case InternalServices.SessionEvent.Restored: {
+          case ExternalServices.SessionEvent.Restored: {
             void (async () => {
               await this.sync.sync({ sourceDescription: 'Session restored pre key creation' })
               if (this.protocolService.needsNewRootKeyBasedItemsKey()) {
@@ -1619,10 +1797,12 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
             })()
             break
           }
-          case InternalServices.SessionEvent.Revoked: {
+          case ExternalServices.SessionEvent.Revoked: {
             await this.handleRevokedSession()
             break
           }
+          case ExternalServices.SessionEvent.UserKeyPairChanged:
+            break
           default: {
             Utils.assertUnreachable(event)
           }
@@ -1681,6 +1861,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   private createProtectionService() {
     this.protectionService = new InternalServices.SNProtectionService(
       this.protocolService,
+      this.mutator,
       this.challengeService,
       this.diskStorageService,
       this.internalEventBus,
@@ -1727,6 +1908,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.preferencesService = new InternalServices.SNPreferencesService(
       this.singletonManager,
       this.itemManager,
+      this.mutator,
       this.syncService,
       this.internalEventBus,
     )
@@ -1760,13 +1942,8 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   private createMutatorService() {
     this.mutatorService = new InternalServices.MutatorService(
       this.itemManager,
-      this.syncService,
-      this.protectionService,
-      this.protocolService,
       this.payloadManager,
-      this.challengeService,
-      this.componentManagerService,
-      this.historyManager,
+      this.alertService,
       this.internalEventBus,
     )
     this.services.push(this.mutatorService)

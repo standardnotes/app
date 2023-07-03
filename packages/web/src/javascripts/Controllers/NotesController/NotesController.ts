@@ -7,10 +7,11 @@ import {
   NoteMutator,
   ContentType,
   SNTag,
-  InternalEventBus,
   PrefKey,
   ApplicationEvent,
   EditorLineWidth,
+  InternalEventBusInterface,
+  MutationType,
 } from '@standardnotes/snjs'
 import { makeObservable, observable, action, computed, runInAction } from 'mobx'
 import { WebApplication } from '../../Application/WebApplication'
@@ -48,7 +49,7 @@ export class NotesController extends AbstractViewController implements NotesCont
     application: WebApplication,
     private selectionController: SelectedItemsController,
     private navigationController: NavigationController,
-    eventBus: InternalEventBus,
+    eventBus: InternalEventBusInterface,
   ) {
     super(application, eventBus)
 
@@ -201,7 +202,7 @@ export class NotesController extends AbstractViewController implements NotesCont
   }
 
   async changeSelectedNotes(mutate: (mutator: NoteMutator) => void): Promise<void> {
-    await this.application.mutator.changeItems(this.getSelectedNotesList(), mutate, false)
+    await this.application.mutator.changeItems(this.getSelectedNotesList(), mutate, MutationType.NoUpdateUserTimestamps)
     this.application.sync.sync().catch(console.error)
   }
 
@@ -263,9 +264,8 @@ export class NotesController extends AbstractViewController implements NotesCont
     ) {
       this.selectionController.selectNextItem()
       if (permanently) {
-        for (const note of this.getSelectedNotesList()) {
-          await this.application.mutator.deleteItem(note)
-        }
+        await this.application.mutator.deleteItems(this.getSelectedNotesList())
+        void this.application.sync.sync()
       } else {
         await this.changeSelectedNotes((mutator) => {
           mutator.trashed = true
@@ -332,12 +332,14 @@ export class NotesController extends AbstractViewController implements NotesCont
   async setProtectSelectedNotes(protect: boolean): Promise<void> {
     const selectedNotes = this.getSelectedNotesList()
     if (protect) {
-      await this.application.mutator.protectNotes(selectedNotes)
+      await this.application.protections.protectNotes(selectedNotes)
       this.setShowProtectedWarning(true)
     } else {
-      await this.application.mutator.unprotectNotes(selectedNotes)
+      await this.application.protections.unprotectNotes(selectedNotes)
       this.setShowProtectedWarning(false)
     }
+
+    void this.application.sync.sync()
   }
 
   unselectNotes(): void {
@@ -354,7 +356,7 @@ export class NotesController extends AbstractViewController implements NotesCont
       (mutator) => {
         mutator.toggleSpellcheck()
       },
-      false,
+      MutationType.NoUpdateUserTimestamps,
     )
     this.application.sync.sync().catch(console.error)
   }
@@ -371,7 +373,7 @@ export class NotesController extends AbstractViewController implements NotesCont
       (mutator) => {
         mutator.editorWidth = editorWidth
       },
-      false,
+      MutationType.NoUpdateUserTimestamps,
     )
     this.application.sync.sync().catch(console.error)
   }
@@ -380,7 +382,7 @@ export class NotesController extends AbstractViewController implements NotesCont
     const selectedNotes = this.getSelectedNotesList()
     await Promise.all(
       selectedNotes.map(async (note) => {
-        await this.application.items.addTagToNote(note, tag, this.shouldLinkToParentFolders)
+        await this.application.mutator.addTagToNote(note, tag, this.shouldLinkToParentFolders)
       }),
     )
     this.application.sync.sync().catch(console.error)
@@ -414,7 +416,7 @@ export class NotesController extends AbstractViewController implements NotesCont
         confirmButtonStyle: 'danger',
       })
     ) {
-      this.application.mutator.emptyTrash().catch(console.error)
+      await this.application.mutator.emptyTrash()
       this.application.sync.sync().catch(console.error)
     }
   }

@@ -9,6 +9,7 @@ export enum ErrorTag {
   RevokedSession = 'revoked-session',
   AuthInvalid = 'invalid-auth',
   ReadOnlyAccess = 'read-only-access',
+  ExpiredItemShare = 'expired-item-share',
 
   ClientValidationError = 'client-validation-error',
   ClientCanceledMfa = 'client-canceled-mfa',

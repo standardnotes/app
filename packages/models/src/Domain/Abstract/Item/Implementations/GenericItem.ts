@@ -10,6 +10,7 @@ import { SingletonStrategy } from '../Types/SingletonStrategy'
 import { PayloadInterface } from '../../Payload/Interfaces/PayloadInterface'
 import { HistoryEntryInterface } from '../../../Runtime/History/HistoryEntryInterface'
 import { isDecryptedItem, isDeletedItem, isEncryptedErroredItem } from '../Interfaces/TypeCheck'
+import { PersistentSignatureData } from '../../../Runtime/Encryption/PersistentSignatureData'
 
 export abstract class GenericItem<P extends PayloadInterface = PayloadInterface> implements ItemInterface<P> {
   payload: P
@@ -41,6 +42,26 @@ export abstract class GenericItem<P extends PayloadInterface = PayloadInterface>
 
   get created_at() {
     return this.payload.created_at
+  }
+
+  get key_system_identifier(): string | undefined {
+    return this.payload.key_system_identifier
+  }
+
+  get user_uuid(): string | undefined {
+    return this.payload.user_uuid
+  }
+
+  get shared_vault_uuid(): string | undefined {
+    return this.payload.shared_vault_uuid
+  }
+
+  get last_edited_by_uuid(): string | undefined {
+    return this.payload.last_edited_by_uuid
+  }
+
+  get signatureData(): PersistentSignatureData | undefined {
+    return this.payload.signatureData
   }
 
   /**

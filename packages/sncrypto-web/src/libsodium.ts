@@ -6,12 +6,19 @@ export {
   crypto_box_easy,
   crypto_box_keypair,
   crypto_box_open_easy,
+  crypto_box_seed_keypair,
+  crypto_generichash,
+  crypto_kdf_derive_from_key,
   crypto_pwhash_ALG_DEFAULT,
   crypto_pwhash,
   crypto_secretstream_xchacha20poly1305_init_pull,
   crypto_secretstream_xchacha20poly1305_init_push,
   crypto_secretstream_xchacha20poly1305_pull,
   crypto_secretstream_xchacha20poly1305_push,
+  crypto_sign_detached,
+  crypto_sign_keypair,
+  crypto_sign_seed_keypair,
+  crypto_sign_verify_detached,
   from_base64,
   from_hex,
   from_string,
@@ -19,6 +26,7 @@ export {
   to_base64,
   to_hex,
   to_string,
+  crypto_generichash_BYTES,
 } from 'libsodium-wrappers'
 
 export type { StateAddress } from 'libsodium-wrappers'

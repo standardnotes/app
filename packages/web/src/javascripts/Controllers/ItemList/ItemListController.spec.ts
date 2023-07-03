@@ -2,7 +2,6 @@ import { SNTag } from '@standardnotes/snjs'
 import { ContentType } from '@standardnotes/common'
 import { InternalEventBus } from '@standardnotes/services'
 import { WebApplication } from '@/Application/WebApplication'
-import { LinkingController } from '../LinkingController'
 import { NavigationController } from '../Navigation/NavigationController'
 import { NotesController } from '../NotesController/NotesController'
 import { SearchOptionsController } from '../SearchOptionsController'
@@ -28,7 +27,6 @@ describe('item list controller', () => {
 
     const searchOptionsController = {} as jest.Mocked<SearchOptionsController>
     const notesController = {} as jest.Mocked<NotesController>
-    const linkingController = {} as jest.Mocked<LinkingController>
     const eventBus = new InternalEventBus()
 
     controller = new ItemListController(
@@ -37,7 +35,6 @@ describe('item list controller', () => {
       searchOptionsController,
       selectionController,
       notesController,
-      linkingController,
       eventBus,
     )
   })

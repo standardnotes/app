@@ -10,6 +10,7 @@ import {
   ApplicationStage,
   PreferenceServiceInterface,
   PreferencesServiceEvent,
+  MutatorClientInterface,
 } from '@standardnotes/services'
 
 export class SNPreferencesService
@@ -24,7 +25,8 @@ export class SNPreferencesService
 
   constructor(
     private singletonManager: SNSingletonManager,
-    private itemManager: ItemManager,
+    itemManager: ItemManager,
+    private mutator: MutatorClientInterface,
     private syncService: SNSyncService,
     protected override internalEventBus: InternalEventBusInterface,
   ) {
@@ -45,7 +47,7 @@ export class SNPreferencesService
     this.removeItemObserver?.()
     this.removeSyncObserver?.()
     ;(this.singletonManager as unknown) = undefined
-    ;(this.itemManager as unknown) = undefined
+    ;(this.mutator as unknown) = undefined
 
     super.deinit()
   }
@@ -77,7 +79,7 @@ export class SNPreferencesService
       return
     }
 
-    this.preferences = (await this.itemManager.changeItem<UserPrefsMutator>(this.preferences, (m) => {
+    this.preferences = (await this.mutator.changeItem<UserPrefsMutator>(this.preferences, (m) => {
       m.setPref(key, value)
     })) as SNUserPrefs
 

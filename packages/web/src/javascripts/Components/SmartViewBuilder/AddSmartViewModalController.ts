@@ -89,7 +89,13 @@ export class AddSmartViewModalController {
         ? JSON.parse(this.customPredicateJson)
         : this.predicateController.toJson()
     const predicate = predicateFromJson(predicateJson as PredicateJsonForm)
-    await this.application.items.createSmartView(this.title, predicate, this.icon as string)
+
+    await this.application.mutator.createSmartView({
+      title: this.title,
+      predicate,
+      iconString: this.icon as string,
+      vault: this.application.vaultDisplayService.exclusivelyShownVault,
+    })
 
     this.setIsSaving(false)
     this.closeModal()

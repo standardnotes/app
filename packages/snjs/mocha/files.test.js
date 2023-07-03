@@ -1,4 +1,5 @@
 import * as Factory from './lib/factory.js'
+import * as Events from './lib/Events.js'
 import * as Utils from './lib/Utils.js'
 import * as Files from './lib/Files.js'
 
@@ -38,22 +39,7 @@ describe('files', function () {
     })
 
     if (subscription) {
-      await Factory.publishMockedEvent('SUBSCRIPTION_PURCHASED', {
-        userEmail: context.email,
-        subscriptionId: subscriptionId++,
-        subscriptionName: 'PRO_PLAN',
-        subscriptionExpiresAt: (new Date().getTime() + 3_600_000) * 1_000,
-        timestamp: Date.now(),
-        offline: false,
-        discountCode: null,
-        limitedDiscountPurchased: false,
-        newSubscriber: true,
-        totalActiveSubscriptionsCount: 1,
-        userRegisteredAt: 1,
-        billingFrequency: 12,
-        payAmount: 59.00
-      })
-      await Factory.sleep(2)
+      await context.publicMockSubscriptionPurchaseEvent()
     }
   }
 
@@ -66,7 +52,7 @@ describe('files', function () {
     await setup({ fakeCrypto: true, subscription: true })
 
     const remoteIdentifier = Utils.generateUuid()
-    const token = await application.apiService.createFileValetToken(remoteIdentifier, 'write')
+    const token = await application.apiService.createUserFileValetToken(remoteIdentifier, 'write')
 
     expect(token.length).to.be.above(0)
   })
@@ -75,15 +61,15 @@ describe('files', function () {
     await setup({ fakeCrypto: true, subscription: false })
 
     const remoteIdentifier = Utils.generateUuid()
-    const tokenOrError = await application.apiService.createFileValetToken(remoteIdentifier, 'write')
+    const tokenOrError = await application.apiService.createUserFileValetToken(remoteIdentifier, 'write')
 
-    expect(tokenOrError.tag).to.equal('no-subscription')
+    expect(isClientDisplayableError(tokenOrError)).to.equal(true)
   })
 
   it('should not create valet token from server when user has an expired subscription - @paidfeature', async function () {
     await setup({ fakeCrypto: true, subscription: false })
 
-    await Factory.publishMockedEvent('SUBSCRIPTION_PURCHASED', {
+    await Events.publishMockedEvent('SUBSCRIPTION_PURCHASED', {
       userEmail: context.email,
       subscriptionId: subscriptionId++,
       subscriptionName: 'PLUS_PLAN',
@@ -96,27 +82,27 @@ describe('files', function () {
       totalActiveSubscriptionsCount: 1,
       userRegisteredAt: 1,
       billingFrequency: 12,
-      payAmount: 59.00
+      payAmount: 59.0,
     })
 
     await Factory.sleep(2)
 
     const remoteIdentifier = Utils.generateUuid()
-    const tokenOrError = await application.apiService.createFileValetToken(remoteIdentifier, 'write')
+    const tokenOrError = await application.apiService.createUserFileValetToken(remoteIdentifier, 'write')
 
-    expect(tokenOrError.tag).to.equal('expired-subscription')
+    expect(isClientDisplayableError(tokenOrError)).to.equal(true)
   })
 
   it('creating two upload sessions successively should succeed - @paidfeature', async function () {
     await setup({ fakeCrypto: true, subscription: true })
 
-    const firstToken = await application.apiService.createFileValetToken(Utils.generateUuid(), 'write')
-    const firstSession = await application.apiService.startUploadSession(firstToken)
+    const firstToken = await application.apiService.createUserFileValetToken(Utils.generateUuid(), 'write')
+    const firstSession = await application.apiService.startUploadSession(firstToken, 'user')
 
     expect(firstSession.uploadId).to.be.ok
 
-    const secondToken = await application.apiService.createFileValetToken(Utils.generateUuid(), 'write')
-    const secondSession = await application.apiService.startUploadSession(secondToken)
+    const secondToken = await application.apiService.createUserFileValetToken(Utils.generateUuid(), 'write')
+    const secondSession = await application.apiService.startUploadSession(secondToken, 'user')
 
     expect(secondSession.uploadId).to.be.ok
   })
@@ -129,7 +115,7 @@ describe('files', function () {
 
     const file = await Files.uploadFile(fileService, buffer, 'my-file', 'md', 1000)
 
-    const downloadedBytes = await Files.downloadFile(fileService, itemManager, file.remoteIdentifier)
+    const downloadedBytes = await Files.downloadFile(fileService, file)
 
     expect(downloadedBytes).to.eql(buffer)
   })
@@ -142,7 +128,7 @@ describe('files', function () {
 
     const file = await Files.uploadFile(fileService, buffer, 'my-file', 'md', 100000)
 
-    const downloadedBytes = await Files.downloadFile(fileService, itemManager, file.remoteIdentifier)
+    const downloadedBytes = await Files.downloadFile(fileService, file)
 
     expect(downloadedBytes).to.eql(buffer)
   })

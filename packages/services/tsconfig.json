@@ -3,7 +3,8 @@
   "compilerOptions": {
     "skipLibCheck": true,
     "rootDir": "./src",
-    "outDir": "./dist"
+    "outDir": "./dist",
+    "noEmit": true
   },
   "include": ["src/**/*"],
   "exclude": ["**/*.spec.ts", "node_modules"]

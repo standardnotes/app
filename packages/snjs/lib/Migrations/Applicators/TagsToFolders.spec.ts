@@ -1,31 +1,37 @@
 import { ItemManager } from '@Lib/Services'
 import { TagsToFoldersMigrationApplicator } from './TagsToFolders'
+import { MutatorClientInterface } from '@standardnotes/services'
 
-const itemManagerMock = (tagTitles: string[]) => {
+describe('folders component to hierarchy', () => {
+  let itemManager: ItemManager
+  let mutator: MutatorClientInterface
+  let changeItemMock: jest.Mock
+  let findOrCreateTagParentChainMock: jest.Mock
+
   const mockTag = (title: string) => ({
     title,
     uuid: title,
     parentId: undefined,
   })
+  beforeEach(() => {
+    itemManager = {} as unknown as jest.Mocked<ItemManager>
 
-  const mock = {
-    getItems: jest.fn().mockReturnValue(tagTitles.map(mockTag)),
-    findOrCreateTagParentChain: jest.fn(),
-    changeItem: jest.fn(),
-  }
+    mutator = {} as unknown as jest.Mocked<MutatorClientInterface>
 
-  return mock
-}
+    changeItemMock = mutator.changeItem = jest.fn()
+    findOrCreateTagParentChainMock = mutator.findOrCreateTagParentChain = jest.fn()
+  })
 
-describe('folders component to hierarchy', () => {
   it('should produce a valid hierarchy in the simple case', async () => {
     const titles = ['a', 'a.b', 'a.b.c']
+    itemManager.getItems
 
-    const itemManager = itemManagerMock(titles)
-    await TagsToFoldersMigrationApplicator.run(itemManager as unknown as ItemManager)
+    itemManager.getItems = jest.fn().mockReturnValue(titles.map(mockTag))
 
-    const findOrCreateTagParentChainCalls = itemManager.findOrCreateTagParentChain.mock.calls
-    const changeItemCalls = itemManager.changeItem.mock.calls
+    await TagsToFoldersMigrationApplicator.run(itemManager, mutator)
+
+    const findOrCreateTagParentChainCalls = findOrCreateTagParentChainMock.mock.calls
+    const changeItemCalls = changeItemMock.mock.calls
 
     expect(findOrCreateTagParentChainCalls.length).toEqual(2)
     expect(findOrCreateTagParentChainCalls[0][0]).toEqual(['a'])
@@ -39,11 +45,11 @@ describe('folders component to hierarchy', () => {
   it('should not touch flat hierarchies', async () => {
     const titles = ['a', 'x', 'y', 'z']
 
-    const itemManager = itemManagerMock(titles)
-    await TagsToFoldersMigrationApplicator.run(itemManager as unknown as ItemManager)
+    itemManager.getItems = jest.fn().mockReturnValue(titles.map(mockTag))
+    await TagsToFoldersMigrationApplicator.run(itemManager, mutator)
 
-    const findOrCreateTagParentChainCalls = itemManager.findOrCreateTagParentChain.mock.calls
-    const changeItemCalls = itemManager.changeItem.mock.calls
+    const findOrCreateTagParentChainCalls = findOrCreateTagParentChainMock.mock.calls
+    const changeItemCalls = changeItemMock.mock.calls
 
     expect(findOrCreateTagParentChainCalls.length).toEqual(0)
 
@@ -53,11 +59,11 @@ describe('folders component to hierarchy', () => {
   it('should work despite cloned tags', async () => {
     const titles = ['a.b', 'c', 'a.b']
 
-    const itemManager = itemManagerMock(titles)
-    await TagsToFoldersMigrationApplicator.run(itemManager as unknown as ItemManager)
+    itemManager.getItems = jest.fn().mockReturnValue(titles.map(mockTag))
+    await TagsToFoldersMigrationApplicator.run(itemManager, mutator)
 
-    const findOrCreateTagParentChainCalls = itemManager.findOrCreateTagParentChain.mock.calls
-    const changeItemCalls = itemManager.changeItem.mock.calls
+    const findOrCreateTagParentChainCalls = findOrCreateTagParentChainMock.mock.calls
+    const changeItemCalls = changeItemMock.mock.calls
 
     expect(findOrCreateTagParentChainCalls.length).toEqual(2)
     expect(findOrCreateTagParentChainCalls[0][0]).toEqual(['a'])
@@ -71,11 +77,11 @@ describe('folders component to hierarchy', () => {
   it('should produce a valid hierarchy cases with  missing intermediate tags or unordered', async () => {
     const titles = ['y.2', 'w.3', 'y']
 
-    const itemManager = itemManagerMock(titles)
-    await TagsToFoldersMigrationApplicator.run(itemManager as unknown as ItemManager)
+    itemManager.getItems = jest.fn().mockReturnValue(titles.map(mockTag))
+    await TagsToFoldersMigrationApplicator.run(itemManager, mutator)
 
-    const findOrCreateTagParentChainCalls = itemManager.findOrCreateTagParentChain.mock.calls
-    const changeItemCalls = itemManager.changeItem.mock.calls
+    const findOrCreateTagParentChainCalls = findOrCreateTagParentChainMock.mock.calls
+    const changeItemCalls = changeItemMock.mock.calls
 
     expect(findOrCreateTagParentChainCalls.length).toEqual(2)
     expect(findOrCreateTagParentChainCalls[0][0]).toEqual(['w'])
@@ -89,11 +95,11 @@ describe('folders component to hierarchy', () => {
   it('skip prefixed names', async () => {
     const titles = ['.something', '.something...something']
 
-    const itemManager = itemManagerMock(titles)
-    await TagsToFoldersMigrationApplicator.run(itemManager as unknown as ItemManager)
+    itemManager.getItems = jest.fn().mockReturnValue(titles.map(mockTag))
+    await TagsToFoldersMigrationApplicator.run(itemManager, mutator)
 
-    const findOrCreateTagParentChainCalls = itemManager.findOrCreateTagParentChain.mock.calls
-    const changeItemCalls = itemManager.changeItem.mock.calls
+    const findOrCreateTagParentChainCalls = findOrCreateTagParentChainMock.mock.calls
+    const changeItemCalls = changeItemMock.mock.calls
 
     expect(findOrCreateTagParentChainCalls.length).toEqual(0)
     expect(changeItemCalls.length).toEqual(0)
@@ -109,11 +115,11 @@ describe('folders component to hierarchy', () => {
       'something..another.thing..anyway',
     ]
 
-    const itemManager = itemManagerMock(titles)
-    await TagsToFoldersMigrationApplicator.run(itemManager as unknown as ItemManager)
+    itemManager.getItems = jest.fn().mockReturnValue(titles.map(mockTag))
+    await TagsToFoldersMigrationApplicator.run(itemManager, mutator)
 
-    const findOrCreateTagParentChainCalls = itemManager.findOrCreateTagParentChain.mock.calls
-    const changeItemCalls = itemManager.changeItem.mock.calls
+    const findOrCreateTagParentChainCalls = findOrCreateTagParentChainMock.mock.calls
+    const changeItemCalls = changeItemMock.mock.calls
 
     expect(findOrCreateTagParentChainCalls.length).toEqual(1)
     expect(findOrCreateTagParentChainCalls[0][0]).toEqual(['a', 'b'])

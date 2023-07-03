@@ -1,20 +1,23 @@
-import { ProtocolVersion } from '@standardnotes/common'
-import { EncryptedPayloadInterface, ItemContent } from '@standardnotes/models'
+import { ContentType, ProtocolVersion } from '@standardnotes/common'
+import { EncryptedPayloadInterface, DecryptedPayloadInterface, PersistentSignatureData } from '@standardnotes/models'
+import { DecryptedParameters } from './DecryptedParameters'
 
-export type EncryptedParameters = {
+export type EncryptedOutputParameters = {
   uuid: string
   content: string
+  content_type: ContentType
   items_key_id: string | undefined
   enc_item_key: string
   version: ProtocolVersion
+  key_system_identifier: string | undefined
+  shared_vault_uuid: string | undefined
 
   /** @deprecated */
   auth_hash?: string
 }
 
-export type DecryptedParameters<C extends ItemContent = ItemContent> = {
-  uuid: string
-  content: C
+export type EncryptedInputParameters = EncryptedOutputParameters & {
+  signatureData: PersistentSignatureData | undefined
 }
 
 export type ErrorDecryptingParameters = {
@@ -24,18 +27,27 @@ export type ErrorDecryptingParameters = {
 }
 
 export function isErrorDecryptingParameters(
-  x: EncryptedParameters | DecryptedParameters | ErrorDecryptingParameters,
+  x:
+    | EncryptedOutputParameters
+    | DecryptedParameters
+    | ErrorDecryptingParameters
+    | DecryptedPayloadInterface
+    | EncryptedPayloadInterface,
 ): x is ErrorDecryptingParameters {
   return (x as ErrorDecryptingParameters).errorDecrypting
 }
 
-export function encryptedParametersFromPayload(payload: EncryptedPayloadInterface): EncryptedParameters {
+export function encryptedInputParametersFromPayload(payload: EncryptedPayloadInterface): EncryptedInputParameters {
   return {
     uuid: payload.uuid,
     content: payload.content,
+    content_type: payload.content_type,
     items_key_id: payload.items_key_id,
     enc_item_key: payload.enc_item_key as string,
     version: payload.version,
     auth_hash: payload.auth_hash,
+    key_system_identifier: payload.key_system_identifier,
+    shared_vault_uuid: payload.shared_vault_uuid,
+    signatureData: payload.signatureData,
   }
 }

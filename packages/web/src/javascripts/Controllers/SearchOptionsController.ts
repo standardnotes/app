@@ -1,4 +1,4 @@
-import { ApplicationEvent, InternalEventBus } from '@standardnotes/snjs'
+import { ApplicationEvent, InternalEventBusInterface } from '@standardnotes/snjs'
 import { makeObservable, observable, action, runInAction } from 'mobx'
 import { WebApplication } from '../Application/WebApplication'
 import { AbstractViewController } from './Abstract/AbstractViewController'
@@ -8,7 +8,7 @@ export class SearchOptionsController extends AbstractViewController {
   includeArchived = false
   includeTrashed = false
 
-  constructor(application: WebApplication, eventBus: InternalEventBus) {
+  constructor(application: WebApplication, eventBus: InternalEventBusInterface) {
     super(application, eventBus)
 
     makeObservable(this, {

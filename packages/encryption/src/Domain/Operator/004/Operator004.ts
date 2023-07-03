@@ -1,44 +1,56 @@
-import { ContentType, KeyParamsOrigination, ProtocolVersion } from '@standardnotes/common'
-import * as Models from '@standardnotes/models'
 import {
   CreateDecryptedItemFromPayload,
-  FillItemContent,
   ItemContent,
-  ItemsKeyContent,
   ItemsKeyInterface,
   PayloadTimestampDefaults,
+  DecryptedPayload,
+  DecryptedPayloadInterface,
+  KeySystemItemsKeyInterface,
+  KeySystemRootKeyInterface,
+  FillItemContentSpecialized,
+  ItemsKeyContentSpecialized,
+  KeySystemIdentifier,
+  RootKeyInterface,
+  KeySystemRootKeyParamsInterface,
 } from '@standardnotes/models'
-import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
-import * as Utils from '@standardnotes/utils'
+import { ContentType, KeyParamsOrigination, ProtocolVersion } from '@standardnotes/common'
+import { HexString, PkcKeyPair, PureCryptoInterface, Utf8String } from '@standardnotes/sncrypto-common'
 import { V004Algorithm } from '../../Algorithm'
-import { isItemsKey } from '../../Keys/ItemsKey/ItemsKey'
-import { ContentTypeUsesRootKeyEncryption, CreateNewRootKey } from '../../Keys/RootKey/Functions'
-import { Create004KeyParams } from '../../Keys/RootKey/KeyParamsFunctions'
-import { SNRootKey } from '../../Keys/RootKey/RootKey'
 import { SNRootKeyParams } from '../../Keys/RootKey/RootKeyParams'
-import { DecryptedParameters, EncryptedParameters, ErrorDecryptingParameters } from '../../Types/EncryptedParameters'
+import {
+  EncryptedInputParameters,
+  EncryptedOutputParameters,
+  ErrorDecryptingParameters,
+} from '../../Types/EncryptedParameters'
+import { DecryptedParameters } from '../../Types/DecryptedParameters'
 import { ItemAuthenticatedData } from '../../Types/ItemAuthenticatedData'
 import { LegacyAttachedData } from '../../Types/LegacyAttachedData'
 import { RootKeyEncryptedAuthenticatedData } from '../../Types/RootKeyEncryptedAuthenticatedData'
-import { SynchronousOperator } from '../Operator'
+import { OperatorInterface } from '../OperatorInterface/OperatorInterface'
+import { AsymmetricallyEncryptedString } from '../Types/Types'
+import { AsymmetricItemAdditionalData } from '../../Types/EncryptionAdditionalData'
+import { V004AsymmetricStringComponents } from './V004AlgorithmTypes'
+import { AsymmetricEncryptUseCase } from './UseCase/Asymmetric/AsymmetricEncrypt'
+import { ParseConsistentBase64JsonPayloadUseCase } from './UseCase/Utils/ParseConsistentBase64JsonPayload'
+import { AsymmetricDecryptUseCase } from './UseCase/Asymmetric/AsymmetricDecrypt'
+import { GenerateDecryptedParametersUseCase } from './UseCase/Symmetric/GenerateDecryptedParameters'
+import { GenerateEncryptedParametersUseCase } from './UseCase/Symmetric/GenerateEncryptedParameters'
+import { DeriveRootKeyUseCase } from './UseCase/RootKey/DeriveRootKey'
+import { GetPayloadAuthenticatedDataDetachedUseCase } from './UseCase/Symmetric/GetPayloadAuthenticatedDataDetached'
+import { CreateRootKeyUseCase } from './UseCase/RootKey/CreateRootKey'
+import { UuidGenerator } from '@standardnotes/utils'
+import { CreateKeySystemItemsKeyUseCase } from './UseCase/KeySystem/CreateKeySystemItemsKey'
+import { AsymmetricDecryptResult } from '../Types/AsymmetricDecryptResult'
+import { PublicKeySet } from '../Types/PublicKeySet'
+import { CreateRandomKeySystemRootKey } from './UseCase/KeySystem/CreateRandomKeySystemRootKey'
+import { CreateUserInputKeySystemRootKey } from './UseCase/KeySystem/CreateUserInputKeySystemRootKey'
+import { AsymmetricSignatureVerificationDetachedResult } from '../Types/AsymmetricSignatureVerificationDetachedResult'
+import { AsymmetricSignatureVerificationDetachedUseCase } from './UseCase/Asymmetric/AsymmetricSignatureVerificationDetached'
+import { DeriveKeySystemRootKeyUseCase } from './UseCase/KeySystem/DeriveKeySystemRootKey'
+import { SyncOperatorInterface } from '../OperatorInterface/SyncOperatorInterface'
 
-type V004StringComponents = [version: string, nonce: string, ciphertext: string, authenticatedData: string]
-
-type V004Components = {
-  version: V004StringComponents[0]
-  nonce: V004StringComponents[1]
-  ciphertext: V004StringComponents[2]
-  authenticatedData: V004StringComponents[3]
-}
-
-const PARTITION_CHARACTER = ':'
-
-export class SNProtocolOperator004 implements SynchronousOperator {
-  protected readonly crypto: PureCryptoInterface
-
-  constructor(crypto: PureCryptoInterface) {
-    this.crypto = crypto
-  }
+export class SNProtocolOperator004 implements OperatorInterface, SyncOperatorInterface {
+  constructor(protected readonly crypto: PureCryptoInterface) {}
 
   public getEncryptionDisplayName(): string {
     return 'XChaCha20-Poly1305'
@@ -50,7 +62,7 @@ export class SNProtocolOperator004 implements SynchronousOperator {
 
   private generateNewItemsKeyContent() {
     const itemsKey = this.crypto.generateRandomKey(V004Algorithm.EncryptionKeyLength)
-    const response = FillItemContent<ItemsKeyContent>({
+    const response = FillItemContentSpecialized<ItemsKeyContentSpecialized>({
       itemsKey: itemsKey,
       version: ProtocolVersion.V004,
     })
@@ -62,260 +74,130 @@ export class SNProtocolOperator004 implements SynchronousOperator {
    * The consumer must save/sync this item.
    */
   public createItemsKey(): ItemsKeyInterface {
-    const payload = new Models.DecryptedPayload({
-      uuid: Utils.UuidGenerator.GenerateUuid(),
+    const payload = new DecryptedPayload({
+      uuid: UuidGenerator.GenerateUuid(),
       content_type: ContentType.ItemsKey,
       content: this.generateNewItemsKeyContent(),
+      key_system_identifier: undefined,
+      shared_vault_uuid: undefined,
       ...PayloadTimestampDefaults(),
     })
     return CreateDecryptedItemFromPayload(payload)
   }
 
-  /**
-   * We require both a client-side component and a server-side component in generating a
-   * salt. This way, a comprimised server cannot benefit from sending the same seed value
-   * for every user. We mix a client-controlled value that is globally unique
-   * (their identifier), with a server controlled value to produce a salt for our KDF.
-   * @param identifier
-   * @param seed
-   */
-  private async generateSalt004(identifier: string, seed: string) {
-    const hash = await this.crypto.sha256([identifier, seed].join(PARTITION_CHARACTER))
-    return Utils.truncateHexString(hash, V004Algorithm.ArgonSaltLength)
+  createRandomizedKeySystemRootKey(dto: { systemIdentifier: KeySystemIdentifier }): KeySystemRootKeyInterface {
+    const usecase = new CreateRandomKeySystemRootKey(this.crypto)
+    return usecase.execute(dto)
   }
 
-  /**
-   * Computes a root key given a passworf
-   * qwd and previous keyParams
-   * @param password - Plain string representing raw user password
-   * @param keyParams - KeyParams object
-   */
-  public async computeRootKey(password: string, keyParams: SNRootKeyParams): Promise<SNRootKey> {
-    return this.deriveKey(password, keyParams)
+  createUserInputtedKeySystemRootKey(dto: {
+    systemIdentifier: KeySystemIdentifier
+    userInputtedPassword: string
+  }): KeySystemRootKeyInterface {
+    const usecase = new CreateUserInputKeySystemRootKey(this.crypto)
+    return usecase.execute(dto)
   }
 
-  /**
-   * Creates a new root key given an identifier and a user password
-   * @param identifier - Plain string representing a unique identifier
-   * @param password - Plain string representing raw user password
-   */
-  public async createRootKey(
+  deriveUserInputtedKeySystemRootKey(dto: {
+    keyParams: KeySystemRootKeyParamsInterface
+    userInputtedPassword: string
+  }): KeySystemRootKeyInterface {
+    const usecase = new DeriveKeySystemRootKeyUseCase(this.crypto)
+    return usecase.execute({
+      keyParams: dto.keyParams,
+      password: dto.userInputtedPassword,
+    })
+  }
+
+  public createKeySystemItemsKey(
+    uuid: string,
+    keySystemIdentifier: KeySystemIdentifier,
+    sharedVaultUuid: string | undefined,
+    rootKeyToken: string,
+  ): KeySystemItemsKeyInterface {
+    const usecase = new CreateKeySystemItemsKeyUseCase(this.crypto)
+    return usecase.execute({ uuid, keySystemIdentifier, sharedVaultUuid, rootKeyToken })
+  }
+
+  public async computeRootKey<K extends RootKeyInterface>(
+    password: Utf8String,
+    keyParams: SNRootKeyParams,
+  ): Promise<K> {
+    const usecase = new DeriveRootKeyUseCase(this.crypto)
+    return usecase.execute(password, keyParams)
+  }
+
+  public async createRootKey<K extends RootKeyInterface>(
     identifier: string,
-    password: string,
+    password: Utf8String,
     origination: KeyParamsOrigination,
-  ): Promise<SNRootKey> {
-    const version = ProtocolVersion.V004
-    const seed = this.crypto.generateRandomKey(V004Algorithm.ArgonSaltSeedLength)
-    const keyParams = Create004KeyParams({
-      identifier: identifier,
-      pw_nonce: seed,
-      version: version,
-      origination: origination,
-      created: `${Date.now()}`,
-    })
-    return this.deriveKey(password, keyParams)
+  ): Promise<K> {
+    const usecase = new CreateRootKeyUseCase(this.crypto)
+    return usecase.execute(identifier, password, origination)
   }
 
-  /**
-   * @param plaintext - The plaintext to encrypt.
-   * @param rawKey - The key to use to encrypt the plaintext.
-   * @param nonce - The nonce for encryption.
-   * @param authenticatedData - JavaScript object (will be stringified) representing
-                'Additional authenticated data': data you want to be included in authentication.
-   */
-  encryptString004(plaintext: string, rawKey: string, nonce: string, authenticatedData: ItemAuthenticatedData) {
-    if (!nonce) {
-      throw 'encryptString null nonce'
-    }
-    if (!rawKey) {
-      throw 'encryptString null rawKey'
-    }
-    return this.crypto.xchacha20Encrypt(plaintext, nonce, rawKey, this.authenticatedDataToString(authenticatedData))
-  }
-
-  /**
-   * @param ciphertext  The encrypted text to decrypt.
-   * @param rawKey  The key to use to decrypt the ciphertext.
-   * @param nonce  The nonce for decryption.
-   * @param rawAuthenticatedData String representing
-                'Additional authenticated data' - data you want to be included in authentication.
-   */
-  private decryptString004(ciphertext: string, rawKey: string, nonce: string, rawAuthenticatedData: string) {
-    return this.crypto.xchacha20Decrypt(ciphertext, nonce, rawKey, rawAuthenticatedData)
-  }
-
-  generateEncryptionNonce(): string {
-    return this.crypto.generateRandomKey(V004Algorithm.EncryptionNonceLength)
-  }
-
-  /**
-   * @param plaintext  The plaintext text to decrypt.
-   * @param rawKey  The key to use to encrypt the plaintext.
-   */
-  generateEncryptedProtocolString(plaintext: string, rawKey: string, authenticatedData: ItemAuthenticatedData) {
-    const nonce = this.generateEncryptionNonce()
-
-    const ciphertext = this.encryptString004(plaintext, rawKey, nonce, authenticatedData)
-
-    const components: V004StringComponents = [
-      ProtocolVersion.V004 as string,
-      nonce,
-      ciphertext,
-      this.authenticatedDataToString(authenticatedData),
-    ]
-
-    return components.join(PARTITION_CHARACTER)
-  }
-
-  deconstructEncryptedPayloadString(payloadString: string): V004Components {
-    const components = payloadString.split(PARTITION_CHARACTER) as V004StringComponents
-
-    return {
-      version: components[0],
-      nonce: components[1],
-      ciphertext: components[2],
-      authenticatedData: components[3],
-    }
-  }
-
-  public getPayloadAuthenticatedData(
-    encrypted: EncryptedParameters,
+  public getPayloadAuthenticatedDataForExternalUse(
+    encrypted: EncryptedOutputParameters,
   ): RootKeyEncryptedAuthenticatedData | ItemAuthenticatedData | LegacyAttachedData | undefined {
-    const itemKeyComponents = this.deconstructEncryptedPayloadString(encrypted.enc_item_key)
-    const authenticatedDataString = itemKeyComponents.authenticatedData
-    const result = this.stringToAuthenticatedData(authenticatedDataString)
-
-    return result
+    const usecase = new GetPayloadAuthenticatedDataDetachedUseCase(this.crypto)
+    return usecase.execute(encrypted)
   }
 
-  /**
-   * For items that are encrypted with a root key, we append the root key's key params, so
-   * that in the event the client/user loses a reference to their root key, they may still
-   * decrypt data by regenerating the key based on the attached key params.
-   */
-  private generateAuthenticatedDataForPayload(
-    payload: Models.DecryptedPayloadInterface,
-    key: ItemsKeyInterface | SNRootKey,
-  ): ItemAuthenticatedData | RootKeyEncryptedAuthenticatedData {
-    const baseData: ItemAuthenticatedData = {
-      u: payload.uuid,
-      v: ProtocolVersion.V004,
-    }
-    if (ContentTypeUsesRootKeyEncryption(payload.content_type)) {
-      return {
-        ...baseData,
-        kp: (key as SNRootKey).keyParams.content,
-      }
-    } else {
-      if (!isItemsKey(key)) {
-        throw Error('Attempting to use non-items key for regular item.')
-      }
-      return baseData
-    }
+  public generateEncryptedParameters(
+    payload: DecryptedPayloadInterface,
+    key: ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface | RootKeyInterface,
+    signingKeyPair?: PkcKeyPair,
+  ): EncryptedOutputParameters {
+    const usecase = new GenerateEncryptedParametersUseCase(this.crypto)
+    return usecase.execute(payload, key, signingKeyPair)
   }
 
-  private authenticatedDataToString(attachedData: ItemAuthenticatedData) {
-    return this.crypto.base64Encode(JSON.stringify(Utils.sortedCopy(Utils.omitUndefinedCopy(attachedData))))
-  }
-
-  private stringToAuthenticatedData(
-    rawAuthenticatedData: string,
-    override?: Partial<ItemAuthenticatedData>,
-  ): RootKeyEncryptedAuthenticatedData | ItemAuthenticatedData {
-    const base = JSON.parse(this.crypto.base64Decode(rawAuthenticatedData))
-    return Utils.sortedCopy({
-      ...base,
-      ...override,
-    })
-  }
-
-  public generateEncryptedParametersSync(
-    payload: Models.DecryptedPayloadInterface,
-    key: ItemsKeyInterface | SNRootKey,
-  ): EncryptedParameters {
-    const itemKey = this.crypto.generateRandomKey(V004Algorithm.EncryptionKeyLength)
-
-    const contentPlaintext = JSON.stringify(payload.content)
-    const authenticatedData = this.generateAuthenticatedDataForPayload(payload, key)
-    const encryptedContentString = this.generateEncryptedProtocolString(contentPlaintext, itemKey, authenticatedData)
-
-    const encryptedItemKey = this.generateEncryptedProtocolString(itemKey, key.itemsKey, authenticatedData)
-
-    return {
-      uuid: payload.uuid,
-      items_key_id: isItemsKey(key) ? key.uuid : undefined,
-      content: encryptedContentString,
-      enc_item_key: encryptedItemKey,
-      version: this.version,
-    }
-  }
-
-  public generateDecryptedParametersSync<C extends ItemContent = ItemContent>(
-    encrypted: EncryptedParameters,
-    key: ItemsKeyInterface | SNRootKey,
+  public generateDecryptedParameters<C extends ItemContent = ItemContent>(
+    encrypted: EncryptedInputParameters,
+    key: ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface | RootKeyInterface,
   ): DecryptedParameters<C> | ErrorDecryptingParameters {
-    const contentKeyComponents = this.deconstructEncryptedPayloadString(encrypted.enc_item_key)
-    const authenticatedData = this.stringToAuthenticatedData(contentKeyComponents.authenticatedData, {
-      u: encrypted.uuid,
-      v: encrypted.version,
-    })
+    const usecase = new GenerateDecryptedParametersUseCase(this.crypto)
+    return usecase.execute(encrypted, key)
+  }
 
-    const useAuthenticatedString = this.authenticatedDataToString(authenticatedData)
-    const contentKey = this.decryptString004(
-      contentKeyComponents.ciphertext,
-      key.itemsKey,
-      contentKeyComponents.nonce,
-      useAuthenticatedString,
-    )
+  public asymmetricEncrypt(dto: {
+    stringToEncrypt: Utf8String
+    senderKeyPair: PkcKeyPair
+    senderSigningKeyPair: PkcKeyPair
+    recipientPublicKey: HexString
+  }): AsymmetricallyEncryptedString {
+    const usecase = new AsymmetricEncryptUseCase(this.crypto)
+    return usecase.execute(dto)
+  }
 
-    if (!contentKey) {
-      console.error('Error decrypting itemKey parameters', encrypted)
-      return {
-        uuid: encrypted.uuid,
-        errorDecrypting: true,
-      }
-    }
+  asymmetricDecrypt(dto: {
+    stringToDecrypt: AsymmetricallyEncryptedString
+    recipientSecretKey: HexString
+  }): AsymmetricDecryptResult | null {
+    const usecase = new AsymmetricDecryptUseCase(this.crypto)
+    return usecase.execute(dto)
+  }
 
-    const contentComponents = this.deconstructEncryptedPayloadString(encrypted.content)
-    const content = this.decryptString004(
-      contentComponents.ciphertext,
-      contentKey,
-      contentComponents.nonce,
-      useAuthenticatedString,
-    )
+  asymmetricSignatureVerifyDetached(
+    encryptedString: AsymmetricallyEncryptedString,
+  ): AsymmetricSignatureVerificationDetachedResult {
+    const usecase = new AsymmetricSignatureVerificationDetachedUseCase(this.crypto)
+    return usecase.execute({ encryptedString })
+  }
 
-    if (!content) {
-      return {
-        uuid: encrypted.uuid,
-        errorDecrypting: true,
-      }
-    } else {
-      return {
-        uuid: encrypted.uuid,
-        content: JSON.parse(content),
-      }
+  getSenderPublicKeySetFromAsymmetricallyEncryptedString(string: AsymmetricallyEncryptedString): PublicKeySet {
+    const [_, __, ___, additionalDataString] = <V004AsymmetricStringComponents>string.split(':')
+    const parseBase64Usecase = new ParseConsistentBase64JsonPayloadUseCase(this.crypto)
+    const additionalData = parseBase64Usecase.execute<AsymmetricItemAdditionalData>(additionalDataString)
+    return {
+      encryption: additionalData.senderPublicKey,
+      signing: additionalData.signingData.publicKey,
     }
   }
 
-  private async deriveKey(password: string, keyParams: SNRootKeyParams): Promise<SNRootKey> {
-    const salt = await this.generateSalt004(keyParams.content004.identifier, keyParams.content004.pw_nonce)
-    const derivedKey = this.crypto.argon2(
-      password,
-      salt,
-      V004Algorithm.ArgonIterations,
-      V004Algorithm.ArgonMemLimit,
-      V004Algorithm.ArgonOutputKeyBytes,
-    )
-
-    const partitions = Utils.splitString(derivedKey, 2)
-    const masterKey = partitions[0]
-    const serverPassword = partitions[1]
-
-    return CreateNewRootKey({
-      masterKey,
-      serverPassword,
-      version: ProtocolVersion.V004,
-      keyParams: keyParams.getPortableValue(),
-    })
+  versionForAsymmetricallyEncryptedString(string: string): ProtocolVersion {
+    const [versionPrefix] = <V004AsymmetricStringComponents>string.split(':')
+    const version = versionPrefix.split('_')[0]
+    return version as ProtocolVersion
   }
 }

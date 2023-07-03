@@ -1,4 +1,5 @@
-import { ReactNativeToWebEvent, WebApplicationInterface } from '@standardnotes/snjs'
+import { ReactNativeToWebEvent } from '@standardnotes/snjs'
+import { WebApplicationInterface } from '@standardnotes/ui-services'
 
 export type NativeMobileEventListener = (event: ReactNativeToWebEvent) => void
 

@@ -21,7 +21,7 @@ import {
   ClientDisplayableError,
   ContentType,
   FileItem,
-  InternalEventBus,
+  InternalEventBusInterface,
   isFile,
   Platform,
 } from '@standardnotes/snjs'
@@ -68,7 +68,7 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
     application: WebApplication,
     private notesController: NotesController,
     private filePreviewModalController: FilePreviewModalController,
-    eventBus: InternalEventBus,
+    eventBus: InternalEventBusInterface,
   ) {
     super(application, eventBus)
 
@@ -156,7 +156,8 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
       return
     }
 
-    await this.application.items.associateFileWithNote(file, note)
+    await this.application.mutator.associateFileWithNote(file, note)
+    void this.application.sync.sync()
   }
 
   detachFileFromNote = async (file: FileItem) => {
@@ -168,16 +169,18 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
       })
       return
     }
-    await this.application.items.disassociateFileWithNote(file, note)
+    await this.application.mutator.disassociateFileWithNote(file, note)
+    void this.application.sync.sync()
   }
 
   toggleFileProtection = async (file: FileItem) => {
     let result: FileItem | undefined
     if (file.protected) {
-      result = await this.application.mutator.unprotectFile(file)
+      result = await this.application.protections.unprotectFile(file)
     } else {
-      result = await this.application.mutator.protectFile(file)
+      result = await this.application.protections.protectFile(file)
     }
+    void this.application.sync.sync()
     const isProtected = result ? result.protected : file.protected
     return isProtected
   }
@@ -189,7 +192,8 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
   }
 
   renameFile = async (file: FileItem, fileName: string) => {
-    await this.application.items.renameFile(file, fileName)
+    await this.application.mutator.renameFile(file, fileName)
+    void this.application.sync.sync()
   }
 
   handleFileAction = async (
@@ -373,7 +377,10 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
         return
       }
 
-      const operation = await this.application.files.beginNewFileUpload(fileToUpload.size)
+      const operation = await this.application.files.beginNewFileUpload(
+        fileToUpload.size,
+        this.application.vaultDisplayService.exclusivelyShownVault,
+      )
 
       if (operation instanceof ClientDisplayableError) {
         addToast({
@@ -485,12 +492,12 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
 
   setProtectionForFiles = async (protect: boolean, files: FileItem[]) => {
     if (protect) {
-      const protectedItems = await this.application.mutator.protectItems(files)
+      const protectedItems = await this.application.protections.protectItems(files)
       if (protectedItems) {
         this.setShowProtectedOverlay(true)
       }
     } else {
-      const unprotectedItems = await this.application.mutator.unprotectItems(files, ChallengeReason.UnprotectFile)
+      const unprotectedItems = await this.application.protections.unprotectItems(files, ChallengeReason.UnprotectFile)
       if (unprotectedItems) {
         this.setShowProtectedOverlay(false)
       }

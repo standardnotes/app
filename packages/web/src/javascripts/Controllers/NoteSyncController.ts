@@ -1,5 +1,5 @@
 import { WebApplication } from '@/Application/WebApplication'
-import { NoteMutator, SNNote } from '@standardnotes/models'
+import { MutationType, NoteMutator, SNNote } from '@standardnotes/models'
 import { InfoStrings } from '@standardnotes/snjs'
 import { Deferred } from '@standardnotes/utils'
 import { EditorSaveTimeoutDebounce } from '../Components/NoteView/Controller/EditorSaveTimeoutDebounce'
@@ -106,7 +106,7 @@ export class NoteSyncController {
           noteMutator.preview_html = undefined
         }
       },
-      params.isUserModified,
+      params.isUserModified ? MutationType.UpdateUserTimestamps : MutationType.NoUpdateUserTimestamps,
     )
 
     void this.application.sync.sync().then(() => {

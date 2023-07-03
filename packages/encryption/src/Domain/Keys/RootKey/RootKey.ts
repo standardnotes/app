@@ -7,7 +7,7 @@ import {
   RootKeyContentInStorage,
   RootKeyInterface,
 } from '@standardnotes/models'
-import { timingSafeEqual } from '@standardnotes/sncrypto-common'
+import { PkcKeyPair, timingSafeEqual } from '@standardnotes/sncrypto-common'
 import { SNRootKeyParams } from './RootKeyParams'
 
 /**
@@ -47,6 +47,14 @@ export class SNRootKey extends DecryptedItem<RootKeyContent> implements RootKeyI
     return this.content.serverPassword
   }
 
+  get encryptionKeyPair(): PkcKeyPair | undefined {
+    return this.content.encryptionKeyPair
+  }
+
+  get signingKeyPair(): PkcKeyPair | undefined {
+    return this.content.signingKeyPair
+  }
+
   /** 003 and below only. */
   public get dataAuthenticationKey(): string | undefined {
     return this.content.dataAuthenticationKey
@@ -84,6 +92,8 @@ export class SNRootKey extends DecryptedItem<RootKeyContent> implements RootKeyI
     const values: NamespacedRootKeyInKeychain = {
       version: this.keyVersion,
       masterKey: this.masterKey,
+      encryptionKeyPair: this.encryptionKeyPair,
+      signingKeyPair: this.signingKeyPair,
     }
 
     if (this.dataAuthenticationKey) {

@@ -6,6 +6,7 @@ import {
   ChangelogServiceInterface,
   KeyboardService,
   ThemeManager,
+  VaultDisplayServiceInterface,
 } from '@standardnotes/ui-services'
 import { MomentsService } from '@/Controllers/Moments/MomentsService'
 
@@ -18,4 +19,5 @@ export type WebServices = {
   keyboardService: KeyboardService
   changelogService: ChangelogServiceInterface
   momentsService: MomentsService
+  vaultDisplayService: VaultDisplayServiceInterface
 }

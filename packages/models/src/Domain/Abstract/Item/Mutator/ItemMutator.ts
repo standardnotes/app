@@ -3,6 +3,8 @@ import { PayloadInterface } from '../../Payload'
 import { ItemInterface } from '../Interfaces/ItemInterface'
 import { TransferPayload } from '../../TransferPayload'
 import { getIncrementedDirtyIndex } from '../../../Runtime/DirtyCounter/DirtyCounter'
+import { KeySystemIdentifier } from '../../../Syncable/KeySystemRootKey/KeySystemIdentifier'
+import { ContentTypeUsesRootKeyEncryption } from '../../../Runtime/Encryption/ContentTypeUsesRootKeyEncryption'
 
 /**
  * An item mutator takes in an item, and an operation, and returns the resulting payload.
@@ -48,6 +50,26 @@ export class ItemMutator<
     this.immutablePayload = this.immutablePayload.copy({
       lastSyncBegan: began,
       globalDirtyIndexAtLastSync: globalDirtyIndex,
+    })
+  }
+
+  public set key_system_identifier(keySystemIdentifier: KeySystemIdentifier | undefined) {
+    if (ContentTypeUsesRootKeyEncryption(this.immutableItem.content_type)) {
+      throw new Error('Cannot set key_system_identifier on a root key encrypted item')
+    }
+
+    this.immutablePayload = this.immutablePayload.copy({
+      key_system_identifier: keySystemIdentifier,
+    })
+  }
+
+  public set shared_vault_uuid(sharedVaultUuid: string | undefined) {
+    if (ContentTypeUsesRootKeyEncryption(this.immutableItem.content_type)) {
+      throw new Error('Cannot set shared_vault_uuid on a root key encrypted item')
+    }
+
+    this.immutablePayload = this.immutablePayload.copy({
+      shared_vault_uuid: sharedVaultUuid,
     })
   }
 

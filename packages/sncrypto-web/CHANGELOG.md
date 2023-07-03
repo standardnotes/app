@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.14.4](https://github.com/standardnotes/app/compare/@standardnotes/sncrypto-web@1.14.3...@standardnotes/sncrypto-web@1.14.4) (2023-06-30)
+
+**Note:** Version bump only for package @standardnotes/sncrypto-web
+
 ## [1.14.3](https://github.com/standardnotes/app/compare/@standardnotes/sncrypto-web@1.14.2...@standardnotes/sncrypto-web@1.14.3) (2022-11-17)
 
 **Note:** Version bump only for package @standardnotes/sncrypto-web

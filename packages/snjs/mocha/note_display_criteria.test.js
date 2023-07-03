@@ -6,9 +6,10 @@ describe('note display criteria', function () {
   beforeEach(async function () {
     this.payloadManager = new PayloadManager()
     this.itemManager = new ItemManager(this.payloadManager)
+    this.mutator = new MutatorService(this.itemManager, this.payloadManager)
 
     this.createNote = async (title = 'hello', text = 'world') => {
-      return this.itemManager.createItem(ContentType.Note, {
+      return this.mutator.createItem(ContentType.Note, {
         title: title,
         text: text,
       })
@@ -21,7 +22,7 @@ describe('note display criteria', function () {
           content_type: note.content_type,
         }
       })
-      return this.itemManager.createItem(ContentType.Tag, {
+      return this.mutator.createItem(ContentType.Tag, {
         title: title,
         references: references,
       })
@@ -31,138 +32,168 @@ describe('note display criteria', function () {
   it('includePinned off', async function () {
     await this.createNote()
     const pendingPin = await this.createNote()
-    await this.itemManager.changeItem(pendingPin, (mutator) => {
+    await this.mutator.changeItem(pendingPin, (mutator) => {
       mutator.pinned = true
     })
     const criteria = {
       includePinned: false,
     }
     expect(
-      itemsMatchingOptions(criteria, this.itemManager.collection.all(ContentType.Note), this.itemManager.collection)
-        .length,
+      notesAndFilesMatchingOptions(
+        criteria,
+        this.itemManager.collection.all(ContentType.Note),
+        this.itemManager.collection,
+      ).length,
     ).to.equal(1)
   })
 
   it('includePinned on', async function () {
     await this.createNote()
     const pendingPin = await this.createNote()
-    await this.itemManager.changeItem(pendingPin, (mutator) => {
+    await this.mutator.changeItem(pendingPin, (mutator) => {
       mutator.pinned = true
     })
     const criteria = { includePinned: true }
     expect(
-      itemsMatchingOptions(criteria, this.itemManager.collection.all(ContentType.Note), this.itemManager.collection)
-        .length,
+      notesAndFilesMatchingOptions(
+        criteria,
+        this.itemManager.collection.all(ContentType.Note),
+        this.itemManager.collection,
+      ).length,
     ).to.equal(2)
   })
 
   it('includeTrashed off', async function () {
     await this.createNote()
     const pendingTrash = await this.createNote()
-    await this.itemManager.changeItem(pendingTrash, (mutator) => {
+    await this.mutator.changeItem(pendingTrash, (mutator) => {
       mutator.trashed = true
     })
     const criteria = { includeTrashed: false }
     expect(
-      itemsMatchingOptions(criteria, this.itemManager.collection.all(ContentType.Note), this.itemManager.collection)
-        .length,
+      notesAndFilesMatchingOptions(
+        criteria,
+        this.itemManager.collection.all(ContentType.Note),
+        this.itemManager.collection,
+      ).length,
     ).to.equal(1)
   })
 
   it('includeTrashed on', async function () {
     await this.createNote()
     const pendingTrash = await this.createNote()
-    await this.itemManager.changeItem(pendingTrash, (mutator) => {
+    await this.mutator.changeItem(pendingTrash, (mutator) => {
       mutator.trashed = true
     })
     const criteria = { includeTrashed: true }
     expect(
-      itemsMatchingOptions(criteria, this.itemManager.collection.all(ContentType.Note), this.itemManager.collection)
-        .length,
+      notesAndFilesMatchingOptions(
+        criteria,
+        this.itemManager.collection.all(ContentType.Note),
+        this.itemManager.collection,
+      ).length,
     ).to.equal(2)
   })
 
   it('includeArchived off', async function () {
     await this.createNote()
     const pendingArchive = await this.createNote()
-    await this.itemManager.changeItem(pendingArchive, (mutator) => {
+    await this.mutator.changeItem(pendingArchive, (mutator) => {
       mutator.archived = true
     })
     const criteria = { includeArchived: false }
     expect(
-      itemsMatchingOptions(criteria, this.itemManager.collection.all(ContentType.Note), this.itemManager.collection)
-        .length,
+      notesAndFilesMatchingOptions(
+        criteria,
+        this.itemManager.collection.all(ContentType.Note),
+        this.itemManager.collection,
+      ).length,
     ).to.equal(1)
   })
 
   it('includeArchived on', async function () {
     await this.createNote()
     const pendingArchive = await this.createNote()
-    await this.itemManager.changeItem(pendingArchive, (mutator) => {
+    await this.mutator.changeItem(pendingArchive, (mutator) => {
       mutator.archived = true
     })
     const criteria = {
       includeArchived: true,
     }
     expect(
-      itemsMatchingOptions(criteria, this.itemManager.collection.all(ContentType.Note), this.itemManager.collection)
-        .length,
+      notesAndFilesMatchingOptions(
+        criteria,
+        this.itemManager.collection.all(ContentType.Note),
+        this.itemManager.collection,
+      ).length,
     ).to.equal(2)
   })
 
   it('includeProtected off', async function () {
     await this.createNote()
     const pendingProtected = await this.createNote()
-    await this.itemManager.changeItem(pendingProtected, (mutator) => {
+    await this.mutator.changeItem(pendingProtected, (mutator) => {
       mutator.protected = true
     })
     const criteria = { includeProtected: false }
     expect(
-      itemsMatchingOptions(criteria, this.itemManager.collection.all(ContentType.Note), this.itemManager.collection)
-        .length,
+      notesAndFilesMatchingOptions(
+        criteria,
+        this.itemManager.collection.all(ContentType.Note),
+        this.itemManager.collection,
+      ).length,
     ).to.equal(1)
   })
 
   it('includeProtected on', async function () {
     await this.createNote()
     const pendingProtected = await this.createNote()
-    await this.itemManager.changeItem(pendingProtected, (mutator) => {
+    await this.mutator.changeItem(pendingProtected, (mutator) => {
       mutator.protected = true
     })
     const criteria = {
       includeProtected: true,
     }
     expect(
-      itemsMatchingOptions(criteria, this.itemManager.collection.all(ContentType.Note), this.itemManager.collection)
-        .length,
+      notesAndFilesMatchingOptions(
+        criteria,
+        this.itemManager.collection.all(ContentType.Note),
+        this.itemManager.collection,
+      ).length,
     ).to.equal(2)
   })
 
   it('protectedSearchEnabled false', async function () {
     const normal = await this.createNote('hello', 'world')
-    await this.itemManager.changeItem(normal, (mutator) => {
+    await this.mutator.changeItem(normal, (mutator) => {
       mutator.protected = true
     })
     const criteria = {
       searchQuery: { query: 'world', includeProtectedNoteText: false },
     }
     expect(
-      itemsMatchingOptions(criteria, this.itemManager.collection.all(ContentType.Note), this.itemManager.collection)
-        .length,
+      notesAndFilesMatchingOptions(
+        criteria,
+        this.itemManager.collection.all(ContentType.Note),
+        this.itemManager.collection,
+      ).length,
     ).to.equal(0)
   })
 
   it('protectedSearchEnabled true', async function () {
     const normal = await this.createNote()
-    await this.itemManager.changeItem(normal, (mutator) => {
+    await this.mutator.changeItem(normal, (mutator) => {
       mutator.protected = true
     })
     const criteria = {
       searchQuery: { query: 'world', includeProtectedNoteText: true },
     }
     expect(
-      itemsMatchingOptions(criteria, this.itemManager.collection.all(ContentType.Note), this.itemManager.collection)
-        .length,
+      notesAndFilesMatchingOptions(
+        criteria,
+        this.itemManager.collection.all(ContentType.Note),
+        this.itemManager.collection,
+      ).length,
     ).to.equal(1)
   })
 
@@ -175,7 +206,7 @@ describe('note display criteria', function () {
       tags: [tag],
     }
     expect(
-      itemsMatchingOptions(
+      notesAndFilesMatchingOptions(
         matchingCriteria,
         this.itemManager.collection.all(ContentType.Note),
         this.itemManager.collection,
@@ -186,7 +217,7 @@ describe('note display criteria', function () {
       tags: [looseTag],
     }
     expect(
-      itemsMatchingOptions(
+      notesAndFilesMatchingOptions(
         nonmatchingCriteria,
         this.itemManager.collection.all(ContentType.Note),
         this.itemManager.collection,
@@ -198,7 +229,7 @@ describe('note display criteria', function () {
     it('normal note', async function () {
       await this.createNote()
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.allNotesSmartView],
           },
@@ -208,7 +239,7 @@ describe('note display criteria', function () {
       ).to.equal(1)
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.trashSmartView],
           },
@@ -218,7 +249,7 @@ describe('note display criteria', function () {
       ).to.equal(0)
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.archivedSmartView],
           },
@@ -230,12 +261,12 @@ describe('note display criteria', function () {
 
     it('trashed note', async function () {
       const normal = await this.createNote()
-      await this.itemManager.changeItem(normal, (mutator) => {
+      await this.mutator.changeItem(normal, (mutator) => {
         mutator.trashed = true
       })
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.allNotesSmartView],
             includeTrashed: false,
@@ -246,7 +277,7 @@ describe('note display criteria', function () {
       ).to.equal(0)
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.trashSmartView],
           },
@@ -256,7 +287,7 @@ describe('note display criteria', function () {
       ).to.equal(1)
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.archivedSmartView],
           },
@@ -268,12 +299,12 @@ describe('note display criteria', function () {
 
     it('archived note', async function () {
       const normal = await this.createNote()
-      await this.itemManager.changeItem(normal, (mutator) => {
+      await this.mutator.changeItem(normal, (mutator) => {
         mutator.trashed = false
         mutator.archived = true
       })
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.allNotesSmartView],
             includeArchived: false,
@@ -284,7 +315,7 @@ describe('note display criteria', function () {
       ).to.equal(0)
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.trashSmartView],
           },
@@ -294,7 +325,7 @@ describe('note display criteria', function () {
       ).to.equal(0)
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.archivedSmartView],
           },
@@ -306,13 +337,13 @@ describe('note display criteria', function () {
 
     it('archived + trashed note', async function () {
       const normal = await this.createNote()
-      await this.itemManager.changeItem(normal, (mutator) => {
+      await this.mutator.changeItem(normal, (mutator) => {
         mutator.trashed = true
         mutator.archived = true
       })
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.allNotesSmartView],
           },
@@ -322,7 +353,7 @@ describe('note display criteria', function () {
       ).to.equal(1)
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.trashSmartView],
           },
@@ -332,7 +363,7 @@ describe('note display criteria', function () {
       ).to.equal(1)
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.archivedSmartView],
           },
@@ -348,7 +379,7 @@ describe('note display criteria', function () {
       await this.createNote()
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.allNotesSmartView],
             includeTrashed: true,
@@ -359,7 +390,7 @@ describe('note display criteria', function () {
       ).to.equal(1)
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.trashSmartView],
             includeTrashed: true,
@@ -373,12 +404,12 @@ describe('note display criteria', function () {
     it('trashed note', async function () {
       const normal = await this.createNote()
 
-      await this.itemManager.changeItem(normal, (mutator) => {
+      await this.mutator.changeItem(normal, (mutator) => {
         mutator.trashed = true
       })
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.allNotesSmartView],
             includeTrashed: false,
@@ -389,7 +420,7 @@ describe('note display criteria', function () {
       ).to.equal(0)
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.allNotesSmartView],
             includeTrashed: true,
@@ -400,7 +431,7 @@ describe('note display criteria', function () {
       ).to.equal(1)
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.trashSmartView],
             includeTrashed: true,
@@ -411,7 +442,7 @@ describe('note display criteria', function () {
       ).to.equal(1)
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.archivedSmartView],
             includeTrashed: true,
@@ -425,13 +456,13 @@ describe('note display criteria', function () {
     it('archived + trashed note', async function () {
       const normal = await this.createNote()
 
-      await this.itemManager.changeItem(normal, (mutator) => {
+      await this.mutator.changeItem(normal, (mutator) => {
         mutator.trashed = true
         mutator.archived = true
       })
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.allNotesSmartView],
           },
@@ -441,7 +472,7 @@ describe('note display criteria', function () {
       ).to.equal(1)
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.trashSmartView],
           },
@@ -451,7 +482,7 @@ describe('note display criteria', function () {
       ).to.equal(1)
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.archivedSmartView],
           },
@@ -467,7 +498,7 @@ describe('note display criteria', function () {
       await this.createNote()
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.allNotesSmartView],
             includeArchived: true,
@@ -478,7 +509,7 @@ describe('note display criteria', function () {
       ).to.equal(1)
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.trashSmartView],
             includeArchived: true,
@@ -491,12 +522,12 @@ describe('note display criteria', function () {
 
     it('archived note', async function () {
       const normal = await this.createNote()
-      await this.itemManager.changeItem(normal, (mutator) => {
+      await this.mutator.changeItem(normal, (mutator) => {
         mutator.archived = true
       })
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.allNotesSmartView],
             includeArchived: false,
@@ -507,7 +538,7 @@ describe('note display criteria', function () {
       ).to.equal(0)
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.allNotesSmartView],
             includeArchived: true,
@@ -518,7 +549,7 @@ describe('note display criteria', function () {
       ).to.equal(1)
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.trashSmartView],
             includeArchived: true,
@@ -529,7 +560,7 @@ describe('note display criteria', function () {
       ).to.equal(0)
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.archivedSmartView],
             includeArchived: false,
@@ -542,13 +573,13 @@ describe('note display criteria', function () {
 
     it('archived + trashed note', async function () {
       const normal = await this.createNote()
-      await this.itemManager.changeItem(normal, (mutator) => {
+      await this.mutator.changeItem(normal, (mutator) => {
         mutator.trashed = true
         mutator.archived = true
       })
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.allNotesSmartView],
             includeArchived: true,
@@ -559,7 +590,7 @@ describe('note display criteria', function () {
       ).to.equal(1)
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.trashSmartView],
             includeArchived: true,
@@ -570,7 +601,7 @@ describe('note display criteria', function () {
       ).to.equal(1)
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.archivedSmartView],
             includeArchived: true,
@@ -587,7 +618,7 @@ describe('note display criteria', function () {
       await this.createNote()
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [
               this.itemManager.allNotesSmartView,
@@ -601,7 +632,7 @@ describe('note display criteria', function () {
       ).to.equal(1)
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.trashSmartView],
           },
@@ -613,12 +644,12 @@ describe('note display criteria', function () {
 
     it('archived note', async function () {
       const normal = await this.createNote()
-      await this.itemManager.changeItem(normal, (mutator) => {
+      await this.mutator.changeItem(normal, (mutator) => {
         mutator.archived = true
       })
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.allNotesSmartView],
             includeArchived: false,
@@ -629,7 +660,7 @@ describe('note display criteria', function () {
       ).to.equal(0)
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.allNotesSmartView],
             includeArchived: true,
@@ -640,7 +671,7 @@ describe('note display criteria', function () {
       ).to.equal(1)
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.trashSmartView],
             includeArchived: true,
@@ -651,7 +682,7 @@ describe('note display criteria', function () {
       ).to.equal(0)
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.archivedSmartView],
             includeArchived: false,
@@ -664,13 +695,13 @@ describe('note display criteria', function () {
 
     it('archived + trashed note', async function () {
       const normal = await this.createNote()
-      await this.itemManager.changeItem(normal, (mutator) => {
+      await this.mutator.changeItem(normal, (mutator) => {
         mutator.trashed = true
         mutator.archived = true
       })
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.allNotesSmartView],
             includeArchived: true,
@@ -681,7 +712,7 @@ describe('note display criteria', function () {
       ).to.equal(0)
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.trashSmartView],
             includeArchived: true,
@@ -692,7 +723,7 @@ describe('note display criteria', function () {
       ).to.equal(1)
 
       expect(
-        itemsMatchingOptions(
+        notesAndFilesMatchingOptions(
           {
             views: [this.itemManager.archivedSmartView],
             includeArchived: true,

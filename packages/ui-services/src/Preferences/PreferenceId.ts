@@ -3,6 +3,7 @@ const PREFERENCE_IDS = [
   'account',
   'security',
   'home-server',
+  'vaults',
   'appearance',
   'backups',
   'listed',

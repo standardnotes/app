@@ -2,11 +2,19 @@ import { ContentType } from '@standardnotes/common'
 import { compareValues } from '@standardnotes/utils'
 import { isDeletedItem, isEncryptedItem } from '../../Abstract/Item'
 import { ItemDelta } from '../Index/ItemDelta'
-import { DisplayControllerOptions } from './DisplayOptions'
+import { AnyDisplayOptions, DisplayControllerDisplayOptions, GenericDisplayOptions } from './DisplayOptions'
 import { sortTwoItems } from './SortTwoItems'
 import { UuidToSortedPositionMap, DisplayItem, ReadonlyItemCollection } from './Types'
+import { CriteriaValidatorInterface } from './Validator/CriteriaValidatorInterface'
+import { CollectionCriteriaValidator } from './Validator/CollectionCriteriaValidator'
+import { CustomFilterCriteriaValidator } from './Validator/CustomFilterCriteriaValidator'
+import { ExcludeVaultsCriteriaValidator } from './Validator/ExcludeVaultsCriteriaValidator'
+import { ExclusiveVaultCriteriaValidator } from './Validator/ExclusiveVaultCriteriaValidator'
+import { HiddenContentCriteriaValidator } from './Validator/HiddenContentCriteriaValidator'
+import { VaultDisplayOptions } from './VaultDisplayOptions'
+import { isExclusioanaryOptionsValue } from './VaultDisplayOptionsTypes'
 
-export class ItemDisplayController<I extends DisplayItem> {
+export class ItemDisplayController<I extends DisplayItem, O extends AnyDisplayOptions = GenericDisplayOptions> {
   private sortMap: UuidToSortedPositionMap = {}
   private sortedItems: I[] = []
   private needsSort = true
@@ -14,7 +22,8 @@ export class ItemDisplayController<I extends DisplayItem> {
   constructor(
     private readonly collection: ReadonlyItemCollection,
     public readonly contentTypes: ContentType[],
-    private options: DisplayControllerOptions,
+    private options: DisplayControllerDisplayOptions & O,
+    private vaultOptions?: VaultDisplayOptions,
   ) {
     this.filterThenSortElements(this.collection.all(this.contentTypes) as I[])
   }
@@ -23,7 +32,18 @@ export class ItemDisplayController<I extends DisplayItem> {
     return this.sortedItems
   }
 
-  setDisplayOptions(displayOptions: Partial<DisplayControllerOptions>): void {
+  public getDisplayOptions(): DisplayControllerDisplayOptions & O {
+    return this.options
+  }
+
+  setVaultDisplayOptions(vaultOptions?: VaultDisplayOptions): void {
+    this.vaultOptions = vaultOptions
+    this.needsSort = true
+
+    this.filterThenSortElements(this.collection.all(this.contentTypes) as I[])
+  }
+
+  setDisplayOptions(displayOptions: Partial<DisplayControllerDisplayOptions & O>): void {
     this.options = { ...this.options, ...displayOptions }
     this.needsSort = true
 
@@ -35,6 +55,29 @@ export class ItemDisplayController<I extends DisplayItem> {
       this.contentTypes.includes(i.content_type),
     )
     this.filterThenSortElements(items as I[])
+  }
+
+  private passesAllFilters(element: I): boolean {
+    const filters: CriteriaValidatorInterface[] = [new CollectionCriteriaValidator(this.collection, element)]
+
+    if (this.vaultOptions) {
+      const options = this.vaultOptions.getOptions()
+      if (isExclusioanaryOptionsValue(options)) {
+        filters.push(new ExcludeVaultsCriteriaValidator([...options.exclude, ...options.locked], element))
+      } else {
+        filters.push(new ExclusiveVaultCriteriaValidator(options.exclusive, element))
+      }
+    }
+
+    if ('hiddenContentTypes' in this.options && this.options.hiddenContentTypes) {
+      filters.push(new HiddenContentCriteriaValidator(this.options.hiddenContentTypes, element))
+    }
+
+    if ('customFilter' in this.options && this.options.customFilter) {
+      filters.push(new CustomFilterCriteriaValidator(this.options.customFilter, element))
+    }
+
+    return filters.every((f) => f.passes())
   }
 
   private filterThenSortElements(elements: I[]): void {
@@ -61,13 +104,7 @@ export class ItemDisplayController<I extends DisplayItem> {
         continue
       }
 
-      const passes = !this.collection.has(element.uuid)
-        ? false
-        : this.options.hiddenContentTypes?.includes(element.content_type)
-        ? false
-        : this.options.customFilter
-        ? this.options.customFilter(element)
-        : true
+      const passes = this.passesAllFilters(element)
 
       if (passes) {
         if (previousElement != undefined) {

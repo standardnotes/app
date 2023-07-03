@@ -1,4 +1,4 @@
-import { WebApplicationInterface } from '@standardnotes/services'
+import { WebApplicationInterface } from '../../WebApplication/WebApplicationInterface'
 import { SimplenoteConverter } from './SimplenoteConverter'
 import data from './testData'
 

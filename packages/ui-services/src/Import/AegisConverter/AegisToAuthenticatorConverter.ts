@@ -2,7 +2,7 @@ import { DecryptedTransferPayload, NoteContent } from '@standardnotes/models'
 import { ContentType } from '@standardnotes/common'
 import { readFileAsText } from '../Utils'
 import { FeatureIdentifier, NoteType } from '@standardnotes/features'
-import { WebApplicationInterface } from '@standardnotes/services'
+import { WebApplicationInterface } from '../../WebApplication/WebApplicationInterface'
 
 type AegisData = {
   db: {

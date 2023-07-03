@@ -21,6 +21,8 @@ export class DownloadAndDecryptFileOperation {
 
   constructor(
     private readonly file: {
+      uuid: string
+      shared_vault_uuid: string | undefined
       encryptedChunkSizes: FileContent['encryptedChunkSizes']
       encryptionHeader: FileContent['encryptionHeader']
       remoteIdentifier: FileContent['remoteIdentifier']
@@ -28,8 +30,9 @@ export class DownloadAndDecryptFileOperation {
     },
     private readonly crypto: PureCryptoInterface,
     private readonly api: FilesApiInterface,
+    valetToken: string,
   ) {
-    this.downloader = new FileDownloader(this.file, this.api)
+    this.downloader = new FileDownloader(this.file, this.api, valetToken)
   }
 
   private createDecryptor(): FileDecryptor {

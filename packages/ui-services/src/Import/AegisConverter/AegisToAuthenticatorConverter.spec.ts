@@ -1,5 +1,5 @@
+import { WebApplicationInterface } from './../../WebApplication/WebApplicationInterface'
 import { FeatureIdentifier, NoteType } from '@standardnotes/features'
-import { WebApplicationInterface } from '@standardnotes/services'
 import { AegisToAuthenticatorConverter } from './AegisToAuthenticatorConverter'
 import data from './testData'
 

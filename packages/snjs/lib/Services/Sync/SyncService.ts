@@ -1,15 +1,15 @@
+import { ConflictParams, ConflictType } from '@standardnotes/responses'
 import { log, LoggingDomain } from './../../Logging'
 import { AccountSyncOperation } from '@Lib/Services/Sync/Account/Operation'
 import { ContentType } from '@standardnotes/common'
 import {
+  Uuids,
   extendArray,
   isNotUndefined,
   isNullOrUndefined,
   removeFromIndex,
   sleep,
   subtractFromArray,
-  useBoolean,
-  Uuids,
 } from '@standardnotes/utils'
 import { ItemManager } from '@Lib/Services/Items/ItemManager'
 import { OfflineSyncOperation } from '@Lib/Services/Sync/Offline/Operation'
@@ -56,6 +56,12 @@ import {
   getIncrementedDirtyIndex,
   getCurrentDirtyIndex,
   ItemContent,
+  KeySystemItemsKeyContent,
+  KeySystemItemsKeyInterface,
+  FullyFormedTransferPayload,
+  ItemMutator,
+  isDecryptedOrDeletedItem,
+  MutationType,
 } from '@standardnotes/models'
 import {
   AbstractService,
@@ -71,11 +77,14 @@ import {
   SyncOptions,
   SyncQueueStrategy,
   SyncServiceInterface,
-  DiagnosticInfo,
   EncryptionService,
   DeviceInterface,
   isFullEntryLoadChunkResponse,
   isChunkFullEntry,
+  SyncEventReceivedSharedVaultInvitesData,
+  SyncEventReceivedRemoteSharedVaultsData,
+  SyncEventReceivedUserEventsData,
+  SyncEventReceivedAsymmetricMessagesData,
 } from '@standardnotes/services'
 import { OfflineSyncResponse } from './Offline/Response'
 import {
@@ -86,9 +95,22 @@ import {
 } from '@standardnotes/encryption'
 import { CreatePayloadFromRawServerItem } from './Account/Utilities'
 import { ApplicationSyncOptions } from '@Lib/Application/Options/OptionalOptions'
+import { DecryptedServerConflictMap, TrustedServerConflictMap } from './Account/ServerConflictMap'
 
 const DEFAULT_MAJOR_CHANGE_THRESHOLD = 15
 const INVALID_SESSION_RESPONSE_STATUS = 401
+
+/** Content types appearing first are always mapped first */
+const ContentTypeLocalLoadPriorty = [
+  ContentType.ItemsKey,
+  ContentType.KeySystemRootKey,
+  ContentType.KeySystemItemsKey,
+  ContentType.VaultListing,
+  ContentType.TrustedContact,
+  ContentType.UserPrefs,
+  ContentType.Component,
+  ContentType.Theme,
+]
 
 /**
  * The sync service orchestrates with the model manager, api service, and storage service
@@ -100,7 +122,7 @@ const INVALID_SESSION_RESPONSE_STATUS = 401
  * The sync service largely does not perform any task unless it is called upon.
  */
 export class SNSyncService
-  extends AbstractService<SyncEvent, ServerSyncResponse | OfflineSyncResponse | { source: SyncSource }>
+  extends AbstractService<SyncEvent>
   implements SyncServiceInterface, InternalEventHandlerInterface, SyncClientInterface
 {
   private dirtyIndexAtLastPresyncSave?: number
@@ -127,14 +149,6 @@ export class SNSyncService
 
   public lastSyncInvokationPromise?: Promise<unknown>
   public currentSyncRequestPromise?: Promise<void>
-
-  /** Content types appearing first are always mapped first */
-  private readonly localLoadPriorty = [
-    ContentType.ItemsKey,
-    ContentType.UserPrefs,
-    ContentType.Component,
-    ContentType.Theme,
-  ]
 
   constructor(
     private itemManager: ItemManager,
@@ -225,29 +239,21 @@ export class SNSyncService
     return this.databaseLoaded
   }
 
-  private async processItemsKeysFirstDuringDatabaseLoad(
-    itemsKeysPayloads: FullyFormedPayloadInterface[],
-  ): Promise<void> {
-    if (itemsKeysPayloads.length === 0) {
+  private async processPriorityItemsForDatabaseLoad(items: FullyFormedPayloadInterface[]): Promise<void> {
+    if (items.length === 0) {
       return
     }
 
-    const encryptedItemsKeysPayloads = itemsKeysPayloads.filter(isEncryptedPayload)
+    const encryptedPayloads = items.filter(isEncryptedPayload)
+    const alreadyDecryptedPayloads = items.filter(isDecryptedPayload) as DecryptedPayloadInterface<ItemsKeyContent>[]
 
-    const originallyDecryptedItemsKeysPayloads = itemsKeysPayloads.filter(
-      isDecryptedPayload,
-    ) as DecryptedPayloadInterface<ItemsKeyContent>[]
+    const encryptionSplit = SplitPayloadsByEncryptionType(encryptedPayloads)
+    const decryptionSplit = CreateDecryptionSplitWithKeyLookup(encryptionSplit)
 
-    const itemsKeysSplit: KeyedDecryptionSplit = {
-      usesRootKeyWithKeyLookup: {
-        items: encryptedItemsKeysPayloads,
-      },
-    }
-
-    const newlyDecryptedItemsKeys = await this.protocolService.decryptSplit(itemsKeysSplit)
+    const newlyDecryptedPayloads = await this.protocolService.decryptSplit(decryptionSplit)
 
     await this.payloadManager.emitPayloads(
-      [...originallyDecryptedItemsKeysPayloads, ...newlyDecryptedItemsKeys],
+      [...alreadyDecryptedPayloads, ...newlyDecryptedPayloads],
       PayloadEmitSource.LocalDatabaseLoaded,
     )
   }
@@ -262,7 +268,7 @@ export class SNSyncService
     const chunks = await this.device.getDatabaseLoadChunks(
       {
         batchSize: this.options.loadBatchSize,
-        contentTypePriority: this.localLoadPriorty,
+        contentTypePriority: ContentTypeLocalLoadPriorty,
         uuidPriority: this.launchPriorityUuids,
       },
       this.identifier,
@@ -272,18 +278,30 @@ export class SNSyncService
       ? chunks.fullEntries.itemsKeys.entries
       : await this.device.getDatabaseEntries(this.identifier, chunks.keys.itemsKeys.keys)
 
-    const itemsKeyPayloads = itemsKeyEntries
-      .map((entry) => {
-        try {
-          return CreatePayload(entry, PayloadSource.Constructor)
-        } catch (e) {
-          console.error('Creating payload failed', e)
-          return undefined
-        }
-      })
-      .filter(isNotUndefined)
+    const keySystemRootKeyEntries = isFullEntryLoadChunkResponse(chunks)
+      ? chunks.fullEntries.keySystemRootKeys.entries
+      : await this.device.getDatabaseEntries(this.identifier, chunks.keys.keySystemRootKeys.keys)
 
-    await this.processItemsKeysFirstDuringDatabaseLoad(itemsKeyPayloads)
+    const keySystemItemsKeyEntries = isFullEntryLoadChunkResponse(chunks)
+      ? chunks.fullEntries.keySystemItemsKeys.entries
+      : await this.device.getDatabaseEntries(this.identifier, chunks.keys.keySystemItemsKeys.keys)
+
+    const createPayloadFromEntry = (entry: FullyFormedTransferPayload) => {
+      try {
+        return CreatePayload(entry, PayloadSource.LocalDatabaseLoaded)
+      } catch (e) {
+        console.error('Creating payload failed', e)
+        return undefined
+      }
+    }
+
+    await this.processPriorityItemsForDatabaseLoad(itemsKeyEntries.map(createPayloadFromEntry).filter(isNotUndefined))
+    await this.processPriorityItemsForDatabaseLoad(
+      keySystemRootKeyEntries.map(createPayloadFromEntry).filter(isNotUndefined),
+    )
+    await this.processPriorityItemsForDatabaseLoad(
+      keySystemItemsKeyEntries.map(createPayloadFromEntry).filter(isNotUndefined),
+    )
 
     /**
      * Map in batches to give interface a chance to update. Note that total decryption
@@ -308,7 +326,7 @@ export class SNSyncService
       const payloads = dbEntries
         .map((entry) => {
           try {
-            return CreatePayload(entry, PayloadSource.Constructor)
+            return CreatePayload(entry, PayloadSource.LocalDatabaseLoaded)
           } catch (e) {
             console.error('Creating payload failed', e)
             return undefined
@@ -348,13 +366,10 @@ export class SNSyncService
       }
     }
 
-    const split: KeyedDecryptionSplit = {
-      usesItemsKeyWithKeyLookup: {
-        items: encrypted,
-      },
-    }
+    const encryptionSplit = SplitPayloadsByEncryptionType(encrypted)
+    const decryptionSplit = CreateDecryptionSplitWithKeyLookup(encryptionSplit)
 
-    const results = await this.protocolService.decryptSplit(split)
+    const results = await this.protocolService.decryptSplit(decryptionSplit)
 
     await this.payloadManager.emitPayloads([...nonencrypted, ...results], PayloadEmitSource.LocalDatabaseLoaded)
 
@@ -616,11 +631,7 @@ export class SNSyncService
     if (useStrategy === SyncQueueStrategy.ResolveOnNext) {
       return this.queueStrategyResolveOnNext()
     } else if (useStrategy === SyncQueueStrategy.ForceSpawnNew) {
-      return this.queueStrategyForceSpawnNew({
-        mode: options.mode,
-        checkIntegrity: options.checkIntegrity,
-        source: options.source,
-      })
+      return this.queueStrategyForceSpawnNew(options)
     } else {
       throw Error(`Unhandled timing strategy ${useStrategy}`)
     }
@@ -634,7 +645,7 @@ export class SNSyncService
   ) {
     this.opStatus.setDidBegin()
 
-    await this.notifyEvent(SyncEvent.SyncWillBegin)
+    await this.notifyEvent(SyncEvent.SyncDidBeginProcessing)
 
     /**
      * Subtract from array as soon as we're sure they'll be called.
@@ -647,10 +658,39 @@ export class SNSyncService
      * Setting this value means the item was 100% sent to the server.
      */
     if (items.length > 0) {
-      return this.itemManager.setLastSyncBeganForItems(items, beginDate, frozenDirtyIndex)
+      return this.setLastSyncBeganForItems(items, beginDate, frozenDirtyIndex)
     } else {
       return items
     }
+  }
+
+  private async setLastSyncBeganForItems(
+    itemsToLookupUuidsFor: (DecryptedItemInterface | DeletedItemInterface)[],
+    date: Date,
+    globalDirtyIndex: number,
+  ): Promise<(DecryptedItemInterface | DeletedItemInterface)[]> {
+    const uuids = Uuids(itemsToLookupUuidsFor)
+
+    const items = this.itemManager.getCollection().findAll(uuids).filter(isDecryptedOrDeletedItem)
+
+    const payloads: (DecryptedPayloadInterface | DeletedPayloadInterface)[] = []
+
+    for (const item of items) {
+      const mutator = new ItemMutator<DecryptedPayloadInterface | DeletedPayloadInterface>(
+        item,
+        MutationType.NonDirtying,
+      )
+
+      mutator.setBeginSync(date, globalDirtyIndex)
+
+      const payload = mutator.getResult()
+
+      payloads.push(payload)
+    }
+
+    await this.payloadManager.emitPayloads(payloads, PayloadEmitSource.PreSyncSave)
+
+    return this.itemManager.findAnyItems(uuids) as (DecryptedItemInterface | DeletedItemInterface)[]
   }
 
   /**
@@ -725,12 +765,15 @@ export class SNSyncService
 
   private async createServerSyncOperation(
     payloads: ServerSyncPushContextualPayload[],
-    checkIntegrity: boolean,
-    source: SyncSource,
+    options: SyncOptions,
     mode: SyncMode = SyncMode.Default,
   ) {
-    const syncToken = await this.getLastSyncToken()
-    const paginationToken = await this.getPaginationToken()
+    const syncToken =
+      options.sharedVaultUuids && options.sharedVaultUuids.length > 0 && options.syncSharedVaultsFromScratch
+        ? undefined
+        : await this.getLastSyncToken()
+    const paginationToken =
+      options.sharedVaultUuids && options.syncSharedVaultsFromScratch ? undefined : await this.getPaginationToken()
 
     const operation = new AccountSyncOperation(
       payloads,
@@ -753,20 +796,23 @@ export class SNSyncService
             break
         }
       },
-      syncToken,
-      paginationToken,
       this.apiService,
+      {
+        syncToken,
+        paginationToken,
+        sharedVaultUuids: options.sharedVaultUuids,
+      },
     )
 
     log(
       LoggingDomain.Sync,
       'Syncing online user',
       'source',
-      SyncSource[source],
+      SyncSource[options.source],
       'operation id',
       operation.id,
       'integrity check',
-      checkIntegrity,
+      options.checkIntegrity,
       'mode',
       SyncMode[mode],
       'syncToken',
@@ -789,12 +835,7 @@ export class SNSyncService
       const { uploadPayloads, syncMode } = await this.getOnlineSyncParameters(payloads, options.mode)
 
       return {
-        operation: await this.createServerSyncOperation(
-          uploadPayloads,
-          useBoolean(options.checkIntegrity, false),
-          options.source,
-          syncMode,
-        ),
+        operation: await this.createServerSyncOperation(uploadPayloads, options, syncMode),
         mode: syncMode,
       }
     } else {
@@ -867,6 +908,7 @@ export class SNSyncService
 
     await this.notifyEventSync(SyncEvent.SyncCompletedWithAllItemsUploadedAndDownloaded, {
       source: options.source,
+      options,
     })
 
     this.resolvePendingSyncRequestsThatMadeItInTimeOfCurrentRequest(inTimeResolveQueue)
@@ -889,7 +931,7 @@ export class SNSyncService
 
     this.opStatus.clearError()
 
-    await this.notifyEvent(SyncEvent.SingleRoundTripSyncCompleted, response)
+    await this.notifyEvent(SyncEvent.PaginatedSyncRequestCompleted, response)
   }
 
   private handleErrorServerResponse(response: ServerSyncResponse) {
@@ -917,19 +959,36 @@ export class SNSyncService
 
     const historyMap = this.historyService.getHistoryMapCopy()
 
+    if (response.userEvents) {
+      await this.notifyEventSync(SyncEvent.ReceivedUserEvents, response.userEvents as SyncEventReceivedUserEventsData)
+    }
+
+    if (response.asymmetricMessages) {
+      await this.notifyEventSync(
+        SyncEvent.ReceivedAsymmetricMessages,
+        response.asymmetricMessages as SyncEventReceivedAsymmetricMessagesData,
+      )
+    }
+
+    if (response.vaults) {
+      await this.notifyEventSync(
+        SyncEvent.ReceivedRemoteSharedVaults,
+        response.vaults as SyncEventReceivedRemoteSharedVaultsData,
+      )
+    }
+
+    if (response.vaultInvites) {
+      await this.notifyEventSync(
+        SyncEvent.ReceivedSharedVaultInvites,
+        response.vaultInvites as SyncEventReceivedSharedVaultInvitesData,
+      )
+    }
+
     const resolver = new ServerSyncResponseResolver(
       {
         retrievedPayloads: await this.processServerPayloads(response.retrievedPayloads, PayloadSource.RemoteRetrieved),
         savedPayloads: response.savedPayloads,
-        uuidConflictPayloads: await this.processServerPayloads(
-          response.uuidConflictPayloads,
-          PayloadSource.RemoteRetrieved,
-        ),
-        dataConflictPayloads: await this.processServerPayloads(
-          response.dataConflictPayloads,
-          PayloadSource.RemoteRetrieved,
-        ),
-        rejectedPayloads: await this.processServerPayloads(response.rejectedPayloads, PayloadSource.RemoteRetrieved),
+        conflicts: await this.decryptServerConflicts(response.conflicts),
       },
       masterCollection,
       operation.payloadsSavedOrSaving,
@@ -954,11 +1013,69 @@ export class SNSyncService
       await this.persistPayloads(payloadsToPersist)
     }
 
-    await Promise.all([
-      this.setLastSyncToken(response.lastSyncToken as string),
-      this.setPaginationToken(response.paginationToken as string),
-      this.notifyEvent(SyncEvent.SingleRoundTripSyncCompleted, response),
-    ])
+    if (!operation.options.sharedVaultUuids) {
+      await Promise.all([
+        this.setLastSyncToken(response.lastSyncToken as string),
+        this.setPaginationToken(response.paginationToken as string),
+      ])
+    }
+
+    await this.notifyEvent(SyncEvent.PaginatedSyncRequestCompleted, {
+      ...response,
+      uploadedPayloads: operation.payloads,
+      options: operation.options,
+    })
+  }
+
+  private async decryptServerConflicts(conflictMap: TrustedServerConflictMap): Promise<DecryptedServerConflictMap> {
+    const decrypted: DecryptedServerConflictMap = {}
+
+    for (const conflictType of Object.keys(conflictMap)) {
+      const conflictsForType = conflictMap[conflictType as ConflictType]
+      if (!conflictsForType) {
+        continue
+      }
+
+      if (!decrypted[conflictType as ConflictType]) {
+        decrypted[conflictType as ConflictType] = []
+      }
+
+      const decryptedConflictsForType = decrypted[conflictType as ConflictType]
+      if (!decryptedConflictsForType) {
+        throw Error('Decrypted conflicts for type should exist')
+      }
+
+      for (const conflict of conflictsForType) {
+        const decryptedUnsavedItem = conflict.unsaved_item
+          ? await this.processServerPayload(conflict.unsaved_item, PayloadSource.RemoteRetrieved)
+          : undefined
+
+        const decryptedServerItem = conflict.server_item
+          ? await this.processServerPayload(conflict.server_item, PayloadSource.RemoteRetrieved)
+          : undefined
+
+        const decryptedEntry: ConflictParams<FullyFormedPayloadInterface> = <
+          ConflictParams<FullyFormedPayloadInterface>
+        >{
+          type: conflict.type,
+          unsaved_item: decryptedUnsavedItem,
+          server_item: decryptedServerItem,
+        }
+
+        decryptedConflictsForType.push(decryptedEntry)
+      }
+    }
+
+    return decrypted
+  }
+
+  private async processServerPayload(
+    item: FilteredServerItem,
+    source: PayloadSource,
+  ): Promise<FullyFormedPayloadInterface> {
+    const result = await this.processServerPayloads([item], source)
+
+    return result[0]
   }
 
   private async processServerPayloads(
@@ -971,7 +1088,8 @@ export class SNSyncService
 
     const results: FullyFormedPayloadInterface[] = [...deleted]
 
-    const { rootKeyEncryption, itemsKeyEncryption } = SplitPayloadsByEncryptionType(encrypted)
+    const { rootKeyEncryption, itemsKeyEncryption, keySystemRootKeyEncryption } =
+      SplitPayloadsByEncryptionType(encrypted)
 
     const { results: rootKeyDecryptionResults, map: processedItemsKeys } = await this.decryptServerItemsKeys(
       rootKeyEncryption || [],
@@ -979,8 +1097,16 @@ export class SNSyncService
 
     extendArray(results, rootKeyDecryptionResults)
 
+    const { results: keySystemRootKeyDecryptionResults, map: processedKeySystemItemsKeys } =
+      await this.decryptServerKeySystemItemsKeys(keySystemRootKeyEncryption || [])
+
+    extendArray(results, keySystemRootKeyDecryptionResults)
+
     if (itemsKeyEncryption) {
-      const decryptionResults = await this.decryptProcessedServerPayloads(itemsKeyEncryption, processedItemsKeys)
+      const decryptionResults = await this.decryptProcessedServerPayloads(itemsKeyEncryption, {
+        ...processedItemsKeys,
+        ...processedKeySystemItemsKeys,
+      })
       extendArray(results, decryptionResults)
     }
 
@@ -1017,17 +1143,53 @@ export class SNSyncService
     }
   }
 
+  private async decryptServerKeySystemItemsKeys(payloads: EncryptedPayloadInterface[]) {
+    const map: Record<UuidString, DecryptedPayloadInterface<KeySystemItemsKeyContent>> = {}
+
+    if (payloads.length === 0) {
+      return {
+        results: [],
+        map,
+      }
+    }
+
+    const keySystemRootKeySplit: KeyedDecryptionSplit = {
+      usesKeySystemRootKeyWithKeyLookup: {
+        items: payloads,
+      },
+    }
+
+    const results = await this.protocolService.decryptSplit<KeySystemItemsKeyContent>(keySystemRootKeySplit)
+
+    results.forEach((result) => {
+      if (
+        isDecryptedPayload<KeySystemItemsKeyContent>(result) &&
+        result.content_type === ContentType.KeySystemItemsKey
+      ) {
+        map[result.uuid] = result
+      }
+    })
+
+    return {
+      results,
+      map,
+    }
+  }
+
   private async decryptProcessedServerPayloads(
     payloads: EncryptedPayloadInterface[],
-    map: Record<UuidString, DecryptedPayloadInterface<ItemsKeyContent>>,
+    map: Record<UuidString, DecryptedPayloadInterface<ItemsKeyContent | KeySystemItemsKeyContent>>,
   ): Promise<(EncryptedPayloadInterface | DecryptedPayloadInterface)[]> {
     return Promise.all(
       payloads.map(async (encrypted) => {
-        const previouslyProcessedItemsKey: DecryptedPayloadInterface<ItemsKeyContent> | undefined =
-          map[encrypted.items_key_id as string]
+        const previouslyProcessedItemsKey:
+          | DecryptedPayloadInterface<ItemsKeyContent | KeySystemItemsKeyContent>
+          | undefined = map[encrypted.items_key_id as string]
 
         const itemsKey = previouslyProcessedItemsKey
-          ? (CreateDecryptedItemFromPayload(previouslyProcessedItemsKey) as ItemsKeyInterface)
+          ? (CreateDecryptedItemFromPayload(previouslyProcessedItemsKey) as
+              | ItemsKeyInterface
+              | KeySystemItemsKeyInterface)
           : undefined
 
         const keyedSplit: KeyedDecryptionSplit = {}
@@ -1251,26 +1413,13 @@ export class SNSyncService
     await this.persistPayloads(emit.emits)
   }
 
-  override async getDiagnostics(): Promise<DiagnosticInfo | undefined> {
-    const dirtyUuids = Uuids(this.itemsNeedingSync())
-
-    return {
-      sync: {
-        syncToken: await this.getLastSyncToken(),
-        cursorToken: await this.getPaginationToken(),
-        dirtyIndexAtLastPresyncSave: this.dirtyIndexAtLastPresyncSave,
-        lastSyncDate: this.lastSyncDate,
-        outOfSync: this.outOfSync,
-        completedOnlineDownloadFirstSync: this.completedOnlineDownloadFirstSync,
-        clientLocked: this.clientLocked,
-        databaseLoaded: this.databaseLoaded,
-        syncLock: this.syncLock,
-        dealloced: this.dealloced,
-        itemsNeedingSync: dirtyUuids,
-        itemsNeedingSyncCount: dirtyUuids.length,
-        pendingRequestCount: this.resolveQueue.length + this.spawnQueue.length,
-      },
-    }
+  async syncSharedVaultsFromScratch(sharedVaultUuids: string[]): Promise<void> {
+    await this.sync({
+      sharedVaultUuids: sharedVaultUuids,
+      syncSharedVaultsFromScratch: true,
+      queueStrategy: SyncQueueStrategy.ForceSpawnNew,
+      awaitAll: true,
+    })
   }
 
   /** @e2e_testing */

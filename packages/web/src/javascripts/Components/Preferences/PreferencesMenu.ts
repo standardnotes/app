@@ -5,6 +5,7 @@ import { PackageProvider } from './Panes/General/Advanced/Packages/Provider/Pack
 import { securityPrefsHasBubble } from './Panes/Security/securityPrefsHasBubble'
 import { PreferenceId } from '@standardnotes/ui-services'
 import { isDesktopApplication } from '@/Utils'
+import { featureTrunkVaultsEnabled } from '@/FeatureTrunk'
 
 interface PreferencesMenuItem {
   readonly id: PreferenceId
@@ -49,6 +50,11 @@ const READY_PREFERENCES_MENU_ITEMS: PreferencesMenuItem[] = [
 const DESKTOP_PREFERENCES_MENU_ITEMS: PreferencesMenuItem[] = [
   { id: 'home-server', label: 'Home Server', icon: 'server', order: 5 },
 ]
+
+if (featureTrunkVaultsEnabled()) {
+  PREFERENCES_MENU_ITEMS.splice(3, 0, { id: 'vaults', label: 'Vaults', icon: 'safe-square', order: 5 })
+  READY_PREFERENCES_MENU_ITEMS.splice(3, 0, { id: 'vaults', label: 'Vaults', icon: 'safe-square', order: 5 })
+}
 
 export class PreferencesMenu {
   private _selectedPane: PreferenceId = 'account'

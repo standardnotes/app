@@ -3,7 +3,7 @@ import {
   TOGGLE_LIST_PANE_KEYBOARD_COMMAND,
   TOGGLE_NAVIGATION_PANE_KEYBOARD_COMMAND,
 } from '@standardnotes/ui-services'
-import { ApplicationEvent, InternalEventBus, PrefKey, removeFromArray } from '@standardnotes/snjs'
+import { ApplicationEvent, InternalEventBusInterface, PrefKey, removeFromArray } from '@standardnotes/snjs'
 import { AppPaneId } from '../../Components/Panes/AppPaneMetadata'
 import { isMobileScreen } from '@/Utils'
 import { makeObservable, observable, action, computed } from 'mobx'
@@ -35,7 +35,7 @@ export class PaneController extends AbstractViewController {
   listPaneExplicitelyCollapsed = false
   navigationPaneExplicitelyCollapsed = false
 
-  constructor(application: WebApplication, eventBus: InternalEventBus) {
+  constructor(application: WebApplication, eventBus: InternalEventBusInterface) {
     super(application, eventBus)
 
     makeObservable(this, {

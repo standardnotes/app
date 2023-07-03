@@ -13,13 +13,13 @@ export const mockUuid = () => {
   return `${currentId++}`
 }
 
-export const createNote = (payload?: Partial<NoteContent>): SNNote => {
+export const createNote = (content?: Partial<NoteContent>): SNNote => {
   return new SNNote(
     new DecryptedPayload(
       {
         uuid: mockUuid(),
         content_type: ContentType.Note,
-        content: FillItemContent({ ...payload }),
+        content: FillItemContent({ ...content }),
         ...PayloadTimestampDefaults(),
       },
       PayloadSource.Constructor,

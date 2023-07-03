@@ -5,8 +5,7 @@ import { ErrorMessage } from '../../Error/ErrorMessage'
 import { ApiCallError } from '../../Error/ApiCallError'
 import { UserServerInterface } from '../../Server/User/UserServerInterface'
 import { ApiVersion } from '../../Api/ApiVersion'
-import { ApiEndpointParam } from '../../Request/ApiEndpointParam'
-import { HttpResponse } from '@standardnotes/responses'
+import { HttpResponse, ApiEndpointParam } from '@standardnotes/responses'
 
 import { UserDeletionResponseBody } from '../../Response/User/UserDeletionResponseBody'
 import { UserRegistrationResponseBody } from '../../Response/User/UserRegistrationResponseBody'
@@ -15,6 +14,7 @@ import { UserRequestServerInterface } from '../../Server/UserRequest/UserRequest
 
 import { UserApiOperations } from './UserApiOperations'
 import { UserApiServiceInterface } from './UserApiServiceInterface'
+import { UserUpdateResponse } from '../../Response/User/UserUpdateResponse'
 
 export class UserApiService implements UserApiServiceInterface {
   private operationsInProgress: Map<UserApiOperations, boolean>
@@ -35,7 +35,7 @@ export class UserApiService implements UserApiServiceInterface {
 
       return response
     } catch (error) {
-      throw new ApiCallError(ErrorMessage.GenericRegistrationFail)
+      throw new ApiCallError(ErrorMessage.GenericFail)
     }
   }
 
@@ -81,6 +81,23 @@ export class UserApiService implements UserApiServiceInterface {
       return response
     } catch (error) {
       throw new ApiCallError(ErrorMessage.GenericRegistrationFail)
+    }
+  }
+
+  async updateUser(updateDTO: { userUuid: string }): Promise<HttpResponse<UserUpdateResponse>> {
+    this.lockOperation(UserApiOperations.UpdatingUser)
+
+    try {
+      const response = await this.userServer.update({
+        [ApiEndpointParam.ApiVersion]: ApiVersion.v0,
+        user_uuid: updateDTO.userUuid,
+      })
+
+      this.unlockOperation(UserApiOperations.UpdatingUser)
+
+      return response
+    } catch (error) {
+      throw new ApiCallError(ErrorMessage.GenericFail)
     }
   }
 

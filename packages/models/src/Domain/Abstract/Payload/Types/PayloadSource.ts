@@ -5,6 +5,8 @@ export enum PayloadSource {
    */
   Constructor = 1,
 
+  LocalDatabaseLoaded = 2,
+
   RemoteRetrieved,
 
   RemoteSaved,

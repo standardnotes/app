@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-expressions */
 /* eslint-disable no-undef */
-import { BaseItemCounts } from '../lib/Applications.js'
+import { BaseItemCounts } from '../lib/BaseItemCounts.js'
 import * as Factory from '../lib/factory.js'
 chai.use(chaiAsPromised)
 const expect = chai.expect
@@ -22,11 +22,11 @@ describe('items', () => {
 
   it('setting an item as dirty should update its client updated at', async function () {
     const params = Factory.createNotePayload()
-    await this.application.itemManager.emitItemsFromPayloads([params], PayloadEmitSource.LocalChanged)
+    await this.application.mutator.emitItemsFromPayloads([params], PayloadEmitSource.LocalChanged)
     const item = this.application.itemManager.items[0]
     const prevDate = item.userModifiedDate.getTime()
     await Factory.sleep(0.1)
-    await this.application.itemManager.setItemDirty(item, true)
+    await this.application.mutator.setItemDirty(item, true)
     const refreshedItem = this.application.itemManager.findItem(item.uuid)
     const newDate = refreshedItem.userModifiedDate.getTime()
     expect(prevDate).to.not.equal(newDate)
@@ -34,23 +34,23 @@ describe('items', () => {
 
   it('setting an item as dirty with option to skip client updated at', async function () {
     const params = Factory.createNotePayload()
-    await this.application.itemManager.emitItemsFromPayloads([params], PayloadEmitSource.LocalChanged)
+    await this.application.mutator.emitItemsFromPayloads([params], PayloadEmitSource.LocalChanged)
     const item = this.application.itemManager.items[0]
     const prevDate = item.userModifiedDate.getTime()
     await Factory.sleep(0.1)
-    await this.application.itemManager.setItemDirty(item)
+    await this.application.mutator.setItemDirty(item)
     const newDate = item.userModifiedDate.getTime()
     expect(prevDate).to.equal(newDate)
   })
 
   it('properly pins, archives, and locks', async function () {
     const params = Factory.createNotePayload()
-    await this.application.itemManager.emitItemsFromPayloads([params], PayloadEmitSource.LocalChanged)
+    await this.application.mutator.emitItemsFromPayloads([params], PayloadEmitSource.LocalChanged)
 
     const item = this.application.itemManager.items[0]
     expect(item.pinned).to.not.be.ok
 
-    const refreshedItem = await this.application.mutator.changeAndSaveItem(
+    const refreshedItem = await this.application.changeAndSaveItem(
       item,
       (mutator) => {
         mutator.pinned = true
@@ -69,7 +69,7 @@ describe('items', () => {
   it('properly compares item equality', async function () {
     const params1 = Factory.createNotePayload()
     const params2 = Factory.createNotePayload()
-    await this.application.itemManager.emitItemsFromPayloads([params1, params2], PayloadEmitSource.LocalChanged)
+    await this.application.mutator.emitItemsFromPayloads([params1, params2], PayloadEmitSource.LocalChanged)
 
     let item1 = this.application.itemManager.getDisplayableNotes()[0]
     let item2 = this.application.itemManager.getDisplayableNotes()[1]
@@ -77,7 +77,7 @@ describe('items', () => {
     expect(item1.isItemContentEqualWith(item2)).to.equal(true)
 
     // items should ignore this field when checking for equality
-    item1 = await this.application.mutator.changeAndSaveItem(
+    item1 = await this.application.changeAndSaveItem(
       item1,
       (mutator) => {
         mutator.userModifiedDate = new Date()
@@ -86,7 +86,7 @@ describe('items', () => {
       undefined,
       syncOptions,
     )
-    item2 = await this.application.mutator.changeAndSaveItem(
+    item2 = await this.application.changeAndSaveItem(
       item2,
       (mutator) => {
         mutator.userModifiedDate = undefined
@@ -98,7 +98,7 @@ describe('items', () => {
 
     expect(item1.isItemContentEqualWith(item2)).to.equal(true)
 
-    item1 = await this.application.mutator.changeAndSaveItem(
+    item1 = await this.application.changeAndSaveItem(
       item1,
       (mutator) => {
         mutator.mutableContent.foo = 'bar'
@@ -110,7 +110,7 @@ describe('items', () => {
 
     expect(item1.isItemContentEqualWith(item2)).to.equal(false)
 
-    item2 = await this.application.mutator.changeAndSaveItem(
+    item2 = await this.application.changeAndSaveItem(
       item2,
       (mutator) => {
         mutator.mutableContent.foo = 'bar'
@@ -123,7 +123,7 @@ describe('items', () => {
     expect(item1.isItemContentEqualWith(item2)).to.equal(true)
     expect(item2.isItemContentEqualWith(item1)).to.equal(true)
 
-    item1 = await this.application.mutator.changeAndSaveItem(
+    item1 = await this.application.changeAndSaveItem(
       item1,
       (mutator) => {
         mutator.e2ePendingRefactor_addItemAsRelationship(item2)
@@ -132,7 +132,7 @@ describe('items', () => {
       undefined,
       syncOptions,
     )
-    item2 = await this.application.mutator.changeAndSaveItem(
+    item2 = await this.application.changeAndSaveItem(
       item2,
       (mutator) => {
         mutator.e2ePendingRefactor_addItemAsRelationship(item1)
@@ -147,7 +147,7 @@ describe('items', () => {
 
     expect(item1.isItemContentEqualWith(item2)).to.equal(false)
 
-    item1 = await this.application.mutator.changeAndSaveItem(
+    item1 = await this.application.changeAndSaveItem(
       item1,
       (mutator) => {
         mutator.removeItemAsRelationship(item2)
@@ -156,7 +156,7 @@ describe('items', () => {
       undefined,
       syncOptions,
     )
-    item2 = await this.application.mutator.changeAndSaveItem(
+    item2 = await this.application.changeAndSaveItem(
       item2,
       (mutator) => {
         mutator.removeItemAsRelationship(item1)
@@ -174,12 +174,12 @@ describe('items', () => {
   it('content equality should not have side effects', async function () {
     const params1 = Factory.createNotePayload()
     const params2 = Factory.createNotePayload()
-    await this.application.itemManager.emitItemsFromPayloads([params1, params2], PayloadEmitSource.LocalChanged)
+    await this.application.mutator.emitItemsFromPayloads([params1, params2], PayloadEmitSource.LocalChanged)
 
     let item1 = this.application.itemManager.getDisplayableNotes()[0]
     const item2 = this.application.itemManager.getDisplayableNotes()[1]
 
-    item1 = await this.application.mutator.changeAndSaveItem(
+    item1 = await this.application.changeAndSaveItem(
       item1,
       (mutator) => {
         mutator.mutableContent.foo = 'bar'
@@ -203,7 +203,7 @@ describe('items', () => {
     // There was an issue where calling that function would modify values directly to omit keys
     // in contentKeysToIgnoreWhenCheckingEquality.
 
-    await this.application.itemManager.setItemsDirty([item1, item2])
+    await this.application.mutator.setItemsDirty([item1, item2])
 
     expect(item1.userModifiedDate).to.be.ok
     expect(item2.userModifiedDate).to.be.ok

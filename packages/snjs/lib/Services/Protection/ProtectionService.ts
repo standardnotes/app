@@ -1,6 +1,13 @@
 import { ChallengeService } from './../Challenge/ChallengeService'
 import { SNLog } from '@Lib/Log'
-import { DecryptedItem } from '@standardnotes/models'
+import {
+  DecryptedItem,
+  DecryptedItemInterface,
+  DecryptedItemMutator,
+  FileItem,
+  MutationType,
+  SNNote,
+} from '@standardnotes/models'
 import { DiskStorageService } from '@Lib/Services/Storage/DiskStorageService'
 import { isNullOrUndefined } from '@standardnotes/utils'
 import {
@@ -9,7 +16,6 @@ import {
   StorageValueModes,
   ApplicationStage,
   StorageKey,
-  DiagnosticInfo,
   Challenge,
   ChallengeReason,
   ChallengePrompt,
@@ -18,6 +24,7 @@ import {
   MobileUnlockTiming,
   TimingDisplayOption,
   ProtectionsClientInterface,
+  MutatorClientInterface,
 } from '@standardnotes/services'
 import { ContentType } from '@standardnotes/common'
 
@@ -70,6 +77,7 @@ export class SNProtectionService extends AbstractService<ProtectionEvent> implem
 
   constructor(
     private protocolService: EncryptionService,
+    private mutator: MutatorClientInterface,
     private challengeService: ChallengeService,
     private storageService: DiskStorageService,
     protected override internalEventBus: InternalEventBusInterface,
@@ -435,15 +443,69 @@ export class SNProtectionService extends AbstractService<ProtectionEvent> implem
     this.sessionExpiryTimeout = setTimeout(timer, expiryDate.getTime() - Date.now())
   }
 
-  override getDiagnostics(): Promise<DiagnosticInfo | undefined> {
-    return Promise.resolve({
-      protections: {
-        getSessionExpiryDate: this.getSessionExpiryDate(),
-        getLastSessionLength: this.getLastSessionLength(),
-        hasProtectionSources: this.hasProtectionSources(),
-        hasUnprotectedAccessSession: this.hasUnprotectedAccessSession(),
-        hasBiometricsEnabled: this.hasBiometricsEnabled(),
+  async protectItems<I extends DecryptedItemInterface>(items: I[]): Promise<I[]> {
+    const protectedItems = await this.mutator.changeItems<DecryptedItemMutator, I>(
+      items,
+      (mutator) => {
+        mutator.protected = true
       },
-    })
+      MutationType.NoUpdateUserTimestamps,
+    )
+
+    return protectedItems
+  }
+
+  async unprotectItems<I extends DecryptedItemInterface>(
+    items: I[],
+    reason: ChallengeReason,
+  ): Promise<I[] | undefined> {
+    if (
+      !(await this.authorizeAction(reason, {
+        fallBackToAccountPassword: true,
+        requireAccountPassword: false,
+        forcePrompt: false,
+      }))
+    ) {
+      return undefined
+    }
+
+    const unprotectedItems = await this.mutator.changeItems<DecryptedItemMutator, I>(
+      items,
+      (mutator) => {
+        mutator.protected = false
+      },
+      MutationType.NoUpdateUserTimestamps,
+    )
+
+    return unprotectedItems
+  }
+
+  public async protectNote(note: SNNote): Promise<SNNote> {
+    const result = await this.protectItems([note])
+    return result[0]
+  }
+
+  public async unprotectNote(note: SNNote): Promise<SNNote | undefined> {
+    const result = await this.unprotectItems([note], ChallengeReason.UnprotectNote)
+    return result ? result[0] : undefined
+  }
+
+  public async protectNotes(notes: SNNote[]): Promise<SNNote[]> {
+    return this.protectItems(notes)
+  }
+
+  public async unprotectNotes(notes: SNNote[]): Promise<SNNote[]> {
+    const results = await this.unprotectItems(notes, ChallengeReason.UnprotectNote)
+    return results || []
+  }
+
+  async protectFile(file: FileItem): Promise<FileItem> {
+    const result = await this.protectItems([file])
+    return result[0]
+  }
+
+  async unprotectFile(file: FileItem): Promise<FileItem | undefined> {
+    const result = await this.unprotectItems([file], ChallengeReason.UnprotectFile)
+    return result ? result[0] : undefined
   }
 }

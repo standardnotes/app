@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/web",
-  "version": "3.162.9",
+  "version": "3.163.3",
   "license": "AGPL-3.0-or-later",
   "main": "dist/app.js",
   "author": "Standard Notes",
@@ -16,7 +16,7 @@
     "lint:fix": "eslint src/javascripts --fix",
     "start": "webpack-dev-server --config web.webpack.dev.js",
     "start-secure": "yarn start --server-type https",
-    "test": "jest --config jest.config.js --coverage",
+    "test": "jest --config jest.config.js",
     "tsc": "tsc --project tsconfig.json",
     "upgrade:snjs": "ncu -u '@standardnotes/*'",
     "watch": "webpack -w --config web.webpack.dev.js",

@@ -56,7 +56,7 @@ describe('mapping performance', () => {
     const batchSize = 100
     for (let i = 0; i < payloads.length; i += batchSize) {
       const subArray = payloads.slice(currentIndex, currentIndex + batchSize)
-      await application.itemManager.emitItemsFromPayloads(subArray, PayloadEmitSource.LocalChanged)
+      await application.mutator.emitItemsFromPayloads(subArray, PayloadEmitSource.LocalChanged)
       currentIndex += batchSize
     }
 
@@ -117,7 +117,7 @@ describe('mapping performance', () => {
     const batchSize = 100
     for (let i = 0; i < payloads.length; i += batchSize) {
       var subArray = payloads.slice(currentIndex, currentIndex + batchSize)
-      await application.itemManager.emitItemsFromPayloads(subArray, PayloadEmitSource.LocalChanged)
+      await application.mutator.emitItemsFromPayloads(subArray, PayloadEmitSource.LocalChanged)
       currentIndex += batchSize
     }
 

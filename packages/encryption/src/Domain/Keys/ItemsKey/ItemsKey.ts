@@ -7,11 +7,10 @@ import {
   HistoryEntryInterface,
   ItemsKeyContent,
   ItemsKeyInterface,
-  RootKeyInterface,
 } from '@standardnotes/models'
 
-export function isItemsKey(x: ItemsKeyInterface | RootKeyInterface): x is ItemsKeyInterface {
-  return x.content_type === ContentType.ItemsKey
+export function isItemsKey(x: unknown): x is ItemsKeyInterface {
+  return (x as ItemsKeyInterface).content_type === ContentType.ItemsKey
 }
 
 /**

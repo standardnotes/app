@@ -12,6 +12,8 @@ import { formatDateForContextMenu } from '@/Utils/DateUtils'
 import { PremiumFeatureIconClass, PremiumFeatureIconName } from '../Icon/PremiumFeatureIcon'
 import Popover from '../Popover/Popover'
 import IconPicker from '../Icon/IconPicker'
+import AddToVaultMenuOption from '../Vaults/AddToVaultMenuOption'
+import { featureTrunkVaultsEnabled } from '@/FeatureTrunk'
 
 type ContextMenuProps = {
   navigationController: NavigationController
@@ -25,6 +27,8 @@ const TagContextMenu = ({ navigationController, isEntitledToFolders, selectedTag
   const { contextMenuOpen, contextMenuClickLocation, application } = navigationController
 
   const contextMenuRef = useRef<HTMLDivElement>(null)
+
+  /** @TODO Needs fixing to handle clicking on the vault selection sub menu */
   useCloseOnClickOutside(contextMenuRef, () => navigationController.setContextMenuOpen(false))
 
   const onClickAddSubtag = useCallback(() => {
@@ -82,6 +86,9 @@ const TagContextMenu = ({ navigationController, isEntitledToFolders, selectedTag
             iconGridClassName="max-h-30"
           />
           <HorizontalSeparator classes="my-2" />
+          {featureTrunkVaultsEnabled() && (
+            <AddToVaultMenuOption iconClassName="mr-2 text-neutral" items={[selectedTag]} />
+          )}
           <MenuItem className={'justify-between py-1.5'} onClick={onClickStar}>
             <div className="flex items-center">
               <Icon type="star" className="mr-2 text-neutral" />

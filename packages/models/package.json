@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/models",
-  "version": "1.46.4",
+  "version": "1.46.5",
   "engines": {
     "node": ">=16.0.0 <17.0.0"
   },
@@ -22,9 +22,10 @@
     "test": "jest"
   },
   "dependencies": {
-    "@standardnotes/common": "^1.46.6",
+    "@standardnotes/common": "^1.48.3",
     "@standardnotes/features": "workspace:*",
     "@standardnotes/responses": "workspace:*",
+    "@standardnotes/sncrypto-common": "workspace:^",
     "@standardnotes/utils": "workspace:^",
     "lodash": "^4.17.21"
   },

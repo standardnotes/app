@@ -1,10 +1,20 @@
 const FilesPaths = {
   closeUploadSession: '/v1/files/upload/close-session',
-  createFileValetToken: '/v1/files/valet-tokens',
+  createUserFileValetToken: '/v1/files/valet-tokens',
   deleteFile: '/v1/files',
   downloadFileChunk: '/v1/files',
+  downloadVaultFileChunk: '/v1/vaults/files',
   startUploadSession: '/v1/files/upload/create-session',
   uploadFileChunk: '/v1/files/upload/chunk',
+}
+
+const SharedVaultFilesPaths = {
+  closeSharedVaultUploadSession: '/v1/shared-vault/files/upload/close-session',
+  deleteSharedVaultFile: '/v1/shared-vault/files',
+  downloadSharedVaultFileChunk: '/v1/shared-vault/files',
+  startSharedVaultUploadSession: '/v1/shared-vault/files/upload/create-session',
+  uploadSharedVaultFileChunk: '/v1/shared-vault/files/upload/chunk',
+  moveFile: '/v1/shared-vault/files/move',
 }
 
 const UserPaths = {
@@ -58,6 +68,7 @@ const ListedPaths = {
 export const Paths = {
   v1: {
     ...FilesPaths,
+    ...SharedVaultFilesPaths,
     ...ItemsPaths,
     ...ListedPaths,
     ...SettingsPaths,

@@ -33,7 +33,7 @@ export interface DecryptedItemInterface<C extends ItemContent = ItemContent>
 
   payloadRepresentation(override?: Partial<DecryptedTransferPayload<C>>): DecryptedPayloadInterface<C>
 
-  isReferencingItem(item: DecryptedItemInterface): boolean
+  isReferencingItem(item: { uuid: string }): boolean
 
   getDomainData(domain: typeof ComponentDataDomain | typeof DefaultAppDomain): undefined | Record<string, unknown>
 

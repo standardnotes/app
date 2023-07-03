@@ -1,8 +1,9 @@
-import { UuidString } from '@standardnotes/snjs'
+import { UuidString, VaultListingInterface } from '@standardnotes/snjs'
 
 export type TemplateNoteViewControllerOptions = {
   title?: string
   tag?: UuidString
+  vault?: VaultListingInterface
   createdAt?: Date
   autofocusBehavior?: TemplateNoteViewAutofocusBehavior
 }

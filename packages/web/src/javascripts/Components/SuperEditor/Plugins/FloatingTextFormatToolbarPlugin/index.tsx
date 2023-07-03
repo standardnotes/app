@@ -6,22 +6,23 @@
  *
  */
 
-import './index.css'
-
 import { $isCodeHighlightNode } from '@lexical/code'
-import { $isLinkNode, TOGGLE_LINK_COMMAND } from '@lexical/link'
+import { $isLinkNode, $isAutoLinkNode, TOGGLE_LINK_COMMAND } from '@lexical/link'
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
 import { mergeRegister, $findMatchingParent, $getNearestNodeOfType } from '@lexical/utils'
 import {
   $getSelection,
   $isRangeSelection,
   $isTextNode,
-  COMMAND_PRIORITY_LOW,
   FORMAT_TEXT_COMMAND,
   LexicalEditor,
   SELECTION_CHANGE_COMMAND,
   $isRootOrShadowRoot,
   COMMAND_PRIORITY_CRITICAL,
+  COMMAND_PRIORITY_LOW,
+  RangeSelection,
+  GridSelection,
+  NodeSelection,
 } from 'lexical'
 import { $isHeadingNode } from '@lexical/rich-text'
 import {
@@ -31,12 +32,10 @@ import {
   ListNode,
   INSERT_ORDERED_LIST_COMMAND,
 } from '@lexical/list'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { ComponentPropsWithoutRef, useCallback, useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 
-import { getDOMRangeRect } from '../../Lexical/Utils/getDOMRangeRect'
 import { getSelectedNode } from '../../Lexical/Utils/getSelectedNode'
-import { setFloatingElemPosition } from '../../Lexical/Utils/setFloatingElemPosition'
 import {
   BoldIcon,
   ItalicIcon,
@@ -51,6 +50,11 @@ import {
 } from '@standardnotes/icons'
 import { IconComponent } from '../../Lexical/Theme/IconComponent'
 import { sanitizeUrl } from '../../Lexical/Utils/sanitizeUrl'
+import { classNames } from '@standardnotes/snjs'
+import { getDOMRangeRect } from '../../Lexical/Utils/getDOMRangeRect'
+import { getPositionedPopoverStyles } from '@/Components/Popover/GetPositionedPopoverStyles'
+import { getAdjustedStylesForNonPortalPopover } from '@/Components/Popover/Utils/getAdjustedStylesForNonPortal'
+import LinkEditor from '../FloatingLinkEditorPlugin/LinkEditor'
 
 const blockTypeToBlockName = {
   bullet: 'Bulleted List',
@@ -69,10 +73,26 @@ const blockTypeToBlockName = {
 
 const IconSize = 15
 
+const ToolbarButton = ({ active, ...props }: { active?: boolean } & ComponentPropsWithoutRef<'button'>) => {
+  return (
+    <button
+      className={classNames(
+        'flex rounded-lg p-3 hover:bg-contrast hover:text-text disabled:cursor-not-allowed',
+        active && 'bg-info text-info-contrast',
+      )}
+      {...props}
+    >
+      {props.children}
+    </button>
+  )
+}
+
 function TextFormatFloatingToolbar({
   editor,
   anchorElem,
+  isText,
   isLink,
+  isAutoLink,
   isBold,
   isItalic,
   isUnderline,
@@ -85,18 +105,24 @@ function TextFormatFloatingToolbar({
 }: {
   editor: LexicalEditor
   anchorElem: HTMLElement
+  isText: boolean
   isBold: boolean
   isCode: boolean
   isItalic: boolean
   isLink: boolean
+  isAutoLink: boolean
   isStrikethrough: boolean
   isSubscript: boolean
   isSuperscript: boolean
   isUnderline: boolean
   isBulletedList: boolean
   isNumberedList: boolean
-}): JSX.Element {
-  const popupCharStylesEditorRef = useRef<HTMLDivElement | null>(null)
+}) {
+  const toolbarRef = useRef<HTMLDivElement | null>(null)
+
+  const [linkUrl, setLinkUrl] = useState('')
+  const [isLinkEditMode, setIsLinkEditMode] = useState(false)
+  const [lastSelection, setLastSelection] = useState<RangeSelection | GridSelection | NodeSelection | null>(null)
 
   const insertLink = useCallback(() => {
     if (!isLink) {
@@ -130,36 +156,72 @@ function TextFormatFloatingToolbar({
     }
   }, [editor, isNumberedList])
 
-  const updateTextFormatFloatingToolbar = useCallback(() => {
+  const updateToolbar = useCallback(() => {
     const selection = $getSelection()
+    if ($isRangeSelection(selection)) {
+      const node = getSelectedNode(selection)
+      const parent = node.getParent()
+      if ($isLinkNode(parent)) {
+        setLinkUrl(parent.getURL())
+      } else if ($isLinkNode(node)) {
+        setLinkUrl(node.getURL())
+      } else {
+        setLinkUrl('')
+      }
+    }
 
-    const popupCharStylesEditorElem = popupCharStylesEditorRef.current
-    const nativeSelection = window.getSelection()
+    const toolbarElement = toolbarRef.current
 
-    if (popupCharStylesEditorElem === null) {
+    if (!toolbarElement) {
       return
     }
 
+    const nativeSelection = window.getSelection()
+    const activeElement = document.activeElement
     const rootElement = editor.getRootElement()
+
     if (
       selection !== null &&
       nativeSelection !== null &&
-      !nativeSelection.isCollapsed &&
       rootElement !== null &&
       rootElement.contains(nativeSelection.anchorNode)
     ) {
-      const rangeRect = getDOMRangeRect(nativeSelection, rootElement)
+      setLastSelection(selection)
 
-      setFloatingElemPosition(rangeRect, popupCharStylesEditorElem, anchorElem)
+      const rangeRect = getDOMRangeRect(nativeSelection, rootElement)
+      const toolbarRect = toolbarElement.getBoundingClientRect()
+      const rootElementRect = rootElement.getBoundingClientRect()
+
+      const calculatedStyles = getPositionedPopoverStyles({
+        align: 'start',
+        side: 'top',
+        anchorRect: rangeRect,
+        popoverRect: toolbarRect,
+        documentRect: rootElementRect,
+        offset: 8,
+      })
+
+      if (calculatedStyles) {
+        Object.assign(toolbarElement.style, calculatedStyles)
+        const adjustedStyles = getAdjustedStylesForNonPortalPopover(toolbarElement, calculatedStyles, rootElement)
+        toolbarElement.style.setProperty('--translate-x', adjustedStyles['--translate-x'])
+        toolbarElement.style.setProperty('--translate-y', adjustedStyles['--translate-y'])
+      }
+    } else if (!activeElement || activeElement.id !== 'link-input') {
+      setLastSelection(null)
+      setIsLinkEditMode(false)
+      setLinkUrl('')
     }
-  }, [editor, anchorElem])
+
+    return true
+  }, [editor])
 
   useEffect(() => {
     const scrollerElem = anchorElem.parentElement
 
     const update = () => {
       editor.getEditorState().read(() => {
-        updateTextFormatFloatingToolbar()
+        updateToolbar()
       })
     }
 
@@ -174,141 +236,151 @@ function TextFormatFloatingToolbar({
         scrollerElem.removeEventListener('scroll', update)
       }
     }
-  }, [editor, updateTextFormatFloatingToolbar, anchorElem])
+  }, [editor, anchorElem, updateToolbar])
 
   useEffect(() => {
     editor.getEditorState().read(() => {
-      updateTextFormatFloatingToolbar()
+      updateToolbar()
     })
     return mergeRegister(
       editor.registerUpdateListener(({ editorState }) => {
         editorState.read(() => {
-          updateTextFormatFloatingToolbar()
+          updateToolbar()
         })
       }),
 
       editor.registerCommand(
         SELECTION_CHANGE_COMMAND,
         () => {
-          updateTextFormatFloatingToolbar()
+          updateToolbar()
           return false
         },
         COMMAND_PRIORITY_LOW,
       ),
     )
-  }, [editor, updateTextFormatFloatingToolbar])
+  }, [editor, updateToolbar])
+
+  useEffect(() => {
+    editor.getEditorState().read(() => updateToolbar())
+  }, [editor, isLink, isText, updateToolbar])
+
+  if (!editor.isEditable()) {
+    return null
+  }
 
   return (
-    <div ref={popupCharStylesEditorRef} className="floating-text-format-popup">
-      {editor.isEditable() && (
-        <>
-          <button
+    <div
+      ref={toolbarRef}
+      className="absolute top-0 left-0 rounded-lg border border-border bg-default py-1 px-2 shadow shadow-contrast"
+    >
+      {isLink && (
+        <LinkEditor
+          linkUrl={linkUrl}
+          isEditMode={isLinkEditMode}
+          setEditMode={setIsLinkEditMode}
+          isAutoLink={isAutoLink}
+          editor={editor}
+          lastSelection={lastSelection}
+        />
+      )}
+      {isText && isLink && <div role="presentation" className="mt-0.5 mb-1.5 h-px bg-border" />}
+      {isText && (
+        <div className="flex gap-1">
+          <ToolbarButton
+            active={isBold}
             onClick={() => {
               editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'bold')
             }}
-            className={'popup-item spaced ' + (isBold ? 'active' : '')}
             aria-label="Format text as bold"
           >
             <IconComponent size={IconSize}>
               <BoldIcon />
             </IconComponent>
-          </button>
-          <button
+          </ToolbarButton>
+          <ToolbarButton
             onClick={() => {
               editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'italic')
             }}
-            className={'popup-item spaced ' + (isItalic ? 'active' : '')}
+            active={isItalic}
             aria-label="Format text as italics"
           >
             <IconComponent size={IconSize}>
               <ItalicIcon />
             </IconComponent>
-          </button>
-          <button
+          </ToolbarButton>
+          <ToolbarButton
             onClick={() => {
               editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'underline')
             }}
-            className={'popup-item spaced ' + (isUnderline ? 'active' : '')}
+            active={isUnderline}
             aria-label="Format text to underlined"
           >
             <IconComponent size={IconSize + 1}>
               <UnderlineIcon />
             </IconComponent>
-          </button>
-          <button
+          </ToolbarButton>
+          <ToolbarButton
             onClick={() => {
               editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'strikethrough')
             }}
-            className={'popup-item spaced ' + (isStrikethrough ? 'active' : '')}
+            active={isStrikethrough}
             aria-label="Format text with a strikethrough"
           >
             <IconComponent size={IconSize}>
               <StrikethroughIcon />
             </IconComponent>
-          </button>
-          <button
+          </ToolbarButton>
+          <ToolbarButton
             onClick={() => {
               editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'subscript')
             }}
-            className={'popup-item spaced ' + (isSubscript ? 'active' : '')}
+            active={isSubscript}
             title="Subscript"
             aria-label="Format Subscript"
           >
             <IconComponent paddingTop={4} size={IconSize - 2}>
               <SubscriptIcon />
             </IconComponent>
-          </button>
-          <button
+          </ToolbarButton>
+          <ToolbarButton
             onClick={() => {
               editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'superscript')
             }}
-            className={'popup-item spaced ' + (isSuperscript ? 'active' : '')}
+            active={isSuperscript}
             title="Superscript"
             aria-label="Format Superscript"
           >
             <IconComponent paddingTop={1} size={IconSize - 2}>
               <SuperscriptIcon />
             </IconComponent>
-          </button>
-          <button
+          </ToolbarButton>
+          <ToolbarButton
             onClick={() => {
               editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'code')
             }}
-            className={'popup-item spaced ' + (isCode ? 'active' : '')}
+            active={isCode}
             aria-label="Insert code block"
           >
             <IconComponent size={IconSize}>
               <CodeIcon />
             </IconComponent>
-          </button>
-          <button
-            onClick={insertLink}
-            className={'popup-item spaced ' + (isLink ? 'active' : '')}
-            aria-label="Insert link"
-          >
+          </ToolbarButton>
+          <ToolbarButton onClick={insertLink} active={isLink} aria-label="Insert link">
             <IconComponent size={IconSize}>
               <LinkIcon />
             </IconComponent>
-          </button>
-          <button
-            onClick={formatBulletList}
-            className={'popup-item spaced ' + (isBulletedList ? 'active' : '')}
-            aria-label="Insert bulleted list"
-          >
+          </ToolbarButton>
+          <ToolbarButton onClick={formatBulletList} active={isBulletedList} aria-label="Insert bulleted list">
             <IconComponent size={IconSize}>
               <ListBulleted />
             </IconComponent>
-          </button>
-          <button
-            onClick={formatNumberedList}
-            className={'popup-item spaced ' + (isNumberedList ? 'active' : '')}
-            aria-label="Insert numbered list"
-          >
+          </ToolbarButton>
+          <ToolbarButton onClick={formatNumberedList} active={isNumberedList} aria-label="Insert numbered list">
             <IconComponent size={IconSize}>
               <ListNumbered />
             </IconComponent>
-          </button>
-        </>
+          </ToolbarButton>
+        </div>
       )}
     </div>
   )
@@ -318,6 +390,7 @@ function useFloatingTextFormatToolbar(editor: LexicalEditor, anchorElem: HTMLEle
   const [activeEditor, setActiveEditor] = useState(editor)
   const [isText, setIsText] = useState(false)
   const [isLink, setIsLink] = useState(false)
+  const [isAutoLink, setIsAutoLink] = useState(false)
   const [isBold, setIsBold] = useState(false)
   const [isItalic, setIsItalic] = useState(false)
   const [isUnderline, setIsUnderline] = useState(false)
@@ -402,6 +475,11 @@ function useFloatingTextFormatToolbar(editor: LexicalEditor, anchorElem: HTMLEle
       } else {
         setIsLink(false)
       }
+      if ($isAutoLinkNode(parent) || $isAutoLinkNode(node)) {
+        setIsAutoLink(true)
+      } else {
+        setIsAutoLink(false)
+      }
 
       if (!$isCodeHighlightNode(selection.anchor.getNode()) && selection.getTextContent() !== '') {
         setIsText($isTextNode(node))
@@ -436,7 +514,7 @@ function useFloatingTextFormatToolbar(editor: LexicalEditor, anchorElem: HTMLEle
     )
   }, [editor, updatePopup])
 
-  if (!isText || isLink) {
+  if (!isText && !isLink) {
     return null
   }
 
@@ -444,7 +522,9 @@ function useFloatingTextFormatToolbar(editor: LexicalEditor, anchorElem: HTMLEle
     <TextFormatFloatingToolbar
       editor={editor}
       anchorElem={anchorElem}
+      isText={isText}
       isLink={isLink}
+      isAutoLink={isAutoLink}
       isBold={isBold}
       isItalic={isItalic}
       isStrikethrough={isStrikethrough}

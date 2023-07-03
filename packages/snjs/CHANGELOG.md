@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.200.2](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.200.1...@standardnotes/snjs@2.200.2) (2023-07-02)
+
+### Bug Fixes
+
+* Fixed issue where subfolders would show one extra item count ([a8bc20e](https://github.com/standardnotes/app/commit/a8bc20e99e81cee3896cea186ef798e4f2c1784d))
+
+## [2.200.1](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.169.6...@standardnotes/snjs@2.200.1) (2023-06-30)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
 ## [2.169.6](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.169.5...@standardnotes/snjs@2.169.6) (2023-06-29)
 
 ### Bug Fixes

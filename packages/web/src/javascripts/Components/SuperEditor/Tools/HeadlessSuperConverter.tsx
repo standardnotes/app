@@ -55,7 +55,7 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
       { discrete: true },
     )
 
-    if (!content) {
+    if (typeof content !== 'string') {
       throw new Error('Could not export note')
     }
 

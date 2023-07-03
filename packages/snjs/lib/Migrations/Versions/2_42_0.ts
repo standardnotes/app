@@ -24,7 +24,7 @@ export class Migration2_42_0 extends Migration {
     })
 
     for (const theme of themes) {
-      await this.services.itemManager.setItemToBeDeleted(theme)
+      await this.services.mutator.setItemToBeDeleted(theme)
     }
   }
 }

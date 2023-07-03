@@ -173,7 +173,7 @@ describe('upgrading', () => {
   it('protocol version should be upgraded on password change', async function () {
     /** Delete default items key that is created on launch */
     const itemsKey = await this.application.protocolService.getSureDefaultItemsKey()
-    await this.application.itemManager.setItemToBeDeleted(itemsKey)
+    await this.application.mutator.setItemToBeDeleted(itemsKey)
     expect(Uuids(this.application.itemManager.getDisplayableItemsKeys()).includes(itemsKey.uuid)).to.equal(false)
 
     Factory.createMappedNote(this.application)

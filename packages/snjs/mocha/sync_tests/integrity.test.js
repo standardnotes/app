@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-expressions */
 /* eslint-disable no-undef */
-import { BaseItemCounts } from '../lib/Applications.js'
+import { BaseItemCounts } from '../lib/BaseItemCounts.js'
 import * as Factory from '../lib/factory.js'
 chai.use(chaiAsPromised)
 const expect = chai.expect
@@ -15,7 +15,7 @@ describe('sync integrity', () => {
   })
 
   beforeEach(async function () {
-    this.expectedItemCount = BaseItemCounts.DefaultItems
+    this.expectedItemCount = BaseItemCounts.DefaultItemsWithAccount
     this.application = await Factory.createInitAppWithFakeCrypto()
     this.email = UuidGenerator.GenerateUuid()
     this.password = UuidGenerator.GenerateUuid()
@@ -44,7 +44,7 @@ describe('sync integrity', () => {
   })
 
   it('should detect when out of sync', async function () {
-    const item = await this.application.itemManager.emitItemFromPayload(
+    const item = await this.application.mutator.emitItemFromPayload(
       Factory.createNotePayload(),
       PayloadEmitSource.LocalChanged,
     )
@@ -60,7 +60,7 @@ describe('sync integrity', () => {
   })
 
   it('should self heal after out of sync', async function () {
-    const item = await this.application.itemManager.emitItemFromPayload(
+    const item = await this.application.mutator.emitItemFromPayload(
       Factory.createNotePayload(),
       PayloadEmitSource.LocalChanged,
     )

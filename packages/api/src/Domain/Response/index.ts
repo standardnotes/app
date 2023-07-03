@@ -16,7 +16,9 @@ export * from './Subscription/SubscriptionInviteCancelResponseBody'
 export * from './Subscription/SubscriptionInviteDeclineResponseBody'
 export * from './Subscription/SubscriptionInviteListResponseBody'
 export * from './Subscription/SubscriptionInviteResponseBody'
+
 export * from './User/UserDeletionResponseBody'
 export * from './User/UserRegistrationResponseBody'
+
 export * from './UserRequest/UserRequestResponseBody'
 export * from './WebSocket/WebSocketConnectionTokenResponseBody'

@@ -16,6 +16,7 @@ import {
   ChallengePrompt,
   EncryptionService,
   ChallengeStrings,
+  ChallengeObserver,
 } from '@standardnotes/services'
 import { ChallengeResponse } from './ChallengeResponse'
 import { ChallengeOperation } from './ChallengeOperation'
@@ -23,16 +24,6 @@ import { ChallengeOperation } from './ChallengeOperation'
 type ChallengeValidationResponse = {
   valid: boolean
   artifacts?: ChallengeArtifacts
-}
-
-export type ValueCallback = (value: ChallengeValue) => void
-
-export type ChallengeObserver = {
-  onValidValue?: ValueCallback
-  onInvalidValue?: ValueCallback
-  onNonvalidatedSubmit?: (response: ChallengeResponse) => void
-  onComplete?: (response: ChallengeResponse) => void
-  onCancel?: () => void
 }
 
 const clearChallengeObserver = (observer: ChallengeObserver) => {
@@ -112,7 +103,7 @@ export class ChallengeService extends AbstractService implements ChallengeServic
     return value.value as string
   }
 
-  async promptForAccountPassword(): Promise<boolean> {
+  async promptForAccountPassword(): Promise<string | null> {
     if (!this.protocolService.hasAccount()) {
       throw Error('Requiring account password for challenge with no account')
     }
@@ -126,11 +117,7 @@ export class ChallengeService extends AbstractService implements ChallengeServic
       ),
     )
 
-    if (response) {
-      return true
-    } else {
-      return false
-    }
+    return response?.getValueForType(ChallengeValidation.AccountPassword)?.value as string
   }
 
   /**
@@ -175,7 +162,7 @@ export class ChallengeService extends AbstractService implements ChallengeServic
     return this.protocolService.isPasscodeLocked()
   }
 
-  public addChallengeObserver(challenge: Challenge, observer: ChallengeObserver) {
+  public addChallengeObserver(challenge: Challenge, observer: ChallengeObserver): () => void {
     const observers = this.challengeObservers[challenge.id] || []
 
     observers.push(observer)
@@ -304,11 +291,11 @@ export class ChallengeService extends AbstractService implements ChallengeServic
   }
 
   public setValidationStatusForChallenge(
-    challenge: Challenge,
+    challenge: ChallengeInterface,
     value: ChallengeValue,
     valid: boolean,
     artifacts?: ChallengeArtifacts,
-  ) {
+  ): void {
     const operation = this.getChallengeOperation(challenge)
     operation.setValueStatus(value, valid, artifacts)
 

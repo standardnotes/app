@@ -1,4 +1,5 @@
-import { DecryptedItem, SNTag, WebApplicationInterface } from '@standardnotes/snjs'
+import { DecryptedItem, SNTag } from '@standardnotes/snjs'
+import { WebApplicationInterface } from '@standardnotes/ui-services'
 
 type ReturnType =
   | {

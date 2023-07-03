@@ -37,6 +37,8 @@ import ModalOverlay from '../Modal/ModalOverlay'
 import SuperExportModal from './SuperExportModal'
 import { useApplication } from '../ApplicationProvider'
 import { MutuallyExclusiveMediaQueryBreakpoints } from '@/Hooks/useMediaQuery'
+import AddToVaultMenuOption from '../Vaults/AddToVaultMenuOption'
+import { featureTrunkVaultsEnabled } from '@/FeatureTrunk'
 
 const iconSize = MenuItemIconSize
 const iconClassDanger = `text-danger mr-2 ${iconSize}`
@@ -144,8 +146,9 @@ const NotesOptions = ({
 
   const duplicateSelectedItems = useCallback(async () => {
     await Promise.all(notes.map((note) => application.mutator.duplicateItem(note).catch(console.error)))
+    void application.sync.sync()
     closeMenuAndToggleNotesList()
-  }, [application.mutator, closeMenuAndToggleNotesList, notes])
+  }, [application.mutator, application.sync, closeMenuAndToggleNotesList, notes])
 
   const openRevisionHistoryModal = useCallback(() => {
     historyModalController.openModal(notesController.firstSelectedNote)
@@ -240,6 +243,9 @@ const NotesOptions = ({
         </>
       )}
       <HorizontalSeparator classes="my-2" />
+
+      {featureTrunkVaultsEnabled() && <AddToVaultMenuOption iconClassName={iconClass} items={notes} />}
+
       {navigationController.tagsCount > 0 && (
         <AddTagOption
           iconClassName={iconClass}

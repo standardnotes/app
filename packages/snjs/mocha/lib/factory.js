@@ -71,24 +71,6 @@ export function getDefaultHost() {
   return Defaults.getDefaultHost()
 }
 
-export async function publishMockedEvent(eventType, eventPayload) {
-  const response = await fetch(`${Defaults.getDefaultMockedEventServiceUrl()}/events`, {
-    method: 'POST',
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      eventType,
-      eventPayload,
-    }),
-  })
-
-  if (!response.ok) {
-    console.error(`Failed to publish mocked event: ${response.status} ${response.statusText}`)
-  }
-}
-
 export function createApplicationWithFakeCrypto(identifier, environment, platform, host) {
   return Applications.createApplicationWithFakeCrypto(identifier, environment, platform, host)
 }
@@ -154,7 +136,7 @@ export async function registerOldUser({ application, email, password, version })
     keyParams: accountKey.keyParams,
   })
   /** Mark all existing items as dirty. */
-  await application.itemManager.changeItems(application.itemManager.items, (m) => {
+  await application.mutator.changeItems(application.itemManager.items, (m) => {
     m.dirty = true
   })
   await application.sessionManager.handleSuccessAuthResponse(response, accountKey)
@@ -188,18 +170,18 @@ export function itemToStoragePayload(item) {
 
 export function createMappedNote(application, title, text, dirty = true) {
   const payload = createNotePayload(title, text, dirty)
-  return application.itemManager.emitItemFromPayload(payload, PayloadEmitSource.LocalChanged)
+  return application.mutator.emitItemFromPayload(payload, PayloadEmitSource.LocalChanged)
 }
 
 export async function createMappedTag(application, tagParams = {}) {
   const payload = createStorageItemTagPayload(tagParams)
-  return application.itemManager.emitItemFromPayload(payload, PayloadEmitSource.LocalChanged)
+  return application.mutator.emitItemFromPayload(payload, PayloadEmitSource.LocalChanged)
 }
 
 export async function createSyncedNote(application, title, text) {
   const payload = createNotePayload(title, text)
-  const item = await application.itemManager.emitItemFromPayload(payload, PayloadEmitSource.LocalChanged)
-  await application.itemManager.setItemDirty(item)
+  const item = await application.mutator.emitItemFromPayload(payload, PayloadEmitSource.LocalChanged)
+  await application.mutator.setItemDirty(item)
   await application.syncService.sync(syncOptions)
   const note = application.items.findItem(payload.uuid)
   return note
@@ -218,7 +200,7 @@ export async function createManyMappedNotes(application, count) {
   const createdNotes = []
   for (let i = 0; i < count; i++) {
     const note = await createMappedNote(application)
-    await application.itemManager.setItemDirty(note)
+    await application.mutator.setItemDirty(note)
     createdNotes.push(note)
   }
   return createdNotes
@@ -406,7 +388,7 @@ export function pinNote(application, note) {
 }
 
 export async function insertItemWithOverride(application, contentType, content, needsSync = false, errorDecrypting) {
-  const item = await application.itemManager.createItem(contentType, content, needsSync)
+  const item = await application.mutator.createItem(contentType, content, needsSync)
 
   if (errorDecrypting) {
     const encrypted = new EncryptedPayload({
@@ -415,12 +397,12 @@ export async function insertItemWithOverride(application, contentType, content, 
       errorDecrypting,
     })
 
-    await application.itemManager.emitItemFromPayload(encrypted)
+    await application.payloadManager.emitPayload(encrypted)
   } else {
     const decrypted = new DecryptedPayload({
       ...item.payload.ejected(),
     })
-    await application.itemManager.emitItemFromPayload(decrypted)
+    await application.payloadManager.emitPayload(decrypted)
   }
 
   return application.itemManager.findAnyItem(item.uuid)
@@ -441,7 +423,7 @@ export async function markDirtyAndSyncItem(application, itemToLookupUuidFor) {
     throw Error('Attempting to save non-inserted item')
   }
   if (!item.dirty) {
-    await application.itemManager.changeItem(item, undefined, MutationType.NoUpdateUserTimestamps)
+    await application.mutator.changeItem(item, undefined, MutationType.NoUpdateUserTimestamps)
   }
   await application.sync.sync()
 }
@@ -467,23 +449,22 @@ export async function changePayloadTimeStamp(application, payload, timestamp, co
     updated_at_timestamp: timestamp,
   })
 
-  await application.itemManager.emitItemFromPayload(changedPayload)
+  await application.mutator.emitItemFromPayload(changedPayload)
 
   return application.itemManager.findAnyItem(payload.uuid)
 }
 
 export async function changePayloadUpdatedAt(application, payload, updatedAt) {
   const latestPayload = application.payloadManager.collection.find(payload.uuid)
+
   const changedPayload = new DecryptedPayload({
-    ...latestPayload,
+    ...latestPayload.ejected(),
     dirty: true,
     dirtyIndex: getIncrementedDirtyIndex(),
     updated_at: updatedAt,
   })
 
-  await application.itemManager.emitItemFromPayload(changedPayload)
-
-  return application.itemManager.findAnyItem(payload.uuid)
+  return application.mutator.emitItemFromPayload(changedPayload)
 }
 
 export async function changePayloadTimeStampDeleteAndSync(application, payload, timestamp, syncOptions) {
@@ -497,6 +478,6 @@ export async function changePayloadTimeStampDeleteAndSync(application, payload, 
     updated_at_timestamp: timestamp,
   })
 
-  await application.itemManager.emitItemFromPayload(changedPayload)
+  await application.payloadManager.emitPayload(changedPayload)
   await application.sync.sync(syncOptions)
 }

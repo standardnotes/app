@@ -6,6 +6,7 @@ import {
   InternalEventBusInterface,
   ChallengeReason,
   EncryptionService,
+  MutatorClientInterface,
 } from '@standardnotes/services'
 import { UuidGenerator } from '@standardnotes/utils'
 import {
@@ -22,6 +23,7 @@ const setupRandomUuid = () => {
 }
 
 describe('protectionService', () => {
+  let mutator: MutatorClientInterface
   let protocolService: EncryptionService
   let challengeService: ChallengeService
   let storageService: DiskStorageService
@@ -29,7 +31,7 @@ describe('protectionService', () => {
   let protectionService: SNProtectionService
 
   const createService = () => {
-    return new SNProtectionService(protocolService, challengeService, storageService, internalEventBus)
+    return new SNProtectionService(protocolService, mutator, challengeService, storageService, internalEventBus)
   }
 
   const createFile = (name: string, isProtected?: boolean) => {
@@ -60,6 +62,8 @@ describe('protectionService', () => {
     protocolService = {} as jest.Mocked<EncryptionService>
     protocolService.hasAccount = jest.fn().mockReturnValue(true)
     protocolService.hasPasscode = jest.fn().mockReturnValue(false)
+
+    mutator = {} as jest.Mocked<MutatorClientInterface>
   })
 
   describe('files', () => {

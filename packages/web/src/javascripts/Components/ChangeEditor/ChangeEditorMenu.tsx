@@ -77,14 +77,14 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
   const selectComponent = useCallback(
     async (component: SNComponent, note: SNNote) => {
       if (component.conflictOf) {
-        void application.mutator.changeAndSaveItem(component, (mutator) => {
+        void application.changeAndSaveItem(component, (mutator) => {
           mutator.conflictOf = undefined
         })
       }
 
       await application.getViewControllerManager().itemListController.insertCurrentIfTemplate()
 
-      await application.mutator.changeAndSaveItem(note, (mutator) => {
+      await application.changeAndSaveItem(note, (mutator) => {
         const noteMutator = mutator as NoteMutator
         noteMutator.noteType = component.noteType
         noteMutator.editorIdentifier = component.identifier
@@ -101,7 +101,7 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
 
       reloadFont(application.getPreference(PrefKey.EditorMonospaceEnabled))
 
-      await application.mutator.changeAndSaveItem(note, (mutator) => {
+      await application.changeAndSaveItem(note, (mutator) => {
         const noteMutator = mutator as NoteMutator
         noteMutator.noteType = item.noteType
         noteMutator.editorIdentifier = undefined

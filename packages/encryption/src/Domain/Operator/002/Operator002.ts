@@ -9,7 +9,8 @@ import { CreateNewRootKey } from '../../Keys/RootKey/Functions'
 import { Create002KeyParams } from '../../Keys/RootKey/KeyParamsFunctions'
 import { SNRootKey } from '../../Keys/RootKey/RootKey'
 import { SNRootKeyParams } from '../../Keys/RootKey/RootKeyParams'
-import { DecryptedParameters, EncryptedParameters, ErrorDecryptingParameters } from '../../Types/EncryptedParameters'
+import { EncryptedOutputParameters, ErrorDecryptingParameters } from '../../Types/EncryptedParameters'
+import { DecryptedParameters } from '../../Types/DecryptedParameters'
 import { ItemAuthenticatedData } from '../../Types/ItemAuthenticatedData'
 import { LegacyAttachedData } from '../../Types/LegacyAttachedData'
 import { RootKeyEncryptedAuthenticatedData } from '../../Types/RootKeyEncryptedAuthenticatedData'
@@ -50,11 +51,11 @@ export class SNProtocolOperator002 extends SNProtocolOperator001 {
     return Models.CreateDecryptedItemFromPayload(payload)
   }
 
-  public override async createRootKey(
+  public override async createRootKey<K extends Models.RootKeyInterface>(
     identifier: string,
     password: string,
     origination: Common.KeyParamsOrigination,
-  ): Promise<SNRootKey> {
+  ): Promise<K> {
     const pwCost = Utils.lastElement(V002Algorithm.PbkdfCostsUsed) as number
     const pwNonce = this.crypto.generateRandomKey(V002Algorithm.SaltSeedLength)
     const pwSalt = await this.crypto.unsafeSha1(identifier + ':' + pwNonce)
@@ -77,7 +78,10 @@ export class SNProtocolOperator002 extends SNProtocolOperator001 {
    * may have had costs of 5000, and others of 101000. Therefore, when computing
    * the root key, we must use the value returned by the server.
    */
-  public override async computeRootKey(password: string, keyParams: SNRootKeyParams): Promise<SNRootKey> {
+  public override async computeRootKey<K extends Models.RootKeyInterface>(
+    password: string,
+    keyParams: SNRootKeyParams,
+  ): Promise<K> {
     return this.deriveKey(password, keyParams)
   }
 
@@ -141,8 +145,8 @@ export class SNProtocolOperator002 extends SNProtocolOperator001 {
     return this.decryptString002(contentCiphertext, encryptionKey, iv)
   }
 
-  public override getPayloadAuthenticatedData(
-    encrypted: EncryptedParameters,
+  public override getPayloadAuthenticatedDataForExternalUse(
+    encrypted: EncryptedOutputParameters,
   ): RootKeyEncryptedAuthenticatedData | ItemAuthenticatedData | LegacyAttachedData | undefined {
     const itemKeyComponents = this.encryptionComponentsFromString002(encrypted.enc_item_key)
     const authenticatedData = itemKeyComponents.keyParams
@@ -161,7 +165,7 @@ export class SNProtocolOperator002 extends SNProtocolOperator001 {
   public override async generateEncryptedParametersAsync(
     payload: Models.DecryptedPayloadInterface,
     key: Models.ItemsKeyInterface | SNRootKey,
-  ): Promise<EncryptedParameters> {
+  ): Promise<EncryptedOutputParameters> {
     /**
      * Generate new item key that is double the key size.
      * Will be split to create encryption key and authentication key.
@@ -189,15 +193,18 @@ export class SNProtocolOperator002 extends SNProtocolOperator001 {
 
     return {
       uuid: payload.uuid,
+      content_type: payload.content_type,
       items_key_id: isItemsKey(key) ? key.uuid : undefined,
       content: ciphertext,
       enc_item_key: encItemKey,
       version: this.version,
+      key_system_identifier: payload.key_system_identifier,
+      shared_vault_uuid: payload.shared_vault_uuid,
     }
   }
 
   public override async generateDecryptedParametersAsync<C extends ItemContent = ItemContent>(
-    encrypted: EncryptedParameters,
+    encrypted: EncryptedOutputParameters,
     key: Models.ItemsKeyInterface | SNRootKey,
   ): Promise<DecryptedParameters<C> | ErrorDecryptingParameters> {
     if (!encrypted.enc_item_key) {
@@ -252,11 +259,15 @@ export class SNProtocolOperator002 extends SNProtocolOperator001 {
       return {
         uuid: encrypted.uuid,
         content: JSON.parse(content),
+        signatureData: { required: false, contentHash: '' },
       }
     }
   }
 
-  protected override async deriveKey(password: string, keyParams: SNRootKeyParams): Promise<SNRootKey> {
+  protected override async deriveKey<K extends Models.RootKeyInterface>(
+    password: string,
+    keyParams: SNRootKeyParams,
+  ): Promise<K> {
     const derivedKey = await this.crypto.pbkdf2(
       password,
       keyParams.content002.pw_salt,
@@ -270,7 +281,7 @@ export class SNProtocolOperator002 extends SNProtocolOperator001 {
 
     const partitions = Utils.splitString(derivedKey, 3)
 
-    return CreateNewRootKey({
+    return CreateNewRootKey<K>({
       serverPassword: partitions[0],
       masterKey: partitions[1],
       dataAuthenticationKey: partitions[2],

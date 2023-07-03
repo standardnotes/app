@@ -10,8 +10,6 @@ import {
   SNNote,
   SNTag,
   SystemViewId,
-  DisplayOptions,
-  InternalEventBus,
   InternalEventHandlerInterface,
   InternalEventInterface,
   FileItem,
@@ -22,6 +20,8 @@ import {
   isFile,
   isSmartView,
   isSystemView,
+  NotesAndFilesDisplayControllerOptions,
+  InternalEventBusInterface,
 } from '@standardnotes/snjs'
 import { action, computed, makeObservable, observable, reaction, runInAction } from 'mobx'
 import { WebApplication } from '../../Application/WebApplication'
@@ -33,16 +33,18 @@ import { SelectedItemsController } from '../SelectedItemsController'
 import { NotesController } from '../NotesController/NotesController'
 import { formatDateAndTimeForNote } from '@/Utils/DateUtils'
 import { PrefDefaults } from '@/Constants/PrefDefaults'
+
 import dayjs from 'dayjs'
 import dayjsAdvancedFormat from 'dayjs/plugin/advancedFormat'
 dayjs.extend(dayjsAdvancedFormat)
-import { LinkingController } from '../LinkingController'
+
 import { AbstractViewController } from '../Abstract/AbstractViewController'
 import { log, LoggingDomain } from '@/Logging'
 import { NoteViewController } from '@/Components/NoteView/Controller/NoteViewController'
 import { FileViewController } from '@/Components/NoteView/Controller/FileViewController'
 import { TemplateNoteViewAutofocusBehavior } from '@/Components/NoteView/Controller/TemplateNoteViewControllerOptions'
 import { ItemsReloadSource } from './ItemsReloadSource'
+import { VaultDisplayServiceEvent } from '@standardnotes/ui-services'
 
 const MinNoteCellHeight = 51.0
 const DefaultListNumNotes = 20
@@ -59,7 +61,7 @@ export class ItemListController extends AbstractViewController implements Intern
   renderedItems: ListableContentItem[] = []
   searchSubmitted = false
   showDisplayOptionsMenu = false
-  displayOptions: DisplayOptions = {
+  displayOptions: NotesAndFilesDisplayControllerOptions = {
     sortBy: CollectionSort.CreatedAt,
     sortDirection: 'dsc',
     includePinned: true,
@@ -96,13 +98,13 @@ export class ItemListController extends AbstractViewController implements Intern
     private searchOptionsController: SearchOptionsController,
     private selectionController: SelectedItemsController,
     private notesController: NotesController,
-    private linkingController: LinkingController,
-    eventBus: InternalEventBus,
+    eventBus: InternalEventBusInterface,
   ) {
     super(application, eventBus)
 
     eventBus.addEventHandler(this, CrossControllerEvent.TagChanged)
     eventBus.addEventHandler(this, CrossControllerEvent.ActiveEditorChanged)
+    eventBus.addEventHandler(this, VaultDisplayServiceEvent.VaultDisplayOptionsChanged)
 
     this.resetPagination()
 
@@ -222,6 +224,8 @@ export class ItemListController extends AbstractViewController implements Intern
       await this.handleTagChange(payload.userTriggered)
     } else if (event.type === CrossControllerEvent.ActiveEditorChanged) {
       this.handleEditorChange().catch(console.error)
+    } else if (event.type === VaultDisplayServiceEvent.VaultDisplayOptionsChanged) {
+      void this.reloadItems(ItemsReloadSource.DisplayOptionsChange)
     }
   }
 
@@ -489,7 +493,7 @@ export class ItemListController extends AbstractViewController implements Intern
       includeTrashed = this.displayOptions.includeTrashed ?? false
     }
 
-    const criteria: DisplayOptions = {
+    const criteria: NotesAndFilesDisplayControllerOptions = {
       sortBy: this.displayOptions.sortBy,
       sortDirection: this.displayOptions.sortDirection,
       tags: tag instanceof SNTag ? [tag] : [],
@@ -512,8 +516,9 @@ export class ItemListController extends AbstractViewController implements Intern
   }: {
     userTriggered: boolean
   }): Promise<{ didReloadItems: boolean }> => {
-    const newDisplayOptions = {} as DisplayOptions
+    const newDisplayOptions = {} as NotesAndFilesDisplayControllerOptions
     const newWebDisplayOptions = {} as WebDisplayOptions
+
     const selectedTag = this.navigationController.selected
     const isSystemTag = selectedTag && isSmartView(selectedTag) && isSystemView(selectedTag)
     const selectedTagPreferences = isSystemTag
@@ -631,6 +636,7 @@ export class ItemListController extends AbstractViewController implements Intern
         tag: activeRegularTagUuid,
         createdAt,
         autofocusBehavior,
+        vault: this.application.vaultDisplayService.exclusivelyShownVault,
       },
     })
   }
@@ -783,7 +789,7 @@ export class ItemListController extends AbstractViewController implements Intern
     const activeNote = this.application.itemControllerGroup.activeItemViewController?.item
 
     if (activeNote && activeNote.conflictOf) {
-      this.application.mutator
+      this.application
         .changeAndSaveItem(activeNote, (mutator) => {
           mutator.conflictOf = undefined
         })

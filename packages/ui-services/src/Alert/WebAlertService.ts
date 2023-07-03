@@ -4,6 +4,30 @@ import { SKAlert } from '@standardnotes/styles'
 import { alertDialog, confirmDialog } from './Functions'
 
 export class WebAlertService extends AlertService {
+  override confirmV2(dto: {
+    text: string
+    title?: string | undefined
+    confirmButtonText?: string | undefined
+    confirmButtonType?: ButtonType | undefined
+    cancelButtonText?: string | undefined
+  }): Promise<boolean> {
+    return confirmDialog({
+      text: dto.text,
+      title: dto.title,
+      confirmButtonText: dto.confirmButtonText,
+      cancelButtonText: dto.cancelButtonText,
+      confirmButtonStyle: dto.confirmButtonType === ButtonType.Danger ? 'danger' : 'info',
+    })
+  }
+
+  override alertV2(dto: {
+    text: string
+    title?: string | undefined
+    closeButtonText?: string | undefined
+  }): Promise<void> {
+    return alertDialog({ text: dto.text, title: dto.title, closeButtonText: dto.closeButtonText })
+  }
+
   alert(text: string, title?: string, closeButtonText?: string) {
     return alertDialog({ text, title, closeButtonText })
   }

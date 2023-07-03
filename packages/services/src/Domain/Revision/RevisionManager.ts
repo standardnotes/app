@@ -5,6 +5,7 @@ import { isErrorResponse } from '@standardnotes/responses'
 import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
 import { AbstractService } from '../Service/AbstractService'
 import { RevisionClientInterface } from './RevisionClientInterface'
+import { RevisionPayload } from './RevisionPayload'
 
 export class RevisionManager extends AbstractService implements RevisionClientInterface {
   constructor(
@@ -36,20 +37,7 @@ export class RevisionManager extends AbstractService implements RevisionClientIn
     return result.data.message
   }
 
-  async getRevision(
-    itemUuid: Uuid,
-    revisionUuid: Uuid,
-  ): Promise<{
-    uuid: string
-    item_uuid: string
-    content: string | null
-    content_type: string
-    items_key_id: string | null
-    enc_item_key: string | null
-    auth_hash: string | null
-    created_at: string
-    updated_at: string
-  } | null> {
+  async getRevision(itemUuid: Uuid, revisionUuid: Uuid): Promise<RevisionPayload | null> {
     const result = await this.revisionApiService.getRevision(itemUuid.value, revisionUuid.value)
 
     if (isErrorResponse(result)) {

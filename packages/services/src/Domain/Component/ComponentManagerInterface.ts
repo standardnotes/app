@@ -21,4 +21,6 @@ export interface ComponentManagerInterface {
   presentPermissionsDialog(_dialog: PermissionDialog): void
   legacyGetDefaultEditor(): SNComponent | undefined
   componentWithIdentifier(identifier: FeatureIdentifier | string): SNComponent | undefined
+  toggleTheme(uuid: string): Promise<void>
+  toggleComponent(uuid: string): Promise<void>
 }

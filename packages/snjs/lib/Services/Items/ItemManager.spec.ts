@@ -1,8 +1,8 @@
 import { ContentType } from '@standardnotes/common'
-import { InternalEventBusInterface, ItemRelationshipDirection } from '@standardnotes/services'
+import { AlertService, InternalEventBusInterface, ItemRelationshipDirection } from '@standardnotes/services'
 import { ItemManager } from './ItemManager'
 import { PayloadManager } from '../Payloads/PayloadManager'
-import { UuidGenerator } from '@standardnotes/utils'
+import { UuidGenerator, assert } from '@standardnotes/utils'
 import * as Models from '@standardnotes/models'
 import {
   DecryptedPayload,
@@ -15,6 +15,7 @@ import {
   SystemViewId,
 } from '@standardnotes/models'
 import { createNoteWithTitle } from '../../Spec/SpecUtils'
+import { MutatorService } from '../Mutator'
 
 const setupRandomUuid = () => {
   UuidGenerator.SetGenerator(() => String(Math.random()))
@@ -43,14 +44,10 @@ const LongTextPredicate = Models.predicateFromJson<Models.SNTag>({
 })
 
 describe('itemManager', () => {
+  let mutator: MutatorService
   let payloadManager: PayloadManager
   let itemManager: ItemManager
-  let items: Models.DecryptedItemInterface[]
   let internalEventBus: InternalEventBusInterface
-
-  const createService = () => {
-    return new ItemManager(payloadManager, internalEventBus)
-  }
 
   beforeEach(() => {
     setupRandomUuid()
@@ -59,16 +56,9 @@ describe('itemManager', () => {
     internalEventBus.publish = jest.fn()
 
     payloadManager = new PayloadManager(internalEventBus)
+    itemManager = new ItemManager(payloadManager, internalEventBus)
 
-    items = [] as jest.Mocked<Models.DecryptedItemInterface[]>
-    itemManager = {} as jest.Mocked<ItemManager>
-    itemManager.getItems = jest.fn().mockReturnValue(items)
-    itemManager.createItem = jest.fn()
-    itemManager.changeComponent = jest.fn().mockReturnValue({} as jest.Mocked<Models.DecryptedItemInterface>)
-    itemManager.setItemsToBeDeleted = jest.fn()
-    itemManager.addObserver = jest.fn()
-    itemManager.changeItem = jest.fn()
-    itemManager.changeFeatureRepo = jest.fn()
+    mutator = new MutatorService(itemManager, payloadManager, {} as jest.Mocked<AlertService>, internalEventBus)
   })
 
   const createTag = (title: string) => {
@@ -99,8 +89,6 @@ describe('itemManager', () => {
 
   describe('item emit', () => {
     it('deleted payloads should map to removed items', async () => {
-      itemManager = createService()
-
       const payload = new DeletedPayload({
         uuid: String(Math.random()),
         content_type: ContentType.Note,
@@ -120,8 +108,6 @@ describe('itemManager', () => {
     })
 
     it('decrypted items who become encrypted should be removed from ui', async () => {
-      itemManager = createService()
-
       const decrypted = new DecryptedPayload({
         uuid: String(Math.random()),
         content_type: ContentType.Note,
@@ -154,11 +140,10 @@ describe('itemManager', () => {
 
   describe('note display criteria', () => {
     it('viewing notes with tag', async () => {
-      itemManager = createService()
       const tag = createTag('parent')
       const note = createNoteWithTitle('note')
-      await itemManager.insertItems([tag, note])
-      await itemManager.addTagToNote(note, tag, false)
+      await mutator.insertItems([tag, note])
+      await mutator.addTagToNote(note, tag, false)
 
       itemManager.setPrimaryItemDisplayOptions({
         tags: [tag],
@@ -171,21 +156,19 @@ describe('itemManager', () => {
     })
 
     it('viewing trashed notes smart view should include archived notes', async () => {
-      itemManager = createService()
-
       const archivedNote = createNoteWithTitle('archived')
       const trashedNote = createNoteWithTitle('trashed')
       const archivedAndTrashedNote = createNoteWithTitle('archived&trashed')
 
-      await itemManager.insertItems([archivedNote, trashedNote, archivedAndTrashedNote])
+      await mutator.insertItems([archivedNote, trashedNote, archivedAndTrashedNote])
 
-      await itemManager.changeItem<Models.NoteMutator>(archivedNote, (m) => {
+      await mutator.changeItem<Models.NoteMutator>(archivedNote, (m) => {
         m.archived = true
       })
-      await itemManager.changeItem<Models.NoteMutator>(trashedNote, (m) => {
+      await mutator.changeItem<Models.NoteMutator>(trashedNote, (m) => {
         m.trashed = true
       })
-      await itemManager.changeItem<Models.NoteMutator>(archivedAndTrashedNote, (m) => {
+      await mutator.changeItem<Models.NoteMutator>(archivedAndTrashedNote, (m) => {
         m.trashed = true
         m.archived = true
       })
@@ -206,58 +189,53 @@ describe('itemManager', () => {
 
   describe('tag relationships', () => {
     it('updates parentId of child tag', async () => {
-      itemManager = createService()
       const parent = createTag('parent')
       const child = createTag('child')
-      await itemManager.insertItems([parent, child])
-      await itemManager.setTagParent(parent, child)
+      await mutator.insertItems([parent, child])
+      await mutator.setTagParent(parent, child)
 
       const changedChild = itemManager.findItem(child.uuid) as Models.SNTag
       expect(changedChild.parentId).toBe(parent.uuid)
     })
 
     it('forbids a tag to be its own parent', async () => {
-      itemManager = createService()
       const tag = createTag('tag')
-      await itemManager.insertItems([tag])
+      await mutator.insertItems([tag])
 
-      expect(() => itemManager.setTagParent(tag, tag)).toThrow()
+      await expect(mutator.setTagParent(tag, tag)).rejects.toThrow()
       expect(itemManager.getTagParent(tag)).toBeUndefined()
     })
 
     it('forbids a tag to be its own ancestor', async () => {
-      itemManager = createService()
       const grandParent = createTag('grandParent')
       const parent = createTag('parent')
       const child = createTag('child')
 
-      await itemManager.insertItems([child, parent, grandParent])
-      await itemManager.setTagParent(parent, child)
-      await itemManager.setTagParent(grandParent, parent)
+      await mutator.insertItems([child, parent, grandParent])
+      await mutator.setTagParent(parent, child)
+      await mutator.setTagParent(grandParent, parent)
 
-      expect(() => itemManager.setTagParent(child, grandParent)).toThrow()
+      await expect(mutator.setTagParent(child, grandParent)).rejects.toThrow()
       expect(itemManager.getTagParent(grandParent)).toBeUndefined()
     })
 
     it('getTagParent', async () => {
-      itemManager = createService()
       const parent = createTag('parent')
       const child = createTag('child')
-      await itemManager.insertItems([parent, child])
-      await itemManager.setTagParent(parent, child)
+      await mutator.insertItems([parent, child])
+      await mutator.setTagParent(parent, child)
 
       expect(itemManager.getTagParent(child)?.uuid).toBe(parent.uuid)
     })
 
     it('findTagByTitleAndParent', async () => {
-      itemManager = createService()
       const parent = createTag('name1')
       const child = createTag('childName')
       const duplicateNameChild = createTag('name1')
 
-      await itemManager.insertItems([parent, child, duplicateNameChild])
-      await itemManager.setTagParent(parent, child)
-      await itemManager.setTagParent(parent, duplicateNameChild)
+      await mutator.insertItems([parent, child, duplicateNameChild])
+      await mutator.setTagParent(parent, child)
+      await mutator.setTagParent(parent, duplicateNameChild)
 
       const a = itemManager.findTagByTitleAndParent('name1', undefined)
       const b = itemManager.findTagByTitleAndParent('name1', parent)
@@ -270,16 +248,16 @@ describe('itemManager', () => {
 
     it('findOrCreateTagByTitle', async () => {
       setupRandomUuid()
-      itemManager = createService()
+
       const parent = createTag('parent')
       const child = createTag('child')
-      await itemManager.insertItems([parent, child])
-      await itemManager.setTagParent(parent, child)
+      await mutator.insertItems([parent, child])
+      await mutator.setTagParent(parent, child)
 
-      const childA = await itemManager.findOrCreateTagByTitle('child')
-      const childB = await itemManager.findOrCreateTagByTitle('child', parent)
-      const childC = await itemManager.findOrCreateTagByTitle('child-bis', parent)
-      const childD = await itemManager.findOrCreateTagByTitle('child-bis', parent)
+      const childA = await mutator.findOrCreateTagByTitle({ title: 'child' })
+      const childB = await mutator.findOrCreateTagByTitle({ title: 'child', parentItemToLookupUuidFor: parent })
+      const childC = await mutator.findOrCreateTagByTitle({ title: 'child-bis', parentItemToLookupUuidFor: parent })
+      const childD = await mutator.findOrCreateTagByTitle({ title: 'child-bis', parentItemToLookupUuidFor: parent })
 
       expect(childA.uuid).not.toEqual(child.uuid)
       expect(childB.uuid).toEqual(child.uuid)
@@ -292,17 +270,16 @@ describe('itemManager', () => {
     })
 
     it('findOrCreateTagParentChain', async () => {
-      itemManager = createService()
       const parent = createTag('parent')
       const child = createTag('child')
 
-      await itemManager.insertItems([parent, child])
-      await itemManager.setTagParent(parent, child)
+      await mutator.insertItems([parent, child])
+      await mutator.setTagParent(parent, child)
 
-      const a = await itemManager.findOrCreateTagParentChain(['parent'])
-      const b = await itemManager.findOrCreateTagParentChain(['parent', 'child'])
-      const c = await itemManager.findOrCreateTagParentChain(['parent', 'child2'])
-      const d = await itemManager.findOrCreateTagParentChain(['parent2', 'child1'])
+      const a = await mutator.findOrCreateTagParentChain(['parent'])
+      const b = await mutator.findOrCreateTagParentChain(['parent', 'child'])
+      const c = await mutator.findOrCreateTagParentChain(['parent', 'child2'])
+      const d = await mutator.findOrCreateTagParentChain(['parent2', 'child1'])
 
       expect(a?.uuid).toEqual(parent.uuid)
       expect(b?.uuid).toEqual(child.uuid)
@@ -317,15 +294,14 @@ describe('itemManager', () => {
     })
 
     it('isAncestor', async () => {
-      itemManager = createService()
       const grandParent = createTag('grandParent')
       const parent = createTag('parent')
       const child = createTag('child')
       const another = createTag('another')
 
-      await itemManager.insertItems([child, parent, grandParent, another])
-      await itemManager.setTagParent(parent, child)
-      await itemManager.setTagParent(grandParent, parent)
+      await mutator.insertItems([child, parent, grandParent, another])
+      await mutator.setTagParent(parent, child)
+      await mutator.setTagParent(grandParent, parent)
 
       expect(itemManager.isTagAncestor(grandParent, parent)).toEqual(true)
       expect(itemManager.isTagAncestor(grandParent, child)).toEqual(true)
@@ -341,28 +317,26 @@ describe('itemManager', () => {
     })
 
     it('unsetTagRelationship', async () => {
-      itemManager = createService()
       const parent = createTag('parent')
       const child = createTag('child')
-      await itemManager.insertItems([parent, child])
-      await itemManager.setTagParent(parent, child)
+      await mutator.insertItems([parent, child])
+      await mutator.setTagParent(parent, child)
       expect(itemManager.getTagParent(child)?.uuid).toBe(parent.uuid)
 
-      await itemManager.unsetTagParent(child)
+      await mutator.unsetTagParent(child)
 
       expect(itemManager.getTagParent(child)).toBeUndefined()
     })
 
     it('getTagParentChain', async () => {
-      itemManager = createService()
       const greatGrandParent = createTag('greatGrandParent')
       const grandParent = createTag('grandParent')
       const parent = createTag('parent')
       const child = createTag('child')
-      await itemManager.insertItems([greatGrandParent, grandParent, parent, child])
-      await itemManager.setTagParent(parent, child)
-      await itemManager.setTagParent(grandParent, parent)
-      await itemManager.setTagParent(greatGrandParent, grandParent)
+      await mutator.insertItems([greatGrandParent, grandParent, parent, child])
+      await mutator.setTagParent(parent, child)
+      await mutator.setTagParent(grandParent, parent)
+      await mutator.setTagParent(greatGrandParent, grandParent)
 
       const uuidChain = itemManager.getTagParentChain(child).map((tag) => tag.uuid)
 
@@ -371,18 +345,17 @@ describe('itemManager', () => {
     })
 
     it('viewing notes for parent tag should not display notes of children', async () => {
-      itemManager = createService()
       const parentTag = createTag('parent')
       const childTag = createTag('child')
-      await itemManager.insertItems([parentTag, childTag])
-      await itemManager.setTagParent(parentTag, childTag)
+      await mutator.insertItems([parentTag, childTag])
+      await mutator.setTagParent(parentTag, childTag)
 
       const parentNote = createNoteWithTitle('parentNote')
       const childNote = createNoteWithTitle('childNote')
-      await itemManager.insertItems([parentNote, childNote])
+      await mutator.insertItems([parentNote, childNote])
 
-      await itemManager.addTagToNote(parentNote, parentTag, false)
-      await itemManager.addTagToNote(childNote, childTag, false)
+      await mutator.addTagToNote(parentNote, parentTag, false)
+      await mutator.addTagToNote(childNote, childTag, false)
 
       itemManager.setPrimaryItemDisplayOptions({
         tags: [parentTag],
@@ -397,7 +370,6 @@ describe('itemManager', () => {
 
   describe('template items', () => {
     it('create template item', async () => {
-      itemManager = createService()
       setupRandomUuid()
 
       const item = await itemManager.createTemplateItem(ContentType.Note, {
@@ -412,7 +384,6 @@ describe('itemManager', () => {
     })
 
     it('isTemplateItem return the correct value', async () => {
-      itemManager = createService()
       setupRandomUuid()
 
       const item = await itemManager.createTemplateItem(ContentType.Note, {
@@ -422,13 +393,12 @@ describe('itemManager', () => {
 
       expect(itemManager.isTemplateItem(item)).toEqual(true)
 
-      await itemManager.insertItem(item)
+      await mutator.insertItem(item)
 
       expect(itemManager.isTemplateItem(item)).toEqual(false)
     })
 
     it('isTemplateItem return the correct value for system smart views', () => {
-      itemManager = createService()
       setupRandomUuid()
 
       const [systemTag1, ...restOfSystemViews] = itemManager
@@ -445,29 +415,27 @@ describe('itemManager', () => {
 
   describe('tags', () => {
     it('lets me create a regular tag with a clear API', async () => {
-      itemManager = createService()
       setupRandomUuid()
 
-      const tag = await itemManager.createTag('this is my new tag')
+      const tag = await mutator.createTag({ title: 'this is my new tag' })
 
       expect(tag).toBeTruthy()
       expect(itemManager.isTemplateItem(tag)).toEqual(false)
     })
 
     it('should search tags correctly', async () => {
-      itemManager = createService()
       setupRandomUuid()
 
-      const foo = await itemManager.createTag('foo[')
-      const foobar = await itemManager.createTag('foo[bar]')
-      const bar = await itemManager.createTag('bar[')
-      const barfoo = await itemManager.createTag('bar[foo]')
-      const fooDelimiter = await itemManager.createTag('bar.foo')
-      const barFooDelimiter = await itemManager.createTag('baz.bar.foo')
-      const fooAttached = await itemManager.createTag('Foo')
+      const foo = await mutator.createTag({ title: 'foo[' })
+      const foobar = await mutator.createTag({ title: 'foo[bar]' })
+      const bar = await mutator.createTag({ title: 'bar[' })
+      const barfoo = await mutator.createTag({ title: 'bar[foo]' })
+      const fooDelimiter = await mutator.createTag({ title: 'bar.foo' })
+      const barFooDelimiter = await mutator.createTag({ title: 'baz.bar.foo' })
+      const fooAttached = await mutator.createTag({ title: 'Foo' })
       const note = createNoteWithTitle('note')
-      await itemManager.insertItems([foo, foobar, bar, barfoo, fooDelimiter, barFooDelimiter, fooAttached, note])
-      await itemManager.addTagToNote(note, fooAttached, false)
+      await mutator.insertItems([foo, foobar, bar, barfoo, fooDelimiter, barFooDelimiter, fooAttached, note])
+      await mutator.addTagToNote(note, fooAttached, false)
 
       const fooResults = itemManager.searchTags('foo')
       expect(fooResults).toContainEqual(foo)
@@ -482,19 +450,17 @@ describe('itemManager', () => {
 
   describe('tags notes index', () => {
     it('counts countable notes', async () => {
-      itemManager = createService()
-
       const parentTag = createTag('parent')
       const childTag = createTag('child')
-      await itemManager.insertItems([parentTag, childTag])
-      await itemManager.setTagParent(parentTag, childTag)
+      await mutator.insertItems([parentTag, childTag])
+      await mutator.setTagParent(parentTag, childTag)
 
       const parentNote = createNoteWithTitle('parentNote')
       const childNote = createNoteWithTitle('childNote')
-      await itemManager.insertItems([parentNote, childNote])
+      await mutator.insertItems([parentNote, childNote])
 
-      await itemManager.addTagToNote(parentNote, parentTag, false)
-      await itemManager.addTagToNote(childNote, childTag, false)
+      await mutator.addTagToNote(parentNote, parentTag, false)
+      await mutator.addTagToNote(childNote, childTag, false)
 
       expect(itemManager.countableNotesForTag(parentTag)).toBe(1)
       expect(itemManager.countableNotesForTag(childTag)).toBe(1)
@@ -502,29 +468,27 @@ describe('itemManager', () => {
     })
 
     it('archiving a note should update count index', async () => {
-      itemManager = createService()
-
       const tag1 = createTag('tag 1')
-      await itemManager.insertItems([tag1])
+      await mutator.insertItems([tag1])
 
       const note1 = createNoteWithTitle('note 1')
       const note2 = createNoteWithTitle('note 2')
-      await itemManager.insertItems([note1, note2])
+      await mutator.insertItems([note1, note2])
 
-      await itemManager.addTagToNote(note1, tag1, false)
-      await itemManager.addTagToNote(note2, tag1, false)
+      await mutator.addTagToNote(note1, tag1, false)
+      await mutator.addTagToNote(note2, tag1, false)
 
       expect(itemManager.countableNotesForTag(tag1)).toBe(2)
       expect(itemManager.allCountableNotesCount()).toBe(2)
 
-      await itemManager.changeItem<Models.NoteMutator>(note1, (m) => {
+      await mutator.changeItem<Models.NoteMutator>(note1, (m) => {
         m.archived = true
       })
 
       expect(itemManager.allCountableNotesCount()).toBe(1)
       expect(itemManager.countableNotesForTag(tag1)).toBe(1)
 
-      await itemManager.changeItem<Models.NoteMutator>(note1, (m) => {
+      await mutator.changeItem<Models.NoteMutator>(note1, (m) => {
         m.archived = false
       })
 
@@ -535,13 +499,12 @@ describe('itemManager', () => {
 
   describe('smart views', () => {
     it('lets me create a smart view', async () => {
-      itemManager = createService()
       setupRandomUuid()
 
       const [view1, view2, view3] = await Promise.all([
-        itemManager.createSmartView('Not Pinned', NotPinnedPredicate),
-        itemManager.createSmartView('Last Day', LastDayPredicate),
-        itemManager.createSmartView('Long', LongTextPredicate),
+        mutator.createSmartView({ title: 'Not Pinned', predicate: NotPinnedPredicate }),
+        mutator.createSmartView({ title: 'Last Day', predicate: LastDayPredicate }),
+        mutator.createSmartView({ title: 'Long', predicate: LongTextPredicate }),
       ])
 
       expect(view1).toBeTruthy()
@@ -554,10 +517,9 @@ describe('itemManager', () => {
     })
 
     it('lets me use a smart view', async () => {
-      itemManager = createService()
       setupRandomUuid()
 
-      const view = await itemManager.createSmartView('Not Pinned', NotPinnedPredicate)
+      const view = await mutator.createSmartView({ title: 'Not Pinned', predicate: NotPinnedPredicate })
 
       const notes = itemManager.notesMatchingSmartView(view)
 
@@ -565,7 +527,6 @@ describe('itemManager', () => {
     })
 
     it('lets me test if a title is a smart view', () => {
-      itemManager = createService()
       setupRandomUuid()
 
       expect(itemManager.isSmartViewTitle(VIEW_NOT_PINNED)).toEqual(true)
@@ -577,13 +538,12 @@ describe('itemManager', () => {
     })
 
     it('lets me create a smart view from the DSL', async () => {
-      itemManager = createService()
       setupRandomUuid()
 
       const [tag1, tag2, tag3] = await Promise.all([
-        itemManager.createSmartViewFromDSL(VIEW_NOT_PINNED),
-        itemManager.createSmartViewFromDSL(VIEW_LAST_DAY),
-        itemManager.createSmartViewFromDSL(VIEW_LONG),
+        mutator.createSmartViewFromDSL(VIEW_NOT_PINNED),
+        mutator.createSmartViewFromDSL(VIEW_LAST_DAY),
+        mutator.createSmartViewFromDSL(VIEW_LONG),
       ])
 
       expect(tag1).toBeTruthy()
@@ -596,11 +556,10 @@ describe('itemManager', () => {
     })
 
     it('will create smart view or tags from the generic method', async () => {
-      itemManager = createService()
       setupRandomUuid()
 
-      const someTag = await itemManager.createTagOrSmartView('some-tag')
-      const someView = await itemManager.createTagOrSmartView(VIEW_LONG)
+      const someTag = await mutator.createTagOrSmartView('some-tag')
+      const someView = await mutator.createTagOrSmartView(VIEW_LONG)
 
       expect(someTag.content_type).toEqual(ContentType.Tag)
       expect(someView.content_type).toEqual(ContentType.SmartView)
@@ -608,12 +567,11 @@ describe('itemManager', () => {
   })
 
   it('lets me rename a smart view', async () => {
-    itemManager = createService()
     setupRandomUuid()
 
-    const tag = await itemManager.createSmartView('Not Pinned', NotPinnedPredicate)
+    const tag = await mutator.createSmartView({ title: 'Not Pinned', predicate: NotPinnedPredicate })
 
-    await itemManager.changeItem<Models.TagMutator>(tag, (m) => {
+    await mutator.changeItem<Models.TagMutator>(tag, (m) => {
       m.title = 'New Title'
     })
 
@@ -625,10 +583,9 @@ describe('itemManager', () => {
   })
 
   it('lets me find a smart view', async () => {
-    itemManager = createService()
     setupRandomUuid()
 
-    const tag = await itemManager.createSmartView('Not Pinned', NotPinnedPredicate)
+    const tag = await mutator.createSmartView({ title: 'Not Pinned', predicate: NotPinnedPredicate })
 
     const view = itemManager.findItem(tag.uuid) as Models.SmartView
 
@@ -636,7 +593,6 @@ describe('itemManager', () => {
   })
 
   it('untagged notes smart view', async () => {
-    itemManager = createService()
     setupRandomUuid()
 
     const view = itemManager.untaggedNotesSmartView
@@ -644,11 +600,11 @@ describe('itemManager', () => {
     const tag = createTag('tag')
     const untaggedNote = createNoteWithTitle('note')
     const taggedNote = createNoteWithTitle('taggedNote')
-    await itemManager.insertItems([tag, untaggedNote, taggedNote])
+    await mutator.insertItems([tag, untaggedNote, taggedNote])
 
     expect(itemManager.notesMatchingSmartView(view)).toHaveLength(2)
 
-    await itemManager.addTagToNote(taggedNote, tag, false)
+    await mutator.addTagToNote(taggedNote, tag, false)
 
     expect(itemManager.notesMatchingSmartView(view)).toHaveLength(1)
 
@@ -657,31 +613,28 @@ describe('itemManager', () => {
 
   describe('files', () => {
     it('should correctly rename file to filename that has extension', async () => {
-      itemManager = createService()
       const file = createFile('initialName.ext')
-      await itemManager.insertItems([file])
+      await mutator.insertItems([file])
 
-      const renamedFile = await itemManager.renameFile(file, 'anotherName.anotherExt')
+      const renamedFile = await mutator.renameFile(file, 'anotherName.anotherExt')
 
       expect(renamedFile.name).toBe('anotherName.anotherExt')
     })
 
     it('should correctly rename extensionless file to filename that has extension', async () => {
-      itemManager = createService()
       const file = createFile('initialName')
-      await itemManager.insertItems([file])
+      await mutator.insertItems([file])
 
-      const renamedFile = await itemManager.renameFile(file, 'anotherName.anotherExt')
+      const renamedFile = await mutator.renameFile(file, 'anotherName.anotherExt')
 
       expect(renamedFile.name).toBe('anotherName.anotherExt')
     })
 
     it('should correctly rename file to filename that does not have extension', async () => {
-      itemManager = createService()
       const file = createFile('initialName.ext')
-      await itemManager.insertItems([file])
+      await mutator.insertItems([file])
 
-      const renamedFile = await itemManager.renameFile(file, 'anotherName')
+      const renamedFile = await mutator.renameFile(file, 'anotherName')
 
       expect(renamedFile.name).toBe('anotherName')
     })
@@ -689,15 +642,14 @@ describe('itemManager', () => {
 
   describe('linking', () => {
     it('adding a note to a tag hierarchy should add the note to its parent too', async () => {
-      itemManager = createService()
       const parentTag = createTag('parent')
       const childTag = createTag('child')
       const note = createNoteWithTitle('note')
 
-      await itemManager.insertItems([parentTag, childTag, note])
-      await itemManager.setTagParent(parentTag, childTag)
+      await mutator.insertItems([parentTag, childTag, note])
+      await mutator.setTagParent(parentTag, childTag)
 
-      await itemManager.addTagToNote(note, childTag, true)
+      await mutator.addTagToNote(note, childTag, true)
 
       const tags = itemManager.getSortedTagsForItem(note)
 
@@ -707,15 +659,14 @@ describe('itemManager', () => {
     })
 
     it('adding a note to a tag hierarchy should not add the note to its parent if hierarchy option is disabled', async () => {
-      itemManager = createService()
       const parentTag = createTag('parent')
       const childTag = createTag('child')
       const note = createNoteWithTitle('note')
 
-      await itemManager.insertItems([parentTag, childTag, note])
-      await itemManager.setTagParent(parentTag, childTag)
+      await mutator.insertItems([parentTag, childTag, note])
+      await mutator.setTagParent(parentTag, childTag)
 
-      await itemManager.addTagToNote(note, childTag, false)
+      await mutator.addTagToNote(note, childTag, false)
 
       const tags = itemManager.getSortedTagsForItem(note)
 
@@ -724,15 +675,14 @@ describe('itemManager', () => {
     })
 
     it('adding a file to a tag hierarchy should add the file to its parent too', async () => {
-      itemManager = createService()
       const parentTag = createTag('parent')
       const childTag = createTag('child')
       const file = createFile('file')
 
-      await itemManager.insertItems([parentTag, childTag, file])
-      await itemManager.setTagParent(parentTag, childTag)
+      await mutator.insertItems([parentTag, childTag, file])
+      await mutator.setTagParent(parentTag, childTag)
 
-      await itemManager.addTagToFile(file, childTag, true)
+      await mutator.addTagToFile(file, childTag, true)
 
       const tags = itemManager.getSortedTagsForItem(file)
 
@@ -742,15 +692,14 @@ describe('itemManager', () => {
     })
 
     it('adding a file to a tag hierarchy should not add the file to its parent if hierarchy option is disabled', async () => {
-      itemManager = createService()
       const parentTag = createTag('parent')
       const childTag = createTag('child')
       const file = createFile('file')
 
-      await itemManager.insertItems([parentTag, childTag, file])
-      await itemManager.setTagParent(parentTag, childTag)
+      await mutator.insertItems([parentTag, childTag, file])
+      await mutator.setTagParent(parentTag, childTag)
 
-      await itemManager.addTagToFile(file, childTag, false)
+      await mutator.addTagToFile(file, childTag, false)
 
       const tags = itemManager.getSortedTagsForItem(file)
 
@@ -759,12 +708,12 @@ describe('itemManager', () => {
     })
 
     it('should link file with note', async () => {
-      itemManager = createService()
       const note = createNoteWithTitle('invoices')
       const file = createFile('invoice_1.pdf')
-      await itemManager.insertItems([note, file])
+      await mutator.insertItems([note, file])
 
-      const resultingFile = await itemManager.associateFileWithNote(file, note)
+      const resultingFile = await mutator.associateFileWithNote(file, note)
+      assert(resultingFile)
       const references = resultingFile.references
 
       expect(references).toHaveLength(1)
@@ -772,25 +721,24 @@ describe('itemManager', () => {
     })
 
     it('should unlink file from note', async () => {
-      itemManager = createService()
       const note = createNoteWithTitle('invoices')
       const file = createFile('invoice_1.pdf')
-      await itemManager.insertItems([note, file])
+      await mutator.insertItems([note, file])
 
-      const associatedFile = await itemManager.associateFileWithNote(file, note)
-      const disassociatedFile = await itemManager.disassociateFileWithNote(associatedFile, note)
+      const associatedFile = await mutator.associateFileWithNote(file, note)
+      assert(associatedFile)
+      const disassociatedFile = await mutator.disassociateFileWithNote(associatedFile, note)
       const references = disassociatedFile.references
 
       expect(references).toHaveLength(0)
     })
 
     it('should link note to note', async () => {
-      itemManager = createService()
       const note = createNoteWithTitle('research')
       const note2 = createNoteWithTitle('citation')
-      await itemManager.insertItems([note, note2])
+      await mutator.insertItems([note, note2])
 
-      const resultingNote = await itemManager.linkNoteToNote(note, note2)
+      const resultingNote = await mutator.linkNoteToNote(note, note2)
       const references = resultingNote.references
 
       expect(references).toHaveLength(1)
@@ -798,12 +746,11 @@ describe('itemManager', () => {
     })
 
     it('should link file to file', async () => {
-      itemManager = createService()
       const file = createFile('research')
       const file2 = createFile('citation')
-      await itemManager.insertItems([file, file2])
+      await mutator.insertItems([file, file2])
 
-      const resultingfile = await itemManager.linkFileToFile(file, file2)
+      const resultingfile = await mutator.linkFileToFile(file, file2)
       const references = resultingfile.references
 
       expect(references).toHaveLength(1)
@@ -811,13 +758,12 @@ describe('itemManager', () => {
     })
 
     it('should get the relationship type for two items', async () => {
-      itemManager = createService()
       const firstNote = createNoteWithTitle('First note')
       const secondNote = createNoteWithTitle('Second note')
       const unlinkedNote = createNoteWithTitle('Unlinked note')
-      await itemManager.insertItems([firstNote, secondNote, unlinkedNote])
+      await mutator.insertItems([firstNote, secondNote, unlinkedNote])
 
-      const firstNoteLinkedToSecond = await itemManager.linkNoteToNote(firstNote, secondNote)
+      const firstNoteLinkedToSecond = await mutator.linkNoteToNote(firstNote, secondNote)
 
       const relationshipOfFirstNoteToSecond = itemManager.relationshipDirectionBetweenItems(
         firstNoteLinkedToSecond,
@@ -838,13 +784,12 @@ describe('itemManager', () => {
     })
 
     it('should unlink itemOne from itemTwo if relation is direct', async () => {
-      itemManager = createService()
       const note = createNoteWithTitle('Note 1')
       const note2 = createNoteWithTitle('Note 2')
-      await itemManager.insertItems([note, note2])
+      await mutator.insertItems([note, note2])
 
-      const linkedItem = await itemManager.linkNoteToNote(note, note2)
-      const unlinkedItem = await itemManager.unlinkItems(linkedItem, note2)
+      const linkedItem = await mutator.linkNoteToNote(note, note2)
+      const unlinkedItem = await mutator.unlinkItems(linkedItem, note2)
       const references = unlinkedItem.references
 
       expect(unlinkedItem.uuid).toBe(note.uuid)
@@ -852,13 +797,12 @@ describe('itemManager', () => {
     })
 
     it('should unlink itemTwo from itemOne if relation is indirect', async () => {
-      itemManager = createService()
       const note = createNoteWithTitle('Note 1')
       const note2 = createNoteWithTitle('Note 2')
-      await itemManager.insertItems([note, note2])
+      await mutator.insertItems([note, note2])
 
-      const linkedItem = await itemManager.linkNoteToNote(note, note2)
-      const changedItem = await itemManager.unlinkItems(linkedItem, note2)
+      const linkedItem = await mutator.linkNoteToNote(note, note2)
+      const changedItem = await mutator.unlinkItems(linkedItem, note2)
 
       expect(changedItem.uuid).toBe(note.uuid)
       expect(changedItem.references).toHaveLength(0)

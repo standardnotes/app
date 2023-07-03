@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-expressions */
 /* eslint-disable no-undef */
-import { BaseItemCounts } from '../lib/Applications.js'
+import { BaseItemCounts } from '../lib/BaseItemCounts.js'
 import * as Factory from '../lib/factory.js'
 import { createRelatedNoteTagPairPayload } from '../lib/Items.js'
 chai.use(chaiAsPromised)
@@ -43,7 +43,7 @@ describe('importing', function () {
 
   it('should not import backups made from unsupported versions', async function () {
     await setup({ fakeCrypto: true })
-    const result = await application.mutator.importData({
+    const result = await application.importData({
       version: '-1',
       items: [],
     })
@@ -58,7 +58,7 @@ describe('importing', function () {
       password,
       version: ProtocolVersion.V003,
     })
-    const result = await application.mutator.importData({
+    const result = await application.importData({
       version: ProtocolVersion.V004,
       items: [],
     })
@@ -71,7 +71,7 @@ describe('importing', function () {
     const notePayload = pair[0]
     const tagPayload = pair[1]
 
-    await application.itemManager.emitItemsFromPayloads([notePayload, tagPayload], PayloadEmitSource.LocalChanged)
+    await application.mutator.emitItemsFromPayloads([notePayload, tagPayload], PayloadEmitSource.LocalChanged)
     expectedItemCount += 2
     const note = application.itemManager.getItems([ContentType.Note])[0]
     const tag = application.itemManager.getItems([ContentType.Tag])[0]
@@ -82,7 +82,7 @@ describe('importing', function () {
     expect(note.content.references.length).to.equal(0)
     expect(application.itemManager.itemsReferencingItem(note).length).to.equal(1)
 
-    await application.mutator.importData(
+    await application.importData(
       {
         items: [notePayload, tagPayload],
       },
@@ -105,7 +105,7 @@ describe('importing', function () {
      */
     await setup({ fakeCrypto: true })
     const notePayload = Factory.createNotePayload()
-    await application.itemManager.emitItemFromPayload(notePayload, PayloadEmitSource.LocalChanged)
+    await application.mutator.emitItemFromPayload(notePayload, PayloadEmitSource.LocalChanged)
     expectedItemCount++
     const mutatedNote = new DecryptedPayload({
       ...notePayload,
@@ -114,7 +114,7 @@ describe('importing', function () {
         title: `${Math.random()}`,
       },
     })
-    await application.mutator.importData(
+    await application.importData(
       {
         items: [mutatedNote, mutatedNote, mutatedNote],
       },
@@ -130,7 +130,7 @@ describe('importing', function () {
     await setup({ fakeCrypto: true })
     const pair = createRelatedNoteTagPairPayload()
     const tagPayload = pair[1]
-    await application.itemManager.emitItemsFromPayloads(pair, PayloadEmitSource.LocalChanged)
+    await application.mutator.emitItemsFromPayloads(pair, PayloadEmitSource.LocalChanged)
     const mutatedTag = new DecryptedPayload({
       ...tagPayload,
       content: {
@@ -138,7 +138,7 @@ describe('importing', function () {
         references: [],
       },
     })
-    await application.mutator.importData(
+    await application.importData(
       {
         items: [mutatedTag],
       },
@@ -153,7 +153,7 @@ describe('importing', function () {
     const pair = createRelatedNoteTagPairPayload()
     const notePayload = pair[0]
     const tagPayload = pair[1]
-    await application.itemManager.emitItemsFromPayloads(pair, PayloadEmitSource.LocalChanged)
+    await application.mutator.emitItemsFromPayloads(pair, PayloadEmitSource.LocalChanged)
     expectedItemCount += 2
     const note = application.itemManager.getDisplayableNotes()[0]
     const tag = application.itemManager.getDisplayableTags()[0]
@@ -171,7 +171,7 @@ describe('importing', function () {
         title: `${Math.random()}`,
       },
     })
-    await application.mutator.importData(
+    await application.importData(
       {
         items: [mutatedNote, mutatedTag],
       },
@@ -217,7 +217,7 @@ describe('importing', function () {
     const tag = await Factory.createMappedTag(application)
     expectedItemCount += 2
 
-    await application.itemManager.changeItem(tag, (mutator) => {
+    await application.mutator.changeItem(tag, (mutator) => {
       mutator.e2ePendingRefactor_addItemAsRelationship(note)
     })
 
@@ -240,7 +240,7 @@ describe('importing', function () {
       },
     )
 
-    await application.mutator.importData(
+    await application.importData(
       {
         items: [externalNote, externalTag],
       },
@@ -272,12 +272,14 @@ describe('importing', function () {
     await application.sync.sync({ awaitAll: true })
 
     await application.mutator.deleteItem(note)
+    await application.sync.sync()
     expect(application.items.findItem(note.uuid)).to.not.exist
 
     await application.mutator.deleteItem(tag)
+    await application.sync.sync()
     expect(application.items.findItem(tag.uuid)).to.not.exist
 
-    await application.mutator.importData(
+    await application.importData(
       {
         items: [note, tag],
       },
@@ -311,7 +313,7 @@ describe('importing', function () {
       password: password,
     })
 
-    await application.mutator.importData(
+    await application.importData(
       {
         items: [note.payload],
       },
@@ -341,7 +343,7 @@ describe('importing', function () {
       password: password,
     })
 
-    await application.mutator.importData(
+    await application.importData(
       {
         items: [note],
       },
@@ -372,12 +374,14 @@ describe('importing', function () {
     await application.sync.sync({ awaitAll: true })
 
     await application.mutator.deleteItem(note)
+    await application.sync.sync()
     expect(application.items.findItem(note.uuid)).to.not.exist
 
     await application.mutator.deleteItem(tag)
+    await application.sync.sync()
     expect(application.items.findItem(tag.uuid)).to.not.exist
 
-    await application.mutator.importData(backupData, true)
+    await application.importData(backupData, true)
 
     expect(application.itemManager.getDisplayableNotes().length).to.equal(1)
     expect(application.items.findItem(note.uuid).deleted).to.not.be.ok
@@ -402,7 +406,7 @@ describe('importing', function () {
     application = await Factory.createInitAppWithFakeCrypto()
     Factory.handlePasswordChallenges(application, password)
 
-    await application.mutator.importData(backupData, true)
+    await application.importData(backupData, true)
 
     const importedNote = application.items.findItem(note.uuid)
     const importedTag = application.items.findItem(tag.uuid)
@@ -427,7 +431,7 @@ describe('importing', function () {
     application = await Factory.createInitAppWithFakeCrypto()
     Factory.handlePasswordChallenges(application, password)
 
-    await application.mutator.importData(backupData, true)
+    await application.importData(backupData, true)
 
     const importedNote = application.items.findItem(note.uuid)
     const importedTag = application.items.findItem(tag.uuid)
@@ -445,7 +449,7 @@ describe('importing', function () {
       version: oldVersion,
     })
 
-    const noteItem = await application.itemManager.createItem(ContentType.Note, {
+    const noteItem = await application.mutator.createItem(ContentType.Note, {
       title: 'Encrypted note',
       text: 'On protocol version 003.',
     })
@@ -456,7 +460,7 @@ describe('importing', function () {
     application = await Factory.createInitAppWithFakeCrypto()
     Factory.handlePasswordChallenges(application, password)
 
-    const result = await application.mutator.importData(backupData, true)
+    const result = await application.importData(backupData, true)
     expect(result).to.not.be.undefined
     expect(result.affectedItems.length).to.be.eq(backupData.items.length)
     expect(result.errorCount).to.be.eq(0)
@@ -512,7 +516,7 @@ describe('importing', function () {
     application = await Factory.createInitAppWithRealCrypto()
     Factory.handlePasswordChallenges(application, password)
 
-    const result = await application.mutator.importData(backupData, true)
+    const result = await application.importData(backupData, true)
     expect(result).to.not.be.undefined
     expect(result.affectedItems.length).to.be.eq(backupData.items.length)
     expect(result.errorCount).to.be.eq(0)
@@ -526,7 +530,7 @@ describe('importing', function () {
       password: password,
     })
 
-    const noteItem = await application.itemManager.createItem(ContentType.Note, {
+    const noteItem = await application.mutator.createItem(ContentType.Note, {
       title: 'Encrypted note',
       text: 'On protocol version 004.',
     })
@@ -537,7 +541,7 @@ describe('importing', function () {
     application = await Factory.createInitAppWithFakeCrypto()
     Factory.handlePasswordChallenges(application, password)
 
-    const result = await application.mutator.importData(backupData, true)
+    const result = await application.importData(backupData, true)
     expect(result).to.not.be.undefined
     expect(result.affectedItems.length).to.be.eq(backupData.items.length)
     expect(result.errorCount).to.be.eq(0)
@@ -556,7 +560,7 @@ describe('importing', function () {
       password: password,
     })
 
-    const noteItem = await application.itemManager.createItem(ContentType.Note, {
+    const noteItem = await application.mutator.createItem(ContentType.Note, {
       title: 'This is a valid, encrypted note',
       text: 'On protocol version 004.',
     })
@@ -577,7 +581,7 @@ describe('importing', function () {
 
     backupData.items = [...backupData.items, madeUpPayload]
 
-    const result = await application.mutator.importData(backupData, true)
+    const result = await application.importData(backupData, true)
     expect(result).to.not.be.undefined
     expect(result.affectedItems.length).to.be.eq(backupData.items.length - 1)
     expect(result.errorCount).to.be.eq(1)
@@ -594,7 +598,7 @@ describe('importing', function () {
       version: oldVersion,
     })
 
-    await application.itemManager.createItem(ContentType.Note, {
+    await application.mutator.createItem(ContentType.Note, {
       title: 'Encrypted note',
       text: 'On protocol version 003.',
     })
@@ -615,7 +619,7 @@ describe('importing', function () {
       },
     })
 
-    const result = await application.mutator.importData(backupData, true)
+    const result = await application.importData(backupData, true)
     expect(result).to.not.be.undefined
 
     expect(result.affectedItems.length).to.be.eq(0)
@@ -631,7 +635,7 @@ describe('importing', function () {
       password: password,
     })
 
-    await application.itemManager.createItem(ContentType.Note, {
+    await application.mutator.createItem(ContentType.Note, {
       title: 'This is a valid, encrypted note',
       text: 'On protocol version 004.',
     })
@@ -647,7 +651,7 @@ describe('importing', function () {
       },
     })
 
-    const result = await application.mutator.importData(backupData, true)
+    const result = await application.importData(backupData, true)
     expect(result).to.not.be.undefined
     expect(result.affectedItems.length).to.be.eq(0)
     expect(result.errorCount).to.be.eq(backupData.items.length)
@@ -662,7 +666,7 @@ describe('importing', function () {
       password: password,
     })
 
-    await application.itemManager.createItem(ContentType.Note, {
+    await application.mutator.createItem(ContentType.Note, {
       title: 'Encrypted note',
       text: 'On protocol version 004.',
     })
@@ -673,7 +677,7 @@ describe('importing', function () {
     await Factory.safeDeinit(application)
     application = await Factory.createInitAppWithFakeCrypto()
 
-    const result = await application.mutator.importData(backupData)
+    const result = await application.importData(backupData)
 
     expect(result.error).to.be.ok
   })
@@ -687,7 +691,7 @@ describe('importing', function () {
     })
     Factory.handlePasswordChallenges(application, password)
 
-    await application.itemManager.createItem(ContentType.Note, {
+    await application.mutator.createItem(ContentType.Note, {
       title: 'Encrypted note',
       text: 'On protocol version 004.',
     })
@@ -699,11 +703,13 @@ describe('importing', function () {
     application = await Factory.createInitAppWithFakeCrypto()
     Factory.handlePasswordChallenges(application, password)
 
-    const result = await application.mutator.importData(backupData, true)
+    const result = await application.importData(backupData, true)
 
     expect(result).to.not.be.undefined
-    expect(result.affectedItems.length).to.be.eq(0)
-    expect(result.errorCount).to.be.eq(backupData.items.length)
+
+    expect(result.affectedItems.length).to.equal(BaseItemCounts.BackupFileRootKeyEncryptedItems)
+
+    expect(result.errorCount).to.be.eq(backupData.items.length - BaseItemCounts.BackupFileRootKeyEncryptedItems)
     expect(application.itemManager.getDisplayableNotes().length).to.equal(0)
   })
 
@@ -784,7 +790,14 @@ describe('importing', function () {
 
     await application.prepareForLaunch({
       receiveChallenge: (challenge) => {
-        if (challenge.prompts.length === 2) {
+        if (challenge.reason === ChallengeReason.Custom) {
+          return
+        }
+
+        if (
+          challenge.reason === ChallengeReason.DecryptEncryptedFile ||
+          challenge.reason === ChallengeReason.ImportFile
+        ) {
           application.submitValuesForChallenge(
             challenge,
             challenge.prompts.map((prompt) =>
@@ -796,9 +809,6 @@ describe('importing', function () {
               ),
             ),
           )
-        } else {
-          const prompt = challenge.prompts[0]
-          application.submitValuesForChallenge(challenge, [CreateChallengeValue(prompt, password)])
         }
       },
     })
@@ -827,7 +837,7 @@ describe('importing', function () {
       },
     }
 
-    const result = await application.mutator.importData(backupFile, false)
+    const result = await application.importData(backupFile, false)
     expect(result.errorCount).to.equal(0)
     await Factory.safeDeinit(application)
   })
@@ -846,7 +856,7 @@ describe('importing', function () {
     Factory.handlePasswordChallenges(application, password)
 
     const pair = createRelatedNoteTagPairPayload()
-    await application.itemManager.emitItemsFromPayloads(pair, PayloadEmitSource.LocalChanged)
+    await application.mutator.emitItemsFromPayloads(pair, PayloadEmitSource.LocalChanged)
 
     await application.sync.sync()
 
@@ -862,7 +872,7 @@ describe('importing', function () {
       password: password,
     })
 
-    await application.mutator.importData(backupData, true)
+    await application.importData(backupData, true)
 
     expect(application.itemManager.getDisplayableNotes().length).to.equal(1)
     expect(application.itemManager.getDisplayableTags().length).to.equal(1)
@@ -871,5 +881,9 @@ describe('importing', function () {
     const importedTag = application.itemManager.getDisplayableTags()[0]
     expect(application.itemManager.referencesForItem(importedTag).length).to.equal(1)
     expect(application.itemManager.itemsReferencingItem(importedNote).length).to.equal(1)
+  })
+
+  it('should decrypt backup file which contains a vaulted note without a synced key system root key', async () => {
+    console.error('TODO: Implement this test')
   })
 })

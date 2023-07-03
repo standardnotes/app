@@ -122,29 +122,46 @@ export abstract class WebOrDesktopDevice implements WebOrDesktopDeviceInterface 
     identifier: string,
   ): Promise<DatabaseFullEntryLoadChunkResponse> {
     const entries = await this.getAllDatabaseEntries(identifier)
-    const sorted = GetSortedPayloadsByPriority(entries, options)
+
+    const {
+      itemsKeyPayloads,
+      keySystemRootKeyPayloads,
+      keySystemItemsKeyPayloads,
+      contentTypePriorityPayloads,
+      remainingPayloads,
+    } = GetSortedPayloadsByPriority(entries, options)
 
     const itemsKeysChunk: DatabaseFullEntryLoadChunk = {
-      entries: sorted.itemsKeyPayloads,
+      entries: itemsKeyPayloads,
+    }
+
+    const keySystemRootKeysChunk: DatabaseFullEntryLoadChunk = {
+      entries: keySystemRootKeyPayloads,
+    }
+
+    const keySystemItemsKeysChunk: DatabaseFullEntryLoadChunk = {
+      entries: keySystemItemsKeyPayloads,
     }
 
     const contentTypePriorityChunk: DatabaseFullEntryLoadChunk = {
-      entries: sorted.contentTypePriorityPayloads,
+      entries: contentTypePriorityPayloads,
     }
 
     const remainingPayloadsChunks: DatabaseFullEntryLoadChunk[] = []
-    for (let i = 0; i < sorted.remainingPayloads.length; i += options.batchSize) {
+    for (let i = 0; i < remainingPayloads.length; i += options.batchSize) {
       remainingPayloadsChunks.push({
-        entries: sorted.remainingPayloads.slice(i, i + options.batchSize),
+        entries: remainingPayloads.slice(i, i + options.batchSize),
       })
     }
 
     const result: DatabaseFullEntryLoadChunkResponse = {
       fullEntries: {
         itemsKeys: itemsKeysChunk,
+        keySystemRootKeys: keySystemRootKeysChunk,
+        keySystemItemsKeys: keySystemItemsKeysChunk,
         remainingChunks: [contentTypePriorityChunk, ...remainingPayloadsChunks],
       },
-      remainingChunksItemCount: sorted.contentTypePriorityPayloads.length + sorted.remainingPayloads.length,
+      remainingChunksItemCount: contentTypePriorityPayloads.length + remainingPayloads.length,
     }
 
     return result

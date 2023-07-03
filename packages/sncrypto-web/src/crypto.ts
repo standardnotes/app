@@ -380,13 +380,61 @@ export class SNWebCrypto implements PureCryptoInterface {
     return result
   }
 
-  public sodiumCryptoBoxGenerateKeypair(): PkcKeyPair {
-    const result = sodium.crypto_box_keypair()
+  sodiumCryptoBoxSeedKeypair(seed: HexString): PkcKeyPair {
+    const result = sodium.crypto_box_seed_keypair(Utils.hexStringToArrayBuffer(seed))
 
     const publicKey = Utils.arrayBufferToHexString(result.publicKey)
     const privateKey = Utils.arrayBufferToHexString(result.privateKey)
 
-    return { publicKey, privateKey, keyType: result.keyType }
+    return { publicKey, privateKey }
+  }
+
+  sodiumCryptoSignSeedKeypair(seed: HexString): PkcKeyPair {
+    const result = sodium.crypto_sign_seed_keypair(Utils.hexStringToArrayBuffer(seed))
+
+    const publicKey = Utils.arrayBufferToHexString(result.publicKey)
+    const privateKey = Utils.arrayBufferToHexString(result.privateKey)
+
+    return { publicKey, privateKey }
+  }
+
+  sodiumCryptoSign(message: Utf8String, secretKey: HexString): Base64String {
+    const result = sodium.crypto_sign_detached(message, Utils.hexStringToArrayBuffer(secretKey))
+
+    return Utils.arrayBufferToBase64(result)
+  }
+
+  sodiumCryptoSignVerify(message: Utf8String, signature: Base64String, publicKey: HexString): boolean {
+    return sodium.crypto_sign_verify_detached(
+      Utils.base64ToArrayBuffer(signature),
+      message,
+      Utils.hexStringToArrayBuffer(publicKey),
+    )
+  }
+
+  sodiumCryptoKdfDeriveFromKey(key: HexString, subkeyNumber: number, subkeyLength: number, context: string): HexString {
+    if (context.length !== 8) {
+      throw new Error('Context must be 8 bytes')
+    }
+
+    const result = sodium.crypto_kdf_derive_from_key(
+      subkeyLength,
+      subkeyNumber,
+      context,
+      Utils.hexStringToArrayBuffer(key),
+    )
+
+    return Utils.arrayBufferToHexString(result)
+  }
+
+  sodiumCryptoGenericHash(message: string, key?: HexString): HexString {
+    const result = sodium.crypto_generichash(
+      sodium.crypto_generichash_BYTES,
+      message,
+      key ? Utils.hexStringToArrayBuffer(key) : null,
+    )
+
+    return Utils.arrayBufferToHexString(result)
   }
 
   /**

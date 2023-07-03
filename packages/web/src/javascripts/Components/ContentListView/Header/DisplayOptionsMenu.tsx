@@ -181,7 +181,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
       } else if (isSystemTag) {
         await changeSystemViewPreferences(properties)
       } else {
-        await application.mutator.changeAndSaveItem<TagMutator>(selectedTag, (mutator) => {
+        await application.changeAndSaveItem<TagMutator>(selectedTag, (mutator) => {
           mutator.preferences = {
             ...mutator.preferences,
             ...properties,
@@ -189,7 +189,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
         })
       }
     },
-    [currentMode, isSystemTag, changeGlobalPreferences, changeSystemViewPreferences, application.mutator, selectedTag],
+    [currentMode, isSystemTag, changeGlobalPreferences, changeSystemViewPreferences, application, selectedTag],
   )
 
   const resetTagPreferences = useCallback(async () => {
@@ -202,7 +202,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
       return
     }
 
-    void application.mutator.changeAndSaveItem<TagMutator>(selectedTag, (mutator) => {
+    void application.changeAndSaveItem<TagMutator>(selectedTag, (mutator) => {
       mutator.preferences = undefined
     })
   }, [application, isSystemTag, reloadPreferences, selectedTag])

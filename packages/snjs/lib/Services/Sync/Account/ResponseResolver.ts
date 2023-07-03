@@ -1,3 +1,4 @@
+import { ConflictParams, ConflictType } from '@standardnotes/responses'
 import {
   ImmutablePayloadCollection,
   HistoryMap,
@@ -11,13 +12,12 @@ import {
   DeltaRemoteRejected,
   DeltaEmit,
 } from '@standardnotes/models'
+import { DecryptedServerConflictMap } from './ServerConflictMap'
 
 type PayloadSet = {
   retrievedPayloads: FullyFormedPayloadInterface[]
   savedPayloads: ServerSyncSavedContextualPayload[]
-  uuidConflictPayloads: FullyFormedPayloadInterface[]
-  dataConflictPayloads: FullyFormedPayloadInterface[]
-  rejectedPayloads: FullyFormedPayloadInterface[]
+  conflicts: DecryptedServerConflictMap
 }
 
 /**
@@ -39,8 +39,8 @@ export class ServerSyncResponseResolver {
 
     emits.push(this.processRetrievedPayloads())
     emits.push(this.processSavedPayloads())
-    emits.push(this.processUuidConflictPayloads())
-    emits.push(this.processDataConflictPayloads())
+    emits.push(this.processUuidConflictUnsavedPayloads())
+    emits.push(this.processDataConflictServerPayloads())
     emits.push(this.processRejectedPayloads())
 
     return emits
@@ -60,27 +60,42 @@ export class ServerSyncResponseResolver {
     return delta.result()
   }
 
-  private processDataConflictPayloads(): DeltaEmit {
-    const collection = ImmutablePayloadCollection.WithPayloads(this.payloadSet.dataConflictPayloads)
+  private getConflictsForType<T extends ConflictParams<FullyFormedPayloadInterface>>(type: ConflictType): T[] {
+    const results = this.payloadSet.conflicts[type] || []
 
-    const delta = new DeltaRemoteDataConflicts(this.baseCollection, collection, this.historyMap)
+    return results as T[]
+  }
+
+  private processDataConflictServerPayloads(): DeltaEmit {
+    const delta = new DeltaRemoteDataConflicts(
+      this.baseCollection,
+      this.getConflictsForType(ConflictType.ConflictingData),
+      this.historyMap,
+    )
 
     return delta.result()
   }
 
-  private processUuidConflictPayloads(): DeltaEmit {
-    const collection = ImmutablePayloadCollection.WithPayloads(this.payloadSet.uuidConflictPayloads)
-
-    const delta = new DeltaRemoteUuidConflicts(this.baseCollection, collection)
+  private processUuidConflictUnsavedPayloads(): DeltaEmit {
+    const delta = new DeltaRemoteUuidConflicts(this.baseCollection, this.getConflictsForType(ConflictType.UuidConflict))
 
     return delta.result()
   }
 
   private processRejectedPayloads(): DeltaEmit {
-    const collection = ImmutablePayloadCollection.WithPayloads(this.payloadSet.rejectedPayloads)
+    const conflicts = [
+      ...this.getConflictsForType(ConflictType.ContentTypeError),
+      ...this.getConflictsForType(ConflictType.ContentError),
+      ...this.getConflictsForType(ConflictType.ReadOnlyError),
+      ...this.getConflictsForType(ConflictType.UuidError),
+      ...this.getConflictsForType(ConflictType.SharedVaultSnjsVersionError),
+      ...this.getConflictsForType(ConflictType.SharedVaultInsufficientPermissionsError),
+      ...this.getConflictsForType(ConflictType.SharedVaultNotMemberError),
+      ...this.getConflictsForType(ConflictType.SharedVaultInvalidState),
+    ]
 
-    const delta = new DeltaRemoteRejected(this.baseCollection, collection)
-
-    return delta.result()
+    const delta = new DeltaRemoteRejected(this.baseCollection, conflicts)
+    const result = delta.result()
+    return result
   }
 }

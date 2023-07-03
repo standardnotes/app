@@ -42,27 +42,29 @@ Object.assign(window, SNLibrary);
 
 #### Prerequisites
 
-To run a stable server environment for E2E tests that is up to date with production, clone the [self-hosted repository](https://github.com/standardnotes/self-hosted). Make sure you have everything set up configuration wise as in self-hosting docs. In particular, make sure the env files are created and proper values for keys are set up.
+To run a stable server environment for E2E tests that is up to date with production, [setup a local self-hosted server](https://standardnotes.com/help/self-hosting/docker).
 
-Make sure you have the following value in the env vars mentioned below. It's important to have low token TTLs for the purpose of the suite. For the most up to date values it's best to check `self-hosted` github workflows. At the moment of writting the recommended values are:
+Make sure you have the following value in the env vars mentioned below. It's important to have low token TTLs for the purpose of the suite.
+
 ```
-# docker/auth.env
-...
-ACCESS_TOKEN_AGE=4
-REFRESH_TOKEN_AGE=10
-EPHEMERAL_SESSION_AGE=300
-
 # .env
 ...
-REVISIONS_FREQUENCY=5
+AUTH_SERVER_ACCESS_TOKEN_AGE=4
+AUTH_SERVER_REFRESH_TOKEN_AGE=10
+AUTH_SERVER_EPHEMERAL_SESSION_AGE=300
+SYNCING_SERVER_REVISIONS_FREQUENCY=5
 ```
 
-#### Start Server For Tests (SELF-HOSTED)
+Edit `docker-compose.yml` ports and change keypath services.server.ports[0] from port 3000 to 3123.
+
+If running server without docker and as individual node processes, and you need a valid subscription for a test (such as uploading files), you'll need to clone the [mock-event-publisher](https://github.com/standardnotes/mock-event-publisher) and run it locally on port 3124. In the Container.ts file, comment out any SNS_ENDPOINT related lines for running locally.
+
+#### Start Server For Tests
 
 In the `self-hosted` folder run:
 
 ```
-EXPOSED_PORT=3123 ./server.sh start && ./server.sh wait-for-startup
+docker compose pull && docker compose up
 ```
 
 Wait for the services to be up.

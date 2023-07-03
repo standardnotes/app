@@ -102,9 +102,9 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, quickSet
   const toggleComponent = useCallback(
     (component: SNComponent) => {
       if (component.isTheme()) {
-        application.mutator.toggleTheme(component).catch(console.error)
+        application.componentManager.toggleTheme(component.uuid).catch(console.error)
       } else {
-        application.mutator.toggleComponent(component).catch(console.error)
+        application.componentManager.toggleComponent(component.uuid).catch(console.error)
       }
     },
     [application],
@@ -113,7 +113,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, quickSet
   const deactivateAnyNonLayerableTheme = useCallback(() => {
     const activeTheme = themes.map((item) => item.component).find((theme) => theme?.active && !theme.isLayerable())
     if (activeTheme) {
-      application.mutator.toggleTheme(activeTheme).catch(console.error)
+      application.componentManager.toggleTheme(activeTheme.uuid).catch(console.error)
     }
   }, [application, themes])
 

@@ -1,3 +1,5 @@
+import { SodiumConstant } from '@standardnotes/sncrypto-common'
+
 export const V001Algorithm = Object.freeze({
   SaltSeedLength: 128,
   /**
@@ -41,11 +43,21 @@ export enum V004Algorithm {
   ArgonIterations = 5,
   ArgonMemLimit = 67108864,
   ArgonOutputKeyBytes = 64,
+
   EncryptionKeyLength = 256,
   EncryptionNonceLength = 192,
-}
 
-export enum V005Algorithm {
   AsymmetricEncryptionNonceLength = 192,
-  SymmetricEncryptionNonceLength = 192,
+
+  MasterKeyEncryptionKeyPairSubKeyNumber = 1,
+  MasterKeyEncryptionKeyPairSubKeyContext = 'sn-pkc-e',
+  MasterKeyEncryptionKeyPairSubKeyBytes = SodiumConstant.crypto_box_SEEDBYTES,
+
+  MasterKeySigningKeyPairSubKeyNumber = 2,
+  MasterKeySigningKeyPairSubKeyContext = 'sn-pkc-s',
+  MasterKeySigningKeyPairSubKeyBytes = SodiumConstant.crypto_sign_SEEDBYTES,
+
+  PayloadKeyHashingKeySubKeyNumber = 1,
+  PayloadKeyHashingKeySubKeyContext = 'sn-sym-h',
+  PayloadKeyHashingKeySubKeyBytes = SodiumConstant.crypto_generichash_KEYBYTES,
 }

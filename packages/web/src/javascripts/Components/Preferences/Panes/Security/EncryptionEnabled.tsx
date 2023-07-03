@@ -1,6 +1,6 @@
 import { useApplication } from '@/Components/ApplicationProvider'
 import Icon from '@/Components/Icon/Icon'
-import { ContentType, ItemCounter } from '@standardnotes/snjs'
+import { ContentType, StaticItemCounter } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'react'
 import EncryptionStatusItem from './EncryptionStatusItem'
@@ -8,7 +8,7 @@ import { formatCount } from './formatCount'
 
 const EncryptionEnabled: FunctionComponent = () => {
   const application = useApplication()
-  const itemCounter = new ItemCounter()
+  const itemCounter = new StaticItemCounter()
   const count = itemCounter.countNotesAndTags(application.items.getItems([ContentType.Note, ContentType.Tag]))
   const files = application.items.getItems([ContentType.File])
   const notes = formatCount(count.notes, 'notes')

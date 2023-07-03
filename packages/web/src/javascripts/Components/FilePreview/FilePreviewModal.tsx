@@ -95,14 +95,14 @@ const FilePreviewModal = observer(({ application, viewControllerManager }: Props
     if (renameInputRef.current) {
       const newName = renameInputRef.current.value
       if (newName && newName !== currentFile.name) {
-        await application.items.renameFile(currentFile, newName)
+        await application.mutator.renameFile(currentFile, newName)
         setIsRenaming(false)
         setCurrentFile(application.items.findSureItem(currentFile.uuid))
         return
       }
       setIsRenaming(false)
     }
-  }, [application.items, currentFile, setCurrentFile])
+  }, [application.items, application.mutator, currentFile, setCurrentFile])
 
   const isMobileScreen = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
 
@@ -225,6 +225,7 @@ const FilePreviewModal = observer(({ application, viewControllerManager }: Props
               align="start"
               className="py-2"
               overrideZIndex="z-modal"
+              portal={false}
             >
               <Menu a11yLabel="File context menu" isOpen={showOptionsMenu}>
                 <FileMenuOptions

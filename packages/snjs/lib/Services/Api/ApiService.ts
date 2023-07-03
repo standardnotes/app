@@ -8,7 +8,6 @@ import {
   ItemsServerInterface,
   StorageKey,
   ApiServiceEvent,
-  DiagnosticInfo,
   KeyValueStoreInterface,
   API_MESSAGE_GENERIC_SYNC_FAIL,
   API_MESSAGE_GENERIC_TOKEN_REFRESH_FAIL,
@@ -30,8 +29,8 @@ import {
   API_MESSAGE_TOKEN_REFRESH_IN_PROGRESS,
   ApiServiceEventData,
 } from '@standardnotes/services'
-import { FilesApiInterface } from '@standardnotes/files'
-import { ServerSyncPushContextualPayload, SNFeatureRepo, FileContent } from '@standardnotes/models'
+import { DownloadFileParams, FileOwnershipType, FilesApiInterface } from '@standardnotes/files'
+import { ServerSyncPushContextualPayload, SNFeatureRepo } from '@standardnotes/models'
 import {
   User,
   HttpStatusCode,
@@ -72,6 +71,8 @@ import {
   HttpErrorResponse,
   HttpSuccessResponse,
   isErrorResponse,
+  ValetTokenOperation,
+  MoveFileResponse,
 } from '@standardnotes/responses'
 import { LegacySession, MapperInterface, Session, SessionToken } from '@standardnotes/domain-core'
 import { HttpServiceInterface } from '@standardnotes/api'
@@ -103,7 +104,6 @@ export class SNApiService
 {
   private session: Session | LegacySession | null
   public user?: User
-  private registering = false
   private authenticating = false
   private changing = false
   private refreshingSession = false
@@ -210,7 +210,7 @@ export class SNApiService
   }
 
   private errorResponseWithFallbackMessage(response: HttpErrorResponse, message: string): HttpErrorResponse {
-    if (!response.data.error.message) {
+    if (response.data.error && !response.data.error.message) {
       response.data.error.message = message
     }
 
@@ -369,9 +369,10 @@ export class SNApiService
 
   async sync(
     payloads: ServerSyncPushContextualPayload[],
-    lastSyncToken: string,
-    paginationToken: string,
+    lastSyncToken: string | undefined,
+    paginationToken: string | undefined,
     limit: number,
+    sharedVaultUuids?: string[],
   ): Promise<HttpResponse<RawSyncResponse>> {
     const preprocessingError = this.preprocessingError()
     if (preprocessingError) {
@@ -383,6 +384,7 @@ export class SNApiService
       [ApiEndpointParam.LastSyncToken]: lastSyncToken,
       [ApiEndpointParam.PaginationToken]: paginationToken,
       [ApiEndpointParam.SyncDlLimit]: limit,
+      [ApiEndpointParam.SharedVaultUuids]: sharedVaultUuids,
     })
     const response = await this.httpService.post<RawSyncResponse>(path, params, this.getSessionAccessToken())
 
@@ -686,12 +688,12 @@ export class SNApiService
     })
   }
 
-  public async createFileValetToken(
+  public async createUserFileValetToken(
     remoteIdentifier: string,
-    operation: 'write' | 'read' | 'delete',
+    operation: ValetTokenOperation,
     unencryptedFileSize?: number,
   ): Promise<string | ClientDisplayableError> {
-    const url = joinPaths(this.host, Paths.v1.createFileValetToken)
+    const url = joinPaths(this.host, Paths.v1.createUserFileValetToken)
 
     const params: CreateValetTokenPayload = {
       operation,
@@ -717,40 +719,60 @@ export class SNApiService
     return response.data?.valetToken
   }
 
-  public async startUploadSession(apiToken: string): Promise<HttpResponse<StartUploadSessionResponse>> {
-    const url = joinPaths(this.getFilesHost(), Paths.v1.startUploadSession)
+  public async startUploadSession(
+    valetToken: string,
+    ownershipType: FileOwnershipType,
+  ): Promise<HttpResponse<StartUploadSessionResponse>> {
+    const url = joinPaths(
+      this.getFilesHost(),
+      ownershipType === 'user' ? Paths.v1.startUploadSession : Paths.v1.startSharedVaultUploadSession,
+    )
 
     return this.tokenRefreshableRequest({
       verb: HttpVerb.Post,
       url,
-      customHeaders: [{ key: 'x-valet-token', value: apiToken }],
+      customHeaders: [{ key: 'x-valet-token', value: valetToken }],
       fallbackErrorMessage: Strings.Network.Files.FailedStartUploadSession,
     })
   }
 
-  public async deleteFile(apiToken: string): Promise<HttpResponse<StartUploadSessionResponse>> {
-    const url = joinPaths(this.getFilesHost(), Paths.v1.deleteFile)
+  public async deleteFile(
+    valetToken: string,
+    ownershipType: FileOwnershipType,
+  ): Promise<HttpResponse<StartUploadSessionResponse>> {
+    const url = joinPaths(
+      this.getFilesHost(),
+      ownershipType === 'user' ? Paths.v1.deleteFile : Paths.v1.deleteSharedVaultFile,
+    )
 
     return this.tokenRefreshableRequest({
       verb: HttpVerb.Delete,
       url,
-      customHeaders: [{ key: 'x-valet-token', value: apiToken }],
+      customHeaders: [{ key: 'x-valet-token', value: valetToken }],
       fallbackErrorMessage: Strings.Network.Files.FailedDeleteFile,
     })
   }
 
-  public async uploadFileBytes(apiToken: string, chunkId: number, encryptedBytes: Uint8Array): Promise<boolean> {
+  public async uploadFileBytes(
+    valetToken: string,
+    ownershipType: FileOwnershipType,
+    chunkId: number,
+    encryptedBytes: Uint8Array,
+  ): Promise<boolean> {
     if (chunkId === 0) {
       throw Error('chunkId must start with 1')
     }
-    const url = joinPaths(this.getFilesHost(), Paths.v1.uploadFileChunk)
+    const url = joinPaths(
+      this.getFilesHost(),
+      ownershipType === 'user' ? Paths.v1.uploadFileChunk : Paths.v1.uploadSharedVaultFileChunk,
+    )
 
     const response = await this.tokenRefreshableRequest<UploadFileChunkResponse>({
       verb: HttpVerb.Post,
       url,
       rawBytes: encryptedBytes,
       customHeaders: [
-        { key: 'x-valet-token', value: apiToken },
+        { key: 'x-valet-token', value: valetToken },
         { key: 'x-chunk-id', value: chunkId.toString() },
         { key: 'Content-Type', value: 'application/octet-stream' },
       ],
@@ -764,13 +786,16 @@ export class SNApiService
     return response.data.success
   }
 
-  public async closeUploadSession(apiToken: string): Promise<boolean> {
-    const url = joinPaths(this.getFilesHost(), Paths.v1.closeUploadSession)
+  public async closeUploadSession(valetToken: string, ownershipType: FileOwnershipType): Promise<boolean> {
+    const url = joinPaths(
+      this.getFilesHost(),
+      ownershipType === 'user' ? Paths.v1.closeUploadSession : Paths.v1.closeSharedVaultUploadSession,
+    )
 
     const response = await this.tokenRefreshableRequest<CloseUploadSessionResponse>({
       verb: HttpVerb.Post,
       url,
-      customHeaders: [{ key: 'x-valet-token', value: apiToken }],
+      customHeaders: [{ key: 'x-valet-token', value: valetToken }],
       fallbackErrorMessage: Strings.Network.Files.FailedCloseUploadSession,
     })
 
@@ -781,33 +806,61 @@ export class SNApiService
     return response.data.success
   }
 
-  public getFilesDownloadUrl(): string {
-    return joinPaths(this.getFilesHost(), Paths.v1.downloadFileChunk)
+  public async moveFile(valetToken: string): Promise<boolean> {
+    const url = joinPaths(this.getFilesHost(), Paths.v1.moveFile)
+
+    const response = await this.tokenRefreshableRequest<MoveFileResponse>({
+      verb: HttpVerb.Post,
+      url,
+      customHeaders: [{ key: 'x-valet-token', value: valetToken }],
+      fallbackErrorMessage: Strings.Network.Files.FailedCloseUploadSession,
+    })
+
+    if (isErrorResponse(response)) {
+      return false
+    }
+
+    return response.data.success
   }
 
-  public async downloadFile(
-    file: { encryptedChunkSizes: FileContent['encryptedChunkSizes'] },
-    chunkIndex = 0,
-    apiToken: string,
-    contentRangeStart: number,
-    onBytesReceived: (bytes: Uint8Array) => Promise<void>,
-  ): Promise<ClientDisplayableError | undefined> {
-    const url = this.getFilesDownloadUrl()
+  public getFilesDownloadUrl(ownershipType: FileOwnershipType): string {
+    if (ownershipType === 'user') {
+      return joinPaths(this.getFilesHost(), Paths.v1.downloadFileChunk)
+    } else if (ownershipType === 'shared-vault') {
+      return joinPaths(this.getFilesHost(), Paths.v1.downloadSharedVaultFileChunk)
+    } else {
+      throw Error('Invalid download type')
+    }
+  }
+
+  public async downloadFile({
+    file,
+    chunkIndex,
+    valetToken,
+    ownershipType,
+    contentRangeStart,
+    onBytesReceived,
+  }: DownloadFileParams): Promise<ClientDisplayableError | undefined> {
+    const url = this.getFilesDownloadUrl(ownershipType)
     const pullChunkSize = file.encryptedChunkSizes[chunkIndex]
 
-    const response = await this.tokenRefreshableRequest<DownloadFileChunkResponse>({
+    const request: HttpRequest = {
       verb: HttpVerb.Get,
       url,
       customHeaders: [
-        { key: 'x-valet-token', value: apiToken },
+        { key: 'x-valet-token', value: valetToken },
         {
           key: 'x-chunk-size',
           value: pullChunkSize.toString(),
         },
         { key: 'range', value: `bytes=${contentRangeStart}-` },
       ],
-      fallbackErrorMessage: Strings.Network.Files.FailedDownloadFileChunk,
       responseType: 'arraybuffer',
+    }
+
+    const response = await this.tokenRefreshableRequest<DownloadFileChunkResponse>({
+      ...request,
+      fallbackErrorMessage: Strings.Network.Files.FailedDownloadFileChunk,
     })
 
     if (isErrorResponse(response)) {
@@ -833,7 +886,14 @@ export class SNApiService
     await onBytesReceived(bytesReceived)
 
     if (rangeEnd < totalSize - 1) {
-      return this.downloadFile(file, ++chunkIndex, apiToken, rangeStart + pullChunkSize, onBytesReceived)
+      return this.downloadFile({
+        file,
+        chunkIndex: ++chunkIndex,
+        valetToken,
+        ownershipType,
+        contentRangeStart: rangeStart + pullChunkSize,
+        onBytesReceived,
+      })
     }
 
     return undefined
@@ -888,20 +948,5 @@ export class SNApiService
     }
 
     return this.session.accessToken
-  }
-
-  override getDiagnostics(): Promise<DiagnosticInfo | undefined> {
-    return Promise.resolve({
-      api: {
-        hasSession: this.session != undefined,
-        user: this.user,
-        registering: this.registering,
-        authenticating: this.authenticating,
-        changing: this.changing,
-        refreshingSession: this.refreshingSession,
-        filesHost: this.filesHost,
-        host: this.host,
-      },
-    })
   }
 }

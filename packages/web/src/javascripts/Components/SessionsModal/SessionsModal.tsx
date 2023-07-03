@@ -1,6 +1,6 @@
 import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { SNApplication, SessionStrings, UuidString, SessionListEntry, isErrorResponse } from '@standardnotes/snjs'
-import { FunctionComponent, useState, useEffect, useRef, useMemo, useCallback } from 'react'
+import { FunctionComponent, useState, useEffect, useRef, useMemo } from 'react'
 import { WebApplication } from '@/Application/WebApplication'
 import { observer } from 'mobx-react-lite'
 import Spinner from '@/Components/Spinner/Spinner'
@@ -80,8 +80,6 @@ const SessionsModalContent: FunctionComponent<{
   viewControllerManager: ViewControllerManager
   application: SNApplication
 }> = ({ viewControllerManager, application }) => {
-  const close = useCallback(() => viewControllerManager.closeSessionsModal(), [viewControllerManager])
-
   const [sessions, refresh, refreshing, revokeSession, errorMessage] = useSessions(application)
 
   const [confirmRevokingSessionUuid, setRevokingSessionUuid] = useState('')
@@ -109,7 +107,7 @@ const SessionsModalContent: FunctionComponent<{
     (): ModalAction[] => [
       {
         label: 'Close',
-        onClick: close,
+        onClick: viewControllerManager.closeSessionsModal,
         type: 'cancel',
         mobileSlot: 'left',
       },
@@ -120,14 +118,14 @@ const SessionsModalContent: FunctionComponent<{
         mobileSlot: 'right',
       },
     ],
-    [close, refresh],
+    [refresh, viewControllerManager.closeSessionsModal],
   )
 
   return (
     <>
       <Modal
         title="Active Sessions"
-        close={close}
+        close={viewControllerManager.closeSessionsModal}
         actions={sessionModalActions}
         className={{
           content: 'sessions-modal',

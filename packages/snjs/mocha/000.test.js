@@ -22,7 +22,7 @@ describe('000 legacy protocol operations', () => {
 
     let error
     try {
-      protocol004.generateDecryptedParametersSync({
+      protocol004.generateDecryptedParameters({
         uuid: 'foo',
         content: string,
         content_type: 'foo',

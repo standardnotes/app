@@ -1,6 +1,7 @@
-import { IconType, FileItem, SNNote, DecryptedItem, SNTag, WebApplicationInterface } from '@standardnotes/snjs'
+import { IconType, FileItem, SNNote, DecryptedItem, SNTag } from '@standardnotes/snjs'
 import { getIconAndTintForNoteType } from './getIconAndTintForNoteType'
 import { getIconForFileType } from './getIconForFileType'
+import { WebApplicationInterface } from '@standardnotes/ui-services'
 
 export function getIconForItem(item: DecryptedItem, application: WebApplicationInterface): [IconType, string] {
   if (item instanceof SNNote) {

@@ -1,10 +1,14 @@
 import { ContentType } from '@standardnotes/common'
 import { FillItemContent } from '../../Abstract/Content/ItemContent'
-import { DecryptedPayload, PayloadTimestampDefaults } from '../../Abstract/Payload'
+import { DecryptedPayload, FullyFormedPayloadInterface, PayloadTimestampDefaults } from '../../Abstract/Payload'
 import { NoteContent } from '../../Syncable/Note'
 import { PayloadCollection } from '../Collection/Payload/PayloadCollection'
 import { DeltaRemoteRejected } from './RemoteRejected'
 import { ImmutablePayloadCollection } from '../Collection/Payload/ImmutablePayloadCollection'
+import { ConflictParams, ConflictType } from '@standardnotes/responses'
+import { UuidGenerator } from '@standardnotes/utils'
+
+UuidGenerator.SetGenerator(() => String(Math.random()))
 
 describe('remote rejected delta', () => {
   it('rejected payloads should not map onto app state', async () => {
@@ -30,10 +34,12 @@ describe('remote rejected delta', () => {
       dirty: true,
     })
 
-    const delta = new DeltaRemoteRejected(
-      ImmutablePayloadCollection.FromCollection(baseCollection),
-      ImmutablePayloadCollection.WithPayloads([rejectedPayload]),
-    )
+    const entry: ConflictParams<FullyFormedPayloadInterface> = {
+      type: ConflictType.ContentTypeError,
+      unsaved_item: rejectedPayload,
+    } as unknown as ConflictParams<FullyFormedPayloadInterface>
+
+    const delta = new DeltaRemoteRejected(ImmutablePayloadCollection.FromCollection(baseCollection), [entry])
 
     const result = delta.result()
     const payload = result.emits[0] as DecryptedPayload<NoteContent>

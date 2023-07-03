@@ -1,6 +1,6 @@
 import { LoggingDomain, log } from '@/Logging'
 import { loadPurchaseFlowUrl } from '@/Components/PurchaseFlow/PurchaseFlowFunctions'
-import { InternalEventBus, AppleIAPProductId } from '@standardnotes/snjs'
+import { AppleIAPProductId, InternalEventBusInterface } from '@standardnotes/snjs'
 import { action, makeObservable, observable } from 'mobx'
 import { WebApplication } from '../../Application/WebApplication'
 import { AbstractViewController } from '../Abstract/AbstractViewController'
@@ -10,7 +10,7 @@ export class PurchaseFlowController extends AbstractViewController {
   isOpen = false
   currentPane = PurchaseFlowPane.CreateAccount
 
-  constructor(application: WebApplication, eventBus: InternalEventBus) {
+  constructor(application: WebApplication, eventBus: InternalEventBusInterface) {
     super(application, eventBus)
 
     makeObservable(this, {
