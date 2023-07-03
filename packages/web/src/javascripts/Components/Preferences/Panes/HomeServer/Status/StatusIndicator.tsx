@@ -16,6 +16,7 @@ type Props = {
 const StatusIndicator = ({ status, className, homeServerService }: Props) => {
   const application = useApplication()
   const [signInStatusMessage, setSignInStatusMessage] = useState<string>('')
+  const [signInStatusIcon, setSignInStatusIcon] = useState<string>('')
   const [signInStatusClassName, setSignInStatusClassName] = useState<string>('')
 
   let statusClassName: string
@@ -44,6 +45,7 @@ const StatusIndicator = ({ status, className, homeServerService }: Props) => {
         if (isUsingHomeServer) {
           setSignInStatusMessage(`You are currently signed into your home server under ${signedInUser.email}`)
           setSignInStatusClassName('bg-success')
+          setSignInStatusIcon('check')
         } else {
           setSignInStatusMessage(
             `You are not currently signed into your home server. To use your home server, sign out of ${
@@ -51,12 +53,14 @@ const StatusIndicator = ({ status, className, homeServerService }: Props) => {
             }, then sign in or register using ${await homeServerService.getHomeServerUrl()}.`,
           )
           setSignInStatusClassName('bg-warning')
+          setSignInStatusIcon('warning')
         }
       } else {
         setSignInStatusMessage(
           `You are not currently signed into your home server. To use your home server, sign in or register using ${await homeServerService.getHomeServerUrl()}`,
         )
         setSignInStatusClassName('bg-warning')
+        setSignInStatusIcon('warning')
       }
     }
 
@@ -93,7 +97,9 @@ const StatusIndicator = ({ status, className, homeServerService }: Props) => {
                 className,
               )}
               aria-describedby={ElementIds.NoteStatusTooltip}
-            ></div>
+            >
+              <Icon type={signInStatusIcon} size="small" />
+            </div>
           </div>
           <div>
             <div className={'mr-3'}>{signInStatusMessage}</div>
