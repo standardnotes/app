@@ -172,6 +172,11 @@ export default class WebDeviceInterface {
     localStorage.removeItem(KEYCHAIN_STORAGE_KEY)
   }
 
+  async removeRawStorageValuesForIdentifier(identifier) {
+    await this.removeRawStorageValue(namespacedKey(identifier, RawStorageKey.SnjsVersion))
+    await this.removeRawStorageValue(namespacedKey(identifier, RawStorageKey.StorageObject))
+  }
+
   performSoftReset() {}
 
   performHardReset() {}

@@ -89,7 +89,10 @@ describe('storage manager', function () {
     const key = 'foo'
     const value = 'bar'
     await this.application.diskStorageService.setValueAndAwaitPersist(key, value)
-    expect(Object.keys(localStorage).length).to.equal(0)
+
+    const expectedKeys = ['keychain']
+    expect(Object.keys(localStorage).length).to.equal(expectedKeys.length)
+
     const retrievedValue = await this.application.diskStorageService.getValue(key)
     expect(retrievedValue).to.equal(value)
   })
