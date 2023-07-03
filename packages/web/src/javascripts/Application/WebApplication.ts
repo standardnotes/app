@@ -52,6 +52,7 @@ import { ItemGroupController } from '@/Components/NoteView/Controller/ItemGroupC
 import { VisibilityObserver } from './VisibilityObserver'
 import { MomentsService } from '@/Controllers/Moments/MomentsService'
 import { purchaseMockSubscription } from '@/Utils/Dev/PurchaseMockSubscription'
+import { DevModeHook } from './DevMode'
 
 export type WebEventObserver = (event: WebAppEvent, data?: unknown) => void
 
@@ -90,6 +91,10 @@ export class WebApplication extends SNApplication implements WebApplicationInter
       u2fAuthenticatorRegistrationPromptFunction: startRegistration,
       u2fAuthenticatorVerificationPromptFunction: startAuthentication,
     })
+
+    if (isDev) {
+      new DevModeHook().load(this)
+    }
 
     makeObservable(this, {
       dealloced: observable,

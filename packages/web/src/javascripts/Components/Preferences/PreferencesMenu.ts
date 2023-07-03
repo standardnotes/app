@@ -45,17 +45,17 @@ const READY_PREFERENCES_MENU_ITEMS: PreferencesMenuItem[] = [
   { id: 'help-feedback', label: 'Help & feedback', icon: 'help' },
 ]
 
-if (featureTrunkVaultsEnabled()) {
-  PREFERENCES_MENU_ITEMS.splice(3, 0, { id: 'vaults', label: 'Vaults', icon: 'safe-square' })
-  READY_PREFERENCES_MENU_ITEMS.splice(3, 0, { id: 'vaults', label: 'Vaults', icon: 'safe-square' })
-}
-
 export class PreferencesMenu {
   private _selectedPane: PreferenceId = 'account'
   private _menu: PreferencesMenuItem[]
   private _extensionLatestVersions: PackageProvider = new PackageProvider(new Map())
 
   constructor(private application: WebApplication, private readonly _enableUnfinishedFeatures: boolean) {
+    if (featureTrunkVaultsEnabled()) {
+      PREFERENCES_MENU_ITEMS.splice(3, 0, { id: 'vaults', label: 'Vaults', icon: 'safe-square' })
+      READY_PREFERENCES_MENU_ITEMS.splice(3, 0, { id: 'vaults', label: 'Vaults', icon: 'safe-square' })
+    }
+
     this._menu = this._enableUnfinishedFeatures ? PREFERENCES_MENU_ITEMS : READY_PREFERENCES_MENU_ITEMS
 
     this.loadLatestVersions()
