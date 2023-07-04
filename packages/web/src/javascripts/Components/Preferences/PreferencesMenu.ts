@@ -72,8 +72,6 @@ export class PreferencesMenu {
 
     this._menu = menuItems.sort((a, b) => a.order - b.order)
 
-    this._menu = this._enableUnfinishedFeatures ? PREFERENCES_MENU_ITEMS : READY_PREFERENCES_MENU_ITEMS
-
     this.loadLatestVersions()
 
     makeAutoObservable<
