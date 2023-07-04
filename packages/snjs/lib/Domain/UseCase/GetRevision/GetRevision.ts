@@ -15,7 +15,7 @@ import { EncryptionProviderInterface } from '@standardnotes/encryption'
 import { GetRevisionDTO } from './GetRevisionDTO'
 
 export class GetRevision implements UseCaseInterface<HistoryEntry> {
-  constructor(private revisionManager: RevisionClientInterface, private protocolService: EncryptionProviderInterface) {}
+  constructor(private revisionManager: RevisionClientInterface, private encryptionService: EncryptionProviderInterface) {}
 
   async execute(dto: GetRevisionDTO): Promise<Result<HistoryEntry>> {
     const itemUuidOrError = Uuid.create(dto.itemUuid)
@@ -63,7 +63,7 @@ export class GetRevision implements UseCaseInterface<HistoryEntry> {
      * these olders revisions (which have not been mutated after copy) with the source item's
      * uuid.
      */
-    const embeddedParams = this.protocolService.getEmbeddedPayloadAuthenticatedData(serverPayload)
+    const embeddedParams = this.encryptionService.getEmbeddedPayloadAuthenticatedData(serverPayload)
     const sourceItemUuid = embeddedParams?.u as string | undefined
 
     const payload = serverPayload.copy({
@@ -76,7 +76,7 @@ export class GetRevision implements UseCaseInterface<HistoryEntry> {
 
     const encryptedPayload = new EncryptedPayload(payload)
 
-    const decryptedPayload = await this.protocolService.decryptSplitSingle<NoteContent>({
+    const decryptedPayload = await this.encryptionService.decryptSplitSingle<NoteContent>({
       usesItemsKeyWithKeyLookup: { items: [encryptedPayload] },
     })
 

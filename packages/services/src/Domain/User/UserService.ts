@@ -49,7 +49,7 @@ export class UserService
     private syncService: SyncServiceInterface,
     private storageService: StorageServiceInterface,
     private itemManager: ItemManagerInterface,
-    private protocolService: EncryptionProviderInterface,
+    private encryptionService: EncryptionProviderInterface,
     private alertService: AlertService,
     private challengeService: ChallengeServiceInterface,
     private protectionService: ProtectionsClientInterface,
@@ -84,14 +84,14 @@ export class UserService
         })
         .then(() => {
           if (!payload.awaitSync) {
-            void this.protocolService.decryptErroredPayloads()
+            void this.encryptionService.decryptErroredPayloads()
           }
         })
 
       if (payload.awaitSync) {
         await syncPromise
 
-        await this.protocolService.decryptErroredPayloads()
+        await this.encryptionService.decryptErroredPayloads()
       }
     }
   }
@@ -102,7 +102,7 @@ export class UserService
     ;(this.syncService as unknown) = undefined
     ;(this.storageService as unknown) = undefined
     ;(this.itemManager as unknown) = undefined
-    ;(this.protocolService as unknown) = undefined
+    ;(this.encryptionService as unknown) = undefined
     ;(this.alertService as unknown) = undefined
     ;(this.challengeService as unknown) = undefined
     ;(this.protectionService as unknown) = undefined
@@ -123,7 +123,7 @@ export class UserService
     ephemeral = false,
     mergeLocal = true,
   ): Promise<UserRegistrationResponseBody> {
-    if (this.protocolService.hasAccount()) {
+    if (this.encryptionService.hasAccount()) {
       throw Error('Tried to register when an account already exists.')
     }
 
@@ -169,7 +169,7 @@ export class UserService
     mergeLocal = true,
     awaitSync = false,
   ): Promise<HttpResponse<SignInResponse>> {
-    if (this.protocolService.hasAccount()) {
+    if (this.encryptionService.hasAccount()) {
       throw Error('Tried to sign in when an account already exists.')
     }
 
@@ -313,7 +313,7 @@ export class UserService
   public async signOut(force = false, source = DeinitSource.SignOut): Promise<void> {
     const performSignOut = async () => {
       await this.sessionManager.signOut()
-      await this.protocolService.deleteWorkspaceSpecificKeyStateFromDevice()
+      await this.encryptionService.deleteWorkspaceSpecificKeyStateFromDevice()
       await this.storageService.clearAllData()
       await this.notifyEvent(AccountEvent.SignedOut, { payload: { source } })
     }
@@ -359,8 +359,8 @@ export class UserService
     canceled?: true
     error?: { message: string }
   }> {
-    const hasPasscode = this.protocolService.hasPasscode()
-    const hasAccount = this.protocolService.hasAccount()
+    const hasPasscode = this.encryptionService.hasPasscode()
+    const hasAccount = this.encryptionService.hasAccount()
     const prompts = []
     if (hasPasscode) {
       prompts.push(
@@ -504,14 +504,14 @@ export class UserService
 
   private async setPasscodeWithoutWarning(passcode: string, origination: KeyParamsOrigination) {
     const identifier = UuidGenerator.GenerateUuid()
-    const key = await this.protocolService.createRootKey(identifier, passcode, origination)
-    await this.protocolService.setNewRootKeyWrapper(key)
+    const key = await this.encryptionService.createRootKey(identifier, passcode, origination)
+    await this.encryptionService.setNewRootKeyWrapper(key)
     await this.rewriteItemsKeys()
     await this.syncService.sync()
   }
 
   private async removePasscodeWithoutWarning() {
-    await this.protocolService.removePasscode()
+    await this.encryptionService.removePasscode()
     await this.rewriteItemsKeys()
   }
 
@@ -564,7 +564,7 @@ export class UserService
       }
     }
 
-    const accountPasswordValidation = await this.protocolService.validateAccountPassword(parameters.currentPassword)
+    const accountPasswordValidation = await this.encryptionService.validateAccountPassword(parameters.currentPassword)
     if (!accountPasswordValidation.valid) {
       return {
         error: Error(Messages.INVALID_PASSWORD),
@@ -597,11 +597,11 @@ export class UserService
       return { error: Error(response.data.error?.message) }
     }
 
-    const rollback = await this.protocolService.createNewItemsKeyWithRollback()
-    await this.protocolService.reencryptApplicableItemsAfterUserRootKeyChange()
+    const rollback = await this.encryptionService.createNewItemsKeyWithRollback()
+    await this.encryptionService.reencryptApplicableItemsAfterUserRootKeyChange()
     await this.syncService.sync({ awaitAll: true })
 
-    const defaultItemsKey = this.protocolService.getSureDefaultItemsKey()
+    const defaultItemsKey = this.encryptionService.getSureDefaultItemsKey()
     const itemsKeyWasSynced = !defaultItemsKey.neverSynced
 
     if (!itemsKeyWasSynced) {
@@ -610,7 +610,7 @@ export class UserService
         newRootKey: currentRootKey,
         wrappingKey,
       })
-      await this.protocolService.reencryptApplicableItemsAfterUserRootKeyChange()
+      await this.encryptionService.reencryptApplicableItemsAfterUserRootKeyChange()
       await rollback()
       await this.syncService.sync({ awaitAll: true })
 
@@ -627,11 +627,11 @@ export class UserService
     newEmail?: string
     newPassword?: string
   }): Promise<{ currentRootKey: SNRootKey; newRootKey: SNRootKey }> {
-    const currentRootKey = await this.protocolService.computeRootKey(
+    const currentRootKey = await this.encryptionService.computeRootKey(
       parameters.currentPassword,
-      (await this.protocolService.getRootKeyParams()) as SNRootKeyParams,
+      (await this.encryptionService.getRootKeyParams()) as SNRootKeyParams,
     )
-    const newRootKey = await this.protocolService.createRootKey(
+    const newRootKey = await this.encryptionService.createRootKey(
       parameters.newEmail ?? parameters.currentEmail,
       parameters.newPassword ?? parameters.currentPassword,
       parameters.origination,

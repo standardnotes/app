@@ -27,10 +27,10 @@ describe('backups', function () {
 
   it('backup file should have a version number', async function () {
     let data = await this.application.createDecryptedBackupFile()
-    expect(data.version).to.equal(this.application.protocolService.getLatestVersion())
+    expect(data.version).to.equal(this.application.encryptionService.getLatestVersion())
     await this.application.addPasscode('passcode')
     data = await this.application.createEncryptedBackupFileForAutomatedDesktopBackups()
-    expect(data.version).to.equal(this.application.protocolService.getLatestVersion())
+    expect(data.version).to.equal(this.application.encryptionService.getLatestVersion())
   })
 
   it('no passcode + no account backup file should have correct number of items', async function () {
@@ -143,7 +143,7 @@ describe('backups', function () {
 
     const note = await Factory.createSyncedNote(this.application)
 
-    const encrypted = await this.application.protocolService.encryptSplitSingle({
+    const encrypted = await this.application.encryptionService.encryptSplitSingle({
       usesItemsKeyWithKeyLookup: {
         items: [note.payload],
       },

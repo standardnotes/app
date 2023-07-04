@@ -277,7 +277,7 @@ describe('online syncing', function () {
     await this.application.syncService.sync(syncOptions)
 
     const encrypted = CreateEncryptedServerSyncPushPayload(
-      await this.application.protocolService.encryptSplitSingle({
+      await this.application.encryptionService.encryptSplitSingle({
         usesItemsKeyWithKeyLookup: {
           items: [note.payloadRepresentation()],
         },
@@ -295,7 +295,7 @@ describe('online syncing', function () {
 
     expect(typeof mappedItem.content).to.equal('string')
 
-    const decryptedPayload = await this.application.protocolService.decryptSplitSingle({
+    const decryptedPayload = await this.application.encryptionService.decryptSplitSingle({
       usesItemsKeyWithKeyLookup: {
         items: [errorred],
       },
@@ -515,7 +515,7 @@ describe('online syncing', function () {
 
     const keyedSplit = CreateDecryptionSplitWithKeyLookup(encryptionSplit)
 
-    const decryptionResults = await this.application.protocolService.decryptSplit(keyedSplit)
+    const decryptionResults = await this.application.encryptionService.decryptSplit(keyedSplit)
 
     await this.application.mutator.emitItemsFromPayloads(decryptionResults, PayloadEmitSource.LocalChanged)
 
@@ -918,7 +918,7 @@ describe('online syncing', function () {
     const lastSyncBegan = note.lastSyncBegan
     const lastSyncEnd = note.lastSyncEnd
 
-    const encrypted = await this.application.protocolService.encryptSplitSingle({
+    const encrypted = await this.application.encryptionService.encryptSplitSingle({
       usesItemsKeyWithKeyLookup: {
         items: [note.payload],
       },

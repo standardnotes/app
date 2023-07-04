@@ -76,7 +76,7 @@ export class SNProtectionService extends AbstractService<ProtectionEvent> implem
   private mobileBiometricsTiming: MobileUnlockTiming | undefined = MobileUnlockTiming.OnQuit
 
   constructor(
-    private protocolService: EncryptionService,
+    private encryptionService: EncryptionService,
     private mutator: MutatorClientInterface,
     private challengeService: ChallengeService,
     private storageService: DiskStorageService,
@@ -87,7 +87,7 @@ export class SNProtectionService extends AbstractService<ProtectionEvent> implem
 
   public override deinit(): void {
     clearTimeout(this.sessionExpiryTimeout)
-    ;(this.protocolService as unknown) = undefined
+    ;(this.encryptionService as unknown) = undefined
     ;(this.challengeService as unknown) = undefined
     ;(this.storageService as unknown) = undefined
     super.deinit()
@@ -103,7 +103,7 @@ export class SNProtectionService extends AbstractService<ProtectionEvent> implem
   }
 
   public hasProtectionSources(): boolean {
-    return this.protocolService.hasAccount() || this.protocolService.hasPasscode() || this.hasBiometricsEnabled()
+    return this.encryptionService.hasAccount() || this.encryptionService.hasPasscode() || this.hasBiometricsEnabled()
   }
 
   public hasUnprotectedAccessSession(): boolean {
@@ -148,7 +148,7 @@ export class SNProtectionService extends AbstractService<ProtectionEvent> implem
     if (this.hasBiometricsEnabled()) {
       prompts.push(new ChallengePrompt(ChallengeValidation.Biometric))
     }
-    if (this.protocolService.hasPasscode()) {
+    if (this.encryptionService.hasPasscode()) {
       prompts.push(new ChallengePrompt(ChallengeValidation.LocalPasscode))
     }
     if (prompts.length > 0) {
@@ -354,19 +354,19 @@ export class SNProtectionService extends AbstractService<ProtectionEvent> implem
       prompts.push(new ChallengePrompt(ChallengeValidation.Biometric))
     }
 
-    if (this.protocolService.hasPasscode()) {
+    if (this.encryptionService.hasPasscode()) {
       prompts.push(new ChallengePrompt(ChallengeValidation.LocalPasscode))
     }
 
     if (requireAccountPassword) {
-      if (!this.protocolService.hasAccount()) {
+      if (!this.encryptionService.hasAccount()) {
         throw Error('Requiring account password for challenge with no account')
       }
       prompts.push(new ChallengePrompt(ChallengeValidation.AccountPassword))
     }
 
     if (prompts.length === 0) {
-      if (fallBackToAccountPassword && this.protocolService.hasAccount()) {
+      if (fallBackToAccountPassword && this.encryptionService.hasAccount()) {
         prompts.push(new ChallengePrompt(ChallengeValidation.AccountPassword))
       } else {
         return true

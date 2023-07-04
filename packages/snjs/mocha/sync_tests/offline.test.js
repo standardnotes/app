@@ -90,7 +90,7 @@ describe('offline syncing', () => {
 
     const payload = rawPayloads2[0]
     expect(typeof payload.content).to.equal('string')
-    expect(payload.content.startsWith(this.application.protocolService.getLatestVersion())).to.equal(true)
+    expect(payload.content.startsWith(this.application.encryptionService.getLatestVersion())).to.equal(true)
   })
 
   it('signing out while offline should succeed', async function () {

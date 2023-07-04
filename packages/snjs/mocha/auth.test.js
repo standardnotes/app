@@ -31,7 +31,7 @@ describe('basic auth', function () {
   it('successfully register new account', async function () {
     const response = await this.application.register(this.email, this.password)
     expect(response).to.be.ok
-    expect(await this.application.protocolService.getRootKey()).to.be.ok
+    expect(await this.application.encryptionService.getRootKey()).to.be.ok
   })
 
   it('fails register new account with short password', async function () {
@@ -49,18 +49,18 @@ describe('basic auth', function () {
         'For your security, please choose a longer password or, ideally, a passphrase, and try again.',
     )
 
-    expect(await this.application.protocolService.getRootKey()).to.not.be.ok
+    expect(await this.application.encryptionService.getRootKey()).to.not.be.ok
   })
 
   it('successfully signs out of account', async function () {
     await this.application.register(this.email, this.password)
 
-    expect(await this.application.protocolService.getRootKey()).to.be.ok
+    expect(await this.application.encryptionService.getRootKey()).to.be.ok
 
     this.application = await Factory.signOutApplicationAndReturnNew(this.application)
 
-    expect(await this.application.protocolService.getRootKey()).to.not.be.ok
-    expect(this.application.protocolService.rootKeyManager.getKeyMode()).to.equal(KeyMode.RootKeyNone)
+    expect(await this.application.encryptionService.getRootKey()).to.not.be.ok
+    expect(this.application.encryptionService.rootKeyManager.getKeyMode()).to.equal(KeyMode.RootKeyNone)
   })
 
   it('successfully signs in to registered account', async function () {
@@ -69,7 +69,7 @@ describe('basic auth', function () {
     const response = await this.application.signIn(this.email, this.password, undefined, undefined, undefined, true)
     expect(response).to.be.ok
     expect(response.data.error).to.not.be.ok
-    expect(await this.application.protocolService.getRootKey()).to.be.ok
+    expect(await this.application.encryptionService.getRootKey()).to.be.ok
   }).timeout(20000)
 
   it('cannot sign while already signed in', async function () {
@@ -79,7 +79,7 @@ describe('basic auth', function () {
     const response = await this.application.signIn(this.email, this.password, undefined, undefined, undefined, true)
     expect(response).to.be.ok
     expect(response.data.error).to.not.be.ok
-    expect(await this.application.protocolService.getRootKey()).to.be.ok
+    expect(await this.application.encryptionService.getRootKey()).to.be.ok
 
     let error
     try {
@@ -99,7 +99,7 @@ describe('basic auth', function () {
       error = e
     }
     expect(error).to.be.ok
-    expect(await this.application.protocolService.getRootKey()).to.be.ok
+    expect(await this.application.encryptionService.getRootKey()).to.be.ok
   }).timeout(20000)
 
   it('cannot perform two sign-ins at the same time', async function () {
@@ -111,7 +111,7 @@ describe('basic auth', function () {
         const response = await this.application.signIn(this.email, this.password, undefined, undefined, undefined, true)
         expect(response).to.be.ok
         expect(response.data.error).to.not.be.ok
-        expect(await this.application.protocolService.getRootKey()).to.be.ok
+        expect(await this.application.encryptionService.getRootKey()).to.be.ok
       })(),
       (async () => {
         /** Make sure the first function runs first */
@@ -134,7 +134,7 @@ describe('basic auth', function () {
         const response = await this.application.register(this.email, this.password)
         expect(response).to.be.ok
         expect(response.error).to.not.be.ok
-        expect(await this.application.protocolService.getRootKey()).to.be.ok
+        expect(await this.application.encryptionService.getRootKey()).to.be.ok
       })(),
       (async () => {
         /** Make sure the first function runs first */
@@ -204,7 +204,7 @@ describe('basic auth', function () {
     const response = await this.application.signIn(uppercase, this.password, undefined, undefined, undefined, true)
     expect(response).to.be.ok
     expect(response.data.error).to.not.be.ok
-    expect(await this.application.protocolService.getRootKey()).to.be.ok
+    expect(await this.application.encryptionService.getRootKey()).to.be.ok
   }).timeout(20000)
 
   it('can sign into account regardless of whitespace', async function () {
@@ -220,7 +220,7 @@ describe('basic auth', function () {
     const response = await this.application.signIn(withspace, this.password, undefined, undefined, undefined, true)
     expect(response).to.be.ok
     expect(response.data.error).to.not.be.ok
-    expect(await this.application.protocolService.getRootKey()).to.be.ok
+    expect(await this.application.encryptionService.getRootKey()).to.be.ok
   }).timeout(20000)
 
   it('fails login with wrong password', async function () {
@@ -229,7 +229,7 @@ describe('basic auth', function () {
     const response = await this.application.signIn(this.email, 'wrongpassword', undefined, undefined, undefined, true)
     expect(response).to.be.ok
     expect(response.data.error).to.be.ok
-    expect(await this.application.protocolService.getRootKey()).to.not.be.ok
+    expect(await this.application.encryptionService.getRootKey()).to.not.be.ok
   }).timeout(20000)
 
   it('fails to change to short password', async function () {
@@ -339,7 +339,7 @@ describe('basic auth', function () {
     expect(signinResponse).to.be.ok
     expect(signinResponse.data.error).to.not.be.ok
 
-    expect(await this.application.protocolService.getRootKey()).to.be.ok
+    expect(await this.application.encryptionService.getRootKey()).to.be.ok
 
     expect(this.application.itemManager.items.length).to.equal(this.expectedItemCount)
     expect(this.application.payloadManager.invalidPayloads.length).to.equal(0)
@@ -421,7 +421,7 @@ describe('basic auth', function () {
 
       expect(signinResponse).to.be.ok
       expect(signinResponse.data.error).to.not.be.ok
-      expect(await this.application.protocolService.getRootKey()).to.be.ok
+      expect(await this.application.encryptionService.getRootKey()).to.be.ok
     }
   }).timeout(80000)
 

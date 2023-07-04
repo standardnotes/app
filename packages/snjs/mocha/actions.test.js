@@ -25,7 +25,7 @@ describe('actions service', () => {
       password: this.password,
     })
 
-    const rootKey = await this.application.protocolService.createRootKey(
+    const rootKey = await this.application.encryptionService.createRootKey(
       this.email,
       this.password,
       KeyParamsOrigination.Registration,
@@ -117,7 +117,7 @@ describe('actions service', () => {
     })
 
     const encryptedPayload = CreateEncryptedServerSyncPushPayload(
-      await this.application.protocolService.encryptSplitSingle({
+      await this.application.encryptionService.encryptSplitSingle({
         usesItemsKeyWithKeyLookup: {
           items: [payload],
         },
@@ -359,14 +359,14 @@ describe('actions service', () => {
       const response = await this.actionsManager.runAction(this.encryptedPostAction, this.noteItem)
 
       expect(response.items[0].enc_item_key).to.satisfy((string) => {
-        return string.startsWith(this.application.protocolService.getLatestVersion())
+        return string.startsWith(this.application.encryptionService.getLatestVersion())
       })
       expect(response.items[0].uuid).to.eq(this.noteItem.uuid)
       expect(response.items[0].auth_hash).to.not.be.ok
       expect(response.items[0].content_type).to.be.ok
       expect(response.items[0].created_at).to.be.ok
       expect(response.items[0].content).to.satisfy((string) => {
-        return string.startsWith(this.application.protocolService.getLatestVersion())
+        return string.startsWith(this.application.encryptionService.getLatestVersion())
       })
     })
 

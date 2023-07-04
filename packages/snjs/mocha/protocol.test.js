@@ -19,43 +19,43 @@ describe('protocol', function () {
   })
 
   it('checks version to make sure its 004', function () {
-    expect(this.application.protocolService.getLatestVersion()).to.equal('004')
+    expect(this.application.encryptionService.getLatestVersion()).to.equal('004')
   })
 
   it('checks supported versions to make sure it includes 001, 002, 003, 004', function () {
-    expect(this.application.protocolService.supportedVersions()).to.eql(['001', '002', '003', '004'])
+    expect(this.application.encryptionService.supportedVersions()).to.eql(['001', '002', '003', '004'])
   })
 
   it('platform derivation support', function () {
     expect(
-      this.application.protocolService.platformSupportsKeyDerivation({
+      this.application.encryptionService.platformSupportsKeyDerivation({
         version: '001',
       }),
     ).to.equal(true)
     expect(
-      this.application.protocolService.platformSupportsKeyDerivation({
+      this.application.encryptionService.platformSupportsKeyDerivation({
         version: '002',
       }),
     ).to.equal(true)
     expect(
-      this.application.protocolService.platformSupportsKeyDerivation({
+      this.application.encryptionService.platformSupportsKeyDerivation({
         version: '003',
       }),
     ).to.equal(true)
     expect(
-      this.application.protocolService.platformSupportsKeyDerivation({
+      this.application.encryptionService.platformSupportsKeyDerivation({
         version: '004',
       }),
     ).to.equal(true)
     expect(
-      this.application.protocolService.platformSupportsKeyDerivation({
+      this.application.encryptionService.platformSupportsKeyDerivation({
         version: '005',
       }),
     ).to.equal(true)
   })
 
   it('key params versions <= 002 should include pw_cost in portable value', function () {
-    const keyParams002 = this.application.protocolService.createKeyParams({
+    const keyParams002 = this.application.encryptionService.createKeyParams({
       version: '002',
       pw_cost: 5000,
     })
@@ -63,15 +63,15 @@ describe('protocol', function () {
   })
 
   it('version comparison of 002 should be older than library version', function () {
-    expect(this.application.protocolService.isVersionNewerThanLibraryVersion('002')).to.equal(false)
+    expect(this.application.encryptionService.isVersionNewerThanLibraryVersion('002')).to.equal(false)
   })
 
   it('version comparison of 005 should be newer than library version', function () {
-    expect(this.application.protocolService.isVersionNewerThanLibraryVersion('005')).to.equal(true)
+    expect(this.application.encryptionService.isVersionNewerThanLibraryVersion('005')).to.equal(true)
   })
 
   it('library version should not be outdated', function () {
-    var currentVersion = this.application.protocolService.getLatestVersion()
+    var currentVersion = this.application.encryptionService.getLatestVersion()
     expect(isProtocolVersionExpired(currentVersion)).to.equal(false)
   })
 
@@ -91,7 +91,7 @@ describe('protocol', function () {
     const payload = Factory.createNotePayload()
     let error
     try {
-      await this.application.protocolService.decryptSplitSingle({
+      await this.application.encryptionService.decryptSplitSingle({
         usesItemsKeyWithKeyLookup: {
           items: [payload],
         },
@@ -106,7 +106,7 @@ describe('protocol', function () {
     await this.application.addPasscode('123')
     const payload = Factory.createNotePayload()
     const result = CreateEncryptedServerSyncPushPayload(
-      await this.application.protocolService.encryptSplitSingle({
+      await this.application.encryptionService.encryptSplitSingle({
         usesItemsKeyWithKeyLookup: {
           items: [payload],
         },
@@ -121,7 +121,7 @@ describe('protocol', function () {
   it('encrypted payload for server should include duplicate_of field', async function () {
     const payload = Factory.createNotePayload('Test')
     const encryptedPayload = CreateEncryptedServerSyncPushPayload(
-      await this.application.protocolService.encryptSplitSingle({
+      await this.application.encryptionService.encryptSplitSingle({
         usesItemsKeyWithKeyLookup: {
           items: [payload],
         },
@@ -134,7 +134,7 @@ describe('protocol', function () {
   it('ejected payload for server should include duplicate_of field', async function () {
     const payload = Factory.createNotePayload('Test')
     const encryptedPayload = CreateEncryptedServerSyncPushPayload(
-      await this.application.protocolService.encryptSplitSingle({
+      await this.application.encryptionService.encryptSplitSingle({
         usesItemsKeyWithKeyLookup: {
           items: [payload],
         },
@@ -147,7 +147,7 @@ describe('protocol', function () {
   it('encrypted payload for storage should include duplicate_of field', async function () {
     const payload = Factory.createNotePayload('Test')
     const encryptedPayload = CreateEncryptedLocalStorageContextPayload(
-      await this.application.protocolService.encryptSplitSingle({
+      await this.application.encryptionService.encryptSplitSingle({
         usesItemsKeyWithKeyLookup: {
           items: [payload],
         },
@@ -160,7 +160,7 @@ describe('protocol', function () {
   it('ejected payload for storage should include duplicate_of field', async function () {
     const payload = Factory.createNotePayload('Test')
     const encryptedPayload = CreateEncryptedLocalStorageContextPayload(
-      await this.application.protocolService.encryptSplitSingle({
+      await this.application.encryptionService.encryptSplitSingle({
         usesItemsKeyWithKeyLookup: {
           items: [payload],
         },
@@ -173,7 +173,7 @@ describe('protocol', function () {
   it('encrypted payload for file should include duplicate_of field', async function () {
     const payload = Factory.createNotePayload('Test')
     const encryptedPayload = CreateEncryptedBackupFileContextPayload(
-      await this.application.protocolService.encryptSplitSingle({
+      await this.application.encryptionService.encryptSplitSingle({
         usesItemsKeyWithKeyLookup: {
           items: [payload],
         },
@@ -186,7 +186,7 @@ describe('protocol', function () {
   it('ejected payload for file should include duplicate_of field', async function () {
     const payload = Factory.createNotePayload('Test')
     const encryptedPayload = CreateEncryptedBackupFileContextPayload(
-      await this.application.protocolService.encryptSplitSingle({
+      await this.application.encryptionService.encryptSplitSingle({
         usesItemsKeyWithKeyLookup: {
           items: [payload],
         },

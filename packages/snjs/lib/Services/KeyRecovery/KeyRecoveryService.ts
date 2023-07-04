@@ -87,7 +87,7 @@ export class SNKeyRecoveryService extends AbstractService<KeyRecoveryEvent, Decr
     private itemManager: ItemManager,
     private payloadManager: PayloadManager,
     private apiService: SNApiService,
-    private protocolService: EncryptionService,
+    private encryptionService: EncryptionService,
     private challengeService: ChallengeService,
     private alertService: AlertService,
     private storageService: DiskStorageService,
@@ -121,7 +121,7 @@ export class SNKeyRecoveryService extends AbstractService<KeyRecoveryEvent, Decr
     ;(this.itemManager as unknown) = undefined
     ;(this.payloadManager as unknown) = undefined
     ;(this.apiService as unknown) = undefined
-    ;(this.protocolService as unknown) = undefined
+    ;(this.encryptionService as unknown) = undefined
     ;(this.challengeService as unknown) = undefined
     ;(this.alertService as unknown) = undefined
     ;(this.storageService as unknown) = undefined
@@ -251,7 +251,7 @@ export class SNKeyRecoveryService extends AbstractService<KeyRecoveryEvent, Decr
   }
 
   private getClientKeyParams() {
-    return this.protocolService.getAccountKeyParams()
+    return this.encryptionService.getAccountKeyParams()
   }
 
   private async performServerSignIn(): Promise<SNRootKey | undefined> {
@@ -279,7 +279,7 @@ export class SNKeyRecoveryService extends AbstractService<KeyRecoveryEvent, Decr
       return
     }
 
-    const rootKey = await this.protocolService.computeRootKey(password, serverParams)
+    const rootKey = await this.encryptionService.computeRootKey(password, serverParams)
 
     const signInResponse = await this.userService.correctiveSignIn(rootKey)
 
@@ -295,7 +295,7 @@ export class SNKeyRecoveryService extends AbstractService<KeyRecoveryEvent, Decr
   }
 
   private async getWrappingKeyIfApplicable(): Promise<SNRootKey | undefined> {
-    if (!this.protocolService.hasPasscode()) {
+    if (!this.encryptionService.hasPasscode()) {
       return undefined
     }
     const { wrappingKey, canceled } = await this.challengeService.getWrappingKeyIfApplicable()
@@ -312,7 +312,7 @@ export class SNKeyRecoveryService extends AbstractService<KeyRecoveryEvent, Decr
 
   private addKeysToQueue(keys: EncryptedPayloadInterface[]) {
     for (const key of keys) {
-      const keyParams = this.protocolService.getKeyEmbeddedKeyParamsFromItemsKey(key)
+      const keyParams = this.encryptionService.getKeyEmbeddedKeyParamsFromItemsKey(key)
       if (!keyParams) {
         continue
       }
@@ -356,12 +356,12 @@ export class SNKeyRecoveryService extends AbstractService<KeyRecoveryEvent, Decr
       serverParams = await this.getLatestKeyParamsFromServer(clientParams.identifier)
     }
 
-    const deallocedAfterNetworkRequest = this.protocolService == undefined
+    const deallocedAfterNetworkRequest = this.encryptionService == undefined
     if (deallocedAfterNetworkRequest) {
       return
     }
 
-    const credentialsMissing = !this.protocolService.hasAccount() && !this.protocolService.hasPasscode()
+    const credentialsMissing = !this.encryptionService.hasAccount() && !this.encryptionService.hasPasscode()
 
     if (credentialsMissing) {
       const rootKey = await this.performServerSignIn()
@@ -426,7 +426,7 @@ export class SNKeyRecoveryService extends AbstractService<KeyRecoveryEvent, Decr
     const operation = new KeyRecoveryOperation(
       queueItem,
       this.itemManager,
-      this.protocolService,
+      this.encryptionService,
       this.challengeService,
       clientParams,
       serverParams,
@@ -460,7 +460,7 @@ export class SNKeyRecoveryService extends AbstractService<KeyRecoveryEvent, Decr
     if (replacesRootKey) {
       const wrappingKey = await this.getWrappingKeyIfApplicable()
 
-      await this.protocolService.setRootKey(rootKey, wrappingKey)
+      await this.encryptionService.setRootKey(rootKey, wrappingKey)
     }
 
     const clientKeyParams = this.getClientKeyParams()
@@ -475,7 +475,7 @@ export class SNKeyRecoveryService extends AbstractService<KeyRecoveryEvent, Decr
         : qItem.encryptedKey
     })
 
-    const matchingResults = await this.protocolService.decryptSplit({
+    const matchingResults = await this.encryptionService.decryptSplit({
       usesRootKey: {
         items: matchingKeys,
         key: rootKey,

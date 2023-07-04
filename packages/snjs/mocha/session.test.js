@@ -574,7 +574,7 @@ describe('server session', function () {
       password: password,
     })
 
-    const oldRootKey = await appA.protocolService.getRootKey()
+    const oldRootKey = await appA.encryptionService.getRootKey()
 
     /** Set the session as nonsense */
     appA.diskStorageService.setValue(StorageKey.Session, {
@@ -597,7 +597,7 @@ describe('server session', function () {
     expect(appA.apiService.session.refreshToken.value).to.not.equal('bar')
 
     /** Expect that the session recovery replaces the global root key */
-    const newRootKey = await appA.protocolService.getRootKey()
+    const newRootKey = await appA.encryptionService.getRootKey()
     expect(oldRootKey).to.not.equal(newRootKey)
 
     await Factory.safeDeinit(appA)

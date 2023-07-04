@@ -44,7 +44,7 @@ export class ChallengeService extends AbstractService implements ChallengeServic
 
   constructor(
     private storageService: DiskStorageService,
-    private protocolService: EncryptionService,
+    private encryptionService: EncryptionService,
     protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)
@@ -52,7 +52,7 @@ export class ChallengeService extends AbstractService implements ChallengeServic
 
   public override deinit() {
     ;(this.storageService as unknown) = undefined
-    ;(this.protocolService as unknown) = undefined
+    ;(this.encryptionService as unknown) = undefined
     ;(this.sendChallenge as unknown) = undefined
     ;(this.challengeOperations as unknown) = undefined
     ;(this.challengeObservers as unknown) = undefined
@@ -79,9 +79,9 @@ export class ChallengeService extends AbstractService implements ChallengeServic
   public async validateChallengeValue(value: ChallengeValue): Promise<ChallengeValidationResponse> {
     switch (value.prompt.validation) {
       case ChallengeValidation.LocalPasscode:
-        return this.protocolService.validatePasscode(value.value as string)
+        return this.encryptionService.validatePasscode(value.value as string)
       case ChallengeValidation.AccountPassword:
-        return this.protocolService.validateAccountPassword(value.value as string)
+        return this.encryptionService.validateAccountPassword(value.value as string)
       case ChallengeValidation.Biometric:
         return { valid: value.value === true }
       case ChallengeValidation.Authenticator:
@@ -104,7 +104,7 @@ export class ChallengeService extends AbstractService implements ChallengeServic
   }
 
   async promptForAccountPassword(): Promise<string | null> {
-    if (!this.protocolService.hasAccount()) {
+    if (!this.encryptionService.hasAccount()) {
       throw Error('Requiring account password for challenge with no account')
     }
 
@@ -143,7 +143,7 @@ export class ChallengeService extends AbstractService implements ChallengeServic
         canceled?: undefined
       }
   > {
-    if (!this.protocolService.hasPasscode()) {
+    if (!this.encryptionService.hasPasscode()) {
       return {}
     }
 
@@ -154,12 +154,12 @@ export class ChallengeService extends AbstractService implements ChallengeServic
       }
     }
 
-    const wrappingKey = await this.protocolService.computeWrappingKey(passcode)
+    const wrappingKey = await this.encryptionService.computeWrappingKey(passcode)
     return { wrappingKey }
   }
 
   public isPasscodeLocked() {
-    return this.protocolService.isPasscodeLocked()
+    return this.encryptionService.isPasscodeLocked()
   }
 
   public addChallengeObserver(challenge: Challenge, observer: ChallengeObserver): () => void {

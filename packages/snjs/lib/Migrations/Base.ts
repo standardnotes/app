@@ -207,13 +207,13 @@ export class BaseMigration extends Migration {
       this.services.challengeService.addChallengeObserver(challenge, {
         onNonvalidatedSubmit: async (challengeResponse) => {
           const password = challengeResponse.values[0].value as string
-          const accountParams = this.services.protocolService.createKeyParams(rawAccountParams)
-          const rootKey = await this.services.protocolService.computeRootKey(password, accountParams)
+          const accountParams = this.services.encryptionService.createKeyParams(rawAccountParams)
+          const rootKey = await this.services.encryptionService.computeRootKey(password, accountParams)
 
           /** TS can't detect we returned early above if itemToDecrypt is null */
           assert(itemToDecrypt)
 
-          const decryptedPayload = await this.services.protocolService.decryptSplitSingle({
+          const decryptedPayload = await this.services.encryptionService.decryptSplitSingle({
             usesRootKey: {
               items: [itemToDecrypt],
               key: rootKey,

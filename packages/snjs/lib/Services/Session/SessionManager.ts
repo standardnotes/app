@@ -93,7 +93,7 @@ export class SNSessionManager
     private apiService: SNApiService,
     private userApiService: UserApiServiceInterface,
     private alertService: AlertService,
-    private protocolService: EncryptionService,
+    private encryptionService: EncryptionService,
     private challengeService: ChallengeService,
     private webSocketsService: SNWebSocketsService,
     private httpService: HttpServiceInterface,
@@ -119,7 +119,7 @@ export class SNSessionManager
   }
 
   override deinit(): void {
-    ;(this.protocolService as unknown) = undefined
+    ;(this.encryptionService as unknown) = undefined
     ;(this.diskStorageService as unknown) = undefined
     ;(this.apiService as unknown) = undefined
     ;(this.alertService as unknown) = undefined
@@ -205,11 +205,11 @@ export class SNSessionManager
   }
 
   public getPublicKey(): string {
-    return this.protocolService.getKeyPair().publicKey
+    return this.encryptionService.getKeyPair().publicKey
   }
 
   public getSigningPublicKey(): string {
-    return this.protocolService.getSigningKeyPair().publicKey
+    return this.encryptionService.getSigningKeyPair().publicKey
   }
 
   public get userUuid(): string {
@@ -285,7 +285,7 @@ export class SNSessionManager
         onNonvalidatedSubmit: async (challengeResponse) => {
           const email = challengeResponse.values[0].value as string
           const password = challengeResponse.values[1].value as string
-          const currentKeyParams = this.protocolService.getAccountKeyParams()
+          const currentKeyParams = this.encryptionService.getAccountKeyParams()
           const { response } = await this.signIn(
             email,
             password,
@@ -403,7 +403,7 @@ export class SNSessionManager
 
     email = cleanedEmailString(email)
 
-    const rootKey = await this.protocolService.createRootKey<RootKeyWithKeyPairsInterface>(
+    const rootKey = await this.encryptionService.createRootKey<RootKeyWithKeyPairsInterface>(
       email,
       password,
       Common.KeyParamsOrigination.Registration,
@@ -525,8 +525,8 @@ export class SNSessionManager
       }
     }
     const keyParams = paramsResult.keyParams as SNRootKeyParams
-    if (!this.protocolService.supportedVersions().includes(keyParams.version)) {
-      if (this.protocolService.isVersionNewerThanLibraryVersion(keyParams.version)) {
+    if (!this.encryptionService.supportedVersions().includes(keyParams.version)) {
+      if (this.encryptionService.isVersionNewerThanLibraryVersion(keyParams.version)) {
         return {
           response: this.apiService.createErrorResponse(UNSUPPORTED_PROTOCOL_VERSION),
         }
@@ -539,7 +539,7 @@ export class SNSessionManager
 
     if (Common.isProtocolVersionExpired(keyParams.version)) {
       /* Cost minimums only apply to now outdated versions (001 and 002) */
-      const minimum = this.protocolService.costMinimumForVersion(keyParams.version)
+      const minimum = this.encryptionService.costMinimumForVersion(keyParams.version)
       if (keyParams.content002.pw_cost < minimum) {
         return {
           response: this.apiService.createErrorResponse(INVALID_PASSWORD_COST),
@@ -560,14 +560,14 @@ export class SNSessionManager
       }
     }
 
-    if (!this.protocolService.platformSupportsKeyDerivation(keyParams)) {
+    if (!this.encryptionService.platformSupportsKeyDerivation(keyParams)) {
       return {
         response: this.apiService.createErrorResponse(UNSUPPORTED_KEY_DERIVATION),
       }
     }
 
     if (strict) {
-      minAllowedVersion = this.protocolService.getLatestVersion()
+      minAllowedVersion = this.encryptionService.getLatestVersion()
     }
 
     if (minAllowedVersion != undefined) {
@@ -577,7 +577,7 @@ export class SNSessionManager
         }
       }
     }
-    const rootKey = await this.protocolService.computeRootKey(password, keyParams)
+    const rootKey = await this.encryptionService.computeRootKey(password, keyParams)
     const signInResponse = await this.bypassChecksAndSignInWithRootKey(email, rootKey, ephemeral)
 
     return {
@@ -641,8 +641,8 @@ export class SNSessionManager
     let oldSigningKeyPair: PkcKeyPair | undefined
 
     try {
-      oldKeyPair = this.protocolService.getKeyPair()
-      oldSigningKeyPair = this.protocolService.getSigningKeyPair()
+      oldKeyPair = this.encryptionService.getKeyPair()
+      oldSigningKeyPair = this.encryptionService.getSigningKeyPair()
     } catch (error) {
       void error
     }
@@ -718,7 +718,7 @@ export class SNSessionManager
   }
 
   private decodeDemoShareToken(token: Base64String): ShareToken {
-    const jsonString = this.protocolService.crypto.base64Decode(token)
+    const jsonString = this.encryptionService.crypto.base64Decode(token)
     return JSON.parse(jsonString)
   }
 
@@ -735,7 +735,7 @@ export class SNSessionManager
     host: string,
     wrappingKey?: SNRootKey,
   ) {
-    await this.protocolService.setRootKey(rootKey, wrappingKey)
+    await this.encryptionService.setRootKey(rootKey, wrappingKey)
 
     this.memoizeUser(user)
     this.diskStorageService.setValue(StorageKey.User, user)

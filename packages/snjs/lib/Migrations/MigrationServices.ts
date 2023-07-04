@@ -13,7 +13,7 @@ import { ChallengeService, SNSingletonManager, SNFeaturesService, DiskStorageSer
 import { LegacySession, MapperInterface } from '@standardnotes/domain-core'
 
 export type MigrationServices = {
-  protocolService: EncryptionService
+  encryptionService: EncryptionService
   deviceInterface: DeviceInterface
   storageService: DiskStorageService
   challengeService: ChallengeService

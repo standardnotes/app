@@ -11,7 +11,7 @@ export class KeyRecoveryOperation {
   constructor(
     private queueItem: DecryptionQueueItem,
     private itemManager: ItemManager,
-    private protocolService: EncryptionProviderInterface,
+    private encryptionService: EncryptionProviderInterface,
     private challengeService: ChallengeServiceInterface,
     private clientParams: SNRootKeyParams | undefined,
     private serverParams: SNRootKeyParams | undefined,
@@ -43,7 +43,7 @@ export class KeyRecoveryOperation {
 
     const decryptionResult = await DecryptItemsKeyByPromptingUser(
       this.queueItem.encryptedKey,
-      this.protocolService,
+      this.encryptionService,
       this.challengeService,
       this.queueItem.keyParams,
     )

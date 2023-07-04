@@ -20,7 +20,7 @@ import { SignInWithRecoveryCodesDTO } from './SignInWithRecoveryCodesDTO'
 export class SignInWithRecoveryCodes implements UseCaseInterface<void> {
   constructor(
     private authManager: AuthClientInterface,
-    private protocolService: EncryptionProviderInterface,
+    private encryptionService: EncryptionProviderInterface,
     private inMemoryStore: KeyValueStoreInterface<string>,
     private crypto: PureCryptoInterface,
     private sessionManager: SessionsClientInterface,
@@ -28,7 +28,7 @@ export class SignInWithRecoveryCodes implements UseCaseInterface<void> {
   ) {}
 
   async execute(dto: SignInWithRecoveryCodesDTO): Promise<Result<void>> {
-    if (this.protocolService.hasAccount()) {
+    if (this.encryptionService.hasAccount()) {
       return Result.fail('Tried to sign in when an account already exists.')
     }
 
@@ -48,19 +48,19 @@ export class SignInWithRecoveryCodes implements UseCaseInterface<void> {
 
     const rootKeyParams = CreateAnyKeyParams(recoveryKeyParams)
 
-    if (!this.protocolService.supportedVersions().includes(rootKeyParams.version)) {
-      if (this.protocolService.isVersionNewerThanLibraryVersion(rootKeyParams.version)) {
+    if (!this.encryptionService.supportedVersions().includes(rootKeyParams.version)) {
+      if (this.encryptionService.isVersionNewerThanLibraryVersion(rootKeyParams.version)) {
         return Result.fail(UNSUPPORTED_PROTOCOL_VERSION)
       }
 
       return Result.fail(EXPIRED_PROTOCOL_VERSION)
     }
 
-    if (!this.protocolService.platformSupportsKeyDerivation(rootKeyParams)) {
+    if (!this.encryptionService.platformSupportsKeyDerivation(rootKeyParams)) {
       return Result.fail(UNSUPPORTED_KEY_DERIVATION)
     }
 
-    const rootKey = await this.protocolService.computeRootKey(dto.password, rootKeyParams)
+    const rootKey = await this.encryptionService.computeRootKey(dto.password, rootKeyParams)
 
     const signInResult = await this.authManager.signInWithRecoveryCodes({
       codeVerifier,
