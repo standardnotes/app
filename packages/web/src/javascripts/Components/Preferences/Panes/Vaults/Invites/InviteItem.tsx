@@ -5,33 +5,36 @@ import ModalOverlay from '@/Components/Modal/ModalOverlay'
 import { PendingSharedVaultInviteRecord } from '@standardnotes/snjs'
 import { useCallback, useState } from 'react'
 import EditContactModal from '../Contacts/EditContactModal'
+import { GreenCheckmarkCircle } from './GreenCheckmarkCircle'
 
 type Props = {
-  invite: PendingSharedVaultInviteRecord
+  inviteRecord: PendingSharedVaultInviteRecord
 }
 
-const InviteItem = ({ invite }: Props) => {
+const InviteItem = ({ inviteRecord }: Props) => {
   const application = useApplication()
   const [isAddContactModalOpen, setIsAddContactModalOpen] = useState(false)
 
-  const isTrusted = invite.trusted
-  const inviteData = invite.message.data
+  const isTrusted = inviteRecord.trusted
+  const inviteData = inviteRecord.message.data
 
   const addAsTrustedContact = useCallback(() => {
     setIsAddContactModalOpen(true)
   }, [])
 
   const acceptInvite = useCallback(async () => {
-    await application.sharedVaults.acceptPendingSharedVaultInvite(invite)
-  }, [application.sharedVaults, invite])
+    await application.sharedVaults.acceptPendingSharedVaultInvite(inviteRecord)
+  }, [application.sharedVaults, inviteRecord])
 
   const closeAddContactModal = () => setIsAddContactModalOpen(false)
-  const collaborationId = application.contacts.getCollaborationIDFromInvite(invite.invite)
+  const collaborationId = application.contacts.getCollaborationIDFromInvite(inviteRecord.invite)
+
+  const trustedContact = application.contacts.findTrustedContactForInvite(inviteRecord.invite)
 
   return (
     <>
       <ModalOverlay isOpen={isAddContactModalOpen} close={closeAddContactModal}>
-        <EditContactModal fromInvite={invite} onCloseDialog={closeAddContactModal} />
+        <EditContactModal fromInvite={inviteRecord} onCloseDialog={closeAddContactModal} />
       </ModalOverlay>
 
       <div className="bg-gray-100 flex flex-row gap-3.5 rounded-lg py-2.5 px-3.5 shadow-md">
@@ -41,9 +44,16 @@ const InviteItem = ({ invite }: Props) => {
           <span className="mr-auto overflow-hidden text-ellipsis text-sm">
             Vault Description: {inviteData.metadata.description}
           </span>
-          <span className="mr-auto overflow-hidden text-ellipsis text-sm">
-            Sender CollaborationID: {collaborationId}
-          </span>
+          {trustedContact ? (
+            <div className="flex flex-row gap-2">
+              <span className="overflow-hidden text-ellipsis text-sm">Trusted Sender: {trustedContact.name}</span>
+              <GreenCheckmarkCircle />
+            </div>
+          ) : (
+            <span className="mr-auto overflow-hidden text-ellipsis text-sm">
+              Sender CollaborationID: {collaborationId}
+            </span>
+          )}
 
           <div className="mt-2.5 flex flex-row">
             {isTrusted ? (

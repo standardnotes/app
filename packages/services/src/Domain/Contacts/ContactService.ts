@@ -237,7 +237,7 @@ export class ContactService
   }
 
   findTrustedContactForInvite(invite: SharedVaultInviteServerHash): TrustedContactInterface | undefined {
-    return this.findTrustedContact(invite.user_uuid)
+    return this.findTrustedContact(invite.sender_uuid)
   }
 
   getCollaborationIDForTrustedContact(contact: TrustedContactInterface): string {
