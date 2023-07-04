@@ -55,6 +55,7 @@ import { getDOMRangeRect } from '../../Lexical/Utils/getDOMRangeRect'
 import { getPositionedPopoverStyles } from '@/Components/Popover/GetPositionedPopoverStyles'
 import { getAdjustedStylesForNonPortalPopover } from '@/Components/Popover/Utils/getAdjustedStylesForNonPortal'
 import LinkEditor from '../FloatingLinkEditorPlugin/LinkEditor'
+import { movePopoverToFitInsideRect } from '@/Components/Popover/Utils/movePopoverToFitInsideRect'
 
 const blockTypeToBlockName = {
   bullet: 'Bulleted List',
@@ -198,7 +199,8 @@ function TextFormatFloatingToolbar({
         anchorRect: rangeRect,
         popoverRect: toolbarRect,
         documentRect: rootElementRect,
-        offset: 8,
+        offset: 12,
+        maxHeightFunction: () => 'none',
       })
 
       if (calculatedStyles) {
@@ -206,6 +208,7 @@ function TextFormatFloatingToolbar({
         const adjustedStyles = getAdjustedStylesForNonPortalPopover(toolbarElement, calculatedStyles, rootElement)
         toolbarElement.style.setProperty('--translate-x', adjustedStyles['--translate-x'])
         toolbarElement.style.setProperty('--translate-y', adjustedStyles['--translate-y'])
+        movePopoverToFitInsideRect(toolbarElement, rootElementRect)
       }
     } else if (!activeElement || activeElement.id !== 'link-input') {
       setLastSelection(null)
@@ -217,7 +220,7 @@ function TextFormatFloatingToolbar({
   }, [editor])
 
   useEffect(() => {
-    const scrollerElem = anchorElem.parentElement
+    const scrollerElem = editor.getRootElement()
 
     const update = () => {
       editor.getEditorState().read(() => {

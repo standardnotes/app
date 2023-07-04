@@ -47,7 +47,7 @@ type Options = {
   popoverRect?: DOMRect
   side: PopoverSide
   disableMobileFullscreenTakeover?: boolean
-  maxHeightFunction?: (calculatedMaxHeight: number) => number
+  maxHeightFunction?: (calculatedMaxHeight: number) => number | 'none'
   offset?: number
 }
 
