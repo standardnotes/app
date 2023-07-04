@@ -15,7 +15,10 @@ import { EncryptionProviderInterface } from '@standardnotes/encryption'
 import { GetRevisionDTO } from './GetRevisionDTO'
 
 export class GetRevision implements UseCaseInterface<HistoryEntry> {
-  constructor(private revisionManager: RevisionClientInterface, private encryptionService: EncryptionProviderInterface) {}
+  constructor(
+    private revisionManager: RevisionClientInterface,
+    private encryptionService: EncryptionProviderInterface,
+  ) {}
 
   async execute(dto: GetRevisionDTO): Promise<Result<HistoryEntry>> {
     const itemUuidOrError = Uuid.create(dto.itemUuid)
