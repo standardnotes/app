@@ -26,9 +26,7 @@ export class HomeServerManager implements HomeServerManagerInterface {
 
   private homeServer?: HomeServerInterface
 
-  constructor(private webContents: WebContents, private filesManager: FilesManagerInterface) {
-    this.doNotInstantiateHomeServerOnWindowsUntilItIsSupported()
-  }
+  constructor(private webContents: WebContents, private filesManager: FilesManagerInterface) {}
 
   async getHomeServerUrl(): Promise<string | undefined> {
     const homeServerConfiguration = await this.getHomeServerConfigurationObject()
@@ -129,6 +127,8 @@ export class HomeServerManager implements HomeServerManagerInterface {
   }
 
   async startHomeServer(): Promise<string | undefined> {
+    this.doNotInstantiateHomeServerOnWindowsUntilItIsSupported()
+
     if (!this.homeServer) {
       return
     }
@@ -266,7 +266,7 @@ export class HomeServerManager implements HomeServerManagerInterface {
   }
 
   private doNotInstantiateHomeServerOnWindowsUntilItIsSupported(): void {
-    if (!isWindows()) {
+    if (!isWindows() && !this.homeServer) {
       this.homeServer = new HomeServer()
     }
   }
