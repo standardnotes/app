@@ -25,7 +25,7 @@ const ContactItem = ({ contact }: Props) => {
   return (
     <>
       <ModalOverlay isOpen={isContactModalOpen} close={closeContactModal}>
-        <EditContactModal editContactUuid={contact.uuid} onCloseDialog={closeContactModal} />
+        <EditContactModal editContactUuid={contact.contactUuid} onCloseDialog={closeContactModal} />
       </ModalOverlay>
 
       <div className="bg-gray-100 flex flex-row gap-3.5 rounded-lg py-2.5 px-3.5 shadow-md">
