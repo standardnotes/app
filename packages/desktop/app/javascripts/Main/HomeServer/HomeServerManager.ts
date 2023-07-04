@@ -4,12 +4,13 @@ import {
   HomeServerManagerInterface,
   HomeServerEnvironmentConfiguration,
 } from '@web/Application/Device/DesktopSnjsExports'
-import { HomeServerInterface } from '@standardnotes/home-server'
+import { HomeServer, HomeServerInterface } from '@standardnotes/home-server'
 
 import { WebContents } from 'electron'
 import { MessageToWebApp } from '../../Shared/IpcMessages'
 import { FilesManagerInterface } from '../File/FilesManagerInterface'
 import { HomeServerConfigurationFile } from './HomeServerConfigurationFile'
+import { isWindows } from '../Types/Platforms'
 
 const os = require('os')
 
@@ -126,6 +127,8 @@ export class HomeServerManager implements HomeServerManagerInterface {
   }
 
   async startHomeServer(): Promise<string | undefined> {
+    this.doNotInstantiateHomeServerOnWindowsUntilItIsSupported()
+
     if (!this.homeServer) {
       return
     }
@@ -260,5 +263,11 @@ export class HomeServerManager implements HomeServerManagerInterface {
     }
 
     return configuration
+  }
+
+  private doNotInstantiateHomeServerOnWindowsUntilItIsSupported(): void {
+    if (!isWindows() && !this.homeServer) {
+      this.homeServer = new HomeServer()
+    }
   }
 }
