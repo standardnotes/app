@@ -153,9 +153,11 @@ export class RootKeyManager extends AbstractService<RootKeyManagerEvent> {
    */
   public async deleteWorkspaceSpecificKeyStateFromDevice(): Promise<void> {
     await this.device.clearNamespacedKeychainValue(this.identifier)
+
     await this.storage.removeValue(StorageKey.WrappedRootKey, StorageValueModes.Nonwrapped)
     await this.storage.removeValue(StorageKey.RootKeyWrapperKeyParams, StorageValueModes.Nonwrapped)
     await this.storage.removeValue(StorageKey.RootKeyParams, StorageValueModes.Nonwrapped)
+
     this.keyMode = KeyMode.RootKeyNone
     this.setRootKeyInstance(undefined)
 
@@ -270,10 +272,6 @@ export class RootKeyManager extends AbstractService<RootKeyManagerEvent> {
     }
 
     const wrappedKey = this.getWrappedRootKey()
-    if (!wrappedKey) {
-      throw 'Attempting to unwrap root key when none is wrapped.'
-    }
-
     const payload = new EncryptedPayload(wrappedKey)
     const usecase = new RootKeyDecryptPayloadUseCase(this.operators)
     const decrypted = await usecase.executeOne<RootKeyContent>(payload, wrappingKey)
@@ -323,21 +321,6 @@ export class RootKeyManager extends AbstractService<RootKeyManagerEvent> {
       await this.handleKeyStatusChange()
     } else {
       throw Error('Invalid keyMode on setNewRootKeyWrapper')
-    }
-  }
-
-  /**
-   * When the root key changes, we must re-encrypt all relevant items with this new root key (by simply re-syncing).
-   */
-  public async reencryptApplicableItemsAfterUserRootKeyChange(): Promise<void> {
-    const items = this.items.getItems(ContentTypesUsingRootKeyEncryption())
-    if (items.length > 0) {
-      /**
-       * Do not call sync after marking dirty.
-       * Re-encrypting items keys is called by consumers who have specific flows who
-       * will sync on their own timing
-       */
-      await this.mutator.setItemsDirty(items)
     }
   }
 
@@ -439,9 +422,6 @@ export class RootKeyManager extends AbstractService<RootKeyManagerEvent> {
    */
   public async validateWrappingKey(wrappingKey: RootKeyInterface): Promise<boolean> {
     const wrappedRootKey = this.getWrappedRootKey()
-    if (!wrappedRootKey) {
-      throw 'Attempting to validate wrapping key when no wrapped key is present.'
-    }
 
     /** If wrapper only, storage is encrypted directly with wrappingKey */
     if (this.keyMode === KeyMode.WrapperOnly) {
@@ -461,7 +441,7 @@ export class RootKeyManager extends AbstractService<RootKeyManagerEvent> {
     }
   }
 
-  public getWrappedRootKey(): EncryptedTransferPayload | undefined {
+  private getWrappedRootKey(): EncryptedTransferPayload {
     return this.storage.getValue<EncryptedTransferPayload>(StorageKey.WrappedRootKey, StorageValueModes.Nonwrapped)
   }
 
@@ -492,5 +472,20 @@ export class RootKeyManager extends AbstractService<RootKeyManagerEvent> {
       ...rawKey,
       keyParams: keyParams.getPortableValue(),
     })
+  }
+
+  /**
+   * When the root key changes, we must re-encrypt all relevant items with this new root key (by simply re-syncing).
+   */
+  public async reencryptApplicableItemsAfterUserRootKeyChange(): Promise<void> {
+    const items = this.items.getItems(ContentTypesUsingRootKeyEncryption())
+    if (items.length > 0) {
+      /**
+       * Do not call sync after marking dirty.
+       * Re-encrypting items keys is called by consumers who have specific flows who
+       * will sync on their own timing
+       */
+      await this.mutator.setItemsDirty(items)
+    }
   }
 }
