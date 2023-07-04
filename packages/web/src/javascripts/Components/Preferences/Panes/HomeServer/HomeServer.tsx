@@ -24,7 +24,7 @@ const HomeServer = () => {
             </div>
             <div className="flex items-center justify-between">
               <div className="mr-10 flex flex-col">
-                <Subtitle>Windows support for homer server is coming soon.</Subtitle>
+                <Subtitle>Windows support for home server is coming soon.</Subtitle>
               </div>
             </div>
           </PreferencesSegment>
