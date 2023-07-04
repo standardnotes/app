@@ -70,7 +70,7 @@ export class AppContext {
   }
 
   get encryption() {
-    return this.application.protocolService
+    return this.application.encryptionService
   }
 
   get contacts() {

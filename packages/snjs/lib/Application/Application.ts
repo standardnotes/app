@@ -139,7 +139,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   private deprecatedHttpService!: InternalServices.DeprecatedHttpService
   private declare httpService: HttpServiceInterface
   public payloadManager!: InternalServices.PayloadManager
-  public protocolService!: EncryptionService
+  public encryptionService!: EncryptionService
   private diskStorageService!: InternalServices.DiskStorageService
   private inMemoryStore!: ExternalServices.KeyValueStoreInterface<string>
   /**
@@ -435,7 +435,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     await this.diskStorageService.initializeFromDisk()
     await this.notifyEvent(ApplicationEvent.StorageReady)
 
-    await this.protocolService.initialize()
+    await this.encryptionService.initialize()
 
     await this.handleStage(ExternalServices.ApplicationStage.ReadyForLaunch_05)
 
@@ -547,9 +547,9 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       let wrappingKey = response.artifacts?.wrappingKey
       if (!wrappingKey) {
         const value = response.getValueForType(ChallengeValidation.LocalPasscode)
-        wrappingKey = await this.protocolService.computeWrappingKey(value.value as string)
+        wrappingKey = await this.encryptionService.computeWrappingKey(value.value as string)
       }
-      await this.protocolService.unwrapRootKey(wrappingKey)
+      await this.encryptionService.unwrapRootKey(wrappingKey)
     }
   }
 
@@ -740,22 +740,22 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   }
 
   public getUserPasswordCreationDate(): Date | undefined {
-    return this.protocolService.getPasswordCreatedDate()
+    return this.encryptionService.getPasswordCreatedDate()
   }
 
   public getProtocolEncryptionDisplayName(): Promise<string | undefined> {
-    return this.protocolService.getEncryptionDisplayName()
+    return this.encryptionService.getEncryptionDisplayName()
   }
 
   public getUserVersion(): Common.ProtocolVersion | undefined {
-    return this.protocolService.getUserVersion()
+    return this.encryptionService.getUserVersion()
   }
 
   /**
    * Returns true if there is an upgrade available for the account or passcode
    */
   public protocolUpgradeAvailable(): Promise<boolean> {
-    return this.protocolService.upgradeAvailable()
+    return this.encryptionService.upgradeAvailable()
   }
 
   /**
@@ -790,7 +790,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   }
 
   public hasAccount(): boolean {
-    return this.protocolService.hasAccount()
+    return this.encryptionService.hasAccount()
   }
 
   /**
@@ -840,7 +840,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   }
 
   public async createEncryptedBackupFileForAutomatedDesktopBackups(): Promise<BackupFile | undefined> {
-    return this.protocolService.createEncryptedBackupFile()
+    return this.encryptionService.createEncryptedBackupFile()
   }
 
   public async createEncryptedBackupFile(): Promise<BackupFile | undefined> {
@@ -848,7 +848,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       return
     }
 
-    return this.protocolService.createEncryptedBackupFile()
+    return this.encryptionService.createEncryptedBackupFile()
   }
 
   public async createDecryptedBackupFile(): Promise<BackupFile | undefined> {
@@ -856,7 +856,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       return
     }
 
-    return this.protocolService.createDecryptedBackupFile()
+    return this.encryptionService.createDecryptedBackupFile()
   }
 
   public isEphemeralSession(): boolean {
@@ -1058,7 +1058,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       this.itemManager,
       this.syncService,
       this.protectionService,
-      this.protocolService,
+      this.encryptionService,
       this.payloadManager,
       this.challengeService,
       this.historyManager,
@@ -1083,7 +1083,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   }
 
   public async validateAccountPassword(password: string): Promise<boolean> {
-    const { valid } = await this.protocolService.validateAccountPassword(password)
+    const { valid } = await this.encryptionService.validateAccountPassword(password)
     return valid
   }
 
@@ -1096,7 +1096,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   }
 
   public hasPasscode(): boolean {
-    return this.protocolService.hasPasscode()
+    return this.encryptionService.hasPasscode()
   }
 
   async isLocked(): Promise<boolean> {
@@ -1253,7 +1253,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.createKeySystemKeyManager()
     this.createProtocolService()
 
-    this.diskStorageService.provideEncryptionProvider(this.protocolService)
+    this.diskStorageService.provideEncryptionProvider(this.encryptionService)
     this.createChallengeService()
     this.createLegacyHttpManager()
     this.createHttpServiceAndApiService()
@@ -1308,7 +1308,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     ;(this.deprecatedHttpService as unknown) = undefined
     ;(this.httpService as unknown) = undefined
     ;(this.payloadManager as unknown) = undefined
-    ;(this.protocolService as unknown) = undefined
+    ;(this.encryptionService as unknown) = undefined
     ;(this.diskStorageService as unknown) = undefined
     ;(this.inMemoryStore as unknown) = undefined
     ;(this.apiService as unknown) = undefined
@@ -1392,7 +1392,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   private createAsymmetricMessageService() {
     this.asymmetricMessageService = new ExternalServices.AsymmetricMessageService(
       this.httpService,
-      this.protocolService,
+      this.encryptionService,
       this.contacts,
       this.itemManager,
       this.mutator,
@@ -1410,7 +1410,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       this.sessionManager,
       this.options.crypto,
       this.user,
-      this.protocolService,
+      this.encryptionService,
       this.singletonManager,
       this.internalEventBus,
     )
@@ -1424,7 +1424,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       this.syncService,
       this.itemManager,
       this.mutator,
-      this.protocolService,
+      this.encryptionService,
       this.sessions,
       this.contactService,
       this.files,
@@ -1440,7 +1440,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       this.syncService,
       this.itemManager,
       this.mutator,
-      this.protocolService,
+      this.encryptionService,
       this.files,
       this.alertService,
       this.internalEventBus,
@@ -1468,7 +1468,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       this.apiService,
       this.mutator,
       this.syncService,
-      this.protocolService,
+      this.encryptionService,
       this.challengeService,
       this.httpService,
       this.alertService,
@@ -1542,7 +1542,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
 
   private createMigrationService() {
     this.migrationService = new InternalServices.SNMigrationService({
-      protocolService: this.protocolService,
+      encryptionService: this.encryptionService,
       deviceInterface: this.deviceInterface,
       storageService: this.diskStorageService,
       sessionManager: this.sessionManager,
@@ -1567,7 +1567,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       this.syncService,
       this.diskStorageService,
       this.itemManager,
-      this.protocolService,
+      this.encryptionService,
       this.alertService,
       this.challengeService,
       this.protectionService,
@@ -1720,7 +1720,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   }
 
   private createProtocolService() {
-    this.protocolService = new EncryptionService(
+    this.encryptionService = new EncryptionService(
       this.itemManager,
       this.mutator,
       this.payloadManager,
@@ -1732,13 +1732,13 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       this.internalEventBus,
     )
     this.serviceObservers.push(
-      this.protocolService.addEventObserver(async (event) => {
+      this.encryptionService.addEventObserver(async (event) => {
         if (event === EncryptionServiceEvent.RootKeyStatusChanged) {
           await this.notifyEvent(ApplicationEvent.KeyStatusChanged)
         }
       }),
     )
-    this.services.push(this.protocolService)
+    this.services.push(this.encryptionService)
   }
 
   private createKeySystemKeyManager() {
@@ -1757,7 +1757,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       this.itemManager,
       this.payloadManager,
       this.apiService,
-      this.protocolService,
+      this.encryptionService,
       this.challengeService,
       this.alertService,
       this.diskStorageService,
@@ -1774,7 +1774,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       this.apiService,
       this.userApiService,
       this.alertService,
-      this.protocolService,
+      this.encryptionService,
       this.challengeService,
       this.webSocketsService,
       this.httpService,
@@ -1789,8 +1789,8 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
           case ExternalServices.SessionEvent.Restored: {
             void (async () => {
               await this.sync.sync({ sourceDescription: 'Session restored pre key creation' })
-              if (this.protocolService.needsNewRootKeyBasedItemsKey()) {
-                void this.protocolService.createNewDefaultItemsKey().then(() => {
+              if (this.encryptionService.needsNewRootKeyBasedItemsKey()) {
+                void this.encryptionService.createNewDefaultItemsKey().then(() => {
                   void this.sync.sync({ sourceDescription: 'Session restored post key creation' })
                 })
               }
@@ -1816,7 +1816,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.syncService = new InternalServices.SNSyncService(
       this.itemManager,
       this.sessionManager,
-      this.protocolService,
+      this.encryptionService,
       this.diskStorageService,
       this.payloadManager,
       this.apiService,
@@ -1832,7 +1832,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     const syncEventCallback = async (eventName: ExternalServices.SyncEvent) => {
       const appEvent = applicationEventForSyncEvent(eventName)
       if (appEvent) {
-        await this.protocolService.onSyncEvent(eventName)
+        await this.encryptionService.onSyncEvent(eventName)
 
         await this.notifyEvent(appEvent)
 
@@ -1852,7 +1852,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   private createChallengeService() {
     this.challengeService = new InternalServices.ChallengeService(
       this.diskStorageService,
-      this.protocolService,
+      this.encryptionService,
       this.internalEventBus,
     )
     this.services.push(this.challengeService)
@@ -1860,7 +1860,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
 
   private createProtectionService() {
     this.protectionService = new InternalServices.SNProtectionService(
-      this.protocolService,
+      this.encryptionService,
       this.mutator,
       this.challengeService,
       this.diskStorageService,
@@ -1895,7 +1895,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       this.deviceInterface,
       this.deprecatedHttpService,
       this.payloadManager,
-      this.protocolService,
+      this.encryptionService,
       this.syncService,
       this.challengeService,
       this.listedService,
@@ -1953,7 +1953,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.filesBackupService = new FilesBackupService(
       this.itemManager,
       this.apiService,
-      this.protocolService,
+      this.encryptionService,
       device as FileBackupsDevice,
       this.statusService,
       this.options.crypto,
@@ -2003,7 +2003,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   private createUseCases() {
     this._signInWithRecoveryCodes = new SignInWithRecoveryCodes(
       this.authManager,
-      this.protocolService,
+      this.encryptionService,
       this.inMemoryStore,
       this.options.crypto,
       this.sessionManager,
@@ -2030,7 +2030,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
 
     this._listRevisions = new ListRevisions(this.revisionManager)
 
-    this._getRevision = new GetRevision(this.revisionManager, this.protocolService)
+    this._getRevision = new GetRevision(this.revisionManager, this.encryptionService)
 
     this._deleteRevision = new DeleteRevision(this.revisionManager)
   }

@@ -146,7 +146,7 @@ const DataBackups = ({ application, viewControllerManager }: Props) => {
       return
     }
 
-    if (application.protocolService.supportedVersions().includes(version)) {
+    if (application.encryptionService.supportedVersions().includes(version)) {
       await performImport(data)
     } else {
       setIsImportDataLoading(false)

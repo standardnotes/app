@@ -29,7 +29,7 @@ describe('keys', function () {
   })
 
   it('should not have root key by default', async function () {
-    expect(await this.application.protocolService.getRootKey()).to.not.be.ok
+    expect(await this.application.encryptionService.getRootKey()).to.not.be.ok
   })
 
   it('validates content types requiring root encryption', function () {
@@ -43,7 +43,7 @@ describe('keys', function () {
     /** Items key available by default */
     const payload = Factory.createNotePayload()
     const processedPayload = CreateEncryptedLocalStorageContextPayload(
-      await this.application.protocolService.encryptSplitSingle({
+      await this.application.encryptionService.encryptSplitSingle({
         usesItemsKeyWithKeyLookup: {
           items: [payload],
         },
@@ -54,44 +54,44 @@ describe('keys', function () {
 
   it('has root key and one items key after registering user', async function () {
     await Factory.registerUserToApplication({ application: this.application })
-    expect(this.application.protocolService.getRootKey()).to.be.ok
+    expect(this.application.encryptionService.getRootKey()).to.be.ok
     expect(this.application.itemManager.getDisplayableItemsKeys().length).to.equal(1)
   })
 
   it('changing root key with passcode should re-wrap root key', async function () {
     const email = 'foo'
     const password = 'bar'
-    const key = await this.application.protocolService.createRootKey(email, password, KeyParamsOrigination.Registration)
-    await this.application.protocolService.setRootKey(key)
+    const key = await this.application.encryptionService.createRootKey(email, password, KeyParamsOrigination.Registration)
+    await this.application.encryptionService.setRootKey(key)
     Factory.handlePasswordChallenges(this.application, password)
     await this.application.addPasscode(password)
 
     /** We should be able to decrypt wrapped root key with passcode */
-    const wrappingKeyParams = await this.application.protocolService.rootKeyEncryption.getRootKeyWrapperKeyParams()
-    const wrappingKey = await this.application.protocolService.computeRootKey(password, wrappingKeyParams)
-    await this.application.protocolService.unwrapRootKey(wrappingKey).catch((error) => {
+    const wrappingKeyParams = await this.application.encryptionService.rootKeyManager.getRootKeyWrapperKeyParams()
+    const wrappingKey = await this.application.encryptionService.computeRootKey(password, wrappingKeyParams)
+    await this.application.encryptionService.unwrapRootKey(wrappingKey).catch((error) => {
       expect(error).to.not.be.ok
     })
 
     const newPassword = 'bar'
-    const newKey = await this.application.protocolService.createRootKey(
+    const newKey = await this.application.encryptionService.createRootKey(
       email,
       newPassword,
       KeyParamsOrigination.Registration,
     )
-    await this.application.protocolService.setRootKey(newKey, wrappingKey)
-    await this.application.protocolService.unwrapRootKey(wrappingKey).catch((error) => {
+    await this.application.encryptionService.setRootKey(newKey, wrappingKey)
+    await this.application.encryptionService.unwrapRootKey(wrappingKey).catch((error) => {
       expect(error).to.not.be.ok
     })
   })
 
   it('items key should be encrypted with root key', async function () {
     await Factory.registerUserToApplication({ application: this.application })
-    const itemsKey = await this.application.protocolService.getSureDefaultItemsKey()
-    const rootKey = await this.application.protocolService.getRootKey()
+    const itemsKey = await this.application.encryptionService.getSureDefaultItemsKey()
+    const rootKey = await this.application.encryptionService.getRootKey()
 
     /** Encrypt items key */
-    const encryptedPayload = await this.application.protocolService.encryptSplitSingle({
+    const encryptedPayload = await this.application.encryptionService.encryptSplitSingle({
       usesRootKey: {
         items: [itemsKey.payloadRepresentation()],
         key: rootKey,
@@ -102,7 +102,7 @@ describe('keys', function () {
     expect(encryptedPayload.items_key_id).to.not.be.ok
 
     /** Attempt to decrypt with root key. Should succeed. */
-    const decryptedPayload = await this.application.protocolService.decryptSplitSingle({
+    const decryptedPayload = await this.application.encryptionService.decryptSplitSingle({
       usesRootKey: {
         items: [encryptedPayload],
         key: rootKey,
@@ -142,35 +142,35 @@ describe('keys', function () {
 
   it('should use items key for encryption of note', async function () {
     const notePayload = Factory.createNotePayload()
-    const keyToUse = await this.application.protocolService.itemsEncryption.keyToUseForItemEncryption(notePayload)
+    const keyToUse = await this.application.encryptionService.itemsEncryption.keyToUseForItemEncryption(notePayload)
     expect(keyToUse.content_type).to.equal(ContentType.ItemsKey)
   })
 
   it('encrypting an item should associate an items key to it', async function () {
     const note = Factory.createNotePayload()
-    const encryptedPayload = await this.application.protocolService.encryptSplitSingle({
+    const encryptedPayload = await this.application.encryptionService.encryptSplitSingle({
       usesItemsKeyWithKeyLookup: {
         items: [note],
       },
     })
 
-    const itemsKey = this.application.protocolService.itemsKeyForEncryptedPayload(encryptedPayload)
+    const itemsKey = this.application.encryptionService.itemsKeyForEncryptedPayload(encryptedPayload)
     expect(itemsKey).to.be.ok
   })
 
   it('decrypt encrypted item with associated key', async function () {
     const note = Factory.createNotePayload()
     const title = note.content.title
-    const encryptedPayload = await this.application.protocolService.encryptSplitSingle({
+    const encryptedPayload = await this.application.encryptionService.encryptSplitSingle({
       usesItemsKeyWithKeyLookup: {
         items: [note],
       },
     })
 
-    const itemsKey = this.application.protocolService.itemsKeyForEncryptedPayload(encryptedPayload)
+    const itemsKey = this.application.encryptionService.itemsKeyForEncryptedPayload(encryptedPayload)
     expect(itemsKey).to.be.ok
 
-    const decryptedPayload = await this.application.protocolService.decryptSplitSingle({
+    const decryptedPayload = await this.application.encryptionService.decryptSplitSingle({
       usesItemsKeyWithKeyLookup: {
         items: [encryptedPayload],
       },
@@ -182,17 +182,17 @@ describe('keys', function () {
   it('decrypts items waiting for keys', async function () {
     const notePayload = Factory.createNotePayload()
     const title = notePayload.content.title
-    const encryptedPayload = await this.application.protocolService.encryptSplitSingle({
+    const encryptedPayload = await this.application.encryptionService.encryptSplitSingle({
       usesItemsKeyWithKeyLookup: {
         items: [notePayload],
       },
     })
 
-    const itemsKey = this.application.protocolService.itemsKeyForEncryptedPayload(encryptedPayload)
+    const itemsKey = this.application.encryptionService.itemsKeyForEncryptedPayload(encryptedPayload)
 
     await this.application.itemManager.removeItemLocally(itemsKey)
 
-    const erroredPayload = await this.application.protocolService.decryptSplitSingle({
+    const erroredPayload = await this.application.encryptionService.decryptSplitSingle({
       usesItemsKeyWithKeyLookup: {
         items: [encryptedPayload],
       },
@@ -208,7 +208,7 @@ describe('keys', function () {
     await this.application.mutator.emitItemsFromPayloads([keyPayload], PayloadEmitSource.LocalChanged)
 
     /**
-     * Sleeping is required to trigger asyncronous protocolService.decryptItemsWaitingForKeys,
+     * Sleeping is required to trigger asyncronous encryptionService.decryptItemsWaitingForKeys,
      * which occurs after keys are mapped above.
      */
     await Factory.sleep(0.2)
@@ -223,7 +223,7 @@ describe('keys', function () {
   it('attempting to emit errored items key for which there exists a non errored master copy should ignore it', async function () {
     await Factory.registerUserToApplication({ application: this.application })
 
-    const itemsKey = await this.application.protocolService.getSureDefaultItemsKey()
+    const itemsKey = await this.application.encryptionService.getSureDefaultItemsKey()
 
     expect(itemsKey.errorDecrypting).to.not.be.ok
 
@@ -250,13 +250,13 @@ describe('keys', function () {
   it('generating export params with logged in account should produce encrypted payload', async function () {
     await Factory.registerUserToApplication({ application: this.application })
     const payload = Factory.createNotePayload()
-    const encryptedPayload = await this.application.protocolService.encryptSplitSingle({
+    const encryptedPayload = await this.application.encryptionService.encryptSplitSingle({
       usesItemsKeyWithKeyLookup: {
         items: [payload],
       },
     })
     expect(typeof encryptedPayload.content).to.equal('string')
-    expect(encryptedPayload.content.substring(0, 3)).to.equal(this.application.protocolService.getLatestVersion())
+    expect(encryptedPayload.content.substring(0, 3)).to.equal(this.application.encryptionService.getLatestVersion())
   })
 
   it('When setting passcode, should encrypt items keys', async function () {
@@ -276,7 +276,7 @@ describe('keys', function () {
     const itemsKeyPayload = new EncryptedPayload(itemsKeyRawPayload)
 
     const authenticatedData = this.context.encryption.getEmbeddedPayloadAuthenticatedData(itemsKeyPayload)
-    const rootKeyParams = await this.application.protocolService.getRootKeyParams()
+    const rootKeyParams = await this.application.encryptionService.getRootKeyParams()
 
     expect(authenticatedData.kp).to.be.ok
     expect(authenticatedData.kp).to.eql(rootKeyParams.getPortableValue())
@@ -286,8 +286,8 @@ describe('keys', function () {
   it('correctly validates local passcode', async function () {
     const passcode = 'foo'
     await this.application.addPasscode('foo')
-    expect((await this.application.protocolService.validatePasscode('wrong')).valid).to.equal(false)
-    expect((await this.application.protocolService.validatePasscode(passcode)).valid).to.equal(true)
+    expect((await this.application.encryptionService.validatePasscode('wrong')).valid).to.equal(false)
+    expect((await this.application.encryptionService.validatePasscode(passcode)).valid).to.equal(true)
   })
 
   it('signing into 003 account should delete latest offline items key and create 003 items key', async function () {
@@ -296,8 +296,8 @@ describe('keys', function () {
      * Upon signing into an 003 account, the application should delete any neverSynced items keys,
      * and create a new default items key that is the default for a given protocol version.
      */
-    const defaultItemsKey = await this.application.protocolService.getSureDefaultItemsKey()
-    const latestVersion = this.application.protocolService.getLatestVersion()
+    const defaultItemsKey = await this.application.encryptionService.getSureDefaultItemsKey()
+    const latestVersion = this.application.encryptionService.getLatestVersion()
     expect(defaultItemsKey.keyVersion).to.equal(latestVersion)
 
     /** Register with 003 version */
@@ -312,7 +312,7 @@ describe('keys', function () {
     expect(itemsKeys.length).to.equal(1)
     const newestItemsKey = itemsKeys[0]
     expect(newestItemsKey.keyVersion).to.equal(ProtocolVersion.V003)
-    const rootKey = await this.application.protocolService.getRootKey()
+    const rootKey = await this.application.encryptionService.getRootKey()
     expect(newestItemsKey.itemsKey).to.equal(rootKey.masterKey)
     expect(newestItemsKey.dataAuthenticationKey).to.equal(rootKey.dataAuthenticationKey)
   })
@@ -347,12 +347,12 @@ describe('keys', function () {
     expect(itemsKeys.length).to.equal(1)
     const originalItemsKey = itemsKeys[0]
 
-    const originalRootKey = await this.application.protocolService.getRootKey()
+    const originalRootKey = await this.application.encryptionService.getRootKey()
     /** Expect that we can decrypt raw payload with current root key */
     const rawPayloads = await this.application.diskStorageService.getAllRawPayloads()
     const itemsKeyRawPayload = rawPayloads.find((p) => p.uuid === originalItemsKey.uuid)
     const itemsKeyPayload = new EncryptedPayload(itemsKeyRawPayload)
-    const decrypted = await this.application.protocolService.decryptSplitSingle({
+    const decrypted = await this.application.encryptionService.decryptSplitSingle({
       usesRootKey: {
         items: [itemsKeyPayload],
         key: originalRootKey,
@@ -366,7 +366,7 @@ describe('keys', function () {
     Factory.handlePasswordChallenges(this.application, passcode)
     await this.application.changePasscode('bar')
 
-    const newRootKey = await this.application.protocolService.getRootKey()
+    const newRootKey = await this.application.encryptionService.getRootKey()
     expect(newRootKey).to.not.equal(originalRootKey)
     expect(newRootKey.masterKey).to.not.equal(originalRootKey.masterKey)
 
@@ -379,7 +379,7 @@ describe('keys', function () {
     expect(itemsKeyRawPayload2.content).to.not.equal(itemsKeyRawPayload.content)
 
     const itemsKeyPayload2 = new EncryptedPayload(itemsKeyRawPayload2)
-    const decrypted2 = await this.application.protocolService.decryptSplitSingle({
+    const decrypted2 = await this.application.encryptionService.decryptSplitSingle({
       usesRootKey: {
         items: [itemsKeyPayload2],
         key: originalRootKey,
@@ -388,7 +388,7 @@ describe('keys', function () {
     expect(decrypted2.errorDecrypting).to.equal(true)
 
     /** Should be able to decrypt with new root key */
-    const decrypted3 = await this.application.protocolService.decryptSplitSingle({
+    const decrypted3 = await this.application.encryptionService.decryptSplitSingle({
       usesRootKey: {
         items: [itemsKeyPayload2],
         key: newRootKey,
@@ -405,17 +405,17 @@ describe('keys', function () {
     })
     const itemsKeys = this.application.itemManager.getDisplayableItemsKeys()
     expect(itemsKeys.length).to.equal(1)
-    const defaultItemsKey = await this.application.protocolService.getSureDefaultItemsKey()
+    const defaultItemsKey = await this.application.encryptionService.getSureDefaultItemsKey()
 
     const result = await this.application.changePassword(this.password, 'foobarfoo')
     expect(result.error).to.not.be.ok
 
     expect(this.application.itemManager.getDisplayableItemsKeys().length).to.equal(2)
-    const newDefaultItemsKey = await this.application.protocolService.getSureDefaultItemsKey()
+    const newDefaultItemsKey = await this.application.encryptionService.getSureDefaultItemsKey()
     expect(newDefaultItemsKey.uuid).to.not.equal(defaultItemsKey.uuid)
 
     const note = await Factory.createSyncedNote(this.application)
-    const payload = await this.application.protocolService.encryptSplitSingle({
+    const payload = await this.application.encryptionService.encryptSplitSingle({
       usesItemsKeyWithKeyLookup: {
         items: [note.payload],
       },
@@ -432,18 +432,18 @@ describe('keys', function () {
     })
     const itemsKeys = application.itemManager.getDisplayableItemsKeys()
     expect(itemsKeys.length).to.equal(1)
-    const defaultItemsKey = application.protocolService.getSureDefaultItemsKey()
+    const defaultItemsKey = application.encryptionService.getSureDefaultItemsKey()
 
     const newEmail = UuidGenerator.GenerateUuid()
     const result = await application.changeEmail(newEmail, password)
     expect(result.error).to.not.be.ok
 
     expect(application.itemManager.getDisplayableItemsKeys().length).to.equal(2)
-    const newDefaultItemsKey = application.protocolService.getSureDefaultItemsKey()
+    const newDefaultItemsKey = application.encryptionService.getSureDefaultItemsKey()
     expect(newDefaultItemsKey.uuid).to.not.equal(defaultItemsKey.uuid)
 
     const note = await Factory.createSyncedNote(application)
-    const payload = await application.protocolService.encryptSplitSingle({
+    const payload = await application.encryptionService.encryptSplitSingle({
       usesItemsKeyWithKeyLookup: {
         items: [note.payload],
       },
@@ -480,7 +480,7 @@ describe('keys', function () {
 
   it('loading the keychain root key should also load its key params', async function () {
     await Factory.registerUserToApplication({ application: this.application })
-    const rootKey = await this.application.protocolService.rootKeyEncryption.getRootKeyFromKeychain()
+    const rootKey = await this.application.encryptionService.rootKeyManager.getRootKeyFromKeychain()
     expect(rootKey.keyParams).to.be.ok
   })
 
@@ -497,7 +497,7 @@ describe('keys', function () {
 
   it('persisted key params should exactly equal in memory rootKey.keyParams', async function () {
     await Factory.registerUserToApplication({ application: this.application })
-    const rootKey = await this.application.protocolService.getRootKey()
+    const rootKey = await this.application.encryptionService.getRootKey()
     const rawKeyParams = await this.application.diskStorageService.getValue(
       StorageKey.RootKeyParams,
       StorageValueModes.Nonwrapped,
@@ -507,7 +507,7 @@ describe('keys', function () {
 
   it('key params should have expected values', async function () {
     await Factory.registerUserToApplication({ application: this.application })
-    const keyParamsObject = await this.application.protocolService.getRootKeyParams()
+    const keyParamsObject = await this.application.encryptionService.getRootKeyParams()
     const keyParams = keyParamsObject.content
     expect(keyParams.identifier).to.be.ok
     expect(keyParams.pw_nonce).to.be.ok
@@ -533,7 +533,7 @@ describe('keys', function () {
       email,
       password,
     })
-    const keyParamsObject = await this.application.protocolService.getRootKeyParams()
+    const keyParamsObject = await this.application.encryptionService.getRootKeyParams()
     const keyParams = keyParamsObject.content
 
     expect(keyParams.created).to.be.ok
@@ -551,7 +551,7 @@ describe('keys', function () {
       password: this.password,
       version: ProtocolVersion.V003,
     })
-    const keyParamsObject = await this.application.protocolService.getRootKeyParams()
+    const keyParamsObject = await this.application.encryptionService.getRootKeyParams()
     const keyParams = keyParamsObject.content
 
     expect(keyParams.created).to.be.ok
@@ -566,12 +566,12 @@ describe('keys', function () {
       password: this.password,
       version: ProtocolVersion.V003,
     })
-    expect(await this.application.protocolService.getEncryptionDisplayName()).to.equal('AES-256')
+    expect(await this.application.encryptionService.getEncryptionDisplayName()).to.equal('AES-256')
 
     this.application = await Factory.signOutApplicationAndReturnNew(this.application)
     /** Register with 004 account */
     await this.application.register(this.email + 'new', this.password)
-    expect(await this.application.protocolService.getEncryptionDisplayName()).to.equal('XChaCha20-Poly1305')
+    expect(await this.application.encryptionService.getEncryptionDisplayName()).to.equal('XChaCha20-Poly1305')
   })
 
   it('when launching app with no keychain but data, should present account recovery challenge', async function () {
@@ -599,7 +599,7 @@ describe('keys', function () {
     await recreatedApp.prepareForLaunch({ receiveChallenge })
     await recreatedApp.launch(true)
 
-    expect(recreatedApp.protocolService.getRootKey()).to.be.ok
+    expect(recreatedApp.encryptionService.getRootKey()).to.be.ok
     expect(totalChallenges).to.equal(expectedChallenges)
     await Factory.safeDeinit(recreatedApp)
   })
@@ -684,11 +684,11 @@ describe('keys', function () {
 
       /** Change password through session manager directly instead of application,
        * as not to create any items key (to simulate 003 client behavior) */
-      const currentRootKey = await oldClient.protocolService.computeRootKey(
+      const currentRootKey = await oldClient.encryptionService.computeRootKey(
         this.password,
-        await oldClient.protocolService.getRootKeyParams(),
+        await oldClient.encryptionService.getRootKeyParams(),
       )
-      const operator = oldClient.protocolService.operatorManager.operatorForVersion(ProtocolVersion.V003)
+      const operator = oldClient.encryptionService.operators.operatorForVersion(ProtocolVersion.V003)
       const newRootKey = await operator.createRootKey(this.email, this.password)
       Object.defineProperty(oldClient.apiService, 'apiVersion', {
         get: function () {
@@ -734,11 +734,11 @@ describe('keys', function () {
 
       /** Change password through session manager directly instead of application,
        * as not to create any items key (to simulate 003 client behavior) */
-      const currentRootKey = await this.application.protocolService.computeRootKey(
+      const currentRootKey = await this.application.encryptionService.computeRootKey(
         this.password,
-        await this.application.protocolService.getRootKeyParams(),
+        await this.application.encryptionService.getRootKeyParams(),
       )
-      const operator = this.application.protocolService.operatorManager.operatorForVersion(ProtocolVersion.V003)
+      const operator = this.application.encryptionService.operators.operatorForVersion(ProtocolVersion.V003)
       const newRootKeyTemplate = await operator.createRootKey(this.email, this.password)
       const newRootKey = CreateNewRootKey({
         ...newRootKeyTemplate.content,
@@ -761,7 +761,7 @@ describe('keys', function () {
         currentServerPassword: currentRootKey.serverPassword,
         newRootKey,
       })
-      await this.application.protocolService.reencryptApplicableItemsAfterUserRootKeyChange()
+      await this.application.encryptionService.reencryptApplicableItemsAfterUserRootKeyChange()
       /** Note: this may result in a deadlock if features_service syncs and results in an error */
       await this.application.sync.sync({ awaitAll: true })
 
@@ -786,7 +786,7 @@ describe('keys', function () {
      * will have an updated_at value, which tell our protocol service that this key has been
      * synced before, which sort of "lies" to the protocol service because now it thinks it doesnt
      * need to create a new items key because one has already been synced with the account.
-     * The corrective action was to do a final check in protocolService.handleDownloadFirstSyncCompletion
+     * The corrective action was to do a final check in encryptionService.handleDownloadFirstSyncCompletion
      * to ensure there exists an items key corresponding to the user's account version.
      */
     const promise = this.context.awaitNextSucessfulSync()
@@ -794,7 +794,7 @@ describe('keys', function () {
     await promise
 
     await this.application.itemManager.removeAllItemsFromMemory()
-    expect(this.application.protocolService.getSureDefaultItemsKey()).to.not.be.ok
+    expect(this.application.encryptionService.getSureDefaultItemsKey()).to.not.be.ok
 
     const protocol003 = new SNProtocolOperator003(new SNWebCrypto())
     const key = await protocol003.createItemsKey()
@@ -810,14 +810,14 @@ describe('keys', function () {
       }),
     )
 
-    const defaultKey = this.application.protocolService.getSureDefaultItemsKey()
+    const defaultKey = this.application.encryptionService.getSureDefaultItemsKey()
     expect(defaultKey.keyVersion).to.equal(ProtocolVersion.V003)
     expect(defaultKey.uuid).to.equal(key.uuid)
 
     await Factory.registerUserToApplication({ application: this.application })
 
     const notePayload = Factory.createNotePayload()
-    expect(await this.application.protocolService.itemsEncryption.keyToUseForItemEncryption(notePayload)).to.be.ok
+    expect(await this.application.encryptionService.itemsEncryption.keyToUseForItemEncryption(notePayload)).to.be.ok
   })
 
   it('having unsynced items keys should resync them upon download first sync completion', async function () {
@@ -856,7 +856,7 @@ describe('keys', function () {
       email: this.email,
       password: this.password,
     })
-    const defaultKeys = otherClient.protocolService.itemsEncryption.getItemsKeys().filter((key) => {
+    const defaultKeys = otherClient.encryptionService.itemsEncryption.getItemsKeys().filter((key) => {
       return key.isDefault
     })
     expect(defaultKeys.length).to.equal(1)

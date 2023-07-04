@@ -153,7 +153,7 @@ export class SNSyncService
   constructor(
     private itemManager: ItemManager,
     private sessionManager: SNSessionManager,
-    private protocolService: EncryptionService,
+    private encryptionService: EncryptionService,
     private storageService: DiskStorageService,
     private payloadManager: PayloadManager,
     private apiService: SNApiService,
@@ -189,7 +189,7 @@ export class SNSyncService
     this.dealloced = true
     ;(this.sessionManager as unknown) = undefined
     ;(this.itemManager as unknown) = undefined
-    ;(this.protocolService as unknown) = undefined
+    ;(this.encryptionService as unknown) = undefined
     ;(this.payloadManager as unknown) = undefined
     ;(this.storageService as unknown) = undefined
     ;(this.apiService as unknown) = undefined
@@ -250,7 +250,7 @@ export class SNSyncService
     const encryptionSplit = SplitPayloadsByEncryptionType(encryptedPayloads)
     const decryptionSplit = CreateDecryptionSplitWithKeyLookup(encryptionSplit)
 
-    const newlyDecryptedPayloads = await this.protocolService.decryptSplit(decryptionSplit)
+    const newlyDecryptedPayloads = await this.encryptionService.decryptSplit(decryptionSplit)
 
     await this.payloadManager.emitPayloads(
       [...alreadyDecryptedPayloads, ...newlyDecryptedPayloads],
@@ -369,7 +369,7 @@ export class SNSyncService
     const encryptionSplit = SplitPayloadsByEncryptionType(encrypted)
     const decryptionSplit = CreateDecryptionSplitWithKeyLookup(encryptionSplit)
 
-    const results = await this.protocolService.decryptSplit(decryptionSplit)
+    const results = await this.encryptionService.decryptSplit(decryptionSplit)
 
     await this.payloadManager.emitPayloads([...nonencrypted, ...results], PayloadEmitSource.LocalDatabaseLoaded)
 
@@ -510,7 +510,7 @@ export class SNSyncService
 
     const keyLookupSplit = CreateEncryptionSplitWithKeyLookup(encryptionSplit)
 
-    const encryptedResults = await this.protocolService.encryptSplit(keyLookupSplit)
+    const encryptedResults = await this.encryptionService.encryptSplit(keyLookupSplit)
 
     const contextPayloads = [
       ...encryptedResults.map(CreateEncryptedServerSyncPushPayload),
@@ -1138,7 +1138,7 @@ export class SNSyncService
       },
     }
 
-    const results = await this.protocolService.decryptSplit<ItemsKeyContent>(rootKeySplit)
+    const results = await this.encryptionService.decryptSplit<ItemsKeyContent>(rootKeySplit)
 
     results.forEach((result) => {
       if (isDecryptedPayload<ItemsKeyContent>(result) && result.content_type === ContentType.ItemsKey) {
@@ -1168,7 +1168,7 @@ export class SNSyncService
       },
     }
 
-    const results = await this.protocolService.decryptSplit<KeySystemItemsKeyContent>(keySystemRootKeySplit)
+    const results = await this.encryptionService.decryptSplit<KeySystemItemsKeyContent>(keySystemRootKeySplit)
 
     results.forEach((result) => {
       if (
@@ -1213,7 +1213,7 @@ export class SNSyncService
           }
         }
 
-        return this.protocolService.decryptSplitSingle(keyedSplit)
+        return this.encryptionService.decryptSplitSingle(keyedSplit)
       }),
     )
   }
@@ -1399,7 +1399,7 @@ export class SNSyncService
 
     const keyedSplit = CreateDecryptionSplitWithKeyLookup(encryptionSplit)
 
-    const decryptionResults = await this.protocolService.decryptSplit(keyedSplit)
+    const decryptionResults = await this.encryptionService.decryptSplit(keyedSplit)
 
     this.setInSync(false)
 

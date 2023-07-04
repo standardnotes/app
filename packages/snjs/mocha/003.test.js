@@ -39,7 +39,7 @@ describe('003 protocol operations', () => {
 
   it('cost minimum should throw', () => {
     expect(() => {
-      sharedApplication.protocolService.costMinimumForVersion('003')
+      sharedApplication.encryptionService.costMinimumForVersion('003')
     }).to.throw('Cost minimums only apply to versions <= 002')
   })
 
@@ -59,7 +59,7 @@ describe('003 protocol operations', () => {
   it('computes proper keys for sign in', async () => {
     const identifier = 'foo@bar.com'
     const password = 'very_secure'
-    const keyParams = sharedApplication.protocolService.createKeyParams({
+    const keyParams = sharedApplication.encryptionService.createKeyParams({
       pw_nonce: 'baaec0131d677cf993381367eb082fe377cefe70118c1699cb9b38f0bc850e7b',
       identifier: identifier,
       version: '003',
@@ -73,7 +73,7 @@ describe('003 protocol operations', () => {
   it('can decrypt item generated with web version 3.3.6', async () => {
     const identifier = 'demo@standardnotes.org'
     const password = 'password'
-    const keyParams = sharedApplication.protocolService.createKeyParams({
+    const keyParams = sharedApplication.encryptionService.createKeyParams({
       pw_nonce: '31107837b44d86179140b7c602a55d694243e2e9ced0c4c914ac21ad90215055',
       identifier: identifier,
       version: '003',

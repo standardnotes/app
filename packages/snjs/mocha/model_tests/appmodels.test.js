@@ -282,7 +282,7 @@ describe('app models', () => {
     const itemsKey = this.application.itemManager.getDisplayableItemsKeys()[0]
 
     /** Encrypt item1 and emit as errored so it persists with items_key_id */
-    const encrypted = await this.application.protocolService.encryptSplitSingle({
+    const encrypted = await this.application.encryptionService.encryptSplitSingle({
       usesItemsKeyWithKeyLookup: {
         items: [item1.payload],
       },
@@ -297,7 +297,7 @@ describe('app models', () => {
     expect(this.application.payloadManager.findOne(item1.uuid).errorDecrypting).to.equal(true)
     expect(this.application.payloadManager.findOne(item1.uuid).items_key_id).to.equal(itemsKey.uuid)
 
-    sinon.stub(this.application.protocolService.itemsEncryption, 'decryptErroredItemPayloads').callsFake(() => {
+    sinon.stub(this.application.encryptionService.itemsEncryption, 'decryptErroredItemPayloads').callsFake(() => {
       // prevent auto decryption
     })
 

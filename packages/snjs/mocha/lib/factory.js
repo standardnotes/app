@@ -112,10 +112,10 @@ export function registerUserToApplication({ application, email, password, epheme
 }
 
 export async function setOldVersionPasscode({ application, passcode, version }) {
-  const identifier = await application.protocolService.crypto.generateUUID()
-  const operator = application.protocolService.operatorManager.operatorForVersion(version)
+  const identifier = await application.encryptionService.crypto.generateUUID()
+  const operator = application.encryptionService.operators.operatorForVersion(version)
   const key = await operator.createRootKey(identifier, passcode, KeyParamsOrigination.PasscodeCreate)
-  await application.protocolService.setNewRootKeyWrapper(key)
+  await application.encryptionService.setNewRootKeyWrapper(key)
   await application.userService.rewriteItemsKeys()
   await application.syncService.sync(syncOptions)
 }
@@ -127,7 +127,7 @@ export async function setOldVersionPasscode({ application, passcode, version }) 
 export async function registerOldUser({ application, email, password, version }) {
   if (!email) email = Utils.generateUuid()
   if (!password) password = Utils.generateUuid()
-  const operator = application.protocolService.operatorManager.operatorForVersion(version)
+  const operator = application.encryptionService.operators.operatorForVersion(version)
   const accountKey = await operator.createRootKey(email, password, KeyParamsOrigination.Registration)
 
   const response = await application.userApiService.register({
@@ -145,7 +145,7 @@ export async function registerOldUser({ application, email, password, version })
     mode: SyncMode.DownloadFirst,
     ...syncOptions,
   })
-  await application.protocolService.decryptErroredPayloads()
+  await application.encryptionService.decryptErroredPayloads()
 }
 
 export function createStorageItemPayload(contentType) {

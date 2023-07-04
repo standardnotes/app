@@ -14,7 +14,7 @@ import { SignInWithRecoveryCodes } from './SignInWithRecoveryCodes'
 
 describe('SignInWithRecoveryCodes', () => {
   let authManager: AuthClientInterface
-  let protocolService: EncryptionProviderInterface
+  let encryptionService: EncryptionProviderInterface
   let inMemoryStore: KeyValueStoreInterface<string>
   let crypto: PureCryptoInterface
   let sessionManager: SessionsClientInterface
@@ -22,7 +22,7 @@ describe('SignInWithRecoveryCodes', () => {
 
   const createUseCase = () => new SignInWithRecoveryCodes(
     authManager,
-    protocolService,
+    encryptionService,
     inMemoryStore,
     crypto,
     sessionManager,
@@ -50,17 +50,17 @@ describe('SignInWithRecoveryCodes', () => {
     })
     rootKey.payload = payload
 
-    protocolService = {} as jest.Mocked<EncryptionProviderInterface>
-    protocolService.hasAccount = jest.fn()
-    protocolService.computeRootKey = jest.fn().mockReturnValue(rootKey)
-    protocolService.platformSupportsKeyDerivation = jest.fn().mockReturnValue(true)
-    protocolService.supportedVersions = jest.fn().mockReturnValue([
+    encryptionService = {} as jest.Mocked<EncryptionProviderInterface>
+    encryptionService.hasAccount = jest.fn()
+    encryptionService.computeRootKey = jest.fn().mockReturnValue(rootKey)
+    encryptionService.platformSupportsKeyDerivation = jest.fn().mockReturnValue(true)
+    encryptionService.supportedVersions = jest.fn().mockReturnValue([
       '001',
       '002',
       '003',
       '004',
     ])
-    protocolService.isVersionNewerThanLibraryVersion = jest.fn()
+    encryptionService.isVersionNewerThanLibraryVersion = jest.fn()
 
     inMemoryStore = {} as jest.Mocked<KeyValueStoreInterface<string>>
     inMemoryStore.setValue = jest.fn()
@@ -79,7 +79,7 @@ describe('SignInWithRecoveryCodes', () => {
   })
 
   it('should fail if an account already exists', async () => {
-    protocolService.hasAccount = jest.fn().mockReturnValue(true)
+    encryptionService.hasAccount = jest.fn().mockReturnValue(true)
 
     const useCase = createUseCase()
     const result = await useCase.execute({ recoveryCodes: 'recovery-codes', password: 'foobar', username: 'test@test.te' })
@@ -99,7 +99,7 @@ describe('SignInWithRecoveryCodes', () => {
   })
 
   it('should fail if key params has unsupported deriviation', async () => {
-    protocolService.platformSupportsKeyDerivation = jest.fn().mockReturnValue(false)
+    encryptionService.platformSupportsKeyDerivation = jest.fn().mockReturnValue(false)
 
     const useCase = createUseCase()
     const result = await useCase.execute({ recoveryCodes: 'recovery-codes', password: 'foobar', username: 'test@test.te' })
@@ -109,7 +109,7 @@ describe('SignInWithRecoveryCodes', () => {
   })
 
   it('should fail if key params has unsupported version', async () => {
-    protocolService.isVersionNewerThanLibraryVersion = jest.fn().mockReturnValue(true)
+    encryptionService.isVersionNewerThanLibraryVersion = jest.fn().mockReturnValue(true)
 
     authManager.recoveryKeyParams = jest.fn().mockReturnValue({
       identifier: 'test@test.te',
@@ -120,7 +120,7 @@ describe('SignInWithRecoveryCodes', () => {
       version: '006',
     })
 
-    protocolService.platformSupportsKeyDerivation = jest.fn().mockReturnValue(false)
+    encryptionService.platformSupportsKeyDerivation = jest.fn().mockReturnValue(false)
 
     const useCase = createUseCase()
     const result = await useCase.execute({ recoveryCodes: 'recovery-codes', password: 'foobar', username: 'test@test.te' })
@@ -130,7 +130,7 @@ describe('SignInWithRecoveryCodes', () => {
   })
 
   it('should fail if key params has expired version', async () => {
-    protocolService.isVersionNewerThanLibraryVersion = jest.fn().mockReturnValue(false)
+    encryptionService.isVersionNewerThanLibraryVersion = jest.fn().mockReturnValue(false)
 
     authManager.recoveryKeyParams = jest.fn().mockReturnValue({
       identifier: 'test@test.te',
@@ -141,7 +141,7 @@ describe('SignInWithRecoveryCodes', () => {
       version: '006',
     })
 
-    protocolService.platformSupportsKeyDerivation = jest.fn().mockReturnValue(false)
+    encryptionService.platformSupportsKeyDerivation = jest.fn().mockReturnValue(false)
 
     const useCase = createUseCase()
     const result = await useCase.execute({ recoveryCodes: 'recovery-codes', password: 'foobar', username: 'test@test.te' })

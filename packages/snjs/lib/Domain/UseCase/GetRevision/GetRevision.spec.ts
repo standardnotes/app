@@ -17,9 +17,9 @@ import { GetRevision } from './GetRevision'
 
 describe('GetRevision', () => {
   let revisionManager: RevisionClientInterface
-  let protocolService: EncryptionProviderInterface
+  let encryptionService: EncryptionProviderInterface
 
-  const createUseCase = () => new GetRevision(revisionManager, protocolService)
+  const createUseCase = () => new GetRevision(revisionManager, encryptionService)
 
   beforeEach(() => {
     revisionManager = {} as jest.Mocked<RevisionClientInterface>
@@ -35,13 +35,13 @@ describe('GetRevision', () => {
       updated_at: '2021-01-01T00:00:00.000Z'
     } as jest.Mocked<Revision>)
 
-    protocolService = {} as jest.Mocked<EncryptionProviderInterface>
-    protocolService.getEmbeddedPayloadAuthenticatedData = jest.fn().mockReturnValue({ u: '00000000-0000-0000-0000-000000000000' })
+    encryptionService = {} as jest.Mocked<EncryptionProviderInterface>
+    encryptionService.getEmbeddedPayloadAuthenticatedData = jest.fn().mockReturnValue({ u: '00000000-0000-0000-0000-000000000000' })
     const encryptedPayload = {
       content: 'foobar',
     } as jest.Mocked<EncryptedPayloadInterface>
     encryptedPayload.copy = jest.fn().mockReturnValue(encryptedPayload)
-    protocolService.decryptSplitSingle = jest.fn().mockReturnValue(encryptedPayload)
+    encryptionService.decryptSplitSingle = jest.fn().mockReturnValue(encryptedPayload)
 
     isRemotePayloadAllowed.mockImplementation(() => true)
   })
@@ -59,7 +59,7 @@ describe('GetRevision', () => {
   })
 
   it('it should get a revision without uuid from embedded params', async () => {
-    protocolService.getEmbeddedPayloadAuthenticatedData = jest.fn().mockReturnValue({ u: undefined })
+    encryptionService.getEmbeddedPayloadAuthenticatedData = jest.fn().mockReturnValue({ u: undefined })
 
     const useCase = createUseCase()
 
@@ -73,7 +73,7 @@ describe('GetRevision', () => {
   })
 
   it('it should get a revision without embedded params', async () => {
-    protocolService.getEmbeddedPayloadAuthenticatedData = jest.fn().mockReturnValue(undefined)
+    encryptionService.getEmbeddedPayloadAuthenticatedData = jest.fn().mockReturnValue(undefined)
 
     const useCase = createUseCase()
 
@@ -130,7 +130,7 @@ describe('GetRevision', () => {
       errorDecrypting: true,
     } as jest.Mocked<EncryptedPayloadInterface>
     encryptedPayload.copy = jest.fn().mockReturnValue(encryptedPayload)
-    protocolService.decryptSplitSingle = jest.fn().mockReturnValue(encryptedPayload)
+    encryptionService.decryptSplitSingle = jest.fn().mockReturnValue(encryptedPayload)
 
     const useCase = createUseCase()
 

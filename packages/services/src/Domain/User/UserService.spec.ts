@@ -20,7 +20,7 @@ describe('UserService', () => {
   let syncService: SyncServiceInterface
   let storageService: StorageServiceInterface
   let itemManager: ItemManagerInterface
-  let protocolService: EncryptionProviderInterface
+  let encryptionService: EncryptionProviderInterface
   let alertService: AlertService
   let challengeService: ChallengeServiceInterface
   let protectionService: ProtectionsClientInterface
@@ -33,7 +33,7 @@ describe('UserService', () => {
       syncService,
       storageService,
       itemManager,
-      protocolService,
+      encryptionService,
       alertService,
       challengeService,
       protectionService,
@@ -51,7 +51,7 @@ describe('UserService', () => {
 
     itemManager = {} as jest.Mocked<ItemManagerInterface>
 
-    protocolService = {} as jest.Mocked<EncryptionProviderInterface>
+    encryptionService = {} as jest.Mocked<EncryptionProviderInterface>
 
     alertService = {} as jest.Mocked<AlertService>
 

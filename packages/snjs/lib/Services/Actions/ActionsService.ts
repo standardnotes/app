@@ -63,7 +63,7 @@ export class SNActionsService extends AbstractService {
     public deviceInterface: DeviceInterface,
     private httpService: DeprecatedHttpService,
     private payloadManager: PayloadManager,
-    private protocolService: EncryptionService,
+    private encryptionService: EncryptionService,
     private syncService: SNSyncService,
     private challengeService: ChallengeService,
     private listedService: ListedService,
@@ -81,7 +81,7 @@ export class SNActionsService extends AbstractService {
     ;(this.payloadManager as unknown) = undefined
     ;(this.listedService as unknown) = undefined
     ;(this.challengeService as unknown) = undefined
-    ;(this.protocolService as unknown) = undefined
+    ;(this.encryptionService as unknown) = undefined
     ;(this.syncService as unknown) = undefined
     this.payloadRequestHandlers.length = 0
     this.previousPasswords.length = 0
@@ -207,7 +207,7 @@ export class SNActionsService extends AbstractService {
       return
     }
 
-    let decryptedPayload = await this.protocolService.decryptSplitSingle<ActionExtensionContent>({
+    let decryptedPayload = await this.encryptionService.decryptSplitSingle<ActionExtensionContent>({
       usesItemsKeyWithKeyLookup: {
         items: [payload],
       },
@@ -218,7 +218,7 @@ export class SNActionsService extends AbstractService {
     }
 
     if (rootKey) {
-      decryptedPayload = await this.protocolService.decryptSplitSingle({
+      decryptedPayload = await this.encryptionService.decryptSplitSingle({
         usesRootKey: {
           items: [payload],
           key: rootKey,
@@ -230,7 +230,7 @@ export class SNActionsService extends AbstractService {
     }
 
     for (const itemsKey of this.itemManager.getDisplayableItemsKeys()) {
-      const decryptedPayload = await this.protocolService.decryptSplitSingle<ActionExtensionContent>({
+      const decryptedPayload = await this.encryptionService.decryptSplitSingle<ActionExtensionContent>({
         usesItemsKey: {
           items: [payload],
           key: itemsKey,
@@ -256,7 +256,7 @@ export class SNActionsService extends AbstractService {
       )
       return undefined
     }
-    const keyParams = this.protocolService.createKeyParams(keyParamsData)
+    const keyParams = this.encryptionService.createKeyParams(keyParamsData)
 
     /* Try previous passwords */
     for (const passwordCandidate of this.previousPasswords) {
@@ -266,7 +266,7 @@ export class SNActionsService extends AbstractService {
 
       triedPasswords.push(passwordCandidate)
 
-      const key = await this.protocolService.computeRootKey(passwordCandidate, keyParams)
+      const key = await this.encryptionService.computeRootKey(passwordCandidate, keyParams)
       if (!key) {
         continue
       }
@@ -341,7 +341,7 @@ export class SNActionsService extends AbstractService {
       return item.payload.ejected()
     }
 
-    const encrypted = await this.protocolService.encryptSplitSingle({
+    const encrypted = await this.encryptionService.encryptSplitSingle({
       usesItemsKeyWithKeyLookup: { items: [item.payload] },
     })
 

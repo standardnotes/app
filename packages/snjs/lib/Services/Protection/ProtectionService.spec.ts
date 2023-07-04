@@ -24,14 +24,14 @@ const setupRandomUuid = () => {
 
 describe('protectionService', () => {
   let mutator: MutatorClientInterface
-  let protocolService: EncryptionService
+  let encryptionService: EncryptionService
   let challengeService: ChallengeService
   let storageService: DiskStorageService
   let internalEventBus: InternalEventBusInterface
   let protectionService: SNProtectionService
 
   const createService = () => {
-    return new SNProtectionService(protocolService, mutator, challengeService, storageService, internalEventBus)
+    return new SNProtectionService(encryptionService, mutator, challengeService, storageService, internalEventBus)
   }
 
   const createFile = (name: string, isProtected?: boolean) => {
@@ -59,9 +59,9 @@ describe('protectionService', () => {
     storageService = {} as jest.Mocked<DiskStorageService>
     storageService.getValue = jest.fn()
 
-    protocolService = {} as jest.Mocked<EncryptionService>
-    protocolService.hasAccount = jest.fn().mockReturnValue(true)
-    protocolService.hasPasscode = jest.fn().mockReturnValue(false)
+    encryptionService = {} as jest.Mocked<EncryptionService>
+    encryptionService.hasAccount = jest.fn().mockReturnValue(true)
+    encryptionService.hasPasscode = jest.fn().mockReturnValue(false)
 
     mutator = {} as jest.Mocked<MutatorClientInterface>
   })
