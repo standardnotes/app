@@ -6,7 +6,6 @@ import Spinner from '../Spinner/Spinner'
 import { PasswordStep } from './PasswordStep'
 import { FinishStep } from './FinishStep'
 import { PreprocessingStep } from './PreprocessingStep'
-import { InternalFeatureService } from '@standardnotes/snjs'
 import { featureTrunkVaultsEnabled } from '@/FeatureTrunk'
 
 interface Props {
