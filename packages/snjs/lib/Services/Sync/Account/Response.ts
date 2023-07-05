@@ -99,15 +99,14 @@ export class ServerSyncResponse {
   }
 
   public get error(): HttpError | undefined {
-    if (this.hasError) {
-      if (isErrorResponse(this.rawResponse)) {
-        const error = this.rawResponse.data?.error
-        if (error) {
-          return error
+    if (isErrorResponse(this.rawResponse)) {
+      const error = this.rawResponse.data?.error
+      if (error) {
+        return error
+      } else {
+        return {
+          message: 'Unknown error',
         }
-      }
-      return {
-        message: 'Unknown error',
       }
     } else {
       return undefined
