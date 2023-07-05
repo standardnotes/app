@@ -176,6 +176,11 @@ export class DesktopManager
     }
   }
 
+  consoleLog(message: string): void {
+    // eslint-disable-next-line no-console
+    console.log(message)
+  }
+
   async onComponentInstallationComplete(componentData: DecryptedTransferPayload<ComponentContent>) {
     const component = this.application.items.findItem(componentData.uuid)
     if (!component) {

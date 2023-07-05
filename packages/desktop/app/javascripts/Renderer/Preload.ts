@@ -22,6 +22,8 @@ process.once('loaded', function () {
 
     setHomeServerStartedHandler: (handler: MainEventHandler) =>
       ipcRenderer.on(MessageToWebApp.HomeServerStarted, handler),
+
+    setConsoleLogHandler: (handler: MainEventHandler) => ipcRenderer.on(MessageToWebApp.ConsoleLog, handler),
   }
 
   contextBridge.exposeInMainWorld('electronMainEvents', mainEvents)
