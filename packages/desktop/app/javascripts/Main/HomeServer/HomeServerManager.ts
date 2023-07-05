@@ -4,7 +4,7 @@ import {
   HomeServerManagerInterface,
   HomeServerEnvironmentConfiguration,
 } from '@web/Application/Device/DesktopSnjsExports'
-import { HomeServer, HomeServerInterface } from '@standardnotes/home-server'
+import { HomeServerInterface } from '@standardnotes/home-server'
 
 import { WebContents } from 'electron'
 import { MessageToWebApp } from '../../Shared/IpcMessages'
@@ -127,7 +127,7 @@ export class HomeServerManager implements HomeServerManagerInterface {
   }
 
   async startHomeServer(): Promise<string | undefined> {
-    this.doNotInstantiateHomeServerOnWindowsUntilItIsSupported()
+    await this.lazyLoadHomeServerOnApplicablePlatforms()
 
     if (!this.homeServer) {
       return
@@ -265,9 +265,17 @@ export class HomeServerManager implements HomeServerManagerInterface {
     return configuration
   }
 
-  private doNotInstantiateHomeServerOnWindowsUntilItIsSupported(): void {
-    if (!isWindows() && !this.homeServer) {
-      this.homeServer = new HomeServer()
+  private async lazyLoadHomeServerOnApplicablePlatforms(): Promise<void> {
+    if (isWindows()) {
+      return
     }
+
+    if (this.homeServer) {
+      return
+    }
+
+    const { HomeServer } = await import('@standardnotes/home-server')
+
+    this.homeServer = new HomeServer()
   }
 }

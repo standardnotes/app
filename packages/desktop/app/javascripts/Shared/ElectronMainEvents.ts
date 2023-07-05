@@ -9,4 +9,5 @@ export interface ElectronMainEvents {
   setInstallComponentCompleteHandler(handler: MainEventHandler): void
   setWatchedDirectoriesChangeHandler(handler: MainEventHandler): void
   setHomeServerStartedHandler(handler: MainEventHandler): void
+  setConsoleLogHandler(handler: MainEventHandler): void
 }

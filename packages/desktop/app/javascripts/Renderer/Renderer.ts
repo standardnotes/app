@@ -150,8 +150,13 @@ window.electronMainEvents.setWindowFocusedHandler(() => {
   window.webClient.windowGainedFocus()
 })
 
-window.electronMainEvents.setInstallComponentCompleteHandler((_: IpcRendererEvent, data: any) => {
-  void window.webClient.onComponentInstallationComplete(data.component, undefined)
+window.electronMainEvents.setConsoleLogHandler((_: IpcRendererEvent, message: unknown) => {
+  window.webClient.consoleLog(message as string)
+})
+
+window.electronMainEvents.setInstallComponentCompleteHandler((_: IpcRendererEvent, data: unknown) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  void window.webClient.onComponentInstallationComplete((data as any).component, undefined)
 })
 
 window.electronMainEvents.setWatchedDirectoriesChangeHandler((_: IpcRendererEvent, changes: unknown) => {
