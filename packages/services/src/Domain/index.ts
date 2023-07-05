@@ -9,6 +9,7 @@ export * from './Application/DeinitMode'
 export * from './Application/DeinitSource'
 
 export * from './AsymmetricMessage/AsymmetricMessageService'
+export * from './AsymmetricMessage/AsymmetricMessageServiceInterface'
 
 export * from './Auth/AuthClientInterface'
 export * from './Auth/AuthManager'

@@ -1,3 +1,4 @@
+import { AsymmetricMessageServiceInterface } from './../AsymmetricMessage/AsymmetricMessageServiceInterface'
 import { SyncOptions } from './../Sync/SyncOptions'
 import { ImportDataReturnType } from './../Mutator/ImportDataUseCase'
 import { ChallengeServiceInterface } from './../Challenge/ChallengeServiceInterface'
@@ -102,6 +103,8 @@ export interface ApplicationInterface {
   get vaults(): VaultServiceInterface
   get challenges(): ChallengeServiceInterface
   get alerts(): AlertService
+  get asymmetric(): AsymmetricMessageServiceInterface
+
   readonly identifier: ApplicationIdentifier
   readonly platform: Platform
   deviceInterface: DeviceInterface
