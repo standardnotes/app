@@ -128,7 +128,7 @@ async function configureWindow(remoteBridge: CrossProcessBridge) {
     /* Use custom title bar. Take the sn-titlebar-height off of
     the app content height so its not overflowing */
     sheet.insertRule(
-      '[role="dialog"] { position: relative; height: calc(100vh - var(--sn-desktop-titlebar-height)) !important; margin-top: var(--sn-desktop-titlebar-height) !important; }',
+      '[role="dialog"] { height: calc(100vh - var(--sn-desktop-titlebar-height)) !important; top: var(--sn-desktop-titlebar-height); }',
       sheet.cssRules.length,
     )
     sheet.insertRule(
