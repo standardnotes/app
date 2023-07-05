@@ -1,5 +1,12 @@
 import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
-import { SNApplication, SessionStrings, UuidString, SessionListEntry, isErrorResponse } from '@standardnotes/snjs'
+import {
+  SNApplication,
+  SessionStrings,
+  UuidString,
+  SessionListEntry,
+  isErrorResponse,
+  getErrorFromErrorResponse,
+} from '@standardnotes/snjs'
 import { FunctionComponent, useState, useEffect, useRef, useMemo } from 'react'
 import { WebApplication } from '@/Application/WebApplication'
 import { observer } from 'mobx-react-lite'
@@ -64,9 +71,10 @@ function useSessions(
     if (!response) {
       setSessions(sessionsBeforeRevoke)
     } else if (isErrorResponse(response)) {
-      if (response.data?.error.message) {
-        setErrorMessage(response.data?.error.message || 'An unknown error occured while revoking the session.')
-      }
+      setErrorMessage(
+        getErrorFromErrorResponse(response).message || 'An unknown error occured while revoking the session.',
+      )
+
       setSessions(sessionsBeforeRevoke)
     } else {
       setSessions(sessions.filter((session) => session.uuid !== uuid))

@@ -1,7 +1,7 @@
 import { SettingsList } from './SettingsList'
 import { SettingName } from '@standardnotes/settings'
 import { API_MESSAGE_INVALID_SESSION } from '@standardnotes/services'
-import { HttpStatusCode, isErrorResponse, User } from '@standardnotes/responses'
+import { getErrorFromErrorResponse, HttpStatusCode, isErrorResponse, User } from '@standardnotes/responses'
 import { SettingsServerInterface } from './SettingsServerInterface'
 
 /**
@@ -34,7 +34,7 @@ export class SettingsGateway {
     const response = await this.settingsApi.listSettings(this.userUuid)
 
     if (isErrorResponse(response)) {
-      throw new Error(response.data?.error.message)
+      throw new Error(getErrorFromErrorResponse(response).message)
     }
 
     if (response.data == undefined || response.data.settings == undefined) {
@@ -53,7 +53,7 @@ export class SettingsGateway {
     }
 
     if (isErrorResponse(response)) {
-      throw new Error(response.data?.error.message)
+      throw new Error(getErrorFromErrorResponse(response).message)
     }
 
     return response?.data?.setting?.value ?? undefined
@@ -71,7 +71,7 @@ export class SettingsGateway {
     }
 
     if (isErrorResponse(response)) {
-      throw new Error(response.data?.error.message)
+      throw new Error(getErrorFromErrorResponse(response).message)
     }
 
     return response?.data?.setting?.value ?? undefined
@@ -89,7 +89,7 @@ export class SettingsGateway {
     }
 
     if (isErrorResponse(response)) {
-      throw new Error(response.data?.error.message)
+      throw new Error(getErrorFromErrorResponse(response).message)
     }
 
     return response.data?.success ?? false
@@ -98,14 +98,14 @@ export class SettingsGateway {
   async updateSetting(name: SettingName, payload: string, sensitive: boolean): Promise<void> {
     const response = await this.settingsApi.updateSetting(this.userUuid, name.value, payload, sensitive)
     if (isErrorResponse(response)) {
-      throw new Error(response.data?.error.message)
+      throw new Error(getErrorFromErrorResponse(response).message)
     }
   }
 
   async deleteSetting(name: SettingName): Promise<void> {
     const response = await this.settingsApi.deleteSetting(this.userUuid, name.value)
     if (isErrorResponse(response)) {
-      throw new Error(response.data?.error.message)
+      throw new Error(getErrorFromErrorResponse(response).message)
     }
   }
 

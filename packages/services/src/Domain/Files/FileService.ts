@@ -386,7 +386,7 @@ export class FileService extends AbstractService implements FilesClientInterface
 
     const result = await this.api.deleteFile(tokenResult, file.shared_vault_uuid ? 'shared-vault' : 'user')
 
-    if (result.data?.error) {
+    if (isErrorResponse(result)) {
       const deleteAnyway = await this.alertService.confirm(
         spaceSeparatedStrings(
           'This file could not be deleted from the server, possibly because you are attempting to delete a file item',
@@ -400,7 +400,7 @@ export class FileService extends AbstractService implements FilesClientInterface
       )
 
       if (!deleteAnyway) {
-        return ClientDisplayableError.FromError(result.data?.error)
+        return ClientDisplayableError.FromNetworkError(result)
       }
     }
 
