@@ -9,6 +9,7 @@ import {
   RawSyncResponse,
   UserEventServerHash,
   AsymmetricMessageServerHash,
+  getErrorFromErrorResponse,
 } from '@standardnotes/responses'
 import {
   FilterDisallowedRemotePayloadsAndMap,
@@ -100,14 +101,7 @@ export class ServerSyncResponse {
 
   public get error(): HttpError | undefined {
     if (isErrorResponse(this.rawResponse)) {
-      const error = this.rawResponse.data?.error
-      if (error) {
-        return error
-      } else {
-        return {
-          message: 'Unknown error',
-        }
-      }
+      return getErrorFromErrorResponse(this.rawResponse)
     } else {
       return undefined
     }

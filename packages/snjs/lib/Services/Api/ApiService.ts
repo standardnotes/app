@@ -664,7 +664,7 @@ export class SNApiService
       })
 
       if (isErrorResponse(response)) {
-        return ClientDisplayableError.FromError(response.data.error)
+        return ClientDisplayableError.FromNetworkError(response)
       }
       const data = response.data
       return {

@@ -8,7 +8,7 @@ export class GetOutboundAsymmetricMessages {
     const response = await this.messageServer.getOutboundUserMessages()
 
     if (isErrorResponse(response)) {
-      return ClientDisplayableError.FromError(response.data.error)
+      return ClientDisplayableError.FromNetworkError(response)
     }
 
     return response.data.messages

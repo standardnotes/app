@@ -1,4 +1,4 @@
-import { HttpErrorResponse } from '../Http'
+import { HttpErrorResponse, getErrorFromErrorResponse } from '../Http'
 
 export class ClientDisplayableError {
   constructor(public text: string, public title?: string, public tag?: string) {
@@ -14,7 +14,7 @@ export class ClientDisplayableError {
   }
 
   static FromNetworkError(error: HttpErrorResponse) {
-    return new ClientDisplayableError(error.data.error.message)
+    return new ClientDisplayableError(getErrorFromErrorResponse(error).message)
   }
 }
 
