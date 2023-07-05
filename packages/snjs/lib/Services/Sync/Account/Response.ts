@@ -35,8 +35,6 @@ export class ServerSyncResponse {
   private successResponseData: RawSyncResponse | undefined
 
   constructor(public rawResponse: HttpResponse<RawSyncResponse>) {
-    this.rawResponse = rawResponse
-
     if (!isErrorResponse(rawResponse)) {
       this.successResponseData = rawResponse.data
     }
@@ -101,7 +99,19 @@ export class ServerSyncResponse {
   }
 
   public get error(): HttpError | undefined {
-    return isErrorResponse(this.rawResponse) ? this.rawResponse.data?.error : undefined
+    if (this.hasError) {
+      if (isErrorResponse(this.rawResponse)) {
+        const error = this.rawResponse.data?.error
+        if (error) {
+          return error
+        }
+      }
+      return {
+        message: 'Unknown error',
+      }
+    } else {
+      return undefined
+    }
   }
 
   public get status(): number {
@@ -123,6 +133,6 @@ export class ServerSyncResponse {
   }
 
   public get hasError(): boolean {
-    return this.error != undefined
+    return isErrorResponse(this.rawResponse)
   }
 }
