@@ -1,6 +1,6 @@
 import { RevisionApiServiceInterface } from '@standardnotes/api'
 import { Uuid } from '@standardnotes/domain-core'
-import { isErrorResponse } from '@standardnotes/responses'
+import { getErrorFromErrorResponse, isErrorResponse } from '@standardnotes/responses'
 
 import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
 import { AbstractService } from '../Service/AbstractService'
@@ -21,7 +21,7 @@ export class RevisionManager extends AbstractService implements RevisionClientIn
     const result = await this.revisionApiService.listRevisions(itemUuid.value)
 
     if (isErrorResponse(result)) {
-      throw new Error(result.data.error.message)
+      throw new Error(getErrorFromErrorResponse(result).message)
     }
 
     return result.data.revisions
@@ -31,7 +31,7 @@ export class RevisionManager extends AbstractService implements RevisionClientIn
     const result = await this.revisionApiService.deleteRevision(itemUuid.value, revisionUuid.value)
 
     if (isErrorResponse(result)) {
-      throw new Error(result.data.error.message)
+      throw new Error(getErrorFromErrorResponse(result).message)
     }
 
     return result.data.message
@@ -41,7 +41,7 @@ export class RevisionManager extends AbstractService implements RevisionClientIn
     const result = await this.revisionApiService.getRevision(itemUuid.value, revisionUuid.value)
 
     if (isErrorResponse(result)) {
-      throw new Error(result.data.error.message)
+      throw new Error(getErrorFromErrorResponse(result).message)
     }
 
     return result.data.revision
