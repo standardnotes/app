@@ -359,14 +359,18 @@ export class ComponentViewer implements ComponentViewerInterface {
 
     if (isDecryptedItem(item)) {
       params.content = this.contentForItem(item)
-      const globalComponentData = item.getDomainData(ComponentDataDomain) || {}
-      const thisComponentData = globalComponentData[this.component.getClientDataKey()] || {}
-      params.clientData = thisComponentData as Record<string, unknown>
+      params.clientData = this.getClientData(item)
     } else {
       params.deleted = true
     }
 
     return this.responseItemsByRemovingPrivateProperties([params])[0]
+  }
+
+  private getClientData(item: DecryptedItemInterface): Record<string, unknown> {
+    const globalComponentData = item.getDomainData(ComponentDataDomain) || {}
+    const thisComponentData = globalComponentData[this.component.getClientDataKey()] || {}
+    return thisComponentData as Record<string, unknown>
   }
 
   contentForItem(item: DecryptedItemInterface): ItemContent | undefined {

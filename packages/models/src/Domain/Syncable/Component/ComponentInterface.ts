@@ -1,8 +1,7 @@
 import { ComponentArea, ComponentPermission } from '@standardnotes/features'
 import { ComponentPackageInfo } from './PackageInfo'
-import { ItemContent } from '../../Abstract/Content/ItemContent'
 
-export type ComponentContentSpecialized = {
+export interface ComponentInterface {
   /** Items that have requested a component to be disabled in its context */
   disassociatedItemIds: string[]
 
@@ -33,7 +32,5 @@ export type ComponentContentSpecialized = {
    * Replaced with per-note component data stored in the note's ComponentDataDomain.
    */
   /* eslint-disable @typescript-eslint/no-explicit-any */
-  componentData: Record<string, any>
+  legacyComponentData: Record<string, any>
 }
-
-export type ComponentContent = ItemContent & ComponentContentSpecialized

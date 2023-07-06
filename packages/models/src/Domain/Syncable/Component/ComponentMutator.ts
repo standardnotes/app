@@ -13,10 +13,6 @@ export class ComponentMutator extends DecryptedItemMutator<ComponentContent> {
     this.mutableContent.isMobileDefault = isMobileDefault
   }
 
-  set componentData(componentData: Record<string, unknown>) {
-    this.mutableContent.componentData = componentData
-  }
-
   set package_info(package_info: FeatureDescription) {
     this.mutableContent.package_info = package_info
   }

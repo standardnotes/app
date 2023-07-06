@@ -10,7 +10,8 @@ import {
   NoteType,
 } from '@standardnotes/features'
 import { AppDataField } from '../../Abstract/Item/Types/AppDataField'
-import { ComponentContent, ComponentInterface } from './ComponentContent'
+import { ComponentContent } from './ComponentContent'
+import { ComponentInterface } from './ComponentInterface'
 import { ConflictStrategy } from '../../Abstract/Item/Types/ConflictStrategy'
 import { DecryptedItem } from '../../Abstract/Item/Implementations/DecryptedItem'
 import { DecryptedPayloadInterface } from '../../Abstract/Payload/Interfaces/DecryptedPayload'
@@ -32,7 +33,7 @@ export const isComponentOrTheme = (x: ItemInterface): x is SNComponent =>
  * only by its url.
  */
 export class SNComponent extends DecryptedItem<ComponentContent> implements ComponentInterface {
-  public readonly componentData: Record<string, unknown>
+  public readonly legacyComponentData: Record<string, unknown>
   /** Items that have requested a component to be disabled in its context */
   public readonly disassociatedItemIds: string[]
   /** Items that have requested a component to be enabled in its context */
@@ -52,8 +53,6 @@ export class SNComponent extends DecryptedItem<ComponentContent> implements Comp
 
   constructor(payload: DecryptedPayloadInterface<ComponentContent>) {
     super(payload)
-    /** Custom data that a component can store in itself */
-    this.componentData = this.payload.content.componentData || {}
 
     if (payload.content.hosted_url && isValidUrl(payload.content.hosted_url)) {
       this.hosted_url = payload.content.hosted_url
@@ -83,6 +82,8 @@ export class SNComponent extends DecryptedItem<ComponentContent> implements Comp
      * hosted_url is the url replacement.
      */
     this.legacy_url = !payload.content.hosted_url ? payload.content.url : undefined
+
+    this.legacyComponentData = this.payload.content.componentData || {}
   }
 
   /** Do not duplicate components under most circumstances. Always keep original */
@@ -125,7 +126,7 @@ export class SNComponent extends DecryptedItem<ComponentContent> implements Comp
 
   /**
    * The key used to look up data that this component may have saved to an item.
-   * This data will be stored on the item using this key.
+   * This data will be stored on the note item using this lookup key.
    */
   public getClientDataKey(): string {
     if (this.legacy_url) {
