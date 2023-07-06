@@ -1,4 +1,3 @@
-import { SNPreferencesService } from '../Preferences/PreferencesService'
 import {
   ComponentViewerInterface,
   ComponentViewerError,
@@ -6,6 +5,7 @@ import {
   FeaturesEvent,
   AlertService,
   MutatorClientInterface,
+  PreferenceServiceInterface,
 } from '@standardnotes/services'
 import { SNFeaturesService } from '@Lib/Services'
 import {
@@ -36,6 +36,7 @@ import {
   Environment,
   Platform,
   OutgoingItemMessagePayload,
+  ComponentPreferencesEntry,
 } from '@standardnotes/models'
 import find from 'lodash/find'
 import uniq from 'lodash/uniq'
@@ -95,7 +96,7 @@ export class ComponentViewer implements ComponentViewerInterface {
     private mutator: MutatorClientInterface,
     private syncService: SNSyncService,
     private alertService: AlertService,
-    private preferencesSerivce: SNPreferencesService,
+    private preferences: PreferenceServiceInterface,
     featuresService: SNFeaturesService,
     private environment: Environment,
     private platform: Platform,
@@ -156,7 +157,7 @@ export class ComponentViewer implements ComponentViewerInterface {
     ;(this.itemManager as unknown) = undefined
     ;(this.syncService as unknown) = undefined
     ;(this.alertService as unknown) = undefined
-    ;(this.preferencesSerivce as unknown) = undefined
+    ;(this.preferences as unknown) = undefined
     ;(this.componentManagerFunctions as unknown) = undefined
 
     this.eventObservers.length = 0
@@ -377,9 +378,7 @@ export class ComponentViewer implements ComponentViewerInterface {
     if (isNote(item)) {
       const content = item.content
       const spellcheck =
-        item.spellcheck != undefined
-          ? item.spellcheck
-          : this.preferencesSerivce.getValue(PrefKey.EditorSpellcheck, true)
+        item.spellcheck != undefined ? item.spellcheck : this.preferences.getValue(PrefKey.EditorSpellcheck, true)
 
       return {
         ...content,
@@ -489,10 +488,12 @@ export class ComponentViewer implements ComponentViewerInterface {
     this.window = window
     this.sessionKey = UuidGenerator.GenerateUuid()
 
+    const componentData = this.preferences.getComponentPreferences(this.component)
+
     this.sendMessage({
       action: ComponentAction.ComponentRegistered,
       sessionKey: this.sessionKey,
-      componentData: this.component.componentData,
+      componentData: componentData,
       data: {
         uuid: this.component.uuid,
         environment: environmentToString(this.environment),
@@ -558,7 +559,7 @@ export class ComponentViewer implements ComponentViewerInterface {
     const messageHandlers: Partial<Record<ComponentAction, (message: ComponentMessage) => void>> = {
       [ComponentAction.StreamItems]: this.handleStreamItemsMessage.bind(this),
       [ComponentAction.StreamContextItem]: this.handleStreamContextItemMessage.bind(this),
-      [ComponentAction.SetComponentData]: this.handleSetComponentDataMessage.bind(this),
+      [ComponentAction.SetComponentData]: this.handleSetComponentPreferencesMessage.bind(this),
       [ComponentAction.DeleteItems]: this.handleDeleteItemsMessage.bind(this),
       [ComponentAction.CreateItems]: this.handleCreateItemsMessage.bind(this),
       [ComponentAction.CreateItem]: this.handleCreateItemsMessage.bind(this),
@@ -729,7 +730,9 @@ export class ComponentViewer implements ComponentViewerInterface {
             })
 
             if (responseItem.clientData) {
-              const allComponentData = Copy(mutator.getItem().getDomainData(ComponentDataDomain) || {})
+              const allComponentData = Copy<Record<string, unknown>>(
+                mutator.getItem().getDomainData(ComponentDataDomain) || {},
+              )
               allComponentData[this.component.getClientDataKey()] = responseItem.clientData
               mutator.setDomainData(allComponentData, ComponentDataDomain)
             }
@@ -792,9 +795,11 @@ export class ComponentViewer implements ComponentViewerInterface {
           item,
           (mutator) => {
             if (responseItem.clientData) {
-              const allComponentData = Copy(item.getDomainData(ComponentDataDomain) || {})
-              allComponentData[this.component.getClientDataKey()] = responseItem.clientData
-              mutator.setDomainData(allComponentData, ComponentDataDomain)
+              const allComponentClientData = Copy<Record<string, unknown>>(
+                item.getDomainData(ComponentDataDomain) || {},
+              )
+              allComponentClientData[this.component.getClientDataKey()] = responseItem.clientData
+              mutator.setDomainData(allComponentClientData, ComponentDataDomain)
             }
           },
           MutationType.UpdateUserTimestamps,
@@ -860,14 +865,16 @@ export class ComponentViewer implements ComponentViewerInterface {
     })
   }
 
-  handleSetComponentDataMessage(message: ComponentMessage): void {
+  handleSetComponentPreferencesMessage(message: ComponentMessage): void {
     const noPermissionsRequired: ComponentPermission[] = []
     this.componentManagerFunctions.runWithPermissions(this.component.uuid, noPermissionsRequired, async () => {
-      await this.mutator.changeComponent(this.component, (mutator) => {
-        mutator.componentData = message.data.componentData || {}
-      })
+      const newPreferences = <ComponentPreferencesEntry | undefined>message.data.componentData
 
-      void this.syncService.sync()
+      if (!newPreferences) {
+        return
+      }
+
+      await this.preferences.setComponentPreferences(this.component, newPreferences)
     })
   }
 

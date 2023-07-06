@@ -1561,6 +1561,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       internalEventBus: this.internalEventBus,
       legacySessionStorageMapper: this.legacySessionStorageMapper,
       backups: this.fileBackups,
+      preferences: this.preferencesService,
     })
     this.services.push(this.migrationService)
   }

@@ -19,7 +19,7 @@ export class DecryptedItemMutator<
   constructor(item: I, type: MutationType) {
     super(item, type)
 
-    const mutableCopy = Copy(this.immutablePayload.content)
+    const mutableCopy = Copy<C>(this.immutablePayload.content)
     this.mutableContent = mutableCopy
   }
 

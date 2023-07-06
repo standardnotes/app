@@ -2,6 +2,11 @@ import { CollectionSortProperty } from '../../Runtime/Collection/CollectionSort'
 import { EditorIdentifier, FeatureIdentifier } from '@standardnotes/features'
 import { SystemViewId } from '../SmartView'
 import { TagPreferences } from '../Tag'
+import { NewNoteTitleFormat } from './NewNoteTitleFormat'
+import { EditorLineHeight } from './EditorLineHeight'
+import { EditorLineWidth } from './EditorLineWidth'
+import { EditorFontSize } from './EditorFontSize'
+import { AllComponentPreferences } from './ComponentPreferences'
 
 export enum PrefKey {
   TagsPanelWidth = 'tagsPanelWidth',
@@ -38,37 +43,7 @@ export enum PrefKey {
   SuperNoteExportFormat = 'superNoteExportFormat',
   AuthenticatorNames = 'authenticatorNames',
   PaneGesturesEnabled = 'paneGesturesEnabled',
-}
-
-export enum NewNoteTitleFormat {
-  CurrentDateAndTime = 'CurrentDateAndTime',
-  CurrentNoteCount = 'CurrentNoteCount',
-  CustomFormat = 'CustomFormat',
-  Empty = 'Empty',
-}
-
-export enum EditorLineHeight {
-  None = 'None',
-  Tight = 'Tight',
-  Snug = 'Snug',
-  Normal = 'Normal',
-  Relaxed = 'Relaxed',
-  Loose = 'Loose',
-}
-
-export enum EditorLineWidth {
-  Narrow = 'Narrow',
-  Wide = 'Wide',
-  Dynamic = 'Dynamic',
-  FullWidth = 'FullWidth',
-}
-
-export enum EditorFontSize {
-  ExtraSmall = 'ExtraSmall',
-  Small = 'Small',
-  Normal = 'Normal',
-  Medium = 'Medium',
-  Large = 'Large',
+  ComponentPreferences = 'componentPreferences',
 }
 
 export type PrefValue = {
@@ -106,4 +81,5 @@ export type PrefValue = {
   [PrefKey.SuperNoteExportFormat]: 'json' | 'md' | 'html'
   [PrefKey.AuthenticatorNames]: string
   [PrefKey.PaneGesturesEnabled]: boolean
+  [PrefKey.ComponentPreferences]: AllComponentPreferences
 }

@@ -510,7 +510,7 @@ export class SNFeaturesService
       throw Error(`Attempting to map remote native to unfound static feature ${remoteFeature.identifier}`)
     }
 
-    const nativeFeatureCopy = Copy(nativeFeature) as FeaturesImports.FeatureDescription
+    const nativeFeatureCopy = Copy<FeaturesImports.FeatureDescription>(nativeFeature)
 
     for (const field of remoteFields) {
       nativeFeatureCopy[field] = remoteFeature[field] as never

@@ -102,6 +102,10 @@ export class SNComponent extends DecryptedItem<ComponentContent> implements Comp
     return FindNativeFeature(this.identifier)?.name || this.name
   }
 
+  public get userPreferencesLookupKey(): string {
+    return FindNativeFeature(this.identifier) ? this.identifier : this.uuid
+  }
+
   public override singletonPredicate(): Predicate<SNComponent> {
     const uniqueIdentifierPredicate = new Predicate<SNComponent>('identifier', '=', this.identifier)
     return uniqueIdentifierPredicate

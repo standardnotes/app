@@ -1,5 +1,4 @@
 import { AllowedBatchStreaming } from './Types'
-import { SNPreferencesService } from '../Preferences/PreferencesService'
 import { SNFeaturesService } from '@Lib/Services/Features/FeaturesService'
 import { ContentType, DisplayStringForContentType } from '@standardnotes/common'
 import { ItemManager } from '@Lib/Services/Items/ItemManager'
@@ -40,6 +39,7 @@ import {
   DeviceInterface,
   isMobileDevice,
   MutatorClientInterface,
+  PreferenceServiceInterface,
 } from '@standardnotes/services'
 
 const DESKTOP_URL_PREFIX = 'sn://'
@@ -82,7 +82,7 @@ export class SNComponentManager
     private mutator: MutatorClientInterface,
     private syncService: SNSyncService,
     private featuresService: SNFeaturesService,
-    private preferencesSerivce: SNPreferencesService,
+    private preferences: PreferenceServiceInterface,
     protected alertService: AlertService,
     private environment: Environment,
     private platform: Platform,
@@ -141,7 +141,7 @@ export class SNComponentManager
     ;(this.featuresService as unknown) = undefined
     ;(this.syncService as unknown) = undefined
     ;(this.alertService as unknown) = undefined
-    ;(this.preferencesSerivce as unknown) = undefined
+    ;(this.preferences as unknown) = undefined
 
     this.removeItemObserver?.()
     ;(this.removeItemObserver as unknown) = undefined
@@ -167,7 +167,7 @@ export class SNComponentManager
       this.mutator,
       this.syncService,
       this.alertService,
-      this.preferencesSerivce,
+      this.preferences,
       this.featuresService,
       this.environment,
       this.platform,
@@ -420,7 +420,7 @@ export class SNComponentManager
         filterFromArray(requiredPermissions, required)
         continue
       }
-      for (const acquiredContentType of respectiveAcquired.content_types!) {
+      for (const acquiredContentType of respectiveAcquired.content_types as ContentType[]) {
         removeFromArray(requiredContentTypes, acquiredContentType)
       }
       if (requiredContentTypes.length === 0) {
@@ -481,7 +481,7 @@ export class SNComponentManager
             } else {
               /* Permission already exists, but content_types may have been expanded */
               const contentTypes = matchingPermission.content_types || []
-              matchingPermission.content_types = uniq(contentTypes.concat(permission.content_types!))
+              matchingPermission.content_types = uniq(contentTypes.concat(permission.content_types as ContentType[]))
             }
           }
 

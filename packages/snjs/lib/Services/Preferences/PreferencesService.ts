@@ -1,4 +1,14 @@
-import { SNUserPrefs, PrefKey, PrefValue, UserPrefsMutator, ItemContent, FillItemContent } from '@standardnotes/models'
+import {
+  SNUserPrefs,
+  PrefKey,
+  PrefValue,
+  UserPrefsMutator,
+  ItemContent,
+  FillItemContent,
+  ComponentInterface,
+  ComponentPreferencesEntry,
+  AllComponentPreferences,
+} from '@standardnotes/models'
 import { ContentType } from '@standardnotes/common'
 import { ItemManager } from '../Items/ItemManager'
 import { SNSingletonManager } from '../Singleton/SingletonManager'
@@ -12,6 +22,7 @@ import {
   PreferencesServiceEvent,
   MutatorClientInterface,
 } from '@standardnotes/services'
+import { Copy } from '@standardnotes/utils'
 
 export class SNPreferencesService
   extends AbstractService<PreferencesServiceEvent>
@@ -72,6 +83,30 @@ export class SNPreferencesService
   getValue<K extends PrefKey>(key: K, defaultValue: PrefValue[K]): PrefValue[K]
   getValue<K extends PrefKey>(key: K, defaultValue?: PrefValue[K]): PrefValue[K] | undefined {
     return this.preferences?.getPref(key) ?? defaultValue
+  }
+
+  async setComponentPreferences(component: ComponentInterface, preferences: ComponentPreferencesEntry): Promise<void> {
+    const mutablePreferencesValue = Copy<AllComponentPreferences>(
+      this.getValue(PrefKey.ComponentPreferences, undefined) ?? {},
+    )
+
+    const preferencesLookupKey = component.userPreferencesLookupKey
+
+    mutablePreferencesValue[preferencesLookupKey] = preferences
+
+    await this.setValue(PrefKey.ComponentPreferences, mutablePreferencesValue)
+  }
+
+  getComponentPreferences(component: ComponentInterface): ComponentPreferencesEntry | undefined {
+    const preferences = this.getValue(PrefKey.ComponentPreferences, undefined)
+
+    if (!preferences) {
+      return undefined
+    }
+
+    const preferencesLookupKey = component.userPreferencesLookupKey
+
+    return preferences[preferencesLookupKey]
   }
 
   async setValue<K extends PrefKey>(key: K, value: PrefValue[K]): Promise<void> {

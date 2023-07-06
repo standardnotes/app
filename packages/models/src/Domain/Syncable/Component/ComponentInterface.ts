@@ -1,7 +1,9 @@
-import { ComponentArea, ComponentPermission } from '@standardnotes/features'
+import { ComponentArea, ComponentPermission, FeatureIdentifier } from '@standardnotes/features'
 import { ComponentPackageInfo } from './PackageInfo'
+import { DecryptedItemInterface } from '../../Abstract/Item'
+import { ComponentContent } from './ComponentContent'
 
-export interface ComponentInterface {
+export interface ComponentInterface extends DecryptedItemInterface<ComponentContent> {
   /** Items that have requested a component to be disabled in its context */
   disassociatedItemIds: string[]
 
@@ -23,6 +25,9 @@ export interface ComponentInterface {
   isMobileDefault: boolean
   isDeprecated: boolean
   isExplicitlyEnabledForItem(uuid: string): boolean
+
+  get identifier(): FeatureIdentifier
+  get userPreferencesLookupKey(): string
 
   /** @deprecated */
   url?: string

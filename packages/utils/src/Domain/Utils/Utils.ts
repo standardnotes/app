@@ -429,9 +429,9 @@ export function joinPaths(...args: string[]) {
  * the string (if the input is an object). If input is date, a Date copy will be created,
  * and if input is a primitive value, it will be returned as-is.
  */
-export function Copy(object: any) {
+export function Copy<T>(object: any): T {
   if (object instanceof Date) {
-    return new Date(object)
+    return new Date(object) as T
   } else if (isObject(object)) {
     return JSON.parse(JSON.stringify(object))
   } else {
