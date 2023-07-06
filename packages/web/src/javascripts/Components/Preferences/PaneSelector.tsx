@@ -1,6 +1,6 @@
 import { FunctionComponent } from 'react'
 import { observer } from 'mobx-react-lite'
-import { PreferencesMenuController } from './PreferencesMenuController'
+import { PreferencesSessionController } from './Controller/PreferencesSessionController'
 import Backups from '@/Components/Preferences/Panes/Backups/Backups'
 import Appearance from './Panes/Appearance'
 import General from './Panes/General/General'
@@ -13,7 +13,7 @@ import WhatsNew from './Panes/WhatsNew/WhatsNew'
 import HomeServer from './Panes/HomeServer/HomeServer'
 import Vaults from './Panes/Vaults/Vaults'
 
-const PaneSelector: FunctionComponent<PreferencesProps & { menu: PreferencesMenuController }> = ({
+const PaneSelector: FunctionComponent<PreferencesProps & { menu: PreferencesSessionController }> = ({
   menu,
   viewControllerManager,
   application,

@@ -1,7 +1,7 @@
 import RoundIconButton from '@/Components/Button/RoundIconButton'
 import { FunctionComponent, useEffect, useMemo } from 'react'
 import { observer } from 'mobx-react-lite'
-import { PreferencesMenuController } from './PreferencesMenuController'
+import { PreferencesSessionController } from './Controller/PreferencesSessionController'
 import PreferencesCanvas from './PreferencesCanvas'
 import { PreferencesProps } from './PreferencesProps'
 import { useAndroidBackHandler } from '@/NativeMobileWeb/useAndroidBackHandler'
@@ -19,7 +19,7 @@ const PreferencesView: FunctionComponent<PreferencesProps> = ({
   mfaProvider,
 }) => {
   const menu = useMemo(
-    () => new PreferencesMenuController(application, viewControllerManager.enableUnfinishedFeatures),
+    () => new PreferencesSessionController(application, viewControllerManager.enableUnfinishedFeatures),
     [viewControllerManager.enableUnfinishedFeatures, application],
   )
 
