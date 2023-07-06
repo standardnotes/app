@@ -1,6 +1,6 @@
 import Icon from '@/Components/Icon/Icon'
 
-export const GreenCheckmarkCircle = () => {
+export const CheckmarkCircle = () => {
   return (
     <button
       className={

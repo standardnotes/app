@@ -5,7 +5,7 @@ import ModalOverlay from '@/Components/Modal/ModalOverlay'
 import { PendingSharedVaultInviteRecord } from '@standardnotes/snjs'
 import { useCallback, useState } from 'react'
 import EditContactModal from '../Contacts/EditContactModal'
-import { GreenCheckmarkCircle } from './GreenCheckmarkCircle'
+import { CheckmarkCircle } from '../../../../UIElements/CheckmarkCircle'
 
 type Props = {
   inviteRecord: PendingSharedVaultInviteRecord
@@ -47,7 +47,7 @@ const InviteItem = ({ inviteRecord }: Props) => {
           {trustedContact ? (
             <div className="flex flex-row gap-2">
               <span className="overflow-hidden text-ellipsis text-sm">Trusted Sender: {trustedContact.name}</span>
-              <GreenCheckmarkCircle />
+              <CheckmarkCircle />
             </div>
           ) : (
             <span className="mr-auto overflow-hidden text-ellipsis text-sm">

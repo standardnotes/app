@@ -12,6 +12,7 @@ import Button from '@/Components/Button/Button'
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
+import { ErrorCircle } from '@/Components/UIElements/ErrorCircle'
 
 type Props = { viewControllerManager: ViewControllerManager }
 
@@ -66,8 +67,9 @@ const ErroredItems: FunctionComponent<Props> = ({ viewControllerManager }: Props
   return (
     <PreferencesGroup>
       <PreferencesSegment>
-        <Title>
-          Error decrypting items <span className="ml-1 text-warning">⚠️</span>
+        <Title className="flex flex-row items-center gap-2">
+          <ErrorCircle />
+          Error decrypting items
         </Title>
         <Text>{`${erroredItems.length} items are errored and could not be decrypted.`}</Text>
         <div className="flex">
@@ -95,10 +97,8 @@ const ErroredItems: FunctionComponent<Props> = ({ viewControllerManager }: Props
               <div className="flex items-center justify-between">
                 <div className="flex flex-col">
                   <Subtitle>{`${getContentTypeDisplay(item)} created on ${item.createdAtString}`}</Subtitle>
-                  <Text>
-                    <div>Item ID: {item.uuid}</div>
-                    <div>Last Modified: {item.updatedAtString}</div>
-                  </Text>
+                  <Text>Item ID: {item.uuid}</Text>
+                  <Text>Last Modified: {item.updatedAtString}</Text>
                   <div className="flex">
                     <Button
                       className="mt-3 mr-2 min-w-20"
