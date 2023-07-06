@@ -437,6 +437,30 @@ describe('basic auth', function () {
     expect(performSignIn.callCount).to.equal(1)
   })
 
+  it('should rollback password change if fails to sync new items key', async function () {
+    /** Should delete the new items key locally without marking it as deleted so that it doesn't sync */
+    await this.context.register()
+
+    const originalImpl = this.application.encryptionService.getSureDefaultItemsKey
+    this.application.encryptionService.getSureDefaultItemsKey = () => {
+      return {
+        neverSynced: true,
+      }
+    }
+
+    const mutatorSpy = sinon.spy(this.application.mutator, 'setItemToBeDeleted')
+    const removeItemsSpy = sinon.spy(this.application.items, 'removeItemsLocally')
+    const deletePayloadsSpy = sinon.spy(this.application.storage, 'deletePayloadsWithUuids')
+
+    await this.context.changePassword('new-password')
+
+    this.application.encryptionService.getSureDefaultItemsKey = originalImpl
+
+    expect(mutatorSpy.callCount).to.equal(0)
+    expect(removeItemsSpy.callCount).to.equal(1)
+    expect(deletePayloadsSpy.callCount).to.equal(1)
+  })
+
   describe('add passcode', function () {
     it('should set passcode successfully', async function () {
       const passcode = 'passcode'

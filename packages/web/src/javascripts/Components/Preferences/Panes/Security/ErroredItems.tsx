@@ -1,10 +1,10 @@
-import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
-import { Fragment, FunctionComponent, useState } from 'react'
+import { Fragment, FunctionComponent, useEffect, useState } from 'react'
 import { Text, Title, Subtitle } from '@/Components/Preferences/PreferencesComponents/Content'
 import {
   ButtonType,
   ClientDisplayableError,
+  ContentType,
   DisplayStringForContentType,
   EncryptedItemInterface,
 } from '@standardnotes/snjs'
@@ -12,13 +12,18 @@ import Button from '@/Components/Button/Button'
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
+import { ErrorCircle } from '@/Components/UIElements/ErrorCircle'
+import { useApplication } from '@/Components/ApplicationProvider'
 
-type Props = { viewControllerManager: ViewControllerManager }
+const ErroredItems: FunctionComponent = () => {
+  const application = useApplication()
+  const [erroredItems, setErroredItems] = useState(application.items.invalidNonVaultedItems)
 
-const ErroredItems: FunctionComponent<Props> = ({ viewControllerManager }: Props) => {
-  const app = viewControllerManager.application
-
-  const [erroredItems, setErroredItems] = useState(app.items.invalidNonVaultedItems)
+  useEffect(() => {
+    return application.streamItems(ContentType.Any, () => {
+      setErroredItems(application.items.invalidNonVaultedItems)
+    })
+  }, [application])
 
   const getContentTypeDisplay = (item: EncryptedItemInterface): string => {
     const display = DisplayStringForContentType(item.content_type)
@@ -34,7 +39,7 @@ const ErroredItems: FunctionComponent<Props> = ({ viewControllerManager }: Props
   }
 
   const deleteItems = async (items: EncryptedItemInterface[]): Promise<void> => {
-    const confirmed = await app.alertService.confirm(
+    const confirmed = await application.alertService.confirm(
       `Are you sure you want to permanently delete ${items.length} item(s)?`,
       undefined,
       'Delete',
@@ -44,30 +49,35 @@ const ErroredItems: FunctionComponent<Props> = ({ viewControllerManager }: Props
       return
     }
 
-    void app.mutator.deleteItems(items).then(() => {
-      void app.sync.sync()
+    void application.mutator.deleteItems(items).then(() => {
+      void application.sync.sync()
     })
 
-    setErroredItems(app.items.invalidItems)
+    setErroredItems(application.items.invalidItems)
   }
 
   const attemptDecryption = (item: EncryptedItemInterface): void => {
-    const errorOrTrue = app.canAttemptDecryptionOfItem(item)
+    const errorOrTrue = application.canAttemptDecryptionOfItem(item)
 
     if (errorOrTrue instanceof ClientDisplayableError) {
-      void app.alertService.showErrorAlert(errorOrTrue)
+      void application.alertService.showErrorAlert(errorOrTrue)
 
       return
     }
 
-    app.presentKeyRecoveryWizard()
+    application.presentKeyRecoveryWizard()
+  }
+
+  if (erroredItems.length === 0) {
+    return null
   }
 
   return (
     <PreferencesGroup>
       <PreferencesSegment>
-        <Title>
-          Error decrypting items <span className="ml-1 text-warning">⚠️</span>
+        <Title className="flex flex-row items-center gap-2">
+          <ErrorCircle />
+          Error decrypting items
         </Title>
         <Text>{`${erroredItems.length} items are errored and could not be decrypted.`}</Text>
         <div className="flex">
@@ -75,7 +85,7 @@ const ErroredItems: FunctionComponent<Props> = ({ viewControllerManager }: Props
             className="mt-3 mr-2 min-w-20"
             label="Export all"
             onClick={() => {
-              void app.getArchiveService().downloadEncryptedItems(erroredItems)
+              void application.getArchiveService().downloadEncryptedItems(erroredItems)
             }}
           />
           <Button
@@ -95,10 +105,8 @@ const ErroredItems: FunctionComponent<Props> = ({ viewControllerManager }: Props
               <div className="flex items-center justify-between">
                 <div className="flex flex-col">
                   <Subtitle>{`${getContentTypeDisplay(item)} created on ${item.createdAtString}`}</Subtitle>
-                  <Text>
-                    <div>Item ID: {item.uuid}</div>
-                    <div>Last Modified: {item.updatedAtString}</div>
-                  </Text>
+                  <Text>Item ID: {item.uuid}</Text>
+                  <Text>Last Modified: {item.updatedAtString}</Text>
                   <div className="flex">
                     <Button
                       className="mt-3 mr-2 min-w-20"
@@ -111,7 +119,7 @@ const ErroredItems: FunctionComponent<Props> = ({ viewControllerManager }: Props
                       className="mt-3 mr-2 min-w-20"
                       label="Export"
                       onClick={() => {
-                        void app.getArchiveService().downloadEncryptedItem(item)
+                        void application.getArchiveService().downloadEncryptedItem(item)
                       }}
                     />
                     <Button

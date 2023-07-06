@@ -111,7 +111,9 @@ export class SharedVaultService
     )
 
     this.eventDisposers.push(
-      items.addObserver<TrustedContactInterface>(ContentType.TrustedContact, ({ changed, inserted, source }) => {
+      items.addObserver<TrustedContactInterface>(ContentType.TrustedContact, async ({ changed, inserted, source }) => {
+        await this.reprocessCachedInvitesTrustStatusAfterTrustedContactsChange()
+
         if (source === PayloadEmitSource.LocalChanged && inserted.length > 0) {
           void this.handleCreationOfNewTrustedContacts(inserted)
         }
@@ -250,8 +252,6 @@ export class SharedVaultService
   }
 
   private async handleTrustedContactsChange(contacts: TrustedContactInterface[]): Promise<void> {
-    await this.reprocessCachedInvitesTrustStatusAfterTrustedContactsChange()
-
     for (const contact of contacts) {
       await this.shareContactWithUserAdministeredSharedVaults(contact)
     }
@@ -328,28 +328,9 @@ export class SharedVaultService
   }
 
   private async reprocessCachedInvitesTrustStatusAfterTrustedContactsChange(): Promise<void> {
-    const cachedInvites = this.getCachedPendingInviteRecords()
+    const cachedInvites = this.getCachedPendingInviteRecords().map((record) => record.invite)
 
-    for (const record of cachedInvites) {
-      if (record.trusted) {
-        continue
-      }
-
-      const trustedMessageUseCase = new GetAsymmetricMessageTrustedPayload<AsymmetricMessageSharedVaultInvite>(
-        this.encryption,
-        this.contacts,
-      )
-
-      const trustedMessage = trustedMessageUseCase.execute({
-        message: record.invite,
-        privateKey: this.encryption.getKeyPair().privateKey,
-      })
-
-      if (trustedMessage) {
-        record.message = trustedMessage
-        record.trusted = true
-      }
-    }
+    await this.processInboundInvites(cachedInvites)
   }
 
   private async processInboundInvites(invites: SharedVaultInviteServerHash[]): Promise<void> {

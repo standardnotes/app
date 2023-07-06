@@ -1,6 +1,6 @@
 import { MutatorClientInterface } from './../Mutator/MutatorClientInterface'
 import { ContactServiceInterface } from './../Contacts/ContactServiceInterface'
-import { AsymmetricMessageServerHash, ClientDisplayableError } from '@standardnotes/responses'
+import { AsymmetricMessageServerHash, ClientDisplayableError, isClientDisplayableError } from '@standardnotes/responses'
 import { SyncEvent, SyncEventReceivedAsymmetricMessagesData } from '../Event/SyncEvent'
 import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
 import { InternalEventHandlerInterface } from '../Internal/InternalEventHandlerInterface'
@@ -27,8 +27,12 @@ import { SendOwnContactChangeMessage } from './UseCase/SendOwnContactChangeMessa
 import { GetOutboundAsymmetricMessages } from './UseCase/GetOutboundAsymmetricMessages'
 import { GetInboundAsymmetricMessages } from './UseCase/GetInboundAsymmetricMessages'
 import { GetVaultUseCase } from '../Vaults/UseCase/GetVault'
+import { AsymmetricMessageServiceInterface } from './AsymmetricMessageServiceInterface'
 
-export class AsymmetricMessageService extends AbstractService implements InternalEventHandlerInterface {
+export class AsymmetricMessageService
+  extends AbstractService
+  implements AsymmetricMessageServiceInterface, InternalEventHandlerInterface
+{
   private messageServer: AsymmetricMessageServer
 
   constructor(
@@ -69,7 +73,16 @@ export class AsymmetricMessageService extends AbstractService implements Interna
     return usecase.execute()
   }
 
-  async sendOwnContactChangeEventToAllContacts(data: UserKeyPairChangedEventData): Promise<void> {
+  public async downloadAndProcessInboundMessages(): Promise<void> {
+    const messages = await this.getInboundMessages()
+    if (isClientDisplayableError(messages)) {
+      return
+    }
+
+    await this.handleRemoteReceivedAsymmetricMessages(messages)
+  }
+
+  private async sendOwnContactChangeEventToAllContacts(data: UserKeyPairChangedEventData): Promise<void> {
     if (!data.oldKeyPair || !data.oldSigningKeyPair) {
       return
     }

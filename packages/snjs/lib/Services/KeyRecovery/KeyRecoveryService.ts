@@ -9,6 +9,7 @@ import {
   PayloadEmitSource,
   EncryptedItemInterface,
   getIncrementedDirtyIndex,
+  ContentTypeUsesRootKeyEncryption,
 } from '@standardnotes/models'
 import { SNSyncService } from '../Sync/SyncService'
 import { DiskStorageService } from '../Storage/DiskStorageService'
@@ -187,6 +188,10 @@ export class SNKeyRecoveryService extends AbstractService<KeyRecoveryEvent, Decr
   }
 
   public canAttemptDecryptionOfItem(item: EncryptedItemInterface): ClientDisplayableError | true {
+    if (ContentTypeUsesRootKeyEncryption(item.content_type)) {
+      return true
+    }
+
     const keyId = item.payload.items_key_id
 
     if (!keyId) {
