@@ -1,7 +1,34 @@
-import { ComponentArea, ComponentAction, FeatureIdentifier, LegacyFileSafeIdentifier } from '@standardnotes/features'
+import {
+  ComponentArea,
+  ComponentAction,
+  FeatureIdentifier,
+  LegacyFileSafeIdentifier,
+  ComponentPermission,
+} from '@standardnotes/features'
 import { ComponentMessage, MessageData, OutgoingItemMessagePayload } from '@standardnotes/models'
 import { UuidString } from '@Lib/Types/UuidString'
 import { ContentType } from '@standardnotes/common'
+
+type RunWithPermissionsCallback = (
+  componentUuid: UuidString,
+  requiredPermissions: ComponentPermission[],
+  runFunction: () => void,
+) => void
+
+export type ComponentManagerFunctions = {
+  runWithPermissions: RunWithPermissionsCallback
+  urlsForActiveThemes: () => string[]
+}
+
+export const ReadwriteActions = [
+  ComponentAction.SaveItems,
+  ComponentAction.CreateItem,
+  ComponentAction.CreateItems,
+  ComponentAction.DeleteItems,
+  ComponentAction.SetComponentData,
+]
+
+export type Writeable<T> = { -readonly [P in keyof T]: T[P] }
 
 /**
  * Extensions allowed to batch stream AllowedBatchContentTypes

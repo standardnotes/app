@@ -48,6 +48,9 @@ import {
   AllowedBatchContentTypes,
   DeleteItemsMessageData,
   MessageReplyData,
+  ComponentManagerFunctions,
+  ReadwriteActions,
+  Writeable,
 } from './Types'
 import { ComponentAction, ComponentPermission, ComponentArea, FindNativeFeature } from '@standardnotes/features'
 import { ItemManager } from '@Lib/Services/Items/ItemManager'
@@ -65,27 +68,6 @@ import {
   sureSearchArray,
   isNotUndefined,
 } from '@standardnotes/utils'
-
-type RunWithPermissionsCallback = (
-  componentUuid: UuidString,
-  requiredPermissions: ComponentPermission[],
-  runFunction: () => void,
-) => void
-
-type ComponentManagerFunctions = {
-  runWithPermissions: RunWithPermissionsCallback
-  urlsForActiveThemes: () => string[]
-}
-
-const ReadwriteActions = [
-  ComponentAction.SaveItems,
-  ComponentAction.CreateItem,
-  ComponentAction.CreateItems,
-  ComponentAction.DeleteItems,
-  ComponentAction.SetComponentData,
-]
-
-type Writeable<T> = { -readonly [P in keyof T]: T[P] }
 
 export class ComponentViewer implements ComponentViewerInterface {
   private streamItems?: ContentType[]
@@ -302,12 +284,12 @@ export class ComponentViewer implements ComponentViewerInterface {
     const requiredPermissions: ComponentPermission[] = [
       {
         name: ComponentAction.StreamItems,
-        content_types: this.streamItems!.sort(),
+        content_types: this.streamItems?.sort(),
       },
     ]
 
     this.componentManagerFunctions.runWithPermissions(this.component.uuid, requiredPermissions, () => {
-      this.sendItemsInReply(items, this.streamItemsOriginalMessage!)
+      this.sendItemsInReply(items, this.streamItemsOriginalMessage as ComponentMessage)
     })
   }
 
@@ -330,7 +312,7 @@ export class ComponentViewer implements ComponentViewerInterface {
       const response: MessageReplyData = {
         item: this.jsonForItem(item, source),
       }
-      this.replyToMessage(this.streamContextItemOriginalMessage!, response)
+      this.replyToMessage(this.streamContextItemOriginalMessage as ComponentMessage, response)
     })
   }
 
@@ -547,7 +529,7 @@ export class ComponentViewer implements ComponentViewerInterface {
       }
 
       if (this.streamItems) {
-        this.handleStreamItemsMessage(this.streamItemsOriginalMessage!)
+        this.handleStreamItemsMessage(this.streamItemsOriginalMessage as ComponentMessage)
       }
     }
   }
@@ -622,7 +604,7 @@ export class ComponentViewer implements ComponentViewerInterface {
       if (!this.streamContextItemOriginalMessage) {
         this.streamContextItemOriginalMessage = message
       }
-      const matchingItem = this.overrideContextItem || this.itemManager.findItem(this.contextItemUuid!)
+      const matchingItem = this.overrideContextItem || this.itemManager.findItem(this.contextItemUuid as string)
       if (matchingItem) {
         this.sendContextItemThroughBridge(matchingItem)
       }
