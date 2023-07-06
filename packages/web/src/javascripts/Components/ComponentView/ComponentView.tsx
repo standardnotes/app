@@ -6,6 +6,7 @@ import {
   ComponentViewerInterface,
   ComponentViewerEvent,
   ComponentViewerError,
+  ComponentOrNativeFeature,
 } from '@standardnotes/snjs'
 import { WebApplication } from '@/Application/WebApplication'
 import { FunctionComponent, useCallback, useEffect, useRef, useState } from 'react'
@@ -17,11 +18,11 @@ import IsExpired from '@/Components/ComponentView/IsExpired'
 import IssueOnLoading from '@/Components/ComponentView/IssueOnLoading'
 import { openSubscriptionDashboard } from '@/Utils/ManageSubscription'
 
-interface IProps {
+interface Props {
   application: WebApplication
   componentViewer: ComponentViewerInterface
   requestReload?: (viewer: ComponentViewerInterface, force?: boolean) => void
-  onLoad?: (component: SNComponent) => void
+  onLoad?: (component: ComponentOrNativeFeature) => void
 }
 
 /**
@@ -32,7 +33,7 @@ const MaxLoadThreshold = 4000
 const VisibilityChangeKey = 'visibilitychange'
 const MSToWaitAfterIframeLoadToAvoidFlicker = 35
 
-const ComponentView: FunctionComponent<IProps> = ({ application, onLoad, componentViewer, requestReload }) => {
+const ComponentView: FunctionComponent<Props> = ({ application, onLoad, componentViewer, requestReload }) => {
   const iframeRef = useRef<HTMLIFrameElement | null>(null)
   const [loadTimeout, setLoadTimeout] = useState<ReturnType<typeof setTimeout> | undefined>(undefined)
 
@@ -45,7 +46,7 @@ const ComponentView: FunctionComponent<IProps> = ({ application, onLoad, compone
   const [isDeprecationMessageDismissed, setIsDeprecationMessageDismissed] = useState(false)
   const [didAttemptReload, setDidAttemptReload] = useState(false)
 
-  const component: SNComponent = componentViewer.component
+  const component = componentViewer.componentOrFeature
 
   const manageSubscription = useCallback(() => {
     void openSubscriptionDashboard(application)

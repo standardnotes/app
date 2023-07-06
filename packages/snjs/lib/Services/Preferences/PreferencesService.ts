@@ -5,9 +5,9 @@ import {
   UserPrefsMutator,
   ItemContent,
   FillItemContent,
-  ComponentInterface,
   ComponentPreferencesEntry,
   AllComponentPreferences,
+  ComponentOrNativeFeature,
 } from '@standardnotes/models'
 import { ContentType } from '@standardnotes/common'
 import { ItemManager } from '../Items/ItemManager'
@@ -85,7 +85,10 @@ export class SNPreferencesService
     return this.preferences?.getPref(key) ?? defaultValue
   }
 
-  async setComponentPreferences(component: ComponentInterface, preferences: ComponentPreferencesEntry): Promise<void> {
+  async setComponentPreferences(
+    component: ComponentOrNativeFeature,
+    preferences: ComponentPreferencesEntry,
+  ): Promise<void> {
     const mutablePreferencesValue = Copy<AllComponentPreferences>(
       this.getValue(PrefKey.ComponentPreferences, undefined) ?? {},
     )
@@ -97,7 +100,7 @@ export class SNPreferencesService
     await this.setValue(PrefKey.ComponentPreferences, mutablePreferencesValue)
   }
 
-  getComponentPreferences(component: ComponentInterface): ComponentPreferencesEntry | undefined {
+  getComponentPreferences(component: ComponentOrNativeFeature): ComponentPreferencesEntry | undefined {
     const preferences = this.getValue(PrefKey.ComponentPreferences, undefined)
 
     if (!preferences) {

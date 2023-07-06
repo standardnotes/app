@@ -1,5 +1,5 @@
 import { ComponentArea, FeatureIdentifier } from '@standardnotes/features'
-import { ActionObserver, PermissionDialog, SNComponent, SNNote } from '@standardnotes/models'
+import { ActionObserver, ComponentOrNativeFeature, PermissionDialog, SNComponent, SNNote } from '@standardnotes/models'
 
 import { DesktopManagerInterface } from '../Device/DesktopManagerInterface'
 import { ComponentViewerInterface } from './ComponentViewerInterface'
@@ -13,7 +13,7 @@ export interface ComponentManagerInterface {
   showEditorChangeAlert(): Promise<boolean>
   destroyComponentViewer(viewer: ComponentViewerInterface): void
   createComponentViewer(
-    component: SNComponent,
+    component: ComponentOrNativeFeature,
     contextItem?: string,
     actionObserver?: ActionObserver,
     urlOverride?: string,

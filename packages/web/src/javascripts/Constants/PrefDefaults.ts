@@ -44,6 +44,7 @@ export const PrefDefaults = {
   [PrefKey.SuperNoteExportFormat]: 'json',
   [PrefKey.SystemViewPreferences]: {},
   [PrefKey.AuthenticatorNames]: '',
+  [PrefKey.ComponentPreferences]: {},
 } satisfies {
   [key in PrefKey]: PrefValue[key]
 }

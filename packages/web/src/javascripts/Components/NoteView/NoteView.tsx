@@ -13,6 +13,7 @@ import { classNames, pluralize } from '@standardnotes/utils'
 import {
   ApplicationEvent,
   ComponentArea,
+  ComponentOrNativeFeature,
   ComponentViewerInterface,
   ContentType,
   EditorLineWidth,
@@ -446,7 +447,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
     })
   }
 
-  private createComponentViewer(component: SNComponent) {
+  private createComponentViewer(component: ComponentOrNativeFeature) {
     const viewer = this.application.componentManager.createComponentViewer(component, this.note.uuid)
     return viewer
   }
@@ -459,7 +460,6 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
       return
     }
 
-    const component = viewer.component
     this.application.componentManager.destroyComponentViewer(viewer)
     this.setState(
       {
@@ -468,7 +468,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
       },
       () => {
         this.setState({
-          editorComponentViewer: this.createComponentViewer(component),
+          editorComponentViewer: this.createComponentViewer(viewer.componentOrFeature),
           editorStateDidLoad: true,
         })
       },

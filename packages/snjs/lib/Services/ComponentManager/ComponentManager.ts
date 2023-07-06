@@ -13,6 +13,9 @@ import {
   Environment,
   Platform,
   ComponentMessage,
+  ComponentOrNativeFeature,
+  isNativeComponent,
+  isNonNativeComponent,
 } from '@standardnotes/models'
 import { SNSyncService } from '@Lib/Services/Sync/SyncService'
 import find from 'lodash/find'
@@ -157,7 +160,7 @@ export class SNComponentManager
   }
 
   public createComponentViewer(
-    component: SNComponent,
+    component: ComponentOrNativeFeature,
     contextItem?: UuidString,
     actionObserver?: ActionObserver,
   ): ComponentViewerInterface {
@@ -294,47 +297,61 @@ export class SNComponentManager
     }) as SNTheme[]
   }
 
-  urlForComponent(component: SNComponent): string | undefined {
-    const platformSupportsOfflineOnly = this.isDesktop
-    if (component.offlineOnly && !platformSupportsOfflineOnly) {
+  private urlForComponentOnDesktop(component: ComponentOrNativeFeature): string | undefined {
+    assert(this.desktopManager)
+
+    if (isNativeComponent(component)) {
+      const nativeFeature = FindNativeFeature(component.identifier)
+      assert(nativeFeature)
+
+      return `${this.desktopManager.getExtServerHost()}/components/${component.identifier}/${nativeFeature.index_path}`
+    }
+
+    if (component.local_url) {
+      return component.local_url.replace(DESKTOP_URL_PREFIX, this.desktopManager.getExtServerHost() + '/')
+    }
+
+    return component.hosted_url || component.legacy_url
+  }
+
+  private urlForNativeComponent(component: ComponentOrNativeFeature): string {
+    const nativeFeature = FindNativeFeature(component.identifier)
+    if (!nativeFeature) {
+      throw Error(`Could not find native feature for component ${component.identifier}`)
+    }
+
+    if (this.isMobile) {
+      const baseUrlRequiredForThemesInsideEditors = window.location.href.split('/index.html')[0]
+      return `${baseUrlRequiredForThemesInsideEditors}/web-src/components/assets/${component.identifier}/${nativeFeature.index_path}`
+    } else {
+      const baseUrlRequiredForThemesInsideEditors = window.location.origin
+      return `${baseUrlRequiredForThemesInsideEditors}/components/assets/${component.identifier}/${nativeFeature.index_path}`
+    }
+  }
+
+  urlForComponent(component: ComponentOrNativeFeature): string | undefined {
+    if (this.desktopManager) {
+      return this.urlForComponentOnDesktop(component)
+    }
+
+    if (isNonNativeComponent(component) && component.offlineOnly) {
       return undefined
     }
 
-    const nativeFeature = FindNativeFeature(component.identifier)
-
-    if (this.isDesktop) {
-      assert(this.desktopManager)
-
-      if (nativeFeature) {
-        return `${this.desktopManager.getExtServerHost()}/components/${component.identifier}/${
-          nativeFeature.index_path
-        }`
-      } else if (component.local_url) {
-        return component.local_url.replace(DESKTOP_URL_PREFIX, this.desktopManager.getExtServerHost() + '/')
-      } else {
-        return component.hosted_url || component.legacy_url
-      }
+    if (isNativeComponent(component)) {
+      return this.urlForNativeComponent(component)
     }
 
-    const isMobile = this.environment === Environment.Mobile
-    if (nativeFeature) {
-      if (isMobile) {
-        const baseUrlRequiredForThemesInsideEditors = window.location.href.split('/index.html')[0]
-        return `${baseUrlRequiredForThemesInsideEditors}/web-src/components/assets/${component.identifier}/${nativeFeature.index_path}`
-      } else {
-        const baseUrlRequiredForThemesInsideEditors = window.location.origin
-        return `${baseUrlRequiredForThemesInsideEditors}/components/assets/${component.identifier}/${nativeFeature.index_path}`
-      }
-    }
-
-    let url = component.hosted_url || component.legacy_url
+    const url = component.hosted_url || component.legacy_url
     if (!url) {
       return undefined
     }
+
     if (this.isMobile) {
       const localReplacement = this.platform === Platform.Ios ? LOCAL_HOST : ANDROID_LOCAL_HOST
-      url = url.replace(LOCAL_HOST, localReplacement).replace(CUSTOM_LOCAL_HOST, localReplacement)
+      return url.replace(LOCAL_HOST, localReplacement).replace(CUSTOM_LOCAL_HOST, localReplacement)
     }
+
     return url
   }
 

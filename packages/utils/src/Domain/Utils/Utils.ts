@@ -276,7 +276,7 @@ export function objectToValueArray(object: AnyRecord) {
  * Returns a key-sorted copy of the object.
  * For example, sortedCopy({b: '1', a: '2'}) returns {a: '2', b: '1'}
  */
-export function sortedCopy(object: any) {
+export function sortedCopy<T>(object: any): T {
   const keys = Object.keys(object).sort()
   const result: any = {}
   for (const key of keys) {
@@ -463,7 +463,7 @@ export function deepMerge(a: AnyRecord, b: AnyRecord) {
 /**
  * Returns a new object by selecting certain keys from input object.
  */
-export function pickByCopy<T>(object: T, keys: Array<keyof T>) {
+export function pickByCopy<T>(object: T, keys: Array<keyof T>): T {
   const result = {} as T
   for (const key of keys) {
     result[key] = object[key]

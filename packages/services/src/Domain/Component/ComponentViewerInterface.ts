@@ -2,14 +2,14 @@ import {
   ActionObserver,
   ComponentEventObserver,
   ComponentMessage,
+  ComponentOrNativeFeature,
   DecryptedItemInterface,
-  SNComponent,
 } from '@standardnotes/models'
 import { FeatureStatus } from '../Feature/FeatureStatus'
 import { ComponentViewerError } from './ComponentViewerError'
 
 export interface ComponentViewerInterface {
-  readonly component: SNComponent
+  readonly componentOrFeature: ComponentOrNativeFeature
   readonly url?: string
   identifier: string
   lockReadonly: boolean

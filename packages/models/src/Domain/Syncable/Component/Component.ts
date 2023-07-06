@@ -74,6 +74,7 @@ export class SNComponent extends DecryptedItem<ComponentContent> implements Comp
     this.disassociatedItemIds = payload.content.disassociatedItemIds || []
     this.associatedItemIds = payload.content.associatedItemIds || []
     this.isMobileDefault = payload.content.isMobileDefault
+
     /**
      * @legacy
      * We don't want to set this.url directly, as we'd like to phase it out.
@@ -102,10 +103,6 @@ export class SNComponent extends DecryptedItem<ComponentContent> implements Comp
     return FindNativeFeature(this.identifier)?.name || this.name
   }
 
-  public get userPreferencesLookupKey(): string {
-    return FindNativeFeature(this.identifier) ? this.identifier : this.uuid
-  }
-
   public override singletonPredicate(): Predicate<SNComponent> {
     const uniqueIdentifierPredicate = new Predicate<SNComponent>('identifier', '=', this.identifier)
     return uniqueIdentifierPredicate
@@ -132,12 +129,16 @@ export class SNComponent extends DecryptedItem<ComponentContent> implements Comp
    * The key used to look up data that this component may have saved to an item.
    * This data will be stored on the note item using this lookup key.
    */
-  public getClientDataKey(): string {
+  public get perItemPreferencesLookupKey(): string {
     if (this.legacy_url) {
       return this.legacy_url
     } else {
       return this.uuid
     }
+  }
+
+  public get userPreferencesLookupKey(): string {
+    return FindNativeFeature(this.identifier) ? this.identifier : this.uuid
   }
 
   public hasValidHostedUrl(): boolean {
