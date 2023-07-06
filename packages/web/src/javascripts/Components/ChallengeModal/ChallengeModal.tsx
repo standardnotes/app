@@ -241,7 +241,13 @@ const ChallengeModal: FunctionComponent<Props> = ({
   })
 
   return (
-    <ModalOverlay isOpen={true} key={challenge.id} ref={setModalElement} close={cancelChallenge}>
+    <ModalOverlay
+      isOpen={true}
+      key={challenge.id}
+      ref={setModalElement}
+      close={cancelChallenge}
+      hideOnInteractOutside={false}
+    >
       <Modal
         title="Authenticate"
         close={cancelChallenge}

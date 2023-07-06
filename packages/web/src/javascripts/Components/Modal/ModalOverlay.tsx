@@ -1,5 +1,5 @@
 import { mergeRefs } from '@/Hooks/mergeRefs'
-import { Dialog, useDialogStore } from '@ariakit/react'
+import { Dialog, DialogOptions, useDialogStore } from '@ariakit/react'
 import { ForwardedRef, forwardRef, ReactNode } from 'react'
 import { useModalAnimation } from '../Modal/useModalAnimation'
 
@@ -11,7 +11,10 @@ type Props = {
 }
 
 const ModalOverlay = forwardRef(
-  ({ isOpen, children, animationVariant, close, ...props }: Props, ref: ForwardedRef<HTMLDivElement>) => {
+  (
+    { isOpen, children, animationVariant, close, ...props }: Props & Partial<DialogOptions>,
+    ref: ForwardedRef<HTMLDivElement>,
+  ) => {
     const [isMounted, setElement] = useModalAnimation(isOpen, animationVariant)
     const dialog = useDialogStore({
       open: isMounted,
