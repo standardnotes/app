@@ -12,7 +12,7 @@ import Icon from '@/Components/Icon/Icon'
 import IconButton from '@/Components/Button/IconButton'
 import AdvancedOptions from './AdvancedOptions'
 import HorizontalSeparator from '../Shared/HorizontalSeparator'
-import { isErrorResponse } from '@standardnotes/snjs'
+import { getErrorFromErrorResponse, isErrorResponse } from '@standardnotes/snjs'
 
 type Props = {
   viewControllerManager: ViewControllerManager
@@ -99,7 +99,7 @@ const SignInPane: FunctionComponent<Props> = ({ application, viewControllerManag
       .signIn(email, password, isStrictSignin, isEphemeral, shouldMergeLocal)
       .then((response) => {
         if (isErrorResponse(response)) {
-          throw new Error(response.data?.error.message)
+          throw new Error(getErrorFromErrorResponse(response).message)
         }
         viewControllerManager.accountMenuController.closeAccountMenu()
       })

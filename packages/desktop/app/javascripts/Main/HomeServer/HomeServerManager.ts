@@ -10,6 +10,7 @@ import { WebContents } from 'electron'
 import { MessageToWebApp } from '../../Shared/IpcMessages'
 import { FilesManagerInterface } from '../File/FilesManagerInterface'
 import { HomeServerConfigurationFile } from './HomeServerConfigurationFile'
+import { isWindows } from '../Types/Platforms'
 
 const os = require('os')
 
@@ -126,6 +127,8 @@ export class HomeServerManager implements HomeServerManagerInterface {
   }
 
   async startHomeServer(): Promise<string | undefined> {
+    await this.lazyLoadHomeServerOnApplicablePlatforms()
+
     if (!this.homeServer) {
       return
     }
@@ -260,5 +263,19 @@ export class HomeServerManager implements HomeServerManagerInterface {
     }
 
     return configuration
+  }
+
+  private async lazyLoadHomeServerOnApplicablePlatforms(): Promise<void> {
+    if (isWindows()) {
+      return
+    }
+
+    if (this.homeServer) {
+      return
+    }
+
+    const { HomeServer } = await import('@standardnotes/home-server')
+
+    this.homeServer = new HomeServer()
   }
 }

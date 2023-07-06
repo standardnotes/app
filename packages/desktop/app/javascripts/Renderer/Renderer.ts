@@ -128,7 +128,7 @@ async function configureWindow(remoteBridge: CrossProcessBridge) {
     /* Use custom title bar. Take the sn-titlebar-height off of
     the app content height so its not overflowing */
     sheet.insertRule(
-      '[role="dialog"] { position: relative; height: calc(100vh - var(--sn-desktop-titlebar-height)) !important; margin-top: var(--sn-desktop-titlebar-height) !important; }',
+      '[role="dialog"] { height: calc(100vh - var(--sn-desktop-titlebar-height)) !important; top: var(--sn-desktop-titlebar-height); }',
       sheet.cssRules.length,
     )
     sheet.insertRule(
@@ -150,8 +150,13 @@ window.electronMainEvents.setWindowFocusedHandler(() => {
   window.webClient.windowGainedFocus()
 })
 
-window.electronMainEvents.setInstallComponentCompleteHandler((_: IpcRendererEvent, data: any) => {
-  void window.webClient.onComponentInstallationComplete(data.component, undefined)
+window.electronMainEvents.setConsoleLogHandler((_: IpcRendererEvent, message: unknown) => {
+  window.webClient.consoleLog(message as string)
+})
+
+window.electronMainEvents.setInstallComponentCompleteHandler((_: IpcRendererEvent, data: unknown) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  void window.webClient.onComponentInstallationComplete((data as any).component, undefined)
 })
 
 window.electronMainEvents.setWatchedDirectoriesChangeHandler((_: IpcRendererEvent, changes: unknown) => {

@@ -1,10 +1,38 @@
-import { Subtitle, Text, Title } from '@/Components/Preferences/PreferencesComponents/Content'
+import { isWindowsPlatform } from '@standardnotes/ui-services'
+
+import { useApplication } from '@/Components/ApplicationProvider'
+import { Pill, Subtitle, Text, Title } from '@/Components/Preferences/PreferencesComponents/Content'
+
 import PreferencesPane from '../../PreferencesComponents/PreferencesPane'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 import HomeServerSettings from './HomeServerSettings'
 
 const HomeServer = () => {
+  const application = useApplication()
+
+  if (isWindowsPlatform(application.platform)) {
+    return (
+      <PreferencesPane>
+        <PreferencesGroup>
+          <PreferencesSegment>
+            <div className="flex items-center justify-between">
+              <div className="flex items-start">
+                <Title>Home Server</Title>
+                <Pill style={'success'}>Labs</Pill>
+              </div>
+            </div>
+            <div className="flex items-center justify-between">
+              <div className="mr-10 flex flex-col">
+                <Subtitle>Windows support for home server is coming soon.</Subtitle>
+              </div>
+            </div>
+          </PreferencesSegment>
+        </PreferencesGroup>
+      </PreferencesPane>
+    )
+  }
+
   return (
     <PreferencesPane>
       <PreferencesGroup>

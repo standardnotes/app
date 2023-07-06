@@ -45,6 +45,7 @@ import {
   ChangeCredentialsResponse,
   SessionListResponse,
   HttpSuccessResponse,
+  getErrorFromErrorResponse,
 } from '@standardnotes/responses'
 import { CopyPayloadWithContentOverride, RootKeyWithKeyPairsInterface } from '@standardnotes/models'
 import { LegacySession, MapperInterface, Result, Session, SessionToken } from '@standardnotes/domain-core'
@@ -316,7 +317,7 @@ export class SNSessionManager
     const result = await this.apiService.getSubscription(this.getSureUser().uuid)
 
     if (isErrorResponse(result)) {
-      return ClientDisplayableError.FromError(result.data?.error)
+      return ClientDisplayableError.FromNetworkError(result)
     }
 
     const subscription = result.data.subscription
@@ -328,7 +329,7 @@ export class SNSessionManager
     const response = await this.apiService.getAvailableSubscriptions()
 
     if (isErrorResponse(response)) {
-      return ClientDisplayableError.FromError(response.data.error)
+      return ClientDisplayableError.FromNetworkError(response)
     }
 
     return response.data
@@ -418,8 +419,8 @@ export class SNSessionManager
       ephemeral,
     })
 
-    if ('error' in registerResponse.data) {
-      throw new ApiCallError(registerResponse.data.error.message)
+    if (isErrorResponse(registerResponse)) {
+      throw new ApiCallError(getErrorFromErrorResponse(registerResponse).message)
     }
 
     await this.handleAuthentication({
@@ -492,8 +493,8 @@ export class SNSessionManager
     const result = await this.performSignIn(email, password, strict, ephemeral, minAllowedVersion)
     if (
       isErrorResponse(result.response) &&
-      result.response.data.error.tag !== ErrorTag.ClientValidationError &&
-      result.response.data.error.tag !== ErrorTag.ClientCanceledMfa
+      getErrorFromErrorResponse(result.response).tag !== ErrorTag.ClientValidationError &&
+      getErrorFromErrorResponse(result.response).tag !== ErrorTag.ClientCanceledMfa
     ) {
       const cleanedEmail = cleanedEmailString(email)
       if (cleanedEmail !== email) {

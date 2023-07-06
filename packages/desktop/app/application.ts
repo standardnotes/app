@@ -28,6 +28,7 @@ export function initializeApplication(args: { app: Electron.App; ipcMain: Electr
 
   if (isDev()) {
     /** Expose the app's state as a global variable. Useful for debugging */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ;(global as any).appState = state
 
     setTimeout(() => {
@@ -124,7 +125,6 @@ async function finishApplicationInitialization({ app, shell, state }: { app: App
   })
 
   if (state.isRunningVersionForFirstTime()) {
-    console.log('Clearing window cache')
     await windowState.window.webContents.session.clearCache()
   }
 

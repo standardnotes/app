@@ -2,6 +2,7 @@
   "compilerOptions": {
     "target": "ES2019",
     "moduleResolution": "node",
+    "module": "es2020",
     "types": ["node"],
     "allowJs": true,
     "noEmit": false,

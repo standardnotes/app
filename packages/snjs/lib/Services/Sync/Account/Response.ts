@@ -9,6 +9,7 @@ import {
   RawSyncResponse,
   UserEventServerHash,
   AsymmetricMessageServerHash,
+  getErrorFromErrorResponse,
 } from '@standardnotes/responses'
 import {
   FilterDisallowedRemotePayloadsAndMap,
@@ -35,8 +36,6 @@ export class ServerSyncResponse {
   private successResponseData: RawSyncResponse | undefined
 
   constructor(public rawResponse: HttpResponse<RawSyncResponse>) {
-    this.rawResponse = rawResponse
-
     if (!isErrorResponse(rawResponse)) {
       this.successResponseData = rawResponse.data
     }
@@ -101,7 +100,11 @@ export class ServerSyncResponse {
   }
 
   public get error(): HttpError | undefined {
-    return isErrorResponse(this.rawResponse) ? this.rawResponse.data?.error : undefined
+    if (isErrorResponse(this.rawResponse)) {
+      return getErrorFromErrorResponse(this.rawResponse)
+    } else {
+      return undefined
+    }
   }
 
   public get status(): number {
@@ -123,6 +126,6 @@ export class ServerSyncResponse {
   }
 
   public get hasError(): boolean {
-    return this.error != undefined
+    return isErrorResponse(this.rawResponse)
   }
 }

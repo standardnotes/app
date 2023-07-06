@@ -61,6 +61,7 @@ export async function createWindowState({
   const services = await createWindowServices(window, appState, appLocale)
 
   require('@electron/remote/main').enable(window.webContents)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ;(global as any).RemoteBridge = new RemoteBridge(
     window,
     Keychain,

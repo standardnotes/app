@@ -4,7 +4,7 @@ import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface
 import { AbstractService } from '../Service/AbstractService'
 import { SubscriptionClientInterface } from './SubscriptionClientInterface'
 import { AppleIAPReceipt } from './AppleIAPReceipt'
-import { isErrorResponse } from '@standardnotes/responses'
+import { getErrorFromErrorResponse, isErrorResponse } from '@standardnotes/responses'
 
 export class SubscriptionManager extends AbstractService implements SubscriptionClientInterface {
   constructor(
@@ -19,7 +19,7 @@ export class SubscriptionManager extends AbstractService implements Subscription
       const result = await this.subscriptionApiService.acceptInvite(inviteUuid)
 
       if (isErrorResponse(result)) {
-        return { success: false, message: result.data.error.message }
+        return { success: false, message: getErrorFromErrorResponse(result).message }
       }
 
       return result.data
@@ -81,7 +81,7 @@ export class SubscriptionManager extends AbstractService implements Subscription
       })
 
       if (isErrorResponse(result)) {
-        return { success: false, message: result.data.error.message }
+        return { success: false, message: getErrorFromErrorResponse(result).message }
       }
 
       return result.data

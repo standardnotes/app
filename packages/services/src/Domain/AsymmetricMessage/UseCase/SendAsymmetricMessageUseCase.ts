@@ -16,7 +16,7 @@ export class SendAsymmetricMessageUseCase {
     })
 
     if (isErrorResponse(response)) {
-      return ClientDisplayableError.FromError(response.data.error)
+      return ClientDisplayableError.FromNetworkError(response)
     }
 
     return response.data.message

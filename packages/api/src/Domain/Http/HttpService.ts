@@ -315,12 +315,14 @@ export class HttpService implements HttpServiceInterface {
       console.error(error)
     }
     if (httpStatus >= HttpStatusCode.Success && httpStatus < HttpStatusCode.InternalServerError) {
-      if (
-        httpStatus === HttpStatusCode.Forbidden &&
-        response.data &&
-        (response as HttpErrorResponse).data.error !== undefined
-      ) {
-        ;(response as HttpErrorResponse).data.error.message = ErrorMessage.RateLimited
+      if (httpStatus === HttpStatusCode.Forbidden && isErrorResponse(response)) {
+        if (!response.data.error) {
+          response.data.error = {
+            message: ErrorMessage.RateLimited,
+          }
+        } else {
+          response.data.error.message = ErrorMessage.RateLimited
+        }
       }
       resolve(response)
     } else {

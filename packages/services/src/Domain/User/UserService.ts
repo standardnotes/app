@@ -1,6 +1,12 @@
 import { Base64String } from '@standardnotes/sncrypto-common'
 import { EncryptionProviderInterface, SNRootKey, SNRootKeyParams } from '@standardnotes/encryption'
-import { HttpResponse, SignInResponse, User, isErrorResponse } from '@standardnotes/responses'
+import {
+  HttpResponse,
+  SignInResponse,
+  User,
+  getErrorFromErrorResponse,
+  isErrorResponse,
+} from '@standardnotes/responses'
 import { KeyParamsOrigination, UserRequestType } from '@standardnotes/common'
 import { UuidGenerator } from '@standardnotes/utils'
 import { UserApiServiceInterface, UserRegistrationResponseBody } from '@standardnotes/api'
@@ -227,7 +233,7 @@ export class UserService
     if (isErrorResponse(response)) {
       return {
         error: true,
-        message: response.data.error.message,
+        message: getErrorFromErrorResponse(response).message,
       }
     }
 

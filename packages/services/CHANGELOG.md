@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.62.2](https://github.com/standardnotes/app/compare/@standardnotes/services@1.62.1...@standardnotes/services@1.62.2) (2023-07-05)
+
+**Note:** Version bump only for package @standardnotes/services
+
+## [1.62.1](https://github.com/standardnotes/app/compare/@standardnotes/services@1.62.0...@standardnotes/services@1.62.1) (2023-07-05)
+
+**Note:** Version bump only for package @standardnotes/services
+
+# [1.62.0](https://github.com/standardnotes/app/compare/@standardnotes/services@1.61.2...@standardnotes/services@1.62.0) (2023-07-04)
+
+### Features
+
+* New one-click Home Server, now in Labs. Launch your own self-hosted server instance with just 1 click from the Preferences window.  ([#2345](https://github.com/standardnotes/app/issues/2345)) ([0552878](https://github.com/standardnotes/app/commit/05528782a4e9684dbd86fd12b77eb86727d6c414))
+
+## [1.61.2](https://github.com/standardnotes/app/compare/@standardnotes/services@1.61.1...@standardnotes/services@1.61.2) (2023-07-04)
+
+**Note:** Version bump only for package @standardnotes/services
+
 ## [1.61.1](https://github.com/standardnotes/app/compare/@standardnotes/services@1.61.0...@standardnotes/services@1.61.1) (2023-07-03)
 
 **Note:** Version bump only for package @standardnotes/services

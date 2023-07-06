@@ -18,6 +18,8 @@ export interface DesktopClientRequiresWebMethods {
 
   windowLostFocus(): void
 
+  consoleLog(message: string): void
+
   onComponentInstallationComplete(componentData: DecryptedTransferPayload, error: unknown): Promise<void>
 
   handleWatchedDirectoriesChanges(changes: DesktopWatchedDirectoriesChanges): Promise<void>
