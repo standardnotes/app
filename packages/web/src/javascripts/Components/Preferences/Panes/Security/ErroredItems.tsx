@@ -68,6 +68,10 @@ const ErroredItems: FunctionComponent = () => {
     application.presentKeyRecoveryWizard()
   }
 
+  if (erroredItems.length === 0) {
+    return null
+  }
+
   return (
     <PreferencesGroup>
       <PreferencesSegment>
