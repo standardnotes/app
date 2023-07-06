@@ -3,11 +3,11 @@ import { FunctionComponent, useMemo } from 'react'
 import Dropdown from '../Dropdown/Dropdown'
 import { DropdownItem } from '../Dropdown/DropdownItem'
 import PreferencesMenuItem from './PreferencesComponents/MenuItem'
-import { PreferencesMenu } from './PreferencesMenu'
+import { PreferencesMenuController } from './PreferencesMenuController'
 import { PreferenceId } from '@standardnotes/ui-services'
 
 type Props = {
-  menu: PreferencesMenu
+  menu: PreferencesMenuController
 }
 
 const PreferencesMenuView: FunctionComponent<Props> = ({ menu }) => {

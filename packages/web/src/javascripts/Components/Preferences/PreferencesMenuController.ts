@@ -49,7 +49,7 @@ const READY_PREFERENCES_MENU_ITEMS: PreferencesMenuItem[] = [
 
 const DESKTOP_PREFERENCES_MENU_ITEMS: PreferencesMenuItem[] = []
 
-export class PreferencesMenu {
+export class PreferencesMenuController {
   private _selectedPane: PreferenceId = 'account'
   private _menu: PreferencesMenuItem[]
   private _extensionLatestVersions: PackageProvider = new PackageProvider(new Map())
@@ -75,7 +75,7 @@ export class PreferencesMenu {
     this.loadLatestVersions()
 
     makeAutoObservable<
-      PreferencesMenu,
+      PreferencesMenuController,
       '_selectedPane' | '_twoFactorAuth' | '_extensionPanes' | '_extensionLatestVersions' | 'loadLatestVersions'
     >(this, {
       _twoFactorAuth: observable,
