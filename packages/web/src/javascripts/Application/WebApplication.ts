@@ -22,6 +22,8 @@ import {
   Environment,
   ApplicationOptionsDefaults,
   BackupServiceInterface,
+  InternalFeatureService,
+  InternalFeatureServiceInterface,
 } from '@standardnotes/snjs'
 import { makeObservable, observable } from 'mobx'
 import { startAuthentication, startRegistration } from '@simplewebauthn/browser'
@@ -261,6 +263,10 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     }
 
     return undefined
+  }
+
+  public getInternalFeatureService(): InternalFeatureServiceInterface {
+    return InternalFeatureService.get()
   }
 
   isNativeIOS() {
