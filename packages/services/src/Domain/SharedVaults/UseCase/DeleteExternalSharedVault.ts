@@ -3,10 +3,12 @@ import { StorageServiceInterface } from '../../Storage/StorageServiceInterface'
 import { EncryptionProviderInterface } from '@standardnotes/encryption'
 import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
 import { AnyItemInterface, VaultListingInterface } from '@standardnotes/models'
-import { Uuids } from '@standardnotes/utils'
 import { MutatorClientInterface } from '../../Mutator/MutatorClientInterface'
+import { RemoveItemsLocallyUseCase } from '../../UseCase/RemoveItemsLocally'
 
 export class DeleteExternalSharedVaultUseCase {
+  private removeItemsLocallyUsecase = new RemoveItemsLocallyUseCase(this.items, this.storage)
+
   constructor(
     private items: ItemManagerInterface,
     private mutator: MutatorClientInterface,
@@ -28,15 +30,13 @@ export class DeleteExternalSharedVaultUseCase {
    * The data will be removed locally without syncing the items
    */
   private async deleteDataSharedByVaultUsers(vault: VaultListingInterface): Promise<void> {
-    const vaultItems = this.items
-      .allTrackedItems()
-      .filter((item) => item.key_system_identifier === vault.systemIdentifier)
-    this.items.removeItemsLocally(vaultItems as AnyItemInterface[])
+    const vaultItems = <AnyItemInterface[]>(
+      this.items.allTrackedItems().filter((item) => item.key_system_identifier === vault.systemIdentifier)
+    )
 
     const itemsKeys = this.encryption.keys.getKeySystemItemsKeys(vault.systemIdentifier)
-    this.items.removeItemsLocally(itemsKeys)
 
-    await this.storage.deletePayloadsWithUuids([...Uuids(vaultItems), ...Uuids(itemsKeys)])
+    await this.removeItemsLocallyUsecase.execute([...vaultItems, ...itemsKeys])
   }
 
   private async deleteDataOwnedByThisUser(vault: VaultListingInterface): Promise<void> {

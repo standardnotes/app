@@ -387,6 +387,10 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return this.challengeService
   }
 
+  public get asymmetric(): ExternalServices.AsymmetricMessageServiceInterface {
+    return this.asymmetricMessageService
+  }
+
   get homeServer(): ExternalServices.HomeServerServiceInterface | undefined {
     return this.homeServerService
   }

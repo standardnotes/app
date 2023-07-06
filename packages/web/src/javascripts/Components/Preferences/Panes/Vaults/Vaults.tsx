@@ -40,31 +40,36 @@ const Vaults = () => {
     setVaults(vaultService.getVaults())
   }, [vaultService])
 
-  const fetchInvites = useCallback(async () => {
-    await sharedVaultService.downloadInboundInvites()
-    const invites = sharedVaultService.getCachedPendingInviteRecords()
-    setInvites(invites)
+  const updateInvites = useCallback(async () => {
+    setInvites(sharedVaultService.getCachedPendingInviteRecords())
   }, [sharedVaultService])
 
   const updateContacts = useCallback(async () => {
     setContacts(contactService.getAllContacts())
   }, [contactService])
 
+  const updateAllData = useCallback(async () => {
+    await Promise.all([updateVaults(), updateInvites(), updateContacts()])
+  }, [updateContacts, updateInvites, updateVaults])
+
   useEffect(() => {
     return application.sharedVaults.addEventObserver((event) => {
       if (event === SharedVaultServiceEvent.SharedVaultStatusChanged) {
-        void fetchInvites()
+        void updateAllData()
       }
     })
-  })
+  }, [application.sharedVaults, updateAllData])
 
   useEffect(() => {
     return application.streamItems([ContentType.VaultListing, ContentType.TrustedContact], () => {
-      void updateVaults()
-      void fetchInvites()
-      void updateContacts()
+      void updateAllData()
     })
-  }, [application, updateVaults, fetchInvites, updateContacts])
+  }, [application, updateAllData])
+
+  useEffect(() => {
+    void sharedVaultService.downloadInboundInvites()
+    void updateAllData()
+  }, [updateAllData, sharedVaultService])
 
   const createNewVault = useCallback(async () => {
     setIsVaultModalOpen(true)
@@ -73,12 +78,6 @@ const Vaults = () => {
   const createNewContact = useCallback(() => {
     setIsAddContactModalOpen(true)
   }, [])
-
-  useEffect(() => {
-    void updateVaults()
-    void fetchInvites()
-    void updateContacts()
-  }, [updateContacts, updateVaults, fetchInvites])
 
   return (
     <>
@@ -95,7 +94,7 @@ const Vaults = () => {
           <Title>Incoming Invites</Title>
           <div className="my-2 flex flex-col">
             {invites.map((invite) => {
-              return <InviteItem invite={invite} key={invite.invite.uuid} />
+              return <InviteItem inviteRecord={invite} key={invite.invite.uuid} />
             })}
           </div>
         </PreferencesSegment>

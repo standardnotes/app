@@ -283,6 +283,7 @@ export class EncryptionService
     const usecase = new CreateNewItemsKeyWithRollbackUseCase(
       this.mutator,
       this.items,
+      this.storage,
       this.operators,
       this.rootKeyManager,
     )

@@ -1,10 +1,12 @@
 import { WebApplication } from '@/Application/WebApplication'
-import { createRef } from 'react'
 import { AbstractComponent } from '@/Components/Abstract/PureComponent'
-import DecoratedPasswordInput from '../Input/DecoratedPasswordInput'
 import Modal from '../Modal/Modal'
 import { isMobileScreen } from '@/Utils'
 import Spinner from '../Spinner/Spinner'
+import { PasswordStep } from './PasswordStep'
+import { FinishStep } from './FinishStep'
+import { PreprocessingStep } from './PreprocessingStep'
+import { featureTrunkVaultsEnabled } from '@/FeatureTrunk'
 
 interface Props {
   application: WebApplication
@@ -19,7 +21,6 @@ type State = {
   processing?: boolean
   showSpinner?: boolean
   step: Steps
-  title: string
 }
 
 const DEFAULT_CONTINUE_TITLE = 'Continue'
@@ -27,8 +28,9 @@ const GENERATING_CONTINUE_TITLE = 'Generating Keys...'
 const FINISH_CONTINUE_TITLE = 'Finish'
 
 enum Steps {
-  PasswordStep = 1,
-  FinishStep = 2,
+  PreprocessingStep = 'preprocessing-step',
+  PasswordStep = 'password-step',
+  FinishStep = 'finish-step',
 }
 
 type FormData = {
@@ -39,22 +41,32 @@ type FormData = {
 }
 
 class PasswordWizard extends AbstractComponent<Props, State> {
-  private currentPasswordInput = createRef<HTMLInputElement>()
-
   constructor(props: Props) {
     super(props, props.application)
     this.registerWindowUnloadStopper()
-    this.state = {
+
+    const baseState = {
       formData: {},
       continueTitle: DEFAULT_CONTINUE_TITLE,
-      step: Steps.PasswordStep,
-      title: 'Change Password',
+    }
+
+    if (featureTrunkVaultsEnabled()) {
+      this.state = {
+        ...baseState,
+        lockContinue: true,
+        step: Steps.PreprocessingStep,
+      }
+    } else {
+      this.state = {
+        ...baseState,
+        lockContinue: false,
+        step: Steps.PasswordStep,
+      }
     }
   }
 
   override componentDidMount(): void {
     super.componentDidMount()
-    this.currentPasswordInput.current?.focus()
   }
 
   override componentWillUnmount(): void {
@@ -83,6 +95,15 @@ class PasswordWizard extends AbstractComponent<Props, State> {
 
     if (this.state.step === Steps.FinishStep) {
       this.dismiss()
+
+      return
+    }
+
+    if (this.state.step === Steps.PreprocessingStep) {
+      this.setState({
+        step: Steps.PasswordStep,
+      })
+
       return
     }
 
@@ -142,7 +163,6 @@ class PasswordWizard extends AbstractComponent<Props, State> {
       return false
     }
 
-    /** Validate current password */
     const success = await this.application.validateAccountPassword(this.state.formData.currentPassword as string)
     if (!success) {
       this.application.alertService
@@ -192,7 +212,7 @@ class PasswordWizard extends AbstractComponent<Props, State> {
   }
 
   dismiss = () => {
-    if (this.state.lockContinue) {
+    if (this.state.processing) {
       this.application.alertService.alert('Cannot close window until pending tasks are complete.').catch(console.error)
     } else {
       this.props.dismissModal()
@@ -226,11 +246,32 @@ class PasswordWizard extends AbstractComponent<Props, State> {
     }).catch(console.error)
   }
 
+  setContinueEnabled = (enabled: boolean) => {
+    this.setState({
+      lockContinue: !enabled,
+    })
+  }
+
+  nextStepFromPreprocessing = () => {
+    if (this.state.lockContinue) {
+      this.setState(
+        {
+          lockContinue: false,
+        },
+        () => {
+          void this.nextStep()
+        },
+      )
+    } else {
+      void this.nextStep()
+    }
+  }
+
   override render() {
     return (
       <div className="sn-component h-full w-full md:h-auto md:w-auto" id="password-wizard">
         <Modal
-          title={this.state.title}
+          title={'Change Password'}
           close={this.dismiss}
           actions={[
             {
@@ -253,59 +294,23 @@ class PasswordWizard extends AbstractComponent<Props, State> {
             },
           ]}
         >
-          <div className="px-4 py-4">
+          <div className="px-4.5 py-4">
+            {this.state.step === Steps.PreprocessingStep && (
+              <PreprocessingStep
+                onContinue={this.nextStepFromPreprocessing}
+                setContinueEnabled={this.setContinueEnabled}
+              />
+            )}
+
             {this.state.step === Steps.PasswordStep && (
-              <div className="flex flex-col pb-1.5">
-                <form>
-                  <label htmlFor="password-wiz-current-password" className="mb-1 block">
-                    Current Password
-                  </label>
-
-                  <DecoratedPasswordInput
-                    ref={this.currentPasswordInput}
-                    id="password-wiz-current-password"
-                    value={this.state.formData.currentPassword}
-                    onChange={this.handleCurrentPasswordInputChange}
-                    type="password"
-                  />
-
-                  <div className="min-h-2" />
-
-                  <label htmlFor="password-wiz-new-password" className="mb-1 block">
-                    New Password
-                  </label>
-
-                  <DecoratedPasswordInput
-                    id="password-wiz-new-password"
-                    value={this.state.formData.newPassword}
-                    onChange={this.handleNewPasswordInputChange}
-                    type="password"
-                  />
-
-                  <div className="min-h-2" />
-
-                  <label htmlFor="password-wiz-confirm-new-password" className="mb-1 block">
-                    Confirm New Password
-                  </label>
-
-                  <DecoratedPasswordInput
-                    id="password-wiz-confirm-new-password"
-                    value={this.state.formData.newPasswordConfirmation}
-                    onChange={this.handleNewPasswordConfirmationInputChange}
-                    type="password"
-                  />
-                </form>
-              </div>
+              <PasswordStep
+                onCurrentPasswordChange={this.handleCurrentPasswordInputChange}
+                onNewPasswordChange={this.handleNewPasswordInputChange}
+                onNewPasswordConfirmationChange={this.handleNewPasswordConfirmationInputChange}
+              />
             )}
-            {this.state.step === Steps.FinishStep && (
-              <div className="flex flex-col">
-                <div className="mb-1 font-bold text-info">Your password has been successfully changed.</div>
-                <p className="sk-p">
-                  Please ensure you are running the latest version of Standard Notes on all platforms to ensure maximum
-                  compatibility.
-                </p>
-              </div>
-            )}
+
+            {this.state.step === Steps.FinishStep && <FinishStep />}
           </div>
         </Modal>
       </div>

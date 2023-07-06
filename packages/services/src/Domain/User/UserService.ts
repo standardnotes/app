@@ -589,7 +589,6 @@ export class UserService
 
     this.lockSyncing()
 
-    /** Now, change the credentials on the server. Roll back on failure */
     const { response } = await this.sessionManager.changeCredentials({
       currentServerPassword: currentRootKey.serverPassword as string,
       newRootKey: newRootKey,

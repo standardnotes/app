@@ -1,6 +1,7 @@
 import Icon from '@/Components/Icon/Icon'
 import { FunctionComponent } from 'react'
 import { IconType } from '@standardnotes/snjs'
+import { ErrorCircle } from '@/Components/UIElements/ErrorCircle'
 
 interface Props {
   iconType: IconType
@@ -23,7 +24,11 @@ const PreferencesMenuItem: FunctionComponent<Props> = ({ iconType, label, select
     <Icon className={`icon text-base ${selected ? 'text-info' : 'text-neutral'}`} type={iconType} />
     <div className="min-w-1" />
     {label}
-    {hasBubble && <span className="ml-1 text-warning">⚠️</span>}
+    {hasBubble && (
+      <span className="ml-2">
+        <ErrorCircle />
+      </span>
+    )}
   </div>
 )
 

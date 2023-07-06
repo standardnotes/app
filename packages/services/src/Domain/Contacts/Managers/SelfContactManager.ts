@@ -21,7 +21,7 @@ import { PublicKeySet } from '@standardnotes/encryption'
 
 export class SelfContactManager {
   public selfContact?: TrustedContactInterface
-  private shouldReloadSelfContact = true
+
   private isReloadingSelfContact = false
   private eventDisposers: (() => void)[] = []
 
@@ -33,15 +33,13 @@ export class SelfContactManager {
     private singletons: SingletonManagerInterface,
   ) {
     this.eventDisposers.push(
-      items.addObserver(ContentType.TrustedContact, () => {
-        this.shouldReloadSelfContact = true
-      }),
-    )
-
-    this.eventDisposers.push(
       sync.addEventObserver((event) => {
-        if (event === SyncEvent.SyncCompletedWithAllItemsUploaded || event === SyncEvent.LocalDataIncrementalLoad) {
-          void this.reloadSelfContact()
+        if (event === SyncEvent.LocalDataIncrementalLoad) {
+          this.loadSelfContactFromDatabase()
+        }
+
+        if (event === SyncEvent.SyncCompletedWithAllItemsUploaded) {
+          void this.reloadSelfContactAndCreateIfNecessary()
         }
       }),
     )
@@ -49,11 +47,19 @@ export class SelfContactManager {
 
   public async handleApplicationStage(stage: ApplicationStage): Promise<void> {
     if (stage === ApplicationStage.LoadedDatabase_12) {
-      this.selfContact = this.singletons.findSingleton<TrustedContactInterface>(
-        ContentType.UserPrefs,
-        TrustedContact.singletonPredicate,
-      )
+      this.loadSelfContactFromDatabase()
     }
+  }
+
+  private loadSelfContactFromDatabase(): void {
+    if (this.selfContact) {
+      return
+    }
+
+    this.selfContact = this.singletons.findSingleton<TrustedContactInterface>(
+      ContentType.TrustedContact,
+      TrustedContact.singletonPredicate,
+    )
   }
 
   public async updateWithNewPublicKeySet(publicKeySet: PublicKeySet) {
@@ -74,12 +80,16 @@ export class SelfContactManager {
     })
   }
 
-  private async reloadSelfContact() {
+  private async reloadSelfContactAndCreateIfNecessary() {
     if (!InternalFeatureService.get().isFeatureEnabled(InternalFeature.Vaults)) {
       return
     }
 
-    if (!this.shouldReloadSelfContact || this.isReloadingSelfContact) {
+    if (this.selfContact) {
+      return
+    }
+
+    if (this.isReloadingSelfContact) {
       return
     }
 
@@ -105,17 +115,13 @@ export class SelfContactManager {
       }),
     }
 
-    try {
-      this.selfContact = await this.singletons.findOrCreateSingleton<TrustedContactContent, TrustedContact>(
-        TrustedContact.singletonPredicate,
-        ContentType.TrustedContact,
-        FillItemContent<TrustedContactContent>(content),
-      )
+    this.selfContact = await this.singletons.findOrCreateSingleton<TrustedContactContent, TrustedContact>(
+      TrustedContact.singletonPredicate,
+      ContentType.TrustedContact,
+      FillItemContent<TrustedContactContent>(content),
+    )
 
-      this.shouldReloadSelfContact = false
-    } finally {
-      this.isReloadingSelfContact = false
-    }
+    this.isReloadingSelfContact = false
   }
 
   deinit() {
