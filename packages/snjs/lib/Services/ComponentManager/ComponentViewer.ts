@@ -495,7 +495,7 @@ export class ComponentViewer implements ComponentViewerInterface {
     this.window = window
     this.sessionKey = UuidGenerator.GenerateUuid()
 
-    const componentData = this.preferences.getComponentPreferences(this.componentOrFeature)
+    const componentData = this.preferences.getComponentPreferences(this.componentOrFeature) ?? {}
 
     this.sendMessage({
       action: ComponentAction.ComponentRegistered,

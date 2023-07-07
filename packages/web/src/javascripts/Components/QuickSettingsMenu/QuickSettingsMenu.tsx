@@ -104,7 +104,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, quickSet
       if (component.isTheme()) {
         application.componentManager.toggleTheme(component.uuid).catch(console.error)
       } else {
-        application.componentManager.toggleComponent(component.uuid).catch(console.error)
+        application.componentManager.toggleComponent(component).catch(console.error)
       }
     },
     [application],

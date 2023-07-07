@@ -1,5 +1,6 @@
 import { ContentType } from '@standardnotes/common'
 import {
+  ComponentInterface,
   ComponentMutator,
   DecryptedItemInterface,
   DecryptedItemMutator,
@@ -14,7 +15,6 @@ import {
   PayloadEmitSource,
   PredicateInterface,
   SmartView,
-  SNComponent,
   SNFeatureRepo,
   SNNote,
   SNTag,
@@ -73,12 +73,12 @@ export interface MutatorClientInterface {
   ): Promise<ItemsKeyInterface>
 
   changeComponent(
-    itemToLookupUuidFor: SNComponent,
+    itemToLookupUuidFor: ComponentInterface,
     mutate: (mutator: ComponentMutator) => void,
     mutationType?: MutationType,
     emitSource?: PayloadEmitSource,
     payloadSourceKey?: string,
-  ): Promise<SNComponent>
+  ): Promise<ComponentInterface>
 
   changeFeatureRepo(
     itemToLookupUuidFor: SNFeatureRepo,

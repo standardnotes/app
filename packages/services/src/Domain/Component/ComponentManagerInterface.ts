@@ -31,5 +31,5 @@ export interface ComponentManagerInterface {
   legacyGetDefaultEditor(): ComponentInterface | undefined
   componentWithIdentifier(identifier: FeatureIdentifier | string): ComponentOrNativeFeature | undefined
   toggleTheme(uuid: string): Promise<void>
-  toggleComponent(uuid: string): Promise<void>
+  toggleComponent(component: ComponentInterface): Promise<void>
 }

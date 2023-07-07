@@ -18,6 +18,8 @@ import {
   isNonNativeComponent,
   ComponentInterface,
   getComponentOrNativeFeatureFileType,
+  ComponentOrNativeFeatureUniqueIdentifier,
+  getComponentOrNativeFeatureAcquiredPermissions,
 } from '@standardnotes/models'
 import { SNSyncService } from '@Lib/Services/Sync/SyncService'
 import find from 'lodash/find'
@@ -374,8 +376,19 @@ export class SNComponentManager
     return urls
   }
 
-  private findComponent(uuid: UuidString): SNComponent | undefined {
-    return this.itemManager.findItem<SNComponent>(uuid)
+  private findComponent(uuid: string): ComponentInterface | undefined {
+    return this.itemManager.findItem<ComponentInterface>(uuid)
+  }
+
+  private findComponentOrNativeFeature(
+    identifier: ComponentOrNativeFeatureUniqueIdentifier,
+  ): ComponentOrNativeFeature | undefined {
+    const nativeFeature = FindNativeFeature(identifier as FeatureIdentifier)
+    if (nativeFeature) {
+      return nativeFeature
+    }
+
+    return this.itemManager.findItem<ComponentInterface>(identifier)
   }
 
   findComponentViewer(identifier: string): ComponentViewerInterface | undefined {
@@ -386,7 +399,7 @@ export class SNComponentManager
     return this.viewers.find((viewer) => viewer.sessionKey === key)
   }
 
-  areRequestedPermissionsValid(component: SNComponent, permissions: ComponentPermission[]): boolean {
+  areRequestedPermissionsValid(component: ComponentOrNativeFeature, permissions: ComponentPermission[]): boolean {
     for (const permission of permissions) {
       if (permission.name === ComponentAction.StreamItems) {
         if (!AllowedBatchStreaming.includes(component.identifier)) {
@@ -405,28 +418,32 @@ export class SNComponentManager
   }
 
   runWithPermissions(
-    componentUuid: UuidString,
+    componentIdentifier: ComponentOrNativeFeatureUniqueIdentifier,
     requiredPermissions: ComponentPermission[],
     runFunction: () => void,
   ): void {
-    const component = this.findComponent(componentUuid)
+    const componentOrNativeFeature = this.findComponentOrNativeFeature(componentIdentifier)
 
-    if (!component) {
+    if (!componentOrNativeFeature) {
       void this.alertService.alert(
-        `Unable to find component with ID ${componentUuid}. Please restart the app and try again.`,
+        `Unable to find component with ID ${componentIdentifier}. Please restart the app and try again.`,
         'An unexpected error occurred',
       )
 
       return
     }
 
-    if (!this.areRequestedPermissionsValid(component, requiredPermissions)) {
-      console.error('Component is requesting invalid permissions', componentUuid, requiredPermissions)
+    if (isNativeComponent(componentOrNativeFeature)) {
+      runFunction()
       return
     }
 
-    const nativeFeature = FindNativeFeature(component.identifier)
-    const acquiredPermissions = nativeFeature?.component_permissions || component.permissions
+    if (!this.areRequestedPermissionsValid(componentOrNativeFeature, requiredPermissions)) {
+      console.error('Component is requesting invalid permissions', componentIdentifier, requiredPermissions)
+      return
+    }
+
+    const acquiredPermissions = getComponentOrNativeFeatureAcquiredPermissions(componentOrNativeFeature)
 
     /* Make copy as not to mutate input values */
     requiredPermissions = Copy(requiredPermissions) as ComponentPermission[]
@@ -453,8 +470,8 @@ export class SNComponentManager
       }
     }
     if (requiredPermissions.length > 0) {
-      this.promptForPermissionsWithAngularAsyncRendering(
-        component,
+      this.promptForPermissionsWithDeferredRendering(
+        componentOrNativeFeature,
         requiredPermissions,
         // eslint-disable-next-line @typescript-eslint/require-await
         async (approved) => {
@@ -468,8 +485,8 @@ export class SNComponentManager
     }
   }
 
-  promptForPermissionsWithAngularAsyncRendering(
-    component: SNComponent,
+  promptForPermissionsWithDeferredRendering(
+    component: ComponentInterface,
     permissions: ComponentPermission[],
     callback: (approved: boolean) => Promise<void>,
   ): void {
@@ -479,7 +496,7 @@ export class SNComponentManager
   }
 
   promptForPermissions(
-    component: SNComponent,
+    component: ComponentInterface,
     permissions: ComponentPermission[],
     callback: (approved: boolean) => Promise<void>,
   ): void {
@@ -600,23 +617,22 @@ export class SNComponentManager
     void this.syncService.sync()
   }
 
-  async toggleComponent(uuid: UuidString): Promise<void> {
-    this.log('Toggling component', uuid)
+  async toggleComponent(component: ComponentInterface): Promise<void> {
+    this.log('Toggling component', component.uuid)
 
-    const component = this.findComponent(uuid)
-
-    if (!component) {
+    const latestItem = this.itemManager.findItem<ComponentInterface>(component.uuid)
+    if (!latestItem) {
       return
     }
 
-    await this.mutator.changeComponent(component, (mutator) => {
-      mutator.active = !(mutator.getItem() as SNComponent).active
+    await this.mutator.changeComponent(latestItem, (mutator) => {
+      mutator.active = !(mutator.getItem() as ComponentInterface).active
     })
 
     void this.syncService.sync()
   }
 
-  isComponentActive(component: SNComponent): boolean {
+  isComponentActive(component: ComponentInterface): boolean {
     return component.active
   }
 
@@ -664,7 +680,7 @@ export class SNComponentManager
     return editors.filter((e) => e.legacyIsDefaultEditor())[0]
   }
 
-  permissionsStringForPermissions(permissions: ComponentPermission[], component: SNComponent): string {
+  permissionsStringForPermissions(permissions: ComponentPermission[], component: ComponentInterface): string {
     if (permissions.length === 0) {
       return '.'
     }

@@ -1,4 +1,10 @@
-import { FeatureDescription, FindNativeFeature, NoteType } from '@standardnotes/features'
+import {
+  ComponentPermission,
+  EditorFeatureDescription,
+  FeatureDescription,
+  FindNativeFeature,
+  NoteType,
+} from '@standardnotes/features'
 import { ComponentInterface } from './ComponentInterface'
 
 export type ComponentOrNativeFeature = ComponentInterface | FeatureDescription
@@ -7,11 +13,19 @@ export function isNativeComponent(component: ComponentOrNativeFeature): componen
   return FindNativeFeature(component.identifier) != undefined
 }
 
+export function isNativeEditorComponent(component: ComponentOrNativeFeature): component is EditorFeatureDescription {
+  return isNativeComponent(component) && (component as EditorFeatureDescription).note_type != undefined
+}
+
 export function isNonNativeComponent(component: ComponentOrNativeFeature): component is ComponentInterface {
   return FindNativeFeature(component.identifier) == undefined
 }
 
-export function getComponentOrNativeFeatureUniqueIdentifier(component: ComponentOrNativeFeature): string {
+export type ComponentOrNativeFeatureUniqueIdentifier = ComponentInterface['uuid'] | FeatureDescription['identifier']
+
+export function getComponentOrNativeFeatureUniqueIdentifier(
+  component: ComponentOrNativeFeature,
+): ComponentOrNativeFeatureUniqueIdentifier {
   if (isNativeComponent(component)) {
     return component.identifier
   } else {
@@ -66,5 +80,15 @@ export function getComponentOrNativeFeatureFeatureDescription(component: Compone
     return component
   } else {
     return component.package_info
+  }
+}
+
+export function getComponentOrNativeFeatureAcquiredPermissions(
+  component: ComponentOrNativeFeature,
+): ComponentPermission[] {
+  if (isNativeComponent(component)) {
+    return component.component_permissions ?? []
+  } else {
+    return component.permissions
   }
 }
