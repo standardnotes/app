@@ -1,18 +1,20 @@
-import { WebApplication } from '@/Application/WebApplication'
 import {
   ContentType,
   FeatureStatus,
-  SNComponent,
   ComponentArea,
   FeatureDescription,
   GetFeatures,
   FindNativeFeature,
   NoteType,
   FeatureIdentifier,
+  ComponentOrNativeFeature,
+  getComponentOrNativeFeatureNoteType,
+  getComponentOrNativeFeatureDisplayName,
 } from '@standardnotes/snjs'
 import { EditorMenuGroup } from '@/Components/NotesOptions/EditorMenuGroup'
 import { EditorMenuItem } from '@/Components/NotesOptions/EditorMenuItem'
 import { PlainEditorMetadata, SuperEditorMetadata } from '@/Constants/Constants'
+import { WebApplicationInterface } from '@standardnotes/ui-services'
 
 type NoteTypeToEditorRowsMap = Record<NoteType, EditorMenuItem[]>
 
@@ -32,8 +34,8 @@ const getNoteTypeForFeatureDescription = (featureDescription: FeatureDescription
 
 const insertNonInstalledNativeComponentsInMap = (
   map: NoteTypeToEditorRowsMap,
-  components: SNComponent[],
-  application: WebApplication,
+  components: ComponentOrNativeFeature[],
+  application: WebApplicationInterface,
 ): void => {
   GetFeatures()
     .filter((feature) => feature.content_type === ContentType.Component && feature.area === ComponentArea.Editor)
@@ -56,14 +58,14 @@ const insertNonInstalledNativeComponentsInMap = (
 
 const insertInstalledComponentsInMap = (
   map: NoteTypeToEditorRowsMap,
-  components: SNComponent[],
-  application: WebApplication,
+  components: ComponentOrNativeFeature[],
+  application: WebApplicationInterface,
 ) => {
   components.forEach((editor) => {
-    const noteType = getNoteTypeForFeatureDescription(editor.package_info)
+    const noteType = getComponentOrNativeFeatureNoteType(editor)
 
     const editorItem: EditorMenuItem = {
-      name: editor.displayName,
+      name: getComponentOrNativeFeatureDisplayName(editor),
       component: editor,
       isEntitled: application.features.getFeatureStatus(editor.identifier) === FeatureStatus.Entitled,
       noteType,
@@ -73,7 +75,7 @@ const insertInstalledComponentsInMap = (
   })
 }
 
-const createGroupsFromMap = (map: NoteTypeToEditorRowsMap, _application: WebApplication): EditorMenuGroup[] => {
+const createGroupsFromMap = (map: NoteTypeToEditorRowsMap): EditorMenuGroup[] => {
   const groups: EditorMenuGroup[] = [
     {
       icon: 'plain-text',
@@ -135,7 +137,7 @@ const createGroupsFromMap = (map: NoteTypeToEditorRowsMap, _application: WebAppl
   return groups
 }
 
-const createBaselineMap = (application: WebApplication): NoteTypeToEditorRowsMap => {
+const createBaselineMap = (application: WebApplicationInterface): NoteTypeToEditorRowsMap => {
   const map: NoteTypeToEditorRowsMap = {
     [NoteType.Plain]: [
       {
@@ -164,12 +166,15 @@ const createBaselineMap = (application: WebApplication): NoteTypeToEditorRowsMap
   return map
 }
 
-export const createEditorMenuGroups = (application: WebApplication, components: SNComponent[]) => {
+export const createEditorMenuGroups = (
+  application: WebApplicationInterface,
+  components: ComponentOrNativeFeature[],
+) => {
   const map = createBaselineMap(application)
 
   insertNonInstalledNativeComponentsInMap(map, components, application)
 
   insertInstalledComponentsInMap(map, components, application)
 
-  return createGroupsFromMap(map, application)
+  return createGroupsFromMap(map)
 }

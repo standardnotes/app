@@ -1,15 +1,24 @@
 import { ComponentArea, FeatureIdentifier } from '@standardnotes/features'
-import { ActionObserver, ComponentOrNativeFeature, PermissionDialog, SNComponent, SNNote } from '@standardnotes/models'
+import {
+  ActionObserver,
+  ComponentInterface,
+  ComponentOrNativeFeature,
+  PermissionDialog,
+  SNNote,
+} from '@standardnotes/models'
 
 import { DesktopManagerInterface } from '../Device/DesktopManagerInterface'
 import { ComponentViewerInterface } from './ComponentViewerInterface'
 
 export interface ComponentManagerInterface {
-  urlForComponent(component: SNComponent): string | undefined
+  urlForComponent(component: ComponentInterface): string | undefined
   setDesktopManager(desktopManager: DesktopManagerInterface): void
-  componentsForArea(area: ComponentArea): SNComponent[]
-  editorForNote(note: SNNote): SNComponent | undefined
-  doesEditorChangeRequireAlert(from: SNComponent | undefined, to: SNComponent | undefined): boolean
+  componentsForArea(area: ComponentArea): ComponentInterface[]
+  editorForNote(note: SNNote): ComponentOrNativeFeature | undefined
+  doesEditorChangeRequireAlert(
+    from: ComponentOrNativeFeature | undefined,
+    to: ComponentOrNativeFeature | undefined,
+  ): boolean
   showEditorChangeAlert(): Promise<boolean>
   destroyComponentViewer(viewer: ComponentViewerInterface): void
   createComponentViewer(
@@ -19,8 +28,8 @@ export interface ComponentManagerInterface {
     urlOverride?: string,
   ): ComponentViewerInterface
   presentPermissionsDialog(_dialog: PermissionDialog): void
-  legacyGetDefaultEditor(): SNComponent | undefined
-  componentWithIdentifier(identifier: FeatureIdentifier | string): SNComponent | undefined
+  legacyGetDefaultEditor(): ComponentInterface | undefined
+  componentWithIdentifier(identifier: FeatureIdentifier | string): ComponentOrNativeFeature | undefined
   toggleTheme(uuid: string): Promise<void>
   toggleComponent(uuid: string): Promise<void>
 }

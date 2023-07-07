@@ -1,8 +1,8 @@
-import { NoteType, SNComponent } from '@standardnotes/snjs'
+import { ComponentOrNativeFeature, NoteType } from '@standardnotes/snjs'
 
 export type EditorMenuItem = {
   name: string
-  component?: SNComponent
+  component?: ComponentOrNativeFeature
   isEntitled: boolean
   noteType: NoteType
   isLabs?: boolean

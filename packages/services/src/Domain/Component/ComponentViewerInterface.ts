@@ -15,7 +15,7 @@ export interface ComponentViewerInterface {
   lockReadonly: boolean
   sessionKey?: string
   overrideContextItem?: DecryptedItemInterface
-  get componentUuid(): string
+  get componentUniqueIdentifier(): string
   destroy(): void
   setReadonly(readonly: boolean): void
   getFeatureStatus(): FeatureStatus

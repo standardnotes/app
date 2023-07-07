@@ -1,6 +1,6 @@
-import { SNComponent, SNNote, ComponentMutator, TransactionalMutation, ItemMutator } from '@standardnotes/snjs'
+import { SNNote, ComponentMutator, TransactionalMutation, ItemMutator, ComponentInterface } from '@standardnotes/snjs'
 
-export const transactionForAssociateComponentWithCurrentNote = (component: SNComponent, note: SNNote) => {
+export const transactionForAssociateComponentWithCurrentNote = (component: ComponentInterface, note: SNNote) => {
   const transaction: TransactionalMutation = {
     itemUuid: component.uuid,
     mutate: (m: ItemMutator) => {
@@ -12,7 +12,7 @@ export const transactionForAssociateComponentWithCurrentNote = (component: SNCom
   return transaction
 }
 
-export const transactionForDisassociateComponentWithCurrentNote = (component: SNComponent, note: SNNote) => {
+export const transactionForDisassociateComponentWithCurrentNote = (component: ComponentInterface, note: SNNote) => {
   const transaction: TransactionalMutation = {
     itemUuid: component.uuid,
     mutate: (m: ItemMutator) => {

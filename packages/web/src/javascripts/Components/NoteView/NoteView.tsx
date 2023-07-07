@@ -13,17 +13,18 @@ import { classNames, pluralize } from '@standardnotes/utils'
 import {
   ApplicationEvent,
   ComponentArea,
+  ComponentInterface,
   ComponentOrNativeFeature,
   ComponentViewerInterface,
   ContentType,
   EditorLineWidth,
+  getComponentOrNativeFeatureUniqueIdentifier,
   isPayloadSourceInternalChange,
   isPayloadSourceRetrieved,
   NoteType,
   PayloadEmitSource,
   PrefKey,
   ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction,
-  SNComponent,
   SNNote,
 } from '@standardnotes/snjs'
 import { confirmDialog, DELETE_NOTE_KEYBOARD_COMMAND, KeyboardKey } from '@standardnotes/ui-services'
@@ -54,12 +55,12 @@ import Icon from '../Icon/Icon'
 
 const MinimumStatusDuration = 400
 
-function sortAlphabetically(array: SNComponent[]): SNComponent[] {
+function sortAlphabetically(array: ComponentInterface[]): ComponentInterface[] {
   return array.sort((a, b) => (a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1))
 }
 
 type State = {
-  availableStackComponents: SNComponent[]
+  availableStackComponents: ComponentInterface[]
   editorComponentViewer?: ComponentViewerInterface
   editorComponentViewerDidAlreadyReload?: boolean
   editorStateDidLoad: boolean
@@ -509,7 +510,10 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
 
     const currentComponentViewer = this.state.editorComponentViewer
 
-    if (currentComponentViewer?.componentUuid !== newEditor?.uuid) {
+    if (
+      !newEditor ||
+      currentComponentViewer?.componentUniqueIdentifier !== getComponentOrNativeFeatureUniqueIdentifier(newEditor)
+    ) {
       if (currentComponentViewer) {
         this.destroyCurrentEditorComponent()
       }
@@ -737,14 +741,14 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
 
     const needsNewViewer = enabledComponents.filter((component) => {
       const hasExistingViewer = this.state.stackComponentViewers.find(
-        (viewer) => viewer.componentUuid === component.uuid,
+        (viewer) => viewer.componentUniqueIdentifier === component.uuid,
       )
       return !hasExistingViewer
     })
 
     const needsDestroyViewer = this.state.stackComponentViewers.filter((viewer) => {
       const viewerComponentExistsInEnabledComponents = enabledComponents.find((component) => {
-        return component.uuid === viewer.componentUuid
+        return component.uuid === viewer.componentUniqueIdentifier
       })
       return !viewerComponentExistsInEnabledComponents
     })
@@ -763,11 +767,11 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
     })
   }
 
-  stackComponentExpanded = (component: SNComponent): boolean => {
-    return !!this.state.stackComponentViewers.find((viewer) => viewer.componentUuid === component.uuid)
+  stackComponentExpanded = (component: ComponentInterface): boolean => {
+    return !!this.state.stackComponentViewers.find((viewer) => viewer.componentUniqueIdentifier === component.uuid)
   }
 
-  toggleStackComponent = async (component: SNComponent) => {
+  toggleStackComponent = async (component: ComponentInterface) => {
     if (!component.isExplicitlyEnabledForItem(this.note.uuid)) {
       await this.application.mutator.runTransactionalMutation(
         transactionForAssociateComponentWithCurrentNote(component, this.note),

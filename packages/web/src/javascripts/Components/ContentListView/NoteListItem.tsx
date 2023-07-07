@@ -1,4 +1,4 @@
-import { isFile, SNNote } from '@standardnotes/snjs'
+import { getComponentOrNativeFeatureNoteType, isFile, SNNote } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useRef } from 'react'
 import Icon from '@/Components/Icon/Icon'
@@ -34,7 +34,9 @@ const NoteListItem: FunctionComponent<DisplayableListItemProps<SNNote>> = ({
 }) => {
   const listItemRef = useRef<HTMLDivElement>(null)
 
-  const noteType = item.noteType || application.componentManager.editorForNote(item)?.package_info.note_type
+  const editor = application.componentManager.editorForNote(item)
+  const noteType = item.noteType ?? (editor ? getComponentOrNativeFeatureNoteType(editor) : undefined)
+
   const [icon, tint] = getIconAndTintForNoteType(noteType)
   const hasFiles = application.items.itemsReferencingItem(item).filter(isFile).length > 0
 

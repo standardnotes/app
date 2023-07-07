@@ -2,7 +2,15 @@ import { WebApplication } from '@/Application/WebApplication'
 import { STRING_EDIT_LOCKED_ATTEMPT } from '@/Constants/Strings'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import { createEditorMenuGroups } from '@/Utils/createEditorMenuGroups'
-import { ComponentArea, NoteMutator, NoteType, SNComponent, SNNote } from '@standardnotes/snjs'
+import {
+  ComponentArea,
+  ComponentOrNativeFeature,
+  NoteMutator,
+  NoteType,
+  SNNote,
+  getComponentOrNativeFeatureNoteType,
+  isNonNativeComponent,
+} from '@standardnotes/snjs'
 import { Fragment, useCallback, useMemo, useState } from 'react'
 import Icon from '../Icon/Icon'
 import { PremiumFeatureIconName, PremiumFeatureIconClass } from '../Icon/PremiumFeatureIcon'
@@ -40,8 +48,8 @@ const ChangeMultipleMenu = ({ application, notes, setDisableClickOutside }: Prop
   const groups = useMemo(() => createEditorMenuGroups(application, editors), [application, editors])
 
   const selectComponent = useCallback(
-    async (component: SNComponent, note: SNNote) => {
-      if (component.conflictOf) {
+    async (component: ComponentOrNativeFeature, note: SNNote) => {
+      if (isNonNativeComponent(component) && component.conflictOf) {
         void application.changeAndSaveItem(component, (mutator) => {
           mutator.conflictOf = undefined
         })
@@ -49,7 +57,7 @@ const ChangeMultipleMenu = ({ application, notes, setDisableClickOutside }: Prop
 
       await application.changeAndSaveItem(note, (mutator) => {
         const noteMutator = mutator as NoteMutator
-        noteMutator.noteType = component.noteType
+        noteMutator.noteType = getComponentOrNativeFeatureNoteType(component)
         noteMutator.editorIdentifier = component.identifier
       })
     },

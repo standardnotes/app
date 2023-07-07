@@ -14,6 +14,8 @@ import {
   TagMutator,
   isSystemView,
   isSmartView,
+  isNote,
+  getComponentOrNativeFeatureNoteType,
 } from '@standardnotes/snjs'
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import { FileItemActionType } from '../AttachedFilesPopover/PopoverFileItemAction'
@@ -182,10 +184,9 @@ const ItemNameCell = ({ item, hideIcon }: { item: DecryptedItemInterface; hideIc
   const [backupInfo, setBackupInfo] = useState<FileBackupRecord | undefined>(undefined)
   const isItemFile = item instanceof FileItem
 
-  const noteType =
-    item instanceof SNNote
-      ? item.noteType || application.componentManager.editorForNote(item)?.package_info.note_type
-      : undefined
+  const editor = isNote(item) ? application.componentManager.editorForNote(item) : undefined
+  const noteType = isNote(item) ? item.noteType : editor ? getComponentOrNativeFeatureNoteType(editor) : undefined
+
   const [noteIcon, noteIconTint] = getIconAndTintForNoteType(noteType)
 
   useEffect(() => {

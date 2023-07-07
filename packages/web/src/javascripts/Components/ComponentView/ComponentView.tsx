@@ -1,12 +1,17 @@
 import {
   ComponentAction,
   FeatureStatus,
-  SNComponent,
   dateToLocalizedString,
   ComponentViewerInterface,
   ComponentViewerEvent,
   ComponentViewerError,
   ComponentOrNativeFeature,
+  getComponentOrNativeFeatureDeprecationMessage,
+  ComponentInterface,
+  isNonNativeComponent,
+  getComponentOrNativeFeatureDisplayName,
+  getComponentOrNativeFeatureExpirationDate,
+  getComponentOrNativeFeatureUniqueIdentifier,
 } from '@standardnotes/snjs'
 import { WebApplication } from '@/Application/WebApplication'
 import { FunctionComponent, useCallback, useEffect, useRef, useState } from 'react'
@@ -64,8 +69,8 @@ const ComponentView: FunctionComponent<Props> = ({ application, onLoad, componen
     }
 
     setError(componentViewer.getError())
-    setDeprecationMessage(component.deprecationMessage)
-  }, [componentViewer, component.deprecationMessage, featureStatus, isComponentValid, isLoading])
+    setDeprecationMessage(getComponentOrNativeFeatureDeprecationMessage(component))
+  }, [componentViewer, component, featureStatus, isComponentValid, isLoading])
 
   useEffect(() => {
     reloadValidityStatus()
@@ -164,8 +169,8 @@ const ComponentView: FunctionComponent<Props> = ({ application, onLoad, componen
   useEffect(() => {
     const unregisterDesktopObserver = application
       .getDesktopService()
-      ?.registerUpdateObserver((updatedComponent: SNComponent) => {
-        if (updatedComponent.uuid === component.uuid && updatedComponent.active) {
+      ?.registerUpdateObserver((updatedComponent: ComponentInterface) => {
+        if (isNonNativeComponent(component) && updatedComponent.uuid === component.uuid && updatedComponent.active) {
           requestReload?.(componentViewer)
         }
       })
@@ -173,13 +178,13 @@ const ComponentView: FunctionComponent<Props> = ({ application, onLoad, componen
     return () => {
       unregisterDesktopObserver?.()
     }
-  }, [application, requestReload, componentViewer, component.uuid])
+  }, [application, requestReload, componentViewer, component])
 
   return (
     <>
       {hasIssueLoading && (
         <IssueOnLoading
-          componentName={component.displayName}
+          componentName={getComponentOrNativeFeatureDisplayName(component)}
           reloadIframe={() => {
             reloadValidityStatus(), requestReload?.(componentViewer, true)
           }}
@@ -188,18 +193,23 @@ const ComponentView: FunctionComponent<Props> = ({ application, onLoad, componen
 
       {featureStatus !== FeatureStatus.Entitled && (
         <IsExpired
-          expiredDate={dateToLocalizedString(component.valid_until)}
+          expiredDate={dateToLocalizedString(getComponentOrNativeFeatureExpirationDate(component) ?? new Date(0))}
           featureStatus={featureStatus}
-          componentName={component.displayName}
+          componentName={getComponentOrNativeFeatureDisplayName(component)}
           manageSubscription={manageSubscription}
         />
       )}
       {deprecationMessage && !isDeprecationMessageDismissed && (
         <IsDeprecated deprecationMessage={deprecationMessage} dismissDeprecationMessage={dismissDeprecationMessage} />
       )}
+
       {error === ComponentViewerError.OfflineRestricted && <OfflineRestricted />}
-      {error === ComponentViewerError.MissingUrl && <UrlMissing componentName={component.displayName} />}
-      {component.uuid && isComponentValid && (
+
+      {error === ComponentViewerError.MissingUrl && (
+        <UrlMissing componentName={getComponentOrNativeFeatureDisplayName(component)} />
+      )}
+
+      {getComponentOrNativeFeatureUniqueIdentifier(component) && isComponentValid && (
         <iframe
           className="h-full w-full flex-grow bg-transparent"
           ref={iframeRef}

@@ -16,6 +16,8 @@ import {
   ComponentOrNativeFeature,
   isNativeComponent,
   isNonNativeComponent,
+  ComponentInterface,
+  getComponentOrNativeFeatureFileType,
 } from '@standardnotes/models'
 import { SNSyncService } from '@Lib/Services/Sync/SyncService'
 import find from 'lodash/find'
@@ -125,7 +127,12 @@ export class SNComponentManager
     })
   }
 
-  componentWithIdentifier(identifier: FeatureIdentifier | string): SNComponent | undefined {
+  componentWithIdentifier(identifier: FeatureIdentifier | string): ComponentOrNativeFeature | undefined {
+    const nativeFeature = FindNativeFeature(identifier as FeatureIdentifier)
+    if (nativeFeature) {
+      return nativeFeature
+    }
+
     return this.components.find((component) => component.identifier === identifier)
   }
 
@@ -277,7 +284,7 @@ export class SNComponentManager
   }
 
   configureForDesktop(): void {
-    this.desktopManager?.registerUpdateObserver((component: SNComponent) => {
+    this.desktopManager?.registerUpdateObserver((component: ComponentInterface) => {
       /* Reload theme if active */
       if (component.active && component.isTheme()) {
         this.postActiveThemesToAllViewers()
@@ -621,7 +628,7 @@ export class SNComponentManager
     return viewer.getIframe()
   }
 
-  editorForNote(note: SNNote): SNComponent | undefined {
+  editorForNote(note: SNNote): ComponentOrNativeFeature | undefined {
     if (note.noteType === NoteType.Plain || note.noteType === NoteType.Super) {
       return undefined
     }
@@ -636,7 +643,7 @@ export class SNComponentManager
   /**
    * Uses legacy approach of note/editor association. New method uses note.editorIdentifier and note.noteType directly.
    */
-  private legacyGetEditorForNote(note: SNNote): SNComponent | undefined {
+  private legacyGetEditorForNote(note: SNNote): ComponentInterface | undefined {
     const editors = this.componentsForArea(ComponentArea.Editor)
     for (const editor of editors) {
       if (editor.isExplicitlyEnabledForItem(note.uuid)) {
@@ -702,12 +709,20 @@ export class SNComponentManager
     return contentTypeStrings.concat(contextAreaStrings).join(', ') + '.'
   }
 
-  doesEditorChangeRequireAlert(from: SNComponent | undefined, to: SNComponent | undefined): boolean {
-    const isEitherPlainEditor = !from || !to
-    const isEitherMarkdown = from?.package_info.file_type === 'md' || to?.package_info.file_type === 'md'
-    const areBothHtml = from?.package_info.file_type === 'html' && to?.package_info.file_type === 'html'
+  doesEditorChangeRequireAlert(
+    from: ComponentOrNativeFeature | undefined,
+    to: ComponentOrNativeFeature | undefined,
+  ): boolean {
+    if (!from || !to) {
+      return false
+    }
 
-    if (isEitherPlainEditor || isEitherMarkdown || areBothHtml) {
+    const fromFileType = getComponentOrNativeFeatureFileType(from)
+    const toFileType = getComponentOrNativeFeatureFileType(to)
+    const isEitherMarkdown = fromFileType === 'md' || toFileType === 'md'
+    const areBothHtml = fromFileType === 'html' && toFileType === 'html'
+
+    if (isEitherMarkdown || areBothHtml) {
       return false
     } else {
       return true

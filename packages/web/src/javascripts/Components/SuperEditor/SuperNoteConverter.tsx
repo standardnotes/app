@@ -1,4 +1,11 @@
-import { ContentType, NoteContent, NoteType, SNNote, spaceSeparatedStrings } from '@standardnotes/snjs'
+import {
+  ContentType,
+  NoteContent,
+  NoteType,
+  SNNote,
+  getComponentOrNativeFeatureFileType,
+  spaceSeparatedStrings,
+} from '@standardnotes/snjs'
 import { useCallback, useEffect, useMemo } from 'react'
 import { useApplication } from '../ApplicationProvider'
 import ComponentView from '../ComponentView/ComponentView'
@@ -23,8 +30,11 @@ const SuperNoteConverter = ({
   const { name, noteType, component } = convertTo
 
   const format = useMemo(() => {
-    if (component && component.package_info.file_type) {
-      return component.package_info.file_type
+    if (component) {
+      const fileType = getComponentOrNativeFeatureFileType(component)
+      if (fileType) {
+        return fileType
+      }
     }
 
     if (noteType === NoteType.Markdown) {

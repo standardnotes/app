@@ -1,7 +1,7 @@
-import { SNComponent } from '@standardnotes/models'
+import { ComponentInterface } from '@standardnotes/models'
 
 export interface DesktopManagerInterface {
-  syncComponentsInstallation(components: SNComponent[]): void
-  registerUpdateObserver(callback: (component: SNComponent) => void): () => void
+  syncComponentsInstallation(components: ComponentInterface[]): void
+  registerUpdateObserver(callback: (component: ComponentInterface) => void): () => void
   getExtServerHost(): string
 }

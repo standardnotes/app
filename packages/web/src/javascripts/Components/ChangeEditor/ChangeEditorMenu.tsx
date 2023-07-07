@@ -3,7 +3,16 @@ import Menu from '@/Components/Menu/Menu'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import { STRING_EDIT_LOCKED_ATTEMPT } from '@/Constants/Strings'
 import { WebApplication } from '@/Application/WebApplication'
-import { ComponentArea, NoteMutator, NoteType, PrefKey, SNComponent, SNNote } from '@standardnotes/snjs'
+import {
+  ComponentArea,
+  ComponentOrNativeFeature,
+  NoteMutator,
+  NoteType,
+  PrefKey,
+  SNNote,
+  getComponentOrNativeFeatureNoteType,
+  isNonNativeComponent,
+} from '@standardnotes/snjs'
 import { Fragment, FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react'
 import { EditorMenuGroup } from '@/Components/NotesOptions/EditorMenuGroup'
 import { EditorMenuItem } from '@/Components/NotesOptions/EditorMenuItem'
@@ -21,7 +30,7 @@ type ChangeEditorMenuProps = {
   closeMenu: () => void
   isVisible: boolean
   note: SNNote | undefined
-  onSelect?: (component: SNComponent | undefined) => void
+  onSelect?: (component: ComponentOrNativeFeature | undefined) => void
   setDisableClickOutside?: (value: boolean) => void
 }
 
@@ -43,7 +52,7 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
     [application.componentManager],
   )
   const groups = useMemo(() => createEditorMenuGroups(application, editors), [application, editors])
-  const [currentComponent, setCurrentComponent] = useState<SNComponent>()
+  const [currentComponent, setCurrentComponent] = useState<ComponentOrNativeFeature>()
   const [pendingConversionItem, setPendingConversionItem] = useState<EditorMenuItem | null>(null)
 
   const showSuperNoteImporter =
@@ -75,8 +84,8 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
   )
 
   const selectComponent = useCallback(
-    async (component: SNComponent, note: SNNote) => {
-      if (component.conflictOf) {
+    async (component: ComponentOrNativeFeature, note: SNNote) => {
+      if (isNonNativeComponent(component) && component.conflictOf) {
         void application.changeAndSaveItem(component, (mutator) => {
           mutator.conflictOf = undefined
         })
@@ -86,7 +95,7 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
 
       await application.changeAndSaveItem(note, (mutator) => {
         const noteMutator = mutator as NoteMutator
-        noteMutator.noteType = component.noteType
+        noteMutator.noteType = getComponentOrNativeFeatureNoteType(component)
         noteMutator.editorIdentifier = component.identifier
       })
 

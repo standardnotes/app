@@ -1,4 +1,4 @@
-import { ComponentArea, ComponentPermission, FeatureIdentifier } from '@standardnotes/features'
+import { ComponentArea, ComponentPermission, FeatureIdentifier, NoteType } from '@standardnotes/features'
 import { ComponentPackageInfo } from './PackageInfo'
 import { DecryptedItemInterface } from '../../Abstract/Item'
 import { ComponentContent } from './ComponentContent'
@@ -19,15 +19,20 @@ export interface ComponentInterface extends DecryptedItemInterface<ComponentCont
   package_info: ComponentPackageInfo
   area: ComponentArea
   permissions: ComponentPermission[]
-  valid_until: Date | number
+  valid_until: Date
   active: boolean
   legacy_url?: string
   isMobileDefault: boolean
   isDeprecated: boolean
+
   isExplicitlyEnabledForItem(uuid: string): boolean
+  hasValidHostedUrl(): boolean
+  isTheme(): boolean
 
   get identifier(): FeatureIdentifier
-  get userPreferencesLookupKey(): string
+  get noteType(): NoteType
+  get displayName(): string
+  get deprecationMessage(): string | undefined
 
   /** @deprecated */
   url?: string

@@ -13,7 +13,7 @@ import {
   NoteType,
 } from '@standardnotes/features'
 import { ContentType } from '@standardnotes/common'
-import { GenericItem, SNComponent, Environment, Platform } from '@standardnotes/models'
+import { GenericItem, SNComponent, Environment, Platform, ComponentInterface } from '@standardnotes/models'
 import {
   DesktopManagerInterface,
   InternalEventBusInterface,
@@ -43,7 +43,7 @@ describe('featuresService', () => {
       // eslint-disable-next-line @typescript-eslint/no-empty-function
       syncComponentsInstallation() {},
       // eslint-disable-next-line @typescript-eslint/no-empty-function
-      registerUpdateObserver(_callback: (component: SNComponent) => void) {
+      registerUpdateObserver(_callback: (component: ComponentInterface) => void) {
         // eslint-disable-next-line @typescript-eslint/no-empty-function
         return () => {}
       },

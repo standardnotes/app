@@ -8,6 +8,7 @@ import {
   ComponentPreferencesEntry,
   AllComponentPreferences,
   ComponentOrNativeFeature,
+  isNativeComponent,
 } from '@standardnotes/models'
 import { ContentType } from '@standardnotes/common'
 import { ItemManager } from '../Items/ItemManager'
@@ -93,7 +94,7 @@ export class SNPreferencesService
       this.getValue(PrefKey.ComponentPreferences, undefined) ?? {},
     )
 
-    const preferencesLookupKey = component.userPreferencesLookupKey
+    const preferencesLookupKey = isNativeComponent(component) ? component.identifier : component.uuid
 
     mutablePreferencesValue[preferencesLookupKey] = preferences
 
@@ -107,7 +108,7 @@ export class SNPreferencesService
       return undefined
     }
 
-    const preferencesLookupKey = component.userPreferencesLookupKey
+    const preferencesLookupKey = isNativeComponent(component) ? component.identifier : component.uuid
 
     return preferences[preferencesLookupKey]
   }

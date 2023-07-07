@@ -1,7 +1,7 @@
 import { ApplicationStage } from '@standardnotes/services'
 import { Migration } from '@Lib/Migrations/Migration'
 import { ContentType } from '@standardnotes/common'
-import { AllComponentPreferences, ComponentInterface, PrefKey } from '@standardnotes/models'
+import { AllComponentPreferences, ComponentInterface, PrefKey, isNativeComponent } from '@standardnotes/models'
 import { Copy } from '@standardnotes/utils'
 
 export class Migration2_201_6 extends Migration {
@@ -37,7 +37,7 @@ export class Migration2_201_6 extends Migration {
         continue
       }
 
-      const preferencesLookupKey = component.userPreferencesLookupKey
+      const preferencesLookupKey = isNativeComponent(component) ? component.identifier : component.uuid
 
       const componentPreferences = mutablePreferencesValue[preferencesLookupKey] ?? {}
       for (const key of Object.keys(componentData)) {

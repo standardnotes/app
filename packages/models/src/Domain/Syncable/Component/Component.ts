@@ -125,22 +125,6 @@ export class SNComponent extends DecryptedItem<ComponentContent> implements Comp
     return this.getAppDomainValue(AppDataField.LastSize)
   }
 
-  /**
-   * The key used to look up data that this component may have saved to an item.
-   * This data will be stored on the note item using this lookup key.
-   */
-  public get perItemPreferencesLookupKey(): string {
-    if (this.legacy_url) {
-      return this.legacy_url
-    } else {
-      return this.uuid
-    }
-  }
-
-  public get userPreferencesLookupKey(): string {
-    return FindNativeFeature(this.identifier) ? this.identifier : this.uuid
-  }
-
   public hasValidHostedUrl(): boolean {
     return (this.hosted_url || this.legacy_url) != undefined
   }
