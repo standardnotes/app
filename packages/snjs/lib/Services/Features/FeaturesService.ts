@@ -475,19 +475,25 @@ export class SNFeaturesService
   }
 
   public async didDownloadFeatures(features: FeaturesImports.FeatureDescription[]): Promise<void> {
-    features = features
+    const filteredFeaturesNativeOnly = features
       .filter((feature) => {
         const nativeFeature = FeaturesImports.FindNativeFeature(feature.identifier)
         return nativeFeature != undefined && !nativeFeature.clientControlled
       })
       .map((feature) => this.mapRemoteNativeFeatureToStaticFeature(feature))
 
-    this.features = features
+    this.features = filteredFeaturesNativeOnly
     this.completedSuccessfulFeaturesRetrieval = true
+
     void this.notifyEvent(FeaturesEvent.FeaturesUpdated)
     void this.storageService.setValue(StorageKey.UserFeatures, this.features)
 
-    await this.mapRemoteNativeFeaturesToItems(features)
+    const featuresByFilteringOutNativeEditors = filteredFeaturesNativeOnly.filter(
+      (feature) =>
+        FeaturesImports.GetNativeEditors().find((editor) => editor.identifier === feature.identifier) == undefined,
+    )
+
+    await this.mapRemoteNativeFeaturesToItems(featuresByFilteringOutNativeEditors)
   }
 
   public isThirdPartyFeature(identifier: string): boolean {
@@ -663,6 +669,10 @@ export class SNFeaturesService
   ): Promise<boolean> {
     if (feature.clientControlled) {
       throw new Error('Attempted to map client controlled feature as remote item')
+    }
+
+    if (FeaturesImports.GetNativeEditors().find((editor) => editor.identifier === feature.identifier)) {
+      throw new Error('Attempted to map native editor as remote item')
     }
 
     if (!feature.content_type) {

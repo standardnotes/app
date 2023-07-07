@@ -31,6 +31,8 @@ import {
   FindNativeFeature,
   NoteType,
   FeatureIdentifier,
+  EditorFeatureDescription,
+  GetNativeEditors,
 } from '@standardnotes/features'
 import { Copy, filterFromArray, removeFromArray, sleep, assert } from '@standardnotes/utils'
 import { UuidString } from '@Lib/Types/UuidString'
@@ -660,7 +662,16 @@ export class SNComponentManager
       return this.componentWithIdentifier(note.editorIdentifier)
     }
 
+    if (note.noteType) {
+      return this.nativeEditorForNoteType(note.noteType)
+    }
+
     return this.legacyGetEditorForNote(note)
+  }
+
+  private nativeEditorForNoteType(noteType: NoteType): EditorFeatureDescription | undefined {
+    const nativeEditors = GetNativeEditors()
+    return nativeEditors.find((editor) => editor.note_type === noteType)
   }
 
   /**

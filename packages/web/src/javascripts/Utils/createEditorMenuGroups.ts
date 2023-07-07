@@ -28,7 +28,7 @@ const getNoteTypeForFeatureDescription = (featureDescription: FeatureDescription
   return NoteType.Unknown
 }
 
-const insertNonInstalledNativeEditorsInMap = (
+const insertNativeEditorsInMap = (
   map: NoteTypeToEditorRowsMap,
   installedEditors: ComponentInterface[],
   application: WebApplicationInterface,
@@ -53,7 +53,7 @@ const insertNonInstalledNativeEditorsInMap = (
     const noteType = getNoteTypeForFeatureDescription(editorFeature)
     map[noteType].push({
       name: editorFeature.name as string,
-      isEntitled: false,
+      isEntitled: application.features.getFeatureStatus(editorFeature.identifier) === FeatureStatus.Entitled,
       noteType,
     })
   }
@@ -175,7 +175,7 @@ export const createEditorMenuGroups = (
 ) => {
   const map = createBaselineMap(application)
 
-  insertNonInstalledNativeEditorsInMap(map, installedEditors, application)
+  insertNativeEditorsInMap(map, installedEditors, application)
 
   insertInstalledComponentsInMap(map, installedEditors, application)
 

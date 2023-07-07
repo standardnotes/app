@@ -442,6 +442,10 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
     })
 
     this.removeNoteStreamObserver = this.application.streamItems<SNNote>(ContentType.Note, async () => {
+      if (!this.note) {
+        return
+      }
+
       this.setState({
         conflictedNotes: this.application.items.conflictsOf(this.note.uuid) as SNNote[],
       })

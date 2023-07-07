@@ -70,8 +70,8 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
 
   const isSelected = useCallback(
     (item: EditorMenuItem) => {
-      if (currentComponent) {
-        return item.component?.identifier === currentComponent.identifier
+      if (currentComponent && item.component) {
+        return item.component.identifier === currentComponent.identifier
       }
 
       const itemNoteTypeIsSameAsCurrentNoteType = item.noteType === note?.noteType

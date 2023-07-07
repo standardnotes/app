@@ -16,6 +16,7 @@ import { getIconAndTintForNoteType } from '@/Utils/Items/Icons/getIconAndTintFor
 import ListItemVaultInfo from './ListItemVaultInfo'
 import { NoteDragDataFormat } from '../Tags/DragNDrop'
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
+import useItem from '@/Hooks/useItem'
 
 const NoteListItem: FunctionComponent<DisplayableListItemProps<SNNote>> = ({
   application,
@@ -33,9 +34,14 @@ const NoteListItem: FunctionComponent<DisplayableListItemProps<SNNote>> = ({
   isNextItemTiled,
 }) => {
   const listItemRef = useRef<HTMLDivElement>(null)
+  const liveItem = useItem<SNNote>(item.uuid)
 
-  const editor = application.componentManager.editorForNote(item)
-  const noteType = item.noteType ?? (editor ? getComponentOrNativeFeatureNoteType(editor) : undefined)
+  const editor = liveItem ? application.componentManager.editorForNote(liveItem) : undefined
+  const noteType = liveItem?.noteType
+    ? liveItem.noteType
+    : editor
+    ? getComponentOrNativeFeatureNoteType(editor)
+    : undefined
 
   const [icon, tint] = getIconAndTintForNoteType(noteType)
   const hasFiles = application.items.itemsReferencingItem(item).filter(isFile).length > 0
