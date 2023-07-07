@@ -1,8 +1,5 @@
-/**
- * @jest-environment jsdom
- */
-
-import { Environment, HttpVerb } from '@standardnotes/snjs'
+import { Environment } from '@standardnotes/models'
+import { HttpVerb } from '@standardnotes/responses'
 import { FetchRequestHandler } from './FetchRequestHandler'
 import { HttpErrorResponseBody, HttpRequest } from '@standardnotes/responses'
 
