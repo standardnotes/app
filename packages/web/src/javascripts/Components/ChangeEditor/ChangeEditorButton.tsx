@@ -8,7 +8,7 @@ import { getIconAndTintForNoteType } from '@/Utils/Items/Icons/getIconAndTintFor
 import { CHANGE_EDITOR_COMMAND, keyboardStringForShortcut } from '@standardnotes/ui-services'
 import { useApplication } from '../ApplicationProvider'
 import { NoteViewController } from '../NoteView/Controller/NoteViewController'
-import { getComponentOrNativeFeatureNoteType, noteTypeForEditorIdentifier } from '@standardnotes/snjs'
+import { NoteType, getComponentOrNativeFeatureNoteType, noteTypeForEditorIdentifier } from '@standardnotes/snjs'
 
 type Props = {
   viewControllerManager: ViewControllerManager
@@ -39,11 +39,11 @@ const ChangeEditorButton: FunctionComponent<Props> = ({
             : undefined,
         ),
       )
-    : note
+    : note && note.noteType != NoteType.Unknown
     ? note.noteType
     : selectedEditor
     ? getComponentOrNativeFeatureNoteType(selectedEditor)
-    : undefined
+    : NoteType.Unknown
 
   const [selectedEditorIcon, selectedEditorIconTint] = getIconAndTintForNoteType(noteType, true)
   const [isClickOutsideDisabled, setIsClickOutsideDisabled] = useState(false)

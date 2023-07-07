@@ -1,11 +1,11 @@
-import { WebApplication } from '@/Application/WebApplication'
 import { ApplicationEvent, PermissionDialog } from '@standardnotes/snjs'
 import { FunctionComponent, useCallback, useEffect, useState } from 'react'
 import ModalOverlay from '../Modal/ModalOverlay'
 import PermissionsModal from './PermissionsModal'
+import { WebApplicationInterface } from '@standardnotes/ui-services'
 
 type Props = {
-  application: WebApplication
+  application: WebApplicationInterface
 }
 
 const PermissionsModalWrapper: FunctionComponent<Props> = ({ application }) => {

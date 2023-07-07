@@ -1,15 +1,11 @@
 import {
-  ContentType,
   FeatureStatus,
-  ComponentArea,
   FeatureDescription,
-  GetFeatures,
   FindNativeFeature,
   NoteType,
   FeatureIdentifier,
-  ComponentOrNativeFeature,
-  getComponentOrNativeFeatureNoteType,
-  getComponentOrNativeFeatureDisplayName,
+  ComponentInterface,
+  GetNativeEditors,
 } from '@standardnotes/snjs'
 import { EditorMenuGroup } from '@/Components/NotesOptions/EditorMenuGroup'
 import { EditorMenuItem } from '@/Components/NotesOptions/EditorMenuItem'
@@ -32,40 +28,47 @@ const getNoteTypeForFeatureDescription = (featureDescription: FeatureDescription
   return NoteType.Unknown
 }
 
-const insertNonInstalledNativeComponentsInMap = (
+const insertNonInstalledNativeEditorsInMap = (
   map: NoteTypeToEditorRowsMap,
-  components: ComponentOrNativeFeature[],
+  installedEditors: ComponentInterface[],
   application: WebApplicationInterface,
 ): void => {
-  GetFeatures()
-    .filter((feature) => feature.content_type === ContentType.Component && feature.area === ComponentArea.Editor)
-    .forEach((editorFeature) => {
-      const notInstalled = !components.find((editor) => editor.identifier === editorFeature.identifier)
-      const isExperimental = application.features.isExperimentalFeature(editorFeature.identifier)
-      const isDeprecated = editorFeature.deprecated
-      const isShowable = notInstalled && !isExperimental && !isDeprecated
+  for (const editorFeature of GetNativeEditors()) {
+    const hasLegacyInstallation =
+      installedEditors.find((editor) => editor.identifier === editorFeature.identifier) != undefined
+    if (hasLegacyInstallation) {
+      continue
+    }
 
-      if (isShowable) {
-        const noteType = getNoteTypeForFeatureDescription(editorFeature)
-        map[noteType].push({
-          name: editorFeature.name as string,
-          isEntitled: false,
-          noteType,
-        })
-      }
+    const isExperimental = application.features.isExperimentalFeature(editorFeature.identifier)
+    if (isExperimental) {
+      continue
+    }
+
+    const isDeprecated = editorFeature.deprecated
+    if (isDeprecated) {
+      continue
+    }
+
+    const noteType = getNoteTypeForFeatureDescription(editorFeature)
+    map[noteType].push({
+      name: editorFeature.name as string,
+      isEntitled: false,
+      noteType,
     })
+  }
 }
 
 const insertInstalledComponentsInMap = (
   map: NoteTypeToEditorRowsMap,
-  components: ComponentOrNativeFeature[],
+  editors: ComponentInterface[],
   application: WebApplicationInterface,
 ) => {
-  components.forEach((editor) => {
-    const noteType = getComponentOrNativeFeatureNoteType(editor)
+  editors.forEach((editor) => {
+    const noteType = editor.noteType
 
     const editorItem: EditorMenuItem = {
-      name: getComponentOrNativeFeatureDisplayName(editor),
+      name: editor.displayName,
       component: editor,
       isEntitled: application.features.getFeatureStatus(editor.identifier) === FeatureStatus.Entitled,
       noteType,
@@ -168,13 +171,13 @@ const createBaselineMap = (application: WebApplicationInterface): NoteTypeToEdit
 
 export const createEditorMenuGroups = (
   application: WebApplicationInterface,
-  components: ComponentOrNativeFeature[],
+  installedEditors: ComponentInterface[],
 ) => {
   const map = createBaselineMap(application)
 
-  insertNonInstalledNativeComponentsInMap(map, components, application)
+  insertNonInstalledNativeEditorsInMap(map, installedEditors, application)
 
-  insertInstalledComponentsInMap(map, components, application)
+  insertInstalledComponentsInMap(map, installedEditors, application)
 
   return createGroupsFromMap(map)
 }

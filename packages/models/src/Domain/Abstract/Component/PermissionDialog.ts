@@ -1,8 +1,8 @@
 import { ComponentPermission } from '@standardnotes/features'
-import { ComponentOrNativeFeature } from '../../Syncable/Component'
+import { ComponentInterface } from '../../Syncable/Component'
 
 export type PermissionDialog = {
-  component: ComponentOrNativeFeature
+  component: ComponentInterface
   permissions: ComponentPermission[]
   permissionsString: string
   actionBlock: (approved: boolean) => void
