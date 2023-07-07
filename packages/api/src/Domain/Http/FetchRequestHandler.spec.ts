@@ -27,8 +27,7 @@ describe('FetchRequestHandler', () => {
       params: {},
     }
 
-    // @ts-ignore
-    const request = requestHandler.createRequest(httpRequest)
+    const request = requestHandler['createRequest'](httpRequest)
 
     expect(request).toBeInstanceOf(Request)
     expect(request.url).toBe(httpRequest.url)
@@ -39,15 +38,15 @@ describe('FetchRequestHandler', () => {
   })
 
   it('should get url for url and params', () => {
-    // @ts-ignore
-    const url = requestHandler.urlForUrlAndParams('url', { key: 'value' })
+    const urlWithoutExistingParams = requestHandler['urlForUrlAndParams']('url', { key: 'value' })
+    expect(urlWithoutExistingParams).toBe('url?key=value')
 
-    expect(url).toBe('url?key=value')
+    const urlWithExistingParams = requestHandler['urlForUrlAndParams']('url?key=value', { key2: 'value2' })
+    expect(urlWithExistingParams).toBe('url?key=value&key2=value2')
   })
 
   it('should create request body if not GET', () => {
-    // @ts-ignore
-    const body = requestHandler.createRequestBody({
+    const body = requestHandler['createRequestBody']({
       url: 'url',
       verb: HttpVerb.Post,
       external: false,
@@ -62,8 +61,7 @@ describe('FetchRequestHandler', () => {
   })
 
   it('should not create request body if GET', () => {
-    // @ts-ignore
-    const body = requestHandler.createRequestBody({
+    const body = requestHandler['createRequestBody']({
       url: 'url',
       verb: HttpVerb.Get,
       external: false,
@@ -85,8 +83,7 @@ describe('FetchRequestHandler', () => {
       },
     })
 
-    // @ts-ignore
-    const response = await requestHandler.handleFetchResponse(fetchResponse)
+    const response = await requestHandler['handleFetchResponse'](fetchResponse)
 
     expect(response).toEqual({
       status: 200,
@@ -106,8 +103,7 @@ describe('FetchRequestHandler', () => {
       },
     })
 
-    // @ts-ignore
-    const response = await requestHandler.handleFetchResponse(fetchResponse)
+    const response = await requestHandler['handleFetchResponse'](fetchResponse)
 
     expect(response.status).toBe(200)
     expect(response.headers).toEqual(new Map<string, string | null>([['content-type', 'text/plain']]))
@@ -122,8 +118,7 @@ describe('FetchRequestHandler', () => {
       },
     })
 
-    // @ts-ignore
-    const response = await requestHandler.handleFetchResponse(fetchResponse)
+    const response = await requestHandler['handleFetchResponse'](fetchResponse)
 
     expect(response.status).toBe(403)
     expect(response.headers).toEqual(new Map<string, string | null>([['content-type', 'text/plain']]))
@@ -141,8 +136,7 @@ describe('FetchRequestHandler', () => {
         },
       })
 
-      // @ts-ignore
-      const response = await requestHandler.handleFetchResponse(fetchResponse)
+      const response = await requestHandler['handleFetchResponse'](fetchResponse)
 
       expect(response.status).toBe(600)
       expect(response.headers).toEqual(new Map<string, string | null>([['content-type', 'text/plain']]))
