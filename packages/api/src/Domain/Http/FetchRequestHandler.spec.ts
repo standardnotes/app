@@ -6,10 +6,8 @@ import { Environment, HttpVerb } from '@standardnotes/snjs'
 import { FetchRequestHandler } from './FetchRequestHandler'
 import { HttpErrorResponseBody, HttpRequest } from '@standardnotes/responses'
 
-// @ts-ignore
-import { Response } from 'whatwg-fetch'
+import 'whatwg-fetch'
 import { ErrorMessage } from '../Error'
-global.Response = Response
 
 describe('FetchRequestHandler', () => {
   const snjsVersion = 'snjsVersion'
@@ -24,7 +22,9 @@ describe('FetchRequestHandler', () => {
       external: false,
       authentication: 'authentication',
       customHeaders: [],
-      params: {},
+      params: {
+        key: 'value',
+      },
     }
 
     const request = requestHandler['createRequest'](httpRequest)
