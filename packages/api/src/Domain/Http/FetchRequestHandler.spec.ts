@@ -3,7 +3,6 @@ import { HttpVerb } from '@standardnotes/responses'
 import { FetchRequestHandler } from './FetchRequestHandler'
 import { HttpErrorResponseBody, HttpRequest } from '@standardnotes/responses'
 
-import 'whatwg-fetch'
 import { ErrorMessage } from '../Error'
 
 describe('FetchRequestHandler', () => {
@@ -14,7 +13,7 @@ describe('FetchRequestHandler', () => {
 
   it('should create a request', () => {
     const httpRequest: HttpRequest = {
-      url: 'url',
+      url: 'http://localhost:3000/test',
       verb: HttpVerb.Get,
       external: false,
       authentication: 'authentication',
@@ -127,7 +126,7 @@ describe('FetchRequestHandler', () => {
   describe('should return ErrorResponse when status is not >=200 and <500', () => {
     it('should add unknown error message when response has no data', async () => {
       const fetchResponse = new Response('', {
-        status: 600,
+        status: 599,
         headers: {
           'Content-Type': 'text/plain',
         },
@@ -135,7 +134,7 @@ describe('FetchRequestHandler', () => {
 
       const response = await requestHandler['handleFetchResponse'](fetchResponse)
 
-      expect(response.status).toBe(600)
+      expect(response.status).toBe(599)
       expect(response.headers).toEqual(new Map<string, string | null>([['content-type', 'text/plain']]))
       expect((response.data as HttpErrorResponseBody).error).toEqual({
         message: 'Unknown error',

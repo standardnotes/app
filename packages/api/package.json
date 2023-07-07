@@ -33,8 +33,7 @@
     "eslint-plugin-prettier": "*",
     "jest": "^29.3.1",
     "ts-jest": "^29.0.3",
-    "typescript": "*",
-    "whatwg-fetch": "^3.6.2"
+    "typescript": "*"
   },
   "dependencies": {
     "@standardnotes/common": "^1.48.3",
