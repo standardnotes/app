@@ -1,3 +1,4 @@
+import { ComponentViewerItem } from './ComponentViewerItem'
 import { ComponentArea, FeatureIdentifier } from '@standardnotes/features'
 import {
   ActionObserver,
@@ -23,7 +24,7 @@ export interface ComponentManagerInterface {
   destroyComponentViewer(viewer: ComponentViewerInterface): void
   createComponentViewer(
     component: ComponentOrNativeFeature,
-    contextItem?: string,
+    item: ComponentViewerItem,
     actionObserver?: ActionObserver,
     urlOverride?: string,
   ): ComponentViewerInterface

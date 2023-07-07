@@ -658,8 +658,8 @@ export class SNFeaturesService
 
   private async mapRemoteNativeFeatureToItem(
     feature: FeaturesImports.FeatureDescription,
-    currentItems: Models.SNComponent[],
-    itemsToDelete: Models.SNComponent[],
+    currentItems: Models.ComponentInterface[],
+    itemsToDelete: Models.ComponentInterface[],
   ): Promise<boolean> {
     if (feature.clientControlled) {
       throw new Error('Attempted to map client controlled feature as remote item')
@@ -696,7 +696,7 @@ export class SNFeaturesService
       return false
     }
 
-    let resultingItem: Models.SNComponent | undefined = existingItem
+    let resultingItem: Models.ComponentInterface | undefined = existingItem
 
     if (existingItem) {
       const featureExpiresAt = new Date(feature.expires_at || 0)
@@ -720,7 +720,7 @@ export class SNFeaturesService
         feature.content_type,
         this.componentContentForNativeFeatureDescription(feature),
         true,
-      )) as Models.SNComponent
+      )) as Models.ComponentInterface
       hasChanges = true
     }
 

@@ -13,7 +13,6 @@ import {
   getComponentOrNativeFeatureExpirationDate,
   getComponentOrNativeFeatureUniqueIdentifier,
 } from '@standardnotes/snjs'
-import { WebApplication } from '@/Application/WebApplication'
 import { FunctionComponent, useCallback, useEffect, useRef, useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import OfflineRestricted from '@/Components/ComponentView/OfflineRestricted'
@@ -22,9 +21,9 @@ import IsDeprecated from '@/Components/ComponentView/IsDeprecated'
 import IsExpired from '@/Components/ComponentView/IsExpired'
 import IssueOnLoading from '@/Components/ComponentView/IssueOnLoading'
 import { openSubscriptionDashboard } from '@/Utils/ManageSubscription'
+import { useApplication } from '../ApplicationProvider'
 
 interface Props {
-  application: WebApplication
   componentViewer: ComponentViewerInterface
   requestReload?: (viewer: ComponentViewerInterface, force?: boolean) => void
   onLoad?: (component: ComponentOrNativeFeature) => void
@@ -38,7 +37,9 @@ const MaxLoadThreshold = 4000
 const VisibilityChangeKey = 'visibilitychange'
 const MSToWaitAfterIframeLoadToAvoidFlicker = 35
 
-const ComponentView: FunctionComponent<Props> = ({ application, onLoad, componentViewer, requestReload }) => {
+const ComponentView: FunctionComponent<Props> = ({ onLoad, componentViewer, requestReload }) => {
+  const application = useApplication()
+
   const iframeRef = useRef<HTMLIFrameElement | null>(null)
   const [loadTimeout, setLoadTimeout] = useState<ReturnType<typeof setTimeout> | undefined>(undefined)
 

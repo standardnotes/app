@@ -71,10 +71,10 @@ const SuperNoteConverter = ({
       references: note.references,
     })
 
-    const componentViewer = application.componentManager.createComponentViewer(component)
-    componentViewer.setReadonly(true)
-    componentViewer.lockReadonly = true
-    componentViewer.overrideContextItem = templateNoteForRevision
+    const componentViewer = application.componentManager.createComponentViewer(component, {
+      readonlyItem: templateNoteForRevision,
+    })
+
     return componentViewer
   }, [application.componentManager, application.items, component, convertedContent, note.references, note.title])
 
@@ -173,7 +173,7 @@ const SuperNoteConverter = ({
       ) : null}
       {componentViewer ? (
         <div className="component-view min-h-0">
-          <ComponentView key={componentViewer.identifier} componentViewer={componentViewer} application={application} />
+          <ComponentView key={componentViewer.identifier} componentViewer={componentViewer} />
         </div>
       ) : (
         <div className="h-full min-h-0 overflow-hidden">

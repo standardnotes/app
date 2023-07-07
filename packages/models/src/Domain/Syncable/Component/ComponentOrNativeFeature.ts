@@ -1,16 +1,16 @@
-import {
-  ComponentPermission,
-  EditorFeatureDescription,
-  FeatureDescription,
-  FindNativeFeature,
-  NoteType,
-} from '@standardnotes/features'
+import { ComponentPermission, EditorFeatureDescription, FeatureDescription, NoteType } from '@standardnotes/features'
 import { ComponentInterface } from './ComponentInterface'
+import { isComponent } from './Component'
+import { DecryptedItemInterface, isDecryptedItem } from '../../Abstract/Item'
 
 export type ComponentOrNativeFeature = ComponentInterface | FeatureDescription
 
 export function isNativeComponent(component: ComponentOrNativeFeature): component is FeatureDescription {
-  return FindNativeFeature(component.identifier) != undefined
+  if (isDecryptedItem(component as DecryptedItemInterface)) {
+    return false
+  }
+
+  return 'index_path' in component
 }
 
 export function isNativeEditorComponent(component: ComponentOrNativeFeature): component is EditorFeatureDescription {
@@ -18,7 +18,11 @@ export function isNativeEditorComponent(component: ComponentOrNativeFeature): co
 }
 
 export function isNonNativeComponent(component: ComponentOrNativeFeature): component is ComponentInterface {
-  return FindNativeFeature(component.identifier) == undefined
+  if (!isDecryptedItem(component as DecryptedItemInterface)) {
+    return false
+  }
+
+  return isComponent(component as DecryptedItemInterface)
 }
 
 export type ComponentOrNativeFeatureUniqueIdentifier = ComponentInterface['uuid'] | FeatureDescription['identifier']

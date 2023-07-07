@@ -6,6 +6,8 @@ import {
   AlertService,
   MutatorClientInterface,
   PreferenceServiceInterface,
+  ComponentViewerItem,
+  isComponentViewerItemReadonlyItem,
 } from '@standardnotes/services'
 import { SNFeaturesService } from '@Lib/Services'
 import {
@@ -58,7 +60,6 @@ import {
 } from './Types'
 import { ComponentAction, ComponentPermission, ComponentArea } from '@standardnotes/features'
 import { ItemManager } from '@Lib/Services/Items/ItemManager'
-import { UuidString } from '@Lib/Types/UuidString'
 import { ContentType } from '@standardnotes/common'
 import {
   isString,
@@ -81,7 +82,6 @@ export class ComponentViewer implements ComponentViewerInterface {
   private loggingEnabled = false
   public identifier = nonSecureRandomIdentifier()
   private actionObservers: ActionObserver[] = []
-  public overrideContextItem?: DecryptedItemInterface
   private featureStatus: FeatureStatus
   private removeFeaturesObserver: () => void
   private eventObservers: ComponentEventObserver[] = []
@@ -95,20 +95,30 @@ export class ComponentViewer implements ComponentViewerInterface {
 
   constructor(
     public readonly componentOrFeature: ComponentOrNativeFeature,
-    private itemManager: ItemManager,
-    private mutator: MutatorClientInterface,
-    private syncService: SNSyncService,
-    private alertService: AlertService,
-    private preferences: PreferenceServiceInterface,
-    featuresService: SNFeaturesService,
-    private environment: Environment,
-    private platform: Platform,
-    private componentManagerFunctions: ComponentManagerFunctions,
-    public readonly url?: string,
-    private contextItemUuid?: UuidString,
-    actionObserver?: ActionObserver,
+    private services: {
+      items: ItemManager
+      mutator: MutatorClientInterface
+      sync: SNSyncService
+      alerts: AlertService
+      preferences: PreferenceServiceInterface
+      features: SNFeaturesService
+    },
+    private options: {
+      item: ComponentViewerItem
+      url: string
+      actionObserver?: ActionObserver
+    },
+    private config: {
+      environment: Environment
+      platform: Platform
+      componentManagerFunctions: ComponentManagerFunctions
+    },
   ) {
-    this.removeItemObserver = this.itemManager.addObserver(
+    if (isComponentViewerItemReadonlyItem(options.item)) {
+      this.setReadonly(true)
+      this.lockReadonly = true
+    }
+    this.removeItemObserver = this.services.items.addObserver(
       ContentType.Any,
       ({ changed, inserted, removed, source, sourceKey }) => {
         if (this.dealloced) {
@@ -118,18 +128,18 @@ export class ComponentViewer implements ComponentViewerInterface {
         this.handleChangesInItems(items, source, sourceKey)
       },
     )
-    if (actionObserver) {
-      this.actionObservers.push(actionObserver)
+    if (options.actionObserver) {
+      this.actionObservers.push(options.actionObserver)
     }
 
-    this.featureStatus = featuresService.getFeatureStatus(componentOrFeature.identifier)
+    this.featureStatus = services.features.getFeatureStatus(componentOrFeature.identifier)
 
-    this.removeFeaturesObserver = featuresService.addEventObserver((event) => {
+    this.removeFeaturesObserver = services.features.addEventObserver((event) => {
       if (this.dealloced) {
         return
       }
       if (event === FeaturesEvent.FeaturesUpdated) {
-        const featureStatus = featuresService.getFeatureStatus(componentOrFeature.identifier)
+        const featureStatus = services.features.getFeatureStatus(componentOrFeature.identifier)
 
         if (featureStatus !== this.featureStatus) {
           this.featureStatus = featureStatus
@@ -141,12 +151,16 @@ export class ComponentViewer implements ComponentViewerInterface {
     this.log('Constructor', this)
   }
 
+  get url(): string {
+    return this.options.url
+  }
+
   get isDesktop(): boolean {
-    return this.environment === Environment.Desktop
+    return this.config.environment === Environment.Desktop
   }
 
   get isMobile(): boolean {
-    return this.environment === Environment.Mobile
+    return this.config.environment === Environment.Mobile
   }
 
   public destroy(): void {
@@ -157,11 +171,9 @@ export class ComponentViewer implements ComponentViewerInterface {
   private deinit(): void {
     this.dealloced = true
     ;(this.componentOrFeature as unknown) = undefined
-    ;(this.itemManager as unknown) = undefined
-    ;(this.syncService as unknown) = undefined
-    ;(this.alertService as unknown) = undefined
-    ;(this.preferences as unknown) = undefined
-    ;(this.componentManagerFunctions as unknown) = undefined
+    ;(this.services as unknown) = undefined
+    ;(this.config as unknown) = undefined
+    ;(this.options as unknown) = undefined
 
     this.eventObservers.length = 0
     this.actionObservers.length = 0
@@ -277,7 +289,10 @@ export class ComponentViewer implements ComponentViewerInterface {
     }
 
     if (this.streamContextItemOriginalMessage) {
-      const matchingItem = find(nondeletedItems, { uuid: this.contextItemUuid })
+      if (isComponentViewerItemReadonlyItem(this.options.item)) {
+        return
+      }
+      const matchingItem = find(nondeletedItems, { uuid: this.options.item.uuid })
       if (matchingItem) {
         this.sendContextItemThroughBridge(matchingItem, source)
       }
@@ -292,9 +307,13 @@ export class ComponentViewer implements ComponentViewerInterface {
       },
     ]
 
-    this.componentManagerFunctions.runWithPermissions(this.componentUniqueIdentifier, requiredPermissions, () => {
-      this.sendItemsInReply(items, this.streamItemsOriginalMessage as ComponentMessage)
-    })
+    this.config.componentManagerFunctions.runWithPermissions(
+      this.componentUniqueIdentifier,
+      requiredPermissions,
+      () => {
+        this.sendItemsInReply(items, this.streamItemsOriginalMessage as ComponentMessage)
+      },
+    )
   }
 
   sendContextItemThroughBridge(item: DecryptedItemInterface, source?: PayloadEmitSource): void {
@@ -303,7 +322,7 @@ export class ComponentViewer implements ComponentViewerInterface {
         name: ComponentAction.StreamContextItem,
       },
     ] as ComponentPermission[]
-    this.componentManagerFunctions.runWithPermissions(
+    this.config.componentManagerFunctions.runWithPermissions(
       this.componentUniqueIdentifier,
       requiredContextPermissions,
       () => {
@@ -385,7 +404,9 @@ export class ComponentViewer implements ComponentViewerInterface {
     if (isNote(item)) {
       const content = item.content
       const spellcheck =
-        item.spellcheck != undefined ? item.spellcheck : this.preferences.getValue(PrefKey.EditorSpellcheck, true)
+        item.spellcheck != undefined
+          ? item.spellcheck
+          : this.services.preferences.getValue(PrefKey.EditorSpellcheck, true)
 
       return {
         ...content,
@@ -423,10 +444,10 @@ export class ComponentViewer implements ComponentViewerInterface {
     }
     this.log('Send message to component', this.componentOrFeature, 'message: ', message)
 
-    let origin = this.url
+    let origin = this.options.url
     if (!origin || !this.window) {
       if (essential) {
-        void this.alertService.alert(
+        void this.services.alerts.alert(
           `Standard Notes is trying to communicate with ${this.componentOrFeature.name}, ` +
             'but an error is occurring. Please restart this extension and try again.',
         )
@@ -495,7 +516,7 @@ export class ComponentViewer implements ComponentViewerInterface {
     this.window = window
     this.sessionKey = UuidGenerator.GenerateUuid()
 
-    const componentData = this.preferences.getComponentPreferences(this.componentOrFeature) ?? {}
+    const componentData = this.services.preferences.getComponentPreferences(this.componentOrFeature) ?? {}
 
     this.sendMessage({
       action: ComponentAction.ComponentRegistered,
@@ -503,9 +524,9 @@ export class ComponentViewer implements ComponentViewerInterface {
       componentData: componentData,
       data: {
         uuid: this.componentUniqueIdentifier,
-        environment: environmentToString(this.environment),
-        platform: platformToString(this.platform),
-        activeThemeUrls: this.componentManagerFunctions.urlsForActiveThemes(),
+        environment: environmentToString(this.config.environment),
+        platform: platformToString(this.config.platform),
+        activeThemeUrls: this.config.componentManagerFunctions.urlsForActiveThemes(),
       },
     })
 
@@ -515,7 +536,7 @@ export class ComponentViewer implements ComponentViewerInterface {
   }
 
   postActiveThemes(): void {
-    const urls = this.componentManagerFunctions.urlsForActiveThemes()
+    const urls = this.config.componentManagerFunctions.urlsForActiveThemes()
     const data: MessageData = {
       themes: urls,
     }
@@ -550,14 +571,14 @@ export class ComponentViewer implements ComponentViewerInterface {
     this.log('Handle message', message, this)
     if (!this.componentOrFeature) {
       this.log('Component not defined for message, returning', message)
-      void this.alertService.alert(
+      void this.services.alerts.alert(
         'A component is trying to communicate with Standard Notes, ' +
           'but there is an error establishing a bridge. Please restart the app and try again.',
       )
       return
     }
     if (this.readonly && ReadwriteActions.includes(message.action)) {
-      void this.alertService.alert(
+      void this.services.alerts.alert(
         `${this.componentOrFeature.name} is trying to save, but it is in a locked state and cannot accept changes.`,
       )
       return
@@ -591,18 +612,22 @@ export class ComponentViewer implements ComponentViewerInterface {
         content_types: types,
       },
     ]
-    this.componentManagerFunctions.runWithPermissions(this.componentUniqueIdentifier, requiredPermissions, () => {
-      if (!this.streamItems) {
-        this.streamItems = types
-        this.streamItemsOriginalMessage = message
-      }
-      /* Push immediately now */
-      const items: DecryptedItemInterface[] = []
-      for (const contentType of types) {
-        extendArray(items, this.itemManager.getItems(contentType))
-      }
-      this.sendItemsInReply(items, message)
-    })
+    this.config.componentManagerFunctions.runWithPermissions(
+      this.componentUniqueIdentifier,
+      requiredPermissions,
+      () => {
+        if (!this.streamItems) {
+          this.streamItems = types
+          this.streamItemsOriginalMessage = message
+        }
+        /* Push immediately now */
+        const items: DecryptedItemInterface[] = []
+        for (const contentType of types) {
+          extendArray(items, this.services.items.getItems(contentType))
+        }
+        this.sendItemsInReply(items, message)
+      },
+    )
   }
 
   handleStreamContextItemMessage(message: ComponentMessage): void {
@@ -612,15 +637,21 @@ export class ComponentViewer implements ComponentViewerInterface {
       },
     ]
 
-    this.componentManagerFunctions.runWithPermissions(this.componentUniqueIdentifier, requiredPermissions, () => {
-      if (!this.streamContextItemOriginalMessage) {
-        this.streamContextItemOriginalMessage = message
-      }
-      const matchingItem = this.overrideContextItem || this.itemManager.findItem(this.contextItemUuid as string)
-      if (matchingItem) {
-        this.sendContextItemThroughBridge(matchingItem)
-      }
-    })
+    this.config.componentManagerFunctions.runWithPermissions(
+      this.componentUniqueIdentifier,
+      requiredPermissions,
+      () => {
+        if (!this.streamContextItemOriginalMessage) {
+          this.streamContextItemOriginalMessage = message
+        }
+        const matchingItem = isComponentViewerItemReadonlyItem(this.options.item)
+          ? this.options.item.readonlyItem
+          : this.services.items.findItem(this.options.item.uuid)
+        if (matchingItem) {
+          this.sendContextItemThroughBridge(matchingItem)
+        }
+      },
+    )
   }
 
   /**
@@ -634,8 +665,12 @@ export class ComponentViewer implements ComponentViewerInterface {
     /* Pending as in needed to be accounted for in permissions. */
     const pendingResponseItems = responsePayloads.slice()
 
+    if (isComponentViewerItemReadonlyItem(this.options.item)) {
+      return
+    }
+
     for (const responseItem of responsePayloads.slice()) {
-      if (responseItem.uuid === this.contextItemUuid) {
+      if (responseItem.uuid === this.options.item.uuid) {
         requiredPermissions.push({
           name: ComponentAction.StreamContextItem,
         })
@@ -659,7 +694,7 @@ export class ComponentViewer implements ComponentViewerInterface {
       } as ComponentPermission)
     }
 
-    this.componentManagerFunctions.runWithPermissions(
+    this.config.componentManagerFunctions.runWithPermissions(
       this.componentUniqueIdentifier,
       requiredPermissions,
 
@@ -668,7 +703,7 @@ export class ComponentViewer implements ComponentViewerInterface {
 
         /* Filter locked items */
         const uuids = Uuids(responsePayloads)
-        const items = this.itemManager.findItemsIncludingBlanks(uuids)
+        const items = this.services.items.findItemsIncludingBlanks(uuids)
         let lockedCount = 0
         let lockedNoteCount = 0
 
@@ -687,7 +722,7 @@ export class ComponentViewer implements ComponentViewerInterface {
         }
 
         if (lockedNoteCount === 1) {
-          void this.alertService.alert(
+          void this.services.alerts.alert(
             'The note you are attempting to save has editing disabled',
             'Note has Editing Disabled',
           )
@@ -695,7 +730,7 @@ export class ComponentViewer implements ComponentViewerInterface {
         } else if (lockedCount > 0) {
           const itemNoun = lockedCount === 1 ? 'item' : lockedNoteCount === lockedCount ? 'notes' : 'items'
           const auxVerb = lockedCount === 1 ? 'has' : 'have'
-          void this.alertService.alert(
+          void this.services.alerts.alert(
             `${lockedCount} ${itemNoun} you are attempting to save ${auxVerb} editing disabled.`,
             'Items have Editing Disabled',
           )
@@ -708,14 +743,14 @@ export class ComponentViewer implements ComponentViewerInterface {
         })
 
         for (const contextualPayload of contextualPayloads) {
-          const item = this.itemManager.findItem(contextualPayload.uuid)
+          const item = this.services.items.findItem(contextualPayload.uuid)
           if (!item) {
             const payload = new DecryptedPayload({
               ...PayloadTimestampDefaults(),
               ...contextualPayload,
             })
             const template = CreateDecryptedItemFromPayload(payload)
-            await this.mutator.insertItem(template)
+            await this.services.mutator.insertItem(template)
           } else {
             if (contextualPayload.content_type !== item.content_type) {
               throw Error('Extension is trying to modify content type of item.')
@@ -723,7 +758,7 @@ export class ComponentViewer implements ComponentViewerInterface {
           }
         }
 
-        await this.mutator.changeItems(
+        await this.services.mutator.changeItems(
           items.filter(isNotUndefined),
           (mutator) => {
             const contextualPayload = sureSearchArray(contextualPayloads, {
@@ -749,7 +784,7 @@ export class ComponentViewer implements ComponentViewerInterface {
           this.componentUniqueIdentifier,
         )
 
-        this.syncService
+        this.services.sync
           .sync({
             onPresyncSave: () => {
               this.replyToMessage(message, {})
@@ -780,54 +815,58 @@ export class ComponentViewer implements ComponentViewerInterface {
       },
     ]
 
-    this.componentManagerFunctions.runWithPermissions(this.componentUniqueIdentifier, requiredPermissions, async () => {
-      responseItems = this.responseItemsByRemovingPrivateProperties(responseItems)
-      const processedItems = []
+    this.config.componentManagerFunctions.runWithPermissions(
+      this.componentUniqueIdentifier,
+      requiredPermissions,
+      async () => {
+        responseItems = this.responseItemsByRemovingPrivateProperties(responseItems)
+        const processedItems = []
 
-      for (const responseItem of responseItems) {
-        if (!responseItem.uuid) {
-          responseItem.uuid = UuidGenerator.GenerateUuid()
+        for (const responseItem of responseItems) {
+          if (!responseItem.uuid) {
+            responseItem.uuid = UuidGenerator.GenerateUuid()
+          }
+
+          const contextualPayload = createComponentCreatedContextPayload(responseItem)
+          const payload = new DecryptedPayload({
+            ...PayloadTimestampDefaults(),
+            ...contextualPayload,
+          })
+
+          const template = CreateDecryptedItemFromPayload(payload)
+          const item = await this.services.mutator.insertItem(template)
+
+          await this.services.mutator.changeItem(
+            item,
+            (mutator) => {
+              if (responseItem.clientData) {
+                const allComponentClientData = Copy<Record<string, unknown>>(
+                  item.getDomainData(ComponentDataDomain) || {},
+                )
+                allComponentClientData[this.componentUniqueIdentifier] = responseItem.clientData
+                mutator.setDomainData(allComponentClientData, ComponentDataDomain)
+              }
+            },
+            MutationType.UpdateUserTimestamps,
+            PayloadEmitSource.ComponentCreated,
+            this.componentUniqueIdentifier,
+          )
+          processedItems.push(item)
         }
 
-        const contextualPayload = createComponentCreatedContextPayload(responseItem)
-        const payload = new DecryptedPayload({
-          ...PayloadTimestampDefaults(),
-          ...contextualPayload,
-        })
+        void this.services.sync.sync()
 
-        const template = CreateDecryptedItemFromPayload(payload)
-        const item = await this.mutator.insertItem(template)
-
-        await this.mutator.changeItem(
-          item,
-          (mutator) => {
-            if (responseItem.clientData) {
-              const allComponentClientData = Copy<Record<string, unknown>>(
-                item.getDomainData(ComponentDataDomain) || {},
-              )
-              allComponentClientData[this.componentUniqueIdentifier] = responseItem.clientData
-              mutator.setDomainData(allComponentClientData, ComponentDataDomain)
-            }
-          },
-          MutationType.UpdateUserTimestamps,
-          PayloadEmitSource.ComponentCreated,
-          this.componentUniqueIdentifier,
-        )
-        processedItems.push(item)
-      }
-
-      void this.syncService.sync()
-
-      const reply =
-        message.action === ComponentAction.CreateItem
-          ? { item: this.jsonForItem(processedItems[0]) }
-          : {
-              items: processedItems.map((item) => {
-                return this.jsonForItem(item)
-              }),
-            }
-      this.replyToMessage(message, reply)
-    })
+        const reply =
+          message.action === ComponentAction.CreateItem
+            ? { item: this.jsonForItem(processedItems[0]) }
+            : {
+                items: processedItems.map((item) => {
+                  return this.jsonForItem(item)
+                }),
+              }
+        this.replyToMessage(message, reply)
+      },
+    )
   }
 
   handleDeleteItemsMessage(message: ComponentMessage): void {
@@ -843,38 +882,44 @@ export class ComponentViewer implements ComponentViewerInterface {
       },
     ]
 
-    this.componentManagerFunctions.runWithPermissions(this.componentUniqueIdentifier, requiredPermissions, async () => {
-      const itemsData = items
-      const noun = itemsData.length === 1 ? 'item' : 'items'
-      let reply = null
-      const didConfirm = await this.alertService.confirm(`Are you sure you want to delete ${itemsData.length} ${noun}?`)
+    this.config.componentManagerFunctions.runWithPermissions(
+      this.componentUniqueIdentifier,
+      requiredPermissions,
+      async () => {
+        const itemsData = items
+        const noun = itemsData.length === 1 ? 'item' : 'items'
+        let reply = null
+        const didConfirm = await this.services.alerts.confirm(
+          `Are you sure you want to delete ${itemsData.length} ${noun}?`,
+        )
 
-      if (didConfirm) {
-        /* Filter for any components and deactivate before deleting */
-        for (const itemData of itemsData) {
-          const item = this.itemManager.findItem(itemData.uuid)
-          if (!item) {
-            void this.alertService.alert('The item you are trying to delete cannot be found.')
-            continue
+        if (didConfirm) {
+          /* Filter for any components and deactivate before deleting */
+          for (const itemData of itemsData) {
+            const item = this.services.items.findItem(itemData.uuid)
+            if (!item) {
+              void this.services.alerts.alert('The item you are trying to delete cannot be found.')
+              continue
+            }
+            await this.services.mutator.setItemToBeDeleted(item, PayloadEmitSource.ComponentRetrieved)
           }
-          await this.mutator.setItemToBeDeleted(item, PayloadEmitSource.ComponentRetrieved)
+
+          void this.services.sync.sync()
+
+          reply = { deleted: true }
+        } else {
+          /* Rejected by user */
+          reply = { deleted: false }
         }
 
-        void this.syncService.sync()
-
-        reply = { deleted: true }
-      } else {
-        /* Rejected by user */
-        reply = { deleted: false }
-      }
-
-      this.replyToMessage(message, reply)
-    })
+        this.replyToMessage(message, reply)
+      },
+    )
   }
 
   handleSetComponentPreferencesMessage(message: ComponentMessage): void {
     const noPermissionsRequired: ComponentPermission[] = []
-    this.componentManagerFunctions.runWithPermissions(
+    this.config.componentManagerFunctions.runWithPermissions(
       this.componentUniqueIdentifier,
       noPermissionsRequired,
       async () => {
@@ -884,7 +929,7 @@ export class ComponentViewer implements ComponentViewerInterface {
           return
         }
 
-        await this.preferences.setComponentPreferences(this.componentOrFeature, newPreferences)
+        await this.services.preferences.setComponentPreferences(this.componentOrFeature, newPreferences)
       },
     )
   }

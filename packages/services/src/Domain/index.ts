@@ -24,6 +24,7 @@ export * from './Challenge'
 export * from './Component/ComponentManagerInterface'
 export * from './Component/ComponentViewerError'
 export * from './Component/ComponentViewerInterface'
+export * from './Component/ComponentViewerItem'
 
 export * from './Contacts/ContactServiceInterface'
 export * from './Contacts/ContactService'

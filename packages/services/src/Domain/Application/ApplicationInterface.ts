@@ -66,6 +66,7 @@ export interface ApplicationInterface {
   setCustomHost(host: string): Promise<void>
   isThirdPartyHostUsed(): boolean
   isUsingHomeServer(): Promise<boolean>
+  getNewSubscriptionToken(): Promise<string | undefined>
 
   importData(data: BackupFile, awaitSync?: boolean): Promise<ImportDataReturnType>
   /**

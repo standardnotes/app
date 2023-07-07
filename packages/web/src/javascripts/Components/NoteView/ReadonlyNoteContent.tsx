@@ -38,10 +38,10 @@ export const ReadonlyNoteContent = ({
 
     const templateNoteForRevision = application.items.createTemplateItem(ContentType.Note, note.content) as SNNote
 
-    const componentViewer = application.componentManager.createComponentViewer(editorForCurrentNote)
-    componentViewer.setReadonly(true)
-    componentViewer.lockReadonly = true
-    componentViewer.overrideContextItem = templateNoteForRevision
+    const componentViewer = application.componentManager.createComponentViewer(editorForCurrentNote, {
+      readonlyItem: templateNoteForRevision,
+    })
+
     return componentViewer
   }, [application.componentManager, application.items, note])
 
@@ -91,7 +91,7 @@ export const ReadonlyNoteContent = ({
       )}
       {componentViewer ? (
         <div className="component-view">
-          <ComponentView key={componentViewer.identifier} componentViewer={componentViewer} application={application} />
+          <ComponentView key={componentViewer.identifier} componentViewer={componentViewer} />
         </div>
       ) : content.noteType === NoteType.Super ? (
         <ErrorBoundary>

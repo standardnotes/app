@@ -47,6 +47,7 @@ import {
   isMobileDevice,
   MutatorClientInterface,
   PreferenceServiceInterface,
+  ComponentViewerItem,
 } from '@standardnotes/services'
 
 const DESKTOP_URL_PREFIX = 'sn://'
@@ -170,26 +171,32 @@ export class SNComponentManager
 
   public createComponentViewer(
     component: ComponentOrNativeFeature,
-    contextItem?: UuidString,
+    item: ComponentViewerItem,
     actionObserver?: ActionObserver,
   ): ComponentViewerInterface {
     const viewer = new ComponentViewer(
       component,
-      this.itemManager,
-      this.mutator,
-      this.syncService,
-      this.alertService,
-      this.preferences,
-      this.featuresService,
-      this.environment,
-      this.platform,
       {
-        runWithPermissions: this.runWithPermissions.bind(this),
-        urlsForActiveThemes: this.urlsForActiveThemes.bind(this),
+        items: this.itemManager,
+        mutator: this.mutator,
+        sync: this.syncService,
+        alerts: this.alertService,
+        preferences: this.preferences,
+        features: this.featuresService,
       },
-      this.urlForComponent(component),
-      contextItem,
-      actionObserver,
+      {
+        url: this.urlForComponent(component) ?? '',
+        item,
+        actionObserver,
+      },
+      {
+        environment: this.environment,
+        platform: this.platform,
+        componentManagerFunctions: {
+          runWithPermissions: this.runWithPermissions.bind(this),
+          urlsForActiveThemes: this.urlsForActiveThemes.bind(this),
+        },
+      },
     )
     this.viewers.push(viewer)
     return viewer

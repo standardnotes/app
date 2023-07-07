@@ -449,7 +449,10 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
   }
 
   private createComponentViewer(component: ComponentOrNativeFeature) {
-    const viewer = this.application.componentManager.createComponentViewer(component, this.note.uuid)
+    if (!component) {
+      throw Error('Cannot create component viewer for undefined component')
+    }
+    const viewer = this.application.componentManager.createComponentViewer(component, { uuid: this.note.uuid })
     return viewer
   }
 
@@ -461,6 +464,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
       return
     }
 
+    const component = viewer.componentOrFeature
     this.application.componentManager.destroyComponentViewer(viewer)
     this.setState(
       {
@@ -469,7 +473,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
       },
       () => {
         this.setState({
-          editorComponentViewer: this.createComponentViewer(viewer.componentOrFeature),
+          editorComponentViewer: this.createComponentViewer(component),
           editorStateDidLoad: true,
         })
       },
@@ -755,7 +759,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
 
     const newViewers: ComponentViewerInterface[] = []
     for (const component of needsNewViewer) {
-      newViewers.push(this.application.componentManager.createComponentViewer(component, this.note.uuid))
+      newViewers.push(this.application.componentManager.createComponentViewer(component, { uuid: this.note.uuid }))
     }
 
     for (const viewer of needsDestroyViewer) {
@@ -968,7 +972,6 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
                 componentViewer={this.state.editorComponentViewer}
                 onLoad={this.onEditorComponentLoad}
                 requestReload={this.editorComponentViewerRequestsReload}
-                application={this.application}
               />
             </div>
           )}
@@ -1033,7 +1036,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
             {this.state.stackComponentViewers.map((viewer) => {
               return (
                 <div className="component-view component-stack-item" key={viewer.identifier}>
-                  <ComponentView key={viewer.identifier} componentViewer={viewer} application={this.application} />
+                  <ComponentView key={viewer.identifier} componentViewer={viewer} />
                 </div>
               )
             })}

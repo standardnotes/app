@@ -3,18 +3,16 @@ import {
   ComponentEventObserver,
   ComponentMessage,
   ComponentOrNativeFeature,
-  DecryptedItemInterface,
 } from '@standardnotes/models'
 import { FeatureStatus } from '../Feature/FeatureStatus'
 import { ComponentViewerError } from './ComponentViewerError'
 
 export interface ComponentViewerInterface {
   readonly componentOrFeature: ComponentOrNativeFeature
-  readonly url?: string
-  identifier: string
-  lockReadonly: boolean
-  sessionKey?: string
-  overrideContextItem?: DecryptedItemInterface
+  readonly identifier: string
+  readonly lockReadonly: boolean
+  readonly sessionKey?: string
+  get url(): string
   get componentUniqueIdentifier(): string
   destroy(): void
   setReadonly(readonly: boolean): void

@@ -1,6 +1,7 @@
-import { Environment, SNApplication } from '@standardnotes/snjs'
+import { Environment } from '@standardnotes/snjs'
+import { WebApplicationInterface } from '@standardnotes/ui-services'
 
-export async function openSubscriptionDashboard(application: SNApplication) {
+export async function openSubscriptionDashboard(application: WebApplicationInterface) {
   const token = await application.getNewSubscriptionToken()
   if (!token) {
     return

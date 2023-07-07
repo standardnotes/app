@@ -4,6 +4,7 @@ import {
   MobileDeviceInterface,
   WebAppEvent,
 } from '@standardnotes/services'
+import { KeyboardService } from '../Keyboard/KeyboardService'
 
 export interface WebApplicationInterface extends ApplicationInterface {
   notifyWebEvent(event: WebAppEvent, data?: unknown): void
@@ -21,4 +22,5 @@ export interface WebApplicationInterface extends ApplicationInterface {
   addAndroidBackHandlerEventListener(listener: () => boolean): (() => void) | undefined
   setAndroidBackHandlerFallbackListener(listener: () => boolean): void
   generateUUID(): string
+  get keyboardService(): KeyboardService
 }
