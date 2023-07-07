@@ -7,7 +7,6 @@ const KEYCHAIN_STORAGE_KEY = 'keychain'
 export class ExtensionDevice extends WebDevice {
   override async getKeychainValue(): Promise<RawKeychainValue> {
     const value = (await storage.local.get(KEYCHAIN_STORAGE_KEY))[KEYCHAIN_STORAGE_KEY]
-    console.log('getKeychainValue', value)
 
     if (value) {
       return JSON.parse(value)
@@ -26,7 +25,6 @@ export class ExtensionDevice extends WebDevice {
 
   override async getRawStorageValue(key: string): Promise<string | undefined> {
     const result = (await storage.local.get(key))[key]
-    console.log('getRawStorageValue', key, result)
 
     if (result == undefined) {
       return undefined

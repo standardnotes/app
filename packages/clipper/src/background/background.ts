@@ -3,7 +3,8 @@ import { ClipPayload, RuntimeMessage, RuntimeMessageTypes } from '../types/messa
 import {
   ApplicationGroupEvent,
   ApplicationGroupEventData,
-  ContentType,
+  DeinitMode,
+  DeinitSource,
   Environment,
   Platform,
   SNApplication,
@@ -64,6 +65,7 @@ const alertService = {
   },
 }
 
+// eslint-disable-next-line no-console
 SNLog.onLog = console.log
 SNLog.onError = console.error
 global.window = self
@@ -86,19 +88,7 @@ applicationGroup.addEventObserver(async (event, data) => {
         },
       })
       .then(() => {
-        application
-          .launch()
-          .then(() => {
-            application.addEventObserver(async (event) => {
-              console.log(event, application.items.getItems(ContentType.Note))
-            })
-            application.streamItems(ContentType.Note, ({ changed, inserted, removed }) => {
-              console.log('changed', changed)
-              console.log('inserted', inserted)
-              console.log('removed', removed)
-            })
-          })
-          .catch(console.error)
+        application.launch().catch(console.error)
       })
       .catch(console.error)
   }
@@ -113,10 +103,17 @@ applicationGroup
         deviceInterface,
         crypto,
         alertService,
-        identifier: descriptor.identifier,
+        identifier: 'standardnotes',
         appVersion: '1.0.0',
         defaultHost: 'https://api.standardnotes.com',
       })
     },
   })
   .catch(console.error)
+
+runtime.onSuspend.addListener(() => {
+  if (application) {
+    application.deinit(DeinitMode.Hard, DeinitSource.SwitchWorkspace)
+    applicationGroup.deinit()
+  }
+})
