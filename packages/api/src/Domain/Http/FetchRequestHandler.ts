@@ -94,7 +94,7 @@ export class FetchRequestHandler implements RequestHandlerInterface {
         if (contentTypeHeader?.includes('application/json')) {
           body = JSON.parse(await fetchResponse.text())
         } else {
-          body = fetchResponse.type === 'basic' ? await fetchResponse.text() : await fetchResponse.arrayBuffer()
+          body = await fetchResponse.arrayBuffer()
         }
         /**
          * v0 APIs do not have a `data` top-level object. In such cases, mimic
