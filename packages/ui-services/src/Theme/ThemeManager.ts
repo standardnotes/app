@@ -57,7 +57,7 @@ export class ThemeManager extends AbstractUIServicee {
       this.preferences.addEventObserver(async (event) => {
         if (event === PreferencesServiceEvent.PreferencesChanged) {
           let hasChange = false
-          const activeThemes = this.preferences.getActiveThemesUuids()
+          const activeThemes = this.preferences.getActiveThemesIdentifiers()
           for (const uiActiveTheme of this.themesActiveInTheUI) {
             if (!activeThemes.includes(uiActiveTheme)) {
               this.deactivateThemeInTheUI(uiActiveTheme)
@@ -238,7 +238,7 @@ export class ThemeManager extends AbstractUIServicee {
       .getDisplayableComponents()
       .filter((component) => component.isTheme()) as SNTheme[]
 
-    const activeTheme = themes.find((theme) => this.preferences.isThemeActive(theme) && !theme.isLayerable())
+    const activeTheme = themes.find((theme) => this.preferences.isThemeActive(theme) && !theme.layerable)
     const activeThemeIdentifier = activeTheme ? activeTheme.identifier : DefaultThemeIdentifier
 
     const themeIdentifier = this.application.getPreference(preference, preferenceDefault) as string

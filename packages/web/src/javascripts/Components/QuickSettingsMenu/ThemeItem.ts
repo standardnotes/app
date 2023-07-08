@@ -1,7 +1,7 @@
-import { FeatureIdentifier, SNTheme } from '@standardnotes/snjs'
+import { ComponentOrNativeTheme, FeatureIdentifier } from '@standardnotes/snjs'
 
 export type ThemeItem = {
   name: string
   identifier: FeatureIdentifier
-  component?: SNTheme
+  componentOrNativeTheme: ComponentOrNativeTheme
 }

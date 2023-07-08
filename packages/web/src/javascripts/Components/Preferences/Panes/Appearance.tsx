@@ -9,11 +9,11 @@ import {
   FeatureIdentifier,
   PrefKey,
   GetFeatures,
-  SNTheme,
   FindNativeFeature,
   FeatureStatus,
   naturalSort,
   PrefDefaults,
+  ThemeInterface,
 } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useEffect, useState } from 'react'
@@ -23,6 +23,7 @@ import PreferencesGroup from '../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../PreferencesComponents/PreferencesSegment'
 import { PremiumFeatureIconName } from '@/Components/Icon/PremiumFeatureIcon'
 import EditorAppearance from './Appearance/EditorAppearance'
+import { GetAllThemesUseCase } from '@/Components/QuickSettingsMenu/GetAllThemesUseCase'
 
 type Props = {
   application: WebApplication
@@ -43,9 +44,10 @@ const Appearance: FunctionComponent<Props> = ({ application }) => {
   )
 
   useEffect(() => {
+    const usecase = new GetAllThemesUseCase(application.items)
     const themesAsItems: DropdownItem[] = application.items
       .getDisplayableComponents()
-      .filter((component) => component.isTheme() && !(component as SNTheme).isLayerable())
+      .filter((component) => component.isTheme() && !(component as ThemeInterface).layerable)
       .filter((theme) => !FindNativeFeature(theme.identifier))
       .map((theme) => {
         return {

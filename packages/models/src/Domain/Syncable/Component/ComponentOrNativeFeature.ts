@@ -1,9 +1,19 @@
-import { ComponentPermission, EditorFeatureDescription, FeatureDescription, NoteType } from '@standardnotes/features'
+import {
+  ComponentPermission,
+  EditorFeatureDescription,
+  FeatureDescription,
+  NoteType,
+  ThemeFeatureDescription,
+} from '@standardnotes/features'
 import { ComponentInterface } from './ComponentInterface'
 import { isComponent } from './Component'
 import { DecryptedItemInterface, isDecryptedItem } from '../../Abstract/Item'
+import { ContentType } from '@standardnotes/common'
+import { ThemeInterface } from '../Theme'
 
 export type ComponentOrNativeFeature = ComponentInterface | FeatureDescription
+
+export type ComponentOrNativeTheme = ThemeInterface | ThemeFeatureDescription
 
 export function isNativeComponent(component: ComponentOrNativeFeature): component is FeatureDescription {
   if (isDecryptedItem(component as DecryptedItemInterface)) {
@@ -11,6 +21,10 @@ export function isNativeComponent(component: ComponentOrNativeFeature): componen
   }
 
   return 'index_path' in component
+}
+
+export function isNativeTheme(component: ComponentOrNativeFeature): component is ThemeFeatureDescription {
+  return isNativeComponent(component) && (component as ThemeFeatureDescription).content_type === ContentType.Theme
 }
 
 export function isNativeEditorComponent(component: ComponentOrNativeFeature): component is EditorFeatureDescription {

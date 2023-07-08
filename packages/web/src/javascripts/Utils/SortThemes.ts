@@ -4,8 +4,8 @@ import { FeatureIdentifier } from '@standardnotes/snjs'
 const isDarkModeTheme = (theme: ThemeItem) => theme.identifier === FeatureIdentifier.DarkTheme
 
 export const sortThemes = (a: ThemeItem, b: ThemeItem) => {
-  const aIsLayerable = a.component?.isLayerable()
-  const bIsLayerable = b.component?.isLayerable()
+  const aIsLayerable = a.componentOrNativeTheme?.layerable
+  const bIsLayerable = b.componentOrNativeTheme?.layerable
 
   if (aIsLayerable && !bIsLayerable) {
     return 1

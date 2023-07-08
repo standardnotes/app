@@ -3,6 +3,7 @@ import { Migration } from '@Lib/Migrations/Migration'
 import { ContentType } from '@standardnotes/common'
 import { AllComponentPreferences, ComponentInterface, PrefKey, isNativeComponent } from '@standardnotes/models'
 import { Copy, Uuids } from '@standardnotes/utils'
+import { FindNativeFeature } from '@standardnotes/features'
 
 export class Migration2_201_6 extends Migration {
   static override version(): string {
@@ -13,6 +14,8 @@ export class Migration2_201_6 extends Migration {
     this.registerStageHandler(ApplicationStage.FullSyncCompleted_13, async () => {
       await this.migrateComponentDataToUserPreferences()
       await this.migrateActiveComponentsToUserPreferences()
+      await this.deleteComponentsWhichAreNativeFeatures()
+
       this.markDone()
     })
   }
@@ -48,7 +51,7 @@ export class Migration2_201_6 extends Migration {
       mutablePreferencesValue[preferencesLookupKey] = componentPreferences
     }
 
-    await this.services.preferences.setValue(PrefKey.ComponentPreferences, mutablePreferencesValue)
+    await this.services.preferences.setValueDetached(PrefKey.ComponentPreferences, mutablePreferencesValue)
   }
 
   private async migrateActiveComponentsToUserPreferences(): Promise<void> {
@@ -64,7 +67,20 @@ export class Migration2_201_6 extends Migration {
     const activeThemes = allActiveitems.filter((component) => component.isTheme())
     const activeComponents = allActiveitems.filter((component) => !component.isTheme())
 
-    await this.services.preferences.setValue(PrefKey.ActiveThemes, Uuids(activeThemes))
-    await this.services.preferences.setValue(PrefKey.ActiveComponents, Uuids(activeComponents))
+    await this.services.preferences.setValueDetached(PrefKey.ActiveThemes, Uuids(activeThemes))
+    await this.services.preferences.setValueDetached(PrefKey.ActiveComponents, Uuids(activeComponents))
+  }
+
+  private async deleteComponentsWhichAreNativeFeatures(): Promise<void> {
+    const components = [
+      ...this.services.itemManager.getItems<ComponentInterface>(ContentType.Component),
+      ...this.services.itemManager.getItems<ComponentInterface>(ContentType.Theme),
+    ].filter((component) => FindNativeFeature(component.identifier) !== undefined)
+
+    if (components.length === 0) {
+      return
+    }
+
+    await this.services.mutator.setItemsToBeDeleted(components)
   }
 }

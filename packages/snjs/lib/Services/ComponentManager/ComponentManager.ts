@@ -5,7 +5,6 @@ import { ItemManager } from '@Lib/Services/Items/ItemManager'
 import {
   ActionObserver,
   SNNote,
-  SNTheme,
   SNComponent,
   ComponentMutator,
   PayloadEmitSource,
@@ -20,6 +19,12 @@ import {
   getComponentOrNativeFeatureFileType,
   ComponentOrNativeFeatureUniqueIdentifier,
   getComponentOrNativeFeatureAcquiredPermissions,
+  ComponentOrNativeTheme,
+  PrefKey,
+  ThemeInterface,
+  ComponentPreferencesEntry,
+  AllComponentPreferences,
+  getComponentOrNativeFeatureUniqueIdentifier,
 } from '@standardnotes/models'
 import { SNSyncService } from '@Lib/Services/Sync/SyncService'
 import {
@@ -31,8 +36,17 @@ import {
   FeatureIdentifier,
   EditorFeatureDescription,
   GetNativeEditors,
+  ThemeFeatureDescription,
 } from '@standardnotes/features'
-import { Copy, filterFromArray, removeFromArray, sleep, assert, uniqueArray } from '@standardnotes/utils'
+import {
+  Copy,
+  filterFromArray,
+  removeFromArray,
+  sleep,
+  assert,
+  uniqueArray,
+  isNotUndefined,
+} from '@standardnotes/utils'
 import { AllowedBatchContentTypes } from '@Lib/Services/ComponentManager/Types'
 import { ComponentViewer } from '@Lib/Services/ComponentManager/ComponentViewer'
 import {
@@ -295,7 +309,7 @@ export class SNComponentManager
   configureForDesktop(): void {
     this.desktopManager?.registerUpdateObserver((component: ComponentInterface) => {
       /* Reload theme if active */
-      const activeComponents = this.preferences.getActiveComponents()
+      const activeComponents = this.getActiveComponents()
       const isComponentActive = activeComponents.find((candidate) => candidate.uuid === component.uuid)
       if (isComponentActive && component.isTheme()) {
         this.postActiveThemesToAllViewers()
@@ -368,7 +382,7 @@ export class SNComponentManager
   }
 
   urlsForActiveThemes(): string[] {
-    const themes = this.preferences.getActiveThemes()
+    const themes = this.getActiveThemes()
     const urls = []
     for (const theme of themes) {
       const url = this.urlForComponent(theme)
@@ -588,36 +602,53 @@ export class SNComponentManager
     throw 'Must override SNComponentManager.presentPermissionsDialog'
   }
 
-  async toggleTheme(theme: SNTheme): Promise<void> {
-    this.log('Toggling theme', theme.uuid)
+  async toggleTheme(theme: ComponentOrNativeTheme): Promise<void> {
+    this.log('Toggling theme', getComponentOrNativeFeatureUniqueIdentifier(theme))
 
-    if (this.preferences.isThemeActive(theme)) {
-      await this.preferences.removeActiveTheme(theme)
+    if (this.isThemeActive(theme)) {
+      await this.removeActiveTheme(theme)
     } else {
       /* Activate current before deactivating others, so as not to flicker */
-      await this.preferences.addActiveTheme(theme)
+      await this.addActiveTheme(theme)
 
       /* Deactive currently active theme(s) if new theme is not layerable */
-      if (!theme.isLayerable()) {
+      if (!theme.layerable) {
         await sleep(10)
 
-        const activeThemes = this.preferences.getActiveThemes()
+        const activeThemes = this.getActiveThemes()
         for (const candidate of activeThemes) {
-          if (candidate && !candidate.isLayerable()) {
-            await this.preferences.removeActiveTheme(candidate)
+          if (candidate && !candidate.layerable) {
+            await this.removeActiveTheme(candidate)
           }
         }
       }
     }
   }
 
+  getActiveThemes(): ComponentOrNativeTheme[] {
+    const activeThemesIdentifiers = this.getActiveThemesIdentifiers()
+
+    const thirdPartyThemes = this.itemManager.findItems<ThemeInterface>(activeThemesIdentifiers)
+    const nativeThemes = activeThemesIdentifiers
+      .map((identifier) => {
+        return FindNativeFeature<ThemeFeatureDescription>(identifier as FeatureIdentifier)
+      })
+      .filter(isNotUndefined)
+
+    return [...thirdPartyThemes, ...nativeThemes]
+  }
+
+  getActiveThemesIdentifiers(): string[] {
+    return this.preferences.getValue(PrefKey.ActiveThemes, undefined) ?? []
+  }
+
   async toggleComponent(component: ComponentInterface): Promise<void> {
     this.log('Toggling component', component.uuid)
 
-    if (this.preferences.isComponentActive(component)) {
-      await this.preferences.removeActiveComponent(component)
+    if (this.isComponentActive(component)) {
+      await this.removeActiveComponent(component)
     } else {
-      await this.preferences.addActiveComponent(component)
+      await this.addActiveComponent(component)
     }
   }
 
@@ -702,5 +733,88 @@ export class SNComponentManager
     )
 
     return shouldChangeEditor
+  }
+
+  async setComponentPreferences(
+    component: ComponentOrNativeFeature,
+    preferences: ComponentPreferencesEntry,
+  ): Promise<void> {
+    const mutablePreferencesValue = Copy<AllComponentPreferences>(
+      this.preferences.getValue(PrefKey.ComponentPreferences, undefined) ?? {},
+    )
+
+    const preferencesLookupKey = isNativeComponent(component) ? component.identifier : component.uuid
+
+    mutablePreferencesValue[preferencesLookupKey] = preferences
+
+    await this.preferences.setValue(PrefKey.ComponentPreferences, mutablePreferencesValue)
+  }
+
+  getComponentPreferences(component: ComponentOrNativeFeature): ComponentPreferencesEntry | undefined {
+    const preferences = this.preferences.getValue(PrefKey.ComponentPreferences, undefined)
+
+    if (!preferences) {
+      return undefined
+    }
+
+    const preferencesLookupKey = isNativeComponent(component) ? component.identifier : component.uuid
+
+    return preferences[preferencesLookupKey]
+  }
+
+  async addActiveTheme(theme: ComponentOrNativeTheme): Promise<void> {
+    const activeThemes = this.preferences.getValue(PrefKey.ActiveThemes, undefined) ?? []
+
+    activeThemes.push(getComponentOrNativeFeatureUniqueIdentifier(theme))
+
+    await this.preferences.setValue(PrefKey.ActiveThemes, activeThemes)
+  }
+
+  async replaceActiveTheme(theme: ComponentOrNativeTheme): Promise<void> {
+    await this.preferences.setValue(PrefKey.ActiveThemes, [getComponentOrNativeFeatureUniqueIdentifier(theme)])
+  }
+
+  async removeActiveTheme(theme: ComponentOrNativeTheme): Promise<void> {
+    const activeThemes = this.preferences.getValue(PrefKey.ActiveThemes, undefined) ?? []
+
+    const filteredThemes = activeThemes.filter(
+      (activeTheme) => activeTheme !== getComponentOrNativeFeatureUniqueIdentifier(theme),
+    )
+
+    await this.preferences.setValue(PrefKey.ActiveThemes, filteredThemes)
+  }
+
+  isThemeActive(theme: ComponentOrNativeTheme): boolean {
+    const activeThemes = this.preferences.getValue(PrefKey.ActiveThemes, undefined) ?? []
+
+    return activeThemes.includes(getComponentOrNativeFeatureUniqueIdentifier(theme))
+  }
+
+  async addActiveComponent(component: ComponentInterface): Promise<void> {
+    const activeComponents = this.preferences.getValue(PrefKey.ActiveComponents, undefined) ?? []
+
+    activeComponents.push(component.uuid)
+
+    await this.preferences.setValue(PrefKey.ActiveComponents, activeComponents)
+  }
+
+  async removeActiveComponent(component: ComponentInterface): Promise<void> {
+    const activeComponents = this.preferences.getValue(PrefKey.ActiveComponents, undefined) ?? []
+
+    const filteredComponents = activeComponents.filter((activeComponent) => activeComponent !== component.uuid)
+
+    await this.preferences.setValue(PrefKey.ActiveComponents, filteredComponents)
+  }
+
+  getActiveComponents(): ComponentInterface[] {
+    const activeComponents = this.preferences.getValue(PrefKey.ActiveComponents, undefined) ?? []
+
+    return this.itemManager.findItems(activeComponents)
+  }
+
+  isComponentActive(component: ComponentInterface): boolean {
+    const activeComponents = this.preferences.getValue(PrefKey.ActiveComponents, undefined) ?? []
+
+    return activeComponents.includes(component.uuid)
   }
 }

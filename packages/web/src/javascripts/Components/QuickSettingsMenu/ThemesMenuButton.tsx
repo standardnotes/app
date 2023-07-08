@@ -1,5 +1,4 @@
-import { WebApplication } from '@/Application/WebApplication'
-import { FeatureIdentifier, FeatureStatus } from '@standardnotes/snjs'
+import { FeatureIdentifier, FeatureStatus, isNativeTheme } from '@standardnotes/snjs'
 import { FunctionComponent, MouseEventHandler, useCallback, useMemo } from 'react'
 import Icon from '@/Components/Icon/Icon'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
@@ -12,13 +11,14 @@ import MenuRadioButtonItem from '../Menu/MenuRadioButtonItem'
 import { useCommandService } from '../CommandProvider'
 import { TOGGLE_DARK_MODE_COMMAND } from '@standardnotes/ui-services'
 import { KeyboardShortcutIndicator } from '../KeyboardShortcutIndicator/KeyboardShortcutIndicator'
+import { useApplication } from '../ApplicationProvider'
 
 type Props = {
   item: ThemeItem
-  application: WebApplication
 }
 
-const ThemesMenuButton: FunctionComponent<Props> = ({ application, item }) => {
+const ThemesMenuButton: FunctionComponent<Props> = ({ item }) => {
+  const application = useApplication()
   const commandService = useCommandService()
   const premiumModal = usePremiumModal()
 
@@ -33,15 +33,20 @@ const ThemesMenuButton: FunctionComponent<Props> = ({ application, item }) => {
   const canActivateTheme = useMemo(() => isEntitledToTheme || isThirdPartyTheme, [isEntitledToTheme, isThirdPartyTheme])
 
   const toggleTheme = useCallback(() => {
-    if (item.component && canActivateTheme) {
-      const isThemeLayerable = item.component.isLayerable()
-      const themeIsLayerableOrNotActive = isThemeLayerable || !application.preferences.isThemeActive(item.component)
-
-      if (themeIsLayerableOrNotActive) {
-        application.componentManager.toggleTheme(item.component).catch(console.error)
-      }
-    } else {
+    if (!canActivateTheme) {
       premiumModal.activate(`${item.name} theme`)
+      return
+    }
+
+    const isThemeLayerable = isNativeTheme(item.componentOrNativeTheme)
+      ? item.componentOrNativeTheme.layerable
+      : item.componentOrNativeTheme.layerable
+
+    const themeIsLayerableOrNotActive =
+      isThemeLayerable || !application.componentManager.isThemeActive(item.componentOrNativeTheme)
+
+    if (themeIsLayerableOrNotActive) {
+      application.componentManager.toggleTheme(item.componentOrNativeTheme).catch(console.error)
     }
   }, [application, canActivateTheme, item, premiumModal])
 
@@ -66,9 +71,15 @@ const ThemesMenuButton: FunctionComponent<Props> = ({ application, item }) => {
     return null
   }
 
-  const themeActive = item.component ? application.preferences.isThemeActive(item.component) : false
+  const themeActive = item.componentOrNativeTheme
+    ? application.componentManager.isThemeActive(item.componentOrNativeTheme)
+    : false
 
-  return item.component?.isLayerable() ? (
+  const dockIcon = isNativeTheme(item.componentOrNativeTheme)
+    ? item.componentOrNativeTheme.dock_icon
+    : item.componentOrNativeTheme.package_info?.dock_icon
+
+  return item.componentOrNativeTheme?.layerable ? (
     <MenuSwitchButtonItem checked={themeActive} onChange={() => toggleTheme()}>
       {!canActivateTheme && (
         <Icon type={PremiumFeatureIconName} className={classNames(PremiumFeatureIconClass, 'mr-2')} />
@@ -79,11 +90,11 @@ const ThemesMenuButton: FunctionComponent<Props> = ({ application, item }) => {
     <MenuRadioButtonItem checked={themeActive} onClick={onClick}>
       <span className={classNames('mr-auto', themeActive ? 'font-semibold' : undefined)}>{item.name}</span>
       {darkThemeShortcut && <KeyboardShortcutIndicator className="mr-2" shortcut={darkThemeShortcut} />}
-      {item.component && canActivateTheme ? (
+      {item.componentOrNativeTheme && canActivateTheme ? (
         <div
           className="h-5 w-5 rounded-full"
           style={{
-            backgroundColor: item.component.package_info?.dock_icon?.background_color,
+            backgroundColor: dockIcon?.background_color,
           }}
         ></div>
       ) : (

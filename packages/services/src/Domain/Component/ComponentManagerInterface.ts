@@ -4,9 +4,9 @@ import {
   ActionObserver,
   ComponentInterface,
   ComponentOrNativeFeature,
+  ComponentOrNativeTheme,
   PermissionDialog,
   SNNote,
-  SNTheme,
 } from '@standardnotes/models'
 
 import { DesktopManagerInterface } from '../Device/DesktopManagerInterface'
@@ -33,6 +33,11 @@ export interface ComponentManagerInterface {
   legacyGetDefaultEditor(): ComponentInterface | undefined
   componentWithIdentifier(identifier: FeatureIdentifier | string): ComponentOrNativeFeature | undefined
 
-  toggleTheme(theme: SNTheme): Promise<void>
+  isThemeActive(theme: ComponentOrNativeTheme): boolean
+  toggleTheme(theme: ComponentOrNativeTheme): Promise<void>
+  getActiveThemes(): ComponentOrNativeTheme[]
+  getActiveThemesIdentifiers(): string[]
+
+  isComponentActive(component: ComponentInterface): boolean
   toggleComponent(component: ComponentInterface): Promise<void>
 }
