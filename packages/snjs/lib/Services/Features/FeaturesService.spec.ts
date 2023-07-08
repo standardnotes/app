@@ -682,14 +682,18 @@ describe('featuresService', () => {
       )
     })
 
-    it('didDownloadFeatures should filter out client controlled features', async () => {
+    it('processRemotelyDownloadedFeatures should filter out client controlled features', async () => {
       const featuresService = createService()
 
       featuresService['mapRemoteNativeFeaturesToItems'] = jest.fn()
 
-      await featuresService.didDownloadFeatures(GetFeatures().filter((f) => f.clientControlled))
+      await featuresService.processRemotelyDownloadedFeatures(GetFeatures().filter((f) => f.clientControlled))
 
       expect(featuresService['mapRemoteNativeFeaturesToItems']).toHaveBeenCalledWith([])
+    })
+
+    it('processRemotelyDownloadedFeatures should filter out native editors and themes', async () => {
+      throw new Error('Test not implemented')
     })
 
     it('feature status for offline subscription', async () => {
@@ -790,7 +794,7 @@ describe('featuresService', () => {
     })
   })
 
-  describe('downloadExternalFeature', () => {
+  describe('downloadRemoteThirdPartyFeature', () => {
     it('should not allow if identifier matches native identifier', async () => {
       apiService.downloadFeatureUrl = jest.fn().mockReturnValue({
         data: {
@@ -807,7 +811,7 @@ describe('featuresService', () => {
       crypto.base64Decode = jest.fn().mockReturnValue(installUrl)
 
       const featuresService = createService()
-      const result = await featuresService.downloadExternalFeature(installUrl)
+      const result = await featuresService.downloadRemoteThirdPartyFeature(installUrl)
       expect(result).toBeUndefined()
     })
 
@@ -827,7 +831,7 @@ describe('featuresService', () => {
       crypto.base64Decode = jest.fn().mockReturnValue(installUrl)
 
       const featuresService = createService()
-      const result = await featuresService.downloadExternalFeature(installUrl)
+      const result = await featuresService.downloadRemoteThirdPartyFeature(installUrl)
       expect(result).toBeUndefined()
     })
   })

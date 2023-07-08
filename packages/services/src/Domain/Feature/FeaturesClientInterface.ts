@@ -1,11 +1,11 @@
 import { FeatureIdentifier } from '@standardnotes/features'
-import { SNComponent } from '@standardnotes/models'
+import { ComponentInterface } from '@standardnotes/models'
 
 import { FeatureStatus } from './FeatureStatus'
 import { SetOfflineFeaturesFunctionResponse } from './SetOfflineFeaturesFunctionResponse'
 
 export interface FeaturesClientInterface {
-  downloadExternalFeature(urlOrCode: string): Promise<SNComponent | undefined>
+  downloadRemoteThirdPartyFeature(urlOrCode: string): Promise<ComponentInterface | undefined>
 
   getFeatureStatus(featureId: FeatureIdentifier): FeatureStatus
 

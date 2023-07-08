@@ -63,7 +63,7 @@ const PackagesPreferencesSection: FunctionComponent<Props> = ({
   }
 
   const submitExtensionUrl = async (url: string) => {
-    const component = await application.features.downloadExternalFeature(url)
+    const component = await application.features.downloadRemoteThirdPartyFeature(url)
     if (component) {
       setConfirmableExtension(component)
     }

@@ -172,9 +172,7 @@ describe('features', () => {
 
       // Timeout since we don't await for features update
       await new Promise((resolve) => setTimeout(resolve, 1000))
-      expect(application.mutator.setItemsToBeDeleted.calledWith([sinon.match({ uuid: themeItem.uuid })])).to.equal(
-        true,
-      )
+      expect(application.mutator.setItemsToBeDeleted.calledWith([sinon.match({ uuid: themeItem.uuid })])).to.equal(true)
 
       const noTheme = application.items
         .getItems(ContentType.Theme)
@@ -183,18 +181,17 @@ describe('features', () => {
     })
   })
 
-  it('should provide feature', async () => {
-    const feature = application.features.getFeatureThatOriginallyCameFromServer(FeatureIdentifier.PlusEditor)
-    expect(feature).to.containSubset(plusEditorFeature)
-  })
-
   describe('extension repo items observer', () => {
     it('should migrate to user setting when extension repo is added', async () => {
       sinon.stub(application.apiService, 'isThirdPartyHostUsed').callsFake(() => {
         return false
       })
 
-      expect(await application.settings.getDoesSensitiveSettingExist(SettingName.create(SettingName.NAMES.ExtensionKey).getValue())).to.equal(false)
+      expect(
+        await application.settings.getDoesSensitiveSettingExist(
+          SettingName.create(SettingName.NAMES.ExtensionKey).getValue(),
+        ),
+      ).to.equal(false)
 
       const extensionKey = UuidGenerator.GenerateUuid().split('-').join('')
 

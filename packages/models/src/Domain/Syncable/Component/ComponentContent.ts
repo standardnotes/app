@@ -4,26 +4,25 @@ import { ItemContent } from '../../Abstract/Content/ItemContent'
 
 export type ComponentContentSpecialized = {
   /** Items that have requested a component to be disabled in its context */
-  disassociatedItemIds: string[]
+  disassociatedItemIds?: string[]
 
   /** Items that have requested a component to be enabled in its context */
-  associatedItemIds: string[]
+  associatedItemIds?: string[]
 
   local_url?: string
   hosted_url?: string
 
-  offlineOnly: boolean
+  offlineOnly?: boolean
   name: string
-  autoupdateDisabled: boolean
+  autoupdateDisabled?: boolean
   package_info: ComponentPackageInfo
   area: ComponentArea
-  permissions: ComponentPermission[]
+  permissions?: ComponentPermission[]
   valid_until: Date | number
-  active: boolean
+  active?: boolean
   legacy_url?: string
-  isMobileDefault: boolean
-  isDeprecated: boolean
-  isExplicitlyEnabledForItem(uuid: string): boolean
+  isMobileDefault?: boolean
+  isDeprecated?: boolean
 
   /** @deprecated */
   url?: string
@@ -32,8 +31,7 @@ export type ComponentContentSpecialized = {
    * @deprecated
    * Replaced with per-note component data stored in the note's ComponentDataDomain.
    */
-  /* eslint-disable @typescript-eslint/no-explicit-any */
-  componentData: Record<string, any>
+  componentData?: Record<string, unknown>
 }
 
 export type ComponentContent = ItemContent & ComponentContentSpecialized

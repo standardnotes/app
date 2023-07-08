@@ -64,16 +64,16 @@ export class SNComponent extends DecryptedItem<ComponentContent> implements Comp
     this.local_url = payload.content.local_url
 
     this.valid_until = new Date(payload.content.valid_until || 0)
-    this.offlineOnly = payload.content.offlineOnly
+    this.offlineOnly = payload.content.offlineOnly ?? false
     this.name = payload.content.name
     this.area = payload.content.area
     this.package_info = payload.content.package_info || {}
     this.permissions = payload.content.permissions || []
-    this.active = payload.content.active
-    this.autoupdateDisabled = payload.content.autoupdateDisabled
+    this.active = payload.content.active ?? false
+    this.autoupdateDisabled = payload.content.autoupdateDisabled ?? false
     this.disassociatedItemIds = payload.content.disassociatedItemIds || []
     this.associatedItemIds = payload.content.associatedItemIds || []
-    this.isMobileDefault = payload.content.isMobileDefault
+    this.isMobileDefault = payload.content.isMobileDefault ?? false
 
     /**
      * @legacy
