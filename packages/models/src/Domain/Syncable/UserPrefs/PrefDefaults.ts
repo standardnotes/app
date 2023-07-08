@@ -1,13 +1,10 @@
-import {
-  PrefKey,
-  CollectionSort,
-  NewNoteTitleFormat,
-  EditorLineHeight,
-  EditorFontSize,
-  EditorLineWidth,
-  PrefValue,
-} from '@standardnotes/models'
-import { FeatureIdentifier } from '@standardnotes/snjs'
+import { FeatureIdentifier } from '@standardnotes/features'
+import { CollectionSort } from '../../Runtime/Collection/CollectionSort'
+import { EditorFontSize } from './EditorFontSize'
+import { EditorLineHeight } from './EditorLineHeight'
+import { EditorLineWidth } from './EditorLineWidth'
+import { PrefKey, PrefValue } from './PrefKey'
+import { NewNoteTitleFormat } from './NewNoteTitleFormat'
 
 export const PrefDefaults = {
   [PrefKey.TagsPanelWidth]: 220,
@@ -45,6 +42,8 @@ export const PrefDefaults = {
   [PrefKey.SystemViewPreferences]: {},
   [PrefKey.AuthenticatorNames]: '',
   [PrefKey.ComponentPreferences]: {},
+  [PrefKey.ActiveThemes]: [],
+  [PrefKey.ActiveComponents]: [],
 } satisfies {
   [key in PrefKey]: PrefValue[key]
 }

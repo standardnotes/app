@@ -6,6 +6,7 @@ import {
   EditorLineHeight,
   isPayloadSourceRetrieved,
   PrefKey,
+  PrefDefaults,
 } from '@standardnotes/snjs'
 import { FunctionComponent, useCallback, useEffect, useRef, useState } from 'react'
 import { BlocksEditor } from './BlocksEditor'
@@ -30,7 +31,6 @@ import {
   ChangeEditorFunction,
 } from './Plugins/ChangeContentCallback/ChangeContentCallback'
 import PasswordPlugin from './Plugins/PasswordPlugin/PasswordPlugin'
-import { PrefDefaults } from '@/Constants/PrefDefaults'
 import { useCommandService } from '@/Components/CommandProvider'
 import { SUPER_SHOW_MARKDOWN_PREVIEW } from '@standardnotes/ui-services'
 import { SuperNoteMarkdownPreview } from './SuperNoteMarkdownPreview'

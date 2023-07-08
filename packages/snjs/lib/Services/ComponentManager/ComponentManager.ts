@@ -1,6 +1,6 @@
 import { AllowedBatchStreaming } from './Types'
 import { SNFeaturesService } from '@Lib/Services/Features/FeaturesService'
-import { ContentType, DisplayStringForContentType } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/common'
 import { ItemManager } from '@Lib/Services/Items/ItemManager'
 import {
   ActionObserver,
@@ -22,8 +22,6 @@ import {
   getComponentOrNativeFeatureAcquiredPermissions,
 } from '@standardnotes/models'
 import { SNSyncService } from '@Lib/Services/Sync/SyncService'
-import find from 'lodash/find'
-import uniq from 'lodash/uniq'
 import {
   ComponentArea,
   ComponentAction,
@@ -34,8 +32,7 @@ import {
   EditorFeatureDescription,
   GetNativeEditors,
 } from '@standardnotes/features'
-import { Copy, filterFromArray, removeFromArray, sleep, assert } from '@standardnotes/utils'
-import { UuidString } from '@Lib/Types/UuidString'
+import { Copy, filterFromArray, removeFromArray, sleep, assert, uniqueArray } from '@standardnotes/utils'
 import { AllowedBatchContentTypes } from '@Lib/Services/ComponentManager/Types'
 import { ComponentViewer } from '@Lib/Services/ComponentManager/ComponentViewer'
 import {
@@ -51,6 +48,7 @@ import {
   PreferenceServiceInterface,
   ComponentViewerItem,
 } from '@standardnotes/services'
+import { permissionsStringForPermissions } from './permissionsStringForPermissions'
 
 const DESKTOP_URL_PREFIX = 'sn://'
 const LOCAL_HOST = 'localhost'
@@ -297,7 +295,9 @@ export class SNComponentManager
   configureForDesktop(): void {
     this.desktopManager?.registerUpdateObserver((component: ComponentInterface) => {
       /* Reload theme if active */
-      if (component.active && component.isTheme()) {
+      const activeComponents = this.preferences.getActiveComponents()
+      const isComponentActive = activeComponents.find((candidate) => candidate.uuid === component.uuid)
+      if (isComponentActive && component.isTheme()) {
         this.postActiveThemesToAllViewers()
       }
     })
@@ -307,12 +307,6 @@ export class SNComponentManager
     for (const viewer of this.viewers) {
       viewer.postActiveThemes()
     }
-  }
-
-  getActiveThemes(): SNTheme[] {
-    return this.componentsForArea(ComponentArea.Themes).filter((theme) => {
-      return theme.active
-    }) as SNTheme[]
   }
 
   private urlForComponentOnDesktop(component: ComponentOrNativeFeature): string | undefined {
@@ -374,7 +368,7 @@ export class SNComponentManager
   }
 
   urlsForActiveThemes(): string[] {
-    const themes = this.getActiveThemes()
+    const themes = this.preferences.getActiveThemes()
     const urls = []
     for (const theme of themes) {
       const url = this.urlForComponent(theme)
@@ -512,7 +506,7 @@ export class SNComponentManager
     const params: PermissionDialog = {
       component: component,
       permissions: permissions,
-      permissionsString: this.permissionsStringForPermissions(permissions, component),
+      permissionsString: permissionsStringForPermissions(permissions, component),
       actionBlock: callback,
       callback: async (approved: boolean) => {
         const latestComponent = this.findComponent(component.uuid)
@@ -531,7 +525,9 @@ export class SNComponentManager
             } else {
               /* Permission already exists, but content_types may have been expanded */
               const contentTypes = matchingPermission.content_types || []
-              matchingPermission.content_types = uniq(contentTypes.concat(permission.content_types as ContentType[]))
+              matchingPermission.content_types = uniqueArray(
+                contentTypes.concat(permission.content_types as ContentType[]),
+              )
             }
           }
 
@@ -578,9 +574,7 @@ export class SNComponentManager
      * Since these calls are asyncronous, multiple dialogs may be requested at the same time.
      * We only want to present one and trigger all callbacks based on one modal result
      */
-    const existingDialog = find(this.permissionDialogs, {
-      component: component,
-    })
+    const existingDialog = this.permissionDialogs.find((dialog) => dialog.component === component)
     this.permissionDialogs.push(params)
     if (!existingDialog) {
       this.presentPermissionsDialog(params)
@@ -594,55 +588,37 @@ export class SNComponentManager
     throw 'Must override SNComponentManager.presentPermissionsDialog'
   }
 
-  async toggleTheme(uuid: UuidString): Promise<void> {
-    this.log('Toggling theme', uuid)
+  async toggleTheme(theme: SNTheme): Promise<void> {
+    this.log('Toggling theme', theme.uuid)
 
-    const theme = this.findComponent(uuid) as SNTheme
-    if (theme.active) {
-      await this.mutator.changeComponent(theme, (mutator) => {
-        mutator.active = false
-      })
+    if (this.preferences.isThemeActive(theme)) {
+      await this.preferences.removeActiveTheme(theme)
     } else {
-      const activeThemes = this.getActiveThemes()
-
       /* Activate current before deactivating others, so as not to flicker */
-      await this.mutator.changeComponent(theme, (mutator) => {
-        mutator.active = true
-      })
+      await this.preferences.addActiveTheme(theme)
 
       /* Deactive currently active theme(s) if new theme is not layerable */
       if (!theme.isLayerable()) {
         await sleep(10)
+
+        const activeThemes = this.preferences.getActiveThemes()
         for (const candidate of activeThemes) {
           if (candidate && !candidate.isLayerable()) {
-            await this.mutator.changeComponent(candidate, (mutator) => {
-              mutator.active = false
-            })
+            await this.preferences.removeActiveTheme(candidate)
           }
         }
       }
     }
-
-    void this.syncService.sync()
   }
 
   async toggleComponent(component: ComponentInterface): Promise<void> {
     this.log('Toggling component', component.uuid)
 
-    const latestItem = this.itemManager.findItem<ComponentInterface>(component.uuid)
-    if (!latestItem) {
-      return
+    if (this.preferences.isComponentActive(component)) {
+      await this.preferences.removeActiveComponent(component)
+    } else {
+      await this.preferences.addActiveComponent(component)
     }
-
-    await this.mutator.changeComponent(latestItem, (mutator) => {
-      mutator.active = !(mutator.getItem() as ComponentInterface).active
-    })
-
-    void this.syncService.sync()
-  }
-
-  isComponentActive(component: ComponentInterface): boolean {
-    return component.active
   }
 
   allComponentIframes(): HTMLIFrameElement[] {
@@ -696,51 +672,6 @@ export class SNComponentManager
   legacyGetDefaultEditor(): SNComponent | undefined {
     const editors = this.componentsForArea(ComponentArea.Editor)
     return editors.filter((e) => e.legacyIsDefaultEditor())[0]
-  }
-
-  permissionsStringForPermissions(permissions: ComponentPermission[], component: ComponentInterface): string {
-    if (permissions.length === 0) {
-      return '.'
-    }
-
-    let contentTypeStrings: string[] = []
-    let contextAreaStrings: string[] = []
-
-    permissions.forEach((permission) => {
-      switch (permission.name) {
-        case ComponentAction.StreamItems:
-          if (!permission.content_types) {
-            return
-          }
-          permission.content_types.forEach((contentType) => {
-            const desc = DisplayStringForContentType(contentType)
-            if (desc) {
-              contentTypeStrings.push(`${desc}s`)
-            } else {
-              contentTypeStrings.push(`items of type ${contentType}`)
-            }
-          })
-          break
-        case ComponentAction.StreamContextItem:
-          {
-            const componentAreaMapping = {
-              [ComponentArea.EditorStack]: 'working note',
-              [ComponentArea.Editor]: 'working note',
-              [ComponentArea.Themes]: 'Unknown',
-            }
-            contextAreaStrings.push(componentAreaMapping[component.area])
-          }
-          break
-      }
-    })
-
-    contentTypeStrings = uniq(contentTypeStrings)
-    contextAreaStrings = uniq(contextAreaStrings)
-
-    if (contentTypeStrings.length === 0 && contextAreaStrings.length === 0) {
-      return '.'
-    }
-    return contentTypeStrings.concat(contextAreaStrings).join(', ') + '.'
   }
 
   doesEditorChangeRequireAlert(

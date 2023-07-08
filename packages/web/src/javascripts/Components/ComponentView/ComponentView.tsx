@@ -171,7 +171,7 @@ const ComponentView: FunctionComponent<Props> = ({ onLoad, componentViewer, requ
     const unregisterDesktopObserver = application
       .getDesktopService()
       ?.registerUpdateObserver((updatedComponent: ComponentInterface) => {
-        if (isNonNativeComponent(component) && updatedComponent.uuid === component.uuid && updatedComponent.active) {
+        if (isNonNativeComponent(component) && updatedComponent.uuid === component.uuid) {
           requestReload?.(componentViewer)
         }
       })

@@ -9,6 +9,7 @@ import {
   TagMutator,
   TagPreferences,
   VectorIconNameOrEmoji,
+  PrefDefaults,
 } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useEffect, useState } from 'react'
@@ -16,7 +17,6 @@ import Icon from '@/Components/Icon/Icon'
 import Menu from '@/Components/Menu/Menu'
 import MenuItemSeparator from '@/Components/Menu/MenuItemSeparator'
 import { DisplayOptionsMenuProps } from './DisplayOptionsMenuProps'
-import { PrefDefaults } from '@/Constants/PrefDefaults'
 import NewNotePreferences from './NewNotePreferences'
 import { PreferenceMode } from './PreferenceMode'
 import { classNames } from '@standardnotes/utils'

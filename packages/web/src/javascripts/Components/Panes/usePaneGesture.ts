@@ -2,8 +2,7 @@ import { useStateRef } from '@/Hooks/useStateRef'
 import { useEffect, useRef, useState } from 'react'
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 import { useApplication } from '../ApplicationProvider'
-import { ApplicationEvent, PrefKey } from '@standardnotes/snjs'
-import { PrefDefaults } from '@/Constants/PrefDefaults'
+import { ApplicationEvent, PrefKey, PrefDefaults } from '@standardnotes/snjs'
 
 function getScrollParent(node: HTMLElement | null): HTMLElement | null {
   if (!node) {

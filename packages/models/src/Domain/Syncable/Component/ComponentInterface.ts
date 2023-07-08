@@ -1,4 +1,10 @@
-import { ComponentArea, ComponentPermission, FeatureIdentifier, NoteType } from '@standardnotes/features'
+import {
+  ComponentArea,
+  ComponentPermission,
+  FeatureIdentifier,
+  NoteType,
+  ThirdPartyFeatureDescription,
+} from '@standardnotes/features'
 import { ComponentPackageInfo } from './PackageInfo'
 import { DecryptedItemInterface } from '../../Abstract/Item'
 import { ComponentContent } from './ComponentContent'
@@ -20,8 +26,6 @@ export interface ComponentInterface extends DecryptedItemInterface<ComponentCont
   area: ComponentArea
   permissions: ComponentPermission[]
   valid_until: Date
-  active: boolean
-  legacy_url?: string
   isMobileDefault: boolean
   isDeprecated: boolean
 
@@ -33,6 +37,16 @@ export interface ComponentInterface extends DecryptedItemInterface<ComponentCont
   get noteType(): NoteType
   get displayName(): string
   get deprecationMessage(): string | undefined
+  get thirdPartyPackageInfo(): ThirdPartyFeatureDescription
+
+  /**
+   * @deprecated
+   * Replaced with active preferences managed by preferences service.
+   */
+  legacyActive: boolean
+
+  /** @deprecated */
+  legacy_url?: string
 
   /** @deprecated */
   url?: string

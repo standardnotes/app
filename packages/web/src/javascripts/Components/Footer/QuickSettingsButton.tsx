@@ -29,7 +29,7 @@ const QuickSettingsButton = ({ application, isOpen, toggleMenu, quickSettingsMen
           .getDisplayableComponents()
           .find((theme) => theme.package_info.identifier === FeatureIdentifier.DarkTheme) as SNTheme | undefined
         if (darkTheme) {
-          void application.componentManager.toggleTheme(darkTheme.uuid)
+          void application.componentManager.toggleTheme(darkTheme)
         }
       },
     })

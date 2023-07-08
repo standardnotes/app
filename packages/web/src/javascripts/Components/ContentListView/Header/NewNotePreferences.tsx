@@ -7,10 +7,10 @@ import {
   isSmartView,
   isSystemView,
   SystemViewId,
+  PrefDefaults,
 } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { ChangeEventHandler, FunctionComponent, useCallback, useEffect, useRef, useState } from 'react'
-import { PrefDefaults } from '@/Constants/PrefDefaults'
 import Dropdown from '@/Components/Dropdown/Dropdown'
 import { DropdownItem } from '@/Components/Dropdown/DropdownItem'
 import { WebApplication } from '@/Application/WebApplication'

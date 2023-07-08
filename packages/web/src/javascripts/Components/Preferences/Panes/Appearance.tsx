@@ -13,6 +13,7 @@ import {
   FindNativeFeature,
   FeatureStatus,
   naturalSort,
+  PrefDefaults,
 } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useEffect, useState } from 'react'
@@ -21,7 +22,6 @@ import PreferencesPane from '../PreferencesComponents/PreferencesPane'
 import PreferencesGroup from '../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../PreferencesComponents/PreferencesSegment'
 import { PremiumFeatureIconName } from '@/Components/Icon/PremiumFeatureIcon'
-import { PrefDefaults } from '@/Constants/PrefDefaults'
 import EditorAppearance from './Appearance/EditorAppearance'
 
 type Props = {

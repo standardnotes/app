@@ -43,9 +43,6 @@ import {
   isNonNativeComponent,
   isNativeComponent,
 } from '@standardnotes/models'
-import find from 'lodash/find'
-import uniq from 'lodash/uniq'
-import remove from 'lodash/remove'
 import { SNSyncService } from '@Lib/Services/Sync/SyncService'
 import { environmentToString, platformToString } from '@Lib/Application/Platforms'
 import {
@@ -72,6 +69,7 @@ import {
   Uuids,
   sureSearchArray,
   isNotUndefined,
+  uniqueArray,
 } from '@standardnotes/utils'
 
 export class ComponentViewer implements ComponentViewerInterface {
@@ -289,10 +287,12 @@ export class ComponentViewer implements ComponentViewerInterface {
     }
 
     if (this.streamContextItemOriginalMessage) {
-      if (isComponentViewerItemReadonlyItem(this.options.item)) {
+      const optionsItem = this.options.item
+      if (isComponentViewerItemReadonlyItem(optionsItem)) {
         return
       }
-      const matchingItem = find(nondeletedItems, { uuid: this.options.item.uuid })
+
+      const matchingItem = nondeletedItems.find((item) => item.uuid === optionsItem.uuid)
       if (matchingItem) {
         this.sendContextItemThroughBridge(matchingItem, source)
       }
@@ -682,7 +682,7 @@ export class ComponentViewer implements ComponentViewerInterface {
 
     /* Check to see if additional privileges are required */
     if (pendingResponseItems.length > 0) {
-      const requiredContentTypes = uniq(
+      const requiredContentTypes = uniqueArray(
         pendingResponseItems.map((item) => {
           return item.content_type
         }),
@@ -713,7 +713,9 @@ export class ComponentViewer implements ComponentViewerInterface {
           }
 
           if (item.locked) {
-            remove(responsePayloads, { uuid: item.uuid })
+            responsePayloads = responsePayloads.filter((responseItem) => {
+              return responseItem.uuid !== item.uuid
+            })
             lockedCount++
             if (item.content_type === ContentType.Note) {
               lockedNoteCount++
@@ -802,7 +804,7 @@ export class ComponentViewer implements ComponentViewerInterface {
   handleCreateItemsMessage(message: ComponentMessage): void {
     let responseItems = (message.data.item ? [message.data.item] : message.data.items) as IncomingComponentItemPayload[]
 
-    const uniqueContentTypes = uniq(
+    const uniqueContentTypes = uniqueArray(
       responseItems.map((item) => {
         return item.content_type
       }),
@@ -873,7 +875,7 @@ export class ComponentViewer implements ComponentViewerInterface {
     const data = message.data as DeleteItemsMessageData
     const items = data.items.filter((item) => AllowedBatchContentTypes.includes(item.content_type))
 
-    const requiredContentTypes = uniq(items.map((item) => item.content_type)).sort() as ContentType[]
+    const requiredContentTypes = uniqueArray(items.map((item) => item.content_type)).sort() as ContentType[]
 
     const requiredPermissions: ComponentPermission[] = [
       {

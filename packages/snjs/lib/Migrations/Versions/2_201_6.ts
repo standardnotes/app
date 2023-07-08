@@ -2,7 +2,7 @@ import { ApplicationStage } from '@standardnotes/services'
 import { Migration } from '@Lib/Migrations/Migration'
 import { ContentType } from '@standardnotes/common'
 import { AllComponentPreferences, ComponentInterface, PrefKey, isNativeComponent } from '@standardnotes/models'
-import { Copy } from '@standardnotes/utils'
+import { Copy, Uuids } from '@standardnotes/utils'
 
 export class Migration2_201_6 extends Migration {
   static override version(): string {
@@ -12,6 +12,7 @@ export class Migration2_201_6 extends Migration {
   protected registerStageHandlers(): void {
     this.registerStageHandler(ApplicationStage.FullSyncCompleted_13, async () => {
       await this.migrateComponentDataToUserPreferences()
+      await this.migrateActiveComponentsToUserPreferences()
       this.markDone()
     })
   }
@@ -48,5 +49,22 @@ export class Migration2_201_6 extends Migration {
     }
 
     await this.services.preferences.setValue(PrefKey.ComponentPreferences, mutablePreferencesValue)
+  }
+
+  private async migrateActiveComponentsToUserPreferences(): Promise<void> {
+    const allActiveitems = [
+      ...this.services.itemManager.getItems<ComponentInterface>(ContentType.Component),
+      ...this.services.itemManager.getItems<ComponentInterface>(ContentType.Theme),
+    ].filter((component) => component.legacyActive)
+
+    if (allActiveitems.length === 0) {
+      return
+    }
+
+    const activeThemes = allActiveitems.filter((component) => component.isTheme())
+    const activeComponents = allActiveitems.filter((component) => !component.isTheme())
+
+    await this.services.preferences.setValue(PrefKey.ActiveThemes, Uuids(activeThemes))
+    await this.services.preferences.setValue(PrefKey.ActiveComponents, Uuids(activeComponents))
   }
 }

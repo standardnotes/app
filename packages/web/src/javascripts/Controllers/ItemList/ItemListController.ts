@@ -22,6 +22,7 @@ import {
   isSystemView,
   NotesAndFilesDisplayControllerOptions,
   InternalEventBusInterface,
+  PrefDefaults,
 } from '@standardnotes/snjs'
 import { action, computed, makeObservable, observable, reaction, runInAction } from 'mobx'
 import { WebApplication } from '../../Application/WebApplication'
@@ -32,7 +33,6 @@ import { SearchOptionsController } from '../SearchOptionsController'
 import { SelectedItemsController } from '../SelectedItemsController'
 import { NotesController } from '../NotesController/NotesController'
 import { formatDateAndTimeForNote } from '@/Utils/DateUtils'
-import { PrefDefaults } from '@/Constants/PrefDefaults'
 
 import dayjs from 'dayjs'
 import dayjsAdvancedFormat from 'dayjs/plugin/advancedFormat'

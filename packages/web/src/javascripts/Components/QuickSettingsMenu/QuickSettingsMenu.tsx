@@ -1,5 +1,13 @@
 import { WebApplication } from '@/Application/WebApplication'
-import { ComponentArea, ContentType, FeatureIdentifier, GetFeatures, SNComponent } from '@standardnotes/snjs'
+import {
+  ComponentArea,
+  ComponentInterface,
+  ContentType,
+  FeatureIdentifier,
+  GetFeatures,
+  SNComponent,
+  SNTheme,
+} from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useEffect, useRef, useState } from 'react'
 import Icon from '@/Components/Icon/Icon'
@@ -25,7 +33,9 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, quickSet
   const [themes, setThemes] = useState<ThemeItem[]>([])
   const [toggleableComponents, setToggleableComponents] = useState<SNComponent[]>([])
 
-  const defaultThemeOn = !themes.map((item) => item?.component).find((theme) => theme?.active && !theme.isLayerable())
+  const activeThemes = application.preferences.getActiveThemes()
+  const hasNonLayerableActiveTheme = activeThemes.find((theme) => !theme.isLayerable())
+  const defaultThemeOn = !hasNonLayerableActiveTheme
 
   const prefsButtonRef = useRef<HTMLButtonElement>(null)
   const defaultThemeButtonRef = useRef<HTMLButtonElement>(null)
@@ -100,9 +110,9 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, quickSet
   }, [])
 
   const toggleComponent = useCallback(
-    (component: SNComponent) => {
+    (component: ComponentInterface) => {
       if (component.isTheme()) {
-        application.componentManager.toggleTheme(component.uuid).catch(console.error)
+        application.componentManager.toggleTheme(component as SNTheme).catch(console.error)
       } else {
         application.componentManager.toggleComponent(component).catch(console.error)
       }
@@ -111,11 +121,11 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, quickSet
   )
 
   const deactivateAnyNonLayerableTheme = useCallback(() => {
-    const activeTheme = themes.map((item) => item.component).find((theme) => theme?.active && !theme.isLayerable())
-    if (activeTheme) {
-      application.componentManager.toggleTheme(activeTheme.uuid).catch(console.error)
+    const nonLayerableActiveTheme = application.preferences.getActiveThemes().find((theme) => !theme.isLayerable())
+    if (nonLayerableActiveTheme) {
+      void application.componentManager.toggleTheme(nonLayerableActiveTheme)
     }
-  }, [application, themes])
+  }, [application])
 
   const toggleDefaultTheme = useCallback(() => {
     deactivateAnyNonLayerableTheme()
@@ -131,7 +141,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, quickSet
               onChange={() => {
                 toggleComponent(component)
               }}
-              checked={component.active}
+              checked={application.preferences.isComponentActive(component)}
               key={component.uuid}
             >
               <Icon type="window" className="mr-2 text-neutral" />

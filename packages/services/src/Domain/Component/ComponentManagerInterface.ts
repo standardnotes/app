@@ -6,6 +6,7 @@ import {
   ComponentOrNativeFeature,
   PermissionDialog,
   SNNote,
+  SNTheme,
 } from '@standardnotes/models'
 
 import { DesktopManagerInterface } from '../Device/DesktopManagerInterface'
@@ -31,6 +32,7 @@ export interface ComponentManagerInterface {
   presentPermissionsDialog(_dialog: PermissionDialog): void
   legacyGetDefaultEditor(): ComponentInterface | undefined
   componentWithIdentifier(identifier: FeatureIdentifier | string): ComponentOrNativeFeature | undefined
-  toggleTheme(uuid: string): Promise<void>
+
+  toggleTheme(theme: SNTheme): Promise<void>
   toggleComponent(component: ComponentInterface): Promise<void>
 }

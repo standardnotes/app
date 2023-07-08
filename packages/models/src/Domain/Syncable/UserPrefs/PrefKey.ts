@@ -44,6 +44,8 @@ export enum PrefKey {
   AuthenticatorNames = 'authenticatorNames',
   PaneGesturesEnabled = 'paneGesturesEnabled',
   ComponentPreferences = 'componentPreferences',
+  ActiveThemes = 'activeThemes',
+  ActiveComponents = 'activeComponents',
 }
 
 export type PrefValue = {
@@ -82,4 +84,6 @@ export type PrefValue = {
   [PrefKey.AuthenticatorNames]: string
   [PrefKey.PaneGesturesEnabled]: boolean
   [PrefKey.ComponentPreferences]: AllComponentPreferences
+  [PrefKey.ActiveThemes]: string[]
+  [PrefKey.ActiveComponents]: string[]
 }

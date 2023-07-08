@@ -8,7 +8,7 @@ import {
   FillItemContentSpecialized,
 } from '@standardnotes/models'
 import { AlertService, API_MESSAGE_FAILED_DOWNLOADING_EXTENSION, ItemManagerInterface } from '@standardnotes/services'
-import { isString } from 'lodash'
+import { isString } from '@standardnotes/utils'
 
 export class DownloadRemoteThirdPartyFeatureUseCase {
   constructor(private api: SNApiService, private items: ItemManagerInterface, private alerts: AlertService) {}

@@ -35,10 +35,10 @@ const ThemesMenuButton: FunctionComponent<Props> = ({ application, item }) => {
   const toggleTheme = useCallback(() => {
     if (item.component && canActivateTheme) {
       const isThemeLayerable = item.component.isLayerable()
-      const themeIsLayerableOrNotActive = isThemeLayerable || !item.component.active
+      const themeIsLayerableOrNotActive = isThemeLayerable || !application.preferences.isThemeActive(item.component)
 
       if (themeIsLayerableOrNotActive) {
-        application.componentManager.toggleTheme(item.component.uuid).catch(console.error)
+        application.componentManager.toggleTheme(item.component).catch(console.error)
       }
     } else {
       premiumModal.activate(`${item.name} theme`)
@@ -66,16 +66,18 @@ const ThemesMenuButton: FunctionComponent<Props> = ({ application, item }) => {
     return null
   }
 
+  const themeActive = item.component ? application.preferences.isThemeActive(item.component) : false
+
   return item.component?.isLayerable() ? (
-    <MenuSwitchButtonItem checked={item.component.active} onChange={() => toggleTheme()}>
+    <MenuSwitchButtonItem checked={themeActive} onChange={() => toggleTheme()}>
       {!canActivateTheme && (
         <Icon type={PremiumFeatureIconName} className={classNames(PremiumFeatureIconClass, 'mr-2')} />
       )}
       {item.name}
     </MenuSwitchButtonItem>
   ) : (
-    <MenuRadioButtonItem checked={Boolean(item.component?.active)} onClick={onClick}>
-      <span className={classNames('mr-auto', item.component?.active ? 'font-semibold' : undefined)}>{item.name}</span>
+    <MenuRadioButtonItem checked={themeActive} onClick={onClick}>
+      <span className={classNames('mr-auto', themeActive ? 'font-semibold' : undefined)}>{item.name}</span>
       {darkThemeShortcut && <KeyboardShortcutIndicator className="mr-2" shortcut={darkThemeShortcut} />}
       {item.component && canActivateTheme ? (
         <div

@@ -407,6 +407,10 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return this.sharedVaultService
   }
 
+  public get preferences(): ExternalServices.PreferenceServiceInterface {
+    return this.preferencesService
+  }
+
   public computePrivateUsername(username: string): Promise<string | undefined> {
     return ComputePrivateUsername(this.options.crypto, username)
   }

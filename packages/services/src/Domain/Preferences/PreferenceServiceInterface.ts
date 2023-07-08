@@ -1,7 +1,12 @@
-import { ComponentOrNativeFeature, ComponentPreferencesEntry, PrefKey, PrefValue } from '@standardnotes/models'
+import {
+  ComponentInterface,
+  ComponentOrNativeFeature,
+  ComponentPreferencesEntry,
+  PrefKey,
+  PrefValue,
+  SNTheme,
+} from '@standardnotes/models'
 import { AbstractService } from '../Service/AbstractService'
-
-/* istanbul ignore file */
 
 export enum PreferencesServiceEvent {
   PreferencesChanged = 'PreferencesChanged',
@@ -15,4 +20,16 @@ export interface PreferenceServiceInterface extends AbstractService<PreferencesS
 
   setComponentPreferences(component: ComponentOrNativeFeature, preferences: ComponentPreferencesEntry): Promise<void>
   getComponentPreferences(component: ComponentOrNativeFeature): ComponentPreferencesEntry | undefined
+
+  addActiveTheme(theme: SNTheme): Promise<void>
+  replaceActiveTheme(theme: SNTheme): Promise<void>
+  removeActiveTheme(theme: SNTheme): Promise<void>
+  getActiveThemes(): SNTheme[]
+  getActiveThemesUuids(): string[]
+  isThemeActive(theme: SNTheme): boolean
+
+  addActiveComponent(component: ComponentInterface): Promise<void>
+  removeActiveComponent(component: ComponentInterface): Promise<void>
+  getActiveComponents(): ComponentInterface[]
+  isComponentActive(component: ComponentInterface): boolean
 }

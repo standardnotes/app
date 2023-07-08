@@ -5,10 +5,6 @@ import { ComponentContent } from './ComponentContent'
 import { DecryptedItemMutator } from '../../Abstract/Item/Mutator/DecryptedItemMutator'
 
 export class ComponentMutator extends DecryptedItemMutator<ComponentContent> {
-  set active(active: boolean) {
-    this.mutableContent.active = active
-  }
-
   set isMobileDefault(isMobileDefault: boolean) {
     this.mutableContent.isMobileDefault = isMobileDefault
   }

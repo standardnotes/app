@@ -1,8 +1,7 @@
 import { ElementIds } from '@/Constants/ElementIDs'
-import { PrefDefaults } from '@/Constants/PrefDefaults'
 import { classNames } from '@standardnotes/utils'
 import { ReactNode, useCallback, useState } from 'react'
-import { IconType, PrefKey } from '@standardnotes/snjs'
+import { IconType, PrefKey, PrefDefaults } from '@standardnotes/snjs'
 import Icon from '../Icon/Icon'
 import { useApplication } from '../ApplicationProvider'
 

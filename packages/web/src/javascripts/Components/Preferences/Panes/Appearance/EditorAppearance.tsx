@@ -3,8 +3,14 @@ import Dropdown from '@/Components/Dropdown/Dropdown'
 import Icon from '@/Components/Icon/Icon'
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import Switch from '@/Components/Switch/Switch'
-import { PrefDefaults } from '@/Constants/PrefDefaults'
-import { ApplicationEvent, EditorFontSize, EditorLineHeight, EditorLineWidth, PrefKey } from '@standardnotes/snjs'
+import {
+  ApplicationEvent,
+  EditorFontSize,
+  EditorLineHeight,
+  EditorLineWidth,
+  PrefKey,
+  PrefDefaults,
+} from '@standardnotes/snjs'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Subtitle, Title, Text } from '../../PreferencesComponents/Content'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'

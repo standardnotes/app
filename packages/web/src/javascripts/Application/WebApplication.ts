@@ -24,6 +24,7 @@ import {
   BackupServiceInterface,
   InternalFeatureService,
   InternalFeatureServiceInterface,
+  PrefDefaults,
 } from '@standardnotes/snjs'
 import { makeObservable, observable } from 'mobx'
 import { startAuthentication, startRegistration } from '@simplewebauthn/browser'
@@ -46,7 +47,6 @@ import {
 } from '@standardnotes/ui-services'
 import { MobileWebReceiver, NativeMobileEventListener } from '../NativeMobileWeb/MobileWebReceiver'
 import { AndroidBackHandler } from '@/NativeMobileWeb/AndroidBackHandler'
-import { PrefDefaults } from '@/Constants/PrefDefaults'
 import { setCustomViewportHeight } from '@/setViewportHeightWithFallback'
 import { WebServices } from './WebServices'
 import { FeatureName } from '@/Controllers/FeatureName'
@@ -118,7 +118,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     this.webServices = {} as WebServices
     this.webServices.keyboardService = new KeyboardService(platform, this.environment)
     this.webServices.archiveService = new ArchiveManager(this)
-    this.webServices.themeService = new ThemeManager(this, this.internalEventBus)
+    this.webServices.themeService = new ThemeManager(this, this.preferences, this.internalEventBus)
     this.webServices.autolockService = this.isNativeMobileWeb()
       ? undefined
       : new AutolockService(this, this.internalEventBus)

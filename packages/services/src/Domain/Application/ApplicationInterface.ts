@@ -1,3 +1,4 @@
+import { PreferenceServiceInterface } from './../Preferences/PreferenceServiceInterface'
 import { AsymmetricMessageServiceInterface } from './../AsymmetricMessage/AsymmetricMessageServiceInterface'
 import { SyncOptions } from './../Sync/SyncOptions'
 import { ImportDataReturnType } from './../Mutator/ImportDataUseCase'
@@ -105,6 +106,7 @@ export interface ApplicationInterface {
   get challenges(): ChallengeServiceInterface
   get alerts(): AlertService
   get asymmetric(): AsymmetricMessageServiceInterface
+  get preferences(): PreferenceServiceInterface
 
   readonly identifier: ApplicationIdentifier
   readonly platform: Platform

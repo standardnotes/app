@@ -1,4 +1,4 @@
-import { PrefKey, Platform } from '@standardnotes/snjs'
+import { PrefKey, Platform, PrefDefaults } from '@standardnotes/snjs'
 import { Subtitle, Text, Title } from '@/Components/Preferences/PreferencesComponents/Content'
 import { WebApplication } from '@/Application/WebApplication'
 import { FunctionComponent, useState } from 'react'
@@ -6,7 +6,6 @@ import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import Switch from '@/Components/Switch/Switch'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
-import { PrefDefaults } from '@/Constants/PrefDefaults'
 
 type Props = {
   application: WebApplication

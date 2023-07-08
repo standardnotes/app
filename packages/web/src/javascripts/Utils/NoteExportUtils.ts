@@ -1,6 +1,5 @@
 import { HeadlessSuperConverter } from '@/Components/SuperEditor/Tools/HeadlessSuperConverter'
-import { PrefDefaults } from '@/Constants/PrefDefaults'
-import { NoteType, PrefKey, SNNote, getComponentOrNativeFeatureFileType } from '@standardnotes/snjs'
+import { NoteType, PrefKey, SNNote, getComponentOrNativeFeatureFileType, PrefDefaults } from '@standardnotes/snjs'
 import { WebApplicationInterface } from '@standardnotes/ui-services'
 
 export const getNoteFormat = (application: WebApplicationInterface, note: SNNote) => {

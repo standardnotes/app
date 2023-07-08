@@ -47,7 +47,7 @@ export class SNComponent extends DecryptedItem<ComponentContent> implements Comp
   public readonly area: ComponentArea
   public readonly permissions: ComponentPermission[] = []
   public readonly valid_until: Date
-  public readonly active: boolean
+  public readonly legacyActive: boolean
   public readonly legacy_url?: string
   public readonly isMobileDefault: boolean
 
@@ -69,7 +69,6 @@ export class SNComponent extends DecryptedItem<ComponentContent> implements Comp
     this.area = payload.content.area
     this.package_info = payload.content.package_info || {}
     this.permissions = payload.content.permissions || []
-    this.active = payload.content.active ?? false
     this.autoupdateDisabled = payload.content.autoupdateDisabled ?? false
     this.disassociatedItemIds = payload.content.disassociatedItemIds || []
     this.associatedItemIds = payload.content.associatedItemIds || []
@@ -85,6 +84,8 @@ export class SNComponent extends DecryptedItem<ComponentContent> implements Comp
     this.legacy_url = !payload.content.hosted_url ? payload.content.url : undefined
 
     this.legacyComponentData = this.payload.content.componentData || {}
+
+    this.legacyActive = payload.content.active ?? false
   }
 
   /** Do not duplicate components under most circumstances. Always keep original */

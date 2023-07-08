@@ -84,7 +84,6 @@ import { isUrlFirstParty, TRUSTED_FEATURE_HOSTS } from '@Lib/Hosts'
 import { Paths } from './Paths'
 import { DiskStorageService } from '../Storage/DiskStorageService'
 import { UuidString } from '../../Types/UuidString'
-import merge from 'lodash/merge'
 import { SettingsServerInterface } from '../Settings/SettingsServerInterface'
 import { Strings } from '@Lib/Strings'
 
@@ -199,9 +198,12 @@ export class SNApiService
   }
 
   private params(inParams: Record<string | number | symbol, unknown>): HttpRequestParams {
-    const params = merge(inParams, {
-      [ApiEndpointParam.ApiVersion]: this.apiVersion,
-    })
+    const params = {
+      ...inParams,
+      ...{
+        [ApiEndpointParam.ApiVersion]: this.apiVersion,
+      },
+    }
     return params
   }
 

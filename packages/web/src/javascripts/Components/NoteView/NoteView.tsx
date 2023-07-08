@@ -5,7 +5,6 @@ import NotesOptionsPanel from '@/Components/NotesOptions/NotesOptionsPanel'
 import PinNoteButton from '@/Components/PinNoteButton/PinNoteButton'
 import ProtectedItemOverlay from '@/Components/ProtectedItemOverlay/ProtectedItemOverlay'
 import { ElementIds } from '@/Constants/ElementIDs'
-import { PrefDefaults } from '@/Constants/PrefDefaults'
 import { StringDeleteNote, STRING_DELETE_LOCKED_ATTEMPT, STRING_DELETE_PLACEHOLDER_ATTEMPT } from '@/Constants/Strings'
 import { log, LoggingDomain } from '@/Logging'
 import { debounce, isDesktopApplication, isMobileScreen } from '@/Utils'
@@ -23,6 +22,7 @@ import {
   isPayloadSourceRetrieved,
   NoteType,
   PayloadEmitSource,
+  PrefDefaults,
   PrefKey,
   ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction,
   SNNote,
@@ -741,7 +741,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
     const stackComponents = sortAlphabetically(
       this.application.componentManager
         .componentsForArea(ComponentArea.EditorStack)
-        .filter((component) => component.active),
+        .filter((component) => this.application.preferences.isComponentActive(component)),
     )
     const enabledComponents = stackComponents.filter((component) => {
       return component.isExplicitlyEnabledForItem(this.note.uuid)
@@ -1014,6 +1014,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
             >
               <div className="flex h-full">
                 {this.state.availableStackComponents.map((component) => {
+                  const active = this.application.preferences.isComponentActive(component)
                   return (
                     <div
                       key={component.uuid}
@@ -1023,7 +1024,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
                       className="flex flex-grow cursor-pointer items-center justify-center [&:not(:first-child)]:ml-3"
                     >
                       <div className="flex h-full items-center [&:not(:first-child)]:ml-2">
-                        {this.stackComponentExpanded(component) && component.active && <IndicatorCircle style="info" />}
+                        {this.stackComponentExpanded(component) && active && <IndicatorCircle style="info" />}
                         {!this.stackComponentExpanded(component) && <IndicatorCircle style="neutral" />}
                       </div>
                       <div className="flex h-full items-center [&:not(:first-child)]:ml-2">
