@@ -118,7 +118,12 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     this.webServices = {} as WebServices
     this.webServices.keyboardService = new KeyboardService(platform, this.environment)
     this.webServices.archiveService = new ArchiveManager(this)
-    this.webServices.themeService = new ThemeManager(this, this.preferences, this.internalEventBus)
+    this.webServices.themeService = new ThemeManager(
+      this,
+      this.preferences,
+      this.componentManager,
+      this.internalEventBus,
+    )
     this.webServices.autolockService = this.isNativeMobileWeb()
       ? undefined
       : new AutolockService(this, this.internalEventBus)

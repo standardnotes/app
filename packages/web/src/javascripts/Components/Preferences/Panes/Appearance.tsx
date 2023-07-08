@@ -4,17 +4,7 @@ import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import Switch from '@/Components/Switch/Switch'
 import { WebApplication } from '@/Application/WebApplication'
-import {
-  ContentType,
-  FeatureIdentifier,
-  PrefKey,
-  GetFeatures,
-  FindNativeFeature,
-  FeatureStatus,
-  naturalSort,
-  PrefDefaults,
-  ThemeInterface,
-} from '@standardnotes/snjs'
+import { FeatureIdentifier, PrefKey, FeatureStatus, naturalSort, PrefDefaults } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useEffect, useState } from 'react'
 import { Subtitle, Title, Text } from '@/Components/Preferences/PreferencesComponents/Content'
@@ -45,36 +35,38 @@ const Appearance: FunctionComponent<Props> = ({ application }) => {
 
   useEffect(() => {
     const usecase = new GetAllThemesUseCase(application.items)
-    const themesAsItems: DropdownItem[] = application.items
-      .getDisplayableComponents()
-      .filter((component) => component.isTheme() && !(component as ThemeInterface).layerable)
-      .filter((theme) => !FindNativeFeature(theme.identifier))
-      .map((theme) => {
-        return {
-          label: theme.name,
-          value: theme.identifier as string,
-        }
-      })
+    const { thirdParty, native } = usecase.execute()
 
-    GetFeatures()
-      .filter((feature) => feature.content_type === ContentType.Theme && !feature.layerable)
-      .forEach((theme) => {
-        themesAsItems.push({
+    const dropdownItems: DropdownItem[] = []
+
+    dropdownItems.push({
+      label: 'Default',
+      value: 'Default',
+    })
+
+    dropdownItems.push(
+      ...native.map((theme) => {
+        return {
           label: theme.name as string,
           value: theme.identifier,
           icon:
             application.features.getFeatureStatus(theme.identifier) !== FeatureStatus.Entitled
               ? PremiumFeatureIconName
               : undefined,
-        })
-      })
+        }
+      }),
+    )
 
-    themesAsItems.unshift({
-      label: 'Default',
-      value: 'Default',
-    })
+    dropdownItems.push(
+      ...thirdParty.map((theme) => {
+        return {
+          label: theme.name,
+          value: theme.identifier as string,
+        }
+      }),
+    )
 
-    setThemeItems(naturalSort(themesAsItems, 'label'))
+    setThemeItems(naturalSort(dropdownItems, 'label'))
   }, [application])
 
   const toggleUseDeviceSettings = () => {

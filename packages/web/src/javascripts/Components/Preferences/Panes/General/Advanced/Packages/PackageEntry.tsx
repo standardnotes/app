@@ -1,5 +1,5 @@
 import { FunctionComponent, useState } from 'react'
-import { ComponentMutator, SNComponent } from '@standardnotes/snjs'
+import { ComponentInterface, ComponentMutator, SNComponent } from '@standardnotes/snjs'
 import { SubtitleLight } from '@/Components/Preferences/PreferencesComponents/Content'
 import Switch from '@/Components/Switch/Switch'
 import Button from '@/Components/Button/Button'
@@ -39,7 +39,7 @@ const PackageEntry: FunctionComponent<PackageEntryProps> = ({ application, exten
         mutator.offlineOnly = newOfflineOnly
       })
       .then((item) => {
-        const component = item as SNComponent
+        const component = item as ComponentInterface
         setOfflineOnly(component.offlineOnly)
       })
       .catch((e) => {
@@ -54,7 +54,7 @@ const PackageEntry: FunctionComponent<PackageEntryProps> = ({ application, exten
         mutator.name = newName
       })
       .then((item) => {
-        const component = item as SNComponent
+        const component = item as ComponentInterface
         setExtensionName(component.name)
       })
       .catch(console.error)

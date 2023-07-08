@@ -15,7 +15,6 @@ import {
   ComponentEventObserver,
   ComponentViewerEvent,
   ComponentMessage,
-  SNComponent,
   PrefKey,
   NoteContent,
   MutationType,
@@ -42,6 +41,7 @@ import {
   ComponentOrNativeFeature,
   isNonNativeComponent,
   isNativeComponent,
+  isComponent,
 } from '@standardnotes/models'
 import { SNSyncService } from '@Lib/Services/Sync/SyncService'
 import { environmentToString, platformToString } from '@Lib/Application/Platforms'
@@ -51,10 +51,10 @@ import {
   AllowedBatchContentTypes,
   DeleteItemsMessageData,
   MessageReplyData,
-  ComponentManagerFunctions,
   ReadwriteActions,
   Writeable,
 } from './Types'
+import { ComponentViewerRequiresComponentManagerFunctions } from './ComponentViewerRequiresComponentManagerFunctions'
 import { ComponentAction, ComponentPermission, ComponentArea } from '@standardnotes/features'
 import { ItemManager } from '@Lib/Services/Items/ItemManager'
 import { ContentType } from '@standardnotes/common'
@@ -109,7 +109,7 @@ export class ComponentViewer implements ComponentViewerInterface {
     private config: {
       environment: Environment
       platform: Platform
-      componentManagerFunctions: ComponentManagerFunctions
+      componentManagerFunctions: ComponentViewerRequiresComponentManagerFunctions
     },
   ) {
     if (isComponentViewerItemReadonlyItem(options.item)) {
@@ -256,8 +256,12 @@ export class ComponentViewer implements ComponentViewerInterface {
 
   private updateOurComponentRefFromChangedItems(items: DecryptedItemInterface[]): void {
     const updatedComponent = items.find((item) => item.uuid === this.componentUniqueIdentifier)
-    if (updatedComponent && isDecryptedItem(updatedComponent)) {
-      ;(this.componentOrFeature as Writeable<SNComponent>) = updatedComponent as SNComponent
+    if (!updatedComponent) {
+      return
+    }
+
+    if (isComponent(updatedComponent) && isNonNativeComponent(updatedComponent)) {
+      ;(this.componentOrFeature as Writeable<ComponentOrNativeFeature>) = updatedComponent
     }
   }
 
@@ -516,7 +520,7 @@ export class ComponentViewer implements ComponentViewerInterface {
     this.window = window
     this.sessionKey = UuidGenerator.GenerateUuid()
 
-    const componentData = this.services.preferences.getComponentPreferences(this.componentOrFeature) ?? {}
+    const componentData = this.config.componentManagerFunctions.getComponentPreferences(this.componentOrFeature) ?? {}
 
     this.sendMessage({
       action: ComponentAction.ComponentRegistered,
@@ -931,7 +935,7 @@ export class ComponentViewer implements ComponentViewerInterface {
           return
         }
 
-        await this.services.preferences.setComponentPreferences(this.componentOrFeature, newPreferences)
+        await this.config.componentManagerFunctions.setComponentPreferences(this.componentOrFeature, newPreferences)
       },
     )
   }

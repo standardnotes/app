@@ -9,16 +9,11 @@ import { ComponentMessage, MessageData, OutgoingItemMessagePayload } from '@stan
 import { UuidString } from '@Lib/Types/UuidString'
 import { ContentType } from '@standardnotes/common'
 
-type RunWithPermissionsCallback = (
+export type RunWithPermissionsCallback = (
   componentUuid: UuidString,
   requiredPermissions: ComponentPermission[],
   runFunction: () => void,
 ) => void
-
-export type ComponentManagerFunctions = {
-  runWithPermissions: RunWithPermissionsCallback
-  urlsForActiveThemes: () => string[]
-}
 
 export const ReadwriteActions = [
   ComponentAction.SaveItems,

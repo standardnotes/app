@@ -10,7 +10,7 @@ import { ThemeItem } from './ThemeItem'
 export class GetAllThemesUseCase {
   constructor(private readonly items: ItemManagerInterface) {}
 
-  execute(): ThemeItem[] {
+  execute(): { thirdParty: ThemeItem[]; native: ThemeItem[] } {
     const thirdPartyThemes = this.items
       .getDisplayableComponents()
       .filter((component) => component.isTheme())
@@ -33,6 +33,9 @@ export class GetAllThemesUseCase {
         }
       })
 
-    return [...thirdPartyThemes, ...nativeThemes]
+    return {
+      thirdParty: thirdPartyThemes,
+      native: nativeThemes,
+    }
   }
 }

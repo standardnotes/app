@@ -741,7 +741,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
     const stackComponents = sortAlphabetically(
       this.application.componentManager
         .componentsForArea(ComponentArea.EditorStack)
-        .filter((component) => this.application.preferences.isComponentActive(component)),
+        .filter((component) => this.application.componentManager.isComponentActive(component)),
     )
     const enabledComponents = stackComponents.filter((component) => {
       return component.isExplicitlyEnabledForItem(this.note.uuid)
@@ -1014,7 +1014,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
             >
               <div className="flex h-full">
                 {this.state.availableStackComponents.map((component) => {
-                  const active = this.application.preferences.isComponentActive(component)
+                  const active = this.application.componentManager.isComponentActive(component)
                   return (
                     <div
                       key={component.uuid}

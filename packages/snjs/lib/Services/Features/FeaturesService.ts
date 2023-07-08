@@ -17,12 +17,11 @@ import { UserRolesChangedEvent } from '@standardnotes/domain-events'
 import { ExperimentalFeatures, FindNativeFeature, FeatureIdentifier } from '@standardnotes/features'
 import {
   SNFeatureRepo,
-  SNComponent,
-  SNTheme,
   FeatureRepoContent,
   FillItemContent,
   PayloadEmitSource,
   ComponentInterface,
+  ThemeInterface,
 } from '@standardnotes/models'
 import {
   AbstractService,
@@ -174,7 +173,7 @@ export class SNFeaturesService
     void this.storage.setValue(StorageKey.ExperimentalFeatures, this.enabledExperimentalFeatures)
 
     const component = this.items
-      .getItems<SNComponent | SNTheme>([ContentType.Component, ContentType.Theme])
+      .getItems<ComponentInterface | ThemeInterface>([ContentType.Component, ContentType.Theme])
       .find((component) => component.identifier === identifier)
     if (!component) {
       return

@@ -3,10 +3,6 @@ import {
   ComponentInterface,
   ContentType,
   FeatureIdentifier,
-  GetFeatures,
-  SNComponent,
-  SNTheme,
-  ThemeFeatureDescription,
   ThemeInterface,
   getComponentOrNativeFeatureUniqueIdentifier,
 } from '@standardnotes/snjs'
@@ -36,7 +32,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ quickSettingsMenuCont
   const { focusModeEnabled, setFocusModeEnabled } = application.paneController
   const { closeQuickSettingsMenu } = quickSettingsMenuController
   const [thirdPartyThemes, setThirdPartyThemes] = useState<ThemeItem[]>([])
-  const [toggleableComponents, setToggleableComponents] = useState<SNComponent[]>([])
+  const [toggleableComponents, setToggleableComponents] = useState<ComponentInterface[]>([])
 
   const activeThemes = application.componentManager.getActiveThemes()
   const hasNonLayerableActiveTheme = activeThemes.find((theme) => !theme.layerable)
@@ -47,7 +43,8 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ quickSettingsMenuCont
 
   const reloadThemes = useCallback(() => {
     const usecase = new GetAllThemesUseCase(application.items)
-    setThirdPartyThemes(usecase.execute().sort(sortThemes))
+    const { thirdParty, native } = usecase.execute()
+    setThirdPartyThemes([...thirdParty, ...native].sort(sortThemes))
   }, [application])
 
   const reloadToggleableComponents = useCallback(() => {
@@ -96,7 +93,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ quickSettingsMenuCont
   const toggleComponent = useCallback(
     (component: ComponentInterface) => {
       if (component.isTheme()) {
-        application.componentManager.toggleTheme(component as SNTheme).catch(console.error)
+        application.componentManager.toggleTheme(component as ThemeInterface).catch(console.error)
       } else {
         application.componentManager.toggleComponent(component).catch(console.error)
       }

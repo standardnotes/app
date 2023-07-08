@@ -1,9 +1,12 @@
 import { dismissToast, ToastType, addTimedToast } from '@standardnotes/toast'
 import {
+  ComponentOrNativeTheme,
   CreateDecryptedLocalStorageContextPayload,
   LocalStorageDecryptedContextualPayload,
   PrefKey,
-  SNTheme,
+  ThemeInterface,
+  getComponentOrNativeFeatureFeatureDescription,
+  getComponentOrNativeFeatureUniqueIdentifier,
 } from '@standardnotes/models'
 import { removeFromArray } from '@standardnotes/utils'
 import {
@@ -13,6 +16,7 @@ import {
   FeatureStatus,
   PreferenceServiceInterface,
   PreferencesServiceEvent,
+  ComponentManagerInterface,
 } from '@standardnotes/services'
 import { FeatureIdentifier } from '@standardnotes/features'
 import { WebApplicationInterface } from '../WebApplication/WebApplicationInterface'
@@ -29,6 +33,7 @@ export class ThemeManager extends AbstractUIServicee {
   constructor(
     application: WebApplicationInterface,
     private preferences: PreferenceServiceInterface,
+    private components: ComponentManagerInterface,
     internalEventBus: InternalEventBusInterface,
   ) {
     super(application, internalEventBus)
@@ -41,10 +46,10 @@ export class ThemeManager extends AbstractUIServicee {
       this.eventDisposers.push(
         desktopService.registerUpdateObserver((component) => {
           if (component.isTheme()) {
-            if (this.preferences.isThemeActive(component as SNTheme)) {
+            if (this.components.isThemeActive(component as ThemeInterface)) {
               this.deactivateThemeInTheUI(component.uuid)
               setTimeout(() => {
-                this.activateTheme(component as SNTheme)
+                this.activateTheme(component as ThemeInterface)
                 this.cacheThemeState().catch(console.error)
               }, 10)
             }
@@ -57,7 +62,7 @@ export class ThemeManager extends AbstractUIServicee {
       this.preferences.addEventObserver(async (event) => {
         if (event === PreferencesServiceEvent.PreferencesChanged) {
           let hasChange = false
-          const activeThemes = this.preferences.getActiveThemesIdentifiers()
+          const activeThemes = this.components.getActiveThemesIdentifiers()
           for (const uiActiveTheme of this.themesActiveInTheUI) {
             if (!activeThemes.includes(uiActiveTheme)) {
               this.deactivateThemeInTheUI(uiActiveTheme)
@@ -67,7 +72,7 @@ export class ThemeManager extends AbstractUIServicee {
 
           for (const activeTheme of activeThemes) {
             if (!this.themesActiveInTheUI.includes(activeTheme)) {
-              const theme = this.application.items.findItem<SNTheme>(activeTheme)
+              const theme = this.application.items.findItem<ThemeInterface>(activeTheme)
               if (theme) {
                 this.activateTheme(theme)
                 hasChange = true
@@ -163,7 +168,7 @@ export class ThemeManager extends AbstractUIServicee {
     let hasChange = false
 
     for (const themeUuid of this.themesActiveInTheUI) {
-      const theme = this.application.items.findItem<SNTheme>(themeUuid)
+      const theme = this.application.items.findItem<ThemeInterface>(themeUuid)
 
       if (!theme) {
         this.deactivateThemeInTheUI(themeUuid)
@@ -179,10 +184,10 @@ export class ThemeManager extends AbstractUIServicee {
       }
     }
 
-    const activeThemes = this.preferences.getActiveThemes()
+    const activeThemes = this.components.getActiveThemes()
 
     for (const theme of activeThemes) {
-      if (!this.themesActiveInTheUI.includes(theme.uuid)) {
+      if (!this.themesActiveInTheUI.includes(getComponentOrNativeFeatureUniqueIdentifier(theme))) {
         this.activateTheme(theme)
         hasChange = true
       }
@@ -236,16 +241,16 @@ export class ThemeManager extends AbstractUIServicee {
 
     const themes = this.application.items
       .getDisplayableComponents()
-      .filter((component) => component.isTheme()) as SNTheme[]
+      .filter((component) => component.isTheme()) as ThemeInterface[]
 
-    const activeTheme = themes.find((theme) => this.preferences.isThemeActive(theme) && !theme.layerable)
+    const activeTheme = themes.find((theme) => this.components.isThemeActive(theme) && !theme.layerable)
     const activeThemeIdentifier = activeTheme ? activeTheme.identifier : DefaultThemeIdentifier
 
-    const themeIdentifier = this.application.getPreference(preference, preferenceDefault) as string
+    const themeIdentifier = this.preferences.getValue(preference, preferenceDefault)
 
     const toggleActiveTheme = () => {
       if (activeTheme) {
-        void this.application.componentManager.toggleTheme(activeTheme)
+        void this.components.toggleTheme(activeTheme)
       }
     }
 
@@ -254,8 +259,8 @@ export class ThemeManager extends AbstractUIServicee {
         toggleActiveTheme()
       } else {
         const theme = themes.find((theme) => theme.package_info.identifier === themeIdentifier)
-        if (theme && !this.preferences.isThemeActive(theme)) {
-          this.application.componentManager.toggleTheme(theme).catch(console.error)
+        if (theme && !this.components.isThemeActive(theme)) {
+          this.components.toggleTheme(theme).catch(console.error)
         }
       }
     }
@@ -268,7 +273,7 @@ export class ThemeManager extends AbstractUIServicee {
   }
 
   private async activateCachedThemes() {
-    const cachedThemes = await this.getCachedThemes()
+    const cachedThemes = this.getCachedThemes()
     for (const theme of cachedThemes) {
       this.activateTheme(theme, true)
     }
@@ -282,8 +287,8 @@ export class ThemeManager extends AbstractUIServicee {
     }
   }
 
-  private activateTheme(theme: SNTheme, skipEntitlementCheck = false) {
-    if (this.themesActiveInTheUI.find((uuid) => uuid === theme.uuid)) {
+  private activateTheme(theme: ComponentOrNativeTheme, skipEntitlementCheck = false) {
+    if (this.themesActiveInTheUI.find((uuid) => uuid === getComponentOrNativeFeatureUniqueIdentifier(theme))) {
       return
     }
 
@@ -299,22 +304,23 @@ export class ThemeManager extends AbstractUIServicee {
       return
     }
 
-    this.themesActiveInTheUI.push(theme.uuid)
+    this.themesActiveInTheUI.push(getComponentOrNativeFeatureUniqueIdentifier(theme))
 
     const link = document.createElement('link')
     link.href = url
     link.type = 'text/css'
     link.rel = 'stylesheet'
     link.media = 'screen,print'
-    link.id = theme.uuid
+    link.id = getComponentOrNativeFeatureUniqueIdentifier(theme)
     link.onload = () => {
       this.syncThemeColorMetadata()
 
       if (this.application.isNativeMobileWeb()) {
+        const packageInfo = getComponentOrNativeFeatureFeatureDescription(theme)
         setTimeout(() => {
           this.application
             .mobileDevice()
-            .handleThemeSchemeChange(theme.package_info.isDark ?? false, this.getBackgroundColor())
+            .handleThemeSchemeChange(packageInfo.isDark ?? false, this.getBackgroundColor())
         })
       }
     }
@@ -358,7 +364,7 @@ export class ThemeManager extends AbstractUIServicee {
   }
 
   private async cacheThemeState() {
-    const themes = this.application.items.findItems(this.themesActiveInTheUI) as SNTheme[]
+    const themes = this.application.items.findItems<ThemeInterface>(this.themesActiveInTheUI)
 
     const mapped = themes.map((theme) => {
       const payload = theme.payloadRepresentation()
@@ -368,17 +374,17 @@ export class ThemeManager extends AbstractUIServicee {
     return this.application.setValue(CachedThemesKey, mapped, StorageValueModes.Nonwrapped)
   }
 
-  private async getCachedThemes() {
-    const cachedThemes = (await this.application.getValue(
+  private getCachedThemes(): ThemeInterface[] {
+    const cachedThemes = this.application.getValue<LocalStorageDecryptedContextualPayload[]>(
       CachedThemesKey,
       StorageValueModes.Nonwrapped,
-    )) as LocalStorageDecryptedContextualPayload[]
+    )
 
     if (cachedThemes) {
-      const themes = []
+      const themes: ThemeInterface[] = []
       for (const cachedTheme of cachedThemes) {
         const payload = this.application.items.createPayloadFromObject(cachedTheme)
-        const theme = this.application.items.createItemFromPayload(payload) as SNTheme
+        const theme = this.application.items.createItemFromPayload<ThemeInterface>(payload)
         themes.push(theme)
       }
       return themes

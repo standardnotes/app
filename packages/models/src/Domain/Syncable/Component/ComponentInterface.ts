@@ -32,6 +32,8 @@ export interface ComponentInterface extends DecryptedItemInterface<ComponentCont
   isExplicitlyEnabledForItem(uuid: string): boolean
   hasValidHostedUrl(): boolean
   isTheme(): boolean
+  isExplicitlyDisabledForItem(uuid: string): boolean
+  legacyIsDefaultEditor(): boolean
 
   get identifier(): FeatureIdentifier
   get noteType(): NoteType

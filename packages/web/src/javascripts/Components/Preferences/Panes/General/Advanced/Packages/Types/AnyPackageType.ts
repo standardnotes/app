@@ -1,3 +1,3 @@
-import { ComponentInterface, SNActionsExtension, SNTheme } from '@standardnotes/snjs'
+import { ComponentInterface, SNActionsExtension, ThemeInterface } from '@standardnotes/snjs'
 
-export type AnyPackageType = ComponentInterface | SNTheme | SNActionsExtension
+export type AnyPackageType = ComponentInterface | ThemeInterface | SNActionsExtension

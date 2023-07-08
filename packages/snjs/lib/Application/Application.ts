@@ -1652,8 +1652,8 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       this.alertService,
       this.environment,
       this.platform,
-      this.internalEventBus,
       this.deviceInterface,
+      this.internalEventBus,
     )
     this.services.push(this.componentManagerService)
   }

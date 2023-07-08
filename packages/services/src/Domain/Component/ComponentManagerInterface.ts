@@ -13,7 +13,7 @@ import { DesktopManagerInterface } from '../Device/DesktopManagerInterface'
 import { ComponentViewerInterface } from './ComponentViewerInterface'
 
 export interface ComponentManagerInterface {
-  urlForComponent(component: ComponentInterface): string | undefined
+  urlForComponent(component: ComponentOrNativeFeature): string | undefined
   setDesktopManager(desktopManager: DesktopManagerInterface): void
   componentsForArea(area: ComponentArea): ComponentInterface[]
   editorForNote(note: SNNote): ComponentOrNativeFeature | undefined

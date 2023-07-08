@@ -100,16 +100,16 @@ export class SNComponentManager
   private permissionDialogs: PermissionDialog[] = []
 
   constructor(
-    private itemManager: ItemManager,
+    private items: ItemManager,
     private mutator: MutatorClientInterface,
-    private syncService: SNSyncService,
-    private featuresService: SNFeaturesService,
+    private sync: SNSyncService,
+    private features: SNFeaturesService,
     private preferences: PreferenceServiceInterface,
-    protected alertService: AlertService,
+    protected alerts: AlertService,
     private environment: Environment,
     private platform: Platform,
-    protected override internalEventBus: InternalEventBusInterface,
     private device: DeviceInterface,
+    protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)
     this.loggingEnabled = false
@@ -134,11 +134,11 @@ export class SNComponentManager
     return this.environment === Environment.Mobile
   }
 
-  get components(): SNComponent[] {
-    return this.itemManager.getDisplayableComponents()
+  get components(): ComponentInterface[] {
+    return this.items.getDisplayableComponents()
   }
 
-  componentsForArea(area: ComponentArea): SNComponent[] {
+  componentsForArea(area: ComponentArea): ComponentInterface[] {
     return this.components.filter((component) => {
       return component.area === area
     })
@@ -164,10 +164,10 @@ export class SNComponentManager
     this.permissionDialogs.length = 0
 
     this.desktopManager = undefined
-    ;(this.itemManager as unknown) = undefined
-    ;(this.featuresService as unknown) = undefined
-    ;(this.syncService as unknown) = undefined
-    ;(this.alertService as unknown) = undefined
+    ;(this.items as unknown) = undefined
+    ;(this.features as unknown) = undefined
+    ;(this.sync as unknown) = undefined
+    ;(this.alerts as unknown) = undefined
     ;(this.preferences as unknown) = undefined
 
     this.removeItemObserver?.()
@@ -191,12 +191,12 @@ export class SNComponentManager
     const viewer = new ComponentViewer(
       component,
       {
-        items: this.itemManager,
+        items: this.items,
         mutator: this.mutator,
-        sync: this.syncService,
-        alerts: this.alertService,
+        sync: this.sync,
+        alerts: this.alerts,
         preferences: this.preferences,
-        features: this.featuresService,
+        features: this.features,
       },
       {
         url: this.urlForComponent(component) ?? '',
@@ -209,6 +209,8 @@ export class SNComponentManager
         componentManagerFunctions: {
           runWithPermissions: this.runWithPermissions.bind(this),
           urlsForActiveThemes: this.urlsForActiveThemes.bind(this),
+          setComponentPreferences: this.setComponentPreferences.bind(this),
+          getComponentPreferences: this.getComponentPreferences.bind(this),
         },
       },
     )
@@ -255,7 +257,7 @@ export class SNComponentManager
   }
 
   addItemObserver(): void {
-    this.removeItemObserver = this.itemManager.addObserver<SNComponent>(
+    this.removeItemObserver = this.items.addObserver<SNComponent>(
       [ContentType.Component, ContentType.Theme],
       ({ changed, inserted, removed, source }) => {
         const items = [...changed, ...inserted]
@@ -394,7 +396,7 @@ export class SNComponentManager
   }
 
   private findComponent(uuid: string): ComponentInterface | undefined {
-    return this.itemManager.findItem<ComponentInterface>(uuid)
+    return this.items.findItem<ComponentInterface>(uuid)
   }
 
   private findComponentOrNativeFeature(
@@ -405,7 +407,7 @@ export class SNComponentManager
       return nativeFeature
     }
 
-    return this.itemManager.findItem<ComponentInterface>(identifier)
+    return this.items.findItem<ComponentInterface>(identifier)
   }
 
   findComponentViewer(identifier: string): ComponentViewerInterface | undefined {
@@ -442,7 +444,7 @@ export class SNComponentManager
     const componentOrNativeFeature = this.findComponentOrNativeFeature(componentIdentifier)
 
     if (!componentOrNativeFeature) {
-      void this.alertService.alert(
+      void this.alerts.alert(
         `Unable to find component with ID ${componentIdentifier}. Please restart the app and try again.`,
         'An unexpected error occurred',
       )
@@ -550,7 +552,7 @@ export class SNComponentManager
             mutator.permissions = componentPermissions
           })
 
-          void this.syncService.sync()
+          void this.sync.sync()
         }
 
         this.permissionDialogs = this.permissionDialogs.filter((pendingDialog) => {
@@ -628,7 +630,7 @@ export class SNComponentManager
   getActiveThemes(): ComponentOrNativeTheme[] {
     const activeThemesIdentifiers = this.getActiveThemesIdentifiers()
 
-    const thirdPartyThemes = this.itemManager.findItems<ThemeInterface>(activeThemesIdentifiers)
+    const thirdPartyThemes = this.items.findItems<ThemeInterface>(activeThemesIdentifiers)
     const nativeThemes = activeThemesIdentifiers
       .map((identifier) => {
         return FindNativeFeature<ThemeFeatureDescription>(identifier as FeatureIdentifier)
@@ -700,7 +702,7 @@ export class SNComponentManager
     }
   }
 
-  legacyGetDefaultEditor(): SNComponent | undefined {
+  legacyGetDefaultEditor(): ComponentInterface | undefined {
     const editors = this.componentsForArea(ComponentArea.Editor)
     return editors.filter((e) => e.legacyIsDefaultEditor())[0]
   }
@@ -726,7 +728,7 @@ export class SNComponentManager
   }
 
   async showEditorChangeAlert(): Promise<boolean> {
-    const shouldChangeEditor = await this.alertService.confirm(
+    const shouldChangeEditor = await this.alerts.confirm(
       'Doing so might result in minor formatting changes.',
       "Are you sure you want to change this note's type?",
       'Yes, change it',
@@ -809,7 +811,7 @@ export class SNComponentManager
   getActiveComponents(): ComponentInterface[] {
     const activeComponents = this.preferences.getValue(PrefKey.ActiveComponents, undefined) ?? []
 
-    return this.itemManager.findItems(activeComponents)
+    return this.items.findItems(activeComponents)
   }
 
   isComponentActive(component: ComponentInterface): boolean {
