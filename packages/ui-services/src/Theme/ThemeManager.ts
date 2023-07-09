@@ -18,7 +18,7 @@ import {
   PreferencesServiceEvent,
   ComponentManagerInterface,
 } from '@standardnotes/services'
-import { FeatureIdentifier } from '@standardnotes/features'
+import { FeatureIdentifier, FindNativeTheme } from '@standardnotes/features'
 import { WebApplicationInterface } from '../WebApplication/WebApplicationInterface'
 import { AbstractUIServicee } from '../Abstract/AbstractUIService'
 
@@ -60,29 +60,35 @@ export class ThemeManager extends AbstractUIServicee {
 
     this.eventDisposers.push(
       this.preferences.addEventObserver(async (event) => {
-        if (event === PreferencesServiceEvent.PreferencesChanged) {
-          let hasChange = false
-          const activeThemes = this.components.getActiveThemesIdentifiers()
-          for (const uiActiveTheme of this.themesActiveInTheUI) {
-            if (!activeThemes.includes(uiActiveTheme)) {
-              this.deactivateThemeInTheUI(uiActiveTheme)
+        if (event !== PreferencesServiceEvent.PreferencesChanged) {
+          return
+        }
+
+        let hasChange = false
+
+        const activeThemes = this.components.getActiveThemesIdentifiers()
+        for (const uiActiveTheme of this.themesActiveInTheUI) {
+          if (!activeThemes.includes(uiActiveTheme)) {
+            this.deactivateThemeInTheUI(uiActiveTheme)
+            hasChange = true
+          }
+        }
+
+        for (const activeTheme of activeThemes) {
+          if (!this.themesActiveInTheUI.includes(activeTheme)) {
+            const theme =
+              FindNativeTheme(activeTheme as FeatureIdentifier) ??
+              this.application.items.findItem<ThemeInterface>(activeTheme)
+
+            if (theme) {
+              this.activateTheme(theme)
               hasChange = true
             }
           }
+        }
 
-          for (const activeTheme of activeThemes) {
-            if (!this.themesActiveInTheUI.includes(activeTheme)) {
-              const theme = this.application.items.findItem<ThemeInterface>(activeTheme)
-              if (theme) {
-                this.activateTheme(theme)
-                hasChange = true
-              }
-            }
-          }
-
-          if (hasChange) {
-            this.cacheThemeState().catch(console.error)
-          }
+        if (hasChange) {
+          this.cacheThemeState().catch(console.error)
         }
       }),
     )

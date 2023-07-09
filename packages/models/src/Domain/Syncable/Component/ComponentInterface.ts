@@ -40,6 +40,7 @@ export interface ComponentInterface extends DecryptedItemInterface<ComponentCont
   get displayName(): string
   get deprecationMessage(): string | undefined
   get thirdPartyPackageInfo(): ThirdPartyFeatureDescription
+  get isExpired(): boolean
 
   /**
    * @deprecated

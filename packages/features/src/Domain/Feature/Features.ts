@@ -15,6 +15,10 @@ export function FindNativeFeature<T extends FeatureDescription>(identifier: Feat
   return GetFeatures().find((f) => f.identifier === identifier) as T
 }
 
+export function FindNativeTheme(identifier: FeatureIdentifier): ThemeFeatureDescription | undefined {
+  return themes().find((t) => t.identifier === identifier)
+}
+
 export function GetNativeEditors(): EditorFeatureDescription[] {
   return editors()
 }

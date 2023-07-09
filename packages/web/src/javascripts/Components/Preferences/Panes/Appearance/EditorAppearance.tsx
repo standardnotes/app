@@ -84,7 +84,7 @@ const EditorDefaults = ({ application }: Props) => {
   return (
     <PreferencesGroup>
       <PreferencesSegment>
-        <Title>Editor appearance</Title>
+        <Title>Editor</Title>
         <div className="mt-2">
           <div className="flex justify-between gap-2 md:items-center">
             <div className="flex flex-col">

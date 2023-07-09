@@ -5,7 +5,6 @@ import { ItemManager } from '@Lib/Services/Items/ItemManager'
 import {
   ActionObserver,
   SNNote,
-  SNComponent,
   ComponentMutator,
   PayloadEmitSource,
   PermissionDialog,
@@ -36,7 +35,7 @@ import {
   FeatureIdentifier,
   EditorFeatureDescription,
   GetNativeEditors,
-  ThemeFeatureDescription,
+  FindNativeTheme,
 } from '@standardnotes/features'
 import {
   Copy,
@@ -61,6 +60,7 @@ import {
   MutatorClientInterface,
   PreferenceServiceInterface,
   ComponentViewerItem,
+  PreferencesServiceEvent,
 } from '@standardnotes/services'
 import { permissionsStringForPermissions } from './permissionsStringForPermissions'
 
@@ -115,6 +115,14 @@ export class SNComponentManager
     this.loggingEnabled = false
 
     this.addItemObserver()
+
+    this.eventDisposers.push(
+      preferences.addEventObserver((event) => {
+        if (event === PreferencesServiceEvent.PreferencesChanged) {
+          this.postActiveThemesToAllViewers()
+        }
+      }),
+    )
 
     window.addEventListener
       ? window.addEventListener('focus', this.detectFocusChange, true)
@@ -228,7 +236,7 @@ export class SNComponentManager
     this.configureForDesktop()
   }
 
-  handleChangedComponents(components: SNComponent[], source: PayloadEmitSource): void {
+  private handleChangedComponents(components: ComponentInterface[], source: PayloadEmitSource): void {
     const acceptableSources = [
       PayloadEmitSource.LocalChanged,
       PayloadEmitSource.RemoteRetrieved,
@@ -256,8 +264,8 @@ export class SNComponentManager
     }
   }
 
-  addItemObserver(): void {
-    this.removeItemObserver = this.items.addObserver<SNComponent>(
+  private addItemObserver(): void {
+    this.removeItemObserver = this.items.addObserver<ComponentInterface>(
       [ContentType.Component, ContentType.Theme],
       ({ changed, inserted, removed, source }) => {
         const items = [...changed, ...inserted]
@@ -619,7 +627,11 @@ export class SNComponentManager
 
         const activeThemes = this.getActiveThemes()
         for (const candidate of activeThemes) {
-          if (candidate && !candidate.layerable) {
+          if (candidate.identifier === theme.identifier) {
+            continue
+          }
+
+          if (!candidate.layerable) {
             await this.removeActiveTheme(candidate)
           }
         }
@@ -631,9 +643,10 @@ export class SNComponentManager
     const activeThemesIdentifiers = this.getActiveThemesIdentifiers()
 
     const thirdPartyThemes = this.items.findItems<ThemeInterface>(activeThemesIdentifiers)
+
     const nativeThemes = activeThemesIdentifiers
       .map((identifier) => {
-        return FindNativeFeature<ThemeFeatureDescription>(identifier as FeatureIdentifier)
+        return FindNativeTheme(identifier as FeatureIdentifier)
       })
       .filter(isNotUndefined)
 
@@ -765,7 +778,7 @@ export class SNComponentManager
   }
 
   async addActiveTheme(theme: ComponentOrNativeTheme): Promise<void> {
-    const activeThemes = this.preferences.getValue(PrefKey.ActiveThemes, undefined) ?? []
+    const activeThemes = (this.preferences.getValue(PrefKey.ActiveThemes, undefined) ?? []).slice()
 
     activeThemes.push(getComponentOrNativeFeatureUniqueIdentifier(theme))
 
@@ -793,7 +806,7 @@ export class SNComponentManager
   }
 
   async addActiveComponent(component: ComponentInterface): Promise<void> {
-    const activeComponents = this.preferences.getValue(PrefKey.ActiveComponents, undefined) ?? []
+    const activeComponents = (this.preferences.getValue(PrefKey.ActiveComponents, undefined) ?? []).slice()
 
     activeComponents.push(component.uuid)
 

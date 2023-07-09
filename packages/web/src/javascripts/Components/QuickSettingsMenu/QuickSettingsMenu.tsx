@@ -3,6 +3,7 @@ import {
   ComponentInterface,
   ContentType,
   FeatureIdentifier,
+  PreferencesServiceEvent,
   ThemeInterface,
   getComponentOrNativeFeatureUniqueIdentifier,
 } from '@standardnotes/snjs'
@@ -74,6 +75,14 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ quickSettingsMenuCont
     return () => {
       cleanupItemStream()
     }
+  }, [application, reloadThemes])
+
+  useEffect(() => {
+    return application.preferences.addEventObserver((event) => {
+      if (event === PreferencesServiceEvent.PreferencesChanged) {
+        reloadThemes()
+      }
+    })
   }, [application, reloadThemes])
 
   useEffect(() => {
