@@ -1,4 +1,4 @@
-import { ItemInterface, SNComponent, SNFeatureRepo } from '@standardnotes/models'
+import { ItemInterface, SNFeatureRepo } from '@standardnotes/models'
 import { SNSyncService } from '../Sync/SyncService'
 import { SettingName } from '@standardnotes/settings'
 import { SNFeaturesService } from '@Lib/Services/Features'
@@ -11,28 +11,35 @@ import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { convertTimestampToMilliseconds } from '@standardnotes/utils'
 import {
   AlertService,
+  ApiServiceInterface,
   FeaturesEvent,
   FeatureStatus,
   InternalEventBusInterface,
+  ItemManagerInterface,
   MutatorClientInterface,
+  SessionsClientInterface,
   StorageKey,
+  StorageServiceInterface,
+  SyncServiceInterface,
+  UserClientInterface,
   UserService,
 } from '@standardnotes/services'
 import { SNApiService, SNSessionManager } from '../Api'
 import { ItemManager } from '../Items'
 import { DiskStorageService } from '../Storage/DiskStorageService'
+import { SettingsClientInterface } from '../Settings/SettingsClientInterface'
 
-describe('featuresService', () => {
-  let storageService: DiskStorageService
-  let apiService: SNApiService
-  let itemManager: ItemManager
+describe('FeaturesService', () => {
+  let storageService: StorageServiceInterface
+  let apiService: ApiServiceInterface
+  let itemManager: ItemManagerInterface
   let mutator: MutatorClientInterface
   let webSocketsService: SNWebSocketsService
-  let settingsService: SNSettingsService
-  let userService: UserService
-  let syncService: SNSyncService
+  let settingsService: SettingsClientInterface
+  let userService: UserClientInterface
+  let syncService: SyncServiceInterface
   let alertService: AlertService
-  let sessionManager: SNSessionManager
+  let sessionManager: SessionsClientInterface
   let crypto: PureCryptoInterface
   let roles: string[]
   let features: FeatureDescription[]
@@ -41,7 +48,6 @@ describe('featuresService', () => {
   let tomorrow_server: number
   let tomorrow_client: number
   let internalEventBus: InternalEventBusInterface
-  const expiredDate = new Date(new Date().getTime() - 1000).getTime()
 
   const createService = () => {
     return new SNFeaturesService(
@@ -86,11 +92,6 @@ describe('featuresService', () => {
 
     apiService = {} as jest.Mocked<SNApiService>
     apiService.addEventObserver = jest.fn()
-    apiService.getUserFeatures = jest.fn().mockReturnValue({
-      data: {
-        features,
-      },
-    })
     apiService.downloadOfflineFeaturesFromRepo = jest.fn().mockReturnValue({
       features,
     })
@@ -151,65 +152,12 @@ describe('featuresService', () => {
 
       expect(featuresService.isExperimentalFeatureEnabled(FeatureIdentifier.PlusEditor)).toEqual(false)
     })
-
-    it('does not create a component for not enabled experimental feature', async () => {
-      const features = [
-        {
-          identifier: FeatureIdentifier.PlusEditor,
-          expires_at: tomorrow_server,
-          content_type: ContentType.Component,
-        },
-      ]
-
-      apiService.getUserFeatures = jest.fn().mockReturnValue({
-        data: {
-          features,
-        },
-      })
-
-      const newRoles = [...roles, RoleName.NAMES.PlusUser]
-
-      storageService.getValue = jest.fn().mockReturnValue(roles)
-
-      const featuresService = createService()
-      featuresService.getExperimentalFeatures = jest.fn().mockReturnValue([FeatureIdentifier.PlusEditor])
-
-      featuresService.initializeFromDisk()
-      const { didChangeRoles } = await featuresService.updateOnlineRoles(newRoles)
-      await featuresService.fetchFeatures('123', didChangeRoles)
-
-      expect(mutator.createItem).not.toHaveBeenCalled()
-    })
-
-    it('does create a component for enabled experimental feature', async () => {
-      apiService.getUserFeatures = jest.fn().mockReturnValue({
-        data: {
-          features: GetFeatures(),
-        },
-      })
-
-      const newRoles = [...roles, RoleName.NAMES.PlusUser]
-
-      storageService.getValue = jest.fn().mockReturnValue(roles)
-
-      const featuresService = createService()
-      featuresService.getExperimentalFeatures = jest.fn().mockReturnValue([FeatureIdentifier.PlusEditor])
-
-      featuresService.getEnabledExperimentalFeatures = jest.fn().mockReturnValue([FeatureIdentifier.PlusEditor])
-
-      featuresService.initializeFromDisk()
-      const { didChangeRoles } = await featuresService.updateOnlineRoles(newRoles)
-      await featuresService.fetchFeatures('123', didChangeRoles)
-
-      expect(mutator.createItem).toHaveBeenCalled()
-    })
   })
 
   describe('loadUserRoles()', () => {
     it('retrieves user roles and features from storage', async () => {
       createService().initializeFromDisk()
       expect(storageService.getValue).toHaveBeenCalledWith(StorageKey.UserRoles, undefined, [])
-      expect(storageService.getValue).toHaveBeenCalledWith(StorageKey.UserFeatures, undefined, [])
     })
   })
 
@@ -235,8 +183,7 @@ describe('featuresService', () => {
       const spy = jest.spyOn(featuresService, 'notifyEvent' as never)
 
       const newRoles = [...roles, RoleName.NAMES.ProUser]
-      const { didChangeRoles } = await featuresService.updateOnlineRoles(newRoles)
-      await featuresService.fetchFeatures('123', didChangeRoles)
+      await featuresService.updateOnlineRoles(newRoles)
 
       expect(spy.mock.calls[1][0]).toEqual(FeaturesEvent.DidPurchaseSubscription)
     })
@@ -250,8 +197,7 @@ describe('featuresService', () => {
       const spy = jest.spyOn(featuresService, 'notifyEvent' as never)
 
       const newRoles = [...roles, RoleName.NAMES.ProUser]
-      const { didChangeRoles } = await featuresService.updateOnlineRoles(newRoles)
-      await featuresService.fetchFeatures('123', didChangeRoles)
+      await featuresService.updateOnlineRoles(newRoles)
 
       const triggeredEvents = spy.mock.calls.map((call) => call[0])
       expect(triggeredEvents).not.toContain(FeaturesEvent.DidPurchaseSubscription)
@@ -264,11 +210,8 @@ describe('featuresService', () => {
       const featuresService = createService()
       featuresService.initializeFromDisk()
 
-      const { didChangeRoles } = await featuresService.updateOnlineRoles(newRoles)
+      await featuresService.updateOnlineRoles(newRoles)
       expect(storageService.setValue).toHaveBeenCalledWith(StorageKey.UserRoles, newRoles)
-
-      await featuresService.fetchFeatures('123', didChangeRoles)
-      expect(apiService.getUserFeatures).toHaveBeenCalledWith('123')
     })
 
     it('saves new roles to storage and fetches features if a role has been removed', async () => {
@@ -277,271 +220,9 @@ describe('featuresService', () => {
       storageService.getValue = jest.fn().mockReturnValue(roles)
       const featuresService = createService()
       featuresService.initializeFromDisk()
-      const { didChangeRoles } = await featuresService.updateOnlineRoles(newRoles)
-      await featuresService.fetchFeatures('123', didChangeRoles)
+      await featuresService.updateOnlineRoles(newRoles)
 
       expect(storageService.setValue).toHaveBeenCalledWith(StorageKey.UserRoles, newRoles)
-      expect(apiService.getUserFeatures).toHaveBeenCalledWith('123')
-    })
-
-    it('saves features to storage when roles change', async () => {
-      const newRoles = [...roles, RoleName.NAMES.PlusUser]
-
-      storageService.getValue = jest.fn().mockReturnValue(roles)
-      const featuresService = createService()
-      featuresService.initializeFromDisk()
-      const { didChangeRoles } = await featuresService.updateOnlineRoles(newRoles)
-      await featuresService.fetchFeatures('123', didChangeRoles)
-
-      expect(storageService.setValue).toHaveBeenCalledWith(StorageKey.UserFeatures, features)
-    })
-
-    it('creates items for non-expired features with content type if they do not exist', async () => {
-      const newRoles = [...roles, RoleName.NAMES.PlusUser]
-
-      storageService.getValue = jest.fn().mockReturnValue(roles)
-      const featuresService = createService()
-      featuresService.initializeFromDisk()
-      const { didChangeRoles } = await featuresService.updateOnlineRoles(newRoles)
-      await featuresService.fetchFeatures('123', didChangeRoles)
-
-      expect(mutator.createItem).toHaveBeenCalledTimes(2)
-      expect(mutator.createItem).toHaveBeenCalledWith(
-        ContentType.Theme,
-        expect.objectContaining({
-          package_info: expect.objectContaining({
-            content_type: ContentType.Theme,
-            expires_at: tomorrow_client,
-            identifier: FeatureIdentifier.MidnightTheme,
-          }),
-        }),
-        true,
-      )
-      expect(mutator.createItem).toHaveBeenCalledWith(
-        ContentType.Component,
-        expect.objectContaining({
-          package_info: expect.objectContaining({
-            content_type: ContentType.Component,
-            expires_at: tomorrow_client,
-            identifier: FeatureIdentifier.PlusEditor,
-          }),
-        }),
-        true,
-      )
-    })
-
-    it('if item for a feature exists updates its content', async () => {
-      const existingItem = new SNComponent({
-        uuid: '789',
-        content_type: ContentType.Component,
-        content: {
-          package_info: {
-            identifier: FeatureIdentifier.PlusEditor,
-            valid_until: new Date(),
-          },
-        },
-      } as never)
-
-      const newRoles = [...roles, RoleName.NAMES.PlusUser]
-
-      storageService.getValue = jest.fn().mockReturnValue(roles)
-      itemManager.getItems = jest.fn().mockReturnValue([existingItem])
-      const featuresService = createService()
-      featuresService.initializeFromDisk()
-      const { didChangeRoles } = await featuresService.updateOnlineRoles(newRoles)
-      await featuresService.fetchFeatures('123', didChangeRoles)
-
-      expect(mutator.changeComponent).toHaveBeenCalledWith(existingItem, expect.any(Function))
-    })
-
-    it('creates items for expired components if they do not exist', async () => {
-      const newRoles = [...roles, RoleName.NAMES.PlusUser]
-
-      const now = new Date()
-      const yesterday_client = now.setDate(now.getDate() - 1)
-      const yesterday_server = yesterday_client * 1_000
-
-      storageService.getValue = jest.fn().mockReturnValue(roles)
-      apiService.getUserFeatures = jest.fn().mockReturnValue({
-        data: {
-          features: [
-            {
-              ...features[1],
-              expires_at: yesterday_server,
-            },
-          ],
-        },
-      })
-
-      const featuresService = createService()
-      featuresService.initializeFromDisk()
-      const { didChangeRoles } = await featuresService.updateOnlineRoles(newRoles)
-      await featuresService.fetchFeatures('123', didChangeRoles)
-
-      expect(mutator.createItem).toHaveBeenCalledWith(
-        ContentType.Component,
-        expect.objectContaining({
-          package_info: expect.objectContaining({
-            content_type: ContentType.Component,
-            expires_at: yesterday_client,
-            identifier: FeatureIdentifier.PlusEditor,
-          }),
-        }),
-        true,
-      )
-    })
-
-    it('deletes items for expired themes', async () => {
-      const existingItem = new SNComponent({
-        uuid: '456',
-        content_type: ContentType.Theme,
-        content: {
-          package_info: {
-            identifier: FeatureIdentifier.MidnightTheme,
-            valid_until: new Date(),
-          },
-        },
-      } as never)
-
-      const newRoles = [...roles, RoleName.NAMES.PlusUser]
-
-      const now = new Date()
-      const yesterday = now.setDate(now.getDate() - 1)
-
-      mutator.changeComponent = jest.fn().mockReturnValue(existingItem)
-      storageService.getValue = jest.fn().mockReturnValue(roles)
-      itemManager.getItems = jest.fn().mockReturnValue([existingItem])
-      apiService.getUserFeatures = jest.fn().mockReturnValue({
-        data: {
-          features: [
-            {
-              ...features[0],
-              expires_at: yesterday,
-            },
-          ],
-        },
-      })
-
-      const featuresService = createService()
-      featuresService.initializeFromDisk()
-      const { didChangeRoles } = await featuresService.updateOnlineRoles(newRoles)
-      await featuresService.fetchFeatures('123', didChangeRoles)
-
-      expect(mutator.setItemsToBeDeleted).toHaveBeenCalledWith([existingItem])
-    })
-
-    it('does not create an item for a feature without content type', async () => {
-      const features = [
-        {
-          identifier: FeatureIdentifier.TagNesting,
-          expires_at: tomorrow_server,
-        },
-      ]
-
-      apiService.getUserFeatures = jest.fn().mockReturnValue({
-        data: {
-          features,
-        },
-      })
-
-      const newRoles = [...roles, RoleName.NAMES.PlusUser]
-
-      storageService.getValue = jest.fn().mockReturnValue(roles)
-      const featuresService = createService()
-      featuresService.initializeFromDisk()
-      const { didChangeRoles } = await featuresService.updateOnlineRoles(newRoles)
-      await featuresService.fetchFeatures('123', didChangeRoles)
-
-      expect(mutator.createItem).not.toHaveBeenCalled()
-    })
-
-    it('does not create an item for deprecated features', async () => {
-      const features = [
-        {
-          identifier: FeatureIdentifier.DeprecatedBoldEditor,
-          expires_at: tomorrow_server,
-        },
-      ]
-
-      apiService.getUserFeatures = jest.fn().mockReturnValue({
-        data: {
-          features,
-        },
-      })
-
-      const newRoles = [...roles, RoleName.NAMES.PlusUser]
-
-      storageService.getValue = jest.fn().mockReturnValue(roles)
-      const featuresService = createService()
-      featuresService.initializeFromDisk()
-      const { didChangeRoles } = await featuresService.updateOnlineRoles(newRoles)
-      await featuresService.fetchFeatures('123', didChangeRoles)
-
-      expect(mutator.createItem).not.toHaveBeenCalled()
-    })
-
-    it('does nothing after initial update if roles have not changed', async () => {
-      storageService.getValue = jest.fn().mockReturnValue(roles)
-      const featuresService = createService()
-      featuresService.initializeFromDisk()
-      const { didChangeRoles: didChangeRoles1 } = await featuresService.updateOnlineRoles(roles)
-      await featuresService.fetchFeatures('123', didChangeRoles1)
-      const { didChangeRoles: didChangeRoles2 } = await featuresService.updateOnlineRoles(roles)
-      await featuresService.fetchFeatures('123', didChangeRoles2)
-      const { didChangeRoles: didChangeRoles3 } = await featuresService.updateOnlineRoles(roles)
-      await featuresService.fetchFeatures('123', didChangeRoles3)
-      const { didChangeRoles: didChangeRoles4 } = await featuresService.updateOnlineRoles(roles)
-      await featuresService.fetchFeatures('123', didChangeRoles4)
-      expect(storageService.setValue).toHaveBeenCalledTimes(2)
-    })
-
-    it('remote native features should be swapped with compiled version', async () => {
-      const remoteFeature = {
-        identifier: FeatureIdentifier.PlusEditor,
-        content_type: ContentType.Component,
-        expires_at: tomorrow_server,
-      } as FeatureDescription
-
-      const newRoles = [...roles, RoleName.NAMES.PlusUser]
-
-      storageService.getValue = jest.fn().mockReturnValue(roles)
-      apiService.getUserFeatures = jest.fn().mockReturnValue({
-        data: {
-          features: [remoteFeature],
-        },
-      })
-
-      const featuresService = createService()
-      const nativeFeature = featuresService['mapRemoteNativeFeatureToStaticFeature'](remoteFeature)
-      featuresService['mapRemoteNativeFeatureToItem'] = jest.fn()
-      featuresService.initializeFromDisk()
-      const { didChangeRoles } = await featuresService.updateOnlineRoles(newRoles)
-      await featuresService.fetchFeatures('123', didChangeRoles)
-
-      expect(featuresService['mapRemoteNativeFeatureToItem']).toHaveBeenCalledWith(
-        nativeFeature,
-        expect.anything(),
-        expect.anything(),
-      )
-    })
-
-    it('mapRemoteNativeFeatureToItem should throw if called with client controlled feature', async () => {
-      const clientFeature = {
-        identifier: FeatureIdentifier.DarkTheme,
-        content_type: ContentType.Theme,
-        clientControlled: true,
-      } as FeatureDescription
-
-      storageService.getValue = jest.fn().mockReturnValue(roles)
-      apiService.getUserFeatures = jest.fn().mockReturnValue({
-        data: {
-          features: [clientFeature],
-        },
-      })
-
-      const featuresService = createService()
-      featuresService.initializeFromDisk()
-      await expect(() => featuresService['mapRemoteNativeFeatureToItem'](clientFeature, [], [])).rejects.toThrow()
     })
 
     it('role-based feature status', async () => {
@@ -549,19 +230,9 @@ describe('featuresService', () => {
 
       features = [] as jest.Mocked<FeatureDescription[]>
 
-      apiService.getUserFeatures = jest.fn().mockReturnValue({
-        data: {
-          features,
-        },
-      })
-
       sessionManager.isSignedIntoFirstPartyServer = jest.fn().mockReturnValue(true)
 
-      const { didChangeRoles } = await featuresService.updateOnlineRoles([
-        RoleName.NAMES.CoreUser,
-        RoleName.NAMES.PlusUser,
-      ])
-      await featuresService.fetchFeatures('123', didChangeRoles)
+      await featuresService.updateOnlineRoles([RoleName.NAMES.CoreUser, RoleName.NAMES.PlusUser])
 
       expect(featuresService.getFeatureStatus(FeatureIdentifier.MidnightTheme)).toBe(FeatureStatus.Entitled)
       expect(featuresService.getFeatureStatus(FeatureIdentifier.SuperEditor)).toBe(FeatureStatus.Entitled)
@@ -570,31 +241,9 @@ describe('featuresService', () => {
     it('feature status with no paid role but features listings', async () => {
       const featuresService = createService()
 
-      features = [
-        {
-          identifier: FeatureIdentifier.MidnightTheme,
-          content_type: ContentType.Theme,
-          expires_at: tomorrow_server,
-          role_name: RoleName.NAMES.PlusUser,
-        },
-        {
-          identifier: FeatureIdentifier.PlusEditor,
-          content_type: ContentType.Component,
-          expires_at: expiredDate,
-          role_name: RoleName.NAMES.ProUser,
-        },
-      ] as jest.Mocked<FeatureDescription[]>
-
-      apiService.getUserFeatures = jest.fn().mockReturnValue({
-        data: {
-          features,
-        },
-      })
-
       sessionManager.isSignedIntoFirstPartyServer = jest.fn().mockReturnValue(true)
 
-      const { didChangeRoles } = await featuresService.updateOnlineRoles([RoleName.NAMES.CoreUser])
-      await featuresService.fetchFeatures('123', didChangeRoles)
+      await featuresService.updateOnlineRoles([RoleName.NAMES.CoreUser])
 
       expect(featuresService.getFeatureStatus(FeatureIdentifier.MidnightTheme)).toBe(FeatureStatus.NoUserSubscription)
       expect(featuresService.getFeatureStatus(FeatureIdentifier.PlusEditor)).toBe(FeatureStatus.NoUserSubscription)
@@ -606,61 +255,24 @@ describe('featuresService', () => {
 
       sessionManager.isSignedIntoFirstPartyServer = jest.fn().mockReturnValue(false)
 
-      const { didChangeRoles } = await featuresService.updateOnlineRoles([RoleName.NAMES.ProUser])
-      await featuresService.fetchFeatures('123', didChangeRoles)
+      await featuresService.updateOnlineRoles([RoleName.NAMES.ProUser])
 
-      expect(featuresService.getFeatureStatus(FeatureIdentifier.SuperEditor)).toBe(FeatureStatus.NotInCurrentPlan)
+      expect(featuresService.getFeatureStatus(FeatureIdentifier.SuperEditor)).toBe(FeatureStatus.NoUserSubscription)
     })
 
     it('third party feature status', async () => {
       const featuresService = createService()
 
-      const themeFeature = {
-        identifier: 'third-party-theme' as FeatureIdentifier,
-        content_type: ContentType.Theme,
-        expires_at: tomorrow_server,
-        role_name: RoleName.NAMES.CoreUser,
-      }
+      itemManager.getDisplayableComponents = jest
+        .fn()
+        .mockReturnValue([{ identifier: 'third-party-theme' }, { identifier: 'third-party-editor', isExpired: true }])
 
-      const editorFeature = {
-        identifier: 'third-party-editor' as FeatureIdentifier,
-        content_type: ContentType.Component,
-        expires_at: expiredDate,
-        role_name: RoleName.NAMES.PlusUser,
-      }
+      await featuresService.updateOnlineRoles([RoleName.NAMES.CoreUser])
 
-      features = [themeFeature, editorFeature] as jest.Mocked<FeatureDescription[]>
-
-      featuresService['features'] = features
-
-      itemManager.getDisplayableComponents = jest.fn().mockReturnValue([
-        new SNComponent({
-          uuid: '123',
-          content_type: ContentType.Theme,
-          content: {
-            valid_until: themeFeature.expires_at,
-            package_info: {
-              ...themeFeature,
-            },
-          },
-        } as never),
-        new SNComponent({
-          uuid: '456',
-          content_type: ContentType.Component,
-          content: {
-            valid_until: new Date(editorFeature.expires_at),
-            package_info: {
-              ...editorFeature,
-            },
-          },
-        } as never),
-      ])
-
-      const { didChangeRoles } = await featuresService.updateOnlineRoles([RoleName.NAMES.CoreUser])
-      await featuresService.fetchFeatures('123', didChangeRoles)
-
-      expect(featuresService.getFeatureStatus(themeFeature.identifier)).toBe(FeatureStatus.Entitled)
-      expect(featuresService.getFeatureStatus(editorFeature.identifier)).toBe(FeatureStatus.InCurrentPlanButExpired)
+      expect(featuresService.getFeatureStatus('third-party-theme' as FeatureIdentifier)).toBe(FeatureStatus.Entitled)
+      expect(featuresService.getFeatureStatus('third-party-editor' as FeatureIdentifier)).toBe(
+        FeatureStatus.InCurrentPlanButExpired,
+      )
       expect(featuresService.getFeatureStatus('missing-feature-identifier' as FeatureIdentifier)).toBe(
         FeatureStatus.NoUserSubscription,
       )
@@ -669,12 +281,9 @@ describe('featuresService', () => {
     it('feature status should be not entitled if no account or offline repo', async () => {
       const featuresService = createService()
 
-      const { didChangeRoles } = await featuresService.updateOnlineRoles([RoleName.NAMES.CoreUser])
-      await featuresService.fetchFeatures('123', didChangeRoles)
+      await featuresService.updateOnlineRoles([RoleName.NAMES.CoreUser])
 
       sessionManager.isSignedIntoFirstPartyServer = jest.fn().mockReturnValue(false)
-
-      featuresService['completedSuccessfulFeaturesRetrieval'] = false
 
       expect(featuresService.getFeatureStatus(FeatureIdentifier.MidnightTheme)).toBe(FeatureStatus.NoUserSubscription)
       expect(featuresService.getFeatureStatus(FeatureIdentifier.TokenVaultEditor)).toBe(
@@ -682,32 +291,13 @@ describe('featuresService', () => {
       )
     })
 
-    it('processRemotelyDownloadedFeatures should filter out client controlled features', async () => {
-      const featuresService = createService()
-
-      featuresService['mapRemoteNativeFeaturesToItems'] = jest.fn()
-
-      await featuresService.processRemotelyDownloadedFeatures(GetFeatures().filter((f) => f.clientControlled))
-
-      expect(featuresService['mapRemoteNativeFeaturesToItems']).toHaveBeenCalledWith([])
-    })
-
-    it('processRemotelyDownloadedFeatures should filter out native editors and themes', async () => {
-      throw new Error('Test not implemented')
-    })
-
     it('feature status for offline subscription', async () => {
       const featuresService = createService()
 
-      const { didChangeRoles } = await featuresService.updateOnlineRoles([
-        RoleName.NAMES.CoreUser,
-        RoleName.NAMES.PlusUser,
-      ])
-      await featuresService.fetchFeatures('123', didChangeRoles)
+      await featuresService.updateOnlineRoles([RoleName.NAMES.CoreUser, RoleName.NAMES.PlusUser])
 
       sessionManager.isSignedIntoFirstPartyServer = jest.fn().mockReturnValue(false)
       featuresService.onlineRolesIncludePaidSubscription = jest.fn().mockReturnValue(false)
-      featuresService['completedSuccessfulFeaturesRetrieval'] = true
 
       expect(featuresService.getFeatureStatus(FeatureIdentifier.MidnightTheme)).toBe(FeatureStatus.NoUserSubscription)
       expect(featuresService.getFeatureStatus(FeatureIdentifier.TokenVaultEditor)).toBe(
@@ -731,11 +321,7 @@ describe('featuresService', () => {
         FeatureStatus.NoUserSubscription,
       )
 
-      const { didChangeRoles } = await featuresService.updateOnlineRoles([
-        RoleName.NAMES.CoreUser,
-        RoleName.NAMES.PlusUser,
-      ])
-      await featuresService.fetchFeatures('123', didChangeRoles)
+      await featuresService.updateOnlineRoles([RoleName.NAMES.CoreUser, RoleName.NAMES.PlusUser])
 
       expect(featuresService.getFeatureStatus(FeatureIdentifier.DeprecatedFileSafe as FeatureIdentifier)).toBe(
         FeatureStatus.Entitled,
@@ -745,17 +331,13 @@ describe('featuresService', () => {
     it('has paid subscription', async () => {
       const featuresService = createService()
 
-      const { didChangeRoles: didChangeRoles1 } = await featuresService.updateOnlineRoles([RoleName.NAMES.CoreUser])
-      await featuresService.fetchFeatures('123', didChangeRoles1)
+      await featuresService.updateOnlineRoles([RoleName.NAMES.CoreUser])
+
       sessionManager.isSignedIntoFirstPartyServer = jest.fn().mockReturnValue(true)
 
       expect(featuresService.hasPaidAnyPartyOnlineOrOfflineSubscription()).toBeFalsy
 
-      const { didChangeRoles: didChangeRoles2 } = await featuresService.updateOnlineRoles([
-        RoleName.NAMES.CoreUser,
-        RoleName.NAMES.PlusUser,
-      ])
-      await featuresService.fetchFeatures('123', didChangeRoles2)
+      await featuresService.updateOnlineRoles([RoleName.NAMES.CoreUser, RoleName.NAMES.PlusUser])
 
       expect(featuresService.hasPaidAnyPartyOnlineOrOfflineSubscription()).toEqual(true)
     })
@@ -763,8 +345,7 @@ describe('featuresService', () => {
     it('has paid subscription should be true if offline repo and signed into third party server', async () => {
       const featuresService = createService()
 
-      const { didChangeRoles } = await featuresService.updateOnlineRoles([RoleName.NAMES.CoreUser])
-      await featuresService.fetchFeatures('123', didChangeRoles)
+      await featuresService.updateOnlineRoles([RoleName.NAMES.CoreUser])
 
       featuresService.hasOfflineRepo = jest.fn().mockReturnValue(true)
       sessionManager.isSignedIntoFirstPartyServer = jest.fn().mockReturnValue(false)
@@ -854,8 +435,7 @@ describe('featuresService', () => {
     it('should be false if core user checks for plus role', async () => {
       const featuresService = createService()
 
-      const { didChangeRoles } = await featuresService.updateOnlineRoles([RoleName.NAMES.CoreUser])
-      await featuresService.fetchFeatures('123', didChangeRoles)
+      await featuresService.updateOnlineRoles([RoleName.NAMES.CoreUser])
 
       const hasPlusUserRole = featuresService.hasMinimumRole(RoleName.NAMES.PlusUser)
 
@@ -867,11 +447,7 @@ describe('featuresService', () => {
 
       sessionManager.isSignedIntoFirstPartyServer = jest.fn().mockReturnValue(true)
 
-      const { didChangeRoles } = await featuresService.updateOnlineRoles([
-        RoleName.NAMES.PlusUser,
-        RoleName.NAMES.CoreUser,
-      ])
-      await featuresService.fetchFeatures('123', didChangeRoles)
+      await featuresService.updateOnlineRoles([RoleName.NAMES.PlusUser, RoleName.NAMES.CoreUser])
 
       const hasProUserRole = featuresService.hasMinimumRole(RoleName.NAMES.ProUser)
 
@@ -883,11 +459,7 @@ describe('featuresService', () => {
 
       sessionManager.isSignedIntoFirstPartyServer = jest.fn().mockReturnValue(true)
 
-      const { didChangeRoles } = await featuresService.updateOnlineRoles([
-        RoleName.NAMES.ProUser,
-        RoleName.NAMES.PlusUser,
-      ])
-      await featuresService.fetchFeatures('123', didChangeRoles)
+      await featuresService.updateOnlineRoles([RoleName.NAMES.ProUser, RoleName.NAMES.PlusUser])
 
       const hasCoreUserRole = featuresService.hasMinimumRole(RoleName.NAMES.CoreUser)
 
@@ -899,11 +471,7 @@ describe('featuresService', () => {
 
       sessionManager.isSignedIntoFirstPartyServer = jest.fn().mockReturnValue(true)
 
-      const { didChangeRoles } = await featuresService.updateOnlineRoles([
-        RoleName.NAMES.ProUser,
-        RoleName.NAMES.PlusUser,
-      ])
-      await featuresService.fetchFeatures('123', didChangeRoles)
+      await featuresService.updateOnlineRoles([RoleName.NAMES.ProUser, RoleName.NAMES.PlusUser])
 
       const hasProUserRole = featuresService.hasMinimumRole(RoleName.NAMES.ProUser)
 

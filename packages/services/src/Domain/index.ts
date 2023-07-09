@@ -1,5 +1,10 @@
 export * from './Alert/AlertService'
+
 export * from './Api/ApiServiceInterface'
+export * from './Api/ApiServiceEventData'
+export * from './Api/ApiServiceEvent'
+export * from './Api/MetaReceivedData'
+export * from './Api/SessionRefreshedData'
 
 export * from './Application/AppGroupManagedApplication'
 export * from './Application/ApplicationInterface'

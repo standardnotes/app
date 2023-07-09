@@ -1,4 +1,3 @@
-import { SNApiService } from '@Lib/Services/Api'
 import { ContentType } from '@standardnotes/common'
 import { FindNativeFeature, GetFeatures, ThirdPartyFeatureDescription } from '@standardnotes/features'
 import {
@@ -7,11 +6,16 @@ import {
   ComponentInterface,
   FillItemContentSpecialized,
 } from '@standardnotes/models'
-import { AlertService, API_MESSAGE_FAILED_DOWNLOADING_EXTENSION, ItemManagerInterface } from '@standardnotes/services'
+import {
+  AlertService,
+  API_MESSAGE_FAILED_DOWNLOADING_EXTENSION,
+  ApiServiceInterface,
+  ItemManagerInterface,
+} from '@standardnotes/services'
 import { isString } from '@standardnotes/utils'
 
 export class DownloadRemoteThirdPartyFeatureUseCase {
-  constructor(private api: SNApiService, private items: ItemManagerInterface, private alerts: AlertService) {}
+  constructor(private api: ApiServiceInterface, private items: ItemManagerInterface, private alerts: AlertService) {}
 
   async execute(url: string): Promise<ComponentInterface | undefined> {
     const response = await this.api.downloadFeatureUrl(url)

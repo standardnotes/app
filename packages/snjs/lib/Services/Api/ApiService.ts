@@ -41,7 +41,6 @@ import {
   RawSyncResponse,
   SessionRenewalResponse,
   SessionListResponse,
-  UserFeaturesResponse,
   ListSettingsResponse,
   UpdateSettingResponse,
   GetSettingResponse,
@@ -500,19 +499,6 @@ export class SNApiService
       { uuid: sessionId },
       this.getSessionAccessToken(),
     )
-
-    if (isErrorResponse(response)) {
-      this.preprocessAuthenticatedErrorResponse(response)
-      return this.errorResponseWithFallbackMessage(response, API_MESSAGE_GENERIC_SYNC_FAIL)
-    }
-
-    this.processSuccessResponseForMetaBody(response)
-    return response
-  }
-
-  async getUserFeatures(userUuid: UuidString): Promise<HttpResponse<UserFeaturesResponse>> {
-    const path = Paths.v1.userFeatures(userUuid)
-    const response = await this.httpService.get<UserFeaturesResponse>(path, undefined, this.getSessionAccessToken())
 
     if (isErrorResponse(response)) {
       this.preprocessAuthenticatedErrorResponse(response)

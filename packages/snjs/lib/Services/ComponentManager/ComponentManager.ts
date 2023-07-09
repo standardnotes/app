@@ -1,7 +1,6 @@
 import { AllowedBatchStreaming } from './Types'
 import { SNFeaturesService } from '@Lib/Services/Features/FeaturesService'
 import { ContentType } from '@standardnotes/common'
-import { ItemManager } from '@Lib/Services/Items/ItemManager'
 import {
   ActionObserver,
   SNNote,
@@ -25,7 +24,6 @@ import {
   AllComponentPreferences,
   getComponentOrNativeFeatureUniqueIdentifier,
 } from '@standardnotes/models'
-import { SNSyncService } from '@Lib/Services/Sync/SyncService'
 import {
   ComponentArea,
   ComponentAction,
@@ -61,6 +59,8 @@ import {
   PreferenceServiceInterface,
   ComponentViewerItem,
   PreferencesServiceEvent,
+  ItemManagerInterface,
+  SyncServiceInterface,
 } from '@standardnotes/services'
 import { permissionsStringForPermissions } from './permissionsStringForPermissions'
 
@@ -100,9 +100,9 @@ export class SNComponentManager
   private permissionDialogs: PermissionDialog[] = []
 
   constructor(
-    private items: ItemManager,
+    private items: ItemManagerInterface,
     private mutator: MutatorClientInterface,
-    private sync: SNSyncService,
+    private sync: SyncServiceInterface,
     private features: SNFeaturesService,
     private preferences: PreferenceServiceInterface,
     protected alerts: AlertService,

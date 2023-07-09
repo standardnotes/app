@@ -7,7 +7,6 @@ import { createNote } from './../../Spec/SpecUtils'
 import {
   ComponentAction,
   ComponentPermission,
-  FeatureDescription,
   FindNativeFeature,
   FeatureIdentifier,
   NoteType,
@@ -20,6 +19,9 @@ import {
   AlertService,
   DeviceInterface,
   MutatorClientInterface,
+  ItemManagerInterface,
+  SyncServiceInterface,
+  PreferenceServiceInterface,
 } from '@standardnotes/services'
 import { ItemManager } from '@Lib/Services/Items/ItemManager'
 import { SNFeaturesService } from '@Lib/Services/Features/FeaturesService'
@@ -27,54 +29,54 @@ import { SNComponentManager } from './ComponentManager'
 import { SNSyncService } from '../Sync/SyncService'
 
 describe('featuresService', () => {
-  let itemManager: ItemManager
+  let items: ItemManagerInterface
   let mutator: MutatorClientInterface
-  let featureService: SNFeaturesService
-  let alertService: AlertService
-  let syncService: SNSyncService
-  let prefsService: SNPreferencesService
-  let internalEventBus: InternalEventBusInterface
+  let features: SNFeaturesService
+  let alerts: AlertService
+  let sync: SyncServiceInterface
+  let prefs: PreferenceServiceInterface
+  let eventBus: InternalEventBusInterface
   let device: DeviceInterface
 
   const desktopExtHost = 'http://localhost:123'
 
   const createManager = (environment: Environment, platform: Platform) => {
-    const desktopManager: DesktopManagerInterface = {
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-      syncComponentsInstallation() {},
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-      registerUpdateObserver(_callback: (component: ComponentInterface) => void) {
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        return () => {}
-      },
-      getExtServerHost() {
-        return desktopExtHost
-      },
-    }
-
     const manager = new SNComponentManager(
-      itemManager,
+      items,
       mutator,
-      syncService,
-      featureService,
-      prefsService,
-      alertService,
+      sync,
+      features,
+      prefs,
+      alerts,
       environment,
       platform,
-      internalEventBus,
       device,
+      eventBus,
     )
-    manager.setDesktopManager(desktopManager)
+
+    if (environment === Environment.Desktop) {
+      const desktopManager: DesktopManagerInterface = {
+        syncComponentsInstallation() {},
+        registerUpdateObserver(_callback: (component: ComponentInterface) => void) {
+          return () => {}
+        },
+        getExtServerHost() {
+          return desktopExtHost
+        },
+      }
+      manager.setDesktopManager(desktopManager)
+    }
+
     return manager
   }
 
   beforeEach(() => {
-    syncService = {} as jest.Mocked<SNSyncService>
-    syncService.sync = jest.fn()
+    sync = {} as jest.Mocked<SNSyncService>
+    sync.sync = jest.fn()
 
-    itemManager = {} as jest.Mocked<ItemManager>
-    itemManager.getItems = jest.fn().mockReturnValue([])
-    itemManager.addObserver = jest.fn()
+    items = {} as jest.Mocked<ItemManager>
+    items.getItems = jest.fn().mockReturnValue([])
+    items.addObserver = jest.fn()
 
     mutator = {} as jest.Mocked<MutatorClientInterface>
     mutator.createItem = jest.fn()
@@ -83,48 +85,20 @@ describe('featuresService', () => {
     mutator.changeItem = jest.fn()
     mutator.changeFeatureRepo = jest.fn()
 
-    featureService = {} as jest.Mocked<SNFeaturesService>
+    features = {} as jest.Mocked<SNFeaturesService>
 
-    prefsService = {} as jest.Mocked<SNPreferencesService>
+    prefs = {} as jest.Mocked<SNPreferencesService>
+    prefs.addEventObserver = jest.fn()
 
-    alertService = {} as jest.Mocked<AlertService>
-    alertService.confirm = jest.fn()
-    alertService.alert = jest.fn()
+    alerts = {} as jest.Mocked<AlertService>
+    alerts.confirm = jest.fn()
+    alerts.alert = jest.fn()
 
-    internalEventBus = {} as jest.Mocked<InternalEventBusInterface>
-    internalEventBus.publish = jest.fn()
+    eventBus = {} as jest.Mocked<InternalEventBusInterface>
+    eventBus.publish = jest.fn()
 
     device = {} as jest.Mocked<DeviceInterface>
   })
-
-  const nativeComponent = (identifier?: FeatureIdentifier, file_type?: FeatureDescription['file_type']) => {
-    return new SNComponent({
-      uuid: '789',
-      content_type: ContentType.Component,
-      content: {
-        package_info: {
-          hosted_url: 'https://example.com/component',
-          identifier: identifier || FeatureIdentifier.PlusEditor,
-          file_type: file_type ?? 'html',
-          valid_until: new Date(),
-        },
-      },
-    } as never)
-  }
-
-  const deprecatedComponent = () => {
-    return new SNComponent({
-      uuid: '789',
-      content_type: ContentType.Component,
-      content: {
-        package_info: {
-          hosted_url: 'https://example.com/component',
-          identifier: FeatureIdentifier.DeprecatedFileSafe,
-          valid_until: new Date(),
-        },
-      },
-    } as never)
-  }
 
   const thirdPartyComponent = () => {
     return new SNComponent({
@@ -152,7 +126,7 @@ describe('featuresService', () => {
 
       const manager = createManager(Environment.Desktop, Platform.MacDesktop)
       expect(
-        manager.areRequestedPermissionsValid(nativeComponent(FeatureIdentifier.MarkdownProEditor), permissions),
+        manager.areRequestedPermissionsValid(FindNativeFeature(FeatureIdentifier.MarkdownProEditor)!, permissions),
       ).toEqual(true)
     })
 
@@ -165,7 +139,9 @@ describe('featuresService', () => {
       ]
 
       const manager = createManager(Environment.Desktop, Platform.MacDesktop)
-      expect(manager.areRequestedPermissionsValid(nativeComponent(), permissions)).toEqual(false)
+      expect(
+        manager.areRequestedPermissionsValid(FindNativeFeature(FeatureIdentifier.MarkdownProEditor)!, permissions),
+      ).toEqual(false)
     })
 
     it('no extension should be able to stream multiple tags', () => {
@@ -177,7 +153,9 @@ describe('featuresService', () => {
       ]
 
       const manager = createManager(Environment.Desktop, Platform.MacDesktop)
-      expect(manager.areRequestedPermissionsValid(nativeComponent(), permissions)).toEqual(false)
+      expect(
+        manager.areRequestedPermissionsValid(FindNativeFeature(FeatureIdentifier.MarkdownProEditor)!, permissions),
+      ).toEqual(false)
     })
 
     it('no extension should be able to stream multiple notes or tags', () => {
@@ -189,7 +167,9 @@ describe('featuresService', () => {
       ]
 
       const manager = createManager(Environment.Desktop, Platform.MacDesktop)
-      expect(manager.areRequestedPermissionsValid(nativeComponent(), permissions)).toEqual(false)
+      expect(
+        manager.areRequestedPermissionsValid(FindNativeFeature(FeatureIdentifier.MarkdownProEditor)!, permissions),
+      ).toEqual(false)
     })
 
     it('some valid and some invalid permissions should still return invalid permissions', () => {
@@ -202,7 +182,7 @@ describe('featuresService', () => {
 
       const manager = createManager(Environment.Desktop, Platform.MacDesktop)
       expect(
-        manager.areRequestedPermissionsValid(nativeComponent(FeatureIdentifier.DeprecatedFileSafe), permissions),
+        manager.areRequestedPermissionsValid(FindNativeFeature(FeatureIdentifier.DeprecatedFileSafe)!, permissions),
       ).toEqual(false)
     })
 
@@ -220,7 +200,7 @@ describe('featuresService', () => {
 
       const manager = createManager(Environment.Desktop, Platform.MacDesktop)
       expect(
-        manager.areRequestedPermissionsValid(nativeComponent(FeatureIdentifier.DeprecatedFileSafe), permissions),
+        manager.areRequestedPermissionsValid(FindNativeFeature(FeatureIdentifier.DeprecatedFileSafe)!, permissions),
       ).toEqual(true)
     })
 
@@ -238,7 +218,7 @@ describe('featuresService', () => {
 
       const manager = createManager(Environment.Desktop, Platform.MacDesktop)
       expect(
-        manager.areRequestedPermissionsValid(nativeComponent(FeatureIdentifier.DeprecatedBoldEditor), permissions),
+        manager.areRequestedPermissionsValid(FindNativeFeature(FeatureIdentifier.DeprecatedBoldEditor)!, permissions),
       ).toEqual(true)
     })
 
@@ -255,9 +235,9 @@ describe('featuresService', () => {
       ]
 
       const manager = createManager(Environment.Desktop, Platform.MacDesktop)
-      expect(manager.areRequestedPermissionsValid(nativeComponent(FeatureIdentifier.PlusEditor), permissions)).toEqual(
-        false,
-      )
+      expect(
+        manager.areRequestedPermissionsValid(FindNativeFeature(FeatureIdentifier.PlusEditor)!, permissions),
+      ).toEqual(false)
     })
   })
 
@@ -265,7 +245,7 @@ describe('featuresService', () => {
     describe('desktop', () => {
       it('returns native path for native component', () => {
         const manager = createManager(Environment.Desktop, Platform.MacDesktop)
-        const component = nativeComponent()
+        const component = FindNativeFeature(FeatureIdentifier.MarkdownProEditor)!
         const url = manager.urlForComponent(component)
         const feature = FindNativeFeature(component.identifier)
         expect(url).toEqual(`${desktopExtHost}/components/${feature?.identifier}/${feature?.index_path}`)
@@ -273,7 +253,7 @@ describe('featuresService', () => {
 
       it('returns native path for deprecated native component', () => {
         const manager = createManager(Environment.Desktop, Platform.MacDesktop)
-        const component = deprecatedComponent()
+        const component = FindNativeFeature(FeatureIdentifier.DeprecatedBoldEditor)!
         const url = manager.urlForComponent(component)
         const feature = FindNativeFeature(component.identifier)
         expect(url).toEqual(`${desktopExtHost}/components/${feature?.identifier}/${feature?.index_path}`)
@@ -307,10 +287,9 @@ describe('featuresService', () => {
     describe('web', () => {
       it('returns native path for native component', () => {
         const manager = createManager(Environment.Web, Platform.MacWeb)
-        const component = nativeComponent()
-        const url = manager.urlForComponent(component)
-        const feature = FindNativeFeature(component.identifier) as FeatureDescription
-        expect(url).toEqual(`http://localhost/components/assets/${component.identifier}/${feature.index_path}`)
+        const feature = FindNativeFeature(FeatureIdentifier.MarkdownProEditor)!
+        const url = manager.urlForComponent(feature)
+        expect(url).toEqual(`http://localhost/components/assets/${feature.identifier}/${feature.index_path}`)
       })
 
       it('returns hosted path for third party component', () => {
@@ -345,60 +324,60 @@ describe('featuresService', () => {
   describe('editor change alert', () => {
     it('should not require alert switching from plain editor', () => {
       const manager = createManager(Environment.Web, Platform.MacWeb)
-      const component = nativeComponent()
+      const component = FindNativeFeature(FeatureIdentifier.MarkdownProEditor)!
       const requiresAlert = manager.doesEditorChangeRequireAlert(undefined, component)
       expect(requiresAlert).toBe(false)
     })
 
     it('should not require alert switching to plain editor', () => {
       const manager = createManager(Environment.Web, Platform.MacWeb)
-      const component = nativeComponent()
+      const component = FindNativeFeature(FeatureIdentifier.MarkdownProEditor)!
       const requiresAlert = manager.doesEditorChangeRequireAlert(component, undefined)
       expect(requiresAlert).toBe(false)
     })
 
     it('should not require alert switching from a markdown editor', () => {
       const manager = createManager(Environment.Web, Platform.MacWeb)
-      const htmlEditor = nativeComponent()
-      const markdownEditor = nativeComponent(undefined, 'md')
+      const htmlEditor = FindNativeFeature(FeatureIdentifier.MarkdownProEditor)!
+      const markdownEditor = FindNativeFeature(FeatureIdentifier.MarkdownProEditor)
       const requiresAlert = manager.doesEditorChangeRequireAlert(markdownEditor, htmlEditor)
       expect(requiresAlert).toBe(false)
     })
 
     it('should not require alert switching to a markdown editor', () => {
       const manager = createManager(Environment.Web, Platform.MacWeb)
-      const htmlEditor = nativeComponent()
-      const markdownEditor = nativeComponent(undefined, 'md')
+      const htmlEditor = FindNativeFeature(FeatureIdentifier.MarkdownProEditor)!
+      const markdownEditor = FindNativeFeature(FeatureIdentifier.MarkdownProEditor)
       const requiresAlert = manager.doesEditorChangeRequireAlert(htmlEditor, markdownEditor)
       expect(requiresAlert).toBe(false)
     })
 
     it('should not require alert switching from & to a html editor', () => {
       const manager = createManager(Environment.Web, Platform.MacWeb)
-      const htmlEditor = nativeComponent()
+      const htmlEditor = FindNativeFeature(FeatureIdentifier.MarkdownProEditor)!
       const requiresAlert = manager.doesEditorChangeRequireAlert(htmlEditor, htmlEditor)
       expect(requiresAlert).toBe(false)
     })
 
     it('should require alert switching from a html editor to custom editor', () => {
       const manager = createManager(Environment.Web, Platform.MacWeb)
-      const htmlEditor = nativeComponent()
-      const customEditor = nativeComponent(undefined, 'json')
+      const htmlEditor = FindNativeFeature(FeatureIdentifier.PlusEditor)!
+      const customEditor = FindNativeFeature(FeatureIdentifier.TokenVaultEditor)
       const requiresAlert = manager.doesEditorChangeRequireAlert(htmlEditor, customEditor)
       expect(requiresAlert).toBe(true)
     })
 
     it('should require alert switching from a custom editor to html editor', () => {
       const manager = createManager(Environment.Web, Platform.MacWeb)
-      const htmlEditor = nativeComponent()
-      const customEditor = nativeComponent(undefined, 'json')
+      const htmlEditor = FindNativeFeature(FeatureIdentifier.PlusEditor)!
+      const customEditor = FindNativeFeature(FeatureIdentifier.TokenVaultEditor)
       const requiresAlert = manager.doesEditorChangeRequireAlert(customEditor, htmlEditor)
       expect(requiresAlert).toBe(true)
     })
 
     it('should require alert switching from a custom editor to custom editor', () => {
       const manager = createManager(Environment.Web, Platform.MacWeb)
-      const customEditor = nativeComponent(undefined, 'json')
+      const customEditor = FindNativeFeature(FeatureIdentifier.TokenVaultEditor)
       const requiresAlert = manager.doesEditorChangeRequireAlert(customEditor, customEditor)
       expect(requiresAlert).toBe(true)
     })

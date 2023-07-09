@@ -8,6 +8,8 @@ import {
   PreferenceServiceInterface,
   ComponentViewerItem,
   isComponentViewerItemReadonlyItem,
+  ItemManagerInterface,
+  SyncServiceInterface,
 } from '@standardnotes/services'
 import { SNFeaturesService } from '@Lib/Services'
 import {
@@ -43,7 +45,6 @@ import {
   isNativeComponent,
   isComponent,
 } from '@standardnotes/models'
-import { SNSyncService } from '@Lib/Services/Sync/SyncService'
 import { environmentToString, platformToString } from '@Lib/Application/Platforms'
 import {
   MessageReply,
@@ -56,7 +57,6 @@ import {
 } from './Types'
 import { ComponentViewerRequiresComponentManagerFunctions } from './ComponentViewerRequiresComponentManagerFunctions'
 import { ComponentAction, ComponentPermission, ComponentArea } from '@standardnotes/features'
-import { ItemManager } from '@Lib/Services/Items/ItemManager'
 import { ContentType } from '@standardnotes/common'
 import {
   isString,
@@ -94,9 +94,9 @@ export class ComponentViewer implements ComponentViewerInterface {
   constructor(
     public readonly componentOrFeature: ComponentOrNativeFeature,
     private services: {
-      items: ItemManager
+      items: ItemManagerInterface
       mutator: MutatorClientInterface
-      sync: SNSyncService
+      sync: SyncServiceInterface
       alerts: AlertService
       preferences: PreferenceServiceInterface
       features: SNFeaturesService

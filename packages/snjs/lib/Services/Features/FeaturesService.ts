@@ -1,17 +1,12 @@
 import { MigrateFeatureRepoToUserSettingUseCase } from './UseCase/MigrateFeatureRepoToUserSetting'
-import { SNApiService } from '../Api/ApiService'
 import { arraysEqual, removeFromArray, lastElement } from '@standardnotes/utils'
 import { ClientDisplayableError } from '@standardnotes/responses'
 import { ContentType } from '@standardnotes/common'
 import { RoleName } from '@standardnotes/domain-core'
-import { ItemManager } from '../Items/ItemManager'
 import { PROD_OFFLINE_FEATURES_URL } from '../../Hosts'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
-import { SNSessionManager } from '@Lib/Services/Session/SessionManager'
-import { SNSettingsService } from '../Settings'
-import { DiskStorageService } from '../Storage/DiskStorageService'
-import { SNSyncService } from '../Sync/SyncService'
-import { SNWebSocketsService, WebSocketsServiceEvent } from '../Api/WebsocketsService'
+import { SNWebSocketsService } from '../Api/WebsocketsService'
+import { WebSocketsServiceEvent } from '../Api/WebSocketsServiceEvent'
 import { TRUSTED_CUSTOM_EXTENSIONS_HOSTS, TRUSTED_FEATURE_HOSTS } from '@Lib/Hosts'
 import { UserRolesChangedEvent } from '@standardnotes/domain-events'
 import { ExperimentalFeatures, FindNativeFeature, FeatureIdentifier } from '@standardnotes/features'
@@ -43,13 +38,19 @@ import {
   OfflineSubscriptionEntitlements,
   SetOfflineFeaturesFunctionResponse,
   StorageKey,
-  UserService,
   MutatorClientInterface,
+  StorageServiceInterface,
+  ApiServiceInterface,
+  ItemManagerInterface,
+  SyncServiceInterface,
+  SessionsClientInterface,
+  UserClientInterface,
 } from '@standardnotes/services'
 
 import { DownloadRemoteThirdPartyFeatureUseCase } from './UseCase/DownloadRemoteThirdPartyFeature'
 import { MigrateFeatureRepoToOfflineEntitlementsUseCase } from './UseCase/MigrateFeatureRepoToOfflineEntitlements'
 import { GetFeatureStatusUseCase } from './UseCase/GetFeatureStatus'
+import { SettingsClientInterface } from '../Settings/SettingsClientInterface'
 
 type GetOfflineSubscriptionDetailsResponse = OfflineSubscriptionEntitlements | ClientDisplayableError
 
@@ -60,41 +61,39 @@ export class SNFeaturesService
   private onlineRoles: string[] = []
   private offlineRoles: string[] = []
   private enabledExperimentalFeatures: FeatureIdentifier[] = []
-  private removeWebSocketsServiceObserver: () => void
-  private removefeatureReposObserver: () => void
-  private removeSignInObserver: () => void
   private needsInitialFeaturesUpdate = true
 
   private getFeatureStatusUseCase = new GetFeatureStatusUseCase(this.items)
 
   constructor(
-    private storage: DiskStorageService,
-    private api: SNApiService,
-    private items: ItemManager,
+    private storage: StorageServiceInterface,
+    private api: ApiServiceInterface,
+    private items: ItemManagerInterface,
     private mutator: MutatorClientInterface,
     sockets: SNWebSocketsService,
-    private settings: SNSettingsService,
-    private user: UserService,
-    private sync: SNSyncService,
+    private settings: SettingsClientInterface,
+    private user: UserClientInterface,
+    private sync: SyncServiceInterface,
     private alerts: AlertService,
-    private sessions: SNSessionManager,
+    private sessions: SessionsClientInterface,
     private crypto: PureCryptoInterface,
     protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)
 
-    this.removeWebSocketsServiceObserver = sockets.addEventObserver(async (eventName, data) => {
-      if (eventName === WebSocketsServiceEvent.UserRoleMessageReceived) {
-        const {
-          payload: { currentRoles },
-        } = data as UserRolesChangedEvent
-        await this.updateOnlineRoles(currentRoles)
-      }
-    })
+    this.eventDisposers.push(
+      sockets.addEventObserver(async (eventName, data) => {
+        if (eventName === WebSocketsServiceEvent.UserRoleMessageReceived) {
+          const {
+            payload: { currentRoles },
+          } = data as UserRolesChangedEvent
+          await this.updateOnlineRoles(currentRoles)
+        }
+      }),
+    )
 
-    this.removefeatureReposObserver = this.items.addObserver(
-      ContentType.ExtensionRepo,
-      async ({ changed, inserted, source }) => {
+    this.eventDisposers.push(
+      this.items.addObserver(ContentType.ExtensionRepo, async ({ changed, inserted, source }) => {
         const sources = [
           PayloadEmitSource.InitialObserverRegistrationPush,
           PayloadEmitSource.LocalInserted,
@@ -111,18 +110,20 @@ export class SNFeaturesService
             await this.migrateFeatureRepoToOfflineEntitlements(items)
           }
         }
-      },
+      }),
     )
 
-    this.removeSignInObserver = this.user.addEventObserver((eventName: AccountEvent) => {
-      if (eventName === AccountEvent.SignedInOrRegistered) {
-        const featureRepos = this.items.getItems(ContentType.ExtensionRepo) as SNFeatureRepo[]
+    this.eventDisposers.push(
+      this.user.addEventObserver((eventName: AccountEvent) => {
+        if (eventName === AccountEvent.SignedInOrRegistered) {
+          const featureRepos = this.items.getItems(ContentType.ExtensionRepo) as SNFeatureRepo[]
 
-        if (!this.api.isThirdPartyHostUsed()) {
-          void this.migrateFeatureRepoToUserSetting(featureRepos)
+          if (!this.api.isThirdPartyHostUsed()) {
+            void this.migrateFeatureRepoToUserSetting(featureRepos)
+          }
         }
-      }
-    })
+      }),
+    )
   }
 
   public initializeFromDisk(): void {
@@ -440,12 +441,6 @@ export class SNFeaturesService
 
   override deinit(): void {
     super.deinit()
-    this.removeSignInObserver()
-    ;(this.removeSignInObserver as unknown) = undefined
-    this.removeWebSocketsServiceObserver()
-    ;(this.removeWebSocketsServiceObserver as unknown) = undefined
-    this.removefeatureReposObserver()
-    ;(this.removefeatureReposObserver as unknown) = undefined
     ;(this.onlineRoles as unknown) = undefined
     ;(this.offlineRoles as unknown) = undefined
     ;(this.storage as unknown) = undefined

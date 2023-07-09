@@ -61,8 +61,6 @@ export * from './User/ListSettingsResponse'
 export * from './User/PostSubscriptionTokensResponse'
 export * from './User/SettingData'
 export * from './User/UpdateSettingResponse'
-export * from './User/UserFeaturesData'
-export * from './User/UserFeaturesResponse'
 
 export * from './UserEvent/UserEventServerHash'
 export * from './UserEvent/UserEventType'

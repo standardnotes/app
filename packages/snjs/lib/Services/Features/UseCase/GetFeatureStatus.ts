@@ -5,16 +5,16 @@ export class GetFeatureStatusUseCase {
   constructor(private items: ItemManagerInterface) {}
 
   execute(dto: {
-    featureId: FeatureIdentifier
+    featureId: FeatureIdentifier | string
     hasPaidAnyPartyOnlineOrOfflineSubscription: boolean
     hasFirstPartySubscription: boolean
     roles: string[]
   }): FeatureStatus {
-    if (this.isFreeFeature(dto.featureId)) {
+    if (this.isFreeFeature(dto.featureId as FeatureIdentifier)) {
       return FeatureStatus.Entitled
     }
 
-    const nativeFeature = FindNativeFeature(dto.featureId)
+    const nativeFeature = FindNativeFeature(dto.featureId as FeatureIdentifier)
 
     if (nativeFeature?.deprecated) {
       if (dto.hasPaidAnyPartyOnlineOrOfflineSubscription) {
@@ -29,18 +29,21 @@ export class GetFeatureStatusUseCase {
       const component = this.items
         .getDisplayableComponents()
         .find((candidate) => candidate.identifier === dto.featureId)
+
       if (!component) {
         return FeatureStatus.NoUserSubscription
       }
+
       if (component.isExpired) {
         return FeatureStatus.InCurrentPlanButExpired
       }
+
       return FeatureStatus.Entitled
     }
 
     if (nativeFeature) {
       if (!dto.hasFirstPartySubscription) {
-        return FeatureStatus.NotInCurrentPlan
+        return FeatureStatus.NoUserSubscription
       }
 
       if (nativeFeature.availableInRoles) {
