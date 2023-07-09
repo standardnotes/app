@@ -1,6 +1,7 @@
 import {
   ComponentArea,
   ComponentInterface,
+  ComponentOrNativeTheme,
   ContentType,
   FeatureIdentifier,
   PreferencesServiceEvent,
@@ -12,7 +13,6 @@ import { FunctionComponent, useCallback, useEffect, useRef, useState } from 'rea
 import Icon from '@/Components/Icon/Icon'
 import FocusModeSwitch from './FocusModeSwitch'
 import ThemesMenuButton from './ThemesMenuButton'
-import { ThemeItem } from './ThemeItem'
 import { sortThemes } from '@/Utils/SortThemes'
 import HorizontalSeparator from '../Shared/HorizontalSeparator'
 import { QuickSettingsController } from '@/Controllers/QuickSettingsController'
@@ -21,7 +21,7 @@ import Menu from '../Menu/Menu'
 import MenuSwitchButtonItem from '../Menu/MenuSwitchButtonItem'
 import MenuRadioButtonItem from '../Menu/MenuRadioButtonItem'
 import { useApplication } from '../ApplicationProvider'
-import { GetAllThemesUseCase } from './GetAllThemesUseCase'
+import { GetAllThemesUseCase } from '@standardnotes/ui-services'
 
 type MenuProps = {
   quickSettingsMenuController: QuickSettingsController
@@ -32,7 +32,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ quickSettingsMenuCont
 
   const { focusModeEnabled, setFocusModeEnabled } = application.paneController
   const { closeQuickSettingsMenu } = quickSettingsMenuController
-  const [thirdPartyThemes, setThirdPartyThemes] = useState<ThemeItem[]>([])
+  const [themes, setThemes] = useState<ComponentOrNativeTheme[]>([])
   const [toggleableComponents, setToggleableComponents] = useState<ComponentInterface[]>([])
 
   const activeThemes = application.componentManager.getActiveThemes()
@@ -44,8 +44,8 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ quickSettingsMenuCont
 
   const reloadThemes = useCallback(() => {
     const usecase = new GetAllThemesUseCase(application.items)
-    const { thirdParty, native } = usecase.execute()
-    setThirdPartyThemes([...thirdParty, ...native].sort(sortThemes))
+    const { thirdParty, native } = usecase.execute({ excludeLayerable: false })
+    setThemes([...thirdParty, ...native].sort(sortThemes))
   }, [application])
 
   const reloadToggleableComponents = useCallback(() => {
@@ -62,10 +62,10 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ quickSettingsMenuCont
   }, [application])
 
   useEffect(() => {
-    if (!thirdPartyThemes.length) {
+    if (!themes.length) {
       reloadThemes()
     }
-  }, [reloadThemes, thirdPartyThemes.length])
+  }, [reloadThemes, themes.length])
 
   useEffect(() => {
     const cleanupItemStream = application.streamItems(ContentType.Theme, () => {
@@ -145,11 +145,8 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ quickSettingsMenuCont
       <MenuRadioButtonItem checked={defaultThemeOn} onClick={toggleDefaultTheme} ref={defaultThemeButtonRef}>
         Default
       </MenuRadioButtonItem>
-      {thirdPartyThemes.map((theme) => (
-        <ThemesMenuButton
-          item={theme}
-          key={getComponentOrNativeFeatureUniqueIdentifier(theme.componentOrNativeTheme)}
-        />
+      {themes.map((theme) => (
+        <ThemesMenuButton item={theme} key={getComponentOrNativeFeatureUniqueIdentifier(theme)} />
       ))}
       <HorizontalSeparator classes="my-2" />
       <FocusModeSwitch

@@ -13,7 +13,7 @@ import PreferencesGroup from '../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../PreferencesComponents/PreferencesSegment'
 import { PremiumFeatureIconName } from '@/Components/Icon/PremiumFeatureIcon'
 import EditorAppearance from './Appearance/EditorAppearance'
-import { GetAllThemesUseCase } from '@/Components/QuickSettingsMenu/GetAllThemesUseCase'
+import { GetAllThemesUseCase } from '@standardnotes/ui-services'
 
 type Props = {
   application: WebApplication
@@ -35,7 +35,7 @@ const Appearance: FunctionComponent<Props> = ({ application }) => {
 
   useEffect(() => {
     const usecase = new GetAllThemesUseCase(application.items)
-    const { thirdParty, native } = usecase.execute()
+    const { thirdParty, native } = usecase.execute({ excludeLayerable: true })
 
     const dropdownItems: DropdownItem[] = []
 

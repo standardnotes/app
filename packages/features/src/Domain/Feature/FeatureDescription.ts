@@ -28,7 +28,7 @@ export type BaseFeatureDescription = RoleFields & {
   flags?: ComponentFlag[]
   identifier: FeatureIdentifier
   marketing_url?: string
-  name?: string
+  name: string
   no_expire?: boolean
   no_mobile?: boolean
   thumbnail_url?: string
@@ -36,7 +36,7 @@ export type BaseFeatureDescription = RoleFields & {
 }
 
 export type ServerFeatureDescription = RoleFields & {
-  name?: string
+  name: string
   identifier: FeatureIdentifier
   permission_name: PermissionName
 }

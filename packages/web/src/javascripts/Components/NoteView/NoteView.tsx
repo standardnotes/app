@@ -740,7 +740,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
     log(LoggingDomain.NoteView, 'Reload stack components')
     const stackComponents = sortAlphabetically(
       this.application.componentManager
-        .componentsForArea(ComponentArea.EditorStack)
+        .thirdPartyComponentsForArea(ComponentArea.EditorStack)
         .filter((component) => this.application.componentManager.isComponentActive(component)),
     )
     const enabledComponents = stackComponents.filter((component) => {

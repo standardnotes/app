@@ -1,11 +1,10 @@
-import { ThemeItem } from '@/Components/QuickSettingsMenu/ThemeItem'
-import { FeatureIdentifier } from '@standardnotes/snjs'
+import { ComponentOrNativeTheme, FeatureIdentifier } from '@standardnotes/snjs'
 
-const isDarkModeTheme = (theme: ThemeItem) => theme.identifier === FeatureIdentifier.DarkTheme
+const isDarkModeTheme = (theme: ComponentOrNativeTheme) => theme.identifier === FeatureIdentifier.DarkTheme
 
-export const sortThemes = (a: ThemeItem, b: ThemeItem) => {
-  const aIsLayerable = a.componentOrNativeTheme?.layerable
-  const bIsLayerable = b.componentOrNativeTheme?.layerable
+export const sortThemes = (a: ComponentOrNativeTheme, b: ComponentOrNativeTheme) => {
+  const aIsLayerable = a.layerable
+  const bIsLayerable = b.layerable
 
   if (aIsLayerable && !bIsLayerable) {
     return 1

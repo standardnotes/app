@@ -4,7 +4,6 @@ import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import { STRING_EDIT_LOCKED_ATTEMPT } from '@/Constants/Strings'
 import { WebApplication } from '@/Application/WebApplication'
 import {
-  ComponentArea,
   ComponentOrNativeFeature,
   NoteMutator,
   NoteType,
@@ -44,14 +43,7 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
   onSelect,
   setDisableClickOutside,
 }) => {
-  const editors = useMemo(
-    () =>
-      application.componentManager.componentsForArea(ComponentArea.Editor).sort((a, b) => {
-        return a.displayName.toLowerCase() < b.displayName.toLowerCase() ? -1 : 1
-      }),
-    [application.componentManager],
-  )
-  const groups = useMemo(() => createEditorMenuGroups(application, editors), [application, editors])
+  const groups = useMemo(() => createEditorMenuGroups(application), [application])
   const [currentComponent, setCurrentComponent] = useState<ComponentOrNativeFeature>()
   const [pendingConversionItem, setPendingConversionItem] = useState<EditorMenuItem | null>(null)
 

@@ -23,6 +23,10 @@ export function GetNativeEditors(): EditorFeatureDescription[] {
   return editors()
 }
 
+export function GetNativeThemes(): ThemeFeatureDescription[] {
+  return themes()
+}
+
 export function GetDarkThemeFeature(): ThemeFeatureDescription {
   return themes().find((t) => t.identifier === FeatureIdentifier.DarkTheme) as ThemeFeatureDescription
 }

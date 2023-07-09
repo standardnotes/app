@@ -15,7 +15,7 @@ import { ComponentViewerInterface } from './ComponentViewerInterface'
 export interface ComponentManagerInterface {
   urlForComponent(component: ComponentOrNativeFeature): string | undefined
   setDesktopManager(desktopManager: DesktopManagerInterface): void
-  componentsForArea(area: ComponentArea): ComponentInterface[]
+  thirdPartyComponentsForArea(area: ComponentArea): ComponentInterface[]
   editorForNote(note: SNNote): ComponentOrNativeFeature | undefined
   doesEditorChangeRequireAlert(
     from: ComponentOrNativeFeature | undefined,
@@ -31,7 +31,7 @@ export interface ComponentManagerInterface {
   ): ComponentViewerInterface
   presentPermissionsDialog(_dialog: PermissionDialog): void
   legacyGetDefaultEditor(): ComponentInterface | undefined
-  componentWithIdentifier(identifier: FeatureIdentifier | string): ComponentOrNativeFeature | undefined
+  componentOrNativeFeatureForIdentifier(identifier: FeatureIdentifier | string): ComponentOrNativeFeature | undefined
 
   isThemeActive(theme: ComponentOrNativeTheme): boolean
   toggleTheme(theme: ComponentOrNativeTheme): Promise<void>

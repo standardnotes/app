@@ -21,6 +21,7 @@ import {
 import { FeatureIdentifier, FindNativeTheme } from '@standardnotes/features'
 import { WebApplicationInterface } from '../WebApplication/WebApplicationInterface'
 import { AbstractUIServicee } from '../Abstract/AbstractUIService'
+import { GetAllThemesUseCase } from './GetAllThemesUseCase'
 
 const CachedThemesKey = 'cachedThemes'
 const TimeBeforeApplyingColorScheme = 5
@@ -242,14 +243,16 @@ export class ThemeManager extends AbstractUIServicee {
 
   private setThemeAsPerColorScheme(prefersDarkColorScheme: boolean) {
     const preference = prefersDarkColorScheme ? PrefKey.AutoDarkThemeIdentifier : PrefKey.AutoLightThemeIdentifier
+
     const preferenceDefault =
       preference === PrefKey.AutoDarkThemeIdentifier ? FeatureIdentifier.DarkTheme : DefaultThemeIdentifier
 
-    const themes = this.application.items
-      .getDisplayableComponents()
-      .filter((component) => component.isTheme()) as ThemeInterface[]
+    const usecase = new GetAllThemesUseCase(this.application.items)
+    const { thirdParty, native } = usecase.execute({ excludeLayerable: false })
+    const themes = [...thirdParty, ...native]
 
     const activeTheme = themes.find((theme) => this.components.isThemeActive(theme) && !theme.layerable)
+
     const activeThemeIdentifier = activeTheme ? activeTheme.identifier : DefaultThemeIdentifier
 
     const themeIdentifier = this.preferences.getValue(preference, preferenceDefault)
@@ -264,7 +267,9 @@ export class ThemeManager extends AbstractUIServicee {
       if (themeIdentifier === DefaultThemeIdentifier) {
         toggleActiveTheme()
       } else {
-        const theme = themes.find((theme) => theme.package_info.identifier === themeIdentifier)
+        const theme = themes.find(
+          (theme) => getComponentOrNativeFeatureFeatureDescription(theme).identifier === themeIdentifier,
+        )
         if (theme && !this.components.isThemeActive(theme)) {
           this.components.toggleTheme(theme).catch(console.error)
         }

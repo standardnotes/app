@@ -142,23 +142,23 @@ export class SNComponentManager
     return this.environment === Environment.Mobile
   }
 
-  get components(): ComponentInterface[] {
+  get thirdPartyComponents(): ComponentInterface[] {
     return this.items.getDisplayableComponents()
   }
 
-  componentsForArea(area: ComponentArea): ComponentInterface[] {
-    return this.components.filter((component) => {
+  thirdPartyComponentsForArea(area: ComponentArea): ComponentInterface[] {
+    return this.thirdPartyComponents.filter((component) => {
       return component.area === area
     })
   }
 
-  componentWithIdentifier(identifier: FeatureIdentifier | string): ComponentOrNativeFeature | undefined {
+  componentOrNativeFeatureForIdentifier(identifier: FeatureIdentifier | string): ComponentOrNativeFeature | undefined {
     const nativeFeature = FindNativeFeature(identifier as FeatureIdentifier)
     if (nativeFeature) {
       return nativeFeature
     }
 
-    return this.components.find((component) => component.identifier === identifier)
+    return this.thirdPartyComponents.find((component) => component.identifier === identifier)
   }
 
   override deinit(): void {
@@ -681,7 +681,7 @@ export class SNComponentManager
     }
 
     if (note.editorIdentifier) {
-      return this.componentWithIdentifier(note.editorIdentifier)
+      return this.componentOrNativeFeatureForIdentifier(note.editorIdentifier)
     }
 
     if (note.noteType) {
@@ -700,7 +700,7 @@ export class SNComponentManager
    * Uses legacy approach of note/editor association. New method uses note.editorIdentifier and note.noteType directly.
    */
   private legacyGetEditorForNote(note: SNNote): ComponentInterface | undefined {
-    const editors = this.componentsForArea(ComponentArea.Editor)
+    const editors = this.thirdPartyComponentsForArea(ComponentArea.Editor)
     for (const editor of editors) {
       if (editor.isExplicitlyEnabledForItem(note.uuid)) {
         return editor
@@ -716,7 +716,7 @@ export class SNComponentManager
   }
 
   legacyGetDefaultEditor(): ComponentInterface | undefined {
-    const editors = this.componentsForArea(ComponentArea.Editor)
+    const editors = this.thirdPartyComponentsForArea(ComponentArea.Editor)
     return editors.filter((e) => e.legacyIsDefaultEditor())[0]
   }
 

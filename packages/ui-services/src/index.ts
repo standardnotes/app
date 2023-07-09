@@ -28,7 +28,10 @@ export * from './Route/RouteServiceInterface'
 export * from './Route/RouteServiceEvent'
 export * from './Security/AutolockService'
 export * from './Storage/LocalStorage'
+
 export * from './Theme/ThemeManager'
+export * from './Theme/GetAllThemesUseCase'
+
 export * from './Toast/ToastService'
 export * from './Toast/ToastServiceInterface'
 export * from './StatePersistence/StatePersistence'

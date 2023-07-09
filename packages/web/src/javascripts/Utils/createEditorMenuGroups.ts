@@ -6,6 +6,7 @@ import {
   FeatureIdentifier,
   ComponentInterface,
   GetNativeEditors,
+  ComponentArea,
 } from '@standardnotes/snjs'
 import { EditorMenuGroup } from '@/Components/NotesOptions/EditorMenuGroup'
 import { EditorMenuItem } from '@/Components/NotesOptions/EditorMenuItem'
@@ -169,15 +170,18 @@ const createBaselineMap = (application: WebApplicationInterface): NoteTypeToEdit
   return map
 }
 
-export const createEditorMenuGroups = (
-  application: WebApplicationInterface,
-  installedEditors: ComponentInterface[],
-) => {
+export const createEditorMenuGroups = (application: WebApplicationInterface) => {
   const map = createBaselineMap(application)
 
-  insertNativeEditorsInMap(map, installedEditors, application)
+  const thirdPartyOrInstalledEditors = application.componentManager
+    .thirdPartyComponentsForArea(ComponentArea.Editor)
+    .sort((a, b) => {
+      return a.displayName.toLowerCase() < b.displayName.toLowerCase() ? -1 : 1
+    })
 
-  insertInstalledComponentsInMap(map, installedEditors, application)
+  insertNativeEditorsInMap(map, thirdPartyOrInstalledEditors, application)
+
+  insertInstalledComponentsInMap(map, thirdPartyOrInstalledEditors, application)
 
   return createGroupsFromMap(map)
 }

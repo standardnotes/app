@@ -3,7 +3,6 @@ import { STRING_EDIT_LOCKED_ATTEMPT } from '@/Constants/Strings'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import { createEditorMenuGroups } from '@/Utils/createEditorMenuGroups'
 import {
-  ComponentArea,
   ComponentOrNativeFeature,
   NoteMutator,
   NoteType,
@@ -38,14 +37,7 @@ const ChangeMultipleMenu = ({ application, notes, setDisableClickOutside }: Prop
 
   const hasSelectedLockedNotes = useMemo(() => notes.some((note) => note.locked), [notes])
 
-  const editors = useMemo(
-    () =>
-      application.componentManager.componentsForArea(ComponentArea.Editor).sort((a, b) => {
-        return a.displayName.toLowerCase() < b.displayName.toLowerCase() ? -1 : 1
-      }),
-    [application.componentManager],
-  )
-  const groups = useMemo(() => createEditorMenuGroups(application, editors), [application, editors])
+  const groups = useMemo(() => createEditorMenuGroups(application), [application])
 
   const selectComponent = useCallback(
     async (component: ComponentOrNativeFeature, note: SNNote) => {

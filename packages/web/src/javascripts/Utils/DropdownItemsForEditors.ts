@@ -1,30 +1,44 @@
 import { FeatureIdentifier, FeatureStatus } from '@standardnotes/snjs'
-import { ComponentArea, NoteType } from '@standardnotes/features'
-import { WebApplication } from '@/Application/WebApplication'
+import {
+  ComponentArea,
+  EditorFeatureDescription,
+  FindNativeFeature,
+  GetNativeEditors,
+  NoteType,
+} from '@standardnotes/features'
 import { PlainEditorMetadata, SuperEditorMetadata } from '@/Constants/Constants'
 import { getIconAndTintForNoteType } from './Items/Icons/getIconAndTintForNoteType'
 import { DropdownItem } from '@/Components/Dropdown/DropdownItem'
+import { WebApplicationInterface } from '@standardnotes/ui-services'
 
 export type EditorOption = DropdownItem & {
   value: FeatureIdentifier
   isLabs?: boolean
 }
 
-export function noteTypeForEditorOptionValue(value: EditorOption['value'], application: WebApplication): NoteType {
+export function noteTypeForEditorOptionValue(
+  value: EditorOption['value'],
+  application: WebApplicationInterface,
+): NoteType {
   if (value === FeatureIdentifier.PlainEditor) {
     return NoteType.Plain
   } else if (value === FeatureIdentifier.SuperEditor) {
     return NoteType.Super
   }
 
+  const nativeEditor = FindNativeFeature<EditorFeatureDescription>(value)
+  if (nativeEditor) {
+    return nativeEditor.note_type
+  }
+
   const matchingEditor = application.componentManager
-    .componentsForArea(ComponentArea.Editor)
+    .thirdPartyComponentsForArea(ComponentArea.Editor)
     .find((editor) => editor.identifier === value)
 
   return matchingEditor ? matchingEditor.noteType : NoteType.Unknown
 }
 
-export function getDropdownItemsForAllEditors(application: WebApplication): EditorOption[] {
+export function getDropdownItemsForAllEditors(application: WebApplicationInterface): EditorOption[] {
   const plaintextOption: EditorOption = {
     icon: PlainEditorMetadata.icon,
     iconClassName: PlainEditorMetadata.iconClassName,
@@ -32,17 +46,34 @@ export function getDropdownItemsForAllEditors(application: WebApplication): Edit
     value: FeatureIdentifier.PlainEditor,
   }
 
-  const options = application.componentManager.componentsForArea(ComponentArea.Editor).map((editor): EditorOption => {
-    const identifier = editor.package_info.identifier
-    const [iconType, tint] = getIconAndTintForNoteType(editor.package_info.note_type)
+  const options: EditorOption[] = []
 
-    return {
-      label: editor.displayName,
-      value: identifier,
-      ...(iconType ? { icon: iconType } : null),
-      ...(tint ? { iconClassName: `text-accessory-tint-${tint}` } : null),
-    }
-  })
+  options.push(
+    ...GetNativeEditors().map((editor) => {
+      const [iconType, tint] = getIconAndTintForNoteType(editor.note_type)
+
+      return {
+        label: editor.name,
+        value: editor.identifier,
+        ...(iconType ? { icon: iconType } : null),
+        ...(tint ? { iconClassName: `text-accessory-tint-${tint}` } : null),
+      }
+    }),
+  )
+
+  options.push(
+    ...application.componentManager.thirdPartyComponentsForArea(ComponentArea.Editor).map((editor): EditorOption => {
+      const identifier = editor.package_info.identifier
+      const [iconType, tint] = getIconAndTintForNoteType(editor.package_info.note_type)
+
+      return {
+        label: editor.displayName,
+        value: identifier,
+        ...(iconType ? { icon: iconType } : null),
+        ...(tint ? { iconClassName: `text-accessory-tint-${tint}` } : null),
+      }
+    }),
+  )
 
   options.push(plaintextOption)
 
