@@ -96,9 +96,15 @@ export interface ItemManagerInterface extends AbstractService {
     itemToLookupUuidFor: DecryptedItemInterface,
     contentType?: ContentType,
   ): I[]
+
   findItem<T extends DecryptedItemInterface = DecryptedItemInterface>(uuid: string): T | undefined
   findItems<T extends DecryptedItemInterface>(uuids: string[]): T[]
   findSureItem<T extends DecryptedItemInterface = DecryptedItemInterface>(uuid: string): T
+  /**
+   * If item is not found, an `undefined` element will be inserted into the array.
+   */
+  findItemsIncludingBlanks<T extends DecryptedItemInterface>(uuids: string[]): (T | undefined)[]
+
   get trashedItems(): SNNote[]
   itemsBelongingToKeySystem(systemIdentifier: KeySystemIdentifier): DecryptedItemInterface[]
   hasTagsNeedingFoldersMigration(): boolean

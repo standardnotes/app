@@ -275,10 +275,6 @@ export class ItemManager extends Services.AbstractService implements Services.It
     return this.collection.findAllDecrypted(uuids) as T[]
   }
 
-  /**
-   * If item is not found, an `undefined` element
-   * will be inserted into the array.
-   */
   findItemsIncludingBlanks<T extends Models.DecryptedItemInterface>(uuids: UuidString[]): (T | undefined)[] {
     return this.collection.findAllDecryptedWithBlanks(uuids) as (T | undefined)[]
   }

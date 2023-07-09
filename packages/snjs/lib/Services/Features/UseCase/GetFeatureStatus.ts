@@ -1,4 +1,4 @@
-import { FeatureIdentifier, FindNativeFeature } from '@standardnotes/features'
+import { FeatureDescription, FeatureIdentifier, FindNativeFeature } from '@standardnotes/features'
 import { FeatureStatus, ItemManagerInterface } from '@standardnotes/services'
 
 export class GetFeatureStatusUseCase {
@@ -16,7 +16,25 @@ export class GetFeatureStatusUseCase {
 
     const nativeFeature = FindNativeFeature(dto.featureId as FeatureIdentifier)
 
-    if (nativeFeature?.deprecated) {
+    if (!nativeFeature) {
+      return this.getThirdPartyFeatureStatus(dto.featureId as string)
+    }
+
+    return this.getNativeFeatureFeatureStatus({
+      hasFirstPartySubscription: dto.hasFirstPartySubscription,
+      hasPaidAnyPartyOnlineOrOfflineSubscription: dto.hasPaidAnyPartyOnlineOrOfflineSubscription,
+      roles: dto.roles,
+      nativeFeature,
+    })
+  }
+
+  private getNativeFeatureFeatureStatus(dto: {
+    hasFirstPartySubscription: boolean
+    hasPaidAnyPartyOnlineOrOfflineSubscription: boolean
+    roles: string[]
+    nativeFeature: FeatureDescription
+  }): FeatureStatus {
+    if (dto.nativeFeature.deprecated) {
       if (dto.hasPaidAnyPartyOnlineOrOfflineSubscription) {
         return FeatureStatus.Entitled
       } else {
@@ -24,36 +42,31 @@ export class GetFeatureStatusUseCase {
       }
     }
 
-    const isThirdParty = nativeFeature == undefined
-    if (isThirdParty) {
-      const component = this.items
-        .getDisplayableComponents()
-        .find((candidate) => candidate.identifier === dto.featureId)
-
-      if (!component) {
-        return FeatureStatus.NoUserSubscription
-      }
-
-      if (component.isExpired) {
-        return FeatureStatus.InCurrentPlanButExpired
-      }
-
-      return FeatureStatus.Entitled
+    if (!dto.hasFirstPartySubscription) {
+      return FeatureStatus.NoUserSubscription
     }
 
-    if (nativeFeature) {
-      if (!dto.hasFirstPartySubscription) {
-        return FeatureStatus.NoUserSubscription
+    if (dto.nativeFeature.availableInRoles) {
+      const hasRole = dto.roles.some((role) => {
+        return dto.nativeFeature.availableInRoles?.includes(role)
+      })
+      if (!hasRole) {
+        return FeatureStatus.NotInCurrentPlan
       }
+    }
 
-      if (nativeFeature.availableInRoles) {
-        const hasRole = dto.roles.some((role) => {
-          return nativeFeature.availableInRoles?.includes(role)
-        })
-        if (!hasRole) {
-          return FeatureStatus.NotInCurrentPlan
-        }
-      }
+    return FeatureStatus.Entitled
+  }
+
+  private getThirdPartyFeatureStatus(featureId: string): FeatureStatus {
+    const component = this.items.getDisplayableComponents().find((candidate) => candidate.identifier === featureId)
+
+    if (!component) {
+      return FeatureStatus.NoUserSubscription
+    }
+
+    if (component.isExpired) {
+      return FeatureStatus.InCurrentPlanButExpired
     }
 
     return FeatureStatus.Entitled
