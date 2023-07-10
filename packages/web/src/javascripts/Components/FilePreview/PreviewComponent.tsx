@@ -8,6 +8,8 @@ import ImagePreview from './ImagePreview'
 import { ImageZoomLevelProps } from './ImageZoomLevelProps'
 import { PreviewableTextFileTypes, RequiresNativeFilePreview } from './isFilePreviewable'
 import TextPreview from './TextPreview'
+import { parseFileName } from '@standardnotes/filepicker'
+import { sanitizeFileName } from '@standardnotes/ui-services'
 
 type Props = {
   application: WebApplication
@@ -55,7 +57,11 @@ const PreviewComponent: FunctionComponent<Props> = ({
       }),
     )
 
-    void application.mobileDevice().previewFile(fileBase64, file.name)
+    const { name, ext } = parseFileName(file.name)
+    const sanitizedName = sanitizeFileName(name)
+    const filename = `${sanitizedName}.${ext}`
+
+    void application.mobileDevice().previewFile(fileBase64, filename)
   }, [application, bytes, file.mimeType, file.name, isNativeMobileWeb])
 
   if (isNativeMobileWeb && requiresNativePreview) {
