@@ -1,7 +1,6 @@
 import {
   ComponentAction,
   FeatureStatus,
-  dateToLocalizedString,
   ComponentViewerInterface,
   ComponentViewerEvent,
   ComponentViewerError,
@@ -10,17 +9,17 @@ import {
   ComponentInterface,
   isNonNativeComponent,
   getComponentOrNativeFeatureDisplayName,
-  getComponentOrNativeFeatureExpirationDate,
   getComponentOrNativeFeatureUniqueIdentifier,
+  SubscriptionManagerEvent,
+  getComponentOrNativeFeatureFeatureDescription,
 } from '@standardnotes/snjs'
 import { FunctionComponent, useCallback, useEffect, useRef, useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import OfflineRestricted from '@/Components/ComponentView/OfflineRestricted'
 import UrlMissing from '@/Components/ComponentView/UrlMissing'
 import IsDeprecated from '@/Components/ComponentView/IsDeprecated'
-import IsExpired from '@/Components/ComponentView/IsExpired'
+import NotEntitledBanner from '@/Components/ComponentView/NotEntitledBanner'
 import IssueOnLoading from '@/Components/ComponentView/IssueOnLoading'
-import { openSubscriptionDashboard } from '@/Utils/ManageSubscription'
 import { useApplication } from '../ApplicationProvider'
 
 interface Props {
@@ -54,10 +53,6 @@ const ComponentView: FunctionComponent<Props> = ({ onLoad, componentViewer, requ
 
   const component = componentViewer.componentOrFeature
 
-  const manageSubscription = useCallback(() => {
-    void openSubscriptionDashboard(application)
-  }, [application])
-
   const reloadValidityStatus = useCallback(() => {
     setFeatureStatus(componentViewer.getFeatureStatus())
     if (!componentViewer.lockReadonly) {
@@ -76,6 +71,14 @@ const ComponentView: FunctionComponent<Props> = ({ onLoad, componentViewer, requ
   useEffect(() => {
     reloadValidityStatus()
   }, [reloadValidityStatus])
+
+  useEffect(() => {
+    return application.subscriptions.addEventObserver((event) => {
+      if (event === SubscriptionManagerEvent.DidFetchSubscription) {
+        reloadValidityStatus()
+      }
+    })
+  }, [application.subscriptions, reloadValidityStatus])
 
   const dismissDeprecationMessage = () => {
     setIsDeprecationMessageDismissed(true)
@@ -156,7 +159,7 @@ const ComponentView: FunctionComponent<Props> = ({ onLoad, componentViewer, requ
           application.keyboardService.handleComponentKeyUp(data.keyboardModifier)
           break
         case ComponentAction.Click:
-          application.getViewControllerManager().notesController.setContextMenuOpen(false)
+          application.controllers.notesController.setContextMenuOpen(false)
           break
         default:
           return
@@ -193,11 +196,9 @@ const ComponentView: FunctionComponent<Props> = ({ onLoad, componentViewer, requ
       )}
 
       {featureStatus !== FeatureStatus.Entitled && (
-        <IsExpired
-          expiredDate={dateToLocalizedString(getComponentOrNativeFeatureExpirationDate(component) ?? new Date(0))}
+        <NotEntitledBanner
           featureStatus={featureStatus}
-          componentName={getComponentOrNativeFeatureDisplayName(component)}
-          manageSubscription={manageSubscription}
+          feature={getComponentOrNativeFeatureFeatureDescription(component)}
         />
       )}
       {deprecationMessage && !isDeprecationMessageDismissed && (

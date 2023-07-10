@@ -226,7 +226,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     return this.webServices.vaultDisplayService
   }
 
-  public getViewControllerManager(): ViewControllerManager {
+  public get controllers(): ViewControllerManager {
     return this.webServices.viewControllerManager
   }
 
@@ -259,7 +259,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
   }
 
   public get featuresController() {
-    return this.getViewControllerManager().featuresController
+    return this.controllers.featuresController
   }
 
   public get desktopDevice(): DesktopDeviceInterface | undefined {
@@ -434,19 +434,19 @@ export class WebApplication extends SNApplication implements WebApplicationInter
   }
 
   get entitledToFiles(): boolean {
-    return this.getViewControllerManager().featuresController.entitledToFiles
+    return this.controllers.featuresController.entitledToFiles
   }
 
   showPremiumModal(featureName?: FeatureName): void {
-    void this.getViewControllerManager().featuresController.showPremiumAlert(featureName)
+    void this.controllers.featuresController.showPremiumAlert(featureName)
   }
 
   hasValidFirstPartySubscription(): boolean {
-    return this.getViewControllerManager().subscriptionController.hasFirstPartyOnlineOrOfflineSubscription
+    return this.controllers.subscriptionController.hasFirstPartyOnlineOrOfflineSubscription
   }
 
   async openPurchaseFlow() {
-    await this.getViewControllerManager().purchaseFlowController.openPurchaseFlow()
+    await this.controllers.purchaseFlowController.openPurchaseFlow()
   }
 
   addNativeMobileEventListener = (listener: NativeMobileEventListener) => {
@@ -458,11 +458,11 @@ export class WebApplication extends SNApplication implements WebApplicationInter
   }
 
   showAccountMenu(): void {
-    this.getViewControllerManager().accountMenuController.setShow(true)
+    this.controllers.accountMenuController.setShow(true)
   }
 
   hideAccountMenu(): void {
-    this.getViewControllerManager().accountMenuController.setShow(false)
+    this.controllers.accountMenuController.setShow(false)
   }
 
   /**
@@ -483,9 +483,9 @@ export class WebApplication extends SNApplication implements WebApplicationInter
   }
 
   openPreferences(pane?: PreferenceId): void {
-    this.getViewControllerManager().preferencesController.openPreferences()
+    this.controllers.preferencesController.openPreferences()
     if (pane) {
-      this.getViewControllerManager().preferencesController.setCurrentPane(pane)
+      this.controllers.preferencesController.setCurrentPane(pane)
     }
   }
 

@@ -154,7 +154,7 @@ const EditorWidthSelectionModal = ({
 
 const EditorWidthSelectionModalWrapper = () => {
   const application = useApplication()
-  const { notesController } = application.getViewControllerManager()
+  const { notesController } = application.controllers
 
   const [isOpen, setIsOpen] = useState(false)
   const [isGlobal, setIsGlobal] = useState(false)

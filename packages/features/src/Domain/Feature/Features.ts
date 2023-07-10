@@ -23,6 +23,10 @@ export function GetNativeEditors(): EditorFeatureDescription[] {
   return editors()
 }
 
+export function GetSuperEditorFeature(): FeatureDescription {
+  return FindNativeFeature(FeatureIdentifier.SuperEditor) as FeatureDescription
+}
+
 export function GetNativeThemes(): ThemeFeatureDescription[] {
   return themes()
 }

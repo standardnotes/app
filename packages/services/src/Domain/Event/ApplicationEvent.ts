@@ -1,79 +1,61 @@
-import { ApplicationStage } from './../Application/ApplicationStage'
 export enum ApplicationEvent {
-  SignedIn = 'signed-in',
-  SignedOut = 'signed-out',
-
+  SignedIn = 'Application:SignedIn',
+  SignedOut = 'Application:SignedOut',
   /** When a full, potentially multi-page sync completes */
-  CompletedFullSync = 'completed-full-sync',
-
-  FailedSync = 'failed-sync',
-  HighLatencySync = 'high-latency-sync',
-  EnteredOutOfSync = 'entered-out-of-sync',
-  ExitedOutOfSync = 'exited-out-of-sync',
-
-  ApplicationStageChanged = 'application-stage-changed',
-
+  CompletedFullSync = 'Application:CompletedFullSync',
+  FailedSync = 'Application:FailedSync',
+  HighLatencySync = 'Application:HighLatencySync',
+  EnteredOutOfSync = 'Application:EnteredOutOfSync',
+  ExitedOutOfSync = 'Application:ExitedOutOfSync',
+  ApplicationStageChanged = 'Application:ApplicationStageChanged',
   /**
    * The application has finished its prepareForLaunch state and is now ready for unlock
    * Called when the application has initialized and is ready for launch, but before
    * the application has been unlocked, if applicable. Use this to do pre-launch
    * configuration, but do not attempt to access user data like notes or tags.
    */
-  Started = 'started',
-
+  Started = 'Application:Started',
   /**
    * The applicaiton is fully unlocked and ready for i/o
    * Called when the application has been fully decrypted and unlocked. Use this to
    * to begin streaming data like notes and tags.
    */
-  Launched = 'launched',
-
-  LocalDataLoaded = 'local-data-loaded',
-
+  Launched = 'Application:Launched',
+  LocalDataLoaded = 'Application:LocalDataLoaded',
   /**
    * When the root key or root key wrapper changes. Includes events like account state
    * changes (registering, signing in, changing pw, logging out) and passcode state
    * changes (adding, removing, changing).
    */
-  KeyStatusChanged = 'key-status-changed',
-
-  MajorDataChange = 'major-data-change',
-  CompletedRestart = 'completed-restart',
-  LocalDataIncrementalLoad = 'local-data-incremental-load',
-  SyncStatusChanged = 'sync-status-changed',
-  WillSync = 'will-sync',
-  InvalidSyncSession = 'invalid-sync-session',
-  LocalDatabaseReadError = 'local-database-read-error',
-  LocalDatabaseWriteError = 'local-database-write-error',
-
+  KeyStatusChanged = 'Application:KeyStatusChanged',
+  MajorDataChange = 'Application:MajorDataChange',
+  CompletedRestart = 'Application:CompletedRestart',
+  LocalDataIncrementalLoad = 'Application:LocalDataIncrementalLoad',
+  SyncStatusChanged = 'Application:SyncStatusChanged',
+  WillSync = 'Application:WillSync',
+  InvalidSyncSession = 'Application:InvalidSyncSession',
+  LocalDatabaseReadError = 'Application:LocalDatabaseReadError',
+  LocalDatabaseWriteError = 'Application:LocalDatabaseWriteError',
   /**
    * When a single roundtrip completes with sync, in a potentially multi-page sync request.
    * If just a single roundtrip, this event will be triggered, along with CompletedFullSync
    */
-  CompletedIncrementalSync = 'completed-incremental-sync',
-
+  CompletedIncrementalSync = 'Application:CompletedIncrementalSync',
   /**
    * The application has loaded all pending migrations (but not run any, except for the base one),
    * and consumers may now call hasPendingMigrations
    */
-  MigrationsLoaded = 'migrations-loaded',
-
+  MigrationsLoaded = 'Application:MigrationsLoaded',
   /** When StorageService is ready (but NOT yet decrypted) to start servicing read/write requests */
-  StorageReady = 'storage-ready',
-
-  PreferencesChanged = 'preferences-changed',
-  UnprotectedSessionBegan = 'unprotected-session-began',
-  UserRolesChanged = 'user-roles-changed',
-  FeaturesUpdated = 'features-updated',
-  UnprotectedSessionExpired = 'unprotected-session-expired',
-
+  StorageReady = 'Application:StorageReady',
+  PreferencesChanged = 'Application:PreferencesChanged',
+  UnprotectedSessionBegan = 'Application:UnprotectedSessionBegan',
+  UserRolesChanged = 'Application:UserRolesChanged',
+  FeaturesAvailabilityChanged = 'Application:FeaturesAvailabilityChanged',
+  UnprotectedSessionExpired = 'Application:UnprotectedSessionExpired',
   /** Called when the app first launches and after first sync request made after sign in */
-  CompletedInitialSync = 'completed-initial-sync',
-  BiometricsSoftLockEngaged = 'biometrics-soft-lock-engaged',
-  BiometricsSoftLockDisengaged = 'biometrics-soft-lock-disengaged',
-  DidPurchaseSubscription = 'did-purchase-subscription',
-}
-
-export type ApplicationStageChangedEventPayload = {
-  stage: ApplicationStage
+  CompletedInitialSync = 'Application:CompletedInitialSync',
+  BiometricsSoftLockEngaged = 'Application:BiometricsSoftLockEngaged',
+  BiometricsSoftLockDisengaged = 'Application:BiometricsSoftLockDisengaged',
+  DidPurchaseSubscription = 'Application:DidPurchaseSubscription',
 }

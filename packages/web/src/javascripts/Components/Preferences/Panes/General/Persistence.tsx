@@ -21,9 +21,9 @@ const Persistence = ({ application }: Props) => {
     setShouldPersistNoteState(shouldPersist)
 
     if (shouldPersist) {
-      application.getViewControllerManager().persistValues()
+      application.controllers.persistValues()
     } else {
-      application.getViewControllerManager().clearPersistedValues()
+      application.controllers.clearPersistedValues()
     }
   }
 

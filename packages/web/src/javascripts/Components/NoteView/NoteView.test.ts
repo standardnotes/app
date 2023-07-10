@@ -41,8 +41,9 @@ describe('NoteView', () => {
       notesController: notesController,
     } as jest.Mocked<ViewControllerManager>
 
-    application = {} as jest.Mocked<WebApplication>
-    application.getViewControllerManager = jest.fn().mockReturnValue(viewControllerManager)
+    application = {
+      controllers: viewControllerManager,
+    } as jest.Mocked<WebApplication>
     application.hasProtectionSources = jest.fn().mockReturnValue(true)
     application.authorizeNoteAccess = jest.fn()
     application.addWebEventObserver = jest.fn()

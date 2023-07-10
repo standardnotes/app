@@ -636,6 +636,11 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       }
     }
 
+    this.internalEventBus.publish({
+      type: event,
+      payload: data,
+    })
+
     void this.migrationService.handleApplicationEvent(event)
   }
 
@@ -1508,8 +1513,8 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
             void this.notifyEvent(ApplicationEvent.UserRolesChanged)
             break
           }
-          case ExternalServices.FeaturesEvent.FeaturesUpdated: {
-            void this.notifyEvent(ApplicationEvent.FeaturesUpdated)
+          case ExternalServices.FeaturesEvent.FeaturesAvailabilityChanged: {
+            void this.notifyEvent(ApplicationEvent.FeaturesAvailabilityChanged)
             break
           }
           case ExternalServices.FeaturesEvent.DidPurchaseSubscription: {
@@ -1624,8 +1629,10 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.subscriptionManager = new SubscriptionManager(
       this.subscriptionApiService,
       this.sessions,
+      this.storage,
       this.internalEventBus,
     )
+    this.services.push(this.subscriptionManager)
   }
 
   private createItemManager() {

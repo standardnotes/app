@@ -38,7 +38,7 @@ export abstract class AbstractComponent<P = PureComponentProps, S = PureComponen
   }
 
   public get viewControllerManager(): ViewControllerManager {
-    return this.application.getViewControllerManager()
+    return this.application.controllers
   }
 
   autorun(view: (r: IReactionPublic) => void): void {

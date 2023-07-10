@@ -71,7 +71,7 @@ const ThemesMenuButton: FunctionComponent<Props> = ({ item }) => {
 
   const dockIcon = isNativeTheme(item) ? item.dock_icon : item.package_info?.dock_icon
 
-  return item?.layerable ? (
+  return item.layerable ? (
     <MenuSwitchButtonItem checked={themeActive} onChange={() => toggleTheme()}>
       {!canActivateTheme && (
         <Icon type={PremiumFeatureIconName} className={classNames(PremiumFeatureIconClass, 'mr-2')} />

@@ -94,7 +94,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
   const [currentMode, setCurrentMode] = useState<PreferenceMode>(selectedTagPreferences ? 'tag' : 'global')
   const [preferences, setPreferences] = useState<TagPreferences>({})
   const hasSubscription =
-    application.getViewControllerManager().subscriptionController.hasFirstPartyOnlineOrOfflineSubscription
+    application.controllers.subscriptionController.hasFirstPartyOnlineOrOfflineSubscription
   const controlsDisabled = currentMode === 'tag' && !hasSubscription
   const isDailyEntry = selectedTagPreferences?.entryMode === 'daily'
 

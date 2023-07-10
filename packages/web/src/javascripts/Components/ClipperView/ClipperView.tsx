@@ -74,7 +74,7 @@ const ClipperView = ({
           setUser(application.getUser())
           setIsEntitled(application.features.getFeatureStatus(FeatureIdentifier.Extension) === FeatureStatus.Entitled)
           break
-        case ApplicationEvent.FeaturesUpdated:
+        case ApplicationEvent.FeaturesAvailabilityChanged:
           setIsEntitled(application.features.getFeatureStatus(FeatureIdentifier.Extension) === FeatureStatus.Entitled)
           break
       }

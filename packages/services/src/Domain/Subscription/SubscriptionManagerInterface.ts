@@ -1,12 +1,14 @@
+import { ApplicationServiceInterface } from './../Service/ApplicationServiceInterface'
 import { Invitation } from '@standardnotes/models'
 import { AppleIAPReceipt } from './AppleIAPReceipt'
 import { AvailableSubscriptions } from '@standardnotes/responses'
 import { Subscription } from '@standardnotes/security'
+import { SubscriptionManagerEvent } from './SubscriptionManagerEvent'
 
-export interface SubscriptionManagerInterface {
+export interface SubscriptionManagerInterface extends ApplicationServiceInterface<SubscriptionManagerEvent, unknown> {
   getOnlineSubscription(): Subscription | undefined
   getAvailableSubscriptions(): AvailableSubscriptions | undefined
-  hasValidSubscription(): boolean
+  hasOnlineSubscription(): boolean
 
   get userSubscriptionName(): string
   get userSubscriptionExpirationDate(): Date | undefined

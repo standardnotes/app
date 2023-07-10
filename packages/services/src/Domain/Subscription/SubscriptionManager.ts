@@ -1,3 +1,6 @@
+import { StorageKey } from './../Storage/StorageKeys'
+import { ApplicationStage } from './../Application/ApplicationStage'
+import { StorageServiceInterface } from './../Storage/StorageServiceInterface'
 import { InternalEventInterface } from './../Internal/InternalEventInterface'
 import { SessionsClientInterface } from './../Session/SessionsClientInterface'
 import { SubscriptionName } from '@standardnotes/common'
@@ -12,9 +15,10 @@ import { SubscriptionManagerInterface } from './SubscriptionManagerInterface'
 import { AppleIAPReceipt } from './AppleIAPReceipt'
 import { AvailableSubscriptions, getErrorFromErrorResponse, isErrorResponse } from '@standardnotes/responses'
 import { Subscription } from '@standardnotes/security'
+import { SubscriptionManagerEvent } from './SubscriptionManagerEvent'
 
 export class SubscriptionManager
-  extends AbstractService
+  extends AbstractService<SubscriptionManagerEvent>
   implements SubscriptionManagerInterface, InternalEventHandlerInterface
 {
   private onlineSubscription?: Subscription
@@ -23,6 +27,7 @@ export class SubscriptionManager
   constructor(
     private subscriptionApiService: SubscriptionApiServiceInterface,
     private sessions: SessionsClientInterface,
+    private storage: StorageServiceInterface,
     protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)
@@ -45,6 +50,17 @@ export class SubscriptionManager
         void this.fetchOnlineSubscription()
         break
     }
+  }
+
+  public override async handleApplicationStage(stage: ApplicationStage): Promise<void> {
+    if (stage === ApplicationStage.StorageDecrypted_09) {
+      this.onlineSubscription = this.storage.getValue(StorageKey.Subscription)
+      void this.notifyEvent(SubscriptionManagerEvent.DidFetchSubscription)
+    }
+  }
+
+  hasOnlineSubscription(): boolean {
+    return this.onlineSubscription != undefined
   }
 
   getOnlineSubscription(): Subscription | undefined {
@@ -96,10 +112,6 @@ export class SubscriptionManager
     }
 
     return this.onlineSubscription.cancelled
-  }
-
-  hasValidSubscription(): boolean {
-    return this.onlineSubscription != undefined && !this.isUserSubscriptionExpired && !this.isUserSubscriptionCanceled
   }
 
   async acceptInvitation(inviteUuid: string): Promise<{ success: true } | { success: false; message: string }> {
@@ -172,10 +184,18 @@ export class SubscriptionManager
 
       const subscription = result.data.subscription
 
-      this.onlineSubscription = subscription
+      this.handleReceivedOnlineSubscriptionFromServer(subscription)
     } catch (error) {
       void error
     }
+  }
+
+  private handleReceivedOnlineSubscriptionFromServer(subscription: Subscription | undefined): void {
+    this.onlineSubscription = subscription
+
+    this.storage.setValue(StorageKey.Subscription, subscription)
+
+    void this.notifyEvent(SubscriptionManagerEvent.DidFetchSubscription)
   }
 
   private async fetchAvailableSubscriptions(): Promise<void> {

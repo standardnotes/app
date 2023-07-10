@@ -46,6 +46,7 @@ import {
   UserClientInterface,
   SubscriptionManagerInterface,
   AccountEvent,
+  SubscriptionManagerEvent,
 } from '@standardnotes/services'
 
 import { DownloadRemoteThirdPartyFeatureUseCase } from './UseCase/DownloadRemoteThirdPartyFeature'
@@ -88,6 +89,14 @@ export class SNFeaturesService
         if (eventName === WebSocketsServiceEvent.UserRoleMessageReceived) {
           const currentRoles = (data as UserRolesChangedEvent).payload.currentRoles
           await this.didReceiveNewRolesFromServer(currentRoles)
+        }
+      }),
+    )
+
+    this.eventDisposers.push(
+      subscriptions.addEventObserver((event) => {
+        if (event === SubscriptionManagerEvent.DidFetchSubscription) {
+          void this.notifyEvent(FeaturesEvent.FeaturesAvailabilityChanged)
         }
       }),
     )
@@ -168,7 +177,7 @@ export class SNFeaturesService
 
     void this.storage.setValue(StorageKey.ExperimentalFeatures, this.enabledExperimentalFeatures)
 
-    void this.notifyEvent(FeaturesEvent.FeaturesUpdated)
+    void this.notifyEvent(FeaturesEvent.FeaturesAvailabilityChanged)
   }
 
   public disableExperimentalFeature(identifier: FeatureIdentifier): void {
@@ -186,7 +195,7 @@ export class SNFeaturesService
     void this.mutator.setItemToBeDeleted(component).then(() => {
       void this.sync.sync()
     })
-    void this.notifyEvent(FeaturesEvent.FeaturesUpdated)
+    void this.notifyEvent(FeaturesEvent.FeaturesAvailabilityChanged)
   }
 
   public toggleExperimentalFeature(identifier: FeatureIdentifier): void {
@@ -298,7 +307,7 @@ export class SNFeaturesService
   }
 
   private hasFirstPartyOnlineSubscription(): boolean {
-    return this.sessions.isSignedIntoFirstPartyServer() && this.subscriptions.hasValidSubscription()
+    return this.sessions.isSignedIntoFirstPartyServer() && this.subscriptions.hasOnlineSubscription()
   }
 
   public hasFirstPartyOfflineSubscription(): boolean {

@@ -83,7 +83,7 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
         })
       }
 
-      await application.getViewControllerManager().itemListController.insertCurrentIfTemplate()
+      await application.controllers.itemListController.insertCurrentIfTemplate()
 
       await application.changeAndSaveItem(note, (mutator) => {
         const noteMutator = mutator as NoteMutator
@@ -98,7 +98,7 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
 
   const selectNonComponent = useCallback(
     async (item: EditorMenuItem, note: SNNote) => {
-      await application.getViewControllerManager().itemListController.insertCurrentIfTemplate()
+      await application.controllers.itemListController.insertCurrentIfTemplate()
 
       reloadFont(application.getPreference(PrefKey.EditorMonospaceEnabled))
 
@@ -231,7 +231,7 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
                         key={item.name}
                         onClick={onClickEditorItem}
                         className={'flex-row-reversed py-2'}
-                        checked={item.isEntitled ? isSelected(item) : false}
+                        checked={isSelected(item)}
                         info={item.description}
                       >
                         <div className="flex flex-grow items-center justify-between">

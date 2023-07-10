@@ -7,6 +7,9 @@ import {
   isPayloadSourceRetrieved,
   PrefKey,
   PrefDefaults,
+  FeatureIdentifier,
+  FeatureStatus,
+  GetSuperEditorFeature,
 } from '@standardnotes/snjs'
 import { FunctionComponent, useCallback, useEffect, useRef, useState } from 'react'
 import { BlocksEditor } from './BlocksEditor'
@@ -45,6 +48,7 @@ import ModalOverlay from '@/Components/Modal/ModalOverlay'
 import MobileToolbarPlugin from './Plugins/MobileToolbarPlugin/MobileToolbarPlugin'
 import CodeOptionsPlugin from './Plugins/CodeOptionsPlugin/CodeOptions'
 import RemoteImagePlugin from './Plugins/RemoteImagePlugin/RemoteImagePlugin'
+import NotEntitledBanner from '../ComponentView/NotEntitledBanner'
 
 export const SuperNotePreviewCharLimit = 160
 
@@ -68,6 +72,11 @@ export const SuperEditor: FunctionComponent<Props> = ({
   const ignoreNextChange = useRef(false)
   const [showMarkdownPreview, setShowMarkdownPreview] = useState(false)
   const getMarkdownPlugin = useRef<GetMarkdownPluginInterface | null>(null)
+  const [featureStatus, setFeatureStatus] = useState<FeatureStatus>(FeatureStatus.Entitled)
+
+  useEffect(() => {
+    setFeatureStatus(application.features.getFeatureStatus(FeatureIdentifier.SuperEditor))
+  }, [application.features])
 
   const commandService = useCommandService()
 
@@ -194,6 +203,9 @@ export const SuperEditor: FunctionComponent<Props> = ({
 
   return (
     <div className="font-editor relative flex h-full w-full flex-col md:block" ref={ref}>
+      {featureStatus !== FeatureStatus.Entitled && (
+        <NotEntitledBanner featureStatus={featureStatus} feature={GetSuperEditorFeature()} />
+      )}
       <ErrorBoundary>
         <LinkingControllerProvider controller={linkingController}>
           <FilesControllerProvider controller={filesController}>

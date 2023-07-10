@@ -107,8 +107,8 @@ export class ThemeManager extends AbstractUIServicee {
         await this.activateCachedThemes()
         break
       }
-      case ApplicationEvent.FeaturesUpdated: {
-        this.handleFeaturesUpdated()
+      case ApplicationEvent.FeaturesAvailabilityChanged: {
+        this.handleFeaturesAvailabilityChanged()
         break
       }
       case ApplicationEvent.Launched: {
@@ -171,7 +171,7 @@ export class ThemeManager extends AbstractUIServicee {
     super.deinit()
   }
 
-  private handleFeaturesUpdated(): void {
+  private handleFeaturesAvailabilityChanged(): void {
     let hasChange = false
 
     for (const themeUuid of this.themesActiveInTheUI) {

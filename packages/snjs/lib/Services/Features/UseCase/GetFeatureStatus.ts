@@ -1,6 +1,7 @@
 import { FeatureDescription, FeatureIdentifier, FindNativeFeature } from '@standardnotes/features'
 import { Subscription } from '@standardnotes/security'
 import { FeatureStatus, ItemManagerInterface } from '@standardnotes/services'
+import { convertTimestampToMilliseconds } from '@standardnotes/utils'
 
 export class GetFeatureStatusUseCase {
   constructor(private items: ItemManagerInterface) {}
@@ -72,7 +73,9 @@ export class GetFeatureStatusUseCase {
     }
 
     if (dto.firstPartyOnlineSubscription) {
-      const isSubscriptionExpired = new Date(dto.firstPartyOnlineSubscription.endsAt) < new Date()
+      const isSubscriptionExpired =
+        new Date(convertTimestampToMilliseconds(dto.firstPartyOnlineSubscription.endsAt)) < new Date()
+
       if (isSubscriptionExpired) {
         return FeatureStatus.InCurrentPlanButExpired
       }

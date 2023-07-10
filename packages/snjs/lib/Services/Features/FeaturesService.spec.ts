@@ -239,7 +239,7 @@ describe('FeaturesService', () => {
       sessionManager.isSignedIntoFirstPartyServer = jest.fn().mockReturnValue(true)
 
       await featuresService.updateOnlineRolesWithNewValues([RoleName.NAMES.CoreUser, RoleName.NAMES.PlusUser])
-      subscriptions.hasValidSubscription = jest.fn().mockReturnValue(true)
+      subscriptions.hasOnlineSubscription = jest.fn().mockReturnValue(true)
 
       expect(featuresService.getFeatureStatus(FeatureIdentifier.MidnightTheme)).toBe(FeatureStatus.Entitled)
       expect(featuresService.getFeatureStatus(FeatureIdentifier.SuperEditor)).toBe(FeatureStatus.Entitled)
@@ -251,7 +251,7 @@ describe('FeaturesService', () => {
       sessionManager.isSignedIntoFirstPartyServer = jest.fn().mockReturnValue(true)
 
       await featuresService.updateOnlineRolesWithNewValues([RoleName.NAMES.CoreUser])
-      subscriptions.hasValidSubscription = jest.fn().mockReturnValue(false)
+      subscriptions.hasOnlineSubscription = jest.fn().mockReturnValue(false)
 
       expect(featuresService.getFeatureStatus(FeatureIdentifier.MidnightTheme)).toBe(FeatureStatus.NoUserSubscription)
       expect(featuresService.getFeatureStatus(FeatureIdentifier.PlusEditor)).toBe(FeatureStatus.NoUserSubscription)
@@ -312,7 +312,7 @@ describe('FeaturesService', () => {
     it('feature status for deprecated feature and no subscription', async () => {
       const featuresService = createService()
 
-      subscriptions.hasValidSubscription = jest.fn().mockReturnValue(false)
+      subscriptions.hasOnlineSubscription = jest.fn().mockReturnValue(false)
       sessionManager.isSignedIntoFirstPartyServer = jest.fn().mockReturnValue(true)
 
       expect(featuresService.getFeatureStatus(FeatureIdentifier.DeprecatedFileSafe as FeatureIdentifier)).toBe(
@@ -323,7 +323,7 @@ describe('FeaturesService', () => {
     it('feature status for deprecated feature with subscription', async () => {
       const featuresService = createService()
 
-      subscriptions.hasValidSubscription = jest.fn().mockReturnValue(true)
+      subscriptions.hasOnlineSubscription = jest.fn().mockReturnValue(true)
       await featuresService.updateOnlineRolesWithNewValues([RoleName.NAMES.CoreUser, RoleName.NAMES.PlusUser])
 
       expect(featuresService.getFeatureStatus(FeatureIdentifier.DeprecatedFileSafe as FeatureIdentifier)).toBe(
@@ -449,7 +449,7 @@ describe('FeaturesService', () => {
       const featuresService = createService()
 
       sessionManager.isSignedIntoFirstPartyServer = jest.fn().mockReturnValue(true)
-      subscriptions.hasValidSubscription = jest.fn().mockReturnValue(true)
+      subscriptions.hasOnlineSubscription = jest.fn().mockReturnValue(true)
 
       await featuresService.updateOnlineRolesWithNewValues([RoleName.NAMES.PlusUser, RoleName.NAMES.CoreUser])
 
@@ -462,7 +462,7 @@ describe('FeaturesService', () => {
       const featuresService = createService()
 
       sessionManager.isSignedIntoFirstPartyServer = jest.fn().mockReturnValue(true)
-      subscriptions.hasValidSubscription = jest.fn().mockReturnValue(true)
+      subscriptions.hasOnlineSubscription = jest.fn().mockReturnValue(true)
 
       await featuresService.updateOnlineRolesWithNewValues([RoleName.NAMES.ProUser, RoleName.NAMES.PlusUser])
 
@@ -475,7 +475,7 @@ describe('FeaturesService', () => {
       const featuresService = createService()
 
       sessionManager.isSignedIntoFirstPartyServer = jest.fn().mockReturnValue(true)
-      subscriptions.hasValidSubscription = jest.fn().mockReturnValue(true)
+      subscriptions.hasOnlineSubscription = jest.fn().mockReturnValue(true)
 
       await featuresService.updateOnlineRolesWithNewValues([RoleName.NAMES.ProUser, RoleName.NAMES.PlusUser])
 

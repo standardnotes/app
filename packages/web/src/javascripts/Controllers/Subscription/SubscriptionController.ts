@@ -1,9 +1,11 @@
+import { Subscription } from '@standardnotes/security'
 import { destroyAllObjectProperties } from '@/Utils'
 import {
   ApplicationEvent,
   InternalEventBusInterface,
   Invitation,
   InvitationStatus,
+  SubscriptionManagerEvent,
   SubscriptionManagerInterface,
 } from '@standardnotes/snjs'
 import { computed, makeObservable, observable, runInAction } from 'mobx'
@@ -15,6 +17,7 @@ export class SubscriptionController extends AbstractViewController {
 
   subscriptionInvitations: Invitation[] | undefined = undefined
   hasAccount: boolean
+  onlineSubscription: Subscription | undefined = undefined
 
   override deinit() {
     super.deinit()
@@ -34,6 +37,7 @@ export class SubscriptionController extends AbstractViewController {
     makeObservable(this, {
       subscriptionInvitations: observable,
       hasAccount: observable,
+      onlineSubscription: observable,
 
       hasFirstPartyOnlineOrOfflineSubscription: computed,
       usedInvitationsCount: computed,
@@ -59,6 +63,16 @@ export class SubscriptionController extends AbstractViewController {
           this.hasAccount = application.hasAccount()
         })
       }, ApplicationEvent.SignedIn),
+    )
+
+    this.disposers.push(
+      application.subscriptions.addEventObserver(async (event) => {
+        if (event === SubscriptionManagerEvent.DidFetchSubscription) {
+          runInAction(() => {
+            this.onlineSubscription = application.subscriptions.getOnlineSubscription()
+          })
+        }
+      }),
     )
 
     this.disposers.push(

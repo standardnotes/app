@@ -136,11 +136,12 @@ export class ComponentViewer implements ComponentViewerInterface {
       if (this.dealloced) {
         return
       }
-      if (event === FeaturesEvent.FeaturesUpdated) {
-        const featureStatus = services.features.getFeatureStatus(componentOrFeature.identifier)
 
+      if (event === FeaturesEvent.FeaturesAvailabilityChanged) {
+        const featureStatus = services.features.getFeatureStatus(componentOrFeature.identifier)
         if (featureStatus !== this.featureStatus) {
           this.featureStatus = featureStatus
+          this.postActiveThemes()
           this.notifyEventObservers(ComponentViewerEvent.FeatureStatusUpdated)
         }
       }

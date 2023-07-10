@@ -61,6 +61,7 @@ import {
   PreferencesServiceEvent,
   ItemManagerInterface,
   SyncServiceInterface,
+  FeatureStatus,
 } from '@standardnotes/services'
 import { permissionsStringForPermissions } from './permissionsStringForPermissions'
 
@@ -617,23 +618,29 @@ export class SNComponentManager
 
     if (this.isThemeActive(theme)) {
       await this.removeActiveTheme(theme)
-    } else {
-      /* Activate current before deactivating others, so as not to flicker */
-      await this.addActiveTheme(theme)
+      return
+    }
 
-      /* Deactive currently active theme(s) if new theme is not layerable */
-      if (!theme.layerable) {
-        await sleep(10)
+    const featureStatus = this.features.getFeatureStatus(theme.identifier)
+    if (featureStatus !== FeatureStatus.Entitled) {
+      return
+    }
 
-        const activeThemes = this.getActiveThemes()
-        for (const candidate of activeThemes) {
-          if (candidate.identifier === theme.identifier) {
-            continue
-          }
+    /* Activate current before deactivating others, so as not to flicker */
+    await this.addActiveTheme(theme)
 
-          if (!candidate.layerable) {
-            await this.removeActiveTheme(candidate)
-          }
+    /* Deactive currently active theme(s) if new theme is not layerable */
+    if (!theme.layerable) {
+      await sleep(10)
+
+      const activeThemes = this.getActiveThemes()
+      for (const candidate of activeThemes) {
+        if (candidate.identifier === theme.identifier) {
+          continue
+        }
+
+        if (!candidate.layerable) {
+          await this.removeActiveTheme(candidate)
         }
       }
     }
@@ -650,7 +657,11 @@ export class SNComponentManager
       })
       .filter(isNotUndefined)
 
-    return [...thirdPartyThemes, ...nativeThemes]
+    const entitledThemes = [...thirdPartyThemes, ...nativeThemes].filter((theme) => {
+      return this.features.getFeatureStatus(theme.identifier) === FeatureStatus.Entitled
+    })
+
+    return entitledThemes
   }
 
   getActiveThemesIdentifiers(): string[] {
@@ -800,6 +811,10 @@ export class SNComponentManager
   }
 
   isThemeActive(theme: ComponentOrNativeTheme): boolean {
+    if (this.features.getFeatureStatus(theme.identifier) !== FeatureStatus.Entitled) {
+      return false
+    }
+
     const activeThemes = this.preferences.getValue(PrefKey.ActiveThemes, undefined) ?? []
 
     return activeThemes.includes(getComponentOrNativeFeatureUniqueIdentifier(theme))
