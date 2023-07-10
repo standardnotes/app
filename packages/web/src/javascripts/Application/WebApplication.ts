@@ -430,7 +430,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
   }
 
   entitledToPerTagPreferences(): boolean {
-    return this.hasValidSubscription()
+    return this.hasValidFirstPartySubscription()
   }
 
   get entitledToFiles(): boolean {
@@ -441,8 +441,8 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     void this.getViewControllerManager().featuresController.showPremiumAlert(featureName)
   }
 
-  hasValidSubscription(): boolean {
-    return this.getViewControllerManager().subscriptionController.hasValidSubscription()
+  hasValidFirstPartySubscription(): boolean {
+    return this.getViewControllerManager().subscriptionController.hasFirstPartyOnlineOrOfflineSubscription
   }
 
   async openPurchaseFlow() {

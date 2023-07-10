@@ -1,21 +1,16 @@
 import { Title } from '@/Components/Preferences/PreferencesComponents/Content'
-import { WebApplication } from '@/Application/WebApplication'
 import SubscriptionInformation from './SubscriptionInformation'
 import NoSubscription from './NoSubscription'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'react'
-import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import PreferencesGroup from '@/Components/Preferences/PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '@/Components/Preferences/PreferencesComponents/PreferencesSegment'
+import { useApplication } from '@/Components/ApplicationProvider'
 
-type Props = {
-  application: WebApplication
-  viewControllerManager: ViewControllerManager
-}
+const Subscription: FunctionComponent = () => {
+  const application = useApplication()
 
-const Subscription: FunctionComponent<Props> = ({ application, viewControllerManager }: Props) => {
-  const subscriptionState = viewControllerManager.subscriptionController
-  const { onlineSubscription } = subscriptionState
+  const onlineSubscription = application.subscriptions.getOnlineSubscription()
 
   const now = new Date().getTime()
 
@@ -26,7 +21,7 @@ const Subscription: FunctionComponent<Props> = ({ application, viewControllerMan
           <div className="flex flex-grow flex-col">
             <Title>Subscription</Title>
             {onlineSubscription && onlineSubscription.endsAt > now ? (
-              <SubscriptionInformation subscriptionState={subscriptionState} application={application} />
+              <SubscriptionInformation />
             ) : (
               <NoSubscription application={application} />
             )}

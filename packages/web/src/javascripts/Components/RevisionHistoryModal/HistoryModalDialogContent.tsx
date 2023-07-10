@@ -15,7 +15,6 @@ import MobileModalHeader from '../Modal/MobileModalHeader'
 const HistoryModalDialogContent = ({
   application,
   dismissModal,
-  subscriptionController,
   note,
   selectionController,
 }: RevisionHistoryModalContentProps) => {
@@ -87,11 +86,7 @@ const HistoryModalDialogContent = ({
             selectedMobileTab === 'Content' ? 'flex' : 'hidden',
           )}
         >
-          <HistoryModalContentPane
-            noteHistoryController={noteHistoryController}
-            note={note}
-            subscriptionController={subscriptionController}
-          />
+          <HistoryModalContentPane noteHistoryController={noteHistoryController} note={note} />
         </div>
       </div>
       <HistoryModalFooter dismissModal={dismissModal} noteHistoryController={noteHistoryController} />

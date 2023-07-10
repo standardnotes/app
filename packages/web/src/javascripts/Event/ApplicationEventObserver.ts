@@ -8,7 +8,7 @@ import {
 import {
   ApplicationEvent,
   SessionsClientInterface,
-  SubscriptionClientInterface,
+  SubscriptionManagerInterface,
   SyncClientInterface,
   UserClientInterface,
 } from '@standardnotes/snjs'
@@ -35,7 +35,7 @@ export class ApplicationEventObserver implements EventObserverInterface {
     private syncStatusController: SyncStatusController,
     private syncClient: SyncClientInterface,
     private sessionManager: SessionsClientInterface,
-    private subscriptionManager: SubscriptionClientInterface,
+    private subscriptionManager: SubscriptionManagerInterface,
     private toastService: ToastServiceInterface,
     private userService: UserClientInterface,
   ) {}

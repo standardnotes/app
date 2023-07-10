@@ -252,7 +252,6 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
                       application={application}
                       historyModalController={viewControllerManager.historyModalController}
                       selectionController={viewControllerManager.selectionController}
-                      subscriptionController={viewControllerManager.subscriptionController}
                     />
                   </>
                   {renderChallenges()}

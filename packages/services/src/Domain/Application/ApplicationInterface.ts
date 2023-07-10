@@ -22,7 +22,7 @@ import { ComponentManagerInterface } from '../Component/ComponentManagerInterfac
 import { ApplicationEvent } from '../Event/ApplicationEvent'
 import { ApplicationEventCallback } from '../Event/ApplicationEventCallback'
 import { FeaturesClientInterface } from '../Feature/FeaturesClientInterface'
-import { SubscriptionClientInterface } from '../Subscription/SubscriptionClientInterface'
+import { SubscriptionManagerInterface } from '../Subscription/SubscriptionManagerInterface'
 import { DeviceInterface } from '../Device/DeviceInterface'
 import { ItemManagerInterface } from '../Item/ItemManagerInterface'
 import { MutatorClientInterface } from '../Mutator/MutatorClientInterface'
@@ -98,7 +98,7 @@ export interface ApplicationInterface {
   get mutator(): MutatorClientInterface
   get user(): UserClientInterface
   get files(): FilesClientInterface
-  get subscriptions(): SubscriptionClientInterface
+  get subscriptions(): SubscriptionManagerInterface
   get fileBackups(): BackupServiceInterface | undefined
   get sessions(): SessionsClientInterface
   get homeServer(): HomeServerServiceInterface | undefined

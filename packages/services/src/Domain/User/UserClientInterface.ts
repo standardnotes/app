@@ -1,33 +1,14 @@
 import { Base64String } from '@standardnotes/sncrypto-common'
-import { Either, UserRequestType } from '@standardnotes/common'
+import { UserRequestType } from '@standardnotes/common'
 import { DeinitSource } from '../Application/DeinitSource'
 import { UserRegistrationResponseBody } from '@standardnotes/api'
-import { HttpError, HttpResponse, SignInResponse } from '@standardnotes/responses'
+import { HttpResponse, SignInResponse } from '@standardnotes/responses'
 import { AbstractService } from '../Service/AbstractService'
-
-export type CredentialsChangeFunctionResponse = { error?: HttpError }
-
-export enum AccountEvent {
-  SignedInOrRegistered = 'SignedInOrRegistered',
-  SignedOut = 'SignedOut',
-}
-
-export interface SignedInOrRegisteredEventPayload {
-  ephemeral: boolean
-  mergeLocal: boolean
-  awaitSync: boolean
-  checkIntegrity: boolean
-}
-
-export interface SignedOutEventPayload {
-  source: DeinitSource
-}
-
-export interface AccountEventData {
-  payload: Either<SignedInOrRegisteredEventPayload, SignedOutEventPayload>
-}
+import { AccountEventData } from './AccountEventData'
+import { AccountEvent } from './AccountEvent'
 
 export interface UserClientInterface extends AbstractService<AccountEvent, AccountEventData> {
+  getUserUuid(): string
   isSignedIn(): boolean
   register(
     email: string,

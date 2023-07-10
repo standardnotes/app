@@ -9,7 +9,7 @@ export class DevMode {
 
   /** Valid only when running a mock event publisher on port 3124 */
   async purchaseMockSubscription() {
-    const subscriptionId = 2000
+    const subscriptionId = 2002
     const email = this.application.getUser()?.email
     const response = await fetch('http://localhost:3124/events', {
       method: 'POST',

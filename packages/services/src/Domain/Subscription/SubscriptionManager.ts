@@ -1,17 +1,105 @@
+import { InternalEventInterface } from './../Internal/InternalEventInterface'
+import { SessionsClientInterface } from './../Session/SessionsClientInterface'
+import { SubscriptionName } from '@standardnotes/common'
+import { convertTimestampToMilliseconds } from '@standardnotes/utils'
+import { ApplicationEvent } from './../Event/ApplicationEvent'
+import { InternalEventHandlerInterface } from './../Internal/InternalEventHandlerInterface'
 import { Invitation } from '@standardnotes/models'
 import { SubscriptionApiServiceInterface } from '@standardnotes/api'
 import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
 import { AbstractService } from '../Service/AbstractService'
-import { SubscriptionClientInterface } from './SubscriptionClientInterface'
+import { SubscriptionManagerInterface } from './SubscriptionManagerInterface'
 import { AppleIAPReceipt } from './AppleIAPReceipt'
-import { getErrorFromErrorResponse, isErrorResponse } from '@standardnotes/responses'
+import { AvailableSubscriptions, getErrorFromErrorResponse, isErrorResponse } from '@standardnotes/responses'
+import { Subscription } from '@standardnotes/security'
 
-export class SubscriptionManager extends AbstractService implements SubscriptionClientInterface {
+export class SubscriptionManager
+  extends AbstractService
+  implements SubscriptionManagerInterface, InternalEventHandlerInterface
+{
+  private onlineSubscription?: Subscription
+  private availableSubscriptions?: AvailableSubscriptions | undefined
+
   constructor(
     private subscriptionApiService: SubscriptionApiServiceInterface,
+    private sessions: SessionsClientInterface,
     protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)
+
+    internalEventBus.addEventHandler(this, ApplicationEvent.UserRolesChanged)
+    internalEventBus.addEventHandler(this, ApplicationEvent.Launched)
+    internalEventBus.addEventHandler(this, ApplicationEvent.SignedIn)
+  }
+
+  async handleEvent(event: InternalEventInterface): Promise<void> {
+    switch (event.type) {
+      case ApplicationEvent.Launched: {
+        void this.fetchOnlineSubscription()
+        void this.fetchAvailableSubscriptions()
+        break
+      }
+
+      case ApplicationEvent.UserRolesChanged:
+      case ApplicationEvent.SignedIn:
+        void this.fetchOnlineSubscription()
+        break
+    }
+  }
+
+  getOnlineSubscription(): Subscription | undefined {
+    return this.onlineSubscription
+  }
+
+  getAvailableSubscriptions(): AvailableSubscriptions | undefined {
+    return this.availableSubscriptions
+  }
+
+  get userSubscriptionName(): string {
+    if (!this.onlineSubscription) {
+      throw new Error('Attempting to get subscription name without a subscription.')
+    }
+
+    if (
+      this.availableSubscriptions &&
+      this.availableSubscriptions[this.onlineSubscription.planName as SubscriptionName]
+    ) {
+      return this.availableSubscriptions[this.onlineSubscription.planName as SubscriptionName].name
+    }
+
+    return ''
+  }
+
+  get userSubscriptionExpirationDate(): Date | undefined {
+    if (!this.onlineSubscription) {
+      return undefined
+    }
+
+    return new Date(convertTimestampToMilliseconds(this.onlineSubscription.endsAt))
+  }
+
+  get isUserSubscriptionExpired(): boolean {
+    if (!this.onlineSubscription) {
+      throw new Error('Attempting to check subscription expiration without a subscription.')
+    }
+
+    if (!this.userSubscriptionExpirationDate) {
+      return false
+    }
+
+    return this.userSubscriptionExpirationDate.getTime() < new Date().getTime()
+  }
+
+  get isUserSubscriptionCanceled(): boolean {
+    if (!this.onlineSubscription) {
+      throw new Error('Attempting to check subscription expiration without a subscription.')
+    }
+
+    return this.onlineSubscription.cancelled
+  }
+
+  hasValidSubscription(): boolean {
+    return this.onlineSubscription != undefined && !this.isUserSubscriptionExpired && !this.isUserSubscriptionCanceled
   }
 
   async acceptInvitation(inviteUuid: string): Promise<{ success: true } | { success: false; message: string }> {
@@ -67,6 +155,40 @@ export class SubscriptionManager extends AbstractService implements Subscription
       return result.data.success === true
     } catch (error) {
       return false
+    }
+  }
+
+  private async fetchOnlineSubscription(): Promise<void> {
+    if (!this.sessions.isSignedIn()) {
+      return
+    }
+
+    try {
+      const result = await this.subscriptionApiService.getUserSubscription({ userUuid: this.sessions.userUuid })
+
+      if (isErrorResponse(result)) {
+        return
+      }
+
+      const subscription = result.data.subscription
+
+      this.onlineSubscription = subscription
+    } catch (error) {
+      void error
+    }
+  }
+
+  private async fetchAvailableSubscriptions(): Promise<void> {
+    try {
+      const response = await this.subscriptionApiService.getAvailableSubscriptions()
+
+      if (isErrorResponse(response)) {
+        return
+      }
+
+      this.availableSubscriptions = response.data
+    } catch (error) {
+      void error
     }
   }
 

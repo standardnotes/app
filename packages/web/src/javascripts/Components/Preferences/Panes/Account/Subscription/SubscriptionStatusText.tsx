@@ -1,16 +1,17 @@
-import { SubscriptionController } from '@/Controllers/Subscription/SubscriptionController'
 import { observer } from 'mobx-react-lite'
 import { Text } from '@/Components/Preferences/PreferencesComponents/Content'
+import { useApplication } from '@/Components/ApplicationProvider'
 
-type Props = { subscriptionState: SubscriptionController }
+const SubscriptionStatusText = () => {
+  const application = useApplication()
 
-const StatusText = ({ subscriptionState }: Props) => {
   const {
     userSubscriptionName,
     userSubscriptionExpirationDate,
     isUserSubscriptionExpired,
     isUserSubscriptionCanceled,
-  } = subscriptionState
+  } = application.subscriptions
+
   const expirationDateString = userSubscriptionExpirationDate?.toLocaleString()
 
   if (isUserSubscriptionCanceled) {
@@ -58,4 +59,4 @@ const StatusText = ({ subscriptionState }: Props) => {
   )
 }
 
-export default observer(StatusText)
+export default observer(SubscriptionStatusText)

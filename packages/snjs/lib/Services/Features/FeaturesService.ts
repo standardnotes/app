@@ -20,7 +20,6 @@ import {
 } from '@standardnotes/models'
 import {
   AbstractService,
-  AccountEvent,
   AlertService,
   ApiServiceEvent,
   API_MESSAGE_FAILED_OFFLINE_ACTIVATION,
@@ -45,6 +44,8 @@ import {
   SyncServiceInterface,
   SessionsClientInterface,
   UserClientInterface,
+  SubscriptionManagerInterface,
+  AccountEvent,
 } from '@standardnotes/services'
 
 import { DownloadRemoteThirdPartyFeatureUseCase } from './UseCase/DownloadRemoteThirdPartyFeature'
@@ -67,9 +68,10 @@ export class SNFeaturesService
 
   constructor(
     private storage: StorageServiceInterface,
-    private api: ApiServiceInterface,
     private items: ItemManagerInterface,
     private mutator: MutatorClientInterface,
+    private subscriptions: SubscriptionManagerInterface,
+    private api: ApiServiceInterface,
     sockets: SNWebSocketsService,
     private settings: SettingsClientInterface,
     private user: UserClientInterface,
@@ -84,10 +86,8 @@ export class SNFeaturesService
     this.eventDisposers.push(
       sockets.addEventObserver(async (eventName, data) => {
         if (eventName === WebSocketsServiceEvent.UserRoleMessageReceived) {
-          const {
-            payload: { currentRoles },
-          } = data as UserRolesChangedEvent
-          await this.updateOnlineRoles(currentRoles)
+          const currentRoles = (data as UserRolesChangedEvent).payload.currentRoles
+          await this.didReceiveNewRolesFromServer(currentRoles)
         }
       }),
     )
@@ -137,14 +137,17 @@ export class SNFeaturesService
   async handleEvent(event: InternalEventInterface): Promise<void> {
     if (event.type === ApiServiceEvent.MetaReceived) {
       if (!this.sync) {
-        this.log('[Features Service] Handling events interrupted. Sync service is not yet initialized.', event)
-
+        this.log('Handling events interrupted. Sync service is not yet initialized.', event)
         return
       }
 
       const { userRoles } = event.payload as MetaReceivedData
-      await this.updateOnlineRoles(userRoles.map((role) => role.name))
+      await this.didReceiveNewRolesFromServer(userRoles.map((role) => role.name))
     }
+  }
+
+  private async didReceiveNewRolesFromServer(roles: string[]): Promise<void> {
+    await this.updateOnlineRolesWithNewValues(roles)
   }
 
   override async handleApplicationStage(stage: ApplicationStage): Promise<void> {
@@ -154,7 +157,7 @@ export class SNFeaturesService
       if (!this.hasFirstPartyOnlineSubscription()) {
         const offlineRepo = this.getOfflineRepo()
         if (offlineRepo) {
-          void this.downloadOfflineEntitlements(offlineRepo)
+          void this.downloadOfflineRoles(offlineRepo)
         }
       }
     }
@@ -230,7 +233,7 @@ export class SNFeaturesService
         true,
       )) as SNFeatureRepo
       void this.sync.sync()
-      return this.downloadOfflineEntitlements(offlineRepo)
+      return this.downloadOfflineRoles(offlineRepo)
     } catch (err) {
       return new ClientDisplayableError(`${API_MESSAGE_FAILED_OFFLINE_ACTIVATION}, ${err}`)
     }
@@ -266,7 +269,7 @@ export class SNFeaturesService
     }
   }
 
-  private async downloadOfflineEntitlements(repo: SNFeatureRepo): Promise<SetOfflineFeaturesFunctionResponse> {
+  private async downloadOfflineRoles(repo: SNFeatureRepo): Promise<SetOfflineFeaturesFunctionResponse> {
     const result = await this.api.downloadOfflineFeaturesFromRepo(repo)
 
     if (result instanceof ClientDisplayableError) {
@@ -286,19 +289,19 @@ export class SNFeaturesService
     const updatedRepos = await usecase.execute(featureRepos)
 
     if (updatedRepos.length > 0) {
-      await this.downloadOfflineEntitlements(updatedRepos[0])
+      await this.downloadOfflineRoles(updatedRepos[0])
     }
   }
 
-  hasFirstPartyOnlineSubscription(): boolean {
-    return this.sessions.isSignedIntoFirstPartyServer() && this.onlineRolesIncludePaidSubscription()
+  hasPaidAnyPartyOnlineOrOfflineSubscription(): boolean {
+    return this.onlineRolesIncludePaidSubscription() || this.hasOfflineRepo()
   }
 
-  hasFirstPartySubscription(): boolean {
-    if (this.hasFirstPartyOnlineSubscription()) {
-      return true
-    }
+  private hasFirstPartyOnlineSubscription(): boolean {
+    return this.sessions.isSignedIntoFirstPartyServer() && this.subscriptions.hasValidSubscription()
+  }
 
+  public hasFirstPartyOfflineSubscription(): boolean {
     const offlineRepo = this.getOfflineRepo()
     if (!offlineRepo || !offlineRepo.content.offlineFeaturesUrl) {
       return false
@@ -308,7 +311,7 @@ export class SNFeaturesService
     return hasFirstPartyOfflineSubscription || new URL(offlineRepo.content.offlineFeaturesUrl).hostname === 'localhost'
   }
 
-  async updateOnlineRoles(roles: string[]): Promise<{
+  async updateOnlineRolesWithNewValues(roles: string[]): Promise<{
     didChangeRoles: boolean
   }> {
     const previousRoles = this.onlineRoles
@@ -371,10 +374,6 @@ export class SNFeaturesService
     return this.onlineRoles.some((role) => !unpaidRoles.includes(role))
   }
 
-  hasPaidAnyPartyOnlineOrOfflineSubscription(): boolean {
-    return this.onlineRolesIncludePaidSubscription() || this.hasOfflineRepo()
-  }
-
   public rolesBySorting(roles: string[]): string[] {
     return Object.values(RoleName.NAMES).filter((role) => roles.includes(role))
   }
@@ -382,7 +381,9 @@ export class SNFeaturesService
   public hasMinimumRole(role: string): boolean {
     const sortedAllRoles = Object.values(RoleName.NAMES)
 
-    const sortedUserRoles = this.rolesBySorting(this.rolesToUseForFeatureCheck())
+    const sortedUserRoles = this.rolesBySorting(
+      this.hasFirstPartyOnlineSubscription() ? this.onlineRoles : this.offlineRoles,
+    )
 
     const highestUserRoleIndex = sortedAllRoles.indexOf(lastElement(sortedUserRoles) as string)
 
@@ -394,14 +395,16 @@ export class SNFeaturesService
   public getFeatureStatus(featureId: FeatureIdentifier): FeatureStatus {
     return this.getFeatureStatusUseCase.execute({
       featureId,
+      firstPartyRoles: this.hasFirstPartyOnlineSubscription()
+        ? { online: this.onlineRoles }
+        : this.hasFirstPartyOfflineSubscription()
+        ? { offline: this.offlineRoles }
+        : undefined,
       hasPaidAnyPartyOnlineOrOfflineSubscription: this.hasPaidAnyPartyOnlineOrOfflineSubscription(),
-      roles: this.rolesToUseForFeatureCheck(),
-      hasFirstPartySubscription: this.hasFirstPartySubscription(),
+      firstPartyOnlineSubscription: this.hasFirstPartyOnlineSubscription()
+        ? this.subscriptions.getOnlineSubscription()
+        : undefined,
     })
-  }
-
-  private rolesToUseForFeatureCheck(): string[] {
-    return this.hasFirstPartyOnlineSubscription() ? this.onlineRoles : this.offlineRoles
   }
 
   public async downloadRemoteThirdPartyFeature(urlOrCode: string): Promise<ComponentInterface | undefined> {
@@ -444,9 +447,10 @@ export class SNFeaturesService
     ;(this.onlineRoles as unknown) = undefined
     ;(this.offlineRoles as unknown) = undefined
     ;(this.storage as unknown) = undefined
-    ;(this.api as unknown) = undefined
     ;(this.items as unknown) = undefined
     ;(this.mutator as unknown) = undefined
+    ;(this.api as unknown) = undefined
+    ;(this.subscriptions as unknown) = undefined
     ;(this.settings as unknown) = undefined
     ;(this.user as unknown) = undefined
     ;(this.sync as unknown) = undefined

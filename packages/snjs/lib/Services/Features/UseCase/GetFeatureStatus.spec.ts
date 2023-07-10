@@ -7,158 +7,184 @@ jest.mock('@standardnotes/features', () => ({
   FeatureIdentifier: {
     DarkTheme: 'darkTheme',
   },
-  FindNativeFeature: jest.fn(), // Mocked function
+  FindNativeFeature: jest.fn(),
 }))
 
 import { FindNativeFeature } from '@standardnotes/features'
+import { Subscription } from '@standardnotes/security'
 
 describe('GetFeatureStatusUseCase', () => {
-  let items: ItemManagerInterface
+  let items: jest.Mocked<ItemManagerInterface>
+  let usecase: GetFeatureStatusUseCase
 
   beforeEach(() => {
     items = {
       getDisplayableComponents: jest.fn(),
-    } as unknown as ItemManagerInterface
+    } as unknown as jest.Mocked<ItemManagerInterface>
+    usecase = new GetFeatureStatusUseCase(items)
+    ;(FindNativeFeature as jest.Mock).mockReturnValue(undefined)
   })
 
-  describe('execute', () => {
-    it('should return entitled if feature is free', () => {
-      const useCase = new GetFeatureStatusUseCase(items)
-      const result = useCase.execute({
-        featureId: FeatureIdentifier.DarkTheme,
-        hasPaidAnyPartyOnlineOrOfflineSubscription: false,
-        hasFirstPartySubscription: false,
-        roles: [],
-      })
-      expect(result).toBe(FeatureStatus.Entitled)
-    })
+  afterEach(() => {
+    jest.restoreAllMocks()
+  })
 
-    it('should return entitled if feature is deprecated and user has paid subscription', () => {
-      ;(FindNativeFeature as jest.Mock).mockReturnValue({ deprecated: true })
-
-      const useCase = new GetFeatureStatusUseCase(items)
-      const result = useCase.execute({
-        featureId: 'deprecatedFeature' as FeatureIdentifier,
-        hasPaidAnyPartyOnlineOrOfflineSubscription: true,
-        hasFirstPartySubscription: false,
-        roles: [],
-      })
-      expect(result).toBe(FeatureStatus.Entitled)
-    })
-
-    it('should return NoUserSubscription if feature is deprecated and user has no subscription', () => {
-      ;(FindNativeFeature as jest.Mock).mockReturnValue({ deprecated: true })
-
-      const useCase = new GetFeatureStatusUseCase(items)
-      const result = useCase.execute({
-        featureId: 'deprecatedFeature',
-        hasPaidAnyPartyOnlineOrOfflineSubscription: false,
-        hasFirstPartySubscription: false,
-        roles: [],
-      })
-      expect(result).toBe(FeatureStatus.NoUserSubscription)
-    })
-
-    it('should return NoUserSubscription if feature is third party and there is no component', () => {
-      jest.spyOn(items, 'getDisplayableComponents').mockReturnValue([])
-      const useCase = new GetFeatureStatusUseCase(items)
-      const result = useCase.execute({
-        featureId: 'thirdPartyFeature',
-        hasPaidAnyPartyOnlineOrOfflineSubscription: false,
-        hasFirstPartySubscription: false,
-        roles: [],
-      })
-      expect(result).toBe(FeatureStatus.NoUserSubscription)
-    })
-
-    it('should return InCurrentPlanButExpired if feature is third party and component is expired', () => {
-      jest
-        .spyOn(items, 'getDisplayableComponents')
-        .mockReturnValue([
-          <ComponentInterface>{ identifier: 'thirdPartyFeature' as FeatureIdentifier, isExpired: true },
-        ])
-
-      const useCase = new GetFeatureStatusUseCase(items)
-      const result = useCase.execute({
-        featureId: 'thirdPartyFeature',
-        hasPaidAnyPartyOnlineOrOfflineSubscription: false,
-        hasFirstPartySubscription: false,
-        roles: [],
-      })
-      expect(result).toBe(FeatureStatus.InCurrentPlanButExpired)
-    })
-
-    it('should return Entitled if feature is third party and component is not expired', () => {
-      jest
-        .spyOn(items, 'getDisplayableComponents')
-        .mockReturnValue([
-          <ComponentInterface>{ identifier: 'thirdPartyFeature' as FeatureIdentifier, isExpired: false },
-        ])
-
-      const useCase = new GetFeatureStatusUseCase(items)
-      const result = useCase.execute({
-        featureId: 'thirdPartyFeature' as FeatureIdentifier,
-        hasPaidAnyPartyOnlineOrOfflineSubscription: false,
-        hasFirstPartySubscription: false,
-        roles: [],
-      })
-      expect(result).toBe(FeatureStatus.Entitled)
-    })
-
-    it('should return NoUserSubscription if feature is native and user has no first party subscription', () => {
-      ;(FindNativeFeature as jest.Mock).mockReturnValue({})
-
-      const useCase = new GetFeatureStatusUseCase(items)
-      const result = useCase.execute({
-        featureId: FeatureIdentifier.SuperEditor,
-        hasPaidAnyPartyOnlineOrOfflineSubscription: false,
-        hasFirstPartySubscription: false,
-        roles: [],
-      })
-      expect(result).toBe(FeatureStatus.NoUserSubscription)
-    })
-
-    it('should return NotInCurrentPlan if feature is native and user has no matching role', () => {
-      ;(FindNativeFeature as jest.Mock).mockReturnValue({ availableInRoles: ['role1'] })
-
-      const useCase = new GetFeatureStatusUseCase(items)
-      const result = useCase.execute({
-        featureId: FeatureIdentifier.SuperEditor,
-        hasPaidAnyPartyOnlineOrOfflineSubscription: false,
-        hasFirstPartySubscription: true,
-        roles: ['role2'],
-      })
-      expect(result).toBe(FeatureStatus.NotInCurrentPlan)
-    })
-
-    it('should return Entitled if feature is native and user has a matching role', () => {
-      ;(FindNativeFeature as jest.Mock).mockReturnValue({ availableInRoles: ['role1'] })
-
-      const useCase = new GetFeatureStatusUseCase(items)
-      const result = useCase.execute({
-        featureId: FeatureIdentifier.SuperEditor,
-        hasPaidAnyPartyOnlineOrOfflineSubscription: false,
-        hasFirstPartySubscription: true,
-        roles: ['role1'],
-      })
-      expect(result).toBe(FeatureStatus.Entitled)
-    })
-
-    it('should return Entitled if feature is native and there are no specific roles required', () => {
-      ;(FindNativeFeature as jest.Mock).mockReturnValue({})
-
-      const useCase = new GetFeatureStatusUseCase(items)
-      const result = useCase.execute({
-        featureId: FeatureIdentifier.SuperEditor,
-        hasPaidAnyPartyOnlineOrOfflineSubscription: false,
-        hasFirstPartySubscription: true,
-        roles: ['role1'],
-      })
-      expect(result).toBe(FeatureStatus.Entitled)
+  describe('free features', () => {
+    it('should return entitled for free features', () => {
+      expect(
+        usecase.execute({
+          featureId: FeatureIdentifier.DarkTheme,
+          hasPaidAnyPartyOnlineOrOfflineSubscription: false,
+          firstPartyOnlineSubscription: undefined,
+          firstPartyRoles: undefined,
+        }),
+      ).toEqual(FeatureStatus.Entitled)
     })
   })
-})
 
-afterEach(() => {
-  jest.restoreAllMocks()
+  describe('deprecated features', () => {
+    it('should return entitled for deprecated paid features if any subscription is active', () => {
+      ;(FindNativeFeature as jest.Mock).mockReturnValue({ deprecated: true })
+
+      expect(
+        usecase.execute({
+          featureId: 'deprecatedFeature',
+          hasPaidAnyPartyOnlineOrOfflineSubscription: true,
+          firstPartyOnlineSubscription: undefined,
+          firstPartyRoles: undefined,
+        }),
+      ).toEqual(FeatureStatus.Entitled)
+    })
+
+    it('should return NoUserSubscription for deprecated paid features if no subscription is active', () => {
+      ;(FindNativeFeature as jest.Mock).mockReturnValue({ deprecated: true })
+
+      expect(
+        usecase.execute({
+          featureId: 'deprecatedFeature',
+          hasPaidAnyPartyOnlineOrOfflineSubscription: false,
+          firstPartyOnlineSubscription: undefined,
+          firstPartyRoles: undefined,
+        }),
+      ).toEqual(FeatureStatus.NoUserSubscription)
+    })
+  })
+
+  describe('native features', () => {
+    it('should return NoUserSubscription for native features without subscription and roles', () => {
+      ;(FindNativeFeature as jest.Mock).mockReturnValue({ deprecated: false })
+
+      expect(
+        usecase.execute({
+          featureId: 'nativeFeature',
+          firstPartyOnlineSubscription: undefined,
+          firstPartyRoles: undefined,
+          hasPaidAnyPartyOnlineOrOfflineSubscription: false,
+        }),
+      ).toEqual(FeatureStatus.NoUserSubscription)
+    })
+
+    it('should return NotInCurrentPlan for native features with roles not in available roles', () => {
+      ;(FindNativeFeature as jest.Mock).mockReturnValue({
+        deprecated: false,
+        availableInRoles: ['notInRole'],
+      })
+
+      expect(
+        usecase.execute({
+          featureId: 'nativeFeature',
+          firstPartyOnlineSubscription: undefined,
+          firstPartyRoles: { online: ['inRole'] },
+          hasPaidAnyPartyOnlineOrOfflineSubscription: false,
+        }),
+      ).toEqual(FeatureStatus.NotInCurrentPlan)
+    })
+
+    it('should return Entitled for native features with roles in available roles and active subscription', () => {
+      ;(FindNativeFeature as jest.Mock).mockReturnValue({
+        deprecated: false,
+        availableInRoles: ['inRole'],
+      })
+
+      expect(
+        usecase.execute({
+          featureId: 'nativeFeature',
+          firstPartyOnlineSubscription: {
+            endsAt: new Date(Date.now() + 10000).getTime(),
+          } as jest.Mocked<Subscription>,
+          firstPartyRoles: { online: ['inRole'] },
+          hasPaidAnyPartyOnlineOrOfflineSubscription: false,
+        }),
+      ).toEqual(FeatureStatus.Entitled)
+    })
+
+    it('should return InCurrentPlanButExpired for native features with roles in available roles and expired subscription', () => {
+      ;(FindNativeFeature as jest.Mock).mockReturnValue({
+        deprecated: false,
+        availableInRoles: ['inRole'],
+      })
+
+      expect(
+        usecase.execute({
+          featureId: 'nativeFeature',
+          firstPartyOnlineSubscription: {
+            endsAt: new Date(Date.now() - 10000).getTime(),
+          } as jest.Mocked<Subscription>,
+          firstPartyRoles: { online: ['inRole'] },
+          hasPaidAnyPartyOnlineOrOfflineSubscription: false,
+        }),
+      ).toEqual(FeatureStatus.InCurrentPlanButExpired)
+    })
+  })
+
+  describe('third party features', () => {
+    it('should return Entitled for third-party features', () => {
+      const mockComponent = {
+        identifier: 'thirdPartyFeature',
+        isExpired: false,
+      } as unknown as jest.Mocked<ComponentInterface>
+
+      items.getDisplayableComponents.mockReturnValue([mockComponent])
+
+      expect(
+        usecase.execute({
+          featureId: 'thirdPartyFeature',
+          hasPaidAnyPartyOnlineOrOfflineSubscription: false,
+          firstPartyOnlineSubscription: undefined,
+          firstPartyRoles: undefined,
+        }),
+      ).toEqual(FeatureStatus.Entitled)
+    })
+
+    it('should return NoUserSubscription for non-existing third-party features', () => {
+      ;(items.getDisplayableComponents as jest.Mock).mockReturnValue([])
+
+      expect(
+        usecase.execute({
+          featureId: 'nonExistingThirdPartyFeature',
+          hasPaidAnyPartyOnlineOrOfflineSubscription: false,
+          firstPartyOnlineSubscription: undefined,
+          firstPartyRoles: undefined,
+        }),
+      ).toEqual(FeatureStatus.NoUserSubscription)
+    })
+
+    it('should return InCurrentPlanButExpired for expired third-party features', () => {
+      const mockComponent = {
+        identifier: 'thirdPartyFeature',
+        isExpired: true,
+      } as unknown as jest.Mocked<ComponentInterface>
+
+      items.getDisplayableComponents.mockReturnValue([mockComponent])
+
+      expect(
+        usecase.execute({
+          featureId: 'thirdPartyFeature',
+          hasPaidAnyPartyOnlineOrOfflineSubscription: false,
+          firstPartyOnlineSubscription: undefined,
+          firstPartyRoles: undefined,
+        }),
+      ).toEqual(FeatureStatus.InCurrentPlanButExpired)
+    })
+  })
 })

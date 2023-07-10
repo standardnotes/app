@@ -1,4 +1,5 @@
 import { FeatureDescription, FeatureIdentifier, FindNativeFeature } from '@standardnotes/features'
+import { Subscription } from '@standardnotes/security'
 import { FeatureStatus, ItemManagerInterface } from '@standardnotes/services'
 
 export class GetFeatureStatusUseCase {
@@ -6,9 +7,9 @@ export class GetFeatureStatusUseCase {
 
   execute(dto: {
     featureId: FeatureIdentifier | string
+    firstPartyOnlineSubscription: Subscription | undefined
+    firstPartyRoles: { online: string[] } | { offline: string[] } | undefined
     hasPaidAnyPartyOnlineOrOfflineSubscription: boolean
-    hasFirstPartySubscription: boolean
-    roles: string[]
   }): FeatureStatus {
     if (this.isFreeFeature(dto.featureId as FeatureIdentifier)) {
       return FeatureStatus.Entitled
@@ -20,38 +21,60 @@ export class GetFeatureStatusUseCase {
       return this.getThirdPartyFeatureStatus(dto.featureId as string)
     }
 
+    if (nativeFeature.deprecated) {
+      return this.getDeprecatedNativeFeatureStatus({
+        nativeFeature,
+        hasPaidAnyPartyOnlineOrOfflineSubscription: dto.hasPaidAnyPartyOnlineOrOfflineSubscription,
+      })
+    }
+
     return this.getNativeFeatureFeatureStatus({
-      hasFirstPartySubscription: dto.hasFirstPartySubscription,
-      hasPaidAnyPartyOnlineOrOfflineSubscription: dto.hasPaidAnyPartyOnlineOrOfflineSubscription,
-      roles: dto.roles,
       nativeFeature,
+      firstPartyOnlineSubscription: dto.firstPartyOnlineSubscription,
+      firstPartyRoles: dto.firstPartyRoles,
     })
   }
 
-  private getNativeFeatureFeatureStatus(dto: {
-    hasFirstPartySubscription: boolean
+  private getDeprecatedNativeFeatureStatus(dto: {
     hasPaidAnyPartyOnlineOrOfflineSubscription: boolean
-    roles: string[]
     nativeFeature: FeatureDescription
   }): FeatureStatus {
-    if (dto.nativeFeature.deprecated) {
-      if (dto.hasPaidAnyPartyOnlineOrOfflineSubscription) {
-        return FeatureStatus.Entitled
-      } else {
-        return FeatureStatus.NoUserSubscription
-      }
+    if (dto.hasPaidAnyPartyOnlineOrOfflineSubscription) {
+      return FeatureStatus.Entitled
+    } else {
+      return FeatureStatus.NoUserSubscription
     }
+  }
 
-    if (!dto.hasFirstPartySubscription) {
+  private getNativeFeatureFeatureStatus(dto: {
+    nativeFeature: FeatureDescription
+    firstPartyOnlineSubscription: Subscription | undefined
+    firstPartyRoles: { online: string[] } | { offline: string[] } | undefined
+  }): FeatureStatus {
+    if (!dto.firstPartyOnlineSubscription && !dto.firstPartyRoles) {
       return FeatureStatus.NoUserSubscription
     }
 
-    if (dto.nativeFeature.availableInRoles) {
-      const hasRole = dto.roles.some((role) => {
+    const roles = !dto.firstPartyRoles
+      ? undefined
+      : 'online' in dto.firstPartyRoles
+      ? dto.firstPartyRoles.online
+      : dto.firstPartyRoles.offline
+
+    if (dto.nativeFeature.availableInRoles && roles) {
+      const hasRole = roles.some((role) => {
         return dto.nativeFeature.availableInRoles?.includes(role)
       })
+
       if (!hasRole) {
         return FeatureStatus.NotInCurrentPlan
+      }
+    }
+
+    if (dto.firstPartyOnlineSubscription) {
+      const isSubscriptionExpired = new Date(dto.firstPartyOnlineSubscription.endsAt) < new Date()
+      if (isSubscriptionExpired) {
+        return FeatureStatus.InCurrentPlanButExpired
       }
     }
 

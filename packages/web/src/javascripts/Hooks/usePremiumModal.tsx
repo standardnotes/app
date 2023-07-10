@@ -32,7 +32,7 @@ const PremiumModalProvider: FunctionComponent<Props> = observer(
   ({ application, featuresController, children }: Props) => {
     const featureName = featuresController.premiumAlertFeatureName || ''
 
-    const hasSubscription = application.hasValidSubscription()
+    const hasSubscription = application.hasValidFirstPartySubscription()
 
     const activate = useCallback(
       (feature: string) => {

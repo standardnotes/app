@@ -8,11 +8,17 @@ import { SubscriptionInviteAcceptResponseBody } from '../../Response/Subscriptio
 import { SubscriptionInviteCancelResponseBody } from '../../Response/Subscription/SubscriptionInviteCancelResponseBody'
 import { SubscriptionInviteListResponseBody } from '../../Response/Subscription/SubscriptionInviteListResponseBody'
 import { SubscriptionInviteResponseBody } from '../../Response/Subscription/SubscriptionInviteResponseBody'
-import { HttpResponse, ApiEndpointParam } from '@standardnotes/responses'
+import {
+  HttpResponse,
+  ApiEndpointParam,
+  GetSubscriptionResponse,
+  GetAvailableSubscriptionsResponse,
+} from '@standardnotes/responses'
 
 import { SubscriptionApiServiceInterface } from './SubscriptionApiServiceInterface'
 import { SubscriptionApiOperations } from './SubscriptionApiOperations'
 import { AppleIAPConfirmRequestParams } from '../../Request'
+import { GetUserSubscriptionRequestParams } from '../../Request/Subscription/GetUserSubscriptionRequestParams'
 
 export class SubscriptionApiService implements SubscriptionApiServiceInterface {
   private operationsInProgress: Map<SubscriptionApiOperations, boolean>
@@ -116,6 +122,38 @@ export class SubscriptionApiService implements SubscriptionApiServiceInterface {
       return response
     } finally {
       this.operationsInProgress.set(SubscriptionApiOperations.ConfirmAppleIAP, false)
+    }
+  }
+
+  async getUserSubscription(params: GetUserSubscriptionRequestParams): Promise<HttpResponse<GetSubscriptionResponse>> {
+    if (this.operationsInProgress.get(SubscriptionApiOperations.GetSubscription)) {
+      throw new ApiCallError(ErrorMessage.GenericInProgress)
+    }
+
+    this.operationsInProgress.set(SubscriptionApiOperations.GetSubscription, true)
+
+    try {
+      const response = await this.subscriptionServer.getUserSubscription(params)
+
+      return response
+    } finally {
+      this.operationsInProgress.set(SubscriptionApiOperations.GetSubscription, false)
+    }
+  }
+
+  async getAvailableSubscriptions(): Promise<HttpResponse<GetAvailableSubscriptionsResponse>> {
+    if (this.operationsInProgress.get(SubscriptionApiOperations.GetAvailableSubscriptions)) {
+      throw new ApiCallError(ErrorMessage.GenericInProgress)
+    }
+
+    this.operationsInProgress.set(SubscriptionApiOperations.GetAvailableSubscriptions, true)
+
+    try {
+      const response = await this.subscriptionServer.getAvailableSubscriptions()
+
+      return response
+    } finally {
+      this.operationsInProgress.set(SubscriptionApiOperations.GetAvailableSubscriptions, false)
     }
   }
 }

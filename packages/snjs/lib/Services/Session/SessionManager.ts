@@ -32,14 +32,12 @@ import {
 } from '@standardnotes/services'
 import { Base64String, PkcKeyPair } from '@standardnotes/sncrypto-common'
 import {
-  ClientDisplayableError,
   SessionBody,
   ErrorTag,
   HttpResponse,
   isErrorResponse,
   SessionListEntry,
   User,
-  AvailableSubscriptions,
   KeyParamsResponse,
   SignInResponse,
   ChangeCredentialsResponse,
@@ -50,7 +48,6 @@ import {
 import { CopyPayloadWithContentOverride, RootKeyWithKeyPairsInterface } from '@standardnotes/models'
 import { LegacySession, MapperInterface, Result, Session, SessionToken } from '@standardnotes/domain-core'
 import { KeyParamsFromApiResponse, SNRootKeyParams, SNRootKey } from '@standardnotes/encryption'
-import { Subscription } from '@standardnotes/security'
 import * as Common from '@standardnotes/common'
 
 import { RawStorageValue } from './Sessions/Types'
@@ -311,28 +308,6 @@ export class SNSessionManager
       })
       void this.challengeService.promptForChallengeResponse(challenge)
     })
-  }
-
-  public async getSubscription(): Promise<ClientDisplayableError | Subscription | undefined> {
-    const result = await this.apiService.getSubscription(this.getSureUser().uuid)
-
-    if (isErrorResponse(result)) {
-      return ClientDisplayableError.FromNetworkError(result)
-    }
-
-    const subscription = result.data.subscription
-
-    return subscription
-  }
-
-  public async getAvailableSubscriptions(): Promise<AvailableSubscriptions | ClientDisplayableError> {
-    const response = await this.apiService.getAvailableSubscriptions()
-
-    if (isErrorResponse(response)) {
-      return ClientDisplayableError.FromNetworkError(response)
-    }
-
-    return response.data
   }
 
   private async promptForU2FVerification(username: string): Promise<Record<string, unknown> | undefined> {

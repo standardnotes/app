@@ -18,7 +18,6 @@ import {
   API_MESSAGE_FAILED_LISTED_REGISTRATION,
   API_MESSAGE_FAILED_OFFLINE_ACTIVATION,
   API_MESSAGE_FAILED_OFFLINE_FEATURES,
-  API_MESSAGE_FAILED_SUBSCRIPTION_INFO,
   API_MESSAGE_FAILED_UPDATE_SETTINGS,
   API_MESSAGE_GENERIC_CHANGE_CREDENTIALS_FAIL,
   API_MESSAGE_GENERIC_INTEGRITY_CHECK_FAIL,
@@ -45,8 +44,6 @@ import {
   UpdateSettingResponse,
   GetSettingResponse,
   DeleteSettingResponse,
-  GetSubscriptionResponse,
-  GetAvailableSubscriptionsResponse,
   PostSubscriptionTokensResponse,
   GetOfflineFeaturesResponse,
   ListedRegistrationResponse,
@@ -590,25 +587,6 @@ export class SNApiService
       url,
       external: true,
       fallbackErrorMessage: API_MESSAGE_GENERIC_INVALID_LOGIN,
-    })
-  }
-
-  public async getSubscription(userUuid: string): Promise<HttpResponse<GetSubscriptionResponse>> {
-    const url = joinPaths(this.host, Paths.v1.subscription(userUuid))
-    return this.tokenRefreshableRequest({
-      verb: HttpVerb.Get,
-      url,
-      authentication: this.getSessionAccessToken(),
-      fallbackErrorMessage: API_MESSAGE_FAILED_SUBSCRIPTION_INFO,
-    })
-  }
-
-  public async getAvailableSubscriptions(): Promise<HttpResponse<GetAvailableSubscriptionsResponse>> {
-    const url = joinPaths(this.host, Paths.v2.subscriptions)
-    return this.request({
-      verb: HttpVerb.Get,
-      url,
-      fallbackErrorMessage: API_MESSAGE_FAILED_SUBSCRIPTION_INFO,
     })
   }
 

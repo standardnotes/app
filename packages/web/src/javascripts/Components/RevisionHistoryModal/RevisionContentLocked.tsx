@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'react'
 import { HistoryLockedIllustration } from '@standardnotes/icons'
 import Button from '@/Components/Button/Button'
-import { SubscriptionController } from '@/Controllers/Subscription/SubscriptionController'
+import { useApplication } from '../ApplicationProvider'
 
 const getPlanHistoryDuration = (planName: string | undefined) => {
   switch (planName) {
@@ -19,12 +19,10 @@ const getPremiumContentCopy = (planName: string | undefined) => {
   return `Version history is limited to ${getPlanHistoryDuration(planName)} in the ${planName} plan`
 }
 
-type Props = {
-  subscriptionController: SubscriptionController
-}
+const RevisionContentLocked: FunctionComponent = () => {
+  const application = useApplication()
 
-const RevisionContentLocked: FunctionComponent<Props> = ({ subscriptionController }) => {
-  const { userSubscriptionName, isUserSubscriptionExpired, isUserSubscriptionCanceled } = subscriptionController
+  const { userSubscriptionName, isUserSubscriptionExpired, isUserSubscriptionCanceled } = application.subscriptions
 
   return (
     <div className="flex h-full w-full items-center justify-center">
