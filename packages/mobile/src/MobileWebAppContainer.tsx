@@ -1,7 +1,6 @@
 import { ReactNativeToWebEvent } from '@standardnotes/snjs'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { AppState, Button, Keyboard, NativeModules, Platform, Text, View } from 'react-native'
-import { readFile } from 'react-native-fs'
+import { Button, Keyboard, Platform, Text, View } from 'react-native'
 import VersionInfo from 'react-native-version-info'
 import { WebView, WebViewMessageEvent } from 'react-native-webview'
 import { OnShouldStartLoadWithRequest } from 'react-native-webview/lib/WebViewTypes'
@@ -11,6 +10,7 @@ import { ColorSchemeObserverService } from './ColorSchemeObserverService'
 import CustomAndroidWebView from './CustomAndroidWebView'
 import { MobileDevice, MobileDeviceEvent } from './Lib/MobileDevice'
 import { IsDev } from './Lib/Utils'
+import { useReceivedSharedItems } from './useReceivedSharedItems'
 
 const LoggingEnabled = IsDev
 
@@ -23,8 +23,6 @@ export const MobileWebAppContainer = () => {
 
   return <MobileWebAppContents key={`${identifier}`} destroyAndReload={destroyAndReload} />
 }
-
-const { ReceiveSharingIntent } = NativeModules
 
 const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => void }) => {
   const webViewRef = useRef<WebView>(null)
@@ -285,43 +283,7 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
   const requireInlineMediaPlaybackForMomentsFeature = true
   const requireMediaUserInteractionForMomentsFeature = false
 
-  useEffect(() => {
-    if (!ReceiveSharingIntent) {
-      return
-    }
-
-    const eventListener = AppState.addEventListener('change', (state) => {
-      if (state === 'active') {
-        ReceiveSharingIntent.getFileNames().then(async (filesObject) => {
-          try {
-            const files = await Promise.all(
-              Object.keys(filesObject)
-                .map((k) => filesObject[k])
-                .map(async (file) => {
-                  const name = file.fileName as string
-                  const uri = file.contentUri
-                  const mimeType = file.mimeType as string
-                  const data = await readFile(uri, 'base64')
-                  return { name, mimeType, data }
-                }),
-            )
-
-            webViewRef.current?.postMessage(
-              JSON.stringify({
-                reactNativeEvent: ReactNativeToWebEvent.ReceivedFiles,
-                messageType: 'event',
-                messageData: files,
-              }),
-            )
-          } catch (error) {
-            console.error(error)
-          }
-        })
-      }
-    })
-
-    return () => eventListener.remove()
-  }, [])
+  useReceivedSharedItems(webViewRef)
 
   if (showAndroidWebviewUpdatePrompt) {
     return (

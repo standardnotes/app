@@ -1,3 +1,6 @@
+// Adapted from
+// https://github.com/ajith-ab/react-native-receive-sharing-intent
+
 package com.standardnotes;
 
 import android.app.Activity;

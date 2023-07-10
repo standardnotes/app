@@ -1,3 +1,6 @@
+// Adapted from
+// https://github.com/ajith-ab/react-native-receive-sharing-intent
+
 package com.standardnotes;
 
 import android.annotation.SuppressLint;
@@ -53,7 +56,6 @@ public class ReceiveSharingIntentHelper {
           WritableMap files = new WritableNativeMap();
           WritableMap file = new WritableNativeMap();
           file.putString("contentUri",null);
-          file.putString("filePath", null);
           file.putString("fileName", null);
           file.putString("extension", null);
           if(text.startsWith("http")){
@@ -73,7 +75,6 @@ public class ReceiveSharingIntentHelper {
         WritableMap files = new WritableNativeMap();
         WritableMap file = new WritableNativeMap();
         file.putString("contentUri",null);
-        file.putString("filePath", null);
         file.putString("mimeType",null);
         file.putString("text",null);
         file.putString("weblink", link);
@@ -91,7 +92,6 @@ public class ReceiveSharingIntentHelper {
           WritableMap files = new WritableNativeMap();
           WritableMap file = new WritableNativeMap();
           file.putString("contentUri", null);
-          file.putString("filePath", null);
           file.putString("fileName", null);
           file.putString("extension", null);
           file.putString("weblink", null);

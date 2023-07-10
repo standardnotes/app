@@ -16,6 +16,7 @@ export interface WebApplicationInterface extends ApplicationInterface {
   handleMobileKeyboardWillChangeFrameEvent(frame: { height: number; contentHeight: number }): void
   handleMobileKeyboardDidChangeFrameEvent(frame: { height: number; contentHeight: number }): void
   handleReceivedFilesEvent(files: { name: string; mimeType: string; data: string }[]): void
+  handleReceivedTextEvent(item: { text: string; title?: string }): Promise<void>
   isNativeMobileWeb(): boolean
   mobileDevice(): MobileDeviceInterface
   handleAndroidBackButtonPressed(): void

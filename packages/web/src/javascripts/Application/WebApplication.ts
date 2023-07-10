@@ -24,6 +24,8 @@ import {
   BackupServiceInterface,
   InternalFeatureService,
   InternalFeatureServiceInterface,
+  NoteContent,
+  SNNote,
 } from '@standardnotes/snjs'
 import { makeObservable, observable } from 'mobx'
 import { startAuthentication, startRegistration } from '@simplewebauthn/browser'
@@ -383,6 +385,20 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     mappedFiles.forEach((file) => {
       void filesController.uploadNewFile(file, true)
     })
+  }
+
+  async handleReceivedTextEvent({ text, title }: { text: string; title?: string | undefined }) {
+    const titleForNote = title || this.getViewControllerManager().itemListController.titleForNewNote()
+
+    const note = this.items.createTemplateItem<NoteContent, SNNote>(ContentType.Note, {
+      title: titleForNote,
+      text: text,
+      references: [],
+    })
+
+    const insertedNote = await this.mutator.insertItem(note)
+
+    this.getViewControllerManager().selectionController.selectItem(insertedNote.uuid, true).catch(console.error)
   }
 
   private async lockApplicationAfterMobileEventIfApplicable(): Promise<void> {

@@ -92,6 +92,9 @@ export class MobileWebReceiver {
           }[],
         )
         break
+      case ReactNativeToWebEvent.ReceivedText:
+        void this.application.handleReceivedTextEvent(messageData as { text: string; title?: string })
+        break
 
       default:
         break
