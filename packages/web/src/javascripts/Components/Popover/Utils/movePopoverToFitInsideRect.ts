@@ -4,21 +4,22 @@ export const movePopoverToFitInsideRect = (popoverElement: HTMLElement, rect: DO
   const popoverRect = popoverElement.getBoundingClientRect()
   const x = parseInt(popoverElement.style.getPropertyValue('--translate-x')) || 0
   const y = parseInt(popoverElement.style.getPropertyValue('--translate-y')) || 0
+  const offset = parseInt(popoverElement.style.getPropertyValue('--offset')) || 0
   const overflows = getOverflows(popoverRect, rect)
 
   if (overflows['top'] > 0) {
-    popoverElement.style.setProperty('--translate-y', `${y + overflows['top']}px`)
+    popoverElement.style.setProperty('--translate-y', `${y + overflows['top'] + offset}px`)
   }
 
   if (overflows['bottom'] > 0) {
-    popoverElement.style.setProperty('--translate-y', `${y - overflows['bottom']}px`)
+    popoverElement.style.setProperty('--translate-y', `${y - overflows['bottom'] - offset}px`)
   }
 
   if (overflows['left'] > 0) {
-    popoverElement.style.setProperty('--translate-x', `${x + overflows['left']}px`)
+    popoverElement.style.setProperty('--translate-x', `${x + overflows['left'] + offset}px`)
   }
 
   if (overflows['right'] > 0) {
-    popoverElement.style.setProperty('--translate-x', `${x - overflows['right']}px`)
+    popoverElement.style.setProperty('--translate-x', `${x - overflows['right'] - offset}px`)
   }
 }

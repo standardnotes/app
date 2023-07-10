@@ -202,6 +202,9 @@ function TextFormatFloatingToolbar({
         offset: 12,
         maxHeightFunction: () => 'none',
       })
+      if (calculatedStyles) {
+        toolbarElement.style.setProperty('--offset', calculatedStyles['--offset'])
+      }
 
       if (calculatedStyles) {
         Object.assign(toolbarElement.style, calculatedStyles)

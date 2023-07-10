@@ -10,6 +10,7 @@ const percentOf = (percent: number, value: number) => (percent / 100) * value
 export type PopoverCSSProperties = CSSProperties & {
   '--translate-x': string
   '--translate-y': string
+  '--offset': string
 }
 
 const getStylesFromRect = (
@@ -17,6 +18,7 @@ const getStylesFromRect = (
   options: {
     disableMobileFullscreenTakeover?: boolean
     maxHeight?: number | 'none'
+    offset?: number
   },
 ): PopoverCSSProperties => {
   const { disableMobileFullscreenTakeover = false, maxHeight = 'none' } = options
@@ -29,6 +31,7 @@ const getStylesFromRect = (
     willChange: 'transform',
     '--translate-x': `${shouldApplyMobileWidth ? marginForMobile / 2 : rect.x}px`,
     '--translate-y': `${rect.y}px`,
+    '--offset': `${options.offset}px`,
     transform: 'translate(var(--translate-x), var(--translate-y))',
     visibility: 'visible',
     ...(canApplyMaxHeight && {
@@ -108,5 +111,5 @@ export const getPositionedPopoverStyles = ({
     maxHeight = maxHeightFunction(maxHeight)
   }
 
-  return getStylesFromRect(finalPositionedRect, { disableMobileFullscreenTakeover, maxHeight })
+  return getStylesFromRect(finalPositionedRect, { disableMobileFullscreenTakeover, maxHeight, offset })
 }
