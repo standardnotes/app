@@ -28,7 +28,7 @@ import {
 import { makeObservable, observable } from 'mobx'
 import { startAuthentication, startRegistration } from '@simplewebauthn/browser'
 import { PanelResizedData } from '@/Types/PanelResizedData'
-import { isAndroid, isDesktopApplication, isDev, isIOS } from '@/Utils'
+import { getBlobFromBase64, isAndroid, isDesktopApplication, isDev, isIOS } from '@/Utils'
 import { DesktopManager } from './Device/DesktopManager'
 import {
   ArchiveManager,
@@ -374,6 +374,15 @@ export class WebApplication extends SNApplication implements WebApplicationInter
 
   handleMobileKeyboardDidChangeFrameEvent(frame: { height: number; contentHeight: number }): void {
     this.notifyWebEvent(WebAppEvent.MobileKeyboardDidChangeFrame, frame)
+  }
+
+  handleReceivedFilesEvent(files: { name: string; mimeType: string; data: string }[]): void {
+    const filesController = this.getViewControllerManager().filesController
+    const blob = getBlobFromBase64(files[0].data, files[0].mimeType)
+    const mappedFiles = files.map((file) => new File([blob], file.name, { type: file.mimeType }))
+    mappedFiles.forEach((file) => {
+      void filesController.uploadNewFile(file, true)
+    })
   }
 
   private async lockApplicationAfterMobileEventIfApplicable(): Promise<void> {
