@@ -114,6 +114,7 @@ describe('FeaturesService', () => {
 
     subscriptions = {} as jest.Mocked<SubscriptionManagerInterface>
     subscriptions.getOnlineSubscription = jest.fn()
+    subscriptions.addEventObserver = jest.fn()
 
     webSocketsService = {} as jest.Mocked<SNWebSocketsService>
     webSocketsService.addEventObserver = jest.fn()
@@ -140,6 +141,7 @@ describe('FeaturesService', () => {
 
     internalEventBus = {} as jest.Mocked<InternalEventBusInterface>
     internalEventBus.publish = jest.fn()
+    internalEventBus.addEventHandler = jest.fn()
   })
 
   describe('experimental features', () => {
