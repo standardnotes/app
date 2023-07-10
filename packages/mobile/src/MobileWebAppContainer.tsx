@@ -1,17 +1,16 @@
 import { ReactNativeToWebEvent } from '@standardnotes/snjs'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { AppState, Button, Keyboard, NativeModules, Platform, requireNativeComponent, Text, View } from 'react-native'
+import { AppState, Button, Keyboard, NativeModules, Platform, Text, View } from 'react-native'
 import { readFile } from 'react-native-fs'
 import VersionInfo from 'react-native-version-info'
 import { WebView, WebViewMessageEvent } from 'react-native-webview'
-import { NativeWebViewAndroid, OnShouldStartLoadWithRequest } from 'react-native-webview/lib/WebViewTypes'
+import { OnShouldStartLoadWithRequest } from 'react-native-webview/lib/WebViewTypes'
 import { AndroidBackHandlerService } from './AndroidBackHandlerService'
 import { AppStateObserverService } from './AppStateObserverService'
 import { ColorSchemeObserverService } from './ColorSchemeObserverService'
+import CustomAndroidWebView from './CustomAndroidWebView'
 import { MobileDevice, MobileDeviceEvent } from './Lib/MobileDevice'
 import { IsDev } from './Lib/Utils'
-
-const CustomWebView: NativeWebViewAndroid = requireNativeComponent('CustomWebView')
 
 const LoggingEnabled = IsDev
 
@@ -398,7 +397,7 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
       overScrollMode="never"
       nativeConfig={Platform.select({
         android: {
-          component: CustomWebView,
+          component: CustomAndroidWebView,
         },
       })}
     />
