@@ -122,13 +122,11 @@ public class ReceiveSharingIntentHelper {
       WritableMap file = new WritableNativeMap();
       Uri contentUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
       if(contentUri == null) return null;
-      String filePath = FileDirectory.INSTANCE.getAbsolutePath(context, contentUri);
       ContentResolver contentResolver = context.getContentResolver();
       file.putString("mimeType", contentResolver.getType(contentUri));
       Cursor queryResult = contentResolver.query(contentUri, null, null, null, null);
       queryResult.moveToFirst();
       file.putString("fileName", queryResult.getString(queryResult.getColumnIndex(OpenableColumns.DISPLAY_NAME)));
-      file.putString("filePath", filePath);
       file.putString("contentUri",contentUri.toString());
       file.putString("text",null);
       file.putString("weblink", null);
@@ -141,13 +139,11 @@ public class ReceiveSharingIntentHelper {
         for (Uri uri : contentUris) {
           WritableMap file = new WritableNativeMap();
           ContentResolver contentResolver = context.getContentResolver();
-          String filePath = FileDirectory.INSTANCE.getAbsolutePath(context, uri);
           // Based on https://developer.android.com/training/secure-file-sharing/retrieve-info
           file.putString("mimeType", contentResolver.getType(uri));
           Cursor queryResult = contentResolver.query(uri, null, null, null, null);
           queryResult.moveToFirst();
           file.putString("fileName", queryResult.getString(queryResult.getColumnIndex(OpenableColumns.DISPLAY_NAME)));
-          file.putString("filePath", filePath);
           file.putString("contentUri",uri.toString());
           file.putString("text",null);
           file.putString("weblink", null);
