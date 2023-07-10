@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.165.10](https://github.com/standardnotes/app/compare/@standardnotes/web@3.165.9...@standardnotes/web@3.165.10) (2023-07-10)
+
+### Bug Fixes
+
+* Fixed issue where files would not download correctly on mobile if they had special characters in the name ([de6994f](https://github.com/standardnotes/app/commit/de6994f74326b34c485297f984cad51e10d89df6))
+
+## [3.165.9](https://github.com/standardnotes/app/compare/@standardnotes/web@3.165.8...@standardnotes/web@3.165.9) (2023-07-10)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.165.8](https://github.com/standardnotes/app/compare/@standardnotes/web@3.165.7...@standardnotes/web@3.165.8) (2023-07-10)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.165.7](https://github.com/standardnotes/app/compare/@standardnotes/web@3.165.6...@standardnotes/web@3.165.7) (2023-07-07)
+
+**Note:** Version bump only for package @standardnotes/web
+
 ## [3.165.6](https://github.com/standardnotes/app/compare/@standardnotes/web@3.165.5...@standardnotes/web@3.165.6) (2023-07-07)
 
 **Note:** Version bump only for package @standardnotes/web

@@ -1,7 +1,9 @@
 import { WebApplication } from '@/Application/WebApplication'
 import { getBase64FromBlob } from '@/Utils'
+import { parseFileName } from '@standardnotes/filepicker'
 import { Platform } from '@standardnotes/snjs'
 import { addToast, ToastType, dismissToast } from '@standardnotes/toast'
+import { sanitizeFileName } from '@standardnotes/ui-services'
 
 export const downloadBlobOnAndroid = async (
   application: WebApplication,
@@ -20,6 +22,9 @@ export const downloadBlobOnAndroid = async (
     })
   }
   const base64 = await getBase64FromBlob(blob)
+  const { name, ext } = parseFileName(filename)
+  const sanitizedName = sanitizeFileName(name)
+  filename = `${sanitizedName}.${ext}`
   const downloaded = await application.mobileDevice().downloadBase64AsFile(base64, filename)
   if (loadingToastId) {
     dismissToast(loadingToastId)

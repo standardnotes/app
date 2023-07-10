@@ -3,8 +3,8 @@ import path from 'path'
 import {
   HomeServerManagerInterface,
   HomeServerEnvironmentConfiguration,
+  Result,
 } from '@web/Application/Device/DesktopSnjsExports'
-import { HomeServerInterface } from '@standardnotes/home-server'
 
 import { WebContents } from 'electron'
 import { MessageToWebApp } from '../../Shared/IpcMessages'
@@ -13,6 +13,13 @@ import { HomeServerConfigurationFile } from './HomeServerConfigurationFile'
 import { isWindows } from '../Types/Platforms'
 
 const os = require('os')
+
+interface TempHomeServerInterface {
+  start(configuration?: unknown): Promise<Result<string>>
+  activatePremiumFeatures(username: string): Promise<Result<string>>
+  stop(): Promise<Result<string>>
+  isRunning(): Promise<boolean>
+}
 
 export class HomeServerManager implements HomeServerManagerInterface {
   private readonly HOME_SERVER_CONFIGURATION_FILE_NAME = 'config.json'
@@ -24,7 +31,7 @@ export class HomeServerManager implements HomeServerManagerInterface {
 
   private readonly LOGS_BUFFER_SIZE = 1000
 
-  private homeServer?: HomeServerInterface
+  private homeServer?: TempHomeServerInterface
 
   constructor(private webContents: WebContents, private filesManager: FilesManagerInterface) {}
 
@@ -273,9 +280,5 @@ export class HomeServerManager implements HomeServerManagerInterface {
     if (this.homeServer) {
       return
     }
-
-    const { HomeServer } = await import('@standardnotes/home-server')
-
-    this.homeServer = new HomeServer()
   }
 }

@@ -1,4 +1,4 @@
-import { isString, joinPaths, sleep } from '@standardnotes/utils'
+import { joinPaths, sleep } from '@standardnotes/utils'
 import { Environment } from '@standardnotes/models'
 import { Session, SessionToken } from '@standardnotes/domain-core'
 import {
@@ -8,15 +8,14 @@ import {
   HttpRequest,
   HttpResponse,
   HttpResponseMeta,
-  HttpErrorResponse,
   isErrorResponse,
 } from '@standardnotes/responses'
 import { HttpServiceInterface } from './HttpServiceInterface'
-import { XMLHttpRequestState } from './XMLHttpRequestState'
-import { ErrorMessage } from '../Error/ErrorMessage'
 
 import { Paths } from '../Server/Auth/Paths'
 import { SessionRefreshResponseBody } from '../Response/Auth/SessionRefreshResponseBody'
+import { FetchRequestHandler } from './FetchRequestHandler'
+import { RequestHandlerInterface } from './RequestHandlerInterface'
 
 export class HttpService implements HttpServiceInterface {
   private session: Session | null
@@ -27,8 +26,11 @@ export class HttpService implements HttpServiceInterface {
   private updateMetaCallback!: (meta: HttpResponseMeta) => void
   private refreshSessionCallback!: (session: Session) => void
 
+  private requestHandler: RequestHandlerInterface
+
   constructor(private environment: Environment, private appVersion: string, private snjsVersion: string) {
     this.session = null
+    this.requestHandler = new FetchRequestHandler(this.snjsVersion, this.appVersion, this.environment)
   }
 
   setCallbacks(
@@ -131,9 +133,7 @@ export class HttpService implements HttpServiceInterface {
       httpRequest.authentication = this.session?.accessToken.value
     }
 
-    const request = this.createXmlRequest(httpRequest)
-
-    const response = await this.runRequest<T>(request, this.createRequestBody(httpRequest))
+    const response = await this.requestHandler.handleRequest<T>(httpRequest)
 
     if (response.meta && !httpRequest.external) {
       this.updateMetaCallback?.(response.meta)
@@ -208,162 +208,5 @@ export class HttpService implements HttpServiceInterface {
     this.refreshSessionCallback(this.session)
 
     return true
-  }
-
-  private createRequestBody(httpRequest: HttpRequest): string | Uint8Array | undefined {
-    if (
-      httpRequest.params !== undefined &&
-      [HttpVerb.Post, HttpVerb.Put, HttpVerb.Patch, HttpVerb.Delete].includes(httpRequest.verb)
-    ) {
-      return JSON.stringify(httpRequest.params)
-    }
-
-    return httpRequest.rawBytes
-  }
-
-  private createXmlRequest(httpRequest: HttpRequest) {
-    const request = new XMLHttpRequest()
-    if (httpRequest.params && httpRequest.verb === HttpVerb.Get && Object.keys(httpRequest.params).length > 0) {
-      httpRequest.url = this.urlForUrlAndParams(httpRequest.url, httpRequest.params)
-    }
-    request.open(httpRequest.verb, httpRequest.url, true)
-    request.responseType = httpRequest.responseType ?? ''
-
-    if (!httpRequest.external) {
-      request.setRequestHeader('X-SNJS-Version', this.snjsVersion)
-
-      const appVersionHeaderValue = `${Environment[this.environment]}-${this.appVersion}`
-      request.setRequestHeader('X-Application-Version', appVersionHeaderValue)
-
-      if (httpRequest.authentication) {
-        request.setRequestHeader('Authorization', 'Bearer ' + httpRequest.authentication)
-      }
-    }
-
-    let contenTypeIsSet = false
-    if (httpRequest.customHeaders && httpRequest.customHeaders.length > 0) {
-      httpRequest.customHeaders.forEach(({ key, value }) => {
-        request.setRequestHeader(key, value)
-        if (key === 'Content-Type') {
-          contenTypeIsSet = true
-        }
-      })
-    }
-    if (!contenTypeIsSet && !httpRequest.external) {
-      request.setRequestHeader('Content-Type', 'application/json')
-    }
-
-    return request
-  }
-
-  private async runRequest<T>(request: XMLHttpRequest, body?: string | Uint8Array): Promise<HttpResponse<T>> {
-    return new Promise((resolve) => {
-      request.onreadystatechange = () => {
-        this.stateChangeHandlerForRequest(request, resolve)
-      }
-      request.send(body)
-    })
-  }
-
-  private stateChangeHandlerForRequest<T>(request: XMLHttpRequest, resolve: (response: HttpResponse<T>) => void) {
-    if (request.readyState !== XMLHttpRequestState.Completed) {
-      return
-    }
-    const httpStatus = request.status
-    const response: HttpResponse<T> = {
-      status: httpStatus,
-      headers: new Map<string, string | null>(),
-      data: {} as T,
-    }
-
-    const responseHeaderLines = request
-      .getAllResponseHeaders()
-      ?.trim()
-      .split(/[\r\n]+/)
-    responseHeaderLines?.forEach((responseHeaderLine) => {
-      const parts = responseHeaderLine.split(': ')
-      const name = parts.shift() as string
-      const value = parts.join(': ')
-
-      ;(<Map<string, string | null>>response.headers).set(name, value)
-    })
-
-    try {
-      if (httpStatus !== HttpStatusCode.NoContent) {
-        let body
-
-        const contentTypeHeader = response.headers?.get('content-type') || response.headers?.get('Content-Type')
-
-        if (contentTypeHeader?.includes('application/json')) {
-          body = JSON.parse(request.responseText)
-        } else {
-          body = request.response
-        }
-        /**
-         * v0 APIs do not have a `data` top-level object. In such cases, mimic
-         * the newer response body style by putting all the top-level
-         * properties inside a `data` object.
-         */
-        if (!body.data) {
-          response.data = body
-        }
-        if (!isString(body)) {
-          Object.assign(response, body)
-        }
-      }
-    } catch (error) {
-      console.error(error)
-    }
-    if (httpStatus >= HttpStatusCode.Success && httpStatus < HttpStatusCode.InternalServerError) {
-      if (httpStatus === HttpStatusCode.Forbidden && isErrorResponse(response)) {
-        if (!response.data.error) {
-          response.data.error = {
-            message: ErrorMessage.RateLimited,
-          }
-        } else {
-          response.data.error.message = ErrorMessage.RateLimited
-        }
-      }
-      resolve(response)
-    } else {
-      const errorResponse = response as HttpErrorResponse
-      if (!errorResponse.data) {
-        errorResponse.data = {
-          error: {
-            message: 'Unknown error',
-          },
-        }
-      }
-
-      if (isString(errorResponse.data)) {
-        errorResponse.data = {
-          error: {
-            message: errorResponse.data,
-          },
-        }
-      }
-
-      if (!errorResponse.data.error) {
-        errorResponse.data.error = {
-          message: 'Unknown error',
-        }
-      }
-
-      resolve(errorResponse)
-    }
-  }
-
-  private urlForUrlAndParams(url: string, params: HttpRequestParams) {
-    const keyValueString = Object.keys(params as Record<string, unknown>)
-      .map((key) => {
-        return key + '=' + encodeURIComponent((params as Record<string, unknown>)[key] as string)
-      })
-      .join('&')
-
-    if (url.includes('?')) {
-      return url + '&' + keyValueString
-    } else {
-      return url + '?' + keyValueString
-    }
   }
 }

@@ -1,6 +1,53 @@
 {
   "versions": [
     {
+      "version": "3.165.10",
+      "title": "[3.165.10](https://github.com/standardnotes/app/compare/@standardnotes/web@3.165.9...@standardnotes/web@3.165.10) (2023-07-10)",
+      "date": null,
+      "body": "### Bug Fixes\n\n* Fixed issue where files would not download correctly on mobile if they had special characters in the name ([de6994f](https://github.com/standardnotes/app/commit/de6994f74326b34c485297f984cad51e10d89df6))",
+      "parsed": {
+        "_": [
+          "Fixed issue where files would not download correctly on mobile if they had special characters in the name (de6994f)"
+        ],
+        "Bug Fixes": [
+          "Fixed issue where files would not download correctly on mobile if they had special characters in the name (de6994f)"
+        ]
+      }
+    },
+    {
+      "version": "3.165.9",
+      "title": "[3.165.9](https://github.com/standardnotes/app/compare/@standardnotes/web@3.165.8...@standardnotes/web@3.165.9) (2023-07-10)",
+      "date": null,
+      "body": "**Note:** Version bump only for package @standardnotes/web",
+      "parsed": {
+        "_": [
+          "Note: Version bump only for package @standardnotes/web"
+        ]
+      }
+    },
+    {
+      "version": "3.165.8",
+      "title": "[3.165.8](https://github.com/standardnotes/app/compare/@standardnotes/web@3.165.7...@standardnotes/web@3.165.8) (2023-07-10)",
+      "date": null,
+      "body": "**Note:** Version bump only for package @standardnotes/web",
+      "parsed": {
+        "_": [
+          "Note: Version bump only for package @standardnotes/web"
+        ]
+      }
+    },
+    {
+      "version": "3.165.7",
+      "title": "[3.165.7](https://github.com/standardnotes/app/compare/@standardnotes/web@3.165.6...@standardnotes/web@3.165.7) (2023-07-07)",
+      "date": null,
+      "body": "**Note:** Version bump only for package @standardnotes/web",
+      "parsed": {
+        "_": [
+          "Note: Version bump only for package @standardnotes/web"
+        ]
+      }
+    },
+    {
       "version": "3.165.6",
       "title": "[3.165.6](https://github.com/standardnotes/app/compare/@standardnotes/web@3.165.5...@standardnotes/web@3.165.6) (2023-07-07)",
       "date": null,
