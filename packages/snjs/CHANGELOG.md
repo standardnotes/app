@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.202.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.201.9...@standardnotes/snjs@2.202.0) (2023-07-11)
+
+### Features
+
+* On Android, you can now share text & files from other apps directly into Standard Notes ([#2352](https://github.com/standardnotes/app/issues/2352)) ([3dc179c](https://github.com/standardnotes/app/commit/3dc179c7b0779ef0f2857b7f9c994ea9d5385720))
+
 ## [2.201.9](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.201.8...@standardnotes/snjs@2.201.9) (2023-07-11)
 
 **Note:** Version bump only for package @standardnotes/snjs
