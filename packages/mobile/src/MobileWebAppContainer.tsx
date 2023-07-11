@@ -1,16 +1,16 @@
-import { ReactNativeToWebEvent } from '@standardnotes/snjs'
+import { ApplicationEvent, ReactNativeToWebEvent } from '@standardnotes/snjs'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Button, Keyboard, Platform, requireNativeComponent, Text, View } from 'react-native'
+import { Button, Keyboard, Platform, Text, View } from 'react-native'
 import VersionInfo from 'react-native-version-info'
 import { WebView, WebViewMessageEvent } from 'react-native-webview'
-import { NativeWebViewAndroid, OnShouldStartLoadWithRequest } from 'react-native-webview/lib/WebViewTypes'
+import { OnShouldStartLoadWithRequest } from 'react-native-webview/lib/WebViewTypes'
 import { AndroidBackHandlerService } from './AndroidBackHandlerService'
 import { AppStateObserverService } from './AppStateObserverService'
 import { ColorSchemeObserverService } from './ColorSchemeObserverService'
+import CustomAndroidWebView from './CustomAndroidWebView'
 import { MobileDevice, MobileDeviceEvent } from './Lib/MobileDevice'
 import { IsDev } from './Lib/Utils'
-
-const CustomWebView: NativeWebViewAndroid = requireNativeComponent('CustomWebView')
+import { ReceivedSharedItemsHandler } from './ReceivedSharedItemsHandler'
 
 const LoggingEnabled = IsDev
 
@@ -110,7 +110,7 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
   }, [webViewRef, stateService, device, androidBackHandlerService, colorSchemeService])
 
   useEffect(() => {
-    const observer = device.addMobileWebEventReceiver((event) => {
+    const observer = device.addMobileDeviceEventReceiver((event) => {
       if (event === MobileDeviceEvent.RequestsWebViewReload) {
         destroyAndReload()
       }
@@ -283,6 +283,21 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
   const requireInlineMediaPlaybackForMomentsFeature = true
   const requireMediaUserInteractionForMomentsFeature = false
 
+  const receivedSharedItemsHandler = useRef(new ReceivedSharedItemsHandler(webViewRef))
+  useEffect(() => {
+    const receivedSharedItemsHandlerInstance = receivedSharedItemsHandler.current
+    return () => {
+      receivedSharedItemsHandlerInstance.deinit()
+    }
+  }, [])
+  useEffect(() => {
+    return device.addApplicationEventReceiver((event) => {
+      if (event === ApplicationEvent.Launched) {
+        receivedSharedItemsHandler.current.setIsApplicationLaunched(true)
+      }
+    })
+  }, [device])
+
   if (showAndroidWebviewUpdatePrompt) {
     return (
       <View
@@ -357,7 +372,7 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
       overScrollMode="never"
       nativeConfig={Platform.select({
         android: {
-          component: CustomWebView,
+          component: CustomAndroidWebView,
         },
       })}
     />

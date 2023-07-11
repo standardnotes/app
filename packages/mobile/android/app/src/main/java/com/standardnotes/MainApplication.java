@@ -39,6 +39,7 @@ public class MainApplication extends Application implements ReactApplication {
 
       packages.add(new Fido2ApiPackage());
       packages.add(new CustomWebViewPackage());
+      packages.add(new ReceiveSharingIntentPackage());
 
       return packages;
     }
