@@ -43,15 +43,16 @@ const isReceivedText = (item: ReceivedItem): item is ReceivedText => {
 export class ReceivedSharedItemsHandler {
   private appStateEventSub: NativeEventSubscription | null = null
   private receivedItemsQueue: ReceivedItem[] = []
+  private isApplicationLaunched = false
 
-  constructor(private webViewRef: RefObject<WebView>, private didWebViewLoad: boolean) {
+  constructor(private webViewRef: RefObject<WebView>) {
     this.registerNativeEventSub()
   }
 
-  setDidWebViewLoad = (didWebViewLoad: boolean) => {
-    this.didWebViewLoad = didWebViewLoad
+  setIsApplicationLaunched = (isApplicationLaunched: boolean) => {
+    this.isApplicationLaunched = isApplicationLaunched
 
-    if (didWebViewLoad) {
+    if (isApplicationLaunched) {
       this.handleItemsQueue().catch(console.error)
     }
   }
@@ -69,7 +70,7 @@ export class ReceivedSharedItemsHandler {
             const items = Object.values(filesObject)
             this.receivedItemsQueue.push(...items)
 
-            if (this.didWebViewLoad) {
+            if (this.isApplicationLaunched) {
               this.handleItemsQueue().catch(console.error)
             }
           })

@@ -1,4 +1,4 @@
-import { ReactNativeToWebEvent } from '@standardnotes/snjs'
+import { ApplicationEvent, ReactNativeToWebEvent } from '@standardnotes/snjs'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Button, Keyboard, Platform, Text, View } from 'react-native'
 import VersionInfo from 'react-native-version-info'
@@ -36,7 +36,6 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
     [androidBackHandlerService, colorSchemeService, stateService],
   )
 
-  const [didWebViewLoad, setDidWebViewLoad] = useState(false)
   const [showAndroidWebviewUpdatePrompt, setShowAndroidWebviewUpdatePrompt] = useState(false)
 
   useEffect(() => {
@@ -111,7 +110,7 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
   }, [webViewRef, stateService, device, androidBackHandlerService, colorSchemeService])
 
   useEffect(() => {
-    const observer = device.addMobileWebEventReceiver((event) => {
+    const observer = device.addMobileDeviceEventReceiver((event) => {
       if (event === MobileDeviceEvent.RequestsWebViewReload) {
         destroyAndReload()
       }
@@ -284,7 +283,7 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
   const requireInlineMediaPlaybackForMomentsFeature = true
   const requireMediaUserInteractionForMomentsFeature = false
 
-  const receivedSharedItemsHandler = useRef(new ReceivedSharedItemsHandler(webViewRef, didWebViewLoad))
+  const receivedSharedItemsHandler = useRef(new ReceivedSharedItemsHandler(webViewRef))
   useEffect(() => {
     const receivedSharedItemsHandlerInstance = receivedSharedItemsHandler.current
     return () => {
@@ -292,8 +291,12 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
     }
   }, [])
   useEffect(() => {
-    receivedSharedItemsHandler.current.setDidWebViewLoad(didWebViewLoad)
-  }, [didWebViewLoad])
+    return device.addApplicationEventReceiver((event) => {
+      if (event === ApplicationEvent.Launched) {
+        receivedSharedItemsHandler.current.setIsApplicationLaunched(true)
+      }
+    })
+  }, [device])
 
   if (showAndroidWebviewUpdatePrompt) {
     return (
@@ -342,9 +345,6 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
       source={{ uri: sourceUri }}
       style={{ backgroundColor: 'black' }}
       originWhitelist={['*']}
-      onLoad={() => {
-        setDidWebViewLoad(true)
-      }}
       onError={(err) => console.error('An error has occurred', err)}
       onHttpError={() => console.error('An HTTP error occurred')}
       onMessage={onMessage}

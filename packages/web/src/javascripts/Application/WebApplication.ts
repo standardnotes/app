@@ -68,6 +68,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
   private readonly mobileWebReceiver?: MobileWebReceiver
   private readonly androidBackHandler?: AndroidBackHandler
   private readonly visibilityObserver?: VisibilityObserver
+  private readonly mobileAppEventObserver?: () => void
 
   public readonly devMode?: DevMode
 
@@ -139,6 +140,9 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     if (this.isNativeMobileWeb()) {
       this.mobileWebReceiver = new MobileWebReceiver(this)
       this.androidBackHandler = new AndroidBackHandler()
+      this.mobileAppEventObserver = this.addEventObserver(async (event) => {
+        this.mobileDevice().notifyApplicationEvent(event)
+      })
 
       // eslint-disable-next-line no-console
       console.log = (...args) => {
@@ -187,6 +191,11 @@ export class WebApplication extends SNApplication implements WebApplicationInter
       if (this.visibilityObserver) {
         this.visibilityObserver.deinit()
         ;(this.visibilityObserver as unknown) = undefined
+      }
+
+      if (this.mobileAppEventObserver) {
+        this.mobileAppEventObserver()
+        ;(this.mobileAppEventObserver as unknown) = undefined
       }
     } catch (error) {
       console.error('Error while deiniting application', error)
