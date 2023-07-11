@@ -3920,7 +3920,6 @@ __metadata:
   dependencies:
     "@standardnotes/common": ^1.48.3
     "@standardnotes/domain-core": ^1.12.0
-    "@standardnotes/encryption": "workspace:*"
     "@standardnotes/models": "workspace:*"
     "@standardnotes/responses": "workspace:*"
     "@standardnotes/security": ^1.7.6
