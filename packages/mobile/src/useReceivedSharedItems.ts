@@ -1,8 +1,5 @@
-import { ReactNativeToWebEvent } from '@standardnotes/snjs'
-import { RefObject, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { AppState, NativeModules, Platform } from 'react-native'
-import { readFile } from 'react-native-fs'
-import WebView from 'react-native-webview'
 
 type ReceivedItem = {
   contentUri?: string | null
@@ -14,21 +11,38 @@ type ReceivedItem = {
   subject?: string | null
 }
 
-const isReceivedFile = (item: ReceivedItem): item is ReceivedItem & { contentUri: string; mimeType: string } => {
+type ReceivedFile = ReceivedItem & {
+  contentUri: string
+  mimeType: string
+}
+
+type ReceivedWeblink = ReceivedItem & {
+  weblink: string
+}
+
+type ReceivedText = ReceivedItem & {
+  text: string
+}
+
+const isReceivedFile = (item: ReceivedItem): item is ReceivedFile => {
   return !!item.contentUri && !!item.mimeType
 }
 
-const isReceivedWeblink = (item: ReceivedItem): item is ReceivedItem & { weblink: string } => {
+const isReceivedWeblink = (item: ReceivedItem): item is ReceivedWeblink => {
   return !!item.weblink
 }
 
-const isReceivedText = (item: ReceivedItem): item is ReceivedItem & { text: string } => {
+const isReceivedText = (item: ReceivedItem): item is ReceivedText => {
   return !!item.text
 }
 
 const { ReceiveSharingIntent } = NativeModules
 
-export const useReceivedSharedItems = (webViewRef: RefObject<WebView<unknown>>) => {
+export const useReceivedSharedItems = () => {
+  const [receivedFiles, setFiles] = useState<ReceivedFile[]>([])
+  const [receivedLinks, setLinks] = useState<ReceivedWeblink[]>([])
+  const [receivedTexts, setTexts] = useState<ReceivedText[]>([])
+
   useEffect(() => {
     if (Platform.OS !== 'android') {
       return
@@ -48,51 +62,9 @@ export const useReceivedSharedItems = (webViewRef: RefObject<WebView<unknown>>) 
             const receivedLinks = items.filter(isReceivedWeblink)
             const receivedTexts = items.filter(isReceivedText)
 
-            if (receivedFiles.length) {
-              const filesWithData = await Promise.all(
-                receivedFiles.map(async (file) => {
-                  const data = await readFile(file.contentUri, 'base64')
-                  return {
-                    name: file.fileName || file.contentUri,
-                    data,
-                    mimeType: file.mimeType,
-                  }
-                }),
-              )
-
-              webViewRef.current?.postMessage(
-                JSON.stringify({
-                  reactNativeEvent: ReactNativeToWebEvent.ReceivedFiles,
-                  messageType: 'event',
-                  messageData: filesWithData,
-                }),
-              )
-            }
-
-            receivedLinks.forEach((item) => {
-              webViewRef.current?.postMessage(
-                JSON.stringify({
-                  reactNativeEvent: ReactNativeToWebEvent.ReceivedText,
-                  messageType: 'event',
-                  messageData: {
-                    title: item.subject || item.weblink,
-                    text: item.weblink,
-                  },
-                }),
-              )
-            })
-
-            receivedTexts.forEach((item) => {
-              webViewRef.current?.postMessage(
-                JSON.stringify({
-                  reactNativeEvent: ReactNativeToWebEvent.ReceivedText,
-                  messageType: 'event',
-                  messageData: {
-                    text: item.text,
-                  },
-                }),
-              )
-            })
+            setFiles(receivedFiles)
+            setLinks(receivedLinks)
+            setTexts(receivedTexts)
           } catch (error) {
             console.error(error)
           }
@@ -101,5 +73,7 @@ export const useReceivedSharedItems = (webViewRef: RefObject<WebView<unknown>>) 
     })
 
     return () => eventListener.remove()
-  }, [webViewRef])
+  }, [])
+
+  return { receivedFiles, receivedLinks, receivedTexts }
 }
