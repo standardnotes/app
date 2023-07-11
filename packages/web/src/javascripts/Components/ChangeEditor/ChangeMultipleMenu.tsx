@@ -2,14 +2,7 @@ import { WebApplication } from '@/Application/WebApplication'
 import { STRING_EDIT_LOCKED_ATTEMPT } from '@/Constants/Strings'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import { createEditorMenuGroups } from '@/Utils/createEditorMenuGroups'
-import {
-  ComponentOrNativeFeature,
-  NoteMutator,
-  NoteType,
-  SNNote,
-  getComponentOrNativeFeatureNoteType,
-  isNonNativeComponent,
-} from '@standardnotes/snjs'
+import { ComponentOrNativeFeature, NoteMutator, NoteType, SNNote } from '@standardnotes/snjs'
 import { Fragment, useCallback, useMemo, useState } from 'react'
 import Icon from '../Icon/Icon'
 import { PremiumFeatureIconName, PremiumFeatureIconClass } from '../Icon/PremiumFeatureIcon'
@@ -49,7 +42,7 @@ const ChangeMultipleMenu = ({ application, notes, setDisableClickOutside }: Prop
 
       await application.changeAndSaveItem(note, (mutator) => {
         const noteMutator = mutator as NoteMutator
-        noteMutator.noteType = getComponentOrNativeFeatureNoteType(component)
+        noteMutator.noteType = getComponenOrFeatureDescriptionNoteType(component)
         noteMutator.editorIdentifier = component.identifier
       })
     },
@@ -86,10 +79,10 @@ const ChangeMultipleMenu = ({ application, notes, setDisableClickOutside }: Prop
         return
       }
 
-      if (itemToBeSelected.component) {
+      if (itemToBeSelected.uiFeature) {
         const changeRequiresConfirmation = notes.some((note) => {
           const editorForNote = application.componentManager.editorForNote(note)
-          return application.componentManager.doesEditorChangeRequireAlert(editorForNote, itemToBeSelected.component)
+          return application.componentManager.doesEditorChangeRequireAlert(editorForNote, itemToBeSelected.uiFeature)
         })
 
         if (changeRequiresConfirmation) {
@@ -100,7 +93,7 @@ const ChangeMultipleMenu = ({ application, notes, setDisableClickOutside }: Prop
         }
 
         for (const note of notes) {
-          void selectComponent(itemToBeSelected.component, note)
+          void selectComponent(itemToBeSelected.uiFeature, note)
         }
 
         return

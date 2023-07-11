@@ -1,19 +1,19 @@
 import { ContentType } from '@standardnotes/common'
 import {
-  EditorFeatureDescription,
-  IframeComponentFeatureDescription,
-  FeatureDescription,
-} from '../Feature/FeatureDescription'
+  AnyFeatureDescription,
+} from '../Feature/AnyFeatureDescription'
+import { EditorFeatureDescription } from '../Feature/EditorFeatureDescription'
+import { IframeComponentFeatureDescription } from '../Feature/IframeComponentFeatureDescription'
 import { PermissionName } from '../Permission/PermissionName'
 import { FeatureIdentifier } from '../Feature/FeatureIdentifier'
 import { NoteType } from '../Component/NoteType'
-import { FillEditorComponentDefaults } from './Utilities/FillEditorComponentDefaults'
+import { FillIframeEditorDefaults } from './Utilities/FillEditorComponentDefaults'
 import { ComponentAction } from '../Component/ComponentAction'
 import { ComponentArea } from '../Component/ComponentArea'
 import { RoleName } from '@standardnotes/domain-core'
 
-export function GetDeprecatedFeatures(): FeatureDescription[] {
-  const bold: EditorFeatureDescription = FillEditorComponentDefaults({
+export function GetDeprecatedFeatures(): AnyFeatureDescription[] {
+  const bold: EditorFeatureDescription = FillIframeEditorDefaults({
     name: 'Alternative Rich Text',
     identifier: FeatureIdentifier.DeprecatedBoldEditor,
     note_type: NoteType.RichText,
@@ -40,7 +40,7 @@ export function GetDeprecatedFeatures(): FeatureDescription[] {
     availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
   })
 
-  const markdownBasic: EditorFeatureDescription = FillEditorComponentDefaults({
+  const markdownBasic: EditorFeatureDescription = FillIframeEditorDefaults({
     name: 'Basic Markdown',
     identifier: FeatureIdentifier.DeprecatedMarkdownBasicEditor,
     note_type: NoteType.Markdown,
@@ -53,7 +53,7 @@ export function GetDeprecatedFeatures(): FeatureDescription[] {
     availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
   })
 
-  const markdownAlt: EditorFeatureDescription = FillEditorComponentDefaults({
+  const markdownAlt: EditorFeatureDescription = FillIframeEditorDefaults({
     name: 'Markdown Alternative',
     identifier: FeatureIdentifier.DeprecatedMarkdownVisualEditor,
     note_type: NoteType.Markdown,
@@ -67,7 +67,7 @@ export function GetDeprecatedFeatures(): FeatureDescription[] {
     availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
   })
 
-  const markdownMinimist: EditorFeatureDescription = FillEditorComponentDefaults({
+  const markdownMinimist: EditorFeatureDescription = FillIframeEditorDefaults({
     name: 'Minimal Markdown',
     identifier: FeatureIdentifier.DeprecatedMarkdownMinimistEditor,
     note_type: NoteType.Markdown,
@@ -81,7 +81,7 @@ export function GetDeprecatedFeatures(): FeatureDescription[] {
     availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
   })
 
-  const markdownMath: EditorFeatureDescription = FillEditorComponentDefaults({
+  const markdownMath: EditorFeatureDescription = FillIframeEditorDefaults({
     name: 'Markdown with Math',
     identifier: FeatureIdentifier.DeprecatedMarkdownMathEditor,
     spellcheckControl: true,
@@ -95,7 +95,7 @@ export function GetDeprecatedFeatures(): FeatureDescription[] {
     availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
   })
 
-  const filesafe: IframeComponentFeatureDescription = FillEditorComponentDefaults({
+  const filesafe: IframeComponentFeatureDescription = FillIframeEditorDefaults({
     name: 'FileSafe',
     identifier: FeatureIdentifier.DeprecatedFileSafe,
     component_permissions: [

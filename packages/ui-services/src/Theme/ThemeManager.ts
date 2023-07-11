@@ -1,6 +1,6 @@
 import { dismissToast, ToastType, addTimedToast } from '@standardnotes/toast'
 import {
-  ComponentOrNativeTheme,
+  ComponentOrThemeFeatureDescription,
   CreateDecryptedLocalStorageContextPayload,
   LocalStorageDecryptedContextualPayload,
   PrefKey,
@@ -298,7 +298,7 @@ export class ThemeManager extends AbstractUIServicee {
     }
   }
 
-  private activateTheme(theme: ComponentOrNativeTheme, skipEntitlementCheck = false) {
+  private activateTheme(theme: ComponentOrThemeFeatureDescription, skipEntitlementCheck = false) {
     if (this.themesActiveInTheUI.find((uuid) => uuid === getComponentOrNativeFeatureUniqueIdentifier(theme))) {
       return
     }

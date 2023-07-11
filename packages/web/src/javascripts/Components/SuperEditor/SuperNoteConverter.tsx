@@ -27,7 +27,7 @@ const SuperNoteConverter = ({
   onComplete: () => void
 }) => {
   const application = useApplication()
-  const { name, noteType, component } = convertTo
+  const { name, noteType, uiFeature: component } = convertTo
 
   const format = useMemo(() => {
     if (component) {

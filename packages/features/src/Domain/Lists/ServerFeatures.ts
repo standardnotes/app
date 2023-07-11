@@ -1,4 +1,4 @@
-import { ServerFeatureDescription } from '../Feature/FeatureDescription'
+import { ServerFeatureDescription } from '../Feature/ServerFeatureDescription'
 import { PermissionName } from '../Permission/PermissionName'
 import { FeatureIdentifier } from '../Feature/FeatureIdentifier'
 import { RoleName } from '@standardnotes/domain-core'

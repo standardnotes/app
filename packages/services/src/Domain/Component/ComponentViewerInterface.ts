@@ -6,14 +6,18 @@ import {
 } from '@standardnotes/models'
 import { FeatureStatus } from '../Feature/FeatureStatus'
 import { ComponentViewerError } from './ComponentViewerError'
+import { IframeComponentFeatureDescription } from '@standardnotes/features'
 
 export interface ComponentViewerInterface {
-  readonly componentOrFeature: ComponentOrNativeFeature
   readonly identifier: string
   readonly lockReadonly: boolean
   readonly sessionKey?: string
+
   get url(): string
   get componentUniqueIdentifier(): string
+
+  getComponentOrFeatureItem(): ComponentOrNativeFeature<IframeComponentFeatureDescription>
+
   destroy(): void
   setReadonly(readonly: boolean): void
   getFeatureStatus(): FeatureStatus

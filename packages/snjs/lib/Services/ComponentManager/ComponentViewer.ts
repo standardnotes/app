@@ -41,9 +41,7 @@ import {
   OutgoingItemMessagePayload,
   ComponentPreferencesEntry,
   ComponentOrNativeFeature,
-  isNonNativeComponent,
-  isNativeComponent,
-  isComponent,
+  ComponentInterface,
 } from '@standardnotes/models'
 import { environmentToString, platformToString } from '@Lib/Application/Platforms'
 import {
@@ -53,10 +51,14 @@ import {
   DeleteItemsMessageData,
   MessageReplyData,
   ReadwriteActions,
-  Writeable,
 } from './Types'
 import { ComponentViewerRequiresComponentManagerFunctions } from './ComponentViewerRequiresComponentManagerFunctions'
-import { ComponentAction, ComponentPermission, ComponentArea } from '@standardnotes/features'
+import {
+  ComponentAction,
+  ComponentPermission,
+  ComponentArea,
+  IframeComponentFeatureDescription,
+} from '@standardnotes/features'
 import { ContentType } from '@standardnotes/common'
 import {
   isString,
@@ -92,7 +94,7 @@ export class ComponentViewer implements ComponentViewerInterface {
   public sessionKey?: string
 
   constructor(
-    public readonly componentOrFeature: ComponentOrNativeFeature,
+    private componentOrFeature: ComponentOrNativeFeature<IframeComponentFeatureDescription>,
     private services: {
       items: ItemManagerInterface
       mutator: MutatorClientInterface
@@ -130,7 +132,7 @@ export class ComponentViewer implements ComponentViewerInterface {
       this.actionObservers.push(options.actionObserver)
     }
 
-    this.featureStatus = services.features.getFeatureStatus(componentOrFeature.identifier)
+    this.featureStatus = services.features.getFeatureStatus(componentOrFeature.featureIdentifier)
 
     this.removeFeaturesObserver = services.features.addEventObserver((event) => {
       if (this.dealloced) {
@@ -138,7 +140,7 @@ export class ComponentViewer implements ComponentViewerInterface {
       }
 
       if (event === FeaturesEvent.FeaturesAvailabilityChanged) {
-        const featureStatus = services.features.getFeatureStatus(componentOrFeature.identifier)
+        const featureStatus = services.features.getFeatureStatus(componentOrFeature.featureIdentifier)
         if (featureStatus !== this.featureStatus) {
           this.featureStatus = featureStatus
           this.postActiveThemes()
@@ -148,6 +150,10 @@ export class ComponentViewer implements ComponentViewerInterface {
     })
 
     this.log('Constructor', this)
+  }
+
+  public getComponentOrFeatureItem(): ComponentOrNativeFeature<IframeComponentFeatureDescription> {
+    return this.componentOrFeature
   }
 
   get url(): string {
@@ -216,9 +222,7 @@ export class ComponentViewer implements ComponentViewerInterface {
   }
 
   get componentUniqueIdentifier(): string {
-    return isNativeComponent(this.componentOrFeature)
-      ? this.componentOrFeature.identifier
-      : this.componentOrFeature.uuid
+    return this.componentOrFeature.uniqueIdentifier
   }
 
   public getFeatureStatus(): FeatureStatus {
@@ -226,17 +230,17 @@ export class ComponentViewer implements ComponentViewerInterface {
   }
 
   private isOfflineRestricted(): boolean {
-    return isNonNativeComponent(this.componentOrFeature) && this.componentOrFeature.offlineOnly && !this.isDesktop
+    return this.componentOrFeature.isComponent && this.componentOrFeature.asComponent.offlineOnly && !this.isDesktop
   }
 
   private hasUrlError(): boolean {
-    if (isNativeComponent(this.componentOrFeature)) {
+    if (!this.componentOrFeature.isComponent) {
       return false
     }
 
     return this.isDesktop
-      ? !this.componentOrFeature.local_url && !this.componentOrFeature.hasValidHostedUrl
-      : !this.componentOrFeature.hasValidHostedUrl
+      ? !this.componentOrFeature.asComponent.local_url && !this.componentOrFeature.asComponent.hasValidHostedUrl
+      : !this.componentOrFeature.asComponent.hasValidHostedUrl
   }
 
   public shouldRender(): boolean {
@@ -256,14 +260,18 @@ export class ComponentViewer implements ComponentViewerInterface {
   }
 
   private updateOurComponentRefFromChangedItems(items: DecryptedItemInterface[]): void {
-    const updatedComponent = items.find((item) => item.uuid === this.componentUniqueIdentifier)
+    if (!this.componentOrFeature.isComponent) {
+      return
+    }
+
+    const updatedComponent = items.find((item) => item.uuid === this.componentUniqueIdentifier) as ComponentInterface
     if (!updatedComponent) {
       return
     }
 
-    if (isComponent(updatedComponent) && isNonNativeComponent(updatedComponent)) {
-      ;(this.componentOrFeature as Writeable<ComponentOrNativeFeature>) = updatedComponent
-    }
+    const item = new ComponentOrNativeFeature<IframeComponentFeatureDescription>(updatedComponent)
+
+    this.componentOrFeature = item
   }
 
   handleChangesInItems(
@@ -439,7 +447,7 @@ export class ComponentViewer implements ComponentViewerInterface {
     const permissibleActionsWhileHidden = [ComponentAction.ComponentRegistered, ComponentAction.ActivateThemes]
 
     if (this.hidden && !permissibleActionsWhileHidden.includes(message.action)) {
-      this.log('Component disabled for current item, ignoring messages.', this.componentOrFeature.name)
+      this.log('Component disabled for current item, ignoring messages.', this.componentOrFeature.displayName)
       return
     }
 
@@ -453,7 +461,7 @@ export class ComponentViewer implements ComponentViewerInterface {
     if (!origin || !this.window) {
       if (essential) {
         void this.services.alerts.alert(
-          `Standard Notes is trying to communicate with ${this.componentOrFeature.name}, ` +
+          `Standard Notes is trying to communicate with ${this.componentOrFeature.displayName}, ` +
             'but an error is occurring. Please restart this extension and try again.',
         )
       }
@@ -584,7 +592,7 @@ export class ComponentViewer implements ComponentViewerInterface {
     }
     if (this.readonly && ReadwriteActions.includes(message.action)) {
       void this.services.alerts.alert(
-        `${this.componentOrFeature.name} is trying to save, but it is in a locked state and cannot accept changes.`,
+        `${this.componentOrFeature.displayName} is trying to save, but it is in a locked state and cannot accept changes.`,
       )
       return
     }

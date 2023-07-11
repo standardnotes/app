@@ -8,6 +8,7 @@ import {
   ComponentPermission,
   FindNativeFeature,
   NoteType,
+  isEditorFeatureDescription,
 } from '@standardnotes/features'
 import { AppDataField } from '../../Abstract/Item/Types/AppDataField'
 import { ComponentContent } from './ComponentContent'
@@ -21,11 +22,23 @@ import { Predicate } from '../../Runtime/Predicate/Predicate'
 import { ItemInterface } from '../../Abstract/Item/Interfaces/ItemInterface'
 import { DecryptedItemInterface } from './../../Abstract/Item/Interfaces/DecryptedItem'
 import { ComponentPackageInfo } from './PackageInfo'
+import { isDecryptedItem } from '../../Abstract/Item'
 
-export const isComponent = (x: ItemInterface): x is SNComponent => x.content_type === ContentType.Component
+export function isComponent(x: ItemInterface): x is ComponentInterface {
+  if (!isDecryptedItem(x as DecryptedItemInterface)) {
+    return false
+  }
 
-export const isComponentOrTheme = (x: ItemInterface): x is SNComponent =>
-  x.content_type === ContentType.Component || x.content_type === ContentType.Theme
+  return x.content_type === ContentType.Component
+}
+
+export function isComponentOrTheme(x: ItemInterface): x is ComponentInterface {
+  if (!isDecryptedItem(x as DecryptedItemInterface)) {
+    return false
+  }
+
+  return x.content_type === ContentType.Component || x.content_type === ContentType.Theme
+}
 
 /**
  * Components are mostly iframe based extensions that communicate with the SN parent
@@ -171,7 +184,11 @@ export class SNComponent extends DecryptedItem<ComponentContent> implements Comp
   }
 
   public get noteType(): NoteType {
-    return this.package_info.note_type || NoteType.Unknown
+    if (isEditorFeatureDescription(this.package_info)) {
+      return this.package_info.note_type
+    }
+
+    return NoteType.Unknown
   }
 
   public get isDeprecated(): boolean {

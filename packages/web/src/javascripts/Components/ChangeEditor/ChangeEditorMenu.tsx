@@ -5,11 +5,12 @@ import { STRING_EDIT_LOCKED_ATTEMPT } from '@/Constants/Strings'
 import { WebApplication } from '@/Application/WebApplication'
 import {
   ComponentOrNativeFeature,
+  FeatureIdentifier,
   NoteMutator,
   NoteType,
   PrefKey,
   SNNote,
-  getComponentOrNativeFeatureNoteType,
+  getComponenOrFeatureDescriptionNoteType,
   isNonNativeComponent,
 } from '@standardnotes/snjs'
 import { Fragment, FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react'
@@ -29,7 +30,7 @@ type ChangeEditorMenuProps = {
   closeMenu: () => void
   isVisible: boolean
   note: SNNote | undefined
-  onSelect?: (component: ComponentOrNativeFeature | undefined) => void
+  onSelect?: (component: ComponentOrNativeFeature) => void
   setDisableClickOutside?: (value: boolean) => void
 }
 
@@ -62,8 +63,8 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
 
   const isSelected = useCallback(
     (item: EditorMenuItem) => {
-      if (currentComponent && item.component) {
-        return item.component.identifier === currentComponent.identifier
+      if (currentComponent) {
+        return item.uiFeature.identifier === currentComponent.identifier
       }
 
       const itemNoteTypeIsSameAsCurrentNoteType = item.noteType === note?.noteType
@@ -87,28 +88,15 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
 
       await application.changeAndSaveItem(note, (mutator) => {
         const noteMutator = mutator as NoteMutator
-        noteMutator.noteType = getComponentOrNativeFeatureNoteType(component)
+        noteMutator.noteType = getComponenOrFeatureDescriptionNoteType(component)
         noteMutator.editorIdentifier = component.identifier
       })
 
       setCurrentComponent(application.componentManager.editorForNote(note))
-    },
-    [application],
-  )
 
-  const selectNonComponent = useCallback(
-    async (item: EditorMenuItem, note: SNNote) => {
-      await application.controllers.itemListController.insertCurrentIfTemplate()
-
-      reloadFont(application.getPreference(PrefKey.EditorMonospaceEnabled))
-
-      await application.changeAndSaveItem(note, (mutator) => {
-        const noteMutator = mutator as NoteMutator
-        noteMutator.noteType = item.noteType
-        noteMutator.editorIdentifier = undefined
-      })
-
-      setCurrentComponent(undefined)
+      if (component.identifier === FeatureIdentifier.PlainEditor) {
+        reloadFont(application.getPreference(PrefKey.EditorMonospaceEnabled))
+      }
     },
     [application],
   )
@@ -147,10 +135,10 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
 
       let shouldMakeSelection = true
 
-      if (itemToBeSelected.component) {
+      if (itemToBeSelected.uiFeature) {
         const changeRequiresAlert = application.componentManager.doesEditorChangeRequireAlert(
           currentComponent,
-          itemToBeSelected.component,
+          itemToBeSelected.uiFeature,
         )
 
         if (changeRequiresAlert) {
@@ -159,17 +147,13 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
       }
 
       if (shouldMakeSelection) {
-        if (itemToBeSelected.component) {
-          selectComponent(itemToBeSelected.component, note).catch(console.error)
-        } else {
-          selectNonComponent(itemToBeSelected, note).catch(console.error)
-        }
+        selectComponent(itemToBeSelected.uiFeature, note).catch(console.error)
       }
 
       closeMenu()
 
       if (onSelect) {
-        onSelect(itemToBeSelected.component)
+        onSelect(itemToBeSelected.uiFeature)
       }
     },
     [
@@ -182,7 +166,6 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
       setDisableClickOutside,
       currentComponent,
       selectComponent,
-      selectNonComponent,
     ],
   )
 
@@ -191,15 +174,9 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
       return
     }
 
-    if (pendingConversionItem.component) {
-      selectComponent(pendingConversionItem.component, note).catch(console.error)
-      closeMenu()
-      return
-    }
-
-    selectNonComponent(pendingConversionItem, note).catch(console.error)
+    selectComponent(pendingConversionItem.uiFeature, note).catch(console.error)
     closeMenu()
-  }, [pendingConversionItem, note, selectNonComponent, closeMenu, selectComponent])
+  }, [pendingConversionItem, note, closeMenu, selectComponent])
 
   const closeSuperNoteImporter = () => {
     setPendingConversionItem(null)

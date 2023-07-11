@@ -3,7 +3,7 @@ import {
   ComponentArea,
   EditorFeatureDescription,
   FindNativeFeature,
-  GetNativeEditors,
+  GetIframeAndNativeEditors,
   NoteType,
 } from '@standardnotes/features'
 import { PlainEditorMetadata, SuperEditorMetadata } from '@/Constants/Constants'
@@ -49,7 +49,7 @@ export function getDropdownItemsForAllEditors(application: WebApplicationInterfa
   const options: EditorOption[] = []
 
   options.push(
-    ...GetNativeEditors().map((editor) => {
+    ...GetIframeAndNativeEditors().map((editor) => {
       const [iconType, tint] = getIconAndTintForNoteType(editor.note_type)
 
       return {

@@ -27,7 +27,6 @@ export const SYNC_TIMEOUT_DEBOUNCE = 350
 export const SYNC_TIMEOUT_NO_DEBOUNCE = 100
 
 type EditorMetadata = {
-  name: string
   icon: IconType
   subtleIcon?: IconType
   iconClassName: string
@@ -35,7 +34,6 @@ type EditorMetadata = {
 }
 
 export const SuperEditorMetadata: EditorMetadata = {
-  name: 'Super',
   icon: 'file-doc',
   subtleIcon: 'format-align-left',
   iconClassName: 'text-accessory-tint-1',
@@ -43,7 +41,6 @@ export const SuperEditorMetadata: EditorMetadata = {
 }
 
 export const PlainEditorMetadata: EditorMetadata = {
-  name: 'Plain Text',
   icon: 'plain-text',
   iconClassName: 'text-accessory-tint-1',
   iconTintNumber: 1,

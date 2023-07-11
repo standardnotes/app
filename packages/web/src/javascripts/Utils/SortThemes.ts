@@ -1,8 +1,8 @@
-import { ComponentOrNativeTheme, FeatureIdentifier } from '@standardnotes/snjs'
+import { ComponentOrThemeFeatureDescription, FeatureIdentifier } from '@standardnotes/snjs'
 
-const isDarkModeTheme = (theme: ComponentOrNativeTheme) => theme.identifier === FeatureIdentifier.DarkTheme
+const isDarkModeTheme = (theme: ComponentOrThemeFeatureDescription) => theme.identifier === FeatureIdentifier.DarkTheme
 
-export const sortThemes = (a: ComponentOrNativeTheme, b: ComponentOrNativeTheme) => {
+export const sortThemes = (a: ComponentOrThemeFeatureDescription, b: ComponentOrThemeFeatureDescription) => {
   const aIsLayerable = a.layerable
   const bIsLayerable = b.layerable
 

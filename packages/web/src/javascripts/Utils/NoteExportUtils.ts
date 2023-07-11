@@ -3,11 +3,7 @@ import { NoteType, PrefKey, SNNote, getComponentOrNativeFeatureFileType, PrefDef
 import { WebApplicationInterface } from '@standardnotes/ui-services'
 
 export const getNoteFormat = (application: WebApplicationInterface, note: SNNote) => {
-  const editor = application.componentManager.editorForNote(note)
-
-  const isSuperNote = note.noteType === NoteType.Super
-
-  if (isSuperNote) {
+  if (note.noteType === NoteType.Super) {
     const superNoteExportFormatPref = application.getPreference(
       PrefKey.SuperNoteExportFormat,
       PrefDefaults[PrefKey.SuperNoteExportFormat],
@@ -16,6 +12,7 @@ export const getNoteFormat = (application: WebApplicationInterface, note: SNNote
     return superNoteExportFormatPref
   }
 
+  const editor = application.componentManager.editorForNote(note)
   if (editor) {
     return getComponentOrNativeFeatureFileType(editor) ?? 'txt'
   }

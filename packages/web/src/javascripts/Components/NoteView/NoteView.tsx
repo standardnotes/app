@@ -17,6 +17,7 @@ import {
   ComponentViewerInterface,
   ContentType,
   EditorLineWidth,
+  FeatureIdentifier,
   getComponentOrNativeFeatureUniqueIdentifier,
   isPayloadSourceInternalChange,
   isPayloadSourceRetrieved,
@@ -511,8 +512,8 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
 
     const newEditor = this.application.componentManager.editorForNote(this.note)
 
-    /** Editors cannot interact with template notes so the note must be inserted */
-    if (newEditor && this.controller.isTemplateNote) {
+    /** Component editors cannot interact with template notes so the note must be inserted */
+    if (newEditor && newEditor.identifier !== FeatureIdentifier.PlainEditor && this.controller.isTemplateNote) {
       await this.controller.insertTemplatedNote()
     }
 

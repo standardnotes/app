@@ -1,14 +1,10 @@
-import { FeatureDescription } from '../Feature/FeatureDescription'
 import { PermissionName } from '../Permission/PermissionName'
 import { FeatureIdentifier } from '../Feature/FeatureIdentifier'
 import { RoleName } from '@standardnotes/domain-core'
-import { themes } from './Themes'
-import { editors } from './Editors'
+import { ClientFeatureDescription } from '../Feature/ClientFeatureDescription'
 
-export function clientFeatures(): FeatureDescription[] {
+export function clientFeatures(): ClientFeatureDescription[] {
   return [
-    ...themes(),
-    ...editors(),
     {
       name: 'Tag Nesting',
       availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
@@ -16,14 +12,7 @@ export function clientFeatures(): FeatureDescription[] {
       permission_name: PermissionName.TagNesting,
       description: 'Organize your tags into folders.',
     },
-    {
-      name: 'Super Notes',
-      identifier: FeatureIdentifier.SuperEditor,
-      availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
-      permission_name: PermissionName.SuperEditor,
-      description:
-        'A new way to edit notes. Type / to bring up the block selection menu, or @ to embed images or link other tags and notes. Type - then space to start a list, or [] then space to start a checklist. Drag and drop an image or file to embed it in your note. Cmd/Ctrl + F to bring up search and replace.',
-    },
+
     {
       name: 'Smart Filters',
       availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],

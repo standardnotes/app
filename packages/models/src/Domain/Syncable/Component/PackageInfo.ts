@@ -1,9 +1,9 @@
-import { FeatureDescription, ThemeFeatureDescription } from '@standardnotes/features'
+import { ComponentFeatureDescription, ThemeFeatureDescription } from '@standardnotes/features'
 
 type ThirdPartyPackageInfo = {
   version: string
   download_url?: string
 }
 
-export type ComponentPackageInfo = FeatureDescription & Partial<ThirdPartyPackageInfo>
-export type ThemePackageInfo = FeatureDescription & Partial<ThirdPartyPackageInfo> & ThemeFeatureDescription
+export type ComponentPackageInfo = ComponentFeatureDescription & Partial<ThirdPartyPackageInfo>
+export type ThemePackageInfo = ThemeFeatureDescription & Partial<ThirdPartyPackageInfo> & ThemeFeatureDescription

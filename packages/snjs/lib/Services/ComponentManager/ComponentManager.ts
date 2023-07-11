@@ -11,18 +11,11 @@ import {
   Platform,
   ComponentMessage,
   ComponentOrNativeFeature,
-  isNativeComponent,
-  isNonNativeComponent,
   ComponentInterface,
-  getComponentOrNativeFeatureFileType,
-  ComponentOrNativeFeatureUniqueIdentifier,
-  getComponentOrNativeFeatureAcquiredPermissions,
-  ComponentOrNativeTheme,
   PrefKey,
   ThemeInterface,
   ComponentPreferencesEntry,
   AllComponentPreferences,
-  getComponentOrNativeFeatureUniqueIdentifier,
 } from '@standardnotes/models'
 import {
   ComponentArea,
@@ -32,8 +25,14 @@ import {
   NoteType,
   FeatureIdentifier,
   EditorFeatureDescription,
-  GetNativeEditors,
+  GetIframeAndNativeEditors,
   FindNativeTheme,
+  UIFeatureDescriptionTypes,
+  IframeComponentFeatureDescription,
+  GetPlainNoteFeature,
+  GetSuperNoteFeature,
+  ComponentFeatureDescription,
+  ThemeFeatureDescription,
 } from '@standardnotes/features'
 import {
   Copy,
@@ -153,15 +152,6 @@ export class SNComponentManager
     })
   }
 
-  componentOrNativeFeatureForIdentifier(identifier: FeatureIdentifier | string): ComponentOrNativeFeature | undefined {
-    const nativeFeature = FindNativeFeature(identifier as FeatureIdentifier)
-    if (nativeFeature) {
-      return nativeFeature
-    }
-
-    return this.thirdPartyComponents.find((component) => component.identifier === identifier)
-  }
-
   override deinit(): void {
     super.deinit()
 
@@ -193,7 +183,7 @@ export class SNComponentManager
   }
 
   public createComponentViewer(
-    component: ComponentOrNativeFeature,
+    component: ComponentOrNativeFeature<IframeComponentFeatureDescription>,
     item: ComponentViewerItem,
     actionObserver?: ActionObserver,
   ): ComponentViewerInterface {
@@ -275,7 +265,7 @@ export class SNComponentManager
         const device = this.device
         if (isMobileDevice(device) && 'addComponentUrl' in device) {
           inserted.forEach((component) => {
-            const url = this.urlForComponent(component)
+            const url = this.urlForComponent(new ComponentOrNativeFeature<ComponentFeatureDescription>(component))
             if (url) {
               device.addComponentUrl(component.uuid, url)
             }
@@ -334,52 +324,48 @@ export class SNComponentManager
     }
   }
 
-  private urlForComponentOnDesktop(component: ComponentOrNativeFeature): string | undefined {
+  private urlForComponentOnDesktop(
+    uiFeature: ComponentOrNativeFeature<ComponentFeatureDescription>,
+  ): string | undefined {
     assert(this.desktopManager)
 
-    if (isNativeComponent(component)) {
-      const nativeFeature = FindNativeFeature(component.identifier)
-      assert(nativeFeature)
+    if (uiFeature.isFeatureDescription) {
+      return `${this.desktopManager.getExtServerHost()}/components/${uiFeature.featureIdentifier}/${
+        uiFeature.asFeatureDescription.index_path
+      }`
+    } else {
+      if (uiFeature.asComponent.local_url) {
+        return uiFeature.asComponent.local_url.replace(DESKTOP_URL_PREFIX, this.desktopManager.getExtServerHost() + '/')
+      }
 
-      return `${this.desktopManager.getExtServerHost()}/components/${component.identifier}/${nativeFeature.index_path}`
+      return uiFeature.asComponent.hosted_url || uiFeature.asComponent.legacy_url
     }
-
-    if (component.local_url) {
-      return component.local_url.replace(DESKTOP_URL_PREFIX, this.desktopManager.getExtServerHost() + '/')
-    }
-
-    return component.hosted_url || component.legacy_url
   }
 
-  private urlForNativeComponent(component: ComponentOrNativeFeature): string {
-    const nativeFeature = FindNativeFeature(component.identifier)
-    if (!nativeFeature) {
-      throw Error(`Could not find native feature for component ${component.identifier}`)
-    }
-
+  private urlForNativeComponent(feature: ComponentFeatureDescription): string {
     if (this.isMobile) {
       const baseUrlRequiredForThemesInsideEditors = window.location.href.split('/index.html')[0]
-      return `${baseUrlRequiredForThemesInsideEditors}/web-src/components/assets/${component.identifier}/${nativeFeature.index_path}`
+      return `${baseUrlRequiredForThemesInsideEditors}/web-src/components/assets/${feature.identifier}/${feature.index_path}`
     } else {
       const baseUrlRequiredForThemesInsideEditors = window.location.origin
-      return `${baseUrlRequiredForThemesInsideEditors}/components/assets/${component.identifier}/${nativeFeature.index_path}`
+      return `${baseUrlRequiredForThemesInsideEditors}/components/assets/${feature.identifier}/${feature.index_path}`
     }
   }
 
-  urlForComponent(component: ComponentOrNativeFeature): string | undefined {
+  urlForComponent(uiFeature: ComponentOrNativeFeature<ComponentFeatureDescription>): string | undefined {
     if (this.desktopManager) {
-      return this.urlForComponentOnDesktop(component)
+      return this.urlForComponentOnDesktop(uiFeature)
     }
 
-    if (isNonNativeComponent(component) && component.offlineOnly) {
+    if (uiFeature.isFeatureDescription) {
+      return this.urlForNativeComponent(uiFeature.asFeatureDescription)
+    }
+
+    if (uiFeature.asComponent.offlineOnly) {
       return undefined
     }
 
-    if (isNativeComponent(component)) {
-      return this.urlForNativeComponent(component)
-    }
-
-    const url = component.hosted_url || component.legacy_url
+    const url = uiFeature.asComponent.hosted_url || uiFeature.asComponent.legacy_url
     if (!url) {
       return undefined
     }
@@ -409,14 +395,19 @@ export class SNComponentManager
   }
 
   private findComponentOrNativeFeature(
-    identifier: ComponentOrNativeFeatureUniqueIdentifier,
-  ): ComponentOrNativeFeature | undefined {
-    const nativeFeature = FindNativeFeature(identifier as FeatureIdentifier)
+    identifier: string,
+  ): ComponentOrNativeFeature<ComponentFeatureDescription> | undefined {
+    const nativeFeature = FindNativeFeature<ComponentFeatureDescription>(identifier as FeatureIdentifier)
     if (nativeFeature) {
-      return nativeFeature
+      return new ComponentOrNativeFeature(nativeFeature)
     }
 
-    return this.items.findItem<ComponentInterface>(identifier)
+    const componentItem = this.items.findItem<ComponentInterface>(identifier)
+    if (componentItem) {
+      return new ComponentOrNativeFeature<ComponentFeatureDescription>(componentItem)
+    }
+
+    return undefined
   }
 
   findComponentViewer(identifier: string): ComponentViewerInterface | undefined {
@@ -427,10 +418,13 @@ export class SNComponentManager
     return this.viewers.find((viewer) => viewer.sessionKey === key)
   }
 
-  areRequestedPermissionsValid(component: ComponentOrNativeFeature, permissions: ComponentPermission[]): boolean {
+  areRequestedPermissionsValid(
+    uiFeature: ComponentOrNativeFeature<ComponentFeatureDescription>,
+    permissions: ComponentPermission[],
+  ): boolean {
     for (const permission of permissions) {
       if (permission.name === ComponentAction.StreamItems) {
-        if (!AllowedBatchStreaming.includes(component.identifier)) {
+        if (!AllowedBatchStreaming.includes(uiFeature.featureIdentifier)) {
           return false
         }
         const hasNonAllowedBatchPermission = permission.content_types?.some(
@@ -446,13 +440,13 @@ export class SNComponentManager
   }
 
   runWithPermissions(
-    componentIdentifier: ComponentOrNativeFeatureUniqueIdentifier,
+    componentIdentifier: string,
     requiredPermissions: ComponentPermission[],
     runFunction: () => void,
   ): void {
-    const componentOrNativeFeature = this.findComponentOrNativeFeature(componentIdentifier)
+    const uiFeature = this.findComponentOrNativeFeature(componentIdentifier)
 
-    if (!componentOrNativeFeature) {
+    if (!uiFeature) {
       void this.alerts.alert(
         `Unable to find component with ID ${componentIdentifier}. Please restart the app and try again.`,
         'An unexpected error occurred',
@@ -461,17 +455,17 @@ export class SNComponentManager
       return
     }
 
-    if (isNativeComponent(componentOrNativeFeature)) {
+    if (uiFeature.isFeatureDescription) {
       runFunction()
       return
     }
 
-    if (!this.areRequestedPermissionsValid(componentOrNativeFeature, requiredPermissions)) {
+    if (!this.areRequestedPermissionsValid(uiFeature, requiredPermissions)) {
       console.error('Component is requesting invalid permissions', componentIdentifier, requiredPermissions)
       return
     }
 
-    const acquiredPermissions = getComponentOrNativeFeatureAcquiredPermissions(componentOrNativeFeature)
+    const acquiredPermissions = uiFeature.acquiredPermissions
 
     /* Make copy as not to mutate input values */
     requiredPermissions = Copy(requiredPermissions) as ComponentPermission[]
@@ -499,7 +493,7 @@ export class SNComponentManager
     }
     if (requiredPermissions.length > 0) {
       this.promptForPermissionsWithDeferredRendering(
-        componentOrNativeFeature,
+        uiFeature.asComponent,
         requiredPermissions,
         // eslint-disable-next-line @typescript-eslint/require-await
         async (approved) => {
@@ -613,52 +607,55 @@ export class SNComponentManager
     throw 'Must override SNComponentManager.presentPermissionsDialog'
   }
 
-  async toggleTheme(theme: ComponentOrNativeTheme): Promise<void> {
-    this.log('Toggling theme', getComponentOrNativeFeatureUniqueIdentifier(theme))
+  async toggleTheme(uiFeature: ComponentOrNativeFeature<ThemeFeatureDescription>): Promise<void> {
+    this.log('Toggling theme', uiFeature.uniqueIdentifier)
 
-    if (this.isThemeActive(theme)) {
-      await this.removeActiveTheme(theme)
+    if (this.isThemeActive(uiFeature)) {
+      await this.removeActiveTheme(uiFeature)
       return
     }
 
-    const featureStatus = this.features.getFeatureStatus(theme.identifier)
+    const featureStatus = this.features.getFeatureStatus(uiFeature.featureIdentifier)
     if (featureStatus !== FeatureStatus.Entitled) {
       return
     }
 
     /* Activate current before deactivating others, so as not to flicker */
-    await this.addActiveTheme(theme)
+    await this.addActiveTheme(uiFeature)
 
     /* Deactive currently active theme(s) if new theme is not layerable */
-    if (!theme.layerable) {
+    if (!uiFeature.asTheme.layerable) {
       await sleep(10)
 
       const activeThemes = this.getActiveThemes()
       for (const candidate of activeThemes) {
-        if (candidate.identifier === theme.identifier) {
+        if (candidate.featureIdentifier === uiFeature.featureIdentifier) {
           continue
         }
 
-        if (!candidate.layerable) {
+        if (!candidate.asTheme.layerable) {
           await this.removeActiveTheme(candidate)
         }
       }
     }
   }
 
-  getActiveThemes(): ComponentOrNativeTheme[] {
+  getActiveThemes(): ComponentOrNativeFeature<ThemeFeatureDescription>[] {
     const activeThemesIdentifiers = this.getActiveThemesIdentifiers()
 
-    const thirdPartyThemes = this.items.findItems<ThemeInterface>(activeThemesIdentifiers)
+    const thirdPartyThemes = this.items.findItems<ThemeInterface>(activeThemesIdentifiers).map((item) => {
+      return new ComponentOrNativeFeature<ThemeFeatureDescription>(item)
+    })
 
     const nativeThemes = activeThemesIdentifiers
       .map((identifier) => {
         return FindNativeTheme(identifier as FeatureIdentifier)
       })
       .filter(isNotUndefined)
+      .map((theme) => new ComponentOrNativeFeature(theme))
 
     const entitledThemes = [...thirdPartyThemes, ...nativeThemes].filter((theme) => {
-      return this.features.getFeatureStatus(theme.identifier) === FeatureStatus.Entitled
+      return this.features.getFeatureStatus(theme.featureIdentifier) === FeatureStatus.Entitled
     })
 
     return entitledThemes
@@ -686,24 +683,57 @@ export class SNComponentManager
     return viewer.getIframe()
   }
 
-  editorForNote(note: SNNote): ComponentOrNativeFeature | undefined {
-    if (note.noteType === NoteType.Plain || note.noteType === NoteType.Super) {
-      return undefined
+  private componentOrNativeFeatureForIdentifier<F extends UIFeatureDescriptionTypes>(
+    identifier: FeatureIdentifier | string,
+  ): ComponentOrNativeFeature<F> | undefined {
+    const nativeFeature = FindNativeFeature<F>(identifier as FeatureIdentifier)
+    if (nativeFeature) {
+      return new ComponentOrNativeFeature(nativeFeature)
+    }
+
+    const component = this.thirdPartyComponents.find((component) => component.identifier === identifier)
+    if (component) {
+      return new ComponentOrNativeFeature<F>(component)
+    }
+
+    return undefined
+  }
+
+  editorForNote(note: SNNote): ComponentOrNativeFeature<EditorFeatureDescription | IframeComponentFeatureDescription> {
+    if (note.noteType === NoteType.Plain) {
+      return new ComponentOrNativeFeature(GetPlainNoteFeature())
+    }
+
+    if (note.noteType === NoteType.Super) {
+      return new ComponentOrNativeFeature(GetSuperNoteFeature())
     }
 
     if (note.editorIdentifier) {
-      return this.componentOrNativeFeatureForIdentifier(note.editorIdentifier)
+      const result = this.componentOrNativeFeatureForIdentifier<
+        EditorFeatureDescription | IframeComponentFeatureDescription
+      >(note.editorIdentifier)
+      if (result) {
+        return result
+      }
     }
 
     if (note.noteType) {
-      return this.nativeEditorForNoteType(note.noteType)
+      const result = this.nativeEditorForNoteType(note.noteType)
+      if (result) {
+        return new ComponentOrNativeFeature(result)
+      }
     }
 
-    return this.legacyGetEditorForNote(note)
+    const legacyResult = this.legacyGetEditorForNote(note)
+    if (legacyResult) {
+      return new ComponentOrNativeFeature<IframeComponentFeatureDescription>(legacyResult)
+    }
+
+    return new ComponentOrNativeFeature(GetPlainNoteFeature())
   }
 
   private nativeEditorForNoteType(noteType: NoteType): EditorFeatureDescription | undefined {
-    const nativeEditors = GetNativeEditors()
+    const nativeEditors = GetIframeAndNativeEditors()
     return nativeEditors.find((editor) => editor.note_type === noteType)
   }
 
@@ -732,15 +762,15 @@ export class SNComponentManager
   }
 
   doesEditorChangeRequireAlert(
-    from: ComponentOrNativeFeature | undefined,
-    to: ComponentOrNativeFeature | undefined,
+    from: ComponentOrNativeFeature<IframeComponentFeatureDescription | EditorFeatureDescription> | undefined,
+    to: ComponentOrNativeFeature<IframeComponentFeatureDescription | EditorFeatureDescription> | undefined,
   ): boolean {
     if (!from || !to) {
       return false
     }
 
-    const fromFileType = getComponentOrNativeFeatureFileType(from)
-    const toFileType = getComponentOrNativeFeatureFileType(to)
+    const fromFileType = from.fileType
+    const toFileType = to.fileType
     const isEitherMarkdown = fromFileType === 'md' || toFileType === 'md'
     const areBothHtml = fromFileType === 'html' && toFileType === 'html'
 
@@ -762,62 +792,62 @@ export class SNComponentManager
   }
 
   async setComponentPreferences(
-    component: ComponentOrNativeFeature,
+    uiFeature: ComponentOrNativeFeature<ComponentFeatureDescription>,
     preferences: ComponentPreferencesEntry,
   ): Promise<void> {
     const mutablePreferencesValue = Copy<AllComponentPreferences>(
       this.preferences.getValue(PrefKey.ComponentPreferences, undefined) ?? {},
     )
 
-    const preferencesLookupKey = isNativeComponent(component) ? component.identifier : component.uuid
+    const preferencesLookupKey = uiFeature.uniqueIdentifier
 
     mutablePreferencesValue[preferencesLookupKey] = preferences
 
     await this.preferences.setValue(PrefKey.ComponentPreferences, mutablePreferencesValue)
   }
 
-  getComponentPreferences(component: ComponentOrNativeFeature): ComponentPreferencesEntry | undefined {
+  getComponentPreferences(
+    component: ComponentOrNativeFeature<ComponentFeatureDescription>,
+  ): ComponentPreferencesEntry | undefined {
     const preferences = this.preferences.getValue(PrefKey.ComponentPreferences, undefined)
 
     if (!preferences) {
       return undefined
     }
 
-    const preferencesLookupKey = isNativeComponent(component) ? component.identifier : component.uuid
+    const preferencesLookupKey = component.uniqueIdentifier
 
     return preferences[preferencesLookupKey]
   }
 
-  async addActiveTheme(theme: ComponentOrNativeTheme): Promise<void> {
+  async addActiveTheme(theme: ComponentOrNativeFeature<ThemeFeatureDescription>): Promise<void> {
     const activeThemes = (this.preferences.getValue(PrefKey.ActiveThemes, undefined) ?? []).slice()
 
-    activeThemes.push(getComponentOrNativeFeatureUniqueIdentifier(theme))
+    activeThemes.push(theme.uniqueIdentifier)
 
     await this.preferences.setValue(PrefKey.ActiveThemes, activeThemes)
   }
 
-  async replaceActiveTheme(theme: ComponentOrNativeTheme): Promise<void> {
-    await this.preferences.setValue(PrefKey.ActiveThemes, [getComponentOrNativeFeatureUniqueIdentifier(theme)])
+  async replaceActiveTheme(theme: ComponentOrNativeFeature<ThemeFeatureDescription>): Promise<void> {
+    await this.preferences.setValue(PrefKey.ActiveThemes, [theme.uniqueIdentifier])
   }
 
-  async removeActiveTheme(theme: ComponentOrNativeTheme): Promise<void> {
+  async removeActiveTheme(theme: ComponentOrNativeFeature<ThemeFeatureDescription>): Promise<void> {
     const activeThemes = this.preferences.getValue(PrefKey.ActiveThemes, undefined) ?? []
 
-    const filteredThemes = activeThemes.filter(
-      (activeTheme) => activeTheme !== getComponentOrNativeFeatureUniqueIdentifier(theme),
-    )
+    const filteredThemes = activeThemes.filter((activeTheme) => activeTheme !== theme.uniqueIdentifier)
 
     await this.preferences.setValue(PrefKey.ActiveThemes, filteredThemes)
   }
 
-  isThemeActive(theme: ComponentOrNativeTheme): boolean {
-    if (this.features.getFeatureStatus(theme.identifier) !== FeatureStatus.Entitled) {
+  isThemeActive(theme: ComponentOrNativeFeature<ThemeFeatureDescription>): boolean {
+    if (this.features.getFeatureStatus(theme.featureIdentifier) !== FeatureStatus.Entitled) {
       return false
     }
 
     const activeThemes = this.preferences.getValue(PrefKey.ActiveThemes, undefined) ?? []
 
-    return activeThemes.includes(getComponentOrNativeFeatureUniqueIdentifier(theme))
+    return activeThemes.includes(theme.uniqueIdentifier)
   }
 
   async addActiveComponent(component: ComponentInterface): Promise<void> {

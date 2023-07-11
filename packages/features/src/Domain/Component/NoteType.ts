@@ -1,3 +1,4 @@
+import { EditorFeatureDescription } from '../Feature/EditorFeatureDescription'
 import { FindNativeFeature } from '../Feature/Features'
 import { FeatureIdentifier } from './../Feature/FeatureIdentifier'
 import { EditorIdentifier } from './EditorIdentifier'
@@ -21,7 +22,7 @@ export function noteTypeForEditorIdentifier(identifier: EditorIdentifier): NoteT
     return NoteType.Super
   }
 
-  const feature = FindNativeFeature(identifier as FeatureIdentifier)
+  const feature = FindNativeFeature<EditorFeatureDescription>(identifier as FeatureIdentifier)
   if (feature && feature.note_type) {
     return feature.note_type
   }

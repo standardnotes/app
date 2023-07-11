@@ -1,4 +1,4 @@
-import { ThemeFeatureDescription } from '../Feature/FeatureDescription'
+import { ThemeFeatureDescription } from '../Feature/ThemeFeatureDescription'
 import { PermissionName } from '../Permission/PermissionName'
 import { FeatureIdentifier } from '../Feature/FeatureIdentifier'
 import { FillThemeComponentDefaults } from './Utilities/FillThemeComponentDefaults'

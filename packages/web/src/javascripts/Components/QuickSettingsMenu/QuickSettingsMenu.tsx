@@ -1,7 +1,7 @@
 import {
   ComponentArea,
   ComponentInterface,
-  ComponentOrNativeTheme,
+  ComponentOrThemeFeatureDescription,
   ContentType,
   FeatureIdentifier,
   PreferencesServiceEvent,
@@ -32,7 +32,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ quickSettingsMenuCont
 
   const { focusModeEnabled, setFocusModeEnabled } = application.paneController
   const { closeQuickSettingsMenu } = quickSettingsMenuController
-  const [themes, setThemes] = useState<ComponentOrNativeTheme[]>([])
+  const [themes, setThemes] = useState<ComponentOrThemeFeatureDescription[]>([])
   const [toggleableComponents, setToggleableComponents] = useState<ComponentInterface[]>([])
 
   const activeThemes = application.componentManager.getActiveThemes()

@@ -22,6 +22,7 @@ export enum PermissionName {
   NoteHistory30Days = 'server:note-history-30-days',
   NoteHistory365Days = 'server:note-history-365-days',
   NoteHistoryUnlimited = 'server:note-history-unlimited',
+  PlainEditor = 'editor:plain',
   PlusEditor = 'editor:plus',
   SheetsEditor = 'editor:sheets',
   SignInAlerts = 'server:sign-in-alerts',

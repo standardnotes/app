@@ -1,4 +1,4 @@
-import { ComponentOrNativeTheme, FeatureIdentifier, FeatureStatus, isNativeTheme } from '@standardnotes/snjs'
+import { ComponentOrThemeFeatureDescription, FeatureIdentifier, FeatureStatus, isThemeFeatureDescription } from '@standardnotes/snjs'
 import { FunctionComponent, MouseEventHandler, useCallback, useMemo } from 'react'
 import Icon from '@/Components/Icon/Icon'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
@@ -13,7 +13,7 @@ import { KeyboardShortcutIndicator } from '../KeyboardShortcutIndicator/Keyboard
 import { useApplication } from '../ApplicationProvider'
 
 type Props = {
-  item: ComponentOrNativeTheme
+  item: ComponentOrThemeFeatureDescription
 }
 
 const ThemesMenuButton: FunctionComponent<Props> = ({ item }) => {
@@ -37,7 +37,7 @@ const ThemesMenuButton: FunctionComponent<Props> = ({ item }) => {
       return
     }
 
-    const isThemeLayerable = isNativeTheme(item) ? item.layerable : item.layerable
+    const isThemeLayerable = isThemeFeatureDescription(item) ? item.layerable : item.layerable
 
     const themeIsLayerableOrNotActive = isThemeLayerable || !application.componentManager.isThemeActive(item)
 
@@ -69,7 +69,7 @@ const ThemesMenuButton: FunctionComponent<Props> = ({ item }) => {
 
   const themeActive = item ? application.componentManager.isThemeActive(item) : false
 
-  const dockIcon = isNativeTheme(item) ? item.dock_icon : item.package_info?.dock_icon
+  const dockIcon = isThemeFeatureDescription(item) ? item.dock_icon : item.package_info?.dock_icon
 
   return item.layerable ? (
     <MenuSwitchButtonItem checked={themeActive} onChange={() => toggleTheme()}>

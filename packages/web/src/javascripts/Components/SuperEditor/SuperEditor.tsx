@@ -9,7 +9,7 @@ import {
   PrefDefaults,
   FeatureIdentifier,
   FeatureStatus,
-  GetSuperEditorFeature,
+  GetSuperNoteFeature,
 } from '@standardnotes/snjs'
 import { FunctionComponent, useCallback, useEffect, useRef, useState } from 'react'
 import { BlocksEditor } from './BlocksEditor'
@@ -204,7 +204,7 @@ export const SuperEditor: FunctionComponent<Props> = ({
   return (
     <div className="font-editor relative flex h-full w-full flex-col md:block" ref={ref}>
       {featureStatus !== FeatureStatus.Entitled && (
-        <NotEntitledBanner featureStatus={featureStatus} feature={GetSuperEditorFeature()} />
+        <NotEntitledBanner featureStatus={featureStatus} feature={GetSuperNoteFeature()} />
       )}
       <ErrorBoundary>
         <LinkingControllerProvider controller={linkingController}>

@@ -1,13 +1,14 @@
 import { ComponentAction } from '../../Component/ComponentAction'
 import { ContentType } from '@standardnotes/common'
-import { EditorFeatureDescription } from '../../Feature/FeatureDescription'
+import { EditorFeatureDescription } from '../../Feature/EditorFeatureDescription'
+import { IframeComponentFeatureDescription } from '../../Feature/IframeComponentFeatureDescription'
 import { ComponentArea } from '../../Component/ComponentArea'
 
 export type RequiredEditorFields = Pick<EditorFeatureDescription, 'availableInRoles'>
 
-export function FillEditorComponentDefaults(
-  component: Partial<EditorFeatureDescription> & RequiredEditorFields,
-): EditorFeatureDescription {
+export function FillIframeEditorDefaults(
+  component: Partial<IframeComponentFeatureDescription> & RequiredEditorFields,
+): IframeComponentFeatureDescription {
   if (!component.index_path) {
     component.index_path = 'dist/index.html'
   }
@@ -30,5 +31,5 @@ export function FillEditorComponentDefaults(
     component.interchangeable = true
   }
 
-  return component as EditorFeatureDescription
+  return component as IframeComponentFeatureDescription
 }

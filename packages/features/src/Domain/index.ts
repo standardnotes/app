@@ -1,6 +1,17 @@
-export * from './Feature/FeatureDescription'
+export * from './Feature/AnyFeatureDescription'
 export * from './Feature/FeatureIdentifier'
 export * from './Feature/Features'
+export * from './Feature/TypeGuards'
+
+export * from './Feature/ThirdPartyFeatureDescription'
+export * from './Feature/ClientFeatureDescription'
+export * from './Feature/ServerFeatureDescription'
+export * from './Feature/IframeComponentFeatureDescription'
+export * from './Feature/ComponentFeatureDescription'
+export * from './Feature/BaseFeatureDescription'
+export * from './Feature/EditorFeatureDescription'
+export * from './Feature/ThemeFeatureDescription'
+export * from './Feature/UIFeatureDescription'
 
 export * from './Permission/Permission'
 export * from './Permission/PermissionName'

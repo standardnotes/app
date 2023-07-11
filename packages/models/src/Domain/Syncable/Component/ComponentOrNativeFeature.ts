@@ -1,112 +1,139 @@
 import {
+  AnyFeatureDescription,
+  ComponentArea,
   ComponentPermission,
   EditorFeatureDescription,
-  FeatureDescription,
+  FeatureIdentifier,
   NoteType,
-  ThemeFeatureDescription,
+  UIFeatureDescriptionTypes,
+  isEditorFeatureDescription,
+  isIframeComponentFeatureDescription,
 } from '@standardnotes/features'
 import { ComponentInterface } from './ComponentInterface'
-import { isComponent } from './Component'
-import { DecryptedItemInterface, isDecryptedItem } from '../../Abstract/Item'
-import { ContentType } from '@standardnotes/common'
-import { ThemeInterface } from '../Theme'
+import { ThemeInterface, isTheme } from '../Theme'
 
-export type ComponentOrNativeFeature = ComponentInterface | FeatureDescription
+function isComponent(x: ComponentInterface | UIFeatureDescriptionTypes): x is ComponentInterface {
+  return 'uuid' in x
+}
 
-export type ComponentOrNativeTheme = ThemeInterface | ThemeFeatureDescription
+function isFeatureDescription(x: ComponentInterface | AnyFeatureDescription): x is AnyFeatureDescription {
+  return !('uuid' in x)
+}
 
-export function isNativeComponent(component: ComponentOrNativeFeature): component is FeatureDescription {
-  if (isDecryptedItem(component as DecryptedItemInterface)) {
-    return false
+export class ComponentOrNativeFeature<F extends UIFeatureDescriptionTypes> {
+  constructor(private item: ComponentInterface | F) {}
+
+  get isComponent(): boolean {
+    return isComponent(this.item)
   }
 
-  return 'index_path' in component
-}
-
-export function isNativeTheme(component: ComponentOrNativeFeature): component is ThemeFeatureDescription {
-  return isNativeComponent(component) && (component as ThemeFeatureDescription).content_type === ContentType.Theme
-}
-
-export function isNativeEditorComponent(component: ComponentOrNativeFeature): component is EditorFeatureDescription {
-  return isNativeComponent(component) && (component as EditorFeatureDescription).note_type != undefined
-}
-
-export function isNonNativeComponent(component: ComponentOrNativeFeature): component is ComponentInterface {
-  if (!isDecryptedItem(component as DecryptedItemInterface)) {
-    return false
+  get isFeatureDescription(): boolean {
+    return isFeatureDescription(this.item)
   }
 
-  return isComponent(component as DecryptedItemInterface)
-}
+  get asComponent(): ComponentInterface {
+    if (isComponent(this.item)) {
+      return this.item
+    }
 
-export type ComponentOrNativeFeatureUniqueIdentifier = ComponentInterface['uuid'] | FeatureDescription['identifier']
-
-export function getComponentOrNativeFeatureUniqueIdentifier(
-  component: ComponentOrNativeFeature,
-): ComponentOrNativeFeatureUniqueIdentifier {
-  if (isNativeComponent(component)) {
-    return component.identifier
-  } else {
-    return component.uuid
+    throw new Error('Cannot cast item to component')
   }
-}
 
-export function getComponentOrNativeFeatureNoteType(component: ComponentOrNativeFeature): NoteType {
-  if (isNativeComponent(component)) {
-    return component.note_type ?? NoteType.Unknown
-  } else {
-    return component.noteType
+  get asTheme(): ThemeInterface {
+    if (isComponent(this.item) && isTheme(this.item)) {
+      return this.item
+    }
+
+    throw new Error('Cannot cast item to theme')
   }
-}
 
-export function getComponentOrNativeFeatureFileType(
-  component: ComponentOrNativeFeature,
-): FeatureDescription['file_type'] | undefined {
-  if (isNativeComponent(component)) {
-    return component.file_type
-  } else {
-    return component.package_info?.file_type
+  get asFeatureDescription(): F {
+    if (isFeatureDescription(this.item)) {
+      return this.item
+    }
+
+    throw new Error('Cannot cast item to feature description')
   }
-}
 
-export function getComponentOrNativeFeatureDisplayName(component: ComponentOrNativeFeature): string {
-  if (isNativeComponent(component)) {
-    return component.name ?? ''
-  } else {
-    return component.displayName
+  get uniqueIdentifier(): string {
+    if (isFeatureDescription(this.item)) {
+      return this.item.identifier
+    } else {
+      return this.item.uuid
+    }
   }
-}
 
-export function getComponentOrNativeFeatureDeprecationMessage(component: ComponentOrNativeFeature): string | undefined {
-  if (isNativeComponent(component)) {
-    return component.deprecation_message
-  } else {
-    return component.deprecationMessage
+  get featureIdentifier(): FeatureIdentifier {
+    return this.item.identifier
   }
-}
 
-export function getComponentOrNativeFeatureExpirationDate(component: ComponentOrNativeFeature): Date | undefined {
-  if (isNativeComponent(component)) {
-    return component.expires_at ? new Date(component.expires_at) : undefined
-  } else {
-    return component.valid_until
+  get noteType(): NoteType {
+    if (isFeatureDescription(this.item) && isEditorFeatureDescription(this.item)) {
+      return this.item.note_type ?? NoteType.Unknown
+    } else if (isComponent(this.item)) {
+      return this.item.noteType
+    }
+
+    throw new Error('Invalid component or feature description')
   }
-}
 
-export function getComponentOrNativeFeatureFeatureDescription(component: ComponentOrNativeFeature): FeatureDescription {
-  if (isNativeComponent(component)) {
-    return component
-  } else {
-    return component.package_info
+  get fileType(): EditorFeatureDescription['file_type'] | undefined {
+    if (isFeatureDescription(this.item) && isEditorFeatureDescription(this.item)) {
+      return this.item.file_type
+    } else if (isComponent(this.item) && isEditorFeatureDescription(this.item.package_info)) {
+      return this.item.package_info?.file_type
+    }
+
+    throw new Error('Invalid component or feature description')
   }
-}
 
-export function getComponentOrNativeFeatureAcquiredPermissions(
-  component: ComponentOrNativeFeature,
-): ComponentPermission[] {
-  if (isNativeComponent(component)) {
-    return component.component_permissions ?? []
-  } else {
-    return component.permissions
+  get displayName(): string {
+    if (isFeatureDescription(this.item)) {
+      return this.item.name ?? ''
+    } else {
+      return this.item.displayName
+    }
+  }
+
+  get deprecationMessage(): string | undefined {
+    if (isFeatureDescription(this.item)) {
+      return this.item.deprecation_message
+    } else {
+      return this.item.deprecationMessage
+    }
+  }
+
+  get expirationDate(): Date | undefined {
+    if (isFeatureDescription(this.item)) {
+      return this.item.expires_at ? new Date(this.item.expires_at) : undefined
+    } else {
+      return this.item.valid_until
+    }
+  }
+
+  get featureDescription(): AnyFeatureDescription {
+    if (isFeatureDescription(this.item)) {
+      return this.item
+    } else {
+      return this.item.package_info
+    }
+  }
+
+  get acquiredPermissions(): ComponentPermission[] {
+    if (isFeatureDescription(this.item) && isIframeComponentFeatureDescription(this.item)) {
+      return this.item.component_permissions ?? []
+    } else if (isComponent(this.item)) {
+      return this.item.permissions
+    }
+
+    throw new Error('Invalid component or feature description')
+  }
+
+  get area(): ComponentArea {
+    if ('area' in this.item) {
+      return this.item.area
+    }
+
+    return ComponentArea.Editor
   }
 }
