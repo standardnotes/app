@@ -83,13 +83,13 @@ export class MobileWebReceiver {
           messageData as { height: number; contentHeight: number },
         )
         break
-      case ReactNativeToWebEvent.ReceivedFiles:
-        void this.application.handleReceivedFilesEvent(
+      case ReactNativeToWebEvent.ReceivedFile:
+        void this.application.handleReceivedFileEvent(
           messageData as {
             name: string
             mimeType: string
             data: string
-          }[],
+          },
         )
         break
       case ReactNativeToWebEvent.ReceivedText:

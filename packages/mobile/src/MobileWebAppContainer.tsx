@@ -1,7 +1,6 @@
 import { ReactNativeToWebEvent } from '@standardnotes/snjs'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Button, Keyboard, Platform, Text, View } from 'react-native'
-import { readFile } from 'react-native-fs'
 import VersionInfo from 'react-native-version-info'
 import { WebView, WebViewMessageEvent } from 'react-native-webview'
 import { OnShouldStartLoadWithRequest } from 'react-native-webview/lib/WebViewTypes'
@@ -11,7 +10,7 @@ import { ColorSchemeObserverService } from './ColorSchemeObserverService'
 import CustomAndroidWebView from './CustomAndroidWebView'
 import { MobileDevice, MobileDeviceEvent } from './Lib/MobileDevice'
 import { IsDev } from './Lib/Utils'
-import { useReceivedSharedItems } from './useReceivedSharedItems'
+import { ReceivedSharedItemsHandler } from './ReceivedSharedItemsHandler'
 
 const LoggingEnabled = IsDev
 
@@ -37,7 +36,7 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
     [androidBackHandlerService, colorSchemeService, stateService],
   )
 
-  const [didWebviewLoad, setDidWebviewLoad] = useState(false)
+  const [didWebViewLoad, setDidWebViewLoad] = useState(false)
   const [showAndroidWebviewUpdatePrompt, setShowAndroidWebviewUpdatePrompt] = useState(false)
 
   useEffect(() => {
@@ -285,63 +284,13 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
   const requireInlineMediaPlaybackForMomentsFeature = true
   const requireMediaUserInteractionForMomentsFeature = false
 
-  const { receivedFiles, receivedLinks, receivedTexts } = useReceivedSharedItems()
+  const receivedSharedItemsHandler = useRef(new ReceivedSharedItemsHandler(webViewRef, () => didWebViewLoad))
 
   useEffect(() => {
-    if (!didWebviewLoad) {
-      return
+    if (didWebViewLoad) {
+      receivedSharedItemsHandler.current.handleItemsQueue().catch(console.error)
     }
-
-    const handleReceivedItems = async () => {
-      if (receivedFiles.length) {
-        const filesWithData = await Promise.all(
-          receivedFiles.map(async (file) => {
-            const data = await readFile(file.contentUri, 'base64')
-            return {
-              name: file.fileName || file.contentUri,
-              data,
-              mimeType: file.mimeType,
-            }
-          }),
-        )
-
-        webViewRef.current?.postMessage(
-          JSON.stringify({
-            reactNativeEvent: ReactNativeToWebEvent.ReceivedFiles,
-            messageType: 'event',
-            messageData: filesWithData,
-          }),
-        )
-      }
-
-      receivedLinks.forEach((item) => {
-        webViewRef.current?.postMessage(
-          JSON.stringify({
-            reactNativeEvent: ReactNativeToWebEvent.ReceivedText,
-            messageType: 'event',
-            messageData: {
-              title: item.subject || item.weblink,
-              text: item.weblink,
-            },
-          }),
-        )
-      })
-
-      receivedTexts.forEach((item) => {
-        webViewRef.current?.postMessage(
-          JSON.stringify({
-            reactNativeEvent: ReactNativeToWebEvent.ReceivedText,
-            messageType: 'event',
-            messageData: {
-              text: item.text,
-            },
-          }),
-        )
-      })
-    }
-
-    handleReceivedItems().catch(console.error)
-  }, [didWebviewLoad, receivedFiles, receivedLinks, receivedTexts])
+  }, [didWebViewLoad])
 
   if (showAndroidWebviewUpdatePrompt) {
     return (
@@ -391,7 +340,7 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
       style={{ backgroundColor: 'black' }}
       originWhitelist={['*']}
       onLoad={() => {
-        setDidWebviewLoad(true)
+        setDidWebViewLoad(true)
       }}
       onError={(err) => console.error('An error has occurred', err)}
       onHttpError={() => console.error('An HTTP error occurred')}

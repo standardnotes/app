@@ -378,13 +378,11 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     this.notifyWebEvent(WebAppEvent.MobileKeyboardDidChangeFrame, frame)
   }
 
-  handleReceivedFilesEvent(files: { name: string; mimeType: string; data: string }[]): void {
+  handleReceivedFileEvent(file: { name: string; mimeType: string; data: string }): void {
     const filesController = this.getViewControllerManager().filesController
-    const blob = getBlobFromBase64(files[0].data, files[0].mimeType)
-    const mappedFiles = files.map((file) => new File([blob], file.name, { type: file.mimeType }))
-    mappedFiles.forEach((file) => {
-      void filesController.uploadNewFile(file, true)
-    })
+    const blob = getBlobFromBase64(file.data, file.mimeType)
+    const mappedFile = new File([blob], file.name, { type: file.mimeType })
+    void filesController.uploadNewFile(mappedFile, true)
   }
 
   async handleReceivedTextEvent({ text, title }: { text: string; title?: string | undefined }) {
