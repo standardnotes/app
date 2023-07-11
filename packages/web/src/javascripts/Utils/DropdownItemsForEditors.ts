@@ -62,17 +62,20 @@ export function getDropdownItemsForAllEditors(application: WebApplicationInterfa
   )
 
   options.push(
-    ...application.componentManager.thirdPartyComponentsForArea(ComponentArea.Editor).map((editor): EditorOption => {
-      const identifier = editor.package_info.identifier
-      const [iconType, tint] = getIconAndTintForNoteType(editor.package_info.note_type)
+    ...application.componentManager
+      .thirdPartyComponentsForArea(ComponentArea.Editor)
+      .filter((component) => FindNativeFeature(component.identifier) === undefined)
+      .map((editor): EditorOption => {
+        const identifier = editor.package_info.identifier
+        const [iconType, tint] = getIconAndTintForNoteType(editor.package_info.note_type)
 
-      return {
-        label: editor.displayName,
-        value: identifier,
-        ...(iconType ? { icon: iconType } : null),
-        ...(tint ? { iconClassName: `text-accessory-tint-${tint}` } : null),
-      }
-    }),
+        return {
+          label: editor.displayName,
+          value: identifier,
+          ...(iconType ? { icon: iconType } : null),
+          ...(tint ? { iconClassName: `text-accessory-tint-${tint}` } : null),
+        }
+      }),
   )
 
   options.push(plaintextOption)
