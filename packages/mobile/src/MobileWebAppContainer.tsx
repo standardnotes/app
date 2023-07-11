@@ -284,12 +284,15 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
   const requireInlineMediaPlaybackForMomentsFeature = true
   const requireMediaUserInteractionForMomentsFeature = false
 
-  const receivedSharedItemsHandler = useRef(new ReceivedSharedItemsHandler(webViewRef, () => didWebViewLoad))
-
+  const receivedSharedItemsHandler = useRef(new ReceivedSharedItemsHandler(webViewRef, didWebViewLoad))
   useEffect(() => {
-    if (didWebViewLoad) {
-      receivedSharedItemsHandler.current.handleItemsQueue().catch(console.error)
+    const receivedSharedItemsHandlerInstance = receivedSharedItemsHandler.current
+    return () => {
+      receivedSharedItemsHandlerInstance.deinit()
     }
+  }, [])
+  useEffect(() => {
+    receivedSharedItemsHandler.current.setDidWebViewLoad(didWebViewLoad)
   }, [didWebViewLoad])
 
   if (showAndroidWebviewUpdatePrompt) {

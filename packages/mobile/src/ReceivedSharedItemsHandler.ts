@@ -44,11 +44,20 @@ export class ReceivedSharedItemsHandler {
   private appStateEventSub: NativeEventSubscription | null = null
   private receivedItemsQueue: ReceivedItem[] = []
 
-  constructor(private webViewRef: RefObject<WebView>, private didWebViewLoad: () => boolean) {
+  constructor(private webViewRef: RefObject<WebView>, private didWebViewLoad: boolean) {
     this.registerNativeEventSub()
   }
 
+  setDidWebViewLoad = (didWebViewLoad: boolean) => {
+    this.didWebViewLoad = didWebViewLoad
+
+    if (didWebViewLoad) {
+      this.handleItemsQueue().catch(console.error)
+    }
+  }
+
   deinit() {
+    this.receivedItemsQueue = []
     this.appStateEventSub?.remove()
   }
 
@@ -60,10 +69,11 @@ export class ReceivedSharedItemsHandler {
             const items = Object.values(filesObject)
             this.receivedItemsQueue.push(...items)
 
-            if (this.didWebViewLoad()) {
+            if (this.didWebViewLoad) {
               this.handleItemsQueue().catch(console.error)
             }
           })
+          .then(() => ReceiveSharingIntent.clearFileNames())
           .catch(console.error)
       }
     })
