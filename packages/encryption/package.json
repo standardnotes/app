@@ -5,9 +5,15 @@
     "node": ">=16.0.0 <17.0.0"
   },
   "description": "Payload encryption used in SNJS library",
-  "main": "./src/index.ts",
-  "private": true,
+  "main": "dist/index.js",
   "author": "Standard Notes",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
   "license": "AGPL-3.0-or-later",
   "scripts": {
     "lint": "eslint src --ext .ts",
