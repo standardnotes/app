@@ -324,15 +324,14 @@ export class SNFeaturesService
     const userRolesChanged =
       roles.some((role) => !this.onlineRoles.includes(role)) || this.onlineRoles.some((role) => !roles.includes(role))
 
-    const isInitialLoadRolesChange = previousRoles.length === 0 && userRolesChanged
-
     if (!userRolesChanged) {
       return
     }
 
     this.setOnlineRoles(roles)
 
-    if (userRolesChanged && !isInitialLoadRolesChange) {
+    const isInitialLoadRolesChange = previousRoles.length === 0
+    if (!isInitialLoadRolesChange) {
       if (this.onlineRolesIncludePaidSubscription()) {
         await this.notifyEvent(FeaturesEvent.DidPurchaseSubscription)
       }

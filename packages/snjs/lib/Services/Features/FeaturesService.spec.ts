@@ -4,11 +4,10 @@ import { SettingName } from '@standardnotes/settings'
 import { SNFeaturesService } from '@Lib/Services/Features'
 import { ContentType } from '@standardnotes/common'
 import { RoleName } from '@standardnotes/domain-core'
-import { FeatureDescription, FeatureIdentifier, GetFeatures } from '@standardnotes/features'
+import { FeatureIdentifier, GetFeatures } from '@standardnotes/features'
 import { SNWebSocketsService } from '../Api/WebsocketsService'
 import { SNSettingsService } from '../Settings'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
-import { convertTimestampToMilliseconds } from '@standardnotes/utils'
 import {
   AlertService,
   ApiServiceInterface,
@@ -44,11 +43,7 @@ describe('FeaturesService', () => {
   let sessionManager: SessionsClientInterface
   let crypto: PureCryptoInterface
   let roles: string[]
-  let features: FeatureDescription[]
   let items: ItemInterface[]
-  let now: Date
-  let tomorrow_server: number
-  let tomorrow_client: number
   let internalEventBus: InternalEventBusInterface
 
   const createService = () => {
@@ -72,21 +67,6 @@ describe('FeaturesService', () => {
   beforeEach(() => {
     roles = [RoleName.NAMES.CoreUser, RoleName.NAMES.PlusUser]
 
-    now = new Date()
-    tomorrow_client = now.setDate(now.getDate() + 1)
-    tomorrow_server = convertTimestampToMilliseconds(tomorrow_client * 1_000)
-
-    features = [
-      {
-        ...GetFeatures().find((f) => f.identifier === FeatureIdentifier.MidnightTheme),
-        expires_at: tomorrow_server,
-      },
-      {
-        ...GetFeatures().find((f) => f.identifier === FeatureIdentifier.PlusEditor),
-        expires_at: tomorrow_server,
-      },
-    ] as jest.Mocked<FeatureDescription[]>
-
     items = [] as jest.Mocked<ItemInterface[]>
 
     storageService = {} as jest.Mocked<DiskStorageService>
@@ -95,9 +75,6 @@ describe('FeaturesService', () => {
 
     apiService = {} as jest.Mocked<SNApiService>
     apiService.addEventObserver = jest.fn()
-    apiService.downloadOfflineFeaturesFromRepo = jest.fn().mockReturnValue({
-      features,
-    })
     apiService.isThirdPartyHostUsed = jest.fn().mockReturnValue(false)
 
     itemManager = {} as jest.Mocked<ItemManager>
@@ -211,18 +188,17 @@ describe('FeaturesService', () => {
       expect(triggeredEvents).not.toContain(FeaturesEvent.DidPurchaseSubscription)
     })
 
-    it('saves new roles to storage and fetches features if a role has been added', async () => {
-      const newRoles = [...roles, RoleName.NAMES.PlusUser]
-
+    it('saves new roles to storage if a role has been added', async () => {
       storageService.getValue = jest.fn().mockReturnValue(roles)
       const featuresService = createService()
       featuresService.initializeFromDisk()
 
+      const newRoles = [...roles, RoleName.NAMES.ProUser]
       await featuresService.updateOnlineRolesWithNewValues(newRoles)
       expect(storageService.setValue).toHaveBeenCalledWith(StorageKey.UserRoles, newRoles)
     })
 
-    it('saves new roles to storage and fetches features if a role has been removed', async () => {
+    it('saves new roles to storage if a role has been removed', async () => {
       const newRoles = [RoleName.NAMES.CoreUser]
 
       storageService.getValue = jest.fn().mockReturnValue(roles)
@@ -235,8 +211,6 @@ describe('FeaturesService', () => {
 
     it('role-based feature status', async () => {
       const featuresService = createService()
-
-      features = [] as jest.Mocked<FeatureDescription[]>
 
       sessionManager.isSignedIntoFirstPartyServer = jest.fn().mockReturnValue(true)
 
