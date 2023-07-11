@@ -3,7 +3,7 @@ chai.use(chaiAsPromised)
 const expect = chai.expect
 
 describe('migrations', () => {
-  const allMigrations = ['2.0.15', '2.7.0', '2.20.0', '2.36.0', '2.42.0', '2.167.6', '2.168.6']
+  const allMigrationsLength = MigrationClasses.length
 
   beforeEach(async () => {
     localStorage.clear()
@@ -21,11 +21,11 @@ describe('migrations', () => {
   })
 
   it('should return correct required migrations if stored version is 1.0.0', async function () {
-    expect((await SNMigrationService.getRequiredMigrations('1.0.0')).length).to.equal(allMigrations.length)
+    expect((await SNMigrationService.getRequiredMigrations('1.0.0')).length).to.equal(allMigrationsLength)
   })
 
   it('should return correct required migrations if stored version is 2.0.0', async function () {
-    expect((await SNMigrationService.getRequiredMigrations('2.0.0')).length).to.equal(allMigrations.length)
+    expect((await SNMigrationService.getRequiredMigrations('2.0.0')).length).to.equal(allMigrationsLength)
   })
 
   it('should return 0 required migrations if stored version is futuristic', async function () {
@@ -110,15 +110,14 @@ describe('migrations', () => {
     await application.mutator.insertItem(noDistractionItem)
     await application.sync.sync()
 
-    const systemThemeCount = 1
-    expect(application.items.getItems(ContentType.Theme).length).to.equal(1 + systemThemeCount)
+    expect(application.items.getItems(ContentType.Theme).length).to.equal(1)
 
     /** Run migration */
     const migration = new Migration2_42_0(application.migrationService.services)
     await migration.handleStage(ApplicationStage.FullSyncCompleted_13)
     await application.sync.sync()
 
-    expect(application.items.getItems(ContentType.Theme).length).to.equal(systemThemeCount)
+    expect(application.items.getItems(ContentType.Theme).length).to.equal(0)
 
     await Factory.safeDeinit(application)
   })
