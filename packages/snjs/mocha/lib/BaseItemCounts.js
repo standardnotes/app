@@ -1,16 +1,16 @@
 const ExpectedItemCountsWithVaultFeatureEnabled = {
-  Items: ['ItemsKey', 'UserPreferences', 'DarkTheme'].length,
-  ItemsWithAccount: ['ItemsKey', 'UserPreferences', 'DarkTheme', 'TrustedSelfContact'].length,
-  ItemsWithAccountWithoutItemsKey: ['UserPreferences', 'DarkTheme', 'TrustedSelfContact'].length,
-  ItemsNoAccounNoItemsKey: ['UserPreferences', 'DarkTheme'].length,
+  Items: ['ItemsKey', 'UserPreferences'].length,
+  ItemsWithAccount: ['ItemsKey', 'UserPreferences', 'TrustedSelfContact'].length,
+  ItemsWithAccountWithoutItemsKey: ['UserPreferences', 'TrustedSelfContact'].length,
+  ItemsNoAccounNoItemsKey: ['UserPreferences'].length,
   BackupFileRootKeyEncryptedItems: ['TrustedSelfContact'].length,
 }
 
 const ExpectedItemCountsWithVaultFeatureDisabled = {
-  Items: ['ItemsKey', 'UserPreferences', 'DarkTheme'].length,
-  ItemsWithAccount: ['ItemsKey', 'UserPreferences', 'DarkTheme'].length,
-  ItemsWithAccountWithoutItemsKey: ['UserPreferences', 'DarkTheme'].length,
-  ItemsNoAccounNoItemsKey: ['UserPreferences', 'DarkTheme'].length,
+  Items: ['ItemsKey', 'UserPreferences'].length,
+  ItemsWithAccount: ['ItemsKey', 'UserPreferences'].length,
+  ItemsWithAccountWithoutItemsKey: ['UserPreferences'].length,
+  ItemsNoAccounNoItemsKey: ['UserPreferences'].length,
   BackupFileRootKeyEncryptedItems: [].length,
 }
 
