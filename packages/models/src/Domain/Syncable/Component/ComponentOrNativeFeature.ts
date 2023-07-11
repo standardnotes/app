@@ -4,6 +4,7 @@ import {
   ComponentPermission,
   EditorFeatureDescription,
   FeatureIdentifier,
+  IframeComponentFeatureDescription,
   NoteType,
   UIFeatureDescriptionTypes,
   isEditorFeatureDescription,
@@ -20,8 +21,14 @@ function isFeatureDescription(x: ComponentInterface | AnyFeatureDescription): x 
   return !('uuid' in x)
 }
 
+export function isIframeUIFeature(
+  x: ComponentOrNativeFeature<EditorFeatureDescription | IframeComponentFeatureDescription>,
+): x is ComponentOrNativeFeature<IframeComponentFeatureDescription> {
+  return isIframeComponentFeatureDescription(x.featureDescription)
+}
+
 export class ComponentOrNativeFeature<F extends UIFeatureDescriptionTypes> {
-  constructor(private item: ComponentInterface | F) {}
+  constructor(public readonly item: ComponentInterface | F) {}
 
   get isComponent(): boolean {
     return isComponent(this.item)
@@ -29,6 +36,10 @@ export class ComponentOrNativeFeature<F extends UIFeatureDescriptionTypes> {
 
   get isFeatureDescription(): boolean {
     return isFeatureDescription(this.item)
+  }
+
+  get isThemeComponent(): boolean {
+    return isComponent(this.item) && isTheme(this.item)
   }
 
   get asComponent(): ComponentInterface {
@@ -95,6 +106,14 @@ export class ComponentOrNativeFeature<F extends UIFeatureDescriptionTypes> {
     }
   }
 
+  get description(): string {
+    if (isFeatureDescription(this.item)) {
+      return this.item.description ?? ''
+    } else {
+      return this.item.package_info.description ?? ''
+    }
+  }
+
   get deprecationMessage(): string | undefined {
     if (isFeatureDescription(this.item)) {
       return this.item.deprecation_message
@@ -111,11 +130,11 @@ export class ComponentOrNativeFeature<F extends UIFeatureDescriptionTypes> {
     }
   }
 
-  get featureDescription(): AnyFeatureDescription {
+  get featureDescription(): F {
     if (isFeatureDescription(this.item)) {
       return this.item
     } else {
-      return this.item.package_info
+      return this.item.package_info as F
     }
   }
 

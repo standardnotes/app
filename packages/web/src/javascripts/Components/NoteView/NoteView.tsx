@@ -1,6 +1,6 @@
 import { AbstractComponent } from '@/Components/Abstract/PureComponent'
 import ChangeEditorButton from '@/Components/ChangeEditor/ChangeEditorButton'
-import ComponentView from '@/Components/ComponentView/ComponentView'
+import IframeFeatureView from '@/Components/ComponentView/IframeFeatureView'
 import NotesOptionsPanel from '@/Components/NotesOptions/NotesOptionsPanel'
 import PinNoteButton from '@/Components/PinNoteButton/PinNoteButton'
 import ProtectedItemOverlay from '@/Components/ProtectedItemOverlay/ProtectedItemOverlay'
@@ -17,8 +17,8 @@ import {
   ComponentViewerInterface,
   ContentType,
   EditorLineWidth,
-  FeatureIdentifier,
-  getComponentOrNativeFeatureUniqueIdentifier,
+  IframeComponentFeatureDescription,
+  isIframeUIFeature,
   isPayloadSourceInternalChange,
   isPayloadSourceRetrieved,
   NoteType,
@@ -453,7 +453,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
     })
   }
 
-  private createComponentViewer(component: ComponentOrNativeFeature) {
+  private createComponentViewer(component: ComponentOrNativeFeature<IframeComponentFeatureDescription>) {
     if (!component) {
       throw Error('Cannot create component viewer for undefined component')
     }
@@ -469,7 +469,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
       return
     }
 
-    const component = viewer.componentOrFeature
+    const component = viewer.getComponentOrFeatureItem()
     this.application.componentManager.destroyComponentViewer(viewer)
     this.setState(
       {
@@ -510,26 +510,26 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
       return
     }
 
-    const newEditor = this.application.componentManager.editorForNote(this.note)
+    const newUIFeature = this.application.componentManager.editorForNote(this.note)
 
     /** Component editors cannot interact with template notes so the note must be inserted */
-    if (newEditor && newEditor.identifier !== FeatureIdentifier.PlainEditor && this.controller.isTemplateNote) {
+    if (isIframeUIFeature(newUIFeature) && this.controller.isTemplateNote) {
       await this.controller.insertTemplatedNote()
     }
 
     const currentComponentViewer = this.state.editorComponentViewer
 
     if (
-      !newEditor ||
-      currentComponentViewer?.componentUniqueIdentifier !== getComponentOrNativeFeatureUniqueIdentifier(newEditor)
+      !isIframeUIFeature(newUIFeature) ||
+      currentComponentViewer?.componentUniqueIdentifier !== newUIFeature.uniqueIdentifier
     ) {
       if (currentComponentViewer) {
         this.destroyCurrentEditorComponent()
       }
 
-      if (newEditor) {
+      if (isIframeUIFeature(newUIFeature)) {
         this.setState({
-          editorComponentViewer: this.createComponentViewer(newEditor),
+          editorComponentViewer: this.createComponentViewer(newUIFeature),
           editorStateDidLoad: true,
         })
       }
@@ -764,7 +764,14 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
 
     const newViewers: ComponentViewerInterface[] = []
     for (const component of needsNewViewer) {
-      newViewers.push(this.application.componentManager.createComponentViewer(component, { uuid: this.note.uuid }))
+      newViewers.push(
+        this.application.componentManager.createComponentViewer(
+          new ComponentOrNativeFeature<IframeComponentFeatureDescription>(component),
+          {
+            uuid: this.note.uuid,
+          },
+        ),
+      )
     }
 
     for (const viewer of needsDestroyViewer) {
@@ -972,7 +979,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
           {editorMode === 'component' && this.state.editorComponentViewer && (
             <div className="component-view relative flex-grow">
               {this.state.paneGestureEnabled && <div className="absolute top-0 left-0 h-full w-[20px] md:hidden" />}
-              <ComponentView
+              <IframeFeatureView
                 key={this.state.editorComponentViewer.identifier}
                 componentViewer={this.state.editorComponentViewer}
                 onLoad={this.onEditorComponentLoad}
@@ -1042,7 +1049,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
             {this.state.stackComponentViewers.map((viewer) => {
               return (
                 <div className="component-view component-stack-item" key={viewer.identifier}>
-                  <ComponentView key={viewer.identifier} componentViewer={viewer} />
+                  <IframeFeatureView key={viewer.identifier} componentViewer={viewer} />
                 </div>
               )
             })}

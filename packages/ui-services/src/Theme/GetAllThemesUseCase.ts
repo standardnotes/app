@@ -1,11 +1,14 @@
 import { FindNativeTheme, GetNativeThemes, ThemeFeatureDescription } from '@standardnotes/features'
-import { ThemeInterface } from '@standardnotes/models'
+import { ComponentOrNativeFeature, ThemeInterface } from '@standardnotes/models'
 import { ItemManagerInterface } from '@standardnotes/services'
 
 export class GetAllThemesUseCase {
   constructor(private readonly items: ItemManagerInterface) {}
 
-  execute(options: { excludeLayerable: boolean }): { thirdParty: ThemeInterface[]; native: ThemeFeatureDescription[] } {
+  execute(options: { excludeLayerable: boolean }): {
+    thirdParty: ComponentOrNativeFeature<ThemeFeatureDescription>[]
+    native: ComponentOrNativeFeature<ThemeFeatureDescription>[]
+  } {
     const nativeThemes = GetNativeThemes().filter((feature) => (options.excludeLayerable ? !feature.layerable : true))
 
     const allThirdPartyThemes = this.items
@@ -19,8 +22,8 @@ export class GetAllThemesUseCase {
     })
 
     return {
-      thirdParty: filteredThirdPartyThemes,
-      native: nativeThemes,
+      thirdParty: filteredThirdPartyThemes.map((theme) => new ComponentOrNativeFeature<ThemeFeatureDescription>(theme)),
+      native: nativeThemes.map((theme) => new ComponentOrNativeFeature(theme)),
     }
   }
 }

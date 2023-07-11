@@ -3,7 +3,7 @@ import { NotesController } from '@/Controllers/NotesController/NotesController'
 import { useRef, useState } from 'react'
 import RoundIconButton from '../Button/RoundIconButton'
 import Popover from '../Popover/Popover'
-import ChangeMultipleMenu from './ChangeMultipleMenu'
+import ChangeEditorMultipleMenu from './ChangeEditorMultipleMenu'
 
 type Props = {
   application: WebApplication
@@ -27,7 +27,7 @@ const ChangeMultipleButton = ({ application, notesController }: Props) => {
         open={isChangeMenuOpen}
         className="pt-2 md:pt-0"
       >
-        <ChangeMultipleMenu
+        <ChangeEditorMultipleMenu
           application={application}
           notes={notesController.selectedNotes}
           setDisableClickOutside={setDisableClickOutside}

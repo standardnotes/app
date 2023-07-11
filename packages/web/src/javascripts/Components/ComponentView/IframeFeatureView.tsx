@@ -4,14 +4,8 @@ import {
   ComponentViewerInterface,
   ComponentViewerEvent,
   ComponentViewerError,
-  ComponentOrNativeFeature,
-  getComponentOrNativeFeatureDeprecationMessage,
   ComponentInterface,
-  isNonNativeComponent,
-  getComponentOrNativeFeatureDisplayName,
-  getComponentOrNativeFeatureUniqueIdentifier,
   SubscriptionManagerEvent,
-  getComponentOrNativeFeatureFeatureDescription,
 } from '@standardnotes/snjs'
 import { FunctionComponent, useCallback, useEffect, useRef, useState } from 'react'
 import { observer } from 'mobx-react-lite'
@@ -25,7 +19,7 @@ import { useApplication } from '../ApplicationProvider'
 interface Props {
   componentViewer: ComponentViewerInterface
   requestReload?: (viewer: ComponentViewerInterface, force?: boolean) => void
-  onLoad?: (component: ComponentOrNativeFeature) => void
+  onLoad?: () => void
 }
 
 /**
@@ -36,7 +30,7 @@ const MaxLoadThreshold = 4000
 const VisibilityChangeKey = 'visibilitychange'
 const MSToWaitAfterIframeLoadToAvoidFlicker = 35
 
-const ComponentView: FunctionComponent<Props> = ({ onLoad, componentViewer, requestReload }) => {
+const IframeFeatureView: FunctionComponent<Props> = ({ onLoad, componentViewer, requestReload }) => {
   const application = useApplication()
 
   const iframeRef = useRef<HTMLIFrameElement | null>(null)
@@ -51,7 +45,7 @@ const ComponentView: FunctionComponent<Props> = ({ onLoad, componentViewer, requ
   const [isDeprecationMessageDismissed, setIsDeprecationMessageDismissed] = useState(false)
   const [didAttemptReload, setDidAttemptReload] = useState(false)
 
-  const component = componentViewer.componentOrFeature
+  const uiFeature = componentViewer.getComponentOrFeatureItem()
 
   const reloadValidityStatus = useCallback(() => {
     setFeatureStatus(componentViewer.getFeatureStatus())
@@ -65,8 +59,8 @@ const ComponentView: FunctionComponent<Props> = ({ onLoad, componentViewer, requ
     }
 
     setError(componentViewer.getError())
-    setDeprecationMessage(getComponentOrNativeFeatureDeprecationMessage(component))
-  }, [componentViewer, component, featureStatus, isComponentValid, isLoading])
+    setDeprecationMessage(uiFeature.deprecationMessage)
+  }, [componentViewer, uiFeature, featureStatus, isComponentValid, isLoading])
 
   useEffect(() => {
     reloadValidityStatus()
@@ -133,9 +127,9 @@ const ComponentView: FunctionComponent<Props> = ({ onLoad, componentViewer, requ
     setTimeout(() => {
       setIsLoading(false)
       setHasIssueLoading(false)
-      onLoad?.(component)
+      onLoad?.()
     }, MSToWaitAfterIframeLoadToAvoidFlicker)
-  }, [componentViewer, onLoad, component, loadTimeout])
+  }, [componentViewer, onLoad, loadTimeout])
 
   useEffect(() => {
     const removeFeaturesChangedObserver = componentViewer.addEventObserver((event) => {
@@ -174,7 +168,7 @@ const ComponentView: FunctionComponent<Props> = ({ onLoad, componentViewer, requ
     const unregisterDesktopObserver = application
       .getDesktopService()
       ?.registerUpdateObserver((updatedComponent: ComponentInterface) => {
-        if (isNonNativeComponent(component) && updatedComponent.uuid === component.uuid) {
+        if (updatedComponent.uuid === uiFeature.uniqueIdentifier) {
           requestReload?.(componentViewer)
         }
       })
@@ -182,13 +176,13 @@ const ComponentView: FunctionComponent<Props> = ({ onLoad, componentViewer, requ
     return () => {
       unregisterDesktopObserver?.()
     }
-  }, [application, requestReload, componentViewer, component])
+  }, [application, requestReload, componentViewer, uiFeature])
 
   return (
     <>
       {hasIssueLoading && (
         <IssueOnLoading
-          componentName={getComponentOrNativeFeatureDisplayName(component)}
+          componentName={uiFeature.displayName}
           reloadIframe={() => {
             reloadValidityStatus(), requestReload?.(componentViewer, true)
           }}
@@ -196,10 +190,7 @@ const ComponentView: FunctionComponent<Props> = ({ onLoad, componentViewer, requ
       )}
 
       {featureStatus !== FeatureStatus.Entitled && (
-        <NotEntitledBanner
-          featureStatus={featureStatus}
-          feature={getComponentOrNativeFeatureFeatureDescription(component)}
-        />
+        <NotEntitledBanner featureStatus={featureStatus} feature={uiFeature.featureDescription} />
       )}
       {deprecationMessage && !isDeprecationMessageDismissed && (
         <IsDeprecated deprecationMessage={deprecationMessage} dismissDeprecationMessage={dismissDeprecationMessage} />
@@ -207,11 +198,9 @@ const ComponentView: FunctionComponent<Props> = ({ onLoad, componentViewer, requ
 
       {error === ComponentViewerError.OfflineRestricted && <OfflineRestricted />}
 
-      {error === ComponentViewerError.MissingUrl && (
-        <UrlMissing componentName={getComponentOrNativeFeatureDisplayName(component)} />
-      )}
+      {error === ComponentViewerError.MissingUrl && <UrlMissing componentName={uiFeature.displayName} />}
 
-      {getComponentOrNativeFeatureUniqueIdentifier(component) && isComponentValid && (
+      {uiFeature.uniqueIdentifier && isComponentValid && (
         <iframe
           className="h-full w-full flex-grow bg-transparent"
           ref={iframeRef}
@@ -229,4 +218,4 @@ const ComponentView: FunctionComponent<Props> = ({ onLoad, componentViewer, requ
   )
 }
 
-export default observer(ComponentView)
+export default observer(IframeFeatureView)

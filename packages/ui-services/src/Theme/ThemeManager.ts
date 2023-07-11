@@ -1,12 +1,10 @@
 import { dismissToast, ToastType, addTimedToast } from '@standardnotes/toast'
 import {
-  ComponentOrThemeFeatureDescription,
+  ComponentOrNativeFeature,
   CreateDecryptedLocalStorageContextPayload,
   LocalStorageDecryptedContextualPayload,
   PrefKey,
   ThemeInterface,
-  getComponentOrNativeFeatureFeatureDescription,
-  getComponentOrNativeFeatureUniqueIdentifier,
 } from '@standardnotes/models'
 import { removeFromArray } from '@standardnotes/utils'
 import {
@@ -18,7 +16,7 @@ import {
   PreferencesServiceEvent,
   ComponentManagerInterface,
 } from '@standardnotes/services'
-import { FeatureIdentifier, FindNativeTheme } from '@standardnotes/features'
+import { FeatureIdentifier, FindNativeTheme, ThemeFeatureDescription } from '@standardnotes/features'
 import { WebApplicationInterface } from '../WebApplication/WebApplicationInterface'
 import { AbstractUIServicee } from '../Abstract/AbstractUIService'
 import { GetAllThemesUseCase } from './GetAllThemesUseCase'
@@ -46,11 +44,12 @@ export class ThemeManager extends AbstractUIServicee {
     if (desktopService) {
       this.eventDisposers.push(
         desktopService.registerUpdateObserver((component) => {
-          if (component.isTheme()) {
-            if (this.components.isThemeActive(component as ThemeInterface)) {
-              this.deactivateThemeInTheUI(component.uuid)
+          const uiFeature = new ComponentOrNativeFeature<ThemeFeatureDescription>(component)
+          if (uiFeature.isTheme) {
+            if (this.components.isThemeActive(uiFeature)) {
+              this.deactivateThemeInTheUI(uiFeature.uniqueIdentifier)
               setTimeout(() => {
-                this.activateTheme(component as ThemeInterface)
+                this.activateTheme(uiFeature)
                 this.cacheThemeState().catch(console.error)
               }, 10)
             }
@@ -82,7 +81,8 @@ export class ThemeManager extends AbstractUIServicee {
               this.application.items.findItem<ThemeInterface>(activeTheme)
 
             if (theme) {
-              this.activateTheme(theme)
+              const uiFeature = new ComponentOrNativeFeature<ThemeFeatureDescription>(theme)
+              this.activateTheme(uiFeature)
               hasChange = true
             }
           }
@@ -194,7 +194,7 @@ export class ThemeManager extends AbstractUIServicee {
     const activeThemes = this.components.getActiveThemes()
 
     for (const theme of activeThemes) {
-      if (!this.themesActiveInTheUI.includes(getComponentOrNativeFeatureUniqueIdentifier(theme))) {
+      if (!this.themesActiveInTheUI.includes(theme.uniqueIdentifier)) {
         this.activateTheme(theme)
         hasChange = true
       }
@@ -251,9 +251,9 @@ export class ThemeManager extends AbstractUIServicee {
     const { thirdParty, native } = usecase.execute({ excludeLayerable: false })
     const themes = [...thirdParty, ...native]
 
-    const activeTheme = themes.find((theme) => this.components.isThemeActive(theme) && !theme.layerable)
+    const activeTheme = themes.find((theme) => this.components.isThemeActive(theme) && !theme.asTheme.layerable)
 
-    const activeThemeIdentifier = activeTheme ? activeTheme.identifier : DefaultThemeIdentifier
+    const activeThemeIdentifier = activeTheme ? activeTheme.featureIdentifier : DefaultThemeIdentifier
 
     const themeIdentifier = this.preferences.getValue(preference, preferenceDefault)
 
@@ -267,9 +267,7 @@ export class ThemeManager extends AbstractUIServicee {
       if (themeIdentifier === DefaultThemeIdentifier) {
         toggleActiveTheme()
       } else {
-        const theme = themes.find(
-          (theme) => getComponentOrNativeFeatureFeatureDescription(theme).identifier === themeIdentifier,
-        )
+        const theme = themes.find((theme) => theme.featureIdentifier === themeIdentifier)
         if (theme && !this.components.isThemeActive(theme)) {
           this.components.toggleTheme(theme).catch(console.error)
         }
@@ -298,14 +296,14 @@ export class ThemeManager extends AbstractUIServicee {
     }
   }
 
-  private activateTheme(theme: ComponentOrThemeFeatureDescription, skipEntitlementCheck = false) {
-    if (this.themesActiveInTheUI.find((uuid) => uuid === getComponentOrNativeFeatureUniqueIdentifier(theme))) {
+  private activateTheme(theme: ComponentOrNativeFeature<ThemeFeatureDescription>, skipEntitlementCheck = false) {
+    if (this.themesActiveInTheUI.find((uuid) => uuid === theme.uniqueIdentifier)) {
       return
     }
 
     if (
       !skipEntitlementCheck &&
-      this.application.features.getFeatureStatus(theme.identifier) !== FeatureStatus.Entitled
+      this.application.features.getFeatureStatus(theme.featureIdentifier) !== FeatureStatus.Entitled
     ) {
       return
     }
@@ -315,19 +313,19 @@ export class ThemeManager extends AbstractUIServicee {
       return
     }
 
-    this.themesActiveInTheUI.push(getComponentOrNativeFeatureUniqueIdentifier(theme))
+    this.themesActiveInTheUI.push(theme.uniqueIdentifier)
 
     const link = document.createElement('link')
     link.href = url
     link.type = 'text/css'
     link.rel = 'stylesheet'
     link.media = 'screen,print'
-    link.id = getComponentOrNativeFeatureUniqueIdentifier(theme)
+    link.id = theme.uniqueIdentifier
     link.onload = () => {
       this.syncThemeColorMetadata()
 
       if (this.application.isNativeMobileWeb()) {
-        const packageInfo = getComponentOrNativeFeatureFeatureDescription(theme)
+        const packageInfo = theme.featureDescription
         setTimeout(() => {
           this.application
             .mobileDevice()
@@ -385,7 +383,7 @@ export class ThemeManager extends AbstractUIServicee {
     return this.application.setValue(CachedThemesKey, mapped, StorageValueModes.Nonwrapped)
   }
 
-  private getCachedThemes(): ThemeInterface[] {
+  private getCachedThemes(): ComponentOrNativeFeature<ThemeFeatureDescription>[] {
     const cachedThemes = this.application.getValue<LocalStorageDecryptedContextualPayload[]>(
       CachedThemesKey,
       StorageValueModes.Nonwrapped,
@@ -398,7 +396,7 @@ export class ThemeManager extends AbstractUIServicee {
         const theme = this.application.items.createItemFromPayload<ThemeInterface>(payload)
         themes.push(theme)
       }
-      return themes
+      return themes.map((theme) => new ComponentOrNativeFeature<ThemeFeatureDescription>(theme))
     } else {
       return []
     }

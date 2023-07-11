@@ -1,8 +1,8 @@
-import { ContentType, NoteContent, NoteType, SNNote, classNames } from '@standardnotes/snjs'
+import { ContentType, NoteContent, NoteType, SNNote, classNames, isIframeUIFeature } from '@standardnotes/snjs'
 import { UIEventHandler, useEffect, useMemo, useRef } from 'react'
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 import { useApplication } from '../ApplicationProvider'
-import ComponentView from '../ComponentView/ComponentView'
+import IframeFeatureView from '../ComponentView/IframeFeatureView'
 import { ErrorBoundary } from '@/Utils/ErrorBoundary'
 import { BlocksEditor } from '../SuperEditor/BlocksEditor'
 import { BlocksEditorComposer } from '../SuperEditor/BlocksEditorComposer'
@@ -30,9 +30,8 @@ export const ReadonlyNoteContent = ({
   const isMobileScreen = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
 
   const componentViewer = useMemo(() => {
-    const editorForCurrentNote = note ? application.componentManager.editorForNote(note) : undefined
-
-    if (!editorForCurrentNote) {
+    const editorForCurrentNote = application.componentManager.editorForNote(note)
+    if (!isIframeUIFeature(editorForCurrentNote)) {
       return undefined
     }
 
@@ -91,7 +90,7 @@ export const ReadonlyNoteContent = ({
       )}
       {componentViewer ? (
         <div className="component-view">
-          <ComponentView key={componentViewer.identifier} componentViewer={componentViewer} />
+          <IframeFeatureView key={componentViewer.identifier} componentViewer={componentViewer} />
         </div>
       ) : content.noteType === NoteType.Super ? (
         <ErrorBoundary>

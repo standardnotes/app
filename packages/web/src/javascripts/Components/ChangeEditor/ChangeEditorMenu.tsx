@@ -5,13 +5,13 @@ import { STRING_EDIT_LOCKED_ATTEMPT } from '@/Constants/Strings'
 import { WebApplication } from '@/Application/WebApplication'
 import {
   ComponentOrNativeFeature,
+  EditorFeatureDescription,
   FeatureIdentifier,
+  IframeComponentFeatureDescription,
   NoteMutator,
   NoteType,
   PrefKey,
   SNNote,
-  getComponenOrFeatureDescriptionNoteType,
-  isNonNativeComponent,
 } from '@standardnotes/snjs'
 import { Fragment, FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react'
 import { EditorMenuGroup } from '@/Components/NotesOptions/EditorMenuGroup'
@@ -30,7 +30,7 @@ type ChangeEditorMenuProps = {
   closeMenu: () => void
   isVisible: boolean
   note: SNNote | undefined
-  onSelect?: (component: ComponentOrNativeFeature) => void
+  onSelect?: (component: ComponentOrNativeFeature<EditorFeatureDescription | IframeComponentFeatureDescription>) => void
   setDisableClickOutside?: (value: boolean) => void
 }
 
@@ -45,13 +45,18 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
   setDisableClickOutside,
 }) => {
   const groups = useMemo(() => createEditorMenuGroups(application), [application])
-  const [currentComponent, setCurrentComponent] = useState<ComponentOrNativeFeature>()
+  const [currentComponent, setCurrentComponent] =
+    useState<ComponentOrNativeFeature<EditorFeatureDescription | IframeComponentFeatureDescription>>()
   const [pendingConversionItem, setPendingConversionItem] = useState<EditorMenuItem | null>(null)
 
   const showSuperNoteImporter =
-    !!pendingConversionItem && note?.noteType !== NoteType.Super && pendingConversionItem.noteType === NoteType.Super
+    !!pendingConversionItem &&
+    note?.noteType !== NoteType.Super &&
+    pendingConversionItem.uiFeature.noteType === NoteType.Super
   const showSuperNoteConverter =
-    !!pendingConversionItem && note?.noteType === NoteType.Super && pendingConversionItem.noteType !== NoteType.Super
+    !!pendingConversionItem &&
+    note?.noteType === NoteType.Super &&
+    pendingConversionItem.uiFeature.noteType !== NoteType.Super
 
   useEffect(() => {
     if (note) {
@@ -64,12 +69,13 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
   const isSelected = useCallback(
     (item: EditorMenuItem) => {
       if (currentComponent) {
-        return item.uiFeature.identifier === currentComponent.identifier
+        return item.uiFeature.featureIdentifier === currentComponent.featureIdentifier
       }
 
-      const itemNoteTypeIsSameAsCurrentNoteType = item.noteType === note?.noteType
-      const noteDoesntHaveTypeAndItemIsPlain = !note?.noteType && item.noteType === NoteType.Plain
-      const unknownNoteTypeAndItemIsPlain = note?.noteType === NoteType.Unknown && item.noteType === NoteType.Plain
+      const itemNoteTypeIsSameAsCurrentNoteType = item.uiFeature.noteType === note?.noteType
+      const noteDoesntHaveTypeAndItemIsPlain = !note?.noteType && item.uiFeature.noteType === NoteType.Plain
+      const unknownNoteTypeAndItemIsPlain =
+        note?.noteType === NoteType.Unknown && item.uiFeature.noteType === NoteType.Plain
 
       return itemNoteTypeIsSameAsCurrentNoteType || noteDoesntHaveTypeAndItemIsPlain || unknownNoteTypeAndItemIsPlain
     },
@@ -77,9 +83,12 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
   )
 
   const selectComponent = useCallback(
-    async (component: ComponentOrNativeFeature, note: SNNote) => {
-      if (isNonNativeComponent(component) && component.conflictOf) {
-        void application.changeAndSaveItem(component, (mutator) => {
+    async (
+      uiFeature: ComponentOrNativeFeature<EditorFeatureDescription | IframeComponentFeatureDescription>,
+      note: SNNote,
+    ) => {
+      if (uiFeature.isComponent && uiFeature.asComponent.conflictOf) {
+        void application.changeAndSaveItem(uiFeature.asComponent, (mutator) => {
           mutator.conflictOf = undefined
         })
       }
@@ -88,23 +97,23 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
 
       await application.changeAndSaveItem(note, (mutator) => {
         const noteMutator = mutator as NoteMutator
-        noteMutator.noteType = getComponenOrFeatureDescriptionNoteType(component)
-        noteMutator.editorIdentifier = component.identifier
+        noteMutator.noteType = uiFeature.noteType
+        noteMutator.editorIdentifier = uiFeature.featureIdentifier
       })
 
       setCurrentComponent(application.componentManager.editorForNote(note))
 
-      if (component.identifier === FeatureIdentifier.PlainEditor) {
+      if (uiFeature.featureIdentifier === FeatureIdentifier.PlainEditor) {
         reloadFont(application.getPreference(PrefKey.EditorMonospaceEnabled))
       }
     },
     [application],
   )
 
-  const selectItem = useCallback(
-    async (itemToBeSelected: EditorMenuItem) => {
-      if (!itemToBeSelected.isEntitled) {
-        premiumModal.activate(itemToBeSelected.name)
+  const handleMenuSelection = useCallback(
+    async (menuItem: EditorMenuItem) => {
+      if (!menuItem.isEntitled) {
+        premiumModal.activate(menuItem.uiFeature.displayName)
         return
       }
 
@@ -117,28 +126,28 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
         return
       }
 
-      if (itemToBeSelected.noteType === NoteType.Super) {
+      if (menuItem.uiFeature.noteType === NoteType.Super) {
         if (note.noteType === NoteType.Super) {
           return
         }
 
-        setPendingConversionItem(itemToBeSelected)
+        setPendingConversionItem(menuItem)
         setDisableClickOutside?.(true)
         return
       }
 
       if (note.noteType === NoteType.Super && note.text.length > 0) {
-        setPendingConversionItem(itemToBeSelected)
+        setPendingConversionItem(menuItem)
         setDisableClickOutside?.(true)
         return
       }
 
       let shouldMakeSelection = true
 
-      if (itemToBeSelected.uiFeature) {
+      if (menuItem.uiFeature) {
         const changeRequiresAlert = application.componentManager.doesEditorChangeRequireAlert(
           currentComponent,
-          itemToBeSelected.uiFeature,
+          menuItem.uiFeature,
         )
 
         if (changeRequiresAlert) {
@@ -147,13 +156,13 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
       }
 
       if (shouldMakeSelection) {
-        selectComponent(itemToBeSelected.uiFeature, note).catch(console.error)
+        selectComponent(menuItem.uiFeature, note).catch(console.error)
       }
 
       closeMenu()
 
       if (onSelect) {
-        onSelect(itemToBeSelected.uiFeature)
+        onSelect(menuItem.uiFeature)
       }
     },
     [
@@ -198,30 +207,30 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
             return (
               <Fragment key={groupId}>
                 <div className={`border-0 border-t border-solid border-border py-1 ${index === 0 ? 'border-t-0' : ''}`}>
-                  {group.items.map((item) => {
+                  {group.items.map((menuItem) => {
                     const onClickEditorItem = () => {
-                      selectItem(item).catch(console.error)
+                      handleMenuSelection(menuItem).catch(console.error)
                     }
 
                     return (
                       <MenuRadioButtonItem
-                        key={item.name}
+                        key={menuItem.uiFeature.uniqueIdentifier}
                         onClick={onClickEditorItem}
                         className={'flex-row-reversed py-2'}
-                        checked={isSelected(item)}
-                        info={item.description}
+                        checked={isSelected(menuItem)}
+                        info={menuItem.uiFeature.description}
                       >
                         <div className="flex flex-grow items-center justify-between">
                           <div className={`flex items-center ${group.featured ? 'font-bold' : ''}`}>
                             {group.icon && <Icon type={group.icon} className={`mr-2 ${group.iconClassName}`} />}
-                            {item.name}
-                            {item.isLabs && (
+                            {menuItem.uiFeature.displayName}
+                            {menuItem.isLabs && (
                               <Pill className="py-0.5 px-1.5" style="success">
                                 Labs
                               </Pill>
                             )}
                           </div>
-                          {!item.isEntitled && (
+                          {!menuItem.isEntitled && (
                             <Icon type={PremiumFeatureIconName} className={PremiumFeatureIconClass} />
                           )}
                         </div>

@@ -2,7 +2,14 @@ import { WebApplication } from '@/Application/WebApplication'
 import { STRING_EDIT_LOCKED_ATTEMPT } from '@/Constants/Strings'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import { createEditorMenuGroups } from '@/Utils/createEditorMenuGroups'
-import { ComponentOrNativeFeature, NoteMutator, NoteType, SNNote } from '@standardnotes/snjs'
+import {
+  ComponentOrNativeFeature,
+  EditorFeatureDescription,
+  IframeComponentFeatureDescription,
+  NoteMutator,
+  NoteType,
+  SNNote,
+} from '@standardnotes/snjs'
 import { Fragment, useCallback, useMemo, useState } from 'react'
 import Icon from '../Icon/Icon'
 import { PremiumFeatureIconName, PremiumFeatureIconClass } from '../Icon/PremiumFeatureIcon'
@@ -22,7 +29,7 @@ type Props = {
   setDisableClickOutside: (value: boolean) => void
 }
 
-const ChangeMultipleMenu = ({ application, notes, setDisableClickOutside }: Props) => {
+const ChangeEditorMultipleMenu = ({ application, notes, setDisableClickOutside }: Props) => {
   const premiumModal = usePremiumModal()
 
   const [itemToBeSelected, setItemToBeSelected] = useState<EditorMenuItem | undefined>()
@@ -33,37 +40,29 @@ const ChangeMultipleMenu = ({ application, notes, setDisableClickOutside }: Prop
   const groups = useMemo(() => createEditorMenuGroups(application), [application])
 
   const selectComponent = useCallback(
-    async (component: ComponentOrNativeFeature, note: SNNote) => {
-      if (isNonNativeComponent(component) && component.conflictOf) {
-        void application.changeAndSaveItem(component, (mutator) => {
+    async (
+      uiFeature: ComponentOrNativeFeature<EditorFeatureDescription | IframeComponentFeatureDescription>,
+      note: SNNote,
+    ) => {
+      if (uiFeature.isComponent && uiFeature.asComponent.conflictOf) {
+        void application.changeAndSaveItem(uiFeature.asComponent, (mutator) => {
           mutator.conflictOf = undefined
         })
       }
 
       await application.changeAndSaveItem(note, (mutator) => {
         const noteMutator = mutator as NoteMutator
-        noteMutator.noteType = getComponenOrFeatureDescriptionNoteType(component)
-        noteMutator.editorIdentifier = component.identifier
+        noteMutator.noteType = uiFeature.noteType
+        noteMutator.editorIdentifier = uiFeature.featureIdentifier
       })
     },
     [application],
   )
 
-  const selectNonComponent = useCallback(
-    async (item: EditorMenuItem, note: SNNote) => {
-      await application.changeAndSaveItem(note, (mutator) => {
-        const noteMutator = mutator as NoteMutator
-        noteMutator.noteType = item.noteType
-        noteMutator.editorIdentifier = undefined
-      })
-    },
-    [application],
-  )
-
-  const selectItem = useCallback(
+  const handleMenuSelection = useCallback(
     async (itemToBeSelected: EditorMenuItem) => {
       if (!itemToBeSelected.isEntitled) {
-        premiumModal.activate(itemToBeSelected.name)
+        premiumModal.activate(itemToBeSelected.uiFeature.displayName)
         return
       }
 
@@ -72,35 +71,27 @@ const ChangeMultipleMenu = ({ application, notes, setDisableClickOutside }: Prop
         return
       }
 
-      if (itemToBeSelected.noteType === NoteType.Super) {
+      if (itemToBeSelected.uiFeature.noteType === NoteType.Super) {
         setDisableClickOutside(true)
         setItemToBeSelected(itemToBeSelected)
         setConfirmationQueue(notes)
         return
       }
 
-      if (itemToBeSelected.uiFeature) {
-        const changeRequiresConfirmation = notes.some((note) => {
-          const editorForNote = application.componentManager.editorForNote(note)
-          return application.componentManager.doesEditorChangeRequireAlert(editorForNote, itemToBeSelected.uiFeature)
-        })
+      const changeRequiresConfirmation = notes.some((note) => {
+        const editorForNote = application.componentManager.editorForNote(note)
+        return application.componentManager.doesEditorChangeRequireAlert(editorForNote, itemToBeSelected.uiFeature)
+      })
 
-        if (changeRequiresConfirmation) {
-          const canChange = await application.componentManager.showEditorChangeAlert()
-          if (!canChange) {
-            return
-          }
+      if (changeRequiresConfirmation) {
+        const canChange = await application.componentManager.showEditorChangeAlert()
+        if (!canChange) {
+          return
         }
-
-        for (const note of notes) {
-          void selectComponent(itemToBeSelected.uiFeature, note)
-        }
-
-        return
       }
 
       for (const note of notes) {
-        void selectNonComponent(itemToBeSelected, note)
+        void selectComponent(itemToBeSelected.uiFeature, note)
       }
     },
     [
@@ -110,14 +101,13 @@ const ChangeMultipleMenu = ({ application, notes, setDisableClickOutside }: Prop
       notes,
       premiumModal,
       selectComponent,
-      selectNonComponent,
       setDisableClickOutside,
     ],
   )
 
   const groupsWithItems = groups.filter((group) => group.items && group.items.length)
 
-  const showSuperImporter = itemToBeSelected?.noteType === NoteType.Super && confirmationQueue.length > 0
+  const showSuperImporter = itemToBeSelected?.uiFeature.noteType === NoteType.Super && confirmationQueue.length > 0
 
   const closeCurrentSuperNoteImporter = useCallback(() => {
     const remainingNotes = confirmationQueue.slice(1)
@@ -137,10 +127,10 @@ const ChangeMultipleMenu = ({ application, notes, setDisableClickOutside }: Prop
       return
     }
 
-    void selectNonComponent(itemToBeSelected, confirmationQueue[0])
+    void selectComponent(itemToBeSelected.uiFeature, confirmationQueue[0])
 
     closeCurrentSuperNoteImporter()
-  }, [closeCurrentSuperNoteImporter, confirmationQueue, itemToBeSelected, selectNonComponent])
+  }, [closeCurrentSuperNoteImporter, confirmationQueue, itemToBeSelected, selectComponent])
 
   return (
     <>
@@ -150,14 +140,18 @@ const ChangeMultipleMenu = ({ application, notes, setDisableClickOutside }: Prop
             <div className={`border-0 border-t border-solid border-border py-1 ${index === 0 ? 'border-t-0' : ''}`}>
               {group.items.map((item) => {
                 const onClickEditorItem = () => {
-                  selectItem(item).catch(console.error)
+                  handleMenuSelection(item).catch(console.error)
                 }
                 return (
-                  <MenuItem key={item.name} onClick={onClickEditorItem} className={'flex-row-reversed py-2'}>
+                  <MenuItem
+                    key={item.uiFeature.uniqueIdentifier}
+                    onClick={onClickEditorItem}
+                    className={'flex-row-reversed py-2'}
+                  >
                     <div className="flex flex-grow items-center justify-between">
                       <div className={'flex items-center'}>
                         {group.icon && <Icon type={group.icon} className={`mr-2 ${group.iconClassName}`} />}
-                        {item.name}
+                        {item.uiFeature.displayName}
                         {item.isLabs && (
                           <Pill className="py-0.5 px-1.5" style="success">
                             Labs
@@ -187,4 +181,4 @@ const ChangeMultipleMenu = ({ application, notes, setDisableClickOutside }: Prop
   )
 }
 
-export default ChangeMultipleMenu
+export default ChangeEditorMultipleMenu
