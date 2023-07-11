@@ -63,7 +63,6 @@ export class SNFeaturesService
   private onlineRoles: string[] = []
   private offlineRoles: string[] = []
   private enabledExperimentalFeatures: FeatureIdentifier[] = []
-  private needsInitialFeaturesUpdate = true
 
   private getFeatureStatusUseCase = new GetFeatureStatusUseCase(this.items)
 
@@ -88,7 +87,7 @@ export class SNFeaturesService
       sockets.addEventObserver(async (eventName, data) => {
         if (eventName === WebSocketsServiceEvent.UserRoleMessageReceived) {
           const currentRoles = (data as UserRolesChangedEvent).payload.currentRoles
-          await this.didReceiveNewRolesFromServer(currentRoles)
+          void this.updateOnlineRolesWithNewValues(currentRoles)
         }
       }),
     )
@@ -114,9 +113,9 @@ export class SNFeaturesService
         if (sources.includes(source)) {
           const items = [...changed, ...inserted] as SNFeatureRepo[]
           if (this.sessions.isSignedIntoFirstPartyServer()) {
-            await this.migrateFeatureRepoToUserSetting(items)
+            void this.migrateFeatureRepoToUserSetting(items)
           } else {
-            await this.migrateFeatureRepoToOfflineEntitlements(items)
+            void this.migrateFeatureRepoToOfflineEntitlements(items)
           }
         }
       }),
@@ -151,25 +150,22 @@ export class SNFeaturesService
       }
 
       const { userRoles } = event.payload as MetaReceivedData
-      await this.didReceiveNewRolesFromServer(userRoles.map((role) => role.name))
+      void this.updateOnlineRolesWithNewValues(userRoles.map((role) => role.name))
     }
   }
 
-  private async didReceiveNewRolesFromServer(roles: string[]): Promise<void> {
-    await this.updateOnlineRolesWithNewValues(roles)
-  }
-
   override async handleApplicationStage(stage: ApplicationStage): Promise<void> {
-    await super.handleApplicationStage(stage)
-
     if (stage === ApplicationStage.FullSyncCompleted_13) {
       if (!this.hasFirstPartyOnlineSubscription()) {
         const offlineRepo = this.getOfflineRepo()
+
         if (offlineRepo) {
           void this.downloadOfflineRoles(offlineRepo)
         }
       }
     }
+
+    return super.handleApplicationStage(stage)
   }
 
   public enableExperimentalFeature(identifier: FeatureIdentifier): void {
@@ -241,7 +237,9 @@ export class SNFeaturesService
         } as FeatureRepoContent),
         true,
       )) as SNFeatureRepo
+
       void this.sync.sync()
+
       return this.downloadOfflineRoles(offlineRepo)
     } catch (err) {
       return new ClientDisplayableError(`${API_MESSAGE_FAILED_OFFLINE_ACTIVATION}, ${err}`)
@@ -285,7 +283,7 @@ export class SNFeaturesService
       return result
     }
 
-    await this.setOfflineRoles(result.roles)
+    this.setOfflineRoles(result.roles)
   }
 
   public async migrateFeatureRepoToUserSetting(featureRepos: SNFeatureRepo[] = []): Promise<void> {
@@ -320,9 +318,7 @@ export class SNFeaturesService
     return hasFirstPartyOfflineSubscription || new URL(offlineRepo.content.offlineFeaturesUrl).hostname === 'localhost'
   }
 
-  async updateOnlineRolesWithNewValues(roles: string[]): Promise<{
-    didChangeRoles: boolean
-  }> {
+  async updateOnlineRolesWithNewValues(roles: string[]): Promise<void> {
     const previousRoles = this.onlineRoles
 
     const userRolesChanged =
@@ -330,26 +326,20 @@ export class SNFeaturesService
 
     const isInitialLoadRolesChange = previousRoles.length === 0 && userRolesChanged
 
-    if (!userRolesChanged && !this.needsInitialFeaturesUpdate) {
-      return {
-        didChangeRoles: false,
-      }
+    if (!userRolesChanged) {
+      return
     }
 
-    await this.setOnlineRoles(roles)
+    this.setOnlineRoles(roles)
 
     if (userRolesChanged && !isInitialLoadRolesChange) {
       if (this.onlineRolesIncludePaidSubscription()) {
         await this.notifyEvent(FeaturesEvent.DidPurchaseSubscription)
       }
     }
-
-    return {
-      didChangeRoles: true,
-    }
   }
 
-  async setOnlineRoles(roles: string[]): Promise<void> {
+  setOnlineRoles(roles: string[]): void {
     const rolesChanged = !arraysEqual(this.onlineRoles, roles)
 
     this.onlineRoles = roles
@@ -361,7 +351,7 @@ export class SNFeaturesService
     this.storage.setValue(StorageKey.UserRoles, this.onlineRoles)
   }
 
-  async setOfflineRoles(roles: string[]): Promise<void> {
+  setOfflineRoles(roles: string[]): void {
     const rolesChanged = !arraysEqual(this.offlineRoles, roles)
 
     this.offlineRoles = roles

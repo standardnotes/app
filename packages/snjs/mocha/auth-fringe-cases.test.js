@@ -27,7 +27,7 @@ describe('auth fringe cases', () => {
     localStorage.clear()
   })
 
-  const clearApplicationLocalStorage = function () {
+  const clearApplicationLocalStorageOfNonItems = function () {
     const keys = Object.keys(localStorage)
     for (const key of keys) {
       if (!key.toLowerCase().includes('item')) {
@@ -43,7 +43,7 @@ describe('auth fringe cases', () => {
       const context = await createContext()
       await context.application.register(context.email, context.password)
       const note = await Factory.createSyncedNote(context.application)
-      clearApplicationLocalStorage()
+      clearApplicationLocalStorageOfNonItems()
 
       console.warn("Expecting errors 'Unable to find operator for version undefined'")
 
@@ -58,7 +58,7 @@ describe('auth fringe cases', () => {
       const context = await createContext()
       await context.application.register(context.email, context.password)
       const note = await Factory.createSyncedNote(context.application)
-      clearApplicationLocalStorage()
+      clearApplicationLocalStorageOfNonItems()
       const restartedApplication = await Factory.restartApplication(context.application)
 
       console.warn(

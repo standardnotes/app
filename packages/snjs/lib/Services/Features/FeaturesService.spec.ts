@@ -178,7 +178,7 @@ describe('FeaturesService', () => {
       const mock = (featuresService['notifyEvent'] = jest.fn())
 
       const newRoles = [...roles, RoleName.NAMES.PlusUser]
-      await featuresService.setOnlineRoles(newRoles)
+      featuresService.setOnlineRoles(newRoles)
 
       expect(mock.mock.calls[0][0]).toEqual(FeaturesEvent.UserRolesChanged)
     })
@@ -305,7 +305,7 @@ describe('FeaturesService', () => {
       const featuresService = createService()
 
       featuresService.hasFirstPartyOfflineSubscription = jest.fn().mockReturnValue(true)
-      await featuresService.setOfflineRoles([RoleName.NAMES.CoreUser, RoleName.NAMES.PlusUser])
+      featuresService.setOfflineRoles([RoleName.NAMES.CoreUser, RoleName.NAMES.PlusUser])
 
       expect(featuresService.getFeatureStatus(FeatureIdentifier.MidnightTheme)).toBe(FeatureStatus.Entitled)
       expect(featuresService.getFeatureStatus(FeatureIdentifier.TokenVaultEditor)).toBe(FeatureStatus.Entitled)
