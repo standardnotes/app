@@ -1,11 +1,6 @@
 import Icon from '@/Components/Icon/Icon'
 import { FunctionComponent } from 'react'
-import {
-  UIFeature,
-  EditorFeatureDescription,
-  IframeComponentFeatureDescription,
-  SNNote,
-} from '@standardnotes/snjs'
+import { UIFeature, EditorFeatureDescription, IframeComponentFeatureDescription, SNNote } from '@standardnotes/snjs'
 import { NotesController } from '@/Controllers/NotesController/NotesController'
 import { iconClass } from './ClassNames'
 import MenuSwitchButtonItem from '../Menu/MenuSwitchButtonItem'

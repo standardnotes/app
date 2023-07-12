@@ -94,7 +94,7 @@ export class NoteViewController implements ItemViewControllerInterface {
     if (!this.item) {
       log(LoggingDomain.NoteView, 'Initializing as template note')
 
-      const editorIdentifier = this.application.geDefaultEditorIdentifier(this.defaultTag)
+      const editorIdentifier = this.application.componentManager.getDefaultEditorIdentifier(this.defaultTag)
 
       const noteType = noteTypeForEditorIdentifier(editorIdentifier)
 

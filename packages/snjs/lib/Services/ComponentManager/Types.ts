@@ -1,19 +1,7 @@
-import {
-  ComponentArea,
-  ComponentAction,
-  FeatureIdentifier,
-  LegacyFileSafeIdentifier,
-  ComponentPermission,
-} from '@standardnotes/features'
+import { ComponentArea, ComponentAction, FeatureIdentifier, LegacyFileSafeIdentifier } from '@standardnotes/features'
 import { ComponentMessage, MessageData, OutgoingItemMessagePayload } from '@standardnotes/models'
 import { UuidString } from '@Lib/Types/UuidString'
 import { ContentType } from '@standardnotes/domain-core'
-
-export type RunWithPermissionsCallback = (
-  componentUuid: UuidString,
-  requiredPermissions: ComponentPermission[],
-  runFunction: () => void,
-) => void
 
 export const ReadwriteActions = [
   ComponentAction.SaveItems,

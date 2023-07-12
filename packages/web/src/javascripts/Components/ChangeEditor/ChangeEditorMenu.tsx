@@ -83,10 +83,7 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
   )
 
   const selectComponent = useCallback(
-    async (
-      uiFeature: UIFeature<EditorFeatureDescription | IframeComponentFeatureDescription>,
-      note: SNNote,
-    ) => {
+    async (uiFeature: UIFeature<EditorFeatureDescription | IframeComponentFeatureDescription>, note: SNNote) => {
       if (uiFeature.isComponent && uiFeature.asComponent.conflictOf) {
         void application.changeAndSaveItem(uiFeature.asComponent, (mutator) => {
           mutator.conflictOf = undefined

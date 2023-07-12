@@ -66,7 +66,7 @@ const NewNotePreferences: FunctionComponent<Props> = ({
   const [customNoteTitleFormat, setCustomNoteTitleFormat] = useState('')
 
   const getGlobalEditorDefaultIdentifier = useCallback((): string => {
-    return application.geDefaultEditorIdentifier()
+    return application.componentManager.getDefaultEditorIdentifier()
   }, [application])
 
   const reloadPreferences = useCallback(() => {

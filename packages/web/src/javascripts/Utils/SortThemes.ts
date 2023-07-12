@@ -3,10 +3,7 @@ import { UIFeature, FeatureIdentifier, ThemeFeatureDescription } from '@standard
 const isDarkModeTheme = (theme: UIFeature<ThemeFeatureDescription>) =>
   theme.featureIdentifier === FeatureIdentifier.DarkTheme
 
-export const sortThemes = (
-  a: UIFeature<ThemeFeatureDescription>,
-  b: UIFeature<ThemeFeatureDescription>,
-) => {
+export const sortThemes = (a: UIFeature<ThemeFeatureDescription>, b: UIFeature<ThemeFeatureDescription>) => {
   const aIsLayerable = a.layerable
   const bIsLayerable = b.layerable
 

@@ -33,7 +33,7 @@ const ChangeEditorButton: FunctionComponent<Props> = ({
 
   const noteType = noteViewController?.isTemplateNote
     ? noteTypeForEditorIdentifier(
-        application.geDefaultEditorIdentifier(
+        application.componentManager.getDefaultEditorIdentifier(
           noteViewController.templateNoteOptions?.tag
             ? application.items.findItem(noteViewController.templateNoteOptions.tag)
             : undefined,

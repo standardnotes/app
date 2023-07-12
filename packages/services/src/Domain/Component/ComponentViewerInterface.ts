@@ -1,9 +1,4 @@
-import {
-  ActionObserver,
-  ComponentEventObserver,
-  ComponentMessage,
-  UIFeature,
-} from '@standardnotes/models'
+import { ActionObserver, ComponentEventObserver, ComponentMessage, UIFeature } from '@standardnotes/models'
 import { FeatureStatus } from '../Feature/FeatureStatus'
 import { ComponentViewerError } from './ComponentViewerError'
 import { IframeComponentFeatureDescription } from '@standardnotes/features'

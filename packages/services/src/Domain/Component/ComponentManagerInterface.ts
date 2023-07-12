@@ -3,17 +3,11 @@ import {
   ComponentArea,
   ComponentFeatureDescription,
   EditorFeatureDescription,
+  EditorIdentifier,
   IframeComponentFeatureDescription,
   ThemeFeatureDescription,
 } from '@standardnotes/features'
-import {
-  ActionObserver,
-  ComponentInterface,
-  UIFeature,
-  PermissionDialog,
-  SNNote,
-} from '@standardnotes/models'
-
+import { ActionObserver, ComponentInterface, UIFeature, PermissionDialog, SNNote, SNTag } from '@standardnotes/models'
 import { DesktopManagerInterface } from '../Device/DesktopManagerInterface'
 import { ComponentViewerInterface } from './ComponentViewerInterface'
 
@@ -21,7 +15,6 @@ export interface ComponentManagerInterface {
   urlForComponent(uiFeature: UIFeature<ComponentFeatureDescription>): string | undefined
   setDesktopManager(desktopManager: DesktopManagerInterface): void
   thirdPartyComponentsForArea(area: ComponentArea): ComponentInterface[]
-  editorForNote(note: SNNote): UIFeature<EditorFeatureDescription | IframeComponentFeatureDescription>
   doesEditorChangeRequireAlert(
     from: UIFeature<IframeComponentFeatureDescription | EditorFeatureDescription> | undefined,
     to: UIFeature<IframeComponentFeatureDescription | EditorFeatureDescription> | undefined,
@@ -35,7 +28,9 @@ export interface ComponentManagerInterface {
     urlOverride?: string,
   ): ComponentViewerInterface
   presentPermissionsDialog(_dialog: PermissionDialog): void
-  legacyGetDefaultEditor(): ComponentInterface | undefined
+
+  editorForNote(note: SNNote): UIFeature<EditorFeatureDescription | IframeComponentFeatureDescription>
+  getDefaultEditorIdentifier(currentTag?: SNTag): EditorIdentifier
 
   isThemeActive(theme: UIFeature<ThemeFeatureDescription>): boolean
   toggleTheme(theme: UIFeature<ThemeFeatureDescription>): Promise<void>

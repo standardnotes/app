@@ -1,9 +1,4 @@
-import {
-  UIFeature,
-  FeatureIdentifier,
-  FeatureStatus,
-  ThemeFeatureDescription,
-} from '@standardnotes/snjs'
+import { UIFeature, FeatureIdentifier, FeatureStatus, ThemeFeatureDescription } from '@standardnotes/snjs'
 import { FunctionComponent, MouseEventHandler, useCallback, useMemo } from 'react'
 import Icon from '@/Components/Icon/Icon'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'

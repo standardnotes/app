@@ -1,10 +1,7 @@
-import { AllowedBatchStreaming } from './Types'
 import { SNFeaturesService } from '@Lib/Services/Features/FeaturesService'
 import { ContentType } from '@standardnotes/domain-core'
 import {
   ActionObserver,
-  SNNote,
-  ComponentMutator,
   PayloadEmitSource,
   PermissionDialog,
   Environment,
@@ -16,26 +13,21 @@ import {
   ThemeInterface,
   ComponentPreferencesEntry,
   AllComponentPreferences,
+  SNNote,
+  SNTag,
 } from '@standardnotes/models'
 import {
   ComponentArea,
-  ComponentAction,
-  ComponentPermission,
   FindNativeFeature,
-  NoteType,
   FeatureIdentifier,
   EditorFeatureDescription,
-  GetIframeAndNativeEditors,
   FindNativeTheme,
-  UIFeatureDescriptionTypes,
   IframeComponentFeatureDescription,
-  GetPlainNoteFeature,
-  GetSuperNoteFeature,
   ComponentFeatureDescription,
   ThemeFeatureDescription,
+  EditorIdentifier,
 } from '@standardnotes/features'
-import { Copy, filterFromArray, removeFromArray, sleep, uniqueArray, isNotUndefined } from '@standardnotes/utils'
-import { AllowedBatchContentTypes } from '@Lib/Services/ComponentManager/Types'
+import { Copy, removeFromArray, sleep, isNotUndefined } from '@standardnotes/utils'
 import { ComponentViewer } from '@Lib/Services/ComponentManager/ComponentViewer'
 import {
   AbstractService,
@@ -54,10 +46,13 @@ import {
   SyncServiceInterface,
   FeatureStatus,
 } from '@standardnotes/services'
-import { permissionsStringForPermissions } from './permissionsStringForPermissions'
 import { GetFeatureUrlUseCase } from './UseCase/GetFeatureUrl'
 import { ComponentManagerEventData } from './ComponentManagerEventData'
 import { ComponentManagerEvent } from './ComponentManagerEvent'
+import { RunWithPermissionsUseCase } from './UseCase/RunWithPermissionsUseCase'
+import { EditorForNoteUseCase } from './UseCase/EditorForNote'
+import { GetDefaultEditorIdentifierUseCase } from './UseCase/GetDefaultEditorIdentifier'
+import { DoesEditorChangeRequireAlertUseCase } from './UseCase/DoesEditorChangeRequireAlert'
 
 declare global {
   interface Window {
@@ -79,7 +74,13 @@ export class SNComponentManager
   private desktopManager?: DesktopManagerInterface
   private viewers: ComponentViewerInterface[] = []
   private removeItemObserver!: () => void
-  private permissionDialogs: PermissionDialog[] = []
+  private runWithPermissionsUseCase = new RunWithPermissionsUseCase(
+    this.presentPermissionsDialog,
+    this.alerts,
+    this.mutator,
+    this.sync,
+    this.items,
+  )
 
   constructor(
     private items: ItemManagerInterface,
@@ -142,7 +143,7 @@ export class SNComponentManager
     }
 
     this.viewers.length = 0
-    this.permissionDialogs.length = 0
+    this.runWithPermissionsUseCase.deinit()
 
     this.desktopManager = undefined
     ;(this.items as unknown) = undefined
@@ -188,7 +189,7 @@ export class SNComponentManager
         environment: this.environment,
         platform: this.platform,
         componentManagerFunctions: {
-          runWithPermissions: this.runWithPermissions.bind(this),
+          runWithPermissionsUseCase: this.runWithPermissionsUseCase,
           urlsForActiveThemes: this.urlsForActiveThemes.bind(this),
           setComponentPreferences: this.setComponentPreferences.bind(this),
           getComponentPreferences: this.getComponentPreferences.bind(this),
@@ -266,11 +267,10 @@ export class SNComponentManager
     for (const iframe of activeIframes) {
       if (document.activeElement === iframe) {
         setTimeout(() => {
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           const viewer = this.findComponentViewer(
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            iframe.dataset.componentViewerId!,
-          )!
+            iframe.dataset.componentViewerId as string,
+          ) as ComponentViewerInterface
+
           void this.notifyEvent(ComponentManagerEvent.ViewerDidFocus, {
             componentViewer: viewer,
           })
@@ -283,6 +283,7 @@ export class SNComponentManager
   onWindowMessage = (event: MessageEvent): void => {
     /** Make sure this message is for us */
     const data = event.data as ComponentMessage
+
     if (data.sessionKey) {
       this.log('Component manager received message', data)
       this.componentViewerForSessionKey(data.sessionKey)?.handleMessage(data)
@@ -323,215 +324,14 @@ export class SNComponentManager
     return urls
   }
 
-  private findComponent(uuid: string): ComponentInterface | undefined {
-    return this.items.findItem<ComponentInterface>(uuid)
-  }
-
-  private findUIFeature(identifier: string): UIFeature<ComponentFeatureDescription> | undefined {
-    const nativeFeature = FindNativeFeature<ComponentFeatureDescription>(identifier as FeatureIdentifier)
-    if (nativeFeature) {
-      return new UIFeature(nativeFeature)
-    }
-
-    const componentItem = this.items.findItem<ComponentInterface>(identifier)
-    if (componentItem) {
-      return new UIFeature<ComponentFeatureDescription>(componentItem)
-    }
-
-    return undefined
-  }
-
-  findComponentViewer(identifier: string): ComponentViewerInterface | undefined {
+  private findComponentViewer(identifier: string): ComponentViewerInterface | undefined {
     return this.viewers.find((viewer) => viewer.identifier === identifier)
   }
 
-  componentViewerForSessionKey(key: string): ComponentViewerInterface | undefined {
+  private componentViewerForSessionKey(key: string): ComponentViewerInterface | undefined {
     return this.viewers.find((viewer) => viewer.sessionKey === key)
   }
 
-  areRequestedPermissionsValid(
-    uiFeature: UIFeature<ComponentFeatureDescription>,
-    permissions: ComponentPermission[],
-  ): boolean {
-    for (const permission of permissions) {
-      if (permission.name === ComponentAction.StreamItems) {
-        if (!AllowedBatchStreaming.includes(uiFeature.featureIdentifier)) {
-          return false
-        }
-        const hasNonAllowedBatchPermission = permission.content_types?.some(
-          (type) => !AllowedBatchContentTypes.includes(type),
-        )
-        if (hasNonAllowedBatchPermission) {
-          return false
-        }
-      }
-    }
-
-    return true
-  }
-
-  runWithPermissions(
-    componentIdentifier: string,
-    requiredPermissions: ComponentPermission[],
-    runFunction: () => void,
-  ): void {
-    const uiFeature = this.findUIFeature(componentIdentifier)
-
-    if (!uiFeature) {
-      void this.alerts.alert(
-        `Unable to find component with ID ${componentIdentifier}. Please restart the app and try again.`,
-        'An unexpected error occurred',
-      )
-
-      return
-    }
-
-    if (uiFeature.isFeatureDescription) {
-      runFunction()
-      return
-    }
-
-    if (!this.areRequestedPermissionsValid(uiFeature, requiredPermissions)) {
-      console.error('Component is requesting invalid permissions', componentIdentifier, requiredPermissions)
-      return
-    }
-
-    const acquiredPermissions = uiFeature.acquiredPermissions
-
-    /* Make copy as not to mutate input values */
-    requiredPermissions = Copy(requiredPermissions) as ComponentPermission[]
-    for (const required of requiredPermissions.slice()) {
-      /* Remove anything we already have */
-      const respectiveAcquired = acquiredPermissions.find((candidate) => candidate.name === required.name)
-      if (!respectiveAcquired) {
-        continue
-      }
-      /* We now match on name, lets substract from required.content_types anything we have in acquired. */
-      const requiredContentTypes = required.content_types
-      if (!requiredContentTypes) {
-        /* If this permission does not require any content types (i.e stream-context-item)
-          then we can remove this from required since we match by name (respectiveAcquired.name === required.name) */
-        filterFromArray(requiredPermissions, required)
-        continue
-      }
-      for (const acquiredContentType of respectiveAcquired.content_types as string[]) {
-        removeFromArray(requiredContentTypes, acquiredContentType)
-      }
-      if (requiredContentTypes.length === 0) {
-        /* We've removed all acquired and end up with zero, means we already have all these permissions */
-        filterFromArray(requiredPermissions, required)
-      }
-    }
-    if (requiredPermissions.length > 0) {
-      this.promptForPermissionsWithDeferredRendering(
-        uiFeature.asComponent,
-        requiredPermissions,
-        // eslint-disable-next-line @typescript-eslint/require-await
-        async (approved) => {
-          if (approved) {
-            runFunction()
-          }
-        },
-      )
-    } else {
-      runFunction()
-    }
-  }
-
-  promptForPermissionsWithDeferredRendering(
-    component: ComponentInterface,
-    permissions: ComponentPermission[],
-    callback: (approved: boolean) => Promise<void>,
-  ): void {
-    setTimeout(() => {
-      this.promptForPermissions(component, permissions, callback)
-    })
-  }
-
-  promptForPermissions(
-    component: ComponentInterface,
-    permissions: ComponentPermission[],
-    callback: (approved: boolean) => Promise<void>,
-  ): void {
-    const params: PermissionDialog = {
-      component: component,
-      permissions: permissions,
-      permissionsString: permissionsStringForPermissions(permissions, component),
-      actionBlock: callback,
-      callback: async (approved: boolean) => {
-        const latestComponent = this.findComponent(component.uuid)
-
-        if (!latestComponent) {
-          return
-        }
-
-        if (approved) {
-          this.log('Changing component to expand permissions', component)
-          const componentPermissions = Copy(latestComponent.permissions) as ComponentPermission[]
-          for (const permission of permissions) {
-            const matchingPermission = componentPermissions.find((candidate) => candidate.name === permission.name)
-            if (!matchingPermission) {
-              componentPermissions.push(permission)
-            } else {
-              /* Permission already exists, but content_types may have been expanded */
-              const contentTypes = matchingPermission.content_types || []
-              matchingPermission.content_types = uniqueArray(contentTypes.concat(permission.content_types as string[]))
-            }
-          }
-
-          await this.mutator.changeItem(component, (m) => {
-            const mutator = m as ComponentMutator
-            mutator.permissions = componentPermissions
-          })
-
-          void this.sync.sync()
-        }
-
-        this.permissionDialogs = this.permissionDialogs.filter((pendingDialog) => {
-          /* Remove self */
-          if (pendingDialog === params) {
-            pendingDialog.actionBlock && pendingDialog.actionBlock(approved)
-            return false
-          }
-          const containsObjectSubset = (source: ComponentPermission[], target: ComponentPermission[]) => {
-            return !target.some((val) => !source.find((candidate) => JSON.stringify(candidate) === JSON.stringify(val)))
-          }
-          if (pendingDialog.component === component) {
-            /* remove pending dialogs that are encapsulated by already approved permissions, and run its function */
-            if (
-              pendingDialog.permissions === permissions ||
-              containsObjectSubset(permissions, pendingDialog.permissions)
-            ) {
-              /* If approved, run the action block. Otherwise, if canceled, cancel any
-              pending ones as well, since the user was explicit in their intentions */
-              if (approved) {
-                pendingDialog.actionBlock && pendingDialog.actionBlock(approved)
-              }
-              return false
-            }
-          }
-          return true
-        })
-
-        if (this.permissionDialogs.length > 0) {
-          this.presentPermissionsDialog(this.permissionDialogs[0])
-        }
-      },
-    }
-    /**
-     * Since these calls are asyncronous, multiple dialogs may be requested at the same time.
-     * We only want to present one and trigger all callbacks based on one modal result
-     */
-    const existingDialog = this.permissionDialogs.find((dialog) => dialog.component === component)
-    this.permissionDialogs.push(params)
-    if (!existingDialog) {
-      this.presentPermissionsDialog(params)
-    } else {
-      this.log('Existing dialog, not presenting.')
-    }
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   presentPermissionsDialog(_dialog: PermissionDialog): void {
     throw 'Must override SNComponentManager.presentPermissionsDialog'
   }
@@ -612,104 +412,22 @@ export class SNComponentManager
     return viewer.getIframe()
   }
 
-  componentOrNativeFeatureForIdentifier<F extends UIFeatureDescriptionTypes>(
-    identifier: FeatureIdentifier | string,
-  ): UIFeature<F> | undefined {
-    const nativeFeature = FindNativeFeature<F>(identifier as FeatureIdentifier)
-    if (nativeFeature) {
-      return new UIFeature(nativeFeature)
-    }
-
-    const component = this.thirdPartyComponents.find((component) => {
-      return component.identifier === identifier
-    })
-    if (component) {
-      return new UIFeature<F>(component)
-    }
-
-    return undefined
-  }
-
   editorForNote(note: SNNote): UIFeature<EditorFeatureDescription | IframeComponentFeatureDescription> {
-    if (note.noteType === NoteType.Plain) {
-      return new UIFeature(GetPlainNoteFeature())
-    }
-
-    if (note.noteType === NoteType.Super) {
-      return new UIFeature(GetSuperNoteFeature())
-    }
-
-    if (note.editorIdentifier) {
-      const result = this.componentOrNativeFeatureForIdentifier<
-        EditorFeatureDescription | IframeComponentFeatureDescription
-      >(note.editorIdentifier)
-      if (result) {
-        return result
-      }
-    }
-
-    if (note.noteType && note.noteType !== NoteType.Unknown) {
-      const result = this.nativeEditorForNoteType(note.noteType)
-      if (result) {
-        return new UIFeature(result)
-      }
-    }
-
-    const legacyResult = this.legacyGetEditorForNote(note)
-    if (legacyResult) {
-      return new UIFeature<IframeComponentFeatureDescription>(legacyResult)
-    }
-
-    return new UIFeature(GetPlainNoteFeature())
+    const usecase = new EditorForNoteUseCase(this.items)
+    return usecase.execute(note)
   }
 
-  private nativeEditorForNoteType(noteType: NoteType): EditorFeatureDescription | undefined {
-    const nativeEditors = GetIframeAndNativeEditors()
-    return nativeEditors.find((editor) => editor.note_type === noteType)
-  }
-
-  /**
-   * Uses legacy approach of note/editor association. New method uses note.editorIdentifier and note.noteType directly.
-   */
-  private legacyGetEditorForNote(note: SNNote): ComponentInterface | undefined {
-    const editors = this.thirdPartyComponentsForArea(ComponentArea.Editor)
-    for (const editor of editors) {
-      if (editor.isExplicitlyEnabledForItem(note.uuid)) {
-        return editor
-      }
-    }
-    const defaultEditor = this.legacyGetDefaultEditor()
-
-    if (defaultEditor && !defaultEditor.isExplicitlyDisabledForItem(note.uuid)) {
-      return defaultEditor
-    } else {
-      return undefined
-    }
-  }
-
-  legacyGetDefaultEditor(): ComponentInterface | undefined {
-    const editors = this.thirdPartyComponentsForArea(ComponentArea.Editor)
-    return editors.filter((e) => e.legacyIsDefaultEditor())[0]
+  getDefaultEditorIdentifier(currentTag?: SNTag): EditorIdentifier {
+    const usecase = new GetDefaultEditorIdentifierUseCase(this.preferences, this.items)
+    return usecase.execute(currentTag)
   }
 
   doesEditorChangeRequireAlert(
     from: UIFeature<IframeComponentFeatureDescription | EditorFeatureDescription> | undefined,
     to: UIFeature<IframeComponentFeatureDescription | EditorFeatureDescription> | undefined,
   ): boolean {
-    if (!from || !to) {
-      return false
-    }
-
-    const fromFileType = from.fileType
-    const toFileType = to.fileType
-    const isEitherMarkdown = fromFileType === 'md' || toFileType === 'md'
-    const areBothHtml = fromFileType === 'html' && toFileType === 'html'
-
-    if (isEitherMarkdown || areBothHtml) {
-      return false
-    } else {
-      return true
-    }
+    const usecase = new DoesEditorChangeRequireAlertUseCase()
+    return usecase.execute(from, to)
   }
 
   async showEditorChangeAlert(): Promise<boolean> {
