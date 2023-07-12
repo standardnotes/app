@@ -8,8 +8,7 @@ import {
   isString,
 } from '@standardnotes/utils'
 import { ClientDisplayableError, isErrorResponse } from '@standardnotes/responses'
-import { ContentType } from '@standardnotes/common'
-import { RoleName } from '@standardnotes/domain-core'
+import { ContentType, RoleName } from '@standardnotes/domain-core'
 import { FillItemContent, PayloadEmitSource } from '@standardnotes/models'
 import { ItemManager } from '../Items/ItemManager'
 import { LEGACY_PROD_EXT_ORIGIN, PROD_OFFLINE_FEATURES_URL } from '../../Hosts'
@@ -96,7 +95,7 @@ export class SNFeaturesService
     })
 
     this.removefeatureReposObserver = this.itemManager.addObserver(
-      ContentType.ExtensionRepo,
+      ContentType.TYPES.ExtensionRepo,
       async ({ changed, inserted, source }) => {
         const sources = [
           PayloadEmitSource.InitialObserverRegistrationPush,
@@ -119,7 +118,7 @@ export class SNFeaturesService
 
     this.removeSignInObserver = this.userService.addEventObserver((eventName: AccountEvent) => {
       if (eventName === AccountEvent.SignedInOrRegistered) {
-        const featureRepos = this.itemManager.getItems(ContentType.ExtensionRepo) as Models.SNFeatureRepo[]
+        const featureRepos = this.itemManager.getItems(ContentType.TYPES.ExtensionRepo) as Models.SNFeatureRepo[]
 
         if (!this.apiService.isThirdPartyHostUsed()) {
           void this.migrateFeatureRepoToUserSetting(featureRepos)
@@ -179,7 +178,10 @@ export class SNFeaturesService
 
   private async mapClientControlledFeaturesToItems() {
     const clientFeatures = FeaturesImports.GetFeatures().filter((feature) => feature.clientControlled)
-    const currentItems = this.itemManager.getItems<Models.SNComponent>([ContentType.Component, ContentType.Theme])
+    const currentItems = this.itemManager.getItems<Models.SNComponent>([
+      ContentType.TYPES.Component,
+      ContentType.TYPES.Theme,
+    ])
 
     for (const feature of clientFeatures) {
       if (!feature.content_type) {
@@ -226,7 +228,7 @@ export class SNFeaturesService
     void this.storageService.setValue(StorageKey.ExperimentalFeatures, this.enabledExperimentalFeatures)
 
     const component = this.itemManager
-      .getItems<Models.SNComponent | Models.SNTheme>([ContentType.Component, ContentType.Theme])
+      .getItems<Models.SNComponent | Models.SNTheme>([ContentType.TYPES.Component, ContentType.TYPES.Theme])
       .find((component) => component.identifier === identifier)
     if (!component) {
       return
@@ -273,7 +275,7 @@ export class SNFeaturesService
       }
 
       const offlineRepo = (await this.mutator.createItem(
-        ContentType.ExtensionRepo,
+        ContentType.TYPES.ExtensionRepo,
         FillItemContent({
           offlineFeaturesUrl: result.featuresUrl,
           offlineKey: result.extensionKey,
@@ -289,7 +291,7 @@ export class SNFeaturesService
   }
 
   private getOfflineRepo(): Models.SNFeatureRepo | undefined {
-    const repos = this.itemManager.getItems(ContentType.ExtensionRepo) as Models.SNFeatureRepo[]
+    const repos = this.itemManager.getItems(ContentType.TYPES.ExtensionRepo) as Models.SNFeatureRepo[]
     return repos.filter((repo) => repo.migratedToOfflineEntitlements)[0]
   }
 
@@ -638,7 +640,10 @@ export class SNFeaturesService
   }
 
   private async mapRemoteNativeFeaturesToItems(features: FeaturesImports.FeatureDescription[]): Promise<void> {
-    const currentItems = this.itemManager.getItems<Models.SNComponent>([ContentType.Component, ContentType.Theme])
+    const currentItems = this.itemManager.getItems<Models.SNComponent>([
+      ContentType.TYPES.Component,
+      ContentType.TYPES.Theme,
+    ])
     const itemsToDelete: Models.SNComponent[] = []
     let hasChanges = false
 
@@ -715,7 +720,7 @@ export class SNFeaturesService
       } else {
         resultingItem = existingItem
       }
-    } else if (!expired || feature.content_type === ContentType.Component) {
+    } else if (!expired || feature.content_type === ContentType.TYPES.Component) {
       resultingItem = (await this.mutator.createItem(
         feature.content_type,
         this.componentContentForNativeFeatureDescription(feature),
@@ -725,7 +730,7 @@ export class SNFeaturesService
     }
 
     if (expired && resultingItem) {
-      if (feature.content_type !== ContentType.Component) {
+      if (feature.content_type !== ContentType.TYPES.Component) {
         itemsToDelete.push(resultingItem)
         hasChanges = true
       }
@@ -786,10 +791,10 @@ export class SNFeaturesService
     }
 
     const isValidContentType = [
-      ContentType.Component,
-      ContentType.Theme,
-      ContentType.ActionsExtension,
-      ContentType.ExtensionRepo,
+      ContentType.TYPES.Component,
+      ContentType.TYPES.Theme,
+      ContentType.TYPES.ActionsExtension,
+      ContentType.TYPES.ExtensionRepo,
     ].includes(rawFeature.content_type)
 
     if (!isValidContentType) {

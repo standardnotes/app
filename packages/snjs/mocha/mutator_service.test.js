@@ -28,7 +28,7 @@ describe('mutator service', function () {
   })
 
   const createNote = async () => {
-    return mutator.createItem(ContentType.Note, {
+    return mutator.createItem(ContentType.TYPES.Note, {
       title: 'hello',
       text: 'world',
     })
@@ -41,7 +41,7 @@ describe('mutator service', function () {
         content_type: note.content_type,
       }
     })
-    return mutator.createItem(ContentType.Tag, {
+    return mutator.createItem(ContentType.TYPES.Tag, {
       title: 'thoughts',
       references: references,
     })
@@ -127,7 +127,7 @@ describe('mutator service', function () {
   })
 
   it('change non-existant item through uuid should fail', async function () {
-    const note = await application.items.createTemplateItem(ContentType.Note, {
+    const note = await application.items.createTemplateItem(ContentType.TYPES.Note, {
       title: 'hello',
       text: 'world',
     })
@@ -219,7 +219,7 @@ describe('mutator service', function () {
     })
 
     it('duplicates item with additional content', async function () {
-      const note = await mutator.createItem(ContentType.Note, {
+      const note = await mutator.createItem(ContentType.TYPES.Note, {
         title: 'hello',
         text: 'world',
       })

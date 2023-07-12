@@ -106,7 +106,7 @@ describe('backups', function () {
   it('backup file item should have correct fields', async function () {
     await Factory.createSyncedNote(this.application)
     let backupData = await this.application.createDecryptedBackupFile()
-    let rawItem = backupData.items.find((i) => i.content_type === ContentType.Note)
+    let rawItem = backupData.items.find((i) => i.content_type === ContentType.TYPES.Note)
 
     expect(rawItem.fields).to.not.be.ok
     expect(rawItem.source).to.not.be.ok
@@ -125,7 +125,7 @@ describe('backups', function () {
     })
 
     backupData = await this.application.createEncryptedBackupFileForAutomatedDesktopBackups()
-    rawItem = backupData.items.find((i) => i.content_type === ContentType.Note)
+    rawItem = backupData.items.find((i) => i.content_type === ContentType.TYPES.Note)
 
     expect(rawItem.fields).to.not.be.ok
     expect(rawItem.source).to.not.be.ok
@@ -195,21 +195,21 @@ describe('backups', function () {
 
   it('decrypted backup file should not have itemsKeys', async function () {
     const backup = await this.application.createDecryptedBackupFile()
-    expect(backup.items.some((item) => item.content_type === ContentType.ItemsKey)).to.be.false
+    expect(backup.items.some((item) => item.content_type === ContentType.TYPES.ItemsKey)).to.be.false
   })
 
   it('encrypted backup file should have itemsKeys', async function () {
     await this.application.addPasscode('passcode')
     const backup = await this.application.createEncryptedBackupFileForAutomatedDesktopBackups()
-    expect(backup.items.some((item) => item.content_type === ContentType.ItemsKey)).to.be.true
+    expect(backup.items.some((item) => item.content_type === ContentType.TYPES.ItemsKey)).to.be.true
   })
 
   it('backup file with no account and no passcode should be decrypted', async function () {
     const note = await Factory.createSyncedNote(this.application)
     const backup = await this.application.createDecryptedBackupFile()
     expect(backup).to.not.haveOwnProperty('keyParams')
-    expect(backup.items.some((item) => item.content_type === ContentType.ItemsKey)).to.be.false
-    expect(backup.items.find((item) => item.content_type === ContentType.Note).uuid).to.equal(note.uuid)
+    expect(backup.items.some((item) => item.content_type === ContentType.TYPES.ItemsKey)).to.be.false
+    expect(backup.items.find((item) => item.content_type === ContentType.TYPES.Note).uuid).to.equal(note.uuid)
     let error
     try {
       await this.application.createEncryptedBackupFileForAutomatedDesktopBackups()

@@ -1,4 +1,5 @@
-import { ContentType, ProtocolVersion } from '@standardnotes/common'
+import { ProtocolVersion } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/domain-core'
 import {
   ConflictStrategy,
   DecryptedItem,
@@ -10,7 +11,7 @@ import {
 } from '@standardnotes/models'
 
 export function isKeySystemItemsKey(x: unknown): x is KeySystemItemsKeyInterface {
-  return (x as KeySystemItemsKeyInterface).content_type === ContentType.KeySystemItemsKey
+  return (x as KeySystemItemsKeyInterface).content_type === ContentType.TYPES.KeySystemItemsKey
 }
 
 /**

@@ -12,7 +12,7 @@ describe('file', () => {
     return new FileItem(
       new DecryptedPayload<FileContent>({
         uuid: '123',
-        content_type: ContentType.File,
+        content_type: ContentType.TYPES.File,
         content: FillItemContent<FileContent>({
           name: 'name.png',
           key: 'secret',

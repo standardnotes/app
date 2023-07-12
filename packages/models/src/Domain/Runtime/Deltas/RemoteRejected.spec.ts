@@ -15,7 +15,7 @@ describe('remote rejected delta', () => {
     const baseCollection = new PayloadCollection()
     const basePayload = new DecryptedPayload<NoteContent>({
       uuid: '123',
-      content_type: ContentType.Note,
+      content_type: ContentType.TYPES.Note,
       dirty: true,
       content: FillItemContent<NoteContent>({
         title: 'foo',

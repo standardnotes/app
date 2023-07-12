@@ -1,5 +1,4 @@
 import { SNUserPrefs, PrefKey, PrefValue, UserPrefsMutator, ItemContent, FillItemContent } from '@standardnotes/models'
-import { ContentType } from '@standardnotes/common'
 import { ItemManager } from '../Items/ItemManager'
 import { SNSingletonManager } from '../Singleton/SingletonManager'
 import { SNSyncService } from '../Sync/SyncService'
@@ -12,6 +11,7 @@ import {
   PreferencesServiceEvent,
   MutatorClientInterface,
 } from '@standardnotes/services'
+import { ContentType } from '@standardnotes/domain-core'
 
 export class SNPreferencesService
   extends AbstractService<PreferencesServiceEvent>
@@ -32,7 +32,7 @@ export class SNPreferencesService
   ) {
     super(internalEventBus)
 
-    this.removeItemObserver = itemManager.addObserver(ContentType.UserPrefs, () => {
+    this.removeItemObserver = itemManager.addObserver(ContentType.TYPES.UserPrefs, () => {
       this.shouldReload = true
     })
 
@@ -58,7 +58,7 @@ export class SNPreferencesService
     if (stage === ApplicationStage.LoadedDatabase_12) {
       /** Try to read preferences singleton from storage */
       this.preferences = this.singletonManager.findSingleton<SNUserPrefs>(
-        ContentType.UserPrefs,
+        ContentType.TYPES.UserPrefs,
         SNUserPrefs.singletonPredicate,
       )
 
@@ -99,7 +99,7 @@ export class SNPreferencesService
       const previousRef = this.preferences
 
       this.preferences = await this.singletonManager.findOrCreateContentTypeSingleton<ItemContent, SNUserPrefs>(
-        ContentType.UserPrefs,
+        ContentType.TYPES.UserPrefs,
         FillItemContent({}),
       )
 

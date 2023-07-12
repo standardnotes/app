@@ -14,7 +14,7 @@ const create = (title: string, references: ContentReference[] = []): SNTag => {
     new DecryptedPayload(
       {
         uuid: randUuid(),
-        content_type: ContentType.Tag,
+        content_type: ContentType.TYPES.Tag,
         content: FillItemContent({
           title,
           references,
@@ -31,9 +31,9 @@ const create = (title: string, references: ContentReference[] = []): SNTag => {
 describe('SNTag Tests', () => {
   it('should count notes in the basic case', () => {
     const tag = create('helloworld', [
-      { uuid: randUuid(), content_type: ContentType.Note },
-      { uuid: randUuid(), content_type: ContentType.Note },
-      { uuid: randUuid(), content_type: ContentType.Tag },
+      { uuid: randUuid(), content_type: ContentType.TYPES.Note },
+      { uuid: randUuid(), content_type: ContentType.TYPES.Note },
+      { uuid: randUuid(), content_type: ContentType.TYPES.Tag },
     ])
 
     expect(tag.noteCount).toEqual(2)

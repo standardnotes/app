@@ -91,8 +91,8 @@ export class ImportModalController {
     try {
       await this.importer.importFromTransferPayloads(payloads)
 
-      const notesImported = payloads.filter((payload) => payload.content_type === ContentType.Note)
-      const tagsImported = payloads.filter((payload) => payload.content_type === ContentType.Tag)
+      const notesImported = payloads.filter((payload) => payload.content_type === ContentType.TYPES.Note)
+      const tagsImported = payloads.filter((payload) => payload.content_type === ContentType.TYPES.Tag)
 
       const successMessage =
         `Successfully imported ${notesImported.length} ` +
@@ -149,14 +149,14 @@ export class ImportModalController {
       }
     }
     const currentDate = new Date()
-    const importTagItem = this.application.items.createTemplateItem<TagContent, SNTag>(ContentType.Tag, {
+    const importTagItem = this.application.items.createTemplateItem<TagContent, SNTag>(ContentType.TYPES.Tag, {
       title: `Imported on ${currentDate.toLocaleString()}`,
       expanded: false,
       iconString: '',
       references: importedPayloads
-        .filter((payload) => payload.content_type === ContentType.Note)
+        .filter((payload) => payload.content_type === ContentType.TYPES.Note)
         .map((payload) => ({
-          content_type: ContentType.Note,
+          content_type: ContentType.TYPES.Note,
           uuid: payload.uuid,
         })),
     })

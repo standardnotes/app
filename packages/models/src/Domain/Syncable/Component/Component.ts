@@ -1,5 +1,4 @@
 import { isValidUrl } from '@standardnotes/utils'
-import { ContentType } from '@standardnotes/common'
 import {
   FeatureIdentifier,
   ThirdPartyFeatureDescription,
@@ -20,11 +19,12 @@ import { Predicate } from '../../Runtime/Predicate/Predicate'
 import { ItemInterface } from '../../Abstract/Item/Interfaces/ItemInterface'
 import { DecryptedItemInterface } from './../../Abstract/Item/Interfaces/DecryptedItem'
 import { ComponentPackageInfo } from './PackageInfo'
+import { ContentType } from '@standardnotes/domain-core'
 
-export const isComponent = (x: ItemInterface): x is SNComponent => x.content_type === ContentType.Component
+export const isComponent = (x: ItemInterface): x is SNComponent => x.content_type === ContentType.TYPES.Component
 
 export const isComponentOrTheme = (x: ItemInterface): x is SNComponent =>
-  x.content_type === ContentType.Component || x.content_type === ContentType.Theme
+  x.content_type === ContentType.TYPES.Component || x.content_type === ContentType.TYPES.Theme
 
 /**
  * Components are mostly iframe based extensions that communicate with the SN parent
@@ -111,7 +111,7 @@ export class SNComponent extends DecryptedItem<ComponentContent> implements Comp
   }
 
   public isTheme(): boolean {
-    return this.content_type === ContentType.Theme || this.area === ComponentArea.Themes
+    return this.content_type === ContentType.TYPES.Theme || this.area === ComponentArea.Themes
   }
 
   /** @deprecated Use global application PrefKey.DefaultEditorIdentifier */

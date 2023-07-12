@@ -9,7 +9,6 @@ import {
   NoteContent,
   PayloadTimestampDefaults,
 } from '@standardnotes/models'
-import { ContentType } from '@standardnotes/common'
 import { EncryptionProviderInterface } from '@standardnotes/encryption'
 
 import { GetRevisionDTO } from './GetRevisionDTO'
@@ -51,7 +50,7 @@ export class GetRevision implements UseCaseInterface<HistoryEntry> {
       enc_item_key: revision.enc_item_key as string,
       items_key_id: revision.items_key_id as string,
       auth_hash: revision.auth_hash as string,
-      content_type: revision.content_type as ContentType,
+      content_type: revision.content_type,
       updated_at: new Date(revision.updated_at),
       created_at: new Date(revision.created_at),
       key_system_identifier: revision.key_system_identifier ?? undefined,

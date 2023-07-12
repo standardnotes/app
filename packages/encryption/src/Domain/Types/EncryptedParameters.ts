@@ -1,11 +1,11 @@
-import { ContentType, ProtocolVersion } from '@standardnotes/common'
+import { ProtocolVersion } from '@standardnotes/common'
 import { EncryptedPayloadInterface, DecryptedPayloadInterface, PersistentSignatureData } from '@standardnotes/models'
 import { DecryptedParameters } from './DecryptedParameters'
 
 export type EncryptedOutputParameters = {
   uuid: string
   content: string
-  content_type: ContentType
+  content_type: string
   items_key_id: string | undefined
   enc_item_key: string
   version: ProtocolVersion

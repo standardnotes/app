@@ -9,7 +9,7 @@ describe('item mutator', () => {
     this.createBarePayload = () => {
       return new DecryptedPayload({
         uuid: '123',
-        content_type: ContentType.Note,
+        content_type: ContentType.TYPES.Note,
         content: {
           title: 'hello',
         },
@@ -30,7 +30,7 @@ describe('item mutator', () => {
       return new SNTag(
         new DecryptedPayload({
           uuid: Factory.generateUuidish(),
-          content_type: ContentType.Tag,
+          content_type: ContentType.TYPES.Tag,
           content: {
             title: 'thoughts',
             references: references,

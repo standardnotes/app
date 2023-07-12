@@ -1,5 +1,4 @@
 import { removeFromArray } from '@standardnotes/utils'
-import { ContentType } from '@standardnotes/common'
 import { isTag, SNTag } from '../../../Syncable/Tag/Tag'
 import { SNIndex } from '../../Index/SNIndex'
 import { ItemCollection } from './ItemCollection'
@@ -13,6 +12,7 @@ import { HiddenContentCriteriaValidator } from '../../Display/Validator/HiddenCo
 import { CustomFilterCriteriaValidator } from '../../Display/Validator/CustomFilterCriteriaValidator'
 import { AnyDisplayOptions, VaultDisplayOptions } from '../../Display'
 import { isExclusioanaryOptionsValue } from '../../Display/VaultDisplayOptionsTypes'
+import { ContentType } from '@standardnotes/domain-core'
 
 type AllNotesUuidSignifier = undefined
 export type TagItemCountChangeObserver = (tagUuid: string | AllNotesUuidSignifier) => void
@@ -20,7 +20,7 @@ export type TagItemCountChangeObserver = (tagUuid: string | AllNotesUuidSignifie
 export class ItemCounter implements SNIndex {
   private tagToItemsMap: Partial<Record<string, Set<string>>> = {}
   private allCountableItems = new Set<string>()
-  private countableItemsByType = new Map<ContentType, Set<string>>()
+  private countableItemsByType = new Map<string, Set<string>>()
   private displayOptions?: AnyDisplayOptions
   private vaultDisplayOptions?: VaultDisplayOptions
 
@@ -50,11 +50,11 @@ export class ItemCounter implements SNIndex {
   }
 
   public allCountableNotesCount(): number {
-    return this.countableItemsByType.get(ContentType.Note)?.size || 0
+    return this.countableItemsByType.get(ContentType.TYPES.Note)?.size || 0
   }
 
   public allCountableFilesCount(): number {
-    return this.countableItemsByType.get(ContentType.File)?.size || 0
+    return this.countableItemsByType.get(ContentType.TYPES.File)?.size || 0
   }
 
   public countableItemsForTag(tag: SNTag): number {
@@ -63,7 +63,7 @@ export class ItemCounter implements SNIndex {
 
   public onChange(delta: ItemDelta): void {
     const items = [...delta.changed, ...delta.inserted, ...delta.discarded].filter(
-      (i) => i.content_type === ContentType.Note || i.content_type === ContentType.File,
+      (i) => i.content_type === ContentType.TYPES.Note || i.content_type === ContentType.TYPES.File,
     )
     const tags = [...delta.changed, ...delta.inserted].filter(isDecryptedItem).filter(isTag)
 
@@ -115,7 +115,7 @@ export class ItemCounter implements SNIndex {
   private receiveTagChanges(tags: SNTag[]): void {
     for (const tag of tags) {
       const uuids = tag.references
-        .filter((ref) => ref.content_type === ContentType.Note || ref.content_type === ContentType.File)
+        .filter((ref) => ref.content_type === ContentType.TYPES.Note || ref.content_type === ContentType.TYPES.File)
         .map((ref) => ref.uuid)
       const countableUuids = uuids.filter((uuid) => this.allCountableItems.has(uuid))
       const previousSet = this.tagToItemsMap[tag.uuid]

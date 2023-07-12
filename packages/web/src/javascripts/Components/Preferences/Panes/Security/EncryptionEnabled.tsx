@@ -9,8 +9,10 @@ import { formatCount } from './formatCount'
 const EncryptionEnabled: FunctionComponent = () => {
   const application = useApplication()
   const itemCounter = new StaticItemCounter()
-  const count = itemCounter.countNotesAndTags(application.items.getItems([ContentType.Note, ContentType.Tag]))
-  const files = application.items.getItems([ContentType.File])
+  const count = itemCounter.countNotesAndTags(
+    application.items.getItems([ContentType.TYPES.Note, ContentType.TYPES.Tag]),
+  )
+  const files = application.items.getItems([ContentType.TYPES.File])
   const notes = formatCount(count.notes, 'notes')
   const tags = formatCount(count.tags, 'tags')
   const archived = formatCount(count.archived, 'archived notes')

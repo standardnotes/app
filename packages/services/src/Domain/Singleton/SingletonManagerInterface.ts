@@ -1,17 +1,13 @@
 import { DecryptedItemInterface, ItemContent, Predicate, PredicateInterface } from '@standardnotes/models'
-import { ContentType } from '@standardnotes/common'
 
 export interface SingletonManagerInterface {
-  findSingleton<T extends DecryptedItemInterface>(
-    contentType: ContentType,
-    predicate: PredicateInterface<T>,
-  ): T | undefined
+  findSingleton<T extends DecryptedItemInterface>(contentType: string, predicate: PredicateInterface<T>): T | undefined
 
   findOrCreateContentTypeSingleton<
     C extends ItemContent = ItemContent,
     T extends DecryptedItemInterface<C> = DecryptedItemInterface<C>,
   >(
-    contentType: ContentType,
+    contentType: string,
     createContent: ItemContent,
   ): Promise<T>
 
@@ -20,7 +16,7 @@ export interface SingletonManagerInterface {
     T extends DecryptedItemInterface<C> = DecryptedItemInterface<C>,
   >(
     predicate: Predicate<T>,
-    contentType: ContentType,
+    contentType: string,
     createContent: ItemContent,
   ): Promise<T>
 }

@@ -1,4 +1,3 @@
-import { ContentType } from '@standardnotes/common'
 import { Copy, extendArray, UuidGenerator, Uuids } from '@standardnotes/utils'
 import { SNLog } from '../../Log'
 import { isErrorDecryptingParameters, SNRootKey } from '@standardnotes/encryption'
@@ -20,6 +19,7 @@ import {
   LocalStorageEncryptedContextualPayload,
   FullyFormedTransferPayload,
 } from '@standardnotes/models'
+import { ContentType } from '@standardnotes/domain-core'
 
 /**
  * The storage service is responsible for persistence of both simple key-values, and payload
@@ -140,7 +140,7 @@ export class DiskStorageService extends Services.AbstractService implements Serv
     const payload = new EncryptedPayload({
       ...wrappedValue,
       ...PayloadTimestampDefaults(),
-      content_type: ContentType.EncryptedStorage,
+      content_type: ContentType.TYPES.EncryptedStorage,
     })
 
     const split: Encryption.KeyedDecryptionSplit = key
@@ -232,7 +232,7 @@ export class DiskStorageService extends Services.AbstractService implements Serv
     const payload = new DecryptedPayload({
       uuid: UuidGenerator.GenerateUuid(),
       content: valuesToWrap as unknown as ItemContent,
-      content_type: ContentType.EncryptedStorage,
+      content_type: ContentType.TYPES.EncryptedStorage,
       ...PayloadTimestampDefaults(),
     })
 

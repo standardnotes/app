@@ -1,5 +1,5 @@
 import { dismissToast, ToastType, addTimedToast } from '@standardnotes/toast'
-import { ContentType } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/domain-core'
 import {
   CreateDecryptedLocalStorageContextPayload,
   LocalStorageDecryptedContextualPayload,
@@ -136,7 +136,7 @@ export class ThemeManager extends AbstractUIServicee {
       }
     }
 
-    const activeThemes = (this.application.items.getItems(ContentType.Theme) as SNTheme[]).filter(
+    const activeThemes = (this.application.items.getItems(ContentType.TYPES.Theme) as SNTheme[]).filter(
       (theme) => theme.active,
     )
 
@@ -244,7 +244,7 @@ export class ThemeManager extends AbstractUIServicee {
       }
     })
 
-    this.unregisterStream = this.application.streamItems(ContentType.Theme, ({ changed, inserted, source }) => {
+    this.unregisterStream = this.application.streamItems(ContentType.TYPES.Theme, ({ changed, inserted, source }) => {
       const items = changed.concat(inserted)
       const themes = items as SNTheme[]
       for (const theme of themes) {

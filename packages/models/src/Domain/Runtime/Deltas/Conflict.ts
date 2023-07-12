@@ -1,4 +1,5 @@
 import { uniqCombineObjArrays } from '@standardnotes/utils'
+import { ContentType } from '@standardnotes/domain-core'
 import { ImmutablePayloadCollection } from '../Collection/Payload/ImmutablePayloadCollection'
 import { CreateDecryptedItemFromPayload, CreateItemFromPayload } from '../../Utilities/Item/ItemGenerator'
 import { HistoryMap, historyMapFunctions } from '../History/HistoryMap'
@@ -11,7 +12,6 @@ import {
   isErrorDecryptingPayload,
   isDeletedPayload,
 } from '../../Abstract/Payload/Interfaces/TypeCheck'
-import { ContentType } from '@standardnotes/common'
 import { SyncResolvedPayload } from './Utilities/SyncResolvedPayload'
 import { ItemsKeyDelta } from './ItemsKeyDelta'
 import { SourcelessSyncDeltaEmit } from './Abstract/DeltaEmit'
@@ -26,7 +26,7 @@ export class ConflictDelta {
   ) {}
 
   public result(): SourcelessSyncDeltaEmit {
-    if (this.applyPayload.content_type === ContentType.ItemsKey) {
+    if (this.applyPayload.content_type === ContentType.TYPES.ItemsKey) {
       const keyDelta = new ItemsKeyDelta(this.baseCollection, [this.applyPayload])
 
       return keyDelta.result()

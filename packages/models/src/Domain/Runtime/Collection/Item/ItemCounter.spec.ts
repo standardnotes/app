@@ -12,7 +12,7 @@ describe('tag notes index', () => {
   const createEncryptedItem = (uuid?: string) => {
     const payload = new EncryptedPayload({
       uuid: uuid || String(Math.random()),
-      content_type: ContentType.Note,
+      content_type: ContentType.TYPES.Note,
       content: '004:...',
       enc_item_key: '004:...',
       items_key_id: '123',
@@ -24,7 +24,7 @@ describe('tag notes index', () => {
     return new EncryptedItem(payload)
   }
 
-  const createDecryptedItem = (uuid?: string, content_type = ContentType.Note) => {
+  const createDecryptedItem = (uuid?: string, content_type = ContentType.TYPES.Note) => {
     const payload = new DecryptedPayload({
       uuid: uuid || String(Math.random()),
       content_type,

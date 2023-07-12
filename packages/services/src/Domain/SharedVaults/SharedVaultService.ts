@@ -33,7 +33,6 @@ import {
 import { SharedVaultServiceInterface } from './SharedVaultServiceInterface'
 import { SharedVaultServiceEvent, SharedVaultServiceEventPayload } from './SharedVaultServiceEvent'
 import { EncryptionProviderInterface } from '@standardnotes/encryption'
-import { ContentType } from '@standardnotes/common'
 import { GetSharedVaultUsersUseCase } from './UseCase/GetSharedVaultUsers'
 import { RemoveVaultMemberUseCase } from './UseCase/RemoveSharedVaultMember'
 import { AbstractService } from '../Service/AbstractService'
@@ -64,6 +63,7 @@ import { CreateSharedVaultUseCase } from './UseCase/CreateSharedVault'
 import { SendSharedVaultMetadataChangedMessageToAll } from './UseCase/SendSharedVaultMetadataChangedMessageToAll'
 import { ConvertToSharedVaultUseCase } from './UseCase/ConvertToSharedVault'
 import { GetVaultUseCase } from '../Vaults/UseCase/GetVault'
+import { ContentType } from '@standardnotes/domain-core'
 
 export class SharedVaultService
   extends AbstractService<SharedVaultServiceEvent, SharedVaultServiceEventPayload>
@@ -111,20 +111,23 @@ export class SharedVaultService
     )
 
     this.eventDisposers.push(
-      items.addObserver<TrustedContactInterface>(ContentType.TrustedContact, async ({ changed, inserted, source }) => {
-        await this.reprocessCachedInvitesTrustStatusAfterTrustedContactsChange()
+      items.addObserver<TrustedContactInterface>(
+        ContentType.TYPES.TrustedContact,
+        async ({ changed, inserted, source }) => {
+          await this.reprocessCachedInvitesTrustStatusAfterTrustedContactsChange()
 
-        if (source === PayloadEmitSource.LocalChanged && inserted.length > 0) {
-          void this.handleCreationOfNewTrustedContacts(inserted)
-        }
-        if (source === PayloadEmitSource.LocalChanged && changed.length > 0) {
-          void this.handleTrustedContactsChange(changed)
-        }
-      }),
+          if (source === PayloadEmitSource.LocalChanged && inserted.length > 0) {
+            void this.handleCreationOfNewTrustedContacts(inserted)
+          }
+          if (source === PayloadEmitSource.LocalChanged && changed.length > 0) {
+            void this.handleTrustedContactsChange(changed)
+          }
+        },
+      ),
     )
 
     this.eventDisposers.push(
-      items.addObserver<VaultListingInterface>(ContentType.VaultListing, ({ changed, source }) => {
+      items.addObserver<VaultListingInterface>(ContentType.TYPES.VaultListing, ({ changed, source }) => {
         if (source === PayloadEmitSource.LocalChanged && changed.length > 0) {
           void this.handleVaultListingsChange(changed)
         }

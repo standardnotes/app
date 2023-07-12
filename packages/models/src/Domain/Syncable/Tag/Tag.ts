@@ -1,5 +1,4 @@
 import { VectorIconNameOrEmoji, IconType } from './../../Utilities/Icon/IconType'
-import { ContentType } from '@standardnotes/common'
 import { DecryptedItem } from '../../Abstract/Item/Implementations/DecryptedItem'
 import { ItemInterface } from '../../Abstract/Item/Interfaces/ItemInterface'
 import { ContentReference } from '../../Abstract/Reference/ContentReference'
@@ -7,12 +6,13 @@ import { isTagToParentTagReference } from '../../Abstract/Reference/Functions'
 import { DecryptedPayloadInterface } from '../../Abstract/Payload/Interfaces/DecryptedPayload'
 import { TagContent, TagContentSpecialized } from './TagContent'
 import { TagPreferences } from './TagPreferences'
+import { ContentType } from '@standardnotes/domain-core'
 
 export const TagFolderDelimitter = '.'
 
 export const DefaultTagIconName: IconType = 'hashtag'
 
-export const isTag = (x: ItemInterface): x is SNTag => x.content_type === ContentType.Tag
+export const isTag = (x: ItemInterface): x is SNTag => x.content_type === ContentType.TYPES.Tag
 
 export class SNTag extends DecryptedItem<TagContent> implements TagContentSpecialized {
   public readonly title: string
@@ -34,7 +34,7 @@ export class SNTag extends DecryptedItem<TagContent> implements TagContentSpecia
 
   get noteReferences(): ContentReference[] {
     const references = this.payload.references
-    return references.filter((ref) => ref.content_type === ContentType.Note)
+    return references.filter((ref) => ref.content_type === ContentType.TYPES.Note)
   }
 
   get noteCount(): number {

@@ -1,5 +1,4 @@
 import { DeletedPayload } from '../../Abstract/Payload/Implementations/DeletedPayload'
-import { ContentType } from '@standardnotes/common'
 import { extendArray, UuidGenerator } from '@standardnotes/utils'
 import { ImmutablePayloadCollection } from '../../Runtime/Collection/Payload/ImmutablePayloadCollection'
 import { DecryptedPayloadInterface } from '../../Abstract/Payload/Interfaces/DecryptedPayload'
@@ -9,6 +8,7 @@ import { EncryptedPayloadInterface } from '../../Abstract/Payload/Interfaces/Enc
 import { PayloadsByUpdatingReferencingPayloadReferences } from './PayloadsByUpdatingReferencingPayloadReferences'
 import { SyncResolvedPayload } from '../../Runtime/Deltas/Utilities/SyncResolvedPayload'
 import { getIncrementedDirtyIndex } from '../../Runtime/DirtyCounter/DirtyCounter'
+import { ContentType } from '@standardnotes/domain-core'
 
 /**
  * Return the payloads that result if you alternated the uuid for the payload.
@@ -50,7 +50,7 @@ export function PayloadsByAlternatingUuid<P extends DecryptedPayloadInterface = 
 
   extendArray(results, updatedReferencing)
 
-  if (payload.content_type === ContentType.ItemsKey) {
+  if (payload.content_type === ContentType.TYPES.ItemsKey) {
     /**
      * Update any payloads who are still encrypted and whose items_key_id point to this uuid
      */

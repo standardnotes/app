@@ -16,7 +16,7 @@ describe('items key delta', () => {
     const baseCollection = new PayloadCollection()
     const basePayload = new DecryptedPayload<ItemsKeyContent>({
       uuid: '123',
-      content_type: ContentType.ItemsKey,
+      content_type: ContentType.TYPES.ItemsKey,
       content: FillItemContent<ItemsKeyContent>({
         itemsKey: 'secret',
       }),
@@ -28,7 +28,7 @@ describe('items key delta', () => {
 
     const payloadToIgnore = new EncryptedPayload({
       uuid: '123',
-      content_type: ContentType.ItemsKey,
+      content_type: ContentType.TYPES.ItemsKey,
       content: '004:...',
       enc_item_key: '004:...',
       items_key_id: undefined,

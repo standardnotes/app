@@ -115,7 +115,7 @@ const LinkedItemBubblesContainer = ({
 
     return (
       existsInAllItemLinks &&
-      (link.item.content_type === ContentType.Note ? existsInNotesLinkingToItem : existsInFilesLinkingToItem)
+      (link.item.content_type === ContentType.TYPES.Note ? existsInNotesLinkingToItem : existsInFilesLinkingToItem)
     )
   }
 

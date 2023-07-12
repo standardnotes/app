@@ -690,7 +690,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
    * items matching the constraint are added, changed, or deleted.
    */
   public streamItems<I extends DecryptedItemInterface = DecryptedItemInterface>(
-    contentType: Common.ContentType | Common.ContentType[],
+    contentType: string | string[],
     stream: ItemStream<I>,
   ): () => void {
     const removeItemManagerObserver = this.itemManager.addObserver<I>(

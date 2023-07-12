@@ -1,4 +1,3 @@
-import { ContentType } from '@standardnotes/common'
 import { dateToLocalizedString, deepFreeze } from '@standardnotes/utils'
 import { TransferPayload } from './../../TransferPayload/Interfaces/TransferPayload'
 import { ItemContentsDiffer } from '../../../Utilities/Item/ItemContentsDiffer'
@@ -36,7 +35,7 @@ export abstract class GenericItem<P extends PayloadInterface = PayloadInterface>
     return this.payload.uuid
   }
 
-  get content_type(): ContentType {
+  get content_type(): string {
     return this.payload.content_type
   }
 

@@ -62,7 +62,6 @@ import {
   AnyKeyParamsContent,
   ApplicationIdentifier,
   compareVersions,
-  ContentType,
   isVersionLessThanOrEqualTo,
   KeyParamsOrigination,
   ProtocolVersion,
@@ -92,6 +91,7 @@ import { RootKeyEncryptPayloadWithKeyLookupUseCase } from './UseCase/RootEncrypt
 import { RootKeyEncryptPayloadUseCase } from './UseCase/RootEncryption/EncryptPayload'
 import { ValidateAccountPasswordResult } from './RootKey/ValidateAccountPasswordResult'
 import { ValidatePasscodeResult } from './RootKey/ValidatePasscodeResult'
+import { ContentType } from '@standardnotes/domain-core'
 
 /**
  * The encryption service is responsible for the encryption and decryption of payloads, and
@@ -746,7 +746,7 @@ export class EncryptionService
   }
 
   public createDecryptedBackupFile(): BackupFile {
-    const payloads = this.payloads.nonDeletedItems.filter((item) => item.content_type !== ContentType.ItemsKey)
+    const payloads = this.payloads.nonDeletedItems.filter((item) => item.content_type !== ContentType.TYPES.ItemsKey)
 
     const data: BackupFile = {
       version: ProtocolVersionLatest,

@@ -1,4 +1,3 @@
-import { ContentType } from '@standardnotes/common'
 import { assert, naturalSort, removeFromArray, UuidGenerator, Uuids } from '@standardnotes/utils'
 import { SNItemsKey } from '@standardnotes/encryption'
 import { PayloadManager } from '../Payloads/PayloadManager'
@@ -8,9 +7,10 @@ import * as Models from '@standardnotes/models'
 import * as Services from '@standardnotes/services'
 import { PayloadManagerChangeData } from '../Payloads'
 import { ItemRelationshipDirection } from '@standardnotes/services'
+import { ContentType } from '@standardnotes/domain-core'
 
 type ItemsChangeObserver<I extends Models.DecryptedItemInterface = Models.DecryptedItemInterface> = {
-  contentType: ContentType[]
+  contentType: string[]
   callback: Services.ItemManagerChangeObserverCallback<I>
 }
 
@@ -48,7 +48,7 @@ export class ItemManager extends Services.AbstractService implements Services.It
     this.payloadManager = payloadManager
     this.systemSmartViews = this.rebuildSystemSmartViews({})
     this.createCollection()
-    this.unsubChangeObserver = this.payloadManager.addObserver(ContentType.Any, this.setPayloads.bind(this))
+    this.unsubChangeObserver = this.payloadManager.addObserver(ContentType.TYPES.Any, this.setPayloads.bind(this))
   }
 
   private rebuildSystemSmartViews(criteria: Models.NotesAndFilesDisplayOptions): Models.SmartView[] {
@@ -65,34 +65,34 @@ export class ItemManager extends Services.AbstractService implements Services.It
 
     this.navigationDisplayController = new Models.ItemDisplayController(
       this.collection,
-      [ContentType.Note, ContentType.File],
+      [ContentType.TYPES.Note, ContentType.TYPES.File],
       {
         sortBy: 'created_at',
         sortDirection: 'dsc',
         hiddenContentTypes: [],
       },
     )
-    this.tagDisplayController = new Models.ItemDisplayController(this.collection, [ContentType.Tag], {
+    this.tagDisplayController = new Models.ItemDisplayController(this.collection, [ContentType.TYPES.Tag], {
       sortBy: 'title',
       sortDirection: 'asc',
     })
-    this.itemsKeyDisplayController = new Models.ItemDisplayController(this.collection, [ContentType.ItemsKey], {
+    this.itemsKeyDisplayController = new Models.ItemDisplayController(this.collection, [ContentType.TYPES.ItemsKey], {
       sortBy: 'created_at',
       sortDirection: 'asc',
     })
-    this.componentDisplayController = new Models.ItemDisplayController(this.collection, [ContentType.Component], {
+    this.componentDisplayController = new Models.ItemDisplayController(this.collection, [ContentType.TYPES.Component], {
       sortBy: 'created_at',
       sortDirection: 'asc',
     })
-    this.themeDisplayController = new Models.ItemDisplayController(this.collection, [ContentType.Theme], {
+    this.themeDisplayController = new Models.ItemDisplayController(this.collection, [ContentType.TYPES.Theme], {
       sortBy: 'title',
       sortDirection: 'asc',
     })
-    this.smartViewDisplayController = new Models.ItemDisplayController(this.collection, [ContentType.SmartView], {
+    this.smartViewDisplayController = new Models.ItemDisplayController(this.collection, [ContentType.TYPES.SmartView], {
       sortBy: 'title',
       sortDirection: 'asc',
     })
-    this.fileDisplayController = new Models.ItemDisplayController(this.collection, [ContentType.File], {
+    this.fileDisplayController = new Models.ItemDisplayController(this.collection, [ContentType.TYPES.File], {
       sortBy: 'title',
       sortDirection: 'asc',
     })
@@ -177,7 +177,7 @@ export class ItemManager extends Services.AbstractService implements Services.It
       ...{
         tags: mostRecentVersionOfTags,
         views: mostRecentVersionOfViews,
-        hiddenContentTypes: [ContentType.Tag],
+        hiddenContentTypes: [ContentType.TYPES.Tag],
       },
     }
 
@@ -324,7 +324,7 @@ export class ItemManager extends Services.AbstractService implements Services.It
   }
 
   public addObserver<I extends Models.DecryptedItemInterface = Models.DecryptedItemInterface>(
-    contentType: ContentType | ContentType[],
+    contentType: string | string[],
     callback: Services.ItemManagerChangeObserverCallback<I>,
   ): () => void {
     if (!Array.isArray(contentType)) {
@@ -349,7 +349,7 @@ export class ItemManager extends Services.AbstractService implements Services.It
    */
   public itemsReferencingItem<I extends Models.DecryptedItemInterface = Models.DecryptedItemInterface>(
     itemToLookupUuidFor: { uuid: UuidString },
-    contentType?: ContentType,
+    contentType?: string,
   ): I[] {
     const uuids = this.collection.uuidsThatReferenceUuid(itemToLookupUuidFor.uuid)
     let referencing = this.findItems<I>(uuids)
@@ -366,7 +366,7 @@ export class ItemManager extends Services.AbstractService implements Services.It
    */
   public referencesForItem<I extends Models.DecryptedItemInterface = Models.DecryptedItemInterface>(
     itemToLookupUuidFor: Models.DecryptedItemInterface,
-    contentType?: ContentType,
+    contentType?: string,
   ): I[] {
     const item = this.findSureItem<I>(itemToLookupUuidFor.uuid)
     const uuids = item.references.map((ref) => ref.uuid)
@@ -386,7 +386,7 @@ export class ItemManager extends Services.AbstractService implements Services.It
       return Models.CreateItemFromPayload(payload)
     }
 
-    const affectedContentTypes = new Set<ContentType>()
+    const affectedContentTypes = new Set<string>()
 
     const changedItems = changed.map((p) => {
       affectedContentTypes.add(p.content_type)
@@ -490,9 +490,9 @@ export class ItemManager extends Services.AbstractService implements Services.It
     source: Models.PayloadEmitSource,
     sourceKey?: string,
   ) {
-    const filter = <I extends Models.ItemInterface>(items: I[], types: ContentType[]) => {
+    const filter = <I extends Models.ItemInterface>(items: I[], types: string[]) => {
       return items.filter((item) => {
-        return types.includes(ContentType.Any) || types.includes(item.content_type)
+        return types.includes(ContentType.TYPES.Any) || types.includes(item.content_type)
       })
     }
 
@@ -536,7 +536,7 @@ export class ItemManager extends Services.AbstractService implements Services.It
   public createTemplateItem<
     C extends Models.ItemContent = Models.ItemContent,
     I extends Models.DecryptedItemInterface<C> = Models.DecryptedItemInterface<C>,
-  >(contentType: ContentType, content?: C, override?: Partial<Models.DecryptedPayload<C>>): I {
+  >(contentType: string, content?: C, override?: Partial<Models.DecryptedPayload<C>>): I {
     const payload = new Models.DecryptedPayload<C>({
       uuid: UuidGenerator.GenerateUuid(),
       content_type: contentType,
@@ -556,23 +556,23 @@ export class ItemManager extends Services.AbstractService implements Services.It
     return !this.findItem(item.uuid)
   }
 
-  public getItems<T extends Models.DecryptedItemInterface>(contentType: ContentType | ContentType[]): T[] {
+  public getItems<T extends Models.DecryptedItemInterface>(contentType: string | string[]): T[] {
     return this.collection.allDecrypted<T>(contentType)
   }
 
-  getAnyItems(contentType: ContentType | ContentType[]): Models.ItemInterface[] {
+  getAnyItems(contentType: string | string[]): Models.ItemInterface[] {
     return this.collection.all(contentType)
   }
 
   public itemsMatchingPredicate<T extends Models.DecryptedItemInterface>(
-    contentType: ContentType,
+    contentType: string,
     predicate: Models.PredicateInterface<T>,
   ): T[] {
     return this.itemsMatchingPredicates(contentType, [predicate])
   }
 
   public itemsMatchingPredicates<T extends Models.DecryptedItemInterface>(
-    contentType: ContentType,
+    contentType: string,
     predicates: Models.PredicateInterface<T>[],
   ): T[] {
     const subItems = this.getItems<T>(contentType)
@@ -687,7 +687,7 @@ export class ItemManager extends Services.AbstractService implements Services.It
       return []
     }
 
-    const tags = this.collection.elementsReferencingElement(tag, ContentType.Tag) as Models.SNTag[]
+    const tags = this.collection.elementsReferencingElement(tag, ContentType.TYPES.Tag) as Models.SNTag[]
 
     return tags.filter((tag) => tag.parentId === itemToLookupUuidFor.uuid)
   }
@@ -736,7 +736,7 @@ export class ItemManager extends Services.AbstractService implements Services.It
   public getSortedTagsForItem(item: Models.DecryptedItemInterface<Models.ItemContent>): Models.SNTag[] {
     return naturalSort(
       this.itemsReferencingItem(item).filter((ref) => {
-        return ref?.content_type === ContentType.Tag
+        return ref?.content_type === ContentType.TYPES.Tag
       }) as Models.SNTag[],
       'title',
     )
@@ -753,7 +753,7 @@ export class ItemManager extends Services.AbstractService implements Services.It
 
     return Models.notesAndFilesMatchingOptions(
       criteria,
-      this.collection.allDecrypted(ContentType.Note),
+      this.collection.allDecrypted(ContentType.TYPES.Note),
       this.collection,
     ) as Models.SNNote[]
   }
@@ -790,7 +790,7 @@ export class ItemManager extends Services.AbstractService implements Services.It
    * The number of notes currently managed
    */
   public get noteCount(): number {
-    return this.collection.all(ContentType.Note).length
+    return this.collection.all(ContentType.TYPES.Note).length
   }
 
   /**

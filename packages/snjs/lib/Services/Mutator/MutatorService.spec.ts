@@ -8,7 +8,7 @@ import {
   FileItem,
   SNTag,
 } from '@standardnotes/models'
-import { ContentType } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/domain-core'
 import { AlertService, InternalEventBusInterface } from '@standardnotes/services'
 import { MutatorService, PayloadManager, ItemManager } from '../'
 import { UuidGenerator } from '@standardnotes/utils'
@@ -42,7 +42,7 @@ describe('mutator service', () => {
     const note = new SNNote(
       new DecryptedPayload({
         uuid: String(Math.random()),
-        content_type: ContentType.Note,
+        content_type: ContentType.TYPES.Note,
         content: FillItemContent<NoteContent>({
           title: title,
         }),

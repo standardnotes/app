@@ -3918,8 +3918,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@standardnotes/api@workspace:packages/api"
   dependencies:
-    "@standardnotes/common": ^1.48.3
-    "@standardnotes/domain-core": ^1.12.0
+    "@standardnotes/common": ^1.50.0
+    "@standardnotes/domain-core": ^1.22.0
     "@standardnotes/models": "workspace:*"
     "@standardnotes/responses": "workspace:*"
     "@standardnotes/security": ^1.7.6
@@ -4038,12 +4038,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/common@npm:^1.48.3":
-  version: 1.48.3
-  resolution: "@standardnotes/common@npm:1.48.3"
+"@standardnotes/common@npm:^1.50.0":
+  version: 1.50.0
+  resolution: "@standardnotes/common@npm:1.50.0"
   dependencies:
     reflect-metadata: ^0.1.13
-  checksum: 191d97879d3476af51490f21f23e58daad7a2c7bc3e7a69a78e7ba978b5e17bed86c1f7c3b681d62c1e1665eb1b16c2495f51a2a053ee9fa245a36cdf9092425
+  checksum: 5388811ee595732d346fc5333d65aed9270dc406f9a3d4d36a3a9778f075e2f917c356b68d224c6e3e1e3737b1245d888f656405eabb9c647d2d57c3217f90e0
   languageName: node
   linkType: hard
 
@@ -4080,7 +4080,7 @@ __metadata:
     "@babel/core": "*"
     "@babel/preset-env": "*"
     "@electron/remote": ^2.0.9
-    "@standardnotes/domain-core": ^1.18.0
+    "@standardnotes/domain-core": ^1.22.0
     "@standardnotes/electron-clear-data": 1.1.1
     "@standardnotes/web": "workspace:*"
     "@types/fs-extra": ^11.0.1
@@ -4123,7 +4123,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/domain-core@npm:^1.11.3, @standardnotes/domain-core@npm:^1.12.0":
+"@standardnotes/domain-core@npm:^1.11.3":
   version: 1.12.0
   resolution: "@standardnotes/domain-core@npm:1.12.0"
   dependencies:
@@ -4132,12 +4132,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/domain-core@npm:^1.18.0":
-  version: 1.19.0
-  resolution: "@standardnotes/domain-core@npm:1.19.0"
+"@standardnotes/domain-core@npm:^1.22.0":
+  version: 1.22.0
+  resolution: "@standardnotes/domain-core@npm:1.22.0"
   dependencies:
     uuid: ^9.0.0
-  checksum: 40d3cad6d6acc0794249fa24faebc086903bfa3337a60c0dda67ab891a23ab94ab0e69b56bbaae5b7847b0e08283c45bb3c2cec9066ff186843d850dcb4b8b4e
+  checksum: aaa4812146f7ffcac8ed83bfd370d9dfb58055dea768dd4332a44756cccbb3d1a667da4d6da804fa26d5be594b85c60f3aa9b4c3eebb89805ffdbbfd7444946e
   languageName: node
   linkType: hard
 
@@ -4182,8 +4182,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@standardnotes/encryption@workspace:packages/encryption"
   dependencies:
-    "@standardnotes/common": ^1.48.3
+    "@standardnotes/common": ^1.50.0
     "@standardnotes/config": 2.4.3
+    "@standardnotes/domain-core": ^1.22.0
     "@standardnotes/models": "workspace:*"
     "@standardnotes/responses": "workspace:*"
     "@standardnotes/sncrypto-common": "workspace:*"
@@ -4217,8 +4218,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@standardnotes/features@workspace:packages/features"
   dependencies:
-    "@standardnotes/common": ^1.48.3
-    "@standardnotes/domain-core": ^1.12.0
+    "@standardnotes/common": ^1.50.0
+    "@standardnotes/domain-core": ^1.22.0
     "@standardnotes/security": ^1.7.6
     "@types/jest": ^29.2.3
     "@typescript-eslint/eslint-plugin": "*"
@@ -4235,7 +4236,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@standardnotes/filepicker@workspace:packages/filepicker"
   dependencies:
-    "@standardnotes/common": ^1.48.3
+    "@standardnotes/common": ^1.50.0
     "@standardnotes/files": "workspace:*"
     "@standardnotes/utils": "workspace:*"
     "@types/jest": ^29.2.3
@@ -4255,7 +4256,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@standardnotes/files@workspace:packages/files"
   dependencies:
-    "@standardnotes/common": ^1.48.3
+    "@standardnotes/common": ^1.50.0
     "@standardnotes/encryption": "workspace:*"
     "@standardnotes/models": "workspace:*"
     "@standardnotes/responses": "workspace:*"
@@ -4422,7 +4423,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@standardnotes/models@workspace:packages/models"
   dependencies:
-    "@standardnotes/common": ^1.48.3
+    "@standardnotes/common": ^1.50.0
+    "@standardnotes/domain-core": ^1.22.0
     "@standardnotes/features": "workspace:*"
     "@standardnotes/responses": "workspace:*"
     "@standardnotes/sncrypto-common": "workspace:^"
@@ -4470,7 +4472,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@standardnotes/responses@workspace:packages/responses"
   dependencies:
-    "@standardnotes/common": ^1.48.3
+    "@standardnotes/common": ^1.50.0
     "@standardnotes/features": "workspace:*"
     "@standardnotes/security": ^1.7.6
     "@types/jest": ^29.2.3
@@ -4508,8 +4510,8 @@ __metadata:
   resolution: "@standardnotes/services@workspace:packages/services"
   dependencies:
     "@standardnotes/api": "workspace:^"
-    "@standardnotes/common": ^1.48.3
-    "@standardnotes/domain-core": ^1.12.0
+    "@standardnotes/common": ^1.50.0
+    "@standardnotes/domain-core": ^1.22.0
     "@standardnotes/encryption": "workspace:^"
     "@standardnotes/features": "workspace:^"
     "@standardnotes/files": "workspace:^"
@@ -4608,8 +4610,8 @@ __metadata:
     "@babel/core": "*"
     "@babel/preset-env": "*"
     "@standardnotes/api": "workspace:*"
-    "@standardnotes/common": ^1.48.3
-    "@standardnotes/domain-core": ^1.12.0
+    "@standardnotes/common": ^1.50.0
+    "@standardnotes/domain-core": ^1.22.0
     "@standardnotes/domain-events": ^2.108.1
     "@standardnotes/encryption": "workspace:*"
     "@standardnotes/features": "workspace:*"
@@ -4736,7 +4738,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@standardnotes/ui-services@workspace:packages/ui-services"
   dependencies:
-    "@standardnotes/common": ^1.48.3
+    "@standardnotes/common": ^1.50.0
+    "@standardnotes/domain-core": ^1.22.0
     "@standardnotes/features": "workspace:^"
     "@standardnotes/filepicker": "workspace:^"
     "@standardnotes/models": "workspace:^"
@@ -4761,7 +4764,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@standardnotes/utils@workspace:packages/utils"
   dependencies:
-    "@standardnotes/common": ^1.48.3
+    "@standardnotes/common": ^1.50.0
     "@types/dompurify": ^2.4.0
     "@types/jest": ^29.2.3
     "@types/jsdom": ^20.0.1

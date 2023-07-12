@@ -1,6 +1,5 @@
 import { ItemContent } from './../../../Abstract/Content/ItemContent'
 import { EncryptedItemInterface } from './../../../Abstract/Item/Interfaces/EncryptedItem'
-import { ContentType } from '@standardnotes/common'
 import { SNIndex } from '../../Index/SNIndex'
 import { isDecryptedItem } from '../../../Abstract/Item/Interfaces/TypeCheck'
 import { DecryptedItemInterface } from '../../../Abstract/Item/Interfaces/DecryptedItem'
@@ -53,7 +52,7 @@ export class ItemCollection
     return mapped as (DecryptedItemInterface<C> | undefined)[]
   }
 
-  public allDecrypted<T extends DecryptedItemInterface>(contentType: ContentType | ContentType[]): T[] {
+  public allDecrypted<T extends DecryptedItemInterface>(contentType: string | string[]): T[] {
     return this.all(contentType).filter(isDecryptedItem) as T[]
   }
 }

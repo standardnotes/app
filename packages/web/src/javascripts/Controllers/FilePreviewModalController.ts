@@ -21,7 +21,7 @@ export class FilePreviewModalController {
     })
 
     this.eventObservers.push(
-      application.streamItems(ContentType.File, ({ changed, removed }) => {
+      application.streamItems(ContentType.TYPES.File, ({ changed, removed }) => {
         if (!this.currentFile) {
           return
         }

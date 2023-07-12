@@ -4,7 +4,7 @@ import { PayloadManagerInterface } from '../Payloads/PayloadManagerInterface'
 import { ProtectionsClientInterface } from '../Protection/ProtectionClientInterface'
 import { SyncServiceInterface } from '../Sync/SyncServiceInterface'
 import { ItemManagerInterface } from '../Item/ItemManagerInterface'
-import { ContentType, ProtocolVersion, compareVersions } from '@standardnotes/common'
+import { ProtocolVersion, compareVersions } from '@standardnotes/common'
 import {
   BackupFile,
   BackupFileDecryptedContextualPayload,
@@ -20,6 +20,7 @@ import {
 import { ClientDisplayableError } from '@standardnotes/responses'
 import { EncryptionProviderInterface } from '@standardnotes/encryption'
 import { Challenge, ChallengePrompt, ChallengeReason, ChallengeValidation } from '../Challenge'
+import { ContentType } from '@standardnotes/domain-core'
 
 const Strings = {
   UnsupportedBackupFileVersion:
@@ -115,7 +116,7 @@ export class ImportDataUseCase {
     const validPayloads = decryptedPayloadsOrError.filter(isDecryptedPayload).map((payload) => {
       /* Don't want to activate any components during import process in
        * case of exceptions breaking up the import proccess */
-      if (payload.content_type === ContentType.Component && (payload.content as ComponentContent).active) {
+      if (payload.content_type === ContentType.TYPES.Component && (payload.content as ComponentContent).active) {
         const typedContent = payload as DecryptedPayloadInterface<ComponentContent>
         return CopyPayloadWithContentOverride(typedContent, {
           active: false,

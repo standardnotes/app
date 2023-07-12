@@ -1,10 +1,10 @@
-import { ContentType } from '@standardnotes/common'
 import { DecryptedTransferPayload, NoteContent, TagContent } from '@standardnotes/models'
 import { readFileAsText } from '../Utils'
 import dayjs from 'dayjs'
 import customParseFormat from 'dayjs/plugin/customParseFormat'
 import utc from 'dayjs/plugin/utc'
 import { WebApplicationInterface } from '../../WebApplication/WebApplicationInterface'
+import { ContentType } from '@standardnotes/domain-core'
 dayjs.extend(customParseFormat)
 dayjs.extend(utc)
 
@@ -36,7 +36,7 @@ export class EvernoteConverter {
         updated_at: now,
         updated_at_timestamp: now.getTime(),
         uuid: this.application.generateUUID(),
-        content_type: ContentType.Tag,
+        content_type: ContentType.TYPES.Tag,
         content: {
           title: defaultTagName,
           expanded: false,
@@ -89,7 +89,7 @@ export class EvernoteConverter {
         updated_at: updatedAtDate,
         updated_at_timestamp: updatedAtDate.getTime(),
         uuid: this.application.generateUUID(),
-        content_type: ContentType.Note,
+        content_type: ContentType.TYPES.Note,
         content: {
           title: !title ? `Imported note ${index + 1} from Evernote` : title,
           text,
@@ -99,7 +99,7 @@ export class EvernoteConverter {
 
       if (defaultTag) {
         defaultTag.content.references.push({
-          content_type: ContentType.Note,
+          content_type: ContentType.TYPES.Note,
           uuid: note.uuid,
         })
       }
@@ -112,7 +112,7 @@ export class EvernoteConverter {
           const now = new Date()
           tag = {
             uuid: this.application.generateUUID(),
-            content_type: ContentType.Tag,
+            content_type: ContentType.TYPES.Tag,
             created_at: now,
             created_at_timestamp: now.getTime(),
             updated_at: now,

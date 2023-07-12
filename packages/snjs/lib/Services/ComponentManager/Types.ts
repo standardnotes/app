@@ -1,7 +1,7 @@
 import { ComponentArea, ComponentAction, FeatureIdentifier, LegacyFileSafeIdentifier } from '@standardnotes/features'
 import { ComponentMessage, MessageData, OutgoingItemMessagePayload } from '@standardnotes/models'
 import { UuidString } from '@Lib/Types/UuidString'
-import { ContentType } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/domain-core'
 
 /**
  * Extensions allowed to batch stream AllowedBatchContentTypes
@@ -16,9 +16,9 @@ export const AllowedBatchStreaming = Object.freeze([
  * Content types which are allowed to be managed/streamed in bulk by a component.
  */
 export const AllowedBatchContentTypes = Object.freeze([
-  ContentType.FilesafeCredentials,
-  ContentType.FilesafeFileMetadata,
-  ContentType.FilesafeIntegration,
+  ContentType.TYPES.FilesafeCredentials,
+  ContentType.TYPES.FilesafeFileMetadata,
+  ContentType.TYPES.FilesafeIntegration,
 ])
 
 export type StreamObserver = {

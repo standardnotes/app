@@ -1,8 +1,7 @@
-import { ContentType } from '@standardnotes/common'
 import { ContentReferenceType } from './ContenteReferenceType'
 
 export interface AnonymousReference {
   uuid: string
-  content_type: ContentType
+  content_type: string
   reference_type: ContentReferenceType
 }

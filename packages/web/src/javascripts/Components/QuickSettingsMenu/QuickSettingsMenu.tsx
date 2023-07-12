@@ -43,7 +43,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, quickSet
       }) as ThemeItem[]
 
     GetFeatures()
-      .filter((feature) => feature.content_type === ContentType.Theme && !feature.layerable)
+      .filter((feature) => feature.content_type === ContentType.TYPES.Theme && !feature.layerable)
       .forEach((theme) => {
         if (themes.findIndex((item) => item.identifier === theme.identifier) === -1) {
           themes.push({
@@ -76,7 +76,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, quickSet
   }, [reloadThemes, themes.length])
 
   useEffect(() => {
-    const cleanupItemStream = application.streamItems(ContentType.Theme, () => {
+    const cleanupItemStream = application.streamItems(ContentType.TYPES.Theme, () => {
       reloadThemes()
     })
 
@@ -86,7 +86,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, quickSet
   }, [application, reloadThemes])
 
   useEffect(() => {
-    const cleanupItemStream = application.streamItems(ContentType.Component, () => {
+    const cleanupItemStream = application.streamItems(ContentType.TYPES.Component, () => {
       reloadToggleableComponents()
     })
 

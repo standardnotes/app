@@ -77,9 +77,9 @@ export class AccountMenuController extends AbstractViewController {
     )
 
     this.disposers.push(
-      this.application.streamItems([ContentType.Note, ContentType.Tag], () => {
+      this.application.streamItems([ContentType.TYPES.Note, ContentType.TYPES.Tag], () => {
         runInAction(() => {
-          this.notesAndTags = this.application.items.getItems([ContentType.Note, ContentType.Tag])
+          this.notesAndTags = this.application.items.getItems([ContentType.TYPES.Note, ContentType.TYPES.Tag])
         })
       }),
     )

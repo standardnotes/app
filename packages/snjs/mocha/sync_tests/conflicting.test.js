@@ -62,7 +62,7 @@ describe('online conflict handling', function () {
   }
 
   it('components should not be duplicated under any circumstances', async function () {
-    const payload = createDirtyPayload(ContentType.Component)
+    const payload = createDirtyPayload(ContentType.TYPES.Component)
 
     const item = await this.application.mutator.emitItemFromPayload(payload, PayloadEmitSource.LocalChanged)
 
@@ -90,7 +90,7 @@ describe('online conflict handling', function () {
   })
 
   it('items keys should not be duplicated under any circumstances', async function () {
-    const payload = createDirtyPayload(ContentType.ItemsKey)
+    const payload = createDirtyPayload(ContentType.TYPES.ItemsKey)
     const item = await this.application.mutator.emitItemFromPayload(payload, PayloadEmitSource.LocalChanged)
     this.expectedItemCount++
     await this.application.syncService.sync(syncOptions)
@@ -527,13 +527,13 @@ describe('online conflict handling', function () {
   }).timeout(60000)
 
   it('duplicating an item should maintian its relationships', async function () {
-    const payload1 = Factory.createStorageItemPayload(ContentType.Tag)
-    const payload2 = Factory.createStorageItemPayload(ContentType.UserPrefs)
+    const payload1 = Factory.createStorageItemPayload(ContentType.TYPES.Tag)
+    const payload2 = Factory.createStorageItemPayload(ContentType.TYPES.UserPrefs)
     this.expectedItemCount -= 1 /** auto-created user preferences  */
     await this.application.mutator.emitItemsFromPayloads([payload1, payload2], PayloadEmitSource.LocalChanged)
     this.expectedItemCount += 2
-    let tag = this.application.itemManager.getItems(ContentType.Tag)[0]
-    let userPrefs = this.application.itemManager.getItems(ContentType.UserPrefs)[0]
+    let tag = this.application.itemManager.getItems(ContentType.TYPES.Tag)[0]
+    let userPrefs = this.application.itemManager.getItems(ContentType.TYPES.UserPrefs)[0]
     expect(tag).to.be.ok
     expect(userPrefs).to.be.ok
 
@@ -567,7 +567,7 @@ describe('online conflict handling', function () {
     const rawPayloads = await this.application.diskStorageService.getAllRawPayloads()
     expect(rawPayloads.length).to.equal(this.expectedItemCount)
 
-    const fooItems = this.application.itemManager.getItems(ContentType.Tag)
+    const fooItems = this.application.itemManager.getItems(ContentType.TYPES.Tag)
     const fooItem2 = fooItems[1]
 
     expect(fooItem2.content.conflict_of).to.equal(tag.uuid)
@@ -772,9 +772,9 @@ describe('online conflict handling', function () {
     let backupFile = await this.application.createEncryptedBackupFileForAutomatedDesktopBackups()
     /** Sort matters, and is the cause of the original issue, where tag comes before the note */
     backupFile.items = [
-      backupFile.items.find((i) => i.content_type === ContentType.ItemsKey),
-      backupFile.items.find((i) => i.content_type === ContentType.Tag),
-      backupFile.items.find((i) => i.content_type === ContentType.Note),
+      backupFile.items.find((i) => i.content_type === ContentType.TYPES.ItemsKey),
+      backupFile.items.find((i) => i.content_type === ContentType.TYPES.Tag),
+      backupFile.items.find((i) => i.content_type === ContentType.TYPES.Note),
     ]
     backupFile = JSON.parse(JSON.stringify(backupFile))
     /** Register new account and import this same data */
@@ -806,10 +806,10 @@ describe('online conflict handling', function () {
     })
     let backupFile = await this.application.createEncryptedBackupFileForAutomatedDesktopBackups()
     backupFile.items = [
-      backupFile.items.find((i) => i.content_type === ContentType.ItemsKey),
-      backupFile.items.filter((i) => i.content_type === ContentType.Note)[0],
-      backupFile.items.filter((i) => i.content_type === ContentType.Note)[1],
-      backupFile.items.find((i) => i.content_type === ContentType.Tag),
+      backupFile.items.find((i) => i.content_type === ContentType.TYPES.ItemsKey),
+      backupFile.items.filter((i) => i.content_type === ContentType.TYPES.Note)[0],
+      backupFile.items.filter((i) => i.content_type === ContentType.TYPES.Note)[1],
+      backupFile.items.find((i) => i.content_type === ContentType.TYPES.Tag),
     ]
     backupFile = JSON.parse(JSON.stringify(backupFile))
     /** Register new account and import this same data */

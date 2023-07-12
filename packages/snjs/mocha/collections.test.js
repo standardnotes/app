@@ -41,11 +41,11 @@ describe('payload collections', () => {
   it('references by content type', async () => {
     const [notePayload1, tagPayload1] = createRelatedNoteTagPairPayload()
     const collection = ImmutablePayloadCollection.WithPayloads([notePayload1, tagPayload1])
-    const referencingTags = collection.elementsReferencingElement(notePayload1, ContentType.Tag)
+    const referencingTags = collection.elementsReferencingElement(notePayload1, ContentType.TYPES.Tag)
     expect(referencingTags.length).to.equal(1)
     expect(referencingTags[0].uuid).to.equal(tagPayload1.uuid)
 
-    const referencingNotes = collection.elementsReferencingElement(notePayload1, ContentType.Note)
+    const referencingNotes = collection.elementsReferencingElement(notePayload1, ContentType.TYPES.Note)
     expect(referencingNotes.length).to.equal(0)
   })
 
@@ -78,7 +78,7 @@ describe('payload collections', () => {
     collection.set([payload])
     collection.set([payload, copy])
 
-    const sorted = collection.all(ContentType.Note)
+    const sorted = collection.all(ContentType.TYPES.Note)
     expect(sorted.length).to.equal(1)
   })
 })

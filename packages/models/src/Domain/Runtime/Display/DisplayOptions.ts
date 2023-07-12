@@ -1,4 +1,3 @@
-import { ContentType } from '@standardnotes/common'
 import { SmartView } from '../../Syncable/SmartView'
 import { SNTag } from '../../Syncable/Tag'
 import { CollectionSortDirection, CollectionSortProperty } from '../Collection/CollectionSort'
@@ -16,7 +15,7 @@ export interface NotesAndFilesDisplayOptions extends GenericDisplayOptions {
   tags?: SNTag[]
   views?: SmartView[]
   searchQuery?: SearchQuery
-  hiddenContentTypes?: ContentType[]
+  hiddenContentTypes?: string[]
   customFilter?: DisplayControllerCustomFilter
 }
 

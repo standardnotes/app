@@ -7,7 +7,7 @@ import {
 } from '@standardnotes/models'
 import { PayloadManager } from './PayloadManager'
 import { InternalEventBusInterface } from '@standardnotes/services'
-import { ContentType } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/domain-core'
 
 describe('payload manager', () => {
   let payloadManager: PayloadManager
@@ -23,7 +23,7 @@ describe('payload manager', () => {
   it('emitting a payload should emit as-is and not merge on top of existing payload', async () => {
     const decrypted = new DecryptedPayload({
       uuid: '123',
-      content_type: ContentType.ItemsKey,
+      content_type: ContentType.TYPES.ItemsKey,
       content: FillItemContent<ItemsKeyContent>({
         itemsKey: 'secret',
       }),
@@ -36,7 +36,7 @@ describe('payload manager', () => {
 
     const nondirty = new DecryptedPayload({
       uuid: '123',
-      content_type: ContentType.ItemsKey,
+      content_type: ContentType.TYPES.ItemsKey,
       ...PayloadTimestampDefaults(),
       updated_at_timestamp: 2,
       content: FillItemContent<ItemsKeyContent>({

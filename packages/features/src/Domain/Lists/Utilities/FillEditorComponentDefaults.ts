@@ -1,5 +1,6 @@
+import { ContentType } from '@standardnotes/domain-core'
+
 import { ComponentAction } from '../../Component/ComponentAction'
-import { ContentType } from '@standardnotes/common'
 import { EditorFeatureDescription } from '../../Feature/FeatureDescription'
 import { ComponentArea } from '../../Component/ComponentArea'
 
@@ -16,12 +17,12 @@ export function FillEditorComponentDefaults(
     component.component_permissions = [
       {
         name: ComponentAction.StreamContextItem,
-        content_types: [ContentType.Note],
+        content_types: [ContentType.TYPES.Note],
       },
     ]
   }
 
-  component.content_type = ContentType.Component
+  component.content_type = ContentType.TYPES.Component
   if (!component.area) {
     component.area = ComponentArea.Editor
   }

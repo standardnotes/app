@@ -1,5 +1,4 @@
 import { ComponentPermission } from '../Component/ComponentPermission'
-import { ContentType } from '@standardnotes/common'
 import { ComponentArea } from '../Component/ComponentArea'
 import { PermissionName } from '../Permission/PermissionName'
 import { FeatureIdentifier } from './FeatureIdentifier'
@@ -51,7 +50,7 @@ export type ClientFeatureDescription = RoleFields & {
 export type ComponentFeatureDescription = BaseFeatureDescription & {
   /** The relative path of the index.html file or the main css file if theme, within the component folder itself */
   index_path: string
-  content_type: ContentType
+  content_type: string
   area: ComponentArea
 }
 

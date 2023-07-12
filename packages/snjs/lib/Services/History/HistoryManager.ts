@@ -1,4 +1,3 @@
-import { ContentType } from '@standardnotes/common'
 import { removeFromArray } from '@standardnotes/utils'
 import { ItemManager } from '@Lib/Services/Items/ItemManager'
 import { DiskStorageService } from '@Lib/Services/Storage/DiskStorageService'
@@ -11,6 +10,7 @@ import {
   HistoryServiceInterface,
   InternalEventBusInterface,
 } from '@standardnotes/services'
+import { ContentType } from '@standardnotes/domain-core'
 
 /** The amount of revisions per item above which should call for an optimization. */
 const DefaultItemRevisionsThreshold = 20
@@ -53,7 +53,7 @@ export class SNHistoryManager extends AbstractService implements HistoryServiceI
     protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)
-    this.removeChangeObserver = this.itemManager.addObserver(ContentType.Note, ({ changed, inserted }) => {
+    this.removeChangeObserver = this.itemManager.addObserver(ContentType.TYPES.Note, ({ changed, inserted }) => {
       this.recordNewHistoryForItems(changed.concat(inserted) as SNNote[])
     })
   }

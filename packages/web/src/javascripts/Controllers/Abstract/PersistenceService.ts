@@ -23,7 +23,7 @@ export class PersistenceService {
       this.hydratePersistedValues()
       this.didHydrateOnce = true
     } else if (eventName === ApplicationEvent.LocalDataIncrementalLoad) {
-      const canHydrate = this.application.items.getItems([ContentType.Note, ContentType.Tag]).length > 0
+      const canHydrate = this.application.items.getItems([ContentType.TYPES.Note, ContentType.TYPES.Tag]).length > 0
 
       if (!canHydrate) {
         return

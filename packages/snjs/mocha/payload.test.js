@@ -9,7 +9,7 @@ describe('payload', () => {
     this.createBarePayload = () => {
       return new DecryptedPayload({
         uuid: '123',
-        content_type: ContentType.Note,
+        content_type: ContentType.TYPES.Note,
         content: {
           title: 'hello',
         },
@@ -19,7 +19,7 @@ describe('payload', () => {
     this.createEncryptedPayload = () => {
       return new EncryptedPayload({
         uuid: '123',
-        content_type: ContentType.Note,
+        content_type: ContentType.TYPES.Note,
         content: '004:foo:bar',
       })
     }
@@ -36,7 +36,7 @@ describe('payload', () => {
   it('not supplying source should default to constructor source', function () {
     const payload = new DecryptedPayload({
       uuid: '123',
-      content_type: ContentType.Note,
+      content_type: ContentType.TYPES.Note,
       content: {
         title: 'hello',
       },
@@ -74,7 +74,7 @@ describe('payload', () => {
       () =>
         new EncryptedPayload({
           uuid: '123',
-          content_type: ContentType.Note,
+          content_type: ContentType.TYPES.Note,
           content: '000:somebase64string',
         }),
       'Unrecognized protocol version 000',
@@ -84,7 +84,7 @@ describe('payload', () => {
   it('payload format deleted', function () {
     const payload = new DeletedPayload({
       uuid: '123',
-      content_type: ContentType.Note,
+      content_type: ContentType.TYPES.Note,
       deleted: true,
     })
 
@@ -101,7 +101,7 @@ describe('payload', () => {
     const payload = this.createBarePayload()
     const merged = payload.copy({
       uuid: '123',
-      content_type: ContentType.Note,
+      content_type: ContentType.TYPES.Note,
       updated_at: new Date(),
       dirty: true,
       dirtyIndex: getIncrementedDirtyIndex(),
@@ -116,7 +116,7 @@ describe('payload', () => {
   it('deleted and not dirty should be discardable', function () {
     const payload = new DeletedPayload({
       uuid: '123',
-      content_type: ContentType.Note,
+      content_type: ContentType.TYPES.Note,
       deleted: true,
       dirty: false,
     })

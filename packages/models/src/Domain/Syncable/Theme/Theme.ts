@@ -4,11 +4,11 @@ import { ConflictStrategy } from '../../Abstract/Item/Types/ConflictStrategy'
 import { AppDataField } from '../../Abstract/Item/Types/AppDataField'
 import { HistoryEntryInterface } from '../../Runtime/History'
 import { DecryptedItemInterface, ItemInterface } from '../../Abstract/Item'
-import { ContentType } from '@standardnotes/common'
 import { useBoolean } from '@standardnotes/utils'
 import { ThemePackageInfo } from '../Component/PackageInfo'
+import { ContentType } from '@standardnotes/domain-core'
 
-export const isTheme = (x: ItemInterface): x is SNTheme => x.content_type === ContentType.Theme
+export const isTheme = (x: ItemInterface): x is SNTheme => x.content_type === ContentType.TYPES.Theme
 
 export class SNTheme extends SNComponent {
   public override area: ComponentArea = ComponentArea.Themes

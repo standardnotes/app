@@ -55,11 +55,11 @@ describe('HandleTrustedSharedVaultInviteMessage', () => {
     await handleTrustedSharedVaultInviteMessage.execute(testMessage, sharedVaultUuid, senderUuid)
 
     const keySystemRootKeyCallIndex = mutatorMock.createItem.mock.calls.findIndex(
-      ([contentType]) => contentType === ContentType.KeySystemRootKey,
+      ([contentType]) => contentType === ContentType.TYPES.KeySystemRootKey,
     )
 
     const vaultListingCallIndex = mutatorMock.createItem.mock.calls.findIndex(
-      ([contentType]) => contentType === ContentType.VaultListing,
+      ([contentType]) => contentType === ContentType.TYPES.VaultListing,
     )
 
     expect(keySystemRootKeyCallIndex).toBeLessThan(vaultListingCallIndex)

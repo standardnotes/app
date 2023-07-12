@@ -1,13 +1,7 @@
 import { observer } from 'mobx-react-lite'
 import { Fragment, FunctionComponent, useEffect, useState } from 'react'
 import { Text, Title, Subtitle } from '@/Components/Preferences/PreferencesComponents/Content'
-import {
-  ButtonType,
-  ClientDisplayableError,
-  ContentType,
-  DisplayStringForContentType,
-  EncryptedItemInterface,
-} from '@standardnotes/snjs'
+import { ButtonType, ClientDisplayableError, ContentType, EncryptedItemInterface } from '@standardnotes/snjs'
 import Button from '@/Components/Button/Button'
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
@@ -20,13 +14,17 @@ const ErroredItems: FunctionComponent = () => {
   const [erroredItems, setErroredItems] = useState(application.items.invalidNonVaultedItems)
 
   useEffect(() => {
-    return application.streamItems(ContentType.Any, () => {
+    return application.streamItems(ContentType.TYPES.Any, () => {
       setErroredItems(application.items.invalidNonVaultedItems)
     })
   }, [application])
 
   const getContentTypeDisplay = (item: EncryptedItemInterface): string => {
-    const display = DisplayStringForContentType(item.content_type)
+    const contentTypeOrError = ContentType.create(item.content_type)
+    let display = null
+    if (!contentTypeOrError.isFailed()) {
+      display = contentTypeOrError.getValue().getDisplayName()
+    }
     if (display) {
       return `${display[0].toUpperCase()}${display.slice(1)}`
     } else {

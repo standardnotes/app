@@ -1,6 +1,5 @@
 import { useBoolean } from '@standardnotes/utils'
 import { FilteredServerItem } from './FilteredServerItem'
-import { ContentType } from '@standardnotes/common'
 
 /**
  * The saved sync item payload represents the payload we want to map
@@ -9,7 +8,7 @@ import { ContentType } from '@standardnotes/common'
  * nothing else.
  */
 export interface ServerSyncSavedContextualPayload {
-  content_type: ContentType
+  content_type: string
   created_at_timestamp: number
   created_at: Date
   deleted: boolean

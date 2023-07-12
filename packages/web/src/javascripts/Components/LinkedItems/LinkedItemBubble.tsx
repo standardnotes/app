@@ -120,7 +120,7 @@ const LinkedItemBubble = ({
       <span className="flex items-center overflow-hidden overflow-ellipsis whitespace-nowrap">
         {tagTitle && <span className="text-passive-1">{tagTitle.titlePrefix}</span>}
         <span className="flex items-center gap-1">
-          {link.type === 'linked-by' && link.item.content_type !== ContentType.Tag && (
+          {link.type === 'linked-by' && link.item.content_type !== ContentType.TYPES.Tag && (
             <span className={!isBidirectional ? 'hidden group-focus:block' : ''}>Linked By:</span>
           )}
           {getItemTitleInContextOfLinkBubble(link.item)}

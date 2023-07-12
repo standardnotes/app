@@ -15,7 +15,7 @@ import {
   ConflictType,
 } from '@standardnotes/responses'
 import { PayloadsByDuplicating } from '../../Utilities/Payload/PayloadsByDuplicating'
-import { ContentType } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/domain-core'
 
 export class DeltaRemoteRejected implements SyncDeltaInterface {
   constructor(
@@ -61,7 +61,7 @@ export class DeltaRemoteRejected implements SyncDeltaInterface {
       return this.resultByDuplicatingBasePayloadAsNonVaultedAndRemovingBaseItemLocally(base)
     }
 
-    if (base.content_type === ContentType.KeySystemItemsKey) {
+    if (base.content_type === ContentType.TYPES.KeySystemItemsKey) {
       return this.discardChangesOfBasePayload(base)
     }
 

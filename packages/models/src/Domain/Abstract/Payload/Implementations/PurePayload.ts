@@ -1,4 +1,3 @@
-import { ContentType } from '@standardnotes/common'
 import { deepFreeze, useBoolean } from '@standardnotes/utils'
 import { PayloadInterface } from '../Interfaces/PayloadInterface'
 import { PayloadSource } from '../Types/PayloadSource'
@@ -19,7 +18,7 @@ export abstract class PurePayload<T extends TransferPayload<C>, C extends ItemCo
 {
   readonly source: PayloadSource
   readonly uuid: string
-  readonly content_type: ContentType
+  readonly content_type: string
   readonly deleted: boolean
   readonly content: C | string | undefined
 

@@ -1,5 +1,6 @@
 import * as Common from '@standardnotes/common'
 import * as Models from '@standardnotes/models'
+import { ContentType } from '@standardnotes/domain-core'
 import { ItemContent, PayloadTimestampDefaults } from '@standardnotes/models'
 import * as Utils from '@standardnotes/utils'
 import { UuidGenerator } from '@standardnotes/utils'
@@ -44,7 +45,7 @@ export class SNProtocolOperator002 extends SNProtocolOperator001 {
   public override createItemsKey(): Models.ItemsKeyInterface {
     const payload = new Models.DecryptedPayload({
       uuid: UuidGenerator.GenerateUuid(),
-      content_type: Common.ContentType.ItemsKey,
+      content_type: ContentType.TYPES.ItemsKey,
       content: this.generateNewItemsKeyContent(),
       ...PayloadTimestampDefaults(),
     })

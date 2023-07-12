@@ -36,7 +36,7 @@ const insertNonInstalledNativeComponentsInMap = (
   application: WebApplication,
 ): void => {
   GetFeatures()
-    .filter((feature) => feature.content_type === ContentType.Component && feature.area === ComponentArea.Editor)
+    .filter((feature) => feature.content_type === ContentType.TYPES.Component && feature.area === ComponentArea.Editor)
     .forEach((editorFeature) => {
       const notInstalled = !components.find((editor) => editor.identifier === editorFeature.identifier)
       const isExperimental = application.features.isExperimentalFeature(editorFeature.identifier)

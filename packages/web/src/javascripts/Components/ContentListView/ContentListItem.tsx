@@ -7,9 +7,9 @@ import { ListableContentItem } from './Types/ListableContentItem'
 
 const ContentListItem: FunctionComponent<AbstractListItemProps<ListableContentItem>> = (props) => {
   switch (props.item.content_type) {
-    case ContentType.Note:
+    case ContentType.TYPES.Note:
       return <NoteListItem {...props} item={props.item as SNNote} />
-    case ContentType.File: {
+    case ContentType.TYPES.File: {
       return <FileListItem {...props} item={props.item as FileItem} />
     }
     default:

@@ -5,7 +5,6 @@ import {
   isClientDisplayableError,
   isErrorResponse,
 } from '@standardnotes/responses'
-import { ContentType } from '@standardnotes/common'
 import {
   FileItem,
   FileProtocolV1Constants,
@@ -54,6 +53,7 @@ import {
   SharedVaultServerInterface,
   HttpServiceInterface,
 } from '@standardnotes/api'
+import { ContentType } from '@standardnotes/domain-core'
 
 const OneHundredMb = 100 * 1_000_000
 
@@ -268,7 +268,7 @@ export class FileService extends AbstractService implements FilesClientInterface
     }
 
     const file = await this.mutator.createItem<FileItem>(
-      ContentType.File,
+      ContentType.TYPES.File,
       FillItemContentSpecialized(fileContent),
       true,
       operation.vault,

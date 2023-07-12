@@ -1,6 +1,7 @@
+import { ContentType } from '@standardnotes/domain-core'
+
 import { DatabaseItemMetadata } from './DatabaseItemMetadata'
 import { DatabaseLoadOptions } from './DatabaseLoadOptions'
-import { ContentType } from '@standardnotes/common'
 
 /**
  * Sorts payloads according by most recently modified first, according to the priority,
@@ -9,7 +10,7 @@ import { ContentType } from '@standardnotes/common'
  */
 function SortPayloadsByRecentAndContentPriority<T extends DatabaseItemMetadata = DatabaseItemMetadata>(
   payloads: T[],
-  contentTypePriorityList: ContentType[],
+  contentTypePriorityList: string[],
 ): T[] {
   return payloads.sort((a, b) => {
     const dateResult = new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
@@ -97,11 +98,11 @@ export function GetSortedPayloadsByPriority<T extends DatabaseItemMetadata = Dat
   for (let index = 0; index < payloads.length; index++) {
     const payload = payloads[index]
 
-    if (payload.content_type === ContentType.KeySystemRootKey) {
+    if (payload.content_type === ContentType.TYPES.KeySystemRootKey) {
       keySystemRootKeyPayloads.push(payload)
-    } else if (payload.content_type === ContentType.KeySystemItemsKey) {
+    } else if (payload.content_type === ContentType.TYPES.KeySystemItemsKey) {
       keySystemItemsKeyPayloads.push(payload)
-    } else if (payload.content_type === ContentType.ItemsKey) {
+    } else if (payload.content_type === ContentType.TYPES.ItemsKey) {
       itemsKeyPayloads.push(payload)
     } else if (options.contentTypePriority.includes(payload.content_type)) {
       contentTypePriorityPayloads.push(payload)

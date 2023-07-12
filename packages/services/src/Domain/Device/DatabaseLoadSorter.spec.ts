@@ -4,25 +4,25 @@ import { GetSortedPayloadsByPriority } from './DatabaseLoadSorter'
 
 describe('GetSortedPayloadsByPriority', () => {
   let payloads: FullyFormedPayloadInterface[] = []
-  const contentTypePriority = [ContentType.ItemsKey, ContentType.UserPrefs, ContentType.Component, ContentType.Theme]
+  const contentTypePriority = [ContentType.TYPES.ItemsKey, ContentType.TYPES.UserPrefs, ContentType.TYPES.Component, ContentType.TYPES.Theme]
   let launchPriorityUuids: string[] = []
 
   it('should sort payloads based on content type priority', () => {
     payloads = [
       {
-        content_type: ContentType.Theme,
+        content_type: ContentType.TYPES.Theme,
       } as FullyFormedPayloadInterface,
       {
-        content_type: ContentType.UserPrefs,
+        content_type: ContentType.TYPES.UserPrefs,
       } as FullyFormedPayloadInterface,
       {
-        content_type: ContentType.Component,
+        content_type: ContentType.TYPES.Component,
       } as FullyFormedPayloadInterface,
       {
-        content_type: ContentType.ItemsKey,
+        content_type: ContentType.TYPES.ItemsKey,
       } as FullyFormedPayloadInterface,
       {
-        content_type: ContentType.Note,
+        content_type: ContentType.TYPES.Note,
       } as FullyFormedPayloadInterface,
     ]
 
@@ -33,15 +33,15 @@ describe('GetSortedPayloadsByPriority', () => {
     })
 
     expect(itemsKeyPayloads.length).toBe(1)
-    expect(itemsKeyPayloads[0].content_type).toBe(ContentType.ItemsKey)
+    expect(itemsKeyPayloads[0].content_type).toBe(ContentType.TYPES.ItemsKey)
 
     expect(contentTypePriorityPayloads.length).toBe(3)
-    expect(contentTypePriorityPayloads[0].content_type).toBe(ContentType.UserPrefs)
-    expect(contentTypePriorityPayloads[1].content_type).toBe(ContentType.Component)
-    expect(contentTypePriorityPayloads[2].content_type).toBe(ContentType.Theme)
+    expect(contentTypePriorityPayloads[0].content_type).toBe(ContentType.TYPES.UserPrefs)
+    expect(contentTypePriorityPayloads[1].content_type).toBe(ContentType.TYPES.Component)
+    expect(contentTypePriorityPayloads[2].content_type).toBe(ContentType.TYPES.Theme)
 
     expect(remainingPayloads.length).toBe(1)
-    expect(remainingPayloads[0].content_type).toBe(ContentType.Note)
+    expect(remainingPayloads[0].content_type).toBe(ContentType.TYPES.Note)
   })
 
   it('should sort payloads based on launch priority uuids', () => {
@@ -53,31 +53,31 @@ describe('GetSortedPayloadsByPriority', () => {
 
     payloads = [
       {
-        content_type: ContentType.Theme,
+        content_type: ContentType.TYPES.Theme,
       } as FullyFormedPayloadInterface,
       {
-        content_type: ContentType.UserPrefs,
+        content_type: ContentType.TYPES.UserPrefs,
       } as FullyFormedPayloadInterface,
       {
-        content_type: ContentType.Component,
+        content_type: ContentType.TYPES.Component,
       } as FullyFormedPayloadInterface,
       {
-        content_type: ContentType.ItemsKey,
+        content_type: ContentType.TYPES.ItemsKey,
       } as FullyFormedPayloadInterface,
       {
-        content_type: ContentType.Note,
+        content_type: ContentType.TYPES.Note,
         uuid: unprioritizedNoteUuid,
       } as FullyFormedPayloadInterface,
       {
-        content_type: ContentType.Tag,
+        content_type: ContentType.TYPES.Tag,
         uuid: unprioritizedTagUuid,
       } as FullyFormedPayloadInterface,
       {
-        content_type: ContentType.Note,
+        content_type: ContentType.TYPES.Note,
         uuid: prioritizedNoteUuid,
       } as FullyFormedPayloadInterface,
       {
-        content_type: ContentType.Tag,
+        content_type: ContentType.TYPES.Tag,
         uuid: prioritizedTagUuid,
       } as FullyFormedPayloadInterface,
     ]
@@ -91,12 +91,12 @@ describe('GetSortedPayloadsByPriority', () => {
     })
 
     expect(itemsKeyPayloads.length).toBe(1)
-    expect(itemsKeyPayloads[0].content_type).toBe(ContentType.ItemsKey)
+    expect(itemsKeyPayloads[0].content_type).toBe(ContentType.TYPES.ItemsKey)
 
     expect(contentTypePriorityPayloads.length).toBe(3)
-    expect(contentTypePriorityPayloads[0].content_type).toBe(ContentType.UserPrefs)
-    expect(contentTypePriorityPayloads[1].content_type).toBe(ContentType.Component)
-    expect(contentTypePriorityPayloads[2].content_type).toBe(ContentType.Theme)
+    expect(contentTypePriorityPayloads[0].content_type).toBe(ContentType.TYPES.UserPrefs)
+    expect(contentTypePriorityPayloads[1].content_type).toBe(ContentType.TYPES.Component)
+    expect(contentTypePriorityPayloads[2].content_type).toBe(ContentType.TYPES.Theme)
 
     expect(remainingPayloads.length).toBe(4)
     expect(remainingPayloads[0].uuid).toBe(prioritizedNoteUuid)
@@ -114,21 +114,21 @@ describe('GetSortedPayloadsByPriority', () => {
 
     payloads = [
       {
-        content_type: ContentType.Note,
+        content_type: ContentType.TYPES.Note,
         uuid: unprioritizedNoteUuid,
         updated_at: new Date(1),
       } as FullyFormedPayloadInterface,
       {
-        content_type: ContentType.Tag,
+        content_type: ContentType.TYPES.Tag,
         uuid: unprioritizedTagUuid,
         updated_at: new Date(2),
       } as FullyFormedPayloadInterface,
       {
-        content_type: ContentType.Note,
+        content_type: ContentType.TYPES.Note,
         uuid: prioritizedNoteUuid,
       } as FullyFormedPayloadInterface,
       {
-        content_type: ContentType.Tag,
+        content_type: ContentType.TYPES.Tag,
         uuid: prioritizedTagUuid,
       } as FullyFormedPayloadInterface,
     ]

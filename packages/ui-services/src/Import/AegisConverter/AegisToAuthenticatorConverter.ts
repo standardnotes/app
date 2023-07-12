@@ -1,8 +1,8 @@
 import { DecryptedTransferPayload, NoteContent } from '@standardnotes/models'
-import { ContentType } from '@standardnotes/common'
 import { readFileAsText } from '../Utils'
 import { FeatureIdentifier, NoteType } from '@standardnotes/features'
 import { WebApplicationInterface } from '../../WebApplication/WebApplicationInterface'
+import { ContentType } from '@standardnotes/snjs'
 
 type AegisData = {
   db: {
@@ -62,7 +62,7 @@ export class AegisToAuthenticatorConverter {
       updated_at: new Date(file.lastModified),
       updated_at_timestamp: file.lastModified,
       uuid: this.application.generateUUID(),
-      content_type: ContentType.Note,
+      content_type: ContentType.TYPES.Note,
       content: {
         title: file.name.split('.')[0],
         text: JSON.stringify(entries),

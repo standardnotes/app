@@ -84,7 +84,7 @@ describe('features', () => {
       expect(application.apiService.getUserFeatures.callCount).to.equal(1)
       expect(application.mutator.createItem.callCount).to.equal(2)
 
-      const themeItems = application.items.getItems(ContentType.Theme)
+      const themeItems = application.items.getItems(ContentType.TYPES.Theme)
       const systemThemeCount = 1
       expect(themeItems).to.have.lengthOf(1 + systemThemeCount)
       expect(themeItems[1].content).to.containSubset(
@@ -97,7 +97,7 @@ describe('features', () => {
         ),
       )
 
-      const editorItems = application.items.getItems(ContentType.Component)
+      const editorItems = application.items.getItems(ContentType.TYPES.Component)
       expect(editorItems).to.have.lengthOf(1)
       expect(editorItems[0].content).to.containSubset(
         JSON.parse(
@@ -118,7 +118,7 @@ describe('features', () => {
       await application.featuresService.setOnlineRoles([])
       // Create pre-existing item for theme without all the info
       await application.mutator.createItem(
-        ContentType.Theme,
+        ContentType.TYPES.Theme,
         FillItemContent({
           package_info: {
             identifier: FeatureIdentifier.MidnightTheme,
@@ -130,7 +130,7 @@ describe('features', () => {
       // Timeout since we don't await for features update
       await new Promise((resolve) => setTimeout(resolve, 1000))
       expect(application.mutator.changeComponent.callCount).to.equal(1)
-      const themeItems = application.items.getItems(ContentType.Theme)
+      const themeItems = application.items.getItems(ContentType.TYPES.Theme)
       expect(themeItems).to.have.lengthOf(1)
       expect(themeItems[0].content).to.containSubset(
         JSON.parse(
@@ -161,7 +161,7 @@ describe('features', () => {
       })
 
       const themeItem = application.items
-        .getItems(ContentType.Theme)
+        .getItems(ContentType.TYPES.Theme)
         .find((theme) => theme.identifier === midnightThemeFeature.identifier)
 
       // Wipe roles from initial sync
@@ -177,7 +177,7 @@ describe('features', () => {
       )
 
       const noTheme = application.items
-        .getItems(ContentType.Theme)
+        .getItems(ContentType.TYPES.Theme)
         .find((theme) => theme.identifier === midnightThemeFeature.identifier)
       expect(noTheme).to.not.be.ok
     })
@@ -203,7 +203,7 @@ describe('features', () => {
       })
 
       await application.mutator.createItem(
-        ContentType.ExtensionRepo,
+        ContentType.TYPES.ExtensionRepo,
         FillItemContent({
           url: `https://extensions.standardnotes.org/${extensionKey}`,
         }),
@@ -225,7 +225,7 @@ describe('features', () => {
         .callsFake(() => {})
       const extensionKey = UuidGenerator.GenerateUuid().split('-').join('')
       await application.mutator.createItem(
-        ContentType.ExtensionRepo,
+        ContentType.TYPES.ExtensionRepo,
         FillItemContent({
           url: `https://extensions.standardnotes.org/${extensionKey}`,
         }),
@@ -256,7 +256,7 @@ describe('features', () => {
       })
       const extensionKey = UuidGenerator.GenerateUuid().split('-').join('')
       await application.mutator.createItem(
-        ContentType.ExtensionRepo,
+        ContentType.TYPES.ExtensionRepo,
         FillItemContent({
           url: `https://extensions.standardnotes.org/${extensionKey}`,
         }),
@@ -282,7 +282,7 @@ describe('features', () => {
       expect(await application.settings.getDoesSensitiveSettingExist(SettingName.ExtensionKey)).to.equal(false)
       const extensionKey = UuidGenerator.GenerateUuid().split('-').join('')
       const promise = new Promise((resolve) => {
-        application.streamItems(ContentType.ExtensionRepo, ({ changed }) => {
+        application.streamItems(ContentType.TYPES.ExtensionRepo, ({ changed }) => {
           for (const item of changed) {
             if (item.content.migratedToUserSetting) {
               resolve()
@@ -291,7 +291,7 @@ describe('features', () => {
         })
       })
       await application.mutator.createItem(
-        ContentType.ExtensionRepo,
+        ContentType.TYPES.ExtensionRepo,
         FillItemContent({
           url: `https://extensions.standardnotes.org/${extensionKey}`,
         }),
@@ -305,7 +305,7 @@ describe('features', () => {
       application = await Factory.signOutApplicationAndReturnNew(application)
       const extensionKey = UuidGenerator.GenerateUuid().split('-').join('')
       await application.mutator.createItem(
-        ContentType.ExtensionRepo,
+        ContentType.TYPES.ExtensionRepo,
         FillItemContent({
           url: `https://extensions.standardnotes.org/${extensionKey}`,
         }),

@@ -39,7 +39,7 @@ export class ClassicFileApi {
   downloadFileBytes = async (remoteIdentifier: string): Promise<Uint8Array> => {
     console.log('Downloading file', remoteIdentifier)
     const file = this.application['itemManager']
-      .getItems(ContentType.File)
+      .getItems(ContentType.TYPES.File)
       .find((file: FileItem) => file.remoteIdentifier === remoteIdentifier)
 
     let receivedBytes = new Uint8Array()

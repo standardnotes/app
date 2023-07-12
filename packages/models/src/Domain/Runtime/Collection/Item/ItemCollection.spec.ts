@@ -9,7 +9,7 @@ describe('item collection', () => {
   const createDecryptedPayload = (uuid?: string, content?: Partial<NoteContent>): DecryptedPayload => {
     return new DecryptedPayload({
       uuid: uuid || String(Math.random()),
-      content_type: ContentType.Note,
+      content_type: ContentType.TYPES.Note,
       content: FillItemContent<NoteContent>({
         title: 'foo',
         ...content,
