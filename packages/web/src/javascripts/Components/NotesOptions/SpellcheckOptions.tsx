@@ -11,11 +11,11 @@ import { iconClass } from './ClassNames'
 import MenuSwitchButtonItem from '../Menu/MenuSwitchButtonItem'
 
 export const SpellcheckOptions: FunctionComponent<{
-  editorForNote: ComponentOrNativeFeature<EditorFeatureDescription | IframeComponentFeatureDescription> | undefined
+  editorForNote: ComponentOrNativeFeature<EditorFeatureDescription | IframeComponentFeatureDescription>
   notesController: NotesController
   note: SNNote
 }> = ({ editorForNote, notesController, note }) => {
-  const spellcheckControllable = Boolean(!editorForNote || editorForNote.featureDescription.spellcheckControl)
+  const spellcheckControllable = editorForNote.featureDescription.spellcheckControl
   const noteSpellcheck = !spellcheckControllable
     ? true
     : note

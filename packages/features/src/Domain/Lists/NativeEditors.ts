@@ -10,6 +10,7 @@ export function nativeEditors(): EditorFeatureDescription[] {
       name: 'Super',
       note_type: NoteType.Super,
       identifier: FeatureIdentifier.SuperEditor,
+      spellcheckControl: true,
       file_type: 'json',
       interchangeable: false,
       availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
@@ -20,6 +21,7 @@ export function nativeEditors(): EditorFeatureDescription[] {
     {
       name: 'Plain Text',
       note_type: NoteType.Plain,
+      spellcheckControl: true,
       file_type: 'txt',
       interchangeable: true,
       identifier: FeatureIdentifier.PlainEditor,
