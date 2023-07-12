@@ -1,6 +1,6 @@
 import { mergeRefs } from '@/Hooks/mergeRefs'
 import { Dialog, DialogOptions, useDialogStore } from '@ariakit/react'
-import { ForwardedRef, forwardRef, ReactNode } from 'react'
+import { ForwardedRef, forwardRef, ReactNode, useCallback } from 'react'
 import { useModalAnimation } from '../Modal/useModalAnimation'
 
 type Props = {
@@ -9,6 +9,8 @@ type Props = {
   animationVariant?: 'horizontal' | 'vertical'
   close: () => void
 }
+
+type DialogWithClose = HTMLDivElement & { close: () => void }
 
 const ModalOverlay = forwardRef(
   (
@@ -25,6 +27,15 @@ const ModalOverlay = forwardRef(
       },
     })
 
+    const addCloseMethod = useCallback(
+      (element: HTMLDivElement | null) => {
+        if (element) {
+          ;(element as DialogWithClose).close = close
+        }
+      },
+      [close],
+    )
+
     if (!isMounted) {
       return null
     }
@@ -33,7 +44,7 @@ const ModalOverlay = forwardRef(
       <Dialog
         tabIndex={0}
         className="fixed top-0 left-0 z-modal h-full w-full"
-        ref={mergeRefs([setElement, ref])}
+        ref={mergeRefs([setElement, addCloseMethod, ref])}
         store={dialog}
         modal={false}
         portal={true}

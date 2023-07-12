@@ -21,6 +21,7 @@ import { Persistable } from './Abstract/Persistable'
 import { CrossControllerEvent } from './CrossControllerEvent'
 import { ItemListController } from './ItemList/ItemListController'
 import { PaneLayout } from './PaneController/PaneLayout'
+import { requestCloseAllOpenModalsAndPopovers } from '@/Utils/CloseOpenModalsAndPopovers'
 
 export class SelectedItemsController
   extends AbstractViewController
@@ -251,6 +252,10 @@ export class SelectedItemsController
 
       if (!this.application.paneController.isInMobileView || userTriggered) {
         void this.application.paneController.setPaneLayout(PaneLayout.Editing)
+      }
+
+      if (this.application.paneController.isInMobileView && userTriggered) {
+        requestCloseAllOpenModalsAndPopovers()
       }
     }
   }
