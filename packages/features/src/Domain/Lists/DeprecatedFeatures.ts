@@ -1,7 +1,5 @@
 import { ContentType } from '@standardnotes/common'
-import {
-  AnyFeatureDescription,
-} from '../Feature/AnyFeatureDescription'
+import { AnyFeatureDescription } from '../Feature/AnyFeatureDescription'
 import { EditorFeatureDescription } from '../Feature/EditorFeatureDescription'
 import { IframeComponentFeatureDescription } from '../Feature/IframeComponentFeatureDescription'
 import { PermissionName } from '../Permission/PermissionName'
