@@ -28,12 +28,16 @@ const Tooltip = ({ text }: { text: string }) => {
 
   return (
     <div className="relative">
-      <div className={classNames('peer flex h-5 w-5 items-center justify-center rounded-full')} onClick={onClickMobile}>
-        <Icon type={'help'} className="text-neutral" size="large" />
+      <div
+        className={classNames('peer z-0 flex h-5 w-5 items-center justify-center rounded-full')}
+        onClick={onClickMobile}
+      >
+        <Icon type={'notes'} className="text-border" size="large" />
         <span className="sr-only">Note sync status</span>
       </div>
       <div
         className={classNames(
+          'z-tooltip',
           'hidden',
           'absolute top-full right-0 w-60 translate-x-2 translate-y-1 select-none rounded border border-border shadow-main',
           'bg-default py-1.5 px-3 text-left peer-hover:block peer-focus:block',
