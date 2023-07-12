@@ -72,15 +72,27 @@ export class Migration2_202_1 extends Migration {
   }
 
   private async deleteComponentsWhichAreNativeFeatures(): Promise<void> {
-    const components = [
+    const componentsToDelete = [
       ...this.services.itemManager.getItems<ComponentInterface>(ContentType.TYPES.Component),
       ...this.services.itemManager.getItems<ComponentInterface>(ContentType.TYPES.Theme),
-    ].filter((component) => FindNativeFeature(component.identifier) !== undefined)
+    ].filter((candidate) => {
+      const nativeFeature = FindNativeFeature(candidate.identifier)
+      if (!nativeFeature) {
+        return false
+      }
 
-    if (components.length === 0) {
+      const isDeprecatedAndThusShouldNotDeleteComponentSinceUserHasItRetained = nativeFeature.deprecated
+      if (isDeprecatedAndThusShouldNotDeleteComponentSinceUserHasItRetained) {
+        return false
+      }
+
+      return true
+    })
+
+    if (componentsToDelete.length === 0) {
       return
     }
 
-    await this.services.mutator.setItemsToBeDeleted(components)
+    await this.services.mutator.setItemsToBeDeleted(componentsToDelete)
   }
 }
