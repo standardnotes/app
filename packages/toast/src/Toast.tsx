@@ -101,7 +101,7 @@ export const Toast = forwardRef(({ toast, index }: Props, ref: ForwardedRef<HTML
           <>
             {toast.actions?.map((action, index) => (
               <button
-                className={`hover:bg-passive-3 cursor-pointer rounded border-0 py-1 px-[0.45rem] text-sm font-semibold md:bg-transparent ${colorForToastType(
+                className={`hover:bg-passive-3 cursor-pointer rounded border-0 px-[0.45rem] py-1 text-sm font-semibold md:bg-transparent ${colorForToastType(
                   toast.type,
                 )} ${index !== 0 ? 'ml-2' : ''}`}
                 onClick={() => {
