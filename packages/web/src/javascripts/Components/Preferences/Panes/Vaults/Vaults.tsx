@@ -61,7 +61,7 @@ const Vaults = () => {
   }, [application.sharedVaults, updateAllData])
 
   useEffect(() => {
-    return application.streamItems([ContentType.VaultListing, ContentType.TrustedContact], () => {
+    return application.streamItems([ContentType.TYPES.VaultListing, ContentType.TYPES.TrustedContact], () => {
       void updateAllData()
     })
   }, [application, updateAllData])

@@ -101,7 +101,7 @@ export class LinkingController extends AbstractViewController {
 
     const referencingItem = naturalSort(this.application.items.itemsReferencingItem(item).filter(isFile), 'title')
 
-    if (item.content_type === ContentType.File) {
+    if (item.content_type === ContentType.TYPES.File) {
       return {
         filesLinkedToItem: referencesOfItem.map((item) => createLinkFromItem(item, 'linked')),
         filesLinkingToItem: referencingItem.map((item) => createLinkFromItem(item, 'linked-by')),

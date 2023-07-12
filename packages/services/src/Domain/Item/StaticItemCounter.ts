@@ -1,4 +1,4 @@
-import { ContentType } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/domain-core'
 import { SNNote, SNTag, ItemCounts } from '@standardnotes/models'
 
 export class StaticItemCounter {
@@ -21,12 +21,12 @@ export class StaticItemCounter {
 
         continue
       }
-      if (item.content_type === ContentType.Note && !item.conflictOf) {
+      if (item.content_type === ContentType.TYPES.Note && !item.conflictOf) {
         counts.notes++
 
         continue
       }
-      if (item.content_type === ContentType.Tag) {
+      if (item.content_type === ContentType.TYPES.Tag) {
         counts.tags++
 
         continue

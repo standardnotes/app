@@ -1,4 +1,3 @@
-import { ContentType } from '@standardnotes/common'
 import { EncryptedItem } from '../../Abstract/Item/Implementations/EncryptedItem'
 import { DecryptedPayloadInterface } from '../../Abstract/Payload/Interfaces/DecryptedPayload'
 import { FileItem } from '../../Syncable/File/File'
@@ -40,6 +39,7 @@ import {
   isDeletedPayload,
   isEncryptedPayload,
 } from '../../Abstract/Payload'
+import { ContentType } from '@standardnotes/domain-core'
 
 type ItemClass<C extends ItemContent = ItemContent> = new (payload: DecryptedPayloadInterface<C>) => DecryptedItem<C>
 
@@ -53,24 +53,24 @@ type MappingEntry<C extends ItemContent = ItemContent> = {
   mutatorClass?: MutatorClass<C>
 }
 
-const ContentTypeClassMapping: Partial<Record<ContentType, MappingEntry>> = {
-  [ContentType.ActionsExtension]: {
+const ContentTypeClassMapping: Partial<Record<string, MappingEntry>> = {
+  [ContentType.TYPES.ActionsExtension]: {
     itemClass: SNActionsExtension,
     mutatorClass: ActionsExtensionMutator,
   },
-  [ContentType.Component]: { itemClass: SNComponent, mutatorClass: ComponentMutator },
-  [ContentType.KeySystemRootKey]: { itemClass: KeySystemRootKey, mutatorClass: KeySystemRootKeyMutator },
-  [ContentType.TrustedContact]: { itemClass: TrustedContact, mutatorClass: TrustedContactMutator },
-  [ContentType.VaultListing]: { itemClass: VaultListing, mutatorClass: VaultListingMutator },
-  [ContentType.Editor]: { itemClass: SNEditor },
-  [ContentType.ExtensionRepo]: { itemClass: SNFeatureRepo },
-  [ContentType.File]: { itemClass: FileItem, mutatorClass: FileMutator },
-  [ContentType.Note]: { itemClass: SNNote, mutatorClass: NoteMutator },
-  [ContentType.SmartView]: { itemClass: SmartView, mutatorClass: SmartViewMutator },
-  [ContentType.Tag]: { itemClass: SNTag, mutatorClass: TagMutator },
-  [ContentType.Theme]: { itemClass: SNTheme, mutatorClass: ThemeMutator },
-  [ContentType.UserPrefs]: { itemClass: SNUserPrefs, mutatorClass: UserPrefsMutator },
-} as unknown as Partial<Record<ContentType, MappingEntry>>
+  [ContentType.TYPES.Component]: { itemClass: SNComponent, mutatorClass: ComponentMutator },
+  [ContentType.TYPES.KeySystemRootKey]: { itemClass: KeySystemRootKey, mutatorClass: KeySystemRootKeyMutator },
+  [ContentType.TYPES.TrustedContact]: { itemClass: TrustedContact, mutatorClass: TrustedContactMutator },
+  [ContentType.TYPES.VaultListing]: { itemClass: VaultListing, mutatorClass: VaultListingMutator },
+  [ContentType.TYPES.Editor]: { itemClass: SNEditor },
+  [ContentType.TYPES.ExtensionRepo]: { itemClass: SNFeatureRepo },
+  [ContentType.TYPES.File]: { itemClass: FileItem, mutatorClass: FileMutator },
+  [ContentType.TYPES.Note]: { itemClass: SNNote, mutatorClass: NoteMutator },
+  [ContentType.TYPES.SmartView]: { itemClass: SmartView, mutatorClass: SmartViewMutator },
+  [ContentType.TYPES.Tag]: { itemClass: SNTag, mutatorClass: TagMutator },
+  [ContentType.TYPES.Theme]: { itemClass: SNTheme, mutatorClass: ThemeMutator },
+  [ContentType.TYPES.UserPrefs]: { itemClass: SNUserPrefs, mutatorClass: UserPrefsMutator },
+} as unknown as Partial<Record<string, MappingEntry>>
 
 export function CreateDecryptedMutatorForItem<
   I extends DecryptedItemInterface,
@@ -87,7 +87,7 @@ export function CreateDecryptedMutatorForItem<
 export function RegisterItemClass<
   C extends ItemContent = ItemContent,
   M extends DecryptedItemMutator<C> = DecryptedItemMutator<C>,
->(contentType: ContentType, itemClass: ItemClass<C>, mutatorClass: M) {
+>(contentType: string, itemClass: ItemClass<C>, mutatorClass: M) {
   const entry: MappingEntry<C> = {
     itemClass: itemClass,
     mutatorClass: mutatorClass as unknown as MutatorClass<C>,

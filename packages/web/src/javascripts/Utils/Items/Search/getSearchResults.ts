@@ -19,7 +19,7 @@ export function getLinkingSearchResults(
   application: WebApplicationInterface,
   activeItem?: LinkableItem,
   options: {
-    contentType?: ContentType
+    contentType?: string
     returnEmptyIfQueryEmpty?: boolean
   } = { returnEmptyIfQueryEmpty: true },
 ): {
@@ -49,7 +49,7 @@ export function getLinkingSearchResults(
   }
 
   const searchableItems = naturalSort(
-    application.items.getItems([ContentType.Note, ContentType.File, ContentType.Tag]),
+    application.items.getItems([ContentType.TYPES.Note, ContentType.TYPES.File, ContentType.TYPES.Tag]),
     'title',
   )
 
@@ -85,19 +85,26 @@ export function getLinkingSearchResults(
     const limitPerContentType = resultLimitForSearchQuery(searchQuery)
 
     if (
-      item.content_type === ContentType.Tag &&
-      (!enforceResultLimit || (unlinkedTags.length < limitPerContentType && item.content_type === ContentType.Tag))
+      item.content_type === ContentType.TYPES.Tag &&
+      (!enforceResultLimit ||
+        (unlinkedTags.length < limitPerContentType && item.content_type === ContentType.TYPES.Tag))
     ) {
       unlinkedTags.push(item)
       continue
     }
 
-    if (item.content_type === ContentType.Note && (!enforceResultLimit || unlinkedNotes.length < limitPerContentType)) {
+    if (
+      item.content_type === ContentType.TYPES.Note &&
+      (!enforceResultLimit || unlinkedNotes.length < limitPerContentType)
+    ) {
       unlinkedNotes.push(item)
       continue
     }
 
-    if (item.content_type === ContentType.File && (!enforceResultLimit || unlinkedFiles.length < limitPerContentType)) {
+    if (
+      item.content_type === ContentType.TYPES.File &&
+      (!enforceResultLimit || unlinkedFiles.length < limitPerContentType)
+    ) {
       unlinkedFiles.push(item)
       continue
     }

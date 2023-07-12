@@ -11,7 +11,7 @@ import {
 } from '@standardnotes/models'
 import { UuidString } from '@standardnotes/snjs'
 import { removeFromArray } from '@standardnotes/utils'
-import { ContentType } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/domain-core'
 import { ItemViewControllerInterface } from './ItemViewControllerInterface'
 import { TemplateNoteViewControllerOptions } from './TemplateNoteViewControllerOptions'
 import { log, LoggingDomain } from '@/Logging'
@@ -99,7 +99,7 @@ export class NoteViewController implements ItemViewControllerInterface {
       const noteType = noteTypeForEditorIdentifier(editorIdentifier)
 
       const note = this.application.items.createTemplateItem<NoteContent, SNNote>(
-        ContentType.Note,
+        ContentType.TYPES.Note,
         {
           text: '',
           title: this.templateNoteOptions?.title || '',
@@ -140,7 +140,7 @@ export class NoteViewController implements ItemViewControllerInterface {
     }
 
     this.disposers.push(
-      this.application.streamItems<SNNote>(ContentType.Note, ({ changed, inserted, source }) => {
+      this.application.streamItems<SNNote>(ContentType.TYPES.Note, ({ changed, inserted, source }) => {
         if (this.dealloced) {
           return
         }

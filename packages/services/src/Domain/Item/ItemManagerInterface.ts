@@ -1,4 +1,3 @@
-import { ContentType } from '@standardnotes/common'
 import {
   ItemsKeyInterface,
   DecryptedItemInterface,
@@ -54,13 +53,13 @@ export interface ItemManagerInterface extends AbstractService {
   getCollection(): ItemCollection
 
   addObserver<I extends DecryptedItemInterface = DecryptedItemInterface>(
-    contentType: ContentType | ContentType[],
+    contentType: string | string[],
     callback: ItemManagerChangeObserverCallback<I>,
   ): () => void
 
   get items(): DecryptedItemInterface[]
 
-  getItems<T extends DecryptedItemInterface>(contentType: ContentType | ContentType[]): T[]
+  getItems<T extends DecryptedItemInterface>(contentType: string | string[]): T[]
   get invalidItems(): EncryptedItemInterface[]
   allTrackedItems(): ItemInterface[]
   getDisplayableItemsKeys(): ItemsKeyInterface[]
@@ -69,17 +68,14 @@ export interface ItemManagerInterface extends AbstractService {
     C extends ItemContent = ItemContent,
     I extends DecryptedItemInterface<C> = DecryptedItemInterface<C>,
   >(
-    contentType: ContentType,
+    contentType: string,
     content?: C,
     override?: Partial<DecryptedPayload<C>>,
   ): I
 
-  itemsMatchingPredicate<T extends DecryptedItemInterface>(
-    contentType: ContentType,
-    predicate: PredicateInterface<T>,
-  ): T[]
+  itemsMatchingPredicate<T extends DecryptedItemInterface>(contentType: string, predicate: PredicateInterface<T>): T[]
   itemsMatchingPredicates<T extends DecryptedItemInterface>(
-    contentType: ContentType,
+    contentType: string,
     predicates: PredicateInterface<T>[],
   ): T[]
   subItemsMatchingPredicates<T extends DecryptedItemInterface>(items: T[], predicates: PredicateInterface<T>[]): T[]
@@ -90,11 +86,11 @@ export interface ItemManagerInterface extends AbstractService {
   getSortedTagsForItem(item: DecryptedItemInterface<ItemContent>): SNTag[]
   itemsReferencingItem<I extends DecryptedItemInterface = DecryptedItemInterface>(
     itemToLookupUuidFor: { uuid: string },
-    contentType?: ContentType,
+    contentType?: string,
   ): I[]
   referencesForItem<I extends DecryptedItemInterface = DecryptedItemInterface>(
     itemToLookupUuidFor: DecryptedItemInterface,
-    contentType?: ContentType,
+    contentType?: string,
   ): I[]
 
   findItem<T extends DecryptedItemInterface = DecryptedItemInterface>(uuid: string): T | undefined

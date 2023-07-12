@@ -1,4 +1,5 @@
-import { DisplayStringForContentType } from '@standardnotes/snjs'
+import { ContentType } from '@standardnotes/snjs'
+
 import Button from '@/Components/Button/Button'
 import { Fragment, FunctionComponent } from 'react'
 import { Title, Text, Subtitle } from '@/Components/Preferences/PreferencesComponents/Content'
@@ -9,6 +10,12 @@ const ConfirmCustomPackage: FunctionComponent<{
   component: AnyPackageType
   callback: (confirmed: boolean) => void
 }> = ({ component, callback }) => {
+  let contentTypeDisplayName = null
+  const contentTypeOrError = ContentType.create(component.content_type)
+  if (!contentTypeOrError.isFailed()) {
+    contentTypeDisplayName = contentTypeOrError.getValue().getDisplayName()
+  }
+
   const fields = [
     {
       label: 'Name',
@@ -32,7 +39,7 @@ const ConfirmCustomPackage: FunctionComponent<{
     },
     {
       label: 'Extension Type',
-      value: DisplayStringForContentType(component.content_type),
+      value: contentTypeDisplayName,
     },
   ]
 

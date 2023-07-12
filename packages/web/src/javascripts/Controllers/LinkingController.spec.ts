@@ -29,7 +29,7 @@ const createNote = (name: string, options?: Partial<SNNote>) => {
     archived: false,
     trashed: false,
     uuid: String(Math.random()),
-    content_type: ContentType.Note,
+    content_type: ContentType.TYPES.Note,
     ...options,
   } as jest.Mocked<SNNote>
 }
@@ -40,7 +40,7 @@ const createFile = (name: string, options?: Partial<FileItem>) => {
     archived: false,
     trashed: false,
     uuid: String(Math.random()),
-    content_type: ContentType.File,
+    content_type: ContentType.TYPES.File,
     ...options,
   } as jest.Mocked<FileItem>
 }

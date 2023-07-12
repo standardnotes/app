@@ -1,8 +1,7 @@
 import { MigrateFeatureRepoToUserSettingUseCase } from './UseCase/MigrateFeatureRepoToUserSetting'
 import { arraysEqual, removeFromArray, lastElement } from '@standardnotes/utils'
 import { ClientDisplayableError } from '@standardnotes/responses'
-import { ContentType } from '@standardnotes/common'
-import { RoleName } from '@standardnotes/domain-core'
+import { RoleName, ContentType } from '@standardnotes/domain-core'
 import { PROD_OFFLINE_FEATURES_URL } from '../../Hosts'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { SNWebSocketsService } from '../Api/WebsocketsService'
@@ -101,7 +100,7 @@ export class SNFeaturesService
     )
 
     this.eventDisposers.push(
-      this.items.addObserver(ContentType.ExtensionRepo, async ({ changed, inserted, source }) => {
+      this.items.addObserver(ContentType.TYPES.ExtensionRepo, async ({ changed, inserted, source }) => {
         const sources = [
           PayloadEmitSource.InitialObserverRegistrationPush,
           PayloadEmitSource.LocalInserted,
@@ -124,7 +123,7 @@ export class SNFeaturesService
     this.eventDisposers.push(
       this.user.addEventObserver((eventName: AccountEvent) => {
         if (eventName === AccountEvent.SignedInOrRegistered) {
-          const featureRepos = this.items.getItems(ContentType.ExtensionRepo) as SNFeatureRepo[]
+          const featureRepos = this.items.getItems(ContentType.TYPES.ExtensionRepo) as SNFeatureRepo[]
 
           if (!this.api.isThirdPartyHostUsed()) {
             void this.migrateFeatureRepoToUserSetting(featureRepos)
@@ -182,7 +181,7 @@ export class SNFeaturesService
     void this.storage.setValue(StorageKey.ExperimentalFeatures, this.enabledExperimentalFeatures)
 
     const component = this.items
-      .getItems<ComponentInterface | ThemeInterface>([ContentType.Component, ContentType.Theme])
+      .getItems<ComponentInterface | ThemeInterface>([ContentType.TYPES.Component, ContentType.TYPES.Theme])
       .find((component) => component.identifier === identifier)
     if (!component) {
       return
@@ -229,7 +228,7 @@ export class SNFeaturesService
       }
 
       const offlineRepo = (await this.mutator.createItem(
-        ContentType.ExtensionRepo,
+        ContentType.TYPES.ExtensionRepo,
         FillItemContent({
           offlineFeaturesUrl: result.featuresUrl,
           offlineKey: result.extensionKey,
@@ -247,7 +246,7 @@ export class SNFeaturesService
   }
 
   private getOfflineRepo(): SNFeatureRepo | undefined {
-    const repos = this.items.getItems(ContentType.ExtensionRepo) as SNFeatureRepo[]
+    const repos = this.items.getItems(ContentType.TYPES.ExtensionRepo) as SNFeatureRepo[]
     return repos.filter((repo) => repo.migratedToOfflineEntitlements)[0]
   }
 

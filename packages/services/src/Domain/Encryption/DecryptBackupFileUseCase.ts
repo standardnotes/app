@@ -1,7 +1,6 @@
 import {
   AnyKeyParamsContent,
   compareVersions,
-  ContentType,
   leftVersionGreaterThanOrEqualToRight,
   ProtocolVersion,
 } from '@standardnotes/common'
@@ -39,6 +38,7 @@ import {
 import { ClientDisplayableError } from '@standardnotes/responses'
 import { extendArray } from '@standardnotes/utils'
 import { EncryptionService } from './EncryptionService'
+import { ContentType } from '@standardnotes/domain-core'
 
 export class DecryptBackupFileUseCase {
   constructor(private encryption: EncryptionService) {}
@@ -95,7 +95,7 @@ export class DecryptBackupFileUseCase {
     } else {
       const hasEncryptedItem = payloads.find(isEncryptedPayload)
       const hasDecryptedItemsKey = payloads.find(
-        (payload) => payload.content_type === ContentType.ItemsKey && isDecryptedPayload(payload),
+        (payload) => payload.content_type === ContentType.TYPES.ItemsKey && isDecryptedPayload(payload),
       )
 
       if (hasEncryptedItem && hasDecryptedItemsKey) {
@@ -149,7 +149,7 @@ export class DecryptBackupFileUseCase {
     const encryptedPayloads: EncryptedPayloadInterface[] = []
 
     payloads.forEach((payload) => {
-      if (payload.content_type === ContentType.ItemsKey && isDecryptedPayload(payload)) {
+      if (payload.content_type === ContentType.TYPES.ItemsKey && isDecryptedPayload(payload)) {
         decryptedItemsKeys.push(payload as DecryptedPayloadInterface<ItemsKeyContent>)
       } else if (isEncryptedPayload(payload)) {
         encryptedPayloads.push(payload)

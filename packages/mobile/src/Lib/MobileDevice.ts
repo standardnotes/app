@@ -2,6 +2,7 @@ import SNReactNative from '@standardnotes/react-native-utils'
 import {
   AppleIAPProductId,
   AppleIAPReceipt,
+  ApplicationEvent,
   ApplicationIdentifier,
   DatabaseKeysLoadChunkResponse,
   DatabaseLoadOptions,
@@ -57,11 +58,13 @@ export enum MobileDeviceEvent {
 }
 
 type MobileDeviceEventHandler = (event: MobileDeviceEvent) => void
+type ApplicationEventHandler = (event: ApplicationEvent) => void
 
 export class MobileDevice implements MobileDeviceInterface {
   environment: Environment.Mobile = Environment.Mobile
   platform: SNPlatform.Ios | SNPlatform.Android = Platform.OS === 'ios' ? SNPlatform.Ios : SNPlatform.Android
-  private eventObservers: MobileDeviceEventHandler[] = []
+  private applicationEventObservers: ApplicationEventHandler[] = []
+  private mobileDeviceEventObservers: MobileDeviceEventHandler[] = []
   public isDarkMode = false
   public statusBarBgColor: string | undefined
   private componentUrls: Map<UuidString, string> = new Map()
@@ -346,13 +349,23 @@ export class MobileDevice implements MobileDeviceInterface {
   }
 
   performSoftReset() {
-    this.notifyEvent(MobileDeviceEvent.RequestsWebViewReload)
+    this.notifyMobileDeviceEvent(MobileDeviceEvent.RequestsWebViewReload)
   }
 
-  addMobileWebEventReceiver(handler: MobileDeviceEventHandler): () => void {
-    this.eventObservers.push(handler)
+  addMobileDeviceEventReceiver(handler: MobileDeviceEventHandler): () => void {
+    this.mobileDeviceEventObservers.push(handler)
 
-    const thislessObservers = this.eventObservers
+    const thislessObservers = this.mobileDeviceEventObservers
+
+    return () => {
+      removeFromArray(thislessObservers, handler)
+    }
+  }
+
+  addApplicationEventReceiver(handler: ApplicationEventHandler): () => void {
+    this.applicationEventObservers.push(handler)
+
+    const thislessObservers = this.applicationEventObservers
 
     return () => {
       removeFromArray(thislessObservers, handler)
@@ -373,8 +386,14 @@ export class MobileDevice implements MobileDeviceInterface {
     StatusBar.setBarStyle(this.isDarkMode ? 'light-content' : 'dark-content', animated)
   }
 
-  private notifyEvent(event: MobileDeviceEvent): void {
-    for (const handler of this.eventObservers) {
+  private notifyMobileDeviceEvent(event: MobileDeviceEvent): void {
+    for (const handler of this.mobileDeviceEventObservers) {
+      handler(event)
+    }
+  }
+
+  notifyApplicationEvent(event: ApplicationEvent): void {
+    for (const handler of this.applicationEventObservers) {
       handler(event)
     }
   }

@@ -1,5 +1,6 @@
+import { ContentType } from '@standardnotes/domain-core'
+
 import { ComponentAction } from '../../Component/ComponentAction'
-import { ContentType } from '@standardnotes/common'
 import { EditorFeatureDescription } from '../../Feature/EditorFeatureDescription'
 import { IframeComponentFeatureDescription } from '../../Feature/IframeComponentFeatureDescription'
 import { ComponentArea } from '../../Component/ComponentArea'
@@ -17,12 +18,12 @@ export function FillIframeEditorDefaults(
     component.component_permissions = [
       {
         name: ComponentAction.StreamContextItem,
-        content_types: [ContentType.Note],
+        content_types: [ContentType.TYPES.Note],
       },
     ]
   }
 
-  component.content_type = ContentType.Component
+  component.content_type = ContentType.TYPES.Component
   if (!component.area) {
     component.area = ComponentArea.Editor
   }

@@ -1,7 +1,6 @@
 import { SyncClientInterface } from './../Sync/SyncClientInterface'
 import { isString, lastElement, sleep } from '@standardnotes/utils'
 import { UuidString } from '@Lib/Types/UuidString'
-import { ContentType } from '@standardnotes/common'
 import { ItemManager } from '@Lib/Services/Items/ItemManager'
 import { DeprecatedHttpService } from '../Api/DeprecatedHttpService'
 import { SettingName } from '@standardnotes/settings'
@@ -12,6 +11,7 @@ import { isErrorResponse, ListedAccount, ListedAccountInfo, ListedAccountInfoRes
 import { NoteMutator, SNActionsExtension, SNNote } from '@standardnotes/models'
 import { AbstractService, InternalEventBusInterface, MutatorClientInterface } from '@standardnotes/services'
 import { SNProtectionService } from '../Protection'
+import { ContentType } from '@standardnotes/domain-core'
 
 export class ListedService extends AbstractService implements ListedClientInterface {
   constructor(
@@ -124,7 +124,7 @@ export class ListedService extends AbstractService implements ListedClientInterf
 
   private getLegacyListedAccounts(): ListedAccount[] {
     const extensions = this.itemManager
-      .getItems<SNActionsExtension>(ContentType.ActionsExtension)
+      .getItems<SNActionsExtension>(ContentType.TYPES.ActionsExtension)
       .filter((extension) => extension.isListedExtension)
 
     const accounts: ListedAccount[] = []

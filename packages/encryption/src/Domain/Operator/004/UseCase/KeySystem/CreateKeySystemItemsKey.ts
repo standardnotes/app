@@ -10,7 +10,8 @@ import {
 } from '@standardnotes/models'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { V004Algorithm } from '../../../../Algorithm'
-import { ContentType, ProtocolVersion } from '@standardnotes/common'
+import { ProtocolVersion } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/domain-core'
 
 export class CreateKeySystemItemsKeyUseCase {
   constructor(private readonly crypto: PureCryptoInterface) {}
@@ -31,7 +32,7 @@ export class CreateKeySystemItemsKeyUseCase {
 
     const transferPayload: DecryptedTransferPayload = {
       uuid: dto.uuid,
-      content_type: ContentType.KeySystemItemsKey,
+      content_type: ContentType.TYPES.KeySystemItemsKey,
       key_system_identifier: dto.keySystemIdentifier,
       shared_vault_uuid: dto.sharedVaultUuid,
       content: content,

@@ -1,7 +1,7 @@
 import { CreateItemDelta } from './../Index/ItemDelta'
 import { DeletedPayload } from './../../Abstract/Payload/Implementations/DeletedPayload'
 import { createFile, createNote, createTagWithTitle, mockUuid, pinnedContent } from './../../Utilities/Test/SpecUtils'
-import { ContentType } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/domain-core'
 import { DeletedItem, EncryptedItem } from '../../Abstract/Item'
 import { EncryptedPayload, PayloadTimestampDefaults } from '../../Abstract/Payload'
 import { createNoteWithContent } from '../../Utilities/Test/SpecUtils'
@@ -16,7 +16,7 @@ describe('item display controller', () => {
     const noteB = createNoteWithContent({ title: 'b' })
     collection.set([noteA, noteB])
 
-    const controller = new ItemDisplayController(collection, [ContentType.Note], {
+    const controller = new ItemDisplayController(collection, [ContentType.TYPES.Note], {
       sortBy: 'title',
       sortDirection: 'asc',
     })
@@ -36,7 +36,7 @@ describe('item display controller', () => {
     const noteB = createNoteWithContent({ title: 'b' })
     collection.set([noteA, noteB])
 
-    const controller = new ItemDisplayController(collection, [ContentType.Note], {
+    const controller = new ItemDisplayController(collection, [ContentType.TYPES.Note], {
       sortBy: 'title',
       sortDirection: 'asc',
     })
@@ -56,7 +56,7 @@ describe('item display controller', () => {
     const noteA = createNoteWithContent({ title: 'a' })
     collection.set([noteA])
 
-    const controller = new ItemDisplayController(collection, [ContentType.Note], {
+    const controller = new ItemDisplayController(collection, [ContentType.TYPES.Note], {
       sortBy: 'title',
       sortDirection: 'asc',
     })
@@ -76,7 +76,7 @@ describe('item display controller', () => {
     const noteA = new EncryptedItem(
       new EncryptedPayload({
         uuid: mockUuid(),
-        content_type: ContentType.Note,
+        content_type: ContentType.TYPES.Note,
         content: '004:...',
         enc_item_key: '004:...',
         items_key_id: mockUuid(),
@@ -87,7 +87,7 @@ describe('item display controller', () => {
     )
     collection.set([noteA])
 
-    const controller = new ItemDisplayController(collection, [ContentType.Note], {
+    const controller = new ItemDisplayController(collection, [ContentType.TYPES.Note], {
       sortBy: 'title',
       sortDirection: 'asc',
     })
@@ -101,7 +101,7 @@ describe('item display controller', () => {
     const noteB = createNoteWithContent({ title: 'b' })
     collection.set([noteA, noteB])
 
-    const controller = new ItemDisplayController(collection, [ContentType.Note], {
+    const controller = new ItemDisplayController(collection, [ContentType.TYPES.Note], {
       sortBy: 'title',
       sortDirection: 'asc',
     })
@@ -134,7 +134,7 @@ describe('item display controller', () => {
     const noteA = createNoteWithContent({ title: 'a' })
     collection.set([noteA])
 
-    const controller = new ItemDisplayController(collection, [ContentType.Note], {
+    const controller = new ItemDisplayController(collection, [ContentType.TYPES.Note], {
       sortBy: 'title',
       sortDirection: 'asc',
     })
@@ -159,7 +159,7 @@ describe('item display controller', () => {
     const noteA = createNoteWithContent({ title: 'a' })
     collection.set([noteA])
 
-    const controller = new ItemDisplayController(collection, [ContentType.Note], {
+    const controller = new ItemDisplayController(collection, [ContentType.TYPES.Note], {
       sortBy: 'title',
       sortDirection: 'asc',
     })
@@ -177,7 +177,7 @@ describe('item display controller', () => {
     const tag = createTagWithTitle()
     collection.set([note, tag])
 
-    const controller = new ItemDisplayController(collection, [ContentType.Note], {
+    const controller = new ItemDisplayController(collection, [ContentType.TYPES.Note], {
       sortBy: 'title',
       sortDirection: 'asc',
     })
@@ -190,7 +190,7 @@ describe('item display controller', () => {
     const tag = createTagWithTitle()
     collection.set([note, tag])
 
-    const controller = new ItemDisplayController(collection, [ContentType.Note], {
+    const controller = new ItemDisplayController(collection, [ContentType.TYPES.Note], {
       sortBy: 'title',
       sortDirection: 'asc',
     })
@@ -203,7 +203,7 @@ describe('item display controller', () => {
     const note = createNoteWithContent({ title: 'a' })
     collection.set([note])
 
-    const controller = new ItemDisplayController(collection, [ContentType.Note], {
+    const controller = new ItemDisplayController(collection, [ContentType.TYPES.Note], {
       sortBy: 'title',
       sortDirection: 'asc',
     })
@@ -222,7 +222,7 @@ describe('item display controller', () => {
     const file = createFile('A')
     collection.set([note, file])
 
-    const controller = new ItemDisplayController(collection, [ContentType.Note, ContentType.File], {
+    const controller = new ItemDisplayController(collection, [ContentType.TYPES.Note, ContentType.TYPES.File], {
       sortBy: 'title',
       sortDirection: 'asc',
     })
@@ -242,14 +242,14 @@ describe('item display controller', () => {
     const file = createFile()
     collection.set([note, file])
 
-    const controller = new ItemDisplayController(collection, [ContentType.Note, ContentType.File], {
+    const controller = new ItemDisplayController(collection, [ContentType.TYPES.Note, ContentType.TYPES.File], {
       sortBy: 'title',
       sortDirection: 'asc',
     })
 
     expect(controller.items()).toHaveLength(2)
 
-    controller.setDisplayOptions({ hiddenContentTypes: [ContentType.File] })
+    controller.setDisplayOptions({ hiddenContentTypes: [ContentType.TYPES.File] })
 
     expect(controller.items()).toHaveLength(1)
   })

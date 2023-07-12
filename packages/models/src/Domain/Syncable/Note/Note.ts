@@ -1,13 +1,13 @@
 import { AppDataField } from './../../Abstract/Item/Types/AppDataField'
-import { ContentType } from '@standardnotes/common'
 import { FeatureIdentifier, NoteType } from '@standardnotes/features'
 import { DecryptedItem } from '../../Abstract/Item/Implementations/DecryptedItem'
 import { ItemInterface } from '../../Abstract/Item/Interfaces/ItemInterface'
 import { DecryptedPayloadInterface } from '../../Abstract/Payload/Interfaces/DecryptedPayload'
 import { NoteContent, NoteContentSpecialized } from './NoteContent'
 import { EditorLineWidth } from '../UserPrefs'
+import { ContentType } from '@standardnotes/domain-core'
 
-export const isNote = (x: ItemInterface): x is SNNote => x.content_type === ContentType.Note
+export const isNote = (x: ItemInterface): x is SNNote => x.content_type === ContentType.TYPES.Note
 
 export class SNNote extends DecryptedItem<NoteContent> implements NoteContentSpecialized {
   public readonly title: string

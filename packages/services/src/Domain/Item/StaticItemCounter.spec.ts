@@ -1,4 +1,4 @@
-import { ContentType } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/domain-core'
 import { SNNote, SNTag } from '@standardnotes/models'
 import { StaticItemCounter } from './StaticItemCounter'
 
@@ -18,10 +18,10 @@ describe('ItemCounter', () => {
         trashed: true,
       } as jest.Mocked<SNNote>,
       {
-        content_type: ContentType.Note,
+        content_type: ContentType.TYPES.Note,
       } as jest.Mocked<SNNote>,
       {
-        content_type: ContentType.Tag,
+        content_type: ContentType.TYPES.Tag,
       } as jest.Mocked<SNTag>,
     ]
 

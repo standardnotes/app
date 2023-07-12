@@ -104,7 +104,7 @@ const Moments: FunctionComponent<Props> = ({ application }: Props) => {
             <ItemSelectionDropdown
               onSelection={selectTag}
               placeholder="Select tag to save Moments to..."
-              contentTypes={[ContentType.Tag]}
+              contentTypes={[ContentType.TYPES.Tag]}
             />
           </div>
         )}

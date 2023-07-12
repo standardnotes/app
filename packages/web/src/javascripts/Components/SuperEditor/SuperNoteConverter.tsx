@@ -65,7 +65,7 @@ const SuperNoteConverter = ({
       return undefined
     }
 
-    const templateNoteForRevision = application.items.createTemplateItem<NoteContent, SNNote>(ContentType.Note, {
+    const templateNoteForRevision = application.items.createTemplateItem<NoteContent, SNNote>(ContentType.TYPES.Note, {
       title: note.title,
       text: convertedContent,
       references: note.references,

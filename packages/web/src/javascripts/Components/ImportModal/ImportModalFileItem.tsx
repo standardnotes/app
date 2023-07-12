@@ -63,11 +63,11 @@ const ImportModalFileItem = ({
 
   const notePayloads =
     file.status === 'ready' && file.payloads
-      ? file.payloads.filter((payload) => payload.content_type === ContentType.Note)
+      ? file.payloads.filter((payload) => payload.content_type === ContentType.TYPES.Note)
       : []
   const tagPayloads =
     file.status === 'ready' && file.payloads
-      ? file.payloads.filter((payload) => payload.content_type === ContentType.Tag)
+      ? file.payloads.filter((payload) => payload.content_type === ContentType.TYPES.Tag)
       : []
 
   const payloadsImportMessage =

@@ -13,7 +13,7 @@ import {
   UIFeatureDescriptionTypes,
   IframeComponentFeatureDescription,
 } from '@standardnotes/features'
-import { ContentType } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/domain-core'
 import {
   GenericItem,
   SNComponent,
@@ -121,7 +121,7 @@ describe('featuresService', () => {
     const component = new SNComponent(
       new DecryptedPayload({
         uuid: '789',
-        content_type: ContentType.Component,
+        content_type: ContentType.TYPES.Component,
         ...PayloadTimestampDefaults(),
         content: {
           local_url: 'sn://Extensions/non-native-identifier/dist/index.html',
@@ -143,7 +143,7 @@ describe('featuresService', () => {
       const permissions: ComponentPermission[] = [
         {
           name: ComponentAction.StreamContextItem,
-          content_types: [ContentType.Note],
+          content_types: [ContentType.TYPES.Note],
         },
       ]
 
@@ -160,7 +160,7 @@ describe('featuresService', () => {
       const permissions: ComponentPermission[] = [
         {
           name: ComponentAction.StreamItems,
-          content_types: [ContentType.Note],
+          content_types: [ContentType.TYPES.Note],
         },
       ]
 
@@ -177,7 +177,7 @@ describe('featuresService', () => {
       const permissions: ComponentPermission[] = [
         {
           name: ComponentAction.StreamItems,
-          content_types: [ContentType.Tag],
+          content_types: [ContentType.TYPES.Tag],
         },
       ]
 
@@ -194,7 +194,7 @@ describe('featuresService', () => {
       const permissions: ComponentPermission[] = [
         {
           name: ComponentAction.StreamItems,
-          content_types: [ContentType.Tag, ContentType.Note],
+          content_types: [ContentType.TYPES.Tag, ContentType.TYPES.Note],
         },
       ]
 
@@ -211,7 +211,7 @@ describe('featuresService', () => {
       const permissions: ComponentPermission[] = [
         {
           name: ComponentAction.StreamItems,
-          content_types: [ContentType.Tag, ContentType.FilesafeFileMetadata],
+          content_types: [ContentType.TYPES.Tag, ContentType.TYPES.FilesafeFileMetadata],
         },
       ]
 
@@ -229,9 +229,9 @@ describe('featuresService', () => {
         {
           name: ComponentAction.StreamItems,
           content_types: [
-            ContentType.FilesafeFileMetadata,
-            ContentType.FilesafeCredentials,
-            ContentType.FilesafeIntegration,
+            ContentType.TYPES.FilesafeFileMetadata,
+            ContentType.TYPES.FilesafeCredentials,
+            ContentType.TYPES.FilesafeIntegration,
           ],
         },
       ]
@@ -250,9 +250,9 @@ describe('featuresService', () => {
         {
           name: ComponentAction.StreamItems,
           content_types: [
-            ContentType.FilesafeFileMetadata,
-            ContentType.FilesafeCredentials,
-            ContentType.FilesafeIntegration,
+            ContentType.TYPES.FilesafeFileMetadata,
+            ContentType.TYPES.FilesafeCredentials,
+            ContentType.TYPES.FilesafeIntegration,
           ],
         },
       ]
@@ -271,9 +271,9 @@ describe('featuresService', () => {
         {
           name: ComponentAction.StreamItems,
           content_types: [
-            ContentType.FilesafeFileMetadata,
-            ContentType.FilesafeCredentials,
-            ContentType.FilesafeIntegration,
+            ContentType.TYPES.FilesafeFileMetadata,
+            ContentType.TYPES.FilesafeCredentials,
+            ContentType.TYPES.FilesafeIntegration,
           ],
         },
       ]
@@ -320,7 +320,7 @@ describe('featuresService', () => {
         const manager = createManager(Environment.Desktop, Platform.MacDesktop)
         const component = new SNComponent({
           uuid: '789',
-          content_type: ContentType.Component,
+          content_type: ContentType.TYPES.Component,
           content: {
             hosted_url: 'https://example.com/component',
             package_info: {

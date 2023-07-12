@@ -59,7 +59,6 @@ import {
   ComponentArea,
   IframeComponentFeatureDescription,
 } from '@standardnotes/features'
-import { ContentType } from '@standardnotes/common'
 import {
   isString,
   extendArray,
@@ -73,9 +72,10 @@ import {
   isNotUndefined,
   uniqueArray,
 } from '@standardnotes/utils'
+import { ContentType } from '@standardnotes/domain-core'
 
 export class ComponentViewer implements ComponentViewerInterface {
-  private streamItems?: ContentType[]
+  private streamItems?: string[]
   private streamContextItemOriginalMessage?: ComponentMessage
   private streamItemsOriginalMessage?: ComponentMessage
   private removeItemObserver: () => void
@@ -119,7 +119,7 @@ export class ComponentViewer implements ComponentViewerInterface {
       this.lockReadonly = true
     }
     this.removeItemObserver = this.services.items.addObserver(
-      ContentType.Any,
+      ContentType.TYPES.Any,
       ({ changed, inserted, removed, source, sourceKey }) => {
         if (this.dealloced) {
           return
@@ -730,7 +730,7 @@ export class ComponentViewer implements ComponentViewerInterface {
               return responseItem.uuid !== item.uuid
             })
             lockedCount++
-            if (item.content_type === ContentType.Note) {
+            if (item.content_type === ContentType.TYPES.Note) {
               lockedNoteCount++
             }
           }
@@ -888,7 +888,7 @@ export class ComponentViewer implements ComponentViewerInterface {
     const data = message.data as DeleteItemsMessageData
     const items = data.items.filter((item) => AllowedBatchContentTypes.includes(item.content_type))
 
-    const requiredContentTypes = uniqueArray(items.map((item) => item.content_type)).sort() as ContentType[]
+    const requiredContentTypes = uniqueArray(items.map((item) => item.content_type)).sort()
 
     const requiredPermissions: ComponentPermission[] = [
       {

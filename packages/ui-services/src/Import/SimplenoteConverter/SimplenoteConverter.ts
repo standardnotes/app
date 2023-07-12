@@ -1,5 +1,5 @@
 import { DecryptedTransferPayload, NoteContent } from '@standardnotes/models'
-import { ContentType } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/domain-core'
 import { readFileAsText } from '../Utils'
 import { WebApplicationInterface } from '../../WebApplication/WebApplicationInterface'
 
@@ -54,7 +54,7 @@ export class SimplenoteConverter {
       updated_at: updatedAtDate,
       updated_at_timestamp: updatedAtDate.getTime(),
       uuid: this.application.generateUUID(),
-      content_type: ContentType.Note,
+      content_type: ContentType.TYPES.Note,
       content: {
         title,
         text: content,

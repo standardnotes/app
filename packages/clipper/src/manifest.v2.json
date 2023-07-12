@@ -4,7 +4,7 @@
   "description": "Web clipper for Standard Notes",
   "permissions": ["activeTab", "storage", "<all_urls>"],
   "browser_action": {
-    "default_popup": "popup/index.html?route=extension"
+    "default_popup": "popup.html?route=extension"
   },
   "background": {
     "scripts": ["background.js"],

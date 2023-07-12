@@ -361,11 +361,11 @@ describe('app models', () => {
 
   it('maintains editor reference when duplicating note', async function () {
     const component = await this.application.mutator.createItem(
-      ContentType.Component,
+      ContentType.TYPES.Component,
       { area: ComponentArea.Editor, package_info: { identifier: 'foo-editor' } },
       true,
     )
-    const note = await Factory.insertItemWithOverride(this.application, ContentType.Note, {
+    const note = await Factory.insertItemWithOverride(this.application, ContentType.TYPES.Note, {
       editorIdentifier: 'foo-editor',
     })
 

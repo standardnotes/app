@@ -33,10 +33,10 @@ describe('keys', function () {
   })
 
   it('validates content types requiring root encryption', function () {
-    expect(ContentTypeUsesRootKeyEncryption(ContentType.ItemsKey)).to.equal(true)
-    expect(ContentTypeUsesRootKeyEncryption(ContentType.EncryptedStorage)).to.equal(true)
-    expect(ContentTypeUsesRootKeyEncryption(ContentType.Item)).to.equal(false)
-    expect(ContentTypeUsesRootKeyEncryption(ContentType.Note)).to.equal(false)
+    expect(ContentTypeUsesRootKeyEncryption(ContentType.TYPES.ItemsKey)).to.equal(true)
+    expect(ContentTypeUsesRootKeyEncryption(ContentType.TYPES.EncryptedStorage)).to.equal(true)
+    expect(ContentTypeUsesRootKeyEncryption(ContentType.TYPES.Item)).to.equal(false)
+    expect(ContentTypeUsesRootKeyEncryption(ContentType.TYPES.Note)).to.equal(false)
   })
 
   it('generating export params with no account or passcode should produce encrypted payload', async function () {
@@ -126,7 +126,7 @@ describe('keys', function () {
     await this.application.sync.sync()
 
     const rawPayloads = await this.application.diskStorageService.getAllRawPayloads()
-    const rawNotePayload = rawPayloads.find((r) => r.content_type === ContentType.Note)
+    const rawNotePayload = rawPayloads.find((r) => r.content_type === ContentType.TYPES.Note)
     expect(typeof rawNotePayload.content).to.equal('string')
   })
 
@@ -143,7 +143,7 @@ describe('keys', function () {
   it('should use items key for encryption of note', async function () {
     const notePayload = Factory.createNotePayload()
     const keyToUse = await this.application.encryptionService.itemsEncryption.keyToUseForItemEncryption(notePayload)
-    expect(keyToUse.content_type).to.equal(ContentType.ItemsKey)
+    expect(keyToUse.content_type).to.equal(ContentType.TYPES.ItemsKey)
   })
 
   it('encrypting an item should associate an items key to it', async function () {
@@ -848,7 +848,7 @@ describe('keys', function () {
       password: this.password,
     })
     await Factory.createSyncedNote(this.application)
-    const itemsKey = this.application.items.getItems(ContentType.ItemsKey)[0]
+    const itemsKey = this.application.items.getItems(ContentType.TYPES.ItemsKey)[0]
 
     /** Create another client and sign into account */
     await Factory.loginToApplication({
@@ -862,7 +862,7 @@ describe('keys', function () {
     expect(defaultKeys.length).to.equal(1)
 
     const rawPayloads = await otherClient.diskStorageService.getAllRawPayloads()
-    const notePayload = rawPayloads.find((p) => p.content_type === ContentType.Note)
+    const notePayload = rawPayloads.find((p) => p.content_type === ContentType.TYPES.Note)
 
     expect(notePayload.items_key_id).to.equal(itemsKey.uuid)
   })

@@ -54,7 +54,7 @@ describe('online syncing', function () {
   })
 
   function noteObjectsFromObjects(items) {
-    return items.filter((item) => item.content_type === ContentType.Note)
+    return items.filter((item) => item.content_type === ContentType.TYPES.Note)
   }
 
   it('should register and sync basic model online', async function () {
@@ -577,7 +577,7 @@ describe('online syncing', function () {
     await this.application.syncService.sync(syncOptions)
     this.expectedItemCount++
     const rawPayloads = await this.application.diskStorageService.getAllRawPayloads()
-    const notePayload = rawPayloads.find((p) => p.content_type === ContentType.Note)
+    const notePayload = rawPayloads.find((p) => p.content_type === ContentType.TYPES.Note)
     expect(typeof notePayload.content).to.equal('string')
   })
 
@@ -593,7 +593,7 @@ describe('online syncing', function () {
     await Factory.sleep(0.3)
 
     const rawPayloads = await this.application.diskStorageService.getAllRawPayloads()
-    const notePayload = rawPayloads.find((p) => p.content_type === ContentType.Note)
+    const notePayload = rawPayloads.find((p) => p.content_type === ContentType.TYPES.Note)
     expect(typeof notePayload.content).to.equal('string')
   })
 
@@ -611,7 +611,7 @@ describe('online syncing', function () {
     )
     this.expectedItemCount++
     const rawPayloads = await this.application.diskStorageService.getAllRawPayloads()
-    const notePayload = rawPayloads.find((p) => p.content_type === ContentType.Note)
+    const notePayload = rawPayloads.find((p) => p.content_type === ContentType.TYPES.Note)
     expect(typeof notePayload.content).to.equal('string')
     expect(notePayload.content.length).to.be.above(text.length)
   })
@@ -790,7 +790,7 @@ describe('online syncing', function () {
     /** Create an item and sync it */
     let note = await Factory.createMappedNote(this.application)
 
-    this.application.itemManager.addObserver(ContentType.Note, ({ source }) => {
+    this.application.itemManager.addObserver(ContentType.TYPES.Note, ({ source }) => {
       if (source === PayloadEmitSource.RemoteSaved) {
         actualSaveCount++
       }
@@ -837,7 +837,7 @@ describe('online syncing', function () {
     /** Create an item and sync it */
     let note = await Factory.createMappedNote(this.application)
 
-    this.application.itemManager.addObserver(ContentType.Note, ({ source }) => {
+    this.application.itemManager.addObserver(ContentType.TYPES.Note, ({ source }) => {
       if (source === PayloadEmitSource.RemoteSaved) {
         actualSaveCount++
       }
@@ -876,7 +876,7 @@ describe('online syncing', function () {
     let didPerformMutatation = false
     const newText = `${Math.random()}`
 
-    this.application.itemManager.addObserver(ContentType.Note, async ({ changed, source }) => {
+    this.application.itemManager.addObserver(ContentType.TYPES.Note, async ({ changed, source }) => {
       if (source === PayloadEmitSource.RemoteSaved) {
         actualSaveCount++
       } else if (source === PayloadEmitSource.PreSyncSave && !didPerformMutatation) {
@@ -1015,7 +1015,7 @@ describe('online syncing', function () {
   it('deleting an item permanently should include it in PayloadEmitSource.PreSyncSave item change observer', async function () {
     let conditionMet = false
 
-    this.application.streamItems([ContentType.Note], async ({ removed, source }) => {
+    this.application.streamItems([ContentType.TYPES.Note], async ({ removed, source }) => {
       if (source === PayloadEmitSource.PreSyncSave && removed.length === 1) {
         conditionMet = true
       }

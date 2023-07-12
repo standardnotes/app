@@ -1,4 +1,4 @@
-import { ContentType } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/domain-core'
 import { AnyFeatureDescription } from './AnyFeatureDescription'
 import { ThemeFeatureDescription } from './ThemeFeatureDescription'
 import { EditorFeatureDescription } from './EditorFeatureDescription'
@@ -7,7 +7,7 @@ import { ComponentFeatureDescription } from './ComponentFeatureDescription'
 import { ComponentArea } from '../Component/ComponentArea'
 
 export function isThemeFeatureDescription(feature: AnyFeatureDescription): feature is ThemeFeatureDescription {
-  return 'content_type' in feature && feature.content_type === ContentType.Theme
+  return 'content_type' in feature && feature.content_type === ContentType.TYPES.Theme
 }
 
 export function isIframeComponentFeatureDescription(
@@ -15,7 +15,7 @@ export function isIframeComponentFeatureDescription(
 ): feature is IframeComponentFeatureDescription {
   return (
     'content_type' in feature &&
-    feature.content_type === ContentType.Component &&
+    feature.content_type === ContentType.TYPES.Component &&
     [ComponentArea.Editor, ComponentArea.EditorStack].includes(feature.area)
   )
 }

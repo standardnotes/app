@@ -1,8 +1,6 @@
-import { ContentType } from '@standardnotes/common'
-
 export interface SortableItem {
   uuid: string
-  content_type: ContentType
+  content_type: string
   created_at: Date
   userModifiedDate: Date
   title?: string

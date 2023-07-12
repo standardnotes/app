@@ -7,14 +7,14 @@ import {
   useComboboxStore,
   VisuallyHidden,
 } from '@ariakit/react'
-import { classNames, ContentType, DecryptedItem, naturalSort } from '@standardnotes/snjs'
+import { classNames, DecryptedItem, naturalSort } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { useDeferredValue, useEffect, useState } from 'react'
 import { useApplication } from '../ApplicationProvider'
 import LinkedItemMeta from '../LinkedItems/LinkedItemMeta'
 
 type Props = {
-  contentTypes: ContentType[]
+  contentTypes: string[]
   placeholder: string
   onSelection: (item: DecryptedItem) => void
   className?: {

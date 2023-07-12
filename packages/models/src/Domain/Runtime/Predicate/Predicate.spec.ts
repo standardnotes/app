@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { ItemInterface } from '../../Abstract/Item/Interfaces/ItemInterface'
-import { ContentType } from '@standardnotes/common'
 import {
   compoundPredicateFromArguments,
   includesPredicateFromArguments,
@@ -13,9 +12,10 @@ import { IncludesPredicate } from './IncludesPredicate'
 import { Predicate } from './Predicate'
 import { CompoundPredicate } from './CompoundPredicate'
 import { NotPredicate } from './NotPredicate'
+import { ContentType } from '@standardnotes/domain-core'
 
 interface Item extends ItemInterface {
-  content_type: ContentType
+  content_type: string
   updated_at: Date
 }
 
@@ -32,7 +32,7 @@ interface Tag extends Item {
 function createNote(content: Record<string, unknown>, tags?: Tag[]): Note {
   return {
     ...content,
-    content_type: ContentType.Note,
+    content_type: ContentType.TYPES.Note,
     tags,
   } as jest.Mocked<Note>
 }
@@ -40,7 +40,7 @@ function createNote(content: Record<string, unknown>, tags?: Tag[]): Note {
 function createTag(title: string): Tag {
   return {
     title,
-    content_type: ContentType.Tag,
+    content_type: ContentType.TYPES.Tag,
   } as jest.Mocked<Tag>
 }
 
@@ -48,7 +48,7 @@ function createItem(content: Record<string, unknown>, updatedAt?: Date): Item {
   return {
     ...content,
     updated_at: updatedAt,
-    content_type: ContentType.Any,
+    content_type: ContentType.TYPES.Any,
   } as jest.Mocked<Note>
 }
 
@@ -100,7 +100,7 @@ describe('predicates', () => {
       expect(
         compoundPredicateFromArguments<Note>('or', [
           { keypath: 'title', operator: '=', value: 'Hello' },
-          { keypath: 'content_type', operator: '=', value: ContentType.Note },
+          { keypath: 'content_type', operator: '=', value: ContentType.TYPES.Note },
         ]).matchesItem(item),
       ).toEqual(true)
     })
@@ -118,7 +118,7 @@ describe('predicates', () => {
       expect(
         compoundPredicateFromArguments<Note>('or', [
           { keypath: 'title', operator: '=', value: 'Wrong' },
-          { keypath: 'content_type', operator: '=', value: ContentType.Note },
+          { keypath: 'content_type', operator: '=', value: ContentType.TYPES.Note },
         ]).matchesItem(item),
       ).toEqual(true)
     })
@@ -158,7 +158,7 @@ describe('predicates', () => {
       expect(
         compoundPredicateFromArguments<Note>('and', [
           { keypath: 'title', operator: '=', value: title },
-          { keypath: 'content_type', operator: '=', value: ContentType.Note },
+          { keypath: 'content_type', operator: '=', value: ContentType.TYPES.Note },
         ]).matchesItem(item),
       ).toEqual(true)
     })
@@ -167,7 +167,7 @@ describe('predicates', () => {
       expect(
         compoundPredicateFromArguments<Note>('and', [
           { keypath: 'title', operator: '=', value: 'Wrong' },
-          { keypath: 'content_type', operator: '=', value: ContentType.Note },
+          { keypath: 'content_type', operator: '=', value: ContentType.TYPES.Note },
         ]).matchesItem(item),
       ).toEqual(false)
     })
@@ -184,7 +184,7 @@ describe('predicates', () => {
     it('explicit compound syntax', () => {
       const compoundProd = new CompoundPredicate('and', [
         new Predicate<Note>('title', '=', title),
-        new Predicate('content_type', '=', ContentType.Note),
+        new Predicate('content_type', '=', ContentType.TYPES.Note),
       ])
       expect(compoundProd.matchesItem(item)).toEqual(true)
     })

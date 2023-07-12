@@ -1,5 +1,5 @@
 import { WebApplication } from '@/Application/WebApplication'
-import { ContentType } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/domain-core'
 import {
   MutatorService,
   SNComponentManager,
@@ -47,7 +47,7 @@ describe('note view controller', () => {
     await controller.initialize()
 
     expect(application.items.createTemplateItem).toHaveBeenCalledWith(
-      ContentType.Note,
+      ContentType.TYPES.Note,
       expect.objectContaining({ noteType: NoteType.Plain }),
       expect.anything(),
     )
@@ -68,7 +68,7 @@ describe('note view controller', () => {
     await controller.initialize()
 
     expect(application.items.createTemplateItem).toHaveBeenCalledWith(
-      ContentType.Note,
+      ContentType.TYPES.Note,
       expect.objectContaining({ noteType: NoteType.Markdown }),
       expect.anything(),
     )

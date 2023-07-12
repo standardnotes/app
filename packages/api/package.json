@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/api",
-  "version": "1.26.23",
+  "version": "1.26.26",
   "engines": {
     "node": ">=16.0.0 <17.0.0"
   },
@@ -35,9 +35,8 @@
     "typescript": "*"
   },
   "dependencies": {
-    "@standardnotes/common": "^1.48.3",
-    "@standardnotes/domain-core": "^1.12.0",
-    "@standardnotes/encryption": "workspace:*",
+    "@standardnotes/common": "^1.50.0",
+    "@standardnotes/domain-core": "^1.22.0",
     "@standardnotes/models": "workspace:*",
     "@standardnotes/responses": "workspace:*",
     "@standardnotes/security": "^1.7.6",

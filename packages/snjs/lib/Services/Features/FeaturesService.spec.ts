@@ -2,8 +2,7 @@ import { ItemInterface, SNFeatureRepo } from '@standardnotes/models'
 import { SNSyncService } from '../Sync/SyncService'
 import { SettingName } from '@standardnotes/settings'
 import { SNFeaturesService } from '@Lib/Services/Features'
-import { ContentType } from '@standardnotes/common'
-import { RoleName } from '@standardnotes/domain-core'
+import { RoleName, ContentType } from '@standardnotes/domain-core'
 import { FeatureIdentifier, GetFeatures } from '@standardnotes/features'
 import { SNWebSocketsService } from '../Api/WebsocketsService'
 import { SNSettingsService } from '../Settings'
@@ -338,7 +337,7 @@ describe('FeaturesService', () => {
       const extensionKey = '129b029707e3470c94a8477a437f9394'
       const extensionRepoItem = new SNFeatureRepo({
         uuid: '456',
-        content_type: ContentType.ExtensionRepo,
+        content_type: ContentType.TYPES.ExtensionRepo,
         content: {
           url: `https://extensions.standardnotes.org/${extensionKey}`,
         },

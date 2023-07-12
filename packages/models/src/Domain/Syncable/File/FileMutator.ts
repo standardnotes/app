@@ -1,4 +1,4 @@
-import { ContentType } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/domain-core'
 import { SNNote } from '../Note/Note'
 import { FileContent, FileItem } from './File'
 import { FileToNoteReference } from '../../Abstract/Reference/FileToNoteReference'
@@ -18,7 +18,7 @@ export class FileMutator extends DecryptedItemMutator<FileContent> {
   public addNote(note: SNNote): void {
     const reference: FileToNoteReference = {
       reference_type: ContentReferenceType.FileToNote,
-      content_type: ContentType.Note,
+      content_type: ContentType.TYPES.Note,
       uuid: note.uuid,
     }
 
@@ -39,7 +39,7 @@ export class FileMutator extends DecryptedItemMutator<FileContent> {
 
     const reference: FileToFileReference = {
       uuid: file.uuid,
-      content_type: ContentType.File,
+      content_type: ContentType.TYPES.File,
       reference_type: ContentReferenceType.FileToFile,
     }
 

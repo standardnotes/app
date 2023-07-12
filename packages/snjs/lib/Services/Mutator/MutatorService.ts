@@ -6,7 +6,7 @@ import {
   AlertService,
 } from '@standardnotes/services'
 import { ItemsKeyMutator, SNItemsKey } from '@standardnotes/encryption'
-import { ContentType } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/domain-core'
 import { ItemManager } from '../Items'
 import { PayloadManager } from '../Payloads/PayloadManager'
 import { TagsToFoldersMigrationApplicator } from '@Lib/Migrations/Applicators/TagsToFolders'
@@ -329,7 +329,7 @@ export class MutatorService extends AbstractService implements MutatorClientInte
   }
 
   public async createItem<T extends DecryptedItemInterface, C extends ItemContent = ItemContent>(
-    contentType: ContentType,
+    contentType: string,
     content: C,
     needsSync = false,
     vault?: VaultListingInterface,
@@ -451,7 +451,7 @@ export class MutatorService extends AbstractService implements MutatorClientInte
     createInVault?: VaultListingInterface
   }): Promise<SNTag> {
     const newTag = await this.createItem<SNTag>(
-      ContentType.Tag,
+      ContentType.TYPES.Tag,
       FillItemContent<TagContent>({ title: dto.title }),
       true,
       dto.createInVault,
@@ -477,7 +477,7 @@ export class MutatorService extends AbstractService implements MutatorClientInte
     vault?: VaultListingInterface
   }): Promise<SmartView> {
     return this.createItem(
-      ContentType.SmartView,
+      ContentType.TYPES.SmartView,
       FillItemContent({
         title: dto.title,
         predicate: dto.predicate.toJson(),

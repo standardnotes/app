@@ -1,6 +1,6 @@
 import { PayloadSource } from './../../Abstract/Payload/Types/PayloadSource'
 import { DecryptedPayload } from './../../Abstract/Payload/Implementations/DecryptedPayload'
-import { ContentType } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/domain-core'
 import { FillItemContent } from '../../Abstract/Content/ItemContent'
 import { SNComponent } from './Component'
 import { ComponentContent } from './ComponentContent'
@@ -13,7 +13,7 @@ describe('component model', () => {
       new DecryptedPayload(
         {
           uuid: String(Math.random()),
-          content_type: ContentType.Component,
+          content_type: ContentType.TYPES.Component,
           content: FillItemContent<ComponentContent>({
             url: 'http://foo.com',
             hosted_url: 'http://bar.com',
@@ -33,7 +33,7 @@ describe('component model', () => {
       new DecryptedPayload(
         {
           uuid: String(Math.random()),
-          content_type: ContentType.Component,
+          content_type: ContentType.TYPES.Component,
           content: FillItemContent({
             url: 'http://foo.com',
             hosted_url: '#{foo.zoo}',
@@ -53,7 +53,7 @@ describe('component model', () => {
       new DecryptedPayload(
         {
           uuid: String(Math.random()),
-          content_type: ContentType.Component,
+          content_type: ContentType.TYPES.Component,
           content: FillItemContent({
             package_info: {
               note_type: NoteType.Authentication,
@@ -73,7 +73,7 @@ describe('component model', () => {
       new DecryptedPayload(
         {
           uuid: String(Math.random()),
-          content_type: ContentType.Component,
+          content_type: ContentType.TYPES.Component,
           content: FillItemContent({
             package_info: {},
           } as ComponentContent),

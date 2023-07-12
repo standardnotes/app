@@ -1,4 +1,3 @@
-import { ContentType } from '@standardnotes/common'
 import { ComponentPermission } from '@standardnotes/features'
 
 import { IncomingComponentItemPayload } from './IncomingComponentItemPayload'
@@ -8,7 +7,7 @@ export type MessageData = Partial<{
   /** Related to the stream-item-context action */
   item?: IncomingComponentItemPayload
   /** Related to the stream-items action */
-  content_types?: ContentType[]
+  content_types?: string[]
   items?: IncomingComponentItemPayload[]
   /** Related to the request-permission action */
   permissions?: ComponentPermission[]
@@ -25,7 +24,7 @@ export type MessageData = Partial<{
   /** Related to themes action */
   themes?: string[]
   /** Related to clear-selection action */
-  content_type?: ContentType
+  content_type?: string
   /** Related to key-pressed action */
   keyboardModifier?: KeyboardModifier
 }>

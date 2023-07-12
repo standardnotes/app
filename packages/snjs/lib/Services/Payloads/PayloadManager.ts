@@ -1,4 +1,4 @@
-import { ContentType } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/domain-core'
 import { PayloadsChangeObserver, QueueElement, PayloadsChangeObserverCallback, EmitQueue } from './Types'
 import { removeFromArray, Uuids } from '@standardnotes/utils'
 import {
@@ -74,7 +74,7 @@ export class PayloadManager extends AbstractService implements PayloadManagerInt
     return this.collection.findAll([uuid])[0]
   }
 
-  public all(contentType: ContentType): FullyFormedPayloadInterface[] {
+  public all(contentType: string): FullyFormedPayloadInterface[] {
     return this.collection.all(contentType)
   }
 
@@ -224,7 +224,7 @@ export class PayloadManager extends AbstractService implements PayloadManagerInt
    * @param priority - The lower the priority, the earlier the function is called
    *  wrt to other observers
    */
-  public addObserver(types: ContentType | ContentType[], callback: PayloadsChangeObserverCallback, priority = 1) {
+  public addObserver(types: string | string[], callback: PayloadsChangeObserverCallback, priority = 1) {
     if (!Array.isArray(types)) {
       types = [types]
     }
@@ -261,9 +261,9 @@ export class PayloadManager extends AbstractService implements PayloadManagerInt
 
     const filter = <P extends FullyFormedPayloadInterface = FullyFormedPayloadInterface>(
       payloads: P[],
-      types: ContentType[],
+      types: string[],
     ) => {
-      return types.includes(ContentType.Any)
+      return types.includes(ContentType.TYPES.Any)
         ? payloads.slice()
         : payloads.slice().filter((payload) => {
             return types.includes(payload.content_type)
@@ -304,7 +304,7 @@ export class PayloadManager extends AbstractService implements PayloadManagerInt
     this.collection.discard(payload)
   }
 
-  public erroredPayloadsForContentType(contentType: ContentType): EncryptedPayloadInterface[] {
+  public erroredPayloadsForContentType(contentType: string): EncryptedPayloadInterface[] {
     return this.collection.invalidElements().filter((p) => p.content_type === contentType)
   }
 

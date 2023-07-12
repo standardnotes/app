@@ -1,4 +1,4 @@
-import { ContentType } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/domain-core'
 import { ContentReferenceType, MutationType } from '../../Abstract/Item'
 import { createFile, createTagWithContent, createTagWithTitle } from '../../Utilities/Test/SpecUtils'
 import { SNTag } from './Tag'
@@ -15,7 +15,7 @@ describe('tag mutator', () => {
 
     expect(result.content.references[0]).toEqual({
       uuid: file.uuid,
-      content_type: ContentType.File,
+      content_type: ContentType.TYPES.File,
       reference_type: ContentReferenceType.TagToFile,
     })
   })

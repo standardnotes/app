@@ -1,4 +1,4 @@
-import { ContentType, ProtocolVersion } from '@standardnotes/common'
+import { ProtocolVersion } from '@standardnotes/common'
 import {
   DecryptedParameters,
   ErrorDecryptingParameters,
@@ -32,6 +32,7 @@ import { PayloadManagerInterface } from '../Payloads/PayloadManagerInterface'
 import { AbstractService } from '../Service/AbstractService'
 import { StorageServiceInterface } from '../Storage/StorageServiceInterface'
 import { PkcKeyPair } from '@standardnotes/sncrypto-common'
+import { ContentType } from '@standardnotes/domain-core'
 
 export class ItemsEncryptionService extends AbstractService {
   private removeItemsObserver!: () => void
@@ -47,7 +48,7 @@ export class ItemsEncryptionService extends AbstractService {
   ) {
     super(internalEventBus)
 
-    this.removeItemsObserver = this.itemManager.addObserver([ContentType.ItemsKey], ({ changed, inserted }) => {
+    this.removeItemsObserver = this.itemManager.addObserver([ContentType.TYPES.ItemsKey], ({ changed, inserted }) => {
       if (changed.concat(inserted).length > 0) {
         void this.decryptErroredItemPayloads()
       }
@@ -84,7 +85,9 @@ export class ItemsEncryptionService extends AbstractService {
     payload: EncryptedPayloadInterface,
   ): ItemsKeyInterface | KeySystemItemsKeyInterface | undefined {
     const itemsKeys = this.getItemsKeys()
-    const keySystemItemsKeys = this.itemManager.getItems<KeySystemItemsKeyInterface>(ContentType.KeySystemItemsKey)
+    const keySystemItemsKeys = this.itemManager.getItems<KeySystemItemsKeyInterface>(
+      ContentType.TYPES.KeySystemItemsKey,
+    )
 
     return [...itemsKeys, ...keySystemItemsKeys].find(
       (key) => key.uuid === payload.items_key_id || key.duplicateOf === payload.items_key_id,

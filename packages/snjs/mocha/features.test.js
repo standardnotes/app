@@ -61,7 +61,7 @@ describe('features', () => {
       })
 
       await application.mutator.createItem(
-        ContentType.ExtensionRepo,
+        ContentType.TYPES.ExtensionRepo,
         FillItemContent({
           url: `https://extensions.standardnotes.org/${extensionKey}`,
         }),
@@ -83,7 +83,7 @@ describe('features', () => {
         .callsFake(() => {})
       const extensionKey = UuidGenerator.GenerateUuid().split('-').join('')
       await application.mutator.createItem(
-        ContentType.ExtensionRepo,
+        ContentType.TYPES.ExtensionRepo,
         FillItemContent({
           url: `https://extensions.standardnotes.org/${extensionKey}`,
         }),
@@ -114,7 +114,7 @@ describe('features', () => {
       })
       const extensionKey = UuidGenerator.GenerateUuid().split('-').join('')
       await application.mutator.createItem(
-        ContentType.ExtensionRepo,
+        ContentType.TYPES.ExtensionRepo,
         FillItemContent({
           url: `https://extensions.standardnotes.org/${extensionKey}`,
         }),
@@ -140,7 +140,7 @@ describe('features', () => {
       expect(await application.settings.getDoesSensitiveSettingExist(SettingName.ExtensionKey)).to.equal(false)
       const extensionKey = UuidGenerator.GenerateUuid().split('-').join('')
       const promise = new Promise((resolve) => {
-        application.streamItems(ContentType.ExtensionRepo, ({ changed }) => {
+        application.streamItems(ContentType.TYPES.ExtensionRepo, ({ changed }) => {
           for (const item of changed) {
             if (item.content.migratedToUserSetting) {
               resolve()
@@ -149,7 +149,7 @@ describe('features', () => {
         })
       })
       await application.mutator.createItem(
-        ContentType.ExtensionRepo,
+        ContentType.TYPES.ExtensionRepo,
         FillItemContent({
           url: `https://extensions.standardnotes.org/${extensionKey}`,
         }),
@@ -163,7 +163,7 @@ describe('features', () => {
       application = await Factory.signOutApplicationAndReturnNew(application)
       const extensionKey = UuidGenerator.GenerateUuid().split('-').join('')
       await application.mutator.createItem(
-        ContentType.ExtensionRepo,
+        ContentType.TYPES.ExtensionRepo,
         FillItemContent({
           url: `https://extensions.standardnotes.org/${extensionKey}`,
         }),

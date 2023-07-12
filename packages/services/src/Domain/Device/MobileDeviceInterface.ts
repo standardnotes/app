@@ -3,6 +3,7 @@ import { Environment, Platform, RawKeychainValue } from '@standardnotes/models'
 import { AppleIAPProductId } from './../Subscription/AppleIAPProductId'
 import { DeviceInterface } from './DeviceInterface'
 import { AppleIAPReceipt } from '../Subscription/AppleIAPReceipt'
+import { ApplicationEvent } from '../Event/ApplicationEvent'
 
 export interface MobileDeviceInterface extends DeviceInterface {
   environment: Environment.Mobile
@@ -28,4 +29,5 @@ export interface MobileDeviceInterface extends DeviceInterface {
   getColorScheme(): Promise<'light' | 'dark' | null | undefined>
   purchaseSubscriptionIAP(plan: AppleIAPProductId): Promise<AppleIAPReceipt | undefined>
   authenticateWithU2F(authenticationOptionsJSONString: string): Promise<Record<string, unknown> | null>
+  notifyApplicationEvent(event: ApplicationEvent): void
 }

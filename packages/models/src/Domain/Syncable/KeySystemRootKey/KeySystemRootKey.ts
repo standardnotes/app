@@ -1,4 +1,4 @@
-import { ContentType, ProtocolVersion } from '@standardnotes/common'
+import { ProtocolVersion } from '@standardnotes/common'
 import { ConflictStrategy, DecryptedItem } from '../../Abstract/Item'
 import { DecryptedPayloadInterface } from '../../Abstract/Payload'
 import { HistoryEntryInterface } from '../../Runtime/History'
@@ -6,9 +6,10 @@ import { KeySystemRootKeyContent } from './KeySystemRootKeyContent'
 import { KeySystemRootKeyInterface } from './KeySystemRootKeyInterface'
 import { KeySystemIdentifier } from './KeySystemIdentifier'
 import { KeySystemRootKeyParamsInterface } from '../../Local/KeyParams/KeySystemRootKeyParamsInterface'
+import { ContentType } from '@standardnotes/domain-core'
 
-export function isKeySystemRootKey(x: { content_type: ContentType }): x is KeySystemRootKey {
-  return x.content_type === ContentType.KeySystemRootKey
+export function isKeySystemRootKey(x: { content_type: string }): x is KeySystemRootKey {
+  return x.content_type === ContentType.TYPES.KeySystemRootKey
 }
 
 export class KeySystemRootKey extends DecryptedItem<KeySystemRootKeyContent> implements KeySystemRootKeyInterface {

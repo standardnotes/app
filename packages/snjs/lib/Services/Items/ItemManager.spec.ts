@@ -1,4 +1,4 @@
-import { ContentType } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/domain-core'
 import { AlertService, InternalEventBusInterface, ItemRelationshipDirection } from '@standardnotes/services'
 import { ItemManager } from './ItemManager'
 import { PayloadManager } from '../Payloads/PayloadManager'
@@ -65,7 +65,7 @@ describe('itemManager', () => {
     return new Models.SNTag(
       new Models.DecryptedPayload({
         uuid: String(Math.random()),
-        content_type: ContentType.Tag,
+        content_type: ContentType.TYPES.Tag,
         content: Models.FillItemContent<Models.TagContent>({
           title: title,
         }),
@@ -78,7 +78,7 @@ describe('itemManager', () => {
     return new Models.FileItem(
       new Models.DecryptedPayload({
         uuid: String(Math.random()),
-        content_type: ContentType.File,
+        content_type: ContentType.TYPES.File,
         content: Models.FillItemContent<Models.FileContent>({
           name: name,
         }),
@@ -91,7 +91,7 @@ describe('itemManager', () => {
     it('deleted payloads should map to removed items', async () => {
       const payload = new DeletedPayload({
         uuid: String(Math.random()),
-        content_type: ContentType.Note,
+        content_type: ContentType.TYPES.Note,
         content: undefined,
         deleted: true,
         dirty: true,
@@ -110,7 +110,7 @@ describe('itemManager', () => {
     it('decrypted items who become encrypted should be removed from ui', async () => {
       const decrypted = new DecryptedPayload({
         uuid: String(Math.random()),
-        content_type: ContentType.Note,
+        content_type: ContentType.TYPES.Note,
         content: FillItemContent<NoteContent>({
           title: 'foo',
         }),
@@ -372,7 +372,7 @@ describe('itemManager', () => {
     it('create template item', async () => {
       setupRandomUuid()
 
-      const item = await itemManager.createTemplateItem(ContentType.Note, {
+      const item = await itemManager.createTemplateItem(ContentType.TYPES.Note, {
         title: 'hello',
         references: [],
       })
@@ -386,7 +386,7 @@ describe('itemManager', () => {
     it('isTemplateItem return the correct value', async () => {
       setupRandomUuid()
 
-      const item = await itemManager.createTemplateItem(ContentType.Note, {
+      const item = await itemManager.createTemplateItem(ContentType.TYPES.Note, {
         title: 'hello',
         references: [],
       })
@@ -511,9 +511,9 @@ describe('itemManager', () => {
       expect(view2).toBeTruthy()
       expect(view3).toBeTruthy()
 
-      expect(view1.content_type).toEqual(ContentType.SmartView)
-      expect(view2.content_type).toEqual(ContentType.SmartView)
-      expect(view3.content_type).toEqual(ContentType.SmartView)
+      expect(view1.content_type).toEqual(ContentType.TYPES.SmartView)
+      expect(view2.content_type).toEqual(ContentType.TYPES.SmartView)
+      expect(view3.content_type).toEqual(ContentType.TYPES.SmartView)
     })
 
     it('lets me use a smart view', async () => {
@@ -550,9 +550,9 @@ describe('itemManager', () => {
       expect(tag2).toBeTruthy()
       expect(tag3).toBeTruthy()
 
-      expect(tag1.content_type).toEqual(ContentType.SmartView)
-      expect(tag2.content_type).toEqual(ContentType.SmartView)
-      expect(tag3.content_type).toEqual(ContentType.SmartView)
+      expect(tag1.content_type).toEqual(ContentType.TYPES.SmartView)
+      expect(tag2.content_type).toEqual(ContentType.TYPES.SmartView)
+      expect(tag3.content_type).toEqual(ContentType.TYPES.SmartView)
     })
 
     it('will create smart view or tags from the generic method', async () => {
@@ -561,8 +561,8 @@ describe('itemManager', () => {
       const someTag = await mutator.createTagOrSmartView('some-tag')
       const someView = await mutator.createTagOrSmartView(VIEW_LONG)
 
-      expect(someTag.content_type).toEqual(ContentType.Tag)
-      expect(someView.content_type).toEqual(ContentType.SmartView)
+      expect(someTag.content_type).toEqual(ContentType.TYPES.Tag)
+      expect(someView.content_type).toEqual(ContentType.TYPES.SmartView)
     })
   })
 

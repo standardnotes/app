@@ -1,5 +1,4 @@
 import { PayloadManager } from './../Payloads/PayloadManager'
-import { ContentType } from '@standardnotes/common'
 import { ItemManager } from '@Lib/Services/Items/ItemManager'
 import {
   DecryptedItemInterface,
@@ -21,6 +20,7 @@ import {
   SingletonManagerInterface,
   SyncEvent,
 } from '@standardnotes/services'
+import { ContentType } from '@standardnotes/domain-core'
 
 /**
  * The singleton manager allow consumers to ensure that only 1 item exists of a certain
@@ -83,7 +83,7 @@ export class SNSingletonManager extends AbstractService implements SingletonMana
    * all items keys have been downloaded.
    */
   private addObservers() {
-    this.removeItemObserver = this.itemManager.addObserver(ContentType.Any, ({ inserted, unerrored }) => {
+    this.removeItemObserver = this.itemManager.addObserver(ContentType.TYPES.Any, ({ inserted, unerrored }) => {
       if (unerrored.length > 0) {
         this.resolveQueue = this.resolveQueue.concat(unerrored)
       }
@@ -104,7 +104,7 @@ export class SNSingletonManager extends AbstractService implements SingletonMana
   }
 
   private validItemsMatchingPredicate<T extends DecryptedItemInterface>(
-    contentType: ContentType,
+    contentType: string,
     predicate: PredicateInterface<T>,
   ) {
     return this.itemManager.itemsMatchingPredicate(contentType, predicate)
@@ -161,7 +161,7 @@ export class SNSingletonManager extends AbstractService implements SingletonMana
   }
 
   public findSingleton<T extends DecryptedItemInterface>(
-    contentType: ContentType,
+    contentType: string,
     predicate: PredicateInterface<T>,
   ): T | undefined {
     const matchingItems = this.validItemsMatchingPredicate(contentType, predicate)
@@ -174,7 +174,7 @@ export class SNSingletonManager extends AbstractService implements SingletonMana
   public async findOrCreateContentTypeSingleton<
     C extends ItemContent = ItemContent,
     T extends DecryptedItemInterface<C> = DecryptedItemInterface<C>,
-  >(contentType: ContentType, createContent: ItemContent): Promise<T> {
+  >(contentType: string, createContent: ItemContent): Promise<T> {
     const existingItems = this.itemManager.getItems<T>(contentType)
 
     if (existingItems.length > 0) {
@@ -241,7 +241,7 @@ export class SNSingletonManager extends AbstractService implements SingletonMana
   public async findOrCreateSingleton<
     C extends ItemContent = ItemContent,
     T extends DecryptedItemInterface<C> = DecryptedItemInterface<C>,
-  >(predicate: Predicate<T>, contentType: ContentType, createContent: ItemContent): Promise<T> {
+  >(predicate: Predicate<T>, contentType: string, createContent: ItemContent): Promise<T> {
     const existingItems = this.itemManager.itemsMatchingPredicate<T>(contentType, predicate)
     if (existingItems.length > 0) {
       return existingItems[0]

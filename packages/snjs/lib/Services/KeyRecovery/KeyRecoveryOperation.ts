@@ -1,4 +1,3 @@
-import { ContentType } from '@standardnotes/common'
 import { ItemsKeyInterface } from '@standardnotes/models'
 import { dateSorted } from '@standardnotes/utils'
 import { SNRootKeyParams, EncryptionProviderInterface } from '@standardnotes/encryption'
@@ -6,6 +5,7 @@ import { DecryptionQueueItem, KeyRecoveryOperationResult } from './Types'
 import { serverKeyParamsAreSafe } from './Utils'
 import { ChallengeServiceInterface, DecryptItemsKeyByPromptingUser } from '@standardnotes/services'
 import { ItemManager } from '../Items'
+import { ContentType } from '@standardnotes/domain-core'
 
 export class KeyRecoveryOperation {
   constructor(
@@ -29,7 +29,7 @@ export class KeyRecoveryOperation {
 
     if (queueItemKeyParamsAreBetterOrEqualToClients) {
       const latestDecryptedItemsKey = dateSorted(
-        this.itemManager.getItems<ItemsKeyInterface>(ContentType.ItemsKey),
+        this.itemManager.getItems<ItemsKeyInterface>(ContentType.TYPES.ItemsKey),
         'created_at',
         false,
       )[0]

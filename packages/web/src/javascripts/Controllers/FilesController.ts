@@ -88,7 +88,7 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
     })
 
     this.disposers.push(
-      application.streamItems(ContentType.File, () => {
+      application.streamItems(ContentType.TYPES.File, () => {
         this.reloadAllFiles()
         this.reloadAttachedFiles()
       }),

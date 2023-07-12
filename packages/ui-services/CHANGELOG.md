@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.28.2](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.28.1...@standardnotes/ui-services@1.28.2) (2023-07-12)
+
+**Note:** Version bump only for package @standardnotes/ui-services
+
+## [1.28.1](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.28.0...@standardnotes/ui-services@1.28.1) (2023-07-12)
+
+**Note:** Version bump only for package @standardnotes/ui-services
+
+# [1.28.0](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.27.9...@standardnotes/ui-services@1.28.0) (2023-07-11)
+
+### Features
+
+* On Android, you can now share text & files from other apps directly into Standard Notes ([#2352](https://github.com/standardnotes/app/issues/2352)) ([3dc179c](https://github.com/standardnotes/app/commit/3dc179c7b0779ef0f2857b7f9c994ea9d5385720))
+
+## [1.27.9](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.27.8...@standardnotes/ui-services@1.27.9) (2023-07-11)
+
+**Note:** Version bump only for package @standardnotes/ui-services
+
+## [1.27.8](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.27.7...@standardnotes/ui-services@1.27.8) (2023-07-11)
+
+**Note:** Version bump only for package @standardnotes/ui-services
+
 ## [1.27.7](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.27.6...@standardnotes/ui-services@1.27.7) (2023-07-07)
 
 **Note:** Version bump only for package @standardnotes/ui-services

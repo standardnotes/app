@@ -1,5 +1,4 @@
 import { FullyFormedPayloadInterface } from './../../../Abstract/Payload/Interfaces/UnionTypes'
-import { ContentType } from '@standardnotes/common'
 import { UuidMap } from '@standardnotes/utils'
 import { PayloadCollection } from './PayloadCollection'
 
@@ -33,7 +32,7 @@ export class ImmutablePayloadCollection<
     const result = new ImmutablePayloadCollection<T>(
       true,
       mapCopy,
-      typedMapCopy as Partial<Record<ContentType, T[]>>,
+      typedMapCopy as Partial<Record<string, T[]>>,
       referenceMapCopy,
       conflictMapCopy,
     )

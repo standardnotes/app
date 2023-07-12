@@ -13,7 +13,7 @@ import {
   RootKeyInterface,
   KeySystemRootKeyParamsInterface,
 } from '@standardnotes/models'
-import { ContentType, KeyParamsOrigination, ProtocolVersion } from '@standardnotes/common'
+import { KeyParamsOrigination, ProtocolVersion } from '@standardnotes/common'
 import { HexString, PkcKeyPair, PureCryptoInterface, Utf8String } from '@standardnotes/sncrypto-common'
 import { V004Algorithm } from '../../Algorithm'
 import { SNRootKeyParams } from '../../Keys/RootKey/RootKeyParams'
@@ -48,6 +48,7 @@ import { AsymmetricSignatureVerificationDetachedResult } from '../Types/Asymmetr
 import { AsymmetricSignatureVerificationDetachedUseCase } from './UseCase/Asymmetric/AsymmetricSignatureVerificationDetached'
 import { DeriveKeySystemRootKeyUseCase } from './UseCase/KeySystem/DeriveKeySystemRootKey'
 import { SyncOperatorInterface } from '../OperatorInterface/SyncOperatorInterface'
+import { ContentType } from '@standardnotes/domain-core'
 
 export class SNProtocolOperator004 implements OperatorInterface, SyncOperatorInterface {
   constructor(protected readonly crypto: PureCryptoInterface) {}
@@ -76,7 +77,7 @@ export class SNProtocolOperator004 implements OperatorInterface, SyncOperatorInt
   public createItemsKey(): ItemsKeyInterface {
     const payload = new DecryptedPayload({
       uuid: UuidGenerator.GenerateUuid(),
-      content_type: ContentType.ItemsKey,
+      content_type: ContentType.TYPES.ItemsKey,
       content: this.generateNewItemsKeyContent(),
       key_system_identifier: undefined,
       shared_vault_uuid: undefined,

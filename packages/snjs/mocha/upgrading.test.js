@@ -192,7 +192,7 @@ describe('upgrading', () => {
     expect((await this.application.encryptionService.getRootKey()).keyVersion).to.equal(ProtocolVersion.V003)
 
     /** Ensure note is encrypted with 003 */
-    const notePayloads = await Factory.getStoragePayloadsOfType(this.application, ContentType.Note)
+    const notePayloads = await Factory.getStoragePayloadsOfType(this.application, ContentType.TYPES.Note)
     expect(notePayloads.length).to.equal(1)
     expect(notePayloads[0].version).to.equal(ProtocolVersion.V003)
 
@@ -211,7 +211,7 @@ describe('upgrading', () => {
     const note = this.application.itemManager.getDisplayableNotes()[0]
     await Factory.markDirtyAndSyncItem(this.application, note)
 
-    const refreshedNotePayloads = await Factory.getStoragePayloadsOfType(this.application, ContentType.Note)
+    const refreshedNotePayloads = await Factory.getStoragePayloadsOfType(this.application, ContentType.TYPES.Note)
     const refreshedNotePayload = refreshedNotePayloads[0]
     expect(refreshedNotePayload.version).to.equal(latestVersion)
   }).timeout(5000)

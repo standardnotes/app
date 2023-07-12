@@ -1,4 +1,3 @@
-import { ContentType } from '@standardnotes/common'
 import { compareValues } from '@standardnotes/utils'
 import { isDeletedItem, isEncryptedItem } from '../../Abstract/Item'
 import { ItemDelta } from '../Index/ItemDelta'
@@ -21,7 +20,7 @@ export class ItemDisplayController<I extends DisplayItem, O extends AnyDisplayOp
 
   constructor(
     private readonly collection: ReadonlyItemCollection,
-    public readonly contentTypes: ContentType[],
+    public readonly contentTypes: string[],
     private options: DisplayControllerDisplayOptions & O,
     private vaultOptions?: VaultDisplayOptions,
   ) {

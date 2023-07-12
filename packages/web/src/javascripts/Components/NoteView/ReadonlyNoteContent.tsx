@@ -35,7 +35,7 @@ export const ReadonlyNoteContent = ({
       return undefined
     }
 
-    const templateNoteForRevision = application.items.createTemplateItem(ContentType.Note, note.content) as SNNote
+    const templateNoteForRevision = application.items.createTemplateItem(ContentType.TYPES.Note, note.content) as SNNote
 
     const componentViewer = application.componentManager.createComponentViewer(editorForCurrentNote, {
       readonlyItem: templateNoteForRevision,

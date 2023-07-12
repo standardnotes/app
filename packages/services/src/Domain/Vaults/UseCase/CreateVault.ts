@@ -10,8 +10,8 @@ import {
   FillItemContentSpecialized,
   KeySystemRootKeyInterface,
 } from '@standardnotes/models'
-import { ContentType } from '@standardnotes/common'
 import { MutatorClientInterface } from '../../Mutator/MutatorClientInterface'
+import { ContentType } from '@standardnotes/domain-core'
 
 export class CreateVaultUseCase {
   constructor(
@@ -70,7 +70,7 @@ export class CreateVaultUseCase {
       description: dto.vaultDescription,
     }
 
-    return this.mutator.createItem(ContentType.VaultListing, FillItemContentSpecialized(content), true)
+    return this.mutator.createItem(ContentType.TYPES.VaultListing, FillItemContentSpecialized(content), true)
   }
 
   private async createKeySystemItemsKey(keySystemIdentifier: string, rootKeyToken: string): Promise<void> {

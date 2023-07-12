@@ -1,6 +1,6 @@
 import { ApplicationStage } from '@standardnotes/services'
 import { Migration } from '@Lib/Migrations/Migration'
-import { ContentType } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/domain-core'
 import { AllComponentPreferences, ComponentInterface, PrefKey } from '@standardnotes/models'
 import { Copy, Uuids } from '@standardnotes/utils'
 import { FindNativeFeature } from '@standardnotes/features'
@@ -21,7 +21,7 @@ export class Migration2_201_6 extends Migration {
   }
 
   private async migrateComponentDataToUserPreferences(): Promise<void> {
-    const components = this.services.itemManager.getItems<ComponentInterface>(ContentType.Component)
+    const components = this.services.itemManager.getItems<ComponentInterface>(ContentType.TYPES.Component)
 
     if (components.length === 0) {
       return
@@ -56,8 +56,8 @@ export class Migration2_201_6 extends Migration {
 
   private async migrateActiveComponentsToUserPreferences(): Promise<void> {
     const allActiveitems = [
-      ...this.services.itemManager.getItems<ComponentInterface>(ContentType.Component),
-      ...this.services.itemManager.getItems<ComponentInterface>(ContentType.Theme),
+      ...this.services.itemManager.getItems<ComponentInterface>(ContentType.TYPES.Component),
+      ...this.services.itemManager.getItems<ComponentInterface>(ContentType.TYPES.Theme),
     ].filter((component) => component.legacyActive)
 
     if (allActiveitems.length === 0) {
@@ -73,8 +73,8 @@ export class Migration2_201_6 extends Migration {
 
   private async deleteComponentsWhichAreNativeFeatures(): Promise<void> {
     const components = [
-      ...this.services.itemManager.getItems<ComponentInterface>(ContentType.Component),
-      ...this.services.itemManager.getItems<ComponentInterface>(ContentType.Theme),
+      ...this.services.itemManager.getItems<ComponentInterface>(ContentType.TYPES.Component),
+      ...this.services.itemManager.getItems<ComponentInterface>(ContentType.TYPES.Theme),
     ].filter((component) => FindNativeFeature(component.identifier) !== undefined)
 
     if (components.length === 0) {

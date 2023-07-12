@@ -1,4 +1,3 @@
-import { ContentType } from '@standardnotes/common'
 import { TransferPayload } from './../../TransferPayload/Interfaces/TransferPayload'
 import { PayloadInterface } from '../../Payload/Interfaces/PayloadInterface'
 import { PredicateInterface } from '../../../Runtime/Predicate/Interface'
@@ -21,7 +20,7 @@ export interface ItemInterface<P extends PayloadInterface = PayloadInterface> {
   get last_edited_by_uuid(): string | undefined
   get signatureData(): PersistentSignatureData | undefined
 
-  content_type: ContentType
+  content_type: string
   created_at: Date
   serverUpdatedAt: Date
   serverUpdatedAtTimestamp: number | undefined

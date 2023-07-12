@@ -9,7 +9,7 @@ import {
   VaultListingMutator,
 } from '@standardnotes/models'
 
-import { ContentType } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/domain-core'
 import { GetVaultUseCase } from '../../Vaults/UseCase/GetVault'
 import { EncryptionProviderInterface } from '@standardnotes/encryption'
 
@@ -25,7 +25,7 @@ export class HandleTrustedSharedVaultRootKeyChangedMessage {
     const rootKeyContent = message.data.rootKey
 
     await this.mutator.createItem<KeySystemRootKeyInterface>(
-      ContentType.KeySystemRootKey,
+      ContentType.TYPES.KeySystemRootKey,
       FillItemContent<KeySystemRootKeyContent>(rootKeyContent),
       true,
     )

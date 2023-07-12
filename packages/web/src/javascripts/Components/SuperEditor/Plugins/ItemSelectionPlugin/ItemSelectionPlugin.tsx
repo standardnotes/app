@@ -60,7 +60,7 @@ export const ItemSelectionPlugin: FunctionComponent<Props> = ({ currentNote }) =
       return new ItemOption(item, item.title || '', {
         onSelect: (_queryString: string) => {
           void linkingController.linkItems(currentNote, item)
-          if (item.content_type === ContentType.File) {
+          if (item.content_type === ContentType.TYPES.File) {
             editor.dispatchCommand(INSERT_FILE_COMMAND, item.uuid)
           } else {
             editor.dispatchCommand(INSERT_BUBBLE_COMMAND, item.uuid)

@@ -1,10 +1,5 @@
 import { OperatorManager } from '@standardnotes/encryption'
-import {
-  ContentType,
-  ProtocolVersionLastNonrootItemsKey,
-  ProtocolVersionLatest,
-  compareVersions,
-} from '@standardnotes/common'
+import { ProtocolVersionLastNonrootItemsKey, ProtocolVersionLatest, compareVersions } from '@standardnotes/common'
 import {
   CreateDecryptedItemFromPayload,
   DecryptedPayload,
@@ -18,6 +13,7 @@ import { UuidGenerator } from '@standardnotes/utils'
 import { MutatorClientInterface } from '../../../Mutator/MutatorClientInterface'
 import { ItemManagerInterface } from '../../../Item/ItemManagerInterface'
 import { RootKeyManager } from '../../RootKey/RootKeyManager'
+import { ContentType } from '@standardnotes/domain-core'
 
 /**
  * Creates a new random items key to use for item encryption, and adds it to model management.
@@ -41,7 +37,7 @@ export class CreateNewDefaultItemsKeyUseCase {
       /** Create root key based items key */
       const payload = new DecryptedPayload<ItemsKeyContent>({
         uuid: UuidGenerator.GenerateUuid(),
-        content_type: ContentType.ItemsKey,
+        content_type: ContentType.TYPES.ItemsKey,
         content: FillItemContentSpecialized<ItemsKeyContentSpecialized, ItemsKeyContent>({
           itemsKey: rootKey.masterKey,
           dataAuthenticationKey: rootKey.dataAuthenticationKey,

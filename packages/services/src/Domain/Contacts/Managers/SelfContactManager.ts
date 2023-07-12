@@ -15,9 +15,9 @@ import {
   TrustedContactContentSpecialized,
   TrustedContactInterface,
 } from '@standardnotes/models'
-import { ContentType } from '@standardnotes/common'
 import { CreateOrEditTrustedContactUseCase } from '../UseCase/CreateOrEditTrustedContact'
 import { PublicKeySet } from '@standardnotes/encryption'
+import { ContentType } from '@standardnotes/domain-core'
 
 export class SelfContactManager {
   public selfContact?: TrustedContactInterface
@@ -57,7 +57,7 @@ export class SelfContactManager {
     }
 
     this.selfContact = this.singletons.findSingleton<TrustedContactInterface>(
-      ContentType.TrustedContact,
+      ContentType.TYPES.TrustedContact,
       TrustedContact.singletonPredicate,
     )
   }
@@ -117,7 +117,7 @@ export class SelfContactManager {
 
     this.selfContact = await this.singletons.findOrCreateSingleton<TrustedContactContent, TrustedContact>(
       TrustedContact.singletonPredicate,
-      ContentType.TrustedContact,
+      ContentType.TYPES.TrustedContact,
       FillItemContent<TrustedContactContent>(content),
     )
 

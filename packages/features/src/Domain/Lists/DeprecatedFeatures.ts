@@ -1,14 +1,13 @@
-import { ContentType } from '@standardnotes/common'
 import { AnyFeatureDescription } from '../Feature/AnyFeatureDescription'
 import { EditorFeatureDescription } from '../Feature/EditorFeatureDescription'
 import { IframeComponentFeatureDescription } from '../Feature/IframeComponentFeatureDescription'
+import { ContentType, RoleName } from '@standardnotes/domain-core'
 import { PermissionName } from '../Permission/PermissionName'
 import { FeatureIdentifier } from '../Feature/FeatureIdentifier'
 import { NoteType } from '../Component/NoteType'
 import { FillIframeEditorDefaults } from './Utilities/FillEditorComponentDefaults'
 import { ComponentAction } from '../Component/ComponentAction'
 import { ComponentArea } from '../Component/ComponentArea'
-import { RoleName } from '@standardnotes/domain-core'
 
 export function GetDeprecatedFeatures(): AnyFeatureDescription[] {
   const bold: EditorFeatureDescription = FillIframeEditorDefaults({
@@ -19,14 +18,14 @@ export function GetDeprecatedFeatures(): AnyFeatureDescription[] {
     component_permissions: [
       {
         name: ComponentAction.StreamContextItem,
-        content_types: [ContentType.Note],
+        content_types: [ContentType.TYPES.Note],
       },
       {
         name: ComponentAction.StreamItems,
         content_types: [
-          ContentType.FilesafeCredentials,
-          ContentType.FilesafeFileMetadata,
-          ContentType.FilesafeIntegration,
+          ContentType.TYPES.FilesafeCredentials,
+          ContentType.TYPES.FilesafeFileMetadata,
+          ContentType.TYPES.FilesafeIntegration,
         ],
       },
     ],
@@ -99,14 +98,14 @@ export function GetDeprecatedFeatures(): AnyFeatureDescription[] {
     component_permissions: [
       {
         name: ComponentAction.StreamContextItem,
-        content_types: [ContentType.Note],
+        content_types: [ContentType.TYPES.Note],
       },
       {
         name: ComponentAction.StreamItems,
         content_types: [
-          ContentType.FilesafeCredentials,
-          ContentType.FilesafeFileMetadata,
-          ContentType.FilesafeIntegration,
+          ContentType.TYPES.FilesafeCredentials,
+          ContentType.TYPES.FilesafeFileMetadata,
+          ContentType.TYPES.FilesafeIntegration,
         ],
       },
     ],

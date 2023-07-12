@@ -1,9 +1,10 @@
-import { ContentType, ProtocolVersion } from '@standardnotes/common'
+import { ProtocolVersion } from '@standardnotes/common'
 import { DecryptedPayload, ItemContent, ItemsKeyContent, PayloadTimestampDefaults } from '@standardnotes/models'
 import { SNItemsKey } from '../../Keys/ItemsKey/ItemsKey'
 import { SNProtocolOperator004 } from './Operator004'
 import { getMockedCrypto } from './MockedCrypto'
 import { deconstructEncryptedPayloadString } from './V004AlgorithmHelpers'
+import { ContentType } from '@standardnotes/domain-core'
 
 describe('operator 004', () => {
   const crypto = getMockedCrypto()
@@ -31,7 +32,7 @@ describe('operator 004', () => {
   it('should generateEncryptedParameters', () => {
     const payload = {
       uuid: '123',
-      content_type: ContentType.Note,
+      content_type: ContentType.TYPES.Note,
       content: { foo: 'bar' } as unknown as jest.Mocked<ItemContent>,
       ...PayloadTimestampDefaults(),
     } as jest.Mocked<DecryptedPayload>
@@ -39,7 +40,7 @@ describe('operator 004', () => {
     const key = new SNItemsKey(
       new DecryptedPayload<ItemsKeyContent>({
         uuid: 'key-456',
-        content_type: ContentType.ItemsKey,
+        content_type: ContentType.TYPES.ItemsKey,
         content: {
           itemsKey: 'secret',
           version: ProtocolVersion.V004,
@@ -56,7 +57,7 @@ describe('operator 004', () => {
       key_system_identifier: undefined,
       shared_vault_uuid: undefined,
       content: '004:random-string:<e>{"foo"|"bar"}<e>:base64-{"u"|"123","v"|"004"}:base64-{}',
-      content_type: ContentType.Note,
+      content_type: ContentType.TYPES.Note,
       enc_item_key: '004:random-string:<e>random-string<e>:base64-{"u"|"123","v"|"004"}:base64-{}',
       version: '004',
     })

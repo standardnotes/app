@@ -1,6 +1,5 @@
 import { NoteType } from '@standardnotes/features'
 import { ApplicationStage } from './../Application/ApplicationStage'
-import { ContentType } from '@standardnotes/common'
 import { EncryptionProviderInterface } from '@standardnotes/encryption'
 import {
   PayloadEmitSource,
@@ -34,6 +33,7 @@ import { StorageKey } from '../Storage/StorageKeys'
 import { SessionsClientInterface } from '../Session/SessionsClientInterface'
 import { PayloadManagerInterface } from '../Payloads/PayloadManagerInterface'
 import { HistoryServiceInterface } from '../History/HistoryServiceInterface'
+import { ContentType } from '@standardnotes/domain-core'
 
 const PlaintextBackupsDirectoryName = 'Plaintext Backups'
 export const TextBackupsDirectoryName = 'Text Backups'
@@ -65,16 +65,19 @@ export class FilesBackupService extends AbstractService implements BackupService
   ) {
     super(internalEventBus)
 
-    this.filesObserverDisposer = items.addObserver<FileItem>(ContentType.File, ({ changed, inserted, source }) => {
-      const applicableSources = [
-        PayloadEmitSource.LocalDatabaseLoaded,
-        PayloadEmitSource.RemoteSaved,
-        PayloadEmitSource.RemoteRetrieved,
-      ]
-      if (applicableSources.includes(source)) {
-        void this.handleChangedFiles([...changed, ...inserted])
-      }
-    })
+    this.filesObserverDisposer = items.addObserver<FileItem>(
+      ContentType.TYPES.File,
+      ({ changed, inserted, source }) => {
+        const applicableSources = [
+          PayloadEmitSource.LocalDatabaseLoaded,
+          PayloadEmitSource.RemoteSaved,
+          PayloadEmitSource.RemoteRetrieved,
+        ]
+        if (applicableSources.includes(source)) {
+          void this.handleChangedFiles([...changed, ...inserted])
+        }
+      },
+    )
 
     const noteAndTagSources = [
       PayloadEmitSource.RemoteSaved,
@@ -82,13 +85,13 @@ export class FilesBackupService extends AbstractService implements BackupService
       PayloadEmitSource.OfflineSyncSaved,
     ]
 
-    this.notesObserverDisposer = items.addObserver<SNNote>(ContentType.Note, ({ changed, inserted, source }) => {
+    this.notesObserverDisposer = items.addObserver<SNNote>(ContentType.TYPES.Note, ({ changed, inserted, source }) => {
       if (noteAndTagSources.includes(source)) {
         void this.handleChangedNotes([...changed, ...inserted])
       }
     })
 
-    this.tagsObserverDisposer = items.addObserver<SNTag>(ContentType.Tag, ({ changed, inserted, source }) => {
+    this.tagsObserverDisposer = items.addObserver<SNTag>(ContentType.TYPES.Tag, ({ changed, inserted, source }) => {
       if (noteAndTagSources.includes(source)) {
         void this.handleChangedTags([...changed, ...inserted])
       }
@@ -266,7 +269,7 @@ export class FilesBackupService extends AbstractService implements BackupService
     this.storage.setValue(StorageKey.PlaintextBackupsEnabled, true)
     this.storage.setValue(StorageKey.PlaintextBackupsLocation, location)
 
-    void this.handleChangedNotes(this.items.getItems<SNNote>(ContentType.Note))
+    void this.handleChangedNotes(this.items.getItems<SNNote>(ContentType.TYPES.Note))
   }
 
   disablePlaintextBackups(): void {
@@ -319,7 +322,7 @@ export class FilesBackupService extends AbstractService implements BackupService
   }
 
   private backupAllFiles(): void {
-    const files = this.items.getItems<FileItem>(ContentType.File)
+    const files = this.items.getItems<FileItem>(ContentType.TYPES.File)
 
     void this.handleChangedFiles(files)
   }
@@ -453,7 +456,7 @@ export class FilesBackupService extends AbstractService implements BackupService
     }
 
     for (const tag of tags) {
-      const notes = this.items.referencesForItem<SNNote>(tag, ContentType.Note)
+      const notes = this.items.referencesForItem<SNNote>(tag, ContentType.TYPES.Note)
       await this.handleChangedNotes(notes)
     }
   }

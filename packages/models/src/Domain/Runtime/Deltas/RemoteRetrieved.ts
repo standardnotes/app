@@ -2,7 +2,7 @@ import { ImmutablePayloadCollection } from './../Collection/Payload/ImmutablePay
 import { ConflictDelta } from './Conflict'
 import { isErrorDecryptingPayload, isDecryptedPayload } from '../../Abstract/Payload/Interfaces/TypeCheck'
 import { FullyFormedPayloadInterface, PayloadEmitSource } from '../../Abstract/Payload'
-import { ContentType } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/domain-core'
 import { HistoryMap } from '../History'
 import { ServerSyncPushContextualPayload } from '../../Abstract/Contextual/ServerSyncPush'
 import { payloadByFinalizingSyncState } from './Utilities/ApplyDirtyState'
@@ -36,7 +36,10 @@ export class DeltaRemoteRetrieved implements SyncDeltaInterface {
      * or if the item is locally dirty, filter it out of retrieved_items, and add to potential conflicts.
      */
     for (const apply of this.applyCollection.all()) {
-      if (apply.content_type === ContentType.ItemsKey || apply.content_type === ContentType.KeySystemItemsKey) {
+      if (
+        apply.content_type === ContentType.TYPES.ItemsKey ||
+        apply.content_type === ContentType.TYPES.KeySystemItemsKey
+      ) {
         const itemsKeyDeltaEmit = new ItemsKeyDelta(this.baseCollection, [apply]).result()
 
         extendSyncDelta(result, itemsKeyDeltaEmit)

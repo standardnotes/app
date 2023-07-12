@@ -1,6 +1,7 @@
 package com.standardnotes;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.content.res.Configuration;
@@ -53,5 +54,11 @@ public class MainActivity extends ReactActivity {
     @Override
     public void invokeDefaultOnBackPressed() {
         moveTaskToBack(true);
+    }
+
+    @Override
+    public void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
     }
 }

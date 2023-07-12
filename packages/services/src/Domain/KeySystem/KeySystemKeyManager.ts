@@ -16,9 +16,9 @@ import {
   VaultListingInterface,
 } from '@standardnotes/models'
 import { ItemManagerInterface } from './../Item/ItemManagerInterface'
-import { ContentType } from '@standardnotes/common'
 import { KeySystemKeyManagerInterface } from '@standardnotes/encryption'
 import { AbstractService } from '../Service/AbstractService'
+import { ContentType } from '@standardnotes/domain-core'
 
 const RootKeyStorageKeyPrefix = 'key-system-root-key-'
 
@@ -76,7 +76,7 @@ export class KeySystemKeyManager extends AbstractService implements KeySystemKey
   }
 
   public getAllSyncedKeySystemRootKeys(): KeySystemRootKeyInterface[] {
-    return this.items.getItems(ContentType.KeySystemRootKey)
+    return this.items.getItems(ContentType.TYPES.KeySystemRootKey)
   }
 
   public clearMemoryOfKeysRelatedToVault(vault: VaultListingInterface): void {
@@ -88,7 +88,7 @@ export class KeySystemKeyManager extends AbstractService implements KeySystemKey
 
   public getSyncedKeySystemRootKeysForVault(systemIdentifier: KeySystemIdentifier): KeySystemRootKeyInterface[] {
     return this.items.itemsMatchingPredicate<KeySystemRootKeyInterface>(
-      ContentType.KeySystemRootKey,
+      ContentType.TYPES.KeySystemRootKey,
       new Predicate<KeySystemRootKeyInterface>('systemIdentifier', '=', systemIdentifier),
     )
   }
@@ -131,14 +131,16 @@ export class KeySystemKeyManager extends AbstractService implements KeySystemKey
   }
 
   public getAllKeySystemItemsKeys(): (KeySystemItemsKeyInterface | EncryptedItemInterface)[] {
-    const decryptedItems = this.items.getItems<KeySystemItemsKeyInterface>(ContentType.KeySystemItemsKey)
-    const encryptedItems = this.items.invalidItems.filter((item) => item.content_type === ContentType.KeySystemItemsKey)
+    const decryptedItems = this.items.getItems<KeySystemItemsKeyInterface>(ContentType.TYPES.KeySystemItemsKey)
+    const encryptedItems = this.items.invalidItems.filter(
+      (item) => item.content_type === ContentType.TYPES.KeySystemItemsKey,
+    )
     return [...decryptedItems, ...encryptedItems]
   }
 
   public getKeySystemItemsKeys(systemIdentifier: KeySystemIdentifier): KeySystemItemsKeyInterface[] {
     return this.items
-      .getItems<KeySystemItemsKeyInterface>(ContentType.KeySystemItemsKey)
+      .getItems<KeySystemItemsKeyInterface>(ContentType.TYPES.KeySystemItemsKey)
       .filter((key) => key.key_system_identifier === systemIdentifier)
   }
 

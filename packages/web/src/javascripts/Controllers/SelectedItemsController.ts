@@ -21,6 +21,7 @@ import { Persistable } from './Abstract/Persistable'
 import { CrossControllerEvent } from './CrossControllerEvent'
 import { ItemListController } from './ItemList/ItemListController'
 import { PaneLayout } from './PaneController/PaneLayout'
+import { requestCloseAllOpenModalsAndPopovers } from '@/Utils/CloseOpenModalsAndPopovers'
 
 export class SelectedItemsController
   extends AbstractViewController
@@ -94,7 +95,7 @@ export class SelectedItemsController
 
     this.disposers.push(
       this.application.streamItems<SNNote | FileItem>(
-        [ContentType.Note, ContentType.File],
+        [ContentType.TYPES.Note, ContentType.TYPES.File],
         ({ changed, inserted, removed }) => {
           runInAction(() => {
             for (const removedItem of removed) {
@@ -121,7 +122,7 @@ export class SelectedItemsController
   }
 
   get selectedFiles(): FileItem[] {
-    return this.getFilteredSelectedItems<FileItem>(ContentType.File)
+    return this.getFilteredSelectedItems<FileItem>(ContentType.TYPES.File)
   }
 
   get selectedFilesCount(): number {
@@ -137,7 +138,7 @@ export class SelectedItemsController
     return uuids.map((uuid) => this.application.items.findSureItem<SNNote | FileItem>(uuid)).filter((item) => !!item)
   }
 
-  getFilteredSelectedItems = <T extends ListableContentItem = ListableContentItem>(contentType?: ContentType): T[] => {
+  getFilteredSelectedItems = <T extends ListableContentItem = ListableContentItem>(contentType?: string): T[] => {
     return Object.values(this.selectedItems).filter((item) => {
       return !contentType ? true : item.content_type === contentType
     }) as T[]
@@ -243,14 +244,18 @@ export class SelectedItemsController
     if (this.selectedItemsCount === 1) {
       const item = this.firstSelectedItem
 
-      if (item.content_type === ContentType.Note) {
+      if (item.content_type === ContentType.TYPES.Note) {
         await this.itemListController.openNote(item.uuid)
-      } else if (item.content_type === ContentType.File) {
+      } else if (item.content_type === ContentType.TYPES.File) {
         await this.itemListController.openFile(item.uuid)
       }
 
       if (!this.application.paneController.isInMobileView || userTriggered) {
         void this.application.paneController.setPaneLayout(PaneLayout.Editing)
+      }
+
+      if (this.application.paneController.isInMobileView && userTriggered) {
+        requestCloseAllOpenModalsAndPopovers()
       }
     }
   }

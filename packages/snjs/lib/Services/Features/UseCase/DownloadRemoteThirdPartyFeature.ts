@@ -1,4 +1,4 @@
-import { ContentType } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/domain-core'
 import { FindNativeFeature, GetFeatures, ThirdPartyFeatureDescription } from '@standardnotes/features'
 import {
   ComponentContent,
@@ -38,10 +38,10 @@ export class DownloadRemoteThirdPartyFeatureUseCase {
     }
 
     const isValidContentType = [
-      ContentType.Component,
-      ContentType.Theme,
-      ContentType.ActionsExtension,
-      ContentType.ExtensionRepo,
+      ContentType.TYPES.Component,
+      ContentType.TYPES.Theme,
+      ContentType.TYPES.ActionsExtension,
+      ContentType.TYPES.ExtensionRepo,
     ].includes(rawFeature.content_type)
 
     if (!isValidContentType) {

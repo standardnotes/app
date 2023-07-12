@@ -25,11 +25,13 @@ import {
   InternalFeatureService,
   InternalFeatureServiceInterface,
   PrefDefaults,
+  NoteContent,
+  SNNote,
 } from '@standardnotes/snjs'
 import { makeObservable, observable } from 'mobx'
 import { startAuthentication, startRegistration } from '@simplewebauthn/browser'
 import { PanelResizedData } from '@/Types/PanelResizedData'
-import { isAndroid, isDesktopApplication, isDev, isIOS } from '@/Utils'
+import { getBlobFromBase64, isAndroid, isDesktopApplication, isDev, isIOS } from '@/Utils'
 import { DesktopManager } from './Device/DesktopManager'
 import {
   ArchiveManager,
@@ -66,6 +68,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
   private readonly mobileWebReceiver?: MobileWebReceiver
   private readonly androidBackHandler?: AndroidBackHandler
   private readonly visibilityObserver?: VisibilityObserver
+  private readonly mobileAppEventObserver?: () => void
 
   public readonly devMode?: DevMode
 
@@ -142,6 +145,9 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     if (this.isNativeMobileWeb()) {
       this.mobileWebReceiver = new MobileWebReceiver(this)
       this.androidBackHandler = new AndroidBackHandler()
+      this.mobileAppEventObserver = this.addEventObserver(async (event) => {
+        this.mobileDevice().notifyApplicationEvent(event)
+      })
 
       // eslint-disable-next-line no-console
       console.log = (...args) => {
@@ -190,6 +196,11 @@ export class WebApplication extends SNApplication implements WebApplicationInter
       if (this.visibilityObserver) {
         this.visibilityObserver.deinit()
         ;(this.visibilityObserver as unknown) = undefined
+      }
+
+      if (this.mobileAppEventObserver) {
+        this.mobileAppEventObserver()
+        ;(this.mobileAppEventObserver as unknown) = undefined
       }
     } catch (error) {
       console.error('Error while deiniting application', error)
@@ -319,7 +330,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
 
   public getItemTags(item: DecryptedItemInterface) {
     return this.items.itemsReferencingItem(item).filter((ref) => {
-      return ref.content_type === ContentType.Tag
+      return ref.content_type === ContentType.TYPES.Tag
     }) as SNTag[]
   }
 
@@ -379,6 +390,27 @@ export class WebApplication extends SNApplication implements WebApplicationInter
 
   handleMobileKeyboardDidChangeFrameEvent(frame: { height: number; contentHeight: number }): void {
     this.notifyWebEvent(WebAppEvent.MobileKeyboardDidChangeFrame, frame)
+  }
+
+  handleReceivedFileEvent(file: { name: string; mimeType: string; data: string }): void {
+    const filesController = this.controllers.filesController
+    const blob = getBlobFromBase64(file.data, file.mimeType)
+    const mappedFile = new File([blob], file.name, { type: file.mimeType })
+    void filesController.uploadNewFile(mappedFile, true)
+  }
+
+  async handleReceivedTextEvent({ text, title }: { text: string; title?: string | undefined }) {
+    const titleForNote = title || this.controllers.itemListController.titleForNewNote()
+
+    const note = this.items.createTemplateItem<NoteContent, SNNote>(ContentType.TYPES.Note, {
+      title: titleForNote,
+      text: text,
+      references: [],
+    })
+
+    const insertedNote = await this.mutator.insertItem(note)
+
+    this.controllers.selectionController.selectItem(insertedNote.uuid, true).catch(console.error)
   }
 
   private async lockApplicationAfterMobileEventIfApplicable(): Promise<void> {

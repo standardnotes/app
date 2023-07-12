@@ -1,5 +1,4 @@
 import { Migration } from '@Lib/Migrations/Migration'
-import { ContentType } from '@standardnotes/common'
 import { ApplicationStage } from '@standardnotes/services'
 
 export class Migration2_20_0 extends Migration {
@@ -15,7 +14,7 @@ export class Migration2_20_0 extends Migration {
   }
 
   private async deleteMfaItems(): Promise<void> {
-    const contentType = 'SF|MFA' as ContentType
+    const contentType = 'SF|MFA'
     const items = this.services.itemManager.getItems(contentType)
 
     for (const item of items) {

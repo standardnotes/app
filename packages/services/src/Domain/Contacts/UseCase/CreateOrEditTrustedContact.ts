@@ -10,8 +10,8 @@ import {
 } from '@standardnotes/models'
 import { FindTrustedContactUseCase } from './FindTrustedContact'
 import { UnknownContactName } from '../UnknownContactName'
-import { ContentType } from '@standardnotes/common'
 import { UpdateTrustedContactUseCase } from './UpdateTrustedContact'
+import { ContentType } from '@standardnotes/domain-core'
 
 export class CreateOrEditTrustedContactUseCase {
   constructor(
@@ -49,7 +49,7 @@ export class CreateOrEditTrustedContactUseCase {
     }
 
     const contact = await this.mutator.createItem<TrustedContactInterface>(
-      ContentType.TrustedContact,
+      ContentType.TYPES.TrustedContact,
       FillItemContent<TrustedContactContent>(content),
       true,
     )

@@ -37,7 +37,7 @@ describe('shared vault conflicts', function () {
 
     expect(conflicts.length).to.equal(1)
     expect(conflicts[0].type).to.equal(ConflictType.SharedVaultNotMemberError)
-    expect(conflicts[0].unsaved_item.content_type).to.equal(ContentType.Note)
+    expect(conflicts[0].unsaved_item.content_type).to.equal(ContentType.TYPES.Note)
 
     const collaboratorNotes = contactContext.items.getDisplayableNotes()
     expect(collaboratorNotes.length).to.equal(1)
@@ -89,7 +89,7 @@ describe('shared vault conflicts', function () {
 
     expect(conflicts.length).to.equal(1)
     expect(conflicts[0].type).to.equal(ConflictType.SharedVaultInsufficientPermissionsError)
-    expect(conflicts[0].unsaved_item.content_type).to.equal(ContentType.Note)
+    expect(conflicts[0].unsaved_item.content_type).to.equal(ContentType.TYPES.Note)
 
     await deinitContactContext()
   })
@@ -135,7 +135,7 @@ describe('shared vault conflicts', function () {
 
     expect(conflicts.length).to.equal(1)
     expect(conflicts[0].type).to.equal(ConflictType.SharedVaultNotMemberError)
-    expect(conflicts[0].unsaved_item.content_type).to.equal(ContentType.Note)
+    expect(conflicts[0].unsaved_item.content_type).to.equal(ContentType.TYPES.Note)
   })
 
   it('should create a non-vaulted copy if attempting to move item from vault to user and item belongs to someone else', async () => {
@@ -147,7 +147,7 @@ describe('shared vault conflicts', function () {
     const conflicts = await promise
 
     expect(conflicts.length).to.equal(1)
-    expect(conflicts[0].unsaved_item.content_type).to.equal(ContentType.Note)
+    expect(conflicts[0].unsaved_item.content_type).to.equal(ContentType.TYPES.Note)
 
     const duplicateNote = contactContext.findDuplicateNote(note.uuid)
     expect(duplicateNote).to.not.be.undefined
@@ -172,7 +172,7 @@ describe('shared vault conflicts', function () {
     const conflicts = await promise
 
     expect(conflicts.length).to.equal(1)
-    expect(conflicts[0].unsaved_item.content_type).to.equal(ContentType.Note)
+    expect(conflicts[0].unsaved_item.content_type).to.equal(ContentType.TYPES.Note)
 
     const duplicateNote = context.findDuplicateNote(note.uuid)
     expect(duplicateNote).to.not.be.undefined

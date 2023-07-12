@@ -1,10 +1,9 @@
-import { ContentType } from '@standardnotes/common'
 import { ItemContent } from '../../Content/ItemContent'
 import { PersistentSignatureData } from '../../../Runtime/Encryption/PersistentSignatureData'
 
 export interface TransferPayload<C extends ItemContent = ItemContent> {
   uuid: string
-  content_type: ContentType
+  content_type: string
   content: C | string | undefined
   deleted?: boolean
 

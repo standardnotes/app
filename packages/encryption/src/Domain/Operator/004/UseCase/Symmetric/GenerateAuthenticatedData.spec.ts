@@ -1,5 +1,5 @@
 import { CreateAnyKeyParams } from '../../../../Keys/RootKey/KeyParamsFunctions'
-import { AnyKeyParamsContent, ContentType, ProtocolVersion } from '@standardnotes/common'
+import { AnyKeyParamsContent, ProtocolVersion } from '@standardnotes/common'
 import { GenerateAuthenticatedDataUseCase } from './GenerateAuthenticatedData'
 import {
   DecryptedPayloadInterface,
@@ -8,6 +8,7 @@ import {
   RootKeyInterface,
 } from '@standardnotes/models'
 import { KeySystemItemsKey } from '../../../../Keys/KeySystemItemsKey/KeySystemItemsKey'
+import { ContentType } from '@standardnotes/domain-core'
 
 describe('generate authenticated data use case', () => {
   let usecase: GenerateAuthenticatedDataUseCase
@@ -19,7 +20,7 @@ describe('generate authenticated data use case', () => {
   it('should include key params if payload being encrypted is an items key', () => {
     const payload = {
       uuid: '123',
-      content_type: ContentType.ItemsKey,
+      content_type: ContentType.TYPES.ItemsKey,
     } as jest.Mocked<DecryptedPayloadInterface>
 
     const keyParams = CreateAnyKeyParams({
@@ -42,7 +43,7 @@ describe('generate authenticated data use case', () => {
   it('should include root key params if payload is a key system items key', () => {
     const payload = {
       uuid: '123',
-      content_type: ContentType.KeySystemItemsKey,
+      content_type: ContentType.TYPES.KeySystemItemsKey,
       shared_vault_uuid: 'shared-vault-uuid-123',
       key_system_identifier: 'key-system-identifier-123',
     } as jest.Mocked<DecryptedPayloadInterface>
@@ -52,7 +53,7 @@ describe('generate authenticated data use case', () => {
       keyParams: {
         seed: 'seed-123',
       },
-      content_type: ContentType.KeySystemRootKey,
+      content_type: ContentType.TYPES.KeySystemRootKey,
       token: '123',
     } as jest.Mocked<KeySystemRootKeyInterface>
 
@@ -70,7 +71,7 @@ describe('generate authenticated data use case', () => {
   it('should include key system identifier and shared vault uuid', () => {
     const payload = {
       uuid: '123',
-      content_type: ContentType.Note,
+      content_type: ContentType.TYPES.Note,
       shared_vault_uuid: 'shared-vault-uuid-123',
       key_system_identifier: 'key-system-identifier-123',
     } as jest.Mocked<DecryptedPayloadInterface>
@@ -78,7 +79,7 @@ describe('generate authenticated data use case', () => {
     const itemsKey = {
       creationTimestamp: 123,
       keyVersion: ProtocolVersion.V004,
-      content_type: ContentType.KeySystemItemsKey,
+      content_type: ContentType.TYPES.KeySystemItemsKey,
     } as jest.Mocked<KeySystemItemsKey>
 
     const authenticatedData = usecase.execute(payload, itemsKey)
@@ -94,11 +95,11 @@ describe('generate authenticated data use case', () => {
   it('should include only uuid and version if non-keysystem item with items key', () => {
     const payload = {
       uuid: '123',
-      content_type: ContentType.Note,
+      content_type: ContentType.TYPES.Note,
     } as jest.Mocked<DecryptedPayloadInterface>
 
     const itemsKey = {
-      content_type: ContentType.ItemsKey,
+      content_type: ContentType.TYPES.ItemsKey,
     } as jest.Mocked<ItemsKeyInterface>
 
     const authenticatedData = usecase.execute(payload, itemsKey)

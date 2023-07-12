@@ -71,7 +71,7 @@ describe('004 protocol operations', function () {
   it('properly encrypts and decrypts', async function () {
     const payload = new DecryptedPayload({
       uuid: '123',
-      content_type: ContentType.ItemsKey,
+      content_type: ContentType.TYPES.ItemsKey,
       content: FillItemContent({
         title: 'foo',
         text: 'bar',
@@ -90,7 +90,7 @@ describe('004 protocol operations', function () {
   it('fails to decrypt non-matching aad', async function () {
     const payload = new DecryptedPayload({
       uuid: '123',
-      content_type: ContentType.ItemsKey,
+      content_type: ContentType.TYPES.ItemsKey,
       content: FillItemContent({
         title: 'foo',
         text: 'bar',

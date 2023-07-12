@@ -102,9 +102,9 @@ export class RouteParser implements RouteParserInterface {
       return RouteType.Onboarding
     }
 
-    const isIndexPath = this.path.endsWith('index.html')
+    const isValidPath = ['index.html', 'popup.html'].some((path) => this.path.endsWith(path))
 
-    if (this.path !== RootRoutes.None && !isIndexPath) {
+    if (this.path !== RootRoutes.None && !isValidPath) {
       return RouteType.None
     }
 

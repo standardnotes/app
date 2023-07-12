@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.63.1](https://github.com/standardnotes/app/compare/@standardnotes/services@1.63.0...@standardnotes/services@1.63.1) (2023-07-12)
+
+**Note:** Version bump only for package @standardnotes/services
+
+# [1.63.0](https://github.com/standardnotes/app/compare/@standardnotes/services@1.62.6...@standardnotes/services@1.63.0) (2023-07-11)
+
+### Features
+
+* On Android, you can now share text & files from other apps directly into Standard Notes ([#2352](https://github.com/standardnotes/app/issues/2352)) ([3dc179c](https://github.com/standardnotes/app/commit/3dc179c7b0779ef0f2857b7f9c994ea9d5385720))
+
+## [1.62.6](https://github.com/standardnotes/app/compare/@standardnotes/services@1.62.5...@standardnotes/services@1.62.6) (2023-07-11)
+
+**Note:** Version bump only for package @standardnotes/services
+
+## [1.62.5](https://github.com/standardnotes/app/compare/@standardnotes/services@1.62.4...@standardnotes/services@1.62.5) (2023-07-11)
+
+**Note:** Version bump only for package @standardnotes/services
+
 ## [1.62.4](https://github.com/standardnotes/app/compare/@standardnotes/services@1.62.3...@standardnotes/services@1.62.4) (2023-07-07)
 
 **Note:** Version bump only for package @standardnotes/services

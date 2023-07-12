@@ -13,9 +13,9 @@ import PreferencesSegment from '../../../../PreferencesComponents/PreferencesSeg
 
 const loadExtensions = (application: WebApplication) =>
   application.items.getItems([
-    ContentType.ActionsExtension,
-    ContentType.Component,
-    ContentType.Theme,
+    ContentType.TYPES.ActionsExtension,
+    ContentType.TYPES.Component,
+    ContentType.TYPES.Theme,
   ]) as AnyPackageType[]
 
 type Props = {

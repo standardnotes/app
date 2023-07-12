@@ -1,6 +1,6 @@
 import { AllowedBatchStreaming } from './Types'
 import { SNFeaturesService } from '@Lib/Services/Features/FeaturesService'
-import { ContentType } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/domain-core'
 import {
   ActionObserver,
   SNNote,
@@ -257,7 +257,7 @@ export class SNComponentManager
 
   private addItemObserver(): void {
     this.removeItemObserver = this.items.addObserver<ComponentInterface>(
-      [ContentType.Component, ContentType.Theme],
+      [ContentType.TYPES.Component, ContentType.TYPES.Theme],
       ({ changed, inserted, removed, source }) => {
         const items = [...changed, ...inserted]
         this.handleChangedComponents(items, source)
@@ -483,7 +483,7 @@ export class SNComponentManager
         filterFromArray(requiredPermissions, required)
         continue
       }
-      for (const acquiredContentType of respectiveAcquired.content_types as ContentType[]) {
+      for (const acquiredContentType of respectiveAcquired.content_types as string[]) {
         removeFromArray(requiredContentTypes, acquiredContentType)
       }
       if (requiredContentTypes.length === 0) {
@@ -544,9 +544,7 @@ export class SNComponentManager
             } else {
               /* Permission already exists, but content_types may have been expanded */
               const contentTypes = matchingPermission.content_types || []
-              matchingPermission.content_types = uniqueArray(
-                contentTypes.concat(permission.content_types as ContentType[]),
-              )
+              matchingPermission.content_types = uniqueArray(contentTypes.concat(permission.content_types as string[]))
             }
           }
 

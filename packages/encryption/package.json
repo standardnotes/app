@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/encryption",
-  "version": "1.21.48",
+  "version": "1.21.49",
   "engines": {
     "node": ">=16.0.0 <17.0.0"
   },
@@ -28,7 +28,8 @@
     "typescript": "*"
   },
   "dependencies": {
-    "@standardnotes/common": "^1.48.3",
+    "@standardnotes/common": "^1.50.0",
+    "@standardnotes/domain-core": "^1.22.0",
     "@standardnotes/models": "workspace:*",
     "@standardnotes/responses": "workspace:*",
     "@standardnotes/sncrypto-common": "workspace:*",
