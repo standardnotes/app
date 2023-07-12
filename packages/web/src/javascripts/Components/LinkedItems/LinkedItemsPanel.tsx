@@ -70,7 +70,7 @@ const LinkedItemsPanel = ({
       >
         <DecoratedInput
           type="text"
-          className={{ container: !isSearching ? 'py-1.5 px-0.5' : 'py-0', input: 'placeholder:text-passive-0' }}
+          className={{ container: !isSearching ? 'px-0.5 py-1.5' : 'py-0', input: 'placeholder:text-passive-0' }}
           placeholder="Search items to link..."
           value={searchQuery}
           onChange={setSearchQuery}
@@ -92,7 +92,7 @@ const LinkedItemsPanel = ({
           <>
             {(!!unlinkedItems.length || shouldShowCreateTag) && (
               <div>
-                <div className="mt-3 mb-1 px-3 text-menu-item font-semibold uppercase text-passive-0">Unlinked</div>
+                <div className="mb-1 mt-3 px-3 text-menu-item font-semibold uppercase text-passive-0">Unlinked</div>
                 <LinkedItemSearchResults
                   createAndAddNewTag={createAndAddNewTag}
                   linkItems={linkItems}
@@ -110,7 +110,7 @@ const LinkedItemsPanel = ({
             )}
             {!!linkedResults.length && (
               <div>
-                <div className="mt-3 mb-1 px-3 text-menu-item font-semibold uppercase text-passive-0">Linked</div>
+                <div className="mb-1 mt-3 px-3 text-menu-item font-semibold uppercase text-passive-0">Linked</div>
                 <div className="my-1">
                   {linkedResults.map((link) => (
                     <LinkedItemsSectionItem
@@ -130,7 +130,7 @@ const LinkedItemsPanel = ({
           <>
             {!!tagsLinkedToItem.length && (
               <div>
-                <div className="mt-3 mb-1 px-3 text-menu-item font-semibold uppercase text-passive-0">Linked Tags</div>
+                <div className="mb-1 mt-3 px-3 text-menu-item font-semibold uppercase text-passive-0">Linked Tags</div>
                 <div className="my-1">
                   {tagsLinkedToItem.map((link) => (
                     <LinkedItemsSectionItem
@@ -147,7 +147,7 @@ const LinkedItemsPanel = ({
             )}
 
             <div>
-              <div className="mt-3 mb-1 px-3 text-menu-item font-semibold uppercase text-passive-0">Linked Files</div>
+              <div className="mb-1 mt-3 px-3 text-menu-item font-semibold uppercase text-passive-0">Linked Files</div>
               <div className="my-1">
                 <button
                   className="flex w-full cursor-pointer items-center gap-3 bg-transparent px-3 py-2 text-left text-base text-text hover:bg-info-backdrop hover:text-foreground focus:bg-info-backdrop focus:shadow-none md:text-sm"
@@ -171,7 +171,7 @@ const LinkedItemsPanel = ({
 
             {!!filesLinkingToItem.length && (
               <div>
-                <div className="mt-3 mb-1 px-3 text-menu-item font-semibold uppercase text-passive-0">
+                <div className="mb-1 mt-3 px-3 text-menu-item font-semibold uppercase text-passive-0">
                   Files Linking To Current File
                 </div>
                 <div className="my-1">
@@ -190,7 +190,7 @@ const LinkedItemsPanel = ({
             )}
             {!!notesLinkedToItem.length && (
               <div>
-                <div className="mt-3 mb-1 px-3 text-menu-item font-semibold uppercase text-passive-0">Linked Notes</div>
+                <div className="mb-1 mt-3 px-3 text-menu-item font-semibold uppercase text-passive-0">Linked Notes</div>
                 <div className="my-1">
                   {notesLinkedToItem.map((link) => (
                     <LinkedItemsSectionItem
@@ -207,7 +207,7 @@ const LinkedItemsPanel = ({
             )}
             {!!notesLinkingToItem.length && (
               <div>
-                <div className="mt-3 mb-1 px-3 text-menu-item font-semibold uppercase text-passive-0">
+                <div className="mb-1 mt-3 px-3 text-menu-item font-semibold uppercase text-passive-0">
                   Notes Linking To This Note
                 </div>
                 <div className="my-1">

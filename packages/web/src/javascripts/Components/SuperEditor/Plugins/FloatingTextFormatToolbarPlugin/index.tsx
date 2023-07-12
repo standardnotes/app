@@ -277,7 +277,7 @@ function TextFormatFloatingToolbar({
   return (
     <div
       ref={toolbarRef}
-      className="absolute top-0 left-0 rounded-lg border border-border bg-default py-1 px-2 shadow shadow-contrast"
+      className="absolute left-0 top-0 rounded-lg border border-border bg-default px-2 py-1 shadow shadow-contrast"
     >
       {isLink && (
         <LinkEditor
@@ -289,7 +289,7 @@ function TextFormatFloatingToolbar({
           lastSelection={lastSelection}
         />
       )}
-      {isText && isLink && <div role="presentation" className="mt-0.5 mb-1.5 h-px bg-border" />}
+      {isText && isLink && <div role="presentation" className="mb-1.5 mt-0.5 h-px bg-border" />}
       {isText && (
         <div className="flex gap-1">
           <ToolbarButton

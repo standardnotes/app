@@ -113,7 +113,7 @@ const ItemLinkAutocompleteInput = forwardRef(
               return (
                 <ComboboxItem
                   key={result.uuid}
-                  className="flex w-full cursor-pointer items-center justify-between gap-4 overflow-hidden py-2 px-3 hover:bg-contrast hover:text-foreground [&[data-active-item]]:bg-info-backdrop"
+                  className="flex w-full cursor-pointer items-center justify-between gap-4 overflow-hidden px-3 py-2 hover:bg-contrast hover:text-foreground [&[data-active-item]]:bg-info-backdrop"
                   hideOnClick
                   onClick={() => {
                     linkItems(item, result).catch(console.error)

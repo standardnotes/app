@@ -22,8 +22,8 @@ const RadioButtonGroup = ({ value, items, onChange, className }: Props) => {
       {items.map(({ label, value: itemValue }) => (
         <label
           className={classNames(
-            'flex-grow select-none py-1.5 px-3.5 text-center',
-            'first:rounded-tl first:rounded-bl last:rounded-tr last:rounded-br',
+            'flex-grow select-none px-3.5 py-1.5 text-center',
+            'first:rounded-bl first:rounded-tl last:rounded-br last:rounded-tr',
             itemValue === value &&
               'bg-info-backdrop font-medium text-info ring-1 ring-inset ring-info focus-within:ring-2',
           )}

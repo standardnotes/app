@@ -32,7 +32,7 @@ const ListItemVaultInfo: FunctionComponent<Props> = ({ item }) => {
       <VaultNameBadge vault={vault} />
 
       {sharedByContact && (
-        <div title="Shared by contact" className={'mt-2 rounded bg-info py-1 px-1.5 text-neutral-contrast'}>
+        <div title="Shared by contact" className={'mt-2 rounded bg-info px-1.5 py-1 text-neutral-contrast'}>
           <span className="flex items-center" title="Shared by contact">
             <Icon ariaLabel="Shared by contact" type="archive" className="mr-1 text-info-contrast" size="medium" />
             <div className="text-center text-xs font-bold">{sharedByContact?.name}</div>

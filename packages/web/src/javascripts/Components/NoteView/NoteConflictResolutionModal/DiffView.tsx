@@ -121,7 +121,7 @@ export const DiffView = ({
         ))}
       </pre>
       {hasOverflow && (
-        <div className="absolute top-0 right-0 z-[-1] h-full w-[19px] border-l border-border" ref={setDiffVisualizer} />
+        <div className="absolute right-0 top-0 z-[-1] h-full w-[19px] border-l border-border" ref={setDiffVisualizer} />
       )}
     </div>
   )

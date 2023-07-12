@@ -184,7 +184,7 @@ const InfiniteCalendar = forwardRef<InfiniteCalendarInterface, Props>(
         <div
           onClick={toggleVisibility}
           className={classNames(
-            'text-md flex cursor-pointer items-center justify-center py-2 px-4',
+            'text-md flex cursor-pointer items-center justify-center px-4 py-2',
             'text-center font-bold hover:bg-contrast',
           )}
         >

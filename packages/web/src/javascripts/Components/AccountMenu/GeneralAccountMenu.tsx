@@ -89,7 +89,7 @@ const GeneralAccountMenu: FunctionComponent<Props> = ({
 
   return (
     <>
-      <div className="mt-1 mb-1 hidden items-center justify-between px-3 md:flex">
+      <div className="mb-1 mt-1 hidden items-center justify-between px-3 md:flex">
         <div className="text-lg font-bold lg:text-base">Account</div>
         <div className="flex cursor-pointer" onClick={closeMenu}>
           <Icon type="close" className="text-neutral" />

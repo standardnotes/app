@@ -194,11 +194,11 @@ const NoteConflictResolutionModal = ({
               ref={setSelectAnchor}
               render={
                 <ToolbarItem
-                  className="relative rounded rounded-l-none bg-info py-1.5 px-3 ring-info hover:brightness-110 focus:ring-0 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-default focus-visible:brightness-110"
+                  className="relative rounded rounded-l-none bg-info px-3 py-1.5 ring-info hover:brightness-110 focus:ring-0 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-default focus-visible:brightness-110"
                   disabled={isPerformingAction}
                 >
                   <SelectArrow className="block rotate-180" />
-                  <div className="absolute top-0 left-0 h-full w-[2px] bg-info brightness-[.85]" />
+                  <div className="absolute left-0 top-0 h-full w-[2px] bg-info brightness-[.85]" />
                 </ToolbarItem>
               }
               store={selectStore}
@@ -342,7 +342,7 @@ const NoteConflictResolutionModal = ({
                 <div className="relative rounded-full p-1 hover:bg-contrast">
                   <Icon type={shouldSyncComparisonScroll ? 'link' : 'link-off'} className="text-neutral" />
                   <Checkbox
-                    className="absolute top-0 left-0 right-0 bottom-0 cursor-pointer opacity-0"
+                    className="absolute bottom-0 left-0 right-0 top-0 cursor-pointer opacity-0"
                     checked={shouldSyncComparisonScroll}
                     onChange={() => setShouldSyncComparisonScroll((shouldSync) => !shouldSync)}
                   />

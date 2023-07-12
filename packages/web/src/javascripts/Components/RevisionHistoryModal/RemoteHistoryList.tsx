@@ -40,7 +40,7 @@ const RemoteHistoryList: FunctionComponent<RemoteHistoryListProps> = ({
         if (group.entries && group.entries.length) {
           return (
             <Fragment key={group.title}>
-              <div className="mt-2.5 mb-1 select-none px-3 text-sm font-semibold uppercase text-passive-0">
+              <div className="mb-1 mt-2.5 select-none px-3 text-sm font-semibold uppercase text-passive-0">
                 {group.title}
               </div>
               {group.entries.map((entry) => (

@@ -47,7 +47,7 @@ const CompoundPredicateBuilder = ({ controller }: Props) => {
           <div className="flex w-full flex-col gap-2 md:flex-row md:items-center">
             {index !== 0 && <div className="mr-2 text-sm font-semibold">{operator === 'and' ? 'AND' : 'OR'}</div>}
             <select
-              className="flex-grow rounded border border-border bg-default py-1.5 px-2 focus:outline focus:outline-1 focus:outline-info"
+              className="flex-grow rounded border border-border bg-default px-2 py-1.5 focus:outline focus:outline-1 focus:outline-info"
               value={predicate.keypath}
               onChange={(event) => {
                 changePredicateKeypath(index, event.target.value as PredicateKeypath)
@@ -60,7 +60,7 @@ const CompoundPredicateBuilder = ({ controller }: Props) => {
               ))}
             </select>
             <select
-              className="rounded border border-border bg-default py-1.5 px-2 focus:outline focus:outline-1 focus:outline-info"
+              className="rounded border border-border bg-default px-2 py-1.5 focus:outline focus:outline-1 focus:outline-info"
               value={predicate.operator}
               onChange={(event) => {
                 setPredicate(index, { operator: event.target.value as PredicateOperator })
@@ -106,7 +106,7 @@ const CompoundPredicateBuilder = ({ controller }: Props) => {
         </div>
       ))}
       {predicates.some((predicate) => PredicateKeypathTypes[predicate.keypath as PredicateKeypath] === 'date') && (
-        <div className="flex flex-col gap-2 rounded-md border-2 border-info-backdrop bg-info-backdrop py-3 px-4 [&_code]:rounded [&_code]:bg-default [&_code]:px-1.5 [&_code]:py-1">
+        <div className="flex flex-col gap-2 rounded-md border-2 border-info-backdrop bg-info-backdrop px-4 py-3 [&_code]:rounded [&_code]:bg-default [&_code]:px-1.5 [&_code]:py-1">
           <div className="text-sm font-semibold">Date Examples:</div>
           <ul className="space-y-2 pl-4">
             <li>

@@ -112,7 +112,7 @@ const TagContextMenu = ({ navigationController, isEntitledToFolders, selectedTag
           </MenuItem>
         </Menu>
         <HorizontalSeparator classes="my-2" />
-        <div className="px-3 pt-1 pb-1.5 text-sm font-medium text-neutral lg:text-xs">
+        <div className="px-3 pb-1.5 pt-1 text-sm font-medium text-neutral lg:text-xs">
           <div className="mb-1">
             <span className="font-semibold">Last modified:</span> {tagLastModified}
           </div>

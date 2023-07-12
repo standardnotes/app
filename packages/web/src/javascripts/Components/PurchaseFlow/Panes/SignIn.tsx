@@ -93,16 +93,16 @@ const SignIn: FunctionComponent<Props> = ({ viewControllerManager, application }
 
   return (
     <div className="flex items-center">
-      <CircleIcon className="absolute top-[35%] -left-56 h-8 w-8" />
-      <BlueDotIcon className="absolute top-[30%] -left-40 h-4 w-4" />
+      <CircleIcon className="absolute -left-56 top-[35%] h-8 w-8" />
+      <BlueDotIcon className="absolute -left-40 top-[30%] h-4 w-4" />
       <DiamondIcon className="absolute -bottom-5 left-0 -z-[1] h-26 w-26 -translate-x-1/2" />
 
-      <CircleIcon className="absolute bottom-[30%] -right-56 h-8 w-8" />
-      <BlueDotIcon className="absolute bottom-[20%] -right-44 h-4 w-4" />
-      <DiamondIcon className="absolute top-0 -right-2 -z-[1] h-18 w-18 translate-x-1/2" />
+      <CircleIcon className="absolute -right-56 bottom-[30%] h-8 w-8" />
+      <BlueDotIcon className="absolute -right-44 bottom-[20%] h-4 w-4" />
+      <DiamondIcon className="absolute -right-2 top-0 -z-[1] h-18 w-18 translate-x-1/2" />
 
       <div>
-        <h1 className="mt-0 mb-2 text-2xl font-bold">Sign in</h1>
+        <h1 className="mb-2 mt-0 text-2xl font-bold">Sign in</h1>
         <div className="mb-4 text-sm font-medium">to continue to Standard Notes.</div>
         <form onSubmit={handleSignIn}>
           <div className="flex flex-col">

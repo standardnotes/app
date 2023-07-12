@@ -59,7 +59,7 @@ function TableRow<Data>({
             aria-colindex={cell.colIndex + 1}
             key={index}
             className={classNames(
-              'relative flex items-center overflow-hidden border-b border-border py-4 px-3 focus:border-info',
+              'relative flex items-center overflow-hidden border-b border-border px-3 py-4 focus:border-info',
               row.isSelected && 'bg-info-backdrop',
               canSelectRows && 'cursor-pointer',
               canSelectRows && isHoveredOrFocused && 'bg-contrast',
@@ -78,7 +78,7 @@ function TableRow<Data>({
                 <div className="z-[1]">{row.rowActions}</div>
                 <div
                   className={classNames(
-                    'absolute top-0 right-0 z-0 h-full w-full backdrop-blur-[2px]',
+                    'absolute right-0 top-0 z-0 h-full w-full backdrop-blur-[2px]',
                     row.isSelected ? '' : isHoveredOrFocused ? '' : 'invisible',
                   )}
                 />
@@ -388,7 +388,7 @@ function Table<Data>({ table }: { table: Table<Data> }) {
                   aria-colindex={header.colIndex + 1}
                   aria-sort={header.isSorting ? (header.sortReversed ? 'descending' : 'ascending') : 'none'}
                   className={classNames(
-                    'border-b border-border px-3 pt-3 pb-2 text-left text-sm font-medium text-passive-0',
+                    'border-b border-border px-3 pb-2 pt-3 text-left text-sm font-medium text-passive-0',
                     header.sortBy &&
                       'cursor-pointer hover:bg-info-backdrop hover:underline focus:border-info focus:bg-info-backdrop',
                   )}

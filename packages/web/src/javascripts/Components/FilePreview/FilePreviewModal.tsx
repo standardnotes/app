@@ -259,7 +259,7 @@ const FilePreviewModal = observer(({ application, viewControllerManager }: Props
           </div>
         </div>
         {showLinkedBubblesContainer && (
-          <div className="-mt-1 min-h-0 flex-shrink-0 border-b border-border py-1.5 px-3.5">
+          <div className="-mt-1 min-h-0 flex-shrink-0 border-b border-border px-3.5 py-1.5">
             <LinkedItemBubblesContainer
               linkingController={viewControllerManager.linkingController}
               item={currentFile}

@@ -29,7 +29,7 @@ export const VaultModalInvites = ({
       {invites.map((invite) => {
         const contact = application.contacts.findTrustedContactForInvite(invite)
         return (
-          <div key={invite.uuid} className="bg-gray-100 flex flex-row gap-3.5 rounded-lg py-2.5 px-3.5 shadow-md">
+          <div key={invite.uuid} className="bg-gray-100 flex flex-row gap-3.5 rounded-lg px-3.5 py-2.5 shadow-md">
             <Icon type={'user'} size="custom" className="mt-2.5 h-5.5 w-5.5 flex-shrink-0" />
             <div className="flex flex-col gap-2 py-1.5">
               <span className="mr-auto overflow-hidden text-ellipsis text-base font-bold">

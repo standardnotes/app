@@ -28,7 +28,7 @@ const RecoveryCodeBanner = ({ application }: { application: WebApplication }) =>
   return (
     <div className="grid grid-cols-1 rounded-md border border-border p-4">
       <div className="flex items-center">
-        <Icon className="mr-1 -ml-1 h-5 w-5 text-info group-disabled:text-passive-2" type="asterisk" />
+        <Icon className="-ml-1 mr-1 h-5 w-5 text-info group-disabled:text-passive-2" type="asterisk" />
         <h1 className="sk-h3 m-0 text-sm font-semibold">Save your recovery code</h1>
       </div>
       <p className="col-start-1 col-end-3 m-0 mt-1 text-sm">
@@ -42,10 +42,10 @@ const RecoveryCodeBanner = ({ application }: { application: WebApplication }) =>
         </Button>
       )}
       {recoveryCode && (
-        <div className="group relative mt-2 rounded border border-border py-2 px-3 text-sm font-semibold">
+        <div className="group relative mt-2 rounded border border-border px-3 py-2 text-sm font-semibold">
           <StyledTooltip label="Copy to clipboard" className="!z-modal">
             <button
-              className="absolute top-2 right-2 flex rounded border border-border bg-default p-1 opacity-0 hover:bg-contrast focus:opacity-100 group-hover:opacity-100"
+              className="absolute right-2 top-2 flex rounded border border-border bg-default p-1 opacity-0 hover:bg-contrast focus:opacity-100 group-hover:opacity-100"
               onClick={() => {
                 void navigator.clipboard.writeText(recoveryCode)
               }}

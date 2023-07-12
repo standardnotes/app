@@ -117,7 +117,7 @@ const ChallengeModalPrompt: FunctionComponent<Props> = ({
                     type="radio"
                     name={`session-duration-${prompt.id}`}
                     className={
-                      'absolute top-0 left-0 m-0 h-px w-px appearance-none focus:shadow-none focus:outline-none'
+                      'absolute left-0 top-0 m-0 h-px w-px appearance-none focus:shadow-none focus:outline-none'
                     }
                     style={{
                       marginRight: 0,

@@ -125,7 +125,7 @@ const OfflineSubscription: FunctionComponent<Props> = ({ application, onSuccess 
               )}
             </div>
             {(isSuccessfullyActivated || isSuccessfullyRemoved) && (
-              <div className={'info mt-3 mb-3'}>
+              <div className={'info mb-3 mt-3'}>
                 Your offline subscription code has been successfully {isSuccessfullyActivated ? 'activated' : 'removed'}
                 .
               </div>

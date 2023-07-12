@@ -52,7 +52,7 @@ const FilesSection: FunctionComponent<Props> = ({ application }) => {
           </div>
         ) : (
           <>
-            <div className="mt-1 mb-1">
+            <div className="mb-1 mt-1">
               <span className="font-semibold">{formatSizeToReadableString(filesQuotaUsed)}</span> of{' '}
               <span>{application.isThirdPartyHostUsed() ? '∞' : formatSizeToReadableString(filesQuotaTotal)}</span> used
             </div>

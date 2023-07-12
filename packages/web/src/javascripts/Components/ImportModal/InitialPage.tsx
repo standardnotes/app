@@ -36,9 +36,9 @@ const ImportModalInitialPage = ({ setFiles }: Props) => {
         <div className="text-lg font-semibold">Drag and drop files to auto-detect and import</div>
         <div className="text-sm">Or click to open file picker</div>
       </button>
-      <div className="relative mt-6 mb-6 w-full">
+      <div className="relative mb-6 mt-6 w-full">
         <hr className="w-full border-border" />
-        <div className="absolute left-1/2 top-1/2 -translate-y-1/2 -translate-x-1/2 bg-default p-1">
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-default p-1">
           or import from:
         </div>
       </div>

@@ -26,7 +26,7 @@ const NoSubscriptionBanner = ({
   return (
     <div className={classNames('grid grid-cols-1 rounded-md border border-border p-4', className)}>
       <div className="flex items-center">
-        <Icon className={classNames('mr-1 -ml-1 h-5 w-5', PremiumFeatureIconClass)} type={PremiumFeatureIconName} />
+        <Icon className={classNames('-ml-1 mr-1 h-5 w-5', PremiumFeatureIconClass)} type={PremiumFeatureIconName} />
         <h1 className="sk-h3 m-0 text-sm font-semibold">{title}</h1>
       </div>
       <p className="col-start-1 col-end-3 m-0 mt-1 text-sm">{message}</p>

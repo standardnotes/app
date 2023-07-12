@@ -27,7 +27,7 @@ const HistoryModalDialogContent = ({
 
   return (
     <>
-      <MobileModalHeader className="items-center border-b border-border py-1 px-2 md:hidden">
+      <MobileModalHeader className="items-center border-b border-border px-2 py-1 md:hidden">
         <MobileModalAction type="secondary" action={toggleTabMenu} slot="left" ref={tabOptionRef}>
           <div className="rounded-full border border-border p-0.5">
             <Icon type="more" />

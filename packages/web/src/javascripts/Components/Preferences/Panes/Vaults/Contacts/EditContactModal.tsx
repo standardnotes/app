@@ -88,7 +88,7 @@ const EditContactModal: FunctionComponent<Props> = ({ onCloseDialog, fromInvite,
       close={handleDialogClose}
       actions={modalActions}
     >
-      <div className="px-4.5 pt-4 pb-1.5">
+      <div className="px-4.5 pb-1.5 pt-4">
         <div className="flex w-full flex-col">
           <div className="mb-3">
             <DecoratedInput

@@ -187,7 +187,7 @@ const SignInPane: FunctionComponent<Props> = ({ application, viewControllerManag
 
   return (
     <>
-      <div className="mt-1 mb-3 flex items-center px-3">
+      <div className="mb-3 mt-1 flex items-center px-3">
         <IconButton
           icon="arrow-left"
           title="Go back"
@@ -225,7 +225,7 @@ const SignInPane: FunctionComponent<Props> = ({ application, viewControllerManag
         />
         {error ? <div className="my-2 text-danger">{error}</div> : null}
         <Button
-          className="mt-1 mb-3"
+          className="mb-3 mt-1"
           label={isSigningIn ? 'Signing in...' : 'Sign in'}
           primary
           onClick={handleSignInFormSubmit}

@@ -81,7 +81,7 @@ const ImagePreview: FunctionComponent<Props> = ({
       <div
         className={classNames(
           isEmbeddedInSuper ? 'hidden focus-within:flex group-hover:flex' : '',
-          'absolute left-1/2 bottom-6 flex -translate-x-1/2 items-center rounded border border-solid border-border bg-default py-1 px-3',
+          'absolute bottom-6 left-1/2 flex -translate-x-1/2 items-center rounded border border-solid border-border bg-default px-3 py-1',
         )}
       >
         <span className="mr-1.5">{isEmbeddedInSuper ? 'Size' : 'Zoom'}:</span>
@@ -127,7 +127,7 @@ const ImagePreview: FunctionComponent<Props> = ({
           </div>
         ) : (
           <button
-            className="mx-1 rounded py-1 px-1.5 hover:bg-contrast"
+            className="mx-1 rounded px-1.5 py-1 hover:bg-contrast"
             onClick={() => setIsZoomInputVisible((visible) => !visible)}
           >
             {imageZoomPercent}%

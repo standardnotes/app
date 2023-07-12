@@ -198,7 +198,7 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
 
   return (
     <>
-      <Menu className="pt-0.5 pb-1" a11yLabel="Change note type menu" isOpen={isVisible}>
+      <Menu className="pb-1 pt-0.5" a11yLabel="Change note type menu" isOpen={isVisible}>
         {groups
           .filter((group) => group.items && group.items.length)
           .map((group, index) => {
@@ -225,7 +225,7 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
                             {group.icon && <Icon type={group.icon} className={`mr-2 ${group.iconClassName}`} />}
                             {menuItem.uiFeature.displayName}
                             {menuItem.isLabs && (
-                              <Pill className="py-0.5 px-1.5" style="success">
+                              <Pill className="px-1.5 py-0.5" style="success">
                                 Labs
                               </Pill>
                             )}

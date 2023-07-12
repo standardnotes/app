@@ -154,7 +154,7 @@ function FloatingLinkEditor({
   return (
     <div
       ref={editorRef}
-      className="absolute top-0 left-0 max-w-[100vw] rounded-lg border border-border bg-default py-1 px-2 shadow shadow-contrast md:hidden"
+      className="absolute left-0 top-0 max-w-[100vw] rounded-lg border border-border bg-default px-2 py-1 shadow shadow-contrast md:hidden"
     >
       <LinkEditor
         linkUrl={linkUrl}

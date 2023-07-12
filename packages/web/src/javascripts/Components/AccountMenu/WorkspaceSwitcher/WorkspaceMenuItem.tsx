@@ -96,7 +96,7 @@ const WorkspaceMenuItem: FunctionComponent<Props> = ({
           onKeyDown={handleInputKeyDown}
           onBlur={handleInputBlur}
           onClick={(e) => e.stopPropagation()}
-          className="absolute top-1/2 left-11 -translate-y-1/2 bg-default"
+          className="absolute left-11 top-1/2 -translate-y-1/2 bg-default"
         />
       )}
     </div>

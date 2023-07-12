@@ -78,7 +78,7 @@ const ImportModalFileItem = ({
   return (
     <div
       className={classNames(
-        'flex gap-2 py-2 px-2',
+        'flex gap-2 px-2 py-2',
         file.service == null ? 'flex-col items-start md:flex-row md:items-center' : 'items-center',
       )}
     >

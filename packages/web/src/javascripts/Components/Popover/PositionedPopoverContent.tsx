@@ -86,11 +86,11 @@ const PositionedPopoverContent = ({
     <Portal disabled={!portal}>
       <div
         className={classNames(
-          'absolute top-0 left-0 flex w-full min-w-80 cursor-auto flex-col',
+          'absolute left-0 top-0 flex w-full min-w-80 cursor-auto flex-col',
           'overflow-y-auto rounded border border-[--menu-border-color] bg-default shadow-main md:h-auto md:max-w-xs',
           !disableMobileFullscreenTakeover && 'h-full',
           overrideZIndex ? overrideZIndex : 'z-dropdown-menu',
-          !isDesktopScreen && !disableMobileFullscreenTakeover ? 'pt-safe-top pb-safe-bottom' : '',
+          !isDesktopScreen && !disableMobileFullscreenTakeover ? 'pb-safe-bottom pt-safe-top' : '',
           isDesktopScreen || disableMobileFullscreenTakeover ? 'invisible' : '',
           className,
         )}

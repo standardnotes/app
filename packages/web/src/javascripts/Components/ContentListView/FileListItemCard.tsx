@@ -100,9 +100,9 @@ const FileListItemCard: FunctionComponent<DisplayableListItemProps<FileItem>> = 
           ) : (
             <div className="pr-4" />
           )}
-          <div className="min-w-0 flex-grow py-4 px-0">
+          <div className="min-w-0 flex-grow px-0 py-4">
             <div className="line-clamp-2 overflow-hidden text-editor font-semibold">
-              <div className="break-word line-clamp-2 mr-2 overflow-hidden">{file.title}</div>
+              <div className="break-word mr-2 line-clamp-2 overflow-hidden">{file.title}</div>
             </div>
             <ListItemMetadata item={file} hideDate={hideDate} sortBy={sortBy} />
             <ListItemTags hideTags={hideTags} tags={tags} />

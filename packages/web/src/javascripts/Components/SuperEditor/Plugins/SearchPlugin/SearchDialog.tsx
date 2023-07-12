@@ -70,7 +70,7 @@ export const SearchDialog = ({ open, closeDialog }: { open: boolean; closeDialog
         )}
       </button>
       <div
-        className="flex flex-col gap-2 py-2 px-2"
+        className="flex flex-col gap-2 px-2 py-2"
         onKeyDown={(event) => {
           if (event.key === KeyboardKey.Escape) {
             closeDialog()
@@ -118,14 +118,14 @@ export const SearchDialog = ({ open, closeDialog }: { open: boolean; closeDialog
           />
           <label
             className={classNames(
-              'relative flex items-center rounded border py-1 px-1.5 focus-within:ring-2 focus-within:ring-info focus-within:ring-offset-2 focus-within:ring-offset-default',
+              'relative flex items-center rounded border px-1.5 py-1 focus-within:ring-2 focus-within:ring-info focus-within:ring-offset-2 focus-within:ring-offset-default',
               isCaseSensitive ? 'border-info bg-info text-info-contrast' : 'border-border hover:bg-contrast',
             )}
             title={`Case sensitive (${caseSensitivityShortcut})`}
           >
             <input
               type="checkbox"
-              className="absolute top-0 left-0 z-[1] m-0 h-full w-full cursor-pointer border border-transparent p-0 opacity-0 shadow-none outline-none"
+              className="absolute left-0 top-0 z-[1] m-0 h-full w-full cursor-pointer border border-transparent p-0 opacity-0 shadow-none outline-none"
               checked={isCaseSensitive}
               onChange={() => {
                 dispatch({

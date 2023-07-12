@@ -414,7 +414,7 @@ const ClipperView = ({
           <Icon type="user" className="mx-2" />
           <div className="flex-grow py-2 text-sm font-semibold">{user.email}</div>
           <button
-            className="flex-shrink-0 border-l border-border py-2 px-2 hover:bg-info-backdrop focus:bg-info-backdrop focus:shadow-none focus:outline-none"
+            className="flex-shrink-0 border-l border-border px-2 py-2 hover:bg-info-backdrop focus:bg-info-backdrop focus:shadow-none focus:outline-none"
             onClick={showSignOutConfirmation}
           >
             <Icon type="signOut" className="text-neutral" />

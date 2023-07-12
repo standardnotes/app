@@ -11,7 +11,7 @@ const AuthAppInfoTooltip = () => {
       <HovercardAnchor store={infoHovercard}>
         <Icon type="info" />
       </HovercardAnchor>
-      <Hovercard store={infoHovercard} className=" max-w-76 rounded border border-border bg-default py-2 px-3 text-sm">
+      <Hovercard store={infoHovercard} className=" max-w-76 rounded border border-border bg-default px-3 py-2 text-sm">
         Some apps, like Google Authenticator, do not back up and restore your secret keys if you lose your device or get
         a new one.
       </Hovercard>

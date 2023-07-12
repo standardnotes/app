@@ -44,7 +44,7 @@ const HomeServer = () => {
       <PreferencesGroup>
         <Title>Remote access</Title>
         <Subtitle>Accessing your home server while on the go is easy and secure with Tailscale.</Subtitle>
-        <ol className="mt-3 ml-3 list-outside list-decimal">
+        <ol className="ml-3 mt-3 list-outside list-decimal">
           <li>
             Register on{' '}
             <a className="text-info" href="https://tailscale.com/">
@@ -73,7 +73,7 @@ const HomeServer = () => {
           For automatic backups, you can place your server's data inside of a synced cloud folder, like Dropbox,
           Tresorit, or iCloud Drive.
         </Subtitle>
-        <ol className="mt-3 ml-3 list-outside list-decimal">
+        <ol className="ml-3 mt-3 list-outside list-decimal">
           <li>Change your server's data location by selecting "Change Location" in the Home Server section above.</li>
           <li className="mt-2">Select a cloud drive to store your server's data in.</li>
           <li className="mt-2">Restart your home server.</li>

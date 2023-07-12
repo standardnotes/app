@@ -100,16 +100,16 @@ const CreateAccount: FunctionComponent<Props> = ({ viewControllerManager, applic
 
   return (
     <div className="flex items-center">
-      <CircleIcon className="absolute top-[40%] -left-28 h-8 w-8" />
-      <BlueDotIcon className="absolute top-[35%] -left-10 h-4 w-4" />
+      <CircleIcon className="absolute -left-28 top-[40%] h-8 w-8" />
+      <BlueDotIcon className="absolute -left-10 top-[35%] h-4 w-4" />
       <DiamondIcon className="absolute -bottom-5 left-0 -z-[1] h-26 w-26 -translate-x-1/2" />
 
-      <CircleIcon className="absolute bottom-[35%] -right-20 h-8 w-8" />
-      <BlueDotIcon className="absolute bottom-[25%] -right-10 h-4 w-4" />
-      <DiamondIcon className="absolute top-0 -right-2 -z-[1] h-18 w-18 translate-x-1/2" />
+      <CircleIcon className="absolute -right-20 bottom-[35%] h-8 w-8" />
+      <BlueDotIcon className="absolute -right-10 bottom-[25%] h-4 w-4" />
+      <DiamondIcon className="absolute -right-2 top-0 -z-[1] h-18 w-18 translate-x-1/2" />
 
       <div className="mr-0 lg:mr-12">
-        <h1 className="mt-0 mb-2 text-2xl font-bold">Create your free account</h1>
+        <h1 className="mb-2 mt-0 text-2xl font-bold">Create your free account</h1>
         <div className="mb-4 text-sm font-medium">to continue to Standard Notes.</div>
         <form onSubmit={handleCreateAccount}>
           <div className="flex flex-col">

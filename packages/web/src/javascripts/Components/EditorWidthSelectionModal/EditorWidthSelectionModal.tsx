@@ -17,8 +17,8 @@ const DoubleSidedArrow = ({ className }: { className?: string }) => {
     <div
       className={classNames(
         'relative h-[2px] w-full bg-current',
-        'before:absolute before:-left-px before:top-1/2 before:h-0 before:w-0 before:-translate-y-1/2 before:border-r-[6px] before:border-t-[6px] before:border-b-[6px] before:border-current before:border-b-transparent before:border-t-transparent',
-        'after:absolute after:-right-px after:top-1/2 after:h-0 after:w-0 after:-translate-y-1/2 after:border-l-[6px] after:border-t-[6px] after:border-b-[6px] after:border-current after:border-b-transparent after:border-t-transparent',
+        'before:absolute before:-left-px before:top-1/2 before:h-0 before:w-0 before:-translate-y-1/2 before:border-b-[6px] before:border-r-[6px] before:border-t-[6px] before:border-current before:border-b-transparent before:border-t-transparent',
+        'after:absolute after:-right-px after:top-1/2 after:h-0 after:w-0 after:-translate-y-1/2 after:border-b-[6px] after:border-l-[6px] after:border-t-[6px] after:border-current after:border-b-transparent after:border-t-transparent',
         className,
       )}
     />

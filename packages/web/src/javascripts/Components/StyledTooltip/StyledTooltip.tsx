@@ -47,7 +47,7 @@ const StyledTooltip = ({
         autoFocusOnShow={!showOnHover}
         store={tooltip}
         className={classNames(
-          'z-tooltip max-w-max rounded border border-border bg-contrast py-1.5 px-3 text-sm text-foreground shadow',
+          'z-tooltip max-w-max rounded border border-border bg-contrast px-3 py-1.5 text-sm text-foreground shadow',
           className,
         )}
         updatePosition={() => {

@@ -142,7 +142,7 @@ const NoteListItem: FunctionComponent<DisplayableListItemProps<SNNote>> = ({
       ) : (
         <div className="pr-4" />
       )}
-      <div className={`min-w-0 flex-grow ${hasOffsetBorder && 'border-b border-solid border-border'} py-4 px-0`}>
+      <div className={`min-w-0 flex-grow ${hasOffsetBorder && 'border-b border-solid border-border'} px-0 py-4`}>
         <ListItemTitle item={item} />
         <ListItemNotePreviewText item={item} hidePreview={hidePreview} />
         <ListItemMetadata item={item} hideDate={hideDate} sortBy={sortBy} />

@@ -125,7 +125,7 @@ const EditorDefaults = ({ application }: Props) => {
             <Text>Sets the max editor width for all notes</Text>
             <div className="mt-2">
               <button
-                className="flex w-full min-w-55 items-center justify-between rounded border border-border bg-default py-1.5 px-3.5 text-left text-base text-foreground md:w-fit lg:text-sm"
+                className="flex w-full min-w-55 items-center justify-between rounded border border-border bg-default px-3.5 py-1.5 text-left text-base text-foreground md:w-fit lg:text-sm"
                 onClick={toggleEditorWidthModal}
               >
                 {editorWidth === EditorLineWidth.FullWidth ? 'Full width' : editorWidth}

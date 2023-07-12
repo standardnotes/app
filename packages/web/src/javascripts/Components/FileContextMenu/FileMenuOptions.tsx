@@ -142,7 +142,7 @@ const FileMenuOptions: FunctionComponent<Props> = ({
       <FileContextMenuBackupOption file={selectedFiles[0]} />
 
       <HorizontalSeparator classes="my-2" />
-      <div className="px-3 pt-1 pb-0.5 text-xs font-medium text-neutral">
+      <div className="px-3 pb-0.5 pt-1 text-xs font-medium text-neutral">
         {!hasSelectedMultipleFiles && (
           <div className="mb-1">
             <span className="font-semibold">File ID:</span> {selectedFiles[0].uuid}

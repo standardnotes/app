@@ -34,7 +34,7 @@ const Calendar: FunctionComponent<Props> = ({ activities, startDate, onDateSelec
 
   return (
     <div className={`w-300 ${className} min-h-[210px]`}>
-      <div className="mr-auto ml-auto w-70">
+      <div className="ml-auto mr-auto w-70">
         <div className="flex w-full flex-wrap">
           {CalendarDaysOfTheWeek.map((d) => (
             <div className={'flex h-8 w-[14.2%] items-center justify-center'} key={d}>

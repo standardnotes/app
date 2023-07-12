@@ -115,7 +115,7 @@ const Modal = ({
           <div
             className={classNames(
               'flex w-full flex-shrink-0 select-none items-center justify-between rounded-t border-b border-solid border-border bg-default px-2 text-text md:px-4.5 md:py-3',
-              hasTopInset ? 'pt-safe-top pb-1.5' : 'py-1.5',
+              hasTopInset ? 'pb-1.5 pt-safe-top' : 'py-1.5',
             )}
           >
             <MobileModalHeader className="flex-row items-center justify-between md:flex md:gap-0">
@@ -201,7 +201,7 @@ const Modal = ({
           : sortedActions.length > 0 && (
               <div
                 className={classNames(
-                  'hidden items-center justify-start gap-3 border-t border-border py-2 px-2.5 md:flex md:px-4 md:py-4',
+                  'hidden items-center justify-start gap-3 border-t border-border px-2.5 py-2 md:flex md:px-4 md:py-4',
                   hasBottomInset && 'pb-safe-bottom',
                 )}
               >

@@ -110,7 +110,7 @@ const CreateAccount: FunctionComponent<Props> = ({
 
   return (
     <>
-      <div className="mt-1 mb-3 flex items-center px-3">
+      <div className="mb-3 mt-1 flex items-center px-3">
         <IconButton
           icon="arrow-left"
           title="Go back"

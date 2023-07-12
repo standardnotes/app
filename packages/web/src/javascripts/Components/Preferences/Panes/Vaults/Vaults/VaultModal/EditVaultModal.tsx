@@ -175,7 +175,7 @@ const EditVaultModal: FunctionComponent<Props> = ({ onCloseDialog, existingVault
 
   return (
     <Modal title={existingVault ? 'Edit Vault' : 'Create New Vault'} close={handleDialogClose} actions={modalActions}>
-      <div className="px-4.5 pt-4 pb-1.5">
+      <div className="px-4.5 pb-1.5 pt-4">
         <div className="flex w-full flex-col">
           <div className="mb-3">
             <div className="text-lg">Vault Info</div>

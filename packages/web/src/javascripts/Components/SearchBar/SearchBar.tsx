@@ -47,7 +47,7 @@ const SearchBar = ({ itemListController, searchOptionsController, hideOptions = 
   }, [clearFilterText])
 
   return (
-    <div className="pt-3 pb-0.5" role="search">
+    <div className="pb-0.5 pt-3" role="search">
       <DecoratedInput
         autocomplete={false}
         id={ElementIds.SearchBar}

@@ -56,7 +56,7 @@ export const DailyItemCell = forwardRef(
         }`}
         id={section.id}
       >
-        <div className="min-w-0 flex-grow border-b border-solid border-border py-4 px-4">
+        <div className="min-w-0 flex-grow border-b border-solid border-border px-4 py-4">
           <div className="flex items-start overflow-hidden text-base">
             <DaySquare weekday={section.weekday} hasActivity={item != undefined} day={section.day} />
 

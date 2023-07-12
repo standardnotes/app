@@ -147,7 +147,7 @@ const AddSmartViewModal = ({ controller, platform }: Props) => {
           <div className="flex items-center gap-2.5">
             <div className="text-sm font-semibold">Title:</div>
             <input
-              className="rounded border border-border bg-default py-1 px-2"
+              className="rounded border border-border bg-default px-2 py-1"
               value={title}
               onChange={(event) => {
                 setTitle(event.target.value)
@@ -207,7 +207,7 @@ const AddSmartViewModal = ({ controller, platform }: Props) => {
               </TabPanel>
               <TabPanel state={tabState} id="custom" className="flex flex-grow flex-col">
                 <textarea
-                  className="h-full min-h-[10rem] w-full flex-grow resize-none bg-default py-1.5 px-2.5 font-mono text-sm"
+                  className="h-full min-h-[10rem] w-full flex-grow resize-none bg-default px-2.5 py-1.5 font-mono text-sm"
                   value={customPredicateJson}
                   onChange={(event) => {
                     setCustomPredicateJson(event.target.value)
@@ -224,7 +224,7 @@ const AddSmartViewModal = ({ controller, platform }: Props) => {
               </TabPanel>
             </TabsContainer>
             {tabState.activeTab === 'custom' && (
-              <div className="flex flex-col gap-1.5 rounded-md border-2 border-info-backdrop bg-info-backdrop py-3 px-4">
+              <div className="flex flex-col gap-1.5 rounded-md border-2 border-info-backdrop bg-info-backdrop px-4 py-3">
                 <Disclosure
                   store={jsonExamplesDisclosure}
                   className="flex items-center justify-between focus:shadow-none focus:outline-none"

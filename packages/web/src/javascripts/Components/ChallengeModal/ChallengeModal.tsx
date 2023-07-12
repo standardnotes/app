@@ -276,7 +276,7 @@ const ChallengeModal: FunctionComponent<Props> = ({
           <button
             onClick={cancelChallenge}
             aria-label="Close modal"
-            className="absolute top-4 right-4 hidden cursor-pointer border-0 bg-transparent p-1 md:flex"
+            className="absolute right-4 top-4 hidden cursor-pointer border-0 bg-transparent p-1 md:flex"
           >
             <Icon type="close" className="text-neutral" />
           </button>
@@ -314,7 +314,7 @@ const ChallengeModal: FunctionComponent<Props> = ({
             ))}
           </form>
           {shouldShowSubmitButton && (
-            <Button primary disabled={isProcessing} className="mt-1 mb-3.5 min-w-76" onClick={submit}>
+            <Button primary disabled={isProcessing} className="mb-3.5 mt-1 min-w-76" onClick={submit}>
               {isProcessing ? 'Generating Keys...' : 'Submit'}
             </Button>
           )}

@@ -109,7 +109,7 @@ const ConfirmPassword: FunctionComponent<Props> = ({
 
   return (
     <>
-      <div className="mt-1 mb-3 flex items-center px-3">
+      <div className="mb-3 mt-1 flex items-center px-3">
         <IconButton
           icon="arrow-left"
           title="Go back"
@@ -140,7 +140,7 @@ const ConfirmPassword: FunctionComponent<Props> = ({
         <Button
           primary
           fullWidth
-          className="mt-1 mb-3"
+          className="mb-3 mt-1"
           label={isRegistering ? 'Creating account...' : 'Create account & sign in'}
           onClick={handleConfirmFormSubmit}
           disabled={isRegistering}

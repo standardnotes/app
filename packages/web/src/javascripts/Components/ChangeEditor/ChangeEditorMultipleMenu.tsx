@@ -153,7 +153,7 @@ const ChangeEditorMultipleMenu = ({ application, notes, setDisableClickOutside }
                         {group.icon && <Icon type={group.icon} className={`mr-2 ${group.iconClassName}`} />}
                         {item.uiFeature.displayName}
                         {item.isLabs && (
-                          <Pill className="py-0.5 px-1.5" style="success">
+                          <Pill className="px-1.5 py-0.5" style="success">
                             Labs
                           </Pill>
                         )}

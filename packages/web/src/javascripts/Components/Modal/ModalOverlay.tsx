@@ -43,7 +43,7 @@ const ModalOverlay = forwardRef(
     return (
       <Dialog
         tabIndex={0}
-        className="fixed top-0 left-0 z-modal h-full w-full"
+        className="fixed left-0 top-0 z-modal h-full w-full"
         ref={mergeRefs([setElement, addCloseMethod, ref])}
         store={dialog}
         modal={false}

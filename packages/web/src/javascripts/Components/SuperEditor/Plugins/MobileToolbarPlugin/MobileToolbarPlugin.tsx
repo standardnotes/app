@@ -217,7 +217,7 @@ const MobileToolbarPlugin = () => {
           {items.map((item) => {
             return (
               <button
-                className="flex items-center justify-center rounded py-3 px-3"
+                className="flex items-center justify-center rounded px-3 py-3"
                 aria-label={item.name}
                 onClick={item.onSelect}
                 key={item.name}
@@ -228,7 +228,7 @@ const MobileToolbarPlugin = () => {
           })}
         </div>
         <button
-          className="flex flex-shrink-0 items-center justify-center rounded border-l border-border py-3 px-3"
+          className="flex flex-shrink-0 items-center justify-center rounded border-l border-border px-3 py-3"
           aria-label="Dismiss keyboard"
         >
           <Icon type="keyboard-close" size="medium" />

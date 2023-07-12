@@ -41,7 +41,7 @@ const NoteViewFileDropTarget = ({ note, linkingController, noteViewElement, file
 
   return isDraggingFiles ? (
     // Required to block drag events to editor iframe
-    <div id="file-drag-iframe-overlay" className="absolute top-0 left-0 z-dropdown-menu h-full w-full" />
+    <div id="file-drag-iframe-overlay" className="absolute left-0 top-0 z-dropdown-menu h-full w-full" />
   ) : null
 }
 

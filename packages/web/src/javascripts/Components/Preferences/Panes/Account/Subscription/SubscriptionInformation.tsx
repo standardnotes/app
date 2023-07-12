@@ -14,7 +14,7 @@ const SubscriptionInformation = () => {
   return (
     <>
       <SubscriptionStatusText />
-      <Button className="mt-3 mr-3 min-w-20" label="Manage subscription" onClick={manageSubscription} />
+      <Button className="mr-3 mt-3 min-w-20" label="Manage subscription" onClick={manageSubscription} />
     </>
   )
 }

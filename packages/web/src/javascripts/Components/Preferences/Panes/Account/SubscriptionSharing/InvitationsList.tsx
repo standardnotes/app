@@ -43,14 +43,14 @@ const InvitationsList = ({ subscriptionState, application }: Props) => {
   }
 
   if (usedInvitationsCount === 0) {
-    return <Text className="mt-1 mb-3">Make your first subscription invite below.</Text>
+    return <Text className="mb-3 mt-1">Make your first subscription invite below.</Text>
   }
 
   return (
     <div>
       <SubtitleLight className="mb-2 text-info">Active Invites</SubtitleLight>
       {activeSubscriptions?.map((invitation) => (
-        <div key={invitation.uuid} className="mt-1 mb-4">
+        <div key={invitation.uuid} className="mb-4 mt-1">
           <Text>
             {invitation.inviteeIdentifier} <span className="text-info">({invitation.status})</span>
           </Text>

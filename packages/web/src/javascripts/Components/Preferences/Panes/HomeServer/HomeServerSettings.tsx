@@ -369,7 +369,7 @@ const HomeServerSettings = () => {
                   <div className={'mt-2 grid grid-cols-1 rounded-md border border-border p-4'}>
                     <div className="flex items-center">
                       <Icon
-                        className={classNames('mr-1 -ml-1 h-5 w-5', PremiumFeatureIconClass)}
+                        className={classNames('-ml-1 mr-1 h-5 w-5', PremiumFeatureIconClass)}
                         type={PremiumFeatureIconName}
                       />
                       <h1 className="sk-h3 m-0 text-sm font-semibold">Activate Premium Features</h1>

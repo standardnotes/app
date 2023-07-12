@@ -13,7 +13,7 @@ interface Props {
 
 const PreferencesMenuItem: FunctionComponent<Props> = ({ iconType, label, selected, onClick, hasBubble }) => (
   <div
-    className={`preferences-menu-item box-border flex h-auto w-auto min-w-42 cursor-pointer select-none flex-row items-center justify-start rounded border border-solid py-2 px-4 text-sm hover:border-border hover:bg-default ${
+    className={`preferences-menu-item box-border flex h-auto w-auto min-w-42 cursor-pointer select-none flex-row items-center justify-start rounded border border-solid px-4 py-2 text-sm hover:border-border hover:bg-default ${
       selected ? 'selected border-info font-bold text-info' : 'border-transparent'
     }`}
     onClick={(e) => {

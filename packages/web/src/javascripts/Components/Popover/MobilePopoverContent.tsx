@@ -50,11 +50,11 @@ const MobilePopoverContent = ({
       <DisableScroll />
       <div
         ref={mergeRefs([setPopoverElement, addCloseMethod])}
-        className="fixed top-0 left-0 z-modal flex h-full w-full flex-col bg-default pt-safe-top pb-safe-bottom"
+        className="fixed left-0 top-0 z-modal flex h-full w-full flex-col bg-default pb-safe-bottom pt-safe-top"
         data-popover={id}
         data-mobile-popover
       >
-        <MobileModalHeader className="border-b border-border py-1.5 px-2 text-base">
+        <MobileModalHeader className="border-b border-border px-2 py-1.5 text-base">
           <div />
           <div className="flex items-center justify-center font-semibold">{title}</div>
           <MobileModalAction type="primary" slot="right" action={requestClose}>

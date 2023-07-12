@@ -44,7 +44,7 @@ const LinkedItemSearchResults = ({
         return (
           <button
             key={result.uuid}
-            className="flex w-full items-center justify-between gap-4 overflow-hidden py-2 px-3 hover:bg-contrast hover:text-foreground focus:bg-info-backdrop"
+            className="flex w-full items-center justify-between gap-4 overflow-hidden px-3 py-2 hover:bg-contrast hover:text-foreground focus:bg-info-backdrop"
             onClick={() => {
               void linkItems(item, result)
               onClickCallback?.()

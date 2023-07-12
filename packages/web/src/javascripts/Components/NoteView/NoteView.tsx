@@ -979,7 +979,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
         >
           {editorMode === 'component' && this.state.editorComponentViewer && (
             <div className="component-view relative flex-grow">
-              {this.state.paneGestureEnabled && <div className="absolute top-0 left-0 h-full w-[20px] md:hidden" />}
+              {this.state.paneGestureEnabled && <div className="absolute left-0 top-0 h-full w-[20px] md:hidden" />}
               <IframeFeatureView
                 key={this.state.editorComponentViewer.identifier}
                 componentViewer={this.state.editorComponentViewer}

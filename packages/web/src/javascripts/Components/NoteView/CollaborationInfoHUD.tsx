@@ -28,13 +28,13 @@ const CollaborationInfoHUD: FunctionComponent<Props> = ({ item }) => {
 
   return (
     <div className="flex flex-wrap items-start gap-2">
-      <div title="Vault name" className={'flex rounded bg-success py-1 px-1.5 text-success-contrast'}>
+      <div title="Vault name" className={'flex rounded bg-success px-1.5 py-1 text-success-contrast'}>
         <Icon ariaLabel="Shared in vault" type="safe-square" className="mr-1 text-info-contrast" size="medium" />
         <span className="mr-auto overflow-hidden text-ellipsis text-xs">{vault.name}</span>
       </div>
 
       {lastEditedBy && (
-        <div title="Last edited by" className={'flex rounded bg-info py-1 px-1.5 text-info-contrast'}>
+        <div title="Last edited by" className={'flex rounded bg-info px-1.5 py-1 text-info-contrast'}>
           <Icon ariaLabel="Shared by" type="pencil" className="mr-1 text-info-contrast" size="medium" />
           <span className="mr-auto overflow-hidden text-ellipsis text-xs">{lastEditedBy?.name}</span>
         </div>

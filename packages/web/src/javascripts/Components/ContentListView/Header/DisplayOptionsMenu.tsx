@@ -54,7 +54,7 @@ const TabButton: FunctionComponent<{
   return (
     <button
       className={classNames(
-        'relative cursor-pointer rounded-full border-2 border-solid border-transparent py-1 px-2 text-mobile-menu-item focus:shadow-none md:py-0 lg:text-sm',
+        'relative cursor-pointer rounded-full border-2 border-solid border-transparent px-2 py-1 text-mobile-menu-item focus:shadow-none md:py-0 lg:text-sm',
         isSelected
           ? 'bg-info text-info-contrast'
           : 'bg-transparent text-text hover:bg-info-backdrop focus:bg-info-backdrop',
@@ -305,7 +305,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
 
       {controlsDisabled && (
         <NoSubscriptionBanner
-          className="m-2 mt-2 mb-3"
+          className="m-2 mb-3 mt-2"
           application={application}
           title="Upgrade for per-tag preferences"
           message={
@@ -441,7 +441,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
             <div className="flex flex-col pr-5">
               <div className="flex flex-row items-center">
                 <div className="text-base font-semibold uppercase text-text lg:text-xs">Daily Notebook</div>
-                <Pill className="py-0 px-1.5" style="success">
+                <Pill className="px-1.5 py-0" style="success">
                   Labs
                 </Pill>
               </div>
@@ -463,7 +463,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
             <div className="flex flex-col pr-5">
               <div className="flex flex-row items-center">
                 <div className="text-base font-semibold uppercase text-text lg:text-xs">Table view</div>
-                <Pill className="py-0 px-1.5" style="success">
+                <Pill className="px-1.5 py-0" style="success">
                   Labs
                 </Pill>
               </div>

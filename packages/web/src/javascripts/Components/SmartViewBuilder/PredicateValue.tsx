@@ -16,7 +16,7 @@ const PredicateValue = ({ keypath, value, setValue }: Props) => {
 
   return type === 'noteType' ? (
     <select
-      className="flex-grow rounded border border-border bg-default py-1.5 px-2 focus:outline focus:outline-1 focus:outline-info"
+      className="flex-grow rounded border border-border bg-default px-2 py-1.5 focus:outline focus:outline-1 focus:outline-info"
       value={value}
       onChange={(event) => {
         setValue(event.target.value)
@@ -30,7 +30,7 @@ const PredicateValue = ({ keypath, value, setValue }: Props) => {
     </select>
   ) : type === 'editorIdentifier' ? (
     <select
-      className="flex-grow rounded border border-border bg-default py-1.5 px-2 focus:outline focus:outline-1 focus:outline-info"
+      className="flex-grow rounded border border-border bg-default px-2 py-1.5 focus:outline focus:outline-1 focus:outline-info"
       value={value}
       onChange={(event) => {
         setValue(event.target.value)
@@ -44,7 +44,7 @@ const PredicateValue = ({ keypath, value, setValue }: Props) => {
     </select>
   ) : type === 'string' || type === 'date' ? (
     <input
-      className="flex-grow rounded border border-border bg-default py-1.5 px-2"
+      className="flex-grow rounded border border-border bg-default px-2 py-1.5"
       value={value}
       onChange={(event) => {
         setValue(event.target.value)
@@ -52,7 +52,7 @@ const PredicateValue = ({ keypath, value, setValue }: Props) => {
     />
   ) : type === 'boolean' ? (
     <select
-      className="flex-grow rounded border border-border bg-default py-1.5 px-2 focus:outline focus:outline-1 focus:outline-info"
+      className="flex-grow rounded border border-border bg-default px-2 py-1.5 focus:outline focus:outline-1 focus:outline-info"
       value={value}
       onChange={(event) => {
         setValue(event.target.value)
@@ -64,7 +64,7 @@ const PredicateValue = ({ keypath, value, setValue }: Props) => {
   ) : type === 'number' ? (
     <input
       type="number"
-      className="flex-grow rounded border border-border bg-default py-1.5 px-2"
+      className="flex-grow rounded border border-border bg-default px-2 py-1.5"
       value={value}
       onChange={(event) => {
         setValue(event.target.value)

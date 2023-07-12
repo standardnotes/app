@@ -62,7 +62,7 @@ const Dropdown = ({
       </VisuallyHidden>
       <Select
         className={classNames(
-          'flex w-full min-w-55 items-center justify-between rounded border border-border bg-default py-1.5 px-3.5 text-sm text-foreground',
+          'flex w-full min-w-55 items-center justify-between rounded border border-border bg-default px-3.5 py-1.5 text-sm text-foreground',
           disabled && 'opacity-50',
           classNameOverride.button,
           !fullWidth && 'md:w-fit',
@@ -90,7 +90,7 @@ const Dropdown = ({
       >
         {items.map((item) => (
           <SelectItem
-            className="flex cursor-pointer items-center bg-transparent py-1.5 px-3 text-sm text-text hover:bg-contrast hover:text-foreground [&[data-active-item]]:bg-info [&[data-active-item]]:text-info-contrast"
+            className="flex cursor-pointer items-center bg-transparent px-3 py-1.5 text-sm text-text hover:bg-contrast hover:text-foreground [&[data-active-item]]:bg-info [&[data-active-item]]:text-info-contrast"
             key={item.value}
             value={item.value}
             disabled={item.disabled}

@@ -42,7 +42,7 @@ const PreferencesButton = ({ openPreferences }: Props) => {
         <div className="h-5">
           <Icon type="tune" className="rounded hover:text-info" />
         </div>
-        {isChangelogUnread && <div className="absolute top-0.5 right-0.5 h-2 w-2 rounded-full bg-info" />}
+        {isChangelogUnread && <div className="absolute right-0.5 top-0.5 h-2 w-2 rounded-full bg-info" />}
       </button>
     </StyledTooltip>
   )

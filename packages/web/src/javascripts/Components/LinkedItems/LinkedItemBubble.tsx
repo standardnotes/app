@@ -130,7 +130,7 @@ const LinkedItemBubble = ({
         <a
           ref={unlinkButtonRef}
           role="button"
-          className="ml-2 -mr-1 flex cursor-pointer border-0 bg-transparent p-0"
+          className="-mr-1 ml-2 flex cursor-pointer border-0 bg-transparent p-0"
           onClick={onUnlinkClick}
         >
           <Icon type="close" className="text-neutral hover:text-info" size="small" />
