@@ -1,7 +1,7 @@
 import { ApplicationStage } from '@standardnotes/services'
 import { Migration } from '@Lib/Migrations/Migration'
 import { ContentType } from '@standardnotes/common'
-import { AllComponentPreferences, ComponentInterface, PrefKey, isThemeOrEditorFeatureDescription } from '@standardnotes/models'
+import { AllComponentPreferences, ComponentInterface, PrefKey } from '@standardnotes/models'
 import { Copy, Uuids } from '@standardnotes/utils'
 import { FindNativeFeature } from '@standardnotes/features'
 
@@ -41,7 +41,7 @@ export class Migration2_201_6 extends Migration {
         continue
       }
 
-      const preferencesLookupKey = isThemeOrEditorFeatureDescription(component) ? component.identifier : component.uuid
+      const preferencesLookupKey = FindNativeFeature(component.identifier) ? component.identifier : component.uuid
 
       const componentPreferences = mutablePreferencesValue[preferencesLookupKey] ?? {}
       for (const key of Object.keys(componentData)) {

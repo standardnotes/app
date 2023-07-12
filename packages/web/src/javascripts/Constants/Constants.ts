@@ -39,9 +39,3 @@ export const SuperEditorMetadata: EditorMetadata = {
   iconClassName: 'text-accessory-tint-1',
   iconTintNumber: 1,
 }
-
-export const PlainEditorMetadata: EditorMetadata = {
-  icon: 'plain-text',
-  iconClassName: 'text-accessory-tint-1',
-  iconTintNumber: 1,
-}

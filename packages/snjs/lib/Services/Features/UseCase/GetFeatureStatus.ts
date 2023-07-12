@@ -1,4 +1,4 @@
-import { FeatureDescription, FeatureIdentifier, FindNativeFeature } from '@standardnotes/features'
+import { AnyFeatureDescription, FeatureIdentifier, FindNativeFeature } from '@standardnotes/features'
 import { Subscription } from '@standardnotes/security'
 import { FeatureStatus, ItemManagerInterface } from '@standardnotes/services'
 import { convertTimestampToMilliseconds } from '@standardnotes/utils'
@@ -38,7 +38,7 @@ export class GetFeatureStatusUseCase {
 
   private getDeprecatedNativeFeatureStatus(dto: {
     hasPaidAnyPartyOnlineOrOfflineSubscription: boolean
-    nativeFeature: FeatureDescription
+    nativeFeature: AnyFeatureDescription
   }): FeatureStatus {
     if (dto.hasPaidAnyPartyOnlineOrOfflineSubscription) {
       return FeatureStatus.Entitled
@@ -48,7 +48,7 @@ export class GetFeatureStatusUseCase {
   }
 
   private getNativeFeatureFeatureStatus(dto: {
-    nativeFeature: FeatureDescription
+    nativeFeature: AnyFeatureDescription
     firstPartyOnlineSubscription: Subscription | undefined
     firstPartyRoles: { online: string[] } | { offline: string[] } | undefined
   }): FeatureStatus {

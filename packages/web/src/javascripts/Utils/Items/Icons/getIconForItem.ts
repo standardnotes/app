@@ -1,11 +1,4 @@
-import {
-  IconType,
-  FileItem,
-  SNNote,
-  SNTag,
-  DecryptedItemInterface,
-  getComponenOrFeatureDescriptionNoteType,
-} from '@standardnotes/snjs'
+import { IconType, FileItem, SNNote, SNTag, DecryptedItemInterface } from '@standardnotes/snjs'
 import { getIconAndTintForNoteType } from './getIconAndTintForNoteType'
 import { getIconForFileType } from './getIconForFileType'
 import { WebApplicationInterface } from '@standardnotes/ui-services'
@@ -13,10 +6,7 @@ import { WebApplicationInterface } from '@standardnotes/ui-services'
 export function getIconForItem(item: DecryptedItemInterface, application: WebApplicationInterface): [IconType, string] {
   if (item instanceof SNNote) {
     const editorForNote = application.componentManager.editorForNote(item)
-    const [icon, tint] = getIconAndTintForNoteType(
-      editorForNote ? getComponenOrFeatureDescriptionNoteType(editorForNote) : undefined,
-    )
-
+    const [icon, tint] = getIconAndTintForNoteType(editorForNote.noteType)
     const className = `text-accessory-tint-${tint}`
     return [icon, className]
   } else if (item instanceof FileItem) {

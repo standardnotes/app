@@ -15,7 +15,6 @@ import {
   isSystemView,
   isSmartView,
   isNote,
-  getComponenOrFeatureDescriptionNoteType,
 } from '@standardnotes/snjs'
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import { FileItemActionType } from '../AttachedFilesPopover/PopoverFileItemAction'
@@ -185,7 +184,7 @@ const ItemNameCell = ({ item, hideIcon }: { item: DecryptedItemInterface; hideIc
   const isItemFile = item instanceof FileItem
 
   const editor = isNote(item) ? application.componentManager.editorForNote(item) : undefined
-  const noteType = isNote(item) ? item.noteType : editor ? getComponenOrFeatureDescriptionNoteType(editor) : undefined
+  const noteType = isNote(item) ? item.noteType : editor ? editor.noteType : undefined
 
   const [noteIcon, noteIconTint] = getIconAndTintForNoteType(noteType)
 

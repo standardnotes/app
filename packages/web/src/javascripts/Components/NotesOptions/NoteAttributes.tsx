@@ -1,5 +1,5 @@
 import { useMemo, FunctionComponent } from 'react'
-import { SNNote, classNames, getComponentOrNativeFeatureFileType } from '@standardnotes/snjs'
+import { SNNote, classNames } from '@standardnotes/snjs'
 import { formatDateForContextMenu } from '@/Utils/DateUtils'
 import { calculateReadTime } from './Utils/calculateReadTime'
 import { countNoteAttributes } from './Utils/countNoteAttributes'
@@ -15,7 +15,7 @@ export const useNoteAttributes = (application: WebApplicationInterface, note: SN
   const dateCreated = useMemo(() => formatDateForContextMenu(note.created_at), [note.created_at])
 
   const editor = application.componentManager.editorForNote(note)
-  const format = (editor ? getComponentOrNativeFeatureFileType(editor) : 'txt') ?? 'txt'
+  const format = (editor ? editor.fileType : 'txt') ?? 'txt'
 
   return {
     words,

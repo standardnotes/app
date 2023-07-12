@@ -1,4 +1,4 @@
-import { FeatureDescription, FeatureStatus, dateToLocalizedString } from '@standardnotes/snjs'
+import { AnyFeatureDescription, FeatureStatus, dateToLocalizedString } from '@standardnotes/snjs'
 import { FunctionComponent, useCallback } from 'react'
 import Button from '@/Components/Button/Button'
 import { WarningCircle } from '../UIElements/WarningCircle'
@@ -6,7 +6,7 @@ import { useApplication } from '../ApplicationProvider'
 import { openSubscriptionDashboard } from '@/Utils/ManageSubscription'
 
 type Props = {
-  feature: FeatureDescription
+  feature: AnyFeatureDescription
   featureStatus: FeatureStatus
 }
 

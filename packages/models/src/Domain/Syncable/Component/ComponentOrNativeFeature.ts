@@ -6,9 +6,11 @@ import {
   FeatureIdentifier,
   IframeComponentFeatureDescription,
   NoteType,
+  ThemeDockIcon,
   UIFeatureDescriptionTypes,
   isEditorFeatureDescription,
   isIframeComponentFeatureDescription,
+  isThemeFeatureDescription,
 } from '@standardnotes/features'
 import { ComponentInterface } from './ComponentInterface'
 import { ThemeInterface, isTheme } from '../Theme'
@@ -88,11 +90,11 @@ export class ComponentOrNativeFeature<F extends UIFeatureDescriptionTypes> {
     throw new Error('Invalid component or feature description')
   }
 
-  get fileType(): EditorFeatureDescription['file_type'] | undefined {
+  get fileType(): EditorFeatureDescription['file_type'] {
     if (isFeatureDescription(this.item) && isEditorFeatureDescription(this.item)) {
       return this.item.file_type
     } else if (isComponent(this.item) && isEditorFeatureDescription(this.item.package_info)) {
-      return this.item.package_info?.file_type
+      return this.item.package_info?.file_type ?? 'txt'
     }
 
     throw new Error('Invalid component or feature description')
@@ -154,5 +156,25 @@ export class ComponentOrNativeFeature<F extends UIFeatureDescriptionTypes> {
     }
 
     return ComponentArea.Editor
+  }
+
+  get layerable(): boolean {
+    if (this.isThemeComponent) {
+      return this.asTheme.layerable
+    } else if (isThemeFeatureDescription(this.asFeatureDescription)) {
+      return this.asFeatureDescription.layerable ?? false
+    }
+
+    return false
+  }
+
+  get dockIcon(): ThemeDockIcon | undefined {
+    if (this.isThemeComponent) {
+      return this.asTheme.package_info.dock_icon
+    } else if (isThemeFeatureDescription(this.asFeatureDescription)) {
+      return this.asFeatureDescription.dock_icon
+    }
+
+    return undefined
   }
 }

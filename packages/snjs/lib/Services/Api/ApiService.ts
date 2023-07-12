@@ -1,4 +1,3 @@
-import { FeatureDescription } from '@standardnotes/features'
 import { joinPaths } from '@standardnotes/utils'
 import {
   AbstractService,
@@ -82,6 +81,7 @@ import { DiskStorageService } from '../Storage/DiskStorageService'
 import { UuidString } from '../../Types/UuidString'
 import { SettingsServerInterface } from '../Settings/SettingsServerInterface'
 import { Strings } from '@Lib/Strings'
+import { AnyFeatureDescription } from '@standardnotes/features'
 
 /** Legacy api version field to be specified in params when calling v0 APIs. */
 const V0_API_VERSION = '20200115'
@@ -608,7 +608,7 @@ export class SNApiService
 
   public async downloadOfflineFeaturesFromRepo(
     repo: SNFeatureRepo,
-  ): Promise<{ features: FeatureDescription[]; roles: string[] } | ClientDisplayableError> {
+  ): Promise<{ features: AnyFeatureDescription[]; roles: string[] } | ClientDisplayableError> {
     try {
       const featuresUrl = repo.offlineFeaturesUrl
       const extensionKey = repo.offlineKey

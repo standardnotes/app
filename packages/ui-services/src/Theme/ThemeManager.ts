@@ -45,7 +45,7 @@ export class ThemeManager extends AbstractUIServicee {
       this.eventDisposers.push(
         desktopService.registerUpdateObserver((component) => {
           const uiFeature = new ComponentOrNativeFeature<ThemeFeatureDescription>(component)
-          if (uiFeature.isTheme) {
+          if (uiFeature.isThemeComponent) {
             if (this.components.isThemeActive(uiFeature)) {
               this.deactivateThemeInTheUI(uiFeature.uniqueIdentifier)
               setTimeout(() => {

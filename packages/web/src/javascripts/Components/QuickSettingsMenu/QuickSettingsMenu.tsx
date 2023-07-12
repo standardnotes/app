@@ -1,12 +1,11 @@
 import {
   ComponentArea,
   ComponentInterface,
-  ComponentOrThemeFeatureDescription,
+  ComponentOrNativeFeature,
   ContentType,
   FeatureIdentifier,
   PreferencesServiceEvent,
-  ThemeInterface,
-  getComponentOrNativeFeatureUniqueIdentifier,
+  ThemeFeatureDescription,
 } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useEffect, useRef, useState } from 'react'
@@ -32,8 +31,8 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ quickSettingsMenuCont
 
   const { focusModeEnabled, setFocusModeEnabled } = application.paneController
   const { closeQuickSettingsMenu } = quickSettingsMenuController
-  const [themes, setThemes] = useState<ComponentOrThemeFeatureDescription[]>([])
-  const [toggleableComponents, setToggleableComponents] = useState<ComponentInterface[]>([])
+  const [themes, setThemes] = useState<ComponentOrNativeFeature<ThemeFeatureDescription>[]>([])
+  const [editorStackComponents, setEditorStackComponents] = useState<ComponentInterface[]>([])
 
   const activeThemes = application.componentManager.getActiveThemes()
   const hasNonLayerableActiveTheme = activeThemes.find((theme) => !theme.layerable)
@@ -48,7 +47,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ quickSettingsMenuCont
     setThemes([...thirdParty, ...native].sort(sortThemes))
   }, [application])
 
-  const reloadToggleableComponents = useCallback(() => {
+  const reloadEditorStackComponents = useCallback(() => {
     const toggleableComponents = application.items
       .getDisplayableComponents()
       .filter(
@@ -58,7 +57,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ quickSettingsMenuCont
           component.identifier !== FeatureIdentifier.DeprecatedFoldersComponent,
       )
 
-    setToggleableComponents(toggleableComponents)
+    setEditorStackComponents(toggleableComponents)
   }, [application])
 
   useEffect(() => {
@@ -87,25 +86,21 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ quickSettingsMenuCont
 
   useEffect(() => {
     const cleanupItemStream = application.streamItems(ContentType.Component, () => {
-      reloadToggleableComponents()
+      reloadEditorStackComponents()
     })
 
     return () => {
       cleanupItemStream()
     }
-  }, [application, reloadToggleableComponents])
+  }, [application, reloadEditorStackComponents])
 
   useEffect(() => {
     prefsButtonRef.current?.focus()
   }, [])
 
-  const toggleComponent = useCallback(
+  const toggleEditorStackComponent = useCallback(
     (component: ComponentInterface) => {
-      if (component.isTheme()) {
-        application.componentManager.toggleTheme(component as ThemeInterface).catch(console.error)
-      } else {
-        application.componentManager.toggleComponent(component).catch(console.error)
-      }
+      application.componentManager.toggleComponent(component).catch(console.error)
     },
     [application],
   )
@@ -123,13 +118,13 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ quickSettingsMenuCont
 
   return (
     <Menu a11yLabel="Quick settings menu" isOpen>
-      {toggleableComponents.length > 0 && (
+      {editorStackComponents.length > 0 && (
         <>
           <div className="my-1 px-3 text-sm font-semibold uppercase text-text">Tools</div>
-          {toggleableComponents.map((component) => (
+          {editorStackComponents.map((component) => (
             <MenuSwitchButtonItem
               onChange={() => {
-                toggleComponent(component)
+                toggleEditorStackComponent(component)
               }}
               checked={application.componentManager.isComponentActive(component)}
               key={component.uuid}
@@ -146,7 +141,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ quickSettingsMenuCont
         Default
       </MenuRadioButtonItem>
       {themes.map((theme) => (
-        <ThemesMenuButton item={theme} key={getComponentOrNativeFeatureUniqueIdentifier(theme)} />
+        <ThemesMenuButton uiFeature={theme} key={theme.uniqueIdentifier} />
       ))}
       <HorizontalSeparator classes="my-2" />
       <FocusModeSwitch

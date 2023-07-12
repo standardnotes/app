@@ -1,12 +1,5 @@
-import { FeatureIdentifier, FeatureStatus } from '@standardnotes/snjs'
-import {
-  ComponentArea,
-  EditorFeatureDescription,
-  FindNativeFeature,
-  GetIframeAndNativeEditors,
-  NoteType,
-} from '@standardnotes/features'
-import { PlainEditorMetadata, SuperEditorMetadata } from '@/Constants/Constants'
+import { FeatureIdentifier } from '@standardnotes/snjs'
+import { ComponentArea, FindNativeFeature, GetIframeAndNativeEditors } from '@standardnotes/features'
 import { getIconAndTintForNoteType } from './Items/Icons/getIconAndTintForNoteType'
 import { DropdownItem } from '@/Components/Dropdown/DropdownItem'
 import { WebApplicationInterface } from '@standardnotes/ui-services'
@@ -16,36 +9,7 @@ export type EditorOption = DropdownItem & {
   isLabs?: boolean
 }
 
-export function noteTypeForEditorOptionValue(
-  value: EditorOption['value'],
-  application: WebApplicationInterface,
-): NoteType {
-  if (value === FeatureIdentifier.PlainEditor) {
-    return NoteType.Plain
-  } else if (value === FeatureIdentifier.SuperEditor) {
-    return NoteType.Super
-  }
-
-  const nativeEditor = FindNativeFeature<EditorFeatureDescription>(value)
-  if (nativeEditor) {
-    return nativeEditor.note_type
-  }
-
-  const matchingEditor = application.componentManager
-    .thirdPartyComponentsForArea(ComponentArea.Editor)
-    .find((editor) => editor.identifier === value)
-
-  return matchingEditor ? matchingEditor.noteType : NoteType.Unknown
-}
-
 export function getDropdownItemsForAllEditors(application: WebApplicationInterface): EditorOption[] {
-  const plaintextOption: EditorOption = {
-    icon: PlainEditorMetadata.icon,
-    iconClassName: PlainEditorMetadata.iconClassName,
-    label: PlainEditorMetadata.name,
-    value: FeatureIdentifier.PlainEditor,
-  }
-
   const options: EditorOption[] = []
 
   options.push(
@@ -67,7 +31,7 @@ export function getDropdownItemsForAllEditors(application: WebApplicationInterfa
       .filter((component) => FindNativeFeature(component.identifier) === undefined)
       .map((editor): EditorOption => {
         const identifier = editor.package_info.identifier
-        const [iconType, tint] = getIconAndTintForNoteType(editor.package_info.note_type)
+        const [iconType, tint] = getIconAndTintForNoteType(editor.noteType)
 
         return {
           label: editor.displayName,
@@ -77,18 +41,6 @@ export function getDropdownItemsForAllEditors(application: WebApplicationInterfa
         }
       }),
   )
-
-  options.push(plaintextOption)
-
-  if (application.features.getFeatureStatus(FeatureIdentifier.SuperEditor) === FeatureStatus.Entitled) {
-    options.push({
-      icon: SuperEditorMetadata.icon,
-      iconClassName: SuperEditorMetadata.iconClassName,
-      label: SuperEditorMetadata.name,
-      value: FeatureIdentifier.SuperEditor,
-      isLabs: true,
-    })
-  }
 
   options.sort((a, b) => {
     return a.label.toLowerCase() < b.label.toLowerCase() ? -1 : 1

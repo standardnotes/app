@@ -2,6 +2,7 @@ export * from './Feature/AnyFeatureDescription'
 export * from './Feature/FeatureIdentifier'
 export * from './Feature/Features'
 export * from './Feature/TypeGuards'
+export * from './Feature/FeatureType'
 
 export * from './Feature/ThirdPartyFeatureDescription'
 export * from './Feature/ClientFeatureDescription'

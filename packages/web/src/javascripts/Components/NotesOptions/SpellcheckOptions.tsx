@@ -1,18 +1,21 @@
 import Icon from '@/Components/Icon/Icon'
 import { FunctionComponent } from 'react'
-import { ComponentOrNativeFeature, SNNote, getComponentOrNativeFeatureFeatureDescription } from '@standardnotes/snjs'
+import {
+  ComponentOrNativeFeature,
+  EditorFeatureDescription,
+  IframeComponentFeatureDescription,
+  SNNote,
+} from '@standardnotes/snjs'
 import { NotesController } from '@/Controllers/NotesController/NotesController'
 import { iconClass } from './ClassNames'
 import MenuSwitchButtonItem from '../Menu/MenuSwitchButtonItem'
 
 export const SpellcheckOptions: FunctionComponent<{
-  editorForNote: ComponentOrNativeFeature | undefined
+  editorForNote: ComponentOrNativeFeature<EditorFeatureDescription | IframeComponentFeatureDescription> | undefined
   notesController: NotesController
   note: SNNote
 }> = ({ editorForNote, notesController, note }) => {
-  const spellcheckControllable = Boolean(
-    !editorForNote || getComponentOrNativeFeatureFeatureDescription(editorForNote).spellcheckControl,
-  )
+  const spellcheckControllable = Boolean(!editorForNote || editorForNote.featureDescription.spellcheckControl)
   const noteSpellcheck = !spellcheckControllable
     ? true
     : note

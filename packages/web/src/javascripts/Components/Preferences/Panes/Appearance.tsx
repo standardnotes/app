@@ -47,10 +47,10 @@ const Appearance: FunctionComponent<Props> = ({ application }) => {
     dropdownItems.push(
       ...native.map((theme) => {
         return {
-          label: theme.name as string,
-          value: theme.identifier,
+          label: theme.displayName as string,
+          value: theme.featureIdentifier,
           icon:
-            application.features.getFeatureStatus(theme.identifier) !== FeatureStatus.Entitled
+            application.features.getFeatureStatus(theme.featureIdentifier) !== FeatureStatus.Entitled
               ? PremiumFeatureIconName
               : undefined,
         }
@@ -60,8 +60,8 @@ const Appearance: FunctionComponent<Props> = ({ application }) => {
     dropdownItems.push(
       ...thirdParty.map((theme) => {
         return {
-          label: theme.name,
-          value: theme.identifier as string,
+          label: theme.displayName,
+          value: theme.featureIdentifier,
         }
       }),
     )

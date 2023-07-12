@@ -8,7 +8,7 @@ import { getIconAndTintForNoteType } from '@/Utils/Items/Icons/getIconAndTintFor
 import { CHANGE_EDITOR_COMMAND, keyboardStringForShortcut } from '@standardnotes/ui-services'
 import { useApplication } from '../ApplicationProvider'
 import { NoteViewController } from '../NoteView/Controller/NoteViewController'
-import { NoteType, getComponenOrFeatureDescriptionNoteType, noteTypeForEditorIdentifier } from '@standardnotes/snjs'
+import { NoteType, noteTypeForEditorIdentifier } from '@standardnotes/snjs'
 
 type Props = {
   viewControllerManager: ViewControllerManager
@@ -42,7 +42,7 @@ const ChangeEditorButton: FunctionComponent<Props> = ({
     : note && note.noteType != NoteType.Unknown
     ? note.noteType
     : selectedEditor
-    ? getComponenOrFeatureDescriptionNoteType(selectedEditor)
+    ? selectedEditor.noteType
     : NoteType.Unknown
 
   const [selectedEditorIcon, selectedEditorIconTint] = getIconAndTintForNoteType(noteType, true)
