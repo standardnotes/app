@@ -17,9 +17,9 @@ module.exports = (env, argv) => {
         patterns: [
           {
             from: '../web/dist',
-            to: './web',
+            to: './',
             globOptions: {
-              ignore: isProd ? ['**/app.js.map'] : [],
+              ignore: isProd ? ['**/*.js.map'] : [],
             },
           },
           {
@@ -36,7 +36,7 @@ module.exports = (env, argv) => {
           },
           {
             from: './src/popup',
-            to: './popup',
+            to: './',
           },
           {
             from: './images',

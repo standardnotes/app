@@ -4,6 +4,8 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const CircularDependencyPlugin = require('circular-dependency-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const mergeWithEnvDefaults = require('./web.webpack-defaults')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+const clipperHtmlTemplate = require('./clipper.htmlTemplate')
 require('dotenv').config()
 
 module.exports = (env) => {
@@ -28,8 +30,16 @@ module.exports = (env) => {
   return {
     entry: './src/javascripts/index.ts',
     output: {
-      filename: './app.js',
+      filename: process.env.BUILD_TARGET === 'clipper' ? './[name].bundle.js' : './app.js',
     },
+    optimization:
+      process.env.BUILD_TARGET === 'clipper'
+        ? {
+            splitChunks: {
+              chunks: 'all',
+            },
+          }
+        : undefined,
     plugins: [
       new CircularDependencyPlugin({
         // exclude detection of files based on a RegExp
@@ -55,6 +65,12 @@ module.exports = (env) => {
       new CopyWebpackPlugin({
         patterns: copyPluginPatterns,
       }),
+      process.env.BUILD_TARGET === 'clipper' &&
+        new HtmlWebpackPlugin({
+          filename: 'popup.html',
+          inject: false,
+          templateContent: clipperHtmlTemplate,
+        }),
     ],
     resolve: {
       extensions: ['.ts', '.tsx', '.js'],
