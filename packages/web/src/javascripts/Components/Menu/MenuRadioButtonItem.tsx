@@ -14,37 +14,44 @@ import Icon from '../Icon/Icon'
 import { KeyboardShortcutIndicator } from '../KeyboardShortcutIndicator/KeyboardShortcutIndicator'
 import RadioIndicator from '../Radio/RadioIndicator'
 import MenuListItem from './MenuListItem'
+import Popover from '../Popover/Popover'
 
 const Tooltip = ({ text }: { text: string }) => {
-  const [mobileVisible, setMobileVisible] = useState(false)
+  const [visible, setVisible] = useState(false)
   const onClickMobile: MouseEventHandler<HTMLDivElement> = useCallback(
     (event) => {
       event.preventDefault()
       event.stopPropagation()
-      setMobileVisible(!mobileVisible)
+      setVisible(!visible)
     },
-    [mobileVisible],
+    [visible],
   )
+
+  const [anchorElement, setAnchorElement] = useState<HTMLDivElement | null>(null)
 
   return (
     <div className="relative">
       <div
+        ref={setAnchorElement}
         className={classNames('peer z-0 flex h-5 w-5 items-center justify-center rounded-full')}
         onClick={onClickMobile}
+        onMouseEnter={() => setVisible(true)}
+        onMouseLeave={() => setVisible(false)}
       >
         <Icon type={'notes'} className="text-border" size="large" />
-        <span className="sr-only">Note sync status</span>
       </div>
-      <div
+      <Popover
+        open={visible}
+        title="Info"
+        anchorElement={anchorElement}
+        disableMobileFullscreenTakeover
         className={classNames(
-          'z-tooltip',
-          'hidden',
-          'absolute top-full right-0 w-60 translate-x-2 translate-y-1 select-none rounded border border-border shadow-main',
-          'bg-default py-1.5 px-3 text-left peer-hover:block peer-focus:block',
+          'w-60 translate-x-2 translate-y-1 select-none rounded border border-border shadow-main',
+          'z-modal bg-default py-1.5 px-3 text-left',
         )}
       >
         {text}
-      </div>
+      </Popover>
     </div>
   )
 }
