@@ -11,10 +11,11 @@ import { SubscriptionInviteCancelResponseBody } from '../../Response/Subscriptio
 import { SubscriptionInviteDeclineResponseBody } from '../../Response/Subscription/SubscriptionInviteDeclineResponseBody'
 import { SubscriptionInviteListResponseBody } from '../../Response/Subscription/SubscriptionInviteListResponseBody'
 import { SubscriptionInviteResponseBody } from '../../Response/Subscription/SubscriptionInviteResponseBody'
-import { HttpResponse } from '@standardnotes/responses'
+import { GetAvailableSubscriptionsResponse, GetSubscriptionResponse, HttpResponse } from '@standardnotes/responses'
 
 import { Paths } from './Paths'
 import { SubscriptionServerInterface } from './SubscriptionServerInterface'
+import { GetUserSubscriptionRequestParams } from '../../Request/Subscription/GetUserSubscriptionRequestParams'
 
 export class SubscriptionServer implements SubscriptionServerInterface {
   constructor(private httpService: HttpServiceInterface) {}
@@ -49,5 +50,13 @@ export class SubscriptionServer implements SubscriptionServerInterface {
 
   async confirmAppleIAP(params: AppleIAPConfirmRequestParams): Promise<HttpResponse<AppleIAPConfirmResponseBody>> {
     return this.httpService.post(Paths.v1.confirmAppleIAP, params)
+  }
+
+  async getUserSubscription(params: GetUserSubscriptionRequestParams): Promise<HttpResponse<GetSubscriptionResponse>> {
+    return this.httpService.get(Paths.v1.subscription(params.userUuid), params)
+  }
+
+  async getAvailableSubscriptions(): Promise<HttpResponse<GetAvailableSubscriptionsResponse>> {
+    return this.httpService.get(Paths.v1.availableSubscriptions)
   }
 }

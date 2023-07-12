@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'react'
 import { HistoryLockedIllustration } from '@standardnotes/icons'
 import Button from '@/Components/Button/Button'
-import { SubscriptionController } from '@/Controllers/Subscription/SubscriptionController'
+import { useApplication } from '../ApplicationProvider'
 
 const getPlanHistoryDuration = (planName: string | undefined) => {
   switch (planName) {
@@ -19,12 +19,15 @@ const getPremiumContentCopy = (planName: string | undefined) => {
   return `Version history is limited to ${getPlanHistoryDuration(planName)} in the ${planName} plan`
 }
 
-type Props = {
-  subscriptionController: SubscriptionController
-}
+const RevisionContentLocked: FunctionComponent = () => {
+  const application = useApplication()
 
-const RevisionContentLocked: FunctionComponent<Props> = ({ subscriptionController }) => {
-  const { userSubscriptionName, isUserSubscriptionExpired, isUserSubscriptionCanceled } = subscriptionController
+  let planName = 'free'
+  if (application.subscriptions.hasOnlineSubscription()) {
+    if (!application.subscriptions.isUserSubscriptionCanceled && !application.subscriptions.isUserSubscriptionExpired) {
+      planName = application.subscriptions.userSubscriptionName
+    }
+  }
 
   return (
     <div className="flex h-full w-full items-center justify-center">
@@ -32,12 +35,7 @@ const RevisionContentLocked: FunctionComponent<Props> = ({ subscriptionControlle
         <HistoryLockedIllustration />
         <div className="mt-2 mb-1 text-lg font-bold">Can't access this version</div>
         <div className="leading-140% mb-4 text-passive-0">
-          {getPremiumContentCopy(
-            !isUserSubscriptionCanceled && !isUserSubscriptionExpired && userSubscriptionName
-              ? userSubscriptionName
-              : 'free',
-          )}
-          . Learn more about our other plans to upgrade your history capacity.
+          {getPremiumContentCopy(planName)}. Learn more about our other plans to upgrade your history capacity.
         </div>
         <Button
           primary

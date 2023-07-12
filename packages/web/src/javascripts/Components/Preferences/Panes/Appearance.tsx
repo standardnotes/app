@@ -4,16 +4,7 @@ import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import Switch from '@/Components/Switch/Switch'
 import { WebApplication } from '@/Application/WebApplication'
-import {
-  ContentType,
-  FeatureIdentifier,
-  PrefKey,
-  GetFeatures,
-  SNTheme,
-  FindNativeFeature,
-  FeatureStatus,
-  naturalSort,
-} from '@standardnotes/snjs'
+import { FeatureIdentifier, PrefKey, FeatureStatus, naturalSort, PrefDefaults } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useEffect, useState } from 'react'
 import { Subtitle, Title, Text } from '@/Components/Preferences/PreferencesComponents/Content'
@@ -21,8 +12,8 @@ import PreferencesPane from '../PreferencesComponents/PreferencesPane'
 import PreferencesGroup from '../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../PreferencesComponents/PreferencesSegment'
 import { PremiumFeatureIconName } from '@/Components/Icon/PremiumFeatureIcon'
-import { PrefDefaults } from '@/Constants/PrefDefaults'
 import EditorAppearance from './Appearance/EditorAppearance'
+import { GetAllThemesUseCase } from '@standardnotes/ui-services'
 
 type Props = {
   application: WebApplication
@@ -43,36 +34,39 @@ const Appearance: FunctionComponent<Props> = ({ application }) => {
   )
 
   useEffect(() => {
-    const themesAsItems: DropdownItem[] = application.items
-      .getDisplayableComponents()
-      .filter((component) => component.isTheme() && !(component as SNTheme).isLayerable())
-      .filter((theme) => !FindNativeFeature(theme.identifier))
-      .map((theme) => {
-        return {
-          label: theme.name,
-          value: theme.identifier as string,
-        }
-      })
+    const usecase = new GetAllThemesUseCase(application.items)
+    const { thirdParty, native } = usecase.execute({ excludeLayerable: true })
 
-    GetFeatures()
-      .filter((feature) => feature.content_type === ContentType.TYPES.Theme && !feature.layerable)
-      .forEach((theme) => {
-        themesAsItems.push({
-          label: theme.name as string,
-          value: theme.identifier,
-          icon:
-            application.features.getFeatureStatus(theme.identifier) !== FeatureStatus.Entitled
-              ? PremiumFeatureIconName
-              : undefined,
-        })
-      })
+    const dropdownItems: DropdownItem[] = []
 
-    themesAsItems.unshift({
+    dropdownItems.push({
       label: 'Default',
       value: 'Default',
     })
 
-    setThemeItems(naturalSort(themesAsItems, 'label'))
+    dropdownItems.push(
+      ...native.map((theme) => {
+        return {
+          label: theme.displayName as string,
+          value: theme.featureIdentifier,
+          icon:
+            application.features.getFeatureStatus(theme.featureIdentifier) !== FeatureStatus.Entitled
+              ? PremiumFeatureIconName
+              : undefined,
+        }
+      }),
+    )
+
+    dropdownItems.push(
+      ...thirdParty.map((theme) => {
+        return {
+          label: theme.displayName,
+          value: theme.featureIdentifier,
+        }
+      }),
+    )
+
+    setThemeItems(naturalSort(dropdownItems, 'label'))
   }, [application])
 
   const toggleUseDeviceSettings = () => {

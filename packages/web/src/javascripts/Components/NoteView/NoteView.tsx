@@ -1,11 +1,10 @@
 import { AbstractComponent } from '@/Components/Abstract/PureComponent'
 import ChangeEditorButton from '@/Components/ChangeEditor/ChangeEditorButton'
-import ComponentView from '@/Components/ComponentView/ComponentView'
+import IframeFeatureView from '@/Components/ComponentView/IframeFeatureView'
 import NotesOptionsPanel from '@/Components/NotesOptions/NotesOptionsPanel'
 import PinNoteButton from '@/Components/PinNoteButton/PinNoteButton'
 import ProtectedItemOverlay from '@/Components/ProtectedItemOverlay/ProtectedItemOverlay'
 import { ElementIds } from '@/Constants/ElementIDs'
-import { PrefDefaults } from '@/Constants/PrefDefaults'
 import { StringDeleteNote, STRING_DELETE_LOCKED_ATTEMPT, STRING_DELETE_PLACEHOLDER_ATTEMPT } from '@/Constants/Strings'
 import { log, LoggingDomain } from '@/Logging'
 import { debounce, isDesktopApplication, isMobileScreen } from '@/Utils'
@@ -13,16 +12,20 @@ import { classNames, pluralize } from '@standardnotes/utils'
 import {
   ApplicationEvent,
   ComponentArea,
+  ComponentInterface,
+  ComponentOrNativeFeature,
   ComponentViewerInterface,
   ContentType,
   EditorLineWidth,
+  IframeComponentFeatureDescription,
+  isIframeUIFeature,
   isPayloadSourceInternalChange,
   isPayloadSourceRetrieved,
   NoteType,
   PayloadEmitSource,
+  PrefDefaults,
   PrefKey,
   ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction,
-  SNComponent,
   SNNote,
 } from '@standardnotes/snjs'
 import { confirmDialog, DELETE_NOTE_KEYBOARD_COMMAND, KeyboardKey } from '@standardnotes/ui-services'
@@ -53,12 +56,12 @@ import Icon from '../Icon/Icon'
 
 const MinimumStatusDuration = 400
 
-function sortAlphabetically(array: SNComponent[]): SNComponent[] {
+function sortAlphabetically(array: ComponentInterface[]): ComponentInterface[] {
   return array.sort((a, b) => (a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1))
 }
 
 type State = {
-  availableStackComponents: SNComponent[]
+  availableStackComponents: ComponentInterface[]
   editorComponentViewer?: ComponentViewerInterface
   editorComponentViewerDidAlreadyReload?: boolean
   editorStateDidLoad: boolean
@@ -443,14 +446,21 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
     )
 
     this.removeNoteStreamObserver = this.application.streamItems<SNNote>(ContentType.TYPES.Note, async () => {
+      if (!this.note) {
+        return
+      }
+
       this.setState({
         conflictedNotes: this.application.items.conflictsOf(this.note.uuid) as SNNote[],
       })
     })
   }
 
-  private createComponentViewer(component: SNComponent) {
-    const viewer = this.application.componentManager.createComponentViewer(component, this.note.uuid)
+  private createComponentViewer(component: ComponentOrNativeFeature<IframeComponentFeatureDescription>) {
+    if (!component) {
+      throw Error('Cannot create component viewer for undefined component')
+    }
+    const viewer = this.application.componentManager.createComponentViewer(component, { uuid: this.note.uuid })
     return viewer
   }
 
@@ -462,7 +472,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
       return
     }
 
-    const component = viewer.component
+    const component = viewer.getComponentOrFeatureItem()
     this.application.componentManager.destroyComponentViewer(viewer)
     this.setState(
       {
@@ -496,35 +506,36 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
     }
   }
 
-  async reloadEditorComponent() {
+  async reloadEditorComponent(): Promise<void> {
     log(LoggingDomain.NoteView, 'Reload editor component')
     if (this.state.showProtectedWarning) {
       this.destroyCurrentEditorComponent()
       return
     }
 
-    const newEditor = this.application.componentManager.editorForNote(this.note)
+    const newUIFeature = this.application.componentManager.editorForNote(this.note)
 
-    /** Editors cannot interact with template notes so the note must be inserted */
-    if (newEditor && this.controller.isTemplateNote) {
+    /** Component editors cannot interact with template notes so the note must be inserted */
+    if (isIframeUIFeature(newUIFeature) && this.controller.isTemplateNote) {
       await this.controller.insertTemplatedNote()
     }
 
     const currentComponentViewer = this.state.editorComponentViewer
 
-    if (currentComponentViewer?.componentUuid !== newEditor?.uuid) {
-      if (currentComponentViewer) {
+    if (currentComponentViewer) {
+      const needsDestroy = currentComponentViewer.componentUniqueIdentifier !== newUIFeature.uniqueIdentifier
+      if (needsDestroy) {
         this.destroyCurrentEditorComponent()
       }
+    }
 
-      if (newEditor) {
-        this.setState({
-          editorComponentViewer: this.createComponentViewer(newEditor),
-          editorStateDidLoad: true,
-        })
-      }
-      reloadFont(this.state.monospaceFont)
+    if (isIframeUIFeature(newUIFeature)) {
+      this.setState({
+        editorComponentViewer: this.createComponentViewer(newUIFeature),
+        editorStateDidLoad: true,
+      })
     } else {
+      reloadFont(this.state.monospaceFont)
       this.setState({
         editorStateDidLoad: true,
       })
@@ -731,8 +742,8 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
     log(LoggingDomain.NoteView, 'Reload stack components')
     const stackComponents = sortAlphabetically(
       this.application.componentManager
-        .componentsForArea(ComponentArea.EditorStack)
-        .filter((component) => component.active),
+        .thirdPartyComponentsForArea(ComponentArea.EditorStack)
+        .filter((component) => this.application.componentManager.isComponentActive(component)),
     )
     const enabledComponents = stackComponents.filter((component) => {
       return component.isExplicitlyEnabledForItem(this.note.uuid)
@@ -740,21 +751,28 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
 
     const needsNewViewer = enabledComponents.filter((component) => {
       const hasExistingViewer = this.state.stackComponentViewers.find(
-        (viewer) => viewer.componentUuid === component.uuid,
+        (viewer) => viewer.componentUniqueIdentifier === component.uuid,
       )
       return !hasExistingViewer
     })
 
     const needsDestroyViewer = this.state.stackComponentViewers.filter((viewer) => {
       const viewerComponentExistsInEnabledComponents = enabledComponents.find((component) => {
-        return component.uuid === viewer.componentUuid
+        return component.uuid === viewer.componentUniqueIdentifier
       })
       return !viewerComponentExistsInEnabledComponents
     })
 
     const newViewers: ComponentViewerInterface[] = []
     for (const component of needsNewViewer) {
-      newViewers.push(this.application.componentManager.createComponentViewer(component, this.note.uuid))
+      newViewers.push(
+        this.application.componentManager.createComponentViewer(
+          new ComponentOrNativeFeature<IframeComponentFeatureDescription>(component),
+          {
+            uuid: this.note.uuid,
+          },
+        ),
+      )
     }
 
     for (const viewer of needsDestroyViewer) {
@@ -766,11 +784,11 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
     })
   }
 
-  stackComponentExpanded = (component: SNComponent): boolean => {
-    return !!this.state.stackComponentViewers.find((viewer) => viewer.componentUuid === component.uuid)
+  stackComponentExpanded = (component: ComponentInterface): boolean => {
+    return !!this.state.stackComponentViewers.find((viewer) => viewer.componentUniqueIdentifier === component.uuid)
   }
 
-  toggleStackComponent = async (component: SNComponent) => {
+  toggleStackComponent = async (component: ComponentInterface) => {
     if (!component.isExplicitlyEnabledForItem(this.note.uuid)) {
       await this.application.mutator.runTransactionalMutation(
         transactionForAssociateComponentWithCurrentNote(component, this.note),
@@ -962,12 +980,11 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
           {editorMode === 'component' && this.state.editorComponentViewer && (
             <div className="component-view relative flex-grow">
               {this.state.paneGestureEnabled && <div className="absolute top-0 left-0 h-full w-[20px] md:hidden" />}
-              <ComponentView
+              <IframeFeatureView
                 key={this.state.editorComponentViewer.identifier}
                 componentViewer={this.state.editorComponentViewer}
                 onLoad={this.onEditorComponentLoad}
                 requestReload={this.editorComponentViewerRequestsReload}
-                application={this.application}
               />
             </div>
           )}
@@ -1006,6 +1023,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
             >
               <div className="flex h-full">
                 {this.state.availableStackComponents.map((component) => {
+                  const active = this.application.componentManager.isComponentActive(component)
                   return (
                     <div
                       key={component.uuid}
@@ -1015,7 +1033,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
                       className="flex flex-grow cursor-pointer items-center justify-center [&:not(:first-child)]:ml-3"
                     >
                       <div className="flex h-full items-center [&:not(:first-child)]:ml-2">
-                        {this.stackComponentExpanded(component) && component.active && <IndicatorCircle style="info" />}
+                        {this.stackComponentExpanded(component) && active && <IndicatorCircle style="info" />}
                         {!this.stackComponentExpanded(component) && <IndicatorCircle style="neutral" />}
                       </div>
                       <div className="flex h-full items-center [&:not(:first-child)]:ml-2">
@@ -1032,7 +1050,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
             {this.state.stackComponentViewers.map((viewer) => {
               return (
                 <div className="component-view component-stack-item" key={viewer.identifier}>
-                  <ComponentView key={viewer.identifier} componentViewer={viewer} application={this.application} />
+                  <IframeFeatureView key={viewer.identifier} componentViewer={viewer} />
                 </div>
               )
             })}

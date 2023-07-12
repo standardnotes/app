@@ -1,4 +1,3 @@
-import { FeatureDescription } from '@standardnotes/features'
 import { joinPaths } from '@standardnotes/utils'
 import {
   AbstractService,
@@ -18,7 +17,6 @@ import {
   API_MESSAGE_FAILED_LISTED_REGISTRATION,
   API_MESSAGE_FAILED_OFFLINE_ACTIVATION,
   API_MESSAGE_FAILED_OFFLINE_FEATURES,
-  API_MESSAGE_FAILED_SUBSCRIPTION_INFO,
   API_MESSAGE_FAILED_UPDATE_SETTINGS,
   API_MESSAGE_GENERIC_CHANGE_CREDENTIALS_FAIL,
   API_MESSAGE_GENERIC_INTEGRITY_CHECK_FAIL,
@@ -41,13 +39,10 @@ import {
   RawSyncResponse,
   SessionRenewalResponse,
   SessionListResponse,
-  UserFeaturesResponse,
   ListSettingsResponse,
   UpdateSettingResponse,
   GetSettingResponse,
   DeleteSettingResponse,
-  GetSubscriptionResponse,
-  GetAvailableSubscriptionsResponse,
   PostSubscriptionTokensResponse,
   GetOfflineFeaturesResponse,
   ListedRegistrationResponse,
@@ -84,9 +79,9 @@ import { isUrlFirstParty, TRUSTED_FEATURE_HOSTS } from '@Lib/Hosts'
 import { Paths } from './Paths'
 import { DiskStorageService } from '../Storage/DiskStorageService'
 import { UuidString } from '../../Types/UuidString'
-import merge from 'lodash/merge'
 import { SettingsServerInterface } from '../Settings/SettingsServerInterface'
 import { Strings } from '@Lib/Strings'
+import { AnyFeatureDescription } from '@standardnotes/features'
 
 /** Legacy api version field to be specified in params when calling v0 APIs. */
 const V0_API_VERSION = '20200115'
@@ -199,9 +194,12 @@ export class SNApiService
   }
 
   private params(inParams: Record<string | number | symbol, unknown>): HttpRequestParams {
-    const params = merge(inParams, {
-      [ApiEndpointParam.ApiVersion]: this.apiVersion,
-    })
+    const params = {
+      ...inParams,
+      ...{
+        [ApiEndpointParam.ApiVersion]: this.apiVersion,
+      },
+    }
     return params
   }
 
@@ -508,19 +506,6 @@ export class SNApiService
     return response
   }
 
-  async getUserFeatures(userUuid: UuidString): Promise<HttpResponse<UserFeaturesResponse>> {
-    const path = Paths.v1.userFeatures(userUuid)
-    const response = await this.httpService.get<UserFeaturesResponse>(path, undefined, this.getSessionAccessToken())
-
-    if (isErrorResponse(response)) {
-      this.preprocessAuthenticatedErrorResponse(response)
-      return this.errorResponseWithFallbackMessage(response, API_MESSAGE_GENERIC_SYNC_FAIL)
-    }
-
-    this.processSuccessResponseForMetaBody(response)
-    return response
-  }
-
   private async tokenRefreshableRequest<T>(
     params: HttpRequest & { fallbackErrorMessage: string },
   ): Promise<HttpResponse<T>> {
@@ -605,25 +590,6 @@ export class SNApiService
     })
   }
 
-  public async getSubscription(userUuid: string): Promise<HttpResponse<GetSubscriptionResponse>> {
-    const url = joinPaths(this.host, Paths.v1.subscription(userUuid))
-    return this.tokenRefreshableRequest({
-      verb: HttpVerb.Get,
-      url,
-      authentication: this.getSessionAccessToken(),
-      fallbackErrorMessage: API_MESSAGE_FAILED_SUBSCRIPTION_INFO,
-    })
-  }
-
-  public async getAvailableSubscriptions(): Promise<HttpResponse<GetAvailableSubscriptionsResponse>> {
-    const url = joinPaths(this.host, Paths.v2.subscriptions)
-    return this.request({
-      verb: HttpVerb.Get,
-      url,
-      fallbackErrorMessage: API_MESSAGE_FAILED_SUBSCRIPTION_INFO,
-    })
-  }
-
   public async getNewSubscriptionToken(): Promise<string | undefined> {
     const url = joinPaths(this.host, Paths.v1.subscriptionTokens)
     const response = await this.request<PostSubscriptionTokensResponse>({
@@ -642,7 +608,7 @@ export class SNApiService
 
   public async downloadOfflineFeaturesFromRepo(
     repo: SNFeatureRepo,
-  ): Promise<{ features: FeatureDescription[]; roles: string[] } | ClientDisplayableError> {
+  ): Promise<{ features: AnyFeatureDescription[]; roles: string[] } | ClientDisplayableError> {
     try {
       const featuresUrl = repo.offlineFeaturesUrl
       const extensionKey = repo.offlineKey

@@ -1,3 +1,5 @@
+import { StorageServiceInterface } from './../Storage/StorageServiceInterface'
+import { SessionsClientInterface } from './../Session/SessionsClientInterface'
 import { SubscriptionApiServiceInterface } from '@standardnotes/api'
 import { Invitation } from '@standardnotes/models'
 import { InternalEventBusInterface } from '..'
@@ -6,8 +8,10 @@ import { SubscriptionManager } from './SubscriptionManager'
 describe('SubscriptionManager', () => {
   let subscriptionApiService: SubscriptionApiServiceInterface
   let internalEventBus: InternalEventBusInterface
+  let sessions: SessionsClientInterface
+  let storage: StorageServiceInterface
 
-  const createManager = () => new SubscriptionManager(subscriptionApiService, internalEventBus)
+  const createManager = () => new SubscriptionManager(subscriptionApiService, sessions, storage, internalEventBus)
 
   beforeEach(() => {
     subscriptionApiService = {} as jest.Mocked<SubscriptionApiServiceInterface>
@@ -16,7 +20,12 @@ describe('SubscriptionManager', () => {
     subscriptionApiService.invite = jest.fn()
     subscriptionApiService.listInvites = jest.fn()
 
+    sessions = {} as jest.Mocked<SessionsClientInterface>
+
+    storage = {} as jest.Mocked<StorageServiceInterface>
+
     internalEventBus = {} as jest.Mocked<InternalEventBusInterface>
+    internalEventBus.addEventHandler = jest.fn()
   })
 
   it('should invite user by email to a shared subscription', async () => {

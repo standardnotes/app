@@ -10,7 +10,6 @@ const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> = ({
   application,
   historyModalController,
   selectionController,
-  subscriptionController,
 }) => {
   const addAndroidBackHandler = useAndroidBackHandler()
 
@@ -49,7 +48,6 @@ const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> = ({
           dismissModal={historyModalController.dismissModal}
           note={historyModalController.note}
           selectionController={selectionController}
-          subscriptionController={subscriptionController}
         />
       )}
     </HistoryModalDialog>

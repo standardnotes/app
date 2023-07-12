@@ -1,3 +1,4 @@
+import { PreferenceServiceInterface } from './../Preferences/PreferenceServiceInterface'
 import { AsymmetricMessageServiceInterface } from './../AsymmetricMessage/AsymmetricMessageServiceInterface'
 import { SyncOptions } from './../Sync/SyncOptions'
 import { ImportDataReturnType } from './../Mutator/ImportDataUseCase'
@@ -21,7 +22,7 @@ import { ComponentManagerInterface } from '../Component/ComponentManagerInterfac
 import { ApplicationEvent } from '../Event/ApplicationEvent'
 import { ApplicationEventCallback } from '../Event/ApplicationEventCallback'
 import { FeaturesClientInterface } from '../Feature/FeaturesClientInterface'
-import { SubscriptionClientInterface } from '../Subscription/SubscriptionClientInterface'
+import { SubscriptionManagerInterface } from '../Subscription/SubscriptionManagerInterface'
 import { DeviceInterface } from '../Device/DeviceInterface'
 import { ItemManagerInterface } from '../Item/ItemManagerInterface'
 import { MutatorClientInterface } from '../Mutator/MutatorClientInterface'
@@ -66,6 +67,7 @@ export interface ApplicationInterface {
   setCustomHost(host: string): Promise<void>
   isThirdPartyHostUsed(): boolean
   isUsingHomeServer(): Promise<boolean>
+  getNewSubscriptionToken(): Promise<string | undefined>
 
   importData(data: BackupFile, awaitSync?: boolean): Promise<ImportDataReturnType>
   /**
@@ -96,7 +98,7 @@ export interface ApplicationInterface {
   get mutator(): MutatorClientInterface
   get user(): UserClientInterface
   get files(): FilesClientInterface
-  get subscriptions(): SubscriptionClientInterface
+  get subscriptions(): SubscriptionManagerInterface
   get fileBackups(): BackupServiceInterface | undefined
   get sessions(): SessionsClientInterface
   get homeServer(): HomeServerServiceInterface | undefined
@@ -104,6 +106,7 @@ export interface ApplicationInterface {
   get challenges(): ChallengeServiceInterface
   get alerts(): AlertService
   get asymmetric(): AsymmetricMessageServiceInterface
+  get preferences(): PreferenceServiceInterface
 
   readonly identifier: ApplicationIdentifier
   readonly platform: Platform

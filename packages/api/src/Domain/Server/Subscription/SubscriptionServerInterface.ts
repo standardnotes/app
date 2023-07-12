@@ -11,7 +11,8 @@ import { SubscriptionInviteCancelResponseBody } from '../../Response/Subscriptio
 import { SubscriptionInviteDeclineResponseBody } from '../../Response/Subscription/SubscriptionInviteDeclineResponseBody'
 import { SubscriptionInviteListResponseBody } from '../../Response/Subscription/SubscriptionInviteListResponseBody'
 import { SubscriptionInviteResponseBody } from '../../Response/Subscription/SubscriptionInviteResponseBody'
-import { HttpResponse } from '@standardnotes/responses'
+import { GetAvailableSubscriptionsResponse, GetSubscriptionResponse, HttpResponse } from '@standardnotes/responses'
+import { GetUserSubscriptionRequestParams } from '../../Request/Subscription/GetUserSubscriptionRequestParams'
 
 export interface SubscriptionServerInterface {
   invite(params: SubscriptionInviteRequestParams): Promise<HttpResponse<SubscriptionInviteResponseBody>>
@@ -25,5 +26,9 @@ export interface SubscriptionServerInterface {
     params: SubscriptionInviteCancelRequestParams,
   ): Promise<HttpResponse<SubscriptionInviteCancelResponseBody>>
   listInvites(params: SubscriptionInviteListRequestParams): Promise<HttpResponse<SubscriptionInviteListResponseBody>>
+
   confirmAppleIAP(params: AppleIAPConfirmRequestParams): Promise<HttpResponse<AppleIAPConfirmResponseBody>>
+
+  getUserSubscription(params: GetUserSubscriptionRequestParams): Promise<HttpResponse<GetSubscriptionResponse>>
+  getAvailableSubscriptions(): Promise<HttpResponse<GetAvailableSubscriptionsResponse>>
 }

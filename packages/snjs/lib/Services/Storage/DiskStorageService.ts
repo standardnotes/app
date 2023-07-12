@@ -224,7 +224,7 @@ export class DiskStorageService extends Services.AbstractService implements Serv
    * either as a plain object, or an encrypted item.
    */
   private async generatePersistableValues() {
-    const rawContent = Copy(this.values) as Partial<Services.StorageValuesObject>
+    const rawContent = <Partial<Services.StorageValuesObject>>Copy(this.values)
 
     const valuesToWrap = rawContent[Services.ValueModesKeys.Unwrapped]
     rawContent[Services.ValueModesKeys.Unwrapped] = undefined

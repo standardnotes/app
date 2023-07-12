@@ -15,13 +15,13 @@ import {
   SNNote,
   SmartView,
   TagItemCountChangeObserver,
-  SNComponent,
-  SNTheme,
   DecryptedPayloadInterface,
   DecryptedTransferPayload,
   FileItem,
   VaultDisplayOptions,
   NotesAndFilesDisplayControllerOptions,
+  ThemeInterface,
+  ComponentInterface,
 } from '@standardnotes/models'
 import { AbstractService } from '../Service/AbstractService'
 
@@ -92,9 +92,15 @@ export interface ItemManagerInterface extends AbstractService {
     itemToLookupUuidFor: DecryptedItemInterface,
     contentType?: string,
   ): I[]
+
   findItem<T extends DecryptedItemInterface = DecryptedItemInterface>(uuid: string): T | undefined
   findItems<T extends DecryptedItemInterface>(uuids: string[]): T[]
   findSureItem<T extends DecryptedItemInterface = DecryptedItemInterface>(uuid: string): T
+  /**
+   * If item is not found, an `undefined` element will be inserted into the array.
+   */
+  findItemsIncludingBlanks<T extends DecryptedItemInterface>(uuids: string[]): (T | undefined)[]
+
   get trashedItems(): SNNote[]
   itemsBelongingToKeySystem(systemIdentifier: KeySystemIdentifier): DecryptedItemInterface[]
   hasTagsNeedingFoldersMigration(): boolean
@@ -111,8 +117,8 @@ export interface ItemManagerInterface extends AbstractService {
   getTagParent(itemToLookupUuidFor: SNTag): SNTag | undefined
   isValidTagParent(parentTagToLookUpUuidFor: SNTag, childToLookUpUuidFor: SNTag): boolean
   isSmartViewTitle(title: string): boolean
-  getDisplayableComponents(): (SNComponent | SNTheme)[]
-  createItemFromPayload(payload: DecryptedPayloadInterface): DecryptedItemInterface
+  getDisplayableComponents(): (ComponentInterface | ThemeInterface)[]
+  createItemFromPayload<T extends DecryptedItemInterface>(payload: DecryptedPayloadInterface): T
   createPayloadFromObject(object: DecryptedTransferPayload): DecryptedPayloadInterface
   getDisplayableFiles(): FileItem[]
   setVaultDisplayOptions(options: VaultDisplayOptions): void

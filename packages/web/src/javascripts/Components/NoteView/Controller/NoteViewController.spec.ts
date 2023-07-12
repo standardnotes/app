@@ -58,7 +58,7 @@ describe('note view controller', () => {
       identifier: FeatureIdentifier.MarkdownProEditor,
     } as SNComponent)
 
-    componentManager.componentWithIdentifier = jest.fn().mockReturnValue({
+    componentManager.componentOrNativeFeatureForIdentifier = jest.fn().mockReturnValue({
       identifier: FeatureIdentifier.MarkdownProEditor,
     } as SNComponent)
 

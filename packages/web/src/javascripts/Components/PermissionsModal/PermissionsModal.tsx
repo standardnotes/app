@@ -1,4 +1,4 @@
-import { SNComponent } from '@standardnotes/snjs'
+import { ComponentInterface } from '@standardnotes/snjs'
 import { useCallback } from 'react'
 import Button from '@/Components/Button/Button'
 import ModalDialogButtons from '../Modal/ModalDialogButtons'
@@ -7,7 +7,7 @@ import Modal from '../Modal/Modal'
 type Props = {
   callback: (approved: boolean) => void
   dismiss: () => void
-  component: SNComponent
+  component: ComponentInterface
   permissionsString: string
 }
 

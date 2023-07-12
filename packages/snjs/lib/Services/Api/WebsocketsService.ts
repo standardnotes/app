@@ -1,19 +1,19 @@
 import { isErrorResponse } from '@standardnotes/responses'
 import { UserRolesChangedEvent } from '@standardnotes/domain-events'
-import { AbstractService, InternalEventBusInterface, StorageKey } from '@standardnotes/services'
+import {
+  AbstractService,
+  InternalEventBusInterface,
+  StorageKey,
+  StorageServiceInterface,
+} from '@standardnotes/services'
 import { WebSocketApiServiceInterface } from '@standardnotes/api'
-
-import { DiskStorageService } from '../Storage/DiskStorageService'
-
-export enum WebSocketsServiceEvent {
-  UserRoleMessageReceived = 'WebSocketMessageReceived',
-}
+import { WebSocketsServiceEvent } from './WebSocketsServiceEvent'
 
 export class SNWebSocketsService extends AbstractService<WebSocketsServiceEvent, UserRolesChangedEvent> {
   private webSocket?: WebSocket
 
   constructor(
-    private storageService: DiskStorageService,
+    private storageService: StorageServiceInterface,
     private webSocketUrl: string | undefined,
     private webSocketApiService: WebSocketApiServiceInterface,
     protected override internalEventBus: InternalEventBusInterface,

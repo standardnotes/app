@@ -1,7 +1,7 @@
 import { FileItemActionType } from '@/Components/AttachedFilesPopover/PopoverFileItemAction'
 import { NoteViewController } from '@/Components/NoteView/Controller/NoteViewController'
 import { AppPaneId } from '@/Components/Panes/AppPaneMetadata'
-import { PrefDefaults } from '@/Constants/PrefDefaults'
+
 import { createLinkFromItem } from '@/Utils/Items/Search/createLinkFromItem'
 import { LinkableItem } from '@/Utils/Items/Search/LinkableItem'
 import {
@@ -16,6 +16,7 @@ import {
   isNote,
   InternalEventBusInterface,
   isTag,
+  PrefDefaults,
 } from '@standardnotes/snjs'
 import { action, computed, makeObservable, observable } from 'mobx'
 import { AbstractViewController } from './Abstract/AbstractViewController'
@@ -77,7 +78,7 @@ export class LinkingController extends AbstractViewController {
   }
 
   get isEntitledToNoteLinking() {
-    return !!this.subscriptionController.onlineSubscription
+    return !!this.subscriptionController.hasFirstPartyOnlineOrOfflineSubscription
   }
 
   setIsLinkingPanelOpen = (open: boolean) => {

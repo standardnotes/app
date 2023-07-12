@@ -3,7 +3,13 @@ import {
   TOGGLE_LIST_PANE_KEYBOARD_COMMAND,
   TOGGLE_NAVIGATION_PANE_KEYBOARD_COMMAND,
 } from '@standardnotes/ui-services'
-import { ApplicationEvent, InternalEventBusInterface, PrefKey, removeFromArray } from '@standardnotes/snjs'
+import {
+  ApplicationEvent,
+  InternalEventBusInterface,
+  PrefKey,
+  removeFromArray,
+  PrefDefaults,
+} from '@standardnotes/snjs'
 import { AppPaneId } from '../../Components/Panes/AppPaneMetadata'
 import { isMobileScreen } from '@/Utils'
 import { makeObservable, observable, action, computed } from 'mobx'
@@ -11,7 +17,6 @@ import { Disposer } from '@/Types/Disposer'
 import { MediaQueryBreakpoints } from '@/Hooks/useMediaQuery'
 import { WebApplication } from '@/Application/WebApplication'
 import { AbstractViewController } from '../Abstract/AbstractViewController'
-import { PrefDefaults } from '@/Constants/PrefDefaults'
 import { log, LoggingDomain } from '@/Logging'
 import { PaneLayout } from './PaneLayout'
 import { panesForLayout } from './panesForLayout'

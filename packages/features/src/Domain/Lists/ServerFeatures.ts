@@ -1,4 +1,4 @@
-import { ServerFeatureDescription } from '../Feature/FeatureDescription'
+import { ServerFeatureDescription } from '../Feature/ServerFeatureDescription'
 import { PermissionName } from '../Permission/PermissionName'
 import { FeatureIdentifier } from '../Feature/FeatureIdentifier'
 import { RoleName } from '@standardnotes/domain-core'
@@ -42,16 +42,19 @@ export function serverFeatures(): ServerFeatureDescription[] {
       availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
     },
     {
+      name: 'Files maximum storage tier',
       identifier: FeatureIdentifier.FilesMaximumStorageTier,
       permission_name: PermissionName.FilesMaximumStorageTier,
       availableInRoles: [RoleName.NAMES.ProUser],
     },
     {
+      name: 'Files low storage tier',
       identifier: FeatureIdentifier.FilesLowStorageTier,
       permission_name: PermissionName.FilesLowStorageTier,
       availableInRoles: [RoleName.NAMES.PlusUser],
     },
     {
+      name: 'Files medium storage tier',
       identifier: FeatureIdentifier.SubscriptionSharing,
       permission_name: PermissionName.SubscriptionSharing,
       availableInRoles: [RoleName.NAMES.ProUser],

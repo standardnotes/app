@@ -1,35 +1,40 @@
 import { ComponentArea, ComponentPermission } from '@standardnotes/features'
-import { ItemContent } from '../../Abstract/Content/ItemContent'
 import { ComponentPackageInfo } from './PackageInfo'
+import { ItemContent } from '../../Abstract/Content/ItemContent'
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-export interface ComponentInterface {
-  componentData: Record<string, any>
-
+export type ComponentContentSpecialized = {
   /** Items that have requested a component to be disabled in its context */
-  disassociatedItemIds: string[]
+  disassociatedItemIds?: string[]
 
   /** Items that have requested a component to be enabled in its context */
-  associatedItemIds: string[]
+  associatedItemIds?: string[]
 
   local_url?: string
   hosted_url?: string
 
+  offlineOnly?: boolean
+  name: string
+  autoupdateDisabled?: boolean
+  package_info: ComponentPackageInfo
+  area: ComponentArea
+  permissions?: ComponentPermission[]
+  valid_until: Date | number
+
+  legacy_url?: string
+  isMobileDefault?: boolean
+  isDeprecated?: boolean
+
+  /** @deprecated */
+  active?: boolean
+
   /** @deprecated */
   url?: string
 
-  offlineOnly: boolean
-  name: string
-  autoupdateDisabled: boolean
-  package_info: ComponentPackageInfo
-  area: ComponentArea
-  permissions: ComponentPermission[]
-  valid_until: Date | number
-  active: boolean
-  legacy_url?: string
-  isMobileDefault: boolean
-  isDeprecated: boolean
-  isExplicitlyEnabledForItem(uuid: string): boolean
+  /**
+   * @deprecated
+   * Replaced with per-note component data stored in the note's ComponentDataDomain.
+   */
+  componentData?: Record<string, unknown>
 }
 
-export type ComponentContent = ComponentInterface & ItemContent
+export type ComponentContent = ItemContent & ComponentContentSpecialized

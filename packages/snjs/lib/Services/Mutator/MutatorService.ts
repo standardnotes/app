@@ -12,6 +12,7 @@ import { PayloadManager } from '../Payloads/PayloadManager'
 import { TagsToFoldersMigrationApplicator } from '@Lib/Migrations/Applicators/TagsToFolders'
 import {
   ActionsExtensionMutator,
+  ComponentInterface,
   ComponentMutator,
   CreateDecryptedMutatorForItem,
   DecryptedItemInterface,
@@ -39,7 +40,6 @@ import {
   SmartViewContent,
   SmartViewDefaultIconName,
   SNActionsExtension,
-  SNComponent,
   SNFeatureRepo,
   SNNote,
   SNTag,
@@ -205,19 +205,19 @@ export class MutatorService extends AbstractService implements MutatorClientInte
   }
 
   async changeComponent(
-    itemToLookupUuidFor: SNComponent,
+    itemToLookupUuidFor: ComponentInterface,
     mutate: (mutator: ComponentMutator) => void,
     mutationType: MutationType = MutationType.UpdateUserTimestamps,
     emitSource = PayloadEmitSource.LocalChanged,
     payloadSourceKey?: string,
-  ): Promise<SNComponent> {
-    const component = this.itemManager.findItem<SNComponent>(itemToLookupUuidFor.uuid)
+  ): Promise<ComponentInterface> {
+    const component = this.itemManager.findItem<ComponentInterface>(itemToLookupUuidFor.uuid)
     if (!component) {
       throw Error('Attempting to change non-existant component')
     }
     const mutator = new ComponentMutator(component, mutationType)
     await this.applyTransform(mutator, mutate, emitSource, payloadSourceKey)
-    return this.itemManager.findSureItem<SNComponent>(itemToLookupUuidFor.uuid)
+    return this.itemManager.findSureItem<ComponentInterface>(itemToLookupUuidFor.uuid)
   }
 
   async changeFeatureRepo(

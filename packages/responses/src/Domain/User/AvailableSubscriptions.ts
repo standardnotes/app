@@ -1,4 +1,4 @@
-import { FeatureDescription } from '@standardnotes/features'
+import { AnyFeatureDescription } from '@standardnotes/features'
 import { SubscriptionName } from '@standardnotes/common'
 
 export type AvailableSubscriptions = {
@@ -8,6 +8,6 @@ export type AvailableSubscriptions = {
       price: number
       period: string
     }[]
-    features: FeatureDescription[]
+    features: AnyFeatureDescription[]
   }
 }

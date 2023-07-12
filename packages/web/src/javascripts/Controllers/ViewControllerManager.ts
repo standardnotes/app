@@ -13,7 +13,7 @@ import { destroyAllObjectProperties } from '@/Utils'
 import {
   DeinitSource,
   WebOrDesktopDeviceInterface,
-  SubscriptionClientInterface,
+  SubscriptionManagerInterface,
   InternalEventHandlerInterface,
   InternalEventInterface,
 } from '@standardnotes/snjs'
@@ -75,7 +75,7 @@ export class ViewControllerManager implements InternalEventHandlerInterface {
 
   private appEventObserverRemovers: (() => void)[] = []
 
-  private subscriptionManager: SubscriptionClientInterface
+  private subscriptionManager: SubscriptionManagerInterface
   private persistenceService: PersistenceService
   private applicationEventObserver: EventObserverInterface
   private toastService: ToastServiceInterface

@@ -1,6 +1,5 @@
 import RevisionContentLocked from './RevisionContentLocked'
 import { observer } from 'mobx-react-lite'
-import { SubscriptionController } from '@/Controllers/Subscription/SubscriptionController'
 import { NoteHistoryController, RevisionContentState } from '@/Controllers/NoteHistory/NoteHistoryController'
 import Spinner from '@/Components/Spinner/Spinner'
 import { ReadonlyNoteContent } from '../NoteView/ReadonlyNoteContent'
@@ -9,10 +8,9 @@ import { SNNote } from '@standardnotes/snjs'
 type Props = {
   noteHistoryController: NoteHistoryController
   note: SNNote
-  subscriptionController: SubscriptionController
 }
 
-const HistoryModalContentPane = ({ noteHistoryController, subscriptionController, note }: Props) => {
+const HistoryModalContentPane = ({ noteHistoryController, note }: Props) => {
   const { selectedRevision, contentState } = noteHistoryController
 
   switch (contentState) {
@@ -30,7 +28,7 @@ const HistoryModalContentPane = ({ noteHistoryController, subscriptionController
       }
       return <ReadonlyNoteContent note={note} content={selectedRevision.payload.content} showLinkedItems={false} />
     case RevisionContentState.NotEntitled:
-      return <RevisionContentLocked subscriptionController={subscriptionController} />
+      return <RevisionContentLocked />
     default:
       return null
   }

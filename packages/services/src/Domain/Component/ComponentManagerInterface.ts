@@ -1,26 +1,47 @@
-import { ComponentArea, FeatureIdentifier } from '@standardnotes/features'
-import { ActionObserver, PermissionDialog, SNComponent, SNNote } from '@standardnotes/models'
+import { ComponentViewerItem } from './ComponentViewerItem'
+import {
+  ComponentArea,
+  ComponentFeatureDescription,
+  EditorFeatureDescription,
+  IframeComponentFeatureDescription,
+  ThemeFeatureDescription,
+} from '@standardnotes/features'
+import {
+  ActionObserver,
+  ComponentInterface,
+  ComponentOrNativeFeature,
+  PermissionDialog,
+  SNNote,
+} from '@standardnotes/models'
 
 import { DesktopManagerInterface } from '../Device/DesktopManagerInterface'
 import { ComponentViewerInterface } from './ComponentViewerInterface'
 
 export interface ComponentManagerInterface {
-  urlForComponent(component: SNComponent): string | undefined
+  urlForComponent(uiFeature: ComponentOrNativeFeature<ComponentFeatureDescription>): string | undefined
   setDesktopManager(desktopManager: DesktopManagerInterface): void
-  componentsForArea(area: ComponentArea): SNComponent[]
-  editorForNote(note: SNNote): SNComponent | undefined
-  doesEditorChangeRequireAlert(from: SNComponent | undefined, to: SNComponent | undefined): boolean
+  thirdPartyComponentsForArea(area: ComponentArea): ComponentInterface[]
+  editorForNote(note: SNNote): ComponentOrNativeFeature<EditorFeatureDescription | IframeComponentFeatureDescription>
+  doesEditorChangeRequireAlert(
+    from: ComponentOrNativeFeature<IframeComponentFeatureDescription | EditorFeatureDescription> | undefined,
+    to: ComponentOrNativeFeature<IframeComponentFeatureDescription | EditorFeatureDescription> | undefined,
+  ): boolean
   showEditorChangeAlert(): Promise<boolean>
   destroyComponentViewer(viewer: ComponentViewerInterface): void
   createComponentViewer(
-    component: SNComponent,
-    contextItem?: string,
+    uiFeature: ComponentOrNativeFeature<IframeComponentFeatureDescription>,
+    item: ComponentViewerItem,
     actionObserver?: ActionObserver,
     urlOverride?: string,
   ): ComponentViewerInterface
   presentPermissionsDialog(_dialog: PermissionDialog): void
-  legacyGetDefaultEditor(): SNComponent | undefined
-  componentWithIdentifier(identifier: FeatureIdentifier | string): SNComponent | undefined
-  toggleTheme(uuid: string): Promise<void>
-  toggleComponent(uuid: string): Promise<void>
+  legacyGetDefaultEditor(): ComponentInterface | undefined
+
+  isThemeActive(theme: ComponentOrNativeFeature<ThemeFeatureDescription>): boolean
+  toggleTheme(theme: ComponentOrNativeFeature<ThemeFeatureDescription>): Promise<void>
+  getActiveThemes(): ComponentOrNativeFeature<ThemeFeatureDescription>[]
+  getActiveThemesIdentifiers(): string[]
+
+  isComponentActive(component: ComponentInterface): boolean
+  toggleComponent(component: ComponentInterface): Promise<void>
 }

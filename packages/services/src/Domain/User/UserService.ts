@@ -10,13 +10,6 @@ import {
 import { KeyParamsOrigination, UserRequestType } from '@standardnotes/common'
 import { UuidGenerator } from '@standardnotes/utils'
 import { UserApiServiceInterface, UserRegistrationResponseBody } from '@standardnotes/api'
-import {
-  AccountEventData,
-  AccountEvent,
-  SignedInOrRegisteredEventPayload,
-  CredentialsChangeFunctionResponse,
-} from '@standardnotes/services'
-
 import * as Messages from '../Strings/Messages'
 import { InfoStrings } from '../Strings/InfoStrings'
 import { SyncServiceInterface } from '../Sync/SyncServiceInterface'
@@ -39,6 +32,10 @@ import { SessionsClientInterface } from '../Session/SessionsClientInterface'
 import { ProtectionsClientInterface } from '../Protection/ProtectionClientInterface'
 import { InternalEventHandlerInterface } from '../Internal/InternalEventHandlerInterface'
 import { InternalEventInterface } from '../Internal/InternalEventInterface'
+import { AccountEventData } from './AccountEventData'
+import { AccountEvent } from './AccountEvent'
+import { SignedInOrRegisteredEventPayload } from './SignedInOrRegisteredEventPayload'
+import { CredentialsChangeFunctionResponse } from './CredentialsChangeFunctionResponse'
 
 export class UserService
   extends AbstractService<AccountEvent, AccountEventData>
@@ -113,6 +110,10 @@ export class UserService
     ;(this.challengeService as unknown) = undefined
     ;(this.protectionService as unknown) = undefined
     ;(this.userApiService as unknown) = undefined
+  }
+
+  getUserUuid(): string {
+    return this.sessionManager.userUuid
   }
 
   isSignedIn(): boolean {

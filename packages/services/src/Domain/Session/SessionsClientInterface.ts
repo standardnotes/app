@@ -15,6 +15,7 @@ export interface SessionsClientInterface {
   isSignedIn(): boolean
   get userUuid(): string
   getSureUser(): User
+  isSignedIntoFirstPartyServer(): boolean
 
   isCurrentSessionReadOnly(): boolean | undefined
   register(email: string, password: string, ephemeral: boolean): Promise<UserRegistrationResponseBody>

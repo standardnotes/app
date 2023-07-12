@@ -5,7 +5,7 @@
 
   #navigation {
     flex: none !important;
-    width: 10px !important;
+    width: 49px !important;
     transition: width 0.25s;
   }
 

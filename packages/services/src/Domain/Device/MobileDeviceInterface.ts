@@ -15,6 +15,7 @@ export interface MobileDeviceInterface extends DeviceInterface {
   authenticateWithBiometrics(): Promise<boolean>
   hideMobileInterfaceFromScreenshots(): void
   stopHidingMobileInterfaceFromScreenshots(): void
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   consoleLog(...args: any[]): void
   handleThemeSchemeChange(isDark: boolean, bgColor: string): void
   shareBase64AsFile(base64: string, filename: string): Promise<void>

@@ -9,6 +9,7 @@ import {
   TagMutator,
   TagPreferences,
   VectorIconNameOrEmoji,
+  PrefDefaults,
 } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useEffect, useState } from 'react'
@@ -16,7 +17,6 @@ import Icon from '@/Components/Icon/Icon'
 import Menu from '@/Components/Menu/Menu'
 import MenuItemSeparator from '@/Components/Menu/MenuItemSeparator'
 import { DisplayOptionsMenuProps } from './DisplayOptionsMenuProps'
-import { PrefDefaults } from '@/Constants/PrefDefaults'
 import NewNotePreferences from './NewNotePreferences'
 import { PreferenceMode } from './PreferenceMode'
 import { classNames } from '@standardnotes/utils'
@@ -93,7 +93,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
     : selectedTag.preferences
   const [currentMode, setCurrentMode] = useState<PreferenceMode>(selectedTagPreferences ? 'tag' : 'global')
   const [preferences, setPreferences] = useState<TagPreferences>({})
-  const hasSubscription = application.features.hasFirstPartySubscription()
+  const hasSubscription = application.controllers.subscriptionController.hasFirstPartyOnlineOrOfflineSubscription
   const controlsDisabled = currentMode === 'tag' && !hasSubscription
   const isDailyEntry = selectedTagPreferences?.entryMode === 'daily'
 

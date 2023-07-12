@@ -38,7 +38,7 @@ const PanesSystemComponent = () => {
   const [panesPendingEntrance, setPanesPendingEntrance] = useState<AppPaneId[]>([])
   const [panesPendingExit, setPanesPendingExit] = useState<AppPaneId[]>([])
 
-  const viewControllerManager = application.getViewControllerManager()
+  const viewControllerManager = application.controllers
 
   const [navigationPanelWidth, setNavigationPanelWidth] = useState<number>(
     application.getPreference(PrefKey.TagsPanelWidth, PLACEHOLDER_NAVIGATION_PANEL_WIDTH),

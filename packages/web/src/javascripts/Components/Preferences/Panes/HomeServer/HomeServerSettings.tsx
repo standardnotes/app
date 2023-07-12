@@ -25,7 +25,7 @@ const HomeServerSettings = () => {
   const homeServerService = application.homeServer as HomeServerServiceInterface
   const featuresService = application.features
   const sessionsService = application.sessions
-  const viewControllerManager = application.getViewControllerManager()
+  const viewControllerManager = application.controllers
 
   const logsTextarea = useRef<HTMLTextAreaElement>(null)
 

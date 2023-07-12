@@ -10,11 +10,14 @@ import { FileErrorCodes } from './File/FileErrorCodes'
 
 const Protocol = 'http'
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function logError(...message: any) {
   console.error('extServer:', ...message)
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function log(...message: any) {
+  // eslint-disable-next-line no-console
   console.log('extServer:', ...message)
 }
 
@@ -71,8 +74,8 @@ async function handleRequest(request: IncomingMessage, response: ServerResponse)
     response.writeHead(200)
 
     response.end(data)
-  } catch (error: any) {
-    onRequestError(error, response)
+  } catch (error) {
+    onRequestError(error as Error, response)
   }
 }
 

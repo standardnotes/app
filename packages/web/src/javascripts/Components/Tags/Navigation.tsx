@@ -24,7 +24,7 @@ type Props = {
 }
 
 const Navigation = forwardRef<HTMLDivElement, Props>(({ application, className, children, id }, ref) => {
-  const viewControllerManager = useMemo(() => application.getViewControllerManager(), [application])
+  const viewControllerManager = useMemo(() => application.controllers, [application])
   const { setPaneLayout } = useResponsiveAppPane()
 
   const [hasPasscode, setHasPasscode] = useState(() => application.hasPasscode())

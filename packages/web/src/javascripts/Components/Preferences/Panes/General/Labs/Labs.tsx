@@ -1,6 +1,13 @@
 import { Text, Title } from '@/Components/Preferences/PreferencesComponents/Content'
 import { WebApplication } from '@/Application/WebApplication'
-import { ApplicationEvent, FeatureIdentifier, FeatureStatus, FindNativeFeature, PrefKey } from '@standardnotes/snjs'
+import {
+  ApplicationEvent,
+  FeatureIdentifier,
+  FeatureStatus,
+  FindNativeFeature,
+  PrefKey,
+  PrefDefaults,
+} from '@standardnotes/snjs'
 import { Fragment, FunctionComponent, useCallback, useEffect, useState } from 'react'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import PreferencesGroup from '../../../PreferencesComponents/PreferencesGroup'
@@ -8,7 +15,6 @@ import PreferencesSegment from '../../../PreferencesComponents/PreferencesSegmen
 import LabsFeature from './LabsFeature'
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
-import { PrefDefaults } from '@/Constants/PrefDefaults'
 
 type ExperimentalFeatureItem = {
   identifier: FeatureIdentifier

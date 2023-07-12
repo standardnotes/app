@@ -49,7 +49,6 @@ const SubscriptionPaths = {
   purchase: '/v1/purchase',
   subscription: (userUuid: string) => `/v1/users/${userUuid}/subscription`,
   subscriptionTokens: '/v1/subscription-tokens',
-  userFeatures: (userUuid: string) => `/v1/users/${userUuid}/features`,
 }
 
 const SubscriptionPathsV2 = {

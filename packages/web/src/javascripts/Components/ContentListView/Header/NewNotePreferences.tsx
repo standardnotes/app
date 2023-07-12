@@ -7,10 +7,11 @@ import {
   isSmartView,
   isSystemView,
   SystemViewId,
+  PrefDefaults,
+  FeatureStatus,
 } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { ChangeEventHandler, FunctionComponent, useCallback, useEffect, useRef, useState } from 'react'
-import { PrefDefaults } from '@/Constants/PrefDefaults'
 import Dropdown from '@/Components/Dropdown/Dropdown'
 import { DropdownItem } from '@/Components/Dropdown/DropdownItem'
 import { WebApplication } from '@/Application/WebApplication'
@@ -26,6 +27,8 @@ dayjs.extend(dayjsTimezone)
 import { EditorOption, getDropdownItemsForAllEditors } from '@/Utils/DropdownItemsForEditors'
 import { classNames } from '@standardnotes/utils'
 import { NoteTitleFormatOptions } from './NoteTitleFormatOptions'
+
+import { usePremiumModal } from '@/Hooks/usePremiumModal'
 
 const PrefChangeDebounceTimeInMs = 25
 
@@ -46,6 +49,8 @@ const NewNotePreferences: FunctionComponent<Props> = ({
   changePreferencesCallback,
   disabled,
 }: Props) => {
+  const premiumModal = usePremiumModal()
+
   const isSystemTag = isSmartView(selectedTag) && isSystemView(selectedTag)
   const selectedTagPreferences = isSystemTag
     ? application.getPreference(PrefKey.SystemViewPreferences)?.[selectedTag.uuid as SystemViewId]
@@ -114,8 +119,15 @@ const NewNotePreferences: FunctionComponent<Props> = ({
     setEditorItems(getDropdownItemsForAllEditors(application))
   }, [application])
 
-  const setDefaultEditor = useCallback(
+  const selectEditorForNewNoteDefault = useCallback(
     (value: EditorOption['value']) => {
+      if (application.features.getFeatureStatus(value) !== FeatureStatus.Entitled) {
+        const editorItem = editorItems.find((item) => item.value === value)
+        if (editorItem) {
+          premiumModal.activate(editorItem.label)
+        }
+        return
+      }
       setDefaultEditorIdentifier(value as FeatureIdentifier)
 
       if (mode === 'global') {
@@ -124,7 +136,7 @@ const NewNotePreferences: FunctionComponent<Props> = ({
         void changePreferencesCallback({ editorIdentifier: value })
       }
     },
-    [application, changePreferencesCallback, mode],
+    [application, mode, editorItems, premiumModal, changePreferencesCallback],
   )
 
   const debounceTimeoutRef = useRef<number>()
@@ -158,7 +170,7 @@ const NewNotePreferences: FunctionComponent<Props> = ({
             label="Select the default note type"
             items={editorItems}
             value={defaultEditorIdentifier}
-            onChange={(value) => setDefaultEditor(value as EditorOption['value'])}
+            onChange={(value) => selectEditorForNewNoteDefault(value as EditorOption['value'])}
           />
         </div>
       </div>

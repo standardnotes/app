@@ -1,4 +1,4 @@
-import { ButtonType, ContentType, SNComponent } from '@standardnotes/snjs'
+import { ButtonType, ContentType } from '@standardnotes/snjs'
 import Button from '@/Components/Button/Button'
 import DecoratedInput from '@/Components/Input/DecoratedInput'
 import { WebApplication } from '@/Application/WebApplication'
@@ -63,7 +63,7 @@ const PackagesPreferencesSection: FunctionComponent<Props> = ({
   }
 
   const submitExtensionUrl = async (url: string) => {
-    const component = await application.features.downloadExternalFeature(url)
+    const component = await application.features.downloadRemoteThirdPartyFeature(url)
     if (component) {
       setConfirmableExtension(component)
     }
@@ -88,10 +88,6 @@ const PackagesPreferencesSection: FunctionComponent<Props> = ({
 
     if (!hasPackageInfo) {
       return false
-    }
-
-    if (extension instanceof SNComponent) {
-      return !['modal', 'rooms'].includes(extension.area)
     }
 
     return true

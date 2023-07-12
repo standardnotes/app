@@ -1,26 +1,17 @@
-import { Either } from '@standardnotes/common'
 import { FilesApiInterface } from '@standardnotes/files'
-import { Session } from '@standardnotes/domain-core'
-import { Role } from '@standardnotes/security'
-
 import { AbstractService } from '../Service/AbstractService'
+import { ApiServiceEvent } from './ApiServiceEvent'
+import { ApiServiceEventData } from './ApiServiceEventData'
+import { SNFeatureRepo } from '@standardnotes/models'
+import { ClientDisplayableError, HttpResponse } from '@standardnotes/responses'
+import { AnyFeatureDescription } from '@standardnotes/features'
 
-/* istanbul ignore file */
+export interface ApiServiceInterface extends AbstractService<ApiServiceEvent, ApiServiceEventData>, FilesApiInterface {
+  isThirdPartyHostUsed(): boolean
 
-export enum ApiServiceEvent {
-  MetaReceived = 'MetaReceived',
-  SessionRefreshed = 'SessionRefreshed',
+  downloadOfflineFeaturesFromRepo(
+    repo: SNFeatureRepo,
+  ): Promise<{ features: AnyFeatureDescription[]; roles: string[] } | ClientDisplayableError>
+
+  downloadFeatureUrl(url: string): Promise<HttpResponse>
 }
-
-export type MetaReceivedData = {
-  userUuid: string
-  userRoles: Role[]
-}
-
-export type SessionRefreshedData = {
-  session: Session
-}
-
-export type ApiServiceEventData = Either<MetaReceivedData, SessionRefreshedData>
-
-export interface ApiServiceInterface extends AbstractService<ApiServiceEvent, ApiServiceEventData>, FilesApiInterface {}

@@ -47,7 +47,7 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
   const currentWriteErrorDialog = useRef<Promise<void> | null>(null)
   const currentLoadErrorDialog = useRef<Promise<void> | null>(null)
 
-  const viewControllerManager = application.getViewControllerManager()
+  const viewControllerManager = application.controllers
 
   useEffect(() => {
     const desktopService = application.getDesktopService()
@@ -198,7 +198,7 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
       <ApplicationProvider application={application}>
         <CommandProvider service={application.keyboardService}>
           <AndroidBackHandlerProvider application={application}>
-            <ResponsivePaneProvider paneController={application.getViewControllerManager().paneController}>
+            <ResponsivePaneProvider paneController={application.controllers.paneController}>
               <PremiumModalProvider
                 application={application}
                 featuresController={viewControllerManager.featuresController}
@@ -230,7 +230,7 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
     <ApplicationProvider application={application}>
       <CommandProvider service={application.keyboardService}>
         <AndroidBackHandlerProvider application={application}>
-          <ResponsivePaneProvider paneController={application.getViewControllerManager().paneController}>
+          <ResponsivePaneProvider paneController={application.controllers.paneController}>
             <PremiumModalProvider
               application={application}
               featuresController={viewControllerManager.featuresController}
@@ -252,7 +252,6 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
                       application={application}
                       historyModalController={viewControllerManager.historyModalController}
                       selectionController={viewControllerManager.selectionController}
-                      subscriptionController={viewControllerManager.subscriptionController}
                     />
                   </>
                   {renderChallenges()}

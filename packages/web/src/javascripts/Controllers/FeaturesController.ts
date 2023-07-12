@@ -63,7 +63,7 @@ export class FeaturesController extends AbstractViewController {
           case ApplicationEvent.DidPurchaseSubscription:
             this.showPurchaseSuccessAlert()
             break
-          case ApplicationEvent.FeaturesUpdated:
+          case ApplicationEvent.FeaturesAvailabilityChanged:
           case ApplicationEvent.Launched:
           case ApplicationEvent.LocalDataLoaded:
           case ApplicationEvent.UserRolesChanged:

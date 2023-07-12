@@ -31,7 +31,7 @@ const AccountPreferences = ({ application, viewControllerManager }: Props) => {
           <Sync application={application} />
         </>
       )}
-      <Subscription application={application} viewControllerManager={viewControllerManager} />
+      <Subscription />
       <SubscriptionSharing application={application} viewControllerManager={viewControllerManager} />
       {application.hasAccount() && viewControllerManager.featuresController.entitledToFiles && (
         <FilesSection application={application} />

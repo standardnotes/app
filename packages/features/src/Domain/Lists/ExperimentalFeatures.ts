@@ -1,5 +1,5 @@
-import { FeatureDescription } from '../Feature/FeatureDescription'
+import { AnyFeatureDescription } from '../Feature/AnyFeatureDescription'
 
-export function experimentalFeatures(): FeatureDescription[] {
+export function experimentalFeatures(): AnyFeatureDescription[] {
   return []
 }

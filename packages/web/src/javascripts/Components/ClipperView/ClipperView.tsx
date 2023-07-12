@@ -64,7 +64,7 @@ const ClipperView = ({
     () => application.features.getFeatureStatus(FeatureIdentifier.Extension) === FeatureStatus.Entitled,
   )
   const isEntitledRef = useStateRef(isEntitledToExtension)
-  const hasSubscription = application.hasValidSubscription()
+  const hasSubscription = application.hasValidFirstPartySubscription()
   useEffect(() => {
     return application.addEventObserver(async (event) => {
       switch (event) {
@@ -74,7 +74,7 @@ const ClipperView = ({
           setUser(application.getUser())
           setIsEntitled(application.features.getFeatureStatus(FeatureIdentifier.Extension) === FeatureStatus.Entitled)
           break
-        case ApplicationEvent.FeaturesUpdated:
+        case ApplicationEvent.FeaturesAvailabilityChanged:
           setIsEntitled(application.features.getFeatureStatus(FeatureIdentifier.Extension) === FeatureStatus.Entitled)
           break
       }

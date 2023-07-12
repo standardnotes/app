@@ -7,9 +7,11 @@ import {
   ComponentPermission,
   FindNativeFeature,
   NoteType,
+  isEditorFeatureDescription,
 } from '@standardnotes/features'
 import { AppDataField } from '../../Abstract/Item/Types/AppDataField'
-import { ComponentContent, ComponentInterface } from './ComponentContent'
+import { ComponentContent } from './ComponentContent'
+import { ComponentInterface } from './ComponentInterface'
 import { ConflictStrategy } from '../../Abstract/Item/Types/ConflictStrategy'
 import { DecryptedItem } from '../../Abstract/Item/Implementations/DecryptedItem'
 import { DecryptedPayloadInterface } from '../../Abstract/Payload/Interfaces/DecryptedPayload'
@@ -19,12 +21,24 @@ import { Predicate } from '../../Runtime/Predicate/Predicate'
 import { ItemInterface } from '../../Abstract/Item/Interfaces/ItemInterface'
 import { DecryptedItemInterface } from './../../Abstract/Item/Interfaces/DecryptedItem'
 import { ComponentPackageInfo } from './PackageInfo'
+import { isDecryptedItem } from '../../Abstract/Item'
 import { ContentType } from '@standardnotes/domain-core'
 
-export const isComponent = (x: ItemInterface): x is SNComponent => x.content_type === ContentType.TYPES.Component
+export function isComponent(x: ItemInterface): x is ComponentInterface {
+  if (!isDecryptedItem(x as DecryptedItemInterface)) {
+    return false
+  }
 
-export const isComponentOrTheme = (x: ItemInterface): x is SNComponent =>
-  x.content_type === ContentType.TYPES.Component || x.content_type === ContentType.TYPES.Theme
+  return x.content_type === ContentType.TYPES.Component
+}
+
+export function isComponentOrTheme(x: ItemInterface): x is ComponentInterface {
+  if (!isDecryptedItem(x as DecryptedItemInterface)) {
+    return false
+  }
+
+  return x.content_type === ContentType.TYPES.Component || x.content_type === ContentType.TYPES.Theme
+}
 
 /**
  * Components are mostly iframe based extensions that communicate with the SN parent
@@ -32,7 +46,7 @@ export const isComponentOrTheme = (x: ItemInterface): x is SNComponent =>
  * only by its url.
  */
 export class SNComponent extends DecryptedItem<ComponentContent> implements ComponentInterface {
-  public readonly componentData: Record<string, unknown>
+  public readonly legacyComponentData: Record<string, unknown>
   /** Items that have requested a component to be disabled in its context */
   public readonly disassociatedItemIds: string[]
   /** Items that have requested a component to be enabled in its context */
@@ -46,14 +60,12 @@ export class SNComponent extends DecryptedItem<ComponentContent> implements Comp
   public readonly area: ComponentArea
   public readonly permissions: ComponentPermission[] = []
   public readonly valid_until: Date
-  public readonly active: boolean
+  public readonly legacyActive: boolean
   public readonly legacy_url?: string
   public readonly isMobileDefault: boolean
 
   constructor(payload: DecryptedPayloadInterface<ComponentContent>) {
     super(payload)
-    /** Custom data that a component can store in itself */
-    this.componentData = this.payload.content.componentData || {}
 
     if (payload.content.hosted_url && isValidUrl(payload.content.hosted_url)) {
       this.hosted_url = payload.content.hosted_url
@@ -65,16 +77,16 @@ export class SNComponent extends DecryptedItem<ComponentContent> implements Comp
     this.local_url = payload.content.local_url
 
     this.valid_until = new Date(payload.content.valid_until || 0)
-    this.offlineOnly = payload.content.offlineOnly
+    this.offlineOnly = payload.content.offlineOnly ?? false
     this.name = payload.content.name
     this.area = payload.content.area
     this.package_info = payload.content.package_info || {}
     this.permissions = payload.content.permissions || []
-    this.active = payload.content.active
-    this.autoupdateDisabled = payload.content.autoupdateDisabled
+    this.autoupdateDisabled = payload.content.autoupdateDisabled ?? false
     this.disassociatedItemIds = payload.content.disassociatedItemIds || []
     this.associatedItemIds = payload.content.associatedItemIds || []
-    this.isMobileDefault = payload.content.isMobileDefault
+    this.isMobileDefault = payload.content.isMobileDefault ?? false
+
     /**
      * @legacy
      * We don't want to set this.url directly, as we'd like to phase it out.
@@ -83,6 +95,10 @@ export class SNComponent extends DecryptedItem<ComponentContent> implements Comp
      * hosted_url is the url replacement.
      */
     this.legacy_url = !payload.content.hosted_url ? payload.content.url : undefined
+
+    this.legacyComponentData = this.payload.content.componentData || {}
+
+    this.legacyActive = payload.content.active ?? false
   }
 
   /** Do not duplicate components under most circumstances. Always keep original */
@@ -121,18 +137,6 @@ export class SNComponent extends DecryptedItem<ComponentContent> implements Comp
 
   public getLastSize(): unknown {
     return this.getAppDomainValue(AppDataField.LastSize)
-  }
-
-  /**
-   * The key used to look up data that this component may have saved to an item.
-   * This data will be stored on the item using this key.
-   */
-  public getClientDataKey(): string {
-    if (this.legacy_url) {
-      return this.legacy_url
-    } else {
-      return this.uuid
-    }
   }
 
   public hasValidHostedUrl(): boolean {
@@ -180,7 +184,11 @@ export class SNComponent extends DecryptedItem<ComponentContent> implements Comp
   }
 
   public get noteType(): NoteType {
-    return this.package_info.note_type || NoteType.Unknown
+    if (isEditorFeatureDescription(this.package_info)) {
+      return this.package_info.note_type ?? NoteType.Unknown
+    }
+
+    return NoteType.Unknown
   }
 
   public get isDeprecated(): boolean {

@@ -1,3 +1,6 @@
 export * from './Component'
 export * from './ComponentMutator'
 export * from './ComponentContent'
+export * from './ComponentInterface'
+export * from './ComponentOrNativeFeature'
+export * from './PackageInfo'

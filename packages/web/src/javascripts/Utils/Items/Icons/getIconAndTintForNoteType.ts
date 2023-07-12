@@ -1,4 +1,4 @@
-import { PlainEditorMetadata, SuperEditorMetadata } from '@/Constants/Constants'
+import { SuperEditorMetadata } from '@/Constants/Constants'
 import { NoteType } from '@standardnotes/features'
 import { IconType } from '@standardnotes/models'
 
@@ -6,7 +6,7 @@ export function getIconAndTintForNoteType(noteType?: NoteType, subtle?: boolean)
   switch (noteType) {
     case undefined:
     case NoteType.Plain:
-      return [PlainEditorMetadata.icon, PlainEditorMetadata.iconTintNumber]
+      return ['plain-text', 1]
     case NoteType.RichText:
       return ['rich-text', 1]
     case NoteType.Markdown:
@@ -26,6 +26,6 @@ export function getIconAndTintForNoteType(noteType?: NoteType, subtle?: boolean)
       ]
     case NoteType.Unknown:
     default:
-      return ['editor', PlainEditorMetadata.iconTintNumber]
+      return ['editor', 1]
   }
 }

@@ -12,6 +12,7 @@ import {
   EditorLineWidth,
   InternalEventBusInterface,
   MutationType,
+  PrefDefaults,
 } from '@standardnotes/snjs'
 import { makeObservable, observable, action, computed, runInAction } from 'mobx'
 import { WebApplication } from '../../Application/WebApplication'
@@ -20,7 +21,6 @@ import { SelectedItemsController } from '../SelectedItemsController'
 import { ItemListController } from '../ItemList/ItemListController'
 import { NavigationController } from '../Navigation/NavigationController'
 import { NotesControllerInterface } from './NotesControllerInterface'
-import { PrefDefaults } from '@/Constants/PrefDefaults'
 
 export class NotesController extends AbstractViewController implements NotesControllerInterface {
   shouldLinkToParentFolders: boolean

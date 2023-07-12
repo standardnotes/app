@@ -1,5 +1,5 @@
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
-import { classNames, EditorLineWidth, PrefKey, SNNote } from '@standardnotes/snjs'
+import { classNames, EditorLineWidth, PrefKey, SNNote, PrefDefaults } from '@standardnotes/snjs'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import Button from '../Button/Button'
 import Modal, { ModalAction } from '../Modal/Modal'
@@ -9,7 +9,6 @@ import { EditorMargins, EditorMaxWidths } from './EditorWidths'
 import { useApplication } from '../ApplicationProvider'
 import ModalOverlay from '../Modal/ModalOverlay'
 import { CHANGE_EDITOR_WIDTH_COMMAND } from '@standardnotes/ui-services'
-import { PrefDefaults } from '@/Constants/PrefDefaults'
 import { observer } from 'mobx-react-lite'
 import Switch from '../Switch/Switch'
 
@@ -155,7 +154,7 @@ const EditorWidthSelectionModal = ({
 
 const EditorWidthSelectionModalWrapper = () => {
   const application = useApplication()
-  const { notesController } = application.getViewControllerManager()
+  const { notesController } = application.controllers
 
   const [isOpen, setIsOpen] = useState(false)
   const [isGlobal, setIsGlobal] = useState(false)

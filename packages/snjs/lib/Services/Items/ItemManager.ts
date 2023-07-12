@@ -35,8 +35,8 @@ export class ItemManager extends Services.AbstractService implements Services.It
   >
   private tagDisplayController!: Models.ItemDisplayController<Models.SNTag, Models.TagsDisplayOptions>
   private itemsKeyDisplayController!: Models.ItemDisplayController<SNItemsKey>
-  private componentDisplayController!: Models.ItemDisplayController<Models.SNComponent>
-  private themeDisplayController!: Models.ItemDisplayController<Models.SNTheme>
+  private componentDisplayController!: Models.ItemDisplayController<Models.ComponentInterface>
+  private themeDisplayController!: Models.ItemDisplayController<Models.ThemeInterface>
   private fileDisplayController!: Models.ItemDisplayController<Models.FileItem>
   private smartViewDisplayController!: Models.ItemDisplayController<Models.SmartView>
 
@@ -120,7 +120,7 @@ export class ItemManager extends Services.AbstractService implements Services.It
     return this.invalidItems.filter((item) => !item.key_system_identifier)
   }
 
-  public createItemFromPayload(payload: Models.DecryptedPayloadInterface): Models.DecryptedItemInterface {
+  public createItemFromPayload<T extends Models.DecryptedItemInterface>(payload: Models.DecryptedPayloadInterface): T {
     return Models.CreateDecryptedItemFromPayload(payload)
   }
 
@@ -224,7 +224,7 @@ export class ItemManager extends Services.AbstractService implements Services.It
     return this.itemsKeyDisplayController.items()
   }
 
-  public getDisplayableComponents(): (Models.SNComponent | Models.SNTheme)[] {
+  public getDisplayableComponents(): (Models.ComponentInterface | Models.ThemeInterface)[] {
     return [...this.componentDisplayController.items(), ...this.themeDisplayController.items()]
   }
 
@@ -275,10 +275,6 @@ export class ItemManager extends Services.AbstractService implements Services.It
     return this.collection.findAllDecrypted(uuids) as T[]
   }
 
-  /**
-   * If item is not found, an `undefined` element
-   * will be inserted into the array.
-   */
   findItemsIncludingBlanks<T extends Models.DecryptedItemInterface>(uuids: UuidString[]): (T | undefined)[] {
     return this.collection.findAllDecryptedWithBlanks(uuids) as (T | undefined)[]
   }

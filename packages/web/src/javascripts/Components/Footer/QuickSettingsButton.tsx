@@ -1,6 +1,6 @@
 import { WebApplication } from '@/Application/WebApplication'
 import { QuickSettingsController } from '@/Controllers/QuickSettingsController'
-import { FeatureIdentifier, SNTheme } from '@standardnotes/snjs'
+import { ComponentOrNativeFeature, GetDarkThemeFeature } from '@standardnotes/snjs'
 import { TOGGLE_DARK_MODE_COMMAND } from '@standardnotes/ui-services'
 import { classNames } from '@standardnotes/utils'
 import { useEffect, useRef } from 'react'
@@ -25,12 +25,7 @@ const QuickSettingsButton = ({ application, isOpen, toggleMenu, quickSettingsMen
     return commandService.addCommandHandler({
       command: TOGGLE_DARK_MODE_COMMAND,
       onKeyDown: () => {
-        const darkTheme = application.items
-          .getDisplayableComponents()
-          .find((theme) => theme.package_info.identifier === FeatureIdentifier.DarkTheme) as SNTheme | undefined
-        if (darkTheme) {
-          void application.componentManager.toggleTheme(darkTheme.uuid)
-        }
+        void application.componentManager.toggleTheme(new ComponentOrNativeFeature(GetDarkThemeFeature()))
       },
     })
   }, [application, commandService])
@@ -57,7 +52,7 @@ const QuickSettingsButton = ({ application, isOpen, toggleMenu, quickSettingsMen
         align="start"
         className="py-2"
       >
-        <QuickSettingsMenu quickSettingsMenuController={quickSettingsMenuController} application={application} />
+        <QuickSettingsMenu quickSettingsMenuController={quickSettingsMenuController} />
       </Popover>
     </>
   )

@@ -1,6 +1,5 @@
 import { useApplication } from '@/Components/ApplicationProvider'
-import { PrefDefaults } from '@/Constants/PrefDefaults'
-import { ApplicationEvent, PrefKey } from '@standardnotes/snjs'
+import { ApplicationEvent, PrefKey, PrefDefaults } from '@standardnotes/snjs'
 import { useEffect, useState } from 'react'
 
 export default function usePreference<Key extends PrefKey>(preference: Key) {

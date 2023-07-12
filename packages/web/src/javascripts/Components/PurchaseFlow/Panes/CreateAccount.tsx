@@ -51,7 +51,7 @@ const CreateAccount: FunctionComponent<Props> = ({ viewControllerManager, applic
   }
 
   const subscribeWithoutAccount = () => {
-    application.getViewControllerManager().purchaseFlowController.openPurchaseWebpage()
+    application.controllers.purchaseFlowController.openPurchaseWebpage()
   }
 
   const handleCreateAccount = async () => {

@@ -1,12 +1,12 @@
-import { EditorFeatureDescription } from '../Feature/FeatureDescription'
 import { PermissionName } from '../Permission/PermissionName'
 import { FeatureIdentifier } from '../Feature/FeatureIdentifier'
 import { NoteType } from '../Component/NoteType'
-import { FillEditorComponentDefaults } from './Utilities/FillEditorComponentDefaults'
+import { FillIframeEditorDefaults } from './Utilities/FillEditorComponentDefaults'
 import { RoleName } from '@standardnotes/domain-core'
+import { IframeComponentFeatureDescription } from '../Feature/IframeComponentFeatureDescription'
 
-export function editors(): EditorFeatureDescription[] {
-  const code: EditorFeatureDescription = FillEditorComponentDefaults({
+export function IframeEditors(): IframeComponentFeatureDescription[] {
+  const code = FillIframeEditorDefaults({
     name: 'Code',
     spellcheckControl: true,
     identifier: FeatureIdentifier.CodeEditor,
@@ -22,7 +22,7 @@ export function editors(): EditorFeatureDescription[] {
     availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
   })
 
-  const plus: EditorFeatureDescription = FillEditorComponentDefaults({
+  const plus = FillIframeEditorDefaults({
     name: 'Rich Text',
     note_type: NoteType.RichText,
     file_type: 'html',
@@ -35,7 +35,7 @@ export function editors(): EditorFeatureDescription[] {
     availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
   })
 
-  const markdown: EditorFeatureDescription = FillEditorComponentDefaults({
+  const markdown = FillIframeEditorDefaults({
     name: 'Markdown',
     identifier: FeatureIdentifier.MarkdownProEditor,
     note_type: NoteType.Markdown,
@@ -48,7 +48,7 @@ export function editors(): EditorFeatureDescription[] {
     availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
   })
 
-  const task: EditorFeatureDescription = FillEditorComponentDefaults({
+  const task = FillIframeEditorDefaults({
     name: 'Checklist',
     identifier: FeatureIdentifier.TaskEditor,
     note_type: NoteType.Task,
@@ -62,7 +62,7 @@ export function editors(): EditorFeatureDescription[] {
     availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
   })
 
-  const tokenvault: EditorFeatureDescription = FillEditorComponentDefaults({
+  const tokenvault = FillIframeEditorDefaults({
     name: 'Authenticator',
     note_type: NoteType.Authentication,
     file_type: 'json',
@@ -75,7 +75,7 @@ export function editors(): EditorFeatureDescription[] {
     availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
   })
 
-  const spreadsheets: EditorFeatureDescription = FillEditorComponentDefaults({
+  const spreadsheets = FillIframeEditorDefaults({
     name: 'Spreadsheet',
     identifier: FeatureIdentifier.SheetsEditor,
     note_type: NoteType.Spreadsheet,

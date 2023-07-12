@@ -1,7 +1,6 @@
 import { WebApplication } from '@/Application/WebApplication'
 import { usePrevious } from '@/Components/ContentListView/Calendar/usePrevious'
 import { ElementIds } from '@/Constants/ElementIDs'
-import { PrefDefaults } from '@/Constants/PrefDefaults'
 import { log, LoggingDomain } from '@/Logging'
 import { Disposer } from '@/Types/Disposer'
 import { EditorEventSource } from '@/Types/EditorEventSource'
@@ -14,6 +13,7 @@ import {
   isPayloadSourceRetrieved,
   PrefKey,
   WebAppEvent,
+  PrefDefaults,
 } from '@standardnotes/snjs'
 import { TAB_COMMAND } from '@standardnotes/ui-services'
 import { ChangeEventHandler, forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'

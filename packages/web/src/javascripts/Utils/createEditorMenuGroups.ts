@@ -1,79 +1,66 @@
-import { WebApplication } from '@/Application/WebApplication'
 import {
-  ContentType,
   FeatureStatus,
-  SNComponent,
-  ComponentArea,
-  FeatureDescription,
-  GetFeatures,
   FindNativeFeature,
   NoteType,
-  FeatureIdentifier,
+  GetIframeAndNativeEditors,
+  ComponentArea,
+  GetSuperNoteFeature,
+  ComponentOrNativeFeature,
+  IframeComponentFeatureDescription,
 } from '@standardnotes/snjs'
 import { EditorMenuGroup } from '@/Components/NotesOptions/EditorMenuGroup'
 import { EditorMenuItem } from '@/Components/NotesOptions/EditorMenuItem'
-import { PlainEditorMetadata, SuperEditorMetadata } from '@/Constants/Constants'
+import { SuperEditorMetadata } from '@/Constants/Constants'
+import { WebApplicationInterface } from '@standardnotes/ui-services'
 
 type NoteTypeToEditorRowsMap = Record<NoteType, EditorMenuItem[]>
 
-const getNoteTypeForFeatureDescription = (featureDescription: FeatureDescription): NoteType => {
-  if (featureDescription.note_type) {
-    return featureDescription.note_type
-  } else if (featureDescription.file_type) {
-    switch (featureDescription.file_type) {
-      case 'html':
-        return NoteType.RichText
-      case 'md':
-        return NoteType.Markdown
+const insertNativeEditorsInMap = (map: NoteTypeToEditorRowsMap, application: WebApplicationInterface): void => {
+  for (const editorFeature of GetIframeAndNativeEditors()) {
+    const isExperimental = application.features.isExperimentalFeature(editorFeature.identifier)
+    if (isExperimental) {
+      continue
     }
-  }
-  return NoteType.Unknown
-}
 
-const insertNonInstalledNativeComponentsInMap = (
-  map: NoteTypeToEditorRowsMap,
-  components: SNComponent[],
-  application: WebApplication,
-): void => {
-  GetFeatures()
-    .filter((feature) => feature.content_type === ContentType.TYPES.Component && feature.area === ComponentArea.Editor)
-    .forEach((editorFeature) => {
-      const notInstalled = !components.find((editor) => editor.identifier === editorFeature.identifier)
-      const isExperimental = application.features.isExperimentalFeature(editorFeature.identifier)
-      const isDeprecated = editorFeature.deprecated
-      const isShowable = notInstalled && !isExperimental && !isDeprecated
+    const isDeprecated = editorFeature.deprecated
+    if (isDeprecated) {
+      continue
+    }
 
-      if (isShowable) {
-        const noteType = getNoteTypeForFeatureDescription(editorFeature)
-        map[noteType].push({
-          name: editorFeature.name as string,
-          isEntitled: false,
-          noteType,
-        })
-      }
+    const noteType = editorFeature.note_type
+    map[noteType].push({
+      isEntitled: application.features.getFeatureStatus(editorFeature.identifier) === FeatureStatus.Entitled,
+      uiFeature: new ComponentOrNativeFeature(editorFeature),
     })
+  }
 }
 
-const insertInstalledComponentsInMap = (
-  map: NoteTypeToEditorRowsMap,
-  components: SNComponent[],
-  application: WebApplication,
-) => {
-  components.forEach((editor) => {
-    const noteType = getNoteTypeForFeatureDescription(editor.package_info)
+const insertInstalledComponentsInMap = (map: NoteTypeToEditorRowsMap, application: WebApplicationInterface) => {
+  const thirdPartyOrInstalledEditors = application.componentManager
+    .thirdPartyComponentsForArea(ComponentArea.Editor)
+    .sort((a, b) => {
+      return a.displayName.toLowerCase() < b.displayName.toLowerCase() ? -1 : 1
+    })
+
+  for (const editor of thirdPartyOrInstalledEditors) {
+    const nativeFeature = FindNativeFeature(editor.identifier)
+    if (nativeFeature && !nativeFeature.deprecated) {
+      continue
+    }
+
+    const noteType = editor.noteType
 
     const editorItem: EditorMenuItem = {
-      name: editor.displayName,
-      component: editor,
+      uiFeature: new ComponentOrNativeFeature<IframeComponentFeatureDescription>(editor),
       isEntitled: application.features.getFeatureStatus(editor.identifier) === FeatureStatus.Entitled,
-      noteType,
     }
 
     map[noteType].push(editorItem)
-  })
+  }
 }
 
-const createGroupsFromMap = (map: NoteTypeToEditorRowsMap, _application: WebApplication): EditorMenuGroup[] => {
+const createGroupsFromMap = (map: NoteTypeToEditorRowsMap): EditorMenuGroup[] => {
+  const superNote = GetSuperNoteFeature()
   const groups: EditorMenuGroup[] = [
     {
       icon: 'plain-text',
@@ -84,7 +71,7 @@ const createGroupsFromMap = (map: NoteTypeToEditorRowsMap, _application: WebAppl
     {
       icon: SuperEditorMetadata.icon,
       iconClassName: SuperEditorMetadata.iconClassName,
-      title: SuperEditorMetadata.name,
+      title: superNote.name,
       items: map[NoteType.Super],
       featured: true,
     },
@@ -135,23 +122,10 @@ const createGroupsFromMap = (map: NoteTypeToEditorRowsMap, _application: WebAppl
   return groups
 }
 
-const createBaselineMap = (application: WebApplication): NoteTypeToEditorRowsMap => {
+const createBaselineMap = (): NoteTypeToEditorRowsMap => {
   const map: NoteTypeToEditorRowsMap = {
-    [NoteType.Plain]: [
-      {
-        name: PlainEditorMetadata.name,
-        isEntitled: true,
-        noteType: NoteType.Plain,
-      },
-    ],
-    [NoteType.Super]: [
-      {
-        name: SuperEditorMetadata.name,
-        isEntitled: application.features.getFeatureStatus(FeatureIdentifier.SuperEditor) === FeatureStatus.Entitled,
-        noteType: NoteType.Super,
-        description: FindNativeFeature(FeatureIdentifier.SuperEditor)?.description,
-      },
-    ],
+    [NoteType.Plain]: [],
+    [NoteType.Super]: [],
     [NoteType.RichText]: [],
     [NoteType.Markdown]: [],
     [NoteType.Task]: [],
@@ -164,12 +138,12 @@ const createBaselineMap = (application: WebApplication): NoteTypeToEditorRowsMap
   return map
 }
 
-export const createEditorMenuGroups = (application: WebApplication, components: SNComponent[]) => {
-  const map = createBaselineMap(application)
+export const createEditorMenuGroups = (application: WebApplicationInterface): EditorMenuGroup[] => {
+  const map = createBaselineMap()
 
-  insertNonInstalledNativeComponentsInMap(map, components, application)
+  insertNativeEditorsInMap(map, application)
 
-  insertInstalledComponentsInMap(map, components, application)
+  insertInstalledComponentsInMap(map, application)
 
-  return createGroupsFromMap(map, application)
+  return createGroupsFromMap(map)
 }

@@ -276,7 +276,7 @@ export function objectToValueArray(object: AnyRecord) {
  * Returns a key-sorted copy of the object.
  * For example, sortedCopy({b: '1', a: '2'}) returns {a: '2', b: '1'}
  */
-export function sortedCopy(object: any) {
+export function sortedCopy<T>(object: any): T {
   const keys = Object.keys(object).sort()
   const result: any = {}
   for (const key of keys) {
@@ -429,9 +429,9 @@ export function joinPaths(...args: string[]) {
  * the string (if the input is an object). If input is date, a Date copy will be created,
  * and if input is a primitive value, it will be returned as-is.
  */
-export function Copy(object: any) {
+export function Copy<T>(object: any): T {
   if (object instanceof Date) {
-    return new Date(object)
+    return new Date(object) as T
   } else if (isObject(object)) {
     return JSON.parse(JSON.stringify(object))
   } else {
@@ -463,7 +463,7 @@ export function deepMerge(a: AnyRecord, b: AnyRecord) {
 /**
  * Returns a new object by selecting certain keys from input object.
  */
-export function pickByCopy<T>(object: T, keys: Array<keyof T>) {
+export function pickByCopy<T>(object: T, keys: Array<keyof T>): T {
   const result = {} as T
   for (const key of keys) {
     result[key] = object[key]

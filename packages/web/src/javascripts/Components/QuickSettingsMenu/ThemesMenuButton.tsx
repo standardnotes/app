@@ -1,9 +1,12 @@
-import { WebApplication } from '@/Application/WebApplication'
-import { FeatureIdentifier, FeatureStatus } from '@standardnotes/snjs'
+import {
+  ComponentOrNativeFeature,
+  FeatureIdentifier,
+  FeatureStatus,
+  ThemeFeatureDescription,
+} from '@standardnotes/snjs'
 import { FunctionComponent, MouseEventHandler, useCallback, useMemo } from 'react'
 import Icon from '@/Components/Icon/Icon'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
-import { ThemeItem } from './ThemeItem'
 import { PremiumFeatureIconClass, PremiumFeatureIconName } from '../Icon/PremiumFeatureIcon'
 import { isMobileScreen } from '@/Utils'
 import { classNames } from '@standardnotes/utils'
@@ -12,38 +15,41 @@ import MenuRadioButtonItem from '../Menu/MenuRadioButtonItem'
 import { useCommandService } from '../CommandProvider'
 import { TOGGLE_DARK_MODE_COMMAND } from '@standardnotes/ui-services'
 import { KeyboardShortcutIndicator } from '../KeyboardShortcutIndicator/KeyboardShortcutIndicator'
+import { useApplication } from '../ApplicationProvider'
 
 type Props = {
-  item: ThemeItem
-  application: WebApplication
+  uiFeature: ComponentOrNativeFeature<ThemeFeatureDescription>
 }
 
-const ThemesMenuButton: FunctionComponent<Props> = ({ application, item }) => {
+const ThemesMenuButton: FunctionComponent<Props> = ({ uiFeature }) => {
+  const application = useApplication()
   const commandService = useCommandService()
   const premiumModal = usePremiumModal()
 
   const isThirdPartyTheme = useMemo(
-    () => application.features.isThirdPartyFeature(item.identifier),
-    [application, item.identifier],
+    () => application.features.isThirdPartyFeature(uiFeature.featureIdentifier),
+    [application, uiFeature.featureIdentifier],
   )
   const isEntitledToTheme = useMemo(
-    () => application.features.getFeatureStatus(item.identifier) === FeatureStatus.Entitled,
-    [application, item.identifier],
+    () => application.features.getFeatureStatus(uiFeature.featureIdentifier) === FeatureStatus.Entitled,
+    [application, uiFeature.featureIdentifier],
   )
   const canActivateTheme = useMemo(() => isEntitledToTheme || isThirdPartyTheme, [isEntitledToTheme, isThirdPartyTheme])
 
   const toggleTheme = useCallback(() => {
-    if (item.component && canActivateTheme) {
-      const isThemeLayerable = item.component.isLayerable()
-      const themeIsLayerableOrNotActive = isThemeLayerable || !item.component.active
-
-      if (themeIsLayerableOrNotActive) {
-        application.componentManager.toggleTheme(item.component.uuid).catch(console.error)
-      }
-    } else {
-      premiumModal.activate(`${item.name} theme`)
+    if (!canActivateTheme) {
+      premiumModal.activate(`${uiFeature.displayName} theme`)
+      return
     }
-  }, [application, canActivateTheme, item, premiumModal])
+
+    const isThemeLayerable = uiFeature.layerable
+
+    const themeIsLayerableOrNotActive = isThemeLayerable || !application.componentManager.isThemeActive(uiFeature)
+
+    if (themeIsLayerableOrNotActive) {
+      void application.componentManager.toggleTheme(uiFeature)
+    }
+  }, [application, canActivateTheme, uiFeature, premiumModal])
 
   const onClick: MouseEventHandler<HTMLButtonElement> = useCallback(
     (event) => {
@@ -54,34 +60,38 @@ const ThemesMenuButton: FunctionComponent<Props> = ({ application, item }) => {
   )
 
   const isMobile = application.isNativeMobileWeb() || isMobileScreen()
-  const shouldHideButton = item.identifier === FeatureIdentifier.DynamicTheme && isMobile
+  const shouldHideButton = uiFeature.featureIdentifier === FeatureIdentifier.DynamicTheme && isMobile
 
   const darkThemeShortcut = useMemo(() => {
-    if (item.identifier === FeatureIdentifier.DarkTheme) {
+    if (uiFeature.featureIdentifier === FeatureIdentifier.DarkTheme) {
       return commandService.keyboardShortcutForCommand(TOGGLE_DARK_MODE_COMMAND)
     }
-  }, [commandService, item.identifier])
+  }, [commandService, uiFeature.featureIdentifier])
 
   if (shouldHideButton) {
     return null
   }
 
-  return item.component?.isLayerable() ? (
-    <MenuSwitchButtonItem checked={item.component.active} onChange={() => toggleTheme()}>
+  const themeActive = uiFeature ? application.componentManager.isThemeActive(uiFeature) : false
+
+  const dockIcon = uiFeature.dockIcon
+
+  return uiFeature.layerable ? (
+    <MenuSwitchButtonItem checked={themeActive} onChange={() => toggleTheme()}>
       {!canActivateTheme && (
         <Icon type={PremiumFeatureIconName} className={classNames(PremiumFeatureIconClass, 'mr-2')} />
       )}
-      {item.name}
+      {uiFeature.displayName}
     </MenuSwitchButtonItem>
   ) : (
-    <MenuRadioButtonItem checked={Boolean(item.component?.active)} onClick={onClick}>
-      <span className={classNames('mr-auto', item.component?.active ? 'font-semibold' : undefined)}>{item.name}</span>
+    <MenuRadioButtonItem checked={themeActive} onClick={onClick}>
+      <span className={classNames('mr-auto', themeActive ? 'font-semibold' : undefined)}>{uiFeature.displayName}</span>
       {darkThemeShortcut && <KeyboardShortcutIndicator className="mr-2" shortcut={darkThemeShortcut} />}
-      {item.component && canActivateTheme ? (
+      {uiFeature && canActivateTheme ? (
         <div
           className="h-5 w-5 rounded-full"
           style={{
-            backgroundColor: item.component.package_info?.dock_icon?.background_color,
+            backgroundColor: dockIcon?.background_color,
           }}
         ></div>
       ) : (

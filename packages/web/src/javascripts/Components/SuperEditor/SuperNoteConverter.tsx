@@ -1,7 +1,14 @@
-import { ContentType, NoteContent, NoteType, SNNote, spaceSeparatedStrings } from '@standardnotes/snjs'
+import {
+  ContentType,
+  NoteContent,
+  NoteType,
+  SNNote,
+  isIframeUIFeature,
+  spaceSeparatedStrings,
+} from '@standardnotes/snjs'
 import { useCallback, useEffect, useMemo } from 'react'
 import { useApplication } from '../ApplicationProvider'
-import ComponentView from '../ComponentView/ComponentView'
+import IframeFeatureView from '../ComponentView/IframeFeatureView'
 import Icon from '../Icon/Icon'
 import Modal, { ModalAction } from '../Modal/Modal'
 import { EditorMenuItem } from '../NotesOptions/EditorMenuItem'
@@ -20,27 +27,30 @@ const SuperNoteConverter = ({
   onComplete: () => void
 }) => {
   const application = useApplication()
-  const { name, noteType, component } = convertTo
+  const { uiFeature } = convertTo
 
   const format = useMemo(() => {
-    if (component && component.package_info.file_type) {
-      return component.package_info.file_type
+    if (uiFeature) {
+      const fileType = uiFeature.fileType
+      if (fileType) {
+        return fileType
+      }
     }
 
-    if (noteType === NoteType.Markdown) {
+    if (uiFeature.noteType === NoteType.Markdown) {
       return 'md'
     }
 
-    if (noteType === NoteType.RichText) {
+    if (uiFeature.noteType === NoteType.RichText) {
       return 'html'
     }
 
-    if (noteType === NoteType.Plain) {
+    if (uiFeature.noteType === NoteType.Plain) {
       return 'txt'
     }
 
     return 'json'
-  }, [component, noteType])
+  }, [uiFeature])
 
   const convertedContent = useMemo(() => {
     if (note.text.length === 0) {
@@ -51,7 +61,7 @@ const SuperNoteConverter = ({
   }, [format, note])
 
   const componentViewer = useMemo(() => {
-    if (!component) {
+    if (!uiFeature || !isIframeUIFeature(uiFeature)) {
       return undefined
     }
 
@@ -61,12 +71,12 @@ const SuperNoteConverter = ({
       references: note.references,
     })
 
-    const componentViewer = application.componentManager.createComponentViewer(component)
-    componentViewer.setReadonly(true)
-    componentViewer.lockReadonly = true
-    componentViewer.overrideContextItem = templateNoteForRevision
+    const componentViewer = application.componentManager.createComponentViewer(uiFeature, {
+      readonlyItem: templateNoteForRevision,
+    })
+
     return componentViewer
-  }, [application.componentManager, application.items, component, convertedContent, note.references, note.title])
+  }, [application.componentManager, application.items, uiFeature, convertedContent, note.references, note.title])
 
   useEffect(() => {
     return () => {
@@ -163,7 +173,7 @@ const SuperNoteConverter = ({
       ) : null}
       {componentViewer ? (
         <div className="component-view min-h-0">
-          <ComponentView key={componentViewer.identifier} componentViewer={componentViewer} application={application} />
+          <IframeFeatureView key={componentViewer.identifier} componentViewer={componentViewer} />
         </div>
       ) : (
         <div className="h-full min-h-0 overflow-hidden">

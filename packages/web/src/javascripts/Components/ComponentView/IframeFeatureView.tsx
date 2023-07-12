@@ -1,27 +1,25 @@
 import {
   ComponentAction,
   FeatureStatus,
-  SNComponent,
-  dateToLocalizedString,
   ComponentViewerInterface,
   ComponentViewerEvent,
   ComponentViewerError,
+  ComponentInterface,
+  SubscriptionManagerEvent,
 } from '@standardnotes/snjs'
-import { WebApplication } from '@/Application/WebApplication'
 import { FunctionComponent, useCallback, useEffect, useRef, useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import OfflineRestricted from '@/Components/ComponentView/OfflineRestricted'
 import UrlMissing from '@/Components/ComponentView/UrlMissing'
 import IsDeprecated from '@/Components/ComponentView/IsDeprecated'
-import IsExpired from '@/Components/ComponentView/IsExpired'
+import NotEntitledBanner from '@/Components/ComponentView/NotEntitledBanner'
 import IssueOnLoading from '@/Components/ComponentView/IssueOnLoading'
-import { openSubscriptionDashboard } from '@/Utils/ManageSubscription'
+import { useApplication } from '../ApplicationProvider'
 
-interface IProps {
-  application: WebApplication
+interface Props {
   componentViewer: ComponentViewerInterface
   requestReload?: (viewer: ComponentViewerInterface, force?: boolean) => void
-  onLoad?: (component: SNComponent) => void
+  onLoad?: () => void
 }
 
 /**
@@ -32,7 +30,9 @@ const MaxLoadThreshold = 4000
 const VisibilityChangeKey = 'visibilitychange'
 const MSToWaitAfterIframeLoadToAvoidFlicker = 35
 
-const ComponentView: FunctionComponent<IProps> = ({ application, onLoad, componentViewer, requestReload }) => {
+const IframeFeatureView: FunctionComponent<Props> = ({ onLoad, componentViewer, requestReload }) => {
+  const application = useApplication()
+
   const iframeRef = useRef<HTMLIFrameElement | null>(null)
   const [loadTimeout, setLoadTimeout] = useState<ReturnType<typeof setTimeout> | undefined>(undefined)
 
@@ -45,11 +45,7 @@ const ComponentView: FunctionComponent<IProps> = ({ application, onLoad, compone
   const [isDeprecationMessageDismissed, setIsDeprecationMessageDismissed] = useState(false)
   const [didAttemptReload, setDidAttemptReload] = useState(false)
 
-  const component: SNComponent = componentViewer.component
-
-  const manageSubscription = useCallback(() => {
-    void openSubscriptionDashboard(application)
-  }, [application])
+  const uiFeature = componentViewer.getComponentOrFeatureItem()
 
   const reloadValidityStatus = useCallback(() => {
     setFeatureStatus(componentViewer.getFeatureStatus())
@@ -63,12 +59,20 @@ const ComponentView: FunctionComponent<IProps> = ({ application, onLoad, compone
     }
 
     setError(componentViewer.getError())
-    setDeprecationMessage(component.deprecationMessage)
-  }, [componentViewer, component.deprecationMessage, featureStatus, isComponentValid, isLoading])
+    setDeprecationMessage(uiFeature.deprecationMessage)
+  }, [componentViewer, uiFeature, featureStatus, isComponentValid, isLoading])
 
   useEffect(() => {
     reloadValidityStatus()
   }, [reloadValidityStatus])
+
+  useEffect(() => {
+    return application.subscriptions.addEventObserver((event) => {
+      if (event === SubscriptionManagerEvent.DidFetchSubscription) {
+        reloadValidityStatus()
+      }
+    })
+  }, [application.subscriptions, reloadValidityStatus])
 
   const dismissDeprecationMessage = () => {
     setIsDeprecationMessageDismissed(true)
@@ -123,9 +127,9 @@ const ComponentView: FunctionComponent<IProps> = ({ application, onLoad, compone
     setTimeout(() => {
       setIsLoading(false)
       setHasIssueLoading(false)
-      onLoad?.(component)
+      onLoad?.()
     }, MSToWaitAfterIframeLoadToAvoidFlicker)
-  }, [componentViewer, onLoad, component, loadTimeout])
+  }, [componentViewer, onLoad, loadTimeout])
 
   useEffect(() => {
     const removeFeaturesChangedObserver = componentViewer.addEventObserver((event) => {
@@ -149,7 +153,7 @@ const ComponentView: FunctionComponent<IProps> = ({ application, onLoad, compone
           application.keyboardService.handleComponentKeyUp(data.keyboardModifier)
           break
         case ComponentAction.Click:
-          application.getViewControllerManager().notesController.setContextMenuOpen(false)
+          application.controllers.notesController.setContextMenuOpen(false)
           break
         default:
           return
@@ -163,8 +167,8 @@ const ComponentView: FunctionComponent<IProps> = ({ application, onLoad, compone
   useEffect(() => {
     const unregisterDesktopObserver = application
       .getDesktopService()
-      ?.registerUpdateObserver((updatedComponent: SNComponent) => {
-        if (updatedComponent.uuid === component.uuid && updatedComponent.active) {
+      ?.registerUpdateObserver((updatedComponent: ComponentInterface) => {
+        if (updatedComponent.uuid === uiFeature.uniqueIdentifier) {
           requestReload?.(componentViewer)
         }
       })
@@ -172,13 +176,13 @@ const ComponentView: FunctionComponent<IProps> = ({ application, onLoad, compone
     return () => {
       unregisterDesktopObserver?.()
     }
-  }, [application, requestReload, componentViewer, component.uuid])
+  }, [application, requestReload, componentViewer, uiFeature])
 
   return (
     <>
       {hasIssueLoading && (
         <IssueOnLoading
-          componentName={component.displayName}
+          componentName={uiFeature.displayName}
           reloadIframe={() => {
             reloadValidityStatus(), requestReload?.(componentViewer, true)
           }}
@@ -186,19 +190,17 @@ const ComponentView: FunctionComponent<IProps> = ({ application, onLoad, compone
       )}
 
       {featureStatus !== FeatureStatus.Entitled && (
-        <IsExpired
-          expiredDate={dateToLocalizedString(component.valid_until)}
-          featureStatus={featureStatus}
-          componentName={component.displayName}
-          manageSubscription={manageSubscription}
-        />
+        <NotEntitledBanner featureStatus={featureStatus} feature={uiFeature.featureDescription} />
       )}
       {deprecationMessage && !isDeprecationMessageDismissed && (
         <IsDeprecated deprecationMessage={deprecationMessage} dismissDeprecationMessage={dismissDeprecationMessage} />
       )}
+
       {error === ComponentViewerError.OfflineRestricted && <OfflineRestricted />}
-      {error === ComponentViewerError.MissingUrl && <UrlMissing componentName={component.displayName} />}
-      {component.uuid && isComponentValid && (
+
+      {error === ComponentViewerError.MissingUrl && <UrlMissing componentName={uiFeature.displayName} />}
+
+      {uiFeature.uniqueIdentifier && isComponentValid && (
         <iframe
           className="h-full w-full flex-grow bg-transparent"
           ref={iframeRef}
@@ -216,4 +218,4 @@ const ComponentView: FunctionComponent<IProps> = ({ application, onLoad, compone
   )
 }
 
-export default observer(ComponentView)
+export default observer(IframeFeatureView)

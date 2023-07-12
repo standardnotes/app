@@ -1,5 +1,5 @@
 export enum FeaturesEvent {
   UserRolesChanged = 'UserRolesChanged',
-  FeaturesUpdated = 'FeaturesUpdated',
+  FeaturesAvailabilityChanged = 'Features:FeaturesAvailabilityChanged',
   DidPurchaseSubscription = 'DidPurchaseSubscription',
 }

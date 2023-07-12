@@ -24,19 +24,19 @@ export class SNPreferencesService
   private removeSyncObserver?: () => void
 
   constructor(
-    private singletonManager: SNSingletonManager,
-    itemManager: ItemManager,
+    private singletons: SNSingletonManager,
+    items: ItemManager,
     private mutator: MutatorClientInterface,
-    private syncService: SNSyncService,
+    private sync: SNSyncService,
     protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)
 
-    this.removeItemObserver = itemManager.addObserver(ContentType.TYPES.UserPrefs, () => {
+    this.removeItemObserver = items.addObserver(ContentType.TYPES.UserPrefs, () => {
       this.shouldReload = true
     })
 
-    this.removeSyncObserver = syncService.addEventObserver((event) => {
+    this.removeSyncObserver = sync.addEventObserver((event) => {
       if (event === SyncEvent.SyncCompletedWithAllItemsUploaded || event === SyncEvent.LocalDataIncrementalLoad) {
         void this.reload()
       }
@@ -46,7 +46,7 @@ export class SNPreferencesService
   override deinit(): void {
     this.removeItemObserver?.()
     this.removeSyncObserver?.()
-    ;(this.singletonManager as unknown) = undefined
+    ;(this.singletons as unknown) = undefined
     ;(this.mutator as unknown) = undefined
 
     super.deinit()
@@ -57,7 +57,7 @@ export class SNPreferencesService
 
     if (stage === ApplicationStage.LoadedDatabase_12) {
       /** Try to read preferences singleton from storage */
-      this.preferences = this.singletonManager.findSingleton<SNUserPrefs>(
+      this.preferences = this.singletons.findSingleton<SNUserPrefs>(
         ContentType.TYPES.UserPrefs,
         SNUserPrefs.singletonPredicate,
       )
@@ -75,6 +75,14 @@ export class SNPreferencesService
   }
 
   async setValue<K extends PrefKey>(key: K, value: PrefValue[K]): Promise<void> {
+    await this.setValueDetached(key, value)
+
+    void this.notifyEvent(PreferencesServiceEvent.PreferencesChanged)
+
+    void this.sync.sync({ sourceDescription: 'PreferencesService.setValue' })
+  }
+
+  async setValueDetached<K extends PrefKey>(key: K, value: PrefValue[K]): Promise<void> {
     if (!this.preferences) {
       return
     }
@@ -82,10 +90,6 @@ export class SNPreferencesService
     this.preferences = (await this.mutator.changeItem<UserPrefsMutator>(this.preferences, (m) => {
       m.setPref(key, value)
     })) as SNUserPrefs
-
-    void this.notifyEvent(PreferencesServiceEvent.PreferencesChanged)
-
-    void this.syncService.sync({ sourceDescription: 'PreferencesService.setValue' })
   }
 
   private async reload() {
@@ -98,7 +102,7 @@ export class SNPreferencesService
     try {
       const previousRef = this.preferences
 
-      this.preferences = await this.singletonManager.findOrCreateContentTypeSingleton<ItemContent, SNUserPrefs>(
+      this.preferences = await this.singletons.findOrCreateContentTypeSingleton<ItemContent, SNUserPrefs>(
         ContentType.TYPES.UserPrefs,
         FillItemContent({}),
       )

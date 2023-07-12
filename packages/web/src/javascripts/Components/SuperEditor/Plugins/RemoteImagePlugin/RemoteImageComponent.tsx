@@ -41,7 +41,7 @@ const RemoteImageComponent = ({ className, src, alt, node, format, nodeKey }: Pr
       const blob = await response.blob()
       const file = new File([blob], src, { type: blob.type })
 
-      const { filesController, linkingController } = application.getViewControllerManager()
+      const { filesController, linkingController } = application.controllers
 
       const uploadedFile = await filesController.uploadNewFile(file, false)
 

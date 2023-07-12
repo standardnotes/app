@@ -1,23 +1,15 @@
 import { addIfUnique, removeFromArray } from '@standardnotes/utils'
-import { ComponentPermission, FeatureDescription } from '@standardnotes/features'
+import { ComponentFeatureDescription, ComponentPermission } from '@standardnotes/features'
 import { AppDataField } from '../../Abstract/Item/Types/AppDataField'
 import { ComponentContent } from './ComponentContent'
 import { DecryptedItemMutator } from '../../Abstract/Item/Mutator/DecryptedItemMutator'
 
 export class ComponentMutator extends DecryptedItemMutator<ComponentContent> {
-  set active(active: boolean) {
-    this.mutableContent.active = active
-  }
-
   set isMobileDefault(isMobileDefault: boolean) {
     this.mutableContent.isMobileDefault = isMobileDefault
   }
 
-  set componentData(componentData: Record<string, unknown>) {
-    this.mutableContent.componentData = componentData
-  }
-
-  set package_info(package_info: FeatureDescription) {
+  set package_info(package_info: ComponentFeatureDescription) {
     this.mutableContent.package_info = package_info
   }
 

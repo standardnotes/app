@@ -5,6 +5,7 @@ import {
   InternalEventBusInterface,
   EncryptionService,
   MutatorClientInterface,
+  PreferenceServiceInterface,
 } from '@standardnotes/services'
 import { SNSessionManager } from '../Services/Session/SessionManager'
 import { ApplicationIdentifier } from '@standardnotes/common'
@@ -23,6 +24,7 @@ export type MigrationServices = {
   mutator: MutatorClientInterface
   singletonManager: SNSingletonManager
   featuresService: SNFeaturesService
+  preferences: PreferenceServiceInterface
   environment: Environment
   platform: Platform
   identifier: ApplicationIdentifier

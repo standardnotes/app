@@ -1,22 +1,22 @@
 import { AllowedBatchStreaming } from './Types'
-import { SNPreferencesService } from '../Preferences/PreferencesService'
 import { SNFeaturesService } from '@Lib/Services/Features/FeaturesService'
-import { ItemManager } from '@Lib/Services/Items/ItemManager'
+import { ContentType } from '@standardnotes/domain-core'
 import {
   ActionObserver,
   SNNote,
-  SNTheme,
-  SNComponent,
   ComponentMutator,
   PayloadEmitSource,
   PermissionDialog,
   Environment,
   Platform,
   ComponentMessage,
+  ComponentOrNativeFeature,
+  ComponentInterface,
+  PrefKey,
+  ThemeInterface,
+  ComponentPreferencesEntry,
+  AllComponentPreferences,
 } from '@standardnotes/models'
-import { SNSyncService } from '@Lib/Services/Sync/SyncService'
-import find from 'lodash/find'
-import uniq from 'lodash/uniq'
 import {
   ComponentArea,
   ComponentAction,
@@ -24,9 +24,25 @@ import {
   FindNativeFeature,
   NoteType,
   FeatureIdentifier,
+  EditorFeatureDescription,
+  GetIframeAndNativeEditors,
+  FindNativeTheme,
+  UIFeatureDescriptionTypes,
+  IframeComponentFeatureDescription,
+  GetPlainNoteFeature,
+  GetSuperNoteFeature,
+  ComponentFeatureDescription,
+  ThemeFeatureDescription,
 } from '@standardnotes/features'
-import { Copy, filterFromArray, removeFromArray, sleep, assert } from '@standardnotes/utils'
-import { UuidString } from '@Lib/Types/UuidString'
+import {
+  Copy,
+  filterFromArray,
+  removeFromArray,
+  sleep,
+  assert,
+  uniqueArray,
+  isNotUndefined,
+} from '@standardnotes/utils'
 import { AllowedBatchContentTypes } from '@Lib/Services/ComponentManager/Types'
 import { ComponentViewer } from '@Lib/Services/ComponentManager/ComponentViewer'
 import {
@@ -39,8 +55,14 @@ import {
   DeviceInterface,
   isMobileDevice,
   MutatorClientInterface,
+  PreferenceServiceInterface,
+  ComponentViewerItem,
+  PreferencesServiceEvent,
+  ItemManagerInterface,
+  SyncServiceInterface,
+  FeatureStatus,
 } from '@standardnotes/services'
-import { ContentType } from '@standardnotes/domain-core'
+import { permissionsStringForPermissions } from './permissionsStringForPermissions'
 
 const DESKTOP_URL_PREFIX = 'sn://'
 const LOCAL_HOST = 'localhost'
@@ -78,21 +100,29 @@ export class SNComponentManager
   private permissionDialogs: PermissionDialog[] = []
 
   constructor(
-    private itemManager: ItemManager,
+    private items: ItemManagerInterface,
     private mutator: MutatorClientInterface,
-    private syncService: SNSyncService,
-    private featuresService: SNFeaturesService,
-    private preferencesSerivce: SNPreferencesService,
-    protected alertService: AlertService,
+    private sync: SyncServiceInterface,
+    private features: SNFeaturesService,
+    private preferences: PreferenceServiceInterface,
+    protected alerts: AlertService,
     private environment: Environment,
     private platform: Platform,
-    protected override internalEventBus: InternalEventBusInterface,
     private device: DeviceInterface,
+    protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)
     this.loggingEnabled = false
 
     this.addItemObserver()
+
+    this.eventDisposers.push(
+      preferences.addEventObserver((event) => {
+        if (event === PreferencesServiceEvent.PreferencesChanged) {
+          this.postActiveThemesToAllViewers()
+        }
+      }),
+    )
 
     window.addEventListener
       ? window.addEventListener('focus', this.detectFocusChange, true)
@@ -112,18 +142,14 @@ export class SNComponentManager
     return this.environment === Environment.Mobile
   }
 
-  get components(): SNComponent[] {
-    return this.itemManager.getDisplayableComponents()
+  get thirdPartyComponents(): ComponentInterface[] {
+    return this.items.getDisplayableComponents()
   }
 
-  componentsForArea(area: ComponentArea): SNComponent[] {
-    return this.components.filter((component) => {
+  thirdPartyComponentsForArea(area: ComponentArea): ComponentInterface[] {
+    return this.thirdPartyComponents.filter((component) => {
       return component.area === area
     })
-  }
-
-  componentWithIdentifier(identifier: FeatureIdentifier | string): SNComponent | undefined {
-    return this.components.find((component) => component.identifier === identifier)
   }
 
   override deinit(): void {
@@ -137,11 +163,11 @@ export class SNComponentManager
     this.permissionDialogs.length = 0
 
     this.desktopManager = undefined
-    ;(this.itemManager as unknown) = undefined
-    ;(this.featuresService as unknown) = undefined
-    ;(this.syncService as unknown) = undefined
-    ;(this.alertService as unknown) = undefined
-    ;(this.preferencesSerivce as unknown) = undefined
+    ;(this.items as unknown) = undefined
+    ;(this.features as unknown) = undefined
+    ;(this.sync as unknown) = undefined
+    ;(this.alerts as unknown) = undefined
+    ;(this.preferences as unknown) = undefined
 
     this.removeItemObserver?.()
     ;(this.removeItemObserver as unknown) = undefined
@@ -157,27 +183,35 @@ export class SNComponentManager
   }
 
   public createComponentViewer(
-    component: SNComponent,
-    contextItem?: UuidString,
+    component: ComponentOrNativeFeature<IframeComponentFeatureDescription>,
+    item: ComponentViewerItem,
     actionObserver?: ActionObserver,
   ): ComponentViewerInterface {
     const viewer = new ComponentViewer(
       component,
-      this.itemManager,
-      this.mutator,
-      this.syncService,
-      this.alertService,
-      this.preferencesSerivce,
-      this.featuresService,
-      this.environment,
-      this.platform,
       {
-        runWithPermissions: this.runWithPermissions.bind(this),
-        urlsForActiveThemes: this.urlsForActiveThemes.bind(this),
+        items: this.items,
+        mutator: this.mutator,
+        sync: this.sync,
+        alerts: this.alerts,
+        preferences: this.preferences,
+        features: this.features,
       },
-      this.urlForComponent(component),
-      contextItem,
-      actionObserver,
+      {
+        url: this.urlForComponent(component) ?? '',
+        item,
+        actionObserver,
+      },
+      {
+        environment: this.environment,
+        platform: this.platform,
+        componentManagerFunctions: {
+          runWithPermissions: this.runWithPermissions.bind(this),
+          urlsForActiveThemes: this.urlsForActiveThemes.bind(this),
+          setComponentPreferences: this.setComponentPreferences.bind(this),
+          getComponentPreferences: this.getComponentPreferences.bind(this),
+        },
+      },
     )
     this.viewers.push(viewer)
     return viewer
@@ -193,7 +227,7 @@ export class SNComponentManager
     this.configureForDesktop()
   }
 
-  handleChangedComponents(components: SNComponent[], source: PayloadEmitSource): void {
+  private handleChangedComponents(components: ComponentInterface[], source: PayloadEmitSource): void {
     const acceptableSources = [
       PayloadEmitSource.LocalChanged,
       PayloadEmitSource.RemoteRetrieved,
@@ -221,8 +255,8 @@ export class SNComponentManager
     }
   }
 
-  addItemObserver(): void {
-    this.removeItemObserver = this.itemManager.addObserver<SNComponent>(
+  private addItemObserver(): void {
+    this.removeItemObserver = this.items.addObserver<ComponentInterface>(
       [ContentType.TYPES.Component, ContentType.TYPES.Theme],
       ({ changed, inserted, removed, source }) => {
         const items = [...changed, ...inserted]
@@ -231,7 +265,7 @@ export class SNComponentManager
         const device = this.device
         if (isMobileDevice(device) && 'addComponentUrl' in device) {
           inserted.forEach((component) => {
-            const url = this.urlForComponent(component)
+            const url = this.urlForComponent(new ComponentOrNativeFeature<ComponentFeatureDescription>(component))
             if (url) {
               device.addComponentUrl(component.uuid, url)
             }
@@ -274,9 +308,11 @@ export class SNComponentManager
   }
 
   configureForDesktop(): void {
-    this.desktopManager?.registerUpdateObserver((component: SNComponent) => {
+    this.desktopManager?.registerUpdateObserver((component: ComponentInterface) => {
       /* Reload theme if active */
-      if (component.active && component.isTheme()) {
+      const activeComponents = this.getActiveComponents()
+      const isComponentActive = activeComponents.find((candidate) => candidate.uuid === component.uuid)
+      if (isComponentActive && component.isTheme()) {
         this.postActiveThemesToAllViewers()
       }
     })
@@ -288,53 +324,57 @@ export class SNComponentManager
     }
   }
 
-  getActiveThemes(): SNTheme[] {
-    return this.componentsForArea(ComponentArea.Themes).filter((theme) => {
-      return theme.active
-    }) as SNTheme[]
+  private urlForComponentOnDesktop(
+    uiFeature: ComponentOrNativeFeature<ComponentFeatureDescription>,
+  ): string | undefined {
+    assert(this.desktopManager)
+
+    if (uiFeature.isFeatureDescription) {
+      return `${this.desktopManager.getExtServerHost()}/components/${uiFeature.featureIdentifier}/${
+        uiFeature.asFeatureDescription.index_path
+      }`
+    } else {
+      if (uiFeature.asComponent.local_url) {
+        return uiFeature.asComponent.local_url.replace(DESKTOP_URL_PREFIX, this.desktopManager.getExtServerHost() + '/')
+      }
+
+      return uiFeature.asComponent.hosted_url || uiFeature.asComponent.legacy_url
+    }
   }
 
-  urlForComponent(component: SNComponent): string | undefined {
-    const platformSupportsOfflineOnly = this.isDesktop
-    if (component.offlineOnly && !platformSupportsOfflineOnly) {
+  private urlForNativeComponent(feature: ComponentFeatureDescription): string {
+    if (this.isMobile) {
+      const baseUrlRequiredForThemesInsideEditors = window.location.href.split('/index.html')[0]
+      return `${baseUrlRequiredForThemesInsideEditors}/web-src/components/assets/${feature.identifier}/${feature.index_path}`
+    } else {
+      const baseUrlRequiredForThemesInsideEditors = window.location.origin
+      return `${baseUrlRequiredForThemesInsideEditors}/components/assets/${feature.identifier}/${feature.index_path}`
+    }
+  }
+
+  urlForComponent(uiFeature: ComponentOrNativeFeature<ComponentFeatureDescription>): string | undefined {
+    if (this.desktopManager) {
+      return this.urlForComponentOnDesktop(uiFeature)
+    }
+
+    if (uiFeature.isFeatureDescription) {
+      return this.urlForNativeComponent(uiFeature.asFeatureDescription)
+    }
+
+    if (uiFeature.asComponent.offlineOnly) {
       return undefined
     }
 
-    const nativeFeature = FindNativeFeature(component.identifier)
-
-    if (this.isDesktop) {
-      assert(this.desktopManager)
-
-      if (nativeFeature) {
-        return `${this.desktopManager.getExtServerHost()}/components/${component.identifier}/${
-          nativeFeature.index_path
-        }`
-      } else if (component.local_url) {
-        return component.local_url.replace(DESKTOP_URL_PREFIX, this.desktopManager.getExtServerHost() + '/')
-      } else {
-        return component.hosted_url || component.legacy_url
-      }
-    }
-
-    const isMobile = this.environment === Environment.Mobile
-    if (nativeFeature) {
-      if (isMobile) {
-        const baseUrlRequiredForThemesInsideEditors = window.location.href.split('/index.html')[0]
-        return `${baseUrlRequiredForThemesInsideEditors}/web-src/components/assets/${component.identifier}/${nativeFeature.index_path}`
-      } else {
-        const baseUrlRequiredForThemesInsideEditors = window.location.origin
-        return `${baseUrlRequiredForThemesInsideEditors}/components/assets/${component.identifier}/${nativeFeature.index_path}`
-      }
-    }
-
-    let url = component.hosted_url || component.legacy_url
+    const url = uiFeature.asComponent.hosted_url || uiFeature.asComponent.legacy_url
     if (!url) {
       return undefined
     }
+
     if (this.isMobile) {
       const localReplacement = this.platform === Platform.Ios ? LOCAL_HOST : ANDROID_LOCAL_HOST
-      url = url.replace(LOCAL_HOST, localReplacement).replace(CUSTOM_LOCAL_HOST, localReplacement)
+      return url.replace(LOCAL_HOST, localReplacement).replace(CUSTOM_LOCAL_HOST, localReplacement)
     }
+
     return url
   }
 
@@ -350,8 +390,24 @@ export class SNComponentManager
     return urls
   }
 
-  private findComponent(uuid: UuidString): SNComponent | undefined {
-    return this.itemManager.findItem<SNComponent>(uuid)
+  private findComponent(uuid: string): ComponentInterface | undefined {
+    return this.items.findItem<ComponentInterface>(uuid)
+  }
+
+  private findComponentOrNativeFeature(
+    identifier: string,
+  ): ComponentOrNativeFeature<ComponentFeatureDescription> | undefined {
+    const nativeFeature = FindNativeFeature<ComponentFeatureDescription>(identifier as FeatureIdentifier)
+    if (nativeFeature) {
+      return new ComponentOrNativeFeature(nativeFeature)
+    }
+
+    const componentItem = this.items.findItem<ComponentInterface>(identifier)
+    if (componentItem) {
+      return new ComponentOrNativeFeature<ComponentFeatureDescription>(componentItem)
+    }
+
+    return undefined
   }
 
   findComponentViewer(identifier: string): ComponentViewerInterface | undefined {
@@ -362,10 +418,13 @@ export class SNComponentManager
     return this.viewers.find((viewer) => viewer.sessionKey === key)
   }
 
-  areRequestedPermissionsValid(component: SNComponent, permissions: ComponentPermission[]): boolean {
+  areRequestedPermissionsValid(
+    uiFeature: ComponentOrNativeFeature<ComponentFeatureDescription>,
+    permissions: ComponentPermission[],
+  ): boolean {
     for (const permission of permissions) {
       if (permission.name === ComponentAction.StreamItems) {
-        if (!AllowedBatchStreaming.includes(component.identifier)) {
+        if (!AllowedBatchStreaming.includes(uiFeature.featureIdentifier)) {
           return false
         }
         const hasNonAllowedBatchPermission = permission.content_types?.some(
@@ -381,28 +440,32 @@ export class SNComponentManager
   }
 
   runWithPermissions(
-    componentUuid: UuidString,
+    componentIdentifier: string,
     requiredPermissions: ComponentPermission[],
     runFunction: () => void,
   ): void {
-    const component = this.findComponent(componentUuid)
+    const uiFeature = this.findComponentOrNativeFeature(componentIdentifier)
 
-    if (!component) {
-      void this.alertService.alert(
-        `Unable to find component with ID ${componentUuid}. Please restart the app and try again.`,
+    if (!uiFeature) {
+      void this.alerts.alert(
+        `Unable to find component with ID ${componentIdentifier}. Please restart the app and try again.`,
         'An unexpected error occurred',
       )
 
       return
     }
 
-    if (!this.areRequestedPermissionsValid(component, requiredPermissions)) {
-      console.error('Component is requesting invalid permissions', componentUuid, requiredPermissions)
+    if (uiFeature.isFeatureDescription) {
+      runFunction()
       return
     }
 
-    const nativeFeature = FindNativeFeature(component.identifier)
-    const acquiredPermissions = nativeFeature?.component_permissions || component.permissions
+    if (!this.areRequestedPermissionsValid(uiFeature, requiredPermissions)) {
+      console.error('Component is requesting invalid permissions', componentIdentifier, requiredPermissions)
+      return
+    }
+
+    const acquiredPermissions = uiFeature.acquiredPermissions
 
     /* Make copy as not to mutate input values */
     requiredPermissions = Copy(requiredPermissions) as ComponentPermission[]
@@ -420,7 +483,7 @@ export class SNComponentManager
         filterFromArray(requiredPermissions, required)
         continue
       }
-      for (const acquiredContentType of respectiveAcquired.content_types!) {
+      for (const acquiredContentType of respectiveAcquired.content_types as string[]) {
         removeFromArray(requiredContentTypes, acquiredContentType)
       }
       if (requiredContentTypes.length === 0) {
@@ -429,8 +492,8 @@ export class SNComponentManager
       }
     }
     if (requiredPermissions.length > 0) {
-      this.promptForPermissionsWithAngularAsyncRendering(
-        component,
+      this.promptForPermissionsWithDeferredRendering(
+        uiFeature.asComponent,
         requiredPermissions,
         // eslint-disable-next-line @typescript-eslint/require-await
         async (approved) => {
@@ -444,8 +507,8 @@ export class SNComponentManager
     }
   }
 
-  promptForPermissionsWithAngularAsyncRendering(
-    component: SNComponent,
+  promptForPermissionsWithDeferredRendering(
+    component: ComponentInterface,
     permissions: ComponentPermission[],
     callback: (approved: boolean) => Promise<void>,
   ): void {
@@ -455,14 +518,14 @@ export class SNComponentManager
   }
 
   promptForPermissions(
-    component: SNComponent,
+    component: ComponentInterface,
     permissions: ComponentPermission[],
     callback: (approved: boolean) => Promise<void>,
   ): void {
     const params: PermissionDialog = {
       component: component,
       permissions: permissions,
-      permissionsString: this.permissionsStringForPermissions(permissions, component),
+      permissionsString: permissionsStringForPermissions(permissions, component),
       actionBlock: callback,
       callback: async (approved: boolean) => {
         const latestComponent = this.findComponent(component.uuid)
@@ -481,7 +544,7 @@ export class SNComponentManager
             } else {
               /* Permission already exists, but content_types may have been expanded */
               const contentTypes = matchingPermission.content_types || []
-              matchingPermission.content_types = uniq(contentTypes.concat(permission.content_types!))
+              matchingPermission.content_types = uniqueArray(contentTypes.concat(permission.content_types as string[]))
             }
           }
 
@@ -490,7 +553,7 @@ export class SNComponentManager
             mutator.permissions = componentPermissions
           })
 
-          void this.syncService.sync()
+          void this.sync.sync()
         }
 
         this.permissionDialogs = this.permissionDialogs.filter((pendingDialog) => {
@@ -528,9 +591,7 @@ export class SNComponentManager
      * Since these calls are asyncronous, multiple dialogs may be requested at the same time.
      * We only want to present one and trigger all callbacks based on one modal result
      */
-    const existingDialog = find(this.permissionDialogs, {
-      component: component,
-    })
+    const existingDialog = this.permissionDialogs.find((dialog) => dialog.component === component)
     this.permissionDialogs.push(params)
     if (!existingDialog) {
       this.presentPermissionsDialog(params)
@@ -544,56 +605,72 @@ export class SNComponentManager
     throw 'Must override SNComponentManager.presentPermissionsDialog'
   }
 
-  async toggleTheme(uuid: UuidString): Promise<void> {
-    this.log('Toggling theme', uuid)
+  async toggleTheme(uiFeature: ComponentOrNativeFeature<ThemeFeatureDescription>): Promise<void> {
+    this.log('Toggling theme', uiFeature.uniqueIdentifier)
 
-    const theme = this.findComponent(uuid) as SNTheme
-    if (theme.active) {
-      await this.mutator.changeComponent(theme, (mutator) => {
-        mutator.active = false
-      })
-    } else {
-      const activeThemes = this.getActiveThemes()
-
-      /* Activate current before deactivating others, so as not to flicker */
-      await this.mutator.changeComponent(theme, (mutator) => {
-        mutator.active = true
-      })
-
-      /* Deactive currently active theme(s) if new theme is not layerable */
-      if (!theme.isLayerable()) {
-        await sleep(10)
-        for (const candidate of activeThemes) {
-          if (candidate && !candidate.isLayerable()) {
-            await this.mutator.changeComponent(candidate, (mutator) => {
-              mutator.active = false
-            })
-          }
-        }
-      }
-    }
-
-    void this.syncService.sync()
-  }
-
-  async toggleComponent(uuid: UuidString): Promise<void> {
-    this.log('Toggling component', uuid)
-
-    const component = this.findComponent(uuid)
-
-    if (!component) {
+    if (this.isThemeActive(uiFeature)) {
+      await this.removeActiveTheme(uiFeature)
       return
     }
 
-    await this.mutator.changeComponent(component, (mutator) => {
-      mutator.active = !(mutator.getItem() as SNComponent).active
-    })
+    const featureStatus = this.features.getFeatureStatus(uiFeature.featureIdentifier)
+    if (featureStatus !== FeatureStatus.Entitled) {
+      return
+    }
 
-    void this.syncService.sync()
+    /* Activate current before deactivating others, so as not to flicker */
+    await this.addActiveTheme(uiFeature)
+
+    /* Deactive currently active theme(s) if new theme is not layerable */
+    if (!uiFeature.layerable) {
+      await sleep(10)
+
+      const activeThemes = this.getActiveThemes()
+      for (const candidate of activeThemes) {
+        if (candidate.featureIdentifier === uiFeature.featureIdentifier) {
+          continue
+        }
+
+        if (!candidate.layerable) {
+          await this.removeActiveTheme(candidate)
+        }
+      }
+    }
   }
 
-  isComponentActive(component: SNComponent): boolean {
-    return component.active
+  getActiveThemes(): ComponentOrNativeFeature<ThemeFeatureDescription>[] {
+    const activeThemesIdentifiers = this.getActiveThemesIdentifiers()
+
+    const thirdPartyThemes = this.items.findItems<ThemeInterface>(activeThemesIdentifiers).map((item) => {
+      return new ComponentOrNativeFeature<ThemeFeatureDescription>(item)
+    })
+
+    const nativeThemes = activeThemesIdentifiers
+      .map((identifier) => {
+        return FindNativeTheme(identifier as FeatureIdentifier)
+      })
+      .filter(isNotUndefined)
+      .map((theme) => new ComponentOrNativeFeature(theme))
+
+    const entitledThemes = [...thirdPartyThemes, ...nativeThemes].filter((theme) => {
+      return this.features.getFeatureStatus(theme.featureIdentifier) === FeatureStatus.Entitled
+    })
+
+    return entitledThemes
+  }
+
+  getActiveThemesIdentifiers(): string[] {
+    return this.preferences.getValue(PrefKey.ActiveThemes, undefined) ?? []
+  }
+
+  async toggleComponent(component: ComponentInterface): Promise<void> {
+    this.log('Toggling component', component.uuid)
+
+    if (this.isComponentActive(component)) {
+      await this.removeActiveComponent(component)
+    } else {
+      await this.addActiveComponent(component)
+    }
   }
 
   allComponentIframes(): HTMLIFrameElement[] {
@@ -604,23 +681,67 @@ export class SNComponentManager
     return viewer.getIframe()
   }
 
-  editorForNote(note: SNNote): SNComponent | undefined {
-    if (note.noteType === NoteType.Plain || note.noteType === NoteType.Super) {
-      return undefined
+  componentOrNativeFeatureForIdentifier<F extends UIFeatureDescriptionTypes>(
+    identifier: FeatureIdentifier | string,
+  ): ComponentOrNativeFeature<F> | undefined {
+    const nativeFeature = FindNativeFeature<F>(identifier as FeatureIdentifier)
+    if (nativeFeature) {
+      return new ComponentOrNativeFeature(nativeFeature)
+    }
+
+    const component = this.thirdPartyComponents.find((component) => {
+      return component.identifier === identifier
+    })
+    if (component) {
+      return new ComponentOrNativeFeature<F>(component)
+    }
+
+    return undefined
+  }
+
+  editorForNote(note: SNNote): ComponentOrNativeFeature<EditorFeatureDescription | IframeComponentFeatureDescription> {
+    if (note.noteType === NoteType.Plain) {
+      return new ComponentOrNativeFeature(GetPlainNoteFeature())
+    }
+
+    if (note.noteType === NoteType.Super) {
+      return new ComponentOrNativeFeature(GetSuperNoteFeature())
     }
 
     if (note.editorIdentifier) {
-      return this.componentWithIdentifier(note.editorIdentifier)
+      const result = this.componentOrNativeFeatureForIdentifier<
+        EditorFeatureDescription | IframeComponentFeatureDescription
+      >(note.editorIdentifier)
+      if (result) {
+        return result
+      }
     }
 
-    return this.legacyGetEditorForNote(note)
+    if (note.noteType && note.noteType !== NoteType.Unknown) {
+      const result = this.nativeEditorForNoteType(note.noteType)
+      if (result) {
+        return new ComponentOrNativeFeature(result)
+      }
+    }
+
+    const legacyResult = this.legacyGetEditorForNote(note)
+    if (legacyResult) {
+      return new ComponentOrNativeFeature<IframeComponentFeatureDescription>(legacyResult)
+    }
+
+    return new ComponentOrNativeFeature(GetPlainNoteFeature())
+  }
+
+  private nativeEditorForNoteType(noteType: NoteType): EditorFeatureDescription | undefined {
+    const nativeEditors = GetIframeAndNativeEditors()
+    return nativeEditors.find((editor) => editor.note_type === noteType)
   }
 
   /**
    * Uses legacy approach of note/editor association. New method uses note.editorIdentifier and note.noteType directly.
    */
-  private legacyGetEditorForNote(note: SNNote): SNComponent | undefined {
-    const editors = this.componentsForArea(ComponentArea.Editor)
+  private legacyGetEditorForNote(note: SNNote): ComponentInterface | undefined {
+    const editors = this.thirdPartyComponentsForArea(ComponentArea.Editor)
     for (const editor of editors) {
       if (editor.isExplicitlyEnabledForItem(note.uuid)) {
         return editor
@@ -635,67 +756,25 @@ export class SNComponentManager
     }
   }
 
-  legacyGetDefaultEditor(): SNComponent | undefined {
-    const editors = this.componentsForArea(ComponentArea.Editor)
+  legacyGetDefaultEditor(): ComponentInterface | undefined {
+    const editors = this.thirdPartyComponentsForArea(ComponentArea.Editor)
     return editors.filter((e) => e.legacyIsDefaultEditor())[0]
   }
 
-  permissionsStringForPermissions(permissions: ComponentPermission[], component: SNComponent): string {
-    if (permissions.length === 0) {
-      return '.'
+  doesEditorChangeRequireAlert(
+    from: ComponentOrNativeFeature<IframeComponentFeatureDescription | EditorFeatureDescription> | undefined,
+    to: ComponentOrNativeFeature<IframeComponentFeatureDescription | EditorFeatureDescription> | undefined,
+  ): boolean {
+    if (!from || !to) {
+      return false
     }
 
-    let contentTypeStrings: string[] = []
-    let contextAreaStrings: string[] = []
+    const fromFileType = from.fileType
+    const toFileType = to.fileType
+    const isEitherMarkdown = fromFileType === 'md' || toFileType === 'md'
+    const areBothHtml = fromFileType === 'html' && toFileType === 'html'
 
-    permissions.forEach((permission) => {
-      switch (permission.name) {
-        case ComponentAction.StreamItems:
-          if (!permission.content_types) {
-            return
-          }
-          permission.content_types.forEach((contentTypeString: string) => {
-            const contentTypeOrError = ContentType.create(contentTypeString)
-            if (contentTypeOrError.isFailed()) {
-              return
-            }
-            const contentType = contentTypeOrError.getValue()
-            const desc = contentType.getDisplayName()
-            if (desc) {
-              contentTypeStrings.push(`${desc}s`)
-            } else {
-              contentTypeStrings.push(`items of type ${contentType.value}`)
-            }
-          })
-          break
-        case ComponentAction.StreamContextItem:
-          {
-            const componentAreaMapping = {
-              [ComponentArea.EditorStack]: 'working note',
-              [ComponentArea.Editor]: 'working note',
-              [ComponentArea.Themes]: 'Unknown',
-            }
-            contextAreaStrings.push(componentAreaMapping[component.area])
-          }
-          break
-      }
-    })
-
-    contentTypeStrings = uniq(contentTypeStrings)
-    contextAreaStrings = uniq(contextAreaStrings)
-
-    if (contentTypeStrings.length === 0 && contextAreaStrings.length === 0) {
-      return '.'
-    }
-    return contentTypeStrings.concat(contextAreaStrings).join(', ') + '.'
-  }
-
-  doesEditorChangeRequireAlert(from: SNComponent | undefined, to: SNComponent | undefined): boolean {
-    const isEitherPlainEditor = !from || !to
-    const isEitherMarkdown = from?.package_info.file_type === 'md' || to?.package_info.file_type === 'md'
-    const areBothHtml = from?.package_info.file_type === 'html' && to?.package_info.file_type === 'html'
-
-    if (isEitherPlainEditor || isEitherMarkdown || areBothHtml) {
+    if (isEitherMarkdown || areBothHtml) {
       return false
     } else {
       return true
@@ -703,12 +782,99 @@ export class SNComponentManager
   }
 
   async showEditorChangeAlert(): Promise<boolean> {
-    const shouldChangeEditor = await this.alertService.confirm(
+    const shouldChangeEditor = await this.alerts.confirm(
       'Doing so might result in minor formatting changes.',
       "Are you sure you want to change this note's type?",
       'Yes, change it',
     )
 
     return shouldChangeEditor
+  }
+
+  async setComponentPreferences(
+    uiFeature: ComponentOrNativeFeature<ComponentFeatureDescription>,
+    preferences: ComponentPreferencesEntry,
+  ): Promise<void> {
+    const mutablePreferencesValue = Copy<AllComponentPreferences>(
+      this.preferences.getValue(PrefKey.ComponentPreferences, undefined) ?? {},
+    )
+
+    const preferencesLookupKey = uiFeature.uniqueIdentifier
+
+    mutablePreferencesValue[preferencesLookupKey] = preferences
+
+    await this.preferences.setValue(PrefKey.ComponentPreferences, mutablePreferencesValue)
+  }
+
+  getComponentPreferences(
+    component: ComponentOrNativeFeature<ComponentFeatureDescription>,
+  ): ComponentPreferencesEntry | undefined {
+    const preferences = this.preferences.getValue(PrefKey.ComponentPreferences, undefined)
+
+    if (!preferences) {
+      return undefined
+    }
+
+    const preferencesLookupKey = component.uniqueIdentifier
+
+    return preferences[preferencesLookupKey]
+  }
+
+  async addActiveTheme(theme: ComponentOrNativeFeature<ThemeFeatureDescription>): Promise<void> {
+    const activeThemes = (this.preferences.getValue(PrefKey.ActiveThemes, undefined) ?? []).slice()
+
+    activeThemes.push(theme.uniqueIdentifier)
+
+    await this.preferences.setValue(PrefKey.ActiveThemes, activeThemes)
+  }
+
+  async replaceActiveTheme(theme: ComponentOrNativeFeature<ThemeFeatureDescription>): Promise<void> {
+    await this.preferences.setValue(PrefKey.ActiveThemes, [theme.uniqueIdentifier])
+  }
+
+  async removeActiveTheme(theme: ComponentOrNativeFeature<ThemeFeatureDescription>): Promise<void> {
+    const activeThemes = this.preferences.getValue(PrefKey.ActiveThemes, undefined) ?? []
+
+    const filteredThemes = activeThemes.filter((activeTheme) => activeTheme !== theme.uniqueIdentifier)
+
+    await this.preferences.setValue(PrefKey.ActiveThemes, filteredThemes)
+  }
+
+  isThemeActive(theme: ComponentOrNativeFeature<ThemeFeatureDescription>): boolean {
+    if (this.features.getFeatureStatus(theme.featureIdentifier) !== FeatureStatus.Entitled) {
+      return false
+    }
+
+    const activeThemes = this.preferences.getValue(PrefKey.ActiveThemes, undefined) ?? []
+
+    return activeThemes.includes(theme.uniqueIdentifier)
+  }
+
+  async addActiveComponent(component: ComponentInterface): Promise<void> {
+    const activeComponents = (this.preferences.getValue(PrefKey.ActiveComponents, undefined) ?? []).slice()
+
+    activeComponents.push(component.uuid)
+
+    await this.preferences.setValue(PrefKey.ActiveComponents, activeComponents)
+  }
+
+  async removeActiveComponent(component: ComponentInterface): Promise<void> {
+    const activeComponents = this.preferences.getValue(PrefKey.ActiveComponents, undefined) ?? []
+
+    const filteredComponents = activeComponents.filter((activeComponent) => activeComponent !== component.uuid)
+
+    await this.preferences.setValue(PrefKey.ActiveComponents, filteredComponents)
+  }
+
+  getActiveComponents(): ComponentInterface[] {
+    const activeComponents = this.preferences.getValue(PrefKey.ActiveComponents, undefined) ?? []
+
+    return this.items.findItems(activeComponents)
+  }
+
+  isComponentActive(component: ComponentInterface): boolean {
+    const activeComponents = this.preferences.getValue(PrefKey.ActiveComponents, undefined) ?? []
+
+    return activeComponents.includes(component.uuid)
   }
 }

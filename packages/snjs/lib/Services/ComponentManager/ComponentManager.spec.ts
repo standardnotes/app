@@ -7,74 +7,93 @@ import { createNote } from './../../Spec/SpecUtils'
 import {
   ComponentAction,
   ComponentPermission,
-  FeatureDescription,
   FindNativeFeature,
   FeatureIdentifier,
   NoteType,
+  UIFeatureDescriptionTypes,
+  IframeComponentFeatureDescription,
 } from '@standardnotes/features'
-import { GenericItem, SNComponent, Environment, Platform } from '@standardnotes/models'
+import { ContentType } from '@standardnotes/domain-core'
+import {
+  GenericItem,
+  SNComponent,
+  Environment,
+  Platform,
+  ComponentInterface,
+  ComponentOrNativeFeature,
+  ComponentContent,
+  DecryptedPayload,
+  PayloadTimestampDefaults,
+} from '@standardnotes/models'
 import {
   DesktopManagerInterface,
   InternalEventBusInterface,
   AlertService,
   DeviceInterface,
   MutatorClientInterface,
+  ItemManagerInterface,
+  SyncServiceInterface,
+  PreferenceServiceInterface,
 } from '@standardnotes/services'
 import { ItemManager } from '@Lib/Services/Items/ItemManager'
 import { SNFeaturesService } from '@Lib/Services/Features/FeaturesService'
 import { SNComponentManager } from './ComponentManager'
 import { SNSyncService } from '../Sync/SyncService'
-import { ContentType } from '@standardnotes/domain-core'
+import { ComponentPackageInfo } from '@standardnotes/models'
 
 describe('featuresService', () => {
-  let itemManager: ItemManager
+  let items: ItemManagerInterface
   let mutator: MutatorClientInterface
-  let featureService: SNFeaturesService
-  let alertService: AlertService
-  let syncService: SNSyncService
-  let prefsService: SNPreferencesService
-  let internalEventBus: InternalEventBusInterface
+  let features: SNFeaturesService
+  let alerts: AlertService
+  let sync: SyncServiceInterface
+  let prefs: PreferenceServiceInterface
+  let eventBus: InternalEventBusInterface
   let device: DeviceInterface
+
+  const nativeFeatureAsUIFeature = <F extends UIFeatureDescriptionTypes>(identifier: FeatureIdentifier) => {
+    return new ComponentOrNativeFeature(FindNativeFeature<F>(identifier)!)
+  }
 
   const desktopExtHost = 'http://localhost:123'
 
   const createManager = (environment: Environment, platform: Platform) => {
-    const desktopManager: DesktopManagerInterface = {
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-      syncComponentsInstallation() {},
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-      registerUpdateObserver(_callback: (component: SNComponent) => void) {
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        return () => {}
-      },
-      getExtServerHost() {
-        return desktopExtHost
-      },
-    }
-
     const manager = new SNComponentManager(
-      itemManager,
+      items,
       mutator,
-      syncService,
-      featureService,
-      prefsService,
-      alertService,
+      sync,
+      features,
+      prefs,
+      alerts,
       environment,
       platform,
-      internalEventBus,
       device,
+      eventBus,
     )
-    manager.setDesktopManager(desktopManager)
+
+    if (environment === Environment.Desktop) {
+      const desktopManager: DesktopManagerInterface = {
+        syncComponentsInstallation() {},
+        registerUpdateObserver(_callback: (component: ComponentInterface) => void) {
+          return () => {}
+        },
+        getExtServerHost() {
+          return desktopExtHost
+        },
+      }
+      manager.setDesktopManager(desktopManager)
+    }
+
     return manager
   }
 
   beforeEach(() => {
-    syncService = {} as jest.Mocked<SNSyncService>
-    syncService.sync = jest.fn()
+    sync = {} as jest.Mocked<SNSyncService>
+    sync.sync = jest.fn()
 
-    itemManager = {} as jest.Mocked<ItemManager>
-    itemManager.getItems = jest.fn().mockReturnValue([])
-    itemManager.addObserver = jest.fn()
+    items = {} as jest.Mocked<ItemManager>
+    items.getItems = jest.fn().mockReturnValue([])
+    items.addObserver = jest.fn()
 
     mutator = {} as jest.Mocked<MutatorClientInterface>
     mutator.createItem = jest.fn()
@@ -83,62 +102,40 @@ describe('featuresService', () => {
     mutator.changeItem = jest.fn()
     mutator.changeFeatureRepo = jest.fn()
 
-    featureService = {} as jest.Mocked<SNFeaturesService>
+    features = {} as jest.Mocked<SNFeaturesService>
 
-    prefsService = {} as jest.Mocked<SNPreferencesService>
+    prefs = {} as jest.Mocked<SNPreferencesService>
+    prefs.addEventObserver = jest.fn()
 
-    alertService = {} as jest.Mocked<AlertService>
-    alertService.confirm = jest.fn()
-    alertService.alert = jest.fn()
+    alerts = {} as jest.Mocked<AlertService>
+    alerts.confirm = jest.fn()
+    alerts.alert = jest.fn()
 
-    internalEventBus = {} as jest.Mocked<InternalEventBusInterface>
-    internalEventBus.publish = jest.fn()
+    eventBus = {} as jest.Mocked<InternalEventBusInterface>
+    eventBus.publish = jest.fn()
 
     device = {} as jest.Mocked<DeviceInterface>
   })
 
-  const nativeComponent = (identifier?: FeatureIdentifier, file_type?: FeatureDescription['file_type']) => {
-    return new SNComponent({
-      uuid: '789',
-      content_type: ContentType.TYPES.Component,
-      content: {
-        package_info: {
+  const thirdPartyFeature = () => {
+    const component = new SNComponent(
+      new DecryptedPayload({
+        uuid: '789',
+        content_type: ContentType.TYPES.Component,
+        ...PayloadTimestampDefaults(),
+        content: {
+          local_url: 'sn://Extensions/non-native-identifier/dist/index.html',
           hosted_url: 'https://example.com/component',
-          identifier: identifier || FeatureIdentifier.PlusEditor,
-          file_type: file_type ?? 'html',
-          valid_until: new Date(),
-        },
-      },
-    } as never)
-  }
+          package_info: {
+            identifier: 'non-native-identifier' as FeatureIdentifier,
+            expires_at: new Date().getTime(),
+            availableInRoles: [],
+          } as unknown as jest.Mocked<ComponentPackageInfo>,
+        } as unknown as jest.Mocked<ComponentContent>,
+      }),
+    )
 
-  const deprecatedComponent = () => {
-    return new SNComponent({
-      uuid: '789',
-      content_type: ContentType.TYPES.Component,
-      content: {
-        package_info: {
-          hosted_url: 'https://example.com/component',
-          identifier: FeatureIdentifier.DeprecatedFileSafe,
-          valid_until: new Date(),
-        },
-      },
-    } as never)
-  }
-
-  const thirdPartyComponent = () => {
-    return new SNComponent({
-      uuid: '789',
-      content_type: ContentType.TYPES.Component,
-      content: {
-        local_url: 'sn://Extensions/non-native-identifier/dist/index.html',
-        hosted_url: 'https://example.com/component',
-        package_info: {
-          identifier: 'non-native-identifier',
-          valid_until: new Date(),
-        },
-      },
-    } as never)
+    return new ComponentOrNativeFeature<IframeComponentFeatureDescription>(component)
   }
 
   describe('permissions', () => {
@@ -152,7 +149,10 @@ describe('featuresService', () => {
 
       const manager = createManager(Environment.Desktop, Platform.MacDesktop)
       expect(
-        manager.areRequestedPermissionsValid(nativeComponent(FeatureIdentifier.MarkdownProEditor), permissions),
+        manager.areRequestedPermissionsValid(
+          nativeFeatureAsUIFeature(FeatureIdentifier.MarkdownProEditor),
+          permissions,
+        ),
       ).toEqual(true)
     })
 
@@ -165,7 +165,12 @@ describe('featuresService', () => {
       ]
 
       const manager = createManager(Environment.Desktop, Platform.MacDesktop)
-      expect(manager.areRequestedPermissionsValid(nativeComponent(), permissions)).toEqual(false)
+      expect(
+        manager.areRequestedPermissionsValid(
+          nativeFeatureAsUIFeature(FeatureIdentifier.MarkdownProEditor),
+          permissions,
+        ),
+      ).toEqual(false)
     })
 
     it('no extension should be able to stream multiple tags', () => {
@@ -177,7 +182,12 @@ describe('featuresService', () => {
       ]
 
       const manager = createManager(Environment.Desktop, Platform.MacDesktop)
-      expect(manager.areRequestedPermissionsValid(nativeComponent(), permissions)).toEqual(false)
+      expect(
+        manager.areRequestedPermissionsValid(
+          nativeFeatureAsUIFeature(FeatureIdentifier.MarkdownProEditor),
+          permissions,
+        ),
+      ).toEqual(false)
     })
 
     it('no extension should be able to stream multiple notes or tags', () => {
@@ -189,7 +199,12 @@ describe('featuresService', () => {
       ]
 
       const manager = createManager(Environment.Desktop, Platform.MacDesktop)
-      expect(manager.areRequestedPermissionsValid(nativeComponent(), permissions)).toEqual(false)
+      expect(
+        manager.areRequestedPermissionsValid(
+          nativeFeatureAsUIFeature(FeatureIdentifier.MarkdownProEditor),
+          permissions,
+        ),
+      ).toEqual(false)
     })
 
     it('some valid and some invalid permissions should still return invalid permissions', () => {
@@ -202,7 +217,10 @@ describe('featuresService', () => {
 
       const manager = createManager(Environment.Desktop, Platform.MacDesktop)
       expect(
-        manager.areRequestedPermissionsValid(nativeComponent(FeatureIdentifier.DeprecatedFileSafe), permissions),
+        manager.areRequestedPermissionsValid(
+          nativeFeatureAsUIFeature(FeatureIdentifier.DeprecatedFileSafe),
+          permissions,
+        ),
       ).toEqual(false)
     })
 
@@ -220,7 +238,10 @@ describe('featuresService', () => {
 
       const manager = createManager(Environment.Desktop, Platform.MacDesktop)
       expect(
-        manager.areRequestedPermissionsValid(nativeComponent(FeatureIdentifier.DeprecatedFileSafe), permissions),
+        manager.areRequestedPermissionsValid(
+          nativeFeatureAsUIFeature(FeatureIdentifier.DeprecatedFileSafe),
+          permissions,
+        ),
       ).toEqual(true)
     })
 
@@ -238,7 +259,10 @@ describe('featuresService', () => {
 
       const manager = createManager(Environment.Desktop, Platform.MacDesktop)
       expect(
-        manager.areRequestedPermissionsValid(nativeComponent(FeatureIdentifier.DeprecatedBoldEditor), permissions),
+        manager.areRequestedPermissionsValid(
+          nativeFeatureAsUIFeature(FeatureIdentifier.DeprecatedBoldEditor),
+          permissions,
+        ),
       ).toEqual(true)
     })
 
@@ -255,9 +279,9 @@ describe('featuresService', () => {
       ]
 
       const manager = createManager(Environment.Desktop, Platform.MacDesktop)
-      expect(manager.areRequestedPermissionsValid(nativeComponent(FeatureIdentifier.PlusEditor), permissions)).toEqual(
-        false,
-      )
+      expect(
+        manager.areRequestedPermissionsValid(nativeFeatureAsUIFeature(FeatureIdentifier.PlusEditor), permissions),
+      ).toEqual(false)
     })
   })
 
@@ -265,25 +289,31 @@ describe('featuresService', () => {
     describe('desktop', () => {
       it('returns native path for native component', () => {
         const manager = createManager(Environment.Desktop, Platform.MacDesktop)
-        const component = nativeComponent()
-        const url = manager.urlForComponent(component)
-        const feature = FindNativeFeature(component.identifier)
-        expect(url).toEqual(`${desktopExtHost}/components/${feature?.identifier}/${feature?.index_path}`)
+        const feature = nativeFeatureAsUIFeature<IframeComponentFeatureDescription>(
+          FeatureIdentifier.MarkdownProEditor,
+        )!
+        const url = manager.urlForComponent(feature)
+        expect(url).toEqual(
+          `${desktopExtHost}/components/${feature.featureIdentifier}/${feature.asFeatureDescription.index_path}`,
+        )
       })
 
       it('returns native path for deprecated native component', () => {
         const manager = createManager(Environment.Desktop, Platform.MacDesktop)
-        const component = deprecatedComponent()
-        const url = manager.urlForComponent(component)
-        const feature = FindNativeFeature(component.identifier)
-        expect(url).toEqual(`${desktopExtHost}/components/${feature?.identifier}/${feature?.index_path}`)
+        const feature = nativeFeatureAsUIFeature<IframeComponentFeatureDescription>(
+          FeatureIdentifier.DeprecatedBoldEditor,
+        )!
+        const url = manager.urlForComponent(feature)
+        expect(url).toEqual(
+          `${desktopExtHost}/components/${feature?.featureIdentifier}/${feature.asFeatureDescription.index_path}`,
+        )
       })
 
       it('returns nonnative path for third party component', () => {
         const manager = createManager(Environment.Desktop, Platform.MacDesktop)
-        const component = thirdPartyComponent()
-        const url = manager.urlForComponent(component)
-        expect(url).toEqual(`${desktopExtHost}/Extensions/${component.identifier}/dist/index.html`)
+        const feature = thirdPartyFeature()
+        const url = manager.urlForComponent(feature)
+        expect(url).toEqual(`${desktopExtHost}/Extensions/${feature.featureIdentifier}/dist/index.html`)
       })
 
       it('returns hosted url for third party component with no local_url', () => {
@@ -299,7 +329,8 @@ describe('featuresService', () => {
             },
           },
         } as never)
-        const url = manager.urlForComponent(component)
+        const feature = new ComponentOrNativeFeature<IframeComponentFeatureDescription>(component)
+        const url = manager.urlForComponent(feature)
         expect(url).toEqual('https://example.com/component')
       })
     })
@@ -307,29 +338,30 @@ describe('featuresService', () => {
     describe('web', () => {
       it('returns native path for native component', () => {
         const manager = createManager(Environment.Web, Platform.MacWeb)
-        const component = nativeComponent()
-        const url = manager.urlForComponent(component)
-        const feature = FindNativeFeature(component.identifier) as FeatureDescription
-        expect(url).toEqual(`http://localhost/components/assets/${component.identifier}/${feature.index_path}`)
+        const feature = nativeFeatureAsUIFeature<IframeComponentFeatureDescription>(FeatureIdentifier.MarkdownProEditor)
+        const url = manager.urlForComponent(feature)
+        expect(url).toEqual(
+          `http://localhost/components/assets/${feature.featureIdentifier}/${feature.asFeatureDescription.index_path}`,
+        )
       })
 
       it('returns hosted path for third party component', () => {
         const manager = createManager(Environment.Web, Platform.MacWeb)
-        const component = thirdPartyComponent()
-        const url = manager.urlForComponent(component)
-        expect(url).toEqual(component.hosted_url)
+        const feature = thirdPartyFeature()
+        const url = manager.urlForComponent(feature)
+        expect(url).toEqual(feature.asComponent.hosted_url)
       })
     })
   })
 
   describe('editors', () => {
-    it('getEditorForNote should return undefined is note type is plain', () => {
+    it('getEditorForNote should return plain notes is note type is plain', () => {
       const note = createNote({
         noteType: NoteType.Plain,
       })
       const manager = createManager(Environment.Web, Platform.MacWeb)
 
-      expect(manager.editorForNote(note)).toBe(undefined)
+      expect(manager.editorForNote(note).featureIdentifier).toBe(FeatureIdentifier.PlainEditor)
     })
 
     it('getEditorForNote should call legacy function if no note editorIdentifier or noteType', () => {
@@ -345,60 +377,74 @@ describe('featuresService', () => {
   describe('editor change alert', () => {
     it('should not require alert switching from plain editor', () => {
       const manager = createManager(Environment.Web, Platform.MacWeb)
-      const component = nativeComponent()
+      const component = nativeFeatureAsUIFeature<IframeComponentFeatureDescription>(
+        FeatureIdentifier.MarkdownProEditor,
+      )!
       const requiresAlert = manager.doesEditorChangeRequireAlert(undefined, component)
       expect(requiresAlert).toBe(false)
     })
 
     it('should not require alert switching to plain editor', () => {
       const manager = createManager(Environment.Web, Platform.MacWeb)
-      const component = nativeComponent()
+      const component = nativeFeatureAsUIFeature<IframeComponentFeatureDescription>(
+        FeatureIdentifier.MarkdownProEditor,
+      )!
       const requiresAlert = manager.doesEditorChangeRequireAlert(component, undefined)
       expect(requiresAlert).toBe(false)
     })
 
     it('should not require alert switching from a markdown editor', () => {
       const manager = createManager(Environment.Web, Platform.MacWeb)
-      const htmlEditor = nativeComponent()
-      const markdownEditor = nativeComponent(undefined, 'md')
+      const htmlEditor = nativeFeatureAsUIFeature<IframeComponentFeatureDescription>(FeatureIdentifier.PlusEditor)!
+      const markdownEditor = nativeFeatureAsUIFeature<IframeComponentFeatureDescription>(
+        FeatureIdentifier.MarkdownProEditor,
+      )
       const requiresAlert = manager.doesEditorChangeRequireAlert(markdownEditor, htmlEditor)
       expect(requiresAlert).toBe(false)
     })
 
     it('should not require alert switching to a markdown editor', () => {
       const manager = createManager(Environment.Web, Platform.MacWeb)
-      const htmlEditor = nativeComponent()
-      const markdownEditor = nativeComponent(undefined, 'md')
+      const htmlEditor = nativeFeatureAsUIFeature<IframeComponentFeatureDescription>(FeatureIdentifier.PlusEditor)!
+      const markdownEditor = nativeFeatureAsUIFeature<IframeComponentFeatureDescription>(
+        FeatureIdentifier.MarkdownProEditor,
+      )
       const requiresAlert = manager.doesEditorChangeRequireAlert(htmlEditor, markdownEditor)
       expect(requiresAlert).toBe(false)
     })
 
     it('should not require alert switching from & to a html editor', () => {
       const manager = createManager(Environment.Web, Platform.MacWeb)
-      const htmlEditor = nativeComponent()
+      const htmlEditor = nativeFeatureAsUIFeature<IframeComponentFeatureDescription>(FeatureIdentifier.PlusEditor)!
       const requiresAlert = manager.doesEditorChangeRequireAlert(htmlEditor, htmlEditor)
       expect(requiresAlert).toBe(false)
     })
 
     it('should require alert switching from a html editor to custom editor', () => {
       const manager = createManager(Environment.Web, Platform.MacWeb)
-      const htmlEditor = nativeComponent()
-      const customEditor = nativeComponent(undefined, 'json')
+      const htmlEditor = nativeFeatureAsUIFeature<IframeComponentFeatureDescription>(FeatureIdentifier.PlusEditor)!
+      const customEditor = nativeFeatureAsUIFeature<IframeComponentFeatureDescription>(
+        FeatureIdentifier.TokenVaultEditor,
+      )
       const requiresAlert = manager.doesEditorChangeRequireAlert(htmlEditor, customEditor)
       expect(requiresAlert).toBe(true)
     })
 
     it('should require alert switching from a custom editor to html editor', () => {
       const manager = createManager(Environment.Web, Platform.MacWeb)
-      const htmlEditor = nativeComponent()
-      const customEditor = nativeComponent(undefined, 'json')
+      const htmlEditor = nativeFeatureAsUIFeature<IframeComponentFeatureDescription>(FeatureIdentifier.PlusEditor)!
+      const customEditor = nativeFeatureAsUIFeature<IframeComponentFeatureDescription>(
+        FeatureIdentifier.TokenVaultEditor,
+      )
       const requiresAlert = manager.doesEditorChangeRequireAlert(customEditor, htmlEditor)
       expect(requiresAlert).toBe(true)
     })
 
     it('should require alert switching from a custom editor to custom editor', () => {
       const manager = createManager(Environment.Web, Platform.MacWeb)
-      const customEditor = nativeComponent(undefined, 'json')
+      const customEditor = nativeFeatureAsUIFeature<IframeComponentFeatureDescription>(
+        FeatureIdentifier.TokenVaultEditor,
+      )
       const requiresAlert = manager.doesEditorChangeRequireAlert(customEditor, customEditor)
       expect(requiresAlert).toBe(true)
     })

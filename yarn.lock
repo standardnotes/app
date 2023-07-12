@@ -3935,7 +3935,6 @@ __metadata:
     "@standardnotes/security": ^1.7.6
     "@standardnotes/utils": "workspace:*"
     "@types/jest": ^29.2.3
-    "@types/lodash": ^4.14.189
     "@typescript-eslint/eslint-plugin": "*"
     eslint: ^8.27.0
     eslint-plugin-prettier: "*"
@@ -4638,7 +4637,6 @@ __metadata:
     "@types/jest": ^29.2.3
     "@types/jsdom": ^20.0.1
     "@types/libsodium-wrappers": ^0.7.10
-    "@types/lodash": ^4.14.189
     "@types/semver": ^7.3.13
     "@typescript-eslint/eslint-plugin": "*"
     babel-jest: ^29.3.1
@@ -4654,7 +4652,6 @@ __metadata:
     jest-environment-jsdom: ^29.3.1
     jsdom: ^20.0.2
     libsodium-wrappers: ^0.7.10
-    lodash: ^4.17.21
     nock: ^13.2.9
     otplib: ^12.0.1
     reflect-metadata: ^0.1.13

@@ -1,14 +1,9 @@
-import { WebApplication } from '@/Application/WebApplication'
 import { HeadlessSuperConverter } from '@/Components/SuperEditor/Tools/HeadlessSuperConverter'
-import { PrefDefaults } from '@/Constants/PrefDefaults'
-import { NoteType, PrefKey, SNNote } from '@standardnotes/snjs'
+import { NoteType, PrefKey, SNNote, PrefDefaults } from '@standardnotes/snjs'
+import { WebApplicationInterface } from '@standardnotes/ui-services'
 
-export const getNoteFormat = (application: WebApplication, note: SNNote) => {
-  const editor = application.componentManager.editorForNote(note)
-
-  const isSuperNote = note.noteType === NoteType.Super
-
-  if (isSuperNote) {
+export const getNoteFormat = (application: WebApplicationInterface, note: SNNote) => {
+  if (note.noteType === NoteType.Super) {
     const superNoteExportFormatPref = application.getPreference(
       PrefKey.SuperNoteExportFormat,
       PrefDefaults[PrefKey.SuperNoteExportFormat],
@@ -17,15 +12,16 @@ export const getNoteFormat = (application: WebApplication, note: SNNote) => {
     return superNoteExportFormatPref
   }
 
-  return editor?.package_info?.file_type || 'txt'
+  const editor = application.componentManager.editorForNote(note)
+  return editor.fileType
 }
 
-export const getNoteFileName = (application: WebApplication, note: SNNote): string => {
+export const getNoteFileName = (application: WebApplicationInterface, note: SNNote): string => {
   const format = getNoteFormat(application, note)
   return `${note.title}.${format}`
 }
 
-export const getNoteBlob = (application: WebApplication, note: SNNote) => {
+export const getNoteBlob = (application: WebApplicationInterface, note: SNNote) => {
   const format = getNoteFormat(application, note)
   let type: string
   switch (format) {

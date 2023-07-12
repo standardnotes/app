@@ -29,7 +29,6 @@ import * as Models from '@standardnotes/models'
 import * as Responses from '@standardnotes/responses'
 import * as InternalServices from '../Services'
 import * as Utils from '@standardnotes/utils'
-import { Subscription } from '@standardnotes/security'
 import { UuidString, ApplicationEventPayload } from '../Types'
 import { applicationEventForSyncEvent } from '@Lib/Application/Event'
 import {
@@ -50,7 +49,7 @@ import {
   EncryptionServiceEvent,
   FilesBackupService,
   FileService,
-  SubscriptionClientInterface,
+  SubscriptionManagerInterface,
   SubscriptionManager,
   ChallengePrompt,
   Challenge,
@@ -151,7 +150,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   private declare userRequestServer: UserRequestServerInterface
   private declare subscriptionApiService: SubscriptionApiServiceInterface
   private declare subscriptionServer: SubscriptionServerInterface
-  private declare subscriptionManager: SubscriptionClientInterface
+  private declare subscriptionManager: SubscriptionManagerInterface
   private declare webSocketApiService: WebSocketApiServiceInterface
   private declare webSocketServer: WebSocketServerInterface
 
@@ -275,7 +274,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.defineInternalEventHandlers()
   }
 
-  get subscriptions(): ExternalServices.SubscriptionClientInterface {
+  get subscriptions(): ExternalServices.SubscriptionManagerInterface {
     return this.subscriptionManager
   }
 
@@ -405,6 +404,10 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
 
   public get sharedVaults(): ExternalServices.SharedVaultServiceInterface {
     return this.sharedVaultService
+  }
+
+  public get preferences(): ExternalServices.PreferenceServiceInterface {
+    return this.preferencesService
   }
 
   public computePrivateUsername(username: string): Promise<string | undefined> {
@@ -633,6 +636,11 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       }
     }
 
+    this.internalEventBus.publish({
+      type: event,
+      payload: data,
+    })
+
     void this.migrationService.handleApplicationEvent(event)
   }
 
@@ -669,19 +677,6 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       return false
     }
     return Common.compareVersions(userVersion, Common.ProtocolVersion.V004) >= 0
-  }
-
-  public async getUserSubscription(): Promise<Subscription | Responses.ClientDisplayableError | undefined> {
-    return this.sessionManager.getSubscription()
-  }
-
-  public async getAvailableSubscriptions(): Promise<
-    Responses.AvailableSubscriptions | Responses.ClientDisplayableError
-  > {
-    if (this.isThirdPartyHostUsed()) {
-      return ClientDisplayableError.FromString('Third party hosts do not support subscriptions.')
-    }
-    return this.sessionManager.getAvailableSubscriptions()
   }
 
   /**
@@ -1268,9 +1263,9 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.createSubscriptionApiService()
     this.createWebSocketServer()
     this.createWebSocketApiService()
-    this.createSubscriptionManager()
     this.createWebSocketsService()
     this.createSessionManager()
+    this.createSubscriptionManager()
     this.createHistoryManager()
     this.createSyncManager()
     this.createProtectionService()
@@ -1498,9 +1493,10 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   private createFeaturesService() {
     this.featuresService = new InternalServices.SNFeaturesService(
       this.diskStorageService,
-      this.apiService,
       this.itemManager,
       this.mutator,
+      this.subscriptions,
+      this.apiService,
       this.webSocketsService,
       this.settingsService,
       this.userService,
@@ -1517,8 +1513,8 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
             void this.notifyEvent(ApplicationEvent.UserRolesChanged)
             break
           }
-          case ExternalServices.FeaturesEvent.FeaturesUpdated: {
-            void this.notifyEvent(ApplicationEvent.FeaturesUpdated)
+          case ExternalServices.FeaturesEvent.FeaturesAvailabilityChanged: {
+            void this.notifyEvent(ApplicationEvent.FeaturesAvailabilityChanged)
             break
           }
           case ExternalServices.FeaturesEvent.DidPurchaseSubscription: {
@@ -1561,6 +1557,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       internalEventBus: this.internalEventBus,
       legacySessionStorageMapper: this.legacySessionStorageMapper,
       backups: this.fileBackups,
+      preferences: this.preferencesService,
     })
     this.services.push(this.migrationService)
   }
@@ -1629,7 +1626,13 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   }
 
   private createSubscriptionManager() {
-    this.subscriptionManager = new SubscriptionManager(this.subscriptionApiService, this.internalEventBus)
+    this.subscriptionManager = new SubscriptionManager(
+      this.subscriptionApiService,
+      this.sessions,
+      this.storage,
+      this.internalEventBus,
+    )
+    this.services.push(this.subscriptionManager)
   }
 
   private createItemManager() {
@@ -1647,8 +1650,8 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       this.alertService,
       this.environment,
       this.platform,
-      this.internalEventBus,
       this.deviceInterface,
+      this.internalEventBus,
     )
     this.services.push(this.componentManagerService)
   }

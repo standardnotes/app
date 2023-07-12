@@ -36,7 +36,6 @@ export enum StorageKey {
   WebSocketUrl = 'webSocket_url',
   UserRoles = 'user_roles',
   OfflineUserRoles = 'offline_user_roles',
-  UserFeatures = 'user_features',
   ExperimentalFeatures = 'experimental_features',
   DeinitMode = 'deinit_mode',
   CodeVerifier = 'code_verifier',
@@ -50,6 +49,7 @@ export enum StorageKey {
   FileBackupsEnabled = 'file_backups_enabled',
   FileBackupsLocation = 'file_backups_location',
   VaultSelectionOptions = 'vault_selection_options',
+  Subscription = 'subscription',
 }
 
 export enum NonwrappedStorageKey {

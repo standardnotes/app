@@ -13,7 +13,7 @@ import { ToastType } from '@standardnotes/toast'
 import {
   ApplicationEvent,
   SessionsClientInterface,
-  SubscriptionClientInterface,
+  SubscriptionManagerInterface,
   SyncClientInterface,
   SyncOpStatus,
   User,
@@ -39,7 +39,7 @@ describe('ApplicationEventObserver', () => {
   let syncStatusController: SyncStatusController
   let syncClient: SyncClientInterface
   let sessionManager: SessionsClientInterface
-  let subscriptionManager: SubscriptionClientInterface
+  let subscriptionManager: SubscriptionManagerInterface
   let toastService: ToastServiceInterface
   let userService: UserClientInterface
 
@@ -87,7 +87,7 @@ describe('ApplicationEventObserver', () => {
     sessionManager = {} as jest.Mocked<SessionsClientInterface>
     sessionManager.getUser = jest.fn().mockReturnValue({} as jest.Mocked<User>)
 
-    subscriptionManager = {} as jest.Mocked<SubscriptionClientInterface>
+    subscriptionManager = {} as jest.Mocked<SubscriptionManagerInterface>
     subscriptionManager.acceptInvitation = jest.fn()
 
     toastService = {} as jest.Mocked<ToastServiceInterface>

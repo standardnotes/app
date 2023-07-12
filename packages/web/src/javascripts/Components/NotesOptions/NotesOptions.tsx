@@ -409,7 +409,9 @@ const NotesOptions = ({
 
           <HorizontalSeparator classes="my-2" />
 
-          <SpellcheckOptions editorForNote={editorForNote} notesController={notesController} note={notes[0]} />
+          {editorForNote && (
+            <SpellcheckOptions editorForNote={editorForNote} notesController={notesController} note={notes[0]} />
+          )}
 
           <HorizontalSeparator classes="my-2" />
 

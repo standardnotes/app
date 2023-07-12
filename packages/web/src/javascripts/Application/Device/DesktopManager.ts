@@ -16,6 +16,7 @@ import {
   WebAppEvent,
   BackupServiceInterface,
   DesktopWatchedDirectoriesChanges,
+  ComponentInterface,
 } from '@standardnotes/snjs'
 import { WebApplicationInterface } from '@standardnotes/ui-services'
 
@@ -122,11 +123,11 @@ export class DesktopManager
    * Sending a component in its raw state is really slow for the desktop app
    * Keys are not passed into ItemParams, so the result is not encrypted
    */
-  convertComponentForTransmission(component: SNComponent) {
+  convertComponentForTransmission(component: ComponentInterface) {
     return component.payloadRepresentation().ejected()
   }
 
-  syncComponentsInstallation(components: SNComponent[]) {
+  syncComponentsInstallation(components: ComponentInterface[]) {
     Promise.all(
       components.map((component) => {
         return this.convertComponentForTransmission(component)
@@ -138,7 +139,7 @@ export class DesktopManager
       .catch(console.error)
   }
 
-  registerUpdateObserver(callback: (component: SNComponent) => void): () => void {
+  registerUpdateObserver(callback: (component: ComponentInterface) => void): () => void {
     const observer = {
       callback: callback,
     }

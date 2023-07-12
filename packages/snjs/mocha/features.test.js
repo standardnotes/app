@@ -7,41 +7,13 @@ describe('features', () => {
   let application
   let email
   let password
-  let midnightThemeFeature
-  let plusEditorFeature
-  let tagNestingFeature
-  let getUserFeatures
 
   beforeEach(async function () {
     application = await Factory.createInitAppWithFakeCrypto()
 
-    const now = new Date()
-    const tomorrow = now.setDate(now.getDate() + 1)
-
-    midnightThemeFeature = {
-      ...GetFeatures().find((feature) => feature.identifier === FeatureIdentifier.MidnightTheme),
-      expires_at: tomorrow,
-    }
-    plusEditorFeature = {
-      ...GetFeatures().find((feature) => feature.identifier === FeatureIdentifier.PlusEditor),
-      expires_at: tomorrow,
-    }
-    tagNestingFeature = {
-      ...GetFeatures().find((feature) => feature.identifier === FeatureIdentifier.TagNesting),
-      expires_at: tomorrow,
-    }
-
     sinon.spy(application.mutator, 'createItem')
     sinon.spy(application.mutator, 'changeComponent')
     sinon.spy(application.mutator, 'setItemsToBeDeleted')
-
-    getUserFeatures = sinon.stub(application.apiService, 'getUserFeatures').callsFake(() => {
-      return Promise.resolve({
-        data: {
-          features: [midnightThemeFeature, plusEditorFeature, tagNestingFeature],
-        },
-      })
-    })
 
     email = UuidGenerator.GenerateUuid()
     password = UuidGenerator.GenerateUuid()
@@ -63,129 +35,11 @@ describe('features', () => {
       expect(application.featuresService.onlineRoles).to.have.lengthOf(1)
       expect(application.featuresService.onlineRoles[0]).to.equal('CORE_USER')
 
-      expect(application.featuresService.features).to.have.lengthOf(3)
-      expect(application.featuresService.features[0]).to.containSubset(midnightThemeFeature)
-      expect(application.featuresService.features[1]).to.containSubset(plusEditorFeature)
-
       const storedRoles = await application.getValue(StorageKey.UserRoles)
 
       expect(storedRoles).to.have.lengthOf(1)
       expect(storedRoles[0]).to.equal('CORE_USER')
-
-      const storedFeatures = await application.getValue(StorageKey.UserFeatures)
-
-      expect(storedFeatures).to.have.lengthOf(3)
-      expect(storedFeatures[0]).to.containSubset(midnightThemeFeature)
-      expect(storedFeatures[1]).to.containSubset(plusEditorFeature)
-      expect(storedFeatures[2]).to.containSubset(tagNestingFeature)
     })
-
-    it('should fetch user features and create items for features with content type', async () => {
-      expect(application.apiService.getUserFeatures.callCount).to.equal(1)
-      expect(application.mutator.createItem.callCount).to.equal(2)
-
-      const themeItems = application.items.getItems(ContentType.TYPES.Theme)
-      const systemThemeCount = 1
-      expect(themeItems).to.have.lengthOf(1 + systemThemeCount)
-      expect(themeItems[1].content).to.containSubset(
-        JSON.parse(
-          JSON.stringify({
-            name: midnightThemeFeature.name,
-            package_info: midnightThemeFeature,
-            valid_until: new Date(midnightThemeFeature.expires_at),
-          }),
-        ),
-      )
-
-      const editorItems = application.items.getItems(ContentType.TYPES.Component)
-      expect(editorItems).to.have.lengthOf(1)
-      expect(editorItems[0].content).to.containSubset(
-        JSON.parse(
-          JSON.stringify({
-            name: plusEditorFeature.name,
-            area: plusEditorFeature.area,
-            package_info: plusEditorFeature,
-            valid_until: new Date(midnightThemeFeature.expires_at),
-          }),
-        ),
-      )
-    })
-
-    it('should update content for existing feature items', async () => {
-      // Wipe items from initial sync
-      await application.itemManager.removeAllItemsFromMemory()
-      // Wipe roles from initial sync
-      await application.featuresService.setOnlineRoles([])
-      // Create pre-existing item for theme without all the info
-      await application.mutator.createItem(
-        ContentType.TYPES.Theme,
-        FillItemContent({
-          package_info: {
-            identifier: FeatureIdentifier.MidnightTheme,
-          },
-        }),
-      )
-      // Call sync intentionally to get roles again in meta
-      await application.sync.sync()
-      // Timeout since we don't await for features update
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-      expect(application.mutator.changeComponent.callCount).to.equal(1)
-      const themeItems = application.items.getItems(ContentType.TYPES.Theme)
-      expect(themeItems).to.have.lengthOf(1)
-      expect(themeItems[0].content).to.containSubset(
-        JSON.parse(
-          JSON.stringify({
-            package_info: midnightThemeFeature,
-            valid_until: new Date(midnightThemeFeature.expires_at),
-          }),
-        ),
-      )
-    })
-
-    it('should delete theme item if feature has expired', async () => {
-      const now = new Date()
-      const yesterday = now.setDate(now.getDate() - 1)
-
-      getUserFeatures.restore()
-      sinon.stub(application.apiService, 'getUserFeatures').callsFake(() => {
-        return Promise.resolve({
-          data: {
-            features: [
-              {
-                ...midnightThemeFeature,
-                expires_at: yesterday,
-              },
-            ],
-          },
-        })
-      })
-
-      const themeItem = application.items
-        .getItems(ContentType.TYPES.Theme)
-        .find((theme) => theme.identifier === midnightThemeFeature.identifier)
-
-      // Wipe roles from initial sync
-      await application.featuresService.setOnlineRoles([])
-
-      // Call sync intentionally to get roles again in meta
-      await application.sync.sync()
-
-      // Timeout since we don't await for features update
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-      expect(application.mutator.setItemsToBeDeleted.calledWith([sinon.match({ uuid: themeItem.uuid })])).to.equal(
-        true,
-      )
-
-      const noTheme = application.items
-        .getItems(ContentType.TYPES.Theme)
-        .find((theme) => theme.identifier === midnightThemeFeature.identifier)
-      expect(noTheme).to.not.be.ok
-    })
-  })
-
-  it('should provide feature', async () => {
-    const feature = application.features.getFeatureThatOriginallyCameFromServer(FeatureIdentifier.PlusEditor)
-    expect(feature).to.containSubset(plusEditorFeature)
   })
 
   describe('extension repo items observer', () => {
@@ -194,7 +48,11 @@ describe('features', () => {
         return false
       })
 
-      expect(await application.settings.getDoesSensitiveSettingExist(SettingName.create(SettingName.NAMES.ExtensionKey).getValue())).to.equal(false)
+      expect(
+        await application.settings.getDoesSensitiveSettingExist(
+          SettingName.create(SettingName.NAMES.ExtensionKey).getValue(),
+        ),
+      ).to.equal(false)
 
       const extensionKey = UuidGenerator.GenerateUuid().split('-').join('')
 

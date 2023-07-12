@@ -4,4 +4,6 @@ export enum SubscriptionApiOperations {
   ListingInvites,
   AcceptingInvite,
   ConfirmAppleIAP,
+  GetSubscription,
+  GetAvailableSubscriptions,
 }

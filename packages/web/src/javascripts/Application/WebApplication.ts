@@ -24,6 +24,7 @@ import {
   BackupServiceInterface,
   InternalFeatureService,
   InternalFeatureServiceInterface,
+  PrefDefaults,
   NoteContent,
   SNNote,
 } from '@standardnotes/snjs'
@@ -48,7 +49,6 @@ import {
 } from '@standardnotes/ui-services'
 import { MobileWebReceiver, NativeMobileEventListener } from '../NativeMobileWeb/MobileWebReceiver'
 import { AndroidBackHandler } from '@/NativeMobileWeb/AndroidBackHandler'
-import { PrefDefaults } from '@/Constants/PrefDefaults'
 import { setCustomViewportHeight } from '@/setViewportHeightWithFallback'
 import { WebServices } from './WebServices'
 import { FeatureName } from '@/Controllers/FeatureName'
@@ -121,7 +121,12 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     this.webServices = {} as WebServices
     this.webServices.keyboardService = new KeyboardService(platform, this.environment)
     this.webServices.archiveService = new ArchiveManager(this)
-    this.webServices.themeService = new ThemeManager(this, this.internalEventBus)
+    this.webServices.themeService = new ThemeManager(
+      this,
+      this.preferences,
+      this.componentManager,
+      this.internalEventBus,
+    )
     this.webServices.autolockService = this.isNativeMobileWeb()
       ? undefined
       : new AutolockService(this, this.internalEventBus)
@@ -232,7 +237,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     return this.webServices.vaultDisplayService
   }
 
-  public getViewControllerManager(): ViewControllerManager {
+  public get controllers(): ViewControllerManager {
     return this.webServices.viewControllerManager
   }
 
@@ -265,7 +270,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
   }
 
   public get featuresController() {
-    return this.getViewControllerManager().featuresController
+    return this.controllers.featuresController
   }
 
   public get desktopDevice(): DesktopDeviceInterface | undefined {
@@ -388,14 +393,14 @@ export class WebApplication extends SNApplication implements WebApplicationInter
   }
 
   handleReceivedFileEvent(file: { name: string; mimeType: string; data: string }): void {
-    const filesController = this.getViewControllerManager().filesController
+    const filesController = this.controllers.filesController
     const blob = getBlobFromBase64(file.data, file.mimeType)
     const mappedFile = new File([blob], file.name, { type: file.mimeType })
     void filesController.uploadNewFile(mappedFile, true)
   }
 
   async handleReceivedTextEvent({ text, title }: { text: string; title?: string | undefined }) {
-    const titleForNote = title || this.getViewControllerManager().itemListController.titleForNewNote()
+    const titleForNote = title || this.controllers.itemListController.titleForNewNote()
 
     const note = this.items.createTemplateItem<NoteContent, SNNote>(ContentType.TYPES.Note, {
       title: titleForNote,
@@ -405,7 +410,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
 
     const insertedNote = await this.mutator.insertItem(note)
 
-    this.getViewControllerManager().selectionController.selectItem(insertedNote.uuid, true).catch(console.error)
+    this.controllers.selectionController.selectItem(insertedNote.uuid, true).catch(console.error)
   }
 
   private async lockApplicationAfterMobileEventIfApplicable(): Promise<void> {
@@ -457,23 +462,23 @@ export class WebApplication extends SNApplication implements WebApplicationInter
   }
 
   entitledToPerTagPreferences(): boolean {
-    return this.hasValidSubscription()
+    return this.hasValidFirstPartySubscription()
   }
 
   get entitledToFiles(): boolean {
-    return this.getViewControllerManager().featuresController.entitledToFiles
+    return this.controllers.featuresController.entitledToFiles
   }
 
   showPremiumModal(featureName?: FeatureName): void {
-    void this.getViewControllerManager().featuresController.showPremiumAlert(featureName)
+    void this.controllers.featuresController.showPremiumAlert(featureName)
   }
 
-  hasValidSubscription(): boolean {
-    return this.getViewControllerManager().subscriptionController.hasValidSubscription()
+  hasValidFirstPartySubscription(): boolean {
+    return this.controllers.subscriptionController.hasFirstPartyOnlineOrOfflineSubscription
   }
 
   async openPurchaseFlow() {
-    await this.getViewControllerManager().purchaseFlowController.openPurchaseFlow()
+    await this.controllers.purchaseFlowController.openPurchaseFlow()
   }
 
   addNativeMobileEventListener = (listener: NativeMobileEventListener) => {
@@ -485,11 +490,11 @@ export class WebApplication extends SNApplication implements WebApplicationInter
   }
 
   showAccountMenu(): void {
-    this.getViewControllerManager().accountMenuController.setShow(true)
+    this.controllers.accountMenuController.setShow(true)
   }
 
   hideAccountMenu(): void {
-    this.getViewControllerManager().accountMenuController.setShow(false)
+    this.controllers.accountMenuController.setShow(false)
   }
 
   /**
@@ -510,9 +515,9 @@ export class WebApplication extends SNApplication implements WebApplicationInter
   }
 
   openPreferences(pane?: PreferenceId): void {
-    this.getViewControllerManager().preferencesController.openPreferences()
+    this.controllers.preferencesController.openPreferences()
     if (pane) {
-      this.getViewControllerManager().preferencesController.setCurrentPane(pane)
+      this.controllers.preferencesController.setCurrentPane(pane)
     }
   }
 

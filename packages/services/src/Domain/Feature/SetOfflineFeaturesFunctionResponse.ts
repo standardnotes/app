@@ -1,3 +1,3 @@
 import { ClientDisplayableError } from '@standardnotes/responses'
 
-export type SetOfflineFeaturesFunctionResponse = ClientDisplayableError | undefined
+export type SetOfflineFeaturesFunctionResponse = ClientDisplayableError | void

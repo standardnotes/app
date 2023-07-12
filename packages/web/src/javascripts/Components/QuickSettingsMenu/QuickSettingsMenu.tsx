@@ -1,11 +1,17 @@
-import { WebApplication } from '@/Application/WebApplication'
-import { ComponentArea, ContentType, FeatureIdentifier, GetFeatures, SNComponent } from '@standardnotes/snjs'
+import {
+  ComponentArea,
+  ComponentInterface,
+  ComponentOrNativeFeature,
+  ContentType,
+  FeatureIdentifier,
+  PreferencesServiceEvent,
+  ThemeFeatureDescription,
+} from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useEffect, useRef, useState } from 'react'
 import Icon from '@/Components/Icon/Icon'
 import FocusModeSwitch from './FocusModeSwitch'
 import ThemesMenuButton from './ThemesMenuButton'
-import { ThemeItem } from './ThemeItem'
 import { sortThemes } from '@/Utils/SortThemes'
 import HorizontalSeparator from '../Shared/HorizontalSeparator'
 import { QuickSettingsController } from '@/Controllers/QuickSettingsController'
@@ -13,50 +19,35 @@ import PanelSettingsSection from './PanelSettingsSection'
 import Menu from '../Menu/Menu'
 import MenuSwitchButtonItem from '../Menu/MenuSwitchButtonItem'
 import MenuRadioButtonItem from '../Menu/MenuRadioButtonItem'
+import { useApplication } from '../ApplicationProvider'
+import { GetAllThemesUseCase } from '@standardnotes/ui-services'
 
 type MenuProps = {
   quickSettingsMenuController: QuickSettingsController
-  application: WebApplication
 }
 
-const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, quickSettingsMenuController }) => {
+const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ quickSettingsMenuController }) => {
+  const application = useApplication()
+
   const { focusModeEnabled, setFocusModeEnabled } = application.paneController
   const { closeQuickSettingsMenu } = quickSettingsMenuController
-  const [themes, setThemes] = useState<ThemeItem[]>([])
-  const [toggleableComponents, setToggleableComponents] = useState<SNComponent[]>([])
+  const [themes, setThemes] = useState<ComponentOrNativeFeature<ThemeFeatureDescription>[]>([])
+  const [editorStackComponents, setEditorStackComponents] = useState<ComponentInterface[]>([])
 
-  const defaultThemeOn = !themes.map((item) => item?.component).find((theme) => theme?.active && !theme.isLayerable())
+  const activeThemes = application.componentManager.getActiveThemes()
+  const hasNonLayerableActiveTheme = activeThemes.find((theme) => !theme.layerable)
+  const defaultThemeOn = !hasNonLayerableActiveTheme
 
   const prefsButtonRef = useRef<HTMLButtonElement>(null)
   const defaultThemeButtonRef = useRef<HTMLButtonElement>(null)
 
   const reloadThemes = useCallback(() => {
-    const themes = application.items
-      .getDisplayableComponents()
-      .filter((component) => component.isTheme())
-      .map((item) => {
-        return {
-          name: item.displayName,
-          identifier: item.identifier,
-          component: item,
-        }
-      }) as ThemeItem[]
-
-    GetFeatures()
-      .filter((feature) => feature.content_type === ContentType.TYPES.Theme && !feature.layerable)
-      .forEach((theme) => {
-        if (themes.findIndex((item) => item.identifier === theme.identifier) === -1) {
-          themes.push({
-            name: theme.name as string,
-            identifier: theme.identifier,
-          })
-        }
-      })
-
-    setThemes(themes.sort(sortThemes))
+    const usecase = new GetAllThemesUseCase(application.items)
+    const { thirdParty, native } = usecase.execute({ excludeLayerable: false })
+    setThemes([...thirdParty, ...native].sort(sortThemes))
   }, [application])
 
-  const reloadToggleableComponents = useCallback(() => {
+  const reloadEditorStackComponents = useCallback(() => {
     const toggleableComponents = application.items
       .getDisplayableComponents()
       .filter(
@@ -66,7 +57,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, quickSet
           component.identifier !== FeatureIdentifier.DeprecatedFoldersComponent,
       )
 
-    setToggleableComponents(toggleableComponents)
+    setEditorStackComponents(toggleableComponents)
   }, [application])
 
   useEffect(() => {
@@ -86,36 +77,40 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, quickSet
   }, [application, reloadThemes])
 
   useEffect(() => {
+    return application.preferences.addEventObserver((event) => {
+      if (event === PreferencesServiceEvent.PreferencesChanged) {
+        reloadThemes()
+      }
+    })
+  }, [application, reloadThemes])
+
+  useEffect(() => {
     const cleanupItemStream = application.streamItems(ContentType.TYPES.Component, () => {
-      reloadToggleableComponents()
+      reloadEditorStackComponents()
     })
 
     return () => {
       cleanupItemStream()
     }
-  }, [application, reloadToggleableComponents])
+  }, [application, reloadEditorStackComponents])
 
   useEffect(() => {
     prefsButtonRef.current?.focus()
   }, [])
 
-  const toggleComponent = useCallback(
-    (component: SNComponent) => {
-      if (component.isTheme()) {
-        application.componentManager.toggleTheme(component.uuid).catch(console.error)
-      } else {
-        application.componentManager.toggleComponent(component.uuid).catch(console.error)
-      }
+  const toggleEditorStackComponent = useCallback(
+    (component: ComponentInterface) => {
+      application.componentManager.toggleComponent(component).catch(console.error)
     },
     [application],
   )
 
   const deactivateAnyNonLayerableTheme = useCallback(() => {
-    const activeTheme = themes.map((item) => item.component).find((theme) => theme?.active && !theme.isLayerable())
-    if (activeTheme) {
-      application.componentManager.toggleTheme(activeTheme.uuid).catch(console.error)
+    const nonLayerableActiveTheme = application.componentManager.getActiveThemes().find((theme) => !theme.layerable)
+    if (nonLayerableActiveTheme) {
+      void application.componentManager.toggleTheme(nonLayerableActiveTheme)
     }
-  }, [application, themes])
+  }, [application])
 
   const toggleDefaultTheme = useCallback(() => {
     deactivateAnyNonLayerableTheme()
@@ -123,15 +118,15 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, quickSet
 
   return (
     <Menu a11yLabel="Quick settings menu" isOpen>
-      {toggleableComponents.length > 0 && (
+      {editorStackComponents.length > 0 && (
         <>
           <div className="my-1 px-3 text-sm font-semibold uppercase text-text">Tools</div>
-          {toggleableComponents.map((component) => (
+          {editorStackComponents.map((component) => (
             <MenuSwitchButtonItem
               onChange={() => {
-                toggleComponent(component)
+                toggleEditorStackComponent(component)
               }}
-              checked={component.active}
+              checked={application.componentManager.isComponentActive(component)}
               key={component.uuid}
             >
               <Icon type="window" className="mr-2 text-neutral" />
@@ -146,7 +141,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, quickSet
         Default
       </MenuRadioButtonItem>
       {themes.map((theme) => (
-        <ThemesMenuButton item={theme} application={application} key={theme.component?.uuid ?? theme.identifier} />
+        <ThemesMenuButton uiFeature={theme} key={theme.uniqueIdentifier} />
       ))}
       <HorizontalSeparator classes="my-2" />
       <FocusModeSwitch
