@@ -22,7 +22,12 @@ const getPremiumContentCopy = (planName: string | undefined) => {
 const RevisionContentLocked: FunctionComponent = () => {
   const application = useApplication()
 
-  const { userSubscriptionName, isUserSubscriptionExpired, isUserSubscriptionCanceled } = application.subscriptions
+  let planName = 'free'
+  if (application.subscriptions.hasOnlineSubscription()) {
+    if (!application.subscriptions.isUserSubscriptionCanceled && !application.subscriptions.isUserSubscriptionExpired) {
+      planName = application.subscriptions.userSubscriptionName
+    }
+  }
 
   return (
     <div className="flex h-full w-full items-center justify-center">
@@ -30,12 +35,7 @@ const RevisionContentLocked: FunctionComponent = () => {
         <HistoryLockedIllustration />
         <div className="mt-2 mb-1 text-lg font-bold">Can't access this version</div>
         <div className="leading-140% mb-4 text-passive-0">
-          {getPremiumContentCopy(
-            !isUserSubscriptionCanceled && !isUserSubscriptionExpired && userSubscriptionName
-              ? userSubscriptionName
-              : 'free',
-          )}
-          . Learn more about our other plans to upgrade your history capacity.
+          {getPremiumContentCopy(planName)}. Learn more about our other plans to upgrade your history capacity.
         </div>
         <Button
           primary
