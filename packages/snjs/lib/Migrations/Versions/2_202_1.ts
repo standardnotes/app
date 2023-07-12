@@ -5,9 +5,9 @@ import { AllComponentPreferences, ComponentInterface, PrefKey } from '@standardn
 import { Copy, Uuids } from '@standardnotes/utils'
 import { FindNativeFeature } from '@standardnotes/features'
 
-export class Migration2_201_6 extends Migration {
+export class Migration2_202_1 extends Migration {
   static override version(): string {
-    return '2.201.6'
+    return '2.202.1'
   }
 
   protected registerStageHandlers(): void {
