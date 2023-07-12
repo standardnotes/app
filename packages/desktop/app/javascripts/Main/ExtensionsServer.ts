@@ -20,8 +20,8 @@ function log(...message: any) {
 
 export function normalizeFilePath(requestUrl: string, host: string): string {
   const isThirdPartyComponent = requestUrl.startsWith('/Extensions')
-  const isThemeOrEditorFeatureDescription = requestUrl.startsWith('/components')
-  if (!isThirdPartyComponent && !isThemeOrEditorFeatureDescription) {
+  const isNativeComponent = requestUrl.startsWith('/components')
+  if (!isThirdPartyComponent && !isNativeComponent) {
     throw new Error(`URL '${requestUrl}' falls outside of the extensions/features domain.`)
   }
 
