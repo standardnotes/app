@@ -19,10 +19,13 @@ export type ComponentContentSpecialized = {
   area: ComponentArea
   permissions?: ComponentPermission[]
   valid_until: Date | number
-  active?: boolean
+
   legacy_url?: string
   isMobileDefault?: boolean
   isDeprecated?: boolean
+
+  /** @deprecated */
+  active?: boolean
 
   /** @deprecated */
   url?: string
