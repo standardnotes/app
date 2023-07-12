@@ -45,7 +45,7 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
   setDisableClickOutside,
 }) => {
   const groups = useMemo(() => createEditorMenuGroups(application), [application])
-  const [currentComponent, setCurrentComponent] =
+  const [currentFeature, setCurrentFeature] =
     useState<ComponentOrNativeFeature<EditorFeatureDescription | IframeComponentFeatureDescription>>()
   const [pendingConversionItem, setPendingConversionItem] = useState<EditorMenuItem | null>(null)
 
@@ -60,7 +60,7 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
 
   useEffect(() => {
     if (note) {
-      setCurrentComponent(application.componentManager.editorForNote(note))
+      setCurrentFeature(application.componentManager.editorForNote(note))
     }
   }, [application, note])
 
@@ -68,8 +68,8 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
 
   const isSelected = useCallback(
     (item: EditorMenuItem) => {
-      if (currentComponent) {
-        return item.uiFeature.featureIdentifier === currentComponent.featureIdentifier
+      if (currentFeature) {
+        return item.uiFeature.featureIdentifier === currentFeature.featureIdentifier
       }
 
       const itemNoteTypeIsSameAsCurrentNoteType = item.uiFeature.noteType === note?.noteType
@@ -79,7 +79,7 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
 
       return itemNoteTypeIsSameAsCurrentNoteType || noteDoesntHaveTypeAndItemIsPlain || unknownNoteTypeAndItemIsPlain
     },
-    [currentComponent, note],
+    [currentFeature, note],
   )
 
   const selectComponent = useCallback(
@@ -101,7 +101,7 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
         noteMutator.editorIdentifier = uiFeature.featureIdentifier
       })
 
-      setCurrentComponent(application.componentManager.editorForNote(note))
+      setCurrentFeature(application.componentManager.editorForNote(note))
 
       if (uiFeature.featureIdentifier === FeatureIdentifier.PlainEditor) {
         reloadFont(application.getPreference(PrefKey.EditorMonospaceEnabled))
@@ -146,7 +146,7 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
 
       if (menuItem.uiFeature) {
         const changeRequiresAlert = application.componentManager.doesEditorChangeRequireAlert(
-          currentComponent,
+          currentFeature,
           menuItem.uiFeature,
         )
 
@@ -173,7 +173,7 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
       application.alertService,
       application.componentManager,
       setDisableClickOutside,
-      currentComponent,
+      currentFeature,
       selectComponent,
     ],
   )

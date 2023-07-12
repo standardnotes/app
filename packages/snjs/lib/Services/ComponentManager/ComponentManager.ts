@@ -691,7 +691,9 @@ export class SNComponentManager
       return new ComponentOrNativeFeature(nativeFeature)
     }
 
-    const component = this.thirdPartyComponents.find((component) => component.identifier === identifier)
+    const component = this.thirdPartyComponents.find((component) => {
+      return component.identifier === identifier
+    })
     if (component) {
       return new ComponentOrNativeFeature<F>(component)
     }
@@ -717,7 +719,7 @@ export class SNComponentManager
       }
     }
 
-    if (note.noteType) {
+    if (note.noteType && note.noteType !== NoteType.Unknown) {
       const result = this.nativeEditorForNoteType(note.noteType)
       if (result) {
         return new ComponentOrNativeFeature(result)

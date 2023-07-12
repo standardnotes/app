@@ -185,7 +185,7 @@ export class SNComponent extends DecryptedItem<ComponentContent> implements Comp
 
   public get noteType(): NoteType {
     if (isEditorFeatureDescription(this.package_info)) {
-      return this.package_info.note_type
+      return this.package_info.note_type ?? NoteType.Unknown
     }
 
     return NoteType.Unknown

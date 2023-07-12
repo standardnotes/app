@@ -503,7 +503,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
     }
   }
 
-  async reloadEditorComponent() {
+  async reloadEditorComponent(): Promise<void> {
     log(LoggingDomain.NoteView, 'Reload editor component')
     if (this.state.showProtectedWarning) {
       this.destroyCurrentEditorComponent()
@@ -519,22 +519,20 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
 
     const currentComponentViewer = this.state.editorComponentViewer
 
-    if (
-      !isIframeUIFeature(newUIFeature) ||
-      currentComponentViewer?.componentUniqueIdentifier !== newUIFeature.uniqueIdentifier
-    ) {
-      if (currentComponentViewer) {
+    if (currentComponentViewer) {
+      const needsDestroy = currentComponentViewer.componentUniqueIdentifier !== newUIFeature.uniqueIdentifier
+      if (needsDestroy) {
         this.destroyCurrentEditorComponent()
       }
+    }
 
-      if (isIframeUIFeature(newUIFeature)) {
-        this.setState({
-          editorComponentViewer: this.createComponentViewer(newUIFeature),
-          editorStateDidLoad: true,
-        })
-      }
-      reloadFont(this.state.monospaceFont)
+    if (isIframeUIFeature(newUIFeature)) {
+      this.setState({
+        editorComponentViewer: this.createComponentViewer(newUIFeature),
+        editorStateDidLoad: true,
+      })
     } else {
+      reloadFont(this.state.monospaceFont)
       this.setState({
         editorStateDidLoad: true,
       })
