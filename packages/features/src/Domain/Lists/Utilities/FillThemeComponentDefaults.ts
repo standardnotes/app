@@ -1,4 +1,5 @@
-import { ContentType } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/domain-core'
+
 import { ThemeFeatureDescription } from '../../Feature/FeatureDescription'
 import { ComponentArea } from '../../Component/ComponentArea'
 
@@ -11,7 +12,7 @@ export function FillThemeComponentDefaults(
     theme.index_path = 'index.css'
   }
 
-  theme.content_type = ContentType.Theme
+  theme.content_type = ContentType.TYPES.Theme
 
   if (!theme.area) {
     theme.area = ComponentArea.Themes

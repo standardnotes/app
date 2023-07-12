@@ -3,7 +3,6 @@ import { SNRootKey } from '@standardnotes/encryption'
 import { ChallengeService } from '../Challenge'
 import { ListedService } from '../Listed/ListedService'
 import { ActionResponse, DeprecatedHttpResponse } from '@standardnotes/responses'
-import { ContentType } from '@standardnotes/common'
 import { ItemManager } from '@Lib/Services/Items/ItemManager'
 import {
   SNActionsExtension,
@@ -36,6 +35,7 @@ import {
   EncryptionService,
   Challenge,
 } from '@standardnotes/services'
+import { ContentType } from '@standardnotes/domain-core'
 
 type PayloadRequestHandler = (uuid: string) => TransferPayload | undefined
 
@@ -97,7 +97,7 @@ export class SNActionsService extends AbstractService {
   }
 
   public getExtensions(): SNActionsExtension[] {
-    const extensionItems = this.itemManager.getItems<SNActionsExtension>(ContentType.ActionsExtension)
+    const extensionItems = this.itemManager.getItems<SNActionsExtension>(ContentType.TYPES.ActionsExtension)
     const excludingListed = extensionItems.filter((extension) => !extension.isListedExtension)
     return excludingListed
   }

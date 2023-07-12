@@ -15,7 +15,6 @@ import {
   TrustedContactMutator,
   DecryptedItemInterface,
 } from '@standardnotes/models'
-import { ContentType } from '@standardnotes/common'
 import { AbstractService } from '../Service/AbstractService'
 import { SyncServiceInterface } from '../Sync/SyncServiceInterface'
 import { ItemManagerInterface } from '../Item/ItemManagerInterface'
@@ -31,6 +30,7 @@ import { FindTrustedContactUseCase } from './UseCase/FindTrustedContact'
 import { SelfContactManager } from './Managers/SelfContactManager'
 import { CreateOrEditTrustedContactUseCase } from './UseCase/CreateOrEditTrustedContact'
 import { UpdateTrustedContactUseCase } from './UseCase/UpdateTrustedContact'
+import { ContentType } from '@standardnotes/domain-core'
 
 export class ContactService
   extends AbstractService<ContactServiceEvent>
@@ -191,7 +191,7 @@ export class ContactService
       })
     } else {
       contact = await this.mutator.createItem<TrustedContactInterface>(
-        ContentType.TrustedContact,
+        ContentType.TYPES.TrustedContact,
         FillItemContent<TrustedContactContent>(data),
         true,
       )
@@ -224,7 +224,7 @@ export class ContactService
   }
 
   getAllContacts(): TrustedContactInterface[] {
-    return this.items.getItems(ContentType.TrustedContact)
+    return this.items.getItems(ContentType.TYPES.TrustedContact)
   }
 
   findTrustedContact(userUuid: string): TrustedContactInterface | undefined {

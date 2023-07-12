@@ -1,4 +1,3 @@
-import { ContentType } from '@standardnotes/common'
 import { DecryptedPayloadInterface, DeletedPayloadInterface, isDeletedPayload } from '../Payload'
 
 /**
@@ -8,7 +7,7 @@ import { DecryptedPayloadInterface, DeletedPayloadInterface, isDeletedPayload } 
  * nothing else.
  */
 export interface OfflineSyncSavedContextualPayload {
-  content_type: ContentType
+  content_type: string
   created_at_timestamp: number
   deleted: boolean
   updated_at_timestamp?: number

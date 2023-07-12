@@ -12,7 +12,8 @@ import {
   PayloadTimestampDefaults,
   KeySystemRootKeyParamsInterface,
 } from '@standardnotes/models'
-import { ContentType, ProtocolVersion } from '@standardnotes/common'
+import { ProtocolVersion } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/domain-core'
 
 export class DeriveKeySystemRootKeyUseCase {
   constructor(private readonly crypto: PureCryptoInterface) {}
@@ -44,7 +45,7 @@ export class DeriveKeySystemRootKeyUseCase {
 
     const payload = new DecryptedPayload<KeySystemRootKeyContent>({
       uuid: uuid,
-      content_type: ContentType.KeySystemRootKey,
+      content_type: ContentType.TYPES.KeySystemRootKey,
       content: FillItemContentSpecialized(content),
       ...PayloadTimestampDefaults(),
     })

@@ -35,7 +35,7 @@
   },
   "dependencies": {
     "@electron/remote": "^2.0.9",
-    "@standardnotes/domain-core": "^1.18.0",
+    "@standardnotes/domain-core": "^1.22.0",
     "@standardnotes/electron-clear-data": "1.1.1",
     "@standardnotes/web": "workspace:*",
     "axios": "^1.1.3",

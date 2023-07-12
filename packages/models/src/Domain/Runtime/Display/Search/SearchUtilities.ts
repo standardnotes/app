@@ -1,4 +1,4 @@
-import { ContentType } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/domain-core'
 import { SNTag } from '../../../Syncable/Tag'
 import { NotesAndFilesDisplayOptions } from '../DisplayOptions'
 import { computeFiltersForDisplayOptions } from '../DisplayOptionsToFilters'
@@ -38,7 +38,7 @@ export function itemMatchesQuery(
   searchQuery: SearchQuery,
   collection: ReferenceLookupCollection,
 ): boolean {
-  const itemTags = collection.elementsReferencingElement(itemToMatch, ContentType.Tag) as SNTag[]
+  const itemTags = collection.elementsReferencingElement(itemToMatch, ContentType.TYPES.Tag) as SNTag[]
   const someTagsMatches = itemTags.some((tag) => matchResultForStringQuery(tag, searchQuery.query) !== MatchResult.None)
 
   if (itemToMatch.protected && !searchQuery.includeProtectedNoteText) {

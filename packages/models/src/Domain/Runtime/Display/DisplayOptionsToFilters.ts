@@ -1,4 +1,3 @@
-import { ContentType } from '@standardnotes/common'
 import { DecryptedItem } from '../../Abstract/Item'
 import { SNTag } from '../../Syncable/Tag'
 import { CompoundPredicate } from '../Predicate/CompoundPredicate'
@@ -7,6 +6,7 @@ import { itemMatchesQuery, itemPassesFilters } from './Search/SearchUtilities'
 import { ItemFilter, ReferenceLookupCollection, SearchableDecryptedItem } from './Search/Types'
 import { NotesAndFilesDisplayOptions } from './DisplayOptions'
 import { SystemViewId } from '../../Syncable/SmartView'
+import { ContentType } from '@standardnotes/domain-core'
 
 export function computeUnifiedFilterForDisplayOptions(
   options: NotesAndFilesDisplayOptions,
@@ -40,7 +40,7 @@ export function computeFiltersForDisplayOptions(
         const noteWithTags = ItemWithTags.Create(
           item.payload,
           item,
-          collection.elementsReferencingElement(item, ContentType.Tag) as SNTag[],
+          collection.elementsReferencingElement(item, ContentType.TYPES.Tag) as SNTag[],
         )
         return compoundPredicate.matchesItem(noteWithTags)
       } else {

@@ -110,7 +110,7 @@ describe('actions service', () => {
 
     const payload = new DecryptedPayload({
       uuid: Utils.generateUuid(),
-      content_type: ContentType.Note,
+      content_type: ContentType.TYPES.Note,
       content: {
         title: 'Testing',
       },
@@ -170,7 +170,7 @@ describe('actions service', () => {
     })
 
     // Extension item
-    const extensionItem = await this.application.mutator.createItem(ContentType.ActionsExtension, this.actionsExtension)
+    const extensionItem = await this.application.mutator.createItem(ContentType.TYPES.ActionsExtension, this.actionsExtension)
     this.extensionItemUuid = extensionItem.uuid
   })
 
@@ -182,7 +182,7 @@ describe('actions service', () => {
   })
 
   it('should get extension items', async function () {
-    await this.application.mutator.createItem(ContentType.Note, {
+    await this.application.mutator.createItem(ContentType.TYPES.Note, {
       title: 'A simple note',
       text: 'Standard Notes rocks! lml.',
     })
@@ -191,7 +191,7 @@ describe('actions service', () => {
   })
 
   it('should get extensions in context of item', async function () {
-    const noteItem = await this.application.mutator.createItem(ContentType.Note, {
+    const noteItem = await this.application.mutator.createItem(ContentType.TYPES.Note, {
       title: 'Another note',
       text: 'Whiskey In The Jar',
     })
@@ -202,7 +202,7 @@ describe('actions service', () => {
   })
 
   it('should get actions based on item context', async function () {
-    const tagItem = await this.application.mutator.createItem(ContentType.Tag, {
+    const tagItem = await this.application.mutator.createItem(ContentType.TYPES.Tag, {
       title: 'Music',
     })
 
@@ -214,7 +214,7 @@ describe('actions service', () => {
   })
 
   it('should load extension in context of item', async function () {
-    const noteItem = await this.application.mutator.createItem(ContentType.Note, {
+    const noteItem = await this.application.mutator.createItem(ContentType.TYPES.Note, {
       title: 'Yet another note',
       text: 'And all things will end ♫',
     })
@@ -246,7 +246,7 @@ describe('actions service', () => {
     const sandbox = sinon.createSandbox()
 
     before(async function () {
-      this.noteItem = await this.application.mutator.createItem(ContentType.Note, {
+      this.noteItem = await this.application.mutator.createItem(ContentType.TYPES.Note, {
         title: 'Hey',
         text: 'Welcome To Paradise',
       })
@@ -328,7 +328,7 @@ describe('actions service', () => {
     const sandbox = sinon.createSandbox()
 
     before(async function () {
-      this.noteItem = await this.application.mutator.createItem(ContentType.Note, {
+      this.noteItem = await this.application.mutator.createItem(ContentType.TYPES.Note, {
         title: 'Excuse Me',
         text: 'Time To Be King 8)',
       })

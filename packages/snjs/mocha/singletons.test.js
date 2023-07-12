@@ -16,7 +16,7 @@ describe('singletons', function () {
   function createPrefsPayload() {
     const params = {
       uuid: UuidGenerator.GenerateUuid(),
-      content_type: ContentType.UserPrefs,
+      content_type: ContentType.TYPES.UserPrefs,
       content: {
         foo: 'bar',
       },
@@ -25,7 +25,7 @@ describe('singletons', function () {
   }
 
   function findOrCreatePrefsSingleton(application) {
-    return application.singletonManager.findOrCreateContentTypeSingleton(ContentType.UserPrefs, FillItemContent({}))
+    return application.singletonManager.findOrCreateContentTypeSingleton(ContentType.TYPES.UserPrefs, FillItemContent({}))
   }
 
   beforeEach(async function () {
@@ -59,13 +59,13 @@ describe('singletons', function () {
     this.extManagerId = 'org.standardnotes.extensions-manager'
 
     this.extPred = new CompoundPredicate('and', [
-      new Predicate('content_type', '=', ContentType.Component),
+      new Predicate('content_type', '=', ContentType.TYPES.Component),
       new Predicate('package_info.identifier', '=', this.extManagerId),
     ])
 
     this.createExtMgr = () => {
       return this.application.mutator.createItem(
-        ContentType.Component,
+        ContentType.TYPES.Component,
         {
           package_info: {
             name: 'Extensions',
@@ -121,14 +121,14 @@ describe('singletons', function () {
 
     await this.application.sync.sync(syncOptions)
 
-    expect(this.application.itemManager.itemsMatchingPredicate(ContentType.Component, this.extPred).length).to.equal(1)
+    expect(this.application.itemManager.itemsMatchingPredicate(ContentType.TYPES.Component, this.extPred).length).to.equal(1)
   })
 
   it('resolves via find or create', async function () {
     /* Set to never synced as singleton manager will attempt to sync before resolving */
     this.application.syncService.ut_clearLastSyncDate()
     this.application.syncService.ut_setDatabaseLoaded(false)
-    const contentType = ContentType.UserPrefs
+    const contentType = ContentType.TYPES.UserPrefs
     const predicate = new Predicate('content_type', '=', contentType)
     /* Start a sync right after we await singleton resolve below */
     setTimeout(() => {
@@ -198,7 +198,7 @@ describe('singletons', function () {
         didCompleteRelevantSync = true
         const saved = data.savedPayloads
         expect(saved.length).to.equal(1)
-        const matching = saved.find((p) => p.content_type === ContentType.Component && p.deleted)
+        const matching = saved.find((p) => p.content_type === ContentType.TYPES.Component && p.deleted)
         expect(matching).to.not.be.ok
       }
     })
@@ -252,7 +252,7 @@ describe('singletons', function () {
   })
 
   it('if only result is errorDecrypting, create new item', async function () {
-    const item = this.application.itemManager.items.find((item) => item.content_type === ContentType.UserPrefs)
+    const item = this.application.itemManager.items.find((item) => item.content_type === ContentType.TYPES.UserPrefs)
 
     const erroredPayload = new EncryptedPayload({
       ...item.payload.ejected(),
@@ -292,7 +292,7 @@ describe('singletons', function () {
     const errorDecryptingFalse = false
     await Factory.insertItemWithOverride(
       this.application,
-      ContentType.Component,
+      ContentType.TYPES.Component,
       sharedContent,
       true,
       errorDecryptingFalse,
@@ -301,7 +301,7 @@ describe('singletons', function () {
     const errorDecryptingTrue = true
     const errored = await Factory.insertItemWithOverride(
       this.application,
-      ContentType.Component,
+      ContentType.TYPES.Component,
       sharedContent,
       true,
       errorDecryptingTrue,
@@ -324,7 +324,7 @@ describe('singletons', function () {
     await Factory.sleep(0)
     await this.application.syncService.sync(syncOptions)
 
-    expect(this.application.itemManager.itemsMatchingPredicate(ContentType.Component, this.extPred).length).to.equal(1)
+    expect(this.application.itemManager.itemsMatchingPredicate(ContentType.TYPES.Component, this.extPred).length).to.equal(1)
   })
 
   it('alternating the uuid of a singleton should return correct result', async function () {

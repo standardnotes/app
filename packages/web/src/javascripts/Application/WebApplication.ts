@@ -325,7 +325,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
 
   public getItemTags(item: DecryptedItemInterface) {
     return this.items.itemsReferencingItem(item).filter((ref) => {
-      return ref.content_type === ContentType.Tag
+      return ref.content_type === ContentType.TYPES.Tag
     }) as SNTag[]
   }
 
@@ -397,7 +397,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
   async handleReceivedTextEvent({ text, title }: { text: string; title?: string | undefined }) {
     const titleForNote = title || this.getViewControllerManager().itemListController.titleForNewNote()
 
-    const note = this.items.createTemplateItem<NoteContent, SNNote>(ContentType.Note, {
+    const note = this.items.createTemplateItem<NoteContent, SNNote>(ContentType.TYPES.Note, {
       title: titleForNote,
       text: text,
       references: [],

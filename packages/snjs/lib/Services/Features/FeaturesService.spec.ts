@@ -2,8 +2,7 @@ import { ItemInterface, SNComponent, SNFeatureRepo } from '@standardnotes/models
 import { SNSyncService } from '../Sync/SyncService'
 import { SettingName } from '@standardnotes/settings'
 import { SNFeaturesService } from '@Lib/Services/Features'
-import { ContentType } from '@standardnotes/common'
-import { RoleName } from '@standardnotes/domain-core'
+import { ContentType, RoleName } from '@standardnotes/domain-core'
 import { FeatureDescription, FeatureIdentifier, GetFeatures } from '@standardnotes/features'
 import { SNWebSocketsService } from '../Api/WebsocketsService'
 import { SNSettingsService } from '../Settings'
@@ -157,7 +156,7 @@ describe('featuresService', () => {
         {
           identifier: FeatureIdentifier.PlusEditor,
           expires_at: tomorrow_server,
-          content_type: ContentType.Component,
+          content_type: ContentType.TYPES.Component,
         },
       ]
 
@@ -307,10 +306,10 @@ describe('featuresService', () => {
 
       expect(mutator.createItem).toHaveBeenCalledTimes(2)
       expect(mutator.createItem).toHaveBeenCalledWith(
-        ContentType.Theme,
+        ContentType.TYPES.Theme,
         expect.objectContaining({
           package_info: expect.objectContaining({
-            content_type: ContentType.Theme,
+            content_type: ContentType.TYPES.Theme,
             expires_at: tomorrow_client,
             identifier: FeatureIdentifier.MidnightTheme,
           }),
@@ -318,10 +317,10 @@ describe('featuresService', () => {
         true,
       )
       expect(mutator.createItem).toHaveBeenCalledWith(
-        ContentType.Component,
+        ContentType.TYPES.Component,
         expect.objectContaining({
           package_info: expect.objectContaining({
-            content_type: ContentType.Component,
+            content_type: ContentType.TYPES.Component,
             expires_at: tomorrow_client,
             identifier: FeatureIdentifier.PlusEditor,
           }),
@@ -333,7 +332,7 @@ describe('featuresService', () => {
     it('if item for a feature exists updates its content', async () => {
       const existingItem = new SNComponent({
         uuid: '789',
-        content_type: ContentType.Component,
+        content_type: ContentType.TYPES.Component,
         content: {
           package_info: {
             identifier: FeatureIdentifier.PlusEditor,
@@ -379,10 +378,10 @@ describe('featuresService', () => {
       await featuresService.fetchFeatures('123', didChangeRoles)
 
       expect(mutator.createItem).toHaveBeenCalledWith(
-        ContentType.Component,
+        ContentType.TYPES.Component,
         expect.objectContaining({
           package_info: expect.objectContaining({
-            content_type: ContentType.Component,
+            content_type: ContentType.TYPES.Component,
             expires_at: yesterday_client,
             identifier: FeatureIdentifier.PlusEditor,
           }),
@@ -394,7 +393,7 @@ describe('featuresService', () => {
     it('deletes items for expired themes', async () => {
       const existingItem = new SNComponent({
         uuid: '456',
-        content_type: ContentType.Theme,
+        content_type: ContentType.TYPES.Theme,
         content: {
           package_info: {
             identifier: FeatureIdentifier.MidnightTheme,
@@ -498,7 +497,7 @@ describe('featuresService', () => {
     it('remote native features should be swapped with compiled version', async () => {
       const remoteFeature = {
         identifier: FeatureIdentifier.PlusEditor,
-        content_type: ContentType.Component,
+        content_type: ContentType.TYPES.Component,
         expires_at: tomorrow_server,
       } as FeatureDescription
 
@@ -528,7 +527,7 @@ describe('featuresService', () => {
     it('mapRemoteNativeFeatureToItem should throw if called with client controlled feature', async () => {
       const clientFeature = {
         identifier: FeatureIdentifier.DarkTheme,
-        content_type: ContentType.Theme,
+        content_type: ContentType.TYPES.Theme,
         clientControlled: true,
       } as FeatureDescription
 
@@ -573,13 +572,13 @@ describe('featuresService', () => {
       features = [
         {
           identifier: FeatureIdentifier.MidnightTheme,
-          content_type: ContentType.Theme,
+          content_type: ContentType.TYPES.Theme,
           expires_at: tomorrow_server,
           role_name: RoleName.NAMES.PlusUser,
         },
         {
           identifier: FeatureIdentifier.PlusEditor,
-          content_type: ContentType.Component,
+          content_type: ContentType.TYPES.Component,
           expires_at: expiredDate,
           role_name: RoleName.NAMES.ProUser,
         },
@@ -617,14 +616,14 @@ describe('featuresService', () => {
 
       const themeFeature = {
         identifier: 'third-party-theme' as FeatureIdentifier,
-        content_type: ContentType.Theme,
+        content_type: ContentType.TYPES.Theme,
         expires_at: tomorrow_server,
         role_name: RoleName.NAMES.CoreUser,
       }
 
       const editorFeature = {
         identifier: 'third-party-editor' as FeatureIdentifier,
-        content_type: ContentType.Component,
+        content_type: ContentType.TYPES.Component,
         expires_at: expiredDate,
         role_name: RoleName.NAMES.PlusUser,
       }
@@ -636,7 +635,7 @@ describe('featuresService', () => {
       itemManager.getDisplayableComponents = jest.fn().mockReturnValue([
         new SNComponent({
           uuid: '123',
-          content_type: ContentType.Theme,
+          content_type: ContentType.TYPES.Theme,
           content: {
             valid_until: themeFeature.expires_at,
             package_info: {
@@ -646,7 +645,7 @@ describe('featuresService', () => {
         } as never),
         new SNComponent({
           uuid: '456',
-          content_type: ContentType.Component,
+          content_type: ContentType.TYPES.Component,
           content: {
             valid_until: new Date(editorFeature.expires_at),
             package_info: {
@@ -774,7 +773,7 @@ describe('featuresService', () => {
       const extensionKey = '129b029707e3470c94a8477a437f9394'
       const extensionRepoItem = new SNFeatureRepo({
         uuid: '456',
-        content_type: ContentType.ExtensionRepo,
+        content_type: ContentType.TYPES.ExtensionRepo,
         content: {
           url: `https://extensions.standardnotes.org/${extensionKey}`,
         },

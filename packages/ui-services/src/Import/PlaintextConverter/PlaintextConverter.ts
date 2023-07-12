@@ -1,4 +1,4 @@
-import { ContentType } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/domain-core'
 import { parseFileName } from '@standardnotes/filepicker'
 import { DecryptedTransferPayload, NoteContent } from '@standardnotes/models'
 import { readFileAsText } from '../Utils'
@@ -25,7 +25,7 @@ export class PlaintextConverter {
       updated_at: updatedAtDate,
       updated_at_timestamp: updatedAtDate.getTime(),
       uuid: this.application.generateUUID(),
-      content_type: ContentType.Note,
+      content_type: ContentType.TYPES.Note,
       content: {
         title: name,
         text: content,

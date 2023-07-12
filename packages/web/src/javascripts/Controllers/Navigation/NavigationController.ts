@@ -122,7 +122,7 @@ export class NavigationController
     })
 
     this.disposers.push(
-      this.application.streamItems([ContentType.Tag, ContentType.SmartView], ({ changed, removed }) => {
+      this.application.streamItems([ContentType.TYPES.Tag, ContentType.TYPES.SmartView], ({ changed, removed }) => {
         this.reloadTags()
 
         runInAction(() => {
@@ -599,7 +599,7 @@ export class NavigationController
       return
     }
 
-    const newTag = this.application.items.createTemplateItem(ContentType.Tag) as SNTag
+    const newTag = this.application.items.createTemplateItem(ContentType.TYPES.Tag) as SNTag
 
     runInAction(() => {
       this.selectedLocation = 'all'

@@ -16,7 +16,7 @@ import {
   FillItemContent,
   PayloadTimestampDefaults,
 } from '@standardnotes/models'
-import { ContentType } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/domain-core'
 
 const setupRandomUuid = () => {
   UuidGenerator.SetGenerator(() => String(Math.random()))
@@ -38,7 +38,7 @@ describe('protectionService', () => {
     return new FileItem(
       new DecryptedPayload({
         uuid: String(Math.random()),
-        content_type: ContentType.File,
+        content_type: ContentType.TYPES.File,
         content: FillItemContent<FileContent>({
           name: name,
           protected: isProtected,

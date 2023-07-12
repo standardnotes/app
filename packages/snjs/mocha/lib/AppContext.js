@@ -415,7 +415,7 @@ export class AppContext {
         if (!didCompleteRelevantSync) {
           if (data?.savedPayloads) {
             const matching = data.savedPayloads.find((p) => {
-              return p.content_type === ContentType.UserPrefs
+              return p.content_type === ContentType.TYPES.UserPrefs
             })
             if (matching) {
               didCompleteRelevantSync = true
@@ -510,7 +510,7 @@ export class AppContext {
   }
 
   spyOnChangedItems(callback) {
-    this.application.items.addObserver(ContentType.Any, ({ changed, unerrored }) => {
+    this.application.items.addObserver(ContentType.TYPES.Any, ({ changed, unerrored }) => {
       callback([...changed, ...unerrored])
     })
   }

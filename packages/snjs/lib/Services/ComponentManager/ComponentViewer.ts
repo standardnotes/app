@@ -52,7 +52,6 @@ import {
 import { ComponentAction, ComponentPermission, ComponentArea, FindNativeFeature } from '@standardnotes/features'
 import { ItemManager } from '@Lib/Services/Items/ItemManager'
 import { UuidString } from '@Lib/Types/UuidString'
-import { ContentType } from '@standardnotes/common'
 import {
   isString,
   extendArray,
@@ -65,6 +64,7 @@ import {
   sureSearchArray,
   isNotUndefined,
 } from '@standardnotes/utils'
+import { ContentType } from '@standardnotes/domain-core'
 
 type RunWithPermissionsCallback = (
   componentUuid: UuidString,
@@ -88,7 +88,7 @@ const ReadwriteActions = [
 type Writeable<T> = { -readonly [P in keyof T]: T[P] }
 
 export class ComponentViewer implements ComponentViewerInterface {
-  private streamItems?: ContentType[]
+  private streamItems?: string[]
   private streamContextItemOriginalMessage?: ComponentMessage
   private streamItemsOriginalMessage?: ComponentMessage
   private removeItemObserver: () => void
@@ -123,7 +123,7 @@ export class ComponentViewer implements ComponentViewerInterface {
     actionObserver?: ActionObserver,
   ) {
     this.removeItemObserver = this.itemManager.addObserver(
-      ContentType.Any,
+      ContentType.TYPES.Any,
       ({ changed, inserted, removed, source, sourceKey }) => {
         if (this.dealloced) {
           return
@@ -686,7 +686,7 @@ export class ComponentViewer implements ComponentViewerInterface {
           if (item.locked) {
             remove(responsePayloads, { uuid: item.uuid })
             lockedCount++
-            if (item.content_type === ContentType.Note) {
+            if (item.content_type === ContentType.TYPES.Note) {
               lockedNoteCount++
             }
           }
@@ -836,7 +836,7 @@ export class ComponentViewer implements ComponentViewerInterface {
     const data = message.data as DeleteItemsMessageData
     const items = data.items.filter((item) => AllowedBatchContentTypes.includes(item.content_type))
 
-    const requiredContentTypes = uniq(items.map((item) => item.content_type)).sort() as ContentType[]
+    const requiredContentTypes = uniq(items.map((item) => item.content_type)).sort()
 
     const requiredPermissions: ComponentPermission[] = [
       {

@@ -109,27 +109,33 @@ export class ItemListController extends AbstractViewController implements Intern
     this.resetPagination()
 
     this.disposers.push(
-      application.streamItems<SNNote>([ContentType.Note, ContentType.File], () => {
+      application.streamItems<SNNote>([ContentType.TYPES.Note, ContentType.TYPES.File], () => {
         void this.reloadItems(ItemsReloadSource.ItemStream)
       }),
     )
 
     this.disposers.push(
-      application.streamItems<SNTag>([ContentType.Tag, ContentType.SmartView], async ({ changed, inserted }) => {
-        const tags = [...changed, ...inserted]
+      application.streamItems<SNTag>(
+        [ContentType.TYPES.Tag, ContentType.TYPES.SmartView],
+        async ({ changed, inserted }) => {
+          const tags = [...changed, ...inserted]
 
-        const { didReloadItems } = await this.reloadDisplayPreferences({ userTriggered: false })
-        if (!didReloadItems) {
-          /** A tag could have changed its relationships, so we need to reload the filter */
-          this.reloadNotesDisplayOptions()
-          void this.reloadItems(ItemsReloadSource.ItemStream)
-        }
+          const { didReloadItems } = await this.reloadDisplayPreferences({ userTriggered: false })
+          if (!didReloadItems) {
+            /** A tag could have changed its relationships, so we need to reload the filter */
+            this.reloadNotesDisplayOptions()
+            void this.reloadItems(ItemsReloadSource.ItemStream)
+          }
 
-        if (this.navigationController.selected && findInArray(tags, 'uuid', this.navigationController.selected.uuid)) {
-          /** Tag title could have changed */
-          this.reloadPanelTitle()
-        }
-      }),
+          if (
+            this.navigationController.selected &&
+            findInArray(tags, 'uuid', this.navigationController.selected.uuid)
+          ) {
+            /** Tag title could have changed */
+            this.reloadPanelTitle()
+          }
+        },
+      ),
     )
 
     this.disposers.push(

@@ -119,7 +119,7 @@ export class NotesController extends AbstractViewController implements NotesCont
   }
 
   public get selectedNotes(): SNNote[] {
-    return this.selectionController.getFilteredSelectedItems<SNNote>(ContentType.Note)
+    return this.selectionController.getFilteredSelectedItems<SNNote>(ContentType.TYPES.Note)
   }
 
   get firstSelectedNote(): SNNote | undefined {

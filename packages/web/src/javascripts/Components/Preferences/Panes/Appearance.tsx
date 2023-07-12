@@ -55,7 +55,7 @@ const Appearance: FunctionComponent<Props> = ({ application }) => {
       })
 
     GetFeatures()
-      .filter((feature) => feature.content_type === ContentType.Theme && !feature.layerable)
+      .filter((feature) => feature.content_type === ContentType.TYPES.Theme && !feature.layerable)
       .forEach((theme) => {
         themesAsItems.push({
           label: theme.name as string,

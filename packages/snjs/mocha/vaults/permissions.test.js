@@ -82,7 +82,7 @@ describe('shared vault permissions', function () {
     const conflicts = await promise
 
     expect(conflicts.length).to.equal(1)
-    expect(conflicts[0].unsaved_item.content_type).to.equal(ContentType.KeySystemItemsKey)
+    expect(conflicts[0].unsaved_item.content_type).to.equal(ContentType.TYPES.KeySystemItemsKey)
 
     await deinitContactContext()
   })
@@ -103,7 +103,7 @@ describe('shared vault permissions', function () {
     const conflicts = await promise
 
     expect(conflicts.length).to.equal(1)
-    expect(conflicts[0].unsaved_item.content_type).to.equal(ContentType.Note)
+    expect(conflicts[0].unsaved_item.content_type).to.equal(ContentType.TYPES.Note)
 
     await deinitContactContext()
   })

@@ -1,7 +1,6 @@
 import { AllowedBatchStreaming } from './Types'
 import { SNPreferencesService } from '../Preferences/PreferencesService'
 import { SNFeaturesService } from '@Lib/Services/Features/FeaturesService'
-import { ContentType, DisplayStringForContentType } from '@standardnotes/common'
 import { ItemManager } from '@Lib/Services/Items/ItemManager'
 import {
   ActionObserver,
@@ -41,6 +40,7 @@ import {
   isMobileDevice,
   MutatorClientInterface,
 } from '@standardnotes/services'
+import { ContentType } from '@standardnotes/domain-core'
 
 const DESKTOP_URL_PREFIX = 'sn://'
 const LOCAL_HOST = 'localhost'
@@ -223,7 +223,7 @@ export class SNComponentManager
 
   addItemObserver(): void {
     this.removeItemObserver = this.itemManager.addObserver<SNComponent>(
-      [ContentType.Component, ContentType.Theme],
+      [ContentType.TYPES.Component, ContentType.TYPES.Theme],
       ({ changed, inserted, removed, source }) => {
         const items = [...changed, ...inserted]
         this.handleChangedComponents(items, source)
@@ -654,12 +654,17 @@ export class SNComponentManager
           if (!permission.content_types) {
             return
           }
-          permission.content_types.forEach((contentType) => {
-            const desc = DisplayStringForContentType(contentType)
+          permission.content_types.forEach((contentTypeString: string) => {
+            const contentTypeOrError = ContentType.create(contentTypeString)
+            if (contentTypeOrError.isFailed()) {
+              return
+            }
+            const contentType = contentTypeOrError.getValue()
+            const desc = contentType.getDisplayName()
             if (desc) {
               contentTypeStrings.push(`${desc}s`)
             } else {
-              contentTypeStrings.push(`items of type ${contentType}`)
+              contentTypeStrings.push(`items of type ${contentType.value}`)
             }
           })
           break

@@ -95,7 +95,7 @@ const ContentList: FunctionComponent<Props> = ({
     [hideTags, selectedTag, application],
   )
 
-  const hasNotes = items.some((item) => item.content_type === ContentType.Note)
+  const hasNotes = items.some((item) => item.content_type === ContentType.TYPES.Note)
 
   return (
     <div

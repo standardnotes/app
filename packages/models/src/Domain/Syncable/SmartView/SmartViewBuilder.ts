@@ -4,19 +4,19 @@ import { SmartView } from './SmartView'
 import { SmartViewContent } from './SmartViewContent'
 import { SystemViewId } from './SystemViewId'
 import { ItemWithTags } from '../../Runtime/Display/Search/ItemWithTags'
-import { ContentType } from '@standardnotes/common'
 import { FillItemContent } from '../../Abstract/Content/ItemContent'
 import { Predicate } from '../../Runtime/Predicate/Predicate'
 import { CompoundPredicate } from '../../Runtime/Predicate/CompoundPredicate'
 import { PayloadTimestampDefaults } from '../../Abstract/Payload'
 import { NotesAndFilesDisplayOptions } from '../../Runtime/Display'
 import { FileItem } from '../File'
+import { ContentType } from '@standardnotes/domain-core'
 
 export function BuildSmartViews(options: NotesAndFilesDisplayOptions): SmartView[] {
   const notes = new SmartView(
     new DecryptedPayload({
       uuid: SystemViewId.AllNotes,
-      content_type: ContentType.SmartView,
+      content_type: ContentType.TYPES.SmartView,
       ...PayloadTimestampDefaults(),
       content: FillItemContent<SmartViewContent>({
         title: 'Notes',
@@ -28,7 +28,7 @@ export function BuildSmartViews(options: NotesAndFilesDisplayOptions): SmartView
   const files = new SmartView(
     new DecryptedPayload({
       uuid: SystemViewId.Files,
-      content_type: ContentType.SmartView,
+      content_type: ContentType.TYPES.SmartView,
       ...PayloadTimestampDefaults(),
       content: FillItemContent<SmartViewContent>({
         title: 'Files',
@@ -40,7 +40,7 @@ export function BuildSmartViews(options: NotesAndFilesDisplayOptions): SmartView
   const archived = new SmartView(
     new DecryptedPayload({
       uuid: SystemViewId.ArchivedNotes,
-      content_type: ContentType.SmartView,
+      content_type: ContentType.TYPES.SmartView,
       ...PayloadTimestampDefaults(),
       content: FillItemContent<SmartViewContent>({
         title: 'Archived',
@@ -52,7 +52,7 @@ export function BuildSmartViews(options: NotesAndFilesDisplayOptions): SmartView
   const trash = new SmartView(
     new DecryptedPayload({
       uuid: SystemViewId.TrashedNotes,
-      content_type: ContentType.SmartView,
+      content_type: ContentType.TYPES.SmartView,
       ...PayloadTimestampDefaults(),
       content: FillItemContent<SmartViewContent>({
         title: 'Trash',
@@ -64,7 +64,7 @@ export function BuildSmartViews(options: NotesAndFilesDisplayOptions): SmartView
   const untagged = new SmartView(
     new DecryptedPayload({
       uuid: SystemViewId.UntaggedNotes,
-      content_type: ContentType.SmartView,
+      content_type: ContentType.TYPES.SmartView,
       ...PayloadTimestampDefaults(),
       content: FillItemContent<SmartViewContent>({
         title: 'Untagged',
@@ -76,7 +76,7 @@ export function BuildSmartViews(options: NotesAndFilesDisplayOptions): SmartView
   const starred = new SmartView(
     new DecryptedPayload({
       uuid: SystemViewId.StarredNotes,
-      content_type: ContentType.SmartView,
+      content_type: ContentType.TYPES.SmartView,
       ...PayloadTimestampDefaults(),
       content: FillItemContent<SmartViewContent>({
         title: 'Starred',
@@ -88,7 +88,7 @@ export function BuildSmartViews(options: NotesAndFilesDisplayOptions): SmartView
   const conflicts = new SmartView(
     new DecryptedPayload({
       uuid: SystemViewId.Conflicts,
-      content_type: ContentType.SmartView,
+      content_type: ContentType.TYPES.SmartView,
       ...PayloadTimestampDefaults(),
       content: FillItemContent<SmartViewContent>({
         title: 'Conflicts',
@@ -101,7 +101,7 @@ export function BuildSmartViews(options: NotesAndFilesDisplayOptions): SmartView
 }
 
 function allNotesPredicate(options: NotesAndFilesDisplayOptions) {
-  const subPredicates: Predicate<SNNote>[] = [new Predicate('content_type', '=', ContentType.Note)]
+  const subPredicates: Predicate<SNNote>[] = [new Predicate('content_type', '=', ContentType.TYPES.Note)]
 
   if (options.includeTrashed === false) {
     subPredicates.push(new Predicate('trashed', '=', false))
@@ -121,7 +121,7 @@ function allNotesPredicate(options: NotesAndFilesDisplayOptions) {
 }
 
 function filesPredicate(options: NotesAndFilesDisplayOptions) {
-  const subPredicates: Predicate<FileItem>[] = [new Predicate('content_type', '=', ContentType.File)]
+  const subPredicates: Predicate<FileItem>[] = [new Predicate('content_type', '=', ContentType.TYPES.File)]
 
   if (options.includeTrashed === false) {
     subPredicates.push(new Predicate('trashed', '=', false))
@@ -143,7 +143,7 @@ function filesPredicate(options: NotesAndFilesDisplayOptions) {
 function archivedNotesPredicate(options: NotesAndFilesDisplayOptions) {
   const subPredicates: Predicate<SNNote>[] = [
     new Predicate('archived', '=', true),
-    new Predicate('content_type', '=', ContentType.Note),
+    new Predicate('content_type', '=', ContentType.TYPES.Note),
   ]
   if (options.includeTrashed === false) {
     subPredicates.push(new Predicate('trashed', '=', false))
@@ -162,7 +162,7 @@ function archivedNotesPredicate(options: NotesAndFilesDisplayOptions) {
 function trashedNotesPredicate(options: NotesAndFilesDisplayOptions) {
   const subPredicates: Predicate<SNNote>[] = [
     new Predicate('trashed', '=', true),
-    new Predicate('content_type', '=', ContentType.Note),
+    new Predicate('content_type', '=', ContentType.TYPES.Note),
   ]
   if (options.includeArchived === false) {
     subPredicates.push(new Predicate('archived', '=', false))
@@ -180,7 +180,7 @@ function trashedNotesPredicate(options: NotesAndFilesDisplayOptions) {
 
 function untaggedNotesPredicate(options: NotesAndFilesDisplayOptions) {
   const subPredicates = [
-    new Predicate('content_type', '=', ContentType.Note),
+    new Predicate('content_type', '=', ContentType.TYPES.Note),
     new Predicate<ItemWithTags>('tagsCount', '=', 0),
   ]
   if (options.includeArchived === false) {
@@ -200,7 +200,7 @@ function untaggedNotesPredicate(options: NotesAndFilesDisplayOptions) {
 function starredNotesPredicate(options: NotesAndFilesDisplayOptions) {
   const subPredicates: Predicate<SNNote>[] = [
     new Predicate('starred', '=', true),
-    new Predicate('content_type', '=', ContentType.Note),
+    new Predicate('content_type', '=', ContentType.TYPES.Note),
   ]
   if (options.includeTrashed === false) {
     subPredicates.push(new Predicate('trashed', '=', false))
@@ -217,7 +217,7 @@ function starredNotesPredicate(options: NotesAndFilesDisplayOptions) {
 }
 
 function conflictsPredicate(options: NotesAndFilesDisplayOptions) {
-  const subPredicates: Predicate<SNNote>[] = [new Predicate('content_type', '=', ContentType.Note)]
+  const subPredicates: Predicate<SNNote>[] = [new Predicate('content_type', '=', ContentType.TYPES.Note)]
 
   if (options.includeTrashed === false) {
     subPredicates.push(new Predicate('trashed', '=', false))

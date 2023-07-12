@@ -5,7 +5,7 @@ import {
   EncryptedItemInterface,
   NoteContent,
 } from '@standardnotes/models'
-import { ContentType } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/domain-core'
 import { ApplicationInterface } from '@standardnotes/services'
 
 export function sanitizeFileName(name: string): string {
@@ -87,7 +87,7 @@ export class ArchiveManager {
       const item = items[index]
       let name, contents
 
-      if (item.content_type === ContentType.Note) {
+      if (item.content_type === ContentType.TYPES.Note) {
         const note = item as BackupFileDecryptedContextualPayload<NoteContent>
         name = note.content.title
         contents = note.content.text

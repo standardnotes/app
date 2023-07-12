@@ -64,8 +64,8 @@ describe('offline syncing', () => {
     const rawPayloads2 = await this.application.diskStorageService.getAllRawPayloads()
     expect(rawPayloads2.length).to.equal(this.expectedItemCount)
 
-    const itemsKeyRaw = (await Factory.getStoragePayloadsOfType(this.application, ContentType.ItemsKey))[0]
-    const noteRaw = (await Factory.getStoragePayloadsOfType(this.application, ContentType.Note))[0]
+    const itemsKeyRaw = (await Factory.getStoragePayloadsOfType(this.application, ContentType.TYPES.ItemsKey))[0]
+    const noteRaw = (await Factory.getStoragePayloadsOfType(this.application, ContentType.TYPES.Note))[0]
 
     /** Encrypts with default items key */
     expect(typeof noteRaw.content).to.equal('string')

@@ -3,7 +3,7 @@ import { SyncOptions } from './../Sync/SyncOptions'
 import { ImportDataReturnType } from './../Mutator/ImportDataUseCase'
 import { ChallengeServiceInterface } from './../Challenge/ChallengeServiceInterface'
 import { VaultServiceInterface } from './../Vaults/VaultServiceInterface'
-import { ApplicationIdentifier, ContentType } from '@standardnotes/common'
+import { ApplicationIdentifier } from '@standardnotes/common'
 import {
   BackupFile,
   DecryptedItemInterface,
@@ -57,7 +57,7 @@ export interface ApplicationInterface {
   getPreference<K extends PrefKey>(key: K, defaultValue?: PrefValue[K]): PrefValue[K] | undefined
   setPreference<K extends PrefKey>(key: K, value: PrefValue[K]): Promise<void>
   streamItems<I extends DecryptedItemInterface = DecryptedItemInterface>(
-    contentType: ContentType | ContentType[],
+    contentType: string | string[],
     stream: ItemStream<I>,
   ): () => void
 

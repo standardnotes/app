@@ -73,8 +73,8 @@ describe('importing', function () {
 
     await application.mutator.emitItemsFromPayloads([notePayload, tagPayload], PayloadEmitSource.LocalChanged)
     expectedItemCount += 2
-    const note = application.itemManager.getItems([ContentType.Note])[0]
-    const tag = application.itemManager.getItems([ContentType.Tag])[0]
+    const note = application.itemManager.getItems([ContentType.TYPES.Note])[0]
+    const tag = application.itemManager.getItems([ContentType.TYPES.Tag])[0]
 
     expect(tag.content.references.length).to.equal(1)
     expect(tag.noteCount).to.equal(1)
@@ -352,8 +352,8 @@ describe('importing', function () {
 
     const storedPayloads = await application.diskStorageService.getAllRawPayloads()
     expect(application.itemManager.items.length).to.equal(storedPayloads.length)
-    const notes = storedPayloads.filter((p) => p.content_type === ContentType.Note)
-    const itemsKeys = storedPayloads.filter((p) => p.content_type === ContentType.ItemsKey)
+    const notes = storedPayloads.filter((p) => p.content_type === ContentType.TYPES.Note)
+    const itemsKeys = storedPayloads.filter((p) => p.content_type === ContentType.TYPES.ItemsKey)
     expect(notes.length).to.equal(1)
     expect(itemsKeys.length).to.equal(1)
   })
@@ -449,7 +449,7 @@ describe('importing', function () {
       version: oldVersion,
     })
 
-    const noteItem = await application.mutator.createItem(ContentType.Note, {
+    const noteItem = await application.mutator.createItem(ContentType.TYPES.Note, {
       title: 'Encrypted note',
       text: 'On protocol version 003.',
     })
@@ -530,7 +530,7 @@ describe('importing', function () {
       password: password,
     })
 
-    const noteItem = await application.mutator.createItem(ContentType.Note, {
+    const noteItem = await application.mutator.createItem(ContentType.TYPES.Note, {
       title: 'Encrypted note',
       text: 'On protocol version 004.',
     })
@@ -560,7 +560,7 @@ describe('importing', function () {
       password: password,
     })
 
-    const noteItem = await application.mutator.createItem(ContentType.Note, {
+    const noteItem = await application.mutator.createItem(ContentType.TYPES.Note, {
       title: 'This is a valid, encrypted note',
       text: 'On protocol version 004.',
     })
@@ -598,7 +598,7 @@ describe('importing', function () {
       version: oldVersion,
     })
 
-    await application.mutator.createItem(ContentType.Note, {
+    await application.mutator.createItem(ContentType.TYPES.Note, {
       title: 'Encrypted note',
       text: 'On protocol version 003.',
     })
@@ -635,7 +635,7 @@ describe('importing', function () {
       password: password,
     })
 
-    await application.mutator.createItem(ContentType.Note, {
+    await application.mutator.createItem(ContentType.TYPES.Note, {
       title: 'This is a valid, encrypted note',
       text: 'On protocol version 004.',
     })
@@ -666,7 +666,7 @@ describe('importing', function () {
       password: password,
     })
 
-    await application.mutator.createItem(ContentType.Note, {
+    await application.mutator.createItem(ContentType.TYPES.Note, {
       title: 'Encrypted note',
       text: 'On protocol version 004.',
     })
@@ -691,13 +691,13 @@ describe('importing', function () {
     })
     Factory.handlePasswordChallenges(application, password)
 
-    await application.mutator.createItem(ContentType.Note, {
+    await application.mutator.createItem(ContentType.TYPES.Note, {
       title: 'Encrypted note',
       text: 'On protocol version 004.',
     })
 
     const backupData = await application.createEncryptedBackupFileForAutomatedDesktopBackups()
-    backupData.items = backupData.items.filter((payload) => payload.content_type !== ContentType.ItemsKey)
+    backupData.items = backupData.items.filter((payload) => payload.content_type !== ContentType.TYPES.ItemsKey)
 
     await Factory.safeDeinit(application)
     application = await Factory.createInitAppWithFakeCrypto()

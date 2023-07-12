@@ -1,4 +1,4 @@
-import { ContentType } from '@standardnotes/common'
+import { ContentType, RoleName } from '@standardnotes/domain-core'
 import {
   EditorFeatureDescription,
   IframeComponentFeatureDescription,
@@ -10,7 +10,6 @@ import { NoteType } from '../Component/NoteType'
 import { FillEditorComponentDefaults } from './Utilities/FillEditorComponentDefaults'
 import { ComponentAction } from '../Component/ComponentAction'
 import { ComponentArea } from '../Component/ComponentArea'
-import { RoleName } from '@standardnotes/domain-core'
 
 export function GetDeprecatedFeatures(): FeatureDescription[] {
   const bold: EditorFeatureDescription = FillEditorComponentDefaults({
@@ -21,14 +20,14 @@ export function GetDeprecatedFeatures(): FeatureDescription[] {
     component_permissions: [
       {
         name: ComponentAction.StreamContextItem,
-        content_types: [ContentType.Note],
+        content_types: [ContentType.TYPES.Note],
       },
       {
         name: ComponentAction.StreamItems,
         content_types: [
-          ContentType.FilesafeCredentials,
-          ContentType.FilesafeFileMetadata,
-          ContentType.FilesafeIntegration,
+          ContentType.TYPES.FilesafeCredentials,
+          ContentType.TYPES.FilesafeFileMetadata,
+          ContentType.TYPES.FilesafeIntegration,
         ],
       },
     ],
@@ -101,14 +100,14 @@ export function GetDeprecatedFeatures(): FeatureDescription[] {
     component_permissions: [
       {
         name: ComponentAction.StreamContextItem,
-        content_types: [ContentType.Note],
+        content_types: [ContentType.TYPES.Note],
       },
       {
         name: ComponentAction.StreamItems,
         content_types: [
-          ContentType.FilesafeCredentials,
-          ContentType.FilesafeFileMetadata,
-          ContentType.FilesafeIntegration,
+          ContentType.TYPES.FilesafeCredentials,
+          ContentType.TYPES.FilesafeFileMetadata,
+          ContentType.TYPES.FilesafeIntegration,
         ],
       },
     ],

@@ -2,7 +2,7 @@ import { PayloadEmitSource } from '../../Abstract/Payload'
 import { isDecryptedPayload } from '../../Abstract/Payload/Interfaces/TypeCheck'
 import { PayloadContentsEqual } from '../../Utilities/Payload/PayloadContentsEqual'
 import { ConflictDelta } from './Conflict'
-import { ContentType } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/domain-core'
 import { ItemsKeyDelta } from './ItemsKeyDelta'
 import { payloadByFinalizingSyncState } from './Utilities/ApplyDirtyState'
 import { ImmutablePayloadCollection } from '../Collection/Payload/ImmutablePayloadCollection'
@@ -25,7 +25,7 @@ export class DeltaOutOfSync implements SyncDeltaInterface {
     }
 
     for (const apply of this.applyCollection.all()) {
-      if (apply.content_type === ContentType.ItemsKey) {
+      if (apply.content_type === ContentType.TYPES.ItemsKey) {
         const itemsKeyDeltaEmit = new ItemsKeyDelta(this.baseCollection, [apply]).result()
 
         extendSyncDelta(result, itemsKeyDeltaEmit)

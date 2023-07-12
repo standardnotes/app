@@ -1,5 +1,5 @@
 import { NoteContent } from './../../../Syncable/Note/NoteContent'
-import { ContentType } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/domain-core'
 import { DecryptedItem } from '../../../Abstract/Item'
 import { DecryptedPayload, PayloadTimestampDefaults } from '../../../Abstract/Payload'
 import { ItemCollection } from './ItemCollection'
@@ -9,7 +9,7 @@ describe('item collection', () => {
   const createDecryptedPayload = (uuid?: string, content?: Partial<NoteContent>): DecryptedPayload => {
     return new DecryptedPayload({
       uuid: uuid || String(Math.random()),
-      content_type: ContentType.Note,
+      content_type: ContentType.TYPES.Note,
       content: FillItemContent<NoteContent>({
         title: 'foo',
         ...content,

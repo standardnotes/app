@@ -24,11 +24,11 @@ import { MoveItemsToVaultUseCase } from './UseCase/MoveItemsToVault'
 
 import { RotateVaultRootKeyUseCase } from './UseCase/RotateVaultRootKey'
 import { FilesClientInterface } from '@standardnotes/files'
-import { ContentType } from '@standardnotes/common'
 import { GetVaultUseCase } from './UseCase/GetVault'
 import { ChangeVaultKeyOptionsUseCase } from './UseCase/ChangeVaultKeyOptions'
 import { MutatorClientInterface } from '../Mutator/MutatorClientInterface'
 import { AlertService } from '../Alert/AlertService'
+import { ContentType } from '@standardnotes/domain-core'
 
 export class VaultService
   extends AbstractService<VaultServiceEvent, VaultServiceEventPayload[VaultServiceEvent]>
@@ -47,13 +47,16 @@ export class VaultService
   ) {
     super(eventBus)
 
-    items.addObserver([ContentType.KeySystemItemsKey, ContentType.KeySystemRootKey, ContentType.VaultListing], () => {
-      void this.recomputeAllVaultsLockingState()
-    })
+    items.addObserver(
+      [ContentType.TYPES.KeySystemItemsKey, ContentType.TYPES.KeySystemRootKey, ContentType.TYPES.VaultListing],
+      () => {
+        void this.recomputeAllVaultsLockingState()
+      },
+    )
   }
 
   getVaults(): VaultListingInterface[] {
-    return this.items.getItems<VaultListingInterface>(ContentType.VaultListing).sort((a, b) => {
+    return this.items.getItems<VaultListingInterface>(ContentType.TYPES.VaultListing).sort((a, b) => {
       return a.name.localeCompare(b.name)
     })
   }

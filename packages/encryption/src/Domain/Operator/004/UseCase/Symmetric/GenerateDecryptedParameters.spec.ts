@@ -1,10 +1,10 @@
 import { PkcKeyPair, PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { getMockedCrypto } from '../../MockedCrypto'
 import { GenerateDecryptedParametersUseCase } from './GenerateDecryptedParameters'
-import { ContentType } from '@standardnotes/common'
 import { DecryptedPayloadInterface, ItemsKeyInterface } from '@standardnotes/models'
 import { GenerateEncryptedParametersUseCase } from './GenerateEncryptedParameters'
 import { EncryptedInputParameters, EncryptedOutputParameters } from '../../../../Types/EncryptedParameters'
+import { ContentType } from '@standardnotes/domain-core'
 
 describe('generate decrypted parameters usecase', () => {
   let crypto: PureCryptoInterface
@@ -18,7 +18,7 @@ describe('generate decrypted parameters usecase', () => {
     itemsKey = {
       uuid: 'items-key-id',
       itemsKey: 'items-key',
-      content_type: ContentType.ItemsKey,
+      content_type: ContentType.TYPES.ItemsKey,
     } as jest.Mocked<ItemsKeyInterface>
   })
 
@@ -28,7 +28,7 @@ describe('generate decrypted parameters usecase', () => {
       content: {
         text: plaintext,
       },
-      content_type: ContentType.Note,
+      content_type: ContentType.TYPES.Note,
     } as unknown as jest.Mocked<DecryptedPayloadInterface>
 
     const encryptedParametersUsecase = new GenerateEncryptedParametersUseCase(crypto)

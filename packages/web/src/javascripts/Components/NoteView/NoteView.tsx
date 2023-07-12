@@ -425,21 +425,24 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
   }
 
   streamItems() {
-    this.removeComponentStreamObserver = this.application.streamItems(ContentType.Component, async ({ source }) => {
-      log(LoggingDomain.NoteView, 'On component stream observer', PayloadEmitSource[source])
-      if (isPayloadSourceInternalChange(source) || source === PayloadEmitSource.InitialObserverRegistrationPush) {
-        return
-      }
+    this.removeComponentStreamObserver = this.application.streamItems(
+      ContentType.TYPES.Component,
+      async ({ source }) => {
+        log(LoggingDomain.NoteView, 'On component stream observer', PayloadEmitSource[source])
+        if (isPayloadSourceInternalChange(source) || source === PayloadEmitSource.InitialObserverRegistrationPush) {
+          return
+        }
 
-      if (!this.note) {
-        return
-      }
+        if (!this.note) {
+          return
+        }
 
-      await this.reloadStackComponents()
-      this.debounceReloadEditorComponent()
-    })
+        await this.reloadStackComponents()
+        this.debounceReloadEditorComponent()
+      },
+    )
 
-    this.removeNoteStreamObserver = this.application.streamItems<SNNote>(ContentType.Note, async () => {
+    this.removeNoteStreamObserver = this.application.streamItems<SNNote>(ContentType.TYPES.Note, async () => {
       this.setState({
         conflictedNotes: this.application.items.conflictsOf(this.note.uuid) as SNNote[],
       })

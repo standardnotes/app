@@ -1,12 +1,11 @@
 import { extendArray, isObject, isString, UuidMap } from '@standardnotes/utils'
-import { ContentType } from '@standardnotes/common'
 import { remove } from 'lodash'
 import { ItemContent } from '../../Abstract/Content/ItemContent'
 import { ContentReference } from '../../Abstract/Item'
 
 export interface CollectionElement {
   uuid: string
-  content_type: ContentType
+  content_type: string
   dirty?: boolean
   deleted?: boolean
 }
@@ -33,7 +32,7 @@ export abstract class Collection<
   Deleted extends DeletedCollectionElement,
 > {
   readonly map: Partial<Record<string, Element>> = {}
-  readonly typedMap: Partial<Record<ContentType, Element[]>> = {}
+  readonly typedMap: Partial<Record<string, Element[]>> = {}
 
   /** An array of uuids of items that are dirty */
   dirtyIndex: Set<string> = new Set()
@@ -74,7 +73,7 @@ export abstract class Collection<
   constructor(
     copy = false,
     mapCopy?: Partial<Record<string, Element>>,
-    typedMapCopy?: Partial<Record<ContentType, Element[]>>,
+    typedMapCopy?: Partial<Record<string, Element[]>>,
     referenceMapCopy?: UuidMap,
     conflictMapCopy?: UuidMap,
   ) {
@@ -93,7 +92,7 @@ export abstract class Collection<
     return Object.keys(this.map)
   }
 
-  public all(contentType?: ContentType | ContentType[]): Element[] {
+  public all(contentType?: string | string[]): Element[] {
     if (contentType) {
       if (Array.isArray(contentType)) {
         const elements: Element[] = []
@@ -254,7 +253,7 @@ export abstract class Collection<
     return this.findAll(uuids)
   }
 
-  public elementsReferencingElement(element: Decrypted, contentType?: ContentType): Element[] {
+  public elementsReferencingElement(element: Decrypted, contentType?: string): Element[] {
     const uuids = this.uuidsThatReferenceUuid(element.uuid)
     const items = this.findAll(uuids)
 

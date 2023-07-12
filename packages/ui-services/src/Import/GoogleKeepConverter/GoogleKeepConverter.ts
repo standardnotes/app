@@ -1,4 +1,4 @@
-import { ContentType } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/domain-core'
 import { DecryptedTransferPayload, NoteContent } from '@standardnotes/models'
 import { readFileAsText } from '../Utils'
 import { WebApplicationInterface } from '../../WebApplication/WebApplicationInterface'
@@ -67,7 +67,7 @@ export class GoogleKeepConverter {
       updated_at: date,
       updated_at_timestamp: date.getTime(),
       uuid: this.application.generateUUID(),
-      content_type: ContentType.Note,
+      content_type: ContentType.TYPES.Note,
       content: {
         title: title,
         text: content,
@@ -121,7 +121,7 @@ export class GoogleKeepConverter {
         updated_at: date,
         updated_at_timestamp: date.getTime(),
         uuid: this.application.generateUUID(),
-        content_type: ContentType.Note,
+        content_type: ContentType.TYPES.Note,
         content: {
           title: parsed.title,
           text: parsed.textContent,

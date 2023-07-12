@@ -1,3 +1,4 @@
+import { ContentType } from '@standardnotes/domain-core'
 import { DecryptedItem } from '../../Abstract/Item/Implementations/DecryptedItem'
 import { ItemContent } from '../../Abstract/Content/ItemContent'
 import { DecryptedPayloadInterface } from '../../Abstract/Payload/Interfaces/DecryptedPayload'
@@ -5,7 +6,6 @@ import { FileMetadata } from './FileMetadata'
 import { FileProtocolV1 } from './FileProtocolV1'
 import { SortableItem } from '../../Runtime/Collection/CollectionSort'
 import { ConflictStrategy, ItemInterface } from '../../Abstract/Item'
-import { ContentType } from '@standardnotes/common'
 
 type EncryptedBytesLength = number
 type DecryptedBytesLength = number
@@ -32,7 +32,7 @@ export type FileContentSpecialized = FileContentWithoutSize & FileMetadata & Siz
 
 export type FileContent = FileContentSpecialized & ItemContent
 
-export const isFile = (x: ItemInterface): x is FileItem => x.content_type === ContentType.File
+export const isFile = (x: ItemInterface): x is FileItem => x.content_type === ContentType.TYPES.File
 
 export class FileItem
   extends DecryptedItem<FileContent>

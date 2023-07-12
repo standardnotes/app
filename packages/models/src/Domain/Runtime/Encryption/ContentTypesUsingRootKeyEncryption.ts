@@ -1,11 +1,11 @@
-import { ContentType } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/domain-core'
 
-export function ContentTypesUsingRootKeyEncryption(): ContentType[] {
+export function ContentTypesUsingRootKeyEncryption(): string[] {
   return [
-    ContentType.RootKey,
-    ContentType.ItemsKey,
-    ContentType.EncryptedStorage,
-    ContentType.TrustedContact,
-    ContentType.KeySystemRootKey,
+    ContentType.TYPES.RootKey,
+    ContentType.TYPES.ItemsKey,
+    ContentType.TYPES.EncryptedStorage,
+    ContentType.TYPES.TrustedContact,
+    ContentType.TYPES.KeySystemRootKey,
   ]
 }

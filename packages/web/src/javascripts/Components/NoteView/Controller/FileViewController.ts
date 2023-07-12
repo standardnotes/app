@@ -1,5 +1,5 @@
 import { FileItem } from '@standardnotes/models'
-import { ContentType } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/domain-core'
 import { SNApplication } from '@standardnotes/snjs'
 import { ItemViewControllerInterface } from './ItemViewControllerInterface'
 
@@ -23,20 +23,23 @@ export class FileViewController implements ItemViewControllerInterface {
   }
 
   private streamItems() {
-    this.removeStreamObserver = this.application.streamItems<FileItem>(ContentType.File, ({ changed, inserted }) => {
-      if (this.dealloced) {
-        return
-      }
+    this.removeStreamObserver = this.application.streamItems<FileItem>(
+      ContentType.TYPES.File,
+      ({ changed, inserted }) => {
+        if (this.dealloced) {
+          return
+        }
 
-      const files = changed.concat(inserted)
+        const files = changed.concat(inserted)
 
-      const matchingFile = files.find((item) => {
-        return item.uuid === this.item.uuid
-      })
+        const matchingFile = files.find((item) => {
+          return item.uuid === this.item.uuid
+        })
 
-      if (matchingFile) {
-        this.item = matchingFile
-      }
-    })
+        if (matchingFile) {
+          this.item = matchingFile
+        }
+      },
+    )
   }
 }

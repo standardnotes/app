@@ -2,10 +2,10 @@ import { NoteContent } from './NoteContent'
 import { DecryptedItemMutator } from '../../Abstract/Item/Mutator/DecryptedItemMutator'
 import { SNNote } from './Note'
 import { NoteToNoteReference } from '../../Abstract/Reference/NoteToNoteReference'
-import { ContentType } from '@standardnotes/common'
 import { ContentReferenceType } from '../../Abstract/Item'
 import { FeatureIdentifier, NoteType } from '@standardnotes/features'
 import { EditorLineWidth } from '../UserPrefs'
+import { ContentType } from '@standardnotes/domain-core'
 
 export class NoteMutator extends DecryptedItemMutator<NoteContent> {
   set title(title: string) {
@@ -63,7 +63,7 @@ export class NoteMutator extends DecryptedItemMutator<NoteContent> {
 
     const reference: NoteToNoteReference = {
       uuid: note.uuid,
-      content_type: ContentType.Note,
+      content_type: ContentType.TYPES.Note,
       reference_type: ContentReferenceType.NoteToNote,
     }
 

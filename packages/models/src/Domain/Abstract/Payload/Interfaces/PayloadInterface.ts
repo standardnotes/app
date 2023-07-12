@@ -1,5 +1,4 @@
 import { SyncResolvedParams, SyncResolvedPayload } from './../../../Runtime/Deltas/Utilities/SyncResolvedPayload'
-import { ContentType } from '@standardnotes/common'
 import { ItemContent } from '../../Content/ItemContent'
 import { TransferPayload } from '../../TransferPayload/Interfaces/TransferPayload'
 import { PayloadSource } from '../Types/PayloadSource'
@@ -8,7 +7,7 @@ import { PersistentSignatureData } from '../../../Runtime/Encryption/PersistentS
 export interface PayloadInterface<T extends TransferPayload = TransferPayload, C extends ItemContent = ItemContent> {
   readonly source: PayloadSource
   readonly uuid: string
-  readonly content_type: ContentType
+  readonly content_type: string
   content: C | string | undefined
   deleted: boolean
 

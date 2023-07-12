@@ -53,8 +53,8 @@ describe('notes + tags syncing', function () {
     const tagPayload = pair[1]
 
     await this.application.mutator.emitItemsFromPayloads([notePayload, tagPayload], PayloadEmitSource.LocalChanged)
-    const note = this.application.itemManager.getItems([ContentType.Note])[0]
-    const tag = this.application.itemManager.getItems([ContentType.Tag])[0]
+    const note = this.application.itemManager.getItems([ContentType.TYPES.Note])[0]
+    const tag = this.application.itemManager.getItems([ContentType.TYPES.Tag])[0]
     expect(this.application.itemManager.getDisplayableNotes().length).to.equal(1)
     expect(this.application.itemManager.getDisplayableTags().length).to.equal(1)
 

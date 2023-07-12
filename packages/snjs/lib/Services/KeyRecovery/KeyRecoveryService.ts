@@ -16,7 +16,6 @@ import { DiskStorageService } from '../Storage/DiskStorageService'
 import { PayloadManager } from '../Payloads/PayloadManager'
 import { ChallengeService } from '../Challenge'
 import { SNApiService } from '@Lib/Services/Api/ApiService'
-import { ContentType } from '@standardnotes/common'
 import { ItemManager } from '../Items/ItemManager'
 import { removeFromArray, Uuids } from '@standardnotes/utils'
 import { ClientDisplayableError, isErrorResponse } from '@standardnotes/responses'
@@ -43,6 +42,7 @@ import {
   KeyRecoveryOperationResult,
 } from './Types'
 import { serverKeyParamsAreSafe } from './Utils'
+import { ContentType } from '@standardnotes/domain-core'
 
 /**
  * The key recovery service listens to items key changes to detect any that cannot be decrypted.
@@ -99,7 +99,7 @@ export class SNKeyRecoveryService extends AbstractService<KeyRecoveryEvent, Decr
     super(internalEventBus)
 
     this.removeItemObserver = this.payloadManager.addObserver(
-      [ContentType.ItemsKey],
+      [ContentType.TYPES.ItemsKey],
       ({ changed, inserted, ignored, source }) => {
         if (source === PayloadEmitSource.LocalChanged) {
           return
@@ -181,7 +181,7 @@ export class SNKeyRecoveryService extends AbstractService<KeyRecoveryEvent, Decr
 
   public presentKeyRecoveryWizard(): void {
     const invalidKeys = this.itemManager.invalidItems
-      .filter((i) => i.content_type === ContentType.ItemsKey)
+      .filter((i) => i.content_type === ContentType.TYPES.ItemsKey)
       .map((i) => i.payload)
 
     void this.handleIgnoredItemsKeys(invalidKeys, false)

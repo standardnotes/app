@@ -272,7 +272,7 @@ describe('key recovery service', function () {
     const result = await contextB.application.changePassword(contextA.password, newPassword)
 
     expect(result.error).to.not.be.ok
-    expect(contextB.application.items.getAnyItems(ContentType.ItemsKey).length).to.equal(2)
+    expect(contextB.application.items.getAnyItems(ContentType.TYPES.ItemsKey).length).to.equal(2)
 
     const newItemsKey = contextB.application.items
       .getDisplayableItemsKeys()
@@ -288,7 +288,7 @@ describe('key recovery service', function () {
     await recoveryPromise
 
     /** Same previously errored key should now no longer be errored, */
-    expect(contextA.application.items.getAnyItems(ContentType.ItemsKey).length).to.equal(2)
+    expect(contextA.application.items.getAnyItems(ContentType.TYPES.ItemsKey).length).to.equal(2)
     for (const key of contextA.application.itemManager.getDisplayableItemsKeys()) {
       expect(key.errorDecrypting).to.not.be.ok
     }
@@ -321,7 +321,7 @@ describe('key recovery service', function () {
       password: contextA.password,
     })
 
-    expect(appA.items.getItems(ContentType.ItemsKey).length).to.equal(1)
+    expect(appA.items.getItems(ContentType.TYPES.ItemsKey).length).to.equal(1)
 
     /** Create simultaneous appB signed into same account */
     const appB = await Factory.createApplicationWithFakeCrypto('another-namespace')

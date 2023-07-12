@@ -209,7 +209,7 @@ const ClipperView = ({
 
       const editorStateJSON = await getSuperJSONFromClipPayload(clipPayload)
 
-      const note = application.items.createTemplateItem<NoteContent, SNNote>(ContentType.Note, {
+      const note = application.items.createTemplateItem<NoteContent, SNNote>(ContentType.TYPES.Note, {
         title: clipPayload.title,
         text: editorStateJSON,
         editorIdentifier: FeatureIdentifier.SuperEditor,
@@ -401,7 +401,7 @@ const ClipperView = ({
           <ItemSelectionDropdown
             onSelection={selectTag}
             placeholder="Select tag to save clipped notes to..."
-            contentTypes={[ContentType.Tag]}
+            contentTypes={[ContentType.TYPES.Tag]}
             className={{
               input: 'text-[0.85rem]',
             }}

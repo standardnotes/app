@@ -1,6 +1,6 @@
 import { PkcKeyPair, PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { getMockedCrypto } from '../../MockedCrypto'
-import { AnyKeyParamsContent, ContentType, ProtocolVersion } from '@standardnotes/common'
+import { AnyKeyParamsContent, ProtocolVersion } from '@standardnotes/common'
 import { GenerateEncryptedParametersUseCase } from './GenerateEncryptedParameters'
 import {
   DecryptedPayloadInterface,
@@ -11,6 +11,7 @@ import {
 import { deconstructEncryptedPayloadString } from '../../V004AlgorithmHelpers'
 import { ParseConsistentBase64JsonPayloadUseCase } from '../Utils/ParseConsistentBase64JsonPayload'
 import { SymmetricItemAdditionalData } from '../../../../Types/EncryptionAdditionalData'
+import { ContentType } from '@standardnotes/domain-core'
 
 describe('generate encrypted parameters usecase', () => {
   let crypto: PureCryptoInterface
@@ -29,20 +30,20 @@ describe('generate encrypted parameters usecase', () => {
           title: 'title',
           text: 'text',
         },
-        content_type: ContentType.Note,
+        content_type: ContentType.TYPES.Note,
       } as unknown as jest.Mocked<DecryptedPayloadInterface>
 
       const itemsKey = {
         uuid: 'items-key-id',
         itemsKey: 'items-key',
-        content_type: ContentType.ItemsKey,
+        content_type: ContentType.TYPES.ItemsKey,
       } as jest.Mocked<ItemsKeyInterface>
 
       const result = usecase.execute(decrypted, itemsKey)
 
       expect(result).toEqual({
         uuid: '123',
-        content_type: ContentType.Note,
+        content_type: ContentType.TYPES.Note,
         items_key_id: 'items-key-id',
         content: expect.any(String),
         enc_item_key: expect.any(String),
@@ -57,7 +58,7 @@ describe('generate encrypted parameters usecase', () => {
         content: {
           foo: 'bar',
         },
-        content_type: ContentType.ItemsKey,
+        content_type: ContentType.TYPES.ItemsKey,
       } as unknown as jest.Mocked<DecryptedPayloadInterface>
 
       const rootKey = {
@@ -66,7 +67,7 @@ describe('generate encrypted parameters usecase', () => {
         keyParams: {
           content: {} as jest.Mocked<AnyKeyParamsContent>,
         },
-        content_type: ContentType.RootKey,
+        content_type: ContentType.TYPES.RootKey,
       } as jest.Mocked<RootKeyInterface>
 
       const result = usecase.execute(decrypted, rootKey)
@@ -80,13 +81,13 @@ describe('generate encrypted parameters usecase', () => {
         content: {
           foo: 'bar',
         },
-        content_type: ContentType.KeySystemItemsKey,
+        content_type: ContentType.TYPES.KeySystemItemsKey,
       } as unknown as jest.Mocked<DecryptedPayloadInterface>
 
       const rootKey = {
         uuid: 'items-key-id',
         itemsKey: 'items-key',
-        content_type: ContentType.KeySystemRootKey,
+        content_type: ContentType.TYPES.KeySystemRootKey,
       } as jest.Mocked<KeySystemRootKeyInterface>
 
       const result = usecase.execute(decrypted, rootKey)
@@ -111,13 +112,13 @@ describe('generate encrypted parameters usecase', () => {
           title: 'title',
           text: 'text',
         },
-        content_type: ContentType.Note,
+        content_type: ContentType.TYPES.Note,
       } as unknown as jest.Mocked<DecryptedPayloadInterface>
 
       const itemsKey = {
         uuid: 'items-key-id',
         itemsKey: 'items-key',
-        content_type: ContentType.ItemsKey,
+        content_type: ContentType.TYPES.ItemsKey,
       } as jest.Mocked<ItemsKeyInterface>
 
       const result = usecase.execute(decrypted, itemsKey, signingKeyPair)

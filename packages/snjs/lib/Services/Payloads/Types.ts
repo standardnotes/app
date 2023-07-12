@@ -1,4 +1,3 @@
-import { ContentType } from '@standardnotes/common'
 import {
   DecryptedPayloadInterface,
   DeletedPayloadInterface,
@@ -34,7 +33,7 @@ export type PayloadManagerChangeData = {
 export type PayloadsChangeObserverCallback = (data: PayloadManagerChangeData) => void
 
 export type PayloadsChangeObserver = {
-  types: ContentType[]
+  types: string[]
   callback: PayloadsChangeObserverCallback
   priority: number
 }

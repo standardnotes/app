@@ -2,7 +2,7 @@ import { MutatorClientInterface, SyncServiceInterface } from '@standardnotes/ser
 import { ClientDisplayableError } from '@standardnotes/responses'
 import { DecryptedItemInterface, FileItem, VaultListingInterface } from '@standardnotes/models'
 import { FilesClientInterface } from '@standardnotes/files'
-import { ContentType } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/domain-core'
 
 export class MoveItemsToVaultUseCase {
   constructor(
@@ -25,7 +25,7 @@ export class MoveItemsToVaultUseCase {
     await this.sync.sync()
 
     for (const item of dto.items) {
-      if (item.content_type !== ContentType.File) {
+      if (item.content_type !== ContentType.TYPES.File) {
         continue
       }
 

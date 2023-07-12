@@ -1,7 +1,7 @@
 import { MutatorClientInterface, SyncServiceInterface } from '@standardnotes/services'
 import { ClientDisplayableError } from '@standardnotes/responses'
 import { DecryptedItemInterface, FileItem } from '@standardnotes/models'
-import { ContentType } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/domain-core'
 import { FilesClientInterface } from '@standardnotes/files'
 
 export class RemoveItemFromVault {
@@ -19,7 +19,7 @@ export class RemoveItemFromVault {
 
     await this.sync.sync()
 
-    if (dto.item.content_type === ContentType.File) {
+    if (dto.item.content_type === ContentType.TYPES.File) {
       await this.files.moveFileOutOfSharedVault(dto.item as FileItem)
     }
   }

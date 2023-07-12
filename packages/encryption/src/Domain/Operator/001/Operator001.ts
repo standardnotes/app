@@ -1,4 +1,4 @@
-import { ContentType, KeyParamsOrigination, ProtocolVersion, ProtocolVersionLength } from '@standardnotes/common'
+import { KeyParamsOrigination, ProtocolVersion, ProtocolVersionLength } from '@standardnotes/common'
 import {
   CreateDecryptedItemFromPayload,
   DecryptedPayload,
@@ -32,6 +32,7 @@ import { PublicKeySet } from '../Types/PublicKeySet'
 import { AsymmetricDecryptResult } from '../Types/AsymmetricDecryptResult'
 import { AsymmetricSignatureVerificationDetachedResult } from '../Types/AsymmetricSignatureVerificationDetachedResult'
 import { AsyncOperatorInterface } from '../OperatorInterface/AsyncOperatorInterface'
+import { ContentType } from '@standardnotes/domain-core'
 
 const NO_IV = '00000000000000000000000000000000'
 
@@ -71,7 +72,7 @@ export class SNProtocolOperator001 implements OperatorInterface, AsyncOperatorIn
   public createItemsKey(): ItemsKeyInterface {
     const payload = new DecryptedPayload({
       uuid: UuidGenerator.GenerateUuid(),
-      content_type: ContentType.ItemsKey,
+      content_type: ContentType.TYPES.ItemsKey,
       content: this.generateNewItemsKeyContent(),
       ...PayloadTimestampDefaults(),
     })

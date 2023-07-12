@@ -20,7 +20,7 @@ export function createItemParams(contentType) {
 export function createNoteParams({ title, text, dirty = true } = {}) {
   const params = {
     uuid: Utils.generateUuid(),
-    content_type: ContentType.Note,
+    content_type: ContentType.TYPES.Note,
     dirty: dirty,
     dirtyIndex: dirty ? getIncrementedDirtyIndex() : undefined,
     content: FillItemContent({
@@ -34,7 +34,7 @@ export function createNoteParams({ title, text, dirty = true } = {}) {
 export function createTagParams({ title, dirty = true, uuid = undefined } = {}) {
   const params = {
     uuid: uuid || Utils.generateUuid(),
-    content_type: ContentType.Tag,
+    content_type: ContentType.TYPES.Tag,
     dirty: dirty,
     dirtyIndex: dirty ? getIncrementedDirtyIndex() : undefined,
     content: FillItemContent({

@@ -1,4 +1,4 @@
-import { ContentType } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/domain-core'
 import { FillItemContent } from '../../Abstract/Content/ItemContent'
 import {
   DecryptedPayload,
@@ -16,7 +16,7 @@ describe('remote retrieved delta', () => {
     const baseCollection = new PayloadCollection()
     const basePayload = new DecryptedPayload<ItemsKeyContent>({
       uuid: '123',
-      content_type: ContentType.ItemsKey,
+      content_type: ContentType.TYPES.ItemsKey,
       content: FillItemContent<ItemsKeyContent>({
         itemsKey: 'secret',
       }),
@@ -28,7 +28,7 @@ describe('remote retrieved delta', () => {
 
     const payloadToIgnore = new EncryptedPayload({
       uuid: '123',
-      content_type: ContentType.ItemsKey,
+      content_type: ContentType.TYPES.ItemsKey,
       content: '004:...',
       enc_item_key: '004:...',
       items_key_id: undefined,

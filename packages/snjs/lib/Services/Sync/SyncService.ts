@@ -1,7 +1,6 @@
 import { ConflictParams, ConflictType } from '@standardnotes/responses'
 import { log, LoggingDomain } from './../../Logging'
 import { AccountSyncOperation } from '@Lib/Services/Sync/Account/Operation'
-import { ContentType } from '@standardnotes/common'
 import {
   Uuids,
   extendArray,
@@ -96,20 +95,21 @@ import {
 import { CreatePayloadFromRawServerItem } from './Account/Utilities'
 import { ApplicationSyncOptions } from '@Lib/Application/Options/OptionalOptions'
 import { DecryptedServerConflictMap, TrustedServerConflictMap } from './Account/ServerConflictMap'
+import { ContentType } from '@standardnotes/domain-core'
 
 const DEFAULT_MAJOR_CHANGE_THRESHOLD = 15
 const INVALID_SESSION_RESPONSE_STATUS = 401
 
 /** Content types appearing first are always mapped first */
 const ContentTypeLocalLoadPriorty = [
-  ContentType.ItemsKey,
-  ContentType.KeySystemRootKey,
-  ContentType.KeySystemItemsKey,
-  ContentType.VaultListing,
-  ContentType.TrustedContact,
-  ContentType.UserPrefs,
-  ContentType.Component,
-  ContentType.Theme,
+  ContentType.TYPES.ItemsKey,
+  ContentType.TYPES.KeySystemRootKey,
+  ContentType.TYPES.KeySystemItemsKey,
+  ContentType.TYPES.VaultListing,
+  ContentType.TYPES.TrustedContact,
+  ContentType.TYPES.UserPrefs,
+  ContentType.TYPES.Component,
+  ContentType.TYPES.Theme,
 ]
 
 /**
@@ -1141,7 +1141,7 @@ export class SNSyncService
     const results = await this.encryptionService.decryptSplit<ItemsKeyContent>(rootKeySplit)
 
     results.forEach((result) => {
-      if (isDecryptedPayload<ItemsKeyContent>(result) && result.content_type === ContentType.ItemsKey) {
+      if (isDecryptedPayload<ItemsKeyContent>(result) && result.content_type === ContentType.TYPES.ItemsKey) {
         map[result.uuid] = result
       }
     })
@@ -1173,7 +1173,7 @@ export class SNSyncService
     results.forEach((result) => {
       if (
         isDecryptedPayload<KeySystemItemsKeyContent>(result) &&
-        result.content_type === ContentType.KeySystemItemsKey
+        result.content_type === ContentType.TYPES.KeySystemItemsKey
       ) {
         map[result.uuid] = result
       }

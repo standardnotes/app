@@ -118,7 +118,7 @@ describe('model manager mapping', () => {
     await this.application.mutator.emitItemsFromPayloads([payload], PayloadEmitSource.LocalChanged)
     const item = this.application.itemManager.items[0]
     return new Promise((resolve) => {
-      this.application.itemManager.addObserver(ContentType.Any, ({ changed }) => {
+      this.application.itemManager.addObserver(ContentType.TYPES.Any, ({ changed }) => {
         expect(changed[0].uuid === item.uuid)
         resolve()
       })

@@ -1,5 +1,4 @@
-import { SNTag } from '@standardnotes/snjs'
-import { ContentType } from '@standardnotes/common'
+import { ContentType, SNTag } from '@standardnotes/snjs'
 import { InternalEventBus } from '@standardnotes/services'
 import { WebApplication } from '@/Application/WebApplication'
 import { NavigationController } from '../Navigation/NavigationController'
@@ -57,7 +56,7 @@ describe('item list controller', () => {
 
     it('should return false first item is file', () => {
       controller.getFirstNonProtectedItem = jest.fn().mockReturnValue({
-        content_type: ContentType.File,
+        content_type: ContentType.TYPES.File,
       })
 
       expect(controller.shouldSelectFirstItem(ItemsReloadSource.UserTriggeredTagChange)).toBe(false)
@@ -66,7 +65,7 @@ describe('item list controller', () => {
     it('should return false if selected tag is daily entry', () => {
       const tag = {
         isDailyEntry: true,
-        content_type: ContentType.Tag,
+        content_type: ContentType.TYPES.Tag,
       } as jest.Mocked<SNTag>
 
       Object.defineProperty(navigationController, 'selected', {
@@ -78,7 +77,7 @@ describe('item list controller', () => {
 
     it('should return true if user triggered tag change', () => {
       const tag = {
-        content_type: ContentType.Tag,
+        content_type: ContentType.TYPES.Tag,
       } as jest.Mocked<SNTag>
 
       Object.defineProperty(navigationController, 'selected', {
@@ -90,7 +89,7 @@ describe('item list controller', () => {
 
     it('should return false if not user triggered tag change and there is an existing selected item', () => {
       const tag = {
-        content_type: ContentType.Tag,
+        content_type: ContentType.TYPES.Tag,
       } as jest.Mocked<SNTag>
 
       Object.defineProperty(selectionController, 'selectedUuids', {

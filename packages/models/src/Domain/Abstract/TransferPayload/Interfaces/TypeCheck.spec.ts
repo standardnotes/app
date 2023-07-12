@@ -1,4 +1,4 @@
-import { ContentType } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/domain-core'
 import { PayloadTimestampDefaults } from '../../Payload'
 import { isCorruptTransferPayload } from './TypeCheck'
 
@@ -8,7 +8,7 @@ describe('type check', () => {
       expect(
         isCorruptTransferPayload({
           uuid: '123',
-          content_type: ContentType.Note,
+          content_type: ContentType.TYPES.Note,
           content: '123',
           ...PayloadTimestampDefaults(),
         }),
@@ -19,7 +19,7 @@ describe('type check', () => {
       expect(
         isCorruptTransferPayload({
           uuid: undefined as never,
-          content_type: ContentType.Note,
+          content_type: ContentType.TYPES.Note,
           content: '123',
           ...PayloadTimestampDefaults(),
         }),
@@ -30,7 +30,7 @@ describe('type check', () => {
       expect(
         isCorruptTransferPayload({
           uuid: '123',
-          content_type: ContentType.Note,
+          content_type: ContentType.TYPES.Note,
           content: '123',
           deleted: true,
           ...PayloadTimestampDefaults(),
@@ -42,7 +42,7 @@ describe('type check', () => {
       expect(
         isCorruptTransferPayload({
           uuid: '123',
-          content_type: ContentType.Unknown,
+          content_type: ContentType.TYPES.Unknown,
           content: '123',
           ...PayloadTimestampDefaults(),
         }),

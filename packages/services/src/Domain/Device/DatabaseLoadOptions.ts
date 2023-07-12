@@ -1,4 +1,3 @@
-import { ContentType } from '@standardnotes/common'
 import { FullyFormedTransferPayload } from '@standardnotes/models'
 
 export type DatabaseKeysLoadChunk = {
@@ -42,7 +41,7 @@ export function isFullEntryLoadChunkResponse(
 }
 
 export type DatabaseLoadOptions = {
-  contentTypePriority: ContentType[]
+  contentTypePriority: string[]
   uuidPriority: string[]
   batchSize: number
 }

@@ -1,11 +1,11 @@
 import { TagContent } from './../../Syncable/Tag/TagContent'
-import { ContentType } from '@standardnotes/common'
 import { FillItemContent, ItemContent } from '../../Abstract/Content/ItemContent'
 import { DecryptedPayload, PayloadSource, PayloadTimestampDefaults } from '../../Abstract/Payload'
 import { FileContent, FileItem } from '../../Syncable/File'
 import { NoteContent, SNNote } from '../../Syncable/Note'
 import { SNTag } from '../../Syncable/Tag'
 import { SmartView, SmartViewContent } from '../../Syncable/SmartView'
+import { ContentType } from '@standardnotes/domain-core'
 
 let currentId = 0
 
@@ -18,7 +18,7 @@ export const createNote = (content?: Partial<NoteContent>): SNNote => {
     new DecryptedPayload(
       {
         uuid: mockUuid(),
-        content_type: ContentType.Note,
+        content_type: ContentType.TYPES.Note,
         content: FillItemContent({ ...content }),
         ...PayloadTimestampDefaults(),
       },
@@ -32,7 +32,7 @@ export const createNoteWithContent = (content: Partial<NoteContent>, createdAt?:
     new DecryptedPayload(
       {
         uuid: mockUuid(),
-        content_type: ContentType.Note,
+        content_type: ContentType.TYPES.Note,
         content: FillItemContent<NoteContent>(content),
         ...PayloadTimestampDefaults(),
         created_at: createdAt || new Date(),
@@ -47,7 +47,7 @@ export const createTagWithContent = (content: Partial<TagContent>): SNTag => {
     new DecryptedPayload(
       {
         uuid: mockUuid(),
-        content_type: ContentType.Tag,
+        content_type: ContentType.TYPES.Tag,
         content: FillItemContent<TagContent>(content),
         ...PayloadTimestampDefaults(),
       },
@@ -61,7 +61,7 @@ export const createSmartViewWithContent = (content: Partial<SmartViewContent>): 
     new DecryptedPayload(
       {
         uuid: mockUuid(),
-        content_type: ContentType.SmartView,
+        content_type: ContentType.TYPES.SmartView,
         content: FillItemContent<SmartViewContent>(content),
         ...PayloadTimestampDefaults(),
       },
@@ -75,7 +75,7 @@ export const createTagWithTitle = (title = 'photos') => {
     new DecryptedPayload(
       {
         uuid: mockUuid(),
-        content_type: ContentType.Tag,
+        content_type: ContentType.TYPES.Tag,
         content: FillItemContent<TagContent>({ title }),
         ...PayloadTimestampDefaults(),
       },
@@ -89,7 +89,7 @@ export const createSmartViewWithTitle = (title = 'photos') => {
     new DecryptedPayload(
       {
         uuid: mockUuid(),
-        content_type: ContentType.SmartView,
+        content_type: ContentType.TYPES.SmartView,
         content: FillItemContent<SmartViewContent>({ title }),
         ...PayloadTimestampDefaults(),
       },
@@ -103,7 +103,7 @@ export const createFile = (name = 'screenshot.png') => {
     new DecryptedPayload(
       {
         uuid: mockUuid(),
-        content_type: ContentType.File,
+        content_type: ContentType.TYPES.File,
         content: FillItemContent<FileContent>({ name }),
         ...PayloadTimestampDefaults(),
       },

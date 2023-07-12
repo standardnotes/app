@@ -99,7 +99,7 @@ describe('migrations', () => {
     const noDistractionItem = CreateDecryptedItemFromPayload(
       new DecryptedPayload({
         uuid: '123',
-        content_type: ContentType.Theme,
+        content_type: ContentType.TYPES.Theme,
         content: FillItemContent({
           package_info: {
             identifier: 'org.standardnotes.theme-no-distraction',
@@ -111,14 +111,14 @@ describe('migrations', () => {
     await application.sync.sync()
 
     const systemThemeCount = 1
-    expect(application.items.getItems(ContentType.Theme).length).to.equal(1 + systemThemeCount)
+    expect(application.items.getItems(ContentType.TYPES.Theme).length).to.equal(1 + systemThemeCount)
 
     /** Run migration */
     const migration = new Migration2_42_0(application.migrationService.services)
     await migration.handleStage(ApplicationStage.FullSyncCompleted_13)
     await application.sync.sync()
 
-    expect(application.items.getItems(ContentType.Theme).length).to.equal(systemThemeCount)
+    expect(application.items.getItems(ContentType.TYPES.Theme).length).to.equal(systemThemeCount)
 
     await Factory.safeDeinit(application)
   })

@@ -1,4 +1,3 @@
-import { ContentType } from '@standardnotes/common'
 import { SNTag } from './Tag'
 import { TagContent } from './TagContent'
 import { FileItem } from '../File'
@@ -10,6 +9,7 @@ import { DecryptedItemMutator } from '../../Abstract/Item/Mutator/DecryptedItemM
 import { TagToFileReference } from '../../Abstract/Reference/TagToFileReference'
 import { TagPreferences } from './TagPreferences'
 import { DecryptedItemInterface, MutationType } from '../../Abstract/Item'
+import { ContentType } from '@standardnotes/domain-core'
 
 export class TagMutator<Content extends TagContent = TagContent> extends DecryptedItemMutator<Content> {
   private mutablePreferences?: TagPreferences
@@ -51,7 +51,7 @@ export class TagMutator<Content extends TagContent = TagContent> extends Decrypt
 
     const reference: TagToParentTagReference = {
       reference_type: ContentReferenceType.TagToParentTag,
-      content_type: ContentType.Tag,
+      content_type: ContentType.TYPES.Tag,
       uuid: tag.uuid,
     }
 
@@ -71,7 +71,7 @@ export class TagMutator<Content extends TagContent = TagContent> extends Decrypt
 
     const reference: TagToFileReference = {
       reference_type: ContentReferenceType.TagToFile,
-      content_type: ContentType.File,
+      content_type: ContentType.TYPES.File,
       uuid: file.uuid,
     }
 

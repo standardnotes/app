@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { ContentType } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/domain-core'
+
 import { ItemInterface } from '../Item/Interfaces/ItemInterface'
 import { ContentReferenceType } from './ContenteReferenceType'
 import { ContentReference } from './ContentReference'
@@ -20,8 +20,8 @@ export const isLegacyTagToNoteReference = (
   x: LegacyAnonymousReference,
   currentItem: ItemInterface,
 ): x is LegacyTagToNoteReference => {
-  const isReferenceToANote = x.content_type === ContentType.Note
-  const isReferenceFromATag = currentItem.content_type === ContentType.Tag
+  const isReferenceToANote = x.content_type === ContentType.TYPES.Note
+  const isReferenceFromATag = currentItem.content_type === ContentType.TYPES.Tag
   return isReferenceToANote && isReferenceFromATag
 }
 

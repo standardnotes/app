@@ -1,7 +1,5 @@
-import { ContentType } from '@standardnotes/common'
-
 export interface ServerItemResponse {
-  content_type: ContentType
+  content_type: string
   content: string | undefined
   created_at_timestamp: number
   created_at: Date

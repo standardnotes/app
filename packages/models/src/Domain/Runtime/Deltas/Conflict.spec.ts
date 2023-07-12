@@ -1,4 +1,4 @@
-import { ContentType } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/domain-core'
 import { FillItemContent } from '../../Abstract/Content/ItemContent'
 import { ConflictStrategy } from '../../Abstract/Item'
 import {
@@ -25,7 +25,7 @@ describe('conflict delta', () => {
   const createDecryptedItemsKey = (uuid: string, key: string, timestamp = 0) => {
     return new DecryptedPayload<ItemsKeyContent>({
       uuid: uuid,
-      content_type: ContentType.ItemsKey,
+      content_type: ContentType.TYPES.ItemsKey,
       content: FillItemContent<ItemsKeyContent>({
         itemsKey: key,
       }),
@@ -37,7 +37,7 @@ describe('conflict delta', () => {
   const createErroredItemsKey = (uuid: string, timestamp = 0) => {
     return new EncryptedPayload({
       uuid: uuid,
-      content_type: ContentType.ItemsKey,
+      content_type: ContentType.TYPES.ItemsKey,
       content: '004:...',
       enc_item_key: '004:...',
       items_key_id: undefined,

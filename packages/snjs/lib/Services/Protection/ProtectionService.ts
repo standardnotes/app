@@ -26,7 +26,7 @@ import {
   ProtectionsClientInterface,
   MutatorClientInterface,
 } from '@standardnotes/services'
-import { ContentType } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/domain-core'
 
 export enum ProtectionEvent {
   UnprotectedSessionBegan = 'UnprotectedSessionBegan',
@@ -182,7 +182,7 @@ export class SNProtectionService extends AbstractService<ProtectionEvent> implem
     }
 
     return this.authorizeAction(
-      item.content_type === ContentType.Note
+      item.content_type === ContentType.TYPES.Note
         ? ChallengeReason.AccessProtectedNote
         : ChallengeReason.AccessProtectedFile,
       { fallBackToAccountPassword: true, requireAccountPassword: false, forcePrompt: false },

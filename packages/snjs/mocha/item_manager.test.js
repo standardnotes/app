@@ -25,7 +25,7 @@ describe('item manager', function () {
   })
 
   const createNote = async () => {
-    return application.mutator.createItem(ContentType.Note, {
+    return application.mutator.createItem(ContentType.TYPES.Note, {
       title: 'hello',
       text: 'world',
     })
@@ -38,7 +38,7 @@ describe('item manager', function () {
         content_type: note.content_type,
       }
     })
-    return application.mutator.createItem(ContentType.Tag, {
+    return application.mutator.createItem(ContentType.TYPES.Tag, {
       title: 'thoughts',
       references: references,
     })
@@ -110,7 +110,7 @@ describe('item manager', function () {
 
   it('observer', async function () {
     const observed = []
-    application.items.addObserver(ContentType.Any, ({ changed, inserted, removed, source, sourceKey }) => {
+    application.items.addObserver(ContentType.TYPES.Any, ({ changed, inserted, removed, source, sourceKey }) => {
       observed.push({ changed, inserted, removed, source, sourceKey })
     })
     const note = await createNote()
@@ -184,7 +184,7 @@ describe('item manager', function () {
 
   it('remove all items from memory', async function () {
     const observed = []
-    application.items.addObserver(ContentType.Any, ({ changed, inserted, removed, ignored }) => {
+    application.items.addObserver(ContentType.TYPES.Any, ({ changed, inserted, removed, ignored }) => {
       observed.push({ changed, inserted, removed, ignored })
     })
     await createNote()
@@ -197,7 +197,7 @@ describe('item manager', function () {
 
   it('remove item locally', async function () {
     const observed = []
-    application.items.addObserver(ContentType.Any, ({ changed, inserted, removed, ignored }) => {
+    application.items.addObserver(ContentType.TYPES.Any, ({ changed, inserted, removed, ignored }) => {
       observed.push({ changed, inserted, removed, ignored })
     })
     const note = await createNote()
@@ -220,7 +220,7 @@ describe('item manager', function () {
     const changedTitle = 'changed title'
     let didEmit = false
     let latestVersion
-    application.items.addObserver(ContentType.Note, ({ changed, inserted }) => {
+    application.items.addObserver(ContentType.TYPES.Note, ({ changed, inserted }) => {
       const all = changed.concat(inserted)
       if (!didEmit) {
         didEmit = true

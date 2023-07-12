@@ -1,4 +1,4 @@
-import { ContentType, KeyParamsOrigination, ProtocolVersion } from '@standardnotes/common'
+import { KeyParamsOrigination, ProtocolVersion } from '@standardnotes/common'
 import {
   CreateDecryptedItemFromPayload,
   DecryptedPayload,
@@ -14,6 +14,7 @@ import { CreateNewRootKey } from '../../Keys/RootKey/Functions'
 import { Create003KeyParams } from '../../Keys/RootKey/KeyParamsFunctions'
 import { SNRootKeyParams } from '../../Keys/RootKey/RootKeyParams'
 import { SNProtocolOperator002 } from '../002/Operator002'
+import { ContentType } from '@standardnotes/domain-core'
 
 /**
  * @legacy
@@ -46,7 +47,7 @@ export class SNProtocolOperator003 extends SNProtocolOperator002 {
     const content = this.generateNewItemsKeyContent()
     const payload = new DecryptedPayload({
       uuid: UuidGenerator.GenerateUuid(),
-      content_type: ContentType.ItemsKey,
+      content_type: ContentType.TYPES.ItemsKey,
       content: FillItemContent(content),
       ...PayloadTimestampDefaults(),
     })

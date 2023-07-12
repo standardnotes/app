@@ -20,7 +20,7 @@ describe('mapping performance', () => {
     for (let i = 0; i < tagCount; i++) {
       var tag = {
         uuid: UuidGenerator.GenerateUuid(),
-        content_type: ContentType.Tag,
+        content_type: ContentType.TYPES.Tag,
         content: {
           title: `${Math.random()}`,
           references: [],
@@ -31,7 +31,7 @@ describe('mapping performance', () => {
     for (let i = 0; i < noteCount; i++) {
       const note = {
         uuid: UuidGenerator.GenerateUuid(),
-        content_type: ContentType.Note,
+        content_type: ContentType.TYPES.Note,
         content: {
           title: `${Math.random()}`,
           text: `${Math.random()}`,
@@ -40,7 +40,7 @@ describe('mapping performance', () => {
       }
       const randomTag = Factory.randomArrayValue(tags)
       randomTag.content.references.push({
-        content_type: ContentType.Note,
+        content_type: ContentType.TYPES.Note,
         uuid: note.uuid,
       })
       notes.push(note)
@@ -65,7 +65,7 @@ describe('mapping performance', () => {
     const expectedRunTime = 3 // seconds
     expect(seconds).to.be.at.most(expectedRunTime)
 
-    for (const note of application.itemManager.getItems(ContentType.Note)) {
+    for (const note of application.itemManager.getItems(ContentType.TYPES.Note)) {
       expect(application.itemManager.itemsReferencingItem(note).length).to.be.above(0)
     }
     await Factory.safeDeinit(application)
@@ -84,7 +84,7 @@ describe('mapping performance', () => {
 
     const tag = {
       uuid: UuidGenerator.GenerateUuid(),
-      content_type: ContentType.Tag,
+      content_type: ContentType.TYPES.Tag,
       content: {
         title: `${Math.random()}`,
         references: [],
@@ -94,7 +94,7 @@ describe('mapping performance', () => {
     for (let i = 0; i < noteCount; i++) {
       const note = {
         uuid: UuidGenerator.GenerateUuid(),
-        content_type: ContentType.Note,
+        content_type: ContentType.TYPES.Note,
         content: {
           title: `${Math.random()}`,
           text: `${Math.random()}`,
@@ -103,7 +103,7 @@ describe('mapping performance', () => {
       }
 
       tag.content.references.push({
-        content_type: ContentType.Note,
+        content_type: ContentType.TYPES.Note,
         uuid: note.uuid,
       })
       notes.push(note)
@@ -131,8 +131,8 @@ describe('mapping performance', () => {
     const MAX_RUN_TIME = 15.0 // seconds
     expect(seconds).to.be.at.most(MAX_RUN_TIME)
 
-    application.itemManager.getItems(ContentType.Tag)[0]
-    for (const note of application.itemManager.getItems(ContentType.Note)) {
+    application.itemManager.getItems(ContentType.TYPES.Tag)[0]
+    for (const note of application.itemManager.getItems(ContentType.TYPES.Note)) {
       expect(application.itemManager.itemsReferencingItem(note).length).to.equal(1)
     }
     await Factory.safeDeinit(application)

@@ -1,4 +1,3 @@
-import { ContentType } from '@standardnotes/common'
 import {
   ComponentMutator,
   DecryptedItemInterface,
@@ -37,7 +36,7 @@ export interface MutatorClientInterface {
     isUserModified?: boolean,
   ): Promise<DecryptedItemInterface[]>
   createItem<T extends DecryptedItemInterface, C extends ItemContent = ItemContent>(
-    contentType: ContentType,
+    contentType: string,
     content: C,
     needsSync?: boolean,
     vault?: VaultListingInterface,
