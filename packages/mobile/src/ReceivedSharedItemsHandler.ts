@@ -1,6 +1,6 @@
 import { ReactNativeToWebEvent } from '@standardnotes/snjs'
 import { RefObject } from 'react'
-import { AppState, NativeEventSubscription, NativeModules } from 'react-native'
+import { AppState, NativeEventSubscription, NativeModules, Platform } from 'react-native'
 import { readFile } from 'react-native-fs'
 import WebView from 'react-native-webview'
 const { ReceiveSharingIntent } = NativeModules
@@ -46,7 +46,9 @@ export class ReceivedSharedItemsHandler {
   private isApplicationLaunched = false
 
   constructor(private webViewRef: RefObject<WebView>) {
-    this.registerNativeEventSub()
+    if (Platform.OS === 'android') {
+      this.registerNativeEventSub()
+    }
   }
 
   setIsApplicationLaunched = (isApplicationLaunched: boolean) => {
