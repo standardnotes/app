@@ -58,7 +58,7 @@ describe('component model', () => {
             package_info: {
               note_type: NoteType.Authentication,
             },
-          } as ComponentContent),
+          } as unknown as ComponentContent),
           ...PayloadTimestampDefaults(),
         },
         PayloadSource.Constructor,

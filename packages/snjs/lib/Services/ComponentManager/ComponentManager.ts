@@ -683,7 +683,7 @@ export class SNComponentManager
     return viewer.getIframe()
   }
 
-  private componentOrNativeFeatureForIdentifier<F extends UIFeatureDescriptionTypes>(
+  componentOrNativeFeatureForIdentifier<F extends UIFeatureDescriptionTypes>(
     identifier: FeatureIdentifier | string,
   ): ComponentOrNativeFeature<F> | undefined {
     const nativeFeature = FindNativeFeature<F>(identifier as FeatureIdentifier)
