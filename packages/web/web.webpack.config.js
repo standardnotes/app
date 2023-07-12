@@ -39,7 +39,7 @@ module.exports = (env) => {
               chunks: 'all',
             },
           }
-        : undefined,
+        : {},
     plugins: [
       new CircularDependencyPlugin({
         // exclude detection of files based on a RegExp
@@ -65,13 +65,17 @@ module.exports = (env) => {
       new CopyWebpackPlugin({
         patterns: copyPluginPatterns,
       }),
-      process.env.BUILD_TARGET === 'clipper' &&
-        new HtmlWebpackPlugin({
-          filename: 'popup.html',
-          inject: false,
-          templateContent: clipperHtmlTemplate,
-        }),
-    ],
+    ].concat(
+      process.env.BUILD_TARGET === 'clipper'
+        ? [
+            new HtmlWebpackPlugin({
+              filename: 'popup.html',
+              inject: false,
+              templateContent: clipperHtmlTemplate,
+            }),
+          ]
+        : [],
+    ),
     resolve: {
       extensions: ['.ts', '.tsx', '.js'],
       fallback: {
