@@ -1,5 +1,5 @@
 import { CreateAnyKeyParams } from '../../../../Keys/RootKey/KeyParamsFunctions'
-import { AnyKeyParamsContent, ContentType, ProtocolVersion } from '@standardnotes/common'
+import { AnyKeyParamsContent, ProtocolVersion } from '@standardnotes/common'
 import { GenerateAuthenticatedDataUseCase } from './GenerateAuthenticatedData'
 import {
   DecryptedPayloadInterface,
@@ -8,6 +8,7 @@ import {
   RootKeyInterface,
 } from '@standardnotes/models'
 import { KeySystemItemsKey } from '../../../../Keys/KeySystemItemsKey/KeySystemItemsKey'
+import { ContentType } from '@standardnotes/domain-core'
 
 describe('generate authenticated data use case', () => {
   let usecase: GenerateAuthenticatedDataUseCase

@@ -1,5 +1,5 @@
 import { ConflictStrategy } from './../../Abstract/Item/Types/ConflictStrategy'
-import { ContentType } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/domain-core'
 import { FillItemContent } from '../../Abstract/Content/ItemContent'
 import { DecryptedPayload, PayloadTimestampDefaults } from '../../Abstract/Payload'
 import { FileContent, FileItem } from './File'

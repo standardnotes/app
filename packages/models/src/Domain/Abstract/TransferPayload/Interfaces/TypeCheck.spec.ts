@@ -1,4 +1,4 @@
-import { ContentType } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/domain-core'
 import { PayloadTimestampDefaults } from '../../Payload'
 import { isCorruptTransferPayload } from './TypeCheck'
 

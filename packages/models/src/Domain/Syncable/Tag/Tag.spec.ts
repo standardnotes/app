@@ -1,7 +1,7 @@
 import { PayloadSource } from './../../Abstract/Payload/Types/PayloadSource'
 import { DecryptedPayload } from './../../Abstract/Payload/Implementations/DecryptedPayload'
 import { SNTag } from './Tag'
-import { ContentType } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/domain-core'
 import { FillItemContent } from '../../Abstract/Content/ItemContent'
 import { ContentReference } from '../../Abstract/Reference/ContentReference'
 import { PayloadTimestampDefaults } from '../../Abstract/Payload'

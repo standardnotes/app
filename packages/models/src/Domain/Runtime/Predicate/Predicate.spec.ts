@@ -12,6 +12,7 @@ import { IncludesPredicate } from './IncludesPredicate'
 import { Predicate } from './Predicate'
 import { CompoundPredicate } from './CompoundPredicate'
 import { NotPredicate } from './NotPredicate'
+import { ContentType } from '@standardnotes/domain-core'
 
 interface Item extends ItemInterface {
   content_type: string

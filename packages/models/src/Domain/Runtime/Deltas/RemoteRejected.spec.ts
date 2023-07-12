@@ -1,4 +1,4 @@
-import { ContentType } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/domain-core'
 import { FillItemContent } from '../../Abstract/Content/ItemContent'
 import { DecryptedPayload, FullyFormedPayloadInterface, PayloadTimestampDefaults } from '../../Abstract/Payload'
 import { NoteContent } from '../../Syncable/Note'

@@ -1,4 +1,4 @@
-import { ContentType } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/domain-core'
 import { FullyFormedPayloadInterface } from '@standardnotes/models'
 import { GetSortedPayloadsByPriority } from './DatabaseLoadSorter'
 

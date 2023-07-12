@@ -1,4 +1,4 @@
-import { ContentType } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/domain-core'
 import { SNNote, SNTag } from '@standardnotes/models'
 import { StaticItemCounter } from './StaticItemCounter'
 

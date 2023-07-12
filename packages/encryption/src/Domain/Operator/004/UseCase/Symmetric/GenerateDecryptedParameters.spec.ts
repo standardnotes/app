@@ -1,10 +1,10 @@
 import { PkcKeyPair, PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { getMockedCrypto } from '../../MockedCrypto'
 import { GenerateDecryptedParametersUseCase } from './GenerateDecryptedParameters'
-import { ContentType } from '@standardnotes/common'
 import { DecryptedPayloadInterface, ItemsKeyInterface } from '@standardnotes/models'
 import { GenerateEncryptedParametersUseCase } from './GenerateEncryptedParameters'
 import { EncryptedInputParameters, EncryptedOutputParameters } from '../../../../Types/EncryptedParameters'
+import { ContentType } from '@standardnotes/domain-core'
 
 describe('generate decrypted parameters usecase', () => {
   let crypto: PureCryptoInterface

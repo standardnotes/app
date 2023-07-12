@@ -1,6 +1,6 @@
 import { PkcKeyPair, PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { getMockedCrypto } from '../../MockedCrypto'
-import { AnyKeyParamsContent, ContentType, ProtocolVersion } from '@standardnotes/common'
+import { AnyKeyParamsContent, ProtocolVersion } from '@standardnotes/common'
 import { GenerateEncryptedParametersUseCase } from './GenerateEncryptedParameters'
 import {
   DecryptedPayloadInterface,
@@ -11,6 +11,7 @@ import {
 import { deconstructEncryptedPayloadString } from '../../V004AlgorithmHelpers'
 import { ParseConsistentBase64JsonPayloadUseCase } from '../Utils/ParseConsistentBase64JsonPayload'
 import { SymmetricItemAdditionalData } from '../../../../Types/EncryptionAdditionalData'
+import { ContentType } from '@standardnotes/domain-core'
 
 describe('generate encrypted parameters usecase', () => {
   let crypto: PureCryptoInterface

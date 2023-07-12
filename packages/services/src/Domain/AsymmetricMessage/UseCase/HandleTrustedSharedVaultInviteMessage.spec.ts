@@ -2,7 +2,7 @@ import { MutatorClientInterface } from './../../Mutator/MutatorClientInterface'
 import { HandleTrustedSharedVaultInviteMessage } from './HandleTrustedSharedVaultInviteMessage'
 import { SyncServiceInterface } from '../../Sync/SyncServiceInterface'
 import { ContactServiceInterface } from '../../Contacts/ContactServiceInterface'
-import { ContentType } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/domain-core'
 import {
   AsymmetricMessagePayloadType,
   AsymmetricMessageSharedVaultInvite,

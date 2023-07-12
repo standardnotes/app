@@ -1,9 +1,10 @@
-import { ContentType, ProtocolVersion } from '@standardnotes/common'
+import { ProtocolVersion } from '@standardnotes/common'
 import { DecryptedPayload, ItemContent, ItemsKeyContent, PayloadTimestampDefaults } from '@standardnotes/models'
 import { SNItemsKey } from '../../Keys/ItemsKey/ItemsKey'
 import { SNProtocolOperator004 } from './Operator004'
 import { getMockedCrypto } from './MockedCrypto'
 import { deconstructEncryptedPayloadString } from './V004AlgorithmHelpers'
+import { ContentType } from '@standardnotes/domain-core'
 
 describe('operator 004', () => {
   const crypto = getMockedCrypto()

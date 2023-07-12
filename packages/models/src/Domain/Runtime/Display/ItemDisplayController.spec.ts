@@ -1,7 +1,7 @@
 import { CreateItemDelta } from './../Index/ItemDelta'
 import { DeletedPayload } from './../../Abstract/Payload/Implementations/DeletedPayload'
 import { createFile, createNote, createTagWithTitle, mockUuid, pinnedContent } from './../../Utilities/Test/SpecUtils'
-import { ContentType } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/domain-core'
 import { DeletedItem, EncryptedItem } from '../../Abstract/Item'
 import { EncryptedPayload, PayloadTimestampDefaults } from '../../Abstract/Payload'
 import { createNoteWithContent } from '../../Utilities/Test/SpecUtils'

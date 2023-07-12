@@ -1,6 +1,6 @@
 import { ItemCounter } from './ItemCounter'
 import { NoteContent } from '../../../Syncable/Note/NoteContent'
-import { ContentType } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/domain-core'
 import { DecryptedItem, EncryptedItem } from '../../../Abstract/Item'
 import { DecryptedPayload, EncryptedPayload, PayloadTimestampDefaults } from '../../../Abstract/Payload'
 import { ItemCollection } from './ItemCollection'

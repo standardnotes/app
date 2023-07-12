@@ -1,5 +1,5 @@
 import { NoteContent } from './../../../Syncable/Note/NoteContent'
-import { ContentType } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/domain-core'
 import { DecryptedItem } from '../../../Abstract/Item'
 import { DecryptedPayload, PayloadTimestampDefaults } from '../../../Abstract/Payload'
 import { ItemCollection } from './ItemCollection'

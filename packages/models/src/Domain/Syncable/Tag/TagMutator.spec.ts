@@ -1,4 +1,4 @@
-import { ContentType } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/domain-core'
 import { ContentReferenceType, MutationType } from '../../Abstract/Item'
 import { createFile, createTagWithContent, createTagWithTitle } from '../../Utilities/Test/SpecUtils'
 import { SNTag } from './Tag'
