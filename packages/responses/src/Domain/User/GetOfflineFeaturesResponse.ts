@@ -1,6 +1,6 @@
-import { FeatureDescription } from '@standardnotes/features'
+import { AnyFeatureDescription } from '@standardnotes/features'
 
 export type GetOfflineFeaturesResponse = {
-  features: FeatureDescription[]
+  features: AnyFeatureDescription[]
   roles: string[]
 }
