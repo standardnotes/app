@@ -56,6 +56,7 @@ import { ItemGroupController } from '@/Components/NoteView/Controller/ItemGroupC
 import { VisibilityObserver } from './VisibilityObserver'
 import { MomentsService } from '@/Controllers/Moments/MomentsService'
 import { DevMode } from './DevMode'
+import { ToastType, addToast } from '@standardnotes/toast'
 
 export type WebEventObserver = (event: WebAppEvent, data?: unknown) => void
 
@@ -411,6 +412,11 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     const insertedNote = await this.mutator.insertItem(note)
 
     this.controllers.selectionController.selectItem(insertedNote.uuid, true).catch(console.error)
+
+    addToast({
+      type: ToastType.Success,
+      message: 'Successfully created note from shared text',
+    })
   }
 
   private async lockApplicationAfterMobileEventIfApplicable(): Promise<void> {

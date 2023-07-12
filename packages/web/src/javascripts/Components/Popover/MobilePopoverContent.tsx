@@ -6,14 +6,13 @@ import MobileModalAction from '../Modal/MobileModalAction'
 import { useModalAnimation } from '../Modal/useModalAnimation'
 import MobileModalHeader from '../Modal/MobileModalHeader'
 import { mergeRefs } from '@/Hooks/mergeRefs'
+import { DialogWithClose } from '@/Utils/CloseOpenModalsAndPopovers'
 
 const DisableScroll = () => {
   useDisableBodyScrollOnMobile()
 
   return null
 }
-
-type PopoverWithClose = HTMLDivElement & { close: () => void }
 
 const MobilePopoverContent = ({
   open,
@@ -35,7 +34,7 @@ const MobilePopoverContent = ({
   const addCloseMethod = useCallback(
     (element: HTMLDivElement | null) => {
       if (element) {
-        ;(element as PopoverWithClose).close = requestClose
+        ;(element as DialogWithClose).close = requestClose
       }
     },
     [requestClose],

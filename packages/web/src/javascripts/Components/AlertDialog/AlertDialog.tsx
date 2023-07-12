@@ -1,6 +1,7 @@
+import { DialogWithClose } from '@/Utils/CloseOpenModalsAndPopovers'
 import { Dialog, DialogStoreProps, useDialogStore } from '@ariakit/react'
 import { classNames } from '@standardnotes/snjs'
-import { ReactNode } from 'react'
+import { ReactNode, useCallback } from 'react'
 
 const AlertDialog = ({
   children,
@@ -13,6 +14,15 @@ const AlertDialog = ({
     ...props,
   })
 
+  const addCloseMethod = useCallback(
+    (element: HTMLDivElement | null) => {
+      if (element) {
+        ;(element as DialogWithClose).close = closeDialog
+      }
+    },
+    [closeDialog],
+  )
+
   return (
     <Dialog
       store={dialog}
@@ -21,6 +31,7 @@ const AlertDialog = ({
       modal={false}
       portal={true}
       preventBodyScroll={true}
+      ref={addCloseMethod}
     >
       <div
         className="absolute z-0 h-full w-full bg-passive-5 opacity-25 md:opacity-75"

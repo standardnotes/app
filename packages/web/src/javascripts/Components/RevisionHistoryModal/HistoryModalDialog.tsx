@@ -1,7 +1,9 @@
 import { getPlatformString } from '@/Utils'
 import { classNames } from '@standardnotes/utils'
 import { Dialog, useDialogStore } from '@ariakit/react'
-import { ForwardedRef, forwardRef, ReactNode } from 'react'
+import { ForwardedRef, forwardRef, ReactNode, useCallback } from 'react'
+import { mergeRefs } from '@/Hooks/mergeRefs'
+import { DialogWithClose } from '@/Utils/CloseOpenModalsAndPopovers'
 
 type Props = {
   children: ReactNode
@@ -13,11 +15,20 @@ const HistoryModalDialog = forwardRef(({ children, onDismiss }: Props, ref: Forw
     open: true,
   })
 
+  const addCloseMethod = useCallback(
+    (element: HTMLDivElement | null) => {
+      if (element) {
+        ;(element as DialogWithClose).close = onDismiss
+      }
+    },
+    [onDismiss],
+  )
+
   return (
     <Dialog
       store={dialog}
       aria-label="Note revision history"
-      ref={ref}
+      ref={mergeRefs([addCloseMethod, ref])}
       className="fixed left-0 top-0 z-modal h-full w-full"
     >
       <div

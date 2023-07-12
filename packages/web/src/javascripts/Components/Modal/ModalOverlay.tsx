@@ -2,6 +2,7 @@ import { mergeRefs } from '@/Hooks/mergeRefs'
 import { Dialog, DialogOptions, useDialogStore } from '@ariakit/react'
 import { ForwardedRef, forwardRef, ReactNode, useCallback } from 'react'
 import { useModalAnimation } from '../Modal/useModalAnimation'
+import { DialogWithClose } from '@/Utils/CloseOpenModalsAndPopovers'
 
 type Props = {
   isOpen: boolean
@@ -9,8 +10,6 @@ type Props = {
   animationVariant?: 'horizontal' | 'vertical'
   close: () => void
 }
-
-type DialogWithClose = HTMLDivElement & { close: () => void }
 
 const ModalOverlay = forwardRef(
   (

@@ -10,6 +10,8 @@ import { useDisableBodyScrollOnMobile } from '@/Hooks/useDisableBodyScrollOnMobi
 import { MediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 import { KeyboardKey } from '@standardnotes/ui-services'
 import { getAdjustedStylesForNonPortalPopover } from './Utils/getAdjustedStylesForNonPortal'
+import { DialogWithClose } from '@/Utils/CloseOpenModalsAndPopovers'
+import { mergeRefs } from '@/Hooks/mergeRefs'
 
 const PositionedPopoverContent = ({
   align = 'end',
@@ -82,6 +84,15 @@ const PositionedPopoverContent = ({
     correctInitialScrollForOverflowedContent()
   }, [popoverElement, correctInitialScrollForOverflowedContent])
 
+  const addCloseMethod = useCallback(
+    (element: HTMLDivElement | null) => {
+      if (element && togglePopover) {
+        ;(element as DialogWithClose).close = togglePopover
+      }
+    },
+    [togglePopover],
+  )
+
   return (
     <Portal disabled={!portal}>
       <div
@@ -100,7 +111,7 @@ const PositionedPopoverContent = ({
             ...adjustedStyles,
           } as CSSProperties
         }
-        ref={setPopoverElement}
+        ref={mergeRefs([setPopoverElement, addCloseMethod])}
         data-popover={id}
         onKeyDown={(event) => {
           if (event.key === KeyboardKey.Escape) {
