@@ -13,7 +13,7 @@ import {
   isThemeFeatureDescription,
 } from '@standardnotes/features'
 import { ComponentInterface } from './ComponentInterface'
-import { ThemeInterface, isTheme } from '../Theme'
+import { isTheme } from '../Theme'
 
 function isComponent(x: ComponentInterface | UIFeatureDescriptionTypes): x is ComponentInterface {
   return 'uuid' in x
@@ -50,14 +50,6 @@ export class ComponentOrNativeFeature<F extends UIFeatureDescriptionTypes> {
     }
 
     throw new Error('Cannot cast item to component')
-  }
-
-  get asTheme(): ThemeInterface {
-    if (isComponent(this.item) && isTheme(this.item)) {
-      return this.item
-    }
-
-    throw new Error('Cannot cast item to theme')
   }
 
   get asFeatureDescription(): F {
@@ -159,8 +151,8 @@ export class ComponentOrNativeFeature<F extends UIFeatureDescriptionTypes> {
   }
 
   get layerable(): boolean {
-    if (this.isThemeComponent) {
-      return this.asTheme.layerable
+    if (isComponent(this.item) && isTheme(this.item)) {
+      return this.item.layerable
     } else if (isThemeFeatureDescription(this.asFeatureDescription)) {
       return this.asFeatureDescription.layerable ?? false
     }
@@ -169,8 +161,8 @@ export class ComponentOrNativeFeature<F extends UIFeatureDescriptionTypes> {
   }
 
   get dockIcon(): ThemeDockIcon | undefined {
-    if (this.isThemeComponent) {
-      return this.asTheme.package_info.dock_icon
+    if (isComponent(this.item) && isTheme(this.item)) {
+      return this.item.package_info.dock_icon
     } else if (isThemeFeatureDescription(this.asFeatureDescription)) {
       return this.asFeatureDescription.dock_icon
     }

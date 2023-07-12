@@ -2,10 +2,8 @@ import {
   FeatureStatus,
   FindNativeFeature,
   NoteType,
-  FeatureIdentifier,
   GetIframeAndNativeEditors,
   ComponentArea,
-  GetPlainNoteFeature,
   GetSuperNoteFeature,
   ComponentOrNativeFeature,
   IframeComponentFeatureDescription,
@@ -124,20 +122,10 @@ const createGroupsFromMap = (map: NoteTypeToEditorRowsMap): EditorMenuGroup[] =>
   return groups
 }
 
-const createBaselineMap = (application: WebApplicationInterface): NoteTypeToEditorRowsMap => {
+const createBaselineMap = (): NoteTypeToEditorRowsMap => {
   const map: NoteTypeToEditorRowsMap = {
-    [NoteType.Plain]: [
-      {
-        isEntitled: true,
-        uiFeature: new ComponentOrNativeFeature(GetPlainNoteFeature()),
-      },
-    ],
-    [NoteType.Super]: [
-      {
-        isEntitled: application.features.getFeatureStatus(FeatureIdentifier.SuperEditor) === FeatureStatus.Entitled,
-        uiFeature: new ComponentOrNativeFeature(GetSuperNoteFeature()),
-      },
-    ],
+    [NoteType.Plain]: [],
+    [NoteType.Super]: [],
     [NoteType.RichText]: [],
     [NoteType.Markdown]: [],
     [NoteType.Task]: [],
@@ -151,7 +139,7 @@ const createBaselineMap = (application: WebApplicationInterface): NoteTypeToEdit
 }
 
 export const createEditorMenuGroups = (application: WebApplicationInterface): EditorMenuGroup[] => {
-  const map = createBaselineMap(application)
+  const map = createBaselineMap()
 
   insertNativeEditorsInMap(map, application)
 

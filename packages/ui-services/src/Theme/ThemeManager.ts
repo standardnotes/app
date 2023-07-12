@@ -251,7 +251,7 @@ export class ThemeManager extends AbstractUIServicee {
     const { thirdParty, native } = usecase.execute({ excludeLayerable: false })
     const themes = [...thirdParty, ...native]
 
-    const activeTheme = themes.find((theme) => this.components.isThemeActive(theme) && !theme.asTheme.layerable)
+    const activeTheme = themes.find((theme) => this.components.isThemeActive(theme) && !theme.layerable)
 
     const activeThemeIdentifier = activeTheme ? activeTheme.featureIdentifier : DefaultThemeIdentifier
 

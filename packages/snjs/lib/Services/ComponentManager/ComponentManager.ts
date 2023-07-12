@@ -624,7 +624,7 @@ export class SNComponentManager
     await this.addActiveTheme(uiFeature)
 
     /* Deactive currently active theme(s) if new theme is not layerable */
-    if (!uiFeature.asTheme.layerable) {
+    if (!uiFeature.layerable) {
       await sleep(10)
 
       const activeThemes = this.getActiveThemes()
@@ -633,7 +633,7 @@ export class SNComponentManager
           continue
         }
 
-        if (!candidate.asTheme.layerable) {
+        if (!candidate.layerable) {
           await this.removeActiveTheme(candidate)
         }
       }

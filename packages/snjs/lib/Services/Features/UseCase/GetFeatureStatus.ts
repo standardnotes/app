@@ -99,6 +99,6 @@ export class GetFeatureStatusUseCase {
   }
 
   private isFreeFeature(featureId: FeatureIdentifier) {
-    return [FeatureIdentifier.DarkTheme].includes(featureId)
+    return [FeatureIdentifier.DarkTheme, FeatureIdentifier.PlainEditor].includes(featureId)
   }
 }

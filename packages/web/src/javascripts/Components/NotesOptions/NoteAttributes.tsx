@@ -15,7 +15,7 @@ export const useNoteAttributes = (application: WebApplicationInterface, note: SN
   const dateCreated = useMemo(() => formatDateForContextMenu(note.created_at), [note.created_at])
 
   const editor = application.componentManager.editorForNote(note)
-  const format = (editor ? editor.fileType : 'txt') ?? 'txt'
+  const format = editor.fileType
 
   return {
     words,
