@@ -360,7 +360,7 @@ describe('app models', () => {
   })
 
   it('maintains editor reference when duplicating note', async function () {
-    const editor = await this.application.mutator.createItem(
+    const component = await this.application.mutator.createItem(
       ContentType.Component,
       { area: ComponentArea.Editor, package_info: { identifier: 'foo-editor' } },
       true,
@@ -369,9 +369,9 @@ describe('app models', () => {
       editorIdentifier: 'foo-editor',
     })
 
-    expect(this.application.componentManager.editorForNote(note).uuid).to.equal(editor.uuid)
+    expect(this.application.componentManager.editorForNote(note).uniqueIdentifier).to.equal(component.uuid)
 
     const duplicate = await this.application.mutator.duplicateItem(note, true)
-    expect(this.application.componentManager.editorForNote(duplicate).uuid).to.equal(editor.uuid)
+    expect(this.application.componentManager.editorForNote(duplicate).uniqueIdentifier).to.equal(component.uuid)
   })
 })
