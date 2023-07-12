@@ -40,7 +40,7 @@ import {
   Platform,
   OutgoingItemMessagePayload,
   ComponentPreferencesEntry,
-  ComponentOrNativeFeature,
+  UIFeature,
   ComponentInterface,
 } from '@standardnotes/models'
 import { environmentToString, platformToString } from '@Lib/Application/Platforms'
@@ -94,7 +94,7 @@ export class ComponentViewer implements ComponentViewerInterface {
   public sessionKey?: string
 
   constructor(
-    private componentOrFeature: ComponentOrNativeFeature<IframeComponentFeatureDescription>,
+    private componentOrFeature: UIFeature<IframeComponentFeatureDescription>,
     private services: {
       items: ItemManagerInterface
       mutator: MutatorClientInterface
@@ -152,7 +152,7 @@ export class ComponentViewer implements ComponentViewerInterface {
     this.log('Constructor', this)
   }
 
-  public getComponentOrFeatureItem(): ComponentOrNativeFeature<IframeComponentFeatureDescription> {
+  public getComponentOrFeatureItem(): UIFeature<IframeComponentFeatureDescription> {
     return this.componentOrFeature
   }
 
@@ -269,7 +269,7 @@ export class ComponentViewer implements ComponentViewerInterface {
       return
     }
 
-    const item = new ComponentOrNativeFeature<IframeComponentFeatureDescription>(updatedComponent)
+    const item = new UIFeature<IframeComponentFeatureDescription>(updatedComponent)
 
     this.componentOrFeature = item
   }

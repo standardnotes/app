@@ -14,19 +14,8 @@ import {
   IframeComponentFeatureDescription,
 } from '@standardnotes/features'
 import { ContentType } from '@standardnotes/domain-core'
+import { GenericItem, Environment, Platform, UIFeature } from '@standardnotes/models'
 import {
-  GenericItem,
-  SNComponent,
-  Environment,
-  Platform,
-  ComponentInterface,
-  ComponentOrNativeFeature,
-  ComponentContent,
-  DecryptedPayload,
-  PayloadTimestampDefaults,
-} from '@standardnotes/models'
-import {
-  DesktopManagerInterface,
   InternalEventBusInterface,
   AlertService,
   DeviceInterface,
@@ -39,7 +28,6 @@ import { ItemManager } from '@Lib/Services/Items/ItemManager'
 import { SNFeaturesService } from '@Lib/Services/Features/FeaturesService'
 import { SNComponentManager } from './ComponentManager'
 import { SNSyncService } from '../Sync/SyncService'
-import { ComponentPackageInfo } from '@standardnotes/models'
 
 describe('featuresService', () => {
   let items: ItemManagerInterface
@@ -52,10 +40,8 @@ describe('featuresService', () => {
   let device: DeviceInterface
 
   const nativeFeatureAsUIFeature = <F extends UIFeatureDescriptionTypes>(identifier: FeatureIdentifier) => {
-    return new ComponentOrNativeFeature(FindNativeFeature<F>(identifier)!)
+    return new UIFeature(FindNativeFeature<F>(identifier)!)
   }
-
-  const desktopExtHost = 'http://localhost:123'
 
   const createManager = (environment: Environment, platform: Platform) => {
     const manager = new SNComponentManager(
@@ -70,19 +56,6 @@ describe('featuresService', () => {
       device,
       eventBus,
     )
-
-    if (environment === Environment.Desktop) {
-      const desktopManager: DesktopManagerInterface = {
-        syncComponentsInstallation() {},
-        registerUpdateObserver(_callback: (component: ComponentInterface) => void) {
-          return () => {}
-        },
-        getExtServerHost() {
-          return desktopExtHost
-        },
-      }
-      manager.setDesktopManager(desktopManager)
-    }
 
     return manager
   }
@@ -116,27 +89,6 @@ describe('featuresService', () => {
 
     device = {} as jest.Mocked<DeviceInterface>
   })
-
-  const thirdPartyFeature = () => {
-    const component = new SNComponent(
-      new DecryptedPayload({
-        uuid: '789',
-        content_type: ContentType.TYPES.Component,
-        ...PayloadTimestampDefaults(),
-        content: {
-          local_url: 'sn://Extensions/non-native-identifier/dist/index.html',
-          hosted_url: 'https://example.com/component',
-          package_info: {
-            identifier: 'non-native-identifier' as FeatureIdentifier,
-            expires_at: new Date().getTime(),
-            availableInRoles: [],
-          } as unknown as jest.Mocked<ComponentPackageInfo>,
-        } as unknown as jest.Mocked<ComponentContent>,
-      }),
-    )
-
-    return new ComponentOrNativeFeature<IframeComponentFeatureDescription>(component)
-  }
 
   describe('permissions', () => {
     it('editor should be able to to stream single note', () => {
@@ -282,75 +234,6 @@ describe('featuresService', () => {
       expect(
         manager.areRequestedPermissionsValid(nativeFeatureAsUIFeature(FeatureIdentifier.PlusEditor), permissions),
       ).toEqual(false)
-    })
-  })
-
-  describe('urlForComponent', () => {
-    describe('desktop', () => {
-      it('returns native path for native component', () => {
-        const manager = createManager(Environment.Desktop, Platform.MacDesktop)
-        const feature = nativeFeatureAsUIFeature<IframeComponentFeatureDescription>(
-          FeatureIdentifier.MarkdownProEditor,
-        )!
-        const url = manager.urlForComponent(feature)
-        expect(url).toEqual(
-          `${desktopExtHost}/components/${feature.featureIdentifier}/${feature.asFeatureDescription.index_path}`,
-        )
-      })
-
-      it('returns native path for deprecated native component', () => {
-        const manager = createManager(Environment.Desktop, Platform.MacDesktop)
-        const feature = nativeFeatureAsUIFeature<IframeComponentFeatureDescription>(
-          FeatureIdentifier.DeprecatedBoldEditor,
-        )!
-        const url = manager.urlForComponent(feature)
-        expect(url).toEqual(
-          `${desktopExtHost}/components/${feature?.featureIdentifier}/${feature.asFeatureDescription.index_path}`,
-        )
-      })
-
-      it('returns nonnative path for third party component', () => {
-        const manager = createManager(Environment.Desktop, Platform.MacDesktop)
-        const feature = thirdPartyFeature()
-        const url = manager.urlForComponent(feature)
-        expect(url).toEqual(`${desktopExtHost}/Extensions/${feature.featureIdentifier}/dist/index.html`)
-      })
-
-      it('returns hosted url for third party component with no local_url', () => {
-        const manager = createManager(Environment.Desktop, Platform.MacDesktop)
-        const component = new SNComponent({
-          uuid: '789',
-          content_type: ContentType.TYPES.Component,
-          content: {
-            hosted_url: 'https://example.com/component',
-            package_info: {
-              identifier: 'non-native-identifier',
-              valid_until: new Date(),
-            },
-          },
-        } as never)
-        const feature = new ComponentOrNativeFeature<IframeComponentFeatureDescription>(component)
-        const url = manager.urlForComponent(feature)
-        expect(url).toEqual('https://example.com/component')
-      })
-    })
-
-    describe('web', () => {
-      it('returns native path for native component', () => {
-        const manager = createManager(Environment.Web, Platform.MacWeb)
-        const feature = nativeFeatureAsUIFeature<IframeComponentFeatureDescription>(FeatureIdentifier.MarkdownProEditor)
-        const url = manager.urlForComponent(feature)
-        expect(url).toEqual(
-          `http://localhost/components/assets/${feature.featureIdentifier}/${feature.asFeatureDescription.index_path}`,
-        )
-      })
-
-      it('returns hosted path for third party component', () => {
-        const manager = createManager(Environment.Web, Platform.MacWeb)
-        const feature = thirdPartyFeature()
-        const url = manager.urlForComponent(feature)
-        expect(url).toEqual(feature.asComponent.hosted_url)
-      })
     })
   })
 

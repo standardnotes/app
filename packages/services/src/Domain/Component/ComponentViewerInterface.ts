@@ -2,7 +2,7 @@ import {
   ActionObserver,
   ComponentEventObserver,
   ComponentMessage,
-  ComponentOrNativeFeature,
+  UIFeature,
 } from '@standardnotes/models'
 import { FeatureStatus } from '../Feature/FeatureStatus'
 import { ComponentViewerError } from './ComponentViewerError'
@@ -16,7 +16,7 @@ export interface ComponentViewerInterface {
   get url(): string
   get componentUniqueIdentifier(): string
 
-  getComponentOrFeatureItem(): ComponentOrNativeFeature<IframeComponentFeatureDescription>
+  getComponentOrFeatureItem(): UIFeature<IframeComponentFeatureDescription>
 
   destroy(): void
   setReadonly(readonly: boolean): void

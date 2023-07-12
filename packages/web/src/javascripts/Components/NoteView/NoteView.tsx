@@ -13,12 +13,12 @@ import {
   ApplicationEvent,
   ComponentArea,
   ComponentInterface,
-  ComponentOrNativeFeature,
+  UIFeature,
   ComponentViewerInterface,
   ContentType,
   EditorLineWidth,
   IframeComponentFeatureDescription,
-  isIframeUIFeature,
+  isUIFeatureAnIframeFeature,
   isPayloadSourceInternalChange,
   isPayloadSourceRetrieved,
   NoteType,
@@ -456,7 +456,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
     })
   }
 
-  private createComponentViewer(component: ComponentOrNativeFeature<IframeComponentFeatureDescription>) {
+  private createComponentViewer(component: UIFeature<IframeComponentFeatureDescription>) {
     if (!component) {
       throw Error('Cannot create component viewer for undefined component')
     }
@@ -516,7 +516,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
     const newUIFeature = this.application.componentManager.editorForNote(this.note)
 
     /** Component editors cannot interact with template notes so the note must be inserted */
-    if (isIframeUIFeature(newUIFeature) && this.controller.isTemplateNote) {
+    if (isUIFeatureAnIframeFeature(newUIFeature) && this.controller.isTemplateNote) {
       await this.controller.insertTemplatedNote()
     }
 
@@ -529,7 +529,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
       }
     }
 
-    if (isIframeUIFeature(newUIFeature)) {
+    if (isUIFeatureAnIframeFeature(newUIFeature)) {
       this.setState({
         editorComponentViewer: this.createComponentViewer(newUIFeature),
         editorStateDidLoad: true,
@@ -767,7 +767,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
     for (const component of needsNewViewer) {
       newViewers.push(
         this.application.componentManager.createComponentViewer(
-          new ComponentOrNativeFeature<IframeComponentFeatureDescription>(component),
+          new UIFeature<IframeComponentFeatureDescription>(component),
           {
             uuid: this.note.uuid,
           },

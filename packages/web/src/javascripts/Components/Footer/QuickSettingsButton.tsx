@@ -1,6 +1,6 @@
 import { WebApplication } from '@/Application/WebApplication'
 import { QuickSettingsController } from '@/Controllers/QuickSettingsController'
-import { ComponentOrNativeFeature, GetDarkThemeFeature } from '@standardnotes/snjs'
+import { UIFeature, GetDarkThemeFeature } from '@standardnotes/snjs'
 import { TOGGLE_DARK_MODE_COMMAND } from '@standardnotes/ui-services'
 import { classNames } from '@standardnotes/utils'
 import { useEffect, useRef } from 'react'
@@ -25,7 +25,7 @@ const QuickSettingsButton = ({ application, isOpen, toggleMenu, quickSettingsMen
     return commandService.addCommandHandler({
       command: TOGGLE_DARK_MODE_COMMAND,
       onKeyDown: () => {
-        void application.componentManager.toggleTheme(new ComponentOrNativeFeature(GetDarkThemeFeature()))
+        void application.componentManager.toggleTheme(new UIFeature(GetDarkThemeFeature()))
       },
     })
   }, [application, commandService])

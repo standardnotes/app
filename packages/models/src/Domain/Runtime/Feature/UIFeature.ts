@@ -1,10 +1,8 @@
 import {
-  AnyFeatureDescription,
   ComponentArea,
   ComponentPermission,
   EditorFeatureDescription,
   FeatureIdentifier,
-  IframeComponentFeatureDescription,
   NoteType,
   ThemeDockIcon,
   UIFeatureDescriptionTypes,
@@ -12,40 +10,31 @@ import {
   isIframeComponentFeatureDescription,
   isThemeFeatureDescription,
 } from '@standardnotes/features'
-import { ComponentInterface } from './ComponentInterface'
-import { isTheme } from '../Theme'
+import { ComponentInterface } from '../../Syncable/Component/ComponentInterface'
+import { isTheme } from '../../Syncable/Theme'
+import {
+  isComponentOrFeatureDescriptionAComponent,
+  isComponentOrFeatureDescriptionAFeatureDescription,
+} from './TypeGuards'
+import { UIFeatureInterface } from './UIFeatureInterface'
 
-function isComponent(x: ComponentInterface | UIFeatureDescriptionTypes): x is ComponentInterface {
-  return 'uuid' in x
-}
-
-function isFeatureDescription(x: ComponentInterface | AnyFeatureDescription): x is AnyFeatureDescription {
-  return !('uuid' in x)
-}
-
-export function isIframeUIFeature(
-  x: ComponentOrNativeFeature<EditorFeatureDescription | IframeComponentFeatureDescription>,
-): x is ComponentOrNativeFeature<IframeComponentFeatureDescription> {
-  return isIframeComponentFeatureDescription(x.featureDescription)
-}
-
-export class ComponentOrNativeFeature<F extends UIFeatureDescriptionTypes> {
+export class UIFeature<F extends UIFeatureDescriptionTypes> implements UIFeatureInterface<F> {
   constructor(public readonly item: ComponentInterface | F) {}
 
   get isComponent(): boolean {
-    return isComponent(this.item)
+    return isComponentOrFeatureDescriptionAComponent(this.item)
   }
 
   get isFeatureDescription(): boolean {
-    return isFeatureDescription(this.item)
+    return isComponentOrFeatureDescriptionAFeatureDescription(this.item)
   }
 
   get isThemeComponent(): boolean {
-    return isComponent(this.item) && isTheme(this.item)
+    return isComponentOrFeatureDescriptionAComponent(this.item) && isTheme(this.item)
   }
 
   get asComponent(): ComponentInterface {
-    if (isComponent(this.item)) {
+    if (isComponentOrFeatureDescriptionAComponent(this.item)) {
       return this.item
     }
 
@@ -53,7 +42,7 @@ export class ComponentOrNativeFeature<F extends UIFeatureDescriptionTypes> {
   }
 
   get asFeatureDescription(): F {
-    if (isFeatureDescription(this.item)) {
+    if (isComponentOrFeatureDescriptionAFeatureDescription(this.item)) {
       return this.item
     }
 
@@ -61,7 +50,7 @@ export class ComponentOrNativeFeature<F extends UIFeatureDescriptionTypes> {
   }
 
   get uniqueIdentifier(): string {
-    if (isFeatureDescription(this.item)) {
+    if (isComponentOrFeatureDescriptionAFeatureDescription(this.item)) {
       return this.item.identifier
     } else {
       return this.item.uuid
@@ -73,9 +62,9 @@ export class ComponentOrNativeFeature<F extends UIFeatureDescriptionTypes> {
   }
 
   get noteType(): NoteType {
-    if (isFeatureDescription(this.item) && isEditorFeatureDescription(this.item)) {
+    if (isComponentOrFeatureDescriptionAFeatureDescription(this.item) && isEditorFeatureDescription(this.item)) {
       return this.item.note_type ?? NoteType.Unknown
-    } else if (isComponent(this.item)) {
+    } else if (isComponentOrFeatureDescriptionAComponent(this.item)) {
       return this.item.noteType
     }
 
@@ -83,9 +72,12 @@ export class ComponentOrNativeFeature<F extends UIFeatureDescriptionTypes> {
   }
 
   get fileType(): EditorFeatureDescription['file_type'] {
-    if (isFeatureDescription(this.item) && isEditorFeatureDescription(this.item)) {
+    if (isComponentOrFeatureDescriptionAFeatureDescription(this.item) && isEditorFeatureDescription(this.item)) {
       return this.item.file_type
-    } else if (isComponent(this.item) && isEditorFeatureDescription(this.item.package_info)) {
+    } else if (
+      isComponentOrFeatureDescriptionAComponent(this.item) &&
+      isEditorFeatureDescription(this.item.package_info)
+    ) {
       return this.item.package_info?.file_type ?? 'txt'
     }
 
@@ -93,7 +85,7 @@ export class ComponentOrNativeFeature<F extends UIFeatureDescriptionTypes> {
   }
 
   get displayName(): string {
-    if (isFeatureDescription(this.item)) {
+    if (isComponentOrFeatureDescriptionAFeatureDescription(this.item)) {
       return this.item.name ?? ''
     } else {
       return this.item.displayName
@@ -101,7 +93,7 @@ export class ComponentOrNativeFeature<F extends UIFeatureDescriptionTypes> {
   }
 
   get description(): string {
-    if (isFeatureDescription(this.item)) {
+    if (isComponentOrFeatureDescriptionAFeatureDescription(this.item)) {
       return this.item.description ?? ''
     } else {
       return this.item.package_info.description ?? ''
@@ -109,7 +101,7 @@ export class ComponentOrNativeFeature<F extends UIFeatureDescriptionTypes> {
   }
 
   get deprecationMessage(): string | undefined {
-    if (isFeatureDescription(this.item)) {
+    if (isComponentOrFeatureDescriptionAFeatureDescription(this.item)) {
       return this.item.deprecation_message
     } else {
       return this.item.deprecationMessage
@@ -117,7 +109,7 @@ export class ComponentOrNativeFeature<F extends UIFeatureDescriptionTypes> {
   }
 
   get expirationDate(): Date | undefined {
-    if (isFeatureDescription(this.item)) {
+    if (isComponentOrFeatureDescriptionAFeatureDescription(this.item)) {
       return this.item.expires_at ? new Date(this.item.expires_at) : undefined
     } else {
       return this.item.valid_until
@@ -125,7 +117,7 @@ export class ComponentOrNativeFeature<F extends UIFeatureDescriptionTypes> {
   }
 
   get featureDescription(): F {
-    if (isFeatureDescription(this.item)) {
+    if (isComponentOrFeatureDescriptionAFeatureDescription(this.item)) {
       return this.item
     } else {
       return this.item.package_info as F
@@ -133,9 +125,12 @@ export class ComponentOrNativeFeature<F extends UIFeatureDescriptionTypes> {
   }
 
   get acquiredPermissions(): ComponentPermission[] {
-    if (isFeatureDescription(this.item) && isIframeComponentFeatureDescription(this.item)) {
+    if (
+      isComponentOrFeatureDescriptionAFeatureDescription(this.item) &&
+      isIframeComponentFeatureDescription(this.item)
+    ) {
       return this.item.component_permissions ?? []
-    } else if (isComponent(this.item)) {
+    } else if (isComponentOrFeatureDescriptionAComponent(this.item)) {
       return this.item.permissions
     }
 
@@ -151,7 +146,7 @@ export class ComponentOrNativeFeature<F extends UIFeatureDescriptionTypes> {
   }
 
   get layerable(): boolean {
-    if (isComponent(this.item) && isTheme(this.item)) {
+    if (isComponentOrFeatureDescriptionAComponent(this.item) && isTheme(this.item)) {
       return this.item.layerable
     } else if (isThemeFeatureDescription(this.asFeatureDescription)) {
       return this.asFeatureDescription.layerable ?? false
@@ -161,7 +156,7 @@ export class ComponentOrNativeFeature<F extends UIFeatureDescriptionTypes> {
   }
 
   get dockIcon(): ThemeDockIcon | undefined {
-    if (isComponent(this.item) && isTheme(this.item)) {
+    if (isComponentOrFeatureDescriptionAComponent(this.item) && isTheme(this.item)) {
       return this.item.package_info.dock_icon
     } else if (isThemeFeatureDescription(this.asFeatureDescription)) {
       return this.asFeatureDescription.dock_icon

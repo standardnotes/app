@@ -1,5 +1,5 @@
 import {
-  ComponentOrNativeFeature,
+  UIFeature,
   FeatureIdentifier,
   FeatureStatus,
   ThemeFeatureDescription,
@@ -18,7 +18,7 @@ import { KeyboardShortcutIndicator } from '../KeyboardShortcutIndicator/Keyboard
 import { useApplication } from '../ApplicationProvider'
 
 type Props = {
-  uiFeature: ComponentOrNativeFeature<ThemeFeatureDescription>
+  uiFeature: UIFeature<ThemeFeatureDescription>
 }
 
 const ThemesMenuButton: FunctionComponent<Props> = ({ uiFeature }) => {

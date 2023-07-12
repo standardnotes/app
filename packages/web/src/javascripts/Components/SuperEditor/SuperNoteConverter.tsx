@@ -3,7 +3,7 @@ import {
   NoteContent,
   NoteType,
   SNNote,
-  isIframeUIFeature,
+  isUIFeatureAnIframeFeature,
   spaceSeparatedStrings,
 } from '@standardnotes/snjs'
 import { useCallback, useEffect, useMemo } from 'react'
@@ -61,7 +61,7 @@ const SuperNoteConverter = ({
   }, [format, note])
 
   const componentViewer = useMemo(() => {
-    if (!uiFeature || !isIframeUIFeature(uiFeature)) {
+    if (!uiFeature || !isUIFeatureAnIframeFeature(uiFeature)) {
       return undefined
     }
 

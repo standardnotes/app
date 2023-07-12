@@ -1,4 +1,4 @@
-import { ContentType, NoteContent, NoteType, SNNote, classNames, isIframeUIFeature } from '@standardnotes/snjs'
+import { ContentType, NoteContent, NoteType, SNNote, classNames, isUIFeatureAnIframeFeature } from '@standardnotes/snjs'
 import { UIEventHandler, useEffect, useMemo, useRef } from 'react'
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 import { useApplication } from '../ApplicationProvider'
@@ -31,7 +31,7 @@ export const ReadonlyNoteContent = ({
 
   const componentViewer = useMemo(() => {
     const editorForCurrentNote = application.componentManager.editorForNote(note)
-    if (!isIframeUIFeature(editorForCurrentNote)) {
+    if (!isUIFeatureAnIframeFeature(editorForCurrentNote)) {
       return undefined
     }
 

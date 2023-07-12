@@ -10,7 +10,7 @@ import {
   Environment,
   Platform,
   ComponentMessage,
-  ComponentOrNativeFeature,
+  UIFeature,
   ComponentInterface,
   PrefKey,
   ThemeInterface,
@@ -34,15 +34,7 @@ import {
   ComponentFeatureDescription,
   ThemeFeatureDescription,
 } from '@standardnotes/features'
-import {
-  Copy,
-  filterFromArray,
-  removeFromArray,
-  sleep,
-  assert,
-  uniqueArray,
-  isNotUndefined,
-} from '@standardnotes/utils'
+import { Copy, filterFromArray, removeFromArray, sleep, uniqueArray, isNotUndefined } from '@standardnotes/utils'
 import { AllowedBatchContentTypes } from '@Lib/Services/ComponentManager/Types'
 import { ComponentViewer } from '@Lib/Services/ComponentManager/ComponentViewer'
 import {
@@ -63,11 +55,9 @@ import {
   FeatureStatus,
 } from '@standardnotes/services'
 import { permissionsStringForPermissions } from './permissionsStringForPermissions'
-
-const DESKTOP_URL_PREFIX = 'sn://'
-const LOCAL_HOST = 'localhost'
-const CUSTOM_LOCAL_HOST = 'sn.local'
-const ANDROID_LOCAL_HOST = '10.0.2.2'
+import { GetFeatureUrlUseCase } from './UseCase/GetFeatureUrl'
+import { ComponentManagerEventData } from './ComponentManagerEventData'
+import { ComponentManagerEvent } from './ComponentManagerEvent'
 
 declare global {
   interface Window {
@@ -77,21 +67,13 @@ declare global {
   }
 }
 
-export enum ComponentManagerEvent {
-  ViewerDidFocus = 'ViewerDidFocus',
-}
-
-export type EventData = {
-  componentViewer?: ComponentViewerInterface
-}
-
 /**
  * Responsible for orchestrating component functionality, including editors, themes,
  * and other components. The component manager primarily deals with iframes, and orchestrates
  * sending and receiving messages to and from frames via the postMessage API.
  */
 export class SNComponentManager
-  extends AbstractService<ComponentManagerEvent, EventData>
+  extends AbstractService<ComponentManagerEvent, ComponentManagerEventData>
   implements ComponentManagerInterface
 {
   private desktopManager?: DesktopManagerInterface
@@ -183,7 +165,7 @@ export class SNComponentManager
   }
 
   public createComponentViewer(
-    component: ComponentOrNativeFeature<IframeComponentFeatureDescription>,
+    component: UIFeature<IframeComponentFeatureDescription>,
     item: ComponentViewerItem,
     actionObserver?: ActionObserver,
   ): ComponentViewerInterface {
@@ -265,7 +247,7 @@ export class SNComponentManager
         const device = this.device
         if (isMobileDevice(device) && 'addComponentUrl' in device) {
           inserted.forEach((component) => {
-            const url = this.urlForComponent(new ComponentOrNativeFeature<ComponentFeatureDescription>(component))
+            const url = this.urlForComponent(new UIFeature<ComponentFeatureDescription>(component))
             if (url) {
               device.addComponentUrl(component.uuid, url)
             }
@@ -324,58 +306,9 @@ export class SNComponentManager
     }
   }
 
-  private urlForComponentOnDesktop(
-    uiFeature: ComponentOrNativeFeature<ComponentFeatureDescription>,
-  ): string | undefined {
-    assert(this.desktopManager)
-
-    if (uiFeature.isFeatureDescription) {
-      return `${this.desktopManager.getExtServerHost()}/components/${uiFeature.featureIdentifier}/${
-        uiFeature.asFeatureDescription.index_path
-      }`
-    } else {
-      if (uiFeature.asComponent.local_url) {
-        return uiFeature.asComponent.local_url.replace(DESKTOP_URL_PREFIX, this.desktopManager.getExtServerHost() + '/')
-      }
-
-      return uiFeature.asComponent.hosted_url || uiFeature.asComponent.legacy_url
-    }
-  }
-
-  private urlForNativeComponent(feature: ComponentFeatureDescription): string {
-    if (this.isMobile) {
-      const baseUrlRequiredForThemesInsideEditors = window.location.href.split('/index.html')[0]
-      return `${baseUrlRequiredForThemesInsideEditors}/web-src/components/assets/${feature.identifier}/${feature.index_path}`
-    } else {
-      const baseUrlRequiredForThemesInsideEditors = window.location.origin
-      return `${baseUrlRequiredForThemesInsideEditors}/components/assets/${feature.identifier}/${feature.index_path}`
-    }
-  }
-
-  urlForComponent(uiFeature: ComponentOrNativeFeature<ComponentFeatureDescription>): string | undefined {
-    if (this.desktopManager) {
-      return this.urlForComponentOnDesktop(uiFeature)
-    }
-
-    if (uiFeature.isFeatureDescription) {
-      return this.urlForNativeComponent(uiFeature.asFeatureDescription)
-    }
-
-    if (uiFeature.asComponent.offlineOnly) {
-      return undefined
-    }
-
-    const url = uiFeature.asComponent.hosted_url || uiFeature.asComponent.legacy_url
-    if (!url) {
-      return undefined
-    }
-
-    if (this.isMobile) {
-      const localReplacement = this.platform === Platform.Ios ? LOCAL_HOST : ANDROID_LOCAL_HOST
-      return url.replace(LOCAL_HOST, localReplacement).replace(CUSTOM_LOCAL_HOST, localReplacement)
-    }
-
-    return url
+  urlForComponent(uiFeature: UIFeature<ComponentFeatureDescription>): string | undefined {
+    const usecase = new GetFeatureUrlUseCase(this.desktopManager, this.environment, this.platform)
+    return usecase.execute(uiFeature)
   }
 
   urlsForActiveThemes(): string[] {
@@ -394,17 +327,15 @@ export class SNComponentManager
     return this.items.findItem<ComponentInterface>(uuid)
   }
 
-  private findComponentOrNativeFeature(
-    identifier: string,
-  ): ComponentOrNativeFeature<ComponentFeatureDescription> | undefined {
+  private findUIFeature(identifier: string): UIFeature<ComponentFeatureDescription> | undefined {
     const nativeFeature = FindNativeFeature<ComponentFeatureDescription>(identifier as FeatureIdentifier)
     if (nativeFeature) {
-      return new ComponentOrNativeFeature(nativeFeature)
+      return new UIFeature(nativeFeature)
     }
 
     const componentItem = this.items.findItem<ComponentInterface>(identifier)
     if (componentItem) {
-      return new ComponentOrNativeFeature<ComponentFeatureDescription>(componentItem)
+      return new UIFeature<ComponentFeatureDescription>(componentItem)
     }
 
     return undefined
@@ -419,7 +350,7 @@ export class SNComponentManager
   }
 
   areRequestedPermissionsValid(
-    uiFeature: ComponentOrNativeFeature<ComponentFeatureDescription>,
+    uiFeature: UIFeature<ComponentFeatureDescription>,
     permissions: ComponentPermission[],
   ): boolean {
     for (const permission of permissions) {
@@ -444,7 +375,7 @@ export class SNComponentManager
     requiredPermissions: ComponentPermission[],
     runFunction: () => void,
   ): void {
-    const uiFeature = this.findComponentOrNativeFeature(componentIdentifier)
+    const uiFeature = this.findUIFeature(componentIdentifier)
 
     if (!uiFeature) {
       void this.alerts.alert(
@@ -605,7 +536,7 @@ export class SNComponentManager
     throw 'Must override SNComponentManager.presentPermissionsDialog'
   }
 
-  async toggleTheme(uiFeature: ComponentOrNativeFeature<ThemeFeatureDescription>): Promise<void> {
+  async toggleTheme(uiFeature: UIFeature<ThemeFeatureDescription>): Promise<void> {
     this.log('Toggling theme', uiFeature.uniqueIdentifier)
 
     if (this.isThemeActive(uiFeature)) {
@@ -638,11 +569,11 @@ export class SNComponentManager
     }
   }
 
-  getActiveThemes(): ComponentOrNativeFeature<ThemeFeatureDescription>[] {
+  getActiveThemes(): UIFeature<ThemeFeatureDescription>[] {
     const activeThemesIdentifiers = this.getActiveThemesIdentifiers()
 
     const thirdPartyThemes = this.items.findItems<ThemeInterface>(activeThemesIdentifiers).map((item) => {
-      return new ComponentOrNativeFeature<ThemeFeatureDescription>(item)
+      return new UIFeature<ThemeFeatureDescription>(item)
     })
 
     const nativeThemes = activeThemesIdentifiers
@@ -650,7 +581,7 @@ export class SNComponentManager
         return FindNativeTheme(identifier as FeatureIdentifier)
       })
       .filter(isNotUndefined)
-      .map((theme) => new ComponentOrNativeFeature(theme))
+      .map((theme) => new UIFeature(theme))
 
     const entitledThemes = [...thirdPartyThemes, ...nativeThemes].filter((theme) => {
       return this.features.getFeatureStatus(theme.featureIdentifier) === FeatureStatus.Entitled
@@ -683,29 +614,29 @@ export class SNComponentManager
 
   componentOrNativeFeatureForIdentifier<F extends UIFeatureDescriptionTypes>(
     identifier: FeatureIdentifier | string,
-  ): ComponentOrNativeFeature<F> | undefined {
+  ): UIFeature<F> | undefined {
     const nativeFeature = FindNativeFeature<F>(identifier as FeatureIdentifier)
     if (nativeFeature) {
-      return new ComponentOrNativeFeature(nativeFeature)
+      return new UIFeature(nativeFeature)
     }
 
     const component = this.thirdPartyComponents.find((component) => {
       return component.identifier === identifier
     })
     if (component) {
-      return new ComponentOrNativeFeature<F>(component)
+      return new UIFeature<F>(component)
     }
 
     return undefined
   }
 
-  editorForNote(note: SNNote): ComponentOrNativeFeature<EditorFeatureDescription | IframeComponentFeatureDescription> {
+  editorForNote(note: SNNote): UIFeature<EditorFeatureDescription | IframeComponentFeatureDescription> {
     if (note.noteType === NoteType.Plain) {
-      return new ComponentOrNativeFeature(GetPlainNoteFeature())
+      return new UIFeature(GetPlainNoteFeature())
     }
 
     if (note.noteType === NoteType.Super) {
-      return new ComponentOrNativeFeature(GetSuperNoteFeature())
+      return new UIFeature(GetSuperNoteFeature())
     }
 
     if (note.editorIdentifier) {
@@ -720,16 +651,16 @@ export class SNComponentManager
     if (note.noteType && note.noteType !== NoteType.Unknown) {
       const result = this.nativeEditorForNoteType(note.noteType)
       if (result) {
-        return new ComponentOrNativeFeature(result)
+        return new UIFeature(result)
       }
     }
 
     const legacyResult = this.legacyGetEditorForNote(note)
     if (legacyResult) {
-      return new ComponentOrNativeFeature<IframeComponentFeatureDescription>(legacyResult)
+      return new UIFeature<IframeComponentFeatureDescription>(legacyResult)
     }
 
-    return new ComponentOrNativeFeature(GetPlainNoteFeature())
+    return new UIFeature(GetPlainNoteFeature())
   }
 
   private nativeEditorForNoteType(noteType: NoteType): EditorFeatureDescription | undefined {
@@ -762,8 +693,8 @@ export class SNComponentManager
   }
 
   doesEditorChangeRequireAlert(
-    from: ComponentOrNativeFeature<IframeComponentFeatureDescription | EditorFeatureDescription> | undefined,
-    to: ComponentOrNativeFeature<IframeComponentFeatureDescription | EditorFeatureDescription> | undefined,
+    from: UIFeature<IframeComponentFeatureDescription | EditorFeatureDescription> | undefined,
+    to: UIFeature<IframeComponentFeatureDescription | EditorFeatureDescription> | undefined,
   ): boolean {
     if (!from || !to) {
       return false
@@ -792,7 +723,7 @@ export class SNComponentManager
   }
 
   async setComponentPreferences(
-    uiFeature: ComponentOrNativeFeature<ComponentFeatureDescription>,
+    uiFeature: UIFeature<ComponentFeatureDescription>,
     preferences: ComponentPreferencesEntry,
   ): Promise<void> {
     const mutablePreferencesValue = Copy<AllComponentPreferences>(
@@ -806,9 +737,7 @@ export class SNComponentManager
     await this.preferences.setValue(PrefKey.ComponentPreferences, mutablePreferencesValue)
   }
 
-  getComponentPreferences(
-    component: ComponentOrNativeFeature<ComponentFeatureDescription>,
-  ): ComponentPreferencesEntry | undefined {
+  getComponentPreferences(component: UIFeature<ComponentFeatureDescription>): ComponentPreferencesEntry | undefined {
     const preferences = this.preferences.getValue(PrefKey.ComponentPreferences, undefined)
 
     if (!preferences) {
@@ -820,7 +749,7 @@ export class SNComponentManager
     return preferences[preferencesLookupKey]
   }
 
-  async addActiveTheme(theme: ComponentOrNativeFeature<ThemeFeatureDescription>): Promise<void> {
+  async addActiveTheme(theme: UIFeature<ThemeFeatureDescription>): Promise<void> {
     const activeThemes = (this.preferences.getValue(PrefKey.ActiveThemes, undefined) ?? []).slice()
 
     activeThemes.push(theme.uniqueIdentifier)
@@ -828,11 +757,11 @@ export class SNComponentManager
     await this.preferences.setValue(PrefKey.ActiveThemes, activeThemes)
   }
 
-  async replaceActiveTheme(theme: ComponentOrNativeFeature<ThemeFeatureDescription>): Promise<void> {
+  async replaceActiveTheme(theme: UIFeature<ThemeFeatureDescription>): Promise<void> {
     await this.preferences.setValue(PrefKey.ActiveThemes, [theme.uniqueIdentifier])
   }
 
-  async removeActiveTheme(theme: ComponentOrNativeFeature<ThemeFeatureDescription>): Promise<void> {
+  async removeActiveTheme(theme: UIFeature<ThemeFeatureDescription>): Promise<void> {
     const activeThemes = this.preferences.getValue(PrefKey.ActiveThemes, undefined) ?? []
 
     const filteredThemes = activeThemes.filter((activeTheme) => activeTheme !== theme.uniqueIdentifier)
@@ -840,7 +769,7 @@ export class SNComponentManager
     await this.preferences.setValue(PrefKey.ActiveThemes, filteredThemes)
   }
 
-  isThemeActive(theme: ComponentOrNativeFeature<ThemeFeatureDescription>): boolean {
+  isThemeActive(theme: UIFeature<ThemeFeatureDescription>): boolean {
     if (this.features.getFeatureStatus(theme.featureIdentifier) !== FeatureStatus.Entitled) {
       return false
     }

@@ -1,6 +1,6 @@
 import { dismissToast, ToastType, addTimedToast } from '@standardnotes/toast'
 import {
-  ComponentOrNativeFeature,
+  UIFeature,
   CreateDecryptedLocalStorageContextPayload,
   LocalStorageDecryptedContextualPayload,
   PrefKey,
@@ -44,7 +44,7 @@ export class ThemeManager extends AbstractUIServicee {
     if (desktopService) {
       this.eventDisposers.push(
         desktopService.registerUpdateObserver((component) => {
-          const uiFeature = new ComponentOrNativeFeature<ThemeFeatureDescription>(component)
+          const uiFeature = new UIFeature<ThemeFeatureDescription>(component)
           if (uiFeature.isThemeComponent) {
             if (this.components.isThemeActive(uiFeature)) {
               this.deactivateThemeInTheUI(uiFeature.uniqueIdentifier)
@@ -81,7 +81,7 @@ export class ThemeManager extends AbstractUIServicee {
               this.application.items.findItem<ThemeInterface>(activeTheme)
 
             if (theme) {
-              const uiFeature = new ComponentOrNativeFeature<ThemeFeatureDescription>(theme)
+              const uiFeature = new UIFeature<ThemeFeatureDescription>(theme)
               this.activateTheme(uiFeature)
               hasChange = true
             }
@@ -296,7 +296,7 @@ export class ThemeManager extends AbstractUIServicee {
     }
   }
 
-  private activateTheme(theme: ComponentOrNativeFeature<ThemeFeatureDescription>, skipEntitlementCheck = false) {
+  private activateTheme(theme: UIFeature<ThemeFeatureDescription>, skipEntitlementCheck = false) {
     if (this.themesActiveInTheUI.find((uuid) => uuid === theme.uniqueIdentifier)) {
       return
     }
@@ -383,7 +383,7 @@ export class ThemeManager extends AbstractUIServicee {
     return this.application.setValue(CachedThemesKey, mapped, StorageValueModes.Nonwrapped)
   }
 
-  private getCachedThemes(): ComponentOrNativeFeature<ThemeFeatureDescription>[] {
+  private getCachedThemes(): UIFeature<ThemeFeatureDescription>[] {
     const cachedThemes = this.application.getValue<LocalStorageDecryptedContextualPayload[]>(
       CachedThemesKey,
       StorageValueModes.Nonwrapped,
@@ -396,7 +396,7 @@ export class ThemeManager extends AbstractUIServicee {
         const theme = this.application.items.createItemFromPayload<ThemeInterface>(payload)
         themes.push(theme)
       }
-      return themes.map((theme) => new ComponentOrNativeFeature<ThemeFeatureDescription>(theme))
+      return themes.map((theme) => new UIFeature<ThemeFeatureDescription>(theme))
     } else {
       return []
     }
