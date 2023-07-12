@@ -16,7 +16,7 @@ export function nativeEditors(): EditorFeatureDescription[] {
       availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
       permission_name: PermissionName.SuperEditor,
       description:
-        'A new way to edit notes. Type / to bring up the block selection menu, or @ to embed images or link other tags and notes. Type - then space to start a list, or [] then space to start a checklist. Drag and drop an image or file to embed it in your note. Cmd/Ctrl + F to bring up search and replace.',
+        'The best way to edit notes. Type / to bring up the block selection menu, or @ to embed images or link other tags and notes. Type - then space to start a list, or [] then space to start a checklist. Drag and drop an image or file to embed it in your note. Cmd/Ctrl + F to bring up search and replace.',
     },
     {
       name: 'Plain Text',
