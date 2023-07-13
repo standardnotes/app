@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { ApplicationEvent, ReactNativeToWebEvent } from '@standardnotes/snjs'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Button, Keyboard, Platform, Text, View } from 'react-native'
@@ -239,6 +241,7 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
       void onFunctionMessage(functionData.functionName, functionData.messageId, functionData.args)
     } catch (error) {
       if (LoggingEnabled) {
+        // eslint-disable-next-line no-console
         console.log('onGeneralMessage', JSON.stringify(message))
       }
     }
@@ -247,6 +250,7 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
   const onFunctionMessage = async (functionName: string, messageId: string, args: any) => {
     const returnValue = await (device as any)[functionName](...args)
     if (LoggingEnabled && functionName !== 'consoleLog') {
+      // eslint-disable-next-line no-console
       console.log(`Native device function ${functionName} called`)
     }
     webViewRef.current?.postMessage(JSON.stringify({ messageId, returnValue, messageType: 'reply' }))
@@ -270,7 +274,7 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
       (Platform.OS === 'ios' && request.navigationType === 'click') ||
       (Platform.OS === 'android' && request.url !== sourceUri)
 
-    const isComponentUrl = device.isUrlComponentUrl(request.url)
+    const isComponentUrl = device.isUrlRegisteredComponentUrl(request.url)
 
     if (shouldStopRequest && !isComponentUrl) {
       device.openUrl(request.url)

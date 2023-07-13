@@ -40,7 +40,7 @@ import {
   Platform,
   OutgoingItemMessagePayload,
   ComponentPreferencesEntry,
-  ComponentOrNativeFeature,
+  UIFeature,
   ComponentInterface,
 } from '@standardnotes/models'
 import { environmentToString, platformToString } from '@Lib/Application/Platforms'
@@ -52,7 +52,7 @@ import {
   MessageReplyData,
   ReadwriteActions,
 } from './Types'
-import { ComponentViewerRequiresComponentManagerFunctions } from './ComponentViewerRequiresComponentManagerFunctions'
+import { ComponentViewerRequiresComponentManagerProperties } from './ComponentViewerRequiresComponentManagerFunctions'
 import {
   ComponentAction,
   ComponentPermission,
@@ -94,7 +94,7 @@ export class ComponentViewer implements ComponentViewerInterface {
   public sessionKey?: string
 
   constructor(
-    private componentOrFeature: ComponentOrNativeFeature<IframeComponentFeatureDescription>,
+    private componentOrFeature: UIFeature<IframeComponentFeatureDescription>,
     private services: {
       items: ItemManagerInterface
       mutator: MutatorClientInterface
@@ -111,7 +111,7 @@ export class ComponentViewer implements ComponentViewerInterface {
     private config: {
       environment: Environment
       platform: Platform
-      componentManagerFunctions: ComponentViewerRequiresComponentManagerFunctions
+      componentManagerFunctions: ComponentViewerRequiresComponentManagerProperties
     },
   ) {
     if (isComponentViewerItemReadonlyItem(options.item)) {
@@ -152,7 +152,7 @@ export class ComponentViewer implements ComponentViewerInterface {
     this.log('Constructor', this)
   }
 
-  public getComponentOrFeatureItem(): ComponentOrNativeFeature<IframeComponentFeatureDescription> {
+  public getComponentOrFeatureItem(): UIFeature<IframeComponentFeatureDescription> {
     return this.componentOrFeature
   }
 
@@ -269,7 +269,7 @@ export class ComponentViewer implements ComponentViewerInterface {
       return
     }
 
-    const item = new ComponentOrNativeFeature<IframeComponentFeatureDescription>(updatedComponent)
+    const item = new UIFeature<IframeComponentFeatureDescription>(updatedComponent)
 
     this.componentOrFeature = item
   }
@@ -320,7 +320,7 @@ export class ComponentViewer implements ComponentViewerInterface {
       },
     ]
 
-    this.config.componentManagerFunctions.runWithPermissions(
+    this.config.componentManagerFunctions.runWithPermissionsUseCase.execute(
       this.componentUniqueIdentifier,
       requiredPermissions,
       () => {
@@ -335,7 +335,7 @@ export class ComponentViewer implements ComponentViewerInterface {
         name: ComponentAction.StreamContextItem,
       },
     ] as ComponentPermission[]
-    this.config.componentManagerFunctions.runWithPermissions(
+    this.config.componentManagerFunctions.runWithPermissionsUseCase.execute(
       this.componentUniqueIdentifier,
       requiredContextPermissions,
       () => {
@@ -625,7 +625,7 @@ export class ComponentViewer implements ComponentViewerInterface {
         content_types: types,
       },
     ]
-    this.config.componentManagerFunctions.runWithPermissions(
+    this.config.componentManagerFunctions.runWithPermissionsUseCase.execute(
       this.componentUniqueIdentifier,
       requiredPermissions,
       () => {
@@ -650,7 +650,7 @@ export class ComponentViewer implements ComponentViewerInterface {
       },
     ]
 
-    this.config.componentManagerFunctions.runWithPermissions(
+    this.config.componentManagerFunctions.runWithPermissionsUseCase.execute(
       this.componentUniqueIdentifier,
       requiredPermissions,
       () => {
@@ -707,7 +707,7 @@ export class ComponentViewer implements ComponentViewerInterface {
       } as ComponentPermission)
     }
 
-    this.config.componentManagerFunctions.runWithPermissions(
+    this.config.componentManagerFunctions.runWithPermissionsUseCase.execute(
       this.componentUniqueIdentifier,
       requiredPermissions,
 
@@ -830,7 +830,7 @@ export class ComponentViewer implements ComponentViewerInterface {
       },
     ]
 
-    this.config.componentManagerFunctions.runWithPermissions(
+    this.config.componentManagerFunctions.runWithPermissionsUseCase.execute(
       this.componentUniqueIdentifier,
       requiredPermissions,
       async () => {
@@ -897,7 +897,7 @@ export class ComponentViewer implements ComponentViewerInterface {
       },
     ]
 
-    this.config.componentManagerFunctions.runWithPermissions(
+    this.config.componentManagerFunctions.runWithPermissionsUseCase.execute(
       this.componentUniqueIdentifier,
       requiredPermissions,
       async () => {
@@ -934,7 +934,7 @@ export class ComponentViewer implements ComponentViewerInterface {
 
   handleSetComponentPreferencesMessage(message: ComponentMessage): void {
     const noPermissionsRequired: ComponentPermission[] = []
-    this.config.componentManagerFunctions.runWithPermissions(
+    this.config.componentManagerFunctions.runWithPermissionsUseCase.execute(
       this.componentUniqueIdentifier,
       noPermissionsRequired,
       async () => {

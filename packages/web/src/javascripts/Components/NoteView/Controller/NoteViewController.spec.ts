@@ -33,7 +33,6 @@ describe('note view controller', () => {
     application.sync.sync = jest.fn().mockReturnValue(Promise.resolve())
 
     componentManager = {} as jest.Mocked<SNComponentManager>
-    componentManager.legacyGetDefaultEditor = jest.fn()
     Object.defineProperty(application, 'componentManager', { value: componentManager })
 
     const mutator = {} as jest.Mocked<MutatorClientInterface>
@@ -41,7 +40,7 @@ describe('note view controller', () => {
   })
 
   it('should create notes with plaintext note type', async () => {
-    application.geDefaultEditorIdentifier = jest.fn().mockReturnValue(FeatureIdentifier.PlainEditor)
+    application.componentManager.getDefaultEditorIdentifier = jest.fn().mockReturnValue(FeatureIdentifier.PlainEditor)
 
     const controller = new NoteViewController(application)
     await controller.initialize()
@@ -54,15 +53,15 @@ describe('note view controller', () => {
   })
 
   it('should create notes with markdown note type', async () => {
-    componentManager.legacyGetDefaultEditor = jest.fn().mockReturnValue({
-      identifier: FeatureIdentifier.MarkdownProEditor,
-    } as SNComponent)
+    application.items.getDisplayableComponents = jest.fn().mockReturnValue([
+      {
+        identifier: FeatureIdentifier.MarkdownProEditor,
+      } as SNComponent,
+    ])
 
-    componentManager.componentOrNativeFeatureForIdentifier = jest.fn().mockReturnValue({
-      identifier: FeatureIdentifier.MarkdownProEditor,
-    } as SNComponent)
-
-    application.geDefaultEditorIdentifier = jest.fn().mockReturnValue(FeatureIdentifier.MarkdownProEditor)
+    application.componentManager.getDefaultEditorIdentifier = jest
+      .fn()
+      .mockReturnValue(FeatureIdentifier.MarkdownProEditor)
 
     const controller = new NoteViewController(application)
     await controller.initialize()
@@ -75,7 +74,7 @@ describe('note view controller', () => {
   })
 
   it('should add tag to note if default tag is set', async () => {
-    application.geDefaultEditorIdentifier = jest.fn().mockReturnValue(FeatureIdentifier.PlainEditor)
+    application.componentManager.getDefaultEditorIdentifier = jest.fn().mockReturnValue(FeatureIdentifier.PlainEditor)
 
     const tag = {
       uuid: 'tag-uuid',

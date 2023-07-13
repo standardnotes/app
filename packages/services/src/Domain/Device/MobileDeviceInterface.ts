@@ -15,16 +15,20 @@ export interface MobileDeviceInterface extends DeviceInterface {
   authenticateWithBiometrics(): Promise<boolean>
   hideMobileInterfaceFromScreenshots(): void
   stopHidingMobileInterfaceFromScreenshots(): void
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   consoleLog(...args: any[]): void
+
   handleThemeSchemeChange(isDark: boolean, bgColor: string): void
   shareBase64AsFile(base64: string, filename: string): Promise<void>
   downloadBase64AsFile(base64: string, filename: string, saveInTempLocation?: boolean): Promise<string | undefined>
   previewFile(base64: string, filename: string): Promise<boolean>
   exitApp(confirm?: boolean): void
-  addComponentUrl(componentUuid: string, componentUrl: string): void
-  removeComponentUrl(componentUuid: string): void
-  isUrlComponentUrl(url: string): boolean
+
+  registerComponentUrl(componentUuid: string, componentUrl: string): void
+  deregisterComponentUrl(componentUuid: string): void
+  isUrlRegisteredComponentUrl(url: string): boolean
+
   getAppState(): Promise<'active' | 'background' | 'inactive' | 'unknown' | 'extension'>
   getColorScheme(): Promise<'light' | 'dark' | null | undefined>
   purchaseSubscriptionIAP(plan: AppleIAPProductId): Promise<AppleIAPReceipt | undefined>

@@ -17,8 +17,6 @@ import {
   MobileDeviceInterface,
   MobileUnlockTiming,
   DecryptedItem,
-  EditorIdentifier,
-  FeatureIdentifier,
   Environment,
   ApplicationOptionsDefaults,
   BackupServiceInterface,
@@ -509,15 +507,6 @@ export class WebApplication extends SNApplication implements WebApplicationInter
    */
   get isFullU2FClient(): boolean {
     return this.environment === Environment.Web
-  }
-
-  geDefaultEditorIdentifier(currentTag?: SNTag): EditorIdentifier {
-    return (
-      currentTag?.preferences?.editorIdentifier ||
-      this.getPreference(PrefKey.DefaultEditorIdentifier) ||
-      this.componentManager.legacyGetDefaultEditor()?.identifier ||
-      FeatureIdentifier.PlainEditor
-    )
   }
 
   openPreferences(pane?: PreferenceId): void {

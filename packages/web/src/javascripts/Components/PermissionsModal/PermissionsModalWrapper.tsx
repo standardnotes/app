@@ -20,11 +20,7 @@ const PermissionsModalWrapper: FunctionComponent<Props> = ({ application }) => {
   }, [])
 
   const onAppStart = useCallback(() => {
-    application.componentManager.presentPermissionsDialog = presentPermissionsDialog
-
-    return () => {
-      ;(application.componentManager.presentPermissionsDialog as unknown) = undefined
-    }
+    application.componentManager.setPermissionDialogUIHandler(presentPermissionsDialog)
   }, [application, presentPermissionsDialog])
 
   useEffect(() => {

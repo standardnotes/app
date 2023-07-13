@@ -4,7 +4,7 @@ import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import { STRING_EDIT_LOCKED_ATTEMPT } from '@/Constants/Strings'
 import { WebApplication } from '@/Application/WebApplication'
 import {
-  ComponentOrNativeFeature,
+  UIFeature,
   EditorFeatureDescription,
   FeatureIdentifier,
   IframeComponentFeatureDescription,
@@ -30,7 +30,7 @@ type ChangeEditorMenuProps = {
   closeMenu: () => void
   isVisible: boolean
   note: SNNote | undefined
-  onSelect?: (component: ComponentOrNativeFeature<EditorFeatureDescription | IframeComponentFeatureDescription>) => void
+  onSelect?: (component: UIFeature<EditorFeatureDescription | IframeComponentFeatureDescription>) => void
   setDisableClickOutside?: (value: boolean) => void
 }
 
@@ -46,7 +46,7 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
 }) => {
   const groups = useMemo(() => createEditorMenuGroups(application), [application])
   const [currentFeature, setCurrentFeature] =
-    useState<ComponentOrNativeFeature<EditorFeatureDescription | IframeComponentFeatureDescription>>()
+    useState<UIFeature<EditorFeatureDescription | IframeComponentFeatureDescription>>()
   const [pendingConversionItem, setPendingConversionItem] = useState<EditorMenuItem | null>(null)
 
   const showSuperNoteImporter =
@@ -83,10 +83,7 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
   )
 
   const selectComponent = useCallback(
-    async (
-      uiFeature: ComponentOrNativeFeature<EditorFeatureDescription | IframeComponentFeatureDescription>,
-      note: SNNote,
-    ) => {
+    async (uiFeature: UIFeature<EditorFeatureDescription | IframeComponentFeatureDescription>, note: SNNote) => {
       if (uiFeature.isComponent && uiFeature.asComponent.conflictOf) {
         void application.changeAndSaveItem(uiFeature.asComponent, (mutator) => {
           mutator.conflictOf = undefined

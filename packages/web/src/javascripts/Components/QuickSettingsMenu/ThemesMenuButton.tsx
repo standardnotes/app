@@ -1,9 +1,4 @@
-import {
-  ComponentOrNativeFeature,
-  FeatureIdentifier,
-  FeatureStatus,
-  ThemeFeatureDescription,
-} from '@standardnotes/snjs'
+import { UIFeature, FeatureIdentifier, FeatureStatus, ThemeFeatureDescription } from '@standardnotes/snjs'
 import { FunctionComponent, MouseEventHandler, useCallback, useMemo } from 'react'
 import Icon from '@/Components/Icon/Icon'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
@@ -18,7 +13,7 @@ import { KeyboardShortcutIndicator } from '../KeyboardShortcutIndicator/Keyboard
 import { useApplication } from '../ApplicationProvider'
 
 type Props = {
-  uiFeature: ComponentOrNativeFeature<ThemeFeatureDescription>
+  uiFeature: UIFeature<ThemeFeatureDescription>
 }
 
 const ThemesMenuButton: FunctionComponent<Props> = ({ uiFeature }) => {

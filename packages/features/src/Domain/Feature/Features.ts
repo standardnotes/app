@@ -9,6 +9,7 @@ import { experimentalFeatures } from '../Lists/ExperimentalFeatures'
 import { IframeEditors } from '../Lists/IframeEditors'
 import { themes } from '../Lists/Themes'
 import { nativeEditors } from '../Lists/NativeEditors'
+import { IframeComponentFeatureDescription } from './IframeComponentFeatureDescription'
 
 export function GetFeatures(): AnyFeatureDescription[] {
   return [
@@ -30,8 +31,12 @@ export function FindNativeTheme(identifier: FeatureIdentifier): ThemeFeatureDesc
   return themes().find((t) => t.identifier === identifier)
 }
 
-export function GetIframeAndNativeEditors(): EditorFeatureDescription[] {
+export function GetIframeAndNativeEditors(): (IframeComponentFeatureDescription | EditorFeatureDescription)[] {
   return [...IframeEditors(), ...nativeEditors()]
+}
+
+export function GetIframeEditors(): IframeComponentFeatureDescription[] {
+  return IframeEditors()
 }
 
 export function GetSuperNoteFeature(): EditorFeatureDescription {

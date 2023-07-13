@@ -3,7 +3,7 @@ import { STRING_EDIT_LOCKED_ATTEMPT } from '@/Constants/Strings'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import { createEditorMenuGroups } from '@/Utils/createEditorMenuGroups'
 import {
-  ComponentOrNativeFeature,
+  UIFeature,
   EditorFeatureDescription,
   IframeComponentFeatureDescription,
   NoteMutator,
@@ -40,10 +40,7 @@ const ChangeEditorMultipleMenu = ({ application, notes, setDisableClickOutside }
   const groups = useMemo(() => createEditorMenuGroups(application), [application])
 
   const selectComponent = useCallback(
-    async (
-      uiFeature: ComponentOrNativeFeature<EditorFeatureDescription | IframeComponentFeatureDescription>,
-      note: SNNote,
-    ) => {
+    async (uiFeature: UIFeature<EditorFeatureDescription | IframeComponentFeatureDescription>, note: SNNote) => {
       if (uiFeature.isComponent && uiFeature.asComponent.conflictOf) {
         void application.changeAndSaveItem(uiFeature.asComponent, (mutator) => {
           mutator.conflictOf = undefined
