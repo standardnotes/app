@@ -78,8 +78,12 @@ export class SNComponentManager
   private desktopManager?: DesktopManagerInterface
   private viewers: ComponentViewerInterface[] = []
 
+  private permissionDialogUIHandler: (dialog: PermissionDialog) => void = () => {
+    throw 'Must call setPermissionDialogUIHandler'
+  }
+
   private runWithPermissionsUseCase = new RunWithPermissionsUseCase(
-    this.presentPermissionsDialog,
+    this.permissionDialogUIHandler,
     this.alerts,
     this.mutator,
     this.sync,
@@ -156,6 +160,7 @@ export class SNComponentManager
     ;(this.sync as unknown) = undefined
     ;(this.alerts as unknown) = undefined
     ;(this.preferences as unknown) = undefined
+    ;(this.permissionDialogUIHandler as unknown) = undefined
 
     if (window) {
       window.removeEventListener('focus', this.detectFocusChange, true)
@@ -165,6 +170,18 @@ export class SNComponentManager
 
     ;(this.detectFocusChange as unknown) = undefined
     ;(this.onWindowMessage as unknown) = undefined
+  }
+
+  setPermissionDialogUIHandler(handler: (dialog: PermissionDialog) => void): void {
+    this.permissionDialogUIHandler = handler
+
+    this.runWithPermissionsUseCase = new RunWithPermissionsUseCase(
+      this.permissionDialogUIHandler,
+      this.alerts,
+      this.mutator,
+      this.sync,
+      this.items,
+    )
   }
 
   public createComponentViewer(
@@ -361,10 +378,6 @@ export class SNComponentManager
 
   private componentViewerForSessionKey(key: string): ComponentViewerInterface | undefined {
     return this.viewers.find((viewer) => viewer.sessionKey === key)
-  }
-
-  presentPermissionsDialog(_dialog: PermissionDialog): void {
-    throw 'Must override SNComponentManager.presentPermissionsDialog'
   }
 
   async toggleTheme(uiFeature: UIFeature<ThemeFeatureDescription>): Promise<void> {

@@ -24,7 +24,7 @@ const PermissionsModal = ({ callback, component, dismiss, permissionsString }: P
 
   return (
     <Modal
-      title="Activate Component"
+      title="Activate Plugin"
       close={deny}
       actions={[
         { label: 'Cancel', onClick: deny, type: 'cancel', mobileSlot: 'left' },
@@ -52,10 +52,7 @@ const PermissionsModal = ({ callback, component, dismiss, permissionsString }: P
         </div>
         <div className="sk-panel-row [word-break:break-word]">
           <p className="sk-p">
-            Components use an offline messaging system to communicate. Learn more at{' '}
-            <a href="https://standardnotes.com/permissions" rel="noopener" target="_blank" className="sk-a info">
-              https://standardnotes.com/permissions.
-            </a>
+            Plugins use an offline messaging system to communicate and can only access the current note.
           </p>
         </div>
       </div>

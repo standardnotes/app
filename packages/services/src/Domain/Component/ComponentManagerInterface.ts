@@ -27,7 +27,8 @@ export interface ComponentManagerInterface {
     actionObserver?: ActionObserver,
     urlOverride?: string,
   ): ComponentViewerInterface
-  presentPermissionsDialog(_dialog: PermissionDialog): void
+
+  setPermissionDialogUIHandler(handler: (dialog: PermissionDialog) => void): void
 
   editorForNote(note: SNNote): UIFeature<EditorFeatureDescription | IframeComponentFeatureDescription>
   getDefaultEditorIdentifier(currentTag?: SNTag): EditorIdentifier
