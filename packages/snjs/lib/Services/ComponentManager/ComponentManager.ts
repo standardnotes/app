@@ -259,19 +259,20 @@ export class SNComponentManager
     inserted: ComponentInterface[],
     removed: (EncryptedItemInterface | DeletedItemInterface)[],
   ): void {
-    const device = this.device
-    if (isMobileDevice(device) && 'registerComponentUrl' in device) {
-      inserted.forEach((component) => {
-        const feature = new UIFeature<ComponentFeatureDescription>(component)
-        const url = this.urlForFeature(feature)
-        if (url) {
-          device.registerComponentUrl(component.uuid, url)
-        }
-      })
+    if (!isMobileDevice(this.device)) {
+      return
+    }
 
-      removed.forEach((component) => {
-        device.deregisterComponentUrl(component.uuid)
-      })
+    for (const component of inserted) {
+      const feature = new UIFeature<ComponentFeatureDescription>(component)
+      const url = this.urlForFeature(feature)
+      if (url) {
+        this.device.registerComponentUrl(component.uuid, url)
+      }
+    }
+
+    for (const component of removed) {
+      this.device.deregisterComponentUrl(component.uuid)
     }
   }
 
