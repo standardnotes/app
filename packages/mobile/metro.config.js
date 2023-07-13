@@ -6,37 +6,41 @@
  * https://stackoverflow.com/a/65231261/2504429
  * @format
  */
+const { getDefaultConfig, mergeConfig } = require('@react-native/metro-config')
 const path = require('path')
-const { getDefaultConfig } = require('metro-config')
 
 const extraNodeModules = {
   common: path.resolve(__dirname + '../..'),
 }
 
-module.exports = (async () => {
-  const {
-    resolver: { sourceExts, assetExts },
-  } = await getDefaultConfig()
+const defaultConfig = getDefaultConfig(__dirname)
 
-  return {
-    watchFolders: [__dirname, '../snjs'],
-    transformer: {
-      getTransformOptions: async () => ({
-        transform: {
-          experimentalImportSupport: false,
-          inlineRequires: true,
-        },
-      }),
-    },
-    resolver: {
-      assetExts: assetExts.filter((ext) => ext !== 'svg'),
-      sourceExts: [...sourceExts, 'svg'],
-      extraNodeModules: new Proxy(extraNodeModules, {
-        get: (target, name) => {
-          const result = name in target ? target[name] : path.join(process.cwd(), `node_modules/${name}`)
-          return result
-        },
-      }),
-    },
-  }
-})()
+/**
+ * Metro configuration
+ * https://facebook.github.io/metro/docs/configuration
+ *
+ * @type {import('metro-config').MetroConfig}
+ */
+const config = {
+  watchFolders: [__dirname, '../snjs'],
+  transformer: {
+    getTransformOptions: async () => ({
+      transform: {
+        experimentalImportSupport: false,
+        inlineRequires: true,
+      },
+    }),
+  },
+  resolver: {
+    assetExts: defaultConfig.resolver.assetExts.filter((ext) => ext !== 'svg'),
+    sourceExts: [...defaultConfig.resolver.sourceExts, 'svg'],
+    extraNodeModules: new Proxy(extraNodeModules, {
+      get: (target, name) => {
+        const result = name in target ? target[name] : path.join(process.cwd(), `node_modules/${name}`)
+        return result
+      },
+    }),
+  },
+}
+
+module.exports = mergeConfig(defaultConfig, config)
