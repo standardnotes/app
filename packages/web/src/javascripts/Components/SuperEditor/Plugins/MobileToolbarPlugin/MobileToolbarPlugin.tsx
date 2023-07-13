@@ -65,7 +65,13 @@ const MobileToolbarPlugin = () => {
   }, [editor])
 
   const items = useMemo(
-    () => [
+    (): {
+      name: string
+      iconName: string
+      iconClassName?: string
+      keywords?: string[]
+      onSelect: () => void
+    }[] => [
       {
         name: 'Bold',
         iconName: 'bold',
@@ -222,7 +228,7 @@ const MobileToolbarPlugin = () => {
                 onClick={item.onSelect}
                 key={item.name}
               >
-                <Icon type={item.iconName} size="medium" />
+                <Icon type={item.iconName} size="medium" className={item.iconClassName} />
               </button>
             )
           })}
