@@ -8,7 +8,6 @@ import {
   GetSuperNoteFeature,
   IframeComponentFeatureDescription,
   NoteType,
-  UIFeatureDescriptionTypes,
 } from '@standardnotes/features'
 import { ComponentInterface, SNNote, UIFeature } from '@standardnotes/models'
 import { ItemManagerInterface } from '@standardnotes/services'
@@ -26,9 +25,7 @@ export class EditorForNoteUseCase {
     }
 
     if (note.editorIdentifier) {
-      const result = this.componentOrNativeFeatureForIdentifier<
-        EditorFeatureDescription | IframeComponentFeatureDescription
-      >(note.editorIdentifier)
+      const result = this.componentOrNativeFeatureForIdentifier(note.editorIdentifier)
       if (result) {
         return result
       }
@@ -49,10 +46,12 @@ export class EditorForNoteUseCase {
     return new UIFeature(GetPlainNoteFeature())
   }
 
-  private componentOrNativeFeatureForIdentifier<F extends UIFeatureDescriptionTypes>(
+  private componentOrNativeFeatureForIdentifier(
     identifier: FeatureIdentifier | string,
-  ): UIFeature<F> | undefined {
-    const nativeFeature = FindNativeFeature<F>(identifier as FeatureIdentifier)
+  ): UIFeature<EditorFeatureDescription | IframeComponentFeatureDescription> | undefined {
+    const nativeFeature = FindNativeFeature<EditorFeatureDescription | IframeComponentFeatureDescription>(
+      identifier as FeatureIdentifier,
+    )
     if (nativeFeature) {
       return new UIFeature(nativeFeature)
     }
@@ -61,7 +60,7 @@ export class EditorForNoteUseCase {
       return component.identifier === identifier
     })
     if (component) {
-      return new UIFeature<F>(component)
+      return new UIFeature<EditorFeatureDescription | IframeComponentFeatureDescription>(component)
     }
 
     return undefined
@@ -72,9 +71,7 @@ export class EditorForNoteUseCase {
     return nativeEditors.find((editor) => editor.note_type === noteType)
   }
 
-  /**
-   * Uses legacy approach of note/editor association. New method uses note.editorIdentifier and note.noteType directly.
-   */
+  /** Uses legacy approach of note/editor association. New method uses note.editorIdentifier and note.noteType directly. */
   private legacyGetEditorForNote(note: SNNote): ComponentInterface | undefined {
     const editors = this.thirdPartyComponentsForArea(ComponentArea.Editor)
     for (const editor of editors) {

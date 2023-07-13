@@ -121,7 +121,7 @@ describe('GetFeatureUrl', () => {
       usecase = new GetFeatureUrlUseCase(undefined, Environment.Web, Platform.MacWeb)
     })
 
-    it('returns native path for native component', () => {
+    it('returns native path for native feature', () => {
       const feature = nativeFeatureAsUIFeature<IframeComponentFeatureDescription>(FeatureIdentifier.MarkdownProEditor)
       const url = usecase.execute(feature)
       expect(url).toEqual(
