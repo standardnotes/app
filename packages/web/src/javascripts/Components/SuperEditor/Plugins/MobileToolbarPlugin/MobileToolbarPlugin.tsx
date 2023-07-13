@@ -68,7 +68,6 @@ const MobileToolbarPlugin = () => {
     (): {
       name: string
       iconName: string
-      iconClassName?: string
       keywords?: string[]
       onSelect: () => void
     }[] => [
@@ -228,7 +227,7 @@ const MobileToolbarPlugin = () => {
                 onClick={item.onSelect}
                 key={item.name}
               >
-                <Icon type={item.iconName} size="medium" className={item.iconClassName} />
+                <Icon type={item.iconName} size="medium" className="!text-current [&>path]:!text-current" />
               </button>
             )
           })}
