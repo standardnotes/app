@@ -15,6 +15,8 @@ import {
   AllComponentPreferences,
   SNNote,
   SNTag,
+  DeletedItemInterface,
+  EncryptedItemInterface,
 } from '@standardnotes/models'
 import {
   ComponentArea,
@@ -26,6 +28,8 @@ import {
   ComponentFeatureDescription,
   ThemeFeatureDescription,
   EditorIdentifier,
+  GetIframeEditors,
+  GetNativeThemes,
 } from '@standardnotes/features'
 import { Copy, removeFromArray, sleep, isNotUndefined } from '@standardnotes/utils'
 import { ComponentViewer } from '@Lib/Services/ComponentManager/ComponentViewer'
@@ -73,7 +77,7 @@ export class SNComponentManager
 {
   private desktopManager?: DesktopManagerInterface
   private viewers: ComponentViewerInterface[] = []
-  private removeItemObserver!: () => void
+
   private runWithPermissionsUseCase = new RunWithPermissionsUseCase(
     this.presentPermissionsDialog,
     this.alerts,
@@ -97,7 +101,8 @@ export class SNComponentManager
     super(internalEventBus)
     this.loggingEnabled = false
 
-    this.addItemObserver()
+    this.addSyncedComponentItemObserver()
+    this.registerMobileNativeComponentUrls()
 
     this.eventDisposers.push(
       preferences.addEventObserver((event) => {
@@ -151,9 +156,6 @@ export class SNComponentManager
     ;(this.sync as unknown) = undefined
     ;(this.alerts as unknown) = undefined
     ;(this.preferences as unknown) = undefined
-
-    this.removeItemObserver?.()
-    ;(this.removeItemObserver as unknown) = undefined
 
     if (window) {
       window.removeEventListener('focus', this.detectFocusChange, true)
@@ -238,28 +240,56 @@ export class SNComponentManager
     }
   }
 
-  private addItemObserver(): void {
-    this.removeItemObserver = this.items.addObserver<ComponentInterface>(
-      [ContentType.TYPES.Component, ContentType.TYPES.Theme],
-      ({ changed, inserted, removed, source }) => {
-        const items = [...changed, ...inserted]
-        this.handleChangedComponents(items, source)
+  private addSyncedComponentItemObserver(): void {
+    this.eventDisposers.push(
+      this.items.addObserver<ComponentInterface>(
+        [ContentType.TYPES.Component, ContentType.TYPES.Theme],
+        ({ changed, inserted, removed, source }) => {
+          const items = [...changed, ...inserted]
 
-        const device = this.device
-        if (isMobileDevice(device) && 'addComponentUrl' in device) {
-          inserted.forEach((component) => {
-            const url = this.urlForComponent(new UIFeature<ComponentFeatureDescription>(component))
-            if (url) {
-              device.addComponentUrl(component.uuid, url)
-            }
-          })
+          this.handleChangedComponents(items, source)
 
-          removed.forEach((component) => {
-            device.removeComponentUrl(component.uuid)
-          })
-        }
-      },
+          this.updateMobileRegisteredComponentUrls(inserted, removed)
+        },
+      ),
     )
+  }
+
+  private updateMobileRegisteredComponentUrls(
+    inserted: ComponentInterface[],
+    removed: (EncryptedItemInterface | DeletedItemInterface)[],
+  ): void {
+    const device = this.device
+    if (isMobileDevice(device) && 'registerComponentUrl' in device) {
+      inserted.forEach((component) => {
+        const feature = new UIFeature<ComponentFeatureDescription>(component)
+        const url = this.urlForComponent(feature)
+        if (url) {
+          device.registerComponentUrl(component.uuid, url)
+        }
+      })
+
+      removed.forEach((component) => {
+        device.deregisterComponentUrl(component.uuid)
+      })
+    }
+  }
+
+  private registerMobileNativeComponentUrls(): void {
+    if (!isMobileDevice(this.device)) {
+      return
+    }
+
+    const nativeComponents = [...GetIframeEditors(), ...GetNativeThemes()]
+
+    for (const component of nativeComponents) {
+      const feature = new UIFeature<ComponentFeatureDescription>(component)
+      const url = this.urlForComponent(feature)
+
+      if (url) {
+        this.device.registerComponentUrl(feature.uniqueIdentifier, url)
+      }
+    }
   }
 
   detectFocusChange = (): void => {

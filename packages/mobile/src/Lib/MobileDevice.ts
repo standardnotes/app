@@ -512,15 +512,15 @@ export class MobileDevice implements MobileDeviceInterface {
     )
   }
 
-  addComponentUrl(componentUuid: UuidString, componentUrl: string) {
+  registerComponentUrl(componentUuid: UuidString, componentUrl: string) {
     this.componentUrls.set(componentUuid, componentUrl)
   }
 
-  removeComponentUrl(componentUuid: UuidString) {
+  deregisterComponentUrl(componentUuid: UuidString) {
     this.componentUrls.delete(componentUuid)
   }
 
-  isUrlComponentUrl(url: string): boolean {
+  isUrlRegisteredComponentUrl(url: string): boolean {
     return Array.from(this.componentUrls.values()).includes(url)
   }
 
