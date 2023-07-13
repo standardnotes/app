@@ -3,6 +3,7 @@ import * as Applications from './Applications.js'
 import * as Utils from './Utils.js'
 import * as Defaults from './Defaults.js'
 import * as Events from './Events.js'
+import * as HomeServer from './HomeServer.js'
 import { createNotePayload } from './Items.js'
 
 UuidGenerator.SetGenerator(new FakeWebCrypto().generateUUID)
@@ -597,7 +598,7 @@ export class AppContext {
     console.warn('Anticipating a console error with message:', message)
   }
 
-  async publicMockSubscriptionPurchaseEvent() {
+  async activatePaidSubscriptionForUser() {
     await Events.publishMockedEvent('SUBSCRIPTION_PURCHASED', {
       userEmail: this.email,
       subscriptionId: GlobalSubscriptionIdCounter++,
@@ -613,6 +614,8 @@ export class AppContext {
       billingFrequency: 12,
       payAmount: 59.0,
     })
+
+    await HomeServer.activatePremiumFeatures(this.email)
 
     await Utils.sleep(2)
   }

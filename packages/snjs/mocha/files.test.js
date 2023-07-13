@@ -1,5 +1,4 @@
 import * as Factory from './lib/factory.js'
-import * as Events from './lib/Events.js'
 import * as Utils from './lib/Utils.js'
 import * as Files from './lib/Files.js'
 
@@ -39,7 +38,7 @@ describe('files', function () {
     })
 
     if (subscription) {
-      await context.publicMockSubscriptionPurchaseEvent()
+      await context.activatePaidSubscriptionForUser()
     }
   }
 
@@ -48,7 +47,7 @@ describe('files', function () {
     localStorage.clear()
   })
 
-  it('should create valet token from server - @paidfeature', async function () {
+  it('should create valet token from server', async function () {
     await setup({ fakeCrypto: true, subscription: true })
 
     const remoteIdentifier = Utils.generateUuid()
@@ -66,24 +65,10 @@ describe('files', function () {
     expect(isClientDisplayableError(tokenOrError)).to.equal(true)
   })
 
-  it('should not create valet token from server when user has an expired subscription - @paidfeature', async function () {
+  it('should not create valet token from server when user has an expired subscription', async function () {
     await setup({ fakeCrypto: true, subscription: false })
 
-    await Events.publishMockedEvent('SUBSCRIPTION_PURCHASED', {
-      userEmail: context.email,
-      subscriptionId: subscriptionId++,
-      subscriptionName: 'PLUS_PLAN',
-      subscriptionExpiresAt: (new Date().getTime() - 3_600_000) * 1_000,
-      timestamp: Date.now(),
-      offline: false,
-      discountCode: null,
-      limitedDiscountPurchased: false,
-      newSubscriber: true,
-      totalActiveSubscriptionsCount: 1,
-      userRegisteredAt: 1,
-      billingFrequency: 12,
-      payAmount: 59.0,
-    })
+    await context.activatePaidSubscriptionForUser()
 
     await Factory.sleep(2)
 
@@ -93,7 +78,7 @@ describe('files', function () {
     expect(isClientDisplayableError(tokenOrError)).to.equal(true)
   })
 
-  it('creating two upload sessions successively should succeed - @paidfeature', async function () {
+  it('creating two upload sessions successively should succeed', async function () {
     await setup({ fakeCrypto: true, subscription: true })
 
     const firstToken = await application.apiService.createUserFileValetToken(Utils.generateUuid(), 'write')
@@ -107,7 +92,7 @@ describe('files', function () {
     expect(secondSession.uploadId).to.be.ok
   })
 
-  it('should encrypt and upload small file - @paidfeature', async function () {
+  it('should encrypt and upload small file', async function () {
     await setup({ fakeCrypto: false, subscription: true })
 
     const response = await fetch('/packages/snjs/mocha/assets/small_file.md')
@@ -120,7 +105,7 @@ describe('files', function () {
     expect(downloadedBytes).to.eql(buffer)
   })
 
-  it('should encrypt and upload big file - @paidfeature', async function () {
+  it('should encrypt and upload big file', async function () {
     await setup({ fakeCrypto: false, subscription: true })
 
     const response = await fetch('/packages/snjs/mocha/assets/two_mb_file.md')
@@ -133,7 +118,7 @@ describe('files', function () {
     expect(downloadedBytes).to.eql(buffer)
   })
 
-  it('should delete file - @paidfeature', async function () {
+  it('should delete file', async function () {
     await setup({ fakeCrypto: false, subscription: true })
 
     const response = await fetch('/packages/snjs/mocha/assets/small_file.md')
