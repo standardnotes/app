@@ -84,7 +84,7 @@ export const Toast = forwardRef(({ toast, index }: Props, ref: ForwardedRef<HTML
         animationDelay: !toast.dismissed ? '50ms' : undefined,
       }}
       onClick={() => {
-        if (!hasActions && toast.type !== ToastType.Loading && toast.type !== ToastType.Progress) {
+        if (toast.type !== ToastType.Loading && toast.type !== ToastType.Progress) {
           dismissToast(toast.id)
         }
       }}
@@ -104,7 +104,9 @@ export const Toast = forwardRef(({ toast, index }: Props, ref: ForwardedRef<HTML
                 className={`hover:bg-passive-3 cursor-pointer rounded border-0 px-[0.45rem] py-1 text-sm font-semibold md:bg-transparent ${colorForToastType(
                   toast.type,
                 )} ${index !== 0 ? 'ml-2' : ''}`}
-                onClick={() => {
+                onClick={(event) => {
+                  event.preventDefault()
+                  event.stopPropagation()
                   action.handler(toast.id)
                 }}
                 key={index}
