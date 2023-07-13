@@ -12,7 +12,7 @@ import { DesktopManagerInterface } from '../Device/DesktopManagerInterface'
 import { ComponentViewerInterface } from './ComponentViewerInterface'
 
 export interface ComponentManagerInterface {
-  urlForComponent(uiFeature: UIFeature<ComponentFeatureDescription>): string | undefined
+  urlForFeature(uiFeature: UIFeature<ComponentFeatureDescription>): string | undefined
   setDesktopManager(desktopManager: DesktopManagerInterface): void
   thirdPartyComponentsForArea(area: ComponentArea): ComponentInterface[]
   doesEditorChangeRequireAlert(

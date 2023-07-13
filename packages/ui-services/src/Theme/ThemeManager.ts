@@ -308,7 +308,7 @@ export class ThemeManager extends AbstractUIServicee {
       return
     }
 
-    const url = this.application.componentManager.urlForComponent(theme)
+    const url = this.application.componentManager.urlForFeature(theme)
     if (!url) {
       return
     }

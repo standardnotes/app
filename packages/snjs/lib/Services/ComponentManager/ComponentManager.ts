@@ -183,7 +183,7 @@ export class SNComponentManager
         features: this.features,
       },
       {
-        url: this.urlForComponent(component) ?? '',
+        url: this.urlForFeature(component) ?? '',
         item,
         actionObserver,
       },
@@ -263,7 +263,7 @@ export class SNComponentManager
     if (isMobileDevice(device) && 'registerComponentUrl' in device) {
       inserted.forEach((component) => {
         const feature = new UIFeature<ComponentFeatureDescription>(component)
-        const url = this.urlForComponent(feature)
+        const url = this.urlForFeature(feature)
         if (url) {
           device.registerComponentUrl(component.uuid, url)
         }
@@ -284,7 +284,7 @@ export class SNComponentManager
 
     for (const component of nativeComponents) {
       const feature = new UIFeature<ComponentFeatureDescription>(component)
-      const url = this.urlForComponent(feature)
+      const url = this.urlForFeature(feature)
 
       if (url) {
         this.device.registerComponentUrl(feature.uniqueIdentifier, url)
@@ -337,7 +337,7 @@ export class SNComponentManager
     }
   }
 
-  urlForComponent(uiFeature: UIFeature<ComponentFeatureDescription>): string | undefined {
+  urlForFeature(uiFeature: UIFeature<ComponentFeatureDescription>): string | undefined {
     const usecase = new GetFeatureUrlUseCase(this.desktopManager, this.environment, this.platform)
     return usecase.execute(uiFeature)
   }
@@ -346,7 +346,7 @@ export class SNComponentManager
     const themes = this.getActiveThemes()
     const urls = []
     for (const theme of themes) {
-      const url = this.urlForComponent(theme)
+      const url = this.urlForFeature(theme)
       if (url) {
         urls.push(url)
       }
