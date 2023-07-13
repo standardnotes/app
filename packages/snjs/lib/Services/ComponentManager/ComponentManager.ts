@@ -82,7 +82,7 @@ export class SNComponentManager
     throw 'Must call setPermissionDialogUIHandler'
   }
 
-  private runWithPermissionsUseCase = new RunWithPermissionsUseCase(
+  private readonly runWithPermissionsUseCase = new RunWithPermissionsUseCase(
     this.permissionDialogUIHandler,
     this.alerts,
     this.mutator,
@@ -174,14 +174,7 @@ export class SNComponentManager
 
   setPermissionDialogUIHandler(handler: (dialog: PermissionDialog) => void): void {
     this.permissionDialogUIHandler = handler
-
-    this.runWithPermissionsUseCase = new RunWithPermissionsUseCase(
-      this.permissionDialogUIHandler,
-      this.alerts,
-      this.mutator,
-      this.sync,
-      this.items,
-    )
+    this.runWithPermissionsUseCase.setPermissionDialogUIHandler(handler)
   }
 
   public createComponentViewer(

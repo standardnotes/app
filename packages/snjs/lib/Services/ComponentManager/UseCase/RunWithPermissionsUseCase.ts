@@ -18,9 +18,10 @@ import { permissionsStringForPermissions } from '../permissionsStringForPermissi
 
 export class RunWithPermissionsUseCase {
   private permissionDialogs: PermissionDialog[] = []
+  private pendingErrorAlerts: Set<string> = new Set()
 
   constructor(
-    private presentDialogFunction: (dialog: PermissionDialog) => void,
+    private permissionDialogUIHandler: (dialog: PermissionDialog) => void,
     private alerts: AlertService,
     private mutator: MutatorClientInterface,
     private sync: SyncServiceInterface,
@@ -29,7 +30,7 @@ export class RunWithPermissionsUseCase {
 
   deinit() {
     this.permissionDialogs = []
-    ;(this.presentDialogFunction as unknown) = undefined
+    ;(this.permissionDialogUIHandler as unknown) = undefined
     ;(this.alerts as unknown) = undefined
     ;(this.mutator as unknown) = undefined
     ;(this.sync as unknown) = undefined
@@ -44,10 +45,17 @@ export class RunWithPermissionsUseCase {
     const uiFeature = this.findUIFeature(componentIdentifier)
 
     if (!uiFeature) {
-      void this.alerts.alert(
-        `Unable to find component with ID ${componentIdentifier}. Please restart the app and try again.`,
-        'An unexpected error occurred',
-      )
+      if (!this.pendingErrorAlerts.has(componentIdentifier)) {
+        this.pendingErrorAlerts.add(componentIdentifier)
+        void this.alerts
+          .alert(
+            `Unable to find component with ID ${componentIdentifier}. Please restart the app and try again.`,
+            'An unexpected error occurred',
+          )
+          .then(() => {
+            this.pendingErrorAlerts.delete(componentIdentifier)
+          })
+      }
 
       return
     }
@@ -102,6 +110,10 @@ export class RunWithPermissionsUseCase {
     } else {
       runFunction()
     }
+  }
+
+  setPermissionDialogUIHandler(handler: (dialog: PermissionDialog) => void): void {
+    this.permissionDialogUIHandler = handler
   }
 
   areRequestedPermissionsValid(
@@ -200,7 +212,7 @@ export class RunWithPermissionsUseCase {
         })
 
         if (this.permissionDialogs.length > 0) {
-          this.presentDialogFunction(this.permissionDialogs[0])
+          this.permissionDialogUIHandler(this.permissionDialogs[0])
         }
       },
     }
@@ -211,7 +223,7 @@ export class RunWithPermissionsUseCase {
     const existingDialog = this.permissionDialogs.find((dialog) => dialog.component === component)
     this.permissionDialogs.push(params)
     if (!existingDialog) {
-      this.presentDialogFunction(params)
+      this.permissionDialogUIHandler(params)
     }
   }
 
