@@ -131,7 +131,7 @@ const Modal = ({
               ) : (
                 <div className="md:hidden" />
               )}
-              <div className="flex items-center justify-center gap-2 overflow-hidden text-center text-base font-semibold text-text md:flex-grow md:text-left md:text-lg">
+              <div className="flex items-center justify-center gap-2 overflow-hidden text-center font-semibold text-text md:flex-grow md:text-left md:text-lg">
                 {extraActions.length > 0 && (
                   <>
                     <MobileModalAction

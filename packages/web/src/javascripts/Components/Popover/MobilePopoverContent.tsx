@@ -53,7 +53,7 @@ const MobilePopoverContent = ({
         data-popover={id}
         data-mobile-popover
       >
-        <MobileModalHeader className="border-b border-border px-2 py-1.5 text-base">
+        <MobileModalHeader className="border-b border-border px-2 py-1.5 text-lg">
           <div />
           <div className="flex items-center justify-center font-semibold">{title}</div>
           <MobileModalAction type="primary" slot="right" action={requestClose}>

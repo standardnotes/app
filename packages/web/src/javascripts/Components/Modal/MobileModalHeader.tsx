@@ -8,7 +8,12 @@ type Props = {
 
 const MobileModalHeader = ({ className, children }: Props) => {
   return (
-    <div className={classNames('grid w-full select-none grid-cols-[0.35fr_1fr_0.35fr] gap-2', className)}>
+    <div
+      className={classNames(
+        'grid w-full select-none grid-cols-[0.35fr_1fr_0.35fr] gap-2 text-[1.05rem] leading-6',
+        className,
+      )}
+    >
       {children}
     </div>
   )
