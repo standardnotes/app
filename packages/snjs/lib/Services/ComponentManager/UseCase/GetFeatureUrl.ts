@@ -7,7 +7,7 @@ const LOCAL_HOST = 'localhost'
 const CUSTOM_LOCAL_HOST = 'sn.local'
 const ANDROID_LOCAL_HOST = '10.0.2.2'
 
-export class GetFeatureUrlUseCase {
+export class GetFeatureUrl {
   constructor(
     private desktopManager: DesktopManagerInterface | undefined,
     private environment: Environment,

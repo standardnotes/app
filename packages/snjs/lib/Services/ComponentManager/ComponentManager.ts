@@ -50,12 +50,12 @@ import {
   SyncServiceInterface,
   FeatureStatus,
 } from '@standardnotes/services'
-import { GetFeatureUrlUseCase } from './UseCase/GetFeatureUrl'
+import { GetFeatureUrl } from './UseCase/GetFeatureUrl'
 import { ComponentManagerEventData } from './ComponentManagerEventData'
 import { ComponentManagerEvent } from './ComponentManagerEvent'
 import { RunWithPermissionsUseCase } from './UseCase/RunWithPermissionsUseCase'
 import { EditorForNoteUseCase } from './UseCase/EditorForNote'
-import { GetDefaultEditorIdentifierUseCase } from './UseCase/GetDefaultEditorIdentifier'
+import { GetDefaultEditorIdentifier } from './UseCase/GetDefaultEditorIdentifier'
 import { DoesEditorChangeRequireAlertUseCase } from './UseCase/DoesEditorChangeRequireAlert'
 
 declare global {
@@ -338,7 +338,7 @@ export class SNComponentManager
   }
 
   urlForFeature(uiFeature: UIFeature<ComponentFeatureDescription>): string | undefined {
-    const usecase = new GetFeatureUrlUseCase(this.desktopManager, this.environment, this.platform)
+    const usecase = new GetFeatureUrl(this.desktopManager, this.environment, this.platform)
     return usecase.execute(uiFeature)
   }
 
@@ -448,8 +448,8 @@ export class SNComponentManager
   }
 
   getDefaultEditorIdentifier(currentTag?: SNTag): EditorIdentifier {
-    const usecase = new GetDefaultEditorIdentifierUseCase(this.preferences, this.items)
-    return usecase.execute(currentTag)
+    const usecase = new GetDefaultEditorIdentifier(this.preferences, this.items)
+    return usecase.execute(currentTag).getValue()
   }
 
   doesEditorChangeRequireAlert(

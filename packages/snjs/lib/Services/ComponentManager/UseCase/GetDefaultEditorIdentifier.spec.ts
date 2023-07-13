@@ -1,10 +1,10 @@
 import { ItemManagerInterface, PreferenceServiceInterface } from '@standardnotes/services'
-import { GetDefaultEditorIdentifierUseCase } from './GetDefaultEditorIdentifier'
+import { GetDefaultEditorIdentifier } from './GetDefaultEditorIdentifier'
 import { ComponentArea, FeatureIdentifier } from '@standardnotes/features'
 import { SNComponent, SNTag } from '@standardnotes/models'
 
 describe('getDefaultEditorIdentifier', () => {
-  let usecase: GetDefaultEditorIdentifierUseCase
+  let usecase: GetDefaultEditorIdentifier
   let preferences: PreferenceServiceInterface
   let items: ItemManagerInterface
 
@@ -15,11 +15,11 @@ describe('getDefaultEditorIdentifier', () => {
     items = {} as jest.Mocked<ItemManagerInterface>
     items.getDisplayableComponents = jest.fn().mockReturnValue([])
 
-    usecase = new GetDefaultEditorIdentifierUseCase(preferences, items)
+    usecase = new GetDefaultEditorIdentifier(preferences, items)
   })
 
   it('should return plain editor if no default tag editor or component editor', () => {
-    const editorIdentifier = usecase.execute()
+    const editorIdentifier = usecase.execute().getValue()
 
     expect(editorIdentifier).toEqual(FeatureIdentifier.PlainEditor)
   })
@@ -27,7 +27,7 @@ describe('getDefaultEditorIdentifier', () => {
   it('should return pref key based value if available', () => {
     preferences.getValue = jest.fn().mockReturnValue(FeatureIdentifier.SuperEditor)
 
-    const editorIdentifier = usecase.execute()
+    const editorIdentifier = usecase.execute().getValue()
 
     expect(editorIdentifier).toEqual(FeatureIdentifier.SuperEditor)
   })
@@ -39,7 +39,7 @@ describe('getDefaultEditorIdentifier', () => {
       },
     } as jest.Mocked<SNTag>
 
-    const editorIdentifier = usecase.execute(tag)
+    const editorIdentifier = usecase.execute(tag).getValue()
 
     expect(editorIdentifier).toEqual(FeatureIdentifier.SuperEditor)
   })
@@ -53,7 +53,7 @@ describe('getDefaultEditorIdentifier', () => {
 
     items.getDisplayableComponents = jest.fn().mockReturnValue([editor])
 
-    const editorIdentifier = usecase.execute()
+    const editorIdentifier = usecase.execute().getValue()
 
     expect(editorIdentifier).toEqual(FeatureIdentifier.MarkdownProEditor)
   })

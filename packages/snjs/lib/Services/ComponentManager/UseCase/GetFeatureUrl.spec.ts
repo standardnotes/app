@@ -17,7 +17,7 @@ import {
   UIFeature,
 } from '@standardnotes/models'
 import { DesktopManagerInterface } from '@standardnotes/services'
-import { GetFeatureUrlUseCase } from './GetFeatureUrl'
+import { GetFeatureUrl } from './GetFeatureUrl'
 
 const desktopExtHost = 'http://localhost:123'
 
@@ -47,7 +47,7 @@ const thirdPartyFeature = () => {
 }
 
 describe('GetFeatureUrl', () => {
-  let usecase: GetFeatureUrlUseCase
+  let usecase: GetFeatureUrl
 
   beforeEach(() => {
     global.window = {
@@ -71,7 +71,7 @@ describe('GetFeatureUrl', () => {
         },
       }
 
-      usecase = new GetFeatureUrlUseCase(desktopManager, Environment.Desktop, Platform.MacDesktop)
+      usecase = new GetFeatureUrl(desktopManager, Environment.Desktop, Platform.MacDesktop)
     })
 
     it('returns native path for native component', () => {
@@ -118,7 +118,7 @@ describe('GetFeatureUrl', () => {
 
   describe('web', () => {
     beforeEach(() => {
-      usecase = new GetFeatureUrlUseCase(undefined, Environment.Web, Platform.MacWeb)
+      usecase = new GetFeatureUrl(undefined, Environment.Web, Platform.MacWeb)
     })
 
     it('returns native path for native feature', () => {
