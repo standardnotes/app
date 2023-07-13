@@ -1,9 +1,9 @@
-import { Result } from '@standardnotes/domain-core'
+import { Result, SyncUseCaseInterface } from '@standardnotes/domain-core'
 import { ComponentArea, EditorIdentifier, FeatureIdentifier } from '@standardnotes/features'
 import { ComponentInterface, PrefKey, SNTag } from '@standardnotes/models'
 import { ItemManagerInterface, PreferenceServiceInterface } from '@standardnotes/services'
 
-export class GetDefaultEditorIdentifier {
+export class GetDefaultEditorIdentifier implements SyncUseCaseInterface<EditorIdentifier> {
   constructor(private preferences: PreferenceServiceInterface, private items: ItemManagerInterface) {}
 
   execute(currentTag?: SNTag): Result<EditorIdentifier> {
