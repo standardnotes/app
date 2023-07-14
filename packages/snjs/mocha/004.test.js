@@ -64,7 +64,7 @@ describe('004 protocol operations', function () {
 
   it('generates random key', async function () {
     const length = 96
-    const key = await application.encryptionService.crypto.generateRandomKey(length)
+    const key = await application.crypto.generateRandomKey(length)
     expect(key.length).to.equal(length / 4)
   })
 

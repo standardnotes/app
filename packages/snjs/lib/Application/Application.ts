@@ -111,6 +111,7 @@ import { GetRevision } from '@Lib/Domain/UseCase/GetRevision/GetRevision'
 import { DeleteRevision } from '@Lib/Domain/UseCase/DeleteRevision/DeleteRevision'
 import { GetAuthenticatorAuthenticationResponse } from '@Lib/Domain/UseCase/GetAuthenticatorAuthenticationResponse/GetAuthenticatorAuthenticationResponse'
 import { GetAuthenticatorAuthenticationOptions } from '@Lib/Domain/UseCase/GetAuthenticatorAuthenticationOptions/GetAuthenticatorAuthenticationOptions'
+import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 
 /** How often to automatically sync, in milliseconds */
 const DEFAULT_AUTO_SYNC_INTERVAL = 30_000
@@ -281,6 +282,10 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.constructServices()
 
     this.defineInternalEventHandlers()
+  }
+
+  get crypto(): PureCryptoInterface {
+    return this.options.crypto
   }
 
   get subscriptions(): ExternalServices.SubscriptionManagerInterface {

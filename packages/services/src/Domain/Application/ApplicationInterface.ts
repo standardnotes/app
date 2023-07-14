@@ -34,6 +34,7 @@ import { UserClientInterface } from '../User/UserClientInterface'
 import { SessionsClientInterface } from '../Session/SessionsClientInterface'
 import { HomeServerServiceInterface } from '../HomeServer/HomeServerServiceInterface'
 import { User } from '@standardnotes/responses'
+import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 
 export interface ApplicationInterface {
   deinit(mode: DeinitMode, source: DeinitSource): void
@@ -92,6 +93,7 @@ export interface ApplicationInterface {
     syncOptions?: SyncOptions,
   ): Promise<void>
 
+  get crypto(): PureCryptoInterface
   get features(): FeaturesClientInterface
   get componentManager(): ComponentManagerInterface
   get items(): ItemManagerInterface

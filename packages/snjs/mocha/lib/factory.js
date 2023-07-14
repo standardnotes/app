@@ -112,7 +112,7 @@ export function registerUserToApplication({ application, email, password, epheme
 }
 
 export async function setOldVersionPasscode({ application, passcode, version }) {
-  const identifier = await application.encryptionService.crypto.generateUUID()
+  const identifier = await application.crypto.generateUUID()
   const operator = application.encryptionService.operators.operatorForVersion(version)
   const key = await operator.createRootKey(identifier, passcode, KeyParamsOrigination.PasscodeCreate)
   await application.encryptionService.setNewRootKeyWrapper(key)
