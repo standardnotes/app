@@ -19,7 +19,6 @@ import {
 } from '@standardnotes/models'
 import { HandleTrustedSharedVaultRootKeyChangedMessage } from './UseCase/HandleTrustedSharedVaultRootKeyChangedMessage'
 import { ItemManagerInterface } from '../Item/ItemManagerInterface'
-import { SyncServiceInterface } from '../Sync/SyncServiceInterface'
 import { SessionEvent } from '../Session/SessionEvent'
 import { AsymmetricMessageServer, HttpServiceInterface } from '@standardnotes/api'
 import { UserKeyPairChangedEventData } from '../Session/UserKeyPairChangedEventData'
@@ -41,7 +40,7 @@ export class AsymmetricMessageService
     private contacts: ContactServiceInterface,
     private items: ItemManagerInterface,
     private mutator: MutatorClientInterface,
-    private sync: SyncServiceInterface,
+    private handleTrustedSharedVaultRootKeyChangedMessageUseCase: HandleTrustedSharedVaultRootKeyChangedMessage,
     eventBus: InternalEventBusInterface,
   ) {
     super(eventBus)
@@ -189,12 +188,9 @@ export class AsymmetricMessageService
     _message: AsymmetricMessageServerHash,
     trustedPayload: AsymmetricMessageSharedVaultRootKeyChanged,
   ): Promise<void> {
-    const useCase = new HandleTrustedSharedVaultRootKeyChangedMessage(
-      this.mutator,
-      this.items,
-      this.sync,
-      this.encryption,
-    )
-    await useCase.execute(trustedPayload)
+    const resultOrError = await this.handleTrustedSharedVaultRootKeyChangedMessageUseCase.execute(trustedPayload)
+    if (resultOrError.isFailed()) {
+      throw new Error(resultOrError.getError())
+    }
   }
 }

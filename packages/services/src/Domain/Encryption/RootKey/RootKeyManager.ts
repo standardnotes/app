@@ -16,28 +16,28 @@ import {
 import {
   ContentTypesUsingRootKeyEncryption,
   DecryptedPayload,
-  DecryptedTransferPayload,
   EncryptedPayload,
   EncryptedTransferPayload,
-  FillItemContentSpecialized,
   NamespacedRootKeyInKeychain,
   RootKeyContent,
   RootKeyInterface,
   RootKeyParamsInterface,
+  DecryptedTransferPayload,
+  FillItemContentSpecialized,
 } from '@standardnotes/models'
 import { DeviceInterface } from '../../Device/DeviceInterface'
 import { InternalEventBusInterface } from '../../Internal/InternalEventBusInterface'
 import { StorageKey } from '../../Storage/StorageKeys'
 import { StorageServiceInterface } from '../../Storage/StorageServiceInterface'
 import { StorageValueModes } from '../../Storage/StorageTypes'
-import { RootKeyEncryptPayloadUseCase } from '../UseCase/RootEncryption/EncryptPayload'
-import { RootKeyDecryptPayloadUseCase } from '../UseCase/RootEncryption/DecryptPayload'
 import { AbstractService } from '../../Service/AbstractService'
 import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
 import { MutatorClientInterface } from '../../Mutator/MutatorClientInterface'
 import { RootKeyManagerEvent } from './RootKeyManagerEvent'
 import { ValidatePasscodeResult } from './ValidatePasscodeResult'
 import { ValidateAccountPasswordResult } from './ValidateAccountPasswordResult'
+import { DecryptPayloads } from '../UseCase/DecryptPayloads/DecryptPayloads'
+import { EncryptPayloads } from '../UseCase/EncryptPayloads/EncryptPayloads'
 
 export class RootKeyManager extends AbstractService<RootKeyManagerEvent> {
   private rootKey?: RootKeyInterface
@@ -51,6 +51,8 @@ export class RootKeyManager extends AbstractService<RootKeyManagerEvent> {
     private mutator: MutatorClientInterface,
     private operators: OperatorManager,
     private identifier: ApplicationIdentifier,
+    private encryptPayloadsUseCase: EncryptPayloads,
+    private decryptPayloadsUseCase: DecryptPayloads,
     eventBus: InternalEventBusInterface,
   ) {
     super(eventBus)
@@ -249,8 +251,16 @@ export class RootKeyManager extends AbstractService<RootKeyManagerEvent> {
 
     const payload = new DecryptedPayload(value)
 
-    const usecase = new RootKeyEncryptPayloadUseCase(this.operators)
-    const wrappedKey = await usecase.executeOne(payload, wrappingKey)
+    const wrappedKeysOrError = await this.encryptPayloadsUseCase.execute({
+      payloads: [payload],
+      key: wrappingKey,
+      fallbackRootKey: this.getRootKey(),
+    })
+    if (wrappedKeysOrError.isFailed()) {
+      throw Error(wrappedKeysOrError.getError())
+    }
+    const wrappedKey = wrappedKeysOrError.getValue()[0]
+
     const wrappedKeyPayload = new EncryptedPayload({
       ...payload.ejected(),
       ...wrappedKey,
@@ -273,8 +283,15 @@ export class RootKeyManager extends AbstractService<RootKeyManagerEvent> {
 
     const wrappedKey = this.getWrappedRootKey()
     const payload = new EncryptedPayload(wrappedKey)
-    const usecase = new RootKeyDecryptPayloadUseCase(this.operators)
-    const decrypted = await usecase.executeOne<RootKeyContent>(payload, wrappingKey)
+    const decryptedPayloadsOrError = await this.decryptPayloadsUseCase.execute<RootKeyContent>({
+      payloads: [payload],
+      key: wrappingKey,
+      fallbackRootKey: this.getRootKey(),
+    })
+    if (decryptedPayloadsOrError.isFailed()) {
+      throw Error(decryptedPayloadsOrError.getError())
+    }
+    const decrypted = decryptedPayloadsOrError.getValue()[0]
 
     if (isErrorDecryptingParameters(decrypted)) {
       throw Error('Unable to decrypt root key with provided wrapping key.')
@@ -433,8 +450,16 @@ export class RootKeyManager extends AbstractService<RootKeyManagerEvent> {
        * by attempting to decrypt account keys.
        */
       const wrappedKeyPayload = new EncryptedPayload(wrappedRootKey)
-      const usecase = new RootKeyDecryptPayloadUseCase(this.operators)
-      const decrypted = await usecase.executeOne(wrappedKeyPayload, wrappingKey)
+      const decryptedPayloadsOrError = await this.decryptPayloadsUseCase.execute({
+        payloads: [wrappedKeyPayload],
+        key: wrappingKey,
+        fallbackRootKey: this.getRootKey(),
+      })
+      if (decryptedPayloadsOrError.isFailed()) {
+        throw Error(decryptedPayloadsOrError.getError())
+      }
+      const decrypted = decryptedPayloadsOrError.getValue()[0]
+
       return !isErrorDecryptingParameters(decrypted)
     } else {
       throw 'Unhandled case in validateWrappingKey'

@@ -29,6 +29,7 @@ import { ChangeVaultKeyOptionsUseCase } from './UseCase/ChangeVaultKeyOptions'
 import { MutatorClientInterface } from '../Mutator/MutatorClientInterface'
 import { AlertService } from '../Alert/AlertService'
 import { ContentType } from '@standardnotes/domain-core'
+import { EmitDecryptedErroredPayloads } from '../Encryption/UseCase/EmitDecryptedErroredPayloads/EmitDecryptedErroredPayloads'
 
 export class VaultService
   extends AbstractService<VaultServiceEvent, VaultServiceEventPayload[VaultServiceEvent]>
@@ -43,6 +44,7 @@ export class VaultService
     private encryption: EncryptionProviderInterface,
     private files: FilesClientInterface,
     private alerts: AlertService,
+    private emitDecryptedErroredPayloadsUseCase: EmitDecryptedErroredPayloads,
     eventBus: InternalEventBusInterface,
   ) {
     super(eventBus)
@@ -271,7 +273,10 @@ export class VaultService
 
     this.encryption.keys.intakeNonPersistentKeySystemRootKey(derivedRootKey, vault.keyStorageMode)
 
-    await this.encryption.decryptErroredPayloads()
+    const emitedOrFailed = await this.emitDecryptedErroredPayloadsUseCase.execute()
+    if (emitedOrFailed.isFailed()) {
+      throw emitedOrFailed.getError()
+    }
 
     if (this.computeVaultLockState(vault) === 'locked') {
       this.encryption.keys.undoIntakeNonPersistentKeySystemRootKey(vault.systemIdentifier)

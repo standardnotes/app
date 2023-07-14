@@ -65,6 +65,7 @@ import {
   UserApiServiceInterface,
   UserRegistrationResponseBody,
 } from '@standardnotes/api'
+import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 
 export const MINIMUM_PASSWORD_LENGTH = 8
 export const MissingAccountParams = 'missing-params'
@@ -98,6 +99,7 @@ export class SNSessionManager
     private sessionStorageMapper: MapperInterface<Session, Record<string, unknown>>,
     private legacySessionStorageMapper: MapperInterface<LegacySession, Record<string, unknown>>,
     private workspaceIdentifier: string,
+    private crypto: PureCryptoInterface,
     protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)
@@ -694,7 +696,7 @@ export class SNSessionManager
   }
 
   private decodeDemoShareToken(token: Base64String): ShareToken {
-    const jsonString = this.encryptionService.crypto.base64Decode(token)
+    const jsonString = this.crypto.base64Decode(token)
     return JSON.parse(jsonString)
   }
 

@@ -1,6 +1,3 @@
-import { ItemManagerInterface } from './../../Item/ItemManagerInterface'
-import { MutatorClientInterface } from './../../Mutator/MutatorClientInterface'
-import { SyncServiceInterface } from '../../Sync/SyncServiceInterface'
 import {
   KeySystemRootKeyInterface,
   AsymmetricMessageSharedVaultRootKeyChanged,
@@ -8,20 +5,23 @@ import {
   KeySystemRootKeyContent,
   VaultListingMutator,
 } from '@standardnotes/models'
+import { ContentType, UseCaseInterface, Result } from '@standardnotes/domain-core'
 
-import { ContentType } from '@standardnotes/domain-core'
+import { ItemManagerInterface } from './../../Item/ItemManagerInterface'
+import { MutatorClientInterface } from './../../Mutator/MutatorClientInterface'
+import { SyncServiceInterface } from '../../Sync/SyncServiceInterface'
 import { GetVaultUseCase } from '../../Vaults/UseCase/GetVault'
-import { EncryptionProviderInterface } from '@standardnotes/encryption'
+import { EmitDecryptedErroredPayloads } from '../../Encryption/UseCase/EmitDecryptedErroredPayloads/EmitDecryptedErroredPayloads'
 
-export class HandleTrustedSharedVaultRootKeyChangedMessage {
+export class HandleTrustedSharedVaultRootKeyChangedMessage implements UseCaseInterface<void> {
   constructor(
     private mutator: MutatorClientInterface,
     private items: ItemManagerInterface,
     private sync: SyncServiceInterface,
-    private encryption: EncryptionProviderInterface,
+    private emitDecryptedErroredPayloadsUseCase: EmitDecryptedErroredPayloads,
   ) {}
 
-  async execute(message: AsymmetricMessageSharedVaultRootKeyChanged): Promise<void> {
+  async execute(message: AsymmetricMessageSharedVaultRootKeyChanged): Promise<Result<void>> {
     const rootKeyContent = message.data.rootKey
 
     await this.mutator.createItem<KeySystemRootKeyInterface>(
@@ -37,8 +37,13 @@ export class HandleTrustedSharedVaultRootKeyChangedMessage {
       })
     }
 
-    await this.encryption.decryptErroredPayloads()
+    const emitedOrFailed = await this.emitDecryptedErroredPayloadsUseCase.execute()
+    if (emitedOrFailed.isFailed()) {
+      return Result.fail(emitedOrFailed.getError())
+    }
 
     void this.sync.sync({ sourceDescription: 'Not awaiting due to this event handler running from sync response' })
+
+    return Result.ok()
   }
 }

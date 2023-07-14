@@ -49,14 +49,13 @@ import {
   RootKeyParamsInterface,
 } from '@standardnotes/models'
 import { ClientDisplayableError } from '@standardnotes/responses'
-import { PkcKeyPair, PureCryptoInterface } from '@standardnotes/sncrypto-common'
+import { PkcKeyPair } from '@standardnotes/sncrypto-common'
 import {
   extendArray,
   isNotUndefined,
   isNullOrUndefined,
   isReactNativeEnvironment,
   isWebCryptoAvailable,
-  UuidGenerator,
 } from '@standardnotes/utils'
 import {
   AnyKeyParamsContent,
@@ -83,15 +82,12 @@ import { DecryptedParameters } from '@standardnotes/encryption/src/Domain/Types/
 import { RootKeyManager } from './RootKey/RootKeyManager'
 import { RootKeyManagerEvent } from './RootKey/RootKeyManagerEvent'
 import { CreateNewItemsKeyWithRollbackUseCase } from './UseCase/ItemsKey/CreateNewItemsKeyWithRollback'
-import { DecryptErroredRootPayloadsUseCase } from './UseCase/RootEncryption/DecryptErroredPayloads'
 import { CreateNewDefaultItemsKeyUseCase } from './UseCase/ItemsKey/CreateNewDefaultItemsKey'
-import { RootKeyDecryptPayloadUseCase } from './UseCase/RootEncryption/DecryptPayload'
-import { RootKeyDecryptPayloadWithKeyLookupUseCase } from './UseCase/RootEncryption/DecryptPayloadWithKeyLookup'
-import { RootKeyEncryptPayloadWithKeyLookupUseCase } from './UseCase/RootEncryption/EncryptPayloadWithKeyLookup'
-import { RootKeyEncryptPayloadUseCase } from './UseCase/RootEncryption/EncryptPayload'
 import { ValidateAccountPasswordResult } from './RootKey/ValidateAccountPasswordResult'
 import { ValidatePasscodeResult } from './RootKey/ValidatePasscodeResult'
 import { ContentType } from '@standardnotes/domain-core'
+import { EncryptPayloads } from './UseCase/EncryptPayloads/EncryptPayloads'
+import { DecryptPayloads } from './UseCase/DecryptPayloads/DecryptPayloads'
 
 /**
  * The encryption service is responsible for the encryption and decryption of payloads, and
@@ -124,9 +120,7 @@ export class EncryptionService
   extends AbstractService<EncryptionServiceEvent>
   implements EncryptionProviderInterface, InternalEventHandlerInterface
 {
-  private operators: OperatorManager
   private readonly itemsEncryption: ItemsEncryptionService
-  private readonly rootKeyManager: RootKeyManager
 
   constructor(
     private items: ItemManagerInterface,
@@ -135,30 +129,18 @@ export class EncryptionService
     public device: DeviceInterface,
     private storage: StorageServiceInterface,
     public readonly keys: KeySystemKeyManagerInterface,
-    identifier: ApplicationIdentifier,
-    public crypto: PureCryptoInterface,
+    private rootKeyManager: RootKeyManager,
+    public identifier: ApplicationIdentifier,
+    private encryptPayloadsUseCase: EncryptPayloads,
+    private decryptPayloadsUseCase: DecryptPayloads,
+    private operators: OperatorManager,
     protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)
-    this.crypto = crypto
-
-    this.operators = new OperatorManager(crypto)
-
-    this.rootKeyManager = new RootKeyManager(
-      device,
-      storage,
-      items,
-      mutator,
-      this.operators,
-      identifier,
-      internalEventBus,
-    )
 
     internalEventBus.addEventHandler(this, RootKeyManagerEvent.RootKeyManagerKeyStatusChanged)
 
     this.itemsEncryption = new ItemsEncryptionService(items, payloads, storage, this.operators, keys, internalEventBus)
-
-    UuidGenerator.SetGenerator(this.crypto.generateUUID)
   }
 
   async handleEvent(event: InternalEventInterface): Promise<void> {
@@ -179,7 +161,6 @@ export class EncryptionService
     ;(this.payloads as unknown) = undefined
     ;(this.device as unknown) = undefined
     ;(this.storage as unknown) = undefined
-    ;(this.crypto as unknown) = undefined
     ;(this.operators as unknown) = undefined
 
     this.itemsEncryption.deinit()
@@ -290,13 +271,6 @@ export class EncryptionService
     return usecase.execute()
   }
 
-  public async decryptErroredPayloads(): Promise<void> {
-    const usecase = new DecryptErroredRootPayloadsUseCase(this.payloads, this.operators, this.keys, this.rootKeyManager)
-    await usecase.execute()
-
-    await this.itemsEncryption.decryptErroredItemPayloads()
-  }
-
   public itemsKeyForEncryptedPayload(
     payload: EncryptedPayloadInterface,
   ): ItemsKeyInterface | KeySystemItemsKeyInterface | undefined {
@@ -326,47 +300,41 @@ export class EncryptionService
       usesKeySystemRootKeyWithKeyLookup,
     } = split
 
-    const rootKeyEncryptWithKeyLookupUsecase = new RootKeyEncryptPayloadWithKeyLookupUseCase(
-      this.operators,
-      this.keys,
-      this.rootKeyManager,
-    )
-
-    const rootKeyEncryptUsecase = new RootKeyEncryptPayloadUseCase(this.operators)
-
     const signingKeyPair = this.hasSigningKeyPair() ? this.getSigningKeyPair() : undefined
 
     if (usesRootKey) {
-      const rootKeyEncrypted = await rootKeyEncryptUsecase.executeMany(
-        usesRootKey.items,
-        usesRootKey.key,
+      const rootKeyEncrypted = await this.encryptPayloads({
+        payloads: usesRootKey.items,
+        key: usesRootKey.key,
         signingKeyPair,
-      )
+      })
+
       extendArray(allEncryptedParams, rootKeyEncrypted)
     }
 
     if (usesRootKeyWithKeyLookup) {
-      const rootKeyEncrypted = await rootKeyEncryptWithKeyLookupUsecase.executeMany(
-        usesRootKeyWithKeyLookup.items,
+      const rootKeyEncrypted = await this.encryptPayloads({
+        payloads: usesRootKeyWithKeyLookup.items,
         signingKeyPair,
-      )
+      })
+
       extendArray(allEncryptedParams, rootKeyEncrypted)
     }
 
     if (usesKeySystemRootKey) {
-      const keySystemRootKeyEncrypted = await rootKeyEncryptUsecase.executeMany(
-        usesKeySystemRootKey.items,
-        usesKeySystemRootKey.key,
+      const keySystemRootKeyEncrypted = await this.encryptPayloads({
+        payloads: usesKeySystemRootKey.items,
+        key: usesKeySystemRootKey.key,
         signingKeyPair,
-      )
+      })
       extendArray(allEncryptedParams, keySystemRootKeyEncrypted)
     }
 
     if (usesKeySystemRootKeyWithKeyLookup) {
-      const keySystemRootKeyEncrypted = await rootKeyEncryptWithKeyLookupUsecase.executeMany(
-        usesKeySystemRootKeyWithKeyLookup.items,
+      const keySystemRootKeyEncrypted = await this.encryptPayloads({
+        payloads: usesKeySystemRootKeyWithKeyLookup.items,
         signingKeyPair,
-      )
+      })
       extendArray(allEncryptedParams, keySystemRootKeyEncrypted)
     }
 
@@ -423,34 +391,29 @@ export class EncryptionService
       usesKeySystemRootKeyWithKeyLookup,
     } = split
 
-    const rootKeyDecryptUseCase = new RootKeyDecryptPayloadUseCase(this.operators)
-
-    const rootKeyDecryptWithKeyLookupUsecase = new RootKeyDecryptPayloadWithKeyLookupUseCase(
-      this.operators,
-      this.keys,
-      this.rootKeyManager,
-    )
-
     if (usesRootKey) {
-      const rootKeyDecrypted = await rootKeyDecryptUseCase.executeMany<C>(usesRootKey.items, usesRootKey.key)
+      const rootKeyDecrypted = await this.decryptPayloads<C>({
+        payloads: usesRootKey.items,
+        key: usesRootKey.key,
+      })
       extendArray(resultParams, rootKeyDecrypted)
     }
 
     if (usesRootKeyWithKeyLookup) {
-      const rootKeyDecrypted = await rootKeyDecryptWithKeyLookupUsecase.executeMany<C>(usesRootKeyWithKeyLookup.items)
+      const rootKeyDecrypted = await this.decryptPayloads<C>({ payloads: usesRootKeyWithKeyLookup.items })
       extendArray(resultParams, rootKeyDecrypted)
     }
     if (usesKeySystemRootKey) {
-      const keySystemRootKeyDecrypted = await rootKeyDecryptUseCase.executeMany<C>(
-        usesKeySystemRootKey.items,
-        usesKeySystemRootKey.key,
-      )
+      const keySystemRootKeyDecrypted = await this.decryptPayloads<C>({
+        payloads: usesKeySystemRootKey.items,
+        key: usesKeySystemRootKey.key,
+      })
       extendArray(resultParams, keySystemRootKeyDecrypted)
     }
     if (usesKeySystemRootKeyWithKeyLookup) {
-      const keySystemRootKeyDecrypted = await rootKeyDecryptWithKeyLookupUsecase.executeMany<C>(
-        usesKeySystemRootKeyWithKeyLookup.items,
-      )
+      const keySystemRootKeyDecrypted = await this.decryptPayloads<C>({
+        payloads: usesKeySystemRootKeyWithKeyLookup.items,
+      })
       extendArray(resultParams, keySystemRootKeyDecrypted)
     }
 
@@ -1025,5 +988,38 @@ export class EncryptionService
     if (unsyncedKeys.length > 0) {
       void this.mutator.setItemsDirty(unsyncedKeys)
     }
+  }
+
+  private async encryptPayloads(dto: {
+    payloads: DecryptedPayloadInterface[]
+    key?: RootKeyInterface | KeySystemRootKeyInterface
+    signingKeyPair?: PkcKeyPair
+  }): Promise<EncryptedOutputParameters[]> {
+    const encryptedPayloadsOrError = await this.encryptPayloadsUseCase.execute({
+      ...dto,
+      fallbackRootKey: this.rootKeyManager.getRootKey(),
+    })
+    if (encryptedPayloadsOrError.isFailed()) {
+      throw new Error(encryptedPayloadsOrError.getError())
+    }
+    const encryptedPayloads = encryptedPayloadsOrError.getValue()
+
+    return encryptedPayloads
+  }
+
+  private async decryptPayloads<C extends ItemContent = ItemContent>(dto: {
+    payloads: EncryptedPayloadInterface[]
+    key?: RootKeyInterface | KeySystemRootKeyInterface
+  }): Promise<(DecryptedParameters<C> | ErrorDecryptingParameters)[]> {
+    const decryptedPayloadsOrError = await this.decryptPayloadsUseCase.execute<C>({
+      ...dto,
+      fallbackRootKey: this.rootKeyManager.getRootKey(),
+    })
+    if (decryptedPayloadsOrError.isFailed()) {
+      throw new Error(decryptedPayloadsOrError.getError())
+    }
+    const decryptedPayloads = decryptedPayloadsOrError.getValue()
+
+    return decryptedPayloads
   }
 }

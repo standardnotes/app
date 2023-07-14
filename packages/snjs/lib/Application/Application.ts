@@ -68,6 +68,11 @@ import {
   RevisionClientInterface,
   RevisionManager,
   ApiServiceEvent,
+  DecryptPayloads,
+  EncryptPayloads,
+  RootKeyManager,
+  HandleTrustedSharedVaultRootKeyChangedMessage,
+  EmitDecryptedErroredPayloads,
 } from '@standardnotes/services'
 import {
   BackupServiceInterface,
@@ -75,7 +80,7 @@ import {
   FileBackupsDevice,
   FilesClientInterface,
 } from '@standardnotes/files'
-import { ComputePrivateUsername } from '@standardnotes/encryption'
+import { ComputePrivateUsername, OperatorManager } from '@standardnotes/encryption'
 import { useBoolean } from '@standardnotes/utils'
 import {
   BackupFile,
@@ -189,6 +194,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   private declare authManager: AuthClientInterface
   private declare revisionManager: RevisionClientInterface
   private homeServerService?: ExternalServices.HomeServerService
+  private declare operatorManager: OperatorManager
 
   private declare _signInWithRecoveryCodes: SignInWithRecoveryCodes
   private declare _getRecoveryCodes: GetRecoveryCodes
@@ -200,6 +206,9 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   private declare _listRevisions: ListRevisions
   private declare _getRevision: GetRevision
   private declare _deleteRevision: DeleteRevision
+  private declare _encryptPayloads: EncryptPayloads
+  private declare _decryptPayloads: DecryptPayloads
+  private declare _emitDecryptedErroredPayloads: EmitDecryptedErroredPayloads
 
   public internalEventBus!: ExternalServices.InternalEventBusInterface
 
@@ -1308,6 +1317,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     ;(this.httpService as unknown) = undefined
     ;(this.payloadManager as unknown) = undefined
     ;(this.encryptionService as unknown) = undefined
+    ;(this.operatorManager as unknown) = undefined
     ;(this.diskStorageService as unknown) = undefined
     ;(this.inMemoryStore as unknown) = undefined
     ;(this.apiService as unknown) = undefined
@@ -1356,6 +1366,9 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     ;(this._listRevisions as unknown) = undefined
     ;(this._getRevision as unknown) = undefined
     ;(this._deleteRevision as unknown) = undefined
+    ;(this._encryptPayloads as unknown) = undefined
+    ;(this._decryptPayloads as unknown) = undefined
+    ;(this._emitDecryptedErroredPayloads as unknown) = undefined
     ;(this.vaultService as unknown) = undefined
     ;(this.contactService as unknown) = undefined
     ;(this.sharedVaultService as unknown) = undefined
@@ -1389,13 +1402,20 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   }
 
   private createAsymmetricMessageService() {
+    const handleTrustedSharedVaultRootKeyChangedMessageUseCase = new HandleTrustedSharedVaultRootKeyChangedMessage(
+      this.mutator,
+      this.itemManager,
+      this.syncService,
+      this._emitDecryptedErroredPayloads,
+    )
+
     this.asymmetricMessageService = new ExternalServices.AsymmetricMessageService(
       this.httpService,
       this.encryptionService,
       this.contacts,
       this.itemManager,
       this.mutator,
-      this.syncService,
+      handleTrustedSharedVaultRootKeyChangedMessageUseCase,
       this.internalEventBus,
     )
     this.services.push(this.asymmetricMessageService)
@@ -1429,6 +1449,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       this.files,
       this.vaults,
       this.storage,
+      this._emitDecryptedErroredPayloads,
       this.internalEventBus,
     )
     this.services.push(this.sharedVaultService)
@@ -1442,6 +1463,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       this.encryptionService,
       this.files,
       this.alertService,
+      this._emitDecryptedErroredPayloads,
       this.internalEventBus,
     )
 
@@ -1573,6 +1595,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       this.challengeService,
       this.protectionService,
       this.userApiService,
+      this._emitDecryptedErroredPayloads,
       this.internalEventBus,
     )
     this.serviceObservers.push(
@@ -1727,6 +1750,26 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   }
 
   private createProtocolService() {
+    this.operatorManager = new OperatorManager(this.options.crypto)
+
+    this._decryptPayloads = new DecryptPayloads(this.operatorManager, this.keySystemKeyManager)
+
+    this._encryptPayloads = new EncryptPayloads(this.operatorManager, this.keySystemKeyManager)
+
+    this._emitDecryptedErroredPayloads = new EmitDecryptedErroredPayloads(this.payloadManager, this._decryptPayloads)
+
+    const rootKeyManager = new RootKeyManager(
+      this.deviceInterface,
+      this.diskStorageService,
+      this.itemManager,
+      this.mutator,
+      this.operatorManager,
+      this.identifier,
+      this._encryptPayloads,
+      this._decryptPayloads,
+      this.internalEventBus,
+    )
+
     this.encryptionService = new EncryptionService(
       this.itemManager,
       this.mutator,
@@ -1734,8 +1777,11 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       this.deviceInterface,
       this.diskStorageService,
       this.keySystemKeyManager,
+      rootKeyManager,
       this.identifier,
-      this.options.crypto,
+      this._encryptPayloads,
+      this._decryptPayloads,
+      this.operatorManager,
       this.internalEventBus,
     )
     this.serviceObservers.push(
@@ -1788,6 +1834,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       this.sessionStorageMapper,
       this.legacySessionStorageMapper,
       this.identifier,
+      this.options.crypto,
       this.internalEventBus,
     )
     this.serviceObservers.push(

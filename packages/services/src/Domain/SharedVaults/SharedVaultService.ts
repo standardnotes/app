@@ -64,6 +64,7 @@ import { SendSharedVaultMetadataChangedMessageToAll } from './UseCase/SendShared
 import { ConvertToSharedVaultUseCase } from './UseCase/ConvertToSharedVault'
 import { GetVaultUseCase } from '../Vaults/UseCase/GetVault'
 import { ContentType } from '@standardnotes/domain-core'
+import { EmitDecryptedErroredPayloads } from '../Encryption/UseCase/EmitDecryptedErroredPayloads/EmitDecryptedErroredPayloads'
 
 export class SharedVaultService
   extends AbstractService<SharedVaultServiceEvent, SharedVaultServiceEventPayload>
@@ -87,6 +88,7 @@ export class SharedVaultService
     private files: FilesClientInterface,
     private vaults: VaultServiceInterface,
     private storage: StorageServiceInterface,
+    private emitDecryptedErroredPayloadsUseCase: EmitDecryptedErroredPayloads,
     eventBus: InternalEventBusInterface,
   ) {
     super(eventBus)
@@ -399,13 +401,12 @@ export class SharedVaultService
 
     void this.sync.sync()
 
-    await this.decryptErroredItemsAfterInviteAccept()
+    const emitedOrFailed = await this.emitDecryptedErroredPayloadsUseCase.execute()
+    if (emitedOrFailed.isFailed()) {
+      throw new Error(emitedOrFailed.getError())
+    }
 
     await this.sync.syncSharedVaultsFromScratch([pendingInvite.invite.shared_vault_uuid])
-  }
-
-  private async decryptErroredItemsAfterInviteAccept(): Promise<void> {
-    await this.encryption.decryptErroredPayloads()
   }
 
   public async getInvitableContactsForSharedVault(

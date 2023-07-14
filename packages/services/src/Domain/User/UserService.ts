@@ -36,6 +36,7 @@ import { AccountEventData } from './AccountEventData'
 import { AccountEvent } from './AccountEvent'
 import { SignedInOrRegisteredEventPayload } from './SignedInOrRegisteredEventPayload'
 import { CredentialsChangeFunctionResponse } from './CredentialsChangeFunctionResponse'
+import { EmitDecryptedErroredPayloads } from '../Encryption/UseCase/EmitDecryptedErroredPayloads/EmitDecryptedErroredPayloads'
 
 export class UserService
   extends AbstractService<AccountEvent, AccountEventData>
@@ -57,6 +58,7 @@ export class UserService
     private challengeService: ChallengeServiceInterface,
     private protectionService: ProtectionsClientInterface,
     private userApiService: UserApiServiceInterface,
+    private emitDecryptedErroredPayloadsUseCase: EmitDecryptedErroredPayloads,
     protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)
@@ -87,14 +89,14 @@ export class UserService
         })
         .then(() => {
           if (!payload.awaitSync) {
-            void this.encryptionService.decryptErroredPayloads()
+            void this.emitDecryptedErroredPayloadsUseCase.execute()
           }
         })
 
       if (payload.awaitSync) {
         await syncPromise
 
-        await this.encryptionService.decryptErroredPayloads()
+        await this.emitDecryptedErroredPayloadsUseCase.execute()
       }
     }
   }
