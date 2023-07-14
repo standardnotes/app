@@ -617,7 +617,7 @@ export class AppContext {
       })
 
       await Utils.sleep(2)
-    }catch (error) {
+    } catch (error) {
       console.warn(`Mock events service not available. You are probalby running a test suite for home server: ${error.message}`)
     }
 

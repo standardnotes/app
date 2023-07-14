@@ -70,8 +70,6 @@ describe('files', function () {
 
     await context.activatePaidSubscriptionForUser()
 
-    await Factory.sleep(2)
-
     const remoteIdentifier = Utils.generateUuid()
     const tokenOrError = await application.apiService.createUserFileValetToken(remoteIdentifier, 'write')
 
