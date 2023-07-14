@@ -52,6 +52,9 @@ const isReceivedText = (item: ReceivedItem): item is ReceivedText => {
 const BundleIdentifier = 'com.standardnotes.standardnotes'
 const IosUrlToCheckFor = `${BundleIdentifier}://dataUrl`
 
+const IosWebUrlPrefix = 'webUrl:'
+const IosTextPrefix = 'text:'
+
 export class ReceivedSharedItemsHandler {
   private eventSub: NativeEventSubscription | null = null
   private receivedItemsQueue: ReceivedItem[] = []
@@ -162,15 +165,15 @@ export class ReceivedSharedItemsHandler {
           const items = Object.values(received as Record<string, ReceivedItem>)
           this.receivedItemsQueue.push(...items)
         } else if (typeof received === 'string') {
-          const isWebUrl = received.startsWith('webUrl:')
-          const isText = received.startsWith('text:')
+          const isWebUrl = received.startsWith(IosWebUrlPrefix)
+          const isText = received.startsWith(IosTextPrefix)
           if (isWebUrl) {
             this.receivedItemsQueue.push({
-              weblink: received,
+              weblink: received.slice(IosWebUrlPrefix.length),
             })
           } else if (isText) {
             this.receivedItemsQueue.push({
-              text: received,
+              text: received.slice(IosTextPrefix.length),
             })
           } else {
             const parsed = JSON.parse(received)
