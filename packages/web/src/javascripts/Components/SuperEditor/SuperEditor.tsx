@@ -75,7 +75,9 @@ export const SuperEditor: FunctionComponent<Props> = ({
   const [featureStatus, setFeatureStatus] = useState<FeatureStatus>(FeatureStatus.Entitled)
 
   useEffect(() => {
-    setFeatureStatus(application.features.getFeatureStatus(FeatureIdentifier.SuperEditor))
+    setFeatureStatus(
+      application.features.getFeatureStatus(FeatureIdentifier.SuperEditor, { inContextOfItem: note.current }),
+    )
   }, [application.features])
 
   const commandService = useCommandService()

@@ -82,13 +82,12 @@ export class ComponentViewer implements ComponentViewerInterface {
   private loggingEnabled = false
   public identifier = nonSecureRandomIdentifier()
   private actionObservers: ActionObserver[] = []
-  private featureStatus: FeatureStatus
+
   private removeFeaturesObserver: () => void
   private eventObservers: ComponentEventObserver[] = []
   private dealloced = false
 
   private window?: Window
-  private hidden = false
   private readonly = false
   public lockReadonly = false
   public sessionKey?: string
@@ -132,20 +131,14 @@ export class ComponentViewer implements ComponentViewerInterface {
       this.actionObservers.push(options.actionObserver)
     }
 
-    this.featureStatus = services.features.getFeatureStatus(componentOrFeature.featureIdentifier)
-
     this.removeFeaturesObserver = services.features.addEventObserver((event) => {
       if (this.dealloced) {
         return
       }
 
       if (event === FeaturesEvent.FeaturesAvailabilityChanged) {
-        const featureStatus = services.features.getFeatureStatus(componentOrFeature.featureIdentifier)
-        if (featureStatus !== this.featureStatus) {
-          this.featureStatus = featureStatus
-          this.postActiveThemes()
-          this.notifyEventObservers(ComponentViewerEvent.FeatureStatusUpdated)
-        }
+        this.postActiveThemes()
+        this.notifyEventObservers(ComponentViewerEvent.FeatureStatusUpdated)
       }
     })
 
@@ -226,7 +219,19 @@ export class ComponentViewer implements ComponentViewerInterface {
   }
 
   public getFeatureStatus(): FeatureStatus {
-    return this.featureStatus
+    return this.services.features.getFeatureStatus(this.componentOrFeature.featureIdentifier, {
+      inContextOfItem: this.getContextItem(),
+    })
+  }
+
+  private getContextItem(): DecryptedItemInterface | undefined {
+    if (isComponentViewerItemReadonlyItem(this.options.item)) {
+      return this.options.item.readonlyItem
+    }
+
+    const matchingItem = this.services.items.findItem(this.options.item.uuid)
+
+    return matchingItem
   }
 
   private isOfflineRestricted(): boolean {
@@ -274,7 +279,7 @@ export class ComponentViewer implements ComponentViewerInterface {
     this.componentOrFeature = item
   }
 
-  handleChangesInItems(
+  private handleChangesInItems(
     items: (DecryptedItemInterface | DeletedItemInterface | EncryptedItemInterface)[],
     source: PayloadEmitSource,
     sourceKey?: string,
@@ -312,7 +317,7 @@ export class ComponentViewer implements ComponentViewerInterface {
     }
   }
 
-  sendManyItemsThroughBridge(items: (DecryptedItemInterface | DeletedItemInterface)[]): void {
+  private sendManyItemsThroughBridge(items: (DecryptedItemInterface | DeletedItemInterface)[]): void {
     const requiredPermissions: ComponentPermission[] = [
       {
         name: ComponentAction.StreamItems,
@@ -329,7 +334,7 @@ export class ComponentViewer implements ComponentViewerInterface {
     )
   }
 
-  sendContextItemThroughBridge(item: DecryptedItemInterface, source?: PayloadEmitSource): void {
+  private sendContextItemThroughBridge(item: DecryptedItemInterface, source?: PayloadEmitSource): void {
     const requiredContextPermissions = [
       {
         name: ComponentAction.StreamContextItem,
@@ -443,14 +448,7 @@ export class ComponentViewer implements ComponentViewerInterface {
    * @param essential If the message is non-essential, no alert will be shown
    *  if we can no longer find the window.
    */
-  sendMessage(message: ComponentMessage | MessageReply, essential = true): void {
-    const permissibleActionsWhileHidden = [ComponentAction.ComponentRegistered, ComponentAction.ActivateThemes]
-
-    if (this.hidden && !permissibleActionsWhileHidden.includes(message.action)) {
-      this.log('Component disabled for current item, ignoring messages.', this.componentOrFeature.displayName)
-      return
-    }
-
+  private sendMessage(message: ComponentMessage | MessageReply, essential = true): void {
     if (!this.window && message.action === ComponentAction.Reply) {
       this.log('Component has been deallocated in between message send and reply', this.componentOrFeature, message)
       return
@@ -514,10 +512,6 @@ export class ComponentViewer implements ComponentViewerInterface {
     })
   }
 
-  public getWindow(): Window | undefined {
-    return this.window
-  }
-
   /** Called by client when the iframe is ready */
   public setWindow(window: Window): void {
     if (this.window) {
@@ -548,7 +542,7 @@ export class ComponentViewer implements ComponentViewerInterface {
     this.postActiveThemes()
   }
 
-  postActiveThemes(): void {
+  public postActiveThemes(): void {
     const urls = this.config.componentManagerFunctions.urlsForActiveThemes()
     const data: MessageData = {
       themes: urls,
@@ -560,24 +554,6 @@ export class ComponentViewer implements ComponentViewerInterface {
     }
 
     this.sendMessage(message, false)
-  }
-
-  /* A hidden component will not receive messages. However, when a component is unhidden,
-   * we need to send it any items it may have registered streaming for. */
-  public setHidden(hidden: boolean): void {
-    if (hidden) {
-      this.hidden = true
-    } else if (this.hidden) {
-      this.hidden = false
-
-      if (this.streamContextItemOriginalMessage) {
-        this.handleStreamContextItemMessage(this.streamContextItemOriginalMessage)
-      }
-
-      if (this.streamItems) {
-        this.handleStreamItemsMessage(this.streamItemsOriginalMessage as ComponentMessage)
-      }
-    }
   }
 
   handleMessage(message: ComponentMessage): void {
@@ -616,7 +592,7 @@ export class ComponentViewer implements ComponentViewerInterface {
     }
   }
 
-  handleStreamItemsMessage(message: ComponentMessage): void {
+  private handleStreamItemsMessage(message: ComponentMessage): void {
     const data = message.data as StreamItemsMessageData
     const types = data.content_types.filter((type) => AllowedBatchContentTypes.includes(type)).sort()
     const requiredPermissions = [
@@ -643,7 +619,7 @@ export class ComponentViewer implements ComponentViewerInterface {
     )
   }
 
-  handleStreamContextItemMessage(message: ComponentMessage): void {
+  private handleStreamContextItemMessage(message: ComponentMessage): void {
     const requiredPermissions: ComponentPermission[] = [
       {
         name: ComponentAction.StreamContextItem,
@@ -671,7 +647,7 @@ export class ComponentViewer implements ComponentViewerInterface {
    * Save items is capable of saving existing items, and also creating new ones
    * if they don't exist.
    */
-  handleSaveItemsMessage(message: ComponentMessage): void {
+  private handleSaveItemsMessage(message: ComponentMessage): void {
     let responsePayloads = message.data.items as IncomingComponentItemPayload[]
     const requiredPermissions = []
 
@@ -814,7 +790,7 @@ export class ComponentViewer implements ComponentViewerInterface {
     )
   }
 
-  handleCreateItemsMessage(message: ComponentMessage): void {
+  private handleCreateItemsMessage(message: ComponentMessage): void {
     let responseItems = (message.data.item ? [message.data.item] : message.data.items) as IncomingComponentItemPayload[]
 
     const uniqueContentTypes = uniqueArray(
@@ -884,7 +860,7 @@ export class ComponentViewer implements ComponentViewerInterface {
     )
   }
 
-  handleDeleteItemsMessage(message: ComponentMessage): void {
+  private handleDeleteItemsMessage(message: ComponentMessage): void {
     const data = message.data as DeleteItemsMessageData
     const items = data.items.filter((item) => AllowedBatchContentTypes.includes(item.content_type))
 
@@ -932,7 +908,7 @@ export class ComponentViewer implements ComponentViewerInterface {
     )
   }
 
-  handleSetComponentPreferencesMessage(message: ComponentMessage): void {
+  private handleSetComponentPreferencesMessage(message: ComponentMessage): void {
     const noPermissionsRequired: ComponentPermission[] = []
     this.config.componentManagerFunctions.runWithPermissionsUseCase.execute(
       this.componentUniqueIdentifier,
@@ -949,7 +925,7 @@ export class ComponentViewer implements ComponentViewerInterface {
     )
   }
 
-  handleSetSizeEvent(message: ComponentMessage): void {
+  private handleSetSizeEvent(message: ComponentMessage): void {
     if (this.componentOrFeature.area !== ComponentArea.EditorStack) {
       return
     }
@@ -967,7 +943,7 @@ export class ComponentViewer implements ComponentViewerInterface {
     }
   }
 
-  getIframe(): HTMLIFrameElement | undefined {
+  private getIframe(): HTMLIFrameElement | undefined {
     return Array.from(document.getElementsByTagName('iframe')).find(
       (iframe) => iframe.dataset.componentViewerId === this.identifier,
     )
