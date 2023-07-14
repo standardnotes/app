@@ -16,6 +16,7 @@ import {
   PayloadEmitSource,
   ComponentInterface,
   ThemeInterface,
+  DecryptedItemInterface,
 } from '@standardnotes/models'
 import {
   AbstractService,
@@ -389,7 +390,10 @@ export class SNFeaturesService
     return indexOfRoleToCheck <= highestUserRoleIndex
   }
 
-  public getFeatureStatus(featureId: FeatureIdentifier): FeatureStatus {
+  public getFeatureStatus(
+    featureId: FeatureIdentifier,
+    options: { inContextOfItem?: DecryptedItemInterface } = {},
+  ): FeatureStatus {
     return this.getFeatureStatusUseCase.execute({
       featureId,
       firstPartyRoles: this.hasFirstPartyOnlineSubscription()
@@ -401,6 +405,7 @@ export class SNFeaturesService
       firstPartyOnlineSubscription: this.hasFirstPartyOnlineSubscription()
         ? this.subscriptions.getOnlineSubscription()
         : undefined,
+      inContextOfItem: options.inContextOfItem,
     })
   }
 
