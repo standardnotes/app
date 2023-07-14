@@ -126,24 +126,6 @@ export class SNComponentManager
     window.addEventListener('message', this.onWindowMessage, true)
   }
 
-  get isDesktop(): boolean {
-    return this.environment === Environment.Desktop
-  }
-
-  get isMobile(): boolean {
-    return this.environment === Environment.Mobile
-  }
-
-  get thirdPartyComponents(): ComponentInterface[] {
-    return this.items.getDisplayableComponents()
-  }
-
-  thirdPartyComponentsForArea(area: ComponentArea): ComponentInterface[] {
-    return this.thirdPartyComponents.filter((component) => {
-      return component.area === area
-    })
-  }
-
   override deinit(): void {
     super.deinit()
 
@@ -172,9 +154,15 @@ export class SNComponentManager
     ;(this.onWindowMessage as unknown) = undefined
   }
 
-  setPermissionDialogUIHandler(handler: (dialog: PermissionDialog) => void): void {
+  public setPermissionDialogUIHandler(handler: (dialog: PermissionDialog) => void): void {
     this.permissionDialogUIHandler = handler
     this.runWithPermissionsUseCase.setPermissionDialogUIHandler(handler)
+  }
+
+  public thirdPartyComponentsForArea(area: ComponentArea): ComponentInterface[] {
+    return this.items.getDisplayableComponents().filter((component) => {
+      return component.area === area
+    })
   }
 
   public createComponentViewer(
@@ -217,7 +205,7 @@ export class SNComponentManager
     removeFromArray(this.viewers, viewer)
   }
 
-  setDesktopManager(desktopManager: DesktopManagerInterface): void {
+  public setDesktopManager(desktopManager: DesktopManagerInterface): void {
     this.desktopManager = desktopManager
     this.configureForDesktop()
   }
@@ -234,13 +222,14 @@ export class SNComponentManager
       return
     }
 
-    if (this.isDesktop) {
+    if (this.desktopManager) {
       const thirdPartyComponents = components.filter((component) => {
         const nativeFeature = FindNativeFeature(component.identifier)
         return nativeFeature ? false : true
       })
+
       if (thirdPartyComponents.length > 0) {
-        this.desktopManager?.syncComponentsInstallation(thirdPartyComponents)
+        this.desktopManager.syncComponentsInstallation(thirdPartyComponents)
       }
     }
 
@@ -304,7 +293,8 @@ export class SNComponentManager
   }
 
   detectFocusChange = (): void => {
-    const activeIframes = this.allComponentIframes()
+    const activeIframes = Array.from(document.getElementsByTagName('iframe'))
+
     for (const iframe of activeIframes) {
       if (document.activeElement === iframe) {
         setTimeout(() => {
@@ -322,18 +312,19 @@ export class SNComponentManager
   }
 
   onWindowMessage = (event: MessageEvent): void => {
-    /** Make sure this message is for us */
     const data = event.data as ComponentMessage
-
     if (data.sessionKey) {
       this.log('Component manager received message', data)
       this.componentViewerForSessionKey(data.sessionKey)?.handleMessage(data)
     }
   }
 
-  configureForDesktop(): void {
-    this.desktopManager?.registerUpdateObserver((component: ComponentInterface) => {
-      /* Reload theme if active */
+  private configureForDesktop(): void {
+    if (!this.desktopManager) {
+      throw new Error('Desktop manager is not defined')
+    }
+
+    this.desktopManager.registerUpdateObserver((component: ComponentInterface) => {
       const activeComponents = this.getActiveComponents()
       const isComponentActive = activeComponents.find((candidate) => candidate.uuid === component.uuid)
       if (isComponentActive && component.isTheme()) {
@@ -342,18 +333,18 @@ export class SNComponentManager
     })
   }
 
-  postActiveThemesToAllViewers(): void {
+  private postActiveThemesToAllViewers(): void {
     for (const viewer of this.viewers) {
       viewer.postActiveThemes()
     }
   }
 
-  urlForFeature(uiFeature: UIFeature<ComponentFeatureDescription>): string | undefined {
+  public urlForFeature(uiFeature: UIFeature<ComponentFeatureDescription>): string | undefined {
     const usecase = new GetFeatureUrl(this.desktopManager, this.environment, this.platform)
     return usecase.execute(uiFeature)
   }
 
-  urlsForActiveThemes(): string[] {
+  public urlsForActiveThemes(): string[] {
     const themes = this.getActiveThemes()
     const urls = []
     for (const theme of themes) {
@@ -373,7 +364,7 @@ export class SNComponentManager
     return this.viewers.find((viewer) => viewer.sessionKey === key)
   }
 
-  async toggleTheme(uiFeature: UIFeature<ThemeFeatureDescription>): Promise<void> {
+  public async toggleTheme(uiFeature: UIFeature<ThemeFeatureDescription>): Promise<void> {
     this.log('Toggling theme', uiFeature.uniqueIdentifier)
 
     if (this.isThemeActive(uiFeature)) {
@@ -406,7 +397,7 @@ export class SNComponentManager
     }
   }
 
-  getActiveThemes(): UIFeature<ThemeFeatureDescription>[] {
+  public getActiveThemes(): UIFeature<ThemeFeatureDescription>[] {
     const activeThemesIdentifiers = this.getActiveThemesIdentifiers()
 
     const thirdPartyThemes = this.items.findItems<ThemeInterface>(activeThemesIdentifiers).map((item) => {
@@ -427,11 +418,11 @@ export class SNComponentManager
     return entitledThemes
   }
 
-  getActiveThemesIdentifiers(): string[] {
+  public getActiveThemesIdentifiers(): string[] {
     return this.preferences.getValue(PrefKey.ActiveThemes, undefined) ?? []
   }
 
-  async toggleComponent(component: ComponentInterface): Promise<void> {
+  public async toggleComponent(component: ComponentInterface): Promise<void> {
     this.log('Toggling component', component.uuid)
 
     if (this.isComponentActive(component)) {
@@ -439,14 +430,6 @@ export class SNComponentManager
     } else {
       await this.addActiveComponent(component)
     }
-  }
-
-  allComponentIframes(): HTMLIFrameElement[] {
-    return Array.from(document.getElementsByTagName('iframe'))
-  }
-
-  iframeForComponentViewer(viewer: ComponentViewer): HTMLIFrameElement | undefined {
-    return viewer.getIframe()
   }
 
   editorForNote(note: SNNote): UIFeature<EditorFeatureDescription | IframeComponentFeatureDescription> {

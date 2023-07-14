@@ -1,7 +1,7 @@
 import { FeatureIdentifier } from '@standardnotes/features'
 import { FeatureStatus, ItemManagerInterface } from '@standardnotes/services'
 import { GetFeatureStatusUseCase } from './GetFeatureStatus'
-import { ComponentInterface } from '@standardnotes/models'
+import { ComponentInterface, DecryptedItemInterface } from '@standardnotes/models'
 
 jest.mock('@standardnotes/features', () => ({
   FeatureIdentifier: {
@@ -71,6 +71,34 @@ describe('GetFeatureStatusUseCase', () => {
   })
 
   describe('native features', () => {
+    it('should return Entitled if the context item belongs to a shared vault and user does not have subscription', () => {
+      ;(FindNativeFeature as jest.Mock).mockReturnValue({ deprecated: false })
+
+      expect(
+        usecase.execute({
+          featureId: 'nativeFeature',
+          firstPartyOnlineSubscription: undefined,
+          firstPartyRoles: undefined,
+          hasPaidAnyPartyOnlineOrOfflineSubscription: false,
+          inContextOfItem: { shared_vault_uuid: 'sharedVaultUuid' } as jest.Mocked<DecryptedItemInterface>,
+        }),
+      ).toEqual(FeatureStatus.Entitled)
+    })
+
+    it('should return NoUserSubscription if the context item does not belong to a shared vault and user does not have subscription', () => {
+      ;(FindNativeFeature as jest.Mock).mockReturnValue({ deprecated: false })
+
+      expect(
+        usecase.execute({
+          featureId: 'nativeFeature',
+          firstPartyOnlineSubscription: undefined,
+          firstPartyRoles: undefined,
+          hasPaidAnyPartyOnlineOrOfflineSubscription: false,
+          inContextOfItem: { shared_vault_uuid: undefined } as jest.Mocked<DecryptedItemInterface>,
+        }),
+      ).toEqual(FeatureStatus.NoUserSubscription)
+    })
+
     it('should return NoUserSubscription for native features without subscription and roles', () => {
       ;(FindNativeFeature as jest.Mock).mockReturnValue({ deprecated: false })
 

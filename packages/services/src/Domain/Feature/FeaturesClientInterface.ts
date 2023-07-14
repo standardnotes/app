@@ -1,11 +1,11 @@
 import { FeatureIdentifier } from '@standardnotes/features'
-import { ComponentInterface } from '@standardnotes/models'
+import { ComponentInterface, DecryptedItemInterface } from '@standardnotes/models'
 
 import { FeatureStatus } from './FeatureStatus'
 import { SetOfflineFeaturesFunctionResponse } from './SetOfflineFeaturesFunctionResponse'
 
 export interface FeaturesClientInterface {
-  getFeatureStatus(featureId: FeatureIdentifier): FeatureStatus
+  getFeatureStatus(featureId: FeatureIdentifier, options?: { inContextOfItem?: DecryptedItemInterface }): FeatureStatus
   hasMinimumRole(role: string): boolean
 
   hasFirstPartyOfflineSubscription(): boolean

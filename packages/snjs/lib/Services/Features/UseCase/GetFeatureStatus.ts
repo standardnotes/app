@@ -1,4 +1,5 @@
 import { AnyFeatureDescription, FeatureIdentifier, FindNativeFeature } from '@standardnotes/features'
+import { DecryptedItemInterface } from '@standardnotes/models'
 import { Subscription } from '@standardnotes/security'
 import { FeatureStatus, ItemManagerInterface } from '@standardnotes/services'
 import { convertTimestampToMilliseconds } from '@standardnotes/utils'
@@ -11,6 +12,7 @@ export class GetFeatureStatusUseCase {
     firstPartyOnlineSubscription: Subscription | undefined
     firstPartyRoles: { online: string[] } | { offline: string[] } | undefined
     hasPaidAnyPartyOnlineOrOfflineSubscription: boolean
+    inContextOfItem?: DecryptedItemInterface
   }): FeatureStatus {
     if (this.isFreeFeature(dto.featureId as FeatureIdentifier)) {
       return FeatureStatus.Entitled
@@ -33,6 +35,7 @@ export class GetFeatureStatusUseCase {
       nativeFeature,
       firstPartyOnlineSubscription: dto.firstPartyOnlineSubscription,
       firstPartyRoles: dto.firstPartyRoles,
+      inContextOfItem: dto.inContextOfItem,
     })
   }
 
@@ -51,7 +54,15 @@ export class GetFeatureStatusUseCase {
     nativeFeature: AnyFeatureDescription
     firstPartyOnlineSubscription: Subscription | undefined
     firstPartyRoles: { online: string[] } | { offline: string[] } | undefined
+    inContextOfItem?: DecryptedItemInterface
   }): FeatureStatus {
+    if (dto.inContextOfItem) {
+      const isSharedVaultItem = dto.inContextOfItem.shared_vault_uuid !== undefined
+      if (isSharedVaultItem) {
+        return FeatureStatus.Entitled
+      }
+    }
+
     if (!dto.firstPartyOnlineSubscription && !dto.firstPartyRoles) {
       return FeatureStatus.NoUserSubscription
     }
