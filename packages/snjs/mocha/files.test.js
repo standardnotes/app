@@ -68,7 +68,12 @@ describe('files', function () {
   it('should not create valet token from server when user has an expired subscription', async function () {
     await setup({ fakeCrypto: true, subscription: false })
 
-    await context.activatePaidSubscriptionForUser()
+    const dateAnHourBefore = new Date()
+    dateAnHourBefore.setHours(dateAnHourBefore.getHours() - 1)
+
+    await context.activatePaidSubscriptionForUser({
+      expiresAt: dateAnHourBefore,
+    })
 
     const remoteIdentifier = Utils.generateUuid()
     const tokenOrError = await application.apiService.createUserFileValetToken(remoteIdentifier, 'write')

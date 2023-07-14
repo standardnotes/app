@@ -598,13 +598,19 @@ export class AppContext {
     console.warn('Anticipating a console error with message:', message)
   }
 
-  async activatePaidSubscriptionForUser() {
+  async activatePaidSubscriptionForUser(options = {}) {
+    const dateInAnHour = new Date()
+    dateInAnHour.setHours(dateInAnHour.getHours() + 1)
+
+    options.expiresAt = options.expiresAt || dateInAnHour
+    options.subscriptionPlanName = options.subscriptionPlanName || 'PRO_PLAN'
+
     try {
       await Events.publishMockedEvent('SUBSCRIPTION_PURCHASED', {
         userEmail: this.email,
         subscriptionId: GlobalSubscriptionIdCounter++,
-        subscriptionName: 'PRO_PLAN',
-        subscriptionExpiresAt: (new Date().getTime() + 3_600_000) * 1_000,
+        subscriptionName: options.subscriptionPlanName,
+        subscriptionExpiresAt: options.expiresAt.getTime() * 1_000,
         timestamp: Date.now(),
         offline: false,
         discountCode: null,
@@ -622,7 +628,7 @@ export class AppContext {
     }
 
     try {
-      await HomeServer.activatePremiumFeatures(this.email)
+      await HomeServer.activatePremiumFeatures(this.email, options.subscriptionPlanName, options.expiresAt)
 
       await Utils.sleep(1)
     } catch (error) {
