@@ -224,15 +224,12 @@ export class ComponentViewer implements ComponentViewerInterface {
     })
   }
 
-  private getContextItem(): DecryptedItemInterface {
+  private getContextItem(): DecryptedItemInterface | undefined {
     if (isComponentViewerItemReadonlyItem(this.options.item)) {
       return this.options.item.readonlyItem
     }
 
     const matchingItem = this.services.items.findItem(this.options.item.uuid)
-    if (!matchingItem) {
-      throw Error('Could not find matching item for component viewer')
-    }
 
     return matchingItem
   }
