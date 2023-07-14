@@ -189,7 +189,7 @@ describe('shared vault crypto', function () {
       console.error('TODO')
     })
 
-    it('revoking a keypair should send a keypair revocation event to trusted contacts', async () => {
+    it('revoking a keypair should send a keypair revocation message to trusted contacts', async () => {
       console.error('TODO')
     })
 

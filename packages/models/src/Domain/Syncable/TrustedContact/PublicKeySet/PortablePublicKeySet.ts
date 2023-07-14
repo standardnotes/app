@@ -1,4 +1,4 @@
-export type PublicKeySet = {
+export type PortablePublicKeySet = {
   encryption: string
   signing: string
 }

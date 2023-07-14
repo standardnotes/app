@@ -1,9 +1,13 @@
+import { ContactPublicKeySetJsonInterface } from './ContactPublicKeySetJsonInterface'
+
 export interface ContactPublicKeySetInterface {
   encryption: string
   signing: string
   timestamp: Date
   isRevoked: boolean
   previousKeySet?: ContactPublicKeySetInterface
+
+  isEqual(other: ContactPublicKeySetInterface): boolean
 
   findKeySet(params: {
     targetEncryptionPublicKey: string
@@ -12,4 +16,7 @@ export interface ContactPublicKeySetInterface {
 
   findKeySetWithPublicKey(publicKey: string): ContactPublicKeySetInterface | undefined
   findKeySetWithSigningKey(signingKey: string): ContactPublicKeySetInterface | undefined
+
+  asJson(): ContactPublicKeySetJsonInterface
+  mutableCopy(): ContactPublicKeySetInterface
 }

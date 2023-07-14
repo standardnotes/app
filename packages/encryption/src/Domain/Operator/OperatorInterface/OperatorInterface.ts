@@ -6,6 +6,7 @@ import {
   KeySystemRootKeyInterface,
   KeySystemIdentifier,
   KeySystemRootKeyParamsInterface,
+  PortablePublicKeySet,
 } from '@standardnotes/models'
 import { SNRootKeyParams } from '../../Keys/RootKey/RootKeyParams'
 import { EncryptedOutputParameters } from '../../Types/EncryptedParameters'
@@ -15,7 +16,6 @@ import { RootKeyEncryptedAuthenticatedData } from '../../Types/RootKeyEncryptedA
 import { HexString, PkcKeyPair } from '@standardnotes/sncrypto-common'
 import { AsymmetricallyEncryptedString } from '../Types/Types'
 import { AsymmetricDecryptResult } from '../Types/AsymmetricDecryptResult'
-import { PublicKeySet } from '../Types/PublicKeySet'
 import { AsymmetricSignatureVerificationDetachedResult } from '../Types/AsymmetricSignatureVerificationDetachedResult'
 
 /**w
@@ -96,7 +96,7 @@ export interface OperatorInterface {
     encryptedString: AsymmetricallyEncryptedString,
   ): AsymmetricSignatureVerificationDetachedResult
 
-  getSenderPublicKeySetFromAsymmetricallyEncryptedString(string: AsymmetricallyEncryptedString): PublicKeySet
+  getSenderPublicKeySetFromAsymmetricallyEncryptedString(string: AsymmetricallyEncryptedString): PortablePublicKeySet
 
   versionForAsymmetricallyEncryptedString(encryptedString: string): ProtocolVersion
 }

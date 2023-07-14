@@ -13,6 +13,7 @@ import {
   KeySystemRootKeyInterface,
   RootKeyInterface,
   KeySystemRootKeyParamsInterface,
+  PortablePublicKeySet,
 } from '@standardnotes/models'
 import { PkcKeyPair, PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { firstHalfOfString, secondHalfOfString, splitString, UuidGenerator } from '@standardnotes/utils'
@@ -28,7 +29,7 @@ import { ItemAuthenticatedData } from '../../Types/ItemAuthenticatedData'
 import { LegacyAttachedData } from '../../Types/LegacyAttachedData'
 import { RootKeyEncryptedAuthenticatedData } from '../../Types/RootKeyEncryptedAuthenticatedData'
 import { OperatorInterface } from '../OperatorInterface/OperatorInterface'
-import { PublicKeySet } from '../Types/PublicKeySet'
+
 import { AsymmetricDecryptResult } from '../Types/AsymmetricDecryptResult'
 import { AsymmetricSignatureVerificationDetachedResult } from '../Types/AsymmetricSignatureVerificationDetachedResult'
 import { AsyncOperatorInterface } from '../OperatorInterface/AsyncOperatorInterface'
@@ -276,7 +277,7 @@ export class SNProtocolOperator001 implements OperatorInterface, AsyncOperatorIn
     throw new Error('Method not implemented.')
   }
 
-  getSenderPublicKeySetFromAsymmetricallyEncryptedString(_string: string): PublicKeySet {
+  getSenderPublicKeySetFromAsymmetricallyEncryptedString(_string: string): PortablePublicKeySet {
     throw new Error('Method not implemented.')
   }
 }

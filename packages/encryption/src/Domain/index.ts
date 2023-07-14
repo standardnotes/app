@@ -28,7 +28,6 @@ export * from './Operator/Functions'
 export * from './Operator/OperatorInterface/OperatorInterface'
 export * from './Operator/OperatorManager'
 export * from './Operator/OperatorWrapper'
-export * from './Operator/Types/PublicKeySet'
 export * from './Operator/Types/AsymmetricSignatureVerificationDetachedResult'
 export * from './Operator/Types/Types'
 

@@ -102,6 +102,7 @@ export * from './Syncable/TrustedContact/TrustedContactContent'
 export * from './Syncable/TrustedContact/TrustedContactInterface'
 export * from './Syncable/TrustedContact/PublicKeySet/ContactPublicKeySetInterface'
 export * from './Syncable/TrustedContact/PublicKeySet/ContactPublicKeySet'
+export * from './Syncable/TrustedContact/PublicKeySet/PortablePublicKeySet'
 
 export * from './Syncable/KeySystemRootKey/KeySystemRootKey'
 export * from './Syncable/KeySystemRootKey/KeySystemRootKeyMutator'

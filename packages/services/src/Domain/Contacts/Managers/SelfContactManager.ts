@@ -14,9 +14,9 @@ import {
   TrustedContactContent,
   TrustedContactContentSpecialized,
   TrustedContactInterface,
+  PortablePublicKeySet,
 } from '@standardnotes/models'
 import { CreateOrEditTrustedContactUseCase } from '../UseCase/CreateOrEditTrustedContact'
-import { PublicKeySet } from '@standardnotes/encryption'
 import { ContentType } from '@standardnotes/domain-core'
 
 export class SelfContactManager {
@@ -62,7 +62,7 @@ export class SelfContactManager {
     )
   }
 
-  public async updateWithNewPublicKeySet(publicKeySet: PublicKeySet) {
+  public async updateWithNewPublicKeySet(publicKeySet: PortablePublicKeySet) {
     if (!InternalFeatureService.get().isFeatureEnabled(InternalFeature.Vaults)) {
       return
     }

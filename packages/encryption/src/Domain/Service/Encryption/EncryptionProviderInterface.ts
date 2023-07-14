@@ -13,6 +13,7 @@ import {
   KeySystemRootKeyInterface,
   KeySystemRootKeyParamsInterface,
   TrustedContactInterface,
+  PortablePublicKeySet,
 } from '@standardnotes/models'
 import { ClientDisplayableError } from '@standardnotes/responses'
 import { SNRootKeyParams } from '../../Keys/RootKey/RootKeyParams'
@@ -20,7 +21,6 @@ import { KeyedDecryptionSplit } from '../../Split/KeyedDecryptionSplit'
 import { KeyedEncryptionSplit } from '../../Split/KeyedEncryptionSplit'
 import { ItemAuthenticatedData } from '../../Types/ItemAuthenticatedData'
 import { PkcKeyPair } from '@standardnotes/sncrypto-common'
-import { PublicKeySet } from '../../Operator/Types/PublicKeySet'
 import { KeySystemKeyManagerInterface } from '../KeySystemKeyManagerInterface'
 import { AsymmetricallyEncryptedString } from '../../Operator/Types/Types'
 
@@ -129,5 +129,5 @@ export interface EncryptionProviderInterface {
   asymmetricSignatureVerifyDetached(
     encryptedString: AsymmetricallyEncryptedString,
   ): AsymmetricSignatureVerificationDetachedResult
-  getSenderPublicKeySetFromAsymmetricallyEncryptedString(string: string): PublicKeySet
+  getSenderPublicKeySetFromAsymmetricallyEncryptedString(string: string): PortablePublicKeySet
 }

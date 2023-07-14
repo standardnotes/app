@@ -21,7 +21,6 @@ import {
   SplitPayloadsByEncryptionType,
   V001Algorithm,
   V002Algorithm,
-  PublicKeySet,
   EncryptedOutputParameters,
   KeySystemKeyManagerInterface,
   AsymmetricSignatureVerificationDetachedResult,
@@ -46,6 +45,7 @@ import {
   KeySystemRootKeyInterface,
   KeySystemRootKeyParamsInterface,
   TrustedContactInterface,
+  PortablePublicKeySet,
   RootKeyParamsInterface,
 } from '@standardnotes/models'
 import { ClientDisplayableError } from '@standardnotes/responses'
@@ -92,6 +92,7 @@ import { RootKeyEncryptPayloadUseCase } from './UseCase/RootEncryption/EncryptPa
 import { ValidateAccountPasswordResult } from './RootKey/ValidateAccountPasswordResult'
 import { ValidatePasscodeResult } from './RootKey/ValidatePasscodeResult'
 import { ContentType } from '@standardnotes/domain-core'
+import { DecryptAsymmetricMessagePayload } from './UseCase/Asymmetric/DecryptAsymmetricMessagePayload'
 
 /**
  * The encryption service is responsible for the encryption and decryption of payloads, and
@@ -661,33 +662,12 @@ export class EncryptionService
     trustedSender: TrustedContactInterface | undefined
     privateKey: string
   }): M | undefined {
-    const defaultOperator = this.operators.defaultOperator()
-    const version = defaultOperator.versionForAsymmetricallyEncryptedString(dto.encryptedString)
-    const keyOperator = this.operators.operatorForVersion(version)
-    const decryptedResult = keyOperator.asymmetricDecrypt({
-      stringToDecrypt: dto.encryptedString,
-      recipientSecretKey: dto.privateKey,
-    })
-
-    if (!decryptedResult) {
+    const usecase = new DecryptAsymmetricMessagePayload<M>(this.operators)
+    const result = usecase.execute(dto)
+    if (result.isFailed()) {
       return undefined
     }
-
-    if (!decryptedResult.signatureVerified) {
-      return undefined
-    }
-
-    if (dto.trustedSender) {
-      if (!dto.trustedSender.isPublicKeyTrusted(decryptedResult.senderPublicKey)) {
-        return undefined
-      }
-
-      if (!dto.trustedSender.isSigningKeyTrusted(decryptedResult.signaturePublicKey)) {
-        return undefined
-      }
-    }
-
-    return JSON.parse(decryptedResult.plaintext)
+    return result.getValue()
   }
 
   asymmetricSignatureVerifyDetached(
@@ -699,7 +679,7 @@ export class EncryptionService
     return keyOperator.asymmetricSignatureVerifyDetached(encryptedString)
   }
 
-  getSenderPublicKeySetFromAsymmetricallyEncryptedString(string: AsymmetricallyEncryptedString): PublicKeySet {
+  getSenderPublicKeySetFromAsymmetricallyEncryptedString(string: AsymmetricallyEncryptedString): PortablePublicKeySet {
     const defaultOperator = this.operators.defaultOperator()
     const version = defaultOperator.versionForAsymmetricallyEncryptedString(string)
 

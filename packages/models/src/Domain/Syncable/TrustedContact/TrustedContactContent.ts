@@ -1,10 +1,10 @@
 import { ItemContent } from '../../Abstract/Content/ItemContent'
-import { ContactPublicKeySetInterface } from './PublicKeySet/ContactPublicKeySetInterface'
+import { ContactPublicKeySetJsonInterface } from './PublicKeySet/ContactPublicKeySetJsonInterface'
 
 export type TrustedContactContentSpecialized = {
   name: string
   contactUuid: string
-  publicKeySet: ContactPublicKeySetInterface
+  publicKeySet: ContactPublicKeySetJsonInterface
   isMe: boolean
 }
 

@@ -6,20 +6,24 @@ export class ContactPublicKeySet implements ContactPublicKeySetInterface {
   signing: string
   timestamp: Date
   isRevoked: boolean
-  previousKeySet?: ContactPublicKeySet
+  previousKeySet?: ContactPublicKeySetInterface
 
-  constructor(
-    encryption: string,
-    signing: string,
-    timestamp: Date,
-    isRevoked: boolean,
-    previousKeySet: ContactPublicKeySet | undefined,
-  ) {
-    this.encryption = encryption
-    this.signing = signing
-    this.timestamp = timestamp
-    this.isRevoked = isRevoked
-    this.previousKeySet = previousKeySet
+  constructor(dto: {
+    encryption: string
+    signing: string
+    timestamp: Date
+    isRevoked: boolean
+    previousKeySet: ContactPublicKeySetInterface | undefined
+  }) {
+    this.encryption = dto.encryption
+    this.signing = dto.signing
+    this.timestamp = dto.timestamp
+    this.isRevoked = dto.isRevoked
+    this.previousKeySet = dto.previousKeySet
+  }
+
+  public isEqual(other: ContactPublicKeySetInterface): boolean {
+    return this.encryption === other.encryption && this.signing === other.signing
   }
 
   public findKeySet(params: {
@@ -61,13 +65,33 @@ export class ContactPublicKeySet implements ContactPublicKeySetInterface {
     return undefined
   }
 
+  asJson(): ContactPublicKeySetJsonInterface {
+    return {
+      encryption: this.encryption,
+      signing: this.signing,
+      timestamp: this.timestamp,
+      isRevoked: this.isRevoked,
+      previousKeySet: this.previousKeySet ? this.previousKeySet.asJson() : undefined,
+    }
+  }
+
+  mutableCopy(): ContactPublicKeySetInterface {
+    return new ContactPublicKeySet({
+      encryption: this.encryption,
+      signing: this.signing,
+      timestamp: this.timestamp,
+      isRevoked: this.isRevoked,
+      previousKeySet: this.previousKeySet ? ContactPublicKeySet.FromJson(this.previousKeySet.asJson()) : undefined,
+    })
+  }
+
   static FromJson(json: ContactPublicKeySetJsonInterface): ContactPublicKeySetInterface {
-    return new ContactPublicKeySet(
-      json.encryption,
-      json.signing,
-      new Date(json.timestamp),
-      json.isRevoked,
-      json.previousKeySet ? ContactPublicKeySet.FromJson(json.previousKeySet) : undefined,
-    )
+    return new ContactPublicKeySet({
+      encryption: json.encryption,
+      signing: json.signing,
+      timestamp: new Date(json.timestamp),
+      isRevoked: json.isRevoked,
+      previousKeySet: json.previousKeySet ? ContactPublicKeySet.FromJson(json.previousKeySet) : undefined,
+    })
   }
 }

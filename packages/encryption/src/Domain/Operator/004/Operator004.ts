@@ -12,6 +12,7 @@ import {
   KeySystemIdentifier,
   RootKeyInterface,
   KeySystemRootKeyParamsInterface,
+  PortablePublicKeySet,
 } from '@standardnotes/models'
 import { KeyParamsOrigination, ProtocolVersion } from '@standardnotes/common'
 import { HexString, PkcKeyPair, PureCryptoInterface, Utf8String } from '@standardnotes/sncrypto-common'
@@ -41,7 +42,6 @@ import { CreateRootKeyUseCase } from './UseCase/RootKey/CreateRootKey'
 import { UuidGenerator } from '@standardnotes/utils'
 import { CreateKeySystemItemsKeyUseCase } from './UseCase/KeySystem/CreateKeySystemItemsKey'
 import { AsymmetricDecryptResult } from '../Types/AsymmetricDecryptResult'
-import { PublicKeySet } from '../Types/PublicKeySet'
 import { CreateRandomKeySystemRootKey } from './UseCase/KeySystem/CreateRandomKeySystemRootKey'
 import { CreateUserInputKeySystemRootKey } from './UseCase/KeySystem/CreateUserInputKeySystemRootKey'
 import { AsymmetricSignatureVerificationDetachedResult } from '../Types/AsymmetricSignatureVerificationDetachedResult'
@@ -186,7 +186,7 @@ export class SNProtocolOperator004 implements OperatorInterface, SyncOperatorInt
     return usecase.execute({ encryptedString })
   }
 
-  getSenderPublicKeySetFromAsymmetricallyEncryptedString(string: AsymmetricallyEncryptedString): PublicKeySet {
+  getSenderPublicKeySetFromAsymmetricallyEncryptedString(string: AsymmetricallyEncryptedString): PortablePublicKeySet {
     const [_, __, ___, additionalDataString] = <V004AsymmetricStringComponents>string.split(':')
     const parseBase64Usecase = new ParseConsistentBase64JsonPayloadUseCase(this.crypto)
     const additionalData = parseBase64Usecase.execute<AsymmetricItemAdditionalData>(additionalDataString)
