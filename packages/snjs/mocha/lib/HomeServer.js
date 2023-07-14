@@ -1,6 +1,6 @@
 import * as Defaults from './Defaults.js'
 
-export async function activatePremiumFeatures(userName) {
+export async function activatePremiumFeatures(username) {
   await fetch(`${Defaults.getDefaultHost()}/e2e/activate-premium`, {
     method: 'POST',
     headers: {
@@ -8,7 +8,7 @@ export async function activatePremiumFeatures(userName) {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      userName,
+      username,
     }),
   })
 }

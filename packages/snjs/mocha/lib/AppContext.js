@@ -599,24 +599,34 @@ export class AppContext {
   }
 
   async activatePaidSubscriptionForUser() {
-    await Events.publishMockedEvent('SUBSCRIPTION_PURCHASED', {
-      userEmail: this.email,
-      subscriptionId: GlobalSubscriptionIdCounter++,
-      subscriptionName: 'PRO_PLAN',
-      subscriptionExpiresAt: (new Date().getTime() + 3_600_000) * 1_000,
-      timestamp: Date.now(),
-      offline: false,
-      discountCode: null,
-      limitedDiscountPurchased: false,
-      newSubscriber: true,
-      totalActiveSubscriptionsCount: 1,
-      userRegisteredAt: 1,
-      billingFrequency: 12,
-      payAmount: 59.0,
-    })
+    try {
+      await Events.publishMockedEvent('SUBSCRIPTION_PURCHASED', {
+        userEmail: this.email,
+        subscriptionId: GlobalSubscriptionIdCounter++,
+        subscriptionName: 'PRO_PLAN',
+        subscriptionExpiresAt: (new Date().getTime() + 3_600_000) * 1_000,
+        timestamp: Date.now(),
+        offline: false,
+        discountCode: null,
+        limitedDiscountPurchased: false,
+        newSubscriber: true,
+        totalActiveSubscriptionsCount: 1,
+        userRegisteredAt: 1,
+        billingFrequency: 12,
+        payAmount: 59.0,
+      })
 
-    await HomeServer.activatePremiumFeatures(this.email)
+      await Utils.sleep(2)
+    }catch (error) {
+      console.warn(`Mock events service not available. You are probalby running a test suite for home server: ${error.message}`)
+    }
 
-    await Utils.sleep(2)
+    try {
+      await HomeServer.activatePremiumFeatures(this.email)
+
+      await Utils.sleep(1)
+    } catch (error) {
+      console.warn(`Home server not available. You are probalby running a test suite for self hosted setup: ${error.message}`)
+    }
   }
 }

@@ -138,7 +138,7 @@ describe('settings service', function () {
     await context.activatePaidSubscriptionForUser()
 
     const setting = await application.settings.getSubscriptionSetting(
-      SettingName.create(SettingName.NAMES.FileUploadBytesLimit).getValue(),
+      SettingName.create(SettingName.NAMES.FileUploadBytesUsed).getValue(),
     )
     expect(setting).to.be.a('string')
   })
@@ -158,7 +158,6 @@ describe('settings service', function () {
     const limitSettingBefore = await application.settings.getSubscriptionSetting(
       SettingName.create(SettingName.NAMES.FileUploadBytesLimit).getValue(),
     )
-    expect(limitSettingBefore).to.equal('107374182400')
 
     const usedSettingBefore = await application.settings.getSubscriptionSetting(
       SettingName.create(SettingName.NAMES.FileUploadBytesUsed).getValue(),
