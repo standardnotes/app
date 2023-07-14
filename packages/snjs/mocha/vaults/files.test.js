@@ -25,7 +25,7 @@ describe('shared vault files', function () {
     await context.register()
 
     vaults = context.vaults
-    await context.publicMockSubscriptionPurchaseEvent()
+    await context.activatePaidSubscriptionForUser()
   })
 
   describe('private vaults', () => {

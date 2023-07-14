@@ -1,7 +1,7 @@
 import * as Defaults from './Defaults.js'
 
 export async function publishMockedEvent(eventType, eventPayload) {
-  const response = await fetch(`${Defaults.getDefaultMockedEventServiceUrl()}/events`, {
+  await fetch(`${Defaults.getDefaultMockedEventServiceUrl()}/events`, {
     method: 'POST',
     headers: {
       Accept: 'application/json',
@@ -12,8 +12,4 @@ export async function publishMockedEvent(eventType, eventPayload) {
       eventPayload,
     }),
   })
-
-  if (!response.ok) {
-    console.error(`Failed to publish mocked event: ${response.status} ${response.statusText}`)
-  }
 }

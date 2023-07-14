@@ -3,6 +3,7 @@ import * as Applications from './Applications.js'
 import * as Utils from './Utils.js'
 import * as Defaults from './Defaults.js'
 import * as Events from './Events.js'
+import * as HomeServer from './HomeServer.js'
 import { createNotePayload } from './Items.js'
 
 UuidGenerator.SetGenerator(new FakeWebCrypto().generateUUID)
@@ -597,23 +598,41 @@ export class AppContext {
     console.warn('Anticipating a console error with message:', message)
   }
 
-  async publicMockSubscriptionPurchaseEvent() {
-    await Events.publishMockedEvent('SUBSCRIPTION_PURCHASED', {
-      userEmail: this.email,
-      subscriptionId: GlobalSubscriptionIdCounter++,
-      subscriptionName: 'PRO_PLAN',
-      subscriptionExpiresAt: (new Date().getTime() + 3_600_000) * 1_000,
-      timestamp: Date.now(),
-      offline: false,
-      discountCode: null,
-      limitedDiscountPurchased: false,
-      newSubscriber: true,
-      totalActiveSubscriptionsCount: 1,
-      userRegisteredAt: 1,
-      billingFrequency: 12,
-      payAmount: 59.0,
-    })
+  async activatePaidSubscriptionForUser(options = {}) {
+    const dateInAnHour = new Date()
+    dateInAnHour.setHours(dateInAnHour.getHours() + 1)
 
-    await Utils.sleep(2)
+    options.expiresAt = options.expiresAt || dateInAnHour
+    options.subscriptionPlanName = options.subscriptionPlanName || 'PRO_PLAN'
+
+    try {
+      await Events.publishMockedEvent('SUBSCRIPTION_PURCHASED', {
+        userEmail: this.email,
+        subscriptionId: GlobalSubscriptionIdCounter++,
+        subscriptionName: options.subscriptionPlanName,
+        subscriptionExpiresAt: options.expiresAt.getTime() * 1_000,
+        timestamp: Date.now(),
+        offline: false,
+        discountCode: null,
+        limitedDiscountPurchased: false,
+        newSubscriber: true,
+        totalActiveSubscriptionsCount: 1,
+        userRegisteredAt: 1,
+        billingFrequency: 12,
+        payAmount: 59.0,
+      })
+
+      await Utils.sleep(2)
+    } catch (error) {
+      console.warn(`Mock events service not available. You are probalby running a test suite for home server: ${error.message}`)
+    }
+
+    try {
+      await HomeServer.activatePremiumFeatures(this.email, options.subscriptionPlanName, options.expiresAt)
+
+      await Utils.sleep(1)
+    } catch (error) {
+      console.warn(`Home server not available. You are probalby running a test suite for self hosted setup: ${error.message}`)
+    }
   }
 }
