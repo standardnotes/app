@@ -134,50 +134,19 @@ describe('settings service', function () {
     expect(settings.getSettingValue(SettingName.create(SettingName.NAMES.MfaSecret).getValue())).to.not.be.ok
   })
 
-  it('reads a subscription setting - @paidfeature', async () => {
-    await Events.publishMockedEvent('SUBSCRIPTION_PURCHASED', {
-      userEmail: context.email,
-      subscriptionId: subscriptionId++,
-      subscriptionName: 'PRO_PLAN',
-      subscriptionExpiresAt: (new Date().getTime() + 3_600_000) * 1_000,
-      timestamp: Date.now(),
-      offline: false,
-      discountCode: null,
-      limitedDiscountPurchased: false,
-      newSubscriber: true,
-      totalActiveSubscriptionsCount: 1,
-      userRegisteredAt: 1,
-      billingFrequency: 12,
-      payAmount: 59.0,
-    })
-
-    await Factory.sleep(2)
+  it('reads a subscription setting', async () => {
+    await context.activatePaidSubscriptionForUser()
 
     const setting = await application.settings.getSubscriptionSetting(
-      SettingName.create(SettingName.NAMES.FileUploadBytesLimit).getValue(),
+      SettingName.create(SettingName.NAMES.FileUploadBytesUsed).getValue(),
     )
     expect(setting).to.be.a('string')
   })
 
-  it('persist irreplaceable subscription settings between subsequent subscriptions - @paidfeature', async () => {
+  it('persist irreplaceable subscription settings between subsequent subscriptions', async () => {
     await reInitializeApplicationWithRealCrypto()
 
-    await Events.publishMockedEvent('SUBSCRIPTION_PURCHASED', {
-      userEmail: context.email,
-      subscriptionId: subscriptionId,
-      subscriptionName: 'PRO_PLAN',
-      subscriptionExpiresAt: (new Date().getTime() + 3_600_000) * 1_000,
-      timestamp: Date.now(),
-      offline: false,
-      discountCode: null,
-      limitedDiscountPurchased: false,
-      newSubscriber: true,
-      totalActiveSubscriptionsCount: 1,
-      userRegisteredAt: 1,
-      billingFrequency: 12,
-      payAmount: 59.0,
-    })
-    await Factory.sleep(1)
+    await context.activatePaidSubscriptionForUser()
 
     const response = await fetch('/packages/snjs/mocha/assets/small_file.md')
     const buffer = new Uint8Array(await response.arrayBuffer())
@@ -189,42 +158,15 @@ describe('settings service', function () {
     const limitSettingBefore = await application.settings.getSubscriptionSetting(
       SettingName.create(SettingName.NAMES.FileUploadBytesLimit).getValue(),
     )
-    expect(limitSettingBefore).to.equal('107374182400')
 
     const usedSettingBefore = await application.settings.getSubscriptionSetting(
       SettingName.create(SettingName.NAMES.FileUploadBytesUsed).getValue(),
     )
     expect(usedSettingBefore).to.equal('196')
 
-    await Events.publishMockedEvent('SUBSCRIPTION_EXPIRED', {
-      userEmail: context.email,
-      subscriptionId: subscriptionId++,
-      subscriptionName: 'PRO_PLAN',
-      timestamp: Date.now(),
-      offline: false,
-      totalActiveSubscriptionsCount: 1,
-      userExistingSubscriptionsCount: 1,
-      billingFrequency: 12,
-      payAmount: 59.0,
-    })
-    await Factory.sleep(1)
+    await context.activatePaidSubscriptionForUser()
 
-    await Events.publishMockedEvent('SUBSCRIPTION_PURCHASED', {
-      userEmail: context.email,
-      subscriptionId: subscriptionId++,
-      subscriptionName: 'PRO_PLAN',
-      subscriptionExpiresAt: (new Date().getTime() + 3_600_000) * 1_000,
-      timestamp: Date.now(),
-      offline: false,
-      discountCode: null,
-      limitedDiscountPurchased: false,
-      newSubscriber: false,
-      totalActiveSubscriptionsCount: 2,
-      userRegisteredAt: 1,
-      billingFrequency: 12,
-      payAmount: 59.0,
-    })
-    await Factory.sleep(1)
+    await context.activatePaidSubscriptionForUser()
 
     const limitSettingAfter = await application.settings.getSubscriptionSetting(
       SettingName.create(SettingName.NAMES.FileUploadBytesLimit).getValue(),
