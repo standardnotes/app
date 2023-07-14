@@ -23,6 +23,7 @@ type ReceivedAndroidFile = ReceivedItem & {
 
 type ReceivedIosFile = ReceivedItem & {
   path: string
+  mimeType: string
 }
 
 type ReceivedWeblink = ReceivedItem & {
@@ -127,7 +128,18 @@ export class ReceivedSharedItemsHandler {
       )
     } else if (isReceivedIosFile(item)) {
       const data = await readFile(item.path, 'base64')
-      console.log(data.slice(0, 50))
+      const file = {
+        name: item.fileName || item.path,
+        data,
+        mimeType: item.mimeType,
+      }
+      this.webViewRef.current?.postMessage(
+        JSON.stringify({
+          reactNativeEvent: ReactNativeToWebEvent.ReceivedFile,
+          messageType: 'event',
+          messageData: file,
+        }),
+      )
     } else if (isReceivedWeblink(item)) {
       this.webViewRef.current?.postMessage(
         JSON.stringify({

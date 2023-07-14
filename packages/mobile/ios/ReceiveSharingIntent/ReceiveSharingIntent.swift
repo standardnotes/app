@@ -1,5 +1,6 @@
 import Foundation
 import Photos
+import MobileCoreServices
 
 @objc(ReceiveSharingIntent)
 class ReceiveSharingIntent: NSObject {
@@ -44,14 +45,7 @@ class ReceiveSharingIntent: NSObject {
             guard let path = getAbsolutePath(for: $0.path) else {
               return nil
             }
-            if ($0.type == .video && $0.thumbnail != nil) {
-              let thumbnail = getAbsolutePath(for: $0.thumbnail!)
-              return SharedMediaFile.init(path: path, thumbnail: thumbnail, duration: $0.duration, type: $0.type)
-            } else if ($0.type == .video && $0.thumbnail == nil) {
-              return SharedMediaFile.init(path: path, thumbnail: nil, duration: $0.duration, type: $0.type)
-            }
-            
-            return SharedMediaFile.init(path: path, thumbnail: nil, duration: $0.duration, type: $0.type)
+            return SharedMediaFile.init(path: path, fileName: fileNameForPath(path: path), mimeType: mimeTypeForPath(path: path))
           }
           latestMedia = sharedMediaFiles
           let json = toJson(data: latestMedia);
@@ -65,7 +59,7 @@ class ReceiveSharingIntent: NSObject {
             guard let path = getAbsolutePath(for: $0.path) else {
               return nil
             }
-            return SharedMediaFile.init(path: path, thumbnail: nil, duration: nil, type: $0.type)
+            return SharedMediaFile.init(path: path, fileName: fileNameForPath(path: path), mimeType: mimeTypeForPath(path: path))
           }
           latestMedia = sharedMediaFiles
           let json = toJson(data: latestMedia);
@@ -143,25 +137,15 @@ class ReceiveSharingIntent: NSObject {
   
   class SharedMediaFile: Codable {
     var path: String;
-    var thumbnail: String?; // video thumbnail
-    var duration: Double?; // video duration in milliseconds
-    var type: SharedMediaType;
+    var fileName: String?;
+    var mimeType: String?;
     
-    
-    init(path: String, thumbnail: String?, duration: Double?, type: SharedMediaType) {
+    init(path: String, fileName: String?, mimeType: String?) {
       self.path = path
-      self.thumbnail = thumbnail
-      self.duration = duration
-      self.type = type
+      self.fileName = fileName
+      self.mimeType = mimeType
     }
   }
-  
-  enum SharedMediaType: Int, Codable {
-    case image
-    case video
-    case file
-  }
-  
   
   @objc
   func clearFileNames(){
@@ -173,4 +157,22 @@ class ReceiveSharingIntent: NSObject {
   static func requiresMainQueueSetup() -> Bool {
     return true
   }
+}
+
+func fileNameForPath(path: String) -> String? {
+  let url = NSURL(fileURLWithPath: path)
+  return url.lastPathComponent
+}
+
+func mimeTypeForPath(path: String) -> String {
+  let url = NSURL(fileURLWithPath: path)
+  let pathExtension = url.pathExtension
+  
+  if let uti = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, pathExtension! as NSString, nil)?.takeRetainedValue() {
+    if let mimetype = UTTypeCopyPreferredTagWithClass(uti, kUTTagClassMIMEType)?.takeRetainedValue() {
+      return mimetype as String
+    }
+    return "application/octet-stream"
+  }
+  return "application/octet-stream"
 }
