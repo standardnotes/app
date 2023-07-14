@@ -1,6 +1,6 @@
 import { ReactNativeToWebEvent } from '@standardnotes/snjs'
 import { RefObject } from 'react'
-import { AppState, NativeEventSubscription, NativeModules, Platform } from 'react-native'
+import { AppState, Linking, NativeEventSubscription, NativeModules, Platform } from 'react-native'
 import { readFile } from 'react-native-fs'
 import WebView from 'react-native-webview'
 const { ReceiveSharingIntent } = NativeModules
@@ -40,8 +40,11 @@ const isReceivedText = (item: ReceivedItem): item is ReceivedText => {
   return !!item.text
 }
 
+const BundleIdentifier = 'com.standardnotes.standardnotes'
+const IosUrlToCheckFor = `${BundleIdentifier}://dataUrl`
+
 export class ReceivedSharedItemsHandler {
-  private appStateEventSub: NativeEventSubscription | null = null
+  private eventSub: NativeEventSubscription | null = null
   private receivedItemsQueue: ReceivedItem[] = []
   private isApplicationLaunched = false
 
@@ -61,23 +64,29 @@ export class ReceivedSharedItemsHandler {
 
   deinit() {
     this.receivedItemsQueue = []
-    this.appStateEventSub?.remove()
+    this.eventSub?.remove()
   }
 
   private registerNativeEventSub = () => {
-    this.appStateEventSub = AppState.addEventListener('change', (state) => {
-      if (state === 'active') {
-        ReceiveSharingIntent.getFileNames()
-          .then(async (filesObject: Record<string, ReceivedItem>) => {
-            const items = Object.values(filesObject)
-            this.receivedItemsQueue.push(...items)
+    if (Platform.OS === 'ios') {
+      Linking.getInitialURL()
+        .then((url) => {
+          if (url && url.startsWith(IosUrlToCheckFor)) {
+            this.addSharedItemsToQueue()
+          }
+        })
+        .catch(console.error)
+      this.eventSub = Linking.addEventListener('url', ({ url }) => {
+        if (url && url.startsWith(IosUrlToCheckFor)) {
+          this.addSharedItemsToQueue()
+        }
+      })
+      return
+    }
 
-            if (this.isApplicationLaunched) {
-              this.handleItemsQueue().catch(console.error)
-            }
-          })
-          .then(() => ReceiveSharingIntent.clearFileNames())
-          .catch(console.error)
+    this.eventSub = AppState.addEventListener('change', (state) => {
+      if (state === 'active') {
+        this.addSharedItemsToQueue()
       }
     })
   }
@@ -130,5 +139,19 @@ export class ReceivedSharedItemsHandler {
     }
 
     this.handleItemsQueue().catch(console.error)
+  }
+
+  private addSharedItemsToQueue = () => {
+    ReceiveSharingIntent.getFileNames()
+      .then(async (filesObject: Record<string, ReceivedItem>) => {
+        const items = Object.values(filesObject)
+        this.receivedItemsQueue.push(...items)
+
+        if (this.isApplicationLaunched) {
+          this.handleItemsQueue().catch(console.error)
+        }
+      })
+      .then(() => ReceiveSharingIntent.clearFileNames())
+      .catch(console.error)
   }
 }
