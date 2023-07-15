@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.56.0](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.55.12...@standardnotes/mobile@3.56.0) (2023-07-15)
+
+### Features
+
+* You can now share files & text from other apps into SN on iOS ([#2358](https://github.com/standardnotes/app/issues/2358)) ([88ef588](https://github.com/standardnotes/app/commit/88ef5887a91b4a0eace68faec90cd53381436dea))
+
 ## [3.55.12](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.55.11...@standardnotes/mobile@3.55.12) (2023-07-14)
 
 **Note:** Version bump only for package @standardnotes/mobile
