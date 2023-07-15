@@ -32,12 +32,12 @@ class ShareViewController: SLComposeServiceViewController {
     if let content = extensionContext!.inputItems[0] as? NSExtensionItem {
       if let contents = content.attachments {
         for (index, attachment) in (contents).enumerated() {
-          if attachment.hasItemConformingToTypeIdentifier(imageContentType) {
+          if attachment.hasItemConformingToTypeIdentifier(fileURLType) {
+            handleFiles(content: content, attachment: attachment, index: index)
+          } else if attachment.hasItemConformingToTypeIdentifier(imageContentType) {
             handleImages(content: content, attachment: attachment, index: index)
           } else if attachment.hasItemConformingToTypeIdentifier(textContentType) {
             handleText(content: content, attachment: attachment, index: index)
-          } else if attachment.hasItemConformingToTypeIdentifier(fileURLType) {
-            handleFiles(content: content, attachment: attachment, index: index)
           } else if attachment.hasItemConformingToTypeIdentifier(urlContentType) {
             handleUrl(content: content, attachment: attachment, index: index)
           } else if attachment.hasItemConformingToTypeIdentifier(videoContentType) {
@@ -203,6 +203,15 @@ class ShareViewController: SLComposeServiceViewController {
     alert.addAction(action)
     present(alert, animated: true, completion: nil)
     extensionContext!.completeRequest(returningItems: [], completionHandler: nil)
+  }
+  
+  private func alertLog(message: String) {
+    let alert = UIAlertController(title: "Log", message: message, preferredStyle: .alert)
+    
+    let action = UIAlertAction(title: "OK", style: .default)
+    
+    alert.addAction(action)
+    present(alert, animated: true, completion: nil)
   }
   
   enum RedirectType {
