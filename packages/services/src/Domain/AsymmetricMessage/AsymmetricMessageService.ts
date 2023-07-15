@@ -16,6 +16,8 @@ import {
   AsymmetricMessagePayload,
   AsymmetricMessageSharedVaultMetadataChanged,
   VaultListingMutator,
+  AsymmetricMessageSenderKeysetRevoked,
+  TrustedContactMutator,
 } from '@standardnotes/models'
 import { HandleTrustedSharedVaultRootKeyChangedMessage } from './UseCase/HandleTrustedSharedVaultRootKeyChangedMessage'
 import { ItemManagerInterface } from '../Item/ItemManagerInterface'
@@ -130,7 +132,7 @@ export class AsymmetricMessageService
       } else if (trustedMessagePayload.type === AsymmetricMessagePayloadType.SharedVaultRootKeyChanged) {
         await this.handleTrustedSharedVaultRootKeyChangedMessage(message, trustedMessagePayload)
       } else if (trustedMessagePayload.type === AsymmetricMessagePayloadType.SharedVaultMetadataChanged) {
-        await this.handleVaultMetadataChangedMessage(message, trustedMessagePayload)
+        await this.handleTrustedVaultMetadataChangedMessage(message, trustedMessagePayload)
       } else if (trustedMessagePayload.type === AsymmetricMessagePayloadType.SharedVaultInvite) {
         throw new Error('Shared vault invites payloads are not handled as part of asymmetric messages')
       }
@@ -148,11 +150,30 @@ export class AsymmetricMessageService
     })
   }
 
-  private async deleteMessageAfterProcessing(message: AsymmetricMessageServerHash): Promise<void> {
+  async deleteMessageAfterProcessing(message: AsymmetricMessageServerHash): Promise<void> {
     await this.messageServer.deleteMessage({ messageUuid: message.uuid })
   }
 
-  async handleVaultMetadataChangedMessage(
+  async handleTrustedSenderKeysetRevokedMessage(
+    message: AsymmetricMessageServerHash,
+    trustedPayload: AsymmetricMessageSenderKeysetRevoked,
+  ): Promise<void> {
+    const contact = this.contacts.findTrustedContact(message.sender_uuid)
+    if (!contact) {
+      return
+    }
+
+    await this.mutator.changeItem<TrustedContactMutator>(contact, (mutator) => {
+      mutator.revokePublicKeySet({
+        encryption: trustedPayload.data.revokedPublicKey,
+        signing: trustedPayload.data.revokedSigningPublicKey,
+      })
+    })
+
+    void this.sync.sync()
+  }
+
+  async handleTrustedVaultMetadataChangedMessage(
     _message: AsymmetricMessageServerHash,
     trustedPayload: AsymmetricMessageSharedVaultMetadataChanged,
   ): Promise<void> {
@@ -174,7 +195,7 @@ export class AsymmetricMessageService
     await this.contacts.createOrUpdateTrustedContactFromContactShare(trustedPayload.data.trustedContact)
   }
 
-  private async handleTrustedSenderKeypairChangedMessage(
+  async handleTrustedSenderKeypairChangedMessage(
     message: AsymmetricMessageServerHash,
     trustedPayload: AsymmetricMessageSenderKeypairChanged,
   ): Promise<void> {
@@ -185,7 +206,7 @@ export class AsymmetricMessageService
     })
   }
 
-  private async handleTrustedSharedVaultRootKeyChangedMessage(
+  async handleTrustedSharedVaultRootKeyChangedMessage(
     _message: AsymmetricMessageServerHash,
     trustedPayload: AsymmetricMessageSharedVaultRootKeyChanged,
   ): Promise<void> {

@@ -2,6 +2,7 @@ export enum AsymmetricMessagePayloadType {
   ContactShare = 'contact-share',
   SharedVaultRootKeyChanged = 'shared-vault-root-key-changed',
   SenderKeypairChanged = 'sender-keypair-changed',
+  SenderKeysetRevoked = 'sender-keyset-revoked',
   SharedVaultMetadataChanged = 'shared-vault-metadata-changed',
 
   /**

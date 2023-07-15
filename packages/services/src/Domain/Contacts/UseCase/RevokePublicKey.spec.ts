@@ -1,6 +1,10 @@
 import { MutatorClientInterface } from './../../Mutator/MutatorClientInterface'
 import { ContactPublicKeySet, ContactPublicKeySetInterface, TrustedContactInterface } from '@standardnotes/models'
 import { RevokePublicKeyUseCase } from './RevokePublicKey'
+import { ContactServiceInterface } from '../ContactServiceInterface'
+import { EncryptAsymmetricMessagePayload } from '../../Encryption/UseCase/Asymmetric/EncryptAsymmetricMessagePayload'
+import { SendAsymmetricMessageUseCase } from '../../AsymmetricMessage/UseCase/SendAsymmetricMessageUseCase'
+import { PkcKeyPair } from '@standardnotes/sncrypto-common'
 
 function createMockPublicKeySetChain(): ContactPublicKeySetInterface {
   const nMinusTwo = new ContactPublicKeySet({
@@ -33,6 +37,18 @@ function createMockPublicKeySetChain(): ContactPublicKeySetInterface {
 describe('RevokePublicKey', () => {
   let selfContact: jest.Mocked<TrustedContactInterface>
   let usecase: RevokePublicKeyUseCase
+  let encryptAsymmetricMessageUseCase: jest.Mocked<EncryptAsymmetricMessagePayload>
+  let sendMessageUseCase: jest.Mocked<SendAsymmetricMessageUseCase>
+
+  const senderEncryptionKeyPair: PkcKeyPair = {
+    privateKey: 'private-key',
+    publicKey: 'public-key',
+  }
+
+  const senderSigningKeyPair: PkcKeyPair = {
+    privateKey: 'private-key',
+    publicKey: 'public-key',
+  }
 
   beforeEach(() => {
     selfContact = {
@@ -42,15 +58,30 @@ describe('RevokePublicKey', () => {
       isMe: true,
     } as jest.Mocked<TrustedContactInterface>
 
+    const otherContact = {
+      name: 'Other',
+      contactUuid: '456',
+      publicKeySet: createMockPublicKeySetChain(),
+      isMe: false,
+    } as jest.Mocked<TrustedContactInterface>
+
     const mutator = {} as jest.Mocked<MutatorClientInterface>
 
-    usecase = new RevokePublicKeyUseCase(mutator)
+    const contacts = {} as jest.Mocked<ContactServiceInterface>
+    contacts.getAllContacts = jest.fn().mockReturnValue([selfContact, otherContact])
+
+    encryptAsymmetricMessageUseCase = {} as jest.Mocked<EncryptAsymmetricMessagePayload>
+    sendMessageUseCase = {} as jest.Mocked<SendAsymmetricMessageUseCase>
+
+    usecase = new RevokePublicKeyUseCase(mutator, contacts, encryptAsymmetricMessageUseCase, sendMessageUseCase)
   })
 
   it('should not be able to revoke current keyset', async () => {
     const result = await usecase.execute({
       selfContact: selfContact,
       revokeKeySet: selfContact.publicKeySet,
+      senderEncryptionKeyPair,
+      senderSigningKeyPair,
     })
 
     expect(result.isFailed()).toBe(true)
@@ -60,16 +91,24 @@ describe('RevokePublicKey', () => {
     const result = await usecase.execute({
       selfContact: selfContact,
       revokeKeySet: selfContact.publicKeySet.previousKeySet!,
+      senderEncryptionKeyPair,
+      senderSigningKeyPair,
     })
 
     expect(result.isFailed()).toBe(false)
   })
 
   it('revoking a keyset should send a keypair revocation message to trusted contacts', async () => {
-    console.error('TODO')
-  })
+    const result = await usecase.execute({
+      selfContact: selfContact,
+      revokeKeySet: selfContact.publicKeySet.previousKeySet!,
+      senderEncryptionKeyPair,
+      senderSigningKeyPair,
+    })
 
-  it('should distrust revoked keyset as third party contact', async () => {
-    console.error('TODO')
+    expect(result.isFailed()).toBe(false)
+
+    expect(encryptAsymmetricMessageUseCase.execute).toBeCalledTimes(1)
+    expect(sendMessageUseCase.execute).toBeCalledTimes(1)
   })
 })

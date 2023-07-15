@@ -1,14 +1,30 @@
-import { ContactPublicKeySetInterface, TrustedContactInterface, TrustedContactMutator } from '@standardnotes/models'
+import {
+  AsymmetricMessagePayloadType,
+  ContactPublicKeySetInterface,
+  TrustedContactInterface,
+  TrustedContactMutator,
+  AsymmetricMessageSenderKeysetRevoked,
+} from '@standardnotes/models'
 import { MutatorClientInterface } from '../../Mutator/MutatorClientInterface'
-
 import { Result, UseCaseInterface } from '@standardnotes/domain-core'
+import { ContactServiceInterface } from '../ContactServiceInterface'
+import { PkcKeyPair } from '@standardnotes/sncrypto-common'
+import { EncryptAsymmetricMessagePayload } from '../../Encryption/UseCase/Asymmetric/EncryptAsymmetricMessagePayload'
+import { SendAsymmetricMessageUseCase } from '../../AsymmetricMessage/UseCase/SendAsymmetricMessageUseCase'
 
 export class RevokePublicKeyUseCase implements UseCaseInterface<void> {
-  constructor(private mutator: MutatorClientInterface) {}
+  constructor(
+    private mutator: MutatorClientInterface,
+    private contacts: ContactServiceInterface,
+    private encryptAsymmetricMessageUseCase: EncryptAsymmetricMessagePayload,
+    private sendMessageUseCase: SendAsymmetricMessageUseCase,
+  ) {}
 
   async execute(dto: {
     selfContact: TrustedContactInterface
     revokeKeySet: ContactPublicKeySetInterface
+    senderEncryptionKeyPair: PkcKeyPair
+    senderSigningKeyPair: PkcKeyPair
   }): Promise<Result<void>> {
     const currentKeySet = dto.selfContact.publicKeySet
 
@@ -23,6 +39,44 @@ export class RevokePublicKeyUseCase implements UseCaseInterface<void> {
       })
     })
 
+    await this.sendMessageToContacts(dto)
+
     return Result.ok()
+  }
+
+  private async sendMessageToContacts(dto: {
+    revokeKeySet: ContactPublicKeySetInterface
+    senderEncryptionKeyPair: PkcKeyPair
+    senderSigningKeyPair: PkcKeyPair
+  }): Promise<void> {
+    const allContacts = this.contacts.getAllContacts().filter((contact) => !contact.isMe)
+
+    for (const contact of allContacts) {
+      const message: AsymmetricMessageSenderKeysetRevoked = {
+        type: AsymmetricMessagePayloadType.SenderKeysetRevoked,
+        data: {
+          recipientUuid: contact.contactUuid,
+          revokedPublicKey: dto.revokeKeySet.encryption,
+          revokedSigningPublicKey: dto.revokeKeySet.signing,
+        },
+      }
+
+      const encryptedMessage = this.encryptAsymmetricMessageUseCase.execute({
+        message: message,
+        senderKeyPair: dto.senderEncryptionKeyPair,
+        senderSigningKeyPair: dto.senderSigningKeyPair,
+        recipientPublicKey: contact.publicKeySet.encryption,
+      })
+
+      if (encryptedMessage.isFailed()) {
+        continue
+      }
+
+      await this.sendMessageUseCase.execute({
+        recipientUuid: contact.contactUuid,
+        encryptedMessage: encryptedMessage.getValue(),
+        replaceabilityIdentifier: undefined,
+      })
+    }
   }
 }

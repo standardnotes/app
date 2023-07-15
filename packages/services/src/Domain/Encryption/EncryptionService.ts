@@ -93,6 +93,7 @@ import { ValidateAccountPasswordResult } from './RootKey/ValidateAccountPassword
 import { ValidatePasscodeResult } from './RootKey/ValidatePasscodeResult'
 import { ContentType } from '@standardnotes/domain-core'
 import { DecryptAsymmetricMessagePayload } from './UseCase/Asymmetric/DecryptAsymmetricMessagePayload'
+import { EncryptAsymmetricMessagePayload } from './UseCase/Asymmetric/EncryptAsymmetricMessagePayload'
 
 /**
  * The encryption service is responsible for the encryption and decryption of payloads, and
@@ -647,14 +648,12 @@ export class EncryptionService
     senderSigningKeyPair: PkcKeyPair
     recipientPublicKey: string
   }): AsymmetricallyEncryptedString {
-    const operator = this.operators.defaultOperator()
-    const encrypted = operator.asymmetricEncrypt({
-      stringToEncrypt: JSON.stringify(dto.message),
-      senderKeyPair: dto.senderKeyPair,
-      senderSigningKeyPair: dto.senderSigningKeyPair,
-      recipientPublicKey: dto.recipientPublicKey,
-    })
-    return encrypted
+    const usecase = new EncryptAsymmetricMessagePayload(this.operators)
+    const result = usecase.execute(dto)
+    if (result.isFailed()) {
+      throw new Error('Failed to encrypt message')
+    }
+    return result.getValue()
   }
 
   asymmetricallyDecryptMessage<M extends AsymmetricMessagePayload>(dto: {

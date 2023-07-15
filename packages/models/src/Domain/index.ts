@@ -77,6 +77,7 @@ export * from './Runtime/AsymmetricMessage/MessageTypes/AsymmetricMessageSharedV
 export * from './Runtime/AsymmetricMessage/MessageTypes/AsymmetricMessageSharedVaultMetadataChanged'
 export * from './Runtime/AsymmetricMessage/MessageTypes/AsymmetricMessageSharedVaultRootKeyChanged'
 export * from './Runtime/AsymmetricMessage/MessageTypes/AsymmetricMessageTrustedContactShare'
+export * from './Runtime/AsymmetricMessage/MessageTypes/AsymmetricMessageSenderKeysetRevoked'
 
 export * from './Runtime/Encryption/PersistentSignatureData'
 export * from './Runtime/Encryption/ContentTypeUsesRootKeyEncryption'
