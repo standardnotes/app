@@ -53,9 +53,6 @@ const isReceivedText = (item: ReceivedItem): item is ReceivedText => {
 const BundleIdentifier = 'com.standardnotes.standardnotes'
 const IosUrlToCheckFor = `${BundleIdentifier}://dataUrl`
 
-const IosWebUrlPrefix = 'webUrl:'
-const IosTextPrefix = 'text:'
-
 export class ReceivedSharedItemsHandler {
   private eventSub: NativeEventSubscription | null = null
   private receivedItemsQueue: ReceivedItem[] = []
@@ -177,21 +174,29 @@ export class ReceivedSharedItemsHandler {
           const items = Object.values(received as Record<string, ReceivedItem>)
           this.receivedItemsQueue.push(...items)
         } else if (typeof received === 'string') {
-          const isWebUrl = received.startsWith(IosWebUrlPrefix)
-          const isText = received.startsWith(IosTextPrefix)
-          if (isWebUrl) {
-            this.receivedItemsQueue.push({
-              weblink: received.slice(IosWebUrlPrefix.length),
-            })
-          } else if (isText) {
-            this.receivedItemsQueue.push({
-              text: received.slice(IosTextPrefix.length),
-            })
-          } else {
-            const parsed = JSON.parse(received)
-            if (Array.isArray(parsed)) {
-              this.receivedItemsQueue.push(...parsed)
-            }
+          const parsed: unknown = JSON.parse(received)
+          if (typeof parsed !== 'object') {
+            return
+          }
+          if (!parsed) {
+            return
+          }
+          if ('media' in parsed && Array.isArray(parsed.media)) {
+            this.receivedItemsQueue.push(...parsed.media)
+          }
+          if ('text' in parsed && Array.isArray(parsed.text)) {
+            this.receivedItemsQueue.push(
+              ...parsed.text.map((text: string) => ({
+                text: text,
+              })),
+            )
+          }
+          if ('urls' in parsed && Array.isArray(parsed.urls)) {
+            this.receivedItemsQueue.push(
+              ...parsed.urls.map((url: string) => ({
+                weblink: url,
+              })),
+            )
           }
         }
 

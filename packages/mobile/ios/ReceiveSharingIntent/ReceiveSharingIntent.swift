@@ -5,12 +5,13 @@ import MobileCoreServices
 @objc(ReceiveSharingIntent)
 class ReceiveSharingIntent: NSObject {
   
-  private var initialMedia: [SharedMediaFile]? = nil
-  private var latestMedia: [SharedMediaFile]? = nil
+  struct Share: Codable {
+    var media: [SharedMediaFile] = []
+    var text: [String] = []
+    var urls: [String] = []
+  }
   
-  private var initialText: String? = nil
-  private var latestText: String? = nil
-  
+  private var share = Share()
   
   @objc
   func getFileNames(_ url: String,
@@ -30,63 +31,31 @@ class ReceiveSharingIntent: NSObject {
     }
   }
   
-  
-  
-  
   private func handleUrl(url: URL?) -> String? {
     if let url = url {
       let appDomain = Bundle.main.bundleIdentifier!
       let userDefaults = UserDefaults(suiteName: "group.\(appDomain)")
-      if url.fragment == "media" {
-        if let key = url.host?.components(separatedBy: "=").last,
-           let json = userDefaults?.object(forKey: key) as? Data {
-          let sharedArray = decode(data: json)
-          let sharedMediaFiles: [SharedMediaFile] = sharedArray.compactMap {
+      if let key = url.host?.components(separatedBy: "=").last {
+        if let mediaJson = userDefaults?.object(forKey: "\(key).media") as? Data {
+          let mediaSharedArray = decode(data: mediaJson)
+          let sharedMediaFiles: [SharedMediaFile] = mediaSharedArray.compactMap {
             guard let path = getAbsolutePath(for: $0.path) else {
               return nil
             }
+            
             return SharedMediaFile.init(path: path, fileName: fileNameForPath(path: path), mimeType: mimeTypeForPath(path: path))
           }
-          latestMedia = sharedMediaFiles
-          let json = toJson(data: latestMedia);
-          return json;
+          self.share.media = sharedMediaFiles
         }
-      } else if url.fragment == "file" {
-        if let key = url.host?.components(separatedBy: "=").last,
-           let json = userDefaults?.object(forKey: key) as? Data {
-          let sharedArray = decode(data: json)
-          let sharedMediaFiles: [SharedMediaFile] = sharedArray.compactMap{
-            guard let path = getAbsolutePath(for: $0.path) else {
-              return nil
-            }
-            return SharedMediaFile.init(path: path, fileName: fileNameForPath(path: path), mimeType: mimeTypeForPath(path: path))
-          }
-          latestMedia = sharedMediaFiles
-          let json = toJson(data: latestMedia);
-          return json;
+        if let textSharedArray = userDefaults?.object(forKey: "\(key).text") as? [String] {
+          self.share.text =  textSharedArray
         }
-      } else if url.fragment == "text" {
-        if let key = url.host?.components(separatedBy: "=").last,
-           let sharedArray = userDefaults?.object(forKey: key) as? [String] {
-          latestText =  sharedArray.joined(separator: ",")
-          
-          let optionalString = latestText;
-          if let unwrapped = optionalString {
-            let text = "text:" + unwrapped;
-            return text;
-          }
-          return latestText!;
-          
+        if let textSharedArray = userDefaults?.object(forKey: "\(key).url") as? [String] {
+          self.share.urls =  textSharedArray
         }
-      } else {
-        latestText = url.absoluteString
-        
-        let optionalString = latestText;
-        // now unwrap it
-        if let unwrapwebUrl = optionalString {
-          let webUrl = "webUrl:"+unwrapwebUrl;
-          return webUrl;
-        }
+        let encodedData = try? JSONEncoder().encode(self.share)
+        let json = String(data: encodedData!, encoding: .utf8)!
+        return json
       }
       return "error"
     }
