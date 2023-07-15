@@ -189,11 +189,17 @@ describe('shared vault crypto', function () {
       console.error('TODO')
     })
 
-    it('revoking a keypair should send a keypair revocation message to trusted contacts', async () => {
-      console.error('TODO')
+    it('should not be able to revoke current key pair', async () => {
+      const currentKeySet = context.contacts.getSelfContact().publicKeySet
+
+      await context.changePassword('new-password')
+
+      const result = await context.sharedVaults.revokeOwnKeySet(currentKeySet)
+
+      expect(result.isFail()).to.equal(true)
     })
 
-    it('should not be able to revoke current key pair', async () => {
+    it('revoking a keypair should send a keypair revocation message to trusted contacts', async () => {
       console.error('TODO')
     })
 

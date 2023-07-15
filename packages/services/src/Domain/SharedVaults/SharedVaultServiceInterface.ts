@@ -10,10 +10,12 @@ import {
   SharedVaultListingInterface,
   VaultListingInterface,
   KeySystemRootKeyStorageMode,
+  ContactPublicKeySetInterface,
 } from '@standardnotes/models'
 import { AbstractService } from '../Service/AbstractService'
 import { SharedVaultServiceEvent, SharedVaultServiceEventPayload } from './SharedVaultServiceEvent'
 import { PendingSharedVaultInviteRecord } from './PendingSharedVaultInviteRecord'
+import { Result } from '@standardnotes/domain-core'
 
 export interface SharedVaultServiceInterface
   extends AbstractService<SharedVaultServiceEvent, SharedVaultServiceEventPayload> {
@@ -52,4 +54,6 @@ export interface SharedVaultServiceInterface
   getCachedPendingInviteRecords(): PendingSharedVaultInviteRecord[]
   getInvitableContactsForSharedVault(sharedVault: SharedVaultListingInterface): Promise<TrustedContactInterface[]>
   deleteInvite(invite: SharedVaultInviteServerHash): Promise<ClientDisplayableError | void>
+
+  revokeOwnKeySet(keyset: ContactPublicKeySetInterface): Promise<Result<void>>
 }

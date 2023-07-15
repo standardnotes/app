@@ -126,7 +126,7 @@ export class EncryptionService
   extends AbstractService<EncryptionServiceEvent>
   implements EncryptionProviderInterface, InternalEventHandlerInterface
 {
-  private operators: OperatorManager
+  public readonly operators: OperatorManager
   private readonly itemsEncryption: ItemsEncryptionService
   private readonly rootKeyManager: RootKeyManager
 

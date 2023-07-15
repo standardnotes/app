@@ -29,6 +29,7 @@ import {
   VaultListingInterface,
   AsymmetricMessageSharedVaultInvite,
   KeySystemRootKeyStorageMode,
+  ContactPublicKeySetInterface,
 } from '@standardnotes/models'
 import { SharedVaultServiceInterface } from './SharedVaultServiceInterface'
 import { SharedVaultServiceEvent, SharedVaultServiceEventPayload } from './SharedVaultServiceEvent'
@@ -63,7 +64,10 @@ import { CreateSharedVaultUseCase } from './UseCase/CreateSharedVault'
 import { SendSharedVaultMetadataChangedMessageToAll } from './UseCase/SendSharedVaultMetadataChangedMessageToAll'
 import { ConvertToSharedVaultUseCase } from './UseCase/ConvertToSharedVault'
 import { GetVaultUseCase } from '../Vaults/UseCase/GetVault'
-import { ContentType } from '@standardnotes/domain-core'
+import { ContentType, Result } from '@standardnotes/domain-core'
+import { RevokePublicKeyUseCase } from '../Contacts/UseCase/RevokePublicKey'
+import { EncryptAsymmetricMessagePayload } from '../Encryption/UseCase/Asymmetric/EncryptAsymmetricMessagePayload'
+import { SendAsymmetricMessageUseCase } from '../AsymmetricMessage/UseCase/SendAsymmetricMessageUseCase'
 
 export class SharedVaultService
   extends AbstractService<SharedVaultServiceEvent, SharedVaultServiceEventPayload>
@@ -552,6 +556,26 @@ export class SharedVaultService
     const contact = this.contacts.findTrustedContact(item.user_uuid)
 
     return contact
+  }
+
+  async revokeOwnKeySet(keyset: ContactPublicKeySetInterface): Promise<Result<void>> {
+    const encryptUseCase = new EncryptAsymmetricMessagePayload(this.encryption.operators)
+    const sendMessageUseCase = new SendAsymmetricMessageUseCase(this.messageServer)
+    const usecase = new RevokePublicKeyUseCase(this.mutator, this.contacts, encryptUseCase, sendMessageUseCase)
+
+    const selfContact = this.contacts.getSelfContact()
+    if (!selfContact) {
+      return Result.fail('Cannot find self contact')
+    }
+
+    const result = await usecase.execute({
+      selfContact,
+      revokeKeySet: keyset,
+      senderEncryptionKeyPair: this.encryption.getKeyPair(),
+      senderSigningKeyPair: this.encryption.getSigningKeyPair(),
+    })
+
+    return result
   }
 
   override deinit(): void {

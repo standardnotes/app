@@ -7,8 +7,6 @@ export interface ContactPublicKeySetInterface {
   isRevoked: boolean
   previousKeySet?: ContactPublicKeySetInterface
 
-  isEqual(other: ContactPublicKeySetInterface): boolean
-
   findKeySet(params: {
     targetEncryptionPublicKey: string
     targetSigningPublicKey: string

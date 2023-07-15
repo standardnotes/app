@@ -22,10 +22,6 @@ export class ContactPublicKeySet implements ContactPublicKeySetInterface {
     this.previousKeySet = dto.previousKeySet
   }
 
-  public isEqual(other: ContactPublicKeySetInterface): boolean {
-    return this.encryption === other.encryption && this.signing === other.signing
-  }
-
   public findKeySet(params: {
     targetEncryptionPublicKey: string
     targetSigningPublicKey: string

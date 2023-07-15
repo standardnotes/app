@@ -1,9 +1,9 @@
 import {
   AsymmetricMessagePayloadType,
-  ContactPublicKeySetInterface,
   TrustedContactInterface,
   TrustedContactMutator,
   AsymmetricMessageSenderKeysetRevoked,
+  PortablePublicKeySet,
 } from '@standardnotes/models'
 import { MutatorClientInterface } from '../../Mutator/MutatorClientInterface'
 import { Result, UseCaseInterface } from '@standardnotes/domain-core'
@@ -22,13 +22,16 @@ export class RevokePublicKeyUseCase implements UseCaseInterface<void> {
 
   async execute(dto: {
     selfContact: TrustedContactInterface
-    revokeKeySet: ContactPublicKeySetInterface
+    revokeKeySet: PortablePublicKeySet
     senderEncryptionKeyPair: PkcKeyPair
     senderSigningKeyPair: PkcKeyPair
   }): Promise<Result<void>> {
     const currentKeySet = dto.selfContact.publicKeySet
 
-    if (currentKeySet.isEqual(dto.revokeKeySet)) {
+    if (
+      currentKeySet.encryption === dto.revokeKeySet.encryption ||
+      currentKeySet.signing === dto.revokeKeySet.signing
+    ) {
       return Result.fail('Cannot revoke current key set')
     }
 
@@ -45,7 +48,7 @@ export class RevokePublicKeyUseCase implements UseCaseInterface<void> {
   }
 
   private async sendMessageToContacts(dto: {
-    revokeKeySet: ContactPublicKeySetInterface
+    revokeKeySet: PortablePublicKeySet
     senderEncryptionKeyPair: PkcKeyPair
     senderSigningKeyPair: PkcKeyPair
   }): Promise<void> {

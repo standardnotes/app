@@ -1,3 +1,4 @@
+import { OperatorManager } from './../../Operator/OperatorManager'
 import { AsymmetricSignatureVerificationDetachedResult } from '../../Operator/Types/AsymmetricSignatureVerificationDetachedResult'
 import { KeyParamsOrigination, ProtocolVersion } from '@standardnotes/common'
 import {
@@ -26,6 +27,7 @@ import { AsymmetricallyEncryptedString } from '../../Operator/Types/Types'
 
 export interface EncryptionProviderInterface {
   keys: KeySystemKeyManagerInterface
+  readonly operators: OperatorManager
 
   encryptSplitSingle(split: KeyedEncryptionSplit): Promise<EncryptedPayloadInterface>
   encryptSplit(split: KeyedEncryptionSplit): Promise<EncryptedPayloadInterface[]>
