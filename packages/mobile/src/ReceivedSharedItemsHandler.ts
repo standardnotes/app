@@ -80,13 +80,13 @@ export class ReceivedSharedItemsHandler {
       Linking.getInitialURL()
         .then((url) => {
           if (url && url.startsWith(IosUrlToCheckFor)) {
-            this.addSharedItemsToQueue(url)
+            this.addSharedItemsToQueue(url).catch(console.error)
           }
         })
         .catch(console.error)
       this.eventSub = Linking.addEventListener('url', ({ url }) => {
         if (url && url.startsWith(IosUrlToCheckFor)) {
-          this.addSharedItemsToQueue(url)
+          this.addSharedItemsToQueue(url).catch(console.error)
         }
       })
       return
@@ -94,7 +94,7 @@ export class ReceivedSharedItemsHandler {
 
     this.eventSub = AppState.addEventListener('change', (state) => {
       if (state === 'active') {
-        this.addSharedItemsToQueue()
+        this.addSharedItemsToQueue().catch(console.error)
       }
     })
   }
@@ -163,48 +163,47 @@ export class ReceivedSharedItemsHandler {
     this.handleItemsQueue().catch(console.error)
   }
 
-  private addSharedItemsToQueue = (url?: string) => {
-    ReceiveSharingIntent.getFileNames(url)
-      .then(async (received: unknown) => {
-        if (!received) {
-          return
-        }
+  private addSharedItemsToQueue = async (url?: string) => {
+    const received =
+      Platform.OS === 'ios' ? await ReceiveSharingIntent.getFileNames(url) : await ReceiveSharingIntent.getFileNames()
+    ReceiveSharingIntent.clearFileNames()
 
-        if (Platform.OS === 'android') {
-          const items = Object.values(received as Record<string, ReceivedItem>)
-          this.receivedItemsQueue.push(...items)
-        } else if (typeof received === 'string') {
-          const parsed: unknown = JSON.parse(received)
-          if (typeof parsed !== 'object') {
-            return
-          }
-          if (!parsed) {
-            return
-          }
-          if ('media' in parsed && Array.isArray(parsed.media)) {
-            this.receivedItemsQueue.push(...parsed.media)
-          }
-          if ('text' in parsed && Array.isArray(parsed.text)) {
-            this.receivedItemsQueue.push(
-              ...parsed.text.map((text: string) => ({
-                text: text,
-              })),
-            )
-          }
-          if ('urls' in parsed && Array.isArray(parsed.urls)) {
-            this.receivedItemsQueue.push(
-              ...parsed.urls.map((url: string) => ({
-                weblink: url,
-              })),
-            )
-          }
-        }
+    if (!received) {
+      return
+    }
 
-        if (this.isApplicationLaunched) {
-          this.handleItemsQueue().catch(console.error)
-        }
-      })
-      .then(() => ReceiveSharingIntent.clearFileNames())
-      .catch(console.error)
+    if (Platform.OS === 'android') {
+      const items = Object.values(received as Record<string, ReceivedItem>)
+      this.receivedItemsQueue.push(...items)
+    } else if (typeof received === 'string') {
+      const parsed: unknown = JSON.parse(received)
+      if (typeof parsed !== 'object') {
+        return
+      }
+      if (!parsed) {
+        return
+      }
+      if ('media' in parsed && Array.isArray(parsed.media)) {
+        this.receivedItemsQueue.push(...parsed.media)
+      }
+      if ('text' in parsed && Array.isArray(parsed.text)) {
+        this.receivedItemsQueue.push(
+          ...parsed.text.map((text: string) => ({
+            text: text,
+          })),
+        )
+      }
+      if ('urls' in parsed && Array.isArray(parsed.urls)) {
+        this.receivedItemsQueue.push(
+          ...parsed.urls.map((url: string) => ({
+            weblink: url,
+          })),
+        )
+      }
+    }
+
+    if (this.isApplicationLaunched) {
+      this.handleItemsQueue().catch(console.error)
+    }
   }
 }
