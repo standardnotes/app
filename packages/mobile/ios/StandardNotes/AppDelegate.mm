@@ -1,28 +1,36 @@
 #import "AppDelegate.h"
 
 #import <React/RCTBundleURLProvider.h>
+#import <React/RCTLinkingManager.h>
 #import <WebKit/WKWebsiteDataStore.h>
 #import <TrustKit/TrustKit.h>
 
 @implementation AppDelegate
 
+- (BOOL)application:(UIApplication *)application
+            openURL:(NSURL *)url
+            options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options
+{
+  return [RCTLinkingManager application:application openURL:url options:options];
+}
+
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
   NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-
+  
   [self configurePinning];
-
+  
   [self disableUrlCache];
-
+  
   [self clearWebEditorCache];
-
+  
   NSString *CFBundleIdentifier = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleIdentifier"];
-
+  
   NSDictionary * initialProperties = @{@"env" : [CFBundleIdentifier isEqualToString:@"com.standardnotes.standardnotes.dev"] ? @"dev" : @"prod"};
-
+  
   self.moduleName = @"StandardNotes";
   self.initialProps = @{};
-
+  
   return [super application:application didFinishLaunchingWithOptions:launchOptions];
 }
 
@@ -50,12 +58,12 @@
   if(![currentVersion isEqualToString:lastVersionClear]) {
     // UIWebView
     [[NSURLCache sharedURLCache] removeAllCachedResponses];
-
+    
     // WebKit
     NSSet *websiteDataTypes = [WKWebsiteDataStore allWebsiteDataTypes];
     NSDate *dateFrom = [NSDate dateWithTimeIntervalSince1970:0];
     [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:websiteDataTypes modifiedSince:dateFrom completionHandler:^{}];
-
+    
     [[NSUserDefaults standardUserDefaults] setObject:currentVersion forKey:lastVersionClearKey];
   }
 }
@@ -65,17 +73,17 @@
     NSDictionary *trustKitConfig =
     @{
       kTSKSwizzleNetworkDelegates: @YES,
-
+      
       // The list of domains we want to pin and their configuration
       kTSKPinnedDomains: @{
         @"standardnotes.org" : @{
           kTSKIncludeSubdomains:@YES,
-
+          
           kTSKEnforcePinning:@YES,
-
+          
           // Send reports for pin validation failures so we can track them
           kTSKReportUris: @[@"https://standard.report-uri.com/r/d/hpkp/reportOnly"],
-
+          
           // The pinned public keys' Subject Public Key Info hashes
           kTSKPublicKeyHashes : @[
             @"Vjs8r4z+80wjNcr1YKepWQboSIRi63WsWXhIMN+eWys=",
@@ -90,12 +98,12 @@
         },
         @"standardnotes.com" : @{
           kTSKIncludeSubdomains:@YES,
-
+          
           kTSKEnforcePinning:@YES,
-
+          
           // Send reports for pin validation failures so we can track them
           kTSKReportUris: @[@"https://standard.report-uri.com/r/d/hpkp/reportOnly"],
-
+          
           // The pinned public keys' Subject Public Key Info hashes
           kTSKPublicKeyHashes : @[
             @"Vjs8r4z+80wjNcr1YKepWQboSIRi63WsWXhIMN+eWys=",
@@ -110,7 +118,7 @@
         },
       }
     };
-
+    
     [TrustKit initSharedInstanceWithConfiguration:trustKitConfig];
   }
 }
