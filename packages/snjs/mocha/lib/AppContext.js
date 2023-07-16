@@ -364,6 +364,30 @@ export class AppContext {
     })
   }
 
+  resolveWhenAllInboundAsymmetricMessagesAreDeleted() {
+    return new Promise((resolve) => {
+      const objectToSpy = this.application.asymmetric.messageServer
+      sinon.stub(objectToSpy, 'deleteAllInboundMessages').callsFake(async (params) => {
+        objectToSpy.deleteAllInboundMessages.restore()
+        const result = await objectToSpy.deleteAllInboundMessages(params)
+        resolve()
+        return result
+      })
+    })
+  }
+
+  resolveWhenAllInboundSharedVaultInvitesAreDeleted() {
+    return new Promise((resolve) => {
+      const objectToSpy = this.application.sharedVaults.invitesServer
+      sinon.stub(objectToSpy, 'deleteAllInboundInvites').callsFake(async (params) => {
+        objectToSpy.deleteAllInboundInvites.restore()
+        const result = await objectToSpy.deleteAllInboundInvites(params)
+        resolve()
+        return result
+      })
+    })
+  }
+
   resolveWhenSharedVaultServiceSendsContactShareMessage() {
     return new Promise((resolve) => {
       const objectToSpy = this.sharedVaults
@@ -624,7 +648,9 @@ export class AppContext {
 
       await Utils.sleep(2)
     } catch (error) {
-      console.warn(`Mock events service not available. You are probalby running a test suite for home server: ${error.message}`)
+      console.warn(
+        `Mock events service not available. You are probalby running a test suite for home server: ${error.message}`,
+      )
     }
 
     try {
@@ -632,7 +658,9 @@ export class AppContext {
 
       await Utils.sleep(1)
     } catch (error) {
-      console.warn(`Home server not available. You are probalby running a test suite for self hosted setup: ${error.message}`)
+      console.warn(
+        `Home server not available. You are probalby running a test suite for self hosted setup: ${error.message}`,
+      )
     }
   }
 }

@@ -5,6 +5,7 @@ export const VaultTests = [
   'vaults/contacts.test.js',
   'vaults/crypto.test.js',
   'vaults/asymmetric-messages.test.js',
+  'vaults/key-revocation.test.js',
   'vaults/shared_vaults.test.js',
   'vaults/invites.test.js',
   'vaults/items.test.js',

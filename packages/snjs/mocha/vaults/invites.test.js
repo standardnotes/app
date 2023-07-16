@@ -197,7 +197,17 @@ describe('shared vault invites', function () {
 
   it('should delete all inbound invites after changing user password', async () => {
     /** Invites to user are encrypted with old keypair and are no longer decryptable */
-    console.error('TODO: implement test')
+    const { contactContext, deinitContactContext } =
+      await Collaboration.createSharedVaultWithUnacceptedButTrustedInvite(context)
+
+    const promise = contactContext.resolveWhenAllInboundSharedVaultInvitesAreDeleted()
+    await contactContext.changePassword('new-password')
+    await promise
+
+    const invites = await contactContext.sharedVaults.downloadInboundInvites()
+    expect(invites.length).to.equal(0)
+
+    await deinitContactContext()
   })
 
   it('sharing a vault with user inputted and ephemeral password should share the key as synced for the recipient', async () => {

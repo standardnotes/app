@@ -272,6 +272,28 @@ describe('asymmetric messages', function () {
 
   it('should delete all inbound messages after changing user password', async () => {
     /** Messages to user are encrypted with old keypair and are no longer decryptable */
-    console.error('TODO: implement test')
+
+    const { sharedVault, contactContext, deinitContactContext } =
+      await Collaboration.createSharedVaultWithAcceptedInvite(context)
+
+    contactContext.lockSyncing()
+
+    await context.vaults.changeVaultNameAndDescription(sharedVault, {
+      name: 'New Name',
+      description: 'New Description',
+    })
+
+    const promise = contactContext.resolveWhenAllInboundAsymmetricMessagesAreDeleted()
+    await contactContext.changePassword('new-password')
+    await promise
+
+    const messages = await contactContext.asymmetric.getInboundMessages()
+    expect(messages.length).to.equal(0)
+
+    const updatedVault = contactContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })
+    expect(updatedVault.name).to.not.equal('New Name')
+    expect(updatedVault.description).to.not.equal('New Description')
+
+    await deinitContactContext()
   })
 })
