@@ -67,6 +67,7 @@
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* StandardNotesTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = StandardNotesTests.m; sourceTree = "<group>"; };
 		04FCB5A3A3387CA3CFC82AA3 /* libPods-StandardNotes-StandardNotesTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-StandardNotes-StandardNotesTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		0780C8AC2A63ECF400DDE846 /* Share To SNRelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Share To SNRelease.entitlements"; sourceTree = "<group>"; };
 		07CAB75B2A618128008FE1EF /* Share To SN.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Share To SN.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		07CAB75D2A618128008FE1EF /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
 		07CAB7602A618128008FE1EF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
@@ -158,6 +159,7 @@
 		07CAB75C2A618128008FE1EF /* Share To SN */ = {
 			isa = PBXGroup;
 			children = (
+				0780C8AC2A63ECF400DDE846 /* Share To SNRelease.entitlements */,
 				07CAB76B2A6182D6008FE1EF /* Share To SNDebug.entitlements */,
 				07CAB75D2A618128008FE1EF /* ShareViewController.swift */,
 				07CAB75F2A618128008FE1EF /* MainInterface.storyboard */,
@@ -818,6 +820,7 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = "Share To SN/Share To SNRelease.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
