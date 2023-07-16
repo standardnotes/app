@@ -20,7 +20,10 @@ export class GetFeatureUrl {
     }
 
     if (uiFeature.isFeatureDescription) {
-      return this.urlForNativeComponent(uiFeature.asFeatureDescription)
+      return this.urlForNativeComponent(
+        uiFeature.asFeatureDescription.identifier,
+        uiFeature.asFeatureDescription.index_path,
+      )
     }
 
     if (uiFeature.asComponent.offlineOnly) {
@@ -29,6 +32,13 @@ export class GetFeatureUrl {
 
     const url = uiFeature.asComponent.hosted_url || uiFeature.asComponent.legacy_url
     if (!url) {
+      if (uiFeature.asComponent.package_info.identifier && uiFeature.asComponent.package_info.index_path) {
+        return this.urlForNativeComponent(
+          uiFeature.asComponent.package_info.identifier,
+          uiFeature.asComponent.package_info.index_path,
+        )
+      }
+
       return undefined
     }
 
@@ -58,13 +68,16 @@ export class GetFeatureUrl {
     }
   }
 
-  private urlForNativeComponent(feature: ComponentFeatureDescription): string {
+  private urlForNativeComponent(
+    identifier: ComponentFeatureDescription['identifier'],
+    index_path: ComponentFeatureDescription['index_path'],
+  ): string {
     if (this.isMobile) {
       const baseUrlRequiredForThemesInsideEditors = window.location.href.split('/index.html')[0]
-      return `${baseUrlRequiredForThemesInsideEditors}/web-src/components/assets/${feature.identifier}/${feature.index_path}`
+      return `${baseUrlRequiredForThemesInsideEditors}/web-src/components/assets/${identifier}/${index_path}`
     } else {
       const baseUrlRequiredForThemesInsideEditors = window.location.origin
-      return `${baseUrlRequiredForThemesInsideEditors}/components/assets/${feature.identifier}/${feature.index_path}`
+      return `${baseUrlRequiredForThemesInsideEditors}/components/assets/${identifier}/${index_path}`
     }
   }
 
