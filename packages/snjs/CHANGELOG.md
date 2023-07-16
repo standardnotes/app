@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.202.6](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.202.5...@standardnotes/snjs@2.202.6) (2023-07-16)
+
+### Bug Fixes
+
+* Fixed issue where some editors would not open on Android ([5932eb8](https://github.com/standardnotes/app/commit/5932eb814cbf81568d435afe134b99441d71f930))
+
 ## [2.202.5](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.202.4...@standardnotes/snjs@2.202.5) (2023-07-14)
 
 **Note:** Version bump only for package @standardnotes/snjs

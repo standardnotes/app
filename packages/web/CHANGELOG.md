@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.166.15](https://github.com/standardnotes/app/compare/@standardnotes/web@3.166.14...@standardnotes/web@3.166.15) (2023-07-16)
+
+### Bug Fixes
+
+* Fixed issue where some editors would not open on Android ([5932eb8](https://github.com/standardnotes/app/commit/5932eb814cbf81568d435afe134b99441d71f930))
+
 ## [3.166.14](https://github.com/standardnotes/app/compare/@standardnotes/web@3.166.13...@standardnotes/web@3.166.14) (2023-07-16)
 
 **Note:** Version bump only for package @standardnotes/web
