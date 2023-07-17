@@ -3,6 +3,44 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.56.8](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.56.7...@standardnotes/mobile@3.56.8) (2023-07-17)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.56.7](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.56.6...@standardnotes/mobile@3.56.7) (2023-07-16)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.56.6](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.56.5...@standardnotes/mobile@3.56.6) (2023-07-16)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.56.5](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.56.4...@standardnotes/mobile@3.56.5) (2023-07-16)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.56.4](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.56.3...@standardnotes/mobile@3.56.4) (2023-07-15)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.56.3](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.56.2...@standardnotes/mobile@3.56.3) (2023-07-15)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.56.2](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.56.1...@standardnotes/mobile@3.56.2) (2023-07-15)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.56.1](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.56.0...@standardnotes/mobile@3.56.1) (2023-07-15)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+# [3.56.0](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.55.12...@standardnotes/mobile@3.56.0) (2023-07-15)
+
+### Features
+
+* You can now share files & text from other apps into SN on iOS ([#2358](https://github.com/standardnotes/app/issues/2358)) ([88ef588](https://github.com/standardnotes/app/commit/88ef5887a91b4a0eace68faec90cd53381436dea))
+
 ## [3.55.12](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.55.11...@standardnotes/mobile@3.55.12) (2023-07-14)
 
 **Note:** Version bump only for package @standardnotes/mobile

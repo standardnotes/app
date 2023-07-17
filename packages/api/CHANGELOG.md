@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.26.29](https://github.com/standardnotes/app/compare/@standardnotes/api@1.26.28...@standardnotes/api@1.26.29) (2023-07-17)
+
+### Bug Fixes
+
+* fixes issue where some accounts were not correctly loading subscription info ([#2361](https://github.com/standardnotes/app/issues/2361)) ([eba1289](https://github.com/standardnotes/app/commit/eba1289ab9da10a545b58572bcf0dde8c050de61))
+
 ## [1.26.28](https://github.com/standardnotes/app/compare/@standardnotes/api@1.26.27...@standardnotes/api@1.26.28) (2023-07-13)
 
 **Note:** Version bump only for package @standardnotes/api

@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/snjs",
-  "version": "2.202.5",
+  "version": "2.202.7",
   "engines": {
     "node": ">=16.0.0 <17.0.0"
   },
@@ -44,7 +44,6 @@
     "@standardnotes/files": "workspace:*",
     "@standardnotes/models": "workspace:*",
     "@standardnotes/responses": "workspace:*",
-    "@standardnotes/security": "^1.7.6",
     "@standardnotes/services": "workspace:*",
     "@standardnotes/settings": "^1.20.0",
     "@standardnotes/sncrypto-common": "workspace:*",

@@ -1,4 +1,4 @@
-import { Role } from '@standardnotes/security'
+import { Role } from '../Temp/Role'
 
 export type HttpResponseMeta = {
   auth: {

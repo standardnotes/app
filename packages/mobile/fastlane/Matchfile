@@ -2,7 +2,7 @@ storage_mode("git")
 
 # type("development") # The default type, can be: appstore, adhoc, enterprise or development
 
-app_identifier(["com.standardnotes.standardnotes"])
+app_identifier(["com.standardnotes.standardnotes", "com.standardnotes.standardnotes.Share-To-SN"])
 
 # For all available options run `fastlane match --help`
 # Remove the # in the beginning of the line to enable the other options
