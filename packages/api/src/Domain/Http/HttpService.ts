@@ -1,6 +1,6 @@
 import { joinPaths, sleep } from '@standardnotes/utils'
 import { Environment } from '@standardnotes/models'
-import { Session, SessionToken } from '@standardnotes/domain-core'
+import { LegacySession, Session, SessionToken } from '@standardnotes/domain-core'
 import {
   HttpStatusCode,
   HttpRequestParams,
@@ -18,7 +18,7 @@ import { FetchRequestHandler } from './FetchRequestHandler'
 import { RequestHandlerInterface } from './RequestHandlerInterface'
 
 export class HttpService implements HttpServiceInterface {
-  private session: Session | null
+  private session?: Session | LegacySession
   private __latencySimulatorMs?: number
   private declare host: string
 
@@ -29,7 +29,6 @@ export class HttpService implements HttpServiceInterface {
   private requestHandler: RequestHandlerInterface
 
   constructor(private environment: Environment, private appVersion: string, private snjsVersion: string) {
-    this.session = null
     this.requestHandler = new FetchRequestHandler(this.snjsVersion, this.appVersion, this.environment)
   }
 
@@ -42,12 +41,12 @@ export class HttpService implements HttpServiceInterface {
   }
 
   public deinit(): void {
-    this.session = null
+    ;(this.session as unknown) = undefined
     ;(this.updateMetaCallback as unknown) = undefined
     ;(this.refreshSessionCallback as unknown) = undefined
   }
 
-  setSession(session: Session): void {
+  setSession(session: Session | LegacySession): void {
     this.session = session
   }
 
@@ -59,6 +58,18 @@ export class HttpService implements HttpServiceInterface {
     return this.host
   }
 
+  private getSessionAccessToken(): string | undefined {
+    if (!this.session) {
+      return undefined
+    }
+
+    if (this.session instanceof Session) {
+      return this.session.accessToken.value
+    } else {
+      return this.session.accessToken
+    }
+  }
+
   async get<T>(path: string, params?: HttpRequestParams, authentication?: string): Promise<HttpResponse<T>> {
     if (!this.host) {
       throw new Error('Attempting to make network request before host is set')
@@ -68,7 +79,7 @@ export class HttpService implements HttpServiceInterface {
       url: joinPaths(this.host, path),
       params,
       verb: HttpVerb.Get,
-      authentication: authentication ?? this.session?.accessToken.value,
+      authentication: authentication ?? this.getSessionAccessToken(),
     })
   }
 
@@ -90,7 +101,7 @@ export class HttpService implements HttpServiceInterface {
       url: joinPaths(this.host, path),
       params,
       verb: HttpVerb.Post,
-      authentication: authentication ?? this.session?.accessToken.value,
+      authentication: authentication ?? this.getSessionAccessToken(),
     })
   }
 
@@ -99,7 +110,7 @@ export class HttpService implements HttpServiceInterface {
       url: joinPaths(this.host, path),
       params,
       verb: HttpVerb.Put,
-      authentication: authentication ?? this.session?.accessToken.value,
+      authentication: authentication ?? this.getSessionAccessToken(),
     })
   }
 
@@ -108,7 +119,7 @@ export class HttpService implements HttpServiceInterface {
       url: joinPaths(this.host, path),
       params,
       verb: HttpVerb.Patch,
-      authentication: authentication ?? this.session?.accessToken.value,
+      authentication: authentication ?? this.getSessionAccessToken(),
     })
   }
 
@@ -117,7 +128,7 @@ export class HttpService implements HttpServiceInterface {
       url: joinPaths(this.host, path),
       params,
       verb: HttpVerb.Delete,
-      authentication: authentication ?? this.session?.accessToken.value,
+      authentication: authentication ?? this.getSessionAccessToken(),
     })
   }
 
@@ -130,7 +141,7 @@ export class HttpService implements HttpServiceInterface {
     if (this.inProgressRefreshSessionPromise && !isRefreshRequest) {
       await this.inProgressRefreshSessionPromise
 
-      httpRequest.authentication = this.session?.accessToken.value
+      httpRequest.authentication = this.getSessionAccessToken()
     }
 
     const response = await this.requestHandler.handleRequest<T>(httpRequest)
@@ -152,7 +163,7 @@ export class HttpService implements HttpServiceInterface {
         }
       }
 
-      httpRequest.authentication = this.session?.accessToken.value
+      httpRequest.authentication = this.getSessionAccessToken()
 
       return this.runHttp(httpRequest)
     }
@@ -161,7 +172,11 @@ export class HttpService implements HttpServiceInterface {
   }
 
   private async refreshSession(): Promise<boolean> {
-    if (this.session === null) {
+    if (!this.session) {
+      return false
+    }
+
+    if (this.session instanceof LegacySession) {
       return false
     }
 
