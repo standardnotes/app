@@ -169,9 +169,7 @@ export class SNSessionManager
   private setSession(session: Session | LegacySession, persist = true): void {
     this.session = session
 
-    if (session instanceof Session) {
-      this.httpService.setSession(session)
-    }
+    this.httpService.setSession(session)
 
     this.apiService.setSession(session, persist)
 
