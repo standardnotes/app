@@ -66,7 +66,6 @@ import {
   HttpErrorResponse,
   HttpSuccessResponse,
   isErrorResponse,
-  ValetTokenOperation,
   MoveFileResponse,
 } from '@standardnotes/responses'
 import { LegacySession, MapperInterface, Session, SessionToken } from '@standardnotes/domain-core'
@@ -82,6 +81,7 @@ import { UuidString } from '../../Types/UuidString'
 import { SettingsServerInterface } from '../Settings/SettingsServerInterface'
 import { Strings } from '@Lib/Strings'
 import { AnyFeatureDescription } from '@standardnotes/features'
+import { ValetTokenOperation } from '@standardnotes/security'
 
 /** Legacy api version field to be specified in params when calling v0 APIs. */
 const V0_API_VERSION = '20200115'

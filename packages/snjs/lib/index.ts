@@ -18,3 +18,5 @@ export * from '@standardnotes/responses'
 export * from '@standardnotes/services'
 export * from '@standardnotes/settings'
 export * from '@standardnotes/utils'
+
+export type { Subscription } from '@standardnotes/security'

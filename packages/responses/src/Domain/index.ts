@@ -24,7 +24,6 @@ export * from './Files/DownloadFileChunkResponse'
 export * from './Files/StartUploadSessionResponse'
 export * from './Files/UploadFileChunkResponse'
 export * from './Files/MoveFileResponse'
-export * from './Files/ValetTokenOperation'
 
 export * from './Http'
 

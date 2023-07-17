@@ -1,4 +1,4 @@
-import { ValetTokenOperation } from './ValetTokenOperation'
+import { ValetTokenOperation } from '@standardnotes/security'
 
 export type CreateValetTokenPayload = {
   operation: ValetTokenOperation

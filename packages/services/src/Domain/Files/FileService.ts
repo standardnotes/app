@@ -1,10 +1,5 @@
 import { MutatorClientInterface } from './../Mutator/MutatorClientInterface'
-import {
-  ClientDisplayableError,
-  ValetTokenOperation,
-  isClientDisplayableError,
-  isErrorResponse,
-} from '@standardnotes/responses'
+import { ClientDisplayableError, isClientDisplayableError, isErrorResponse } from '@standardnotes/responses'
 import {
   FileItem,
   FileProtocolV1Constants,
@@ -47,13 +42,9 @@ import { AbstractService } from '../Service/AbstractService'
 import { SyncServiceInterface } from '../Sync/SyncServiceInterface'
 import { DecryptItemsKeyWithUserFallback } from '../Encryption/Functions'
 import { log, LoggingDomain } from '../Logging'
-import {
-  SharedVaultMoveType,
-  SharedVaultServer,
-  SharedVaultServerInterface,
-  HttpServiceInterface,
-} from '@standardnotes/api'
+import { SharedVaultServer, SharedVaultServerInterface, HttpServiceInterface } from '@standardnotes/api'
 import { ContentType } from '@standardnotes/domain-core'
+import { SharedVaultMoveType, ValetTokenOperation } from '@standardnotes/security'
 
 const OneHundredMb = 100 * 1_000_000
 
@@ -139,7 +130,7 @@ export class FileService extends AbstractService implements FilesClientInterface
     const valetTokenResult = await this.createSharedVaultValetToken({
       sharedVaultUuid: file.shared_vault_uuid ? file.shared_vault_uuid : sharedVault.sharing.sharedVaultUuid,
       remoteIdentifier: file.remoteIdentifier,
-      operation: 'move',
+      operation: ValetTokenOperation.Move,
       fileUuidRequiredForExistingFiles: file.uuid,
       moveOperationType: file.shared_vault_uuid ? 'shared-vault-to-shared-vault' : 'user-to-shared-vault',
       sharedVaultToSharedVaultMoveTargetUuid: file.shared_vault_uuid ? sharedVault.sharing.sharedVaultUuid : undefined,
@@ -164,7 +155,7 @@ export class FileService extends AbstractService implements FilesClientInterface
     const valetTokenResult = await this.createSharedVaultValetToken({
       sharedVaultUuid: file.shared_vault_uuid,
       remoteIdentifier: file.remoteIdentifier,
-      operation: 'move',
+      operation: ValetTokenOperation.Move,
       fileUuidRequiredForExistingFiles: file.uuid,
       moveOperationType: 'shared-vault-to-user',
     })
@@ -190,10 +181,10 @@ export class FileService extends AbstractService implements FilesClientInterface
         ? await this.createSharedVaultValetToken({
             sharedVaultUuid: vault.sharing.sharedVaultUuid,
             remoteIdentifier,
-            operation: 'write',
+            operation: ValetTokenOperation.Write,
             unencryptedFileSizeForUpload: sizeInBytes,
           })
-        : await this.createUserValetToken(remoteIdentifier, 'write', sizeInBytes)
+        : await this.createUserValetToken(remoteIdentifier, ValetTokenOperation.Write, sizeInBytes)
 
     if (valetTokenResult instanceof ClientDisplayableError) {
       return valetTokenResult
@@ -342,10 +333,10 @@ export class FileService extends AbstractService implements FilesClientInterface
         ? await this.createSharedVaultValetToken({
             sharedVaultUuid: file.shared_vault_uuid,
             remoteIdentifier: file.remoteIdentifier,
-            operation: 'read',
+            operation: ValetTokenOperation.Read,
             fileUuidRequiredForExistingFiles: file.uuid,
           })
-        : await this.createUserValetToken(file.remoteIdentifier, 'read')
+        : await this.createUserValetToken(file.remoteIdentifier, ValetTokenOperation.Read)
 
       if (tokenResult instanceof ClientDisplayableError) {
         return tokenResult
@@ -375,10 +366,10 @@ export class FileService extends AbstractService implements FilesClientInterface
       ? await this.createSharedVaultValetToken({
           sharedVaultUuid: file.shared_vault_uuid,
           remoteIdentifier: file.remoteIdentifier,
-          operation: 'delete',
+          operation: ValetTokenOperation.Delete,
           fileUuidRequiredForExistingFiles: file.uuid,
         })
-      : await this.createUserValetToken(file.remoteIdentifier, 'delete')
+      : await this.createUserValetToken(file.remoteIdentifier, ValetTokenOperation.Delete)
 
     if (tokenResult instanceof ClientDisplayableError) {
       return tokenResult

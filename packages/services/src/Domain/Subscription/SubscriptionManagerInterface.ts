@@ -15,6 +15,7 @@ export interface SubscriptionManagerInterface extends ApplicationServiceInterfac
   get isUserSubscriptionExpired(): boolean
   get isUserSubscriptionCanceled(): boolean
 
+  fetchOnlineSubscription(): Promise<void>
   listSubscriptionInvitations(): Promise<Invitation[]>
   inviteToSubscription(inviteeEmail: string): Promise<boolean>
   cancelInvitation(inviteUuid: string): Promise<boolean>

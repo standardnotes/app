@@ -1,9 +1,5 @@
-import {
-  StartUploadSessionResponse,
-  HttpResponse,
-  ClientDisplayableError,
-  ValetTokenOperation,
-} from '@standardnotes/responses'
+import { ValetTokenOperation } from '@standardnotes/security'
+import { StartUploadSessionResponse, HttpResponse, ClientDisplayableError } from '@standardnotes/responses'
 import { DownloadFileParams } from './DownloadFileParams'
 import { FileOwnershipType } from './FileOwnershipType'
 

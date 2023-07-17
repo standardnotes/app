@@ -170,7 +170,7 @@ export class SubscriptionManager
     }
   }
 
-  private async fetchOnlineSubscription(): Promise<void> {
+  public async fetchOnlineSubscription(): Promise<void> {
     if (!this.sessions.isSignedIn()) {
       return
     }
