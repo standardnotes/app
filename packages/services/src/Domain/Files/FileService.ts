@@ -102,7 +102,7 @@ export class FileService extends AbstractService implements FilesClientInterface
     moveOperationType?: SharedVaultMoveType
     sharedVaultToSharedVaultMoveTargetUuid?: string
   }): Promise<string | ClientDisplayableError> {
-    if (params.operation !== 'write' && !params.fileUuidRequiredForExistingFiles) {
+    if (params.operation !== ValetTokenOperation.Write && !params.fileUuidRequiredForExistingFiles) {
       throw new Error('File UUID is required for for non-write operations')
     }
 

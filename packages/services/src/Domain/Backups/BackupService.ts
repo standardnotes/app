@@ -34,6 +34,7 @@ import { SessionsClientInterface } from '../Session/SessionsClientInterface'
 import { PayloadManagerInterface } from '../Payloads/PayloadManagerInterface'
 import { HistoryServiceInterface } from '../History/HistoryServiceInterface'
 import { ContentType } from '@standardnotes/domain-core'
+import { ValetTokenOperation } from '@standardnotes/security'
 
 const PlaintextBackupsDirectoryName = 'Plaintext Backups'
 export const TextBackupsDirectoryName = 'Text Backups'
@@ -520,7 +521,7 @@ export class FilesBackupService extends AbstractService implements BackupService
       },
     })
 
-    const token = await this.api.createUserFileValetToken(file.remoteIdentifier, 'read')
+    const token = await this.api.createUserFileValetToken(file.remoteIdentifier, ValetTokenOperation.Read)
 
     if (token instanceof ClientDisplayableError) {
       this.status.removeMessage(messageId)

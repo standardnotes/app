@@ -7,6 +7,10 @@ module.exports = {
     'snjs.js': './lib/index.ts',
   },
   resolve: {
+    fallback: {
+      stream: false,
+      crypto: false,
+    },
     extensions: ['.ts', '.js'],
     alias: {
       '@Lib': path.resolve(__dirname, 'lib'),
