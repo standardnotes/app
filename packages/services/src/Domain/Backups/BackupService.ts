@@ -10,7 +10,7 @@ import {
   isNote,
   NoteContent,
 } from '@standardnotes/models'
-import { ClientDisplayableError } from '@standardnotes/responses'
+import { ClientDisplayableError, ValetTokenOperation } from '@standardnotes/responses'
 import {
   FilesApiInterface,
   FileBackupMetadataFile,
@@ -520,7 +520,7 @@ export class FilesBackupService extends AbstractService implements BackupService
       },
     })
 
-    const token = await this.api.createUserFileValetToken(file.remoteIdentifier, 'read')
+    const token = await this.api.createUserFileValetToken(file.remoteIdentifier, ValetTokenOperation.Read)
 
     if (token instanceof ClientDisplayableError) {
       this.status.removeMessage(messageId)

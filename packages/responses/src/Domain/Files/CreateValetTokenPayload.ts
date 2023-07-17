@@ -1,4 +1,4 @@
-import { ValetTokenOperation } from './ValetTokenOperation'
+import { ValetTokenOperation } from '../Temp/ValetTokenOperation'
 
 export type CreateValetTokenPayload = {
   operation: ValetTokenOperation

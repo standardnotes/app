@@ -4221,7 +4221,6 @@ __metadata:
     "@standardnotes/domain-core": ^1.22.0
     "@standardnotes/models": "workspace:*"
     "@standardnotes/responses": "workspace:*"
-    "@standardnotes/security": ^1.7.6
     "@standardnotes/utils": "workspace:*"
     "@types/jest": ^29.2.3
     "@typescript-eslint/eslint-plugin": "*"
@@ -4518,7 +4517,6 @@ __metadata:
   dependencies:
     "@standardnotes/common": ^1.50.0
     "@standardnotes/domain-core": ^1.22.0
-    "@standardnotes/security": ^1.7.6
     "@types/jest": ^29.2.3
     "@typescript-eslint/eslint-plugin": "*"
     eslint: "*"
@@ -4774,7 +4772,6 @@ __metadata:
   dependencies:
     "@standardnotes/common": ^1.50.0
     "@standardnotes/features": "workspace:*"
-    "@standardnotes/security": ^1.7.6
     "@types/jest": ^29.2.3
     "@typescript-eslint/eslint-plugin": "*"
     eslint: "*"
@@ -4795,7 +4792,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/security@npm:1.7.6, @standardnotes/security@npm:^1.2.0, @standardnotes/security@npm:^1.7.5, @standardnotes/security@npm:^1.7.6":
+"@standardnotes/security@npm:1.7.6, @standardnotes/security@npm:^1.2.0":
   version: 1.7.6
   resolution: "@standardnotes/security@npm:1.7.6"
   dependencies:
@@ -4817,7 +4814,6 @@ __metadata:
     "@standardnotes/files": "workspace:^"
     "@standardnotes/models": "workspace:^"
     "@standardnotes/responses": "workspace:*"
-    "@standardnotes/security": ^1.7.5
     "@standardnotes/sncrypto-common": "workspace:^"
     "@standardnotes/utils": "workspace:*"
     "@types/jest": ^29.2.3
@@ -4918,7 +4914,6 @@ __metadata:
     "@standardnotes/files": "workspace:*"
     "@standardnotes/models": "workspace:*"
     "@standardnotes/responses": "workspace:*"
-    "@standardnotes/security": ^1.7.6
     "@standardnotes/services": "workspace:*"
     "@standardnotes/settings": ^1.20.0
     "@standardnotes/sncrypto-common": "workspace:*"

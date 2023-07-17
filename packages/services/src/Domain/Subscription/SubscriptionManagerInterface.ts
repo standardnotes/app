@@ -1,8 +1,7 @@
 import { ApplicationServiceInterface } from './../Service/ApplicationServiceInterface'
 import { Invitation } from '@standardnotes/models'
 import { AppleIAPReceipt } from './AppleIAPReceipt'
-import { AvailableSubscriptions } from '@standardnotes/responses'
-import { Subscription } from '@standardnotes/security'
+import { AvailableSubscriptions, Subscription } from '@standardnotes/responses'
 import { SubscriptionManagerEvent } from './SubscriptionManagerEvent'
 
 export interface SubscriptionManagerInterface extends ApplicationServiceInterface<SubscriptionManagerEvent, unknown> {
@@ -15,6 +14,7 @@ export interface SubscriptionManagerInterface extends ApplicationServiceInterfac
   get isUserSubscriptionExpired(): boolean
   get isUserSubscriptionCanceled(): boolean
 
+  fetchOnlineSubscription(): Promise<void>
   listSubscriptionInvitations(): Promise<Invitation[]>
   inviteToSubscription(inviteeEmail: string): Promise<boolean>
   cancelInvitation(inviteUuid: string): Promise<boolean>

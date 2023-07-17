@@ -14,6 +14,12 @@ export * from './Auth/SignInResponse'
 export * from './Auth/SignOutResponse'
 export * from './Auth/User'
 
+/** Temps are awaiting final publish state on server repo */
+export * from './Temp/SharedVaultMoveType'
+export * from './Temp/Subscription'
+export * from './Temp/ValetTokenOperation'
+export * from './Temp/Role'
+
 export * from './Error/ClientDisplayableError'
 
 export * from './Files/CloseUploadSessionResponse'
@@ -24,7 +30,6 @@ export * from './Files/DownloadFileChunkResponse'
 export * from './Files/StartUploadSessionResponse'
 export * from './Files/UploadFileChunkResponse'
 export * from './Files/MoveFileResponse'
-export * from './Files/ValetTokenOperation'
 
 export * from './Http'
 
