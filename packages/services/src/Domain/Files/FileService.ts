@@ -1,5 +1,11 @@
 import { MutatorClientInterface } from './../Mutator/MutatorClientInterface'
-import { ClientDisplayableError, isClientDisplayableError, isErrorResponse } from '@standardnotes/responses'
+import {
+  ClientDisplayableError,
+  isClientDisplayableError,
+  isErrorResponse,
+  SharedVaultMoveType,
+  ValetTokenOperation,
+} from '@standardnotes/responses'
 import {
   FileItem,
   FileProtocolV1Constants,
@@ -44,7 +50,6 @@ import { DecryptItemsKeyWithUserFallback } from '../Encryption/Functions'
 import { log, LoggingDomain } from '../Logging'
 import { SharedVaultServer, SharedVaultServerInterface, HttpServiceInterface } from '@standardnotes/api'
 import { ContentType } from '@standardnotes/domain-core'
-import { SharedVaultMoveType, ValetTokenOperation } from '@standardnotes/security'
 
 const OneHundredMb = 100 * 1_000_000
 

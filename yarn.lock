@@ -4221,7 +4221,6 @@ __metadata:
     "@standardnotes/domain-core": ^1.22.0
     "@standardnotes/models": "workspace:*"
     "@standardnotes/responses": "workspace:*"
-    "@standardnotes/security": ^1.8.1
     "@standardnotes/utils": "workspace:*"
     "@types/jest": ^29.2.3
     "@typescript-eslint/eslint-plugin": "*"
@@ -4518,7 +4517,6 @@ __metadata:
   dependencies:
     "@standardnotes/common": ^1.50.0
     "@standardnotes/domain-core": ^1.22.0
-    "@standardnotes/security": ^1.8.1
     "@types/jest": ^29.2.3
     "@typescript-eslint/eslint-plugin": "*"
     eslint: "*"
@@ -4774,7 +4772,6 @@ __metadata:
   dependencies:
     "@standardnotes/common": ^1.50.0
     "@standardnotes/features": "workspace:*"
-    "@standardnotes/security": ^1.8.1
     "@types/jest": ^29.2.3
     "@typescript-eslint/eslint-plugin": "*"
     eslint: "*"
@@ -4805,16 +4802,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/security@npm:^1.8.1":
-  version: 1.8.1
-  resolution: "@standardnotes/security@npm:1.8.1"
-  dependencies:
-    jsonwebtoken: ^9.0.0
-    reflect-metadata: ^0.1.13
-  checksum: 5218a924af250ca8cee177c114ff1be6bbe0bcf857fcc22fe3d22ca21d5704b999bf6f32fe43d1177099c384edba882e66c80d8bc917420840bff9435007386b
-  languageName: node
-  linkType: hard
-
 "@standardnotes/services@workspace:*, @standardnotes/services@workspace:^, @standardnotes/services@workspace:packages/services":
   version: 0.0.0-use.local
   resolution: "@standardnotes/services@workspace:packages/services"
@@ -4827,7 +4814,6 @@ __metadata:
     "@standardnotes/files": "workspace:^"
     "@standardnotes/models": "workspace:^"
     "@standardnotes/responses": "workspace:*"
-    "@standardnotes/security": ^1.8.1
     "@standardnotes/sncrypto-common": "workspace:^"
     "@standardnotes/utils": "workspace:*"
     "@types/jest": ^29.2.3
@@ -4928,7 +4914,6 @@ __metadata:
     "@standardnotes/files": "workspace:*"
     "@standardnotes/models": "workspace:*"
     "@standardnotes/responses": "workspace:*"
-    "@standardnotes/security": ^1.8.1
     "@standardnotes/services": "workspace:*"
     "@standardnotes/settings": ^1.20.0
     "@standardnotes/sncrypto-common": "workspace:*"

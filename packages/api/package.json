@@ -39,7 +39,6 @@
     "@standardnotes/domain-core": "^1.22.0",
     "@standardnotes/models": "workspace:*",
     "@standardnotes/responses": "workspace:*",
-    "@standardnotes/security": "^1.8.1",
     "@standardnotes/utils": "workspace:*",
     "reflect-metadata": "^0.1.13"
   }

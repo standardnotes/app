@@ -10,7 +10,7 @@ import {
   isNote,
   NoteContent,
 } from '@standardnotes/models'
-import { ClientDisplayableError } from '@standardnotes/responses'
+import { ClientDisplayableError, ValetTokenOperation } from '@standardnotes/responses'
 import {
   FilesApiInterface,
   FileBackupMetadataFile,
@@ -34,7 +34,6 @@ import { SessionsClientInterface } from '../Session/SessionsClientInterface'
 import { PayloadManagerInterface } from '../Payloads/PayloadManagerInterface'
 import { HistoryServiceInterface } from '../History/HistoryServiceInterface'
 import { ContentType } from '@standardnotes/domain-core'
-import { ValetTokenOperation } from '@standardnotes/security'
 
 const PlaintextBackupsDirectoryName = 'Plaintext Backups'
 export const TextBackupsDirectoryName = 'Text Backups'

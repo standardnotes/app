@@ -13,8 +13,12 @@ import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface
 import { AbstractService } from '../Service/AbstractService'
 import { SubscriptionManagerInterface } from './SubscriptionManagerInterface'
 import { AppleIAPReceipt } from './AppleIAPReceipt'
-import { AvailableSubscriptions, getErrorFromErrorResponse, isErrorResponse } from '@standardnotes/responses'
-import { Subscription } from '@standardnotes/security'
+import {
+  AvailableSubscriptions,
+  getErrorFromErrorResponse,
+  isErrorResponse,
+  Subscription,
+} from '@standardnotes/responses'
 import { SubscriptionManagerEvent } from './SubscriptionManagerEvent'
 
 export class SubscriptionManager

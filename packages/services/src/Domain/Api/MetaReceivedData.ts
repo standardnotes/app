@@ -1,4 +1,4 @@
-import { Role } from '@standardnotes/security'
+import { Role } from '@standardnotes/responses'
 
 export type MetaReceivedData = {
   userUuid: string

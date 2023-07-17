@@ -1,4 +1,4 @@
-import { SharedVaultMoveType, ValetTokenOperation } from '@standardnotes/security'
+import { SharedVaultMoveType, ValetTokenOperation } from '@standardnotes/responses'
 
 export type CreateSharedVaultValetTokenParams = {
   sharedVaultUuid: string

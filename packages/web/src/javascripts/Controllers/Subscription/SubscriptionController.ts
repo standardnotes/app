@@ -1,4 +1,4 @@
-import { Subscription } from '@standardnotes/security'
+import { Subscription } from '@standardnotes/responses'
 import { destroyAllObjectProperties } from '@/Utils'
 import {
   ApplicationEvent,
