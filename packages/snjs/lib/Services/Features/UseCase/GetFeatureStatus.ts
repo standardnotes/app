@@ -1,6 +1,6 @@
 import { AnyFeatureDescription, FeatureIdentifier, FindNativeFeature } from '@standardnotes/features'
 import { DecryptedItemInterface } from '@standardnotes/models'
-import { Subscription } from '@standardnotes/security'
+import { Subscription } from '@standardnotes/responses'
 import { FeatureStatus, ItemManagerInterface } from '@standardnotes/services'
 import { convertTimestampToMilliseconds } from '@standardnotes/utils'
 

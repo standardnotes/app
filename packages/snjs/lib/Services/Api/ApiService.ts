@@ -66,15 +66,13 @@ import {
   HttpErrorResponse,
   HttpSuccessResponse,
   isErrorResponse,
-  ValetTokenOperation,
   MoveFileResponse,
+  ValetTokenOperation,
 } from '@standardnotes/responses'
 import { LegacySession, MapperInterface, Session, SessionToken } from '@standardnotes/domain-core'
 import { HttpServiceInterface } from '@standardnotes/api'
 import { SNRootKeyParams } from '@standardnotes/encryption'
-
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
-
 import { isUrlFirstParty, TRUSTED_FEATURE_HOSTS } from '@Lib/Hosts'
 import { Paths } from './Paths'
 import { DiskStorageService } from '../Storage/DiskStorageService'

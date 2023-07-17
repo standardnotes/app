@@ -2,15 +2,30 @@ import { Title } from '@/Components/Preferences/PreferencesComponents/Content'
 import SubscriptionInformation from './SubscriptionInformation'
 import NoSubscription from './NoSubscription'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent } from 'react'
+import { FunctionComponent, useEffect, useState } from 'react'
 import PreferencesGroup from '@/Components/Preferences/PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '@/Components/Preferences/PreferencesComponents/PreferencesSegment'
 import { useApplication } from '@/Components/ApplicationProvider'
+import { SubscriptionManagerEvent, Subscription } from '@standardnotes/snjs'
 
 const Subscription: FunctionComponent = () => {
   const application = useApplication()
 
-  const onlineSubscription = application.controllers.subscriptionController.onlineSubscription
+  const [onlineSubscription, setOnlineSubscription] = useState<Subscription | undefined>(
+    application.controllers.subscriptionController.onlineSubscription,
+  )
+
+  useEffect(() => {
+    return application.subscriptions.addEventObserver((event) => {
+      if (event === SubscriptionManagerEvent.DidFetchSubscription) {
+        setOnlineSubscription(application.controllers.subscriptionController.onlineSubscription)
+      }
+    })
+  }, [application.subscriptions, application.controllers.subscriptionController])
+
+  useEffect(() => {
+    void application.subscriptions.fetchOnlineSubscription()
+  }, [application.subscriptions])
 
   return (
     <PreferencesGroup>

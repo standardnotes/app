@@ -65,13 +65,26 @@ export class FetchRequestHandler implements RequestHandlerInterface {
   }
 
   private async runRequest<T>(request: Request, body?: string | Uint8Array | undefined): Promise<HttpResponse<T>> {
-    const fetchResponse = await fetch(request, {
-      body,
-    })
+    try {
+      const fetchResponse = await fetch(request, {
+        body,
+      })
 
-    const response = await this.handleFetchResponse<T>(fetchResponse)
+      const response = await this.handleFetchResponse<T>(fetchResponse)
 
-    return response
+      return response
+    } catch (error) {
+      return {
+        status: HttpStatusCode.InternalServerError,
+        headers: new Map<string, string | null>(),
+        data: {
+          error: {
+            message:
+              'message' in (error as { message: string }) ? (error as { message: string }).message : 'Unknown error',
+          },
+        },
+      }
+    }
   }
 
   private async handleFetchResponse<T>(fetchResponse: Response): Promise<HttpResponse<T>> {

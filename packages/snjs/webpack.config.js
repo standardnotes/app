@@ -1,6 +1,6 @@
-const path = require('path');
-const webpack = require('webpack');
-const CircularDependencyPlugin = require('circular-dependency-plugin');
+const path = require('path')
+const webpack = require('webpack')
+const CircularDependencyPlugin = require('circular-dependency-plugin')
 
 module.exports = {
   entry: {
@@ -57,4 +57,4 @@ module.exports = {
       cwd: process.cwd(),
     }),
   ],
-};
+}

@@ -11,7 +11,7 @@ jest.mock('@standardnotes/features', () => ({
 }))
 
 import { FindNativeFeature } from '@standardnotes/features'
-import { Subscription } from '@standardnotes/security'
+import { Subscription } from '@standardnotes/responses'
 
 describe('GetFeatureStatusUseCase', () => {
   let items: jest.Mocked<ItemManagerInterface>
