@@ -71,6 +71,18 @@ describe('contacts', function () {
     expect(updatedSelfContact.publicKeySet.signing).to.equal(context.signingPublicKey)
   })
 
+  it('should update self contact reference when changed', async () => {
+    const selfContact = context.contacts.getSelfContact()
+
+    await context.mutator.changeItem(selfContact, (mutator) => {
+      mutator.name = 'New Name'
+    })
+
+    const updatedSelfContact = context.contacts.getSelfContact()
+
+    expect(updatedSelfContact.name).to.equal('New Name')
+  })
+
   it('should not be able to delete self contact', async () => {
     const selfContact = context.contacts.getSelfContact()
 

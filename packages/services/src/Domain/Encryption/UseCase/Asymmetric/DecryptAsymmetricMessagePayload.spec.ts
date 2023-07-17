@@ -6,6 +6,7 @@ import {
 } from '@standardnotes/models'
 import { DecryptAsymmetricMessagePayload } from './DecryptAsymmetricMessagePayload'
 import { OperatorInterface, OperatorManager } from '@standardnotes/encryption'
+import { ProtocolVersion } from '@standardnotes/common'
 
 function createMockPublicKeySetChain(): ContactPublicKeySetInterface {
   const nMinusOne = new ContactPublicKeySet({
@@ -33,6 +34,7 @@ describe('DecryptAsymmetricMessagePayload', () => {
 
   beforeEach(() => {
     operator = {} as jest.Mocked<OperatorInterface>
+    operator.versionForAsymmetricallyEncryptedString = jest.fn().mockReturnValue(ProtocolVersion.V004)
 
     const operators = {} as jest.Mocked<OperatorManager>
     operators.defaultOperator = jest.fn().mockReturnValue(operator)
@@ -114,6 +116,7 @@ describe('DecryptAsymmetricMessagePayload', () => {
         isMe: false,
       } as jest.Mocked<TrustedContactInterface>
 
+      senderContact.isPublicKeyTrusted = jest.fn().mockReturnValue(true)
       senderContact.isSigningKeyTrusted = jest.fn().mockReturnValue(false)
 
       const result = usecase.execute({
@@ -123,12 +126,12 @@ describe('DecryptAsymmetricMessagePayload', () => {
       })
 
       expect(result.isFailed()).toEqual(true)
-      expect(result.getError()).toEqual('Sender public key is not trusted')
+      expect(result.getError()).toEqual('Signature public key is not trusted')
     })
 
     it('should succeed with valid signature and encryption key', () => {
       operator.asymmetricDecrypt = jest.fn().mockReturnValue({
-        plaintext: '{foo: "bar"}',
+        plaintext: '{"foo": "bar"}',
         signatureVerified: true,
         signaturePublicKey: 'signing-public-key',
         senderPublicKey: 'encryption-public-key',
@@ -157,23 +160,21 @@ describe('DecryptAsymmetricMessagePayload', () => {
 
   describe('without trusted sender', () => {
     it('should succeed with valid signature and encryption key', () => {
-      it('should succeed with valid signature and encryption key', () => {
-        operator.asymmetricDecrypt = jest.fn().mockReturnValue({
-          plaintext: '{foo: "bar"}',
-          signatureVerified: true,
-          signaturePublicKey: 'signing-public-key',
-          senderPublicKey: 'encryption-public-key',
-        })
-
-        const result = usecase.execute({
-          encryptedString: 'encrypted',
-          trustedSender: undefined,
-          privateKey: 'private-key',
-        })
-
-        expect(result.isFailed()).toEqual(false)
-        expect(result.getValue()).toEqual({ foo: 'bar' })
+      operator.asymmetricDecrypt = jest.fn().mockReturnValue({
+        plaintext: '{"foo": "bar"}',
+        signatureVerified: true,
+        signaturePublicKey: 'signing-public-key',
+        senderPublicKey: 'encryption-public-key',
       })
+
+      const result = usecase.execute({
+        encryptedString: 'encrypted',
+        trustedSender: undefined,
+        privateKey: 'private-key',
+      })
+
+      expect(result.isFailed()).toEqual(false)
+      expect(result.getValue()).toEqual({ foo: 'bar' })
     })
   })
 })

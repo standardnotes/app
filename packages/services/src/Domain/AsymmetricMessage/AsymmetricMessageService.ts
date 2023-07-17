@@ -30,6 +30,8 @@ import { GetOutboundAsymmetricMessages } from './UseCase/GetOutboundAsymmetricMe
 import { GetInboundAsymmetricMessages } from './UseCase/GetInboundAsymmetricMessages'
 import { GetVaultUseCase } from '../Vaults/UseCase/GetVault'
 import { AsymmetricMessageServiceInterface } from './AsymmetricMessageServiceInterface'
+import { isNotUndefined } from '@standardnotes/utils'
+import { TrustedMessageResult } from './TrustedMessageResult'
 
 export class AsymmetricMessageService
   extends AbstractService
@@ -108,37 +110,90 @@ export class AsymmetricMessageService
     }
   }
 
+  categorizeTrustedMessages(messages: TrustedMessageResult[]): {
+    priority: TrustedMessageResult[]
+    regular: TrustedMessageResult[]
+  } {
+    const prioritizePayloadTypes = [AsymmetricMessagePayloadType.SenderKeysetRevoked]
+
+    const priority: TrustedMessageResult[] = []
+    const regular: TrustedMessageResult[] = []
+
+    for (const message of messages) {
+      if (prioritizePayloadTypes.includes(message.payload.type)) {
+        priority.push(message)
+      } else {
+        regular.push(message)
+      }
+    }
+
+    return { priority, regular }
+  }
+
+  private getTrustedMessageResultsFromServerHashes(hashes: AsymmetricMessageServerHash[]): TrustedMessageResult[] {
+    const sortedMessageHashes = hashes.slice().sort((a, b) => a.created_at_timestamp - b.created_at_timestamp)
+
+    const trustedMessageResults: TrustedMessageResult[] = sortedMessageHashes
+      .map((message) => {
+        const payload = this.getTrustedMessagePayload(message)
+        if (!payload) {
+          return undefined
+        }
+        return { message: message, payload: payload }
+      })
+      .filter(isNotUndefined)
+
+    return trustedMessageResults
+  }
+
   async handleRemoteReceivedAsymmetricMessages(messages: AsymmetricMessageServerHash[]): Promise<void> {
     if (messages.length === 0) {
       return
     }
 
-    const sortedMessages = messages.slice().sort((a, b) => a.created_at_timestamp - b.created_at_timestamp)
+    const trustedMessageResults = this.getTrustedMessageResultsFromServerHashes(messages)
 
-    for (const message of sortedMessages) {
-      const trustedMessagePayload = this.getTrustedMessagePayload(message)
-      if (!trustedMessagePayload) {
-        continue
+    const { priority, regular } = this.categorizeTrustedMessages(trustedMessageResults)
+
+    if (priority.length > 0) {
+      for (const priorityMessage of priority) {
+        await this.handleTrustedMessageResult(priorityMessage)
       }
 
-      if (trustedMessagePayload.data.recipientUuid !== message.user_uuid) {
-        continue
+      /** The trust status for messages could change after processing priority messages. */
+      const reprocessedRegularResults = this.getTrustedMessageResultsFromServerHashes(regular.map((r) => r.message))
+      for (const trustedMessage of reprocessedRegularResults) {
+        await this.handleTrustedMessageResult(trustedMessage)
       }
-
-      if (trustedMessagePayload.type === AsymmetricMessagePayloadType.ContactShare) {
-        await this.handleTrustedContactShareMessage(message, trustedMessagePayload)
-      } else if (trustedMessagePayload.type === AsymmetricMessagePayloadType.SenderKeypairChanged) {
-        await this.handleTrustedSenderKeypairChangedMessage(message, trustedMessagePayload)
-      } else if (trustedMessagePayload.type === AsymmetricMessagePayloadType.SharedVaultRootKeyChanged) {
-        await this.handleTrustedSharedVaultRootKeyChangedMessage(message, trustedMessagePayload)
-      } else if (trustedMessagePayload.type === AsymmetricMessagePayloadType.SharedVaultMetadataChanged) {
-        await this.handleTrustedVaultMetadataChangedMessage(message, trustedMessagePayload)
-      } else if (trustedMessagePayload.type === AsymmetricMessagePayloadType.SharedVaultInvite) {
-        throw new Error('Shared vault invites payloads are not handled as part of asymmetric messages')
+    } else {
+      for (const trustedMessage of regular) {
+        await this.handleTrustedMessageResult(trustedMessage)
       }
-
-      await this.deleteMessageAfterProcessing(message)
     }
+  }
+
+  private async handleTrustedMessageResult(result: TrustedMessageResult): Promise<void> {
+    const { message, payload } = result
+
+    if (payload.data.recipientUuid !== message.user_uuid) {
+      return
+    }
+
+    if (payload.type === AsymmetricMessagePayloadType.ContactShare) {
+      await this.handleTrustedContactShareMessage(message, payload)
+    } else if (payload.type === AsymmetricMessagePayloadType.SenderKeypairChanged) {
+      await this.handleTrustedSenderKeypairChangedMessage(message, payload)
+    } else if (payload.type === AsymmetricMessagePayloadType.SharedVaultRootKeyChanged) {
+      await this.handleTrustedSharedVaultRootKeyChangedMessage(message, payload)
+    } else if (payload.type === AsymmetricMessagePayloadType.SharedVaultMetadataChanged) {
+      await this.handleTrustedVaultMetadataChangedMessage(message, payload)
+    } else if (payload.type === AsymmetricMessagePayloadType.SenderKeysetRevoked) {
+      await this.handleTrustedSenderKeysetRevokedMessage(message, payload)
+    } else if (payload.type === AsymmetricMessagePayloadType.SharedVaultInvite) {
+      throw new Error('Shared vault invites payloads are not handled as part of asymmetric messages')
+    }
+
+    await this.deleteMessageAfterProcessing(message)
   }
 
   getTrustedMessagePayload(message: AsymmetricMessageServerHash): AsymmetricMessagePayload | undefined {

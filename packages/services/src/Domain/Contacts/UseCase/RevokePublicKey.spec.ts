@@ -5,6 +5,7 @@ import { ContactServiceInterface } from '../ContactServiceInterface'
 import { EncryptAsymmetricMessagePayload } from '../../Encryption/UseCase/Asymmetric/EncryptAsymmetricMessagePayload'
 import { SendAsymmetricMessageUseCase } from '../../AsymmetricMessage/UseCase/SendAsymmetricMessageUseCase'
 import { PkcKeyPair } from '@standardnotes/sncrypto-common'
+import { Result } from '@standardnotes/domain-core'
 
 function createMockPublicKeySetChain(): ContactPublicKeySetInterface {
   const nMinusTwo = new ContactPublicKeySet({
@@ -66,12 +67,16 @@ describe('RevokePublicKey', () => {
     } as jest.Mocked<TrustedContactInterface>
 
     const mutator = {} as jest.Mocked<MutatorClientInterface>
+    mutator.changeItem = jest.fn()
 
     const contacts = {} as jest.Mocked<ContactServiceInterface>
     contacts.getAllContacts = jest.fn().mockReturnValue([selfContact, otherContact])
 
     encryptAsymmetricMessageUseCase = {} as jest.Mocked<EncryptAsymmetricMessagePayload>
+    encryptAsymmetricMessageUseCase.execute = jest.fn().mockReturnValue(Result.ok())
+
     sendMessageUseCase = {} as jest.Mocked<SendAsymmetricMessageUseCase>
+    sendMessageUseCase.execute = jest.fn()
 
     usecase = new RevokePublicKeyUseCase(mutator, contacts, encryptAsymmetricMessageUseCase, sendMessageUseCase)
   })

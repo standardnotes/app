@@ -19,6 +19,8 @@ import {
 import { CreateOrEditTrustedContactUseCase } from '../UseCase/CreateOrEditTrustedContact'
 import { ContentType } from '@standardnotes/domain-core'
 
+const SelfContactName = 'Me'
+
 export class SelfContactManager {
   public selfContact?: TrustedContactInterface
 
@@ -40,6 +42,18 @@ export class SelfContactManager {
 
         if (event === SyncEvent.SyncCompletedWithAllItemsUploaded) {
           void this.reloadSelfContactAndCreateIfNecessary()
+        }
+      }),
+    )
+
+    this.eventDisposers.push(
+      items.addObserver(ContentType.TYPES.TrustedContact, () => {
+        const updatedReference = this.singletons.findSingleton<TrustedContact>(
+          ContentType.TYPES.TrustedContact,
+          TrustedContact.singletonPredicate,
+        )
+        if (updatedReference) {
+          this.selfContact = updatedReference
         }
       }),
     )
@@ -73,7 +87,7 @@ export class SelfContactManager {
 
     const usecase = new CreateOrEditTrustedContactUseCase(this.items, this.mutator, this.sync)
     await usecase.execute({
-      name: 'Me',
+      name: SelfContactName,
       contactUuid: this.selfContact.contactUuid,
       publicKey: publicKeySet.encryption,
       signingPublicKey: publicKeySet.signing,
@@ -104,7 +118,7 @@ export class SelfContactManager {
     this.isReloadingSelfContact = true
 
     const content: TrustedContactContentSpecialized = {
-      name: 'Me',
+      name: SelfContactName,
       isMe: true,
       contactUuid: this.session.getSureUser().uuid,
       publicKeySet: ContactPublicKeySet.FromJson({

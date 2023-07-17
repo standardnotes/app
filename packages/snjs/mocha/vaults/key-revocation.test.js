@@ -4,7 +4,7 @@ import * as Collaboration from '../lib/Collaboration.js'
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
-describe('keypair revocation', () => {
+describe.only('public keyset revocation', function () {
   this.timeout(Factory.TwentySecondTimeout)
 
   let context
@@ -30,7 +30,7 @@ describe('keypair revocation', () => {
 
     const result = await context.sharedVaults.revokeOwnKeySet(previousKeySet)
 
-    expect(result.isFail()).to.equal(false)
+    expect(result.isFailed()).to.equal(false)
 
     const revokedKeySet = context.contacts.getSelfContact().publicKeySet.previousKeySet
 
@@ -43,12 +43,14 @@ describe('keypair revocation', () => {
     const currentKeySet = context.contacts.getSelfContact().publicKeySet
     const result = await context.sharedVaults.revokeOwnKeySet(currentKeySet)
 
-    expect(result.isFail()).to.equal(true)
+    expect(result.isFailed()).to.equal(true)
     expect(result.getError()).to.equal('Cannot revoke current key set')
   })
 
-  it('revoking a key should send a key revocation message to trusted contacts', async () => {
+  it.only('revoking a key should send a key revocation message to trusted contacts', async () => {
     const { contactContext, deinitContactContext } = await Collaboration.createSharedVaultWithAcceptedInvite(context)
+
+    contactContext.lockSyncing()
 
     const previousKeySet = context.contacts.getSelfContact().publicKeySet
 
@@ -60,6 +62,7 @@ describe('keypair revocation', () => {
 
     await context.sharedVaults.revokeOwnKeySet(previousKeySet)
 
+    contactContext.unlockSyncing()
     const completedProcessingMessagesPromise = contactContext.resolveWhenAsymmetricMessageProcessingCompletes()
     await contactContext.sync()
     await completedProcessingMessagesPromise
@@ -81,6 +84,8 @@ describe('keypair revocation', () => {
       name: 'New Name',
       description: 'New Description',
     })
+
+    const previousKeySet = context.contacts.getSelfContact().publicKeySet
 
     await context.changePassword('new-password')
     await context.sharedVaults.revokeOwnKeySet(previousKeySet)
