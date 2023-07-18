@@ -13,6 +13,7 @@ import {
 } from '@standardnotes/snjs'
 import { ExtensionDevice } from '../device/device'
 import { SNWebCrypto } from '@standardnotes/sncrypto-web'
+import packageInfo from '../../package.json'
 
 const isFirefox = navigator.userAgent.indexOf('Firefox/') !== -1
 
@@ -104,13 +105,13 @@ applicationGroup
   .initialize({
     async applicationCreator(descriptor, deviceInterface) {
       return new SNApplication({
-        environment: Environment.Web,
+        environment: Environment.Clipper,
         platform: Platform.LinuxWeb,
         deviceInterface,
         crypto,
         alertService,
         identifier: descriptor.identifier,
-        appVersion: '1.0.0',
+        appVersion: packageInfo.version || '1.0.0',
         defaultHost: 'https://api.standardnotes.com',
       })
     },
