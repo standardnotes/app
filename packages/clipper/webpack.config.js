@@ -49,6 +49,9 @@ module.exports = (env, argv) => {
     ],
     resolve: {
       extensions: ['.ts', '.js'],
+      fallback: {
+        crypto: false,
+      },
     },
     module: {
       rules: [
