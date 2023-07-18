@@ -8,6 +8,8 @@ module.exports = (env, argv) => {
     entry: {
       background: './src/background/background.ts',
       content: './src/content/content.ts',
+      device: './src/device/device.ts',
+      addDeviceToWindow: './src/device/addDeviceToWindow.ts',
     },
     output: {
       filename: '[name].js',

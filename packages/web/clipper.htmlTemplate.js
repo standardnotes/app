@@ -8,6 +8,7 @@ module.exports = ({ htmlWebpackPlugin }) => {
 		<meta name="theme-color" content="#ffffff" />
 		<title>Standard Notes</title>
 		<script src="./globals.js"></script>
+    <script src="./addDeviceToWindow.js"></script>
 		${htmlWebpackPlugin.tags.headTags}
 		<style>
 			html,
