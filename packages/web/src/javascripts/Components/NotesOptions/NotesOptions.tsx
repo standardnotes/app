@@ -1,6 +1,6 @@
 import Icon from '@/Components/Icon/Icon'
 import { observer } from 'mobx-react-lite'
-import { useState, useEffect, useMemo, useCallback } from 'react'
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import { NoteType, Platform, SNNote } from '@standardnotes/snjs'
 import {
   CHANGE_EDITOR_WIDTH_COMMAND,
@@ -8,6 +8,9 @@ import {
   PIN_NOTE_COMMAND,
   SHOW_HIDDEN_OPTIONS_KEYBOARD_COMMAND,
   STAR_NOTE_COMMAND,
+  SUPER_EXPORT_HTML,
+  SUPER_EXPORT_JSON,
+  SUPER_EXPORT_MARKDOWN,
   SUPER_SHOW_MARKDOWN_PREVIEW,
 } from '@standardnotes/ui-services'
 import ChangeEditorOption from './ChangeEditorOption'
@@ -39,6 +42,8 @@ import { useApplication } from '../ApplicationProvider'
 import { MutuallyExclusiveMediaQueryBreakpoints } from '@/Hooks/useMediaQuery'
 import AddToVaultMenuOption from '../Vaults/AddToVaultMenuOption'
 import { featureTrunkVaultsEnabled } from '@/FeatureTrunk'
+import Menu from '../Menu/Menu'
+import Popover from '../Popover/Popover'
 
 const iconSize = MenuItemIconSize
 const iconClassDanger = `text-danger mr-2 ${iconSize}`
@@ -181,6 +186,9 @@ const NotesOptions = ({
     [application],
   )
 
+  const superExportButtonRef = useRef<HTMLButtonElement>(null)
+  const [isSuperExportMenuOpen, setIsSuperExportMenuOpen] = useState(false)
+
   const unauthorized = notes.some((note) => !application.isAuthorizedToRenderItem(note))
   if (unauthorized) {
     return <ProtectedUnauthorizedLabel />
@@ -286,7 +294,48 @@ const NotesOptions = ({
           {pinShortcut && <KeyboardShortcutIndicator className="ml-auto" shortcut={pinShortcut} />}
         </MenuItem>
       )}
-      {!isOnlySuperNoteSelected && (
+      {isOnlySuperNoteSelected ? (
+        <>
+          <MenuItem
+            ref={superExportButtonRef}
+            onClick={() => {
+              setIsSuperExportMenuOpen((open) => !open)
+            }}
+          >
+            <div className="flex items-center">
+              <Icon type="download" className={iconClass} />
+              Export
+            </div>
+            <Icon type="chevron-right" className="ml-auto text-neutral" />
+          </MenuItem>
+          <Popover
+            title="Export note"
+            side="left"
+            align="start"
+            open={isSuperExportMenuOpen}
+            anchorElement={superExportButtonRef.current}
+            togglePopover={() => {
+              setIsSuperExportMenuOpen(!isSuperExportMenuOpen)
+            }}
+            className="py-1"
+          >
+            <Menu a11yLabel={'Super note export menu'} isOpen={isSuperExportMenuOpen}>
+              <MenuItem onClick={() => commandService.triggerCommand(SUPER_EXPORT_JSON, notes[0].title)}>
+                <Icon type="code" className={iconClass} />
+                Export as JSON
+              </MenuItem>
+              <MenuItem onClick={() => commandService.triggerCommand(SUPER_EXPORT_MARKDOWN, notes[0].title)}>
+                <Icon type="markdown" className={iconClass} />
+                Export as Markdown
+              </MenuItem>
+              <MenuItem onClick={() => commandService.triggerCommand(SUPER_EXPORT_HTML, notes[0].title)}>
+                <Icon type="rich-text" className={iconClass} />
+                Export as HTML
+              </MenuItem>
+            </Menu>
+          </Popover>
+        </>
+      ) : (
         <>
           <MenuItem
             onClick={() => {
