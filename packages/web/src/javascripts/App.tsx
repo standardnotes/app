@@ -15,6 +15,7 @@ declare global {
     electronAppVersion?: string
     webClient?: DesktopManagerInterface
     electronRemoteBridge?: unknown
+    extensionDevice?: WebDevice
     reactNativeDevice?: WebDevice
     platform?: Platform
 
@@ -109,7 +110,7 @@ if (IsWebPlatform) {
   const ReactNativeWebViewInitializationTimeout = 0
 
   setTimeout(() => {
-    const device = window.reactNativeDevice || new WebDevice(WebAppVersion)
+    const device = window.extensionDevice || window.reactNativeDevice || new WebDevice(WebAppVersion)
     window.platform = getPlatform(device)
 
     startApplication(window.defaultSyncServer, device, window.enabledUnfinishedFeatures, window.websocketUrl).catch(
