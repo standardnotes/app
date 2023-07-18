@@ -161,8 +161,8 @@ describe('asymmetric messages', function () {
       description: 'New Description',
     })
 
-    const firstPartySpy = sinon.spy(context.asymmetric, 'handleVaultMetadataChangedMessage')
-    const secondPartySpy = sinon.spy(contactContext.asymmetric, 'handleVaultMetadataChangedMessage')
+    const firstPartySpy = sinon.spy(context.asymmetric, 'handleTrustedVaultMetadataChangedMessage')
+    const secondPartySpy = sinon.spy(contactContext.asymmetric, 'handleTrustedVaultMetadataChangedMessage')
 
     await context.sync()
     await contactContext.sync()
@@ -197,6 +197,61 @@ describe('asymmetric messages', function () {
     const contact = contactContext.contacts.findTrustedContact(context.userUuid)
     expect(contact.publicKeySet.encryption).to.equal(context.publicKey)
     expect(contact.publicKeySet.signing).to.equal(context.signingPublicKey)
+
+    await deinitContactContext()
+  })
+
+  it('should trust and process messages sent after sender keypair changed', async () => {
+    const { sharedVault, contactContext, deinitContactContext } =
+      await Collaboration.createSharedVaultWithAcceptedInvite(context)
+
+    await context.changePassword('new password')
+
+    await context.vaults.changeVaultNameAndDescription(sharedVault, {
+      name: 'New Name',
+      description: 'New Description',
+    })
+
+    const completedProcessingMessagesPromise = contactContext.resolveWhenAsymmetricMessageProcessingCompletes()
+    await contactContext.sync()
+    await completedProcessingMessagesPromise
+
+    const updatedVault = contactContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })
+    expect(updatedVault.name).to.equal('New Name')
+    expect(updatedVault.description).to.equal('New Description')
+
+    await deinitContactContext()
+  })
+
+  it('should not send back a vault change message after receiving a vault change message', async () => {
+    /**
+     * If userA receives a vault change message and mutates their vault locally, this should not create a
+     * chain of vault change messages that then ping-pongs back and forth between the two users.
+     */
+    const { sharedVault, contactContext, deinitContactContext } =
+      await Collaboration.createSharedVaultWithAcceptedInvite(context)
+
+    await context.changePassword('new password')
+
+    await context.vaults.changeVaultNameAndDescription(sharedVault, {
+      name: 'New Name',
+      description: 'New Description',
+    })
+
+    context.lockSyncing()
+
+    const completedProcessingMessagesPromise = contactContext.resolveWhenAsymmetricMessageProcessingCompletes()
+    await contactContext.sync()
+    await completedProcessingMessagesPromise
+
+    /**
+     * There's really no good way to await the exact call since
+     * the relevant part fires in the SharedVaultSerivce item observer
+     */
+    await context.sleep(0.25)
+
+    const messages = await context.asymmetric.getInboundMessages()
+    expect(messages.length).to.equal(0)
 
     await deinitContactContext()
   })

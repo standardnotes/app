@@ -14,6 +14,8 @@ import {
   FillItemContent,
   TrustedContactMutator,
   DecryptedItemInterface,
+  MutationType,
+  PayloadEmitSource,
 } from '@standardnotes/models'
 import { AbstractService } from '../Service/AbstractService'
 import { SyncServiceInterface } from '../Sync/SyncServiceInterface'
@@ -185,10 +187,15 @@ export class ContactService
 
     let contact = this.findTrustedContact(data.contactUuid)
     if (contact) {
-      contact = await this.mutator.changeItem<TrustedContactMutator, TrustedContactInterface>(contact, (mutator) => {
-        mutator.name = data.name
-        mutator.replacePublicKeySet(data.publicKeySet)
-      })
+      contact = await this.mutator.changeItem<TrustedContactMutator, TrustedContactInterface>(
+        contact,
+        (mutator) => {
+          mutator.name = data.name
+          mutator.replacePublicKeySet(data.publicKeySet)
+        },
+        MutationType.UpdateUserTimestamps,
+        PayloadEmitSource.RemoteRetrieved,
+      )
     } else {
       contact = await this.mutator.createItem<TrustedContactInterface>(
         ContentType.TYPES.TrustedContact,

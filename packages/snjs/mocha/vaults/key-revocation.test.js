@@ -4,7 +4,7 @@ import * as Collaboration from '../lib/Collaboration.js'
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
-describe.only('public keyset revocation', function () {
+describe('public keyset revocation', function () {
   this.timeout(Factory.TwentySecondTimeout)
 
   let context
@@ -47,7 +47,7 @@ describe.only('public keyset revocation', function () {
     expect(result.getError()).to.equal('Cannot revoke current key set')
   })
 
-  it.only('revoking a key should send a key revocation message to trusted contacts', async () => {
+  it('revoking a key should send a key revocation message to trusted contacts', async () => {
     const { contactContext, deinitContactContext } = await Collaboration.createSharedVaultWithAcceptedInvite(context)
 
     contactContext.lockSyncing()
@@ -74,7 +74,7 @@ describe.only('public keyset revocation', function () {
     await deinitContactContext()
   })
 
-  it('messages received with revoked key should be distrusted', async () => {
+  it('messages received with revoked key should be untrusted', async () => {
     const { sharedVault, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithAcceptedInvite(context)
 
@@ -90,10 +90,14 @@ describe.only('public keyset revocation', function () {
     await context.changePassword('new-password')
     await context.sharedVaults.revokeOwnKeySet(previousKeySet)
 
-    const messages = await contactContext.asymmetric.getInboundMessages()
-    const trustedPayload = contactContext.asymmetric.getTrustedMessagePayload(messages[0])
+    contactContext.unlockSyncing()
+    const completedProcessingMessagesPromise = contactContext.resolveWhenAsymmetricMessageProcessingCompletes()
+    await contactContext.sync()
+    await completedProcessingMessagesPromise
 
-    expect(trustedPayload).to.be.undefined
+    const updatedVault = contactContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })
+    expect(updatedVault.name).to.not.equal('New Name')
+    expect(updatedVault.description).to.not.equal('New Description')
 
     await deinitContactContext()
   })

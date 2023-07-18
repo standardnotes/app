@@ -260,6 +260,10 @@ export class SharedVaultService
 
   private async handleTrustedContactsChange(contacts: TrustedContactInterface[]): Promise<void> {
     for (const contact of contacts) {
+      if (contact.isMe) {
+        continue
+      }
+
       await this.shareContactWithUserAdministeredSharedVaults(contact)
     }
   }
@@ -513,7 +517,11 @@ export class SharedVaultService
     return useCase.execute({ sharedVaultUuid: sharedVault.sharing.sharedVaultUuid })
   }
 
-  private async shareContactWithUserAdministeredSharedVaults(contact: TrustedContactInterface): Promise<void> {
+  async shareContactWithUserAdministeredSharedVaults(contact: TrustedContactInterface): Promise<void> {
+    if (contact.isMe) {
+      throw new Error('Cannot share self contact')
+    }
+
     const sharedVaults = this.getAllSharedVaults()
 
     const useCase = new ShareContactWithAllMembersOfSharedVaultUseCase(

@@ -18,6 +18,8 @@ import {
   VaultListingMutator,
   AsymmetricMessageSenderKeysetRevoked,
   TrustedContactMutator,
+  MutationType,
+  PayloadEmitSource,
 } from '@standardnotes/models'
 import { HandleTrustedSharedVaultRootKeyChangedMessage } from './UseCase/HandleTrustedSharedVaultRootKeyChangedMessage'
 import { ItemManagerInterface } from '../Item/ItemManagerInterface'
@@ -30,8 +32,7 @@ import { GetOutboundAsymmetricMessages } from './UseCase/GetOutboundAsymmetricMe
 import { GetInboundAsymmetricMessages } from './UseCase/GetInboundAsymmetricMessages'
 import { GetVaultUseCase } from '../Vaults/UseCase/GetVault'
 import { AsymmetricMessageServiceInterface } from './AsymmetricMessageServiceInterface'
-import { isNotUndefined } from '@standardnotes/utils'
-import { TrustedMessageResult } from './TrustedMessageResult'
+import { GetAsymmetricMessageUntrustedPayload } from './UseCase/GetAsymmetricMessageUntrustedPayload'
 
 export class AsymmetricMessageService
   extends AbstractService
@@ -110,40 +111,58 @@ export class AsymmetricMessageService
     }
   }
 
-  categorizeTrustedMessages(messages: TrustedMessageResult[]): {
-    priority: TrustedMessageResult[]
-    regular: TrustedMessageResult[]
-  } {
-    const prioritizePayloadTypes = [AsymmetricMessagePayloadType.SenderKeysetRevoked]
+  sortServerMessages(messages: AsymmetricMessageServerHash[]): AsymmetricMessageServerHash[] {
+    const SortedPriorityTypes = [
+      AsymmetricMessagePayloadType.SenderKeypairChanged,
+      AsymmetricMessagePayloadType.SenderKeysetRevoked,
+    ]
 
-    const priority: TrustedMessageResult[] = []
-    const regular: TrustedMessageResult[] = []
+    const priority: AsymmetricMessageServerHash[] = []
+    const regular: AsymmetricMessageServerHash[] = []
 
-    for (const message of messages) {
-      if (prioritizePayloadTypes.includes(message.payload.type)) {
+    const sortedByDate = messages.slice().sort((a, b) => a.created_at_timestamp - b.created_at_timestamp)
+
+    const messageTypeMap: Record<string, AsymmetricMessagePayloadType> = {}
+
+    for (const message of sortedByDate) {
+      const messageType = this.getServerMessageType(message)
+      if (!messageType) {
+        continue
+      }
+
+      messageTypeMap[message.uuid] = messageType
+
+      if (SortedPriorityTypes.includes(messageType)) {
         priority.push(message)
       } else {
         regular.push(message)
       }
     }
 
-    return { priority, regular }
+    const sortedPriority = priority.sort((a, b) => {
+      const typeA = messageTypeMap[a.uuid]
+      const typeB = messageTypeMap[b.uuid]
+
+      if (typeA !== typeB) {
+        return SortedPriorityTypes.indexOf(typeA) - SortedPriorityTypes.indexOf(typeB)
+      }
+
+      return a.created_at_timestamp - b.created_at_timestamp
+    })
+
+    const sortedRegular = regular.sort((a, b) => a.created_at_timestamp - b.created_at_timestamp)
+
+    return [...sortedPriority, ...sortedRegular]
   }
 
-  private getTrustedMessageResultsFromServerHashes(hashes: AsymmetricMessageServerHash[]): TrustedMessageResult[] {
-    const sortedMessageHashes = hashes.slice().sort((a, b) => a.created_at_timestamp - b.created_at_timestamp)
+  getServerMessageType(message: AsymmetricMessageServerHash): AsymmetricMessagePayloadType | undefined {
+    const result = this.getUntrustedMessagePayload(message)
 
-    const trustedMessageResults: TrustedMessageResult[] = sortedMessageHashes
-      .map((message) => {
-        const payload = this.getTrustedMessagePayload(message)
-        if (!payload) {
-          return undefined
-        }
-        return { message: message, payload: payload }
-      })
-      .filter(isNotUndefined)
+    if (!result) {
+      return undefined
+    }
 
-    return trustedMessageResults
+    return result.type
   }
 
   async handleRemoteReceivedAsymmetricMessages(messages: AsymmetricMessageServerHash[]): Promise<void> {
@@ -151,30 +170,22 @@ export class AsymmetricMessageService
       return
     }
 
-    const trustedMessageResults = this.getTrustedMessageResultsFromServerHashes(messages)
+    const sortedMessages = this.sortServerMessages(messages)
 
-    const { priority, regular } = this.categorizeTrustedMessages(trustedMessageResults)
-
-    if (priority.length > 0) {
-      for (const priorityMessage of priority) {
-        await this.handleTrustedMessageResult(priorityMessage)
+    for (const message of sortedMessages) {
+      const trustedPayload = this.getTrustedMessagePayload(message)
+      if (!trustedPayload) {
+        continue
       }
 
-      /** The trust status for messages could change after processing priority messages. */
-      const reprocessedRegularResults = this.getTrustedMessageResultsFromServerHashes(regular.map((r) => r.message))
-      for (const trustedMessage of reprocessedRegularResults) {
-        await this.handleTrustedMessageResult(trustedMessage)
-      }
-    } else {
-      for (const trustedMessage of regular) {
-        await this.handleTrustedMessageResult(trustedMessage)
-      }
+      await this.handleTrustedMessageResult(message, trustedPayload)
     }
   }
 
-  private async handleTrustedMessageResult(result: TrustedMessageResult): Promise<void> {
-    const { message, payload } = result
-
+  private async handleTrustedMessageResult(
+    message: AsymmetricMessageServerHash,
+    payload: AsymmetricMessagePayload,
+  ): Promise<void> {
     if (payload.data.recipientUuid !== message.user_uuid) {
       return
     }
@@ -194,6 +205,15 @@ export class AsymmetricMessageService
     }
 
     await this.deleteMessageAfterProcessing(message)
+  }
+
+  getUntrustedMessagePayload(message: AsymmetricMessageServerHash): AsymmetricMessagePayload | undefined {
+    const useCase = new GetAsymmetricMessageUntrustedPayload(this.encryption)
+
+    return useCase.execute({
+      privateKey: this.encryption.getKeyPair().privateKey,
+      message,
+    })
   }
 
   getTrustedMessagePayload(message: AsymmetricMessageServerHash): AsymmetricMessagePayload | undefined {
@@ -218,12 +238,17 @@ export class AsymmetricMessageService
       return
     }
 
-    await this.mutator.changeItem<TrustedContactMutator>(contact, (mutator) => {
-      mutator.revokePublicKeySet({
-        encryption: trustedPayload.data.revokedPublicKey,
-        signing: trustedPayload.data.revokedSigningPublicKey,
-      })
-    })
+    await this.mutator.changeItem<TrustedContactMutator>(
+      contact,
+      (mutator) => {
+        mutator.revokePublicKeySet({
+          encryption: trustedPayload.data.revokedPublicKey,
+          signing: trustedPayload.data.revokedSigningPublicKey,
+        })
+      },
+      MutationType.UpdateUserTimestamps,
+      PayloadEmitSource.RemoteRetrieved,
+    )
 
     void this.sync.sync()
   }
@@ -237,16 +262,25 @@ export class AsymmetricMessageService
       return
     }
 
-    await this.mutator.changeItem<VaultListingMutator>(vault, (mutator) => {
-      mutator.name = trustedPayload.data.name
-      mutator.description = trustedPayload.data.description
-    })
+    await this.mutator.changeItem<VaultListingMutator>(
+      vault,
+      (mutator) => {
+        mutator.name = trustedPayload.data.name
+        mutator.description = trustedPayload.data.description
+      },
+      MutationType.UpdateUserTimestamps,
+      PayloadEmitSource.RemoteRetrieved,
+    )
   }
 
   async handleTrustedContactShareMessage(
     _message: AsymmetricMessageServerHash,
     trustedPayload: AsymmetricMessageTrustedContactShare,
   ): Promise<void> {
+    if (trustedPayload.data.trustedContact.isMe) {
+      return
+    }
+
     await this.contacts.createOrUpdateTrustedContactFromContactShare(trustedPayload.data.trustedContact)
   }
 

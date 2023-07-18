@@ -8,7 +8,6 @@ import { ItemManagerInterface } from '../Item/ItemManagerInterface'
 import { SyncServiceInterface } from '../Sync/SyncServiceInterface'
 import { AsymmetricMessageServerHash } from '@standardnotes/responses'
 import {
-  AsymmetricMessagePayload,
   AsymmetricMessagePayloadType,
   AsymmetricMessageSenderKeypairChanged,
   AsymmetricMessageSenderKeysetRevoked,
@@ -18,9 +17,10 @@ import {
   AsymmetricMessageTrustedContactShare,
   ContactPublicKeySetInterface,
   KeySystemRootKeyContentSpecialized,
+  MutationType,
+  PayloadEmitSource,
   TrustedContactInterface,
 } from '@standardnotes/models'
-import { TrustedMessageResult } from './TrustedMessageResult'
 
 describe('AsymmetricMessageService', () => {
   let service: AsymmetricMessageService
@@ -52,43 +52,93 @@ describe('AsymmetricMessageService', () => {
     service = new AsymmetricMessageService(http, encryption, contacts, items, mutator, sync, eventBus)
   })
 
-  describe('categorizeTrustedMessages', () => {
-    it('should prioritize keyset revocation messages', () => {
-      const messages: TrustedMessageResult[] = [
+  describe('sortServerMessages', () => {
+    it('should prioritize keyset revocation messages over other misc messages', () => {
+      const messages: AsymmetricMessageServerHash[] = [
         {
-          message: {
-            uuid: 'newer-revocation-message',
-            user_uuid: '1',
-            sender_uuid: '2',
-            encrypted_message: 'encrypted_message',
-            created_at_timestamp: 2,
-            updated_at_timestamp: 2,
-          },
-          payload: {
-            type: AsymmetricMessagePayloadType.SenderKeysetRevoked,
-            data: { recipientUuid: '1' },
-          } as AsymmetricMessagePayload,
+          uuid: 'newer-revocation-message',
+          user_uuid: '1',
+          sender_uuid: '2',
+          encrypted_message: 'encrypted_message',
+          created_at_timestamp: 2,
+          updated_at_timestamp: 2,
         },
         {
-          message: {
-            uuid: 'older-message',
-            user_uuid: '1',
-            sender_uuid: '2',
-            encrypted_message: 'encrypted_message',
-            created_at_timestamp: 1,
-            updated_at_timestamp: 1,
-          },
-          payload: {
-            type: AsymmetricMessagePayloadType.ContactShare,
-            data: { recipientUuid: '1' },
-          } as AsymmetricMessagePayload,
+          uuid: 'older-message',
+          user_uuid: '1',
+          sender_uuid: '2',
+          encrypted_message: 'encrypted_message',
+          created_at_timestamp: 1,
+          updated_at_timestamp: 1,
         },
       ]
 
-      const { priority, regular } = service.categorizeTrustedMessages(messages)
+      service.getUntrustedMessagePayload = jest.fn()
+      service.getServerMessageType = jest.fn().mockImplementation((message) => {
+        if (message.uuid === 'newer-revocation-message') {
+          return AsymmetricMessagePayloadType.SenderKeysetRevoked
+        } else {
+          return AsymmetricMessagePayloadType.ContactShare
+        }
+      })
 
-      expect(priority[0].message.uuid).toEqual('newer-revocation-message')
-      expect(regular[0].message.uuid).toEqual('older-message')
+      const sorted = service.sortServerMessages(messages)
+      expect(sorted[0].uuid).toEqual('newer-revocation-message')
+      expect(sorted[1].uuid).toEqual('older-message')
+
+      const reverseSorted = service.sortServerMessages(messages.reverse())
+      expect(reverseSorted[0].uuid).toEqual('newer-revocation-message')
+      expect(reverseSorted[1].uuid).toEqual('older-message')
+    })
+
+    it('should prioritize keypair changed messages over keyset revoked messages', () => {
+      const messages: AsymmetricMessageServerHash[] = [
+        {
+          uuid: 'keypair-changed-message',
+          user_uuid: '1',
+          sender_uuid: '2',
+          encrypted_message: 'encrypted_message',
+          created_at_timestamp: 2,
+          updated_at_timestamp: 2,
+        },
+        {
+          uuid: 'keyset-revoked-message',
+          user_uuid: '1',
+          sender_uuid: '2',
+          encrypted_message: 'encrypted_message',
+          created_at_timestamp: 1,
+          updated_at_timestamp: 1,
+        },
+        {
+          uuid: 'misc-message',
+          user_uuid: '1',
+          sender_uuid: '2',
+          encrypted_message: 'encrypted_message',
+          created_at_timestamp: 1,
+          updated_at_timestamp: 1,
+        },
+      ]
+
+      service.getUntrustedMessagePayload = jest.fn()
+      service.getServerMessageType = jest.fn().mockImplementation((message) => {
+        if (message.uuid === 'keyset-revoked-message') {
+          return AsymmetricMessagePayloadType.SenderKeysetRevoked
+        } else if (message.uuid === 'keypair-changed-message') {
+          return AsymmetricMessagePayloadType.SenderKeypairChanged
+        } else {
+          return AsymmetricMessagePayloadType.ContactShare
+        }
+      })
+
+      const sorted = service.sortServerMessages(messages)
+      expect(sorted[0].uuid).toEqual('keypair-changed-message')
+      expect(sorted[1].uuid).toEqual('keyset-revoked-message')
+      expect(sorted[2].uuid).toEqual('misc-message')
+
+      const reverseSorted = service.sortServerMessages(messages.reverse())
+      expect(reverseSorted[0].uuid).toEqual('keypair-changed-message')
+      expect(reverseSorted[1].uuid).toEqual('keyset-revoked-message')
+      expect(reverseSorted[2].uuid).toEqual('misc-message')
     })
   })
 
@@ -114,7 +164,9 @@ describe('AsymmetricMessageService', () => {
 
     const trustedPayloadMock = { type: AsymmetricMessagePayloadType.ContactShare, data: { recipientUuid: '1' } }
 
-    service.getTrustedMessagePayload = jest.fn().mockReturnValue(trustedPayloadMock)
+    service.getTrustedMessagePayload = service.getUntrustedMessagePayload = jest
+      .fn()
+      .mockReturnValue(trustedPayloadMock)
 
     const handleTrustedContactShareMessageMock = jest.fn()
     service.handleTrustedContactShareMessage = handleTrustedContactShareMessageMock
@@ -151,7 +203,7 @@ describe('AsymmetricMessageService', () => {
     }
     const otherMessage = { type: AsymmetricMessagePayloadType.ContactShare, data: { recipientUuid: '1' } }
 
-    service.getTrustedMessagePayload = jest.fn().mockImplementation((message) => {
+    service.getTrustedMessagePayload = service.getUntrustedMessagePayload = jest.fn().mockImplementation((message) => {
       if (message.uuid === 'newer-keyset-revocation-message') {
         return keysetRevokedMessage
       } else {
@@ -191,7 +243,9 @@ describe('AsymmetricMessageService', () => {
     }
 
     service.handleTrustedContactShareMessage = jest.fn()
-    service.getTrustedMessagePayload = jest.fn().mockReturnValue(decryptedMessagePayload)
+    service.getTrustedMessagePayload = service.getUntrustedMessagePayload = jest
+      .fn()
+      .mockReturnValue(decryptedMessagePayload)
 
     await service.handleRemoteReceivedAsymmetricMessages([message])
 
@@ -218,7 +272,9 @@ describe('AsymmetricMessageService', () => {
     }
 
     service.handleTrustedSenderKeypairChangedMessage = jest.fn()
-    service.getTrustedMessagePayload = jest.fn().mockReturnValue(decryptedMessagePayload)
+    service.getTrustedMessagePayload = service.getUntrustedMessagePayload = jest
+      .fn()
+      .mockReturnValue(decryptedMessagePayload)
 
     await service.handleRemoteReceivedAsymmetricMessages([message])
 
@@ -244,7 +300,9 @@ describe('AsymmetricMessageService', () => {
     }
 
     service.handleTrustedSharedVaultRootKeyChangedMessage = jest.fn()
-    service.getTrustedMessagePayload = jest.fn().mockReturnValue(decryptedMessagePayload)
+    service.getTrustedMessagePayload = service.getUntrustedMessagePayload = jest
+      .fn()
+      .mockReturnValue(decryptedMessagePayload)
 
     await service.handleRemoteReceivedAsymmetricMessages([message])
 
@@ -272,7 +330,9 @@ describe('AsymmetricMessageService', () => {
     }
 
     service.handleTrustedVaultMetadataChangedMessage = jest.fn()
-    service.getTrustedMessagePayload = jest.fn().mockReturnValue(decryptedMessagePayload)
+    service.getTrustedMessagePayload = service.getUntrustedMessagePayload = jest
+      .fn()
+      .mockReturnValue(decryptedMessagePayload)
 
     await service.handleRemoteReceivedAsymmetricMessages([message])
 
@@ -299,7 +359,9 @@ describe('AsymmetricMessageService', () => {
     }
 
     service.handleTrustedSenderKeysetRevokedMessage = jest.fn()
-    service.getTrustedMessagePayload = jest.fn().mockReturnValue(decryptedMessagePayload)
+    service.getTrustedMessagePayload = service.getUntrustedMessagePayload = jest
+      .fn()
+      .mockReturnValue(decryptedMessagePayload)
 
     await service.handleRemoteReceivedAsymmetricMessages([message])
 
@@ -323,7 +385,9 @@ describe('AsymmetricMessageService', () => {
       },
     } as AsymmetricMessageSharedVaultInvite
 
-    service.getTrustedMessagePayload = jest.fn().mockReturnValue(decryptedMessagePayload)
+    service.getTrustedMessagePayload = service.getUntrustedMessagePayload = jest
+      .fn()
+      .mockReturnValue(decryptedMessagePayload)
 
     await expect(service.handleRemoteReceivedAsymmetricMessages([message])).rejects.toThrow(
       'Shared vault invites payloads are not handled as part of asymmetric messages',
@@ -350,7 +414,9 @@ describe('AsymmetricMessageService', () => {
 
     service.deleteMessageAfterProcessing = jest.fn()
     service.handleTrustedContactShareMessage = jest.fn()
-    service.getTrustedMessagePayload = jest.fn().mockReturnValue(decryptedMessagePayload)
+    service.getTrustedMessagePayload = service.getUntrustedMessagePayload = jest
+      .fn()
+      .mockReturnValue(decryptedMessagePayload)
 
     await service.handleRemoteReceivedAsymmetricMessages([message])
 
@@ -389,7 +455,12 @@ describe('AsymmetricMessageService', () => {
 
       await service.handleTrustedSenderKeysetRevokedMessage(message, messagePayload)
 
-      expect(mutator.changeItem).toHaveBeenCalledWith(senderContact, expect.any(Function))
+      expect(mutator.changeItem).toHaveBeenCalledWith(
+        senderContact,
+        expect.any(Function),
+        MutationType.UpdateUserTimestamps,
+        PayloadEmitSource.RemoteRetrieved,
+      )
       expect(sync.sync).toHaveBeenCalled()
     })
   })
