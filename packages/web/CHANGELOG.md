@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.167.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.167.0...@standardnotes/web@3.167.1) (2023-07-19)
+
+### Bug Fixes
+
+* Fixed issue where trying to create new folder on mobile would close navigation pane ([2b0df30](https://github.com/standardnotes/app/commit/2b0df30ca25bd15d7e4c279fa0e586ddec08b821))
+
 # [3.167.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.166.19...@standardnotes/web@3.167.0) (2023-07-19)
 
 ### Features
