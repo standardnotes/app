@@ -36,7 +36,7 @@ const KeyManagementModal: FunctionComponent<Props> = ({ onCloseDialog }) => {
 
       const confirmed = await application.alerts.confirmV2({
         title: 'Revoke Public Key',
-        text: 'Are you sure you want to revoke this public key set? Your contacts will treat this key as untrusted, and refuse any data that is encrypted or signed with this pair.',
+        text: 'Are you sure you want to revoke this public key set? Your contacts will treat this key as untrusted, and refuse any data that is encrypted or signed with it.',
       })
 
       if (!confirmed) {
@@ -74,10 +74,15 @@ const KeyManagementModal: FunctionComponent<Props> = ({ onCloseDialog }) => {
         <div className="flex w-full flex-col">
           {keySets.map((keySet, index) => {
             return (
-              <div className="flex flex-row items-center justify-between" key={index}>
-                <div className="mt-2.5 flex flex-row">
+              <div className="my-2 flex flex-col gap-1" key={index}>
+                <div>Public Key: {keySet.encryption}</div>
+                <div>Signing Public Key: {keySet.signing}</div>
+                <div>Created At: {keySet.timestamp.toLocaleString()}</div>
+                {keySet.isRevoked ? (
+                  <div className="text-danger">Revoked</div>
+                ) : (
                   <Button label="Revoke" className={'mr-3 text-xs'} onClick={() => revokeKeySet(keySet)} />
-                </div>
+                )}
               </div>
             )
           })}

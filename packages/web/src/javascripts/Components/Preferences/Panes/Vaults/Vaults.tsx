@@ -164,7 +164,7 @@ const Vaults = () => {
           <Button
             label="Manage Public Keys"
             className={'mr-3 text-xs'}
-            onClick={() => contactService.enableCollaboration()}
+            onClick={() => setIsKeyManagementModalOpen(true)}
           />
         </PreferencesSegment>
       </PreferencesGroup>
