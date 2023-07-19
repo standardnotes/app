@@ -1,6 +1,20 @@
 {
   "versions": [
     {
+      "version": "3.167.0",
+      "title": "[3.167.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.166.19...@standardnotes/web@3.167.0) (2023-07-19)",
+      "date": null,
+      "body": "### Features\n\n* Added Undo/Redo buttons to Super mobile toolbar ([edead7e](https://github.com/standardnotes/app/commit/edead7e2511b6c59843bb5b0336ef89fd3240f77))",
+      "parsed": {
+        "_": [
+          "Added Undo/Redo buttons to Super mobile toolbar (edead7e)"
+        ],
+        "Features": [
+          "Added Undo/Redo buttons to Super mobile toolbar (edead7e)"
+        ]
+      }
+    },
+    {
       "version": "3.166.19",
       "title": "[3.166.19](https://github.com/standardnotes/app/compare/@standardnotes/web@3.166.18...@standardnotes/web@3.166.19) (2023-07-18)",
       "date": null,

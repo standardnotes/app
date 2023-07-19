@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.167.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.166.19...@standardnotes/web@3.167.0) (2023-07-19)
+
+### Features
+
+* Added Undo/Redo buttons to Super mobile toolbar ([edead7e](https://github.com/standardnotes/app/commit/edead7e2511b6c59843bb5b0336ef89fd3240f77))
+
 ## [3.166.19](https://github.com/standardnotes/app/compare/@standardnotes/web@3.166.18...@standardnotes/web@3.166.19) (2023-07-18)
 
 **Note:** Version bump only for package @standardnotes/web
