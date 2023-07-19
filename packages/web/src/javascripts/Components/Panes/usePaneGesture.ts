@@ -110,6 +110,7 @@ export const usePaneSwipeGesture = (
 
       const touch = event.touches[0]
       startX = touch.clientX
+      clientX = touch.clientX
 
       const isStartOutOfThreshold =
         (direction === 'right' && startX > TouchStartThreshold) ||
