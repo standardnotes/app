@@ -6,6 +6,9 @@ import { EncryptAsymmetricMessagePayload } from '../../Encryption/UseCase/Asymme
 import { SendAsymmetricMessageUseCase } from '../../AsymmetricMessage/UseCase/SendAsymmetricMessageUseCase'
 import { PkcKeyPair } from '@standardnotes/sncrypto-common'
 import { Result } from '@standardnotes/domain-core'
+import { GetOutboundAsymmetricMessages } from '../../AsymmetricMessage/UseCase/GetOutboundAsymmetricMessages'
+import { GetAsymmetricStringAdditionalData } from '../../Encryption/UseCase/Asymmetric/GetAsymmetricStringAdditionalData'
+import { AsymmetricMessageServerInterface, SharedVaultInvitesServerInterface } from '@standardnotes/api'
 
 function createMockPublicKeySetChain(): ContactPublicKeySetInterface {
   const nMinusTwo = new ContactPublicKeySet({
@@ -78,7 +81,22 @@ describe('RevokePublicKey', () => {
     sendMessageUseCase = {} as jest.Mocked<SendAsymmetricMessageUseCase>
     sendMessageUseCase.execute = jest.fn()
 
-    usecase = new RevokePublicKeyUseCase(mutator, contacts, encryptAsymmetricMessageUseCase, sendMessageUseCase)
+    const getOutboundMessages = {} as jest.Mocked<GetOutboundAsymmetricMessages>
+    const getAdditionalData = {} as jest.Mocked<GetAsymmetricStringAdditionalData>
+
+    const invitesServer = {} as jest.Mocked<SharedVaultInvitesServerInterface>
+    const messageServer = {} as jest.Mocked<AsymmetricMessageServerInterface>
+
+    usecase = new RevokePublicKeyUseCase(
+      mutator,
+      contacts,
+      messageServer,
+      invitesServer,
+      encryptAsymmetricMessageUseCase,
+      sendMessageUseCase,
+      getOutboundMessages,
+      getAdditionalData,
+    )
   })
 
   it('should not be able to revoke current keyset', async () => {

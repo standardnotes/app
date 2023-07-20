@@ -17,6 +17,8 @@ import { HexString, PkcKeyPair } from '@standardnotes/sncrypto-common'
 import { AsymmetricallyEncryptedString } from '../Types/Types'
 import { AsymmetricDecryptResult } from '../Types/AsymmetricDecryptResult'
 import { AsymmetricSignatureVerificationDetachedResult } from '../Types/AsymmetricSignatureVerificationDetachedResult'
+import { AsymmetricItemAdditionalData } from '../../Types/EncryptionAdditionalData'
+import { Result } from '@standardnotes/domain-core'
 
 /**w
  * An operator is responsible for performing crypto operations, such as generating keys
@@ -95,6 +97,10 @@ export interface OperatorInterface {
   asymmetricSignatureVerifyDetached(
     encryptedString: AsymmetricallyEncryptedString,
   ): AsymmetricSignatureVerificationDetachedResult
+
+  asymmetricStringGetAdditionalData(dto: {
+    encryptedString: AsymmetricallyEncryptedString
+  }): Result<AsymmetricItemAdditionalData>
 
   getSenderPublicKeySetFromAsymmetricallyEncryptedString(string: AsymmetricallyEncryptedString): PortablePublicKeySet
 

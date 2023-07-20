@@ -33,7 +33,8 @@ import { OperatorInterface } from '../OperatorInterface/OperatorInterface'
 import { AsymmetricDecryptResult } from '../Types/AsymmetricDecryptResult'
 import { AsymmetricSignatureVerificationDetachedResult } from '../Types/AsymmetricSignatureVerificationDetachedResult'
 import { AsyncOperatorInterface } from '../OperatorInterface/AsyncOperatorInterface'
-import { ContentType } from '@standardnotes/domain-core'
+import { ContentType, Result } from '@standardnotes/domain-core'
+import { AsymmetricItemAdditionalData } from '../../Types/EncryptionAdditionalData'
 
 const NO_IV = '00000000000000000000000000000000'
 
@@ -274,6 +275,10 @@ export class SNProtocolOperator001 implements OperatorInterface, AsyncOperatorIn
   }
 
   asymmetricSignatureVerifyDetached(_encryptedString: string): AsymmetricSignatureVerificationDetachedResult {
+    throw new Error('Method not implemented.')
+  }
+
+  asymmetricStringGetAdditionalData(_dto: { encryptedString: string }): Result<AsymmetricItemAdditionalData> {
     throw new Error('Method not implemented.')
   }
 

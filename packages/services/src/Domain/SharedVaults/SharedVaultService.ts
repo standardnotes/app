@@ -68,6 +68,8 @@ import { ContentType, Result } from '@standardnotes/domain-core'
 import { RevokePublicKeyUseCase } from '../Contacts/UseCase/RevokePublicKey'
 import { EncryptAsymmetricMessagePayload } from '../Encryption/UseCase/Asymmetric/EncryptAsymmetricMessagePayload'
 import { SendAsymmetricMessageUseCase } from '../AsymmetricMessage/UseCase/SendAsymmetricMessageUseCase'
+import { GetOutboundAsymmetricMessages } from '../AsymmetricMessage/UseCase/GetOutboundAsymmetricMessages'
+import { GetAsymmetricStringAdditionalData } from '../Encryption/UseCase/Asymmetric/GetAsymmetricStringAdditionalData'
 
 export class SharedVaultService
   extends AbstractService<SharedVaultServiceEvent, SharedVaultServiceEventPayload>
@@ -569,7 +571,19 @@ export class SharedVaultService
   async revokeOwnKeySet(keyset: ContactPublicKeySetInterface): Promise<Result<void>> {
     const encryptUseCase = new EncryptAsymmetricMessagePayload(this.encryption.operators)
     const sendMessageUseCase = new SendAsymmetricMessageUseCase(this.messageServer)
-    const usecase = new RevokePublicKeyUseCase(this.mutator, this.contacts, encryptUseCase, sendMessageUseCase)
+    const getOutboundMessages = new GetOutboundAsymmetricMessages(this.messageServer)
+    const getAdditionalData = new GetAsymmetricStringAdditionalData(this.encryption.operators)
+
+    const usecase = new RevokePublicKeyUseCase(
+      this.mutator,
+      this.contacts,
+      this.messageServer,
+      this.invitesServer,
+      encryptUseCase,
+      sendMessageUseCase,
+      getOutboundMessages,
+      getAdditionalData,
+    )
 
     const selfContact = this.contacts.getSelfContact()
     if (!selfContact) {

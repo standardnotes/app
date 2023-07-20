@@ -101,4 +101,46 @@ describe('public keyset revocation', function () {
 
     await deinitContactContext()
   })
+
+  it('should delete invites sent with revoked key', async () => {
+    const { contactContext, deinitContactContext } =
+      await Collaboration.createSharedVaultWithUnacceptedButTrustedInvite(context)
+
+    const previousKeySet = context.contacts.getSelfContact().publicKeySet
+
+    await context.changePassword('new-password')
+
+    await context.sharedVaults.revokeOwnKeySet(previousKeySet)
+
+    const invites = await contactContext.sharedVaults.downloadInboundInvites()
+
+    expect(invites.length).to.equal(0)
+
+    await deinitContactContext()
+  })
+
+  it.only('should delete asymmetric messages sent with revoked key', async () => {
+    const { sharedVault, contactContext, deinitContactContext } =
+      await Collaboration.createSharedVaultWithAcceptedInvite(context)
+
+    contactContext.lockSyncing()
+
+    await context.vaults.changeVaultNameAndDescription(sharedVault, {
+      name: 'New Name',
+      description: 'New Description',
+    })
+
+    const previousKeySet = context.contacts.getSelfContact().publicKeySet
+
+    await context.changePassword('new-password')
+    await context.sharedVaults.revokeOwnKeySet(previousKeySet)
+
+
+
+    const messages = await contactContext.asymmetric.getInboundMessages()
+
+    expect(messages.length).to.equal(0)
+
+    await deinitContactContext()
+  })
 })

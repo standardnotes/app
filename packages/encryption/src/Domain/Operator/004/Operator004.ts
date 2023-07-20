@@ -48,7 +48,8 @@ import { AsymmetricSignatureVerificationDetachedResult } from '../Types/Asymmetr
 import { AsymmetricSignatureVerificationDetachedUseCase } from './UseCase/Asymmetric/AsymmetricSignatureVerificationDetached'
 import { DeriveKeySystemRootKeyUseCase } from './UseCase/KeySystem/DeriveKeySystemRootKey'
 import { SyncOperatorInterface } from '../OperatorInterface/SyncOperatorInterface'
-import { ContentType } from '@standardnotes/domain-core'
+import { ContentType, Result } from '@standardnotes/domain-core'
+import { AsymmetricStringGetAdditionalData } from './UseCase/Asymmetric/AsymmetricStringGetAdditionalData'
 
 export class SNProtocolOperator004 implements OperatorInterface, SyncOperatorInterface {
   constructor(protected readonly crypto: PureCryptoInterface) {}
@@ -184,6 +185,13 @@ export class SNProtocolOperator004 implements OperatorInterface, SyncOperatorInt
   ): AsymmetricSignatureVerificationDetachedResult {
     const usecase = new AsymmetricSignatureVerificationDetachedUseCase(this.crypto)
     return usecase.execute({ encryptedString })
+  }
+
+  asymmetricStringGetAdditionalData(dto: {
+    encryptedString: AsymmetricallyEncryptedString
+  }): Result<AsymmetricItemAdditionalData> {
+    const usecase = new AsymmetricStringGetAdditionalData(this.crypto)
+    return usecase.execute(dto)
   }
 
   getSenderPublicKeySetFromAsymmetricallyEncryptedString(string: AsymmetricallyEncryptedString): PortablePublicKeySet {
