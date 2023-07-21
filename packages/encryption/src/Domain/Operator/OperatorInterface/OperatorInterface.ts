@@ -94,6 +94,12 @@ export interface OperatorInterface {
     recipientSecretKey: HexString
   }): AsymmetricDecryptResult | null
 
+  asymmetricDecryptOwnMessage(dto: {
+    message: AsymmetricallyEncryptedString
+    ownPrivateKey: HexString
+    recipientPublicKey: HexString
+  }): Result<AsymmetricDecryptResult>
+
   asymmetricSignatureVerifyDetached(
     encryptedString: AsymmetricallyEncryptedString,
   ): AsymmetricSignatureVerificationDetachedResult

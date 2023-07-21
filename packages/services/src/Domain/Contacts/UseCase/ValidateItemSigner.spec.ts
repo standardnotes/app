@@ -2,17 +2,19 @@ import {
   DecryptedItemInterface,
   PayloadSource,
   PersistentSignatureData,
+  PublicKeyTrustStatus,
   TrustedContactInterface,
 } from '@standardnotes/models'
 import { ItemManagerInterface } from './../../Item/ItemManagerInterface'
 import { ValidateItemSignerUseCase } from './ValidateItemSigner'
+import { ItemSignatureValidationResult } from './ItemSignatureValidationResult'
 
 describe('validate item signer use case', () => {
   let usecase: ValidateItemSignerUseCase
   let items: ItemManagerInterface
 
   const trustedContact = {} as jest.Mocked<TrustedContactInterface>
-  trustedContact.isSigningKeyTrusted = jest.fn().mockReturnValue(true)
+  trustedContact.getTrustStatusForSigningPublicKey = jest.fn().mockReturnValue(PublicKeyTrustStatus.Trusted)
 
   beforeEach(() => {
     items = {} as jest.Mocked<ItemManagerInterface>
@@ -53,7 +55,7 @@ describe('validate item signer use case', () => {
         })
 
         const result = usecase.execute(item)
-        expect(result).toEqual('no')
+        expect(result).toEqual(ItemSignatureValidationResult.NotTrusted)
       })
 
       it('should return not applicable signing is not required', () => {
@@ -106,7 +108,7 @@ describe('validate item signer use case', () => {
           })
 
           const result = usecase.execute(item)
-          expect(result).toEqual('no')
+          expect(result).toEqual(ItemSignatureValidationResult.NotTrusted)
         })
 
         it('should return not applicable if signing is not required', () => {
@@ -133,7 +135,7 @@ describe('validate item signer use case', () => {
             })
 
             const result = usecase.execute(item)
-            expect(result).toEqual('no')
+            expect(result).toEqual(ItemSignatureValidationResult.NotTrusted)
           })
 
           it('should return not applicable if signing is not required', () => {
@@ -164,7 +166,7 @@ describe('validate item signer use case', () => {
             })
 
             const result = usecase.execute(item)
-            expect(result).toEqual('no')
+            expect(result).toEqual(ItemSignatureValidationResult.NotTrusted)
           })
 
           it('should return invalid if signature result passes and a trusted contact is NOT found for signature public key', () => {
@@ -183,7 +185,7 @@ describe('validate item signer use case', () => {
             items.itemsMatchingPredicate = jest.fn().mockReturnValue([])
 
             const result = usecase.execute(item)
-            expect(result).toEqual('no')
+            expect(result).toEqual(ItemSignatureValidationResult.NotTrusted)
           })
 
           it('should return valid if signature result passes and a trusted contact is found for signature public key', () => {
@@ -243,7 +245,7 @@ describe('validate item signer use case', () => {
         })
 
         const result = usecase.execute(item)
-        expect(result).toEqual('no')
+        expect(result).toEqual(ItemSignatureValidationResult.NotTrusted)
       })
 
       it('should return not applicable if signing is not required', () => {
@@ -270,7 +272,7 @@ describe('validate item signer use case', () => {
           })
 
           const result = usecase.execute(item)
-          expect(result).toEqual('no')
+          expect(result).toEqual(ItemSignatureValidationResult.NotTrusted)
         })
 
         it('should return not applicable if signing is not required', () => {
@@ -301,7 +303,7 @@ describe('validate item signer use case', () => {
           })
 
           const result = usecase.execute(item)
-          expect(result).toEqual('no')
+          expect(result).toEqual(ItemSignatureValidationResult.NotTrusted)
         })
 
         it('should return invalid if signature result passes and a trusted contact is NOT found for signature public key', () => {
@@ -320,7 +322,7 @@ describe('validate item signer use case', () => {
           items.getItems = jest.fn().mockReturnValue([])
 
           const result = usecase.execute(item)
-          expect(result).toEqual('no')
+          expect(result).toEqual(ItemSignatureValidationResult.NotTrusted)
         })
 
         it('should return valid if signature result passes and a trusted contact is found for signature public key', () => {

@@ -123,7 +123,7 @@ describe('public keyset revocation', function () {
     await deinitContactContext()
   })
 
-  it.only('should delete asymmetric messages sent with revoked key', async () => {
+  it.only('should reupload asymmetric messages sent with old key', async () => {
     const { sharedVault, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithAcceptedInvite(context)
 

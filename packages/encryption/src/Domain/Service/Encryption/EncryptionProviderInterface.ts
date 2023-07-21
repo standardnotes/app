@@ -10,7 +10,6 @@ import {
   RootKeyInterface,
   KeySystemIdentifier,
   KeySystemItemsKeyInterface,
-  AsymmetricMessagePayload,
   KeySystemRootKeyInterface,
   KeySystemRootKeyParamsInterface,
   PortablePublicKeySet,
@@ -116,12 +115,6 @@ export interface EncryptionProviderInterface {
   getKeyPair(): PkcKeyPair
   getSigningKeyPair(): PkcKeyPair
 
-  asymmetricallyEncryptMessage(dto: {
-    message: AsymmetricMessagePayload
-    senderKeyPair: PkcKeyPair
-    senderSigningKeyPair: PkcKeyPair
-    recipientPublicKey: string
-  }): string
   asymmetricSignatureVerifyDetached(
     encryptedString: AsymmetricallyEncryptedString,
   ): AsymmetricSignatureVerificationDetachedResult

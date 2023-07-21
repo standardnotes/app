@@ -2,20 +2,16 @@ import { SyncUseCaseInterface, Result } from '@standardnotes/domain-core'
 import { OperatorManager } from '@standardnotes/encryption'
 import { AsymmetricMessagePayload, PublicKeyTrustStatus, TrustedContactInterface } from '@standardnotes/models'
 
-export class DecryptAsymmetricMessagePayload<M extends AsymmetricMessagePayload> implements SyncUseCaseInterface<M> {
+export class DecryptMessage<M extends AsymmetricMessagePayload> implements SyncUseCaseInterface<M> {
   constructor(private operators: OperatorManager) {}
 
-  execute(dto: {
-    encryptedString: string
-    trustedSender: TrustedContactInterface | undefined
-    privateKey: string
-  }): Result<M> {
+  execute(dto: { message: string; sender: TrustedContactInterface | undefined; privateKey: string }): Result<M> {
     const defaultOperator = this.operators.defaultOperator()
-    const version = defaultOperator.versionForAsymmetricallyEncryptedString(dto.encryptedString)
+    const version = defaultOperator.versionForAsymmetricallyEncryptedString(dto.message)
     const keyOperator = this.operators.operatorForVersion(version)
 
     const decryptedResult = keyOperator.asymmetricDecrypt({
-      stringToDecrypt: dto.encryptedString,
+      stringToDecrypt: dto.message,
       recipientSecretKey: dto.privateKey,
     })
 
@@ -27,16 +23,14 @@ export class DecryptAsymmetricMessagePayload<M extends AsymmetricMessagePayload>
       return Result.fail('Failed to verify signature')
     }
 
-    if (dto.trustedSender) {
-      const publicKeyTrustStatus = dto.trustedSender.getTrustStatusForPublicKey(decryptedResult.senderPublicKey)
-      if (publicKeyTrustStatus !== PublicKeyTrustStatus.TrustedRoot) {
+    if (dto.sender) {
+      const publicKeyTrustStatus = dto.sender.getTrustStatusForPublicKey(decryptedResult.senderPublicKey)
+      if (publicKeyTrustStatus !== PublicKeyTrustStatus.Trusted) {
         return Result.fail('Sender public key is not trusted')
       }
 
-      const signingKeyTrustStatus = dto.trustedSender.getTrustStatusForSigningPublicKey(
-        decryptedResult.signaturePublicKey,
-      )
-      if (signingKeyTrustStatus !== PublicKeyTrustStatus.TrustedRoot) {
+      const signingKeyTrustStatus = dto.sender.getTrustStatusForSigningPublicKey(decryptedResult.signaturePublicKey)
+      if (signingKeyTrustStatus !== PublicKeyTrustStatus.Trusted) {
         return Result.fail('Signature public key is not trusted')
       }
     }

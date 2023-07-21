@@ -1,14 +1,15 @@
-import { ClientDisplayableError, isErrorResponse, AsymmetricMessageServerHash } from '@standardnotes/responses'
+import { isErrorResponse, AsymmetricMessageServerHash, getErrorFromErrorResponse } from '@standardnotes/responses'
 import { AsymmetricMessageServerInterface } from '@standardnotes/api'
+import { Result, UseCaseInterface } from '@standardnotes/domain-core'
 
-export class SendAsymmetricMessageUseCase {
+export class SendMessage implements UseCaseInterface<AsymmetricMessageServerHash> {
   constructor(private messageServer: AsymmetricMessageServerInterface) {}
 
   async execute(params: {
     recipientUuid: string
     encryptedMessage: string
     replaceabilityIdentifier: string | undefined
-  }): Promise<AsymmetricMessageServerHash | ClientDisplayableError> {
+  }): Promise<Result<AsymmetricMessageServerHash>> {
     const response = await this.messageServer.createMessage({
       recipientUuid: params.recipientUuid,
       encryptedMessage: params.encryptedMessage,
@@ -16,9 +17,9 @@ export class SendAsymmetricMessageUseCase {
     })
 
     if (isErrorResponse(response)) {
-      return ClientDisplayableError.FromNetworkError(response)
+      return Result.fail(getErrorFromErrorResponse(response).message)
     }
 
-    return response.data.message
+    return Result.ok(response.data.message)
   }
 }

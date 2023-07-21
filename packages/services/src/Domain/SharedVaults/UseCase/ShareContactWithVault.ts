@@ -1,5 +1,4 @@
-import { EncryptionProviderInterface } from '@standardnotes/encryption'
-import { ClientDisplayableError, isErrorResponse } from '@standardnotes/responses'
+import { isErrorResponse } from '@standardnotes/responses'
 import {
   TrustedContactInterface,
   SharedVaultListingInterface,
@@ -8,41 +7,45 @@ import {
 import { AsymmetricMessageServerInterface, SharedVaultUsersServerInterface } from '@standardnotes/api'
 import { PkcKeyPair } from '@standardnotes/sncrypto-common'
 import { ContactServiceInterface } from '../../Contacts/ContactServiceInterface'
-import { SendAsymmetricMessageUseCase } from '../../AsymmetricMessage/UseCase/SendAsymmetricMessageUseCase'
+import { SendMessage } from '../../AsymmetricMessage/UseCase/SendMessage'
+import { EncryptMessage } from '../../Encryption/UseCase/Asymmetric/EncryptMessage'
+import { Result, UseCaseInterface } from '@standardnotes/domain-core'
 
-export class ShareContactWithAllMembersOfSharedVaultUseCase {
+export class ShareContactWithVault implements UseCaseInterface<void> {
   constructor(
     private contacts: ContactServiceInterface,
-    private encryption: EncryptionProviderInterface,
-    private sharedVaultUsersServer: SharedVaultUsersServerInterface,
+    private encryptMessage: EncryptMessage,
+    private userServer: SharedVaultUsersServerInterface,
     private messageServer: AsymmetricMessageServerInterface,
   ) {}
 
   async execute(params: {
-    senderKeyPair: PkcKeyPair
-    senderSigningKeyPair: PkcKeyPair
+    keys: {
+      encryption: PkcKeyPair
+      signing: PkcKeyPair
+    }
     senderUserUuid: string
     sharedVault: SharedVaultListingInterface
     contactToShare: TrustedContactInterface
-  }): Promise<void | ClientDisplayableError> {
+  }): Promise<Result<void>> {
     if (params.sharedVault.sharing.ownerUserUuid !== params.senderUserUuid) {
-      return ClientDisplayableError.FromString('Cannot share contact; user is not the owner of the shared vault')
+      return Result.fail('Cannot share contact; user is not the owner of the shared vault')
     }
 
-    const usersResponse = await this.sharedVaultUsersServer.getSharedVaultUsers({
+    const usersResponse = await this.userServer.getSharedVaultUsers({
       sharedVaultUuid: params.sharedVault.sharing.sharedVaultUuid,
     })
 
     if (isErrorResponse(usersResponse)) {
-      return ClientDisplayableError.FromString('Cannot share contact; shared vault users not found')
+      return Result.fail('Cannot share contact; shared vault users not found')
     }
 
     const users = usersResponse.data.users
     if (users.length === 0) {
-      return
+      return Result.ok()
     }
 
-    const messageSendUseCase = new SendAsymmetricMessageUseCase(this.messageServer)
+    const messageSendUseCase = new SendMessage(this.messageServer)
 
     for (const vaultUser of users) {
       if (vaultUser.user_uuid === params.senderUserUuid) {
@@ -58,21 +61,26 @@ export class ShareContactWithAllMembersOfSharedVaultUseCase {
         continue
       }
 
-      const encryptedMessage = this.encryption.asymmetricallyEncryptMessage({
+      const encryptedMessage = this.encryptMessage.execute({
         message: {
           type: AsymmetricMessagePayloadType.ContactShare,
           data: { recipientUuid: vaultUserAsContact.contactUuid, trustedContact: params.contactToShare.content },
         },
-        senderKeyPair: params.senderKeyPair,
-        senderSigningKeyPair: params.senderSigningKeyPair,
+        keys: params.keys,
         recipientPublicKey: vaultUserAsContact.publicKeySet.encryption,
       })
 
+      if (encryptedMessage.isFailed()) {
+        continue
+      }
+
       await messageSendUseCase.execute({
         recipientUuid: vaultUserAsContact.contactUuid,
-        encryptedMessage,
+        encryptedMessage: encryptedMessage.getValue(),
         replaceabilityIdentifier: undefined,
       })
     }
+
+    return Result.ok()
   }
 }

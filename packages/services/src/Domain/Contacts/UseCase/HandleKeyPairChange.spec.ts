@@ -1,4 +1,4 @@
-import { MutatorClientInterface } from './../../Mutator/MutatorClientInterface'
+import { MutatorClientInterface } from '../../Mutator/MutatorClientInterface'
 import { ContactPublicKeySet, ContactPublicKeySetInterface, TrustedContactInterface } from '@standardnotes/models'
 import { RevokePublicKeyUseCase } from './RevokePublicKey'
 import { ContactServiceInterface } from '../ContactServiceInterface'

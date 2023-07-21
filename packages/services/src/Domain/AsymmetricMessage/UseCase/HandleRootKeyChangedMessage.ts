@@ -1,5 +1,5 @@
-import { ItemManagerInterface } from './../../Item/ItemManagerInterface'
-import { MutatorClientInterface } from './../../Mutator/MutatorClientInterface'
+import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
+import { MutatorClientInterface } from '../../Mutator/MutatorClientInterface'
 import { SyncServiceInterface } from '../../Sync/SyncServiceInterface'
 import {
   KeySystemRootKeyInterface,
@@ -13,7 +13,7 @@ import { ContentType } from '@standardnotes/domain-core'
 import { GetVaultUseCase } from '../../Vaults/UseCase/GetVault'
 import { EncryptionProviderInterface } from '@standardnotes/encryption'
 
-export class HandleTrustedSharedVaultRootKeyChangedMessage {
+export class HandleRootKeyChangedMessage {
   constructor(
     private mutator: MutatorClientInterface,
     private items: ItemManagerInterface,

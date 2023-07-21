@@ -166,11 +166,13 @@ describe('shared vault crypto', function () {
       const { note, contactContext, deinitContactContext } =
         await Collaboration.createSharedVaultWithAcceptedInviteAndNote(context)
 
-      expect(context.contacts.isItemAuthenticallySigned(note)).to.equal('not-applicable')
+      expect(context.contacts.isItemAuthenticallySigned(note)).to.equal(ItemSignatureValidationResult.NotApplicable)
 
       const contactNote = contactContext.items.findItem(note.uuid)
 
-      expect(contactContext.contacts.isItemAuthenticallySigned(contactNote)).to.equal('yes')
+      expect(contactContext.contacts.isItemAuthenticallySigned(contactNote)).to.equal(
+        ItemSignatureValidationResult.Trusted,
+      )
 
       await contactContext.changeNoteTitleAndSync(contactNote, 'new title')
 
@@ -178,7 +180,7 @@ describe('shared vault crypto', function () {
 
       let updatedNote = context.items.findItem(note.uuid)
 
-      expect(context.contacts.isItemAuthenticallySigned(updatedNote)).to.equal('yes')
+      expect(context.contacts.isItemAuthenticallySigned(updatedNote)).to.equal(ItemSignatureValidationResult.Trusted)
 
       await deinitContactContext()
     })

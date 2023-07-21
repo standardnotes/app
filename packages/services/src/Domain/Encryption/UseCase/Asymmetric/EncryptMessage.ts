@@ -3,21 +3,23 @@ import { OperatorManager } from '@standardnotes/encryption'
 import { AsymmetricMessagePayload } from '@standardnotes/models'
 import { PkcKeyPair } from '@standardnotes/sncrypto-common'
 
-export class EncryptAsymmetricMessagePayload implements SyncUseCaseInterface<string> {
+export class EncryptMessage implements SyncUseCaseInterface<string> {
   constructor(private operators: OperatorManager) {}
 
   execute(dto: {
     message: AsymmetricMessagePayload
-    senderKeyPair: PkcKeyPair
-    senderSigningKeyPair: PkcKeyPair
+    keys: {
+      encryption: PkcKeyPair
+      signing: PkcKeyPair
+    }
     recipientPublicKey: string
   }): Result<string> {
     const operator = this.operators.defaultOperator()
 
     const encrypted = operator.asymmetricEncrypt({
       stringToEncrypt: JSON.stringify(dto.message),
-      senderKeyPair: dto.senderKeyPair,
-      senderSigningKeyPair: dto.senderSigningKeyPair,
+      senderKeyPair: dto.keys.encryption,
+      senderSigningKeyPair: dto.keys.signing,
       recipientPublicKey: dto.recipientPublicKey,
     })
 

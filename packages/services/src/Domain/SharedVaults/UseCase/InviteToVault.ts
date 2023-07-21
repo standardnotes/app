@@ -1,37 +1,41 @@
-import { EncryptionProviderInterface } from '@standardnotes/encryption'
-import { ClientDisplayableError, SharedVaultInviteServerHash, SharedVaultPermission } from '@standardnotes/responses'
+import { KeySystemKeyManagerInterface } from '@standardnotes/encryption'
+import { SharedVaultInviteServerHash, SharedVaultPermission } from '@standardnotes/responses'
 import {
   TrustedContactInterface,
   SharedVaultListingInterface,
   AsymmetricMessagePayloadType,
   VaultInviteDelegatedContact,
 } from '@standardnotes/models'
-import { SharedVaultInvitesServerInterface } from '@standardnotes/api'
-import { SendSharedVaultInviteUseCase } from './SendSharedVaultInviteUseCase'
+import { SendVaultInvite } from './SendVaultInvite'
 import { PkcKeyPair } from '@standardnotes/sncrypto-common'
+import { EncryptMessage } from '../../Encryption/UseCase/Asymmetric/EncryptMessage'
+import { Result, UseCaseInterface } from '@standardnotes/domain-core'
 
-export class InviteContactToSharedVaultUseCase {
+export class InviteToVault implements UseCaseInterface<SharedVaultInviteServerHash> {
   constructor(
-    private encryption: EncryptionProviderInterface,
-    private sharedVaultInviteServer: SharedVaultInvitesServerInterface,
+    private keyManager: KeySystemKeyManagerInterface,
+    private encryptMessage: EncryptMessage,
+    private sendInvite: SendVaultInvite,
   ) {}
 
   async execute(params: {
-    senderKeyPair: PkcKeyPair
-    senderSigningKeyPair: PkcKeyPair
+    keys: {
+      encryption: PkcKeyPair
+      signing: PkcKeyPair
+    }
     sharedVault: SharedVaultListingInterface
     sharedVaultContacts: TrustedContactInterface[]
     recipient: TrustedContactInterface
     permissions: SharedVaultPermission
-  }): Promise<SharedVaultInviteServerHash | ClientDisplayableError> {
-    const keySystemRootKey = this.encryption.keys.getPrimaryKeySystemRootKey(params.sharedVault.systemIdentifier)
+  }): Promise<Result<SharedVaultInviteServerHash>> {
+    const keySystemRootKey = this.keyManager.getPrimaryKeySystemRootKey(params.sharedVault.systemIdentifier)
     if (!keySystemRootKey) {
-      return ClientDisplayableError.FromString('Cannot invite contact; key system root key not found')
+      return Result.fail('Cannot invite contact; key system root key not found')
     }
 
     const meContact = params.sharedVaultContacts.find((contact) => contact.isMe)
     if (!meContact) {
-      return ClientDisplayableError.FromString('Cannot invite contact; me contact not found')
+      return Result.fail('Cannot invite contact; me contact not found')
     }
 
     const meContactContent: VaultInviteDelegatedContact = {
@@ -50,7 +54,7 @@ export class InviteContactToSharedVaultUseCase {
         }
       })
 
-    const encryptedMessage = this.encryption.asymmetricallyEncryptMessage({
+    const encryptedMessage = this.encryptMessage.execute({
       message: {
         type: AsymmetricMessagePayloadType.SharedVaultInvite,
         data: {
@@ -63,16 +67,18 @@ export class InviteContactToSharedVaultUseCase {
           },
         },
       },
-      senderKeyPair: params.senderKeyPair,
-      senderSigningKeyPair: params.senderSigningKeyPair,
+      keys: params.keys,
       recipientPublicKey: params.recipient.publicKeySet.encryption,
     })
 
-    const createInviteUseCase = new SendSharedVaultInviteUseCase(this.sharedVaultInviteServer)
-    const createInviteResult = await createInviteUseCase.execute({
+    if (encryptedMessage.isFailed()) {
+      return Result.fail(encryptedMessage.getError())
+    }
+
+    const createInviteResult = await this.sendInvite.execute({
       sharedVaultUuid: params.sharedVault.sharing.sharedVaultUuid,
       recipientUuid: params.recipient.contactUuid,
-      encryptedMessage,
+      encryptedMessage: encryptedMessage.getValue(),
       permissions: params.permissions,
     })
 

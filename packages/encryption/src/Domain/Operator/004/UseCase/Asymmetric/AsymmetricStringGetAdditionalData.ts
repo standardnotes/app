@@ -5,7 +5,7 @@ import { ParseConsistentBase64JsonPayloadUseCase } from '../Utils/ParseConsisten
 import { AsymmetricItemAdditionalData } from '../../../../Types/EncryptionAdditionalData'
 import { Result, SyncUseCaseInterface } from '@standardnotes/domain-core'
 
-export class AsymmetricStringGetAdditionalData implements SyncUseCaseInterface<AsymmetricItemAdditionalData> {
+export class AsymmetricStringGetAdditionalData004 implements SyncUseCaseInterface<AsymmetricItemAdditionalData> {
   private parseBase64Usecase = new ParseConsistentBase64JsonPayloadUseCase(this.crypto)
 
   constructor(private readonly crypto: PureCryptoInterface) {}

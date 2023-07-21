@@ -6,7 +6,7 @@ import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface
 import { InternalEventHandlerInterface } from '../Internal/InternalEventHandlerInterface'
 import { InternalEventInterface } from '../Internal/InternalEventInterface'
 import { AbstractService } from '../Service/AbstractService'
-import { GetAsymmetricMessageTrustedPayload } from './UseCase/GetAsymmetricMessageTrustedPayload'
+import { GetTrustedPayload } from './UseCase/GetTrustedPayload'
 import { EncryptionProviderInterface } from '@standardnotes/encryption'
 import {
   AsymmetricMessageSharedVaultRootKeyChanged,
@@ -19,18 +19,18 @@ import {
   MutationType,
   PayloadEmitSource,
 } from '@standardnotes/models'
-import { HandleTrustedSharedVaultRootKeyChangedMessage } from './UseCase/HandleTrustedSharedVaultRootKeyChangedMessage'
+import { HandleRootKeyChangedMessage } from './UseCase/HandleRootKeyChangedMessage'
 import { ItemManagerInterface } from '../Item/ItemManagerInterface'
 import { SyncServiceInterface } from '../Sync/SyncServiceInterface'
 import { SessionEvent } from '../Session/SessionEvent'
 import { AsymmetricMessageServer, HttpServiceInterface } from '@standardnotes/api'
 import { UserKeyPairChangedEventData } from '../Session/UserKeyPairChangedEventData'
 import { SendOwnContactChangeMessage } from './UseCase/SendOwnContactChangeMessage'
-import { GetOutboundAsymmetricMessages } from './UseCase/GetOutboundAsymmetricMessages'
-import { GetInboundAsymmetricMessages } from './UseCase/GetInboundAsymmetricMessages'
+import { GetOutboundMessages } from './UseCase/GetOutboundMessages'
+import { GetInboundMessages } from './UseCase/GetInboundMessages'
 import { GetVaultUseCase } from '../Vaults/UseCase/GetVault'
 import { AsymmetricMessageServiceInterface } from './AsymmetricMessageServiceInterface'
-import { GetAsymmetricMessageUntrustedPayload } from './UseCase/GetAsymmetricMessageUntrustedPayload'
+import { GetUntrustedPayload } from './UseCase/GetUntrustedPayload'
 
 export class AsymmetricMessageService
   extends AbstractService
@@ -67,12 +67,12 @@ export class AsymmetricMessageService
   }
 
   public async getOutboundMessages(): Promise<AsymmetricMessageServerHash[] | ClientDisplayableError> {
-    const usecase = new GetOutboundAsymmetricMessages(this.messageServer)
+    const usecase = new GetOutboundMessages(this.messageServer)
     return usecase.execute()
   }
 
   public async getInboundMessages(): Promise<AsymmetricMessageServerHash[] | ClientDisplayableError> {
-    const usecase = new GetInboundAsymmetricMessages(this.messageServer)
+    const usecase = new GetInboundMessages(this.messageServer)
     return usecase.execute()
   }
 
@@ -86,7 +86,7 @@ export class AsymmetricMessageService
   }
 
   private async sendOwnContactChangeEventToAllContacts(data: UserKeyPairChangedEventData): Promise<void> {
-    if (!data.oldKeyPair || !data.oldSigningKeyPair) {
+    if (!data.previous) {
       return
     }
 
@@ -100,10 +100,10 @@ export class AsymmetricMessageService
       }
 
       await useCase.execute({
-        senderOldKeyPair: data.oldKeyPair,
-        senderOldSigningKeyPair: data.oldSigningKeyPair,
-        senderNewKeyPair: data.newKeyPair,
-        senderNewSigningKeyPair: data.newSigningKeyPair,
+        senderOldKeyPair: data.previous.encryption,
+        senderOldSigningKeyPair: data.previous.signing,
+        senderNewKeyPair: data.current.encryption,
+        senderNewSigningKeyPair: data.current.signing,
         contact,
       })
     }
@@ -201,7 +201,7 @@ export class AsymmetricMessageService
   }
 
   getUntrustedMessagePayload(message: AsymmetricMessageServerHash): AsymmetricMessagePayload | undefined {
-    const useCase = new GetAsymmetricMessageUntrustedPayload(this.encryption.operators)
+    const useCase = new GetUntrustedPayload(this.encryption.operators)
 
     const result = useCase.execute({
       privateKey: this.encryption.getKeyPair().privateKey,
@@ -216,7 +216,7 @@ export class AsymmetricMessageService
   }
 
   getTrustedMessagePayload(message: AsymmetricMessageServerHash): AsymmetricMessagePayload | undefined {
-    const useCase = new GetAsymmetricMessageTrustedPayload(this.encryption.operators, this.contacts)
+    const useCase = new GetTrustedPayload(this.encryption.operators, this.contacts)
 
     const result = useCase.execute({
       privateKey: this.encryption.getKeyPair().privateKey,
@@ -280,12 +280,7 @@ export class AsymmetricMessageService
     _message: AsymmetricMessageServerHash,
     trustedPayload: AsymmetricMessageSharedVaultRootKeyChanged,
   ): Promise<void> {
-    const useCase = new HandleTrustedSharedVaultRootKeyChangedMessage(
-      this.mutator,
-      this.items,
-      this.sync,
-      this.encryption,
-    )
+    const useCase = new HandleRootKeyChangedMessage(this.mutator, this.items, this.sync, this.encryption)
     await useCase.execute(trustedPayload)
   }
 }

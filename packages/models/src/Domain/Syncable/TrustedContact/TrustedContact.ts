@@ -33,15 +33,19 @@ export class TrustedContact extends DecryptedItem<TrustedContactContent> impleme
     return TrustedContact.singletonPredicate
   }
 
+  hasCurrentOrPreviousSigningPublicKey(signingPublicKey: string): boolean {
+    return this.publicKeySet.findKeySetWithSigningKey(signingPublicKey) !== undefined
+  }
+
   getTrustStatusForPublicKey(encryptionPublicKey: string): PublicKeyTrustStatus {
     if (this.publicKeySet.encryption === encryptionPublicKey) {
-      return PublicKeyTrustStatus.TrustedRoot
+      return PublicKeyTrustStatus.Trusted
     }
 
     const previous = this.publicKeySet.findKeySetWithPublicKey(encryptionPublicKey)
 
     if (previous) {
-      return PublicKeyTrustStatus.QuestionablePrevious
+      return PublicKeyTrustStatus.Previous
     }
 
     return PublicKeyTrustStatus.NotFound
@@ -49,13 +53,13 @@ export class TrustedContact extends DecryptedItem<TrustedContactContent> impleme
 
   getTrustStatusForSigningPublicKey(signingPublicKey: string): PublicKeyTrustStatus {
     if (this.publicKeySet.signing === signingPublicKey) {
-      return PublicKeyTrustStatus.TrustedRoot
+      return PublicKeyTrustStatus.Trusted
     }
 
     const previous = this.publicKeySet.findKeySetWithSigningKey(signingPublicKey)
 
     if (previous) {
-      return PublicKeyTrustStatus.QuestionablePrevious
+      return PublicKeyTrustStatus.Previous
     }
 
     return PublicKeyTrustStatus.NotFound

@@ -72,4 +72,8 @@ export class SharedVaultInvitesServer implements SharedVaultInvitesServerInterfa
   deleteAllInboundInvites(): Promise<HttpResponse<{ success: boolean }>> {
     return this.httpService.delete(SharedVaultInvitesPaths.deleteAllInboundInvites)
   }
+
+  deleteAllOutboundInvites(): Promise<HttpResponse<{ success: boolean }>> {
+    return this.httpService.delete(SharedVaultInvitesPaths.deleteAllOutboundInvites)
+  }
 }

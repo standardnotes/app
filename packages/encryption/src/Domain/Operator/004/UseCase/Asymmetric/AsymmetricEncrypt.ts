@@ -5,7 +5,7 @@ import { V004AsymmetricCiphertextPrefix, V004AsymmetricStringComponents } from '
 import { CreateConsistentBase64JsonPayloadUseCase } from '../Utils/CreateConsistentBase64JsonPayload'
 import { AsymmetricItemAdditionalData } from '../../../../Types/EncryptionAdditionalData'
 
-export class AsymmetricEncryptUseCase {
+export class AsymmetricEncrypt004 {
   private base64DataUsecase = new CreateConsistentBase64JsonPayloadUseCase(this.crypto)
 
   constructor(private readonly crypto: PureCryptoInterface) {}
@@ -21,8 +21,8 @@ export class AsymmetricEncryptUseCase {
     const ciphertext = this.crypto.sodiumCryptoBoxEasyEncrypt(
       dto.stringToEncrypt,
       nonce,
-      dto.senderKeyPair.privateKey,
       dto.recipientPublicKey,
+      dto.senderKeyPair.privateKey,
     )
 
     const additionalData: AsymmetricItemAdditionalData = {

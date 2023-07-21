@@ -1,4 +1,4 @@
-import { ContactServiceInterface } from './../../Contacts/ContactServiceInterface'
+import { ContactServiceInterface } from '../../Contacts/ContactServiceInterface'
 import { SyncServiceInterface } from '../../Sync/SyncServiceInterface'
 import {
   KeySystemRootKeyInterface,
@@ -12,7 +12,7 @@ import {
 import { MutatorClientInterface } from '../../Mutator/MutatorClientInterface'
 import { ContentType } from '@standardnotes/domain-core'
 
-export class HandleTrustedSharedVaultInviteMessage {
+export class ProcessAcceptedVaultInvite {
   constructor(
     private mutator: MutatorClientInterface,
     private sync: SyncServiceInterface,

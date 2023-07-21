@@ -41,7 +41,6 @@ import {
   RootKeyInterface,
   KeySystemItemsKeyInterface,
   KeySystemIdentifier,
-  AsymmetricMessagePayload,
   KeySystemRootKeyInterface,
   KeySystemRootKeyParamsInterface,
   PortablePublicKeySet,
@@ -91,7 +90,6 @@ import { RootKeyEncryptPayloadUseCase } from './UseCase/RootEncryption/EncryptPa
 import { ValidateAccountPasswordResult } from './RootKey/ValidateAccountPasswordResult'
 import { ValidatePasscodeResult } from './RootKey/ValidatePasscodeResult'
 import { ContentType } from '@standardnotes/domain-core'
-import { EncryptAsymmetricMessagePayload } from './UseCase/Asymmetric/EncryptAsymmetricMessagePayload'
 
 /**
  * The encryption service is responsible for the encryption and decryption of payloads, and
@@ -638,25 +636,6 @@ export class EncryptionService
     return this.operators
       .defaultOperator()
       .createKeySystemItemsKey(uuid, keySystemIdentifier, sharedVaultUuid, rootKeyToken)
-  }
-
-  asymmetricallyEncryptMessage(dto: {
-    message: AsymmetricMessagePayload
-    senderKeyPair: PkcKeyPair
-    senderSigningKeyPair: PkcKeyPair
-    recipientPublicKey: string
-  }): AsymmetricallyEncryptedString {
-    const usecase = new EncryptAsymmetricMessagePayload(this.operators)
-    const result = usecase.execute({
-      message: dto.message,
-      senderKeyPair: dto.senderKeyPair,
-      senderSigningKeyPair: dto.senderSigningKeyPair,
-      recipientPublicKey: dto.recipientPublicKey,
-    })
-    if (result.isFailed()) {
-      throw new Error('Failed to encrypt message')
-    }
-    return result.getValue()
   }
 
   asymmetricSignatureVerifyDetached(

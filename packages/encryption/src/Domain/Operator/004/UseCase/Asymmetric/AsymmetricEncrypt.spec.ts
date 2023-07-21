@@ -1,20 +1,20 @@
 import { PkcKeyPair, PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { getMockedCrypto } from '../../MockedCrypto'
-import { AsymmetricEncryptUseCase } from './AsymmetricEncrypt'
+import { AsymmetricEncrypt004 } from './AsymmetricEncrypt'
 import { V004AsymmetricStringComponents } from '../../V004AlgorithmTypes'
 import { ParseConsistentBase64JsonPayloadUseCase } from '../Utils/ParseConsistentBase64JsonPayload'
 import { AsymmetricItemAdditionalData } from '../../../../Types/EncryptionAdditionalData'
 
 describe('asymmetric encrypt use case', () => {
   let crypto: PureCryptoInterface
-  let usecase: AsymmetricEncryptUseCase
+  let usecase: AsymmetricEncrypt004
   let encryptionKeyPair: PkcKeyPair
   let signingKeyPair: PkcKeyPair
   let parseBase64Usecase: ParseConsistentBase64JsonPayloadUseCase
 
   beforeEach(() => {
     crypto = getMockedCrypto()
-    usecase = new AsymmetricEncryptUseCase(crypto)
+    usecase = new AsymmetricEncrypt004(crypto)
     encryptionKeyPair = crypto.sodiumCryptoBoxSeedKeypair('seedling')
     signingKeyPair = crypto.sodiumCryptoSignSeedKeypair('seedling')
     parseBase64Usecase = new ParseConsistentBase64JsonPayloadUseCase(crypto)

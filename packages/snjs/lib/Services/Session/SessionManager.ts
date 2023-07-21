@@ -630,10 +630,17 @@ export class SNSessionManager
     if (!isErrorResponse(rawResponse)) {
       if (InternalFeatureService.get().isFeatureEnabled(InternalFeature.Vaults)) {
         const eventData: UserKeyPairChangedEventData = {
-          oldKeyPair,
-          oldSigningKeyPair,
-          newKeyPair: parameters.newRootKey.encryptionKeyPair,
-          newSigningKeyPair: parameters.newRootKey.signingKeyPair,
+          previous:
+            oldKeyPair && oldSigningKeyPair
+              ? {
+                  encryption: oldKeyPair,
+                  signing: oldSigningKeyPair,
+                }
+              : undefined,
+          current: {
+            encryption: parameters.newRootKey.encryptionKeyPair,
+            signing: parameters.newRootKey.signingKeyPair,
+          },
         }
 
         void this.notifyEvent(SessionEvent.UserKeyPairChanged, eventData)

@@ -54,6 +54,4 @@ export interface SharedVaultServiceInterface
   getCachedPendingInviteRecords(): PendingSharedVaultInviteRecord[]
   getInvitableContactsForSharedVault(sharedVault: SharedVaultListingInterface): Promise<TrustedContactInterface[]>
   deleteInvite(invite: SharedVaultInviteServerHash): Promise<ClientDisplayableError | void>
-
-  revokeOwnKeySet(keyset: ContactPublicKeySetInterface): Promise<Result<void>>
 }

@@ -32,4 +32,5 @@ export interface SharedVaultInvitesServerInterface {
   ): Promise<HttpResponse<DeleteAllSharedVaultInvitesResponse>>
   deleteInvite(params: DeleteInviteRequestParams): Promise<HttpResponse<DeleteInviteResponse>>
   deleteAllInboundInvites(): Promise<HttpResponse<{ success: boolean }>>
+  deleteAllOutboundInvites(): Promise<HttpResponse<{ success: boolean }>>
 }

@@ -1,6 +1,7 @@
+import { UserKeyPairChangedEventData } from './../Session/UserKeyPairChangedEventData'
 import { MutatorClientInterface } from './../Mutator/MutatorClientInterface'
 import { StorageServiceInterface } from './../Storage/StorageServiceInterface'
-import { InviteContactToSharedVaultUseCase } from './UseCase/InviteContactToSharedVault'
+import { InviteToVault } from './UseCase/InviteToVault'
 import {
   ClientDisplayableError,
   SharedVaultInviteServerHash,
@@ -34,7 +35,7 @@ import {
 import { SharedVaultServiceInterface } from './SharedVaultServiceInterface'
 import { SharedVaultServiceEvent, SharedVaultServiceEventPayload } from './SharedVaultServiceEvent'
 import { EncryptionProviderInterface } from '@standardnotes/encryption'
-import { GetSharedVaultUsersUseCase } from './UseCase/GetSharedVaultUsers'
+import { GetSharedVaultUsers } from './UseCase/GetSharedVaultUsers'
 import { RemoveVaultMemberUseCase } from './UseCase/RemoveSharedVaultMember'
 import { AbstractService } from '../Service/AbstractService'
 import { InternalEventHandlerInterface } from '../Internal/InternalEventHandlerInterface'
@@ -53,23 +54,23 @@ import { UserEventServiceEvent, UserEventServiceEventPayload } from '../UserEven
 import { DeleteExternalSharedVaultUseCase } from './UseCase/DeleteExternalSharedVault'
 import { DeleteSharedVaultUseCase } from './UseCase/DeleteSharedVault'
 import { VaultServiceEvent, VaultServiceEventPayload } from '../Vaults/VaultServiceEvent'
-import { AcceptTrustedSharedVaultInvite } from './UseCase/AcceptTrustedSharedVaultInvite'
-import { GetAsymmetricMessageTrustedPayload } from '../AsymmetricMessage/UseCase/GetAsymmetricMessageTrustedPayload'
+import { AcceptVaultInvite } from './UseCase/AcceptVaultInvite'
+import { GetTrustedPayload } from '../AsymmetricMessage/UseCase/GetTrustedPayload'
 import { PendingSharedVaultInviteRecord } from './PendingSharedVaultInviteRecord'
-import { GetAsymmetricMessageUntrustedPayload } from '../AsymmetricMessage/UseCase/GetAsymmetricMessageUntrustedPayload'
-import { ShareContactWithAllMembersOfSharedVaultUseCase } from './UseCase/ShareContactWithAllMembersOfSharedVault'
-import { GetSharedVaultTrustedContacts } from './UseCase/GetSharedVaultTrustedContacts'
-import { NotifySharedVaultUsersOfRootKeyRotationUseCase } from './UseCase/NotifySharedVaultUsersOfRootKeyRotation'
+import { GetUntrustedPayload } from '../AsymmetricMessage/UseCase/GetUntrustedPayload'
+import { ShareContactWithVault } from './UseCase/ShareContactWithVault'
+import { GetVaultContacts } from './UseCase/GetVaultContacts'
+import { NotifyVaultUsersOfKeyRotation } from './UseCase/NotifyVaultUsersOfKeyRotation'
 import { CreateSharedVaultUseCase } from './UseCase/CreateSharedVault'
-import { SendSharedVaultMetadataChangedMessageToAll } from './UseCase/SendSharedVaultMetadataChangedMessageToAll'
+import { SendVaultDataChangedMessage } from './UseCase/SendVaultDataChangedMessage'
 import { ConvertToSharedVaultUseCase } from './UseCase/ConvertToSharedVault'
 import { GetVaultUseCase } from '../Vaults/UseCase/GetVault'
 import { ContentType, Result } from '@standardnotes/domain-core'
-import { RevokePublicKeyUseCase } from '../Contacts/UseCase/RevokePublicKey'
-import { EncryptAsymmetricMessagePayload } from '../Encryption/UseCase/Asymmetric/EncryptAsymmetricMessagePayload'
-import { SendAsymmetricMessageUseCase } from '../AsymmetricMessage/UseCase/SendAsymmetricMessageUseCase'
-import { GetOutboundAsymmetricMessages } from '../AsymmetricMessage/UseCase/GetOutboundAsymmetricMessages'
-import { GetAsymmetricStringAdditionalData } from '../Encryption/UseCase/Asymmetric/GetAsymmetricStringAdditionalData'
+import { HandleKeyPairChange } from '../Contacts/UseCase/HandleKeyPairChange'
+import { EncryptMessage } from '../Encryption/UseCase/Asymmetric/EncryptMessage'
+import { SendMessage } from '../AsymmetricMessage/UseCase/SendMessage'
+import { GetOutboundMessages } from '../AsymmetricMessage/UseCase/GetOutboundMessages'
+import { GetMessageAdditionalData } from '../Encryption/UseCase/Asymmetric/GetMessageAdditionalData'
 
 export class SharedVaultService
   extends AbstractService<SharedVaultServiceEvent, SharedVaultServiceEventPayload>
@@ -93,6 +94,7 @@ export class SharedVaultService
     private files: FilesClientInterface,
     private vaults: VaultServiceInterface,
     private storage: StorageServiceInterface,
+    private handleKeyPairChange: HandleKeyPairChange,
     eventBus: InternalEventBusInterface,
   ) {
     super(eventBus)
@@ -144,6 +146,13 @@ export class SharedVaultService
   async handleEvent(event: InternalEventInterface): Promise<void> {
     if (event.type === SessionEvent.UserKeyPairChanged) {
       void this.invitesServer.deleteAllInboundInvites()
+
+      const eventData = event.payload as UserKeyPairChangedEventData
+
+      void this.handleKeyPairChange.execute({
+        newKeys: eventData.current,
+        previousKeys: eventData.previous,
+      })
     } else if (event.type === UserEventServiceEvent.UserEventReceived) {
       await this.handleUserEvent(event.payload as UserEventServiceEventPayload)
     } else if (event.type === VaultServiceEvent.VaultRootKeyRotated) {
@@ -182,7 +191,7 @@ export class SharedVaultService
       return
     }
 
-    const usecase = new NotifySharedVaultUsersOfRootKeyRotationUseCase(
+    const usecase = new NotifyVaultUsersOfKeyRotation(
       this.usersServer,
       this.invitesServer,
       this.messageServer,
@@ -234,7 +243,8 @@ export class SharedVaultService
   }
 
   private findSharedVault(sharedVaultUuid: string): SharedVaultListingInterface | undefined {
-    return this.getAllSharedVaults().find((vault) => vault.sharing.sharedVaultUuid === sharedVaultUuid)
+    const usecase = new GetVaultUseCase<SharedVaultListingInterface>(this.items)
+    return usecase.execute({ sharedVaultUuid })
   }
 
   public isCurrentUserSharedVaultAdmin(sharedVault: SharedVaultListingInterface): boolean {
@@ -276,7 +286,7 @@ export class SharedVaultService
         continue
       }
 
-      const usecase = new SendSharedVaultMetadataChangedMessageToAll(
+      const usecase = new SendVaultDataChangedMessage(
         this.encryption,
         this.contacts,
         this.usersServer,
@@ -352,7 +362,7 @@ export class SharedVaultService
     }
 
     for (const invite of invites) {
-      const trustedMessageUseCase = new GetAsymmetricMessageTrustedPayload<AsymmetricMessageSharedVaultInvite>(
+      const trustedMessageUseCase = new GetTrustedPayload<AsymmetricMessageSharedVaultInvite>(
         this.encryption.operators,
         this.contacts,
       )
@@ -372,7 +382,7 @@ export class SharedVaultService
         continue
       }
 
-      const untrustedMessageUseCase = new GetAsymmetricMessageUntrustedPayload<AsymmetricMessageSharedVaultInvite>(
+      const untrustedMessageUseCase = new GetUntrustedPayload<AsymmetricMessageSharedVaultInvite>(
         this.encryption.operators,
       )
 
@@ -402,7 +412,7 @@ export class SharedVaultService
       throw new Error('Cannot accept untrusted invite')
     }
 
-    const useCase = new AcceptTrustedSharedVaultInvite(this.invitesServer, this.mutator, this.sync, this.contacts)
+    const useCase = new AcceptVaultInvite(this.invitesServer, this.mutator, this.sync, this.contacts)
     await useCase.execute({ invite: pendingInvite.invite, message: pendingInvite.message })
 
     delete this.pendingInvites[pendingInvite.invite.uuid]
@@ -434,7 +444,7 @@ export class SharedVaultService
   }
 
   private async getSharedVaultContacts(sharedVault: SharedVaultListingInterface): Promise<TrustedContactInterface[]> {
-    const usecase = new GetSharedVaultTrustedContacts(this.contacts, this.usersServer)
+    const usecase = new GetVaultContacts(this.contacts, this.usersServer)
     const contacts = await usecase.execute(sharedVault)
     if (!contacts) {
       return []
@@ -450,7 +460,7 @@ export class SharedVaultService
   ): Promise<SharedVaultInviteServerHash | ClientDisplayableError> {
     const sharedVaultContacts = await this.getSharedVaultContacts(sharedVault)
 
-    const useCase = new InviteContactToSharedVaultUseCase(this.encryption, this.invitesServer)
+    const useCase = new InviteToVault(this.encryption, this.invitesServer)
 
     const result = await useCase.execute({
       senderKeyPair: this.encryption.getKeyPair(),
@@ -515,7 +525,7 @@ export class SharedVaultService
   async getSharedVaultUsers(
     sharedVault: SharedVaultListingInterface,
   ): Promise<SharedVaultUserServerHash[] | undefined> {
-    const useCase = new GetSharedVaultUsersUseCase(this.usersServer)
+    const useCase = new GetSharedVaultUsers(this.usersServer)
     return useCase.execute({ sharedVaultUuid: sharedVault.sharing.sharedVaultUuid })
   }
 
@@ -526,12 +536,7 @@ export class SharedVaultService
 
     const sharedVaults = this.getAllSharedVaults()
 
-    const useCase = new ShareContactWithAllMembersOfSharedVaultUseCase(
-      this.contacts,
-      this.encryption,
-      this.usersServer,
-      this.messageServer,
-    )
+    const useCase = new ShareContactWithVault(this.contacts, this.encryption, this.usersServer, this.messageServer)
 
     for (const vault of sharedVaults) {
       if (!this.isCurrentUserSharedVaultAdmin(vault)) {
@@ -569,12 +574,12 @@ export class SharedVaultService
   }
 
   async revokeOwnKeySet(keyset: ContactPublicKeySetInterface): Promise<Result<void>> {
-    const encryptUseCase = new EncryptAsymmetricMessagePayload(this.encryption.operators)
-    const sendMessageUseCase = new SendAsymmetricMessageUseCase(this.messageServer)
-    const getOutboundMessages = new GetOutboundAsymmetricMessages(this.messageServer)
-    const getAdditionalData = new GetAsymmetricStringAdditionalData(this.encryption.operators)
+    const encryptUseCase = new EncryptMessage(this.encryption.operators)
+    const sendMessageUseCase = new SendMessage(this.messageServer)
+    const getOutboundMessages = new GetOutboundMessages(this.messageServer)
+    const getAdditionalData = new GetMessageAdditionalData(this.encryption.operators)
 
-    const usecase = new RevokePublicKeyUseCase(
+    const usecase = new HandleKeyPairChange(
       this.mutator,
       this.contacts,
       this.messageServer,

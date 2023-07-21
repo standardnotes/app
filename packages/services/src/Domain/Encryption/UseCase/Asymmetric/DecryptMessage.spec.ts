@@ -4,7 +4,7 @@ import {
   ContactPublicKeySetInterface,
   TrustedContactInterface,
 } from '@standardnotes/models'
-import { DecryptAsymmetricMessagePayload } from './DecryptAsymmetricMessagePayload'
+import { DecryptMessage } from './DecryptMessage'
 import { OperatorInterface, OperatorManager } from '@standardnotes/encryption'
 import { ProtocolVersion } from '@standardnotes/common'
 
@@ -26,8 +26,8 @@ function createMockPublicKeySetChain(): ContactPublicKeySetInterface {
   return root
 }
 
-describe('DecryptAsymmetricMessagePayload', () => {
-  let usecase: DecryptAsymmetricMessagePayload<AsymmetricMessagePayload>
+describe('DecryptMessage', () => {
+  let usecase: DecryptMessage<AsymmetricMessagePayload>
   let operator: jest.Mocked<OperatorInterface>
 
   beforeEach(() => {
@@ -38,14 +38,14 @@ describe('DecryptAsymmetricMessagePayload', () => {
     operators.defaultOperator = jest.fn().mockReturnValue(operator)
     operators.operatorForVersion = jest.fn().mockReturnValue(operator)
 
-    usecase = new DecryptAsymmetricMessagePayload(operators)
+    usecase = new DecryptMessage(operators)
   })
 
   it('should fail if fails to decrypt', () => {
     operator.asymmetricDecrypt = jest.fn().mockReturnValue(null)
     const result = usecase.execute({
-      encryptedString: 'encrypted',
-      trustedSender: undefined,
+      message: 'encrypted',
+      sender: undefined,
       privateKey: 'private-key',
     })
 
@@ -62,8 +62,8 @@ describe('DecryptAsymmetricMessagePayload', () => {
     })
 
     const result = usecase.execute({
-      encryptedString: 'encrypted',
-      trustedSender: undefined,
+      message: 'encrypted',
+      sender: undefined,
       privateKey: 'private-key',
     })
 
@@ -90,8 +90,8 @@ describe('DecryptAsymmetricMessagePayload', () => {
       senderContact.isPublicKeyTrusted = jest.fn().mockReturnValue(false)
 
       const result = usecase.execute({
-        encryptedString: 'encrypted',
-        trustedSender: senderContact,
+        message: 'encrypted',
+        sender: senderContact,
         privateKey: 'private-key',
       })
 
@@ -118,8 +118,8 @@ describe('DecryptAsymmetricMessagePayload', () => {
       senderContact.isSigningKeyTrusted = jest.fn().mockReturnValue(false)
 
       const result = usecase.execute({
-        encryptedString: 'encrypted',
-        trustedSender: senderContact,
+        message: 'encrypted',
+        sender: senderContact,
         privateKey: 'private-key',
       })
 
@@ -146,8 +146,8 @@ describe('DecryptAsymmetricMessagePayload', () => {
       senderContact.isPublicKeyTrusted = jest.fn().mockReturnValue(true)
 
       const result = usecase.execute({
-        encryptedString: 'encrypted',
-        trustedSender: senderContact,
+        message: 'encrypted',
+        sender: senderContact,
         privateKey: 'private-key',
       })
 
@@ -166,8 +166,8 @@ describe('DecryptAsymmetricMessagePayload', () => {
       })
 
       const result = usecase.execute({
-        encryptedString: 'encrypted',
-        trustedSender: undefined,
+        message: 'encrypted',
+        sender: undefined,
         privateKey: 'private-key',
       })
 

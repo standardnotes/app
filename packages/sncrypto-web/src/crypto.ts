@@ -350,8 +350,8 @@ export class SNWebCrypto implements PureCryptoInterface {
   public sodiumCryptoBoxEasyEncrypt(
     message: Utf8String,
     nonce: HexString,
-    senderSecretKey: HexString,
     recipientPublicKey: HexString,
+    senderSecretKey: HexString,
   ): Base64String {
     const result = sodium.crypto_box_easy(
       message,

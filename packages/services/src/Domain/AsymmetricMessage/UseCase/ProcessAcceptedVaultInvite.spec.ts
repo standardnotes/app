@@ -1,5 +1,5 @@
-import { MutatorClientInterface } from './../../Mutator/MutatorClientInterface'
-import { HandleTrustedSharedVaultInviteMessage } from './HandleTrustedSharedVaultInviteMessage'
+import { MutatorClientInterface } from '../../Mutator/MutatorClientInterface'
+import { ProcessAcceptedVaultInvite } from './ProcessAcceptedVaultInvite'
 import { SyncServiceInterface } from '../../Sync/SyncServiceInterface'
 import { ContactServiceInterface } from '../../Contacts/ContactServiceInterface'
 import { ContentType } from '@standardnotes/domain-core'
@@ -9,7 +9,7 @@ import {
   KeySystemRootKeyContent,
 } from '@standardnotes/models'
 
-describe('HandleTrustedSharedVaultInviteMessage', () => {
+describe('ProcessAcceptedVaultInvite', () => {
   let mutatorMock: jest.Mocked<MutatorClientInterface>
   let syncServiceMock: jest.Mocked<SyncServiceInterface>
   let contactServiceMock: jest.Mocked<ContactServiceInterface>
@@ -29,7 +29,7 @@ describe('HandleTrustedSharedVaultInviteMessage', () => {
   })
 
   it('should create root key before creating vault listing so that propagated vault listings do not appear as locked', async () => {
-    const handleTrustedSharedVaultInviteMessage = new HandleTrustedSharedVaultInviteMessage(
+    const handleTrustedSharedVaultInviteMessage = new ProcessAcceptedVaultInvite(
       mutatorMock,
       syncServiceMock,
       contactServiceMock,

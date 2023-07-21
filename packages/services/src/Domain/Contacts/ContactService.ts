@@ -27,7 +27,7 @@ import { UserClientInterface } from '../User/UserClientInterface'
 import { CollaborationIDData, Version1CollaborationId } from './CollaborationID'
 import { EncryptionProviderInterface } from '@standardnotes/encryption'
 import { ValidateItemSignerUseCase } from './UseCase/ValidateItemSigner'
-import { ValidateItemSignerResult } from './UseCase/ValidateItemSignerResult'
+import { ItemSignatureValidationResult } from './UseCase/Types/ItemSignatureValidationResult'
 import { FindTrustedContactUseCase } from './UseCase/FindTrustedContact'
 import { SelfContactManager } from './Managers/SelfContactManager'
 import { CreateOrEditTrustedContactUseCase } from './UseCase/CreateOrEditTrustedContact'
@@ -68,8 +68,8 @@ export class ContactService
       const data = event.payload as UserKeyPairChangedEventData
 
       await this.selfContactManager.updateWithNewPublicKeySet({
-        encryption: data.newKeyPair.publicKey,
-        signing: data.newSigningKeyPair.publicKey,
+        encryption: data.current.encryption.publicKey,
+        signing: data.current.signing.publicKey,
       })
     }
   }
@@ -256,7 +256,7 @@ export class ContactService
     })
   }
 
-  isItemAuthenticallySigned(item: DecryptedItemInterface): ValidateItemSignerResult {
+  isItemAuthenticallySigned(item: DecryptedItemInterface): ItemSignatureValidationResult {
     const usecase = new ValidateItemSignerUseCase(this.items)
     return usecase.execute(item)
   }

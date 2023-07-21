@@ -274,6 +274,14 @@ export class SNProtocolOperator001 implements OperatorInterface, AsyncOperatorIn
     throw new Error('Method not implemented.')
   }
 
+  asymmetricDecryptOwnMessage(_dto: {
+    message: string
+    ownPrivateKey: string
+    recipientPublicKey: string
+  }): Result<AsymmetricDecryptResult> {
+    throw new Error('Method not implemented.')
+  }
+
   asymmetricSignatureVerifyDetached(_encryptedString: string): AsymmetricSignatureVerificationDetachedResult {
     throw new Error('Method not implemented.')
   }

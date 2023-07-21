@@ -1,5 +1,5 @@
 export enum PublicKeyTrustStatus {
-  TrustedRoot = 'TrustedRoot',
-  QuestionablePrevious = 'QuestionablePrevious',
+  Trusted = 'Trusted',
+  Previous = 'Previous',
   NotFound = 'NotFound',
 }

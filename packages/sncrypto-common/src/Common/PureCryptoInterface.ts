@@ -136,8 +136,8 @@ export interface PureCryptoInterface {
   sodiumCryptoBoxEasyEncrypt(
     message: Utf8String,
     nonce: HexString,
-    senderSecretKey: HexString,
     recipientPublicKey: HexString,
+    senderSecretKey: HexString,
   ): Base64String
   sodiumCryptoBoxEasyDecrypt(
     ciphertext: Base64String,

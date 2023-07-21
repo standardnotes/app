@@ -1,27 +1,27 @@
 import { PkcKeyPair, PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { getMockedCrypto } from '../../MockedCrypto'
-import { AsymmetricDecryptUseCase } from './AsymmetricDecrypt'
-import { AsymmetricEncryptUseCase } from './AsymmetricEncrypt'
+import { AsymmetricDecrypt004 } from './AsymmetricDecrypt'
+import { AsymmetricEncrypt004 } from './AsymmetricEncrypt'
 import { V004AsymmetricStringComponents } from '../../V004AlgorithmTypes'
 import { AsymmetricItemAdditionalData } from '../../../../Types/EncryptionAdditionalData'
 
 describe('asymmetric decrypt use case', () => {
   let crypto: PureCryptoInterface
-  let usecase: AsymmetricDecryptUseCase
+  let usecase: AsymmetricDecrypt004
   let recipientKeyPair: PkcKeyPair
   let senderKeyPair: PkcKeyPair
   let senderSigningKeyPair: PkcKeyPair
 
   beforeEach(() => {
     crypto = getMockedCrypto()
-    usecase = new AsymmetricDecryptUseCase(crypto)
+    usecase = new AsymmetricDecrypt004(crypto)
     recipientKeyPair = crypto.sodiumCryptoBoxSeedKeypair('recipient-seedling')
     senderKeyPair = crypto.sodiumCryptoBoxSeedKeypair('sender-seedling')
     senderSigningKeyPair = crypto.sodiumCryptoSignSeedKeypair('sender-signing-seedling')
   })
 
   const getEncryptedString = () => {
-    const encryptUsecase = new AsymmetricEncryptUseCase(crypto)
+    const encryptUsecase = new AsymmetricEncrypt004(crypto)
 
     const result = encryptUsecase.execute({
       stringToEncrypt: 'foobar',

@@ -277,8 +277,8 @@ describe('crypto operations', async function () {
     const ciphertext = await webCrypto.sodiumCryptoBoxEasyEncrypt(
       plaintext,
       nonce,
-      senderKeyPair.privateKey,
       recipientKeyPair.publicKey,
+      senderKeyPair.privateKey,
     )
 
     expect(ciphertext.length).to.equal(44)

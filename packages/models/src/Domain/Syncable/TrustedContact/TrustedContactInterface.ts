@@ -11,4 +11,5 @@ export interface TrustedContactInterface extends DecryptedItemInterface<TrustedC
 
   getTrustStatusForPublicKey(encryptionPublicKey: string): PublicKeyTrustStatus
   getTrustStatusForSigningPublicKey(signingPublicKey: string): PublicKeyTrustStatus
+  hasCurrentOrPreviousSigningPublicKey(signingPublicKey: string): boolean
 }

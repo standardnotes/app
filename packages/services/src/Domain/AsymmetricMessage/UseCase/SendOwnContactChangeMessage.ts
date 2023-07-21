@@ -7,7 +7,7 @@ import {
 } from '@standardnotes/models'
 import { AsymmetricMessageServer } from '@standardnotes/api'
 import { PkcKeyPair } from '@standardnotes/sncrypto-common'
-import { SendAsymmetricMessageUseCase } from './SendAsymmetricMessageUseCase'
+import { SendMessage } from './SendMessage'
 
 export class SendOwnContactChangeMessage {
   constructor(private encryption: EncryptionProviderInterface, private messageServer: AsymmetricMessageServer) {}
@@ -35,7 +35,7 @@ export class SendOwnContactChangeMessage {
       recipientPublicKey: params.contact.publicKeySet.encryption,
     })
 
-    const sendMessageUseCase = new SendAsymmetricMessageUseCase(this.messageServer)
+    const sendMessageUseCase = new SendMessage(this.messageServer)
     const sendMessageResult = await sendMessageUseCase.execute({
       recipientUuid: params.contact.contactUuid,
       encryptedMessage,

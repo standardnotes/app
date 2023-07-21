@@ -16,12 +16,7 @@ export class FindTrustedContactUseCase {
 
     if ('signingPublicKey' in query && query.signingPublicKey) {
       const allContacts = this.items.getItems<TrustedContactInterface>(ContentType.TYPES.TrustedContact)
-      return allContacts.find((contact) => contact.isSigningKeyTrusted(query.signingPublicKey))
-    }
-
-    if ('publicKey' in query && query.publicKey) {
-      const allContacts = this.items.getItems<TrustedContactInterface>(ContentType.TYPES.TrustedContact)
-      return allContacts.find((contact) => contact.isPublicKeyTrusted(query.publicKey))
+      return allContacts.find((contact) => contact.hasCurrentOrPreviousSigningPublicKey(query.signingPublicKey))
     }
 
     throw new Error('Invalid query')
