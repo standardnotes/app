@@ -109,42 +109,16 @@ export class ReceivedSharedItemsHandler {
       return
     }
 
-    if (isReceivedAndroidFile(item)) {
-      const data = await readFile(item.contentUri, 'base64')
-      const file = {
-        name: item.fileName || item.contentUri,
-        data,
-        mimeType: item.mimeType,
-      }
-      this.webViewRef.current?.postMessage(
-        JSON.stringify({
-          reactNativeEvent: ReactNativeToWebEvent.ReceivedFile,
-          messageType: 'event',
-          messageData: file,
-        }),
-      )
-    } else if (isReceivedIosFile(item)) {
-      const data = await readFile(item.path, 'base64')
-      const file = {
-        name: item.fileName || item.path,
-        data,
-        mimeType: item.mimeType,
-      }
-      this.webViewRef.current?.postMessage(
-        JSON.stringify({
-          reactNativeEvent: ReactNativeToWebEvent.ReceivedFile,
-          messageType: 'event',
-          messageData: file,
-        }),
-      )
+    if (isReceivedAndroidFile(item) || isReceivedIosFile(item)) {
+      this.sendFileToWebView(item).catch(console.error)
     } else if (isReceivedWeblink(item)) {
       this.webViewRef.current?.postMessage(
         JSON.stringify({
-          reactNativeEvent: ReactNativeToWebEvent.ReceivedText,
+          reactNativeEvent: ReactNativeToWebEvent.ReceivedLink,
           messageType: 'event',
           messageData: {
             title: item.subject || item.weblink,
-            text: item.weblink,
+            link: item.weblink,
           },
         }),
       )
@@ -161,6 +135,23 @@ export class ReceivedSharedItemsHandler {
     }
 
     this.handleItemsQueue().catch(console.error)
+  }
+
+  sendFileToWebView = async (item: ReceivedAndroidFile | ReceivedIosFile) => {
+    const path = isReceivedAndroidFile(item) ? item.contentUri : item.path
+    const data = await readFile(path, 'base64')
+    const file = {
+      name: item.fileName || item.path,
+      data,
+      mimeType: item.mimeType,
+    }
+    this.webViewRef.current?.postMessage(
+      JSON.stringify({
+        reactNativeEvent: ReactNativeToWebEvent.ReceivedFile,
+        messageType: 'event',
+        messageData: file,
+      }),
+    )
   }
 
   private addSharedItemsToQueue = async (url?: string) => {
