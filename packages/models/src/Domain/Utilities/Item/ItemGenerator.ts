@@ -27,7 +27,7 @@ import { EncryptedItemInterface } from '../../Abstract/Item/Interfaces/Encrypted
 import { DeletedItemInterface } from '../../Abstract/Item/Interfaces/DeletedItem'
 import { SmartViewMutator } from '../../Syncable/SmartView'
 import { TrustedContact } from '../../Syncable/TrustedContact/TrustedContact'
-import { TrustedContactMutator } from '../../Syncable/TrustedContact/TrustedContactMutator'
+import { TrustedContactMutator } from '../../Syncable/TrustedContact/Mutator/TrustedContactMutator'
 import { KeySystemRootKey } from '../../Syncable/KeySystemRootKey/KeySystemRootKey'
 import { KeySystemRootKeyMutator } from '../../Syncable/KeySystemRootKey/KeySystemRootKeyMutator'
 import { VaultListing } from '../../Syncable/VaultListing/VaultListing'

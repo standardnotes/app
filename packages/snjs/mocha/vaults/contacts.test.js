@@ -92,4 +92,8 @@ describe('contacts', function () {
   it('should not be able to delete a trusted contact if it belongs to a vault I administer', async () => {
     console.error('TODO: implement test')
   })
+
+  it('should be able to refresh a contact using a collaborationID that includes full chain of previouos public keys', async () => {
+    console.error('TODO: implement test')
+  })
 })

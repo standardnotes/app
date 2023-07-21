@@ -13,7 +13,6 @@ function createMockPublicKeySetChain(): ContactPublicKeySetInterface {
     encryption: 'encryption-public-key-n-1',
     signing: 'signing-public-key-n-1',
     timestamp: new Date(-1),
-    isRevoked: false,
     previousKeySet: undefined,
   })
 
@@ -21,7 +20,6 @@ function createMockPublicKeySetChain(): ContactPublicKeySetInterface {
     encryption: 'encryption-public-key',
     signing: 'signing-public-key',
     timestamp: new Date(),
-    isRevoked: false,
     previousKeySet: nMinusOne,
   })
 

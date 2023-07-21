@@ -353,7 +353,7 @@ export class SharedVaultService
 
     for (const invite of invites) {
       const trustedMessageUseCase = new GetAsymmetricMessageTrustedPayload<AsymmetricMessageSharedVaultInvite>(
-        this.encryption,
+        this.encryption.operators,
         this.contacts,
       )
 
@@ -362,10 +362,10 @@ export class SharedVaultService
         privateKey: this.encryption.getKeyPair().privateKey,
       })
 
-      if (trustedMessage) {
+      if (!trustedMessage.isFailed()) {
         this.pendingInvites[invite.uuid] = {
           invite,
-          message: trustedMessage,
+          message: trustedMessage.getValue(),
           trusted: true,
         }
 
@@ -373,7 +373,7 @@ export class SharedVaultService
       }
 
       const untrustedMessageUseCase = new GetAsymmetricMessageUntrustedPayload<AsymmetricMessageSharedVaultInvite>(
-        this.encryption,
+        this.encryption.operators,
       )
 
       const untrustedMessage = untrustedMessageUseCase.execute({
@@ -381,10 +381,10 @@ export class SharedVaultService
         privateKey: this.encryption.getKeyPair().privateKey,
       })
 
-      if (untrustedMessage) {
+      if (!untrustedMessage.isFailed()) {
         this.pendingInvites[invite.uuid] = {
           invite,
-          message: untrustedMessage,
+          message: untrustedMessage.getValue(),
           trusted: false,
         }
       }

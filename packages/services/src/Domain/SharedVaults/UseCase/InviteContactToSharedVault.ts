@@ -4,6 +4,7 @@ import {
   TrustedContactInterface,
   SharedVaultListingInterface,
   AsymmetricMessagePayloadType,
+  VaultInviteDelegatedContact,
 } from '@standardnotes/models'
 import { SharedVaultInvitesServerInterface } from '@standardnotes/api'
 import { SendSharedVaultInviteUseCase } from './SendSharedVaultInviteUseCase'
@@ -25,12 +26,29 @@ export class InviteContactToSharedVaultUseCase {
   }): Promise<SharedVaultInviteServerHash | ClientDisplayableError> {
     const keySystemRootKey = this.encryption.keys.getPrimaryKeySystemRootKey(params.sharedVault.systemIdentifier)
     if (!keySystemRootKey) {
-      return ClientDisplayableError.FromString('Cannot add contact; key system root key not found')
+      return ClientDisplayableError.FromString('Cannot invite contact; key system root key not found')
     }
 
-    const delegatedContacts = params.sharedVaultContacts.filter(
-      (contact) => !contact.isMe && contact.contactUuid !== params.recipient.contactUuid,
-    )
+    const meContact = params.sharedVaultContacts.find((contact) => contact.isMe)
+    if (!meContact) {
+      return ClientDisplayableError.FromString('Cannot invite contact; me contact not found')
+    }
+
+    const meContactContent: VaultInviteDelegatedContact = {
+      name: undefined,
+      contactUuid: meContact.contactUuid,
+      publicKeySet: meContact.publicKeySet,
+    }
+
+    const delegatedContacts: VaultInviteDelegatedContact[] = params.sharedVaultContacts
+      .filter((contact) => !contact.isMe && contact.contactUuid !== params.recipient.contactUuid)
+      .map((contact) => {
+        return {
+          name: contact.name,
+          contactUuid: contact.contactUuid,
+          publicKeySet: contact.publicKeySet,
+        }
+      })
 
     const encryptedMessage = this.encryption.asymmetricallyEncryptMessage({
       message: {
@@ -38,7 +56,7 @@ export class InviteContactToSharedVaultUseCase {
         data: {
           recipientUuid: params.recipient.contactUuid,
           rootKey: keySystemRootKey.content,
-          trustedContacts: delegatedContacts.map((contact) => contact.content),
+          trustedContacts: [meContactContent, ...delegatedContacts],
           metadata: {
             name: params.sharedVault.name,
             description: params.sharedVault.description,

@@ -13,7 +13,6 @@ import {
   AsymmetricMessagePayload,
   KeySystemRootKeyInterface,
   KeySystemRootKeyParamsInterface,
-  TrustedContactInterface,
   PortablePublicKeySet,
 } from '@standardnotes/models'
 import { ClientDisplayableError } from '@standardnotes/responses'
@@ -123,11 +122,6 @@ export interface EncryptionProviderInterface {
     senderSigningKeyPair: PkcKeyPair
     recipientPublicKey: string
   }): string
-  asymmetricallyDecryptMessage<M extends AsymmetricMessagePayload>(dto: {
-    encryptedString: AsymmetricallyEncryptedString
-    trustedSender: TrustedContactInterface | undefined
-    privateKey: string
-  }): M | undefined
   asymmetricSignatureVerifyDetached(
     encryptedString: AsymmetricallyEncryptedString,
   ): AsymmetricSignatureVerificationDetachedResult

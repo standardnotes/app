@@ -1,21 +1,20 @@
 import { ContentType } from '@standardnotes/domain-core'
-import { DecryptedPayload, PayloadTimestampDefaults } from '../../Abstract/Payload'
-import { TrustedContact } from './TrustedContact'
-import { TrustedContactInterface } from './TrustedContactInterface'
+import { DecryptedPayload, PayloadTimestampDefaults } from '../../../Abstract/Payload'
+import { TrustedContact } from '../TrustedContact'
+import { TrustedContactInterface } from '../TrustedContactInterface'
 import { TrustedContactMutator } from './TrustedContactMutator'
-import { ContactPublicKeySet } from './PublicKeySet/ContactPublicKeySet'
-import { FillItemContentSpecialized } from '../../Abstract/Content/ItemContent'
-import { TrustedContactContentSpecialized } from './TrustedContactContent'
-import { MutationType } from '../../Abstract/Item'
-import { PortablePublicKeySet } from './PublicKeySet/PortablePublicKeySet'
-import { ContactPublicKeySetInterface } from './PublicKeySet/ContactPublicKeySetInterface'
+import { ContactPublicKeySet } from '../PublicKeySet/ContactPublicKeySet'
+import { FillItemContentSpecialized } from '../../../Abstract/Content/ItemContent'
+import { TrustedContactContentSpecialized } from '../Content/TrustedContactContent'
+import { MutationType } from '../../../Abstract/Item'
+import { PortablePublicKeySet } from '../Types/PortablePublicKeySet'
+import { ContactPublicKeySetInterface } from '../PublicKeySet/ContactPublicKeySetInterface'
 
 function createMockPublicKeySetChain(): ContactPublicKeySetInterface {
   const nMinusOne = new ContactPublicKeySet({
     encryption: 'encryption-public-key-n-1',
     signing: 'signing-public-key-n-1',
     timestamp: new Date(-1),
-    isRevoked: false,
     previousKeySet: undefined,
   })
 
@@ -23,7 +22,6 @@ function createMockPublicKeySetChain(): ContactPublicKeySetInterface {
     encryption: 'encryption-public-key',
     signing: 'signing-public-key',
     timestamp: new Date(),
-    isRevoked: false,
     previousKeySet: nMinusOne,
   })
 
@@ -77,28 +75,11 @@ describe('TrustedContactMutator', () => {
     expect(result.publicKeySet.previousKeySet).toEqual(currentKeySet)
   })
 
-  it('should revoke public key', () => {
-    mutator.revokePublicKeySet({
-      encryption: 'encryption-public-key-n-1',
-      signing: 'signing-public-key-n-1',
-    })
-
-    const result = new TrustedContact(mutator.getResult())
-
-    const matchingKeySet = result.publicKeySet.findKeySet({
-      targetEncryptionPublicKey: 'encryption-public-key-n-1',
-      targetSigningPublicKey: 'signing-public-key-n-1',
-    })
-
-    expect(matchingKeySet?.isRevoked).toEqual(true)
-  })
-
   it('should replace public key set', () => {
     const replacement = new ContactPublicKeySet({
       encryption: 'encryption-public-key-replacement',
       signing: 'signing-public-key-replacement',
       timestamp: new Date(),
-      isRevoked: false,
       previousKeySet: undefined,
     })
 

@@ -1,13 +1,19 @@
 import { KeySystemRootKeyContentSpecialized } from '../../../Syncable/KeySystemRootKey/KeySystemRootKeyContent'
-import { TrustedContactContentSpecialized } from '../../../Syncable/TrustedContact/TrustedContactContent'
+import { ContactPublicKeySetJsonInterface } from '../../../Syncable/TrustedContact/PublicKeySet/ContactPublicKeySetJsonInterface'
 import { AsymmetricMessageDataCommon } from '../AsymmetricMessageDataCommon'
 import { AsymmetricMessagePayloadType } from '../AsymmetricMessagePayloadType'
+
+export type VaultInviteDelegatedContact = {
+  name?: string
+  contactUuid: string
+  publicKeySet: ContactPublicKeySetJsonInterface
+}
 
 export type AsymmetricMessageSharedVaultInvite = {
   type: AsymmetricMessagePayloadType.SharedVaultInvite
   data: AsymmetricMessageDataCommon & {
     rootKey: KeySystemRootKeyContentSpecialized
-    trustedContacts: TrustedContactContentSpecialized[]
+    trustedContacts: VaultInviteDelegatedContact[]
     metadata: {
       name: string
       description?: string

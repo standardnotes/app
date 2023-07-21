@@ -23,6 +23,10 @@ describe('public keyset revocation', function () {
     await context.register()
   })
 
+  it('contacts should be able to handle receiving multiple keypair changed messages and trust them in order', async () => {
+    console.error('TODO: implement test')
+  })
+
   it('should be able to revoke non-current keypair', async () => {
     const previousKeySet = context.contacts.getSelfContact().publicKeySet
 
@@ -134,8 +138,6 @@ describe('public keyset revocation', function () {
 
     await context.changePassword('new-password')
     await context.sharedVaults.revokeOwnKeySet(previousKeySet)
-
-
 
     const messages = await contactContext.asymmetric.getInboundMessages()
 

@@ -41,7 +41,6 @@ export class CreateOrEditTrustedContactUseCase {
       publicKeySet: ContactPublicKeySet.FromJson({
         encryption: params.publicKey,
         signing: params.signingPublicKey,
-        isRevoked: false,
         timestamp: new Date(),
       }),
       contactUuid: params.contactUuid,

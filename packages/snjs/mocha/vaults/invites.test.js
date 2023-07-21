@@ -85,6 +85,10 @@ describe('shared vault invites', function () {
     await deinitContactContext()
   })
 
+  it('delegated contacts inside invite should include sender contact', async () => {
+    console.error('TODO: implement test')
+  })
+
   it('should sync a shared vault from scratch after accepting an invitation', async () => {
     const sharedVault = await Collaboration.createSharedVault(context)
 

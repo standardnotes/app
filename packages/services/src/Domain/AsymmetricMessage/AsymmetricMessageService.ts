@@ -16,8 +16,6 @@ import {
   AsymmetricMessagePayload,
   AsymmetricMessageSharedVaultMetadataChanged,
   VaultListingMutator,
-  AsymmetricMessageSenderKeysetRevoked,
-  TrustedContactMutator,
   MutationType,
   PayloadEmitSource,
 } from '@standardnotes/models'
@@ -112,19 +110,16 @@ export class AsymmetricMessageService
   }
 
   sortServerMessages(messages: AsymmetricMessageServerHash[]): AsymmetricMessageServerHash[] {
-    const SortedPriorityTypes = [
-      AsymmetricMessagePayloadType.SenderKeypairChanged,
-      AsymmetricMessagePayloadType.SenderKeysetRevoked,
-    ]
+    const SortedPriorityTypes = [AsymmetricMessagePayloadType.SenderKeypairChanged]
 
     const priority: AsymmetricMessageServerHash[] = []
     const regular: AsymmetricMessageServerHash[] = []
 
-    const sortedByDate = messages.slice().sort((a, b) => a.created_at_timestamp - b.created_at_timestamp)
+    const allMessagesOldestFirst = messages.slice().sort((a, b) => a.created_at_timestamp - b.created_at_timestamp)
 
     const messageTypeMap: Record<string, AsymmetricMessagePayloadType> = {}
 
-    for (const message of sortedByDate) {
+    for (const message of allMessagesOldestFirst) {
       const messageType = this.getServerMessageType(message)
       if (!messageType) {
         continue
@@ -150,9 +145,9 @@ export class AsymmetricMessageService
       return a.created_at_timestamp - b.created_at_timestamp
     })
 
-    const sortedRegular = regular.sort((a, b) => a.created_at_timestamp - b.created_at_timestamp)
+    const regularMessagesOldestFirst = regular.sort((a, b) => a.created_at_timestamp - b.created_at_timestamp)
 
-    return [...sortedPriority, ...sortedRegular]
+    return [...sortedPriority, ...regularMessagesOldestFirst]
   }
 
   getServerMessageType(message: AsymmetricMessageServerHash): AsymmetricMessagePayloadType | undefined {
@@ -198,8 +193,6 @@ export class AsymmetricMessageService
       await this.handleTrustedSharedVaultRootKeyChangedMessage(message, payload)
     } else if (payload.type === AsymmetricMessagePayloadType.SharedVaultMetadataChanged) {
       await this.handleTrustedVaultMetadataChangedMessage(message, payload)
-    } else if (payload.type === AsymmetricMessagePayloadType.SenderKeysetRevoked) {
-      await this.handleTrustedSenderKeysetRevokedMessage(message, payload)
     } else if (payload.type === AsymmetricMessagePayloadType.SharedVaultInvite) {
       throw new Error('Shared vault invites payloads are not handled as part of asymmetric messages')
     }
@@ -208,49 +201,37 @@ export class AsymmetricMessageService
   }
 
   getUntrustedMessagePayload(message: AsymmetricMessageServerHash): AsymmetricMessagePayload | undefined {
-    const useCase = new GetAsymmetricMessageUntrustedPayload(this.encryption)
+    const useCase = new GetAsymmetricMessageUntrustedPayload(this.encryption.operators)
 
-    return useCase.execute({
+    const result = useCase.execute({
       privateKey: this.encryption.getKeyPair().privateKey,
       message,
     })
+
+    if (result.isFailed()) {
+      return undefined
+    }
+
+    return result.getValue()
   }
 
   getTrustedMessagePayload(message: AsymmetricMessageServerHash): AsymmetricMessagePayload | undefined {
-    const useCase = new GetAsymmetricMessageTrustedPayload(this.encryption, this.contacts)
+    const useCase = new GetAsymmetricMessageTrustedPayload(this.encryption.operators, this.contacts)
 
-    return useCase.execute({
+    const result = useCase.execute({
       privateKey: this.encryption.getKeyPair().privateKey,
       message,
     })
+
+    if (result.isFailed()) {
+      return undefined
+    }
+
+    return result.getValue()
   }
 
   async deleteMessageAfterProcessing(message: AsymmetricMessageServerHash): Promise<void> {
     await this.messageServer.deleteMessage({ messageUuid: message.uuid })
-  }
-
-  async handleTrustedSenderKeysetRevokedMessage(
-    message: AsymmetricMessageServerHash,
-    trustedPayload: AsymmetricMessageSenderKeysetRevoked,
-  ): Promise<void> {
-    const contact = this.contacts.findTrustedContact(message.sender_uuid)
-    if (!contact) {
-      return
-    }
-
-    await this.mutator.changeItem<TrustedContactMutator>(
-      contact,
-      (mutator) => {
-        mutator.revokePublicKeySet({
-          encryption: trustedPayload.data.revokedPublicKey,
-          signing: trustedPayload.data.revokedSigningPublicKey,
-        })
-      },
-      MutationType.UpdateUserTimestamps,
-      PayloadEmitSource.RemoteRetrieved,
-    )
-
-    void this.sync.sync()
   }
 
   async handleTrustedVaultMetadataChangedMessage(

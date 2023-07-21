@@ -1,6 +1,6 @@
 import { SyncUseCaseInterface, Result } from '@standardnotes/domain-core'
 import { OperatorManager } from '@standardnotes/encryption'
-import { AsymmetricMessagePayload, TrustedContactInterface } from '@standardnotes/models'
+import { AsymmetricMessagePayload, PublicKeyTrustStatus, TrustedContactInterface } from '@standardnotes/models'
 
 export class DecryptAsymmetricMessagePayload<M extends AsymmetricMessagePayload> implements SyncUseCaseInterface<M> {
   constructor(private operators: OperatorManager) {}
@@ -28,11 +28,15 @@ export class DecryptAsymmetricMessagePayload<M extends AsymmetricMessagePayload>
     }
 
     if (dto.trustedSender) {
-      if (!dto.trustedSender.isPublicKeyTrusted(decryptedResult.senderPublicKey)) {
+      const publicKeyTrustStatus = dto.trustedSender.getTrustStatusForPublicKey(decryptedResult.senderPublicKey)
+      if (publicKeyTrustStatus !== PublicKeyTrustStatus.TrustedRoot) {
         return Result.fail('Sender public key is not trusted')
       }
 
-      if (!dto.trustedSender.isSigningKeyTrusted(decryptedResult.signaturePublicKey)) {
+      const signingKeyTrustStatus = dto.trustedSender.getTrustStatusForSigningPublicKey(
+        decryptedResult.signaturePublicKey,
+      )
+      if (signingKeyTrustStatus !== PublicKeyTrustStatus.TrustedRoot) {
         return Result.fail('Signature public key is not trusted')
       }
     }
