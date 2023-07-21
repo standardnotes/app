@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.167.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.167.2...@standardnotes/web@3.167.3) (2023-07-21)
+
+### Bug Fixes
+
+* Shared image links are now correctly handled on iOS ([ab2e88a](https://github.com/standardnotes/app/commit/ab2e88a710c65771312bd9d02cec0b400d352a0e))
+
 ## [3.167.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.167.1...@standardnotes/web@3.167.2) (2023-07-20)
 
 **Note:** Version bump only for package @standardnotes/web
