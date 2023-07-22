@@ -1,5 +1,4 @@
 import { SharedVaultInvitesServerInterface } from '@standardnotes/api'
-import { ContactServiceInterface } from '../../Contacts/ContactServiceInterface'
 import { AsymmetricMessageSharedVaultInvite, SharedVaultListingInterface } from '@standardnotes/models'
 import { SharedVaultInviteServerHash, isErrorResponse } from '@standardnotes/responses'
 import { SendVaultKeyChangedMessage } from './SendVaultKeyChangedMessage'
@@ -8,6 +7,7 @@ import { Result, UseCaseInterface } from '@standardnotes/domain-core'
 import { InviteToVault } from './InviteToVault'
 import { GetVaultContacts } from './GetVaultContacts'
 import { DecryptOwnMessage } from '../../Encryption/UseCase/Asymmetric/DecryptOwnMessage'
+import { FindContact } from '../../Contacts/UseCase/FindContact'
 
 type Params = {
   keys: {
@@ -20,7 +20,7 @@ type Params = {
 
 export class NotifyVaultUsersOfKeyRotation implements UseCaseInterface<void> {
   constructor(
-    private contacts: ContactServiceInterface,
+    private findContact: FindContact,
     private sendKeyChangedMessage: SendVaultKeyChangedMessage,
     private inviteToVault: InviteToVault,
     private inviteServer: SharedVaultInvitesServerInterface,
@@ -47,15 +47,15 @@ export class NotifyVaultUsersOfKeyRotation implements UseCaseInterface<void> {
     const contacts = await this.getVaultContacts.execute(params.sharedVault.sharing.sharedVaultUuid)
 
     for (const invite of existingInvites.getValue()) {
-      const recipient = this.contacts.findTrustedContact(invite.user_uuid)
-      if (!recipient) {
+      const recipient = this.findContact.execute({ userUuid: invite.user_uuid })
+      if (recipient.isFailed()) {
         continue
       }
 
       const decryptedPreviousInvite = this.decryptOwnMessage.execute({
         message: invite.encrypted_message,
         privateKey: params.keys.encryption.privateKey,
-        recipientPublicKey: recipient.publicKeySet.encryption,
+        recipientPublicKey: recipient.getValue().publicKeySet.encryption,
       })
 
       if (decryptedPreviousInvite.isFailed()) {
@@ -65,8 +65,8 @@ export class NotifyVaultUsersOfKeyRotation implements UseCaseInterface<void> {
       await this.inviteToVault.execute({
         keys: params.keys,
         sharedVault: params.sharedVault,
-        sharedVaultContacts: contacts ?? [],
-        recipient: recipient,
+        sharedVaultContacts: !contacts.isFailed() ? contacts.getValue() : [],
+        recipient: recipient.getValue(),
         permissions: invite.permissions,
       })
     }

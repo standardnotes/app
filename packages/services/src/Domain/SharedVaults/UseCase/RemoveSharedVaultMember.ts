@@ -1,7 +1,7 @@
 import { ClientDisplayableError, isErrorResponse } from '@standardnotes/responses'
 import { SharedVaultUsersServerInterface } from '@standardnotes/api'
 
-export class RemoveVaultMemberUseCase {
+export class RemoveVaultMember {
   constructor(private vaultUserServer: SharedVaultUsersServerInterface) {}
 
   async execute(params: { sharedVaultUuid: string; userUuid: string }): Promise<ClientDisplayableError | void> {

@@ -10,7 +10,6 @@ import {
   SharedVaultListingInterface,
   VaultListingInterface,
   KeySystemRootKeyStorageMode,
-  ContactPublicKeySetInterface,
 } from '@standardnotes/models'
 import { AbstractService } from '../Service/AbstractService'
 import { SharedVaultServiceEvent, SharedVaultServiceEventPayload } from './SharedVaultServiceEvent'
@@ -33,7 +32,7 @@ export interface SharedVaultServiceInterface
     sharedVault: SharedVaultListingInterface,
     contact: TrustedContactInterface,
     permissions: SharedVaultPermission,
-  ): Promise<SharedVaultInviteServerHash | ClientDisplayableError>
+  ): Promise<Result<SharedVaultInviteServerHash>>
   removeUserFromSharedVault(
     sharedVault: SharedVaultListingInterface,
     userUuid: string,

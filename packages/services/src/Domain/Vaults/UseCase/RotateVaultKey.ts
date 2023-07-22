@@ -11,7 +11,7 @@ import {
 } from '@standardnotes/models'
 import { MutatorClientInterface } from '../../Mutator/MutatorClientInterface'
 
-export class RotateVaultRootKeyUseCase {
+export class RotateVaultKey {
   constructor(private mutator: MutatorClientInterface, private encryption: EncryptionProviderInterface) {}
 
   async execute(params: {

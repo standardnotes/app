@@ -1,6 +1,5 @@
-import { SyncServiceInterface } from './../../Sync/SyncServiceInterface'
-import { MutatorClientInterface } from './../../Mutator/MutatorClientInterface'
-import { ItemManagerInterface } from './../../Item/ItemManagerInterface'
+import { SyncServiceInterface } from '../../Sync/SyncServiceInterface'
+import { MutatorClientInterface } from '../../Mutator/MutatorClientInterface'
 import {
   ContactPublicKeySet,
   FillItemContent,
@@ -8,16 +7,17 @@ import {
   TrustedContactContentSpecialized,
   TrustedContactInterface,
 } from '@standardnotes/models'
-import { FindTrustedContactUseCase } from './FindTrustedContact'
+import { FindContact } from './FindContact'
 import { UnknownContactName } from '../UnknownContactName'
-import { UpdateTrustedContactUseCase } from './UpdateTrustedContact'
+import { EditContact } from './EditContact'
 import { ContentType } from '@standardnotes/domain-core'
 
-export class CreateOrEditTrustedContactUseCase {
+export class CreateOrEditContact {
   constructor(
-    private items: ItemManagerInterface,
     private mutator: MutatorClientInterface,
     private sync: SyncServiceInterface,
+    private findContact: FindContact,
+    private editContact: EditContact,
   ) {}
 
   async execute(params: {
@@ -27,13 +27,14 @@ export class CreateOrEditTrustedContactUseCase {
     signingPublicKey: string
     isMe?: boolean
   }): Promise<TrustedContactInterface | undefined> {
-    const findUsecase = new FindTrustedContactUseCase(this.items)
-    const existingContact = findUsecase.execute({ userUuid: params.contactUuid })
+    const existingContact = this.findContact.execute({ userUuid: params.contactUuid })
 
-    if (existingContact) {
-      const updateUsecase = new UpdateTrustedContactUseCase(this.mutator, this.sync)
-      await updateUsecase.execute(existingContact, { ...params, name: params.name ?? existingContact.name })
-      return existingContact
+    if (!existingContact.isFailed()) {
+      await this.editContact.execute(existingContact.getValue(), {
+        ...params,
+        name: params.name ?? existingContact.getValue().name,
+      })
+      return existingContact.getValue()
     }
 
     const content: TrustedContactContentSpecialized = {

@@ -1,8 +1,4 @@
-import {
-  DecryptedItemInterface,
-  TrustedContactContentSpecialized,
-  TrustedContactInterface,
-} from '@standardnotes/models'
+import { DecryptedItemInterface, TrustedContactInterface } from '@standardnotes/models'
 import { AbstractService } from '../Service/AbstractService'
 import { SharedVaultInviteServerHash, SharedVaultUserServerHash } from '@standardnotes/responses'
 import { ItemSignatureValidationResult } from './UseCase/Types/ItemSignatureValidationResult'
@@ -26,7 +22,6 @@ export interface ContactServiceInterface extends AbstractService<ContactServiceE
     publicKey: string
     signingPublicKey: string
   }): Promise<TrustedContactInterface | undefined>
-  createOrUpdateTrustedContactFromContactShare(data: TrustedContactContentSpecialized): Promise<TrustedContactInterface>
   editTrustedContactFromCollaborationID(
     contact: TrustedContactInterface,
     params: { name: string; collaborationID: string },

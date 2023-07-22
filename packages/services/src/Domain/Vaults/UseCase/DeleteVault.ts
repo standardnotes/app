@@ -4,7 +4,7 @@ import { VaultListingInterface } from '@standardnotes/models'
 import { EncryptionProviderInterface } from '@standardnotes/encryption'
 import { MutatorClientInterface } from '../../Mutator/MutatorClientInterface'
 
-export class DeleteVaultUseCase {
+export class DeleteVault {
   constructor(
     private items: ItemManagerInterface,
     private mutator: MutatorClientInterface,

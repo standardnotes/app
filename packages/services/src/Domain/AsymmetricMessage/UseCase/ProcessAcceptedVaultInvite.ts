@@ -1,4 +1,3 @@
-import { ContactServiceInterface } from '../../Contacts/ContactServiceInterface'
 import { SyncServiceInterface } from '../../Sync/SyncServiceInterface'
 import {
   KeySystemRootKeyInterface,
@@ -11,12 +10,13 @@ import {
 } from '@standardnotes/models'
 import { MutatorClientInterface } from '../../Mutator/MutatorClientInterface'
 import { ContentType } from '@standardnotes/domain-core'
+import { CreateOrEditContact } from '../../Contacts/UseCase/CreateOrEditContact'
 
 export class ProcessAcceptedVaultInvite {
   constructor(
     private mutator: MutatorClientInterface,
     private sync: SyncServiceInterface,
-    private contacts: ContactServiceInterface,
+    private createOrEditContact: CreateOrEditContact,
   ) {}
 
   async execute(
@@ -47,7 +47,7 @@ export class ProcessAcceptedVaultInvite {
     await this.mutator.createItem(ContentType.TYPES.VaultListing, FillItemContentSpecialized(content), true)
 
     for (const contact of trustedContacts) {
-      await this.contacts.createOrEditTrustedContact({
+      await this.createOrEditContact.execute({
         name: contact.name,
         contactUuid: contact.contactUuid,
         publicKey: contact.publicKeySet.encryption,

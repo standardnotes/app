@@ -13,7 +13,7 @@ import {
 import { MutatorClientInterface } from '../../Mutator/MutatorClientInterface'
 import { ContentType } from '@standardnotes/domain-core'
 
-export class CreateVaultUseCase {
+export class CreateVault {
   constructor(
     private mutator: MutatorClientInterface,
     private encryption: EncryptionProviderInterface,

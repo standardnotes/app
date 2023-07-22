@@ -1,16 +1,16 @@
-import { OperatorManager } from '@standardnotes/encryption'
 import { AsymmetricMessageServerHash } from '@standardnotes/responses'
 import { AsymmetricMessagePayload } from '@standardnotes/models'
 import { DecryptMessage } from '../../Encryption/UseCase/Asymmetric/DecryptMessage'
 import { Result, SyncUseCaseInterface } from '@standardnotes/domain-core'
 
-export class GetUntrustedPayload<M extends AsymmetricMessagePayload> implements SyncUseCaseInterface<M> {
-  constructor(private operators: OperatorManager) {}
+export class GetUntrustedPayload implements SyncUseCaseInterface<AsymmetricMessagePayload> {
+  constructor(private decryptMessage: DecryptMessage) {}
 
-  execute(dto: { privateKey: string; message: AsymmetricMessageServerHash }): Result<M> {
-    const usecase = new DecryptMessage<M>(this.operators)
-
-    const result = usecase.execute({
+  execute<M extends AsymmetricMessagePayload>(dto: {
+    privateKey: string
+    message: AsymmetricMessageServerHash
+  }): Result<M> {
+    const result = this.decryptMessage.execute<M>({
       message: dto.message.encrypted_message,
       sender: undefined,
       privateKey: dto.privateKey,

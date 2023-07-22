@@ -4,19 +4,19 @@ import {
   SharedVaultListingInterface,
   AsymmetricMessagePayloadType,
 } from '@standardnotes/models'
-import { AsymmetricMessageServerInterface, SharedVaultUsersServerInterface } from '@standardnotes/api'
+import { SharedVaultUsersServerInterface } from '@standardnotes/api'
 import { PkcKeyPair } from '@standardnotes/sncrypto-common'
-import { ContactServiceInterface } from '../../Contacts/ContactServiceInterface'
 import { SendMessage } from '../../AsymmetricMessage/UseCase/SendMessage'
 import { EncryptMessage } from '../../Encryption/UseCase/Asymmetric/EncryptMessage'
 import { Result, UseCaseInterface } from '@standardnotes/domain-core'
+import { FindContact } from '../../Contacts/UseCase/FindContact'
 
 export class ShareContactWithVault implements UseCaseInterface<void> {
   constructor(
-    private contacts: ContactServiceInterface,
+    private findContact: FindContact,
     private encryptMessage: EncryptMessage,
     private userServer: SharedVaultUsersServerInterface,
-    private messageServer: AsymmetricMessageServerInterface,
+    private sendMessage: SendMessage,
   ) {}
 
   async execute(params: {
@@ -45,8 +45,6 @@ export class ShareContactWithVault implements UseCaseInterface<void> {
       return Result.ok()
     }
 
-    const messageSendUseCase = new SendMessage(this.messageServer)
-
     for (const vaultUser of users) {
       if (vaultUser.user_uuid === params.senderUserUuid) {
         continue
@@ -56,26 +54,29 @@ export class ShareContactWithVault implements UseCaseInterface<void> {
         continue
       }
 
-      const vaultUserAsContact = this.contacts.findTrustedContact(vaultUser.user_uuid)
-      if (!vaultUserAsContact) {
+      const vaultUserAsContact = this.findContact.execute({ userUuid: vaultUser.user_uuid })
+      if (vaultUserAsContact.isFailed()) {
         continue
       }
 
       const encryptedMessage = this.encryptMessage.execute({
         message: {
           type: AsymmetricMessagePayloadType.ContactShare,
-          data: { recipientUuid: vaultUserAsContact.contactUuid, trustedContact: params.contactToShare.content },
+          data: {
+            recipientUuid: vaultUserAsContact.getValue().contactUuid,
+            trustedContact: params.contactToShare.content,
+          },
         },
         keys: params.keys,
-        recipientPublicKey: vaultUserAsContact.publicKeySet.encryption,
+        recipientPublicKey: vaultUserAsContact.getValue().publicKeySet.encryption,
       })
 
       if (encryptedMessage.isFailed()) {
         continue
       }
 
-      await messageSendUseCase.execute({
-        recipientUuid: vaultUserAsContact.contactUuid,
+      await this.sendMessage.execute({
+        recipientUuid: vaultUserAsContact.getValue().contactUuid,
         encryptedMessage: encryptedMessage.getValue(),
         replaceabilityIdentifier: undefined,
       })

@@ -1,5 +1,4 @@
 import { MutatorClientInterface, SyncServiceInterface } from '@standardnotes/services'
-import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
 import {
   KeySystemRootKeyPasswordType,
   KeySystemRootKeyStorageMode,
@@ -8,15 +7,14 @@ import {
 } from '@standardnotes/models'
 import { EncryptionProviderInterface, KeySystemKeyManagerInterface } from '@standardnotes/encryption'
 import { ChangeVaultOptionsDTO } from '../ChangeVaultOptionsDTO'
-import { GetVaultUseCase } from './GetVault'
-import { assert } from '@standardnotes/utils'
+import { GetVault } from './GetVault'
 
-export class ChangeVaultKeyOptionsUseCase {
+export class ChangeVaultKeyOptions {
   constructor(
-    private items: ItemManagerInterface,
     private mutator: MutatorClientInterface,
     private sync: SyncServiceInterface,
     private encryption: EncryptionProviderInterface,
+    private getVault: GetVault,
   ) {}
 
   private get keys(): KeySystemKeyManagerInterface {
@@ -42,9 +40,13 @@ export class ChangeVaultKeyOptionsUseCase {
     }
 
     if (dto.newKeyStorageMode) {
-      const usecase = new GetVaultUseCase(this.items)
-      const latestVault = usecase.execute({ keySystemIdentifier: dto.vault.systemIdentifier })
-      assert(latestVault)
+      const result = this.getVault.execute({ keySystemIdentifier: dto.vault.systemIdentifier })
+
+      if (result.isFailed()) {
+        throw new Error('Vault not found')
+      }
+
+      const latestVault = result.getValue()
 
       if (latestVault.rootKeyParams.passwordType !== KeySystemRootKeyPasswordType.UserInputted) {
         throw new Error('Vault uses randomized password and cannot change its storage preference')

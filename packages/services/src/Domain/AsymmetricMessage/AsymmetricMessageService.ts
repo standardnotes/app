@@ -1,5 +1,4 @@
 import { MutatorClientInterface } from './../Mutator/MutatorClientInterface'
-import { ContactServiceInterface } from './../Contacts/ContactServiceInterface'
 import { AsymmetricMessageServerHash, ClientDisplayableError, isClientDisplayableError } from '@standardnotes/responses'
 import { SyncEvent, SyncEventReceivedAsymmetricMessagesData } from '../Event/SyncEvent'
 import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
@@ -18,38 +17,45 @@ import {
   VaultListingMutator,
   MutationType,
   PayloadEmitSource,
+  VaultListingInterface,
 } from '@standardnotes/models'
 import { HandleRootKeyChangedMessage } from './UseCase/HandleRootKeyChangedMessage'
-import { ItemManagerInterface } from '../Item/ItemManagerInterface'
-import { SyncServiceInterface } from '../Sync/SyncServiceInterface'
 import { SessionEvent } from '../Session/SessionEvent'
-import { AsymmetricMessageServer, HttpServiceInterface } from '@standardnotes/api'
+import { AsymmetricMessageServer } from '@standardnotes/api'
 import { UserKeyPairChangedEventData } from '../Session/UserKeyPairChangedEventData'
 import { SendOwnContactChangeMessage } from './UseCase/SendOwnContactChangeMessage'
 import { GetOutboundMessages } from './UseCase/GetOutboundMessages'
 import { GetInboundMessages } from './UseCase/GetInboundMessages'
-import { GetVaultUseCase } from '../Vaults/UseCase/GetVault'
+import { GetVault } from '../Vaults/UseCase/GetVault'
 import { AsymmetricMessageServiceInterface } from './AsymmetricMessageServiceInterface'
 import { GetUntrustedPayload } from './UseCase/GetUntrustedPayload'
+import { FindContact } from '../Contacts/UseCase/FindContact'
+import { CreateOrEditContact } from '../Contacts/UseCase/CreateOrEditContact'
+import { ReplaceContactData } from '../Contacts/UseCase/ReplaceContactData'
+import { GetAllContacts } from '../Contacts/UseCase/GetAllContacts'
 
 export class AsymmetricMessageService
   extends AbstractService
   implements AsymmetricMessageServiceInterface, InternalEventHandlerInterface
 {
-  private messageServer: AsymmetricMessageServer
-
   constructor(
-    http: HttpServiceInterface,
+    private messageServer: AsymmetricMessageServer,
     private encryption: EncryptionProviderInterface,
-    private contacts: ContactServiceInterface,
-    private items: ItemManagerInterface,
     private mutator: MutatorClientInterface,
-    private sync: SyncServiceInterface,
+    private createOrEditContact: CreateOrEditContact,
+    private findContact: FindContact,
+    private getAllContacts: GetAllContacts,
+    private replaceContactData: ReplaceContactData,
+    private getTrustedPayload: GetTrustedPayload,
+    private getVault: GetVault,
+    private handleRootKeyChangedMessage: HandleRootKeyChangedMessage,
+    private sendOwnContactChangedMessage: SendOwnContactChangeMessage,
+    private getOutboundMessagesUseCase: GetOutboundMessages,
+    private getInboundMessagesUseCase: GetInboundMessages,
+    private getUntrustedPayload: GetUntrustedPayload,
     eventBus: InternalEventBusInterface,
   ) {
     super(eventBus)
-
-    this.messageServer = new AsymmetricMessageServer(http)
 
     eventBus.addEventHandler(this, SyncEvent.ReceivedAsymmetricMessages)
     eventBus.addEventHandler(this, SessionEvent.UserKeyPairChanged)
@@ -67,13 +73,11 @@ export class AsymmetricMessageService
   }
 
   public async getOutboundMessages(): Promise<AsymmetricMessageServerHash[] | ClientDisplayableError> {
-    const usecase = new GetOutboundMessages(this.messageServer)
-    return usecase.execute()
+    return this.getOutboundMessagesUseCase.execute()
   }
 
   public async getInboundMessages(): Promise<AsymmetricMessageServerHash[] | ClientDisplayableError> {
-    const usecase = new GetInboundMessages(this.messageServer)
-    return usecase.execute()
+    return this.getInboundMessagesUseCase.execute()
   }
 
   public async downloadAndProcessInboundMessages(): Promise<void> {
@@ -90,16 +94,17 @@ export class AsymmetricMessageService
       return
     }
 
-    const useCase = new SendOwnContactChangeMessage(this.encryption, this.messageServer)
+    const contacts = this.getAllContacts.execute()
+    if (contacts.isFailed()) {
+      return
+    }
 
-    const contacts = this.contacts.getAllContacts()
-
-    for (const contact of contacts) {
+    for (const contact of contacts.getValue()) {
       if (contact.isMe) {
         continue
       }
 
-      await useCase.execute({
+      await this.sendOwnContactChangedMessage.execute({
         senderOldKeyPair: data.previous.encryption,
         senderOldSigningKeyPair: data.previous.signing,
         senderNewKeyPair: data.current.encryption,
@@ -201,9 +206,7 @@ export class AsymmetricMessageService
   }
 
   getUntrustedMessagePayload(message: AsymmetricMessageServerHash): AsymmetricMessagePayload | undefined {
-    const useCase = new GetUntrustedPayload(this.encryption.operators)
-
-    const result = useCase.execute({
+    const result = this.getUntrustedPayload.execute({
       privateKey: this.encryption.getKeyPair().privateKey,
       message,
     })
@@ -216,10 +219,14 @@ export class AsymmetricMessageService
   }
 
   getTrustedMessagePayload(message: AsymmetricMessageServerHash): AsymmetricMessagePayload | undefined {
-    const useCase = new GetTrustedPayload(this.encryption.operators, this.contacts)
+    const contact = this.findContact.execute({ userUuid: message.sender_uuid })
+    if (contact.isFailed()) {
+      return undefined
+    }
 
-    const result = useCase.execute({
+    const result = this.getTrustedPayload.execute({
       privateKey: this.encryption.getKeyPair().privateKey,
+      sender: contact.getValue(),
       message,
     })
 
@@ -238,13 +245,13 @@ export class AsymmetricMessageService
     _message: AsymmetricMessageServerHash,
     trustedPayload: AsymmetricMessageSharedVaultMetadataChanged,
   ): Promise<void> {
-    const vault = new GetVaultUseCase(this.items).execute({ sharedVaultUuid: trustedPayload.data.sharedVaultUuid })
-    if (!vault) {
+    const vault = this.getVault.execute<VaultListingInterface>({ sharedVaultUuid: trustedPayload.data.sharedVaultUuid })
+    if (vault.isFailed()) {
       return
     }
 
     await this.mutator.changeItem<VaultListingMutator>(
-      vault,
+      vault.getValue(),
       (mutator) => {
         mutator.name = trustedPayload.data.name
         mutator.description = trustedPayload.data.description
@@ -262,14 +269,14 @@ export class AsymmetricMessageService
       return
     }
 
-    await this.contacts.createOrUpdateTrustedContactFromContactShare(trustedPayload.data.trustedContact)
+    await this.replaceContactData.execute(trustedPayload.data.trustedContact)
   }
 
   async handleTrustedSenderKeypairChangedMessage(
     message: AsymmetricMessageServerHash,
     trustedPayload: AsymmetricMessageSenderKeypairChanged,
   ): Promise<void> {
-    await this.contacts.createOrEditTrustedContact({
+    await this.createOrEditContact.execute({
       contactUuid: message.sender_uuid,
       publicKey: trustedPayload.data.newEncryptionPublicKey,
       signingPublicKey: trustedPayload.data.newSigningPublicKey,
@@ -280,7 +287,24 @@ export class AsymmetricMessageService
     _message: AsymmetricMessageServerHash,
     trustedPayload: AsymmetricMessageSharedVaultRootKeyChanged,
   ): Promise<void> {
-    const useCase = new HandleRootKeyChangedMessage(this.mutator, this.items, this.sync, this.encryption)
-    await useCase.execute(trustedPayload)
+    await this.handleRootKeyChangedMessage.execute(trustedPayload)
+  }
+
+  public override deinit(): void {
+    super.deinit()
+    ;(this.messageServer as unknown) = undefined
+    ;(this.encryption as unknown) = undefined
+    ;(this.mutator as unknown) = undefined
+    ;(this.createOrEditContact as unknown) = undefined
+    ;(this.findContact as unknown) = undefined
+    ;(this.getAllContacts as unknown) = undefined
+    ;(this.replaceContactData as unknown) = undefined
+    ;(this.getTrustedPayload as unknown) = undefined
+    ;(this.getVault as unknown) = undefined
+    ;(this.handleRootKeyChangedMessage as unknown) = undefined
+    ;(this.sendOwnContactChangedMessage as unknown) = undefined
+    ;(this.getOutboundMessagesUseCase as unknown) = undefined
+    ;(this.getInboundMessagesUseCase as unknown) = undefined
+    ;(this.getUntrustedPayload as unknown) = undefined
   }
 }

@@ -2,10 +2,14 @@ import { SyncUseCaseInterface, Result } from '@standardnotes/domain-core'
 import { OperatorManager } from '@standardnotes/encryption'
 import { AsymmetricMessagePayload, PublicKeyTrustStatus, TrustedContactInterface } from '@standardnotes/models'
 
-export class DecryptMessage<M extends AsymmetricMessagePayload> implements SyncUseCaseInterface<M> {
+export class DecryptMessage implements SyncUseCaseInterface<AsymmetricMessagePayload> {
   constructor(private operators: OperatorManager) {}
 
-  execute(dto: { message: string; sender: TrustedContactInterface | undefined; privateKey: string }): Result<M> {
+  execute<M extends AsymmetricMessagePayload>(dto: {
+    message: string
+    sender: TrustedContactInterface | undefined
+    privateKey: string
+  }): Result<M> {
     const defaultOperator = this.operators.defaultOperator()
     const version = defaultOperator.versionForAsymmetricallyEncryptedString(dto.message)
     const keyOperator = this.operators.operatorForVersion(version)

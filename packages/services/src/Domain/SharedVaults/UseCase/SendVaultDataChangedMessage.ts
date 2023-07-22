@@ -6,17 +6,17 @@ import {
 } from '@standardnotes/models'
 import { AsymmetricMessageServerHash } from '@standardnotes/responses'
 import { GetSharedVaultUsers } from './GetSharedVaultUsers'
-import { ContactServiceInterface } from '../../Contacts/ContactServiceInterface'
 import { PkcKeyPair } from '@standardnotes/sncrypto-common'
 import { SendMessage } from '../../AsymmetricMessage/UseCase/SendMessage'
 import { EncryptMessage } from '../../Encryption/UseCase/Asymmetric/EncryptMessage'
 import { Result, UseCaseInterface } from '@standardnotes/domain-core'
 import { GetReplaceabilityIdentifier } from '../../AsymmetricMessage/UseCase/GetReplaceabilityIdentifier'
+import { FindContact } from '../../Contacts/UseCase/FindContact'
 
 export class SendVaultDataChangedMessage implements UseCaseInterface<void> {
   constructor(
     private encryptMessage: EncryptMessage,
-    private contacts: ContactServiceInterface,
+    private findContact: FindContact,
     private getVaultUsers: GetSharedVaultUsers,
     private sendMessage: SendMessage,
   ) {}
@@ -40,15 +40,15 @@ export class SendVaultDataChangedMessage implements UseCaseInterface<void> {
         continue
       }
 
-      const trustedContact = this.contacts.findTrustedContact(user.user_uuid)
-      if (!trustedContact) {
+      const trustedContact = this.findContact.execute({ userUuid: user.user_uuid })
+      if (trustedContact.isFailed()) {
         continue
       }
 
       const sendMessageResult = await this.sendToContact({
         vault: params.vault,
         keys: params.keys,
-        contact: trustedContact,
+        contact: trustedContact.getValue(),
       })
 
       if (sendMessageResult.isFailed()) {

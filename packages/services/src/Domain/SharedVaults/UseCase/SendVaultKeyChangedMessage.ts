@@ -6,22 +6,21 @@ import {
 } from '@standardnotes/models'
 import { KeySystemKeyManagerInterface } from '@standardnotes/encryption'
 import { AsymmetricMessageServerHash } from '@standardnotes/responses'
-import { SharedVaultUsersServerInterface } from '@standardnotes/api'
 import { GetSharedVaultUsers } from './GetSharedVaultUsers'
-import { ContactServiceInterface } from '../../Contacts/ContactServiceInterface'
 import { PkcKeyPair } from '@standardnotes/sncrypto-common'
 import { SendMessage } from '../../AsymmetricMessage/UseCase/SendMessage'
 import { EncryptMessage } from '../../Encryption/UseCase/Asymmetric/EncryptMessage'
 import { Result, UseCaseInterface } from '@standardnotes/domain-core'
 import { GetReplaceabilityIdentifier } from '../../AsymmetricMessage/UseCase/GetReplaceabilityIdentifier'
+import { FindContact } from '../../Contacts/UseCase/FindContact'
 
 export class SendVaultKeyChangedMessage implements UseCaseInterface<void> {
   constructor(
     private encryptMessage: EncryptMessage,
     private keyManager: KeySystemKeyManagerInterface,
-    private contacts: ContactServiceInterface,
-    private userServer: SharedVaultUsersServerInterface,
+    private findContact: FindContact,
     private sendMessage: SendMessage,
+    private getVaultUsers: GetSharedVaultUsers,
   ) {}
 
   async execute(params: {
@@ -33,8 +32,7 @@ export class SendVaultKeyChangedMessage implements UseCaseInterface<void> {
       signing: PkcKeyPair
     }
   }): Promise<Result<void>> {
-    const getUsersUseCase = new GetSharedVaultUsers(this.userServer)
-    const users = await getUsersUseCase.execute({ sharedVaultUuid: params.sharedVaultUuid })
+    const users = await this.getVaultUsers.execute({ sharedVaultUuid: params.sharedVaultUuid })
     if (!users) {
       return Result.fail('Cannot send root key changed message; users not found')
     }
@@ -46,8 +44,8 @@ export class SendVaultKeyChangedMessage implements UseCaseInterface<void> {
         continue
       }
 
-      const trustedContact = this.contacts.findTrustedContact(user.user_uuid)
-      if (!trustedContact) {
+      const trustedContact = this.findContact.execute({ userUuid: user.user_uuid })
+      if (trustedContact.isFailed()) {
         continue
       }
 
@@ -55,7 +53,7 @@ export class SendVaultKeyChangedMessage implements UseCaseInterface<void> {
         keySystemIdentifier: params.keySystemIdentifier,
         sharedVaultUuid: params.sharedVaultUuid,
         keys: params.keys,
-        contact: trustedContact,
+        contact: trustedContact.getValue(),
       })
 
       if (result.isFailed()) {

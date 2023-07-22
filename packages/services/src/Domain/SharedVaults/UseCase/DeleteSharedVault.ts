@@ -1,19 +1,14 @@
-import { MutatorClientInterface } from './../../Mutator/MutatorClientInterface'
 import { ClientDisplayableError, isErrorResponse } from '@standardnotes/responses'
 import { SharedVaultServerInterface } from '@standardnotes/api'
-import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
 import { SharedVaultListingInterface } from '@standardnotes/models'
 import { SyncServiceInterface } from '../../Sync/SyncServiceInterface'
-import { DeleteVaultUseCase } from '../../Vaults/UseCase/DeleteVault'
-import { EncryptionProviderInterface } from '@standardnotes/encryption'
+import { DeleteVault } from '../../Vaults/UseCase/DeleteVault'
 
-export class DeleteSharedVaultUseCase {
+export class DeleteSharedVault {
   constructor(
     private sharedVaultServer: SharedVaultServerInterface,
-    private items: ItemManagerInterface,
-    private mutator: MutatorClientInterface,
     private sync: SyncServiceInterface,
-    private encryption: EncryptionProviderInterface,
+    private deleteVault: DeleteVault,
   ) {}
 
   async execute(params: { sharedVault: SharedVaultListingInterface }): Promise<ClientDisplayableError | void> {
@@ -25,8 +20,7 @@ export class DeleteSharedVaultUseCase {
       return ClientDisplayableError.FromString(`Failed to delete vault ${response}`)
     }
 
-    const deleteUsecase = new DeleteVaultUseCase(this.items, this.mutator, this.encryption)
-    await deleteUsecase.execute(params.sharedVault)
+    await this.deleteVault.execute(params.sharedVault)
 
     await this.sync.sync()
   }

@@ -1,4 +1,3 @@
-import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
 import { MutatorClientInterface } from '../../Mutator/MutatorClientInterface'
 import { SyncServiceInterface } from '../../Sync/SyncServiceInterface'
 import {
@@ -7,18 +6,19 @@ import {
   FillItemContent,
   KeySystemRootKeyContent,
   VaultListingMutator,
+  VaultListingInterface,
 } from '@standardnotes/models'
 
 import { ContentType } from '@standardnotes/domain-core'
-import { GetVaultUseCase } from '../../Vaults/UseCase/GetVault'
+import { GetVault } from '../../Vaults/UseCase/GetVault'
 import { EncryptionProviderInterface } from '@standardnotes/encryption'
 
 export class HandleRootKeyChangedMessage {
   constructor(
     private mutator: MutatorClientInterface,
-    private items: ItemManagerInterface,
     private sync: SyncServiceInterface,
     private encryption: EncryptionProviderInterface,
+    private getVault: GetVault,
   ) {}
 
   async execute(message: AsymmetricMessageSharedVaultRootKeyChanged): Promise<void> {
@@ -30,9 +30,9 @@ export class HandleRootKeyChangedMessage {
       true,
     )
 
-    const vault = new GetVaultUseCase(this.items).execute({ keySystemIdentifier: rootKeyContent.systemIdentifier })
-    if (vault) {
-      await this.mutator.changeItem<VaultListingMutator>(vault, (mutator) => {
+    const vault = this.getVault.execute<VaultListingInterface>({ keySystemIdentifier: rootKeyContent.systemIdentifier })
+    if (!vault.isFailed()) {
+      await this.mutator.changeItem<VaultListingMutator>(vault.getValue(), (mutator) => {
         mutator.rootKeyParams = rootKeyContent.keyParams
       })
     }

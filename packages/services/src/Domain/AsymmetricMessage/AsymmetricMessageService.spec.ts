@@ -35,7 +35,6 @@ describe('AsymmetricMessageService', () => {
     const encryption = {} as jest.Mocked<EncryptionProviderInterface>
 
     contacts = {} as jest.Mocked<ContactServiceInterface>
-    contacts.createOrUpdateTrustedContactFromContactShare = jest.fn()
     contacts.createOrEditTrustedContact = jest.fn()
 
     const items = {} as jest.Mocked<ItemManagerInterface>

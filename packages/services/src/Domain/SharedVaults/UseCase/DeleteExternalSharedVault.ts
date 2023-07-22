@@ -1,20 +1,17 @@
 import { SyncServiceInterface } from './../../Sync/SyncServiceInterface'
-import { StorageServiceInterface } from '../../Storage/StorageServiceInterface'
 import { EncryptionProviderInterface } from '@standardnotes/encryption'
 import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
 import { AnyItemInterface, VaultListingInterface } from '@standardnotes/models'
 import { MutatorClientInterface } from '../../Mutator/MutatorClientInterface'
 import { RemoveItemsLocallyUseCase } from '../../UseCase/RemoveItemsLocally'
 
-export class DeleteExternalSharedVaultUseCase {
-  private removeItemsLocallyUsecase = new RemoveItemsLocallyUseCase(this.items, this.storage)
-
+export class DeleteThirdPartyVault {
   constructor(
     private items: ItemManagerInterface,
     private mutator: MutatorClientInterface,
     private encryption: EncryptionProviderInterface,
-    private storage: StorageServiceInterface,
     private sync: SyncServiceInterface,
+    private removeItemsLocally: RemoveItemsLocallyUseCase,
   ) {}
 
   async execute(vault: VaultListingInterface): Promise<void> {
@@ -36,7 +33,7 @@ export class DeleteExternalSharedVaultUseCase {
 
     const itemsKeys = this.encryption.keys.getKeySystemItemsKeys(vault.systemIdentifier)
 
-    await this.removeItemsLocallyUsecase.execute([...vaultItems, ...itemsKeys])
+    await this.removeItemsLocally.execute([...vaultItems, ...itemsKeys])
   }
 
   private async deleteDataOwnedByThisUser(vault: VaultListingInterface): Promise<void> {

@@ -1,10 +1,10 @@
 import { SharedVaultListingInterface } from '@standardnotes/models'
 import { SharedVaultInviteServerHash, isErrorResponse } from '@standardnotes/responses'
 import { SharedVaultInvitesServerInterface } from '@standardnotes/api'
-import { ContactServiceInterface } from '../../Contacts/ContactServiceInterface'
 import { PkcKeyPair } from '@standardnotes/sncrypto-common'
 import { Result, UseCaseInterface } from '@standardnotes/domain-core'
 import { ReuploadInvite } from './ReuploadInvite'
+import { FindContact } from '../../Contacts/UseCase/FindContact'
 
 type ReuploadVaultInvitesDTO = {
   sharedVault: SharedVaultListingInterface
@@ -18,7 +18,7 @@ type ReuploadVaultInvitesDTO = {
 export class ReuploadVaultInvites implements UseCaseInterface<void> {
   constructor(
     private reuploadInvite: ReuploadInvite,
-    private contacts: ContactServiceInterface,
+    private findContact: FindContact,
     private inviteServer: SharedVaultInvitesServerInterface,
   ) {}
 
@@ -36,15 +36,15 @@ export class ReuploadVaultInvites implements UseCaseInterface<void> {
     const errors: string[] = []
 
     for (const invite of existingInvites.getValue()) {
-      const recipient = this.contacts.findTrustedContact(invite.user_uuid)
-      if (!recipient) {
+      const recipient = this.findContact.execute({ userUuid: invite.user_uuid })
+      if (recipient.isFailed()) {
         errors.push(`Contact not found for invite ${invite.user_uuid}`)
         continue
       }
 
       const result = await this.reuploadInvite.execute({
         keys: params.keys,
-        recipient: recipient,
+        recipient: recipient.getValue(),
         previousInvite: invite,
       })
 

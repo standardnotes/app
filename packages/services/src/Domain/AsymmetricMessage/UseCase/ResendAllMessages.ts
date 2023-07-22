@@ -3,13 +3,13 @@ import { PkcKeyPair } from '@standardnotes/sncrypto-common'
 import { Result, UseCaseInterface } from '@standardnotes/domain-core'
 import { AsymmetricMessageServerInterface } from '@standardnotes/api'
 import { ResendMessage } from './ResendMessage'
-import { ContactServiceInterface } from '../../Contacts/ContactServiceInterface'
+import { FindContact } from '../../Contacts/UseCase/FindContact'
 
 export class ResendAllMessages implements UseCaseInterface<void> {
   constructor(
     private resendMessage: ResendMessage,
     private messageServer: AsymmetricMessageServerInterface,
-    private contacts: ContactServiceInterface,
+    private findContact: FindContact,
   ) {}
 
   async execute(params: {
@@ -31,8 +31,8 @@ export class ResendAllMessages implements UseCaseInterface<void> {
     const errors: string[] = []
 
     for (const message of messages.data.messages) {
-      const recipient = this.contacts.findTrustedContact(message.user_uuid)
-      if (!recipient) {
+      const recipient = this.findContact.execute({ userUuid: message.user_uuid })
+      if (recipient) {
         errors.push(`Contact not found for invite ${message.user_uuid}`)
         continue
       }

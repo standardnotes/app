@@ -1,12 +1,11 @@
-import { MutatorClientInterface } from './../../Mutator/MutatorClientInterface'
-import { InternalFeature } from './../../InternalFeatures/InternalFeature'
-import { InternalFeatureService } from '../../InternalFeatures/InternalFeatureService'
-import { ApplicationStage } from './../../Application/ApplicationStage'
-import { SingletonManagerInterface } from './../../Singleton/SingletonManagerInterface'
-import { SyncEvent } from './../../Event/SyncEvent'
-import { SessionsClientInterface } from '../../Session/SessionsClientInterface'
-import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
-import { SyncServiceInterface } from '../../Sync/SyncServiceInterface'
+import { InternalFeature } from '../InternalFeatures/InternalFeature'
+import { InternalFeatureService } from '../InternalFeatures/InternalFeatureService'
+import { ApplicationStage } from '../Application/ApplicationStage'
+import { SingletonManagerInterface } from '../Singleton/SingletonManagerInterface'
+import { SyncEvent } from '../Event/SyncEvent'
+import { SessionsClientInterface } from '../Session/SessionsClientInterface'
+import { ItemManagerInterface } from '../Item/ItemManagerInterface'
+import { SyncServiceInterface } from '../Sync/SyncServiceInterface'
 import {
   ContactPublicKeySet,
   FillItemContent,
@@ -16,7 +15,7 @@ import {
   TrustedContactInterface,
   PortablePublicKeySet,
 } from '@standardnotes/models'
-import { CreateOrEditTrustedContactUseCase } from '../UseCase/CreateOrEditTrustedContact'
+import { CreateOrEditContact } from './UseCase/CreateOrEditContact'
 import { ContentType } from '@standardnotes/domain-core'
 
 const SelfContactName = 'Me'
@@ -28,11 +27,11 @@ export class SelfContactManager {
   private eventDisposers: (() => void)[] = []
 
   constructor(
-    private sync: SyncServiceInterface,
-    private items: ItemManagerInterface,
-    private mutator: MutatorClientInterface,
+    sync: SyncServiceInterface,
+    items: ItemManagerInterface,
     private session: SessionsClientInterface,
     private singletons: SingletonManagerInterface,
+    private createOrEditContact: CreateOrEditContact,
   ) {
     this.eventDisposers.push(
       sync.addEventObserver((event) => {
@@ -85,8 +84,7 @@ export class SelfContactManager {
       return
     }
 
-    const usecase = new CreateOrEditTrustedContactUseCase(this.items, this.mutator, this.sync)
-    await usecase.execute({
+    await this.createOrEditContact.execute({
       name: SelfContactName,
       contactUuid: this.selfContact.contactUuid,
       publicKey: publicKeySet.encryption,
@@ -124,7 +122,6 @@ export class SelfContactManager {
       publicKeySet: ContactPublicKeySet.FromJson({
         encryption: this.session.getPublicKey(),
         signing: this.session.getSigningPublicKey(),
-        isRevoked: false,
         timestamp: new Date(),
       }),
     }
@@ -140,10 +137,8 @@ export class SelfContactManager {
 
   deinit() {
     this.eventDisposers.forEach((disposer) => disposer())
-    ;(this.sync as unknown) = undefined
-    ;(this.items as unknown) = undefined
-    ;(this.mutator as unknown) = undefined
     ;(this.session as unknown) = undefined
     ;(this.singletons as unknown) = undefined
+    ;(this.createOrEditContact as unknown) = undefined
   }
 }

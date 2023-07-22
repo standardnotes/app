@@ -1,13 +1,10 @@
-import { ItemManagerInterface } from './../../Item/ItemManagerInterface'
 import { doesPayloadRequireSigning } from '@standardnotes/encryption/src/Domain/Operator/004/V004AlgorithmHelpers'
 import { DecryptedItemInterface, PayloadSource, PublicKeyTrustStatus } from '@standardnotes/models'
 import { ItemSignatureValidationResult } from './Types/ItemSignatureValidationResult'
-import { FindTrustedContactUseCase } from './FindTrustedContact'
+import { FindContact } from './FindContact'
 
-export class ValidateItemSignerUseCase {
-  private findContactUseCase = new FindTrustedContactUseCase(this.items)
-
-  constructor(private items: ItemManagerInterface) {}
+export class ValidateItemSigner {
+  constructor(private findContact: FindContact) {}
 
   execute(item: DecryptedItemInterface): ItemSignatureValidationResult {
     const uuidOfLastEditor = item.last_edited_by_uuid
@@ -32,8 +29,8 @@ export class ValidateItemSignerUseCase {
   ): ItemSignatureValidationResult {
     const requiresSignature = doesPayloadRequireSigning(item)
 
-    const trustedContact = this.findContactUseCase.execute({ userUuid: uuidOfLastEditor })
-    if (!trustedContact) {
+    const trustedContact = this.findContact.execute({ userUuid: uuidOfLastEditor })
+    if (trustedContact.isFailed()) {
       if (requiresSignature) {
         return ItemSignatureValidationResult.NotTrusted
       } else {
@@ -70,7 +67,7 @@ export class ValidateItemSignerUseCase {
 
     const signerPublicKey = signatureResult.publicKey
 
-    const trustStatus = trustedContact.getTrustStatusForSigningPublicKey(signerPublicKey)
+    const trustStatus = trustedContact.getValue().getTrustStatusForSigningPublicKey(signerPublicKey)
     if (trustStatus === PublicKeyTrustStatus.Trusted) {
       return ItemSignatureValidationResult.Trusted
     } else if (trustStatus === PublicKeyTrustStatus.Previous) {
@@ -114,13 +111,13 @@ export class ValidateItemSignerUseCase {
 
     const signerPublicKey = signatureResult.publicKey
 
-    const trustedContact = this.findContactUseCase.execute({ signingPublicKey: signerPublicKey })
+    const trustedContact = this.findContact.execute({ signingPublicKey: signerPublicKey })
 
-    if (!trustedContact) {
+    if (trustedContact.isFailed()) {
       return ItemSignatureValidationResult.NotTrusted
     }
 
-    const trustStatus = trustedContact.getTrustStatusForSigningPublicKey(signerPublicKey)
+    const trustStatus = trustedContact.getValue().getTrustStatusForSigningPublicKey(signerPublicKey)
     if (trustStatus === PublicKeyTrustStatus.Trusted) {
       return ItemSignatureValidationResult.Trusted
     } else if (trustStatus === PublicKeyTrustStatus.Previous) {
