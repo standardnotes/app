@@ -82,8 +82,5 @@
     "webpack": "*",
     "webpack-cli": "*",
     "webpack-merge": "^5.8.0"
-  },
-  "dependencies": {
-    "inversify": "^6.0.1"
   }
 }

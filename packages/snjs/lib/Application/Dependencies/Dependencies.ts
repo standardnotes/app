@@ -1,4 +1,3 @@
-import { Container, interfaces } from 'inversify'
 import { SNActionsService } from './../../Services/Actions/ActionsService'
 import { DeleteRevision } from '../../Domain/UseCase/DeleteRevision/DeleteRevision'
 import { GetRevision } from '../../Domain/UseCase/GetRevision/GetRevision'
@@ -116,7 +115,8 @@ import { isDeinitable } from './isDeinitable'
 import { DependencyInitOrder } from './DependencyInitOrder'
 
 export class Dependencies {
-  private container = new Container()
+  private dependencyMakers = new Map<symbol, () => unknown>()
+  private dependencies = new Map<symbol, unknown>()
 
   constructor(private options: FullyResolvedApplicationOptions) {
     this.registerServiceMakers()
@@ -127,7 +127,7 @@ export class Dependencies {
   public deinit() {
     this.dependencyMakers.clear()
 
-    const deps = this.container.getAll
+    const deps = this.getAll()
     for (const dep of deps) {
       if (isDeinitable(dep)) {
         dep.deinit()
@@ -142,776 +142,851 @@ export class Dependencies {
   }
 
   private registerUseCaseMakers() {
-    this.container.bind(TYPES.ImportDataUseCase).toDynamicValue((context: interfaces.Context) => {
+    this.dependencyMakers.set(TYPES.ImportDataUseCase, () => {
       return new ImportDataUseCase(
-        context.container.get(TYPES.ItemManager),
-        context.container.get(TYPES.SyncService),
-        context.container.get(TYPES.ProtectionService),
-        context.container.get(TYPES.EncryptionService),
-        context.container.get(TYPES.PayloadManager),
-        context.container.get(TYPES.ChallengeService),
-        context.container.get(TYPES.HistoryManager),
-      )
-    })
-    this.container.bind(TYPES.RemoveItemsLocally).toDynamicValue((context: interfaces.Context) => {
-      return new RemoveItemsLocally(
-        context.container.get(TYPES.ItemManager),
-        context.container.get(TYPES.DiskStorageService),
+        this.get(TYPES.ItemManager),
+        this.get(TYPES.SyncService),
+        this.get(TYPES.ProtectionService),
+        this.get(TYPES.EncryptionService),
+        this.get(TYPES.PayloadManager),
+        this.get(TYPES.ChallengeService),
+        this.get(TYPES.HistoryManager),
       )
     })
 
-    this.container.bind(TYPES.FindContact).toDynamicValue((context: interfaces.Context) => {
-      return new FindContact(context.container.get(TYPES.ItemManager))
+    this.dependencyMakers.set(TYPES.RemoveItemsLocally, () => {
+      return new RemoveItemsLocally(this.get(TYPES.ItemManager), this.get(TYPES.DiskStorageService))
     })
-    this.container.bind(TYPES.EditContact).toDynamicValue((context: interfaces.Context) => {
-      return new EditContact(context.container.get(TYPES.MutatorService), context.container.get(TYPES.SyncService))
+
+    this.dependencyMakers.set(TYPES.FindContact, () => {
+      return new FindContact(this.get(TYPES.ItemManager))
     })
-    this.container.bind(TYPES.GetAllContacts).toDynamicValue((context: interfaces.Context) => {
-      return new GetAllContacts(context.container.get(TYPES.ItemManager))
+
+    this.dependencyMakers.set(TYPES.EditContact, () => {
+      return new EditContact(this.get(TYPES.MutatorService), this.get(TYPES.SyncService))
     })
-    this.container.bind(TYPES.ValidateItemSigner).toDynamicValue((context: interfaces.Context) => {
-      return new ValidateItemSigner(context.container.get(TYPES.FindContact))
+
+    this.dependencyMakers.set(TYPES.GetAllContacts, () => {
+      return new GetAllContacts(this.get(TYPES.ItemManager))
     })
-    this.container.bind(TYPES.CreateOrEditContact).toDynamicValue((context: interfaces.Context) => {
+
+    this.dependencyMakers.set(TYPES.ValidateItemSigner, () => {
+      return new ValidateItemSigner(this.get(TYPES.FindContact))
+    })
+
+    this.dependencyMakers.set(TYPES.CreateOrEditContact, () => {
       return new CreateOrEditContact(
-        context.container.get(TYPES.MutatorService),
-        context.container.get(TYPES.SyncService),
-        context.container.get(TYPES.FindContact),
-        context.container.get(TYPES.EditContact),
+        this.get(TYPES.MutatorService),
+        this.get(TYPES.SyncService),
+        this.get(TYPES.FindContact),
+        this.get(TYPES.EditContact),
       )
     })
-    this.container.bind(TYPES.GetVault).toDynamicValue((context: interfaces.Context) => {
-      return new GetVault(context.container.get(TYPES.ItemManager))
+
+    this.dependencyMakers.set(TYPES.GetVault, () => {
+      return new GetVault(this.get(TYPES.ItemManager))
     })
-    this.container.bind(TYPES.ChangeVaultKeyOptions).toDynamicValue((context: interfaces.Context) => {
+
+    this.dependencyMakers.set(TYPES.ChangeVaultKeyOptions, () => {
       return new ChangeVaultKeyOptions(
-        context.container.get(TYPES.MutatorService),
-        context.container.get(TYPES.SyncService),
-        context.container.get(TYPES.EncryptionService),
-        context.container.get(TYPES.GetVault),
+        this.get(TYPES.MutatorService),
+        this.get(TYPES.SyncService),
+        this.get(TYPES.EncryptionService),
+        this.get(TYPES.GetVault),
       )
     })
-    this.container.bind(TYPES.MoveItemsToVault).toDynamicValue((context: interfaces.Context) => {
+
+    this.dependencyMakers.set(TYPES.MoveItemsToVault, () => {
       return new MoveItemsToVault(
-        context.container.get(TYPES.MutatorService),
-        context.container.get(TYPES.SyncService),
-        context.container.get(TYPES.FileService),
+        this.get(TYPES.MutatorService),
+        this.get(TYPES.SyncService),
+        this.get(TYPES.FileService),
       )
     })
-    this.container.bind(TYPES.CreateVault).toDynamicValue((context: interfaces.Context) => {
+
+    this.dependencyMakers.set(TYPES.CreateVault, () => {
       return new CreateVault(
-        context.container.get(TYPES.MutatorService),
-        context.container.get(TYPES.EncryptionService),
-        context.container.get(TYPES.SyncService),
+        this.get(TYPES.MutatorService),
+        this.get(TYPES.EncryptionService),
+        this.get(TYPES.SyncService),
       )
     })
-    this.container.bind(TYPES.RemoveItemFromVault).toDynamicValue((context: interfaces.Context) => {
+
+    this.dependencyMakers.set(TYPES.RemoveItemFromVault, () => {
       return new RemoveItemFromVault(
-        context.container.get(TYPES.MutatorService),
-        context.container.get(TYPES.SyncService),
-        context.container.get(TYPES.FileService),
+        this.get(TYPES.MutatorService),
+        this.get(TYPES.SyncService),
+        this.get(TYPES.FileService),
       )
     })
-    this.container.bind(TYPES.DeleteVault).toDynamicValue((context: interfaces.Context) => {
+
+    this.dependencyMakers.set(TYPES.DeleteVault, () => {
       return new DeleteVault(
-        context.container.get(TYPES.ItemManager),
-        context.container.get(TYPES.MutatorService),
-        context.container.get(TYPES.EncryptionService),
+        this.get(TYPES.ItemManager),
+        this.get(TYPES.MutatorService),
+        this.get(TYPES.EncryptionService),
       )
     })
-    this.container.bind(TYPES.RotateVaultKey).toDynamicValue((context: interfaces.Context) => {
-      return new RotateVaultKey(
-        context.container.get(TYPES.MutatorService),
-        context.container.get(TYPES.EncryptionService),
-      )
+
+    this.dependencyMakers.set(TYPES.RotateVaultKey, () => {
+      return new RotateVaultKey(this.get(TYPES.MutatorService), this.get(TYPES.EncryptionService))
     })
-    this.container.bind(TYPES.ReuploadInvite).toDynamicValue((context: interfaces.Context) => {
+
+    this.dependencyMakers.set(TYPES.ReuploadInvite, () => {
       return new ReuploadInvite(
-        context.container.get(TYPES.DecryptOwnMessage),
-        context.container.get(TYPES.SendVaultInvite),
-        context.container.get(TYPES.EncryptMessage),
+        this.get(TYPES.DecryptOwnMessage),
+        this.get(TYPES.SendVaultInvite),
+        this.get(TYPES.EncryptMessage),
       )
     })
-    this.container.bind(TYPES.ReuploadAllInvites).toDynamicValue((context: interfaces.Context) => {
+
+    this.dependencyMakers.set(TYPES.ReuploadAllInvites, () => {
       return new ReuploadAllInvites(
-        context.container.get(TYPES.ReuploadInvite),
-        context.container.get(TYPES.FindContact),
-        context.container.get(TYPES.SharedVaultInvitesServer),
+        this.get(TYPES.ReuploadInvite),
+        this.get(TYPES.FindContact),
+        this.get(TYPES.SharedVaultInvitesServer),
       )
     })
-    this.container.bind(TYPES.ResendAllMessages).toDynamicValue((context: interfaces.Context) => {
+
+    this.dependencyMakers.set(TYPES.ResendAllMessages, () => {
       return new ResendAllMessages(
-        context.container.get(TYPES.ResendMessage),
-        context.container.get(TYPES.MessageServer),
-        context.container.get(TYPES.FindContact),
+        this.get(TYPES.ResendMessage),
+        this.get(TYPES.MessageServer),
+        this.get(TYPES.FindContact),
       )
     })
-    this.container.bind(TYPES.CreateSharedVault).toDynamicValue((context: interfaces.Context) => {
+
+    this.dependencyMakers.set(TYPES.CreateSharedVault, () => {
       return new CreateSharedVault(
-        context.container.get(TYPES.ItemManager),
-        context.container.get(TYPES.MutatorService),
-        context.container.get(TYPES.SharedVaultServer),
-        context.container.get(TYPES.CreateVault),
-        context.container.get(TYPES.MoveItemsToVault),
+        this.get(TYPES.ItemManager),
+        this.get(TYPES.MutatorService),
+        this.get(TYPES.SharedVaultServer),
+        this.get(TYPES.CreateVault),
+        this.get(TYPES.MoveItemsToVault),
       )
     })
-    this.container.bind(TYPES.HandleKeyPairChange).toDynamicValue((context: interfaces.Context) => {
-      return new HandleKeyPairChange(
-        context.container.get(TYPES.ReuploadAllInvites),
-        context.container.get(TYPES.ResendAllMessages),
-      )
+
+    this.dependencyMakers.set(TYPES.HandleKeyPairChange, () => {
+      return new HandleKeyPairChange(this.get(TYPES.ReuploadAllInvites), this.get(TYPES.ResendAllMessages))
     })
-    this.container.bind(TYPES.NotifyVaultUsersOfKeyRotation).toDynamicValue((context: interfaces.Context) => {
+
+    this.dependencyMakers.set(TYPES.NotifyVaultUsersOfKeyRotation, () => {
       return new NotifyVaultUsersOfKeyRotation(
-        context.container.get(TYPES.FindContact),
-        context.container.get(TYPES.SendVaultDataChangedMessage),
-        context.container.get(TYPES.InviteToVault),
-        context.container.get(TYPES.SharedVaultInvitesServer),
-        context.container.get(TYPES.GetVaultContacts),
-        context.container.get(TYPES.DecryptOwnMessage),
+        this.get(TYPES.FindContact),
+        this.get(TYPES.SendVaultDataChangedMessage),
+        this.get(TYPES.InviteToVault),
+        this.get(TYPES.SharedVaultInvitesServer),
+        this.get(TYPES.GetVaultContacts),
+        this.get(TYPES.DecryptOwnMessage),
       )
     })
-    this.container.bind(TYPES.SendVaultDataChangedMessage).toDynamicValue((context: interfaces.Context) => {
+
+    this.dependencyMakers.set(TYPES.SendVaultDataChangedMessage, () => {
       return new SendVaultDataChangedMessage(
-        context.container.get(TYPES.EncryptMessage),
-        context.container.get(TYPES.FindContact),
-        context.container.get(TYPES.GetSharedVaultUsers),
-        context.container.get(TYPES.SendMessage),
+        this.get(TYPES.EncryptMessage),
+        this.get(TYPES.FindContact),
+        this.get(TYPES.GetSharedVaultUsers),
+        this.get(TYPES.SendMessage),
       )
     })
-    this.container.bind(TYPES.ReplaceContactData).toDynamicValue((context: interfaces.Context) => {
+
+    this.dependencyMakers.set(TYPES.ReplaceContactData, () => {
       return new ReplaceContactData(
-        context.container.get(TYPES.MutatorService),
-        context.container.get(TYPES.SyncService),
-        context.container.get(TYPES.FindContact),
+        this.get(TYPES.MutatorService),
+        this.get(TYPES.SyncService),
+        this.get(TYPES.FindContact),
       )
     })
-    this.container.bind(TYPES.GetTrustedPayload).toDynamicValue((context: interfaces.Context) => {
-      return new GetTrustedPayload(context.container.get(TYPES.DecryptMessage))
+
+    this.dependencyMakers.set(TYPES.GetTrustedPayload, () => {
+      return new GetTrustedPayload(this.get(TYPES.DecryptMessage))
     })
-    this.container.bind(TYPES.GetUntrustedPayload).toDynamicValue((context: interfaces.Context) => {
-      return new GetUntrustedPayload(context.container.get(TYPES.DecryptMessage))
+
+    this.dependencyMakers.set(TYPES.GetUntrustedPayload, () => {
+      return new GetUntrustedPayload(this.get(TYPES.DecryptMessage))
     })
-    this.container.bind(TYPES.GetVaultContacts).toDynamicValue((context: interfaces.Context) => {
-      return new GetVaultContacts(
-        context.container.get(TYPES.FindContact),
-        context.container.get(TYPES.GetSharedVaultUsers),
-      )
+
+    this.dependencyMakers.set(TYPES.GetVaultContacts, () => {
+      return new GetVaultContacts(this.get(TYPES.FindContact), this.get(TYPES.GetSharedVaultUsers))
     })
-    this.container.bind(TYPES.AcceptVaultInvite).toDynamicValue((context: interfaces.Context) => {
-      return new AcceptVaultInvite(
-        context.container.get(TYPES.SharedVaultInvitesServer),
-        context.container.get(TYPES.ProcessAcceptedVaultInvite),
-      )
+
+    this.dependencyMakers.set(TYPES.AcceptVaultInvite, () => {
+      return new AcceptVaultInvite(this.get(TYPES.SharedVaultInvitesServer), this.get(TYPES.ProcessAcceptedVaultInvite))
     })
-    this.container.bind(TYPES.InviteToVault).toDynamicValue((context: interfaces.Context) => {
+
+    this.dependencyMakers.set(TYPES.InviteToVault, () => {
       return new InviteToVault(
-        context.container.get(TYPES.KeySystemKeyManager),
-        context.container.get(TYPES.EncryptMessage),
-        context.container.get(TYPES.SendVaultInvite),
+        this.get(TYPES.KeySystemKeyManager),
+        this.get(TYPES.EncryptMessage),
+        this.get(TYPES.SendVaultInvite),
       )
     })
-    this.container.bind(TYPES.DeleteThirdPartyVault).toDynamicValue((context: interfaces.Context) => {
+
+    this.dependencyMakers.set(TYPES.DeleteThirdPartyVault, () => {
       return new DeleteThirdPartyVault(
-        context.container.get(TYPES.ItemManager),
-        context.container.get(TYPES.MutatorService),
-        context.container.get(TYPES.EncryptionService),
-        context.container.get(TYPES.SyncService),
-        context.container.get(TYPES.RemoveItemsLocally),
+        this.get(TYPES.ItemManager),
+        this.get(TYPES.MutatorService),
+        this.get(TYPES.EncryptionService),
+        this.get(TYPES.SyncService),
+        this.get(TYPES.RemoveItemsLocally),
       )
     })
-    this.container.bind(TYPES.LeaveVault).toDynamicValue((context: interfaces.Context) => {
+
+    this.dependencyMakers.set(TYPES.LeaveVault, () => {
       return new LeaveVault(
-        context.container.get(TYPES.SharedVaultUsersServer),
-        context.container.get(TYPES.ItemManager),
-        context.container.get(TYPES.DeleteThirdPartyVault),
+        this.get(TYPES.SharedVaultUsersServer),
+        this.get(TYPES.ItemManager),
+        this.get(TYPES.DeleteThirdPartyVault),
       )
     })
-    this.container.bind(TYPES.ShareContactWithVault).toDynamicValue((context: interfaces.Context) => {
+
+    this.dependencyMakers.set(TYPES.ShareContactWithVault, () => {
       return new ShareContactWithVault(
-        context.container.get(TYPES.FindContact),
-        context.container.get(TYPES.EncryptMessage),
-        context.container.get(TYPES.UserServer),
-        context.container.get(TYPES.SendMessage),
+        this.get(TYPES.FindContact),
+        this.get(TYPES.EncryptMessage),
+        this.get(TYPES.UserServer),
+        this.get(TYPES.SendMessage),
       )
     })
-    this.container.bind(TYPES.ConvertToSharedVault).toDynamicValue((context: interfaces.Context) => {
+
+    this.dependencyMakers.set(TYPES.ConvertToSharedVault, () => {
       return new ConvertToSharedVault(
-        context.container.get(TYPES.ItemManager),
-        context.container.get(TYPES.MutatorService),
-        context.container.get(TYPES.SharedVaultServer),
-        context.container.get(TYPES.MoveItemsToVault),
+        this.get(TYPES.ItemManager),
+        this.get(TYPES.MutatorService),
+        this.get(TYPES.SharedVaultServer),
+        this.get(TYPES.MoveItemsToVault),
       )
     })
-    this.container.bind(TYPES.DeleteSharedVault).toDynamicValue((context: interfaces.Context) => {
+
+    this.dependencyMakers.set(TYPES.DeleteSharedVault, () => {
       return new DeleteSharedVault(
-        context.container.get(TYPES.SharedVaultServer),
-        context.container.get(TYPES.SyncService),
-        context.container.get(TYPES.DeleteVault),
+        this.get(TYPES.SharedVaultServer),
+        this.get(TYPES.SyncService),
+        this.get(TYPES.DeleteVault),
       )
     })
-    this.container.bind(TYPES.RemoveVaultMember).toDynamicValue((context: interfaces.Context) => {
-      return new RemoveVaultMember(context.container.get(TYPES.SharedVaultUsersServer))
+
+    this.dependencyMakers.set(TYPES.RemoveVaultMember, () => {
+      return new RemoveVaultMember(this.get(TYPES.SharedVaultUsersServer))
     })
-    this.container.bind(TYPES.GetSharedVaultUsers).toDynamicValue((context: interfaces.Context) => {
-      return new GetSharedVaultUsers(context.container.get(TYPES.SharedVaultUsersServer))
+
+    this.dependencyMakers.set(TYPES.GetSharedVaultUsers, () => {
+      return new GetSharedVaultUsers(this.get(TYPES.SharedVaultUsersServer))
     })
   }
 
   private registerServiceMakers() {
-    this.container.bind(TYPES.UserServer).toDynamicValue((context: interfaces.Context) => {
-      return new UserServer(context.container.get(TYPES.HttpService))
+    this.dependencyMakers.set(TYPES.UserServer, () => {
+      return new UserServer(this.get(TYPES.HttpService))
     })
-    this.container.bind(TYPES.SharedVaultInvitesServer).toDynamicValue((context: interfaces.Context) => {
-      return new SharedVaultInvitesServer(context.container.get(TYPES.HttpService))
+
+    this.dependencyMakers.set(TYPES.SharedVaultInvitesServer, () => {
+      return new SharedVaultInvitesServer(this.get(TYPES.HttpService))
     })
-    this.container.bind(TYPES.SharedVaultServer).toDynamicValue((context: interfaces.Context) => {
-      return new SharedVaultServer(context.container.get(TYPES.HttpService))
+
+    this.dependencyMakers.set(TYPES.SharedVaultServer, () => {
+      return new SharedVaultServer(this.get(TYPES.HttpService))
     })
-    this.container.bind(TYPES.MessageServer).toDynamicValue((context: interfaces.Context) => {
-      return new AsymmetricMessageServer(context.container.get(TYPES.HttpService))
+
+    this.dependencyMakers.set(TYPES.MessageServer, () => {
+      return new AsymmetricMessageServer(this.get(TYPES.HttpService))
     })
-    this.container.bind(TYPES.SharedVaultUsersServer).toDynamicValue((context: interfaces.Context) => {
-      return new SharedVaultUsersServer(context.container.get(TYPES.HttpService))
+
+    this.dependencyMakers.set(TYPES.SharedVaultUsersServer, () => {
+      return new SharedVaultUsersServer(this.get(TYPES.HttpService))
     })
-    this.container.bind(TYPES.AsymmetricMessageService).toDynamicValue((context: interfaces.Context) => {
+
+    this.dependencyMakers.set(TYPES.AsymmetricMessageService, () => {
       return new AsymmetricMessageService(
-        context.container.get(TYPES.MessageServer),
-        context.container.get(TYPES.EncryptionService),
-        context.container.get(TYPES.MutatorService),
-        context.container.get(TYPES.CreateOrEditContact),
-        context.container.get(TYPES.FindContact),
-        context.container.get(TYPES.GetAllContacts),
-        context.container.get(TYPES.ReplaceContactData),
-        context.container.get(TYPES.GetTrustedPayload),
-        context.container.get(TYPES.GetVault),
-        context.container.get(TYPES.HandleRootKeyChangedMessage),
-        context.container.get(TYPES.SendOwnContactChangeMessage),
-        context.container.get(TYPES.GetOutboundMessages),
-        context.container.get(TYPES.GetInboundMessages),
-        context.container.get(TYPES.GetUntrustedPayload),
-        context.container.get(TYPES.InternalEventBus),
+        this.get(TYPES.MessageServer),
+        this.get(TYPES.EncryptionService),
+        this.get(TYPES.MutatorService),
+        this.get(TYPES.CreateOrEditContact),
+        this.get(TYPES.FindContact),
+        this.get(TYPES.GetAllContacts),
+        this.get(TYPES.ReplaceContactData),
+        this.get(TYPES.GetTrustedPayload),
+        this.get(TYPES.GetVault),
+        this.get(TYPES.HandleRootKeyChangedMessage),
+        this.get(TYPES.SendOwnContactChangeMessage),
+        this.get(TYPES.GetOutboundMessages),
+        this.get(TYPES.GetInboundMessages),
+        this.get(TYPES.GetUntrustedPayload),
+        this.get(TYPES.InternalEventBus),
       )
     })
-    this.container.bind(TYPES.SharedVaultService).toDynamicValue((context: interfaces.Context) => {
+
+    this.dependencyMakers.set(TYPES.SharedVaultService, () => {
       return new SharedVaultService(
-        context.container.get(TYPES.SyncService),
-        context.container.get(TYPES.ItemManager),
-        context.container.get(TYPES.EncryptionService),
-        context.container.get(TYPES.SessionManager),
-        context.container.get(TYPES.VaultService),
-        context.container.get(TYPES.SharedVaultInvitesServer),
-        context.container.get(TYPES.GetVault),
-        context.container.get(TYPES.CreateSharedVault),
-        context.container.get(TYPES.HandleKeyPairChange),
-        context.container.get(TYPES.NotifyVaultUsersOfKeyRotation),
-        context.container.get(TYPES.SendVaultDataChangedMessage),
-        context.container.get(TYPES.GetTrustedPayload),
-        context.container.get(TYPES.GetUntrustedPayload),
-        context.container.get(TYPES.FindContact),
-        context.container.get(TYPES.GetAllContacts),
-        context.container.get(TYPES.GetVaultContacts),
-        context.container.get(TYPES.AcceptVaultInvite),
-        context.container.get(TYPES.InviteToVault),
-        context.container.get(TYPES.LeaveVault),
-        context.container.get(TYPES.DeleteThirdPartyVault),
-        context.container.get(TYPES.ShareContactWithVault),
-        context.container.get(TYPES.ConvertToSharedVault),
-        context.container.get(TYPES.DeleteSharedVault),
-        context.container.get(TYPES.RemoveVaultMember),
-        context.container.get(TYPES.GetSharedVaultUsers),
-        context.container.get(TYPES.InternalEventBus),
+        this.get(TYPES.SyncService),
+        this.get(TYPES.ItemManager),
+        this.get(TYPES.EncryptionService),
+        this.get(TYPES.SessionManager),
+        this.get(TYPES.VaultService),
+        this.get(TYPES.SharedVaultInvitesServer),
+        this.get(TYPES.GetVault),
+        this.get(TYPES.CreateSharedVault),
+        this.get(TYPES.HandleKeyPairChange),
+        this.get(TYPES.NotifyVaultUsersOfKeyRotation),
+        this.get(TYPES.SendVaultDataChangedMessage),
+        this.get(TYPES.GetTrustedPayload),
+        this.get(TYPES.GetUntrustedPayload),
+        this.get(TYPES.FindContact),
+        this.get(TYPES.GetAllContacts),
+        this.get(TYPES.GetVaultContacts),
+        this.get(TYPES.AcceptVaultInvite),
+        this.get(TYPES.InviteToVault),
+        this.get(TYPES.LeaveVault),
+        this.get(TYPES.DeleteThirdPartyVault),
+        this.get(TYPES.ShareContactWithVault),
+        this.get(TYPES.ConvertToSharedVault),
+        this.get(TYPES.DeleteSharedVault),
+        this.get(TYPES.RemoveVaultMember),
+        this.get(TYPES.GetSharedVaultUsers),
+        this.get(TYPES.InternalEventBus),
       )
     })
-    this.container.bind(TYPES.VaultService).toDynamicValue((context: interfaces.Context) => {
+
+    this.dependencyMakers.set(TYPES.VaultService, () => {
       return new VaultService(
-        context.container.get(TYPES.SyncService),
-        context.container.get(TYPES.ItemManager),
-        context.container.get(TYPES.MutatorService),
-        context.container.get(TYPES.EncryptionService),
-        context.container.get(TYPES.AlertService),
-        context.container.get(TYPES.GetVault),
-        context.container.get(TYPES.ChangeVaultKeyOptions),
-        context.container.get(TYPES.MoveItemsToVault),
-        context.container.get(TYPES.CreateVault),
-        context.container.get(TYPES.RemoveItemFromVault),
-        context.container.get(TYPES.DeleteVault),
-        context.container.get(TYPES.RotateVaultKey),
-        context.container.get(TYPES.InternalEventBus),
+        this.get(TYPES.SyncService),
+        this.get(TYPES.ItemManager),
+        this.get(TYPES.MutatorService),
+        this.get(TYPES.EncryptionService),
+        this.get(TYPES.AlertService),
+        this.get(TYPES.GetVault),
+        this.get(TYPES.ChangeVaultKeyOptions),
+        this.get(TYPES.MoveItemsToVault),
+        this.get(TYPES.CreateVault),
+        this.get(TYPES.RemoveItemFromVault),
+        this.get(TYPES.DeleteVault),
+        this.get(TYPES.RotateVaultKey),
+        this.get(TYPES.InternalEventBus),
       )
     })
-    this.container.bind(TYPES.SelfContactManager).toDynamicValue((context: interfaces.Context) => {
+
+    this.dependencyMakers.set(TYPES.SelfContactManager, () => {
       return new SelfContactManager(
-        context.container.get(TYPES.SyncService),
-        context.container.get(TYPES.ItemManager),
-        context.container.get(TYPES.SessionManager),
-        context.container.get(TYPES.SingletonManager),
-        context.container.get(TYPES.CreateOrEditContact),
+        this.get(TYPES.SyncService),
+        this.get(TYPES.ItemManager),
+        this.get(TYPES.SessionManager),
+        this.get(TYPES.SingletonManager),
+        this.get(TYPES.CreateOrEditContact),
       )
     })
-    this.container.bind(TYPES.ContactService).toDynamicValue((context: interfaces.Context) => {
+
+    this.dependencyMakers.set(TYPES.ContactService, () => {
       return new ContactService(
-        context.container.get(TYPES.SyncService),
-        context.container.get(TYPES.MutatorService),
-        context.container.get(TYPES.SessionManager),
+        this.get(TYPES.SyncService),
+        this.get(TYPES.MutatorService),
+        this.get(TYPES.SessionManager),
         this.options.crypto,
-        context.container.get(TYPES.UserService),
-        context.container.get(TYPES.SelfContactManager),
-        context.container.get(TYPES.EncryptionService),
-        context.container.get(TYPES.FindContact),
-        context.container.get(TYPES.GetAllContacts),
-        context.container.get(TYPES.CreateOrEditContact),
-        context.container.get(TYPES.EditContact),
-        context.container.get(TYPES.ValidateItemSigner),
-        context.container.get(TYPES.InternalEventBus),
+        this.get(TYPES.UserService),
+        this.get(TYPES.SelfContactManager),
+        this.get(TYPES.EncryptionService),
+        this.get(TYPES.FindContact),
+        this.get(TYPES.GetAllContacts),
+        this.get(TYPES.CreateOrEditContact),
+        this.get(TYPES.EditContact),
+        this.get(TYPES.ValidateItemSigner),
+        this.get(TYPES.InternalEventBus),
       )
     })
-    this.container.bind(TYPES.SignInWithRecoveryCodes).toDynamicValue((context: interfaces.Context) => {
+
+    this.dependencyMakers.set(TYPES.SignInWithRecoveryCodes, () => {
       return new SignInWithRecoveryCodes(
-        context.container.get(TYPES.AuthManager),
-        context.container.get(TYPES.EncryptionService),
-        context.container.get(TYPES.InMemoryStore),
+        this.get(TYPES.AuthManager),
+        this.get(TYPES.EncryptionService),
+        this.get(TYPES.InMemoryStore),
         this.options.crypto,
-        context.container.get(TYPES.SessionManager),
-        context.container.get(TYPES.InternalEventBus),
+        this.get(TYPES.SessionManager),
+        this.get(TYPES.InternalEventBus),
       )
     })
-    this.container.bind(TYPES.GetRecoveryCodes).toDynamicValue((context: interfaces.Context) => {
-      return new GetRecoveryCodes(
-        context.container.get(TYPES.AuthManager),
-        context.container.get(TYPES.SettingsService),
-      )
+
+    this.dependencyMakers.set(TYPES.GetRecoveryCodes, () => {
+      return new GetRecoveryCodes(this.get(TYPES.AuthManager), this.get(TYPES.SettingsService))
     })
-    this.container.bind(TYPES.AddAuthenticator).toDynamicValue((context: interfaces.Context) => {
+
+    this.dependencyMakers.set(TYPES.AddAuthenticator, () => {
       return new AddAuthenticator(
-        context.container.get(TYPES.AuthenticatorManager),
+        this.get(TYPES.AuthenticatorManager),
         this.options.u2fAuthenticatorRegistrationPromptFunction,
       )
     })
-    this.container.bind(TYPES.ListAuthenticators).toDynamicValue((context: interfaces.Context) => {
-      return new ListAuthenticators(context.container.get(TYPES.AuthenticatorManager))
+
+    this.dependencyMakers.set(TYPES.ListAuthenticators, () => {
+      return new ListAuthenticators(this.get(TYPES.AuthenticatorManager))
     })
-    this.container.bind(TYPES.DeleteAuthenticator).toDynamicValue((context: interfaces.Context) => {
-      return new DeleteAuthenticator(context.container.get(TYPES.AuthenticatorManager))
+
+    this.dependencyMakers.set(TYPES.DeleteAuthenticator, () => {
+      return new DeleteAuthenticator(this.get(TYPES.AuthenticatorManager))
     })
-    this.container.bind(TYPES.GetAuthenticatorAuthenticationOptions).toDynamicValue((context: interfaces.Context) => {
-      return new GetAuthenticatorAuthenticationOptions(context.container.get(TYPES.AuthenticatorManager))
+
+    this.dependencyMakers.set(TYPES.GetAuthenticatorAuthenticationOptions, () => {
+      return new GetAuthenticatorAuthenticationOptions(this.get(TYPES.AuthenticatorManager))
     })
-    this.container.bind(TYPES.GetAuthenticatorAuthenticationResponse).toDynamicValue((context: interfaces.Context) => {
+
+    this.dependencyMakers.set(TYPES.GetAuthenticatorAuthenticationResponse, () => {
       return new GetAuthenticatorAuthenticationResponse(
-        context.container.get(TYPES.GetAuthenticatorAuthenticationOptions),
+        this.get(TYPES.GetAuthenticatorAuthenticationOptions),
         this.options.u2fAuthenticatorVerificationPromptFunction,
       )
     })
-    this.container.bind(TYPES.ListRevisions).toDynamicValue((context: interfaces.Context) => {
-      return new ListRevisions(context.container.get(TYPES.RevisionManager))
+
+    this.dependencyMakers.set(TYPES.ListRevisions, () => {
+      return new ListRevisions(this.get(TYPES.RevisionManager))
     })
-    this.container.bind(TYPES.GetRevision).toDynamicValue((context: interfaces.Context) => {
-      return new GetRevision(
-        context.container.get(TYPES.RevisionManager),
-        context.container.get(TYPES.EncryptionService),
-      )
+
+    this.dependencyMakers.set(TYPES.GetRevision, () => {
+      return new GetRevision(this.get(TYPES.RevisionManager), this.get(TYPES.EncryptionService))
     })
-    this.container.bind(TYPES.DeleteRevision).toDynamicValue((context: interfaces.Context) => {
-      return new DeleteRevision(context.container.get(TYPES.RevisionManager))
+
+    this.dependencyMakers.set(TYPES.DeleteRevision, () => {
+      return new DeleteRevision(this.get(TYPES.RevisionManager))
     })
-    this.container.bind(TYPES.RevisionServer).toDynamicValue((context: interfaces.Context) => {
-      return new RevisionServer(context.container.get(TYPES.HttpService))
+
+    this.dependencyMakers.set(TYPES.RevisionServer, () => {
+      return new RevisionServer(this.get(TYPES.HttpService))
     })
-    this.container.bind(TYPES.RevisionApiService).toDynamicValue((context: interfaces.Context) => {
-      return new RevisionApiService(context.container.get(TYPES.RevisionServer))
+
+    this.dependencyMakers.set(TYPES.RevisionApiService, () => {
+      return new RevisionApiService(this.get(TYPES.RevisionServer))
     })
-    this.container.bind(TYPES.RevisionManager).toDynamicValue((context: interfaces.Context) => {
-      return new RevisionManager(
-        context.container.get(TYPES.RevisionApiService),
-        context.container.get(TYPES.InternalEventBus),
-      )
+
+    this.dependencyMakers.set(TYPES.RevisionManager, () => {
+      return new RevisionManager(this.get(TYPES.RevisionApiService), this.get(TYPES.InternalEventBus))
     })
-    this.container.bind(TYPES.AuthServer).toDynamicValue((context: interfaces.Context) => {
-      return new AuthServer(context.container.get(TYPES.HttpService))
+
+    this.dependencyMakers.set(TYPES.AuthServer, () => {
+      return new AuthServer(this.get(TYPES.HttpService))
     })
-    this.container.bind(TYPES.AuthApiService).toDynamicValue((context: interfaces.Context) => {
-      return new AuthApiService(context.container.get(TYPES.AuthServer))
+
+    this.dependencyMakers.set(TYPES.AuthApiService, () => {
+      return new AuthApiService(this.get(TYPES.AuthServer))
     })
-    this.container.bind(TYPES.AuthManager).toDynamicValue((context: interfaces.Context) => {
-      return new AuthManager(context.container.get(TYPES.AuthApiService), context.container.get(TYPES.InternalEventBus))
+
+    this.dependencyMakers.set(TYPES.AuthManager, () => {
+      return new AuthManager(this.get(TYPES.AuthApiService), this.get(TYPES.InternalEventBus))
     })
-    this.container.bind(TYPES.AuthenticatorServer).toDynamicValue((context: interfaces.Context) => {
-      return new AuthenticatorServer(context.container.get(TYPES.HttpService))
+
+    this.dependencyMakers.set(TYPES.AuthenticatorServer, () => {
+      return new AuthenticatorServer(this.get(TYPES.HttpService))
     })
-    this.container.bind(TYPES.AuthenticatorApiService).toDynamicValue((context: interfaces.Context) => {
-      return new AuthenticatorApiService(context.container.get(TYPES.AuthenticatorServer))
+
+    this.dependencyMakers.set(TYPES.AuthenticatorApiService, () => {
+      return new AuthenticatorApiService(this.get(TYPES.AuthenticatorServer))
     })
-    this.container.bind(TYPES.AuthenticatorManager).toDynamicValue((context: interfaces.Context) => {
+
+    this.dependencyMakers.set(TYPES.AuthenticatorManager, () => {
       return new AuthenticatorManager(
-        context.container.get(TYPES.AuthenticatorApiService),
-        context.container.get(TYPES.PreferencesService),
-        context.container.get(TYPES.InternalEventBus),
+        this.get(TYPES.AuthenticatorApiService),
+        this.get(TYPES.PreferencesService),
+        this.get(TYPES.InternalEventBus),
       )
     })
-    this.container.bind(TYPES.ActionsService).toDynamicValue((context: interfaces.Context) => {
+
+    this.dependencyMakers.set(TYPES.ActionsService, () => {
       return new SNActionsService(
-        context.container.get(TYPES.ItemManager),
-        context.container.get(TYPES.AlertService),
-        context.container.get(TYPES.DeviceInterface),
-        context.container.get(TYPES.DeprecatedHttpService),
-        context.container.get(TYPES.PayloadManager),
-        context.container.get(TYPES.EncryptionService),
-        context.container.get(TYPES.SyncService),
-        context.container.get(TYPES.ChallengeService),
-        context.container.get(TYPES.ListedService),
-        context.container.get(TYPES.InternalEventBus),
+        this.get(TYPES.ItemManager),
+        this.get(TYPES.AlertService),
+        this.get(TYPES.DeviceInterface),
+        this.get(TYPES.DeprecatedHttpService),
+        this.get(TYPES.PayloadManager),
+        this.get(TYPES.EncryptionService),
+        this.get(TYPES.SyncService),
+        this.get(TYPES.ChallengeService),
+        this.get(TYPES.ListedService),
+        this.get(TYPES.InternalEventBus),
       )
     })
-    this.container.bind(TYPES.ListedService).toDynamicValue((context: interfaces.Context) => {
+
+    this.dependencyMakers.set(TYPES.ListedService, () => {
       return new ListedService(
-        context.container.get(TYPES.LegacyApiService),
-        context.container.get(TYPES.ItemManager),
-        context.container.get(TYPES.SettingsService),
-        context.container.get(TYPES.DeprecatedHttpService),
-        context.container.get(TYPES.ProtectionService),
-        context.container.get(TYPES.MutatorService),
-        context.container.get(TYPES.SyncService),
-        context.container.get(TYPES.InternalEventBus),
+        this.get(TYPES.LegacyApiService),
+        this.get(TYPES.ItemManager),
+        this.get(TYPES.SettingsService),
+        this.get(TYPES.DeprecatedHttpService),
+        this.get(TYPES.ProtectionService),
+        this.get(TYPES.MutatorService),
+        this.get(TYPES.SyncService),
+        this.get(TYPES.InternalEventBus),
       )
     })
-    this.container.bind(TYPES.IntegrityService).toDynamicValue((context: interfaces.Context) => {
+
+    this.dependencyMakers.set(TYPES.IntegrityService, () => {
       return new IntegrityService(
-        context.container.get(TYPES.LegacyApiService),
-        context.container.get(TYPES.LegacyApiService),
-        context.container.get(TYPES.PayloadManager),
-        context.container.get(TYPES.InternalEventBus),
+        this.get(TYPES.LegacyApiService),
+        this.get(TYPES.LegacyApiService),
+        this.get(TYPES.PayloadManager),
+        this.get(TYPES.InternalEventBus),
       )
     })
-    this.container.bind(TYPES.FileService).toDynamicValue((context: interfaces.Context) => {
+
+    this.dependencyMakers.set(TYPES.FileService, () => {
       return new FileService(
-        context.container.get(TYPES.LegacyApiService),
-        context.container.get(TYPES.MutatorService),
-        context.container.get(TYPES.SyncService),
-        context.container.get(TYPES.EncryptionService),
-        context.container.get(TYPES.ChallengeService),
-        context.container.get(TYPES.HttpService),
-        context.container.get(TYPES.AlertService),
+        this.get(TYPES.LegacyApiService),
+        this.get(TYPES.MutatorService),
+        this.get(TYPES.SyncService),
+        this.get(TYPES.EncryptionService),
+        this.get(TYPES.ChallengeService),
+        this.get(TYPES.HttpService),
+        this.get(TYPES.AlertService),
         this.options.crypto,
-        context.container.get(TYPES.InternalEventBus),
-        context.container.get(TYPES.FilesBackupService),
+        this.get(TYPES.InternalEventBus),
+        this.get(TYPES.FilesBackupService),
       )
     })
-    this.container.bind(TYPES.MigrationService).toDynamicValue((context: interfaces.Context) => {
+
+    this.dependencyMakers.set(TYPES.MigrationService, () => {
       return new SNMigrationService({
-        encryptionService: context.container.get(TYPES.EncryptionService),
-        deviceInterface: context.container.get(TYPES.DeviceInterface),
-        storageService: context.container.get(TYPES.DiskStorageService),
-        sessionManager: context.container.get(TYPES.SessionManager),
-        challengeService: context.container.get(TYPES.ChallengeService),
-        itemManager: context.container.get(TYPES.ItemManager),
-        mutator: context.container.get(TYPES.MutatorService),
-        singletonManager: context.container.get(TYPES.SingletonManager),
-        featuresService: context.container.get(TYPES.FeaturesService),
+        encryptionService: this.get(TYPES.EncryptionService),
+        deviceInterface: this.get(TYPES.DeviceInterface),
+        storageService: this.get(TYPES.DiskStorageService),
+        sessionManager: this.get(TYPES.SessionManager),
+        challengeService: this.get(TYPES.ChallengeService),
+        itemManager: this.get(TYPES.ItemManager),
+        mutator: this.get(TYPES.MutatorService),
+        singletonManager: this.get(TYPES.SingletonManager),
+        featuresService: this.get(TYPES.FeaturesService),
         environment: this.options.environment,
         platform: this.options.platform,
         identifier: this.options.identifier,
-        internalEventBus: context.container.get(TYPES.InternalEventBus),
-        legacySessionStorageMapper: context.container.get(TYPES.LegacySessionStorageMapper),
-        backups: context.container.get(TYPES.FilesBackupService),
-        preferences: context.container.get(TYPES.PreferencesService),
+        internalEventBus: this.get(TYPES.InternalEventBus),
+        legacySessionStorageMapper: this.get(TYPES.LegacySessionStorageMapper),
+        backups: this.get(TYPES.FilesBackupService),
+        preferences: this.get(TYPES.PreferencesService),
       })
     })
 
-    this.container.bind(TYPES.HomeServerService).toDynamicValue((context: interfaces.Context) => {
-      if (!isDesktopDevice(context.container.get(TYPES.DeviceInterface))) {
+    this.dependencyMakers.set(TYPES.HomeServerService, () => {
+      if (!isDesktopDevice(this.get(TYPES.DeviceInterface))) {
         return undefined
       }
 
-      return new HomeServerService(
-        context.container.get(TYPES.DeviceInterface),
-        context.container.get(TYPES.InternalEventBus),
-      )
+      return new HomeServerService(this.get(TYPES.DeviceInterface), this.get(TYPES.InternalEventBus))
     })
-    this.container.bind(TYPES.FilesBackupService).toDynamicValue((context: interfaces.Context) => {
-      if (!isDesktopDevice(context.container.get(TYPES.DeviceInterface))) {
+
+    this.dependencyMakers.set(TYPES.FilesBackupService, () => {
+      if (!isDesktopDevice(this.get(TYPES.DeviceInterface))) {
         return undefined
       }
 
       return new FilesBackupService(
-        context.container.get(TYPES.ItemManager),
-        context.container.get(TYPES.LegacyApiService),
-        context.container.get(TYPES.EncryptionService),
-        context.container.get(TYPES.DeviceInterface),
-        context.container.get(TYPES.StatusService),
+        this.get(TYPES.ItemManager),
+        this.get(TYPES.LegacyApiService),
+        this.get(TYPES.EncryptionService),
+        this.get(TYPES.DeviceInterface),
+        this.get(TYPES.StatusService),
         this.options.crypto,
-        context.container.get(TYPES.DiskStorageService),
-        context.container.get(TYPES.SessionManager),
-        context.container.get(TYPES.PayloadManager),
-        context.container.get(TYPES.HistoryManager),
-        context.container.get(TYPES.DeviceInterface),
-        context.container.get(TYPES.InternalEventBus),
+        this.get(TYPES.DiskStorageService),
+        this.get(TYPES.SessionManager),
+        this.get(TYPES.PayloadManager),
+        this.get(TYPES.HistoryManager),
+        this.get(TYPES.DeviceInterface),
+        this.get(TYPES.InternalEventBus),
       )
     })
-    this.container.bind(TYPES.StatusService).toDynamicValue((context: interfaces.Context) => {
-      return new StatusService(context.container.get(TYPES.InternalEventBus))
+
+    this.dependencyMakers.set(TYPES.StatusService, () => {
+      return new StatusService(this.get(TYPES.InternalEventBus))
     })
-    this.container.bind(TYPES.MfaService).toDynamicValue((context: interfaces.Context) => {
+
+    this.dependencyMakers.set(TYPES.MfaService, () => {
       return new SNMfaService(
-        context.container.get(TYPES.SettingsService),
+        this.get(TYPES.SettingsService),
         this.options.crypto,
-        context.container.get(TYPES.FeaturesService),
-        context.container.get(TYPES.InternalEventBus),
+        this.get(TYPES.FeaturesService),
+        this.get(TYPES.InternalEventBus),
       )
     })
-    this.container.bind(TYPES.ComponentManager).toDynamicValue((context: interfaces.Context) => {
+
+    this.dependencyMakers.set(TYPES.ComponentManager, () => {
       return new SNComponentManager(
-        context.container.get(TYPES.ItemManager),
-        context.container.get(TYPES.MutatorService),
-        context.container.get(TYPES.SyncService),
-        context.container.get(TYPES.FeaturesService),
-        context.container.get(TYPES.PreferencesService),
-        context.container.get(TYPES.AlertService),
+        this.get(TYPES.ItemManager),
+        this.get(TYPES.MutatorService),
+        this.get(TYPES.SyncService),
+        this.get(TYPES.FeaturesService),
+        this.get(TYPES.PreferencesService),
+        this.get(TYPES.AlertService),
         this.options.environment,
         this.options.platform,
-        context.container.get(TYPES.DeviceInterface),
-        context.container.get(TYPES.InternalEventBus),
+        this.get(TYPES.DeviceInterface),
+        this.get(TYPES.InternalEventBus),
       )
     })
-    this.container.bind(TYPES.FeaturesService).toDynamicValue((context: interfaces.Context) => {
+
+    this.dependencyMakers.set(TYPES.FeaturesService, () => {
       return new SNFeaturesService(
-        context.container.get(TYPES.DiskStorageService),
-        context.container.get(TYPES.ItemManager),
-        context.container.get(TYPES.MutatorService),
-        context.container.get(TYPES.SubscriptionManager),
-        context.container.get(TYPES.LegacyApiService),
-        context.container.get(TYPES.WebSocketsService),
-        context.container.get(TYPES.SettingsService),
-        context.container.get(TYPES.UserService),
-        context.container.get(TYPES.SyncService),
-        context.container.get(TYPES.AlertService),
-        context.container.get(TYPES.SessionManager),
-        context.container.get(TYPES.Crypto),
-        context.container.get(TYPES.InternalEventBus),
+        this.get(TYPES.DiskStorageService),
+        this.get(TYPES.ItemManager),
+        this.get(TYPES.MutatorService),
+        this.get(TYPES.SubscriptionManager),
+        this.get(TYPES.LegacyApiService),
+        this.get(TYPES.WebSocketsService),
+        this.get(TYPES.SettingsService),
+        this.get(TYPES.UserService),
+        this.get(TYPES.SyncService),
+        this.get(TYPES.AlertService),
+        this.get(TYPES.SessionManager),
+        this.get(TYPES.Crypto),
+        this.get(TYPES.InternalEventBus),
       )
     })
-    this.container.bind(TYPES.SettingsService).toDynamicValue((context: interfaces.Context) => {
+
+    this.dependencyMakers.set(TYPES.SettingsService, () => {
       return new SNSettingsService(
-        context.container.get(TYPES.SessionManager),
-        context.container.get(TYPES.LegacyApiService),
-        context.container.get(TYPES.InternalEventBus),
+        this.get(TYPES.SessionManager),
+        this.get(TYPES.LegacyApiService),
+        this.get(TYPES.InternalEventBus),
       )
     })
-    this.container.bind(TYPES.PreferencesService).toDynamicValue((context: interfaces.Context) => {
+
+    this.dependencyMakers.set(TYPES.PreferencesService, () => {
       return new SNPreferencesService(
-        context.container.get(TYPES.SingletonManager),
-        context.container.get(TYPES.ItemManager),
-        context.container.get(TYPES.MutatorService),
-        context.container.get(TYPES.SyncService),
-        context.container.get(TYPES.InternalEventBus),
+        this.get(TYPES.SingletonManager),
+        this.get(TYPES.ItemManager),
+        this.get(TYPES.MutatorService),
+        this.get(TYPES.SyncService),
+        this.get(TYPES.InternalEventBus),
       )
     })
-    this.container.bind(TYPES.SingletonManager).toDynamicValue((context: interfaces.Context) => {
+
+    this.dependencyMakers.set(TYPES.SingletonManager, () => {
       return new SNSingletonManager(
-        context.container.get(TYPES.ItemManager),
-        context.container.get(TYPES.MutatorService),
-        context.container.get(TYPES.PayloadManager),
-        context.container.get(TYPES.SyncService),
-        context.container.get(TYPES.InternalEventBus),
+        this.get(TYPES.ItemManager),
+        this.get(TYPES.MutatorService),
+        this.get(TYPES.PayloadManager),
+        this.get(TYPES.SyncService),
+        this.get(TYPES.InternalEventBus),
       )
     })
-    this.container.bind(TYPES.KeyRecoveryService).toDynamicValue((context: interfaces.Context) => {
+
+    this.dependencyMakers.set(TYPES.KeyRecoveryService, () => {
       return new SNKeyRecoveryService(
-        context.container.get(TYPES.ItemManager),
-        context.container.get(TYPES.PayloadManager),
-        context.container.get(TYPES.UserApiService),
-        context.container.get(TYPES.EncryptionService),
-        context.container.get(TYPES.ChallengeService),
-        context.container.get(TYPES.AlertService),
-        context.container.get(TYPES.DiskStorageService),
-        context.container.get(TYPES.SyncService),
-        context.container.get(TYPES.UserService),
-        context.container.get(TYPES.InternalEventBus),
+        this.get(TYPES.ItemManager),
+        this.get(TYPES.PayloadManager),
+        this.get(TYPES.UserApiService),
+        this.get(TYPES.EncryptionService),
+        this.get(TYPES.ChallengeService),
+        this.get(TYPES.AlertService),
+        this.get(TYPES.DiskStorageService),
+        this.get(TYPES.SyncService),
+        this.get(TYPES.UserService),
+        this.get(TYPES.InternalEventBus),
       )
     })
-    this.container.bind(TYPES.UserService).toDynamicValue((context: interfaces.Context) => {
+
+    this.dependencyMakers.set(TYPES.UserService, () => {
       return new UserService(
-        context.container.get(TYPES.SessionManager),
-        context.container.get(TYPES.SyncService),
-        context.container.get(TYPES.DiskStorageService),
-        context.container.get(TYPES.ItemManager),
-        context.container.get(TYPES.EncryptionService),
-        context.container.get(TYPES.AlertService),
-        context.container.get(TYPES.ChallengeService),
-        context.container.get(TYPES.ProtectionService),
-        context.container.get(TYPES.UserApiService),
-        context.container.get(TYPES.InternalEventBus),
+        this.get(TYPES.SessionManager),
+        this.get(TYPES.SyncService),
+        this.get(TYPES.DiskStorageService),
+        this.get(TYPES.ItemManager),
+        this.get(TYPES.EncryptionService),
+        this.get(TYPES.AlertService),
+        this.get(TYPES.ChallengeService),
+        this.get(TYPES.ProtectionService),
+        this.get(TYPES.UserApiService),
+        this.get(TYPES.InternalEventBus),
       )
     })
-    this.container.bind(TYPES.ProtectionService).toDynamicValue((context: interfaces.Context) => {
+
+    this.dependencyMakers.set(TYPES.ProtectionService, () => {
       return new SNProtectionService(
-        context.container.get(TYPES.EncryptionService),
-        context.container.get(TYPES.MutatorService),
-        context.container.get(TYPES.ChallengeService),
-        context.container.get(TYPES.DiskStorageService),
-        context.container.get(TYPES.InternalEventBus),
+        this.get(TYPES.EncryptionService),
+        this.get(TYPES.MutatorService),
+        this.get(TYPES.ChallengeService),
+        this.get(TYPES.DiskStorageService),
+        this.get(TYPES.InternalEventBus),
       )
     })
-    this.container.bind(TYPES.SyncService).toDynamicValue((context: interfaces.Context) => {
+
+    this.dependencyMakers.set(TYPES.SyncService, () => {
       return new SNSyncService(
-        context.container.get(TYPES.ItemManager),
-        context.container.get(TYPES.SessionManager),
-        context.container.get(TYPES.EncryptionService),
-        context.container.get(TYPES.DiskStorageService),
-        context.container.get(TYPES.PayloadManager),
-        context.container.get(TYPES.LegacyApiService),
-        context.container.get(TYPES.HistoryManager),
-        context.container.get(TYPES.DeviceInterface),
+        this.get(TYPES.ItemManager),
+        this.get(TYPES.SessionManager),
+        this.get(TYPES.EncryptionService),
+        this.get(TYPES.DiskStorageService),
+        this.get(TYPES.PayloadManager),
+        this.get(TYPES.LegacyApiService),
+        this.get(TYPES.HistoryManager),
+        this.get(TYPES.DeviceInterface),
         this.options.identifier,
         {
           loadBatchSize: this.options.loadBatchSize,
           sleepBetweenBatches: this.options.sleepBetweenBatches,
         },
-        context.container.get(TYPES.InternalEventBus),
+        this.get(TYPES.InternalEventBus),
       )
     })
-    this.container.bind(TYPES.HistoryManager).toDynamicValue((context: interfaces.Context) => {
+
+    this.dependencyMakers.set(TYPES.HistoryManager, () => {
       return new SNHistoryManager(
-        context.container.get(TYPES.ItemManager),
-        context.container.get(TYPES.DiskStorageService),
-        context.container.get(TYPES.DeviceInterface),
-        context.container.get(TYPES.InternalEventBus),
+        this.get(TYPES.ItemManager),
+        this.get(TYPES.DiskStorageService),
+        this.get(TYPES.DeviceInterface),
+        this.get(TYPES.InternalEventBus),
       )
     })
-    this.container.bind(TYPES.SubscriptionManager).toDynamicValue((context: interfaces.Context) => {
+
+    this.dependencyMakers.set(TYPES.SubscriptionManager, () => {
       return new SubscriptionManager(
-        context.container.get(TYPES.SubscriptionApiService),
-        context.container.get(TYPES.SessionManager),
-        context.container.get(TYPES.DiskStorageService),
-        context.container.get(TYPES.InternalEventBus),
+        this.get(TYPES.SubscriptionApiService),
+        this.get(TYPES.SessionManager),
+        this.get(TYPES.DiskStorageService),
+        this.get(TYPES.InternalEventBus),
       )
     })
-    this.container.bind(TYPES.SessionManager).toDynamicValue((context: interfaces.Context) => {
+
+    this.dependencyMakers.set(TYPES.SessionManager, () => {
       return new SNSessionManager(
-        context.container.get(TYPES.DiskStorageService),
-        context.container.get(TYPES.LegacyApiService),
-        context.container.get(TYPES.UserApiService),
-        context.container.get(TYPES.AlertService),
-        context.container.get(TYPES.EncryptionService),
-        context.container.get(TYPES.ChallengeService),
-        context.container.get(TYPES.WebSocketsService),
-        context.container.get(TYPES.HttpService),
-        context.container.get(TYPES.SessionStorageMapper),
-        context.container.get(TYPES.LegacySessionStorageMapper),
+        this.get(TYPES.DiskStorageService),
+        this.get(TYPES.LegacyApiService),
+        this.get(TYPES.UserApiService),
+        this.get(TYPES.AlertService),
+        this.get(TYPES.EncryptionService),
+        this.get(TYPES.ChallengeService),
+        this.get(TYPES.WebSocketsService),
+        this.get(TYPES.HttpService),
+        this.get(TYPES.SessionStorageMapper),
+        this.get(TYPES.LegacySessionStorageMapper),
         this.options.identifier,
-        context.container.get(TYPES.InternalEventBus),
+        this.get(TYPES.InternalEventBus),
       )
     })
-    this.container.bind(TYPES.WebSocketsService).toDynamicValue((context: interfaces.Context) => {
+
+    this.dependencyMakers.set(TYPES.WebSocketsService, () => {
       return new SNWebSocketsService(
-        context.container.get(TYPES.DiskStorageService),
+        this.get(TYPES.DiskStorageService),
         this.options.webSocketUrl,
-        context.container.get(TYPES.WebSocketApiService),
-        context.container.get(TYPES.InternalEventBus),
+        this.get(TYPES.WebSocketApiService),
+        this.get(TYPES.InternalEventBus),
       )
     })
-    this.container.bind(TYPES.WebSocketApiService).toDynamicValue((context: interfaces.Context) => {
-      return new WebSocketApiService(context.container.get(TYPES.WebSocketServer))
+
+    this.dependencyMakers.set(TYPES.WebSocketApiService, () => {
+      return new WebSocketApiService(this.get(TYPES.WebSocketServer))
     })
-    this.container.bind(TYPES.WebSocketServer).toDynamicValue((context: interfaces.Context) => {
-      return new WebSocketServer(context.container.get(TYPES.HttpService))
+
+    this.dependencyMakers.set(TYPES.WebSocketServer, () => {
+      return new WebSocketServer(this.get(TYPES.HttpService))
     })
-    this.container.bind(TYPES.SubscriptionApiService).toDynamicValue((context: interfaces.Context) => {
-      return new SubscriptionApiService(context.container.get(TYPES.SubscriptionServer))
+
+    this.dependencyMakers.set(TYPES.SubscriptionApiService, () => {
+      return new SubscriptionApiService(this.get(TYPES.SubscriptionServer))
     })
-    this.container.bind(TYPES.UserApiService).toDynamicValue((context: interfaces.Context) => {
-      return new UserApiService(context.container.get(TYPES.UserServer), context.container.get(TYPES.UserRequestServer))
+
+    this.dependencyMakers.set(TYPES.UserApiService, () => {
+      return new UserApiService(this.get(TYPES.UserServer), this.get(TYPES.UserRequestServer))
     })
-    this.container.bind(TYPES.SubscriptionServer).toDynamicValue((context: interfaces.Context) => {
-      return new SubscriptionServer(context.container.get(TYPES.HttpService))
+
+    this.dependencyMakers.set(TYPES.SubscriptionServer, () => {
+      return new SubscriptionServer(this.get(TYPES.HttpService))
     })
-    this.container.bind(TYPES.UserRequestServer).toDynamicValue((context: interfaces.Context) => {
-      return new UserServer(context.container.get(TYPES.HttpService))
+
+    this.dependencyMakers.set(TYPES.UserRequestServer, () => {
+      return new UserServer(this.get(TYPES.HttpService))
     })
-    this.container.bind(TYPES.InternalEventBus).toDynamicValue((_context: interfaces.Context) => {
+
+    this.dependencyMakers.set(TYPES.InternalEventBus, () => {
       return new InternalEventBus()
     })
-    this.container.bind(TYPES.PayloadManager).toDynamicValue((context: interfaces.Context) => {
-      return new PayloadManager(context.container.get(TYPES.InternalEventBus))
+
+    this.dependencyMakers.set(TYPES.PayloadManager, () => {
+      return new PayloadManager(this.get(TYPES.InternalEventBus))
     })
-    this.container.bind(TYPES.ItemManager).toDynamicValue((context: interfaces.Context) => {
-      return new ItemManager(context.container.get(TYPES.PayloadManager), context.container.get(TYPES.InternalEventBus))
+
+    this.dependencyMakers.set(TYPES.ItemManager, () => {
+      return new ItemManager(this.get(TYPES.PayloadManager), this.get(TYPES.InternalEventBus))
     })
-    this.container.bind(TYPES.MutatorService).toDynamicValue((context: interfaces.Context) => {
+
+    this.dependencyMakers.set(TYPES.MutatorService, () => {
       return new MutatorService(
-        context.container.get(TYPES.ItemManager),
-        context.container.get(TYPES.PayloadManager),
-        context.container.get(TYPES.AlertService),
-        context.container.get(TYPES.InternalEventBus),
+        this.get(TYPES.ItemManager),
+        this.get(TYPES.PayloadManager),
+        this.get(TYPES.AlertService),
+        this.get(TYPES.InternalEventBus),
       )
     })
-    this.container.bind(TYPES.DiskStorageService).toDynamicValue((context: interfaces.Context) => {
+
+    this.dependencyMakers.set(TYPES.DiskStorageService, () => {
       return new DiskStorageService(
-        context.container.get(TYPES.DeviceInterface),
+        this.get(TYPES.DeviceInterface),
         this.options.identifier,
-        context.container.get(TYPES.InternalEventBus),
+        this.get(TYPES.InternalEventBus),
       )
     })
-    this.container.bind(TYPES.UserEventService).toDynamicValue((context: interfaces.Context) => {
-      return new UserEventService(context.container.get(TYPES.InternalEventBus))
+
+    this.dependencyMakers.set(TYPES.UserEventService, () => {
+      return new UserEventService(this.get(TYPES.InternalEventBus))
     })
-    this.container.bind(TYPES.InMemoryStore).toDynamicValue((_context: interfaces.Context) => {
+
+    this.dependencyMakers.set(TYPES.InMemoryStore, () => {
       return new InMemoryStore()
     })
-    this.container.bind(TYPES.KeySystemKeyManager).toDynamicValue((context: interfaces.Context) => {
+
+    this.dependencyMakers.set(TYPES.KeySystemKeyManager, () => {
       return new KeySystemKeyManager(
-        context.container.get(TYPES.ItemManager),
-        context.container.get(TYPES.MutatorService),
-        context.container.get(TYPES.DiskStorageService),
-        context.container.get(TYPES.InternalEventBus),
+        this.get(TYPES.ItemManager),
+        this.get(TYPES.MutatorService),
+        this.get(TYPES.DiskStorageService),
+        this.get(TYPES.InternalEventBus),
       )
     })
-    this.container.bind(TYPES.ChallengeService).toDynamicValue((context: interfaces.Context) => {
+
+    this.dependencyMakers.set(TYPES.ChallengeService, () => {
       return new ChallengeService(
-        context.container.get(TYPES.DiskStorageService),
-        context.container.get(TYPES.EncryptionService),
-        context.container.get(TYPES.InternalEventBus),
+        this.get(TYPES.DiskStorageService),
+        this.get(TYPES.EncryptionService),
+        this.get(TYPES.InternalEventBus),
       )
     })
-    this.container.bind(TYPES.EncryptionService).toDynamicValue((context: interfaces.Context) => {
+
+    this.dependencyMakers.set(TYPES.EncryptionService, () => {
       return new EncryptionService(
-        context.container.get(TYPES.ItemManager),
-        context.container.get(TYPES.MutatorService),
-        context.container.get(TYPES.PayloadManager),
-        context.container.get(TYPES.DeviceInterface),
-        context.container.get(TYPES.DiskStorageService),
-        context.container.get(TYPES.KeySystemKeyManager),
+        this.get(TYPES.ItemManager),
+        this.get(TYPES.MutatorService),
+        this.get(TYPES.PayloadManager),
+        this.get(TYPES.DeviceInterface),
+        this.get(TYPES.DiskStorageService),
+        this.get(TYPES.KeySystemKeyManager),
         this.options.identifier,
-        context.container.get(TYPES.Crypto),
-        context.container.get(TYPES.InternalEventBus),
+        this.get(TYPES.Crypto),
+        this.get(TYPES.InternalEventBus),
       )
     })
-    this.container.bind(TYPES.DeprecatedHttpService).toDynamicValue((context: interfaces.Context) => {
+
+    this.dependencyMakers.set(TYPES.DeprecatedHttpService, () => {
       return new DeprecatedHttpService(
         this.options.environment,
         this.options.appVersion,
-        context.container.get(TYPES.InternalEventBus),
+        this.get(TYPES.InternalEventBus),
       )
     })
-    this.container.bind(TYPES.HttpService).toDynamicValue((_context: interfaces.Context) => {
+
+    this.dependencyMakers.set(TYPES.HttpService, () => {
       return new HttpService(this.options.environment, this.options.appVersion, SnjsVersion)
     })
-    this.container.bind(TYPES.LegacyApiService).toDynamicValue((context: interfaces.Context) => {
+
+    this.dependencyMakers.set(TYPES.LegacyApiService, () => {
       return new SNApiService(
-        context.container.get(TYPES.HttpService),
-        context.container.get(TYPES.DiskStorageService),
+        this.get(TYPES.HttpService),
+        this.get(TYPES.DiskStorageService),
         this.options.defaultHost,
-        context.container.get(TYPES.InMemoryStore),
-        context.container.get(TYPES.Crypto),
-        context.container.get(TYPES.SessionStorageMapper),
-        context.container.get(TYPES.LegacySessionStorageMapper),
-        context.container.get(TYPES.InternalEventBus),
+        this.get(TYPES.InMemoryStore),
+        this.get(TYPES.Crypto),
+        this.get(TYPES.SessionStorageMapper),
+        this.get(TYPES.LegacySessionStorageMapper),
+        this.get(TYPES.InternalEventBus),
       )
     })
-    this.container.bind(TYPES.SessionStorageMapper).toDynamicValue((_context: interfaces.Context) => {
+
+    this.dependencyMakers.set(TYPES.SessionStorageMapper, () => {
       return new SessionStorageMapper()
     })
-    this.container.bind(TYPES.LegacySessionStorageMapper).toDynamicValue((_context: interfaces.Context) => {
+
+    this.dependencyMakers.set(TYPES.LegacySessionStorageMapper, () => {
       return new LegacySessionStorageMapper()
     })
   }
