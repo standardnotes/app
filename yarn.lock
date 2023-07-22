@@ -4934,6 +4934,7 @@ __metadata:
     eslint: "*"
     eslint-plugin-prettier: "*"
     exports-loader: ^4.0.0
+    inversify: ^6.0.1
     jest: ^29.3.1
     jest-environment-jsdom: ^29.3.1
     jsdom: ^20.0.2
@@ -13487,6 +13488,13 @@ __metadata:
   dependencies:
     loose-envify: ^1.0.0
   checksum: cc3182d793aad82a8d1f0af697b462939cb46066ec48bbf1707c150ad5fad6406137e91a262022c269702e01621f35ef60269f6c0d7fd178487959809acdfb14
+  languageName: node
+  linkType: hard
+
+"inversify@npm:^6.0.1":
+  version: 6.0.1
+  resolution: "inversify@npm:6.0.1"
+  checksum: b6c9b56ef7817a71534b06101c2b0a0130b67c47a769f58794d9c0643591a83ac02be30a48c00cb729c0c83ece96dde369c419d48c32d0201c6cc7407629fbc5
   languageName: node
   linkType: hard
 
