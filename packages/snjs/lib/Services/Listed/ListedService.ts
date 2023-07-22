@@ -1,4 +1,3 @@
-import { SyncClientInterface } from './../Sync/SyncClientInterface'
 import { isString, lastElement, sleep } from '@standardnotes/utils'
 import { UuidString } from '@Lib/Types/UuidString'
 import { ItemManager } from '@Lib/Services/Items/ItemManager'
@@ -9,7 +8,12 @@ import { ListedClientInterface } from './ListedClientInterface'
 import { SNApiService } from '../Api/ApiService'
 import { isErrorResponse, ListedAccount, ListedAccountInfo, ListedAccountInfoResponse } from '@standardnotes/responses'
 import { NoteMutator, SNActionsExtension, SNNote } from '@standardnotes/models'
-import { AbstractService, InternalEventBusInterface, MutatorClientInterface } from '@standardnotes/services'
+import {
+  AbstractService,
+  InternalEventBusInterface,
+  MutatorClientInterface,
+  SyncServiceInterface,
+} from '@standardnotes/services'
 import { SNProtectionService } from '../Protection'
 import { ContentType } from '@standardnotes/domain-core'
 
@@ -21,7 +25,7 @@ export class ListedService extends AbstractService implements ListedClientInterf
     private httpSerivce: DeprecatedHttpService,
     private protectionService: SNProtectionService,
     private mutator: MutatorClientInterface,
-    private sync: SyncClientInterface,
+    private sync: SyncServiceInterface,
     protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)

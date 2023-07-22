@@ -115,7 +115,7 @@ import { isDeinitable } from './isDeinitable'
 import { DependencyInitOrder } from './DependencyInitOrder'
 
 export class Dependencies {
-  private dependencyMakers = new Map<symbol, () => unknown>()
+  private factory = new Map<symbol, () => unknown>()
   private dependencies = new Map<symbol, unknown>()
 
   constructor(private options: FullyResolvedApplicationOptions) {
@@ -125,7 +125,7 @@ export class Dependencies {
   }
 
   public deinit() {
-    this.dependencyMakers.clear()
+    this.factory.clear()
 
     const deps = this.getAll()
     for (const dep of deps) {
@@ -142,7 +142,7 @@ export class Dependencies {
   }
 
   private registerUseCaseMakers() {
-    this.dependencyMakers.set(TYPES.ImportDataUseCase, () => {
+    this.factory.set(TYPES.ImportDataUseCase, () => {
       return new ImportDataUseCase(
         this.get(TYPES.ItemManager),
         this.get(TYPES.SyncService),
@@ -154,27 +154,27 @@ export class Dependencies {
       )
     })
 
-    this.dependencyMakers.set(TYPES.RemoveItemsLocally, () => {
+    this.factory.set(TYPES.RemoveItemsLocally, () => {
       return new RemoveItemsLocally(this.get(TYPES.ItemManager), this.get(TYPES.DiskStorageService))
     })
 
-    this.dependencyMakers.set(TYPES.FindContact, () => {
+    this.factory.set(TYPES.FindContact, () => {
       return new FindContact(this.get(TYPES.ItemManager))
     })
 
-    this.dependencyMakers.set(TYPES.EditContact, () => {
+    this.factory.set(TYPES.EditContact, () => {
       return new EditContact(this.get(TYPES.MutatorService), this.get(TYPES.SyncService))
     })
 
-    this.dependencyMakers.set(TYPES.GetAllContacts, () => {
+    this.factory.set(TYPES.GetAllContacts, () => {
       return new GetAllContacts(this.get(TYPES.ItemManager))
     })
 
-    this.dependencyMakers.set(TYPES.ValidateItemSigner, () => {
+    this.factory.set(TYPES.ValidateItemSigner, () => {
       return new ValidateItemSigner(this.get(TYPES.FindContact))
     })
 
-    this.dependencyMakers.set(TYPES.CreateOrEditContact, () => {
+    this.factory.set(TYPES.CreateOrEditContact, () => {
       return new CreateOrEditContact(
         this.get(TYPES.MutatorService),
         this.get(TYPES.SyncService),
@@ -183,11 +183,11 @@ export class Dependencies {
       )
     })
 
-    this.dependencyMakers.set(TYPES.GetVault, () => {
+    this.factory.set(TYPES.GetVault, () => {
       return new GetVault(this.get(TYPES.ItemManager))
     })
 
-    this.dependencyMakers.set(TYPES.ChangeVaultKeyOptions, () => {
+    this.factory.set(TYPES.ChangeVaultKeyOptions, () => {
       return new ChangeVaultKeyOptions(
         this.get(TYPES.MutatorService),
         this.get(TYPES.SyncService),
@@ -196,7 +196,7 @@ export class Dependencies {
       )
     })
 
-    this.dependencyMakers.set(TYPES.MoveItemsToVault, () => {
+    this.factory.set(TYPES.MoveItemsToVault, () => {
       return new MoveItemsToVault(
         this.get(TYPES.MutatorService),
         this.get(TYPES.SyncService),
@@ -204,7 +204,7 @@ export class Dependencies {
       )
     })
 
-    this.dependencyMakers.set(TYPES.CreateVault, () => {
+    this.factory.set(TYPES.CreateVault, () => {
       return new CreateVault(
         this.get(TYPES.MutatorService),
         this.get(TYPES.EncryptionService),
@@ -212,7 +212,7 @@ export class Dependencies {
       )
     })
 
-    this.dependencyMakers.set(TYPES.RemoveItemFromVault, () => {
+    this.factory.set(TYPES.RemoveItemFromVault, () => {
       return new RemoveItemFromVault(
         this.get(TYPES.MutatorService),
         this.get(TYPES.SyncService),
@@ -220,7 +220,7 @@ export class Dependencies {
       )
     })
 
-    this.dependencyMakers.set(TYPES.DeleteVault, () => {
+    this.factory.set(TYPES.DeleteVault, () => {
       return new DeleteVault(
         this.get(TYPES.ItemManager),
         this.get(TYPES.MutatorService),
@@ -228,11 +228,11 @@ export class Dependencies {
       )
     })
 
-    this.dependencyMakers.set(TYPES.RotateVaultKey, () => {
+    this.factory.set(TYPES.RotateVaultKey, () => {
       return new RotateVaultKey(this.get(TYPES.MutatorService), this.get(TYPES.EncryptionService))
     })
 
-    this.dependencyMakers.set(TYPES.ReuploadInvite, () => {
+    this.factory.set(TYPES.ReuploadInvite, () => {
       return new ReuploadInvite(
         this.get(TYPES.DecryptOwnMessage),
         this.get(TYPES.SendVaultInvite),
@@ -240,7 +240,7 @@ export class Dependencies {
       )
     })
 
-    this.dependencyMakers.set(TYPES.ReuploadAllInvites, () => {
+    this.factory.set(TYPES.ReuploadAllInvites, () => {
       return new ReuploadAllInvites(
         this.get(TYPES.ReuploadInvite),
         this.get(TYPES.FindContact),
@@ -248,7 +248,7 @@ export class Dependencies {
       )
     })
 
-    this.dependencyMakers.set(TYPES.ResendAllMessages, () => {
+    this.factory.set(TYPES.ResendAllMessages, () => {
       return new ResendAllMessages(
         this.get(TYPES.ResendMessage),
         this.get(TYPES.MessageServer),
@@ -256,7 +256,7 @@ export class Dependencies {
       )
     })
 
-    this.dependencyMakers.set(TYPES.CreateSharedVault, () => {
+    this.factory.set(TYPES.CreateSharedVault, () => {
       return new CreateSharedVault(
         this.get(TYPES.ItemManager),
         this.get(TYPES.MutatorService),
@@ -266,11 +266,11 @@ export class Dependencies {
       )
     })
 
-    this.dependencyMakers.set(TYPES.HandleKeyPairChange, () => {
+    this.factory.set(TYPES.HandleKeyPairChange, () => {
       return new HandleKeyPairChange(this.get(TYPES.ReuploadAllInvites), this.get(TYPES.ResendAllMessages))
     })
 
-    this.dependencyMakers.set(TYPES.NotifyVaultUsersOfKeyRotation, () => {
+    this.factory.set(TYPES.NotifyVaultUsersOfKeyRotation, () => {
       return new NotifyVaultUsersOfKeyRotation(
         this.get(TYPES.FindContact),
         this.get(TYPES.SendVaultDataChangedMessage),
@@ -281,7 +281,7 @@ export class Dependencies {
       )
     })
 
-    this.dependencyMakers.set(TYPES.SendVaultDataChangedMessage, () => {
+    this.factory.set(TYPES.SendVaultDataChangedMessage, () => {
       return new SendVaultDataChangedMessage(
         this.get(TYPES.EncryptMessage),
         this.get(TYPES.FindContact),
@@ -290,7 +290,7 @@ export class Dependencies {
       )
     })
 
-    this.dependencyMakers.set(TYPES.ReplaceContactData, () => {
+    this.factory.set(TYPES.ReplaceContactData, () => {
       return new ReplaceContactData(
         this.get(TYPES.MutatorService),
         this.get(TYPES.SyncService),
@@ -298,23 +298,23 @@ export class Dependencies {
       )
     })
 
-    this.dependencyMakers.set(TYPES.GetTrustedPayload, () => {
+    this.factory.set(TYPES.GetTrustedPayload, () => {
       return new GetTrustedPayload(this.get(TYPES.DecryptMessage))
     })
 
-    this.dependencyMakers.set(TYPES.GetUntrustedPayload, () => {
+    this.factory.set(TYPES.GetUntrustedPayload, () => {
       return new GetUntrustedPayload(this.get(TYPES.DecryptMessage))
     })
 
-    this.dependencyMakers.set(TYPES.GetVaultContacts, () => {
+    this.factory.set(TYPES.GetVaultContacts, () => {
       return new GetVaultContacts(this.get(TYPES.FindContact), this.get(TYPES.GetSharedVaultUsers))
     })
 
-    this.dependencyMakers.set(TYPES.AcceptVaultInvite, () => {
+    this.factory.set(TYPES.AcceptVaultInvite, () => {
       return new AcceptVaultInvite(this.get(TYPES.SharedVaultInvitesServer), this.get(TYPES.ProcessAcceptedVaultInvite))
     })
 
-    this.dependencyMakers.set(TYPES.InviteToVault, () => {
+    this.factory.set(TYPES.InviteToVault, () => {
       return new InviteToVault(
         this.get(TYPES.KeySystemKeyManager),
         this.get(TYPES.EncryptMessage),
@@ -322,7 +322,7 @@ export class Dependencies {
       )
     })
 
-    this.dependencyMakers.set(TYPES.DeleteThirdPartyVault, () => {
+    this.factory.set(TYPES.DeleteThirdPartyVault, () => {
       return new DeleteThirdPartyVault(
         this.get(TYPES.ItemManager),
         this.get(TYPES.MutatorService),
@@ -332,7 +332,7 @@ export class Dependencies {
       )
     })
 
-    this.dependencyMakers.set(TYPES.LeaveVault, () => {
+    this.factory.set(TYPES.LeaveVault, () => {
       return new LeaveVault(
         this.get(TYPES.SharedVaultUsersServer),
         this.get(TYPES.ItemManager),
@@ -340,7 +340,7 @@ export class Dependencies {
       )
     })
 
-    this.dependencyMakers.set(TYPES.ShareContactWithVault, () => {
+    this.factory.set(TYPES.ShareContactWithVault, () => {
       return new ShareContactWithVault(
         this.get(TYPES.FindContact),
         this.get(TYPES.EncryptMessage),
@@ -349,7 +349,7 @@ export class Dependencies {
       )
     })
 
-    this.dependencyMakers.set(TYPES.ConvertToSharedVault, () => {
+    this.factory.set(TYPES.ConvertToSharedVault, () => {
       return new ConvertToSharedVault(
         this.get(TYPES.ItemManager),
         this.get(TYPES.MutatorService),
@@ -358,7 +358,7 @@ export class Dependencies {
       )
     })
 
-    this.dependencyMakers.set(TYPES.DeleteSharedVault, () => {
+    this.factory.set(TYPES.DeleteSharedVault, () => {
       return new DeleteSharedVault(
         this.get(TYPES.SharedVaultServer),
         this.get(TYPES.SyncService),
@@ -366,37 +366,37 @@ export class Dependencies {
       )
     })
 
-    this.dependencyMakers.set(TYPES.RemoveVaultMember, () => {
+    this.factory.set(TYPES.RemoveVaultMember, () => {
       return new RemoveVaultMember(this.get(TYPES.SharedVaultUsersServer))
     })
 
-    this.dependencyMakers.set(TYPES.GetSharedVaultUsers, () => {
+    this.factory.set(TYPES.GetSharedVaultUsers, () => {
       return new GetSharedVaultUsers(this.get(TYPES.SharedVaultUsersServer))
     })
   }
 
   private registerServiceMakers() {
-    this.dependencyMakers.set(TYPES.UserServer, () => {
+    this.factory.set(TYPES.UserServer, () => {
       return new UserServer(this.get(TYPES.HttpService))
     })
 
-    this.dependencyMakers.set(TYPES.SharedVaultInvitesServer, () => {
+    this.factory.set(TYPES.SharedVaultInvitesServer, () => {
       return new SharedVaultInvitesServer(this.get(TYPES.HttpService))
     })
 
-    this.dependencyMakers.set(TYPES.SharedVaultServer, () => {
+    this.factory.set(TYPES.SharedVaultServer, () => {
       return new SharedVaultServer(this.get(TYPES.HttpService))
     })
 
-    this.dependencyMakers.set(TYPES.MessageServer, () => {
+    this.factory.set(TYPES.MessageServer, () => {
       return new AsymmetricMessageServer(this.get(TYPES.HttpService))
     })
 
-    this.dependencyMakers.set(TYPES.SharedVaultUsersServer, () => {
+    this.factory.set(TYPES.SharedVaultUsersServer, () => {
       return new SharedVaultUsersServer(this.get(TYPES.HttpService))
     })
 
-    this.dependencyMakers.set(TYPES.AsymmetricMessageService, () => {
+    this.factory.set(TYPES.AsymmetricMessageService, () => {
       return new AsymmetricMessageService(
         this.get(TYPES.MessageServer),
         this.get(TYPES.EncryptionService),
@@ -416,7 +416,7 @@ export class Dependencies {
       )
     })
 
-    this.dependencyMakers.set(TYPES.SharedVaultService, () => {
+    this.factory.set(TYPES.SharedVaultService, () => {
       return new SharedVaultService(
         this.get(TYPES.SyncService),
         this.get(TYPES.ItemManager),
@@ -447,7 +447,7 @@ export class Dependencies {
       )
     })
 
-    this.dependencyMakers.set(TYPES.VaultService, () => {
+    this.factory.set(TYPES.VaultService, () => {
       return new VaultService(
         this.get(TYPES.SyncService),
         this.get(TYPES.ItemManager),
@@ -465,7 +465,7 @@ export class Dependencies {
       )
     })
 
-    this.dependencyMakers.set(TYPES.SelfContactManager, () => {
+    this.factory.set(TYPES.SelfContactManager, () => {
       return new SelfContactManager(
         this.get(TYPES.SyncService),
         this.get(TYPES.ItemManager),
@@ -475,7 +475,7 @@ export class Dependencies {
       )
     })
 
-    this.dependencyMakers.set(TYPES.ContactService, () => {
+    this.factory.set(TYPES.ContactService, () => {
       return new ContactService(
         this.get(TYPES.SyncService),
         this.get(TYPES.MutatorService),
@@ -493,7 +493,7 @@ export class Dependencies {
       )
     })
 
-    this.dependencyMakers.set(TYPES.SignInWithRecoveryCodes, () => {
+    this.factory.set(TYPES.SignInWithRecoveryCodes, () => {
       return new SignInWithRecoveryCodes(
         this.get(TYPES.AuthManager),
         this.get(TYPES.EncryptionService),
@@ -504,81 +504,81 @@ export class Dependencies {
       )
     })
 
-    this.dependencyMakers.set(TYPES.GetRecoveryCodes, () => {
+    this.factory.set(TYPES.GetRecoveryCodes, () => {
       return new GetRecoveryCodes(this.get(TYPES.AuthManager), this.get(TYPES.SettingsService))
     })
 
-    this.dependencyMakers.set(TYPES.AddAuthenticator, () => {
+    this.factory.set(TYPES.AddAuthenticator, () => {
       return new AddAuthenticator(
         this.get(TYPES.AuthenticatorManager),
         this.options.u2fAuthenticatorRegistrationPromptFunction,
       )
     })
 
-    this.dependencyMakers.set(TYPES.ListAuthenticators, () => {
+    this.factory.set(TYPES.ListAuthenticators, () => {
       return new ListAuthenticators(this.get(TYPES.AuthenticatorManager))
     })
 
-    this.dependencyMakers.set(TYPES.DeleteAuthenticator, () => {
+    this.factory.set(TYPES.DeleteAuthenticator, () => {
       return new DeleteAuthenticator(this.get(TYPES.AuthenticatorManager))
     })
 
-    this.dependencyMakers.set(TYPES.GetAuthenticatorAuthenticationOptions, () => {
+    this.factory.set(TYPES.GetAuthenticatorAuthenticationOptions, () => {
       return new GetAuthenticatorAuthenticationOptions(this.get(TYPES.AuthenticatorManager))
     })
 
-    this.dependencyMakers.set(TYPES.GetAuthenticatorAuthenticationResponse, () => {
+    this.factory.set(TYPES.GetAuthenticatorAuthenticationResponse, () => {
       return new GetAuthenticatorAuthenticationResponse(
         this.get(TYPES.GetAuthenticatorAuthenticationOptions),
         this.options.u2fAuthenticatorVerificationPromptFunction,
       )
     })
 
-    this.dependencyMakers.set(TYPES.ListRevisions, () => {
+    this.factory.set(TYPES.ListRevisions, () => {
       return new ListRevisions(this.get(TYPES.RevisionManager))
     })
 
-    this.dependencyMakers.set(TYPES.GetRevision, () => {
+    this.factory.set(TYPES.GetRevision, () => {
       return new GetRevision(this.get(TYPES.RevisionManager), this.get(TYPES.EncryptionService))
     })
 
-    this.dependencyMakers.set(TYPES.DeleteRevision, () => {
+    this.factory.set(TYPES.DeleteRevision, () => {
       return new DeleteRevision(this.get(TYPES.RevisionManager))
     })
 
-    this.dependencyMakers.set(TYPES.RevisionServer, () => {
+    this.factory.set(TYPES.RevisionServer, () => {
       return new RevisionServer(this.get(TYPES.HttpService))
     })
 
-    this.dependencyMakers.set(TYPES.RevisionApiService, () => {
+    this.factory.set(TYPES.RevisionApiService, () => {
       return new RevisionApiService(this.get(TYPES.RevisionServer))
     })
 
-    this.dependencyMakers.set(TYPES.RevisionManager, () => {
+    this.factory.set(TYPES.RevisionManager, () => {
       return new RevisionManager(this.get(TYPES.RevisionApiService), this.get(TYPES.InternalEventBus))
     })
 
-    this.dependencyMakers.set(TYPES.AuthServer, () => {
+    this.factory.set(TYPES.AuthServer, () => {
       return new AuthServer(this.get(TYPES.HttpService))
     })
 
-    this.dependencyMakers.set(TYPES.AuthApiService, () => {
+    this.factory.set(TYPES.AuthApiService, () => {
       return new AuthApiService(this.get(TYPES.AuthServer))
     })
 
-    this.dependencyMakers.set(TYPES.AuthManager, () => {
+    this.factory.set(TYPES.AuthManager, () => {
       return new AuthManager(this.get(TYPES.AuthApiService), this.get(TYPES.InternalEventBus))
     })
 
-    this.dependencyMakers.set(TYPES.AuthenticatorServer, () => {
+    this.factory.set(TYPES.AuthenticatorServer, () => {
       return new AuthenticatorServer(this.get(TYPES.HttpService))
     })
 
-    this.dependencyMakers.set(TYPES.AuthenticatorApiService, () => {
+    this.factory.set(TYPES.AuthenticatorApiService, () => {
       return new AuthenticatorApiService(this.get(TYPES.AuthenticatorServer))
     })
 
-    this.dependencyMakers.set(TYPES.AuthenticatorManager, () => {
+    this.factory.set(TYPES.AuthenticatorManager, () => {
       return new AuthenticatorManager(
         this.get(TYPES.AuthenticatorApiService),
         this.get(TYPES.PreferencesService),
@@ -586,7 +586,7 @@ export class Dependencies {
       )
     })
 
-    this.dependencyMakers.set(TYPES.ActionsService, () => {
+    this.factory.set(TYPES.ActionsService, () => {
       return new SNActionsService(
         this.get(TYPES.ItemManager),
         this.get(TYPES.AlertService),
@@ -601,7 +601,7 @@ export class Dependencies {
       )
     })
 
-    this.dependencyMakers.set(TYPES.ListedService, () => {
+    this.factory.set(TYPES.ListedService, () => {
       return new ListedService(
         this.get(TYPES.LegacyApiService),
         this.get(TYPES.ItemManager),
@@ -614,7 +614,7 @@ export class Dependencies {
       )
     })
 
-    this.dependencyMakers.set(TYPES.IntegrityService, () => {
+    this.factory.set(TYPES.IntegrityService, () => {
       return new IntegrityService(
         this.get(TYPES.LegacyApiService),
         this.get(TYPES.LegacyApiService),
@@ -623,7 +623,7 @@ export class Dependencies {
       )
     })
 
-    this.dependencyMakers.set(TYPES.FileService, () => {
+    this.factory.set(TYPES.FileService, () => {
       return new FileService(
         this.get(TYPES.LegacyApiService),
         this.get(TYPES.MutatorService),
@@ -638,7 +638,7 @@ export class Dependencies {
       )
     })
 
-    this.dependencyMakers.set(TYPES.MigrationService, () => {
+    this.factory.set(TYPES.MigrationService, () => {
       return new SNMigrationService({
         encryptionService: this.get(TYPES.EncryptionService),
         deviceInterface: this.get(TYPES.DeviceInterface),
@@ -659,7 +659,7 @@ export class Dependencies {
       })
     })
 
-    this.dependencyMakers.set(TYPES.HomeServerService, () => {
+    this.factory.set(TYPES.HomeServerService, () => {
       if (!isDesktopDevice(this.get(TYPES.DeviceInterface))) {
         return undefined
       }
@@ -667,7 +667,7 @@ export class Dependencies {
       return new HomeServerService(this.get(TYPES.DeviceInterface), this.get(TYPES.InternalEventBus))
     })
 
-    this.dependencyMakers.set(TYPES.FilesBackupService, () => {
+    this.factory.set(TYPES.FilesBackupService, () => {
       if (!isDesktopDevice(this.get(TYPES.DeviceInterface))) {
         return undefined
       }
@@ -688,11 +688,11 @@ export class Dependencies {
       )
     })
 
-    this.dependencyMakers.set(TYPES.StatusService, () => {
+    this.factory.set(TYPES.StatusService, () => {
       return new StatusService(this.get(TYPES.InternalEventBus))
     })
 
-    this.dependencyMakers.set(TYPES.MfaService, () => {
+    this.factory.set(TYPES.MfaService, () => {
       return new SNMfaService(
         this.get(TYPES.SettingsService),
         this.options.crypto,
@@ -701,7 +701,7 @@ export class Dependencies {
       )
     })
 
-    this.dependencyMakers.set(TYPES.ComponentManager, () => {
+    this.factory.set(TYPES.ComponentManager, () => {
       return new SNComponentManager(
         this.get(TYPES.ItemManager),
         this.get(TYPES.MutatorService),
@@ -716,7 +716,7 @@ export class Dependencies {
       )
     })
 
-    this.dependencyMakers.set(TYPES.FeaturesService, () => {
+    this.factory.set(TYPES.FeaturesService, () => {
       return new SNFeaturesService(
         this.get(TYPES.DiskStorageService),
         this.get(TYPES.ItemManager),
@@ -734,7 +734,7 @@ export class Dependencies {
       )
     })
 
-    this.dependencyMakers.set(TYPES.SettingsService, () => {
+    this.factory.set(TYPES.SettingsService, () => {
       return new SNSettingsService(
         this.get(TYPES.SessionManager),
         this.get(TYPES.LegacyApiService),
@@ -742,7 +742,7 @@ export class Dependencies {
       )
     })
 
-    this.dependencyMakers.set(TYPES.PreferencesService, () => {
+    this.factory.set(TYPES.PreferencesService, () => {
       return new SNPreferencesService(
         this.get(TYPES.SingletonManager),
         this.get(TYPES.ItemManager),
@@ -752,7 +752,7 @@ export class Dependencies {
       )
     })
 
-    this.dependencyMakers.set(TYPES.SingletonManager, () => {
+    this.factory.set(TYPES.SingletonManager, () => {
       return new SNSingletonManager(
         this.get(TYPES.ItemManager),
         this.get(TYPES.MutatorService),
@@ -762,7 +762,7 @@ export class Dependencies {
       )
     })
 
-    this.dependencyMakers.set(TYPES.KeyRecoveryService, () => {
+    this.factory.set(TYPES.KeyRecoveryService, () => {
       return new SNKeyRecoveryService(
         this.get(TYPES.ItemManager),
         this.get(TYPES.PayloadManager),
@@ -777,7 +777,7 @@ export class Dependencies {
       )
     })
 
-    this.dependencyMakers.set(TYPES.UserService, () => {
+    this.factory.set(TYPES.UserService, () => {
       return new UserService(
         this.get(TYPES.SessionManager),
         this.get(TYPES.SyncService),
@@ -792,7 +792,7 @@ export class Dependencies {
       )
     })
 
-    this.dependencyMakers.set(TYPES.ProtectionService, () => {
+    this.factory.set(TYPES.ProtectionService, () => {
       return new SNProtectionService(
         this.get(TYPES.EncryptionService),
         this.get(TYPES.MutatorService),
@@ -802,7 +802,7 @@ export class Dependencies {
       )
     })
 
-    this.dependencyMakers.set(TYPES.SyncService, () => {
+    this.factory.set(TYPES.SyncService, () => {
       return new SNSyncService(
         this.get(TYPES.ItemManager),
         this.get(TYPES.SessionManager),
@@ -821,7 +821,7 @@ export class Dependencies {
       )
     })
 
-    this.dependencyMakers.set(TYPES.HistoryManager, () => {
+    this.factory.set(TYPES.HistoryManager, () => {
       return new SNHistoryManager(
         this.get(TYPES.ItemManager),
         this.get(TYPES.DiskStorageService),
@@ -830,7 +830,7 @@ export class Dependencies {
       )
     })
 
-    this.dependencyMakers.set(TYPES.SubscriptionManager, () => {
+    this.factory.set(TYPES.SubscriptionManager, () => {
       return new SubscriptionManager(
         this.get(TYPES.SubscriptionApiService),
         this.get(TYPES.SessionManager),
@@ -839,7 +839,7 @@ export class Dependencies {
       )
     })
 
-    this.dependencyMakers.set(TYPES.SessionManager, () => {
+    this.factory.set(TYPES.SessionManager, () => {
       return new SNSessionManager(
         this.get(TYPES.DiskStorageService),
         this.get(TYPES.LegacyApiService),
@@ -856,7 +856,7 @@ export class Dependencies {
       )
     })
 
-    this.dependencyMakers.set(TYPES.WebSocketsService, () => {
+    this.factory.set(TYPES.WebSocketsService, () => {
       return new SNWebSocketsService(
         this.get(TYPES.DiskStorageService),
         this.options.webSocketUrl,
@@ -865,43 +865,43 @@ export class Dependencies {
       )
     })
 
-    this.dependencyMakers.set(TYPES.WebSocketApiService, () => {
+    this.factory.set(TYPES.WebSocketApiService, () => {
       return new WebSocketApiService(this.get(TYPES.WebSocketServer))
     })
 
-    this.dependencyMakers.set(TYPES.WebSocketServer, () => {
+    this.factory.set(TYPES.WebSocketServer, () => {
       return new WebSocketServer(this.get(TYPES.HttpService))
     })
 
-    this.dependencyMakers.set(TYPES.SubscriptionApiService, () => {
+    this.factory.set(TYPES.SubscriptionApiService, () => {
       return new SubscriptionApiService(this.get(TYPES.SubscriptionServer))
     })
 
-    this.dependencyMakers.set(TYPES.UserApiService, () => {
+    this.factory.set(TYPES.UserApiService, () => {
       return new UserApiService(this.get(TYPES.UserServer), this.get(TYPES.UserRequestServer))
     })
 
-    this.dependencyMakers.set(TYPES.SubscriptionServer, () => {
+    this.factory.set(TYPES.SubscriptionServer, () => {
       return new SubscriptionServer(this.get(TYPES.HttpService))
     })
 
-    this.dependencyMakers.set(TYPES.UserRequestServer, () => {
+    this.factory.set(TYPES.UserRequestServer, () => {
       return new UserServer(this.get(TYPES.HttpService))
     })
 
-    this.dependencyMakers.set(TYPES.InternalEventBus, () => {
+    this.factory.set(TYPES.InternalEventBus, () => {
       return new InternalEventBus()
     })
 
-    this.dependencyMakers.set(TYPES.PayloadManager, () => {
+    this.factory.set(TYPES.PayloadManager, () => {
       return new PayloadManager(this.get(TYPES.InternalEventBus))
     })
 
-    this.dependencyMakers.set(TYPES.ItemManager, () => {
+    this.factory.set(TYPES.ItemManager, () => {
       return new ItemManager(this.get(TYPES.PayloadManager), this.get(TYPES.InternalEventBus))
     })
 
-    this.dependencyMakers.set(TYPES.MutatorService, () => {
+    this.factory.set(TYPES.MutatorService, () => {
       return new MutatorService(
         this.get(TYPES.ItemManager),
         this.get(TYPES.PayloadManager),
@@ -910,7 +910,7 @@ export class Dependencies {
       )
     })
 
-    this.dependencyMakers.set(TYPES.DiskStorageService, () => {
+    this.factory.set(TYPES.DiskStorageService, () => {
       return new DiskStorageService(
         this.get(TYPES.DeviceInterface),
         this.options.identifier,
@@ -918,15 +918,15 @@ export class Dependencies {
       )
     })
 
-    this.dependencyMakers.set(TYPES.UserEventService, () => {
+    this.factory.set(TYPES.UserEventService, () => {
       return new UserEventService(this.get(TYPES.InternalEventBus))
     })
 
-    this.dependencyMakers.set(TYPES.InMemoryStore, () => {
+    this.factory.set(TYPES.InMemoryStore, () => {
       return new InMemoryStore()
     })
 
-    this.dependencyMakers.set(TYPES.KeySystemKeyManager, () => {
+    this.factory.set(TYPES.KeySystemKeyManager, () => {
       return new KeySystemKeyManager(
         this.get(TYPES.ItemManager),
         this.get(TYPES.MutatorService),
@@ -935,7 +935,7 @@ export class Dependencies {
       )
     })
 
-    this.dependencyMakers.set(TYPES.ChallengeService, () => {
+    this.factory.set(TYPES.ChallengeService, () => {
       return new ChallengeService(
         this.get(TYPES.DiskStorageService),
         this.get(TYPES.EncryptionService),
@@ -943,7 +943,7 @@ export class Dependencies {
       )
     })
 
-    this.dependencyMakers.set(TYPES.EncryptionService, () => {
+    this.factory.set(TYPES.EncryptionService, () => {
       return new EncryptionService(
         this.get(TYPES.ItemManager),
         this.get(TYPES.MutatorService),
@@ -957,7 +957,7 @@ export class Dependencies {
       )
     })
 
-    this.dependencyMakers.set(TYPES.DeprecatedHttpService, () => {
+    this.factory.set(TYPES.DeprecatedHttpService, () => {
       return new DeprecatedHttpService(
         this.options.environment,
         this.options.appVersion,
@@ -965,11 +965,11 @@ export class Dependencies {
       )
     })
 
-    this.dependencyMakers.set(TYPES.HttpService, () => {
+    this.factory.set(TYPES.HttpService, () => {
       return new HttpService(this.options.environment, this.options.appVersion, SnjsVersion)
     })
 
-    this.dependencyMakers.set(TYPES.LegacyApiService, () => {
+    this.factory.set(TYPES.LegacyApiService, () => {
       return new SNApiService(
         this.get(TYPES.HttpService),
         this.get(TYPES.DiskStorageService),
@@ -982,22 +982,28 @@ export class Dependencies {
       )
     })
 
-    this.dependencyMakers.set(TYPES.SessionStorageMapper, () => {
+    this.factory.set(TYPES.SessionStorageMapper, () => {
       return new SessionStorageMapper()
     })
 
-    this.dependencyMakers.set(TYPES.LegacySessionStorageMapper, () => {
+    this.factory.set(TYPES.LegacySessionStorageMapper, () => {
       return new LegacySessionStorageMapper()
     })
   }
 
-  public get<T>(dependency: symbol): T {
-    const dependencyInstance = this.dependencies.get(dependency)
-    if (!dependencyInstance) {
-      throw new Error(`Dependency ${dependency.toString()} not found`)
+  public get<T>(sym: symbol): T {
+    const dep = this.dependencies.get(sym)
+    if (!dep) {
+      const maker = this.factory.get(sym)
+      if (!maker) {
+        throw new Error(`No dependency maker found for ${sym.toString()}`)
+      }
+
+      const instance = maker()
+      this.dependencies.set(sym, instance)
     }
 
-    return dependencyInstance as T
+    return dep as T
   }
 
   public set<T>(dependency: symbol, instance: T): void {
@@ -1006,7 +1012,7 @@ export class Dependencies {
 
   private makeDependencies() {
     for (const dependency of DependencyInitOrder) {
-      const maker = this.dependencyMakers.get(dependency)
+      const maker = this.factory.get(dependency)
       if (!maker) {
         throw new Error(`No dependency maker found for ${dependency.toString()}`)
       }
