@@ -42,7 +42,7 @@ describe('migrations', () => {
   it('after running all migrations from a 2.0.0 installation, should set stored version to current', async function () {
     const application = await Factory.createAppWithRandNamespace()
     /** Set up 2.0.0 structure with tell-tale storage key */
-    await application.deviceInterface.setRawStorageValue('last_migration_timestamp', JSON.stringify(['anything']))
+    await application.device.setRawStorageValue('last_migration_timestamp', JSON.stringify(['anything']))
     await application.prepareForLaunch({
       receiveChallenge: () => {},
     })
@@ -73,7 +73,7 @@ describe('migrations', () => {
 
     expect(application.items.getItems('SF|MFA').length).to.equal(1)
     expect(
-      (await application.diskStorageService.getAllRawPayloads()).filter((p) => p.content_type === 'SF|MFA').length,
+      (await application.storage.getAllRawPayloads()).filter((p) => p.content_type === 'SF|MFA').length,
     ).to.equal(1)
 
     /** Run migration */
@@ -82,7 +82,7 @@ describe('migrations', () => {
 
     expect(application.items.getItems('SF|MFA').length).to.equal(0)
     expect(
-      (await application.diskStorageService.getAllRawPayloads()).filter((p) => p.content_type === 'SF|MFA').length,
+      (await application.storage.getAllRawPayloads()).filter((p) => p.content_type === 'SF|MFA').length,
     ).to.equal(0)
 
     await Factory.safeDeinit(application)

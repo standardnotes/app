@@ -23,11 +23,11 @@ describe('items', () => {
   it('setting an item as dirty should update its client updated at', async function () {
     const params = Factory.createNotePayload()
     await this.application.mutator.emitItemsFromPayloads([params], PayloadEmitSource.LocalChanged)
-    const item = this.application.itemManager.items[0]
+    const item = this.application.items.items[0]
     const prevDate = item.userModifiedDate.getTime()
     await Factory.sleep(0.1)
     await this.application.mutator.setItemDirty(item, true)
-    const refreshedItem = this.application.itemManager.findItem(item.uuid)
+    const refreshedItem = this.application.items.findItem(item.uuid)
     const newDate = refreshedItem.userModifiedDate.getTime()
     expect(prevDate).to.not.equal(newDate)
   })
@@ -35,7 +35,7 @@ describe('items', () => {
   it('setting an item as dirty with option to skip client updated at', async function () {
     const params = Factory.createNotePayload()
     await this.application.mutator.emitItemsFromPayloads([params], PayloadEmitSource.LocalChanged)
-    const item = this.application.itemManager.items[0]
+    const item = this.application.items.items[0]
     const prevDate = item.userModifiedDate.getTime()
     await Factory.sleep(0.1)
     await this.application.mutator.setItemDirty(item)
@@ -47,7 +47,7 @@ describe('items', () => {
     const params = Factory.createNotePayload()
     await this.application.mutator.emitItemsFromPayloads([params], PayloadEmitSource.LocalChanged)
 
-    const item = this.application.itemManager.items[0]
+    const item = this.application.items.items[0]
     expect(item.pinned).to.not.be.ok
 
     const refreshedItem = await this.application.changeAndSaveItem(
@@ -71,8 +71,8 @@ describe('items', () => {
     const params2 = Factory.createNotePayload()
     await this.application.mutator.emitItemsFromPayloads([params1, params2], PayloadEmitSource.LocalChanged)
 
-    let item1 = this.application.itemManager.getDisplayableNotes()[0]
-    let item2 = this.application.itemManager.getDisplayableNotes()[1]
+    let item1 = this.application.items.getDisplayableNotes()[0]
+    let item2 = this.application.items.getDisplayableNotes()[1]
 
     expect(item1.isItemContentEqualWith(item2)).to.equal(true)
 
@@ -176,8 +176,8 @@ describe('items', () => {
     const params2 = Factory.createNotePayload()
     await this.application.mutator.emitItemsFromPayloads([params1, params2], PayloadEmitSource.LocalChanged)
 
-    let item1 = this.application.itemManager.getDisplayableNotes()[0]
-    const item2 = this.application.itemManager.getDisplayableNotes()[1]
+    let item1 = this.application.items.getDisplayableNotes()[0]
+    const item2 = this.application.items.getDisplayableNotes()[1]
 
     item1 = await this.application.changeAndSaveItem(
       item1,

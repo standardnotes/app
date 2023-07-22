@@ -25,7 +25,7 @@ const MultitaskingPrivacy = ({ application }: Props) => {
     setHasScreenshotPrivacy(enable)
 
     application.protections.setMobileScreenshotPrivacyEnabled(enable)
-    ;(application.deviceInterface as MobileDeviceInterface).setAndroidScreenshotPrivacy(enable)
+    ;(application.device as MobileDeviceInterface).setAndroidScreenshotPrivacy(enable)
   }
 
   const screenshotPrivacyFeatureText = isIOS() ? 'Multitasking Privacy' : 'Multitasking/Screenshot Privacy'

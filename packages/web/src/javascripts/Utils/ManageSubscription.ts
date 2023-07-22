@@ -9,12 +9,12 @@ export async function openSubscriptionDashboard(application: WebApplicationInter
 
   const url = `${window.dashboardUrl}?subscription_token=${token}`
 
-  if (application.deviceInterface.environment === Environment.Mobile) {
-    application.deviceInterface.openUrl(url)
+  if (application.device.environment === Environment.Mobile) {
+    application.device.openUrl(url)
     return
   }
 
-  if (application.deviceInterface.environment === Environment.Desktop) {
+  if (application.device.environment === Environment.Desktop) {
     window.open(url, '_blank')
     return
   }

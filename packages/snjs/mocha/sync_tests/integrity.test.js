@@ -28,7 +28,7 @@ describe('sync integrity', () => {
 
   const awaitSyncEventPromise = (application, targetEvent) => {
     return new Promise((resolve) => {
-      application.syncService.addEventObserver((event) => {
+      application.sync.addEventObserver((event) => {
         if (event === targetEvent) {
           resolve()
         }
@@ -37,8 +37,8 @@ describe('sync integrity', () => {
   }
 
   afterEach(async function () {
-    expect(this.application.syncService.isOutOfSync()).to.equal(false)
-    const rawPayloads = await this.application.diskStorageService.getAllRawPayloads()
+    expect(this.application.sync.isOutOfSync()).to.equal(false)
+    const rawPayloads = await this.application.storage.getAllRawPayloads()
     expect(rawPayloads.length).to.equal(this.expectedItemCount)
     await Factory.safeDeinit(this.application)
   })
@@ -51,10 +51,10 @@ describe('sync integrity', () => {
     this.expectedItemCount++
 
     const didEnterOutOfSync = awaitSyncEventPromise(this.application, SyncEvent.EnterOutOfSync)
-    await this.application.syncService.sync({ checkIntegrity: true })
+    await this.application.sync.sync({ checkIntegrity: true })
 
-    await this.application.itemManager.removeItemLocally(item)
-    await this.application.syncService.sync({ checkIntegrity: true, awaitAll: true })
+    await this.application.items.removeItemLocally(item)
+    await this.application.sync.sync({ checkIntegrity: true, awaitAll: true })
 
     await didEnterOutOfSync
   })
@@ -69,11 +69,11 @@ describe('sync integrity', () => {
     const didEnterOutOfSync = awaitSyncEventPromise(this.application, SyncEvent.EnterOutOfSync)
     const didExitOutOfSync = awaitSyncEventPromise(this.application, SyncEvent.ExitOutOfSync)
 
-    await this.application.syncService.sync({ checkIntegrity: true })
-    await this.application.itemManager.removeItemLocally(item)
-    await this.application.syncService.sync({ checkIntegrity: true, awaitAll: true })
+    await this.application.sync.sync({ checkIntegrity: true })
+    await this.application.items.removeItemLocally(item)
+    await this.application.sync.sync({ checkIntegrity: true, awaitAll: true })
 
     await Promise.all([didEnterOutOfSync, didExitOutOfSync])
-    expect(this.application.syncService.isOutOfSync()).to.equal(false)
+    expect(this.application.sync.isOutOfSync()).to.equal(false)
   })
 })

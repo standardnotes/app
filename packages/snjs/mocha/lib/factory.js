@@ -58,7 +58,7 @@ export async function createAppContext({ identifier, crypto, email, password, ho
 }
 
 export function disableIntegrityAutoHeal(application) {
-  application.syncService.emitOutOfSyncRemotePayloads = () => {
+  application.sync.emitOutOfSyncRemotePayloads = () => {
     console.warn('Integrity self-healing is disabled for this test')
   }
 }
@@ -112,12 +112,12 @@ export function registerUserToApplication({ application, email, password, epheme
 }
 
 export async function setOldVersionPasscode({ application, passcode, version }) {
-  const identifier = await application.encryptionService.crypto.generateUUID()
-  const operator = application.encryptionService.operators.operatorForVersion(version)
+  const identifier = await application.encryption.crypto.generateUUID()
+  const operator = application.encryption.operators.operatorForVersion(version)
   const key = await operator.createRootKey(identifier, passcode, KeyParamsOrigination.PasscodeCreate)
-  await application.encryptionService.setNewRootKeyWrapper(key)
+  await application.encryption.setNewRootKeyWrapper(key)
   await application.userService.rewriteItemsKeys()
-  await application.syncService.sync(syncOptions)
+  await application.sync.sync(syncOptions)
 }
 
 /**
@@ -127,7 +127,7 @@ export async function setOldVersionPasscode({ application, passcode, version }) 
 export async function registerOldUser({ application, email, password, version }) {
   if (!email) email = Utils.generateUuid()
   if (!password) password = Utils.generateUuid()
-  const operator = application.encryptionService.operators.operatorForVersion(version)
+  const operator = application.encryption.operators.operatorForVersion(version)
   const accountKey = await operator.createRootKey(email, password, KeyParamsOrigination.Registration)
 
   const response = await application.userApiService.register({
@@ -136,16 +136,16 @@ export async function registerOldUser({ application, email, password, version })
     keyParams: accountKey.keyParams,
   })
   /** Mark all existing items as dirty. */
-  await application.mutator.changeItems(application.itemManager.items, (m) => {
+  await application.mutator.changeItems(application.items.items, (m) => {
     m.dirty = true
   })
   await application.sessionManager.handleSuccessAuthResponse(response, accountKey)
   application.notifyEvent(ApplicationEvent.SignedIn)
-  await application.syncService.sync({
+  await application.sync.sync({
     mode: SyncMode.DownloadFirst,
     ...syncOptions,
   })
-  await application.encryptionService.decryptErroredPayloads()
+  await application.encryption.decryptErroredPayloads()
 }
 
 export function createStorageItemPayload(contentType) {
@@ -182,13 +182,13 @@ export async function createSyncedNote(application, title, text) {
   const payload = createNotePayload(title, text)
   const item = await application.mutator.emitItemFromPayload(payload, PayloadEmitSource.LocalChanged)
   await application.mutator.setItemDirty(item)
-  await application.syncService.sync(syncOptions)
+  await application.sync.sync(syncOptions)
   const note = application.items.findItem(payload.uuid)
   return note
 }
 
 export async function getStoragePayloadsOfType(application, type) {
-  const rawPayloads = await application.diskStorageService.getAllRawPayloads()
+  const rawPayloads = await application.storage.getAllRawPayloads()
   return rawPayloads
     .filter((rp) => rp.content_type === type)
     .map((rp) => {
@@ -263,7 +263,7 @@ export async function restartApplication(application) {
 }
 
 export async function storagePayloadCount(application) {
-  const payloads = await application.diskStorageService.getAllRawPayloads()
+  const payloads = await application.storage.getAllRawPayloads()
   return payloads.length
 }
 
@@ -405,20 +405,20 @@ export async function insertItemWithOverride(application, contentType, content, 
     await application.payloadManager.emitPayload(decrypted)
   }
 
-  return application.itemManager.findAnyItem(item.uuid)
+  return application.items.findAnyItem(item.uuid)
 }
 
 export async function alternateUuidForItem(application, uuid) {
-  const item = application.itemManager.findItem(uuid)
+  const item = application.items.findItem(uuid)
   const payload = new DecryptedPayload(item)
   const results = await PayloadsByAlternatingUuid(payload, application.payloadManager.getMasterCollection())
   await application.payloadManager.emitPayloads(results, PayloadEmitSource.LocalChanged)
-  await application.syncService.persistPayloads(results)
-  return application.itemManager.findItem(results[0].uuid)
+  await application.sync.persistPayloads(results)
+  return application.items.findItem(results[0].uuid)
 }
 
 export async function markDirtyAndSyncItem(application, itemToLookupUuidFor) {
-  const item = application.itemManager.findItem(itemToLookupUuidFor.uuid)
+  const item = application.items.findItem(itemToLookupUuidFor.uuid)
   if (!item) {
     throw Error('Attempting to save non-inserted item')
   }
@@ -433,7 +433,7 @@ export async function changePayloadTimeStampAndSync(application, payload, timest
 
   await application.sync.sync(syncOptions)
 
-  return application.itemManager.findAnyItem(payload.uuid)
+  return application.items.findAnyItem(payload.uuid)
 }
 
 export async function changePayloadTimeStamp(application, payload, timestamp, contentOverride) {
@@ -451,7 +451,7 @@ export async function changePayloadTimeStamp(application, payload, timestamp, co
 
   await application.mutator.emitItemFromPayload(changedPayload)
 
-  return application.itemManager.findAnyItem(payload.uuid)
+  return application.items.findAnyItem(payload.uuid)
 }
 
 export async function changePayloadUpdatedAt(application, payload, updatedAt) {

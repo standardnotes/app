@@ -78,10 +78,10 @@ describe('singletons', function () {
   })
 
   afterEach(async function () {
-    expect(this.application.syncService.isOutOfSync()).to.equal(false)
-    expect(this.application.itemManager.items.length).to.equal(this.expectedItemCount)
+    expect(this.application.sync.isOutOfSync()).to.equal(false)
+    expect(this.application.items.items.length).to.equal(this.expectedItemCount)
 
-    const rawPayloads = await this.application.diskStorageService.getAllRawPayloads()
+    const rawPayloads = await this.application.storage.getAllRawPayloads()
     expect(rawPayloads.length).to.equal(this.expectedItemCount)
 
     await Factory.safeDeinit(this.application)
@@ -100,8 +100,8 @@ describe('singletons', function () {
       PayloadEmitSource.LocalChanged,
     )
     await this.application.mutator.setItemsDirty(items)
-    await this.application.syncService.sync(syncOptions)
-    expect(this.application.itemManager.items.length).to.equal(this.expectedItemCount)
+    await this.application.sync.sync(syncOptions)
+    expect(this.application.items.items.length).to.equal(this.expectedItemCount)
   })
 
   it('duplicate components should auto-resolve to 1', async function () {
@@ -121,18 +121,18 @@ describe('singletons', function () {
 
     await this.application.sync.sync(syncOptions)
 
-    expect(this.application.itemManager.itemsMatchingPredicate(ContentType.TYPES.Component, this.extPred).length).to.equal(1)
+    expect(this.application.items.itemsMatchingPredicate(ContentType.TYPES.Component, this.extPred).length).to.equal(1)
   })
 
   it('resolves via find or create', async function () {
     /* Set to never synced as singleton manager will attempt to sync before resolving */
-    this.application.syncService.ut_clearLastSyncDate()
-    this.application.syncService.ut_setDatabaseLoaded(false)
+    this.application.sync.ut_clearLastSyncDate()
+    this.application.sync.ut_setDatabaseLoaded(false)
     const contentType = ContentType.TYPES.UserPrefs
     const predicate = new Predicate('content_type', '=', contentType)
     /* Start a sync right after we await singleton resolve below */
     setTimeout(() => {
-      this.application.syncService.ut_setDatabaseLoaded(true)
+      this.application.sync.ut_setDatabaseLoaded(true)
       this.application.sync.sync({
         /* Simulate the first sync occuring as that is handled specially by sync service */
         mode: SyncMode.DownloadFirst,
@@ -144,7 +144,7 @@ describe('singletons', function () {
     const refreshedUserPrefs = this.application.items.findItem(userPreferences.uuid)
     expect(refreshedUserPrefs).to.be.ok
     await this.application.sync.sync(syncOptions)
-    expect(this.application.itemManager.itemsMatchingPredicate(contentType, predicate).length).to.equal(1)
+    expect(this.application.items.itemsMatchingPredicate(contentType, predicate).length).to.equal(1)
   })
 
   it('resolves registered predicate with signing in/out', async function () {
@@ -187,7 +187,7 @@ describe('singletons', function () {
 
     let didCompleteRelevantSync = false
     let beginCheckingResponse = false
-    this.application.syncService.addEventObserver(async (eventName, data) => {
+    this.application.sync.addEventObserver(async (eventName, data) => {
       if (eventName === SyncEvent.DownloadFirstSyncCompleted) {
         beginCheckingResponse = true
       }
@@ -202,7 +202,7 @@ describe('singletons', function () {
         expect(matching).to.not.be.ok
       }
     })
-    await this.application.syncService.sync({ mode: SyncMode.DownloadFirst })
+    await this.application.sync.sync({ mode: SyncMode.DownloadFirst })
     expect(didCompleteRelevantSync).to.equal(true)
   }).timeout(10000)
 
@@ -226,7 +226,7 @@ describe('singletons', function () {
     const latestPrefs = await findOrCreatePrefsSingleton(this.application)
     expect(latestPrefs.uuid).to.equal(ogPrefs.uuid)
 
-    const allPrefs = this.application.itemManager.getItems(ogPrefs.content_type)
+    const allPrefs = this.application.items.getItems(ogPrefs.content_type)
     expect(allPrefs.length).to.equal(1)
   })
 
@@ -247,12 +247,12 @@ describe('singletons', function () {
     /** After signing in, the instance retrieved from the server should be the one kept */
     const latestPrefs = await findOrCreatePrefsSingleton(this.application)
     expect(latestPrefs.uuid).to.equal(ogPrefs.uuid)
-    const allPrefs = this.application.itemManager.getItems(ogPrefs.content_type)
+    const allPrefs = this.application.items.getItems(ogPrefs.content_type)
     expect(allPrefs.length).to.equal(1)
   })
 
   it('if only result is errorDecrypting, create new item', async function () {
-    const item = this.application.itemManager.items.find((item) => item.content_type === ContentType.TYPES.UserPrefs)
+    const item = this.application.items.items.find((item) => item.content_type === ContentType.TYPES.UserPrefs)
 
     const erroredPayload = new EncryptedPayload({
       ...item.payload.ejected(),
@@ -269,7 +269,7 @@ describe('singletons', function () {
 
     await this.application.sync.sync({ awaitAll: true })
 
-    expect(this.application.itemManager.items.length).to.equal(this.expectedItemCount)
+    expect(this.application.items.items.length).to.equal(this.expectedItemCount)
     expect(resolvedItem.uuid).to.not.equal(item.uuid)
     expect(resolvedItem.errorDecrypting).to.not.be.ok
   })
@@ -322,15 +322,15 @@ describe('singletons', function () {
 
     /** Item will get decrypted on current tick, so wait one before syncing */
     await Factory.sleep(0)
-    await this.application.syncService.sync(syncOptions)
+    await this.application.sync.sync(syncOptions)
 
-    expect(this.application.itemManager.itemsMatchingPredicate(ContentType.TYPES.Component, this.extPred).length).to.equal(1)
+    expect(this.application.items.itemsMatchingPredicate(ContentType.TYPES.Component, this.extPred).length).to.equal(1)
   })
 
   it('alternating the uuid of a singleton should return correct result', async function () {
     const payload = createPrefsPayload()
     const item = await this.application.mutator.emitItemFromPayload(payload, PayloadEmitSource.LocalChanged)
-    await this.application.syncService.sync(syncOptions)
+    await this.application.sync.sync(syncOptions)
     const predicate = new Predicate('content_type', '=', item.content_type)
     let resolvedItem = await this.application.singletonManager.findOrCreateContentTypeSingleton(
       payload.content_type,
@@ -338,7 +338,7 @@ describe('singletons', function () {
     )
     const originalUuid = resolvedItem.uuid
     await Factory.alternateUuidForItem(this.application, resolvedItem.uuid)
-    await this.application.syncService.sync(syncOptions)
+    await this.application.sync.sync(syncOptions)
     const resolvedItem2 = await this.application.singletonManager.findOrCreateContentTypeSingleton(
       payload.content_type,
       payload.content,
@@ -346,6 +346,6 @@ describe('singletons', function () {
     resolvedItem = this.application.items.findItem(resolvedItem.uuid)
     expect(resolvedItem).to.not.be.ok
     expect(resolvedItem2.uuid).to.not.equal(originalUuid)
-    expect(this.application.itemManager.items.length).to.equal(this.expectedItemCount)
+    expect(this.application.items.items.length).to.equal(this.expectedItemCount)
   })
 })

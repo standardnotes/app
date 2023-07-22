@@ -52,7 +52,7 @@ describe('shared vault crypto', function () {
       await contactContext.changeNoteTitleAndSync(note, 'new title')
       await context.sync()
 
-      const rawPayloads = await context.application.diskStorageService.getAllRawPayloads()
+      const rawPayloads = await context.application.storage.getAllRawPayloads()
       const noteRawPayload = rawPayloads.find((payload) => payload.uuid === note.uuid)
 
       expect(noteRawPayload.signatureData).to.not.be.undefined

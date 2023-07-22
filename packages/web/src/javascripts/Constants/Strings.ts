@@ -123,7 +123,7 @@ export const StringUtils = {
     if (!application.hasAccount()) {
       return null
     }
-    const platform = getPlatform(application.deviceInterface)
+    const platform = getPlatform(application.device)
     const keychainName =
       platform === Platform.WindowsDesktop
         ? 'credential manager'

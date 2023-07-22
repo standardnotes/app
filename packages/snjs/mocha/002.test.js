@@ -30,7 +30,7 @@ describe('002 protocol operations', () => {
   })
 
   it('cost minimum', () => {
-    expect(application.encryptionService.costMinimumForVersion('002')).to.equal(3000)
+    expect(application.encryption.costMinimumForVersion('002')).to.equal(3000)
   })
 
   it('generates valid keys for registration', async () => {
@@ -46,7 +46,7 @@ describe('002 protocol operations', () => {
 
   it('generates valid keys from existing params and decrypts', async () => {
     const password = 'password'
-    const keyParams = await application.encryptionService.createKeyParams({
+    const keyParams = await application.encryption.createKeyParams({
       pw_salt: '8d381ef44cdeab1489194f87066b747b46053a833ee24956e846e7b40440f5f4',
       pw_cost: 101000,
       version: '002',
@@ -64,7 +64,7 @@ describe('002 protocol operations', () => {
         '002:24a8e8f7728bbe06605d8209d87ad338d3d15ef81154bb64d3967c77daa01333:959b042a-3892-461e-8c50-477c10c7c40a:f1d294388742dca34f6f266a01483a4e:VdlEDyjhZ35GbJDg8ruSZv3Tp6WtMME3T5LLvcBYLHIMhrMi0RlPK83lK6F0aEaZvY82pZ0ntU+XpAX7JMSEdKdPXsACML7WeFrqKb3z2qHnA7NxgnIC0yVT/Z2mRrvlY3NNrUPGwJbfRcvfS7FVyw87MemT9CSubMZRviXvXETx82t7rsgjV/AIwOOeWhFi',
       uuid: '959b042a-3892-461e-8c50-477c10c7c40a',
     })
-    const decrypted = await application.encryptionService.decryptSplitSingle({
+    const decrypted = await application.encryption.decryptSplitSingle({
       usesRootKey: {
         items: [payload],
         key: key,

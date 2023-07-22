@@ -37,21 +37,21 @@ describe('key recovery service', function () {
 
     await context.register()
 
-    const randomRootKey = await application.encryptionService.createRootKey(
+    const randomRootKey = await application.encryption.createRootKey(
       unassociatedIdentifier,
       unassociatedPassword,
       KeyParamsOrigination.Registration,
     )
-    const randomItemsKey = await application.encryptionService.operators.defaultOperator().createItemsKey()
+    const randomItemsKey = await application.encryption.operators.defaultOperator().createItemsKey()
 
-    const encrypted = await application.encryptionService.encryptSplitSingle({
+    const encrypted = await application.encryption.encryptSplitSingle({
       usesRootKey: {
         items: [randomItemsKey.payload],
         key: randomRootKey,
       },
     })
 
-    const errored = await application.encryptionService.decryptSplitSingle({
+    const errored = await application.encryption.decryptSplitSingle({
       usesRootKeyWithKeyLookup: {
         items: [encrypted],
       },
@@ -65,7 +65,7 @@ describe('key recovery service', function () {
 
     expect(application.items.findItem(errored.uuid).errorDecrypting).to.not.be.ok
 
-    expect(application.syncService.isOutOfSync()).to.equal(false)
+    expect(application.sync.isOutOfSync()).to.equal(false)
     await context.deinit()
   })
 
@@ -89,13 +89,13 @@ describe('key recovery service', function () {
     })
     await context.register()
 
-    const randomRootKey = await application.encryptionService.createRootKey(
+    const randomRootKey = await application.encryption.createRootKey(
       unassociatedIdentifier,
       unassociatedPassword,
       KeyParamsOrigination.Registration,
     )
 
-    const randomItemsKey = await application.encryptionService.operators.defaultOperator().createItemsKey()
+    const randomItemsKey = await application.encryption.operators.defaultOperator().createItemsKey()
 
     await application.payloadManager.emitPayload(
       randomItemsKey.payload.copy({ dirty: true, dirtyIndex: getIncrementedDirtyIndex() }),
@@ -106,14 +106,14 @@ describe('key recovery service', function () {
 
     const originalSyncTime = application.payloadManager.findOne(randomItemsKey.uuid).lastSyncEnd.getTime()
 
-    const encrypted = await application.encryptionService.encryptSplitSingle({
+    const encrypted = await application.encryption.encryptSplitSingle({
       usesRootKey: {
         items: [randomItemsKey.payload],
         key: randomRootKey,
       },
     })
 
-    const errored = await application.encryptionService.decryptSplitSingle({
+    const errored = await application.encryption.decryptSplitSingle({
       usesRootKeyWithKeyLookup: {
         items: [encrypted],
       },
@@ -214,15 +214,15 @@ describe('key recovery service', function () {
     })
 
     /** Create items key associated with a random root key */
-    const randomRootKey = await application.encryptionService.createRootKey(
+    const randomRootKey = await application.encryption.createRootKey(
       unassociatedIdentifier,
       unassociatedPassword,
       KeyParamsOrigination.Registration,
     )
-    const randomItemsKey = await application.encryptionService.operators.defaultOperator().createItemsKey()
-    const randomItemsKey2 = await application.encryptionService.operators.defaultOperator().createItemsKey()
+    const randomItemsKey = await application.encryption.operators.defaultOperator().createItemsKey()
+    const randomItemsKey2 = await application.encryption.operators.defaultOperator().createItemsKey()
 
-    const encrypted = await application.encryptionService.encryptSplit({
+    const encrypted = await application.encryption.encryptSplit({
       usesRootKey: {
         items: [randomItemsKey.payload, randomItemsKey2.payload],
         key: randomRootKey,
@@ -230,7 +230,7 @@ describe('key recovery service', function () {
     })
 
     /** Attempt decryption and insert into rotation in errored state  */
-    const decrypted = await application.encryptionService.decryptSplit({
+    const decrypted = await application.encryption.decryptSplit({
       usesRootKeyWithKeyLookup: {
         items: encrypted,
       },
@@ -247,7 +247,7 @@ describe('key recovery service', function () {
 
     expect(totalPromptCount).to.equal(1)
 
-    expect(application.syncService.isOutOfSync()).to.equal(false)
+    expect(application.sync.isOutOfSync()).to.equal(false)
     await context.deinit()
   })
 
@@ -289,19 +289,19 @@ describe('key recovery service', function () {
 
     /** Same previously errored key should now no longer be errored, */
     expect(contextA.application.items.getAnyItems(ContentType.TYPES.ItemsKey).length).to.equal(2)
-    for (const key of contextA.application.itemManager.getDisplayableItemsKeys()) {
+    for (const key of contextA.application.items.getDisplayableItemsKeys()) {
       expect(key.errorDecrypting).to.not.be.ok
     }
 
-    const aKey = await contextA.application.encryptionService.getRootKey()
-    const bKey = await contextB.application.encryptionService.getRootKey()
+    const aKey = await contextA.application.encryption.getRootKey()
+    const bKey = await contextB.application.encryption.getRootKey()
     expect(aKey.compare(bKey)).to.equal(true)
 
     expect(contextA.application.items.findItem(note.uuid).errorDecrypting).to.not.be.ok
     expect(contextB.application.items.findItem(note.uuid).errorDecrypting).to.not.be.ok
 
-    expect(contextA.application.syncService.isOutOfSync()).to.equal(false)
-    expect(contextB.application.syncService.isOutOfSync()).to.equal(false)
+    expect(contextA.application.sync.isOutOfSync()).to.equal(false)
+    expect(contextB.application.sync.isOutOfSync()).to.equal(false)
 
     await contextA.deinit()
     await contextB.deinit()
@@ -379,7 +379,7 @@ describe('key recovery service', function () {
     await application.launch(true)
     await context.register()
 
-    const correctRootKey = await application.encryptionService.getRootKey()
+    const correctRootKey = await application.encryption.getRootKey()
 
     /**
      * 1. Change our root key locally so that its keys params doesn't match the server's
@@ -390,7 +390,7 @@ describe('key recovery service', function () {
     const unassociatedIdentifier = 'foorand'
 
     /** Create items key associated with a random root key */
-    const randomRootKey = await application.encryptionService.createRootKey(
+    const randomRootKey = await application.encryption.createRootKey(
       unassociatedIdentifier,
       unassociatedPassword,
       KeyParamsOrigination.Registration,
@@ -398,11 +398,11 @@ describe('key recovery service', function () {
 
     const signInFunction = sinon.spy(application.keyRecoveryService, 'performServerSignIn')
 
-    await application.encryptionService.setRootKey(randomRootKey)
+    await application.encryption.setRootKey(randomRootKey)
 
-    const correctItemsKey = await application.encryptionService.operators.defaultOperator().createItemsKey()
+    const correctItemsKey = await application.encryption.operators.defaultOperator().createItemsKey()
 
-    const encrypted = await application.encryptionService.encryptSplitSingle({
+    const encrypted = await application.encryption.encryptSplitSingle({
       usesRootKey: {
         items: [correctItemsKey.payload],
         key: randomRootKey,
@@ -428,14 +428,14 @@ describe('key recovery service', function () {
 
     expect(signInFunction.callCount).to.equal(1)
 
-    const clientRootKey = await application.encryptionService.getRootKey()
+    const clientRootKey = await application.encryption.getRootKey()
     expect(clientRootKey.compare(correctRootKey)).to.equal(true)
 
     const decryptedKey = application.items.findItem(correctItemsKey.uuid)
     expect(decryptedKey).to.be.ok
     expect(decryptedKey.content.itemsKey).to.equal(correctItemsKey.content.itemsKey)
 
-    expect(application.syncService.isOutOfSync()).to.equal(false)
+    expect(application.sync.isOutOfSync()).to.equal(false)
 
     await context.deinit()
   })
@@ -448,8 +448,8 @@ describe('key recovery service', function () {
     await context.register()
 
     /** Create and emit errored encrypted items key payload */
-    const itemsKey = await application.encryptionService.getSureDefaultItemsKey()
-    const encrypted = await application.encryptionService.encryptSplitSingle({
+    const itemsKey = await application.encryption.getSureDefaultItemsKey()
+    const encrypted = await application.encryption.encryptSplitSingle({
       usesRootKeyWithKeyLookup: {
         items: [itemsKey.payload],
       },
@@ -474,7 +474,7 @@ describe('key recovery service', function () {
     /** The timestamp of our current key should be updated however so we do not enter out of sync state */
     expect(currentItemsKey.serverUpdatedAt.getTime()).to.equal(newUpdated.getTime())
 
-    expect(application.syncService.isOutOfSync()).to.equal(false)
+    expect(application.sync.isOutOfSync()).to.equal(false)
 
     await context.deinit()
   })
@@ -485,8 +485,8 @@ describe('key recovery service', function () {
     await context.launch()
     await context.register()
 
-    const itemsKey = await application.encryptionService.getSureDefaultItemsKey()
-    const encrypted = await application.encryptionService.encryptSplitSingle({
+    const itemsKey = await application.encryption.getSureDefaultItemsKey()
+    const encrypted = await application.encryption.encryptSplitSingle({
       usesRootKeyWithKeyLookup: {
         items: [itemsKey.payload],
       },
@@ -511,7 +511,7 @@ describe('key recovery service', function () {
     expect(latestItemsKey.errorDecrypting).to.not.be.ok
     expect(latestItemsKey.itemsKey).to.equal(itemsKey.itemsKey)
     expect(latestItemsKey.serverUpdatedAt.getTime()).to.equal(newUpdated.getTime())
-    expect(application.syncService.isOutOfSync()).to.equal(false)
+    expect(application.sync.isOutOfSync()).to.equal(false)
 
     await context.deinit()
   })
@@ -524,8 +524,8 @@ describe('key recovery service', function () {
     await context.register()
 
     /** Create and emit errored encrypted items key payload */
-    const itemsKey = await application.encryptionService.getSureDefaultItemsKey()
-    const encrypted = await application.encryptionService.encryptSplitSingle({
+    const itemsKey = await application.encryption.getSureDefaultItemsKey()
+    const encrypted = await application.encryption.encryptSplitSingle({
       usesRootKeyWithKeyLookup: {
         items: [itemsKey.payload],
       },
@@ -548,7 +548,7 @@ describe('key recovery service', function () {
 
     await Factory.sleep(0.1)
 
-    expect(application.syncService.isOutOfSync()).to.equal(false)
+    expect(application.sync.isOutOfSync()).to.equal(false)
 
     await context.deinit()
 
@@ -589,17 +589,17 @@ describe('key recovery service', function () {
     })
 
     /** Create items key associated with a random root key */
-    const randomRootKey = await application.encryptionService.createRootKey(
+    const randomRootKey = await application.encryption.createRootKey(
       unassociatedIdentifier,
       unassociatedPassword,
       KeyParamsOrigination.Registration,
       ProtocolVersion.V003,
     )
-    const randomItemsKey = await application.encryptionService.operators
+    const randomItemsKey = await application.encryption.operators
       .operatorForVersion(ProtocolVersion.V003)
       .createItemsKey()
 
-    const encrypted = await application.encryptionService.encryptSplitSingle({
+    const encrypted = await application.encryption.encryptSplitSingle({
       usesRootKey: {
         items: [randomItemsKey.payload],
         key: randomRootKey,
@@ -607,7 +607,7 @@ describe('key recovery service', function () {
     })
 
     /** Attempt decryption and insert into rotation in errored state  */
-    const decrypted = await application.encryptionService.decryptSplitSingle({
+    const decrypted = await application.encryption.decryptSplitSingle({
       usesRootKeyWithKeyLookup: {
         items: [encrypted],
       },
@@ -624,7 +624,7 @@ describe('key recovery service', function () {
     /** Should be decrypted now */
     expect(application.items.findItem(encrypted.uuid).errorDecrypting).to.not.be.ok
 
-    expect(application.syncService.isOutOfSync()).to.equal(false)
+    expect(application.sync.isOutOfSync()).to.equal(false)
     await context.deinit()
   })
 

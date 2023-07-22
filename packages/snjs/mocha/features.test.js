@@ -32,8 +32,8 @@ describe('features', () => {
 
   describe('new user roles received on api response meta', () => {
     it('should save roles and features', async () => {
-      expect(application.featuresService.onlineRoles).to.have.lengthOf(1)
-      expect(application.featuresService.onlineRoles[0]).to.equal('CORE_USER')
+      expect(application.features.onlineRoles).to.have.lengthOf(1)
+      expect(application.features.onlineRoles[0]).to.equal('CORE_USER')
 
       const storedRoles = await application.getValue(StorageKey.UserRoles)
 
@@ -44,7 +44,7 @@ describe('features', () => {
 
   describe('extension repo items observer', () => {
     it('should migrate to user setting when extension repo is added', async () => {
-      sinon.stub(application.apiService, 'isThirdPartyHostUsed').callsFake(() => {
+      sinon.stub(application.legacyApi, 'isThirdPartyHostUsed').callsFake(() => {
         return false
       })
 
@@ -57,7 +57,7 @@ describe('features', () => {
       const extensionKey = UuidGenerator.GenerateUuid().split('-').join('')
 
       const promise = new Promise((resolve) => {
-        sinon.stub(application.featuresService, 'migrateFeatureRepoToUserSetting').callsFake(resolve)
+        sinon.stub(application.features, 'migrateFeatureRepoToUserSetting').callsFake(resolve)
       })
 
       await application.mutator.createItem(
@@ -71,14 +71,14 @@ describe('features', () => {
     })
 
     it('signing into account with ext repo should migrate it', async () => {
-      sinon.stub(application.apiService, 'isThirdPartyHostUsed').callsFake(() => {
+      sinon.stub(application.legacyApi, 'isThirdPartyHostUsed').callsFake(() => {
         return false
       })
       /** Attach an ExtensionRepo object to an account, but prevent it from being migrated.
        * Then sign out, sign back in, and ensure the item is migrated. */
       /** Prevent migration from running */
       sinon
-        .stub(application.featuresService, 'migrateFeatureRepoToUserSetting')
+        .stub(application.features, 'migrateFeatureRepoToUserSetting')
         // eslint-disable-next-line @typescript-eslint/no-empty-function
         .callsFake(() => {})
       const extensionKey = UuidGenerator.GenerateUuid().split('-').join('')
@@ -93,11 +93,11 @@ describe('features', () => {
       application = await Factory.signOutApplicationAndReturnNew(application)
 
       sinon.restore()
-      sinon.stub(application.apiService, 'isThirdPartyHostUsed').callsFake(() => {
+      sinon.stub(application.legacyApi, 'isThirdPartyHostUsed').callsFake(() => {
         return false
       })
       const promise = new Promise((resolve) => {
-        sinon.stub(application.featuresService, 'migrateFeatureRepoToUserSetting').callsFake(resolve)
+        sinon.stub(application.features, 'migrateFeatureRepoToUserSetting').callsFake(resolve)
       })
       await Factory.loginToApplication({
         application,
@@ -109,7 +109,7 @@ describe('features', () => {
 
     it('having an ext repo with no account, then signing into account, should migrate it', async () => {
       application = await Factory.signOutApplicationAndReturnNew(application)
-      sinon.stub(application.apiService, 'isThirdPartyHostUsed').callsFake(() => {
+      sinon.stub(application.legacyApi, 'isThirdPartyHostUsed').callsFake(() => {
         return false
       })
       const extensionKey = UuidGenerator.GenerateUuid().split('-').join('')
@@ -123,7 +123,7 @@ describe('features', () => {
       await application.sync.sync()
 
       const promise = new Promise((resolve) => {
-        sinon.stub(application.featuresService, 'migrateFeatureRepoToUserSetting').callsFake(resolve)
+        sinon.stub(application.features, 'migrateFeatureRepoToUserSetting').callsFake(resolve)
       })
       await Factory.loginToApplication({
         application,
@@ -134,7 +134,7 @@ describe('features', () => {
     })
 
     it.skip('migrated ext repo should have property indicating it was migrated', async () => {
-      sinon.stub(application.apiService, 'isThirdPartyHostUsed').callsFake(() => {
+      sinon.stub(application.legacyApi, 'isThirdPartyHostUsed').callsFake(() => {
         return false
       })
       expect(await application.settings.getDoesSensitiveSettingExist(SettingName.ExtensionKey)).to.equal(false)
@@ -171,7 +171,7 @@ describe('features', () => {
       )
       await application.sync.sync()
 
-      const repo = application.featuresService.getOfflineRepo()
+      const repo = application.features.getOfflineRepo()
       expect(repo.migratedToOfflineEntitlements).to.equal(true)
       expect(repo.offlineFeaturesUrl).to.equal('https://api.standardnotes.com/v1/offline/features')
       expect(repo.offlineKey).to.equal(extensionKey)

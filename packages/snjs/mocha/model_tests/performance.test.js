@@ -65,8 +65,8 @@ describe('mapping performance', () => {
     const expectedRunTime = 3 // seconds
     expect(seconds).to.be.at.most(expectedRunTime)
 
-    for (const note of application.itemManager.getItems(ContentType.TYPES.Note)) {
-      expect(application.itemManager.itemsReferencingItem(note).length).to.be.above(0)
+    for (const note of application.items.getItems(ContentType.TYPES.Note)) {
+      expect(application.items.itemsReferencingItem(note).length).to.be.above(0)
     }
     await Factory.safeDeinit(application)
   }).timeout(20000)
@@ -131,9 +131,9 @@ describe('mapping performance', () => {
     const MAX_RUN_TIME = 15.0 // seconds
     expect(seconds).to.be.at.most(MAX_RUN_TIME)
 
-    application.itemManager.getItems(ContentType.TYPES.Tag)[0]
-    for (const note of application.itemManager.getItems(ContentType.TYPES.Note)) {
-      expect(application.itemManager.itemsReferencingItem(note).length).to.equal(1)
+    application.items.getItems(ContentType.TYPES.Tag)[0]
+    for (const note of application.items.getItems(ContentType.TYPES.Note)) {
+      expect(application.items.itemsReferencingItem(note).length).to.equal(1)
     }
     await Factory.safeDeinit(application)
   }).timeout(20000)

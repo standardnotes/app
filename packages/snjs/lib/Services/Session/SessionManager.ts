@@ -87,7 +87,7 @@ export class SNSessionManager
   private session?: Session | LegacySession
 
   constructor(
-    private diskStorageService: DiskStorageService,
+    private storage: DiskStorageService,
     private apiService: SNApiService,
     private userApiService: UserApiServiceInterface,
     private alertService: AlertService,
@@ -118,7 +118,7 @@ export class SNSessionManager
 
   override deinit(): void {
     ;(this.encryptionService as unknown) = undefined
-    ;(this.diskStorageService as unknown) = undefined
+    ;(this.storage as unknown) = undefined
     ;(this.apiService as unknown) = undefined
     ;(this.alertService as unknown) = undefined
     ;(this.challengeService as unknown) = undefined
@@ -142,16 +142,16 @@ export class SNSessionManager
   }
 
   async initializeFromDisk(): Promise<void> {
-    this.memoizeUser(this.diskStorageService.getValue(StorageKey.User))
+    this.memoizeUser(this.storage.getValue(StorageKey.User))
 
     if (!this.user) {
-      const legacyUuidLookup = this.diskStorageService.getValue<string>(StorageKey.LegacyUuid)
+      const legacyUuidLookup = this.storage.getValue<string>(StorageKey.LegacyUuid)
       if (legacyUuidLookup) {
         this.memoizeUser({ uuid: legacyUuidLookup, email: legacyUuidLookup })
       }
     }
 
-    const rawSession = this.diskStorageService.getValue<RawStorageValue>(StorageKey.Session)
+    const rawSession = this.storage.getValue<RawStorageValue>(StorageKey.Session)
     if (rawSession) {
       try {
         const session =
@@ -286,7 +286,7 @@ export class SNSessionManager
             email,
             password,
             false,
-            this.diskStorageService.isEphemeralSession(),
+            this.storage.isEphemeralSession(),
             currentKeyParams?.version,
           )
           if (isErrorResponse(response)) {
@@ -719,7 +719,7 @@ export class SNSessionManager
     await this.encryptionService.setRootKey(rootKey, wrappingKey)
 
     this.memoizeUser(user)
-    this.diskStorageService.setValue(StorageKey.User, user)
+    this.storage.setValue(StorageKey.User, user)
 
     void this.apiService.setHost(host)
     this.httpService.setHost(host)

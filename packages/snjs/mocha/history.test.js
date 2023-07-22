@@ -174,7 +174,7 @@ describe('history manager', () => {
       )
       let item = await this.application.mutator.emitItemFromPayload(payload, PayloadEmitSource.LocalChanged)
       await this.application.mutator.setItemDirty(item)
-      await this.application.syncService.sync(syncOptions)
+      await this.application.sync.sync(syncOptions)
       /** It should keep the first and last by default */
       item = await setTextAndSync(this.application, item, item.content.text)
       item = await setTextAndSync(this.application, item, item.content.text + Factory.randomString(1))
@@ -205,7 +205,7 @@ describe('history manager', () => {
       let item = await this.application.mutator.emitItemFromPayload(payload, PayloadEmitSource.LocalChanged)
 
       await this.application.mutator.setItemDirty(item)
-      await this.application.syncService.sync(syncOptions)
+      await this.application.sync.sync(syncOptions)
 
       item = await setTextAndSync(this.application, item, item.content.text + Factory.randomString(1))
 
@@ -283,7 +283,7 @@ describe('history manager', () => {
       this.historyManager = this.application.historyManager
       this.payloadManager = this.application.payloadManager
       const item = await Factory.createSyncedNote(this.application)
-      await this.application.syncService.sync(syncOptions)
+      await this.application.sync.sync(syncOptions)
       const itemHistoryOrError = await this.application.listRevisions.execute({ itemUuid: item.uuid })
 
       expect(itemHistoryOrError.isFailed()).to.equal(true)
@@ -355,7 +355,7 @@ describe('history manager', () => {
       expect(payloadFromServer.uuid).to.eq(item.payload.uuid)
       expect(payloadFromServer.content).to.eql(item.payload.content)
 
-      item = this.application.itemManager.findItem(item.uuid)
+      item = this.application.items.findItem(item.uuid)
       expect(payloadFromServer.content).to.not.eql(item.payload.content)
     })
 

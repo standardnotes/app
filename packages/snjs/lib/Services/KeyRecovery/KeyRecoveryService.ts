@@ -92,7 +92,7 @@ export class SNKeyRecoveryService extends AbstractService<KeyRecoveryEvent, Decr
     private challengeService: ChallengeService,
     private alertService: AlertService,
     private storageService: DiskStorageService,
-    private syncService: SNSyncService,
+    private sync: SNSyncService,
     private userService: UserService,
     protected override internalEventBus: InternalEventBusInterface,
   ) {
@@ -126,7 +126,7 @@ export class SNKeyRecoveryService extends AbstractService<KeyRecoveryEvent, Decr
     ;(this.challengeService as unknown) = undefined
     ;(this.alertService as unknown) = undefined
     ;(this.storageService as unknown) = undefined
-    ;(this.syncService as unknown) = undefined
+    ;(this.sync as unknown) = undefined
     ;(this.userService as unknown) = undefined
 
     this.removeItemObserver()
@@ -383,8 +383,8 @@ export class SNKeyRecoveryService extends AbstractService<KeyRecoveryEvent, Decr
       await this.potentiallyPerformFallbackSignInToUpdateOutdatedLocalRootKey(serverParams)
     }
 
-    if (this.syncService.isOutOfSync()) {
-      void this.syncService.sync({ checkIntegrity: true })
+    if (this.sync.isOutOfSync()) {
+      void this.sync.sync({ checkIntegrity: true })
     }
   }
 
@@ -500,7 +500,7 @@ export class SNKeyRecoveryService extends AbstractService<KeyRecoveryEvent, Decr
     }
 
     if (decryptedMatching.some((p) => p.dirty)) {
-      await this.syncService.sync()
+      await this.sync.sync()
     }
 
     await this.notifyEvent(KeyRecoveryEvent.KeysRecovered, decryptedMatching)

@@ -29,7 +29,7 @@ describe('files', function () {
 
     application = context.application
     fileService = context.application.fileService
-    itemManager = context.application.itemManager
+    itemManager = context.application.items
 
     await Factory.registerUserToApplication({
       application: context.application,
@@ -51,7 +51,7 @@ describe('files', function () {
     await setup({ fakeCrypto: true, subscription: true })
 
     const remoteIdentifier = Utils.generateUuid()
-    const token = await application.apiService.createUserFileValetToken(remoteIdentifier, ValetTokenOperation.Write)
+    const token = await application.legacyApi.createUserFileValetToken(remoteIdentifier, ValetTokenOperation.Write)
 
     expect(token.length).to.be.above(0)
   })
@@ -60,7 +60,7 @@ describe('files', function () {
     await setup({ fakeCrypto: true, subscription: false })
 
     const remoteIdentifier = Utils.generateUuid()
-    const tokenOrError = await application.apiService.createUserFileValetToken(
+    const tokenOrError = await application.legacyApi.createUserFileValetToken(
       remoteIdentifier,
       ValetTokenOperation.Write,
     )
@@ -79,7 +79,7 @@ describe('files', function () {
     })
 
     const remoteIdentifier = Utils.generateUuid()
-    const tokenOrError = await application.apiService.createUserFileValetToken(
+    const tokenOrError = await application.legacyApi.createUserFileValetToken(
       remoteIdentifier,
       ValetTokenOperation.Write,
     )
@@ -90,19 +90,19 @@ describe('files', function () {
   it('creating two upload sessions successively should succeed', async function () {
     await setup({ fakeCrypto: true, subscription: true })
 
-    const firstToken = await application.apiService.createUserFileValetToken(
+    const firstToken = await application.legacyApi.createUserFileValetToken(
       Utils.generateUuid(),
       ValetTokenOperation.Write,
     )
-    const firstSession = await application.apiService.startUploadSession(firstToken, 'user')
+    const firstSession = await application.legacyApi.startUploadSession(firstToken, 'user')
 
     expect(firstSession.uploadId).to.be.ok
 
-    const secondToken = await application.apiService.createUserFileValetToken(
+    const secondToken = await application.legacyApi.createUserFileValetToken(
       Utils.generateUuid(),
       ValetTokenOperation.Write,
     )
-    const secondSession = await application.apiService.startUploadSession(secondToken, 'user')
+    const secondSession = await application.legacyApi.startUploadSession(secondToken, 'user')
 
     expect(secondSession.uploadId).to.be.ok
   })

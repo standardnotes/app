@@ -846,9 +846,6 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       uninstallSubscriber()
     }
 
-    this.http.deinit()
-    ;(this.http as unknown) = undefined
-
     this.options.crypto.deinit()
     ;(this.options as unknown) = undefined
 

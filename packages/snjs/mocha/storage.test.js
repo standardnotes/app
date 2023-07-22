@@ -31,23 +31,23 @@ describe('storage manager', function () {
   it('should set and retrieve values', async function () {
     const key = 'foo'
     const value = 'bar'
-    await this.application.diskStorageService.setValue(key, value)
-    expect(await this.application.diskStorageService.getValue(key)).to.eql(value)
+    await this.application.storage.setValue(key, value)
+    expect(await this.application.storage.getValue(key)).to.eql(value)
   })
 
   it('should set and retrieve items', async function () {
     const payload = Factory.createNotePayload()
-    await this.application.diskStorageService.savePayload(payload)
-    const payloads = await this.application.diskStorageService.getAllRawPayloads()
+    await this.application.storage.savePayload(payload)
+    const payloads = await this.application.storage.getAllRawPayloads()
     expect(payloads.length).to.equal(BaseItemCounts.DefaultItems + 1)
   })
 
   it('should clear values', async function () {
     const key = 'foo'
     const value = 'bar'
-    await this.application.diskStorageService.setValue(key, value)
-    await this.application.diskStorageService.clearAllData()
-    expect(await this.application.diskStorageService.getValue(key)).to.not.be.ok
+    await this.application.storage.setValue(key, value)
+    await this.application.storage.clearAllData()
+    expect(await this.application.storage.getValue(key)).to.not.be.ok
   })
 
   it('serverPassword should not be saved to keychain', async function () {
@@ -57,7 +57,7 @@ describe('storage manager', function () {
       password: this.password,
       ephemeral: false,
     })
-    const keychainValue = await this.application.deviceInterface.getNamespacedKeychainValue(this.application.identifier)
+    const keychainValue = await this.application.device.getNamespacedKeychainValue(this.application.identifier)
     expect(keychainValue.masterKey).to.be.ok
     expect(keychainValue.serverPassword).to.not.be.ok
   })
@@ -71,10 +71,10 @@ describe('storage manager', function () {
     })
     const key = 'foo'
     const value = 'bar'
-    await this.application.diskStorageService.setValue(key, value)
+    await this.application.storage.setValue(key, value)
     /** Items are stored in local storage */
     expect(Object.keys(localStorage).length).to.equal(this.expectedKeyCount + BaseItemCounts.DefaultItems)
-    const retrievedValue = await this.application.diskStorageService.getValue(key)
+    const retrievedValue = await this.application.storage.getValue(key)
     expect(retrievedValue).to.equal(value)
   })
 
@@ -88,12 +88,12 @@ describe('storage manager', function () {
     })
     const key = 'foo'
     const value = 'bar'
-    await this.application.diskStorageService.setValueAndAwaitPersist(key, value)
+    await this.application.storage.setValueAndAwaitPersist(key, value)
 
     const expectedKeys = ['keychain']
     expect(Object.keys(localStorage).length).to.equal(expectedKeys.length)
 
-    const retrievedValue = await this.application.diskStorageService.getValue(key)
+    const retrievedValue = await this.application.storage.getValue(key)
     expect(retrievedValue).to.equal(value)
   })
 
@@ -105,21 +105,21 @@ describe('storage manager', function () {
       ephemeral: true,
     })
     await Factory.createSyncedNote(this.application)
-    const rawPayloads = await this.application.diskStorageService.getAllRawPayloads()
+    const rawPayloads = await this.application.storage.getAllRawPayloads()
     expect(rawPayloads.length).to.equal(0)
   })
 
   it('storage with no account and no passcode should not be encrypted', async function () {
-    await this.application.diskStorageService.setValueAndAwaitPersist('foo', 'bar')
-    const wrappedValue = this.application.diskStorageService.values[ValueModesKeys.Wrapped]
+    await this.application.storage.setValueAndAwaitPersist('foo', 'bar')
+    const wrappedValue = this.application.storage.values[ValueModesKeys.Wrapped]
     const payload = new DecryptedPayload(wrappedValue)
     expect(payload.content).to.be.an.instanceof(Object)
   })
 
   it('storage aftering adding passcode should be encrypted', async function () {
-    await this.application.diskStorageService.setValueAndAwaitPersist('foo', 'bar')
+    await this.application.storage.setValueAndAwaitPersist('foo', 'bar')
     await this.application.addPasscode('123')
-    const wrappedValue = this.application.diskStorageService.values[ValueModesKeys.Wrapped]
+    const wrappedValue = this.application.storage.values[ValueModesKeys.Wrapped]
     const payload = new EncryptedPayload(wrappedValue)
     expect(payload.content).to.be.a('string')
   })
@@ -127,11 +127,11 @@ describe('storage manager', function () {
   it('storage after adding passcode then removing passcode should not be encrypted', async function () {
     const passcode = '123'
     Factory.handlePasswordChallenges(this.application, passcode)
-    await this.application.diskStorageService.setValueAndAwaitPersist('foo', 'bar')
+    await this.application.storage.setValueAndAwaitPersist('foo', 'bar')
     await this.application.addPasscode(passcode)
-    await this.application.diskStorageService.setValueAndAwaitPersist('bar', 'foo')
+    await this.application.storage.setValueAndAwaitPersist('bar', 'foo')
     await this.application.removePasscode()
-    const wrappedValue = this.application.diskStorageService.values[ValueModesKeys.Wrapped]
+    const wrappedValue = this.application.storage.values[ValueModesKeys.Wrapped]
     const payload = new DecryptedPayload(wrappedValue)
     expect(payload.content).to.be.an.instanceof(Object)
   })
@@ -148,35 +148,35 @@ describe('storage manager', function () {
       email: this.email,
       password: this.password,
     })
-    expect(await this.application.deviceInterface.getNamespacedKeychainValue(this.application.identifier)).to.be.ok
-    await this.application.diskStorageService.setValueAndAwaitPersist('foo', 'bar')
+    expect(await this.application.device.getNamespacedKeychainValue(this.application.identifier)).to.be.ok
+    await this.application.storage.setValueAndAwaitPersist('foo', 'bar')
     Factory.handlePasswordChallenges(this.application, this.password)
     await this.application.addPasscode(passcode)
-    expect(await this.application.deviceInterface.getNamespacedKeychainValue(this.application.identifier)).to.not.be.ok
-    await this.application.diskStorageService.setValueAndAwaitPersist('bar', 'foo')
+    expect(await this.application.device.getNamespacedKeychainValue(this.application.identifier)).to.not.be.ok
+    await this.application.storage.setValueAndAwaitPersist('bar', 'foo')
     Factory.handlePasswordChallenges(this.application, passcode)
     await this.application.removePasscode()
-    expect(await this.application.deviceInterface.getNamespacedKeychainValue(this.application.identifier)).to.be.ok
+    expect(await this.application.device.getNamespacedKeychainValue(this.application.identifier)).to.be.ok
 
-    const wrappedValue = this.application.diskStorageService.values[ValueModesKeys.Wrapped]
+    const wrappedValue = this.application.storage.values[ValueModesKeys.Wrapped]
     const payload = new EncryptedPayload(wrappedValue)
     expect(payload.content).to.be.a('string')
   })
 
   it('adding account should encrypt storage with account keys', async function () {
-    await this.application.diskStorageService.setValueAndAwaitPersist('foo', 'bar')
+    await this.application.storage.setValueAndAwaitPersist('foo', 'bar')
     await Factory.registerUserToApplication({
       application: this.application,
       email: this.email,
       password: this.password,
       ephemeral: true,
     })
-    const accountKey = await this.application.encryptionService.getRootKey()
-    expect(await this.application.diskStorageService.canDecryptWithKey(accountKey)).to.equal(true)
+    const accountKey = await this.application.encryption.getRootKey()
+    expect(await this.application.storage.canDecryptWithKey(accountKey)).to.equal(true)
   })
 
   it('signing out of account should decrypt storage', async function () {
-    await this.application.diskStorageService.setValueAndAwaitPersist('foo', 'bar')
+    await this.application.storage.setValueAndAwaitPersist('foo', 'bar')
     await Factory.registerUserToApplication({
       application: this.application,
       email: this.email,
@@ -184,15 +184,15 @@ describe('storage manager', function () {
       ephemeral: true,
     })
     this.application = await Factory.signOutApplicationAndReturnNew(this.application)
-    await this.application.diskStorageService.setValueAndAwaitPersist('bar', 'foo')
-    const wrappedValue = this.application.diskStorageService.values[ValueModesKeys.Wrapped]
+    await this.application.storage.setValueAndAwaitPersist('bar', 'foo')
+    const wrappedValue = this.application.storage.values[ValueModesKeys.Wrapped]
     const payload = new DecryptedPayload(wrappedValue)
     expect(payload.content).to.be.an.instanceof(Object)
   })
 
   it('adding account then passcode should encrypt storage with account keys', async function () {
     /** Should encrypt storage with account keys and encrypt account keys with passcode */
-    await this.application.diskStorageService.setValueAndAwaitPersist('foo', 'bar')
+    await this.application.storage.setValueAndAwaitPersist('foo', 'bar')
     await Factory.registerUserToApplication({
       application: this.application,
       email: this.email,
@@ -201,23 +201,23 @@ describe('storage manager', function () {
     })
 
     /** Should not be wrapped root key yet */
-    expect(await this.application.encryptionService.rootKeyManager.getWrappedRootKey()).to.not.be.ok
+    expect(await this.application.encryption.rootKeyManager.getWrappedRootKey()).to.not.be.ok
 
     const passcode = '123'
     Factory.handlePasswordChallenges(this.application, this.password)
     await this.application.addPasscode(passcode)
-    await this.application.diskStorageService.setValueAndAwaitPersist('bar', 'foo')
+    await this.application.storage.setValueAndAwaitPersist('bar', 'foo')
 
     /** Root key should now be wrapped */
-    expect(await this.application.encryptionService.rootKeyManager.getWrappedRootKey()).to.be.ok
+    expect(await this.application.encryption.rootKeyManager.getWrappedRootKey()).to.be.ok
 
-    const accountKey = await this.application.encryptionService.getRootKey()
-    expect(await this.application.diskStorageService.canDecryptWithKey(accountKey)).to.equal(true)
-    const passcodeKey = await this.application.encryptionService.computeWrappingKey(passcode)
-    const wrappedRootKey = await this.application.encryptionService.rootKeyManager.getWrappedRootKey()
+    const accountKey = await this.application.encryption.getRootKey()
+    expect(await this.application.storage.canDecryptWithKey(accountKey)).to.equal(true)
+    const passcodeKey = await this.application.encryption.computeWrappingKey(passcode)
+    const wrappedRootKey = await this.application.encryption.rootKeyManager.getWrappedRootKey()
     /** Expect that we can decrypt wrapped root key with passcode key */
     const payload = new EncryptedPayload(wrappedRootKey)
-    const decrypted = await this.application.encryptionService.decryptSplitSingle({
+    const decrypted = await this.application.encryption.decryptSplitSingle({
       usesRootKey: {
         items: [payload],
         key: passcodeKey,
@@ -229,7 +229,7 @@ describe('storage manager', function () {
   it('stored payloads should not contain metadata fields', async function () {
     await this.application.addPasscode('123')
     await Factory.createSyncedNote(this.application)
-    const payloads = await this.application.diskStorageService.getAllRawPayloads()
+    const payloads = await this.application.storage.getAllRawPayloads()
     const payload = payloads[0]
     expect(payload.fields).to.not.be.ok
     expect(payload.source).to.not.be.ok
@@ -239,7 +239,7 @@ describe('storage manager', function () {
   it('storing an offline synced payload should not include dirty flag', async function () {
     await this.application.addPasscode('123')
     await Factory.createSyncedNote(this.application)
-    const payloads = await this.application.diskStorageService.getAllRawPayloads()
+    const payloads = await this.application.storage.getAllRawPayloads()
     const payload = payloads[0]
 
     expect(payload.dirty).to.not.be.ok
@@ -254,7 +254,7 @@ describe('storage manager', function () {
     })
 
     await Factory.createSyncedNote(this.application)
-    const payloads = await this.application.diskStorageService.getAllRawPayloads()
+    const payloads = await this.application.storage.getAllRawPayloads()
     const payload = payloads[0]
 
     expect(payload.dirty).to.not.be.ok
@@ -269,7 +269,7 @@ describe('storage manager', function () {
     })
 
     this.application = await Factory.signOutApplicationAndReturnNew(this.application)
-    const values = this.application.diskStorageService.values[ValueModesKeys.Unwrapped]
+    const values = this.application.storage.values[ValueModesKeys.Unwrapped]
     expect(Object.keys(values).length).to.equal(0)
   })
 

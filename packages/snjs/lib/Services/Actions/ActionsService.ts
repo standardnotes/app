@@ -1,7 +1,6 @@
 import { removeFromArray } from '@standardnotes/utils'
 import { SNRootKey } from '@standardnotes/encryption'
 import { ChallengeService } from '../Challenge'
-import { ListedService } from '../Listed/ListedService'
 import { ActionResponse, DeprecatedHttpResponse } from '@standardnotes/responses'
 import { ItemManager } from '@Lib/Services/Items/ItemManager'
 import {
@@ -21,8 +20,6 @@ import {
   TransferPayload,
   ItemContent,
 } from '@standardnotes/models'
-import { SNSyncService } from '../Sync/SyncService'
-import { PayloadManager } from '../Payloads/PayloadManager'
 import { DeprecatedHttpService } from '../Api/DeprecatedHttpService'
 import {
   AbstractService,
@@ -62,11 +59,8 @@ export class SNActionsService extends AbstractService {
     private alertService: AlertService,
     public deviceInterface: DeviceInterface,
     private httpService: DeprecatedHttpService,
-    private payloadManager: PayloadManager,
     private encryptionService: EncryptionService,
-    private syncService: SNSyncService,
     private challengeService: ChallengeService,
-    private listedService: ListedService,
     protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)
@@ -78,11 +72,8 @@ export class SNActionsService extends AbstractService {
     ;(this.alertService as unknown) = undefined
     ;(this.deviceInterface as unknown) = undefined
     ;(this.httpService as unknown) = undefined
-    ;(this.payloadManager as unknown) = undefined
-    ;(this.listedService as unknown) = undefined
     ;(this.challengeService as unknown) = undefined
     ;(this.encryptionService as unknown) = undefined
-    ;(this.syncService as unknown) = undefined
     this.payloadRequestHandlers.length = 0
     this.previousPasswords.length = 0
     super.deinit()

@@ -112,7 +112,7 @@ import {
 import { FullyResolvedApplicationOptions } from '../Options/ApplicationOptions'
 import { TYPES } from './Types'
 import { isDeinitable } from './isDeinitable'
-import { DependencyInitOrder } from './DependencyInitOrder'
+import { isNotUndefined } from '@standardnotes/utils'
 
 export class Dependencies {
   private factory = new Map<symbol, () => unknown>()
@@ -121,7 +121,6 @@ export class Dependencies {
   constructor(private options: FullyResolvedApplicationOptions) {
     this.registerServiceMakers()
     this.registerUseCaseMakers()
-    this.makeDependencies()
   }
 
   public deinit() {
@@ -138,7 +137,7 @@ export class Dependencies {
   }
 
   public getAll(): unknown[] {
-    return Array.from(this.dependencies.values())
+    return Array.from(this.dependencies.values()).filter(isNotUndefined)
   }
 
   private registerUseCaseMakers() {
@@ -592,11 +591,8 @@ export class Dependencies {
         this.get(TYPES.AlertService),
         this.get(TYPES.DeviceInterface),
         this.get(TYPES.DeprecatedHttpService),
-        this.get(TYPES.PayloadManager),
         this.get(TYPES.EncryptionService),
-        this.get(TYPES.SyncService),
         this.get(TYPES.ChallengeService),
-        this.get(TYPES.ListedService),
         this.get(TYPES.InternalEventBus),
       )
     })
@@ -993,31 +989,27 @@ export class Dependencies {
 
   public get<T>(sym: symbol): T {
     const dep = this.dependencies.get(sym)
-    if (!dep) {
-      const maker = this.factory.get(sym)
-      if (!maker) {
-        throw new Error(`No dependency maker found for ${sym.toString()}`)
-      }
-
-      const instance = maker()
-      this.dependencies.set(sym, instance)
+    if (dep) {
+      return dep as T
     }
 
-    return dep as T
+    const maker = this.factory.get(sym)
+    if (!maker) {
+      throw new Error(`No dependency maker found for ${sym.toString()}`)
+    }
+
+    const instance = maker()
+    if (!instance) {
+      /** Could be optional */
+      return undefined as T
+    }
+
+    this.dependencies.set(sym, instance)
+
+    return instance as T
   }
 
   public set<T>(dependency: symbol, instance: T): void {
     this.dependencies.set(dependency, instance)
-  }
-
-  private makeDependencies() {
-    for (const dependency of DependencyInitOrder) {
-      const maker = this.factory.get(dependency)
-      if (!maker) {
-        throw new Error(`No dependency maker found for ${dependency.toString()}`)
-      }
-
-      this.dependencies.set(dependency, maker())
-    }
   }
 }

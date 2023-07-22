@@ -42,7 +42,7 @@ export type ImportDataReturnType =
 export class ImportDataUseCase {
   constructor(
     private itemManager: ItemManagerInterface,
-    private syncService: SyncServiceInterface,
+    private sync: SyncServiceInterface,
     private protectionService: ProtectionsClientInterface,
     private encryption: EncryptionProviderInterface,
     private payloadManager: PayloadManagerInterface,
@@ -131,7 +131,7 @@ export class ImportDataUseCase {
       this.historyService.getHistoryMapCopy(),
     )
 
-    const promise = this.syncService.sync()
+    const promise = this.sync.sync()
 
     if (awaitSync) {
       await promise

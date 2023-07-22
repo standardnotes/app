@@ -26,17 +26,16 @@ export class AppContext {
   }
 
   enableLogging() {
-    const syncService = this.application.syncService
     const payloadManager = this.application.payloadManager
 
-    syncService.getServiceName = () => {
+    this.application.sync.getServiceName = () => {
       return `${this.identifier}—SyncService`
     }
     payloadManager.getServiceName = () => {
       return `${this.identifier}-PayloadManager`
     }
 
-    syncService.loggingEnabled = true
+    this.application.sync.loggingEnabled = true
     payloadManager.loggingEnabled = true
   }
 
@@ -71,7 +70,7 @@ export class AppContext {
   }
 
   get encryption() {
-    return this.application.encryptionService
+    return this.application.encryption
   }
 
   get contacts() {
@@ -115,7 +114,7 @@ export class AppContext {
   }
 
   disableIntegrityAutoHeal() {
-    this.application.syncService.emitOutOfSyncRemotePayloads = () => {
+    this.application.sync.emitOutOfSyncRemotePayloads = () => {
       console.warn('Integrity self-healing is disabled for this test')
     }
   }
@@ -178,7 +177,7 @@ export class AppContext {
       },
     })
 
-    return this.application.syncService.handleSuccessServerResponse(
+    return this.application.sync.handleSuccessServerResponse(
       { payloadsSavedOrSaving: [], options: {} },
       response,
     )
@@ -235,7 +234,7 @@ export class AppContext {
 
   awaitNextSucessfulSync() {
     return new Promise((resolve) => {
-      const removeObserver = this.application.syncService.addEventObserver((event) => {
+      const removeObserver = this.application.sync.addEventObserver((event) => {
         if (event === SyncEvent.SyncCompletedWithAllItemsUploadedAndDownloaded) {
           removeObserver()
           resolve()
@@ -246,7 +245,7 @@ export class AppContext {
 
   awaitNextSyncEvent(eventName) {
     return new Promise((resolve) => {
-      const removeObserver = this.application.syncService.addEventObserver((event, data) => {
+      const removeObserver = this.application.sync.addEventObserver((event, data) => {
         if (event === eventName) {
           removeObserver()
           resolve(data)
@@ -257,7 +256,7 @@ export class AppContext {
 
   awaitNextSyncSharedVaultFromScratchEvent() {
     return new Promise((resolve) => {
-      const removeObserver = this.application.syncService.addEventObserver((event, data) => {
+      const removeObserver = this.application.sync.addEventObserver((event, data) => {
         if (event === SyncEvent.PaginatedSyncRequestCompleted && data?.options?.sharedVaultUuids) {
           removeObserver()
           resolve(data)
@@ -268,7 +267,7 @@ export class AppContext {
 
   resolveWithUploadedPayloads() {
     return new Promise((resolve) => {
-      this.application.syncService.addEventObserver((event, data) => {
+      this.application.sync.addEventObserver((event, data) => {
         if (event === SyncEvent.PaginatedSyncRequestCompleted) {
           resolve(data.uploadedPayloads)
         }
@@ -278,7 +277,7 @@ export class AppContext {
 
   resolveWithConflicts() {
     return new Promise((resolve) => {
-      this.application.syncService.addEventObserver((event, response) => {
+      this.application.sync.addEventObserver((event, response) => {
         if (event === SyncEvent.PaginatedSyncRequestCompleted) {
           resolve(response.rawConflictObjects)
         }
@@ -288,7 +287,7 @@ export class AppContext {
 
   resolveWhenSavedSyncPayloadsIncludesItemUuid(uuid) {
     return new Promise((resolve) => {
-      this.application.syncService.addEventObserver((event, response) => {
+      this.application.sync.addEventObserver((event, response) => {
         if (event === SyncEvent.PaginatedSyncRequestCompleted) {
           const savedPayload = response.savedPayloads.find((payload) => payload.uuid === uuid)
           if (savedPayload) {
@@ -301,7 +300,7 @@ export class AppContext {
 
   resolveWhenSavedSyncPayloadsIncludesItemThatIsDuplicatedOf(uuid) {
     return new Promise((resolve) => {
-      this.application.syncService.addEventObserver((event, response) => {
+      this.application.sync.addEventObserver((event, response) => {
         if (event === SyncEvent.PaginatedSyncRequestCompleted) {
           const savedPayload = response.savedPayloads.find((payload) => payload.duplicate_of === uuid)
           if (savedPayload) {
@@ -436,7 +435,7 @@ export class AppContext {
 
     let didCompleteRelevantSync = false
     return new Promise((resolve) => {
-      this.application.syncService.addEventObserver((eventName, data) => {
+      this.application.sync.addEventObserver((eventName, data) => {
         if (!didCompleteRelevantSync) {
           if (data?.savedPayloads) {
             const matching = data.savedPayloads.find((p) => {
@@ -544,18 +543,18 @@ export class AppContext {
     const payload = createNotePayload(title, text)
     const item = await this.application.mutator.emitItemFromPayload(payload, PayloadEmitSource.LocalChanged)
     await this.application.mutator.setItemDirty(item)
-    await this.application.syncService.sync(MaximumSyncOptions)
+    await this.application.sync.sync(MaximumSyncOptions)
     const note = this.application.items.findItem(payload.uuid)
 
     return note
   }
 
   lockSyncing() {
-    this.application.syncService.lockSyncing()
+    this.application.sync.lockSyncing()
   }
 
   unlockSyncing() {
-    this.application.syncService.unlockSyncing()
+    this.application.sync.unlockSyncing()
   }
 
   async deleteItemAndSync(item) {

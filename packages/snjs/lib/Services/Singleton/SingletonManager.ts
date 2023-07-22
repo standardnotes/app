@@ -43,7 +43,7 @@ export class SNSingletonManager extends AbstractService implements SingletonMana
     private itemManager: ItemManager,
     private mutator: MutatorClientInterface,
     private payloadManager: PayloadManager,
-    private syncService: SNSyncService,
+    private sync: SNSyncService,
     protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)
@@ -51,7 +51,7 @@ export class SNSingletonManager extends AbstractService implements SingletonMana
   }
 
   public override deinit(): void {
-    ;(this.syncService as unknown) = undefined
+    ;(this.sync as unknown) = undefined
     ;(this.mutator as unknown) = undefined
     ;(this.itemManager as unknown) = undefined
     ;(this.payloadManager as unknown) = undefined
@@ -93,7 +93,7 @@ export class SNSingletonManager extends AbstractService implements SingletonMana
       }
     })
 
-    this.removeSyncObserver = this.syncService.addEventObserver(async (eventName) => {
+    this.removeSyncObserver = this.sync.addEventObserver(async (eventName) => {
       if (
         eventName === SyncEvent.DownloadFirstSyncCompleted ||
         eventName === SyncEvent.SyncCompletedWithAllItemsUploaded
@@ -142,7 +142,7 @@ export class SNSingletonManager extends AbstractService implements SingletonMana
      * of a download-first request.
      */
     if (handled.length > 0 && eventSource === SyncEvent.SyncCompletedWithAllItemsUploaded) {
-      await this.syncService?.sync({ sourceDescription: 'Resolve singletons for items' })
+      await this.sync?.sync({ sourceDescription: 'Resolve singletons for items' })
     }
   }
 
@@ -182,7 +182,7 @@ export class SNSingletonManager extends AbstractService implements SingletonMana
     }
 
     /** Item not found, safe to create after full sync has completed */
-    if (!this.syncService.getLastSyncDate()) {
+    if (!this.sync.getLastSyncDate()) {
       /**
        * Add a temporary observer in case of long-running sync request, where
        * the item we're looking for ends up resolving early or in the middle.
@@ -199,7 +199,7 @@ export class SNSingletonManager extends AbstractService implements SingletonMana
         }
       })
 
-      await this.syncService.sync({ sourceDescription: 'Find or create singleton, before any sync has completed' })
+      await this.sync.sync({ sourceDescription: 'Find or create singleton, before any sync has completed' })
 
       removeObserver()
 
@@ -233,7 +233,7 @@ export class SNSingletonManager extends AbstractService implements SingletonMana
 
     const item = await this.mutator.emitItemFromPayload(dirtyPayload, PayloadEmitSource.LocalInserted)
 
-    void this.syncService.sync({ sourceDescription: 'After find or create singleton' })
+    void this.sync.sync({ sourceDescription: 'After find or create singleton' })
 
     return item as T
   }
@@ -248,7 +248,7 @@ export class SNSingletonManager extends AbstractService implements SingletonMana
     }
 
     /** Item not found, safe to create after full sync has completed */
-    if (!this.syncService.getLastSyncDate()) {
+    if (!this.sync.getLastSyncDate()) {
       /**
        * Add a temporary observer in case of long-running sync request, where
        * the item we're looking for ends up resolving early or in the middle.
@@ -265,7 +265,7 @@ export class SNSingletonManager extends AbstractService implements SingletonMana
         }
       })
 
-      await this.syncService.sync({ sourceDescription: 'Find or create singleton, before any sync has completed' })
+      await this.sync.sync({ sourceDescription: 'Find or create singleton, before any sync has completed' })
 
       removeObserver()
 
@@ -292,7 +292,7 @@ export class SNSingletonManager extends AbstractService implements SingletonMana
 
     const item = await this.mutator.emitItemFromPayload(dirtyPayload, PayloadEmitSource.LocalInserted)
 
-    void this.syncService.sync({ sourceDescription: 'After find or create singleton' })
+    void this.sync.sync({ sourceDescription: 'After find or create singleton' })
 
     return item as T
   }

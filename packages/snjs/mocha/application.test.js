@@ -28,8 +28,8 @@ describe('application instances', () => {
     expect(context1.application.payloadManager).to.not.equal(context2.application.payloadManager)
 
     await Factory.createMappedNote(context1.application)
-    expect(context1.application.itemManager.items.length).length.to.equal(BaseItemCounts.DefaultItems + 1)
-    expect(context2.application.itemManager.items.length).to.equal(BaseItemCounts.DefaultItems)
+    expect(context1.application.items.items.length).length.to.equal(BaseItemCounts.DefaultItems + 1)
+    expect(context2.application.items.items.length).to.equal(BaseItemCounts.DefaultItems)
 
     await context1.deinit()
     await context2.deinit()
@@ -40,16 +40,16 @@ describe('application instances', () => {
     const app2 = await Factory.createAndInitializeApplication('app2')
 
     await Factory.createMappedNote(app1)
-    await app1.syncService.sync(syncOptions)
+    await app1.sync.sync(syncOptions)
 
-    expect((await app1.diskStorageService.getAllRawPayloads()).length).length.to.equal(BaseItemCounts.DefaultItems + 1)
-    expect((await app2.diskStorageService.getAllRawPayloads()).length).length.to.equal(BaseItemCounts.DefaultItems)
+    expect((await app1.storage.getAllRawPayloads()).length).length.to.equal(BaseItemCounts.DefaultItems + 1)
+    expect((await app2.storage.getAllRawPayloads()).length).length.to.equal(BaseItemCounts.DefaultItems)
 
     await Factory.createMappedNote(app2)
-    await app2.syncService.sync(syncOptions)
+    await app2.sync.sync(syncOptions)
 
-    expect((await app1.diskStorageService.getAllRawPayloads()).length).length.to.equal(BaseItemCounts.DefaultItems + 1)
-    expect((await app2.diskStorageService.getAllRawPayloads()).length).length.to.equal(BaseItemCounts.DefaultItems + 1)
+    expect((await app1.storage.getAllRawPayloads()).length).length.to.equal(BaseItemCounts.DefaultItems + 1)
+    expect((await app2.storage.getAllRawPayloads()).length).length.to.equal(BaseItemCounts.DefaultItems + 1)
     await Factory.safeDeinit(app1)
     await Factory.safeDeinit(app2)
   })
@@ -58,7 +58,7 @@ describe('application instances', () => {
     /** This test will always succeed but should be observed for console exceptions */
     const app = await Factory.createAndInitializeApplication('app')
     /** Don't await */
-    app.diskStorageService.persistValuesToDisk()
+    app.storage.persistValuesToDisk()
     await app.prepareForDeinit()
     await Factory.safeDeinit(app)
   })
@@ -101,13 +101,13 @@ describe('application instances', () => {
     const app = await Factory.createAndInitializeApplication('app')
     /** Don't await */
     const MaximumWaitTime = 0.5
-    app.diskStorageService.executeCriticalFunction(async () => {
+    app.storage.executeCriticalFunction(async () => {
       /** If we sleep less than the maximum, locking should occur safely.
        * If we sleep more than the maximum, locking should occur with exception on
        * app deinit. */
       await Factory.sleep(MaximumWaitTime - 0.05)
       /** Access any deviceInterface function */
-      app.diskStorageService.deviceInterface.getAllDatabaseEntries(app.identifier)
+      app.storage.deviceInterface.getAllDatabaseEntries(app.identifier)
     })
     await app.lock()
   })

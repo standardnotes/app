@@ -25,12 +25,12 @@ describe('004 protocol operations', function () {
 
   it('cost minimum should throw', function () {
     expect(function () {
-      application.encryptionService.costMinimumForVersion('004')
+      application.encryption.costMinimumForVersion('004')
     }).to.throw('Cost minimums only apply to versions <= 002')
   })
 
   it('generates valid keys for registration', async function () {
-    const key = await application.encryptionService.createRootKey(
+    const key = await application.encryption.createRootKey(
       _identifier,
       _password,
       KeyParamsOrigination.Registration,
@@ -51,7 +51,7 @@ describe('004 protocol operations', function () {
   it('computes proper keys for sign in', async function () {
     const identifier = 'foo@bar.com'
     const password = 'very_secure'
-    const keyParams = application.encryptionService.createKeyParams({
+    const keyParams = application.encryption.createKeyParams({
       pw_nonce: 'baaec0131d677cf993381367eb082fe377cefe70118c1699cb9b38f0bc850e7b',
       identifier: identifier,
       version: '004',
@@ -64,7 +64,7 @@ describe('004 protocol operations', function () {
 
   it('generates random key', async function () {
     const length = 96
-    const key = await application.encryptionService.crypto.generateRandomKey(length)
+    const key = await application.encryption.crypto.generateRandomKey(length)
     expect(key.length).to.equal(length / 4)
   })
 
@@ -78,7 +78,7 @@ describe('004 protocol operations', function () {
       }),
     })
 
-    const operator = application.encryptionService.operators.operatorForVersion(ProtocolVersion.V004)
+    const operator = application.encryption.operators.operatorForVersion(ProtocolVersion.V004)
 
     const encrypted = await operator.generateEncryptedParameters(payload, rootKey)
     const decrypted = await operator.generateDecryptedParameters(encrypted, rootKey)
@@ -97,7 +97,7 @@ describe('004 protocol operations', function () {
       }),
     })
 
-    const operator = application.encryptionService.operators.operatorForVersion(ProtocolVersion.V004)
+    const operator = application.encryption.operators.operatorForVersion(ProtocolVersion.V004)
 
     const encrypted = await operator.generateEncryptedParameters(payload, rootKey)
     const decrypted = await operator.generateDecryptedParameters(
@@ -112,7 +112,7 @@ describe('004 protocol operations', function () {
   })
 
   it('generates existing keys for key params', async function () {
-    const key = await application.encryptionService.computeRootKey(_password, rootKeyParams)
+    const key = await application.encryption.computeRootKey(_password, rootKeyParams)
     expect(key.compare(rootKey)).to.be.true
   })
 

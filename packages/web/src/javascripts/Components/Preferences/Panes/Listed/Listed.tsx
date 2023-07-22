@@ -47,7 +47,7 @@ const Listed = ({ application }: Props) => {
         if (openSettings) {
           const info = await application.listed.getListedAccountInfo(account)
           if (info) {
-            application.deviceInterface.openUrl(info?.settings_url)
+            application.device.openUrl(info?.settings_url)
           }
         }
       }
