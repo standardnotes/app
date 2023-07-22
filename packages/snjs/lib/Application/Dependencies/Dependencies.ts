@@ -1,57 +1,97 @@
-import { DeleteRevision } from './../Domain/UseCase/DeleteRevision/DeleteRevision'
-import { GetRevision } from './../Domain/UseCase/GetRevision/GetRevision'
-import { ListRevisions } from './../Domain/UseCase/ListRevisions/ListRevisions'
-import { GetAuthenticatorAuthenticationResponse } from './../Domain/UseCase/GetAuthenticatorAuthenticationResponse/GetAuthenticatorAuthenticationResponse'
-import { GetAuthenticatorAuthenticationOptions } from './../Domain/UseCase/GetAuthenticatorAuthenticationOptions/GetAuthenticatorAuthenticationOptions'
-import { DeleteAuthenticator } from './../Domain/UseCase/DeleteAuthenticator/DeleteAuthenticator'
-import { ListAuthenticators } from './../Domain/UseCase/ListAuthenticators/ListAuthenticators'
-import { AddAuthenticator } from './../Domain/UseCase/AddAuthenticator/AddAuthenticator'
-import { GetRecoveryCodes } from './../Domain/UseCase/GetRecoveryCodes/GetRecoveryCodes'
-import { SignInWithRecoveryCodes } from './../Domain/UseCase/SignInWithRecoveryCodes/SignInWithRecoveryCodes'
-import { ListedService } from './../Services/Listed/ListedService'
-import { SNMigrationService } from './../Services/Migration/MigrationService'
-import { SNMfaService } from './../Services/Mfa/MfaService'
-import { SNComponentManager } from './../Services/ComponentManager/ComponentManager'
+import { SNActionsService } from './../../Services/Actions/ActionsService'
+import { DeleteRevision } from '../../Domain/UseCase/DeleteRevision/DeleteRevision'
+import { GetRevision } from '../../Domain/UseCase/GetRevision/GetRevision'
+import { ListRevisions } from '../../Domain/UseCase/ListRevisions/ListRevisions'
+import { GetAuthenticatorAuthenticationResponse } from '../../Domain/UseCase/GetAuthenticatorAuthenticationResponse/GetAuthenticatorAuthenticationResponse'
+import { GetAuthenticatorAuthenticationOptions } from '../../Domain/UseCase/GetAuthenticatorAuthenticationOptions/GetAuthenticatorAuthenticationOptions'
+import { DeleteAuthenticator } from '../../Domain/UseCase/DeleteAuthenticator/DeleteAuthenticator'
+import { ListAuthenticators } from '../../Domain/UseCase/ListAuthenticators/ListAuthenticators'
+import { AddAuthenticator } from '../../Domain/UseCase/AddAuthenticator/AddAuthenticator'
+import { GetRecoveryCodes } from '../../Domain/UseCase/GetRecoveryCodes/GetRecoveryCodes'
+import { SignInWithRecoveryCodes } from '../../Domain/UseCase/SignInWithRecoveryCodes/SignInWithRecoveryCodes'
+import { ListedService } from '../../Services/Listed/ListedService'
+import { SNMigrationService } from '../../Services/Migration/MigrationService'
+import { SNMfaService } from '../../Services/Mfa/MfaService'
+import { SNComponentManager } from '../../Services/ComponentManager/ComponentManager'
 import { SNFeaturesService } from '@Lib/Services/Features/FeaturesService'
-import { SNSettingsService } from './../Services/Settings/SNSettingsService'
-import { SNPreferencesService } from './../Services/Preferences/PreferencesService'
-import { SNSingletonManager } from './../Services/Singleton/SingletonManager'
-import { SNKeyRecoveryService } from './../Services/KeyRecovery/KeyRecoveryService'
-import { SNProtectionService } from './../Services/Protection/ProtectionService'
-import { SNSyncService } from './../Services/Sync/SyncService'
-import { SNHistoryManager } from './../Services/History/HistoryManager'
-import { SNSessionManager } from './../Services/Session/SessionManager'
-import { SNWebSocketsService } from './../Services/Api/WebsocketsService'
-import { SNApiService } from './../Services/Api/ApiService'
-import { SnjsVersion } from './../Version'
-import { DeprecatedHttpService } from './../Services/Api/DeprecatedHttpService'
-import { ChallengeService } from './../Services/Challenge/ChallengeService'
-import { DiskStorageService } from './../Services/Storage/DiskStorageService'
-import { MutatorService } from './../Services/Mutator/MutatorService'
+import { SNSettingsService } from '../../Services/Settings/SNSettingsService'
+import { SNPreferencesService } from '../../Services/Preferences/PreferencesService'
+import { SNSingletonManager } from '../../Services/Singleton/SingletonManager'
+import { SNKeyRecoveryService } from '../../Services/KeyRecovery/KeyRecoveryService'
+import { SNProtectionService } from '../../Services/Protection/ProtectionService'
+import { SNSyncService } from '../../Services/Sync/SyncService'
+import { SNHistoryManager } from '../../Services/History/HistoryManager'
+import { SNSessionManager } from '../../Services/Session/SessionManager'
+import { SNWebSocketsService } from '../../Services/Api/WebsocketsService'
+import { SNApiService } from '../../Services/Api/ApiService'
+import { SnjsVersion } from '../../Version'
+import { DeprecatedHttpService } from '../../Services/Api/DeprecatedHttpService'
+import { ChallengeService } from '../../Services/Challenge/ChallengeService'
+import { DiskStorageService } from '../../Services/Storage/DiskStorageService'
+import { MutatorService } from '../../Services/Mutator/MutatorService'
 import {
   AuthManager,
   AuthenticatorManager,
+  ContactService,
+  CreateOrEditContact,
+  EditContact,
   EncryptionService,
   FileService,
   FilesBackupService,
+  FindContact,
+  GetAllContacts,
+  GetVault,
   HomeServerService,
   ImportDataUseCase,
   InMemoryStore,
   IntegrityService,
   InternalEventBus,
   KeySystemKeyManager,
+  RemoveItemsLocally,
   RevisionManager,
+  SelfContactManager,
   StatusService,
   SubscriptionManager,
   UserEventService,
   UserService,
+  ValidateItemSigner,
   isDesktopDevice,
+  ChangeVaultKeyOptions,
+  MoveItemsToVault,
+  CreateVault,
+  RemoveItemFromVault,
+  DeleteVault,
+  RotateVaultKey,
+  VaultService,
+  SharedVaultService,
+  CreateSharedVault,
+  HandleKeyPairChange,
+  ReuploadAllInvites,
+  ReuploadInvite,
+  ResendAllMessages,
+  NotifyVaultUsersOfKeyRotation,
+  SendVaultDataChangedMessage,
+  GetTrustedPayload,
+  GetUntrustedPayload,
+  GetVaultContacts,
+  AcceptVaultInvite,
+  InviteToVault,
+  LeaveVault,
+  DeleteThirdPartyVault,
+  ShareContactWithVault,
+  ConvertToSharedVault,
+  DeleteSharedVault,
+  RemoveVaultMember,
+  GetSharedVaultUsers,
+  AsymmetricMessageService,
+  ReplaceContactData,
 } from '@standardnotes/services'
-import { ItemManager } from './../Services/Items/ItemManager'
-import { PayloadManager } from './../Services/Payloads/PayloadManager'
+import { ItemManager } from '../../Services/Items/ItemManager'
+import { PayloadManager } from '../../Services/Payloads/PayloadManager'
 import { LegacySessionStorageMapper } from '@Lib/Services/Mapping/LegacySessionStorageMapper'
 import { SessionStorageMapper } from '@Lib/Services/Mapping/SessionStorageMapper'
 import {
+  AsymmetricMessageServer,
   AuthApiService,
   AuthServer,
   AuthenticatorApiService,
@@ -59,6 +99,9 @@ import {
   HttpService,
   RevisionApiService,
   RevisionServer,
+  SharedVaultInvitesServer,
+  SharedVaultServer,
+  SharedVaultUsersServer,
   SubscriptionApiService,
   SubscriptionServer,
   UserApiService,
@@ -66,173 +109,18 @@ import {
   WebSocketApiService,
   WebSocketServer,
 } from '@standardnotes/api'
-import { FullyResolvedApplicationOptions } from './Options/ApplicationOptions'
-import { SNActionsService } from '../../dist/@types'
-
-export function isDeinitable(service: unknown): service is { deinit(): void } {
-  return typeof (service as { deinit(): void }).deinit === 'function'
-}
-
-export const TYPES = {
-  // System
-  DeviceInterface: Symbol.for('DeviceInterface'),
-  AlertService: Symbol.for('AlertService'),
-  Crypto: Symbol.for('Crypto'),
-
-  // Services
-  InternalEventBus: Symbol.for('InternalEventBus'),
-  PayloadManager: Symbol.for('PayloadManager'),
-  ItemManager: Symbol.for('ItemManager'),
-  MutatorService: Symbol.for('MutatorService'),
-  DiskStorageService: Symbol.for('DiskStorageService'),
-  UserEventService: Symbol.for('UserEventService'),
-  InMemoryStore: Symbol.for('InMemoryStore'),
-  KeySystemKeyManager: Symbol.for('KeySystemKeyManager'),
-  EncryptionService: Symbol.for('EncryptionService'),
-  ChallengeService: Symbol.for('ChallengeService'),
-  DeprecatedHttpService: Symbol.for('DeprecatedHttpService'),
-  HttpService: Symbol.for('HttpService'),
-  LegacyApiService: Symbol.for('LegacyApiService'),
-  UserServer: Symbol.for('UserServer'),
-  UserRequestServer: Symbol.for('UserRequestServer'),
-  UserApiService: Symbol.for('UserApiService'),
-  SubscriptionServer: Symbol.for('SubscriptionServer'),
-  SubscriptionApiService: Symbol.for('SubscriptionApiService'),
-  WebSocketServer: Symbol.for('WebSocketServer'),
-  WebSocketApiService: Symbol.for('WebSocketApiService'),
-  WebSocketsService: Symbol.for('WebSocketsService'),
-  SessionManager: Symbol.for('SessionManager'),
-  SubscriptionManager: Symbol.for('SubscriptionManager'),
-  HistoryManager: Symbol.for('HistoryManager'),
-  SyncService: Symbol.for('SyncService'),
-  ProtectionService: Symbol.for('ProtectionService'),
-  UserService: Symbol.for('UserService'),
-  KeyRecoveryService: Symbol.for('KeyRecoveryService'),
-  SingletonManager: Symbol.for('SingletonManager'),
-  PreferencesService: Symbol.for('PreferencesService'),
-  SettingsService: Symbol.for('SettingsService'),
-  FeaturesService: Symbol.for('FeaturesService'),
-  ComponentManager: Symbol.for('ComponentManager'),
-  MfaService: Symbol.for('MfaService'),
-  StatusService: Symbol.for('StatusService'),
-  MigrationService: Symbol.for('MigrationService'),
-  FileService: Symbol.for('FileService'),
-  IntegrityService: Symbol.for('IntegrityService'),
-  ListedService: Symbol.for('ListedService'),
-  ActionsService: Symbol.for('ActionsService'),
-  AuthenticatorServer: Symbol.for('AuthenticatorServer'),
-  AuthenticatorApiService: Symbol.for('AuthenticatorApiService'),
-  AuthenticatorManager: Symbol.for('AuthenticatorManager'),
-  AuthServer: Symbol.for('AuthServer'),
-  AuthApiService: Symbol.for('AuthApiService'),
-  AuthManager: Symbol.for('AuthManager'),
-  RevisionServer: Symbol.for('RevisionServer'),
-  RevisionApiService: Symbol.for('RevisionApiService'),
-  RevisionManager: Symbol.for('RevisionManager'),
-  ContactService: Symbol.for('ContactService'),
-  VaultService: Symbol.for('VaultService'),
-  SharedVaultService: Symbol.for('SharedVaultService'),
-  AsymmetricMessageService: Symbol.for('AsymmetricMessageService'),
-
-  // Desktop Services
-  FilesBackupService: Symbol.for('FilesBackupService'),
-  HomeServerService: Symbol.for('HomeServerService'),
-
-  // Usecases
-  SignInWithRecoveryCodes: Symbol.for('SignInWithRecoveryCodes'),
-  GetRecoveryCodes: Symbol.for('GetRecoveryCodes'),
-  AddAuthenticator: Symbol.for('AddAuthenticator'),
-  ListAuthenticators: Symbol.for('ListAuthenticators'),
-  DeleteAuthenticator: Symbol.for('DeleteAuthenticator'),
-  GetAuthenticatorAuthenticationOptions: Symbol.for('GetAuthenticatorAuthenticationOptions'),
-  GetAuthenticatorAuthenticationResponse: Symbol.for('GetAuthenticatorAuthenticationResponse'),
-  ListRevisions: Symbol.for('ListRevisions'),
-  GetRevision: Symbol.for('GetRevision'),
-  DeleteRevision: Symbol.for('DeleteRevision'),
-  ImportDataUseCase: Symbol.for('ImportDataUseCase'),
-
-  // Mappers
-  SessionStorageMapper: Symbol.for('SessionStorageMapper'),
-  LegacySessionStorageMapper: Symbol.for('LegacySessionStorageMapper'),
-}
-
-const DependencyInitOrder = [
-  TYPES.InternalEventBus,
-  TYPES.SessionStorageMapper,
-  TYPES.LegacySessionStorageMapper,
-  TYPES.PayloadManager,
-  TYPES.ItemManager,
-  TYPES.MutatorService,
-  TYPES.DiskStorageService,
-  TYPES.UserEventService,
-  TYPES.InMemoryStore,
-  TYPES.KeySystemKeyManager,
-  TYPES.EncryptionService,
-  TYPES.ChallengeService,
-  TYPES.DeprecatedHttpService,
-  TYPES.HttpService,
-  TYPES.LegacyApiService,
-  TYPES.UserServer,
-  TYPES.UserRequestServer,
-  TYPES.UserApiService,
-  TYPES.SubscriptionServer,
-  TYPES.SubscriptionApiService,
-  TYPES.WebSocketServer,
-  TYPES.WebSocketApiService,
-  TYPES.WebSocketsService,
-  TYPES.SessionManager,
-  TYPES.SubscriptionManager,
-  TYPES.HistoryManager,
-  TYPES.SyncService,
-  TYPES.ProtectionService,
-  TYPES.UserService,
-  TYPES.KeyRecoveryService,
-  TYPES.SingletonManager,
-  TYPES.PreferencesService,
-  TYPES.SettingsService,
-  TYPES.FeaturesService,
-  TYPES.ComponentManager,
-  TYPES.MfaService,
-  TYPES.StatusService,
-  TYPES.FilesBackupService,
-  TYPES.HomeServerService,
-  TYPES.MigrationService,
-  TYPES.FileService,
-  TYPES.IntegrityService,
-  TYPES.ListedService,
-  TYPES.ActionsService,
-  TYPES.AuthenticatorServer,
-  TYPES.AuthenticatorApiService,
-  TYPES.AuthenticatorManager,
-  TYPES.AuthServer,
-  TYPES.AuthApiService,
-  TYPES.AuthManager,
-  TYPES.RevisionServer,
-  TYPES.RevisionApiService,
-  TYPES.RevisionManager,
-  TYPES.SignInWithRecoveryCodes,
-  TYPES.GetRecoveryCodes,
-  TYPES.AddAuthenticator,
-  TYPES.ListAuthenticators,
-  TYPES.DeleteAuthenticator,
-  TYPES.GetAuthenticatorAuthenticationOptions,
-  TYPES.GetAuthenticatorAuthenticationResponse,
-  TYPES.ListRevisions,
-  TYPES.GetRevision,
-  TYPES.DeleteRevision,
-  TYPES.ContactService,
-  TYPES.VaultService,
-  TYPES.SharedVaultService,
-  TYPES.AsymmetricMessageService,
-  TYPES.ImportDataUseCase,
-]
+import { FullyResolvedApplicationOptions } from '../Options/ApplicationOptions'
+import { TYPES } from './Types'
+import { isDeinitable } from './isDeinitable'
+import { DependencyInitOrder } from './DependencyInitOrder'
 
 export class Dependencies {
   private dependencyMakers = new Map<symbol, () => unknown>()
   private dependencies = new Map<symbol, unknown>()
 
   constructor(private options: FullyResolvedApplicationOptions) {
-    this.registerMakers()
+    this.registerServiceMakers()
+    this.registerUseCaseMakers()
     this.makeDependencies()
   }
 
@@ -253,11 +141,7 @@ export class Dependencies {
     return Array.from(this.dependencies.values())
   }
 
-  private registerMakers() {
-    this.dependencyMakers.set(TYPES.UserServer, () => {
-      return new UserServer(this.get(TYPES.HttpService))
-    })
-
+  private registerUseCaseMakers() {
     this.dependencyMakers.set(TYPES.ImportDataUseCase, () => {
       return new ImportDataUseCase(
         this.get(TYPES.ItemManager),
@@ -267,6 +151,345 @@ export class Dependencies {
         this.get(TYPES.PayloadManager),
         this.get(TYPES.ChallengeService),
         this.get(TYPES.HistoryManager),
+      )
+    })
+
+    this.dependencyMakers.set(TYPES.RemoveItemsLocally, () => {
+      return new RemoveItemsLocally(this.get(TYPES.ItemManager), this.get(TYPES.DiskStorageService))
+    })
+
+    this.dependencyMakers.set(TYPES.FindContact, () => {
+      return new FindContact(this.get(TYPES.ItemManager))
+    })
+
+    this.dependencyMakers.set(TYPES.EditContact, () => {
+      return new EditContact(this.get(TYPES.MutatorService), this.get(TYPES.SyncService))
+    })
+
+    this.dependencyMakers.set(TYPES.GetAllContacts, () => {
+      return new GetAllContacts(this.get(TYPES.ItemManager))
+    })
+
+    this.dependencyMakers.set(TYPES.ValidateItemSigner, () => {
+      return new ValidateItemSigner(this.get(TYPES.FindContact))
+    })
+
+    this.dependencyMakers.set(TYPES.CreateOrEditContact, () => {
+      return new CreateOrEditContact(
+        this.get(TYPES.MutatorService),
+        this.get(TYPES.SyncService),
+        this.get(TYPES.FindContact),
+        this.get(TYPES.EditContact),
+      )
+    })
+
+    this.dependencyMakers.set(TYPES.GetVault, () => {
+      return new GetVault(this.get(TYPES.ItemManager))
+    })
+
+    this.dependencyMakers.set(TYPES.ChangeVaultKeyOptions, () => {
+      return new ChangeVaultKeyOptions(
+        this.get(TYPES.MutatorService),
+        this.get(TYPES.SyncService),
+        this.get(TYPES.EncryptionService),
+        this.get(TYPES.GetVault),
+      )
+    })
+
+    this.dependencyMakers.set(TYPES.MoveItemsToVault, () => {
+      return new MoveItemsToVault(
+        this.get(TYPES.MutatorService),
+        this.get(TYPES.SyncService),
+        this.get(TYPES.FileService),
+      )
+    })
+
+    this.dependencyMakers.set(TYPES.CreateVault, () => {
+      return new CreateVault(
+        this.get(TYPES.MutatorService),
+        this.get(TYPES.EncryptionService),
+        this.get(TYPES.SyncService),
+      )
+    })
+
+    this.dependencyMakers.set(TYPES.RemoveItemFromVault, () => {
+      return new RemoveItemFromVault(
+        this.get(TYPES.MutatorService),
+        this.get(TYPES.SyncService),
+        this.get(TYPES.FileService),
+      )
+    })
+
+    this.dependencyMakers.set(TYPES.DeleteVault, () => {
+      return new DeleteVault(
+        this.get(TYPES.ItemManager),
+        this.get(TYPES.MutatorService),
+        this.get(TYPES.EncryptionService),
+      )
+    })
+
+    this.dependencyMakers.set(TYPES.RotateVaultKey, () => {
+      return new RotateVaultKey(this.get(TYPES.MutatorService), this.get(TYPES.EncryptionService))
+    })
+
+    this.dependencyMakers.set(TYPES.ReuploadInvite, () => {
+      return new ReuploadInvite(
+        this.get(TYPES.DecryptOwnMessage),
+        this.get(TYPES.SendVaultInvite),
+        this.get(TYPES.EncryptMessage),
+      )
+    })
+
+    this.dependencyMakers.set(TYPES.ReuploadAllInvites, () => {
+      return new ReuploadAllInvites(
+        this.get(TYPES.ReuploadInvite),
+        this.get(TYPES.FindContact),
+        this.get(TYPES.SharedVaultInvitesServer),
+      )
+    })
+
+    this.dependencyMakers.set(TYPES.ResendAllMessages, () => {
+      return new ResendAllMessages(
+        this.get(TYPES.ResendMessage),
+        this.get(TYPES.MessageServer),
+        this.get(TYPES.FindContact),
+      )
+    })
+
+    this.dependencyMakers.set(TYPES.CreateSharedVault, () => {
+      return new CreateSharedVault(
+        this.get(TYPES.ItemManager),
+        this.get(TYPES.MutatorService),
+        this.get(TYPES.SharedVaultServer),
+        this.get(TYPES.CreateVault),
+        this.get(TYPES.MoveItemsToVault),
+      )
+    })
+
+    this.dependencyMakers.set(TYPES.HandleKeyPairChange, () => {
+      return new HandleKeyPairChange(this.get(TYPES.ReuploadAllInvites), this.get(TYPES.ResendAllMessages))
+    })
+
+    this.dependencyMakers.set(TYPES.NotifyVaultUsersOfKeyRotation, () => {
+      return new NotifyVaultUsersOfKeyRotation(
+        this.get(TYPES.FindContact),
+        this.get(TYPES.SendVaultDataChangedMessage),
+        this.get(TYPES.InviteToVault),
+        this.get(TYPES.SharedVaultInvitesServer),
+        this.get(TYPES.GetVaultContacts),
+        this.get(TYPES.DecryptOwnMessage),
+      )
+    })
+
+    this.dependencyMakers.set(TYPES.SendVaultDataChangedMessage, () => {
+      return new SendVaultDataChangedMessage(
+        this.get(TYPES.EncryptMessage),
+        this.get(TYPES.FindContact),
+        this.get(TYPES.GetSharedVaultUsers),
+        this.get(TYPES.SendMessage),
+      )
+    })
+
+    this.dependencyMakers.set(TYPES.ReplaceContactData, () => {
+      return new ReplaceContactData(
+        this.get(TYPES.MutatorService),
+        this.get(TYPES.SyncService),
+        this.get(TYPES.FindContact),
+      )
+    })
+
+    this.dependencyMakers.set(TYPES.GetTrustedPayload, () => {
+      return new GetTrustedPayload(this.get(TYPES.DecryptMessage))
+    })
+
+    this.dependencyMakers.set(TYPES.GetUntrustedPayload, () => {
+      return new GetUntrustedPayload(this.get(TYPES.DecryptMessage))
+    })
+
+    this.dependencyMakers.set(TYPES.GetVaultContacts, () => {
+      return new GetVaultContacts(this.get(TYPES.FindContact), this.get(TYPES.GetSharedVaultUsers))
+    })
+
+    this.dependencyMakers.set(TYPES.AcceptVaultInvite, () => {
+      return new AcceptVaultInvite(this.get(TYPES.SharedVaultInvitesServer), this.get(TYPES.ProcessAcceptedVaultInvite))
+    })
+
+    this.dependencyMakers.set(TYPES.InviteToVault, () => {
+      return new InviteToVault(
+        this.get(TYPES.KeySystemKeyManager),
+        this.get(TYPES.EncryptMessage),
+        this.get(TYPES.SendVaultInvite),
+      )
+    })
+
+    this.dependencyMakers.set(TYPES.DeleteThirdPartyVault, () => {
+      return new DeleteThirdPartyVault(
+        this.get(TYPES.ItemManager),
+        this.get(TYPES.MutatorService),
+        this.get(TYPES.EncryptionService),
+        this.get(TYPES.SyncService),
+        this.get(TYPES.RemoveItemsLocally),
+      )
+    })
+
+    this.dependencyMakers.set(TYPES.LeaveVault, () => {
+      return new LeaveVault(
+        this.get(TYPES.SharedVaultUsersServer),
+        this.get(TYPES.ItemManager),
+        this.get(TYPES.DeleteThirdPartyVault),
+      )
+    })
+
+    this.dependencyMakers.set(TYPES.ShareContactWithVault, () => {
+      return new ShareContactWithVault(
+        this.get(TYPES.FindContact),
+        this.get(TYPES.EncryptMessage),
+        this.get(TYPES.UserServer),
+        this.get(TYPES.SendMessage),
+      )
+    })
+
+    this.dependencyMakers.set(TYPES.ConvertToSharedVault, () => {
+      return new ConvertToSharedVault(
+        this.get(TYPES.ItemManager),
+        this.get(TYPES.MutatorService),
+        this.get(TYPES.SharedVaultServer),
+        this.get(TYPES.MoveItemsToVault),
+      )
+    })
+
+    this.dependencyMakers.set(TYPES.DeleteSharedVault, () => {
+      return new DeleteSharedVault(
+        this.get(TYPES.SharedVaultServer),
+        this.get(TYPES.SyncService),
+        this.get(TYPES.DeleteVault),
+      )
+    })
+
+    this.dependencyMakers.set(TYPES.RemoveVaultMember, () => {
+      return new RemoveVaultMember(this.get(TYPES.SharedVaultUsersServer))
+    })
+
+    this.dependencyMakers.set(TYPES.GetSharedVaultUsers, () => {
+      return new GetSharedVaultUsers(this.get(TYPES.SharedVaultUsersServer))
+    })
+  }
+
+  private registerServiceMakers() {
+    this.dependencyMakers.set(TYPES.UserServer, () => {
+      return new UserServer(this.get(TYPES.HttpService))
+    })
+
+    this.dependencyMakers.set(TYPES.SharedVaultInvitesServer, () => {
+      return new SharedVaultInvitesServer(this.get(TYPES.HttpService))
+    })
+
+    this.dependencyMakers.set(TYPES.SharedVaultServer, () => {
+      return new SharedVaultServer(this.get(TYPES.HttpService))
+    })
+
+    this.dependencyMakers.set(TYPES.MessageServer, () => {
+      return new AsymmetricMessageServer(this.get(TYPES.HttpService))
+    })
+
+    this.dependencyMakers.set(TYPES.SharedVaultUsersServer, () => {
+      return new SharedVaultUsersServer(this.get(TYPES.HttpService))
+    })
+
+    this.dependencyMakers.set(TYPES.AsymmetricMessageService, () => {
+      return new AsymmetricMessageService(
+        this.get(TYPES.MessageServer),
+        this.get(TYPES.EncryptionService),
+        this.get(TYPES.MutatorService),
+        this.get(TYPES.CreateOrEditContact),
+        this.get(TYPES.FindContact),
+        this.get(TYPES.GetAllContacts),
+        this.get(TYPES.ReplaceContactData),
+        this.get(TYPES.GetTrustedPayload),
+        this.get(TYPES.GetVault),
+        this.get(TYPES.HandleRootKeyChangedMessage),
+        this.get(TYPES.SendOwnContactChangeMessage),
+        this.get(TYPES.GetOutboundMessages),
+        this.get(TYPES.GetInboundMessages),
+        this.get(TYPES.GetUntrustedPayload),
+        this.get(TYPES.InternalEventBus),
+      )
+    })
+
+    this.dependencyMakers.set(TYPES.SharedVaultService, () => {
+      return new SharedVaultService(
+        this.get(TYPES.SyncService),
+        this.get(TYPES.ItemManager),
+        this.get(TYPES.EncryptionService),
+        this.get(TYPES.SessionManager),
+        this.get(TYPES.VaultService),
+        this.get(TYPES.SharedVaultInvitesServer),
+        this.get(TYPES.GetVault),
+        this.get(TYPES.CreateSharedVault),
+        this.get(TYPES.HandleKeyPairChange),
+        this.get(TYPES.NotifyVaultUsersOfKeyRotation),
+        this.get(TYPES.SendVaultDataChangedMessage),
+        this.get(TYPES.GetTrustedPayload),
+        this.get(TYPES.GetUntrustedPayload),
+        this.get(TYPES.FindContact),
+        this.get(TYPES.GetAllContacts),
+        this.get(TYPES.GetVaultContacts),
+        this.get(TYPES.AcceptVaultInvite),
+        this.get(TYPES.InviteToVault),
+        this.get(TYPES.LeaveVault),
+        this.get(TYPES.DeleteThirdPartyVault),
+        this.get(TYPES.ShareContactWithVault),
+        this.get(TYPES.ConvertToSharedVault),
+        this.get(TYPES.DeleteSharedVault),
+        this.get(TYPES.RemoveVaultMember),
+        this.get(TYPES.GetSharedVaultUsers),
+        this.get(TYPES.InternalEventBus),
+      )
+    })
+
+    this.dependencyMakers.set(TYPES.VaultService, () => {
+      return new VaultService(
+        this.get(TYPES.SyncService),
+        this.get(TYPES.ItemManager),
+        this.get(TYPES.MutatorService),
+        this.get(TYPES.EncryptionService),
+        this.get(TYPES.AlertService),
+        this.get(TYPES.GetVault),
+        this.get(TYPES.ChangeVaultKeyOptions),
+        this.get(TYPES.MoveItemsToVault),
+        this.get(TYPES.CreateVault),
+        this.get(TYPES.RemoveItemFromVault),
+        this.get(TYPES.DeleteVault),
+        this.get(TYPES.RotateVaultKey),
+        this.get(TYPES.InternalEventBus),
+      )
+    })
+
+    this.dependencyMakers.set(TYPES.SelfContactManager, () => {
+      return new SelfContactManager(
+        this.get(TYPES.SyncService),
+        this.get(TYPES.ItemManager),
+        this.get(TYPES.SessionManager),
+        this.get(TYPES.SingletonManager),
+        this.get(TYPES.CreateOrEditContact),
+      )
+    })
+
+    this.dependencyMakers.set(TYPES.ContactService, () => {
+      return new ContactService(
+        this.get(TYPES.SyncService),
+        this.get(TYPES.MutatorService),
+        this.get(TYPES.SessionManager),
+        this.options.crypto,
+        this.get(TYPES.UserService),
+        this.get(TYPES.SelfContactManager),
+        this.get(TYPES.EncryptionService),
+        this.get(TYPES.FindContact),
+        this.get(TYPES.GetAllContacts),
+        this.get(TYPES.CreateOrEditContact),
+        this.get(TYPES.EditContact),
+        this.get(TYPES.ValidateItemSigner),
+        this.get(TYPES.InternalEventBus),
       )
     })
 

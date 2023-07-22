@@ -8,15 +8,43 @@ import { SNPreferencesService } from './../Services/Preferences/PreferencesServi
 import { SNProtectionService } from './../Services/Protection/ProtectionService'
 import { SNSessionManager } from './../Services/Session/SessionManager'
 import { HttpService, HttpServiceInterface, UserRegistrationResponseBody } from '@standardnotes/api'
-import * as Common from '@standardnotes/common'
-import * as ExternalServices from '@standardnotes/services'
-import * as Models from '@standardnotes/models'
-import * as Responses from '@standardnotes/responses'
-import * as InternalServices from '../Services'
-import * as Utils from '@standardnotes/utils'
-import { UuidString, ApplicationEventPayload } from '../Types'
-import { applicationEventForSyncEvent } from '@Lib/Application/Event'
+import { ApplicationIdentifier, compareVersions, ProtocolVersion, KeyParamsOrigination } from '@standardnotes/common'
 import {
+  DeinitCallback,
+  SessionEvent,
+  SyncEvent,
+  ApplicationStage,
+  FeaturesEvent,
+  SyncMode,
+  SyncSource,
+  isObjectApplicationService,
+  ApplicationStageChangedEventPayload,
+  StorageValueModes,
+  ChallengeObserver,
+  SyncOptions,
+  ImportDataReturnType,
+  ImportDataUseCase,
+  StoragePersistencePolicies,
+  HomeServerServiceInterface,
+  ApiServiceEvent,
+  IntegrityEvent,
+  DeviceInterface,
+  SubscriptionManagerInterface,
+  FeaturesClientInterface,
+  ItemManagerInterface,
+  SyncServiceInterface,
+  UserClientInterface,
+  MutatorClientInterface,
+  StatusServiceInterface,
+  AlertService,
+  StorageServiceInterface,
+  ChallengeServiceInterface,
+  AsymmetricMessageServiceInterface,
+  VaultServiceInterface,
+  ContactServiceInterface,
+  SharedVaultServiceInterface,
+  PreferenceServiceInterface,
+  InternalEventBusInterface,
   ApplicationEvent,
   ApplicationEventCallback,
   ChallengeValidation,
@@ -40,23 +68,52 @@ import {
   CredentialsChangeFunctionResponse,
   SessionStrings,
   AccountEvent,
-  ApiServiceEvent,
 } from '@standardnotes/services'
-import { BackupServiceInterface, FilesClientInterface } from '@standardnotes/files'
-import { ComputePrivateUsername, EncryptionProviderInterface } from '@standardnotes/encryption'
-import { useBoolean } from '@standardnotes/utils'
 import {
+  PayloadEmitSource,
+  SNNote,
+  PrefKey,
+  PrefValue,
+  DecryptedItemMutator,
   BackupFile,
   DecryptedItemInterface,
   EncryptedItemInterface,
   Environment,
   ItemStream,
   Platform,
+  MutationType,
 } from '@standardnotes/models'
-import { ClientDisplayableError, SessionListEntry } from '@standardnotes/responses'
-
+import {
+  HttpResponse,
+  SessionListResponse,
+  User,
+  SignInResponse,
+  ClientDisplayableError,
+  SessionListEntry,
+} from '@standardnotes/responses'
+import {
+  DiskStorageService,
+  SNSyncService,
+  ProtectionEvent,
+  SNSettingsService,
+  SNActionsService,
+  ChallengeResponse,
+  ListedClientInterface,
+} from '../Services'
+import {
+  nonSecureRandomIdentifier,
+  assertUnreachable,
+  removeFromArray,
+  isNullOrUndefined,
+  sleep,
+  UuidGenerator,
+  useBoolean,
+} from '@standardnotes/utils'
+import { UuidString, ApplicationEventPayload } from '../Types'
+import { applicationEventForSyncEvent } from '@Lib/Application/Event'
+import { BackupServiceInterface, FilesClientInterface } from '@standardnotes/files'
+import { ComputePrivateUsername, EncryptionProviderInterface } from '@standardnotes/encryption'
 import { SNLog } from '../Log'
-import { ChallengeResponse, ListedClientInterface } from '../Services'
 import { ApplicationConstructorOptions, FullyResolvedApplicationOptions } from './Options/ApplicationOptions'
 import { ApplicationOptionsDefaults } from './Options/Defaults'
 import { SignInWithRecoveryCodes } from '@Lib/Domain/UseCase/SignInWithRecoveryCodes/SignInWithRecoveryCodes'
@@ -70,7 +127,8 @@ import { GetRevision } from '@Lib/Domain/UseCase/GetRevision/GetRevision'
 import { DeleteRevision } from '@Lib/Domain/UseCase/DeleteRevision/DeleteRevision'
 import { GetAuthenticatorAuthenticationResponse } from '@Lib/Domain/UseCase/GetAuthenticatorAuthenticationResponse/GetAuthenticatorAuthenticationResponse'
 import { GetAuthenticatorAuthenticationOptions } from '@Lib/Domain/UseCase/GetAuthenticatorAuthenticationOptions/GetAuthenticatorAuthenticationOptions'
-import { Dependencies, TYPES } from './Dependencies'
+import { Dependencies } from './Dependencies/Dependencies'
+import { TYPES } from './Dependencies/Types'
 
 /** How often to automatically sync, in milliseconds */
 const DEFAULT_AUTO_SYNC_INTERVAL = 30_000
@@ -87,14 +145,14 @@ type ApplicationObserver = {
 type ObserverRemover = () => void
 
 export class SNApplication implements ApplicationInterface, AppGroupManagedApplication, UseCaseContainerInterface {
-  onDeinit!: ExternalServices.DeinitCallback
+  onDeinit!: DeinitCallback
 
   /**
    * A runtime based identifier for each dynamic instantiation of the application instance.
    * This differs from the persistent application.identifier which persists in storage
    * across instantiations.
    */
-  public readonly ephemeralIdentifier = Utils.nonSecureRandomIdentifier()
+  public readonly ephemeralIdentifier = nonSecureRandomIdentifier()
 
   private eventHandlers: ApplicationObserver[] = []
 
@@ -118,7 +176,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   public readonly environment: Environment
   public readonly platform: Platform
 
-  public readonly identifier: Common.ApplicationIdentifier
+  public readonly identifier: ApplicationIdentifier
   public readonly options: FullyResolvedApplicationOptions
 
   private dependencies: Dependencies
@@ -180,9 +238,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     )
 
     const apiService = this.dependencies.get<SNApiService>(TYPES.LegacyApiService)
-    this.dependencies
-      .get<InternalServices.DiskStorageService>(TYPES.DiskStorageService)
-      .provideEncryptionProvider(encryptionService)
+    this.dependencies.get<DiskStorageService>(TYPES.DiskStorageService).provideEncryptionProvider(encryptionService)
 
     this.dependencies
       .get<HttpService>(TYPES.HttpService)
@@ -191,7 +247,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.serviceObservers.push(
       this.dependencies.get<SNSessionManager>(TYPES.SessionManager).addEventObserver(async (event) => {
         switch (event) {
-          case ExternalServices.SessionEvent.Restored: {
+          case SessionEvent.Restored: {
             void (async () => {
               await this.sync.sync({ sourceDescription: 'Session restored pre key creation' })
               if (encryptionService.needsNewRootKeyBasedItemsKey()) {
@@ -202,20 +258,20 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
             })()
             break
           }
-          case ExternalServices.SessionEvent.Revoked: {
+          case SessionEvent.Revoked: {
             await this.handleRevokedSession()
             break
           }
-          case ExternalServices.SessionEvent.UserKeyPairChanged:
+          case SessionEvent.UserKeyPairChanged:
             break
           default: {
-            Utils.assertUnreachable(event)
+            assertUnreachable(event)
           }
         }
       }),
     )
 
-    const syncEventCallback = async (eventName: ExternalServices.SyncEvent) => {
+    const syncEventCallback = async (eventName: SyncEvent) => {
       const appEvent = applicationEventForSyncEvent(eventName)
       if (appEvent) {
         await encryptionService.onSyncEvent(eventName)
@@ -225,21 +281,21 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
         if (appEvent === ApplicationEvent.CompletedFullSync) {
           if (!this.handledFullSyncStage) {
             this.handledFullSyncStage = true
-            await this.handleStage(ExternalServices.ApplicationStage.FullSyncCompleted_13)
+            await this.handleStage(ApplicationStage.FullSyncCompleted_13)
           }
         }
       }
     }
-    const syncService = this.dependencies.get<InternalServices.SNSyncService>(TYPES.SyncService)
+    const syncService = this.dependencies.get<SNSyncService>(TYPES.SyncService)
     const uninstall = syncService.addEventObserver(syncEventCallback)
     this.serviceObservers.push(uninstall)
 
     const protectionService = this.dependencies.get<SNProtectionService>(TYPES.ProtectionService)
     this.serviceObservers.push(
       protectionService.addEventObserver((event) => {
-        if (event === InternalServices.ProtectionEvent.UnprotectedSessionBegan) {
+        if (event === ProtectionEvent.UnprotectedSessionBegan) {
           void this.notifyEvent(ApplicationEvent.UnprotectedSessionBegan)
-        } else if (event === InternalServices.ProtectionEvent.UnprotectedSessionExpired) {
+        } else if (event === ProtectionEvent.UnprotectedSessionExpired) {
           void this.notifyEvent(ApplicationEvent.UnprotectedSessionExpired)
         }
       }),
@@ -260,7 +316,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
             break
           }
           default: {
-            Utils.assertUnreachable(event)
+            assertUnreachable(event)
           }
         }
       }),
@@ -277,20 +333,20 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.serviceObservers.push(
       featuresService.addEventObserver((event) => {
         switch (event) {
-          case ExternalServices.FeaturesEvent.UserRolesChanged: {
+          case FeaturesEvent.UserRolesChanged: {
             void this.notifyEvent(ApplicationEvent.UserRolesChanged)
             break
           }
-          case ExternalServices.FeaturesEvent.FeaturesAvailabilityChanged: {
+          case FeaturesEvent.FeaturesAvailabilityChanged: {
             void this.notifyEvent(ApplicationEvent.FeaturesAvailabilityChanged)
             break
           }
-          case ExternalServices.FeaturesEvent.DidPurchaseSubscription: {
+          case FeaturesEvent.DidPurchaseSubscription: {
             void this.notifyEvent(ApplicationEvent.DidPurchaseSubscription)
             break
           }
           default: {
-            Utils.assertUnreachable(event)
+            assertUnreachable(event)
           }
         }
       }),
@@ -324,14 +380,14 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     await this.migrations.initialize()
 
     await this.notifyEvent(ApplicationEvent.MigrationsLoaded)
-    await this.handleStage(ExternalServices.ApplicationStage.PreparingForLaunch_0)
+    await this.handleStage(ApplicationStage.PreparingForLaunch_0)
 
     await this.storage.initializeFromDisk()
     await this.notifyEvent(ApplicationEvent.StorageReady)
 
     await this.encryption.initialize()
 
-    await this.handleStage(ExternalServices.ApplicationStage.ReadyForLaunch_05)
+    await this.handleStage(ApplicationStage.ReadyForLaunch_05)
 
     this.started = true
     await this.notifyEvent(ApplicationEvent.Started)
@@ -372,7 +428,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       }
     }
 
-    await this.handleStage(ExternalServices.ApplicationStage.StorageDecrypted_09)
+    await this.handleStage(ApplicationStage.StorageDecrypted_09)
 
     const host = this.legacyApi.loadHost()
 
@@ -388,9 +444,9 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
 
     this.launched = true
     await this.notifyEvent(ApplicationEvent.Launched)
-    await this.handleStage(ExternalServices.ApplicationStage.Launched_10)
+    await this.handleStage(ApplicationStage.Launched_10)
 
-    await this.handleStage(ExternalServices.ApplicationStage.LoadingDatabase_11)
+    await this.handleStage(ApplicationStage.LoadingDatabase_11)
     if (this.createdNewDatabase) {
       await this.sync.onNewDatabaseCreated()
     }
@@ -404,11 +460,11 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
         if (this.dealloced) {
           throw 'Application has been destroyed.'
         }
-        await this.handleStage(ExternalServices.ApplicationStage.LoadedDatabase_12)
+        await this.handleStage(ApplicationStage.LoadedDatabase_12)
         this.beginAutoSyncTimer()
         await this.sync.sync({
-          mode: ExternalServices.SyncMode.DownloadFirst,
-          source: ExternalServices.SyncSource.External,
+          mode: SyncMode.DownloadFirst,
+          source: SyncSource.External,
           sourceDescription: 'Application Launch',
         })
       })
@@ -451,17 +507,17 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     }, DEFAULT_AUTO_SYNC_INTERVAL)
   }
 
-  private async handleStage(stage: ExternalServices.ApplicationStage) {
+  private async handleStage(stage: ApplicationStage) {
     const deps = this.dependencies.getAll()
     for (const dep of deps) {
-      if (ExternalServices.isObjectApplicationService(dep)) {
+      if (isObjectApplicationService(dep)) {
         await dep.handleApplicationStage(stage)
       }
     }
 
     this.events.publish({
       type: ApplicationEvent.ApplicationStageChanged,
-      payload: { stage } as ExternalServices.ApplicationStageChangedEventPayload,
+      payload: { stage } as ApplicationStageChangedEventPayload,
     })
   }
 
@@ -472,7 +528,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     const observer = { callback, singleEvent }
     this.eventHandlers.push(observer)
     return () => {
-      Utils.removeFromArray(this.eventHandlers, observer)
+      removeFromArray(this.eventHandlers, observer)
     }
   }
 
@@ -513,13 +569,11 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return this.sync.isDatabaseLoaded()
   }
 
-  public getSessions(): Promise<Responses.HttpResponse<SessionListEntry[]>> {
+  public getSessions(): Promise<HttpResponse<SessionListEntry[]>> {
     return this.sessions.getSessionsList()
   }
 
-  public async revokeSession(
-    sessionId: UuidString,
-  ): Promise<Responses.HttpResponse<Responses.SessionListResponse> | undefined> {
+  public async revokeSession(sessionId: UuidString): Promise<HttpResponse<SessionListResponse> | undefined> {
     if (await this.protections.authorizeSessionRevoking()) {
       return this.sessions.revokeSession(sessionId)
     }
@@ -535,10 +589,10 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
 
   public userCanManageSessions(): boolean {
     const userVersion = this.getUserVersion()
-    if (Utils.isNullOrUndefined(userVersion)) {
+    if (isNullOrUndefined(userVersion)) {
       return false
     }
-    return Common.compareVersions(userVersion, Common.ProtocolVersion.V004) >= 0
+    return compareVersions(userVersion, ProtocolVersion.V004) >= 0
   }
 
   /**
@@ -562,7 +616,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       inserted: matches,
       changed: [],
       removed: [],
-      source: Models.PayloadEmitSource.InitialObserverRegistrationPush,
+      source: PayloadEmitSource.InitialObserverRegistrationPush,
     })
 
     this.streamRemovers.push(removeItemManagerObserver)
@@ -570,7 +624,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return () => {
       removeItemManagerObserver()
 
-      Utils.removeFromArray(this.streamRemovers, removeItemManagerObserver)
+      removeFromArray(this.streamRemovers, removeItemManagerObserver)
     }
   }
 
@@ -593,7 +647,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.sockets.setWebSocketUrl(undefined)
   }
 
-  public getUser(): Responses.User | undefined {
+  public getUser(): User | undefined {
     if (!this.launched) {
       throw Error('Attempting to access user before application unlocked')
     }
@@ -608,7 +662,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return this.encryption.getEncryptionDisplayName()
   }
 
-  public getUserVersion(): Common.ProtocolVersion | undefined {
+  public getUserVersion(): ProtocolVersion | undefined {
     return this.encryption.getUserVersion()
   }
 
@@ -678,17 +732,14 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return this.protections.clearSession()
   }
 
-  public async authorizeProtectedActionForNotes(
-    notes: Models.SNNote[],
-    challengeReason: ChallengeReason,
-  ): Promise<Models.SNNote[]> {
+  public async authorizeProtectedActionForNotes(notes: SNNote[], challengeReason: ChallengeReason): Promise<SNNote[]> {
     return await this.protections.authorizeProtectedActionForItems(notes, challengeReason)
   }
 
   /**
    * @returns whether note access has been granted or not
    */
-  public authorizeNoteAccess(note: Models.SNNote): Promise<boolean> {
+  public authorizeNoteAccess(note: SNNote): Promise<boolean> {
     return this.protections.authorizeItemAccess(note)
   }
 
@@ -724,28 +775,25 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return this.storage.isEphemeralSession()
   }
 
-  public setValue(key: string, value: unknown, mode?: ExternalServices.StorageValueModes): void {
+  public setValue(key: string, value: unknown, mode?: StorageValueModes): void {
     return this.storage.setValue(key, value, mode)
   }
 
-  public getValue<T>(key: string, mode?: ExternalServices.StorageValueModes): T {
+  public getValue<T>(key: string, mode?: StorageValueModes): T {
     return this.storage.getValue<T>(key, mode)
   }
 
-  public async removeValue(key: string, mode?: ExternalServices.StorageValueModes): Promise<void> {
+  public async removeValue(key: string, mode?: StorageValueModes): Promise<void> {
     return this.storage.removeValue(key, mode)
   }
 
-  public getPreference<K extends Models.PrefKey>(key: K): Models.PrefValue[K] | undefined
-  public getPreference<K extends Models.PrefKey>(key: K, defaultValue: Models.PrefValue[K]): Models.PrefValue[K]
-  public getPreference<K extends Models.PrefKey>(
-    key: K,
-    defaultValue?: Models.PrefValue[K],
-  ): Models.PrefValue[K] | undefined {
+  public getPreference<K extends PrefKey>(key: K): PrefValue[K] | undefined
+  public getPreference<K extends PrefKey>(key: K, defaultValue: PrefValue[K]): PrefValue[K]
+  public getPreference<K extends PrefKey>(key: K, defaultValue?: PrefValue[K]): PrefValue[K] | undefined {
     return this.preferences.getValue(key, defaultValue)
   }
 
-  public async setPreference<K extends Models.PrefKey>(key: K, value: Models.PrefValue[K]): Promise<void> {
+  public async setPreference<K extends PrefKey>(key: K, value: PrefValue[K]): Promise<void> {
     return this.preferences.setValue(key, value)
   }
 
@@ -755,17 +803,17 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
    * to finish tasks. 0 means no limit.
    */
   private async prepareForDeinit(maxWait = 0): Promise<void> {
-    const deps = this.dependencies.getAll().filter(ExternalServices.isObjectApplicationService)
+    const deps = this.dependencies.getAll().filter(isObjectApplicationService)
     const promise = Promise.all(deps.map((service) => service.blockDeinit()))
     if (maxWait === 0) {
       await promise
     } else {
       /** Await up to maxWait. If not resolved by then, return. */
-      await Promise.race([promise, Utils.sleep(maxWait)])
+      await Promise.race([promise, sleep(maxWait)])
     }
   }
 
-  public addChallengeObserver(challenge: Challenge, observer: ExternalServices.ChallengeObserver): () => void {
+  public addChallengeObserver(challenge: Challenge, observer: ChallengeObserver): () => void {
     return this.challenges.addChallengeObserver(challenge, observer)
   }
 
@@ -777,7 +825,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.challenges.cancelChallenge(challenge)
   }
 
-  public setOnDeinit(onDeinit: ExternalServices.DeinitCallback): void {
+  public setOnDeinit(onDeinit: DeinitCallback): void {
     this.onDeinit = onDeinit
   }
 
@@ -842,7 +890,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     ephemeral = false,
     mergeLocal = true,
     awaitSync = false,
-  ): Promise<Responses.HttpResponse<Responses.SignInResponse>> {
+  ): Promise<HttpResponse<SignInResponse>> {
     return this.user.signIn(email, password, strict, ephemeral, mergeLocal, awaitSync)
   }
 
@@ -850,7 +898,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     newEmail: string,
     currentPassword: string,
     passcode?: string,
-    origination = Common.KeyParamsOrigination.EmailChange,
+    origination = KeyParamsOrigination.EmailChange,
   ): Promise<CredentialsChangeFunctionResponse> {
     return this.user.changeCredentials({
       currentPassword,
@@ -865,7 +913,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     currentPassword: string,
     newPassword: string,
     passcode?: string,
-    origination = Common.KeyParamsOrigination.PasswordChange,
+    origination = KeyParamsOrigination.PasswordChange,
     validateNewPasswordStrength = true,
   ): Promise<CredentialsChangeFunctionResponse> {
     return this.user.changeCredentials({
@@ -877,41 +925,41 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     })
   }
 
-  public async changeAndSaveItem<M extends Models.DecryptedItemMutator = Models.DecryptedItemMutator>(
+  public async changeAndSaveItem<M extends DecryptedItemMutator = DecryptedItemMutator>(
     itemToLookupUuidFor: DecryptedItemInterface,
     mutate: (mutator: M) => void,
     updateTimestamps = true,
-    emitSource?: Models.PayloadEmitSource,
-    syncOptions?: ExternalServices.SyncOptions,
+    emitSource?: PayloadEmitSource,
+    syncOptions?: SyncOptions,
   ): Promise<DecryptedItemInterface | undefined> {
     await this.mutator.changeItems(
       [itemToLookupUuidFor],
       mutate,
-      updateTimestamps ? Models.MutationType.UpdateUserTimestamps : Models.MutationType.NoUpdateUserTimestamps,
+      updateTimestamps ? MutationType.UpdateUserTimestamps : MutationType.NoUpdateUserTimestamps,
       emitSource,
     )
     await this.sync.sync(syncOptions)
     return this.items.findItem(itemToLookupUuidFor.uuid)
   }
 
-  public async changeAndSaveItems<M extends Models.DecryptedItemMutator = Models.DecryptedItemMutator>(
+  public async changeAndSaveItems<M extends DecryptedItemMutator = DecryptedItemMutator>(
     itemsToLookupUuidsFor: DecryptedItemInterface[],
     mutate: (mutator: M) => void,
     updateTimestamps = true,
-    emitSource?: Models.PayloadEmitSource,
-    syncOptions?: ExternalServices.SyncOptions,
+    emitSource?: PayloadEmitSource,
+    syncOptions?: SyncOptions,
   ): Promise<void> {
     await this.mutator.changeItems(
       itemsToLookupUuidsFor,
       mutate,
-      updateTimestamps ? Models.MutationType.UpdateUserTimestamps : Models.MutationType.NoUpdateUserTimestamps,
+      updateTimestamps ? MutationType.UpdateUserTimestamps : MutationType.NoUpdateUserTimestamps,
       emitSource,
     )
     await this.sync.sync(syncOptions)
   }
 
-  public async importData(data: BackupFile, awaitSync = false): Promise<ExternalServices.ImportDataReturnType> {
-    const usecase = this.dependencies.get<ExternalServices.ImportDataUseCase>(TYPES.ImportDataUseCase)
+  public async importData(data: BackupFile, awaitSync = false): Promise<ImportDataReturnType> {
+    const usecase = this.dependencies.get<ImportDataUseCase>(TYPES.ImportDataUseCase)
     return usecase.execute(data, awaitSync)
   }
 
@@ -1009,13 +1057,13 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
 
   public async changePasscode(
     newPasscode: string,
-    origination = Common.KeyParamsOrigination.PasscodeChange,
+    origination = KeyParamsOrigination.PasscodeChange,
   ): Promise<boolean> {
     return this.user.changePasscode(newPasscode, origination)
   }
 
   public enableEphemeralPersistencePolicy(): Promise<void> {
-    return this.storage.setPersistencePolicy(ExternalServices.StoragePersistencePolicies.Ephemeral)
+    return this.storage.setPersistencePolicy(StoragePersistencePolicies.Ephemeral)
   }
 
   public hasPendingMigrations(): Promise<boolean> {
@@ -1023,7 +1071,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   }
 
   public generateUuid(): string {
-    return Utils.UuidGenerator.GenerateUuid()
+    return UuidGenerator.GenerateUuid()
   }
 
   public presentKeyRecoveryWizard(): void {
@@ -1067,9 +1115,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   }
 
   async isUsingHomeServer(): Promise<boolean> {
-    const homeServerService = this.dependencies.get<ExternalServices.HomeServerServiceInterface>(
-      TYPES.HomeServerService,
-    )
+    const homeServerService = this.dependencies.get<HomeServerServiceInterface>(TYPES.HomeServerService)
 
     if (!homeServerService) {
       return false
@@ -1079,29 +1125,19 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   }
 
   private defineInternalEventHandlers(): void {
-    this.events.addEventHandler(
-      this.dependencies.get(TYPES.FeaturesService),
-      ExternalServices.ApiServiceEvent.MetaReceived,
-    )
-    this.events.addEventHandler(
-      this.dependencies.get(TYPES.IntegrityService),
-      ExternalServices.SyncEvent.SyncRequestsIntegrityCheck,
-    )
-
-    this.events.addEventHandler(
-      this.dependencies.get(TYPES.SyncService),
-      ExternalServices.IntegrityEvent.IntegrityCheckCompleted,
-    )
+    this.events.addEventHandler(this.dependencies.get(TYPES.FeaturesService), ApiServiceEvent.MetaReceived)
+    this.events.addEventHandler(this.dependencies.get(TYPES.IntegrityService), SyncEvent.SyncRequestsIntegrityCheck)
+    this.events.addEventHandler(this.dependencies.get(TYPES.SyncService), IntegrityEvent.IntegrityCheckCompleted)
     this.events.addEventHandler(this.dependencies.get(TYPES.UserService), AccountEvent.SignedInOrRegistered)
     this.events.addEventHandler(this.dependencies.get(TYPES.SessionManager), ApiServiceEvent.SessionRefreshed)
   }
 
-  get device(): ExternalServices.DeviceInterface {
-    return this.dependencies.get<ExternalServices.DeviceInterface>(TYPES.DeviceInterface)
+  get device(): DeviceInterface {
+    return this.dependencies.get<DeviceInterface>(TYPES.DeviceInterface)
   }
 
-  get subscriptions(): ExternalServices.SubscriptionManagerInterface {
-    return this.dependencies.get<ExternalServices.SubscriptionManagerInterface>(TYPES.SubscriptionManager)
+  get subscriptions(): SubscriptionManagerInterface {
+    return this.dependencies.get<SubscriptionManagerInterface>(TYPES.SubscriptionManager)
   }
 
   get signInWithRecoveryCodes(): SignInWithRecoveryCodes {
@@ -1148,40 +1184,40 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return this.dependencies.get<FilesClientInterface>(TYPES.FileService)
   }
 
-  public get features(): ExternalServices.FeaturesClientInterface {
-    return this.dependencies.get<ExternalServices.FeaturesClientInterface>(TYPES.FeaturesService)
+  public get features(): FeaturesClientInterface {
+    return this.dependencies.get<FeaturesClientInterface>(TYPES.FeaturesService)
   }
 
-  public get items(): ExternalServices.ItemManagerInterface {
-    return this.dependencies.get<ExternalServices.ItemManagerInterface>(TYPES.ItemManager)
+  public get items(): ItemManagerInterface {
+    return this.dependencies.get<ItemManagerInterface>(TYPES.ItemManager)
   }
 
   public get protections(): ProtectionsClientInterface {
     return this.dependencies.get<ProtectionsClientInterface>(TYPES.ProtectionService)
   }
 
-  public get sync(): ExternalServices.SyncServiceInterface {
-    return this.dependencies.get<ExternalServices.SyncServiceInterface>(TYPES.SyncService)
+  public get sync(): SyncServiceInterface {
+    return this.dependencies.get<SyncServiceInterface>(TYPES.SyncService)
   }
 
-  public get user(): ExternalServices.UserClientInterface {
-    return this.dependencies.get<ExternalServices.UserClientInterface>(TYPES.UserService)
+  public get user(): UserClientInterface {
+    return this.dependencies.get<UserClientInterface>(TYPES.UserService)
   }
 
-  public get settings(): InternalServices.SNSettingsService {
-    return this.dependencies.get<InternalServices.SNSettingsService>(TYPES.SettingsService)
+  public get settings(): SNSettingsService {
+    return this.dependencies.get<SNSettingsService>(TYPES.SettingsService)
   }
 
-  public get mutator(): ExternalServices.MutatorClientInterface {
-    return this.dependencies.get<ExternalServices.MutatorClientInterface>(TYPES.MutatorService)
+  public get mutator(): MutatorClientInterface {
+    return this.dependencies.get<MutatorClientInterface>(TYPES.MutatorService)
   }
 
   public get sessions(): SessionsClientInterface {
     return this.dependencies.get<SessionsClientInterface>(TYPES.SessionManager)
   }
 
-  public get status(): ExternalServices.StatusServiceInterface {
-    return this.dependencies.get<ExternalServices.StatusServiceInterface>(TYPES.StatusService)
+  public get status(): StatusServiceInterface {
+    return this.dependencies.get<StatusServiceInterface>(TYPES.StatusService)
   }
 
   public get fileBackups(): BackupServiceInterface | undefined {
@@ -1196,44 +1232,44 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return this.dependencies.get<ListedClientInterface>(TYPES.ListedService)
   }
 
-  public get alerts(): ExternalServices.AlertService {
-    return this.dependencies.get<ExternalServices.AlertService>(TYPES.AlertService)
+  public get alerts(): AlertService {
+    return this.dependencies.get<AlertService>(TYPES.AlertService)
   }
 
-  public get storage(): ExternalServices.StorageServiceInterface {
-    return this.dependencies.get<ExternalServices.StorageServiceInterface>(TYPES.DiskStorageService)
+  public get storage(): StorageServiceInterface {
+    return this.dependencies.get<StorageServiceInterface>(TYPES.DiskStorageService)
   }
 
-  public get actions(): InternalServices.SNActionsService {
-    return this.dependencies.get<InternalServices.SNActionsService>(TYPES.ActionsService)
+  public get actions(): SNActionsService {
+    return this.dependencies.get<SNActionsService>(TYPES.ActionsService)
   }
 
-  public get challenges(): ExternalServices.ChallengeServiceInterface {
-    return this.dependencies.get<ExternalServices.ChallengeServiceInterface>(TYPES.ChallengeService)
+  public get challenges(): ChallengeServiceInterface {
+    return this.dependencies.get<ChallengeServiceInterface>(TYPES.ChallengeService)
   }
 
-  public get asymmetric(): ExternalServices.AsymmetricMessageServiceInterface {
-    return this.dependencies.get<ExternalServices.AsymmetricMessageServiceInterface>(TYPES.AsymmetricMessageService)
+  public get asymmetric(): AsymmetricMessageServiceInterface {
+    return this.dependencies.get<AsymmetricMessageServiceInterface>(TYPES.AsymmetricMessageService)
   }
 
-  get homeServer(): ExternalServices.HomeServerServiceInterface | undefined {
-    return this.dependencies.get<ExternalServices.HomeServerServiceInterface | undefined>(TYPES.HomeServerService)
+  get homeServer(): HomeServerServiceInterface | undefined {
+    return this.dependencies.get<HomeServerServiceInterface | undefined>(TYPES.HomeServerService)
   }
 
-  public get vaults(): ExternalServices.VaultServiceInterface {
-    return this.dependencies.get<ExternalServices.VaultServiceInterface>(TYPES.VaultService)
+  public get vaults(): VaultServiceInterface {
+    return this.dependencies.get<VaultServiceInterface>(TYPES.VaultService)
   }
 
-  public get contacts(): ExternalServices.ContactServiceInterface {
-    return this.dependencies.get<ExternalServices.ContactServiceInterface>(TYPES.ContactService)
+  public get contacts(): ContactServiceInterface {
+    return this.dependencies.get<ContactServiceInterface>(TYPES.ContactService)
   }
 
-  public get sharedVaults(): ExternalServices.SharedVaultServiceInterface {
-    return this.dependencies.get<ExternalServices.SharedVaultServiceInterface>(TYPES.SharedVaultService)
+  public get sharedVaults(): SharedVaultServiceInterface {
+    return this.dependencies.get<SharedVaultServiceInterface>(TYPES.SharedVaultService)
   }
 
-  public get preferences(): ExternalServices.PreferenceServiceInterface {
-    return this.dependencies.get<ExternalServices.PreferenceServiceInterface>(TYPES.PreferencesService)
+  public get preferences(): PreferenceServiceInterface {
+    return this.dependencies.get<PreferenceServiceInterface>(TYPES.PreferencesService)
   }
 
   private get migrations(): SNMigrationService {
@@ -1256,8 +1292,8 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return this.dependencies.get<SNWebSocketsService>(TYPES.WebSocketsService)
   }
 
-  private get events(): ExternalServices.InternalEventBusInterface {
-    return this.dependencies.get<ExternalServices.InternalEventBusInterface>(TYPES.InternalEventBus)
+  private get events(): InternalEventBusInterface {
+    return this.dependencies.get<InternalEventBusInterface>(TYPES.InternalEventBus)
   }
 
   private get mfa(): SNMfaService {
