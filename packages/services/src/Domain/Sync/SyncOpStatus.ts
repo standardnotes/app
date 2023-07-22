@@ -1,4 +1,7 @@
-import { SyncEvent, SyncEventReceiver } from '@standardnotes/services'
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
+import { SyncEventReceiver } from './../Event/SyncEventReceiver'
+import { SyncEvent } from './../Event/SyncEvent'
 
 const HEALTHY_SYNC_DURATION_THRESHOLD_S = 5
 const TIMING_MONITOR_POLL_FREQUENCY_MS = 500
@@ -105,6 +108,7 @@ export class SyncOpStatus {
     return !!this.error
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   setError(error: any): void {
     this.error = error
   }

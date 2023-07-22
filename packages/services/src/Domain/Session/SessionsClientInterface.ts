@@ -2,7 +2,14 @@ import { UserRegistrationResponseBody } from '@standardnotes/api'
 import { ProtocolVersion } from '@standardnotes/common'
 import { SNRootKey } from '@standardnotes/encryption'
 import { RootKeyInterface } from '@standardnotes/models'
-import { SessionBody, SignInResponse, User, HttpResponse } from '@standardnotes/responses'
+import {
+  SessionBody,
+  SignInResponse,
+  User,
+  HttpResponse,
+  SessionListEntry,
+  SessionListResponse,
+} from '@standardnotes/responses'
 import { Base64String } from '@standardnotes/sncrypto-common'
 
 import { SessionManagerResponse } from './SessionManagerResponse'
@@ -11,11 +18,17 @@ export interface SessionsClientInterface {
   getWorkspaceDisplayIdentifier(): string
   populateSessionFromDemoShareToken(token: Base64String): Promise<void>
 
+  initializeFromDisk(): Promise<void>
+
   getUser(): User | undefined
   isSignedIn(): boolean
   get userUuid(): string
   getSureUser(): User
   isSignedIntoFirstPartyServer(): boolean
+
+  getSessionsList(): Promise<HttpResponse<SessionListEntry[]>>
+  revokeSession(sessionId: string): Promise<HttpResponse<SessionListResponse>>
+  revokeAllOtherSessions(): Promise<void>
 
   isCurrentSessionReadOnly(): boolean | undefined
   register(email: string, password: string, ephemeral: boolean): Promise<UserRegistrationResponseBody>

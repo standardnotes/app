@@ -3,7 +3,7 @@ import { EncryptionProviderInterface } from '@standardnotes/encryption'
 import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
 import { AnyItemInterface, VaultListingInterface } from '@standardnotes/models'
 import { MutatorClientInterface } from '../../Mutator/MutatorClientInterface'
-import { RemoveItemsLocallyUseCase } from '../../UseCase/RemoveItemsLocally'
+import { RemoveItemsLocally } from '../../UseCase/RemoveItemsLocally'
 
 export class DeleteThirdPartyVault {
   constructor(
@@ -11,7 +11,7 @@ export class DeleteThirdPartyVault {
     private mutator: MutatorClientInterface,
     private encryption: EncryptionProviderInterface,
     private sync: SyncServiceInterface,
-    private removeItemsLocally: RemoveItemsLocallyUseCase,
+    private removeItemsLocally: RemoveItemsLocally,
   ) {}
 
   async execute(vault: VaultListingInterface): Promise<void> {

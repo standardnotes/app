@@ -110,6 +110,5 @@ export interface ApplicationInterface {
 
   readonly identifier: ApplicationIdentifier
   readonly platform: Platform
-  deviceInterface: DeviceInterface
-  alertService: AlertService
+  device: DeviceInterface
 }

@@ -4,7 +4,7 @@ import { MutatorClientInterface } from '../../../Mutator/MutatorClientInterface'
 import { ItemManagerInterface } from '../../../Item/ItemManagerInterface'
 import { RootKeyManager } from '../../RootKey/RootKeyManager'
 import { CreateNewDefaultItemsKeyUseCase } from './CreateNewDefaultItemsKey'
-import { RemoveItemsLocallyUseCase } from '../../../UseCase/RemoveItemsLocally'
+import { RemoveItemsLocally } from '../../../UseCase/RemoveItemsLocally'
 
 export class CreateNewItemsKeyWithRollbackUseCase {
   private createDefaultItemsKeyUseCase = new CreateNewDefaultItemsKeyUseCase(
@@ -14,7 +14,7 @@ export class CreateNewItemsKeyWithRollbackUseCase {
     this.rootKeyManager,
   )
 
-  private removeItemsLocallyUsecase = new RemoveItemsLocallyUseCase(this.items, this.storage)
+  private removeItemsLocallyUsecase = new RemoveItemsLocally(this.items, this.storage)
 
   constructor(
     private mutator: MutatorClientInterface,

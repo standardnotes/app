@@ -215,7 +215,7 @@ export class EncryptionService
     return !!this.getRootKey()?.signingKeyPair
   }
 
-  public async initialize() {
+  public async initialize(): Promise<void> {
     await this.rootKeyManager.initialize()
   }
 
@@ -248,7 +248,7 @@ export class EncryptionService
     return this.rootKeyManager.getUserVersion()
   }
 
-  public async upgradeAvailable() {
+  public async upgradeAvailable(): Promise<boolean> {
     const accountUpgradeAvailable = this.accountUpgradeAvailable()
     const passcodeUpgradeAvailable = await this.passcodeUpgradeAvailable()
     return accountUpgradeAvailable || passcodeUpgradeAvailable
@@ -748,7 +748,7 @@ export class EncryptionService
    * If so, they must generate the unwrapping key by getting our saved wrapping key keyParams.
    * After unwrapping, the root key is automatically loaded.
    */
-  public async unwrapRootKey(wrappingKey: RootKeyInterface) {
+  public async unwrapRootKey(wrappingKey: RootKeyInterface): Promise<void> {
     return this.rootKeyManager.unwrapRootKey(wrappingKey)
   }
   /**

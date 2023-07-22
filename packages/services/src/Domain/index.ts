@@ -156,6 +156,7 @@ export * from './Sync/SyncOptions'
 export * from './Sync/SyncQueueStrategy'
 export * from './Sync/SyncServiceInterface'
 export * from './Sync/SyncSource'
+export * from './Sync/SyncOpStatus'
 
 export * from './User/UserClientInterface'
 export * from './User/UserClientInterface'

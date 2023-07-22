@@ -8,6 +8,15 @@ import { ApplicationStage } from '../Application/ApplicationStage'
 import { InternalEventPublishStrategy } from '../Internal/InternalEventPublishStrategy'
 import { DiagnosticInfo } from '../Diagnostics/ServiceDiagnostics'
 
+export function isObjectApplicationService(x: unknown): x is AbstractService {
+  return (
+    x != null &&
+    typeof x === 'object' &&
+    'isApplicationService' in x &&
+    (x as AbstractService).isApplicationService() === true
+  )
+}
+
 export abstract class AbstractService<EventName = string, EventData = unknown>
   implements ApplicationServiceInterface<EventName, EventData>
 {
@@ -104,6 +113,10 @@ export abstract class AbstractService<EventName = string, EventData = unknown>
 
   getServiceName(): string {
     return this.constructor.name
+  }
+
+  isApplicationService(): true {
+    return true
   }
 
   log(..._args: unknown[]): void {

@@ -158,7 +158,7 @@ export class ChallengeService extends AbstractService implements ChallengeServic
     return { wrappingKey }
   }
 
-  public isPasscodeLocked() {
+  public isPasscodeLocked(): Promise<boolean> {
     return this.encryptionService.isPasscodeLocked()
   }
 
@@ -260,7 +260,7 @@ export class ChallengeService extends AbstractService implements ChallengeServic
     delete this.challengeOperations[challenge.id]
   }
 
-  public cancelChallenge(challenge: Challenge) {
+  public cancelChallenge(challenge: Challenge): void {
     const operation = this.challengeOperations[challenge.id]
     operation.cancel()
 
@@ -274,7 +274,7 @@ export class ChallengeService extends AbstractService implements ChallengeServic
     this.deleteChallengeOperation(operation)
   }
 
-  public async submitValuesForChallenge(challenge: Challenge, values: ChallengeValue[]) {
+  public async submitValuesForChallenge(challenge: Challenge, values: ChallengeValue[]): Promise<void> {
     if (values.length === 0) {
       throw Error('Attempting to submit 0 values for challenge')
     }

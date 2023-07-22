@@ -24,6 +24,8 @@ import { KeySystemKeyManagerInterface } from '../KeySystemKeyManagerInterface'
 import { AsymmetricallyEncryptedString } from '../../Operator/Types/Types'
 
 export interface EncryptionProviderInterface {
+  initialize(): Promise<void>
+
   keys: KeySystemKeyManagerInterface
   readonly operators: OperatorManager
 
@@ -51,6 +53,13 @@ export interface EncryptionProviderInterface {
   isVersionNewerThanLibraryVersion(version: ProtocolVersion): boolean
   platformSupportsKeyDerivation(keyParams: SNRootKeyParams): boolean
 
+  getPasswordCreatedDate(): Date | undefined
+  getEncryptionDisplayName(): Promise<string>
+  upgradeAvailable(): Promise<boolean>
+
+  createEncryptedBackupFile(): Promise<BackupFile>
+  createDecryptedBackupFile(): BackupFile
+
   decryptBackupFile(
     file: BackupFile,
     password?: string,
@@ -75,6 +84,7 @@ export interface EncryptionProviderInterface {
   decryptErroredPayloads(): Promise<void>
   deleteWorkspaceSpecificKeyStateFromDevice(): Promise<void>
 
+  unwrapRootKey(wrappingKey: RootKeyInterface): Promise<void>
   computeRootKey(password: string, keyParams: SNRootKeyParams): Promise<RootKeyInterface>
   computeWrappingKey(passcode: string): Promise<RootKeyInterface>
   hasRootKeyEncryptionSource(): boolean

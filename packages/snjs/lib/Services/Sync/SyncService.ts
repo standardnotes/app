@@ -18,9 +18,7 @@ import { SNHistoryManager } from '../History/HistoryManager'
 import { SNLog } from '@Lib/Log'
 import { SNSessionManager } from '../Session/SessionManager'
 import { DiskStorageService } from '../Storage/DiskStorageService'
-import { SyncClientInterface } from './SyncClientInterface'
 import { SyncPromise } from './Types'
-import { SyncOpStatus } from '@Lib/Services/Sync/SyncOpStatus'
 import { ServerSyncResponse } from '@Lib/Services/Sync/Account/Response'
 import { ServerSyncResponseResolver } from '@Lib/Services/Sync/Account/ResponseResolver'
 import { SyncSignal, SyncStats } from '@Lib/Services/Sync/Signals'
@@ -84,6 +82,7 @@ import {
   SyncEventReceivedRemoteSharedVaultsData,
   SyncEventReceivedUserEventsData,
   SyncEventReceivedAsymmetricMessagesData,
+  SyncOpStatus,
 } from '@standardnotes/services'
 import { OfflineSyncResponse } from './Offline/Response'
 import {
@@ -123,7 +122,7 @@ const ContentTypeLocalLoadPriorty = [
  */
 export class SNSyncService
   extends AbstractService<SyncEvent>
-  implements SyncServiceInterface, InternalEventHandlerInterface, SyncClientInterface
+  implements SyncServiceInterface, InternalEventHandlerInterface
 {
   private dirtyIndexAtLastPresyncSave?: number
   private lastSyncDate?: Date

@@ -7,6 +7,9 @@ import {
 import { StoragePersistencePolicies, StorageValueModes } from './StorageTypes'
 
 export interface StorageServiceInterface {
+  initializeFromDisk(): Promise<void>
+  isStorageWrapped(): boolean
+  decryptStorage(): Promise<void>
   getAllRawPayloads(): Promise<FullyFormedTransferPayload[]>
   getAllKeys(mode?: StorageValueModes): string[]
   getValue<T>(key: string, mode?: StorageValueModes, defaultValue?: T): T
@@ -20,4 +23,5 @@ export interface StorageServiceInterface {
   deletePayloads(payloads: FullyFormedPayloadInterface[]): Promise<void>
   deletePayloadsWithUuids(uuids: string[]): Promise<void>
   clearAllPayloads(): Promise<void>
+  isEphemeralSession(): boolean
 }

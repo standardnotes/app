@@ -82,11 +82,11 @@ export class DiskStorageService extends Services.AbstractService implements Serv
     }
   }
 
-  public isEphemeralSession() {
+  public isEphemeralSession(): boolean {
     return this.persistencePolicy === Services.StoragePersistencePolicies.Ephemeral
   }
 
-  public async initializeFromDisk() {
+  public async initializeFromDisk(): Promise<void> {
     const value = await this.deviceInterface.getRawStorageValue(this.getPersistenceKey())
     const values = value ? JSON.parse(value as string) : undefined
 
@@ -161,7 +161,7 @@ export class DiskStorageService extends Services.AbstractService implements Serv
     return decryptedPayload
   }
 
-  public async decryptStorage() {
+  public async decryptStorage(): Promise<void> {
     const wrappedValue = this.values[Services.ValueModesKeys.Wrapped]
 
     if (!isEncryptedLocalStoragePayload(wrappedValue)) {

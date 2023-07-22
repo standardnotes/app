@@ -141,7 +141,7 @@ export class SNSessionManager
     this.apiService.setUser(user)
   }
 
-  async initializeFromDisk() {
+  async initializeFromDisk(): Promise<void> {
     this.memoizeUser(this.diskStorageService.getValue(StorageKey.User))
 
     if (!this.user) {

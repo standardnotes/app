@@ -10,6 +10,12 @@ import { ChallengeReason } from './Types/ChallengeReason'
 import { ChallengeObserver } from './Types/ChallengeObserver'
 
 export interface ChallengeServiceInterface extends AbstractService {
+  sendChallenge: (challenge: ChallengeInterface) => void
+  submitValuesForChallenge(challenge: ChallengeInterface, values: ChallengeValue[]): Promise<void>
+  cancelChallenge(challenge: ChallengeInterface): void
+
+  isPasscodeLocked(): Promise<boolean>
+
   /**
    * Resolves when the challenge has been completed.
    * For non-validated challenges, will resolve when the first value is submitted.
