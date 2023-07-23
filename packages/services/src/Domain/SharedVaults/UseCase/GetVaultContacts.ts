@@ -1,11 +1,11 @@
-import { GetSharedVaultUsers } from './GetSharedVaultUsers'
+import { GetVaultUsers } from './GetVaultUsers'
 import { TrustedContactInterface } from '@standardnotes/models'
 import { isNotUndefined } from '@standardnotes/utils'
 import { FindContact } from '../../Contacts/UseCase/FindContact'
 import { Result, UseCaseInterface } from '@standardnotes/domain-core'
 
 export class GetVaultContacts implements UseCaseInterface<TrustedContactInterface[]> {
-  constructor(private findContact: FindContact, private getVaultUsers: GetSharedVaultUsers) {}
+  constructor(private findContact: FindContact, private getVaultUsers: GetVaultUsers) {}
 
   async execute(sharedVaultUuid: string): Promise<Result<TrustedContactInterface[]>> {
     const users = await this.getVaultUsers.execute({ sharedVaultUuid })

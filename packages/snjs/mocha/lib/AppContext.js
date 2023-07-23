@@ -110,7 +110,7 @@ export class AppContext {
   }
 
   get asymmetric() {
-    return this.application.asymmetricMessageService
+    return this.application.asymmetric
   }
 
   get publicKey() {
@@ -407,9 +407,9 @@ export class AppContext {
   resolveWhenSharedVaultServiceSendsContactShareMessage() {
     return new Promise((resolve) => {
       const objectToSpy = this.sharedVaults
-      sinon.stub(objectToSpy, 'shareContactWithUserAdministeredSharedVaults').callsFake(async (contact) => {
-        objectToSpy.shareContactWithUserAdministeredSharedVaults.restore()
-        const result = await objectToSpy.shareContactWithUserAdministeredSharedVaults(contact)
+      sinon.stub(objectToSpy, 'shareContactWithVaults').callsFake(async (contact) => {
+        objectToSpy.shareContactWithVaults.restore()
+        const result = await objectToSpy.shareContactWithVaults(contact)
         resolve()
         return result
       })

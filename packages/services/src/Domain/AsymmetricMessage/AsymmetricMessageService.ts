@@ -56,19 +56,17 @@ export class AsymmetricMessageService
     eventBus: InternalEventBusInterface,
   ) {
     super(eventBus)
-
-    eventBus.addEventHandler(this, SyncEvent.ReceivedAsymmetricMessages)
-    eventBus.addEventHandler(this, SessionEvent.UserKeyPairChanged)
   }
 
   async handleEvent(event: InternalEventInterface): Promise<void> {
-    if (event.type === SessionEvent.UserKeyPairChanged) {
-      void this.messageServer.deleteAllInboundMessages()
-      void this.sendOwnContactChangeEventToAllContacts(event.payload as UserKeyPairChangedEventData)
-    }
-
-    if (event.type === SyncEvent.ReceivedAsymmetricMessages) {
-      void this.handleRemoteReceivedAsymmetricMessages(event.payload as SyncEventReceivedAsymmetricMessagesData)
+    switch (event.type) {
+      case SessionEvent.UserKeyPairChanged:
+        void this.messageServer.deleteAllInboundMessages()
+        void this.sendOwnContactChangeEventToAllContacts(event.payload as UserKeyPairChangedEventData)
+        break
+      case SyncEvent.ReceivedAsymmetricMessages:
+        void this.handleRemoteReceivedAsymmetricMessages(event.payload as SyncEventReceivedAsymmetricMessagesData)
+        break
     }
   }
 

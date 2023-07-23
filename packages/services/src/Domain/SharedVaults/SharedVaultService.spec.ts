@@ -1,4 +1,4 @@
-import { GetSharedVaultUsers } from './UseCase/GetSharedVaultUsers'
+import { GetVaultUsers } from './UseCase/GetVaultUsers'
 import { RemoveVaultMember } from './UseCase/RemoveSharedVaultMember'
 import { DeleteSharedVault } from './UseCase/DeleteSharedVault'
 import { ConvertToSharedVault } from './UseCase/ConvertToSharedVault'
@@ -59,7 +59,7 @@ describe('SharedVaultService', () => {
     const convertToSharedVault = {} as jest.Mocked<ConvertToSharedVault>
     const deleteSharedVaultUseCase = {} as jest.Mocked<DeleteSharedVault>
     const removeVaultMember = {} as jest.Mocked<RemoveVaultMember>
-    const getSharedVaultUsersUseCase = {} as jest.Mocked<GetSharedVaultUsers>
+    const getSharedVaultUsersUseCase = {} as jest.Mocked<GetVaultUsers>
 
     const eventBus = {} as jest.Mocked<InternalEventBusInterface>
     eventBus.addEventHandler = jest.fn()
@@ -94,7 +94,7 @@ describe('SharedVaultService', () => {
     )
   })
 
-  describe('shareContactWithUserAdministeredSharedVaults', () => {
+  describe('shareContactWithVaults', () => {
     it('should throw if attempting to share self contact', async () => {
       const contact = {
         name: 'Other',
@@ -103,9 +103,7 @@ describe('SharedVaultService', () => {
         isMe: true,
       } as jest.Mocked<TrustedContactInterface>
 
-      await expect(service.shareContactWithUserAdministeredSharedVaults(contact)).rejects.toThrow(
-        'Cannot share self contact',
-      )
+      await expect(service.shareContactWithVaults(contact)).rejects.toThrow('Cannot share self contact')
     })
   })
 })

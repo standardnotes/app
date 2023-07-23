@@ -1,7 +1,7 @@
 import { SharedVaultUserServerHash, isErrorResponse } from '@standardnotes/responses'
 import { SharedVaultUsersServerInterface } from '@standardnotes/api'
 
-export class GetSharedVaultUsers {
+export class GetVaultUsers {
   constructor(private vaultUsersServer: SharedVaultUsersServerInterface) {}
 
   async execute(params: { sharedVaultUuid: string }): Promise<SharedVaultUserServerHash[] | undefined> {

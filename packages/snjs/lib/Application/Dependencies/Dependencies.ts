@@ -82,7 +82,7 @@ import {
   ConvertToSharedVault,
   DeleteSharedVault,
   RemoveVaultMember,
-  GetSharedVaultUsers,
+  GetVaultUsers,
   AsymmetricMessageService,
   ReplaceContactData,
   DecryptOwnMessage,
@@ -328,7 +328,7 @@ export class Dependencies {
       return new SendVaultDataChangedMessage(
         this.get(TYPES.EncryptMessage),
         this.get(TYPES.FindContact),
-        this.get(TYPES.GetSharedVaultUsers),
+        this.get(TYPES.GetVaultUsers),
         this.get(TYPES.SendMessage),
       )
     })
@@ -350,7 +350,7 @@ export class Dependencies {
     })
 
     this.factory.set(TYPES.GetVaultContacts, () => {
-      return new GetVaultContacts(this.get(TYPES.FindContact), this.get(TYPES.GetSharedVaultUsers))
+      return new GetVaultContacts(this.get(TYPES.FindContact), this.get(TYPES.GetVaultUsers))
     })
 
     this.factory.set(TYPES.AcceptVaultInvite, () => {
@@ -362,6 +362,7 @@ export class Dependencies {
         this.get(TYPES.KeySystemKeyManager),
         this.get(TYPES.EncryptMessage),
         this.get(TYPES.SendVaultInvite),
+        this.get(TYPES.ShareContactWithVault),
       )
     })
 
@@ -391,8 +392,8 @@ export class Dependencies {
       return new ShareContactWithVault(
         this.get(TYPES.FindContact),
         this.get(TYPES.EncryptMessage),
-        this.get(TYPES.UserServer),
         this.get(TYPES.SendMessage),
+        this.get(TYPES.GetVaultUsers),
       )
     })
 
@@ -417,8 +418,8 @@ export class Dependencies {
       return new RemoveVaultMember(this.get(TYPES.SharedVaultUsersServer))
     })
 
-    this.factory.set(TYPES.GetSharedVaultUsers, () => {
-      return new GetSharedVaultUsers(this.get(TYPES.SharedVaultUsersServer))
+    this.factory.set(TYPES.GetVaultUsers, () => {
+      return new GetVaultUsers(this.get(TYPES.SharedVaultUsersServer))
     })
 
     this.factory.set(TYPES.DecryptOwnMessage, () => {
@@ -546,7 +547,7 @@ export class Dependencies {
         this.get(TYPES.ConvertToSharedVault),
         this.get(TYPES.DeleteSharedVault),
         this.get(TYPES.RemoveVaultMember),
-        this.get(TYPES.GetSharedVaultUsers),
+        this.get(TYPES.GetVaultUsers),
         this.get(TYPES.InternalEventBus),
       )
     })

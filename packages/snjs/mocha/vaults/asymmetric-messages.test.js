@@ -34,10 +34,14 @@ describe('asymmetric messages', function () {
     const { contactContext, deinitContactContext } = await Collaboration.createSharedVaultWithAcceptedInvite(context)
 
     const eventData = {
-      oldKeyPair: context.encryption.getKeyPair(),
-      oldSigningKeyPair: context.encryption.getSigningKeyPair(),
-      newKeyPair: context.encryption.getKeyPair(),
-      newSigningKeyPair: context.encryption.getSigningKeyPair(),
+      current: {
+        encryption: context.encryption.getKeyPair(),
+        signing: context.encryption.getSigningKeyPair(),
+      },
+      previous: {
+        encryption: context.encryption.getKeyPair(),
+        signing: context.encryption.getSigningKeyPair(),
+      },
     }
 
     await service.sendOwnContactChangeEventToAllContacts(eventData)
@@ -92,6 +96,38 @@ describe('asymmetric messages', function () {
     await deinitThirdPartyContext()
   })
 
+  it('should send contact share message when a member is added to a vault', async () => {
+    const { sharedVault, contactContext, deinitContactContext } =
+      await Collaboration.createSharedVaultWithAcceptedInvite(context)
+
+    const handleInitialContactShareMessage = contactContext.resolveWhenAsymmetricMessageProcessingCompletes()
+
+    const { thirdPartyContext, deinitThirdPartyContext } = await Collaboration.inviteNewPartyToSharedVault(
+      context,
+      sharedVault,
+    )
+
+    await Collaboration.acceptAllInvites(thirdPartyContext)
+
+    const firstPartySpy = sinon.spy(context.asymmetric, 'handleTrustedContactShareMessage')
+    const secondPartySpy = sinon.spy(contactContext.asymmetric, 'handleTrustedContactShareMessage')
+    const thirdPartySpy = sinon.spy(thirdPartyContext.asymmetric, 'handleTrustedContactShareMessage')
+
+    await contactContext.sync()
+    await handleInitialContactShareMessage
+
+    await context.sync()
+    await contactContext.sync()
+    await thirdPartyContext.sync()
+
+    expect(firstPartySpy.callCount).to.equal(0)
+    expect(secondPartySpy.callCount).to.equal(1)
+    expect(thirdPartySpy.callCount).to.equal(0)
+
+    await deinitThirdPartyContext()
+    await deinitContactContext()
+  })
+
   it('should not send contact share message to self or to contact who is changed', async () => {
     const { sharedVault, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithAcceptedInvite(context)
@@ -100,12 +136,10 @@ describe('asymmetric messages', function () {
       context,
       sharedVault,
     )
-    const handleInitialContactShareMessage = contactContext.resolveWhenAsymmetricMessageProcessingCompletes()
 
     await Collaboration.acceptAllInvites(thirdPartyContext)
 
     await contactContext.sync()
-    await handleInitialContactShareMessage
 
     const sendContactSharePromise = context.resolveWhenSharedVaultServiceSendsContactShareMessage()
 

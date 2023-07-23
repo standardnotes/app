@@ -6,7 +6,7 @@ import {
 } from '@standardnotes/models'
 import { KeySystemKeyManagerInterface } from '@standardnotes/encryption'
 import { AsymmetricMessageServerHash } from '@standardnotes/responses'
-import { GetSharedVaultUsers } from './GetSharedVaultUsers'
+import { GetVaultUsers } from './GetVaultUsers'
 import { PkcKeyPair } from '@standardnotes/sncrypto-common'
 import { SendMessage } from '../../AsymmetricMessage/UseCase/SendMessage'
 import { EncryptMessage } from '../../Encryption/UseCase/Asymmetric/EncryptMessage'
@@ -20,7 +20,7 @@ export class SendVaultKeyChangedMessage implements UseCaseInterface<void> {
     private keyManager: KeySystemKeyManagerInterface,
     private findContact: FindContact,
     private sendMessage: SendMessage,
-    private getVaultUsers: GetSharedVaultUsers,
+    private getVaultUsers: GetVaultUsers,
   ) {}
 
   async execute(params: {

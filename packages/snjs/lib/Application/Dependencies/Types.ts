@@ -111,7 +111,7 @@ export const TYPES = {
   ConvertToSharedVault: Symbol.for('ConvertToSharedVault'),
   DeleteSharedVault: Symbol.for('DeleteSharedVault'),
   RemoveVaultMember: Symbol.for('RemoveVaultMember'),
-  GetSharedVaultUsers: Symbol.for('GetSharedVaultUsers'),
+  GetVaultUsers: Symbol.for('GetSharedVaultUsers'),
   ResendAllMessages: Symbol.for('ResendAllMessages'),
   ReuploadAllInvites: Symbol.for('ReuploadAllInvites'),
   ReuploadInvite: Symbol.for('ReuploadInvite'),

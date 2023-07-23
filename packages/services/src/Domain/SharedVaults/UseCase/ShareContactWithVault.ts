@@ -1,22 +1,21 @@
-import { isErrorResponse } from '@standardnotes/responses'
 import {
   TrustedContactInterface,
   SharedVaultListingInterface,
   AsymmetricMessagePayloadType,
 } from '@standardnotes/models'
-import { SharedVaultUsersServerInterface } from '@standardnotes/api'
 import { PkcKeyPair } from '@standardnotes/sncrypto-common'
 import { SendMessage } from '../../AsymmetricMessage/UseCase/SendMessage'
 import { EncryptMessage } from '../../Encryption/UseCase/Asymmetric/EncryptMessage'
 import { Result, UseCaseInterface } from '@standardnotes/domain-core'
 import { FindContact } from '../../Contacts/UseCase/FindContact'
+import { GetVaultUsers } from './GetVaultUsers'
 
 export class ShareContactWithVault implements UseCaseInterface<void> {
   constructor(
     private findContact: FindContact,
     private encryptMessage: EncryptMessage,
-    private userServer: SharedVaultUsersServerInterface,
     private sendMessage: SendMessage,
+    private getVaultUsers: GetVaultUsers,
   ) {}
 
   async execute(params: {
@@ -32,15 +31,14 @@ export class ShareContactWithVault implements UseCaseInterface<void> {
       return Result.fail('Cannot share contact; user is not the owner of the shared vault')
     }
 
-    const usersResponse = await this.userServer.getSharedVaultUsers({
+    const users = await this.getVaultUsers.execute({
       sharedVaultUuid: params.sharedVault.sharing.sharedVaultUuid,
     })
 
-    if (isErrorResponse(usersResponse)) {
+    if (!users) {
       return Result.fail('Cannot share contact; shared vault users not found')
     }
 
-    const users = usersResponse.data.users
     if (users.length === 0) {
       return Result.ok()
     }

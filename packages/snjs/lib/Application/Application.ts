@@ -1120,7 +1120,6 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   private createBackgroundDependencies() {
     this.dependencies.get(TYPES.UserEventService)
     this.dependencies.get(TYPES.KeyRecoveryService)
-    this.dependencies.get(TYPES.AsymmetricMessageService)
   }
 
   private defineInternalEventHandlers(): void {
@@ -1132,6 +1131,12 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
 
     this.events.addEventHandler(this.dependencies.get(TYPES.SharedVaultService), SyncEvent.ReceivedSharedVaultInvites)
     this.events.addEventHandler(this.dependencies.get(TYPES.SharedVaultService), SyncEvent.ReceivedRemoteSharedVaults)
+
+    this.events.addEventHandler(
+      this.dependencies.get(TYPES.AsymmetricMessageService),
+      SyncEvent.ReceivedAsymmetricMessages,
+    )
+    this.events.addEventHandler(this.dependencies.get(TYPES.AsymmetricMessageService), SessionEvent.UserKeyPairChanged)
 
     if (this.dependencies.get(TYPES.FilesBackupService)) {
       this.events.addEventHandler(

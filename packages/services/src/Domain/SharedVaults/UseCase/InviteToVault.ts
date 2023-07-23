@@ -10,15 +10,63 @@ import { SendVaultInvite } from './SendVaultInvite'
 import { PkcKeyPair } from '@standardnotes/sncrypto-common'
 import { EncryptMessage } from '../../Encryption/UseCase/Asymmetric/EncryptMessage'
 import { Result, UseCaseInterface } from '@standardnotes/domain-core'
+import { ShareContactWithVault } from './ShareContactWithVault'
 
 export class InviteToVault implements UseCaseInterface<SharedVaultInviteServerHash> {
   constructor(
     private keyManager: KeySystemKeyManagerInterface,
     private encryptMessage: EncryptMessage,
     private sendInvite: SendVaultInvite,
+    private shareContact: ShareContactWithVault,
   ) {}
 
   async execute(params: {
+    keys: {
+      encryption: PkcKeyPair
+      signing: PkcKeyPair
+    }
+    senderUuid: string
+    sharedVault: SharedVaultListingInterface
+    sharedVaultContacts: TrustedContactInterface[]
+    recipient: TrustedContactInterface
+    permissions: SharedVaultPermission
+  }): Promise<Result<SharedVaultInviteServerHash>> {
+    const createInviteResult = await this.inviteContact(params)
+
+    if (createInviteResult.isFailed()) {
+      return createInviteResult
+    }
+
+    await this.shareContactWithOtherVaultMembers({
+      contact: params.recipient,
+      senderUuid: params.senderUuid,
+      keys: params.keys,
+      sharedVault: params.sharedVault,
+    })
+
+    return createInviteResult
+  }
+
+  private async shareContactWithOtherVaultMembers(params: {
+    contact: TrustedContactInterface
+    senderUuid: string
+    keys: {
+      encryption: PkcKeyPair
+      signing: PkcKeyPair
+    }
+    sharedVault: SharedVaultListingInterface
+  }): Promise<Result<void>> {
+    const result = await this.shareContact.execute({
+      keys: params.keys,
+      senderUserUuid: params.senderUuid,
+      sharedVault: params.sharedVault,
+      contactToShare: params.contact,
+    })
+
+    return result
+  }
+
+  private async inviteContact(params: {
     keys: {
       encryption: PkcKeyPair
       signing: PkcKeyPair

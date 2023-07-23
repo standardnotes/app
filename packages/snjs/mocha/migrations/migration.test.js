@@ -21,15 +21,15 @@ describe('migrations', () => {
   })
 
   it('should return correct required migrations if stored version is 1.0.0', async function () {
-    expect((await SNMigrationService.getRequiredMigrations('1.0.0')).length).to.equal(allMigrationsLength)
+    expect((await MigrationService.getRequiredMigrations('1.0.0')).length).to.equal(allMigrationsLength)
   })
 
   it('should return correct required migrations if stored version is 2.0.0', async function () {
-    expect((await SNMigrationService.getRequiredMigrations('2.0.0')).length).to.equal(allMigrationsLength)
+    expect((await MigrationService.getRequiredMigrations('2.0.0')).length).to.equal(allMigrationsLength)
   })
 
   it('should return 0 required migrations if stored version is futuristic', async function () {
-    expect((await SNMigrationService.getRequiredMigrations('100.0.1')).length).to.equal(0)
+    expect((await MigrationService.getRequiredMigrations('100.0.1')).length).to.equal(0)
   })
 
   it('after running base migration with no present storage values, should set version to current', async function () {

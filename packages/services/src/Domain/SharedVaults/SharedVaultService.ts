@@ -22,7 +22,7 @@ import {
 import { SharedVaultServiceInterface } from './SharedVaultServiceInterface'
 import { SharedVaultServiceEvent, SharedVaultServiceEventPayload } from './SharedVaultServiceEvent'
 import { EncryptionProviderInterface } from '@standardnotes/encryption'
-import { GetSharedVaultUsers } from './UseCase/GetSharedVaultUsers'
+import { GetVaultUsers } from './UseCase/GetVaultUsers'
 import { RemoveVaultMember } from './UseCase/RemoveSharedVaultMember'
 import { AbstractService } from '../Service/AbstractService'
 import { InternalEventHandlerInterface } from '../Internal/InternalEventHandlerInterface'
@@ -86,7 +86,7 @@ export class SharedVaultService
     private convertToSharedVault: ConvertToSharedVault,
     private deleteSharedVaultUseCase: DeleteSharedVault,
     private removeVaultMember: RemoveVaultMember,
-    private getSharedVaultUsersUseCase: GetSharedVaultUsers,
+    private getSharedVaultUsersUseCase: GetVaultUsers,
     eventBus: InternalEventBusInterface,
   ) {
     super(eventBus)
@@ -244,7 +244,7 @@ export class SharedVaultService
         continue
       }
 
-      await this.shareContactWithUserAdministeredSharedVaults(contact)
+      await this.shareContactWithVaults(contact)
     }
   }
 
@@ -423,6 +423,7 @@ export class SharedVaultService
         encryption: this.encryption.getKeyPair(),
         signing: this.encryption.getSigningKeyPair(),
       },
+      senderUuid: this.session.getSureUser().uuid,
       sharedVault,
       recipient: contact,
       sharedVaultContacts,
@@ -480,18 +481,14 @@ export class SharedVaultService
     return this.getSharedVaultUsersUseCase.execute({ sharedVaultUuid: sharedVault.sharing.sharedVaultUuid })
   }
 
-  async shareContactWithUserAdministeredSharedVaults(contact: TrustedContactInterface): Promise<void> {
+  async shareContactWithVaults(contact: TrustedContactInterface): Promise<void> {
     if (contact.isMe) {
       throw new Error('Cannot share self contact')
     }
 
-    const sharedVaults = this.getAllSharedVaults()
+    const ownedVaults = this.getAllSharedVaults().filter(this.isCurrentUserSharedVaultAdmin.bind(this))
 
-    for (const vault of sharedVaults) {
-      if (!this.isCurrentUserSharedVaultAdmin(vault)) {
-        continue
-      }
-
+    for (const vault of ownedVaults) {
       await this.shareContactWithVault.execute({
         keys: {
           encryption: this.encryption.getKeyPair(),
