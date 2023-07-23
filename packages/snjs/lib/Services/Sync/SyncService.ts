@@ -13,10 +13,10 @@ import {
 import { ItemManager } from '@Lib/Services/Items/ItemManager'
 import { OfflineSyncOperation } from '@Lib/Services/Sync/Offline/Operation'
 import { PayloadManager } from '../Payloads/PayloadManager'
-import { SNApiService } from '../Api/ApiService'
+import { LegacyApiService } from '../Api/ApiService'
 import { SNHistoryManager } from '../History/HistoryManager'
 import { SNLog } from '@Lib/Log'
-import { SNSessionManager } from '../Session/SessionManager'
+import { SessionManager } from '../Session/SessionManager'
 import { DiskStorageService } from '../Storage/DiskStorageService'
 import { SyncPromise } from './Types'
 import { ServerSyncResponse } from '@Lib/Services/Sync/Account/Response'
@@ -120,7 +120,7 @@ const ContentTypeLocalLoadPriorty = [
  * After each sync request, any changes made or retrieved are also persisted locally.
  * The sync service largely does not perform any task unless it is called upon.
  */
-export class SNSyncService
+export class SyncService
   extends AbstractService<SyncEvent>
   implements SyncServiceInterface, InternalEventHandlerInterface
 {
@@ -151,11 +151,11 @@ export class SNSyncService
 
   constructor(
     private itemManager: ItemManager,
-    private sessionManager: SNSessionManager,
+    private sessionManager: SessionManager,
     private encryptionService: EncryptionService,
     private storageService: DiskStorageService,
     private payloadManager: PayloadManager,
-    private apiService: SNApiService,
+    private apiService: LegacyApiService,
     private historyService: SNHistoryManager,
     private device: DeviceInterface,
     private identifier: string,

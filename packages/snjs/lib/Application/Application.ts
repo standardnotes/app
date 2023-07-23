@@ -1,12 +1,12 @@
 import { SNMfaService } from './../Services/Mfa/MfaService'
-import { SNKeyRecoveryService } from './../Services/KeyRecovery/KeyRecoveryService'
-import { SNWebSocketsService } from './../Services/Api/WebsocketsService'
+import { KeyRecoveryService } from './../Services/KeyRecovery/KeyRecoveryService'
+import { WebSocketsService } from './../Services/Api/WebsocketsService'
 import { SNMigrationService } from './../Services/Migration/MigrationService'
-import { SNApiService } from './../Services/Api/ApiService'
-import { SNFeaturesService } from '@Lib/Services/Features/FeaturesService'
+import { LegacyApiService } from './../Services/Api/ApiService'
+import { FeaturesService } from '@Lib/Services/Features/FeaturesService'
 import { SNPreferencesService } from './../Services/Preferences/PreferencesService'
 import { SNProtectionService } from './../Services/Protection/ProtectionService'
-import { SNSessionManager } from './../Services/Session/SessionManager'
+import { SessionManager } from './../Services/Session/SessionManager'
 import { HttpService, HttpServiceInterface, UserRegistrationResponseBody } from '@standardnotes/api'
 import { ApplicationIdentifier, compareVersions, ProtocolVersion, KeyParamsOrigination } from '@standardnotes/common'
 import {
@@ -68,6 +68,7 @@ import {
   CredentialsChangeFunctionResponse,
   SessionStrings,
   AccountEvent,
+  PayloadManagerInterface,
 } from '@standardnotes/services'
 import {
   PayloadEmitSource,
@@ -93,10 +94,10 @@ import {
 } from '@standardnotes/responses'
 import {
   DiskStorageService,
-  SNSyncService,
+  SyncService,
   ProtectionEvent,
-  SNSettingsService,
-  SNActionsService,
+  SettingsService,
+  ActionsService,
   ChallengeResponse,
   ListedClientInterface,
 } from '../Services'
@@ -219,10 +220,6 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
 
     this.dependencies = new Dependencies(this.options)
 
-    this.dependencies.set(TYPES.DeviceInterface, options.deviceInterface)
-    this.dependencies.set(TYPES.AlertService, options.alertService)
-    this.dependencies.set(TYPES.Crypto, options.crypto)
-
     this.registerServiceObservers()
     this.defineInternalEventHandlers()
   }
@@ -237,7 +234,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       }),
     )
 
-    const apiService = this.dependencies.get<SNApiService>(TYPES.LegacyApiService)
+    const apiService = this.dependencies.get<LegacyApiService>(TYPES.LegacyApiService)
     this.dependencies.get<DiskStorageService>(TYPES.DiskStorageService).provideEncryptionProvider(encryptionService)
 
     this.dependencies
@@ -245,7 +242,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       .setCallbacks(apiService.processMetaObject.bind(apiService), apiService.setSession.bind(apiService))
 
     this.serviceObservers.push(
-      this.dependencies.get<SNSessionManager>(TYPES.SessionManager).addEventObserver(async (event) => {
+      this.dependencies.get<SessionManager>(TYPES.SessionManager).addEventObserver(async (event) => {
         switch (event) {
           case SessionEvent.Restored: {
             void (async () => {
@@ -286,7 +283,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
         }
       }
     }
-    const syncService = this.dependencies.get<SNSyncService>(TYPES.SyncService)
+    const syncService = this.dependencies.get<SyncService>(TYPES.SyncService)
     const uninstall = syncService.addEventObserver(syncEventCallback)
     this.serviceObservers.push(uninstall)
 
@@ -329,7 +326,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       }),
     )
 
-    const featuresService = this.dependencies.get<SNFeaturesService>(TYPES.FeaturesService)
+    const featuresService = this.dependencies.get<FeaturesService>(TYPES.FeaturesService)
     this.serviceObservers.push(
       featuresService.addEventObserver((event) => {
         switch (event) {
@@ -1072,12 +1069,12 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   }
 
   public presentKeyRecoveryWizard(): void {
-    const service = this.dependencies.get<SNKeyRecoveryService>(TYPES.KeyRecoveryService)
+    const service = this.dependencies.get<KeyRecoveryService>(TYPES.KeyRecoveryService)
     return service.presentKeyRecoveryWizard()
   }
 
   public canAttemptDecryptionOfItem(item: EncryptedItemInterface): ClientDisplayableError | true {
-    const service = this.dependencies.get<SNKeyRecoveryService>(TYPES.KeyRecoveryService)
+    const service = this.dependencies.get<KeyRecoveryService>(TYPES.KeyRecoveryService)
     return service.canAttemptDecryptionOfItem(item)
   }
 
@@ -1189,6 +1186,10 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return this.dependencies.get<ItemManagerInterface>(TYPES.ItemManager)
   }
 
+  public get payloads(): PayloadManagerInterface {
+    return this.dependencies.get<PayloadManagerInterface>(TYPES.PayloadManager)
+  }
+
   public get protections(): ProtectionsClientInterface {
     return this.dependencies.get<ProtectionsClientInterface>(TYPES.ProtectionService)
   }
@@ -1201,8 +1202,8 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return this.dependencies.get<UserClientInterface>(TYPES.UserService)
   }
 
-  public get settings(): SNSettingsService {
-    return this.dependencies.get<SNSettingsService>(TYPES.SettingsService)
+  public get settings(): SettingsService {
+    return this.dependencies.get<SettingsService>(TYPES.SettingsService)
   }
 
   public get mutator(): MutatorClientInterface {
@@ -1237,8 +1238,8 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return this.dependencies.get<StorageServiceInterface>(TYPES.DiskStorageService)
   }
 
-  public get actions(): SNActionsService {
-    return this.dependencies.get<SNActionsService>(TYPES.ActionsService)
+  public get actions(): ActionsService {
+    return this.dependencies.get<ActionsService>(TYPES.ActionsService)
   }
 
   public get challenges(): ChallengeServiceInterface {
@@ -1277,16 +1278,16 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return this.dependencies.get<EncryptionProviderInterface>(TYPES.EncryptionService)
   }
 
-  private get legacyApi(): SNApiService {
-    return this.dependencies.get<SNApiService>(TYPES.LegacyApiService)
+  private get legacyApi(): LegacyApiService {
+    return this.dependencies.get<LegacyApiService>(TYPES.LegacyApiService)
   }
 
   private get http(): HttpServiceInterface {
     return this.dependencies.get<HttpServiceInterface>(TYPES.HttpService)
   }
 
-  private get sockets(): SNWebSocketsService {
-    return this.dependencies.get<SNWebSocketsService>(TYPES.WebSocketsService)
+  private get sockets(): WebSocketsService {
+    return this.dependencies.get<WebSocketsService>(TYPES.WebSocketsService)
   }
 
   private get events(): InternalEventBusInterface {

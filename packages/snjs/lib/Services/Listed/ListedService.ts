@@ -3,9 +3,9 @@ import { UuidString } from '@Lib/Types/UuidString'
 import { ItemManager } from '@Lib/Services/Items/ItemManager'
 import { DeprecatedHttpService } from '../Api/DeprecatedHttpService'
 import { SettingName } from '@standardnotes/settings'
-import { SNSettingsService } from '../Settings/SNSettingsService'
+import { SettingsService } from '../Settings/SNSettingsService'
 import { ListedClientInterface } from './ListedClientInterface'
-import { SNApiService } from '../Api/ApiService'
+import { LegacyApiService } from '../Api/ApiService'
 import { isErrorResponse, ListedAccount, ListedAccountInfo, ListedAccountInfoResponse } from '@standardnotes/responses'
 import { NoteMutator, SNActionsExtension, SNNote } from '@standardnotes/models'
 import {
@@ -19,9 +19,9 @@ import { ContentType } from '@standardnotes/domain-core'
 
 export class ListedService extends AbstractService implements ListedClientInterface {
   constructor(
-    private apiService: SNApiService,
+    private apiService: LegacyApiService,
     private itemManager: ItemManager,
-    private settingsService: SNSettingsService,
+    private settingsService: SettingsService,
     private httpSerivce: DeprecatedHttpService,
     private protectionService: SNProtectionService,
     private mutator: MutatorClientInterface,

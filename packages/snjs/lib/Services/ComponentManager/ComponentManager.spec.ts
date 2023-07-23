@@ -10,14 +10,14 @@ import {
   PreferenceServiceInterface,
 } from '@standardnotes/services'
 import { ItemManager } from '@Lib/Services/Items/ItemManager'
-import { SNFeaturesService } from '@Lib/Services/Features/FeaturesService'
+import { FeaturesService } from '@Lib/Services/Features/FeaturesService'
 import { SNComponentManager } from './ComponentManager'
-import { SNSyncService } from '../Sync/SyncService'
+import { SyncService } from '../Sync/SyncService'
 
 describe('featuresService', () => {
   let items: ItemManagerInterface
   let mutator: MutatorClientInterface
-  let features: SNFeaturesService
+  let features: FeaturesService
   let alerts: AlertService
   let sync: SyncServiceInterface
   let prefs: PreferenceServiceInterface
@@ -47,7 +47,7 @@ describe('featuresService', () => {
       attachEvent: jest.fn(),
     } as unknown as Window & typeof globalThis
 
-    sync = {} as jest.Mocked<SNSyncService>
+    sync = {} as jest.Mocked<SyncService>
     sync.sync = jest.fn()
 
     items = {} as jest.Mocked<ItemManager>
@@ -61,7 +61,7 @@ describe('featuresService', () => {
     mutator.changeItem = jest.fn()
     mutator.changeFeatureRepo = jest.fn()
 
-    features = {} as jest.Mocked<SNFeaturesService>
+    features = {} as jest.Mocked<FeaturesService>
 
     prefs = {} as jest.Mocked<SNPreferencesService>
     prefs.addEventObserver = jest.fn()

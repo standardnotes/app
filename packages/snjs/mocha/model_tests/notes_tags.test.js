@@ -110,7 +110,7 @@ describe('notes and tags', () => {
 
     tag = this.application.items.getDisplayableTags()[0]
 
-    const deletedNotePayload = this.application.payloadManager.findOne(note.uuid)
+    const deletedNotePayload = this.application.payloads.findOne(note.uuid)
     expect(deletedNotePayload.dirty).to.be.true
     expect(tag.dirty).to.be.true
 

@@ -52,9 +52,9 @@ import * as Common from '@standardnotes/common'
 
 import { RawStorageValue } from './Sessions/Types'
 import { ShareToken } from './ShareToken'
-import { SNApiService } from '../Api/ApiService'
+import { LegacyApiService } from '../Api/ApiService'
 import { DiskStorageService } from '../Storage/DiskStorageService'
-import { SNWebSocketsService } from '../Api/WebsocketsService'
+import { WebSocketsService } from '../Api/WebsocketsService'
 import { Strings } from '@Lib/Strings'
 import { UuidString } from '@Lib/Types/UuidString'
 import { ChallengeResponse, ChallengeService } from '../Challenge'
@@ -78,7 +78,7 @@ const cleanedEmailString = (email: string) => {
  * server credentials, such as the session token. It also exposes methods for registering
  * for a new account, signing into an existing one, or changing an account password.
  */
-export class SNSessionManager
+export class SessionManager
   extends AbstractService<SessionEvent>
   implements SessionsClientInterface, InternalEventHandlerInterface
 {
@@ -88,12 +88,12 @@ export class SNSessionManager
 
   constructor(
     private storage: DiskStorageService,
-    private apiService: SNApiService,
+    private apiService: LegacyApiService,
     private userApiService: UserApiServiceInterface,
     private alertService: AlertService,
     private encryptionService: EncryptionService,
     private challengeService: ChallengeService,
-    private webSocketsService: SNWebSocketsService,
+    private webSocketsService: WebSocketsService,
     private httpService: HttpServiceInterface,
     private sessionStorageMapper: MapperInterface<Session, Record<string, unknown>>,
     private legacySessionStorageMapper: MapperInterface<LegacySession, Record<string, unknown>>,

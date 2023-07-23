@@ -1,4 +1,5 @@
 export * from './Application'
+export * from './Application/Dependencies/Types'
 export * from './ApplicationGroup'
 export * from './Client'
 export * from './Domain'

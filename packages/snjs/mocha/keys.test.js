@@ -122,7 +122,7 @@ describe('keys', function () {
       dirty: true,
       dirtyIndex: getIncrementedDirtyIndex(),
     })
-    await this.application.payloadManager.emitPayload(dirtied, PayloadEmitSource.LocalChanged)
+    await this.application.payloads.emitPayload(dirtied, PayloadEmitSource.LocalChanged)
     await this.application.sync.sync()
 
     const rawPayloads = await this.application.storage.getAllRawPayloads()
@@ -241,7 +241,7 @@ describe('keys', function () {
 
     await this.application.sync.handleSuccessServerResponse({ payloadsSavedOrSaving: [], options: {} }, response)
 
-    const refreshedKey = this.application.payloadManager.findOne(itemsKey.uuid)
+    const refreshedKey = this.application.payloads.findOne(itemsKey.uuid)
 
     expect(refreshedKey.errorDecrypting).to.not.be.ok
     expect(refreshedKey.content.itemsKey).to.be.ok
@@ -326,7 +326,7 @@ describe('keys', function () {
       version: ProtocolVersion.V003,
     })
 
-    expect(this.application.payloadManager.invalidPayloads.length).to.equal(0)
+    expect(this.application.payloads.invalidPayloads.length).to.equal(0)
     expect(this.application.items.getDisplayableItemsKeys().length).to.equal(1)
     expect(this.application.items.getDisplayableItemsKeys()[0].dirty).to.equal(false)
 
@@ -336,7 +336,7 @@ describe('keys', function () {
 
     expect(this.application.items.getDisplayableItemsKeys().length).to.equal(1)
     expect(this.application.items.getDisplayableNotes().length).to.equal(10)
-    expect(this.application.payloadManager.invalidPayloads.length).to.equal(0)
+    expect(this.application.payloads.invalidPayloads.length).to.equal(0)
   })
 
   it('When root key changes, all items keys must be re-encrypted', async function () {
@@ -488,20 +488,14 @@ describe('keys', function () {
     await Factory.registerUserToApplication({ application: this.application })
     const rawKey = await this.application.device.getNamespacedKeychainValue(this.application.identifier)
     expect(rawKey.keyParams).to.not.be.ok
-    const rawKeyParams = await this.application.storage.getValue(
-      StorageKey.RootKeyParams,
-      StorageValueModes.Nonwrapped,
-    )
+    const rawKeyParams = await this.application.storage.getValue(StorageKey.RootKeyParams, StorageValueModes.Nonwrapped)
     expect(rawKeyParams).to.be.ok
   })
 
   it('persisted key params should exactly equal in memory rootKey.keyParams', async function () {
     await Factory.registerUserToApplication({ application: this.application })
     const rootKey = await this.application.encryption.getRootKey()
-    const rawKeyParams = await this.application.storage.getValue(
-      StorageKey.RootKeyParams,
-      StorageValueModes.Nonwrapped,
-    )
+    const rawKeyParams = await this.application.storage.getValue(StorageKey.RootKeyParams, StorageValueModes.Nonwrapped)
     expect(rootKey.keyParams.content).to.eql(rawKeyParams)
   })
 
@@ -599,7 +593,7 @@ describe('keys', function () {
     await recreatedApp.prepareForLaunch({ receiveChallenge })
     await recreatedApp.launch(true)
 
-    expect(recreatedApp.encryptionService.getRootKey()).to.be.ok
+    expect(recreatedApp.encryption.getRootKey()).to.be.ok
     expect(totalChallenges).to.equal(expectedChallenges)
     await Factory.safeDeinit(recreatedApp)
   })
@@ -630,7 +624,7 @@ describe('keys', function () {
 
     const newPassword = Utils.generateUuid()
 
-    await contextA.application.userService.changeCredentials({
+    await contextA.application.user.changeCredentials({
       currentPassword: password,
       newPassword: newPassword,
       origination: KeyParamsOrigination.PasswordChange,
@@ -639,8 +633,8 @@ describe('keys', function () {
     await contextB.syncWithIntegrityCheck()
     await contextA.syncWithIntegrityCheck()
 
-    const clientAUndecryptables = contextA.application.keyRecoveryService.getUndecryptables()
-    const clientBUndecryptables = contextB.application.keyRecoveryService.getUndecryptables()
+    const clientAUndecryptables = contextA.keyRecovery.getUndecryptables()
+    const clientBUndecryptables = contextB.keyRecovery.getUndecryptables()
 
     expect(Object.keys(clientBUndecryptables).length).to.equal(1)
     expect(Object.keys(clientAUndecryptables).length).to.equal(0)
@@ -684,11 +678,11 @@ describe('keys', function () {
 
       /** Change password through session manager directly instead of application,
        * as not to create any items key (to simulate 003 client behavior) */
-      const currentRootKey = await oldClient.encryptionService.computeRootKey(
+      const currentRootKey = await oldClient.encryption.computeRootKey(
         this.password,
-        await oldClient.encryptionService.getRootKeyParams(),
+        await oldClient.encryption.getRootKeyParams(),
       )
-      const operator = oldClient.encryptionService.operators.operatorForVersion(ProtocolVersion.V003)
+      const operator = oldClient.encryption.operators.operatorForVersion(ProtocolVersion.V003)
       const newRootKey = await operator.createRootKey(this.email, this.password)
       Object.defineProperty(oldClient.legacyApi, 'apiVersion', {
         get: function () {
@@ -701,7 +695,7 @@ describe('keys', function () {
        */
       await newClient.signIn(this.email, this.password)
 
-      await oldClient.sessionManager.changeCredentials({
+      await oldClient.sessions.changeCredentials({
         currentServerPassword: currentRootKey.serverPassword,
         newRootKey,
       })
@@ -757,7 +751,7 @@ describe('keys', function () {
       /** Renew session to prevent timeouts */
       this.application = await Factory.signOutAndBackIn(this.application, this.email, this.password)
 
-      await this.application.sessionManager.changeCredentials({
+      await this.application.sessions.changeCredentials({
         currentServerPassword: currentRootKey.serverPassword,
         newRootKey,
       })
@@ -856,7 +850,7 @@ describe('keys', function () {
       email: this.email,
       password: this.password,
     })
-    const defaultKeys = otherClient.encryptionService.itemsEncryption.getItemsKeys().filter((key) => {
+    const defaultKeys = otherClient.encryption.itemsEncryption.getItemsKeys().filter((key) => {
       return key.isDefault
     })
     expect(defaultKeys.length).to.equal(1)

@@ -31,7 +31,7 @@ describe('model manager mapping', () => {
       dirty: false,
       deleted: true,
     })
-    await this.application.payloadManager.emitPayload(payload, PayloadEmitSource.LocalChanged)
+    await this.application.payloads.emitPayload(payload, PayloadEmitSource.LocalChanged)
     expect(this.application.items.items.length).to.equal(this.expectedItemCount)
   })
 
@@ -63,13 +63,13 @@ describe('model manager mapping', () => {
 
     this.expectedItemCount++
 
-    await this.application.payloadManager.emitPayload(new DeleteItemMutator(item).getDeletedResult())
+    await this.application.payloads.emitPayload(new DeleteItemMutator(item).getDeletedResult())
 
-    const payload2 = new DeletedPayload(this.application.payloadManager.findOne(payload.uuid).ejected())
+    const payload2 = new DeletedPayload(this.application.payloads.findOne(payload.uuid).ejected())
 
-    await this.application.payloadManager.emitPayloads([payload2], PayloadEmitSource.LocalChanged)
+    await this.application.payloads.emitPayloads([payload2], PayloadEmitSource.LocalChanged)
 
-    expect(this.application.payloadManager.collection.all().length).to.equal(this.expectedItemCount)
+    expect(this.application.payloads.collection.all().length).to.equal(this.expectedItemCount)
   })
 
   it('mapping existing item updates its properties', async function () {

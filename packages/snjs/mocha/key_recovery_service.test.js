@@ -59,7 +59,7 @@ describe('key recovery service', function () {
 
     expect(errored.errorDecrypting).to.equal(true)
 
-    await application.payloadManager.emitPayload(errored, PayloadEmitSource.LocalInserted)
+    await application.payloads.emitPayload(errored, PayloadEmitSource.LocalInserted)
 
     await context.resolveWhenKeyRecovered(errored.uuid)
 
@@ -97,14 +97,14 @@ describe('key recovery service', function () {
 
     const randomItemsKey = await application.encryption.operators.defaultOperator().createItemsKey()
 
-    await application.payloadManager.emitPayload(
+    await application.payloads.emitPayload(
       randomItemsKey.payload.copy({ dirty: true, dirtyIndex: getIncrementedDirtyIndex() }),
       PayloadEmitSource.LocalInserted,
     )
 
     await context.sync()
 
-    const originalSyncTime = application.payloadManager.findOne(randomItemsKey.uuid).lastSyncEnd.getTime()
+    const originalSyncTime = application.payloads.findOne(randomItemsKey.uuid).lastSyncEnd.getTime()
 
     const encrypted = await application.encryption.encryptSplitSingle({
       usesRootKey: {
@@ -119,7 +119,7 @@ describe('key recovery service', function () {
       },
     })
 
-    await application.payloadManager.emitPayload(errored, PayloadEmitSource.LocalInserted)
+    await application.payloads.emitPayload(errored, PayloadEmitSource.LocalInserted)
 
     const recoveryPromise = context.resolveWhenKeyRecovered(errored.uuid)
 
@@ -127,7 +127,7 @@ describe('key recovery service', function () {
 
     await recoveryPromise
 
-    expect(application.payloadManager.findOne(errored.uuid).lastSyncEnd.getTime()).to.be.above(originalSyncTime)
+    expect(application.payloads.findOne(errored.uuid).lastSyncEnd.getTime()).to.be.above(originalSyncTime)
 
     await context.deinit()
   })
@@ -236,7 +236,7 @@ describe('key recovery service', function () {
       },
     })
 
-    await application.payloadManager.emitPayloads(decrypted, PayloadEmitSource.LocalInserted)
+    await application.payloads.emitPayloads(decrypted, PayloadEmitSource.LocalInserted)
 
     /** Wait and allow recovery wizard to complete */
     await Factory.sleep(1.5)
@@ -341,7 +341,7 @@ describe('key recovery service', function () {
 
     /** We expect the item in appA to be errored at this point, but we do not want it to recover */
     await appA.sync.sync()
-    expect(appA.payloadManager.findOne(note.uuid).waitingForKey).to.equal(true)
+    expect(appA.payloads.findOne(note.uuid).waitingForKey).to.equal(true)
 
     console.warn('Expecting exceptions below as we destroy app during key recovery')
     await Factory.safeDeinit(appA)
@@ -351,8 +351,8 @@ describe('key recovery service', function () {
     await recreatedAppA.prepareForLaunch({ receiveChallenge: () => {} })
     await recreatedAppA.launch(true)
 
-    expect(recreatedAppA.payloadManager.findOne(note.uuid).errorDecrypting).to.equal(true)
-    expect(recreatedAppA.payloadManager.findOne(note.uuid).waitingForKey).to.equal(true)
+    expect(recreatedAppA.payloads.findOne(note.uuid).errorDecrypting).to.equal(true)
+    expect(recreatedAppA.payloads.findOne(note.uuid).waitingForKey).to.equal(true)
     await Factory.safeDeinit(recreatedAppA)
   })
 
@@ -396,7 +396,7 @@ describe('key recovery service', function () {
       KeyParamsOrigination.Registration,
     )
 
-    const signInFunction = sinon.spy(application.keyRecoveryService, 'performServerSignIn')
+    const signInFunction = sinon.spy(context.keyRecovery, 'performServerSignIn')
 
     await application.encryption.setRootKey(randomRootKey)
 
@@ -414,7 +414,7 @@ describe('key recovery service', function () {
       context.resolveWhenKeyRecovered(correctItemsKey.uuid),
     ])
 
-    await application.payloadManager.emitPayload(
+    await application.payloads.emitPayload(
       encrypted.copy({
         errorDecrypting: true,
         dirty: true,
@@ -498,7 +498,7 @@ describe('key recovery service', function () {
       updated_at: newUpdated,
     })
 
-    await application.payloadManager.emitDeltaEmit({
+    await application.payloads.emitDeltaEmit({
       emits: [],
       ignored: [errored],
       source: PayloadEmitSource.RemoteRetrieved,
@@ -533,7 +533,7 @@ describe('key recovery service', function () {
 
     context.disableKeyRecovery()
 
-    await application.payloadManager.emitDeltaEmit({
+    await application.payloads.emitDeltaEmit({
       emits: [],
       ignored: [
         encrypted.copy({
@@ -616,7 +616,7 @@ describe('key recovery service', function () {
     expect(decrypted.errorDecrypting).to.equal(true)
 
     /** Insert into rotation */
-    await application.payloadManager.emitPayload(decrypted, PayloadEmitSource.LocalInserted)
+    await application.payloads.emitPayload(decrypted, PayloadEmitSource.LocalInserted)
 
     /** Wait and allow recovery wizard to complete */
     await Factory.sleep(0.3)
@@ -653,9 +653,9 @@ describe('key recovery service', function () {
     contextA.password = newPassword
     await appB.sync.sync()
 
-    const newDefaultKey = appB.encryptionService.getSureDefaultItemsKey()
+    const newDefaultKey = appB.encryption.getSureDefaultItemsKey()
 
-    const encrypted = await appB.encryptionService.encryptSplitSingle({
+    const encrypted = await appB.encryption.encryptSplitSingle({
       usesRootKeyWithKeyLookup: {
         items: [newDefaultKey.payload],
       },
@@ -663,28 +663,26 @@ describe('key recovery service', function () {
 
     /** Insert foreign items key into appA, which shouldn't be able to decrypt it yet */
     const appA = contextA.application
-    await appA.payloadManager.emitPayload(
+    await appA.payloads.emitPayload(
       encrypted.copy({
         errorDecrypting: true,
       }),
       PayloadEmitSource.LocalInserted,
     )
 
-    await Factory.awaitFunctionInvokation(appA.keyRecoveryService, 'handleDecryptionOfAllKeysMatchingCorrectRootKey')
+    await Factory.awaitFunctionInvokation(contextA.keyRecovery, 'handleDecryptionOfAllKeysMatchingCorrectRootKey')
 
     /** Stored version of items key should use new root key */
-    const stored = (await appA.deviceInterface.getAllDatabaseEntries(appA.identifier)).find(
+    const stored = (await appA.device.getAllDatabaseEntries(appA.identifier)).find(
       (payload) => payload.uuid === newDefaultKey.uuid,
     )
-    const storedParams = await appA.encryptionService.getKeyEmbeddedKeyParamsFromItemsKey(new EncryptedPayload(stored))
+    const storedParams = await appA.encryption.getKeyEmbeddedKeyParamsFromItemsKey(new EncryptedPayload(stored))
 
-    const correctStored = (await appB.deviceInterface.getAllDatabaseEntries(appB.identifier)).find(
+    const correctStored = (await appB.device.getAllDatabaseEntries(appB.identifier)).find(
       (payload) => payload.uuid === newDefaultKey.uuid,
     )
 
-    const correctParams = await appB.encryptionService.getKeyEmbeddedKeyParamsFromItemsKey(
-      new EncryptedPayload(correctStored),
-    )
+    const correctParams = await appB.encryption.getKeyEmbeddedKeyParamsFromItemsKey(new EncryptedPayload(correctStored))
 
     expect(storedParams).to.eql(correctParams)
 

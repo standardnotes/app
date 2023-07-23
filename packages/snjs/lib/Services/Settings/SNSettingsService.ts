@@ -1,11 +1,11 @@
-import { SNApiService } from '../Api/ApiService'
+import { LegacyApiService } from '../Api/ApiService'
 import { SettingsGateway } from './SettingsGateway'
-import { SNSessionManager } from '../Session/SessionManager'
+import { SessionManager } from '../Session/SessionManager'
 import { EmailBackupFrequency, SettingName } from '@standardnotes/settings'
 import { AbstractService, InternalEventBusInterface } from '@standardnotes/services'
 import { SettingsClientInterface } from './SettingsClientInterface'
 
-export class SNSettingsService extends AbstractService implements SettingsClientInterface {
+export class SettingsService extends AbstractService implements SettingsClientInterface {
   private provider!: SettingsGateway
   private frequencyOptionsLabels = {
     [EmailBackupFrequency.Disabled]: 'No email backups',
@@ -14,8 +14,8 @@ export class SNSettingsService extends AbstractService implements SettingsClient
   }
 
   constructor(
-    private readonly sessionManager: SNSessionManager,
-    private readonly apiService: SNApiService,
+    private readonly sessionManager: SessionManager,
+    private readonly apiService: LegacyApiService,
     protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)

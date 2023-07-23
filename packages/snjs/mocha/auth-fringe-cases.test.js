@@ -48,7 +48,7 @@ describe('auth fringe cases', () => {
       console.warn("Expecting errors 'Unable to find operator for version undefined'")
 
       const restartedApplication = await Factory.restartApplication(context.application)
-      const refreshedNote = restartedApplication.payloadManager.findOne(note.uuid)
+      const refreshedNote = restartedApplication.payloads.findOne(note.uuid)
       expect(refreshedNote.errorDecrypting).to.equal(true)
 
       await Factory.safeDeinit(restartedApplication)

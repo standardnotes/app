@@ -6,7 +6,9 @@ import { SNFeatureRepo } from '@standardnotes/models'
 import { ClientDisplayableError, HttpResponse } from '@standardnotes/responses'
 import { AnyFeatureDescription } from '@standardnotes/features'
 
-export interface ApiServiceInterface extends AbstractService<ApiServiceEvent, ApiServiceEventData>, FilesApiInterface {
+export interface LegacyApiServiceInterface
+  extends AbstractService<ApiServiceEvent, ApiServiceEventData>,
+    FilesApiInterface {
   isThirdPartyHostUsed(): boolean
 
   downloadOfflineFeaturesFromRepo(

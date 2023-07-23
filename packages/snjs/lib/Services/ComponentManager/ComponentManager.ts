@@ -1,4 +1,4 @@
-import { SNFeaturesService } from '@Lib/Services/Features/FeaturesService'
+import { FeaturesService } from '@Lib/Services/Features/FeaturesService'
 import { ContentType } from '@standardnotes/domain-core'
 import {
   ActionObserver,
@@ -94,7 +94,7 @@ export class SNComponentManager
     private items: ItemManagerInterface,
     private mutator: MutatorClientInterface,
     private sync: SyncServiceInterface,
-    private features: SNFeaturesService,
+    private features: FeaturesService,
     private preferences: PreferenceServiceInterface,
     protected alerts: AlertService,
     private environment: Environment,

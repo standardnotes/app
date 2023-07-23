@@ -26,7 +26,7 @@ export class AppContext {
   }
 
   enableLogging() {
-    const payloadManager = this.application.payloadManager
+    const payloadManager = this.application.payloads
 
     this.application.sync.getServiceName = () => {
       return `${this.identifier}—SyncService`
@@ -50,7 +50,7 @@ export class AppContext {
   }
 
   get vaults() {
-    return this.application.vaultService
+    return this.application.vaults
   }
 
   get sessions() {
@@ -66,27 +66,43 @@ export class AppContext {
   }
 
   get payloads() {
-    return this.application.payloadManager
+    return this.application.payloads
   }
 
   get encryption() {
     return this.application.encryption
   }
 
+  get keyRecovery() {
+    return this.application.dependencies.get(TYPES.KeyRecoveryService)
+  }
+
+  get singletons() {
+    return this.application.dependencies.get(TYPES.SingletonManager)
+  }
+
+  get history() {
+    return this.application.dependencies.get(TYPES.HistoryManager)
+  }
+
+  get subscriptions() {
+    return this.application.dependencies.get(TYPES.SubscriptionManager)
+  }
+
   get contacts() {
-    return this.application.contactService
+    return this.application.contacts
   }
 
   get sharedVaults() {
-    return this.application.sharedVaultService
+    return this.application.sharedVaults
   }
 
   get files() {
-    return this.application.fileService
+    return this.application.files
   }
 
   get keys() {
-    return this.application.keySystemKeyManager
+    return this.application.dependencies.get(TYPES.KeySystemKeyManager)
   }
 
   get asymmetric() {
@@ -120,14 +136,14 @@ export class AppContext {
   }
 
   disableKeyRecovery() {
-    this.application.keyRecoveryService.beginKeyRecovery = () => {
+    this.keyRecovery.beginKeyRecovery = () => {
       console.warn('Key recovery is disabled for this test')
     }
   }
 
   handleChallenge = (challenge) => {
     if (this.ignoringChallenges) {
-      this.application.challengeService.cancelChallenge(challenge)
+      this.application.challenges.cancelChallenge(challenge)
 
       return
     }
@@ -177,15 +193,12 @@ export class AppContext {
       },
     })
 
-    return this.application.sync.handleSuccessServerResponse(
-      { payloadsSavedOrSaving: [], options: {} },
-      response,
-    )
+    return this.application.sync.handleSuccessServerResponse({ payloadsSavedOrSaving: [], options: {} }, response)
   }
 
   resolveWhenKeyRecovered(uuid) {
     return new Promise((resolve) => {
-      this.application.keyRecoveryService.addEventObserver((_eventName, keys) => {
+      this.keyRecovery.addEventObserver((_eventName, keys) => {
         if (Uuids(keys).includes(uuid)) {
           resolve()
         }
@@ -195,7 +208,7 @@ export class AppContext {
 
   resolveWhenSharedVaultUserKeysResolved() {
     return new Promise((resolve) => {
-      this.application.vaultService.collaboration.addEventObserver((eventName) => {
+      this.application.vaults.collaboration.addEventObserver((eventName) => {
         if (eventName === SharedVaultServiceEvent.SharedVaultStatusChanged) {
           resolve()
         }
@@ -205,7 +218,7 @@ export class AppContext {
 
   async awaitSignInEvent() {
     return new Promise((resolve) => {
-      this.application.userService.addEventObserver((eventName) => {
+      this.application.user.addEventObserver((eventName) => {
         if (eventName === AccountEvent.SignedInOrRegistered) {
           resolve()
         }
@@ -353,7 +366,7 @@ export class AppContext {
 
   resolveWhenUserMessagesProcessingCompletes() {
     return new Promise((resolve) => {
-      const objectToSpy = this.application.userEventService
+      const objectToSpy = this.application.userEvents
       sinon.stub(objectToSpy, 'handleReceivedUserEvents').callsFake(async (params) => {
         objectToSpy.handleReceivedUserEvents.restore()
         const result = await objectToSpy.handleReceivedUserEvents(params)
@@ -365,7 +378,7 @@ export class AppContext {
 
   resolveWhenAllInboundAsymmetricMessagesAreDeleted() {
     return new Promise((resolve) => {
-      const objectToSpy = this.application.asymmetric.messageServer
+      const objectToSpy = this.application.dependencies.get(TYPES.messageServer)
       sinon.stub(objectToSpy, 'deleteAllInboundMessages').callsFake(async (params) => {
         objectToSpy.deleteAllInboundMessages.restore()
         const result = await objectToSpy.deleteAllInboundMessages(params)
@@ -428,7 +441,7 @@ export class AppContext {
   }
 
   awaitUserPrefsSingletonCreation() {
-    const preferences = this.application.preferencesService.preferences
+    const preferences = this.application.preferences.preferences
     if (preferences) {
       return
     }
@@ -453,7 +466,7 @@ export class AppContext {
 
   awaitUserPrefsSingletonResolution() {
     return new Promise((resolve) => {
-      this.application.preferencesService.addEventObserver((eventName) => {
+      this.application.preferences.addEventObserver((eventName) => {
         if (eventName === PreferencesServiceEvent.PreferencesChanged) {
           resolve()
         }
@@ -496,7 +509,7 @@ export class AppContext {
   }
 
   findPayload(uuid) {
-    return this.application.payloadManager.findPayload(uuid)
+    return this.application.payloads.findPayload(uuid)
   }
 
   get itemsKeys() {
@@ -514,15 +527,15 @@ export class AppContext {
   }
 
   disableKeyRecoveryServerSignIn() {
-    this.application.keyRecoveryService.performServerSignIn = () => {
-      console.warn('application.keyRecoveryService.performServerSignIn has been stubbed with an empty implementation')
+    this.keyRecovery.performServerSignIn = () => {
+      console.warn('application.keyRecovery.performServerSignIn has been stubbed with an empty implementation')
     }
   }
 
   preventKeyRecoveryOfKeys(ids) {
-    const originalImpl = this.application.keyRecoveryService.handleUndecryptableItemsKeys
+    const originalImpl = this.keyRecovery.handleUndecryptableItemsKeys
 
-    this.application.keyRecoveryService.handleUndecryptableItemsKeys = function (keys) {
+    this.keyRecovery.handleUndecryptableItemsKeys = function (keys) {
       const filtered = keys.filter((k) => !ids.includes(k.uuid))
 
       originalImpl.apply(this, [filtered])

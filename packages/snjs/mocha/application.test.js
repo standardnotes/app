@@ -24,8 +24,8 @@ describe('application instances', () => {
     const context2 = await Factory.createAppContext({ identifier: 'app2' })
     await Promise.all([context1.launch(), context2.launch()])
 
-    expect(context1.application.payloadManager).to.equal(context1.application.payloadManager)
-    expect(context1.application.payloadManager).to.not.equal(context2.application.payloadManager)
+    expect(context1.application.payloads).to.equal(context1.application.payloads)
+    expect(context1.application.payloads).to.not.equal(context2.application.payloads)
 
     await Factory.createMappedNote(context1.application)
     expect(context1.application.items.items.length).length.to.equal(BaseItemCounts.DefaultItems + 1)
@@ -107,7 +107,7 @@ describe('application instances', () => {
        * app deinit. */
       await Factory.sleep(MaximumWaitTime - 0.05)
       /** Access any deviceInterface function */
-      app.storage.deviceInterface.getAllDatabaseEntries(app.identifier)
+      app.device.getAllDatabaseEntries(app.identifier)
     })
     await app.lock()
   })

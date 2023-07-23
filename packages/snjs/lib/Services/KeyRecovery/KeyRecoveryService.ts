@@ -11,11 +11,11 @@ import {
   getIncrementedDirtyIndex,
   ContentTypeUsesRootKeyEncryption,
 } from '@standardnotes/models'
-import { SNSyncService } from '../Sync/SyncService'
+import { SyncService } from '../Sync/SyncService'
 import { DiskStorageService } from '../Storage/DiskStorageService'
 import { PayloadManager } from '../Payloads/PayloadManager'
 import { ChallengeService } from '../Challenge'
-import { SNApiService } from '@Lib/Services/Api/ApiService'
+import { LegacyApiService } from '@Lib/Services/Api/ApiService'
 import { ItemManager } from '../Items/ItemManager'
 import { removeFromArray, Uuids } from '@standardnotes/utils'
 import { ClientDisplayableError, isErrorResponse } from '@standardnotes/responses'
@@ -79,7 +79,7 @@ import { ContentType } from '@standardnotes/domain-core'
  * but our current copy is not, we will ignore the incoming value until we can properly
  * decrypt it.
  */
-export class SNKeyRecoveryService extends AbstractService<KeyRecoveryEvent, DecryptedPayloadInterface[]> {
+export class KeyRecoveryService extends AbstractService<KeyRecoveryEvent, DecryptedPayloadInterface[]> {
   private removeItemObserver: () => void
   private decryptionQueue: DecryptionQueueItem[] = []
   private isProcessingQueue = false
@@ -87,12 +87,12 @@ export class SNKeyRecoveryService extends AbstractService<KeyRecoveryEvent, Decr
   constructor(
     private itemManager: ItemManager,
     private payloadManager: PayloadManager,
-    private apiService: SNApiService,
+    private apiService: LegacyApiService,
     private encryptionService: EncryptionService,
     private challengeService: ChallengeService,
     private alertService: AlertService,
     private storageService: DiskStorageService,
-    private sync: SNSyncService,
+    private sync: SyncService,
     private userService: UserService,
     protected override internalEventBus: InternalEventBusInterface,
   ) {

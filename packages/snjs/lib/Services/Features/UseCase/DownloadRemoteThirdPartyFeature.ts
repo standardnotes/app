@@ -9,13 +9,13 @@ import {
 import {
   AlertService,
   API_MESSAGE_FAILED_DOWNLOADING_EXTENSION,
-  ApiServiceInterface,
+  LegacyApiServiceInterface,
   ItemManagerInterface,
 } from '@standardnotes/services'
 import { isString } from '@standardnotes/utils'
 
 export class DownloadRemoteThirdPartyFeatureUseCase {
-  constructor(private api: ApiServiceInterface, private items: ItemManagerInterface, private alerts: AlertService) {}
+  constructor(private api: LegacyApiServiceInterface, private items: ItemManagerInterface, private alerts: AlertService) {}
 
   async execute(url: string): Promise<ComponentInterface | undefined> {
     const response = await this.api.downloadFeatureUrl(url)

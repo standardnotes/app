@@ -1,4 +1,4 @@
-import { SNActionsService } from './../../Services/Actions/ActionsService'
+import { ActionsService } from './../../Services/Actions/ActionsService'
 import { DeleteRevision } from '../../Domain/UseCase/DeleteRevision/DeleteRevision'
 import { GetRevision } from '../../Domain/UseCase/GetRevision/GetRevision'
 import { ListRevisions } from '../../Domain/UseCase/ListRevisions/ListRevisions'
@@ -13,17 +13,17 @@ import { ListedService } from '../../Services/Listed/ListedService'
 import { SNMigrationService } from '../../Services/Migration/MigrationService'
 import { SNMfaService } from '../../Services/Mfa/MfaService'
 import { SNComponentManager } from '../../Services/ComponentManager/ComponentManager'
-import { SNFeaturesService } from '@Lib/Services/Features/FeaturesService'
-import { SNSettingsService } from '../../Services/Settings/SNSettingsService'
+import { FeaturesService } from '@Lib/Services/Features/FeaturesService'
+import { SettingsService } from '../../Services/Settings/SNSettingsService'
 import { SNPreferencesService } from '../../Services/Preferences/PreferencesService'
-import { SNSingletonManager } from '../../Services/Singleton/SingletonManager'
-import { SNKeyRecoveryService } from '../../Services/KeyRecovery/KeyRecoveryService'
+import { SingletonManager } from '../../Services/Singleton/SingletonManager'
+import { KeyRecoveryService } from '../../Services/KeyRecovery/KeyRecoveryService'
 import { SNProtectionService } from '../../Services/Protection/ProtectionService'
-import { SNSyncService } from '../../Services/Sync/SyncService'
+import { SyncService } from '../../Services/Sync/SyncService'
 import { SNHistoryManager } from '../../Services/History/HistoryManager'
-import { SNSessionManager } from '../../Services/Session/SessionManager'
-import { SNWebSocketsService } from '../../Services/Api/WebsocketsService'
-import { SNApiService } from '../../Services/Api/ApiService'
+import { SessionManager } from '../../Services/Session/SessionManager'
+import { WebSocketsService } from '../../Services/Api/WebsocketsService'
+import { LegacyApiService } from '../../Services/Api/ApiService'
 import { SnjsVersion } from '../../Version'
 import { DeprecatedHttpService } from '../../Services/Api/DeprecatedHttpService'
 import { ChallengeService } from '../../Services/Challenge/ChallengeService'
@@ -119,8 +119,18 @@ export class Dependencies {
   private dependencies = new Map<symbol, unknown>()
 
   constructor(private options: FullyResolvedApplicationOptions) {
+    this.dependencies.set(TYPES.DeviceInterface, options.deviceInterface)
+    this.dependencies.set(TYPES.AlertService, options.alertService)
+    this.dependencies.set(TYPES.Crypto, options.crypto)
+
     this.registerServiceMakers()
     this.registerUseCaseMakers()
+    this.createBackgroundDependencies()
+  }
+
+  private createBackgroundDependencies() {
+    this.get(TYPES.UserEventService)
+    this.get(TYPES.KeyRecoveryService)
   }
 
   public deinit() {
@@ -138,6 +148,28 @@ export class Dependencies {
 
   public getAll(): unknown[] {
     return Array.from(this.dependencies.values()).filter(isNotUndefined)
+  }
+
+  public get<T>(sym: symbol): T {
+    const dep = this.dependencies.get(sym)
+    if (dep) {
+      return dep as T
+    }
+
+    const maker = this.factory.get(sym)
+    if (!maker) {
+      throw new Error(`No dependency maker found for ${sym.toString()}`)
+    }
+
+    const instance = maker()
+    if (!instance) {
+      /** Could be optional */
+      return undefined as T
+    }
+
+    this.dependencies.set(sym, instance)
+
+    return instance as T
   }
 
   private registerUseCaseMakers() {
@@ -479,7 +511,7 @@ export class Dependencies {
         this.get(TYPES.SyncService),
         this.get(TYPES.MutatorService),
         this.get(TYPES.SessionManager),
-        this.options.crypto,
+        this.get(TYPES.Crypto),
         this.get(TYPES.UserService),
         this.get(TYPES.SelfContactManager),
         this.get(TYPES.EncryptionService),
@@ -497,7 +529,7 @@ export class Dependencies {
         this.get(TYPES.AuthManager),
         this.get(TYPES.EncryptionService),
         this.get(TYPES.InMemoryStore),
-        this.options.crypto,
+        this.get(TYPES.Crypto),
         this.get(TYPES.SessionManager),
         this.get(TYPES.InternalEventBus),
       )
@@ -586,7 +618,7 @@ export class Dependencies {
     })
 
     this.factory.set(TYPES.ActionsService, () => {
-      return new SNActionsService(
+      return new ActionsService(
         this.get(TYPES.ItemManager),
         this.get(TYPES.AlertService),
         this.get(TYPES.DeviceInterface),
@@ -628,7 +660,7 @@ export class Dependencies {
         this.get(TYPES.ChallengeService),
         this.get(TYPES.HttpService),
         this.get(TYPES.AlertService),
-        this.options.crypto,
+        this.get(TYPES.Crypto),
         this.get(TYPES.InternalEventBus),
         this.get(TYPES.FilesBackupService),
       )
@@ -674,7 +706,7 @@ export class Dependencies {
         this.get(TYPES.EncryptionService),
         this.get(TYPES.DeviceInterface),
         this.get(TYPES.StatusService),
-        this.options.crypto,
+        this.get(TYPES.Crypto),
         this.get(TYPES.DiskStorageService),
         this.get(TYPES.SessionManager),
         this.get(TYPES.PayloadManager),
@@ -691,7 +723,7 @@ export class Dependencies {
     this.factory.set(TYPES.MfaService, () => {
       return new SNMfaService(
         this.get(TYPES.SettingsService),
-        this.options.crypto,
+        this.get(TYPES.Crypto),
         this.get(TYPES.FeaturesService),
         this.get(TYPES.InternalEventBus),
       )
@@ -713,7 +745,7 @@ export class Dependencies {
     })
 
     this.factory.set(TYPES.FeaturesService, () => {
-      return new SNFeaturesService(
+      return new FeaturesService(
         this.get(TYPES.DiskStorageService),
         this.get(TYPES.ItemManager),
         this.get(TYPES.MutatorService),
@@ -731,7 +763,7 @@ export class Dependencies {
     })
 
     this.factory.set(TYPES.SettingsService, () => {
-      return new SNSettingsService(
+      return new SettingsService(
         this.get(TYPES.SessionManager),
         this.get(TYPES.LegacyApiService),
         this.get(TYPES.InternalEventBus),
@@ -749,7 +781,7 @@ export class Dependencies {
     })
 
     this.factory.set(TYPES.SingletonManager, () => {
-      return new SNSingletonManager(
+      return new SingletonManager(
         this.get(TYPES.ItemManager),
         this.get(TYPES.MutatorService),
         this.get(TYPES.PayloadManager),
@@ -759,10 +791,10 @@ export class Dependencies {
     })
 
     this.factory.set(TYPES.KeyRecoveryService, () => {
-      return new SNKeyRecoveryService(
+      return new KeyRecoveryService(
         this.get(TYPES.ItemManager),
         this.get(TYPES.PayloadManager),
-        this.get(TYPES.UserApiService),
+        this.get(TYPES.LegacyApiService),
         this.get(TYPES.EncryptionService),
         this.get(TYPES.ChallengeService),
         this.get(TYPES.AlertService),
@@ -799,7 +831,7 @@ export class Dependencies {
     })
 
     this.factory.set(TYPES.SyncService, () => {
-      return new SNSyncService(
+      return new SyncService(
         this.get(TYPES.ItemManager),
         this.get(TYPES.SessionManager),
         this.get(TYPES.EncryptionService),
@@ -836,7 +868,7 @@ export class Dependencies {
     })
 
     this.factory.set(TYPES.SessionManager, () => {
-      return new SNSessionManager(
+      return new SessionManager(
         this.get(TYPES.DiskStorageService),
         this.get(TYPES.LegacyApiService),
         this.get(TYPES.UserApiService),
@@ -853,7 +885,7 @@ export class Dependencies {
     })
 
     this.factory.set(TYPES.WebSocketsService, () => {
-      return new SNWebSocketsService(
+      return new WebSocketsService(
         this.get(TYPES.DiskStorageService),
         this.options.webSocketUrl,
         this.get(TYPES.WebSocketApiService),
@@ -966,7 +998,7 @@ export class Dependencies {
     })
 
     this.factory.set(TYPES.LegacyApiService, () => {
-      return new SNApiService(
+      return new LegacyApiService(
         this.get(TYPES.HttpService),
         this.get(TYPES.DiskStorageService),
         this.options.defaultHost,
@@ -985,31 +1017,5 @@ export class Dependencies {
     this.factory.set(TYPES.LegacySessionStorageMapper, () => {
       return new LegacySessionStorageMapper()
     })
-  }
-
-  public get<T>(sym: symbol): T {
-    const dep = this.dependencies.get(sym)
-    if (dep) {
-      return dep as T
-    }
-
-    const maker = this.factory.get(sym)
-    if (!maker) {
-      throw new Error(`No dependency maker found for ${sym.toString()}`)
-    }
-
-    const instance = maker()
-    if (!instance) {
-      /** Could be optional */
-      return undefined as T
-    }
-
-    this.dependencies.set(sym, instance)
-
-    return instance as T
-  }
-
-  public set<T>(dependency: symbol, instance: T): void {
-    this.dependencies.set(dependency, instance)
   }
 }

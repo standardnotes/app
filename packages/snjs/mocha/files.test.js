@@ -12,7 +12,6 @@ describe('files', function () {
   let context
   let fileService
   let itemManager
-  let subscriptionId = 1001
 
   beforeEach(function () {
     localStorage.clear()
@@ -28,7 +27,7 @@ describe('files', function () {
     await context.launch()
 
     application = context.application
-    fileService = context.application.fileService
+    fileService = context.application.files
     itemManager = context.application.items
 
     await Factory.registerUserToApplication({

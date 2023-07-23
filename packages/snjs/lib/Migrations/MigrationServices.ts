@@ -7,10 +7,10 @@ import {
   MutatorClientInterface,
   PreferenceServiceInterface,
 } from '@standardnotes/services'
-import { SNSessionManager } from '../Services/Session/SessionManager'
+import { SessionManager } from '../Services/Session/SessionManager'
 import { ApplicationIdentifier } from '@standardnotes/common'
 import { ItemManager } from '@Lib/Services/Items/ItemManager'
-import { ChallengeService, SNSingletonManager, SNFeaturesService, DiskStorageService } from '@Lib/Services'
+import { ChallengeService, SingletonManager, FeaturesService, DiskStorageService } from '@Lib/Services'
 import { LegacySession, MapperInterface } from '@standardnotes/domain-core'
 
 export type MigrationServices = {
@@ -18,12 +18,12 @@ export type MigrationServices = {
   deviceInterface: DeviceInterface
   storageService: DiskStorageService
   challengeService: ChallengeService
-  sessionManager: SNSessionManager
+  sessionManager: SessionManager
   backups?: BackupServiceInterface
   itemManager: ItemManager
   mutator: MutatorClientInterface
-  singletonManager: SNSingletonManager
-  featuresService: SNFeaturesService
+  singletonManager: SingletonManager
+  featuresService: FeaturesService
   preferences: PreferenceServiceInterface
   environment: Environment
   platform: Platform

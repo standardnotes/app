@@ -35,7 +35,7 @@ describe('notes + tags syncing', function () {
     const note = await Factory.createMappedNote(this.application)
     await this.application.mutator.setItemDirty(note)
     await this.application.sync.sync(syncOptions)
-    await this.application.payloadManager.resetState()
+    await this.application.payloads.resetState()
     await this.application.items.resetState()
     await this.application.sync.clearSyncPositionTokens()
     await this.application.sync.sync(syncOptions)

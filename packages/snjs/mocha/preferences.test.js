@@ -106,7 +106,7 @@ describe('preferences', function () {
     Factory.initializeApplication(this.application)
     await willSyncPromise
 
-    expect(this.application.preferencesService.preferences).to.exist
+    expect(this.application.preferences.preferences).to.exist
     expect(this.application.getPreference(prefKey)).to.equal(prefValue)
   })
 })

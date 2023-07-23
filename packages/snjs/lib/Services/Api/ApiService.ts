@@ -1,7 +1,7 @@
 import { joinPaths } from '@standardnotes/utils'
 import {
   AbstractService,
-  ApiServiceInterface,
+  LegacyApiServiceInterface,
   InternalEventBusInterface,
   IntegrityApiInterface,
   ItemsServerInterface,
@@ -86,10 +86,10 @@ const V0_API_VERSION = '20200115'
 
 type InvalidSessionObserver = (revoked: boolean) => void
 
-export class SNApiService
+export class LegacyApiService
   extends AbstractService<ApiServiceEvent, ApiServiceEventData>
   implements
-    ApiServiceInterface,
+    LegacyApiServiceInterface,
     FilesApiInterface,
     IntegrityApiInterface,
     ItemsServerInterface,

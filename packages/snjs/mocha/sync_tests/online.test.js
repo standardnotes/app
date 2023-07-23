@@ -499,7 +499,7 @@ describe('online syncing', function () {
     await this.application.sync.markAllItemsAsNeedingSyncAndPersist()
 
     this.application.items.resetState()
-    this.application.payloadManager.resetState()
+    this.application.payloads.resetState()
 
     await this.application.sync.clearSyncPositionTokens()
 
@@ -556,7 +556,7 @@ describe('online syncing', function () {
     this.expectedItemCount += largeItemCount
 
     /** Clear local data */
-    await this.application.payloadManager.resetState()
+    await this.application.payloads.resetState()
     await this.application.items.resetState()
     await this.application.sync.clearSyncPositionTokens()
     await this.application.storage.clearAllPayloads()
@@ -619,7 +619,7 @@ describe('online syncing', function () {
   it('syncing a new item before local data has loaded should still persist the item to disk', async function () {
     this.application.sync.ut_setDatabaseLoaded(false)
     /** You don't want to clear model manager state as we'll lose encrypting items key */
-    // await this.application.payloadManager.resetState();
+    // await this.application.payloads.resetState();
     await this.application.sync.clearSyncPositionTokens()
     expect(this.application.items.getDirtyItems().length).to.equal(0)
 
@@ -646,7 +646,7 @@ describe('online syncing', function () {
 
     /** Clear state data and upload item from storage to server */
     await this.application.sync.clearSyncPositionTokens()
-    await this.application.payloadManager.resetState()
+    await this.application.payloads.resetState()
     await this.application.items.resetState()
     await this.application.sync.loadDatabasePayloads()
     await this.application.sync.sync(syncOptions)
@@ -770,7 +770,7 @@ describe('online syncing', function () {
     expect(note.content.text).to.equal(text)
 
     // client B
-    await this.application.payloadManager.resetState()
+    await this.application.payloads.resetState()
     await this.application.items.resetState()
     await this.application.sync.clearSyncPositionTokens()
     await this.application.sync.sync(syncOptions)
@@ -929,7 +929,7 @@ describe('online syncing', function () {
       dirty: true,
     })
 
-    await this.application.payloadManager.emitPayload(errored)
+    await this.application.payloads.emitPayload(errored)
     await this.application.sync.sync(syncOptions)
 
     const updatedNote = this.application.items.findAnyItem(note.uuid)
@@ -959,8 +959,8 @@ describe('online syncing', function () {
 
     await this.application.sync.handleSuccessServerResponse({ payloadsSavedOrSaving: [], options: {} }, response)
 
-    expect(this.application.payloadManager.findOne(invalidPayload.uuid)).to.not.be.ok
-    expect(this.application.payloadManager.findOne(validPayload.uuid)).to.be.ok
+    expect(this.application.payloads.findOne(invalidPayload.uuid)).to.not.be.ok
+    expect(this.application.payloads.findOne(validPayload.uuid)).to.be.ok
   })
 
   it('retrieved items should have both updated_at and updated_at_timestamps', async function () {

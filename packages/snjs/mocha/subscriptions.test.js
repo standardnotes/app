@@ -1,5 +1,5 @@
 import * as Factory from './lib/factory.js'
-import * as Events from './lib/Events.js'
+
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
@@ -9,7 +9,6 @@ describe('subscriptions', function () {
   let application
   let context
   let subscriptionManager
-  let subscriptionId = 3001
 
   afterEach(async function () {
     await Factory.safeDeinit(application)
@@ -24,9 +23,9 @@ describe('subscriptions', function () {
     await context.launch()
 
     application = context.application
-    subscriptionManager = context.application.subscriptionManager
+    subscriptionManager = context.subscriptions
 
-    const result = await Factory.registerUserToApplication({
+    await Factory.registerUserToApplication({
       application: application,
       email: context.email,
       password: context.password,
@@ -40,7 +39,7 @@ describe('subscriptions', function () {
 
     const existingInvites = await subscriptionManager.listSubscriptionInvitations()
 
-    const newlyCreatedInvite = existingInvites.find(invite => invite.inviteeIdentifier === 'test@test.te')
+    const newlyCreatedInvite = existingInvites.find((invite) => invite.inviteeIdentifier === 'test@test.te')
 
     expect(newlyCreatedInvite.status).to.equal('sent')
   })
@@ -69,17 +68,17 @@ describe('subscriptions', function () {
 
     let existingInvites = await subscriptionManager.listSubscriptionInvitations()
 
-    expect (existingInvites.length).to.equal(2)
+    expect(existingInvites.length).to.equal(2)
 
-    const newlyCreatedInvite = existingInvites.find(invite => invite.inviteeIdentifier === 'test@test.te')
+    const newlyCreatedInvite = existingInvites.find((invite) => invite.inviteeIdentifier === 'test@test.te')
 
     await subscriptionManager.cancelInvitation(newlyCreatedInvite.uuid)
 
     existingInvites = await subscriptionManager.listSubscriptionInvitations()
 
-    expect (existingInvites.length).to.equal(2)
+    expect(existingInvites.length).to.equal(2)
 
-    expect(existingInvites.filter(invite => invite.status === 'canceled').length).to.equal(1)
+    expect(existingInvites.filter((invite) => invite.status === 'canceled').length).to.equal(1)
   })
 
   it('should invite a user by email if the limit of shared subscription is restored', async () => {
@@ -99,6 +98,6 @@ describe('subscriptions', function () {
 
     existingInvites = await subscriptionManager.listSubscriptionInvitations()
 
-    expect(existingInvites.find(invite => invite.inviteeIdentifier === 'test6@test.te')).not.to.equal(undefined)
+    expect(existingInvites.find((invite) => invite.inviteeIdentifier === 'test6@test.te')).not.to.equal(undefined)
   })
 })

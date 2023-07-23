@@ -30,8 +30,8 @@ describe('app models', () => {
     await Factory.safeDeinit(this.application)
   })
 
-  it('payloadManager should be defined', () => {
-    expect(sharedApplication.payloadManager).to.be.ok
+  it('payloads should be defined', () => {
+    expect(sharedApplication.payloads).to.be.ok
   })
 
   it('item should be defined', () => {
@@ -292,17 +292,17 @@ describe('app models', () => {
       waitingForKey: true,
     })
 
-    await this.application.payloadManager.emitPayload(errored)
+    await this.application.payloads.emitPayload(errored)
 
-    expect(this.application.payloadManager.findOne(item1.uuid).errorDecrypting).to.equal(true)
-    expect(this.application.payloadManager.findOne(item1.uuid).items_key_id).to.equal(itemsKey.uuid)
+    expect(this.application.payloads.findOne(item1.uuid).errorDecrypting).to.equal(true)
+    expect(this.application.payloads.findOne(item1.uuid).items_key_id).to.equal(itemsKey.uuid)
 
     sinon.stub(this.application.encryption.itemsEncryption, 'decryptErroredItemPayloads').callsFake(() => {
       // prevent auto decryption
     })
 
     const alternatedKey = await Factory.alternateUuidForItem(this.application, itemsKey.uuid)
-    const updatedPayload = this.application.payloadManager.findOne(item1.uuid)
+    const updatedPayload = this.application.payloads.findOne(item1.uuid)
 
     expect(updatedPayload.items_key_id).to.equal(alternatedKey.uuid)
   })

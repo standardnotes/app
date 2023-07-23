@@ -55,4 +55,4 @@ export const BaseTests = [
   'session.test.js',
   'subscriptions.test.js',
   'recovery.test.js',
-];
+]

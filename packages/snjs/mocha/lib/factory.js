@@ -116,7 +116,7 @@ export async function setOldVersionPasscode({ application, passcode, version }) 
   const operator = application.encryption.operators.operatorForVersion(version)
   const key = await operator.createRootKey(identifier, passcode, KeyParamsOrigination.PasscodeCreate)
   await application.encryption.setNewRootKeyWrapper(key)
-  await application.userService.rewriteItemsKeys()
+  await application.user.rewriteItemsKeys()
   await application.sync.sync(syncOptions)
 }
 
@@ -130,16 +130,17 @@ export async function registerOldUser({ application, email, password, version })
   const operator = application.encryption.operators.operatorForVersion(version)
   const accountKey = await operator.createRootKey(email, password, KeyParamsOrigination.Registration)
 
-  const response = await application.userApiService.register({
+  const response = await application.dependencies.get(TYPES.UserApiService).register({
     email: email,
     serverPassword: accountKey.serverPassword,
     keyParams: accountKey.keyParams,
   })
+
   /** Mark all existing items as dirty. */
   await application.mutator.changeItems(application.items.items, (m) => {
     m.dirty = true
   })
-  await application.sessionManager.handleSuccessAuthResponse(response, accountKey)
+  await application.sessions.handleSuccessAuthResponse(response, accountKey)
   application.notifyEvent(ApplicationEvent.SignedIn)
   await application.sync.sync({
     mode: SyncMode.DownloadFirst,
@@ -397,12 +398,12 @@ export async function insertItemWithOverride(application, contentType, content, 
       errorDecrypting,
     })
 
-    await application.payloadManager.emitPayload(encrypted)
+    await application.payloads.emitPayload(encrypted)
   } else {
     const decrypted = new DecryptedPayload({
       ...item.payload.ejected(),
     })
-    await application.payloadManager.emitPayload(decrypted)
+    await application.payloads.emitPayload(decrypted)
   }
 
   return application.items.findAnyItem(item.uuid)
@@ -411,8 +412,8 @@ export async function insertItemWithOverride(application, contentType, content, 
 export async function alternateUuidForItem(application, uuid) {
   const item = application.items.findItem(uuid)
   const payload = new DecryptedPayload(item)
-  const results = await PayloadsByAlternatingUuid(payload, application.payloadManager.getMasterCollection())
-  await application.payloadManager.emitPayloads(results, PayloadEmitSource.LocalChanged)
+  const results = await PayloadsByAlternatingUuid(payload, application.payloads.getMasterCollection())
+  await application.payloads.emitPayloads(results, PayloadEmitSource.LocalChanged)
   await application.sync.persistPayloads(results)
   return application.items.findItem(results[0].uuid)
 }
@@ -437,7 +438,7 @@ export async function changePayloadTimeStampAndSync(application, payload, timest
 }
 
 export async function changePayloadTimeStamp(application, payload, timestamp, contentOverride) {
-  payload = application.payloadManager.collection.find(payload.uuid)
+  payload = application.payloads.collection.find(payload.uuid)
   const changedPayload = new DecryptedPayload({
     ...payload,
     dirty: true,
@@ -455,7 +456,7 @@ export async function changePayloadTimeStamp(application, payload, timestamp, co
 }
 
 export async function changePayloadUpdatedAt(application, payload, updatedAt) {
-  const latestPayload = application.payloadManager.collection.find(payload.uuid)
+  const latestPayload = application.payloads.collection.find(payload.uuid)
 
   const changedPayload = new DecryptedPayload({
     ...latestPayload.ejected(),
@@ -468,7 +469,7 @@ export async function changePayloadUpdatedAt(application, payload, updatedAt) {
 }
 
 export async function changePayloadTimeStampDeleteAndSync(application, payload, timestamp, syncOptions) {
-  payload = application.payloadManager.collection.find(payload.uuid)
+  payload = application.payloads.collection.find(payload.uuid)
   const changedPayload = new DeletedPayload({
     ...payload,
     content: undefined,
@@ -478,6 +479,6 @@ export async function changePayloadTimeStampDeleteAndSync(application, payload, 
     updated_at_timestamp: timestamp,
   })
 
-  await application.payloadManager.emitPayload(changedPayload)
+  await application.payloads.emitPayload(changedPayload)
   await application.sync.sync(syncOptions)
 }

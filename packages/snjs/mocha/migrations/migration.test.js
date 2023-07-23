@@ -15,7 +15,7 @@ describe('migrations', () => {
 
   it('version number is stored as string', async function () {
     const application = await Factory.createInitAppWithFakeCrypto()
-    const version = await application.migrationService.getStoredSnjsVersion()
+    const version = await application.migrations.getStoredSnjsVersion()
     expect(typeof version).to.equal('string')
     await Factory.safeDeinit(application)
   })
@@ -34,8 +34,8 @@ describe('migrations', () => {
 
   it('after running base migration with no present storage values, should set version to current', async function () {
     const application = await Factory.createAppWithRandNamespace()
-    await application.migrationService.runBaseMigrationPreRun()
-    expect(await application.migrationService.getStoredSnjsVersion()).to.equal(SnjsVersion)
+    await application.migrations.runBaseMigrationPreRun()
+    expect(await application.migrations.getStoredSnjsVersion()).to.equal(SnjsVersion)
     await Factory.safeDeinit(application)
   })
 
@@ -47,7 +47,7 @@ describe('migrations', () => {
       receiveChallenge: () => {},
     })
     await application.launch(true)
-    expect(await application.migrationService.getStoredSnjsVersion()).to.equal(SnjsVersion)
+    expect(await application.migrations.getStoredSnjsVersion()).to.equal(SnjsVersion)
     await Factory.safeDeinit(application)
   })
 
@@ -72,18 +72,18 @@ describe('migrations', () => {
     await application.sync.sync()
 
     expect(application.items.getItems('SF|MFA').length).to.equal(1)
-    expect(
-      (await application.storage.getAllRawPayloads()).filter((p) => p.content_type === 'SF|MFA').length,
-    ).to.equal(1)
+    expect((await application.storage.getAllRawPayloads()).filter((p) => p.content_type === 'SF|MFA').length).to.equal(
+      1,
+    )
 
     /** Run migration */
-    const migration = new Migration2_20_0(application.migrationService.services)
+    const migration = new Migration2_20_0(application.migrations.services)
     await migration.handleStage(ApplicationStage.LoadedDatabase_12)
 
     expect(application.items.getItems('SF|MFA').length).to.equal(0)
-    expect(
-      (await application.storage.getAllRawPayloads()).filter((p) => p.content_type === 'SF|MFA').length,
-    ).to.equal(0)
+    expect((await application.storage.getAllRawPayloads()).filter((p) => p.content_type === 'SF|MFA').length).to.equal(
+      0,
+    )
 
     await Factory.safeDeinit(application)
   })
@@ -113,7 +113,7 @@ describe('migrations', () => {
     expect(application.items.getItems(ContentType.TYPES.Theme).length).to.equal(1)
 
     /** Run migration */
-    const migration = new Migration2_42_0(application.migrationService.services)
+    const migration = new Migration2_42_0(application.migrations.services)
     await migration.handleStage(ApplicationStage.FullSyncCompleted_13)
     await application.sync.sync()
 
@@ -156,7 +156,7 @@ describe('migrations', () => {
       expect(application.items.getItems(ContentType.TYPES.Component).length).to.equal(1)
 
       /** Run migration */
-      const migration = new Migration2_202_1(application.migrationService.services)
+      const migration = new Migration2_202_1(application.migrations.services)
       await migration.handleStage(ApplicationStage.FullSyncCompleted_13)
       await application.sync.sync()
 
@@ -181,7 +181,7 @@ describe('migrations', () => {
       expect(application.items.getItems(ContentType.TYPES.Component).length).to.equal(1)
 
       /** Run migration */
-      const migration = new Migration2_202_1(application.migrationService.services)
+      const migration = new Migration2_202_1(application.migrations.services)
       await migration.handleStage(ApplicationStage.FullSyncCompleted_13)
       await application.sync.sync()
 

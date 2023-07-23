@@ -9,7 +9,7 @@ import {
 import { WebSocketApiServiceInterface } from '@standardnotes/api'
 import { WebSocketsServiceEvent } from './WebSocketsServiceEvent'
 
-export class SNWebSocketsService extends AbstractService<WebSocketsServiceEvent, UserRolesChangedEvent> {
+export class WebSocketsService extends AbstractService<WebSocketsServiceEvent, UserRolesChangedEvent> {
   private webSocket?: WebSocket
 
   constructor(

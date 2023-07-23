@@ -1,7 +1,7 @@
 import { SNUserPrefs, PrefKey, PrefValue, UserPrefsMutator, ItemContent, FillItemContent } from '@standardnotes/models'
 import { ItemManager } from '../Items/ItemManager'
-import { SNSingletonManager } from '../Singleton/SingletonManager'
-import { SNSyncService } from '../Sync/SyncService'
+import { SingletonManager } from '../Singleton/SingletonManager'
+import { SyncService } from '../Sync/SyncService'
 import {
   AbstractService,
   InternalEventBusInterface,
@@ -24,10 +24,10 @@ export class SNPreferencesService
   private removeSyncObserver?: () => void
 
   constructor(
-    private singletons: SNSingletonManager,
+    private singletons: SingletonManager,
     items: ItemManager,
     private mutator: MutatorClientInterface,
-    private sync: SNSyncService,
+    private sync: SyncService,
     protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)

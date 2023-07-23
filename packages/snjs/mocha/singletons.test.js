@@ -24,8 +24,8 @@ describe('singletons', function () {
     return new DecryptedPayload(params)
   }
 
-  function findOrCreatePrefsSingleton(application) {
-    return application.singletonManager.findOrCreateContentTypeSingleton(ContentType.TYPES.UserPrefs, FillItemContent({}))
+  function findOrCreatePrefsSingleton(context) {
+    return context.singletons.findOrCreateContentTypeSingleton(ContentType.TYPES.UserPrefs, FillItemContent({}))
   }
 
   beforeEach(async function () {
@@ -49,7 +49,7 @@ describe('singletons', function () {
     }
 
     this.signOut = async () => {
-      this.application = await Factory.signOutApplicationAndReturnNew(this.application)
+      this.application = await this.context.signout()
     }
 
     this.signIn = async () => {
@@ -138,7 +138,7 @@ describe('singletons', function () {
         mode: SyncMode.DownloadFirst,
       })
     })
-    const userPreferences = await this.application.singletonManager.findOrCreateContentTypeSingleton(contentType, {})
+    const userPreferences = await this.context.singletons.findOrCreateContentTypeSingleton(contentType, {})
 
     expect(userPreferences).to.be.ok
     const refreshedUserPrefs = this.application.items.findItem(userPreferences.uuid)
@@ -210,12 +210,14 @@ describe('singletons', function () {
     await this.registerUser()
 
     /** Create prefs */
-    const ogPrefs = await findOrCreatePrefsSingleton(this.application)
+    const ogPrefs = await findOrCreatePrefsSingleton(this.context)
     await this.application.sync.sync(syncOptions)
-    this.application = await Factory.signOutApplicationAndReturnNew(this.application)
+
+    this.application = await this.context.signout()
 
     /** Create another instance while signed out */
-    await findOrCreatePrefsSingleton(this.application)
+    await findOrCreatePrefsSingleton(this.context)
+
     await Factory.loginToApplication({
       application: this.application,
       email: this.email,
@@ -223,7 +225,7 @@ describe('singletons', function () {
     })
 
     /** After signing in, the instance retrieved from the server should be the one kept */
-    const latestPrefs = await findOrCreatePrefsSingleton(this.application)
+    const latestPrefs = await findOrCreatePrefsSingleton(this.context)
     expect(latestPrefs.uuid).to.equal(ogPrefs.uuid)
 
     const allPrefs = this.application.items.getItems(ogPrefs.content_type)
@@ -233,19 +235,19 @@ describe('singletons', function () {
   it('resolving singleton before first sync, then signing in, should result in correct number of instances', async function () {
     await this.registerUser()
     /** Create prefs and associate them with account */
-    const ogPrefs = await findOrCreatePrefsSingleton(this.application)
+    const ogPrefs = await findOrCreatePrefsSingleton(this.context)
     await this.application.sync.sync(syncOptions)
-    this.application = await Factory.signOutApplicationAndReturnNew(this.application)
+    this.application = await this.context.signout()
 
     /** Create another instance while signed out */
-    await findOrCreatePrefsSingleton(this.application)
+    await findOrCreatePrefsSingleton(this.context)
     await Factory.loginToApplication({
       application: this.application,
       email: this.email,
       password: this.password,
     })
     /** After signing in, the instance retrieved from the server should be the one kept */
-    const latestPrefs = await findOrCreatePrefsSingleton(this.application)
+    const latestPrefs = await findOrCreatePrefsSingleton(this.context)
     expect(latestPrefs.uuid).to.equal(ogPrefs.uuid)
     const allPrefs = this.application.items.getItems(ogPrefs.content_type)
     expect(allPrefs.length).to.equal(1)
@@ -260,12 +262,9 @@ describe('singletons', function () {
       errorDecrypting: true,
     })
 
-    await this.application.payloadManager.emitPayload(erroredPayload)
+    await this.application.payloads.emitPayload(erroredPayload)
 
-    const resolvedItem = await this.application.singletonManager.findOrCreateContentTypeSingleton(
-      item.content_type,
-      item.content,
-    )
+    const resolvedItem = await this.context.singletons.findOrCreateContentTypeSingleton(item.content_type, item.content)
 
     await this.application.sync.sync({ awaitAll: true })
 
@@ -318,7 +317,7 @@ describe('singletons', function () {
       errorDecrypting: false,
     })
 
-    await this.application.payloadManager.emitPayload(notErrored)
+    await this.application.payloads.emitPayload(notErrored)
 
     /** Item will get decrypted on current tick, so wait one before syncing */
     await Factory.sleep(0)
@@ -332,14 +331,14 @@ describe('singletons', function () {
     const item = await this.application.mutator.emitItemFromPayload(payload, PayloadEmitSource.LocalChanged)
     await this.application.sync.sync(syncOptions)
     const predicate = new Predicate('content_type', '=', item.content_type)
-    let resolvedItem = await this.application.singletonManager.findOrCreateContentTypeSingleton(
+    let resolvedItem = await this.context.singletons.findOrCreateContentTypeSingleton(
       payload.content_type,
       payload.content,
     )
     const originalUuid = resolvedItem.uuid
     await Factory.alternateUuidForItem(this.application, resolvedItem.uuid)
     await this.application.sync.sync(syncOptions)
-    const resolvedItem2 = await this.application.singletonManager.findOrCreateContentTypeSingleton(
+    const resolvedItem2 = await this.context.singletons.findOrCreateContentTypeSingleton(
       payload.content_type,
       payload.content,
     )

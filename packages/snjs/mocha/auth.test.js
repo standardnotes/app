@@ -185,7 +185,7 @@ describe('basic auth', function () {
      */
     await this.application.register(uppercase, this.password)
 
-    const response = await this.application.sessionManager.retrieveKeyParams(lowercase)
+    const response = await this.application.sessions.retrieveKeyParams(lowercase)
     const keyParams = response.keyParams
     expect(keyParams.identifier).to.equal(lowercase)
     expect(keyParams.identifier).to.not.equal(uppercase)
@@ -303,7 +303,7 @@ describe('basic auth', function () {
 
     expect(response.error).to.not.be.ok
     expect(this.application.items.items.length).to.equal(this.expectedItemCount)
-    expect(this.application.payloadManager.invalidPayloads.length).to.equal(0)
+    expect(this.application.payloads.invalidPayloads.length).to.equal(0)
 
     await this.application.sync.markAllItemsAsNeedingSyncAndPersist()
     await this.application.sync.sync(syncOptions)
@@ -342,7 +342,7 @@ describe('basic auth', function () {
     expect(await this.application.encryption.getRootKey()).to.be.ok
 
     expect(this.application.items.items.length).to.equal(this.expectedItemCount)
-    expect(this.application.payloadManager.invalidPayloads.length).to.equal(0)
+    expect(this.application.payloads.invalidPayloads.length).to.equal(0)
   }
 
   it('successfully changes password', changePassword).timeout(40000)
@@ -399,7 +399,7 @@ describe('basic auth', function () {
       newPassword = Factory.randomString()
 
       expect(this.application.items.items.length).to.equal(this.expectedItemCount)
-      expect(this.application.payloadManager.invalidPayloads.length).to.equal(0)
+      expect(this.application.payloads.invalidPayloads.length).to.equal(0)
 
       await this.application.sync.markAllItemsAsNeedingSyncAndPersist()
       await this.application.sync.sync(syncOptions)
@@ -407,7 +407,7 @@ describe('basic auth', function () {
       this.application = await this.context.signout()
 
       expect(this.application.items.items.length).to.equal(BaseItemCounts.DefaultItems)
-      expect(this.application.payloadManager.invalidPayloads.length).to.equal(0)
+      expect(this.application.payloads.invalidPayloads.length).to.equal(0)
 
       /** Should login with new password */
       const signinResponse = await this.application.signIn(
@@ -432,7 +432,7 @@ describe('basic auth', function () {
       password: this.password,
     })
     this.application = await Factory.signOutApplicationAndReturnNew(this.application)
-    const performSignIn = sinon.spy(this.application.sessionManager, 'performSignIn')
+    const performSignIn = sinon.spy(this.application.sessions, 'performSignIn')
     await this.application.signIn(this.email, 'wrong password', undefined, undefined, undefined, true)
     expect(performSignIn.callCount).to.equal(1)
   })
@@ -518,8 +518,8 @@ describe('basic auth', function () {
 
       const _response = await this.application.deleteAccount()
 
-      sinon.spy(snApp.challengeService, 'sendChallenge')
-      const spyCall = snApp.challengeService.sendChallenge.getCall(0)
+      sinon.spy(snApp.challenges, 'sendChallenge')
+      const spyCall = snApp.challenges.sendChallenge.getCall(0)
       const challenge = spyCall.firstArg
       expect(challenge.prompts).to.have.lengthOf(2)
       expect(challenge.prompts[0].validation).to.equal(ChallengeValidation.AccountPassword)

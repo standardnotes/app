@@ -170,7 +170,10 @@ describe('actions service', () => {
     })
 
     // Extension item
-    const extensionItem = await this.application.mutator.createItem(ContentType.TYPES.ActionsExtension, this.actionsExtension)
+    const extensionItem = await this.application.mutator.createItem(
+      ContentType.TYPES.ActionsExtension,
+      this.actionsExtension,
+    )
     this.extensionItemUuid = extensionItem.uuid
   })
 
@@ -308,8 +311,8 @@ describe('actions service', () => {
     })
 
     beforeEach(async function () {
-      this.actionsManager.deviceInterface.openUrl = (url) => url
-      this.deviceInterfaceOpenUrl = sandbox.spy(this.actionsManager.deviceInterface, 'openUrl')
+      this.actionsManager.device.openUrl = (url) => url
+      this.deviceInterfaceOpenUrl = sandbox.spy(this.actionsManager.device, 'openUrl')
     })
 
     this.afterEach(async function () {

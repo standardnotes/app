@@ -12,7 +12,7 @@ import {
   Predicate,
 } from '@standardnotes/models'
 import { arrayByRemovingFromIndex, extendArray, UuidGenerator } from '@standardnotes/utils'
-import { SNSyncService } from '../Sync/SyncService'
+import { SyncService } from '../Sync/SyncService'
 import {
   AbstractService,
   InternalEventBusInterface,
@@ -33,7 +33,7 @@ import { ContentType } from '@standardnotes/domain-core'
  * 2. Items can override isSingleton, singletonPredicate, and strategyWhenConflictingWithItem (optional)
  *    to automatically gain singleton resolution.
  */
-export class SNSingletonManager extends AbstractService implements SingletonManagerInterface {
+export class SingletonManager extends AbstractService implements SingletonManagerInterface {
   private resolveQueue: DecryptedItemInterface[] = []
 
   private removeItemObserver!: () => void
@@ -43,7 +43,7 @@ export class SNSingletonManager extends AbstractService implements SingletonMana
     private itemManager: ItemManager,
     private mutator: MutatorClientInterface,
     private payloadManager: PayloadManager,
-    private sync: SNSyncService,
+    private sync: SyncService,
     protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)

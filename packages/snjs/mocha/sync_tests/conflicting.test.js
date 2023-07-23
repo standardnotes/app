@@ -227,7 +227,7 @@ describe('online conflict handling', function () {
     // clear sync token, clear storage, download all items, and ensure none of them have error decrypting
     await this.application.sync.clearSyncPositionTokens()
     await this.application.storage.clearAllPayloads()
-    await this.application.payloadManager.resetState()
+    await this.application.payloads.resetState()
     await this.application.items.resetState()
     await this.application.sync.sync(syncOptions)
 
@@ -761,7 +761,7 @@ describe('online conflict handling', function () {
       await newApp.mutator.emitItemsFromPayloads(priorData.map((i) => i.payload))
       await newApp.sync.markAllItemsAsNeedingSyncAndPersist()
       await newApp.sync.sync(syncOptions)
-      expect(newApp.payloadManager.invalidPayloads.length).to.equal(0)
+      expect(newApp.payloads.invalidPayloads.length).to.equal(0)
       await Factory.safeDeinit(newApp)
     },
   ).timeout(80000)

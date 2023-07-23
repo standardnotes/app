@@ -388,7 +388,7 @@ describe('server session', function () {
     await this.application.legacyApi.signOut()
     this.application.legacyApi.session = undefined
 
-    await this.application.sessionManager.signIn(this.email, this.password)
+    await this.application.sessions.signIn(this.email, this.password)
 
     const currentSession = this.application.legacyApi.getSession()
 
@@ -574,7 +574,7 @@ describe('server session', function () {
       password: password,
     })
 
-    const oldRootKey = await appA.encryptionService.getRootKey()
+    const oldRootKey = await appA.encryption.getRootKey()
 
     /** Set the session as nonsense */
     appA.storage.setValue(StorageKey.Session, {
@@ -597,7 +597,7 @@ describe('server session', function () {
     expect(appA.legacyApi.session.refreshToken.value).to.not.equal('bar')
 
     /** Expect that the session recovery replaces the global root key */
-    const newRootKey = await appA.encryptionService.getRootKey()
+    const newRootKey = await appA.encryption.getRootKey()
     expect(oldRootKey).to.not.equal(newRootKey)
 
     await Factory.safeDeinit(appA)
