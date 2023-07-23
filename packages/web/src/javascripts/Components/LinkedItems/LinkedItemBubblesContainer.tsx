@@ -119,10 +119,13 @@ const LinkedItemBubblesContainer = ({
     )
   }
 
-  const [isCollapsed, setIsCollapsed] = useState(() => isCollapsedByDefault)
-
   const itemsToDisplay = allItemsLinkedToItem.concat(notesLinkingToItem).concat(filesLinkingToItem)
-  const visibleItems = isCollapsed ? itemsToDisplay.slice(0, 5) : itemsToDisplay
+  const ItemsToShowWhenCollapsed = 5
+  const [isCollapsed, setIsCollapsed] = useState(
+    itemsToDisplay.length < ItemsToShowWhenCollapsed ? false : isCollapsedByDefault,
+  )
+
+  const visibleItems = isCollapsed ? itemsToDisplay.slice(0, ItemsToShowWhenCollapsed) : itemsToDisplay
   const nonVisibleItems = itemsToDisplay.length - visibleItems.length
 
   const [canShowContainerToggle, setCanShowContainerToggle] = useState(true)
