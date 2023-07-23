@@ -1,5 +1,4 @@
 import { MutatorClientInterface } from './../Mutator/MutatorClientInterface'
-import { ApplicationStage } from './../Application/ApplicationStage'
 import { UserKeyPairChangedEventData } from './../Session/UserKeyPairChangedEventData'
 import { SessionEvent } from './../Session/SessionEvent'
 import { InternalEventInterface } from './../Internal/InternalEventInterface'
@@ -45,11 +44,6 @@ export class ContactService
     super(eventBus)
 
     eventBus.addEventHandler(this, SessionEvent.UserKeyPairChanged)
-  }
-
-  public override async handleApplicationStage(stage: ApplicationStage): Promise<void> {
-    await super.handleApplicationStage(stage)
-    await this.selfContactManager.handleApplicationStage(stage)
   }
 
   async handleEvent(event: InternalEventInterface): Promise<void> {

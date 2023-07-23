@@ -1,8 +1,33 @@
 import { Copy, extendArray, UuidGenerator, Uuids } from '@standardnotes/utils'
 import { SNLog } from '../../Log'
-import { isErrorDecryptingParameters, SNRootKey } from '@standardnotes/encryption'
-import * as Encryption from '@standardnotes/encryption'
-import * as Services from '@standardnotes/services'
+import {
+  EncryptionProviderInterface,
+  KeyedDecryptionSplit,
+  KeyedEncryptionSplit,
+  SplitPayloadsByEncryptionType,
+  CreateEncryptionSplitWithKeyLookup,
+  isErrorDecryptingParameters,
+  SNRootKey,
+} from '@standardnotes/encryption'
+import {
+  AbstractService,
+  StorageServiceInterface,
+  InternalEventHandlerInterface,
+  StoragePersistencePolicies,
+  StorageValuesObject,
+  DeviceInterface,
+  InternalEventBusInterface,
+  InternalEventInterface,
+  ApplicationEvent,
+  ApplicationStageChangedEventPayload,
+  ApplicationStage,
+  ValueModesKeys,
+  StorageValueModes,
+  namespacedKey,
+  RawStorageKey,
+  WrappedStorageValue,
+  ValuesObjectRecord,
+} from '@standardnotes/services'
 import {
   CreateDecryptedLocalStorageContextPayload,
   CreateDeletedLocalStorageContextPayload,
@@ -31,25 +56,28 @@ import { ContentType } from '@standardnotes/domain-core'
  * decrypt the persisted key/values, and also a method to determine whether a particular
  * key can decrypt wrapped storage.
  */
-export class DiskStorageService extends Services.AbstractService implements Services.StorageServiceInterface {
-  private encryptionProvider!: Encryption.EncryptionProviderInterface
+export class DiskStorageService
+  extends AbstractService
+  implements StorageServiceInterface, InternalEventHandlerInterface
+{
+  private encryptionProvider!: EncryptionProviderInterface
   private storagePersistable = false
-  private persistencePolicy!: Services.StoragePersistencePolicies
+  private persistencePolicy!: StoragePersistencePolicies
   private needsPersist = false
-  private currentPersistPromise?: Promise<Services.StorageValuesObject>
+  private currentPersistPromise?: Promise<StorageValuesObject>
 
-  private values!: Services.StorageValuesObject
+  private values!: StorageValuesObject
 
   constructor(
-    private deviceInterface: Services.DeviceInterface,
+    private deviceInterface: DeviceInterface,
     private identifier: string,
-    protected override internalEventBus: Services.InternalEventBusInterface,
+    protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)
-    void this.setPersistencePolicy(Services.StoragePersistencePolicies.Default)
+    void this.setPersistencePolicy(StoragePersistencePolicies.Default)
   }
 
-  public provideEncryptionProvider(provider: Encryption.EncryptionProviderInterface): void {
+  public provideEncryptionProvider(provider: EncryptionProviderInterface): void {
     this.encryptionProvider = provider
   }
 
@@ -60,21 +88,22 @@ export class DiskStorageService extends Services.AbstractService implements Serv
     super.deinit()
   }
 
-  override async handleApplicationStage(stage: Services.ApplicationStage) {
-    await super.handleApplicationStage(stage)
-
-    if (stage === Services.ApplicationStage.Launched_10) {
-      this.storagePersistable = true
-      if (this.needsPersist) {
-        void this.persistValuesToDisk()
+  async handleEvent(event: InternalEventInterface): Promise<void> {
+    if (event.type === ApplicationEvent.ApplicationStageChanged) {
+      const stage = (event.payload as ApplicationStageChangedEventPayload).stage
+      if (stage === ApplicationStage.Launched_10) {
+        this.storagePersistable = true
+        if (this.needsPersist) {
+          void this.persistValuesToDisk()
+        }
       }
     }
   }
 
-  public async setPersistencePolicy(persistencePolicy: Services.StoragePersistencePolicies) {
+  public async setPersistencePolicy(persistencePolicy: StoragePersistencePolicies) {
     this.persistencePolicy = persistencePolicy
 
-    if (this.persistencePolicy === Services.StoragePersistencePolicies.Ephemeral) {
+    if (this.persistencePolicy === StoragePersistencePolicies.Ephemeral) {
       await this.deviceInterface.clearNamespacedKeychainValue(this.identifier)
       await this.deviceInterface.removeAllDatabaseEntries(this.identifier)
       await this.deviceInterface.removeRawStorageValuesForIdentifier(this.identifier)
@@ -83,7 +112,7 @@ export class DiskStorageService extends Services.AbstractService implements Serv
   }
 
   public isEphemeralSession(): boolean {
-    return this.persistencePolicy === Services.StoragePersistencePolicies.Ephemeral
+    return this.persistencePolicy === StoragePersistencePolicies.Ephemeral
   }
 
   public async initializeFromDisk(): Promise<void> {
@@ -93,31 +122,31 @@ export class DiskStorageService extends Services.AbstractService implements Serv
     await this.setInitialValues(values)
   }
 
-  private async setInitialValues(values?: Services.StorageValuesObject) {
+  private async setInitialValues(values?: StorageValuesObject) {
     const sureValues = values || this.defaultValuesObject()
 
-    if (!sureValues[Services.ValueModesKeys.Unwrapped]) {
-      sureValues[Services.ValueModesKeys.Unwrapped] = {}
+    if (!sureValues[ValueModesKeys.Unwrapped]) {
+      sureValues[ValueModesKeys.Unwrapped] = {}
     }
 
     this.values = sureValues
 
     if (!this.isStorageWrapped()) {
-      this.values[Services.ValueModesKeys.Unwrapped] = {
-        ...(this.values[Services.ValueModesKeys.Wrapped].content as object),
-        ...this.values[Services.ValueModesKeys.Unwrapped],
+      this.values[ValueModesKeys.Unwrapped] = {
+        ...(this.values[ValueModesKeys.Wrapped].content as object),
+        ...this.values[ValueModesKeys.Unwrapped],
       }
     }
   }
 
   public isStorageWrapped(): boolean {
-    const wrappedValue = this.values[Services.ValueModesKeys.Wrapped]
+    const wrappedValue = this.values[ValueModesKeys.Wrapped]
 
     return wrappedValue != undefined && isEncryptedLocalStoragePayload(wrappedValue)
   }
 
   public async canDecryptWithKey(key: SNRootKey): Promise<boolean> {
-    const wrappedValue = this.values[Services.ValueModesKeys.Wrapped]
+    const wrappedValue = this.values[ValueModesKeys.Wrapped]
 
     if (!isEncryptedLocalStoragePayload(wrappedValue)) {
       throw Error('Attempting to decrypt non decrypted storage value')
@@ -143,7 +172,7 @@ export class DiskStorageService extends Services.AbstractService implements Serv
       content_type: ContentType.TYPES.EncryptedStorage,
     })
 
-    const split: Encryption.KeyedDecryptionSplit = key
+    const split: KeyedDecryptionSplit = key
       ? {
           usesRootKey: {
             items: [payload],
@@ -162,7 +191,7 @@ export class DiskStorageService extends Services.AbstractService implements Serv
   }
 
   public async decryptStorage(): Promise<void> {
-    const wrappedValue = this.values[Services.ValueModesKeys.Wrapped]
+    const wrappedValue = this.values[ValueModesKeys.Wrapped]
 
     if (!isEncryptedLocalStoragePayload(wrappedValue)) {
       throw Error('Attempting to decrypt already decrypted storage')
@@ -174,7 +203,7 @@ export class DiskStorageService extends Services.AbstractService implements Serv
       throw SNLog.error(Error('Unable to decrypt storage.'))
     }
 
-    this.values[Services.ValueModesKeys.Unwrapped] = Copy(decryptedPayload.content)
+    this.values[ValueModesKeys.Unwrapped] = Copy(decryptedPayload.content)
   }
 
   /** @todo This function should be debounced. */
@@ -184,7 +213,7 @@ export class DiskStorageService extends Services.AbstractService implements Serv
       return
     }
 
-    if (this.persistencePolicy === Services.StoragePersistencePolicies.Ephemeral) {
+    if (this.persistencePolicy === StoragePersistencePolicies.Ephemeral) {
       return
     }
 
@@ -195,18 +224,18 @@ export class DiskStorageService extends Services.AbstractService implements Serv
     const values = await this.immediatelyPersistValuesToDisk()
 
     /** Save the persisted value so we have access to it in memory (for unit tests afawk) */
-    this.values[Services.ValueModesKeys.Wrapped] = values[Services.ValueModesKeys.Wrapped]
+    this.values[ValueModesKeys.Wrapped] = values[ValueModesKeys.Wrapped]
   }
 
   public async awaitPersist(): Promise<void> {
     await this.currentPersistPromise
   }
 
-  private async immediatelyPersistValuesToDisk(): Promise<Services.StorageValuesObject> {
+  private async immediatelyPersistValuesToDisk(): Promise<StorageValuesObject> {
     this.currentPersistPromise = this.executeCriticalFunction(async () => {
       const values = await this.generatePersistableValues()
 
-      const persistencePolicySuddenlyChanged = this.persistencePolicy === Services.StoragePersistencePolicies.Ephemeral
+      const persistencePolicySuddenlyChanged = this.persistencePolicy === StoragePersistencePolicies.Ephemeral
       if (persistencePolicySuddenlyChanged) {
         return values
       }
@@ -224,10 +253,10 @@ export class DiskStorageService extends Services.AbstractService implements Serv
    * either as a plain object, or an encrypted item.
    */
   private async generatePersistableValues() {
-    const rawContent = <Partial<Services.StorageValuesObject>>Copy(this.values)
+    const rawContent = <Partial<StorageValuesObject>>Copy(this.values)
 
-    const valuesToWrap = rawContent[Services.ValueModesKeys.Unwrapped]
-    rawContent[Services.ValueModesKeys.Unwrapped] = undefined
+    const valuesToWrap = rawContent[ValueModesKeys.Unwrapped]
+    rawContent[ValueModesKeys.Unwrapped] = undefined
 
     const payload = new DecryptedPayload({
       uuid: UuidGenerator.GenerateUuid(),
@@ -237,7 +266,7 @@ export class DiskStorageService extends Services.AbstractService implements Serv
     })
 
     if (this.encryptionProvider.hasRootKeyEncryptionSource()) {
-      const split: Encryption.KeyedEncryptionSplit = {
+      const split: KeyedEncryptionSplit = {
         usesRootKeyWithKeyLookup: {
           items: [payload],
         },
@@ -245,31 +274,27 @@ export class DiskStorageService extends Services.AbstractService implements Serv
 
       const encryptedPayload = await this.encryptionProvider.encryptSplitSingle(split)
 
-      rawContent[Services.ValueModesKeys.Wrapped] = CreateEncryptedLocalStorageContextPayload(encryptedPayload)
+      rawContent[ValueModesKeys.Wrapped] = CreateEncryptedLocalStorageContextPayload(encryptedPayload)
     } else {
-      rawContent[Services.ValueModesKeys.Wrapped] = CreateDecryptedLocalStorageContextPayload(payload)
+      rawContent[ValueModesKeys.Wrapped] = CreateDecryptedLocalStorageContextPayload(payload)
     }
 
-    return rawContent as Services.StorageValuesObject
+    return rawContent as StorageValuesObject
   }
 
-  public setValue<T>(key: string, value: T, mode = Services.StorageValueModes.Default): void {
+  public setValue<T>(key: string, value: T, mode = StorageValueModes.Default): void {
     this.setValueWithNoPersist(key, value, mode)
 
     void this.persistValuesToDisk()
   }
 
-  public async setValueAndAwaitPersist(
-    key: string,
-    value: unknown,
-    mode = Services.StorageValueModes.Default,
-  ): Promise<void> {
+  public async setValueAndAwaitPersist(key: string, value: unknown, mode = StorageValueModes.Default): Promise<void> {
     this.setValueWithNoPersist(key, value, mode)
 
     await this.persistValuesToDisk()
   }
 
-  private setValueWithNoPersist(key: string, value: unknown, mode = Services.StorageValueModes.Default): void {
+  private setValueWithNoPersist(key: string, value: unknown, mode = StorageValueModes.Default): void {
     if (!this.values) {
       throw Error(`Attempting to set storage key ${key} before loading local storage.`)
     }
@@ -279,7 +304,7 @@ export class DiskStorageService extends Services.AbstractService implements Serv
     domainStorage[key] = value
   }
 
-  public getValue<T>(key: string, mode = Services.StorageValueModes.Default, defaultValue?: T): T {
+  public getValue<T>(key: string, mode = StorageValueModes.Default, defaultValue?: T): T {
     if (!this.values) {
       throw Error(`Attempting to get storage key ${key} before loading local storage.`)
     }
@@ -293,7 +318,7 @@ export class DiskStorageService extends Services.AbstractService implements Serv
     return value != undefined ? (value as T) : (defaultValue as T)
   }
 
-  public getAllKeys(mode = Services.StorageValueModes.Default): string[] {
+  public getAllKeys(mode = StorageValueModes.Default): string[] {
     if (!this.values) {
       throw Error('Attempting to get all keys before loading local storage.')
     }
@@ -301,7 +326,7 @@ export class DiskStorageService extends Services.AbstractService implements Serv
     return Object.keys(this.values[this.domainKeyForMode(mode)])
   }
 
-  public async removeValue(key: string, mode = Services.StorageValueModes.Default): Promise<void> {
+  public async removeValue(key: string, mode = StorageValueModes.Default): Promise<void> {
     if (!this.values) {
       throw Error(`Attempting to remove storage key ${key} before loading local storage.`)
     }
@@ -318,34 +343,34 @@ export class DiskStorageService extends Services.AbstractService implements Serv
    * Default persistence key. Platforms can override as needed.
    */
   private getPersistenceKey() {
-    return Services.namespacedKey(this.identifier, Services.RawStorageKey.StorageObject)
+    return namespacedKey(this.identifier, RawStorageKey.StorageObject)
   }
 
   private defaultValuesObject(
-    wrapped?: Services.WrappedStorageValue,
-    unwrapped?: Services.ValuesObjectRecord,
-    nonwrapped?: Services.ValuesObjectRecord,
+    wrapped?: WrappedStorageValue,
+    unwrapped?: ValuesObjectRecord,
+    nonwrapped?: ValuesObjectRecord,
   ) {
     return DiskStorageService.DefaultValuesObject(wrapped, unwrapped, nonwrapped)
   }
 
   public static DefaultValuesObject(
-    wrapped: Services.WrappedStorageValue = {} as Services.WrappedStorageValue,
-    unwrapped: Services.ValuesObjectRecord = {},
-    nonwrapped: Services.ValuesObjectRecord = {},
+    wrapped: WrappedStorageValue = {} as WrappedStorageValue,
+    unwrapped: ValuesObjectRecord = {},
+    nonwrapped: ValuesObjectRecord = {},
   ) {
     return {
-      [Services.ValueModesKeys.Wrapped]: wrapped,
-      [Services.ValueModesKeys.Unwrapped]: unwrapped,
-      [Services.ValueModesKeys.Nonwrapped]: nonwrapped,
-    } as Services.StorageValuesObject
+      [ValueModesKeys.Wrapped]: wrapped,
+      [ValueModesKeys.Unwrapped]: unwrapped,
+      [ValueModesKeys.Nonwrapped]: nonwrapped,
+    } as StorageValuesObject
   }
 
-  private domainKeyForMode(mode: Services.StorageValueModes) {
-    if (mode === Services.StorageValueModes.Default) {
-      return Services.ValueModesKeys.Unwrapped
-    } else if (mode === Services.StorageValueModes.Nonwrapped) {
-      return Services.ValueModesKeys.Nonwrapped
+  private domainKeyForMode(mode: StorageValueModes) {
+    if (mode === StorageValueModes.Default) {
+      return ValueModesKeys.Unwrapped
+    } else if (mode === StorageValueModes.Nonwrapped) {
+      return ValueModesKeys.Nonwrapped
     } else {
       throw Error('Invalid mode')
     }
@@ -368,7 +393,7 @@ export class DiskStorageService extends Services.AbstractService implements Serv
   }
 
   public async savePayloads(payloads: FullyFormedPayloadInterface[]): Promise<void> {
-    if (this.persistencePolicy === Services.StoragePersistencePolicies.Ephemeral) {
+    if (this.persistencePolicy === StoragePersistencePolicies.Ephemeral) {
       return
     }
 
@@ -380,7 +405,7 @@ export class DiskStorageService extends Services.AbstractService implements Serv
     const unencryptable: DecryptedPayloadInterface[] = []
 
     const { rootKeyEncryption, keySystemRootKeyEncryption, itemsKeyEncryption } =
-      Encryption.SplitPayloadsByEncryptionType(decrypted)
+      SplitPayloadsByEncryptionType(decrypted)
 
     if (itemsKeyEncryption) {
       extendArray(encryptable, itemsKeyEncryption)
@@ -402,9 +427,9 @@ export class DiskStorageService extends Services.AbstractService implements Serv
       await this.deletePayloads(discardable)
     }
 
-    const encryptableSplit = Encryption.SplitPayloadsByEncryptionType(encryptable)
+    const encryptableSplit = SplitPayloadsByEncryptionType(encryptable)
 
-    const keyLookupSplit = Encryption.CreateEncryptionSplitWithKeyLookup(encryptableSplit)
+    const keyLookupSplit = CreateEncryptionSplitWithKeyLookup(encryptableSplit)
 
     const encryptedResults = await this.encryptionProvider.encryptSplit(keyLookupSplit)
 
@@ -449,9 +474,7 @@ export class DiskStorageService extends Services.AbstractService implements Serv
       await this.clearValues()
       await this.clearAllPayloads()
 
-      await this.deviceInterface.removeRawStorageValue(
-        Services.namespacedKey(this.identifier, Services.RawStorageKey.SnjsVersion),
-      )
+      await this.deviceInterface.removeRawStorageValue(namespacedKey(this.identifier, RawStorageKey.SnjsVersion))
 
       await this.deviceInterface.removeRawStorageValue(this.getPersistenceKey())
     })

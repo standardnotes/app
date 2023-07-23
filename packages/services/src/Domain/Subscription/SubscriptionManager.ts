@@ -20,6 +20,7 @@ import {
   Subscription,
 } from '@standardnotes/responses'
 import { SubscriptionManagerEvent } from './SubscriptionManagerEvent'
+import { ApplicationStageChangedEventPayload } from '../Event/ApplicationStageChangedEventPayload'
 
 export class SubscriptionManager
   extends AbstractService<SubscriptionManagerEvent>
@@ -53,13 +54,14 @@ export class SubscriptionManager
       case ApplicationEvent.SignedIn:
         void this.fetchOnlineSubscription()
         break
-    }
-  }
 
-  public override async handleApplicationStage(stage: ApplicationStage): Promise<void> {
-    if (stage === ApplicationStage.StorageDecrypted_09) {
-      this.onlineSubscription = this.storage.getValue(StorageKey.Subscription)
-      void this.notifyEvent(SubscriptionManagerEvent.DidFetchSubscription)
+      case ApplicationEvent.ApplicationStageChanged: {
+        const stage = (event.payload as ApplicationStageChangedEventPayload).stage
+        if (stage === ApplicationStage.StorageDecrypted_09) {
+          this.onlineSubscription = this.storage.getValue(StorageKey.Subscription)
+          void this.notifyEvent(SubscriptionManagerEvent.DidFetchSubscription)
+        }
+      }
     }
   }
 

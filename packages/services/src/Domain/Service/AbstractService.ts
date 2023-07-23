@@ -4,7 +4,6 @@ import { log, removeFromArray } from '@standardnotes/utils'
 import { EventObserver } from '../Event/EventObserver'
 import { ApplicationServiceInterface } from './ApplicationServiceInterface'
 import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
-import { ApplicationStage } from '../Application/ApplicationStage'
 import { InternalEventPublishStrategy } from '../Internal/InternalEventPublishStrategy'
 import { DiagnosticInfo } from '../Diagnostics/ServiceDiagnostics'
 
@@ -100,15 +99,6 @@ export abstract class AbstractService<EventName = string, EventData = unknown>
     const promise = func()
     this.criticalPromises.push(promise)
     return promise
-  }
-
-  /**
-   * Application instances will call this function directly when they arrive
-   * at a certain migratory state.
-   */
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public async handleApplicationStage(_stage: ApplicationStage): Promise<void> {
-    // optional override
   }
 
   getServiceName(): string {

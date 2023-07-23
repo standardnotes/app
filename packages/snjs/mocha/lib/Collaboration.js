@@ -27,6 +27,10 @@ export const createTrustedContactForUserOfContext = async (
 
 export const acceptAllInvites = async (context) => {
   const inviteRecords = context.sharedVaults.getCachedPendingInviteRecords()
+  if (inviteRecords.length === 0) {
+    throw new Error('No pending invites to accept')
+  }
+
   for (const record of inviteRecords) {
     await context.sharedVaults.acceptPendingSharedVaultInvite(record)
   }

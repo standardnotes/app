@@ -1,3 +1,4 @@
+import { InternalEventHandlerInterface } from './../Internal/InternalEventHandlerInterface'
 import { MutatorClientInterface } from './../Mutator/MutatorClientInterface'
 import { ApplicationStage } from './../Application/ApplicationStage'
 import { InternalEventBusInterface } from './../Internal/InternalEventBusInterface'
@@ -19,10 +20,16 @@ import { ItemManagerInterface } from './../Item/ItemManagerInterface'
 import { KeySystemKeyManagerInterface } from '@standardnotes/encryption'
 import { AbstractService } from '../Service/AbstractService'
 import { ContentType } from '@standardnotes/domain-core'
+import { InternalEventInterface } from '../Internal/InternalEventInterface'
+import { ApplicationEvent } from '../Event/ApplicationEvent'
+import { ApplicationStageChangedEventPayload } from '../Event/ApplicationStageChangedEventPayload'
 
 const RootKeyStorageKeyPrefix = 'key-system-root-key-'
 
-export class KeySystemKeyManager extends AbstractService implements KeySystemKeyManagerInterface {
+export class KeySystemKeyManager
+  extends AbstractService
+  implements KeySystemKeyManagerInterface, InternalEventHandlerInterface
+{
   private rootKeyMemoryCache: Record<KeySystemIdentifier, KeySystemRootKeyInterface> = {}
 
   constructor(
@@ -34,9 +41,12 @@ export class KeySystemKeyManager extends AbstractService implements KeySystemKey
     super(eventBus)
   }
 
-  public override async handleApplicationStage(stage: ApplicationStage): Promise<void> {
-    if (stage === ApplicationStage.StorageDecrypted_09) {
-      this.loadRootKeysFromStorage()
+  async handleEvent(event: InternalEventInterface): Promise<void> {
+    if (event.type === ApplicationEvent.ApplicationStageChanged) {
+      const stage = (event.payload as ApplicationStageChangedEventPayload).stage
+      if (stage === ApplicationStage.StorageDecrypted_09) {
+        this.loadRootKeysFromStorage()
+      }
     }
   }
 

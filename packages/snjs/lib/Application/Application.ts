@@ -1,7 +1,7 @@
 import { SNMfaService } from './../Services/Mfa/MfaService'
 import { KeyRecoveryService } from './../Services/KeyRecovery/KeyRecoveryService'
 import { WebSocketsService } from './../Services/Api/WebsocketsService'
-import { SNMigrationService } from './../Services/Migration/MigrationService'
+import { MigrationService } from './../Services/Migration/MigrationService'
 import { LegacyApiService } from './../Services/Api/ApiService'
 import { FeaturesService } from '@Lib/Services/Features/FeaturesService'
 import { SNPreferencesService } from './../Services/Preferences/PreferencesService'
@@ -70,6 +70,7 @@ import {
   AccountEvent,
   PayloadManagerInterface,
   HistoryServiceInterface,
+  InternalEventPublishStrategy,
 } from '@standardnotes/services'
 import {
   PayloadEmitSource,
@@ -223,6 +224,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
 
     this.registerServiceObservers()
     this.defineInternalEventHandlers()
+    this.createBackgroundDependencies()
   }
 
   private registerServiceObservers() {
@@ -506,17 +508,13 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   }
 
   private async handleStage(stage: ApplicationStage) {
-    const deps = this.dependencies.getAll()
-    for (const dep of deps) {
-      if (isObjectApplicationService(dep)) {
-        await dep.handleApplicationStage(stage)
-      }
-    }
-
-    this.events.publish({
-      type: ApplicationEvent.ApplicationStageChanged,
-      payload: { stage } as ApplicationStageChangedEventPayload,
-    })
+    await this.events.publishSync(
+      {
+        type: ApplicationEvent.ApplicationStageChanged,
+        payload: { stage } as ApplicationStageChangedEventPayload,
+      },
+      InternalEventPublishStrategy.SEQUENCE,
+    )
   }
 
   /**
@@ -1119,12 +1117,65 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return this.getHost() === (await homeServerService.getHomeServerUrl())
   }
 
+  private createBackgroundDependencies() {
+    this.dependencies.get(TYPES.UserEventService)
+    this.dependencies.get(TYPES.KeyRecoveryService)
+    this.dependencies.get(TYPES.AsymmetricMessageService)
+  }
+
   private defineInternalEventHandlers(): void {
     this.events.addEventHandler(this.dependencies.get(TYPES.FeaturesService), ApiServiceEvent.MetaReceived)
     this.events.addEventHandler(this.dependencies.get(TYPES.IntegrityService), SyncEvent.SyncRequestsIntegrityCheck)
     this.events.addEventHandler(this.dependencies.get(TYPES.SyncService), IntegrityEvent.IntegrityCheckCompleted)
     this.events.addEventHandler(this.dependencies.get(TYPES.UserService), AccountEvent.SignedInOrRegistered)
     this.events.addEventHandler(this.dependencies.get(TYPES.SessionManager), ApiServiceEvent.SessionRefreshed)
+
+    this.events.addEventHandler(this.dependencies.get(TYPES.SharedVaultService), SyncEvent.ReceivedSharedVaultInvites)
+    this.events.addEventHandler(this.dependencies.get(TYPES.SharedVaultService), SyncEvent.ReceivedRemoteSharedVaults)
+
+    if (this.dependencies.get(TYPES.FilesBackupService)) {
+      this.events.addEventHandler(
+        this.dependencies.get(TYPES.FilesBackupService),
+        ApplicationEvent.ApplicationStageChanged,
+      )
+    }
+    if (this.dependencies.get(TYPES.HomeServerService)) {
+      this.events.addEventHandler(
+        this.dependencies.get(TYPES.HomeServerService),
+        ApplicationEvent.ApplicationStageChanged,
+      )
+    }
+
+    this.events.addEventHandler(
+      this.dependencies.get(TYPES.SelfContactManager),
+      ApplicationEvent.ApplicationStageChanged,
+    )
+    this.events.addEventHandler(
+      this.dependencies.get(TYPES.KeySystemKeyManager),
+      ApplicationEvent.ApplicationStageChanged,
+    )
+    this.events.addEventHandler(
+      this.dependencies.get(TYPES.SubscriptionManager),
+      ApplicationEvent.ApplicationStageChanged,
+    )
+    this.events.addEventHandler(this.dependencies.get(TYPES.FeaturesService), ApplicationEvent.ApplicationStageChanged)
+    this.events.addEventHandler(
+      this.dependencies.get(TYPES.KeyRecoveryService),
+      ApplicationEvent.ApplicationStageChanged,
+    )
+    this.events.addEventHandler(this.dependencies.get(TYPES.MigrationService), ApplicationEvent.ApplicationStageChanged)
+    this.events.addEventHandler(
+      this.dependencies.get(TYPES.PreferencesService),
+      ApplicationEvent.ApplicationStageChanged,
+    )
+    this.events.addEventHandler(
+      this.dependencies.get(TYPES.ProtectionService),
+      ApplicationEvent.ApplicationStageChanged,
+    )
+    this.events.addEventHandler(
+      this.dependencies.get(TYPES.DiskStorageService),
+      ApplicationEvent.ApplicationStageChanged,
+    )
   }
 
   get device(): DeviceInterface {
@@ -1275,8 +1326,8 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return this.dependencies.get<HistoryServiceInterface>(TYPES.HistoryManager)
   }
 
-  private get migrations(): SNMigrationService {
-    return this.dependencies.get<SNMigrationService>(TYPES.MigrationService)
+  private get migrations(): MigrationService {
+    return this.dependencies.get<MigrationService>(TYPES.MigrationService)
   }
 
   public get encryption(): EncryptionProviderInterface {

@@ -967,25 +967,25 @@ export class SyncService
 
     const historyMap = this.historyService.getHistoryMapCopy()
 
-    if (response.userEvents) {
+    if (response.userEvents && response.userEvents.length > 0) {
       await this.notifyEventSync(SyncEvent.ReceivedUserEvents, response.userEvents as SyncEventReceivedUserEventsData)
     }
 
-    if (response.asymmetricMessages) {
+    if (response.asymmetricMessages && response.asymmetricMessages.length > 0) {
       await this.notifyEventSync(
         SyncEvent.ReceivedAsymmetricMessages,
         response.asymmetricMessages as SyncEventReceivedAsymmetricMessagesData,
       )
     }
 
-    if (response.vaults) {
+    if (response.vaults && response.vaults.length > 0) {
       await this.notifyEventSync(
         SyncEvent.ReceivedRemoteSharedVaults,
         response.vaults as SyncEventReceivedRemoteSharedVaultsData,
       )
     }
 
-    if (response.vaultInvites) {
+    if (response.vaultInvites && response.vaultInvites.length > 0) {
       await this.notifyEventSync(
         SyncEvent.ReceivedSharedVaultInvites,
         response.vaultInvites as SyncEventReceivedSharedVaultInvitesData,

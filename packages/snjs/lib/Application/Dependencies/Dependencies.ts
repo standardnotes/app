@@ -10,7 +10,7 @@ import { AddAuthenticator } from '../../Domain/UseCase/AddAuthenticator/AddAuthe
 import { GetRecoveryCodes } from '../../Domain/UseCase/GetRecoveryCodes/GetRecoveryCodes'
 import { SignInWithRecoveryCodes } from '../../Domain/UseCase/SignInWithRecoveryCodes/SignInWithRecoveryCodes'
 import { ListedService } from '../../Services/Listed/ListedService'
-import { SNMigrationService } from '../../Services/Migration/MigrationService'
+import { MigrationService } from '../../Services/Migration/MigrationService'
 import { SNMfaService } from '../../Services/Mfa/MfaService'
 import { SNComponentManager } from '../../Services/ComponentManager/ComponentManager'
 import { FeaturesService } from '@Lib/Services/Features/FeaturesService'
@@ -92,6 +92,10 @@ import {
   ResendMessage,
   SendMessage,
   ProcessAcceptedVaultInvite,
+  HandleRootKeyChangedMessage,
+  SendOwnContactChangeMessage,
+  GetOutboundMessages,
+  GetInboundMessages,
 } from '@standardnotes/services'
 import { ItemManager } from '../../Services/Items/ItemManager'
 import { PayloadManager } from '../../Services/Payloads/PayloadManager'
@@ -133,12 +137,6 @@ export class Dependencies {
 
     this.registerServiceMakers()
     this.registerUseCaseMakers()
-    this.createBackgroundDependencies()
-  }
-
-  private createBackgroundDependencies() {
-    this.get(TYPES.UserEventService)
-    this.get(TYPES.KeyRecoveryService)
   }
 
   public deinit() {
@@ -454,6 +452,27 @@ export class Dependencies {
         this.get(TYPES.CreateOrEditContact),
       )
     })
+
+    this.factory.set(TYPES.HandleRootKeyChangedMessage, () => {
+      return new HandleRootKeyChangedMessage(
+        this.get(TYPES.MutatorService),
+        this.get(TYPES.SyncService),
+        this.get(TYPES.EncryptionService),
+        this.get(TYPES.GetVault),
+      )
+    })
+
+    this.factory.set(TYPES.SendOwnContactChangeMessage, () => {
+      return new SendOwnContactChangeMessage(this.get(TYPES.EncryptMessage), this.get(TYPES.SendMessage))
+    })
+
+    this.factory.set(TYPES.GetOutboundMessages, () => {
+      return new GetOutboundMessages(this.get(TYPES.AsymmetricMessageServer))
+    })
+
+    this.factory.set(TYPES.GetInboundMessages, () => {
+      return new GetInboundMessages(this.get(TYPES.AsymmetricMessageServer))
+    })
   }
 
   private registerServiceMakers() {
@@ -722,7 +741,7 @@ export class Dependencies {
     })
 
     this.factory.set(TYPES.MigrationService, () => {
-      return new SNMigrationService({
+      return new MigrationService({
         encryptionService: this.get(TYPES.EncryptionService),
         deviceInterface: this.get(TYPES.DeviceInterface),
         storageService: this.get(TYPES.DiskStorageService),

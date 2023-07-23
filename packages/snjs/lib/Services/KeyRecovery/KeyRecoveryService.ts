@@ -33,6 +33,10 @@ import {
   EncryptionService,
   Challenge,
   UserService,
+  InternalEventHandlerInterface,
+  InternalEventInterface,
+  ApplicationEvent,
+  ApplicationStageChangedEventPayload,
 } from '@standardnotes/services'
 import {
   UndecryptableItemsStorage,
@@ -79,7 +83,10 @@ import { ContentType } from '@standardnotes/domain-core'
  * but our current copy is not, we will ignore the incoming value until we can properly
  * decrypt it.
  */
-export class KeyRecoveryService extends AbstractService<KeyRecoveryEvent, DecryptedPayloadInterface[]> {
+export class KeyRecoveryService
+  extends AbstractService<KeyRecoveryEvent, DecryptedPayloadInterface[]>
+  implements InternalEventHandlerInterface
+{
   private removeItemObserver: () => void
   private decryptionQueue: DecryptionQueueItem[] = []
   private isProcessingQueue = false
@@ -135,11 +142,12 @@ export class KeyRecoveryService extends AbstractService<KeyRecoveryEvent, Decryp
     super.deinit()
   }
 
-  // eslint-disable-next-line @typescript-eslint/require-await
-  override async handleApplicationStage(stage: ApplicationStage): Promise<void> {
-    void super.handleApplicationStage(stage)
-    if (stage === ApplicationStage.LoadedDatabase_12) {
-      void this.processPersistedUndecryptables()
+  async handleEvent(event: InternalEventInterface): Promise<void> {
+    if (event.type === ApplicationEvent.ApplicationStageChanged) {
+      const stage = (event.payload as ApplicationStageChangedEventPayload).stage
+      if (stage === ApplicationStage.LoadedDatabase_12) {
+        void this.processPersistedUndecryptables()
+      }
     }
   }
 

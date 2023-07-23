@@ -123,7 +123,7 @@ describe('keypair change', function () {
     await deinitContactContext()
   })
 
-  it.only('should reupload asymmetric messages sent with old key', async () => {
+  it('should reupload asymmetric messages sent with old key', async () => {
     const { sharedVault, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithAcceptedInvite(context)
 

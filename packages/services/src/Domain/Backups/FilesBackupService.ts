@@ -1,5 +1,8 @@
+import { ApplicationStageChangedEventPayload } from '../Event/ApplicationStageChangedEventPayload'
+import { ApplicationEvent } from '../Event/ApplicationEvent'
+import { InternalEventHandlerInterface } from '../Internal/InternalEventHandlerInterface'
 import { NoteType } from '@standardnotes/features'
-import { ApplicationStage } from './../Application/ApplicationStage'
+import { ApplicationStage } from '../Application/ApplicationStage'
 import { EncryptionProviderInterface } from '@standardnotes/encryption'
 import {
   PayloadEmitSource,
@@ -34,12 +37,16 @@ import { SessionsClientInterface } from '../Session/SessionsClientInterface'
 import { PayloadManagerInterface } from '../Payloads/PayloadManagerInterface'
 import { HistoryServiceInterface } from '../History/HistoryServiceInterface'
 import { ContentType } from '@standardnotes/domain-core'
+import { InternalEventInterface } from '@standardnotes/snjs'
 
 const PlaintextBackupsDirectoryName = 'Plaintext Backups'
 export const TextBackupsDirectoryName = 'Text Backups'
 export const FileBackupsDirectoryName = 'File Backups'
 
-export class FilesBackupService extends AbstractService implements BackupServiceInterface {
+export class FilesBackupService
+  extends AbstractService
+  implements BackupServiceInterface, InternalEventHandlerInterface
+{
   private filesObserverDisposer: () => void
   private notesObserverDisposer: () => void
   private tagsObserverDisposer: () => void
@@ -98,6 +105,15 @@ export class FilesBackupService extends AbstractService implements BackupService
     })
   }
 
+  async handleEvent(event: InternalEventInterface): Promise<void> {
+    if (event.type === ApplicationEvent.ApplicationStageChanged) {
+      const stage = (event.payload as ApplicationStageChangedEventPayload).stage
+      if (stage === ApplicationStage.Launched_10) {
+        void this.automaticallyEnableTextBackupsIfPreferenceNotSet()
+      }
+    }
+  }
+
   setSuperConverter(converter: SuperConverterServiceInterface): void {
     this.markdownConverter = converter
   }
@@ -141,12 +157,6 @@ export class FilesBackupService extends AbstractService implements BackupService
     ;(this.crypto as unknown) = undefined
     ;(this.storage as unknown) = undefined
     ;(this.session as unknown) = undefined
-  }
-
-  override async handleApplicationStage(stage: ApplicationStage): Promise<void> {
-    if (stage === ApplicationStage.Launched_10) {
-      void this.automaticallyEnableTextBackupsIfPreferenceNotSet()
-    }
   }
 
   private async automaticallyEnableTextBackupsIfPreferenceNotSet(): Promise<void> {

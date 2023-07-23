@@ -96,16 +96,6 @@ export class SharedVaultService
     eventBus.addEventHandler(this, VaultServiceEvent.VaultRootKeyRotated)
 
     this.eventDisposers.push(
-      sync.addEventObserver(async (event, data) => {
-        if (event === SyncEvent.ReceivedSharedVaultInvites) {
-          void this.processInboundInvites(data as SyncEventReceivedSharedVaultInvitesData)
-        } else if (event === SyncEvent.ReceivedRemoteSharedVaults) {
-          void this.notifyCollaborationStatusChanged()
-        }
-      }),
-    )
-
-    this.eventDisposers.push(
       items.addObserver<TrustedContactInterface>(
         ContentType.TYPES.TrustedContact,
         async ({ changed, inserted, source }) => {
@@ -145,6 +135,10 @@ export class SharedVaultService
     } else if (event.type === VaultServiceEvent.VaultRootKeyRotated) {
       const payload = event.payload as VaultServiceEventPayload[VaultServiceEvent.VaultRootKeyRotated]
       await this.handleVaultRootKeyRotatedEvent(payload.vault)
+    } else if (event.type === SyncEvent.ReceivedSharedVaultInvites) {
+      await this.processInboundInvites(event.payload as SyncEventReceivedSharedVaultInvitesData)
+    } else if (event.type === SyncEvent.ReceivedRemoteSharedVaults) {
+      void this.notifyCollaborationStatusChanged()
     }
   }
 

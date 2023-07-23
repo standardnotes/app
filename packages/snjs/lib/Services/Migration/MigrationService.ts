@@ -10,6 +10,9 @@ import {
   ApplicationStage,
   AbstractService,
   DiagnosticInfo,
+  InternalEventHandlerInterface,
+  InternalEventInterface,
+  ApplicationStageChangedEventPayload,
 } from '@standardnotes/services'
 import { SnjsVersion, isRightVersionGreaterThanLeft } from '../../Version'
 import { SNLog } from '@Lib/Log'
@@ -23,7 +26,7 @@ import { MigrationClasses } from '@Lib/Migrations/Versions'
  * first launches, and also other steps after the application is unlocked, or after the
  * first sync completes. Migrations live under /migrations and inherit from the base Migration class.
  */
-export class SNMigrationService extends AbstractService {
+export class MigrationService extends AbstractService implements InternalEventHandlerInterface {
   private activeMigrations?: Migration[]
   private baseMigration!: BaseMigration
 
@@ -44,7 +47,7 @@ export class SNMigrationService extends AbstractService {
   public async initialize(): Promise<void> {
     await this.runBaseMigrationPreRun()
 
-    const requiredMigrations = SNMigrationService.getRequiredMigrations(await this.getStoredSnjsVersion())
+    const requiredMigrations = MigrationService.getRequiredMigrations(await this.getStoredSnjsVersion())
 
     this.activeMigrations = this.instantiateMigrationClasses(requiredMigrations)
 
@@ -70,13 +73,11 @@ export class SNMigrationService extends AbstractService {
     await this.baseMigration.preRun()
   }
 
-  /**
-   * Application instances will call this function directly when they arrive
-   * at a certain migratory state.
-   */
-  public override async handleApplicationStage(stage: ApplicationStage): Promise<void> {
-    await super.handleApplicationStage(stage)
-    await this.handleStage(stage)
+  async handleEvent(event: InternalEventInterface): Promise<void> {
+    if (event.type === ApplicationEvent.ApplicationStageChanged) {
+      const stage = (event.payload as ApplicationStageChangedEventPayload).stage
+      await this.handleStage(stage)
+    }
   }
 
   /**
@@ -89,7 +90,7 @@ export class SNMigrationService extends AbstractService {
   }
 
   public async hasPendingMigrations(): Promise<boolean> {
-    const requiredMigrations = SNMigrationService.getRequiredMigrations(await this.getStoredSnjsVersion())
+    const requiredMigrations = MigrationService.getRequiredMigrations(await this.getStoredSnjsVersion())
     return requiredMigrations.length > 0 || (await this.baseMigration.needsKeychainRepair())
   }
 

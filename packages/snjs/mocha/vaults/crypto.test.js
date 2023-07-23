@@ -50,6 +50,7 @@ describe('shared vault crypto', function () {
         await Collaboration.createSharedVaultWithAcceptedInviteAndNote(context)
 
       await contactContext.changeNoteTitleAndSync(note, 'new title')
+
       await context.sync()
 
       const rawPayloads = await context.application.storage.getAllRawPayloads()

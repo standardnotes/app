@@ -1,3 +1,7 @@
+import { ApplicationStageChangedEventPayload } from './../Event/ApplicationStageChangedEventPayload'
+import { ApplicationEvent } from './../Event/ApplicationEvent'
+import { InternalEventInterface } from './../Internal/InternalEventInterface'
+import { InternalEventHandlerInterface } from './../Internal/InternalEventHandlerInterface'
 import { InternalFeature } from '../InternalFeatures/InternalFeature'
 import { InternalFeatureService } from '../InternalFeatures/InternalFeatureService'
 import { ApplicationStage } from '../Application/ApplicationStage'
@@ -20,7 +24,7 @@ import { ContentType } from '@standardnotes/domain-core'
 
 const SelfContactName = 'Me'
 
-export class SelfContactManager {
+export class SelfContactManager implements InternalEventHandlerInterface {
   public selfContact?: TrustedContactInterface
 
   private isReloadingSelfContact = false
@@ -58,9 +62,12 @@ export class SelfContactManager {
     )
   }
 
-  public async handleApplicationStage(stage: ApplicationStage): Promise<void> {
-    if (stage === ApplicationStage.LoadedDatabase_12) {
-      this.loadSelfContactFromDatabase()
+  async handleEvent(event: InternalEventInterface): Promise<void> {
+    if (event.type === ApplicationEvent.ApplicationStageChanged) {
+      const stage = (event.payload as ApplicationStageChangedEventPayload).stage
+      if (stage === ApplicationStage.LoadedDatabase_12) {
+        this.loadSelfContactFromDatabase()
+      }
     }
   }
 

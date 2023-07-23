@@ -47,6 +47,8 @@ import {
   SubscriptionManagerInterface,
   AccountEvent,
   SubscriptionManagerEvent,
+  ApplicationEvent,
+  ApplicationStageChangedEventPayload,
 } from '@standardnotes/services'
 
 import { DownloadRemoteThirdPartyFeatureUseCase } from './UseCase/DownloadRemoteThirdPartyFeature'
@@ -152,20 +154,19 @@ export class FeaturesService
       const { userRoles } = event.payload as MetaReceivedData
       void this.updateOnlineRolesWithNewValues(userRoles.map((role) => role.name))
     }
-  }
 
-  override async handleApplicationStage(stage: ApplicationStage): Promise<void> {
-    if (stage === ApplicationStage.FullSyncCompleted_13) {
-      if (!this.hasFirstPartyOnlineSubscription()) {
-        const offlineRepo = this.getOfflineRepo()
+    if (event.type === ApplicationEvent.ApplicationStageChanged) {
+      const stage = (event.payload as ApplicationStageChangedEventPayload).stage
+      if (stage === ApplicationStage.FullSyncCompleted_13) {
+        if (!this.hasFirstPartyOnlineSubscription()) {
+          const offlineRepo = this.getOfflineRepo()
 
-        if (offlineRepo) {
-          void this.downloadOfflineRoles(offlineRepo)
+          if (offlineRepo) {
+            void this.downloadOfflineRoles(offlineRepo)
+          }
         }
       }
     }
-
-    return super.handleApplicationStage(stage)
   }
 
   public enableExperimentalFeature(identifier: FeatureIdentifier): void {
