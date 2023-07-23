@@ -15,7 +15,7 @@ type Params = {
     signing: PkcKeyPair
   }
   sharedVault: SharedVaultListingInterface
-  userUuid: string
+  senderUuid: string
 }
 
 export class NotifyVaultUsersOfKeyRotation implements UseCaseInterface<void> {
@@ -68,6 +68,7 @@ export class NotifyVaultUsersOfKeyRotation implements UseCaseInterface<void> {
         sharedVaultContacts: !contacts.isFailed() ? contacts.getValue() : [],
         recipient: recipient.getValue(),
         permissions: invite.permissions,
+        senderUuid: params.senderUuid,
       })
     }
 
@@ -78,7 +79,7 @@ export class NotifyVaultUsersOfKeyRotation implements UseCaseInterface<void> {
     const result = await this.sendKeyChangedMessage.execute({
       keySystemIdentifier: params.sharedVault.systemIdentifier,
       sharedVaultUuid: params.sharedVault.sharing.sharedVaultUuid,
-      senderUuid: params.userUuid,
+      senderUuid: params.senderUuid,
       keys: params.keys,
     })
 

@@ -96,6 +96,7 @@ import {
   SendOwnContactChangeMessage,
   GetOutboundMessages,
   GetInboundMessages,
+  SendVaultKeyChangedMessage,
 } from '@standardnotes/services'
 import { ItemManager } from '../../Services/Items/ItemManager'
 import { PayloadManager } from '../../Services/Payloads/PayloadManager'
@@ -316,11 +317,21 @@ export class Dependencies {
     this.factory.set(TYPES.NotifyVaultUsersOfKeyRotation, () => {
       return new NotifyVaultUsersOfKeyRotation(
         this.get(TYPES.FindContact),
-        this.get(TYPES.SendVaultDataChangedMessage),
+        this.get(TYPES.SendVaultKeyChangedMessage),
         this.get(TYPES.InviteToVault),
         this.get(TYPES.SharedVaultInvitesServer),
         this.get(TYPES.GetVaultContacts),
         this.get(TYPES.DecryptOwnMessage),
+      )
+    })
+
+    this.factory.set(TYPES.SendVaultKeyChangedMessage, () => {
+      return new SendVaultKeyChangedMessage(
+        this.get(TYPES.EncryptMessage),
+        this.get(TYPES.KeySystemKeyManager),
+        this.get(TYPES.FindContact),
+        this.get(TYPES.SendMessage),
+        this.get(TYPES.GetVaultUsers),
       )
     })
 

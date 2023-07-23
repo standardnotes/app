@@ -169,7 +169,7 @@ export class SharedVaultService
 
     await this.notifyVaultUsersOfKeyRotation.execute({
       sharedVault: vault,
-      userUuid: this.session.getSureUser().uuid,
+      senderUuid: this.session.getSureUser().uuid,
       keys: {
         encryption: this.encryption.getKeyPair(),
         signing: this.encryption.getSigningKeyPair(),

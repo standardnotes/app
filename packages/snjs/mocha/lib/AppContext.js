@@ -382,7 +382,7 @@ export class AppContext {
 
   resolveWhenAllInboundAsymmetricMessagesAreDeleted() {
     return new Promise((resolve) => {
-      const objectToSpy = this.application.dependencies.get(TYPES.messageServer)
+      const objectToSpy = this.application.dependencies.get(TYPES.AsymmetricMessageServer)
       sinon.stub(objectToSpy, 'deleteAllInboundMessages').callsFake(async (params) => {
         objectToSpy.deleteAllInboundMessages.restore()
         const result = await objectToSpy.deleteAllInboundMessages(params)

@@ -100,6 +100,7 @@ export const TYPES = {
   HandleKeyPairChange: Symbol.for('HandleKeyPairChange'),
   NotifyVaultUsersOfKeyRotation: Symbol.for('NotifyVaultUsersOfKeyRotation'),
   SendVaultDataChangedMessage: Symbol.for('SendVaultDataChangedMessage'),
+  SendVaultKeyChangedMessage: Symbol.for('SendVaultKeyChangedMessage'),
   GetTrustedPayload: Symbol.for('GetTrustedPayload'),
   GetUntrustedPayload: Symbol.for('GetUntrustedPayload'),
   GetVaultContacts: Symbol.for('GetVaultContacts'),
