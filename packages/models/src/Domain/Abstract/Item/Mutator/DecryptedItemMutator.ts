@@ -23,7 +23,7 @@ export class DecryptedItemMutator<
     this.mutableContent = mutableCopy
   }
 
-  public override getResult() {
+  public override getResult(): DecryptedPayloadInterface<C> {
     if (this.type === MutationType.NonDirtying) {
       return this.immutablePayload.copy({
         content: this.mutableContent,

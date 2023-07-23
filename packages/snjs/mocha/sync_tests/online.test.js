@@ -42,12 +42,12 @@ describe('online syncing', function () {
   })
 
   afterEach(async function () {
-    expect(this.application.syncService.isOutOfSync()).to.equal(false)
+    expect(this.application.sync.isOutOfSync()).to.equal(false)
 
-    const items = this.application.itemManager.allTrackedItems()
+    const items = this.application.items.allTrackedItems()
     expect(items.length).to.equal(this.expectedItemCount)
 
-    const rawPayloads = await this.application.diskStorageService.getAllRawPayloads()
+    const rawPayloads = await this.application.storage.getAllRawPayloads()
     expect(rawPayloads.length).to.equal(this.expectedItemCount)
     await Factory.safeDeinit(this.application)
     localStorage.clear()
@@ -60,11 +60,11 @@ describe('online syncing', function () {
   it('should register and sync basic model online', async function () {
     let note = await Factory.createSyncedNote(this.application)
     this.expectedItemCount++
-    expect(this.application.itemManager.getDirtyItems().length).to.equal(0)
+    expect(this.application.items.getDirtyItems().length).to.equal(0)
     note = this.application.items.findItem(note.uuid)
     expect(note.dirty).to.not.be.ok
 
-    const rawPayloads = await this.application.diskStorageService.getAllRawPayloads()
+    const rawPayloads = await this.application.storage.getAllRawPayloads()
     const notePayloads = noteObjectsFromObjects(rawPayloads)
     expect(notePayloads.length).to.equal(1)
     for (const rawNote of notePayloads) {
@@ -83,7 +83,7 @@ describe('online syncing', function () {
       password: this.password,
     })
 
-    const notes = this.application.itemManager.getDisplayableNotes()
+    const notes = this.application.items.getDisplayableNotes()
     expect(notes.length).to.equal(1)
     expect(notes[0].title).to.equal(note.title)
   })
@@ -99,7 +99,7 @@ describe('online syncing', function () {
 
     this.application = await this.context.signout()
 
-    expect(this.application.itemManager.items.length).to.equal(BaseItemCounts.DefaultItems)
+    expect(this.application.items.items.length).to.equal(BaseItemCounts.DefaultItems)
 
     const promise = Factory.loginToApplication({
       application: this.application,
@@ -132,7 +132,7 @@ describe('online syncing', function () {
       mergeLocal: true,
     })
 
-    const notes = this.application.itemManager.getDisplayableNotes()
+    const notes = this.application.items.getDisplayableNotes()
     expect(notes.length).to.equal(1)
     /** uuid should have been alternated */
     expect(notes[0].uuid).to.equal(note.uuid)
@@ -143,8 +143,8 @@ describe('online syncing', function () {
     let successes = 0
     let events = 0
 
-    this.application.syncService.ut_beginLatencySimulator(250)
-    this.application.syncService.addEventObserver((event, data) => {
+    this.application.sync.ut_beginLatencySimulator(250)
+    this.application.sync.addEventObserver((event, data) => {
       if (event === SyncEvent.SyncCompletedWithAllItemsUploaded) {
         events++
       }
@@ -153,7 +153,7 @@ describe('online syncing', function () {
     const promises = []
     for (let i = 0; i < syncCount; i++) {
       promises.push(
-        this.application.syncService
+        this.application.sync
           .sync({
             queueStrategy: SyncQueueStrategy.ResolveOnNext,
           })
@@ -169,7 +169,7 @@ describe('online syncing', function () {
     // We don't know how many will execute above.
     expect(events).to.be.at.least(1)
 
-    this.application.syncService.ut_endLatencySimulator()
+    this.application.sync.ut_endLatencySimulator()
     // Since the syncs all happen after one another, extra syncs may be queued on that we are not awaiting.
     await Factory.sleep(0.5)
   })
@@ -179,9 +179,9 @@ describe('online syncing', function () {
     let successes = 0
     let events = 0
 
-    this.application.syncService.ut_beginLatencySimulator(250)
+    this.application.sync.ut_beginLatencySimulator(250)
 
-    this.application.syncService.addEventObserver((event, data) => {
+    this.application.sync.addEventObserver((event, data) => {
       if (event === SyncEvent.SyncCompletedWithAllItemsUploaded) {
         events++
       }
@@ -190,7 +190,7 @@ describe('online syncing', function () {
     const promises = []
     for (let i = 0; i < syncCount; i++) {
       promises.push(
-        this.application.syncService
+        this.application.sync
           .sync({
             queueStrategy: SyncQueueStrategy.ForceSpawnNew,
           })
@@ -202,7 +202,7 @@ describe('online syncing', function () {
     await Promise.all(promises)
     expect(successes).to.equal(syncCount)
     expect(events).to.equal(syncCount)
-    this.application.syncService.ut_endLatencySimulator()
+    this.application.sync.ut_endLatencySimulator()
   })
 
   it('retrieving new items should not mark them as dirty', async function () {
@@ -211,7 +211,7 @@ describe('online syncing', function () {
 
     this.application = await Factory.signOutApplicationAndReturnNew(this.application)
     const promise = new Promise((resolve) => {
-      this.application.syncService.addEventObserver(async (event) => {
+      this.application.sync.addEventObserver(async (event) => {
         if (event === SyncEvent.PaginatedSyncRequestCompleted) {
           const note = this.application.items.findItem(originalNote.uuid)
           if (note) {
@@ -226,22 +226,22 @@ describe('online syncing', function () {
   })
 
   it('allows saving of data after sign out', async function () {
-    expect(this.application.itemManager.getDisplayableItemsKeys().length).to.equal(1)
+    expect(this.application.items.getDisplayableItemsKeys().length).to.equal(1)
     this.application = await Factory.signOutApplicationAndReturnNew(this.application)
-    expect(this.application.itemManager.getDisplayableItemsKeys().length).to.equal(1)
+    expect(this.application.items.getDisplayableItemsKeys().length).to.equal(1)
     const note = await Factory.createMappedNote(this.application)
     this.expectedItemCount++
     await this.application.mutator.setItemDirty(note)
-    await this.application.syncService.sync(syncOptions)
-    const rawPayloads = await this.application.diskStorageService.getAllRawPayloads()
+    await this.application.sync.sync(syncOptions)
+    const rawPayloads = await this.application.storage.getAllRawPayloads()
     const notePayload = noteObjectsFromObjects(rawPayloads)
     expect(notePayload.length).to.equal(1)
-    expect(this.application.itemManager.getDisplayableNotes().length).to.equal(1)
+    expect(this.application.items.getDisplayableNotes().length).to.equal(1)
 
     // set item to be merged for when sign in occurs
-    await this.application.syncService.markAllItemsAsNeedingSyncAndPersist()
-    expect(this.application.syncService.isOutOfSync()).to.equal(false)
-    expect(this.application.itemManager.getDirtyItems().length).to.equal(BaseItemCounts.DefaultItems + 1)
+    await this.application.sync.markAllItemsAsNeedingSyncAndPersist()
+    expect(this.application.sync.isOutOfSync()).to.equal(false)
+    expect(this.application.items.getDirtyItems().length).to.equal(BaseItemCounts.DefaultItems + 1)
 
     // Sign back in for next tests
     await Factory.loginToApplication({
@@ -250,16 +250,16 @@ describe('online syncing', function () {
       password: this.password,
     })
 
-    expect(this.application.itemManager.getDirtyItems().length).to.equal(0)
-    expect(this.application.itemManager.getDisplayableItemsKeys().length).to.equal(1)
-    expect(this.application.syncService.isOutOfSync()).to.equal(false)
-    expect(this.application.itemManager.getDisplayableNotes().length).to.equal(1)
+    expect(this.application.items.getDirtyItems().length).to.equal(0)
+    expect(this.application.items.getDisplayableItemsKeys().length).to.equal(1)
+    expect(this.application.sync.isOutOfSync()).to.equal(false)
+    expect(this.application.items.getDisplayableNotes().length).to.equal(1)
 
-    for (const item of this.application.itemManager.getDisplayableNotes()) {
+    for (const item of this.application.items.getDisplayableNotes()) {
       expect(item.content.title).to.be.ok
     }
 
-    const updatedRawPayloads = await this.application.diskStorageService.getAllRawPayloads()
+    const updatedRawPayloads = await this.application.storage.getAllRawPayloads()
     for (const payload of updatedRawPayloads) {
       // if an item comes back from the server, it is saved to disk immediately without a dirty value.
       expect(payload.dirty).to.not.be.ok
@@ -274,10 +274,10 @@ describe('online syncing', function () {
     const originalTitle = note.content.title
 
     await this.application.mutator.setItemDirty(note)
-    await this.application.syncService.sync(syncOptions)
+    await this.application.sync.sync(syncOptions)
 
     const encrypted = CreateEncryptedServerSyncPushPayload(
-      await this.application.encryptionService.encryptSplitSingle({
+      await this.application.encryption.encryptSplitSingle({
         usesItemsKeyWithKeyLookup: {
           items: [note.payloadRepresentation()],
         },
@@ -291,11 +291,11 @@ describe('online syncing', function () {
 
     const items = await this.application.mutator.emitItemsFromPayloads([errorred], PayloadEmitSource.LocalChanged)
 
-    const mappedItem = this.application.itemManager.findAnyItem(errorred.uuid)
+    const mappedItem = this.application.items.findAnyItem(errorred.uuid)
 
     expect(typeof mappedItem.content).to.equal('string')
 
-    const decryptedPayload = await this.application.encryptionService.decryptSplitSingle({
+    const decryptedPayload = await this.application.encryption.decryptSplitSingle({
       usesItemsKeyWithKeyLookup: {
         items: [errorred],
       },
@@ -319,7 +319,7 @@ describe('online syncing', function () {
     this.application = await Factory.signOutApplicationAndReturnNew(this.application)
     await this.application.signIn(this.email, this.password, undefined, undefined, undefined, true)
 
-    expect(this.application.itemManager.items.length).to.equal(this.expectedItemCount)
+    expect(this.application.items.items.length).to.equal(this.expectedItemCount)
   })
 
   it('removes item from storage upon deletion', async function () {
@@ -327,41 +327,41 @@ describe('online syncing', function () {
     this.expectedItemCount++
 
     await this.application.mutator.setItemDirty(note)
-    await this.application.syncService.sync(syncOptions)
+    await this.application.sync.sync(syncOptions)
 
     note = this.application.items.findItem(note.uuid)
     expect(note.dirty).to.equal(false)
-    expect(this.application.itemManager.items.length).to.equal(this.expectedItemCount)
+    expect(this.application.items.items.length).to.equal(this.expectedItemCount)
 
     await this.application.mutator.setItemToBeDeleted(note)
     note = this.application.items.findAnyItem(note.uuid)
     expect(note.dirty).to.equal(true)
     this.expectedItemCount--
 
-    await this.application.syncService.sync(syncOptions)
+    await this.application.sync.sync(syncOptions)
     note = this.application.items.findItem(note.uuid)
     expect(note).to.not.be.ok
 
     // We expect that this item is now gone for good, and no duplicate has been created.
-    expect(this.application.itemManager.items.length).to.equal(this.expectedItemCount)
+    expect(this.application.items.items.length).to.equal(this.expectedItemCount)
     await Factory.sleep(0.5)
-    const rawPayloads = await this.application.diskStorageService.getAllRawPayloads()
+    const rawPayloads = await this.application.storage.getAllRawPayloads()
     expect(rawPayloads.length).to.equal(this.expectedItemCount)
   })
 
   it('retrieving item with no content should correctly map local state', async function () {
     const note = await Factory.createMappedNote(this.application)
     await this.application.mutator.setItemDirty(note)
-    await this.application.syncService.sync(syncOptions)
+    await this.application.sync.sync(syncOptions)
 
-    const syncToken = await this.application.syncService.getLastSyncToken()
+    const syncToken = await this.application.sync.getLastSyncToken()
 
     this.expectedItemCount++
-    expect(this.application.itemManager.items.length).to.equal(this.expectedItemCount)
+    expect(this.application.items.items.length).to.equal(this.expectedItemCount)
 
     // client A
     await this.application.mutator.setItemToBeDeleted(note)
-    await this.application.syncService.sync(syncOptions)
+    await this.application.sync.sync(syncOptions)
 
     // Subtract 1
     this.expectedItemCount--
@@ -369,10 +369,10 @@ describe('online syncing', function () {
     // client B
     // Clearing sync tokens wont work as server wont return deleted items.
     // Set saved sync token instead
-    await this.application.syncService.setLastSyncToken(syncToken)
-    await this.application.syncService.sync(syncOptions)
+    await this.application.sync.setLastSyncToken(syncToken)
+    await this.application.sync.sync(syncOptions)
 
-    expect(this.application.itemManager.items.length).to.equal(this.expectedItemCount)
+    expect(this.application.items.items.length).to.equal(this.expectedItemCount)
   })
 
   it('changing an item while it is being synced should sync again', async function () {
@@ -381,7 +381,7 @@ describe('online syncing', function () {
     this.expectedItemCount++
 
     /** Begin syncing it with server but introduce latency so we can sneak in a delete */
-    this.application.syncService.ut_beginLatencySimulator(500)
+    this.application.sync.ut_beginLatencySimulator(500)
 
     const sync = this.application.sync.sync()
 
@@ -395,11 +395,11 @@ describe('online syncing', function () {
 
     await sync
 
-    this.application.syncService.ut_endLatencySimulator()
+    this.application.sync.ut_endLatencySimulator()
 
     await this.application.sync.sync(syncOptions)
 
-    const latestNote = this.application.itemManager.findItem(note.uuid)
+    const latestNote = this.application.items.findItem(note.uuid)
     expect(latestNote.title).to.equal('latest title')
   })
 
@@ -409,7 +409,7 @@ describe('online syncing', function () {
     this.expectedItemCount++
 
     /** Begin syncing it with server but introduce latency so we can sneak in a delete */
-    this.application.syncService.ut_beginLatencySimulator(500)
+    this.application.sync.ut_beginLatencySimulator(500)
 
     const sync = this.application.sync.sync()
 
@@ -423,12 +423,12 @@ describe('online syncing', function () {
 
     await sync
 
-    this.application.syncService.ut_endLatencySimulator()
+    this.application.sync.ut_endLatencySimulator()
 
     await this.application.sync.sync(syncOptions)
 
     /** We expect that item has been deleted */
-    const allItems = this.application.itemManager.items
+    const allItems = this.application.items.items
     expect(allItems.length).to.equal(this.expectedItemCount)
   })
 
@@ -440,7 +440,7 @@ describe('online syncing', function () {
     let success = true
     let didCompleteRelevantSync = false
     let beginCheckingResponse = false
-    this.application.syncService.addEventObserver((eventName, data) => {
+    this.application.sync.addEventObserver((eventName, data) => {
       if (eventName === SyncEvent.DownloadFirstSyncCompleted) {
         beginCheckingResponse = true
       }
@@ -456,7 +456,7 @@ describe('online syncing', function () {
         }
       }
     })
-    await this.application.syncService.sync({ mode: SyncMode.DownloadFirst })
+    await this.application.sync.sync({ mode: SyncMode.DownloadFirst })
     expect(didCompleteRelevantSync).to.equal(true)
     expect(success).to.equal(true)
   })
@@ -469,7 +469,7 @@ describe('online syncing', function () {
     let success = true
     let didCompleteRelevantSync = false
     let beginCheckingResponse = false
-    this.application.syncService.addEventObserver(async (eventName, data) => {
+    this.application.sync.addEventObserver(async (eventName, data) => {
       if (eventName === SyncEvent.DownloadFirstSyncCompleted) {
         await this.application.mutator.setItemToBeDeleted(note)
         beginCheckingResponse = true
@@ -486,7 +486,7 @@ describe('online syncing', function () {
         }
       }
     })
-    await this.application.syncService.sync({ mode: SyncMode.DownloadFirst })
+    await this.application.sync.sync({ mode: SyncMode.DownloadFirst })
     expect(didCompleteRelevantSync).to.equal(true)
     expect(success).to.equal(true)
   })
@@ -496,16 +496,16 @@ describe('online syncing', function () {
 
     this.expectedItemCount++
 
-    await this.application.syncService.markAllItemsAsNeedingSyncAndPersist()
+    await this.application.sync.markAllItemsAsNeedingSyncAndPersist()
 
-    this.application.itemManager.resetState()
-    this.application.payloadManager.resetState()
+    this.application.items.resetState()
+    this.application.payloads.resetState()
 
-    await this.application.syncService.clearSyncPositionTokens()
+    await this.application.sync.clearSyncPositionTokens()
 
-    expect(this.application.itemManager.items.length).to.equal(0)
+    expect(this.application.items.items.length).to.equal(0)
 
-    const rawPayloads = await this.application.diskStorageService.getAllRawPayloads()
+    const rawPayloads = await this.application.storage.getAllRawPayloads()
 
     const encryptedPayloads = rawPayloads.map((rawPayload) => {
       return new EncryptedPayload(rawPayload)
@@ -515,17 +515,17 @@ describe('online syncing', function () {
 
     const keyedSplit = CreateDecryptionSplitWithKeyLookup(encryptionSplit)
 
-    const decryptionResults = await this.application.encryptionService.decryptSplit(keyedSplit)
+    const decryptionResults = await this.application.encryption.decryptSplit(keyedSplit)
 
     await this.application.mutator.emitItemsFromPayloads(decryptionResults, PayloadEmitSource.LocalChanged)
 
-    expect(this.application.itemManager.allTrackedItems().length).to.equal(this.expectedItemCount)
+    expect(this.application.items.allTrackedItems().length).to.equal(this.expectedItemCount)
 
-    const foundNote = this.application.itemManager.findAnyItem(note.uuid)
+    const foundNote = this.application.items.findAnyItem(note.uuid)
 
     expect(foundNote.dirty).to.equal(true)
 
-    await this.application.syncService.sync(syncOptions)
+    await this.application.sync.sync(syncOptions)
   })
 
   /** Temporarily skipping due to long run time */
@@ -538,8 +538,8 @@ describe('online syncing', function () {
 
     this.expectedItemCount += largeItemCount
 
-    await this.application.syncService.sync(syncOptions)
-    const rawPayloads = await this.application.diskStorageService.getAllRawPayloads()
+    await this.application.sync.sync(syncOptions)
+    const rawPayloads = await this.application.storage.getAllRawPayloads()
     expect(rawPayloads.length).to.equal(this.expectedItemCount)
   }).timeout(15000)
 
@@ -551,32 +551,32 @@ describe('online syncing', function () {
       await this.application.mutator.setItemDirty(note)
     }
     /** Upload */
-    this.application.syncService.sync({ awaitAll: true, checkIntegrity: false })
+    this.application.sync.sync({ awaitAll: true, checkIntegrity: false })
     await this.context.awaitNextSucessfulSync()
     this.expectedItemCount += largeItemCount
 
     /** Clear local data */
-    await this.application.payloadManager.resetState()
-    await this.application.itemManager.resetState()
-    await this.application.syncService.clearSyncPositionTokens()
-    await this.application.diskStorageService.clearAllPayloads()
-    expect(this.application.itemManager.items.length).to.equal(0)
+    await this.application.payloads.resetState()
+    await this.application.items.resetState()
+    await this.application.sync.clearSyncPositionTokens()
+    await this.application.storage.clearAllPayloads()
+    expect(this.application.items.items.length).to.equal(0)
 
     /** Download all data */
-    this.application.syncService.sync(syncOptions)
+    this.application.sync.sync(syncOptions)
     await this.context.awaitNextSucessfulSync()
-    expect(this.application.itemManager.items.length).to.equal(this.expectedItemCount)
+    expect(this.application.items.items.length).to.equal(this.expectedItemCount)
 
-    const rawPayloads = await this.application.diskStorageService.getAllRawPayloads()
+    const rawPayloads = await this.application.storage.getAllRawPayloads()
     expect(rawPayloads.length).to.equal(this.expectedItemCount)
   }).timeout(30000)
 
   it('syncing an item should storage it encrypted', async function () {
     const note = await Factory.createMappedNote(this.application)
     await this.application.mutator.setItemDirty(note)
-    await this.application.syncService.sync(syncOptions)
+    await this.application.sync.sync(syncOptions)
     this.expectedItemCount++
-    const rawPayloads = await this.application.diskStorageService.getAllRawPayloads()
+    const rawPayloads = await this.application.storage.getAllRawPayloads()
     const notePayload = rawPayloads.find((p) => p.content_type === ContentType.TYPES.Note)
     expect(typeof notePayload.content).to.equal('string')
   })
@@ -587,12 +587,12 @@ describe('online syncing', function () {
     this.expectedItemCount++
 
     /** Simulate database not loaded */
-    await this.application.syncService.clearSyncPositionTokens()
-    this.application.syncService.ut_setDatabaseLoaded(false)
-    this.application.syncService.sync(syncOptions)
+    await this.application.sync.clearSyncPositionTokens()
+    this.application.sync.ut_setDatabaseLoaded(false)
+    this.application.sync.sync(syncOptions)
     await Factory.sleep(0.3)
 
-    const rawPayloads = await this.application.diskStorageService.getAllRawPayloads()
+    const rawPayloads = await this.application.storage.getAllRawPayloads()
     const notePayload = rawPayloads.find((p) => p.content_type === ContentType.TYPES.Note)
     expect(typeof notePayload.content).to.equal('string')
   })
@@ -610,18 +610,18 @@ describe('online syncing', function () {
       syncOptions,
     )
     this.expectedItemCount++
-    const rawPayloads = await this.application.diskStorageService.getAllRawPayloads()
+    const rawPayloads = await this.application.storage.getAllRawPayloads()
     const notePayload = rawPayloads.find((p) => p.content_type === ContentType.TYPES.Note)
     expect(typeof notePayload.content).to.equal('string')
     expect(notePayload.content.length).to.be.above(text.length)
   })
 
   it('syncing a new item before local data has loaded should still persist the item to disk', async function () {
-    this.application.syncService.ut_setDatabaseLoaded(false)
+    this.application.sync.ut_setDatabaseLoaded(false)
     /** You don't want to clear model manager state as we'll lose encrypting items key */
-    // await this.application.payloadManager.resetState();
-    await this.application.syncService.clearSyncPositionTokens()
-    expect(this.application.itemManager.getDirtyItems().length).to.equal(0)
+    // await this.application.payloads.resetState();
+    await this.application.sync.clearSyncPositionTokens()
+    expect(this.application.items.getDirtyItems().length).to.equal(0)
 
     let note = await Factory.createMappedNote(this.application)
     note = await this.application.mutator.changeItem(note, (mutator) => {
@@ -629,15 +629,15 @@ describe('online syncing', function () {
     })
     /** This sync request should exit prematurely as we called ut_setDatabaseNotLoaded */
     /** Do not await. Sleep instead. */
-    this.application.syncService.sync(syncOptions)
+    this.application.sync.sync(syncOptions)
     await Factory.sleep(0.3)
     this.expectedItemCount++
 
     /** Item should still be dirty */
     expect(note.dirty).to.equal(true)
-    expect(this.application.itemManager.getDirtyItems().length).to.equal(1)
+    expect(this.application.items.getDirtyItems().length).to.equal(1)
 
-    const rawPayloads = await this.application.diskStorageService.getAllRawPayloads()
+    const rawPayloads = await this.application.storage.getAllRawPayloads()
     expect(rawPayloads.length).to.equal(this.expectedItemCount)
     const rawPayload = rawPayloads.find((p) => p.uuid === note.uuid)
     expect(rawPayload.uuid).to.equal(note.uuid)
@@ -645,16 +645,16 @@ describe('online syncing', function () {
     expect(typeof rawPayload.content).to.equal('string')
 
     /** Clear state data and upload item from storage to server */
-    await this.application.syncService.clearSyncPositionTokens()
-    await this.application.payloadManager.resetState()
-    await this.application.itemManager.resetState()
-    await this.application.syncService.loadDatabasePayloads()
-    await this.application.syncService.sync(syncOptions)
+    await this.application.sync.clearSyncPositionTokens()
+    await this.application.payloads.resetState()
+    await this.application.items.resetState()
+    await this.application.sync.loadDatabasePayloads()
+    await this.application.sync.sync(syncOptions)
 
-    const newRawPayloads = await this.application.diskStorageService.getAllRawPayloads()
+    const newRawPayloads = await this.application.storage.getAllRawPayloads()
     expect(newRawPayloads.length).to.equal(this.expectedItemCount)
 
-    const currentItem = this.application.itemManager.findItem(note.uuid)
+    const currentItem = this.application.items.findItem(note.uuid)
     expect(currentItem.content.text).to.equal(note.content.text)
     expect(currentItem.text).to.equal(note.text)
     expect(currentItem.dirty).to.not.be.ok
@@ -680,16 +680,16 @@ describe('online syncing', function () {
     const largeItemCount = 50
     await Factory.createManyMappedNotes(this.application, largeItemCount)
     this.expectedItemCount += largeItemCount
-    await this.application.syncService.sync(syncOptions)
+    await this.application.sync.sync(syncOptions)
 
     this.application = await Factory.signOutApplicationAndReturnNew(this.application)
     await this.application.signIn(this.email, this.password, undefined, undefined, undefined, true)
 
-    this.application.syncService.ut_setDatabaseLoaded(false)
-    await this.application.syncService.loadDatabasePayloads()
-    await this.application.syncService.sync(syncOptions)
+    this.application.sync.ut_setDatabaseLoaded(false)
+    await this.application.sync.loadDatabasePayloads()
+    await this.application.sync.sync(syncOptions)
 
-    const items = await this.application.itemManager.items
+    const items = await this.application.items.items
     expect(items.length).to.equal(this.expectedItemCount)
   }).timeout(20000)
 
@@ -717,7 +717,7 @@ describe('online syncing', function () {
   it('syncing twice without waiting should only execute 1 online sync', async function () {
     const expectedEvents = 1
     let actualEvents = 0
-    this.application.syncService.addEventObserver((event, data) => {
+    this.application.sync.addEventObserver((event, data) => {
       if (event === SyncEvent.SyncCompletedWithAllItemsUploaded && data.source === SyncSource.External) {
         actualEvents++
       }
@@ -742,8 +742,8 @@ describe('online syncing', function () {
     this.expectedItemCount++
 
     // client A. Don't await, we want to do other stuff.
-    this.application.syncService.ut_beginLatencySimulator(1500)
-    const slowSync = this.application.syncService.sync(syncOptions)
+    this.application.sync.ut_beginLatencySimulator(1500)
+    const slowSync = this.application.sync.sync(syncOptions)
     await Factory.sleep(0.1)
     expect(note.dirty).to.equal(true)
 
@@ -758,8 +758,8 @@ describe('online syncing', function () {
     expect(note.payload.dirtyIndex).to.be.above(note.payload.globalDirtyIndexAtLastSync)
 
     // Now do a regular sync with no latency.
-    this.application.syncService.ut_endLatencySimulator()
-    const midSync = this.application.syncService.sync(syncOptions)
+    this.application.sync.ut_endLatencySimulator()
+    const midSync = this.application.sync.sync(syncOptions)
 
     await slowSync
     await midSync
@@ -770,14 +770,14 @@ describe('online syncing', function () {
     expect(note.content.text).to.equal(text)
 
     // client B
-    await this.application.payloadManager.resetState()
-    await this.application.itemManager.resetState()
-    await this.application.syncService.clearSyncPositionTokens()
-    await this.application.syncService.sync(syncOptions)
+    await this.application.payloads.resetState()
+    await this.application.items.resetState()
+    await this.application.sync.clearSyncPositionTokens()
+    await this.application.sync.sync(syncOptions)
 
     // Expect that the server value and client value match, and no conflicts are created.
-    expect(this.application.itemManager.items.length).to.equal(this.expectedItemCount)
-    const foundItem = this.application.itemManager.findItem(note.uuid)
+    expect(this.application.items.items.length).to.equal(this.expectedItemCount)
+    const foundItem = this.application.items.findItem(note.uuid)
     expect(foundItem.content.text).to.equal(text)
     expect(foundItem.text).to.equal(text)
   })
@@ -790,17 +790,17 @@ describe('online syncing', function () {
     /** Create an item and sync it */
     let note = await Factory.createMappedNote(this.application)
 
-    this.application.itemManager.addObserver(ContentType.TYPES.Note, ({ source }) => {
+    this.application.items.addObserver(ContentType.TYPES.Note, ({ source }) => {
       if (source === PayloadEmitSource.RemoteSaved) {
         actualSaveCount++
       }
     })
 
     this.expectedItemCount++
-    this.application.syncService.ut_beginLatencySimulator(150)
+    this.application.sync.ut_beginLatencySimulator(150)
 
     /** Dont await */
-    const syncRequest = this.application.syncService.sync(syncOptions)
+    const syncRequest = this.application.sync.sync(syncOptions)
 
     /** Dirty the item 100ms into 150ms request */
     const newText = `${Math.random()}`
@@ -837,7 +837,7 @@ describe('online syncing', function () {
     /** Create an item and sync it */
     let note = await Factory.createMappedNote(this.application)
 
-    this.application.itemManager.addObserver(ContentType.TYPES.Note, ({ source }) => {
+    this.application.items.addObserver(ContentType.TYPES.Note, ({ source }) => {
       if (source === PayloadEmitSource.RemoteSaved) {
         actualSaveCount++
       }
@@ -845,13 +845,13 @@ describe('online syncing', function () {
     this.expectedItemCount++
 
     /** Dont await */
-    const syncRequest = this.application.syncService.sync(syncOptions)
+    const syncRequest = this.application.sync.sync(syncOptions)
 
     /** Dirty the item before lastSyncBegan is set */
     let didPerformMutatation = false
     const newText = `${Math.random()}`
 
-    this.application.syncService.addEventObserver(async (eventName) => {
+    this.application.sync.addEventObserver(async (eventName) => {
       if (eventName === SyncEvent.SyncDidBeginProcessing && !didPerformMutatation) {
         didPerformMutatation = true
         await this.application.mutator.changeItem(note, (mutator) => {
@@ -876,7 +876,7 @@ describe('online syncing', function () {
     let didPerformMutatation = false
     const newText = `${Math.random()}`
 
-    this.application.itemManager.addObserver(ContentType.TYPES.Note, async ({ changed, source }) => {
+    this.application.items.addObserver(ContentType.TYPES.Note, async ({ changed, source }) => {
       if (source === PayloadEmitSource.RemoteSaved) {
         actualSaveCount++
       } else if (source === PayloadEmitSource.PreSyncSave && !didPerformMutatation) {
@@ -895,7 +895,7 @@ describe('online syncing', function () {
     this.expectedItemCount++
 
     /** Dont await */
-    const syncRequest = this.application.syncService.sync(syncOptions)
+    const syncRequest = this.application.sync.sync(syncOptions)
     await syncRequest
     expect(actualSaveCount).to.equal(expectedSaveCount)
     note = this.application.items.findItem(note.uuid)
@@ -904,12 +904,12 @@ describe('online syncing', function () {
 
   it('retreiving a remote deleted item should succeed', async function () {
     const note = await Factory.createSyncedNote(this.application)
-    const preDeleteSyncToken = await this.application.syncService.getLastSyncToken()
+    const preDeleteSyncToken = await this.application.sync.getLastSyncToken()
     await this.application.mutator.deleteItem(note)
     await this.application.sync.sync()
-    await this.application.syncService.setLastSyncToken(preDeleteSyncToken)
+    await this.application.sync.setLastSyncToken(preDeleteSyncToken)
     await this.application.sync.sync(syncOptions)
-    expect(this.application.itemManager.items.length).to.equal(this.expectedItemCount)
+    expect(this.application.items.items.length).to.equal(this.expectedItemCount)
   })
 
   it('errored items should not be synced', async function () {
@@ -918,7 +918,7 @@ describe('online syncing', function () {
     const lastSyncBegan = note.lastSyncBegan
     const lastSyncEnd = note.lastSyncEnd
 
-    const encrypted = await this.application.encryptionService.encryptSplitSingle({
+    const encrypted = await this.application.encryption.encryptSplitSingle({
       usesItemsKeyWithKeyLookup: {
         items: [note.payload],
       },
@@ -929,7 +929,7 @@ describe('online syncing', function () {
       dirty: true,
     })
 
-    await this.application.payloadManager.emitPayload(errored)
+    await this.application.payloads.emitPayload(errored)
     await this.application.sync.sync(syncOptions)
 
     const updatedNote = this.application.items.findAnyItem(note.uuid)
@@ -957,10 +957,10 @@ describe('online syncing', function () {
       },
     })
 
-    await this.application.syncService.handleSuccessServerResponse({ payloadsSavedOrSaving: [], options: {} }, response)
+    await this.application.sync.handleSuccessServerResponse({ payloadsSavedOrSaving: [], options: {} }, response)
 
-    expect(this.application.payloadManager.findOne(invalidPayload.uuid)).to.not.be.ok
-    expect(this.application.payloadManager.findOne(validPayload.uuid)).to.be.ok
+    expect(this.application.payloads.findOne(invalidPayload.uuid)).to.not.be.ok
+    expect(this.application.payloads.findOne(validPayload.uuid)).to.be.ok
   })
 
   it('retrieved items should have both updated_at and updated_at_timestamps', async function () {
@@ -996,13 +996,13 @@ describe('online syncing', function () {
 
   it('should call onPresyncSave before sync begins', async function () {
     const events = []
-    this.application.syncService.addEventObserver((event) => {
+    this.application.sync.addEventObserver((event) => {
       if (event === SyncEvent.SyncDidBeginProcessing) {
         events.push('sync-will-begin')
       }
     })
 
-    await this.application.syncService.sync({
+    await this.application.sync.sync({
       onPresyncSave: () => {
         events.push('on-presync-save')
       },

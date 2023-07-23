@@ -6,6 +6,7 @@ import {
   KeySystemRootKeyInterface,
   KeySystemIdentifier,
   KeySystemRootKeyParamsInterface,
+  PortablePublicKeySet,
 } from '@standardnotes/models'
 import { SNRootKeyParams } from '../../Keys/RootKey/RootKeyParams'
 import { EncryptedOutputParameters } from '../../Types/EncryptedParameters'
@@ -15,8 +16,9 @@ import { RootKeyEncryptedAuthenticatedData } from '../../Types/RootKeyEncryptedA
 import { HexString, PkcKeyPair } from '@standardnotes/sncrypto-common'
 import { AsymmetricallyEncryptedString } from '../Types/Types'
 import { AsymmetricDecryptResult } from '../Types/AsymmetricDecryptResult'
-import { PublicKeySet } from '../Types/PublicKeySet'
 import { AsymmetricSignatureVerificationDetachedResult } from '../Types/AsymmetricSignatureVerificationDetachedResult'
+import { AsymmetricItemAdditionalData } from '../../Types/EncryptionAdditionalData'
+import { Result } from '@standardnotes/domain-core'
 
 /**w
  * An operator is responsible for performing crypto operations, such as generating keys
@@ -92,11 +94,21 @@ export interface OperatorInterface {
     recipientSecretKey: HexString
   }): AsymmetricDecryptResult | null
 
+  asymmetricDecryptOwnMessage(dto: {
+    message: AsymmetricallyEncryptedString
+    ownPrivateKey: HexString
+    recipientPublicKey: HexString
+  }): Result<AsymmetricDecryptResult>
+
   asymmetricSignatureVerifyDetached(
     encryptedString: AsymmetricallyEncryptedString,
   ): AsymmetricSignatureVerificationDetachedResult
 
-  getSenderPublicKeySetFromAsymmetricallyEncryptedString(string: AsymmetricallyEncryptedString): PublicKeySet
+  asymmetricStringGetAdditionalData(dto: {
+    encryptedString: AsymmetricallyEncryptedString
+  }): Result<AsymmetricItemAdditionalData>
+
+  getSenderPublicKeySetFromAsymmetricallyEncryptedString(string: AsymmetricallyEncryptedString): PortablePublicKeySet
 
   versionForAsymmetricallyEncryptedString(encryptedString: string): ProtocolVersion
 }

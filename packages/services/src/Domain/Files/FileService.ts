@@ -20,7 +20,7 @@ import {
 } from '@standardnotes/models'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { spaceSeparatedStrings, UuidGenerator } from '@standardnotes/utils'
-import { EncryptionProviderInterface, SNItemsKey } from '@standardnotes/encryption'
+import { SNItemsKey } from '@standardnotes/encryption'
 import {
   DownloadAndDecryptFileOperation,
   EncryptAndUploadFileOperation,
@@ -50,6 +50,7 @@ import { DecryptItemsKeyWithUserFallback } from '../Encryption/Functions'
 import { log, LoggingDomain } from '../Logging'
 import { SharedVaultServer, SharedVaultServerInterface, HttpServiceInterface } from '@standardnotes/api'
 import { ContentType } from '@standardnotes/domain-core'
+import { EncryptionProviderInterface } from '../Encryption/EncryptionProviderInterface'
 
 const OneHundredMb = 100 * 1_000_000
 
@@ -60,7 +61,7 @@ export class FileService extends AbstractService implements FilesClientInterface
   constructor(
     private api: FilesApiInterface,
     private mutator: MutatorClientInterface,
-    private syncService: SyncServiceInterface,
+    private sync: SyncServiceInterface,
     private encryptor: EncryptionProviderInterface,
     private challengor: ChallengeServiceInterface,
     http: HttpServiceInterface,
@@ -80,7 +81,7 @@ export class FileService extends AbstractService implements FilesClientInterface
     ;(this.encryptedCache as unknown) = undefined
     ;(this.api as unknown) = undefined
     ;(this.encryptor as unknown) = undefined
-    ;(this.syncService as unknown) = undefined
+    ;(this.sync as unknown) = undefined
     ;(this.alertService as unknown) = undefined
     ;(this.challengor as unknown) = undefined
     ;(this.crypto as unknown) = undefined
@@ -270,7 +271,7 @@ export class FileService extends AbstractService implements FilesClientInterface
       operation.vault,
     )
 
-    await this.syncService.sync()
+    await this.sync.sync()
 
     return file
   }
@@ -401,7 +402,7 @@ export class FileService extends AbstractService implements FilesClientInterface
     }
 
     await this.mutator.setItemToBeDeleted(file)
-    await this.syncService.sync()
+    await this.sync.sync()
 
     return undefined
   }

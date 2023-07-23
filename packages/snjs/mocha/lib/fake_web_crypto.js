@@ -139,8 +139,8 @@ export default class FakeWebCrypto {
     const data = {
       message,
       nonce,
-      senderSecretKey,
       recipientPublicKey,
+      senderSecretKey,
     }
     return btoa(JSON.stringify(data))
   }

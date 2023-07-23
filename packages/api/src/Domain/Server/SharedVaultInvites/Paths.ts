@@ -13,4 +13,5 @@ export const SharedVaultInvitesPaths = {
     `/v1/shared-vaults/${sharedVaultUuid}/invites/${inviteUuid}`,
   deleteAllSharedVaultInvites: (sharedVaultUuid: string) => `/v1/shared-vaults/${sharedVaultUuid}/invites`,
   deleteAllInboundInvites: '/v1/shared-vaults/invites/inbound',
+  deleteAllOutboundInvites: '/v1/shared-vaults/invites/outbound',
 }

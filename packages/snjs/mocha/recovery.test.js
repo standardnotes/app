@@ -44,7 +44,7 @@ describe('account recovery', function () {
 
     application = await context.signout()
 
-    expect(await application.encryptionService.getRootKey()).to.not.be.ok
+    expect(await application.encryption.getRootKey()).to.not.be.ok
 
     await application.signInWithRecoveryCodes.execute({
       recoveryCodes: generatedRecoveryCodes.getValue(),
@@ -52,7 +52,7 @@ describe('account recovery', function () {
       password: context.password,
     })
 
-    expect(await application.encryptionService.getRootKey()).to.be.ok
+    expect(await application.encryption.getRootKey()).to.be.ok
   })
 
   it('should automatically generate new recovery code after recovery sign in', async () => {
@@ -96,7 +96,7 @@ describe('account recovery', function () {
 
     application = await context.signout()
 
-    expect(await application.encryptionService.getRootKey()).to.not.be.ok
+    expect(await application.encryption.getRootKey()).to.not.be.ok
 
     await application.signInWithRecoveryCodes.execute({
       recoveryCodes: generatedRecoveryCodes.getValue(),
@@ -104,7 +104,7 @@ describe('account recovery', function () {
       password: 'foobar',
     })
 
-    expect(await application.encryptionService.getRootKey()).to.not.be.ok
+    expect(await application.encryption.getRootKey()).to.not.be.ok
   })
 
   it('should not allow to sign in with invalid recovery code', async () => {
@@ -112,7 +112,7 @@ describe('account recovery', function () {
 
     application = await context.signout()
 
-    expect(await application.encryptionService.getRootKey()).to.not.be.ok
+    expect(await application.encryption.getRootKey()).to.not.be.ok
 
     await application.signInWithRecoveryCodes.execute({
       recoveryCodes: 'invalid recovery code',
@@ -120,13 +120,13 @@ describe('account recovery', function () {
       password: context.paswword,
     })
 
-    expect(await application.encryptionService.getRootKey()).to.not.be.ok
+    expect(await application.encryption.getRootKey()).to.not.be.ok
   })
 
   it('should not allow to sign in with recovery code if user has none', async () => {
     application = await context.signout()
 
-    expect(await application.encryptionService.getRootKey()).to.not.be.ok
+    expect(await application.encryption.getRootKey()).to.not.be.ok
 
     await application.signInWithRecoveryCodes.execute({
       recoveryCodes: 'foo bar',
@@ -134,6 +134,6 @@ describe('account recovery', function () {
       password: context.paswword,
     })
 
-    expect(await application.encryptionService.getRootKey()).to.not.be.ok
+    expect(await application.encryption.getRootKey()).to.not.be.ok
   })
 })

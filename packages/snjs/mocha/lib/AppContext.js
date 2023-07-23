@@ -26,17 +26,16 @@ export class AppContext {
   }
 
   enableLogging() {
-    const syncService = this.application.syncService
-    const payloadManager = this.application.payloadManager
+    const payloadManager = this.application.payloads
 
-    syncService.getServiceName = () => {
+    this.application.sync.getServiceName = () => {
       return `${this.identifier}—SyncService`
     }
     payloadManager.getServiceName = () => {
       return `${this.identifier}-PayloadManager`
     }
 
-    syncService.loggingEnabled = true
+    this.application.sync.loggingEnabled = true
     payloadManager.loggingEnabled = true
   }
 
@@ -51,7 +50,7 @@ export class AppContext {
   }
 
   get vaults() {
-    return this.application.vaultService
+    return this.application.vaults
   }
 
   get sessions() {
@@ -67,31 +66,51 @@ export class AppContext {
   }
 
   get payloads() {
-    return this.application.payloadManager
+    return this.application.payloads
   }
 
   get encryption() {
-    return this.application.encryptionService
+    return this.application.encryption
+  }
+
+  get keyRecovery() {
+    return this.application.dependencies.get(TYPES.KeyRecoveryService)
+  }
+
+  get singletons() {
+    return this.application.dependencies.get(TYPES.SingletonManager)
+  }
+
+  get history() {
+    return this.application.dependencies.get(TYPES.HistoryManager)
+  }
+
+  get subscriptions() {
+    return this.application.dependencies.get(TYPES.SubscriptionManager)
   }
 
   get contacts() {
-    return this.application.contactService
+    return this.application.contacts
   }
 
   get sharedVaults() {
-    return this.application.sharedVaultService
+    return this.application.sharedVaults
   }
 
   get files() {
-    return this.application.fileService
+    return this.application.files
   }
 
   get keys() {
-    return this.application.keySystemKeyManager
+    return this.application.dependencies.get(TYPES.KeySystemKeyManager)
+  }
+
+  get operators() {
+    return this.application.dependencies.get(TYPES.EncryptionOperators)
   }
 
   get asymmetric() {
-    return this.application.asymmetricMessageService
+    return this.application.asymmetric
   }
 
   get publicKey() {
@@ -115,20 +134,20 @@ export class AppContext {
   }
 
   disableIntegrityAutoHeal() {
-    this.application.syncService.emitOutOfSyncRemotePayloads = () => {
+    this.application.sync.emitOutOfSyncRemotePayloads = () => {
       console.warn('Integrity self-healing is disabled for this test')
     }
   }
 
   disableKeyRecovery() {
-    this.application.keyRecoveryService.beginKeyRecovery = () => {
+    this.keyRecovery.beginKeyRecovery = () => {
       console.warn('Key recovery is disabled for this test')
     }
   }
 
   handleChallenge = (challenge) => {
     if (this.ignoringChallenges) {
-      this.application.challengeService.cancelChallenge(challenge)
+      this.application.challenges.cancelChallenge(challenge)
 
       return
     }
@@ -178,15 +197,12 @@ export class AppContext {
       },
     })
 
-    return this.application.syncService.handleSuccessServerResponse(
-      { payloadsSavedOrSaving: [], options: {} },
-      response,
-    )
+    return this.application.sync.handleSuccessServerResponse({ payloadsSavedOrSaving: [], options: {} }, response)
   }
 
   resolveWhenKeyRecovered(uuid) {
     return new Promise((resolve) => {
-      this.application.keyRecoveryService.addEventObserver((_eventName, keys) => {
+      this.keyRecovery.addEventObserver((_eventName, keys) => {
         if (Uuids(keys).includes(uuid)) {
           resolve()
         }
@@ -196,7 +212,7 @@ export class AppContext {
 
   resolveWhenSharedVaultUserKeysResolved() {
     return new Promise((resolve) => {
-      this.application.vaultService.collaboration.addEventObserver((eventName) => {
+      this.application.vaults.collaboration.addEventObserver((eventName) => {
         if (eventName === SharedVaultServiceEvent.SharedVaultStatusChanged) {
           resolve()
         }
@@ -206,7 +222,7 @@ export class AppContext {
 
   async awaitSignInEvent() {
     return new Promise((resolve) => {
-      this.application.userService.addEventObserver((eventName) => {
+      this.application.user.addEventObserver((eventName) => {
         if (eventName === AccountEvent.SignedInOrRegistered) {
           resolve()
         }
@@ -235,7 +251,7 @@ export class AppContext {
 
   awaitNextSucessfulSync() {
     return new Promise((resolve) => {
-      const removeObserver = this.application.syncService.addEventObserver((event) => {
+      const removeObserver = this.application.sync.addEventObserver((event) => {
         if (event === SyncEvent.SyncCompletedWithAllItemsUploadedAndDownloaded) {
           removeObserver()
           resolve()
@@ -246,7 +262,7 @@ export class AppContext {
 
   awaitNextSyncEvent(eventName) {
     return new Promise((resolve) => {
-      const removeObserver = this.application.syncService.addEventObserver((event, data) => {
+      const removeObserver = this.application.sync.addEventObserver((event, data) => {
         if (event === eventName) {
           removeObserver()
           resolve(data)
@@ -257,7 +273,7 @@ export class AppContext {
 
   awaitNextSyncSharedVaultFromScratchEvent() {
     return new Promise((resolve) => {
-      const removeObserver = this.application.syncService.addEventObserver((event, data) => {
+      const removeObserver = this.application.sync.addEventObserver((event, data) => {
         if (event === SyncEvent.PaginatedSyncRequestCompleted && data?.options?.sharedVaultUuids) {
           removeObserver()
           resolve(data)
@@ -268,7 +284,7 @@ export class AppContext {
 
   resolveWithUploadedPayloads() {
     return new Promise((resolve) => {
-      this.application.syncService.addEventObserver((event, data) => {
+      this.application.sync.addEventObserver((event, data) => {
         if (event === SyncEvent.PaginatedSyncRequestCompleted) {
           resolve(data.uploadedPayloads)
         }
@@ -278,7 +294,7 @@ export class AppContext {
 
   resolveWithConflicts() {
     return new Promise((resolve) => {
-      this.application.syncService.addEventObserver((event, response) => {
+      this.application.sync.addEventObserver((event, response) => {
         if (event === SyncEvent.PaginatedSyncRequestCompleted) {
           resolve(response.rawConflictObjects)
         }
@@ -288,7 +304,7 @@ export class AppContext {
 
   resolveWhenSavedSyncPayloadsIncludesItemUuid(uuid) {
     return new Promise((resolve) => {
-      this.application.syncService.addEventObserver((event, response) => {
+      this.application.sync.addEventObserver((event, response) => {
         if (event === SyncEvent.PaginatedSyncRequestCompleted) {
           const savedPayload = response.savedPayloads.find((payload) => payload.uuid === uuid)
           if (savedPayload) {
@@ -301,7 +317,7 @@ export class AppContext {
 
   resolveWhenSavedSyncPayloadsIncludesItemThatIsDuplicatedOf(uuid) {
     return new Promise((resolve) => {
-      this.application.syncService.addEventObserver((event, response) => {
+      this.application.sync.addEventObserver((event, response) => {
         if (event === SyncEvent.PaginatedSyncRequestCompleted) {
           const savedPayload = response.savedPayloads.find((payload) => payload.duplicate_of === uuid)
           if (savedPayload) {
@@ -354,7 +370,7 @@ export class AppContext {
 
   resolveWhenUserMessagesProcessingCompletes() {
     return new Promise((resolve) => {
-      const objectToSpy = this.application.userEventService
+      const objectToSpy = this.application.dependencies.get(TYPES.UserEventService)
       sinon.stub(objectToSpy, 'handleReceivedUserEvents').callsFake(async (params) => {
         objectToSpy.handleReceivedUserEvents.restore()
         const result = await objectToSpy.handleReceivedUserEvents(params)
@@ -364,12 +380,36 @@ export class AppContext {
     })
   }
 
+  resolveWhenAllInboundAsymmetricMessagesAreDeleted() {
+    return new Promise((resolve) => {
+      const objectToSpy = this.application.dependencies.get(TYPES.AsymmetricMessageServer)
+      sinon.stub(objectToSpy, 'deleteAllInboundMessages').callsFake(async (params) => {
+        objectToSpy.deleteAllInboundMessages.restore()
+        const result = await objectToSpy.deleteAllInboundMessages(params)
+        resolve()
+        return result
+      })
+    })
+  }
+
+  resolveWhenAllInboundSharedVaultInvitesAreDeleted() {
+    return new Promise((resolve) => {
+      const objectToSpy = this.application.sharedVaults.invitesServer
+      sinon.stub(objectToSpy, 'deleteAllInboundInvites').callsFake(async (params) => {
+        objectToSpy.deleteAllInboundInvites.restore()
+        const result = await objectToSpy.deleteAllInboundInvites(params)
+        resolve()
+        return result
+      })
+    })
+  }
+
   resolveWhenSharedVaultServiceSendsContactShareMessage() {
     return new Promise((resolve) => {
       const objectToSpy = this.sharedVaults
-      sinon.stub(objectToSpy, 'shareContactWithUserAdministeredSharedVaults').callsFake(async (contact) => {
-        objectToSpy.shareContactWithUserAdministeredSharedVaults.restore()
-        const result = await objectToSpy.shareContactWithUserAdministeredSharedVaults(contact)
+      sinon.stub(objectToSpy, 'shareContactWithVaults').callsFake(async (contact) => {
+        objectToSpy.shareContactWithVaults.restore()
+        const result = await objectToSpy.shareContactWithVaults(contact)
         resolve()
         return result
       })
@@ -405,14 +445,14 @@ export class AppContext {
   }
 
   awaitUserPrefsSingletonCreation() {
-    const preferences = this.application.preferencesService.preferences
+    const preferences = this.application.preferences.preferences
     if (preferences) {
       return
     }
 
     let didCompleteRelevantSync = false
     return new Promise((resolve) => {
-      this.application.syncService.addEventObserver((eventName, data) => {
+      this.application.sync.addEventObserver((eventName, data) => {
         if (!didCompleteRelevantSync) {
           if (data?.savedPayloads) {
             const matching = data.savedPayloads.find((p) => {
@@ -430,7 +470,7 @@ export class AppContext {
 
   awaitUserPrefsSingletonResolution() {
     return new Promise((resolve) => {
-      this.application.preferencesService.addEventObserver((eventName) => {
+      this.application.preferences.addEventObserver((eventName) => {
         if (eventName === PreferencesServiceEvent.PreferencesChanged) {
           resolve()
         }
@@ -473,7 +513,7 @@ export class AppContext {
   }
 
   findPayload(uuid) {
-    return this.application.payloadManager.findPayload(uuid)
+    return this.application.payloads.findPayload(uuid)
   }
 
   get itemsKeys() {
@@ -491,15 +531,15 @@ export class AppContext {
   }
 
   disableKeyRecoveryServerSignIn() {
-    this.application.keyRecoveryService.performServerSignIn = () => {
-      console.warn('application.keyRecoveryService.performServerSignIn has been stubbed with an empty implementation')
+    this.keyRecovery.performServerSignIn = () => {
+      console.warn('application.keyRecovery.performServerSignIn has been stubbed with an empty implementation')
     }
   }
 
   preventKeyRecoveryOfKeys(ids) {
-    const originalImpl = this.application.keyRecoveryService.handleUndecryptableItemsKeys
+    const originalImpl = this.keyRecovery.handleUndecryptableItemsKeys
 
-    this.application.keyRecoveryService.handleUndecryptableItemsKeys = function (keys) {
+    this.keyRecovery.handleUndecryptableItemsKeys = function (keys) {
       const filtered = keys.filter((k) => !ids.includes(k.uuid))
 
       originalImpl.apply(this, [filtered])
@@ -520,18 +560,18 @@ export class AppContext {
     const payload = createNotePayload(title, text)
     const item = await this.application.mutator.emitItemFromPayload(payload, PayloadEmitSource.LocalChanged)
     await this.application.mutator.setItemDirty(item)
-    await this.application.syncService.sync(MaximumSyncOptions)
+    await this.application.sync.sync(MaximumSyncOptions)
     const note = this.application.items.findItem(payload.uuid)
 
     return note
   }
 
   lockSyncing() {
-    this.application.syncService.lockSyncing()
+    this.application.sync.lockSyncing()
   }
 
   unlockSyncing() {
-    this.application.syncService.unlockSyncing()
+    this.application.sync.unlockSyncing()
   }
 
   async deleteItemAndSync(item) {
@@ -624,7 +664,9 @@ export class AppContext {
 
       await Utils.sleep(2)
     } catch (error) {
-      console.warn(`Mock events service not available. You are probalby running a test suite for home server: ${error.message}`)
+      console.warn(
+        `Mock events service not available. You are probalby running a test suite for home server: ${error.message}`,
+      )
     }
 
     try {
@@ -632,7 +674,9 @@ export class AppContext {
 
       await Utils.sleep(1)
     } catch (error) {
-      console.warn(`Home server not available. You are probalby running a test suite for self hosted setup: ${error.message}`)
+      console.warn(
+        `Home server not available. You are probalby running a test suite for self hosted setup: ${error.message}`,
+      )
     }
   }
 }

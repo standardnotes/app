@@ -151,7 +151,7 @@ describe('settings service', function () {
     const response = await fetch('/packages/snjs/mocha/assets/small_file.md')
     const buffer = new Uint8Array(await response.arrayBuffer())
 
-    await Files.uploadFile(application.fileService, buffer, 'my-file', 'md', 1000)
+    await Files.uploadFile(application.files, buffer, 'my-file', 'md', 1000)
 
     await Factory.sleep(1)
 

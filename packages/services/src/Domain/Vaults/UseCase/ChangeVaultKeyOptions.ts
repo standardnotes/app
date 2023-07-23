@@ -1,27 +1,23 @@
 import { MutatorClientInterface, SyncServiceInterface } from '@standardnotes/services'
-import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
 import {
   KeySystemRootKeyPasswordType,
   KeySystemRootKeyStorageMode,
   VaultListingInterface,
   VaultListingMutator,
 } from '@standardnotes/models'
-import { EncryptionProviderInterface, KeySystemKeyManagerInterface } from '@standardnotes/encryption'
 import { ChangeVaultOptionsDTO } from '../ChangeVaultOptionsDTO'
-import { GetVaultUseCase } from './GetVault'
-import { assert } from '@standardnotes/utils'
+import { GetVault } from './GetVault'
+import { EncryptionProviderInterface } from '../../Encryption/EncryptionProviderInterface'
+import { KeySystemKeyManagerInterface } from '../../KeySystem/KeySystemKeyManagerInterface'
 
-export class ChangeVaultKeyOptionsUseCase {
+export class ChangeVaultKeyOptions {
   constructor(
-    private items: ItemManagerInterface,
     private mutator: MutatorClientInterface,
     private sync: SyncServiceInterface,
     private encryption: EncryptionProviderInterface,
+    private keys: KeySystemKeyManagerInterface,
+    private getVault: GetVault,
   ) {}
-
-  private get keys(): KeySystemKeyManagerInterface {
-    return this.encryption.keys
-  }
 
   async execute(dto: ChangeVaultOptionsDTO): Promise<void> {
     const useStorageMode = dto.newKeyStorageMode ?? dto.vault.keyStorageMode
@@ -42,9 +38,13 @@ export class ChangeVaultKeyOptionsUseCase {
     }
 
     if (dto.newKeyStorageMode) {
-      const usecase = new GetVaultUseCase(this.items)
-      const latestVault = usecase.execute({ keySystemIdentifier: dto.vault.systemIdentifier })
-      assert(latestVault)
+      const result = this.getVault.execute({ keySystemIdentifier: dto.vault.systemIdentifier })
+
+      if (result.isFailed()) {
+        throw new Error('Vault not found')
+      }
+
+      const latestVault = result.getValue()
 
       if (latestVault.rootKeyParams.passwordType !== KeySystemRootKeyPasswordType.UserInputted) {
         throw new Error('Vault uses randomized password and cannot change its storage preference')
@@ -80,14 +80,14 @@ export class ChangeVaultKeyOptionsUseCase {
     if (storageMode === KeySystemRootKeyStorageMode.Synced) {
       await this.mutator.insertItem(newRootKey, true)
     } else {
-      this.encryption.keys.intakeNonPersistentKeySystemRootKey(newRootKey, storageMode)
+      this.keys.intakeNonPersistentKeySystemRootKey(newRootKey, storageMode)
     }
 
     await this.mutator.changeItem<VaultListingMutator>(vault, (mutator) => {
       mutator.rootKeyParams = newRootKey.keyParams
     })
 
-    await this.encryption.reencryptKeySystemItemsKeysForVault(vault.systemIdentifier)
+    await this.keys.reencryptKeySystemItemsKeysForVault(vault.systemIdentifier)
   }
 
   private async changePasswordTypeToRandomized(
@@ -108,7 +108,7 @@ export class ChangeVaultKeyOptionsUseCase {
 
     await this.mutator.insertItem(newRootKey, true)
 
-    await this.encryption.reencryptKeySystemItemsKeysForVault(vault.systemIdentifier)
+    await this.keys.reencryptKeySystemItemsKeysForVault(vault.systemIdentifier)
   }
 
   private async changeStorageModeToLocalOrEphemeral(

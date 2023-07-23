@@ -11,7 +11,7 @@ import {
   ItemManagerInterface,
   SyncServiceInterface,
 } from '@standardnotes/services'
-import { SNFeaturesService } from '@Lib/Services'
+import { FeaturesService } from '@Lib/Services'
 import {
   ActionObserver,
   ComponentEventObserver,
@@ -100,7 +100,7 @@ export class ComponentViewer implements ComponentViewerInterface {
       sync: SyncServiceInterface
       alerts: AlertService
       preferences: PreferenceServiceInterface
-      features: SNFeaturesService
+      features: FeaturesService
     },
     private options: {
       item: ComponentViewerItem

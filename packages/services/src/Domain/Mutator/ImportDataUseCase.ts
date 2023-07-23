@@ -1,3 +1,4 @@
+import { DecryptBackupFile } from '../Encryption/UseCase/DecryptBackupFile'
 import { HistoryServiceInterface } from '../History/HistoryServiceInterface'
 import { ChallengeServiceInterface } from '../Challenge/ChallengeServiceInterface'
 import { PayloadManagerInterface } from '../Payloads/PayloadManagerInterface'
@@ -18,9 +19,9 @@ import {
   isEncryptedTransferPayload,
 } from '@standardnotes/models'
 import { ClientDisplayableError } from '@standardnotes/responses'
-import { EncryptionProviderInterface } from '@standardnotes/encryption'
 import { Challenge, ChallengePrompt, ChallengeReason, ChallengeValidation } from '../Challenge'
 import { ContentType } from '@standardnotes/domain-core'
+import { EncryptionProviderInterface } from '../Encryption/EncryptionProviderInterface'
 
 const Strings = {
   UnsupportedBackupFileVersion:
@@ -42,12 +43,13 @@ export type ImportDataReturnType =
 export class ImportDataUseCase {
   constructor(
     private itemManager: ItemManagerInterface,
-    private syncService: SyncServiceInterface,
+    private sync: SyncServiceInterface,
     private protectionService: ProtectionsClientInterface,
     private encryption: EncryptionProviderInterface,
     private payloadManager: PayloadManagerInterface,
     private challengeService: ChallengeServiceInterface,
     private historyService: HistoryServiceInterface,
+    private _decryptBackFile: DecryptBackupFile,
   ) {}
 
   /**
@@ -107,7 +109,7 @@ export class ImportDataUseCase {
       }
     })
 
-    const decryptedPayloadsOrError = await this.encryption.decryptBackupFile(data, password)
+    const decryptedPayloadsOrError = await this._decryptBackFile.execute(data, password)
 
     if (decryptedPayloadsOrError instanceof ClientDisplayableError) {
       return { error: decryptedPayloadsOrError }
@@ -131,7 +133,7 @@ export class ImportDataUseCase {
       this.historyService.getHistoryMapCopy(),
     )
 
-    const promise = this.syncService.sync()
+    const promise = this.sync.sync()
 
     if (awaitSync) {
       await promise

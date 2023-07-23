@@ -9,7 +9,7 @@ import {
   ApplicationEvent,
   SessionsClientInterface,
   SubscriptionManagerInterface,
-  SyncClientInterface,
+  SyncServiceInterface,
   UserClientInterface,
 } from '@standardnotes/snjs'
 import { ToastType } from '@standardnotes/toast'
@@ -33,7 +33,7 @@ export class ApplicationEventObserver implements EventObserverInterface {
     private accountMenuController: AccountMenuController,
     private preferencesController: PreferencesController,
     private syncStatusController: SyncStatusController,
-    private syncClient: SyncClientInterface,
+    private syncClient: SyncServiceInterface,
     private sessionManager: SessionsClientInterface,
     private subscriptionManager: SubscriptionManagerInterface,
     private toastService: ToastServiceInterface,

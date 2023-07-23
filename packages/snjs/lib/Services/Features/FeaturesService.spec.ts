@@ -1,15 +1,15 @@
 import { ItemInterface, SNFeatureRepo } from '@standardnotes/models'
-import { SNSyncService } from '../Sync/SyncService'
+import { SyncService } from '../Sync/SyncService'
 import { SettingName } from '@standardnotes/settings'
-import { SNFeaturesService } from '@Lib/Services/Features'
+import { FeaturesService } from '@Lib/Services/Features'
 import { RoleName, ContentType } from '@standardnotes/domain-core'
 import { FeatureIdentifier, GetFeatures } from '@standardnotes/features'
-import { SNWebSocketsService } from '../Api/WebsocketsService'
-import { SNSettingsService } from '../Settings'
+import { WebSocketsService } from '../Api/WebsocketsService'
+import { SettingsService } from '../Settings'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import {
   AlertService,
-  ApiServiceInterface,
+  LegacyApiServiceInterface,
   FeaturesEvent,
   FeatureStatus,
   InternalEventBusInterface,
@@ -23,7 +23,7 @@ import {
   UserClientInterface,
   UserService,
 } from '@standardnotes/services'
-import { SNApiService, SNSessionManager } from '../Api'
+import { LegacyApiService, SessionManager } from '../Api'
 import { ItemManager } from '../Items'
 import { DiskStorageService } from '../Storage/DiskStorageService'
 import { SettingsClientInterface } from '../Settings/SettingsClientInterface'
@@ -33,8 +33,8 @@ describe('FeaturesService', () => {
   let itemManager: ItemManagerInterface
   let mutator: MutatorClientInterface
   let subscriptions: SubscriptionManagerInterface
-  let apiService: ApiServiceInterface
-  let webSocketsService: SNWebSocketsService
+  let apiService: LegacyApiServiceInterface
+  let webSocketsService: WebSocketsService
   let settingsService: SettingsClientInterface
   let userService: UserClientInterface
   let syncService: SyncServiceInterface
@@ -46,7 +46,7 @@ describe('FeaturesService', () => {
   let internalEventBus: InternalEventBusInterface
 
   const createService = () => {
-    return new SNFeaturesService(
+    return new FeaturesService(
       storageService,
       itemManager,
       mutator,
@@ -72,7 +72,7 @@ describe('FeaturesService', () => {
     storageService.setValue = jest.fn()
     storageService.getValue = jest.fn()
 
-    apiService = {} as jest.Mocked<SNApiService>
+    apiService = {} as jest.Mocked<LegacyApiService>
     apiService.addEventObserver = jest.fn()
     apiService.isThirdPartyHostUsed = jest.fn().mockReturnValue(false)
 
@@ -92,23 +92,23 @@ describe('FeaturesService', () => {
     subscriptions.getOnlineSubscription = jest.fn()
     subscriptions.addEventObserver = jest.fn()
 
-    webSocketsService = {} as jest.Mocked<SNWebSocketsService>
+    webSocketsService = {} as jest.Mocked<WebSocketsService>
     webSocketsService.addEventObserver = jest.fn()
 
-    settingsService = {} as jest.Mocked<SNSettingsService>
+    settingsService = {} as jest.Mocked<SettingsService>
     settingsService.updateSetting = jest.fn()
 
     userService = {} as jest.Mocked<UserService>
     userService.addEventObserver = jest.fn()
 
-    syncService = {} as jest.Mocked<SNSyncService>
+    syncService = {} as jest.Mocked<SyncService>
     syncService.sync = jest.fn()
 
     alertService = {} as jest.Mocked<AlertService>
     alertService.confirm = jest.fn().mockReturnValue(true)
     alertService.alert = jest.fn()
 
-    sessionManager = {} as jest.Mocked<SNSessionManager>
+    sessionManager = {} as jest.Mocked<SessionManager>
     sessionManager.isSignedIntoFirstPartyServer = jest.fn()
     sessionManager.getUser = jest.fn()
 

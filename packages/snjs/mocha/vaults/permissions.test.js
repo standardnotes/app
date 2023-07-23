@@ -43,7 +43,7 @@ describe('shared vault permissions', function () {
       SharedVaultPermission.Write,
     )
 
-    expect(isClientDisplayableError(result)).to.be.true
+    expect(result.isFailed()).to.be.true
 
     await deinitContactContext()
   })

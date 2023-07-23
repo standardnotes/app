@@ -12,23 +12,22 @@ import {
 import { VaultServiceInterface } from './VaultServiceInterface'
 import { ChangeVaultOptionsDTO } from './ChangeVaultOptionsDTO'
 import { VaultServiceEvent, VaultServiceEventPayload } from './VaultServiceEvent'
-import { EncryptionProviderInterface } from '@standardnotes/encryption'
-import { CreateVaultUseCase } from './UseCase/CreateVault'
+import { CreateVault } from './UseCase/CreateVault'
 import { AbstractService } from '../Service/AbstractService'
 import { SyncServiceInterface } from '../Sync/SyncServiceInterface'
 import { ItemManagerInterface } from '../Item/ItemManagerInterface'
 import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
 import { RemoveItemFromVault } from './UseCase/RemoveItemFromVault'
-import { DeleteVaultUseCase } from './UseCase/DeleteVault'
-import { MoveItemsToVaultUseCase } from './UseCase/MoveItemsToVault'
-
-import { RotateVaultRootKeyUseCase } from './UseCase/RotateVaultRootKey'
-import { FilesClientInterface } from '@standardnotes/files'
-import { GetVaultUseCase } from './UseCase/GetVault'
-import { ChangeVaultKeyOptionsUseCase } from './UseCase/ChangeVaultKeyOptions'
+import { DeleteVault } from './UseCase/DeleteVault'
+import { MoveItemsToVault } from './UseCase/MoveItemsToVault'
+import { RotateVaultKey } from './UseCase/RotateVaultKey'
+import { GetVault } from './UseCase/GetVault'
+import { ChangeVaultKeyOptions } from './UseCase/ChangeVaultKeyOptions'
 import { MutatorClientInterface } from '../Mutator/MutatorClientInterface'
 import { AlertService } from '../Alert/AlertService'
 import { ContentType } from '@standardnotes/domain-core'
+import { EncryptionProviderInterface } from '../Encryption/EncryptionProviderInterface'
+import { KeySystemKeyManagerInterface } from '../KeySystem/KeySystemKeyManagerInterface'
 
 export class VaultService
   extends AbstractService<VaultServiceEvent, VaultServiceEventPayload[VaultServiceEvent]>
@@ -41,8 +40,15 @@ export class VaultService
     private items: ItemManagerInterface,
     private mutator: MutatorClientInterface,
     private encryption: EncryptionProviderInterface,
-    private files: FilesClientInterface,
+    private keys: KeySystemKeyManagerInterface,
     private alerts: AlertService,
+    private _getVault: GetVault,
+    private _changeVaultKeyOptions: ChangeVaultKeyOptions,
+    private _moveItemsToVault: MoveItemsToVault,
+    private _createVault: CreateVault,
+    private _removeItemFromVaultUseCase: RemoveItemFromVault,
+    private _deleteVaultUseCase: DeleteVault,
+    private _rotateVaultKey: RotateVaultKey,
     eventBus: InternalEventBusInterface,
   ) {
     super(eventBus)
@@ -67,8 +73,12 @@ export class VaultService
   }
 
   public getVault(dto: { keySystemIdentifier: KeySystemIdentifier }): VaultListingInterface | undefined {
-    const usecase = new GetVaultUseCase(this.items)
-    return usecase.execute(dto)
+    const result = this._getVault.execute(dto)
+    if (result.isFailed()) {
+      return undefined
+    }
+
+    return result.getValue()
   }
 
   public getSureVault(dto: { keySystemIdentifier: KeySystemIdentifier }): VaultListingInterface {
@@ -108,8 +118,7 @@ export class VaultService
     userInputtedPassword: string | undefined
     storagePreference: KeySystemRootKeyStorageMode
   }): Promise<VaultListingInterface> {
-    const createVault = new CreateVaultUseCase(this.mutator, this.encryption, this.sync)
-    const result = await createVault.execute({
+    const result = await this._createVault.execute({
       vaultName: dto.name,
       vaultDescription: dto.description,
       userInputtedPassword: dto.userInputtedPassword,
@@ -142,8 +151,7 @@ export class VaultService
       }
     }
 
-    const useCase = new MoveItemsToVaultUseCase(this.mutator, this.sync, this.files)
-    await useCase.execute({ vault, items: [item, ...linkedFiles] })
+    await this._moveItemsToVault.execute({ vault, items: [item, ...linkedFiles] })
 
     return this.items.findSureItem(item.uuid)
   }
@@ -158,8 +166,7 @@ export class VaultService
       throw new Error('Attempting to remove item from locked vault')
     }
 
-    const useCase = new RemoveItemFromVault(this.mutator, this.sync, this.files)
-    await useCase.execute({ item })
+    await this._removeItemFromVaultUseCase.execute({ item })
     return this.items.findSureItem(item.uuid)
   }
 
@@ -168,8 +175,7 @@ export class VaultService
       throw new Error('Shared vault must be deleted through SharedVaultService')
     }
 
-    const useCase = new DeleteVaultUseCase(this.items, this.mutator, this.encryption)
-    const error = await useCase.execute(vault)
+    const error = await this._deleteVaultUseCase.execute(vault)
 
     if (isClientDisplayableError(error)) {
       return false
@@ -198,8 +204,7 @@ export class VaultService
       throw new Error('Cannot rotate root key of locked vault')
     }
 
-    const useCase = new RotateVaultRootKeyUseCase(this.mutator, this.encryption)
-    await useCase.execute({
+    await this._rotateVaultKey.execute({
       vault,
       sharedVaultUuid: vault.isSharedVaultListing() ? vault.sharing.sharedVaultUuid : undefined,
       userInputtedPassword: undefined,
@@ -232,8 +237,7 @@ export class VaultService
       throw new Error('Attempting to change vault options on a locked vault')
     }
 
-    const usecase = new ChangeVaultKeyOptionsUseCase(this.items, this.mutator, this.sync, this.encryption)
-    await usecase.execute(dto)
+    await this._changeVaultKeyOptions.execute(dto)
 
     if (dto.newPasswordType) {
       await this.notifyEventSync(VaultServiceEvent.VaultRootKeyRotated, { vault: dto.vault })
@@ -249,7 +253,7 @@ export class VaultService
       throw new Error('Vault uses synced root key and cannot be locked')
     }
 
-    this.encryption.keys.clearMemoryOfKeysRelatedToVault(vault)
+    this.keys.clearMemoryOfKeysRelatedToVault(vault)
 
     this.lockMap.set(vault.uuid, true)
     void this.notifyEventSync(VaultServiceEvent.VaultLocked, { vault })
@@ -269,12 +273,12 @@ export class VaultService
       userInputtedPassword: password,
     })
 
-    this.encryption.keys.intakeNonPersistentKeySystemRootKey(derivedRootKey, vault.keyStorageMode)
+    this.keys.intakeNonPersistentKeySystemRootKey(derivedRootKey, vault.keyStorageMode)
 
     await this.encryption.decryptErroredPayloads()
 
     if (this.computeVaultLockState(vault) === 'locked') {
-      this.encryption.keys.undoIntakeNonPersistentKeySystemRootKey(vault.systemIdentifier)
+      this.keys.undoIntakeNonPersistentKeySystemRootKey(vault.systemIdentifier)
       return false
     }
 
@@ -303,12 +307,12 @@ export class VaultService
   }
 
   private computeVaultLockState(vault: VaultListingInterface): 'locked' | 'unlocked' {
-    const rootKey = this.encryption.keys.getPrimaryKeySystemRootKey(vault.systemIdentifier)
+    const rootKey = this.keys.getPrimaryKeySystemRootKey(vault.systemIdentifier)
     if (!rootKey) {
       return 'locked'
     }
 
-    const itemsKey = this.encryption.keys.getPrimaryKeySystemItemsKey(vault.systemIdentifier)
+    const itemsKey = this.keys.getPrimaryKeySystemItemsKey(vault.systemIdentifier)
     if (!itemsKey) {
       return 'locked'
     }
@@ -319,7 +323,18 @@ export class VaultService
   override deinit(): void {
     super.deinit()
     ;(this.sync as unknown) = undefined
-    ;(this.encryption as unknown) = undefined
     ;(this.items as unknown) = undefined
+    ;(this.mutator as unknown) = undefined
+    ;(this.encryption as unknown) = undefined
+    ;(this.alerts as unknown) = undefined
+    ;(this._getVault as unknown) = undefined
+    ;(this._changeVaultKeyOptions as unknown) = undefined
+    ;(this._moveItemsToVault as unknown) = undefined
+    ;(this._createVault as unknown) = undefined
+    ;(this._removeItemFromVaultUseCase as unknown) = undefined
+    ;(this._deleteVaultUseCase as unknown) = undefined
+    ;(this._rotateVaultKey as unknown) = undefined
+
+    this.lockMap.clear()
   }
 }

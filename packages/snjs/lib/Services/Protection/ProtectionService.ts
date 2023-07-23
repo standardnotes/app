@@ -25,6 +25,10 @@ import {
   TimingDisplayOption,
   ProtectionsClientInterface,
   MutatorClientInterface,
+  InternalEventHandlerInterface,
+  InternalEventInterface,
+  ApplicationEvent,
+  ApplicationStageChangedEventPayload,
 } from '@standardnotes/services'
 import { ContentType } from '@standardnotes/domain-core'
 
@@ -70,7 +74,10 @@ export const ProtectionSessionDurations = [
  * like viewing a protected note, as well as managing how long that
  * authentication should be valid for.
  */
-export class SNProtectionService extends AbstractService<ProtectionEvent> implements ProtectionsClientInterface {
+export class SNProtectionService
+  extends AbstractService<ProtectionEvent>
+  implements ProtectionsClientInterface, InternalEventHandlerInterface
+{
   private sessionExpiryTimeout = -1
   private mobilePasscodeTiming: MobileUnlockTiming | undefined = MobileUnlockTiming.OnQuit
   private mobileBiometricsTiming: MobileUnlockTiming | undefined = MobileUnlockTiming.OnQuit
@@ -93,13 +100,15 @@ export class SNProtectionService extends AbstractService<ProtectionEvent> implem
     super.deinit()
   }
 
-  override handleApplicationStage(stage: ApplicationStage): Promise<void> {
-    if (stage === ApplicationStage.LoadedDatabase_12) {
-      this.updateSessionExpiryTimer(this.getSessionExpiryDate())
-      this.mobilePasscodeTiming = this.getMobilePasscodeTiming()
-      this.mobileBiometricsTiming = this.getMobileBiometricsTiming()
+  async handleEvent(event: InternalEventInterface): Promise<void> {
+    if (event.type === ApplicationEvent.ApplicationStageChanged) {
+      const stage = (event.payload as ApplicationStageChangedEventPayload).stage
+      if (stage === ApplicationStage.LoadedDatabase_12) {
+        this.updateSessionExpiryTimer(this.getSessionExpiryDate())
+        this.mobilePasscodeTiming = this.getMobilePasscodeTiming()
+        this.mobileBiometricsTiming = this.getMobileBiometricsTiming()
+      }
     }
-    return Promise.resolve()
   }
 
   public hasProtectionSources(): boolean {

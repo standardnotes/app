@@ -13,14 +13,14 @@ import {
   ErrorDecryptingParameters,
 } from '../Types/EncryptedParameters'
 import { DecryptedParameters } from '../Types/DecryptedParameters'
-import { OperatorManager } from './OperatorManager'
 import { PkcKeyPair } from '@standardnotes/sncrypto-common'
 import { isAsyncOperator } from './OperatorInterface/TypeCheck'
+import { EncryptionOperatorsInterface } from './EncryptionOperatorsInterface'
 
 export async function encryptPayload(
   payload: DecryptedPayloadInterface,
   key: ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface | RootKeyInterface,
-  operatorManager: OperatorManager,
+  operatorManager: EncryptionOperatorsInterface,
   signingKeyPair: PkcKeyPair | undefined,
 ): Promise<EncryptedOutputParameters> {
   const operator = operatorManager.operatorForVersion(key.keyVersion)
@@ -42,7 +42,7 @@ export async function encryptPayload(
 export async function decryptPayload<C extends ItemContent = ItemContent>(
   payload: EncryptedPayloadInterface,
   key: ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface | RootKeyInterface,
-  operatorManager: OperatorManager,
+  operatorManager: EncryptionOperatorsInterface,
 ): Promise<DecryptedParameters<C> | ErrorDecryptingParameters> {
   const operator = operatorManager.operatorForVersion(payload.version)
 

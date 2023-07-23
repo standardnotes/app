@@ -4,7 +4,7 @@ import { DecryptedItemInterface, FileItem, VaultListingInterface } from '@standa
 import { FilesClientInterface } from '@standardnotes/files'
 import { ContentType } from '@standardnotes/domain-core'
 
-export class MoveItemsToVaultUseCase {
+export class MoveItemsToVault {
   constructor(
     private mutator: MutatorClientInterface,
     private sync: SyncServiceInterface,

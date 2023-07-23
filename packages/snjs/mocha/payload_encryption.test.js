@@ -40,7 +40,7 @@ describe('payload encryption', function () {
       lastSyncBegan: new Date(),
     })
 
-    const encryptedPayload = await this.application.encryptionService.encryptSplitSingle({
+    const encryptedPayload = await this.application.encryption.encryptSplitSingle({
       usesItemsKeyWithKeyLookup: {
         items: [notePayload],
       },
@@ -114,7 +114,7 @@ describe('payload encryption', function () {
   it('returns valid encrypted params for syncing', async function () {
     const payload = Factory.createNotePayload()
     const encryptedPayload = CreateEncryptedServerSyncPushPayload(
-      await this.application.encryptionService.encryptSplitSingle({
+      await this.application.encryption.encryptSplitSingle({
         usesItemsKeyWithKeyLookup: {
           items: [payload],
         },
@@ -126,7 +126,7 @@ describe('payload encryption', function () {
     expect(encryptedPayload.content_type).to.be.ok
     expect(encryptedPayload.created_at).to.be.ok
     expect(encryptedPayload.content).to.satisfy((string) => {
-      return string.startsWith(this.application.encryptionService.getLatestVersion())
+      return string.startsWith(this.application.encryption.getLatestVersion())
     })
   }).timeout(5000)
 
@@ -134,7 +134,7 @@ describe('payload encryption', function () {
     const payload = Factory.createNotePayload()
 
     const encryptedPayload = CreateEncryptedLocalStorageContextPayload(
-      await this.application.encryptionService.encryptSplitSingle({
+      await this.application.encryption.encryptSplitSingle({
         usesItemsKeyWithKeyLookup: {
           items: [payload],
         },
@@ -150,14 +150,14 @@ describe('payload encryption', function () {
     expect(encryptedPayload.deleted).to.not.be.ok
     expect(encryptedPayload.errorDecrypting).to.not.be.ok
     expect(encryptedPayload.content).to.satisfy((string) => {
-      return string.startsWith(this.application.encryptionService.getLatestVersion())
+      return string.startsWith(this.application.encryption.getLatestVersion())
     })
   })
 
   it('omits deleted for export file', async function () {
     const payload = Factory.createNotePayload()
     const encryptedPayload = CreateEncryptedBackupFileContextPayload(
-      await this.application.encryptionService.encryptSplitSingle({
+      await this.application.encryption.encryptSplitSingle({
         usesItemsKeyWithKeyLookup: {
           items: [payload],
         },
@@ -170,7 +170,7 @@ describe('payload encryption', function () {
     expect(encryptedPayload.created_at).to.be.ok
     expect(encryptedPayload.deleted).to.not.be.ok
     expect(encryptedPayload.content).to.satisfy((string) => {
-      return string.startsWith(this.application.encryptionService.getLatestVersion())
+      return string.startsWith(this.application.encryption.getLatestVersion())
     })
   })
 

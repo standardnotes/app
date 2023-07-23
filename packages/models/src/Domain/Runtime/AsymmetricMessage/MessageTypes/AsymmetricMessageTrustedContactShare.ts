@@ -1,4 +1,4 @@
-import { TrustedContactContentSpecialized } from '../../../Syncable/TrustedContact/TrustedContactContent'
+import { TrustedContactContentSpecialized } from '../../../Syncable/TrustedContact/Content/TrustedContactContent'
 import { AsymmetricMessageDataCommon } from '../AsymmetricMessageDataCommon'
 import { AsymmetricMessagePayloadType } from '../AsymmetricMessagePayloadType'
 

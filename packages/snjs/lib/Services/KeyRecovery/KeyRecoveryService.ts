@@ -11,11 +11,11 @@ import {
   getIncrementedDirtyIndex,
   ContentTypeUsesRootKeyEncryption,
 } from '@standardnotes/models'
-import { SNSyncService } from '../Sync/SyncService'
+import { SyncService } from '../Sync/SyncService'
 import { DiskStorageService } from '../Storage/DiskStorageService'
 import { PayloadManager } from '../Payloads/PayloadManager'
 import { ChallengeService } from '../Challenge'
-import { SNApiService } from '@Lib/Services/Api/ApiService'
+import { LegacyApiService } from '@Lib/Services/Api/ApiService'
 import { ItemManager } from '../Items/ItemManager'
 import { removeFromArray, Uuids } from '@standardnotes/utils'
 import { ClientDisplayableError, isErrorResponse } from '@standardnotes/responses'
@@ -33,6 +33,10 @@ import {
   EncryptionService,
   Challenge,
   UserService,
+  InternalEventHandlerInterface,
+  InternalEventInterface,
+  ApplicationEvent,
+  ApplicationStageChangedEventPayload,
 } from '@standardnotes/services'
 import {
   UndecryptableItemsStorage,
@@ -79,7 +83,10 @@ import { ContentType } from '@standardnotes/domain-core'
  * but our current copy is not, we will ignore the incoming value until we can properly
  * decrypt it.
  */
-export class SNKeyRecoveryService extends AbstractService<KeyRecoveryEvent, DecryptedPayloadInterface[]> {
+export class KeyRecoveryService
+  extends AbstractService<KeyRecoveryEvent, DecryptedPayloadInterface[]>
+  implements InternalEventHandlerInterface
+{
   private removeItemObserver: () => void
   private decryptionQueue: DecryptionQueueItem[] = []
   private isProcessingQueue = false
@@ -87,12 +94,12 @@ export class SNKeyRecoveryService extends AbstractService<KeyRecoveryEvent, Decr
   constructor(
     private itemManager: ItemManager,
     private payloadManager: PayloadManager,
-    private apiService: SNApiService,
+    private apiService: LegacyApiService,
     private encryptionService: EncryptionService,
     private challengeService: ChallengeService,
     private alertService: AlertService,
     private storageService: DiskStorageService,
-    private syncService: SNSyncService,
+    private sync: SyncService,
     private userService: UserService,
     protected override internalEventBus: InternalEventBusInterface,
   ) {
@@ -126,7 +133,7 @@ export class SNKeyRecoveryService extends AbstractService<KeyRecoveryEvent, Decr
     ;(this.challengeService as unknown) = undefined
     ;(this.alertService as unknown) = undefined
     ;(this.storageService as unknown) = undefined
-    ;(this.syncService as unknown) = undefined
+    ;(this.sync as unknown) = undefined
     ;(this.userService as unknown) = undefined
 
     this.removeItemObserver()
@@ -135,11 +142,12 @@ export class SNKeyRecoveryService extends AbstractService<KeyRecoveryEvent, Decr
     super.deinit()
   }
 
-  // eslint-disable-next-line @typescript-eslint/require-await
-  override async handleApplicationStage(stage: ApplicationStage): Promise<void> {
-    void super.handleApplicationStage(stage)
-    if (stage === ApplicationStage.LoadedDatabase_12) {
-      void this.processPersistedUndecryptables()
+  async handleEvent(event: InternalEventInterface): Promise<void> {
+    if (event.type === ApplicationEvent.ApplicationStageChanged) {
+      const stage = (event.payload as ApplicationStageChangedEventPayload).stage
+      if (stage === ApplicationStage.LoadedDatabase_12) {
+        void this.processPersistedUndecryptables()
+      }
     }
   }
 
@@ -383,8 +391,8 @@ export class SNKeyRecoveryService extends AbstractService<KeyRecoveryEvent, Decr
       await this.potentiallyPerformFallbackSignInToUpdateOutdatedLocalRootKey(serverParams)
     }
 
-    if (this.syncService.isOutOfSync()) {
-      void this.syncService.sync({ checkIntegrity: true })
+    if (this.sync.isOutOfSync()) {
+      void this.sync.sync({ checkIntegrity: true })
     }
   }
 
@@ -500,7 +508,7 @@ export class SNKeyRecoveryService extends AbstractService<KeyRecoveryEvent, Decr
     }
 
     if (decryptedMatching.some((p) => p.dirty)) {
-      await this.syncService.sync()
+      await this.sync.sync()
     }
 
     await this.notifyEvent(KeyRecoveryEvent.KeysRecovered, decryptedMatching)

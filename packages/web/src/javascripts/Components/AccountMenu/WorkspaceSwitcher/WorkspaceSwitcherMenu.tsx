@@ -43,7 +43,7 @@ const WorkspaceSwitcherMenu: FunctionComponent<Props> = ({
   }, [mainApplicationGroup])
 
   const signoutAll = useCallback(async () => {
-    const confirmed = await viewControllerManager.application.alertService.confirm(
+    const confirmed = await viewControllerManager.application.alerts.confirm(
       'Are you sure you want to sign out of all workspaces on this device?',
       undefined,
       'Sign out all',

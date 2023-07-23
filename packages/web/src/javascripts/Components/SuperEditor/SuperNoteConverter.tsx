@@ -113,7 +113,7 @@ const SuperNoteConverter = ({
   }, [isSeamlessConvert, confirmConvert])
 
   const convertAsIs = useCallback(async () => {
-    const confirmed = await application.alertService.confirm(
+    const confirmed = await application.alerts.confirm(
       spaceSeparatedStrings(
         "This option is useful if you want to edit the note's content which is in Super's JSON format directly.",
         'This format is not human-readable. If you want to convert the note to a human-readable format, please use the "Convert" option instead.',

@@ -1,3 +1,4 @@
+import { InternalEventHandlerInterface } from './../Internal/InternalEventHandlerInterface'
 import { MutatorClientInterface } from './../Mutator/MutatorClientInterface'
 import { ApplicationStage } from './../Application/ApplicationStage'
 import { InternalEventBusInterface } from './../Internal/InternalEventBusInterface'
@@ -16,13 +17,19 @@ import {
   VaultListingInterface,
 } from '@standardnotes/models'
 import { ItemManagerInterface } from './../Item/ItemManagerInterface'
-import { KeySystemKeyManagerInterface } from '@standardnotes/encryption'
 import { AbstractService } from '../Service/AbstractService'
 import { ContentType } from '@standardnotes/domain-core'
+import { InternalEventInterface } from '../Internal/InternalEventInterface'
+import { ApplicationEvent } from '../Event/ApplicationEvent'
+import { ApplicationStageChangedEventPayload } from '../Event/ApplicationStageChangedEventPayload'
+import { KeySystemKeyManagerInterface } from './KeySystemKeyManagerInterface'
 
 const RootKeyStorageKeyPrefix = 'key-system-root-key-'
 
-export class KeySystemKeyManager extends AbstractService implements KeySystemKeyManagerInterface {
+export class KeySystemKeyManager
+  extends AbstractService
+  implements KeySystemKeyManagerInterface, InternalEventHandlerInterface
+{
   private rootKeyMemoryCache: Record<KeySystemIdentifier, KeySystemRootKeyInterface> = {}
 
   constructor(
@@ -34,9 +41,12 @@ export class KeySystemKeyManager extends AbstractService implements KeySystemKey
     super(eventBus)
   }
 
-  public override async handleApplicationStage(stage: ApplicationStage): Promise<void> {
-    if (stage === ApplicationStage.StorageDecrypted_09) {
-      this.loadRootKeysFromStorage()
+  async handleEvent(event: InternalEventInterface): Promise<void> {
+    if (event.type === ApplicationEvent.ApplicationStageChanged) {
+      const stage = (event.payload as ApplicationStageChangedEventPayload).stage
+      if (stage === ApplicationStage.StorageDecrypted_09) {
+        this.loadRootKeysFromStorage()
+      }
     }
   }
 
@@ -57,6 +67,17 @@ export class KeySystemKeyManager extends AbstractService implements KeySystemKey
 
   private storageKeyForRootKey(systemIdentifier: KeySystemIdentifier): string {
     return `${RootKeyStorageKeyPrefix}${systemIdentifier}`
+  }
+
+  /**
+   * When the key system root key changes, we must re-encrypt all vault items keys
+   * with this new key system root key (by simply re-syncing).
+   */
+  public async reencryptKeySystemItemsKeysForVault(keySystemIdentifier: KeySystemIdentifier): Promise<void> {
+    const keySystemItemsKeys = this.getKeySystemItemsKeys(keySystemIdentifier)
+    if (keySystemItemsKeys.length > 0) {
+      await this.mutator.setItemsDirty(keySystemItemsKeys)
+    }
   }
 
   public intakeNonPersistentKeySystemRootKey(

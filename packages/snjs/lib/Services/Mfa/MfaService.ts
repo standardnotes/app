@@ -1,15 +1,15 @@
 import { SettingName } from '@standardnotes/settings'
 
-import { SNSettingsService } from '../Settings'
+import { SettingsService } from '../Settings'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
-import { SNFeaturesService } from '../Features/FeaturesService'
+import { FeaturesService } from '../Features/FeaturesService'
 import { AbstractService, InternalEventBusInterface, SignInStrings } from '@standardnotes/services'
 
 export class SNMfaService extends AbstractService {
   constructor(
-    private settingsService: SNSettingsService,
+    private settingsService: SettingsService,
     private crypto: PureCryptoInterface,
-    private featuresService: SNFeaturesService,
+    private featuresService: FeaturesService,
     protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)

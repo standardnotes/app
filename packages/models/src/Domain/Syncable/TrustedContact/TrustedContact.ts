@@ -1,12 +1,12 @@
 import { ConflictStrategy, DecryptedItem, DecryptedItemInterface } from '../../Abstract/Item'
 import { DecryptedPayloadInterface } from '../../Abstract/Payload'
 import { HistoryEntryInterface } from '../../Runtime/History'
-import { TrustedContactContent } from './TrustedContactContent'
+import { TrustedContactContent } from './Content/TrustedContactContent'
 import { TrustedContactInterface } from './TrustedContactInterface'
-import { FindPublicKeySetResult } from './PublicKeySet/FindPublicKeySetResult'
 import { ContactPublicKeySet } from './PublicKeySet/ContactPublicKeySet'
 import { ContactPublicKeySetInterface } from './PublicKeySet/ContactPublicKeySetInterface'
 import { Predicate } from '../../Runtime/Predicate/Predicate'
+import { PublicKeyTrustStatus } from './Types/PublicKeyTrustStatus'
 
 export class TrustedContact extends DecryptedItem<TrustedContactContent> implements TrustedContactInterface {
   static singletonPredicate = new Predicate<TrustedContact>('isMe', '=', true)
@@ -33,39 +33,36 @@ export class TrustedContact extends DecryptedItem<TrustedContactContent> impleme
     return TrustedContact.singletonPredicate
   }
 
-  public findKeySet(params: {
-    targetEncryptionPublicKey: string
-    targetSigningPublicKey: string
-  }): FindPublicKeySetResult {
-    const set = this.publicKeySet.findKeySet(params)
-    if (!set) {
-      return undefined
-    }
-
-    return {
-      publicKeySet: set,
-      current: set === this.publicKeySet,
-    }
+  hasCurrentOrPreviousSigningPublicKey(signingPublicKey: string): boolean {
+    return this.publicKeySet.findKeySetWithSigningKey(signingPublicKey) !== undefined
   }
 
-  isPublicKeyTrusted(encryptionPublicKey: string): boolean {
-    const keySet = this.publicKeySet.findKeySetWithPublicKey(encryptionPublicKey)
-
-    if (keySet && !keySet.isRevoked) {
-      return true
+  getTrustStatusForPublicKey(encryptionPublicKey: string): PublicKeyTrustStatus {
+    if (this.publicKeySet.encryption === encryptionPublicKey) {
+      return PublicKeyTrustStatus.Trusted
     }
 
-    return false
+    const previous = this.publicKeySet.findKeySetWithPublicKey(encryptionPublicKey)
+
+    if (previous) {
+      return PublicKeyTrustStatus.Previous
+    }
+
+    return PublicKeyTrustStatus.NotTrusted
   }
 
-  isSigningKeyTrusted(signingKey: string): boolean {
-    const keySet = this.publicKeySet.findKeySetWithSigningKey(signingKey)
-
-    if (keySet && !keySet.isRevoked) {
-      return true
+  getTrustStatusForSigningPublicKey(signingPublicKey: string): PublicKeyTrustStatus {
+    if (this.publicKeySet.signing === signingPublicKey) {
+      return PublicKeyTrustStatus.Trusted
     }
 
-    return false
+    const previous = this.publicKeySet.findKeySetWithSigningKey(signingPublicKey)
+
+    if (previous) {
+      return PublicKeyTrustStatus.Previous
+    }
+
+    return PublicKeyTrustStatus.NotTrusted
   }
 
   override strategyWhenConflictingWithItem(

@@ -322,7 +322,7 @@ const ChallengeModal: FunctionComponent<Props> = ({
             <Button
               className="flex min-w-76 items-center justify-center"
               onClick={() => {
-                application.alertService
+                application.alerts
                   .confirm(
                     'If you forgot your local passcode, your only option is to clear your local data from this device and sign back in to your account.',
                     'Forgot passcode?',

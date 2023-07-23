@@ -543,7 +543,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
   }
 
   hasAvailableExtensions() {
-    return this.application.actionsManager.extensionsInContextOfItem(this.note).length > 0
+    return this.application.actions.extensionsInContextOfItem(this.note).length > 0
   }
 
   showSavingStatus() {
@@ -636,12 +636,12 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
 
   async deleteNote(permanently: boolean) {
     if (this.controller.isTemplateNote) {
-      this.application.alertService.alert(STRING_DELETE_PLACEHOLDER_ATTEMPT).catch(console.error)
+      this.application.alerts.alert(STRING_DELETE_PLACEHOLDER_ATTEMPT).catch(console.error)
       return
     }
 
     if (this.note.locked) {
-      this.application.alertService.alert(STRING_DELETE_LOCKED_ATTEMPT).catch(console.error)
+      this.application.alerts.alert(STRING_DELETE_LOCKED_ATTEMPT).catch(console.error)
       return
     }
 

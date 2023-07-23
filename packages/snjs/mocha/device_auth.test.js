@@ -18,11 +18,11 @@ describe('device authentication', function () {
     const application = await Factory.createAndInitializeApplication(namespace)
     const passcode = 'foobar'
     const wrongPasscode = 'barfoo'
-    expect(await application.protectionService.createLaunchChallenge()).to.not.be.ok
+    expect(await application.protections.createLaunchChallenge()).to.not.be.ok
     await application.addPasscode(passcode)
     expect(await application.hasPasscode()).to.equal(true)
-    expect(await application.protectionService.createLaunchChallenge()).to.be.ok
-    expect(application.encryptionService.rootKeyManager.getKeyMode()).to.equal(KeyMode.WrapperOnly)
+    expect(await application.protections.createLaunchChallenge()).to.be.ok
+    expect(application.encryption.rootKeyManager.getKeyMode()).to.equal(KeyMode.WrapperOnly)
     await Factory.safeDeinit(application)
 
     /** Recreate application and initialize */
@@ -49,10 +49,10 @@ describe('device authentication', function () {
       tmpApplication.submitValuesForChallenge(challenge, initialValues)
     }
     await tmpApplication.prepareForLaunch({ receiveChallenge })
-    expect(await tmpApplication.encryptionService.getRootKey()).to.not.be.ok
+    expect(await tmpApplication.encryption.getRootKey()).to.not.be.ok
     await tmpApplication.launch(true)
-    expect(await tmpApplication.encryptionService.getRootKey()).to.be.ok
-    expect(tmpApplication.encryptionService.rootKeyManager.getKeyMode()).to.equal(KeyMode.WrapperOnly)
+    expect(await tmpApplication.encryption.getRootKey()).to.be.ok
+    expect(tmpApplication.encryption.rootKeyManager.getKeyMode()).to.equal(KeyMode.WrapperOnly)
     await Factory.safeDeinit(tmpApplication)
   }).timeout(10000)
 
@@ -64,8 +64,8 @@ describe('device authentication', function () {
     await application.addPasscode(passcode)
     await application.protections.enableBiometrics()
     expect(await application.hasPasscode()).to.equal(true)
-    expect((await application.protectionService.createLaunchChallenge()).prompts.length).to.equal(2)
-    expect(application.encryptionService.rootKeyManager.getKeyMode()).to.equal(KeyMode.WrapperOnly)
+    expect((await application.protections.createLaunchChallenge()).prompts.length).to.equal(2)
+    expect(application.encryption.rootKeyManager.getKeyMode()).to.equal(KeyMode.WrapperOnly)
     await Factory.safeDeinit(application)
 
     /** Recreate application and initialize */
@@ -98,11 +98,11 @@ describe('device authentication', function () {
     }
 
     await tmpApplication.prepareForLaunch({ receiveChallenge })
-    expect(await tmpApplication.encryptionService.getRootKey()).to.not.be.ok
-    expect((await tmpApplication.protectionService.createLaunchChallenge()).prompts.length).to.equal(2)
+    expect(await tmpApplication.encryption.getRootKey()).to.not.be.ok
+    expect((await tmpApplication.protections.createLaunchChallenge()).prompts.length).to.equal(2)
     await tmpApplication.launch(true)
-    expect(await tmpApplication.encryptionService.getRootKey()).to.be.ok
-    expect(tmpApplication.encryptionService.rootKeyManager.getKeyMode()).to.equal(KeyMode.WrapperOnly)
+    expect(await tmpApplication.encryption.getRootKey()).to.be.ok
+    expect(tmpApplication.encryption.rootKeyManager.getKeyMode()).to.equal(KeyMode.WrapperOnly)
     await Factory.safeDeinit(tmpApplication)
   }).timeout(Factory.TwentySecondTimeout)
 
@@ -118,12 +118,12 @@ describe('device authentication', function () {
     })
     const sampleStorageKey = 'foo'
     const sampleStorageValue = 'bar'
-    await application.diskStorageService.setValue(sampleStorageKey, sampleStorageValue)
-    expect(application.encryptionService.rootKeyManager.getKeyMode()).to.equal(KeyMode.RootKeyOnly)
+    await application.storage.setValue(sampleStorageKey, sampleStorageValue)
+    expect(application.encryption.rootKeyManager.getKeyMode()).to.equal(KeyMode.RootKeyOnly)
     const passcode = 'foobar'
     Factory.handlePasswordChallenges(application, password)
     await application.addPasscode(passcode)
-    expect(application.encryptionService.rootKeyManager.getKeyMode()).to.equal(KeyMode.RootKeyPlusWrapper)
+    expect(application.encryption.rootKeyManager.getKeyMode()).to.equal(KeyMode.RootKeyPlusWrapper)
     expect(await application.hasPasscode()).to.equal(true)
     await Factory.safeDeinit(application)
 
@@ -154,11 +154,11 @@ describe('device authentication', function () {
     await tmpApplication.prepareForLaunch({
       receiveChallenge: receiveChallenge,
     })
-    expect(await tmpApplication.encryptionService.getRootKey()).to.not.be.ok
+    expect(await tmpApplication.encryption.getRootKey()).to.not.be.ok
     await tmpApplication.launch(true)
-    expect(await tmpApplication.diskStorageService.getValue(sampleStorageKey)).to.equal(sampleStorageValue)
-    expect(await tmpApplication.encryptionService.getRootKey()).to.be.ok
-    expect(tmpApplication.encryptionService.rootKeyManager.getKeyMode()).to.equal(KeyMode.RootKeyPlusWrapper)
+    expect(await tmpApplication.storage.getValue(sampleStorageKey)).to.equal(sampleStorageValue)
+    expect(await tmpApplication.encryption.getRootKey()).to.be.ok
+    expect(tmpApplication.encryption.rootKeyManager.getKeyMode()).to.equal(KeyMode.RootKeyPlusWrapper)
     await Factory.safeDeinit(tmpApplication)
   }).timeout(Factory.TwentySecondTimeout)
 })

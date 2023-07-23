@@ -31,7 +31,7 @@ const ChangeEmail: FunctionComponent<Props> = ({ onCloseDialog, application }) =
 
   useBeforeUnload()
 
-  const applicationAlertService = application.alertService
+  const applicationAlertService = application.alerts
 
   const validateCurrentPassword = useCallback(async () => {
     if (!currentPassword || currentPassword.length === 0) {

@@ -26,7 +26,7 @@ const BiometricsLock = ({ application }: Props) => {
 
     const hasBiometricsSupport = async () => {
       const hasBiometricsAvailable = await (
-        application.deviceInterface as MobileDeviceInterface
+        application.device as MobileDeviceInterface
       ).getDeviceBiometricsAvailability?.()
       setSupportsBiometrics(hasBiometricsAvailable)
     }

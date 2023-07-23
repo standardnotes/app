@@ -119,7 +119,7 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
       }
 
       if (note.locked) {
-        application.alertService.alert(STRING_EDIT_LOCKED_ATTEMPT).catch(console.error)
+        application.alerts.alert(STRING_EDIT_LOCKED_ATTEMPT).catch(console.error)
         return
       }
 
@@ -167,7 +167,7 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
       closeMenu,
       onSelect,
       premiumModal,
-      application.alertService,
+      application.alerts,
       application.componentManager,
       setDisableClickOutside,
       currentFeature,

@@ -1,14 +1,14 @@
 import { ClientDisplayableError } from '@standardnotes/responses'
 import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
 import { VaultListingInterface } from '@standardnotes/models'
-import { EncryptionProviderInterface } from '@standardnotes/encryption'
 import { MutatorClientInterface } from '../../Mutator/MutatorClientInterface'
+import { KeySystemKeyManagerInterface } from '../../KeySystem/KeySystemKeyManagerInterface'
 
-export class DeleteVaultUseCase {
+export class DeleteVault {
   constructor(
     private items: ItemManagerInterface,
     private mutator: MutatorClientInterface,
-    private encryption: EncryptionProviderInterface,
+    private keys: KeySystemKeyManagerInterface,
   ) {}
 
   async execute(vault: VaultListingInterface): Promise<ClientDisplayableError | void> {
@@ -16,12 +16,12 @@ export class DeleteVaultUseCase {
       throw new Error('Vault system identifier is missing')
     }
 
-    await this.encryption.keys.deleteNonPersistentSystemRootKeysForVault(vault.systemIdentifier)
+    await this.keys.deleteNonPersistentSystemRootKeysForVault(vault.systemIdentifier)
 
-    const rootKeys = this.encryption.keys.getSyncedKeySystemRootKeysForVault(vault.systemIdentifier)
+    const rootKeys = this.keys.getSyncedKeySystemRootKeysForVault(vault.systemIdentifier)
     await this.mutator.setItemsToBeDeleted(rootKeys)
 
-    const itemsKeys = this.encryption.keys.getKeySystemItemsKeys(vault.systemIdentifier)
+    const itemsKeys = this.keys.getKeySystemItemsKeys(vault.systemIdentifier)
     await this.mutator.setItemsToBeDeleted(itemsKeys)
 
     const vaultItems = this.items.itemsBelongingToKeySystem(vault.systemIdentifier)

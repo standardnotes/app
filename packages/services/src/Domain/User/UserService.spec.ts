@@ -1,6 +1,6 @@
+import { EncryptionProviderInterface } from './../Encryption/EncryptionProviderInterface'
 import { UserApiServiceInterface } from '@standardnotes/api'
 import { UserRequestType } from '@standardnotes/common'
-import { EncryptionProviderInterface } from '@standardnotes/encryption'
 import { User } from '@standardnotes/responses'
 
 import {

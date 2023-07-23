@@ -24,10 +24,10 @@ describe('history manager', () => {
   describe('session', function () {
     beforeEach(async function () {
       this.application = await Factory.createInitAppWithFakeCrypto()
-      this.historyManager = this.application.historyManager
-      this.payloadManager = this.application.payloadManager
+      this.history = this.application.dependencies.get(TYPES.HistoryManager)
+      this.payloadManager = this.application.payloads
       /** Automatically optimize after every revision by setting this to 0 */
-      this.historyManager.itemRevisionThreshold = 0
+      this.history.itemRevisionThreshold = 0
     })
 
     afterEach(async function () {
@@ -52,11 +52,11 @@ describe('history manager', () => {
 
     it('create basic history entries 1', async function () {
       const item = await Factory.createSyncedNote(this.application)
-      expect(this.historyManager.sessionHistoryForItem(item).length).to.equal(0)
+      expect(this.history.sessionHistoryForItem(item).length).to.equal(0)
 
       /** Sync with same contents, should not create new entry */
       await Factory.markDirtyAndSyncItem(this.application, item)
-      expect(this.historyManager.sessionHistoryForItem(item).length).to.equal(0)
+      expect(this.history.sessionHistoryForItem(item).length).to.equal(0)
 
       /** Sync with different contents, should create new entry */
       await this.application.changeAndSaveItem(
@@ -68,7 +68,7 @@ describe('history manager', () => {
         undefined,
         syncOptions,
       )
-      expect(this.historyManager.sessionHistoryForItem(item).length).to.equal(1)
+      expect(this.history.sessionHistoryForItem(item).length).to.equal(1)
     })
 
     it('first change should create revision with previous value', async function () {
@@ -78,7 +78,7 @@ describe('history manager', () => {
       /** Simulate loading new application session */
       const context = await Factory.createAppContext({ identifier })
       await context.launch()
-      expect(context.application.historyManager.sessionHistoryForItem(item).length).to.equal(0)
+      expect(context.history.sessionHistoryForItem(item).length).to.equal(0)
       await context.application.changeAndSaveItem(
         item,
         (mutator) => {
@@ -88,7 +88,7 @@ describe('history manager', () => {
         undefined,
         syncOptions,
       )
-      const entries = context.application.historyManager.sessionHistoryForItem(item)
+      const entries = context.history.sessionHistoryForItem(item)
       expect(entries.length).to.equal(1)
       expect(entries[0].payload.content.title).to.equal(item.content.title)
       await context.deinit()
@@ -101,7 +101,7 @@ describe('history manager', () => {
         references: [],
       })
       await context.application.mutator.insertItem(item)
-      expect(context.application.historyManager.sessionHistoryForItem(item).length).to.equal(0)
+      expect(context.history.sessionHistoryForItem(item).length).to.equal(0)
 
       await context.application.changeAndSaveItem(
         item,
@@ -112,7 +112,7 @@ describe('history manager', () => {
         undefined,
         syncOptions,
       )
-      expect(context.application.historyManager.sessionHistoryForItem(item).length).to.equal(0)
+      expect(context.history.sessionHistoryForItem(item).length).to.equal(0)
       await context.deinit()
     })
 
@@ -123,14 +123,14 @@ describe('history manager', () => {
        * won't here because it's the first change, which we want to keep.
        */
       await setTextAndSync(this.application, item, item.content.text + '1')
-      expect(this.historyManager.sessionHistoryForItem(item).length).to.equal(1)
+      expect(this.history.sessionHistoryForItem(item).length).to.equal(1)
 
       /**
        * Changing it by one character should keep this entry,
        * since it's now the last (and will keep the first)
        */
       item = await setTextAndSync(this.application, item, item.content.text + '2')
-      expect(this.historyManager.sessionHistoryForItem(item).length).to.equal(2)
+      expect(this.history.sessionHistoryForItem(item).length).to.equal(2)
       /**
        * Change it over the largeCharacterChange threshold. It should keep this
        * revision, but now remove the previous revision, since it's no longer
@@ -141,29 +141,29 @@ describe('history manager', () => {
         item,
         item.content.text + Factory.randomString(largeCharacterChange + 1),
       )
-      expect(this.historyManager.sessionHistoryForItem(item).length).to.equal(2)
+      expect(this.history.sessionHistoryForItem(item).length).to.equal(2)
 
       item = await setTextAndSync(
         this.application,
         item,
         item.content.text + Factory.randomString(largeCharacterChange + 1),
       )
-      expect(this.historyManager.sessionHistoryForItem(item).length).to.equal(2)
+      expect(this.history.sessionHistoryForItem(item).length).to.equal(2)
       /** Delete over threshold text. */
       item = await setTextAndSync(
         this.application,
         item,
         deleteCharsFromString(item.content.text, largeCharacterChange + 1),
       )
-      expect(this.historyManager.sessionHistoryForItem(item).length).to.equal(3)
+      expect(this.history.sessionHistoryForItem(item).length).to.equal(3)
       /**
        * Delete just 1 character. It should now retain the previous revision, as well as the
        * one previous to that.
        */
       item = await setTextAndSync(this.application, item, deleteCharsFromString(item.content.text, 1))
-      expect(this.historyManager.sessionHistoryForItem(item).length).to.equal(4)
+      expect(this.history.sessionHistoryForItem(item).length).to.equal(4)
       item = await setTextAndSync(this.application, item, deleteCharsFromString(item.content.text, 1))
-      expect(this.historyManager.sessionHistoryForItem(item).length).to.equal(5)
+      expect(this.history.sessionHistoryForItem(item).length).to.equal(5)
     })
 
     it('should keep the entry right before a large deletion, regardless of its delta', async function () {
@@ -174,25 +174,25 @@ describe('history manager', () => {
       )
       let item = await this.application.mutator.emitItemFromPayload(payload, PayloadEmitSource.LocalChanged)
       await this.application.mutator.setItemDirty(item)
-      await this.application.syncService.sync(syncOptions)
+      await this.application.sync.sync(syncOptions)
       /** It should keep the first and last by default */
       item = await setTextAndSync(this.application, item, item.content.text)
       item = await setTextAndSync(this.application, item, item.content.text + Factory.randomString(1))
-      expect(this.historyManager.sessionHistoryForItem(item).length).to.equal(2)
+      expect(this.history.sessionHistoryForItem(item).length).to.equal(2)
       item = await setTextAndSync(
         this.application,
         item,
         deleteCharsFromString(item.content.text, largeCharacterChange + 1),
       )
-      expect(this.historyManager.sessionHistoryForItem(item).length).to.equal(2)
+      expect(this.history.sessionHistoryForItem(item).length).to.equal(2)
       item = await setTextAndSync(this.application, item, item.content.text + Factory.randomString(1))
-      expect(this.historyManager.sessionHistoryForItem(item).length).to.equal(3)
+      expect(this.history.sessionHistoryForItem(item).length).to.equal(3)
       item = await setTextAndSync(
         this.application,
         item,
         item.content.text + Factory.randomString(largeCharacterChange + 1),
       )
-      expect(this.historyManager.sessionHistoryForItem(item).length).to.equal(4)
+      expect(this.history.sessionHistoryForItem(item).length).to.equal(4)
     })
 
     it('entries should be ordered from newest to oldest', async function () {
@@ -205,7 +205,7 @@ describe('history manager', () => {
       let item = await this.application.mutator.emitItemFromPayload(payload, PayloadEmitSource.LocalChanged)
 
       await this.application.mutator.setItemDirty(item)
-      await this.application.syncService.sync(syncOptions)
+      await this.application.sync.sync(syncOptions)
 
       item = await setTextAndSync(this.application, item, item.content.text + Factory.randomString(1))
 
@@ -224,10 +224,10 @@ describe('history manager', () => {
       )
 
       /** First entry should be the latest revision. */
-      const latestRevision = this.historyManager.sessionHistoryForItem(item)[0]
+      const latestRevision = this.history.sessionHistoryForItem(item)[0]
       /** Last entry should be the initial revision. */
       const initialRevision =
-        this.historyManager.sessionHistoryForItem(item)[this.historyManager.sessionHistoryForItem(item).length - 1]
+        this.history.sessionHistoryForItem(item)[this.history.sessionHistoryForItem(item).length - 1]
 
       expect(latestRevision).to.not.equal(initialRevision)
 
@@ -252,7 +252,7 @@ describe('history manager', () => {
         undefined,
         syncOptions,
       )
-      const historyItem = this.historyManager.sessionHistoryForItem(item)[0]
+      const historyItem = this.history.sessionHistoryForItem(item)[0]
       expect(historyItem.previewTitle()).to.equal(historyItem.payload.created_at.toLocaleString())
     })
   })
@@ -262,8 +262,8 @@ describe('history manager', () => {
 
     beforeEach(async function () {
       this.application = await Factory.createInitAppWithFakeCrypto()
-      this.historyManager = this.application.historyManager
-      this.payloadManager = this.application.payloadManager
+      this.history = this.application.dependencies.get(TYPES.HistoryManager)
+      this.payloadManager = this.application.payloads
       this.email = UuidGenerator.GenerateUuid()
       this.password = UuidGenerator.GenerateUuid()
       await Factory.registerUserToApplication({
@@ -280,10 +280,10 @@ describe('history manager', () => {
     it('response from server should be failed if not signed in', async function () {
       await this.application.user.signOut()
       this.application = await Factory.createInitAppWithFakeCrypto()
-      this.historyManager = this.application.historyManager
-      this.payloadManager = this.application.payloadManager
+      this.history = this.application.dependencies.get(TYPES.HistoryManager)
+      this.payloadManager = this.application.payloads
       const item = await Factory.createSyncedNote(this.application)
-      await this.application.syncService.sync(syncOptions)
+      await this.application.sync.sync(syncOptions)
       const itemHistoryOrError = await this.application.listRevisions.execute({ itemUuid: item.uuid })
 
       expect(itemHistoryOrError.isFailed()).to.equal(true)
@@ -355,7 +355,7 @@ describe('history manager', () => {
       expect(payloadFromServer.uuid).to.eq(item.payload.uuid)
       expect(payloadFromServer.content).to.eql(item.payload.content)
 
-      item = this.application.itemManager.findItem(item.uuid)
+      item = this.application.items.findItem(item.uuid)
       expect(payloadFromServer.content).to.not.eql(item.payload.content)
     })
 

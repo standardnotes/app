@@ -14,8 +14,8 @@ import {
   ApplicationEvent,
   SessionsClientInterface,
   SubscriptionManagerInterface,
-  SyncClientInterface,
   SyncOpStatus,
+  SyncServiceInterface,
   User,
   UserClientInterface,
   UserRequestType,
@@ -37,7 +37,7 @@ describe('ApplicationEventObserver', () => {
   let accountMenuController: AccountMenuController
   let preferencesController: PreferencesController
   let syncStatusController: SyncStatusController
-  let syncClient: SyncClientInterface
+  let syncClient: SyncServiceInterface
   let sessionManager: SessionsClientInterface
   let subscriptionManager: SubscriptionManagerInterface
   let toastService: ToastServiceInterface
@@ -81,7 +81,7 @@ describe('ApplicationEventObserver', () => {
     syncStatusController = {} as jest.Mocked<SyncStatusController>
     syncStatusController.update = jest.fn()
 
-    syncClient = {} as jest.Mocked<SyncClientInterface>
+    syncClient = {} as jest.Mocked<SyncServiceInterface>
     syncClient.getSyncStatus = jest.fn().mockReturnValue({} as jest.Mocked<SyncOpStatus>)
 
     sessionManager = {} as jest.Mocked<SessionsClientInterface>

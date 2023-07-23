@@ -12,6 +12,7 @@ import {
   KeySystemIdentifier,
   RootKeyInterface,
   KeySystemRootKeyParamsInterface,
+  PortablePublicKeySet,
 } from '@standardnotes/models'
 import { KeyParamsOrigination, ProtocolVersion } from '@standardnotes/common'
 import { HexString, PkcKeyPair, PureCryptoInterface, Utf8String } from '@standardnotes/sncrypto-common'
@@ -30,9 +31,9 @@ import { OperatorInterface } from '../OperatorInterface/OperatorInterface'
 import { AsymmetricallyEncryptedString } from '../Types/Types'
 import { AsymmetricItemAdditionalData } from '../../Types/EncryptionAdditionalData'
 import { V004AsymmetricStringComponents } from './V004AlgorithmTypes'
-import { AsymmetricEncryptUseCase } from './UseCase/Asymmetric/AsymmetricEncrypt'
+import { AsymmetricEncrypt004 } from './UseCase/Asymmetric/AsymmetricEncrypt'
 import { ParseConsistentBase64JsonPayloadUseCase } from './UseCase/Utils/ParseConsistentBase64JsonPayload'
-import { AsymmetricDecryptUseCase } from './UseCase/Asymmetric/AsymmetricDecrypt'
+import { AsymmetricDecrypt004 } from './UseCase/Asymmetric/AsymmetricDecrypt'
 import { GenerateDecryptedParametersUseCase } from './UseCase/Symmetric/GenerateDecryptedParameters'
 import { GenerateEncryptedParametersUseCase } from './UseCase/Symmetric/GenerateEncryptedParameters'
 import { DeriveRootKeyUseCase } from './UseCase/RootKey/DeriveRootKey'
@@ -41,14 +42,15 @@ import { CreateRootKeyUseCase } from './UseCase/RootKey/CreateRootKey'
 import { UuidGenerator } from '@standardnotes/utils'
 import { CreateKeySystemItemsKeyUseCase } from './UseCase/KeySystem/CreateKeySystemItemsKey'
 import { AsymmetricDecryptResult } from '../Types/AsymmetricDecryptResult'
-import { PublicKeySet } from '../Types/PublicKeySet'
 import { CreateRandomKeySystemRootKey } from './UseCase/KeySystem/CreateRandomKeySystemRootKey'
 import { CreateUserInputKeySystemRootKey } from './UseCase/KeySystem/CreateUserInputKeySystemRootKey'
 import { AsymmetricSignatureVerificationDetachedResult } from '../Types/AsymmetricSignatureVerificationDetachedResult'
-import { AsymmetricSignatureVerificationDetachedUseCase } from './UseCase/Asymmetric/AsymmetricSignatureVerificationDetached'
+import { AsymmetricSignatureVerificationDetached004 } from './UseCase/Asymmetric/AsymmetricSignatureVerificationDetached'
 import { DeriveKeySystemRootKeyUseCase } from './UseCase/KeySystem/DeriveKeySystemRootKey'
 import { SyncOperatorInterface } from '../OperatorInterface/SyncOperatorInterface'
-import { ContentType } from '@standardnotes/domain-core'
+import { ContentType, Result } from '@standardnotes/domain-core'
+import { AsymmetricStringGetAdditionalData004 } from './UseCase/Asymmetric/AsymmetricStringGetAdditionalData'
+import { AsymmetricDecryptOwnMessage004 } from './UseCase/Asymmetric/AsymmetricDecryptOwnMessage'
 
 export class SNProtocolOperator004 implements OperatorInterface, SyncOperatorInterface {
   constructor(protected readonly crypto: PureCryptoInterface) {}
@@ -167,7 +169,7 @@ export class SNProtocolOperator004 implements OperatorInterface, SyncOperatorInt
     senderSigningKeyPair: PkcKeyPair
     recipientPublicKey: HexString
   }): AsymmetricallyEncryptedString {
-    const usecase = new AsymmetricEncryptUseCase(this.crypto)
+    const usecase = new AsymmetricEncrypt004(this.crypto)
     return usecase.execute(dto)
   }
 
@@ -175,18 +177,34 @@ export class SNProtocolOperator004 implements OperatorInterface, SyncOperatorInt
     stringToDecrypt: AsymmetricallyEncryptedString
     recipientSecretKey: HexString
   }): AsymmetricDecryptResult | null {
-    const usecase = new AsymmetricDecryptUseCase(this.crypto)
+    const usecase = new AsymmetricDecrypt004(this.crypto)
+    return usecase.execute(dto)
+  }
+
+  asymmetricDecryptOwnMessage(dto: {
+    message: AsymmetricallyEncryptedString
+    ownPrivateKey: HexString
+    recipientPublicKey: HexString
+  }): Result<AsymmetricDecryptResult> {
+    const usecase = new AsymmetricDecryptOwnMessage004(this.crypto)
     return usecase.execute(dto)
   }
 
   asymmetricSignatureVerifyDetached(
     encryptedString: AsymmetricallyEncryptedString,
   ): AsymmetricSignatureVerificationDetachedResult {
-    const usecase = new AsymmetricSignatureVerificationDetachedUseCase(this.crypto)
+    const usecase = new AsymmetricSignatureVerificationDetached004(this.crypto)
     return usecase.execute({ encryptedString })
   }
 
-  getSenderPublicKeySetFromAsymmetricallyEncryptedString(string: AsymmetricallyEncryptedString): PublicKeySet {
+  asymmetricStringGetAdditionalData(dto: {
+    encryptedString: AsymmetricallyEncryptedString
+  }): Result<AsymmetricItemAdditionalData> {
+    const usecase = new AsymmetricStringGetAdditionalData004(this.crypto)
+    return usecase.execute(dto)
+  }
+
+  getSenderPublicKeySetFromAsymmetricallyEncryptedString(string: AsymmetricallyEncryptedString): PortablePublicKeySet {
     const [_, __, ___, additionalDataString] = <V004AsymmetricStringComponents>string.split(':')
     const parseBase64Usecase = new ParseConsistentBase64JsonPayloadUseCase(this.crypto)
     const additionalData = parseBase64Usecase.execute<AsymmetricItemAdditionalData>(additionalDataString)

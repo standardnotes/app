@@ -44,7 +44,7 @@ export class PurchaseFlowController extends AbstractViewController {
   openPurchaseWebpage = () => {
     loadPurchaseFlowUrl(this.application).catch((err) => {
       console.error(err)
-      this.application.alertService.alert(err).catch(console.error)
+      this.application.alerts.alert(err).catch(console.error)
     })
   }
 
@@ -54,12 +54,12 @@ export class PurchaseFlowController extends AbstractViewController {
     log(LoggingDomain.Purchasing, 'BeginIosIapPurchaseFlow result', result)
 
     if (!result) {
-      void this.application.alertService.alert('Your purchase was canceled or failed. Please try again.')
+      void this.application.alerts.alert('Your purchase was canceled or failed. Please try again.')
       return
     }
 
     const showGenericError = () => {
-      void this.application.alertService.alert(
+      void this.application.alerts.alert(
         'There was an error confirming your purchase. Please contact support at help@standardnotes.com.',
       )
     }

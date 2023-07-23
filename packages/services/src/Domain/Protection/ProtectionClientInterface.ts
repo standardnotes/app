@@ -1,9 +1,10 @@
 import { DecryptedItem, DecryptedItemInterface, FileItem, SNNote } from '@standardnotes/models'
-import { ChallengeReason } from '../Challenge'
+import { ChallengeInterface, ChallengeReason } from '../Challenge'
 import { MobileUnlockTiming } from './MobileUnlockTiming'
 import { TimingDisplayOption } from './TimingDisplayOption'
 
 export interface ProtectionsClientInterface {
+  createLaunchChallenge(): ChallengeInterface | undefined
   authorizeProtectedActionForItems<T extends DecryptedItem>(files: T[], challengeReason: ChallengeReason): Promise<T[]>
   authorizeItemAccess(item: DecryptedItem): Promise<boolean>
   getMobileBiometricsTiming(): MobileUnlockTiming | undefined
@@ -17,6 +18,7 @@ export interface ProtectionsClientInterface {
   hasBiometricsEnabled(): boolean
   enableBiometrics(): boolean
   disableBiometrics(): Promise<boolean>
+
   authorizeAction(
     reason: ChallengeReason,
     dto: { fallBackToAccountPassword: boolean; requireAccountPassword: boolean; forcePrompt: boolean },
@@ -25,6 +27,12 @@ export interface ProtectionsClientInterface {
   authorizeRemovingPasscode(): Promise<boolean>
   authorizeChangingPasscode(): Promise<boolean>
   authorizeFileImport(): Promise<boolean>
+  authorizeSessionRevoking(): Promise<boolean>
+  authorizeAutolockIntervalChange(): Promise<boolean>
+  authorizeSearchingProtectedNotesText(): Promise<boolean>
+  authorizeBackupCreation(): Promise<boolean>
+  authorizeMfaDisable(): Promise<boolean>
+
   protectItems<I extends DecryptedItemInterface>(items: I[]): Promise<I[]>
   unprotectItems<I extends DecryptedItemInterface>(items: I[], reason: ChallengeReason): Promise<I[] | undefined>
   protectNote(note: SNNote): Promise<SNNote>
@@ -33,4 +41,9 @@ export interface ProtectionsClientInterface {
   unprotectNotes(notes: SNNote[]): Promise<SNNote[]>
   protectFile(file: FileItem): Promise<FileItem>
   unprotectFile(file: FileItem): Promise<FileItem | undefined>
+
+  hasProtectionSources(): boolean
+  hasUnprotectedAccessSession(): boolean
+  getSessionExpiryDate(): Date
+  clearSession(): Promise<void>
 }

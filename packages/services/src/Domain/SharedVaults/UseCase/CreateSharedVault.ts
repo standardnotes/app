@@ -1,4 +1,3 @@
-import { SyncServiceInterface } from './../../Sync/SyncServiceInterface'
 import {
   KeySystemRootKeyStorageMode,
   SharedVaultListingInterface,
@@ -6,22 +5,19 @@ import {
   VaultListingMutator,
 } from '@standardnotes/models'
 import { ClientDisplayableError, isErrorResponse } from '@standardnotes/responses'
-import { EncryptionProviderInterface } from '@standardnotes/encryption'
 import { SharedVaultServerInterface } from '@standardnotes/api'
 import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
-import { CreateVaultUseCase } from '../../Vaults/UseCase/CreateVault'
-import { MoveItemsToVaultUseCase } from '../../Vaults/UseCase/MoveItemsToVault'
-import { FilesClientInterface } from '@standardnotes/files'
+import { CreateVault } from '../../Vaults/UseCase/CreateVault'
+import { MoveItemsToVault } from '../../Vaults/UseCase/MoveItemsToVault'
 import { MutatorClientInterface } from '../../Mutator/MutatorClientInterface'
 
-export class CreateSharedVaultUseCase {
+export class CreateSharedVault {
   constructor(
-    private encryption: EncryptionProviderInterface,
     private items: ItemManagerInterface,
     private mutator: MutatorClientInterface,
-    private sync: SyncServiceInterface,
-    private files: FilesClientInterface,
     private sharedVaultServer: SharedVaultServerInterface,
+    private createVault: CreateVault,
+    private moveItemsToVault: MoveItemsToVault,
   ) {}
 
   async execute(dto: {
@@ -30,8 +26,7 @@ export class CreateSharedVaultUseCase {
     userInputtedPassword: string | undefined
     storagePreference: KeySystemRootKeyStorageMode
   }): Promise<SharedVaultListingInterface | ClientDisplayableError> {
-    const usecase = new CreateVaultUseCase(this.mutator, this.encryption, this.sync)
-    const privateVault = await usecase.execute({
+    const privateVault = await this.createVault.execute({
       vaultName: dto.vaultName,
       vaultDescription: dto.vaultDescription,
       userInputtedPassword: dto.userInputtedPassword,
@@ -56,8 +51,8 @@ export class CreateSharedVaultUseCase {
     )
 
     const vaultItems = this.items.itemsBelongingToKeySystem(sharedVaultListing.systemIdentifier)
-    const moveToVaultUsecase = new MoveItemsToVaultUseCase(this.mutator, this.sync, this.files)
-    await moveToVaultUsecase.execute({ vault: sharedVaultListing, items: vaultItems })
+
+    await this.moveItemsToVault.execute({ vault: sharedVaultListing, items: vaultItems })
 
     return sharedVaultListing as SharedVaultListingInterface
   }

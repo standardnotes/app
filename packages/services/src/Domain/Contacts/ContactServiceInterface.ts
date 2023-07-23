@@ -1,11 +1,7 @@
-import {
-  DecryptedItemInterface,
-  TrustedContactContentSpecialized,
-  TrustedContactInterface,
-} from '@standardnotes/models'
+import { DecryptedItemInterface, TrustedContactInterface } from '@standardnotes/models'
 import { AbstractService } from '../Service/AbstractService'
 import { SharedVaultInviteServerHash, SharedVaultUserServerHash } from '@standardnotes/responses'
-import { ValidateItemSignerResult } from './UseCase/ValidateItemSignerResult'
+import { ItemSignatureValidationResult } from './UseCase/Types/ItemSignatureValidationResult'
 
 export enum ContactServiceEvent {}
 
@@ -26,7 +22,6 @@ export interface ContactServiceInterface extends AbstractService<ContactServiceE
     publicKey: string
     signingPublicKey: string
   }): Promise<TrustedContactInterface | undefined>
-  createOrUpdateTrustedContactFromContactShare(data: TrustedContactContentSpecialized): Promise<TrustedContactInterface>
   editTrustedContactFromCollaborationID(
     contact: TrustedContactInterface,
     params: { name: string; collaborationID: string },
@@ -39,5 +34,5 @@ export interface ContactServiceInterface extends AbstractService<ContactServiceE
   findTrustedContactForServerUser(user: SharedVaultUserServerHash): TrustedContactInterface | undefined
   findTrustedContactForInvite(invite: SharedVaultInviteServerHash): TrustedContactInterface | undefined
 
-  isItemAuthenticallySigned(item: DecryptedItemInterface): ValidateItemSignerResult
+  isItemAuthenticallySigned(item: DecryptedItemInterface): ItemSignatureValidationResult
 }

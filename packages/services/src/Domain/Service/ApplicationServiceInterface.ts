@@ -1,4 +1,3 @@
-import { ApplicationStage } from '../Application/ApplicationStage'
 import { ServiceDiagnostics } from '../Diagnostics/ServiceDiagnostics'
 import { EventObserver } from '../Event/EventObserver'
 
@@ -7,6 +6,5 @@ export interface ApplicationServiceInterface<E, D> extends ServiceDiagnostics {
   addEventObserver(observer: EventObserver<E, D>): () => void
   blockDeinit(): Promise<void>
   deinit(): void
-  handleApplicationStage(stage: ApplicationStage): Promise<void>
   log(message: string, ...args: unknown[]): void
 }

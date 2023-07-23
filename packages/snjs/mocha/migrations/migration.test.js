@@ -15,39 +15,39 @@ describe('migrations', () => {
 
   it('version number is stored as string', async function () {
     const application = await Factory.createInitAppWithFakeCrypto()
-    const version = await application.migrationService.getStoredSnjsVersion()
+    const version = await application.migrations.getStoredSnjsVersion()
     expect(typeof version).to.equal('string')
     await Factory.safeDeinit(application)
   })
 
   it('should return correct required migrations if stored version is 1.0.0', async function () {
-    expect((await SNMigrationService.getRequiredMigrations('1.0.0')).length).to.equal(allMigrationsLength)
+    expect((await MigrationService.getRequiredMigrations('1.0.0')).length).to.equal(allMigrationsLength)
   })
 
   it('should return correct required migrations if stored version is 2.0.0', async function () {
-    expect((await SNMigrationService.getRequiredMigrations('2.0.0')).length).to.equal(allMigrationsLength)
+    expect((await MigrationService.getRequiredMigrations('2.0.0')).length).to.equal(allMigrationsLength)
   })
 
   it('should return 0 required migrations if stored version is futuristic', async function () {
-    expect((await SNMigrationService.getRequiredMigrations('100.0.1')).length).to.equal(0)
+    expect((await MigrationService.getRequiredMigrations('100.0.1')).length).to.equal(0)
   })
 
   it('after running base migration with no present storage values, should set version to current', async function () {
     const application = await Factory.createAppWithRandNamespace()
-    await application.migrationService.runBaseMigrationPreRun()
-    expect(await application.migrationService.getStoredSnjsVersion()).to.equal(SnjsVersion)
+    await application.migrations.runBaseMigrationPreRun()
+    expect(await application.migrations.getStoredSnjsVersion()).to.equal(SnjsVersion)
     await Factory.safeDeinit(application)
   })
 
   it('after running all migrations from a 2.0.0 installation, should set stored version to current', async function () {
     const application = await Factory.createAppWithRandNamespace()
     /** Set up 2.0.0 structure with tell-tale storage key */
-    await application.deviceInterface.setRawStorageValue('last_migration_timestamp', JSON.stringify(['anything']))
+    await application.device.setRawStorageValue('last_migration_timestamp', JSON.stringify(['anything']))
     await application.prepareForLaunch({
       receiveChallenge: () => {},
     })
     await application.launch(true)
-    expect(await application.migrationService.getStoredSnjsVersion()).to.equal(SnjsVersion)
+    expect(await application.migrations.getStoredSnjsVersion()).to.equal(SnjsVersion)
     await Factory.safeDeinit(application)
   })
 
@@ -72,18 +72,18 @@ describe('migrations', () => {
     await application.sync.sync()
 
     expect(application.items.getItems('SF|MFA').length).to.equal(1)
-    expect(
-      (await application.diskStorageService.getAllRawPayloads()).filter((p) => p.content_type === 'SF|MFA').length,
-    ).to.equal(1)
+    expect((await application.storage.getAllRawPayloads()).filter((p) => p.content_type === 'SF|MFA').length).to.equal(
+      1,
+    )
 
     /** Run migration */
-    const migration = new Migration2_20_0(application.migrationService.services)
+    const migration = new Migration2_20_0(application.migrations.services)
     await migration.handleStage(ApplicationStage.LoadedDatabase_12)
 
     expect(application.items.getItems('SF|MFA').length).to.equal(0)
-    expect(
-      (await application.diskStorageService.getAllRawPayloads()).filter((p) => p.content_type === 'SF|MFA').length,
-    ).to.equal(0)
+    expect((await application.storage.getAllRawPayloads()).filter((p) => p.content_type === 'SF|MFA').length).to.equal(
+      0,
+    )
 
     await Factory.safeDeinit(application)
   })
@@ -113,7 +113,7 @@ describe('migrations', () => {
     expect(application.items.getItems(ContentType.TYPES.Theme).length).to.equal(1)
 
     /** Run migration */
-    const migration = new Migration2_42_0(application.migrationService.services)
+    const migration = new Migration2_42_0(application.migrations.services)
     await migration.handleStage(ApplicationStage.FullSyncCompleted_13)
     await application.sync.sync()
 
@@ -156,7 +156,7 @@ describe('migrations', () => {
       expect(application.items.getItems(ContentType.TYPES.Component).length).to.equal(1)
 
       /** Run migration */
-      const migration = new Migration2_202_1(application.migrationService.services)
+      const migration = new Migration2_202_1(application.migrations.services)
       await migration.handleStage(ApplicationStage.FullSyncCompleted_13)
       await application.sync.sync()
 
@@ -181,7 +181,7 @@ describe('migrations', () => {
       expect(application.items.getItems(ContentType.TYPES.Component).length).to.equal(1)
 
       /** Run migration */
-      const migration = new Migration2_202_1(application.migrationService.services)
+      const migration = new Migration2_202_1(application.migrations.services)
       await migration.handleStage(ApplicationStage.FullSyncCompleted_13)
       await application.sync.sync()
 

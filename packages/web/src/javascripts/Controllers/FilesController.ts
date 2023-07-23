@@ -326,7 +326,7 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
 
   alertIfFileExceedsSizeLimit = (file: File): boolean => {
     if (!this.shouldUseStreamingReader && this.maxFileSize && file.size >= this.maxFileSize) {
-      this.application.alertService
+      this.application.alerts
         .alert(
           `This file exceeds the limits supported in this browser. To upload files greater than ${
             this.maxFileSize / BYTES_IN_ONE_MEGABYTE

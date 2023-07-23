@@ -63,15 +63,15 @@ describe('shared vaults', function () {
     await promise
 
     expect(contactContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })).to.be.undefined
-    expect(contactContext.encryption.keys.getPrimaryKeySystemRootKey(sharedVault.systemIdentifier)).to.be.undefined
-    expect(contactContext.encryption.keys.getKeySystemItemsKeys(sharedVault.systemIdentifier)).to.be.empty
+    expect(contactContext.keys.getPrimaryKeySystemRootKey(sharedVault.systemIdentifier)).to.be.undefined
+    expect(contactContext.keys.getKeySystemItemsKeys(sharedVault.systemIdentifier)).to.be.empty
 
     const recreatedContext = await Factory.createAppContextWithRealCrypto(contactContext.identifier)
     await recreatedContext.launch()
 
     expect(recreatedContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })).to.be.undefined
-    expect(recreatedContext.encryption.keys.getPrimaryKeySystemRootKey(sharedVault.systemIdentifier)).to.be.undefined
-    expect(recreatedContext.encryption.keys.getKeySystemItemsKeys(sharedVault.systemIdentifier)).to.be.empty
+    expect(recreatedContext.keys.getPrimaryKeySystemRootKey(sharedVault.systemIdentifier)).to.be.undefined
+    expect(recreatedContext.keys.getKeySystemItemsKeys(sharedVault.systemIdentifier)).to.be.empty
 
     await deinitContactContext()
     await recreatedContext.deinit()
@@ -90,15 +90,15 @@ describe('shared vaults', function () {
     await promise
 
     expect(contactContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })).to.be.undefined
-    expect(contactContext.encryption.keys.getPrimaryKeySystemRootKey(sharedVault.systemIdentifier)).to.be.undefined
-    expect(contactContext.encryption.keys.getKeySystemItemsKeys(sharedVault.systemIdentifier)).to.be.empty
+    expect(contactContext.keys.getPrimaryKeySystemRootKey(sharedVault.systemIdentifier)).to.be.undefined
+    expect(contactContext.keys.getKeySystemItemsKeys(sharedVault.systemIdentifier)).to.be.empty
 
     const recreatedContext = await Factory.createAppContextWithRealCrypto(contactContext.identifier)
     await recreatedContext.launch()
 
     expect(recreatedContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })).to.be.undefined
-    expect(recreatedContext.encryption.keys.getPrimaryKeySystemRootKey(sharedVault.systemIdentifier)).to.be.undefined
-    expect(recreatedContext.encryption.keys.getKeySystemItemsKeys(sharedVault.systemIdentifier)).to.be.empty
+    expect(recreatedContext.keys.getPrimaryKeySystemRootKey(sharedVault.systemIdentifier)).to.be.undefined
+    expect(recreatedContext.keys.getKeySystemItemsKeys(sharedVault.systemIdentifier)).to.be.empty
 
     await deinitContactContext()
     await recreatedContext.deinit()

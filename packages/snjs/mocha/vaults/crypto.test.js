@@ -50,9 +50,10 @@ describe('shared vault crypto', function () {
         await Collaboration.createSharedVaultWithAcceptedInviteAndNote(context)
 
       await contactContext.changeNoteTitleAndSync(note, 'new title')
+
       await context.sync()
 
-      const rawPayloads = await context.application.diskStorageService.getAllRawPayloads()
+      const rawPayloads = await context.application.storage.getAllRawPayloads()
       const noteRawPayload = rawPayloads.find((payload) => payload.uuid === note.uuid)
 
       expect(noteRawPayload.signatureData).to.not.be.undefined
@@ -166,11 +167,13 @@ describe('shared vault crypto', function () {
       const { note, contactContext, deinitContactContext } =
         await Collaboration.createSharedVaultWithAcceptedInviteAndNote(context)
 
-      expect(context.contacts.isItemAuthenticallySigned(note)).to.equal('not-applicable')
+      expect(context.contacts.isItemAuthenticallySigned(note)).to.equal(ItemSignatureValidationResult.NotApplicable)
 
       const contactNote = contactContext.items.findItem(note.uuid)
 
-      expect(contactContext.contacts.isItemAuthenticallySigned(contactNote)).to.equal('yes')
+      expect(contactContext.contacts.isItemAuthenticallySigned(contactNote)).to.equal(
+        ItemSignatureValidationResult.Trusted,
+      )
 
       await contactContext.changeNoteTitleAndSync(contactNote, 'new title')
 
@@ -178,27 +181,9 @@ describe('shared vault crypto', function () {
 
       let updatedNote = context.items.findItem(note.uuid)
 
-      expect(context.contacts.isItemAuthenticallySigned(updatedNote)).to.equal('yes')
+      expect(context.contacts.isItemAuthenticallySigned(updatedNote)).to.equal(ItemSignatureValidationResult.Trusted)
 
       await deinitContactContext()
-    })
-  })
-
-  describe('keypair revocation', () => {
-    it('should be able to revoke non-current keypair', async () => {
-      console.error('TODO')
-    })
-
-    it('revoking a keypair should send a keypair revocation event to trusted contacts', async () => {
-      console.error('TODO')
-    })
-
-    it('should not be able to revoke current key pair', async () => {
-      console.error('TODO')
-    })
-
-    it('should distrust revoked keypair as contact', async () => {
-      console.error('TODO')
     })
   })
 })

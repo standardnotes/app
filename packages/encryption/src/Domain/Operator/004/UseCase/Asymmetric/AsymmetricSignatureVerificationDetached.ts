@@ -5,7 +5,7 @@ import { ParseConsistentBase64JsonPayloadUseCase } from '../Utils/ParseConsisten
 import { AsymmetricItemAdditionalData } from '../../../../Types/EncryptionAdditionalData'
 import { AsymmetricSignatureVerificationDetachedResult } from '../../../Types/AsymmetricSignatureVerificationDetachedResult'
 
-export class AsymmetricSignatureVerificationDetachedUseCase {
+export class AsymmetricSignatureVerificationDetached004 {
   private parseBase64Usecase = new ParseConsistentBase64JsonPayloadUseCase(this.crypto)
 
   constructor(private readonly crypto: PureCryptoInterface) {}

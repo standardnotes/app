@@ -2,7 +2,7 @@ import { ServerSyncPushContextualPayload } from '@standardnotes/models'
 import { arrayByDifference, nonSecureRandomIdentifier, subtractFromArray } from '@standardnotes/utils'
 import { ServerSyncResponse } from '@Lib/Services/Sync/Account/Response'
 import { ResponseSignalReceiver, SyncSignal } from '@Lib/Services/Sync/Signals'
-import { SNApiService } from '../../Api/ApiService'
+import { LegacyApiService } from '../../Api/ApiService'
 
 export const SyncUpDownLimit = 150
 
@@ -23,7 +23,7 @@ export class AccountSyncOperation {
   constructor(
     public readonly payloads: ServerSyncPushContextualPayload[],
     private receiver: ResponseSignalReceiver<ServerSyncResponse>,
-    private apiService: SNApiService,
+    private apiService: LegacyApiService,
     public readonly options: {
       syncToken?: string
       paginationToken?: string

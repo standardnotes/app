@@ -60,7 +60,7 @@ export const SuperNoteImporter: FunctionComponent<Props> = ({ note, application,
   }, [isSeamlessConvert, confirmConvert])
 
   const convertAsIs = useCallback(async () => {
-    const confirmed = await application.alertService.confirm(
+    const confirmed = await application.alerts.confirm(
       spaceSeparatedStrings(
         "This option is useful if you switched this note's type from Super to another plaintext-based format, and want to return to Super.",
         'To use this option, the preview in the convert window should display a language format known as JSON.',

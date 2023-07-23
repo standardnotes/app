@@ -243,7 +243,7 @@ export class NotesController extends AbstractViewController implements NotesCont
   async deleteNotes(permanently: boolean): Promise<boolean> {
     if (this.getSelectedNotesList().some((note) => note.locked)) {
       const text = StringUtils.deleteLockedNotesAttempt(this.selectedNotesCount)
-      this.application.alertService.alert(text).catch(console.error)
+      this.application.alerts.alert(text).catch(console.error)
       return false
     }
 
@@ -313,7 +313,7 @@ export class NotesController extends AbstractViewController implements NotesCont
 
   async setArchiveSelectedNotes(archived: boolean): Promise<void> {
     if (this.getSelectedNotesList().some((note) => note.locked)) {
-      this.application.alertService
+      this.application.alerts
         .alert(StringUtils.archiveLockedNotesAttempt(archived, this.selectedNotesCount))
         .catch(console.error)
       return

@@ -34,7 +34,7 @@ const Listed = ({ application }: Props) => {
     const requestAccount = async () => {
       const account = await application.listed.requestNewListedAccount()
       if (account) {
-        const openSettings = await application.alertService.confirm(
+        const openSettings = await application.alerts.confirm(
           'Your new Listed blog has been successfully created!' +
             ' You can publish a new post to your blog from Standard Notes via the' +
             ' <i>Actions</i> menu in the editor pane. Open your blog settings to begin setting it up.',
@@ -47,7 +47,7 @@ const Listed = ({ application }: Props) => {
         if (openSettings) {
           const info = await application.listed.getListedAccountInfo(account)
           if (info) {
-            application.deviceInterface.openUrl(info?.settings_url)
+            application.device.openUrl(info?.settings_url)
           }
         }
       }

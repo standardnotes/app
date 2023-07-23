@@ -24,7 +24,7 @@ const InvitationsList = ({ subscriptionState, application }: Props) => {
 
   const handleCancel = async (invitationUuid: string) => {
     if (lockContinue) {
-      application.alertService.alert('Cancelation already in progress.').catch(console.error)
+      application.alerts.alert('Cancelation already in progress.').catch(console.error)
 
       return
     }
@@ -36,7 +36,7 @@ const InvitationsList = ({ subscriptionState, application }: Props) => {
     setLockContinue(false)
 
     if (!success) {
-      application.alertService
+      application.alerts
         .alert('Could not cancel invitation. Please try again or contact support if the issue persists.')
         .catch(console.error)
     }

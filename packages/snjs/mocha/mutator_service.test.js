@@ -155,7 +155,7 @@ describe('mutator service', function () {
     const sandbox = sinon.createSandbox()
 
     beforeEach(async function () {
-      this.emitPayloads = sandbox.spy(application.items.payloadManager, 'emitPayloads')
+      this.emitPayloads = sandbox.spy(application.payloads, 'emitPayloads')
     })
 
     afterEach(async function () {

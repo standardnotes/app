@@ -1,3 +1,7 @@
+import { InternalEventInterface } from './../Internal/InternalEventInterface'
+import { ApplicationStageChangedEventPayload } from './../Event/ApplicationStageChangedEventPayload'
+import { ApplicationEvent } from './../Event/ApplicationEvent'
+import { InternalEventHandlerInterface } from './../Internal/InternalEventHandlerInterface'
 import { Result } from '@standardnotes/domain-core'
 
 import { ApplicationStage } from '../Application/ApplicationStage'
@@ -10,7 +14,10 @@ import { HomeServerServiceInterface } from './HomeServerServiceInterface'
 import { HomeServerEnvironmentConfiguration } from './HomeServerEnvironmentConfiguration'
 import { HomeServerStatus } from './HomeServerStatus'
 
-export class HomeServerService extends AbstractService implements HomeServerServiceInterface {
+export class HomeServerService
+  extends AbstractService
+  implements HomeServerServiceInterface, InternalEventHandlerInterface
+{
   private readonly HOME_SERVER_DATA_DIRECTORY_NAME = '.homeserver'
 
   constructor(
@@ -20,24 +27,26 @@ export class HomeServerService extends AbstractService implements HomeServerServ
     super(internalEventBus)
   }
 
+  async handleEvent(event: InternalEventInterface): Promise<void> {
+    if (event.type === ApplicationEvent.ApplicationStageChanged) {
+      const stage = (event.payload as ApplicationStageChangedEventPayload).stage
+
+      switch (stage) {
+        case ApplicationStage.StorageDecrypted_09: {
+          await this.setHomeServerDataLocationOnDevice()
+          break
+        }
+        case ApplicationStage.Launched_10: {
+          await this.startHomeServerIfItIsEnabled()
+          break
+        }
+      }
+    }
+  }
+
   override deinit() {
     ;(this.desktopDevice as unknown) = undefined
     super.deinit()
-  }
-
-  override async handleApplicationStage(stage: ApplicationStage) {
-    await super.handleApplicationStage(stage)
-
-    switch (stage) {
-      case ApplicationStage.StorageDecrypted_09: {
-        await this.setHomeServerDataLocationOnDevice()
-        break
-      }
-      case ApplicationStage.Launched_10: {
-        await this.startHomeServerIfItIsEnabled()
-        break
-      }
-    }
   }
 
   async getHomeServerStatus(): Promise<HomeServerStatus> {

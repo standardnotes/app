@@ -24,7 +24,7 @@ const Privacy: FunctionComponent<Props> = ({ application }: Props) => {
       await application.settings.updateSetting(settingName, payload, false)
       return true
     } catch (e) {
-      application.alertService.alert(STRING_FAILED_TO_UPDATE_USER_SETTING).catch(console.error)
+      application.alerts.alert(STRING_FAILED_TO_UPDATE_USER_SETTING).catch(console.error)
       return false
     }
   }

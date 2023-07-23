@@ -1,64 +1,49 @@
 import { MutatorClientInterface } from './../Mutator/MutatorClientInterface'
-import { ApplicationStage } from './../Application/ApplicationStage'
-import { SingletonManagerInterface } from './../Singleton/SingletonManagerInterface'
 import { UserKeyPairChangedEventData } from './../Session/UserKeyPairChangedEventData'
 import { SessionEvent } from './../Session/SessionEvent'
 import { InternalEventInterface } from './../Internal/InternalEventInterface'
 import { InternalEventHandlerInterface } from './../Internal/InternalEventHandlerInterface'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { SharedVaultInviteServerHash, SharedVaultUserServerHash } from '@standardnotes/responses'
-import {
-  TrustedContactContent,
-  TrustedContactContentSpecialized,
-  TrustedContactInterface,
-  FillItemContent,
-  TrustedContactMutator,
-  DecryptedItemInterface,
-} from '@standardnotes/models'
+import { TrustedContactInterface, TrustedContactMutator, DecryptedItemInterface } from '@standardnotes/models'
 import { AbstractService } from '../Service/AbstractService'
 import { SyncServiceInterface } from '../Sync/SyncServiceInterface'
-import { ItemManagerInterface } from '../Item/ItemManagerInterface'
 import { SessionsClientInterface } from '../Session/SessionsClientInterface'
 import { ContactServiceEvent, ContactServiceInterface } from '../Contacts/ContactServiceInterface'
 import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
 import { UserClientInterface } from '../User/UserClientInterface'
 import { CollaborationIDData, Version1CollaborationId } from './CollaborationID'
-import { EncryptionProviderInterface } from '@standardnotes/encryption'
-import { ValidateItemSignerUseCase } from './UseCase/ValidateItemSigner'
-import { ValidateItemSignerResult } from './UseCase/ValidateItemSignerResult'
-import { FindTrustedContactUseCase } from './UseCase/FindTrustedContact'
-import { SelfContactManager } from './Managers/SelfContactManager'
-import { CreateOrEditTrustedContactUseCase } from './UseCase/CreateOrEditTrustedContact'
-import { UpdateTrustedContactUseCase } from './UseCase/UpdateTrustedContact'
-import { ContentType } from '@standardnotes/domain-core'
+import { ValidateItemSigner } from './UseCase/ValidateItemSigner'
+import { ItemSignatureValidationResult } from './UseCase/Types/ItemSignatureValidationResult'
+import { FindContact } from './UseCase/FindContact'
+import { SelfContactManager } from './SelfContactManager'
+import { CreateOrEditContact } from './UseCase/CreateOrEditContact'
+import { EditContact } from './UseCase/EditContact'
+import { GetAllContacts } from './UseCase/GetAllContacts'
+import { EncryptionProviderInterface } from '../Encryption/EncryptionProviderInterface'
 
 export class ContactService
   extends AbstractService<ContactServiceEvent>
   implements ContactServiceInterface, InternalEventHandlerInterface
 {
-  private selfContactManager: SelfContactManager
-
   constructor(
     private sync: SyncServiceInterface,
-    private items: ItemManagerInterface,
     private mutator: MutatorClientInterface,
     private session: SessionsClientInterface,
     private crypto: PureCryptoInterface,
     private user: UserClientInterface,
+    private selfContactManager: SelfContactManager,
     private encryption: EncryptionProviderInterface,
-    singletons: SingletonManagerInterface,
+    private _findContact: FindContact,
+    private _getAllContacts: GetAllContacts,
+    private _createOrEditContact: CreateOrEditContact,
+    private _editContact: EditContact,
+    private _validateItemSigner: ValidateItemSigner,
     eventBus: InternalEventBusInterface,
   ) {
     super(eventBus)
 
-    this.selfContactManager = new SelfContactManager(sync, items, mutator, session, singletons)
-
     eventBus.addEventHandler(this, SessionEvent.UserKeyPairChanged)
-  }
-
-  public override async handleApplicationStage(stage: ApplicationStage): Promise<void> {
-    await super.handleApplicationStage(stage)
-    await this.selfContactManager.handleApplicationStage(stage)
   }
 
   async handleEvent(event: InternalEventInterface): Promise<void> {
@@ -66,14 +51,10 @@ export class ContactService
       const data = event.payload as UserKeyPairChangedEventData
 
       await this.selfContactManager.updateWithNewPublicKeySet({
-        encryption: data.newKeyPair.publicKey,
-        signing: data.newSigningKeyPair.publicKey,
+        encryption: data.current.encryption.publicKey,
+        signing: data.current.signing.publicKey,
       })
     }
-  }
-
-  private get userUuid(): string {
-    return this.session.getSureUser().uuid
   }
 
   getSelfContact(): TrustedContactInterface | undefined {
@@ -170,36 +151,9 @@ export class ContactService
     contact: TrustedContactInterface,
     params: { name: string; publicKey: string; signingPublicKey: string },
   ): Promise<TrustedContactInterface> {
-    const usecase = new UpdateTrustedContactUseCase(this.mutator, this.sync)
-    const updatedContact = await usecase.execute(contact, params)
+    const updatedContact = await this._editContact.execute(contact, params)
 
     return updatedContact
-  }
-
-  async createOrUpdateTrustedContactFromContactShare(
-    data: TrustedContactContentSpecialized,
-  ): Promise<TrustedContactInterface> {
-    if (data.contactUuid === this.userUuid) {
-      throw new Error('Cannot receive self from contact share')
-    }
-
-    let contact = this.findTrustedContact(data.contactUuid)
-    if (contact) {
-      contact = await this.mutator.changeItem<TrustedContactMutator, TrustedContactInterface>(contact, (mutator) => {
-        mutator.name = data.name
-        mutator.replacePublicKeySet(data.publicKeySet)
-      })
-    } else {
-      contact = await this.mutator.createItem<TrustedContactInterface>(
-        ContentType.TYPES.TrustedContact,
-        FillItemContent<TrustedContactContent>(data),
-        true,
-      )
-    }
-
-    await this.sync.sync()
-
-    return contact
   }
 
   async createOrEditTrustedContact(params: {
@@ -209,8 +163,7 @@ export class ContactService
     signingPublicKey: string
     isMe?: boolean
   }): Promise<TrustedContactInterface | undefined> {
-    const usecase = new CreateOrEditTrustedContactUseCase(this.items, this.mutator, this.sync)
-    const contact = await usecase.execute(params)
+    const contact = await this._createOrEditContact.execute(params)
     return contact
   }
 
@@ -224,12 +177,15 @@ export class ContactService
   }
 
   getAllContacts(): TrustedContactInterface[] {
-    return this.items.getItems(ContentType.TYPES.TrustedContact)
+    return this._getAllContacts.execute().getValue()
   }
 
   findTrustedContact(userUuid: string): TrustedContactInterface | undefined {
-    const usecase = new FindTrustedContactUseCase(this.items)
-    return usecase.execute({ userUuid })
+    const result = this._findContact.execute({ userUuid })
+    if (result.isFailed()) {
+      return undefined
+    }
+    return result.getValue()
   }
 
   findTrustedContactForServerUser(user: SharedVaultUserServerHash): TrustedContactInterface | undefined {
@@ -249,16 +205,23 @@ export class ContactService
     })
   }
 
-  isItemAuthenticallySigned(item: DecryptedItemInterface): ValidateItemSignerResult {
-    const usecase = new ValidateItemSignerUseCase(this.items)
-    return usecase.execute(item)
+  isItemAuthenticallySigned(item: DecryptedItemInterface): ItemSignatureValidationResult {
+    return this._validateItemSigner.execute(item)
   }
 
   override deinit(): void {
     super.deinit()
-    this.selfContactManager.deinit()
     ;(this.sync as unknown) = undefined
-    ;(this.items as unknown) = undefined
+    ;(this.mutator as unknown) = undefined
+    ;(this.session as unknown) = undefined
+    ;(this.crypto as unknown) = undefined
+    ;(this.user as unknown) = undefined
     ;(this.selfContactManager as unknown) = undefined
+    ;(this.encryption as unknown) = undefined
+    ;(this._findContact as unknown) = undefined
+    ;(this._getAllContacts as unknown) = undefined
+    ;(this._createOrEditContact as unknown) = undefined
+    ;(this._editContact as unknown) = undefined
+    ;(this._validateItemSigner as unknown) = undefined
   }
 }

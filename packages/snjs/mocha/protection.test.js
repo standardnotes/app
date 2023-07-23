@@ -287,8 +287,8 @@ describe('protections', function () {
 
   it('handles session length', async function () {
     application = await Factory.createInitAppWithFakeCrypto()
-    await application.protectionService.setSessionLength(300)
-    const length = await application.protectionService.getLastSessionLength()
+    await application.protections.setSessionLength(300)
+    const length = await application.protections.getLastSessionLength()
     expect(length).to.equal(300)
     const expirey = await application.getProtectionSessionExpiryDate()
     expect(expirey).to.be.ok
@@ -296,8 +296,8 @@ describe('protections', function () {
 
   it('handles session length', async function () {
     application = await Factory.createInitAppWithFakeCrypto()
-    await application.protectionService.setSessionLength(UnprotectedAccessSecondsDuration.OneMinute)
-    const length = await application.protectionService.getLastSessionLength()
+    await application.protections.setSessionLength(UnprotectedAccessSecondsDuration.OneMinute)
+    const length = await application.protections.getLastSessionLength()
     expect(length).to.equal(UnprotectedAccessSecondsDuration.OneMinute)
     const expirey = await application.getProtectionSessionExpiryDate()
     expect(expirey).to.be.ok
@@ -388,7 +388,7 @@ describe('protections', function () {
     it('should return true when session length has been set', async function () {
       application = await Factory.createInitAppWithFakeCrypto()
       await application.addPasscode('passcode')
-      await application.protectionService.setSessionLength(UnprotectedAccessSecondsDuration.OneMinute)
+      await application.protections.setSessionLength(UnprotectedAccessSecondsDuration.OneMinute)
       expect(application.hasUnprotectedAccessSession()).to.be.true
     })
 

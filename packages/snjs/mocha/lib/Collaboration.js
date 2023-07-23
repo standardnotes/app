@@ -15,7 +15,7 @@ export const createTrustedContactForUserOfContext = async (
   contextAddingNewContact,
   contextImportingContactInfoFrom,
 ) => {
-  const contact = await contextAddingNewContact.application.contactService.createOrEditTrustedContact({
+  const contact = await contextAddingNewContact.contacts.createOrEditTrustedContact({
     name: 'John Doe',
     publicKey: contextImportingContactInfoFrom.publicKey,
     signingPublicKey: contextImportingContactInfoFrom.signingPublicKey,
@@ -27,6 +27,10 @@ export const createTrustedContactForUserOfContext = async (
 
 export const acceptAllInvites = async (context) => {
   const inviteRecords = context.sharedVaults.getCachedPendingInviteRecords()
+  if (inviteRecords.length === 0) {
+    throw new Error('No pending invites to accept')
+  }
+
   for (const record of inviteRecords) {
     await context.sharedVaults.acceptPendingSharedVaultInvite(record)
   }
@@ -72,7 +76,7 @@ export const createSharedVaultWithUnacceptedButTrustedInvite = async (
   const contact = await createTrustedContactForUserOfContext(context, contactContext)
   await createTrustedContactForUserOfContext(contactContext, context)
 
-  const invite = await context.sharedVaults.inviteContactToSharedVault(sharedVault, contact, permissions)
+  const invite = (await context.sharedVaults.inviteContactToSharedVault(sharedVault, contact, permissions)).getValue()
   await contactContext.sync()
 
   return { sharedVault, contact, contactContext, deinitContactContext, invite }
@@ -87,7 +91,7 @@ export const createSharedVaultWithUnacceptedAndUntrustedInvite = async (
   const { contactContext, deinitContactContext } = await createContactContext()
   const contact = await createTrustedContactForUserOfContext(context, contactContext)
 
-  const invite = await context.sharedVaults.inviteContactToSharedVault(sharedVault, contact, permissions)
+  const invite = (await context.sharedVaults.inviteContactToSharedVault(sharedVault, contact, permissions)).getValue()
   await contactContext.sync()
 
   return { sharedVault, contact, contactContext, deinitContactContext, invite }

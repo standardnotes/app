@@ -5,6 +5,7 @@ import { FeatureStatus } from './FeatureStatus'
 import { SetOfflineFeaturesFunctionResponse } from './SetOfflineFeaturesFunctionResponse'
 
 export interface FeaturesClientInterface {
+  initializeFromDisk(): void
   getFeatureStatus(featureId: FeatureIdentifier, options?: { inContextOfItem?: DecryptedItemInterface }): FeatureStatus
   hasMinimumRole(role: string): boolean
 

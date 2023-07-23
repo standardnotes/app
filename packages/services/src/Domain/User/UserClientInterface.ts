@@ -1,15 +1,21 @@
 import { Base64String } from '@standardnotes/sncrypto-common'
-import { UserRequestType } from '@standardnotes/common'
+import { KeyParamsOrigination, UserRequestType } from '@standardnotes/common'
 import { DeinitSource } from '../Application/DeinitSource'
 import { UserRegistrationResponseBody } from '@standardnotes/api'
 import { HttpResponse, SignInResponse } from '@standardnotes/responses'
 import { AbstractService } from '../Service/AbstractService'
 import { AccountEventData } from './AccountEventData'
 import { AccountEvent } from './AccountEvent'
+import { CredentialsChangeFunctionResponse } from './CredentialsChangeFunctionResponse'
 
 export interface UserClientInterface extends AbstractService<AccountEvent, AccountEventData> {
   getUserUuid(): string
   isSignedIn(): boolean
+
+  addPasscode(passcode: string): Promise<boolean>
+  removePasscode(): Promise<boolean>
+  changePasscode(newPasscode: string, origination?: KeyParamsOrigination): Promise<boolean>
+
   register(
     email: string,
     password: string,
@@ -28,10 +34,24 @@ export interface UserClientInterface extends AbstractService<AccountEvent, Accou
     error: boolean
     message?: string
   }>
+  changeCredentials(parameters: {
+    currentPassword: string
+    origination: KeyParamsOrigination
+    validateNewPasswordStrength: boolean
+    newEmail?: string
+    newPassword?: string
+    passcode?: string
+  }): Promise<CredentialsChangeFunctionResponse>
+
   signOut(force?: boolean, source?: DeinitSource): Promise<void>
   submitUserRequest(requestType: UserRequestType): Promise<boolean>
   populateSessionFromDemoShareToken(token: Base64String): Promise<void>
   updateAccountWithFirstTimeKeyPair(): Promise<{
+    success?: true
+    canceled?: true
+    error?: { message: string }
+  }>
+  performProtocolUpgrade(): Promise<{
     success?: true
     canceled?: true
     error?: { message: string }

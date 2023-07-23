@@ -1,7 +1,7 @@
 import { SNUserPrefs, PrefKey, PrefValue, UserPrefsMutator, ItemContent, FillItemContent } from '@standardnotes/models'
 import { ItemManager } from '../Items/ItemManager'
-import { SNSingletonManager } from '../Singleton/SingletonManager'
-import { SNSyncService } from '../Sync/SyncService'
+import { SingletonManager } from '../Singleton/SingletonManager'
+import { SyncService } from '../Sync/SyncService'
 import {
   AbstractService,
   InternalEventBusInterface,
@@ -10,12 +10,16 @@ import {
   PreferenceServiceInterface,
   PreferencesServiceEvent,
   MutatorClientInterface,
+  InternalEventHandlerInterface,
+  InternalEventInterface,
+  ApplicationEvent,
+  ApplicationStageChangedEventPayload,
 } from '@standardnotes/services'
 import { ContentType } from '@standardnotes/domain-core'
 
 export class SNPreferencesService
   extends AbstractService<PreferencesServiceEvent>
-  implements PreferenceServiceInterface
+  implements PreferenceServiceInterface, InternalEventHandlerInterface
 {
   private shouldReload = true
   private reloading = false
@@ -24,10 +28,10 @@ export class SNPreferencesService
   private removeSyncObserver?: () => void
 
   constructor(
-    private singletons: SNSingletonManager,
+    private singletons: SingletonManager,
     items: ItemManager,
     private mutator: MutatorClientInterface,
-    private sync: SNSyncService,
+    private sync: SyncService,
     protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)
@@ -52,18 +56,19 @@ export class SNPreferencesService
     super.deinit()
   }
 
-  public override async handleApplicationStage(stage: ApplicationStage): Promise<void> {
-    await super.handleApplicationStage(stage)
+  async handleEvent(event: InternalEventInterface): Promise<void> {
+    if (event.type === ApplicationEvent.ApplicationStageChanged) {
+      const stage = (event.payload as ApplicationStageChangedEventPayload).stage
+      if (stage === ApplicationStage.LoadedDatabase_12) {
+        /** Try to read preferences singleton from storage */
+        this.preferences = this.singletons.findSingleton<SNUserPrefs>(
+          ContentType.TYPES.UserPrefs,
+          SNUserPrefs.singletonPredicate,
+        )
 
-    if (stage === ApplicationStage.LoadedDatabase_12) {
-      /** Try to read preferences singleton from storage */
-      this.preferences = this.singletons.findSingleton<SNUserPrefs>(
-        ContentType.TYPES.UserPrefs,
-        SNUserPrefs.singletonPredicate,
-      )
-
-      if (this.preferences) {
-        void this.notifyEvent(PreferencesServiceEvent.PreferencesChanged)
+        if (this.preferences) {
+          void this.notifyEvent(PreferencesServiceEvent.PreferencesChanged)
+        }
       }
     }
   }

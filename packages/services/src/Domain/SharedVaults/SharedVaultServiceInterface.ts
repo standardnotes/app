@@ -14,6 +14,7 @@ import {
 import { AbstractService } from '../Service/AbstractService'
 import { SharedVaultServiceEvent, SharedVaultServiceEventPayload } from './SharedVaultServiceEvent'
 import { PendingSharedVaultInviteRecord } from './PendingSharedVaultInviteRecord'
+import { Result } from '@standardnotes/domain-core'
 
 export interface SharedVaultServiceInterface
   extends AbstractService<SharedVaultServiceEvent, SharedVaultServiceEventPayload> {
@@ -31,7 +32,7 @@ export interface SharedVaultServiceInterface
     sharedVault: SharedVaultListingInterface,
     contact: TrustedContactInterface,
     permissions: SharedVaultPermission,
-  ): Promise<SharedVaultInviteServerHash | ClientDisplayableError>
+  ): Promise<Result<SharedVaultInviteServerHash>>
   removeUserFromSharedVault(
     sharedVault: SharedVaultListingInterface,
     userUuid: string,

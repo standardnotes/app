@@ -329,7 +329,7 @@ class Footer extends AbstractComponent<Props, State> {
     this.setState({
       newUpdateAvailable: false,
     })
-    this.application.alertService.alert(STRING_NEW_UPDATE_READY).catch(console.error)
+    this.application.alerts.alert(STRING_NEW_UPDATE_READY).catch(console.error)
   }
 
   betaMessageClickHandler = () => {

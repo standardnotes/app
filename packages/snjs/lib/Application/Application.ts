@@ -1,43 +1,53 @@
+import { SNMfaService } from './../Services/Mfa/MfaService'
+import { KeyRecoveryService } from './../Services/KeyRecovery/KeyRecoveryService'
+import { WebSocketsService } from './../Services/Api/WebsocketsService'
+import { MigrationService } from './../Services/Migration/MigrationService'
+import { LegacyApiService } from './../Services/Api/ApiService'
+import { FeaturesService } from '@Lib/Services/Features/FeaturesService'
+import { SNPreferencesService } from './../Services/Preferences/PreferencesService'
+import { SNProtectionService } from './../Services/Protection/ProtectionService'
+import { SessionManager } from './../Services/Session/SessionManager'
+import { HttpService, HttpServiceInterface, UserRegistrationResponseBody } from '@standardnotes/api'
+import { ApplicationIdentifier, compareVersions, ProtocolVersion, KeyParamsOrigination } from '@standardnotes/common'
 import {
-  AuthApiService,
-  AuthenticatorApiService,
-  AuthenticatorServer,
-  AuthServer,
-  HttpService,
-  HttpServiceInterface,
-  RevisionApiService,
-  RevisionServer,
-  SubscriptionApiService,
-  SubscriptionApiServiceInterface,
-  SubscriptionServer,
-  SubscriptionServerInterface,
-  UserApiService,
-  UserApiServiceInterface,
-  UserRegistrationResponseBody,
-  UserRequestServer,
-  UserRequestServerInterface,
-  UserServer,
-  UserServerInterface,
-  WebSocketApiService,
-  WebSocketApiServiceInterface,
-  WebSocketServer,
-  WebSocketServerInterface,
-} from '@standardnotes/api'
-import * as Common from '@standardnotes/common'
-import * as ExternalServices from '@standardnotes/services'
-import * as Models from '@standardnotes/models'
-import * as Responses from '@standardnotes/responses'
-import * as InternalServices from '../Services'
-import * as Utils from '@standardnotes/utils'
-import { UuidString, ApplicationEventPayload } from '../Types'
-import { applicationEventForSyncEvent } from '@Lib/Application/Event'
-import {
+  DeinitCallback,
+  SessionEvent,
+  SyncEvent,
+  ApplicationStage,
+  FeaturesEvent,
+  SyncMode,
+  SyncSource,
+  ApplicationStageChangedEventPayload,
+  StorageValueModes,
+  ChallengeObserver,
+  SyncOptions,
+  ImportDataReturnType,
+  ImportDataUseCase,
+  StoragePersistencePolicies,
+  HomeServerServiceInterface,
+  ApiServiceEvent,
+  IntegrityEvent,
+  DeviceInterface,
+  SubscriptionManagerInterface,
+  FeaturesClientInterface,
+  ItemManagerInterface,
+  SyncServiceInterface,
+  UserClientInterface,
+  MutatorClientInterface,
+  StatusServiceInterface,
+  AlertService,
+  StorageServiceInterface,
+  ChallengeServiceInterface,
+  AsymmetricMessageServiceInterface,
+  VaultServiceInterface,
+  ContactServiceInterface,
+  SharedVaultServiceInterface,
+  PreferenceServiceInterface,
+  InternalEventBusInterface,
   ApplicationEvent,
   ApplicationEventCallback,
   ChallengeValidation,
   ComponentManagerInterface,
-  DiagnosticInfo,
-  isDesktopDevice,
   ChallengeValue,
   StorageKey,
   ChallengeReason,
@@ -47,10 +57,6 @@ import {
   ApplicationInterface,
   EncryptionService,
   EncryptionServiceEvent,
-  FilesBackupService,
-  FileService,
-  SubscriptionManagerInterface,
-  SubscriptionManager,
   ChallengePrompt,
   Challenge,
   ErrorAlertStrings,
@@ -61,40 +67,58 @@ import {
   CredentialsChangeFunctionResponse,
   SessionStrings,
   AccountEvent,
-  AuthenticatorClientInterface,
-  AuthenticatorManager,
-  AuthClientInterface,
-  AuthManager,
-  RevisionClientInterface,
-  RevisionManager,
-  ApiServiceEvent,
+  PayloadManagerInterface,
+  HistoryServiceInterface,
+  InternalEventPublishStrategy,
+  EncryptionProviderInterface,
 } from '@standardnotes/services'
 import {
-  BackupServiceInterface,
-  DirectoryManagerInterface,
-  FileBackupsDevice,
-  FilesClientInterface,
-} from '@standardnotes/files'
-import { ComputePrivateUsername } from '@standardnotes/encryption'
-import { useBoolean } from '@standardnotes/utils'
-import {
+  PayloadEmitSource,
+  SNNote,
+  PrefKey,
+  PrefValue,
+  DecryptedItemMutator,
   BackupFile,
   DecryptedItemInterface,
   EncryptedItemInterface,
   Environment,
   ItemStream,
   Platform,
+  MutationType,
 } from '@standardnotes/models'
-import { ClientDisplayableError, SessionListEntry } from '@standardnotes/responses'
-
-import { SnjsVersion } from './../Version'
+import {
+  HttpResponse,
+  SessionListResponse,
+  User,
+  SignInResponse,
+  ClientDisplayableError,
+  SessionListEntry,
+} from '@standardnotes/responses'
+import {
+  SyncService,
+  ProtectionEvent,
+  SettingsService,
+  ActionsService,
+  ChallengeResponse,
+  ListedClientInterface,
+  DiskStorageService,
+} from '../Services'
+import {
+  nonSecureRandomIdentifier,
+  assertUnreachable,
+  removeFromArray,
+  isNullOrUndefined,
+  sleep,
+  UuidGenerator,
+  useBoolean,
+} from '@standardnotes/utils'
+import { UuidString, ApplicationEventPayload } from '../Types'
+import { applicationEventForSyncEvent } from '@Lib/Application/Event'
+import { BackupServiceInterface, FilesClientInterface } from '@standardnotes/files'
+import { ComputePrivateUsername } from '@standardnotes/encryption'
 import { SNLog } from '../Log'
-import { ChallengeResponse, ListedClientInterface } from '../Services'
 import { ApplicationConstructorOptions, FullyResolvedApplicationOptions } from './Options/ApplicationOptions'
 import { ApplicationOptionsDefaults } from './Options/Defaults'
-import { LegacySession, MapperInterface, Session } from '@standardnotes/domain-core'
-import { SessionStorageMapper } from '@Lib/Services/Mapping/SessionStorageMapper'
-import { LegacySessionStorageMapper } from '@Lib/Services/Mapping/LegacySessionStorageMapper'
 import { SignInWithRecoveryCodes } from '@Lib/Domain/UseCase/SignInWithRecoveryCodes/SignInWithRecoveryCodes'
 import { UseCaseContainerInterface } from '@Lib/Domain/UseCase/UseCaseContainerInterface'
 import { GetRecoveryCodes } from '@Lib/Domain/UseCase/GetRecoveryCodes/GetRecoveryCodes'
@@ -106,6 +130,9 @@ import { GetRevision } from '@Lib/Domain/UseCase/GetRevision/GetRevision'
 import { DeleteRevision } from '@Lib/Domain/UseCase/DeleteRevision/DeleteRevision'
 import { GetAuthenticatorAuthenticationResponse } from '@Lib/Domain/UseCase/GetAuthenticatorAuthenticationResponse/GetAuthenticatorAuthenticationResponse'
 import { GetAuthenticatorAuthenticationOptions } from '@Lib/Domain/UseCase/GetAuthenticatorAuthenticationOptions/GetAuthenticatorAuthenticationOptions'
+import { Dependencies } from './Dependencies/Dependencies'
+import { TYPES } from './Dependencies/Types'
+import { canBlockDeinit } from './Dependencies/isDeinitable'
 
 /** How often to automatically sync, in milliseconds */
 const DEFAULT_AUTO_SYNC_INTERVAL = 30_000
@@ -122,90 +149,17 @@ type ApplicationObserver = {
 type ObserverRemover = () => void
 
 export class SNApplication implements ApplicationInterface, AppGroupManagedApplication, UseCaseContainerInterface {
-  onDeinit!: ExternalServices.DeinitCallback
+  onDeinit!: DeinitCallback
 
   /**
    * A runtime based identifier for each dynamic instantiation of the application instance.
    * This differs from the persistent application.identifier which persists in storage
    * across instantiations.
    */
-  public readonly ephemeralIdentifier = Utils.nonSecureRandomIdentifier()
-
-  private migrationService!: InternalServices.SNMigrationService
-  /**
-   * @deprecated will be fully replaced by @standardnotes/api::HttpService
-   */
-  private deprecatedHttpService!: InternalServices.DeprecatedHttpService
-  private declare httpService: HttpServiceInterface
-  public payloadManager!: InternalServices.PayloadManager
-  public encryptionService!: EncryptionService
-  private diskStorageService!: InternalServices.DiskStorageService
-  private inMemoryStore!: ExternalServices.KeyValueStoreInterface<string>
-  /**
-   * @deprecated will be fully replaced by @standardnotes/api services
-   */
-  public apiService!: InternalServices.SNApiService
-  private declare userApiService: UserApiServiceInterface
-  private declare userServer: UserServerInterface
-  private declare userRequestServer: UserRequestServerInterface
-  private declare subscriptionApiService: SubscriptionApiServiceInterface
-  private declare subscriptionServer: SubscriptionServerInterface
-  private declare subscriptionManager: SubscriptionManagerInterface
-  private declare webSocketApiService: WebSocketApiServiceInterface
-  private declare webSocketServer: WebSocketServerInterface
-
-  private sessionManager!: InternalServices.SNSessionManager
-  private syncService!: InternalServices.SNSyncService
-  public challengeService!: InternalServices.ChallengeService
-  public singletonManager!: InternalServices.SNSingletonManager
-  public componentManagerService!: InternalServices.SNComponentManager
-  public protectionService!: InternalServices.SNProtectionService
-  public actionsManager!: InternalServices.SNActionsService
-  public historyManager!: InternalServices.SNHistoryManager
-  private itemManager!: InternalServices.ItemManager
-  private keyRecoveryService!: InternalServices.SNKeyRecoveryService
-  private preferencesService!: InternalServices.SNPreferencesService
-  private featuresService!: InternalServices.SNFeaturesService
-  private userService!: UserService
-  private webSocketsService!: InternalServices.SNWebSocketsService
-  private settingsService!: InternalServices.SNSettingsService
-  private mfaService!: InternalServices.SNMfaService
-  private listedService!: InternalServices.ListedService
-  private fileService!: FileService
-  private mutatorService!: InternalServices.MutatorService
-  private integrityService!: ExternalServices.IntegrityService
-  private statusService!: ExternalServices.StatusService
-  private filesBackupService?: FilesBackupService
-  private vaultService!: ExternalServices.VaultServiceInterface
-  private contactService!: ExternalServices.ContactServiceInterface
-  private sharedVaultService!: ExternalServices.SharedVaultServiceInterface
-  private userEventService!: ExternalServices.UserEventService
-  private asymmetricMessageService!: ExternalServices.AsymmetricMessageService
-  private keySystemKeyManager!: ExternalServices.KeySystemKeyManager
-
-  private declare sessionStorageMapper: MapperInterface<Session, Record<string, unknown>>
-  private declare legacySessionStorageMapper: MapperInterface<LegacySession, Record<string, unknown>>
-  private declare authenticatorManager: AuthenticatorClientInterface
-  private declare authManager: AuthClientInterface
-  private declare revisionManager: RevisionClientInterface
-  private homeServerService?: ExternalServices.HomeServerService
-
-  private declare _signInWithRecoveryCodes: SignInWithRecoveryCodes
-  private declare _getRecoveryCodes: GetRecoveryCodes
-  private declare _addAuthenticator: AddAuthenticator
-  private declare _listAuthenticators: ListAuthenticators
-  private declare _deleteAuthenticator: DeleteAuthenticator
-  private declare _getAuthenticatorAuthenticationOptions: GetAuthenticatorAuthenticationOptions
-  private declare _getAuthenticatorAuthenticationResponse: GetAuthenticatorAuthenticationResponse
-  private declare _listRevisions: ListRevisions
-  private declare _getRevision: GetRevision
-  private declare _deleteRevision: DeleteRevision
-
-  public internalEventBus!: ExternalServices.InternalEventBusInterface
+  public readonly ephemeralIdentifier = nonSecureRandomIdentifier()
 
   private eventHandlers: ApplicationObserver[] = []
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private services: ExternalServices.ApplicationServiceInterface<any, any>[] = []
+
   private streamRemovers: ObserverRemover[] = []
   private serviceObservers: ObserverRemover[] = []
   private managedSubscribers: ObserverRemover[] = []
@@ -225,10 +179,11 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
 
   public readonly environment: Environment
   public readonly platform: Platform
-  public deviceInterface: ExternalServices.DeviceInterface
-  public alertService: ExternalServices.AlertService
-  public readonly identifier: Common.ApplicationIdentifier
+
+  public readonly identifier: ApplicationIdentifier
   public readonly options: FullyResolvedApplicationOptions
+
+  private dependencies: Dependencies
 
   constructor(options: ApplicationConstructorOptions) {
     const allOptions: FullyResolvedApplicationOptions = {
@@ -262,152 +217,141 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
 
     this.environment = options.environment
     this.platform = options.platform
-    this.deviceInterface = options.deviceInterface
-    this.alertService = options.alertService
+
     this.identifier = options.identifier
     this.options = Object.freeze(allOptions)
 
-    this.constructInternalEventBus()
+    this.dependencies = new Dependencies(this.options)
 
-    this.constructServices()
-
+    this.registerServiceObservers()
     this.defineInternalEventHandlers()
+    this.createBackgroundDependencies()
   }
 
-  get subscriptions(): ExternalServices.SubscriptionManagerInterface {
-    return this.subscriptionManager
-  }
+  private registerServiceObservers() {
+    const encryptionService = this.dependencies.get<EncryptionService>(TYPES.EncryptionService)
+    this.serviceObservers.push(
+      encryptionService.addEventObserver(async (event) => {
+        if (event === EncryptionServiceEvent.RootKeyStatusChanged) {
+          await this.notifyEvent(ApplicationEvent.KeyStatusChanged)
+        }
+      }),
+    )
 
-  get signInWithRecoveryCodes(): SignInWithRecoveryCodes {
-    return this._signInWithRecoveryCodes
-  }
+    this.dependencies.get<DiskStorageService>(TYPES.DiskStorageService).provideEncryptionProvider(encryptionService)
 
-  get getRecoveryCodes(): GetRecoveryCodes {
-    return this._getRecoveryCodes
-  }
+    const apiService = this.dependencies.get<LegacyApiService>(TYPES.LegacyApiService)
+    this.dependencies
+      .get<HttpService>(TYPES.HttpService)
+      .setCallbacks(apiService.processMetaObject.bind(apiService), apiService.setSession.bind(apiService))
 
-  get addAuthenticator(): AddAuthenticator {
-    return this._addAuthenticator
-  }
+    this.serviceObservers.push(
+      this.dependencies.get<SessionManager>(TYPES.SessionManager).addEventObserver(async (event) => {
+        switch (event) {
+          case SessionEvent.Restored: {
+            void (async () => {
+              await this.sync.sync({ sourceDescription: 'Session restored pre key creation' })
+              if (encryptionService.needsNewRootKeyBasedItemsKey()) {
+                void encryptionService.createNewDefaultItemsKey().then(() => {
+                  void this.sync.sync({ sourceDescription: 'Session restored post key creation' })
+                })
+              }
+            })()
+            break
+          }
+          case SessionEvent.Revoked: {
+            await this.handleRevokedSession()
+            break
+          }
+          case SessionEvent.UserKeyPairChanged:
+            break
+          default: {
+            assertUnreachable(event)
+          }
+        }
+      }),
+    )
 
-  get listAuthenticators(): ListAuthenticators {
-    return this._listAuthenticators
-  }
+    const syncEventCallback = async (eventName: SyncEvent) => {
+      const appEvent = applicationEventForSyncEvent(eventName)
+      if (appEvent) {
+        await encryptionService.onSyncEvent(eventName)
 
-  get deleteAuthenticator(): DeleteAuthenticator {
-    return this._deleteAuthenticator
-  }
+        await this.notifyEvent(appEvent)
 
-  get getAuthenticatorAuthenticationOptions(): GetAuthenticatorAuthenticationOptions {
-    return this._getAuthenticatorAuthenticationOptions
-  }
+        if (appEvent === ApplicationEvent.CompletedFullSync) {
+          if (!this.handledFullSyncStage) {
+            this.handledFullSyncStage = true
+            await this.handleStage(ApplicationStage.FullSyncCompleted_13)
+          }
+        }
+      }
+    }
+    const syncService = this.dependencies.get<SyncService>(TYPES.SyncService)
+    const uninstall = syncService.addEventObserver(syncEventCallback)
+    this.serviceObservers.push(uninstall)
 
-  get getAuthenticatorAuthenticationResponse(): GetAuthenticatorAuthenticationResponse {
-    return this._getAuthenticatorAuthenticationResponse
-  }
+    const protectionService = this.dependencies.get<SNProtectionService>(TYPES.ProtectionService)
+    this.serviceObservers.push(
+      protectionService.addEventObserver((event) => {
+        if (event === ProtectionEvent.UnprotectedSessionBegan) {
+          void this.notifyEvent(ApplicationEvent.UnprotectedSessionBegan)
+        } else if (event === ProtectionEvent.UnprotectedSessionExpired) {
+          void this.notifyEvent(ApplicationEvent.UnprotectedSessionExpired)
+        }
+      }),
+    )
 
-  get listRevisions(): ListRevisions {
-    return this._listRevisions
-  }
+    const userService = this.dependencies.get<UserService>(TYPES.UserService)
+    this.serviceObservers.push(
+      userService.addEventObserver(async (event, data) => {
+        switch (event) {
+          case AccountEvent.SignedInOrRegistered: {
+            void this.notifyEvent(ApplicationEvent.SignedIn)
+            break
+          }
+          case AccountEvent.SignedOut: {
+            await this.notifyEvent(ApplicationEvent.SignedOut)
+            await this.prepareForDeinit()
+            this.deinit(this.getDeinitMode(), data?.payload.source || DeinitSource.SignOut)
+            break
+          }
+          default: {
+            assertUnreachable(event)
+          }
+        }
+      }),
+    )
 
-  get getRevision(): GetRevision {
-    return this._getRevision
-  }
+    const preferencesService = this.dependencies.get<SNPreferencesService>(TYPES.PreferencesService)
+    this.serviceObservers.push(
+      preferencesService.addEventObserver(() => {
+        void this.notifyEvent(ApplicationEvent.PreferencesChanged)
+      }),
+    )
 
-  get deleteRevision(): DeleteRevision {
-    return this._deleteRevision
-  }
-
-  public get files(): FilesClientInterface {
-    return this.fileService
-  }
-
-  public get features(): ExternalServices.FeaturesClientInterface {
-    return this.featuresService
-  }
-
-  public get items(): ExternalServices.ItemManagerInterface {
-    return this.itemManager
-  }
-
-  public get protections(): ProtectionsClientInterface {
-    return this.protectionService
-  }
-
-  public get sync(): InternalServices.SyncClientInterface {
-    return this.syncService
-  }
-
-  public get user(): ExternalServices.UserClientInterface {
-    return this.userService
-  }
-
-  public get settings(): InternalServices.SNSettingsService {
-    return this.settingsService
-  }
-
-  public get mutator(): ExternalServices.MutatorClientInterface {
-    return this.mutatorService
-  }
-
-  public get sessions(): SessionsClientInterface {
-    return this.sessionManager
-  }
-
-  public get status(): ExternalServices.StatusServiceInterface {
-    return this.statusService
-  }
-
-  public get fileBackups(): BackupServiceInterface | undefined {
-    return this.filesBackupService
-  }
-
-  public get componentManager(): ComponentManagerInterface {
-    return this.componentManagerService
-  }
-
-  public get listed(): ListedClientInterface {
-    return this.listedService
-  }
-
-  public get alerts(): ExternalServices.AlertService {
-    return this.alertService
-  }
-
-  public get storage(): ExternalServices.StorageServiceInterface {
-    return this.diskStorageService
-  }
-
-  public get actions(): InternalServices.SNActionsService {
-    return this.actionsManager
-  }
-
-  public get challenges(): ExternalServices.ChallengeServiceInterface {
-    return this.challengeService
-  }
-
-  public get asymmetric(): ExternalServices.AsymmetricMessageServiceInterface {
-    return this.asymmetricMessageService
-  }
-
-  get homeServer(): ExternalServices.HomeServerServiceInterface | undefined {
-    return this.homeServerService
-  }
-
-  public get vaults(): ExternalServices.VaultServiceInterface {
-    return this.vaultService
-  }
-
-  public get contacts(): ExternalServices.ContactServiceInterface {
-    return this.contactService
-  }
-
-  public get sharedVaults(): ExternalServices.SharedVaultServiceInterface {
-    return this.sharedVaultService
-  }
-
-  public get preferences(): ExternalServices.PreferenceServiceInterface {
-    return this.preferencesService
+    const featuresService = this.dependencies.get<FeaturesService>(TYPES.FeaturesService)
+    this.serviceObservers.push(
+      featuresService.addEventObserver((event) => {
+        switch (event) {
+          case FeaturesEvent.UserRolesChanged: {
+            void this.notifyEvent(ApplicationEvent.UserRolesChanged)
+            break
+          }
+          case FeaturesEvent.FeaturesAvailabilityChanged: {
+            void this.notifyEvent(ApplicationEvent.FeaturesAvailabilityChanged)
+            break
+          }
+          case FeaturesEvent.DidPurchaseSubscription: {
+            void this.notifyEvent(ApplicationEvent.DidPurchaseSubscription)
+            break
+          }
+          default: {
+            assertUnreachable(event)
+          }
+        }
+      }),
+    )
   }
 
   public computePrivateUsername(username: string): Promise<string | undefined> {
@@ -427,31 +371,31 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
 
     this.setLaunchCallback(callback)
 
-    const databaseResult = await this.deviceInterface.openDatabase(this.identifier).catch((error) => {
+    const databaseResult = await this.device.openDatabase(this.identifier).catch((error) => {
       void this.notifyEvent(ApplicationEvent.LocalDatabaseReadError, error)
       return undefined
     })
 
     this.createdNewDatabase = useBoolean(databaseResult?.isNewDatabase, false)
 
-    await this.migrationService.initialize()
+    await this.migrations.initialize()
 
     await this.notifyEvent(ApplicationEvent.MigrationsLoaded)
-    await this.handleStage(ExternalServices.ApplicationStage.PreparingForLaunch_0)
+    await this.handleStage(ApplicationStage.PreparingForLaunch_0)
 
-    await this.diskStorageService.initializeFromDisk()
+    await this.storage.initializeFromDisk()
     await this.notifyEvent(ApplicationEvent.StorageReady)
 
-    await this.encryptionService.initialize()
+    await this.encryption.initialize()
 
-    await this.handleStage(ExternalServices.ApplicationStage.ReadyForLaunch_05)
+    await this.handleStage(ApplicationStage.ReadyForLaunch_05)
 
     this.started = true
     await this.notifyEvent(ApplicationEvent.Started)
   }
 
   private setLaunchCallback(callback: LaunchCallback) {
-    this.challengeService.sendChallenge = callback.receiveChallenge
+    this.challenges.sendChallenge = callback.receiveChallenge
   }
 
   /**
@@ -470,61 +414,58 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
 
     const launchChallenge = this.getLaunchChallenge()
     if (launchChallenge) {
-      const response = await this.challengeService.promptForChallengeResponse(launchChallenge)
+      const response = await this.challenges.promptForChallengeResponse(launchChallenge)
       if (!response) {
         throw Error('Launch challenge was cancelled.')
       }
       await this.handleLaunchChallengeResponse(response)
     }
 
-    if (this.diskStorageService.isStorageWrapped()) {
+    if (this.storage.isStorageWrapped()) {
       try {
-        await this.diskStorageService.decryptStorage()
+        await this.storage.decryptStorage()
       } catch (_error) {
-        void this.alertService.alert(
-          ErrorAlertStrings.StorageDecryptErrorBody,
-          ErrorAlertStrings.StorageDecryptErrorTitle,
-        )
+        void this.alerts.alert(ErrorAlertStrings.StorageDecryptErrorBody, ErrorAlertStrings.StorageDecryptErrorTitle)
       }
     }
 
-    await this.handleStage(ExternalServices.ApplicationStage.StorageDecrypted_09)
+    await this.handleStage(ApplicationStage.StorageDecrypted_09)
 
-    const host = this.apiService.loadHost()
+    const host = this.legacyApi.loadHost()
 
-    this.httpService.setHost(host)
+    this.http.setHost(host)
 
-    this.webSocketsService.loadWebSocketUrl()
+    this.sockets.loadWebSocketUrl()
 
-    await this.sessionManager.initializeFromDisk()
+    await this.sessions.initializeFromDisk()
 
-    this.settingsService.initializeFromDisk()
+    this.settings.initializeFromDisk()
 
-    this.featuresService.initializeFromDisk()
+    this.features.initializeFromDisk()
 
     this.launched = true
     await this.notifyEvent(ApplicationEvent.Launched)
-    await this.handleStage(ExternalServices.ApplicationStage.Launched_10)
+    await this.handleStage(ApplicationStage.Launched_10)
 
-    await this.handleStage(ExternalServices.ApplicationStage.LoadingDatabase_11)
+    await this.handleStage(ApplicationStage.LoadingDatabase_11)
     if (this.createdNewDatabase) {
-      await this.syncService.onNewDatabaseCreated()
+      await this.sync.onNewDatabaseCreated()
     }
     /**
      * We don't want to await this, as we want to begin allowing the app to function
      * before local data has been loaded fully.
      */
-    const loadPromise = this.syncService
+    const loadPromise = this.sync
       .loadDatabasePayloads()
       .then(async () => {
         if (this.dealloced) {
           throw 'Application has been destroyed.'
         }
-        await this.handleStage(ExternalServices.ApplicationStage.LoadedDatabase_12)
+        await this.handleStage(ApplicationStage.LoadedDatabase_12)
         this.beginAutoSyncTimer()
-        await this.syncService.sync({
-          mode: ExternalServices.SyncMode.DownloadFirst,
-          source: ExternalServices.SyncSource.External,
+        await this.sync.sync({
+          mode: SyncMode.DownloadFirst,
+          source: SyncSource.External,
           sourceDescription: 'Application Launch',
         })
       })
@@ -546,7 +487,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   }
 
   public getLaunchChallenge(): Challenge | undefined {
-    return this.protectionService.createLaunchChallenge()
+    return this.protections.createLaunchChallenge()
   }
 
   private async handleLaunchChallengeResponse(response: ChallengeResponse) {
@@ -554,28 +495,27 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       let wrappingKey = response.artifacts?.wrappingKey
       if (!wrappingKey) {
         const value = response.getValueForType(ChallengeValidation.LocalPasscode)
-        wrappingKey = await this.encryptionService.computeWrappingKey(value.value as string)
+        wrappingKey = await this.encryption.computeWrappingKey(value.value as string)
       }
-      await this.encryptionService.unwrapRootKey(wrappingKey)
+      await this.encryption.unwrapRootKey(wrappingKey)
     }
   }
 
   private beginAutoSyncTimer() {
     this.autoSyncInterval = setInterval(() => {
-      this.syncService.log('Syncing from autosync')
+      this.sync.log('Syncing from autosync')
       void this.sync.sync({ sourceDescription: 'Auto Sync' })
     }, DEFAULT_AUTO_SYNC_INTERVAL)
   }
 
-  private async handleStage(stage: ExternalServices.ApplicationStage) {
-    for (const service of this.services) {
-      await service.handleApplicationStage(stage)
-    }
-
-    this.internalEventBus.publish({
-      type: ApplicationEvent.ApplicationStageChanged,
-      payload: { stage } as ExternalServices.ApplicationStageChangedEventPayload,
-    })
+  private async handleStage(stage: ApplicationStage) {
+    await this.events.publishSync(
+      {
+        type: ApplicationEvent.ApplicationStageChanged,
+        payload: { stage } as ApplicationStageChangedEventPayload,
+      },
+      InternalEventPublishStrategy.SEQUENCE,
+    )
   }
 
   /**
@@ -585,42 +525,17 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     const observer = { callback, singleEvent }
     this.eventHandlers.push(observer)
     return () => {
-      Utils.removeFromArray(this.eventHandlers, observer)
+      removeFromArray(this.eventHandlers, observer)
     }
   }
 
   public addSingleEventObserver(event: ApplicationEvent, callback: ApplicationEventCallback): () => void {
-    // eslint-disable-next-line @typescript-eslint/require-await
     const filteredCallback = async (firedEvent: ApplicationEvent) => {
       if (firedEvent === event) {
         void callback(event)
       }
     }
     return this.addEventObserver(filteredCallback, event)
-  }
-
-  public async getDiagnostics(): Promise<DiagnosticInfo> {
-    let result: DiagnosticInfo = {
-      application: {
-        snjsVersion: SnjsVersion,
-        appVersion: this.options.appVersion,
-        environment: this.options.environment,
-        platform: this.options.platform,
-      },
-    }
-
-    for (const service of this.services) {
-      const diagnostics = await service.getDiagnostics()
-
-      if (diagnostics) {
-        result = {
-          ...result,
-          ...diagnostics,
-        }
-      }
-    }
-
-    return result
   }
 
   private async notifyEvent(event: ApplicationEvent, data?: ApplicationEventPayload) {
@@ -636,30 +551,28 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       }
     }
 
-    this.internalEventBus.publish({
+    this.events.publish({
       type: event,
       payload: data,
     })
 
-    void this.migrationService.handleApplicationEvent(event)
+    void this.migrations.handleApplicationEvent(event)
   }
 
   /**
    * Whether the local database has completed loading local items.
    */
   public isDatabaseLoaded(): boolean {
-    return this.syncService.isDatabaseLoaded()
+    return this.sync.isDatabaseLoaded()
   }
 
-  public getSessions(): Promise<Responses.HttpResponse<SessionListEntry[]>> {
-    return this.sessionManager.getSessionsList()
+  public getSessions(): Promise<HttpResponse<SessionListEntry[]>> {
+    return this.sessions.getSessionsList()
   }
 
-  public async revokeSession(
-    sessionId: UuidString,
-  ): Promise<Responses.HttpResponse<Responses.SessionListResponse> | undefined> {
-    if (await this.protectionService.authorizeSessionRevoking()) {
-      return this.sessionManager.revokeSession(sessionId)
+  public async revokeSession(sessionId: UuidString): Promise<HttpResponse<SessionListResponse> | undefined> {
+    if (await this.protections.authorizeSessionRevoking()) {
+      return this.sessions.revokeSession(sessionId)
     }
     return undefined
   }
@@ -668,15 +581,15 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
    * Revokes all sessions except the current one.
    */
   public async revokeAllOtherSessions(): Promise<void> {
-    return this.sessionManager.revokeAllOtherSessions()
+    return this.sessions.revokeAllOtherSessions()
   }
 
   public userCanManageSessions(): boolean {
     const userVersion = this.getUserVersion()
-    if (Utils.isNullOrUndefined(userVersion)) {
+    if (isNullOrUndefined(userVersion)) {
       return false
     }
-    return Common.compareVersions(userVersion, Common.ProtocolVersion.V004) >= 0
+    return compareVersions(userVersion, ProtocolVersion.V004) >= 0
   }
 
   /**
@@ -688,19 +601,19 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     contentType: string | string[],
     stream: ItemStream<I>,
   ): () => void {
-    const removeItemManagerObserver = this.itemManager.addObserver<I>(
+    const removeItemManagerObserver = this.items.addObserver<I>(
       contentType,
       ({ changed, inserted, removed, source }) => {
         stream({ changed, inserted, removed, source })
       },
     )
 
-    const matches = this.itemManager.getItems<I>(contentType)
+    const matches = this.items.getItems<I>(contentType)
     stream({
       inserted: matches,
       changed: [],
       removed: [],
-      source: Models.PayloadEmitSource.InitialObserverRegistrationPush,
+      source: PayloadEmitSource.InitialObserverRegistrationPush,
     })
 
     this.streamRemovers.push(removeItemManagerObserver)
@@ -708,7 +621,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return () => {
       removeItemManagerObserver()
 
-      Utils.removeFromArray(this.streamRemovers, removeItemManagerObserver)
+      removeFromArray(this.streamRemovers, removeItemManagerObserver)
     }
   }
 
@@ -716,45 +629,45 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
    * Set the server's URL
    */
   public async setHost(host: string): Promise<void> {
-    this.httpService.setHost(host)
+    this.http.setHost(host)
 
-    await this.apiService.setHost(host)
+    await this.legacyApi.setHost(host)
   }
 
   public getHost(): string {
-    return this.apiService.getHost()
+    return this.legacyApi.getHost()
   }
 
   public async setCustomHost(host: string): Promise<void> {
     await this.setHost(host)
 
-    this.webSocketsService.setWebSocketUrl(undefined)
+    this.sockets.setWebSocketUrl(undefined)
   }
 
-  public getUser(): Responses.User | undefined {
+  public getUser(): User | undefined {
     if (!this.launched) {
       throw Error('Attempting to access user before application unlocked')
     }
-    return this.sessionManager.getUser()
+    return this.sessions.getUser()
   }
 
   public getUserPasswordCreationDate(): Date | undefined {
-    return this.encryptionService.getPasswordCreatedDate()
+    return this.encryption.getPasswordCreatedDate()
   }
 
   public getProtocolEncryptionDisplayName(): Promise<string | undefined> {
-    return this.encryptionService.getEncryptionDisplayName()
+    return this.encryption.getEncryptionDisplayName()
   }
 
-  public getUserVersion(): Common.ProtocolVersion | undefined {
-    return this.encryptionService.getUserVersion()
+  public getUserVersion(): ProtocolVersion | undefined {
+    return this.encryption.getUserVersion()
   }
 
   /**
    * Returns true if there is an upgrade available for the account or passcode
    */
   public protocolUpgradeAvailable(): Promise<boolean> {
-    return this.encryptionService.upgradeAvailable()
+    return this.encryption.upgradeAvailable()
   }
 
   /**
@@ -771,15 +684,15 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       message: string
     }
   }> {
-    const result = await this.userService.performProtocolUpgrade()
+    const result = await this.user.performProtocolUpgrade()
     if (result.success) {
       if (this.hasAccount()) {
-        void this.alertService.alert(ProtocolUpgradeStrings.SuccessAccount)
+        void this.alerts.alert(ProtocolUpgradeStrings.SuccessAccount)
       } else {
-        void this.alertService.alert(ProtocolUpgradeStrings.SuccessPasscodeOnly)
+        void this.alerts.alert(ProtocolUpgradeStrings.SuccessPasscodeOnly)
       }
     } else if (result.error) {
-      void this.alertService.alert(ProtocolUpgradeStrings.Fail)
+      void this.alerts.alert(ProtocolUpgradeStrings.Fail)
     }
     return result
   }
@@ -789,7 +702,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   }
 
   public hasAccount(): boolean {
-    return this.encryptionService.hasAccount()
+    return this.encryption.hasAccount()
   }
 
   /**
@@ -797,11 +710,11 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
    * passcode, password, or biometrics.
    */
   public hasProtectionSources(): boolean {
-    return this.protectionService.hasProtectionSources()
+    return this.protections.hasProtectionSources()
   }
 
   public hasUnprotectedAccessSession(): boolean {
-    return this.protectionService.hasUnprotectedAccessSession()
+    return this.protections.hasUnprotectedAccessSession()
   }
 
   /**
@@ -809,82 +722,76 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
    * challenge, a session will be started during which protections are disabled.
    */
   public getProtectionSessionExpiryDate(): Date {
-    return this.protectionService.getSessionExpiryDate()
+    return this.protections.getSessionExpiryDate()
   }
 
   public clearProtectionSession(): Promise<void> {
-    return this.protectionService.clearSession()
+    return this.protections.clearSession()
   }
 
-  public async authorizeProtectedActionForNotes(
-    notes: Models.SNNote[],
-    challengeReason: ChallengeReason,
-  ): Promise<Models.SNNote[]> {
-    return await this.protectionService.authorizeProtectedActionForItems(notes, challengeReason)
+  public async authorizeProtectedActionForNotes(notes: SNNote[], challengeReason: ChallengeReason): Promise<SNNote[]> {
+    return await this.protections.authorizeProtectedActionForItems(notes, challengeReason)
   }
 
   /**
    * @returns whether note access has been granted or not
    */
-  public authorizeNoteAccess(note: Models.SNNote): Promise<boolean> {
-    return this.protectionService.authorizeItemAccess(note)
+  public authorizeNoteAccess(note: SNNote): Promise<boolean> {
+    return this.protections.authorizeItemAccess(note)
   }
 
   public authorizeAutolockIntervalChange(): Promise<boolean> {
-    return this.protectionService.authorizeAutolockIntervalChange()
+    return this.protections.authorizeAutolockIntervalChange()
   }
 
   public authorizeSearchingProtectedNotesText(): Promise<boolean> {
-    return this.protectionService.authorizeSearchingProtectedNotesText()
+    return this.protections.authorizeSearchingProtectedNotesText()
   }
 
   public async createEncryptedBackupFileForAutomatedDesktopBackups(): Promise<BackupFile | undefined> {
-    return this.encryptionService.createEncryptedBackupFile()
+    return this.encryption.createEncryptedBackupFile()
   }
 
   public async createEncryptedBackupFile(): Promise<BackupFile | undefined> {
-    if (!(await this.protectionService.authorizeBackupCreation())) {
+    if (!(await this.protections.authorizeBackupCreation())) {
       return
     }
 
-    return this.encryptionService.createEncryptedBackupFile()
+    return this.encryption.createEncryptedBackupFile()
   }
 
   public async createDecryptedBackupFile(): Promise<BackupFile | undefined> {
-    if (!(await this.protectionService.authorizeBackupCreation())) {
+    if (!(await this.protections.authorizeBackupCreation())) {
       return
     }
 
-    return this.encryptionService.createDecryptedBackupFile()
+    return this.encryption.createDecryptedBackupFile()
   }
 
   public isEphemeralSession(): boolean {
-    return this.diskStorageService.isEphemeralSession()
+    return this.storage.isEphemeralSession()
   }
 
-  public setValue(key: string, value: unknown, mode?: ExternalServices.StorageValueModes): void {
-    return this.diskStorageService.setValue(key, value, mode)
+  public setValue(key: string, value: unknown, mode?: StorageValueModes): void {
+    return this.storage.setValue(key, value, mode)
   }
 
-  public getValue<T>(key: string, mode?: ExternalServices.StorageValueModes): T {
-    return this.diskStorageService.getValue<T>(key, mode)
+  public getValue<T>(key: string, mode?: StorageValueModes): T {
+    return this.storage.getValue<T>(key, mode)
   }
 
-  public async removeValue(key: string, mode?: ExternalServices.StorageValueModes): Promise<void> {
-    return this.diskStorageService.removeValue(key, mode)
+  public async removeValue(key: string, mode?: StorageValueModes): Promise<void> {
+    return this.storage.removeValue(key, mode)
   }
 
-  public getPreference<K extends Models.PrefKey>(key: K): Models.PrefValue[K] | undefined
-  public getPreference<K extends Models.PrefKey>(key: K, defaultValue: Models.PrefValue[K]): Models.PrefValue[K]
-  public getPreference<K extends Models.PrefKey>(
-    key: K,
-    defaultValue?: Models.PrefValue[K],
-  ): Models.PrefValue[K] | undefined {
-    return this.preferencesService.getValue(key, defaultValue)
+  public getPreference<K extends PrefKey>(key: K): PrefValue[K] | undefined
+  public getPreference<K extends PrefKey>(key: K, defaultValue: PrefValue[K]): PrefValue[K]
+  public getPreference<K extends PrefKey>(key: K, defaultValue?: PrefValue[K]): PrefValue[K] | undefined {
+    return this.preferences.getValue(key, defaultValue)
   }
 
-  public async setPreference<K extends Models.PrefKey>(key: K, value: Models.PrefValue[K]): Promise<void> {
-    return this.preferencesService.setValue(key, value)
+  public async setPreference<K extends PrefKey>(key: K, value: PrefValue[K]): Promise<void> {
+    return this.preferences.setValue(key, value)
   }
 
   /**
@@ -893,28 +800,29 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
    * to finish tasks. 0 means no limit.
    */
   private async prepareForDeinit(maxWait = 0): Promise<void> {
-    const promise = Promise.all(this.services.map((service) => service.blockDeinit()))
+    const deps = this.dependencies.getAll().filter(canBlockDeinit)
+    const promise = Promise.all(deps.map((service) => service.blockDeinit()))
     if (maxWait === 0) {
       await promise
     } else {
       /** Await up to maxWait. If not resolved by then, return. */
-      await Promise.race([promise, Utils.sleep(maxWait)])
+      await Promise.race([promise, sleep(maxWait)])
     }
   }
 
-  public addChallengeObserver(challenge: Challenge, observer: ExternalServices.ChallengeObserver): () => void {
-    return this.challengeService.addChallengeObserver(challenge, observer)
+  public addChallengeObserver(challenge: Challenge, observer: ChallengeObserver): () => void {
+    return this.challenges.addChallengeObserver(challenge, observer)
   }
 
   public submitValuesForChallenge(challenge: Challenge, values: ChallengeValue[]): Promise<void> {
-    return this.challengeService.submitValuesForChallenge(challenge, values)
+    return this.challenges.submitValuesForChallenge(challenge, values)
   }
 
   public cancelChallenge(challenge: Challenge): void {
-    this.challengeService.cancelChallenge(challenge)
+    this.challenges.cancelChallenge(challenge)
   }
 
-  public setOnDeinit(onDeinit: ExternalServices.DeinitCallback): void {
+  public setOnDeinit(onDeinit: DeinitCallback): void {
     this.onDeinit = onDeinit
   }
 
@@ -935,26 +843,18 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       uninstallSubscriber()
     }
 
-    for (const service of this.services) {
-      service.deinit()
-    }
-
-    this.httpService.deinit()
-    ;(this.httpService as unknown) = undefined
-
     this.options.crypto.deinit()
     ;(this.options as unknown) = undefined
 
     this.createdNewDatabase = false
-    this.services.length = 0
+
     this.serviceObservers.length = 0
     this.managedSubscribers.length = 0
     this.streamRemovers.length = 0
 
-    this.clearInternalEventBus()
-    this.clearServices()
-
     this.started = false
+
+    this.dependencies.deinit()
 
     this.onDeinit?.(this, mode, source)
     ;(this.onDeinit as unknown) = undefined
@@ -970,7 +870,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     ephemeral = false,
     mergeLocal = true,
   ): Promise<UserRegistrationResponseBody> {
-    return this.userService.register(email, password, ephemeral, mergeLocal)
+    return this.user.register(email, password, ephemeral, mergeLocal)
   }
 
   /**
@@ -984,17 +884,17 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     ephemeral = false,
     mergeLocal = true,
     awaitSync = false,
-  ): Promise<Responses.HttpResponse<Responses.SignInResponse>> {
-    return this.userService.signIn(email, password, strict, ephemeral, mergeLocal, awaitSync)
+  ): Promise<HttpResponse<SignInResponse>> {
+    return this.user.signIn(email, password, strict, ephemeral, mergeLocal, awaitSync)
   }
 
   public async changeEmail(
     newEmail: string,
     currentPassword: string,
     passcode?: string,
-    origination = Common.KeyParamsOrigination.EmailChange,
+    origination = KeyParamsOrigination.EmailChange,
   ): Promise<CredentialsChangeFunctionResponse> {
-    return this.userService.changeCredentials({
+    return this.user.changeCredentials({
       currentPassword,
       newEmail,
       passcode,
@@ -1007,10 +907,10 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     currentPassword: string,
     newPassword: string,
     passcode?: string,
-    origination = Common.KeyParamsOrigination.PasswordChange,
+    origination = KeyParamsOrigination.PasswordChange,
     validateNewPasswordStrength = true,
   ): Promise<CredentialsChangeFunctionResponse> {
-    return this.userService.changeCredentials({
+    return this.user.changeCredentials({
       currentPassword,
       newPassword,
       passcode,
@@ -1019,50 +919,41 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     })
   }
 
-  public async changeAndSaveItem<M extends Models.DecryptedItemMutator = Models.DecryptedItemMutator>(
+  public async changeAndSaveItem<M extends DecryptedItemMutator = DecryptedItemMutator>(
     itemToLookupUuidFor: DecryptedItemInterface,
     mutate: (mutator: M) => void,
     updateTimestamps = true,
-    emitSource?: Models.PayloadEmitSource,
-    syncOptions?: ExternalServices.SyncOptions,
+    emitSource?: PayloadEmitSource,
+    syncOptions?: SyncOptions,
   ): Promise<DecryptedItemInterface | undefined> {
     await this.mutator.changeItems(
       [itemToLookupUuidFor],
       mutate,
-      updateTimestamps ? Models.MutationType.UpdateUserTimestamps : Models.MutationType.NoUpdateUserTimestamps,
+      updateTimestamps ? MutationType.UpdateUserTimestamps : MutationType.NoUpdateUserTimestamps,
       emitSource,
     )
-    await this.syncService.sync(syncOptions)
-    return this.itemManager.findItem(itemToLookupUuidFor.uuid)
+    await this.sync.sync(syncOptions)
+    return this.items.findItem(itemToLookupUuidFor.uuid)
   }
 
-  public async changeAndSaveItems<M extends Models.DecryptedItemMutator = Models.DecryptedItemMutator>(
+  public async changeAndSaveItems<M extends DecryptedItemMutator = DecryptedItemMutator>(
     itemsToLookupUuidsFor: DecryptedItemInterface[],
     mutate: (mutator: M) => void,
     updateTimestamps = true,
-    emitSource?: Models.PayloadEmitSource,
-    syncOptions?: ExternalServices.SyncOptions,
+    emitSource?: PayloadEmitSource,
+    syncOptions?: SyncOptions,
   ): Promise<void> {
     await this.mutator.changeItems(
       itemsToLookupUuidsFor,
       mutate,
-      updateTimestamps ? Models.MutationType.UpdateUserTimestamps : Models.MutationType.NoUpdateUserTimestamps,
+      updateTimestamps ? MutationType.UpdateUserTimestamps : MutationType.NoUpdateUserTimestamps,
       emitSource,
     )
-    await this.syncService.sync(syncOptions)
+    await this.sync.sync(syncOptions)
   }
 
-  public async importData(data: BackupFile, awaitSync = false): Promise<ExternalServices.ImportDataReturnType> {
-    const usecase = new ExternalServices.ImportDataUseCase(
-      this.itemManager,
-      this.syncService,
-      this.protectionService,
-      this.encryptionService,
-      this.payloadManager,
-      this.challengeService,
-      this.historyManager,
-    )
-
+  public async importData(data: BackupFile, awaitSync = false): Promise<ImportDataReturnType> {
+    const usecase = this.dependencies.get<ImportDataUseCase>(TYPES.ImportDataUseCase)
     return usecase.execute(data, awaitSync)
   }
 
@@ -1076,13 +967,13 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     }
     this.revokingSession = true
     /** Keep a reference to the soon-to-be-cleared alertService */
-    const alertService = this.alertService
+    const alertService = this.alerts
     await this.user.signOut(true)
     void alertService.alert(SessionStrings.CurrentSessionRevoked)
   }
 
   public async validateAccountPassword(password: string): Promise<boolean> {
-    const { valid } = await this.encryptionService.validateAccountPassword(password)
+    const { valid } = await this.encryption.validateAccountPassword(password)
     return valid
   }
 
@@ -1095,14 +986,14 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   }
 
   public hasPasscode(): boolean {
-    return this.encryptionService.hasPasscode()
+    return this.encryption.hasPasscode()
   }
 
   async isLocked(): Promise<boolean> {
     if (!this.started) {
       return Promise.resolve(true)
     }
-    const isPasscodeLocked = await this.challengeService.isPasscodeLocked()
+    const isPasscodeLocked = await this.challenges.isPasscodeLocked()
     return isPasscodeLocked || this.isBiometricsSoftLockEngaged
   }
 
@@ -1121,7 +1012,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       false,
     )
 
-    void this.challengeService.promptForChallengeResponse(challenge)
+    void this.challenges.promptForChallengeResponse(challenge)
 
     this.isBiometricsSoftLockEngaged = true
     void this.notifyEvent(ApplicationEvent.BiometricsSoftLockEngaged)
@@ -1148,897 +1039,324 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   }
 
   public addPasscode(passcode: string): Promise<boolean> {
-    return this.userService.addPasscode(passcode)
+    return this.user.addPasscode(passcode)
   }
 
   /**
    * @returns whether the passcode was successfuly removed
    */
   public async removePasscode(): Promise<boolean> {
-    return this.userService.removePasscode()
+    return this.user.removePasscode()
   }
 
   public async changePasscode(
     newPasscode: string,
-    origination = Common.KeyParamsOrigination.PasscodeChange,
+    origination = KeyParamsOrigination.PasscodeChange,
   ): Promise<boolean> {
-    return this.userService.changePasscode(newPasscode, origination)
+    return this.user.changePasscode(newPasscode, origination)
   }
 
   public enableEphemeralPersistencePolicy(): Promise<void> {
-    return this.diskStorageService.setPersistencePolicy(ExternalServices.StoragePersistencePolicies.Ephemeral)
+    return this.storage.setPersistencePolicy(StoragePersistencePolicies.Ephemeral)
   }
 
   public hasPendingMigrations(): Promise<boolean> {
-    return this.migrationService.hasPendingMigrations()
+    return this.migrations.hasPendingMigrations()
   }
 
   public generateUuid(): string {
-    return Utils.UuidGenerator.GenerateUuid()
+    return UuidGenerator.GenerateUuid()
   }
 
   public presentKeyRecoveryWizard(): void {
-    return this.keyRecoveryService.presentKeyRecoveryWizard()
+    const service = this.dependencies.get<KeyRecoveryService>(TYPES.KeyRecoveryService)
+    return service.presentKeyRecoveryWizard()
   }
 
   public canAttemptDecryptionOfItem(item: EncryptedItemInterface): ClientDisplayableError | true {
-    return this.keyRecoveryService.canAttemptDecryptionOfItem(item)
-  }
-
-  /**
-   * Dynamically change the device interface, i.e when Desktop wants to override
-   * default web interface.
-   */
-  public changeDeviceInterface(deviceInterface: ExternalServices.DeviceInterface): void {
-    this.deviceInterface = deviceInterface
-
-    for (const service of this.services) {
-      if ('deviceInterface' in service) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        ;(service as any)['deviceInterface'] = deviceInterface
-      }
-    }
+    const service = this.dependencies.get<KeyRecoveryService>(TYPES.KeyRecoveryService)
+    return service.canAttemptDecryptionOfItem(item)
   }
 
   public async isMfaActivated(): Promise<boolean> {
-    return this.mfaService.isMfaActivated()
+    return this.mfa.isMfaActivated()
   }
 
   public async generateMfaSecret(): Promise<string> {
-    return this.mfaService.generateMfaSecret()
+    return this.mfa.generateMfaSecret()
   }
 
   public async getOtpToken(secret: string): Promise<string> {
-    return this.mfaService.getOtpToken(secret)
+    return this.mfa.getOtpToken(secret)
   }
 
   public async enableMfa(secret: string, otpToken: string): Promise<void> {
-    return this.mfaService.enableMfa(secret, otpToken)
+    return this.mfa.enableMfa(secret, otpToken)
   }
 
   public async disableMfa(): Promise<void> {
-    if (await this.protectionService.authorizeMfaDisable()) {
-      return this.mfaService.disableMfa()
+    if (await this.protections.authorizeMfaDisable()) {
+      return this.mfa.disableMfa()
     }
   }
 
   public getNewSubscriptionToken(): Promise<string | undefined> {
-    return this.apiService.getNewSubscriptionToken()
+    return this.legacyApi.getNewSubscriptionToken()
   }
 
   public isThirdPartyHostUsed(): boolean {
-    return this.apiService.isThirdPartyHostUsed()
+    return this.legacyApi.isThirdPartyHostUsed()
   }
 
   async isUsingHomeServer(): Promise<boolean> {
-    if (!this.homeServerService) {
+    const homeServerService = this.dependencies.get<HomeServerServiceInterface>(TYPES.HomeServerService)
+
+    if (!homeServerService) {
       return false
     }
 
-    return this.getHost() === (await this.homeServerService.getHomeServerUrl())
+    return this.getHost() === (await homeServerService.getHomeServerUrl())
   }
 
-  private constructServices() {
-    this.createMappers()
-    this.createPayloadManager()
-    this.createItemManager()
-    this.createMutatorService()
-
-    this.createDiskStorageManager()
-    this.createUserEventService()
-
-    this.createInMemoryStorageManager()
-
-    this.createKeySystemKeyManager()
-    this.createProtocolService()
-
-    this.diskStorageService.provideEncryptionProvider(this.encryptionService)
-    this.createChallengeService()
-    this.createLegacyHttpManager()
-    this.createHttpServiceAndApiService()
-    this.createUserServer()
-    this.createUserRequestServer()
-    this.createUserApiService()
-    this.createSubscriptionServer()
-    this.createSubscriptionApiService()
-    this.createWebSocketServer()
-    this.createWebSocketApiService()
-    this.createWebSocketsService()
-    this.createSessionManager()
-    this.createSubscriptionManager()
-    this.createHistoryManager()
-    this.createSyncManager()
-    this.createProtectionService()
-    this.createUserService()
-    this.createKeyRecoveryService()
-    this.createSingletonManager()
-    this.createPreferencesService()
-    this.createSettingsService()
-    this.createFeaturesService()
-    this.createComponentManager()
-    this.createMfaService()
-
-    this.createStatusService()
-    if (isDesktopDevice(this.deviceInterface)) {
-      this.createFilesBackupService(this.deviceInterface)
-      this.createHomeServerService(this.deviceInterface)
-    }
-    this.createMigrationService()
-    this.createFileService()
-
-    this.createIntegrityService()
-
-    this.createListedService()
-    this.createActionsManager()
-    this.createAuthenticatorManager()
-    this.createAuthManager()
-    this.createRevisionManager()
-
-    this.createUseCases()
-    this.createContactService()
-    this.createVaultService()
-    this.createSharedVaultService()
-    this.createAsymmetricMessageService()
-  }
-
-  private clearServices() {
-    ;(this.migrationService as unknown) = undefined
-    ;(this.alertService as unknown) = undefined
-    ;(this.deprecatedHttpService as unknown) = undefined
-    ;(this.httpService as unknown) = undefined
-    ;(this.payloadManager as unknown) = undefined
-    ;(this.encryptionService as unknown) = undefined
-    ;(this.diskStorageService as unknown) = undefined
-    ;(this.inMemoryStore as unknown) = undefined
-    ;(this.apiService as unknown) = undefined
-    ;(this.userApiService as unknown) = undefined
-    ;(this.userServer as unknown) = undefined
-    ;(this.userRequestServer as unknown) = undefined
-    ;(this.subscriptionApiService as unknown) = undefined
-    ;(this.subscriptionServer as unknown) = undefined
-    ;(this.subscriptionManager as unknown) = undefined
-    ;(this.webSocketApiService as unknown) = undefined
-    ;(this.webSocketServer as unknown) = undefined
-    ;(this.sessionManager as unknown) = undefined
-    ;(this.syncService as unknown) = undefined
-    ;(this.challengeService as unknown) = undefined
-    ;(this.singletonManager as unknown) = undefined
-    ;(this.componentManagerService as unknown) = undefined
-    ;(this.protectionService as unknown) = undefined
-    ;(this.actionsManager as unknown) = undefined
-    ;(this.historyManager as unknown) = undefined
-    ;(this.itemManager as unknown) = undefined
-    ;(this.keyRecoveryService as unknown) = undefined
-    ;(this.preferencesService as unknown) = undefined
-    ;(this.featuresService as unknown) = undefined
-    ;(this.userService as unknown) = undefined
-    ;(this.webSocketsService as unknown) = undefined
-    ;(this.settingsService as unknown) = undefined
-    ;(this.mfaService as unknown) = undefined
-    ;(this.listedService as unknown) = undefined
-    ;(this.fileService as unknown) = undefined
-    ;(this.integrityService as unknown) = undefined
-    ;(this.mutatorService as unknown) = undefined
-    ;(this.filesBackupService as unknown) = undefined
-    ;(this.statusService as unknown) = undefined
-    ;(this.sessionStorageMapper as unknown) = undefined
-    ;(this.legacySessionStorageMapper as unknown) = undefined
-    ;(this.authenticatorManager as unknown) = undefined
-    ;(this.authManager as unknown) = undefined
-    ;(this.revisionManager as unknown) = undefined
-    ;(this.homeServerService as unknown) = undefined
-    ;(this._signInWithRecoveryCodes as unknown) = undefined
-    ;(this._getRecoveryCodes as unknown) = undefined
-    ;(this._addAuthenticator as unknown) = undefined
-    ;(this._listAuthenticators as unknown) = undefined
-    ;(this._deleteAuthenticator as unknown) = undefined
-    ;(this._getAuthenticatorAuthenticationResponse as unknown) = undefined
-    ;(this._listRevisions as unknown) = undefined
-    ;(this._getRevision as unknown) = undefined
-    ;(this._deleteRevision as unknown) = undefined
-    ;(this.vaultService as unknown) = undefined
-    ;(this.contactService as unknown) = undefined
-    ;(this.sharedVaultService as unknown) = undefined
-    ;(this.userEventService as unknown) = undefined
-    ;(this.asymmetricMessageService as unknown) = undefined
-    ;(this.keySystemKeyManager as unknown) = undefined
-
-    this.services = []
-  }
-
-  private constructInternalEventBus(): void {
-    this.internalEventBus = new ExternalServices.InternalEventBus()
+  private createBackgroundDependencies() {
+    this.dependencies.get(TYPES.UserEventService)
+    this.dependencies.get(TYPES.KeyRecoveryService)
   }
 
   private defineInternalEventHandlers(): void {
-    this.internalEventBus.addEventHandler(this.featuresService, ExternalServices.ApiServiceEvent.MetaReceived)
-    this.internalEventBus.addEventHandler(this.integrityService, ExternalServices.SyncEvent.SyncRequestsIntegrityCheck)
-    this.internalEventBus.addEventHandler(this.syncService, ExternalServices.IntegrityEvent.IntegrityCheckCompleted)
-    this.internalEventBus.addEventHandler(this.userService, AccountEvent.SignedInOrRegistered)
-    this.internalEventBus.addEventHandler(this.sessionManager, ApiServiceEvent.SessionRefreshed)
-  }
+    this.events.addEventHandler(this.dependencies.get(TYPES.FeaturesService), ApiServiceEvent.MetaReceived)
+    this.events.addEventHandler(this.dependencies.get(TYPES.IntegrityService), SyncEvent.SyncRequestsIntegrityCheck)
+    this.events.addEventHandler(this.dependencies.get(TYPES.SyncService), IntegrityEvent.IntegrityCheckCompleted)
+    this.events.addEventHandler(this.dependencies.get(TYPES.UserService), AccountEvent.SignedInOrRegistered)
+    this.events.addEventHandler(this.dependencies.get(TYPES.SessionManager), ApiServiceEvent.SessionRefreshed)
 
-  private clearInternalEventBus(): void {
-    this.internalEventBus.deinit()
-    ;(this.internalEventBus as unknown) = undefined
-  }
+    this.events.addEventHandler(this.dependencies.get(TYPES.SharedVaultService), SyncEvent.ReceivedSharedVaultInvites)
+    this.events.addEventHandler(this.dependencies.get(TYPES.SharedVaultService), SyncEvent.ReceivedRemoteSharedVaults)
 
-  private createUserEventService(): void {
-    this.userEventService = new ExternalServices.UserEventService(this.internalEventBus)
-    this.services.push(this.userEventService)
-  }
-
-  private createAsymmetricMessageService() {
-    this.asymmetricMessageService = new ExternalServices.AsymmetricMessageService(
-      this.httpService,
-      this.encryptionService,
-      this.contacts,
-      this.itemManager,
-      this.mutator,
-      this.syncService,
-      this.internalEventBus,
+    this.events.addEventHandler(
+      this.dependencies.get(TYPES.AsymmetricMessageService),
+      SyncEvent.ReceivedAsymmetricMessages,
     )
-    this.services.push(this.asymmetricMessageService)
-  }
+    this.events.addEventHandler(this.dependencies.get(TYPES.AsymmetricMessageService), SessionEvent.UserKeyPairChanged)
 
-  private createContactService(): void {
-    this.contactService = new ExternalServices.ContactService(
-      this.syncService,
-      this.itemManager,
-      this.mutator,
-      this.sessionManager,
-      this.options.crypto,
-      this.user,
-      this.encryptionService,
-      this.singletonManager,
-      this.internalEventBus,
-    )
-
-    this.services.push(this.contactService)
-  }
-
-  private createSharedVaultService(): void {
-    this.sharedVaultService = new ExternalServices.SharedVaultService(
-      this.httpService,
-      this.syncService,
-      this.itemManager,
-      this.mutator,
-      this.encryptionService,
-      this.sessions,
-      this.contactService,
-      this.files,
-      this.vaults,
-      this.storage,
-      this.internalEventBus,
-    )
-    this.services.push(this.sharedVaultService)
-  }
-
-  private createVaultService(): void {
-    this.vaultService = new ExternalServices.VaultService(
-      this.syncService,
-      this.itemManager,
-      this.mutator,
-      this.encryptionService,
-      this.files,
-      this.alertService,
-      this.internalEventBus,
-    )
-
-    this.services.push(this.vaultService)
-  }
-
-  private createListedService(): void {
-    this.listedService = new InternalServices.ListedService(
-      this.apiService,
-      this.itemManager,
-      this.settingsService,
-      this.deprecatedHttpService,
-      this.protectionService,
-      this.mutator,
-      this.sync,
-      this.internalEventBus,
-    )
-    this.services.push(this.listedService)
-  }
-
-  private createFileService() {
-    this.fileService = new FileService(
-      this.apiService,
-      this.mutator,
-      this.syncService,
-      this.encryptionService,
-      this.challengeService,
-      this.httpService,
-      this.alertService,
-      this.options.crypto,
-      this.internalEventBus,
-      this.fileBackups,
-    )
-
-    this.services.push(this.fileService)
-  }
-
-  private createIntegrityService() {
-    this.integrityService = new ExternalServices.IntegrityService(
-      this.apiService,
-      this.apiService,
-      this.payloadManager,
-      this.internalEventBus,
-    )
-
-    this.services.push(this.integrityService)
-  }
-
-  private createFeaturesService() {
-    this.featuresService = new InternalServices.SNFeaturesService(
-      this.diskStorageService,
-      this.itemManager,
-      this.mutator,
-      this.subscriptions,
-      this.apiService,
-      this.webSocketsService,
-      this.settingsService,
-      this.userService,
-      this.syncService,
-      this.alertService,
-      this.sessionManager,
-      this.options.crypto,
-      this.internalEventBus,
-    )
-    this.serviceObservers.push(
-      this.featuresService.addEventObserver((event) => {
-        switch (event) {
-          case ExternalServices.FeaturesEvent.UserRolesChanged: {
-            void this.notifyEvent(ApplicationEvent.UserRolesChanged)
-            break
-          }
-          case ExternalServices.FeaturesEvent.FeaturesAvailabilityChanged: {
-            void this.notifyEvent(ApplicationEvent.FeaturesAvailabilityChanged)
-            break
-          }
-          case ExternalServices.FeaturesEvent.DidPurchaseSubscription: {
-            void this.notifyEvent(ApplicationEvent.DidPurchaseSubscription)
-            break
-          }
-          default: {
-            Utils.assertUnreachable(event)
-          }
-        }
-      }),
-    )
-    this.services.push(this.featuresService)
-  }
-
-  private createWebSocketsService() {
-    this.webSocketsService = new InternalServices.SNWebSocketsService(
-      this.diskStorageService,
-      this.options.webSocketUrl,
-      this.webSocketApiService,
-      this.internalEventBus,
-    )
-    this.services.push(this.webSocketsService)
-  }
-
-  private createMigrationService() {
-    this.migrationService = new InternalServices.SNMigrationService({
-      encryptionService: this.encryptionService,
-      deviceInterface: this.deviceInterface,
-      storageService: this.diskStorageService,
-      sessionManager: this.sessionManager,
-      challengeService: this.challengeService,
-      itemManager: this.itemManager,
-      mutator: this.mutator,
-      singletonManager: this.singletonManager,
-      featuresService: this.featuresService,
-      environment: this.environment,
-      platform: this.platform,
-      identifier: this.identifier,
-      internalEventBus: this.internalEventBus,
-      legacySessionStorageMapper: this.legacySessionStorageMapper,
-      backups: this.fileBackups,
-      preferences: this.preferencesService,
-    })
-    this.services.push(this.migrationService)
-  }
-
-  private createUserService(): void {
-    this.userService = new UserService(
-      this.sessionManager,
-      this.syncService,
-      this.diskStorageService,
-      this.itemManager,
-      this.encryptionService,
-      this.alertService,
-      this.challengeService,
-      this.protectionService,
-      this.userApiService,
-      this.internalEventBus,
-    )
-    this.serviceObservers.push(
-      this.userService.addEventObserver(async (event, data) => {
-        switch (event) {
-          case AccountEvent.SignedInOrRegistered: {
-            void this.notifyEvent(ApplicationEvent.SignedIn)
-            break
-          }
-          case AccountEvent.SignedOut: {
-            await this.notifyEvent(ApplicationEvent.SignedOut)
-            await this.prepareForDeinit()
-            this.deinit(this.getDeinitMode(), data?.payload.source || DeinitSource.SignOut)
-            break
-          }
-          default: {
-            Utils.assertUnreachable(event)
-          }
-        }
-      }),
-    )
-    this.services.push(this.userService)
-  }
-
-  private createUserApiService() {
-    this.userApiService = new UserApiService(this.userServer, this.userRequestServer)
-  }
-
-  private createUserServer() {
-    this.userServer = new UserServer(this.httpService)
-  }
-
-  private createUserRequestServer() {
-    this.userRequestServer = new UserRequestServer(this.httpService)
-  }
-
-  private createSubscriptionApiService() {
-    this.subscriptionApiService = new SubscriptionApiService(this.subscriptionServer)
-  }
-
-  private createSubscriptionServer() {
-    this.subscriptionServer = new SubscriptionServer(this.httpService)
-  }
-
-  private createWebSocketApiService() {
-    this.webSocketApiService = new WebSocketApiService(this.webSocketServer)
-  }
-
-  private createWebSocketServer() {
-    this.webSocketServer = new WebSocketServer(this.httpService)
-  }
-
-  private createSubscriptionManager() {
-    this.subscriptionManager = new SubscriptionManager(
-      this.subscriptionApiService,
-      this.sessions,
-      this.storage,
-      this.internalEventBus,
-    )
-    this.services.push(this.subscriptionManager)
-  }
-
-  private createItemManager() {
-    this.itemManager = new InternalServices.ItemManager(this.payloadManager, this.internalEventBus)
-    this.services.push(this.itemManager)
-  }
-
-  private createComponentManager() {
-    this.componentManagerService = new InternalServices.SNComponentManager(
-      this.itemManager,
-      this.mutator,
-      this.syncService,
-      this.featuresService,
-      this.preferencesService,
-      this.alertService,
-      this.environment,
-      this.platform,
-      this.deviceInterface,
-      this.internalEventBus,
-    )
-    this.services.push(this.componentManagerService)
-  }
-
-  private createLegacyHttpManager() {
-    this.deprecatedHttpService = new InternalServices.DeprecatedHttpService(
-      this.environment,
-      this.options.appVersion,
-      this.internalEventBus,
-    )
-    this.services.push(this.deprecatedHttpService)
-  }
-
-  private createHttpServiceAndApiService() {
-    this.httpService = new HttpService(this.environment, this.options.appVersion, SnjsVersion)
-
-    this.apiService = new InternalServices.SNApiService(
-      this.httpService,
-      this.diskStorageService,
-      this.options.defaultHost,
-      this.inMemoryStore,
-      this.options.crypto,
-      this.sessionStorageMapper,
-      this.legacySessionStorageMapper,
-      this.internalEventBus,
-    )
-    this.services.push(this.apiService)
-
-    this.httpService.setCallbacks(
-      this.apiService.processMetaObject.bind(this.apiService),
-      this.apiService.setSession.bind(this.apiService),
-    )
-  }
-
-  private createMappers() {
-    this.sessionStorageMapper = new SessionStorageMapper()
-    this.legacySessionStorageMapper = new LegacySessionStorageMapper()
-  }
-
-  private createPayloadManager() {
-    this.payloadManager = new InternalServices.PayloadManager(this.internalEventBus)
-    this.services.push(this.payloadManager)
-  }
-
-  private createSingletonManager() {
-    this.singletonManager = new InternalServices.SNSingletonManager(
-      this.itemManager,
-      this.mutator,
-      this.payloadManager,
-      this.syncService,
-      this.internalEventBus,
-    )
-    this.services.push(this.singletonManager)
-  }
-
-  private createDiskStorageManager() {
-    this.diskStorageService = new InternalServices.DiskStorageService(
-      this.deviceInterface,
-      this.identifier,
-      this.internalEventBus,
-    )
-    this.services.push(this.diskStorageService)
-  }
-
-  private createHomeServerService(device: ExternalServices.DesktopDeviceInterface) {
-    this.homeServerService = new ExternalServices.HomeServerService(device, this.internalEventBus)
-
-    this.services.push(this.homeServerService)
-  }
-
-  private createInMemoryStorageManager() {
-    this.inMemoryStore = new ExternalServices.InMemoryStore()
-  }
-
-  private createProtocolService() {
-    this.encryptionService = new EncryptionService(
-      this.itemManager,
-      this.mutator,
-      this.payloadManager,
-      this.deviceInterface,
-      this.diskStorageService,
-      this.keySystemKeyManager,
-      this.identifier,
-      this.options.crypto,
-      this.internalEventBus,
-    )
-    this.serviceObservers.push(
-      this.encryptionService.addEventObserver(async (event) => {
-        if (event === EncryptionServiceEvent.RootKeyStatusChanged) {
-          await this.notifyEvent(ApplicationEvent.KeyStatusChanged)
-        }
-      }),
-    )
-    this.services.push(this.encryptionService)
-  }
-
-  private createKeySystemKeyManager() {
-    this.keySystemKeyManager = new ExternalServices.KeySystemKeyManager(
-      this.itemManager,
-      this.mutator,
-      this.storage,
-      this.internalEventBus,
-    )
-
-    this.services.push(this.keySystemKeyManager)
-  }
-
-  private createKeyRecoveryService() {
-    this.keyRecoveryService = new InternalServices.SNKeyRecoveryService(
-      this.itemManager,
-      this.payloadManager,
-      this.apiService,
-      this.encryptionService,
-      this.challengeService,
-      this.alertService,
-      this.diskStorageService,
-      this.syncService,
-      this.userService,
-      this.internalEventBus,
-    )
-    this.services.push(this.keyRecoveryService)
-  }
-
-  private createSessionManager() {
-    this.sessionManager = new InternalServices.SNSessionManager(
-      this.diskStorageService,
-      this.apiService,
-      this.userApiService,
-      this.alertService,
-      this.encryptionService,
-      this.challengeService,
-      this.webSocketsService,
-      this.httpService,
-      this.sessionStorageMapper,
-      this.legacySessionStorageMapper,
-      this.identifier,
-      this.internalEventBus,
-    )
-    this.serviceObservers.push(
-      this.sessionManager.addEventObserver(async (event) => {
-        switch (event) {
-          case ExternalServices.SessionEvent.Restored: {
-            void (async () => {
-              await this.sync.sync({ sourceDescription: 'Session restored pre key creation' })
-              if (this.encryptionService.needsNewRootKeyBasedItemsKey()) {
-                void this.encryptionService.createNewDefaultItemsKey().then(() => {
-                  void this.sync.sync({ sourceDescription: 'Session restored post key creation' })
-                })
-              }
-            })()
-            break
-          }
-          case ExternalServices.SessionEvent.Revoked: {
-            await this.handleRevokedSession()
-            break
-          }
-          case ExternalServices.SessionEvent.UserKeyPairChanged:
-            break
-          default: {
-            Utils.assertUnreachable(event)
-          }
-        }
-      }),
-    )
-    this.services.push(this.sessionManager)
-  }
-
-  private createSyncManager() {
-    this.syncService = new InternalServices.SNSyncService(
-      this.itemManager,
-      this.sessionManager,
-      this.encryptionService,
-      this.diskStorageService,
-      this.payloadManager,
-      this.apiService,
-      this.historyManager,
-      this.deviceInterface,
-      this.identifier,
-      {
-        loadBatchSize: this.options.loadBatchSize,
-        sleepBetweenBatches: this.options.sleepBetweenBatches,
-      },
-      this.internalEventBus,
-    )
-    const syncEventCallback = async (eventName: ExternalServices.SyncEvent) => {
-      const appEvent = applicationEventForSyncEvent(eventName)
-      if (appEvent) {
-        await this.encryptionService.onSyncEvent(eventName)
-
-        await this.notifyEvent(appEvent)
-
-        if (appEvent === ApplicationEvent.CompletedFullSync) {
-          if (!this.handledFullSyncStage) {
-            this.handledFullSyncStage = true
-            await this.handleStage(ExternalServices.ApplicationStage.FullSyncCompleted_13)
-          }
-        }
-      }
+    if (this.dependencies.get(TYPES.FilesBackupService)) {
+      this.events.addEventHandler(
+        this.dependencies.get(TYPES.FilesBackupService),
+        ApplicationEvent.ApplicationStageChanged,
+      )
     }
-    const uninstall = this.syncService.addEventObserver(syncEventCallback)
-    this.serviceObservers.push(uninstall)
-    this.services.push(this.syncService)
-  }
+    if (this.dependencies.get(TYPES.HomeServerService)) {
+      this.events.addEventHandler(
+        this.dependencies.get(TYPES.HomeServerService),
+        ApplicationEvent.ApplicationStageChanged,
+      )
+    }
 
-  private createChallengeService() {
-    this.challengeService = new InternalServices.ChallengeService(
-      this.diskStorageService,
-      this.encryptionService,
-      this.internalEventBus,
+    this.events.addEventHandler(
+      this.dependencies.get(TYPES.SelfContactManager),
+      ApplicationEvent.ApplicationStageChanged,
     )
-    this.services.push(this.challengeService)
-  }
-
-  private createProtectionService() {
-    this.protectionService = new InternalServices.SNProtectionService(
-      this.encryptionService,
-      this.mutator,
-      this.challengeService,
-      this.diskStorageService,
-      this.internalEventBus,
+    this.events.addEventHandler(
+      this.dependencies.get(TYPES.KeySystemKeyManager),
+      ApplicationEvent.ApplicationStageChanged,
     )
-    this.serviceObservers.push(
-      this.protectionService.addEventObserver((event) => {
-        if (event === InternalServices.ProtectionEvent.UnprotectedSessionBegan) {
-          void this.notifyEvent(ApplicationEvent.UnprotectedSessionBegan)
-        } else if (event === InternalServices.ProtectionEvent.UnprotectedSessionExpired) {
-          void this.notifyEvent(ApplicationEvent.UnprotectedSessionExpired)
-        }
-      }),
+    this.events.addEventHandler(
+      this.dependencies.get(TYPES.SubscriptionManager),
+      ApplicationEvent.ApplicationStageChanged,
     )
-    this.services.push(this.protectionService)
-  }
-
-  private createHistoryManager() {
-    this.historyManager = new InternalServices.SNHistoryManager(
-      this.itemManager,
-      this.diskStorageService,
-      this.deviceInterface,
-      this.internalEventBus,
+    this.events.addEventHandler(this.dependencies.get(TYPES.FeaturesService), ApplicationEvent.ApplicationStageChanged)
+    this.events.addEventHandler(
+      this.dependencies.get(TYPES.KeyRecoveryService),
+      ApplicationEvent.ApplicationStageChanged,
     )
-    this.services.push(this.historyManager)
-  }
-
-  private createActionsManager() {
-    this.actionsManager = new InternalServices.SNActionsService(
-      this.itemManager,
-      this.alertService,
-      this.deviceInterface,
-      this.deprecatedHttpService,
-      this.payloadManager,
-      this.encryptionService,
-      this.syncService,
-      this.challengeService,
-      this.listedService,
-      this.internalEventBus,
+    this.events.addEventHandler(this.dependencies.get(TYPES.MigrationService), ApplicationEvent.ApplicationStageChanged)
+    this.events.addEventHandler(
+      this.dependencies.get(TYPES.PreferencesService),
+      ApplicationEvent.ApplicationStageChanged,
     )
-    this.services.push(this.actionsManager)
-  }
-
-  private createPreferencesService() {
-    this.preferencesService = new InternalServices.SNPreferencesService(
-      this.singletonManager,
-      this.itemManager,
-      this.mutator,
-      this.syncService,
-      this.internalEventBus,
+    this.events.addEventHandler(
+      this.dependencies.get(TYPES.ProtectionService),
+      ApplicationEvent.ApplicationStageChanged,
     )
-    this.serviceObservers.push(
-      this.preferencesService.addEventObserver(() => {
-        void this.notifyEvent(ApplicationEvent.PreferencesChanged)
-      }),
-    )
-    this.services.push(this.preferencesService)
-  }
-
-  private createSettingsService() {
-    this.settingsService = new InternalServices.SNSettingsService(
-      this.sessionManager,
-      this.apiService,
-      this.internalEventBus,
-    )
-    this.services.push(this.settingsService)
-  }
-
-  private createMfaService() {
-    this.mfaService = new InternalServices.SNMfaService(
-      this.settingsService,
-      this.options.crypto,
-      this.featuresService,
-      this.internalEventBus,
-    )
-    this.services.push(this.mfaService)
-  }
-
-  private createMutatorService() {
-    this.mutatorService = new InternalServices.MutatorService(
-      this.itemManager,
-      this.payloadManager,
-      this.alertService,
-      this.internalEventBus,
-    )
-    this.services.push(this.mutatorService)
-  }
-
-  private createFilesBackupService(device: ExternalServices.DesktopDeviceInterface): void {
-    this.filesBackupService = new FilesBackupService(
-      this.itemManager,
-      this.apiService,
-      this.encryptionService,
-      device as FileBackupsDevice,
-      this.statusService,
-      this.options.crypto,
-      this.storage,
-      this.sessions,
-      this.payloadManager,
-      this.historyManager,
-      device as DirectoryManagerInterface,
-      this.internalEventBus,
-    )
-    this.services.push(this.filesBackupService)
-  }
-
-  private createStatusService(): void {
-    this.statusService = new ExternalServices.StatusService(this.internalEventBus)
-    this.services.push(this.statusService)
-  }
-
-  private createAuthenticatorManager() {
-    const authenticatorServer = new AuthenticatorServer(this.httpService)
-
-    const authenticatorApiService = new AuthenticatorApiService(authenticatorServer)
-
-    this.authenticatorManager = new AuthenticatorManager(
-      authenticatorApiService,
-      this.preferencesService,
-      this.internalEventBus,
+    this.events.addEventHandler(
+      this.dependencies.get(TYPES.DiskStorageService),
+      ApplicationEvent.ApplicationStageChanged,
     )
   }
 
-  private createAuthManager() {
-    const authServer = new AuthServer(this.httpService)
-
-    const authApiService = new AuthApiService(authServer)
-
-    this.authManager = new AuthManager(authApiService, this.internalEventBus)
+  get device(): DeviceInterface {
+    return this.dependencies.get<DeviceInterface>(TYPES.DeviceInterface)
   }
 
-  private createRevisionManager() {
-    const revisionServer = new RevisionServer(this.httpService)
-
-    const revisionApiService = new RevisionApiService(revisionServer)
-
-    this.revisionManager = new RevisionManager(revisionApiService, this.internalEventBus)
+  get subscriptions(): SubscriptionManagerInterface {
+    return this.dependencies.get<SubscriptionManagerInterface>(TYPES.SubscriptionManager)
   }
 
-  private createUseCases() {
-    this._signInWithRecoveryCodes = new SignInWithRecoveryCodes(
-      this.authManager,
-      this.encryptionService,
-      this.inMemoryStore,
-      this.options.crypto,
-      this.sessionManager,
-      this.internalEventBus,
-    )
+  get signInWithRecoveryCodes(): SignInWithRecoveryCodes {
+    return this.dependencies.get<SignInWithRecoveryCodes>(TYPES.SignInWithRecoveryCodes)
+  }
 
-    this._getRecoveryCodes = new GetRecoveryCodes(this.authManager, this.settingsService)
+  get getRecoveryCodes(): GetRecoveryCodes {
+    return this.dependencies.get<GetRecoveryCodes>(TYPES.GetRecoveryCodes)
+  }
 
-    this._addAuthenticator = new AddAuthenticator(
-      this.authenticatorManager,
-      this.options.u2fAuthenticatorRegistrationPromptFunction,
-    )
+  get addAuthenticator(): AddAuthenticator {
+    return this.dependencies.get<AddAuthenticator>(TYPES.AddAuthenticator)
+  }
 
-    this._listAuthenticators = new ListAuthenticators(this.authenticatorManager)
+  get listAuthenticators(): ListAuthenticators {
+    return this.dependencies.get<ListAuthenticators>(TYPES.ListAuthenticators)
+  }
 
-    this._deleteAuthenticator = new DeleteAuthenticator(this.authenticatorManager)
+  get deleteAuthenticator(): DeleteAuthenticator {
+    return this.dependencies.get<DeleteAuthenticator>(TYPES.DeleteAuthenticator)
+  }
 
-    this._getAuthenticatorAuthenticationOptions = new GetAuthenticatorAuthenticationOptions(this.authenticatorManager)
+  get getAuthenticatorAuthenticationOptions(): GetAuthenticatorAuthenticationOptions {
+    return this.dependencies.get<GetAuthenticatorAuthenticationOptions>(TYPES.GetAuthenticatorAuthenticationOptions)
+  }
 
-    this._getAuthenticatorAuthenticationResponse = new GetAuthenticatorAuthenticationResponse(
-      this._getAuthenticatorAuthenticationOptions,
-      this.options.u2fAuthenticatorVerificationPromptFunction,
-    )
+  get getAuthenticatorAuthenticationResponse(): GetAuthenticatorAuthenticationResponse {
+    return this.dependencies.get<GetAuthenticatorAuthenticationResponse>(TYPES.GetAuthenticatorAuthenticationResponse)
+  }
 
-    this._listRevisions = new ListRevisions(this.revisionManager)
+  get listRevisions(): ListRevisions {
+    return this.dependencies.get<ListRevisions>(TYPES.ListRevisions)
+  }
 
-    this._getRevision = new GetRevision(this.revisionManager, this.encryptionService)
+  get getRevision(): GetRevision {
+    return this.dependencies.get<GetRevision>(TYPES.GetRevision)
+  }
 
-    this._deleteRevision = new DeleteRevision(this.revisionManager)
+  get deleteRevision(): DeleteRevision {
+    return this.dependencies.get<DeleteRevision>(TYPES.DeleteRevision)
+  }
+
+  public get files(): FilesClientInterface {
+    return this.dependencies.get<FilesClientInterface>(TYPES.FileService)
+  }
+
+  public get features(): FeaturesClientInterface {
+    return this.dependencies.get<FeaturesClientInterface>(TYPES.FeaturesService)
+  }
+
+  public get items(): ItemManagerInterface {
+    return this.dependencies.get<ItemManagerInterface>(TYPES.ItemManager)
+  }
+
+  public get payloads(): PayloadManagerInterface {
+    return this.dependencies.get<PayloadManagerInterface>(TYPES.PayloadManager)
+  }
+
+  public get protections(): ProtectionsClientInterface {
+    return this.dependencies.get<ProtectionsClientInterface>(TYPES.ProtectionService)
+  }
+
+  public get sync(): SyncServiceInterface {
+    return this.dependencies.get<SyncServiceInterface>(TYPES.SyncService)
+  }
+
+  public get user(): UserClientInterface {
+    return this.dependencies.get<UserClientInterface>(TYPES.UserService)
+  }
+
+  public get settings(): SettingsService {
+    return this.dependencies.get<SettingsService>(TYPES.SettingsService)
+  }
+
+  public get mutator(): MutatorClientInterface {
+    return this.dependencies.get<MutatorClientInterface>(TYPES.MutatorService)
+  }
+
+  public get sessions(): SessionsClientInterface {
+    return this.dependencies.get<SessionsClientInterface>(TYPES.SessionManager)
+  }
+
+  public get status(): StatusServiceInterface {
+    return this.dependencies.get<StatusServiceInterface>(TYPES.StatusService)
+  }
+
+  public get fileBackups(): BackupServiceInterface | undefined {
+    return this.dependencies.get<BackupServiceInterface | undefined>(TYPES.FilesBackupService)
+  }
+
+  public get componentManager(): ComponentManagerInterface {
+    return this.dependencies.get<ComponentManagerInterface>(TYPES.ComponentManager)
+  }
+
+  public get listed(): ListedClientInterface {
+    return this.dependencies.get<ListedClientInterface>(TYPES.ListedService)
+  }
+
+  public get alerts(): AlertService {
+    return this.dependencies.get<AlertService>(TYPES.AlertService)
+  }
+
+  public get storage(): StorageServiceInterface {
+    return this.dependencies.get<StorageServiceInterface>(TYPES.DiskStorageService)
+  }
+
+  public get actions(): ActionsService {
+    return this.dependencies.get<ActionsService>(TYPES.ActionsService)
+  }
+
+  public get challenges(): ChallengeServiceInterface {
+    return this.dependencies.get<ChallengeServiceInterface>(TYPES.ChallengeService)
+  }
+
+  public get asymmetric(): AsymmetricMessageServiceInterface {
+    return this.dependencies.get<AsymmetricMessageServiceInterface>(TYPES.AsymmetricMessageService)
+  }
+
+  get homeServer(): HomeServerServiceInterface | undefined {
+    return this.dependencies.get<HomeServerServiceInterface | undefined>(TYPES.HomeServerService)
+  }
+
+  public get vaults(): VaultServiceInterface {
+    return this.dependencies.get<VaultServiceInterface>(TYPES.VaultService)
+  }
+
+  public get contacts(): ContactServiceInterface {
+    return this.dependencies.get<ContactServiceInterface>(TYPES.ContactService)
+  }
+
+  public get sharedVaults(): SharedVaultServiceInterface {
+    return this.dependencies.get<SharedVaultServiceInterface>(TYPES.SharedVaultService)
+  }
+
+  public get preferences(): PreferenceServiceInterface {
+    return this.dependencies.get<PreferenceServiceInterface>(TYPES.PreferencesService)
+  }
+
+  public get history(): HistoryServiceInterface {
+    return this.dependencies.get<HistoryServiceInterface>(TYPES.HistoryManager)
+  }
+
+  private get migrations(): MigrationService {
+    return this.dependencies.get<MigrationService>(TYPES.MigrationService)
+  }
+
+  public get encryption(): EncryptionProviderInterface {
+    return this.dependencies.get<EncryptionProviderInterface>(TYPES.EncryptionService)
+  }
+
+  private get legacyApi(): LegacyApiService {
+    return this.dependencies.get<LegacyApiService>(TYPES.LegacyApiService)
+  }
+
+  private get http(): HttpServiceInterface {
+    return this.dependencies.get<HttpServiceInterface>(TYPES.HttpService)
+  }
+
+  private get sockets(): WebSocketsService {
+    return this.dependencies.get<WebSocketsService>(TYPES.WebSocketsService)
+  }
+
+  public get events(): InternalEventBusInterface {
+    return this.dependencies.get<InternalEventBusInterface>(TYPES.InternalEventBus)
+  }
+
+  private get mfa(): SNMfaService {
+    return this.dependencies.get<SNMfaService>(TYPES.MfaService)
   }
 }

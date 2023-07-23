@@ -1,9 +1,13 @@
 import { ItemsKeyInterface } from '@standardnotes/models'
 import { dateSorted } from '@standardnotes/utils'
-import { SNRootKeyParams, EncryptionProviderInterface } from '@standardnotes/encryption'
+import { SNRootKeyParams } from '@standardnotes/encryption'
 import { DecryptionQueueItem, KeyRecoveryOperationResult } from './Types'
 import { serverKeyParamsAreSafe } from './Utils'
-import { ChallengeServiceInterface, DecryptItemsKeyByPromptingUser } from '@standardnotes/services'
+import {
+  ChallengeServiceInterface,
+  DecryptItemsKeyByPromptingUser,
+  EncryptionProviderInterface,
+} from '@standardnotes/services'
 import { ItemManager } from '../Items'
 import { ContentType } from '@standardnotes/domain-core'
 

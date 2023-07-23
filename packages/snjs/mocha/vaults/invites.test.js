@@ -30,7 +30,9 @@ describe('shared vault invites', function () {
     const { contactContext, deinitContactContext } = await Collaboration.createContactContext()
     const contact = await Collaboration.createTrustedContactForUserOfContext(context, contactContext)
 
-    const vaultInvite = await sharedVaults.inviteContactToSharedVault(sharedVault, contact, SharedVaultPermission.Write)
+    const vaultInvite = (
+      await sharedVaults.inviteContactToSharedVault(sharedVault, contact, SharedVaultPermission.Write)
+    ).getValue()
 
     expect(vaultInvite).to.not.be.undefined
     expect(vaultInvite.shared_vault_uuid).to.equal(sharedVault.sharing.sharedVaultUuid)
@@ -78,8 +80,10 @@ describe('shared vault invites', function () {
 
     const message = invites[0].message
     const delegatedContacts = message.data.trustedContacts
-    expect(delegatedContacts.length).to.equal(1)
-    expect(delegatedContacts[0].contactUuid).to.equal(contactContext.userUuid)
+    expect(delegatedContacts.length).to.equal(2)
+
+    expect(delegatedContacts.some((contact) => contact.contactUuid === context.userUuid)).to.be.true
+    expect(delegatedContacts.some((contact) => contact.contactUuid === contactContext.userUuid)).to.be.true
 
     await deinitThirdPartyContext()
     await deinitContactContext()
@@ -197,7 +201,17 @@ describe('shared vault invites', function () {
 
   it('should delete all inbound invites after changing user password', async () => {
     /** Invites to user are encrypted with old keypair and are no longer decryptable */
-    console.error('TODO: implement test')
+    const { contactContext, deinitContactContext } =
+      await Collaboration.createSharedVaultWithUnacceptedButTrustedInvite(context)
+
+    const promise = contactContext.resolveWhenAllInboundSharedVaultInvitesAreDeleted()
+    await contactContext.changePassword('new-password')
+    await promise
+
+    const invites = await contactContext.sharedVaults.downloadInboundInvites()
+    expect(invites.length).to.equal(0)
+
+    await deinitContactContext()
   })
 
   it('sharing a vault with user inputted and ephemeral password should share the key as synced for the recipient', async () => {

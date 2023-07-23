@@ -1,7 +1,7 @@
 import { DecryptedItemInterface } from '../../Abstract/Item/Interfaces/DecryptedItem'
-import { FindPublicKeySetResult } from './PublicKeySet/FindPublicKeySetResult'
-import { TrustedContactContent } from './TrustedContactContent'
+import { TrustedContactContent } from './Content/TrustedContactContent'
 import { ContactPublicKeySetInterface } from './PublicKeySet/ContactPublicKeySetInterface'
+import { PublicKeyTrustStatus } from './Types/PublicKeyTrustStatus'
 
 export interface TrustedContactInterface extends DecryptedItemInterface<TrustedContactContent> {
   name: string
@@ -9,8 +9,7 @@ export interface TrustedContactInterface extends DecryptedItemInterface<TrustedC
   publicKeySet: ContactPublicKeySetInterface
   isMe: boolean
 
-  findKeySet(params: { targetEncryptionPublicKey: string; targetSigningPublicKey: string }): FindPublicKeySetResult
-
-  isPublicKeyTrusted(encryptionPublicKey: string): boolean
-  isSigningKeyTrusted(signingKey: string): boolean
+  getTrustStatusForPublicKey(encryptionPublicKey: string): PublicKeyTrustStatus
+  getTrustStatusForSigningPublicKey(signingPublicKey: string): PublicKeyTrustStatus
+  hasCurrentOrPreviousSigningPublicKey(signingPublicKey: string): boolean
 }

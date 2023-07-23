@@ -1,13 +1,11 @@
 import { MutatorClientInterface } from './../Mutator/MutatorClientInterface'
-import { ContactServiceInterface } from './../Contacts/ContactServiceInterface'
 import { AsymmetricMessageServerHash, ClientDisplayableError, isClientDisplayableError } from '@standardnotes/responses'
 import { SyncEvent, SyncEventReceivedAsymmetricMessagesData } from '../Event/SyncEvent'
 import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
 import { InternalEventHandlerInterface } from '../Internal/InternalEventHandlerInterface'
 import { InternalEventInterface } from '../Internal/InternalEventInterface'
 import { AbstractService } from '../Service/AbstractService'
-import { GetAsymmetricMessageTrustedPayload } from './UseCase/GetAsymmetricMessageTrustedPayload'
-import { EncryptionProviderInterface } from '@standardnotes/encryption'
+import { GetTrustedPayload } from './UseCase/GetTrustedPayload'
 import {
   AsymmetricMessageSharedVaultRootKeyChanged,
   AsymmetricMessagePayloadType,
@@ -16,61 +14,68 @@ import {
   AsymmetricMessagePayload,
   AsymmetricMessageSharedVaultMetadataChanged,
   VaultListingMutator,
+  MutationType,
+  PayloadEmitSource,
+  VaultListingInterface,
 } from '@standardnotes/models'
-import { HandleTrustedSharedVaultRootKeyChangedMessage } from './UseCase/HandleTrustedSharedVaultRootKeyChangedMessage'
-import { ItemManagerInterface } from '../Item/ItemManagerInterface'
-import { SyncServiceInterface } from '../Sync/SyncServiceInterface'
+import { HandleRootKeyChangedMessage } from './UseCase/HandleRootKeyChangedMessage'
 import { SessionEvent } from '../Session/SessionEvent'
-import { AsymmetricMessageServer, HttpServiceInterface } from '@standardnotes/api'
+import { AsymmetricMessageServer } from '@standardnotes/api'
 import { UserKeyPairChangedEventData } from '../Session/UserKeyPairChangedEventData'
 import { SendOwnContactChangeMessage } from './UseCase/SendOwnContactChangeMessage'
-import { GetOutboundAsymmetricMessages } from './UseCase/GetOutboundAsymmetricMessages'
-import { GetInboundAsymmetricMessages } from './UseCase/GetInboundAsymmetricMessages'
-import { GetVaultUseCase } from '../Vaults/UseCase/GetVault'
+import { GetOutboundMessages } from './UseCase/GetOutboundMessages'
+import { GetInboundMessages } from './UseCase/GetInboundMessages'
+import { GetVault } from '../Vaults/UseCase/GetVault'
 import { AsymmetricMessageServiceInterface } from './AsymmetricMessageServiceInterface'
+import { GetUntrustedPayload } from './UseCase/GetUntrustedPayload'
+import { FindContact } from '../Contacts/UseCase/FindContact'
+import { CreateOrEditContact } from '../Contacts/UseCase/CreateOrEditContact'
+import { ReplaceContactData } from '../Contacts/UseCase/ReplaceContactData'
+import { GetAllContacts } from '../Contacts/UseCase/GetAllContacts'
+import { EncryptionProviderInterface } from '../Encryption/EncryptionProviderInterface'
 
 export class AsymmetricMessageService
   extends AbstractService
   implements AsymmetricMessageServiceInterface, InternalEventHandlerInterface
 {
-  private messageServer: AsymmetricMessageServer
-
   constructor(
-    http: HttpServiceInterface,
+    private messageServer: AsymmetricMessageServer,
     private encryption: EncryptionProviderInterface,
-    private contacts: ContactServiceInterface,
-    private items: ItemManagerInterface,
     private mutator: MutatorClientInterface,
-    private sync: SyncServiceInterface,
+    private _createOrEditContact: CreateOrEditContact,
+    private _findContact: FindContact,
+    private _getAllContacts: GetAllContacts,
+    private _replaceContactData: ReplaceContactData,
+    private _getTrustedPayload: GetTrustedPayload,
+    private _getVault: GetVault,
+    private _handleRootKeyChangedMessage: HandleRootKeyChangedMessage,
+    private _sendOwnContactChangedMessage: SendOwnContactChangeMessage,
+    private _getOutboundMessagesUseCase: GetOutboundMessages,
+    private _getInboundMessagesUseCase: GetInboundMessages,
+    private _getUntrustedPayload: GetUntrustedPayload,
     eventBus: InternalEventBusInterface,
   ) {
     super(eventBus)
-
-    this.messageServer = new AsymmetricMessageServer(http)
-
-    eventBus.addEventHandler(this, SyncEvent.ReceivedAsymmetricMessages)
-    eventBus.addEventHandler(this, SessionEvent.UserKeyPairChanged)
   }
 
   async handleEvent(event: InternalEventInterface): Promise<void> {
-    if (event.type === SessionEvent.UserKeyPairChanged) {
-      void this.messageServer.deleteAllInboundMessages()
-      void this.sendOwnContactChangeEventToAllContacts(event.payload as UserKeyPairChangedEventData)
-    }
-
-    if (event.type === SyncEvent.ReceivedAsymmetricMessages) {
-      void this.handleRemoteReceivedAsymmetricMessages(event.payload as SyncEventReceivedAsymmetricMessagesData)
+    switch (event.type) {
+      case SessionEvent.UserKeyPairChanged:
+        void this.messageServer.deleteAllInboundMessages()
+        void this.sendOwnContactChangeEventToAllContacts(event.payload as UserKeyPairChangedEventData)
+        break
+      case SyncEvent.ReceivedAsymmetricMessages:
+        void this.handleRemoteReceivedAsymmetricMessages(event.payload as SyncEventReceivedAsymmetricMessagesData)
+        break
     }
   }
 
   public async getOutboundMessages(): Promise<AsymmetricMessageServerHash[] | ClientDisplayableError> {
-    const usecase = new GetOutboundAsymmetricMessages(this.messageServer)
-    return usecase.execute()
+    return this._getOutboundMessagesUseCase.execute()
   }
 
   public async getInboundMessages(): Promise<AsymmetricMessageServerHash[] | ClientDisplayableError> {
-    const usecase = new GetInboundAsymmetricMessages(this.messageServer)
-    return usecase.execute()
+    return this._getInboundMessagesUseCase.execute()
   }
 
   public async downloadAndProcessInboundMessages(): Promise<void> {
@@ -83,27 +88,79 @@ export class AsymmetricMessageService
   }
 
   private async sendOwnContactChangeEventToAllContacts(data: UserKeyPairChangedEventData): Promise<void> {
-    if (!data.oldKeyPair || !data.oldSigningKeyPair) {
+    if (!data.previous) {
       return
     }
 
-    const useCase = new SendOwnContactChangeMessage(this.encryption, this.messageServer)
+    const contacts = this._getAllContacts.execute()
+    if (contacts.isFailed()) {
+      return
+    }
 
-    const contacts = this.contacts.getAllContacts()
-
-    for (const contact of contacts) {
+    for (const contact of contacts.getValue()) {
       if (contact.isMe) {
         continue
       }
 
-      await useCase.execute({
-        senderOldKeyPair: data.oldKeyPair,
-        senderOldSigningKeyPair: data.oldSigningKeyPair,
-        senderNewKeyPair: data.newKeyPair,
-        senderNewSigningKeyPair: data.newSigningKeyPair,
+      await this._sendOwnContactChangedMessage.execute({
+        senderOldKeyPair: data.previous.encryption,
+        senderOldSigningKeyPair: data.previous.signing,
+        senderNewKeyPair: data.current.encryption,
+        senderNewSigningKeyPair: data.current.signing,
         contact,
       })
     }
+  }
+
+  sortServerMessages(messages: AsymmetricMessageServerHash[]): AsymmetricMessageServerHash[] {
+    const SortedPriorityTypes = [AsymmetricMessagePayloadType.SenderKeypairChanged]
+
+    const priority: AsymmetricMessageServerHash[] = []
+    const regular: AsymmetricMessageServerHash[] = []
+
+    const allMessagesOldestFirst = messages.slice().sort((a, b) => a.created_at_timestamp - b.created_at_timestamp)
+
+    const messageTypeMap: Record<string, AsymmetricMessagePayloadType> = {}
+
+    for (const message of allMessagesOldestFirst) {
+      const messageType = this.getServerMessageType(message)
+      if (!messageType) {
+        continue
+      }
+
+      messageTypeMap[message.uuid] = messageType
+
+      if (SortedPriorityTypes.includes(messageType)) {
+        priority.push(message)
+      } else {
+        regular.push(message)
+      }
+    }
+
+    const sortedPriority = priority.sort((a, b) => {
+      const typeA = messageTypeMap[a.uuid]
+      const typeB = messageTypeMap[b.uuid]
+
+      if (typeA !== typeB) {
+        return SortedPriorityTypes.indexOf(typeA) - SortedPriorityTypes.indexOf(typeB)
+      }
+
+      return a.created_at_timestamp - b.created_at_timestamp
+    })
+
+    const regularMessagesOldestFirst = regular.sort((a, b) => a.created_at_timestamp - b.created_at_timestamp)
+
+    return [...sortedPriority, ...regularMessagesOldestFirst]
+  }
+
+  getServerMessageType(message: AsymmetricMessageServerHash): AsymmetricMessagePayloadType | undefined {
+    const result = this.getUntrustedMessagePayload(message)
+
+    if (!result) {
+      return undefined
+    }
+
+    return result.type
   }
 
   async handleRemoteReceivedAsymmetricMessages(messages: AsymmetricMessageServerHash[]): Promise<void> {
@@ -111,90 +168,143 @@ export class AsymmetricMessageService
       return
     }
 
-    const sortedMessages = messages.slice().sort((a, b) => a.created_at_timestamp - b.created_at_timestamp)
+    const sortedMessages = this.sortServerMessages(messages)
 
     for (const message of sortedMessages) {
-      const trustedMessagePayload = this.getTrustedMessagePayload(message)
-      if (!trustedMessagePayload) {
+      const trustedPayload = this.getTrustedMessagePayload(message)
+      if (!trustedPayload) {
         continue
       }
 
-      if (trustedMessagePayload.data.recipientUuid !== message.user_uuid) {
-        continue
-      }
-
-      if (trustedMessagePayload.type === AsymmetricMessagePayloadType.ContactShare) {
-        await this.handleTrustedContactShareMessage(message, trustedMessagePayload)
-      } else if (trustedMessagePayload.type === AsymmetricMessagePayloadType.SenderKeypairChanged) {
-        await this.handleTrustedSenderKeypairChangedMessage(message, trustedMessagePayload)
-      } else if (trustedMessagePayload.type === AsymmetricMessagePayloadType.SharedVaultRootKeyChanged) {
-        await this.handleTrustedSharedVaultRootKeyChangedMessage(message, trustedMessagePayload)
-      } else if (trustedMessagePayload.type === AsymmetricMessagePayloadType.SharedVaultMetadataChanged) {
-        await this.handleVaultMetadataChangedMessage(message, trustedMessagePayload)
-      } else if (trustedMessagePayload.type === AsymmetricMessagePayloadType.SharedVaultInvite) {
-        throw new Error('Shared vault invites payloads are not handled as part of asymmetric messages')
-      }
-
-      await this.deleteMessageAfterProcessing(message)
+      await this.handleTrustedMessageResult(message, trustedPayload)
     }
   }
 
-  getTrustedMessagePayload(message: AsymmetricMessageServerHash): AsymmetricMessagePayload | undefined {
-    const useCase = new GetAsymmetricMessageTrustedPayload(this.encryption, this.contacts)
-
-    return useCase.execute({
-      privateKey: this.encryption.getKeyPair().privateKey,
-      message,
-    })
-  }
-
-  private async deleteMessageAfterProcessing(message: AsymmetricMessageServerHash): Promise<void> {
-    await this.messageServer.deleteMessage({ messageUuid: message.uuid })
-  }
-
-  async handleVaultMetadataChangedMessage(
-    _message: AsymmetricMessageServerHash,
-    trustedPayload: AsymmetricMessageSharedVaultMetadataChanged,
+  private async handleTrustedMessageResult(
+    message: AsymmetricMessageServerHash,
+    payload: AsymmetricMessagePayload,
   ): Promise<void> {
-    const vault = new GetVaultUseCase(this.items).execute({ sharedVaultUuid: trustedPayload.data.sharedVaultUuid })
-    if (!vault) {
+    if (payload.data.recipientUuid !== message.user_uuid) {
       return
     }
 
-    await this.mutator.changeItem<VaultListingMutator>(vault, (mutator) => {
-      mutator.name = trustedPayload.data.name
-      mutator.description = trustedPayload.data.description
+    if (payload.type === AsymmetricMessagePayloadType.ContactShare) {
+      await this.handleTrustedContactShareMessage(message, payload)
+    } else if (payload.type === AsymmetricMessagePayloadType.SenderKeypairChanged) {
+      await this.handleTrustedSenderKeypairChangedMessage(message, payload)
+    } else if (payload.type === AsymmetricMessagePayloadType.SharedVaultRootKeyChanged) {
+      await this.handleTrustedSharedVaultRootKeyChangedMessage(message, payload)
+    } else if (payload.type === AsymmetricMessagePayloadType.SharedVaultMetadataChanged) {
+      await this.handleTrustedVaultMetadataChangedMessage(message, payload)
+    } else if (payload.type === AsymmetricMessagePayloadType.SharedVaultInvite) {
+      throw new Error('Shared vault invites payloads are not handled as part of asymmetric messages')
+    }
+
+    await this.deleteMessageAfterProcessing(message)
+  }
+
+  getUntrustedMessagePayload(message: AsymmetricMessageServerHash): AsymmetricMessagePayload | undefined {
+    const result = this._getUntrustedPayload.execute({
+      privateKey: this.encryption.getKeyPair().privateKey,
+      message,
     })
+
+    if (result.isFailed()) {
+      return undefined
+    }
+
+    return result.getValue()
+  }
+
+  getTrustedMessagePayload(message: AsymmetricMessageServerHash): AsymmetricMessagePayload | undefined {
+    const contact = this._findContact.execute({ userUuid: message.sender_uuid })
+    if (contact.isFailed()) {
+      return undefined
+    }
+
+    const result = this._getTrustedPayload.execute({
+      privateKey: this.encryption.getKeyPair().privateKey,
+      sender: contact.getValue(),
+      message,
+    })
+
+    if (result.isFailed()) {
+      return undefined
+    }
+
+    return result.getValue()
+  }
+
+  async deleteMessageAfterProcessing(message: AsymmetricMessageServerHash): Promise<void> {
+    await this.messageServer.deleteMessage({ messageUuid: message.uuid })
+  }
+
+  async handleTrustedVaultMetadataChangedMessage(
+    _message: AsymmetricMessageServerHash,
+    trustedPayload: AsymmetricMessageSharedVaultMetadataChanged,
+  ): Promise<void> {
+    const vault = this._getVault.execute<VaultListingInterface>({
+      sharedVaultUuid: trustedPayload.data.sharedVaultUuid,
+    })
+    if (vault.isFailed()) {
+      return
+    }
+
+    await this.mutator.changeItem<VaultListingMutator>(
+      vault.getValue(),
+      (mutator) => {
+        mutator.name = trustedPayload.data.name
+        mutator.description = trustedPayload.data.description
+      },
+      MutationType.UpdateUserTimestamps,
+      PayloadEmitSource.RemoteRetrieved,
+    )
   }
 
   async handleTrustedContactShareMessage(
     _message: AsymmetricMessageServerHash,
     trustedPayload: AsymmetricMessageTrustedContactShare,
   ): Promise<void> {
-    await this.contacts.createOrUpdateTrustedContactFromContactShare(trustedPayload.data.trustedContact)
+    if (trustedPayload.data.trustedContact.isMe) {
+      return
+    }
+
+    await this._replaceContactData.execute(trustedPayload.data.trustedContact)
   }
 
-  private async handleTrustedSenderKeypairChangedMessage(
+  async handleTrustedSenderKeypairChangedMessage(
     message: AsymmetricMessageServerHash,
     trustedPayload: AsymmetricMessageSenderKeypairChanged,
   ): Promise<void> {
-    await this.contacts.createOrEditTrustedContact({
+    await this._createOrEditContact.execute({
       contactUuid: message.sender_uuid,
       publicKey: trustedPayload.data.newEncryptionPublicKey,
       signingPublicKey: trustedPayload.data.newSigningPublicKey,
     })
   }
 
-  private async handleTrustedSharedVaultRootKeyChangedMessage(
+  async handleTrustedSharedVaultRootKeyChangedMessage(
     _message: AsymmetricMessageServerHash,
     trustedPayload: AsymmetricMessageSharedVaultRootKeyChanged,
   ): Promise<void> {
-    const useCase = new HandleTrustedSharedVaultRootKeyChangedMessage(
-      this.mutator,
-      this.items,
-      this.sync,
-      this.encryption,
-    )
-    await useCase.execute(trustedPayload)
+    await this._handleRootKeyChangedMessage.execute(trustedPayload)
+  }
+
+  public override deinit(): void {
+    super.deinit()
+    ;(this.messageServer as unknown) = undefined
+    ;(this.encryption as unknown) = undefined
+    ;(this.mutator as unknown) = undefined
+    ;(this._createOrEditContact as unknown) = undefined
+    ;(this._findContact as unknown) = undefined
+    ;(this._getAllContacts as unknown) = undefined
+    ;(this._replaceContactData as unknown) = undefined
+    ;(this._getTrustedPayload as unknown) = undefined
+    ;(this._getVault as unknown) = undefined
+    ;(this._handleRootKeyChangedMessage as unknown) = undefined
+    ;(this._sendOwnContactChangedMessage as unknown) = undefined
+    ;(this._getOutboundMessagesUseCase as unknown) = undefined
+    ;(this._getInboundMessagesUseCase as unknown) = undefined
+    ;(this._getUntrustedPayload as unknown) = undefined
   }
 }

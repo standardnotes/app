@@ -171,7 +171,7 @@ const makeTags = async (application, titles) => {
 
 const extractTagHierarchy = (application) => {
   const result = {}
-  const roots = application.itemManager.getRootTags()
+  const roots = application.items.getRootTags()
 
   const constructHierarchy = (currentTag, result) => {
     result[currentTag.title] = { _uuid: currentTag.uuid }

@@ -1,17 +1,29 @@
 import { VaultListingInterface } from '@standardnotes/models'
 import { ItemManagerInterface } from './../../Item/ItemManagerInterface'
-import { ContentType } from '@standardnotes/domain-core'
+import { ContentType, Result, SyncUseCaseInterface } from '@standardnotes/domain-core'
 
-export class GetVaultUseCase<T extends VaultListingInterface> {
+export class GetVault implements SyncUseCaseInterface<VaultListingInterface> {
   constructor(private items: ItemManagerInterface) {}
 
-  execute(query: { keySystemIdentifier: string } | { sharedVaultUuid: string }): T | undefined {
+  execute<T extends VaultListingInterface>(
+    query: { keySystemIdentifier: string } | { sharedVaultUuid: string },
+  ): Result<T> {
     const vaults = this.items.getItems<VaultListingInterface>(ContentType.TYPES.VaultListing)
 
     if ('keySystemIdentifier' in query) {
-      return vaults.find((listing) => listing.systemIdentifier === query.keySystemIdentifier) as T
+      const result = vaults.find((listing) => listing.systemIdentifier === query.keySystemIdentifier) as T
+      if (!result) {
+        return Result.fail('Vault not found')
+      }
+
+      return Result.ok(result)
     } else {
-      return vaults.find((listing) => listing.sharing?.sharedVaultUuid === query.sharedVaultUuid) as T
+      const result = vaults.find((listing) => listing.sharing?.sharedVaultUuid === query.sharedVaultUuid) as T
+      if (!result) {
+        return Result.fail('Vault not found')
+      }
+
+      return Result.ok(result)
     }
   }
 }

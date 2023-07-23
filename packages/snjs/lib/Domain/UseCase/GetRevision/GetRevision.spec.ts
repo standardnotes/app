@@ -1,6 +1,5 @@
 import { EncryptedPayloadInterface, HistoryEntry } from '@standardnotes/models'
-import { EncryptionProviderInterface } from '@standardnotes/encryption'
-import { RevisionClientInterface } from '@standardnotes/services'
+import { EncryptionProviderInterface, RevisionClientInterface } from '@standardnotes/services'
 jest.mock('@standardnotes/models', () => {
   const original = jest.requireActual('@standardnotes/models')
 
@@ -32,11 +31,13 @@ describe('GetRevision', () => {
       enc_item_key: 'foobar',
       auth_hash: 'foobar',
       created_at: '2021-01-01T00:00:00.000Z',
-      updated_at: '2021-01-01T00:00:00.000Z'
+      updated_at: '2021-01-01T00:00:00.000Z',
     } as jest.Mocked<Revision>)
 
     encryptionService = {} as jest.Mocked<EncryptionProviderInterface>
-    encryptionService.getEmbeddedPayloadAuthenticatedData = jest.fn().mockReturnValue({ u: '00000000-0000-0000-0000-000000000000' })
+    encryptionService.getEmbeddedPayloadAuthenticatedData = jest
+      .fn()
+      .mockReturnValue({ u: '00000000-0000-0000-0000-000000000000' })
     const encryptedPayload = {
       content: 'foobar',
     } as jest.Mocked<EncryptedPayloadInterface>

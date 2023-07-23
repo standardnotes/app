@@ -1,4 +1,4 @@
-import { OperatorManager } from '@standardnotes/encryption'
+import { EncryptionOperatorsInterface } from '@standardnotes/encryption'
 import { ProtocolVersionLastNonrootItemsKey, ProtocolVersionLatest, compareVersions } from '@standardnotes/common'
 import {
   CreateDecryptedItemFromPayload,
@@ -12,7 +12,7 @@ import {
 import { UuidGenerator } from '@standardnotes/utils'
 import { MutatorClientInterface } from '../../../Mutator/MutatorClientInterface'
 import { ItemManagerInterface } from '../../../Item/ItemManagerInterface'
-import { RootKeyManager } from '../../RootKey/RootKeyManager'
+import { RootKeyManager } from '../../../RootKeyManager/RootKeyManager'
 import { ContentType } from '@standardnotes/domain-core'
 
 /**
@@ -20,11 +20,11 @@ import { ContentType } from '@standardnotes/domain-core'
  * Consumer must call sync. If the protocol version <= 003, only one items key should be created,
  * and its .itemsKey value should be equal to the root key masterKey value.
  */
-export class CreateNewDefaultItemsKeyUseCase {
+export class CreateNewDefaultItemsKey {
   constructor(
     private mutator: MutatorClientInterface,
     private items: ItemManagerInterface,
-    private operatorManager: OperatorManager,
+    private operators: EncryptionOperatorsInterface,
     private rootKeyManager: RootKeyManager,
   ) {}
 
@@ -48,7 +48,7 @@ export class CreateNewDefaultItemsKeyUseCase {
       itemTemplate = CreateDecryptedItemFromPayload(payload)
     } else {
       /** Create independent items key */
-      itemTemplate = this.operatorManager.operatorForVersion(operatorVersion).createItemsKey()
+      itemTemplate = this.operators.operatorForVersion(operatorVersion).createItemsKey()
     }
 
     const itemsKeys = this.items.getDisplayableItemsKeys()

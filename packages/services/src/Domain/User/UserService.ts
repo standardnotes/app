@@ -1,5 +1,5 @@
 import { Base64String } from '@standardnotes/sncrypto-common'
-import { EncryptionProviderInterface, SNRootKey, SNRootKeyParams } from '@standardnotes/encryption'
+import { SNRootKey, SNRootKeyParams } from '@standardnotes/encryption'
 import {
   HttpResponse,
   SignInResponse,
@@ -36,6 +36,7 @@ import { AccountEventData } from './AccountEventData'
 import { AccountEvent } from './AccountEvent'
 import { SignedInOrRegisteredEventPayload } from './SignedInOrRegisteredEventPayload'
 import { CredentialsChangeFunctionResponse } from './CredentialsChangeFunctionResponse'
+import { EncryptionProviderInterface } from '../Encryption/EncryptionProviderInterface'
 
 export class UserService
   extends AbstractService<AccountEvent, AccountEventData>
@@ -49,7 +50,7 @@ export class UserService
 
   constructor(
     private sessionManager: SessionsClientInterface,
-    private syncService: SyncServiceInterface,
+    private sync: SyncServiceInterface,
     private storageService: StorageServiceInterface,
     private itemManager: ItemManagerInterface,
     private encryptionService: EncryptionProviderInterface,
@@ -65,14 +66,14 @@ export class UserService
   async handleEvent(event: InternalEventInterface): Promise<void> {
     if (event.type === AccountEvent.SignedInOrRegistered) {
       const payload = (event.payload as AccountEventData).payload as SignedInOrRegisteredEventPayload
-      this.syncService.resetSyncState()
+      this.sync.resetSyncState()
 
       await this.storageService.setPersistencePolicy(
         payload.ephemeral ? StoragePersistencePolicies.Ephemeral : StoragePersistencePolicies.Default,
       )
 
       if (payload.mergeLocal) {
-        await this.syncService.markAllItemsAsNeedingSyncAndPersist()
+        await this.sync.markAllItemsAsNeedingSyncAndPersist()
       } else {
         void this.itemManager.removeAllItemsFromMemory()
         await this.clearDatabase()
@@ -80,7 +81,7 @@ export class UserService
 
       this.unlockSyncing()
 
-      const syncPromise = this.syncService
+      const syncPromise = this.sync
         .downloadFirstSync(1_000, {
           checkIntegrity: payload.checkIntegrity,
           awaitAll: payload.awaitSync,
@@ -102,7 +103,7 @@ export class UserService
   public override deinit(): void {
     super.deinit()
     ;(this.sessionManager as unknown) = undefined
-    ;(this.syncService as unknown) = undefined
+    ;(this.sync as unknown) = undefined
     ;(this.storageService as unknown) = undefined
     ;(this.itemManager as unknown) = undefined
     ;(this.encryptionService as unknown) = undefined
@@ -514,7 +515,7 @@ export class UserService
     const key = await this.encryptionService.createRootKey(identifier, passcode, origination)
     await this.encryptionService.setNewRootKeyWrapper(key)
     await this.rewriteItemsKeys()
-    await this.syncService.sync()
+    await this.sync.sync()
   }
 
   private async removePasscodeWithoutWarning() {
@@ -534,15 +535,15 @@ export class UserService
     const itemsKeys = this.itemManager.getDisplayableItemsKeys()
     const payloads = itemsKeys.map((key) => key.payloadRepresentation())
     await this.storageService.deletePayloads(payloads)
-    await this.syncService.persistPayloads(payloads)
+    await this.sync.persistPayloads(payloads)
   }
 
   private lockSyncing(): void {
-    this.syncService.lockSyncing()
+    this.sync.lockSyncing()
   }
 
   private unlockSyncing(): void {
-    this.syncService.unlockSyncing()
+    this.sync.unlockSyncing()
   }
 
   private clearDatabase(): Promise<void> {
@@ -605,7 +606,7 @@ export class UserService
 
     const rollback = await this.encryptionService.createNewItemsKeyWithRollback()
     await this.encryptionService.reencryptApplicableItemsAfterUserRootKeyChange()
-    await this.syncService.sync({ awaitAll: true })
+    await this.sync.sync({ awaitAll: true })
 
     const defaultItemsKey = this.encryptionService.getSureDefaultItemsKey()
     const itemsKeyWasSynced = !defaultItemsKey.neverSynced
@@ -618,7 +619,7 @@ export class UserService
       })
       await this.encryptionService.reencryptApplicableItemsAfterUserRootKeyChange()
       await rollback()
-      await this.syncService.sync({ awaitAll: true })
+      await this.sync.sync({ awaitAll: true })
 
       return { error: Error(Messages.CredentialsChangeStrings.Failed) }
     }

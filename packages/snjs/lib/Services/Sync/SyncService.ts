@@ -13,14 +13,12 @@ import {
 import { ItemManager } from '@Lib/Services/Items/ItemManager'
 import { OfflineSyncOperation } from '@Lib/Services/Sync/Offline/Operation'
 import { PayloadManager } from '../Payloads/PayloadManager'
-import { SNApiService } from '../Api/ApiService'
-import { SNHistoryManager } from '../History/HistoryManager'
+import { LegacyApiService } from '../Api/ApiService'
+import { HistoryManager } from '../History/HistoryManager'
 import { SNLog } from '@Lib/Log'
-import { SNSessionManager } from '../Session/SessionManager'
+import { SessionManager } from '../Session/SessionManager'
 import { DiskStorageService } from '../Storage/DiskStorageService'
-import { SyncClientInterface } from './SyncClientInterface'
 import { SyncPromise } from './Types'
-import { SyncOpStatus } from '@Lib/Services/Sync/SyncOpStatus'
 import { ServerSyncResponse } from '@Lib/Services/Sync/Account/Response'
 import { ServerSyncResponseResolver } from '@Lib/Services/Sync/Account/ResponseResolver'
 import { SyncSignal, SyncStats } from '@Lib/Services/Sync/Signals'
@@ -84,6 +82,7 @@ import {
   SyncEventReceivedRemoteSharedVaultsData,
   SyncEventReceivedUserEventsData,
   SyncEventReceivedAsymmetricMessagesData,
+  SyncOpStatus,
 } from '@standardnotes/services'
 import { OfflineSyncResponse } from './Offline/Response'
 import {
@@ -121,9 +120,9 @@ const ContentTypeLocalLoadPriorty = [
  * After each sync request, any changes made or retrieved are also persisted locally.
  * The sync service largely does not perform any task unless it is called upon.
  */
-export class SNSyncService
+export class SyncService
   extends AbstractService<SyncEvent>
-  implements SyncServiceInterface, InternalEventHandlerInterface, SyncClientInterface
+  implements SyncServiceInterface, InternalEventHandlerInterface
 {
   private dirtyIndexAtLastPresyncSave?: number
   private lastSyncDate?: Date
@@ -152,12 +151,12 @@ export class SNSyncService
 
   constructor(
     private itemManager: ItemManager,
-    private sessionManager: SNSessionManager,
+    private sessionManager: SessionManager,
     private encryptionService: EncryptionService,
     private storageService: DiskStorageService,
     private payloadManager: PayloadManager,
-    private apiService: SNApiService,
-    private historyService: SNHistoryManager,
+    private apiService: LegacyApiService,
+    private historyService: HistoryManager,
     private device: DeviceInterface,
     private identifier: string,
     private readonly options: ApplicationSyncOptions,
@@ -968,25 +967,25 @@ export class SNSyncService
 
     const historyMap = this.historyService.getHistoryMapCopy()
 
-    if (response.userEvents) {
+    if (response.userEvents && response.userEvents.length > 0) {
       await this.notifyEventSync(SyncEvent.ReceivedUserEvents, response.userEvents as SyncEventReceivedUserEventsData)
     }
 
-    if (response.asymmetricMessages) {
+    if (response.asymmetricMessages && response.asymmetricMessages.length > 0) {
       await this.notifyEventSync(
         SyncEvent.ReceivedAsymmetricMessages,
         response.asymmetricMessages as SyncEventReceivedAsymmetricMessagesData,
       )
     }
 
-    if (response.vaults) {
+    if (response.vaults && response.vaults.length > 0) {
       await this.notifyEventSync(
         SyncEvent.ReceivedRemoteSharedVaults,
         response.vaults as SyncEventReceivedRemoteSharedVaultsData,
       )
     }
 
-    if (response.vaultInvites) {
+    if (response.vaultInvites && response.vaultInvites.length > 0) {
       await this.notifyEventSync(
         SyncEvent.ReceivedSharedVaultInvites,
         response.vaultInvites as SyncEventReceivedSharedVaultInvitesData,

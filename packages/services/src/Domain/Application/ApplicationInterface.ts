@@ -1,3 +1,5 @@
+import { HistoryServiceInterface } from './../History/HistoryServiceInterface'
+import { InternalEventBusInterface } from './../Internal/InternalEventBusInterface'
 import { PreferenceServiceInterface } from './../Preferences/PreferenceServiceInterface'
 import { AsymmetricMessageServiceInterface } from './../AsymmetricMessage/AsymmetricMessageServiceInterface'
 import { SyncOptions } from './../Sync/SyncOptions'
@@ -34,6 +36,7 @@ import { UserClientInterface } from '../User/UserClientInterface'
 import { SessionsClientInterface } from '../Session/SessionsClientInterface'
 import { HomeServerServiceInterface } from '../HomeServer/HomeServerServiceInterface'
 import { User } from '@standardnotes/responses'
+import { EncryptionProviderInterface } from '../Encryption/EncryptionProviderInterface'
 
 export interface ApplicationInterface {
   deinit(mode: DeinitMode, source: DeinitSource): void
@@ -107,9 +110,11 @@ export interface ApplicationInterface {
   get alerts(): AlertService
   get asymmetric(): AsymmetricMessageServiceInterface
   get preferences(): PreferenceServiceInterface
+  get events(): InternalEventBusInterface
+  get history(): HistoryServiceInterface
+  get encryption(): EncryptionProviderInterface
 
   readonly identifier: ApplicationIdentifier
   readonly platform: Platform
-  deviceInterface: DeviceInterface
-  alertService: AlertService
+  device: DeviceInterface
 }

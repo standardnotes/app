@@ -1,16 +1,16 @@
-import { EncryptionProviderInterface } from '@standardnotes/encryption'
-import { AsymmetricMessageServerHash, ClientDisplayableError } from '@standardnotes/responses'
+import { AsymmetricMessageServerHash } from '@standardnotes/responses'
 import {
   TrustedContactInterface,
   AsymmetricMessagePayloadType,
   AsymmetricMessageSenderKeypairChanged,
 } from '@standardnotes/models'
-import { AsymmetricMessageServer } from '@standardnotes/api'
 import { PkcKeyPair } from '@standardnotes/sncrypto-common'
-import { SendAsymmetricMessageUseCase } from './SendAsymmetricMessageUseCase'
+import { SendMessage } from './SendMessage'
+import { EncryptMessage } from '../../Encryption/UseCase/Asymmetric/EncryptMessage'
+import { Result, UseCaseInterface } from '@standardnotes/domain-core'
 
-export class SendOwnContactChangeMessage {
-  constructor(private encryption: EncryptionProviderInterface, private messageServer: AsymmetricMessageServer) {}
+export class SendOwnContactChangeMessage implements UseCaseInterface<AsymmetricMessageServerHash> {
+  constructor(private encryptMessage: EncryptMessage, private sendMessage: SendMessage) {}
 
   async execute(params: {
     senderOldKeyPair: PkcKeyPair
@@ -18,7 +18,7 @@ export class SendOwnContactChangeMessage {
     senderNewKeyPair: PkcKeyPair
     senderNewSigningKeyPair: PkcKeyPair
     contact: TrustedContactInterface
-  }): Promise<AsymmetricMessageServerHash | ClientDisplayableError> {
+  }): Promise<Result<AsymmetricMessageServerHash>> {
     const message: AsymmetricMessageSenderKeypairChanged = {
       type: AsymmetricMessagePayloadType.SenderKeypairChanged,
       data: {
@@ -28,17 +28,22 @@ export class SendOwnContactChangeMessage {
       },
     }
 
-    const encryptedMessage = this.encryption.asymmetricallyEncryptMessage({
+    const encryptedMessage = this.encryptMessage.execute({
       message: message,
-      senderKeyPair: params.senderOldKeyPair,
-      senderSigningKeyPair: params.senderOldSigningKeyPair,
+      keys: {
+        encryption: params.senderOldKeyPair,
+        signing: params.senderOldSigningKeyPair,
+      },
       recipientPublicKey: params.contact.publicKeySet.encryption,
     })
 
-    const sendMessageUseCase = new SendAsymmetricMessageUseCase(this.messageServer)
-    const sendMessageResult = await sendMessageUseCase.execute({
+    if (encryptedMessage.isFailed()) {
+      return Result.fail(encryptedMessage.getError())
+    }
+
+    const sendMessageResult = await this.sendMessage.execute({
       recipientUuid: params.contact.contactUuid,
-      encryptedMessage,
+      encryptedMessage: encryptedMessage.getValue(),
       replaceabilityIdentifier: undefined,
     })
 

@@ -4,7 +4,7 @@ import { ClientDisplayableError } from '@standardnotes/responses'
 import { RoleName, ContentType } from '@standardnotes/domain-core'
 import { PROD_OFFLINE_FEATURES_URL } from '../../Hosts'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
-import { SNWebSocketsService } from '../Api/WebsocketsService'
+import { WebSocketsService } from '../Api/WebsocketsService'
 import { WebSocketsServiceEvent } from '../Api/WebSocketsServiceEvent'
 import { TRUSTED_CUSTOM_EXTENSIONS_HOSTS, TRUSTED_FEATURE_HOSTS } from '@Lib/Hosts'
 import { UserRolesChangedEvent } from '@standardnotes/domain-events'
@@ -39,7 +39,7 @@ import {
   StorageKey,
   MutatorClientInterface,
   StorageServiceInterface,
-  ApiServiceInterface,
+  LegacyApiServiceInterface,
   ItemManagerInterface,
   SyncServiceInterface,
   SessionsClientInterface,
@@ -47,6 +47,8 @@ import {
   SubscriptionManagerInterface,
   AccountEvent,
   SubscriptionManagerEvent,
+  ApplicationEvent,
+  ApplicationStageChangedEventPayload,
 } from '@standardnotes/services'
 
 import { DownloadRemoteThirdPartyFeatureUseCase } from './UseCase/DownloadRemoteThirdPartyFeature'
@@ -56,7 +58,7 @@ import { SettingsClientInterface } from '../Settings/SettingsClientInterface'
 
 type GetOfflineSubscriptionDetailsResponse = OfflineSubscriptionEntitlements | ClientDisplayableError
 
-export class SNFeaturesService
+export class FeaturesService
   extends AbstractService<FeaturesEvent>
   implements FeaturesClientInterface, InternalEventHandlerInterface
 {
@@ -71,8 +73,8 @@ export class SNFeaturesService
     private items: ItemManagerInterface,
     private mutator: MutatorClientInterface,
     private subscriptions: SubscriptionManagerInterface,
-    private api: ApiServiceInterface,
-    sockets: SNWebSocketsService,
+    private api: LegacyApiServiceInterface,
+    sockets: WebSocketsService,
     private settings: SettingsClientInterface,
     private user: UserClientInterface,
     private sync: SyncServiceInterface,
@@ -152,20 +154,19 @@ export class SNFeaturesService
       const { userRoles } = event.payload as MetaReceivedData
       void this.updateOnlineRolesWithNewValues(userRoles.map((role) => role.name))
     }
-  }
 
-  override async handleApplicationStage(stage: ApplicationStage): Promise<void> {
-    if (stage === ApplicationStage.FullSyncCompleted_13) {
-      if (!this.hasFirstPartyOnlineSubscription()) {
-        const offlineRepo = this.getOfflineRepo()
+    if (event.type === ApplicationEvent.ApplicationStageChanged) {
+      const stage = (event.payload as ApplicationStageChangedEventPayload).stage
+      if (stage === ApplicationStage.FullSyncCompleted_13) {
+        if (!this.hasFirstPartyOnlineSubscription()) {
+          const offlineRepo = this.getOfflineRepo()
 
-        if (offlineRepo) {
-          void this.downloadOfflineRoles(offlineRepo)
+          if (offlineRepo) {
+            void this.downloadOfflineRoles(offlineRepo)
+          }
         }
       }
     }
-
-    return super.handleApplicationStage(stage)
   }
 
   public enableExperimentalFeature(identifier: FeatureIdentifier): void {

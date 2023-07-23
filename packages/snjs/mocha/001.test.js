@@ -31,7 +31,7 @@ describe('001 protocol operations', () => {
   })
 
   it('cost minimum', () => {
-    expect(application.encryptionService.costMinimumForVersion('001')).to.equal(3000)
+    expect(application.encryption.costMinimumForVersion('001')).to.equal(3000)
   })
 
   it('generates valid keys for registration', async () => {
@@ -46,7 +46,7 @@ describe('001 protocol operations', () => {
 
   it('generates valid keys from existing params and decrypts', async () => {
     const password = 'password'
-    const keyParams = await application.encryptionService.createKeyParams({
+    const keyParams = await application.encryption.createKeyParams({
       pw_func: 'pbkdf2',
       pw_alg: 'sha512',
       pw_key_size: 512,
@@ -67,7 +67,7 @@ describe('001 protocol operations', () => {
         'sVuHmG0XAp1PRDE8r8XqFXijjP8Pqdwal9YFRrXK4hKLt1yyq8MwQU+1Z95Tz/b7ajYdidwFE0iDwd8Iu8281VtJsQ4yhh2tJiAzBy6newyHfhA5nH93yZ3iXRJaG87bgNQE9lsXzTV/OHAvqMuQtw/QVSWI3Qy1Pyu1Tn72q7FPKKhRRkzEEZ+Ax0BA1fHg',
       uuid: '54001a6f-7c22-4b34-8316-fadf9b1fc255',
     })
-    const decrypted = await application.encryptionService.decryptSplitSingle({
+    const decrypted = await application.encryption.decryptSplitSingle({
       usesRootKey: {
         items: [payload],
         key: key,

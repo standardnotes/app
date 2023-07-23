@@ -30,7 +30,7 @@ import {
   InternalFeatureService,
   InternalFeature,
 } from '@standardnotes/services'
-import { Base64String, PkcKeyPair } from '@standardnotes/sncrypto-common'
+import { Base64String, PkcKeyPair, PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import {
   SessionBody,
   ErrorTag,
@@ -52,9 +52,9 @@ import * as Common from '@standardnotes/common'
 
 import { RawStorageValue } from './Sessions/Types'
 import { ShareToken } from './ShareToken'
-import { SNApiService } from '../Api/ApiService'
+import { LegacyApiService } from '../Api/ApiService'
 import { DiskStorageService } from '../Storage/DiskStorageService'
-import { SNWebSocketsService } from '../Api/WebsocketsService'
+import { WebSocketsService } from '../Api/WebsocketsService'
 import { Strings } from '@Lib/Strings'
 import { UuidString } from '@Lib/Types/UuidString'
 import { ChallengeResponse, ChallengeService } from '../Challenge'
@@ -78,7 +78,7 @@ const cleanedEmailString = (email: string) => {
  * server credentials, such as the session token. It also exposes methods for registering
  * for a new account, signing into an existing one, or changing an account password.
  */
-export class SNSessionManager
+export class SessionManager
   extends AbstractService<SessionEvent>
   implements SessionsClientInterface, InternalEventHandlerInterface
 {
@@ -87,13 +87,14 @@ export class SNSessionManager
   private session?: Session | LegacySession
 
   constructor(
-    private diskStorageService: DiskStorageService,
-    private apiService: SNApiService,
+    private storage: DiskStorageService,
+    private apiService: LegacyApiService,
     private userApiService: UserApiServiceInterface,
     private alertService: AlertService,
     private encryptionService: EncryptionService,
+    private crypto: PureCryptoInterface,
     private challengeService: ChallengeService,
-    private webSocketsService: SNWebSocketsService,
+    private webSocketsService: WebSocketsService,
     private httpService: HttpServiceInterface,
     private sessionStorageMapper: MapperInterface<Session, Record<string, unknown>>,
     private legacySessionStorageMapper: MapperInterface<LegacySession, Record<string, unknown>>,
@@ -118,7 +119,7 @@ export class SNSessionManager
 
   override deinit(): void {
     ;(this.encryptionService as unknown) = undefined
-    ;(this.diskStorageService as unknown) = undefined
+    ;(this.storage as unknown) = undefined
     ;(this.apiService as unknown) = undefined
     ;(this.alertService as unknown) = undefined
     ;(this.challengeService as unknown) = undefined
@@ -141,17 +142,17 @@ export class SNSessionManager
     this.apiService.setUser(user)
   }
 
-  async initializeFromDisk() {
-    this.memoizeUser(this.diskStorageService.getValue(StorageKey.User))
+  async initializeFromDisk(): Promise<void> {
+    this.memoizeUser(this.storage.getValue(StorageKey.User))
 
     if (!this.user) {
-      const legacyUuidLookup = this.diskStorageService.getValue<string>(StorageKey.LegacyUuid)
+      const legacyUuidLookup = this.storage.getValue<string>(StorageKey.LegacyUuid)
       if (legacyUuidLookup) {
         this.memoizeUser({ uuid: legacyUuidLookup, email: legacyUuidLookup })
       }
     }
 
-    const rawSession = this.diskStorageService.getValue<RawStorageValue>(StorageKey.Session)
+    const rawSession = this.storage.getValue<RawStorageValue>(StorageKey.Session)
     if (rawSession) {
       try {
         const session =
@@ -286,7 +287,7 @@ export class SNSessionManager
             email,
             password,
             false,
-            this.diskStorageService.isEphemeralSession(),
+            this.storage.isEphemeralSession(),
             currentKeyParams?.version,
           )
           if (isErrorResponse(response)) {
@@ -630,10 +631,17 @@ export class SNSessionManager
     if (!isErrorResponse(rawResponse)) {
       if (InternalFeatureService.get().isFeatureEnabled(InternalFeature.Vaults)) {
         const eventData: UserKeyPairChangedEventData = {
-          oldKeyPair,
-          oldSigningKeyPair,
-          newKeyPair: parameters.newRootKey.encryptionKeyPair,
-          newSigningKeyPair: parameters.newRootKey.signingKeyPair,
+          previous:
+            oldKeyPair && oldSigningKeyPair
+              ? {
+                  encryption: oldKeyPair,
+                  signing: oldSigningKeyPair,
+                }
+              : undefined,
+          current: {
+            encryption: parameters.newRootKey.encryptionKeyPair,
+            signing: parameters.newRootKey.signingKeyPair,
+          },
         }
 
         void this.notifyEvent(SessionEvent.UserKeyPairChanged, eventData)
@@ -692,7 +700,7 @@ export class SNSessionManager
   }
 
   private decodeDemoShareToken(token: Base64String): ShareToken {
-    const jsonString = this.encryptionService.crypto.base64Decode(token)
+    const jsonString = this.crypto.base64Decode(token)
     return JSON.parse(jsonString)
   }
 
@@ -712,7 +720,7 @@ export class SNSessionManager
     await this.encryptionService.setRootKey(rootKey, wrappingKey)
 
     this.memoizeUser(user)
-    this.diskStorageService.setValue(StorageKey.User, user)
+    this.storage.setValue(StorageKey.User, user)
 
     void this.apiService.setHost(host)
     this.httpService.setHost(host)

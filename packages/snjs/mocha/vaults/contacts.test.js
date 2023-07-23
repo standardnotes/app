@@ -71,6 +71,18 @@ describe('contacts', function () {
     expect(updatedSelfContact.publicKeySet.signing).to.equal(context.signingPublicKey)
   })
 
+  it('should update self contact reference when changed', async () => {
+    const selfContact = context.contacts.getSelfContact()
+
+    await context.mutator.changeItem(selfContact, (mutator) => {
+      mutator.name = 'New Name'
+    })
+
+    const updatedSelfContact = context.contacts.getSelfContact()
+
+    expect(updatedSelfContact.name).to.equal('New Name')
+  })
+
   it('should not be able to delete self contact', async () => {
     const selfContact = context.contacts.getSelfContact()
 
@@ -78,6 +90,10 @@ describe('contacts', function () {
   })
 
   it('should not be able to delete a trusted contact if it belongs to a vault I administer', async () => {
+    console.error('TODO: implement test')
+  })
+
+  it('should be able to refresh a contact using a collaborationID that includes full chain of previouos public keys', async () => {
     console.error('TODO: implement test')
   })
 })

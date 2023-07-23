@@ -1,7 +1,6 @@
 import { removeFromArray } from '@standardnotes/utils'
 import { SNRootKey } from '@standardnotes/encryption'
 import { ChallengeService } from '../Challenge'
-import { ListedService } from '../Listed/ListedService'
 import { ActionResponse, DeprecatedHttpResponse } from '@standardnotes/responses'
 import { ItemManager } from '@Lib/Services/Items/ItemManager'
 import {
@@ -21,8 +20,6 @@ import {
   TransferPayload,
   ItemContent,
 } from '@standardnotes/models'
-import { SNSyncService } from '../Sync/SyncService'
-import { PayloadManager } from '../Payloads/PayloadManager'
 import { DeprecatedHttpService } from '../Api/DeprecatedHttpService'
 import {
   AbstractService,
@@ -53,20 +50,17 @@ type PayloadRequestHandler = (uuid: string) => TransferPayload | undefined
  * `post`: sends an item's data to a remote service. This is used for example by Listed
  *       to allow publishing a note to a user's blog.
  */
-export class SNActionsService extends AbstractService {
+export class ActionsService extends AbstractService {
   private previousPasswords: string[] = []
   private payloadRequestHandlers: PayloadRequestHandler[] = []
 
   constructor(
     private itemManager: ItemManager,
     private alertService: AlertService,
-    public deviceInterface: DeviceInterface,
+    private device: DeviceInterface,
     private httpService: DeprecatedHttpService,
-    private payloadManager: PayloadManager,
     private encryptionService: EncryptionService,
-    private syncService: SNSyncService,
     private challengeService: ChallengeService,
-    private listedService: ListedService,
     protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)
@@ -76,13 +70,10 @@ export class SNActionsService extends AbstractService {
   public override deinit(): void {
     ;(this.itemManager as unknown) = undefined
     ;(this.alertService as unknown) = undefined
-    ;(this.deviceInterface as unknown) = undefined
+    ;(this.device as unknown) = undefined
     ;(this.httpService as unknown) = undefined
-    ;(this.payloadManager as unknown) = undefined
-    ;(this.listedService as unknown) = undefined
     ;(this.challengeService as unknown) = undefined
     ;(this.encryptionService as unknown) = undefined
-    ;(this.syncService as unknown) = undefined
     this.payloadRequestHandlers.length = 0
     this.previousPasswords.length = 0
     super.deinit()
@@ -323,7 +314,7 @@ export class SNActionsService extends AbstractService {
   }
 
   private handleShowAction(action: Action) {
-    void this.deviceInterface.openUrl(action.url)
+    void this.device.openUrl(action.url)
     return {} as ActionResponse
   }
 

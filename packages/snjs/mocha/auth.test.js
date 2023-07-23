@@ -31,7 +31,7 @@ describe('basic auth', function () {
   it('successfully register new account', async function () {
     const response = await this.application.register(this.email, this.password)
     expect(response).to.be.ok
-    expect(await this.application.encryptionService.getRootKey()).to.be.ok
+    expect(await this.application.encryption.getRootKey()).to.be.ok
   })
 
   it('fails register new account with short password', async function () {
@@ -49,18 +49,18 @@ describe('basic auth', function () {
         'For your security, please choose a longer password or, ideally, a passphrase, and try again.',
     )
 
-    expect(await this.application.encryptionService.getRootKey()).to.not.be.ok
+    expect(await this.application.encryption.getRootKey()).to.not.be.ok
   })
 
   it('successfully signs out of account', async function () {
     await this.application.register(this.email, this.password)
 
-    expect(await this.application.encryptionService.getRootKey()).to.be.ok
+    expect(await this.application.encryption.getRootKey()).to.be.ok
 
     this.application = await Factory.signOutApplicationAndReturnNew(this.application)
 
-    expect(await this.application.encryptionService.getRootKey()).to.not.be.ok
-    expect(this.application.encryptionService.rootKeyManager.getKeyMode()).to.equal(KeyMode.RootKeyNone)
+    expect(await this.application.encryption.getRootKey()).to.not.be.ok
+    expect(this.application.encryption.rootKeyManager.getKeyMode()).to.equal(KeyMode.RootKeyNone)
   })
 
   it('successfully signs in to registered account', async function () {
@@ -69,7 +69,7 @@ describe('basic auth', function () {
     const response = await this.application.signIn(this.email, this.password, undefined, undefined, undefined, true)
     expect(response).to.be.ok
     expect(response.data.error).to.not.be.ok
-    expect(await this.application.encryptionService.getRootKey()).to.be.ok
+    expect(await this.application.encryption.getRootKey()).to.be.ok
   }).timeout(20000)
 
   it('cannot sign while already signed in', async function () {
@@ -79,7 +79,7 @@ describe('basic auth', function () {
     const response = await this.application.signIn(this.email, this.password, undefined, undefined, undefined, true)
     expect(response).to.be.ok
     expect(response.data.error).to.not.be.ok
-    expect(await this.application.encryptionService.getRootKey()).to.be.ok
+    expect(await this.application.encryption.getRootKey()).to.be.ok
 
     let error
     try {
@@ -99,7 +99,7 @@ describe('basic auth', function () {
       error = e
     }
     expect(error).to.be.ok
-    expect(await this.application.encryptionService.getRootKey()).to.be.ok
+    expect(await this.application.encryption.getRootKey()).to.be.ok
   }).timeout(20000)
 
   it('cannot perform two sign-ins at the same time', async function () {
@@ -111,7 +111,7 @@ describe('basic auth', function () {
         const response = await this.application.signIn(this.email, this.password, undefined, undefined, undefined, true)
         expect(response).to.be.ok
         expect(response.data.error).to.not.be.ok
-        expect(await this.application.encryptionService.getRootKey()).to.be.ok
+        expect(await this.application.encryption.getRootKey()).to.be.ok
       })(),
       (async () => {
         /** Make sure the first function runs first */
@@ -134,7 +134,7 @@ describe('basic auth', function () {
         const response = await this.application.register(this.email, this.password)
         expect(response).to.be.ok
         expect(response.error).to.not.be.ok
-        expect(await this.application.encryptionService.getRootKey()).to.be.ok
+        expect(await this.application.encryption.getRootKey()).to.be.ok
       })(),
       (async () => {
         /** Make sure the first function runs first */
@@ -185,7 +185,7 @@ describe('basic auth', function () {
      */
     await this.application.register(uppercase, this.password)
 
-    const response = await this.application.sessionManager.retrieveKeyParams(lowercase)
+    const response = await this.application.sessions.retrieveKeyParams(lowercase)
     const keyParams = response.keyParams
     expect(keyParams.identifier).to.equal(lowercase)
     expect(keyParams.identifier).to.not.equal(uppercase)
@@ -204,7 +204,7 @@ describe('basic auth', function () {
     const response = await this.application.signIn(uppercase, this.password, undefined, undefined, undefined, true)
     expect(response).to.be.ok
     expect(response.data.error).to.not.be.ok
-    expect(await this.application.encryptionService.getRootKey()).to.be.ok
+    expect(await this.application.encryption.getRootKey()).to.be.ok
   }).timeout(20000)
 
   it('can sign into account regardless of whitespace', async function () {
@@ -220,7 +220,7 @@ describe('basic auth', function () {
     const response = await this.application.signIn(withspace, this.password, undefined, undefined, undefined, true)
     expect(response).to.be.ok
     expect(response.data.error).to.not.be.ok
-    expect(await this.application.encryptionService.getRootKey()).to.be.ok
+    expect(await this.application.encryption.getRootKey()).to.be.ok
   }).timeout(20000)
 
   it('fails login with wrong password', async function () {
@@ -229,7 +229,7 @@ describe('basic auth', function () {
     const response = await this.application.signIn(this.email, 'wrongpassword', undefined, undefined, undefined, true)
     expect(response).to.be.ok
     expect(response.data.error).to.be.ok
-    expect(await this.application.encryptionService.getRootKey()).to.not.be.ok
+    expect(await this.application.encryption.getRootKey()).to.not.be.ok
   }).timeout(20000)
 
   it('fails to change to short password', async function () {
@@ -255,7 +255,7 @@ describe('basic auth', function () {
     let outOfSync = true
     let didCompletePostDownloadFirstSync = false
     let didCompleteDownloadFirstSync = false
-    this.application.syncService.addEventObserver((eventName) => {
+    this.application.sync.addEventObserver((eventName) => {
       if (eventName === SyncEvent.DownloadFirstSyncCompleted) {
         didCompleteDownloadFirstSync = true
       }
@@ -265,7 +265,7 @@ describe('basic auth', function () {
       if (!didCompletePostDownloadFirstSync && eventName === SyncEvent.PaginatedSyncRequestCompleted) {
         didCompletePostDownloadFirstSync = true
         /** Should be in sync */
-        outOfSync = this.application.syncService.isOutOfSync()
+        outOfSync = this.application.sync.isOutOfSync()
       }
     })
 
@@ -289,9 +289,9 @@ describe('basic auth', function () {
 
     this.expectedItemCount += noteCount
 
-    await this.application.syncService.sync(syncOptions)
+    await this.application.sync.sync(syncOptions)
 
-    expect(this.application.itemManager.items.length).to.equal(this.expectedItemCount)
+    expect(this.application.items.items.length).to.equal(this.expectedItemCount)
 
     const newPassword = 'newpassword'
     const response = await this.application.changePassword(this.password, newPassword)
@@ -299,18 +299,18 @@ describe('basic auth', function () {
     /** New items key */
     this.expectedItemCount++
 
-    expect(this.application.itemManager.items.length).to.equal(this.expectedItemCount)
+    expect(this.application.items.items.length).to.equal(this.expectedItemCount)
 
     expect(response.error).to.not.be.ok
-    expect(this.application.itemManager.items.length).to.equal(this.expectedItemCount)
-    expect(this.application.payloadManager.invalidPayloads.length).to.equal(0)
+    expect(this.application.items.items.length).to.equal(this.expectedItemCount)
+    expect(this.application.payloads.invalidPayloads.length).to.equal(0)
 
-    await this.application.syncService.markAllItemsAsNeedingSyncAndPersist()
-    await this.application.syncService.sync(syncOptions)
+    await this.application.sync.markAllItemsAsNeedingSyncAndPersist()
+    await this.application.sync.sync(syncOptions)
 
-    expect(this.application.itemManager.items.length).to.equal(this.expectedItemCount)
+    expect(this.application.items.items.length).to.equal(this.expectedItemCount)
 
-    const note = this.application.itemManager.getDisplayableNotes()[0]
+    const note = this.application.items.getDisplayableNotes()[0]
 
     /**
      * Create conflict for a note. First modify the item without saving so that
@@ -339,10 +339,10 @@ describe('basic auth', function () {
     expect(signinResponse).to.be.ok
     expect(signinResponse.data.error).to.not.be.ok
 
-    expect(await this.application.encryptionService.getRootKey()).to.be.ok
+    expect(await this.application.encryption.getRootKey()).to.be.ok
 
-    expect(this.application.itemManager.items.length).to.equal(this.expectedItemCount)
-    expect(this.application.payloadManager.invalidPayloads.length).to.equal(0)
+    expect(this.application.items.items.length).to.equal(this.expectedItemCount)
+    expect(this.application.payloads.invalidPayloads.length).to.equal(0)
   }
 
   it('successfully changes password', changePassword).timeout(40000)
@@ -383,7 +383,7 @@ describe('basic auth', function () {
     const noteCount = 10
     await Factory.createManyMappedNotes(this.application, noteCount)
     this.expectedItemCount += noteCount
-    await this.application.syncService.sync(syncOptions)
+    await this.application.sync.sync(syncOptions)
 
     const numTimesToChangePw = 3
     let newPassword = Factory.randomString()
@@ -398,16 +398,16 @@ describe('basic auth', function () {
       currentPassword = newPassword
       newPassword = Factory.randomString()
 
-      expect(this.application.itemManager.items.length).to.equal(this.expectedItemCount)
-      expect(this.application.payloadManager.invalidPayloads.length).to.equal(0)
+      expect(this.application.items.items.length).to.equal(this.expectedItemCount)
+      expect(this.application.payloads.invalidPayloads.length).to.equal(0)
 
-      await this.application.syncService.markAllItemsAsNeedingSyncAndPersist()
-      await this.application.syncService.sync(syncOptions)
+      await this.application.sync.markAllItemsAsNeedingSyncAndPersist()
+      await this.application.sync.sync(syncOptions)
 
       this.application = await this.context.signout()
 
-      expect(this.application.itemManager.items.length).to.equal(BaseItemCounts.DefaultItems)
-      expect(this.application.payloadManager.invalidPayloads.length).to.equal(0)
+      expect(this.application.items.items.length).to.equal(BaseItemCounts.DefaultItems)
+      expect(this.application.payloads.invalidPayloads.length).to.equal(0)
 
       /** Should login with new password */
       const signinResponse = await this.application.signIn(
@@ -421,7 +421,7 @@ describe('basic auth', function () {
 
       expect(signinResponse).to.be.ok
       expect(signinResponse.data.error).to.not.be.ok
-      expect(await this.application.encryptionService.getRootKey()).to.be.ok
+      expect(await this.application.encryption.getRootKey()).to.be.ok
     }
   }).timeout(80000)
 
@@ -432,7 +432,7 @@ describe('basic auth', function () {
       password: this.password,
     })
     this.application = await Factory.signOutApplicationAndReturnNew(this.application)
-    const performSignIn = sinon.spy(this.application.sessionManager, 'performSignIn')
+    const performSignIn = sinon.spy(this.application.sessions, 'performSignIn')
     await this.application.signIn(this.email, 'wrong password', undefined, undefined, undefined, true)
     expect(performSignIn.callCount).to.equal(1)
   })
@@ -441,8 +441,8 @@ describe('basic auth', function () {
     /** Should delete the new items key locally without marking it as deleted so that it doesn't sync */
     await this.context.register()
 
-    const originalImpl = this.application.encryptionService.getSureDefaultItemsKey
-    this.application.encryptionService.getSureDefaultItemsKey = () => {
+    const originalImpl = this.application.encryption.getSureDefaultItemsKey
+    this.application.encryption.getSureDefaultItemsKey = () => {
       return {
         neverSynced: true,
       }
@@ -454,7 +454,7 @@ describe('basic auth', function () {
 
     await this.context.changePassword('new-password')
 
-    this.application.encryptionService.getSureDefaultItemsKey = originalImpl
+    this.application.encryption.getSureDefaultItemsKey = originalImpl
 
     expect(mutatorSpy.callCount).to.equal(0)
     expect(removeItemsSpy.callCount).to.equal(1)
@@ -518,8 +518,8 @@ describe('basic auth', function () {
 
       const _response = await this.application.deleteAccount()
 
-      sinon.spy(snApp.challengeService, 'sendChallenge')
-      const spyCall = snApp.challengeService.sendChallenge.getCall(0)
+      sinon.spy(snApp.challenges, 'sendChallenge')
+      const spyCall = snApp.challenges.sendChallenge.getCall(0)
       const challenge = spyCall.firstArg
       expect(challenge.prompts).to.have.lengthOf(2)
       expect(challenge.prompts[0].validation).to.equal(ChallengeValidation.AccountPassword)

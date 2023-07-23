@@ -34,7 +34,7 @@ const Invite: FunctionComponent<Props> = ({ onCloseDialog, application, subscrip
 
   const validateInviteeEmail = useCallback(async () => {
     if (!isEmailValid(inviteeEmail)) {
-      application.alertService
+      application.alerts
         .alert('The email you entered has an invalid format. Please review your input and try again.')
         .catch(console.error)
 
@@ -42,15 +42,15 @@ const Invite: FunctionComponent<Props> = ({ onCloseDialog, application, subscrip
     }
 
     return true
-  }, [application.alertService, inviteeEmail])
+  }, [application.alerts, inviteeEmail])
 
   const handleDialogClose = useCallback(() => {
     if (lockContinue) {
-      application.alertService.alert('Cannot close window until pending tasks are complete.').catch(console.error)
+      application.alerts.alert('Cannot close window until pending tasks are complete.').catch(console.error)
     } else {
       onCloseDialog()
     }
-  }, [application.alertService, lockContinue, onCloseDialog])
+  }, [application.alerts, lockContinue, onCloseDialog])
 
   const resetProgressState = () => {
     setSubmitButtonTitle(SubmitButtonTitles.Default)
@@ -91,7 +91,7 @@ const Invite: FunctionComponent<Props> = ({ onCloseDialog, application, subscrip
 
     const success = await processInvite()
     if (!success) {
-      application.alertService
+      application.alerts
         .alert('An error occurred while sending the invite. Please try again or contact support if the issue persists.')
         .catch(console.error)
 
@@ -104,7 +104,7 @@ const Invite: FunctionComponent<Props> = ({ onCloseDialog, application, subscrip
     setSubmitButtonTitle(SubmitButtonTitles.Finish)
     setCurrentStep(Steps.FinishStep)
   }, [
-    application.alertService,
+    application.alerts,
     currentStep,
     handleDialogClose,
     isContinuing,

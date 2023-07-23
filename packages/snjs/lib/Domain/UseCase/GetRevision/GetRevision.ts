@@ -1,5 +1,5 @@
 import { ServerItemResponse } from '@standardnotes/responses'
-import { RevisionClientInterface } from '@standardnotes/services'
+import { EncryptionProviderInterface, RevisionClientInterface } from '@standardnotes/services'
 import { Result, UseCaseInterface, Uuid } from '@standardnotes/domain-core'
 import {
   EncryptedPayload,
@@ -9,7 +9,6 @@ import {
   NoteContent,
   PayloadTimestampDefaults,
 } from '@standardnotes/models'
-import { EncryptionProviderInterface } from '@standardnotes/encryption'
 
 import { GetRevisionDTO } from './GetRevisionDTO'
 

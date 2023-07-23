@@ -14,8 +14,8 @@ describe('actions service', () => {
     localStorage.clear()
 
     this.application = await Factory.createInitAppWithFakeCrypto()
-    this.itemManager = this.application.itemManager
-    this.actionsManager = this.application.actionsManager
+    this.itemManager = this.application.items
+    this.actionsManager = this.application.actions
     this.email = UuidGenerator.GenerateUuid()
     this.password = UuidGenerator.GenerateUuid()
 
@@ -25,7 +25,7 @@ describe('actions service', () => {
       password: this.password,
     })
 
-    const rootKey = await this.application.encryptionService.createRootKey(
+    const rootKey = await this.application.encryption.createRootKey(
       this.email,
       this.password,
       KeyParamsOrigination.Registration,
@@ -117,7 +117,7 @@ describe('actions service', () => {
     })
 
     const encryptedPayload = CreateEncryptedServerSyncPushPayload(
-      await this.application.encryptionService.encryptSplitSingle({
+      await this.application.encryption.encryptSplitSingle({
         usesItemsKeyWithKeyLookup: {
           items: [payload],
         },
@@ -170,7 +170,10 @@ describe('actions service', () => {
     })
 
     // Extension item
-    const extensionItem = await this.application.mutator.createItem(ContentType.TYPES.ActionsExtension, this.actionsExtension)
+    const extensionItem = await this.application.mutator.createItem(
+      ContentType.TYPES.ActionsExtension,
+      this.actionsExtension,
+    )
     this.extensionItemUuid = extensionItem.uuid
   })
 
@@ -308,8 +311,8 @@ describe('actions service', () => {
     })
 
     beforeEach(async function () {
-      this.actionsManager.deviceInterface.openUrl = (url) => url
-      this.deviceInterfaceOpenUrl = sandbox.spy(this.actionsManager.deviceInterface, 'openUrl')
+      this.actionsManager.device.openUrl = (url) => url
+      this.deviceInterfaceOpenUrl = sandbox.spy(this.actionsManager.device, 'openUrl')
     })
 
     this.afterEach(async function () {
@@ -359,14 +362,14 @@ describe('actions service', () => {
       const response = await this.actionsManager.runAction(this.encryptedPostAction, this.noteItem)
 
       expect(response.items[0].enc_item_key).to.satisfy((string) => {
-        return string.startsWith(this.application.encryptionService.getLatestVersion())
+        return string.startsWith(this.application.encryption.getLatestVersion())
       })
       expect(response.items[0].uuid).to.eq(this.noteItem.uuid)
       expect(response.items[0].auth_hash).to.not.be.ok
       expect(response.items[0].content_type).to.be.ok
       expect(response.items[0].created_at).to.be.ok
       expect(response.items[0].content).to.satisfy((string) => {
-        return string.startsWith(this.application.encryptionService.getLatestVersion())
+        return string.startsWith(this.application.encryption.getLatestVersion())
       })
     })
 

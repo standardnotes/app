@@ -13,6 +13,7 @@ import {
   KeySystemRootKeyInterface,
   RootKeyInterface,
   KeySystemRootKeyParamsInterface,
+  PortablePublicKeySet,
 } from '@standardnotes/models'
 import { PkcKeyPair, PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { firstHalfOfString, secondHalfOfString, splitString, UuidGenerator } from '@standardnotes/utils'
@@ -28,11 +29,12 @@ import { ItemAuthenticatedData } from '../../Types/ItemAuthenticatedData'
 import { LegacyAttachedData } from '../../Types/LegacyAttachedData'
 import { RootKeyEncryptedAuthenticatedData } from '../../Types/RootKeyEncryptedAuthenticatedData'
 import { OperatorInterface } from '../OperatorInterface/OperatorInterface'
-import { PublicKeySet } from '../Types/PublicKeySet'
+
 import { AsymmetricDecryptResult } from '../Types/AsymmetricDecryptResult'
 import { AsymmetricSignatureVerificationDetachedResult } from '../Types/AsymmetricSignatureVerificationDetachedResult'
 import { AsyncOperatorInterface } from '../OperatorInterface/AsyncOperatorInterface'
-import { ContentType } from '@standardnotes/domain-core'
+import { ContentType, Result } from '@standardnotes/domain-core'
+import { AsymmetricItemAdditionalData } from '../../Types/EncryptionAdditionalData'
 
 const NO_IV = '00000000000000000000000000000000'
 
@@ -272,11 +274,23 @@ export class SNProtocolOperator001 implements OperatorInterface, AsyncOperatorIn
     throw new Error('Method not implemented.')
   }
 
+  asymmetricDecryptOwnMessage(_dto: {
+    message: string
+    ownPrivateKey: string
+    recipientPublicKey: string
+  }): Result<AsymmetricDecryptResult> {
+    throw new Error('Method not implemented.')
+  }
+
   asymmetricSignatureVerifyDetached(_encryptedString: string): AsymmetricSignatureVerificationDetachedResult {
     throw new Error('Method not implemented.')
   }
 
-  getSenderPublicKeySetFromAsymmetricallyEncryptedString(_string: string): PublicKeySet {
+  asymmetricStringGetAdditionalData(_dto: { encryptedString: string }): Result<AsymmetricItemAdditionalData> {
+    throw new Error('Method not implemented.')
+  }
+
+  getSenderPublicKeySetFromAsymmetricallyEncryptedString(_string: string): PortablePublicKeySet {
     throw new Error('Method not implemented.')
   }
 }

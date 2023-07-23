@@ -2,7 +2,7 @@ import { InternalEventBusInterface } from '@standardnotes/services'
 import { WebSocketApiServiceInterface } from '@standardnotes/api'
 
 import { StorageKey, DiskStorageService } from '@Lib/index'
-import { SNWebSocketsService } from './WebsocketsService'
+import { WebSocketsService } from './WebsocketsService'
 
 describe('webSocketsService', () => {
   const webSocketUrl = ''
@@ -12,7 +12,7 @@ describe('webSocketsService', () => {
   let internalEventBus: InternalEventBusInterface
 
   const createService = () => {
-    return new SNWebSocketsService(storageService, webSocketUrl, webSocketApiService, internalEventBus)
+    return new WebSocketsService(storageService, webSocketUrl, webSocketApiService, internalEventBus)
   }
 
   beforeEach(() => {

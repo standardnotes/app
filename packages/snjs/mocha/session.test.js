@@ -30,7 +30,7 @@ describe('server session', function () {
   })
 
   async function sleepUntilSessionExpires(application, basedOnAccessToken = true) {
-    const currentSession = application.apiService.session
+    const currentSession = application.legacyApi.session
     const timestamp = basedOnAccessToken ? currentSession.accessToken.expiresAt : currentSession.refreshToken.expiresAt
     const timeRemaining = (timestamp - Date.now()) / 1000 // in ms
     /*
@@ -42,7 +42,7 @@ describe('server session', function () {
   }
 
   async function getSessionFromStorage(application) {
-    return application.diskStorageService.getValue(StorageKey.Session)
+    return application.storage.getValue(StorageKey.Session)
   }
 
   it('should succeed when a sync request is perfomed with an expired access token', async function () {
@@ -56,7 +56,7 @@ describe('server session', function () {
 
     await sleepUntilSessionExpires(this.application)
 
-    const response = await this.application.apiService.sync([])
+    const response = await this.application.legacyApi.sync([])
 
     expect(response.status).to.equal(200)
   })
@@ -68,7 +68,7 @@ describe('server session', function () {
       password: this.password,
     })
 
-    const response = await this.application.apiService.refreshSession()
+    const response = await this.application.legacyApi.refreshSession()
 
     expect(response.status).to.equal(200)
     expect(response.data.session.access_token).to.be.a('string')
@@ -87,7 +87,7 @@ describe('server session', function () {
     })
 
     // Saving the current session information for later...
-    const sessionBeforeSync = this.application.apiService.getSession()
+    const sessionBeforeSync = this.application.legacyApi.getSession()
 
     // Waiting enough time for the access token to expire, before performing a new sync request.
     await sleepUntilSessionExpires(this.application)
@@ -96,7 +96,7 @@ describe('server session', function () {
     await this.application.sync.sync(syncOptions)
 
     // After the above sync request is completed, we obtain the session information.
-    const sessionAfterSync = this.application.apiService.getSession()
+    const sessionAfterSync = this.application.legacyApi.getSession()
 
     expect(sessionBeforeSync.accessToken.value).to.not.equal(sessionAfterSync.accessToken.value)
     expect(sessionBeforeSync.refreshToken.value).to.not.equal(sessionAfterSync.refreshToken.value)
@@ -119,10 +119,10 @@ describe('server session', function () {
     // Apply a latency simulation so that ` this.inProgressRefreshSessionPromise = this.refreshSession()` does
     // not have the chance to complete before it is assigned to the variable. This test came along with a fix
     // where runHttp does not await a pending refreshSession promise if the request being made is itself a refreshSession request.
-    this.application.httpService.__latencySimulatorMs = 1000
+    this.application.http.__latencySimulatorMs = 1000
     await this.application.sync.sync(syncOptions)
 
-    const sessionAfterSync = this.application.apiService.getSession()
+    const sessionAfterSync = this.application.legacyApi.getSession()
 
     expect(sessionAfterSync.accessToken.expiresAt).to.be.greaterThan(Date.now())
   })
@@ -137,7 +137,7 @@ describe('server session', function () {
 
     await this.application.signIn(this.email, this.password, false, true)
 
-    const response = await this.application.apiService.sync([])
+    const response = await this.application.legacyApi.sync([])
     expect(response.status).to.equal(200)
   })
 
@@ -149,7 +149,7 @@ describe('server session', function () {
       ephemeral: true,
     })
 
-    const response = await this.application.apiService.sync([])
+    const response = await this.application.legacyApi.sync([])
     expect(response.status).to.equal(200)
   })
 
@@ -161,7 +161,7 @@ describe('server session', function () {
     })
 
     const sessionFromStorage = await getSessionFromStorage(this.application)
-    const sessionFromApiService = this.application.apiService.getSession()
+    const sessionFromApiService = this.application.legacyApi.getSession()
 
     expect(sessionFromStorage.accessToken).to.equal(sessionFromApiService.accessToken.value)
     expect(sessionFromStorage.refreshToken).to.equal(sessionFromApiService.refreshToken.value)
@@ -169,10 +169,10 @@ describe('server session', function () {
     expect(sessionFromStorage.refreshExpiration).to.equal(sessionFromApiService.refreshToken.expiresAt)
     expect(sessionFromStorage.readonlyAccess).to.equal(sessionFromApiService.isReadOnly())
 
-    await this.application.apiService.refreshSession()
+    await this.application.legacyApi.refreshSession()
 
     const updatedSessionFromStorage = await getSessionFromStorage(this.application)
-    const updatedSessionFromApiService = this.application.apiService.getSession()
+    const updatedSessionFromApiService = this.application.legacyApi.getSession()
 
     expect(updatedSessionFromStorage.accessToken).to.equal(updatedSessionFromApiService.accessToken.value)
     expect(updatedSessionFromStorage.refreshToken).to.equal(updatedSessionFromApiService.refreshToken.value)
@@ -188,11 +188,11 @@ describe('server session', function () {
       password: this.password,
     })
 
-    const signOutResponse = await this.application.apiService.signOut()
+    const signOutResponse = await this.application.legacyApi.signOut()
     expect(signOutResponse.status).to.equal(204)
 
     Factory.ignoreChallenges(this.application)
-    const syncResponse = await this.application.apiService.sync([])
+    const syncResponse = await this.application.legacyApi.sync([])
     expect(syncResponse.status).to.equal(401)
     expect(syncResponse.data.error.tag).to.equal('invalid-auth')
     expect(syncResponse.data.error.message).to.equal('Invalid login credentials.')
@@ -210,11 +210,11 @@ describe('server session', function () {
     // Waiting enough time for the access token to expire, before performing a sign out request.
     await sleepUntilSessionExpires(this.application)
 
-    const signOutResponse = await this.application.apiService.signOut()
+    const signOutResponse = await this.application.legacyApi.signOut()
     expect(signOutResponse.status).to.equal(204)
 
     Factory.ignoreChallenges(this.application)
-    const syncResponse = await this.application.apiService.sync([])
+    const syncResponse = await this.application.legacyApi.sync([])
     expect(syncResponse.status).to.equal(401)
     expect(syncResponse.data.error.tag).to.equal('invalid-auth')
     expect(syncResponse.data.error.message).to.equal('Invalid login credentials.')
@@ -250,7 +250,7 @@ describe('server session', function () {
       registerUser: true,
     })
 
-    application.diskStorageService.setValue(StorageKey.Session, {
+    application.storage.setValue(StorageKey.Session, {
       accessToken: 'this-is-a-fake-token-1234',
       refreshToken: 'this-is-a-fake-token-1234',
       accessExpiration: 999999999999999,
@@ -345,7 +345,7 @@ describe('server session', function () {
       password: this.password,
     })
 
-    this.application.diskStorageService.setValue(StorageKey.Session, {
+    this.application.storage.setValue(StorageKey.Session, {
       accessToken: 'this-is-a-fake-token-1234',
       refreshToken: 'this-is-a-fake-token-1234',
       accessExpiration: 999999999999999,
@@ -385,12 +385,12 @@ describe('server session', function () {
       password: this.password,
     })
 
-    await this.application.apiService.signOut()
-    this.application.apiService.session = undefined
+    await this.application.legacyApi.signOut()
+    this.application.legacyApi.session = undefined
 
-    await this.application.sessionManager.signIn(this.email, this.password)
+    await this.application.sessions.signIn(this.email, this.password)
 
-    const currentSession = this.application.apiService.getSession()
+    const currentSession = this.application.legacyApi.getSession()
 
     expect(currentSession).to.be.ok
     expect(currentSession.accessToken).to.be.ok
@@ -409,7 +409,7 @@ describe('server session', function () {
 
     await sleepUntilSessionExpires(this.application, false)
 
-    const refreshSessionResponse = await this.application.apiService.refreshSession()
+    const refreshSessionResponse = await this.application.legacyApi.refreshSession()
 
     expect(refreshSessionResponse.status).to.equal(400)
     expect(refreshSessionResponse.data.error.tag).to.equal('expired-refresh-token')
@@ -420,7 +420,7 @@ describe('server session', function () {
       Here we make sure that any subsequent requests will fail.
     */
     Factory.ignoreChallenges(this.application)
-    const syncResponse = await this.application.apiService.sync([])
+    const syncResponse = await this.application.legacyApi.sync([])
     expect(syncResponse.status).to.equal(401)
     expect(syncResponse.data.error.tag).to.equal('invalid-auth')
     expect(syncResponse.data.error.message).to.equal('Invalid login credentials.')
@@ -433,9 +433,9 @@ describe('server session', function () {
       password: this.password,
     })
 
-    const originalSession = this.application.apiService.getSession()
+    const originalSession = this.application.legacyApi.getSession()
 
-    this.application.diskStorageService.setValue(StorageKey.Session, {
+    this.application.storage.setValue(StorageKey.Session, {
       accessToken: originalSession.accessToken.value,
       refreshToken: 'this-is-a-fake-token-1234',
       accessExpiration: originalSession.accessToken.expiresAt,
@@ -444,14 +444,14 @@ describe('server session', function () {
     })
     this.application.sessions.initializeFromDisk()
 
-    const refreshSessionResponse = await this.application.apiService.refreshSession()
+    const refreshSessionResponse = await this.application.legacyApi.refreshSession()
 
     expect(refreshSessionResponse.status).to.equal(400)
     expect(refreshSessionResponse.data.error.tag).to.equal('invalid-refresh-token')
     expect(refreshSessionResponse.data.error.message).to.equal('The refresh token is not valid.')
 
     // Access token should remain valid.
-    const syncResponse = await this.application.apiService.sync([])
+    const syncResponse = await this.application.legacyApi.sync([])
     expect(syncResponse.status).to.equal(200)
   })
 
@@ -462,8 +462,8 @@ describe('server session', function () {
       password: this.password,
     })
 
-    const refreshPromise = this.application.apiService.refreshSession()
-    const syncResponse = await this.application.apiService.sync([])
+    const refreshPromise = this.application.legacyApi.refreshSession()
+    const syncResponse = await this.application.legacyApi.sync([])
 
     expect(syncResponse.data.error).to.be.ok
 
@@ -485,19 +485,19 @@ describe('server session', function () {
     const notesBeforeSync = await Factory.createManyMappedNotes(this.application, 5)
 
     await sleepUntilSessionExpires(this.application)
-    await this.application.syncService.sync(syncOptions)
-    expect(this.application.syncService.isOutOfSync()).to.equal(false)
+    await this.application.sync.sync(syncOptions)
+    expect(this.application.sync.isOutOfSync()).to.equal(false)
 
     this.application = await Factory.signOutApplicationAndReturnNew(this.application)
     await this.application.signIn(this.email, this.password, undefined, undefined, undefined, true)
 
     const expectedNotesUuids = notesBeforeSync.map((n) => n.uuid)
-    const notesResults = await this.application.itemManager.findItems(expectedNotesUuids)
+    const notesResults = await this.application.items.findItems(expectedNotesUuids)
 
     expect(notesResults.length).to.equal(notesBeforeSync.length)
 
     for (const aNoteBeforeSync of notesBeforeSync) {
-      const noteResult = await this.application.itemManager.findItem(aNoteBeforeSync.uuid)
+      const noteResult = await this.application.items.findItem(aNoteBeforeSync.uuid)
       expect(aNoteBeforeSync.isItemContentEqualWith(noteResult)).to.equal(true)
     }
   })
@@ -574,10 +574,10 @@ describe('server session', function () {
       password: password,
     })
 
-    const oldRootKey = await appA.encryptionService.getRootKey()
+    const oldRootKey = await appA.encryption.getRootKey()
 
     /** Set the session as nonsense */
-    appA.diskStorageService.setValue(StorageKey.Session, {
+    appA.storage.setValue(StorageKey.Session, {
       accessToken: 'foo',
       refreshToken: 'bar',
       accessExpiration: 999999999999999,
@@ -593,11 +593,11 @@ describe('server session', function () {
     await Factory.sleep(5.0)
 
     expect(didPromptForSignIn).to.equal(true)
-    expect(appA.apiService.session.accessToken.value).to.not.equal('foo')
-    expect(appA.apiService.session.refreshToken.value).to.not.equal('bar')
+    expect(appA.legacyApi.session.accessToken.value).to.not.equal('foo')
+    expect(appA.legacyApi.session.refreshToken.value).to.not.equal('bar')
 
     /** Expect that the session recovery replaces the global root key */
-    const newRootKey = await appA.encryptionService.getRootKey()
+    const newRootKey = await appA.encryption.getRootKey()
     expect(oldRootKey).to.not.equal(newRootKey)
 
     await Factory.safeDeinit(appA)
@@ -610,7 +610,7 @@ describe('server session', function () {
       password: this.password,
     })
 
-    const response = await this.application.apiService.getSessionsList()
+    const response = await this.application.legacyApi.getSessionsList()
     expect(response.data[0].current).to.equal(true)
   })
 
@@ -625,12 +625,12 @@ describe('server session', function () {
     const app2 = await Factory.createAndInitializeApplication('app2')
     await app2.signIn(this.email, this.password)
 
-    const response = await this.application.apiService.getSessionsList()
+    const response = await this.application.legacyApi.getSessionsList()
     expect(response.data.length).to.equal(2)
 
     await app2.user.signOut()
 
-    const response2 = await this.application.apiService.getSessionsList()
+    const response2 = await this.application.legacyApi.getSessionsList()
     expect(response2.data.length).to.equal(1)
   })
 
@@ -699,7 +699,7 @@ describe('server session', function () {
       password: this.password,
     })
 
-    this.application.diskStorageService.setValue(StorageKey.Session, {
+    this.application.storage.setValue(StorageKey.Session, {
       accessToken: undefined,
       refreshToken: undefined,
       accessExpiration: 999999999999999,
@@ -708,7 +708,7 @@ describe('server session', function () {
     })
     this.application.sessions.initializeFromDisk()
 
-    const storageKey = this.application.diskStorageService.getPersistenceKey()
+    const storageKey = this.application.storage.getPersistenceKey()
     expect(localStorage.getItem(storageKey)).to.be.ok
 
     await this.application.user.signOut()

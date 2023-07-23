@@ -653,7 +653,7 @@ export class NavigationController
       if (isTemplateChange) {
         this.undoCreateNewTag()
       }
-      this.application.alertService?.alert('A tag with this name already exists.').catch(console.error)
+      this.application.alerts?.alert('A tag with this name already exists.').catch(console.error)
       return
     }
 

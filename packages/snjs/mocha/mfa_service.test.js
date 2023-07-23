@@ -54,11 +54,11 @@ describe('mfa service', () => {
     const secret = await snApp.generateMfaSecret()
     const token = await snApp.getOtpToken(secret)
 
-    sinon.spy(snApp.challengeService, 'sendChallenge')
+    sinon.spy(snApp.challenges, 'sendChallenge')
     await snApp.enableMfa(secret, token)
     await snApp.disableMfa()
 
-    const spyCall = snApp.challengeService.sendChallenge.getCall(0)
+    const spyCall = snApp.challenges.sendChallenge.getCall(0)
     const challenge = spyCall.firstArg
     expect(challenge.prompts).to.have.lengthOf(2)
     expect(challenge.prompts[0].validation).to.equal(ChallengeValidation.AccountPassword)
