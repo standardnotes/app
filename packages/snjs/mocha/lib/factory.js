@@ -113,7 +113,7 @@ export function registerUserToApplication({ application, email, password, epheme
 
 export async function setOldVersionPasscode({ application, passcode, version }) {
   const identifier = await application.encryption.crypto.generateUUID()
-  const operator = application.encryption.operators.operatorForVersion(version)
+  const operator = application.dependencies.get(TYPES.EncryptionOperators).operatorForVersion(version)
   const key = await operator.createRootKey(identifier, passcode, KeyParamsOrigination.PasscodeCreate)
   await application.encryption.setNewRootKeyWrapper(key)
   await application.user.rewriteItemsKeys()
@@ -127,7 +127,7 @@ export async function setOldVersionPasscode({ application, passcode, version }) 
 export async function registerOldUser({ application, email, password, version }) {
   if (!email) email = Utils.generateUuid()
   if (!password) password = Utils.generateUuid()
-  const operator = application.encryption.operators.operatorForVersion(version)
+  const operator = application.dependencies.get(TYPES.EncryptionOperators).operatorForVersion(version)
   const accountKey = await operator.createRootKey(email, password, KeyParamsOrigination.Registration)
 
   const response = await application.dependencies.get(TYPES.UserApiService).register({

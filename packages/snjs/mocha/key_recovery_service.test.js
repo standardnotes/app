@@ -42,7 +42,7 @@ describe('key recovery service', function () {
       unassociatedPassword,
       KeyParamsOrigination.Registration,
     )
-    const randomItemsKey = await application.encryption.operators.defaultOperator().createItemsKey()
+    const randomItemsKey = await context.operators.defaultOperator().createItemsKey()
 
     const encrypted = await application.encryption.encryptSplitSingle({
       usesRootKey: {
@@ -95,7 +95,7 @@ describe('key recovery service', function () {
       KeyParamsOrigination.Registration,
     )
 
-    const randomItemsKey = await application.encryption.operators.defaultOperator().createItemsKey()
+    const randomItemsKey = await context.operators.defaultOperator().createItemsKey()
 
     await application.payloads.emitPayload(
       randomItemsKey.payload.copy({ dirty: true, dirtyIndex: getIncrementedDirtyIndex() }),
@@ -219,8 +219,8 @@ describe('key recovery service', function () {
       unassociatedPassword,
       KeyParamsOrigination.Registration,
     )
-    const randomItemsKey = await application.encryption.operators.defaultOperator().createItemsKey()
-    const randomItemsKey2 = await application.encryption.operators.defaultOperator().createItemsKey()
+    const randomItemsKey = await context.operators.defaultOperator().createItemsKey()
+    const randomItemsKey2 = await context.operators.defaultOperator().createItemsKey()
 
     const encrypted = await application.encryption.encryptSplit({
       usesRootKey: {
@@ -400,7 +400,7 @@ describe('key recovery service', function () {
 
     await application.encryption.setRootKey(randomRootKey)
 
-    const correctItemsKey = await application.encryption.operators.defaultOperator().createItemsKey()
+    const correctItemsKey = await context.operators.defaultOperator().createItemsKey()
 
     const encrypted = await application.encryption.encryptSplitSingle({
       usesRootKey: {
@@ -595,7 +595,7 @@ describe('key recovery service', function () {
       KeyParamsOrigination.Registration,
       ProtocolVersion.V003,
     )
-    const randomItemsKey = await application.encryption.operators
+    const randomItemsKey = await context.operators
       .operatorForVersion(ProtocolVersion.V003)
       .createItemsKey()
 

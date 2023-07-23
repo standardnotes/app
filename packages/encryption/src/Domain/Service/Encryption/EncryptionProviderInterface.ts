@@ -1,4 +1,3 @@
-import { OperatorManager } from './../../Operator/OperatorManager'
 import { AsymmetricSignatureVerificationDetachedResult } from '../../Operator/Types/AsymmetricSignatureVerificationDetachedResult'
 import { KeyParamsOrigination, ProtocolVersion } from '@standardnotes/common'
 import {
@@ -20,14 +19,10 @@ import { KeyedDecryptionSplit } from '../../Split/KeyedDecryptionSplit'
 import { KeyedEncryptionSplit } from '../../Split/KeyedEncryptionSplit'
 import { ItemAuthenticatedData } from '../../Types/ItemAuthenticatedData'
 import { PkcKeyPair } from '@standardnotes/sncrypto-common'
-import { KeySystemKeyManagerInterface } from '../KeySystemKeyManagerInterface'
 import { AsymmetricallyEncryptedString } from '../../Operator/Types/Types'
 
 export interface EncryptionProviderInterface {
   initialize(): Promise<void>
-
-  keys: KeySystemKeyManagerInterface
-  readonly operators: OperatorManager
 
   encryptSplitSingle(split: KeyedEncryptionSplit): Promise<EncryptedPayloadInterface>
   encryptSplit(split: KeyedEncryptionSplit): Promise<EncryptedPayloadInterface[]>

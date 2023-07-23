@@ -12,7 +12,7 @@ import {
 import { VaultServiceInterface } from './VaultServiceInterface'
 import { ChangeVaultOptionsDTO } from './ChangeVaultOptionsDTO'
 import { VaultServiceEvent, VaultServiceEventPayload } from './VaultServiceEvent'
-import { EncryptionProviderInterface } from '@standardnotes/encryption'
+import { EncryptionProviderInterface, KeySystemKeyManagerInterface } from '@standardnotes/encryption'
 import { CreateVault } from './UseCase/CreateVault'
 import { AbstractService } from '../Service/AbstractService'
 import { SyncServiceInterface } from '../Sync/SyncServiceInterface'
@@ -39,6 +39,7 @@ export class VaultService
     private items: ItemManagerInterface,
     private mutator: MutatorClientInterface,
     private encryption: EncryptionProviderInterface,
+    private keys: KeySystemKeyManagerInterface,
     private alerts: AlertService,
     private getVaultUseCase: GetVault,
     private changeVaultKeyOptions: ChangeVaultKeyOptions,
@@ -251,7 +252,7 @@ export class VaultService
       throw new Error('Vault uses synced root key and cannot be locked')
     }
 
-    this.encryption.keys.clearMemoryOfKeysRelatedToVault(vault)
+    this.keys.clearMemoryOfKeysRelatedToVault(vault)
 
     this.lockMap.set(vault.uuid, true)
     void this.notifyEventSync(VaultServiceEvent.VaultLocked, { vault })
@@ -271,12 +272,12 @@ export class VaultService
       userInputtedPassword: password,
     })
 
-    this.encryption.keys.intakeNonPersistentKeySystemRootKey(derivedRootKey, vault.keyStorageMode)
+    this.keys.intakeNonPersistentKeySystemRootKey(derivedRootKey, vault.keyStorageMode)
 
     await this.encryption.decryptErroredPayloads()
 
     if (this.computeVaultLockState(vault) === 'locked') {
-      this.encryption.keys.undoIntakeNonPersistentKeySystemRootKey(vault.systemIdentifier)
+      this.keys.undoIntakeNonPersistentKeySystemRootKey(vault.systemIdentifier)
       return false
     }
 
@@ -305,12 +306,12 @@ export class VaultService
   }
 
   private computeVaultLockState(vault: VaultListingInterface): 'locked' | 'unlocked' {
-    const rootKey = this.encryption.keys.getPrimaryKeySystemRootKey(vault.systemIdentifier)
+    const rootKey = this.keys.getPrimaryKeySystemRootKey(vault.systemIdentifier)
     if (!rootKey) {
       return 'locked'
     }
 
-    const itemsKey = this.encryption.keys.getPrimaryKeySystemItemsKey(vault.systemIdentifier)
+    const itemsKey = this.keys.getPrimaryKeySystemItemsKey(vault.systemIdentifier)
     if (!itemsKey) {
       return 'locked'
     }

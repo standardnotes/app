@@ -1,9 +1,9 @@
-import { EncryptedOutputParameters, OperatorManager, encryptPayload } from '@standardnotes/encryption'
+import { EncryptedOutputParameters, EncryptionOperatorsInterface, encryptPayload } from '@standardnotes/encryption'
 import { DecryptedPayloadInterface, KeySystemRootKeyInterface, RootKeyInterface } from '@standardnotes/models'
 import { PkcKeyPair } from '@standardnotes/sncrypto-common'
 
 export class RootKeyEncryptPayloadUseCase {
-  constructor(private operatorManager: OperatorManager) {}
+  constructor(private operatorManager: EncryptionOperatorsInterface) {}
 
   async executeOne(
     payload: DecryptedPayloadInterface,

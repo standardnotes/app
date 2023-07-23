@@ -14,12 +14,9 @@ export class ChangeVaultKeyOptions {
     private mutator: MutatorClientInterface,
     private sync: SyncServiceInterface,
     private encryption: EncryptionProviderInterface,
+    private keys: KeySystemKeyManagerInterface,
     private getVault: GetVault,
   ) {}
-
-  private get keys(): KeySystemKeyManagerInterface {
-    return this.encryption.keys
-  }
 
   async execute(dto: ChangeVaultOptionsDTO): Promise<void> {
     const useStorageMode = dto.newKeyStorageMode ?? dto.vault.keyStorageMode
@@ -82,7 +79,7 @@ export class ChangeVaultKeyOptions {
     if (storageMode === KeySystemRootKeyStorageMode.Synced) {
       await this.mutator.insertItem(newRootKey, true)
     } else {
-      this.encryption.keys.intakeNonPersistentKeySystemRootKey(newRootKey, storageMode)
+      this.keys.intakeNonPersistentKeySystemRootKey(newRootKey, storageMode)
     }
 
     await this.mutator.changeItem<VaultListingMutator>(vault, (mutator) => {

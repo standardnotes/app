@@ -4,12 +4,12 @@ import {
   ErrorDecryptingParameters,
   findDefaultItemsKey,
   isErrorDecryptingParameters,
-  OperatorManager,
   StandardException,
   encryptPayload,
   decryptPayload,
   EncryptedOutputParameters,
   KeySystemKeyManagerInterface,
+  EncryptionOperatorsInterface,
 } from '@standardnotes/encryption'
 import {
   ContentTypeUsesKeySystemRootKeyEncryption,
@@ -42,7 +42,7 @@ export class ItemsEncryptionService extends AbstractService {
     private itemManager: ItemManagerInterface,
     private payloadManager: PayloadManagerInterface,
     private storageService: StorageServiceInterface,
-    private operatorManager: OperatorManager,
+    private operatorManager: EncryptionOperatorsInterface,
     private keys: KeySystemKeyManagerInterface,
     protected override internalEventBus: InternalEventBusInterface,
   ) {

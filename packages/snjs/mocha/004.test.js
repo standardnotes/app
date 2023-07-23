@@ -30,11 +30,7 @@ describe('004 protocol operations', function () {
   })
 
   it('generates valid keys for registration', async function () {
-    const key = await application.encryption.createRootKey(
-      _identifier,
-      _password,
-      KeyParamsOrigination.Registration,
-    )
+    const key = await application.encryption.createRootKey(_identifier, _password, KeyParamsOrigination.Registration)
 
     expect(key.masterKey).to.be.ok
 
@@ -78,7 +74,7 @@ describe('004 protocol operations', function () {
       }),
     })
 
-    const operator = application.encryption.operators.operatorForVersion(ProtocolVersion.V004)
+    const operator = application.dependencies.get(TYPES.EncryptionOperators).operatorForVersion(ProtocolVersion.V004)
 
     const encrypted = await operator.generateEncryptedParameters(payload, rootKey)
     const decrypted = await operator.generateDecryptedParameters(encrypted, rootKey)
@@ -97,7 +93,7 @@ describe('004 protocol operations', function () {
       }),
     })
 
-    const operator = application.encryption.operators.operatorForVersion(ProtocolVersion.V004)
+    const operator = application.dependencies.get(TYPES.EncryptionOperators).operatorForVersion(ProtocolVersion.V004)
 
     const encrypted = await operator.generateEncryptedParameters(payload, rootKey)
     const decrypted = await operator.generateDecryptedParameters(

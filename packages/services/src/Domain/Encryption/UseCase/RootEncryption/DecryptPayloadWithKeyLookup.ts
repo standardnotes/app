@@ -2,7 +2,7 @@ import {
   DecryptedParameters,
   ErrorDecryptingParameters,
   KeySystemKeyManagerInterface,
-  OperatorManager,
+  EncryptionOperatorsInterface,
 } from '@standardnotes/encryption'
 import {
   ContentTypeUsesKeySystemRootKeyEncryption,
@@ -17,7 +17,7 @@ import { RootKeyManager } from '../../RootKey/RootKeyManager'
 
 export class RootKeyDecryptPayloadWithKeyLookupUseCase {
   constructor(
-    private operatorManager: OperatorManager,
+    private operatorManager: EncryptionOperatorsInterface,
     private keySystemKeyManager: KeySystemKeyManagerInterface,
     private rootKeyManager: RootKeyManager,
   ) {}

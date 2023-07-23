@@ -1,4 +1,8 @@
-import { EncryptedOutputParameters, KeySystemKeyManagerInterface, OperatorManager } from '@standardnotes/encryption'
+import {
+  EncryptedOutputParameters,
+  KeySystemKeyManagerInterface,
+  EncryptionOperatorsInterface,
+} from '@standardnotes/encryption'
 import {
   ContentTypeUsesKeySystemRootKeyEncryption,
   DecryptedPayloadInterface,
@@ -12,7 +16,7 @@ import { RootKeyManager } from '../../RootKey/RootKeyManager'
 
 export class RootKeyEncryptPayloadWithKeyLookupUseCase {
   constructor(
-    private operatorManager: OperatorManager,
+    private operatorManager: EncryptionOperatorsInterface,
     private keySystemKeyManager: KeySystemKeyManagerInterface,
     private rootKeyManager: RootKeyManager,
   ) {}

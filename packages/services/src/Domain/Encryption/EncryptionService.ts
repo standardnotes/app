@@ -16,7 +16,6 @@ import {
   KeyedEncryptionSplit,
   KeyMode,
   LegacyAttachedData,
-  OperatorManager,
   RootKeyEncryptedAuthenticatedData,
   SplitPayloadsByEncryptionType,
   V001Algorithm,
@@ -25,6 +24,7 @@ import {
   KeySystemKeyManagerInterface,
   AsymmetricSignatureVerificationDetachedResult,
   AsymmetricallyEncryptedString,
+  EncryptionOperatorsInterface,
 } from '@standardnotes/encryption'
 import {
   BackupFile,
@@ -122,7 +122,6 @@ export class EncryptionService
   extends AbstractService<EncryptionServiceEvent>
   implements EncryptionProviderInterface, InternalEventHandlerInterface
 {
-  public readonly operators: OperatorManager
   private readonly itemsEncryption: ItemsEncryptionService
   private readonly rootKeyManager: RootKeyManager
 
@@ -130,27 +129,19 @@ export class EncryptionService
     private items: ItemManagerInterface,
     private mutator: MutatorClientInterface,
     private payloads: PayloadManagerInterface,
-    public device: DeviceInterface,
+    private device: DeviceInterface,
     private storage: StorageServiceInterface,
-    public readonly keys: KeySystemKeyManagerInterface,
+    private keys: KeySystemKeyManagerInterface,
+    private operators: EncryptionOperatorsInterface,
     identifier: ApplicationIdentifier,
-    public crypto: PureCryptoInterface,
+    private crypto: PureCryptoInterface,
     protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)
+
     this.crypto = crypto
 
-    this.operators = new OperatorManager(crypto)
-
-    this.rootKeyManager = new RootKeyManager(
-      device,
-      storage,
-      items,
-      mutator,
-      this.operators,
-      identifier,
-      internalEventBus,
-    )
+    this.rootKeyManager = new RootKeyManager(device, storage, items, mutator, operators, identifier, internalEventBus)
 
     internalEventBus.addEventHandler(this, RootKeyManagerEvent.RootKeyManagerKeyStatusChanged)
 

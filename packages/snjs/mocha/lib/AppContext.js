@@ -105,6 +105,10 @@ export class AppContext {
     return this.application.dependencies.get(TYPES.KeySystemKeyManager)
   }
 
+  get operators() {
+    return this.application.dependencies.get(TYPES.EncryptionOperators)
+  }
+
   get asymmetric() {
     return this.application.asymmetricMessageService
   }

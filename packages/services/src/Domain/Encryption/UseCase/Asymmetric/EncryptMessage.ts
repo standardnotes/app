@@ -1,10 +1,10 @@
 import { SyncUseCaseInterface, Result } from '@standardnotes/domain-core'
-import { OperatorManager } from '@standardnotes/encryption'
+import { EncryptionOperatorsInterface } from '@standardnotes/encryption'
 import { AsymmetricMessagePayload } from '@standardnotes/models'
 import { PkcKeyPair } from '@standardnotes/sncrypto-common'
 
 export class EncryptMessage implements SyncUseCaseInterface<string> {
-  constructor(private operators: OperatorManager) {}
+  constructor(private operators: EncryptionOperatorsInterface) {}
 
   execute(dto: {
     message: AsymmetricMessagePayload

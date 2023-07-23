@@ -1,4 +1,4 @@
-import { OperatorManager } from '@standardnotes/encryption'
+import { EncryptionOperatorsInterface } from '@standardnotes/encryption'
 import { ProtocolVersionLastNonrootItemsKey, ProtocolVersionLatest, compareVersions } from '@standardnotes/common'
 import {
   CreateDecryptedItemFromPayload,
@@ -24,7 +24,7 @@ export class CreateNewDefaultItemsKeyUseCase {
   constructor(
     private mutator: MutatorClientInterface,
     private items: ItemManagerInterface,
-    private operatorManager: OperatorManager,
+    private operatorManager: EncryptionOperatorsInterface,
     private rootKeyManager: RootKeyManager,
   ) {}
 

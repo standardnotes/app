@@ -11,7 +11,7 @@ import {
   CreateAnyKeyParams,
   SNRootKey,
   isErrorDecryptingParameters,
-  OperatorManager,
+  EncryptionOperatorsInterface,
 } from '@standardnotes/encryption'
 import {
   ContentTypesUsingRootKeyEncryption,
@@ -49,7 +49,7 @@ export class RootKeyManager extends AbstractService<RootKeyManagerEvent> {
     private storage: StorageServiceInterface,
     private items: ItemManagerInterface,
     private mutator: MutatorClientInterface,
-    private operators: OperatorManager,
+    private operators: EncryptionOperatorsInterface,
     private identifier: ApplicationIdentifier,
     eventBus: InternalEventBusInterface,
   ) {

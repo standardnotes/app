@@ -2,8 +2,9 @@ import { ProtocolVersion, ProtocolVersionLatest } from '@standardnotes/common'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { createOperatorForVersion } from './Functions'
 import { AnyOperatorInterface } from './OperatorInterface/TypeCheck'
+import { EncryptionOperatorsInterface } from './EncryptionOperatorsInterface'
 
-export class OperatorManager {
+export class EncryptionOperators implements EncryptionOperatorsInterface {
   private operators: Record<string, AnyOperatorInterface> = {}
 
   constructor(private crypto: PureCryptoInterface) {

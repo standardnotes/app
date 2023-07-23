@@ -7,14 +7,18 @@ import {
   SureFindPayload,
 } from '@standardnotes/models'
 import { PayloadManagerInterface } from './../../../Payloads/PayloadManagerInterface'
-import { KeySystemKeyManagerInterface, OperatorManager, isErrorDecryptingParameters } from '@standardnotes/encryption'
+import {
+  KeySystemKeyManagerInterface,
+  isErrorDecryptingParameters,
+  EncryptionOperatorsInterface,
+} from '@standardnotes/encryption'
 import { RootKeyDecryptPayloadWithKeyLookupUseCase } from './DecryptPayloadWithKeyLookup'
 import { RootKeyManager } from '../../RootKey/RootKeyManager'
 
 export class DecryptErroredRootPayloadsUseCase {
   constructor(
     private payloads: PayloadManagerInterface,
-    private operatorManager: OperatorManager,
+    private operatorManager: EncryptionOperatorsInterface,
     private keySystemKeyManager: KeySystemKeyManagerInterface,
     private rootKeyManager: RootKeyManager,
   ) {}

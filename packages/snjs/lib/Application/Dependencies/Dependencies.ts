@@ -85,6 +85,13 @@ import {
   GetSharedVaultUsers,
   AsymmetricMessageService,
   ReplaceContactData,
+  DecryptOwnMessage,
+  SendVaultInvite,
+  EncryptMessage,
+  DecryptMessage,
+  ResendMessage,
+  SendMessage,
+  ProcessAcceptedVaultInvite,
 } from '@standardnotes/services'
 import { ItemManager } from '../../Services/Items/ItemManager'
 import { PayloadManager } from '../../Services/Payloads/PayloadManager'
@@ -113,6 +120,7 @@ import { FullyResolvedApplicationOptions } from '../Options/ApplicationOptions'
 import { TYPES } from './Types'
 import { isDeinitable } from './isDeinitable'
 import { isNotUndefined } from '@standardnotes/utils'
+import { EncryptionOperators } from '@standardnotes/encryption'
 
 export class Dependencies {
   private factory = new Map<symbol, () => unknown>()
@@ -223,6 +231,7 @@ export class Dependencies {
         this.get(TYPES.MutatorService),
         this.get(TYPES.SyncService),
         this.get(TYPES.EncryptionService),
+        this.get(TYPES.KeySystemKeyManager),
         this.get(TYPES.GetVault),
       )
     })
@@ -239,6 +248,7 @@ export class Dependencies {
       return new CreateVault(
         this.get(TYPES.MutatorService),
         this.get(TYPES.EncryptionService),
+        this.get(TYPES.KeySystemKeyManager),
         this.get(TYPES.SyncService),
       )
     })
@@ -255,12 +265,16 @@ export class Dependencies {
       return new DeleteVault(
         this.get(TYPES.ItemManager),
         this.get(TYPES.MutatorService),
-        this.get(TYPES.EncryptionService),
+        this.get(TYPES.KeySystemKeyManager),
       )
     })
 
     this.factory.set(TYPES.RotateVaultKey, () => {
-      return new RotateVaultKey(this.get(TYPES.MutatorService), this.get(TYPES.EncryptionService))
+      return new RotateVaultKey(
+        this.get(TYPES.MutatorService),
+        this.get(TYPES.EncryptionService),
+        this.get(TYPES.KeySystemKeyManager),
+      )
     })
 
     this.factory.set(TYPES.ReuploadInvite, () => {
@@ -282,7 +296,7 @@ export class Dependencies {
     this.factory.set(TYPES.ResendAllMessages, () => {
       return new ResendAllMessages(
         this.get(TYPES.ResendMessage),
-        this.get(TYPES.MessageServer),
+        this.get(TYPES.AsymmetricMessageServer),
         this.get(TYPES.FindContact),
       )
     })
@@ -353,11 +367,15 @@ export class Dependencies {
       )
     })
 
+    this.factory.set(TYPES.SendVaultInvite, () => {
+      return new SendVaultInvite(this.get(TYPES.SharedVaultInvitesServer))
+    })
+
     this.factory.set(TYPES.DeleteThirdPartyVault, () => {
       return new DeleteThirdPartyVault(
         this.get(TYPES.ItemManager),
         this.get(TYPES.MutatorService),
-        this.get(TYPES.EncryptionService),
+        this.get(TYPES.KeySystemKeyManager),
         this.get(TYPES.SyncService),
         this.get(TYPES.RemoveItemsLocally),
       )
@@ -404,11 +422,47 @@ export class Dependencies {
     this.factory.set(TYPES.GetSharedVaultUsers, () => {
       return new GetSharedVaultUsers(this.get(TYPES.SharedVaultUsersServer))
     })
+
+    this.factory.set(TYPES.DecryptOwnMessage, () => {
+      return new DecryptOwnMessage(this.get(TYPES.EncryptionOperators))
+    })
+
+    this.factory.set(TYPES.EncryptMessage, () => {
+      return new EncryptMessage(this.get(TYPES.EncryptionOperators))
+    })
+
+    this.factory.set(TYPES.DecryptMessage, () => {
+      return new DecryptMessage(this.get(TYPES.EncryptionOperators))
+    })
+
+    this.factory.set(TYPES.ResendMessage, () => {
+      return new ResendMessage(
+        this.get(TYPES.DecryptOwnMessage),
+        this.get(TYPES.SendMessage),
+        this.get(TYPES.EncryptMessage),
+      )
+    })
+
+    this.factory.set(TYPES.SendMessage, () => {
+      return new SendMessage(this.get(TYPES.AsymmetricMessageServer))
+    })
+
+    this.factory.set(TYPES.ProcessAcceptedVaultInvite, () => {
+      return new ProcessAcceptedVaultInvite(
+        this.get(TYPES.MutatorService),
+        this.get(TYPES.SyncService),
+        this.get(TYPES.CreateOrEditContact),
+      )
+    })
   }
 
   private registerServiceMakers() {
     this.factory.set(TYPES.UserServer, () => {
       return new UserServer(this.get(TYPES.HttpService))
+    })
+
+    this.factory.set(TYPES.EncryptionOperators, () => {
+      return new EncryptionOperators(this.get(TYPES.Crypto))
     })
 
     this.factory.set(TYPES.SharedVaultInvitesServer, () => {
@@ -419,7 +473,7 @@ export class Dependencies {
       return new SharedVaultServer(this.get(TYPES.HttpService))
     })
 
-    this.factory.set(TYPES.MessageServer, () => {
+    this.factory.set(TYPES.AsymmetricMessageServer, () => {
       return new AsymmetricMessageServer(this.get(TYPES.HttpService))
     })
 
@@ -429,7 +483,7 @@ export class Dependencies {
 
     this.factory.set(TYPES.AsymmetricMessageService, () => {
       return new AsymmetricMessageService(
-        this.get(TYPES.MessageServer),
+        this.get(TYPES.AsymmetricMessageServer),
         this.get(TYPES.EncryptionService),
         this.get(TYPES.MutatorService),
         this.get(TYPES.CreateOrEditContact),
@@ -484,6 +538,7 @@ export class Dependencies {
         this.get(TYPES.ItemManager),
         this.get(TYPES.MutatorService),
         this.get(TYPES.EncryptionService),
+        this.get(TYPES.KeySystemKeyManager),
         this.get(TYPES.AlertService),
         this.get(TYPES.GetVault),
         this.get(TYPES.ChangeVaultKeyOptions),
@@ -979,6 +1034,7 @@ export class Dependencies {
         this.get(TYPES.DeviceInterface),
         this.get(TYPES.DiskStorageService),
         this.get(TYPES.KeySystemKeyManager),
+        this.get(TYPES.EncryptionOperators),
         this.options.identifier,
         this.get(TYPES.Crypto),
         this.get(TYPES.InternalEventBus),

@@ -5,7 +5,7 @@ import {
   TrustedContactInterface,
 } from '@standardnotes/models'
 import { DecryptMessage } from './DecryptMessage'
-import { OperatorInterface, OperatorManager } from '@standardnotes/encryption'
+import { OperatorInterface, EncryptionOperatorsInterface } from '@standardnotes/encryption'
 import { ProtocolVersion } from '@standardnotes/common'
 
 function createMockPublicKeySetChain(): ContactPublicKeySetInterface {
@@ -34,7 +34,7 @@ describe('DecryptMessage', () => {
     operator = {} as jest.Mocked<OperatorInterface>
     operator.versionForAsymmetricallyEncryptedString = jest.fn().mockReturnValue(ProtocolVersion.V004)
 
-    const operators = {} as jest.Mocked<OperatorManager>
+    const operators = {} as jest.Mocked<EncryptionOperatorsInterface>
     operators.defaultOperator = jest.fn().mockReturnValue(operator)
     operators.operatorForVersion = jest.fn().mockReturnValue(operator)
 

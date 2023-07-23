@@ -1,9 +1,9 @@
 import { SyncUseCaseInterface, Result } from '@standardnotes/domain-core'
-import { OperatorManager } from '@standardnotes/encryption'
+import { EncryptionOperatorsInterface } from '@standardnotes/encryption'
 import { AsymmetricMessagePayload, PublicKeyTrustStatus, TrustedContactInterface } from '@standardnotes/models'
 
 export class DecryptMessage implements SyncUseCaseInterface<AsymmetricMessagePayload> {
-  constructor(private operators: OperatorManager) {}
+  constructor(private operators: EncryptionOperatorsInterface) {}
 
   execute<M extends AsymmetricMessagePayload>(dto: {
     message: string

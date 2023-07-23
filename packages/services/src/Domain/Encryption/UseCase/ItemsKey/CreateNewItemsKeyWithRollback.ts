@@ -1,5 +1,5 @@
 import { StorageServiceInterface } from './../../../Storage/StorageServiceInterface'
-import { ItemsKeyMutator, OperatorManager, findDefaultItemsKey } from '@standardnotes/encryption'
+import { ItemsKeyMutator, findDefaultItemsKey, EncryptionOperatorsInterface } from '@standardnotes/encryption'
 import { MutatorClientInterface } from '../../../Mutator/MutatorClientInterface'
 import { ItemManagerInterface } from '../../../Item/ItemManagerInterface'
 import { RootKeyManager } from '../../RootKey/RootKeyManager'
@@ -20,7 +20,7 @@ export class CreateNewItemsKeyWithRollbackUseCase {
     private mutator: MutatorClientInterface,
     private items: ItemManagerInterface,
     private storage: StorageServiceInterface,
-    private operatorManager: OperatorManager,
+    private operatorManager: EncryptionOperatorsInterface,
     private rootKeyManager: RootKeyManager,
   ) {}
 

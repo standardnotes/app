@@ -682,7 +682,7 @@ describe('keys', function () {
         this.password,
         await oldClient.encryption.getRootKeyParams(),
       )
-      const operator = oldClient.encryption.operators.operatorForVersion(ProtocolVersion.V003)
+      const operator = this.context.operators.operatorForVersion(ProtocolVersion.V003)
       const newRootKey = await operator.createRootKey(this.email, this.password)
       Object.defineProperty(oldClient.legacyApi, 'apiVersion', {
         get: function () {
@@ -732,7 +732,7 @@ describe('keys', function () {
         this.password,
         await this.application.encryption.getRootKeyParams(),
       )
-      const operator = this.application.encryption.operators.operatorForVersion(ProtocolVersion.V003)
+      const operator = this.context.operators.operatorForVersion(ProtocolVersion.V003)
       const newRootKeyTemplate = await operator.createRootKey(this.email, this.password)
       const newRootKey = CreateNewRootKey({
         ...newRootKeyTemplate.content,

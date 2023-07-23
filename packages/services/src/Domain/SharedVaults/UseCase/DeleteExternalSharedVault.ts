@@ -1,5 +1,5 @@
 import { SyncServiceInterface } from './../../Sync/SyncServiceInterface'
-import { EncryptionProviderInterface } from '@standardnotes/encryption'
+import { KeySystemKeyManagerInterface } from '@standardnotes/encryption'
 import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
 import { AnyItemInterface, VaultListingInterface } from '@standardnotes/models'
 import { MutatorClientInterface } from '../../Mutator/MutatorClientInterface'
@@ -9,7 +9,7 @@ export class DeleteThirdPartyVault {
   constructor(
     private items: ItemManagerInterface,
     private mutator: MutatorClientInterface,
-    private encryption: EncryptionProviderInterface,
+    private keys: KeySystemKeyManagerInterface,
     private sync: SyncServiceInterface,
     private removeItemsLocally: RemoveItemsLocally,
   ) {}
@@ -17,7 +17,7 @@ export class DeleteThirdPartyVault {
   async execute(vault: VaultListingInterface): Promise<void> {
     await this.deleteDataSharedByVaultUsers(vault)
     await this.deleteDataOwnedByThisUser(vault)
-    await this.encryption.keys.deleteNonPersistentSystemRootKeysForVault(vault.systemIdentifier)
+    await this.keys.deleteNonPersistentSystemRootKeysForVault(vault.systemIdentifier)
 
     void this.sync.sync({ sourceDescription: 'Not awaiting due to this event handler running from sync response' })
   }
@@ -31,13 +31,13 @@ export class DeleteThirdPartyVault {
       this.items.allTrackedItems().filter((item) => item.key_system_identifier === vault.systemIdentifier)
     )
 
-    const itemsKeys = this.encryption.keys.getKeySystemItemsKeys(vault.systemIdentifier)
+    const itemsKeys = this.keys.getKeySystemItemsKeys(vault.systemIdentifier)
 
     await this.removeItemsLocally.execute([...vaultItems, ...itemsKeys])
   }
 
   private async deleteDataOwnedByThisUser(vault: VaultListingInterface): Promise<void> {
-    const rootKeys = this.encryption.keys.getSyncedKeySystemRootKeysForVault(vault.systemIdentifier)
+    const rootKeys = this.keys.getSyncedKeySystemRootKeysForVault(vault.systemIdentifier)
     await this.mutator.setItemsToBeDeleted(rootKeys)
 
     await this.mutator.setItemToBeDeleted(vault)

@@ -1,8 +1,8 @@
 import {
   DecryptedParameters,
   ErrorDecryptingParameters,
-  OperatorManager,
   decryptPayload,
+  EncryptionOperatorsInterface,
 } from '@standardnotes/encryption'
 import {
   EncryptedPayloadInterface,
@@ -12,7 +12,7 @@ import {
 } from '@standardnotes/models'
 
 export class RootKeyDecryptPayloadUseCase {
-  constructor(private operatorManager: OperatorManager) {}
+  constructor(private operatorManager: EncryptionOperatorsInterface) {}
 
   async executeOne<C extends ItemContent = ItemContent>(
     payload: EncryptedPayloadInterface,

@@ -1,5 +1,5 @@
 import { UuidGenerator, assert } from '@standardnotes/utils'
-import { EncryptionProviderInterface } from '@standardnotes/encryption'
+import { EncryptionProviderInterface, KeySystemKeyManagerInterface } from '@standardnotes/encryption'
 import { ClientDisplayableError, isClientDisplayableError } from '@standardnotes/responses'
 import {
   KeySystemIdentifier,
@@ -12,14 +12,18 @@ import {
 import { MutatorClientInterface } from '../../Mutator/MutatorClientInterface'
 
 export class RotateVaultKey {
-  constructor(private mutator: MutatorClientInterface, private encryption: EncryptionProviderInterface) {}
+  constructor(
+    private mutator: MutatorClientInterface,
+    private encryption: EncryptionProviderInterface,
+    private keys: KeySystemKeyManagerInterface,
+  ) {}
 
   async execute(params: {
     vault: VaultListingInterface
     sharedVaultUuid: string | undefined
     userInputtedPassword: string | undefined
   }): Promise<undefined | ClientDisplayableError[]> {
-    const currentRootKey = this.encryption.keys.getPrimaryKeySystemRootKey(params.vault.systemIdentifier)
+    const currentRootKey = this.keys.getPrimaryKeySystemRootKey(params.vault.systemIdentifier)
     if (!currentRootKey) {
       throw new Error('Cannot rotate key system root key; key system root key not found')
     }
@@ -48,7 +52,7 @@ export class RotateVaultKey {
     if (params.vault.keyStorageMode === KeySystemRootKeyStorageMode.Synced) {
       await this.mutator.insertItem(newRootKey, true)
     } else {
-      this.encryption.keys.intakeNonPersistentKeySystemRootKey(newRootKey, params.vault.keyStorageMode)
+      this.keys.intakeNonPersistentKeySystemRootKey(newRootKey, params.vault.keyStorageMode)
     }
 
     await this.mutator.changeItem<VaultListingMutator>(params.vault, (mutator) => {

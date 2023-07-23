@@ -56,6 +56,7 @@ export const TYPES = {
   SharedVaultService: Symbol.for('SharedVaultService'),
   AsymmetricMessageService: Symbol.for('AsymmetricMessageService'),
   SelfContactManager: Symbol.for('SelfContactManager'),
+  EncryptionOperators: Symbol.for('EncryptionOperators'),
 
   // Servers
   RevisionServer: Symbol.for('RevisionServer'),
@@ -64,7 +65,7 @@ export const TYPES = {
   SharedVaultInvitesServer: Symbol.for('SharedVaultInvitesServer'),
   SharedVaultServer: Symbol.for('SharedVaultServer'),
   SharedVaultUsersServer: Symbol.for('SharedVaultUsersServer'),
-  MessageServer: Symbol.for('MessageServer'),
+  AsymmetricMessageServer: Symbol.for('AsymmetricMessageServer'),
 
   // Desktop Services
   FilesBackupService: Symbol.for('FilesBackupService'),
