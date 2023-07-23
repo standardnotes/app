@@ -30,7 +30,9 @@ describe('shared vault invites', function () {
     const { contactContext, deinitContactContext } = await Collaboration.createContactContext()
     const contact = await Collaboration.createTrustedContactForUserOfContext(context, contactContext)
 
-    const vaultInvite = await sharedVaults.inviteContactToSharedVault(sharedVault, contact, SharedVaultPermission.Write)
+    const vaultInvite = (
+      await sharedVaults.inviteContactToSharedVault(sharedVault, contact, SharedVaultPermission.Write)
+    ).getValue()
 
     expect(vaultInvite).to.not.be.undefined
     expect(vaultInvite.shared_vault_uuid).to.equal(sharedVault.sharing.sharedVaultUuid)
@@ -78,15 +80,13 @@ describe('shared vault invites', function () {
 
     const message = invites[0].message
     const delegatedContacts = message.data.trustedContacts
-    expect(delegatedContacts.length).to.equal(1)
-    expect(delegatedContacts[0].contactUuid).to.equal(contactContext.userUuid)
+    expect(delegatedContacts.length).to.equal(2)
+
+    expect(delegatedContacts.some((contact) => contact.contactUuid === context.userUuid)).to.be.true
+    expect(delegatedContacts.some((contact) => contact.contactUuid === contactContext.userUuid)).to.be.true
 
     await deinitThirdPartyContext()
     await deinitContactContext()
-  })
-
-  it('delegated contacts inside invite should include sender contact', async () => {
-    console.error('TODO: implement test')
   })
 
   it('should sync a shared vault from scratch after accepting an invitation', async () => {

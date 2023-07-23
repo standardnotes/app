@@ -370,7 +370,7 @@ export class AppContext {
 
   resolveWhenUserMessagesProcessingCompletes() {
     return new Promise((resolve) => {
-      const objectToSpy = this.application.userEvents
+      const objectToSpy = this.application.dependencies.get(TYPES.UserEventService)
       sinon.stub(objectToSpy, 'handleReceivedUserEvents').callsFake(async (params) => {
         objectToSpy.handleReceivedUserEvents.restore()
         const result = await objectToSpy.handleReceivedUserEvents(params)
