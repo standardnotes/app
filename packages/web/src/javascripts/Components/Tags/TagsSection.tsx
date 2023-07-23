@@ -32,7 +32,7 @@ const TagsSection: FunctionComponent<Props> = ({ viewControllerManager }) => {
 
   const runMigration = useCallback(async () => {
     if (
-      await viewControllerManager.application.alertService.confirm(
+      await viewControllerManager.application.alerts.confirm(
         '<i>Introducing native, built-in nested tags without requiring the legacy Folders extension.</i><br/></br> ' +
           " To get started, we'll need to migrate any tags containing a dot character to the new system.<br/></br> " +
           ' This migration will convert any tags with dots appearing in their name into a natural' +

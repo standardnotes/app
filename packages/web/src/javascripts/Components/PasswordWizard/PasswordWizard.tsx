@@ -137,16 +137,16 @@ class PasswordWizard extends AbstractComponent<Props, State> {
     const currentPassword = this.state.formData.currentPassword
     const newPass = this.state.formData.newPassword
     if (!currentPassword || currentPassword.length === 0) {
-      this.application.alertService.alert('Please enter your current password.').catch(console.error)
+      this.application.alerts.alert('Please enter your current password.').catch(console.error)
       return false
     }
 
     if (!newPass || newPass.length === 0) {
-      this.application.alertService.alert('Please enter a new password.').catch(console.error)
+      this.application.alerts.alert('Please enter a new password.').catch(console.error)
       return false
     }
     if (newPass !== this.state.formData.newPasswordConfirmation) {
-      this.application.alertService.alert('Your new password does not match its confirmation.').catch(console.error)
+      this.application.alerts.alert('Your new password does not match its confirmation.').catch(console.error)
       this.setFormDataState({
         status: undefined,
       }).catch(console.error)
@@ -154,7 +154,7 @@ class PasswordWizard extends AbstractComponent<Props, State> {
     }
 
     if (!this.application.getUser()?.email) {
-      this.application.alertService
+      this.application.alerts
         .alert("We don't have your email stored. Please sign out then log back in to fix this issue.")
         .catch(console.error)
       this.setFormDataState({
@@ -165,7 +165,7 @@ class PasswordWizard extends AbstractComponent<Props, State> {
 
     const success = await this.application.validateAccountPassword(this.state.formData.currentPassword as string)
     if (!success) {
-      this.application.alertService
+      this.application.alerts
         .alert('The current password you entered is not correct. Please try again.')
         .catch(console.error)
     }
@@ -213,7 +213,7 @@ class PasswordWizard extends AbstractComponent<Props, State> {
 
   dismiss = () => {
     if (this.state.processing) {
-      this.application.alertService.alert('Cannot close window until pending tasks are complete.').catch(console.error)
+      this.application.alerts.alert('Cannot close window until pending tasks are complete.').catch(console.error)
     } else {
       this.props.dismissModal()
     }

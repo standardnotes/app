@@ -14,7 +14,7 @@ import { ItemManager } from '@Lib/Services/Items/ItemManager'
 import { OfflineSyncOperation } from '@Lib/Services/Sync/Offline/Operation'
 import { PayloadManager } from '../Payloads/PayloadManager'
 import { LegacyApiService } from '../Api/ApiService'
-import { SNHistoryManager } from '../History/HistoryManager'
+import { HistoryManager } from '../History/HistoryManager'
 import { SNLog } from '@Lib/Log'
 import { SessionManager } from '../Session/SessionManager'
 import { DiskStorageService } from '../Storage/DiskStorageService'
@@ -156,7 +156,7 @@ export class SyncService
     private storageService: DiskStorageService,
     private payloadManager: PayloadManager,
     private apiService: LegacyApiService,
-    private historyService: SNHistoryManager,
+    private historyService: HistoryManager,
     private device: DeviceInterface,
     private identifier: string,
     private readonly options: ApplicationSyncOptions,

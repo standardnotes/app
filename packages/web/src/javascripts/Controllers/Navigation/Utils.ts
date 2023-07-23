@@ -27,7 +27,7 @@ export const isValidFutureSiblings = (application: SNApplication, futureSiblings
   const siblingWithSameName = futureSiblings.find((otherTag) => otherTag.title === tag.title)
 
   if (siblingWithSameName) {
-    application.alertService
+    application.alerts
       ?.alert(
         `A tag with the name ${tag.title} already exists at this destination. Please rename this tag before moving and try again.`,
       )

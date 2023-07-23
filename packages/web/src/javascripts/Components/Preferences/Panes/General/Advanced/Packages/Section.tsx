@@ -42,7 +42,7 @@ const PackagesPreferencesSection: FunctionComponent<Props> = ({
   }, [confirmableExtension, confirmableEnd])
 
   const uninstallExtension = async (extension: AnyPackageType) => {
-    application.alertService
+    application.alerts
       .confirm(
         'Are you sure you want to uninstall this plugin? Note that plugins managed by your subscription will automatically be re-installed on application restart.',
         'Uninstall Extension?',
@@ -58,7 +58,7 @@ const PackagesPreferencesSection: FunctionComponent<Props> = ({
         }
       })
       .catch((err: string) => {
-        application.alertService.alert(err).catch(console.error)
+        application.alerts.alert(err).catch(console.error)
       })
   }
 

@@ -74,7 +74,7 @@ export class NoteSyncController {
 
   private async undebouncedSave(params: NoteSaveFunctionParams): Promise<void> {
     if (!this.application.items.findItem(this.item.uuid)) {
-      void this.application.alertService.alert(InfoStrings.InvalidNote)
+      void this.application.alerts.alert(InfoStrings.InvalidNote)
       return
     }
 

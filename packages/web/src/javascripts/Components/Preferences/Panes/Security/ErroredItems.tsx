@@ -37,7 +37,7 @@ const ErroredItems: FunctionComponent = () => {
   }
 
   const deleteItems = async (items: EncryptedItemInterface[]): Promise<void> => {
-    const confirmed = await application.alertService.confirm(
+    const confirmed = await application.alerts.confirm(
       `Are you sure you want to permanently delete ${items.length} item(s)?`,
       undefined,
       'Delete',
@@ -58,7 +58,7 @@ const ErroredItems: FunctionComponent = () => {
     const errorOrTrue = application.canAttemptDecryptionOfItem(item)
 
     if (errorOrTrue instanceof ClientDisplayableError) {
-      void application.alertService.showErrorAlert(errorOrTrue)
+      void application.alerts.showErrorAlert(errorOrTrue)
 
       return
     }

@@ -88,7 +88,7 @@ const DataBackups = ({ application, viewControllerManager }: Props) => {
 
   const readFile = async (file: File): Promise<any> => {
     if (file.type === 'application/zip') {
-      application.alertService.alert(STRING_IMPORTING_ZIP_FILE).catch(console.error)
+      application.alerts.alert(STRING_IMPORTING_ZIP_FILE).catch(console.error)
       return
     }
 
@@ -99,7 +99,7 @@ const DataBackups = ({ application, viewControllerManager }: Props) => {
           const data = JSON.parse(e.target?.result as string)
           resolve(data)
         } catch (e) {
-          application.alertService.alert(STRING_INVALID_IMPORT_FILE).catch(console.error)
+          application.alerts.alert(STRING_INVALID_IMPORT_FILE).catch(console.error)
         }
       }
       reader.readAsText(file)

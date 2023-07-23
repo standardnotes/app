@@ -69,6 +69,7 @@ import {
   SessionStrings,
   AccountEvent,
   PayloadManagerInterface,
+  HistoryServiceInterface,
 } from '@standardnotes/services'
 import {
   PayloadEmitSource,
@@ -1270,11 +1271,15 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return this.dependencies.get<PreferenceServiceInterface>(TYPES.PreferencesService)
   }
 
+  public get history(): HistoryServiceInterface {
+    return this.dependencies.get<HistoryServiceInterface>(TYPES.HistoryManager)
+  }
+
   private get migrations(): SNMigrationService {
     return this.dependencies.get<SNMigrationService>(TYPES.MigrationService)
   }
 
-  private get encryption(): EncryptionProviderInterface {
+  public get encryption(): EncryptionProviderInterface {
     return this.dependencies.get<EncryptionProviderInterface>(TYPES.EncryptionService)
   }
 
@@ -1290,7 +1295,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return this.dependencies.get<WebSocketsService>(TYPES.WebSocketsService)
   }
 
-  private get events(): InternalEventBusInterface {
+  public get events(): InternalEventBusInterface {
     return this.dependencies.get<InternalEventBusInterface>(TYPES.InternalEventBus)
   }
 

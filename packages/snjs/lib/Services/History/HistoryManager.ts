@@ -30,7 +30,7 @@ const LargeEntryDeltaThreshold = 25
  * 2. Remote server history. Entries are automatically added by the server and must be
  *    retrieved per item via an API call.
  */
-export class SNHistoryManager extends AbstractService implements HistoryServiceInterface {
+export class HistoryManager extends AbstractService implements HistoryServiceInterface {
   private removeChangeObserver: () => void
 
   /**

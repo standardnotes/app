@@ -51,18 +51,10 @@ const EditContactModal: FunctionComponent<Props> = ({ onCloseDialog, fromInvite,
         onAddContact?.(contact)
         handleDialogClose()
       } else {
-        void application.alertService.alert('Unable to create contact. Please try again.')
+        void application.alerts.alert('Unable to create contact. Please try again.')
       }
     }
-  }, [
-    editingContact,
-    application.contacts,
-    application.alertService,
-    name,
-    collaborationID,
-    handleDialogClose,
-    onAddContact,
-  ])
+  }, [editingContact, application.contacts, application.alerts, name, collaborationID, handleDialogClose, onAddContact])
 
   const modalActions = useMemo(
     (): ModalAction[] => [

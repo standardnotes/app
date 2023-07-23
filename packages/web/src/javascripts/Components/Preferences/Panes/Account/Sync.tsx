@@ -26,7 +26,7 @@ const Sync: FunctionComponent<Props> = ({ application }: Props) => {
     })
     setIsSyncingInProgress(false)
     if (response && (response as any).error) {
-      application.alertService.alert(STRING_GENERIC_SYNC_ERROR).catch(console.error)
+      application.alerts.alert(STRING_GENERIC_SYNC_ERROR).catch(console.error)
     } else {
       setLastSyncDate(formatLastSyncDate(application.sync.getLastSyncDate() as Date))
     }

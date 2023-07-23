@@ -50,14 +50,14 @@ const BackupsDropZone: FunctionComponent<Props> = ({ application }) => {
     const result = await application.files.readBackupFileAndSaveDecrypted(binaryFile, decryptedFileItem, fileSystem)
 
     if (result === 'success') {
-      void application.alertService.alert(
+      void application.alerts.alert(
         `<strong>${decryptedFileItem.name}</strong> has been successfully decrypted and saved to your chosen directory.`,
       )
       setBinaryFile(undefined)
       setDecryptedFileItem(undefined)
       setDroppedFile(undefined)
     } else if (result === 'failed') {
-      void application.alertService.alert(
+      void application.alerts.alert(
         'Unable to save file to local directory. This may be caused by failure to decrypt, or failure to save the file locally.',
       )
     }
@@ -74,7 +74,7 @@ const BackupsDropZone: FunctionComponent<Props> = ({ application }) => {
       }
 
       if (type === 'binary') {
-        void application.alertService.alert('Please drag the metadata file instead of the encrypted data file.')
+        void application.alerts.alert('Please drag the metadata file instead of the encrypted data file.')
         return
       }
 
@@ -85,7 +85,7 @@ const BackupsDropZone: FunctionComponent<Props> = ({ application }) => {
         console.error(error)
       }
     },
-    [application.alertService, application.files],
+    [application.alerts, application.files],
   )
 
   const handleDragOver = useCallback((event: DragEvent) => {

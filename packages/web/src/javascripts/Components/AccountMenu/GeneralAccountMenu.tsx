@@ -51,7 +51,7 @@ const GeneralAccountMenu: FunctionComponent<Props> = ({
         }
       })
       .catch(() => {
-        application.alertService.alert(STRING_GENERIC_SYNC_ERROR).catch(console.error)
+        application.alerts.alert(STRING_GENERIC_SYNC_ERROR).catch(console.error)
       })
       .finally(() => {
         setIsSyncingInProgress(false)

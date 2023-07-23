@@ -115,20 +115,13 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     }
 
     this.itemControllerGroup = new ItemGroupController(this)
-    this.routeService = new RouteService(this, this.internalEventBus)
+    this.routeService = new RouteService(this, this.events)
 
     this.webServices = {} as WebServices
     this.webServices.keyboardService = new KeyboardService(platform, this.environment)
     this.webServices.archiveService = new ArchiveManager(this)
-    this.webServices.themeService = new ThemeManager(
-      this,
-      this.preferences,
-      this.componentManager,
-      this.internalEventBus,
-    )
-    this.webServices.autolockService = this.isNativeMobileWeb()
-      ? undefined
-      : new AutolockService(this, this.internalEventBus)
+    this.webServices.themeService = new ThemeManager(this, this.preferences, this.componentManager, this.events)
+    this.webServices.autolockService = this.isNativeMobileWeb() ? undefined : new AutolockService(this, this.events)
     this.webServices.desktopService = isDesktopDevice(deviceInterface)
       ? new DesktopManager(this, deviceInterface, this.fileBackups as BackupServiceInterface)
       : undefined
@@ -137,9 +130,9 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     this.webServices.momentsService = new MomentsService(
       this,
       this.webServices.viewControllerManager.filesController,
-      this.internalEventBus,
+      this.events,
     )
-    this.webServices.vaultDisplayService = new VaultDisplayService(this, this.internalEventBus)
+    this.webServices.vaultDisplayService = new VaultDisplayService(this, this.events)
 
     if (this.isNativeMobileWeb()) {
       this.mobileWebReceiver = new MobileWebReceiver(this)
@@ -219,7 +212,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
       observer(event, data)
     }
 
-    this.internalEventBus.publish({ type: event, payload: data })
+    this.events.publish({ type: event, payload: data })
   }
 
   publishPanelDidResizeEvent(name: string, width: number, collapsed: boolean) {
@@ -273,8 +266,8 @@ export class WebApplication extends SNApplication implements WebApplicationInter
   }
 
   public get desktopDevice(): DesktopDeviceInterface | undefined {
-    if (isDesktopDevice(this.deviceInterface)) {
-      return this.deviceInterface
+    if (isDesktopDevice(this.device)) {
+      return this.device
     }
 
     return undefined
@@ -300,11 +293,11 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     if (!this.isNativeMobileWeb()) {
       throw Error('Attempting to access device as mobile device on non mobile platform')
     }
-    return this.deviceInterface as MobileDeviceInterface
+    return this.device as MobileDeviceInterface
   }
 
   webOrDesktopDevice(): WebOrDesktopDevice {
-    return this.deviceInterface as WebOrDesktopDevice
+    return this.device as WebOrDesktopDevice
   }
 
   public getThemeService() {
@@ -334,7 +327,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
   }
 
   public get version(): string {
-    return (this.deviceInterface as WebOrDesktopDevice).appVersion
+    return (this.device as WebOrDesktopDevice).appVersion
   }
 
   async toggleGlobalSpellcheck() {

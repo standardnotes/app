@@ -18,7 +18,6 @@ import VaultItem from './Vaults/VaultItem'
 import Button from '@/Components/Button/Button'
 import InviteItem from './Invites/InviteItem'
 import EditVaultModal from './Vaults/VaultModal/EditVaultModal'
-import KeyManagementModal from './KeyManagement/KeyManagementModal'
 
 const Vaults = () => {
   const application = useApplication()
@@ -32,9 +31,6 @@ const Vaults = () => {
 
   const [isVaultModalOpen, setIsVaultModalOpen] = useState(false)
   const closeVaultModal = () => setIsVaultModalOpen(false)
-
-  const [isKeyManagementModalOpen, setIsKeyManagementModalOpen] = useState(false)
-  const closeKeyManagementModal = () => setIsKeyManagementModalOpen(false)
 
   const vaultService = application.vaults
   const sharedVaultService = application.sharedVaults
@@ -91,10 +87,6 @@ const Vaults = () => {
 
       <ModalOverlay isOpen={isVaultModalOpen} close={closeVaultModal}>
         <EditVaultModal onCloseDialog={closeVaultModal} />
-      </ModalOverlay>
-
-      <ModalOverlay isOpen={isKeyManagementModalOpen} close={closeKeyManagementModal}>
-        <KeyManagementModal onCloseDialog={closeKeyManagementModal} />
       </ModalOverlay>
 
       <PreferencesGroup>
@@ -155,17 +147,6 @@ const Vaults = () => {
               />
             </div>
           )}
-        </PreferencesSegment>
-      </PreferencesGroup>
-
-      <PreferencesGroup>
-        <PreferencesSegment>
-          <Title>Options</Title>
-          <Button
-            label="Manage Public Keys"
-            className={'mr-3 text-xs'}
-            onClick={() => setIsKeyManagementModalOpen(true)}
-          />
         </PreferencesSegment>
       </PreferencesGroup>
     </>

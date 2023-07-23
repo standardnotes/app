@@ -86,7 +86,7 @@ const SignIn: FunctionComponent<Props> = ({ viewControllerManager, application }
         setOtherErrorMessage('Invalid email or password.')
         setPassword('')
       } else {
-        application.alertService.alert(err as string).catch(console.error)
+        application.alerts.alert(err as string).catch(console.error)
       }
     }
   }

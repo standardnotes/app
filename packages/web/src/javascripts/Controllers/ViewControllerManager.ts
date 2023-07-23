@@ -81,7 +81,7 @@ export class ViewControllerManager implements InternalEventHandlerInterface {
   private toastService: ToastServiceInterface
 
   constructor(public application: WebApplication, private device: WebOrDesktopDeviceInterface) {
-    const eventBus = application.internalEventBus
+    const eventBus = application.events
 
     this.persistenceService = new PersistenceService(application, eventBus)
 

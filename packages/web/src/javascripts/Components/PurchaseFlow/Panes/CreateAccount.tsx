@@ -92,7 +92,7 @@ const CreateAccount: FunctionComponent<Props> = ({ viewControllerManager, applic
       void viewControllerManager.purchaseFlowController.openPurchaseFlow()
     } catch (err) {
       console.error(err)
-      application.alertService.alert(err as string).catch(console.error)
+      application.alerts.alert(err as string).catch(console.error)
     } finally {
       setIsCreatingAccount(false)
     }

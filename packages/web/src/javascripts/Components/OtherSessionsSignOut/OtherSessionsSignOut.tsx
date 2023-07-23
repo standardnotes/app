@@ -21,7 +21,7 @@ const ConfirmOtherSessionsSignOut = observer(({ application, viewControllerManag
   const confirm = useCallback(() => {
     application.revokeAllOtherSessions().catch(console.error)
     closeDialog()
-    application.alertService
+    application.alerts
       .alert('You have successfully revoked your sessions from other devices.', undefined, 'Finish')
       .catch(console.error)
   }, [application, closeDialog])

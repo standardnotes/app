@@ -64,7 +64,7 @@ const ChangeEditorMultipleMenu = ({ application, notes, setDisableClickOutside }
       }
 
       if (hasSelectedLockedNotes) {
-        void application.alertService.alert(STRING_EDIT_LOCKED_ATTEMPT)
+        void application.alerts.alert(STRING_EDIT_LOCKED_ATTEMPT)
         return
       }
 
@@ -92,7 +92,7 @@ const ChangeEditorMultipleMenu = ({ application, notes, setDisableClickOutside }
       }
     },
     [
-      application.alertService,
+      application.alerts,
       application.componentManager,
       hasSelectedLockedNotes,
       notes,

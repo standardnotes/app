@@ -162,7 +162,7 @@ export class NoteHistoryController {
 
       this.setSelectedEntry(entry)
 
-      const response = await this.application.actionsManager.runAction(entry.subactions[0], this.note)
+      const response = await this.application.actions.runAction(entry.subactions[0], this.note)
 
       if (!response) {
         throw new Error('Could not fetch revision')
@@ -261,14 +261,14 @@ export class NoteHistoryController {
   }
 
   fetchLegacyHistory = async () => {
-    const actionExtensions = this.application.actionsManager.getExtensions()
+    const actionExtensions = this.application.actions.getExtensions()
 
     actionExtensions.forEach(async (ext) => {
       if (!this.note) {
         return
       }
 
-      const actionExtension = await this.application.actionsManager.loadExtensionInContextOfItem(ext, this.note)
+      const actionExtension = await this.application.actions.loadExtensionInContextOfItem(ext, this.note)
 
       if (!actionExtension) {
         return
@@ -297,7 +297,7 @@ export class NoteHistoryController {
 
     this.setSessionHistory(
       sortRevisionListIntoGroups<NoteHistoryEntry>(
-        this.application.historyManager.sessionHistoryForItem(this.note) as NoteHistoryEntry[],
+        this.application.history.sessionHistoryForItem(this.note) as NoteHistoryEntry[],
       ),
     )
     await this.fetchRemoteHistory()
@@ -316,7 +316,7 @@ export class NoteHistoryController {
     const originalNote = this.application.items.findItem<SNNote>(revision.payload.uuid)
 
     if (originalNote?.locked) {
-      this.application.alertService.alert(STRING_RESTORE_LOCKED_ATTEMPT).catch(console.error)
+      this.application.alerts.alert(STRING_RESTORE_LOCKED_ATTEMPT).catch(console.error)
       return
     }
 
@@ -355,7 +355,7 @@ export class NoteHistoryController {
   }
 
   deleteRemoteRevision = async (revisionEntry: RevisionMetadata) => {
-    const shouldDelete = await this.application.alertService.confirm(
+    const shouldDelete = await this.application.alerts.confirm(
       'Are you sure you want to delete this revision?',
       'Delete revision?',
       'Delete revision',

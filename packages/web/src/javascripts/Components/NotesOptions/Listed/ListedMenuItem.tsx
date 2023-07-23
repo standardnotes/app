@@ -28,7 +28,7 @@ const ListedMenuItem: FunctionComponent<ListedMenuItemProps> = ({
 
     setIsRunning(true)
 
-    await application.actionsManager.runAction(action, note)
+    await application.actions.runAction(action, note)
 
     setIsRunning(false)
 

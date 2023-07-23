@@ -20,7 +20,7 @@ import { SingletonManager } from '../../Services/Singleton/SingletonManager'
 import { KeyRecoveryService } from '../../Services/KeyRecovery/KeyRecoveryService'
 import { SNProtectionService } from '../../Services/Protection/ProtectionService'
 import { SyncService } from '../../Services/Sync/SyncService'
-import { SNHistoryManager } from '../../Services/History/HistoryManager'
+import { HistoryManager } from '../../Services/History/HistoryManager'
 import { SessionManager } from '../../Services/Session/SessionManager'
 import { WebSocketsService } from '../../Services/Api/WebsocketsService'
 import { LegacyApiService } from '../../Services/Api/ApiService'
@@ -850,7 +850,7 @@ export class Dependencies {
     })
 
     this.factory.set(TYPES.HistoryManager, () => {
-      return new SNHistoryManager(
+      return new HistoryManager(
         this.get(TYPES.ItemManager),
         this.get(TYPES.DiskStorageService),
         this.get(TYPES.DeviceInterface),

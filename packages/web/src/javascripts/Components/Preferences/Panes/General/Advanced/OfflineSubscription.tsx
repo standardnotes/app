@@ -41,7 +41,7 @@ const OfflineSubscription: FunctionComponent<Props> = ({ application, onSuccess 
 
     if (homeServerEnabled) {
       if (!homeServerIsRunning) {
-        await application.alertService.alert('Please start your home server before activating offline features.')
+        await application.alerts.alert('Please start your home server before activating offline features.')
 
         return
       }
@@ -53,7 +53,7 @@ const OfflineSubscription: FunctionComponent<Props> = ({ application, onSuccess 
 
       const serverActivationResult = await homeServer.activatePremiumFeatures(signedInUser.email)
       if (serverActivationResult.isFailed()) {
-        await application.alertService.alert(serverActivationResult.getError())
+        await application.alerts.alert(serverActivationResult.getError())
 
         return
       }
@@ -62,7 +62,7 @@ const OfflineSubscription: FunctionComponent<Props> = ({ application, onSuccess 
     const result = await application.features.setOfflineFeaturesCode(activationCode)
 
     if (result instanceof ClientDisplayableError) {
-      await application.alertService.alert(result.text)
+      await application.alerts.alert(result.text)
 
       return
     }
@@ -85,7 +85,7 @@ const OfflineSubscription: FunctionComponent<Props> = ({ application, onSuccess 
   }
 
   const handleRemoveClick = async () => {
-    application.alertService
+    application.alerts
       .confirm(
         STRING_REMOVE_OFFLINE_KEY_CONFIRMATION,
         'Remove offline key?',
@@ -99,7 +99,7 @@ const OfflineSubscription: FunctionComponent<Props> = ({ application, onSuccess 
         }
       })
       .catch((err: string) => {
-        application.alertService.alert(err).catch(console.error)
+        application.alerts.alert(err).catch(console.error)
       })
   }
 
