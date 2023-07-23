@@ -30,7 +30,7 @@ import {
   InternalFeatureService,
   InternalFeature,
 } from '@standardnotes/services'
-import { Base64String, PkcKeyPair } from '@standardnotes/sncrypto-common'
+import { Base64String, PkcKeyPair, PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import {
   SessionBody,
   ErrorTag,
@@ -92,6 +92,7 @@ export class SessionManager
     private userApiService: UserApiServiceInterface,
     private alertService: AlertService,
     private encryptionService: EncryptionService,
+    private crypto: PureCryptoInterface,
     private challengeService: ChallengeService,
     private webSocketsService: WebSocketsService,
     private httpService: HttpServiceInterface,
@@ -699,7 +700,7 @@ export class SessionManager
   }
 
   private decodeDemoShareToken(token: Base64String): ShareToken {
-    const jsonString = this.encryptionService.crypto.base64Decode(token)
+    const jsonString = this.crypto.base64Decode(token)
     return JSON.parse(jsonString)
   }
 

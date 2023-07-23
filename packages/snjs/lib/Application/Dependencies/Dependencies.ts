@@ -929,6 +929,7 @@ export class Dependencies {
         this.get(TYPES.UserApiService),
         this.get(TYPES.AlertService),
         this.get(TYPES.EncryptionService),
+        this.get(TYPES.Crypto),
         this.get(TYPES.ChallengeService),
         this.get(TYPES.WebSocketsService),
         this.get(TYPES.HttpService),

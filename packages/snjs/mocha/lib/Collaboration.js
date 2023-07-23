@@ -15,7 +15,7 @@ export const createTrustedContactForUserOfContext = async (
   contextAddingNewContact,
   contextImportingContactInfoFrom,
 ) => {
-  const contact = await contextAddingNewContact.application.contactService.createOrEditTrustedContact({
+  const contact = await contextAddingNewContact.contacts.createOrEditTrustedContact({
     name: 'John Doe',
     publicKey: contextImportingContactInfoFrom.publicKey,
     signingPublicKey: contextImportingContactInfoFrom.signingPublicKey,
