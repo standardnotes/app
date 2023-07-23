@@ -1,3 +1,4 @@
+import { InternalEventInterface } from './../Internal/InternalEventInterface'
 import { ApplicationStageChangedEventPayload } from './../Event/ApplicationStageChangedEventPayload'
 import { ApplicationEvent } from './../Event/ApplicationEvent'
 import { InternalEventHandlerInterface } from './../Internal/InternalEventHandlerInterface'
@@ -12,7 +13,6 @@ import { RawStorageKey } from '../Storage/StorageKeys'
 import { HomeServerServiceInterface } from './HomeServerServiceInterface'
 import { HomeServerEnvironmentConfiguration } from './HomeServerEnvironmentConfiguration'
 import { HomeServerStatus } from './HomeServerStatus'
-import { InternalEventInterface } from '@standardnotes/snjs'
 
 export class HomeServerService
   extends AbstractService

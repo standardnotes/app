@@ -1,3 +1,4 @@
+import { InternalEventInterface } from './../Internal/InternalEventInterface'
 import { ApplicationStageChangedEventPayload } from '../Event/ApplicationStageChangedEventPayload'
 import { ApplicationEvent } from '../Event/ApplicationEvent'
 import { InternalEventHandlerInterface } from '../Internal/InternalEventHandlerInterface'
@@ -37,7 +38,6 @@ import { SessionsClientInterface } from '../Session/SessionsClientInterface'
 import { PayloadManagerInterface } from '../Payloads/PayloadManagerInterface'
 import { HistoryServiceInterface } from '../History/HistoryServiceInterface'
 import { ContentType } from '@standardnotes/domain-core'
-import { InternalEventInterface } from '@standardnotes/snjs'
 
 const PlaintextBackupsDirectoryName = 'Plaintext Backups'
 export const TextBackupsDirectoryName = 'Text Backups'
