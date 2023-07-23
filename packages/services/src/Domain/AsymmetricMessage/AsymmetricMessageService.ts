@@ -6,7 +6,6 @@ import { InternalEventHandlerInterface } from '../Internal/InternalEventHandlerI
 import { InternalEventInterface } from '../Internal/InternalEventInterface'
 import { AbstractService } from '../Service/AbstractService'
 import { GetTrustedPayload } from './UseCase/GetTrustedPayload'
-import { EncryptionProviderInterface } from '@standardnotes/encryption'
 import {
   AsymmetricMessageSharedVaultRootKeyChanged,
   AsymmetricMessagePayloadType,
@@ -33,6 +32,7 @@ import { FindContact } from '../Contacts/UseCase/FindContact'
 import { CreateOrEditContact } from '../Contacts/UseCase/CreateOrEditContact'
 import { ReplaceContactData } from '../Contacts/UseCase/ReplaceContactData'
 import { GetAllContacts } from '../Contacts/UseCase/GetAllContacts'
+import { EncryptionProviderInterface } from '../Encryption/EncryptionProviderInterface'
 
 export class AsymmetricMessageService
   extends AbstractService
@@ -42,17 +42,17 @@ export class AsymmetricMessageService
     private messageServer: AsymmetricMessageServer,
     private encryption: EncryptionProviderInterface,
     private mutator: MutatorClientInterface,
-    private createOrEditContact: CreateOrEditContact,
-    private findContact: FindContact,
-    private getAllContacts: GetAllContacts,
-    private replaceContactData: ReplaceContactData,
-    private getTrustedPayload: GetTrustedPayload,
-    private getVault: GetVault,
-    private handleRootKeyChangedMessage: HandleRootKeyChangedMessage,
-    private sendOwnContactChangedMessage: SendOwnContactChangeMessage,
-    private getOutboundMessagesUseCase: GetOutboundMessages,
-    private getInboundMessagesUseCase: GetInboundMessages,
-    private getUntrustedPayload: GetUntrustedPayload,
+    private _createOrEditContact: CreateOrEditContact,
+    private _findContact: FindContact,
+    private _getAllContacts: GetAllContacts,
+    private _replaceContactData: ReplaceContactData,
+    private _getTrustedPayload: GetTrustedPayload,
+    private _getVault: GetVault,
+    private _handleRootKeyChangedMessage: HandleRootKeyChangedMessage,
+    private _sendOwnContactChangedMessage: SendOwnContactChangeMessage,
+    private _getOutboundMessagesUseCase: GetOutboundMessages,
+    private _getInboundMessagesUseCase: GetInboundMessages,
+    private _getUntrustedPayload: GetUntrustedPayload,
     eventBus: InternalEventBusInterface,
   ) {
     super(eventBus)
@@ -71,11 +71,11 @@ export class AsymmetricMessageService
   }
 
   public async getOutboundMessages(): Promise<AsymmetricMessageServerHash[] | ClientDisplayableError> {
-    return this.getOutboundMessagesUseCase.execute()
+    return this._getOutboundMessagesUseCase.execute()
   }
 
   public async getInboundMessages(): Promise<AsymmetricMessageServerHash[] | ClientDisplayableError> {
-    return this.getInboundMessagesUseCase.execute()
+    return this._getInboundMessagesUseCase.execute()
   }
 
   public async downloadAndProcessInboundMessages(): Promise<void> {
@@ -92,7 +92,7 @@ export class AsymmetricMessageService
       return
     }
 
-    const contacts = this.getAllContacts.execute()
+    const contacts = this._getAllContacts.execute()
     if (contacts.isFailed()) {
       return
     }
@@ -102,7 +102,7 @@ export class AsymmetricMessageService
         continue
       }
 
-      await this.sendOwnContactChangedMessage.execute({
+      await this._sendOwnContactChangedMessage.execute({
         senderOldKeyPair: data.previous.encryption,
         senderOldSigningKeyPair: data.previous.signing,
         senderNewKeyPair: data.current.encryption,
@@ -204,7 +204,7 @@ export class AsymmetricMessageService
   }
 
   getUntrustedMessagePayload(message: AsymmetricMessageServerHash): AsymmetricMessagePayload | undefined {
-    const result = this.getUntrustedPayload.execute({
+    const result = this._getUntrustedPayload.execute({
       privateKey: this.encryption.getKeyPair().privateKey,
       message,
     })
@@ -217,12 +217,12 @@ export class AsymmetricMessageService
   }
 
   getTrustedMessagePayload(message: AsymmetricMessageServerHash): AsymmetricMessagePayload | undefined {
-    const contact = this.findContact.execute({ userUuid: message.sender_uuid })
+    const contact = this._findContact.execute({ userUuid: message.sender_uuid })
     if (contact.isFailed()) {
       return undefined
     }
 
-    const result = this.getTrustedPayload.execute({
+    const result = this._getTrustedPayload.execute({
       privateKey: this.encryption.getKeyPair().privateKey,
       sender: contact.getValue(),
       message,
@@ -243,7 +243,9 @@ export class AsymmetricMessageService
     _message: AsymmetricMessageServerHash,
     trustedPayload: AsymmetricMessageSharedVaultMetadataChanged,
   ): Promise<void> {
-    const vault = this.getVault.execute<VaultListingInterface>({ sharedVaultUuid: trustedPayload.data.sharedVaultUuid })
+    const vault = this._getVault.execute<VaultListingInterface>({
+      sharedVaultUuid: trustedPayload.data.sharedVaultUuid,
+    })
     if (vault.isFailed()) {
       return
     }
@@ -267,14 +269,14 @@ export class AsymmetricMessageService
       return
     }
 
-    await this.replaceContactData.execute(trustedPayload.data.trustedContact)
+    await this._replaceContactData.execute(trustedPayload.data.trustedContact)
   }
 
   async handleTrustedSenderKeypairChangedMessage(
     message: AsymmetricMessageServerHash,
     trustedPayload: AsymmetricMessageSenderKeypairChanged,
   ): Promise<void> {
-    await this.createOrEditContact.execute({
+    await this._createOrEditContact.execute({
       contactUuid: message.sender_uuid,
       publicKey: trustedPayload.data.newEncryptionPublicKey,
       signingPublicKey: trustedPayload.data.newSigningPublicKey,
@@ -285,7 +287,7 @@ export class AsymmetricMessageService
     _message: AsymmetricMessageServerHash,
     trustedPayload: AsymmetricMessageSharedVaultRootKeyChanged,
   ): Promise<void> {
-    await this.handleRootKeyChangedMessage.execute(trustedPayload)
+    await this._handleRootKeyChangedMessage.execute(trustedPayload)
   }
 
   public override deinit(): void {
@@ -293,16 +295,16 @@ export class AsymmetricMessageService
     ;(this.messageServer as unknown) = undefined
     ;(this.encryption as unknown) = undefined
     ;(this.mutator as unknown) = undefined
-    ;(this.createOrEditContact as unknown) = undefined
-    ;(this.findContact as unknown) = undefined
-    ;(this.getAllContacts as unknown) = undefined
-    ;(this.replaceContactData as unknown) = undefined
-    ;(this.getTrustedPayload as unknown) = undefined
-    ;(this.getVault as unknown) = undefined
-    ;(this.handleRootKeyChangedMessage as unknown) = undefined
-    ;(this.sendOwnContactChangedMessage as unknown) = undefined
-    ;(this.getOutboundMessagesUseCase as unknown) = undefined
-    ;(this.getInboundMessagesUseCase as unknown) = undefined
-    ;(this.getUntrustedPayload as unknown) = undefined
+    ;(this._createOrEditContact as unknown) = undefined
+    ;(this._findContact as unknown) = undefined
+    ;(this._getAllContacts as unknown) = undefined
+    ;(this._replaceContactData as unknown) = undefined
+    ;(this._getTrustedPayload as unknown) = undefined
+    ;(this._getVault as unknown) = undefined
+    ;(this._handleRootKeyChangedMessage as unknown) = undefined
+    ;(this._sendOwnContactChangedMessage as unknown) = undefined
+    ;(this._getOutboundMessagesUseCase as unknown) = undefined
+    ;(this._getInboundMessagesUseCase as unknown) = undefined
+    ;(this._getUntrustedPayload as unknown) = undefined
   }
 }

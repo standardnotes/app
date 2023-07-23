@@ -21,7 +21,6 @@ import {
 } from '@standardnotes/models'
 import { SharedVaultServiceInterface } from './SharedVaultServiceInterface'
 import { SharedVaultServiceEvent, SharedVaultServiceEventPayload } from './SharedVaultServiceEvent'
-import { EncryptionProviderInterface } from '@standardnotes/encryption'
 import { GetVaultUsers } from './UseCase/GetVaultUsers'
 import { RemoveVaultMember } from './UseCase/RemoveSharedVaultMember'
 import { AbstractService } from '../Service/AbstractService'
@@ -54,6 +53,7 @@ import { ContentType, Result } from '@standardnotes/domain-core'
 import { HandleKeyPairChange } from '../Contacts/UseCase/HandleKeyPairChange'
 import { FindContact } from '../Contacts/UseCase/FindContact'
 import { GetAllContacts } from '../Contacts/UseCase/GetAllContacts'
+import { EncryptionProviderInterface } from '../Encryption/EncryptionProviderInterface'
 
 export class SharedVaultService
   extends AbstractService<SharedVaultServiceEvent, SharedVaultServiceEventPayload>

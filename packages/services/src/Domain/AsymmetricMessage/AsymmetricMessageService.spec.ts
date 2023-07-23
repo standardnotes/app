@@ -1,3 +1,4 @@
+import { EncryptionProviderInterface } from './../Encryption/EncryptionProviderInterface'
 import { GetUntrustedPayload } from './UseCase/GetUntrustedPayload'
 import { GetInboundMessages } from './UseCase/GetInboundMessages'
 import { GetOutboundMessages } from './UseCase/GetOutboundMessages'
@@ -13,7 +14,6 @@ import { MutatorClientInterface } from './../Mutator/MutatorClientInterface'
 import { AsymmetricMessageServer } from '@standardnotes/api'
 import { AsymmetricMessageService } from './AsymmetricMessageService'
 import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
-import { EncryptionProviderInterface } from '@standardnotes/encryption'
 import { SyncServiceInterface } from '../Sync/SyncServiceInterface'
 import { AsymmetricMessageServerHash } from '@standardnotes/responses'
 import {

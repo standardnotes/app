@@ -1,10 +1,10 @@
 import {
   AuthClientInterface,
+  EncryptionProviderInterface,
   InternalEventBusInterface,
   KeyValueStoreInterface,
   SessionsClientInterface,
 } from '@standardnotes/services'
-import { EncryptionProviderInterface } from '@standardnotes/encryption'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { AnyKeyParamsContent } from '@standardnotes/common'
 import { DecryptedPayloadInterface, RootKeyContent, RootKeyInterface } from '@standardnotes/models'
@@ -20,14 +20,8 @@ describe('SignInWithRecoveryCodes', () => {
   let sessionManager: SessionsClientInterface
   let internalEventBus: InternalEventBusInterface
 
-  const createUseCase = () => new SignInWithRecoveryCodes(
-    authManager,
-    encryptionService,
-    inMemoryStore,
-    crypto,
-    sessionManager,
-    internalEventBus,
-  )
+  const createUseCase = () =>
+    new SignInWithRecoveryCodes(authManager, encryptionService, inMemoryStore, crypto, sessionManager, internalEventBus)
 
   beforeEach(() => {
     authManager = {} as jest.Mocked<AuthClientInterface>
@@ -54,12 +48,7 @@ describe('SignInWithRecoveryCodes', () => {
     encryptionService.hasAccount = jest.fn()
     encryptionService.computeRootKey = jest.fn().mockReturnValue(rootKey)
     encryptionService.platformSupportsKeyDerivation = jest.fn().mockReturnValue(true)
-    encryptionService.supportedVersions = jest.fn().mockReturnValue([
-      '001',
-      '002',
-      '003',
-      '004',
-    ])
+    encryptionService.supportedVersions = jest.fn().mockReturnValue(['001', '002', '003', '004'])
     encryptionService.isVersionNewerThanLibraryVersion = jest.fn()
 
     inMemoryStore = {} as jest.Mocked<KeyValueStoreInterface<string>>
@@ -82,7 +71,11 @@ describe('SignInWithRecoveryCodes', () => {
     encryptionService.hasAccount = jest.fn().mockReturnValue(true)
 
     const useCase = createUseCase()
-    const result = await useCase.execute({ recoveryCodes: 'recovery-codes', password: 'foobar', username: 'test@test.te' })
+    const result = await useCase.execute({
+      recoveryCodes: 'recovery-codes',
+      password: 'foobar',
+      username: 'test@test.te',
+    })
 
     expect(result.isFailed()).toBe(true)
     expect(result.getError()).toEqual('Tried to sign in when an account already exists.')
@@ -92,7 +85,11 @@ describe('SignInWithRecoveryCodes', () => {
     authManager.recoveryKeyParams = jest.fn().mockReturnValue(false)
 
     const useCase = createUseCase()
-    const result = await useCase.execute({ recoveryCodes: 'recovery-codes', password: 'foobar', username: 'test@test.te' })
+    const result = await useCase.execute({
+      recoveryCodes: 'recovery-codes',
+      password: 'foobar',
+      username: 'test@test.te',
+    })
 
     expect(result.isFailed()).toBe(true)
     expect(result.getError()).toEqual('Could not retrieve recovery key params')
@@ -102,10 +99,16 @@ describe('SignInWithRecoveryCodes', () => {
     encryptionService.platformSupportsKeyDerivation = jest.fn().mockReturnValue(false)
 
     const useCase = createUseCase()
-    const result = await useCase.execute({ recoveryCodes: 'recovery-codes', password: 'foobar', username: 'test@test.te' })
+    const result = await useCase.execute({
+      recoveryCodes: 'recovery-codes',
+      password: 'foobar',
+      username: 'test@test.te',
+    })
 
     expect(result.isFailed()).toBe(true)
-    expect(result.getError()).toEqual('Your account was created on a platform with higher security capabilities than this browser supports. If we attempted to generate your login keys here, it would take hours. Please use a browser with more up to date security capabilities, like Google Chrome or Firefox, to log in.')
+    expect(result.getError()).toEqual(
+      'Your account was created on a platform with higher security capabilities than this browser supports. If we attempted to generate your login keys here, it would take hours. Please use a browser with more up to date security capabilities, like Google Chrome or Firefox, to log in.',
+    )
   })
 
   it('should fail if key params has unsupported version', async () => {
@@ -123,10 +126,16 @@ describe('SignInWithRecoveryCodes', () => {
     encryptionService.platformSupportsKeyDerivation = jest.fn().mockReturnValue(false)
 
     const useCase = createUseCase()
-    const result = await useCase.execute({ recoveryCodes: 'recovery-codes', password: 'foobar', username: 'test@test.te' })
+    const result = await useCase.execute({
+      recoveryCodes: 'recovery-codes',
+      password: 'foobar',
+      username: 'test@test.te',
+    })
 
     expect(result.isFailed()).toBe(true)
-    expect(result.getError()).toEqual('This version of the application does not support your newer account type. Please upgrade to the latest version of Standard Notes to sign in.')
+    expect(result.getError()).toEqual(
+      'This version of the application does not support your newer account type. Please upgrade to the latest version of Standard Notes to sign in.',
+    )
   })
 
   it('should fail if key params has expired version', async () => {
@@ -144,17 +153,27 @@ describe('SignInWithRecoveryCodes', () => {
     encryptionService.platformSupportsKeyDerivation = jest.fn().mockReturnValue(false)
 
     const useCase = createUseCase()
-    const result = await useCase.execute({ recoveryCodes: 'recovery-codes', password: 'foobar', username: 'test@test.te' })
+    const result = await useCase.execute({
+      recoveryCodes: 'recovery-codes',
+      password: 'foobar',
+      username: 'test@test.te',
+    })
 
     expect(result.isFailed()).toBe(true)
-    expect(result.getError()).toEqual('The protocol version associated with your account is outdated and no longer supported by this application. Please visit standardnotes.com/help/security for more information.')
+    expect(result.getError()).toEqual(
+      'The protocol version associated with your account is outdated and no longer supported by this application. Please visit standardnotes.com/help/security for more information.',
+    )
   })
 
   it('should fail if the sign in with recovery code fails', async () => {
     authManager.signInWithRecoveryCodes = jest.fn().mockReturnValue(false)
 
     const useCase = createUseCase()
-    const result = await useCase.execute({ recoveryCodes: 'recovery-codes', password: 'foobar', username: 'test@test.te' })
+    const result = await useCase.execute({
+      recoveryCodes: 'recovery-codes',
+      password: 'foobar',
+      username: 'test@test.te',
+    })
 
     expect(result.isFailed()).toBe(true)
     expect(result.getError()).toEqual('Could not sign in with recovery code')
@@ -168,11 +187,15 @@ describe('SignInWithRecoveryCodes', () => {
         uuid: '1-2-3',
         email: 'test@test.te',
         protocolVersion: '004',
-      }
+      },
     })
 
     const useCase = createUseCase()
-    const result = await useCase.execute({ recoveryCodes: 'recovery-codes', password: 'foobar', username: 'test@test.te' })
+    const result = await useCase.execute({
+      recoveryCodes: 'recovery-codes',
+      password: 'foobar',
+      username: 'test@test.te',
+    })
 
     expect(result.isFailed()).toBe(false)
   })

@@ -1,7 +1,6 @@
 import { Copy, extendArray, UuidGenerator, Uuids } from '@standardnotes/utils'
 import { SNLog } from '../../Log'
 import {
-  EncryptionProviderInterface,
   KeyedDecryptionSplit,
   KeyedEncryptionSplit,
   SplitPayloadsByEncryptionType,
@@ -27,6 +26,7 @@ import {
   RawStorageKey,
   WrappedStorageValue,
   ValuesObjectRecord,
+  EncryptionProviderInterface,
 } from '@standardnotes/services'
 import {
   CreateDecryptedLocalStorageContextPayload,

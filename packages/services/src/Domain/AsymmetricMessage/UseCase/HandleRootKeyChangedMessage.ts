@@ -11,7 +11,7 @@ import {
 
 import { ContentType } from '@standardnotes/domain-core'
 import { GetVault } from '../../Vaults/UseCase/GetVault'
-import { EncryptionProviderInterface } from '@standardnotes/encryption'
+import { EncryptionProviderInterface } from '../../Encryption/EncryptionProviderInterface'
 
 export class HandleRootKeyChangedMessage {
   constructor(

@@ -1,8 +1,8 @@
 import { ClientDisplayableError } from '@standardnotes/responses'
 import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
 import { VaultListingInterface } from '@standardnotes/models'
-import { KeySystemKeyManagerInterface } from '@standardnotes/encryption'
 import { MutatorClientInterface } from '../../Mutator/MutatorClientInterface'
+import { KeySystemKeyManagerInterface } from '../../KeySystem/KeySystemKeyManagerInterface'
 
 export class DeleteVault {
   constructor(

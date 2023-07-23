@@ -1,5 +1,5 @@
 import { Base64String } from '@standardnotes/sncrypto-common'
-import { EncryptionProviderInterface, SNRootKey, SNRootKeyParams } from '@standardnotes/encryption'
+import { SNRootKey, SNRootKeyParams } from '@standardnotes/encryption'
 import {
   HttpResponse,
   SignInResponse,
@@ -36,6 +36,7 @@ import { AccountEventData } from './AccountEventData'
 import { AccountEvent } from './AccountEvent'
 import { SignedInOrRegisteredEventPayload } from './SignedInOrRegisteredEventPayload'
 import { CredentialsChangeFunctionResponse } from './CredentialsChangeFunctionResponse'
+import { EncryptionProviderInterface } from '../Encryption/EncryptionProviderInterface'
 
 export class UserService
   extends AbstractService<AccountEvent, AccountEventData>

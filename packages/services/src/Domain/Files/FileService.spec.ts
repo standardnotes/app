@@ -1,7 +1,7 @@
+import { EncryptionProviderInterface } from './../Encryption/EncryptionProviderInterface'
 import { LegacyApiServiceInterface } from './../Api/LegacyApiServiceInterface'
 import { PureCryptoInterface, StreamEncryptor } from '@standardnotes/sncrypto-common'
 import { FileItem } from '@standardnotes/models'
-import { EncryptionProviderInterface } from '@standardnotes/encryption'
 import { ItemManagerInterface } from '../Item/ItemManagerInterface'
 import { ChallengeServiceInterface } from '../Challenge'
 import { InternalEventBusInterface, MutatorClientInterface } from '..'

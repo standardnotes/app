@@ -4,6 +4,7 @@ import {
   AccountEvent,
   AuthClientInterface,
   EXPIRED_PROTOCOL_VERSION,
+  EncryptionProviderInterface,
   InternalEventBusInterface,
   InternalEventPublishStrategy,
   KeyValueStoreInterface,
@@ -12,7 +13,7 @@ import {
   UNSUPPORTED_KEY_DERIVATION,
   UNSUPPORTED_PROTOCOL_VERSION,
 } from '@standardnotes/services'
-import { CreateAnyKeyParams, EncryptionProviderInterface, SNRootKey } from '@standardnotes/encryption'
+import { CreateAnyKeyParams, SNRootKey } from '@standardnotes/encryption'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 
 import { SignInWithRecoveryCodesDTO } from './SignInWithRecoveryCodesDTO'

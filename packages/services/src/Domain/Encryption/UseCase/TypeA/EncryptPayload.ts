@@ -2,15 +2,15 @@ import { EncryptedOutputParameters, EncryptionOperatorsInterface, encryptPayload
 import { DecryptedPayloadInterface, KeySystemRootKeyInterface, RootKeyInterface } from '@standardnotes/models'
 import { PkcKeyPair } from '@standardnotes/sncrypto-common'
 
-export class RootKeyEncryptPayloadUseCase {
-  constructor(private operatorManager: EncryptionOperatorsInterface) {}
+export class EncryptTypeAPayload {
+  constructor(private operators: EncryptionOperatorsInterface) {}
 
   async executeOne(
     payload: DecryptedPayloadInterface,
     key: RootKeyInterface | KeySystemRootKeyInterface,
     signingKeyPair?: PkcKeyPair,
   ): Promise<EncryptedOutputParameters> {
-    return encryptPayload(payload, key, this.operatorManager, signingKeyPair)
+    return encryptPayload(payload, key, this.operators, signingKeyPair)
   }
 
   async executeMany(

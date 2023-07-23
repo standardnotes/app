@@ -13,7 +13,6 @@ import { ContactServiceEvent, ContactServiceInterface } from '../Contacts/Contac
 import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
 import { UserClientInterface } from '../User/UserClientInterface'
 import { CollaborationIDData, Version1CollaborationId } from './CollaborationID'
-import { EncryptionProviderInterface } from '@standardnotes/encryption'
 import { ValidateItemSigner } from './UseCase/ValidateItemSigner'
 import { ItemSignatureValidationResult } from './UseCase/Types/ItemSignatureValidationResult'
 import { FindContact } from './UseCase/FindContact'
@@ -21,6 +20,7 @@ import { SelfContactManager } from './SelfContactManager'
 import { CreateOrEditContact } from './UseCase/CreateOrEditContact'
 import { EditContact } from './UseCase/EditContact'
 import { GetAllContacts } from './UseCase/GetAllContacts'
+import { EncryptionProviderInterface } from '../Encryption/EncryptionProviderInterface'
 
 export class ContactService
   extends AbstractService<ContactServiceEvent>
@@ -34,11 +34,11 @@ export class ContactService
     private user: UserClientInterface,
     private selfContactManager: SelfContactManager,
     private encryption: EncryptionProviderInterface,
-    private findContact: FindContact,
-    private getAllContactsUseCase: GetAllContacts,
-    private createOrEditContactUseCase: CreateOrEditContact,
-    private editContact: EditContact,
-    private validateItemSigner: ValidateItemSigner,
+    private _findContact: FindContact,
+    private _getAllContacts: GetAllContacts,
+    private _createOrEditContact: CreateOrEditContact,
+    private _editContact: EditContact,
+    private _validateItemSigner: ValidateItemSigner,
     eventBus: InternalEventBusInterface,
   ) {
     super(eventBus)
@@ -151,7 +151,7 @@ export class ContactService
     contact: TrustedContactInterface,
     params: { name: string; publicKey: string; signingPublicKey: string },
   ): Promise<TrustedContactInterface> {
-    const updatedContact = await this.editContact.execute(contact, params)
+    const updatedContact = await this._editContact.execute(contact, params)
 
     return updatedContact
   }
@@ -163,7 +163,7 @@ export class ContactService
     signingPublicKey: string
     isMe?: boolean
   }): Promise<TrustedContactInterface | undefined> {
-    const contact = await this.createOrEditContactUseCase.execute(params)
+    const contact = await this._createOrEditContact.execute(params)
     return contact
   }
 
@@ -177,11 +177,11 @@ export class ContactService
   }
 
   getAllContacts(): TrustedContactInterface[] {
-    return this.getAllContactsUseCase.execute().getValue()
+    return this._getAllContacts.execute().getValue()
   }
 
   findTrustedContact(userUuid: string): TrustedContactInterface | undefined {
-    const result = this.findContact.execute({ userUuid })
+    const result = this._findContact.execute({ userUuid })
     if (result.isFailed()) {
       return undefined
     }
@@ -206,7 +206,7 @@ export class ContactService
   }
 
   isItemAuthenticallySigned(item: DecryptedItemInterface): ItemSignatureValidationResult {
-    return this.validateItemSigner.execute(item)
+    return this._validateItemSigner.execute(item)
   }
 
   override deinit(): void {
@@ -218,10 +218,10 @@ export class ContactService
     ;(this.user as unknown) = undefined
     ;(this.selfContactManager as unknown) = undefined
     ;(this.encryption as unknown) = undefined
-    ;(this.findContact as unknown) = undefined
-    ;(this.getAllContactsUseCase as unknown) = undefined
-    ;(this.createOrEditContactUseCase as unknown) = undefined
-    ;(this.editContact as unknown) = undefined
-    ;(this.validateItemSigner as unknown) = undefined
+    ;(this._findContact as unknown) = undefined
+    ;(this._getAllContacts as unknown) = undefined
+    ;(this._createOrEditContact as unknown) = undefined
+    ;(this._editContact as unknown) = undefined
+    ;(this._validateItemSigner as unknown) = undefined
   }
 }

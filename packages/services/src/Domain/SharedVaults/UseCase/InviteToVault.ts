@@ -1,4 +1,3 @@
-import { KeySystemKeyManagerInterface } from '@standardnotes/encryption'
 import { SharedVaultInviteServerHash, SharedVaultPermission } from '@standardnotes/responses'
 import {
   TrustedContactInterface,
@@ -11,6 +10,7 @@ import { PkcKeyPair } from '@standardnotes/sncrypto-common'
 import { EncryptMessage } from '../../Encryption/UseCase/Asymmetric/EncryptMessage'
 import { Result, UseCaseInterface } from '@standardnotes/domain-core'
 import { ShareContactWithVault } from './ShareContactWithVault'
+import { KeySystemKeyManagerInterface } from '../../KeySystem/KeySystemKeyManagerInterface'
 
 export class InviteToVault implements UseCaseInterface<SharedVaultInviteServerHash> {
   constructor(

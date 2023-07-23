@@ -1,4 +1,11 @@
-import { AsymmetricSignatureVerificationDetachedResult } from '../../Operator/Types/AsymmetricSignatureVerificationDetachedResult'
+import {
+  AsymmetricSignatureVerificationDetachedResult,
+  SNRootKeyParams,
+  KeyedDecryptionSplit,
+  KeyedEncryptionSplit,
+  ItemAuthenticatedData,
+  AsymmetricallyEncryptedString,
+} from '@standardnotes/encryption'
 import { KeyParamsOrigination, ProtocolVersion } from '@standardnotes/common'
 import {
   BackupFile,
@@ -13,13 +20,7 @@ import {
   KeySystemRootKeyParamsInterface,
   PortablePublicKeySet,
 } from '@standardnotes/models'
-import { ClientDisplayableError } from '@standardnotes/responses'
-import { SNRootKeyParams } from '../../Keys/RootKey/RootKeyParams'
-import { KeyedDecryptionSplit } from '../../Split/KeyedDecryptionSplit'
-import { KeyedEncryptionSplit } from '../../Split/KeyedEncryptionSplit'
-import { ItemAuthenticatedData } from '../../Types/ItemAuthenticatedData'
 import { PkcKeyPair } from '@standardnotes/sncrypto-common'
-import { AsymmetricallyEncryptedString } from '../../Operator/Types/Types'
 
 export interface EncryptionProviderInterface {
   initialize(): Promise<void>
@@ -54,11 +55,6 @@ export interface EncryptionProviderInterface {
 
   createEncryptedBackupFile(): Promise<BackupFile>
   createDecryptedBackupFile(): BackupFile
-
-  decryptBackupFile(
-    file: BackupFile,
-    password?: string,
-  ): Promise<ClientDisplayableError | (EncryptedPayloadInterface | DecryptedPayloadInterface)[]>
 
   getUserVersion(): ProtocolVersion | undefined
   hasAccount(): boolean
@@ -114,8 +110,6 @@ export interface EncryptionProviderInterface {
     sharedVaultUuid: string | undefined,
     rootKeyToken: string,
   ): KeySystemItemsKeyInterface
-
-  reencryptKeySystemItemsKeysForVault(keySystemIdentifier: KeySystemIdentifier): Promise<void>
 
   getKeyPair(): PkcKeyPair
   getSigningKeyPair(): PkcKeyPair

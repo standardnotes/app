@@ -4,7 +4,6 @@ import { ApplicationEvent } from '../Event/ApplicationEvent'
 import { InternalEventHandlerInterface } from '../Internal/InternalEventHandlerInterface'
 import { NoteType } from '@standardnotes/features'
 import { ApplicationStage } from '../Application/ApplicationStage'
-import { EncryptionProviderInterface } from '@standardnotes/encryption'
 import {
   PayloadEmitSource,
   FileItem,
@@ -38,6 +37,7 @@ import { SessionsClientInterface } from '../Session/SessionsClientInterface'
 import { PayloadManagerInterface } from '../Payloads/PayloadManagerInterface'
 import { HistoryServiceInterface } from '../History/HistoryServiceInterface'
 import { ContentType } from '@standardnotes/domain-core'
+import { EncryptionProviderInterface } from '../Encryption/EncryptionProviderInterface'
 
 const PlaintextBackupsDirectoryName = 'Plaintext Backups'
 export const TextBackupsDirectoryName = 'Text Backups'

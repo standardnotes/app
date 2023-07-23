@@ -1,9 +1,4 @@
-import {
-  DecryptedParameters,
-  ErrorDecryptingParameters,
-  KeySystemKeyManagerInterface,
-  EncryptionOperatorsInterface,
-} from '@standardnotes/encryption'
+import { DecryptedParameters, ErrorDecryptingParameters, EncryptionOperatorsInterface } from '@standardnotes/encryption'
 import {
   ContentTypeUsesKeySystemRootKeyEncryption,
   EncryptedPayloadInterface,
@@ -12,12 +7,13 @@ import {
   RootKeyInterface,
 } from '@standardnotes/models'
 
-import { RootKeyDecryptPayloadUseCase } from './DecryptPayload'
-import { RootKeyManager } from '../../RootKey/RootKeyManager'
+import { DecryptTypeAPayload } from './DecryptPayload'
+import { RootKeyManager } from '../../../RootKeyManager/RootKeyManager'
+import { KeySystemKeyManagerInterface } from '../../../KeySystem/KeySystemKeyManagerInterface'
 
-export class RootKeyDecryptPayloadWithKeyLookupUseCase {
+export class DecryptTypeAPayloadWithKeyLookup {
   constructor(
-    private operatorManager: EncryptionOperatorsInterface,
+    private operators: EncryptionOperatorsInterface,
     private keySystemKeyManager: KeySystemKeyManagerInterface,
     private rootKeyManager: RootKeyManager,
   ) {}
@@ -43,7 +39,7 @@ export class RootKeyDecryptPayloadWithKeyLookupUseCase {
       }
     }
 
-    const usecase = new RootKeyDecryptPayloadUseCase(this.operatorManager)
+    const usecase = new DecryptTypeAPayload(this.operators)
 
     return usecase.executeOne(payload, key)
   }

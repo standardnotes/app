@@ -6,7 +6,6 @@ import {
   ProtocolVersionLatest,
 } from '@standardnotes/common'
 import {
-  KeyMode,
   CreateNewRootKey,
   CreateAnyKeyParams,
   SNRootKey,
@@ -25,19 +24,20 @@ import {
   RootKeyInterface,
   RootKeyParamsInterface,
 } from '@standardnotes/models'
-import { DeviceInterface } from '../../Device/DeviceInterface'
-import { InternalEventBusInterface } from '../../Internal/InternalEventBusInterface'
-import { StorageKey } from '../../Storage/StorageKeys'
-import { StorageServiceInterface } from '../../Storage/StorageServiceInterface'
-import { StorageValueModes } from '../../Storage/StorageTypes'
-import { RootKeyEncryptPayloadUseCase } from '../UseCase/RootEncryption/EncryptPayload'
-import { RootKeyDecryptPayloadUseCase } from '../UseCase/RootEncryption/DecryptPayload'
-import { AbstractService } from '../../Service/AbstractService'
-import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
-import { MutatorClientInterface } from '../../Mutator/MutatorClientInterface'
+import { DeviceInterface } from '../Device/DeviceInterface'
+import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
+import { StorageKey } from '../Storage/StorageKeys'
+import { StorageServiceInterface } from '../Storage/StorageServiceInterface'
+import { StorageValueModes } from '../Storage/StorageTypes'
+import { EncryptTypeAPayload } from '../Encryption/UseCase/TypeA/EncryptPayload'
+import { DecryptTypeAPayload } from '../Encryption/UseCase/TypeA/DecryptPayload'
+import { AbstractService } from '../Service/AbstractService'
+import { ItemManagerInterface } from '../Item/ItemManagerInterface'
+import { MutatorClientInterface } from '../Mutator/MutatorClientInterface'
 import { RootKeyManagerEvent } from './RootKeyManagerEvent'
 import { ValidatePasscodeResult } from './ValidatePasscodeResult'
 import { ValidateAccountPasswordResult } from './ValidateAccountPasswordResult'
+import { KeyMode } from './KeyMode'
 
 export class RootKeyManager extends AbstractService<RootKeyManagerEvent> {
   private rootKey?: RootKeyInterface
@@ -249,7 +249,7 @@ export class RootKeyManager extends AbstractService<RootKeyManagerEvent> {
 
     const payload = new DecryptedPayload(value)
 
-    const usecase = new RootKeyEncryptPayloadUseCase(this.operators)
+    const usecase = new EncryptTypeAPayload(this.operators)
     const wrappedKey = await usecase.executeOne(payload, wrappingKey)
     const wrappedKeyPayload = new EncryptedPayload({
       ...payload.ejected(),
@@ -273,7 +273,7 @@ export class RootKeyManager extends AbstractService<RootKeyManagerEvent> {
 
     const wrappedKey = this.getWrappedRootKey()
     const payload = new EncryptedPayload(wrappedKey)
-    const usecase = new RootKeyDecryptPayloadUseCase(this.operators)
+    const usecase = new DecryptTypeAPayload(this.operators)
     const decrypted = await usecase.executeOne<RootKeyContent>(payload, wrappingKey)
 
     if (isErrorDecryptingParameters(decrypted)) {
@@ -433,7 +433,7 @@ export class RootKeyManager extends AbstractService<RootKeyManagerEvent> {
        * by attempting to decrypt account keys.
        */
       const wrappedKeyPayload = new EncryptedPayload(wrappedRootKey)
-      const usecase = new RootKeyDecryptPayloadUseCase(this.operators)
+      const usecase = new DecryptTypeAPayload(this.operators)
       const decrypted = await usecase.executeOne(wrappedKeyPayload, wrappingKey)
       return !isErrorDecryptingParameters(decrypted)
     } else {

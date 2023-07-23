@@ -5,9 +5,10 @@ import {
   VaultListingInterface,
   VaultListingMutator,
 } from '@standardnotes/models'
-import { EncryptionProviderInterface, KeySystemKeyManagerInterface } from '@standardnotes/encryption'
 import { ChangeVaultOptionsDTO } from '../ChangeVaultOptionsDTO'
 import { GetVault } from './GetVault'
+import { EncryptionProviderInterface } from '../../Encryption/EncryptionProviderInterface'
+import { KeySystemKeyManagerInterface } from '../../KeySystem/KeySystemKeyManagerInterface'
 
 export class ChangeVaultKeyOptions {
   constructor(
@@ -86,7 +87,7 @@ export class ChangeVaultKeyOptions {
       mutator.rootKeyParams = newRootKey.keyParams
     })
 
-    await this.encryption.reencryptKeySystemItemsKeysForVault(vault.systemIdentifier)
+    await this.keys.reencryptKeySystemItemsKeysForVault(vault.systemIdentifier)
   }
 
   private async changePasswordTypeToRandomized(
@@ -107,7 +108,7 @@ export class ChangeVaultKeyOptions {
 
     await this.mutator.insertItem(newRootKey, true)
 
-    await this.encryption.reencryptKeySystemItemsKeysForVault(vault.systemIdentifier)
+    await this.keys.reencryptKeySystemItemsKeysForVault(vault.systemIdentifier)
   }
 
   private async changeStorageModeToLocalOrEphemeral(

@@ -97,6 +97,17 @@ import {
   GetOutboundMessages,
   GetInboundMessages,
   SendVaultKeyChangedMessage,
+  CreateNewDefaultItemsKey,
+  CreateNewItemsKeyWithRollback,
+  FindDefaultItemsKey,
+  DecryptErroredTypeAPayloads,
+  DecryptTypeAPayload,
+  DecryptTypeAPayloadWithKeyLookup,
+  EncryptTypeAPayload,
+  EncryptTypeAPayloadWithKeyLookup,
+  RootKeyManager,
+  ItemsEncryptionService,
+  DecryptBackupFile,
 } from '@standardnotes/services'
 import { ItemManager } from '../../Services/Items/ItemManager'
 import { PayloadManager } from '../../Services/Payloads/PayloadManager'
@@ -189,7 +200,12 @@ export class Dependencies {
         this.get(TYPES.PayloadManager),
         this.get(TYPES.ChallengeService),
         this.get(TYPES.HistoryManager),
+        this.get(TYPES.DecryptBackupFile),
       )
+    })
+
+    this.factory.set(TYPES.DecryptBackupFile, () => {
+      return new DecryptBackupFile(this.get(TYPES.EncryptionService))
     })
 
     this.factory.set(TYPES.RemoveItemsLocally, () => {
@@ -485,11 +501,91 @@ export class Dependencies {
     this.factory.set(TYPES.GetInboundMessages, () => {
       return new GetInboundMessages(this.get(TYPES.AsymmetricMessageServer))
     })
+
+    this.factory.set(TYPES.CreateNewDefaultItemsKey, () => {
+      return new CreateNewDefaultItemsKey(
+        this.get(TYPES.MutatorService),
+        this.get(TYPES.ItemManager),
+        this.get(TYPES.EncryptionOperators),
+        this.get(TYPES.RootKeyManager),
+      )
+    })
+
+    this.factory.set(TYPES.CreateNewItemsKeyWithRollback, () => {
+      return new CreateNewItemsKeyWithRollback(
+        this.get(TYPES.MutatorService),
+        this.get(TYPES.ItemManager),
+        this.get(TYPES.CreateNewDefaultItemsKey),
+        this.get(TYPES.RemoveItemsLocally),
+        this.get(TYPES.FindDefaultItemsKey),
+      )
+    })
+
+    this.factory.set(TYPES.FindDefaultItemsKey, () => {
+      return new FindDefaultItemsKey()
+    })
+
+    this.factory.set(TYPES.DecryptErroredTypeAPayloads, () => {
+      return new DecryptErroredTypeAPayloads(
+        this.get(TYPES.PayloadManager),
+        this.get(TYPES.EncryptionOperators),
+        this.get(TYPES.KeySystemKeyManager),
+        this.get(TYPES.RootKeyManager),
+      )
+    })
+
+    this.factory.set(TYPES.DecryptTypeAPayload, () => {
+      return new DecryptTypeAPayload(this.get(TYPES.EncryptionOperators))
+    })
+
+    this.factory.set(TYPES.DecryptTypeAPayloadWithKeyLookup, () => {
+      return new DecryptTypeAPayloadWithKeyLookup(
+        this.get(TYPES.EncryptionOperators),
+        this.get(TYPES.KeySystemKeyManager),
+        this.get(TYPES.RootKeyManager),
+      )
+    })
+
+    this.factory.set(TYPES.EncryptTypeAPayload, () => {
+      return new EncryptTypeAPayload(this.get(TYPES.EncryptionOperators))
+    })
+
+    this.factory.set(TYPES.EncryptTypeAPayloadWithKeyLookup, () => {
+      return new EncryptTypeAPayloadWithKeyLookup(
+        this.get(TYPES.EncryptionOperators),
+        this.get(TYPES.KeySystemKeyManager),
+        this.get(TYPES.RootKeyManager),
+      )
+    })
   }
 
   private registerServiceMakers() {
     this.factory.set(TYPES.UserServer, () => {
       return new UserServer(this.get(TYPES.HttpService))
+    })
+
+    this.factory.set(TYPES.RootKeyManager, () => {
+      return new RootKeyManager(
+        this.get(TYPES.DeviceInterface),
+        this.get(TYPES.DiskStorageService),
+        this.get(TYPES.ItemManager),
+        this.get(TYPES.MutatorService),
+        this.get(TYPES.EncryptionOperators),
+        this.options.identifier,
+        this.get(TYPES.InternalEventBus),
+      )
+    })
+
+    this.factory.set(TYPES.ItemsEncryptionService, () => {
+      return new ItemsEncryptionService(
+        this.get(TYPES.ItemManager),
+        this.get(TYPES.PayloadManager),
+        this.get(TYPES.DiskStorageService),
+        this.get(TYPES.EncryptionOperators),
+        this.get(TYPES.KeySystemKeyManager),
+        this.get(TYPES.FindDefaultItemsKey),
+        this.get(TYPES.InternalEventBus),
+      )
     })
 
     this.factory.set(TYPES.EncryptionOperators, () => {
@@ -1063,12 +1159,18 @@ export class Dependencies {
         this.get(TYPES.ItemManager),
         this.get(TYPES.MutatorService),
         this.get(TYPES.PayloadManager),
-        this.get(TYPES.DeviceInterface),
-        this.get(TYPES.DiskStorageService),
-        this.get(TYPES.KeySystemKeyManager),
         this.get(TYPES.EncryptionOperators),
-        this.options.identifier,
+        this.get(TYPES.ItemsEncryptionService),
+        this.get(TYPES.RootKeyManager),
         this.get(TYPES.Crypto),
+        this.get(TYPES.CreateNewItemsKeyWithRollback),
+        this.get(TYPES.FindDefaultItemsKey),
+        this.get(TYPES.DecryptErroredTypeAPayloads),
+        this.get(TYPES.EncryptTypeAPayloadWithKeyLookup),
+        this.get(TYPES.EncryptTypeAPayload),
+        this.get(TYPES.DecryptTypeAPayload),
+        this.get(TYPES.DecryptTypeAPayloadWithKeyLookup),
+        this.get(TYPES.CreateNewDefaultItemsKey),
         this.get(TYPES.InternalEventBus),
       )
     })

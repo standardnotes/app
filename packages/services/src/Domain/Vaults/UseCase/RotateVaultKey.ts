@@ -1,5 +1,4 @@
 import { UuidGenerator, assert } from '@standardnotes/utils'
-import { EncryptionProviderInterface, KeySystemKeyManagerInterface } from '@standardnotes/encryption'
 import { ClientDisplayableError, isClientDisplayableError } from '@standardnotes/responses'
 import {
   KeySystemIdentifier,
@@ -10,6 +9,8 @@ import {
   VaultListingMutator,
 } from '@standardnotes/models'
 import { MutatorClientInterface } from '../../Mutator/MutatorClientInterface'
+import { EncryptionProviderInterface } from '../../Encryption/EncryptionProviderInterface'
+import { KeySystemKeyManagerInterface } from '../../KeySystem/KeySystemKeyManagerInterface'
 
 export class RotateVaultKey {
   constructor(
@@ -72,7 +73,7 @@ export class RotateVaultKey {
       errors.push(updateKeySystemItemsKeyResult)
     }
 
-    await this.encryption.reencryptKeySystemItemsKeysForVault(params.vault.systemIdentifier)
+    await this.keys.reencryptKeySystemItemsKeysForVault(params.vault.systemIdentifier)
 
     return errors
   }

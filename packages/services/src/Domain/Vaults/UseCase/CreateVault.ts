@@ -1,5 +1,4 @@
 import { SyncServiceInterface } from './../../Sync/SyncServiceInterface'
-import { EncryptionProviderInterface, KeySystemKeyManagerInterface } from '@standardnotes/encryption'
 import { UuidGenerator } from '@standardnotes/utils'
 import {
   KeySystemRootKeyParamsInterface,
@@ -12,6 +11,8 @@ import {
 } from '@standardnotes/models'
 import { MutatorClientInterface } from '../../Mutator/MutatorClientInterface'
 import { ContentType } from '@standardnotes/domain-core'
+import { EncryptionProviderInterface } from '../../Encryption/EncryptionProviderInterface'
+import { KeySystemKeyManagerInterface } from '../../KeySystem/KeySystemKeyManagerInterface'
 
 export class CreateVault {
   constructor(

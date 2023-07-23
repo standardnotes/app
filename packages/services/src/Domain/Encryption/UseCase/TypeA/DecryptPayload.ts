@@ -11,7 +11,7 @@ import {
   RootKeyInterface,
 } from '@standardnotes/models'
 
-export class RootKeyDecryptPayloadUseCase {
+export class DecryptTypeAPayload {
   constructor(private operatorManager: EncryptionOperatorsInterface) {}
 
   async executeOne<C extends ItemContent = ItemContent>(

@@ -1,9 +1,9 @@
 import { SyncServiceInterface } from './../../Sync/SyncServiceInterface'
-import { KeySystemKeyManagerInterface } from '@standardnotes/encryption'
 import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
 import { AnyItemInterface, VaultListingInterface } from '@standardnotes/models'
 import { MutatorClientInterface } from '../../Mutator/MutatorClientInterface'
 import { RemoveItemsLocally } from '../../UseCase/RemoveItemsLocally'
+import { KeySystemKeyManagerInterface } from '../../KeySystem/KeySystemKeyManagerInterface'
 
 export class DeleteThirdPartyVault {
   constructor(

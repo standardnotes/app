@@ -4,7 +4,6 @@ import {
   KeySystemIdentifier,
   TrustedContactInterface,
 } from '@standardnotes/models'
-import { KeySystemKeyManagerInterface } from '@standardnotes/encryption'
 import { AsymmetricMessageServerHash } from '@standardnotes/responses'
 import { GetVaultUsers } from './GetVaultUsers'
 import { PkcKeyPair } from '@standardnotes/sncrypto-common'
@@ -13,6 +12,7 @@ import { EncryptMessage } from '../../Encryption/UseCase/Asymmetric/EncryptMessa
 import { Result, UseCaseInterface } from '@standardnotes/domain-core'
 import { GetReplaceabilityIdentifier } from '../../AsymmetricMessage/UseCase/GetReplaceabilityIdentifier'
 import { FindContact } from '../../Contacts/UseCase/FindContact'
+import { KeySystemKeyManagerInterface } from '../../KeySystem/KeySystemKeyManagerInterface'
 
 export class SendVaultKeyChangedMessage implements UseCaseInterface<void> {
   constructor(

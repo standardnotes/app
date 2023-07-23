@@ -6,16 +6,13 @@ import {
   PayloadEmitSource,
   SureFindPayload,
 } from '@standardnotes/models'
-import { PayloadManagerInterface } from './../../../Payloads/PayloadManagerInterface'
-import {
-  KeySystemKeyManagerInterface,
-  isErrorDecryptingParameters,
-  EncryptionOperatorsInterface,
-} from '@standardnotes/encryption'
-import { RootKeyDecryptPayloadWithKeyLookupUseCase } from './DecryptPayloadWithKeyLookup'
-import { RootKeyManager } from '../../RootKey/RootKeyManager'
+import { PayloadManagerInterface } from '../../../Payloads/PayloadManagerInterface'
+import { isErrorDecryptingParameters, EncryptionOperatorsInterface } from '@standardnotes/encryption'
+import { DecryptTypeAPayloadWithKeyLookup } from './DecryptPayloadWithKeyLookup'
+import { RootKeyManager } from '../../../RootKeyManager/RootKeyManager'
+import { KeySystemKeyManagerInterface } from '../../../KeySystem/KeySystemKeyManagerInterface'
 
-export class DecryptErroredRootPayloadsUseCase {
+export class DecryptErroredTypeAPayloads {
   constructor(
     private payloads: PayloadManagerInterface,
     private operatorManager: EncryptionOperatorsInterface,
@@ -32,7 +29,7 @@ export class DecryptErroredRootPayloadsUseCase {
       return
     }
 
-    const usecase = new RootKeyDecryptPayloadWithKeyLookupUseCase(
+    const usecase = new DecryptTypeAPayloadWithKeyLookup(
       this.operatorManager,
       this.keySystemKeyManager,
       this.rootKeyManager,

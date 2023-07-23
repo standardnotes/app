@@ -20,7 +20,7 @@ import {
 } from '@standardnotes/models'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { spaceSeparatedStrings, UuidGenerator } from '@standardnotes/utils'
-import { EncryptionProviderInterface, SNItemsKey } from '@standardnotes/encryption'
+import { SNItemsKey } from '@standardnotes/encryption'
 import {
   DownloadAndDecryptFileOperation,
   EncryptAndUploadFileOperation,
@@ -50,6 +50,7 @@ import { DecryptItemsKeyWithUserFallback } from '../Encryption/Functions'
 import { log, LoggingDomain } from '../Logging'
 import { SharedVaultServer, SharedVaultServerInterface, HttpServiceInterface } from '@standardnotes/api'
 import { ContentType } from '@standardnotes/domain-core'
+import { EncryptionProviderInterface } from '../Encryption/EncryptionProviderInterface'
 
 const OneHundredMb = 100 * 1_000_000
 

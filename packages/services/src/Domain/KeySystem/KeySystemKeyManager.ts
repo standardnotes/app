@@ -17,12 +17,12 @@ import {
   VaultListingInterface,
 } from '@standardnotes/models'
 import { ItemManagerInterface } from './../Item/ItemManagerInterface'
-import { KeySystemKeyManagerInterface } from '@standardnotes/encryption'
 import { AbstractService } from '../Service/AbstractService'
 import { ContentType } from '@standardnotes/domain-core'
 import { InternalEventInterface } from '../Internal/InternalEventInterface'
 import { ApplicationEvent } from '../Event/ApplicationEvent'
 import { ApplicationStageChangedEventPayload } from '../Event/ApplicationStageChangedEventPayload'
+import { KeySystemKeyManagerInterface } from './KeySystemKeyManagerInterface'
 
 const RootKeyStorageKeyPrefix = 'key-system-root-key-'
 
@@ -67,6 +67,17 @@ export class KeySystemKeyManager
 
   private storageKeyForRootKey(systemIdentifier: KeySystemIdentifier): string {
     return `${RootKeyStorageKeyPrefix}${systemIdentifier}`
+  }
+
+  /**
+   * When the key system root key changes, we must re-encrypt all vault items keys
+   * with this new key system root key (by simply re-syncing).
+   */
+  public async reencryptKeySystemItemsKeysForVault(keySystemIdentifier: KeySystemIdentifier): Promise<void> {
+    const keySystemItemsKeys = this.getKeySystemItemsKeys(keySystemIdentifier)
+    if (keySystemItemsKeys.length > 0) {
+      await this.mutator.setItemsDirty(keySystemItemsKeys)
+    }
   }
 
   public intakeNonPersistentKeySystemRootKey(

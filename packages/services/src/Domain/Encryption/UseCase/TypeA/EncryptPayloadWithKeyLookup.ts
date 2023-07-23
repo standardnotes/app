@@ -1,8 +1,4 @@
-import {
-  EncryptedOutputParameters,
-  KeySystemKeyManagerInterface,
-  EncryptionOperatorsInterface,
-} from '@standardnotes/encryption'
+import { EncryptedOutputParameters, EncryptionOperatorsInterface } from '@standardnotes/encryption'
 import {
   ContentTypeUsesKeySystemRootKeyEncryption,
   DecryptedPayloadInterface,
@@ -11,12 +7,13 @@ import {
 } from '@standardnotes/models'
 import { PkcKeyPair } from '@standardnotes/sncrypto-common'
 
-import { RootKeyEncryptPayloadUseCase } from './EncryptPayload'
-import { RootKeyManager } from '../../RootKey/RootKeyManager'
+import { EncryptTypeAPayload } from './EncryptPayload'
+import { RootKeyManager } from '../../../RootKeyManager/RootKeyManager'
+import { KeySystemKeyManagerInterface } from '../../../KeySystem/KeySystemKeyManagerInterface'
 
-export class RootKeyEncryptPayloadWithKeyLookupUseCase {
+export class EncryptTypeAPayloadWithKeyLookup {
   constructor(
-    private operatorManager: EncryptionOperatorsInterface,
+    private operators: EncryptionOperatorsInterface,
     private keySystemKeyManager: KeySystemKeyManagerInterface,
     private rootKeyManager: RootKeyManager,
   ) {}
@@ -39,7 +36,7 @@ export class RootKeyEncryptPayloadWithKeyLookupUseCase {
       throw Error('Attempting root key encryption with no root key')
     }
 
-    const usecase = new RootKeyEncryptPayloadUseCase(this.operatorManager)
+    const usecase = new EncryptTypeAPayload(this.operators)
     return usecase.executeOne(payload, key, signingKeyPair)
   }
 

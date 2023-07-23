@@ -37,10 +37,10 @@ import {
 } from '@standardnotes/models'
 import { ClientDisplayableError } from '@standardnotes/responses'
 import { extendArray } from '@standardnotes/utils'
-import { EncryptionService } from './EncryptionService'
+import { EncryptionService } from '../EncryptionService'
 import { ContentType } from '@standardnotes/domain-core'
 
-export class DecryptBackupFileUseCase {
+export class DecryptBackupFile {
   constructor(private encryption: EncryptionService) {}
 
   async execute(
@@ -53,7 +53,7 @@ export class DecryptBackupFileUseCase {
       } else if (isDecryptedTransferPayload(item)) {
         return new DecryptedPayload(item)
       } else {
-        throw Error('Unhandled case in decryptBackupFile')
+        throw Error('Unhandled case in DecryptBackupFile')
       }
     })
 

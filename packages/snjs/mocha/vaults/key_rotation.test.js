@@ -34,7 +34,7 @@ describe('shared vault key rotation', function () {
 
     contactContext.lockSyncing()
 
-    const spy = sinon.spy(context.encryption, 'reencryptKeySystemItemsKeysForVault')
+    const spy = sinon.spy(context.keys, 'reencryptKeySystemItemsKeysForVault')
 
     const promise = context.resolveWhenSharedVaultKeyRotationInvitesGetSent(sharedVault)
     await vaults.rotateVaultRootKey(sharedVault)

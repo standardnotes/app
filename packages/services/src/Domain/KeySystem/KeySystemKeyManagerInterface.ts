@@ -21,6 +21,7 @@ export interface KeySystemKeyManagerInterface {
     keyIdentifier: string,
   ): KeySystemRootKeyInterface | undefined
   getPrimaryKeySystemRootKey(systemIdentifier: KeySystemIdentifier): KeySystemRootKeyInterface | undefined
+  reencryptKeySystemItemsKeysForVault(keySystemIdentifier: KeySystemIdentifier): Promise<void>
 
   intakeNonPersistentKeySystemRootKey(key: KeySystemRootKeyInterface, storage: KeySystemRootKeyStorageMode): void
   undoIntakeNonPersistentKeySystemRootKey(systemIdentifier: KeySystemIdentifier): void

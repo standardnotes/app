@@ -17,7 +17,6 @@ import {
   FeaturesEvent,
   SyncMode,
   SyncSource,
-  isObjectApplicationService,
   ApplicationStageChangedEventPayload,
   StorageValueModes,
   ChallengeObserver,
@@ -71,6 +70,7 @@ import {
   PayloadManagerInterface,
   HistoryServiceInterface,
   InternalEventPublishStrategy,
+  EncryptionProviderInterface,
 } from '@standardnotes/services'
 import {
   PayloadEmitSource,
@@ -95,13 +95,13 @@ import {
   SessionListEntry,
 } from '@standardnotes/responses'
 import {
-  DiskStorageService,
   SyncService,
   ProtectionEvent,
   SettingsService,
   ActionsService,
   ChallengeResponse,
   ListedClientInterface,
+  DiskStorageService,
 } from '../Services'
 import {
   nonSecureRandomIdentifier,
@@ -115,7 +115,7 @@ import {
 import { UuidString, ApplicationEventPayload } from '../Types'
 import { applicationEventForSyncEvent } from '@Lib/Application/Event'
 import { BackupServiceInterface, FilesClientInterface } from '@standardnotes/files'
-import { ComputePrivateUsername, EncryptionProviderInterface } from '@standardnotes/encryption'
+import { ComputePrivateUsername } from '@standardnotes/encryption'
 import { SNLog } from '../Log'
 import { ApplicationConstructorOptions, FullyResolvedApplicationOptions } from './Options/ApplicationOptions'
 import { ApplicationOptionsDefaults } from './Options/Defaults'
@@ -132,6 +132,7 @@ import { GetAuthenticatorAuthenticationResponse } from '@Lib/Domain/UseCase/GetA
 import { GetAuthenticatorAuthenticationOptions } from '@Lib/Domain/UseCase/GetAuthenticatorAuthenticationOptions/GetAuthenticatorAuthenticationOptions'
 import { Dependencies } from './Dependencies/Dependencies'
 import { TYPES } from './Dependencies/Types'
+import { canBlockDeinit } from './Dependencies/isDeinitable'
 
 /** How often to automatically sync, in milliseconds */
 const DEFAULT_AUTO_SYNC_INTERVAL = 30_000
@@ -237,9 +238,9 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       }),
     )
 
-    const apiService = this.dependencies.get<LegacyApiService>(TYPES.LegacyApiService)
     this.dependencies.get<DiskStorageService>(TYPES.DiskStorageService).provideEncryptionProvider(encryptionService)
 
+    const apiService = this.dependencies.get<LegacyApiService>(TYPES.LegacyApiService)
     this.dependencies
       .get<HttpService>(TYPES.HttpService)
       .setCallbacks(apiService.processMetaObject.bind(apiService), apiService.setSession.bind(apiService))
@@ -799,7 +800,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
    * to finish tasks. 0 means no limit.
    */
   private async prepareForDeinit(maxWait = 0): Promise<void> {
-    const deps = this.dependencies.getAll().filter(isObjectApplicationService)
+    const deps = this.dependencies.getAll().filter(canBlockDeinit)
     const promise = Promise.all(deps.map((service) => service.blockDeinit()))
     if (maxWait === 0) {
       await promise

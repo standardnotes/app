@@ -57,6 +57,8 @@ export const TYPES = {
   AsymmetricMessageService: Symbol.for('AsymmetricMessageService'),
   SelfContactManager: Symbol.for('SelfContactManager'),
   EncryptionOperators: Symbol.for('EncryptionOperators'),
+  RootKeyManager: Symbol.for('RootKeyManager'),
+  ItemsEncryptionService: Symbol.for('ItemsEncryptionService'),
 
   // Servers
   RevisionServer: Symbol.for('RevisionServer'),
@@ -129,6 +131,15 @@ export const TYPES = {
   GetMessageAdditionalData: Symbol.for('GetMessageAdditionalData'),
   SendVaultInvite: Symbol.for('SendVaultInvite'),
   ReplaceContactData: Symbol.for('ReplaceContactData'),
+  CreateNewDefaultItemsKey: Symbol.for('CreateNewDefaultItemsKey'),
+  CreateNewItemsKeyWithRollback: Symbol.for('CreateNewItemsKeyWithRollback'),
+  FindDefaultItemsKey: Symbol.for('FindDefaultItemsKey'),
+  DecryptErroredTypeAPayloads: Symbol.for('DecryptErroredTypeAPayloads'),
+  DecryptTypeAPayload: Symbol.for('DecryptTypeAPayload'),
+  DecryptTypeAPayloadWithKeyLookup: Symbol.for('DecryptTypeAPayloadWithKeyLookup'),
+  EncryptTypeAPayload: Symbol.for('EncryptTypeAPayload'),
+  EncryptTypeAPayloadWithKeyLookup: Symbol.for('EncryptTypeAPayloadWithKeyLookup'),
+  DecryptBackupFile: Symbol.for('DecryptBackupFile'),
 
   // Mappers
   SessionStorageMapper: Symbol.for('SessionStorageMapper'),
