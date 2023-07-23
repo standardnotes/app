@@ -36,7 +36,7 @@ const OfflineSubscription: FunctionComponent<Props> = ({ application, onSuccess 
 
     const homeServer = application.homeServer
 
-    const homeServerEnabled = homeServer && homeServer.isHomeServerEnabled()
+    const homeServerEnabled = homeServer && (await homeServer.isHomeServerEnabled())
     const homeServerIsRunning = homeServerEnabled && (await homeServer.isHomeServerRunning())
 
     if (homeServerEnabled) {

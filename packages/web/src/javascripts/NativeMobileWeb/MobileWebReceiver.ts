@@ -93,7 +93,10 @@ export class MobileWebReceiver {
         )
         break
       case ReactNativeToWebEvent.ReceivedText:
-        void this.application.handleReceivedTextEvent(messageData as { text: string; title?: string })
+        void this.application.handleReceivedTextEvent(messageData as { text: string })
+        break
+      case ReactNativeToWebEvent.ReceivedLink:
+        void this.application.handleReceivedLinkEvent(messageData as { link: string; title: string })
         break
 
       default:

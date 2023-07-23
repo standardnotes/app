@@ -54,7 +54,7 @@ import { ItemGroupController } from '@/Components/NoteView/Controller/ItemGroupC
 import { VisibilityObserver } from './VisibilityObserver'
 import { MomentsService } from '@/Controllers/Moments/MomentsService'
 import { DevMode } from './DevMode'
-import { ToastType, addToast } from '@standardnotes/toast'
+import { ToastType, addToast, dismissToast } from '@standardnotes/toast'
 
 export type WebEventObserver = (event: WebAppEvent, data?: unknown) => void
 
@@ -388,7 +388,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     const filesController = this.controllers.filesController
     const blob = getBlobFromBase64(file.data, file.mimeType)
     const mappedFile = new File([blob], file.name, { type: file.mimeType })
-    void filesController.uploadNewFile(mappedFile, true)
+    filesController.uploadNewFile(mappedFile, true).catch(console.error)
   }
 
   async handleReceivedTextEvent({ text, title }: { text: string; title?: string | undefined }) {
@@ -408,6 +408,41 @@ export class WebApplication extends SNApplication implements WebApplicationInter
       type: ToastType.Success,
       message: 'Successfully created note from shared text',
     })
+  }
+
+  async handleReceivedLinkEvent({ link, title }: { link: string; title: string | undefined }) {
+    const url = new URL(link)
+    const paths = url.pathname.split('/')
+    const finalPath = paths[paths.length - 1]
+    const isImagePath = !!finalPath && /\.(png|svg|webp|jpe?g)/.test(finalPath)
+
+    if (isImagePath) {
+      const fetchToastUuid = addToast({
+        type: ToastType.Loading,
+        message: 'Fetching image from link...',
+      })
+      try {
+        const imgResponse = await fetch(link)
+        if (!imgResponse.ok) {
+          throw new Error(`${imgResponse.status}: Could not fetch image`)
+        }
+        const imgBlob = await imgResponse.blob()
+        const file = new File([imgBlob], finalPath, {
+          type: imgBlob.type,
+        })
+        this.controllers.filesController.uploadNewFile(file, true).catch(console.error)
+      } catch (error) {
+        console.error(error)
+      } finally {
+        dismissToast(fetchToastUuid)
+      }
+      return
+    }
+
+    this.handleReceivedTextEvent({
+      title: title,
+      text: link,
+    }).catch(console.error)
   }
 
   private async lockApplicationAfterMobileEventIfApplicable(): Promise<void> {

@@ -154,13 +154,14 @@ jobs:
 
   Publish:
     runs-on: ubuntu-latest
+    env:
+      SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAPCRAFT_STORE_CREDENTIALS }}
     if: ${{ always() }}
     needs: [Windows, Mac, Linux]
     defaults:
       run:
         working-directory: packages/desktop
     steps:
-
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
@@ -209,6 +210,5 @@ jobs:
         continue-on-error: true
         run: |
           sudo snap install snapcraft --classic
-          echo "${{ secrets.SNAPCRAFT_LOGIN_FILE }}" >> snapauth.txt
-          snapcraft login --with=snapauth.txt
+          snapcraft login
           snapcraft upload dist/standard-notes-${{ env.APP_VERSION }}-linux-amd64.snap --release stable,candidate,beta,edge

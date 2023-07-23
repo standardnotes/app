@@ -4,7 +4,17 @@ import useModal from '../../Lexical/Hooks/useModal'
 import { InsertTableDialog } from '../../Plugins/TablePlugin'
 import { getSelectedNode } from '../../Lexical/Utils/getSelectedNode'
 import { sanitizeUrl } from '../../Lexical/Utils/sanitizeUrl'
-import { $getSelection, $isRangeSelection, FORMAT_TEXT_COMMAND } from 'lexical'
+import {
+  $getSelection,
+  $isRangeSelection,
+  CAN_REDO_COMMAND,
+  CAN_UNDO_COMMAND,
+  COMMAND_PRIORITY_CRITICAL,
+  FORMAT_TEXT_COMMAND,
+  REDO_COMMAND,
+  UNDO_COMMAND,
+} from 'lexical'
+import { mergeRegister } from '@lexical/utils'
 import { $isLinkNode, TOGGLE_LINK_COMMAND } from '@lexical/link'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { GetAlignmentBlocks } from '../Blocks/Alignment'
@@ -64,13 +74,53 @@ const MobileToolbarPlugin = () => {
     }
   }, [editor])
 
+  const [canUndo, setCanUndo] = useState(false)
+  const [canRedo, setCanRedo] = useState(false)
+  useEffect(() => {
+    return mergeRegister(
+      editor.registerCommand<boolean>(
+        CAN_UNDO_COMMAND,
+        (payload) => {
+          setCanUndo(payload)
+          return false
+        },
+        COMMAND_PRIORITY_CRITICAL,
+      ),
+      editor.registerCommand<boolean>(
+        CAN_REDO_COMMAND,
+        (payload) => {
+          setCanRedo(payload)
+          return false
+        },
+        COMMAND_PRIORITY_CRITICAL,
+      ),
+    )
+  }, [editor])
+
   const items = useMemo(
     (): {
       name: string
       iconName: string
       keywords?: string[]
+      disabled?: boolean
       onSelect: () => void
     }[] => [
+      {
+        name: 'Undo',
+        iconName: 'undo',
+        disabled: !canUndo,
+        onSelect: () => {
+          editor.dispatchCommand(UNDO_COMMAND, undefined)
+        },
+      },
+      {
+        name: 'Redo',
+        iconName: 'redo',
+        disabled: !canRedo,
+        onSelect: () => {
+          editor.dispatchCommand(REDO_COMMAND, undefined)
+        },
+      },
       {
         name: 'Bold',
         iconName: 'bold',
@@ -150,7 +200,7 @@ const MobileToolbarPlugin = () => {
       GetCollapsibleBlock(editor),
       ...GetEmbedsBlocks(editor),
     ],
-    [application.keyboardService, editor, insertLink, showModal],
+    [application.keyboardService, canRedo, canUndo, editor, insertLink, showModal],
   )
 
   useEffect(() => {
@@ -222,10 +272,11 @@ const MobileToolbarPlugin = () => {
           {items.map((item) => {
             return (
               <button
-                className="flex items-center justify-center rounded px-3 py-3"
+                className="flex items-center justify-center rounded px-3 py-3 disabled:opacity-50"
                 aria-label={item.name}
                 onClick={item.onSelect}
                 key={item.name}
+                disabled={item.disabled}
               >
                 <Icon type={item.iconName} size="medium" className="!text-current [&>path]:!text-current" />
               </button>

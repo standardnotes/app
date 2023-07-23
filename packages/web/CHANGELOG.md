@@ -3,6 +3,40 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.167.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.167.2...@standardnotes/web@3.167.3) (2023-07-21)
+
+### Bug Fixes
+
+* Shared image links are now correctly handled on iOS ([ab2e88a](https://github.com/standardnotes/app/commit/ab2e88a710c65771312bd9d02cec0b400d352a0e))
+
+## [3.167.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.167.1...@standardnotes/web@3.167.2) (2023-07-20)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.167.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.167.0...@standardnotes/web@3.167.1) (2023-07-19)
+
+### Bug Fixes
+
+* Fixed issue where trying to create new folder on mobile would close navigation pane ([2b0df30](https://github.com/standardnotes/app/commit/2b0df30ca25bd15d7e4c279fa0e586ddec08b821))
+
+# [3.167.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.166.19...@standardnotes/web@3.167.0) (2023-07-19)
+
+### Features
+
+* Added Undo/Redo buttons to Super mobile toolbar ([edead7e](https://github.com/standardnotes/app/commit/edead7e2511b6c59843bb5b0336ef89fd3240f77))
+
+## [3.166.19](https://github.com/standardnotes/app/compare/@standardnotes/web@3.166.18...@standardnotes/web@3.166.19) (2023-07-18)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.166.18](https://github.com/standardnotes/app/compare/@standardnotes/web@3.166.17...@standardnotes/web@3.166.18) (2023-07-18)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.166.17](https://github.com/standardnotes/app/compare/@standardnotes/web@3.166.16...@standardnotes/web@3.166.17) (2023-07-18)
+
+**Note:** Version bump only for package @standardnotes/web
+
 ## [3.166.16](https://github.com/standardnotes/app/compare/@standardnotes/web@3.166.15...@standardnotes/web@3.166.16) (2023-07-17)
 
 **Note:** Version bump only for package @standardnotes/web
