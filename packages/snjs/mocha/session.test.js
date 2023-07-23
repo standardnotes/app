@@ -119,7 +119,7 @@ describe('server session', function () {
     // Apply a latency simulation so that ` this.inProgressRefreshSessionPromise = this.refreshSession()` does
     // not have the chance to complete before it is assigned to the variable. This test came along with a fix
     // where runHttp does not await a pending refreshSession promise if the request being made is itself a refreshSession request.
-    this.application.httpService.__latencySimulatorMs = 1000
+    this.application.http.__latencySimulatorMs = 1000
     await this.application.sync.sync(syncOptions)
 
     const sessionAfterSync = this.application.legacyApi.getSession()
