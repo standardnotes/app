@@ -1,7 +1,7 @@
 import {
-  AsymmetricMessagePayload,
   ContactPublicKeySet,
   ContactPublicKeySetInterface,
+  PublicKeyTrustStatus,
   TrustedContactInterface,
 } from '@standardnotes/models'
 import { DecryptMessage } from './DecryptMessage'
@@ -27,7 +27,7 @@ function createMockPublicKeySetChain(): ContactPublicKeySetInterface {
 }
 
 describe('DecryptMessage', () => {
-  let usecase: DecryptMessage<AsymmetricMessagePayload>
+  let usecase: DecryptMessage
   let operator: jest.Mocked<OperatorInterface>
 
   beforeEach(() => {
@@ -87,7 +87,7 @@ describe('DecryptMessage', () => {
         isMe: false,
       } as jest.Mocked<TrustedContactInterface>
 
-      senderContact.isPublicKeyTrusted = jest.fn().mockReturnValue(false)
+      senderContact.getTrustStatusForPublicKey = jest.fn().mockReturnValue(PublicKeyTrustStatus.NotTrusted)
 
       const result = usecase.execute({
         message: 'encrypted',
@@ -114,8 +114,8 @@ describe('DecryptMessage', () => {
         isMe: false,
       } as jest.Mocked<TrustedContactInterface>
 
-      senderContact.isPublicKeyTrusted = jest.fn().mockReturnValue(true)
-      senderContact.isSigningKeyTrusted = jest.fn().mockReturnValue(false)
+      senderContact.getTrustStatusForPublicKey = jest.fn().mockReturnValue(PublicKeyTrustStatus.Trusted)
+      senderContact.getTrustStatusForSigningPublicKey = jest.fn().mockReturnValue(PublicKeyTrustStatus.NotTrusted)
 
       const result = usecase.execute({
         message: 'encrypted',
@@ -142,8 +142,8 @@ describe('DecryptMessage', () => {
         isMe: false,
       } as jest.Mocked<TrustedContactInterface>
 
-      senderContact.isSigningKeyTrusted = jest.fn().mockReturnValue(true)
-      senderContact.isPublicKeyTrusted = jest.fn().mockReturnValue(true)
+      senderContact.getTrustStatusForPublicKey = jest.fn().mockReturnValue(PublicKeyTrustStatus.Trusted)
+      senderContact.getTrustStatusForSigningPublicKey = jest.fn().mockReturnValue(PublicKeyTrustStatus.Trusted)
 
       const result = usecase.execute({
         message: 'encrypted',

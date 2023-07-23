@@ -1,7 +1,7 @@
+import { CreateOrEditContact } from './../../Contacts/UseCase/CreateOrEditContact'
 import { MutatorClientInterface } from '../../Mutator/MutatorClientInterface'
 import { ProcessAcceptedVaultInvite } from './ProcessAcceptedVaultInvite'
 import { SyncServiceInterface } from '../../Sync/SyncServiceInterface'
-import { ContactServiceInterface } from '../../Contacts/ContactServiceInterface'
 import { ContentType } from '@standardnotes/domain-core'
 import {
   AsymmetricMessagePayloadType,
@@ -10,31 +10,24 @@ import {
 } from '@standardnotes/models'
 
 describe('ProcessAcceptedVaultInvite', () => {
-  let mutatorMock: jest.Mocked<MutatorClientInterface>
-  let syncServiceMock: jest.Mocked<SyncServiceInterface>
-  let contactServiceMock: jest.Mocked<ContactServiceInterface>
+  let mutator: jest.Mocked<MutatorClientInterface>
+  let sync: jest.Mocked<SyncServiceInterface>
+  let createOrEditContact: jest.Mocked<CreateOrEditContact>
 
   beforeEach(() => {
-    mutatorMock = {
-      createItem: jest.fn(),
-    } as any
+    mutator = {} as jest.Mocked<MutatorClientInterface>
+    mutator.createItem = jest.fn()
 
-    syncServiceMock = {
-      sync: jest.fn(),
-    } as any
+    sync = {} as jest.Mocked<SyncServiceInterface>
+    sync.sync = jest.fn()
 
-    contactServiceMock = {
-      createOrEditTrustedContact: jest.fn(),
-    } as any
+    createOrEditContact = {} as jest.Mocked<CreateOrEditContact>
+    createOrEditContact.execute = jest.fn()
   })
 
   it('should create root key before creating vault listing so that propagated vault listings do not appear as locked', async () => {
-    const handleTrustedSharedVaultInviteMessage = new ProcessAcceptedVaultInvite(
-      mutatorMock,
-      syncServiceMock,
-      contactServiceMock,
-    )
-
+    const handleTrustedSharedVaultInviteMessage = new ProcessAcceptedVaultInvite(mutator, sync, createOrEditContact)
+    createOrEditContact
     const testMessage = {
       type: AsymmetricMessagePayloadType.SharedVaultInvite,
       data: {
@@ -54,11 +47,11 @@ describe('ProcessAcceptedVaultInvite', () => {
 
     await handleTrustedSharedVaultInviteMessage.execute(testMessage, sharedVaultUuid, senderUuid)
 
-    const keySystemRootKeyCallIndex = mutatorMock.createItem.mock.calls.findIndex(
+    const keySystemRootKeyCallIndex = mutator.createItem.mock.calls.findIndex(
       ([contentType]) => contentType === ContentType.TYPES.KeySystemRootKey,
     )
 
-    const vaultListingCallIndex = mutatorMock.createItem.mock.calls.findIndex(
+    const vaultListingCallIndex = mutator.createItem.mock.calls.findIndex(
       ([contentType]) => contentType === ContentType.TYPES.VaultListing,
     )
 

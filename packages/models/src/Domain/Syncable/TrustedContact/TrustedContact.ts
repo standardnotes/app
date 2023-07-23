@@ -48,7 +48,7 @@ export class TrustedContact extends DecryptedItem<TrustedContactContent> impleme
       return PublicKeyTrustStatus.Previous
     }
 
-    return PublicKeyTrustStatus.NotFound
+    return PublicKeyTrustStatus.NotTrusted
   }
 
   getTrustStatusForSigningPublicKey(signingPublicKey: string): PublicKeyTrustStatus {
@@ -62,7 +62,7 @@ export class TrustedContact extends DecryptedItem<TrustedContactContent> impleme
       return PublicKeyTrustStatus.Previous
     }
 
-    return PublicKeyTrustStatus.NotFound
+    return PublicKeyTrustStatus.NotTrusted
   }
 
   override strategyWhenConflictingWithItem(

@@ -1,3 +1,4 @@
+import { LegacyApiServiceInterface } from '../Api/LegacyApiServiceInterface'
 import { HistoryServiceInterface } from './../History/HistoryServiceInterface'
 import { PayloadManagerInterface } from './../Payloads/PayloadManagerInterface'
 import { StorageServiceInterface } from './../Storage/StorageServiceInterface'
@@ -9,12 +10,11 @@ import { EncryptionProviderInterface } from '@standardnotes/encryption'
 import { ItemManagerInterface } from '../Item/ItemManagerInterface'
 import { InternalEventBusInterface } from '..'
 import { AlertService } from '../Alert/AlertService'
-import { ApiServiceInterface } from '../Api/ApiServiceInterface'
 import { SyncServiceInterface } from '../Sync/SyncServiceInterface'
 import { DirectoryManagerInterface, FileBackupsDevice } from '@standardnotes/files'
 
 describe('backup service', () => {
-  let apiService: ApiServiceInterface
+  let apiService: LegacyApiServiceInterface
   let itemManager: ItemManagerInterface
   let syncService: SyncServiceInterface
   let alertService: AlertService
@@ -30,7 +30,7 @@ describe('backup service', () => {
   let history: HistoryServiceInterface
 
   beforeEach(() => {
-    apiService = {} as jest.Mocked<ApiServiceInterface>
+    apiService = {} as jest.Mocked<LegacyApiServiceInterface>
     apiService.addEventObserver = jest.fn()
     apiService.createUserFileValetToken = jest.fn()
     apiService.downloadFile = jest.fn()

@@ -5,20 +5,23 @@ import {
   PublicKeyTrustStatus,
   TrustedContactInterface,
 } from '@standardnotes/models'
-import { ItemManagerInterface } from './../../Item/ItemManagerInterface'
-import { ValidateItemSignerUseCase } from './ValidateItemSigner'
-import { ItemSignatureValidationResult } from './ItemSignatureValidationResult'
+import { ValidateItemSigner } from './ValidateItemSigner'
+import { FindContact } from './FindContact'
+import { ItemSignatureValidationResult } from './Types/ItemSignatureValidationResult'
+import { Result } from '@standardnotes/domain-core'
 
 describe('validate item signer use case', () => {
-  let usecase: ValidateItemSignerUseCase
-  let items: ItemManagerInterface
+  let usecase: ValidateItemSigner
+  let findContact: FindContact
 
   const trustedContact = {} as jest.Mocked<TrustedContactInterface>
   trustedContact.getTrustStatusForSigningPublicKey = jest.fn().mockReturnValue(PublicKeyTrustStatus.Trusted)
 
   beforeEach(() => {
-    items = {} as jest.Mocked<ItemManagerInterface>
-    usecase = new ValidateItemSignerUseCase(items)
+    findContact = {} as jest.Mocked<FindContact>
+    findContact.execute = jest.fn().mockReturnValue(Result.ok(trustedContact))
+
+    usecase = new ValidateItemSigner(findContact)
   })
 
   const createItem = (params: {
@@ -44,7 +47,7 @@ describe('validate item signer use case', () => {
   describe('has last edited by uuid', () => {
     describe('trusted contact not found', () => {
       beforeEach(() => {
-        items.itemsMatchingPredicate = jest.fn().mockReturnValue([])
+        findContact.execute = jest.fn().mockReturnValue(Result.fail('Not found'))
       })
 
       it('should return invalid signing is required', () => {
@@ -66,15 +69,11 @@ describe('validate item signer use case', () => {
         })
 
         const result = usecase.execute(item)
-        expect(result).toEqual('not-applicable')
+        expect(result).toEqual(ItemSignatureValidationResult.NotApplicable)
       })
     })
 
     describe('trusted contact found for last editor', () => {
-      beforeEach(() => {
-        items.itemsMatchingPredicate = jest.fn().mockReturnValue([trustedContact])
-      })
-
       describe('does not have signature data', () => {
         it('should return not applicable if the item was just recently created', () => {
           const item = createItem({
@@ -85,7 +84,7 @@ describe('validate item signer use case', () => {
           })
 
           const result = usecase.execute(item)
-          expect(result).toEqual('not-applicable')
+          expect(result).toEqual(ItemSignatureValidationResult.NotApplicable)
         })
 
         it('should return not applicable if the item was just recently saved', () => {
@@ -97,7 +96,7 @@ describe('validate item signer use case', () => {
           })
 
           const result = usecase.execute(item)
-          expect(result).toEqual('not-applicable')
+          expect(result).toEqual(ItemSignatureValidationResult.NotApplicable)
         })
 
         it('should return invalid if signing is required', () => {
@@ -119,7 +118,7 @@ describe('validate item signer use case', () => {
           })
 
           const result = usecase.execute(item)
-          expect(result).toEqual('not-applicable')
+          expect(result).toEqual(ItemSignatureValidationResult.NotApplicable)
         })
       })
 
@@ -148,7 +147,7 @@ describe('validate item signer use case', () => {
             })
 
             const result = usecase.execute(item)
-            expect(result).toEqual('not-applicable')
+            expect(result).toEqual(ItemSignatureValidationResult.NotApplicable)
           })
         })
 
@@ -182,7 +181,7 @@ describe('validate item signer use case', () => {
               } as jest.Mocked<PersistentSignatureData>,
             })
 
-            items.itemsMatchingPredicate = jest.fn().mockReturnValue([])
+            findContact.execute = jest.fn().mockReturnValue(Result.fail('Not found'))
 
             const result = usecase.execute(item)
             expect(result).toEqual(ItemSignatureValidationResult.NotTrusted)
@@ -201,10 +200,10 @@ describe('validate item signer use case', () => {
               } as jest.Mocked<PersistentSignatureData>,
             })
 
-            items.itemsMatchingPredicate = jest.fn().mockReturnValue([trustedContact])
+            findContact.execute = jest.fn().mockReturnValue(Result.ok(trustedContact))
 
             const result = usecase.execute(item)
-            expect(result).toEqual('yes')
+            expect(result).toEqual(ItemSignatureValidationResult.Trusted)
           })
         })
       })
@@ -222,7 +221,7 @@ describe('validate item signer use case', () => {
         })
 
         const result = usecase.execute(item)
-        expect(result).toEqual('not-applicable')
+        expect(result).toEqual(ItemSignatureValidationResult.NotApplicable)
       })
 
       it('should return not applicable if the item was just recently saved', () => {
@@ -234,7 +233,7 @@ describe('validate item signer use case', () => {
         })
 
         const result = usecase.execute(item)
-        expect(result).toEqual('not-applicable')
+        expect(result).toEqual(ItemSignatureValidationResult.NotApplicable)
       })
 
       it('should return invalid if signing is required', () => {
@@ -256,7 +255,7 @@ describe('validate item signer use case', () => {
         })
 
         const result = usecase.execute(item)
-        expect(result).toEqual('not-applicable')
+        expect(result).toEqual(ItemSignatureValidationResult.NotApplicable)
       })
     })
 
@@ -285,7 +284,7 @@ describe('validate item signer use case', () => {
           })
 
           const result = usecase.execute(item)
-          expect(result).toEqual('not-applicable')
+          expect(result).toEqual(ItemSignatureValidationResult.NotApplicable)
         })
       })
 
@@ -319,7 +318,7 @@ describe('validate item signer use case', () => {
             } as jest.Mocked<PersistentSignatureData>,
           })
 
-          items.getItems = jest.fn().mockReturnValue([])
+          findContact.execute = jest.fn().mockReturnValue(Result.fail('Not found'))
 
           const result = usecase.execute(item)
           expect(result).toEqual(ItemSignatureValidationResult.NotTrusted)
@@ -338,10 +337,8 @@ describe('validate item signer use case', () => {
             } as jest.Mocked<PersistentSignatureData>,
           })
 
-          items.getItems = jest.fn().mockReturnValue([trustedContact])
-
           const result = usecase.execute(item)
-          expect(result).toEqual('yes')
+          expect(result).toEqual(ItemSignatureValidationResult.Trusted)
         })
       })
     })

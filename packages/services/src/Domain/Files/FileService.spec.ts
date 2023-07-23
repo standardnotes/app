@@ -1,3 +1,4 @@
+import { LegacyApiServiceInterface } from './../Api/LegacyApiServiceInterface'
 import { PureCryptoInterface, StreamEncryptor } from '@standardnotes/sncrypto-common'
 import { FileItem } from '@standardnotes/models'
 import { EncryptionProviderInterface } from '@standardnotes/encryption'
@@ -5,14 +6,14 @@ import { ItemManagerInterface } from '../Item/ItemManagerInterface'
 import { ChallengeServiceInterface } from '../Challenge'
 import { InternalEventBusInterface, MutatorClientInterface } from '..'
 import { AlertService } from '../Alert/AlertService'
-import { ApiServiceInterface } from '../Api/ApiServiceInterface'
+
 import { SyncServiceInterface } from '../Sync/SyncServiceInterface'
 import { FileService } from './FileService'
 import { BackupServiceInterface } from '@standardnotes/files'
 import { HttpServiceInterface } from '@standardnotes/api'
 
 describe('fileService', () => {
-  let apiService: ApiServiceInterface
+  let apiService: LegacyApiServiceInterface
   let itemManager: ItemManagerInterface
   let mutator: MutatorClientInterface
   let syncService: SyncServiceInterface
@@ -26,7 +27,7 @@ describe('fileService', () => {
   let http: HttpServiceInterface
 
   beforeEach(() => {
-    apiService = {} as jest.Mocked<ApiServiceInterface>
+    apiService = {} as jest.Mocked<LegacyApiServiceInterface>
     apiService.addEventObserver = jest.fn()
     apiService.createUserFileValetToken = jest.fn()
     apiService.deleteFile = jest.fn().mockReturnValue({})

@@ -1,9 +1,8 @@
-import { ProtocolVersion } from '@standardnotes/common';
-import { AnyOperatorInterface } from './OperatorInterface/TypeCheck';
-
+import { ProtocolVersion } from '@standardnotes/common'
+import { AnyOperatorInterface } from './OperatorInterface/TypeCheck'
 
 export interface EncryptionOperatorsInterface {
-  operatorForVersion(version: ProtocolVersion): AnyOperatorInterface;
-  defaultOperator(): AnyOperatorInterface;
-  deinit(): void;
+  operatorForVersion(version: ProtocolVersion): AnyOperatorInterface
+  defaultOperator(): AnyOperatorInterface
+  deinit(): void
 }

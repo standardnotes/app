@@ -5,15 +5,15 @@ import { ContactPublicKeySetInterface } from './PublicKeySet/ContactPublicKeySet
 import { TrustedContact } from './TrustedContact'
 import { TrustedContactInterface } from './TrustedContactInterface'
 import { FillItemContentSpecialized } from '../../Abstract/Content/ItemContent'
-import { TrustedContactContentSpecialized } from './TrustedContactContent'
 import { ConflictStrategy } from '../../Abstract/Item'
+import { TrustedContactContentSpecialized } from './Content/TrustedContactContent'
+import { PublicKeyTrustStatus } from './Types/PublicKeyTrustStatus'
 
 function createMockPublicKeySetChain(): ContactPublicKeySetInterface {
   const nMinusOne = new ContactPublicKeySet({
     encryption: 'encryption-public-key-n-1',
     signing: 'signing-public-key-n-1',
     timestamp: new Date(-1),
-    isRevoked: false,
     previousKeySet: undefined,
   })
 
@@ -21,7 +21,6 @@ function createMockPublicKeySetChain(): ContactPublicKeySetInterface {
     encryption: 'encryption-public-key',
     signing: 'signing-public-key',
     timestamp: new Date(),
-    isRevoked: false,
     previousKeySet: nMinusOne,
   })
 
@@ -68,63 +67,43 @@ describe('strategyWhenConflictingWithItem', () => {
 })
 
 describe('TrustedContact', () => {
-  describe('isPublicKeyTrusted', () => {
-    it('should be false if key set is revoked', () => {
-      const root = new ContactPublicKeySet({
-        encryption: 'encryption-public-key',
-        signing: 'signing-public-key',
-        timestamp: new Date(),
-        isRevoked: true,
-        previousKeySet: undefined,
-      })
+  describe('getTrustStatusForPublicKey', () => {
+    it('should be trusted if key set is root', () => {
+      const contact = CreateContact({ publicKeySet: createMockPublicKeySetChain() })
 
-      const contact = CreateContact({ publicKeySet: root })
-
-      expect(contact.isPublicKeyTrusted('encryption-public-key')).toEqual(false)
+      expect(contact.getTrustStatusForPublicKey('encryption-public-key')).toEqual(PublicKeyTrustStatus.Trusted)
     })
 
-    it('should return false if public key is not found', () => {
-      const root = new ContactPublicKeySet({
-        encryption: 'encryption-public-key',
-        signing: 'signing-public-key',
-        timestamp: new Date(),
-        isRevoked: true,
-        previousKeySet: undefined,
-      })
+    it('should be semi-trusted if key set is previous', () => {
+      const contact = CreateContact({ publicKeySet: createMockPublicKeySetChain() })
 
-      const contact = CreateContact({ publicKeySet: root })
+      expect(contact.getTrustStatusForPublicKey('encryption-public-key-n-1')).toEqual(PublicKeyTrustStatus.Previous)
+    })
 
-      expect(contact.isPublicKeyTrusted('not-found-public-key')).toEqual(false)
+    it('should return not trusted if public key is not found', () => {
+      const contact = CreateContact({ publicKeySet: createMockPublicKeySetChain() })
+
+      expect(contact.getTrustStatusForPublicKey('not-found-public-key')).toEqual(PublicKeyTrustStatus.NotTrusted)
     })
   })
 
-  describe('isSigningKeyTrusted', () => {
-    it('should be false if key set is revoked', () => {
-      const root = new ContactPublicKeySet({
-        encryption: 'encryption-public-key',
-        signing: 'signing-public-key',
-        timestamp: new Date(),
-        isRevoked: true,
-        previousKeySet: undefined,
-      })
+  describe('getTrustStatusForSigningPublicKey', () => {
+    it('should be trusted if key set is root', () => {
+      const contact = CreateContact({ publicKeySet: createMockPublicKeySetChain() })
 
-      const contact = CreateContact({ publicKeySet: root })
-
-      expect(contact.isSigningKeyTrusted('signing-public-key')).toEqual(false)
+      expect(contact.getTrustStatusForSigningPublicKey('signing-public-key')).toEqual(PublicKeyTrustStatus.Trusted)
     })
 
-    it('should return false if signing key is not found', () => {
-      const root = new ContactPublicKeySet({
-        encryption: 'encryption-public-key',
-        signing: 'signing-public-key',
-        timestamp: new Date(),
-        isRevoked: true,
-        previousKeySet: undefined,
-      })
+    it('should be semi-trusted if key set is previous', () => {
+      const contact = CreateContact({ publicKeySet: createMockPublicKeySetChain() })
 
-      const contact = CreateContact({ publicKeySet: root })
+      expect(contact.getTrustStatusForSigningPublicKey('signing-public-key-n-1')).toEqual(PublicKeyTrustStatus.Previous)
+    })
 
-      expect(contact.isSigningKeyTrusted('not-found-signing-key')).toEqual(false)
+    it('should return not trusted if public key is not found', () => {
+      const contact = CreateContact({ publicKeySet: createMockPublicKeySetChain() })
+
+      expect(contact.getTrustStatusForSigningPublicKey('not-found-public-key')).toEqual(PublicKeyTrustStatus.NotTrusted)
     })
   })
 })
