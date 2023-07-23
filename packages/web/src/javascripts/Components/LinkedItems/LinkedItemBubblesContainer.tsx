@@ -32,7 +32,7 @@ const LinkedItemBubblesContainer = ({
   hideToggle = false,
   readonly = false,
   className = {},
-  isCollapsedByDefault = false,
+  isCollapsedByDefault = true,
 }: Props) => {
   const { toggleAppPane } = useResponsiveAppPane()
 
