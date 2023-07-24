@@ -357,7 +357,7 @@ const MobileToolbarPlugin = () => {
   return (
     <>
       {modal}
-      <div className="bg-contrast">
+      <div className="bg-contrast" id="super-mobile-toolbar">
         {isSelectionLink && (
           <div className="border-t border-border px-2" ref={linkEditorRef}>
             <LinkEditor
