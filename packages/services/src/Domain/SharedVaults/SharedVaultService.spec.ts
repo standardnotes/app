@@ -1,3 +1,5 @@
+import { InternalEventBusInterface } from './../Internal/InternalEventBusInterface'
+import { GetOwnedSharedVaults } from './UseCase/GetOwnedSharedVaults'
 import { IsVaultOwner } from './../VaultUser/UseCase/IsVaultOwner'
 import { EncryptionProviderInterface } from './../Encryption/EncryptionProviderInterface'
 import { DeleteSharedVault } from './UseCase/DeleteSharedVault'
@@ -14,8 +16,6 @@ import { SharedVaultService } from './SharedVaultService'
 import { SyncServiceInterface } from '../Sync/SyncServiceInterface'
 import { ItemManagerInterface } from '../Item/ItemManagerInterface'
 import { SessionsClientInterface } from '../Session/SessionsClientInterface'
-import { VaultServiceInterface } from '../Vaults/VaultServiceInterface'
-import { InternalEventBusInterface } from '../..'
 import { ContactPublicKeySetInterface, TrustedContactInterface } from '@standardnotes/models'
 
 describe('SharedVaultService', () => {
@@ -30,8 +30,8 @@ describe('SharedVaultService', () => {
 
     const encryption = {} as jest.Mocked<EncryptionProviderInterface>
     const session = {} as jest.Mocked<SessionsClientInterface>
-    const vaults = {} as jest.Mocked<VaultServiceInterface>
     const getVault = {} as jest.Mocked<GetVault>
+    const getOwnedVaults = {} as jest.Mocked<GetOwnedSharedVaults>
     const createSharedVaultUseCase = {} as jest.Mocked<CreateSharedVault>
     const handleKeyPairChange = {} as jest.Mocked<HandleKeyPairChange>
     const notifyVaultUsersOfKeyRotation = {} as jest.Mocked<NotifyVaultUsersOfKeyRotation>
@@ -50,8 +50,8 @@ describe('SharedVaultService', () => {
       items,
       encryption,
       session,
-      vaults,
       getVault,
+      getOwnedVaults,
       createSharedVaultUseCase,
       handleKeyPairChange,
       notifyVaultUsersOfKeyRotation,
