@@ -4,7 +4,7 @@ import { KeyboardKey } from '@standardnotes/ui-services'
 import { IconComponent } from '../../Lexical/Theme/IconComponent'
 import { sanitizeUrl } from '../../Lexical/Utils/sanitizeUrl'
 import { TOGGLE_LINK_COMMAND } from '@lexical/link'
-import { useCallback, useState } from 'react'
+import { useCallback, useState, useRef } from 'react'
 import { GridSelection, LexicalEditor, NodeSelection, RangeSelection } from 'lexical'
 import { classNames } from '@standardnotes/snjs'
 
@@ -19,6 +19,7 @@ type Props = {
 
 const LinkEditor = ({ linkUrl, isEditMode, setEditMode, editor, lastSelection, isAutoLink }: Props) => {
   const [editedLinkUrl, setEditedLinkUrl] = useState('')
+  const editModeContainer = useRef<HTMLDivElement>(null)
 
   const handleLinkSubmission = () => {
     if (lastSelection !== null) {
@@ -36,7 +37,7 @@ const LinkEditor = ({ linkUrl, isEditMode, setEditMode, editor, lastSelection, i
   }, [])
 
   return isEditMode ? (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-2" ref={editModeContainer}>
       <input
         id="link-input"
         ref={focusInput}
@@ -50,6 +51,11 @@ const LinkEditor = ({ linkUrl, isEditMode, setEditMode, editor, lastSelection, i
             handleLinkSubmission()
           } else if (event.key === KeyboardKey.Escape) {
             event.preventDefault()
+            setEditMode(false)
+          }
+        }}
+        onBlur={(event) => {
+          if (!editModeContainer.current?.contains(event.relatedTarget as Node)) {
             setEditMode(false)
           }
         }}

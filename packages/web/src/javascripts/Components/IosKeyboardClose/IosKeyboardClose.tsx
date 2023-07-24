@@ -7,7 +7,7 @@ const IosKeyboardClose = () => {
   const application = useApplication()
   const [isVisible, setIsVisible] = useState(false)
   const [isFocusInSuperEditor, setIsFocusInSuperEditor] = useState(
-    () => !!document.activeElement?.closest('#blocks-editor'),
+    () => !!document.activeElement?.closest('#blocks-editor,#super-mobile-toolbar'),
   )
 
   useEffect(() => {
@@ -22,7 +22,7 @@ const IosKeyboardClose = () => {
 
   useEffect(() => {
     const handleFocusChange = () => {
-      setIsFocusInSuperEditor(!!document.activeElement?.closest('#blocks-editor'))
+      setIsFocusInSuperEditor(!!document.activeElement?.closest('#blocks-editor,#super-mobile-toolbar'))
     }
 
     document.addEventListener('focusin', handleFocusChange)
