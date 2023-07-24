@@ -8,7 +8,6 @@ describe('shared vault items', function () {
   this.timeout(Factory.TwentySecondTimeout)
 
   let context
-  let sharedVaults
 
   afterEach(async function () {
     await context.deinit()
@@ -22,8 +21,6 @@ describe('shared vault items', function () {
 
     await context.launch()
     await context.register()
-
-    sharedVaults = context.sharedVaults
   })
 
   it('should add item to shared vault with no other members', async () => {
@@ -60,7 +57,11 @@ describe('shared vault items', function () {
     const currentContextContact = await Collaboration.createTrustedContactForUserOfContext(context, contactContext)
 
     contactContext.lockSyncing()
-    await sharedVaults.inviteContactToSharedVault(sharedVault, currentContextContact, SharedVaultPermission.Write)
+    await context.vaultInvites.inviteContactToSharedVault(
+      sharedVault,
+      currentContextContact,
+      SharedVaultPermission.Write,
+    )
     await Collaboration.moveItemToVault(context, sharedVault, note)
 
     const promise = contactContext.awaitNextSyncSharedVaultFromScratchEvent()

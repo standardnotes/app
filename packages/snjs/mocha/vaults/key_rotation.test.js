@@ -8,8 +8,6 @@ describe('shared vault key rotation', function () {
   this.timeout(Factory.TwentySecondTimeout)
 
   let context
-  let vaults
-  let sharedVaults
 
   afterEach(async function () {
     await context.deinit()
@@ -23,9 +21,6 @@ describe('shared vault key rotation', function () {
 
     await context.launch()
     await context.register()
-
-    vaults = context.vaults
-    sharedVaults = context.sharedVaults
   })
 
   it('should reencrypt all items keys belonging to key system', async () => {
@@ -37,7 +32,7 @@ describe('shared vault key rotation', function () {
     const spy = sinon.spy(context.keys, 'reencryptKeySystemItemsKeysForVault')
 
     const promise = context.resolveWhenSharedVaultKeyRotationInvitesGetSent(sharedVault)
-    await vaults.rotateVaultRootKey(sharedVault)
+    await context.vaults.rotateVaultRootKey(sharedVault)
     await promise
 
     expect(spy.callCount).to.equal(1)
@@ -52,7 +47,7 @@ describe('shared vault key rotation', function () {
     contactContext.lockSyncing()
 
     const promise = context.resolveWhenSharedVaultKeyRotationInvitesGetSent(sharedVault)
-    await vaults.rotateVaultRootKey(sharedVault)
+    await context.vaults.rotateVaultRootKey(sharedVault)
     await promise
 
     const outboundMessages = await context.asymmetric.getOutboundMessages()
@@ -79,7 +74,7 @@ describe('shared vault key rotation', function () {
     contactContext.lockSyncing()
 
     const promise = context.resolveWhenSharedVaultKeyRotationInvitesGetSent(sharedVault)
-    await vaults.rotateVaultRootKey(sharedVault)
+    await context.vaults.rotateVaultRootKey(sharedVault)
     await promise
 
     const rootKey = context.keys.getPrimaryKeySystemRootKey(sharedVault.systemIdentifier)
@@ -107,7 +102,7 @@ describe('shared vault key rotation', function () {
     expect(previousPrimaryItemsKey).to.not.be.undefined
 
     const promise = context.resolveWhenSharedVaultKeyRotationInvitesGetSent(sharedVault)
-    await vaults.rotateVaultRootKey(sharedVault)
+    await context.vaults.rotateVaultRootKey(sharedVault)
     await promise
 
     const contactPromise = contactContext.resolveWhenAsymmetricMessageProcessingCompletes()
@@ -129,15 +124,15 @@ describe('shared vault key rotation', function () {
       await Collaboration.createSharedVaultWithUnacceptedButTrustedInvite(context)
     contactContext.lockSyncing()
 
-    const originalOutboundInvites = await sharedVaults.getOutboundInvites()
+    const originalOutboundInvites = await context.vaultInvites.getOutboundInvites()
     expect(originalOutboundInvites.length).to.equal(1)
     const originalInviteMessage = originalOutboundInvites[0].encrypted_message
 
     const promise = context.resolveWhenSharedVaultKeyRotationInvitesGetSent(sharedVault)
-    await vaults.rotateVaultRootKey(sharedVault)
+    await context.vaults.rotateVaultRootKey(sharedVault)
     await promise
 
-    const updatedOutboundInvites = await sharedVaults.getOutboundInvites()
+    const updatedOutboundInvites = await context.vaultInvites.getOutboundInvites()
     expect(updatedOutboundInvites.length).to.equal(1)
 
     const joinInvite = updatedOutboundInvites[0]
@@ -150,7 +145,7 @@ describe('shared vault key rotation', function () {
   it('new key system items key in rotated shared vault should belong to shared vault', async () => {
     const sharedVault = await Collaboration.createSharedVault(context)
 
-    await vaults.rotateVaultRootKey(sharedVault)
+    await context.vaults.rotateVaultRootKey(sharedVault)
 
     const keySystemItemsKeys = context.keys
       .getAllKeySystemItemsKeys()
@@ -170,7 +165,7 @@ describe('shared vault key rotation', function () {
     contactContext.lockSyncing()
 
     const firstPromise = context.resolveWhenSharedVaultKeyRotationInvitesGetSent(sharedVault)
-    await vaults.rotateVaultRootKey(sharedVault)
+    await context.vaults.rotateVaultRootKey(sharedVault)
     await firstPromise
 
     const asymmetricMessageAfterFirstChange = await context.asymmetric.getOutboundMessages()
@@ -180,7 +175,7 @@ describe('shared vault key rotation', function () {
     const messageAfterFirstChange = asymmetricMessageAfterFirstChange[0]
 
     const secondPromise = context.resolveWhenSharedVaultKeyRotationInvitesGetSent(sharedVault)
-    await vaults.rotateVaultRootKey(sharedVault)
+    await context.vaults.rotateVaultRootKey(sharedVault)
     await secondPromise
 
     const asymmetricMessageAfterSecondChange = await context.asymmetric.getOutboundMessages()
@@ -204,7 +199,7 @@ describe('shared vault key rotation', function () {
     contactContext.lockSyncing()
 
     const promise = context.resolveWhenSharedVaultKeyRotationInvitesGetSent(sharedVault)
-    await vaults.rotateVaultRootKey(sharedVault)
+    await context.vaults.rotateVaultRootKey(sharedVault)
     await promise
 
     const acceptMessage = sinon.spy(contactContext.asymmetric, 'handleTrustedSharedVaultRootKeyChangedMessage')
@@ -223,7 +218,7 @@ describe('shared vault key rotation', function () {
 
     const originalKeySystemRootKey = context.keys.getPrimaryKeySystemRootKey(sharedVault.systemIdentifier)
 
-    await sharedVaults.removeUserFromSharedVault(sharedVault, contactContext.userUuid)
+    await context.vaultUsers.removeUserFromSharedVault(sharedVault, contactContext.userUuid)
 
     const newKeySystemRootKey = context.keys.getPrimaryKeySystemRootKey(sharedVault.systemIdentifier)
 

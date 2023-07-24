@@ -16,11 +16,11 @@ const ContactInviteModal: FunctionComponent<Props> = ({ vault, onCloseDialog }) 
 
   useEffect(() => {
     const loadContacts = async () => {
-      const contacts = await application.sharedVaults.getInvitableContactsForSharedVault(vault)
+      const contacts = await application.vaultInvites.getInvitableContactsForSharedVault(vault)
       setContacts(contacts)
     }
     void loadContacts()
-  }, [application.sharedVaults, vault])
+  }, [application.vaultInvites, vault])
 
   const handleDialogClose = useCallback(() => {
     onCloseDialog()
@@ -28,10 +28,10 @@ const ContactInviteModal: FunctionComponent<Props> = ({ vault, onCloseDialog }) 
 
   const inviteSelectedContacts = useCallback(async () => {
     for (const contact of selectedContacts) {
-      await application.sharedVaults.inviteContactToSharedVault(vault, contact, SharedVaultPermission.Write)
+      await application.vaultInvites.inviteContactToSharedVault(vault, contact, SharedVaultPermission.Write)
     }
     handleDialogClose()
-  }, [application.sharedVaults, vault, handleDialogClose, selectedContacts])
+  }, [application.vaultInvites, vault, handleDialogClose, selectedContacts])
 
   const toggleContact = useCallback(
     (contact: TrustedContactInterface) => {

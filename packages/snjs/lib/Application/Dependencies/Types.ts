@@ -59,6 +59,8 @@ export const TYPES = {
   EncryptionOperators: Symbol.for('EncryptionOperators'),
   RootKeyManager: Symbol.for('RootKeyManager'),
   ItemsEncryptionService: Symbol.for('ItemsEncryptionService'),
+  VaultUserService: Symbol.for('VaultUserService'),
+  VaultInviteService: Symbol.for('VaultInviteService'),
 
   // Servers
   RevisionServer: Symbol.for('RevisionServer'),
@@ -140,6 +142,7 @@ export const TYPES = {
   EncryptTypeAPayload: Symbol.for('EncryptTypeAPayload'),
   EncryptTypeAPayloadWithKeyLookup: Symbol.for('EncryptTypeAPayloadWithKeyLookup'),
   DecryptBackupFile: Symbol.for('DecryptBackupFile'),
+  IsVaultAdmin: Symbol.for('IsVaultAdmin'),
 
   // Mappers
   SessionStorageMapper: Symbol.for('SessionStorageMapper'),

@@ -9,7 +9,7 @@ import { SendVaultInvite } from './SendVaultInvite'
 import { PkcKeyPair } from '@standardnotes/sncrypto-common'
 import { EncryptMessage } from '../../Encryption/UseCase/Asymmetric/EncryptMessage'
 import { Result, UseCaseInterface } from '@standardnotes/domain-core'
-import { ShareContactWithVault } from './ShareContactWithVault'
+import { ShareContactWithVault } from '../../SharedVaults/UseCase/ShareContactWithVault'
 import { KeySystemKeyManagerInterface } from '../../KeySystem/KeySystemKeyManagerInterface'
 
 export class InviteToVault implements UseCaseInterface<SharedVaultInviteServerHash> {

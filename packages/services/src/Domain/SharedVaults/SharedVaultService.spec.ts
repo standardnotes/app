@@ -1,24 +1,15 @@
+import { IsVaultAdmin } from './../VaultUser/UseCase/IsVaultAdmin'
 import { EncryptionProviderInterface } from './../Encryption/EncryptionProviderInterface'
-import { GetVaultUsers } from './UseCase/GetVaultUsers'
-import { RemoveVaultMember } from './UseCase/RemoveSharedVaultMember'
 import { DeleteSharedVault } from './UseCase/DeleteSharedVault'
 import { ConvertToSharedVault } from './UseCase/ConvertToSharedVault'
 import { ShareContactWithVault } from './UseCase/ShareContactWithVault'
 import { DeleteThirdPartyVault } from './UseCase/DeleteExternalSharedVault'
-import { LeaveVault } from './UseCase/LeaveSharedVault'
-import { InviteToVault } from './UseCase/InviteToVault'
-import { AcceptVaultInvite } from './UseCase/AcceptVaultInvite'
-import { GetVaultContacts } from './UseCase/GetVaultContacts'
-import { GetAllContacts } from './../Contacts/UseCase/GetAllContacts'
 import { FindContact } from './../Contacts/UseCase/FindContact'
-import { GetUntrustedPayload } from './../AsymmetricMessage/UseCase/GetUntrustedPayload'
-import { GetTrustedPayload } from './../AsymmetricMessage/UseCase/GetTrustedPayload'
 import { SendVaultDataChangedMessage } from './UseCase/SendVaultDataChangedMessage'
 import { NotifyVaultUsersOfKeyRotation } from './UseCase/NotifyVaultUsersOfKeyRotation'
 import { HandleKeyPairChange } from './../Contacts/UseCase/HandleKeyPairChange'
 import { CreateSharedVault } from './UseCase/CreateSharedVault'
 import { GetVault } from './../Vaults/UseCase/GetVault'
-import { SharedVaultInvitesServer } from '@standardnotes/api'
 import { SharedVaultService } from './SharedVaultService'
 import { SyncServiceInterface } from '../Sync/SyncServiceInterface'
 import { ItemManagerInterface } from '../Item/ItemManagerInterface'
@@ -40,56 +31,37 @@ describe('SharedVaultService', () => {
     const encryption = {} as jest.Mocked<EncryptionProviderInterface>
     const session = {} as jest.Mocked<SessionsClientInterface>
     const vaults = {} as jest.Mocked<VaultServiceInterface>
-    const invitesServer = {} as jest.Mocked<SharedVaultInvitesServer>
     const getVault = {} as jest.Mocked<GetVault>
     const createSharedVaultUseCase = {} as jest.Mocked<CreateSharedVault>
     const handleKeyPairChange = {} as jest.Mocked<HandleKeyPairChange>
     const notifyVaultUsersOfKeyRotation = {} as jest.Mocked<NotifyVaultUsersOfKeyRotation>
     const sendVaultDataChangeMessage = {} as jest.Mocked<SendVaultDataChangedMessage>
-    const getTrustedPayload = {} as jest.Mocked<GetTrustedPayload>
-    const getUntrustedPayload = {} as jest.Mocked<GetUntrustedPayload>
     const findContact = {} as jest.Mocked<FindContact>
-    const getAllContacts = {} as jest.Mocked<GetAllContacts>
-    const getVaultContacts = {} as jest.Mocked<GetVaultContacts>
-    const acceptVaultInvite = {} as jest.Mocked<AcceptVaultInvite>
-    const inviteToVault = {} as jest.Mocked<InviteToVault>
-    const leaveVault = {} as jest.Mocked<LeaveVault>
     const deleteThirdPartyVault = {} as jest.Mocked<DeleteThirdPartyVault>
     const shareContactWithVault = {} as jest.Mocked<ShareContactWithVault>
     const convertToSharedVault = {} as jest.Mocked<ConvertToSharedVault>
     const deleteSharedVaultUseCase = {} as jest.Mocked<DeleteSharedVault>
-    const removeVaultMember = {} as jest.Mocked<RemoveVaultMember>
-    const getSharedVaultUsersUseCase = {} as jest.Mocked<GetVaultUsers>
+    const isVaultAdmin = {} as jest.Mocked<IsVaultAdmin>
 
     const eventBus = {} as jest.Mocked<InternalEventBusInterface>
     eventBus.addEventHandler = jest.fn()
 
     service = new SharedVaultService(
-      sync,
       items,
       encryption,
       session,
       vaults,
-      invitesServer,
       getVault,
       createSharedVaultUseCase,
       handleKeyPairChange,
       notifyVaultUsersOfKeyRotation,
       sendVaultDataChangeMessage,
-      getTrustedPayload,
-      getUntrustedPayload,
       findContact,
-      getAllContacts,
-      getVaultContacts,
-      acceptVaultInvite,
-      inviteToVault,
-      leaveVault,
       deleteThirdPartyVault,
       shareContactWithVault,
       convertToSharedVault,
       deleteSharedVaultUseCase,
-      removeVaultMember,
-      getSharedVaultUsersUseCase,
+      isVaultAdmin,
       eventBus,
     )
   })

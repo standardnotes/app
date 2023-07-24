@@ -97,6 +97,14 @@ export class AppContext {
     return this.application.sharedVaults
   }
 
+  get vaultUsers() {
+    return this.application.vaultUsers
+  }
+
+  get vaultInvites() {
+    return this.application.vaultInvites
+  }
+
   get files() {
     return this.application.files
   }
@@ -204,16 +212,6 @@ export class AppContext {
     return new Promise((resolve) => {
       this.keyRecovery.addEventObserver((_eventName, keys) => {
         if (Uuids(keys).includes(uuid)) {
-          resolve()
-        }
-      })
-    })
-  }
-
-  resolveWhenSharedVaultUserKeysResolved() {
-    return new Promise((resolve) => {
-      this.application.vaults.collaboration.addEventObserver((eventName) => {
-        if (eventName === SharedVaultServiceEvent.SharedVaultStatusChanged) {
           resolve()
         }
       })
@@ -394,7 +392,7 @@ export class AppContext {
 
   resolveWhenAllInboundSharedVaultInvitesAreDeleted() {
     return new Promise((resolve) => {
-      const objectToSpy = this.application.sharedVaults.invitesServer
+      const objectToSpy = this.application.vaultInvites.invitesServer
       sinon.stub(objectToSpy, 'deleteAllInboundInvites').callsFake(async (params) => {
         objectToSpy.deleteAllInboundInvites.restore()
         const result = await objectToSpy.deleteAllInboundInvites(params)

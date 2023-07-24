@@ -26,13 +26,13 @@ export const createTrustedContactForUserOfContext = async (
 }
 
 export const acceptAllInvites = async (context) => {
-  const inviteRecords = context.sharedVaults.getCachedPendingInviteRecords()
+  const inviteRecords = context.vaultInvites.getCachedPendingInviteRecords()
   if (inviteRecords.length === 0) {
     throw new Error('No pending invites to accept')
   }
 
   for (const record of inviteRecords) {
-    await context.sharedVaults.acceptPendingSharedVaultInvite(record)
+    await context.vaultInvites.acceptInvite(record)
   }
 }
 
@@ -76,7 +76,7 @@ export const createSharedVaultWithUnacceptedButTrustedInvite = async (
   const contact = await createTrustedContactForUserOfContext(context, contactContext)
   await createTrustedContactForUserOfContext(contactContext, context)
 
-  const invite = (await context.sharedVaults.inviteContactToSharedVault(sharedVault, contact, permissions)).getValue()
+  const invite = (await context.vaultInvites.inviteContactToSharedVault(sharedVault, contact, permissions)).getValue()
   await contactContext.sync()
 
   return { sharedVault, contact, contactContext, deinitContactContext, invite }
@@ -91,7 +91,7 @@ export const createSharedVaultWithUnacceptedAndUntrustedInvite = async (
   const { contactContext, deinitContactContext } = await createContactContext()
   const contact = await createTrustedContactForUserOfContext(context, contactContext)
 
-  const invite = (await context.sharedVaults.inviteContactToSharedVault(sharedVault, contact, permissions)).getValue()
+  const invite = (await context.vaultInvites.inviteContactToSharedVault(sharedVault, contact, permissions)).getValue()
   await contactContext.sync()
 
   return { sharedVault, contact, contactContext, deinitContactContext, invite }
@@ -103,7 +103,7 @@ export const inviteNewPartyToSharedVault = async (context, sharedVault, permissi
 
   const thirdPartyContact = await createTrustedContactForUserOfContext(context, thirdPartyContext)
   await createTrustedContactForUserOfContext(thirdPartyContext, context)
-  await context.sharedVaults.inviteContactToSharedVault(sharedVault, thirdPartyContact, permissions)
+  await context.vaultInvites.inviteContactToSharedVault(sharedVault, thirdPartyContact, permissions)
 
   await thirdPartyContext.sync()
 

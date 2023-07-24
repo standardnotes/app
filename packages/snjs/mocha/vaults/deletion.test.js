@@ -90,7 +90,7 @@ describe('shared vault deletion', function () {
     const contactNote = contactContext.items.findItem(note.uuid)
     expect(contactNote).to.not.be.undefined
 
-    await context.sharedVaults.removeUserFromSharedVault(sharedVault, contactContext.userUuid)
+    await context.vaultUsers.removeUserFromSharedVault(sharedVault, contactContext.userUuid)
 
     await contactContext.sync()
 
@@ -108,7 +108,7 @@ describe('shared vault deletion', function () {
     expect(originalNote).to.not.be.undefined
 
     const contactVault = contactContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })
-    await contactContext.sharedVaults.leaveSharedVault(contactVault)
+    await contactContext.vaultUsers.leaveSharedVault(contactVault)
 
     const updatedContactNote = contactContext.items.findItem(note.uuid)
     expect(updatedContactNote).to.be.undefined
@@ -140,14 +140,13 @@ describe('shared vault deletion', function () {
     const { sharedVault, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithAcceptedInvite(context)
 
-    const originalSharedVaultUsers = await sharedVaults.getSharedVaultUsers(sharedVault)
+    const originalSharedVaultUsers = await context.vaultUsers.getSharedVaultUsers(sharedVault)
     expect(originalSharedVaultUsers.length).to.equal(2)
 
-    const result = await sharedVaults.removeUserFromSharedVault(sharedVault, contactContext.userUuid)
+    const result = await context.vaultUsers.removeUserFromSharedVault(sharedVault, contactContext.userUuid)
+    expect(result.isFailed()).to.be.false
 
-    expect(isClientDisplayableError(result)).to.be.false
-
-    const updatedSharedVaultUsers = await sharedVaults.getSharedVaultUsers(sharedVault)
+    const updatedSharedVaultUsers = await context.vaultUsers.getSharedVaultUsers(sharedVault)
     expect(updatedSharedVaultUsers.length).to.equal(1)
 
     await deinitContactContext()

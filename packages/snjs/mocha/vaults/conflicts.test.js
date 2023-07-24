@@ -28,7 +28,7 @@ describe('shared vault conflicts', function () {
       await Collaboration.createSharedVaultWithAcceptedInviteAndNote(context)
 
     contactContext.lockSyncing()
-    await context.sharedVaults.removeUserFromSharedVault(sharedVault, contactContext.userUuid)
+    await context.vaultUsers.removeUserFromSharedVault(sharedVault, contactContext.userUuid)
     const promise = contactContext.resolveWithConflicts()
     contactContext.unlockSyncing()
     await contactContext.changeNoteTitleAndSync(note, 'new title')
@@ -98,7 +98,7 @@ describe('shared vault conflicts', function () {
     const { sharedVault, note, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithAcceptedInviteAndNote(context)
 
-    await context.sharedVaults.removeUserFromSharedVault(sharedVault, contactContext.userUuid)
+    await context.vaultUsers.removeUserFromSharedVault(sharedVault, contactContext.userUuid)
     await contactContext.changeNoteTitleAndSync(note, 'new title')
     const notes = contactContext.notes
 

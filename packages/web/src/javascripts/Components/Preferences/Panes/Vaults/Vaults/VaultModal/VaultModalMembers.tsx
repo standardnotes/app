@@ -20,18 +20,18 @@ export const VaultModalMembers = ({
   const removeMemberFromVault = useCallback(
     async (memberItem: SharedVaultUserServerHash) => {
       if (vault.isSharedVaultListing()) {
-        await application.sharedVaults.removeUserFromSharedVault(vault, memberItem.user_uuid)
+        await application.vaultUsers.removeUserFromSharedVault(vault, memberItem.user_uuid)
         onChange()
       }
     },
-    [application.sharedVaults, vault, onChange],
+    [application.vaultUsers, vault, onChange],
   )
 
   return (
     <div className="mb-3">
       <div className="mb-3 text-lg">Vault Members</div>
       {members.map((member) => {
-        if (application.sharedVaults.isSharedVaultUserSharedVaultOwner(member)) {
+        if (application.vaultUsers.isVaultUserOwner(member)) {
           return null
         }
 
