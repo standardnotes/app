@@ -71,6 +71,7 @@ export class ReceivedSharedItemsHandler {
   }
 
   deinit() {
+    ReceiveSharingIntent.clearFileNames()
     this.receivedItemsQueue = []
     this.eventSub?.remove()
   }
@@ -100,17 +101,13 @@ export class ReceivedSharedItemsHandler {
   }
 
   handleItemsQueue = async () => {
-    if (!this.receivedItemsQueue.length) {
-      return
-    }
-
     const item = this.receivedItemsQueue.shift()
     if (!item) {
       return
     }
 
     if (isReceivedAndroidFile(item) || isReceivedIosFile(item)) {
-      this.sendFileToWebView(item).catch(console.error)
+      await this.sendFileToWebView(item).catch(console.error)
     } else if (isReceivedWeblink(item)) {
       this.webViewRef.current?.postMessage(
         JSON.stringify({
@@ -132,6 +129,14 @@ export class ReceivedSharedItemsHandler {
           },
         }),
       )
+    }
+
+    if (!this.receivedItemsQueue.length) {
+      if (Platform.OS === 'ios') {
+        ReceiveSharingIntent.clearFileNames()
+      }
+
+      return
     }
 
     this.handleItemsQueue().catch(console.error)
@@ -157,7 +162,12 @@ export class ReceivedSharedItemsHandler {
   private addSharedItemsToQueue = async (url?: string) => {
     const received =
       Platform.OS === 'ios' ? await ReceiveSharingIntent.getFileNames(url) : await ReceiveSharingIntent.getFileNames()
-    ReceiveSharingIntent.clearFileNames()
+
+    // On iOS, we need to wait for the whole queue
+    // to finish before clearing
+    if (Platform.OS === 'android') {
+      ReceiveSharingIntent.clearFileNames()
+    }
 
     if (!received) {
       return

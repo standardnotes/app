@@ -118,7 +118,18 @@ class ReceiveSharingIntent: NSObject {
   
   @objc
   func clearFileNames(){
-    print("clearFileNames");
+    let containerURL = FileManager.default
+      .containerURL(forSecurityApplicationGroupIdentifier: "group.\(Bundle.main.bundleIdentifier!)")!
+    let shareTempDirPath = containerURL.appendingPathComponent("ShareTemp", isDirectory: true)
+    do {
+      let fileNames = try FileManager.default.contentsOfDirectory(atPath: shareTempDirPath.relativePath)
+      for fileName in fileNames {
+        let filePath = shareTempDirPath.appendingPathComponent(fileName)
+        try FileManager.default.removeItem(at: filePath)
+      }
+    } catch {
+      print(error)
+    }
   }
   
   
