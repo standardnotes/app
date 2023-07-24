@@ -241,6 +241,7 @@ export class VaultInviteService
         const trustedMessage = this._getTrustedPayload.execute<AsymmetricMessageSharedVaultInvite>({
           message: invite,
           privateKey: this.encryption.getKeyPair().privateKey,
+          ownUserUuid: this.session.userUuid,
           sender: sender.getValue(),
         })
 

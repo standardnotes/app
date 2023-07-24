@@ -650,9 +650,10 @@ export class Dependencies {
 
     this.factory.set(TYPES.AsymmetricMessageService, () => {
       return new AsymmetricMessageService(
-        this.get(TYPES.AsymmetricMessageServer),
         this.get(TYPES.EncryptionService),
         this.get(TYPES.MutatorService),
+        this.get(TYPES.SessionManager),
+        this.get(TYPES.AsymmetricMessageServer),
         this.get(TYPES.CreateOrEditContact),
         this.get(TYPES.FindContact),
         this.get(TYPES.GetAllContacts),

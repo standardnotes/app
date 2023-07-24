@@ -27,7 +27,32 @@ describe('asymmetric messages', function () {
   })
 
   it('should not trust message if the trusted payload data recipientUuid does not match the message user uuid', async () => {
-    console.error('TODO: implement')
+    const { sharedVault, contactContext, deinitContactContext } =
+      await Collaboration.createSharedVaultWithAcceptedInvite(context)
+
+    contactContext.lockSyncing()
+
+    await context.vaults.changeVaultNameAndDescription(sharedVault, {
+      name: 'new vault name',
+      description: 'new vault description',
+    })
+
+    Object.defineProperty(contactContext.asymmetric.sessions, 'userUuid', {
+      get: () => 'invalid user uuid',
+    })
+
+    const completedProcessingMessagesPromise = contactContext.resolveWhenAsymmetricMessageProcessingCompletes()
+
+    contactContext.unlockSyncing()
+    await contactContext.sync()
+    await completedProcessingMessagesPromise
+
+    const updatedVault = contactContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })
+
+    expect(updatedVault.name).to.not.equal('new vault name')
+    expect(updatedVault.description).to.not.equal('new vault description')
+
+    await deinitContactContext()
   })
 
   it('should delete message after processing it', async () => {
