@@ -144,7 +144,7 @@ export class ReceivedSharedItemsHandler {
 
   sendFileToWebView = async (item: ReceivedAndroidFile | ReceivedIosFile) => {
     const path = isReceivedAndroidFile(item) ? item.contentUri : item.path
-    const data = await readFile(path, 'base64')
+    const data = await readFile(decodeURIComponent(path), 'base64')
     const file = {
       name: item.fileName || item.path,
       data,
