@@ -578,9 +578,11 @@ export class AppContext {
   }
 
   async changeNoteTitle(note, title) {
-    return this.application.mutator.changeNote(note, (mutator) => {
+    await this.application.mutator.changeNote(note, (mutator) => {
       mutator.title = title
     })
+
+    return this.findItem(note.uuid)
   }
 
   async changeNoteTitleAndSync(note, title) {

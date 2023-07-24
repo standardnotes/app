@@ -89,7 +89,7 @@ describe('asymmetric messages', function () {
     await contactContext.sync()
     await completedProcessingMessagesPromise
 
-    const updatedContact = contactContext.contacts.findTrustedContact(thirdPartyContext.userUuid)
+    const updatedContact = contactContext.contacts.findContact(thirdPartyContext.userUuid)
     expect(updatedContact.name).to.equal('Changed 3rd Party Name')
 
     await deinitContactContext()
@@ -228,7 +228,7 @@ describe('asymmetric messages', function () {
     expect(firstPartySpy.callCount).to.equal(0)
     expect(secondPartySpy.callCount).to.equal(1)
 
-    const contact = contactContext.contacts.findTrustedContact(context.userUuid)
+    const contact = contactContext.contacts.findContact(context.userUuid)
     expect(contact.publicKeySet.encryption).to.equal(context.publicKey)
     expect(contact.publicKeySet.signing).to.equal(context.signingPublicKey)
 
@@ -294,7 +294,7 @@ describe('asymmetric messages', function () {
     const { contactContext, deinitContactContext } = await Collaboration.createContactContext()
     await Collaboration.createTrustedContactForUserOfContext(context, contactContext)
     await Collaboration.createTrustedContactForUserOfContext(contactContext, context)
-    const originalContact = contactContext.contacts.findTrustedContact(context.userUuid)
+    const originalContact = contactContext.contacts.findContact(context.userUuid)
 
     await context.changePassword('new_password')
 
@@ -302,7 +302,7 @@ describe('asymmetric messages', function () {
     await contactContext.sync()
     await completedProcessingMessagesPromise
 
-    const updatedContact = contactContext.contacts.findTrustedContact(context.userUuid)
+    const updatedContact = contactContext.contacts.findContact(context.userUuid)
 
     expect(updatedContact.publicKeySet.encryption).to.not.equal(originalContact.publicKeySet.encryption)
     expect(updatedContact.publicKeySet.signing).to.not.equal(originalContact.publicKeySet.signing)
@@ -352,7 +352,7 @@ describe('asymmetric messages', function () {
     await contactContext.sync()
     await completedProcessingMessagesPromise
 
-    const updatedContact = contactContext.contacts.findTrustedContact(context.userUuid)
+    const updatedContact = contactContext.contacts.findContact(context.userUuid)
     expect(updatedContact.publicKeySet.encryption).to.equal(newKeyPair.publicKey)
     expect(updatedContact.publicKeySet.signing).to.equal(newSigningKeyPair.publicKey)
 

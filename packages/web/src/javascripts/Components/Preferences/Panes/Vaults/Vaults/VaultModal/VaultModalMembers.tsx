@@ -35,7 +35,7 @@ export const VaultModalMembers = ({
           return null
         }
 
-        const contact = application.contacts.findTrustedContactForServerUser(member)
+        const contact = application.contacts.findContactForServerUser(member)
         return (
           <div
             key={contact?.uuid || member.user_uuid}

@@ -180,7 +180,7 @@ export class ContactService
     return this._getAllContacts.execute().getValue()
   }
 
-  findTrustedContact(userUuid: string): TrustedContactInterface | undefined {
+  findContact(userUuid: string): TrustedContactInterface | undefined {
     const result = this._findContact.execute({ userUuid })
     if (result.isFailed()) {
       return undefined
@@ -188,12 +188,12 @@ export class ContactService
     return result.getValue()
   }
 
-  findTrustedContactForServerUser(user: SharedVaultUserServerHash): TrustedContactInterface | undefined {
-    return this.findTrustedContact(user.user_uuid)
+  findContactForServerUser(user: SharedVaultUserServerHash): TrustedContactInterface | undefined {
+    return this.findContact(user.user_uuid)
   }
 
-  findTrustedContactForInvite(invite: SharedVaultInviteServerHash): TrustedContactInterface | undefined {
-    return this.findTrustedContact(invite.sender_uuid)
+  findContactForInvite(invite: SharedVaultInviteServerHash): TrustedContactInterface | undefined {
+    return this.findContact(invite.sender_uuid)
   }
 
   getCollaborationIDForTrustedContact(contact: TrustedContactInterface): string {
@@ -205,7 +205,7 @@ export class ContactService
     })
   }
 
-  isItemAuthenticallySigned(item: DecryptedItemInterface): ItemSignatureValidationResult {
+  getItemSignatureStatus(item: DecryptedItemInterface): ItemSignatureValidationResult {
     return this._validateItemSigner.execute(item)
   }
 

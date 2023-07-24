@@ -29,7 +29,7 @@ const InviteItem = ({ inviteRecord }: Props) => {
   const closeAddContactModal = () => setIsAddContactModalOpen(false)
   const collaborationId = application.contacts.getCollaborationIDFromInvite(inviteRecord.invite)
 
-  const trustedContact = application.contacts.findTrustedContactForInvite(inviteRecord.invite)
+  const trustedContact = application.contacts.findContactForInvite(inviteRecord.invite)
 
   return (
     <>
