@@ -71,6 +71,10 @@ import {
   HistoryServiceInterface,
   InternalEventPublishStrategy,
   EncryptionProviderInterface,
+  VaultUserServiceInterface,
+  VaultInviteServiceInterface,
+  UserEventServiceEvent,
+  VaultServiceEvent,
 } from '@standardnotes/services'
 import {
   PayloadEmitSource,
@@ -1130,7 +1134,15 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.events.addEventHandler(this.dependencies.get(TYPES.UserService), AccountEvent.SignedInOrRegistered)
     this.events.addEventHandler(this.dependencies.get(TYPES.SessionManager), ApiServiceEvent.SessionRefreshed)
 
-    this.events.addEventHandler(this.dependencies.get(TYPES.SharedVaultService), SyncEvent.ReceivedSharedVaultInvites)
+    this.events.addEventHandler(this.dependencies.get(TYPES.VaultInviteService), SyncEvent.ReceivedSharedVaultInvites)
+    this.events.addEventHandler(this.dependencies.get(TYPES.VaultInviteService), SessionEvent.UserKeyPairChanged)
+
+    this.events.addEventHandler(this.dependencies.get(TYPES.SharedVaultService), SessionEvent.UserKeyPairChanged)
+    this.events.addEventHandler(
+      this.dependencies.get(TYPES.SharedVaultService),
+      UserEventServiceEvent.UserEventReceived,
+    )
+    this.events.addEventHandler(this.dependencies.get(TYPES.SharedVaultService), VaultServiceEvent.VaultRootKeyRotated)
     this.events.addEventHandler(this.dependencies.get(TYPES.SharedVaultService), SyncEvent.ReceivedRemoteSharedVaults)
 
     this.events.addEventHandler(
@@ -1332,12 +1344,24 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return this.dependencies.get<HistoryServiceInterface>(TYPES.HistoryManager)
   }
 
-  private get migrations(): MigrationService {
-    return this.dependencies.get<MigrationService>(TYPES.MigrationService)
-  }
-
   public get encryption(): EncryptionProviderInterface {
     return this.dependencies.get<EncryptionProviderInterface>(TYPES.EncryptionService)
+  }
+
+  public get events(): InternalEventBusInterface {
+    return this.dependencies.get<InternalEventBusInterface>(TYPES.InternalEventBus)
+  }
+
+  public get vaultUsers(): VaultUserServiceInterface {
+    return this.dependencies.get<VaultUserServiceInterface>(TYPES.VaultUserService)
+  }
+
+  public get vaultInvites(): VaultInviteServiceInterface {
+    return this.dependencies.get<VaultInviteServiceInterface>(TYPES.VaultInviteService)
+  }
+
+  private get migrations(): MigrationService {
+    return this.dependencies.get<MigrationService>(TYPES.MigrationService)
   }
 
   private get legacyApi(): LegacyApiService {
@@ -1350,10 +1374,6 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
 
   private get sockets(): WebSocketsService {
     return this.dependencies.get<WebSocketsService>(TYPES.WebSocketsService)
-  }
-
-  public get events(): InternalEventBusInterface {
-    return this.dependencies.get<InternalEventBusInterface>(TYPES.InternalEventBus)
   }
 
   private get mfa(): SNMfaService {

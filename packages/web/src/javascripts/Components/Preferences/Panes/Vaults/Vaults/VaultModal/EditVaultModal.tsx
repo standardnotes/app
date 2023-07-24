@@ -54,20 +54,20 @@ const EditVaultModal: FunctionComponent<Props> = ({ onCloseDialog, existingVault
 
     if (existingVault.isSharedVaultListing()) {
       setIsAdmin(
-        existingVault.isSharedVaultListing() && application.sharedVaults.isCurrentUserSharedVaultAdmin(existingVault),
+        existingVault.isSharedVaultListing() && application.vaultUsers.isCurrentUserSharedVaultAdmin(existingVault),
       )
 
-      const users = await application.sharedVaults.getSharedVaultUsers(existingVault)
+      const users = await application.vaultUsers.getSharedVaultUsers(existingVault)
       if (users) {
         setMembers(users)
       }
 
-      const invites = await application.sharedVaults.getOutboundInvites(existingVault)
+      const invites = await application.vaultInvites.getOutboundInvites(existingVault)
       if (!isClientDisplayableError(invites)) {
         setInvites(invites)
       }
     }
-  }, [application.sharedVaults, existingVault])
+  }, [application, existingVault])
 
   useEffect(() => {
     void reloadVaultInfo()

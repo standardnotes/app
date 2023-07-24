@@ -5,7 +5,7 @@ import {
   TrustedContactInterface,
 } from '@standardnotes/models'
 import { AsymmetricMessageServerHash } from '@standardnotes/responses'
-import { GetVaultUsers } from './GetVaultUsers'
+import { GetVaultUsers } from '../../VaultUser/UseCase/GetVaultUsers'
 import { PkcKeyPair } from '@standardnotes/sncrypto-common'
 import { SendMessage } from '../../AsymmetricMessage/UseCase/SendMessage'
 import { EncryptMessage } from '../../Encryption/UseCase/Asymmetric/EncryptMessage'

@@ -10,9 +10,10 @@ import { useCallback, useEffect, useState } from 'react'
 import {
   VaultListingInterface,
   TrustedContactInterface,
-  PendingSharedVaultInviteRecord,
+  InviteRecord,
   ContentType,
   SharedVaultServiceEvent,
+  VaultUserServiceEvent,
 } from '@standardnotes/snjs'
 import VaultItem from './Vaults/VaultItem'
 import Button from '@/Components/Button/Button'
@@ -23,7 +24,7 @@ const Vaults = () => {
   const application = useApplication()
 
   const [vaults, setVaults] = useState<VaultListingInterface[]>([])
-  const [invites, setInvites] = useState<PendingSharedVaultInviteRecord[]>([])
+  const [invites, setInvites] = useState<InviteRecord[]>([])
   const [contacts, setContacts] = useState<TrustedContactInterface[]>([])
 
   const [isAddContactModalOpen, setIsAddContactModalOpen] = useState(false)
@@ -33,7 +34,6 @@ const Vaults = () => {
   const closeVaultModal = () => setIsVaultModalOpen(false)
 
   const vaultService = application.vaults
-  const sharedVaultService = application.sharedVaults
   const contactService = application.contacts
 
   const updateVaults = useCallback(async () => {
@@ -41,8 +41,8 @@ const Vaults = () => {
   }, [vaultService])
 
   const updateInvites = useCallback(async () => {
-    setInvites(sharedVaultService.getCachedPendingInviteRecords())
-  }, [sharedVaultService])
+    setInvites(application.vaultInvites.getCachedPendingInviteRecords())
+  }, [application.vaultInvites])
 
   const updateContacts = useCallback(async () => {
     setContacts(contactService.getAllContacts())
@@ -61,15 +61,29 @@ const Vaults = () => {
   }, [application.sharedVaults, updateAllData])
 
   useEffect(() => {
+    return application.vaultUsers.addEventObserver((event) => {
+      if (event === VaultUserServiceEvent.UsersChanged) {
+        void updateAllData()
+      }
+    })
+  }, [application.vaultUsers, updateAllData])
+
+  useEffect(() => {
+    return application.vaultInvites.addEventObserver(() => {
+      void updateAllData()
+    })
+  }, [application.vaultInvites, updateAllData])
+
+  useEffect(() => {
     return application.streamItems([ContentType.TYPES.VaultListing, ContentType.TYPES.TrustedContact], () => {
       void updateAllData()
     })
   }, [application, updateAllData])
 
   useEffect(() => {
-    void sharedVaultService.downloadInboundInvites()
+    void application.vaultInvites.downloadInboundInvites()
     void updateAllData()
-  }, [updateAllData, sharedVaultService])
+  }, [updateAllData, application.vaultInvites])
 
   const createNewVault = useCallback(async () => {
     setIsVaultModalOpen(true)

@@ -108,6 +108,9 @@ import {
   RootKeyManager,
   ItemsEncryptionService,
   DecryptBackupFile,
+  VaultUserService,
+  IsVaultAdmin,
+  VaultInviteService,
 } from '@standardnotes/services'
 import { ItemManager } from '../../Services/Items/ItemManager'
 import { PayloadManager } from '../../Services/Payloads/PayloadManager'
@@ -202,6 +205,10 @@ export class Dependencies {
         this.get(TYPES.HistoryManager),
         this.get(TYPES.DecryptBackupFile),
       )
+    })
+
+    this.factory.set(TYPES.IsVaultAdmin, () => {
+      return new IsVaultAdmin()
     })
 
     this.factory.set(TYPES.DecryptBackupFile, () => {
@@ -608,6 +615,39 @@ export class Dependencies {
       return new SharedVaultUsersServer(this.get(TYPES.HttpService))
     })
 
+    this.factory.set(TYPES.VaultUserService, () => {
+      return new VaultUserService(
+        this.get(TYPES.SessionManager),
+        this.get(TYPES.VaultService),
+        this.get(TYPES.GetVaultUsers),
+        this.get(TYPES.RemoveVaultMember),
+        this.get(TYPES.IsVaultAdmin),
+        this.get(TYPES.GetVault),
+        this.get(TYPES.LeaveVault),
+        this.get(TYPES.InternalEventBus),
+      )
+    })
+
+    this.factory.set(TYPES.VaultInviteService, () => {
+      return new VaultInviteService(
+        this.get(TYPES.ItemManager),
+        this.get(TYPES.SessionManager),
+        this.get(TYPES.VaultUserService),
+        this.get(TYPES.SyncService),
+        this.get(TYPES.EncryptionService),
+        this.get(TYPES.SharedVaultInvitesServer),
+        this.get(TYPES.GetAllContacts),
+        this.get(TYPES.GetVault),
+        this.get(TYPES.GetVaultContacts),
+        this.get(TYPES.InviteToVault),
+        this.get(TYPES.GetTrustedPayload),
+        this.get(TYPES.GetUntrustedPayload),
+        this.get(TYPES.FindContact),
+        this.get(TYPES.AcceptVaultInvite),
+        this.get(TYPES.InternalEventBus),
+      )
+    })
+
     this.factory.set(TYPES.AsymmetricMessageService, () => {
       return new AsymmetricMessageService(
         this.get(TYPES.AsymmetricMessageServer),
@@ -630,31 +670,21 @@ export class Dependencies {
 
     this.factory.set(TYPES.SharedVaultService, () => {
       return new SharedVaultService(
-        this.get(TYPES.SyncService),
         this.get(TYPES.ItemManager),
         this.get(TYPES.EncryptionService),
         this.get(TYPES.SessionManager),
         this.get(TYPES.VaultService),
-        this.get(TYPES.SharedVaultInvitesServer),
         this.get(TYPES.GetVault),
         this.get(TYPES.CreateSharedVault),
         this.get(TYPES.HandleKeyPairChange),
         this.get(TYPES.NotifyVaultUsersOfKeyRotation),
         this.get(TYPES.SendVaultDataChangedMessage),
-        this.get(TYPES.GetTrustedPayload),
-        this.get(TYPES.GetUntrustedPayload),
         this.get(TYPES.FindContact),
-        this.get(TYPES.GetAllContacts),
-        this.get(TYPES.GetVaultContacts),
-        this.get(TYPES.AcceptVaultInvite),
-        this.get(TYPES.InviteToVault),
-        this.get(TYPES.LeaveVault),
         this.get(TYPES.DeleteThirdPartyVault),
         this.get(TYPES.ShareContactWithVault),
         this.get(TYPES.ConvertToSharedVault),
         this.get(TYPES.DeleteSharedVault),
-        this.get(TYPES.RemoveVaultMember),
-        this.get(TYPES.GetVaultUsers),
+        this.get(TYPES.IsVaultAdmin),
         this.get(TYPES.InternalEventBus),
       )
     })

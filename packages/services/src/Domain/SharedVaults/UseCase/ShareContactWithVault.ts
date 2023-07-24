@@ -8,7 +8,7 @@ import { SendMessage } from '../../AsymmetricMessage/UseCase/SendMessage'
 import { EncryptMessage } from '../../Encryption/UseCase/Asymmetric/EncryptMessage'
 import { Result, UseCaseInterface } from '@standardnotes/domain-core'
 import { FindContact } from '../../Contacts/UseCase/FindContact'
-import { GetVaultUsers } from './GetVaultUsers'
+import { GetVaultUsers } from '../../VaultUser/UseCase/GetVaultUsers'
 
 export class ShareContactWithVault implements UseCaseInterface<void> {
   constructor(

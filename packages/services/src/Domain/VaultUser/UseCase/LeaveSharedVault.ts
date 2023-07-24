@@ -1,6 +1,6 @@
 import { ClientDisplayableError, isErrorResponse } from '@standardnotes/responses'
 import { SharedVaultUsersServerInterface } from '@standardnotes/api'
-import { DeleteThirdPartyVault } from './DeleteExternalSharedVault'
+import { DeleteThirdPartyVault } from '../../SharedVaults/UseCase/DeleteExternalSharedVault'
 import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
 import { SharedVaultListingInterface } from '@standardnotes/models'
 

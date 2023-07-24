@@ -54,9 +54,8 @@ describe('shared vaults', function () {
     const { sharedVault, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithAcceptedInvite(context)
 
-    const result = await context.sharedVaults.removeUserFromSharedVault(sharedVault, contactContext.userUuid)
-
-    expect(result).to.be.undefined
+    const result = await context.vaultUsers.removeUserFromSharedVault(sharedVault, contactContext.userUuid)
+    expect(result.isFailed()).to.be.false
 
     const promise = contactContext.resolveWhenUserMessagesProcessingCompletes()
     await contactContext.sync()

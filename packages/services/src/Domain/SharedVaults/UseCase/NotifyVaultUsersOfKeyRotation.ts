@@ -4,8 +4,8 @@ import { SharedVaultInviteServerHash, isErrorResponse } from '@standardnotes/res
 import { SendVaultKeyChangedMessage } from './SendVaultKeyChangedMessage'
 import { PkcKeyPair } from '@standardnotes/sncrypto-common'
 import { Result, UseCaseInterface } from '@standardnotes/domain-core'
-import { InviteToVault } from './InviteToVault'
-import { GetVaultContacts } from './GetVaultContacts'
+import { InviteToVault } from '../../VaultInvite/UseCase/InviteToVault'
+import { GetVaultContacts } from '../../VaultUser/UseCase/GetVaultContacts'
 import { DecryptOwnMessage } from '../../Encryption/UseCase/Asymmetric/DecryptOwnMessage'
 import { FindContact } from '../../Contacts/UseCase/FindContact'
 

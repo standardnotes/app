@@ -17,10 +17,10 @@ export const VaultModalInvites = ({
 
   const deleteInvite = useCallback(
     async (invite: SharedVaultInviteServerHash) => {
-      await application.sharedVaults.deleteInvite(invite)
+      await application.vaultInvites.deleteInvite(invite)
       onChange()
     },
-    [application.sharedVaults, onChange],
+    [application.vaultInvites, onChange],
   )
 
   return (

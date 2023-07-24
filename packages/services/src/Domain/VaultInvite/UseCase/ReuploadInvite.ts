@@ -1,4 +1,4 @@
-import { DecryptOwnMessage } from './../../Encryption/UseCase/Asymmetric/DecryptOwnMessage'
+import { DecryptOwnMessage } from '../../Encryption/UseCase/Asymmetric/DecryptOwnMessage'
 import { AsymmetricMessageSharedVaultInvite, TrustedContactInterface } from '@standardnotes/models'
 import { SharedVaultInviteServerHash } from '@standardnotes/responses'
 import { PkcKeyPair } from '@standardnotes/sncrypto-common'

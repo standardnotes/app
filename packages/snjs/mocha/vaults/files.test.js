@@ -249,7 +249,7 @@ describe('shared vault files', function () {
     const uploadedFile = await Files.uploadFile(context.files, buffer, 'my-file', 'md', 1000, sharedVault)
     await contactContext.sync()
 
-    await context.sharedVaults.removeUserFromSharedVault(sharedVault, contactContext.userUuid)
+    await context.vaultUsers.removeUserFromSharedVault(sharedVault, contactContext.userUuid)
 
     const file = contactContext.items.findItem(uploadedFile.uuid)
     await Factory.expectThrowsAsync(() => Files.downloadFile(contactContext.files, file), 'Could not download file')

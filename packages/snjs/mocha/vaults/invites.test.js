@@ -8,7 +8,6 @@ describe('shared vault invites', function () {
   this.timeout(Factory.TwentySecondTimeout)
 
   let context
-  let sharedVaults
 
   afterEach(async function () {
     await context.deinit()
@@ -21,8 +20,6 @@ describe('shared vault invites', function () {
     context = await Factory.createAppContextWithRealCrypto()
     await context.launch()
     await context.register()
-
-    sharedVaults = context.sharedVaults
   })
 
   it('should invite contact to vault', async () => {
@@ -31,7 +28,7 @@ describe('shared vault invites', function () {
     const contact = await Collaboration.createTrustedContactForUserOfContext(context, contactContext)
 
     const vaultInvite = (
-      await sharedVaults.inviteContactToSharedVault(sharedVault, contact, SharedVaultPermission.Write)
+      await context.vaultInvites.inviteContactToSharedVault(sharedVault, contact, SharedVaultPermission.Write)
     ).getValue()
 
     expect(vaultInvite).to.not.be.undefined
@@ -49,7 +46,7 @@ describe('shared vault invites', function () {
     const { contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithUnacceptedButTrustedInvite(context)
 
-    const invites = contactContext.sharedVaults.getCachedPendingInviteRecords()
+    const invites = contactContext.vaultInvites.getCachedPendingInviteRecords()
 
     expect(invites[0].trusted).to.be.true
 
@@ -60,7 +57,7 @@ describe('shared vault invites', function () {
     const { contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithUnacceptedAndUntrustedInvite(context)
 
-    const invites = contactContext.sharedVaults.getCachedPendingInviteRecords()
+    const invites = contactContext.vaultInvites.getCachedPendingInviteRecords()
 
     expect(invites[0].trusted).to.be.false
 
@@ -76,7 +73,7 @@ describe('shared vault invites', function () {
       sharedVault,
     )
 
-    const invites = thirdPartyContext.sharedVaults.getCachedPendingInviteRecords()
+    const invites = thirdPartyContext.vaultInvites.getCachedPendingInviteRecords()
 
     const message = invites[0].message
     const delegatedContacts = message.data.trustedContacts
@@ -103,7 +100,7 @@ describe('shared vault invites', function () {
     /** Sync the contact context so that they wouldn't naturally receive changes made before this point */
     await contactContext.sync()
 
-    await sharedVaults.inviteContactToSharedVault(sharedVault, contact, SharedVaultPermission.Write)
+    await context.vaultInvites.inviteContactToSharedVault(sharedVault, contact, SharedVaultPermission.Write)
 
     /** Contact should now sync and expect to find note */
     const promise = contactContext.awaitNextSyncSharedVaultFromScratchEvent()
@@ -125,10 +122,14 @@ describe('shared vault invites', function () {
     const sharedVault = await Collaboration.createSharedVault(context)
 
     const currentContextContact = await Collaboration.createTrustedContactForUserOfContext(context, contactContext)
-    await sharedVaults.inviteContactToSharedVault(sharedVault, currentContextContact, SharedVaultPermission.Write)
+    await context.vaultInvites.inviteContactToSharedVault(
+      sharedVault,
+      currentContextContact,
+      SharedVaultPermission.Write,
+    )
 
-    await contactContext.sharedVaults.downloadInboundInvites()
-    expect(contactContext.sharedVaults.getCachedPendingInviteRecords()[0].trusted).to.be.false
+    await contactContext.vaultInvites.downloadInboundInvites()
+    expect(contactContext.vaultInvites.getCachedPendingInviteRecords()[0].trusted).to.be.false
 
     await deinitContactContext()
   })
@@ -139,14 +140,18 @@ describe('shared vault invites', function () {
     const sharedVault = await Collaboration.createSharedVault(context)
 
     const currentContextContact = await Collaboration.createTrustedContactForUserOfContext(context, contactContext)
-    await sharedVaults.inviteContactToSharedVault(sharedVault, currentContextContact, SharedVaultPermission.Write)
+    await context.vaultInvites.inviteContactToSharedVault(
+      sharedVault,
+      currentContextContact,
+      SharedVaultPermission.Write,
+    )
 
-    await contactContext.sharedVaults.downloadInboundInvites()
-    expect(contactContext.sharedVaults.getCachedPendingInviteRecords()[0].trusted).to.be.false
+    await contactContext.vaultInvites.downloadInboundInvites()
+    expect(contactContext.vaultInvites.getCachedPendingInviteRecords()[0].trusted).to.be.false
 
     await Collaboration.createTrustedContactForUserOfContext(contactContext, context)
 
-    expect(contactContext.sharedVaults.getCachedPendingInviteRecords()[0].trusted).to.be.true
+    expect(contactContext.vaultInvites.getCachedPendingInviteRecords()[0].trusted).to.be.true
 
     await deinitContactContext()
   })
@@ -184,12 +189,12 @@ describe('shared vault invites', function () {
     const { invite, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithUnacceptedButTrustedInvite(context)
 
-    const preInvites = await contactContext.sharedVaults.downloadInboundInvites()
+    const preInvites = await contactContext.vaultInvites.downloadInboundInvites()
     expect(preInvites.length).to.equal(1)
 
-    await sharedVaults.deleteInvite(invite)
+    await context.vaultInvites.deleteInvite(invite)
 
-    const postInvites = await contactContext.sharedVaults.downloadInboundInvites()
+    const postInvites = await contactContext.vaultInvites.downloadInboundInvites()
     expect(postInvites.length).to.equal(0)
 
     await deinitContactContext()
@@ -208,7 +213,7 @@ describe('shared vault invites', function () {
     await contactContext.changePassword('new-password')
     await promise
 
-    const invites = await contactContext.sharedVaults.downloadInboundInvites()
+    const invites = await contactContext.vaultInvites.downloadInboundInvites()
     expect(invites.length).to.equal(0)
 
     await deinitContactContext()

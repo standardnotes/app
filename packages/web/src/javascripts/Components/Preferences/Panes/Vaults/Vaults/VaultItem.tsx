@@ -20,7 +20,7 @@ const VaultItem = ({ vault }: Props) => {
   const [isVaultModalOpen, setIsVaultModalOpen] = useState(false)
   const closeVaultModal = () => setIsVaultModalOpen(false)
 
-  const isAdmin = !vault.isSharedVaultListing() ? true : application.sharedVaults.isCurrentUserSharedVaultAdmin(vault)
+  const isAdmin = !vault.isSharedVaultListing() ? true : application.vaultUsers.isCurrentUserSharedVaultAdmin(vault)
 
   const deleteVault = useCallback(async () => {
     const confirm = await application.alerts.confirm(
@@ -61,11 +61,11 @@ const VaultItem = ({ vault }: Props) => {
       return
     }
 
-    const success = await application.sharedVaults.leaveSharedVault(vault)
+    const success = await application.vaultUsers.leaveSharedVault(vault)
     if (!success) {
       void application.alerts.alert('Unable to leave vault. Please try again.')
     }
-  }, [application.alerts, application.sharedVaults, vault])
+  }, [application, vault])
 
   const convertToSharedVault = useCallback(async () => {
     await application.sharedVaults.convertVaultToSharedVault(vault)
