@@ -1,3 +1,4 @@
+import { DeleteContact } from './UseCase/DeleteContact'
 import { MutatorClientInterface } from './../Mutator/MutatorClientInterface'
 import { UserKeyPairChangedEventData } from './../Session/UserKeyPairChangedEventData'
 import { SessionEvent } from './../Session/SessionEvent'
@@ -21,6 +22,7 @@ import { CreateOrEditContact } from './UseCase/CreateOrEditContact'
 import { EditContact } from './UseCase/EditContact'
 import { GetAllContacts } from './UseCase/GetAllContacts'
 import { EncryptionProviderInterface } from '../Encryption/EncryptionProviderInterface'
+import { Result } from '@standardnotes/domain-core'
 
 export class ContactService
   extends AbstractService<ContactServiceEvent>
@@ -34,6 +36,7 @@ export class ContactService
     private user: UserClientInterface,
     private selfContactManager: SelfContactManager,
     private encryption: EncryptionProviderInterface,
+    private _deleteContact: DeleteContact,
     private _findContact: FindContact,
     private _getAllContacts: GetAllContacts,
     private _createOrEditContact: CreateOrEditContact,
@@ -167,13 +170,8 @@ export class ContactService
     return contact
   }
 
-  async deleteContact(contact: TrustedContactInterface): Promise<void> {
-    if (contact.isMe) {
-      throw new Error('Cannot delete self')
-    }
-
-    await this.mutator.setItemToBeDeleted(contact)
-    await this.sync.sync()
+  async deleteContact(contact: TrustedContactInterface): Promise<Result<void>> {
+    return this._deleteContact.execute({ contact, ownUserUuid: this.session.userUuid })
   }
 
   getAllContacts(): TrustedContactInterface[] {

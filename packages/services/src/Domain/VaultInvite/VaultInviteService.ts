@@ -175,7 +175,10 @@ export class VaultInviteService
     contact: TrustedContactInterface,
     permissions: SharedVaultPermission,
   ): Promise<Result<SharedVaultInviteServerHash>> {
-    const contactsResult = await this._getVaultContacts.execute(sharedVault.sharing.sharedVaultUuid)
+    const contactsResult = await this._getVaultContacts.execute({
+      sharedVaultUuid: sharedVault.sharing.sharedVaultUuid,
+      readFromCache: false,
+    })
     if (contactsResult.isFailed()) {
       return Result.fail(contactsResult.getError())
     }

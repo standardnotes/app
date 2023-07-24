@@ -1,4 +1,4 @@
-import { IsVaultAdmin } from './../VaultUser/UseCase/IsVaultAdmin'
+import { IsVaultOwner } from './../VaultUser/UseCase/IsVaultOwner'
 import { EncryptionProviderInterface } from './../Encryption/EncryptionProviderInterface'
 import { DeleteSharedVault } from './UseCase/DeleteSharedVault'
 import { ConvertToSharedVault } from './UseCase/ConvertToSharedVault'
@@ -41,7 +41,7 @@ describe('SharedVaultService', () => {
     const shareContactWithVault = {} as jest.Mocked<ShareContactWithVault>
     const convertToSharedVault = {} as jest.Mocked<ConvertToSharedVault>
     const deleteSharedVaultUseCase = {} as jest.Mocked<DeleteSharedVault>
-    const isVaultAdmin = {} as jest.Mocked<IsVaultAdmin>
+    const isVaultAdmin = {} as jest.Mocked<IsVaultOwner>
 
     const eventBus = {} as jest.Mocked<InternalEventBusInterface>
     eventBus.addEventHandler = jest.fn()

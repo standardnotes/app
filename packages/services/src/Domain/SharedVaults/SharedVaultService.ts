@@ -18,7 +18,6 @@ import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface
 import { SyncEvent } from '../Event/SyncEvent'
 import { SessionEvent } from '../Session/SessionEvent'
 import { InternalEventInterface } from '../Internal/InternalEventInterface'
-import { VaultServiceInterface } from '../Vaults/VaultServiceInterface'
 import { UserEventServiceEvent, UserEventServiceEventPayload } from '../UserEvent/UserEventServiceEvent'
 import { DeleteThirdPartyVault } from './UseCase/DeleteExternalSharedVault'
 import { DeleteSharedVault } from './UseCase/DeleteSharedVault'
@@ -33,7 +32,8 @@ import { ContentType } from '@standardnotes/domain-core'
 import { HandleKeyPairChange } from '../Contacts/UseCase/HandleKeyPairChange'
 import { FindContact } from '../Contacts/UseCase/FindContact'
 import { EncryptionProviderInterface } from '../Encryption/EncryptionProviderInterface'
-import { IsVaultAdmin } from '../VaultUser/UseCase/IsVaultAdmin'
+import { IsVaultOwner } from '../VaultUser/UseCase/IsVaultOwner'
+import { GetOwnedSharedVaults } from './UseCase/GetOwnedSharedVaults'
 
 export class SharedVaultService
   extends AbstractService<SharedVaultServiceEvent, SharedVaultServiceEventPayload>
@@ -43,9 +43,9 @@ export class SharedVaultService
     private items: ItemManagerInterface,
     private encryption: EncryptionProviderInterface,
     private session: SessionsClientInterface,
-    private vaults: VaultServiceInterface,
     private _getVault: GetVault,
-    private _createSharedVaultUseCase: CreateSharedVault,
+    private _getOwnedSharedVaults: GetOwnedSharedVaults,
+    private _createSharedVault: CreateSharedVault,
     private _handleKeyPairChange: HandleKeyPairChange,
     private _notifyVaultUsersOfKeyRotation: NotifyVaultUsersOfKeyRotation,
     private _sendVaultDataChangeMessage: SendVaultDataChangedMessage,
@@ -53,8 +53,8 @@ export class SharedVaultService
     private _deleteThirdPartyVault: DeleteThirdPartyVault,
     private _shareContactWithVault: ShareContactWithVault,
     private _convertToSharedVault: ConvertToSharedVault,
-    private _deleteSharedVaultUseCase: DeleteSharedVault,
-    private _isVaultAdmin: IsVaultAdmin,
+    private _deleteSharedVault: DeleteSharedVault,
+    private _isVaultAdmin: IsVaultOwner,
     eventBus: InternalEventBusInterface,
   ) {
     super(eventBus)
@@ -81,9 +81,8 @@ export class SharedVaultService
     ;(this.items as unknown) = undefined
     ;(this.encryption as unknown) = undefined
     ;(this.session as unknown) = undefined
-    ;(this.vaults as unknown) = undefined
     ;(this._getVault as unknown) = undefined
-    ;(this._createSharedVaultUseCase as unknown) = undefined
+    ;(this._createSharedVault as unknown) = undefined
     ;(this._handleKeyPairChange as unknown) = undefined
     ;(this._notifyVaultUsersOfKeyRotation as unknown) = undefined
     ;(this._sendVaultDataChangeMessage as unknown) = undefined
@@ -91,7 +90,7 @@ export class SharedVaultService
     ;(this._deleteThirdPartyVault as unknown) = undefined
     ;(this._shareContactWithVault as unknown) = undefined
     ;(this._convertToSharedVault as unknown) = undefined
-    ;(this._deleteSharedVaultUseCase as unknown) = undefined
+    ;(this._deleteSharedVault as unknown) = undefined
     ;(this._isVaultAdmin as unknown) = undefined
   }
 
@@ -173,7 +172,7 @@ export class SharedVaultService
     userInputtedPassword: string | undefined
     storagePreference?: KeySystemRootKeyStorageMode
   }): Promise<VaultListingInterface | ClientDisplayableError> {
-    return this._createSharedVaultUseCase.execute({
+    return this._createSharedVault.execute({
       vaultName: dto.name,
       vaultDescription: dto.description,
       userInputtedPassword: dto.userInputtedPassword,
@@ -185,11 +184,6 @@ export class SharedVaultService
     vault: VaultListingInterface,
   ): Promise<SharedVaultListingInterface | ClientDisplayableError> {
     return this._convertToSharedVault.execute({ vault })
-  }
-
-  private getAllSharedVaults(): SharedVaultListingInterface[] {
-    const vaults = this.vaults.getVaults().filter((vault) => vault.isSharedVaultListing())
-    return vaults as SharedVaultListingInterface[]
   }
 
   private async handleTrustedContactsChange(contacts: TrustedContactInterface[]): Promise<void> {
@@ -220,7 +214,7 @@ export class SharedVaultService
   }
 
   public async deleteSharedVault(sharedVault: SharedVaultListingInterface): Promise<ClientDisplayableError | void> {
-    return this._deleteSharedVaultUseCase.execute({ sharedVault })
+    return this._deleteSharedVault.execute({ sharedVault })
   }
 
   async shareContactWithVaults(contact: TrustedContactInterface): Promise<void> {
@@ -228,14 +222,7 @@ export class SharedVaultService
       throw new Error('Cannot share self contact')
     }
 
-    const ownedVaults = this.getAllSharedVaults().filter((vault) => {
-      return this._isVaultAdmin
-        .execute({
-          sharedVault: vault,
-          userUuid: this.session.userUuid,
-        })
-        .getValue()
-    })
+    const ownedVaults = this._getOwnedSharedVaults.execute({ userUuid: this.session.userUuid }).getValue()
 
     for (const vault of ownedVaults) {
       await this._shareContactWithVault.execute({

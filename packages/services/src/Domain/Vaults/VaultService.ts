@@ -28,6 +28,7 @@ import { AlertService } from '../Alert/AlertService'
 import { ContentType } from '@standardnotes/domain-core'
 import { EncryptionProviderInterface } from '../Encryption/EncryptionProviderInterface'
 import { KeySystemKeyManagerInterface } from '../KeySystem/KeySystemKeyManagerInterface'
+import { GetVaults } from './UseCase/GetVaults'
 
 export class VaultService
   extends AbstractService<VaultServiceEvent, VaultServiceEventPayload[VaultServiceEvent]>
@@ -43,11 +44,12 @@ export class VaultService
     private keys: KeySystemKeyManagerInterface,
     private alerts: AlertService,
     private _getVault: GetVault,
+    private _getVaults: GetVaults,
     private _changeVaultKeyOptions: ChangeVaultKeyOptions,
     private _moveItemsToVault: MoveItemsToVault,
     private _createVault: CreateVault,
-    private _removeItemFromVaultUseCase: RemoveItemFromVault,
-    private _deleteVaultUseCase: DeleteVault,
+    private _removeItemFromVault: RemoveItemFromVault,
+    private _deleteVaultUse: DeleteVault,
     private _rotateVaultKey: RotateVaultKey,
     eventBus: InternalEventBusInterface,
   ) {
@@ -62,9 +64,7 @@ export class VaultService
   }
 
   getVaults(): VaultListingInterface[] {
-    return this.items.getItems<VaultListingInterface>(ContentType.TYPES.VaultListing).sort((a, b) => {
-      return a.name.localeCompare(b.name)
-    })
+    return this._getVaults.execute().getValue()
   }
 
   getLockedvaults(): VaultListingInterface[] {
@@ -166,7 +166,7 @@ export class VaultService
       throw new Error('Attempting to remove item from locked vault')
     }
 
-    await this._removeItemFromVaultUseCase.execute({ item })
+    await this._removeItemFromVault.execute({ item })
     return this.items.findSureItem(item.uuid)
   }
 
@@ -175,7 +175,7 @@ export class VaultService
       throw new Error('Shared vault must be deleted through SharedVaultService')
     }
 
-    const error = await this._deleteVaultUseCase.execute(vault)
+    const error = await this._deleteVaultUse.execute(vault)
 
     if (isClientDisplayableError(error)) {
       return false
@@ -328,11 +328,12 @@ export class VaultService
     ;(this.encryption as unknown) = undefined
     ;(this.alerts as unknown) = undefined
     ;(this._getVault as unknown) = undefined
+    ;(this._getVaults as unknown) = undefined
     ;(this._changeVaultKeyOptions as unknown) = undefined
     ;(this._moveItemsToVault as unknown) = undefined
     ;(this._createVault as unknown) = undefined
-    ;(this._removeItemFromVaultUseCase as unknown) = undefined
-    ;(this._deleteVaultUseCase as unknown) = undefined
+    ;(this._removeItemFromVault as unknown) = undefined
+    ;(this._deleteVaultUse as unknown) = undefined
     ;(this._rotateVaultKey as unknown) = undefined
 
     this.lockMap.clear()

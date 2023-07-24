@@ -11,7 +11,7 @@ import { ClientDisplayableError, SharedVaultUserServerHash, isClientDisplayableE
 import { AbstractService } from './../Service/AbstractService'
 import { VaultUserServiceEvent } from './VaultUserServiceEvent'
 import { Result } from '@standardnotes/domain-core'
-import { IsVaultAdmin } from './UseCase/IsVaultAdmin'
+import { IsVaultOwner } from './UseCase/IsVaultOwner'
 
 export class VaultUserService extends AbstractService<VaultUserServiceEvent> implements VaultUserServiceInterface {
   constructor(
@@ -19,7 +19,7 @@ export class VaultUserService extends AbstractService<VaultUserServiceEvent> imp
     private vaults: VaultServiceInterface,
     private _getVaultUsers: GetVaultUsers,
     private _removeVaultMember: RemoveVaultMember,
-    private _isVaultAdmin: IsVaultAdmin,
+    private _isVaultOwner: IsVaultOwner,
     private _getVault: GetVault,
     private _leaveVault: LeaveVault,
     eventBus: InternalEventBusInterface,
@@ -33,7 +33,7 @@ export class VaultUserService extends AbstractService<VaultUserServiceEvent> imp
     ;(this.vaults as unknown) = undefined
     ;(this._getVaultUsers as unknown) = undefined
     ;(this._removeVaultMember as unknown) = undefined
-    ;(this._isVaultAdmin as unknown) = undefined
+    ;(this._isVaultOwner as unknown) = undefined
     ;(this._getVault as unknown) = undefined
     ;(this._leaveVault as unknown) = undefined
   }
@@ -41,11 +41,19 @@ export class VaultUserService extends AbstractService<VaultUserServiceEvent> imp
   public async getSharedVaultUsers(
     sharedVault: SharedVaultListingInterface,
   ): Promise<SharedVaultUserServerHash[] | undefined> {
-    return this._getVaultUsers.execute({ sharedVaultUuid: sharedVault.sharing.sharedVaultUuid })
+    const result = await this._getVaultUsers.execute({
+      sharedVaultUuid: sharedVault.sharing.sharedVaultUuid,
+      readFromCache: false,
+    })
+    if (result.isFailed()) {
+      return undefined
+    }
+
+    return result.getValue()
   }
 
   public isCurrentUserSharedVaultAdmin(sharedVault: SharedVaultListingInterface): boolean {
-    return this._isVaultAdmin
+    return this._isVaultOwner
       .execute({
         sharedVault,
         userUuid: this.session.userUuid,

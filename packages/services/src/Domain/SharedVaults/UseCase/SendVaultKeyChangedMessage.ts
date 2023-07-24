@@ -32,14 +32,14 @@ export class SendVaultKeyChangedMessage implements UseCaseInterface<void> {
       signing: PkcKeyPair
     }
   }): Promise<Result<void>> {
-    const users = await this.getVaultUsers.execute({ sharedVaultUuid: params.sharedVaultUuid })
-    if (!users) {
+    const users = await this.getVaultUsers.execute({ sharedVaultUuid: params.sharedVaultUuid, readFromCache: false })
+    if (users.isFailed()) {
       return Result.fail('Cannot send root key changed message; users not found')
     }
 
     const errors: string[] = []
 
-    for (const user of users) {
+    for (const user of users.getValue()) {
       if (user.user_uuid === params.senderUuid) {
         continue
       }

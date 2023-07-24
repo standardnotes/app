@@ -29,13 +29,16 @@ export class SendVaultDataChangedMessage implements UseCaseInterface<void> {
       signing: PkcKeyPair
     }
   }): Promise<Result<void>> {
-    const users = await this.getVaultUsers.execute({ sharedVaultUuid: params.vault.sharing.sharedVaultUuid })
-    if (!users) {
+    const users = await this.getVaultUsers.execute({
+      sharedVaultUuid: params.vault.sharing.sharedVaultUuid,
+      readFromCache: false,
+    })
+    if (users.isFailed()) {
       return Result.fail('Cannot send metadata changed message; users not found')
     }
 
     const errors: string[] = []
-    for (const user of users) {
+    for (const user of users.getValue()) {
       if (user.user_uuid === params.senderUuid) {
         continue
       }

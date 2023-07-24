@@ -44,7 +44,10 @@ export class NotifyVaultUsersOfKeyRotation implements UseCaseInterface<void> {
 
     await this.deleteAllInvites(params.sharedVault.sharing.sharedVaultUuid)
 
-    const contacts = await this.getVaultContacts.execute(params.sharedVault.sharing.sharedVaultUuid)
+    const contacts = await this.getVaultContacts.execute({
+      sharedVaultUuid: params.sharedVault.sharing.sharedVaultUuid,
+      readFromCache: false,
+    })
 
     for (const invite of existingInvites.getValue()) {
       const recipient = this.findContact.execute({ userUuid: invite.user_uuid })
