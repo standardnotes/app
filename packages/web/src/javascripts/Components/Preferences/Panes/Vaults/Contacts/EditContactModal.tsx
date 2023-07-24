@@ -30,7 +30,7 @@ const EditContactModal: FunctionComponent<Props> = ({ onCloseDialog, fromInvite,
 
   useEffect(() => {
     if (editContactUuid) {
-      const contact = application.contacts.findTrustedContact(editContactUuid)
+      const contact = application.contacts.findContact(editContactUuid)
       if (!contact) {
         throw new Error(`Contact with uuid ${editContactUuid} not found`)
       }

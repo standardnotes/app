@@ -61,6 +61,7 @@ export const TYPES = {
   ItemsEncryptionService: Symbol.for('ItemsEncryptionService'),
   VaultUserService: Symbol.for('VaultUserService'),
   VaultInviteService: Symbol.for('VaultInviteService'),
+  VaultUserCache: Symbol.for('VaultUserCache'),
 
   // Servers
   RevisionServer: Symbol.for('RevisionServer'),
@@ -94,9 +95,14 @@ export const TYPES = {
   EditContact: Symbol.for('EditContact'),
   ValidateItemSigner: Symbol.for('ValidateItemSigner'),
   GetVault: Symbol.for('GetVault'),
+  GetVaults: Symbol.for('GetVaults'),
+  GetSharedVaults: Symbol.for('GetSharedVaults'),
+  GetOwnedSharedVaults: Symbol.for('GetOwnedSharedVaults'),
   ChangeVaultKeyOptions: Symbol.for('ChangeVaultKeyOptions'),
   MoveItemsToVault: Symbol.for('MoveItemsToVault'),
   CreateVault: Symbol.for('CreateVault'),
+  DeleteContact: Symbol.for('DeleteContact'),
+  ContactBelongsToVault: Symbol.for('ContactBelongsToVault'),
   RemoveItemFromVault: Symbol.for('RemoveItemFromVault'),
   DeleteVault: Symbol.for('DeleteVault'),
   RotateVaultKey: Symbol.for('RotateVaultKey'),
@@ -142,7 +148,7 @@ export const TYPES = {
   EncryptTypeAPayload: Symbol.for('EncryptTypeAPayload'),
   EncryptTypeAPayloadWithKeyLookup: Symbol.for('EncryptTypeAPayloadWithKeyLookup'),
   DecryptBackupFile: Symbol.for('DecryptBackupFile'),
-  IsVaultAdmin: Symbol.for('IsVaultAdmin'),
+  IsVaultOwner: Symbol.for('IsVaultOwner'),
 
   // Mappers
   SessionStorageMapper: Symbol.for('SessionStorageMapper'),

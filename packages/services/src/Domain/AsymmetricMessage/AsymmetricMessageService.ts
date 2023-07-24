@@ -1,3 +1,4 @@
+import { SessionsClientInterface } from './../Session/SessionsClientInterface'
 import { MutatorClientInterface } from './../Mutator/MutatorClientInterface'
 import { AsymmetricMessageServerHash, ClientDisplayableError, isClientDisplayableError } from '@standardnotes/responses'
 import { SyncEvent, SyncEventReceivedAsymmetricMessagesData } from '../Event/SyncEvent'
@@ -39,9 +40,10 @@ export class AsymmetricMessageService
   implements AsymmetricMessageServiceInterface, InternalEventHandlerInterface
 {
   constructor(
-    private messageServer: AsymmetricMessageServer,
     private encryption: EncryptionProviderInterface,
     private mutator: MutatorClientInterface,
+    private sessions: SessionsClientInterface,
+    private messageServer: AsymmetricMessageServer,
     private _createOrEditContact: CreateOrEditContact,
     private _findContact: FindContact,
     private _getAllContacts: GetAllContacts,
@@ -184,10 +186,6 @@ export class AsymmetricMessageService
     message: AsymmetricMessageServerHash,
     payload: AsymmetricMessagePayload,
   ): Promise<void> {
-    if (payload.data.recipientUuid !== message.user_uuid) {
-      return
-    }
-
     if (payload.type === AsymmetricMessagePayloadType.ContactShare) {
       await this.handleTrustedContactShareMessage(message, payload)
     } else if (payload.type === AsymmetricMessagePayloadType.SenderKeypairChanged) {
@@ -225,6 +223,7 @@ export class AsymmetricMessageService
     const result = this._getTrustedPayload.execute({
       privateKey: this.encryption.getKeyPair().privateKey,
       sender: contact.getValue(),
+      ownUserUuid: this.sessions.userUuid,
       message,
     })
 

@@ -109,8 +109,14 @@ import {
   ItemsEncryptionService,
   DecryptBackupFile,
   VaultUserService,
-  IsVaultAdmin,
+  IsVaultOwner,
   VaultInviteService,
+  VaultUserCache,
+  GetVaults,
+  GetSharedVaults,
+  GetOwnedSharedVaults,
+  ContactBelongsToVault,
+  DeleteContact,
 } from '@standardnotes/services'
 import { ItemManager } from '../../Services/Items/ItemManager'
 import { PayloadManager } from '../../Services/Payloads/PayloadManager'
@@ -207,8 +213,8 @@ export class Dependencies {
       )
     })
 
-    this.factory.set(TYPES.IsVaultAdmin, () => {
-      return new IsVaultAdmin()
+    this.factory.set(TYPES.IsVaultOwner, () => {
+      return new IsVaultOwner()
     })
 
     this.factory.set(TYPES.DecryptBackupFile, () => {
@@ -221,6 +227,15 @@ export class Dependencies {
 
     this.factory.set(TYPES.FindContact, () => {
       return new FindContact(this.get(TYPES.ItemManager))
+    })
+
+    this.factory.set(TYPES.DeleteContact, () => {
+      return new DeleteContact(
+        this.get(TYPES.MutatorService),
+        this.get(TYPES.SyncService),
+        this.get(TYPES.GetOwnedSharedVaults),
+        this.get(TYPES.ContactBelongsToVault),
+      )
     })
 
     this.factory.set(TYPES.EditContact, () => {
@@ -246,6 +261,22 @@ export class Dependencies {
 
     this.factory.set(TYPES.GetVault, () => {
       return new GetVault(this.get(TYPES.ItemManager))
+    })
+
+    this.factory.set(TYPES.GetVaults, () => {
+      return new GetVaults(this.get(TYPES.ItemManager))
+    })
+
+    this.factory.set(TYPES.GetSharedVaults, () => {
+      return new GetSharedVaults(this.get(TYPES.GetVaults))
+    })
+
+    this.factory.set(TYPES.GetOwnedSharedVaults, () => {
+      return new GetOwnedSharedVaults(this.get(TYPES.GetSharedVaults), this.get(TYPES.IsVaultOwner))
+    })
+
+    this.factory.set(TYPES.ContactBelongsToVault, () => {
+      return new ContactBelongsToVault(this.get(TYPES.GetVaultUsers))
     })
 
     this.factory.set(TYPES.ChangeVaultKeyOptions, () => {
@@ -453,7 +484,7 @@ export class Dependencies {
     })
 
     this.factory.set(TYPES.GetVaultUsers, () => {
-      return new GetVaultUsers(this.get(TYPES.SharedVaultUsersServer))
+      return new GetVaultUsers(this.get(TYPES.SharedVaultUsersServer), this.get(TYPES.VaultUserCache))
     })
 
     this.factory.set(TYPES.DecryptOwnMessage, () => {
@@ -621,11 +652,15 @@ export class Dependencies {
         this.get(TYPES.VaultService),
         this.get(TYPES.GetVaultUsers),
         this.get(TYPES.RemoveVaultMember),
-        this.get(TYPES.IsVaultAdmin),
+        this.get(TYPES.IsVaultOwner),
         this.get(TYPES.GetVault),
         this.get(TYPES.LeaveVault),
         this.get(TYPES.InternalEventBus),
       )
+    })
+
+    this.factory.set(TYPES.VaultUserCache, () => {
+      return new VaultUserCache()
     })
 
     this.factory.set(TYPES.VaultInviteService, () => {
@@ -650,9 +685,10 @@ export class Dependencies {
 
     this.factory.set(TYPES.AsymmetricMessageService, () => {
       return new AsymmetricMessageService(
-        this.get(TYPES.AsymmetricMessageServer),
         this.get(TYPES.EncryptionService),
         this.get(TYPES.MutatorService),
+        this.get(TYPES.SessionManager),
+        this.get(TYPES.AsymmetricMessageServer),
         this.get(TYPES.CreateOrEditContact),
         this.get(TYPES.FindContact),
         this.get(TYPES.GetAllContacts),
@@ -673,8 +709,8 @@ export class Dependencies {
         this.get(TYPES.ItemManager),
         this.get(TYPES.EncryptionService),
         this.get(TYPES.SessionManager),
-        this.get(TYPES.VaultService),
         this.get(TYPES.GetVault),
+        this.get(TYPES.GetOwnedSharedVaults),
         this.get(TYPES.CreateSharedVault),
         this.get(TYPES.HandleKeyPairChange),
         this.get(TYPES.NotifyVaultUsersOfKeyRotation),
@@ -684,7 +720,7 @@ export class Dependencies {
         this.get(TYPES.ShareContactWithVault),
         this.get(TYPES.ConvertToSharedVault),
         this.get(TYPES.DeleteSharedVault),
-        this.get(TYPES.IsVaultAdmin),
+        this.get(TYPES.IsVaultOwner),
         this.get(TYPES.InternalEventBus),
       )
     })
@@ -698,6 +734,7 @@ export class Dependencies {
         this.get(TYPES.KeySystemKeyManager),
         this.get(TYPES.AlertService),
         this.get(TYPES.GetVault),
+        this.get(TYPES.GetVaults),
         this.get(TYPES.ChangeVaultKeyOptions),
         this.get(TYPES.MoveItemsToVault),
         this.get(TYPES.CreateVault),
@@ -727,6 +764,7 @@ export class Dependencies {
         this.get(TYPES.UserService),
         this.get(TYPES.SelfContactManager),
         this.get(TYPES.EncryptionService),
+        this.get(TYPES.DeleteContact),
         this.get(TYPES.FindContact),
         this.get(TYPES.GetAllContacts),
         this.get(TYPES.CreateOrEditContact),

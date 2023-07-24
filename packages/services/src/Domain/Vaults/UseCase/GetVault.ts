@@ -20,7 +20,7 @@ export class GetVault implements SyncUseCaseInterface<VaultListingInterface> {
     } else {
       const result = vaults.find((listing) => listing.sharing?.sharedVaultUuid === query.sharedVaultUuid) as T
       if (!result) {
-        return Result.fail('Vault not found')
+        return Result.fail('Shared vault not found')
       }
 
       return Result.ok(result)

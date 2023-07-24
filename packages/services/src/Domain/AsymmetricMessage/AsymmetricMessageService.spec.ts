@@ -1,3 +1,4 @@
+import { SessionsClientInterface } from './../Session/SessionsClientInterface'
 import { EncryptionProviderInterface } from './../Encryption/EncryptionProviderInterface'
 import { GetUntrustedPayload } from './UseCase/GetUntrustedPayload'
 import { GetInboundMessages } from './UseCase/GetInboundMessages'
@@ -31,6 +32,7 @@ describe('AsymmetricMessageService', () => {
   let sync: jest.Mocked<SyncServiceInterface>
   let mutator: jest.Mocked<MutatorClientInterface>
   let encryption: jest.Mocked<EncryptionProviderInterface>
+  let sessions: jest.Mocked<SessionsClientInterface>
   let service: AsymmetricMessageService
 
   beforeEach(() => {
@@ -60,9 +62,10 @@ describe('AsymmetricMessageService', () => {
     eventBus.addEventHandler = jest.fn()
 
     service = new AsymmetricMessageService(
-      messageServer,
       encryption,
       mutator,
+      sessions,
+      messageServer,
       createOrEditContact,
       findContact,
       getAllContacts,

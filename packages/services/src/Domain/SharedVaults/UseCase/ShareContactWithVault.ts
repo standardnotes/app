@@ -33,17 +33,18 @@ export class ShareContactWithVault implements UseCaseInterface<void> {
 
     const users = await this.getVaultUsers.execute({
       sharedVaultUuid: params.sharedVault.sharing.sharedVaultUuid,
+      readFromCache: false,
     })
 
-    if (!users) {
+    if (users.isFailed()) {
       return Result.fail('Cannot share contact; shared vault users not found')
     }
 
-    if (users.length === 0) {
+    if (users.getValue().length === 0) {
       return Result.ok()
     }
 
-    for (const vaultUser of users) {
+    for (const vaultUser of users.getValue()) {
       if (vaultUser.user_uuid === params.senderUserUuid) {
         continue
       }

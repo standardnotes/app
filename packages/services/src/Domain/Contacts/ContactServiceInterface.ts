@@ -2,6 +2,7 @@ import { DecryptedItemInterface, TrustedContactInterface } from '@standardnotes/
 import { AbstractService } from '../Service/AbstractService'
 import { SharedVaultInviteServerHash, SharedVaultUserServerHash } from '@standardnotes/responses'
 import { ItemSignatureValidationResult } from './UseCase/Types/ItemSignatureValidationResult'
+import { Result } from '@standardnotes/domain-core'
 
 export enum ContactServiceEvent {}
 
@@ -26,13 +27,13 @@ export interface ContactServiceInterface extends AbstractService<ContactServiceE
     contact: TrustedContactInterface,
     params: { name: string; collaborationID: string },
   ): Promise<TrustedContactInterface>
-  deleteContact(contact: TrustedContactInterface): Promise<void>
+  deleteContact(contact: TrustedContactInterface): Promise<Result<void>>
 
   getAllContacts(): TrustedContactInterface[]
   getSelfContact(): TrustedContactInterface | undefined
-  findTrustedContact(userUuid: string): TrustedContactInterface | undefined
-  findTrustedContactForServerUser(user: SharedVaultUserServerHash): TrustedContactInterface | undefined
-  findTrustedContactForInvite(invite: SharedVaultInviteServerHash): TrustedContactInterface | undefined
+  findContact(userUuid: string): TrustedContactInterface | undefined
+  findContactForServerUser(user: SharedVaultUserServerHash): TrustedContactInterface | undefined
+  findContactForInvite(invite: SharedVaultInviteServerHash): TrustedContactInterface | undefined
 
-  isItemAuthenticallySigned(item: DecryptedItemInterface): ItemSignatureValidationResult
+  getItemSignatureStatus(item: DecryptedItemInterface): ItemSignatureValidationResult
 }
