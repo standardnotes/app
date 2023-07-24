@@ -16,6 +16,7 @@ export interface UIFeatureInterface<F extends UIFeatureDescriptionTypes> {
   get isThemeComponent(): boolean
   get asComponent(): ComponentInterface
   get asFeatureDescription(): F
+  get isNativeFeature(): boolean
   get uniqueIdentifier(): string
   get featureIdentifier(): FeatureIdentifier
   get noteType(): NoteType

@@ -3,6 +3,7 @@ import {
   ComponentPermission,
   EditorFeatureDescription,
   FeatureIdentifier,
+  FindNativeFeature,
   NoteType,
   ThemeDockIcon,
   UIFeatureDescriptionTypes,
@@ -47,6 +48,10 @@ export class UIFeature<F extends UIFeatureDescriptionTypes> implements UIFeature
     }
 
     throw new Error('Cannot cast item to feature description')
+  }
+
+  get isNativeFeature(): boolean {
+    return FindNativeFeature(this.featureIdentifier) !== undefined
   }
 
   get uniqueIdentifier(): string {
