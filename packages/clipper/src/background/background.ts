@@ -1,5 +1,6 @@
 import { runtime, action, browserAction, windows, storage, tabs } from 'webextension-polyfill'
 import { ClipPayload, RuntimeMessage, RuntimeMessageTypes } from '../types/message'
+import { Environment, FetchRequestHandler } from '@standardnotes/snjs'
 
 const isFirefox = navigator.userAgent.indexOf('Firefox/') !== -1
 
@@ -22,6 +23,8 @@ const openPopupAndClipSelection = async (payload: ClipPayload) => {
   void openPopup()
 }
 
+const requestHandler = new FetchRequestHandler('2.202.12', '3.167.10', Environment.Web)
+
 runtime.onMessage.addListener(async (message: RuntimeMessage) => {
   if (message.type === RuntimeMessageTypes.OpenPopupWithSelection) {
     if (!message.payload) {
@@ -32,5 +35,7 @@ runtime.onMessage.addListener(async (message: RuntimeMessage) => {
     return await tabs.captureVisibleTab(undefined, {
       format: 'png',
     })
+  } else if (message.type === RuntimeMessageTypes.RunHttpRequest) {
+    requestHandler.handleRequest(message.payload).catch(console.error)
   }
 })

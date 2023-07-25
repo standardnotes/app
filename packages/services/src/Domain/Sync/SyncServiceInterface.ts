@@ -5,9 +5,12 @@ import { SyncOptions } from './SyncOptions'
 import { AbstractService } from '../Service/AbstractService'
 import { SyncEvent } from '../Event/SyncEvent'
 import { SyncOpStatus } from './SyncOpStatus'
+import { HttpRequest } from '@standardnotes/responses'
 
 export interface SyncServiceInterface extends AbstractService<SyncEvent> {
   sync(options?: Partial<SyncOptions>): Promise<unknown>
+  getSyncHttpRequest(): Promise<HttpRequest | undefined>
+
   isDatabaseLoaded(): boolean
   onNewDatabaseCreated(): Promise<void>
   loadDatabasePayloads(): Promise<void>

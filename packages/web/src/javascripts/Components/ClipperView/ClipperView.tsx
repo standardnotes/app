@@ -7,7 +7,7 @@ import { useApplication } from '../ApplicationProvider'
 import Icon from '../Icon/Icon'
 import Menu from '../Menu/Menu'
 import MenuItem from '../Menu/MenuItem'
-import { storage as extensionStorage, windows } from 'webextension-polyfill'
+import { storage as extensionStorage, runtime, windows } from 'webextension-polyfill'
 import sendMessageToActiveTab from '@standardnotes/clipper/src/utils/sendMessageToActiveTab'
 import { ClipPayload, RuntimeMessageTypes } from '@standardnotes/clipper/src/types/message'
 import { confirmDialog } from '@standardnotes/ui-services'
@@ -230,7 +230,16 @@ const ClipperView = ({
         message: 'Note clipped successfully',
       })
 
-      void application.sync.sync()
+      const syncRequest = await application.sync.getSyncHttpRequest()
+
+      if (syncRequest) {
+        runtime
+          .sendMessage({
+            type: RuntimeMessageTypes.RunHttpRequest,
+            payload: syncRequest,
+          })
+          .catch(console.error)
+      }
     }
 
     void createNoteFromClip()

@@ -1,4 +1,4 @@
-import { ConflictParams, ConflictType } from '@standardnotes/responses'
+import { ConflictParams, ConflictType, HttpRequest } from '@standardnotes/responses'
 import { log, LoggingDomain } from './../../Logging'
 import { AccountSyncOperation } from '@Lib/Services/Sync/Account/Operation'
 import {
@@ -920,6 +920,37 @@ export class SyncService
     })
 
     this.resolvePendingSyncRequestsThatMadeItInTimeOfCurrentRequest(inTimeResolveQueue)
+
+    return undefined
+  }
+
+  async getSyncHttpRequest(options: Partial<SyncOptions> = {}): Promise<HttpRequest | undefined> {
+    const fullyResolvedOptions: SyncOptions = {
+      source: SyncSource.External,
+      ...options,
+    }
+
+    const { items, beginDate, frozenDirtyIndex } = await this.prepareForSync(fullyResolvedOptions)
+
+    const inTimeResolveQueue = this.getPendingRequestsMadeInTimeToPiggyBackOnCurrentRequest()
+
+    if (this.dealloced) {
+      return
+    }
+
+    const latestItems = await this.prepareForSyncExecution(items, inTimeResolveQueue, beginDate, frozenDirtyIndex)
+
+    const online = this.sessionManager.online()
+
+    const { operation } = await this.createSyncOperation(
+      latestItems.map((i) => i.payloadRepresentation()),
+      online,
+      fullyResolvedOptions,
+    )
+
+    if (operation instanceof AccountSyncOperation) {
+      return operation.getHttpRequest()
+    }
 
     return undefined
   }

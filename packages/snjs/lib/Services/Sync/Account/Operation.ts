@@ -3,6 +3,7 @@ import { arrayByDifference, nonSecureRandomIdentifier, subtractFromArray } from 
 import { ServerSyncResponse } from '@Lib/Services/Sync/Account/Response'
 import { ResponseSignalReceiver, SyncSignal } from '@Lib/Services/Sync/Signals'
 import { LegacyApiService } from '../../Api/ApiService'
+import { HttpRequest } from '@standardnotes/responses'
 
 export const SyncUpDownLimit = 150
 
@@ -76,6 +77,18 @@ export class AccountSyncOperation {
     if (!this.done) {
       return this.run()
     }
+  }
+
+  getHttpRequest(): HttpRequest {
+    const payloads = this.popPayloads(this.upLimit)
+
+    return this.apiService.getSyncHttpRequest(
+      payloads,
+      this.options.syncToken,
+      this.options.paginationToken,
+      this.downLimit,
+      this.options.sharedVaultUuids,
+    )
   }
 
   get done() {

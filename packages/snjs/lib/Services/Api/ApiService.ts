@@ -394,6 +394,29 @@ export class LegacyApiService
     return response
   }
 
+  getSyncHttpRequest(
+    payloads: ServerSyncPushContextualPayload[],
+    lastSyncToken: string | undefined,
+    paginationToken: string | undefined,
+    limit: number,
+    sharedVaultUuids?: string[] | undefined,
+  ): HttpRequest {
+    const path = Paths.v1.sync
+    const params = this.params({
+      [ApiEndpointParam.SyncPayloads]: payloads,
+      [ApiEndpointParam.LastSyncToken]: lastSyncToken,
+      [ApiEndpointParam.PaginationToken]: paginationToken,
+      [ApiEndpointParam.SyncDlLimit]: limit,
+      [ApiEndpointParam.SharedVaultUuids]: sharedVaultUuids,
+    })
+    return {
+      url: joinPaths(this.host, path),
+      params,
+      verb: HttpVerb.Post,
+      authentication: this.getSessionAccessToken(),
+    }
+  }
+
   async refreshSession(): Promise<HttpResponse<SessionRenewalResponse>> {
     const preprocessingError = this.preprocessingError()
     if (preprocessingError) {
