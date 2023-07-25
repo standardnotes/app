@@ -2,7 +2,7 @@ import { ClientDisplayableError, isErrorResponse } from '@standardnotes/response
 import { SharedVaultServerInterface } from '@standardnotes/api'
 import { SharedVaultListingInterface } from '@standardnotes/models'
 import { SyncServiceInterface } from '../../Sync/SyncServiceInterface'
-import { DeleteVault } from '../../Vaults/UseCase/DeleteVault'
+import { DeleteVault } from '../../Vault/UseCase/DeleteVault'
 
 export class DeleteSharedVault {
   constructor(

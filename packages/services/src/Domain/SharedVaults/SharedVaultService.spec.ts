@@ -11,7 +11,7 @@ import { SendVaultDataChangedMessage } from './UseCase/SendVaultDataChangedMessa
 import { NotifyVaultUsersOfKeyRotation } from './UseCase/NotifyVaultUsersOfKeyRotation'
 import { HandleKeyPairChange } from './../Contacts/UseCase/HandleKeyPairChange'
 import { CreateSharedVault } from './UseCase/CreateSharedVault'
-import { GetVault } from './../Vaults/UseCase/GetVault'
+import { GetVault } from './../Vault/UseCase/GetVault'
 import { SharedVaultService } from './SharedVaultService'
 import { SyncServiceInterface } from '../Sync/SyncServiceInterface'
 import { ItemManagerInterface } from '../Item/ItemManagerInterface'

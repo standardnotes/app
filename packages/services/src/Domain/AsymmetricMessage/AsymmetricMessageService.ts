@@ -26,7 +26,7 @@ import { UserKeyPairChangedEventData } from '../Session/UserKeyPairChangedEventD
 import { SendOwnContactChangeMessage } from './UseCase/SendOwnContactChangeMessage'
 import { GetOutboundMessages } from './UseCase/GetOutboundMessages'
 import { GetInboundMessages } from './UseCase/GetInboundMessages'
-import { GetVault } from '../Vaults/UseCase/GetVault'
+import { GetVault } from '../Vault/UseCase/GetVault'
 import { AsymmetricMessageServiceInterface } from './AsymmetricMessageServiceInterface'
 import { GetUntrustedPayload } from './UseCase/GetUntrustedPayload'
 import { FindContact } from '../Contacts/UseCase/FindContact'

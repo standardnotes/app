@@ -49,10 +49,6 @@ export class AppContext {
     )
   }
 
-  get vaults() {
-    return this.application.vaults
-  }
-
   get sessions() {
     return this.application.sessions
   }
@@ -95,6 +91,14 @@ export class AppContext {
 
   get sharedVaults() {
     return this.application.sharedVaults
+  }
+
+  get vaults() {
+    return this.application.vaults
+  }
+
+  get vaultLocks() {
+    return this.application.vaultLocks
   }
 
   get vaultUsers() {

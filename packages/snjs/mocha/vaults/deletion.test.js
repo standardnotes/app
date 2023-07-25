@@ -153,6 +153,16 @@ describe('shared vault deletion', function () {
   })
 
   it('being removed from a shared vault should delete respective vault listing', async () => {
-    console.error('TODO: implement test')
+    const { sharedVault, contactContext, deinitContactContext } =
+      await Collaboration.createSharedVaultWithAcceptedInvite(context)
+
+    await context.vaultUsers.removeUserFromSharedVault(sharedVault, contactContext.userUuid)
+
+    await contactContext.sync()
+
+    const vault = contactContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })
+    expect(vault).to.be.undefined
+
+    await deinitContactContext()
   })
 })

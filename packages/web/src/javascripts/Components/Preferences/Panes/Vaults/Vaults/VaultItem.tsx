@@ -72,12 +72,12 @@ const VaultItem = ({ vault }: Props) => {
   }, [application.sharedVaults, vault])
 
   const ensureVaultIsUnlocked = useCallback(async () => {
-    if (!application.vaults.isVaultLocked(vault)) {
+    if (!application.vaultLocks.isVaultLocked(vault)) {
       return true
     }
     const unlocked = await application.vaultDisplayService.unlockVault(vault)
     return unlocked
-  }, [application.vaultDisplayService, application.vaults, vault])
+  }, [application, vault])
 
   const openEditModal = useCallback(async () => {
     if (!(await ensureVaultIsUnlocked())) {
