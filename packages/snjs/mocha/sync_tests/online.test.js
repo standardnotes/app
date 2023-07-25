@@ -1055,7 +1055,7 @@ describe('online syncing', function () {
     await contextB.launch()
     await contextB.signIn()
 
-    const notePayload = Factory.createNotePayload()
+    const notePayload = Factory.createNote()
 
     const rawSyncRequest = await this.application.sync.getRawSyncRequestForExternalUse([notePayload])
     expect(rawSyncRequest).to.be.ok
