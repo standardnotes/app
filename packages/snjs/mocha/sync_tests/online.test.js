@@ -1057,7 +1057,7 @@ describe('online syncing', function () {
 
     const notePayload = Factory.createNotePayload()
 
-    const rawSyncRequest = await this.application.sync.getSyncRequestForExternalUse([notePayload])
+    const rawSyncRequest = await this.application.sync.getRawSyncRequestForExternalUse([notePayload])
     expect(rawSyncRequest).to.be.ok
 
     const response = await this.application.http.runHttp(rawSyncRequest)
