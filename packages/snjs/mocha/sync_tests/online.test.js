@@ -1047,4 +1047,25 @@ describe('online syncing', function () {
 
     await contextB.deinit()
   })
+
+  it('should sync note when running raw sync request for external use', async function () {
+    const contextA = this.context
+    const contextB = await Factory.createAppContextWithFakeCrypto('AppB', contextA.email, contextA.password)
+
+    await contextB.launch()
+    await contextB.signIn()
+
+    const notePayload = Factory.createNotePayload()
+
+    const rawSyncRequest = await this.application.sync.getSyncRequestForExternalUse([notePayload])
+    expect(rawSyncRequest).to.be.ok
+
+    const response = await this.application.http.runHttp(rawSyncRequest)
+    expect(response.status).to.equal(200)
+
+    await contextB.sync()
+
+    const note = contextB.application.items.findItem(notePayload.uuid)
+    expect(note).to.be.ok
+  })
 })
