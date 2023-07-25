@@ -3,7 +3,7 @@ import * as Factory from '../lib/factory.js'
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
-describe.only('vault key management', function () {
+describe('vault key management', function () {
   this.timeout(Factory.TwentySecondTimeout)
 
   let context
