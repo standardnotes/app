@@ -32,6 +32,7 @@ export type RuntimeMessageReturnTypes = {
   [RuntimeMessageTypes.OpenPopupWithSelection]: void
   [RuntimeMessageTypes.StartNodeSelection]: void
   [RuntimeMessageTypes.ToggleScreenshotMode]: void
+  [RuntimeMessageTypes.RunHttpRequest]: void
 }
 
 export type RuntimeMessage =
