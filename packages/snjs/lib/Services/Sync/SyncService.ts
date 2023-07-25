@@ -924,35 +924,24 @@ export class SyncService
     return undefined
   }
 
-  async getSyncHttpRequest(options: Partial<SyncOptions> = {}): Promise<HttpRequest | undefined> {
-    const fullyResolvedOptions: SyncOptions = {
-      source: SyncSource.External,
-      ...options,
-    }
-
-    const { items, beginDate, frozenDirtyIndex } = await this.prepareForSync(fullyResolvedOptions)
-
-    const inTimeResolveQueue = this.getPendingRequestsMadeInTimeToPiggyBackOnCurrentRequest()
-
+  async getRawSyncRequestForExternalUse(
+    items: (DecryptedItemInterface | DeletedItemInterface)[],
+  ): Promise<HttpRequest | undefined> {
     if (this.dealloced) {
       return
     }
 
-    const latestItems = await this.prepareForSyncExecution(items, inTimeResolveQueue, beginDate, frozenDirtyIndex)
-
     const online = this.sessionManager.online()
 
-    const { operation } = await this.createSyncOperation(
-      latestItems.map((i) => i.payloadRepresentation()),
-      online,
-      fullyResolvedOptions,
-    )
-
-    if (operation instanceof AccountSyncOperation) {
-      return operation.getHttpRequest()
+    if (!online) {
+      return
     }
 
-    return undefined
+    const payloads = await this.payloadsByPreparingForServer(items.map((i) => i.payloadRepresentation()))
+    const syncToken = await this.getLastSyncToken()
+    const paginationToken = await this.getPaginationToken()
+
+    return this.apiService.getSyncHttpRequest(payloads, syncToken, paginationToken, 150)
   }
 
   private async handleOfflineResponse(response: OfflineSyncResponse) {

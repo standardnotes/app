@@ -230,7 +230,7 @@ const ClipperView = ({
         message: 'Note clipped successfully',
       })
 
-      const syncRequest = await application.sync.getSyncHttpRequest()
+      const syncRequest = await application.sync.getRawSyncRequestForExternalUse([insertedNote])
 
       if (syncRequest) {
         runtime
@@ -242,7 +242,7 @@ const ClipperView = ({
       }
     }
 
-    void createNoteFromClip()
+    createNoteFromClip().catch(console.error)
   }, [
     application.items,
     application.linkingController,
