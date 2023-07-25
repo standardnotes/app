@@ -117,6 +117,28 @@ describe('shared vault items', function () {
   })
 
   it('adding item to vault while belonging to other vault should move the item to new vault', async () => {
-    console.error('TODO: implement test')
+    const { note, sharedVault, contactContext, contact, deinitContactContext } =
+      await Collaboration.createSharedVaultWithAcceptedInviteAndNote(context)
+
+    const { sharedVault: otherSharedVault } = await Collaboration.createSharedVaultAndInviteContact(
+      context,
+      contactContext,
+      contact,
+    )
+
+    const updatedNote = await Collaboration.moveItemToVault(context, otherSharedVault, note)
+
+    expect(updatedNote.key_system_identifier).to.equal(otherSharedVault.systemIdentifier)
+    expect(updatedNote.shared_vault_uuid).to.equal(otherSharedVault.sharing.sharedVaultUuid)
+
+    await contactContext.sync()
+
+    const receivedNote = contactContext.items.findItem(note.uuid)
+    expect(receivedNote).to.not.be.undefined
+    expect(receivedNote.title).to.equal(note.title)
+    expect(receivedNote.key_system_identifier).to.equal(otherSharedVault.systemIdentifier)
+    expect(receivedNote.shared_vault_uuid).to.equal(otherSharedVault.sharing.sharedVaultUuid)
+
+    await deinitContactContext()
   })
 })

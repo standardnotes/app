@@ -2,7 +2,7 @@ import { SharedVaultListingInterface, VaultListingInterface, VaultListingMutator
 import { ClientDisplayableError, isErrorResponse } from '@standardnotes/responses'
 import { SharedVaultServerInterface } from '@standardnotes/api'
 import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
-import { MoveItemsToVault } from '../../Vaults/UseCase/MoveItemsToVault'
+import { MoveItemsToVault } from '../../Vault/UseCase/MoveItemsToVault'
 import { MutatorClientInterface } from '../../Mutator/MutatorClientInterface'
 
 export class ConvertToSharedVault {

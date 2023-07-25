@@ -61,7 +61,7 @@
       await loadTests(MainRegistry.VaultTests.files);
     }
 
-    if (!MainRegistry.VaultTests.enabled.exclusive) {
+    if (!MainRegistry.VaultTests.enabled || !MainRegistry.VaultTests.enabled.exclusive) {
       await loadTests(MainRegistry.BaseTests);
     }
 

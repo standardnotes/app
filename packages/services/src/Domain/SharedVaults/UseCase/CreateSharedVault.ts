@@ -7,8 +7,8 @@ import {
 import { ClientDisplayableError, isErrorResponse } from '@standardnotes/responses'
 import { SharedVaultServerInterface } from '@standardnotes/api'
 import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
-import { CreateVault } from '../../Vaults/UseCase/CreateVault'
-import { MoveItemsToVault } from '../../Vaults/UseCase/MoveItemsToVault'
+import { CreateVault } from '../../Vault/UseCase/CreateVault'
+import { MoveItemsToVault } from '../../Vault/UseCase/MoveItemsToVault'
 import { MutatorClientInterface } from '../../Mutator/MutatorClientInterface'
 
 export class CreateSharedVault {

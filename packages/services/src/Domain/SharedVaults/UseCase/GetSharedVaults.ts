@@ -1,4 +1,4 @@
-import { GetVaults } from './../../Vaults/UseCase/GetVaults'
+import { GetVaults } from '../../Vault/UseCase/GetVaults'
 import { Result, SyncUseCaseInterface } from '@standardnotes/domain-core'
 import { SharedVaultListingInterface } from '@standardnotes/models'
 

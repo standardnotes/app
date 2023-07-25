@@ -3,7 +3,7 @@ import Modal, { ModalAction } from '@/Components/Modal/Modal'
 import DecoratedInput from '@/Components/Input/DecoratedInput'
 import { useApplication } from '@/Components/ApplicationProvider'
 import {
-  ChangeVaultOptionsDTO,
+  ChangeVaultKeyOptionsDTO,
   KeySystemRootKeyPasswordType,
   KeySystemRootKeyStorageMode,
   SharedVaultInviteServerHash,
@@ -89,7 +89,7 @@ const EditVaultModal: FunctionComponent<Props> = ({ onCloseDialog, existingVault
       const isChangingPasswordType = vault.keyPasswordType !== passwordType
       const isChangingKeyStorageMode = vault.keyStorageMode !== keyStorageMode
 
-      const getPasswordTypeParams = (): ChangeVaultOptionsDTO['newPasswordType'] => {
+      const getPasswordTypeParams = (): ChangeVaultKeyOptionsDTO['newPasswordType'] => {
         if (!isChangingPasswordType) {
           throw new Error('Password type is not changing')
         }
@@ -135,7 +135,6 @@ const EditVaultModal: FunctionComponent<Props> = ({ onCloseDialog, existingVault
       await application.vaults.createRandomizedVault({
         name,
         description,
-        storagePreference: keyStorageMode,
       })
     }
 
@@ -169,7 +168,7 @@ const EditVaultModal: FunctionComponent<Props> = ({ onCloseDialog, existingVault
     [existingVault, handleDialogClose, handleSubmit],
   )
 
-  if (existingVault && application.vaults.isVaultLocked(existingVault)) {
+  if (existingVault && application.vaultLocks.isVaultLocked(existingVault)) {
     return <div>Vault is locked.</div>
   }
 

@@ -5,7 +5,7 @@ import {
   VaultListingInterface,
   VaultListingMutator,
 } from '@standardnotes/models'
-import { ChangeVaultOptionsDTO } from '../ChangeVaultOptionsDTO'
+import { ChangeVaultKeyOptionsDTO } from './ChangeVaultKeyOptionsDTO'
 import { GetVault } from './GetVault'
 import { EncryptionProviderInterface } from '../../Encryption/EncryptionProviderInterface'
 import { KeySystemKeyManagerInterface } from '../../KeySystem/KeySystemKeyManagerInterface'
@@ -19,7 +19,7 @@ export class ChangeVaultKeyOptions {
     private getVault: GetVault,
   ) {}
 
-  async execute(dto: ChangeVaultOptionsDTO): Promise<void> {
+  async execute(dto: ChangeVaultKeyOptionsDTO): Promise<void> {
     const useStorageMode = dto.newKeyStorageMode ?? dto.vault.keyStorageMode
 
     if (dto.newPasswordType) {

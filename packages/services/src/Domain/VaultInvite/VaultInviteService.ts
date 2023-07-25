@@ -9,7 +9,7 @@ import { GetUntrustedPayload } from './../AsymmetricMessage/UseCase/GetUntrusted
 import { GetTrustedPayload } from './../AsymmetricMessage/UseCase/GetTrustedPayload'
 import { InviteRecord } from './InviteRecord'
 import { VaultUserServiceInterface } from './../VaultUser/VaultUserServiceInterface'
-import { GetVault } from './../Vaults/UseCase/GetVault'
+import { GetVault } from '../Vault/UseCase/GetVault'
 import { InviteToVault } from './UseCase/InviteToVault'
 import { GetVaultContacts } from '../VaultUser/UseCase/GetVaultContacts'
 import { SyncServiceInterface } from './../Sync/SyncServiceInterface'

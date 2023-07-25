@@ -1,4 +1,4 @@
-import { SyncServiceInterface } from './../../Sync/SyncServiceInterface'
+import { SyncServiceInterface } from '../../Sync/SyncServiceInterface'
 import { UuidGenerator } from '@standardnotes/utils'
 import {
   KeySystemRootKeyParamsInterface,
