@@ -1,8 +1,9 @@
+import { VaultLockServiceInterface } from './../VaultLock/VaultLockServiceInterface'
 import { LeaveVault } from './UseCase/LeaveSharedVault'
-import { GetVault } from './../Vaults/UseCase/GetVault'
+import { GetVault } from '../Vault/UseCase/GetVault'
 import { InternalEventBusInterface } from './../Internal/InternalEventBusInterface'
 import { RemoveVaultMember } from './UseCase/RemoveSharedVaultMember'
-import { VaultServiceInterface } from './../Vaults/VaultServiceInterface'
+import { VaultServiceInterface } from '../Vault/VaultServiceInterface'
 import { SessionsClientInterface } from './../Session/SessionsClientInterface'
 import { GetVaultUsers } from './UseCase/GetVaultUsers'
 import { SharedVaultListingInterface } from '@standardnotes/models'
@@ -17,6 +18,7 @@ export class VaultUserService extends AbstractService<VaultUserServiceEvent> imp
   constructor(
     private session: SessionsClientInterface,
     private vaults: VaultServiceInterface,
+    private vaultLocks: VaultLockServiceInterface,
     private _getVaultUsers: GetVaultUsers,
     private _removeVaultMember: RemoveVaultMember,
     private _isVaultOwner: IsVaultOwner,
@@ -66,7 +68,7 @@ export class VaultUserService extends AbstractService<VaultUserServiceEvent> imp
       throw new Error('Only vault admins can remove users')
     }
 
-    if (this.vaults.isVaultLocked(sharedVault)) {
+    if (this.vaultLocks.isVaultLocked(sharedVault)) {
       throw new Error('Cannot remove user from locked vault')
     }
 

@@ -1,5 +1,5 @@
 import { VaultListingInterface } from '@standardnotes/models'
-import { ItemManagerInterface } from './../../Item/ItemManagerInterface'
+import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
 import { ContentType, Result, SyncUseCaseInterface } from '@standardnotes/domain-core'
 
 export class GetVault implements SyncUseCaseInterface<VaultListingInterface> {

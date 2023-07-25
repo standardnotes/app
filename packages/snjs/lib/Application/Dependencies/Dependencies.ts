@@ -117,6 +117,7 @@ import {
   GetOwnedSharedVaults,
   ContactBelongsToVault,
   DeleteContact,
+  VaultLockService,
 } from '@standardnotes/services'
 import { ItemManager } from '../../Services/Items/ItemManager'
 import { PayloadManager } from '../../Services/Payloads/PayloadManager'
@@ -650,6 +651,7 @@ export class Dependencies {
       return new VaultUserService(
         this.get(TYPES.SessionManager),
         this.get(TYPES.VaultService),
+        this.get(TYPES.VaultLockService),
         this.get(TYPES.GetVaultUsers),
         this.get(TYPES.RemoveVaultMember),
         this.get(TYPES.IsVaultOwner),
@@ -725,13 +727,22 @@ export class Dependencies {
       )
     })
 
+    this.factory.set(TYPES.VaultLockService, () => {
+      return new VaultLockService(
+        this.get(TYPES.ItemManager),
+        this.get(TYPES.EncryptionService),
+        this.get(TYPES.KeySystemKeyManager),
+        this.get(TYPES.GetVaults),
+        this.get(TYPES.InternalEventBus),
+      )
+    })
+
     this.factory.set(TYPES.VaultService, () => {
       return new VaultService(
         this.get(TYPES.SyncService),
         this.get(TYPES.ItemManager),
         this.get(TYPES.MutatorService),
-        this.get(TYPES.EncryptionService),
-        this.get(TYPES.KeySystemKeyManager),
+        this.get(TYPES.VaultLockService),
         this.get(TYPES.AlertService),
         this.get(TYPES.GetVault),
         this.get(TYPES.GetVaults),

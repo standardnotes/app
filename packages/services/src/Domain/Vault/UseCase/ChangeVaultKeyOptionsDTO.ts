@@ -1,6 +1,6 @@
 import { KeySystemRootKeyPasswordType, KeySystemRootKeyStorageMode, VaultListingInterface } from '@standardnotes/models'
 
-export type ChangeVaultOptionsDTO = {
+export type ChangeVaultKeyOptionsDTO = {
   vault: VaultListingInterface
   newPasswordType:
     | { passwordType: KeySystemRootKeyPasswordType.Randomized }

@@ -75,6 +75,7 @@ import {
   VaultInviteServiceInterface,
   UserEventServiceEvent,
   VaultServiceEvent,
+  VaultLockServiceInterface,
 } from '@standardnotes/services'
 import {
   PayloadEmitSource,
@@ -1324,18 +1325,6 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return this.dependencies.get<HomeServerServiceInterface | undefined>(TYPES.HomeServerService)
   }
 
-  public get vaults(): VaultServiceInterface {
-    return this.dependencies.get<VaultServiceInterface>(TYPES.VaultService)
-  }
-
-  public get contacts(): ContactServiceInterface {
-    return this.dependencies.get<ContactServiceInterface>(TYPES.ContactService)
-  }
-
-  public get sharedVaults(): SharedVaultServiceInterface {
-    return this.dependencies.get<SharedVaultServiceInterface>(TYPES.SharedVaultService)
-  }
-
   public get preferences(): PreferenceServiceInterface {
     return this.dependencies.get<PreferenceServiceInterface>(TYPES.PreferencesService)
   }
@@ -1352,12 +1341,28 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return this.dependencies.get<InternalEventBusInterface>(TYPES.InternalEventBus)
   }
 
+  public get vaults(): VaultServiceInterface {
+    return this.dependencies.get<VaultServiceInterface>(TYPES.VaultService)
+  }
+
+  public get vaultLocks(): VaultLockServiceInterface {
+    return this.dependencies.get<VaultLockServiceInterface>(TYPES.VaultLockService)
+  }
+
   public get vaultUsers(): VaultUserServiceInterface {
     return this.dependencies.get<VaultUserServiceInterface>(TYPES.VaultUserService)
   }
 
   public get vaultInvites(): VaultInviteServiceInterface {
     return this.dependencies.get<VaultInviteServiceInterface>(TYPES.VaultInviteService)
+  }
+
+  public get contacts(): ContactServiceInterface {
+    return this.dependencies.get<ContactServiceInterface>(TYPES.ContactService)
+  }
+
+  public get sharedVaults(): SharedVaultServiceInterface {
+    return this.dependencies.get<SharedVaultServiceInterface>(TYPES.SharedVaultService)
   }
 
   private get migrations(): MigrationService {

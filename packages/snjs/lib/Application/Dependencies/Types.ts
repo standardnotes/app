@@ -62,6 +62,7 @@ export const TYPES = {
   VaultUserService: Symbol.for('VaultUserService'),
   VaultInviteService: Symbol.for('VaultInviteService'),
   VaultUserCache: Symbol.for('VaultUserCache'),
+  VaultLockService: Symbol.for('VaultLockService'),
 
   // Servers
   RevisionServer: Symbol.for('RevisionServer'),

@@ -10,7 +10,7 @@ import {
 } from '@standardnotes/models'
 
 import { ContentType } from '@standardnotes/domain-core'
-import { GetVault } from '../../Vaults/UseCase/GetVault'
+import { GetVault } from '../../Vault/UseCase/GetVault'
 import { EncryptionProviderInterface } from '../../Encryption/EncryptionProviderInterface'
 
 export class HandleRootKeyChangedMessage {
