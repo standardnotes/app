@@ -449,7 +449,7 @@ describe('basic auth', function () {
     }
 
     const mutatorSpy = sinon.spy(this.application.mutator, 'setItemToBeDeleted')
-    const removeItemsSpy = sinon.spy(this.application.items, 'removeItemsLocally')
+    const removeItemsSpy = sinon.spy(this.application.items, 'removeItemsFromMemory')
     const deletePayloadsSpy = sinon.spy(this.application.storage, 'deletePayloadsWithUuids')
 
     await this.context.changePassword('new-password')

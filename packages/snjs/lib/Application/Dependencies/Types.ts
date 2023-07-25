@@ -89,7 +89,7 @@ export const TYPES = {
   GetRevision: Symbol.for('GetRevision'),
   DeleteRevision: Symbol.for('DeleteRevision'),
   ImportDataUseCase: Symbol.for('ImportDataUseCase'),
-  RemoveItemsLocally: Symbol.for('RemoveItemsLocally'),
+  DiscardItemsLocally: Symbol.for('DiscardItemsLocally'),
   FindContact: Symbol.for('FindContact'),
   GetAllContacts: Symbol.for('GetAllContacts'),
   CreateOrEditContact: Symbol.for('CreateOrEditContact'),
@@ -150,6 +150,7 @@ export const TYPES = {
   EncryptTypeAPayloadWithKeyLookup: Symbol.for('EncryptTypeAPayloadWithKeyLookup'),
   DecryptBackupFile: Symbol.for('DecryptBackupFile'),
   IsVaultOwner: Symbol.for('IsVaultOwner'),
+  RemoveItemsFromMemory: Symbol.for('RemoveItemsFromMemory'),
 
   // Mappers
   SessionStorageMapper: Symbol.for('SessionStorageMapper'),

@@ -1,3 +1,4 @@
+import { RemoveItemsFromMemory } from './../Storage/UseCase/RemoveItemsFromMemory'
 import { InternalEventHandlerInterface } from './../Internal/InternalEventHandlerInterface'
 import { MutatorClientInterface } from './../Mutator/MutatorClientInterface'
 import { ApplicationStage } from './../Application/ApplicationStage'
@@ -36,9 +37,18 @@ export class KeySystemKeyManager
     private readonly items: ItemManagerInterface,
     private readonly mutator: MutatorClientInterface,
     private readonly storage: StorageServiceInterface,
+    private readonly _removeItemsFromMemory: RemoveItemsFromMemory,
     eventBus: InternalEventBusInterface,
   ) {
     super(eventBus)
+  }
+
+  public override deinit(): void {
+    ;(this.items as unknown) = undefined
+    ;(this.mutator as unknown) = undefined
+    ;(this.storage as unknown) = undefined
+    ;(this._removeItemsFromMemory as unknown) = undefined
+    super.deinit()
   }
 
   async handleEvent(event: InternalEventInterface): Promise<void> {
@@ -60,9 +70,28 @@ export class KeySystemKeyManager
     const keyPayloads = keyRawPayloads.map((rawPayload) => new DecryptedPayload<KeySystemRootKeyContent>(rawPayload))
 
     const keys = keyPayloads.map((payload) => new KeySystemRootKey(payload))
-    keys.forEach((key) => {
+
+    for (const key of keys) {
       this.rootKeyMemoryCache[key.systemIdentifier] = key
-    })
+    }
+  }
+
+  public getRootKeyFromStorageForVault(
+    keySystemIdentifier: KeySystemIdentifier,
+  ): KeySystemRootKeyInterface | undefined {
+    const payload = this.storage.getValue<DecryptedTransferPayload<KeySystemRootKeyContent>>(
+      this.storageKeyForRootKey(keySystemIdentifier),
+    )
+
+    if (!payload) {
+      return undefined
+    }
+
+    const keyPayload = new DecryptedPayload<KeySystemRootKeyContent>(payload)
+
+    const key = new KeySystemRootKey(keyPayload)
+
+    return key
   }
 
   private storageKeyForRootKey(systemIdentifier: KeySystemIdentifier): string {
@@ -73,17 +102,14 @@ export class KeySystemKeyManager
    * When the key system root key changes, we must re-encrypt all vault items keys
    * with this new key system root key (by simply re-syncing).
    */
-  public async reencryptKeySystemItemsKeysForVault(keySystemIdentifier: KeySystemIdentifier): Promise<void> {
+  public async queueVaultItemsKeysForReencryption(keySystemIdentifier: KeySystemIdentifier): Promise<void> {
     const keySystemItemsKeys = this.getKeySystemItemsKeys(keySystemIdentifier)
     if (keySystemItemsKeys.length > 0) {
       await this.mutator.setItemsDirty(keySystemItemsKeys)
     }
   }
 
-  public intakeNonPersistentKeySystemRootKey(
-    key: KeySystemRootKeyInterface,
-    storage: KeySystemRootKeyStorageMode,
-  ): void {
+  public cacheKey(key: KeySystemRootKeyInterface, storage: KeySystemRootKeyStorageMode): void {
     this.rootKeyMemoryCache[key.systemIdentifier] = key
 
     if (storage === KeySystemRootKeyStorageMode.Local) {
@@ -91,7 +117,7 @@ export class KeySystemKeyManager
     }
   }
 
-  public undoIntakeNonPersistentKeySystemRootKey(systemIdentifier: KeySystemIdentifier): void {
+  public removeKeyFromCache(systemIdentifier: KeySystemIdentifier): void {
     delete this.rootKeyMemoryCache[systemIdentifier]
     void this.storage.removeValue(this.storageKeyForRootKey(systemIdentifier))
   }
@@ -100,11 +126,11 @@ export class KeySystemKeyManager
     return this.items.getItems(ContentType.TYPES.KeySystemRootKey)
   }
 
-  public clearMemoryOfKeysRelatedToVault(vault: VaultListingInterface): void {
+  public async wipeVaultKeysFromMemory(vault: VaultListingInterface): Promise<void> {
     delete this.rootKeyMemoryCache[vault.systemIdentifier]
 
     const itemsKeys = this.getKeySystemItemsKeys(vault.systemIdentifier)
-    this.items.removeItemsLocally(itemsKeys)
+    await this._removeItemsFromMemory.execute(itemsKeys)
   }
 
   public getSyncedKeySystemRootKeysForVault(systemIdentifier: KeySystemIdentifier): KeySystemRootKeyInterface[] {
@@ -129,19 +155,6 @@ export class KeySystemKeyManager
   public async deleteAllSyncedKeySystemRootKeys(systemIdentifier: KeySystemIdentifier): Promise<void> {
     const keys = this.getSyncedKeySystemRootKeysForVault(systemIdentifier)
     await this.mutator.setItemsToBeDeleted(keys)
-  }
-
-  public getKeySystemRootKeyWithToken(
-    systemIdentifier: KeySystemIdentifier,
-    rootKeyToken: string,
-  ): KeySystemRootKeyInterface | undefined {
-    const keys = this.getAllKeySystemRootKeysForVault(systemIdentifier).filter((key) => key.token === rootKeyToken)
-
-    if (keys.length > 1) {
-      throw new Error('Multiple synced key system root keys found for token')
-    }
-
-    return keys[0]
   }
 
   public getPrimaryKeySystemRootKey(systemIdentifier: KeySystemIdentifier): KeySystemRootKeyInterface | undefined {

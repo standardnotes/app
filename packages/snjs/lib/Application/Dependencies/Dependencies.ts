@@ -47,7 +47,7 @@ import {
   IntegrityService,
   InternalEventBus,
   KeySystemKeyManager,
-  RemoveItemsLocally,
+  DiscardItemsLocally,
   RevisionManager,
   SelfContactManager,
   StatusService,
@@ -118,6 +118,7 @@ import {
   ContactBelongsToVault,
   DeleteContact,
   VaultLockService,
+  RemoveItemsFromMemory,
 } from '@standardnotes/services'
 import { ItemManager } from '../../Services/Items/ItemManager'
 import { PayloadManager } from '../../Services/Payloads/PayloadManager'
@@ -222,8 +223,16 @@ export class Dependencies {
       return new DecryptBackupFile(this.get(TYPES.EncryptionService))
     })
 
-    this.factory.set(TYPES.RemoveItemsLocally, () => {
-      return new RemoveItemsLocally(this.get(TYPES.ItemManager), this.get(TYPES.DiskStorageService))
+    this.factory.set(TYPES.DiscardItemsLocally, () => {
+      return new DiscardItemsLocally(this.get(TYPES.ItemManager), this.get(TYPES.DiskStorageService))
+    })
+
+    this.factory.set(TYPES.RemoveItemsFromMemory, () => {
+      return new RemoveItemsFromMemory(
+        this.get(TYPES.DiskStorageService),
+        this.get(TYPES.ItemManager),
+        this.get(TYPES.PayloadManager),
+      )
     })
 
     this.factory.set(TYPES.FindContact, () => {
@@ -442,7 +451,7 @@ export class Dependencies {
         this.get(TYPES.MutatorService),
         this.get(TYPES.KeySystemKeyManager),
         this.get(TYPES.SyncService),
-        this.get(TYPES.RemoveItemsLocally),
+        this.get(TYPES.DiscardItemsLocally),
       )
     })
 
@@ -555,7 +564,7 @@ export class Dependencies {
         this.get(TYPES.MutatorService),
         this.get(TYPES.ItemManager),
         this.get(TYPES.CreateNewDefaultItemsKey),
-        this.get(TYPES.RemoveItemsLocally),
+        this.get(TYPES.DiscardItemsLocally),
         this.get(TYPES.FindDefaultItemsKey),
       )
     })
@@ -723,6 +732,7 @@ export class Dependencies {
         this.get(TYPES.ConvertToSharedVault),
         this.get(TYPES.DeleteSharedVault),
         this.get(TYPES.IsVaultOwner),
+        this.get(TYPES.DiscardItemsLocally),
         this.get(TYPES.InternalEventBus),
       )
     })
@@ -1221,6 +1231,7 @@ export class Dependencies {
         this.get(TYPES.ItemManager),
         this.get(TYPES.MutatorService),
         this.get(TYPES.DiskStorageService),
+        this.get(TYPES.RemoveItemsFromMemory),
         this.get(TYPES.InternalEventBus),
       )
     })

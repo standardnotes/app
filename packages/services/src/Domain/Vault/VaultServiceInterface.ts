@@ -7,6 +7,7 @@ import {
 import { AbstractService } from '../Service/AbstractService'
 import { VaultServiceEvent, VaultServiceEventPayload } from './VaultServiceEvent'
 import { ChangeVaultKeyOptionsDTO } from './UseCase/ChangeVaultKeyOptionsDTO'
+import { Result } from '@standardnotes/domain-core'
 
 export interface VaultServiceInterface
   extends AbstractService<VaultServiceEvent, VaultServiceEventPayload[VaultServiceEvent]> {
@@ -34,6 +35,6 @@ export interface VaultServiceInterface
     vault: VaultListingInterface,
     params: { name: string; description: string },
   ): Promise<VaultListingInterface>
-  rotateVaultRootKey(vault: VaultListingInterface): Promise<void>
-  changeVaultOptions(dto: ChangeVaultKeyOptionsDTO): Promise<void>
+  rotateVaultRootKey(vault: VaultListingInterface, vaultPassword?: string): Promise<void>
+  changeVaultOptions(dto: ChangeVaultKeyOptionsDTO): Promise<Result<void>>
 }

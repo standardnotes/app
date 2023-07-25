@@ -2,7 +2,7 @@ import { SyncServiceInterface } from './../../Sync/SyncServiceInterface'
 import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
 import { AnyItemInterface, VaultListingInterface } from '@standardnotes/models'
 import { MutatorClientInterface } from '../../Mutator/MutatorClientInterface'
-import { RemoveItemsLocally } from '../../UseCase/RemoveItemsLocally'
+import { DiscardItemsLocally } from '../../UseCase/DiscardItemsLocally'
 import { KeySystemKeyManagerInterface } from '../../KeySystem/KeySystemKeyManagerInterface'
 
 export class DeleteThirdPartyVault {
@@ -11,7 +11,7 @@ export class DeleteThirdPartyVault {
     private mutator: MutatorClientInterface,
     private keys: KeySystemKeyManagerInterface,
     private sync: SyncServiceInterface,
-    private removeItemsLocally: RemoveItemsLocally,
+    private _discardItemsLocally: DiscardItemsLocally,
   ) {}
 
   async execute(vault: VaultListingInterface): Promise<void> {
@@ -33,7 +33,7 @@ export class DeleteThirdPartyVault {
 
     const itemsKeys = this.keys.getKeySystemItemsKeys(vault.systemIdentifier)
 
-    await this.removeItemsLocally.execute([...vaultItems, ...itemsKeys])
+    await this._discardItemsLocally.execute([...vaultItems, ...itemsKeys])
   }
 
   private async deleteDataOwnedByThisUser(vault: VaultListingInterface): Promise<void> {

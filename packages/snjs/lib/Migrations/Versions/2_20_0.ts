@@ -18,7 +18,7 @@ export class Migration2_20_0 extends Migration {
     const items = this.services.itemManager.getItems(contentType)
 
     for (const item of items) {
-      this.services.itemManager.removeItemLocally(item)
+      this.services.itemManager.removeItemFromMemory(item)
       await this.services.storageService.deletePayloadWithUuid(item.uuid)
     }
   }

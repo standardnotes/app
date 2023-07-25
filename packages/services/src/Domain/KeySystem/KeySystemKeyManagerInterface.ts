@@ -16,17 +16,13 @@ export interface KeySystemKeyManagerInterface {
   getAllKeySystemRootKeysForVault(systemIdentifier: KeySystemIdentifier): KeySystemRootKeyInterface[]
   getSyncedKeySystemRootKeysForVault(systemIdentifier: KeySystemIdentifier): KeySystemRootKeyInterface[]
   getAllSyncedKeySystemRootKeys(): KeySystemRootKeyInterface[]
-  getKeySystemRootKeyWithToken(
-    systemIdentifier: KeySystemIdentifier,
-    keyIdentifier: string,
-  ): KeySystemRootKeyInterface | undefined
   getPrimaryKeySystemRootKey(systemIdentifier: KeySystemIdentifier): KeySystemRootKeyInterface | undefined
-  reencryptKeySystemItemsKeysForVault(keySystemIdentifier: KeySystemIdentifier): Promise<void>
+  queueVaultItemsKeysForReencryption(keySystemIdentifier: KeySystemIdentifier): Promise<void>
 
-  intakeNonPersistentKeySystemRootKey(key: KeySystemRootKeyInterface, storage: KeySystemRootKeyStorageMode): void
-  undoIntakeNonPersistentKeySystemRootKey(systemIdentifier: KeySystemIdentifier): void
+  cacheKey(key: KeySystemRootKeyInterface, storage: KeySystemRootKeyStorageMode): void
+  removeKeyFromCache(systemIdentifier: KeySystemIdentifier): void
 
-  clearMemoryOfKeysRelatedToVault(vault: VaultListingInterface): void
+  wipeVaultKeysFromMemory(vault: VaultListingInterface): Promise<void>
   deleteNonPersistentSystemRootKeysForVault(systemIdentifier: KeySystemIdentifier): Promise<void>
   deleteAllSyncedKeySystemRootKeys(systemIdentifier: KeySystemIdentifier): Promise<void>
 }

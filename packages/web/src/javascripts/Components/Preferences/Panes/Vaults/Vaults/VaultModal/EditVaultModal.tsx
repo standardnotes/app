@@ -4,7 +4,7 @@ import DecoratedInput from '@/Components/Input/DecoratedInput'
 import { useApplication } from '@/Components/ApplicationProvider'
 import {
   ChangeVaultKeyOptionsDTO,
-  KeySystemRootKeyPasswordType,
+  KeySystemPasswordType,
   KeySystemRootKeyStorageMode,
   SharedVaultInviteServerHash,
   SharedVaultUserServerHash,
@@ -32,9 +32,7 @@ const EditVaultModal: FunctionComponent<Props> = ({ onCloseDialog, existingVault
   const [members, setMembers] = useState<SharedVaultUserServerHash[]>([])
   const [invites, setInvites] = useState<SharedVaultInviteServerHash[]>([])
   const [isAdmin, setIsAdmin] = useState<boolean>(true)
-  const [passwordType, setPasswordType] = useState<KeySystemRootKeyPasswordType>(
-    KeySystemRootKeyPasswordType.Randomized,
-  )
+  const [passwordType, setPasswordType] = useState<KeySystemPasswordType>(KeySystemPasswordType.Randomized)
   const [keyStorageMode, setKeyStorageMode] = useState<KeySystemRootKeyStorageMode>(KeySystemRootKeyStorageMode.Synced)
   const [customPassword, setCustomPassword] = useState<string | undefined>(undefined)
 
@@ -94,7 +92,7 @@ const EditVaultModal: FunctionComponent<Props> = ({ onCloseDialog, existingVault
           throw new Error('Password type is not changing')
         }
 
-        if (passwordType === KeySystemRootKeyPasswordType.UserInputted) {
+        if (passwordType === KeySystemPasswordType.UserInputted) {
           if (!customPassword) {
             throw new Error('Custom password is not set')
           }
@@ -113,7 +111,7 @@ const EditVaultModal: FunctionComponent<Props> = ({ onCloseDialog, existingVault
         await application.vaults.changeVaultOptions({
           vault,
           newPasswordType: isChangingPasswordType ? getPasswordTypeParams() : undefined,
-          newKeyStorageMode: isChangingKeyStorageMode ? keyStorageMode : undefined,
+          newStorageMode: isChangingKeyStorageMode ? keyStorageMode : undefined,
         })
       }
     },
@@ -121,7 +119,7 @@ const EditVaultModal: FunctionComponent<Props> = ({ onCloseDialog, existingVault
   )
 
   const createNewVault = useCallback(async () => {
-    if (passwordType === KeySystemRootKeyPasswordType.UserInputted) {
+    if (passwordType === KeySystemPasswordType.UserInputted) {
       if (!customPassword) {
         throw new Error('Custom key is not set')
       }

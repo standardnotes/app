@@ -1,6 +1,6 @@
 import { ProtocolVersion } from '@standardnotes/common'
 import { KeySystemIdentifier } from '../../Syncable/KeySystemRootKey/KeySystemIdentifier'
-import { KeySystemRootKeyPasswordType } from './KeySystemRootKeyPasswordType'
+import { KeySystemPasswordType } from './KeySystemPasswordType'
 
 /**
  * Key params are public data that contain information about how a root key was created.
@@ -11,6 +11,6 @@ export interface KeySystemRootKeyParamsInterface {
   systemIdentifier: KeySystemIdentifier
   seed: string
   version: ProtocolVersion
-  passwordType: KeySystemRootKeyPasswordType
+  passwordType: KeySystemPasswordType
   creationTimestamp: number
 }

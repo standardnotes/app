@@ -190,7 +190,7 @@ describe('keys', function () {
 
     const itemsKey = this.application.encryption.itemsKeyForEncryptedPayload(encryptedPayload)
 
-    await this.application.items.removeItemLocally(itemsKey)
+    await this.application.items.removeItemFromMemory(itemsKey)
 
     const erroredPayload = await this.application.encryption.decryptSplitSingle({
       usesItemsKeyWithKeyLookup: {
