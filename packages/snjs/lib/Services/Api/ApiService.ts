@@ -374,15 +374,8 @@ export class LegacyApiService
     if (preprocessingError) {
       return preprocessingError
     }
-    const path = Paths.v1.sync
-    const params = this.params({
-      [ApiEndpointParam.SyncPayloads]: payloads,
-      [ApiEndpointParam.LastSyncToken]: lastSyncToken,
-      [ApiEndpointParam.PaginationToken]: paginationToken,
-      [ApiEndpointParam.SyncDlLimit]: limit,
-      [ApiEndpointParam.SharedVaultUuids]: sharedVaultUuids,
-    })
-    const response = await this.httpService.post<RawSyncResponse>(path, params, this.getSessionAccessToken())
+    const request = this.getSyncHttpRequest(payloads, lastSyncToken, paginationToken, limit, sharedVaultUuids)
+    const response = await this.httpService.runHttp<RawSyncResponse>(request)
 
     if (isErrorResponse(response)) {
       this.preprocessAuthenticatedErrorResponse(response)
