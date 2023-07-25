@@ -1,6 +1,7 @@
 import { runtime, action, browserAction, windows, storage, tabs } from 'webextension-polyfill'
 import { ClipPayload, RuntimeMessage, RuntimeMessageTypes } from '../types/message'
-import { Environment, FetchRequestHandler } from '@standardnotes/snjs'
+import { Environment, FetchRequestHandler, SnjsVersion } from '@standardnotes/snjs'
+import packageInfo from '../../package.json'
 
 const isFirefox = navigator.userAgent.indexOf('Firefox/') !== -1
 
@@ -23,7 +24,7 @@ const openPopupAndClipSelection = async (payload: ClipPayload) => {
   void openPopup()
 }
 
-const requestHandler = new FetchRequestHandler('2.202.12', '3.167.10', Environment.Web)
+const requestHandler = new FetchRequestHandler(SnjsVersion, packageInfo.version, Environment.Clipper)
 
 runtime.onMessage.addListener(async (message: RuntimeMessage) => {
   if (message.type === RuntimeMessageTypes.OpenPopupWithSelection) {
