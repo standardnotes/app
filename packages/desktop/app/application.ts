@@ -52,6 +52,8 @@ function focusWindow(appState: AppState) {
 }
 
 function registerSingleInstanceHandler(app: Electron.App, appState: AppState) {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   app.on('second-instance', (_event: Event, argv: string[]) => {
     if (isWindows()) {
       appState.deepLinkUrl = argv.find((arg) => arg.startsWith(deepLinkScheme))
