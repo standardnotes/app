@@ -4377,7 +4377,7 @@ __metadata:
     "@babel/core": "*"
     "@babel/preset-env": "*"
     "@electron/remote": ^2.0.9
-    "@standardnotes/domain-core": ^1.23.4
+    "@standardnotes/domain-core": ^1.24.0
     "@standardnotes/electron-clear-data": 1.1.1
     "@standardnotes/web": "workspace:*"
     "@types/fs-extra": ^11.0.1
@@ -4429,7 +4429,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/domain-core@npm:^1.23.4, @standardnotes/domain-core@npm:^1.24.0":
+"@standardnotes/domain-core@npm:^1.24.0":
   version: 1.24.0
   resolution: "@standardnotes/domain-core@npm:1.24.0"
   dependencies:
