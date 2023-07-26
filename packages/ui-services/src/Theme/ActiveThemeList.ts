@@ -6,7 +6,11 @@ import { Uuid } from '@standardnotes/domain-core'
 export class ActiveThemeList {
   private list: (NativeFeatureIdentifier | Uuid)[] = []
 
-  constructor(private items: ItemManagerInterface) {}
+  constructor(private items: ItemManagerInterface, initialList?: (NativeFeatureIdentifier | Uuid)[]) {
+    if (initialList) {
+      this.list = initialList
+    }
+  }
 
   public getList(): (NativeFeatureIdentifier | Uuid)[] {
     return this.list.slice()
@@ -22,16 +26,8 @@ export class ActiveThemeList {
 
   public has(candidate: NativeFeatureIdentifier | Uuid): boolean {
     for (const entry of this.list) {
-      if (entry instanceof Uuid) {
-        if (entry.equals(candidate)) {
-          return true
-        }
-      }
-
-      if (entry instanceof NativeFeatureIdentifier) {
-        if (entry.equals(candidate)) {
-          return true
-        }
+      if (entry.equals(candidate)) {
+        return true
       }
     }
 

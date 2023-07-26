@@ -86,8 +86,11 @@ export class ThemeManager extends AbstractUIServicee {
 
         const { features, uuids } = this.components.getActiveThemesIdentifiers()
 
+        const featuresList = new ActiveThemeList(this.application.items, features)
+        const uuidsList = new ActiveThemeList(this.application.items, uuids)
+
         for (const active of this.themesActiveInTheUI.getList()) {
-          if (!this.themesActiveInTheUI.has(active)) {
+          if (!featuresList.has(active) && !uuidsList.has(active)) {
             this.deactivateThemeInTheUI(active)
             hasChange = true
           }
@@ -189,13 +192,6 @@ export class ThemeManager extends AbstractUIServicee {
     let hasChange = false
 
     for (const theme of this.themesActiveInTheUI.asThemes()) {
-      if (!theme) {
-        this.deactivateThemeInTheUI(theme)
-        hasChange = true
-
-        continue
-      }
-
       const status = this.application.features.getFeatureStatus(theme.uniqueIdentifier)
       if (status !== FeatureStatus.Entitled) {
         this.deactivateThemeInTheUI(theme.uniqueIdentifier)

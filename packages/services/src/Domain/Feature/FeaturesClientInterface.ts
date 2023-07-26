@@ -6,7 +6,6 @@ import { NativeFeatureIdentifier } from '@standardnotes/features'
 import { Uuid } from '@standardnotes/domain-core'
 
 export interface FeaturesClientInterface {
-  initializeFromDisk(): void
   getFeatureStatus(
     featureId: NativeFeatureIdentifier | Uuid,
     options?: { inContextOfItem?: DecryptedItemInterface },

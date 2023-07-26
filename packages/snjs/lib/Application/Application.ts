@@ -442,11 +442,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
 
     this.sockets.loadWebSocketUrl()
 
-    await this.sessions.initializeFromDisk()
-
     this.settings.initializeFromDisk()
-
-    this.features.initializeFromDisk()
 
     this.launched = true
     await this.notifyEvent(ApplicationEvent.Launched)
@@ -1165,6 +1161,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       )
     }
 
+    this.events.addEventHandler(this.dependencies.get(TYPES.SessionManager), ApplicationEvent.ApplicationStageChanged)
     this.events.addEventHandler(
       this.dependencies.get(TYPES.SelfContactManager),
       ApplicationEvent.ApplicationStageChanged,

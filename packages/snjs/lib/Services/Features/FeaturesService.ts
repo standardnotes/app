@@ -136,33 +136,40 @@ export class FeaturesService
     )
   }
 
-  public initializeFromDisk(): void {
+  initializeFromDisk(): void {
     this.onlineRoles = this.storage.getValue<string[]>(StorageKey.UserRoles, undefined, [])
-
     this.offlineRoles = this.storage.getValue<string[]>(StorageKey.OfflineUserRoles, undefined, [])
-
     this.enabledExperimentalFeatures = this.storage.getValue(StorageKey.ExperimentalFeatures, undefined, [])
   }
 
   async handleEvent(event: InternalEventInterface): Promise<void> {
-    if (event.type === ApiServiceEvent.MetaReceived) {
-      if (!this.sync) {
-        this.log('Handling events interrupted. Sync service is not yet initialized.', event)
-        return
+    switch (event.type) {
+      case ApiServiceEvent.MetaReceived: {
+        if (!this.sync) {
+          this.log('Handling events interrupted. Sync service is not yet initialized.', event)
+          return
+        }
+
+        const { userRoles } = event.payload as MetaReceivedData
+        void this.updateOnlineRolesWithNewValues(userRoles.map((role) => role.name))
+        break
       }
 
-      const { userRoles } = event.payload as MetaReceivedData
-      void this.updateOnlineRolesWithNewValues(userRoles.map((role) => role.name))
-    }
-
-    if (event.type === ApplicationEvent.ApplicationStageChanged) {
-      const stage = (event.payload as ApplicationStageChangedEventPayload).stage
-      if (stage === ApplicationStage.FullSyncCompleted_13) {
-        if (!this.hasFirstPartyOnlineSubscription()) {
-          const offlineRepo = this.getOfflineRepo()
-
-          if (offlineRepo) {
-            void this.downloadOfflineRoles(offlineRepo)
+      case ApplicationEvent.ApplicationStageChanged: {
+        const stage = (event.payload as ApplicationStageChangedEventPayload).stage
+        switch (stage) {
+          case ApplicationStage.StorageDecrypted_09: {
+            this.initializeFromDisk()
+            break
+          }
+          case ApplicationStage.FullSyncCompleted_13: {
+            if (!this.hasFirstPartyOnlineSubscription()) {
+              const offlineRepo = this.getOfflineRepo()
+              if (offlineRepo) {
+                void this.downloadOfflineRoles(offlineRepo)
+              }
+            }
+            break
           }
         }
       }
@@ -302,10 +309,10 @@ export class FeaturesService
   }
 
   hasPaidAnyPartyOnlineOrOfflineSubscription(): boolean {
-    return this.onlineRolesIncludePaidSubscription() || this.hasOfflineRepo()
+    return this.onlineRolesIncludePaidSubscription() || this.hasOfflineRepo() || this.hasFirstPartyOnlineSubscription()
   }
 
-  private hasFirstPartyOnlineSubscription(): boolean {
+  hasFirstPartyOnlineSubscription(): boolean {
     return this.sessions.isSignedIntoFirstPartyServer() && this.subscriptions.hasOnlineSubscription()
   }
 
@@ -370,6 +377,7 @@ export class FeaturesService
 
   onlineRolesIncludePaidSubscription(): boolean {
     const unpaidRoles = [RoleName.NAMES.CoreUser]
+
     return this.onlineRoles.some((role) => !unpaidRoles.includes(role))
   }
 
