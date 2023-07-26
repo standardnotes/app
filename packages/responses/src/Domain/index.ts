@@ -68,5 +68,3 @@ export * from './User/SettingData'
 export * from './User/UpdateSettingResponse'
 
 export * from './UserEvent/UserEventServerHash'
-export * from './UserEvent/UserEventType'
-export * from './UserEvent/UserEventPayload'
