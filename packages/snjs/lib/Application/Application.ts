@@ -1130,6 +1130,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.events.addEventHandler(this.dependencies.get(TYPES.SyncService), IntegrityEvent.IntegrityCheckCompleted)
     this.events.addEventHandler(this.dependencies.get(TYPES.UserService), AccountEvent.SignedInOrRegistered)
     this.events.addEventHandler(this.dependencies.get(TYPES.SessionManager), ApiServiceEvent.SessionRefreshed)
+    this.events.addEventHandler(this.dependencies.get(TYPES.SubscriptionManager), SessionEvent.Restored)
 
     this.events.addEventHandler(this.dependencies.get(TYPES.VaultInviteService), SyncEvent.ReceivedSharedVaultInvites)
     this.events.addEventHandler(this.dependencies.get(TYPES.VaultInviteService), SessionEvent.UserKeyPairChanged)

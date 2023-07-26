@@ -1,3 +1,6 @@
+import { ApplicationStage } from './../Application/ApplicationStage'
+import { SessionEvent } from './../Session/SessionEvent'
+import { ApplicationEvent } from './../Event/ApplicationEvent'
 import { StorageServiceInterface } from './../Storage/StorageServiceInterface'
 import { SessionsClientInterface } from './../Session/SessionsClientInterface'
 import { SubscriptionApiServiceInterface } from '@standardnotes/api'
@@ -21,11 +24,66 @@ describe('SubscriptionManager', () => {
     subscriptionApiService.listInvites = jest.fn()
 
     sessions = {} as jest.Mocked<SessionsClientInterface>
+    sessions.isSignedIn = jest.fn().mockReturnValue(true)
 
     storage = {} as jest.Mocked<StorageServiceInterface>
 
     internalEventBus = {} as jest.Mocked<InternalEventBusInterface>
     internalEventBus.addEventHandler = jest.fn()
+    internalEventBus.publish = jest.fn()
+  })
+
+  describe('event handling', () => {
+    it('should fetch subscriptions when the application has launched', async () => {
+      const manager = createManager()
+      jest.spyOn(manager, 'fetchOnlineSubscription')
+      jest.spyOn(manager, 'fetchAvailableSubscriptions')
+
+      await manager.handleEvent({ type: ApplicationEvent.Launched, payload: {} })
+
+      expect(manager.fetchOnlineSubscription).toHaveBeenCalledTimes(1)
+      expect(manager.fetchAvailableSubscriptions).toHaveBeenCalledTimes(1)
+    })
+
+    it('should fetch online subscription when user roles have changed', async () => {
+      const manager = createManager()
+      jest.spyOn(manager, 'fetchOnlineSubscription')
+
+      await manager.handleEvent({ type: ApplicationEvent.UserRolesChanged, payload: {} })
+
+      expect(manager.fetchOnlineSubscription).toHaveBeenCalledTimes(1)
+    })
+
+    it('should fetch online subscription when session is restored', async () => {
+      const manager = createManager()
+      jest.spyOn(manager, 'fetchOnlineSubscription')
+
+      await manager.handleEvent({ type: SessionEvent.Restored, payload: {} })
+
+      expect(manager.fetchOnlineSubscription).toHaveBeenCalledTimes(1)
+    })
+
+    it('should fetch online subscription when user has signed in', async () => {
+      const manager = createManager()
+      jest.spyOn(manager, 'fetchOnlineSubscription')
+
+      await manager.handleEvent({ type: ApplicationEvent.SignedIn, payload: {} })
+
+      expect(manager.fetchOnlineSubscription).toHaveBeenCalledTimes(1)
+    })
+
+    it('should handle stage change and notify event', async () => {
+      const manager = createManager()
+      jest.spyOn(manager, 'loadSubscriptionFromStorage')
+      storage.getValue = jest.fn().mockReturnValue({})
+
+      await manager.handleEvent({
+        type: ApplicationEvent.ApplicationStageChanged,
+        payload: { stage: ApplicationStage.StorageDecrypted_09 },
+      })
+
+      expect(manager.loadSubscriptionFromStorage).toHaveBeenCalled()
+    })
   })
 
   it('should invite user by email to a shared subscription', async () => {
