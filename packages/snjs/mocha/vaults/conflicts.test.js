@@ -81,7 +81,7 @@ describe('shared vault conflicts', function () {
 
   it('attempting to modify note as read user should result in SharedVaultInsufficientPermissionsError', async () => {
     const { note, contactContext, deinitContactContext } =
-      await Collaboration.createSharedVaultWithAcceptedInviteAndNote(context, SharedVaultPermission.Read)
+      await Collaboration.createSharedVaultWithAcceptedInviteAndNote(context, SharedVaultUserPermission.PERMISSIONS.Read)
 
     const promise = contactContext.resolveWithConflicts()
     await contactContext.changeNoteTitleAndSync(note, 'new title')

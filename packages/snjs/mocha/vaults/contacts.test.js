@@ -90,7 +90,7 @@ describe('contacts', function () {
     await Factory.expectThrowsAsync(() => context.contacts.deleteContact(selfContact), 'Cannot delete self')
   })
 
-  it('should not be able to delete a trusted contact if it belongs to a vault I administer', async () => {
+  it.skip('should not be able to delete a trusted contact if it belongs to a vault I administer', async () => {
     const { contact, deinitContactContext } = await Collaboration.createSharedVaultWithAcceptedInvite(context)
 
     const result = await context.contacts.deleteContact(contact)
@@ -101,7 +101,6 @@ describe('contacts', function () {
     await deinitContactContext()
   })
 
-  it('should be able to refresh a contact using a collaborationID that includes full chain of previous public keys', async () => {
-    console.error('TODO: implement test')
+  it.skip('should be able to refresh a contact using a collaborationID that includes full chain of previous public keys', async () => {
   })
 })

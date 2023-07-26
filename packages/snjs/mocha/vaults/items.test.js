@@ -60,7 +60,7 @@ describe('shared vault items', function () {
     await context.vaultInvites.inviteContactToSharedVault(
       sharedVault,
       currentContextContact,
-      SharedVaultPermission.Write,
+      SharedVaultUserPermission.PERMISSIONS.Write,
     )
     await Collaboration.moveItemToVault(context, sharedVault, note)
 
