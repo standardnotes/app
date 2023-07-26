@@ -41,6 +41,22 @@ export class ThemeManager extends AbstractUIServicee {
     this.themesActiveInTheUI = new ActiveThemeList(application.items)
   }
 
+  override deinit() {
+    this.themesActiveInTheUI.clear()
+    ;(this.themesActiveInTheUI as unknown) = undefined
+    ;(this.preferences as unknown) = undefined
+    ;(this.components as unknown) = undefined
+
+    const mq = window.matchMedia('(prefers-color-scheme: dark)')
+    if (mq.removeEventListener != undefined) {
+      mq.removeEventListener('change', this.colorSchemeEventHandler)
+    } else {
+      mq.removeListener(this.colorSchemeEventHandler)
+    }
+
+    super.deinit()
+  }
+
   override async onAppStart() {
     const desktopService = this.application.getDesktopService()
     if (desktopService) {
@@ -167,19 +183,6 @@ export class ThemeManager extends AbstractUIServicee {
 
       this.setThemeAsPerColorScheme(prefersDarkColorScheme)
     }
-  }
-
-  override deinit() {
-    this.themesActiveInTheUI.clear()
-
-    const mq = window.matchMedia('(prefers-color-scheme: dark)')
-    if (mq.removeEventListener != undefined) {
-      mq.removeEventListener('change', this.colorSchemeEventHandler)
-    } else {
-      mq.removeListener(this.colorSchemeEventHandler)
-    }
-
-    super.deinit()
   }
 
   private handleFeaturesAvailabilityChanged(): void {

@@ -5,6 +5,7 @@ import { Uuid } from '@standardnotes/domain-core'
 
 export class ActiveThemeList {
   private list: (NativeFeatureIdentifier | Uuid)[] = []
+
   constructor(private items: ItemManagerInterface) {}
 
   public getList(): (NativeFeatureIdentifier | Uuid)[] {
