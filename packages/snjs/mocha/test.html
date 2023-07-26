@@ -38,11 +38,6 @@
   <script type="module">
     import MainRegistry from './TestRegistry/MainRegistry.js'
 
-    const InternalFeatureStatus = {
-      [InternalFeature.Vaults]: { enabled: true, exclusive: true },
-      // [InternalFeature.Vaults]: { enabled: false, exclusive: false },
-    }
-
     const loadTest = (fileName) => {
       return new Promise((resolve) => {
         const script = document.createElement('script');
@@ -61,16 +56,9 @@
       }
     }
 
-    if (InternalFeatureStatus[InternalFeature.Vaults].enabled) {
-      InternalFeatureService.get().enableFeature(InternalFeature.Vaults);
-      await loadTests(MainRegistry.VaultTests);
-    }
+    await loadTests(MainRegistry.BaseTests);
 
-    if (!InternalFeatureStatus[InternalFeature.Vaults].exclusive) {
-      await loadTests(MainRegistry.BaseTests);
-    }
-
-    mocha.run()
+    mocha.run();
   </script>
 </head>
 
