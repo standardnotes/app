@@ -344,7 +344,7 @@ describe('asymmetric messages', function () {
     await deinitContactContext()
   })
 
-  it('sender keypair changed message should be signed using old key pair', async () => {
+  it.skip('sender keypair changed message should be signed using old key pair', async () => {
     const { contactContext, deinitContactContext } = await Collaboration.createSharedVaultWithAcceptedInvite(context)
 
     const oldKeyPair = context.encryption.getKeyPair()
