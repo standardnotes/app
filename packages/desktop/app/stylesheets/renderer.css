@@ -69,13 +69,35 @@ panel-resizer {
   font-size: 0;
 }
 
-/* Required for BrowserWindow titleBarStyle: 'hiddenInset' */
-.mac-desktop #navigation,
-.mac-desktop #navigation .section-title-bar,
-.mac-desktop #items-title-bar,
-.mac-desktop #editor-title-bar,
-.mac-desktop #lock-screen {
+/* https://github.com/electron/electron/issues/37789 */
+.mac-desktop #navigation {
   -webkit-app-region: drag;
+}
+
+.mac-desktop #navigation-content {
+  -webkit-app-region: no-drag;
+}
+
+.mac-desktop #navigation-content .section-title-bar .title {
+  -webkit-app-region: drag;
+}
+
+.mac-desktop #items-title-bar {
+  -webkit-app-region: drag;
+}
+
+.mac-desktop #items-title-bar input,
+.mac-desktop #items-title-bar button {
+  -webkit-app-region: no-drag;
+}
+
+.mac-desktop #editor-title-bar {
+  -webkit-app-region: drag;
+}
+
+.mac-desktop #editor-title-bar input,
+.mac-desktop #editor-title-bar button {
+  -webkit-app-region: no-drag;
 }
 
 input,
