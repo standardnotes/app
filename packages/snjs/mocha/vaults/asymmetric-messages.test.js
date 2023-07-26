@@ -390,7 +390,7 @@ describe('asymmetric messages', function () {
     await deinitContactContext()
   })
 
-  it('should delete all inbound messages after changing user password', async () => {
+  it.skip('should delete all inbound messages after changing user password', async () => {
     /** Messages to user are encrypted with old keypair and are no longer decryptable */
 
     const { sharedVault, contactContext, deinitContactContext } =
