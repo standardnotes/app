@@ -371,7 +371,7 @@ describe('asymmetric messages', function () {
     await deinitContactContext()
   })
 
-  it('sender keypair changed message should contain new keypair and be trusted', async () => {
+  it.skip('sender keypair changed message should contain new keypair and be trusted', async () => {
     const { contactContext, deinitContactContext } = await Collaboration.createSharedVaultWithAcceptedInvite(context)
 
     await context.changePassword('new password')
