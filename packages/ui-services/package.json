@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "@standardnotes/common": "^1.50.0",
-    "@standardnotes/domain-core": "^1.22.0",
+    "@standardnotes/domain-core": "^1.23.4",
     "@standardnotes/features": "workspace:^",
     "@standardnotes/filepicker": "workspace:^",
     "@standardnotes/models": "workspace:^",
