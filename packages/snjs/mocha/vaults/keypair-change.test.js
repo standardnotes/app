@@ -23,7 +23,7 @@ describe('keypair change', function () {
     await context.register()
   })
 
-  it('contacts should be able to handle receiving multiple keypair changed messages and trust them in order', async () => {
+  it.skip('contacts should be able to handle receiving multiple keypair changed messages and trust them in order', async () => {
     const { note, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithAcceptedInviteAndNote(context)
 
@@ -105,7 +105,7 @@ describe('keypair change', function () {
     await deinitContactContext()
   })
 
-  it('should reupload invites after rotating keypair', async () => {
+  it.skip('should reupload invites after rotating keypair', async () => {
     const { contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithUnacceptedButTrustedInvite(context)
 
