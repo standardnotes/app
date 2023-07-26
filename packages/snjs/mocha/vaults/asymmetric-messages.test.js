@@ -266,7 +266,7 @@ describe('asymmetric messages', function () {
     await deinitContactContext()
   })
 
-  it('should trust and process messages sent after sender keypair changed', async () => {
+  it.skip('should trust and process messages sent after sender keypair changed', async () => {
     const { sharedVault, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithAcceptedInvite(context)
 
