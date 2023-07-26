@@ -4,11 +4,9 @@ import { EncryptionProviderInterface } from './../Encryption/EncryptionProviderI
 import { GetUntrustedPayload } from './UseCase/GetUntrustedPayload'
 import { GetInboundMessages } from './UseCase/GetInboundMessages'
 import { GetOutboundMessages } from './UseCase/GetOutboundMessages'
-import { SendOwnContactChangeMessage } from './UseCase/SendOwnContactChangeMessage'
 import { HandleRootKeyChangedMessage } from './UseCase/HandleRootKeyChangedMessage'
 import { GetTrustedPayload } from './UseCase/GetTrustedPayload'
 import { ReplaceContactData } from './../Contacts/UseCase/ReplaceContactData'
-import { GetAllContacts } from './../Contacts/UseCase/GetAllContacts'
 import { FindContact } from './../Contacts/UseCase/FindContact'
 import { CreateOrEditContact } from './../Contacts/UseCase/CreateOrEditContact'
 import { MutatorClientInterface } from './../Mutator/MutatorClientInterface'
@@ -42,12 +40,10 @@ describe('AsymmetricMessageService', () => {
     encryption = {} as jest.Mocked<EncryptionProviderInterface>
     const createOrEditContact = {} as jest.Mocked<CreateOrEditContact>
     const findContact = {} as jest.Mocked<FindContact>
-    const getAllContacts = {} as jest.Mocked<GetAllContacts>
     const replaceContactData = {} as jest.Mocked<ReplaceContactData>
     const getTrustedPayload = {} as jest.Mocked<GetTrustedPayload>
     const getVault = {} as jest.Mocked<GetVault>
     const handleRootKeyChangedMessage = {} as jest.Mocked<HandleRootKeyChangedMessage>
-    const sendOwnContactChangedMessage = {} as jest.Mocked<SendOwnContactChangeMessage>
     const getOutboundMessagesUseCase = {} as jest.Mocked<GetOutboundMessages>
     const getInboundMessagesUseCase = {} as jest.Mocked<GetInboundMessages>
     const getUntrustedPayload = {} as jest.Mocked<GetUntrustedPayload>
@@ -68,12 +64,10 @@ describe('AsymmetricMessageService', () => {
       messageServer,
       createOrEditContact,
       findContact,
-      getAllContacts,
       replaceContactData,
       getTrustedPayload,
       getVault,
       handleRootKeyChangedMessage,
-      sendOwnContactChangedMessage,
       getOutboundMessagesUseCase,
       getInboundMessagesUseCase,
       getUntrustedPayload,
