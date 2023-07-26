@@ -104,13 +104,13 @@ a {
 }
 
 ::selection {
-  background: var(--text-selection-background-color) !important;
-  color: var(--text-selection-color);
+  background: var(--text-selection-background-color, revert) !important;
+  color: var(--text-selection-color, revert);
 }
 
 ::-moz-selection {
-  background: var(--text-selection-background-color) !important;
-  color: var(--text-selection-color);
+  background: var(--text-selection-background-color, revert) !important;
+  color: var(--text-selection-color, revert);
 }
 
 p {
