@@ -1,4 +1,4 @@
-import { FeatureIdentifier, NoteType } from '@standardnotes/features'
+import { NoteType } from '@standardnotes/features'
 import { ItemContent } from '../../Abstract/Content/ItemContent'
 import { EditorLineWidth } from '../UserPrefs'
 
@@ -11,7 +11,7 @@ export interface NoteContentSpecialized {
   spellcheck?: boolean
   editorWidth?: EditorLineWidth
   noteType?: NoteType
-  editorIdentifier?: FeatureIdentifier | string
+  editorIdentifier?: string
   authorizedForListed?: boolean
 }
 

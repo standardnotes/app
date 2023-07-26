@@ -1,14 +1,14 @@
 import {
-  FeatureIdentifier,
+  NativeFeatureIdentifier,
   NewNoteTitleFormat,
   PrefKey,
-  EditorIdentifier,
   TagPreferences,
   isSmartView,
   isSystemView,
   SystemViewId,
   PrefDefaults,
   FeatureStatus,
+  Uuid,
 } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { ChangeEventHandler, FunctionComponent, useCallback, useEffect, useRef, useState } from 'react'
@@ -17,6 +17,11 @@ import { DropdownItem } from '@/Components/Dropdown/DropdownItem'
 import { WebApplication } from '@/Application/WebApplication'
 import { AnyTag } from '@/Controllers/Navigation/AnyTagType'
 import { PreferenceMode } from './PreferenceMode'
+import { EditorOption, getDropdownItemsForAllEditors } from '@/Utils/DropdownItemsForEditors'
+import { classNames } from '@standardnotes/utils'
+import { NoteTitleFormatOptions } from './NoteTitleFormatOptions'
+import { usePremiumModal } from '@/Hooks/usePremiumModal'
+
 import dayjs from 'dayjs'
 import dayjsAdvancedFormat from 'dayjs/plugin/advancedFormat'
 import dayjsUTC from 'dayjs/plugin/utc'
@@ -24,11 +29,6 @@ import dayjsTimezone from 'dayjs/plugin/timezone'
 dayjs.extend(dayjsAdvancedFormat)
 dayjs.extend(dayjsUTC)
 dayjs.extend(dayjsTimezone)
-import { EditorOption, getDropdownItemsForAllEditors } from '@/Utils/DropdownItemsForEditors'
-import { classNames } from '@standardnotes/utils'
-import { NoteTitleFormatOptions } from './NoteTitleFormatOptions'
-
-import { usePremiumModal } from '@/Hooks/usePremiumModal'
 
 const PrefChangeDebounceTimeInMs = 25
 
@@ -57,8 +57,8 @@ const NewNotePreferences: FunctionComponent<Props> = ({
     : selectedTag.preferences
 
   const [editorItems, setEditorItems] = useState<DropdownItem[]>([])
-  const [defaultEditorIdentifier, setDefaultEditorIdentifier] = useState<EditorIdentifier>(
-    FeatureIdentifier.PlainEditor,
+  const [defaultEditorIdentifier, setDefaultEditorIdentifier] = useState<string>(
+    NativeFeatureIdentifier.TYPES.PlainEditor,
   )
   const [newNoteTitleFormat, setNewNoteTitleFormat] = useState<NewNoteTitleFormat>(
     NewNoteTitleFormat.CurrentDateAndTime,
@@ -121,14 +121,19 @@ const NewNotePreferences: FunctionComponent<Props> = ({
 
   const selectEditorForNewNoteDefault = useCallback(
     (value: EditorOption['value']) => {
-      if (application.features.getFeatureStatus(value) !== FeatureStatus.Entitled) {
+      const uuid = Uuid.create(value)
+      const feature = NativeFeatureIdentifier.create(value)
+      if (
+        application.features.getFeatureStatus(!uuid.isFailed() ? uuid.getValue() : feature.getValue()) !==
+        FeatureStatus.Entitled
+      ) {
         const editorItem = editorItems.find((item) => item.value === value)
         if (editorItem) {
           premiumModal.activate(editorItem.label)
         }
         return
       }
-      setDefaultEditorIdentifier(value as FeatureIdentifier)
+      setDefaultEditorIdentifier(value)
 
       if (mode === 'global') {
         void application.setPreference(PrefKey.DefaultEditorIdentifier, value)

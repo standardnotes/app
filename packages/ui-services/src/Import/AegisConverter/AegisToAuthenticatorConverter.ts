@@ -1,6 +1,6 @@
 import { DecryptedTransferPayload, NoteContent } from '@standardnotes/models'
 import { readFileAsText } from '../Utils'
-import { FeatureIdentifier, NoteType } from '@standardnotes/features'
+import { NativeFeatureIdentifier, NoteType } from '@standardnotes/features'
 import { WebApplicationInterface } from '../../WebApplication/WebApplicationInterface'
 import { ContentType } from '@standardnotes/domain-core'
 
@@ -69,7 +69,7 @@ export class AegisToAuthenticatorConverter {
         references: [],
         ...(addEditorInfo && {
           noteType: NoteType.Authentication,
-          editorIdentifier: FeatureIdentifier.TokenVaultEditor,
+          editorIdentifier: NativeFeatureIdentifier.TYPES.TokenVaultEditor,
         }),
       },
     }

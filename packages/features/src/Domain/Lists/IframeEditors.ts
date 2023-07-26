@@ -1,5 +1,5 @@
 import { PermissionName } from '../Permission/PermissionName'
-import { FeatureIdentifier } from '../Feature/FeatureIdentifier'
+import { NativeFeatureIdentifier } from '../Feature/NativeFeatureIdentifier'
 import { NoteType } from '../Component/NoteType'
 import { FillIframeEditorDefaults } from './Utilities/FillEditorComponentDefaults'
 import { RoleName } from '@standardnotes/domain-core'
@@ -9,7 +9,7 @@ export function IframeEditors(): IframeComponentFeatureDescription[] {
   const code = FillIframeEditorDefaults({
     name: 'Code',
     spellcheckControl: true,
-    identifier: FeatureIdentifier.CodeEditor,
+    identifier: NativeFeatureIdentifier.TYPES.CodeEditor,
     permission_name: PermissionName.CodeEditor,
     note_type: NoteType.Code,
     file_type: 'txt',
@@ -26,7 +26,7 @@ export function IframeEditors(): IframeComponentFeatureDescription[] {
     name: 'Rich Text',
     note_type: NoteType.RichText,
     file_type: 'html',
-    identifier: FeatureIdentifier.PlusEditor,
+    identifier: NativeFeatureIdentifier.TYPES.PlusEditor,
     permission_name: PermissionName.PlusEditor,
     spellcheckControl: true,
     description:
@@ -37,7 +37,7 @@ export function IframeEditors(): IframeComponentFeatureDescription[] {
 
   const markdown = FillIframeEditorDefaults({
     name: 'Markdown',
-    identifier: FeatureIdentifier.MarkdownProEditor,
+    identifier: NativeFeatureIdentifier.TYPES.MarkdownProEditor,
     note_type: NoteType.Markdown,
     file_type: 'md',
     permission_name: PermissionName.MarkdownProEditor,
@@ -50,7 +50,7 @@ export function IframeEditors(): IframeComponentFeatureDescription[] {
 
   const task = FillIframeEditorDefaults({
     name: 'Checklist',
-    identifier: FeatureIdentifier.TaskEditor,
+    identifier: NativeFeatureIdentifier.TYPES.TaskEditor,
     note_type: NoteType.Task,
     spellcheckControl: true,
     file_type: 'md',
@@ -67,7 +67,7 @@ export function IframeEditors(): IframeComponentFeatureDescription[] {
     note_type: NoteType.Authentication,
     file_type: 'json',
     interchangeable: false,
-    identifier: FeatureIdentifier.TokenVaultEditor,
+    identifier: NativeFeatureIdentifier.TYPES.TokenVaultEditor,
     permission_name: PermissionName.TokenVaultEditor,
     description:
       'Encrypt and protect your 2FA secrets for all your internet accounts. Authenticator handles your 2FA secrets so that you never lose them again, or have to start over when you get a new device.',
@@ -77,7 +77,7 @@ export function IframeEditors(): IframeComponentFeatureDescription[] {
 
   const spreadsheets = FillIframeEditorDefaults({
     name: 'Spreadsheet',
-    identifier: FeatureIdentifier.SheetsEditor,
+    identifier: NativeFeatureIdentifier.TYPES.SheetsEditor,
     note_type: NoteType.Spreadsheet,
     file_type: 'json',
     interchangeable: false,

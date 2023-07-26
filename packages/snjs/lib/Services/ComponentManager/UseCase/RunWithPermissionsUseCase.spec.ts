@@ -2,7 +2,7 @@ import { ContentType } from '@standardnotes/domain-core'
 import {
   ComponentAction,
   ComponentPermission,
-  FeatureIdentifier,
+  NativeFeatureIdentifier,
   FindNativeFeature,
   UIFeatureDescriptionTypes,
 } from '@standardnotes/features'
@@ -15,7 +15,7 @@ import {
   SyncServiceInterface,
 } from '@standardnotes/services'
 
-const nativeFeatureAsUIFeature = <F extends UIFeatureDescriptionTypes>(identifier: FeatureIdentifier) => {
+const nativeFeatureAsUIFeature = <F extends UIFeatureDescriptionTypes>(identifier: string) => {
   return new UIFeature(FindNativeFeature<F>(identifier)!)
 }
 
@@ -43,7 +43,7 @@ describe('RunWithPermissionsUseCase', () => {
 
       expect(
         usecase.areRequestedPermissionsValid(
-          nativeFeatureAsUIFeature(FeatureIdentifier.MarkdownProEditor),
+          nativeFeatureAsUIFeature(NativeFeatureIdentifier.TYPES.MarkdownProEditor),
           permissions,
         ),
       ).toEqual(true)
@@ -59,7 +59,7 @@ describe('RunWithPermissionsUseCase', () => {
 
       expect(
         usecase.areRequestedPermissionsValid(
-          nativeFeatureAsUIFeature(FeatureIdentifier.MarkdownProEditor),
+          nativeFeatureAsUIFeature(NativeFeatureIdentifier.TYPES.MarkdownProEditor),
           permissions,
         ),
       ).toEqual(false)
@@ -75,7 +75,7 @@ describe('RunWithPermissionsUseCase', () => {
 
       expect(
         usecase.areRequestedPermissionsValid(
-          nativeFeatureAsUIFeature(FeatureIdentifier.MarkdownProEditor),
+          nativeFeatureAsUIFeature(NativeFeatureIdentifier.TYPES.MarkdownProEditor),
           permissions,
         ),
       ).toEqual(false)
@@ -91,7 +91,7 @@ describe('RunWithPermissionsUseCase', () => {
 
       expect(
         usecase.areRequestedPermissionsValid(
-          nativeFeatureAsUIFeature(FeatureIdentifier.MarkdownProEditor),
+          nativeFeatureAsUIFeature(NativeFeatureIdentifier.TYPES.MarkdownProEditor),
           permissions,
         ),
       ).toEqual(false)
@@ -107,7 +107,7 @@ describe('RunWithPermissionsUseCase', () => {
 
       expect(
         usecase.areRequestedPermissionsValid(
-          nativeFeatureAsUIFeature(FeatureIdentifier.DeprecatedFileSafe),
+          nativeFeatureAsUIFeature(NativeFeatureIdentifier.TYPES.DeprecatedFileSafe),
           permissions,
         ),
       ).toEqual(false)
@@ -127,7 +127,7 @@ describe('RunWithPermissionsUseCase', () => {
 
       expect(
         usecase.areRequestedPermissionsValid(
-          nativeFeatureAsUIFeature(FeatureIdentifier.DeprecatedFileSafe),
+          nativeFeatureAsUIFeature(NativeFeatureIdentifier.TYPES.DeprecatedFileSafe),
           permissions,
         ),
       ).toEqual(true)
@@ -147,7 +147,7 @@ describe('RunWithPermissionsUseCase', () => {
 
       expect(
         usecase.areRequestedPermissionsValid(
-          nativeFeatureAsUIFeature(FeatureIdentifier.DeprecatedBoldEditor),
+          nativeFeatureAsUIFeature(NativeFeatureIdentifier.TYPES.DeprecatedBoldEditor),
           permissions,
         ),
       ).toEqual(true)
@@ -166,7 +166,10 @@ describe('RunWithPermissionsUseCase', () => {
       ]
 
       expect(
-        usecase.areRequestedPermissionsValid(nativeFeatureAsUIFeature(FeatureIdentifier.PlusEditor), permissions),
+        usecase.areRequestedPermissionsValid(
+          nativeFeatureAsUIFeature(NativeFeatureIdentifier.TYPES.PlusEditor),
+          permissions,
+        ),
       ).toEqual(false)
     })
   })

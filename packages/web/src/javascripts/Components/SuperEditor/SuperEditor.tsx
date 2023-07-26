@@ -7,7 +7,7 @@ import {
   isPayloadSourceRetrieved,
   PrefKey,
   PrefDefaults,
-  FeatureIdentifier,
+  NativeFeatureIdentifier,
   FeatureStatus,
   GetSuperNoteFeature,
 } from '@standardnotes/snjs'
@@ -76,7 +76,12 @@ export const SuperEditor: FunctionComponent<Props> = ({
 
   useEffect(() => {
     setFeatureStatus(
-      application.features.getFeatureStatus(FeatureIdentifier.SuperEditor, { inContextOfItem: note.current }),
+      application.features.getFeatureStatus(
+        NativeFeatureIdentifier.create(NativeFeatureIdentifier.TYPES.SuperEditor).getValue(),
+        {
+          inContextOfItem: note.current,
+        },
+      ),
     )
   }, [application.features])
 

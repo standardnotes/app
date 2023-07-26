@@ -1,4 +1,4 @@
-import { FeatureIdentifier } from '@standardnotes/features'
+import { NativeFeatureIdentifier } from '@standardnotes/features'
 import { CollectionSort } from '../../Runtime/Collection/CollectionSort'
 import { EditorFontSize } from './EditorFontSize'
 import { EditorLineHeight } from './EditorLineHeight'
@@ -29,7 +29,7 @@ export const PrefDefaults = {
   [PrefKey.NotesHideEditorIcon]: false,
   [PrefKey.UseSystemColorScheme]: false,
   [PrefKey.AutoLightThemeIdentifier]: 'Default',
-  [PrefKey.AutoDarkThemeIdentifier]: FeatureIdentifier.DarkTheme,
+  [PrefKey.AutoDarkThemeIdentifier]: NativeFeatureIdentifier.TYPES.DarkTheme,
   [PrefKey.NoteAddToParentFolders]: true,
   [PrefKey.NewNoteTitleFormat]: NewNoteTitleFormat.CurrentDateAndTime,
   [PrefKey.CustomNoteTitleFormat]: 'YYYY-MM-DD [at] hh:mm A',
@@ -37,7 +37,7 @@ export const PrefDefaults = {
   [PrefKey.PaneGesturesEnabled]: true,
   [PrefKey.MomentsDefaultTagUuid]: undefined,
   [PrefKey.ClipperDefaultTagUuid]: undefined,
-  [PrefKey.DefaultEditorIdentifier]: FeatureIdentifier.PlainEditor,
+  [PrefKey.DefaultEditorIdentifier]: NativeFeatureIdentifier.TYPES.PlainEditor,
   [PrefKey.SuperNoteExportFormat]: 'json',
   [PrefKey.SystemViewPreferences]: {},
   [PrefKey.AuthenticatorNames]: '',

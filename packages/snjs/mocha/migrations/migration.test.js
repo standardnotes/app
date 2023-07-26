@@ -145,7 +145,7 @@ describe('migrations', () => {
           content_type: ContentType.TYPES.Component,
           content: FillItemContent({
             package_info: {
-              identifier: FeatureIdentifier.MarkdownProEditor,
+              identifier: NativeFeatureIdentifier.TYPES.MarkdownProEditor,
             },
           }),
         }),
@@ -170,7 +170,7 @@ describe('migrations', () => {
           content_type: ContentType.TYPES.Component,
           content: FillItemContent({
             package_info: {
-              identifier: FeatureIdentifier.DeprecatedBoldEditor,
+              identifier: NativeFeatureIdentifier.TYPES.DeprecatedBoldEditor,
             },
           }),
         }),

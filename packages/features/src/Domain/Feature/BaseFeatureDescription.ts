@@ -1,5 +1,4 @@
 import { PermissionName } from '../Permission/PermissionName'
-import { FeatureIdentifier } from './FeatureIdentifier'
 import { ComponentFlag } from '../Component/ComponentFlag'
 import { RoleFields } from './RoleFields'
 
@@ -14,7 +13,7 @@ export type BaseFeatureDescription = RoleFields & {
   clientControlled?: boolean
 
   flags?: ComponentFlag[]
-  identifier: FeatureIdentifier
+  identifier: string
   marketing_url?: string
   name: string
   no_expire?: boolean

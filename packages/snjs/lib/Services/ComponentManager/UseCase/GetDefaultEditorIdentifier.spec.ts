@@ -1,6 +1,6 @@
 import { ItemManagerInterface, PreferenceServiceInterface } from '@standardnotes/services'
 import { GetDefaultEditorIdentifier } from './GetDefaultEditorIdentifier'
-import { ComponentArea, FeatureIdentifier } from '@standardnotes/features'
+import { ComponentArea, NativeFeatureIdentifier } from '@standardnotes/features'
 import { SNComponent, SNTag } from '@standardnotes/models'
 
 describe('getDefaultEditorIdentifier', () => {
@@ -21,33 +21,33 @@ describe('getDefaultEditorIdentifier', () => {
   it('should return plain editor if no default tag editor or component editor', () => {
     const editorIdentifier = usecase.execute().getValue()
 
-    expect(editorIdentifier).toEqual(FeatureIdentifier.PlainEditor)
+    expect(editorIdentifier).toEqual(NativeFeatureIdentifier.TYPES.PlainEditor)
   })
 
   it('should return pref key based value if available', () => {
-    preferences.getValue = jest.fn().mockReturnValue(FeatureIdentifier.SuperEditor)
+    preferences.getValue = jest.fn().mockReturnValue(NativeFeatureIdentifier.TYPES.SuperEditor)
 
     const editorIdentifier = usecase.execute().getValue()
 
-    expect(editorIdentifier).toEqual(FeatureIdentifier.SuperEditor)
+    expect(editorIdentifier).toEqual(NativeFeatureIdentifier.TYPES.SuperEditor)
   })
 
   it('should return default tag identifier if tag supplied', () => {
     const tag = {
       preferences: {
-        editorIdentifier: FeatureIdentifier.SuperEditor,
+        editorIdentifier: NativeFeatureIdentifier.TYPES.SuperEditor,
       },
     } as jest.Mocked<SNTag>
 
     const editorIdentifier = usecase.execute(tag).getValue()
 
-    expect(editorIdentifier).toEqual(FeatureIdentifier.SuperEditor)
+    expect(editorIdentifier).toEqual(NativeFeatureIdentifier.TYPES.SuperEditor)
   })
 
   it('should return legacy editor identifier', () => {
     const editor = {
       legacyIsDefaultEditor: jest.fn().mockReturnValue(true),
-      identifier: FeatureIdentifier.MarkdownProEditor,
+      identifier: NativeFeatureIdentifier.TYPES.MarkdownProEditor,
       area: ComponentArea.Editor,
     } as unknown as jest.Mocked<SNComponent>
 
@@ -55,6 +55,6 @@ describe('getDefaultEditorIdentifier', () => {
 
     const editorIdentifier = usecase.execute().getValue()
 
-    expect(editorIdentifier).toEqual(FeatureIdentifier.MarkdownProEditor)
+    expect(editorIdentifier).toEqual(NativeFeatureIdentifier.TYPES.MarkdownProEditor)
   })
 })

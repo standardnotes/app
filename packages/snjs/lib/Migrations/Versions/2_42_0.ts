@@ -1,10 +1,9 @@
 import { ApplicationStage } from '@standardnotes/services'
-import { FeatureIdentifier } from '@standardnotes/features'
 import { Migration } from '@Lib/Migrations/Migration'
 import { ThemeInterface } from '@standardnotes/models'
 import { ContentType } from '@standardnotes/domain-core'
 
-const NoDistractionIdentifier = 'org.standardnotes.theme-no-distraction' as FeatureIdentifier
+const NoDistractionIdentifier = 'org.standardnotes.theme-no-distraction'
 
 export class Migration2_42_0 extends Migration {
   static override version(): string {

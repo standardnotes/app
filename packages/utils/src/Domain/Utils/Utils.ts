@@ -223,6 +223,10 @@ export function arrayByDifference<T>(array: T[], subtract: T[]): T[] {
   return array.filter((x) => !subtract.includes(x)).concat(subtract.filter((x) => !array.includes(x)))
 }
 
+export function compareArrayReferences<T>(arr1: T[], arr2: T[]) {
+  return arr1.length === arr2.length && arr1.every((val, index) => val === arr2[index])
+}
+
 export function compareValues<T>(left: T, right: T) {
   if ((left && !right) || (!left && right)) {
     return false

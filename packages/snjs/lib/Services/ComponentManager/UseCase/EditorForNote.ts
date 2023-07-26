@@ -1,7 +1,6 @@
 import {
   ComponentArea,
   EditorFeatureDescription,
-  FeatureIdentifier,
   FindNativeFeature,
   GetIframeAndNativeEditors,
   GetPlainNoteFeature,
@@ -47,11 +46,9 @@ export class EditorForNoteUseCase {
   }
 
   private componentOrNativeFeatureForIdentifier(
-    identifier: FeatureIdentifier | string,
+    identifier: string,
   ): UIFeature<EditorFeatureDescription | IframeComponentFeatureDescription> | undefined {
-    const nativeFeature = FindNativeFeature<EditorFeatureDescription | IframeComponentFeatureDescription>(
-      identifier as FeatureIdentifier,
-    )
+    const nativeFeature = FindNativeFeature<EditorFeatureDescription | IframeComponentFeatureDescription>(identifier)
     if (nativeFeature) {
       return new UIFeature(nativeFeature)
     }

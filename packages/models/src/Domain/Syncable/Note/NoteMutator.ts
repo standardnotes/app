@@ -3,7 +3,7 @@ import { DecryptedItemMutator } from '../../Abstract/Item/Mutator/DecryptedItemM
 import { SNNote } from './Note'
 import { NoteToNoteReference } from '../../Abstract/Reference/NoteToNoteReference'
 import { ContentReferenceType } from '../../Abstract/Item'
-import { FeatureIdentifier, NoteType } from '@standardnotes/features'
+import { NoteType } from '@standardnotes/features'
 import { EditorLineWidth } from '../UserPrefs'
 import { ContentType } from '@standardnotes/domain-core'
 
@@ -40,7 +40,7 @@ export class NoteMutator extends DecryptedItemMutator<NoteContent> {
     this.mutableContent.noteType = noteType
   }
 
-  set editorIdentifier(identifier: FeatureIdentifier | string | undefined) {
+  set editorIdentifier(identifier: string | undefined) {
     this.mutableContent.editorIdentifier = identifier
   }
 
