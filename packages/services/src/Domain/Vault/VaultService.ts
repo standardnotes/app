@@ -26,6 +26,7 @@ import { MutatorClientInterface } from '../Mutator/MutatorClientInterface'
 import { AlertService } from '../Alert/AlertService'
 import { GetVaults } from './UseCase/GetVaults'
 import { VaultLockServiceInterface } from '../VaultLock/VaultLockServiceInterface'
+import { Result } from '@standardnotes/domain-core'
 
 export class VaultService
   extends AbstractService<VaultServiceEvent, VaultServiceEventPayload[VaultServiceEvent]>
@@ -194,7 +195,7 @@ export class VaultService
     return updatedVault
   }
 
-  async rotateVaultRootKey(vault: VaultListingInterface): Promise<void> {
+  async rotateVaultRootKey(vault: VaultListingInterface, vaultPassword?: string): Promise<void> {
     if (this.vaultLocks.isVaultLocked(vault)) {
       throw new Error('Cannot rotate root key of locked vault')
     }
@@ -202,7 +203,7 @@ export class VaultService
     await this._rotateVaultKey.execute({
       vault,
       sharedVaultUuid: vault.isSharedVaultListing() ? vault.sharing.sharedVaultUuid : undefined,
-      userInputtedPassword: undefined,
+      userInputtedPassword: vaultPassword,
     })
 
     await this.notifyEventSync(VaultServiceEvent.VaultRootKeyRotated, { vault })
@@ -227,15 +228,17 @@ export class VaultService
     return this.getVault({ keySystemIdentifier: latestItem.key_system_identifier })
   }
 
-  async changeVaultOptions(dto: ChangeVaultKeyOptionsDTO): Promise<void> {
+  async changeVaultOptions(dto: ChangeVaultKeyOptionsDTO): Promise<Result<void>> {
     if (this.vaultLocks.isVaultLocked(dto.vault)) {
       throw new Error('Attempting to change vault options on a locked vault')
     }
 
-    await this._changeVaultKeyOptions.execute(dto)
+    const result = await this._changeVaultKeyOptions.execute(dto)
 
     if (dto.newPasswordType) {
       await this.notifyEventSync(VaultServiceEvent.VaultRootKeyRotated, { vault: dto.vault })
     }
+
+    return result
   }
 }

@@ -11,7 +11,7 @@ export const VaultTests = {
     'vaults/signatures.test.js',
     'vaults/shared_vaults.test.js',
     'vaults/invites.test.js',
-    'vaults/locking.test.js',
+    'vaults/key-management.test.js',
     'vaults/items.test.js',
     'vaults/conflicts.test.js',
     'vaults/deletion.test.js',

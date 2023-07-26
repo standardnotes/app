@@ -1,6 +1,6 @@
 import { KeySystemIdentifier } from '../KeySystemRootKey/KeySystemIdentifier'
 import { KeySystemRootKeyParamsInterface } from '../../Local/KeyParams/KeySystemRootKeyParamsInterface'
-import { KeySystemRootKeyPasswordType } from '../../Local/KeyParams/KeySystemRootKeyPasswordType'
+import { KeySystemPasswordType } from '../../Local/KeyParams/KeySystemPasswordType'
 import { KeySystemRootKeyStorageMode } from '../KeySystemRootKey/KeySystemRootKeyStorageMode'
 import { VaultListingSharingInfo } from './VaultListingSharingInfo'
 import { VaultListingContent } from './VaultListingContent'
@@ -17,7 +17,7 @@ export interface VaultListingInterface extends DecryptedItemInterface<VaultListi
 
   sharing?: VaultListingSharingInfo
 
-  get keyPasswordType(): KeySystemRootKeyPasswordType
+  get keyPasswordType(): KeySystemPasswordType
   isSharedVaultListing(): this is SharedVaultListingInterface
 
   get key_system_identifier(): undefined

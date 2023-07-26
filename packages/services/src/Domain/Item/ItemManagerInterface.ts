@@ -80,7 +80,7 @@ export interface ItemManagerInterface extends AbstractService {
   ): T[]
   subItemsMatchingPredicates<T extends DecryptedItemInterface>(items: T[], predicates: PredicateInterface<T>[]): T[]
   removeAllItemsFromMemory(): Promise<void>
-  removeItemsLocally(items: AnyItemInterface[]): void
+  removeItemsFromMemory(items: AnyItemInterface[]): void
   getDirtyItems(): (DecryptedItemInterface | DeletedItemInterface)[]
   getTagLongTitle(tag: SNTag): string
   getSortedTagsForItem(item: DecryptedItemInterface<ItemContent>): SNTag[]

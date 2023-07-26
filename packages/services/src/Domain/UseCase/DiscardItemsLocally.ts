@@ -3,11 +3,11 @@ import { ItemManagerInterface } from '../Item/ItemManagerInterface'
 import { AnyItemInterface } from '@standardnotes/models'
 import { Uuids } from '@standardnotes/utils'
 
-export class RemoveItemsLocally {
+export class DiscardItemsLocally {
   constructor(private readonly items: ItemManagerInterface, private readonly storage: StorageServiceInterface) {}
 
   async execute(items: AnyItemInterface[]): Promise<void> {
-    this.items.removeItemsLocally(items)
+    this.items.removeItemsFromMemory(items)
 
     await this.storage.deletePayloadsWithUuids(Uuids(items))
   }

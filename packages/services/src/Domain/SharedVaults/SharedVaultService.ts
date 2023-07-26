@@ -1,3 +1,4 @@
+import { DiscardItemsLocally } from './../UseCase/DiscardItemsLocally'
 import { UserKeyPairChangedEventData } from './../Session/UserKeyPairChangedEventData'
 import { ClientDisplayableError, UserEventType } from '@standardnotes/responses'
 import {
@@ -55,6 +56,7 @@ export class SharedVaultService
     private _convertToSharedVault: ConvertToSharedVault,
     private _deleteSharedVault: DeleteSharedVault,
     private _isVaultAdmin: IsVaultOwner,
+    private _discardItemsLocally: DiscardItemsLocally,
     eventBus: InternalEventBusInterface,
   ) {
     super(eventBus)
@@ -132,7 +134,7 @@ export class SharedVaultService
       case UserEventType.SharedVaultItemRemoved: {
         const item = this.items.findItem(event.eventPayload.itemUuid)
         if (item) {
-          this.items.removeItemsLocally([item])
+          void this._discardItemsLocally.execute([item])
         }
         break
       }

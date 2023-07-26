@@ -1,5 +1,5 @@
 import { GetVaults } from '../Vault/UseCase/GetVaults'
-import { KeySystemRootKeyPasswordType, KeySystemRootKeyStorageMode, VaultListingInterface } from '@standardnotes/models'
+import { KeySystemPasswordType, KeySystemRootKeyStorageMode, VaultListingInterface } from '@standardnotes/models'
 import { VaultLockServiceInterface } from './VaultLockServiceInterface'
 import { VaultLockServiceEvent, VaultLockServiceEventPayload } from './VaultLockServiceEvent'
 import { AbstractService } from '../Service/AbstractService'
@@ -51,19 +51,19 @@ export class VaultLockService
   }
 
   public isVaultLockable(vault: VaultListingInterface): boolean {
-    return vault.keyPasswordType === KeySystemRootKeyPasswordType.UserInputted
+    return vault.keyPasswordType === KeySystemPasswordType.UserInputted
   }
 
-  public lockNonPersistentVault(vault: VaultListingInterface): void {
+  public async lockNonPersistentVault(vault: VaultListingInterface): Promise<void> {
     if (vault.keyStorageMode === KeySystemRootKeyStorageMode.Synced) {
       throw new Error('Vault uses synced key storage and cannot be locked')
     }
 
-    if (vault.keyPasswordType !== KeySystemRootKeyPasswordType.UserInputted) {
+    if (vault.keyPasswordType !== KeySystemPasswordType.UserInputted) {
       throw new Error('Vault uses randomized password and cannot be locked')
     }
 
-    this.keys.clearMemoryOfKeysRelatedToVault(vault)
+    await this.keys.wipeVaultKeysFromMemory(vault)
 
     this.lockMap.set(vault.uuid, true)
 
@@ -71,7 +71,7 @@ export class VaultLockService
   }
 
   public async unlockNonPersistentVault(vault: VaultListingInterface, password: string): Promise<boolean> {
-    if (vault.keyPasswordType !== KeySystemRootKeyPasswordType.UserInputted) {
+    if (vault.keyPasswordType !== KeySystemPasswordType.UserInputted) {
       throw new Error('Vault uses randomized password and cannot be unlocked with user inputted password')
     }
 
@@ -84,12 +84,12 @@ export class VaultLockService
       userInputtedPassword: password,
     })
 
-    this.keys.intakeNonPersistentKeySystemRootKey(derivedRootKey, vault.keyStorageMode)
+    this.keys.cacheKey(derivedRootKey, vault.keyStorageMode)
 
     await this.encryption.decryptErroredPayloads()
 
     if (this.computeVaultLockState(vault) === 'locked') {
-      this.keys.undoIntakeNonPersistentKeySystemRootKey(vault.systemIdentifier)
+      this.keys.removeKeyFromCache(vault.systemIdentifier)
       return false
     }
 

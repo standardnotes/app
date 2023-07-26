@@ -201,7 +201,7 @@ describe('item manager', function () {
       observed.push({ changed, inserted, removed, ignored })
     })
     const note = await createNote()
-    await application.items.removeItemLocally(note)
+    await application.items.removeItemFromMemory(note)
 
     expect(observed.length).to.equal(1)
     expect(application.items.findItem(note.uuid)).to.not.be.ok

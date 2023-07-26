@@ -69,7 +69,7 @@ export class DiskStorageService
   private values!: StorageValuesObject
 
   constructor(
-    private deviceInterface: DeviceInterface,
+    private device: DeviceInterface,
     private identifier: string,
     protected override internalEventBus: InternalEventBusInterface,
   ) {
@@ -82,7 +82,7 @@ export class DiskStorageService
   }
 
   public override deinit() {
-    ;(this.deviceInterface as unknown) = undefined
+    ;(this.device as unknown) = undefined
     ;(this.encryptionProvider as unknown) = undefined
     this.storagePersistable = false
     super.deinit()
@@ -104,9 +104,9 @@ export class DiskStorageService
     this.persistencePolicy = persistencePolicy
 
     if (this.persistencePolicy === StoragePersistencePolicies.Ephemeral) {
-      await this.deviceInterface.clearNamespacedKeychainValue(this.identifier)
-      await this.deviceInterface.removeAllDatabaseEntries(this.identifier)
-      await this.deviceInterface.removeRawStorageValuesForIdentifier(this.identifier)
+      await this.device.clearNamespacedKeychainValue(this.identifier)
+      await this.device.removeAllDatabaseEntries(this.identifier)
+      await this.device.removeRawStorageValuesForIdentifier(this.identifier)
       await this.clearAllPayloads()
     }
   }
@@ -116,7 +116,7 @@ export class DiskStorageService
   }
 
   public async initializeFromDisk(): Promise<void> {
-    const value = await this.deviceInterface.getRawStorageValue(this.getPersistenceKey())
+    const value = await this.device.getRawStorageValue(this.getPersistenceKey())
     const values = value ? JSON.parse(value as string) : undefined
 
     await this.setInitialValues(values)
@@ -240,7 +240,7 @@ export class DiskStorageService
         return values
       }
 
-      await this.deviceInterface?.setRawStorageValue(this.getPersistenceKey(), JSON.stringify(values))
+      await this.device?.setRawStorageValue(this.getPersistenceKey(), JSON.stringify(values))
 
       return values
     })
@@ -385,7 +385,11 @@ export class DiskStorageService
   }
 
   public async getAllRawPayloads(): Promise<FullyFormedTransferPayload[]> {
-    return this.deviceInterface.getAllDatabaseEntries(this.identifier)
+    return this.device.getAllDatabaseEntries(this.identifier)
+  }
+
+  public async getRawPayloads(uuids: string[]): Promise<FullyFormedTransferPayload[]> {
+    return this.device.getDatabaseEntries(this.identifier, uuids)
   }
 
   public async savePayload(payload: FullyFormedPayloadInterface): Promise<void> {
@@ -440,7 +444,7 @@ export class DiskStorageService
     const exportedDeleted = deleted.map(CreateDeletedLocalStorageContextPayload)
 
     return this.executeCriticalFunction(async () => {
-      return this.deviceInterface?.saveDatabaseEntries(
+      return this.device?.saveDatabaseEntries(
         [...exportedEncrypted, ...exportedDecrypted, ...exportedDeleted],
         this.identifier,
       )
@@ -453,19 +457,19 @@ export class DiskStorageService
 
   public async deletePayloadsWithUuids(uuids: string[]): Promise<void> {
     await this.executeCriticalFunction(async () => {
-      await Promise.all(uuids.map((uuid) => this.deviceInterface.removeDatabaseEntry(uuid, this.identifier)))
+      await Promise.all(uuids.map((uuid) => this.device.removeDatabaseEntry(uuid, this.identifier)))
     })
   }
 
   public async deletePayloadWithUuid(uuid: string) {
     return this.executeCriticalFunction(async () => {
-      await this.deviceInterface.removeDatabaseEntry(uuid, this.identifier)
+      await this.device.removeDatabaseEntry(uuid, this.identifier)
     })
   }
 
   public async clearAllPayloads() {
     return this.executeCriticalFunction(async () => {
-      return this.deviceInterface.removeAllDatabaseEntries(this.identifier)
+      return this.device.removeAllDatabaseEntries(this.identifier)
     })
   }
 
@@ -474,9 +478,9 @@ export class DiskStorageService
       await this.clearValues()
       await this.clearAllPayloads()
 
-      await this.deviceInterface.removeRawStorageValue(namespacedKey(this.identifier, RawStorageKey.SnjsVersion))
+      await this.device.removeRawStorageValue(namespacedKey(this.identifier, RawStorageKey.SnjsVersion))
 
-      await this.deviceInterface.removeRawStorageValue(this.getPersistenceKey())
+      await this.device.removeRawStorageValue(this.getPersistenceKey())
     })
   }
 }
