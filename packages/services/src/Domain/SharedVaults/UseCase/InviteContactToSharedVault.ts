@@ -21,7 +21,7 @@ export class InviteContactToSharedVaultUseCase {
     sharedVault: SharedVaultListingInterface
     sharedVaultContacts: TrustedContactInterface[]
     recipient: TrustedContactInterface
-    permissions: SharedVaultPermission
+    permission: SharedVaultPermission
   }): Promise<SharedVaultInviteServerHash | ClientDisplayableError> {
     const keySystemRootKey = this.encryption.keys.getPrimaryKeySystemRootKey(params.sharedVault.systemIdentifier)
     if (!keySystemRootKey) {
@@ -55,7 +55,7 @@ export class InviteContactToSharedVaultUseCase {
       sharedVaultUuid: params.sharedVault.sharing.sharedVaultUuid,
       recipientUuid: params.recipient.contactUuid,
       encryptedMessage,
-      permissions: params.permissions,
+      permission: params.permission,
     })
 
     return createInviteResult

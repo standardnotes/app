@@ -151,7 +151,6 @@ export class AppContext {
       } else if (challenge.heading.includes('account password')) {
         responses.push(CreateChallengeValue(prompt, accountPassword))
       } else {
-        console.log('Unhandled challenge', challenge)
         throw Error(`Unhandled custom challenge in Factory.createAppContext`)
       }
     }

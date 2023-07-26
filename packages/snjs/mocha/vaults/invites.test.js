@@ -36,7 +36,7 @@ describe('shared vault invites', function () {
     expect(vaultInvite.shared_vault_uuid).to.equal(sharedVault.sharing.sharedVaultUuid)
     expect(vaultInvite.user_uuid).to.equal(contact.contactUuid)
     expect(vaultInvite.encrypted_message).to.not.be.undefined
-    expect(vaultInvite.permissions).to.equal(SharedVaultPermission.Write)
+    expect(vaultInvite.permission).to.equal(SharedVaultPermission.Write)
     expect(vaultInvite.updated_at_timestamp).to.not.be.undefined
     expect(vaultInvite.created_at_timestamp).to.not.be.undefined
 
@@ -170,6 +170,7 @@ describe('shared vault invites', function () {
     await context.sync()
 
     const updatedNote = context.items.findItem(note.uuid)
+    expect(receivedNote.user_uuid).to.equal(updatedNote.user_uuid)
     expect(updatedNote.last_edited_by_uuid).to.not.be.undefined
     expect(updatedNote.last_edited_by_uuid).to.equal(contactContext.userUuid)
 
@@ -191,13 +192,11 @@ describe('shared vault invites', function () {
     await deinitContactContext()
   })
 
-  it('when inviter keypair changes, recipient should still be able to trust and decrypt previous invite', async () => {
-    console.error('TODO: implement test')
+  it.skip('when inviter keypair changes, recipient should still be able to trust and decrypt previous invite', async () => {
   })
 
-  it('should delete all inbound invites after changing user password', async () => {
+  it.skip('should delete all inbound invites after changing user password', async () => {
     /** Invites to user are encrypted with old keypair and are no longer decryptable */
-    console.error('TODO: implement test')
   })
 
   it('sharing a vault with user inputted and ephemeral password should share the key as synced for the recipient', async () => {

@@ -11,6 +11,7 @@ export class ValidateItemSignerUseCase {
 
   execute(item: DecryptedItemInterface): ValidateItemSignerResult {
     const uuidOfLastEditor = item.last_edited_by_uuid
+    console.log('uuidOfLastEditor', uuidOfLastEditor)
     if (uuidOfLastEditor) {
       return this.validateSignatureWithLastEditedByUuid(item, uuidOfLastEditor)
     } else {

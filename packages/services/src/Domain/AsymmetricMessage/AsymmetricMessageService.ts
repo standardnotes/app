@@ -119,7 +119,7 @@ export class AsymmetricMessageService
         continue
       }
 
-      if (trustedMessagePayload.data.recipientUuid !== message.user_uuid) {
+      if (trustedMessagePayload.data.recipientUuid !== message.recipient_uuid) {
         continue
       }
 

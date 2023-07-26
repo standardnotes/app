@@ -26,8 +26,7 @@ describe('asymmetric messages', function () {
     service = context.asymmetric
   })
 
-  it('should not trust message if the trusted payload data recipientUuid does not match the message user uuid', async () => {
-    console.error('TODO: implement')
+  it.skip('should not trust message if the trusted payload data recipientUuid does not match the message user uuid', async () => {
   })
 
   it('should delete message after processing it', async () => {
@@ -270,8 +269,7 @@ describe('asymmetric messages', function () {
     await deinitContactContext()
   })
 
-  it('should delete all inbound messages after changing user password', async () => {
+  it.skip('should delete all inbound messages after changing user password', async () => {
     /** Messages to user are encrypted with old keypair and are no longer decryptable */
-    console.error('TODO: implement test')
   })
 })

@@ -8,7 +8,6 @@ import {
   SharedVaultUserServerHash,
   isClientDisplayableError,
   SharedVaultPermission,
-  UserEventType,
 } from '@standardnotes/responses'
 import {
   HttpServiceInterface,
@@ -63,7 +62,7 @@ import { CreateSharedVaultUseCase } from './UseCase/CreateSharedVault'
 import { SendSharedVaultMetadataChangedMessageToAll } from './UseCase/SendSharedVaultMetadataChangedMessageToAll'
 import { ConvertToSharedVaultUseCase } from './UseCase/ConvertToSharedVault'
 import { GetVaultUseCase } from '../Vaults/UseCase/GetVault'
-import { ContentType } from '@standardnotes/domain-core'
+import { ContentType, NotificationType } from '@standardnotes/domain-core'
 
 export class SharedVaultService
   extends AbstractService<SharedVaultServiceEvent, SharedVaultServiceEventPayload>
@@ -147,8 +146,14 @@ export class SharedVaultService
   }
 
   private async handleUserEvent(event: UserEventServiceEventPayload): Promise<void> {
-    if (event.eventPayload.eventType === UserEventType.RemovedFromSharedVault) {
-      const vault = new GetVaultUseCase(this.items).execute({ sharedVaultUuid: event.eventPayload.sharedVaultUuid })
+    if (
+      event.eventPayload.props.type.equals(
+        NotificationType.create(NotificationType.TYPES.RemovedFromSharedVault).getValue(),
+      )
+    ) {
+      const vault = new GetVaultUseCase(this.items).execute({
+        sharedVaultUuid: event.eventPayload.props.sharedVaultUuid.value,
+      })
       if (vault) {
         const useCase = new DeleteExternalSharedVaultUseCase(
           this.items,
@@ -159,8 +164,12 @@ export class SharedVaultService
         )
         await useCase.execute(vault)
       }
-    } else if (event.eventPayload.eventType === UserEventType.SharedVaultItemRemoved) {
-      const item = this.items.findItem(event.eventPayload.itemUuid)
+    } else if (
+      event.eventPayload.props.type.equals(
+        NotificationType.create(NotificationType.TYPES.SharedVaultItemRemoved).getValue(),
+      )
+    ) {
+      const item = this.items.findItem(event.eventPayload.props.itemUuid?.value as string)
       if (item) {
         this.items.removeItemsLocally([item])
       }
@@ -436,7 +445,7 @@ export class SharedVaultService
   async inviteContactToSharedVault(
     sharedVault: SharedVaultListingInterface,
     contact: TrustedContactInterface,
-    permissions: SharedVaultPermission,
+    permission: SharedVaultPermission,
   ): Promise<SharedVaultInviteServerHash | ClientDisplayableError> {
     const sharedVaultContacts = await this.getSharedVaultContacts(sharedVault)
 
@@ -448,7 +457,7 @@ export class SharedVaultService
       sharedVault,
       recipient: contact,
       sharedVaultContacts,
-      permissions,
+      permission,
     })
 
     void this.notifyCollaborationStatusChanged()

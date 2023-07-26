@@ -4,5 +4,5 @@ export type CreateSharedVaultInviteParams = {
   sharedVaultUuid: string
   recipientUuid: string
   encryptedMessage: string
-  permissions: SharedVaultPermission
+  permission: SharedVaultPermission
 }

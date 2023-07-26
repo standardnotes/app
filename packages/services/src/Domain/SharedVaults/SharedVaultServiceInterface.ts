@@ -30,7 +30,7 @@ export interface SharedVaultServiceInterface
   inviteContactToSharedVault(
     sharedVault: SharedVaultListingInterface,
     contact: TrustedContactInterface,
-    permissions: SharedVaultPermission,
+    permission: SharedVaultPermission,
   ): Promise<SharedVaultInviteServerHash | ClientDisplayableError>
   removeUserFromSharedVault(
     sharedVault: SharedVaultListingInterface,

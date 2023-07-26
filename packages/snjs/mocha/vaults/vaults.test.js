@@ -25,16 +25,13 @@ describe('vaults', function () {
   })
 
   describe('locking', () => {
-    it('should throw if attempting to add item to locked vault', async () => {
-      console.error('TODO: implement')
+    it.skip('should throw if attempting to add item to locked vault', async () => {
     })
 
-    it('should throw if attempting to remove item from locked vault', async () => {
-      console.error('TODO: implement')
+    it.skip('should throw if attempting to remove item from locked vault', async () => {
     })
 
-    it('locking vault should remove root key and items keys from memory', async () => {
-      console.error('TODO: implement')
+    it.skip('locking vault should remove root key and items keys from memory', async () => {
     })
   })
 

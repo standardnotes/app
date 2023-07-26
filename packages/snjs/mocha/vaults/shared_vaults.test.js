@@ -104,11 +104,9 @@ describe('shared vaults', function () {
     await recreatedContext.deinit()
   })
 
-  it('should convert a vault to a shared vault', async () => {
-    console.error('TODO')
+  it.skip('should convert a vault to a shared vault', async () => {
   })
 
-  it('should send metadata change message when changing name or description', async () => {
-    console.error('TODO')
+  it.skip('should send metadata change message when changing name or description', async () => {
   })
 })

@@ -153,7 +153,6 @@ describe('shared vault deletion', function () {
     await deinitContactContext()
   })
 
-  it('being removed from a shared vault should delete respective vault listing', async () => {
-    console.error('TODO: implement test')
+  it.skip('being removed from a shared vault should delete respective vault listing', async () => {
   })
 })

@@ -13,13 +13,13 @@ export class UpdateSharedVaultInviteUseCase {
     sharedVaultUuid: string
     inviteUuid: string
     encryptedMessage: string
-    permissions: SharedVaultPermission
+    permission: SharedVaultPermission
   }): Promise<SharedVaultInviteServerHash | ClientDisplayableError> {
     const response = await this.vaultInvitesServer.updateInvite({
       sharedVaultUuid: params.sharedVaultUuid,
       inviteUuid: params.inviteUuid,
       encryptedMessage: params.encryptedMessage,
-      permissions: params.permissions,
+      permission: params.permission,
     })
 
     if (isErrorResponse(response)) {

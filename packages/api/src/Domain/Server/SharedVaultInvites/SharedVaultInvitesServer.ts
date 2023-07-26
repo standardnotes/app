@@ -26,14 +26,14 @@ export class SharedVaultInvitesServer implements SharedVaultInvitesServerInterfa
     return this.httpService.post(SharedVaultInvitesPaths.createInvite(params.sharedVaultUuid), {
       recipient_uuid: params.recipientUuid,
       encrypted_message: params.encryptedMessage,
-      permissions: params.permissions,
+      permission: params.permission,
     })
   }
 
   updateInvite(params: UpdateSharedVaultInviteParams): Promise<HttpResponse<UpdateSharedVaultInviteResponse>> {
     return this.httpService.patch(SharedVaultInvitesPaths.updateInvite(params.sharedVaultUuid, params.inviteUuid), {
       encrypted_message: params.encryptedMessage,
-      permissions: params.permissions,
+      permission: params.permission,
     })
   }
 

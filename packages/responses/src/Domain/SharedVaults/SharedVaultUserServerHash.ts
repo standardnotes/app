@@ -4,6 +4,6 @@ export interface SharedVaultUserServerHash {
   uuid: string
   shared_vault_uuid: string
   user_uuid: string
-  permissions: SharedVaultPermission
+  permission: SharedVaultPermission
   updated_at_timestamp: number
 }

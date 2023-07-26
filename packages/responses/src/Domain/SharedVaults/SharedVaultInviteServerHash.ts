@@ -7,7 +7,7 @@ export interface SharedVaultInviteServerHash extends AsymmetricMessageServerHash
   user_uuid: string
   sender_uuid: string
   encrypted_message: string
-  permissions: SharedVaultPermission
+  permission: SharedVaultPermission
   created_at_timestamp: number
   updated_at_timestamp: number
 }

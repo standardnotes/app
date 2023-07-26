@@ -4218,7 +4218,7 @@ __metadata:
   resolution: "@standardnotes/api@workspace:packages/api"
   dependencies:
     "@standardnotes/common": ^1.50.0
-    "@standardnotes/domain-core": ^1.22.0
+    "@standardnotes/domain-core": ^1.23.3
     "@standardnotes/models": "workspace:*"
     "@standardnotes/responses": "workspace:*"
     "@standardnotes/security": ^1.7.6
@@ -4378,7 +4378,7 @@ __metadata:
     "@babel/core": "*"
     "@babel/preset-env": "*"
     "@electron/remote": ^2.0.9
-    "@standardnotes/domain-core": ^1.22.0
+    "@standardnotes/domain-core": ^1.23.3
     "@standardnotes/electron-clear-data": 1.1.1
     "@standardnotes/web": "workspace:*"
     "@types/fs-extra": ^11.0.1
@@ -4430,12 +4430,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/domain-core@npm:^1.22.0":
-  version: 1.22.0
-  resolution: "@standardnotes/domain-core@npm:1.22.0"
+"@standardnotes/domain-core@npm:^1.23.3":
+  version: 1.23.3
+  resolution: "@standardnotes/domain-core@npm:1.23.3"
   dependencies:
     uuid: ^9.0.0
-  checksum: aaa4812146f7ffcac8ed83bfd370d9dfb58055dea768dd4332a44756cccbb3d1a667da4d6da804fa26d5be594b85c60f3aa9b4c3eebb89805ffdbbfd7444946e
+  checksum: 9a3f0b9bd4b9858ab0aa2de9d5db3ba70e03d07f613e8be31c36aec3e9d19b8e60952888509d07fbb43bd93a3c5085a5e682fee6fa8ab87aa76982b16d1c3923
   languageName: node
   linkType: hard
 
@@ -4482,7 +4482,7 @@ __metadata:
   dependencies:
     "@standardnotes/common": ^1.50.0
     "@standardnotes/config": 2.4.3
-    "@standardnotes/domain-core": ^1.22.0
+    "@standardnotes/domain-core": ^1.23.3
     "@standardnotes/models": "workspace:*"
     "@standardnotes/responses": "workspace:*"
     "@standardnotes/sncrypto-common": "workspace:*"
@@ -4517,7 +4517,7 @@ __metadata:
   resolution: "@standardnotes/features@workspace:packages/features"
   dependencies:
     "@standardnotes/common": ^1.50.0
-    "@standardnotes/domain-core": ^1.22.0
+    "@standardnotes/domain-core": ^1.23.3
     "@standardnotes/security": ^1.7.6
     "@types/jest": ^29.2.3
     "@typescript-eslint/eslint-plugin": "*"
@@ -4724,7 +4724,7 @@ __metadata:
   resolution: "@standardnotes/models@workspace:packages/models"
   dependencies:
     "@standardnotes/common": ^1.50.0
-    "@standardnotes/domain-core": ^1.22.0
+    "@standardnotes/domain-core": ^1.23.3
     "@standardnotes/features": "workspace:*"
     "@standardnotes/responses": "workspace:*"
     "@standardnotes/sncrypto-common": "workspace:^"
@@ -4811,7 +4811,7 @@ __metadata:
   dependencies:
     "@standardnotes/api": "workspace:^"
     "@standardnotes/common": ^1.50.0
-    "@standardnotes/domain-core": ^1.22.0
+    "@standardnotes/domain-core": ^1.23.3
     "@standardnotes/encryption": "workspace:^"
     "@standardnotes/features": "workspace:^"
     "@standardnotes/files": "workspace:^"
@@ -4911,7 +4911,7 @@ __metadata:
     "@babel/preset-env": "*"
     "@standardnotes/api": "workspace:*"
     "@standardnotes/common": ^1.50.0
-    "@standardnotes/domain-core": ^1.22.0
+    "@standardnotes/domain-core": ^1.23.3
     "@standardnotes/domain-events": ^2.108.1
     "@standardnotes/encryption": "workspace:*"
     "@standardnotes/features": "workspace:*"
@@ -5037,7 +5037,7 @@ __metadata:
   resolution: "@standardnotes/ui-services@workspace:packages/ui-services"
   dependencies:
     "@standardnotes/common": ^1.50.0
-    "@standardnotes/domain-core": ^1.22.0
+    "@standardnotes/domain-core": ^1.23.3
     "@standardnotes/features": "workspace:^"
     "@standardnotes/filepicker": "workspace:^"
     "@standardnotes/models": "workspace:^"

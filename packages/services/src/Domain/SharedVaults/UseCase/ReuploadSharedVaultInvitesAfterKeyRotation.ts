@@ -134,7 +134,7 @@ export class ReuploadSharedVaultInvitesAfterKeyRotationUseCase {
       sharedVault: params.usecaseDTO.sharedVault,
       sharedVaultContacts: params.sharedVaultContacts,
       recipient: params.contact,
-      permissions: params.previousInvite.permissions,
+      permission: params.previousInvite.permission,
     })
 
     if (isClientDisplayableError(result)) {

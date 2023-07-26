@@ -58,9 +58,9 @@ export class ServerSyncResponse {
 
     this.vaultInvites = this.successResponseData?.shared_vault_invites || []
 
-    this.asymmetricMessages = this.successResponseData?.asymmetric_messages || []
+    this.asymmetricMessages = this.successResponseData?.messages || []
 
-    this.userEvents = this.successResponseData?.user_events || []
+    this.userEvents = this.successResponseData?.notifications || []
 
     deepFreeze(this)
   }

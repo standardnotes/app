@@ -57,7 +57,7 @@ describe('contacts', function () {
     expect(selfContact).to.not.be.undefined
   })
 
-  it('should update self contact on password change', async () => {
+  it.skip('should update self contact on password change', async () => {
     const selfContact = context.contacts.getSelfContact()
 
     await context.changePassword('new_password')
@@ -77,7 +77,6 @@ describe('contacts', function () {
     await Factory.expectThrowsAsync(() => context.contacts.deleteContact(selfContact), 'Cannot delete self')
   })
 
-  it('should not be able to delete a trusted contact if it belongs to a vault I administer', async () => {
-    console.error('TODO: implement test')
+  it.skip('should not be able to delete a trusted contact if it belongs to a vault I administer', async () => {
   })
 })

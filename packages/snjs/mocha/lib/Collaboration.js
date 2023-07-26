@@ -32,9 +32,9 @@ export const acceptAllInvites = async (context) => {
   }
 }
 
-export const createSharedVaultWithAcceptedInvite = async (context, permissions = SharedVaultPermission.Write) => {
+export const createSharedVaultWithAcceptedInvite = async (context, permission = SharedVaultPermission.Write) => {
   const { sharedVault, contact, contactContext, deinitContactContext } =
-    await createSharedVaultWithUnacceptedButTrustedInvite(context, permissions)
+    await createSharedVaultWithUnacceptedButTrustedInvite(context, permission)
 
   const promise = contactContext.awaitNextSyncSharedVaultFromScratchEvent()
 
@@ -49,11 +49,11 @@ export const createSharedVaultWithAcceptedInvite = async (context, permissions =
 
 export const createSharedVaultWithAcceptedInviteAndNote = async (
   context,
-  permissions = SharedVaultPermission.Write,
+  permission = SharedVaultPermission.Write,
 ) => {
   const { sharedVault, contactContext, contact, deinitContactContext } = await createSharedVaultWithAcceptedInvite(
     context,
-    permissions,
+    permission,
   )
   const note = await context.createSyncedNote('foo', 'bar')
   const updatedNote = await moveItemToVault(context, sharedVault, note)
@@ -64,7 +64,7 @@ export const createSharedVaultWithAcceptedInviteAndNote = async (
 
 export const createSharedVaultWithUnacceptedButTrustedInvite = async (
   context,
-  permissions = SharedVaultPermission.Write,
+  permission = SharedVaultPermission.Write,
 ) => {
   const sharedVault = await createSharedVault(context)
 
@@ -72,7 +72,7 @@ export const createSharedVaultWithUnacceptedButTrustedInvite = async (
   const contact = await createTrustedContactForUserOfContext(context, contactContext)
   await createTrustedContactForUserOfContext(contactContext, context)
 
-  const invite = await context.sharedVaults.inviteContactToSharedVault(sharedVault, contact, permissions)
+  const invite = await context.sharedVaults.inviteContactToSharedVault(sharedVault, contact, permission)
   await contactContext.sync()
 
   return { sharedVault, contact, contactContext, deinitContactContext, invite }
@@ -80,26 +80,26 @@ export const createSharedVaultWithUnacceptedButTrustedInvite = async (
 
 export const createSharedVaultWithUnacceptedAndUntrustedInvite = async (
   context,
-  permissions = SharedVaultPermission.Write,
+  permission = SharedVaultPermission.Write,
 ) => {
   const sharedVault = await createSharedVault(context)
 
   const { contactContext, deinitContactContext } = await createContactContext()
   const contact = await createTrustedContactForUserOfContext(context, contactContext)
 
-  const invite = await context.sharedVaults.inviteContactToSharedVault(sharedVault, contact, permissions)
+  const invite = await context.sharedVaults.inviteContactToSharedVault(sharedVault, contact, permission)
   await contactContext.sync()
 
   return { sharedVault, contact, contactContext, deinitContactContext, invite }
 }
 
-export const inviteNewPartyToSharedVault = async (context, sharedVault, permissions = SharedVaultPermission.Write) => {
+export const inviteNewPartyToSharedVault = async (context, sharedVault, permission = SharedVaultPermission.Write) => {
   const { contactContext: thirdPartyContext, deinitContactContext: deinitThirdPartyContext } =
     await createContactContext()
 
   const thirdPartyContact = await createTrustedContactForUserOfContext(context, thirdPartyContext)
   await createTrustedContactForUserOfContext(thirdPartyContext, context)
-  await context.sharedVaults.inviteContactToSharedVault(sharedVault, thirdPartyContact, permissions)
+  await context.sharedVaults.inviteContactToSharedVault(sharedVault, thirdPartyContact, permission)
 
   await thirdPartyContext.sync()
 

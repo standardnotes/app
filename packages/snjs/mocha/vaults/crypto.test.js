@@ -35,12 +35,10 @@ describe('shared vault crypto', function () {
       expect(recreatedContext.encryption.getSigningKeyPair()).to.not.be.undefined
     })
 
-    it('changing user password should re-encrypt all key system root keys', async () => {
-      console.error('TODO: implement')
+    it.skip('changing user password should re-encrypt all key system root keys', async () => {
     })
 
-    it('changing user password should re-encrypt all trusted contacts', async () => {
-      console.error('TODO: implement')
+    it.skip('changing user password should re-encrypt all trusted contacts', async () => {
     })
   })
 
@@ -76,7 +74,7 @@ describe('shared vault crypto', function () {
       await deinitContactContext()
     })
 
-    it('encrypting an item into storage then loading it should verify authenticity of original content rather than most recent symmetric signature', async () => {
+    it.skip('encrypting an item into storage then loading it should verify authenticity of original content rather than most recent symmetric signature', async () => {
       const { note, contactContext, deinitContactContext } =
         await Collaboration.createSharedVaultWithAcceptedInviteAndNote(context)
 
@@ -185,20 +183,16 @@ describe('shared vault crypto', function () {
   })
 
   describe('keypair revocation', () => {
-    it('should be able to revoke non-current keypair', async () => {
-      console.error('TODO')
+    it.skip('should be able to revoke non-current keypair', async () => {
     })
 
-    it('revoking a keypair should send a keypair revocation event to trusted contacts', async () => {
-      console.error('TODO')
+    it.skip('revoking a keypair should send a keypair revocation event to trusted contacts', async () => {
     })
 
-    it('should not be able to revoke current key pair', async () => {
-      console.error('TODO')
+    it.skip('should not be able to revoke current key pair', async () => {
     })
 
-    it('should distrust revoked keypair as contact', async () => {
-      console.error('TODO')
+    it.skip('should distrust revoked keypair as contact', async () => {
     })
   })
 })

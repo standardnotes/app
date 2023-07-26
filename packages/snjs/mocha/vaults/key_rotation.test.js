@@ -61,7 +61,7 @@ describe('shared vault key rotation', function () {
 
     const message = outboundMessages[0]
     expect(message).to.not.be.undefined
-    expect(message.user_uuid).to.equal(contactContext.userUuid)
+    expect(message.recipient_uuid).to.equal(contactContext.userUuid)
     expect(message.encrypted_message).to.not.be.undefined
 
     await deinitContactContext()
@@ -235,35 +235,27 @@ describe('shared vault key rotation', function () {
     await deinitContactContext()
   })
 
-  it('should throw if attempting to change password of locked vault', async () => {
-    console.error('TODO: implement')
+  it.skip('should throw if attempting to change password of locked vault', async () => {
   })
 
-  it('should respect storage preference when rotating key system root key', async () => {
-    console.error('TODO: implement')
+  it.skip('should respect storage preference when rotating key system root key', async () => {
   })
 
-  it('should change storage preference from synced to local', async () => {
-    console.error('TODO: implement')
+  it.skip('should change storage preference from synced to local', async () => {
   })
 
-  it('should change storage preference from local to synced', async () => {
-    console.error('TODO: implement')
+  it.skip('should change storage preference from local to synced', async () => {
   })
 
-  it('should resync key system items key if it is encrypted with noncurrent key system root key', async () => {
-    console.error('TODO: implement')
+  it.skip('should resync key system items key if it is encrypted with noncurrent key system root key', async () => {
   })
 
-  it('should change password type from user inputted to randomized', async () => {
-    console.error('TODO: implement')
+  it.skip('should change password type from user inputted to randomized', async () => {
   })
 
-  it('should change password type from randomized to user inputted', async () => {
-    console.error('TODO: implement')
+  it.skip('should change password type from randomized to user inputted', async () => {
   })
 
-  it('should not be able to change storage mode of third party vault', async () => {
-    console.error('TODO: implement')
+  it.skip('should not be able to change storage mode of third party vault', async () => {
   })
 })
