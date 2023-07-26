@@ -80,7 +80,7 @@ describe('AsymmetricMessageService', () => {
       const messages: AsymmetricMessageServerHash[] = [
         {
           uuid: 'keypair-changed-message',
-          user_uuid: '1',
+          recipient_uuid: '1',
           sender_uuid: '2',
           encrypted_message: 'encrypted_message',
           created_at_timestamp: 2,
@@ -88,7 +88,7 @@ describe('AsymmetricMessageService', () => {
         },
         {
           uuid: 'misc-message',
-          user_uuid: '1',
+          recipient_uuid: '1',
           sender_uuid: '2',
           encrypted_message: 'encrypted_message',
           created_at_timestamp: 1,
@@ -119,7 +119,7 @@ describe('AsymmetricMessageService', () => {
     const messages: AsymmetricMessageServerHash[] = [
       {
         uuid: 'newer-message',
-        user_uuid: '1',
+        recipient_uuid: '1',
         sender_uuid: '2',
         encrypted_message: 'encrypted_message',
         created_at_timestamp: 2,
@@ -127,7 +127,7 @@ describe('AsymmetricMessageService', () => {
       },
       {
         uuid: 'older-message',
-        user_uuid: '1',
+        recipient_uuid: '1',
         sender_uuid: '2',
         encrypted_message: 'encrypted_message',
         created_at_timestamp: 1,
@@ -153,7 +153,7 @@ describe('AsymmetricMessageService', () => {
   it('should handle ContactShare message', async () => {
     const message: AsymmetricMessageServerHash = {
       uuid: 'message',
-      user_uuid: '1',
+      recipient_uuid: '1',
       sender_uuid: '2',
       encrypted_message: 'encrypted_message',
       created_at_timestamp: 2,
@@ -181,7 +181,7 @@ describe('AsymmetricMessageService', () => {
   it('should handle SenderKeypairChanged message', async () => {
     const message: AsymmetricMessageServerHash = {
       uuid: 'message',
-      user_uuid: '1',
+      recipient_uuid: '1',
       sender_uuid: '2',
       encrypted_message: 'encrypted_message',
       created_at_timestamp: 2,
@@ -210,7 +210,7 @@ describe('AsymmetricMessageService', () => {
   it('should handle SharedVaultRootKeyChanged message', async () => {
     const message: AsymmetricMessageServerHash = {
       uuid: 'message',
-      user_uuid: '1',
+      recipient_uuid: '1',
       sender_uuid: '2',
       encrypted_message: 'encrypted_message',
       created_at_timestamp: 2,
@@ -238,7 +238,7 @@ describe('AsymmetricMessageService', () => {
   it('should handle SharedVaultMetadataChanged message', async () => {
     const message: AsymmetricMessageServerHash = {
       uuid: 'message',
-      user_uuid: '1',
+      recipient_uuid: '1',
       sender_uuid: '2',
       encrypted_message: 'encrypted_message',
       created_at_timestamp: 2,
@@ -268,7 +268,7 @@ describe('AsymmetricMessageService', () => {
   it('should throw if message type is SharedVaultInvite', async () => {
     const message: AsymmetricMessageServerHash = {
       uuid: 'message',
-      user_uuid: '1',
+      recipient_uuid: '1',
       sender_uuid: '2',
       encrypted_message: 'encrypted_message',
       created_at_timestamp: 2,
@@ -294,7 +294,7 @@ describe('AsymmetricMessageService', () => {
   it('should delete message from server after processing', async () => {
     const message: AsymmetricMessageServerHash = {
       uuid: 'message',
-      user_uuid: '1',
+      recipient_uuid: '1',
       sender_uuid: '2',
       encrypted_message: 'encrypted_message',
       created_at_timestamp: 2,
