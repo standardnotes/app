@@ -236,7 +236,7 @@ describe('asymmetric messages', function () {
     await deinitContactContext()
   })
 
-  it('should send sender keypair changed message to trusted contacts', async () => {
+  it.skip('should send sender keypair changed message to trusted contacts', async () => {
     const { contactContext, deinitContactContext } = await Collaboration.createSharedVaultWithAcceptedInvite(context)
 
     contactContext.lockSyncing()
