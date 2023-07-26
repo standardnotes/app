@@ -100,7 +100,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ quickSettingsMenuCont
 
   const toggleEditorStackComponent = useCallback(
     (component: ComponentInterface) => {
-      application.componentManager.toggleComponent(component).catch(console.error)
+      void application.componentManager.toggleComponent(component)
     },
     [application],
   )
