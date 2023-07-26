@@ -24,20 +24,6 @@ describe('vaults', function () {
     vaults = context.vaults
   })
 
-  describe('locking', () => {
-    it('should throw if attempting to add item to locked vault', async () => {
-      console.error('TODO: implement')
-    })
-
-    it('should throw if attempting to remove item from locked vault', async () => {
-      console.error('TODO: implement')
-    })
-
-    it('locking vault should remove root key and items keys from memory', async () => {
-      console.error('TODO: implement')
-    })
-  })
-
   describe('offline', function () {
     it('should be able to create an offline vault', async () => {
       const vault = await vaults.createRandomizedVault({

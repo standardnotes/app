@@ -69,7 +69,7 @@ describe('asymmetric messages', function () {
       },
     }
 
-    await service.sendOwnContactChangeEventToAllContacts(eventData)
+    await context.contacts.sendOwnContactChangeEventToAllContacts(eventData)
 
     const deleteFunction = sinon.spy(contactContext.asymmetric, 'deleteMessageAfterProcessing')
 
@@ -239,14 +239,20 @@ describe('asymmetric messages', function () {
   it('should send sender keypair changed message to trusted contacts', async () => {
     const { contactContext, deinitContactContext } = await Collaboration.createSharedVaultWithAcceptedInvite(context)
 
+    contactContext.lockSyncing()
+
+    const sendPromise = context.resolveWhenAsyncFunctionCompletes(
+      context.contacts,
+      'sendOwnContactChangeEventToAllContacts',
+    )
     await context.changePassword('new password')
+    await sendPromise
 
     const firstPartySpy = sinon.spy(context.asymmetric, 'handleTrustedSenderKeypairChangedMessage')
     const secondPartySpy = sinon.spy(contactContext.asymmetric, 'handleTrustedSenderKeypairChangedMessage')
 
-    await context.sync()
-
     const completedProcessingMessagesPromise = contactContext.resolveWhenAsymmetricMessageProcessingCompletes()
+    contactContext.unlockSyncing()
     await contactContext.sync()
     await completedProcessingMessagesPromise
 

@@ -702,12 +702,10 @@ export class Dependencies {
         this.get(TYPES.AsymmetricMessageServer),
         this.get(TYPES.CreateOrEditContact),
         this.get(TYPES.FindContact),
-        this.get(TYPES.GetAllContacts),
         this.get(TYPES.ReplaceContactData),
         this.get(TYPES.GetTrustedPayload),
         this.get(TYPES.GetVault),
         this.get(TYPES.HandleRootKeyChangedMessage),
-        this.get(TYPES.SendOwnContactChangeMessage),
         this.get(TYPES.GetOutboundMessages),
         this.get(TYPES.GetInboundMessages),
         this.get(TYPES.GetUntrustedPayload),
@@ -791,6 +789,7 @@ export class Dependencies {
         this.get(TYPES.CreateOrEditContact),
         this.get(TYPES.EditContact),
         this.get(TYPES.ValidateItemSigner),
+        this.get(TYPES.SendOwnContactChangeMessage),
         this.get(TYPES.InternalEventBus),
       )
     })

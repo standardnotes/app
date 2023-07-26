@@ -5,7 +5,7 @@ import {
   AsymmetricMessageSenderKeypairChanged,
 } from '@standardnotes/models'
 import { PkcKeyPair } from '@standardnotes/sncrypto-common'
-import { SendMessage } from './SendMessage'
+import { SendMessage } from '../../AsymmetricMessage/UseCase/SendMessage'
 import { EncryptMessage } from '../../Encryption/UseCase/Asymmetric/EncryptMessage'
 import { Result, UseCaseInterface } from '@standardnotes/domain-core'
 

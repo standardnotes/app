@@ -21,59 +21,99 @@ describe('vault key management', function () {
     await context.launch()
   })
 
-  it('should lock non-persistent vault', async () => {
-    const vault = await context.vaults.createUserInputtedPasswordVault({
-      name: 'test vault',
-      description: 'test vault description',
-      userInputtedPassword: 'test password',
-      storagePreference: KeySystemRootKeyStorageMode.Ephemeral,
+  describe('locking', () => {
+    it('should throw if attempting to add item to locked vault', async () => {
+      const vault = await context.vaults.createUserInputtedPasswordVault({
+        name: 'test vault',
+        description: 'test vault description',
+        userInputtedPassword: 'test password',
+        storagePreference: KeySystemRootKeyStorageMode.Ephemeral,
+      })
+
+      await context.vaultLocks.lockNonPersistentVault(vault)
+
+      const item = await context.createSyncedNote('test note', 'test note text')
+
+      await Factory.expectThrowsAsync(
+        () => context.vaults.moveItemToVault(vault, item),
+        'Attempting to add item to locked vault',
+      )
     })
 
-    await context.vaultLocks.lockNonPersistentVault(vault)
+    it('should throw if attempting to remove item from locked vault', async () => {
+      const vault = await context.vaults.createUserInputtedPasswordVault({
+        name: 'test vault',
+        description: 'test vault description',
+        userInputtedPassword: 'test password',
+        storagePreference: KeySystemRootKeyStorageMode.Ephemeral,
+      })
 
-    expect(context.vaultLocks.isVaultLocked(vault)).to.be.true
-  })
+      const item = await context.createSyncedNote('test note', 'test note text')
 
-  it('should not be able to lock user-inputted vault with synced key', async () => {
-    const vault = await context.vaults.createUserInputtedPasswordVault({
-      name: 'test vault',
-      description: 'test vault description',
-      userInputtedPassword: 'test password',
-      storagePreference: KeySystemRootKeyStorageMode.Synced,
+      await context.vaults.moveItemToVault(vault, item)
+
+      await context.vaultLocks.lockNonPersistentVault(vault)
+
+      await Factory.expectThrowsAsync(
+        () => context.vaults.removeItemFromVault(item),
+        'Attempting to remove item from locked vault',
+      )
     })
 
-    await Factory.expectThrowsAsync(
-      () => context.vaultLocks.lockNonPersistentVault(vault),
-      'Vault uses synced key storage and cannot be locked',
-    )
-  })
+    it('should lock non-persistent vault', async () => {
+      const vault = await context.vaults.createUserInputtedPasswordVault({
+        name: 'test vault',
+        description: 'test vault description',
+        userInputtedPassword: 'test password',
+        storagePreference: KeySystemRootKeyStorageMode.Ephemeral,
+      })
 
-  it('should not be able to lock randomized vault', async () => {
-    const vault = await context.vaults.createRandomizedVault({
-      name: 'test vault',
-      description: 'test vault description',
+      await context.vaultLocks.lockNonPersistentVault(vault)
+
+      expect(context.vaultLocks.isVaultLocked(vault)).to.be.true
     })
 
-    await Factory.expectThrowsAsync(
-      () => context.vaultLocks.lockNonPersistentVault(vault),
-      'Vault uses synced key storage and cannot be locked',
-    )
-  })
+    it('should not be able to lock user-inputted vault with synced key', async () => {
+      const vault = await context.vaults.createUserInputtedPasswordVault({
+        name: 'test vault',
+        description: 'test vault description',
+        userInputtedPassword: 'test password',
+        storagePreference: KeySystemRootKeyStorageMode.Synced,
+      })
 
-  it('should throw if attempting to change password of locked vault', async () => {
-    const vault = await context.vaults.createUserInputtedPasswordVault({
-      name: 'test vault',
-      description: 'test vault description',
-      userInputtedPassword: 'test password',
-      storagePreference: KeySystemRootKeyStorageMode.Ephemeral,
+      await Factory.expectThrowsAsync(
+        () => context.vaultLocks.lockNonPersistentVault(vault),
+        'Vault uses synced key storage and cannot be locked',
+      )
     })
 
-    await context.vaultLocks.lockNonPersistentVault(vault)
+    it('should not be able to lock randomized vault', async () => {
+      const vault = await context.vaults.createRandomizedVault({
+        name: 'test vault',
+        description: 'test vault description',
+      })
 
-    await Factory.expectThrowsAsync(
-      () => context.vaults.changeVaultOptions({ vault }),
-      'Attempting to change vault options on a locked vault',
-    )
+      await Factory.expectThrowsAsync(
+        () => context.vaultLocks.lockNonPersistentVault(vault),
+        'Vault uses synced key storage and cannot be locked',
+      )
+    })
+
+    it('should throw if attempting to change password of locked vault', async () => {
+      const vault = await context.vaults.createUserInputtedPasswordVault({
+        name: 'test vault',
+        description: 'test vault description',
+        userInputtedPassword: 'test password',
+        storagePreference: KeySystemRootKeyStorageMode.Ephemeral,
+      })
+
+      await context.vaultLocks.lockNonPersistentVault(vault)
+
+      await Factory.expectThrowsAsync(
+        () => context.vaults.changeVaultOptions({ vault }),
+        'Attempting to change vault options on a locked vault',
+      )
+    })
   })
 
   describe('key rotation and persistence', () => {

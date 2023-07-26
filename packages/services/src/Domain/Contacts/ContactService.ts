@@ -1,3 +1,4 @@
+import { SendOwnContactChangeMessage } from './UseCase/SendOwnContactChangeMessage'
 import { DeleteContact } from './UseCase/DeleteContact'
 import { MutatorClientInterface } from './../Mutator/MutatorClientInterface'
 import { UserKeyPairChangedEventData } from './../Session/UserKeyPairChangedEventData'
@@ -42,6 +43,7 @@ export class ContactService
     private _createOrEditContact: CreateOrEditContact,
     private _editContact: EditContact,
     private _validateItemSigner: ValidateItemSigner,
+    private _sendOwnContactChangedMessage: SendOwnContactChangeMessage,
     eventBus: InternalEventBusInterface,
   ) {
     super(eventBus)
@@ -52,10 +54,35 @@ export class ContactService
   async handleEvent(event: InternalEventInterface): Promise<void> {
     if (event.type === SessionEvent.UserKeyPairChanged) {
       const data = event.payload as UserKeyPairChangedEventData
-
       await this.selfContactManager.updateWithNewPublicKeySet({
         encryption: data.current.encryption.publicKey,
         signing: data.current.signing.publicKey,
+      })
+      void this.sendOwnContactChangeEventToAllContacts(event.payload as UserKeyPairChangedEventData)
+    }
+  }
+
+  private async sendOwnContactChangeEventToAllContacts(data: UserKeyPairChangedEventData): Promise<void> {
+    if (!data.previous) {
+      return
+    }
+
+    const contacts = this._getAllContacts.execute()
+    if (contacts.isFailed()) {
+      return
+    }
+
+    for (const contact of contacts.getValue()) {
+      if (contact.isMe) {
+        continue
+      }
+
+      await this._sendOwnContactChangedMessage.execute({
+        senderOldKeyPair: data.previous.encryption,
+        senderOldSigningKeyPair: data.previous.signing,
+        senderNewKeyPair: data.current.encryption,
+        senderNewSigningKeyPair: data.current.signing,
+        contact,
       })
     }
   }
