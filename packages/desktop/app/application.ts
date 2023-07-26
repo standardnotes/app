@@ -1,4 +1,4 @@
-import { App, Shell, Event } from 'electron'
+import { App, Shell } from 'electron'
 import { AppState } from './AppState'
 import { createExtensionsServer } from './javascripts/Main/ExtensionsServer'
 import { Keychain } from './javascripts/Main/Keychain/Keychain'
@@ -52,7 +52,7 @@ function focusWindow(appState: AppState) {
 }
 
 function registerSingleInstanceHandler(app: Electron.App, appState: AppState) {
-  app.on('second-instance', (_event: Event, argv: string[], _workingDirectory: string, _additionalData: unknown) => {
+  app.on('second-instance', (_event: Event, argv: string[]) => {
     if (isWindows()) {
       appState.deepLinkUrl = argv.find((arg) => arg.startsWith(deepLinkScheme))
     }

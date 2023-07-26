@@ -174,7 +174,7 @@ export async function checkForUpdate(appState: AppState, state: UpdateState, use
     state.setCheckingForUpdate(true)
 
     try {
-      const result = userTriggered ? await autoUpdater.checkForUpdatesAndNotify() : await autoUpdater.checkForUpdates()
+      const result = await autoUpdater.checkForUpdates()
 
       if (!result) {
         return
