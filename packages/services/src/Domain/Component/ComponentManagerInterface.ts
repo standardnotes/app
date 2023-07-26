@@ -3,7 +3,6 @@ import {
   ComponentArea,
   ComponentFeatureDescription,
   EditorFeatureDescription,
-  EditorIdentifier,
   IframeComponentFeatureDescription,
   ThemeFeatureDescription,
 } from '@standardnotes/features'
@@ -31,7 +30,7 @@ export interface ComponentManagerInterface {
   setPermissionDialogUIHandler(handler: (dialog: PermissionDialog) => void): void
 
   editorForNote(note: SNNote): UIFeature<EditorFeatureDescription | IframeComponentFeatureDescription>
-  getDefaultEditorIdentifier(currentTag?: SNTag): EditorIdentifier
+  getDefaultEditorIdentifier(currentTag?: SNTag): string
 
   isThemeActive(theme: UIFeature<ThemeFeatureDescription>): boolean
   toggleTheme(theme: UIFeature<ThemeFeatureDescription>): Promise<void>

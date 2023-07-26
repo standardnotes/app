@@ -1,6 +1,5 @@
 import { isValidUrl } from '@standardnotes/utils'
 import {
-  FeatureIdentifier,
   ThirdPartyFeatureDescription,
   ComponentArea,
   ComponentFlag,
@@ -175,7 +174,7 @@ export class SNComponent extends DecryptedItem<ComponentContent> implements Comp
     return this.valid_until.getTime() > 0 && this.valid_until <= new Date()
   }
 
-  public get identifier(): FeatureIdentifier {
+  public get identifier(): string {
     return this.package_info.identifier
   }
 

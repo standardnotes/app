@@ -1,10 +1,10 @@
-import { FeatureIdentifier } from '@standardnotes/features'
+import { NativeFeatureIdentifier } from '@standardnotes/features'
 import { FeatureStatus, ItemManagerInterface } from '@standardnotes/services'
 import { GetFeatureStatusUseCase } from './GetFeatureStatus'
 import { ComponentInterface, DecryptedItemInterface } from '@standardnotes/models'
 
 jest.mock('@standardnotes/features', () => ({
-  FeatureIdentifier: {
+  NativeFeatureIdentifier: {
     DarkTheme: 'darkTheme',
   },
   FindNativeFeature: jest.fn(),
@@ -33,7 +33,7 @@ describe('GetFeatureStatusUseCase', () => {
     it('should return entitled for free features', () => {
       expect(
         usecase.execute({
-          featureId: FeatureIdentifier.DarkTheme,
+          featureId: NativeFeatureIdentifier.TYPES.DarkTheme,
           hasPaidAnyPartyOnlineOrOfflineSubscription: false,
           firstPartyOnlineSubscription: undefined,
           firstPartyRoles: undefined,

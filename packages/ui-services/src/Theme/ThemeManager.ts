@@ -16,7 +16,7 @@ import {
   PreferencesServiceEvent,
   ComponentManagerInterface,
 } from '@standardnotes/services'
-import { FeatureIdentifier, FindNativeTheme, ThemeFeatureDescription } from '@standardnotes/features'
+import { NativeFeatureIdentifier, FindNativeTheme, ThemeFeatureDescription } from '@standardnotes/features'
 import { WebApplicationInterface } from '../WebApplication/WebApplicationInterface'
 import { AbstractUIServicee } from '../Abstract/AbstractUIService'
 import { GetAllThemesUseCase } from './GetAllThemesUseCase'
@@ -77,7 +77,7 @@ export class ThemeManager extends AbstractUIServicee {
         for (const activeTheme of activeThemes) {
           if (!this.themesActiveInTheUI.includes(activeTheme)) {
             const theme =
-              FindNativeTheme(activeTheme as FeatureIdentifier) ??
+              FindNativeTheme(activeTheme) ??
               this.application.items.findItem<ThemeInterface>(activeTheme)
 
             if (theme) {
@@ -245,7 +245,7 @@ export class ThemeManager extends AbstractUIServicee {
     const preference = prefersDarkColorScheme ? PrefKey.AutoDarkThemeIdentifier : PrefKey.AutoLightThemeIdentifier
 
     const preferenceDefault =
-      preference === PrefKey.AutoDarkThemeIdentifier ? FeatureIdentifier.DarkTheme : DefaultThemeIdentifier
+      preference === PrefKey.AutoDarkThemeIdentifier ? NativeFeatureIdentifier.TYPES.DarkTheme : DefaultThemeIdentifier
 
     const usecase = new GetAllThemesUseCase(this.application.items)
     const { thirdParty, native } = usecase.execute({ excludeLayerable: false })
@@ -283,6 +283,7 @@ export class ThemeManager extends AbstractUIServicee {
 
   private async activateCachedThemes() {
     const cachedThemes = this.getCachedThemes()
+    console.log('activateCachedThemes > cachedThemes:', cachedThemes)
     for (const theme of cachedThemes) {
       this.activateTheme(theme, true)
     }

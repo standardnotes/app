@@ -11,7 +11,7 @@ import {
   ItemManagerInterface,
   MutatorClientInterface,
 } from '@standardnotes/snjs'
-import { FeatureIdentifier, NoteType } from '@standardnotes/features'
+import { NativeFeatureIdentifier, NoteType } from '@standardnotes/features'
 import { NoteViewController } from './NoteViewController'
 
 describe('note view controller', () => {
@@ -40,7 +40,7 @@ describe('note view controller', () => {
   })
 
   it('should create notes with plaintext note type', async () => {
-    application.componentManager.getDefaultEditorIdentifier = jest.fn().mockReturnValue(FeatureIdentifier.PlainEditor)
+    application.componentManager.getDefaultEditorIdentifier = jest.fn().mockReturnValue(NativeFeatureIdentifier.TYPES.PlainEditor)
 
     const controller = new NoteViewController(application)
     await controller.initialize()
@@ -55,13 +55,13 @@ describe('note view controller', () => {
   it('should create notes with markdown note type', async () => {
     application.items.getDisplayableComponents = jest.fn().mockReturnValue([
       {
-        identifier: FeatureIdentifier.MarkdownProEditor,
+        identifier: NativeFeatureIdentifier.TYPES.MarkdownProEditor,
       } as SNComponent,
     ])
 
     application.componentManager.getDefaultEditorIdentifier = jest
       .fn()
-      .mockReturnValue(FeatureIdentifier.MarkdownProEditor)
+      .mockReturnValue(NativeFeatureIdentifier.TYPES.MarkdownProEditor)
 
     const controller = new NoteViewController(application)
     await controller.initialize()
@@ -74,7 +74,7 @@ describe('note view controller', () => {
   })
 
   it('should add tag to note if default tag is set', async () => {
-    application.componentManager.getDefaultEditorIdentifier = jest.fn().mockReturnValue(FeatureIdentifier.PlainEditor)
+    application.componentManager.getDefaultEditorIdentifier = jest.fn().mockReturnValue(NativeFeatureIdentifier.TYPES.PlainEditor)
 
     const tag = {
       uuid: 'tag-uuid',

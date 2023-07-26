@@ -3,7 +3,7 @@ import {
   ComponentInterface,
   UIFeature,
   ContentType,
-  FeatureIdentifier,
+  NativeFeatureIdentifier,
   PreferencesServiceEvent,
   ThemeFeatureDescription,
 } from '@standardnotes/snjs'
@@ -54,7 +54,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ quickSettingsMenuCont
         (component) =>
           !component.isTheme() &&
           [ComponentArea.EditorStack].includes(component.area) &&
-          component.identifier !== FeatureIdentifier.DeprecatedFoldersComponent,
+          component.identifier !== NativeFeatureIdentifier.TYPES.DeprecatedFoldersComponent,
       )
 
     setEditorStackComponents(toggleableComponents)

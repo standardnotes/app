@@ -2,7 +2,6 @@ import {
   ComponentArea,
   ComponentPermission,
   EditorFeatureDescription,
-  FeatureIdentifier,
   NoteType,
   ThemeDockIcon,
   UIFeatureDescriptionTypes,
@@ -57,7 +56,7 @@ export class UIFeature<F extends UIFeatureDescriptionTypes> implements UIFeature
     }
   }
 
-  get featureIdentifier(): FeatureIdentifier {
+  get featureIdentifier(): string {
     return this.item.identifier
   }
 

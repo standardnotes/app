@@ -2,7 +2,6 @@ import {
   ComponentArea,
   ComponentPermission,
   EditorFeatureDescription,
-  FeatureIdentifier,
   NoteType,
   ThemeDockIcon,
   UIFeatureDescriptionTypes,
@@ -17,7 +16,7 @@ export interface UIFeatureInterface<F extends UIFeatureDescriptionTypes> {
   get asComponent(): ComponentInterface
   get asFeatureDescription(): F
   get uniqueIdentifier(): string
-  get featureIdentifier(): FeatureIdentifier
+  get featureIdentifier(): string
   get noteType(): NoteType
   get fileType(): EditorFeatureDescription['file_type']
   get displayName(): string

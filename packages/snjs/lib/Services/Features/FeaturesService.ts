@@ -8,7 +8,7 @@ import { WebSocketsService } from '../Api/WebsocketsService'
 import { WebSocketsServiceEvent } from '../Api/WebSocketsServiceEvent'
 import { TRUSTED_CUSTOM_EXTENSIONS_HOSTS, TRUSTED_FEATURE_HOSTS } from '@Lib/Hosts'
 import { UserRolesChangedEvent } from '@standardnotes/domain-events'
-import { ExperimentalFeatures, FindNativeFeature, FeatureIdentifier } from '@standardnotes/features'
+import { ExperimentalFeatures, FindNativeFeature } from '@standardnotes/features'
 import {
   SNFeatureRepo,
   FeatureRepoContent,
@@ -64,7 +64,7 @@ export class FeaturesService
 {
   private onlineRoles: string[] = []
   private offlineRoles: string[] = []
-  private enabledExperimentalFeatures: FeatureIdentifier[] = []
+  private enabledExperimentalFeatures: string[] = []
 
   private getFeatureStatusUseCase = new GetFeatureStatusUseCase(this.items)
 
@@ -169,7 +169,7 @@ export class FeaturesService
     }
   }
 
-  public enableExperimentalFeature(identifier: FeatureIdentifier): void {
+  public enableExperimentalFeature(identifier: string): void {
     this.enabledExperimentalFeatures.push(identifier)
 
     void this.storage.setValue(StorageKey.ExperimentalFeatures, this.enabledExperimentalFeatures)
@@ -177,7 +177,7 @@ export class FeaturesService
     void this.notifyEvent(FeaturesEvent.FeaturesAvailabilityChanged)
   }
 
-  public disableExperimentalFeature(identifier: FeatureIdentifier): void {
+  public disableExperimentalFeature(identifier: string): void {
     removeFromArray(this.enabledExperimentalFeatures, identifier)
 
     void this.storage.setValue(StorageKey.ExperimentalFeatures, this.enabledExperimentalFeatures)
@@ -195,7 +195,7 @@ export class FeaturesService
     void this.notifyEvent(FeaturesEvent.FeaturesAvailabilityChanged)
   }
 
-  public toggleExperimentalFeature(identifier: FeatureIdentifier): void {
+  public toggleExperimentalFeature(identifier: string): void {
     if (this.isExperimentalFeatureEnabled(identifier)) {
       this.disableExperimentalFeature(identifier)
     } else {
@@ -203,19 +203,19 @@ export class FeaturesService
     }
   }
 
-  public getExperimentalFeatures(): FeatureIdentifier[] {
+  public getExperimentalFeatures(): string[] {
     return ExperimentalFeatures
   }
 
-  public isExperimentalFeature(featureId: FeatureIdentifier): boolean {
+  public isExperimentalFeature(featureId: string): boolean {
     return this.getExperimentalFeatures().includes(featureId)
   }
 
-  public getEnabledExperimentalFeatures(): FeatureIdentifier[] {
+  public getEnabledExperimentalFeatures(): string[] {
     return this.enabledExperimentalFeatures
   }
 
-  public isExperimentalFeatureEnabled(featureId: FeatureIdentifier): boolean {
+  public isExperimentalFeatureEnabled(featureId: string): boolean {
     return this.enabledExperimentalFeatures.includes(featureId)
   }
 
@@ -364,7 +364,7 @@ export class FeaturesService
   }
 
   public isThirdPartyFeature(identifier: string): boolean {
-    const isNativeFeature = !!FindNativeFeature(identifier as FeatureIdentifier)
+    const isNativeFeature = !!FindNativeFeature(identifier)
     return !isNativeFeature
   }
 
@@ -392,7 +392,7 @@ export class FeaturesService
   }
 
   public getFeatureStatus(
-    featureId: FeatureIdentifier,
+    featureId: string,
     options: { inContextOfItem?: DecryptedItemInterface } = {},
   ): FeatureStatus {
     return this.getFeatureStatusUseCase.execute({

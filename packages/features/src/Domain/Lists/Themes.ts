@@ -1,13 +1,13 @@
 import { ThemeFeatureDescription } from '../Feature/ThemeFeatureDescription'
 import { PermissionName } from '../Permission/PermissionName'
-import { FeatureIdentifier } from '../Feature/FeatureIdentifier'
+import { NativeFeatureIdentifier } from '../Feature/NativeFeatureIdentifier'
 import { FillThemeComponentDefaults } from './Utilities/FillThemeComponentDefaults'
 import { RoleName } from '@standardnotes/domain-core'
 
 export function themes(): ThemeFeatureDescription[] {
   const midnight: ThemeFeatureDescription = FillThemeComponentDefaults({
     name: 'Midnight',
-    identifier: FeatureIdentifier.MidnightTheme,
+    identifier: NativeFeatureIdentifier.TYPES.MidnightTheme,
     permission_name: PermissionName.MidnightTheme,
     isDark: true,
     dock_icon: {
@@ -22,7 +22,7 @@ export function themes(): ThemeFeatureDescription[] {
   const futura: ThemeFeatureDescription = FillThemeComponentDefaults({
     availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
     name: 'Futura',
-    identifier: FeatureIdentifier.FuturaTheme,
+    identifier: NativeFeatureIdentifier.TYPES.FuturaTheme,
     permission_name: PermissionName.FuturaTheme,
     isDark: true,
     dock_icon: {
@@ -36,7 +36,7 @@ export function themes(): ThemeFeatureDescription[] {
   const solarizedDark: ThemeFeatureDescription = FillThemeComponentDefaults({
     availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
     name: 'Solarized Dark',
-    identifier: FeatureIdentifier.SolarizedDarkTheme,
+    identifier: NativeFeatureIdentifier.TYPES.SolarizedDarkTheme,
     permission_name: PermissionName.SolarizedDarkTheme,
     isDark: true,
     dock_icon: {
@@ -50,7 +50,7 @@ export function themes(): ThemeFeatureDescription[] {
   const autobiography: ThemeFeatureDescription = FillThemeComponentDefaults({
     availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
     name: 'Autobiography',
-    identifier: FeatureIdentifier.AutobiographyTheme,
+    identifier: NativeFeatureIdentifier.TYPES.AutobiographyTheme,
     permission_name: PermissionName.AutobiographyTheme,
     dock_icon: {
       type: 'circle',
@@ -63,7 +63,7 @@ export function themes(): ThemeFeatureDescription[] {
   const dark: ThemeFeatureDescription = FillThemeComponentDefaults({
     availableInRoles: [RoleName.NAMES.CoreUser, RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
     name: 'Dark',
-    identifier: FeatureIdentifier.DarkTheme,
+    identifier: NativeFeatureIdentifier.TYPES.DarkTheme,
     permission_name: PermissionName.FocusedTheme,
     clientControlled: true,
     isDark: true,
@@ -78,7 +78,7 @@ export function themes(): ThemeFeatureDescription[] {
   const titanium: ThemeFeatureDescription = FillThemeComponentDefaults({
     availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
     name: 'Titanium',
-    identifier: FeatureIdentifier.TitaniumTheme,
+    identifier: NativeFeatureIdentifier.TYPES.TitaniumTheme,
     permission_name: PermissionName.TitaniumTheme,
     dock_icon: {
       type: 'circle',
@@ -91,7 +91,7 @@ export function themes(): ThemeFeatureDescription[] {
   const dynamic: ThemeFeatureDescription = FillThemeComponentDefaults({
     availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
     name: 'Dynamic Panels',
-    identifier: FeatureIdentifier.DynamicTheme,
+    identifier: NativeFeatureIdentifier.TYPES.DynamicTheme,
     permission_name: PermissionName.ThemeDynamic,
     layerable: true,
     no_mobile: true,

@@ -1,16 +1,16 @@
-import { FeatureIdentifier } from '@standardnotes/features'
+import { NativeFeatureIdentifier } from '@standardnotes/features'
 import { noteTypeForEditorIdentifier, NoteType } from './NoteType'
 
 describe('note type', () => {
   it('should return the correct note type for editor identifier', () => {
-    expect(noteTypeForEditorIdentifier(FeatureIdentifier.PlainEditor)).toEqual(NoteType.Plain)
-    expect(noteTypeForEditorIdentifier(FeatureIdentifier.SuperEditor)).toEqual(NoteType.Super)
-    expect(noteTypeForEditorIdentifier(FeatureIdentifier.MarkdownProEditor)).toEqual(NoteType.Markdown)
-    expect(noteTypeForEditorIdentifier(FeatureIdentifier.PlusEditor)).toEqual(NoteType.RichText)
-    expect(noteTypeForEditorIdentifier(FeatureIdentifier.CodeEditor)).toEqual(NoteType.Code)
-    expect(noteTypeForEditorIdentifier(FeatureIdentifier.SheetsEditor)).toEqual(NoteType.Spreadsheet)
-    expect(noteTypeForEditorIdentifier(FeatureIdentifier.TaskEditor)).toEqual(NoteType.Task)
-    expect(noteTypeForEditorIdentifier(FeatureIdentifier.TokenVaultEditor)).toEqual(NoteType.Authentication)
+    expect(noteTypeForEditorIdentifier(NativeFeatureIdentifier.TYPES.PlainEditor)).toEqual(NoteType.Plain)
+    expect(noteTypeForEditorIdentifier(NativeFeatureIdentifier.TYPES.SuperEditor)).toEqual(NoteType.Super)
+    expect(noteTypeForEditorIdentifier(NativeFeatureIdentifier.TYPES.MarkdownProEditor)).toEqual(NoteType.Markdown)
+    expect(noteTypeForEditorIdentifier(NativeFeatureIdentifier.TYPES.PlusEditor)).toEqual(NoteType.RichText)
+    expect(noteTypeForEditorIdentifier(NativeFeatureIdentifier.TYPES.CodeEditor)).toEqual(NoteType.Code)
+    expect(noteTypeForEditorIdentifier(NativeFeatureIdentifier.TYPES.SheetsEditor)).toEqual(NoteType.Spreadsheet)
+    expect(noteTypeForEditorIdentifier(NativeFeatureIdentifier.TYPES.TaskEditor)).toEqual(NoteType.Task)
+    expect(noteTypeForEditorIdentifier(NativeFeatureIdentifier.TYPES.TokenVaultEditor)).toEqual(NoteType.Authentication)
     expect(noteTypeForEditorIdentifier('org.third.party')).toEqual(NoteType.Unknown)
   })
 })

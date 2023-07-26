@@ -1,5 +1,5 @@
 import { createNote } from '@Lib/Spec/SpecUtils'
-import { FeatureIdentifier, NoteType } from '@standardnotes/features'
+import { NativeFeatureIdentifier, NoteType } from '@standardnotes/features'
 import { EditorForNoteUseCase } from './EditorForNote'
 import { ItemManagerInterface } from '@standardnotes/services'
 
@@ -17,7 +17,7 @@ describe('EditorForNote', () => {
       noteType: NoteType.Plain,
     })
 
-    expect(usecase.execute(note).featureIdentifier).toBe(FeatureIdentifier.PlainEditor)
+    expect(usecase.execute(note).featureIdentifier).toBe(NativeFeatureIdentifier.TYPES.PlainEditor)
   })
 
   it('getEditorForNote should call legacy function if no note editorIdentifier or noteType', () => {

@@ -1,5 +1,5 @@
 import {
-  FeatureIdentifier,
+  NativeFeatureIdentifier,
   NewNoteTitleFormat,
   PrefKey,
   EditorIdentifier,
@@ -58,7 +58,7 @@ const NewNotePreferences: FunctionComponent<Props> = ({
 
   const [editorItems, setEditorItems] = useState<DropdownItem[]>([])
   const [defaultEditorIdentifier, setDefaultEditorIdentifier] = useState<EditorIdentifier>(
-    FeatureIdentifier.PlainEditor,
+    NativeFeatureIdentifier.TYPES.PlainEditor,
   )
   const [newNoteTitleFormat, setNewNoteTitleFormat] = useState<NewNoteTitleFormat>(
     NewNoteTitleFormat.CurrentDateAndTime,
@@ -128,7 +128,7 @@ const NewNotePreferences: FunctionComponent<Props> = ({
         }
         return
       }
-      setDefaultEditorIdentifier(value as FeatureIdentifier)
+      setDefaultEditorIdentifier(value)
 
       if (mode === 'global') {
         void application.setPreference(PrefKey.DefaultEditorIdentifier, value)

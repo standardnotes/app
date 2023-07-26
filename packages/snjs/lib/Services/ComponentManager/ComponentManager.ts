@@ -21,13 +21,11 @@ import {
 import {
   ComponentArea,
   FindNativeFeature,
-  FeatureIdentifier,
   EditorFeatureDescription,
   FindNativeTheme,
   IframeComponentFeatureDescription,
   ComponentFeatureDescription,
   ThemeFeatureDescription,
-  EditorIdentifier,
   GetIframeEditors,
   GetNativeThemes,
 } from '@standardnotes/features'
@@ -406,7 +404,7 @@ export class SNComponentManager
 
     const nativeThemes = activeThemesIdentifiers
       .map((identifier) => {
-        return FindNativeTheme(identifier as FeatureIdentifier)
+        return FindNativeTheme(identifier)
       })
       .filter(isNotUndefined)
       .map((theme) => new UIFeature(theme))
@@ -437,7 +435,7 @@ export class SNComponentManager
     return usecase.execute(note)
   }
 
-  getDefaultEditorIdentifier(currentTag?: SNTag): EditorIdentifier {
+  getDefaultEditorIdentifier(currentTag?: SNTag): string {
     const usecase = new GetDefaultEditorIdentifier(this.preferences, this.items)
     return usecase.execute(currentTag).getValue()
   }

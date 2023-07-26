@@ -1,11 +1,10 @@
-import { FeatureIdentifier } from '@standardnotes/snjs'
 import { ComponentArea, FindNativeFeature, GetIframeAndNativeEditors } from '@standardnotes/features'
 import { getIconAndTintForNoteType } from './Items/Icons/getIconAndTintForNoteType'
 import { DropdownItem } from '@/Components/Dropdown/DropdownItem'
 import { WebApplicationInterface } from '@standardnotes/ui-services'
 
 export type EditorOption = DropdownItem & {
-  value: FeatureIdentifier
+  value: string
   isLabs?: boolean
 }
 

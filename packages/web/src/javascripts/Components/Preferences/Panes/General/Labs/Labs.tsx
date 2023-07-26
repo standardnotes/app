@@ -2,7 +2,7 @@ import { Text, Title } from '@/Components/Preferences/PreferencesComponents/Cont
 import { WebApplication } from '@/Application/WebApplication'
 import {
   ApplicationEvent,
-  FeatureIdentifier,
+  NativeFeatureIdentifier,
   FeatureStatus,
   FindNativeFeature,
   PrefKey,
@@ -17,7 +17,7 @@ import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 
 type ExperimentalFeatureItem = {
-  identifier: FeatureIdentifier
+  identifier: NativeFeatureIdentifier
   name: string
   description: string
   isEnabled: boolean
