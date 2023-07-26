@@ -1,7 +1,8 @@
 import { ActionObserver, ComponentEventObserver, ComponentMessage, UIFeature } from '@standardnotes/models'
 import { FeatureStatus } from '../Feature/FeatureStatus'
 import { ComponentViewerError } from './ComponentViewerError'
-import { IframeComponentFeatureDescription } from '@standardnotes/features'
+import { IframeComponentFeatureDescription, NativeFeatureIdentifier } from '@standardnotes/features'
+import { Uuid } from '@standardnotes/domain-core'
 
 export interface ComponentViewerInterface {
   readonly identifier: string
@@ -9,7 +10,7 @@ export interface ComponentViewerInterface {
   readonly sessionKey?: string
 
   get url(): string
-  get componentUniqueIdentifier(): string
+  get componentUniqueIdentifier(): NativeFeatureIdentifier | Uuid
 
   getComponentOrFeatureItem(): UIFeature<IframeComponentFeatureDescription>
 

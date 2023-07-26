@@ -2,7 +2,7 @@ import { ItemInterface, SNFeatureRepo } from '@standardnotes/models'
 import { SyncService } from '../Sync/SyncService'
 import { SettingName } from '@standardnotes/settings'
 import { FeaturesService } from '@Lib/Services/Features'
-import { RoleName, ContentType } from '@standardnotes/domain-core'
+import { RoleName, ContentType, Uuid } from '@standardnotes/domain-core'
 import { NativeFeatureIdentifier, GetFeatures } from '@standardnotes/features'
 import { WebSocketsService } from '../Api/WebsocketsService'
 import { SettingsService } from '../Settings'
@@ -216,8 +216,16 @@ describe('FeaturesService', () => {
       await featuresService.updateOnlineRolesWithNewValues([RoleName.NAMES.CoreUser, RoleName.NAMES.PlusUser])
       subscriptions.hasOnlineSubscription = jest.fn().mockReturnValue(true)
 
-      expect(featuresService.getFeatureStatus(NativeFeatureIdentifier.TYPES.MidnightTheme)).toBe(FeatureStatus.Entitled)
-      expect(featuresService.getFeatureStatus(NativeFeatureIdentifier.TYPES.SuperEditor)).toBe(FeatureStatus.Entitled)
+      expect(
+        featuresService.getFeatureStatus(
+          NativeFeatureIdentifier.create(NativeFeatureIdentifier.TYPES.MidnightTheme).getValue(),
+        ),
+      ).toBe(FeatureStatus.Entitled)
+      expect(
+        featuresService.getFeatureStatus(
+          NativeFeatureIdentifier.create(NativeFeatureIdentifier.TYPES.SuperEditor).getValue(),
+        ),
+      ).toBe(FeatureStatus.Entitled)
     })
 
     it('feature status with no paid role', async () => {
@@ -228,15 +236,21 @@ describe('FeaturesService', () => {
       await featuresService.updateOnlineRolesWithNewValues([RoleName.NAMES.CoreUser])
       subscriptions.hasOnlineSubscription = jest.fn().mockReturnValue(false)
 
-      expect(featuresService.getFeatureStatus(NativeFeatureIdentifier.TYPES.MidnightTheme)).toBe(
-        FeatureStatus.NoUserSubscription,
-      )
-      expect(featuresService.getFeatureStatus(NativeFeatureIdentifier.TYPES.PlusEditor)).toBe(
-        FeatureStatus.NoUserSubscription,
-      )
-      expect(featuresService.getFeatureStatus(NativeFeatureIdentifier.TYPES.SheetsEditor)).toBe(
-        FeatureStatus.NoUserSubscription,
-      )
+      expect(
+        featuresService.getFeatureStatus(
+          NativeFeatureIdentifier.create(NativeFeatureIdentifier.TYPES.MidnightTheme).getValue(),
+        ),
+      ).toBe(FeatureStatus.NoUserSubscription)
+      expect(
+        featuresService.getFeatureStatus(
+          NativeFeatureIdentifier.create(NativeFeatureIdentifier.TYPES.PlusEditor).getValue(),
+        ),
+      ).toBe(FeatureStatus.NoUserSubscription)
+      expect(
+        featuresService.getFeatureStatus(
+          NativeFeatureIdentifier.create(NativeFeatureIdentifier.TYPES.SheetsEditor).getValue(),
+        ),
+      ).toBe(FeatureStatus.NoUserSubscription)
     })
 
     it('role-based features while not signed into first party server', async () => {
@@ -246,9 +260,11 @@ describe('FeaturesService', () => {
 
       await featuresService.updateOnlineRolesWithNewValues([RoleName.NAMES.ProUser])
 
-      expect(featuresService.getFeatureStatus(NativeFeatureIdentifier.TYPES.SuperEditor)).toBe(
-        FeatureStatus.NoUserSubscription,
-      )
+      expect(
+        featuresService.getFeatureStatus(
+          NativeFeatureIdentifier.create(NativeFeatureIdentifier.TYPES.SuperEditor).getValue(),
+        ),
+      ).toBe(FeatureStatus.NoUserSubscription)
     })
 
     it('third party feature status', async () => {
@@ -256,13 +272,22 @@ describe('FeaturesService', () => {
 
       itemManager.getDisplayableComponents = jest
         .fn()
-        .mockReturnValue([{ identifier: 'third-party-theme' }, { identifier: 'third-party-editor', isExpired: true }])
+        .mockReturnValue([
+          { uuid: '00000000-0000-0000-0000-000000000001' },
+          { uuid: '00000000-0000-0000-0000-000000000002', isExpired: true },
+        ])
 
       await featuresService.updateOnlineRolesWithNewValues([RoleName.NAMES.CoreUser])
 
-      expect(featuresService.getFeatureStatus('third-party-theme')).toBe(FeatureStatus.Entitled)
-      expect(featuresService.getFeatureStatus('third-party-editor')).toBe(FeatureStatus.InCurrentPlanButExpired)
-      expect(featuresService.getFeatureStatus('missing-feature-identifier')).toBe(FeatureStatus.NoUserSubscription)
+      expect(featuresService.getFeatureStatus(Uuid.create('00000000-0000-0000-0000-000000000001').getValue())).toBe(
+        FeatureStatus.Entitled,
+      )
+      expect(featuresService.getFeatureStatus(Uuid.create('00000000-0000-0000-0000-000000000002').getValue())).toBe(
+        FeatureStatus.InCurrentPlanButExpired,
+      )
+      expect(featuresService.getFeatureStatus(Uuid.create('00000000-0000-0000-0000-000000000003').getValue())).toBe(
+        FeatureStatus.NoUserSubscription,
+      )
     })
 
     it('feature status should be not entitled if no account or offline repo', async () => {
@@ -272,12 +297,16 @@ describe('FeaturesService', () => {
 
       sessionManager.isSignedIntoFirstPartyServer = jest.fn().mockReturnValue(false)
 
-      expect(featuresService.getFeatureStatus(NativeFeatureIdentifier.TYPES.MidnightTheme)).toBe(
-        FeatureStatus.NoUserSubscription,
-      )
-      expect(featuresService.getFeatureStatus(NativeFeatureIdentifier.TYPES.TokenVaultEditor)).toBe(
-        FeatureStatus.NoUserSubscription,
-      )
+      expect(
+        featuresService.getFeatureStatus(
+          NativeFeatureIdentifier.create(NativeFeatureIdentifier.TYPES.MidnightTheme).getValue(),
+        ),
+      ).toBe(FeatureStatus.NoUserSubscription)
+      expect(
+        featuresService.getFeatureStatus(
+          NativeFeatureIdentifier.create(NativeFeatureIdentifier.TYPES.TokenVaultEditor).getValue(),
+        ),
+      ).toBe(FeatureStatus.NoUserSubscription)
     })
 
     it('feature status for offline subscription', async () => {
@@ -286,10 +315,16 @@ describe('FeaturesService', () => {
       featuresService.hasFirstPartyOfflineSubscription = jest.fn().mockReturnValue(true)
       featuresService.setOfflineRoles([RoleName.NAMES.CoreUser, RoleName.NAMES.PlusUser])
 
-      expect(featuresService.getFeatureStatus(NativeFeatureIdentifier.TYPES.MidnightTheme)).toBe(FeatureStatus.Entitled)
-      expect(featuresService.getFeatureStatus(NativeFeatureIdentifier.TYPES.TokenVaultEditor)).toBe(
-        FeatureStatus.Entitled,
-      )
+      expect(
+        featuresService.getFeatureStatus(
+          NativeFeatureIdentifier.create(NativeFeatureIdentifier.TYPES.MidnightTheme).getValue(),
+        ),
+      ).toBe(FeatureStatus.Entitled)
+      expect(
+        featuresService.getFeatureStatus(
+          NativeFeatureIdentifier.create(NativeFeatureIdentifier.TYPES.TokenVaultEditor).getValue(),
+        ),
+      ).toBe(FeatureStatus.Entitled)
     })
 
     it('feature status for deprecated feature and no subscription', async () => {
@@ -298,9 +333,11 @@ describe('FeaturesService', () => {
       subscriptions.hasOnlineSubscription = jest.fn().mockReturnValue(false)
       sessionManager.isSignedIntoFirstPartyServer = jest.fn().mockReturnValue(true)
 
-      expect(featuresService.getFeatureStatus(NativeFeatureIdentifier.TYPES.DeprecatedFileSafe)).toBe(
-        FeatureStatus.NoUserSubscription,
-      )
+      expect(
+        featuresService.getFeatureStatus(
+          NativeFeatureIdentifier.create(NativeFeatureIdentifier.TYPES.DeprecatedFileSafe).getValue(),
+        ),
+      ).toBe(FeatureStatus.NoUserSubscription)
     })
 
     it('feature status for deprecated feature with subscription', async () => {
@@ -309,9 +346,11 @@ describe('FeaturesService', () => {
       subscriptions.hasOnlineSubscription = jest.fn().mockReturnValue(true)
       await featuresService.updateOnlineRolesWithNewValues([RoleName.NAMES.CoreUser, RoleName.NAMES.PlusUser])
 
-      expect(featuresService.getFeatureStatus(NativeFeatureIdentifier.TYPES.DeprecatedFileSafe)).toBe(
-        FeatureStatus.Entitled,
-      )
+      expect(
+        featuresService.getFeatureStatus(
+          NativeFeatureIdentifier.create(NativeFeatureIdentifier.TYPES.DeprecatedFileSafe).getValue(),
+        ),
+      ).toBe(FeatureStatus.Entitled)
     })
 
     it('has paid subscription', async () => {

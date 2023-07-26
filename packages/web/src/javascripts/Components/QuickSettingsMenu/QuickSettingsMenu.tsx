@@ -141,7 +141,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ quickSettingsMenuCont
         Default
       </MenuRadioButtonItem>
       {themes.map((theme) => (
-        <ThemesMenuButton uiFeature={theme} key={theme.uniqueIdentifier} />
+        <ThemesMenuButton uiFeature={theme} key={theme.uniqueIdentifier.value} />
       ))}
       <HorizontalSeparator classes="my-2" />
       <FocusModeSwitch

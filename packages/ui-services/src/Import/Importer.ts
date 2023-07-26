@@ -64,7 +64,9 @@ export class Importer {
   async getPayloadsFromFile(file: File, type: NoteImportType): Promise<DecryptedTransferPayload[]> {
     if (type === 'aegis') {
       const isEntitledToAuthenticator =
-        this.application.features.getFeatureStatus(NativeFeatureIdentifier.TYPES.TokenVaultEditor) === FeatureStatus.Entitled
+        this.application.features.getFeatureStatus(
+          NativeFeatureIdentifier.create(NativeFeatureIdentifier.TYPES.TokenVaultEditor).getValue(),
+        ) === FeatureStatus.Entitled
       return [await this.aegisConverter.convertAegisBackupFileToNote(file, isEntitledToAuthenticator)]
     } else if (type === 'google-keep') {
       return [await this.googleKeepConverter.convertGoogleKeepBackupFileToNote(file, true)]

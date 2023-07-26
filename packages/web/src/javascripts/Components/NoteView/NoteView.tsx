@@ -751,14 +751,14 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
 
     const needsNewViewer = enabledComponents.filter((component) => {
       const hasExistingViewer = this.state.stackComponentViewers.find(
-        (viewer) => viewer.componentUniqueIdentifier === component.uuid,
+        (viewer) => viewer.componentUniqueIdentifier.value === component.uuid,
       )
       return !hasExistingViewer
     })
 
     const needsDestroyViewer = this.state.stackComponentViewers.filter((viewer) => {
       const viewerComponentExistsInEnabledComponents = enabledComponents.find((component) => {
-        return component.uuid === viewer.componentUniqueIdentifier
+        return component.uuid === viewer.componentUniqueIdentifier.value
       })
       return !viewerComponentExistsInEnabledComponents
     })
@@ -785,7 +785,9 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
   }
 
   stackComponentExpanded = (component: ComponentInterface): boolean => {
-    return !!this.state.stackComponentViewers.find((viewer) => viewer.componentUniqueIdentifier === component.uuid)
+    return !!this.state.stackComponentViewers.find(
+      (viewer) => viewer.componentUniqueIdentifier.value === component.uuid,
+    )
   }
 
   toggleStackComponent = async (component: ComponentInterface) => {

@@ -6,11 +6,7 @@ import {
   NoteType,
   UIFeatureDescriptionTypes,
 } from '@standardnotes/features'
-import {
-  isUIFeatureAnIframeFeature,
-  isComponentOrFeatureDescriptionAComponent,
-  isComponentOrFeatureDescriptionAFeatureDescription,
-} from './TypeGuards'
+import { isUIFeatureAnIframeFeature, isItemBasedFeature, isNativeFeature } from './TypeGuards'
 import { UIFeature } from './UIFeature'
 import { ComponentInterface } from '../../Syncable/Component'
 import { ContentType } from '@standardnotes/domain-core'
@@ -45,7 +41,7 @@ describe('TypeGuards', () => {
         uuid: 'abc-123',
       } as ComponentInterface
 
-      expect(isComponentOrFeatureDescriptionAComponent(x)).toBe(true)
+      expect(isItemBasedFeature(x)).toBe(true)
     })
 
     it('should return false if feature description is not a component', () => {
@@ -53,17 +49,17 @@ describe('TypeGuards', () => {
         note_type: NoteType.Super,
       } as jest.Mocked<EditorFeatureDescription>
 
-      expect(isComponentOrFeatureDescriptionAComponent(x)).toBe(false)
+      expect(isItemBasedFeature(x)).toBe(false)
     })
   })
 
-  describe('isComponentOrFeatureDescriptionAFeatureDescription', () => {
+  describe('isNativeFeature', () => {
     it('should return true if x is a feature description', () => {
       const x: AnyFeatureDescription = {
         content_type: 'TestContentType',
       } as AnyFeatureDescription
 
-      expect(isComponentOrFeatureDescriptionAFeatureDescription(x)).toBe(true)
+      expect(isNativeFeature(x)).toBe(true)
     })
 
     it('should return false if x is a component', () => {
@@ -71,7 +67,7 @@ describe('TypeGuards', () => {
         uuid: 'abc-123',
       } as ComponentInterface
 
-      expect(isComponentOrFeatureDescriptionAFeatureDescription(x)).toBe(false)
+      expect(isNativeFeature(x)).toBe(false)
     })
   })
 })

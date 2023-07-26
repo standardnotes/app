@@ -100,19 +100,25 @@ export class FeaturesController extends AbstractViewController {
   }
 
   private isEntitledToFiles(): boolean {
-    const status = this.application.features.getFeatureStatus(NativeFeatureIdentifier.TYPES.Files)
+    const status = this.application.features.getFeatureStatus(
+      NativeFeatureIdentifier.create(NativeFeatureIdentifier.TYPES.Files).getValue(),
+    )
 
     return status === FeatureStatus.Entitled
   }
 
   private isEntitledToFolders(): boolean {
-    const status = this.application.features.getFeatureStatus(NativeFeatureIdentifier.TYPES.TagNesting)
+    const status = this.application.features.getFeatureStatus(
+      NativeFeatureIdentifier.create(NativeFeatureIdentifier.TYPES.TagNesting).getValue(),
+    )
 
     return status === FeatureStatus.Entitled
   }
 
   private isEntitledToSmartViews(): boolean {
-    const status = this.application.features.getFeatureStatus(NativeFeatureIdentifier.TYPES.SmartFilters)
+    const status = this.application.features.getFeatureStatus(
+      NativeFeatureIdentifier.create(NativeFeatureIdentifier.TYPES.SmartFilters).getValue(),
+    )
 
     return status === FeatureStatus.Entitled
   }

@@ -61,7 +61,10 @@ const ClipperView = ({
 
   const [user, setUser] = useState(() => application.getUser())
   const [isEntitledToExtension, setIsEntitled] = useState(
-    () => application.features.getFeatureStatus(NativeFeatureIdentifier.TYPES.Extension) === FeatureStatus.Entitled,
+    () =>
+      application.features.getFeatureStatus(
+        NativeFeatureIdentifier.create(NativeFeatureIdentifier.TYPES.Clipper).getValue(),
+      ) === FeatureStatus.Entitled,
   )
   const isEntitledRef = useStateRef(isEntitledToExtension)
   const hasSubscription = application.hasValidFirstPartySubscription()
@@ -72,10 +75,18 @@ const ClipperView = ({
         case ApplicationEvent.SignedOut:
         case ApplicationEvent.UserRolesChanged:
           setUser(application.getUser())
-          setIsEntitled(application.features.getFeatureStatus(NativeFeatureIdentifier.TYPES.Extension) === FeatureStatus.Entitled)
+          setIsEntitled(
+            application.features.getFeatureStatus(
+              NativeFeatureIdentifier.create(NativeFeatureIdentifier.TYPES.Clipper).getValue(),
+            ) === FeatureStatus.Entitled,
+          )
           break
         case ApplicationEvent.FeaturesAvailabilityChanged:
-          setIsEntitled(application.features.getFeatureStatus(NativeFeatureIdentifier.TYPES.Extension) === FeatureStatus.Entitled)
+          setIsEntitled(
+            application.features.getFeatureStatus(
+              NativeFeatureIdentifier.create(NativeFeatureIdentifier.TYPES.Clipper).getValue(),
+            ) === FeatureStatus.Entitled,
+          )
           break
       }
     })

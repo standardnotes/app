@@ -1,14 +1,14 @@
 import { MigrateFeatureRepoToUserSettingUseCase } from './UseCase/MigrateFeatureRepoToUserSetting'
 import { arraysEqual, removeFromArray, lastElement } from '@standardnotes/utils'
 import { ClientDisplayableError } from '@standardnotes/responses'
-import { RoleName, ContentType } from '@standardnotes/domain-core'
+import { RoleName, ContentType, Uuid } from '@standardnotes/domain-core'
 import { PROD_OFFLINE_FEATURES_URL } from '../../Hosts'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { WebSocketsService } from '../Api/WebsocketsService'
 import { WebSocketsServiceEvent } from '../Api/WebSocketsServiceEvent'
 import { TRUSTED_CUSTOM_EXTENSIONS_HOSTS, TRUSTED_FEATURE_HOSTS } from '@Lib/Hosts'
 import { UserRolesChangedEvent } from '@standardnotes/domain-events'
-import { ExperimentalFeatures, FindNativeFeature } from '@standardnotes/features'
+import { ExperimentalFeatures, FindNativeFeature, NativeFeatureIdentifier } from '@standardnotes/features'
 import {
   SNFeatureRepo,
   FeatureRepoContent,
@@ -392,7 +392,7 @@ export class FeaturesService
   }
 
   public getFeatureStatus(
-    featureId: string,
+    featureId: NativeFeatureIdentifier | Uuid,
     options: { inContextOfItem?: DecryptedItemInterface } = {},
   ): FeatureStatus {
     return this.getFeatureStatusUseCase.execute({

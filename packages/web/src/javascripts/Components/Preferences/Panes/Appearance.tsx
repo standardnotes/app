@@ -4,7 +4,7 @@ import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import Switch from '@/Components/Switch/Switch'
 import { WebApplication } from '@/Application/WebApplication'
-import { NativeFeatureIdentifier, PrefKey, FeatureStatus, naturalSort, PrefDefaults } from '@standardnotes/snjs'
+import { PrefKey, FeatureStatus, naturalSort, PrefDefaults } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useEffect, useState } from 'react'
 import { Subtitle, Title, Text } from '@/Components/Preferences/PreferencesComponents/Content'
@@ -50,7 +50,7 @@ const Appearance: FunctionComponent<Props> = ({ application }) => {
           label: theme.displayName as string,
           value: theme.featureIdentifier,
           icon:
-            application.features.getFeatureStatus(theme.featureIdentifier) !== FeatureStatus.Entitled
+            application.features.getFeatureStatus(theme.uniqueIdentifier) !== FeatureStatus.Entitled
               ? PremiumFeatureIconName
               : undefined,
         }
@@ -72,14 +72,10 @@ const Appearance: FunctionComponent<Props> = ({ application }) => {
   const toggleUseDeviceSettings = () => {
     application.setPreference(PrefKey.UseSystemColorScheme, !useDeviceSettings).catch(console.error)
     if (!application.getPreference(PrefKey.AutoLightThemeIdentifier)) {
-      application
-        .setPreference(PrefKey.AutoLightThemeIdentifier, autoLightTheme)
-        .catch(console.error)
+      application.setPreference(PrefKey.AutoLightThemeIdentifier, autoLightTheme).catch(console.error)
     }
     if (!application.getPreference(PrefKey.AutoDarkThemeIdentifier)) {
-      application
-        .setPreference(PrefKey.AutoDarkThemeIdentifier, autoDarkTheme)
-        .catch(console.error)
+      application.setPreference(PrefKey.AutoDarkThemeIdentifier, autoDarkTheme).catch(console.error)
     }
     setUseDeviceSettings(!useDeviceSettings)
   }

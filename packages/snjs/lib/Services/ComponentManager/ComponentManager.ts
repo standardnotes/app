@@ -1,5 +1,5 @@
 import { FeaturesService } from '@Lib/Services/Features/FeaturesService'
-import { ContentType } from '@standardnotes/domain-core'
+import { ContentType, Uuid } from '@standardnotes/domain-core'
 import {
   ActionObserver,
   PayloadEmitSource,
@@ -10,7 +10,6 @@ import {
   UIFeature,
   ComponentInterface,
   PrefKey,
-  ThemeInterface,
   ComponentPreferencesEntry,
   AllComponentPreferences,
   SNNote,
@@ -28,6 +27,7 @@ import {
   ThemeFeatureDescription,
   GetIframeEditors,
   GetNativeThemes,
+  NativeFeatureIdentifier,
 } from '@standardnotes/features'
 import { Copy, removeFromArray, sleep, isNotUndefined } from '@standardnotes/utils'
 import { ComponentViewer } from '@Lib/Services/ComponentManager/ComponentViewer'
@@ -285,7 +285,7 @@ export class SNComponentManager
       const url = this.urlForFeature(feature)
 
       if (url) {
-        this.device.registerComponentUrl(feature.uniqueIdentifier, url)
+        this.device.registerComponentUrl(feature.uniqueIdentifier.value, url)
       }
     }
   }
@@ -370,7 +370,7 @@ export class SNComponentManager
       return
     }
 
-    const featureStatus = this.features.getFeatureStatus(uiFeature.featureIdentifier)
+    const featureStatus = this.features.getFeatureStatus(uiFeature.uniqueIdentifier)
     if (featureStatus !== FeatureStatus.Entitled) {
       return
     }
@@ -396,28 +396,50 @@ export class SNComponentManager
   }
 
   public getActiveThemes(): UIFeature<ThemeFeatureDescription>[] {
-    const activeThemesIdentifiers = this.getActiveThemesIdentifiers()
+    const { features, uuids } = this.getActiveThemesIdentifiers()
 
-    const thirdPartyThemes = this.items.findItems<ThemeInterface>(activeThemesIdentifiers).map((item) => {
-      return new UIFeature<ThemeFeatureDescription>(item)
-    })
+    const thirdPartyThemes = uuids
+      .map((uuid) => {
+        const component = this.items.findItem<ComponentInterface>(uuid.value)
+        if (component) {
+          return new UIFeature<ThemeFeatureDescription>(component)
+        }
+        return undefined
+      })
+      .filter(isNotUndefined)
 
-    const nativeThemes = activeThemesIdentifiers
+    const nativeThemes = features
       .map((identifier) => {
-        return FindNativeTheme(identifier)
+        return FindNativeTheme(identifier.value)
       })
       .filter(isNotUndefined)
       .map((theme) => new UIFeature(theme))
 
     const entitledThemes = [...thirdPartyThemes, ...nativeThemes].filter((theme) => {
-      return this.features.getFeatureStatus(theme.featureIdentifier) === FeatureStatus.Entitled
+      return this.features.getFeatureStatus(theme.uniqueIdentifier) === FeatureStatus.Entitled
     })
 
     return entitledThemes
   }
 
-  public getActiveThemesIdentifiers(): string[] {
-    return this.preferences.getValue(PrefKey.ActiveThemes, undefined) ?? []
+  public getActiveThemesIdentifiers(): { features: NativeFeatureIdentifier[]; uuids: Uuid[] } {
+    const features: NativeFeatureIdentifier[] = []
+    const uuids: Uuid[] = []
+
+    const strings = this.preferences.getValue(PrefKey.ActiveThemes, undefined) ?? []
+    for (const string of strings) {
+      const nativeIdentifier = NativeFeatureIdentifier.create(string)
+      if (!nativeIdentifier.isFailed()) {
+        features.push(nativeIdentifier.getValue())
+      }
+
+      const uuid = Uuid.create(string)
+      if (!uuid.isFailed()) {
+        uuids.push(uuid.getValue())
+      }
+    }
+
+    return { features, uuids }
   }
 
   public async toggleComponent(component: ComponentInterface): Promise<void> {
@@ -466,7 +488,7 @@ export class SNComponentManager
       this.preferences.getValue(PrefKey.ComponentPreferences, undefined) ?? {},
     )
 
-    const preferencesLookupKey = uiFeature.uniqueIdentifier
+    const preferencesLookupKey = uiFeature.uniqueIdentifier.value
 
     mutablePreferencesValue[preferencesLookupKey] = preferences
 
@@ -480,7 +502,7 @@ export class SNComponentManager
       return undefined
     }
 
-    const preferencesLookupKey = component.uniqueIdentifier
+    const preferencesLookupKey = component.uniqueIdentifier.value
 
     return preferences[preferencesLookupKey]
   }
@@ -488,31 +510,31 @@ export class SNComponentManager
   async addActiveTheme(theme: UIFeature<ThemeFeatureDescription>): Promise<void> {
     const activeThemes = (this.preferences.getValue(PrefKey.ActiveThemes, undefined) ?? []).slice()
 
-    activeThemes.push(theme.uniqueIdentifier)
+    activeThemes.push(theme.uniqueIdentifier.value)
 
     await this.preferences.setValue(PrefKey.ActiveThemes, activeThemes)
   }
 
   async replaceActiveTheme(theme: UIFeature<ThemeFeatureDescription>): Promise<void> {
-    await this.preferences.setValue(PrefKey.ActiveThemes, [theme.uniqueIdentifier])
+    await this.preferences.setValue(PrefKey.ActiveThemes, [theme.uniqueIdentifier.value])
   }
 
   async removeActiveTheme(theme: UIFeature<ThemeFeatureDescription>): Promise<void> {
     const activeThemes = this.preferences.getValue(PrefKey.ActiveThemes, undefined) ?? []
 
-    const filteredThemes = activeThemes.filter((activeTheme) => activeTheme !== theme.uniqueIdentifier)
+    const filteredThemes = activeThemes.filter((activeTheme) => activeTheme !== theme.uniqueIdentifier.value)
 
     await this.preferences.setValue(PrefKey.ActiveThemes, filteredThemes)
   }
 
   isThemeActive(theme: UIFeature<ThemeFeatureDescription>): boolean {
-    if (this.features.getFeatureStatus(theme.featureIdentifier) !== FeatureStatus.Entitled) {
+    if (this.features.getFeatureStatus(theme.uniqueIdentifier) !== FeatureStatus.Entitled) {
       return false
     }
 
     const activeThemes = this.preferences.getValue(PrefKey.ActiveThemes, undefined) ?? []
 
-    return activeThemes.includes(theme.uniqueIdentifier)
+    return activeThemes.includes(theme.uniqueIdentifier.value)
   }
 
   async addActiveComponent(component: ComponentInterface): Promise<void> {

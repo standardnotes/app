@@ -2,6 +2,7 @@ import {
   ComponentArea,
   ComponentPermission,
   EditorFeatureDescription,
+  NativeFeatureIdentifier,
   NoteType,
   ThemeDockIcon,
   UIFeatureDescriptionTypes,
@@ -11,29 +12,27 @@ import {
 } from '@standardnotes/features'
 import { ComponentInterface } from '../../Syncable/Component/ComponentInterface'
 import { isTheme } from '../../Syncable/Theme'
-import {
-  isComponentOrFeatureDescriptionAComponent,
-  isComponentOrFeatureDescriptionAFeatureDescription,
-} from './TypeGuards'
+import { isItemBasedFeature, isNativeFeature } from './TypeGuards'
 import { UIFeatureInterface } from './UIFeatureInterface'
+import { Uuid } from '@standardnotes/domain-core'
 
 export class UIFeature<F extends UIFeatureDescriptionTypes> implements UIFeatureInterface<F> {
   constructor(public readonly item: ComponentInterface | F) {}
 
   get isComponent(): boolean {
-    return isComponentOrFeatureDescriptionAComponent(this.item)
+    return isItemBasedFeature(this.item)
   }
 
   get isFeatureDescription(): boolean {
-    return isComponentOrFeatureDescriptionAFeatureDescription(this.item)
+    return isNativeFeature(this.item)
   }
 
   get isThemeComponent(): boolean {
-    return isComponentOrFeatureDescriptionAComponent(this.item) && isTheme(this.item)
+    return isItemBasedFeature(this.item) && isTheme(this.item)
   }
 
   get asComponent(): ComponentInterface {
-    if (isComponentOrFeatureDescriptionAComponent(this.item)) {
+    if (isItemBasedFeature(this.item)) {
       return this.item
     }
 
@@ -41,18 +40,19 @@ export class UIFeature<F extends UIFeatureDescriptionTypes> implements UIFeature
   }
 
   get asFeatureDescription(): F {
-    if (isComponentOrFeatureDescriptionAFeatureDescription(this.item)) {
+    if (isNativeFeature(this.item)) {
       return this.item
     }
 
     throw new Error('Cannot cast item to feature description')
   }
 
-  get uniqueIdentifier(): string {
-    if (isComponentOrFeatureDescriptionAFeatureDescription(this.item)) {
-      return this.item.identifier
+  get uniqueIdentifier(): NativeFeatureIdentifier | Uuid {
+    if (isNativeFeature(this.item)) {
+      const nativeFeature = NativeFeatureIdentifier.create(this.item.identifier)
+      return nativeFeature.getValue()
     } else {
-      return this.item.uuid
+      return Uuid.create(this.item.uuid).getValue()
     }
   }
 
@@ -61,9 +61,9 @@ export class UIFeature<F extends UIFeatureDescriptionTypes> implements UIFeature
   }
 
   get noteType(): NoteType {
-    if (isComponentOrFeatureDescriptionAFeatureDescription(this.item) && isEditorFeatureDescription(this.item)) {
+    if (isNativeFeature(this.item) && isEditorFeatureDescription(this.item)) {
       return this.item.note_type ?? NoteType.Unknown
-    } else if (isComponentOrFeatureDescriptionAComponent(this.item)) {
+    } else if (isItemBasedFeature(this.item)) {
       return this.item.noteType
     }
 
@@ -71,12 +71,9 @@ export class UIFeature<F extends UIFeatureDescriptionTypes> implements UIFeature
   }
 
   get fileType(): EditorFeatureDescription['file_type'] {
-    if (isComponentOrFeatureDescriptionAFeatureDescription(this.item) && isEditorFeatureDescription(this.item)) {
+    if (isNativeFeature(this.item) && isEditorFeatureDescription(this.item)) {
       return this.item.file_type
-    } else if (
-      isComponentOrFeatureDescriptionAComponent(this.item) &&
-      isEditorFeatureDescription(this.item.package_info)
-    ) {
+    } else if (isItemBasedFeature(this.item) && isEditorFeatureDescription(this.item.package_info)) {
       return this.item.package_info?.file_type ?? 'txt'
     }
 
@@ -84,7 +81,7 @@ export class UIFeature<F extends UIFeatureDescriptionTypes> implements UIFeature
   }
 
   get displayName(): string {
-    if (isComponentOrFeatureDescriptionAFeatureDescription(this.item)) {
+    if (isNativeFeature(this.item)) {
       return this.item.name ?? ''
     } else {
       return this.item.displayName
@@ -92,7 +89,7 @@ export class UIFeature<F extends UIFeatureDescriptionTypes> implements UIFeature
   }
 
   get description(): string {
-    if (isComponentOrFeatureDescriptionAFeatureDescription(this.item)) {
+    if (isNativeFeature(this.item)) {
       return this.item.description ?? ''
     } else {
       return this.item.package_info.description ?? ''
@@ -100,7 +97,7 @@ export class UIFeature<F extends UIFeatureDescriptionTypes> implements UIFeature
   }
 
   get deprecationMessage(): string | undefined {
-    if (isComponentOrFeatureDescriptionAFeatureDescription(this.item)) {
+    if (isNativeFeature(this.item)) {
       return this.item.deprecation_message
     } else {
       return this.item.deprecationMessage
@@ -108,7 +105,7 @@ export class UIFeature<F extends UIFeatureDescriptionTypes> implements UIFeature
   }
 
   get expirationDate(): Date | undefined {
-    if (isComponentOrFeatureDescriptionAFeatureDescription(this.item)) {
+    if (isNativeFeature(this.item)) {
       return this.item.expires_at ? new Date(this.item.expires_at) : undefined
     } else {
       return this.item.valid_until
@@ -116,7 +113,7 @@ export class UIFeature<F extends UIFeatureDescriptionTypes> implements UIFeature
   }
 
   get featureDescription(): F {
-    if (isComponentOrFeatureDescriptionAFeatureDescription(this.item)) {
+    if (isNativeFeature(this.item)) {
       return this.item
     } else {
       return this.item.package_info as F
@@ -124,12 +121,9 @@ export class UIFeature<F extends UIFeatureDescriptionTypes> implements UIFeature
   }
 
   get acquiredPermissions(): ComponentPermission[] {
-    if (
-      isComponentOrFeatureDescriptionAFeatureDescription(this.item) &&
-      isIframeComponentFeatureDescription(this.item)
-    ) {
+    if (isNativeFeature(this.item) && isIframeComponentFeatureDescription(this.item)) {
       return this.item.component_permissions ?? []
-    } else if (isComponentOrFeatureDescriptionAComponent(this.item)) {
+    } else if (isItemBasedFeature(this.item)) {
       return this.item.permissions
     }
 
@@ -145,7 +139,7 @@ export class UIFeature<F extends UIFeatureDescriptionTypes> implements UIFeature
   }
 
   get layerable(): boolean {
-    if (isComponentOrFeatureDescriptionAComponent(this.item) && isTheme(this.item)) {
+    if (isItemBasedFeature(this.item) && isTheme(this.item)) {
       return this.item.layerable
     } else if (isThemeFeatureDescription(this.asFeatureDescription)) {
       return this.asFeatureDescription.layerable ?? false
@@ -155,7 +149,7 @@ export class UIFeature<F extends UIFeatureDescriptionTypes> implements UIFeature
   }
 
   get dockIcon(): ThemeDockIcon | undefined {
-    if (isComponentOrFeatureDescriptionAComponent(this.item) && isTheme(this.item)) {
+    if (isItemBasedFeature(this.item) && isTheme(this.item)) {
       return this.item.package_info.dock_icon
     } else if (isThemeFeatureDescription(this.asFeatureDescription)) {
       return this.asFeatureDescription.dock_icon

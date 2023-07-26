@@ -76,9 +76,12 @@ export const SuperEditor: FunctionComponent<Props> = ({
 
   useEffect(() => {
     setFeatureStatus(
-      application.features.getFeatureStatus(NativeFeatureIdentifier.TYPES.SuperEditor, {
-        inContextOfItem: note.current,
-      }),
+      application.features.getFeatureStatus(
+        NativeFeatureIdentifier.create(NativeFeatureIdentifier.TYPES.SuperEditor).getValue(),
+        {
+          inContextOfItem: note.current,
+        },
+      ),
     )
   }, [application.features])
 

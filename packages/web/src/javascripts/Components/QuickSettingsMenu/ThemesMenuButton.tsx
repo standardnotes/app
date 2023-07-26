@@ -26,8 +26,8 @@ const ThemesMenuButton: FunctionComponent<Props> = ({ uiFeature }) => {
     [application, uiFeature.featureIdentifier],
   )
   const isEntitledToTheme = useMemo(
-    () => application.features.getFeatureStatus(uiFeature.featureIdentifier) === FeatureStatus.Entitled,
-    [application, uiFeature.featureIdentifier],
+    () => application.features.getFeatureStatus(uiFeature.uniqueIdentifier) === FeatureStatus.Entitled,
+    [application, uiFeature.uniqueIdentifier],
   )
   const canActivateTheme = useMemo(() => isEntitledToTheme || isThirdPartyTheme, [isEntitledToTheme, isThirdPartyTheme])
 

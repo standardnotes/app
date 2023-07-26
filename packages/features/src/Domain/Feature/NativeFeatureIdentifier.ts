@@ -1,7 +1,7 @@
 import { Result, ValueObject } from '@standardnotes/domain-core'
 
 export interface NativeFeatureIdentifierProps {
-  value: string | null
+  value: string
 }
 
 export class NativeFeatureIdentifier extends ValueObject<NativeFeatureIdentifierProps> {
@@ -39,7 +39,7 @@ export class NativeFeatureIdentifier extends ValueObject<NativeFeatureIdentifier
     TaskEditor: 'org.standardnotes.simple-task-editor',
     TokenVaultEditor: 'org.standardnotes.token-vault',
 
-    Extension: 'org.standardnotes.extension',
+    Clipper: 'org.standardnotes.clipper',
 
     DeprecatedMarkdownVisualEditor: 'org.standardnotes.markdown-visual-editor',
     DeprecatedBoldEditor: 'org.standardnotes.bold-editor',
@@ -51,7 +51,7 @@ export class NativeFeatureIdentifier extends ValueObject<NativeFeatureIdentifier
     LegacyFileSafeIdentifier: 'org.standardnotes.legacy.file-safe',
   }
 
-  get value(): string | null {
+  get value(): string {
     return this.props.value
   }
 
@@ -59,11 +59,7 @@ export class NativeFeatureIdentifier extends ValueObject<NativeFeatureIdentifier
     super(props)
   }
 
-  static create(type: string | null): Result<NativeFeatureIdentifier> {
-    if (type === null) {
-      return Result.ok<NativeFeatureIdentifier>(new NativeFeatureIdentifier({ value: null }))
-    }
-
+  static create(type: string): Result<NativeFeatureIdentifier> {
     const isValidType = Object.values(this.TYPES).includes(type)
     if (!isValidType) {
       return Result.fail<NativeFeatureIdentifier>(`Invalid feature identifier: ${type}`)

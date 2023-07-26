@@ -24,8 +24,9 @@ const Security: FunctionComponent<SecurityProps> = (props) => {
   const isNativeMobileWeb = props.application.isNativeMobileWeb()
 
   const isU2FFeatureAvailable =
-    props.application.features.getFeatureStatus(NativeFeatureIdentifier.TYPES.UniversalSecondFactor) === FeatureStatus.Entitled &&
-    props.userProvider.getUser() !== undefined
+    props.application.features.getFeatureStatus(
+      NativeFeatureIdentifier.create(NativeFeatureIdentifier.TYPES.UniversalSecondFactor).getValue(),
+    ) === FeatureStatus.Entitled && props.userProvider.getUser() !== undefined
 
   return (
     <PreferencesPane>

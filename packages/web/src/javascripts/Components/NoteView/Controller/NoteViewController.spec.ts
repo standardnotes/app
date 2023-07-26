@@ -1,7 +1,6 @@
 import { WebApplication } from '@/Application/WebApplication'
 import { ContentType } from '@standardnotes/domain-core'
 import {
-  MutatorService,
   SNComponentManager,
   SNComponent,
   SNTag,
@@ -40,7 +39,9 @@ describe('note view controller', () => {
   })
 
   it('should create notes with plaintext note type', async () => {
-    application.componentManager.getDefaultEditorIdentifier = jest.fn().mockReturnValue(NativeFeatureIdentifier.TYPES.PlainEditor)
+    application.componentManager.getDefaultEditorIdentifier = jest
+      .fn()
+      .mockReturnValue(NativeFeatureIdentifier.TYPES.PlainEditor)
 
     const controller = new NoteViewController(application)
     await controller.initialize()
@@ -74,7 +75,9 @@ describe('note view controller', () => {
   })
 
   it('should add tag to note if default tag is set', async () => {
-    application.componentManager.getDefaultEditorIdentifier = jest.fn().mockReturnValue(NativeFeatureIdentifier.TYPES.PlainEditor)
+    application.componentManager.getDefaultEditorIdentifier = jest
+      .fn()
+      .mockReturnValue(NativeFeatureIdentifier.TYPES.PlainEditor)
 
     const tag = {
       uuid: 'tag-uuid',

@@ -17,7 +17,7 @@ import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 
 type ExperimentalFeatureItem = {
-  identifier: NativeFeatureIdentifier
+  identifier: string
   name: string
   description: string
   isEnabled: boolean
@@ -55,7 +55,9 @@ const LabsPane: FunctionComponent<Props> = ({ application }) => {
         name: feature?.name ?? featureIdentifier,
         description: feature?.description ?? '',
         isEnabled: application.features.isExperimentalFeatureEnabled(featureIdentifier),
-        isEntitled: application.features.getFeatureStatus(featureIdentifier) === FeatureStatus.Entitled,
+        isEntitled:
+          application.features.getFeatureStatus(NativeFeatureIdentifier.create(featureIdentifier).getValue()) ===
+          FeatureStatus.Entitled,
       }
     })
     setExperimentalFeatures(experimentalFeatures)

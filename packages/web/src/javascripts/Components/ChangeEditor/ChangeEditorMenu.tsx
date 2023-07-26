@@ -211,7 +211,7 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
 
                     return (
                       <MenuRadioButtonItem
-                        key={menuItem.uiFeature.uniqueIdentifier}
+                        key={menuItem.uiFeature.uniqueIdentifier.value}
                         onClick={onClickEditorItem}
                         className={'flex-row-reversed py-2'}
                         checked={isSelected(menuItem)}

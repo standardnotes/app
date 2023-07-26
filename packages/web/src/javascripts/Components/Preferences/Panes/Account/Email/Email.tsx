@@ -28,7 +28,9 @@ const Email: FunctionComponent<Props> = ({ application }: Props) => {
   const [isLoading, setIsLoading] = useState(true)
 
   const isMuteSignInEmailsFeatureAvailable =
-    application.features.getFeatureStatus(NativeFeatureIdentifier.TYPES.SignInAlerts) === FeatureStatus.Entitled
+    application.features.getFeatureStatus(
+      NativeFeatureIdentifier.create(NativeFeatureIdentifier.TYPES.SignInAlerts).getValue(),
+    ) === FeatureStatus.Entitled
 
   const updateSetting = async (settingName: SettingName, payload: string): Promise<boolean> => {
     try {

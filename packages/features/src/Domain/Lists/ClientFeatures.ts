@@ -28,10 +28,10 @@ export function clientFeatures(): ClientFeatureDescription[] {
       description: '',
     },
     {
-      name: 'Extension',
+      name: 'Clipper',
       availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
-      identifier: NativeFeatureIdentifier.TYPES.Extension,
-      permission_name: PermissionName.Extension,
+      identifier: NativeFeatureIdentifier.TYPES.Clipper,
+      permission_name: PermissionName.Clipper,
       description: '',
     },
   ]
