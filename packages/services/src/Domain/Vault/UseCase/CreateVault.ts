@@ -44,9 +44,7 @@ export class CreateVault {
       keySystemIdentifier,
       vaultName: dto.vaultName,
       vaultDescription: dto.vaultDescription,
-      passwordType: dto.userInputtedPassword
-        ? KeySystemPasswordType.UserInputted
-        : KeySystemPasswordType.Randomized,
+      passwordType: dto.userInputtedPassword ? KeySystemPasswordType.UserInputted : KeySystemPasswordType.Randomized,
       rootKeyParams: rootKey.keyParams,
       storage: dto.storagePreference,
     })
