@@ -90,7 +90,7 @@ describe('contacts', function () {
     await Factory.expectThrowsAsync(() => context.contacts.deleteContact(selfContact), 'Cannot delete self')
   })
 
-  it.skip('should not be able to delete a trusted contact if it belongs to a vault I administer', async () => {
+  it('should not be able to delete a trusted contact if it belongs to a vault I administer', async () => {
     const { contact, deinitContactContext } = await Collaboration.createSharedVaultWithAcceptedInvite(context)
 
     const result = await context.contacts.deleteContact(contact)

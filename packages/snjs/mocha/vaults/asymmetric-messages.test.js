@@ -233,7 +233,7 @@ describe('asymmetric messages', function () {
     await deinitContactContext()
   })
 
-  it.skip('should send sender keypair changed message to trusted contacts', async () => {
+  it('should send sender keypair changed message to trusted contacts', async () => {
     const { contactContext, deinitContactContext } = await Collaboration.createSharedVaultWithAcceptedInvite(context)
 
     contactContext.lockSyncing()
@@ -341,7 +341,7 @@ describe('asymmetric messages', function () {
     await deinitContactContext()
   })
 
-  it.skip('sender keypair changed message should be signed using old key pair', async () => {
+  it('sender keypair changed message should be signed using old key pair', async () => {
     const { contactContext, deinitContactContext } = await Collaboration.createSharedVaultWithAcceptedInvite(context)
 
     const oldKeyPair = context.encryption.getKeyPair()
@@ -368,7 +368,7 @@ describe('asymmetric messages', function () {
     await deinitContactContext()
   })
 
-  it.skip('sender keypair changed message should contain new keypair and be trusted', async () => {
+  it('sender keypair changed message should contain new keypair and be trusted', async () => {
     const { contactContext, deinitContactContext } = await Collaboration.createSharedVaultWithAcceptedInvite(context)
 
     await context.changePassword('new password')

@@ -105,7 +105,7 @@ describe('keypair change', function () {
     await deinitContactContext()
   })
 
-  it.skip('should reupload invites after rotating keypair', async () => {
+  it('should reupload invites after rotating keypair', async () => {
     const { contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithUnacceptedButTrustedInvite(context)
 

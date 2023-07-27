@@ -58,7 +58,7 @@ describe('shared vault crypto', function () {
   })
 
   describe('persistent content signature', () => {
-    it.skip('storage payloads should include signatureData', async () => {
+    it('storage payloads should include signatureData', async () => {
       const { note, contactContext, deinitContactContext } =
         await Collaboration.createSharedVaultWithAcceptedInviteAndNote(context)
 
