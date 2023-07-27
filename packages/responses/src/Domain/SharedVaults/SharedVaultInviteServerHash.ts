@@ -1,5 +1,4 @@
 import { AsymmetricMessageServerHash } from '../AsymmetricMessage/AsymmetricMessageServerHash'
-import { SharedVaultPermission } from './SharedVaultPermission'
 
 export interface SharedVaultInviteServerHash extends AsymmetricMessageServerHash {
   uuid: string
@@ -7,7 +6,7 @@ export interface SharedVaultInviteServerHash extends AsymmetricMessageServerHash
   user_uuid: string
   sender_uuid: string
   encrypted_message: string
-  permissions: SharedVaultPermission
+  permission: string
   created_at_timestamp: number
   updated_at_timestamp: number
 }

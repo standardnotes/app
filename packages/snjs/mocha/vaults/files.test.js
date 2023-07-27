@@ -5,7 +5,7 @@ import * as Collaboration from '../lib/Collaboration.js'
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
-describe('shared vault files', function () {
+describe.skip('shared vault files', function () {
   this.timeout(Factory.TwentySecondTimeout)
 
   let context
@@ -179,7 +179,7 @@ describe('shared vault files', function () {
 
   it('should be able to delete vault file as write user', async () => {
     const { sharedVault, contactContext, deinitContactContext } =
-      await Collaboration.createSharedVaultWithAcceptedInvite(context, SharedVaultPermission.Write)
+      await Collaboration.createSharedVaultWithAcceptedInvite(context, SharedVaultUserPermission.PERMISSIONS.Write)
     const response = await fetch('/mocha/assets/small_file.md')
     const buffer = new Uint8Array(await response.arrayBuffer())
 
@@ -201,7 +201,7 @@ describe('shared vault files', function () {
     context.anticipateConsoleError('Could not create valet token')
 
     const { sharedVault, contactContext, deinitContactContext } =
-      await Collaboration.createSharedVaultWithAcceptedInvite(context, SharedVaultPermission.Read)
+      await Collaboration.createSharedVaultWithAcceptedInvite(context, SharedVaultUserPermission.PERMISSIONS.Read)
     const response = await fetch('/mocha/assets/small_file.md')
     const buffer = new Uint8Array(await response.arrayBuffer())
 

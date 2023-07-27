@@ -16,7 +16,7 @@ export type RawSyncData = {
   unsaved?: ConflictParams[]
   shared_vaults?: SharedVaultServerHash[]
   shared_vault_invites?: SharedVaultInviteServerHash[]
-  user_events?: UserEventServerHash[]
-  asymmetric_messages?: AsymmetricMessageServerHash[]
+  notifications?: UserEventServerHash[]
+  messages?: AsymmetricMessageServerHash[]
   status?: number
 }

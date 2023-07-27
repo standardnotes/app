@@ -49,7 +49,7 @@ export class ReuploadInvite implements UseCaseInterface<void> {
       sharedVaultUuid: params.previousInvite.shared_vault_uuid,
       recipientUuid: params.recipient.contactUuid,
       encryptedMessage: encryptedMessage.getValue(),
-      permissions: params.previousInvite.permissions,
+      permission: params.previousInvite.permission,
     })
 
     return createInviteResult

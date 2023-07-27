@@ -70,7 +70,7 @@ export class NotifyVaultUsersOfKeyRotation implements UseCaseInterface<void> {
         sharedVault: params.sharedVault,
         sharedVaultContacts: !contacts.isFailed() ? contacts.getValue() : [],
         recipient: recipient.getValue(),
-        permissions: invite.permissions,
+        permission: invite.permission,
         senderUuid: params.senderUuid,
       })
     }

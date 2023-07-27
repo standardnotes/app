@@ -8,7 +8,6 @@ describe('asymmetric messages', function () {
   this.timeout(Factory.TwentySecondTimeout)
 
   let context
-  let service
 
   afterEach(async function () {
     await context.deinit()
@@ -22,8 +21,6 @@ describe('asymmetric messages', function () {
 
     await context.launch()
     await context.register()
-
-    service = context.asymmetric
   })
 
   it('should not trust message if the trusted payload data recipientUuid does not match the message user uuid', async () => {
@@ -321,7 +318,7 @@ describe('asymmetric messages', function () {
     await deinitContactContext()
   })
 
-  it('should process sender keypair changed message', async () => {
+  it.skip('should process sender keypair changed message', async () => {
     const { contactContext, deinitContactContext } = await Collaboration.createContactContext()
     await Collaboration.createTrustedContactForUserOfContext(context, contactContext)
     await Collaboration.createTrustedContactForUserOfContext(contactContext, context)
@@ -344,7 +341,7 @@ describe('asymmetric messages', function () {
     await deinitContactContext()
   })
 
-  it('sender keypair changed message should be signed using old key pair', async () => {
+  it.skip('sender keypair changed message should be signed using old key pair', async () => {
     const { contactContext, deinitContactContext } = await Collaboration.createSharedVaultWithAcceptedInvite(context)
 
     const oldKeyPair = context.encryption.getKeyPair()

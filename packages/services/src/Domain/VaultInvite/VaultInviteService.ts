@@ -27,7 +27,6 @@ import { VaultInviteServiceInterface } from './VaultInviteServiceInterface'
 import {
   ClientDisplayableError,
   SharedVaultInviteServerHash,
-  SharedVaultPermission,
   SharedVaultUserServerHash,
   isErrorResponse,
 } from '@standardnotes/responses'
@@ -173,7 +172,7 @@ export class VaultInviteService
   public async inviteContactToSharedVault(
     sharedVault: SharedVaultListingInterface,
     contact: TrustedContactInterface,
-    permissions: SharedVaultPermission,
+    permission: string,
   ): Promise<Result<SharedVaultInviteServerHash>> {
     const contactsResult = await this._getVaultContacts.execute({
       sharedVaultUuid: sharedVault.sharing.sharedVaultUuid,
@@ -194,7 +193,7 @@ export class VaultInviteService
       sharedVault,
       recipient: contact,
       sharedVaultContacts: contacts,
-      permissions,
+      permission,
     })
 
     void this.notifyEvent(VaultInviteServiceEvent.InviteSent)

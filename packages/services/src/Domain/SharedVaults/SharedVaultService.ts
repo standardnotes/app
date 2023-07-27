@@ -1,6 +1,6 @@
 import { DiscardItemsLocally } from './../UseCase/DiscardItemsLocally'
 import { UserKeyPairChangedEventData } from './../Session/UserKeyPairChangedEventData'
-import { ClientDisplayableError, UserEventType } from '@standardnotes/responses'
+import { ClientDisplayableError } from '@standardnotes/responses'
 import {
   DecryptedItemInterface,
   PayloadEmitSource,
@@ -29,7 +29,7 @@ import { CreateSharedVault } from './UseCase/CreateSharedVault'
 import { SendVaultDataChangedMessage } from './UseCase/SendVaultDataChangedMessage'
 import { ConvertToSharedVault } from './UseCase/ConvertToSharedVault'
 import { GetVault } from '../Vault/UseCase/GetVault'
-import { ContentType } from '@standardnotes/domain-core'
+import { ContentType, NotificationType, Uuid } from '@standardnotes/domain-core'
 import { HandleKeyPairChange } from '../Contacts/UseCase/HandleKeyPairChange'
 import { FindContact } from '../Contacts/UseCase/FindContact'
 import { EncryptionProviderInterface } from '../Encryption/EncryptionProviderInterface'
@@ -121,18 +121,18 @@ export class SharedVaultService
   }
 
   private async handleUserEvent(event: UserEventServiceEventPayload): Promise<void> {
-    switch (event.eventPayload.eventType) {
-      case UserEventType.RemovedFromSharedVault: {
+    switch (event.eventPayload.props.type.value) {
+      case NotificationType.TYPES.RemovedFromSharedVault: {
         const vault = this._getVault.execute<SharedVaultListingInterface>({
-          sharedVaultUuid: event.eventPayload.sharedVaultUuid,
+          sharedVaultUuid: event.eventPayload.props.sharedVaultUuid.value,
         })
         if (!vault.isFailed()) {
           await this._deleteThirdPartyVault.execute(vault.getValue())
         }
         break
       }
-      case UserEventType.SharedVaultItemRemoved: {
-        const item = this.items.findItem(event.eventPayload.itemUuid)
+      case NotificationType.TYPES.SharedVaultItemRemoved: {
+        const item = this.items.findItem((event.eventPayload.props.itemUuid as Uuid).value)
         if (item) {
           void this._discardItemsLocally.execute([item])
         }

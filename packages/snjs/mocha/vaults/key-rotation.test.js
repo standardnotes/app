@@ -105,7 +105,7 @@ describe('vault key rotation', function () {
 
     const message = outboundMessages[0]
     expect(message).to.not.be.undefined
-    expect(message.user_uuid).to.equal(contactContext.userUuid)
+    expect(message.recipient_uuid).to.equal(contactContext.userUuid)
     expect(message.encrypted_message).to.not.be.undefined
 
     await deinitContactContext()

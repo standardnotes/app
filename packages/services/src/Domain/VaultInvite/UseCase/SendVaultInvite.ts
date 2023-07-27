@@ -1,11 +1,6 @@
-import {
-  SharedVaultInviteServerHash,
-  isErrorResponse,
-  SharedVaultPermission,
-  getErrorFromErrorResponse,
-} from '@standardnotes/responses'
+import { SharedVaultInviteServerHash, isErrorResponse, getErrorFromErrorResponse } from '@standardnotes/responses'
 import { SharedVaultInvitesServerInterface } from '@standardnotes/api'
-import { Result, UseCaseInterface } from '@standardnotes/domain-core'
+import { Result, SharedVaultUserPermission, UseCaseInterface } from '@standardnotes/domain-core'
 
 export class SendVaultInvite implements UseCaseInterface<SharedVaultInviteServerHash> {
   constructor(private vaultInvitesServer: SharedVaultInvitesServerInterface) {}
@@ -14,13 +9,19 @@ export class SendVaultInvite implements UseCaseInterface<SharedVaultInviteServer
     sharedVaultUuid: string
     recipientUuid: string
     encryptedMessage: string
-    permissions: SharedVaultPermission
+    permission: string
   }): Promise<Result<SharedVaultInviteServerHash>> {
+    const permissionOrError = SharedVaultUserPermission.create(params.permission)
+    if (permissionOrError.isFailed()) {
+      return Result.fail(permissionOrError.getError())
+    }
+    const permission = permissionOrError.getValue()
+
     const response = await this.vaultInvitesServer.createInvite({
       sharedVaultUuid: params.sharedVaultUuid,
       recipientUuid: params.recipientUuid,
       encryptedMessage: params.encryptedMessage,
-      permissions: params.permissions,
+      permission: permission,
     })
 
     if (isErrorResponse(response)) {
