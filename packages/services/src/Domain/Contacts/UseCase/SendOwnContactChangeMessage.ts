@@ -10,7 +10,10 @@ import { EncryptMessage } from '../../Encryption/UseCase/Asymmetric/EncryptMessa
 import { Result, UseCaseInterface } from '@standardnotes/domain-core'
 
 export class SendOwnContactChangeMessage implements UseCaseInterface<AsymmetricMessageServerHash> {
-  constructor(private encryptMessage: EncryptMessage, private sendMessage: SendMessage) {}
+  constructor(
+    private encryptMessage: EncryptMessage,
+    private sendMessage: SendMessage,
+  ) {}
 
   async execute(params: {
     senderOldKeyPair: PkcKeyPair

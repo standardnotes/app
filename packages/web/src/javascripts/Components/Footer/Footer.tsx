@@ -77,6 +77,7 @@ class Footer extends AbstractComponent<Props, State> {
           this.onNewUpdateAvailable()
           break
         case WebAppEvent.EditorFocused:
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           if ((data as any).eventSource === EditorEventSource.UserInteraction) {
             this.closeAccountMenu()
           }
@@ -87,6 +88,7 @@ class Footer extends AbstractComponent<Props, State> {
         case WebAppEvent.EndedBackupDownload: {
           const successMessage = 'Successfully saved backup.'
           const errorMessage = 'Unable to save local backup.'
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           statusService.setMessage((data as any).success ? successMessage : errorMessage)
 
           const twoSeconds = 2000

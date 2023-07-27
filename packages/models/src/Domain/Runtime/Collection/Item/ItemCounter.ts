@@ -24,7 +24,10 @@ export class ItemCounter implements SNIndex {
   private displayOptions?: AnyDisplayOptions
   private vaultDisplayOptions?: VaultDisplayOptions
 
-  constructor(private collection: ItemCollection, public observers: TagItemCountChangeObserver[] = []) {}
+  constructor(
+    private collection: ItemCollection,
+    public observers: TagItemCountChangeObserver[] = [],
+  ) {}
 
   public addCountChangeObserver(observer: TagItemCountChangeObserver): () => void {
     this.observers.push(observer)

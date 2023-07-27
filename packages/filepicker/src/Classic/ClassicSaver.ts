@@ -3,6 +3,7 @@ import { saveFile } from '../utils'
 export class ClassicFileSaver {
   public loggingEnabled = false
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private log(...args: any[]): void {
     if (!this.loggingEnabled) {
       return

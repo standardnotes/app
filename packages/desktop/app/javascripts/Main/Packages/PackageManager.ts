@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { compareVersions } from 'compare-versions'
 import log from 'electron-log'
 import fs from 'fs'
@@ -46,7 +47,10 @@ class MappingFileHandler {
     return new MappingFileHandler(mapping, filesManager)
   }
 
-  constructor(private mapping: MappingFile, private filesManager: FilesManagerInterface) {}
+  constructor(
+    private mapping: MappingFile,
+    private filesManager: FilesManagerInterface,
+  ) {}
 
   get = (componendId: string) => {
     return this.mapping[componendId]

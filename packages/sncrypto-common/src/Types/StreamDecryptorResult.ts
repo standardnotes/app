@@ -1,6 +1,6 @@
-import { SodiumConstant } from './SodiumConstant'
+import { SodiumTag } from './SodiumTag'
 
 export type StreamDecryptorResult = {
   message: Uint8Array
-  tag: SodiumConstant
+  tag: SodiumTag
 }

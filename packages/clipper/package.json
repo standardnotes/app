@@ -24,7 +24,7 @@
     "babel-loader": "^9.1.0",
     "copy-webpack-plugin": "11.0.0",
     "eslint": "*",
-    "eslint-config-prettier": "^8.5.0",
+    "eslint-config-prettier": "^8.9.0",
     "ts-loader": "^9.4.2",
     "typescript": "*",
     "web-ext": "^7.5.0",

@@ -1,8 +1,7 @@
-import { PkcKeyPair } from '../Types'
+import { PkcKeyPair, SodiumTag } from '../Types'
 import { Base64String } from '../Types/Base64String'
 import { Base64URLSafeString } from '../Types/Base64URLSafeString'
 import { HexString } from '../Types/HexString'
-import { SodiumConstant } from '../Types/SodiumConstant'
 import { StreamDecryptor } from '../Types/StreamDecryptor'
 import { StreamEncryptor } from '../Types/StreamEncryptor'
 import { Utf8String } from '../Types/Utf8String'
@@ -122,7 +121,7 @@ export interface PureCryptoInterface {
     encryptor: StreamEncryptor,
     plainBuffer: Uint8Array,
     assocData: Utf8String,
-    tag?: SodiumConstant,
+    tag?: SodiumTag,
   ): Uint8Array
 
   xchacha20StreamInitDecryptor(header: Base64String, key: HexString): StreamDecryptor
@@ -131,7 +130,7 @@ export interface PureCryptoInterface {
     decryptor: StreamDecryptor,
     encryptedBuffer: Uint8Array,
     assocData: Utf8String,
-  ): { message: Uint8Array; tag: SodiumConstant } | false
+  ): { message: Uint8Array; tag: SodiumTag } | false
 
   sodiumCryptoBoxEasyEncrypt(
     message: Utf8String,

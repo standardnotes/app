@@ -1,7 +1,10 @@
 import { PredicateTarget, PredicateInterface, PredicateJsonForm, StringKey } from './Interface'
 
 export class IncludesPredicate<T extends PredicateTarget> implements PredicateInterface<T> {
-  constructor(private readonly keypath: StringKey<T>, public readonly predicate: PredicateInterface<T>) {}
+  constructor(
+    private readonly keypath: StringKey<T>,
+    public readonly predicate: PredicateInterface<T>,
+  ) {}
 
   matchesItem(item: T): boolean {
     const keyPathComponents = this.keypath.split('.') as StringKey<T>[]

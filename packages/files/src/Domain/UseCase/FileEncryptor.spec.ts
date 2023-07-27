@@ -1,5 +1,5 @@
 import { FileContent } from '@standardnotes/models'
-import { PureCryptoInterface, StreamEncryptor, SodiumConstant } from '@standardnotes/sncrypto-common'
+import { PureCryptoInterface, StreamEncryptor, SodiumTag } from '@standardnotes/sncrypto-common'
 import { FileEncryptor } from './FileEncryptor'
 
 describe('file encryptor', () => {
@@ -46,7 +46,7 @@ describe('file encryptor', () => {
       expect.any(Object),
       decryptedBytes,
       file.remoteIdentifier,
-      SodiumConstant.CRYPTO_SECRETSTREAM_XCHACHA20POLY1305_TAG_FINAL,
+      SodiumTag.CRYPTO_SECRETSTREAM_XCHACHA20POLY1305_TAG_FINAL,
     )
   })
 

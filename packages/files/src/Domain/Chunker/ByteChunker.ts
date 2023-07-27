@@ -5,8 +5,12 @@ export class ByteChunker {
   private bytes = new Uint8Array()
   private index = 1
 
-  constructor(private minimumChunkSize: number, private onChunk: OnChunkCallbackNoProgress) {}
+  constructor(
+    private minimumChunkSize: number,
+    private onChunk: OnChunkCallbackNoProgress,
+  ) {}
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private log(...args: any[]): void {
     if (!this.loggingEnabled) {
       return

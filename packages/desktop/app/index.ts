@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { app, ipcMain, shell } from 'electron'
 import log from 'electron-log'
 import fs from 'fs-extra'
@@ -96,6 +97,7 @@ function migrateSnapStorage() {
         fs.moveSync(fullFilePath, path.join(dest, fileName), {
           overwrite: false,
         })
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
         console.error(`Migration: error occured while moving ${fullFilePath} to ${dest}:`, error?.message ?? error)
       }
@@ -114,6 +116,7 @@ function migrateSnapStorage() {
       const newLocation = path.join(Paths.documentsDir, path.basename(store.data.backupsLocation))
       try {
         fs.copySync(store.data.backupsLocation, newLocation)
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
         console.error(
           `Migration: error occured while moving ${store.data.backupsLocation} to ${Paths.documentsDir}:`,

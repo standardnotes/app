@@ -12,7 +12,10 @@ export class ChangelogService implements ChangelogServiceInterface {
   private changeLog?: Changelog
   private lastReadChangeListeners: ChangelogLastReadVersionListener[] = []
 
-  constructor(private environment: Environment, private diskService: StorageServiceInterface) {}
+  constructor(
+    private environment: Environment,
+    private diskService: StorageServiceInterface,
+  ) {}
 
   public addLastReadChangeListener(listener: ChangelogLastReadVersionListener) {
     this.lastReadChangeListeners.push(listener)

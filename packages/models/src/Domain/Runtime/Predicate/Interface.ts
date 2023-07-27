@@ -13,7 +13,7 @@ export interface PredicateJsonForm {
 }
 
 export const AllPredicateCompoundOperators = ['and', 'or'] as const
-export type PredicateCompoundOperator = typeof AllPredicateCompoundOperators[number]
+export type PredicateCompoundOperator = (typeof AllPredicateCompoundOperators)[number]
 
 export const AllNonCompoundPredicateOperators = [
   '!=',
@@ -31,7 +31,7 @@ export const AllNonCompoundPredicateOperators = [
 
 export const AllPredicateOperators = [...AllPredicateCompoundOperators, ...AllNonCompoundPredicateOperators] as const
 
-export type PredicateOperator = typeof AllPredicateOperators[number]
+export type PredicateOperator = (typeof AllPredicateOperators)[number]
 
 export type SureValue = number | number[] | string[] | string | Date | boolean | false | ''
 

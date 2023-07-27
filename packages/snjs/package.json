@@ -81,6 +81,6 @@
     "uuid": "^9.0.0",
     "webpack": "*",
     "webpack-cli": "*",
-    "webpack-merge": "^5.8.0"
+    "webpack-merge": "*"
   }
 }

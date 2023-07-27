@@ -4,14 +4,17 @@ import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { autorun, IReactionDisposer, IReactionPublic } from 'mobx'
 import { Component } from 'react'
 
-export type PureComponentState = Partial<Record<string, any>>
-export type PureComponentProps = Partial<Record<string, any>>
+export type PureComponentState = Partial<Record<string, unknown>>
+export type PureComponentProps = Partial<Record<string, unknown>>
 
 export abstract class AbstractComponent<P = PureComponentProps, S = PureComponentState> extends Component<P, S> {
   private unsubApp!: () => void
   private reactionDisposers: IReactionDisposer[] = []
 
-  constructor(props: P, protected application: WebApplication) {
+  constructor(
+    props: P,
+    protected application: WebApplication,
+  ) {
     super(props)
   }
 

@@ -8,6 +8,7 @@ export class StreamingFileSaver {
 
   constructor(private name: string) {}
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private log(...args: any[]): void {
     if (!this.loggingEnabled) {
       return

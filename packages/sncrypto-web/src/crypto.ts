@@ -2,6 +2,7 @@ import {
   StreamEncryptor,
   StreamDecryptor,
   SodiumConstant,
+  SodiumTag,
   StreamDecryptorResult,
   Base64String,
   Base64URLSafeString,
@@ -299,7 +300,7 @@ export class SNWebCrypto implements PureCryptoInterface {
     encryptor: StreamEncryptor,
     plainBuffer: Uint8Array,
     assocData?: Utf8String,
-    tag: SodiumConstant = SodiumConstant.CRYPTO_SECRETSTREAM_XCHACHA20POLY1305_TAG_PUSH,
+    tag: SodiumTag = SodiumTag.CRYPTO_SECRETSTREAM_XCHACHA20POLY1305_TAG_PUSH,
   ): Uint8Array {
     const encryptedBuffer = sodium.crypto_secretstream_xchacha20poly1305_push(
       encryptor.state as sodium.StateAddress,

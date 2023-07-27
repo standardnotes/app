@@ -7,7 +7,10 @@ import { ContentTypesUsingRootKeyEncryption } from '@standardnotes/models'
  * When the user root key changes, we must re-encrypt all relevant items with this new root key (by simply re-syncing).
  */
 export class ReencryptTypeAItems implements UseCaseInterface<void> {
-  constructor(private items: ItemManagerInterface, private mutator: MutatorClientInterface) {}
+  constructor(
+    private items: ItemManagerInterface,
+    private mutator: MutatorClientInterface,
+  ) {}
 
   public async execute(): Promise<Result<void>> {
     const items = this.items.getItems(ContentTypesUsingRootKeyEncryption())

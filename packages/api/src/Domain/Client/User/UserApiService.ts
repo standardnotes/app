@@ -19,7 +19,10 @@ import { UserUpdateResponse } from '../../Response/User/UserUpdateResponse'
 export class UserApiService implements UserApiServiceInterface {
   private operationsInProgress: Map<UserApiOperations, boolean>
 
-  constructor(private userServer: UserServerInterface, private userRequestServer: UserRequestServerInterface) {
+  constructor(
+    private userServer: UserServerInterface,
+    private userRequestServer: UserRequestServerInterface,
+  ) {
     this.operationsInProgress = new Map()
   }
 

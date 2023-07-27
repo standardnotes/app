@@ -3,7 +3,10 @@ import { MutatorClientInterface } from '../../Mutator/MutatorClientInterface'
 import { TrustedContactInterface, TrustedContactMutator } from '@standardnotes/models'
 
 export class EditContact {
-  constructor(private mutator: MutatorClientInterface, private sync: SyncServiceInterface) {}
+  constructor(
+    private mutator: MutatorClientInterface,
+    private sync: SyncServiceInterface,
+  ) {}
 
   async execute(
     contact: TrustedContactInterface,

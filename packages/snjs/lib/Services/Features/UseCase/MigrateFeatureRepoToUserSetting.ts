@@ -4,7 +4,10 @@ import { MutatorClientInterface } from '@standardnotes/services'
 import { SettingName } from '@standardnotes/settings'
 
 export class MigrateFeatureRepoToUserSettingUseCase {
-  constructor(private mutator: MutatorClientInterface, private settings: SettingsClientInterface) {}
+  constructor(
+    private mutator: MutatorClientInterface,
+    private settings: SettingsClientInterface,
+  ) {}
 
   async execute(featureRepos: SNFeatureRepo[] = []): Promise<void> {
     for (const item of featureRepos) {

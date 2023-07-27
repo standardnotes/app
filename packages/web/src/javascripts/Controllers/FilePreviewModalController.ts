@@ -46,8 +46,8 @@ export class FilePreviewModalController {
 
   deinit = () => {
     this.eventObservers.forEach((observer) => observer())
-    ;(this.currentFile as any) = undefined
-    ;(this.otherFiles as any) = undefined
+    ;(this.currentFile as unknown) = undefined
+    ;(this.otherFiles as unknown) = undefined
   }
 
   setCurrentFile = (currentFile: FileItem) => {

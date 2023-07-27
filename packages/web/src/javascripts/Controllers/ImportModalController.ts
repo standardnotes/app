@@ -27,7 +27,10 @@ export class ImportModalController {
   files: ImportModalFile[] = []
   importTag: SNTag | undefined = undefined
 
-  constructor(private application: WebApplication, private navigationController: NavigationController) {
+  constructor(
+    private application: WebApplication,
+    private navigationController: NavigationController,
+  ) {
     makeObservable(this, {
       isVisible: observable,
       setIsVisible: action,

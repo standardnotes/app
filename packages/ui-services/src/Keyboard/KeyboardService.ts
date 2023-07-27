@@ -12,7 +12,10 @@ export class KeyboardService {
   private commandHandlers = new Set<KeyboardCommandHandler>()
   private commandMap = new Map<KeyboardCommand, KeyboardShortcut>()
 
-  constructor(private platform: Platform, environment: Environment) {
+  constructor(
+    private platform: Platform,
+    environment: Environment,
+  ) {
     window.addEventListener('keydown', this.handleKeyDown)
     window.addEventListener('keyup', this.handleKeyUp)
     window.addEventListener('blur', this.handleWindowBlur)

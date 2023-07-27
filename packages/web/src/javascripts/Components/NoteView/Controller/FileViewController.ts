@@ -8,7 +8,10 @@ export class FileViewController implements ItemViewControllerInterface {
   private removeStreamObserver?: () => void
   public runtimeId = `${Math.random()}`
 
-  constructor(private application: SNApplication, public item: FileItem) {}
+  constructor(
+    private application: SNApplication,
+    public item: FileItem,
+  ) {}
 
   deinit() {
     this.dealloced = true

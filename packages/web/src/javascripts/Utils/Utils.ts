@@ -52,7 +52,8 @@ export function isSameDay(dateA: Date, dateB: Date): boolean {
 }
 
 /** Via https://davidwalsh.name/javascript-debounce-function */
-export function debounce(this: any, func: any, wait: number, immediate = false) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function debounce(this: unknown, func: any, wait: number, immediate = false) {
   let timeout: NodeJS.Timeout | null
   return () => {
     // eslint-disable-next-line @typescript-eslint/no-this-alias, no-invalid-this
@@ -80,7 +81,7 @@ export function debounce(this: any, func: any, wait: number, immediate = false) 
 if (!Array.prototype.includes) {
   // eslint-disable-next-line no-extend-native
   Object.defineProperty(Array.prototype, 'includes', {
-    value: function (searchElement: any, fromIndex: number) {
+    value: function (searchElement: unknown, fromIndex: number) {
       if (this == null) {
         throw new TypeError('"this" is null or not defined')
       }
@@ -107,7 +108,7 @@ if (!Array.prototype.includes) {
       //  b. If k < 0, let k be 0.
       let k = Math.max(n >= 0 ? n : len - Math.abs(n), 0)
 
-      function sameValueZero(x: number, y: number) {
+      function sameValueZero(x: unknown, y: unknown) {
         return x === y || (typeof x === 'number' && typeof y === 'number' && isNaN(x) && isNaN(y))
       }
 

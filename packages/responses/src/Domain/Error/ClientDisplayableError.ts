@@ -1,7 +1,11 @@
 import { HttpErrorResponse, getErrorFromErrorResponse } from '../Http'
 
 export class ClientDisplayableError {
-  constructor(public text: string, public title?: string, public tag?: string) {
+  constructor(
+    public text: string,
+    public title?: string,
+    public tag?: string,
+  ) {
     console.error('Client Displayable Error:', text, title || '', tag || '')
   }
 
