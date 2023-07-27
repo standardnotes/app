@@ -1,3 +1,5 @@
+import { VaultUserServiceInterface, VaultInviteServiceInterface } from '@standardnotes/services'
+import { VaultLockServiceInterface } from './../VaultLock/VaultLockServiceInterface'
 import { HistoryServiceInterface } from './../History/HistoryServiceInterface'
 import { InternalEventBusInterface } from './../Internal/InternalEventBusInterface'
 import { PreferenceServiceInterface } from './../Preferences/PreferenceServiceInterface'
@@ -5,7 +7,7 @@ import { AsymmetricMessageServiceInterface } from './../AsymmetricMessage/Asymme
 import { SyncOptions } from './../Sync/SyncOptions'
 import { ImportDataReturnType } from './../Mutator/ImportDataUseCase'
 import { ChallengeServiceInterface } from './../Challenge/ChallengeServiceInterface'
-import { VaultServiceInterface } from './../Vaults/VaultServiceInterface'
+import { VaultServiceInterface } from '../Vault/VaultServiceInterface'
 import { ApplicationIdentifier } from '@standardnotes/common'
 import {
   BackupFile,
@@ -95,24 +97,27 @@ export interface ApplicationInterface {
     syncOptions?: SyncOptions,
   ): Promise<void>
 
-  get features(): FeaturesClientInterface
-  get componentManager(): ComponentManagerInterface
-  get items(): ItemManagerInterface
-  get mutator(): MutatorClientInterface
-  get user(): UserClientInterface
-  get files(): FilesClientInterface
-  get subscriptions(): SubscriptionManagerInterface
-  get fileBackups(): BackupServiceInterface | undefined
-  get sessions(): SessionsClientInterface
-  get homeServer(): HomeServerServiceInterface | undefined
-  get vaults(): VaultServiceInterface
-  get challenges(): ChallengeServiceInterface
   get alerts(): AlertService
   get asymmetric(): AsymmetricMessageServiceInterface
-  get preferences(): PreferenceServiceInterface
-  get events(): InternalEventBusInterface
-  get history(): HistoryServiceInterface
+  get challenges(): ChallengeServiceInterface
+  get componentManager(): ComponentManagerInterface
   get encryption(): EncryptionProviderInterface
+  get events(): InternalEventBusInterface
+  get features(): FeaturesClientInterface
+  get fileBackups(): BackupServiceInterface | undefined
+  get files(): FilesClientInterface
+  get history(): HistoryServiceInterface
+  get homeServer(): HomeServerServiceInterface | undefined
+  get items(): ItemManagerInterface
+  get mutator(): MutatorClientInterface
+  get preferences(): PreferenceServiceInterface
+  get sessions(): SessionsClientInterface
+  get subscriptions(): SubscriptionManagerInterface
+  get user(): UserClientInterface
+  get vaults(): VaultServiceInterface
+  get vaultLocks(): VaultLockServiceInterface
+  get vaultUsers(): VaultUserServiceInterface
+  get vaultInvites(): VaultInviteServiceInterface
 
   readonly identifier: ApplicationIdentifier
   readonly platform: Platform

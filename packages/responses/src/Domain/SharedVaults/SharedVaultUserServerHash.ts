@@ -1,9 +1,7 @@
-import { SharedVaultPermission } from './SharedVaultPermission'
-
 export interface SharedVaultUserServerHash {
   uuid: string
   shared_vault_uuid: string
   user_uuid: string
-  permissions: SharedVaultPermission
+  permission: string
   updated_at_timestamp: number
 }

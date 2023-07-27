@@ -17,17 +17,17 @@ export const VaultModalInvites = ({
 
   const deleteInvite = useCallback(
     async (invite: SharedVaultInviteServerHash) => {
-      await application.sharedVaults.deleteInvite(invite)
+      await application.vaultInvites.deleteInvite(invite)
       onChange()
     },
-    [application.sharedVaults, onChange],
+    [application.vaultInvites, onChange],
   )
 
   return (
     <div className="mb-3">
       <div className="mb-3 text-lg">Pending Invites</div>
       {invites.map((invite) => {
-        const contact = application.contacts.findTrustedContactForInvite(invite)
+        const contact = application.contacts.findContactForInvite(invite)
         return (
           <div key={invite.uuid} className="bg-gray-100 flex flex-row gap-3.5 rounded-lg px-3.5 py-2.5 shadow-md">
             <Icon type={'user'} size="custom" className="mt-2.5 h-5.5 w-5.5 flex-shrink-0" />

@@ -240,10 +240,6 @@ export class EncryptionService
     return this.itemsEncryption.repersistAllItems()
   }
 
-  public async reencryptApplicableItemsAfterUserRootKeyChange(): Promise<void> {
-    await this.rootKeyManager.reencryptApplicableItemsAfterUserRootKeyChange()
-  }
-
   public async createNewItemsKeyWithRollback(): Promise<() => Promise<void>> {
     return this._createNewItemsKeyWithRollback.execute()
   }

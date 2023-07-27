@@ -8,7 +8,6 @@ describe('shared vault permissions', function () {
   this.timeout(Factory.TwentySecondTimeout)
 
   let context
-  let sharedVaults
 
   afterEach(async function () {
     await context.deinit()
@@ -22,8 +21,6 @@ describe('shared vault permissions', function () {
 
     await context.launch()
     await context.register()
-
-    sharedVaults = context.sharedVaults
   })
 
   it('non-admin user should not be able to invite user', async () => {
@@ -37,10 +34,10 @@ describe('shared vault permissions', function () {
       contactContext,
       thirdParty.contactContext,
     )
-    const result = await contactContext.sharedVaults.inviteContactToSharedVault(
+    const result = await contactContext.vaultInvites.inviteContactToSharedVault(
       sharedVault,
       thirdPartyContact,
-      SharedVaultPermission.Write,
+      SharedVaultUserPermission.PERMISSIONS.Write,
     )
 
     expect(result.isFailed()).to.be.true
@@ -53,16 +50,15 @@ describe('shared vault permissions', function () {
 
     const sharedVault = await Collaboration.createSharedVault(context)
 
-    const result = await sharedVaults.removeUserFromSharedVault(sharedVault, context.userUuid)
-
-    expect(isClientDisplayableError(result)).to.be.true
+    const result = await context.vaultUsers.removeUserFromSharedVault(sharedVault, context.userUuid)
+    expect(result.isFailed()).to.be.true
   })
 
   it('should be able to leave shared vault as added admin', async () => {
     const { contactVault, contactContext, deinitContactContext } =
-      await Collaboration.createSharedVaultWithAcceptedInvite(context, SharedVaultPermission.Admin)
+      await Collaboration.createSharedVaultWithAcceptedInvite(context, SharedVaultUserPermission.PERMISSIONS.Admin)
 
-    const result = await contactContext.sharedVaults.leaveSharedVault(contactVault)
+    const result = await contactContext.vaultUsers.leaveSharedVault(contactVault)
 
     expect(isClientDisplayableError(result)).to.be.false
 
@@ -89,7 +85,7 @@ describe('shared vault permissions', function () {
 
   it('read user should not be able to make changes to items', async () => {
     const { sharedVault, contactContext, deinitContactContext } =
-      await Collaboration.createSharedVaultWithAcceptedInvite(context, SharedVaultPermission.Read)
+      await Collaboration.createSharedVaultWithAcceptedInvite(context, SharedVaultUserPermission.PERMISSIONS.Read)
     const note = await context.createSyncedNote('foo', 'bar')
     await Collaboration.moveItemToVault(context, sharedVault, note)
     await contactContext.sync()

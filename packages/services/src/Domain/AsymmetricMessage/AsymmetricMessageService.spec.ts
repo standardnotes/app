@@ -1,13 +1,12 @@
+import { GetVault } from './../Vault/UseCase/GetVault'
+import { SessionsClientInterface } from './../Session/SessionsClientInterface'
 import { EncryptionProviderInterface } from './../Encryption/EncryptionProviderInterface'
 import { GetUntrustedPayload } from './UseCase/GetUntrustedPayload'
 import { GetInboundMessages } from './UseCase/GetInboundMessages'
 import { GetOutboundMessages } from './UseCase/GetOutboundMessages'
-import { SendOwnContactChangeMessage } from './UseCase/SendOwnContactChangeMessage'
 import { HandleRootKeyChangedMessage } from './UseCase/HandleRootKeyChangedMessage'
-import { GetVault } from './../Vaults/UseCase/GetVault'
 import { GetTrustedPayload } from './UseCase/GetTrustedPayload'
 import { ReplaceContactData } from './../Contacts/UseCase/ReplaceContactData'
-import { GetAllContacts } from './../Contacts/UseCase/GetAllContacts'
 import { FindContact } from './../Contacts/UseCase/FindContact'
 import { CreateOrEditContact } from './../Contacts/UseCase/CreateOrEditContact'
 import { MutatorClientInterface } from './../Mutator/MutatorClientInterface'
@@ -31,6 +30,7 @@ describe('AsymmetricMessageService', () => {
   let sync: jest.Mocked<SyncServiceInterface>
   let mutator: jest.Mocked<MutatorClientInterface>
   let encryption: jest.Mocked<EncryptionProviderInterface>
+  let sessions: jest.Mocked<SessionsClientInterface>
   let service: AsymmetricMessageService
 
   beforeEach(() => {
@@ -40,12 +40,10 @@ describe('AsymmetricMessageService', () => {
     encryption = {} as jest.Mocked<EncryptionProviderInterface>
     const createOrEditContact = {} as jest.Mocked<CreateOrEditContact>
     const findContact = {} as jest.Mocked<FindContact>
-    const getAllContacts = {} as jest.Mocked<GetAllContacts>
     const replaceContactData = {} as jest.Mocked<ReplaceContactData>
     const getTrustedPayload = {} as jest.Mocked<GetTrustedPayload>
     const getVault = {} as jest.Mocked<GetVault>
     const handleRootKeyChangedMessage = {} as jest.Mocked<HandleRootKeyChangedMessage>
-    const sendOwnContactChangedMessage = {} as jest.Mocked<SendOwnContactChangeMessage>
     const getOutboundMessagesUseCase = {} as jest.Mocked<GetOutboundMessages>
     const getInboundMessagesUseCase = {} as jest.Mocked<GetInboundMessages>
     const getUntrustedPayload = {} as jest.Mocked<GetUntrustedPayload>
@@ -60,17 +58,16 @@ describe('AsymmetricMessageService', () => {
     eventBus.addEventHandler = jest.fn()
 
     service = new AsymmetricMessageService(
-      messageServer,
       encryption,
       mutator,
+      sessions,
+      messageServer,
       createOrEditContact,
       findContact,
-      getAllContacts,
       replaceContactData,
       getTrustedPayload,
       getVault,
       handleRootKeyChangedMessage,
-      sendOwnContactChangedMessage,
       getOutboundMessagesUseCase,
       getInboundMessagesUseCase,
       getUntrustedPayload,
@@ -83,7 +80,7 @@ describe('AsymmetricMessageService', () => {
       const messages: AsymmetricMessageServerHash[] = [
         {
           uuid: 'keypair-changed-message',
-          user_uuid: '1',
+          recipient_uuid: '1',
           sender_uuid: '2',
           encrypted_message: 'encrypted_message',
           created_at_timestamp: 2,
@@ -91,7 +88,7 @@ describe('AsymmetricMessageService', () => {
         },
         {
           uuid: 'misc-message',
-          user_uuid: '1',
+          recipient_uuid: '1',
           sender_uuid: '2',
           encrypted_message: 'encrypted_message',
           created_at_timestamp: 1,
@@ -122,7 +119,7 @@ describe('AsymmetricMessageService', () => {
     const messages: AsymmetricMessageServerHash[] = [
       {
         uuid: 'newer-message',
-        user_uuid: '1',
+        recipient_uuid: '1',
         sender_uuid: '2',
         encrypted_message: 'encrypted_message',
         created_at_timestamp: 2,
@@ -130,7 +127,7 @@ describe('AsymmetricMessageService', () => {
       },
       {
         uuid: 'older-message',
-        user_uuid: '1',
+        recipient_uuid: '1',
         sender_uuid: '2',
         encrypted_message: 'encrypted_message',
         created_at_timestamp: 1,
@@ -156,7 +153,7 @@ describe('AsymmetricMessageService', () => {
   it('should handle ContactShare message', async () => {
     const message: AsymmetricMessageServerHash = {
       uuid: 'message',
-      user_uuid: '1',
+      recipient_uuid: '1',
       sender_uuid: '2',
       encrypted_message: 'encrypted_message',
       created_at_timestamp: 2,
@@ -184,7 +181,7 @@ describe('AsymmetricMessageService', () => {
   it('should handle SenderKeypairChanged message', async () => {
     const message: AsymmetricMessageServerHash = {
       uuid: 'message',
-      user_uuid: '1',
+      recipient_uuid: '1',
       sender_uuid: '2',
       encrypted_message: 'encrypted_message',
       created_at_timestamp: 2,
@@ -213,7 +210,7 @@ describe('AsymmetricMessageService', () => {
   it('should handle SharedVaultRootKeyChanged message', async () => {
     const message: AsymmetricMessageServerHash = {
       uuid: 'message',
-      user_uuid: '1',
+      recipient_uuid: '1',
       sender_uuid: '2',
       encrypted_message: 'encrypted_message',
       created_at_timestamp: 2,
@@ -241,7 +238,7 @@ describe('AsymmetricMessageService', () => {
   it('should handle SharedVaultMetadataChanged message', async () => {
     const message: AsymmetricMessageServerHash = {
       uuid: 'message',
-      user_uuid: '1',
+      recipient_uuid: '1',
       sender_uuid: '2',
       encrypted_message: 'encrypted_message',
       created_at_timestamp: 2,
@@ -271,7 +268,7 @@ describe('AsymmetricMessageService', () => {
   it('should throw if message type is SharedVaultInvite', async () => {
     const message: AsymmetricMessageServerHash = {
       uuid: 'message',
-      user_uuid: '1',
+      recipient_uuid: '1',
       sender_uuid: '2',
       encrypted_message: 'encrypted_message',
       created_at_timestamp: 2,
@@ -297,7 +294,7 @@ describe('AsymmetricMessageService', () => {
   it('should delete message from server after processing', async () => {
     const message: AsymmetricMessageServerHash = {
       uuid: 'message',
-      user_uuid: '1',
+      recipient_uuid: '1',
       sender_uuid: '2',
       encrypted_message: 'encrypted_message',
       created_at_timestamp: 2,

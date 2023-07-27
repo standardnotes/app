@@ -4,7 +4,7 @@ import { PremiumFeatureModalType } from '@/Components/PremiumFeaturesModal/Premi
 import { destroyAllObjectProperties } from '@/Utils'
 import {
   ApplicationEvent,
-  FeatureIdentifier,
+  NativeFeatureIdentifier,
   FeatureStatus,
   InternalEventBusInterface,
   InternalEventInterface,
@@ -100,19 +100,25 @@ export class FeaturesController extends AbstractViewController {
   }
 
   private isEntitledToFiles(): boolean {
-    const status = this.application.features.getFeatureStatus(FeatureIdentifier.Files)
+    const status = this.application.features.getFeatureStatus(
+      NativeFeatureIdentifier.create(NativeFeatureIdentifier.TYPES.Files).getValue(),
+    )
 
     return status === FeatureStatus.Entitled
   }
 
   private isEntitledToFolders(): boolean {
-    const status = this.application.features.getFeatureStatus(FeatureIdentifier.TagNesting)
+    const status = this.application.features.getFeatureStatus(
+      NativeFeatureIdentifier.create(NativeFeatureIdentifier.TYPES.TagNesting).getValue(),
+    )
 
     return status === FeatureStatus.Entitled
   }
 
   private isEntitledToSmartViews(): boolean {
-    const status = this.application.features.getFeatureStatus(FeatureIdentifier.SmartFilters)
+    const status = this.application.features.getFeatureStatus(
+      NativeFeatureIdentifier.create(NativeFeatureIdentifier.TYPES.SmartFilters).getValue(),
+    )
 
     return status === FeatureStatus.Entitled
   }

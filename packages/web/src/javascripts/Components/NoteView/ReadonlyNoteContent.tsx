@@ -95,7 +95,7 @@ export const ReadonlyNoteContent = ({
       ) : content.noteType === NoteType.Super ? (
         <ErrorBoundary>
           <div className="w-full flex-grow overflow-hidden overflow-y-auto">
-            <BlocksEditorComposer readonly initialValue={content.text}>
+            <BlocksEditorComposer readonly initialValue={content.text} key={content.text}>
               <BlocksEditor
                 readonly
                 className="blocks-editor relative h-full resize-none p-4 text-base focus:shadow-none focus:outline-none"

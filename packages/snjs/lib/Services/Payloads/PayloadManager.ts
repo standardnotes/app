@@ -286,13 +286,11 @@ export class PayloadManager extends AbstractService implements PayloadManagerInt
   /**
    * Imports an array of payloads from an external source (such as a backup file)
    * and marks the items as dirty.
-   * @returns Resulting items
    */
-  public async importPayloads(payloads: DecryptedPayloadInterface[], historyMap: HistoryMap): Promise<string[]> {
+  public async importPayloads(payloads: FullyFormedPayloadInterface[], historyMap: HistoryMap): Promise<string[]> {
     const sourcedPayloads = payloads.map((p) => p.copy(undefined, PayloadSource.FileImport))
 
     const delta = new DeltaFileImport(this.getMasterCollection(), sourcedPayloads, historyMap)
-
     const emit = delta.result()
 
     await this.emitDeltaEmit(emit)

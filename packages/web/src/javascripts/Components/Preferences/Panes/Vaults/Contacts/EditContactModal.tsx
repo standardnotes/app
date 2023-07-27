@@ -2,10 +2,10 @@ import { FunctionComponent, useCallback, useEffect, useMemo, useState } from 're
 import Modal, { ModalAction } from '@/Components/Modal/Modal'
 import DecoratedInput from '@/Components/Input/DecoratedInput'
 import { useApplication } from '@/Components/ApplicationProvider'
-import { PendingSharedVaultInviteRecord, TrustedContactInterface } from '@standardnotes/snjs'
+import { InviteRecord, TrustedContactInterface } from '@standardnotes/snjs'
 
 type Props = {
-  fromInvite?: PendingSharedVaultInviteRecord
+  fromInvite?: InviteRecord
   editContactUuid?: string
   onCloseDialog: () => void
   onAddContact?: (contact: TrustedContactInterface) => void
@@ -30,7 +30,7 @@ const EditContactModal: FunctionComponent<Props> = ({ onCloseDialog, fromInvite,
 
   useEffect(() => {
     if (editContactUuid) {
-      const contact = application.contacts.findTrustedContact(editContactUuid)
+      const contact = application.contacts.findContact(editContactUuid)
       if (!contact) {
         throw new Error(`Contact with uuid ${editContactUuid} not found`)
       }

@@ -1,7 +1,7 @@
-import { UIFeature, FeatureIdentifier, ThemeFeatureDescription } from '@standardnotes/snjs'
+import { UIFeature, NativeFeatureIdentifier, ThemeFeatureDescription } from '@standardnotes/snjs'
 
 const isDarkModeTheme = (theme: UIFeature<ThemeFeatureDescription>) =>
-  theme.featureIdentifier === FeatureIdentifier.DarkTheme
+  theme.featureIdentifier === NativeFeatureIdentifier.TYPES.DarkTheme
 
 export const sortThemes = (a: UIFeature<ThemeFeatureDescription>, b: UIFeature<ThemeFeatureDescription>) => {
   const aIsLayerable = a.layerable

@@ -1,4 +1,5 @@
 import * as Factory from '../lib/factory.js'
+import * as Collaboration from '../lib/Collaboration.js'
 
 chai.use(chaiAsPromised)
 const expect = chai.expect
@@ -90,10 +91,16 @@ describe('contacts', function () {
   })
 
   it('should not be able to delete a trusted contact if it belongs to a vault I administer', async () => {
-    console.error('TODO: implement test')
+    const { contact, deinitContactContext } = await Collaboration.createSharedVaultWithAcceptedInvite(context)
+
+    const result = await context.contacts.deleteContact(contact)
+
+    expect(result.isFailed()).to.be.true
+    expect(result.getError()).to.equal('Cannot delete contact that belongs to an owned vault')
+
+    await deinitContactContext()
   })
 
-  it('should be able to refresh a contact using a collaborationID that includes full chain of previouos public keys', async () => {
-    console.error('TODO: implement test')
+  it.skip('should be able to refresh a contact using a collaborationID that includes full chain of previous public keys', async () => {
   })
 })

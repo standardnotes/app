@@ -1,7 +1,7 @@
 import { RoleName } from '@standardnotes/domain-core'
 import { NoteType } from '../Component/NoteType'
 import { EditorFeatureDescription } from '../Feature/EditorFeatureDescription'
-import { FeatureIdentifier } from '../Feature/FeatureIdentifier'
+import { NativeFeatureIdentifier } from '../Feature/NativeFeatureIdentifier'
 import { PermissionName } from '../Permission/PermissionName'
 
 export function nativeEditors(): EditorFeatureDescription[] {
@@ -9,7 +9,7 @@ export function nativeEditors(): EditorFeatureDescription[] {
     {
       name: 'Super',
       note_type: NoteType.Super,
-      identifier: FeatureIdentifier.SuperEditor,
+      identifier: NativeFeatureIdentifier.TYPES.SuperEditor,
       spellcheckControl: true,
       file_type: 'json',
       interchangeable: false,
@@ -24,7 +24,7 @@ export function nativeEditors(): EditorFeatureDescription[] {
       spellcheckControl: true,
       file_type: 'txt',
       interchangeable: true,
-      identifier: FeatureIdentifier.PlainEditor,
+      identifier: NativeFeatureIdentifier.TYPES.PlainEditor,
       availableInRoles: [RoleName.NAMES.CoreUser, RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
       permission_name: PermissionName.PlainEditor,
     },

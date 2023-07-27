@@ -1,8 +1,6 @@
 import { EditorFeatureDescription } from '../Feature/EditorFeatureDescription'
 import { FindNativeFeature } from '../Feature/Features'
 import { IframeComponentFeatureDescription } from '../Feature/IframeComponentFeatureDescription'
-import { FeatureIdentifier } from './../Feature/FeatureIdentifier'
-import { EditorIdentifier } from './EditorIdentifier'
 
 export enum NoteType {
   Authentication = 'authentication',
@@ -16,10 +14,8 @@ export enum NoteType {
   Unknown = 'unknown',
 }
 
-export function noteTypeForEditorIdentifier(identifier: EditorIdentifier): NoteType {
-  const feature = FindNativeFeature<EditorFeatureDescription | IframeComponentFeatureDescription>(
-    identifier as FeatureIdentifier,
-  )
+export function noteTypeForEditorIdentifier(identifier: string): NoteType {
+  const feature = FindNativeFeature<EditorFeatureDescription | IframeComponentFeatureDescription>(identifier)
   if (feature && feature.note_type) {
     return feature.note_type
   }

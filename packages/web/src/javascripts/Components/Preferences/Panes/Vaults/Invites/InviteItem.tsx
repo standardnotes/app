@@ -2,13 +2,13 @@ import { useApplication } from '@/Components/ApplicationProvider'
 import Button from '@/Components/Button/Button'
 import Icon from '@/Components/Icon/Icon'
 import ModalOverlay from '@/Components/Modal/ModalOverlay'
-import { PendingSharedVaultInviteRecord } from '@standardnotes/snjs'
+import { InviteRecord } from '@standardnotes/snjs'
 import { useCallback, useState } from 'react'
 import EditContactModal from '../Contacts/EditContactModal'
 import { CheckmarkCircle } from '../../../../UIElements/CheckmarkCircle'
 
 type Props = {
-  inviteRecord: PendingSharedVaultInviteRecord
+  inviteRecord: InviteRecord
 }
 
 const InviteItem = ({ inviteRecord }: Props) => {
@@ -23,13 +23,13 @@ const InviteItem = ({ inviteRecord }: Props) => {
   }, [])
 
   const acceptInvite = useCallback(async () => {
-    await application.sharedVaults.acceptPendingSharedVaultInvite(inviteRecord)
-  }, [application.sharedVaults, inviteRecord])
+    await application.vaultInvites.acceptInvite(inviteRecord)
+  }, [application, inviteRecord])
 
   const closeAddContactModal = () => setIsAddContactModalOpen(false)
   const collaborationId = application.contacts.getCollaborationIDFromInvite(inviteRecord.invite)
 
-  const trustedContact = application.contacts.findTrustedContactForInvite(inviteRecord.invite)
+  const trustedContact = application.contacts.findContactForInvite(inviteRecord.invite)
 
   return (
     <>

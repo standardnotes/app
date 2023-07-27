@@ -20,7 +20,6 @@ import CollapsiblePlugin from './Plugins/CollapsiblePlugin'
 import DraggableBlockPlugin from './Plugins/DraggableBlockPlugin'
 import CodeHighlightPlugin from './Plugins/CodeHighlightPlugin'
 import FloatingTextFormatToolbarPlugin from './Plugins/FloatingTextFormatToolbarPlugin'
-import FloatingLinkEditorPlugin from './Plugins/FloatingLinkEditorPlugin'
 import { TabIndentationPlugin } from './Plugins/TabIndentationPlugin'
 import { handleEditorChange } from './Utils'
 import { SuperEditorContentId } from './Constants'
@@ -109,7 +108,6 @@ export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
       {!readonly && floatingAnchorElem && (
         <>
           <FloatingTextFormatToolbarPlugin anchorElem={floatingAnchorElem} />
-          <FloatingLinkEditorPlugin anchorElem={floatingAnchorElem} />
           <DraggableBlockPlugin anchorElem={floatingAnchorElem} />
         </>
       )}

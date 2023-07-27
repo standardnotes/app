@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/models",
-  "version": "1.46.11",
+  "version": "1.46.16",
   "engines": {
     "node": ">=16.0.0 <17.0.0"
   },
@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "@standardnotes/common": "^1.50.0",
-    "@standardnotes/domain-core": "^1.22.0",
+    "@standardnotes/domain-core": "^1.24.0",
     "@standardnotes/features": "workspace:*",
     "@standardnotes/responses": "workspace:*",
     "@standardnotes/sncrypto-common": "workspace:^",

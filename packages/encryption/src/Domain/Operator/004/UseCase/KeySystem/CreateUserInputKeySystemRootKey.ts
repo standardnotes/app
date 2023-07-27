@@ -4,7 +4,7 @@ import {
   KeySystemIdentifier,
   KeySystemRootKeyInterface,
   KeySystemRootKeyParamsInterface,
-  KeySystemRootKeyPasswordType,
+  KeySystemPasswordType,
 } from '@standardnotes/models'
 import { ProtocolVersion } from '@standardnotes/common'
 import { DeriveKeySystemRootKeyUseCase } from './DeriveKeySystemRootKey'
@@ -19,7 +19,7 @@ export class CreateUserInputKeySystemRootKey {
 
     const keyParams: KeySystemRootKeyParamsInterface = {
       systemIdentifier: dto.systemIdentifier,
-      passwordType: KeySystemRootKeyPasswordType.UserInputted,
+      passwordType: KeySystemPasswordType.UserInputted,
       creationTimestamp: new Date().getTime(),
       seed,
       version,

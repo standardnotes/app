@@ -2,12 +2,13 @@ import {
   ComponentArea,
   ComponentPermission,
   EditorFeatureDescription,
-  FeatureIdentifier,
+  NativeFeatureIdentifier,
   NoteType,
   ThemeDockIcon,
   UIFeatureDescriptionTypes,
 } from '@standardnotes/features'
 import { ComponentInterface } from '../../Syncable/Component'
+import { Uuid } from '@standardnotes/domain-core'
 
 export interface UIFeatureInterface<F extends UIFeatureDescriptionTypes> {
   item: ComponentInterface | F
@@ -17,8 +18,8 @@ export interface UIFeatureInterface<F extends UIFeatureDescriptionTypes> {
   get asComponent(): ComponentInterface
   get asFeatureDescription(): F
   get isNativeFeature(): boolean
-  get uniqueIdentifier(): string
-  get featureIdentifier(): FeatureIdentifier
+  get uniqueIdentifier(): NativeFeatureIdentifier | Uuid
+  get featureIdentifier(): string
   get noteType(): NoteType
   get fileType(): EditorFeatureDescription['file_type']
   get displayName(): string

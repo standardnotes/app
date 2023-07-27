@@ -41,7 +41,7 @@ const ManyVaultSelectionMenu: FunctionComponent = () => {
           <Icon type="safe-square" className="mr-2 text-neutral" />
           <div className="flex w-full items-center gap-1">
             {vault.name}
-            {application.vaults.isVaultLocked(vault) && <Icon className="ml-1" type="lock" size={'small'} />}
+            {application.vaultLocks.isVaultLocked(vault) && <Icon className="ml-1" type="lock" size={'small'} />}
           </div>
         </MenuSwitchButtonItem>
       ))}

@@ -3,7 +3,6 @@ import {
   EncryptedPayloadInterface,
   FullyFormedPayloadInterface,
   PayloadEmitSource,
-  DecryptedPayloadInterface,
   HistoryMap,
 } from '@standardnotes/models'
 import { IntegrityPayload } from '@standardnotes/responses'
@@ -24,7 +23,7 @@ export interface PayloadManagerInterface {
    */
   get nonDeletedItems(): FullyFormedPayloadInterface[]
 
-  importPayloads(payloads: DecryptedPayloadInterface[], historyMap: HistoryMap): Promise<string[]>
+  importPayloads(payloads: FullyFormedPayloadInterface[], historyMap: HistoryMap): Promise<string[]>
 
   removePayloadLocally(payload: FullyFormedPayloadInterface | FullyFormedPayloadInterface[]): void
 }

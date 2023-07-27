@@ -3,7 +3,7 @@ import { V004Algorithm } from '../../../../Algorithm'
 import {
   KeySystemRootKeyInterface,
   KeySystemRootKeyParamsInterface,
-  KeySystemRootKeyPasswordType,
+  KeySystemPasswordType,
 } from '@standardnotes/models'
 import { ProtocolVersion } from '@standardnotes/common'
 import { DeriveKeySystemRootKeyUseCase } from './DeriveKeySystemRootKey'
@@ -20,7 +20,7 @@ export class CreateRandomKeySystemRootKey {
 
     const keyParams: KeySystemRootKeyParamsInterface = {
       systemIdentifier: dto.systemIdentifier,
-      passwordType: KeySystemRootKeyPasswordType.Randomized,
+      passwordType: KeySystemPasswordType.Randomized,
       creationTimestamp: new Date().getTime(),
       seed,
       version,

@@ -882,8 +882,4 @@ describe('importing', function () {
     expect(application.items.referencesForItem(importedTag).length).to.equal(1)
     expect(application.items.itemsReferencingItem(importedNote).length).to.equal(1)
   })
-
-  it('should decrypt backup file which contains a vaulted note without a synced key system root key', async () => {
-    console.error('TODO: Implement this test')
-  })
 })

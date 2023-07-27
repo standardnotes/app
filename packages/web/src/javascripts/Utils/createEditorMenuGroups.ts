@@ -7,6 +7,8 @@ import {
   GetSuperNoteFeature,
   UIFeature,
   IframeComponentFeatureDescription,
+  Uuid,
+  NativeFeatureIdentifier,
 } from '@standardnotes/snjs'
 import { EditorMenuGroup } from '@/Components/NotesOptions/EditorMenuGroup'
 import { EditorMenuItem } from '@/Components/NotesOptions/EditorMenuItem'
@@ -29,7 +31,9 @@ const insertNativeEditorsInMap = (map: NoteTypeToEditorRowsMap, application: Web
 
     const noteType = editorFeature.note_type
     map[noteType].push({
-      isEntitled: application.features.getFeatureStatus(editorFeature.identifier) === FeatureStatus.Entitled,
+      isEntitled:
+        application.features.getFeatureStatus(NativeFeatureIdentifier.create(editorFeature.identifier).getValue()) ===
+        FeatureStatus.Entitled,
       uiFeature: new UIFeature(editorFeature),
     })
   }
@@ -52,7 +56,7 @@ const insertInstalledComponentsInMap = (map: NoteTypeToEditorRowsMap, applicatio
 
     const editorItem: EditorMenuItem = {
       uiFeature: new UIFeature<IframeComponentFeatureDescription>(editor),
-      isEntitled: application.features.getFeatureStatus(editor.identifier) === FeatureStatus.Entitled,
+      isEntitled: application.features.getFeatureStatus(Uuid.create(editor.uuid).getValue()) === FeatureStatus.Entitled,
     }
 
     map[noteType].push(editorItem)

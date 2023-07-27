@@ -29,7 +29,7 @@ const AddToVaultMenuOption: FunctionComponent<Props> = ({ iconClassName, items }
 
   const addItemsToVault = useCallback(
     async (vault: VaultListingInterface) => {
-      if (application.vaults.isVaultLocked(vault)) {
+      if (application.vaultLocks.isVaultLocked(vault)) {
         const unlocked = await application.vaultDisplayService.unlockVault(vault)
         if (!unlocked) {
           return
@@ -40,7 +40,7 @@ const AddToVaultMenuOption: FunctionComponent<Props> = ({ iconClassName, items }
         await application.vaults.moveItemToVault(vault, item)
       }
     },
-    [application.vaultDisplayService, application.vaults, items],
+    [application, items],
   )
 
   const removeItemsFromVault = useCallback(async () => {
@@ -50,7 +50,7 @@ const AddToVaultMenuOption: FunctionComponent<Props> = ({ iconClassName, items }
         continue
       }
 
-      if (application.vaults.isVaultLocked(vault)) {
+      if (application.vaultLocks.isVaultLocked(vault)) {
         const unlocked = await application.vaultDisplayService.unlockVault(vault)
         if (!unlocked) {
           return
@@ -58,7 +58,7 @@ const AddToVaultMenuOption: FunctionComponent<Props> = ({ iconClassName, items }
       }
       await application.vaults.removeItemFromVault(item)
     }
-  }, [application.vaultDisplayService, application.vaults, items])
+  }, [application, items])
 
   const doesVaultContainItems = (vault: VaultListingInterface) => {
     return items.every((item) => item.key_system_identifier === vault.systemIdentifier)
@@ -140,7 +140,9 @@ const AddToVaultMenuOption: FunctionComponent<Props> = ({ iconClassName, items }
                   />
                   <div className="flex w-full items-center">
                     {vault.name}
-                    {application.vaults.isVaultLocked(vault) && <Icon className="ml-1" type="lock" size={'small'} />}
+                    {application.vaultLocks.isVaultLocked(vault) && (
+                      <Icon className="ml-1" type="lock" size={'small'} />
+                    )}
                   </div>
                 </span>
               </MenuItem>

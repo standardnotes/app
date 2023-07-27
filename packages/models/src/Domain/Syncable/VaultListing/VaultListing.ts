@@ -2,7 +2,7 @@ import { ConflictStrategy, DecryptedItem } from '../../Abstract/Item'
 import { DecryptedPayloadInterface } from '../../Abstract/Payload'
 import { HistoryEntryInterface } from '../../Runtime/History'
 import { KeySystemRootKeyParamsInterface } from '../../Local/KeyParams/KeySystemRootKeyParamsInterface'
-import { KeySystemRootKeyPasswordType } from '../../Local/KeyParams/KeySystemRootKeyPasswordType'
+import { KeySystemPasswordType } from '../../Local/KeyParams/KeySystemPasswordType'
 import { SharedVaultListingInterface, VaultListingInterface } from './VaultListingInterface'
 import { VaultListingContent } from './VaultListingContent'
 import { KeySystemRootKeyStorageMode } from '../KeySystemRootKey/KeySystemRootKeyStorageMode'
@@ -44,7 +44,7 @@ export class VaultListing extends DecryptedItem<VaultListingContent> implements 
     return incomingKeyTimestamp > baseKeyTimestamp ? ConflictStrategy.KeepApply : ConflictStrategy.KeepBase
   }
 
-  get keyPasswordType(): KeySystemRootKeyPasswordType {
+  get keyPasswordType(): KeySystemPasswordType {
     return this.rootKeyParams.passwordType
   }
 

@@ -1,14 +1,14 @@
 import { MigrateFeatureRepoToUserSettingUseCase } from './UseCase/MigrateFeatureRepoToUserSetting'
 import { arraysEqual, removeFromArray, lastElement } from '@standardnotes/utils'
 import { ClientDisplayableError } from '@standardnotes/responses'
-import { RoleName, ContentType } from '@standardnotes/domain-core'
+import { RoleName, ContentType, Uuid } from '@standardnotes/domain-core'
 import { PROD_OFFLINE_FEATURES_URL } from '../../Hosts'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { WebSocketsService } from '../Api/WebsocketsService'
 import { WebSocketsServiceEvent } from '../Api/WebSocketsServiceEvent'
 import { TRUSTED_CUSTOM_EXTENSIONS_HOSTS, TRUSTED_FEATURE_HOSTS } from '@Lib/Hosts'
 import { UserRolesChangedEvent } from '@standardnotes/domain-events'
-import { ExperimentalFeatures, FindNativeFeature, FeatureIdentifier } from '@standardnotes/features'
+import { ExperimentalFeatures, FindNativeFeature, NativeFeatureIdentifier } from '@standardnotes/features'
 import {
   SNFeatureRepo,
   FeatureRepoContent,
@@ -64,7 +64,7 @@ export class FeaturesService
 {
   private onlineRoles: string[] = []
   private offlineRoles: string[] = []
-  private enabledExperimentalFeatures: FeatureIdentifier[] = []
+  private enabledExperimentalFeatures: string[] = []
 
   private getFeatureStatusUseCase = new GetFeatureStatusUseCase(this.items)
 
@@ -136,40 +136,47 @@ export class FeaturesService
     )
   }
 
-  public initializeFromDisk(): void {
+  initializeFromDisk(): void {
     this.onlineRoles = this.storage.getValue<string[]>(StorageKey.UserRoles, undefined, [])
-
     this.offlineRoles = this.storage.getValue<string[]>(StorageKey.OfflineUserRoles, undefined, [])
-
     this.enabledExperimentalFeatures = this.storage.getValue(StorageKey.ExperimentalFeatures, undefined, [])
   }
 
   async handleEvent(event: InternalEventInterface): Promise<void> {
-    if (event.type === ApiServiceEvent.MetaReceived) {
-      if (!this.sync) {
-        this.log('Handling events interrupted. Sync service is not yet initialized.', event)
-        return
+    switch (event.type) {
+      case ApiServiceEvent.MetaReceived: {
+        if (!this.sync) {
+          this.log('Handling events interrupted. Sync service is not yet initialized.', event)
+          return
+        }
+
+        const { userRoles } = event.payload as MetaReceivedData
+        void this.updateOnlineRolesWithNewValues(userRoles.map((role) => role.name))
+        break
       }
 
-      const { userRoles } = event.payload as MetaReceivedData
-      void this.updateOnlineRolesWithNewValues(userRoles.map((role) => role.name))
-    }
-
-    if (event.type === ApplicationEvent.ApplicationStageChanged) {
-      const stage = (event.payload as ApplicationStageChangedEventPayload).stage
-      if (stage === ApplicationStage.FullSyncCompleted_13) {
-        if (!this.hasFirstPartyOnlineSubscription()) {
-          const offlineRepo = this.getOfflineRepo()
-
-          if (offlineRepo) {
-            void this.downloadOfflineRoles(offlineRepo)
+      case ApplicationEvent.ApplicationStageChanged: {
+        const stage = (event.payload as ApplicationStageChangedEventPayload).stage
+        switch (stage) {
+          case ApplicationStage.StorageDecrypted_09: {
+            this.initializeFromDisk()
+            break
+          }
+          case ApplicationStage.FullSyncCompleted_13: {
+            if (!this.hasFirstPartyOnlineSubscription()) {
+              const offlineRepo = this.getOfflineRepo()
+              if (offlineRepo) {
+                void this.downloadOfflineRoles(offlineRepo)
+              }
+            }
+            break
           }
         }
       }
     }
   }
 
-  public enableExperimentalFeature(identifier: FeatureIdentifier): void {
+  public enableExperimentalFeature(identifier: string): void {
     this.enabledExperimentalFeatures.push(identifier)
 
     void this.storage.setValue(StorageKey.ExperimentalFeatures, this.enabledExperimentalFeatures)
@@ -177,7 +184,7 @@ export class FeaturesService
     void this.notifyEvent(FeaturesEvent.FeaturesAvailabilityChanged)
   }
 
-  public disableExperimentalFeature(identifier: FeatureIdentifier): void {
+  public disableExperimentalFeature(identifier: string): void {
     removeFromArray(this.enabledExperimentalFeatures, identifier)
 
     void this.storage.setValue(StorageKey.ExperimentalFeatures, this.enabledExperimentalFeatures)
@@ -195,7 +202,7 @@ export class FeaturesService
     void this.notifyEvent(FeaturesEvent.FeaturesAvailabilityChanged)
   }
 
-  public toggleExperimentalFeature(identifier: FeatureIdentifier): void {
+  public toggleExperimentalFeature(identifier: string): void {
     if (this.isExperimentalFeatureEnabled(identifier)) {
       this.disableExperimentalFeature(identifier)
     } else {
@@ -203,19 +210,19 @@ export class FeaturesService
     }
   }
 
-  public getExperimentalFeatures(): FeatureIdentifier[] {
+  public getExperimentalFeatures(): string[] {
     return ExperimentalFeatures
   }
 
-  public isExperimentalFeature(featureId: FeatureIdentifier): boolean {
+  public isExperimentalFeature(featureId: string): boolean {
     return this.getExperimentalFeatures().includes(featureId)
   }
 
-  public getEnabledExperimentalFeatures(): FeatureIdentifier[] {
+  public getEnabledExperimentalFeatures(): string[] {
     return this.enabledExperimentalFeatures
   }
 
-  public isExperimentalFeatureEnabled(featureId: FeatureIdentifier): boolean {
+  public isExperimentalFeatureEnabled(featureId: string): boolean {
     return this.enabledExperimentalFeatures.includes(featureId)
   }
 
@@ -302,10 +309,10 @@ export class FeaturesService
   }
 
   hasPaidAnyPartyOnlineOrOfflineSubscription(): boolean {
-    return this.onlineRolesIncludePaidSubscription() || this.hasOfflineRepo()
+    return this.onlineRolesIncludePaidSubscription() || this.hasOfflineRepo() || this.hasFirstPartyOnlineSubscription()
   }
 
-  private hasFirstPartyOnlineSubscription(): boolean {
+  hasFirstPartyOnlineSubscription(): boolean {
     return this.sessions.isSignedIntoFirstPartyServer() && this.subscriptions.hasOnlineSubscription()
   }
 
@@ -364,12 +371,13 @@ export class FeaturesService
   }
 
   public isThirdPartyFeature(identifier: string): boolean {
-    const isNativeFeature = !!FindNativeFeature(identifier as FeatureIdentifier)
+    const isNativeFeature = !!FindNativeFeature(identifier)
     return !isNativeFeature
   }
 
   onlineRolesIncludePaidSubscription(): boolean {
     const unpaidRoles = [RoleName.NAMES.CoreUser]
+
     return this.onlineRoles.some((role) => !unpaidRoles.includes(role))
   }
 
@@ -392,7 +400,7 @@ export class FeaturesService
   }
 
   public getFeatureStatus(
-    featureId: FeatureIdentifier,
+    featureId: NativeFeatureIdentifier | Uuid,
     options: { inContextOfItem?: DecryptedItemInterface } = {},
   ): FeatureStatus {
     return this.getFeatureStatusUseCase.execute({

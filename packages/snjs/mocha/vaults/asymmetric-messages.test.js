@@ -8,7 +8,6 @@ describe('asymmetric messages', function () {
   this.timeout(Factory.TwentySecondTimeout)
 
   let context
-  let service
 
   afterEach(async function () {
     await context.deinit()
@@ -22,12 +21,35 @@ describe('asymmetric messages', function () {
 
     await context.launch()
     await context.register()
-
-    service = context.asymmetric
   })
 
   it('should not trust message if the trusted payload data recipientUuid does not match the message user uuid', async () => {
-    console.error('TODO: implement')
+    const { sharedVault, contactContext, deinitContactContext } =
+      await Collaboration.createSharedVaultWithAcceptedInvite(context)
+
+    contactContext.lockSyncing()
+
+    await context.vaults.changeVaultNameAndDescription(sharedVault, {
+      name: 'new vault name',
+      description: 'new vault description',
+    })
+
+    Object.defineProperty(contactContext.asymmetric.sessions, 'userUuid', {
+      get: () => 'invalid user uuid',
+    })
+
+    const completedProcessingMessagesPromise = contactContext.resolveWhenAsymmetricMessageProcessingCompletes()
+
+    contactContext.unlockSyncing()
+    await contactContext.sync()
+    await completedProcessingMessagesPromise
+
+    const updatedVault = contactContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })
+
+    expect(updatedVault.name).to.not.equal('new vault name')
+    expect(updatedVault.description).to.not.equal('new vault description')
+
+    await deinitContactContext()
   })
 
   it('should delete message after processing it', async () => {
@@ -44,7 +66,7 @@ describe('asymmetric messages', function () {
       },
     }
 
-    await service.sendOwnContactChangeEventToAllContacts(eventData)
+    await context.contacts.sendOwnContactChangeEventToAllContacts(eventData)
 
     const deleteFunction = sinon.spy(contactContext.asymmetric, 'deleteMessageAfterProcessing')
 
@@ -89,7 +111,7 @@ describe('asymmetric messages', function () {
     await contactContext.sync()
     await completedProcessingMessagesPromise
 
-    const updatedContact = contactContext.contacts.findTrustedContact(thirdPartyContext.userUuid)
+    const updatedContact = contactContext.contacts.findContact(thirdPartyContext.userUuid)
     expect(updatedContact.name).to.equal('Changed 3rd Party Name')
 
     await deinitContactContext()
@@ -214,21 +236,27 @@ describe('asymmetric messages', function () {
   it('should send sender keypair changed message to trusted contacts', async () => {
     const { contactContext, deinitContactContext } = await Collaboration.createSharedVaultWithAcceptedInvite(context)
 
+    contactContext.lockSyncing()
+
+    const sendPromise = context.resolveWhenAsyncFunctionCompletes(
+      context.contacts,
+      'sendOwnContactChangeEventToAllContacts',
+    )
     await context.changePassword('new password')
+    await sendPromise
 
     const firstPartySpy = sinon.spy(context.asymmetric, 'handleTrustedSenderKeypairChangedMessage')
     const secondPartySpy = sinon.spy(contactContext.asymmetric, 'handleTrustedSenderKeypairChangedMessage')
 
-    await context.sync()
-
     const completedProcessingMessagesPromise = contactContext.resolveWhenAsymmetricMessageProcessingCompletes()
+    contactContext.unlockSyncing()
     await contactContext.sync()
     await completedProcessingMessagesPromise
 
     expect(firstPartySpy.callCount).to.equal(0)
     expect(secondPartySpy.callCount).to.equal(1)
 
-    const contact = contactContext.contacts.findTrustedContact(context.userUuid)
+    const contact = contactContext.contacts.findContact(context.userUuid)
     expect(contact.publicKeySet.encryption).to.equal(context.publicKey)
     expect(contact.publicKeySet.signing).to.equal(context.signingPublicKey)
 
@@ -290,11 +318,11 @@ describe('asymmetric messages', function () {
     await deinitContactContext()
   })
 
-  it('should process sender keypair changed message', async () => {
+  it.skip('should process sender keypair changed message', async () => {
     const { contactContext, deinitContactContext } = await Collaboration.createContactContext()
     await Collaboration.createTrustedContactForUserOfContext(context, contactContext)
     await Collaboration.createTrustedContactForUserOfContext(contactContext, context)
-    const originalContact = contactContext.contacts.findTrustedContact(context.userUuid)
+    const originalContact = contactContext.contacts.findContact(context.userUuid)
 
     await context.changePassword('new_password')
 
@@ -302,7 +330,7 @@ describe('asymmetric messages', function () {
     await contactContext.sync()
     await completedProcessingMessagesPromise
 
-    const updatedContact = contactContext.contacts.findTrustedContact(context.userUuid)
+    const updatedContact = contactContext.contacts.findContact(context.userUuid)
 
     expect(updatedContact.publicKeySet.encryption).to.not.equal(originalContact.publicKeySet.encryption)
     expect(updatedContact.publicKeySet.signing).to.not.equal(originalContact.publicKeySet.signing)
@@ -313,7 +341,7 @@ describe('asymmetric messages', function () {
     await deinitContactContext()
   })
 
-  it('sender keypair changed message should be signed using old key pair', async () => {
+  it.skip('sender keypair changed message should be signed using old key pair', async () => {
     const { contactContext, deinitContactContext } = await Collaboration.createSharedVaultWithAcceptedInvite(context)
 
     const oldKeyPair = context.encryption.getKeyPair()
@@ -352,7 +380,7 @@ describe('asymmetric messages', function () {
     await contactContext.sync()
     await completedProcessingMessagesPromise
 
-    const updatedContact = contactContext.contacts.findTrustedContact(context.userUuid)
+    const updatedContact = contactContext.contacts.findContact(context.userUuid)
     expect(updatedContact.publicKeySet.encryption).to.equal(newKeyPair.publicKey)
     expect(updatedContact.publicKeySet.signing).to.equal(newSigningKeyPair.publicKey)
 

@@ -47,7 +47,7 @@ import {
   IntegrityService,
   InternalEventBus,
   KeySystemKeyManager,
-  RemoveItemsLocally,
+  DiscardItemsLocally,
   RevisionManager,
   SelfContactManager,
   StatusService,
@@ -108,6 +108,18 @@ import {
   RootKeyManager,
   ItemsEncryptionService,
   DecryptBackupFile,
+  VaultUserService,
+  IsVaultOwner,
+  VaultInviteService,
+  VaultUserCache,
+  GetVaults,
+  GetSharedVaults,
+  GetOwnedSharedVaults,
+  ContactBelongsToVault,
+  DeleteContact,
+  VaultLockService,
+  RemoveItemsFromMemory,
+  ReencryptTypeAItems,
 } from '@standardnotes/services'
 import { ItemManager } from '../../Services/Items/ItemManager'
 import { PayloadManager } from '../../Services/Payloads/PayloadManager'
@@ -191,6 +203,10 @@ export class Dependencies {
   }
 
   private registerUseCaseMakers() {
+    this.factory.set(TYPES.ReencryptTypeAItems, () => {
+      return new ReencryptTypeAItems(this.get(TYPES.ItemManager), this.get(TYPES.MutatorService))
+    })
+
     this.factory.set(TYPES.ImportDataUseCase, () => {
       return new ImportDataUseCase(
         this.get(TYPES.ItemManager),
@@ -204,16 +220,37 @@ export class Dependencies {
       )
     })
 
+    this.factory.set(TYPES.IsVaultOwner, () => {
+      return new IsVaultOwner()
+    })
+
     this.factory.set(TYPES.DecryptBackupFile, () => {
       return new DecryptBackupFile(this.get(TYPES.EncryptionService))
     })
 
-    this.factory.set(TYPES.RemoveItemsLocally, () => {
-      return new RemoveItemsLocally(this.get(TYPES.ItemManager), this.get(TYPES.DiskStorageService))
+    this.factory.set(TYPES.DiscardItemsLocally, () => {
+      return new DiscardItemsLocally(this.get(TYPES.ItemManager), this.get(TYPES.DiskStorageService))
+    })
+
+    this.factory.set(TYPES.RemoveItemsFromMemory, () => {
+      return new RemoveItemsFromMemory(
+        this.get(TYPES.DiskStorageService),
+        this.get(TYPES.ItemManager),
+        this.get(TYPES.PayloadManager),
+      )
     })
 
     this.factory.set(TYPES.FindContact, () => {
       return new FindContact(this.get(TYPES.ItemManager))
+    })
+
+    this.factory.set(TYPES.DeleteContact, () => {
+      return new DeleteContact(
+        this.get(TYPES.MutatorService),
+        this.get(TYPES.SyncService),
+        this.get(TYPES.GetOwnedSharedVaults),
+        this.get(TYPES.ContactBelongsToVault),
+      )
     })
 
     this.factory.set(TYPES.EditContact, () => {
@@ -239,6 +276,22 @@ export class Dependencies {
 
     this.factory.set(TYPES.GetVault, () => {
       return new GetVault(this.get(TYPES.ItemManager))
+    })
+
+    this.factory.set(TYPES.GetVaults, () => {
+      return new GetVaults(this.get(TYPES.ItemManager))
+    })
+
+    this.factory.set(TYPES.GetSharedVaults, () => {
+      return new GetSharedVaults(this.get(TYPES.GetVaults))
+    })
+
+    this.factory.set(TYPES.GetOwnedSharedVaults, () => {
+      return new GetOwnedSharedVaults(this.get(TYPES.GetSharedVaults), this.get(TYPES.IsVaultOwner))
+    })
+
+    this.factory.set(TYPES.ContactBelongsToVault, () => {
+      return new ContactBelongsToVault(this.get(TYPES.GetVaultUsers))
     })
 
     this.factory.set(TYPES.ChangeVaultKeyOptions, () => {
@@ -403,7 +456,7 @@ export class Dependencies {
         this.get(TYPES.MutatorService),
         this.get(TYPES.KeySystemKeyManager),
         this.get(TYPES.SyncService),
-        this.get(TYPES.RemoveItemsLocally),
+        this.get(TYPES.DiscardItemsLocally),
       )
     })
 
@@ -446,7 +499,7 @@ export class Dependencies {
     })
 
     this.factory.set(TYPES.GetVaultUsers, () => {
-      return new GetVaultUsers(this.get(TYPES.SharedVaultUsersServer))
+      return new GetVaultUsers(this.get(TYPES.SharedVaultUsersServer), this.get(TYPES.VaultUserCache))
     })
 
     this.factory.set(TYPES.DecryptOwnMessage, () => {
@@ -516,7 +569,7 @@ export class Dependencies {
         this.get(TYPES.MutatorService),
         this.get(TYPES.ItemManager),
         this.get(TYPES.CreateNewDefaultItemsKey),
-        this.get(TYPES.RemoveItemsLocally),
+        this.get(TYPES.DiscardItemsLocally),
         this.get(TYPES.FindDefaultItemsKey),
       )
     })
@@ -568,10 +621,9 @@ export class Dependencies {
       return new RootKeyManager(
         this.get(TYPES.DeviceInterface),
         this.get(TYPES.DiskStorageService),
-        this.get(TYPES.ItemManager),
-        this.get(TYPES.MutatorService),
         this.get(TYPES.EncryptionOperators),
         this.options.identifier,
+        this.get(TYPES.ReencryptTypeAItems),
         this.get(TYPES.InternalEventBus),
       )
     })
@@ -608,19 +660,56 @@ export class Dependencies {
       return new SharedVaultUsersServer(this.get(TYPES.HttpService))
     })
 
+    this.factory.set(TYPES.VaultUserService, () => {
+      return new VaultUserService(
+        this.get(TYPES.SessionManager),
+        this.get(TYPES.VaultService),
+        this.get(TYPES.VaultLockService),
+        this.get(TYPES.GetVaultUsers),
+        this.get(TYPES.RemoveVaultMember),
+        this.get(TYPES.IsVaultOwner),
+        this.get(TYPES.GetVault),
+        this.get(TYPES.LeaveVault),
+        this.get(TYPES.InternalEventBus),
+      )
+    })
+
+    this.factory.set(TYPES.VaultUserCache, () => {
+      return new VaultUserCache()
+    })
+
+    this.factory.set(TYPES.VaultInviteService, () => {
+      return new VaultInviteService(
+        this.get(TYPES.ItemManager),
+        this.get(TYPES.SessionManager),
+        this.get(TYPES.VaultUserService),
+        this.get(TYPES.SyncService),
+        this.get(TYPES.EncryptionService),
+        this.get(TYPES.SharedVaultInvitesServer),
+        this.get(TYPES.GetAllContacts),
+        this.get(TYPES.GetVault),
+        this.get(TYPES.GetVaultContacts),
+        this.get(TYPES.InviteToVault),
+        this.get(TYPES.GetTrustedPayload),
+        this.get(TYPES.GetUntrustedPayload),
+        this.get(TYPES.FindContact),
+        this.get(TYPES.AcceptVaultInvite),
+        this.get(TYPES.InternalEventBus),
+      )
+    })
+
     this.factory.set(TYPES.AsymmetricMessageService, () => {
       return new AsymmetricMessageService(
-        this.get(TYPES.AsymmetricMessageServer),
         this.get(TYPES.EncryptionService),
         this.get(TYPES.MutatorService),
+        this.get(TYPES.SessionManager),
+        this.get(TYPES.AsymmetricMessageServer),
         this.get(TYPES.CreateOrEditContact),
         this.get(TYPES.FindContact),
-        this.get(TYPES.GetAllContacts),
         this.get(TYPES.ReplaceContactData),
         this.get(TYPES.GetTrustedPayload),
         this.get(TYPES.GetVault),
         this.get(TYPES.HandleRootKeyChangedMessage),
-        this.get(TYPES.SendOwnContactChangeMessage),
         this.get(TYPES.GetOutboundMessages),
         this.get(TYPES.GetInboundMessages),
         this.get(TYPES.GetUntrustedPayload),
@@ -630,31 +719,32 @@ export class Dependencies {
 
     this.factory.set(TYPES.SharedVaultService, () => {
       return new SharedVaultService(
-        this.get(TYPES.SyncService),
         this.get(TYPES.ItemManager),
         this.get(TYPES.EncryptionService),
         this.get(TYPES.SessionManager),
-        this.get(TYPES.VaultService),
-        this.get(TYPES.SharedVaultInvitesServer),
         this.get(TYPES.GetVault),
+        this.get(TYPES.GetOwnedSharedVaults),
         this.get(TYPES.CreateSharedVault),
         this.get(TYPES.HandleKeyPairChange),
         this.get(TYPES.NotifyVaultUsersOfKeyRotation),
         this.get(TYPES.SendVaultDataChangedMessage),
-        this.get(TYPES.GetTrustedPayload),
-        this.get(TYPES.GetUntrustedPayload),
         this.get(TYPES.FindContact),
-        this.get(TYPES.GetAllContacts),
-        this.get(TYPES.GetVaultContacts),
-        this.get(TYPES.AcceptVaultInvite),
-        this.get(TYPES.InviteToVault),
-        this.get(TYPES.LeaveVault),
         this.get(TYPES.DeleteThirdPartyVault),
         this.get(TYPES.ShareContactWithVault),
         this.get(TYPES.ConvertToSharedVault),
         this.get(TYPES.DeleteSharedVault),
-        this.get(TYPES.RemoveVaultMember),
-        this.get(TYPES.GetVaultUsers),
+        this.get(TYPES.IsVaultOwner),
+        this.get(TYPES.DiscardItemsLocally),
+        this.get(TYPES.InternalEventBus),
+      )
+    })
+
+    this.factory.set(TYPES.VaultLockService, () => {
+      return new VaultLockService(
+        this.get(TYPES.ItemManager),
+        this.get(TYPES.EncryptionService),
+        this.get(TYPES.KeySystemKeyManager),
+        this.get(TYPES.GetVaults),
         this.get(TYPES.InternalEventBus),
       )
     })
@@ -664,10 +754,10 @@ export class Dependencies {
         this.get(TYPES.SyncService),
         this.get(TYPES.ItemManager),
         this.get(TYPES.MutatorService),
-        this.get(TYPES.EncryptionService),
-        this.get(TYPES.KeySystemKeyManager),
+        this.get(TYPES.VaultLockService),
         this.get(TYPES.AlertService),
         this.get(TYPES.GetVault),
+        this.get(TYPES.GetVaults),
         this.get(TYPES.ChangeVaultKeyOptions),
         this.get(TYPES.MoveItemsToVault),
         this.get(TYPES.CreateVault),
@@ -697,11 +787,13 @@ export class Dependencies {
         this.get(TYPES.UserService),
         this.get(TYPES.SelfContactManager),
         this.get(TYPES.EncryptionService),
+        this.get(TYPES.DeleteContact),
         this.get(TYPES.FindContact),
         this.get(TYPES.GetAllContacts),
         this.get(TYPES.CreateOrEditContact),
         this.get(TYPES.EditContact),
         this.get(TYPES.ValidateItemSigner),
+        this.get(TYPES.SendOwnContactChangeMessage),
         this.get(TYPES.InternalEventBus),
       )
     })
@@ -998,6 +1090,7 @@ export class Dependencies {
         this.get(TYPES.ChallengeService),
         this.get(TYPES.ProtectionService),
         this.get(TYPES.UserApiService),
+        this.get(TYPES.ReencryptTypeAItems),
         this.get(TYPES.InternalEventBus),
       )
     })
@@ -1142,6 +1235,7 @@ export class Dependencies {
         this.get(TYPES.ItemManager),
         this.get(TYPES.MutatorService),
         this.get(TYPES.DiskStorageService),
+        this.get(TYPES.RemoveItemsFromMemory),
         this.get(TYPES.InternalEventBus),
       )
     })

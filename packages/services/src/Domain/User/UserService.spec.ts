@@ -1,3 +1,4 @@
+import { ReencryptTypeAItems } from './../Encryption/UseCase/TypeA/ReencryptTypeAItems'
 import { EncryptionProviderInterface } from './../Encryption/EncryptionProviderInterface'
 import { UserApiServiceInterface } from '@standardnotes/api'
 import { UserRequestType } from '@standardnotes/common'
@@ -25,6 +26,7 @@ describe('UserService', () => {
   let challengeService: ChallengeServiceInterface
   let protectionService: ProtectionsClientInterface
   let userApiService: UserApiServiceInterface
+  let reencryptTypeAItems: ReencryptTypeAItems
   let internalEventBus: InternalEventBusInterface
 
   const createService = () =>
@@ -38,6 +40,7 @@ describe('UserService', () => {
       challengeService,
       protectionService,
       userApiService,
+      reencryptTypeAItems,
       internalEventBus,
     )
 

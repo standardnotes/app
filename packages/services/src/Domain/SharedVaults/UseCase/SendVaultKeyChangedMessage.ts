@@ -5,7 +5,7 @@ import {
   TrustedContactInterface,
 } from '@standardnotes/models'
 import { AsymmetricMessageServerHash } from '@standardnotes/responses'
-import { GetVaultUsers } from './GetVaultUsers'
+import { GetVaultUsers } from '../../VaultUser/UseCase/GetVaultUsers'
 import { PkcKeyPair } from '@standardnotes/sncrypto-common'
 import { SendMessage } from '../../AsymmetricMessage/UseCase/SendMessage'
 import { EncryptMessage } from '../../Encryption/UseCase/Asymmetric/EncryptMessage'
@@ -32,14 +32,14 @@ export class SendVaultKeyChangedMessage implements UseCaseInterface<void> {
       signing: PkcKeyPair
     }
   }): Promise<Result<void>> {
-    const users = await this.getVaultUsers.execute({ sharedVaultUuid: params.sharedVaultUuid })
-    if (!users) {
+    const users = await this.getVaultUsers.execute({ sharedVaultUuid: params.sharedVaultUuid, readFromCache: false })
+    if (users.isFailed()) {
       return Result.fail('Cannot send root key changed message; users not found')
     }
 
     const errors: string[] = []
 
-    for (const user of users) {
+    for (const user of users.getValue()) {
       if (user.user_uuid === params.senderUuid) {
         continue
       }

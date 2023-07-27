@@ -6,7 +6,7 @@ import { WebApplication } from '@/Application/WebApplication'
 import {
   UIFeature,
   EditorFeatureDescription,
-  FeatureIdentifier,
+  NativeFeatureIdentifier,
   IframeComponentFeatureDescription,
   NoteMutator,
   NoteType,
@@ -100,7 +100,7 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
 
       setCurrentFeature(application.componentManager.editorForNote(note))
 
-      if (uiFeature.featureIdentifier === FeatureIdentifier.PlainEditor) {
+      if (uiFeature.featureIdentifier === NativeFeatureIdentifier.TYPES.PlainEditor) {
         reloadFont(application.getPreference(PrefKey.EditorMonospaceEnabled))
       }
     },
@@ -211,7 +211,7 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
 
                     return (
                       <MenuRadioButtonItem
-                        key={menuItem.uiFeature.uniqueIdentifier}
+                        key={menuItem.uiFeature.uniqueIdentifier.value}
                         onClick={onClickEditorItem}
                         className={'flex-row-reversed py-2'}
                         checked={isSelected(menuItem)}

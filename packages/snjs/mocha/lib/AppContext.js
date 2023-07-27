@@ -49,10 +49,6 @@ export class AppContext {
     )
   }
 
-  get vaults() {
-    return this.application.vaults
-  }
-
   get sessions() {
     return this.application.sessions
   }
@@ -95,6 +91,22 @@ export class AppContext {
 
   get sharedVaults() {
     return this.application.sharedVaults
+  }
+
+  get vaults() {
+    return this.application.vaults
+  }
+
+  get vaultLocks() {
+    return this.application.vaultLocks
+  }
+
+  get vaultUsers() {
+    return this.application.vaultUsers
+  }
+
+  get vaultInvites() {
+    return this.application.vaultInvites
   }
 
   get files() {
@@ -204,16 +216,6 @@ export class AppContext {
     return new Promise((resolve) => {
       this.keyRecovery.addEventObserver((_eventName, keys) => {
         if (Uuids(keys).includes(uuid)) {
-          resolve()
-        }
-      })
-    })
-  }
-
-  resolveWhenSharedVaultUserKeysResolved() {
-    return new Promise((resolve) => {
-      this.application.vaults.collaboration.addEventObserver((eventName) => {
-        if (eventName === SharedVaultServiceEvent.SharedVaultStatusChanged) {
           resolve()
         }
       })
@@ -356,64 +358,50 @@ export class AppContext {
     })
   }
 
-  resolveWhenAsymmetricMessageProcessingCompletes() {
+  resolveWhenAsyncFunctionCompletes(object, functionName) {
     return new Promise((resolve) => {
-      const objectToSpy = this.asymmetric
-      sinon.stub(objectToSpy, 'handleRemoteReceivedAsymmetricMessages').callsFake(async (messages) => {
-        objectToSpy.handleRemoteReceivedAsymmetricMessages.restore()
-        const result = await objectToSpy.handleRemoteReceivedAsymmetricMessages(messages)
+      sinon.stub(object, functionName).callsFake(async (params) => {
+        object[functionName].restore()
+        const result = await object[functionName](params)
         resolve()
         return result
       })
     })
+  }
+
+  spyOnFunctionResult(object, functionName) {
+    return new Promise((resolve) => {
+      sinon.stub(object, functionName).callsFake(async (params) => {
+        object[functionName].restore()
+        const result = await object[functionName](params)
+        resolve(result)
+        return result
+      })
+    })
+  }
+
+  resolveWhenAsymmetricMessageProcessingCompletes() {
+    return this.resolveWhenAsyncFunctionCompletes(this.asymmetric, 'handleRemoteReceivedAsymmetricMessages')
   }
 
   resolveWhenUserMessagesProcessingCompletes() {
-    return new Promise((resolve) => {
-      const objectToSpy = this.application.dependencies.get(TYPES.UserEventService)
-      sinon.stub(objectToSpy, 'handleReceivedUserEvents').callsFake(async (params) => {
-        objectToSpy.handleReceivedUserEvents.restore()
-        const result = await objectToSpy.handleReceivedUserEvents(params)
-        resolve()
-        return result
-      })
-    })
+    const objectToSpy = this.application.dependencies.get(TYPES.UserEventService)
+    return this.resolveWhenAsyncFunctionCompletes(objectToSpy, 'handleReceivedUserEvents')
   }
 
   resolveWhenAllInboundAsymmetricMessagesAreDeleted() {
-    return new Promise((resolve) => {
-      const objectToSpy = this.application.dependencies.get(TYPES.AsymmetricMessageServer)
-      sinon.stub(objectToSpy, 'deleteAllInboundMessages').callsFake(async (params) => {
-        objectToSpy.deleteAllInboundMessages.restore()
-        const result = await objectToSpy.deleteAllInboundMessages(params)
-        resolve()
-        return result
-      })
-    })
+    const objectToSpy = this.application.dependencies.get(TYPES.AsymmetricMessageServer)
+    return this.resolveWhenAsyncFunctionCompletes(objectToSpy, 'deleteAllInboundMessages')
   }
 
   resolveWhenAllInboundSharedVaultInvitesAreDeleted() {
-    return new Promise((resolve) => {
-      const objectToSpy = this.application.sharedVaults.invitesServer
-      sinon.stub(objectToSpy, 'deleteAllInboundInvites').callsFake(async (params) => {
-        objectToSpy.deleteAllInboundInvites.restore()
-        const result = await objectToSpy.deleteAllInboundInvites(params)
-        resolve()
-        return result
-      })
-    })
+    const objectToSpy = this.application.vaultInvites.invitesServer
+    return this.resolveWhenAsyncFunctionCompletes(objectToSpy, 'deleteAllInboundInvites')
   }
 
   resolveWhenSharedVaultServiceSendsContactShareMessage() {
-    return new Promise((resolve) => {
-      const objectToSpy = this.sharedVaults
-      sinon.stub(objectToSpy, 'shareContactWithVaults').callsFake(async (contact) => {
-        objectToSpy.shareContactWithVaults.restore()
-        const result = await objectToSpy.shareContactWithVaults(contact)
-        resolve()
-        return result
-      })
-    })
+    const objectToSpy = this.sharedVaults
+    return this.resolveWhenAsyncFunctionCompletes(objectToSpy, 'shareContactWithVaults')
   }
 
   resolveWhenSharedVaultKeyRotationInvitesGetSent(targetVault) {
@@ -580,9 +568,11 @@ export class AppContext {
   }
 
   async changeNoteTitle(note, title) {
-    return this.application.mutator.changeNote(note, (mutator) => {
+    await this.application.mutator.changeNote(note, (mutator) => {
       mutator.title = title
     })
+
+    return this.findItem(note.uuid)
   }
 
   async changeNoteTitleAndSync(note, title) {

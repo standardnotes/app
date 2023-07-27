@@ -190,7 +190,7 @@ describe('keys', function () {
 
     const itemsKey = this.application.encryption.itemsKeyForEncryptedPayload(encryptedPayload)
 
-    await this.application.items.removeItemLocally(itemsKey)
+    await this.application.items.removeItemFromMemory(itemsKey)
 
     const erroredPayload = await this.application.encryption.decryptSplitSingle({
       usesItemsKeyWithKeyLookup: {
@@ -755,7 +755,7 @@ describe('keys', function () {
         currentServerPassword: currentRootKey.serverPassword,
         newRootKey,
       })
-      await this.application.encryption.reencryptApplicableItemsAfterUserRootKeyChange()
+      await this.application.dependencies.get(TYPES.ReencryptTypeAItems).execute()
       /** Note: this may result in a deadlock if features_service syncs and results in an error */
       await this.application.sync.sync({ awaitAll: true })
 

@@ -54,9 +54,8 @@ describe('shared vaults', function () {
     const { sharedVault, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithAcceptedInvite(context)
 
-    const result = await context.sharedVaults.removeUserFromSharedVault(sharedVault, contactContext.userUuid)
-
-    expect(result).to.be.undefined
+    const result = await context.vaultUsers.removeUserFromSharedVault(sharedVault, contactContext.userUuid)
+    expect(result.isFailed()).to.be.false
 
     const promise = contactContext.resolveWhenUserMessagesProcessingCompletes()
     await contactContext.sync()
@@ -105,10 +104,27 @@ describe('shared vaults', function () {
   })
 
   it('should convert a vault to a shared vault', async () => {
-    console.error('TODO')
-  })
+    const privateVault = await context.vaults.createRandomizedVault({
+      name: 'My Private Vault',
+    })
 
-  it('should send metadata change message when changing name or description', async () => {
-    console.error('TODO')
+    const note = await context.createSyncedNote('foo', 'bar')
+    await context.vaults.moveItemToVault(privateVault, note)
+
+    const sharedVault = await context.sharedVaults.convertVaultToSharedVault(privateVault)
+
+    const { thirdPartyContext, deinitThirdPartyContext } = await Collaboration.inviteNewPartyToSharedVault(
+      context,
+      sharedVault,
+    )
+
+    await Collaboration.acceptAllInvites(thirdPartyContext)
+
+    const contextNote = thirdPartyContext.items.findItem(note.uuid)
+    expect(contextNote).to.not.be.undefined
+    expect(contextNote.title).to.equal('foo')
+    expect(contextNote.text).to.equal(note.text)
+
+    await deinitThirdPartyContext()
   })
 })

@@ -1,9 +1,9 @@
-import { UserEventPayload } from '@standardnotes/responses'
+import { NotificationPayload } from '@standardnotes/domain-core'
 
 export enum UserEventServiceEvent {
   UserEventReceived = 'UserEventReceived',
 }
 
 export type UserEventServiceEventPayload = {
-  eventPayload: UserEventPayload
+  eventPayload: NotificationPayload
 }

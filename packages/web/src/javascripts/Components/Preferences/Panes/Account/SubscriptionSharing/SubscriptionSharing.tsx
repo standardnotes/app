@@ -1,4 +1,4 @@
-import { FeatureStatus, FeatureIdentifier } from '@standardnotes/snjs'
+import { FeatureStatus, NativeFeatureIdentifier } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useState } from 'react'
 
@@ -29,8 +29,9 @@ const SubscriptionSharing: FunctionComponent<Props> = ({ application, viewContro
   const isReadOnlySession = application.sessions.isCurrentSessionReadOnly()
 
   const isSubscriptionSharingFeatureAvailable =
-    application.features.getFeatureStatus(FeatureIdentifier.SubscriptionSharing) === FeatureStatus.Entitled &&
-    !isReadOnlySession
+    application.features.getFeatureStatus(
+      NativeFeatureIdentifier.create(NativeFeatureIdentifier.TYPES.SubscriptionSharing).getValue(),
+    ) === FeatureStatus.Entitled && !isReadOnlySession
 
   const closeInviteDialog = () => setIsInviteDialogOpen(false)
 

@@ -1,3 +1,5 @@
+import { SendOwnContactChangeMessage } from './UseCase/SendOwnContactChangeMessage'
+import { DeleteContact } from './UseCase/DeleteContact'
 import { MutatorClientInterface } from './../Mutator/MutatorClientInterface'
 import { UserKeyPairChangedEventData } from './../Session/UserKeyPairChangedEventData'
 import { SessionEvent } from './../Session/SessionEvent'
@@ -21,6 +23,7 @@ import { CreateOrEditContact } from './UseCase/CreateOrEditContact'
 import { EditContact } from './UseCase/EditContact'
 import { GetAllContacts } from './UseCase/GetAllContacts'
 import { EncryptionProviderInterface } from '../Encryption/EncryptionProviderInterface'
+import { Result } from '@standardnotes/domain-core'
 
 export class ContactService
   extends AbstractService<ContactServiceEvent>
@@ -34,11 +37,13 @@ export class ContactService
     private user: UserClientInterface,
     private selfContactManager: SelfContactManager,
     private encryption: EncryptionProviderInterface,
+    private _deleteContact: DeleteContact,
     private _findContact: FindContact,
     private _getAllContacts: GetAllContacts,
     private _createOrEditContact: CreateOrEditContact,
     private _editContact: EditContact,
     private _validateItemSigner: ValidateItemSigner,
+    private _sendOwnContactChangedMessage: SendOwnContactChangeMessage,
     eventBus: InternalEventBusInterface,
   ) {
     super(eventBus)
@@ -49,10 +54,35 @@ export class ContactService
   async handleEvent(event: InternalEventInterface): Promise<void> {
     if (event.type === SessionEvent.UserKeyPairChanged) {
       const data = event.payload as UserKeyPairChangedEventData
-
       await this.selfContactManager.updateWithNewPublicKeySet({
         encryption: data.current.encryption.publicKey,
         signing: data.current.signing.publicKey,
+      })
+      void this.sendOwnContactChangeEventToAllContacts(event.payload as UserKeyPairChangedEventData)
+    }
+  }
+
+  private async sendOwnContactChangeEventToAllContacts(data: UserKeyPairChangedEventData): Promise<void> {
+    if (!data.previous) {
+      return
+    }
+
+    const contacts = this._getAllContacts.execute()
+    if (contacts.isFailed()) {
+      return
+    }
+
+    for (const contact of contacts.getValue()) {
+      if (contact.isMe) {
+        continue
+      }
+
+      await this._sendOwnContactChangedMessage.execute({
+        senderOldKeyPair: data.previous.encryption,
+        senderOldSigningKeyPair: data.previous.signing,
+        senderNewKeyPair: data.current.encryption,
+        senderNewSigningKeyPair: data.current.signing,
+        contact,
       })
     }
   }
@@ -167,20 +197,15 @@ export class ContactService
     return contact
   }
 
-  async deleteContact(contact: TrustedContactInterface): Promise<void> {
-    if (contact.isMe) {
-      throw new Error('Cannot delete self')
-    }
-
-    await this.mutator.setItemToBeDeleted(contact)
-    await this.sync.sync()
+  async deleteContact(contact: TrustedContactInterface): Promise<Result<void>> {
+    return this._deleteContact.execute({ contact, ownUserUuid: this.session.userUuid })
   }
 
   getAllContacts(): TrustedContactInterface[] {
     return this._getAllContacts.execute().getValue()
   }
 
-  findTrustedContact(userUuid: string): TrustedContactInterface | undefined {
+  findContact(userUuid: string): TrustedContactInterface | undefined {
     const result = this._findContact.execute({ userUuid })
     if (result.isFailed()) {
       return undefined
@@ -188,12 +213,12 @@ export class ContactService
     return result.getValue()
   }
 
-  findTrustedContactForServerUser(user: SharedVaultUserServerHash): TrustedContactInterface | undefined {
-    return this.findTrustedContact(user.user_uuid)
+  findContactForServerUser(user: SharedVaultUserServerHash): TrustedContactInterface | undefined {
+    return this.findContact(user.user_uuid)
   }
 
-  findTrustedContactForInvite(invite: SharedVaultInviteServerHash): TrustedContactInterface | undefined {
-    return this.findTrustedContact(invite.sender_uuid)
+  findContactForInvite(invite: SharedVaultInviteServerHash): TrustedContactInterface | undefined {
+    return this.findContact(invite.sender_uuid)
   }
 
   getCollaborationIDForTrustedContact(contact: TrustedContactInterface): string {
@@ -205,7 +230,7 @@ export class ContactService
     })
   }
 
-  isItemAuthenticallySigned(item: DecryptedItemInterface): ItemSignatureValidationResult {
+  getItemSignatureStatus(item: DecryptedItemInterface): ItemSignatureValidationResult {
     return this._validateItemSigner.execute(item)
   }
 

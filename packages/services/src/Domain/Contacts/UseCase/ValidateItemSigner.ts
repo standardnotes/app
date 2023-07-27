@@ -112,7 +112,6 @@ export class ValidateItemSigner {
     const signerPublicKey = signatureResult.publicKey
 
     const trustedContact = this.findContact.execute({ signingPublicKey: signerPublicKey })
-
     if (trustedContact.isFailed()) {
       return ItemSignatureValidationResult.NotTrusted
     }

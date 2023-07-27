@@ -5,6 +5,7 @@ import { InternalEventHandlerInterface } from '../Internal/InternalEventHandlerI
 import { InternalEventInterface } from '../Internal/InternalEventInterface'
 import { AbstractService } from '../Service/AbstractService'
 import { UserEventServiceEventPayload, UserEventServiceEvent } from './UserEventServiceEvent'
+import { NotificationPayload } from '@standardnotes/domain-core'
 
 export class UserEventService
   extends AbstractService<UserEventServiceEvent, UserEventServiceEventPayload>
@@ -28,9 +29,13 @@ export class UserEventService
     }
 
     for (const serverEvent of userEvents) {
-      const serviceEvent: UserEventServiceEventPayload = {
-        eventPayload: JSON.parse(serverEvent.event_payload),
+      const eventPayloadOrError = NotificationPayload.createFromString(serverEvent.payload)
+      if (eventPayloadOrError.isFailed()) {
+        continue
       }
+      const eventPayload = eventPayloadOrError.getValue()
+
+      const serviceEvent: UserEventServiceEventPayload = { eventPayload }
 
       await this.notifyEventSync(UserEventServiceEvent.UserEventReceived, serviceEvent)
     }

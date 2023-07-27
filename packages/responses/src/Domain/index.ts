@@ -36,7 +36,6 @@ export * from './Http'
 export * from './SharedVaults/SharedVaultInviteServerHash'
 export * from './SharedVaults/SharedVaultUserServerHash'
 export * from './SharedVaults/SharedVaultServerHash'
-export * from './SharedVaults/SharedVaultPermission'
 
 export * from './AsymmetricMessage/AsymmetricMessageServerHash'
 
@@ -68,5 +67,3 @@ export * from './User/SettingData'
 export * from './User/UpdateSettingResponse'
 
 export * from './UserEvent/UserEventServerHash'
-export * from './UserEvent/UserEventType'
-export * from './UserEvent/UserEventPayload'

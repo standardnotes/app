@@ -24,25 +24,10 @@ describe('vaults', function () {
     vaults = context.vaults
   })
 
-  describe('locking', () => {
-    it('should throw if attempting to add item to locked vault', async () => {
-      console.error('TODO: implement')
-    })
-
-    it('should throw if attempting to remove item from locked vault', async () => {
-      console.error('TODO: implement')
-    })
-
-    it('locking vault should remove root key and items keys from memory', async () => {
-      console.error('TODO: implement')
-    })
-  })
-
   describe('offline', function () {
     it('should be able to create an offline vault', async () => {
       const vault = await vaults.createRandomizedVault({
         name: 'My Vault',
-        storagePreference: KeySystemRootKeyStorageMode.Synced,
       })
 
       expect(vault.systemIdentifier).to.not.be.undefined
@@ -59,7 +44,6 @@ describe('vaults', function () {
       await context.application.addPasscode('123')
       const vault = await vaults.createRandomizedVault({
         name: 'My Vault',
-        storagePreference: KeySystemRootKeyStorageMode.Synced,
       })
 
       expect(vault.systemIdentifier).to.not.be.undefined
@@ -75,7 +59,6 @@ describe('vaults', function () {
     it('should add item to offline vault', async () => {
       const vault = await vaults.createRandomizedVault({
         name: 'My Vault',
-        storagePreference: KeySystemRootKeyStorageMode.Synced,
       })
       const item = await context.createSyncedNote()
 
@@ -89,7 +72,6 @@ describe('vaults', function () {
       const appIdentifier = context.identifier
       const vault = await vaults.createRandomizedVault({
         name: 'My Vault',
-        storagePreference: KeySystemRootKeyStorageMode.Synced,
       })
       const note = await context.createSyncedNote('foo', 'bar')
       await vaults.moveItemToVault(vault, note)
@@ -110,7 +92,6 @@ describe('vaults', function () {
         const appIdentifier = context.identifier
         const vault = await vaults.createRandomizedVault({
           name: 'My Vault',
-          storagePreference: KeySystemRootKeyStorageMode.Synced,
         })
         const note = await context.createSyncedNote('foo', 'bar')
         await vaults.moveItemToVault(vault, note)
@@ -138,7 +119,6 @@ describe('vaults', function () {
         const appIdentifier = context.identifier
         const vault = await vaults.createRandomizedVault({
           name: 'My Vault',
-          storagePreference: KeySystemRootKeyStorageMode.Synced,
         })
         const note = await context.createSyncedNote('foo', 'bar')
         await vaults.moveItemToVault(vault, note)
@@ -168,7 +148,6 @@ describe('vaults', function () {
     it('should create a vault', async () => {
       const vault = await vaults.createRandomizedVault({
         name: 'My Vault',
-        storagePreference: KeySystemRootKeyStorageMode.Synced,
       })
       expect(vault).to.not.be.undefined
 
@@ -184,7 +163,6 @@ describe('vaults', function () {
       const note = await context.createSyncedNote('foo', 'bar')
       const vault = await vaults.createRandomizedVault({
         name: 'My Vault',
-        storagePreference: KeySystemRootKeyStorageMode.Synced,
       })
 
       await vaults.moveItemToVault(vault, note)
@@ -198,7 +176,6 @@ describe('vaults', function () {
         const appIdentifier = context.identifier
         const vault = await vaults.createRandomizedVault({
           name: 'My Vault',
-          storagePreference: KeySystemRootKeyStorageMode.Synced,
         })
         const note = await context.createSyncedNote('foo', 'bar')
         await vaults.moveItemToVault(vault, note)
@@ -219,7 +196,6 @@ describe('vaults', function () {
       it('rotating a key system root key should create a new vault items key', async () => {
         const vault = await vaults.createRandomizedVault({
           name: 'My Vault',
-          storagePreference: KeySystemRootKeyStorageMode.Synced,
         })
 
         const keySystemItemsKey = context.keys.getKeySystemItemsKeys(vault.systemIdentifier)[0]
@@ -235,7 +211,6 @@ describe('vaults', function () {
       it('deleting a vault should delete all its items', async () => {
         const vault = await vaults.createRandomizedVault({
           name: 'My Vault',
-          storagePreference: KeySystemRootKeyStorageMode.Synced,
         })
         const note = await context.createSyncedNote('foo', 'bar')
         await vaults.moveItemToVault(vault, note)

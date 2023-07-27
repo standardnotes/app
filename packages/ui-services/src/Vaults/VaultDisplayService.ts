@@ -11,7 +11,7 @@ import {
   InternalEventHandlerInterface,
   InternalEventInterface,
   StorageKey,
-  VaultServiceEvent,
+  VaultLockServiceEvent,
 } from '@standardnotes/services'
 import { VaultDisplayOptions, VaultDisplayOptionsPersistable, VaultListingInterface } from '@standardnotes/models'
 import { VaultDisplayServiceEvent } from './VaultDisplayServiceEvent'
@@ -33,8 +33,8 @@ export class VaultDisplayService
 
     this.options = new VaultDisplayOptions({ exclude: [], locked: [] })
 
-    internalEventBus.addEventHandler(this, VaultServiceEvent.VaultLocked)
-    internalEventBus.addEventHandler(this, VaultServiceEvent.VaultUnlocked)
+    internalEventBus.addEventHandler(this, VaultLockServiceEvent.VaultLocked)
+    internalEventBus.addEventHandler(this, VaultLockServiceEvent.VaultUnlocked)
     internalEventBus.addEventHandler(this, ApplicationEvent.ApplicationStageChanged)
 
     makeObservable(this, {
@@ -51,7 +51,7 @@ export class VaultDisplayService
   }
 
   async handleEvent(event: InternalEventInterface): Promise<void> {
-    if (event.type === VaultServiceEvent.VaultLocked || event.type === VaultServiceEvent.VaultUnlocked) {
+    if (event.type === VaultLockServiceEvent.VaultLocked || event.type === VaultLockServiceEvent.VaultUnlocked) {
       this.handleVaultLockingStatusChanged()
     } else if (event.type === ApplicationEvent.ApplicationStageChanged) {
       const stage = (event.payload as ApplicationStageChangedEventPayload).stage
@@ -62,7 +62,7 @@ export class VaultDisplayService
   }
 
   private handleVaultLockingStatusChanged(): void {
-    const lockedVaults = this.application.vaults.getLockedvaults()
+    const lockedVaults = this.application.vaultLocks.getLockedvaults()
 
     const options = this.options.newOptionsByIntakingLockedVaults(lockedVaults)
     this.setVaultSelectionOptions(options)
@@ -90,7 +90,7 @@ export class VaultDisplayService
 
   changeToMultipleVaultDisplayMode(): void {
     const vaults = this.application.vaults.getVaults()
-    const lockedVaults = this.application.vaults.getLockedvaults()
+    const lockedVaults = this.application.vaultLocks.getLockedvaults()
 
     const newOptions = new VaultDisplayOptions({
       exclude: vaults
@@ -103,26 +103,26 @@ export class VaultDisplayService
   }
 
   hideVault = (vault: VaultListingInterface) => {
-    const lockedVaults = this.application.vaults.getLockedvaults()
+    const lockedVaults = this.application.vaultLocks.getLockedvaults()
     const newOptions = this.options.newOptionsByExcludingVault(vault, lockedVaults)
     this.setVaultSelectionOptions(newOptions)
   }
 
   unhideVault = async (vault: VaultListingInterface) => {
-    if (this.application.vaults.isVaultLocked(vault)) {
+    if (this.application.vaultLocks.isVaultLocked(vault)) {
       const unlocked = await this.unlockVault(vault)
       if (!unlocked) {
         return
       }
     }
 
-    const lockedVaults = this.application.vaults.getLockedvaults()
+    const lockedVaults = this.application.vaultLocks.getLockedvaults()
     const newOptions = this.options.newOptionsByUnexcludingVault(vault, lockedVaults)
     this.setVaultSelectionOptions(newOptions)
   }
 
   showOnlyVault = async (vault: VaultListingInterface) => {
-    if (this.application.vaults.isVaultLocked(vault)) {
+    if (this.application.vaultLocks.isVaultLocked(vault)) {
       const unlocked = await this.unlockVault(vault)
       if (!unlocked) {
         return
@@ -134,7 +134,7 @@ export class VaultDisplayService
   }
 
   async unlockVault(vault: VaultListingInterface): Promise<boolean> {
-    if (!this.application.vaults.isVaultLocked(vault)) {
+    if (!this.application.vaultLocks.isVaultLocked(vault)) {
       throw new Error('Attempting to unlock a vault that is not locked.')
     }
 
@@ -161,7 +161,7 @@ export class VaultDisplayService
 
           const password = value.value as string
 
-          const unlocked = await this.application.vaults.unlockNonPersistentVault(vault, password)
+          const unlocked = await this.application.vaultLocks.unlockNonPersistentVault(vault, password)
           if (!unlocked) {
             this.application.challenges.setValidationStatusForChallenge(challenge, value, false)
             resolve(false)

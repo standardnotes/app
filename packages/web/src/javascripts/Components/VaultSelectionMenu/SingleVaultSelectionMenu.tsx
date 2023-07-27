@@ -30,7 +30,7 @@ const SingleVaultSelectionMenu: FunctionComponent = () => {
         <MenuRadioButtonItem key={vault.uuid} checked={isVaultVisible(vault)} onClick={() => selectVault(vault)}>
           <div className="flex w-full items-center gap-1">
             {vault.name}
-            {application.vaults.isVaultLocked(vault) && <Icon className="ml-1" type="lock" size={'small'} />}
+            {application.vaultLocks.isVaultLocked(vault) && <Icon className="ml-1" type="lock" size={'small'} />}
           </div>
         </MenuRadioButtonItem>
       ))}

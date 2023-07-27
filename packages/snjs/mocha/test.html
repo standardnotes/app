@@ -38,10 +38,6 @@
   <script type="module">
     import MainRegistry from './TestRegistry/MainRegistry.js'
 
-    const InternalFeatureStatus = {
-      [InternalFeature.Vaults]: { enabled: false, exclusive: false },
-    }
-
     const loadTest = (fileName) => {
       return new Promise((resolve) => {
         const script = document.createElement('script');
@@ -60,12 +56,17 @@
       }
     }
 
-    if (InternalFeatureStatus[InternalFeature.Vaults].enabled) {
+    if (MainRegistry.VaultTests.enabled) {
       InternalFeatureService.get().enableFeature(InternalFeature.Vaults);
-      await loadTests(MainRegistry.VaultTests);
-    }
-
-    if (!InternalFeatureStatus[InternalFeature.Vaults].exclusive) {
+      if (MainRegistry.VaultTests.exclusive) {
+        await loadTests(MainRegistry.VaultTests.files);
+      } else {
+        await loadTests([
+          ...MainRegistry.BaseTests,
+          ...MainRegistry.VaultTests.files
+        ]);
+      }
+    } else {
       await loadTests(MainRegistry.BaseTests);
     }
 

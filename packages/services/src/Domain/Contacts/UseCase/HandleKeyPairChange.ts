@@ -1,6 +1,6 @@
 import { Result, UseCaseInterface } from '@standardnotes/domain-core'
 import { PkcKeyPair } from '@standardnotes/sncrypto-common'
-import { ReuploadAllInvites } from '../../SharedVaults/UseCase/ReuploadAllInvites'
+import { ReuploadAllInvites } from '../../VaultInvite/UseCase/ReuploadAllInvites'
 import { ResendAllMessages } from '../../AsymmetricMessage/UseCase/ResendAllMessages'
 
 export class HandleKeyPairChange implements UseCaseInterface<void> {

@@ -3,8 +3,8 @@ import Modal, { ModalAction } from '@/Components/Modal/Modal'
 import DecoratedInput from '@/Components/Input/DecoratedInput'
 import { useApplication } from '@/Components/ApplicationProvider'
 import {
-  ChangeVaultOptionsDTO,
-  KeySystemRootKeyPasswordType,
+  ChangeVaultKeyOptionsDTO,
+  KeySystemPasswordType,
   KeySystemRootKeyStorageMode,
   SharedVaultInviteServerHash,
   SharedVaultUserServerHash,
@@ -32,9 +32,7 @@ const EditVaultModal: FunctionComponent<Props> = ({ onCloseDialog, existingVault
   const [members, setMembers] = useState<SharedVaultUserServerHash[]>([])
   const [invites, setInvites] = useState<SharedVaultInviteServerHash[]>([])
   const [isAdmin, setIsAdmin] = useState<boolean>(true)
-  const [passwordType, setPasswordType] = useState<KeySystemRootKeyPasswordType>(
-    KeySystemRootKeyPasswordType.Randomized,
-  )
+  const [passwordType, setPasswordType] = useState<KeySystemPasswordType>(KeySystemPasswordType.Randomized)
   const [keyStorageMode, setKeyStorageMode] = useState<KeySystemRootKeyStorageMode>(KeySystemRootKeyStorageMode.Synced)
   const [customPassword, setCustomPassword] = useState<string | undefined>(undefined)
 
@@ -54,20 +52,20 @@ const EditVaultModal: FunctionComponent<Props> = ({ onCloseDialog, existingVault
 
     if (existingVault.isSharedVaultListing()) {
       setIsAdmin(
-        existingVault.isSharedVaultListing() && application.sharedVaults.isCurrentUserSharedVaultAdmin(existingVault),
+        existingVault.isSharedVaultListing() && application.vaultUsers.isCurrentUserSharedVaultAdmin(existingVault),
       )
 
-      const users = await application.sharedVaults.getSharedVaultUsers(existingVault)
+      const users = await application.vaultUsers.getSharedVaultUsers(existingVault)
       if (users) {
         setMembers(users)
       }
 
-      const invites = await application.sharedVaults.getOutboundInvites(existingVault)
+      const invites = await application.vaultInvites.getOutboundInvites(existingVault)
       if (!isClientDisplayableError(invites)) {
         setInvites(invites)
       }
     }
-  }, [application.sharedVaults, existingVault])
+  }, [application, existingVault])
 
   useEffect(() => {
     void reloadVaultInfo()
@@ -89,12 +87,12 @@ const EditVaultModal: FunctionComponent<Props> = ({ onCloseDialog, existingVault
       const isChangingPasswordType = vault.keyPasswordType !== passwordType
       const isChangingKeyStorageMode = vault.keyStorageMode !== keyStorageMode
 
-      const getPasswordTypeParams = (): ChangeVaultOptionsDTO['newPasswordType'] => {
+      const getPasswordTypeParams = (): ChangeVaultKeyOptionsDTO['newPasswordType'] => {
         if (!isChangingPasswordType) {
           throw new Error('Password type is not changing')
         }
 
-        if (passwordType === KeySystemRootKeyPasswordType.UserInputted) {
+        if (passwordType === KeySystemPasswordType.UserInputted) {
           if (!customPassword) {
             throw new Error('Custom password is not set')
           }
@@ -113,7 +111,7 @@ const EditVaultModal: FunctionComponent<Props> = ({ onCloseDialog, existingVault
         await application.vaults.changeVaultOptions({
           vault,
           newPasswordType: isChangingPasswordType ? getPasswordTypeParams() : undefined,
-          newKeyStorageMode: isChangingKeyStorageMode ? keyStorageMode : undefined,
+          newStorageMode: isChangingKeyStorageMode ? keyStorageMode : undefined,
         })
       }
     },
@@ -121,7 +119,7 @@ const EditVaultModal: FunctionComponent<Props> = ({ onCloseDialog, existingVault
   )
 
   const createNewVault = useCallback(async () => {
-    if (passwordType === KeySystemRootKeyPasswordType.UserInputted) {
+    if (passwordType === KeySystemPasswordType.UserInputted) {
       if (!customPassword) {
         throw new Error('Custom key is not set')
       }
@@ -135,7 +133,6 @@ const EditVaultModal: FunctionComponent<Props> = ({ onCloseDialog, existingVault
       await application.vaults.createRandomizedVault({
         name,
         description,
-        storagePreference: keyStorageMode,
       })
     }
 
@@ -169,7 +166,7 @@ const EditVaultModal: FunctionComponent<Props> = ({ onCloseDialog, existingVault
     [existingVault, handleDialogClose, handleSubmit],
   )
 
-  if (existingVault && application.vaults.isVaultLocked(existingVault)) {
+  if (existingVault && application.vaultLocks.isVaultLocked(existingVault)) {
     return <div>Vault is locked.</div>
   }
 

@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.46.16](https://github.com/standardnotes/app/compare/@standardnotes/models@1.46.15...@standardnotes/models@1.46.16) (2023-07-27)
+
+**Note:** Version bump only for package @standardnotes/models
+
+## [1.46.15](https://github.com/standardnotes/app/compare/@standardnotes/models@1.46.14...@standardnotes/models@1.46.15) (2023-07-27)
+
+**Note:** Version bump only for package @standardnotes/models
+
+## [1.46.14](https://github.com/standardnotes/app/compare/@standardnotes/models@1.46.13...@standardnotes/models@1.46.14) (2023-07-26)
+
+### Bug Fixes
+
+* Fixes issue where lock screen would not use previously active theme ([#2372](https://github.com/standardnotes/app/issues/2372)) ([d268c02](https://github.com/standardnotes/app/commit/d268c02ab31beb5e2fd9e6547610f9a4dd61bed4))
+
+## [1.46.13](https://github.com/standardnotes/app/compare/@standardnotes/models@1.46.12...@standardnotes/models@1.46.13) (2023-07-26)
+
+**Note:** Version bump only for package @standardnotes/models
+
+## [1.46.12](https://github.com/standardnotes/app/compare/@standardnotes/models@1.46.11...@standardnotes/models@1.46.12) (2023-07-23)
+
+**Note:** Version bump only for package @standardnotes/models
+
 ## [1.46.11](https://github.com/standardnotes/app/compare/@standardnotes/models@1.46.10...@standardnotes/models@1.46.11) (2023-07-17)
 
 **Note:** Version bump only for package @standardnotes/models

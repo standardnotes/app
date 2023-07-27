@@ -2,7 +2,6 @@ import {
   ComponentAction,
   ComponentFeatureDescription,
   ComponentPermission,
-  FeatureIdentifier,
   FindNativeFeature,
 } from '@standardnotes/features'
 import { ComponentInterface, ComponentMutator, PermissionDialog, UIFeature } from '@standardnotes/models'
@@ -228,7 +227,7 @@ export class RunWithPermissionsUseCase {
   }
 
   private findUIFeature(identifier: string): UIFeature<ComponentFeatureDescription> | undefined {
-    const nativeFeature = FindNativeFeature<ComponentFeatureDescription>(identifier as FeatureIdentifier)
+    const nativeFeature = FindNativeFeature<ComponentFeatureDescription>(identifier)
     if (nativeFeature) {
       return new UIFeature(nativeFeature)
     }

@@ -31,9 +31,9 @@ export class ResendAllMessages implements UseCaseInterface<void> {
     const errors: string[] = []
 
     for (const message of messages.data.messages) {
-      const recipient = this.findContact.execute({ userUuid: message.user_uuid })
-      if (recipient) {
-        errors.push(`Contact not found for invite ${message.user_uuid}`)
+      const recipient = this.findContact.execute({ userUuid: message.recipient_uuid })
+      if (recipient.isFailed()) {
+        errors.push(`Contact not found for invite ${message.recipient_uuid}`)
         continue
       }
 
@@ -41,7 +41,7 @@ export class ResendAllMessages implements UseCaseInterface<void> {
         keys: params.keys,
         previousKeys: params.previousKeys,
         message: message,
-        recipient,
+        recipient: recipient.getValue(),
       })
 
       await this.messageServer.deleteMessage({

@@ -3,6 +3,60 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.167.16](https://github.com/standardnotes/app/compare/@standardnotes/web@3.167.15...@standardnotes/web@3.167.16) (2023-07-27)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.167.15](https://github.com/standardnotes/app/compare/@standardnotes/web@3.167.14...@standardnotes/web@3.167.15) (2023-07-27)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.167.14](https://github.com/standardnotes/app/compare/@standardnotes/web@3.167.13...@standardnotes/web@3.167.14) (2023-07-26)
+
+### Bug Fixes
+
+* Fixes issue where lock screen would not use previously active theme ([#2372](https://github.com/standardnotes/app/issues/2372)) ([d268c02](https://github.com/standardnotes/app/commit/d268c02ab31beb5e2fd9e6547610f9a4dd61bed4))
+
+## [3.167.13](https://github.com/standardnotes/app/compare/@standardnotes/web@3.167.12...@standardnotes/web@3.167.13) (2023-07-26)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.167.12](https://github.com/standardnotes/app/compare/@standardnotes/web@3.167.11...@standardnotes/web@3.167.12) (2023-07-26)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.167.11](https://github.com/standardnotes/app/compare/@standardnotes/web@3.167.10...@standardnotes/web@3.167.11) (2023-07-25)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.167.10](https://github.com/standardnotes/app/compare/@standardnotes/web@3.167.9...@standardnotes/web@3.167.10) (2023-07-25)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.167.9](https://github.com/standardnotes/app/compare/@standardnotes/web@3.167.8...@standardnotes/web@3.167.9) (2023-07-24)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.167.8](https://github.com/standardnotes/app/compare/@standardnotes/web@3.167.7...@standardnotes/web@3.167.8) (2023-07-24)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.167.7](https://github.com/standardnotes/app/compare/@standardnotes/web@3.167.6...@standardnotes/web@3.167.7) (2023-07-24)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.167.6](https://github.com/standardnotes/app/compare/@standardnotes/web@3.167.5...@standardnotes/web@3.167.6) (2023-07-24)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.167.5](https://github.com/standardnotes/app/compare/@standardnotes/web@3.167.4...@standardnotes/web@3.167.5) (2023-07-24)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.167.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.167.3...@standardnotes/web@3.167.4) (2023-07-23)
+
+**Note:** Version bump only for package @standardnotes/web
+
 ## [3.167.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.167.2...@standardnotes/web@3.167.3) (2023-07-21)
 
 ### Bug Fixes

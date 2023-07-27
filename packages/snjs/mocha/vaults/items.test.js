@@ -8,7 +8,6 @@ describe('shared vault items', function () {
   this.timeout(Factory.TwentySecondTimeout)
 
   let context
-  let sharedVaults
 
   afterEach(async function () {
     await context.deinit()
@@ -22,8 +21,6 @@ describe('shared vault items', function () {
 
     await context.launch()
     await context.register()
-
-    sharedVaults = context.sharedVaults
   })
 
   it('should add item to shared vault with no other members', async () => {
@@ -60,7 +57,11 @@ describe('shared vault items', function () {
     const currentContextContact = await Collaboration.createTrustedContactForUserOfContext(context, contactContext)
 
     contactContext.lockSyncing()
-    await sharedVaults.inviteContactToSharedVault(sharedVault, currentContextContact, SharedVaultPermission.Write)
+    await context.vaultInvites.inviteContactToSharedVault(
+      sharedVault,
+      currentContextContact,
+      SharedVaultUserPermission.PERMISSIONS.Write,
+    )
     await Collaboration.moveItemToVault(context, sharedVault, note)
 
     const promise = contactContext.awaitNextSyncSharedVaultFromScratchEvent()
@@ -116,6 +117,28 @@ describe('shared vault items', function () {
   })
 
   it('adding item to vault while belonging to other vault should move the item to new vault', async () => {
-    console.error('TODO: implement test')
+    const { note, sharedVault, contactContext, contact, deinitContactContext } =
+      await Collaboration.createSharedVaultWithAcceptedInviteAndNote(context)
+
+    const { sharedVault: otherSharedVault } = await Collaboration.createSharedVaultAndInviteContact(
+      context,
+      contactContext,
+      contact,
+    )
+
+    const updatedNote = await Collaboration.moveItemToVault(context, otherSharedVault, note)
+
+    expect(updatedNote.key_system_identifier).to.equal(otherSharedVault.systemIdentifier)
+    expect(updatedNote.shared_vault_uuid).to.equal(otherSharedVault.sharing.sharedVaultUuid)
+
+    await contactContext.sync()
+
+    const receivedNote = contactContext.items.findItem(note.uuid)
+    expect(receivedNote).to.not.be.undefined
+    expect(receivedNote.title).to.equal(note.title)
+    expect(receivedNote.key_system_identifier).to.equal(otherSharedVault.systemIdentifier)
+    expect(receivedNote.shared_vault_uuid).to.equal(otherSharedVault.sharing.sharedVaultUuid)
+
+    await deinitContactContext()
   })
 })

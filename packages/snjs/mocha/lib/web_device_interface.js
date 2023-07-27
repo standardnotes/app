@@ -63,6 +63,16 @@ export default class WebDeviceInterface {
     return models
   }
 
+  async getDatabaseEntries(identifier, ids) {
+    const models = []
+    for (const id of ids) {
+      const key = this._keyForPayloadId(id, identifier)
+      const model = JSON.parse(localStorage[key])
+      models.push(model)
+    }
+    return models
+  }
+
   async getDatabaseLoadChunks(options, identifier) {
     const entries = await this.getAllDatabaseEntries(identifier)
     const {

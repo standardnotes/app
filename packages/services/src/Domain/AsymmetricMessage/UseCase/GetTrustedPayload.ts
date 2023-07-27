@@ -10,12 +10,23 @@ export class GetTrustedPayload implements SyncUseCaseInterface<AsymmetricMessage
     privateKey: string
     message: AsymmetricMessageServerHash
     sender: TrustedContactInterface
+    ownUserUuid: string
   }): Result<M> {
     const result = this.decryptMessage.execute<M>({
       message: dto.message.encrypted_message,
       sender: dto.sender,
       privateKey: dto.privateKey,
     })
+
+    if (result.isFailed()) {
+      return result
+    }
+
+    const recipientUuid = result.getValue().data.recipientUuid
+
+    if (recipientUuid !== dto.ownUserUuid) {
+      return Result.fail('Message is not for this user')
+    }
 
     return result
   }

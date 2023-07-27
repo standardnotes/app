@@ -3,6 +3,62 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.56.29](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.56.28...@standardnotes/mobile@3.56.29) (2023-07-27)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.56.28](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.56.27...@standardnotes/mobile@3.56.28) (2023-07-27)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.56.27](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.56.26...@standardnotes/mobile@3.56.27) (2023-07-26)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.56.26](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.56.25...@standardnotes/mobile@3.56.26) (2023-07-26)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.56.25](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.56.24...@standardnotes/mobile@3.56.25) (2023-07-26)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.56.24](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.56.23...@standardnotes/mobile@3.56.24) (2023-07-25)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.56.23](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.56.22...@standardnotes/mobile@3.56.23) (2023-07-25)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.56.22](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.56.21...@standardnotes/mobile@3.56.22) (2023-07-24)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.56.21](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.56.20...@standardnotes/mobile@3.56.21) (2023-07-24)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.56.20](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.56.19...@standardnotes/mobile@3.56.20) (2023-07-24)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.56.19](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.56.18...@standardnotes/mobile@3.56.19) (2023-07-24)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.56.18](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.56.17...@standardnotes/mobile@3.56.18) (2023-07-24)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.56.17](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.56.16...@standardnotes/mobile@3.56.17) (2023-07-24)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.56.16](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.56.15...@standardnotes/mobile@3.56.16) (2023-07-23)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
 ## [3.56.15](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.56.14...@standardnotes/mobile@3.56.15) (2023-07-21)
 
 ### Bug Fixes

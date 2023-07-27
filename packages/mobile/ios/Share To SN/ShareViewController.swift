@@ -95,16 +95,11 @@ class ShareViewController: SLComposeServiceViewController {
     attachment.loadItem(forTypeIdentifier: imageContentType, options: nil) { [weak self] data, error in
       
       if error == nil, let url = data as? URL, let this = self {
-        //  this.redirectToHostApp(type: .media)
         // Always copy
         let fileExtension = this.getExtension(from: url, type: .video)
         let newName = UUID().uuidString
-        let newPath = FileManager.default
-          .containerURL(forSecurityApplicationGroupIdentifier: "group.\(hostAppBundleIdentifier)")!
-          .appendingPathComponent("\(newName).\(fileExtension)")
-        let copied = this.copyFile(at: url, to: newPath)
-        if(copied) {
-          this.sharedMedia.append(SharedMediaFile(path: newPath.absoluteString, thumbnail: nil, duration: nil, type: .image))
+        if let copiedPath = this.copyToTemporaryPath(url: url, name: "\(newName).\(fileExtension)") {
+          this.sharedMedia.append(SharedMediaFile(path: copiedPath, thumbnail: nil, duration: nil, type: .image))
         }
         
         if index == (content.attachments?.count)! - 1 {
@@ -125,15 +120,8 @@ class ShareViewController: SLComposeServiceViewController {
         // Always copy
         let fileExtension = this.getExtension(from: url, type: .video)
         let newName = UUID().uuidString
-        let newPath = FileManager.default
-          .containerURL(forSecurityApplicationGroupIdentifier: "group.\(hostAppBundleIdentifier)")!
-          .appendingPathComponent("\(newName).\(fileExtension)")
-        let copied = this.copyFile(at: url, to: newPath)
-        if(copied) {
-          guard let sharedFile = this.getSharedMediaFile(forVideo: newPath) else {
-            return
-          }
-          this.sharedMedia.append(sharedFile)
+        if let copiedPath = this.copyToTemporaryPath(url: url, name: "\(newName).\(fileExtension)") {
+          this.sharedMedia.append(SharedMediaFile(path: copiedPath, thumbnail: nil, duration: nil, type: .video))
         }
         
         if index == (content.attachments?.count)! - 1 {
@@ -151,14 +139,9 @@ class ShareViewController: SLComposeServiceViewController {
       
       if error == nil, let url = data as? URL, let this = self {
         
-        // Always copy
         let newName = this.getFileName(from :url)
-        let newPath = FileManager.default
-          .containerURL(forSecurityApplicationGroupIdentifier: "group.\(hostAppBundleIdentifier)")!
-          .appendingPathComponent("\(newName)")
-        let copied = this.copyFile(at: url, to: newPath)
-        if (copied) {
-          this.sharedMedia.append(SharedMediaFile(path: newPath.absoluteString, thumbnail: nil, duration: nil, type: .file))
+        if let copiedPath = this.copyToTemporaryPath(url: url, name: newName) {
+          this.sharedMedia.append(SharedMediaFile(path: copiedPath, thumbnail: nil, duration: nil, type: .file))
         }
         
         if index == (content.attachments?.count)! - 1 {
@@ -169,6 +152,32 @@ class ShareViewController: SLComposeServiceViewController {
         self?.dismissWithError()
       }
     }
+  }
+  
+  private func directoryExistsAtPath(_ path: String) -> Bool {
+      var isDirectory = ObjCBool(true)
+      let exists = FileManager.default.fileExists(atPath: path, isDirectory: &isDirectory)
+      return exists && isDirectory.boolValue
+  }
+  
+  private func copyToTemporaryPath(url: URL, name: String) -> String? {
+    let containerURL = FileManager.default
+      .containerURL(forSecurityApplicationGroupIdentifier: "group.\(hostAppBundleIdentifier)")!
+    let shareTempDirPath = containerURL.appendingPathComponent("ShareTemp", isDirectory: true)
+    if !directoryExistsAtPath(shareTempDirPath.absoluteString) {
+      do {
+        try FileManager.default.createDirectory(atPath: shareTempDirPath.relativePath, withIntermediateDirectories: true, attributes: nil)
+      } catch {
+        return nil
+      }
+    }
+    let newPath = shareTempDirPath
+      .appendingPathComponent("\(name)")
+    let copied = self.copyFile(at: url, to: newPath)
+    if (copied) {
+      return newPath.absoluteString
+    }
+    return nil
   }
   
   private func redirectToHostApp() {
@@ -261,40 +270,6 @@ class ShareViewController: SLComposeServiceViewController {
       return false
     }
     return true
-  }
-  
-  private func getSharedMediaFile(forVideo: URL) -> SharedMediaFile? {
-    let asset = AVAsset(url: forVideo)
-    let duration = (CMTimeGetSeconds(asset.duration) * 1000).rounded()
-    let thumbnailPath = getThumbnailPath(for: forVideo)
-    
-    if FileManager.default.fileExists(atPath: thumbnailPath.path) {
-      return SharedMediaFile(path: forVideo.absoluteString, thumbnail: thumbnailPath.absoluteString, duration: duration, type: .video)
-    }
-    
-    var saved = false
-    let assetImgGenerate = AVAssetImageGenerator(asset: asset)
-    assetImgGenerate.appliesPreferredTrackTransform = true
-    //        let scale = UIScreen.main.scale
-    assetImgGenerate.maximumSize =  CGSize(width: 360, height: 360)
-    do {
-      let img = try assetImgGenerate.copyCGImage(at: CMTimeMakeWithSeconds(600, preferredTimescale: Int32(1.0)), actualTime: nil)
-      try UIImage.pngData(UIImage(cgImage: img))()?.write(to: thumbnailPath)
-      saved = true
-    } catch {
-      saved = false
-    }
-    
-    return saved ? SharedMediaFile(path: forVideo.absoluteString, thumbnail: thumbnailPath.absoluteString, duration: duration, type: .video) : nil
-    
-  }
-  
-  private func getThumbnailPath(for url: URL) -> URL {
-    let fileName = Data(url.lastPathComponent.utf8).base64EncodedString().replacingOccurrences(of: "==", with: "")
-    let path = FileManager.default
-      .containerURL(forSecurityApplicationGroupIdentifier: "group.\(hostAppBundleIdentifier)")!
-      .appendingPathComponent("\(fileName).jpg")
-    return path
   }
   
   class SharedMediaFile: Codable {

@@ -61,14 +61,14 @@ export const PreprocessingStep = ({
 
   useEffect(() => {
     const processPendingInvites = async () => {
-      await application.sharedVaults.downloadInboundInvites()
-      const hasPendingInvites = application.sharedVaults.getCachedPendingInviteRecords().length > 0
+      await application.vaultInvites.downloadInboundInvites()
+      const hasPendingInvites = application.vaultInvites.getCachedPendingInviteRecords().length > 0
       setNeedsUserConfirmation(hasPendingInvites ? 'yes' : 'no')
       setIsProcessingInvites(false)
     }
 
     void processPendingInvites()
-  }, [application.sharedVaults])
+  }, [application])
 
   const isProcessing = isProcessingSync || isProcessingMessages || isProcessingInvites
 

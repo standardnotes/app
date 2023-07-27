@@ -18,8 +18,6 @@ export interface SessionsClientInterface {
   getWorkspaceDisplayIdentifier(): string
   populateSessionFromDemoShareToken(token: Base64String): Promise<void>
 
-  initializeFromDisk(): Promise<void>
-
   getUser(): User | undefined
   isSignedIn(): boolean
   get userUuid(): string

@@ -1,5 +1,5 @@
 export enum SessionEvent {
-  Restored = 'SessionRestored',
-  Revoked = 'SessionRevoked',
-  UserKeyPairChanged = 'UserKeyPairChanged',
+  Restored = 'SessionEvent:SessionRestored',
+  Revoked = 'SessionEvent:SessionRevoked',
+  UserKeyPairChanged = 'SessionEvent:UserKeyPairChanged',
 }

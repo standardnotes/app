@@ -53,7 +53,7 @@ describe('sync integrity', () => {
     const didEnterOutOfSync = awaitSyncEventPromise(this.application, SyncEvent.EnterOutOfSync)
     await this.application.sync.sync({ checkIntegrity: true })
 
-    await this.application.items.removeItemLocally(item)
+    await this.application.items.removeItemFromMemory(item)
     await this.application.sync.sync({ checkIntegrity: true, awaitAll: true })
 
     await didEnterOutOfSync
@@ -70,7 +70,7 @@ describe('sync integrity', () => {
     const didExitOutOfSync = awaitSyncEventPromise(this.application, SyncEvent.ExitOutOfSync)
 
     await this.application.sync.sync({ checkIntegrity: true })
-    await this.application.items.removeItemLocally(item)
+    await this.application.items.removeItemFromMemory(item)
     await this.application.sync.sync({ checkIntegrity: true, awaitAll: true })
 
     await Promise.all([didEnterOutOfSync, didExitOutOfSync])

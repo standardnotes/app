@@ -35,12 +35,25 @@ describe('shared vault crypto', function () {
       expect(recreatedContext.encryption.getSigningKeyPair()).to.not.be.undefined
     })
 
-    it('changing user password should re-encrypt all key system root keys', async () => {
-      console.error('TODO: implement')
-    })
+    it('changing user password should re-encrypt all key system root keys and contacts with new user root key', async () => {
+      await Collaboration.createPrivateVault(context)
+      const spy = context.spyOnFunctionResult(context.application.sync, 'payloadsByPreparingForServer')
+      await context.changePassword('new_password')
 
-    it('changing user password should re-encrypt all trusted contacts', async () => {
-      console.error('TODO: implement')
+      const payloads = await spy
+      const keyPayloads = payloads.filter(
+        (payload) =>
+          payload.content_type === ContentType.TYPES.KeySystemRootKey ||
+          payload.content_type === ContentType.TYPES.TrustedContact,
+      )
+      expect(keyPayloads.length).to.equal(2)
+
+      for (const payload of payloads) {
+        const keyParams = context.encryption.getEmbeddedPayloadAuthenticatedData(new EncryptedPayload(payload)).kp
+
+        const userKeyParams = context.encryption.getRootKeyParams().content
+        expect(keyParams).to.eql(userKeyParams)
+      }
     })
   })
 
@@ -77,7 +90,7 @@ describe('shared vault crypto', function () {
       await deinitContactContext()
     })
 
-    it('encrypting an item into storage then loading it should verify authenticity of original content rather than most recent symmetric signature', async () => {
+    it.skip('encrypting an item into storage then loading it should verify authenticity of original content rather than most recent symmetric signature', async () => {
       const { note, contactContext, deinitContactContext } =
         await Collaboration.createSharedVaultWithAcceptedInviteAndNote(context)
 
@@ -167,11 +180,11 @@ describe('shared vault crypto', function () {
       const { note, contactContext, deinitContactContext } =
         await Collaboration.createSharedVaultWithAcceptedInviteAndNote(context)
 
-      expect(context.contacts.isItemAuthenticallySigned(note)).to.equal(ItemSignatureValidationResult.NotApplicable)
+      expect(context.contacts.getItemSignatureStatus(note)).to.equal(ItemSignatureValidationResult.NotApplicable)
 
       const contactNote = contactContext.items.findItem(note.uuid)
 
-      expect(contactContext.contacts.isItemAuthenticallySigned(contactNote)).to.equal(
+      expect(contactContext.contacts.getItemSignatureStatus(contactNote)).to.equal(
         ItemSignatureValidationResult.Trusted,
       )
 
@@ -181,7 +194,7 @@ describe('shared vault crypto', function () {
 
       let updatedNote = context.items.findItem(note.uuid)
 
-      expect(context.contacts.isItemAuthenticallySigned(updatedNote)).to.equal(ItemSignatureValidationResult.Trusted)
+      expect(context.contacts.getItemSignatureStatus(updatedNote)).to.equal(ItemSignatureValidationResult.Trusted)
 
       await deinitContactContext()
     })

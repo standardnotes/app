@@ -1,4 +1,5 @@
-import { AnyFeatureDescription, FeatureIdentifier, FindNativeFeature } from '@standardnotes/features'
+import { Uuid } from '@standardnotes/domain-core'
+import { AnyFeatureDescription, NativeFeatureIdentifier, FindNativeFeature } from '@standardnotes/features'
 import { DecryptedItemInterface } from '@standardnotes/models'
 import { Subscription } from '@standardnotes/responses'
 import { FeatureStatus, ItemManagerInterface } from '@standardnotes/services'
@@ -8,20 +9,19 @@ export class GetFeatureStatusUseCase {
   constructor(private items: ItemManagerInterface) {}
 
   execute(dto: {
-    featureId: FeatureIdentifier | string
+    featureId: NativeFeatureIdentifier | Uuid
     firstPartyOnlineSubscription: Subscription | undefined
     firstPartyRoles: { online: string[] } | { offline: string[] } | undefined
     hasPaidAnyPartyOnlineOrOfflineSubscription: boolean
     inContextOfItem?: DecryptedItemInterface
   }): FeatureStatus {
-    if (this.isFreeFeature(dto.featureId as FeatureIdentifier)) {
+    if (this.isFreeFeature(dto.featureId)) {
       return FeatureStatus.Entitled
     }
 
-    const nativeFeature = FindNativeFeature(dto.featureId as FeatureIdentifier)
-
+    const nativeFeature = this.findNativeFeature(dto.featureId)
     if (!nativeFeature) {
-      return this.getThirdPartyFeatureStatus(dto.featureId as string)
+      return this.getThirdPartyFeatureStatus(dto.featureId)
     }
 
     if (nativeFeature.deprecated) {
@@ -37,6 +37,10 @@ export class GetFeatureStatusUseCase {
       firstPartyRoles: dto.firstPartyRoles,
       inContextOfItem: dto.inContextOfItem,
     })
+  }
+
+  findNativeFeature(featureId: NativeFeatureIdentifier | Uuid): AnyFeatureDescription | undefined {
+    return FindNativeFeature(featureId.value)
   }
 
   private getDeprecatedNativeFeatureStatus(dto: {
@@ -95,8 +99,8 @@ export class GetFeatureStatusUseCase {
     return FeatureStatus.Entitled
   }
 
-  private getThirdPartyFeatureStatus(featureId: string): FeatureStatus {
-    const component = this.items.getDisplayableComponents().find((candidate) => candidate.identifier === featureId)
+  private getThirdPartyFeatureStatus(uuid: Uuid): FeatureStatus {
+    const component = this.items.getDisplayableComponents().find((candidate) => candidate.uuid === uuid.value)
 
     if (!component) {
       return FeatureStatus.NoUserSubscription
@@ -109,7 +113,9 @@ export class GetFeatureStatusUseCase {
     return FeatureStatus.Entitled
   }
 
-  private isFreeFeature(featureId: FeatureIdentifier) {
-    return [FeatureIdentifier.DarkTheme, FeatureIdentifier.PlainEditor].includes(featureId)
+  private isFreeFeature(featureId: NativeFeatureIdentifier) {
+    return [NativeFeatureIdentifier.TYPES.DarkTheme, NativeFeatureIdentifier.TYPES.PlainEditor].includes(
+      featureId.value,
+    )
   }
 }

@@ -11,11 +11,15 @@ import {
   CAN_UNDO_COMMAND,
   COMMAND_PRIORITY_CRITICAL,
   FORMAT_TEXT_COMMAND,
+  GridSelection,
+  NodeSelection,
   REDO_COMMAND,
+  RangeSelection,
+  SELECTION_CHANGE_COMMAND,
   UNDO_COMMAND,
 } from 'lexical'
 import { mergeRegister } from '@lexical/utils'
-import { $isLinkNode, TOGGLE_LINK_COMMAND } from '@lexical/link'
+import { $isLinkNode, $isAutoLinkNode, TOGGLE_LINK_COMMAND } from '@lexical/link'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { GetAlignmentBlocks } from '../Blocks/Alignment'
 import { GetBulletedListBlock } from '../Blocks/BulletedList'
@@ -38,6 +42,7 @@ import { SUPER_TOGGLE_SEARCH } from '@standardnotes/ui-services'
 import { useApplication } from '@/Components/ApplicationProvider'
 import { GetRemoteImageBlock } from '../Blocks/RemoteImage'
 import { InsertRemoteImageDialog } from '../RemoteImagePlugin/RemoteImagePlugin'
+import LinkEditor from '../FloatingLinkEditorPlugin/LinkEditor'
 
 const MobileToolbarPlugin = () => {
   const application = useApplication()
@@ -45,10 +50,12 @@ const MobileToolbarPlugin = () => {
   const [modal, showModal] = useModal()
 
   const [isInEditor, setIsInEditor] = useState(false)
+  const [isInLinkEditor, setIsInLinkEditor] = useState(false)
   const [isInToolbar, setIsInToolbar] = useState(false)
   const isMobile = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
 
   const toolbarRef = useRef<HTMLDivElement>(null)
+  const linkEditorRef = useRef<HTMLDivElement>(null)
   const backspaceButtonRef = useRef<HTMLButtonElement>(null)
 
   const insertLink = useCallback(() => {
@@ -214,8 +221,10 @@ const MobileToolbarPlugin = () => {
     const handleBlur = (event: FocusEvent) => {
       const elementToBeFocused = event.relatedTarget as Node
       const toolbarContainsElementToFocus = toolbarRef.current && toolbarRef.current.contains(elementToBeFocused)
+      const linkEditorContainsElementToFocus =
+        linkEditorRef.current && linkEditorRef.current.contains(elementToBeFocused)
       const willFocusBackspaceButton = backspaceButtonRef.current && elementToBeFocused === backspaceButtonRef.current
-      if (toolbarContainsElementToFocus || willFocusBackspaceButton) {
+      if (toolbarContainsElementToFocus || linkEditorContainsElementToFocus || willFocusBackspaceButton) {
         return
       }
       setIsInEditor(false)
@@ -231,31 +240,116 @@ const MobileToolbarPlugin = () => {
   }, [editor])
 
   useEffect(() => {
-    if (!toolbarRef.current) {
-      return
-    }
-
     const toolbar = toolbarRef.current
+    const linkEditor = linkEditorRef.current
 
-    const handleFocus = () => setIsInToolbar(true)
-    const handleBlur = (event: FocusEvent) => {
+    const handleToolbarFocus = () => setIsInToolbar(true)
+    const handleLinkEditorFocus = () => setIsInLinkEditor(true)
+    const handleToolbarBlur = (event: FocusEvent) => {
       const elementToBeFocused = event.relatedTarget as Node
       if (elementToBeFocused === backspaceButtonRef.current) {
         return
       }
       setIsInToolbar(false)
     }
+    const handleLinkEditorBlur = (event: FocusEvent) => {
+      const elementToBeFocused = event.relatedTarget as Node
+      if (elementToBeFocused === backspaceButtonRef.current) {
+        return
+      }
+      setIsInLinkEditor(false)
+    }
 
-    toolbar.addEventListener('focus', handleFocus)
-    toolbar.addEventListener('blur', handleBlur)
+    if (toolbar) {
+      toolbar.addEventListener('focus', handleToolbarFocus)
+      toolbar.addEventListener('blur', handleToolbarBlur)
+    }
+
+    if (linkEditor) {
+      linkEditor.addEventListener('focus', handleLinkEditorFocus)
+      linkEditor.addEventListener('blur', handleLinkEditorBlur)
+    }
 
     return () => {
-      toolbar?.removeEventListener('focus', handleFocus)
-      toolbar?.removeEventListener('blur', handleBlur)
+      toolbar?.removeEventListener('focus', handleToolbarFocus)
+      toolbar?.removeEventListener('blur', handleToolbarBlur)
+      linkEditor?.removeEventListener('focus', handleLinkEditorFocus)
+      linkEditor?.removeEventListener('blur', handleLinkEditorBlur)
     }
   }, [])
 
-  const isFocusInEditorOrToolbar = isInEditor || isInToolbar
+  const [isSelectionLink, setIsSelectionLink] = useState(false)
+  const [isSelectionAutoLink, setIsSelectionAutoLink] = useState(false)
+  const [linkUrl, setLinkUrl] = useState('')
+  const [isLinkEditMode, setIsLinkEditMode] = useState(false)
+  const [lastSelection, setLastSelection] = useState<RangeSelection | GridSelection | NodeSelection | null>(null)
+
+  const updateEditorSelection = useCallback(() => {
+    editor.getEditorState().read(() => {
+      const selection = $getSelection()
+      const nativeSelection = window.getSelection()
+      const activeElement = document.activeElement
+      const rootElement = editor.getRootElement()
+
+      if (!$isRangeSelection(selection)) {
+        return
+      }
+
+      const node = getSelectedNode(selection)
+      const parent = node.getParent()
+
+      if ($isLinkNode(parent) || $isLinkNode(node)) {
+        setIsSelectionLink(true)
+      } else {
+        setIsSelectionLink(false)
+      }
+
+      if ($isAutoLinkNode(parent) || $isAutoLinkNode(node)) {
+        setIsSelectionAutoLink(true)
+      } else {
+        setIsSelectionAutoLink(false)
+      }
+
+      if ($isLinkNode(parent)) {
+        setLinkUrl(parent.getURL())
+      } else if ($isLinkNode(node)) {
+        setLinkUrl(node.getURL())
+      } else {
+        setLinkUrl('')
+      }
+
+      if (
+        selection !== null &&
+        nativeSelection !== null &&
+        rootElement !== null &&
+        rootElement.contains(nativeSelection.anchorNode)
+      ) {
+        setLastSelection(selection)
+      } else if (!activeElement || activeElement.id !== 'link-input') {
+        setLastSelection(null)
+        setIsLinkEditMode(false)
+        setLinkUrl('')
+      }
+    })
+  }, [editor])
+
+  useEffect(() => {
+    return mergeRegister(
+      editor.registerCommand(
+        SELECTION_CHANGE_COMMAND,
+        () => {
+          updateEditorSelection()
+          return false
+        },
+        COMMAND_PRIORITY_CRITICAL,
+      ),
+      editor.registerUpdateListener(() => {
+        updateEditorSelection()
+      }),
+    )
+  }, [editor, updateEditorSelection])
+
+  const isFocusInEditorOrToolbar = isInEditor || isInToolbar || isInLinkEditor
   if (!isMobile || !isFocusInEditorOrToolbar) {
     return null
   }
@@ -263,32 +357,46 @@ const MobileToolbarPlugin = () => {
   return (
     <>
       {modal}
-      <div className="flex w-full flex-shrink-0 border-t border-border bg-contrast">
-        <div
-          tabIndex={-1}
-          className={classNames('flex items-center gap-1 overflow-x-auto', '[&::-webkit-scrollbar]:h-0')}
-          ref={toolbarRef}
-        >
-          {items.map((item) => {
-            return (
-              <button
-                className="flex items-center justify-center rounded px-3 py-3 disabled:opacity-50"
-                aria-label={item.name}
-                onClick={item.onSelect}
-                key={item.name}
-                disabled={item.disabled}
-              >
-                <Icon type={item.iconName} size="medium" className="!text-current [&>path]:!text-current" />
-              </button>
-            )
-          })}
+      <div className="bg-contrast" id="super-mobile-toolbar">
+        {isSelectionLink && (
+          <div className="border-t border-border px-2" ref={linkEditorRef}>
+            <LinkEditor
+              linkUrl={linkUrl}
+              isEditMode={isLinkEditMode}
+              setEditMode={setIsLinkEditMode}
+              isAutoLink={isSelectionAutoLink}
+              editor={editor}
+              lastSelection={lastSelection}
+            />
+          </div>
+        )}
+        <div className="flex w-full flex-shrink-0 border-t border-border bg-contrast">
+          <div
+            tabIndex={-1}
+            className={classNames('flex items-center gap-1 overflow-x-auto', '[&::-webkit-scrollbar]:h-0')}
+            ref={toolbarRef}
+          >
+            {items.map((item) => {
+              return (
+                <button
+                  className="flex items-center justify-center rounded px-3 py-3 disabled:opacity-50"
+                  aria-label={item.name}
+                  onClick={item.onSelect}
+                  key={item.name}
+                  disabled={item.disabled}
+                >
+                  <Icon type={item.iconName} size="medium" className="!text-current [&>path]:!text-current" />
+                </button>
+              )
+            })}
+          </div>
+          <button
+            className="flex flex-shrink-0 items-center justify-center rounded border-l border-border px-3 py-3"
+            aria-label="Dismiss keyboard"
+          >
+            <Icon type="keyboard-close" size="medium" />
+          </button>
         </div>
-        <button
-          className="flex flex-shrink-0 items-center justify-center rounded border-l border-border px-3 py-3"
-          aria-label="Dismiss keyboard"
-        >
-          <Icon type="keyboard-close" size="medium" />
-        </button>
       </div>
     </>
   )

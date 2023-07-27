@@ -4,8 +4,8 @@ import { SharedVaultInviteServerHash, isErrorResponse } from '@standardnotes/res
 import { SendVaultKeyChangedMessage } from './SendVaultKeyChangedMessage'
 import { PkcKeyPair } from '@standardnotes/sncrypto-common'
 import { Result, UseCaseInterface } from '@standardnotes/domain-core'
-import { InviteToVault } from './InviteToVault'
-import { GetVaultContacts } from './GetVaultContacts'
+import { InviteToVault } from '../../VaultInvite/UseCase/InviteToVault'
+import { GetVaultContacts } from '../../VaultUser/UseCase/GetVaultContacts'
 import { DecryptOwnMessage } from '../../Encryption/UseCase/Asymmetric/DecryptOwnMessage'
 import { FindContact } from '../../Contacts/UseCase/FindContact'
 
@@ -44,7 +44,10 @@ export class NotifyVaultUsersOfKeyRotation implements UseCaseInterface<void> {
 
     await this.deleteAllInvites(params.sharedVault.sharing.sharedVaultUuid)
 
-    const contacts = await this.getVaultContacts.execute(params.sharedVault.sharing.sharedVaultUuid)
+    const contacts = await this.getVaultContacts.execute({
+      sharedVaultUuid: params.sharedVault.sharing.sharedVaultUuid,
+      readFromCache: false,
+    })
 
     for (const invite of existingInvites.getValue()) {
       const recipient = this.findContact.execute({ userUuid: invite.user_uuid })
@@ -67,7 +70,7 @@ export class NotifyVaultUsersOfKeyRotation implements UseCaseInterface<void> {
         sharedVault: params.sharedVault,
         sharedVaultContacts: !contacts.isFailed() ? contacts.getValue() : [],
         recipient: recipient.getValue(),
-        permissions: invite.permissions,
+        permission: invite.permission,
         senderUuid: params.senderUuid,
       })
     }
