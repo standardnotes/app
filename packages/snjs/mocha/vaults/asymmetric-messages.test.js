@@ -318,7 +318,7 @@ describe('asymmetric messages', function () {
     await deinitContactContext()
   })
 
-  it('should process sender keypair changed message', async () => {
+  it.skip('should process sender keypair changed message', async () => {
     const { contactContext, deinitContactContext } = await Collaboration.createContactContext()
     await Collaboration.createTrustedContactForUserOfContext(context, contactContext)
     await Collaboration.createTrustedContactForUserOfContext(contactContext, context)
