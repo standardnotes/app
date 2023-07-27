@@ -141,7 +141,7 @@ const ChangeEditorMultipleMenu = ({ application, notes, setDisableClickOutside }
                 }
                 return (
                   <MenuItem
-                    key={item.uiFeature.uniqueIdentifier}
+                    key={item.uiFeature.uniqueIdentifier.value}
                     onClick={onClickEditorItem}
                     className={'flex-row-reversed py-2'}
                   >

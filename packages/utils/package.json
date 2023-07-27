@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/utils",
-  "version": "1.17.6",
+  "version": "1.17.7",
   "engines": {
     "node": ">=16.0.0 <17.0.0"
   },
@@ -22,7 +22,7 @@
     "prebuild": "yarn clean",
     "build": "tsc -p tsconfig.json",
     "lint": "eslint src --ext .ts",
-    "test": "jest spec"
+    "test": "jest"
   },
   "dependencies": {
     "@standardnotes/common": "^1.50.0",

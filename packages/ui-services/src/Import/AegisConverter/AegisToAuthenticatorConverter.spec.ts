@@ -1,5 +1,5 @@
 import { WebApplicationInterface } from './../../WebApplication/WebApplicationInterface'
-import { FeatureIdentifier, NoteType } from '@standardnotes/features'
+import { NativeFeatureIdentifier, NoteType } from '@standardnotes/features'
 import { AegisToAuthenticatorConverter } from './AegisToAuthenticatorConverter'
 import data from './testData'
 
@@ -57,7 +57,7 @@ describe('AegisConverter', () => {
       '[{"service":"TestMail","account":"test@test.com","secret":"TESTMAILTESTMAILTESTMAILTESTMAIL","notes":"Some note"},{"service":"Some Service","account":"test@test.com","secret":"SOMESERVICESOMESERVICESOMESERVIC","notes":"Some other service"}]',
     )
     expect(result.content.noteType).toBe(NoteType.Authentication)
-    expect(result.content.editorIdentifier).toBe(FeatureIdentifier.TokenVaultEditor)
+    expect(result.content.editorIdentifier).toBe(NativeFeatureIdentifier.TYPES.TokenVaultEditor)
   })
 
   it('should create note from entries without editor info', () => {

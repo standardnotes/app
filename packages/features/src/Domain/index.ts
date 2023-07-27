@@ -1,5 +1,5 @@
 export * from './Feature/AnyFeatureDescription'
-export * from './Feature/FeatureIdentifier'
+export * from './Feature/NativeFeatureIdentifier'
 export * from './Feature/Features'
 export * from './Feature/TypeGuards'
 
@@ -22,4 +22,3 @@ export * from './Component/ComponentFlag'
 export * from './Component/ComponentPermission'
 export * from './Component/NoteType'
 export * from './Component/ThemeDockIcon'
-export * from './Component/EditorIdentifier'

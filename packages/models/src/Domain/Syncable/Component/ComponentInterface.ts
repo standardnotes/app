@@ -1,10 +1,4 @@
-import {
-  ComponentArea,
-  ComponentPermission,
-  FeatureIdentifier,
-  NoteType,
-  ThirdPartyFeatureDescription,
-} from '@standardnotes/features'
+import { ComponentArea, ComponentPermission, NoteType, ThirdPartyFeatureDescription } from '@standardnotes/features'
 import { ComponentPackageInfo } from './PackageInfo'
 import { DecryptedItemInterface } from '../../Abstract/Item'
 import { ComponentContent } from './ComponentContent'
@@ -35,7 +29,7 @@ export interface ComponentInterface extends DecryptedItemInterface<ComponentCont
   isExplicitlyDisabledForItem(uuid: string): boolean
   legacyIsDefaultEditor(): boolean
 
-  get identifier(): FeatureIdentifier
+  get identifier(): string
   get noteType(): NoteType
   get displayName(): string
   get deprecationMessage(): string | undefined

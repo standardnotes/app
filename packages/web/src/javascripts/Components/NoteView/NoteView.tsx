@@ -8,7 +8,7 @@ import { ElementIds } from '@/Constants/ElementIDs'
 import { StringDeleteNote, STRING_DELETE_LOCKED_ATTEMPT, STRING_DELETE_PLACEHOLDER_ATTEMPT } from '@/Constants/Strings'
 import { log, LoggingDomain } from '@/Logging'
 import { debounce, isDesktopApplication, isMobileScreen } from '@/Utils'
-import { classNames, pluralize } from '@standardnotes/utils'
+import { classNames, compareArrayReferences, pluralize } from '@standardnotes/utils'
 import {
   ApplicationEvent,
   ComponentArea,
@@ -19,7 +19,6 @@ import {
   EditorLineWidth,
   IframeComponentFeatureDescription,
   isUIFeatureAnIframeFeature,
-  isPayloadSourceInternalChange,
   isPayloadSourceRetrieved,
   NoteType,
   PayloadEmitSource,
@@ -94,7 +93,6 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
   onEditorComponentLoad?: () => void
 
   private removeTrashKeyObserver?: () => void
-  private removeComponentStreamObserver?: () => void
   private removeNoteStreamObserver?: () => void
   private removeComponentManagerObserver?: () => void
   private removeInnerNoteObserver?: () => void
@@ -144,9 +142,6 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
     super.deinit()
     ;(this.controller as unknown) = undefined
 
-    this.removeComponentStreamObserver?.()
-    ;(this.removeComponentStreamObserver as unknown) = undefined
-
     this.removeNoteStreamObserver?.()
     ;(this.removeNoteStreamObserver as unknown) = undefined
 
@@ -187,13 +182,18 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
   }
 
   override shouldComponentUpdate(_nextProps: Readonly<NoteViewProps>, nextState: Readonly<State>): boolean {
-    const complexObjects: (keyof State)[] = ['availableStackComponents', 'stackComponentViewers']
     for (const key of Object.keys(nextState) as (keyof State)[]) {
-      if (complexObjects.includes(key)) {
-        continue
-      }
       const prevValue = this.state[key]
       const nextValue = nextState[key]
+
+      if (Array.isArray(prevValue) && Array.isArray(nextValue)) {
+        const areEqual = compareArrayReferences<unknown>(prevValue, nextValue)
+        if (!areEqual) {
+          log(LoggingDomain.NoteView, 'Rendering due to array state change', key, prevValue, nextValue)
+          return true
+        }
+        continue
+      }
 
       if (prevValue !== nextValue) {
         log(LoggingDomain.NoteView, 'Rendering due to state change', key, prevValue, nextValue)
@@ -340,7 +340,8 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
 
     switch (eventName) {
       case ApplicationEvent.PreferencesChanged:
-        this.reloadPreferences().catch(console.error)
+        void this.reloadPreferences()
+        void this.reloadStackComponents()
         break
       case ApplicationEvent.HighLatencySync:
         this.setState({ syncTakingTooLong: true })
@@ -428,23 +429,6 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
   }
 
   streamItems() {
-    this.removeComponentStreamObserver = this.application.streamItems(
-      ContentType.TYPES.Component,
-      async ({ source }) => {
-        log(LoggingDomain.NoteView, 'On component stream observer', PayloadEmitSource[source])
-        if (isPayloadSourceInternalChange(source) || source === PayloadEmitSource.InitialObserverRegistrationPush) {
-          return
-        }
-
-        if (!this.note) {
-          return
-        }
-
-        await this.reloadStackComponents()
-        this.debounceReloadEditorComponent()
-      },
-    )
-
     this.removeNoteStreamObserver = this.application.streamItems<SNNote>(ContentType.TYPES.Note, async () => {
       if (!this.note) {
         return
@@ -740,25 +724,22 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
 
   async reloadStackComponents() {
     log(LoggingDomain.NoteView, 'Reload stack components')
-    const stackComponents = sortAlphabetically(
+    const enabledComponents = sortAlphabetically(
       this.application.componentManager
         .thirdPartyComponentsForArea(ComponentArea.EditorStack)
         .filter((component) => this.application.componentManager.isComponentActive(component)),
     )
-    const enabledComponents = stackComponents.filter((component) => {
-      return component.isExplicitlyEnabledForItem(this.note.uuid)
-    })
 
     const needsNewViewer = enabledComponents.filter((component) => {
       const hasExistingViewer = this.state.stackComponentViewers.find(
-        (viewer) => viewer.componentUniqueIdentifier === component.uuid,
+        (viewer) => viewer.componentUniqueIdentifier.value === component.uuid,
       )
       return !hasExistingViewer
     })
 
     const needsDestroyViewer = this.state.stackComponentViewers.filter((viewer) => {
       const viewerComponentExistsInEnabledComponents = enabledComponents.find((component) => {
-        return component.uuid === viewer.componentUniqueIdentifier
+        return component.uuid === viewer.componentUniqueIdentifier.value
       })
       return !viewerComponentExistsInEnabledComponents
     })
@@ -779,13 +760,15 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
       this.application.componentManager.destroyComponentViewer(viewer)
     }
     this.setState({
-      availableStackComponents: stackComponents,
+      availableStackComponents: enabledComponents,
       stackComponentViewers: newViewers,
     })
   }
 
   stackComponentExpanded = (component: ComponentInterface): boolean => {
-    return !!this.state.stackComponentViewers.find((viewer) => viewer.componentUniqueIdentifier === component.uuid)
+    return !!this.state.stackComponentViewers.find(
+      (viewer) => viewer.componentUniqueIdentifier.value === component.uuid,
+    )
   }
 
   toggleStackComponent = async (component: ComponentInterface) => {

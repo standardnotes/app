@@ -3,7 +3,7 @@ import { EditorFeatureDescription } from '../Feature/EditorFeatureDescription'
 import { IframeComponentFeatureDescription } from '../Feature/IframeComponentFeatureDescription'
 import { ContentType, RoleName } from '@standardnotes/domain-core'
 import { PermissionName } from '../Permission/PermissionName'
-import { FeatureIdentifier } from '../Feature/FeatureIdentifier'
+import { NativeFeatureIdentifier } from '../Feature/NativeFeatureIdentifier'
 import { NoteType } from '../Component/NoteType'
 import { FillIframeEditorDefaults } from './Utilities/FillEditorComponentDefaults'
 import { ComponentAction } from '../Component/ComponentAction'
@@ -12,7 +12,7 @@ import { ComponentArea } from '../Component/ComponentArea'
 export function GetDeprecatedFeatures(): AnyFeatureDescription[] {
   const bold: EditorFeatureDescription = FillIframeEditorDefaults({
     name: 'Alternative Rich Text',
-    identifier: FeatureIdentifier.DeprecatedBoldEditor,
+    identifier: NativeFeatureIdentifier.TYPES.DeprecatedBoldEditor,
     note_type: NoteType.RichText,
     file_type: 'html',
     component_permissions: [
@@ -39,7 +39,7 @@ export function GetDeprecatedFeatures(): AnyFeatureDescription[] {
 
   const markdownBasic: EditorFeatureDescription = FillIframeEditorDefaults({
     name: 'Basic Markdown',
-    identifier: FeatureIdentifier.DeprecatedMarkdownBasicEditor,
+    identifier: NativeFeatureIdentifier.TYPES.DeprecatedMarkdownBasicEditor,
     note_type: NoteType.Markdown,
     spellcheckControl: true,
     file_type: 'md',
@@ -52,7 +52,7 @@ export function GetDeprecatedFeatures(): AnyFeatureDescription[] {
 
   const markdownAlt: EditorFeatureDescription = FillIframeEditorDefaults({
     name: 'Markdown Alternative',
-    identifier: FeatureIdentifier.DeprecatedMarkdownVisualEditor,
+    identifier: NativeFeatureIdentifier.TYPES.DeprecatedMarkdownVisualEditor,
     note_type: NoteType.Markdown,
     file_type: 'md',
     deprecated: true,
@@ -66,7 +66,7 @@ export function GetDeprecatedFeatures(): AnyFeatureDescription[] {
 
   const markdownMinimist: EditorFeatureDescription = FillIframeEditorDefaults({
     name: 'Minimal Markdown',
-    identifier: FeatureIdentifier.DeprecatedMarkdownMinimistEditor,
+    identifier: NativeFeatureIdentifier.TYPES.DeprecatedMarkdownMinimistEditor,
     note_type: NoteType.Markdown,
     file_type: 'md',
     index_path: 'index.html',
@@ -80,7 +80,7 @@ export function GetDeprecatedFeatures(): AnyFeatureDescription[] {
 
   const markdownMath: EditorFeatureDescription = FillIframeEditorDefaults({
     name: 'Markdown with Math',
-    identifier: FeatureIdentifier.DeprecatedMarkdownMathEditor,
+    identifier: NativeFeatureIdentifier.TYPES.DeprecatedMarkdownMathEditor,
     spellcheckControl: true,
     permission_name: PermissionName.MarkdownMathEditor,
     note_type: NoteType.Markdown,
@@ -94,7 +94,7 @@ export function GetDeprecatedFeatures(): AnyFeatureDescription[] {
 
   const filesafe: IframeComponentFeatureDescription = FillIframeEditorDefaults({
     name: 'FileSafe',
-    identifier: FeatureIdentifier.DeprecatedFileSafe,
+    identifier: NativeFeatureIdentifier.TYPES.DeprecatedFileSafe,
     component_permissions: [
       {
         name: ComponentAction.StreamContextItem,

@@ -1,4 +1,4 @@
-import { UIFeature, FeatureIdentifier, FeatureStatus, ThemeFeatureDescription } from '@standardnotes/snjs'
+import { UIFeature, NativeFeatureIdentifier, FeatureStatus, ThemeFeatureDescription } from '@standardnotes/snjs'
 import { FunctionComponent, MouseEventHandler, useCallback, useMemo } from 'react'
 import Icon from '@/Components/Icon/Icon'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
@@ -26,8 +26,8 @@ const ThemesMenuButton: FunctionComponent<Props> = ({ uiFeature }) => {
     [application, uiFeature.featureIdentifier],
   )
   const isEntitledToTheme = useMemo(
-    () => application.features.getFeatureStatus(uiFeature.featureIdentifier) === FeatureStatus.Entitled,
-    [application, uiFeature.featureIdentifier],
+    () => application.features.getFeatureStatus(uiFeature.uniqueIdentifier) === FeatureStatus.Entitled,
+    [application, uiFeature.uniqueIdentifier],
   )
   const canActivateTheme = useMemo(() => isEntitledToTheme || isThirdPartyTheme, [isEntitledToTheme, isThirdPartyTheme])
 
@@ -55,10 +55,10 @@ const ThemesMenuButton: FunctionComponent<Props> = ({ uiFeature }) => {
   )
 
   const isMobile = application.isNativeMobileWeb() || isMobileScreen()
-  const shouldHideButton = uiFeature.featureIdentifier === FeatureIdentifier.DynamicTheme && isMobile
+  const shouldHideButton = uiFeature.featureIdentifier === NativeFeatureIdentifier.TYPES.DynamicTheme && isMobile
 
   const darkThemeShortcut = useMemo(() => {
-    if (uiFeature.featureIdentifier === FeatureIdentifier.DarkTheme) {
+    if (uiFeature.featureIdentifier === NativeFeatureIdentifier.TYPES.DarkTheme) {
       return commandService.keyboardShortcutForCommand(TOGGLE_DARK_MODE_COMMAND)
     }
   }, [commandService, uiFeature.featureIdentifier])

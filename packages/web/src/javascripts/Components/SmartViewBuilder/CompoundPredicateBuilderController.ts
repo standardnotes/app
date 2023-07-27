@@ -1,4 +1,4 @@
-import { FeatureIdentifier } from '@standardnotes/features'
+import { NativeFeatureIdentifier } from '@standardnotes/features'
 import { NoteType, PredicateCompoundOperator, PredicateJsonForm } from '@standardnotes/snjs'
 import { makeObservable, observable, action } from 'mobx'
 import { PredicateKeypath, PredicateKeypathTypes } from './PredicateKeypaths'
@@ -59,7 +59,7 @@ export class CompoundPredicateBuilderController {
           this.setPredicate(index, { value: Object.values(NoteType)[0] })
           break
         case 'editorIdentifier':
-          this.setPredicate(index, { value: FeatureIdentifier.PlainEditor })
+          this.setPredicate(index, { value: NativeFeatureIdentifier.TYPES.PlainEditor })
           break
         case 'date':
           this.setPredicate(index, { value: '1.days.ago' })

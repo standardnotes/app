@@ -14,14 +14,10 @@ export function isUIFeatureAnIframeFeature(
   return isIframeComponentFeatureDescription(x.featureDescription)
 }
 
-export function isComponentOrFeatureDescriptionAComponent(
-  x: ComponentInterface | UIFeatureDescriptionTypes,
-): x is ComponentInterface {
+export function isItemBasedFeature(x: ComponentInterface | UIFeatureDescriptionTypes): x is ComponentInterface {
   return 'uuid' in x
 }
 
-export function isComponentOrFeatureDescriptionAFeatureDescription(
-  x: ComponentInterface | AnyFeatureDescription,
-): x is AnyFeatureDescription {
+export function isNativeFeature(x: ComponentInterface | AnyFeatureDescription): x is AnyFeatureDescription {
   return !('uuid' in x)
 }

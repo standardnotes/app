@@ -1,6 +1,6 @@
 import { ContentType } from '@standardnotes/domain-core'
 import {
-  FeatureIdentifier,
+  NativeFeatureIdentifier,
   FindNativeFeature,
   IframeComponentFeatureDescription,
   UIFeatureDescriptionTypes,
@@ -21,7 +21,7 @@ import { GetFeatureUrl } from './GetFeatureUrl'
 
 const desktopExtHost = 'http://localhost:123'
 
-const nativeFeatureAsUIFeature = <F extends UIFeatureDescriptionTypes>(identifier: FeatureIdentifier) => {
+const nativeFeatureAsUIFeature = <F extends UIFeatureDescriptionTypes>(identifier: string) => {
   return new UIFeature(FindNativeFeature<F>(identifier)!)
 }
 
@@ -35,7 +35,7 @@ const thirdPartyFeature = () => {
         local_url: 'sn://Extensions/non-native-identifier/dist/index.html',
         hosted_url: 'https://example.com/component',
         package_info: {
-          identifier: 'non-native-identifier' as FeatureIdentifier,
+          identifier: 'non-native-identifier',
           expires_at: new Date().getTime(),
           availableInRoles: [],
         } as unknown as jest.Mocked<ComponentPackageInfo>,
@@ -75,7 +75,9 @@ describe('GetFeatureUrl', () => {
     })
 
     it('returns native path for native component', () => {
-      const feature = nativeFeatureAsUIFeature<IframeComponentFeatureDescription>(FeatureIdentifier.MarkdownProEditor)!
+      const feature = nativeFeatureAsUIFeature<IframeComponentFeatureDescription>(
+        NativeFeatureIdentifier.TYPES.MarkdownProEditor,
+      )!
       const url = usecase.execute(feature)
       expect(url).toEqual(
         `${desktopExtHost}/components/${feature.featureIdentifier}/${feature.asFeatureDescription.index_path}`,
@@ -84,7 +86,7 @@ describe('GetFeatureUrl', () => {
 
     it('returns native path for deprecated native component', () => {
       const feature = nativeFeatureAsUIFeature<IframeComponentFeatureDescription>(
-        FeatureIdentifier.DeprecatedBoldEditor,
+        NativeFeatureIdentifier.TYPES.DeprecatedBoldEditor,
       )!
       const url = usecase.execute(feature)
       expect(url).toEqual(
@@ -122,7 +124,9 @@ describe('GetFeatureUrl', () => {
     })
 
     it('returns native path for native feature', () => {
-      const feature = nativeFeatureAsUIFeature<IframeComponentFeatureDescription>(FeatureIdentifier.MarkdownProEditor)
+      const feature = nativeFeatureAsUIFeature<IframeComponentFeatureDescription>(
+        NativeFeatureIdentifier.TYPES.MarkdownProEditor,
+      )
       const url = usecase.execute(feature)
       expect(url).toEqual(
         `http://localhost/components/assets/${feature.featureIdentifier}/${feature.asFeatureDescription.index_path}`,

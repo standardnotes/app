@@ -369,9 +369,9 @@ describe('app models', () => {
       editorIdentifier: 'foo-editor',
     })
 
-    expect(this.application.componentManager.editorForNote(note).uniqueIdentifier).to.equal(component.uuid)
+    expect(this.application.componentManager.editorForNote(note).uniqueIdentifier.value).to.equal(component.uuid)
 
     const duplicate = await this.application.mutator.duplicateItem(note, true)
-    expect(this.application.componentManager.editorForNote(duplicate).uniqueIdentifier).to.equal(component.uuid)
+    expect(this.application.componentManager.editorForNote(duplicate).uniqueIdentifier.value).to.equal(component.uuid)
   })
 })

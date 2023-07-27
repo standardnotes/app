@@ -29,6 +29,9 @@ import {
   UserKeyPairChangedEventData,
   InternalFeatureService,
   InternalFeature,
+  ApplicationEvent,
+  ApplicationStageChangedEventPayload,
+  ApplicationStage,
 } from '@standardnotes/services'
 import { Base64String, PkcKeyPair, PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import {
@@ -112,8 +115,17 @@ export class SessionManager
   }
 
   async handleEvent(event: InternalEventInterface): Promise<void> {
-    if (event.type === ApiServiceEvent.SessionRefreshed) {
-      this.httpService.setSession((event.payload as SessionRefreshedData).session)
+    switch (event.type) {
+      case ApiServiceEvent.SessionRefreshed:
+        this.httpService.setSession((event.payload as SessionRefreshedData).session)
+        break
+
+      case ApplicationEvent.ApplicationStageChanged: {
+        const stage = (event.payload as ApplicationStageChangedEventPayload).stage
+        if (stage === ApplicationStage.StorageDecrypted_09) {
+          await this.initializeFromDisk()
+        }
+      }
     }
   }
 
@@ -142,7 +154,7 @@ export class SessionManager
     this.apiService.setUser(user)
   }
 
-  async initializeFromDisk(): Promise<void> {
+  private async initializeFromDisk(): Promise<void> {
     this.memoizeUser(this.storage.getValue(StorageKey.User))
 
     if (!this.user) {

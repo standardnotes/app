@@ -168,7 +168,7 @@ const IframeFeatureView: FunctionComponent<Props> = ({ onLoad, componentViewer, 
     const unregisterDesktopObserver = application
       .getDesktopService()
       ?.registerUpdateObserver((updatedComponent: ComponentInterface) => {
-        if (updatedComponent.uuid === uiFeature.uniqueIdentifier) {
+        if (updatedComponent.uuid === uiFeature.uniqueIdentifier.value) {
           requestReload?.(componentViewer)
         }
       })

@@ -3,7 +3,7 @@ import {
   ComponentInterface,
   UIFeature,
   ContentType,
-  FeatureIdentifier,
+  NativeFeatureIdentifier,
   PreferencesServiceEvent,
   ThemeFeatureDescription,
 } from '@standardnotes/snjs'
@@ -54,7 +54,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ quickSettingsMenuCont
         (component) =>
           !component.isTheme() &&
           [ComponentArea.EditorStack].includes(component.area) &&
-          component.identifier !== FeatureIdentifier.DeprecatedFoldersComponent,
+          component.identifier !== NativeFeatureIdentifier.TYPES.DeprecatedFoldersComponent,
       )
 
     setEditorStackComponents(toggleableComponents)
@@ -100,7 +100,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ quickSettingsMenuCont
 
   const toggleEditorStackComponent = useCallback(
     (component: ComponentInterface) => {
-      application.componentManager.toggleComponent(component).catch(console.error)
+      void application.componentManager.toggleComponent(component)
     },
     [application],
   )
@@ -141,7 +141,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ quickSettingsMenuCont
         Default
       </MenuRadioButtonItem>
       {themes.map((theme) => (
-        <ThemesMenuButton uiFeature={theme} key={theme.uniqueIdentifier} />
+        <ThemesMenuButton uiFeature={theme} key={theme.uniqueIdentifier.value} />
       ))}
       <HorizontalSeparator classes="my-2" />
       <FocusModeSwitch
