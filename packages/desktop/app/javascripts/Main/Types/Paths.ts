@@ -36,11 +36,19 @@ export const Paths = {
   get userDataDir(): string {
     return app.getPath('userData')
   },
-  get homeDir(): string {
-    return app.getPath('home')
+  get homeDir(): string | undefined {
+    try {
+      return app.getPath('home')
+    } catch (error) {
+      return undefined
+    }
   },
-  get documentsDir(): string {
-    return app.getPath('documents')
+  get documentsDir(): string | undefined {
+    try {
+      return app.getPath('documents')
+    } catch (error) {
+      return undefined
+    }
   },
   get tempDir(): string {
     return app.getPath('temp')

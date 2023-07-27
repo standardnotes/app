@@ -247,7 +247,7 @@ export class RemoteBridge implements CrossProcessBridge {
     return this.fileBackups.migrateLegacyFileBackupsToNewStructure(newPath)
   }
 
-  getUserDocumentsDirectory(): Promise<string> {
+  getUserDocumentsDirectory(): Promise<string | undefined> {
     return this.fileBackups.getUserDocumentsDirectory()
   }
 
