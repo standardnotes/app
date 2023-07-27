@@ -48,7 +48,10 @@ class MappingFileHandler {
     return new MappingFileHandler(mapping, filesManager)
   }
 
-  constructor(private mapping: MappingFile, private filesManager: FilesManagerInterface) {}
+  constructor(
+    private mapping: MappingFile,
+    private filesManager: FilesManagerInterface,
+  ) {}
 
   get = (componendId: string) => {
     return this.mapping[componendId]

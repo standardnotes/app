@@ -5,7 +5,10 @@ import { SettingName } from '@standardnotes/settings'
 import { SettingsClientInterface } from '@Lib/Services/Settings/SettingsClientInterface'
 
 export class GetRecoveryCodes implements UseCaseInterface<string> {
-  constructor(private authClient: AuthClientInterface, private settingsClient: SettingsClientInterface) {}
+  constructor(
+    private authClient: AuthClientInterface,
+    private settingsClient: SettingsClientInterface,
+  ) {}
 
   async execute(): Promise<Result<string>> {
     const existingRecoveryCodes = await this.settingsClient.getSetting(

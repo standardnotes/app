@@ -14,4 +14,4 @@ const PREFERENCE_IDS = [
   'whats-new',
 ] as const
 
-export type PreferenceId = typeof PREFERENCE_IDS[number]
+export type PreferenceId = (typeof PREFERENCE_IDS)[number]

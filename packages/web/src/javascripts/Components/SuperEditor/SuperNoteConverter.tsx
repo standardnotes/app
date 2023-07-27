@@ -156,7 +156,7 @@ const SuperNoteConverter = ({
 
   return (
     <Modal
-      title={`Convert to ${name}`}
+      title={`Convert to ${uiFeature.displayName}`}
       close={closeDialog}
       actions={modalActions}
       className={{

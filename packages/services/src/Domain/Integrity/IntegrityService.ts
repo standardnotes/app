@@ -31,7 +31,7 @@ export class IntegrityService
 
     const integrityCheckResponse = await this.integrityApi.checkIntegrity(this.payloadManager.integrityPayloads)
     if (isErrorResponse(integrityCheckResponse)) {
-      this.log(`Could not obtain integrity check: ${integrityCheckResponse.data.error}`)
+      this.log(`Could not obtain integrity check: ${integrityCheckResponse.data.error?.message}`)
 
       return
     }
@@ -52,7 +52,7 @@ export class IntegrityService
       ) {
         this.log(
           `Could not obtain item for integrity adjustments: ${
-            isErrorResponse(serverItemResponse) ? serverItemResponse.data.error : ''
+            isErrorResponse(serverItemResponse) ? serverItemResponse.data.error?.message : ''
           }`,
         )
 

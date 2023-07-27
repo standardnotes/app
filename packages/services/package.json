@@ -33,7 +33,7 @@
     "@types/node": "^20.2.5",
     "@typescript-eslint/eslint-plugin": "*",
     "@typescript-eslint/parser": "*",
-    "eslint": "^8.27.0",
+    "eslint": "*",
     "eslint-plugin-prettier": "*",
     "jest": "^29.3.1",
     "ts-jest": "^29.0.3",

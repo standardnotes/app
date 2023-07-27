@@ -27,7 +27,7 @@ export function panesForLayout(layout: PaneLayout, application: WebApplication):
     }
   }
 
-  throw Error(`Unhandled pane layout ${layout}`)
+  throw Error('Unhandled pane layout')
 }
 
 export function isPanesChangeLeafDismiss(from: AppPaneId[], to: AppPaneId[]): boolean {

@@ -24,7 +24,11 @@ const createApplication = (
 }
 
 export class WebApplicationGroup extends SNApplicationGroup<WebOrDesktopDevice> {
-  constructor(private defaultSyncServerHost: string, device: WebOrDesktopDevice, private webSocketUrl: string) {
+  constructor(
+    private defaultSyncServerHost: string,
+    device: WebOrDesktopDevice,
+    private webSocketUrl: string,
+  ) {
     super(device)
   }
 

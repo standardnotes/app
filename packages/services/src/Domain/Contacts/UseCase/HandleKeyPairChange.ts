@@ -4,7 +4,10 @@ import { ReuploadAllInvites } from '../../VaultInvite/UseCase/ReuploadAllInvites
 import { ResendAllMessages } from '../../AsymmetricMessage/UseCase/ResendAllMessages'
 
 export class HandleKeyPairChange implements UseCaseInterface<void> {
-  constructor(private reuploadAllInvites: ReuploadAllInvites, private resendAllMessages: ResendAllMessages) {}
+  constructor(
+    private reuploadAllInvites: ReuploadAllInvites,
+    private resendAllMessages: ResendAllMessages,
+  ) {}
 
   async execute(dto: {
     newKeys: {

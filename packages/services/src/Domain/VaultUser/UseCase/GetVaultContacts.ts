@@ -5,7 +5,10 @@ import { FindContact } from '../../Contacts/UseCase/FindContact'
 import { Result, UseCaseInterface } from '@standardnotes/domain-core'
 
 export class GetVaultContacts implements UseCaseInterface<TrustedContactInterface[]> {
-  constructor(private findContact: FindContact, private getVaultUsers: GetVaultUsers) {}
+  constructor(
+    private findContact: FindContact,
+    private getVaultUsers: GetVaultUsers,
+  ) {}
 
   async execute(dto: { sharedVaultUuid: string; readFromCache: boolean }): Promise<Result<TrustedContactInterface[]>> {
     const users = await this.getVaultUsers.execute({

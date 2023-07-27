@@ -109,7 +109,7 @@ export class VaultInviteService
     const response = await this.invitesServer.getInboundUserInvites()
 
     if (isErrorResponse(response)) {
-      return ClientDisplayableError.FromString(`Failed to get inbound user invites ${response}`)
+      return ClientDisplayableError.FromString(`Failed to get inbound user invites ${JSON.stringify(response)}`)
     }
 
     this.pendingInvites = {}
@@ -125,7 +125,7 @@ export class VaultInviteService
     const response = await this.invitesServer.getOutboundUserInvites()
 
     if (isErrorResponse(response)) {
-      return ClientDisplayableError.FromString(`Failed to get outbound user invites ${response}`)
+      return ClientDisplayableError.FromString(`Failed to get outbound user invites ${JSON.stringify(response)}`)
     }
 
     if (sharedVault) {
@@ -220,7 +220,7 @@ export class VaultInviteService
     })
 
     if (isErrorResponse(response)) {
-      return ClientDisplayableError.FromString(`Failed to delete invite ${response}`)
+      return ClientDisplayableError.FromString(`Failed to delete invite ${JSON.stringify(response)}`)
     }
 
     delete this.pendingInvites[invite.uuid]

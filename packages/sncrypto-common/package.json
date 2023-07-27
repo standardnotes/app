@@ -27,7 +27,7 @@
     "@typescript-eslint/eslint-plugin": "*",
     "@typescript-eslint/parser": "*",
     "eslint": "*",
-    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-prettier": "*",
     "typescript": "*"
   },
   "dependencies": {

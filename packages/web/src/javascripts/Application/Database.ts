@@ -20,7 +20,10 @@ export class Database {
   private locked = true
   private db?: IDBDatabase
 
-  constructor(public databaseName: string, private alertService?: AlertService) {}
+  constructor(
+    public databaseName: string,
+    private alertService?: AlertService,
+  ) {}
 
   public deinit(): void {
     ;(this.alertService as unknown) = undefined

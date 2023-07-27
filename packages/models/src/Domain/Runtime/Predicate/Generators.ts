@@ -81,7 +81,7 @@ export function predicateFromDSLString<T extends PredicateTarget>(dsl: string): 
     const predicateJson = predicateDSLArrayToJsonPredicate(components as RawPredicateInArrayForm)
     return predicateFromJson(predicateJson)
   } catch (e) {
-    throw Error(`Invalid smart view syntax ${e}`)
+    throw Error(`Invalid smart view syntax ${JSON.stringify(e)}`)
   }
 }
 

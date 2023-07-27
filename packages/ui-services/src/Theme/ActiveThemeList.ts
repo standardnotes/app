@@ -6,7 +6,10 @@ import { Uuid } from '@standardnotes/domain-core'
 export class ActiveThemeList {
   private list: (NativeFeatureIdentifier | Uuid)[] = []
 
-  constructor(private items: ItemManagerInterface, initialList?: (NativeFeatureIdentifier | Uuid)[]) {
+  constructor(
+    private items: ItemManagerInterface,
+    initialList?: (NativeFeatureIdentifier | Uuid)[],
+  ) {
     if (initialList) {
       this.list = initialList
     }

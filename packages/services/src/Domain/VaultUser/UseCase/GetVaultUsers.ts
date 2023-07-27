@@ -4,7 +4,10 @@ import { SharedVaultUsersServerInterface } from '@standardnotes/api'
 import { Result, UseCaseInterface } from '@standardnotes/domain-core'
 
 export class GetVaultUsers implements UseCaseInterface<SharedVaultUserServerHash[]> {
-  constructor(private vaultUsersServer: SharedVaultUsersServerInterface, private cache: VaultUserCache) {}
+  constructor(
+    private vaultUsersServer: SharedVaultUsersServerInterface,
+    private cache: VaultUserCache,
+  ) {}
 
   async execute(params: {
     sharedVaultUuid: string
