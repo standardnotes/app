@@ -76,7 +76,12 @@ export const createSharedVaultWithUnacceptedButTrustedInvite = async (
   const contact = await createTrustedContactForUserOfContext(context, contactContext)
   await createTrustedContactForUserOfContext(contactContext, context)
 
-  const invite = (await context.vaultInvites.inviteContactToSharedVault(sharedVault, contact, permission)).getValue()
+  const inviteOrError = await context.vaultInvites.inviteContactToSharedVault(sharedVault, contact, permission)
+  if (inviteOrError.isFailed()) {
+    throw new Error(inviteOrError.getError())
+  }
+  const invite = inviteOrError.getValue()
+
   await contactContext.sync()
 
   return { sharedVault, contact, contactContext, deinitContactContext, invite }
