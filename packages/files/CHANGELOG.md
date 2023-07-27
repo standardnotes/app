@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.16.13](https://github.com/standardnotes/app/compare/@standardnotes/files@1.16.12...@standardnotes/files@1.16.13) (2023-07-27)
+
+### Bug Fixes
+
+* handle bad access when accessing paths ([#2375](https://github.com/standardnotes/app/issues/2375)) ([804a39d](https://github.com/standardnotes/app/commit/804a39dabc595579aba3643ef6d6ef0c10263f9c))
+
 ## [1.16.12](https://github.com/standardnotes/app/compare/@standardnotes/files@1.16.11...@standardnotes/files@1.16.12) (2023-07-27)
 
 **Note:** Version bump only for package @standardnotes/files

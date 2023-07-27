@@ -10,8 +10,6 @@ import { Store } from './javascripts/Main/Store/Store'
 import { StoreKeys } from './javascripts/Main/Store/StoreKeys'
 import { isSnap } from './javascripts/Main/Types/Constants'
 import { Paths } from './javascripts/Main/Types/Paths'
-import { setupTesting } from './javascripts/Main/Utils/Testing'
-import { isTesting } from './javascripts/Main/Utils/Utils'
 import { CommandLineArgs } from './javascripts/Shared/CommandLineArgs'
 
 enableExperimentalFeaturesForFileAccessFix()
@@ -38,10 +36,6 @@ if (userDataPathIndex > 0) {
   }
 } else if (isSnap) {
   migrateSnapStorage()
-}
-
-if (isTesting()) {
-  setupTesting()
 }
 
 log.transports.file.level = 'info'
@@ -97,9 +91,12 @@ function migrateSnapStorage() {
         fs.moveSync(fullFilePath, path.join(dest, fileName), {
           overwrite: false,
         })
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      } catch (error: any) {
-        console.error(`Migration: error occured while moving ${fullFilePath} to ${dest}:`, error?.message ?? error)
+      } catch (error) {
+        console.error(
+          `Migration: error occured while moving ${fullFilePath} to ${dest}:`,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (error as any)?.message ?? error,
+        )
       }
     }
 
@@ -112,19 +109,22 @@ function migrateSnapStorage() {
        * Backups location has not been altered by the user. Move it to the
        * user documents directory
        */
-      console.log(`Migration: moving ${store.data.backupsLocation} to ${Paths.documentsDir}`)
-      const newLocation = path.join(Paths.documentsDir, path.basename(store.data.backupsLocation))
-      try {
-        fs.copySync(store.data.backupsLocation, newLocation)
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      } catch (error: any) {
-        console.error(
-          `Migration: error occured while moving ${store.data.backupsLocation} to ${Paths.documentsDir}:`,
-          error?.message ?? error,
-        )
+      const documentsDir = Paths.documentsDir
+      console.log(`Migration: moving ${store.data.backupsLocation} to ${documentsDir}`)
+      if (documentsDir) {
+        const newLocation = path.join(documentsDir, path.basename(store.data.backupsLocation))
+        try {
+          fs.copySync(store.data.backupsLocation, newLocation)
+        } catch (error) {
+          console.error(
+            `Migration: error occured while moving ${store.data.backupsLocation} to ${documentsDir}:`,
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (error as any)?.message ?? error,
+          )
+        }
+        store.set(StoreKeys.LegacyTextBackupsLocation, newLocation)
+        console.log('Migration: finished moving backups directory.')
       }
-      store.set(StoreKeys.LegacyTextBackupsLocation, newLocation)
-      console.log('Migration: finished moving backups directory.')
     }
   }
 }

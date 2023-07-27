@@ -49,7 +49,7 @@ interface PlaintextBackupsMethods {
 interface TextBackupsMethods {
   getTextBackupsCount(location: string): Promise<number>
   saveTextBackupData(location: string, data: string): Promise<void>
-  getUserDocumentsDirectory(): Promise<string>
+  getUserDocumentsDirectory(): Promise<string | undefined>
 }
 
 interface LegacyBackupsMethods {
