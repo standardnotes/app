@@ -6,6 +6,7 @@ export const VaultTests = {
     'vaults/pkc.test.js',
     'vaults/contacts.test.js',
     'vaults/crypto.test.js',
+    'vaults/importing.test.js',
     'vaults/asymmetric-messages.test.js',
     'vaults/keypair-change.test.js',
     'vaults/signatures.test.js',
@@ -16,7 +17,7 @@ export const VaultTests = {
     'vaults/conflicts.test.js',
     'vaults/deletion.test.js',
     'vaults/permissions.test.js',
-    'vaults/key_rotation.test.js',
+    'vaults/key-rotation.test.js',
     'vaults/files.test.js',
   ],
 }

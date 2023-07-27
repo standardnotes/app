@@ -9,18 +9,16 @@ import { ProtocolVersion, compareVersions } from '@standardnotes/common'
 import {
   BackupFile,
   BackupFileDecryptedContextualPayload,
-  ComponentContent,
-  CopyPayloadWithContentOverride,
   CreateDecryptedBackupFileContextPayload,
   CreateEncryptedBackupFileContextPayload,
   DecryptedItemInterface,
-  DecryptedPayloadInterface,
   isDecryptedPayload,
+  isEncryptedPayload,
   isEncryptedTransferPayload,
 } from '@standardnotes/models'
 import { ClientDisplayableError } from '@standardnotes/responses'
 import { Challenge, ChallengePrompt, ChallengeReason, ChallengeValidation } from '../Challenge'
-import { ContentType } from '@standardnotes/domain-core'
+import { Result } from '@standardnotes/domain-core'
 import { EncryptionProviderInterface } from '../Encryption/EncryptionProviderInterface'
 
 const Strings = {
@@ -57,44 +55,22 @@ export class ImportDataUseCase {
    * .affectedItems: Items that were either created or dirtied by this import
    * .errorCount: The number of items that were not imported due to failure to decrypt.
    */
-
   async execute(data: BackupFile, awaitSync = false): Promise<ImportDataReturnType> {
     if (data.version) {
-      /**
-       * Prior to 003 backup files did not have a version field so we cannot
-       * stop importing if there is no backup file version, only if there is
-       * an unsupported version.
-       */
-      const version = data.version as ProtocolVersion
-
-      const supportedVersions = this.encryption.supportedVersions()
-      if (!supportedVersions.includes(version)) {
-        return { error: new ClientDisplayableError(Strings.UnsupportedBackupFileVersion) }
-      }
-
-      const userVersion = this.encryption.getUserVersion()
-      if (userVersion && compareVersions(version, userVersion) === 1) {
-        /** File was made with a greater version than the user's account */
-        return { error: new ClientDisplayableError(Strings.BackupFileMoreRecentThanAccount) }
+      const result = this.validateVersion(data.version)
+      if (result.isFailed()) {
+        return { error: new ClientDisplayableError(result.getError()) }
       }
     }
 
     let password: string | undefined
 
     if (data.auth_params || data.keyParams) {
-      /** Get import file password. */
-      const challenge = new Challenge(
-        [new ChallengePrompt(ChallengeValidation.None, Strings.FileAccountPassword, undefined, true)],
-        ChallengeReason.DecryptEncryptedFile,
-        true,
-      )
-      const passwordResponse = await this.challengeService.promptForChallengeResponse(challenge)
-      if (passwordResponse == undefined) {
-        /** Challenge was canceled */
-        return { error: new ClientDisplayableError('Import aborted') }
+      const passwordResult = await this.getFilePassword()
+      if (passwordResult.isFailed()) {
+        return { error: new ClientDisplayableError(passwordResult.getError()) }
       }
-      this.challengeService.completeChallenge(challenge)
-      password = passwordResponse?.values[0].value as string
+      password = passwordResult.getValue()
     }
 
     if (!(await this.protectionService.authorizeFileImport())) {
@@ -110,31 +86,23 @@ export class ImportDataUseCase {
     })
 
     const decryptedPayloadsOrError = await this._decryptBackFile.execute(data, password)
-
     if (decryptedPayloadsOrError instanceof ClientDisplayableError) {
       return { error: decryptedPayloadsOrError }
     }
 
-    const validPayloads = decryptedPayloadsOrError.filter(isDecryptedPayload).map((payload) => {
-      /* Don't want to activate any components during import process in
-       * case of exceptions breaking up the import proccess */
-      if (payload.content_type === ContentType.TYPES.Component && (payload.content as ComponentContent).active) {
-        const typedContent = payload as DecryptedPayloadInterface<ComponentContent>
-        return CopyPayloadWithContentOverride(typedContent, {
-          active: false,
-        })
-      } else {
-        return payload
-      }
+    const decryptedPayloads = decryptedPayloadsOrError.filter(isDecryptedPayload)
+    const encryptedPayloads = decryptedPayloadsOrError.filter(isEncryptedPayload)
+    const acceptableEncryptedPayloads = encryptedPayloads.filter((payload) => {
+      return payload.key_system_identifier !== undefined
     })
+    const importablePayloads = [...decryptedPayloads, ...acceptableEncryptedPayloads]
 
     const affectedUuids = await this.payloadManager.importPayloads(
-      validPayloads,
+      importablePayloads,
       this.historyService.getHistoryMapCopy(),
     )
 
     const promise = this.sync.sync()
-
     if (awaitSync) {
       await promise
     }
@@ -143,7 +111,42 @@ export class ImportDataUseCase {
 
     return {
       affectedItems: affectedItems,
-      errorCount: decryptedPayloadsOrError.length - validPayloads.length,
+      errorCount: decryptedPayloadsOrError.length - importablePayloads.length,
     }
+  }
+
+  private async getFilePassword(): Promise<Result<string>> {
+    const challenge = new Challenge(
+      [new ChallengePrompt(ChallengeValidation.None, Strings.FileAccountPassword, undefined, true)],
+      ChallengeReason.DecryptEncryptedFile,
+      true,
+    )
+    const passwordResponse = await this.challengeService.promptForChallengeResponse(challenge)
+    if (passwordResponse == undefined) {
+      /** Challenge was canceled */
+      return Result.fail('Import aborted')
+    }
+    this.challengeService.completeChallenge(challenge)
+    return Result.ok(passwordResponse?.values[0].value as string)
+  }
+
+  /**
+   * Prior to 003 backup files did not have a version field so we cannot
+   * stop importing if there is no backup file version, only if there is
+   * an unsupported version.
+   */
+  private validateVersion(version: ProtocolVersion): Result<void> {
+    const supportedVersions = this.encryption.supportedVersions()
+    if (!supportedVersions.includes(version)) {
+      return Result.fail(Strings.UnsupportedBackupFileVersion)
+    }
+
+    const userVersion = this.encryption.getUserVersion()
+    if (userVersion && compareVersions(version, userVersion) === 1) {
+      /** File was made with a greater version than the user's account */
+      return Result.fail(Strings.BackupFileMoreRecentThanAccount)
+    }
+
+    return Result.ok()
   }
 }

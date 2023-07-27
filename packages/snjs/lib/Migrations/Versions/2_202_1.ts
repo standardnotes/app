@@ -14,7 +14,6 @@ export class Migration2_202_1 extends Migration {
     this.registerStageHandler(ApplicationStage.FullSyncCompleted_13, async () => {
       await this.migrateComponentDataToUserPreferences()
       await this.migrateActiveComponentsToUserPreferences()
-      await this.deleteComponentsWhichAreNativeFeatures()
 
       this.markDone()
     })
@@ -69,30 +68,5 @@ export class Migration2_202_1 extends Migration {
 
     await this.services.preferences.setValueDetached(PrefKey.ActiveThemes, Uuids(activeThemes))
     await this.services.preferences.setValueDetached(PrefKey.ActiveComponents, Uuids(activeComponents))
-  }
-
-  private async deleteComponentsWhichAreNativeFeatures(): Promise<void> {
-    const componentsToDelete = [
-      ...this.services.itemManager.getItems<ComponentInterface>(ContentType.TYPES.Component),
-      ...this.services.itemManager.getItems<ComponentInterface>(ContentType.TYPES.Theme),
-    ].filter((candidate) => {
-      const nativeFeature = FindNativeFeature(candidate.identifier)
-      if (!nativeFeature) {
-        return false
-      }
-
-      const isDeprecatedAndThusShouldNotDeleteComponentSinceUserHasItRetained = nativeFeature.deprecated
-      if (isDeprecatedAndThusShouldNotDeleteComponentSinceUserHasItRetained) {
-        return false
-      }
-
-      return true
-    })
-
-    if (componentsToDelete.length === 0) {
-      return
-    }
-
-    await this.services.mutator.setItemsToBeDeleted(componentsToDelete)
   }
 }
