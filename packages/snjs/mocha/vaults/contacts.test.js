@@ -101,7 +101,7 @@ describe('contacts', function () {
     await deinitContactContext()
   })
 
-  it('should be able to refresh a contact using a collaborationID that includes full chain of previouos public keys', async () => {
+  it('should be able to refresh a contact using a collaborationID that includes full chain of previous public keys', async () => {
     console.error('TODO: implement test')
   })
 })

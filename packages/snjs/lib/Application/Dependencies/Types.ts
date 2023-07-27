@@ -151,6 +151,7 @@ export const TYPES = {
   DecryptBackupFile: Symbol.for('DecryptBackupFile'),
   IsVaultOwner: Symbol.for('IsVaultOwner'),
   RemoveItemsFromMemory: Symbol.for('RemoveItemsFromMemory'),
+  ReencryptTypeAItems: Symbol.for('ReencryptTypeAItems'),
 
   // Mappers
   SessionStorageMapper: Symbol.for('SessionStorageMapper'),

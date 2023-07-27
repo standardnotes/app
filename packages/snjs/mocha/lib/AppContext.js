@@ -369,6 +369,17 @@ export class AppContext {
     })
   }
 
+  spyOnFunctionResult(object, functionName) {
+    return new Promise((resolve) => {
+      sinon.stub(object, functionName).callsFake(async (params) => {
+        object[functionName].restore()
+        const result = await object[functionName](params)
+        resolve(result)
+        return result
+      })
+    })
+  }
+
   resolveWhenAsymmetricMessageProcessingCompletes() {
     return this.resolveWhenAsyncFunctionCompletes(this.asymmetric, 'handleRemoteReceivedAsymmetricMessages')
   }

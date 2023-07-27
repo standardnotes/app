@@ -14,9 +14,9 @@ export class GetPayloadAuthenticatedDataDetachedUseCase {
   execute(
     encrypted: EncryptedOutputParameters,
   ): RootKeyEncryptedAuthenticatedData | ItemAuthenticatedData | LegacyAttachedData | undefined {
-    const itemKeyComponents = deconstructEncryptedPayloadString(encrypted.enc_item_key)
+    const contentKeyComponents = deconstructEncryptedPayloadString(encrypted.enc_item_key)
 
-    const authenticatedDataString = itemKeyComponents.authenticatedData
+    const authenticatedDataString = contentKeyComponents.authenticatedData
 
     const result = this.parseStringUseCase.execute<
       RootKeyEncryptedAuthenticatedData | ItemAuthenticatedData | LegacyAttachedData

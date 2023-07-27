@@ -76,9 +76,7 @@ export class KeySystemKeyManager
     }
   }
 
-  public getRootKeyFromStorageForVault(
-    keySystemIdentifier: KeySystemIdentifier,
-  ): KeySystemRootKeyInterface | undefined {
+  getRootKeyFromStorageForVault(keySystemIdentifier: KeySystemIdentifier): KeySystemRootKeyInterface | undefined {
     const payload = this.storage.getValue<DecryptedTransferPayload<KeySystemRootKeyContent>>(
       this.storageKeyForRootKey(keySystemIdentifier),
     )
@@ -92,6 +90,10 @@ export class KeySystemKeyManager
     const key = new KeySystemRootKey(keyPayload)
 
     return key
+  }
+
+  getMemCachedRootKey(systemIdentifier: KeySystemIdentifier): KeySystemRootKeyInterface {
+    return this.rootKeyMemoryCache[systemIdentifier]
   }
 
   private storageKeyForRootKey(systemIdentifier: KeySystemIdentifier): string {

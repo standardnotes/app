@@ -37,6 +37,7 @@ import { AccountEvent } from './AccountEvent'
 import { SignedInOrRegisteredEventPayload } from './SignedInOrRegisteredEventPayload'
 import { CredentialsChangeFunctionResponse } from './CredentialsChangeFunctionResponse'
 import { EncryptionProviderInterface } from '../Encryption/EncryptionProviderInterface'
+import { ReencryptTypeAItems } from '../Encryption/UseCase/TypeA/ReencryptTypeAItems'
 
 export class UserService
   extends AbstractService<AccountEvent, AccountEventData>
@@ -49,18 +50,33 @@ export class UserService
   private readonly MINIMUM_PASSWORD_LENGTH = 8
 
   constructor(
-    private sessionManager: SessionsClientInterface,
+    private sessions: SessionsClientInterface,
     private sync: SyncServiceInterface,
-    private storageService: StorageServiceInterface,
-    private itemManager: ItemManagerInterface,
-    private encryptionService: EncryptionProviderInterface,
-    private alertService: AlertService,
-    private challengeService: ChallengeServiceInterface,
-    private protectionService: ProtectionsClientInterface,
-    private userApiService: UserApiServiceInterface,
+    private storage: StorageServiceInterface,
+    private items: ItemManagerInterface,
+    private encryption: EncryptionProviderInterface,
+    private alerts: AlertService,
+    private challenges: ChallengeServiceInterface,
+    private protections: ProtectionsClientInterface,
+    private userApi: UserApiServiceInterface,
+    private _reencryptTypeAItems: ReencryptTypeAItems,
     protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)
+  }
+
+  public override deinit(): void {
+    super.deinit()
+    ;(this.sessions as unknown) = undefined
+    ;(this.sync as unknown) = undefined
+    ;(this.storage as unknown) = undefined
+    ;(this.items as unknown) = undefined
+    ;(this.encryption as unknown) = undefined
+    ;(this.alerts as unknown) = undefined
+    ;(this.challenges as unknown) = undefined
+    ;(this.protections as unknown) = undefined
+    ;(this.userApi as unknown) = undefined
+    ;(this._reencryptTypeAItems as unknown) = undefined
   }
 
   async handleEvent(event: InternalEventInterface): Promise<void> {
@@ -68,14 +84,14 @@ export class UserService
       const payload = (event.payload as AccountEventData).payload as SignedInOrRegisteredEventPayload
       this.sync.resetSyncState()
 
-      await this.storageService.setPersistencePolicy(
+      await this.storage.setPersistencePolicy(
         payload.ephemeral ? StoragePersistencePolicies.Ephemeral : StoragePersistencePolicies.Default,
       )
 
       if (payload.mergeLocal) {
         await this.sync.markAllItemsAsNeedingSyncAndPersist()
       } else {
-        void this.itemManager.removeAllItemsFromMemory()
+        void this.items.removeAllItemsFromMemory()
         await this.clearDatabase()
       }
 
@@ -88,37 +104,24 @@ export class UserService
         })
         .then(() => {
           if (!payload.awaitSync) {
-            void this.encryptionService.decryptErroredPayloads()
+            void this.encryption.decryptErroredPayloads()
           }
         })
 
       if (payload.awaitSync) {
         await syncPromise
 
-        await this.encryptionService.decryptErroredPayloads()
+        await this.encryption.decryptErroredPayloads()
       }
     }
   }
 
-  public override deinit(): void {
-    super.deinit()
-    ;(this.sessionManager as unknown) = undefined
-    ;(this.sync as unknown) = undefined
-    ;(this.storageService as unknown) = undefined
-    ;(this.itemManager as unknown) = undefined
-    ;(this.encryptionService as unknown) = undefined
-    ;(this.alertService as unknown) = undefined
-    ;(this.challengeService as unknown) = undefined
-    ;(this.protectionService as unknown) = undefined
-    ;(this.userApiService as unknown) = undefined
-  }
-
   getUserUuid(): string {
-    return this.sessionManager.userUuid
+    return this.sessions.userUuid
   }
 
   isSignedIn(): boolean {
-    return this.sessionManager.isSignedIn()
+    return this.sessions.isSignedIn()
   }
 
   /**
@@ -131,7 +134,7 @@ export class UserService
     ephemeral = false,
     mergeLocal = true,
   ): Promise<UserRegistrationResponseBody> {
-    if (this.encryptionService.hasAccount()) {
+    if (this.encryption.hasAccount()) {
       throw Error('Tried to register when an account already exists.')
     }
 
@@ -143,7 +146,7 @@ export class UserService
 
     try {
       this.lockSyncing()
-      const response = await this.sessionManager.register(email, password, ephemeral)
+      const response = await this.sessions.register(email, password, ephemeral)
 
       await this.notifyEventSync(AccountEvent.SignedInOrRegistered, {
         payload: {
@@ -177,7 +180,7 @@ export class UserService
     mergeLocal = true,
     awaitSync = false,
   ): Promise<HttpResponse<SignInResponse>> {
-    if (this.encryptionService.hasAccount()) {
+    if (this.encryption.hasAccount()) {
       throw Error('Tried to sign in when an account already exists.')
     }
 
@@ -191,7 +194,7 @@ export class UserService
       /** Prevent a timed sync from occuring while signing in. */
       this.lockSyncing()
 
-      const { response } = await this.sessionManager.signIn(email, password, strict, ephemeral)
+      const { response } = await this.sessions.signIn(email, password, strict, ephemeral)
 
       if (!isErrorResponse(response)) {
         const notifyingFunction = awaitSync ? this.notifyEventSync.bind(this) : this.notifyEvent.bind(this)
@@ -218,7 +221,7 @@ export class UserService
     message?: string
   }> {
     if (
-      !(await this.protectionService.authorizeAction(ChallengeReason.DeleteAccount, {
+      !(await this.protections.authorizeAction(ChallengeReason.DeleteAccount, {
         fallBackToAccountPassword: true,
         requireAccountPassword: true,
         forcePrompt: false,
@@ -230,8 +233,8 @@ export class UserService
       }
     }
 
-    const uuid = this.sessionManager.getSureUser().uuid
-    const response = await this.userApiService.deleteAccount(uuid)
+    const uuid = this.sessions.getSureUser().uuid
+    const response = await this.userApi.deleteAccount(uuid)
     if (isErrorResponse(response)) {
       return {
         error: true,
@@ -241,7 +244,7 @@ export class UserService
 
     await this.signOut(true)
 
-    void this.alertService.alert(InfoStrings.AccountDeleted)
+    void this.alerts.alert(InfoStrings.AccountDeleted)
 
     return {
       error: false,
@@ -249,9 +252,9 @@ export class UserService
   }
 
   async submitUserRequest(requestType: UserRequestType): Promise<boolean> {
-    const userUuid = this.sessionManager.getSureUser().uuid
+    const userUuid = this.sessions.getSureUser().uuid
     try {
-      const result = await this.userApiService.submitUserRequest({
+      const result = await this.userApi.submitUserRequest({
         userUuid,
         requestType,
       })
@@ -274,11 +277,7 @@ export class UserService
   public async correctiveSignIn(rootKey: SNRootKey): Promise<HttpResponse<SignInResponse>> {
     this.lockSyncing()
 
-    const response = await this.sessionManager.bypassChecksAndSignInWithRootKey(
-      rootKey.keyParams.identifier,
-      rootKey,
-      false,
-    )
+    const response = await this.sessions.bypassChecksAndSignInWithRootKey(rootKey.keyParams.identifier, rootKey, false)
 
     if (!isErrorResponse(response)) {
       await this.notifyEvent(AccountEvent.SignedInOrRegistered, {
@@ -313,16 +312,16 @@ export class UserService
   }): Promise<CredentialsChangeFunctionResponse> {
     const result = await this.performCredentialsChange(parameters)
     if (result.error) {
-      void this.alertService.alert(result.error.message)
+      void this.alerts.alert(result.error.message)
     }
     return result
   }
 
   public async signOut(force = false, source = DeinitSource.SignOut): Promise<void> {
     const performSignOut = async () => {
-      await this.sessionManager.signOut()
-      await this.encryptionService.deleteWorkspaceSpecificKeyStateFromDevice()
-      await this.storageService.clearAllData()
+      await this.sessions.signOut()
+      await this.encryption.deleteWorkspaceSpecificKeyStateFromDevice()
+      await this.storage.clearAllData()
       await this.notifyEvent(AccountEvent.SignedOut, { payload: { source } })
     }
 
@@ -332,10 +331,10 @@ export class UserService
       return
     }
 
-    const dirtyItems = this.itemManager.getDirtyItems()
+    const dirtyItems = this.items.getDirtyItems()
     if (dirtyItems.length > 0) {
       const singular = dirtyItems.length === 1
-      const didConfirm = await this.alertService.confirm(
+      const didConfirm = await this.alerts.confirm(
         `There ${singular ? 'is' : 'are'} ${dirtyItems.length} ${
           singular ? 'item' : 'items'
         } with unsynced changes. If you sign out, these changes will be lost forever. Are you sure you want to sign out?`,
@@ -353,7 +352,7 @@ export class UserService
     canceled?: true
     error?: { message: string }
   }> {
-    if (!this.sessionManager.isUserMissingKeyPair()) {
+    if (!this.sessions.isUserMissingKeyPair()) {
       throw Error('Cannot update account with first time keypair if user already has a keypair')
     }
 
@@ -367,8 +366,8 @@ export class UserService
     canceled?: true
     error?: { message: string }
   }> {
-    const hasPasscode = this.encryptionService.hasPasscode()
-    const hasAccount = this.encryptionService.hasAccount()
+    const hasPasscode = this.encryption.hasPasscode()
+    const hasAccount = this.encryption.hasAccount()
     const prompts = []
     if (hasPasscode) {
       prompts.push(
@@ -389,11 +388,11 @@ export class UserService
       )
     }
     const challenge = new Challenge(prompts, ChallengeReason.ProtocolUpgrade, true)
-    const response = await this.challengeService.promptForChallengeResponse(challenge)
+    const response = await this.challenges.promptForChallengeResponse(challenge)
     if (!response) {
       return { canceled: true }
     }
-    const dismissBlockingDialog = await this.alertService.blockingDialog(
+    const dismissBlockingDialog = await this.alerts.blockingDialog(
       Messages.DO_NOT_CLOSE_APPLICATION,
       Messages.UPGRADING_ENCRYPTION,
     )
@@ -436,11 +435,11 @@ export class UserService
     if (passcode.length < this.MINIMUM_PASSCODE_LENGTH) {
       return false
     }
-    if (!(await this.protectionService.authorizeAddingPasscode())) {
+    if (!(await this.protections.authorizeAddingPasscode())) {
       return false
     }
 
-    const dismissBlockingDialog = await this.alertService.blockingDialog(
+    const dismissBlockingDialog = await this.alerts.blockingDialog(
       Messages.DO_NOT_CLOSE_APPLICATION,
       Messages.SETTING_PASSCODE,
     )
@@ -453,11 +452,11 @@ export class UserService
   }
 
   public async removePasscode(): Promise<boolean> {
-    if (!(await this.protectionService.authorizeRemovingPasscode())) {
+    if (!(await this.protections.authorizeRemovingPasscode())) {
       return false
     }
 
-    const dismissBlockingDialog = await this.alertService.blockingDialog(
+    const dismissBlockingDialog = await this.alerts.blockingDialog(
       Messages.DO_NOT_CLOSE_APPLICATION,
       Messages.REMOVING_PASSCODE,
     )
@@ -479,11 +478,11 @@ export class UserService
     if (newPasscode.length < this.MINIMUM_PASSCODE_LENGTH) {
       return false
     }
-    if (!(await this.protectionService.authorizeChangingPasscode())) {
+    if (!(await this.protections.authorizeChangingPasscode())) {
       return false
     }
 
-    const dismissBlockingDialog = await this.alertService.blockingDialog(
+    const dismissBlockingDialog = await this.alerts.blockingDialog(
       Messages.DO_NOT_CLOSE_APPLICATION,
       origination === KeyParamsOrigination.ProtocolUpgrade
         ? Messages.ProtocolUpgradeStrings.UpgradingPasscode
@@ -499,7 +498,7 @@ export class UserService
   }
 
   public async populateSessionFromDemoShareToken(token: Base64String): Promise<void> {
-    await this.sessionManager.populateSessionFromDemoShareToken(token)
+    await this.sessions.populateSessionFromDemoShareToken(token)
     await this.notifyEvent(AccountEvent.SignedInOrRegistered, {
       payload: {
         ephemeral: false,
@@ -512,14 +511,14 @@ export class UserService
 
   private async setPasscodeWithoutWarning(passcode: string, origination: KeyParamsOrigination) {
     const identifier = UuidGenerator.GenerateUuid()
-    const key = await this.encryptionService.createRootKey(identifier, passcode, origination)
-    await this.encryptionService.setNewRootKeyWrapper(key)
+    const key = await this.encryption.createRootKey(identifier, passcode, origination)
+    await this.encryption.setNewRootKeyWrapper(key)
     await this.rewriteItemsKeys()
     await this.sync.sync()
   }
 
   private async removePasscodeWithoutWarning() {
-    await this.encryptionService.removePasscode()
+    await this.encryption.removePasscode()
     await this.rewriteItemsKeys()
   }
 
@@ -532,9 +531,9 @@ export class UserService
    * https://github.com/standardnotes/desktop/issues/131
    */
   private async rewriteItemsKeys(): Promise<void> {
-    const itemsKeys = this.itemManager.getDisplayableItemsKeys()
+    const itemsKeys = this.items.getDisplayableItemsKeys()
     const payloads = itemsKeys.map((key) => key.payloadRepresentation())
-    await this.storageService.deletePayloads(payloads)
+    await this.storage.deletePayloads(payloads)
     await this.sync.persistPayloads(payloads)
   }
 
@@ -547,7 +546,7 @@ export class UserService
   }
 
   private clearDatabase(): Promise<void> {
-    return this.storageService.clearAllPayloads()
+    return this.storage.clearAllPayloads()
   }
 
   private async performCredentialsChange(parameters: {
@@ -558,7 +557,7 @@ export class UserService
     newPassword?: string
     passcode?: string
   }): Promise<CredentialsChangeFunctionResponse> {
-    const { wrappingKey, canceled } = await this.challengeService.getWrappingKeyIfApplicable(parameters.passcode)
+    const { wrappingKey, canceled } = await this.challenges.getWrappingKeyIfApplicable(parameters.passcode)
 
     if (canceled) {
       return { error: Error(Messages.CredentialsChangeStrings.PasscodeRequired) }
@@ -572,14 +571,14 @@ export class UserService
       }
     }
 
-    const accountPasswordValidation = await this.encryptionService.validateAccountPassword(parameters.currentPassword)
+    const accountPasswordValidation = await this.encryption.validateAccountPassword(parameters.currentPassword)
     if (!accountPasswordValidation.valid) {
       return {
         error: Error(Messages.INVALID_PASSWORD),
       }
     }
 
-    const user = this.sessionManager.getUser() as User
+    const user = this.sessions.getUser() as User
     const currentEmail = user.email
     const { currentRootKey, newRootKey } = await this.recomputeRootKeysForCredentialChange({
       currentPassword: parameters.currentPassword,
@@ -591,7 +590,7 @@ export class UserService
 
     this.lockSyncing()
 
-    const { response } = await this.sessionManager.changeCredentials({
+    const { response } = await this.sessions.changeCredentials({
       currentServerPassword: currentRootKey.serverPassword as string,
       newRootKey: newRootKey,
       wrappingKey,
@@ -604,20 +603,20 @@ export class UserService
       return { error: Error(response.data.error?.message) }
     }
 
-    const rollback = await this.encryptionService.createNewItemsKeyWithRollback()
-    await this.encryptionService.reencryptApplicableItemsAfterUserRootKeyChange()
+    const rollback = await this.encryption.createNewItemsKeyWithRollback()
+    await this._reencryptTypeAItems.execute()
     await this.sync.sync({ awaitAll: true })
 
-    const defaultItemsKey = this.encryptionService.getSureDefaultItemsKey()
+    const defaultItemsKey = this.encryption.getSureDefaultItemsKey()
     const itemsKeyWasSynced = !defaultItemsKey.neverSynced
 
     if (!itemsKeyWasSynced) {
-      await this.sessionManager.changeCredentials({
+      await this.sessions.changeCredentials({
         currentServerPassword: newRootKey.serverPassword as string,
         newRootKey: currentRootKey,
         wrappingKey,
       })
-      await this.encryptionService.reencryptApplicableItemsAfterUserRootKeyChange()
+      await this._reencryptTypeAItems.execute()
       await rollback()
       await this.sync.sync({ awaitAll: true })
 
@@ -634,11 +633,11 @@ export class UserService
     newEmail?: string
     newPassword?: string
   }): Promise<{ currentRootKey: SNRootKey; newRootKey: SNRootKey }> {
-    const currentRootKey = await this.encryptionService.computeRootKey(
+    const currentRootKey = await this.encryption.computeRootKey(
       parameters.currentPassword,
-      (await this.encryptionService.getRootKeyParams()) as SNRootKeyParams,
+      this.encryption.getRootKeyParams() as SNRootKeyParams,
     )
-    const newRootKey = await this.encryptionService.createRootKey(
+    const newRootKey = await this.encryption.createRootKey(
       parameters.newEmail ?? parameters.currentEmail,
       parameters.newPassword ?? parameters.currentPassword,
       parameters.origination,

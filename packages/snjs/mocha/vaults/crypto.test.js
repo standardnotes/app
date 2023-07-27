@@ -35,12 +35,25 @@ describe('shared vault crypto', function () {
       expect(recreatedContext.encryption.getSigningKeyPair()).to.not.be.undefined
     })
 
-    it('changing user password should re-encrypt all key system root keys', async () => {
-      console.error('TODO: implement')
-    })
+    it('changing user password should re-encrypt all key system root keys and contacts with new user root key', async () => {
+      await Collaboration.createPrivateVault(context)
+      const spy = context.spyOnFunctionResult(context.application.sync, 'payloadsByPreparingForServer')
+      await context.changePassword('new_password')
 
-    it('changing user password should re-encrypt all trusted contacts', async () => {
-      console.error('TODO: implement')
+      const payloads = await spy
+      const keyPayloads = payloads.filter(
+        (payload) =>
+          payload.content_type === ContentType.TYPES.KeySystemRootKey ||
+          payload.content_type === ContentType.TYPES.TrustedContact,
+      )
+      expect(keyPayloads.length).to.equal(2)
+
+      for (const payload of payloads) {
+        const keyParams = context.encryption.getEmbeddedPayloadAuthenticatedData(new EncryptedPayload(payload)).kp
+
+        const userKeyParams = context.encryption.getRootKeyParams().content
+        expect(keyParams).to.eql(userKeyParams)
+      }
     })
   })
 

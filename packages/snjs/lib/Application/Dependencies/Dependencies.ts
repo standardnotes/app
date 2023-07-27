@@ -119,6 +119,7 @@ import {
   DeleteContact,
   VaultLockService,
   RemoveItemsFromMemory,
+  ReencryptTypeAItems,
 } from '@standardnotes/services'
 import { ItemManager } from '../../Services/Items/ItemManager'
 import { PayloadManager } from '../../Services/Payloads/PayloadManager'
@@ -202,6 +203,10 @@ export class Dependencies {
   }
 
   private registerUseCaseMakers() {
+    this.factory.set(TYPES.ReencryptTypeAItems, () => {
+      return new ReencryptTypeAItems(this.get(TYPES.ItemManager), this.get(TYPES.MutatorService))
+    })
+
     this.factory.set(TYPES.ImportDataUseCase, () => {
       return new ImportDataUseCase(
         this.get(TYPES.ItemManager),
@@ -616,10 +621,9 @@ export class Dependencies {
       return new RootKeyManager(
         this.get(TYPES.DeviceInterface),
         this.get(TYPES.DiskStorageService),
-        this.get(TYPES.ItemManager),
-        this.get(TYPES.MutatorService),
         this.get(TYPES.EncryptionOperators),
         this.options.identifier,
+        this.get(TYPES.ReencryptTypeAItems),
         this.get(TYPES.InternalEventBus),
       )
     })
@@ -1086,6 +1090,7 @@ export class Dependencies {
         this.get(TYPES.ChallengeService),
         this.get(TYPES.ProtectionService),
         this.get(TYPES.UserApiService),
+        this.get(TYPES.ReencryptTypeAItems),
         this.get(TYPES.InternalEventBus),
       )
     })

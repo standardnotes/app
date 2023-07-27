@@ -4,7 +4,7 @@ import * as Collaboration from '../lib/Collaboration.js'
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
-describe('shared vault key rotation', function () {
+describe('vault key rotation', function () {
   this.timeout(Factory.TwentySecondTimeout)
 
   let context
@@ -29,15 +29,64 @@ describe('shared vault key rotation', function () {
 
     contactContext.lockSyncing()
 
-    const spy = sinon.spy(context.keys, 'queueVaultItemsKeysForReencryption')
+    const callSpy = sinon.spy(context.keys, 'queueVaultItemsKeysForReencryption')
+    const syncSpy = context.spyOnFunctionResult(context.application.sync, 'payloadsByPreparingForServer')
 
     const promise = context.resolveWhenSharedVaultKeyRotationInvitesGetSent(sharedVault)
     await context.vaults.rotateVaultRootKey(sharedVault)
     await promise
+    await syncSpy
 
-    expect(spy.callCount).to.equal(1)
+    expect(callSpy.callCount).to.equal(1)
+
+    const payloads = await syncSpy
+    const keyPayloads = payloads.filter((payload) => payload.content_type === ContentType.TYPES.KeySystemItemsKey)
+    expect(keyPayloads.length).to.equal(2)
+
+    const vaultRootKey = context.keys.getPrimaryKeySystemRootKey(sharedVault.systemIdentifier)
+
+    for (const payload of keyPayloads) {
+      const keyParams = context.encryption.getEmbeddedPayloadAuthenticatedData(new EncryptedPayload(payload)).kp
+      expect(keyParams).to.eql(vaultRootKey.keyParams)
+    }
 
     deinitContactContext()
+  })
+
+  it('should update value of local storage mode key', async () => {
+    const vault = await context.vaults.createUserInputtedPasswordVault({
+      name: 'test vault',
+      userInputtedPassword: 'test password',
+      storagePreference: KeySystemRootKeyStorageMode.Local,
+    })
+
+    const beforeKey = context.keys.getRootKeyFromStorageForVault(vault.systemIdentifier)
+
+    await context.vaults.rotateVaultRootKey(vault, 'test password')
+
+    const afterKey = context.keys.getRootKeyFromStorageForVault(vault.systemIdentifier)
+
+    expect(afterKey.keyParams.creationTimestamp).to.be.greaterThan(beforeKey.keyParams.creationTimestamp)
+    expect(afterKey.key).to.not.equal(beforeKey.key)
+    expect(afterKey.itemsKey).to.not.equal(beforeKey.itemsKey)
+  })
+
+  it('should update value of mem storage mode key', async () => {
+    const vault = await context.vaults.createUserInputtedPasswordVault({
+      name: 'test vault',
+      userInputtedPassword: 'test password',
+      storagePreference: KeySystemRootKeyStorageMode.Ephemeral,
+    })
+
+    const beforeKey = context.keys.getMemCachedRootKey(vault.systemIdentifier)
+
+    await context.vaults.rotateVaultRootKey(vault, 'test password')
+
+    const afterKey = context.keys.getMemCachedRootKey(vault.systemIdentifier)
+
+    expect(afterKey.keyParams.creationTimestamp).to.be.greaterThan(beforeKey.keyParams.creationTimestamp)
+    expect(afterKey.key).to.not.equal(beforeKey.key)
+    expect(afterKey.itemsKey).to.not.equal(beforeKey.itemsKey)
   })
 
   it("rotating a vault's key should send an asymmetric message to all members", async () => {
