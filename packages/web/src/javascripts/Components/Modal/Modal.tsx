@@ -98,10 +98,7 @@ const Modal = ({
     <>
       <ModalAndroidBackHandler close={close} />
       <div
-        className={classNames(
-          'modal-backdrop absolute z-0 h-full w-full bg-passive-5 opacity-0 md:opacity-75',
-          className?.backdrop,
-        )}
+        className={classNames('absolute z-0 h-full w-full bg-passive-5 opacity-0 md:opacity-75', className?.backdrop)}
         role="presentation"
         onClick={close}
       />
