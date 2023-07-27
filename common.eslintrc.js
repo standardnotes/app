@@ -9,6 +9,7 @@ module.exports = {
   plugins: ['@typescript-eslint', 'prettier'],
   ignorePatterns: ['**/*.spec.ts'],
   rules: {
+    '@typescript-eslint/restrict-template-expressions': 'error',
     'standard/no-callback-literal': 0, // Disable this as we have too many callbacks relying on literals
     'no-throw-literal': 0,
     camelcase: 'off',

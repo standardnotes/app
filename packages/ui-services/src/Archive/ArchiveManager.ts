@@ -62,7 +62,7 @@ export class ArchiveManager {
   }
 
   formattedDateForExports() {
-    const string = `${new Date()}`
+    const string = new Date().toString()
     // Match up to the first parenthesis, i.e do not include '(Central Standard Time)'
     const matches = string.match(/^(.*?) \(/)
     if (matches && matches.length >= 2) {

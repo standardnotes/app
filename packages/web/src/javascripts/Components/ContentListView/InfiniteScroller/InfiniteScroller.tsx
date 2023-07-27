@@ -136,9 +136,9 @@ export const InfinteScroller = forwardRef<InfiniteScrollerInterface, Props>(
 
     const _paginateFront = useCallback(() => {
       if (direction === 'vertical') {
-        setScrollSize(scrollArea!.current!.scrollHeight)
+        setScrollSize(scrollArea.current!.scrollHeight)
       } else {
-        setScrollSize(scrollArea!.current!.scrollWidth)
+        setScrollSize(scrollArea.current!.scrollWidth)
       }
       setDidPaginateFront(true)
       paginateFront()

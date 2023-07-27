@@ -17,7 +17,7 @@ export class DeleteSharedVault {
     })
 
     if (isErrorResponse(response)) {
-      return ClientDisplayableError.FromString(`Failed to delete vault ${response}`)
+      return ClientDisplayableError.FromString(`Failed to delete vault ${JSON.stringify(response)}`)
     }
 
     await this.deleteVault.execute(params.sharedVault)

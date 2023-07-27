@@ -38,7 +38,7 @@ export function FillItemContent<C extends ItemContent = ItemContent>(content: Pa
   }
 
   if (!content.appData[DefaultAppDomain][AppDataField.UserModifiedDate]) {
-    content.appData[DefaultAppDomain][AppDataField.UserModifiedDate] = `${new Date()}`
+    content.appData[DefaultAppDomain][AppDataField.UserModifiedDate] = new Date().toString()
   }
 
   return content as C

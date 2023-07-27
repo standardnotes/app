@@ -423,7 +423,7 @@ export class MobileDevice implements MobileDeviceInterface {
         failOnCancel: false,
       })
     } catch (error) {
-      this.consoleLog(`${error}`)
+      this.consoleLog(error)
     } finally {
       if (downloadedTempFilePath) {
         void this.deleteFileAtPathIfExists(downloadedTempFilePath)
@@ -456,7 +456,7 @@ export class MobileDevice implements MobileDeviceInterface {
       await writeFile(path, base64.replace(/data.*base64,/, ''), 'base64')
       return path
     } catch (error) {
-      this.consoleLog(`${error}`)
+      this.consoleLog(error)
     }
   }
 
