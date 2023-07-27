@@ -4453,7 +4453,7 @@ __metadata:
     "@babel/plugin-syntax-dynamic-import": ^7.8.3
     "@babel/preset-env": "*"
     "@standardnotes/sncrypto-common": "workspace:*"
-    "@types/libsodium-wrappers": ^0.7.10
+    "@types/libsodium-wrappers": 0.7.10
     "@types/node": ^18.11.9
     "@types/uuid": ^8.3.4
     "@typescript-eslint/eslint-plugin": ^5.43.0
@@ -4463,7 +4463,7 @@ __metadata:
     connect: ^3.7.0
     eslint: "*"
     eslint-plugin-prettier: "*"
-    libsodium-wrappers: ^0.7.10
+    libsodium-wrappers: 0.7.10
     reflect-metadata: ^0.1.13
     regenerator-runtime: ^0.13.10
     serve-static: ^1.15.0
@@ -4514,7 +4514,7 @@ __metadata:
     jest: ^29.3.1
     jest-environment-jsdom: ^29.3.1
     jsdom: ^20.0.2
-    libsodium-wrappers: ^0.7.10
+    libsodium-wrappers: 0.7.10
     nock: ^13.2.9
     otplib: ^12.0.1
     reflect-metadata: ^0.1.13
@@ -5303,7 +5303,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/libsodium-wrappers@npm:^0.7.10":
+"@types/libsodium-wrappers@npm:0.7.10, @types/libsodium-wrappers@npm:^0.7.10":
   version: 0.7.10
   resolution: "@types/libsodium-wrappers@npm:0.7.10"
   checksum: 717054ebcb5fa553e378144b8d564bed8b691905c0d4e90b95c64d77ba24ec9fe798cb2c58cd61dad545ceacb1f05ab69b5597217f9829f2da7a23f0688d11d0
@@ -8816,18 +8816,18 @@ __metadata:
   linkType: hard
 
 "core-js-compat@npm:^3.31.0":
-  version: 3.31.1
-  resolution: "core-js-compat@npm:3.31.1"
+  version: 3.32.0
+  resolution: "core-js-compat@npm:3.32.0"
   dependencies:
     browserslist: ^4.21.9
-  checksum: 9a16d6992621f4e099169297381a28d5712cdef7df1fa85352a7c285a5885d5d7a117ec2eae9ad715ed88c7cc774787a22cdb8aceababf6775fbc8b0cbeccdb7
+  checksum: e740b348dfd8dc25ac851ab625a1d5a63c012252bdd6d8ae92d1b2ebf46e6cf57ca6cbec4494cbacdd90d3f8ed822480c8a7106c990dbe9055ebdf5b79fbb92e
   languageName: node
   linkType: hard
 
 "core-js-pure@npm:^3.23.3":
-  version: 3.31.1
-  resolution: "core-js-pure@npm:3.31.1"
-  checksum: 93c3dd28471755cb81ec4828f5617bd32a7c682295d88671534a6733a0d41dae9e28f8f8000ddd1f1e597a3bec4602db5f906a03c9ba1a360534f7ae2519db7c
+  version: 3.32.0
+  resolution: "core-js-pure@npm:3.32.0"
+  checksum: 57b1ae97e6d468dfa34af3df75bba3fec3d01a04392f7c11f77a698f7157be199b647c599a06869fb403397a2e512dbbfc6eb3b8a690f857484125620f7d36e6
   languageName: node
   linkType: hard
 
@@ -14793,19 +14793,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"libsodium-wrappers@npm:^0.7.10":
-  version: 0.7.11
-  resolution: "libsodium-wrappers@npm:0.7.11"
+"libsodium-wrappers@npm:0.7.10":
+  version: 0.7.10
+  resolution: "libsodium-wrappers@npm:0.7.10"
   dependencies:
-    libsodium: ^0.7.11
-  checksum: 6a6ef47b2213e3fb4687196c28fee4c9885f70d89547d845e62d96014d3d5ad9f59cb05fadc601debc0031a3cfd0b9b416d7efbeb5bf66db6aa0ed69f55a6293
+    libsodium: ^0.7.0
+  checksum: 294ac098895a15f99e65431c62478f149e9e5cbbcd1fa1b41e832b65e0ead63856cc964b3b7c14447a48701e3334661dea9223442834ae7dd0d34285991616cd
   languageName: node
   linkType: hard
 
-"libsodium@npm:^0.7.11":
-  version: 0.7.11
-  resolution: "libsodium@npm:0.7.11"
-  checksum: 0a3493ac1829d1e346178b6984c4eb449dc77157c906876441386c0c653142e3fa56f623ce980bb50e580196578689298c9cd406ce6d514904090e370c6bc0f7
+"libsodium@npm:^0.7.0":
+  version: 0.7.10
+  resolution: "libsodium@npm:0.7.10"
+  checksum: 243794a0b3b753fafb304a82e9ff777eaccf11785bde6965e7f25171fd2fb35da302a89f009a91c1e922817d37724f7afc86592b128b2b58ed657d7fbe5259e6
   languageName: node
   linkType: hard
 
