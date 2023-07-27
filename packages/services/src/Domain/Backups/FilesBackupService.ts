@@ -160,14 +160,21 @@ export class FilesBackupService
   }
 
   private async automaticallyEnableTextBackupsIfPreferenceNotSet(): Promise<void> {
-    if (this.storage.getValue(StorageKey.TextBackupsEnabled) == undefined) {
-      this.storage.setValue(StorageKey.TextBackupsEnabled, true)
-      const location = await this.device.joinPaths(
-        await this.device.getUserDocumentsDirectory(),
-        await this.prependWorkspacePathForPath(TextBackupsDirectoryName),
-      )
-      this.storage.setValue(StorageKey.TextBackupsLocation, location)
+    if (this.storage.getValue(StorageKey.TextBackupsEnabled) != undefined) {
+      return
     }
+
+    this.storage.setValue(StorageKey.TextBackupsEnabled, true)
+    const documentsDir = await this.device.getUserDocumentsDirectory()
+    if (!documentsDir) {
+      return
+    }
+
+    const location = await this.device.joinPaths(
+      documentsDir,
+      await this.prependWorkspacePathForPath(TextBackupsDirectoryName),
+    )
+    this.storage.setValue(StorageKey.TextBackupsLocation, location)
   }
 
   openAllDirectoriesContainingBackupFiles(): void {
