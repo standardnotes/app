@@ -20,7 +20,6 @@ import {
   VaultListingInterface,
 } from '@standardnotes/models'
 import { HandleRootKeyChangedMessage } from './UseCase/HandleRootKeyChangedMessage'
-import { SessionEvent } from '../Session/SessionEvent'
 import { AsymmetricMessageServer } from '@standardnotes/api'
 import { GetOutboundMessages } from './UseCase/GetOutboundMessages'
 import { GetInboundMessages } from './UseCase/GetInboundMessages'
@@ -74,9 +73,6 @@ export class AsymmetricMessageService
 
   async handleEvent(event: InternalEventInterface): Promise<void> {
     switch (event.type) {
-      case SessionEvent.UserKeyPairChanged:
-        void this.messageServer.deleteAllInboundMessages()
-        break
       case SyncEvent.ReceivedAsymmetricMessages:
         void this.handleRemoteReceivedAsymmetricMessages(event.payload as SyncEventReceivedAsymmetricMessagesData)
         break

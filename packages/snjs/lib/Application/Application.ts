@@ -1133,7 +1133,6 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.events.addEventHandler(this.dependencies.get(TYPES.SubscriptionManager), SessionEvent.Restored)
 
     this.events.addEventHandler(this.dependencies.get(TYPES.VaultInviteService), SyncEvent.ReceivedSharedVaultInvites)
-    this.events.addEventHandler(this.dependencies.get(TYPES.VaultInviteService), SessionEvent.UserKeyPairChanged)
 
     this.events.addEventHandler(this.dependencies.get(TYPES.SharedVaultService), SessionEvent.UserKeyPairChanged)
     this.events.addEventHandler(
@@ -1147,7 +1146,6 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       this.dependencies.get(TYPES.AsymmetricMessageService),
       SyncEvent.ReceivedAsymmetricMessages,
     )
-    this.events.addEventHandler(this.dependencies.get(TYPES.AsymmetricMessageService), SessionEvent.UserKeyPairChanged)
 
     if (this.dependencies.get(TYPES.FilesBackupService)) {
       this.events.addEventHandler(

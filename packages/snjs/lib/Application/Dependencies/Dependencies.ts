@@ -380,7 +380,15 @@ export class Dependencies {
     })
 
     this.factory.set(TYPES.HandleKeyPairChange, () => {
-      return new HandleKeyPairChange(this.get(TYPES.ReuploadAllInvites), this.get(TYPES.ResendAllMessages))
+      return new HandleKeyPairChange(
+        this.get(TYPES.SelfContactManager),
+        this.get(TYPES.SharedVaultInvitesServer),
+        this.get(TYPES.AsymmetricMessageServer),
+        this.get(TYPES.ReuploadAllInvites),
+        this.get(TYPES.ResendAllMessages),
+        this.get(TYPES.GetAllContacts),
+        this.get(TYPES.SendOwnContactChangeMessage),
+      )
     })
 
     this.factory.set(TYPES.NotifyVaultUsersOfKeyRotation, () => {
@@ -793,7 +801,6 @@ export class Dependencies {
         this.get(TYPES.CreateOrEditContact),
         this.get(TYPES.EditContact),
         this.get(TYPES.ValidateItemSigner),
-        this.get(TYPES.SendOwnContactChangeMessage),
         this.get(TYPES.InternalEventBus),
       )
     })

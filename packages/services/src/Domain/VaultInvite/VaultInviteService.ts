@@ -1,6 +1,5 @@
 import { AcceptVaultInvite } from './UseCase/AcceptVaultInvite'
 import { SyncEvent, SyncEventReceivedSharedVaultInvitesData } from './../Event/SyncEvent'
-import { SessionEvent } from './../Session/SessionEvent'
 import { InternalEventInterface } from './../Internal/InternalEventInterface'
 import { InternalEventHandlerInterface } from './../Internal/InternalEventHandlerInterface'
 import { ItemManagerInterface } from './../Item/ItemManagerInterface'
@@ -92,9 +91,6 @@ export class VaultInviteService
 
   async handleEvent(event: InternalEventInterface): Promise<void> {
     switch (event.type) {
-      case SessionEvent.UserKeyPairChanged:
-        void this.invitesServer.deleteAllInboundInvites()
-        break
       case SyncEvent.ReceivedSharedVaultInvites:
         await this.processInboundInvites(event.payload as SyncEventReceivedSharedVaultInvitesData)
         break

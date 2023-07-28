@@ -1,10 +1,5 @@
-import { SendOwnContactChangeMessage } from './UseCase/SendOwnContactChangeMessage'
 import { DeleteContact } from './UseCase/DeleteContact'
 import { MutatorClientInterface } from './../Mutator/MutatorClientInterface'
-import { UserKeyPairChangedEventData } from './../Session/UserKeyPairChangedEventData'
-import { SessionEvent } from './../Session/SessionEvent'
-import { InternalEventInterface } from './../Internal/InternalEventInterface'
-import { InternalEventHandlerInterface } from './../Internal/InternalEventHandlerInterface'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { SharedVaultInviteServerHash, SharedVaultUserServerHash } from '@standardnotes/responses'
 import { TrustedContactInterface, TrustedContactMutator, DecryptedItemInterface } from '@standardnotes/models'
@@ -25,10 +20,7 @@ import { GetAllContacts } from './UseCase/GetAllContacts'
 import { EncryptionProviderInterface } from '../Encryption/EncryptionProviderInterface'
 import { Result } from '@standardnotes/domain-core'
 
-export class ContactService
-  extends AbstractService<ContactServiceEvent>
-  implements ContactServiceInterface, InternalEventHandlerInterface
-{
+export class ContactService extends AbstractService<ContactServiceEvent> implements ContactServiceInterface {
   constructor(
     private sync: SyncServiceInterface,
     private mutator: MutatorClientInterface,
@@ -43,48 +35,25 @@ export class ContactService
     private _createOrEditContact: CreateOrEditContact,
     private _editContact: EditContact,
     private _validateItemSigner: ValidateItemSigner,
-    private _sendOwnContactChangedMessage: SendOwnContactChangeMessage,
     eventBus: InternalEventBusInterface,
   ) {
     super(eventBus)
-
-    eventBus.addEventHandler(this, SessionEvent.UserKeyPairChanged)
   }
 
-  async handleEvent(event: InternalEventInterface): Promise<void> {
-    if (event.type === SessionEvent.UserKeyPairChanged) {
-      const data = event.payload as UserKeyPairChangedEventData
-      await this.selfContactManager.updateWithNewPublicKeySet({
-        encryption: data.current.encryption.publicKey,
-        signing: data.current.signing.publicKey,
-      })
-      void this.sendOwnContactChangeEventToAllContacts(event.payload as UserKeyPairChangedEventData)
-    }
-  }
-
-  private async sendOwnContactChangeEventToAllContacts(data: UserKeyPairChangedEventData): Promise<void> {
-    if (!data.previous) {
-      return
-    }
-
-    const contacts = this._getAllContacts.execute()
-    if (contacts.isFailed()) {
-      return
-    }
-
-    for (const contact of contacts.getValue()) {
-      if (contact.isMe) {
-        continue
-      }
-
-      await this._sendOwnContactChangedMessage.execute({
-        senderOldKeyPair: data.previous.encryption,
-        senderOldSigningKeyPair: data.previous.signing,
-        senderNewKeyPair: data.current.encryption,
-        senderNewSigningKeyPair: data.current.signing,
-        contact,
-      })
-    }
+  override deinit(): void {
+    super.deinit()
+    ;(this.sync as unknown) = undefined
+    ;(this.mutator as unknown) = undefined
+    ;(this.session as unknown) = undefined
+    ;(this.crypto as unknown) = undefined
+    ;(this.user as unknown) = undefined
+    ;(this.selfContactManager as unknown) = undefined
+    ;(this.encryption as unknown) = undefined
+    ;(this._findContact as unknown) = undefined
+    ;(this._getAllContacts as unknown) = undefined
+    ;(this._createOrEditContact as unknown) = undefined
+    ;(this._editContact as unknown) = undefined
+    ;(this._validateItemSigner as unknown) = undefined
   }
 
   getSelfContact(): TrustedContactInterface | undefined {
@@ -232,21 +201,5 @@ export class ContactService
 
   getItemSignatureStatus(item: DecryptedItemInterface): ItemSignatureValidationResult {
     return this._validateItemSigner.execute(item)
-  }
-
-  override deinit(): void {
-    super.deinit()
-    ;(this.sync as unknown) = undefined
-    ;(this.mutator as unknown) = undefined
-    ;(this.session as unknown) = undefined
-    ;(this.crypto as unknown) = undefined
-    ;(this.user as unknown) = undefined
-    ;(this.selfContactManager as unknown) = undefined
-    ;(this.encryption as unknown) = undefined
-    ;(this._findContact as unknown) = undefined
-    ;(this._getAllContacts as unknown) = undefined
-    ;(this._createOrEditContact as unknown) = undefined
-    ;(this._editContact as unknown) = undefined
-    ;(this._validateItemSigner as unknown) = undefined
   }
 }

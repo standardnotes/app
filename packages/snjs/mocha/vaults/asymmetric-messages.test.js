@@ -53,20 +53,13 @@ describe('asymmetric messages', function () {
   })
 
   it('should delete message after processing it', async () => {
-    const { contactContext, deinitContactContext } = await Collaboration.createSharedVaultWithAcceptedInvite(context)
+    const { sharedVault, contactContext, deinitContactContext } =
+      await Collaboration.createSharedVaultWithAcceptedInvite(context)
 
-    const eventData = {
-      current: {
-        encryption: context.encryption.getKeyPair(),
-        signing: context.encryption.getSigningKeyPair(),
-      },
-      previous: {
-        encryption: context.encryption.getKeyPair(),
-        signing: context.encryption.getSigningKeyPair(),
-      },
-    }
-
-    await context.contacts.sendOwnContactChangeEventToAllContacts(eventData)
+    await context.vaults.changeVaultNameAndDescription(sharedVault, {
+      name: 'New Name',
+      description: 'New Description',
+    })
 
     const deleteFunction = sinon.spy(contactContext.asymmetric, 'deleteMessageAfterProcessing')
 
@@ -262,10 +255,7 @@ describe('asymmetric messages', function () {
 
     contactContext.lockSyncing()
 
-    const sendPromise = context.resolveWhenAsyncFunctionCompletes(
-      context.contacts,
-      'sendOwnContactChangeEventToAllContacts',
-    )
+    const sendPromise = context.resolveWhenAsyncFunctionCompletes(context.sharedVaults._handleKeyPairChange, 'execute')
     await context.changePassword('new password')
     await sendPromise
 
