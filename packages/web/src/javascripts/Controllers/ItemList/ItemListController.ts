@@ -34,10 +34,6 @@ import { SelectedItemsController } from '../SelectedItemsController'
 import { NotesController } from '../NotesController/NotesController'
 import { formatDateAndTimeForNote } from '@/Utils/DateUtils'
 
-import dayjs from 'dayjs'
-import dayjsAdvancedFormat from 'dayjs/plugin/advancedFormat'
-dayjs.extend(dayjsAdvancedFormat)
-
 import { AbstractViewController } from '../Abstract/AbstractViewController'
 import { log, LoggingDomain } from '@/Logging'
 import { NoteViewController } from '@/Components/NoteView/Controller/NoteViewController'
@@ -45,6 +41,7 @@ import { FileViewController } from '@/Components/NoteView/Controller/FileViewCon
 import { TemplateNoteViewAutofocusBehavior } from '@/Components/NoteView/Controller/TemplateNoteViewControllerOptions'
 import { ItemsReloadSource } from './ItemsReloadSource'
 import { VaultDisplayServiceEvent } from '@standardnotes/ui-services'
+import { getDayjsFormattedString } from '@/Utils/GetDayjsFormattedString'
 
 const MinNoteCellHeight = 51.0
 const DefaultListNumNotes = 20
@@ -671,7 +668,12 @@ export class ItemListController extends AbstractViewController implements Intern
         this.navigationController.selected?.preferences?.customNoteTitleFormat ||
         this.application.getPreference(PrefKey.CustomNoteTitleFormat, PrefDefaults[PrefKey.CustomNoteTitleFormat])
 
-      return dayjs(createdAt).format(customFormat)
+      try {
+        return getDayjsFormattedString(createdAt, customFormat)
+      } catch (error) {
+        console.error(error)
+        return formatDateAndTimeForNote(createdAt || new Date())
+      }
     }
 
     if (titleFormat === NewNoteTitleFormat.Empty) {
