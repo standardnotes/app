@@ -370,13 +370,20 @@ export class AppContext {
   }
 
   spyOnFunctionResult(object, functionName) {
-    return new Promise((resolve) => {
-      sinon.stub(object, functionName).callsFake(async (params) => {
-        object[functionName].restore()
-        const result = await object[functionName](params)
-        resolve(result)
-        return result
-      })
+    const originalFunction = object[functionName]
+    return new Promise((resolve, reject) => {
+      try {
+        sinon.stub(object, functionName).callsFake(async (params) => {
+          const result = await originalFunction(params)
+          object[functionName].restore()
+          setTimeout(() => {
+            resolve(result)
+          }, 0)
+          return result
+        })
+      } catch (err) {
+        reject(err)
+      }
     })
   }
 
