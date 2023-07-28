@@ -5030,7 +5030,7 @@ __metadata:
     circular-dependency-plugin: ^5.2.2
     copy-webpack-plugin: ^11.0.0
     css-loader: "*"
-    dayjs: ^1.11.7
+    dayjs: ^1.11.9
     dotenv: ^16.0.3
     eslint: "*"
     eslint-config-prettier: ^8.9.0
@@ -9635,7 +9635,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dayjs@npm:^1.11.7, dayjs@npm:^1.8.15":
+"dayjs@npm:^1.11.9, dayjs@npm:^1.8.15":
   version: 1.11.9
   resolution: "dayjs@npm:1.11.9"
   checksum: a4844d83dc87f921348bb9b1b93af851c51e6f71fa259604809cfe1b49d1230e6b0212dab44d1cb01994c096ad3a77ea1cf18fa55154da6efcc9d3610526ac38
