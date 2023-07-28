@@ -4,7 +4,7 @@ import * as Collaboration from '../lib/Collaboration.js'
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
-describe('asymmetric messages', function () {
+describe.only('asymmetric messages', function () {
   this.timeout(Factory.TwentySecondTimeout)
 
   let context
@@ -233,7 +233,7 @@ describe('asymmetric messages', function () {
     await deinitContactContext()
   })
 
-  it.only('should send sender keypair changed message to trusted contacts', async () => {
+  it('should send sender keypair changed message to trusted contacts', async () => {
     const { contactContext, deinitContactContext } = await Collaboration.createSharedVaultWithAcceptedInvite(context)
 
     contactContext.lockSyncing()
