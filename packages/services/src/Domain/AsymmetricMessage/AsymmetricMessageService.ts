@@ -31,6 +31,7 @@ import { FindContact } from '../Contacts/UseCase/FindContact'
 import { CreateOrEditContact } from '../Contacts/UseCase/CreateOrEditContact'
 import { ReplaceContactData } from '../Contacts/UseCase/ReplaceContactData'
 import { EncryptionProviderInterface } from '../Encryption/EncryptionProviderInterface'
+import { Result } from '@standardnotes/domain-core'
 
 export class AsymmetricMessageService
   extends AbstractService
@@ -143,11 +144,11 @@ export class AsymmetricMessageService
   getServerMessageType(message: AsymmetricMessageServerHash): AsymmetricMessagePayloadType | undefined {
     const result = this.getUntrustedMessagePayload(message)
 
-    if (!result) {
+    if (result.isFailed()) {
       return undefined
     }
 
-    return result.type
+    return result.getValue().type
   }
 
   async handleRemoteReceivedAsymmetricMessages(messages: AsymmetricMessageServerHash[]): Promise<void> {
@@ -159,11 +160,12 @@ export class AsymmetricMessageService
 
     for (const message of sortedMessages) {
       const trustedPayload = this.getTrustedMessagePayload(message)
-      if (!trustedPayload) {
+      if (trustedPayload.isFailed()) {
+        console.error('Could not get trusted payload for message', message, 'error', trustedPayload.getError())
         continue
       }
 
-      await this.handleTrustedMessageResult(message, trustedPayload)
+      await this.handleTrustedMessageResult(message, trustedPayload.getValue())
     }
   }
 
@@ -186,23 +188,23 @@ export class AsymmetricMessageService
     await this.deleteMessageAfterProcessing(message)
   }
 
-  getUntrustedMessagePayload(message: AsymmetricMessageServerHash): AsymmetricMessagePayload | undefined {
+  getUntrustedMessagePayload(message: AsymmetricMessageServerHash): Result<AsymmetricMessagePayload> {
     const result = this._getUntrustedPayload.execute({
       privateKey: this.encryption.getKeyPair().privateKey,
       message,
     })
 
     if (result.isFailed()) {
-      return undefined
+      return Result.fail(result.getError())
     }
 
-    return result.getValue()
+    return result
   }
 
-  getTrustedMessagePayload(message: AsymmetricMessageServerHash): AsymmetricMessagePayload | undefined {
+  getTrustedMessagePayload(message: AsymmetricMessageServerHash): Result<AsymmetricMessagePayload> {
     const contact = this._findContact.execute({ userUuid: message.sender_uuid })
     if (contact.isFailed()) {
-      return undefined
+      return Result.fail(contact.getError())
     }
 
     const result = this._getTrustedPayload.execute({
@@ -213,10 +215,10 @@ export class AsymmetricMessageService
     })
 
     if (result.isFailed()) {
-      return undefined
+      return Result.fail(result.getError())
     }
 
-    return result.getValue()
+    return result
   }
 
   async deleteMessageAfterProcessing(message: AsymmetricMessageServerHash): Promise<void> {

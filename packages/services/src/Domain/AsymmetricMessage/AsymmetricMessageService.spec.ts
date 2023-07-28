@@ -25,6 +25,7 @@ import {
   KeySystemRootKeyContentSpecialized,
   TrustedContactInterface,
 } from '@standardnotes/models'
+import { Result } from '@standardnotes/domain-core'
 
 describe('AsymmetricMessageService', () => {
   let sync: jest.Mocked<SyncServiceInterface>
@@ -139,7 +140,7 @@ describe('AsymmetricMessageService', () => {
 
     service.getTrustedMessagePayload = service.getUntrustedMessagePayload = jest
       .fn()
-      .mockReturnValue(trustedPayloadMock)
+      .mockReturnValue(Result.ok(trustedPayloadMock))
 
     const handleTrustedContactShareMessageMock = jest.fn()
     service.handleTrustedContactShareMessage = handleTrustedContactShareMessageMock
@@ -171,7 +172,7 @@ describe('AsymmetricMessageService', () => {
     service.handleTrustedContactShareMessage = jest.fn()
     service.getTrustedMessagePayload = service.getUntrustedMessagePayload = jest
       .fn()
-      .mockReturnValue(decryptedMessagePayload)
+      .mockReturnValue(Result.ok(decryptedMessagePayload))
 
     await service.handleRemoteReceivedAsymmetricMessages([message])
 
@@ -200,7 +201,7 @@ describe('AsymmetricMessageService', () => {
     service.handleTrustedSenderKeypairChangedMessage = jest.fn()
     service.getTrustedMessagePayload = service.getUntrustedMessagePayload = jest
       .fn()
-      .mockReturnValue(decryptedMessagePayload)
+      .mockReturnValue(Result.ok(decryptedMessagePayload))
 
     await service.handleRemoteReceivedAsymmetricMessages([message])
 
@@ -228,7 +229,7 @@ describe('AsymmetricMessageService', () => {
     service.handleTrustedSharedVaultRootKeyChangedMessage = jest.fn()
     service.getTrustedMessagePayload = service.getUntrustedMessagePayload = jest
       .fn()
-      .mockReturnValue(decryptedMessagePayload)
+      .mockReturnValue(Result.ok(decryptedMessagePayload))
 
     await service.handleRemoteReceivedAsymmetricMessages([message])
 
@@ -258,7 +259,7 @@ describe('AsymmetricMessageService', () => {
     service.handleTrustedVaultMetadataChangedMessage = jest.fn()
     service.getTrustedMessagePayload = service.getUntrustedMessagePayload = jest
       .fn()
-      .mockReturnValue(decryptedMessagePayload)
+      .mockReturnValue(Result.ok(decryptedMessagePayload))
 
     await service.handleRemoteReceivedAsymmetricMessages([message])
 
@@ -284,7 +285,7 @@ describe('AsymmetricMessageService', () => {
 
     service.getTrustedMessagePayload = service.getUntrustedMessagePayload = jest
       .fn()
-      .mockReturnValue(decryptedMessagePayload)
+      .mockReturnValue(Result.ok(decryptedMessagePayload))
 
     await expect(service.handleRemoteReceivedAsymmetricMessages([message])).rejects.toThrow(
       'Shared vault invites payloads are not handled as part of asymmetric messages',
@@ -313,7 +314,7 @@ describe('AsymmetricMessageService', () => {
     service.handleTrustedContactShareMessage = jest.fn()
     service.getTrustedMessagePayload = service.getUntrustedMessagePayload = jest
       .fn()
-      .mockReturnValue(decryptedMessagePayload)
+      .mockReturnValue(Result.ok(decryptedMessagePayload))
 
     await service.handleRemoteReceivedAsymmetricMessages([message])
 

@@ -233,7 +233,7 @@ describe('asymmetric messages', function () {
     await deinitContactContext()
   })
 
-  it('should send sender keypair changed message to trusted contacts', async () => {
+  it.only('should send sender keypair changed message to trusted contacts', async () => {
     const { contactContext, deinitContactContext } = await Collaboration.createSharedVaultWithAcceptedInvite(context)
 
     contactContext.lockSyncing()
@@ -260,11 +260,12 @@ describe('asymmetric messages', function () {
       for (const message of sortedMessages) {
         const trustedPayload = contactContext.asymmetric.getTrustedMessagePayload(message)
         console.log('[Test suite] | Trusted payload', trustedPayload)
-        if (!trustedPayload) {
+        if (trustedPayload.isFailed()) {
+          console.error('Could not get trusted payload for message', message, 'error', trustedPayload.getError())
           continue
         }
 
-        await contactContext.asymmetric.handleTrustedMessageResult(message, trustedPayload)
+        await contactContext.asymmetric.handleTrustedMessageResult(message, trustedPayload.getValue())
       }
     }
 
@@ -338,7 +339,7 @@ describe('asymmetric messages', function () {
     await deinitContactContext()
   })
 
-  it.skip('should process sender keypair changed message', async () => {
+  it('should process sender keypair changed message', async () => {
     const { contactContext, deinitContactContext } = await Collaboration.createContactContext()
     await Collaboration.createTrustedContactForUserOfContext(context, contactContext)
     await Collaboration.createTrustedContactForUserOfContext(contactContext, context)
@@ -361,7 +362,7 @@ describe('asymmetric messages', function () {
     await deinitContactContext()
   })
 
-  it.skip('sender keypair changed message should be signed using old key pair', async () => {
+  it('sender keypair changed message should be signed using old key pair', async () => {
     const { contactContext, deinitContactContext } = await Collaboration.createSharedVaultWithAcceptedInvite(context)
 
     const oldKeyPair = context.encryption.getKeyPair()
