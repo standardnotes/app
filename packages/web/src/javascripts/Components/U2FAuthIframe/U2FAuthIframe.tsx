@@ -89,8 +89,8 @@ const U2FAuthIframe = () => {
       if (!error) {
         return
       }
-      setError(error.toString())
-      console.error(error.toString())
+      setError(JSON.stringify(error))
+      console.error(error)
     }
   }, [source, username, apiHost])
 

@@ -458,8 +458,7 @@ export class ComponentViewer implements ComponentViewerInterface {
     }
     this.log('Send message to component', this.componentOrFeature, 'message: ', message)
 
-    let origin = this.options.url
-    if (!origin || !this.window) {
+    if (!this.window) {
       if (essential) {
         void this.services.alerts.alert(
           `Standard Notes is trying to communicate with ${this.componentOrFeature.displayName}, ` +
@@ -469,13 +468,11 @@ export class ComponentViewer implements ComponentViewerInterface {
       return
     }
 
-    if (!origin.startsWith('http') && !origin.startsWith('file')) {
-      /* Native extension running in web, prefix current host */
-      origin = window.location.href + origin
-    }
+    /** Because iframes do not allow-same-origin, their origin is `null`, and so we can't target their explicit origin */
+    const nullOrigin = '*'
 
     /* Mobile messaging requires json */
-    this.window.postMessage(this.isMobile ? JSON.stringify(message) : message, origin)
+    this.window.postMessage(this.isMobile ? JSON.stringify(message) : message, nullOrigin)
   }
 
   private responseItemsByRemovingPrivateProperties<T extends OutgoingItemMessagePayload | IncomingComponentItemPayload>(
