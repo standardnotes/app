@@ -233,20 +233,8 @@ describe('asymmetric messages', function () {
     await deinitContactContext()
   })
 
-  it.only('should send sender keypair changed message to trusted contacts 7', async () => {
+  const productionFailingTest = async () => {
     const { contactContext, deinitContactContext } = await Collaboration.createSharedVaultWithAcceptedInvite(context)
-
-    contactContext.lockSyncing()
-
-    const sendPromise = context.resolveWhenAsyncFunctionCompletes(
-      context.contacts,
-      'sendOwnContactChangeEventToAllContacts',
-    )
-    await context.changePassword('new password')
-    await sendPromise
-
-    // const firstPartySpy = sinon.spy(context.asymmetric, 'handleTrustedSenderKeypairChangedMessage')
-    // const secondPartySpy = sinon.spy(contactContext.asymmetric, 'handleTrustedSenderKeypairChangedMessage')
 
     contactContext.asymmetric.handleRemoteReceivedAsymmetricMessages = async (messages) => {
       console.log('[Test suite] | Received messages', messages)
@@ -269,19 +257,219 @@ describe('asymmetric messages', function () {
       }
     }
 
+    console.log('Originator public key', context.publicKey)
+    console.log('Contact public key', contactContext.publicKey)
+
+    contactContext.lockSyncing()
+
+    const sendPromise = context.resolveWhenAsyncFunctionCompletes(
+      context.contacts,
+      'sendOwnContactChangeEventToAllContacts',
+    )
+    await context.changePassword('new password')
+    await sendPromise
+
+    console.log('Originator public key after changing password', context.publicKey)
+
     const completedProcessingMessagesPromise = contactContext.resolveWhenAsymmetricMessageProcessingCompletes()
     contactContext.unlockSyncing()
     await contactContext.sync()
     await completedProcessingMessagesPromise
-
-    // expect(firstPartySpy.callCount).to.equal(0)
-    // expect(secondPartySpy.callCount).to.equal(1)
 
     const contact = contactContext.contacts.findContact(context.userUuid)
     expect(contact.publicKeySet.encryption).to.equal(context.publicKey)
     expect(contact.publicKeySet.signing).to.equal(context.signingPublicKey)
 
     await deinitContactContext()
+  }
+
+  it.only('should send sender keypair changed message to trusted contacts', async () => {
+    await productionFailingTest()
+  })
+
+  it.only('should send sender keypair changed message to trusted contacts', async () => {
+    await productionFailingTest()
+  })
+
+  it.only('should send sender keypair changed message to trusted contacts', async () => {
+    await productionFailingTest()
+  })
+
+  it.only('should send sender keypair changed message to trusted contacts', async () => {
+    await productionFailingTest()
+  })
+
+  it.only('should send sender keypair changed message to trusted contacts', async () => {
+    await productionFailingTest()
+  })
+
+  it.only('should send sender keypair changed message to trusted contacts', async () => {
+    await productionFailingTest()
+  })
+
+  it.only('should send sender keypair changed message to trusted contacts', async () => {
+    await productionFailingTest()
+  })
+
+  it.only('should send sender keypair changed message to trusted contacts', async () => {
+    await productionFailingTest()
+  })
+
+  it.only('should send sender keypair changed message to trusted contacts', async () => {
+    await productionFailingTest()
+  })
+
+  it.only('should send sender keypair changed message to trusted contacts', async () => {
+    await productionFailingTest()
+  })
+
+  it.only('should send sender keypair changed message to trusted contacts', async () => {
+    await productionFailingTest()
+  })
+
+  it.only('should send sender keypair changed message to trusted contacts', async () => {
+    await productionFailingTest()
+  })
+
+  it.only('should send sender keypair changed message to trusted contacts', async () => {
+    await productionFailingTest()
+  })
+
+  it.only('should send sender keypair changed message to trusted contacts', async () => {
+    await productionFailingTest()
+  })
+
+  it.only('should send sender keypair changed message to trusted contacts', async () => {
+    await productionFailingTest()
+  })
+
+  it.only('should send sender keypair changed message to trusted contacts', async () => {
+    await productionFailingTest()
+  })
+  it.only('should send sender keypair changed message to trusted contacts', async () => {
+    await productionFailingTest()
+  })
+
+  it.only('should send sender keypair changed message to trusted contacts', async () => {
+    await productionFailingTest()
+  })
+
+  it.only('should send sender keypair changed message to trusted contacts', async () => {
+    await productionFailingTest()
+  })
+
+  it.only('should send sender keypair changed message to trusted contacts', async () => {
+    await productionFailingTest()
+  })
+
+  it.only('should send sender keypair changed message to trusted contacts', async () => {
+    await productionFailingTest()
+  })
+
+  it.only('should send sender keypair changed message to trusted contacts', async () => {
+    await productionFailingTest()
+  })
+
+  it.only('should send sender keypair changed message to trusted contacts', async () => {
+    await productionFailingTest()
+  })
+
+  it.only('should send sender keypair changed message to trusted contacts', async () => {
+    await productionFailingTest()
+  })
+  it.only('should send sender keypair changed message to trusted contacts', async () => {
+    await productionFailingTest()
+  })
+
+  it.only('should send sender keypair changed message to trusted contacts', async () => {
+    await productionFailingTest()
+  })
+
+  it.only('should send sender keypair changed message to trusted contacts', async () => {
+    await productionFailingTest()
+  })
+
+  it.only('should send sender keypair changed message to trusted contacts', async () => {
+    await productionFailingTest()
+  })
+
+  it.only('should send sender keypair changed message to trusted contacts', async () => {
+    await productionFailingTest()
+  })
+
+  it.only('should send sender keypair changed message to trusted contacts', async () => {
+    await productionFailingTest()
+  })
+
+  it.only('should send sender keypair changed message to trusted contacts', async () => {
+    await productionFailingTest()
+  })
+
+  it.only('should send sender keypair changed message to trusted contacts', async () => {
+    await productionFailingTest()
+  })
+  it.only('should send sender keypair changed message to trusted contacts', async () => {
+    await productionFailingTest()
+  })
+
+  it.only('should send sender keypair changed message to trusted contacts', async () => {
+    await productionFailingTest()
+  })
+
+  it.only('should send sender keypair changed message to trusted contacts', async () => {
+    await productionFailingTest()
+  })
+
+  it.only('should send sender keypair changed message to trusted contacts', async () => {
+    await productionFailingTest()
+  })
+
+  it.only('should send sender keypair changed message to trusted contacts', async () => {
+    await productionFailingTest()
+  })
+
+  it.only('should send sender keypair changed message to trusted contacts', async () => {
+    await productionFailingTest()
+  })
+
+  it.only('should send sender keypair changed message to trusted contacts', async () => {
+    await productionFailingTest()
+  })
+
+  it.only('should send sender keypair changed message to trusted contacts', async () => {
+    await productionFailingTest()
+  })
+
+  it.only('should send sender keypair changed message to trusted contacts', async () => {
+    await productionFailingTest()
+  })
+
+  it.only('should send sender keypair changed message to trusted contacts', async () => {
+    await productionFailingTest()
+  })
+
+  it.only('should send sender keypair changed message to trusted contacts', async () => {
+    await productionFailingTest()
+  })
+
+  it.only('should send sender keypair changed message to trusted contacts', async () => {
+    await productionFailingTest()
+  })
+
+  it.only('should send sender keypair changed message to trusted contacts', async () => {
+    await productionFailingTest()
+  })
+
+  it.only('should send sender keypair changed message to trusted contacts', async () => {
+    await productionFailingTest()
+  })
+
+  it.only('should send sender keypair changed message to trusted contacts', async () => {
+    await productionFailingTest()
+  })
+
+  it.only('should send sender keypair changed message to trusted contacts', async () => {
+    await productionFailingTest()
   })
 
   it('should trust and process messages sent after sender keypair changed', async () => {
