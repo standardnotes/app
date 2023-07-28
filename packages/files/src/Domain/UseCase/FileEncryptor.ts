@@ -1,5 +1,5 @@
 import { FileContent } from '@standardnotes/models'
-import { PureCryptoInterface, StreamEncryptor, SodiumConstant } from '@standardnotes/sncrypto-common'
+import { PureCryptoInterface, StreamEncryptor, SodiumTag } from '@standardnotes/sncrypto-common'
 
 export class FileEncryptor {
   private stream!: StreamEncryptor
@@ -20,7 +20,7 @@ export class FileEncryptor {
       throw new Error('FileEncryptor must call initializeHeader first')
     }
 
-    const tag = isFinalChunk ? SodiumConstant.CRYPTO_SECRETSTREAM_XCHACHA20POLY1305_TAG_FINAL : undefined
+    const tag = isFinalChunk ? SodiumTag.CRYPTO_SECRETSTREAM_XCHACHA20POLY1305_TAG_FINAL : undefined
 
     const encryptedBytes = this.crypto.xchacha20StreamEncryptorPush(
       this.stream,

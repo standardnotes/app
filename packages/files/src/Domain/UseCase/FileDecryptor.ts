@@ -1,4 +1,4 @@
-import { PureCryptoInterface, StreamDecryptor, SodiumConstant } from '@standardnotes/sncrypto-common'
+import { PureCryptoInterface, StreamDecryptor, SodiumTag } from '@standardnotes/sncrypto-common'
 import { FileContent } from '@standardnotes/models'
 
 export class FileDecryptor {
@@ -22,7 +22,7 @@ export class FileDecryptor {
       return undefined
     }
 
-    const isFinal = result.tag === SodiumConstant.CRYPTO_SECRETSTREAM_XCHACHA20POLY1305_TAG_FINAL
+    const isFinal = result.tag === SodiumTag.CRYPTO_SECRETSTREAM_XCHACHA20POLY1305_TAG_FINAL
 
     return { decryptedBytes: result.message, isFinalChunk: isFinal }
   }

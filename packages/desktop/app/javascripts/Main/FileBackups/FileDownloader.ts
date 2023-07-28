@@ -4,7 +4,12 @@ import { downloadData } from './FileNetworking'
 export class FileDownloader {
   writeStream: WriteStream
 
-  constructor(private chunkSizes: number[], private valetToken: string, private url: string, filePath: string) {
+  constructor(
+    private chunkSizes: number[],
+    private valetToken: string,
+    private url: string,
+    filePath: string,
+  ) {
     this.writeStream = createWriteStream(filePath, { flags: 'a' })
   }
 

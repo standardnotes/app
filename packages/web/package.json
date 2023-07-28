@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/web",
-  "version": "3.167.16",
+  "version": "3.167.19",
   "license": "AGPL-3.0-or-later",
   "main": "dist/app.js",
   "author": "Standard Notes",
@@ -66,11 +66,11 @@
     "circular-dependency-plugin": "^5.2.2",
     "copy-webpack-plugin": "^11.0.0",
     "css-loader": "*",
-    "dayjs": "^1.11.7",
+    "dayjs": "^1.11.9",
     "dotenv": "^16.0.3",
     "eslint": "*",
-    "eslint-config-prettier": "^8.5.0",
-    "eslint-plugin-react": "^7.31.11",
+    "eslint-config-prettier": "^8.9.0",
+    "eslint-plugin-react": "^7.33.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "html-webpack-plugin": "^5.5.3",
     "identity-obj-proxy": "^3.0.0",
@@ -87,7 +87,7 @@
     "postcss": "^8.4.19",
     "postcss-loader": "^7.0.2",
     "prettier": "*",
-    "prettier-plugin-tailwindcss": "^0.4.0",
+    "prettier-plugin-tailwindcss": "^0.4.1",
     "qrcode.react": "^3.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -101,7 +101,7 @@
     "webextension-polyfill": "^0.10.0",
     "webpack": "*",
     "webpack-dev-server": "*",
-    "webpack-merge": "^5.8.0"
+    "webpack-merge": "*"
   },
   "lint-staged": {
     "app/**/*.{js,ts,jsx,tsx}": "eslint --cache --fix",

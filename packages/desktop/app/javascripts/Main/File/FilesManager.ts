@@ -72,6 +72,7 @@ export class FilesManager implements FilesManagerInterface {
       if (!stat.isDirectory()) {
         throw new Error('Tried to create a directory where a file of the same ' + `name already exists: ${dirPath}`)
       }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       if (error.code === FileErrorCodes.FileDoesNotExist) {
         /**
@@ -83,6 +84,7 @@ export class FilesManager implements FilesManagerInterface {
         /** Now that its parent(s) exist, create the directory */
         try {
           await fs.promises.mkdir(dirPath)
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
           if (error.code === FileErrorCodes.FileAlreadyExists) {
             /**
@@ -257,6 +259,7 @@ export class FilesManager implements FilesManagerInterface {
 
             try {
               await this.ensureDirectoryExists(path.dirname(filepath))
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
             } catch (error: any) {
               return tryReject(error)
             }
@@ -299,6 +302,7 @@ export class FilesManager implements FilesManagerInterface {
       try {
         await fs.promises.unlink(filePath)
         break
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
         if (error.code === FileErrorCodes.OperationNotPermitted || error.code === FileErrorCodes.DeviceIsBusy) {
           await new Promise((resolve) => setTimeout(resolve, 300))

@@ -1,7 +1,7 @@
 {
   "name": "@standardnotes/desktop",
   "main": "./app/dist/index.js",
-  "version": "3.108.49",
+  "version": "3.108.52",
   "license": "AGPL-3.0-or-later",
   "author": "Standard Notes.",
   "private": true,
@@ -65,7 +65,7 @@
     "electron-builder": "23.6.0",
     "electron-notarize": "^1.2.1",
     "eslint": "*",
-    "eslint-config-prettier": "^8.5.0",
+    "eslint-config-prettier": "^8.9.0",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^6.1.1",
@@ -79,7 +79,7 @@
     "ts-node": "^10.9.1",
     "typescript": "*",
     "webpack": "*",
-    "webpack-merge": "^5.8.0"
+    "webpack-merge": "*"
   },
   "build": {
     "appId": "org.standardnotes.standardnotes",

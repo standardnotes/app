@@ -16,7 +16,10 @@ export class TwoFactorAuth {
   private _status: TwoFactorStatus | 'fetching' = 'fetching'
   private _errorMessage: string | null
 
-  constructor(private readonly mfaProvider: MfaProvider, private readonly userProvider: UserProvider) {
+  constructor(
+    private readonly mfaProvider: MfaProvider,
+    private readonly userProvider: UserProvider,
+  ) {
     this._errorMessage = null
 
     makeAutoObservable<TwoFactorAuth, '_status' | '_errorMessage' | 'deactivateMfa' | 'startActivation'>(

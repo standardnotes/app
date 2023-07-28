@@ -129,7 +129,7 @@ export class RootKeyManager extends AbstractService<RootKeyManagerEvent> {
       case KeyMode.RootKeyPlusWrapper:
         return true
       default:
-        throw Error(`Unhandled keyMode value '${this.keyMode}'.`)
+        throw Error('Unhandled keyMode value.')
     }
   }
 
@@ -369,7 +369,7 @@ export class RootKeyManager extends AbstractService<RootKeyManagerEvent> {
       /** Root key is simply changing, mode stays the same */
       /** this.keyMode = this.keyMode; */
     } else {
-      throw Error(`Unhandled key mode for setNewRootKey ${this.keyMode}`)
+      throw Error('Unhandled key mode for setNewRootKey')
     }
 
     this.setRootKeyInstance(key)
@@ -396,7 +396,7 @@ export class RootKeyManager extends AbstractService<RootKeyManagerEvent> {
     } else if (this.keyMode === KeyMode.RootKeyNone) {
       return undefined
     } else {
-      throw `Unhandled key mode for getRootKeyParams ${this.keyMode}`
+      throw 'Unhandled key mode for getRootKeyParams'
     }
   }
 

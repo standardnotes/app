@@ -29,35 +29,35 @@ export const V002Algorithm = Object.freeze({
   EncryptionIvLength: 128,
 })
 
-export enum V003Algorithm {
-  SaltSeedLength = 256,
-  PbkdfCost = 110000,
-  PbkdfOutputLength = 768,
-  EncryptionKeyLength = 256,
-  EncryptionIvLength = 128,
-}
+export const V003Algorithm = Object.freeze({
+  SaltSeedLength: 256,
+  PbkdfCost: 110000,
+  PbkdfOutputLength: 768,
+  EncryptionKeyLength: 256,
+  EncryptionIvLength: 128,
+})
 
-export enum V004Algorithm {
-  ArgonSaltSeedLength = 256,
-  ArgonSaltLength = 128,
-  ArgonIterations = 5,
-  ArgonMemLimit = 67108864,
-  ArgonOutputKeyBytes = 64,
+export const V004Algorithm = Object.freeze({
+  ArgonSaltSeedLength: 256,
+  ArgonSaltLength: 128,
+  ArgonIterations: 5,
+  ArgonMemLimit: 67108864,
+  ArgonOutputKeyBytes: 64,
 
-  EncryptionKeyLength = 256,
-  EncryptionNonceLength = 192,
+  EncryptionKeyLength: 256,
+  EncryptionNonceLength: 192,
 
-  AsymmetricEncryptionNonceLength = 192,
+  AsymmetricEncryptionNonceLength: 192,
 
-  MasterKeyEncryptionKeyPairSubKeyNumber = 1,
-  MasterKeyEncryptionKeyPairSubKeyContext = 'sn-pkc-e',
-  MasterKeyEncryptionKeyPairSubKeyBytes = SodiumConstant.crypto_box_SEEDBYTES,
+  MasterKeyEncryptionKeyPairSubKeyNumber: 1,
+  MasterKeyEncryptionKeyPairSubKeyContext: 'sn-pkc-e',
+  MasterKeyEncryptionKeyPairSubKeyBytes: SodiumConstant.crypto_box_SEEDBYTES,
 
-  MasterKeySigningKeyPairSubKeyNumber = 2,
-  MasterKeySigningKeyPairSubKeyContext = 'sn-pkc-s',
-  MasterKeySigningKeyPairSubKeyBytes = SodiumConstant.crypto_sign_SEEDBYTES,
+  MasterKeySigningKeyPairSubKeyNumber: 2,
+  MasterKeySigningKeyPairSubKeyContext: 'sn-pkc-s',
+  MasterKeySigningKeyPairSubKeyBytes: SodiumConstant.crypto_sign_SEEDBYTES,
 
-  PayloadKeyHashingKeySubKeyNumber = 1,
-  PayloadKeyHashingKeySubKeyContext = 'sn-sym-h',
-  PayloadKeyHashingKeySubKeyBytes = SodiumConstant.crypto_generichash_KEYBYTES,
-}
+  PayloadKeyHashingKeySubKeyNumber: 1,
+  PayloadKeyHashingKeySubKeyContext: 'sn-sym-h',
+  PayloadKeyHashingKeySubKeyBytes: SodiumConstant.crypto_generichash_KEYBYTES,
+})

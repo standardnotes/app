@@ -641,7 +641,7 @@ export class SyncService
     } else if (useStrategy === SyncQueueStrategy.ForceSpawnNew) {
       return this.queueStrategyForceSpawnNew(options)
     } else {
-      throw Error(`Unhandled timing strategy ${useStrategy}`)
+      throw Error('Unhandled timing strategy')
     }
   }
 

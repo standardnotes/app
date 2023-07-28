@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.108.52](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.167.18...@standardnotes/desktop@3.108.52) (2023-07-28)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
+## [3.108.51](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.167.17...@standardnotes/desktop@3.108.51) (2023-07-28)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
+## [3.108.50](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.167.16...@standardnotes/desktop@3.108.50) (2023-07-27)
+
+### Bug Fixes
+
+* handle bad access when accessing paths ([#2375](https://github.com/standardnotes/app/issues/2375)) ([804a39d](https://github.com/standardnotes/app/commit/804a39dabc595579aba3643ef6d6ef0c10263f9c))
+
 ## [3.108.49](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.108.48...@standardnotes/desktop@3.108.49) (2023-07-27)
 
 **Note:** Version bump only for package @standardnotes/desktop

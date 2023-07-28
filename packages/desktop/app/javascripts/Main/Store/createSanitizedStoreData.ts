@@ -5,6 +5,7 @@ import { StoreData, StoreKeys } from './StoreKeys'
 import { logError } from './Store'
 import { FileErrorCodes } from '../File/FileErrorCodes'
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function createSanitizedStoreData(data: any = {}): StoreData {
   return {
     [StoreKeys.MenuBarVisible]: ensureIsBoolean(data[StoreKeys.MenuBarVisible], true),
@@ -27,6 +28,8 @@ export function createSanitizedStoreData(data: any = {}): StoreData {
     [StoreKeys.LegacyFileBackupsLocation]: data[StoreKeys.LegacyFileBackupsLocation],
   }
 }
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function sanitizeZoomFactor(factor?: any): number {
   if (typeof factor === 'number' && factor > 0) {
     return factor
@@ -67,7 +70,9 @@ export function parseDataFile(filePath: string) {
     const fileData = fs.readFileSync(filePath)
     const userData = JSON.parse(fileData.toString())
     return createSanitizedStoreData(userData)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
+    // eslint-disable-next-line no-console
     console.log('Error reading store file', error)
     if (error.code !== FileErrorCodes.FileDoesNotExist) {
       logError(error)

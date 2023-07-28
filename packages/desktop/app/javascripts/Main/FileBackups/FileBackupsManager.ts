@@ -88,7 +88,7 @@ export class FilesBackupManager implements FileBackupsDevice {
     return value === true
   }
 
-  async getUserDocumentsDirectory(): Promise<string> {
+  async getUserDocumentsDirectory(): Promise<string | undefined> {
     return Paths.documentsDir
   }
 
@@ -103,7 +103,12 @@ export class FilesBackupManager implements FileBackupsDevice {
     }
 
     const LegacyTextBackupsDirectory = 'Standard Notes Backups'
-    return path.join(Paths.homeDir, LegacyTextBackupsDirectory)
+    const homeDir = Paths.homeDir
+    if (homeDir) {
+      return path.join(homeDir, LegacyTextBackupsDirectory)
+    }
+
+    return undefined
   }
 
   private getFileBackupsMappingFilePath(backupsLocation: string): string {

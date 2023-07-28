@@ -31,7 +31,9 @@ export function handleEditorChange(
     onChange?.(stringifiedEditorState, previewText)
   } catch (error) {
     window.alert(
-      `An invalid change was made inside the Super editor. Your change was not saved. Please report this error to the team: ${error}`,
+      `An invalid change was made inside the Super editor. Your change was not saved. Please report this error to the team: ${JSON.stringify(
+        error,
+      )}`,
     )
   }
 }

@@ -10,7 +10,10 @@ export abstract class AbstractViewController<Event = void, EventData = void> {
   protected disposers: Disposer[] = []
   private eventObservers: ControllerEventObserver<Event, EventData>[] = []
 
-  constructor(public application: WebApplication, protected eventBus: InternalEventBusInterface) {}
+  constructor(
+    public application: WebApplication,
+    protected eventBus: InternalEventBusInterface,
+  ) {}
 
   protected async publishCrossControllerEventSync(name: CrossControllerEvent, data?: unknown): Promise<void> {
     await this.eventBus.publishSync({ type: name, payload: data }, InternalEventPublishStrategy.SEQUENCE)

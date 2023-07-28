@@ -86,6 +86,7 @@ const DataBackups = ({ application, viewControllerManager }: Props) => {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const readFile = async (file: File): Promise<any> => {
     if (file.type === 'application/zip') {
       application.alerts.alert(STRING_IMPORTING_ZIP_FILE).catch(console.error)

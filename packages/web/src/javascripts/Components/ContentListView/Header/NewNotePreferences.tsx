@@ -21,14 +21,8 @@ import { EditorOption, getDropdownItemsForAllEditors } from '@/Utils/DropdownIte
 import { classNames } from '@standardnotes/utils'
 import { NoteTitleFormatOptions } from './NoteTitleFormatOptions'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
-
-import dayjs from 'dayjs'
-import dayjsAdvancedFormat from 'dayjs/plugin/advancedFormat'
-import dayjsUTC from 'dayjs/plugin/utc'
-import dayjsTimezone from 'dayjs/plugin/timezone'
-dayjs.extend(dayjsAdvancedFormat)
-dayjs.extend(dayjsUTC)
-dayjs.extend(dayjsTimezone)
+import { getDayjsFormattedString } from '@/Utils/GetDayjsFormattedString'
+import { ErrorBoundary } from '@/Utils/ErrorBoundary'
 
 const PrefChangeDebounceTimeInMs = 25
 
@@ -40,6 +34,10 @@ type Props = {
   mode: PreferenceMode
   changePreferencesCallback: (properties: Partial<TagPreferences>) => Promise<void>
   disabled?: boolean
+}
+
+function CustomNoteTitleFormatPreview({ format }: { format: string }) {
+  return <em>{getDayjsFormattedString(undefined, format)}</em>
 }
 
 const NewNotePreferences: FunctionComponent<Props> = ({
@@ -209,7 +207,9 @@ const NewNotePreferences: FunctionComponent<Props> = ({
           </div>
           <div className="mt-3 text-neutral">
             <span className="font-bold">Preview: </span>
-            <em>{dayjs().format(customNoteTitleFormat)}</em>
+            <ErrorBoundary>
+              <CustomNoteTitleFormatPreview format={customNoteTitleFormat} />
+            </ErrorBoundary>
           </div>
           <div className="mt-2 text-neutral">
             <a

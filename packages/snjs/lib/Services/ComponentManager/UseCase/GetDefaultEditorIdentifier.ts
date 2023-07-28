@@ -4,7 +4,10 @@ import { ComponentInterface, PrefKey, SNTag } from '@standardnotes/models'
 import { ItemManagerInterface, PreferenceServiceInterface } from '@standardnotes/services'
 
 export class GetDefaultEditorIdentifier implements SyncUseCaseInterface<string> {
-  constructor(private preferences: PreferenceServiceInterface, private items: ItemManagerInterface) {}
+  constructor(
+    private preferences: PreferenceServiceInterface,
+    private items: ItemManagerInterface,
+  ) {}
 
   execute(currentTag?: SNTag): Result<string> {
     if (currentTag) {

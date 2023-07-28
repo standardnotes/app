@@ -28,7 +28,7 @@ const IconPicker = ({ selectedValue, onIconChange, platform, className, useIconG
             label: value,
             value: value,
             icon: value,
-          } as DropdownItem),
+          }) as DropdownItem,
       ),
     [iconKeys],
   )

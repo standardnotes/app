@@ -28,7 +28,11 @@ export class HttpService implements HttpServiceInterface {
 
   private requestHandler: RequestHandlerInterface
 
-  constructor(private environment: Environment, private appVersion: string, private snjsVersion: string) {
+  constructor(
+    private environment: Environment,
+    private appVersion: string,
+    private snjsVersion: string,
+  ) {
     this.requestHandler = new FetchRequestHandler(this.snjsVersion, this.appVersion, this.environment)
   }
 

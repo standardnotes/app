@@ -9,7 +9,7 @@ export const RuntimeMessageTypes = {
   CaptureVisibleTab: 'capture-visible-tab',
 } as const
 
-export type RuntimeMessageType = typeof RuntimeMessageTypes[keyof typeof RuntimeMessageTypes]
+export type RuntimeMessageType = (typeof RuntimeMessageTypes)[keyof typeof RuntimeMessageTypes]
 
 type MessagesWithClipPayload = typeof RuntimeMessageTypes.OpenPopupWithSelection
 

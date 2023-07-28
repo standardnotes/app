@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/api",
-  "version": "1.26.34",
+  "version": "1.26.35",
   "engines": {
     "node": ">=16.0.0 <17.0.0"
   },
@@ -28,7 +28,7 @@
   "devDependencies": {
     "@types/jest": "^29.2.3",
     "@typescript-eslint/eslint-plugin": "*",
-    "eslint": "^8.27.0",
+    "eslint": "*",
     "eslint-plugin-prettier": "*",
     "jest": "^29.3.1",
     "ts-jest": "^29.0.3",
