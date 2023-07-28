@@ -11,15 +11,15 @@ export async function safeDeinit(application) {
   await application.storage.awaitPersist()
 
   /** Limit waiting to 1s */
-  await Promise.race([sleep(1), application.sync?.awaitCurrentSyncs()])
+  await Promise.race([sleep(1, 'Deinit'), application.sync?.awaitCurrentSyncs()])
 
   await application.prepareForDeinit()
 
   application.deinit(DeinitMode.Soft, DeinitSource.SignOut)
 }
 
-export async function sleep(seconds) {
-  console.warn(`Test sleeping for ${seconds}s`)
+export async function sleep(seconds, reason) {
+  console.warn(`Test sleeping for ${seconds}s. Reason: ${reason}`)
 
   return new Promise((resolve, reject) => {
     setTimeout(function () {

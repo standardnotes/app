@@ -662,7 +662,7 @@ export class AppContext {
     try {
       await HomeServer.activatePremiumFeatures(this.email, options.subscriptionPlanName, options.expiresAt)
 
-      await Utils.sleep(1)
+      await Utils.sleep(1, 'Waiting for premium features to be activated')
     } catch (error) {
       console.warn(
         `Home server not available. You are probalby running a test suite for self hosted setup: ${error.message}`,
