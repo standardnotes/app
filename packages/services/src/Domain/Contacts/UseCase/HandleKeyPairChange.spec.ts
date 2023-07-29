@@ -10,6 +10,7 @@ describe('HandleKeyPairChange', () => {
   let mockReuploadAllInvites: any
   let mockResendAllMessages: any
   let mockGetAllContacts: any
+  let mockCreateOrEditContact: any
   let mockSendOwnContactChangedMessage: any
 
   const dto = {
@@ -64,6 +65,10 @@ describe('HandleKeyPairChange', () => {
       execute: jest.fn(),
     }
 
+    mockCreateOrEditContact = {
+      execute: jest.fn(),
+    }
+
     useCase = new HandleKeyPairChange(
       mockSelfContactManager,
       mockInvitesServer,
@@ -72,6 +77,7 @@ describe('HandleKeyPairChange', () => {
       mockResendAllMessages,
       mockGetAllContacts,
       mockSendOwnContactChangedMessage,
+      mockCreateOrEditContact,
     )
   })
 
@@ -80,7 +86,6 @@ describe('HandleKeyPairChange', () => {
 
     const result = await useCase.execute(dto)
 
-    expect(mockSelfContactManager.updateWithNewPublicKeySet).toBeCalled()
     expect(mockReuploadAllInvites.execute).toBeCalledWith({ keys: dto.newKeys, previousKeys: dto.previousKeys })
     expect(mockResendAllMessages.execute).toBeCalledWith({ keys: dto.newKeys, previousKeys: dto.previousKeys })
     expect(mockSendOwnContactChangedMessage.execute).not.toBeCalled()
@@ -138,7 +143,6 @@ describe('HandleKeyPairChange', () => {
     await useCase.execute(dto)
 
     const callOrder = [
-      mockSelfContactManager.updateWithNewPublicKeySet,
       mockReuploadAllInvites.execute,
       mockResendAllMessages.execute,
       mockSendOwnContactChangedMessage.execute,

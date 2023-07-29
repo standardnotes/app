@@ -62,6 +62,7 @@ describe('AsymmetricMessageService', () => {
       encryption,
       mutator,
       sessions,
+      sync,
       messageServer,
       createOrEditContact,
       findContact,

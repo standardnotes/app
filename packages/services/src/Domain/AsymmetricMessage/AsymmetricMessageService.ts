@@ -1,3 +1,4 @@
+import { SyncServiceInterface } from './../Sync/SyncServiceInterface'
 import { SessionsClientInterface } from './../Session/SessionsClientInterface'
 import { MutatorClientInterface } from './../Mutator/MutatorClientInterface'
 import { AsymmetricMessageServerHash, ClientDisplayableError, isClientDisplayableError } from '@standardnotes/responses'
@@ -40,6 +41,7 @@ export class AsymmetricMessageService
     private encryption: EncryptionProviderInterface,
     private mutator: MutatorClientInterface,
     private sessions: SessionsClientInterface,
+    private sync: SyncServiceInterface,
     private messageServer: AsymmetricMessageServer,
     private _createOrEditContact: CreateOrEditContact,
     private _findContact: FindContact,
@@ -162,6 +164,8 @@ export class AsymmetricMessageService
 
       await this.handleTrustedMessageResult(message, trustedPayload.getValue())
     }
+
+    void this.sync.sync()
   }
 
   private async handleTrustedMessageResult(

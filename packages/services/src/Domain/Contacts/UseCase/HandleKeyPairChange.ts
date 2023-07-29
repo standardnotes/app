@@ -1,3 +1,4 @@
+import { InternalFeatureService } from './../../InternalFeatures/InternalFeatureService'
 import { Result, UseCaseInterface } from '@standardnotes/domain-core'
 import { PkcKeyPair } from '@standardnotes/sncrypto-common'
 import { ReuploadAllInvites } from '../../VaultInvite/UseCase/ReuploadAllInvites'
@@ -6,6 +7,9 @@ import { SelfContactManager } from '../SelfContactManager'
 import { GetAllContacts } from './GetAllContacts'
 import { SendOwnContactChangeMessage } from './SendOwnContactChangeMessage'
 import { AsymmetricMessageServer, SharedVaultInvitesServer } from '@standardnotes/api'
+import { PortablePublicKeySet } from '@standardnotes/models'
+import { InternalFeature } from '../../InternalFeatures/InternalFeature'
+import { CreateOrEditContact } from './CreateOrEditContact'
 
 type Dto = {
   newKeys: {
@@ -27,10 +31,11 @@ export class HandleKeyPairChange implements UseCaseInterface<void> {
     private _resendAllMessages: ResendAllMessages,
     private _getAllContacts: GetAllContacts,
     private _sendOwnContactChangedMessage: SendOwnContactChangeMessage,
+    private _createOrEditContact: CreateOrEditContact,
   ) {}
 
   async execute(dto: Dto): Promise<Result<void>> {
-    await this.selfContactManager.updateWithNewPublicKeySet({
+    await this.updateSelfContact({
       encryption: dto.newKeys.encryption.publicKey,
       signing: dto.newKeys.signing.publicKey,
     })
@@ -53,6 +58,23 @@ export class HandleKeyPairChange implements UseCaseInterface<void> {
     void this.invitesServer.deleteAllInboundInvites()
 
     return Result.ok()
+  }
+
+  private async updateSelfContact(publicKeySet: PortablePublicKeySet) {
+    if (!InternalFeatureService.get().isFeatureEnabled(InternalFeature.Vaults)) {
+      return
+    }
+
+    const selfContact = this.selfContactManager.selfContact
+    if (!selfContact) {
+      return
+    }
+
+    await this._createOrEditContact.execute({
+      contactUuid: selfContact.contactUuid,
+      publicKey: publicKeySet.encryption,
+      signingPublicKey: publicKeySet.signing,
+    })
   }
 
   private async sendOwnContactChangeEventToAllContacts(data: Dto): Promise<void> {

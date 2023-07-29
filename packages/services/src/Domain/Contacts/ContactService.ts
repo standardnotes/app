@@ -152,6 +152,8 @@ export class ContactService extends AbstractService<ContactServiceEvent> impleme
   ): Promise<TrustedContactInterface> {
     const updatedContact = await this._editContact.execute(contact, params)
 
+    void this.sync.sync()
+
     return updatedContact
   }
 
@@ -163,6 +165,9 @@ export class ContactService extends AbstractService<ContactServiceEvent> impleme
     isMe?: boolean
   }): Promise<TrustedContactInterface | undefined> {
     const contact = await this._createOrEditContact.execute(params)
+
+    void this.sync.sync()
+
     return contact
   }
 

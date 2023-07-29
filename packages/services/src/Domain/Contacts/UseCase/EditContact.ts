@@ -1,12 +1,8 @@
-import { SyncServiceInterface } from '../../Sync/SyncServiceInterface'
 import { MutatorClientInterface } from '../../Mutator/MutatorClientInterface'
 import { TrustedContactInterface, TrustedContactMutator } from '@standardnotes/models'
 
 export class EditContact {
-  constructor(
-    private mutator: MutatorClientInterface,
-    private sync: SyncServiceInterface,
-  ) {}
+  constructor(private mutator: MutatorClientInterface) {}
 
   async execute(
     contact: TrustedContactInterface,
@@ -27,8 +23,6 @@ export class EditContact {
         }
       },
     )
-
-    await this.sync.sync()
 
     return updatedContact
   }

@@ -1,4 +1,3 @@
-import { SyncServiceInterface } from '../../Sync/SyncServiceInterface'
 import { MutatorClientInterface } from '../../Mutator/MutatorClientInterface'
 import {
   ContactPublicKeySet,
@@ -15,7 +14,6 @@ import { ContentType } from '@standardnotes/domain-core'
 export class CreateOrEditContact {
   constructor(
     private mutator: MutatorClientInterface,
-    private sync: SyncServiceInterface,
     private findContact: FindContact,
     private editContact: EditContact,
   ) {}
@@ -53,8 +51,6 @@ export class CreateOrEditContact {
       FillItemContent<TrustedContactContent>(content),
       true,
     )
-
-    await this.sync.sync()
 
     return contact
   }

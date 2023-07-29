@@ -254,7 +254,7 @@ export class Dependencies {
     })
 
     this.factory.set(TYPES.EditContact, () => {
-      return new EditContact(this.get(TYPES.MutatorService), this.get(TYPES.SyncService))
+      return new EditContact(this.get(TYPES.MutatorService))
     })
 
     this.factory.set(TYPES.GetAllContacts, () => {
@@ -268,7 +268,6 @@ export class Dependencies {
     this.factory.set(TYPES.CreateOrEditContact, () => {
       return new CreateOrEditContact(
         this.get(TYPES.MutatorService),
-        this.get(TYPES.SyncService),
         this.get(TYPES.FindContact),
         this.get(TYPES.EditContact),
       )
@@ -389,6 +388,7 @@ export class Dependencies {
         this.get(TYPES.ResendAllMessages),
         this.get(TYPES.GetAllContacts),
         this.get(TYPES.SendOwnContactChangeMessage),
+        this.get(TYPES.CreateOrEditContact),
       )
     })
 
@@ -708,6 +708,7 @@ export class Dependencies {
         this.get(TYPES.EncryptionService),
         this.get(TYPES.MutatorService),
         this.get(TYPES.SessionManager),
+        this.get(TYPES.SyncService),
         this.get(TYPES.AsymmetricMessageServer),
         this.get(TYPES.CreateOrEditContact),
         this.get(TYPES.FindContact),
@@ -779,7 +780,6 @@ export class Dependencies {
         this.get(TYPES.ItemManager),
         this.get(TYPES.SessionManager),
         this.get(TYPES.SingletonManager),
-        this.get(TYPES.CreateOrEditContact),
       )
     })
 

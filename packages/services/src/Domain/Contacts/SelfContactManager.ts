@@ -17,9 +17,7 @@ import {
   TrustedContactContent,
   TrustedContactContentSpecialized,
   TrustedContactInterface,
-  PortablePublicKeySet,
 } from '@standardnotes/models'
-import { CreateOrEditContact } from './UseCase/CreateOrEditContact'
 import { ContentType } from '@standardnotes/domain-core'
 
 const SelfContactName = 'Me'
@@ -35,7 +33,6 @@ export class SelfContactManager implements InternalEventHandlerInterface {
     items: ItemManagerInterface,
     private session: SessionsClientInterface,
     private singletons: SingletonManagerInterface,
-    private createOrEditContact: CreateOrEditContact,
   ) {
     this.eventDisposers.push(
       sync.addEventObserver((event) => {
@@ -80,23 +77,6 @@ export class SelfContactManager implements InternalEventHandlerInterface {
       ContentType.TYPES.TrustedContact,
       TrustedContact.singletonPredicate,
     )
-  }
-
-  public async updateWithNewPublicKeySet(publicKeySet: PortablePublicKeySet) {
-    if (!InternalFeatureService.get().isFeatureEnabled(InternalFeature.Vaults)) {
-      return
-    }
-
-    if (!this.selfContact) {
-      return
-    }
-
-    await this.createOrEditContact.execute({
-      name: SelfContactName,
-      contactUuid: this.selfContact.contactUuid,
-      publicKey: publicKeySet.encryption,
-      signingPublicKey: publicKeySet.signing,
-    })
   }
 
   private async reloadSelfContactAndCreateIfNecessary() {
@@ -146,6 +126,5 @@ export class SelfContactManager implements InternalEventHandlerInterface {
     this.eventDisposers.forEach((disposer) => disposer())
     ;(this.session as unknown) = undefined
     ;(this.singletons as unknown) = undefined
-    ;(this.createOrEditContact as unknown) = undefined
   }
 }

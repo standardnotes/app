@@ -370,7 +370,7 @@ export class AppContext {
   }
 
   spyOnFunctionResult(object, functionName) {
-    const originalFunction = object[functionName]
+    const originalFunction = object[functionName].bind(object)
     return new Promise((resolve, reject) => {
       try {
         sinon.stub(object, functionName).callsFake(async (params) => {
