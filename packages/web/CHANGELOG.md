@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.167.21](https://github.com/standardnotes/app/compare/@standardnotes/web@3.167.20...@standardnotes/web@3.167.21) (2023-07-29)
+
+### Bug Fixes
+
+* Fixed issue where links in Super would not open ([6485531](https://github.com/standardnotes/app/commit/64855315e8ec66f8d9397838b62f1a4d15a66937))
+
 ## [3.167.20](https://github.com/standardnotes/app/compare/@standardnotes/web@3.167.19...@standardnotes/web@3.167.20) (2023-07-28)
 
 **Note:** Version bump only for package @standardnotes/web

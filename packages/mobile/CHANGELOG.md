@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.56.34](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.56.33...@standardnotes/mobile@3.56.34) (2023-07-29)
+
+### Bug Fixes
+
+* Fixed issue where links in Super would not open ([6485531](https://github.com/standardnotes/app/commit/64855315e8ec66f8d9397838b62f1a4d15a66937))
+
 ## [3.56.33](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.56.32...@standardnotes/mobile@3.56.33) (2023-07-28)
 
 **Note:** Version bump only for package @standardnotes/mobile
