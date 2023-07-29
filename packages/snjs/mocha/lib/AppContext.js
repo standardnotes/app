@@ -253,10 +253,10 @@ export class AppContext {
 
   awaitNextSucessfulSync() {
     return new Promise((resolve) => {
-      const removeObserver = this.application.sync.addEventObserver((event) => {
+      const removeObserver = this.application.sync.addEventObserver((event, data) => {
         if (event === SyncEvent.SyncCompletedWithAllItemsUploadedAndDownloaded) {
           removeObserver()
-          resolve()
+          resolve(data)
         }
       })
     })
@@ -289,6 +289,16 @@ export class AppContext {
       this.application.sync.addEventObserver((event, data) => {
         if (event === SyncEvent.PaginatedSyncRequestCompleted) {
           resolve(data.uploadedPayloads)
+        }
+      })
+    })
+  }
+
+  resolveWithSyncRetrievedPayloads() {
+    return new Promise((resolve) => {
+      this.application.sync.addEventObserver((event, data) => {
+        if (event === SyncEvent.PaginatedSyncRequestCompleted) {
+          resolve(data.retrievedPayloads)
         }
       })
     })

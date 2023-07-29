@@ -94,7 +94,9 @@ describe('shared vault crypto', function () {
       const { note, contactContext, deinitContactContext } =
         await Collaboration.createSharedVaultWithAcceptedInviteAndNote(context)
 
-      await contactContext.changeNoteTitleAndSync(note, 'new title')
+      const contactNote = contactContext.items.findItem(note.uuid)
+
+      await contactContext.changeNoteTitleAndSync(contactNote, 'new title')
 
       /** Override decrypt result to return failing signature */
       const objectToSpy = context.encryption
@@ -103,6 +105,7 @@ describe('shared vault crypto', function () {
 
         const decryptedPayloads = await objectToSpy.decryptSplit(split)
         expect(decryptedPayloads.length).to.equal(1)
+        expect(decryptedPayloads[0].content_type).to.equal(ContentType.TYPES.Note)
 
         const payload = decryptedPayloads[0]
         const mutatedPayload = new DecryptedPayload({
@@ -118,6 +121,7 @@ describe('shared vault crypto', function () {
 
         return [mutatedPayload]
       })
+
       await context.sync()
 
       let updatedNote = context.items.findItem(note.uuid)

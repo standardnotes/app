@@ -127,4 +127,52 @@ describe('shared vaults', function () {
 
     await deinitThirdPartyContext()
   })
+
+  it('syncing a shared vault exclusively should not retrieve non vault items', async () => {
+    const { sharedVault, contactContext, deinitContactContext } =
+      await Collaboration.createSharedVaultWithAcceptedInvite(context)
+
+    await contactContext.createSyncedNote('foo', 'bar')
+
+    const syncPromise = contactContext.awaitNextSyncSharedVaultFromScratchEvent()
+
+    await contactContext.application.sync.syncSharedVaultsFromScratch([sharedVault.sharing.sharedVaultUuid])
+
+    const syncResponse = await syncPromise
+
+    const expectedItems = ['key system items key']
+
+    expect(syncResponse.retrievedPayloads.length).to.equal(expectedItems.length)
+
+    await deinitContactContext()
+  })
+
+  it('syncing a shared vault with note exclusively should retrieve note and items key', async () => {
+    const { sharedVault, contactContext, deinitContactContext } =
+      await Collaboration.createSharedVaultWithAcceptedInviteAndNote(context)
+
+    const syncPromise = contactContext.awaitNextSyncSharedVaultFromScratchEvent()
+
+    await contactContext.application.sync.syncSharedVaultsFromScratch([sharedVault.sharing.sharedVaultUuid])
+
+    const syncResponse = await syncPromise
+
+    const expectedItems = ['key system items key', 'note']
+
+    expect(syncResponse.retrievedPayloads.length).to.equal(expectedItems.length)
+
+    await deinitContactContext()
+  })
+
+  it('regular sync should not needlessly return vault items', async () => {
+    await Collaboration.createSharedVault(context)
+
+    const promise = context.resolveWithSyncRetrievedPayloads()
+
+    await context.sync()
+
+    const retrievedPayloads = await promise
+
+    expect(retrievedPayloads.length).to.equal(0)
+  })
 })

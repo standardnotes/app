@@ -11,7 +11,7 @@ export enum LoggingDomain {
 const LoggingStatus: Record<LoggingDomain, boolean> = {
   [LoggingDomain.DatabaseLoad]: false,
   [LoggingDomain.Sync]: false,
-  [LoggingDomain.AccountMigration]: true,
+  [LoggingDomain.AccountMigration]: false,
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
