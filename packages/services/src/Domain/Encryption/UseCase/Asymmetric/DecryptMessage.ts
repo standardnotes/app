@@ -30,9 +30,7 @@ export class DecryptMessage implements SyncUseCaseInterface<AsymmetricMessagePay
     if (dto.sender) {
       const publicKeyTrustStatus = dto.sender.getTrustStatusForPublicKey(decryptedResult.senderPublicKey)
       if (publicKeyTrustStatus !== PublicKeyTrustStatus.Trusted) {
-        return Result.fail(
-          `Sender public key ${decryptedResult.senderPublicKey} is not trusted ${publicKeyTrustStatus}`,
-        )
+        return Result.fail('Sender public key is not trusted')
       }
 
       const signingKeyTrustStatus = dto.sender.getTrustStatusForSigningPublicKey(decryptedResult.signaturePublicKey)

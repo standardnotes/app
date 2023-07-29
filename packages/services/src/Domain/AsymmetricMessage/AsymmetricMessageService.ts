@@ -157,7 +157,6 @@ export class AsymmetricMessageService
     for (const message of sortedMessages) {
       const trustedPayload = this.getTrustedMessagePayload(message)
       if (trustedPayload.isFailed()) {
-        console.error('Could not get trusted payload for message', message, 'error', trustedPayload.getError())
         continue
       }
 
