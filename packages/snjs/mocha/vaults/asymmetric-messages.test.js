@@ -403,4 +403,46 @@ describe('asymmetric messages', function () {
 
     await deinitContactContext()
   })
+
+  it('sending a new vault invite to a trusted contact then changing account password should still allow contact to trust invite', async () => {
+    const { contactContext, contact, deinitContactContext } = await Collaboration.createSharedVaultWithAcceptedInvite(
+      context,
+    )
+
+    contactContext.lockSyncing()
+
+    const newVault = await Collaboration.createSharedVault(context)
+
+    await context.vaultInvites.inviteContactToSharedVault(
+      newVault,
+      contact,
+      SharedVaultUserPermission.PERMISSIONS.Write,
+    )
+
+    const sendPromise = context.resolveWhenAsyncFunctionCompletes(context.sharedVaults._handleKeyPairChange, 'execute')
+    await context.changePassword('new password')
+    await sendPromise
+
+    const sendPromise2 = context.resolveWhenAsyncFunctionCompletes(context.sharedVaults._handleKeyPairChange, 'execute')
+    await context.changePassword('new password 2')
+    await sendPromise2
+
+    const messages = await contactContext.asymmetric.getInboundMessages()
+    expect(messages.length).to.equal(2)
+
+    const completedProcessingMessagesPromise = contactContext.resolveWhenAsymmetricMessageProcessingCompletes()
+    contactContext.unlockSyncing()
+    await contactContext.sync()
+    await completedProcessingMessagesPromise
+
+    const invites = contactContext.vaultInvites.getCachedPendingInviteRecords()
+    expect(invites.length).to.equal(1)
+
+    const invite = invites[0]
+    expect(invite.trusted).to.equal(true)
+
+    await contactContext.vaultInvites.acceptInvite(invite)
+
+    await deinitContactContext()
+  })
 })

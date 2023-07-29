@@ -364,6 +364,7 @@ export class Dependencies {
     this.factory.set(TYPES.ResendAllMessages, () => {
       return new ResendAllMessages(
         this.get(TYPES.ResendMessage),
+        this.get(TYPES.DecryptOwnMessage),
         this.get(TYPES.AsymmetricMessageServer),
         this.get(TYPES.FindContact),
       )
@@ -523,11 +524,7 @@ export class Dependencies {
     })
 
     this.factory.set(TYPES.ResendMessage, () => {
-      return new ResendMessage(
-        this.get(TYPES.DecryptOwnMessage),
-        this.get(TYPES.SendMessage),
-        this.get(TYPES.EncryptMessage),
-      )
+      return new ResendMessage(this.get(TYPES.SendMessage), this.get(TYPES.EncryptMessage))
     })
 
     this.factory.set(TYPES.SendMessage, () => {

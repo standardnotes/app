@@ -23,7 +23,7 @@ describe('keypair change', function () {
     await context.register()
   })
 
-  it.skip('contacts should be able to handle receiving multiple keypair changed messages and trust them in order', async () => {
+  it('contacts should be able to handle receiving multiple keypair changed messages and trust them in order', async () => {
     const { note, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithAcceptedInviteAndNote(context)
 
