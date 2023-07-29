@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.167.22](https://github.com/standardnotes/app/compare/@standardnotes/web@3.167.21...@standardnotes/web@3.167.22) (2023-07-29)
+
+### Bug Fixes
+
+* Fixed issue where autocapitalization wouldn't work on iOS for newly created Super notes ([c42afa4](https://github.com/standardnotes/app/commit/c42afa45b42f6d4afcc120cd053ceff14fe2089e))
+
 ## [3.167.21](https://github.com/standardnotes/app/compare/@standardnotes/web@3.167.20...@standardnotes/web@3.167.21) (2023-07-29)
 
 ### Bug Fixes
