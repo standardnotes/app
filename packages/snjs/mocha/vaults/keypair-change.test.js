@@ -133,10 +133,17 @@ describe('keypair change', function () {
 
     contactContext.lockSyncing()
 
+    const sendDataChangePromise = context.resolveWhenAsyncFunctionCompletes(
+      context.sharedVaults._sendVaultDataChangeMessage,
+      'execute',
+    )
+
     await context.vaults.changeVaultNameAndDescription(sharedVault, {
       name: 'New Name',
       description: 'New Description',
     })
+
+    await sendDataChangePromise
 
     const originalMessages = await contactContext.asymmetric.getInboundMessages()
     expect(originalMessages.length).to.equal(1)
