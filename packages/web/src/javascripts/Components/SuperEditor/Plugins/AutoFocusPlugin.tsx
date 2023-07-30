@@ -3,13 +3,13 @@ import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext
 import { Platform } from '@standardnotes/snjs'
 import { useEffect, useState } from 'react'
 
-export default function AutoFocusPlugin({ isTemplateNote }: { isTemplateNote: boolean }) {
+export default function AutoFocusPlugin({ isEnabled }: { isEnabled: boolean }) {
   const application = useApplication()
   const [editor] = useLexicalComposerContext()
   const [didInitialFocus, setDidInitialFocus] = useState(false)
 
   useEffect(() => {
-    if (!isTemplateNote) {
+    if (!isEnabled) {
       return
     }
     if (application.platform !== Platform.Ios) {
@@ -27,7 +27,7 @@ export default function AutoFocusPlugin({ isTemplateNote }: { isTemplateNote: bo
       rootElement.focus()
       setDidInitialFocus(true)
     })
-  }, [application.platform, didInitialFocus, editor, isTemplateNote])
+  }, [application.platform, didInitialFocus, editor, isEnabled])
 
   return null
 }

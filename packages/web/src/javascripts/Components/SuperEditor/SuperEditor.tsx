@@ -242,7 +242,7 @@ export const SuperEditor: FunctionComponent<Props> = ({
                 <NodeObserverPlugin nodeType={FileNode} onRemove={handleBubbleRemove} />
                 <ExportPlugin />
                 <ReadonlyPlugin note={note.current} />
-                <AutoFocusPlugin isTemplateNote={controller.isTemplateNote} />
+                <AutoFocusPlugin isEnabled={controller.isTemplateNote} />
                 <SuperSearchContextProvider>
                   <SearchPlugin />
                 </SuperSearchContextProvider>
