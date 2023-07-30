@@ -37,6 +37,8 @@ export class AsymmetricMessageService
   extends AbstractService
   implements AsymmetricMessageServiceInterface, InternalEventHandlerInterface
 {
+  private handledMessages = new Set<string>()
+
   constructor(
     private encryption: EncryptionProviderInterface,
     private mutator: MutatorClientInterface,
@@ -168,10 +170,16 @@ export class AsymmetricMessageService
     void this.sync.sync()
   }
 
-  private async handleTrustedMessageResult(
+  async handleTrustedMessageResult(
     message: AsymmetricMessageServerHash,
     payload: AsymmetricMessagePayload,
   ): Promise<void> {
+    if (this.handledMessages.has(message.uuid)) {
+      return
+    }
+
+    this.handledMessages.add(message.uuid)
+
     if (payload.type === AsymmetricMessagePayloadType.ContactShare) {
       await this.handleTrustedContactShareMessage(message, payload)
     } else if (payload.type === AsymmetricMessagePayloadType.SenderKeypairChanged) {

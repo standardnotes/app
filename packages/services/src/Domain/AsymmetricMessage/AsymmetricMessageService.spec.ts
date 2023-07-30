@@ -117,6 +117,45 @@ describe('AsymmetricMessageService', () => {
     })
   })
 
+  describe('handleTrustedMessageResult', () => {
+    it('should not double handle the same message', async () => {
+      /**
+       * Because message retrieval is based on a syncToken, and the server aligns syncTokens to items sent back
+       * rather than messages, we may receive the same message twice. We want to keep track of processed messages
+       * and avoid double processing.
+       */
+
+      const message: AsymmetricMessageServerHash = {
+        uuid: 'message',
+        recipient_uuid: '1',
+        sender_uuid: '2',
+        encrypted_message: 'encrypted_message',
+        created_at_timestamp: 2,
+        updated_at_timestamp: 2,
+      }
+
+      const decryptedMessagePayload: AsymmetricMessageTrustedContactShare = {
+        type: AsymmetricMessagePayloadType.ContactShare,
+        data: {
+          recipientUuid: '1',
+          trustedContact: {} as TrustedContactInterface,
+        },
+      }
+
+      service.getTrustedMessagePayload = service.getUntrustedMessagePayload = jest
+        .fn()
+        .mockReturnValue(Result.ok(decryptedMessagePayload))
+
+      service.handleTrustedContactShareMessage = jest.fn()
+      await service.handleTrustedMessageResult(message, decryptedMessagePayload)
+      expect(service.handleTrustedContactShareMessage).toHaveBeenCalledTimes(1)
+
+      service.handleTrustedContactShareMessage = jest.fn()
+      await service.handleTrustedMessageResult(message, decryptedMessagePayload)
+      expect(service.handleTrustedContactShareMessage).toHaveBeenCalledTimes(0)
+    })
+  })
+
   it('should process incoming messages oldest first', async () => {
     const messages: AsymmetricMessageServerHash[] = [
       {

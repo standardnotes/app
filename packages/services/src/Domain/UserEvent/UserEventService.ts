@@ -11,6 +11,8 @@ export class UserEventService
   extends AbstractService<UserEventServiceEvent, UserEventServiceEventPayload>
   implements InternalEventHandlerInterface
 {
+  // private handledNotifications = new Set<string>()
+
   constructor(internalEventBus: InternalEventBusInterface) {
     super(internalEventBus)
 
@@ -33,9 +35,15 @@ export class UserEventService
       if (eventPayloadOrError.isFailed()) {
         continue
       }
-      const eventPayload = eventPayloadOrError.getValue()
 
-      const serviceEvent: UserEventServiceEventPayload = { eventPayload }
+      const notification: NotificationPayload = eventPayloadOrError.getValue()
+
+      /** @TODO - Need a notification unique uuid */
+      // if (this.handledNotifications.has(notification.props.uuid)) {
+      //   continue
+      // }
+
+      const serviceEvent: UserEventServiceEventPayload = { eventPayload: notification }
 
       await this.notifyEventSync(UserEventServiceEvent.UserEventReceived, serviceEvent)
     }
