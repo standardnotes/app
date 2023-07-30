@@ -90,7 +90,7 @@ describe('shared vault crypto', function () {
       await deinitContactContext()
     })
 
-    it.skip('encrypting an item into storage then loading it should verify authenticity of original content rather than most recent symmetric signature', async () => {
+    it('encrypting an item into storage then loading it should verify authenticity of original content rather than most recent symmetric signature', async () => {
       const { note, contactContext, deinitContactContext } =
         await Collaboration.createSharedVaultWithAcceptedInviteAndNote(context)
 

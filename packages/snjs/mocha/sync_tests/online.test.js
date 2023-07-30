@@ -528,8 +528,7 @@ describe('online syncing', function () {
     await this.application.sync.sync(syncOptions)
   })
 
-  /** Temporarily skipping due to long run time */
-  it.skip('should handle uploading with sync pagination', async function () {
+  it('should handle uploading with sync pagination', async function () {
     const largeItemCount = SyncUpDownLimit + 10
     for (let i = 0; i < largeItemCount; i++) {
       const note = await Factory.createMappedNote(this.application)
@@ -543,8 +542,7 @@ describe('online syncing', function () {
     expect(rawPayloads.length).to.equal(this.expectedItemCount)
   }).timeout(15000)
 
-  /** Temporarily skipping due to long run time */
-  it.skip('should handle downloading with sync pagination', async function () {
+  it('should handle downloading with sync pagination', async function () {
     const largeItemCount = SyncUpDownLimit + 10
     for (let i = 0; i < largeItemCount; i++) {
       const note = await Factory.createMappedNote(this.application)

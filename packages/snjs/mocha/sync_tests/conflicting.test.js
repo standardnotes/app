@@ -479,8 +479,7 @@ describe('online conflict handling', function () {
     await this.sharedFinalAssertions()
   })
 
-  /** Temporarily skipping due to long run time */
-  it.skip('handles stale data in bulk', async function () {
+  it('handles stale data in bulk', async function () {
     /** This number must be greater than the pagination limit per sync request.
      * For example if the limit per request is 150 items sent/received, this number should
      * be something like 160. */
@@ -728,43 +727,39 @@ describe('online conflict handling', function () {
     await this.sharedFinalAssertions()
   })
 
-  /** Temporarily skipping due to long run time */
-  it.skip(
-    'registering for account with bulk offline data belonging to another account should be error-free',
-    async function () {
-      /**
-       * When performing a multi-page sync request where we are uploading data imported from a backup,
-       * if the first page of the sync request returns conflicted items keys, we rotate their UUID.
-       * The second page of sync waiting to be sent up is still encrypted with the old items key UUID.
-       * This causes a problem because when that second page is returned as conflicts, we will be looking
-       * for an items_key_id that no longer exists (has been rotated). Rather than modifying the entire
-       * sync paradigm to allow multi-page requests to consider side-effects of each page, we will instead
-       * take the approach of making sure the decryption function is liberal with regards to searching
-       * for the right items key. It will now consider (as a result of this test) an items key as being
-       * the correct key to decrypt an item if the itemskey.uuid == item.items_key_id OR if the itemsKey.duplicateOf
-       * value is equal to item.items_key_id.
-       */
+  it('registering for account with bulk offline data belonging to another account should be error-free', async function () {
+    /**
+     * When performing a multi-page sync request where we are uploading data imported from a backup,
+     * if the first page of the sync request returns conflicted items keys, we rotate their UUID.
+     * The second page of sync waiting to be sent up is still encrypted with the old items key UUID.
+     * This causes a problem because when that second page is returned as conflicts, we will be looking
+     * for an items_key_id that no longer exists (has been rotated). Rather than modifying the entire
+     * sync paradigm to allow multi-page requests to consider side-effects of each page, we will instead
+     * take the approach of making sure the decryption function is liberal with regards to searching
+     * for the right items key. It will now consider (as a result of this test) an items key as being
+     * the correct key to decrypt an item if the itemskey.uuid == item.items_key_id OR if the itemsKey.duplicateOf
+     * value is equal to item.items_key_id.
+     */
 
-      /** Create bulk data belonging to another account and sync */
-      const largeItemCount = SyncUpDownLimit + 10
-      await Factory.createManyMappedNotes(this.application, largeItemCount)
-      await this.application.sync.sync(syncOptions)
-      const priorData = this.application.items.items
+    /** Create bulk data belonging to another account and sync */
+    const largeItemCount = SyncUpDownLimit + 10
+    await Factory.createManyMappedNotes(this.application, largeItemCount)
+    await this.application.sync.sync(syncOptions)
+    const priorData = this.application.items.items
 
-      /** Register new account and import this same data */
-      const newApp = await Factory.signOutApplicationAndReturnNew(this.application)
-      await Factory.registerUserToApplication({
-        application: newApp,
-        email: Utils.generateUuid(),
-        password: Utils.generateUuid(),
-      })
-      await newApp.mutator.emitItemsFromPayloads(priorData.map((i) => i.payload))
-      await newApp.sync.markAllItemsAsNeedingSyncAndPersist()
-      await newApp.sync.sync(syncOptions)
-      expect(newApp.payloads.invalidPayloads.length).to.equal(0)
-      await Factory.safeDeinit(newApp)
-    },
-  ).timeout(80000)
+    /** Register new account and import this same data */
+    const newApp = await Factory.signOutApplicationAndReturnNew(this.application)
+    await Factory.registerUserToApplication({
+      application: newApp,
+      email: Utils.generateUuid(),
+      password: Utils.generateUuid(),
+    })
+    await newApp.mutator.emitItemsFromPayloads(priorData.map((i) => i.payload))
+    await newApp.sync.markAllItemsAsNeedingSyncAndPersist()
+    await newApp.sync.sync(syncOptions)
+    expect(newApp.payloads.invalidPayloads.length).to.equal(0)
+    await Factory.safeDeinit(newApp)
+  }).timeout(80000)
 
   it('importing data belonging to another account should not result in duplication', async function () {
     /** Create primary account and export data */

@@ -7,17 +7,19 @@ const expect = chai.expect
 
 describe('storage manager', function () {
   this.timeout(Factory.TenSecondTimeout)
+
   /**
    * Items are saved in localStorage in tests.
-   * Base keys are `storage`, `snjs_version`, and `keychain`
    */
-  const BASE_KEY_COUNT = 3
+  const BASE_KEY_COUNT = ['storage', 'snjs_version', 'keychain'].length
 
   beforeEach(async function () {
     localStorage.clear()
     this.expectedKeyCount = BASE_KEY_COUNT
+
     this.context = await Factory.createAppContext()
     await this.context.launch()
+
     this.application = this.context.application
     this.email = UuidGenerator.GenerateUuid()
     this.password = UuidGenerator.GenerateUuid()
@@ -62,18 +64,19 @@ describe('storage manager', function () {
     expect(keychainValue.serverPassword).to.not.be.ok
   })
 
-  it.skip('regular session should persist data', async function () {
+  it('regular session should persist data', async function () {
     await Factory.registerUserToApplication({
       application: this.application,
       email: this.email,
       password: this.password,
       ephemeral: false,
     })
+
     const key = 'foo'
     const value = 'bar'
     await this.application.storage.setValue(key, value)
-    /** Items are stored in local storage */
-    expect(Object.keys(localStorage).length).to.equal(this.expectedKeyCount + BaseItemCounts.DefaultItems)
+
+    expect(Object.keys(localStorage).length).to.equal(this.expectedKeyCount + BaseItemCounts.DefaultItemsWithAccount)
     const retrievedValue = await this.application.storage.getValue(key)
     expect(retrievedValue).to.equal(value)
   })

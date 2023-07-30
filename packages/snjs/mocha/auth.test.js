@@ -347,7 +347,7 @@ describe('basic auth', function () {
 
   it('successfully changes password', changePassword).timeout(40000)
 
-  it.skip('successfully changes password when passcode is set', async function () {
+  it('successfully changes password when passcode is set', async function () {
     const passcode = 'passcode'
     const promptValueReply = (prompts) => {
       const values = []
@@ -373,7 +373,7 @@ describe('basic auth', function () {
         this.application.submitValuesForChallenge(challenge, initialValues)
       },
     })
-    await this.application.setPasscode(passcode)
+    await this.application.addPasscode(passcode)
     await changePassword.bind(this)()
   }).timeout(20000)
 
@@ -495,7 +495,7 @@ describe('basic auth', function () {
     }).timeout(Factory.TenSecondTimeout)
   })
 
-  describe.skip('account deletion', function () {
+  describe('account deletion', function () {
     it('should delete account', async function () {
       await Factory.registerUserToApplication({
         application: this.application,
@@ -504,7 +504,7 @@ describe('basic auth', function () {
       })
 
       Factory.handlePasswordChallenges(this.application, this.password)
-      const _response = await this.application.user.deleteAccount()
+      await this.application.user.deleteAccount()
     }).timeout(Factory.TenSecondTimeout)
 
     it('should prompt for account password when deleting account', async function () {
@@ -515,18 +515,18 @@ describe('basic auth', function () {
       })
 
       Factory.handlePasswordChallenges(this.application, this.password)
+      sinon.spy(this.application.challenges, 'sendChallenge')
 
-      const _response = await this.application.deleteAccount()
+      await this.application.user.deleteAccount()
 
-      sinon.spy(snApp.challenges, 'sendChallenge')
-      const spyCall = snApp.challenges.sendChallenge.getCall(0)
+      const spyCall = this.application.challenges.sendChallenge.getCall(0)
       const challenge = spyCall.firstArg
       expect(challenge.prompts).to.have.lengthOf(2)
       expect(challenge.prompts[0].validation).to.equal(ChallengeValidation.AccountPassword)
-      // ...
     }).timeout(Factory.TenSecondTimeout)
 
-    it('deleting account should sign out current user', async function () {
+    it.skip('deleting account should sign out current user', async function () {
+      /** Currently failing due to server error: 'Payments server is not available.' */
       await Factory.registerUserToApplication({
         application: this.application,
         email: this.email,
@@ -535,9 +535,10 @@ describe('basic auth', function () {
 
       Factory.handlePasswordChallenges(this.application, this.password)
 
-      const _response = await this.application.deleteAccount()
+      const result = await this.application.user.deleteAccount()
+      expect(result.error).to.equal(false)
 
-      expect(application.hasAccount()).to.be.false
+      expect(this.application.hasAccount()).to.be.false
     }).timeout(Factory.TenSecondTimeout)
   })
 })

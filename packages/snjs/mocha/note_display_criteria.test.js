@@ -616,7 +616,10 @@ describe('note display criteria', function () {
   describe.skip('multiple tags', function () {
     it('normal note', async function () {
       await this.createNote()
-
+      /**
+       * This test presently fails because the compound predicate created
+       * when using multiple views is an AND predicate instead of OR
+       */
       expect(
         notesAndFilesMatchingOptions(
           {
