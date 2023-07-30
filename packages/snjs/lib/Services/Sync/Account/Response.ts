@@ -7,7 +7,7 @@ import {
   HttpResponse,
   isErrorResponse,
   RawSyncResponse,
-  UserEventServerHash,
+  NotificationServerHash,
   AsymmetricMessageServerHash,
   getErrorFromErrorResponse,
 } from '@standardnotes/responses'
@@ -29,7 +29,7 @@ export class ServerSyncResponse {
   readonly asymmetricMessages: AsymmetricMessageServerHash[]
   readonly vaults: SharedVaultServerHash[]
   readonly vaultInvites: SharedVaultInviteServerHash[]
-  readonly userEvents: UserEventServerHash[]
+  readonly userEvents: NotificationServerHash[]
 
   private readonly rawConflictObjects: ConflictParams[]
 

@@ -66,4 +66,4 @@ export * from './User/PostSubscriptionTokensResponse'
 export * from './User/SettingData'
 export * from './User/UpdateSettingResponse'
 
-export * from './UserEvent/UserEventServerHash'
+export * from './Notification/NotificationServerHash'

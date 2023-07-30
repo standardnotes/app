@@ -73,7 +73,7 @@ import {
   EncryptionProviderInterface,
   VaultUserServiceInterface,
   VaultInviteServiceInterface,
-  UserEventServiceEvent,
+  NotificationServiceEvent,
   VaultServiceEvent,
   VaultLockServiceInterface,
 } from '@standardnotes/services'
@@ -1120,7 +1120,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   }
 
   private createBackgroundDependencies() {
-    this.dependencies.get(TYPES.UserEventService)
+    this.dependencies.get(TYPES.NotificationService)
     this.dependencies.get(TYPES.KeyRecoveryService)
   }
 
@@ -1137,7 +1137,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.events.addEventHandler(this.dependencies.get(TYPES.SharedVaultService), SessionEvent.UserKeyPairChanged)
     this.events.addEventHandler(
       this.dependencies.get(TYPES.SharedVaultService),
-      UserEventServiceEvent.UserEventReceived,
+      NotificationServiceEvent.NotificationReceived,
     )
     this.events.addEventHandler(this.dependencies.get(TYPES.SharedVaultService), VaultServiceEvent.VaultRootKeyRotated)
     this.events.addEventHandler(this.dependencies.get(TYPES.SharedVaultService), SyncEvent.ReceivedRemoteSharedVaults)

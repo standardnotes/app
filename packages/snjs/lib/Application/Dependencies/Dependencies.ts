@@ -52,7 +52,7 @@ import {
   SelfContactManager,
   StatusService,
   SubscriptionManager,
-  UserEventService,
+  NotificationService,
   UserService,
   ValidateItemSigner,
   isDesktopDevice,
@@ -1226,8 +1226,8 @@ export class Dependencies {
       )
     })
 
-    this.factory.set(TYPES.UserEventService, () => {
-      return new UserEventService(this.get(TYPES.InternalEventBus))
+    this.factory.set(TYPES.NotificationService, () => {
+      return new NotificationService(this.get(TYPES.InternalEventBus))
     })
 
     this.factory.set(TYPES.InMemoryStore, () => {

@@ -402,8 +402,8 @@ export class AppContext {
   }
 
   resolveWhenUserMessagesProcessingCompletes() {
-    const objectToSpy = this.application.dependencies.get(TYPES.UserEventService)
-    return this.resolveWhenAsyncFunctionCompletes(objectToSpy, 'handleReceivedUserEvents')
+    const objectToSpy = this.application.dependencies.get(TYPES.NotificationService)
+    return this.resolveWhenAsyncFunctionCompletes(objectToSpy, 'handleReceivedNotifications')
   }
 
   resolveWhenAllInboundAsymmetricMessagesAreDeleted() {

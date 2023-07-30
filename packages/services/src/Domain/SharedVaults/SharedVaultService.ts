@@ -19,7 +19,7 @@ import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface
 import { SyncEvent } from '../Event/SyncEvent'
 import { SessionEvent } from '../Session/SessionEvent'
 import { InternalEventInterface } from '../Internal/InternalEventInterface'
-import { UserEventServiceEvent, UserEventServiceEventPayload } from '../UserEvent/UserEventServiceEvent'
+import { NotificationServiceEvent, NotificationServiceEventPayload } from '../UserEvent/NotificationServiceEvent'
 import { DeleteThirdPartyVault } from './UseCase/DeleteExternalSharedVault'
 import { DeleteSharedVault } from './UseCase/DeleteSharedVault'
 import { VaultServiceEvent, VaultServiceEventPayload } from '../Vault/VaultServiceEvent'
@@ -106,8 +106,8 @@ export class SharedVaultService
         })
         break
       }
-      case UserEventServiceEvent.UserEventReceived:
-        await this.handleUserEvent(event.payload as UserEventServiceEventPayload)
+      case NotificationServiceEvent.NotificationReceived:
+        await this.handleUserEvent(event.payload as NotificationServiceEventPayload)
         break
       case VaultServiceEvent.VaultRootKeyRotated: {
         const payload = event.payload as VaultServiceEventPayload[VaultServiceEvent.VaultRootKeyRotated]
@@ -120,7 +120,7 @@ export class SharedVaultService
     }
   }
 
-  private async handleUserEvent(event: UserEventServiceEventPayload): Promise<void> {
+  private async handleUserEvent(event: NotificationServiceEventPayload): Promise<void> {
     switch (event.eventPayload.props.type.value) {
       case NotificationType.TYPES.RemovedFromSharedVault: {
         const vault = this._getVault.execute<SharedVaultListingInterface>({

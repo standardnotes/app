@@ -80,7 +80,7 @@ import {
   isChunkFullEntry,
   SyncEventReceivedSharedVaultInvitesData,
   SyncEventReceivedRemoteSharedVaultsData,
-  SyncEventReceivedUserEventsData,
+  SyncEventReceivedNotificationsData,
   SyncEventReceivedAsymmetricMessagesData,
   SyncOpStatus,
 } from '@standardnotes/services'
@@ -968,7 +968,10 @@ export class SyncService
     const historyMap = this.historyService.getHistoryMapCopy()
 
     if (response.userEvents && response.userEvents.length > 0) {
-      await this.notifyEventSync(SyncEvent.ReceivedUserEvents, response.userEvents as SyncEventReceivedUserEventsData)
+      await this.notifyEventSync(
+        SyncEvent.ReceivedNotifications,
+        response.userEvents as SyncEventReceivedNotificationsData,
+      )
     }
 
     if (response.asymmetricMessages && response.asymmetricMessages.length > 0) {

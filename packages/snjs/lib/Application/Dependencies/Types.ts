@@ -10,7 +10,7 @@ export const TYPES = {
   ItemManager: Symbol.for('ItemManager'),
   MutatorService: Symbol.for('MutatorService'),
   DiskStorageService: Symbol.for('DiskStorageService'),
-  UserEventService: Symbol.for('UserEventService'),
+  NotificationService: Symbol.for('NotificationService'),
   InMemoryStore: Symbol.for('InMemoryStore'),
   KeySystemKeyManager: Symbol.for('KeySystemKeyManager'),
   EncryptionService: Symbol.for('EncryptionService'),
