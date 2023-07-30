@@ -369,10 +369,16 @@ export class AppContext {
   }
 
   resolveWhenAsyncFunctionCompletes(object, functionName) {
+    if (!object[functionName]) {
+      throw new Error(`Object does not have function ${functionName}`)
+    }
+
+    const originalFunction = object[functionName].bind(object)
+
     return new Promise((resolve) => {
       sinon.stub(object, functionName).callsFake(async (params) => {
         object[functionName].restore()
-        const result = await object[functionName](params)
+        const result = await originalFunction(params)
         resolve()
         return result
       })
