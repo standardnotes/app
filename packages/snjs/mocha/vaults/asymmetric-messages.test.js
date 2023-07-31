@@ -155,6 +155,7 @@ describe('asymmetric messages', function () {
     await Collaboration.acceptAllInvites(thirdPartyContext)
 
     await contactContext.sync()
+    contactContext.lockSyncing()
 
     const sendContactSharePromise = context.resolveWhenSharedVaultServiceSendsContactShareMessage()
 
@@ -172,6 +173,7 @@ describe('asymmetric messages', function () {
     const thirdPartySpy = sinon.spy(thirdPartyContext.asymmetric, 'handleTrustedContactShareMessage')
 
     await context.sync()
+    contactContext.unlockSyncing()
     await contactContext.sync()
     await thirdPartyContext.sync()
 
