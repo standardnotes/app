@@ -72,7 +72,7 @@ describe('asymmetric messages', function () {
     expect(deleteFunction.callCount).to.equal(1)
 
     const messages = await contactContext.asymmetric.getInboundMessages()
-    expect(messages.length).to.equal(0)
+    expect(messages.getValue().length).to.equal(0)
 
     await deinitContactContext()
   })
@@ -303,7 +303,7 @@ describe('asymmetric messages', function () {
     await context.sleep(0.25)
 
     const messages = await context.asymmetric.getInboundMessages()
-    expect(messages.length).to.equal(0)
+    expect(messages.getValue().length).to.equal(0)
 
     await deinitContactContext()
   })
@@ -395,7 +395,7 @@ describe('asymmetric messages', function () {
     await promise
 
     const messages = await contactContext.asymmetric.getInboundMessages()
-    expect(messages.length).to.equal(0)
+    expect(messages.getValue().length).to.equal(0)
 
     const updatedVault = contactContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })
     expect(updatedVault.name).to.not.equal('New Name')
@@ -419,16 +419,34 @@ describe('asymmetric messages', function () {
       SharedVaultUserPermission.PERMISSIONS.Write,
     )
 
+    const runAnyRequestToPreventRefreshTokenFromExpiring = async () => {
+      /**
+       * Run a request to keep refresh token from expiring due to long bouts of inactivity for contact context
+       * while main context changes password. Tests have a refresh token age of 10s typically, and changing password
+       * on CI environment may be time consuming.
+       */
+      await contactContext.asymmetric.getInboundMessages()
+    }
+
+    await runAnyRequestToPreventRefreshTokenFromExpiring()
+
     const sendPromise = context.resolveWhenAsyncFunctionCompletes(context.sharedVaults._handleKeyPairChange, 'execute')
     await context.changePassword('new password')
     await sendPromise
+
+    await runAnyRequestToPreventRefreshTokenFromExpiring()
 
     const sendPromise2 = context.resolveWhenAsyncFunctionCompletes(context.sharedVaults._handleKeyPairChange, 'execute')
     await context.changePassword('new password 2')
     await sendPromise2
 
     const messages = await contactContext.asymmetric.getInboundMessages()
-    expect(messages.length).to.equal(2)
+    if (messages.isFailed()) {
+      console.error(messages.getError())
+    }
+
+    expect(messages.isFailed()).to.be.false
+    expect(messages.getValue().length).to.equal(2)
 
     const completedProcessingMessagesPromise = contactContext.resolveWhenAsymmetricMessageProcessingCompletes()
     contactContext.unlockSyncing()

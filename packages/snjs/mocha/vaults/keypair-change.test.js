@@ -145,7 +145,7 @@ describe('keypair change', function () {
 
     await sendDataChangePromise
 
-    const originalMessages = await contactContext.asymmetric.getInboundMessages()
+    const originalMessages = (await contactContext.asymmetric.getInboundMessages()).getValue()
     expect(originalMessages.length).to.equal(1)
     const originalMessage = originalMessages[0]
 
@@ -156,7 +156,7 @@ describe('keypair change', function () {
     await context.changePassword('new_password')
     await promise
 
-    const updatedMessages = await contactContext.asymmetric.getInboundMessages()
+    const updatedMessages = (await contactContext.asymmetric.getInboundMessages()).getValue()
     const expectedMessages = ['keypair-change', 'vault-change']
     expect(updatedMessages.length).to.equal(expectedMessages.length)
 

@@ -1,7 +1,7 @@
 import { SyncServiceInterface } from './../Sync/SyncServiceInterface'
 import { SessionsClientInterface } from './../Session/SessionsClientInterface'
 import { MutatorClientInterface } from './../Mutator/MutatorClientInterface'
-import { AsymmetricMessageServerHash, ClientDisplayableError, isClientDisplayableError } from '@standardnotes/responses'
+import { AsymmetricMessageServerHash } from '@standardnotes/responses'
 import { SyncEvent, SyncEventReceivedAsymmetricMessagesData } from '../Event/SyncEvent'
 import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
 import { InternalEventHandlerInterface } from '../Internal/InternalEventHandlerInterface'
@@ -83,21 +83,21 @@ export class AsymmetricMessageService
     }
   }
 
-  public async getOutboundMessages(): Promise<AsymmetricMessageServerHash[] | ClientDisplayableError> {
+  public async getOutboundMessages(): Promise<Result<AsymmetricMessageServerHash[]>> {
     return this._getOutboundMessagesUseCase.execute()
   }
 
-  public async getInboundMessages(): Promise<AsymmetricMessageServerHash[] | ClientDisplayableError> {
+  public async getInboundMessages(): Promise<Result<AsymmetricMessageServerHash[]>> {
     return this._getInboundMessagesUseCase.execute()
   }
 
   public async downloadAndProcessInboundMessages(): Promise<void> {
     const messages = await this.getInboundMessages()
-    if (isClientDisplayableError(messages)) {
+    if (messages.isFailed()) {
       return
     }
 
-    await this.handleRemoteReceivedAsymmetricMessages(messages)
+    await this.handleRemoteReceivedAsymmetricMessages(messages.getValue())
   }
 
   sortServerMessages(messages: AsymmetricMessageServerHash[]): AsymmetricMessageServerHash[] {
