@@ -221,8 +221,8 @@ export const getBase64FromBlob = (blob: Blob) => {
   return new Promise<string>((resolve, reject) => {
     const reader = new FileReader()
     reader.onloadend = () => {
-      if (reader.result) {
-        resolve(reader.result.toString())
+      if (reader.result && typeof reader.result === 'string') {
+        resolve(reader.result)
       } else {
         reject()
       }
