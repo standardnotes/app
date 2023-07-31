@@ -3,6 +3,30 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.167.23](https://github.com/standardnotes/app/compare/@standardnotes/web@3.167.22...@standardnotes/web@3.167.23) (2023-07-31)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.167.22](https://github.com/standardnotes/app/compare/@standardnotes/web@3.167.21...@standardnotes/web@3.167.22) (2023-07-29)
+
+### Bug Fixes
+
+* Fixed issue where autocapitalization wouldn't work on iOS for newly created Super notes ([c42afa4](https://github.com/standardnotes/app/commit/c42afa45b42f6d4afcc120cd053ceff14fe2089e))
+
+## [3.167.21](https://github.com/standardnotes/app/compare/@standardnotes/web@3.167.20...@standardnotes/web@3.167.21) (2023-07-29)
+
+### Bug Fixes
+
+* Fixed issue where links in Super would not open ([6485531](https://github.com/standardnotes/app/commit/64855315e8ec66f8d9397838b62f1a4d15a66937))
+
+## [3.167.20](https://github.com/standardnotes/app/compare/@standardnotes/web@3.167.19...@standardnotes/web@3.167.20) (2023-07-28)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.167.19](https://github.com/standardnotes/app/compare/@standardnotes/web@3.167.18...@standardnotes/web@3.167.19) (2023-07-28)
+
+**Note:** Version bump only for package @standardnotes/web
+
 ## [3.167.18](https://github.com/standardnotes/app/compare/@standardnotes/web@3.167.17...@standardnotes/web@3.167.18) (2023-07-28)
 
 **Note:** Version bump only for package @standardnotes/web

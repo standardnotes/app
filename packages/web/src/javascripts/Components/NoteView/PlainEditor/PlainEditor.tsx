@@ -131,12 +131,6 @@ export const PlainEditor = forwardRef<PlainEditorInterface, Props>(
     }, [])
 
     useEffect(() => {
-      if (controller.isTemplateNote && controller.templateNoteOptions?.autofocusBehavior === 'editor') {
-        focusEditor()
-      }
-    }, [controller, focusEditor])
-
-    useEffect(() => {
       const shouldFocus = controller.isTemplateNote && controller.templateNoteOptions?.autofocusBehavior === 'editor'
 
       if (shouldFocus) {

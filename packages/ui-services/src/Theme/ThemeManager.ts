@@ -331,7 +331,7 @@ export class ThemeManager extends AbstractUIServicee {
     link.onload = () => {
       this.syncThemeColorMetadata()
 
-      if (this.application.isNativeMobileWeb()) {
+      if (this.application.isNativeMobileWeb() && !theme.layerable) {
         const packageInfo = theme.featureDescription
         setTimeout(() => {
           this.application

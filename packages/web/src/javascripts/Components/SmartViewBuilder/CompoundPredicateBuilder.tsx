@@ -75,7 +75,7 @@ const CompoundPredicateBuilder = ({ controller }: Props) => {
             {predicate.keypath && (
               <PredicateValue
                 keypath={predicate.keypath as PredicateKeypath}
-                value={predicate.value.toString()}
+                value={typeof predicate.value !== 'string' ? JSON.stringify(predicate.value) : predicate.value}
                 setValue={(value: string) => {
                   setPredicate(index, { value })
                 }}

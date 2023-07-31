@@ -1,6 +1,67 @@
 {
   "versions": [
     {
+      "version": "3.167.23",
+      "title": "[3.167.23](https://github.com/standardnotes/app/compare/@standardnotes/web@3.167.22...@standardnotes/web@3.167.23) (2023-07-31)",
+      "date": null,
+      "body": "**Note:** Version bump only for package @standardnotes/web",
+      "parsed": {
+        "_": [
+          "Note: Version bump only for package @standardnotes/web"
+        ]
+      }
+    },
+    {
+      "version": "3.167.22",
+      "title": "[3.167.22](https://github.com/standardnotes/app/compare/@standardnotes/web@3.167.21...@standardnotes/web@3.167.22) (2023-07-29)",
+      "date": null,
+      "body": "### Bug Fixes\n\n* Fixed issue where autocapitalization wouldn't work on iOS for newly created Super notes ([c42afa4](https://github.com/standardnotes/app/commit/c42afa45b42f6d4afcc120cd053ceff14fe2089e))",
+      "parsed": {
+        "_": [
+          "Fixed issue where autocapitalization wouldn't work on iOS for newly created Super notes (c42afa4)"
+        ],
+        "Bug Fixes": [
+          "Fixed issue where autocapitalization wouldn't work on iOS for newly created Super notes (c42afa4)"
+        ]
+      }
+    },
+    {
+      "version": "3.167.21",
+      "title": "[3.167.21](https://github.com/standardnotes/app/compare/@standardnotes/web@3.167.20...@standardnotes/web@3.167.21) (2023-07-29)",
+      "date": null,
+      "body": "### Bug Fixes\n\n* Fixed issue where links in Super would not open ([6485531](https://github.com/standardnotes/app/commit/64855315e8ec66f8d9397838b62f1a4d15a66937))",
+      "parsed": {
+        "_": [
+          "Fixed issue where links in Super would not open (6485531)"
+        ],
+        "Bug Fixes": [
+          "Fixed issue where links in Super would not open (6485531)"
+        ]
+      }
+    },
+    {
+      "version": "3.167.20",
+      "title": "[3.167.20](https://github.com/standardnotes/app/compare/@standardnotes/web@3.167.19...@standardnotes/web@3.167.20) (2023-07-28)",
+      "date": null,
+      "body": "**Note:** Version bump only for package @standardnotes/web",
+      "parsed": {
+        "_": [
+          "Note: Version bump only for package @standardnotes/web"
+        ]
+      }
+    },
+    {
+      "version": "3.167.19",
+      "title": "[3.167.19](https://github.com/standardnotes/app/compare/@standardnotes/web@3.167.18...@standardnotes/web@3.167.19) (2023-07-28)",
+      "date": null,
+      "body": "**Note:** Version bump only for package @standardnotes/web",
+      "parsed": {
+        "_": [
+          "Note: Version bump only for package @standardnotes/web"
+        ]
+      }
+    },
+    {
       "version": "3.167.18",
       "title": "[3.167.18](https://github.com/standardnotes/app/compare/@standardnotes/web@3.167.17...@standardnotes/web@3.167.18) (2023-07-28)",
       "date": null,

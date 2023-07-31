@@ -380,7 +380,7 @@ PODS:
     - glog
   - react-native-fingerprint-scanner (5.0.0):
     - React-Core
-  - react-native-mmkv (2.7.0):
+  - react-native-mmkv (2.10.1):
     - MMKV (>= 1.2.13)
     - React-Core
   - react-native-version-info (1.1.1):
@@ -503,13 +503,13 @@ PODS:
     - React-Core
   - RNFS (2.20.0):
     - React-Core
-  - RNIap (12.7.4):
+  - RNIap (12.10.5):
     - React-Core
   - RNKeychain (8.0.0):
     - React-Core
   - RNPrivacySnapshot (1.0.0):
     - React-Core
-  - RNShare (8.2.0):
+  - RNShare (8.2.2):
     - React-Core
   - SNReactNative (1.0.1):
     - React-Core
@@ -759,7 +759,7 @@ SPEC CHECKSUMS:
   React-jsinspector: b511447170f561157547bc0bef3f169663860be7
   React-logger: c5b527272d5f22eaa09bb3c3a690fee8f237ae95
   react-native-fingerprint-scanner: be63e626b31fb951780a5fac5328b065a61a3d6e
-  react-native-mmkv: a2a40a0458bdbc9d43c4e7752ecfc5e3a87b66dd
+  react-native-mmkv: dea675cf9697ad35940f1687e98e133e1358ef9f
   react-native-version-info: a106f23009ac0db4ee00de39574eb546682579b9
   react-native-webview: 9f111dfbcfc826084d6c507f569e5e03342ee1c1
   React-NativeModulesApple: c57f3efe0df288a6532b726ad2d0322a9bf38472
@@ -782,10 +782,10 @@ SPEC CHECKSUMS:
   RNCAsyncStorage: 4b98ac3c64efa4e35c1197cb0c5ca5e9f5d4c666
   RNFileViewer: ce7ca3ac370e18554d35d6355cffd7c30437c592
   RNFS: 4ac0f0ea233904cb798630b3c077808c06931688
-  RNIap: 1a0b01a82ce45e61e72f8ef38f85922c5534510d
+  RNIap: c397f49db45af3b10dca64b2325f21bb8078ad21
   RNKeychain: 4f63aada75ebafd26f4bc2c670199461eab85d94
   RNPrivacySnapshot: 8eaf571478a353f2e5184f5c803164f22428b023
-  RNShare: b089c33619bbfb0a32bc4069c858b9274e694187
+  RNShare: d82e10f6b7677f4b0048c23709bd04098d5aee6c
   SNReactNative: b5e9e529c175c13f3a618e27c76cf3071213d5e1
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
   TrustKit: 073855e3adecd317417bda4ac9e9ac54a2e3b9f2

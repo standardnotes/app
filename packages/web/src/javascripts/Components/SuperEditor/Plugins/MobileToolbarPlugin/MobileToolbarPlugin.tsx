@@ -43,6 +43,7 @@ import { useApplication } from '@/Components/ApplicationProvider'
 import { GetRemoteImageBlock } from '../Blocks/RemoteImage'
 import { InsertRemoteImageDialog } from '../RemoteImagePlugin/RemoteImagePlugin'
 import LinkEditor from '../FloatingLinkEditorPlugin/LinkEditor'
+import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
 
 const MobileToolbarPlugin = () => {
   const application = useApplication()
@@ -222,7 +223,8 @@ const MobileToolbarPlugin = () => {
       const elementToBeFocused = event.relatedTarget as Node
       const toolbarContainsElementToFocus = toolbarRef.current && toolbarRef.current.contains(elementToBeFocused)
       const linkEditorContainsElementToFocus =
-        linkEditorRef.current && linkEditorRef.current.contains(elementToBeFocused)
+        linkEditorRef.current &&
+        (linkEditorRef.current.contains(elementToBeFocused) || elementToBeFocused === linkEditorRef.current)
       const willFocusBackspaceButton = backspaceButtonRef.current && elementToBeFocused === backspaceButtonRef.current
       if (toolbarContainsElementToFocus || linkEditorContainsElementToFocus || willFocusBackspaceButton) {
         return
@@ -359,7 +361,11 @@ const MobileToolbarPlugin = () => {
       {modal}
       <div className="bg-contrast" id="super-mobile-toolbar">
         {isSelectionLink && (
-          <div className="border-t border-border px-2" ref={linkEditorRef}>
+          <div
+            className="border-t border-border px-2 focus:outline-none focus:shadow-none"
+            ref={linkEditorRef}
+            tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
+          >
             <LinkEditor
               linkUrl={linkUrl}
               isEditMode={isLinkEditMode}
