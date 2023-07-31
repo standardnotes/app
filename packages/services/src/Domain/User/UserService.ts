@@ -244,7 +244,9 @@ export class UserService
 
     await this.signOut(true)
 
-    void this.alerts.alert(InfoStrings.AccountDeleted)
+    if (this.alerts) {
+      void this.alerts.alert(InfoStrings.AccountDeleted)
+    }
 
     return {
       error: false,
