@@ -13,25 +13,28 @@ describe('basic auth', function () {
     awaitAll: true,
   }
 
-  beforeEach(async function () {
-    localStorage.clear()
-    this.expectedItemCount = BaseItemCounts.DefaultItemsWithAccount
-    this.context = await Factory.createAppContext()
-    await this.context.launch()
-    this.application = this.context.application
-    this.email = UuidGenerator.GenerateUuid()
-    this.password = UuidGenerator.GenerateUuid()
-  })
+  let context
 
   afterEach(async function () {
-    await Factory.safeDeinit(this.application)
+    await context.deinit()
     localStorage.clear()
+  })
+
+  beforeEach(async function () {
+    localStorage.clear()
+
+    context = await Factory.createAppContextWithRealCrypto()
+
+    await context.launch()
+    await context.register()
+
+    this.expectedItemCount = BaseItemCounts.DefaultItemsWithAccount
   })
 
   it('successfully register new account', async function () {
-    const response = await this.application.register(this.email, this.password)
+    const response = await context.application.register(context.email, context.password)
     expect(response).to.be.ok
-    expect(await this.application.encryption.getRootKey()).to.be.ok
+    expect(await context.application.encryption.getRootKey()).to.be.ok
   })
 
   it('fails register new account with short password', async function () {
@@ -39,7 +42,7 @@ describe('basic auth', function () {
 
     let error = null
     try {
-      await this.application.register(this.email, password)
+      await context.application.register(context.email, password)
     } catch (caughtError) {
       error = caughtError
     }
@@ -49,41 +52,41 @@ describe('basic auth', function () {
         'For your security, please choose a longer password or, ideally, a passphrase, and try again.',
     )
 
-    expect(await this.application.encryption.getRootKey()).to.not.be.ok
+    expect(await context.application.encryption.getRootKey()).to.not.be.ok
   })
 
   it('successfully signs out of account', async function () {
-    await this.application.register(this.email, this.password)
+    await context.application.register(context.email, context.password)
 
-    expect(await this.application.encryption.getRootKey()).to.be.ok
+    expect(await context.application.encryption.getRootKey()).to.be.ok
 
-    this.application = await Factory.signOutApplicationAndReturnNew(this.application)
+    context.application = await Factory.signOutApplicationAndReturnNew(context.application)
 
-    expect(await this.application.encryption.getRootKey()).to.not.be.ok
-    expect(this.application.encryption.rootKeyManager.getKeyMode()).to.equal(KeyMode.RootKeyNone)
+    expect(await context.application.encryption.getRootKey()).to.not.be.ok
+    expect(context.application.encryption.rootKeyManager.getKeyMode()).to.equal(KeyMode.RootKeyNone)
   })
 
   it('successfully signs in to registered account', async function () {
-    await this.application.register(this.email, this.password)
-    this.application = await Factory.signOutApplicationAndReturnNew(this.application)
-    const response = await this.application.signIn(this.email, this.password, undefined, undefined, undefined, true)
+    await context.application.register(context.email, context.password)
+    context.application = await Factory.signOutApplicationAndReturnNew(context.application)
+    const response = await context.application.signIn(context.email, context.password, undefined, undefined, undefined, true)
     expect(response).to.be.ok
     expect(response.data.error).to.not.be.ok
-    expect(await this.application.encryption.getRootKey()).to.be.ok
+    expect(await context.application.encryption.getRootKey()).to.be.ok
   }).timeout(20000)
 
   it('cannot sign while already signed in', async function () {
-    await this.application.register(this.email, this.password)
-    await Factory.createSyncedNote(this.application)
-    this.application = await Factory.signOutApplicationAndReturnNew(this.application)
-    const response = await this.application.signIn(this.email, this.password, undefined, undefined, undefined, true)
+    await context.application.register(context.email, context.password)
+    await Factory.createSyncedNote(context.application)
+    context.application = await Factory.signOutApplicationAndReturnNew(context.application)
+    const response = await context.application.signIn(context.email, context.password, undefined, undefined, undefined, true)
     expect(response).to.be.ok
     expect(response.data.error).to.not.be.ok
-    expect(await this.application.encryption.getRootKey()).to.be.ok
+    expect(await context.application.encryption.getRootKey()).to.be.ok
 
     let error
     try {
-      await this.application.signIn(this.email, this.password, undefined, undefined, undefined, true)
+      await context.application.signIn(context.email, context.password, undefined, undefined, undefined, true)
     } catch (e) {
       error = e
     }
@@ -91,27 +94,27 @@ describe('basic auth', function () {
   }).timeout(20000)
 
   it('cannot register while already signed in', async function () {
-    await this.application.register(this.email, this.password)
+    await context.application.register(context.email, context.password)
     let error
     try {
-      await this.application.register(this.email, this.password)
+      await context.application.register(context.email, context.password)
     } catch (e) {
       error = e
     }
     expect(error).to.be.ok
-    expect(await this.application.encryption.getRootKey()).to.be.ok
+    expect(await context.application.encryption.getRootKey()).to.be.ok
   }).timeout(20000)
 
   it('cannot perform two sign-ins at the same time', async function () {
-    await this.application.register(this.email, this.password)
-    this.application = await Factory.signOutApplicationAndReturnNew(this.application)
+    await context.application.register(context.email, context.password)
+    context.application = await Factory.signOutApplicationAndReturnNew(context.application)
 
     await Promise.all([
       (async () => {
-        const response = await this.application.signIn(this.email, this.password, undefined, undefined, undefined, true)
+        const response = await context.application.signIn(context.email, context.password, undefined, undefined, undefined, true)
         expect(response).to.be.ok
         expect(response.data.error).to.not.be.ok
-        expect(await this.application.encryption.getRootKey()).to.be.ok
+        expect(await context.application.encryption.getRootKey()).to.be.ok
       })(),
       (async () => {
         /** Make sure the first function runs first */
@@ -119,7 +122,7 @@ describe('basic auth', function () {
         /** Try to sign in while the first request is going */
         let error
         try {
-          await this.application.signIn(this.email, this.password, undefined, undefined, undefined, true)
+          await context.application.signIn(context.email, context.password, undefined, undefined, undefined, true)
         } catch (e) {
           error = e
         }
@@ -131,10 +134,10 @@ describe('basic auth', function () {
   it('cannot perform two register operations at the same time', async function () {
     await Promise.all([
       (async () => {
-        const response = await this.application.register(this.email, this.password)
+        const response = await context.application.register(context.email, context.password)
         expect(response).to.be.ok
         expect(response.error).to.not.be.ok
-        expect(await this.application.encryption.getRootKey()).to.be.ok
+        expect(await context.application.encryption.getRootKey()).to.be.ok
       })(),
       (async () => {
         /** Make sure the first function runs first */
@@ -142,7 +145,7 @@ describe('basic auth', function () {
         /** Try to register in while the first request is going */
         let error
         try {
-          await this.application.register(this.email, this.password)
+          await context.application.register(context.email, context.password)
         } catch (e) {
           error = e
         }
@@ -152,14 +155,14 @@ describe('basic auth', function () {
   }).timeout(20000)
 
   it('successfuly signs in after failing once', async function () {
-    await this.application.register(this.email, this.password)
-    this.application = await Factory.signOutApplicationAndReturnNew(this.application)
+    await context.application.register(context.email, context.password)
+    context.application = await Factory.signOutApplicationAndReturnNew(context.application)
 
-    let response = await this.application.signIn(this.email, 'wrong password', undefined, undefined, undefined, true)
+    let response = await context.application.signIn(context.email, 'wrong password', undefined, undefined, undefined, true)
     expect(response).to.have.property('status', 401)
     expect(response.data.error).to.be.ok
 
-    response = await this.application.signIn(this.email, this.password, undefined, undefined, undefined, true)
+    response = await context.application.signIn(context.email, context.password, undefined, undefined, undefined, true)
 
     expect(response.status).to.equal(200)
     expect(response.data).to.not.haveOwnProperty('error')
@@ -183,9 +186,9 @@ describe('basic auth', function () {
      * Registering with an uppercase email should still allow us to sign in
      * with lowercase email
      */
-    await this.application.register(uppercase, this.password)
+    await context.application.register(uppercase, context.password)
 
-    const response = await this.application.sessions.retrieveKeyParams(lowercase)
+    const response = await context.application.sessions.retrieveKeyParams(lowercase)
     const keyParams = response.keyParams
     expect(keyParams.identifier).to.equal(lowercase)
     expect(keyParams.identifier).to.not.equal(uppercase)
@@ -199,12 +202,12 @@ describe('basic auth', function () {
      * Registering with a lowercase email should allow us to sign in
      * with an uppercase email
      */
-    await this.application.register(lowercase, this.password)
-    this.application = await Factory.signOutApplicationAndReturnNew(this.application)
-    const response = await this.application.signIn(uppercase, this.password, undefined, undefined, undefined, true)
+    await context.application.register(lowercase, context.password)
+    context.application = await Factory.signOutApplicationAndReturnNew(context.application)
+    const response = await context.application.signIn(uppercase, context.password, undefined, undefined, undefined, true)
     expect(response).to.be.ok
     expect(response.data.error).to.not.be.ok
-    expect(await this.application.encryption.getRootKey()).to.be.ok
+    expect(await context.application.encryption.getRootKey()).to.be.ok
   }).timeout(20000)
 
   it('can sign into account regardless of whitespace', async function () {
@@ -215,47 +218,47 @@ describe('basic auth', function () {
      * Registering with a lowercase email should allow us to sign in
      * with an uppercase email
      */
-    await this.application.register(nospace, this.password)
-    this.application = await Factory.signOutApplicationAndReturnNew(this.application)
-    const response = await this.application.signIn(withspace, this.password, undefined, undefined, undefined, true)
+    await context.application.register(nospace, context.password)
+    context.application = await Factory.signOutApplicationAndReturnNew(context.application)
+    const response = await context.application.signIn(withspace, context.password, undefined, undefined, undefined, true)
     expect(response).to.be.ok
     expect(response.data.error).to.not.be.ok
-    expect(await this.application.encryption.getRootKey()).to.be.ok
+    expect(await context.application.encryption.getRootKey()).to.be.ok
   }).timeout(20000)
 
   it('fails login with wrong password', async function () {
-    await this.application.register(this.email, this.password)
-    this.application = await Factory.signOutApplicationAndReturnNew(this.application)
-    const response = await this.application.signIn(this.email, 'wrongpassword', undefined, undefined, undefined, true)
+    await context.application.register(context.email, context.password)
+    context.application = await Factory.signOutApplicationAndReturnNew(context.application)
+    const response = await context.application.signIn(context.email, 'wrongpassword', undefined, undefined, undefined, true)
     expect(response).to.be.ok
     expect(response.data.error).to.be.ok
-    expect(await this.application.encryption.getRootKey()).to.not.be.ok
+    expect(await context.application.encryption.getRootKey()).to.not.be.ok
   }).timeout(20000)
 
   it('fails to change to short password', async function () {
-    await this.application.register(this.email, this.password)
+    await context.application.register(context.email, context.password)
     const newPassword = '123456'
-    const response = await this.application.changePassword(this.password, newPassword)
+    const response = await context.application.changePassword(context.password, newPassword)
     expect(response.error).to.be.ok
   }).timeout(20000)
 
   it('fails to change password when current password is incorrect', async function () {
-    await this.application.register(this.email, this.password)
-    const response = await this.application.changePassword('Invalid password', 'New password')
+    await context.application.register(context.email, context.password)
+    const response = await context.application.changePassword('Invalid password', 'New password')
     expect(response.error).to.be.ok
 
     /** Ensure we can still log in */
-    this.application = await Factory.signOutAndBackIn(this.application, this.email, this.password)
+    context.application = await Factory.signOutAndBackIn(context.application, context.email, context.password)
   }).timeout(20000)
 
   it('registering for new account and completing first after download sync should not put us out of sync', async function () {
-    this.email = UuidGenerator.GenerateUuid()
-    this.password = UuidGenerator.GenerateUuid()
+    context.email = UuidGenerator.GenerateUuid()
+    context.password = UuidGenerator.GenerateUuid()
 
     let outOfSync = true
     let didCompletePostDownloadFirstSync = false
     let didCompleteDownloadFirstSync = false
-    this.application.sync.addEventObserver((eventName) => {
+    context.application.sync.addEventObserver((eventName) => {
       if (eventName === SyncEvent.DownloadFirstSyncCompleted) {
         didCompleteDownloadFirstSync = true
       }
@@ -265,14 +268,14 @@ describe('basic auth', function () {
       if (!didCompletePostDownloadFirstSync && eventName === SyncEvent.PaginatedSyncRequestCompleted) {
         didCompletePostDownloadFirstSync = true
         /** Should be in sync */
-        outOfSync = this.application.sync.isOutOfSync()
+        outOfSync = context.application.sync.isOutOfSync()
       }
     })
 
     await Factory.registerUserToApplication({
-      application: this.application,
-      email: this.email,
-      password: this.password,
+      application: context.application,
+      email: context.email,
+      password: context.password,
     })
 
     expect(didCompleteDownloadFirstSync).to.equal(true)
@@ -281,47 +284,47 @@ describe('basic auth', function () {
   })
 
   async function changePassword() {
-    await this.application.register(this.email, this.password)
+    await context.application.register(context.email, context.password)
 
     const noteCount = 10
 
-    await Factory.createManyMappedNotes(this.application, noteCount)
+    await Factory.createManyMappedNotes(context.application, noteCount)
 
     this.expectedItemCount += noteCount
 
-    await this.application.sync.sync(syncOptions)
+    await context.application.sync.sync(syncOptions)
 
-    expect(this.application.items.items.length).to.equal(this.expectedItemCount)
+    expect(context.application.items.items.length).to.equal(this.expectedItemCount)
 
     const newPassword = 'newpassword'
-    const response = await this.application.changePassword(this.password, newPassword)
+    const response = await context.application.changePassword(context.password, newPassword)
 
     /** New items key */
     this.expectedItemCount++
 
-    expect(this.application.items.items.length).to.equal(this.expectedItemCount)
+    expect(context.application.items.items.length).to.equal(this.expectedItemCount)
 
     expect(response.error).to.not.be.ok
-    expect(this.application.items.items.length).to.equal(this.expectedItemCount)
-    expect(this.application.payloads.invalidPayloads.length).to.equal(0)
+    expect(context.application.items.items.length).to.equal(this.expectedItemCount)
+    expect(context.application.payloads.invalidPayloads.length).to.equal(0)
 
-    await this.application.sync.markAllItemsAsNeedingSyncAndPersist()
-    await this.application.sync.sync(syncOptions)
+    await context.application.sync.markAllItemsAsNeedingSyncAndPersist()
+    await context.application.sync.sync(syncOptions)
 
-    expect(this.application.items.items.length).to.equal(this.expectedItemCount)
+    expect(context.application.items.items.length).to.equal(this.expectedItemCount)
 
-    const note = this.application.items.getDisplayableNotes()[0]
+    const note = context.application.items.getDisplayableNotes()[0]
 
     /**
      * Create conflict for a note. First modify the item without saving so that
      * our local contents digress from the server's
      */
-    await this.application.mutator.changeItem(note, (mutator) => {
+    await context.application.mutator.changeItem(note, (mutator) => {
       mutator.title = `${Math.random()}`
     })
 
     await Factory.changePayloadTimeStampAndSync(
-      this.application,
+      context.application,
       note.payload,
       Factory.dateToMicroseconds(Factory.yesterday()),
       {
@@ -331,18 +334,18 @@ describe('basic auth', function () {
     )
     this.expectedItemCount++
 
-    this.application = await Factory.signOutApplicationAndReturnNew(this.application)
+    context.application = await Factory.signOutApplicationAndReturnNew(context.application)
 
     /** Should login with new password */
-    const signinResponse = await this.application.signIn(this.email, newPassword, undefined, undefined, undefined, true)
+    const signinResponse = await context.application.signIn(context.email, newPassword, undefined, undefined, undefined, true)
 
     expect(signinResponse).to.be.ok
     expect(signinResponse.data.error).to.not.be.ok
 
-    expect(await this.application.encryption.getRootKey()).to.be.ok
+    expect(await context.application.encryption.getRootKey()).to.be.ok
 
-    expect(this.application.items.items.length).to.equal(this.expectedItemCount)
-    expect(this.application.payloads.invalidPayloads.length).to.equal(0)
+    expect(context.application.items.items.length).to.equal(this.expectedItemCount)
+    expect(context.application.payloads.invalidPayloads.length).to.equal(0)
   }
 
   it('successfully changes password', changePassword).timeout(40000)
@@ -355,42 +358,42 @@ describe('basic auth', function () {
         if (prompt.validation === ChallengeValidation.LocalPasscode) {
           values.push(CreateChallengeValue(prompt, passcode))
         } else {
-          values.push(CreateChallengeValue(prompt, this.password))
+          values.push(CreateChallengeValue(prompt, context.password))
         }
       }
       return values
     }
-    this.application.setLaunchCallback({
+    context.application.setLaunchCallback({
       receiveChallenge: (challenge) => {
-        this.application.addChallengeObserver(challenge, {
+        context.application.addChallengeObserver(challenge, {
           onInvalidValue: (value) => {
             const values = promptValueReply([value.prompt])
-            this.application.submitValuesForChallenge(challenge, values)
+            context.application.submitValuesForChallenge(challenge, values)
             numPasscodeAttempts++
           },
         })
         const initialValues = promptValueReply(challenge.prompts)
-        this.application.submitValuesForChallenge(challenge, initialValues)
+        context.application.submitValuesForChallenge(challenge, initialValues)
       },
     })
-    await this.application.setPasscode(passcode)
+    await context.application.setPasscode(passcode)
     await changePassword.bind(this)()
   }).timeout(20000)
 
   it('changes password many times', async function () {
-    await this.application.register(this.email, this.password)
+    await context.application.register(context.email, context.password)
 
     const noteCount = 10
-    await Factory.createManyMappedNotes(this.application, noteCount)
+    await Factory.createManyMappedNotes(context.application, noteCount)
     this.expectedItemCount += noteCount
-    await this.application.sync.sync(syncOptions)
+    await context.application.sync.sync(syncOptions)
 
     const numTimesToChangePw = 3
     let newPassword = Factory.randomString()
-    let currentPassword = this.password
+    let currentPassword = context.password
 
     for (let i = 0; i < numTimesToChangePw; i++) {
-      await this.application.changePassword(currentPassword, newPassword)
+      await context.application.changePassword(currentPassword, newPassword)
 
       /** New items key */
       this.expectedItemCount++
@@ -398,20 +401,20 @@ describe('basic auth', function () {
       currentPassword = newPassword
       newPassword = Factory.randomString()
 
-      expect(this.application.items.items.length).to.equal(this.expectedItemCount)
-      expect(this.application.payloads.invalidPayloads.length).to.equal(0)
+      expect(context.application.items.items.length).to.equal(this.expectedItemCount)
+      expect(context.application.payloads.invalidPayloads.length).to.equal(0)
 
-      await this.application.sync.markAllItemsAsNeedingSyncAndPersist()
-      await this.application.sync.sync(syncOptions)
+      await context.application.sync.markAllItemsAsNeedingSyncAndPersist()
+      await context.application.sync.sync(syncOptions)
 
-      this.application = await this.context.signout()
+      context.application = await this.context.signout()
 
-      expect(this.application.items.items.length).to.equal(BaseItemCounts.DefaultItems)
-      expect(this.application.payloads.invalidPayloads.length).to.equal(0)
+      expect(context.application.items.items.length).to.equal(BaseItemCounts.DefaultItems)
+      expect(context.application.payloads.invalidPayloads.length).to.equal(0)
 
       /** Should login with new password */
-      const signinResponse = await this.application.signIn(
-        this.email,
+      const signinResponse = await context.application.signIn(
+        context.email,
         currentPassword,
         undefined,
         undefined,
@@ -421,19 +424,19 @@ describe('basic auth', function () {
 
       expect(signinResponse).to.be.ok
       expect(signinResponse.data.error).to.not.be.ok
-      expect(await this.application.encryption.getRootKey()).to.be.ok
+      expect(await context.application.encryption.getRootKey()).to.be.ok
     }
   }).timeout(80000)
 
   it('signing in with a clean email string should only try once', async function () {
     await Factory.registerUserToApplication({
-      application: this.application,
-      email: this.email,
-      password: this.password,
+      application: context.application,
+      email: context.email,
+      password: context.password,
     })
-    this.application = await Factory.signOutApplicationAndReturnNew(this.application)
-    const performSignIn = sinon.spy(this.application.sessions, 'performSignIn')
-    await this.application.signIn(this.email, 'wrong password', undefined, undefined, undefined, true)
+    context.application = await Factory.signOutApplicationAndReturnNew(context.application)
+    const performSignIn = sinon.spy(context.application.sessions, 'performSignIn')
+    await context.application.signIn(context.email, 'wrong password', undefined, undefined, undefined, true)
     expect(performSignIn.callCount).to.equal(1)
   })
 
@@ -441,20 +444,20 @@ describe('basic auth', function () {
     /** Should delete the new items key locally without marking it as deleted so that it doesn't sync */
     await this.context.register()
 
-    const originalImpl = this.application.encryption.getSureDefaultItemsKey
-    this.application.encryption.getSureDefaultItemsKey = () => {
+    const originalImpl = context.application.encryption.getSureDefaultItemsKey
+    context.application.encryption.getSureDefaultItemsKey = () => {
       return {
         neverSynced: true,
       }
     }
 
-    const mutatorSpy = sinon.spy(this.application.mutator, 'setItemToBeDeleted')
-    const removeItemsSpy = sinon.spy(this.application.items, 'removeItemsFromMemory')
-    const deletePayloadsSpy = sinon.spy(this.application.storage, 'deletePayloadsWithUuids')
+    const mutatorSpy = sinon.spy(context.application.mutator, 'setItemToBeDeleted')
+    const removeItemsSpy = sinon.spy(context.application.items, 'removeItemsFromMemory')
+    const deletePayloadsSpy = sinon.spy(context.application.storage, 'deletePayloadsWithUuids')
 
     await this.context.changePassword('new-password')
 
-    this.application.encryption.getSureDefaultItemsKey = originalImpl
+    context.application.encryption.getSureDefaultItemsKey = originalImpl
 
     expect(mutatorSpy.callCount).to.equal(0)
     expect(removeItemsSpy.callCount).to.equal(1)
@@ -464,13 +467,13 @@ describe('basic auth', function () {
   describe('add passcode', function () {
     it('should set passcode successfully', async function () {
       const passcode = 'passcode'
-      const result = await this.application.addPasscode(passcode)
+      const result = await context.application.addPasscode(passcode)
       expect(result).to.be.true
     })
 
     it('should fail when attempting to set 0 character passcode', async function () {
       const passcode = ''
-      const result = await this.application.addPasscode(passcode)
+      const result = await context.application.addPasscode(passcode)
       expect(result).to.be.false
     })
   })
@@ -479,65 +482,47 @@ describe('basic auth', function () {
     it('should change passcode successfully', async function () {
       const passcode = 'passcode'
       const newPasscode = 'newPasscode'
-      await this.application.addPasscode(passcode)
-      Factory.handlePasswordChallenges(this.application, passcode)
-      const result = await this.application.changePasscode(newPasscode)
+      await context.application.addPasscode(passcode)
+      Factory.handlePasswordChallenges(context.application, passcode)
+      const result = await context.application.changePasscode(newPasscode)
       expect(result).to.be.true
     }).timeout(Factory.TenSecondTimeout)
 
     it('should fail when attempting to change to a 0 character passcode', async function () {
       const passcode = 'passcode'
       const newPasscode = ''
-      await this.application.addPasscode(passcode)
-      Factory.handlePasswordChallenges(this.application, passcode)
-      const result = await this.application.changePasscode(newPasscode)
+      await context.application.addPasscode(passcode)
+      Factory.handlePasswordChallenges(context.application, passcode)
+      const result = await context.application.changePasscode(newPasscode)
       expect(result).to.be.false
     }).timeout(Factory.TenSecondTimeout)
   })
 
-  describe.skip('account deletion', function () {
-    it('should delete account', async function () {
-      await Factory.registerUserToApplication({
-        application: this.application,
-        email: this.email,
-        password: this.password,
-      })
-
-      Factory.handlePasswordChallenges(this.application, this.password)
-      const _response = await this.application.user.deleteAccount()
-    }).timeout(Factory.TenSecondTimeout)
-
+  describe('account deletion', function () {
     it('should prompt for account password when deleting account', async function () {
-      await Factory.registerUserToApplication({
-        application: this.application,
-        email: this.email,
-        password: this.password,
-      })
+      Factory.handlePasswordChallenges(context.application, context.password)
 
-      Factory.handlePasswordChallenges(this.application, this.password)
+      const sendChallengeSpy = sinon.spy(context.application.challenges, 'sendChallenge')
 
-      const _response = await this.application.deleteAccount()
+      await context.application.user.deleteAccount()
 
-      sinon.spy(snApp.challenges, 'sendChallenge')
-      const spyCall = snApp.challenges.sendChallenge.getCall(0)
-      const challenge = spyCall.firstArg
-      expect(challenge.prompts).to.have.lengthOf(2)
-      expect(challenge.prompts[0].validation).to.equal(ChallengeValidation.AccountPassword)
-      // ...
+      expect(sendChallengeSpy.callCount).to.equal(1)
     }).timeout(Factory.TenSecondTimeout)
 
     it('deleting account should sign out current user', async function () {
-      await Factory.registerUserToApplication({
-        application: this.application,
-        email: this.email,
-        password: this.password,
-      })
+      const context = await Factory.createAppContextWithRealCrypto()
 
-      Factory.handlePasswordChallenges(this.application, this.password)
+      await context.launch()
+      await context.register()
 
-      const _response = await this.application.deleteAccount()
+      Factory.handlePasswordChallenges(context.application, context.password)
 
-      expect(application.hasAccount()).to.be.false
+      const signOutSpy = sinon.spy(context.application.user.sessions, 'signOut')
+
+      await context.application.user.deleteAccount()
+
+      expect(context.application.dealloced).to.be.true
+      expect(signOutSpy.callCount).to.equal(1)
     }).timeout(Factory.TenSecondTimeout)
   })
 })
