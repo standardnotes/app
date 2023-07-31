@@ -26,13 +26,12 @@ describe('basic auth', function () {
     context = await Factory.createAppContextWithRealCrypto()
 
     await context.launch()
-    await context.register()
 
     this.expectedItemCount = BaseItemCounts.DefaultItemsWithAccount
   })
 
   it('successfully register new account', async function () {
-    const response = await context.application.register(context.email, context.password)
+    const response = await context.register()
     expect(response).to.be.ok
     expect(await context.application.encryption.getRootKey()).to.be.ok
   })
@@ -56,7 +55,7 @@ describe('basic auth', function () {
   })
 
   it('successfully signs out of account', async function () {
-    await context.application.register(context.email, context.password)
+    await context.register()
 
     expect(await context.application.encryption.getRootKey()).to.be.ok
 
@@ -67,8 +66,10 @@ describe('basic auth', function () {
   })
 
   it('successfully signs in to registered account', async function () {
-    await context.application.register(context.email, context.password)
-    context.application = await Factory.signOutApplicationAndReturnNew(context.application)
+    await context.register()
+
+    await context.signout()
+
     const response = await context.application.signIn(context.email, context.password, undefined, undefined, undefined, true)
     expect(response).to.be.ok
     expect(response.data.error).to.not.be.ok
@@ -76,9 +77,10 @@ describe('basic auth', function () {
   }).timeout(20000)
 
   it('cannot sign while already signed in', async function () {
-    await context.application.register(context.email, context.password)
+    await context.register()
     await Factory.createSyncedNote(context.application)
-    context.application = await Factory.signOutApplicationAndReturnNew(context.application)
+    await context.signout()
+
     const response = await context.application.signIn(context.email, context.password, undefined, undefined, undefined, true)
     expect(response).to.be.ok
     expect(response.data.error).to.not.be.ok
@@ -94,10 +96,10 @@ describe('basic auth', function () {
   }).timeout(20000)
 
   it('cannot register while already signed in', async function () {
-    await context.application.register(context.email, context.password)
+    await context.register()
     let error
     try {
-      await context.application.register(context.email, context.password)
+      await context.register()
     } catch (e) {
       error = e
     }
@@ -106,8 +108,8 @@ describe('basic auth', function () {
   }).timeout(20000)
 
   it('cannot perform two sign-ins at the same time', async function () {
-    await context.application.register(context.email, context.password)
-    context.application = await Factory.signOutApplicationAndReturnNew(context.application)
+    await context.register()
+    await context.signout()
 
     await Promise.all([
       (async () => {
@@ -134,7 +136,7 @@ describe('basic auth', function () {
   it('cannot perform two register operations at the same time', async function () {
     await Promise.all([
       (async () => {
-        const response = await context.application.register(context.email, context.password)
+        const response = await context.register()
         expect(response).to.be.ok
         expect(response.error).to.not.be.ok
         expect(await context.application.encryption.getRootKey()).to.be.ok
@@ -145,7 +147,7 @@ describe('basic auth', function () {
         /** Try to register in while the first request is going */
         let error
         try {
-          await context.application.register(context.email, context.password)
+          await context.register()
         } catch (e) {
           error = e
         }
@@ -155,8 +157,8 @@ describe('basic auth', function () {
   }).timeout(20000)
 
   it('successfuly signs in after failing once', async function () {
-    await context.application.register(context.email, context.password)
-    context.application = await Factory.signOutApplicationAndReturnNew(context.application)
+    await context.register()
+    await context.signout()
 
     let response = await context.application.signIn(context.email, 'wrong password', undefined, undefined, undefined, true)
     expect(response).to.have.property('status', 401)
@@ -198,16 +200,23 @@ describe('basic auth', function () {
     const rand = `${Math.random()}`
     const uppercase = `FOO@BAR.COM${rand}`
     const lowercase = `foo@bar.com${rand}`
-    /**
-     * Registering with a lowercase email should allow us to sign in
-     * with an uppercase email
-     */
-    await context.application.register(lowercase, context.password)
-    context.application = await Factory.signOutApplicationAndReturnNew(context.application)
-    const response = await context.application.signIn(uppercase, context.password, undefined, undefined, undefined, true)
+
+    const password = UuidGenerator.GenerateUuid()
+    let specContext = await Factory.createAppContextWithFakeCrypto(Math.random(), lowercase, password)
+
+    await specContext.launch()
+    await specContext.register()
+    await specContext.signout()
+    await specContext.deinit()
+
+    specContext = await Factory.createAppContextWithFakeCrypto(Math.random(), uppercase, password)
+
+    await specContext.launch()
+    const response = await specContext.signIn()
+
     expect(response).to.be.ok
     expect(response.data.error).to.not.be.ok
-    expect(await context.application.encryption.getRootKey()).to.be.ok
+    expect(await specContext.application.encryption.getRootKey()).to.be.ok
   }).timeout(20000)
 
   it('can sign into account regardless of whitespace', async function () {
@@ -218,16 +227,24 @@ describe('basic auth', function () {
      * Registering with a lowercase email should allow us to sign in
      * with an uppercase email
      */
-    await context.application.register(nospace, context.password)
-    context.application = await Factory.signOutApplicationAndReturnNew(context.application)
-    const response = await context.application.signIn(withspace, context.password, undefined, undefined, undefined, true)
+    const password = UuidGenerator.GenerateUuid()
+    let specContext = await Factory.createAppContextWithFakeCrypto(Math.random(), nospace, password)
+    await specContext.launch()
+    await specContext.register()
+    await specContext.signout()
+    await specContext.deinit()
+
+    specContext = await Factory.createAppContextWithFakeCrypto(Math.random(), withspace, password)
+    await specContext.launch()
+    const response = await specContext.signIn()
+
     expect(response).to.be.ok
     expect(response.data.error).to.not.be.ok
-    expect(await context.application.encryption.getRootKey()).to.be.ok
+    expect(await specContext.application.encryption.getRootKey()).to.be.ok
   }).timeout(20000)
 
   it('fails login with wrong password', async function () {
-    await context.application.register(context.email, context.password)
+    await context.register()
     context.application = await Factory.signOutApplicationAndReturnNew(context.application)
     const response = await context.application.signIn(context.email, 'wrongpassword', undefined, undefined, undefined, true)
     expect(response).to.be.ok
@@ -236,14 +253,14 @@ describe('basic auth', function () {
   }).timeout(20000)
 
   it('fails to change to short password', async function () {
-    await context.application.register(context.email, context.password)
+    await context.register()
     const newPassword = '123456'
     const response = await context.application.changePassword(context.password, newPassword)
     expect(response.error).to.be.ok
   }).timeout(20000)
 
   it('fails to change password when current password is incorrect', async function () {
-    await context.application.register(context.email, context.password)
+    await context.register()
     const response = await context.application.changePassword('Invalid password', 'New password')
     expect(response.error).to.be.ok
 
@@ -284,7 +301,7 @@ describe('basic auth', function () {
   })
 
   async function changePassword() {
-    await context.application.register(context.email, context.password)
+    await context.register()
 
     const noteCount = 10
 
@@ -334,7 +351,7 @@ describe('basic auth', function () {
     )
     this.expectedItemCount++
 
-    context.application = await Factory.signOutApplicationAndReturnNew(context.application)
+    await context.signout()
 
     /** Should login with new password */
     const signinResponse = await context.application.signIn(context.email, newPassword, undefined, undefined, undefined, true)
@@ -381,7 +398,7 @@ describe('basic auth', function () {
   }).timeout(20000)
 
   it('changes password many times', async function () {
-    await context.application.register(context.email, context.password)
+    await context.register()
 
     const noteCount = 10
     await Factory.createManyMappedNotes(context.application, noteCount)
@@ -407,7 +424,7 @@ describe('basic auth', function () {
       await context.application.sync.markAllItemsAsNeedingSyncAndPersist()
       await context.application.sync.sync(syncOptions)
 
-      context.application = await this.context.signout()
+      await context.signout()
 
       expect(context.application.items.items.length).to.equal(BaseItemCounts.DefaultItems)
       expect(context.application.payloads.invalidPayloads.length).to.equal(0)
@@ -442,7 +459,7 @@ describe('basic auth', function () {
 
   it('should rollback password change if fails to sync new items key', async function () {
     /** Should delete the new items key locally without marking it as deleted so that it doesn't sync */
-    await this.context.register()
+    await context.register()
 
     const originalImpl = context.application.encryption.getSureDefaultItemsKey
     context.application.encryption.getSureDefaultItemsKey = () => {
@@ -455,7 +472,7 @@ describe('basic auth', function () {
     const removeItemsSpy = sinon.spy(context.application.items, 'removeItemsFromMemory')
     const deletePayloadsSpy = sinon.spy(context.application.storage, 'deletePayloadsWithUuids')
 
-    await this.context.changePassword('new-password')
+    await context.changePassword('new-password')
 
     context.application.encryption.getSureDefaultItemsKey = originalImpl
 
@@ -499,6 +516,10 @@ describe('basic auth', function () {
   })
 
   describe('account deletion', function () {
+    beforeEach(async () => {
+      await context.register()
+    })
+
     it('should prompt for account password when deleting account', async function () {
       Factory.handlePasswordChallenges(context.application, context.password)
 
@@ -510,11 +531,6 @@ describe('basic auth', function () {
     }).timeout(Factory.TenSecondTimeout)
 
     it('deleting account should sign out current user', async function () {
-      const context = await Factory.createAppContextWithRealCrypto()
-
-      await context.launch()
-      await context.register()
-
       Factory.handlePasswordChallenges(context.application, context.password)
 
       const signOutSpy = sinon.spy(context.application.user.sessions, 'signOut')
@@ -524,5 +540,16 @@ describe('basic auth', function () {
       expect(context.application.dealloced).to.be.true
       expect(signOutSpy.callCount).to.equal(1)
     }).timeout(Factory.TenSecondTimeout)
+
+    it('should not allow to delete someone else\'s account', async function () {
+      const secondContext = await Factory.createAppContextWithRealCrypto()
+      await secondContext.launch()
+      const registerResponse = await secondContext.register()
+
+      const response = await context.application.dependencies.get(TYPES.UserApiService).deleteAccount(registerResponse.user.uuid)
+
+      expect(response.status).to.equal(401)
+      expect(response.data.error.message).to.equal('Operation not allowed.')
+    })
   })
 })
