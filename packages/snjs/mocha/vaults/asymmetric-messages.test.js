@@ -188,6 +188,12 @@ describe('asymmetric messages', function () {
   it('should send shared vault root key change message after root key change', async () => {
     const { sharedVault, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithAcceptedInvite(context)
+
+    contactContext.anticipateConsoleError(
+      '(2x) Error decrypting contentKey from parameters',
+      'Items keys are encrypted with new root key and are later decrypted in the test',
+    )
+
     contactContext.lockSyncing()
 
     const promise = context.resolveWhenAsyncFunctionCompletes(
@@ -415,6 +421,8 @@ describe('asymmetric messages', function () {
   })
 
   it('sending a new vault invite to a trusted contact then changing account password should still allow contact to trust invite', async () => {
+    this.timeout(Factory.ThirtySecondTimeout)
+
     const { contactContext, contact, deinitContactContext } = await Collaboration.createSharedVaultWithAcceptedInvite(
       context,
     )
