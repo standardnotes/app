@@ -651,6 +651,10 @@ export class AppContext {
     console.warn('Anticipating a console error with message:', message)
   }
 
+  awaitPromiseOrThrow(promise, maxWait = 2.0, reason = 'No reason provided') {
+    return Utils.awaitPromiseOrThrow(promise, maxWait, reason)
+  }
+
   async activatePaidSubscriptionForUser(options = {}) {
     const dateInAnHour = new Date()
     dateInAnHour.setHours(dateInAnHour.getHours() + 1)

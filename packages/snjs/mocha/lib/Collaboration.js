@@ -2,7 +2,7 @@ import * as Factory from './factory.js'
 import * as Utils from './Utils.js'
 
 export const createContactContext = async () => {
-  const contactContext = await Factory.createAppContextWithRealCrypto()
+  const contactContext = await Factory.createVaultsContextWithRealCrypto()
   await contactContext.launch()
   await contactContext.register()
 
@@ -94,7 +94,10 @@ export const createSharedVaultWithAcceptedInviteAndNote = async (
   )
   const note = await context.createSyncedNote('foo', 'bar')
   const updatedNote = await moveItemToVault(context, sharedVault, note)
+
+  const promise = contactContext.awaitNextSucessfulSync()
   await contactContext.sync()
+  await Utils.awaitPromiseOrThrow(promise, 2.0, 'Waiting for contactContext to sync added note')
 
   return { sharedVault, note: updatedNote, contact, contactContext, deinitContactContext }
 }

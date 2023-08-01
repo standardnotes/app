@@ -10,15 +10,10 @@ describe('shared vaults', function () {
   let context
   let vaults
 
-  afterEach(async function () {
-    await context.deinit()
-    localStorage.clear()
-  })
-
   beforeEach(async function () {
     localStorage.clear()
 
-    context = await Factory.createAppContextWithRealCrypto()
+    context = await Factory.createVaultsContextWithRealCrypto()
 
     await context.launch()
     await context.register()
@@ -26,11 +21,18 @@ describe('shared vaults', function () {
     vaults = context.vaults
   })
 
+  afterEach(async function () {
+    await context.deinit()
+    localStorage.clear()
+  })
+
   it('should update vault name and description', async () => {
     const { sharedVault, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithAcceptedInvite(context)
 
-    await vaults.changeVaultNameAndDescription(sharedVault, {
+    contactContext.lockSyncing()
+
+    await context.changeVaultName(sharedVault, {
       name: 'new vault name',
       description: 'new vault description',
     })
@@ -40,6 +42,7 @@ describe('shared vaults', function () {
     expect(updatedVault.description).to.equal('new vault description')
 
     const promise = contactContext.resolveWhenAsymmetricMessageProcessingCompletes()
+    contactContext.unlockSyncing()
     await contactContext.sync()
     await promise
 
@@ -65,7 +68,7 @@ describe('shared vaults', function () {
     expect(contactContext.keys.getPrimaryKeySystemRootKey(sharedVault.systemIdentifier)).to.be.undefined
     expect(contactContext.keys.getKeySystemItemsKeys(sharedVault.systemIdentifier)).to.be.empty
 
-    const recreatedContext = await Factory.createAppContextWithRealCrypto(contactContext.identifier)
+    const recreatedContext = await Factory.createVaultsContextWithRealCrypto(contactContext.identifier)
     await recreatedContext.launch()
 
     expect(recreatedContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })).to.be.undefined
@@ -92,7 +95,7 @@ describe('shared vaults', function () {
     expect(contactContext.keys.getPrimaryKeySystemRootKey(sharedVault.systemIdentifier)).to.be.undefined
     expect(contactContext.keys.getKeySystemItemsKeys(sharedVault.systemIdentifier)).to.be.empty
 
-    const recreatedContext = await Factory.createAppContextWithRealCrypto(contactContext.identifier)
+    const recreatedContext = await Factory.createVaultsContextWithRealCrypto(contactContext.identifier)
     await recreatedContext.launch()
 
     expect(recreatedContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })).to.be.undefined

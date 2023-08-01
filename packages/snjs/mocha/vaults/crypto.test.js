@@ -17,7 +17,7 @@ describe('shared vault crypto', function () {
   beforeEach(async function () {
     localStorage.clear()
 
-    context = await Factory.createAppContextWithRealCrypto()
+    context = await Factory.createVaultsContextWithRealCrypto()
 
     await context.launch()
     await context.register()
@@ -28,7 +28,7 @@ describe('shared vault crypto', function () {
       const appIdentifier = context.identifier
       await context.deinit()
 
-      let recreatedContext = await Factory.createAppContextWithRealCrypto(appIdentifier)
+      let recreatedContext = await Factory.createVaultsContextWithRealCrypto(appIdentifier)
       await recreatedContext.launch()
 
       expect(recreatedContext.encryption.getKeyPair()).to.not.be.undefined
@@ -131,7 +131,7 @@ describe('shared vault crypto', function () {
       const appIdentifier = context.identifier
       await context.deinit()
 
-      let recreatedContext = await Factory.createAppContextWithRealCrypto(appIdentifier)
+      let recreatedContext = await Factory.createVaultsContextWithRealCrypto(appIdentifier)
       await recreatedContext.launch()
 
       updatedNote = recreatedContext.items.findItem(note.uuid)
@@ -144,7 +144,7 @@ describe('shared vault crypto', function () {
 
       await recreatedContext.deinit()
 
-      recreatedContext = await Factory.createAppContextWithRealCrypto(appIdentifier)
+      recreatedContext = await Factory.createVaultsContextWithRealCrypto(appIdentifier)
       await recreatedContext.launch()
 
       /** Decrypting from storage will now verify current user symmetric signature only */

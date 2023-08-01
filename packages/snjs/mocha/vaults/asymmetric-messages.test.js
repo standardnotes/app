@@ -17,7 +17,7 @@ describe('asymmetric messages', function () {
   beforeEach(async function () {
     localStorage.clear()
 
-    context = await Factory.createAppContextWithRealCrypto()
+    context = await Factory.createVaultsContextWithRealCrypto()
 
     await context.launch()
     await context.register()
@@ -29,7 +29,7 @@ describe('asymmetric messages', function () {
 
     contactContext.lockSyncing()
 
-    await context.vaults.changeVaultNameAndDescription(sharedVault, {
+    await context.changeVaultName(sharedVault, {
       name: 'new vault name',
       description: 'new vault description',
     })
@@ -56,7 +56,7 @@ describe('asymmetric messages', function () {
     const { sharedVault, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithAcceptedInvite(context)
 
-    await context.vaults.changeVaultNameAndDescription(sharedVault, {
+    await context.changeVaultName(sharedVault, {
       name: 'New Name',
       description: 'New Description',
     })
@@ -221,7 +221,7 @@ describe('asymmetric messages', function () {
     const { sharedVault, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithAcceptedInvite(context)
 
-    await context.vaults.changeVaultNameAndDescription(sharedVault, {
+    await context.changeVaultName(sharedVault, {
       name: 'New Name',
       description: 'New Description',
     })
@@ -275,7 +275,7 @@ describe('asymmetric messages', function () {
 
     await context.changePassword('new password')
 
-    await context.vaults.changeVaultNameAndDescription(sharedVault, {
+    await context.changeVaultName(sharedVault, {
       name: 'New Name',
       description: 'New Description',
     })
@@ -301,7 +301,7 @@ describe('asymmetric messages', function () {
 
     await context.changePassword('new password')
 
-    await context.vaults.changeVaultNameAndDescription(sharedVault, {
+    await context.changeVaultName(sharedVault, {
       name: 'New Name',
       description: 'New Description',
     })
@@ -401,7 +401,7 @@ describe('asymmetric messages', function () {
 
     contactContext.lockSyncing()
 
-    await context.vaults.changeVaultNameAndDescription(sharedVault, {
+    await context.changeVaultName(sharedVault, {
       name: 'New Name',
       description: 'New Description',
     })

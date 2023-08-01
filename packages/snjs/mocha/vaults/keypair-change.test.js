@@ -17,7 +17,7 @@ describe('keypair change', function () {
   beforeEach(async function () {
     localStorage.clear()
 
-    context = await Factory.createAppContextWithRealCrypto()
+    context = await Factory.createVaultsContextWithRealCrypto()
 
     await context.launch()
     await context.register()
@@ -103,7 +103,7 @@ describe('keypair change', function () {
     sinon.stub(context.encryption, 'getKeyPair').returns(previousKeyPair)
     sinon.stub(context.encryption, 'getSigningKeyPair').returns(previousSigningKeyPair)
 
-    await context.vaults.changeVaultNameAndDescription(sharedVault, {
+    await context.changeVaultName(sharedVault, {
       name: 'New Name',
       description: 'New Description',
     })
@@ -150,17 +150,10 @@ describe('keypair change', function () {
 
     contactContext.lockSyncing()
 
-    const sendDataChangePromise = context.resolveWhenAsyncFunctionCompletes(
-      context.sharedVaults._sendVaultDataChangeMessage,
-      'execute',
-    )
-
-    await context.vaults.changeVaultNameAndDescription(sharedVault, {
+    await context.changeVaultName(sharedVault, {
       name: 'New Name',
       description: 'New Description',
     })
-
-    await sendDataChangePromise
 
     const originalMessages = (await contactContext.asymmetric.getInboundMessages()).getValue()
     expect(originalMessages.length).to.equal(1)
