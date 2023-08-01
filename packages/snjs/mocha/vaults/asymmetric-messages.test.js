@@ -108,7 +108,7 @@ describe('asymmetric messages', function () {
     const handleInitialContactShareMessage = contactContext.resolveWhenAsyncFunctionCompletes(
       contactContext.asymmetric,
       'handleRemoteReceivedAsymmetricMessages',
-    )()
+    )
 
     const { thirdPartyContext, deinitThirdPartyContext } = await Collaboration.inviteNewPartyToSharedVault(
       context,
