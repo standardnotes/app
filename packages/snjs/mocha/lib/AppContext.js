@@ -647,7 +647,7 @@ export class AppContext {
     console.warn('Anticipating a console error with message:', message)
   }
 
-  awaitPromiseOrThrow(promise, maxWait = 2.0, reason = 'No reason provided') {
+  awaitPromiseOrThrow(promise, maxWait = 2.0, reason = 'Awaiting promise timed out; No description provided') {
     return Utils.awaitPromiseOrThrow(promise, maxWait, reason)
   }
 

@@ -16,7 +16,7 @@ export class VaultsContext extends AppContext {
       description: nameAndDesc.description,
     })
 
-    await this.awaitPromiseOrThrow(sendDataChangePromise)
+    await this.awaitPromiseOrThrow(sendDataChangePromise, undefined, 'Waiting for vault data change message to process')
   }
 
   async changePassword(password) {
@@ -24,7 +24,7 @@ export class VaultsContext extends AppContext {
 
     await super.changePassword(password)
 
-    await this.awaitPromiseOrThrow(promise)
+    await this.awaitPromiseOrThrow(promise, undefined, 'Waiting for keypair change message to process')
   }
 
   async syncAndAwaitMessageProcessing() {
@@ -32,6 +32,6 @@ export class VaultsContext extends AppContext {
 
     await this.sync()
 
-    await this.awaitPromiseOrThrow(promise)
+    await this.awaitPromiseOrThrow(promise, undefined, 'Waiting for messages to process')
   }
 }
