@@ -1,7 +1,7 @@
 export function GetRemoteImageBlock(onSelect: () => void) {
   return {
     name: 'Image from URL',
-    iconName: 'file-image',
+    iconName: 'image',
     keywords: ['image', 'url'],
     onSelect,
   }

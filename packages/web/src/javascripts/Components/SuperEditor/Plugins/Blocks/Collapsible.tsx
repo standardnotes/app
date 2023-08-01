@@ -1,11 +1,11 @@
 import { LexicalEditor } from 'lexical'
 import { INSERT_COLLAPSIBLE_COMMAND } from '../../Plugins/CollapsiblePlugin'
-import { LexicalIconName } from '@/Components/Icon/LexicalIcons'
+import { IconType } from '@standardnotes/snjs'
 
 export function GetCollapsibleBlock(editor: LexicalEditor) {
   return {
     name: 'Collapsible',
-    iconName: 'caret-right-fill' as LexicalIconName,
+    iconName: 'caret-right' as IconType,
     keywords: ['collapse', 'collapsible', 'toggle'],
     onSelect: () => editor.dispatchCommand(INSERT_COLLAPSIBLE_COMMAND, undefined),
   }
