@@ -54,8 +54,7 @@ export class HandleKeyPairChange implements UseCaseInterface<void> {
 
     await this.sendOwnContactChangeEventToAllContacts(dto)
 
-    void this.messageServer.deleteAllInboundMessages()
-    void this.invitesServer.deleteAllInboundInvites()
+    await Promise.all([this.messageServer.deleteAllInboundMessages(), this.invitesServer.deleteAllInboundInvites()])
 
     return Result.ok()
   }
