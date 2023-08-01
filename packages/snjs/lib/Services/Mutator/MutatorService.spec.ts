@@ -65,6 +65,13 @@ describe('mutator service', () => {
 
       expect(note.userModifiedDate).toEqual(pinnedNote?.userModifiedDate)
     })
+
+    it('should update the modification date of duplicated notes', async () => {
+      const note = await insertNote('hello')
+      const duplicatedNote = await mutatorService.duplicateItem(note)
+
+      expect(duplicatedNote.userModifiedDate).not.toEqual(note.userModifiedDate)
+    })
   })
 
   describe('linking', () => {
