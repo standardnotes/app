@@ -399,6 +399,34 @@ describe('asymmetric messages', function () {
     await deinitContactContext()
   })
 
+  it('should be able to decrypt previously sent own messages', async () => {
+    const { sharedVault, contactContext, deinitContactContext } =
+      await Collaboration.createSharedVaultWithAcceptedInvite(context)
+
+    contactContext.lockSyncing()
+
+    await context.changeVaultName(sharedVault, {
+      name: 'New Name',
+      description: 'New Description',
+    })
+
+    const usecase = context.application.dependencies.get(TYPES.ResendAllMessages)
+    const result = await usecase.execute({
+      keys: {
+        encryption: context.encryption.getKeyPair(),
+        signing: context.encryption.getSigningKeyPair(),
+      },
+      previousKeys: {
+        encryption: context.encryption.getKeyPair(),
+        signing: context.encryption.getSigningKeyPair(),
+      },
+    })
+
+    expect(result.isFailed()).to.be.false
+
+    await deinitContactContext()
+  })
+
   it('sending a new vault invite to a trusted contact then changing account password should still allow contact to trust invite', async () => {
     const { contactContext, contact, deinitContactContext } = await Collaboration.createSharedVaultWithAcceptedInvite(
       context,
@@ -429,6 +457,14 @@ describe('asymmetric messages', function () {
 
     await runAnyRequestToPreventRefreshTokenFromExpiring()
 
+    /**
+     * When resending keypair changed messages here, we expect that one of their previous messages will fail to decrypt.
+     * This is because the first contact keypair change message was encrypted using their keypair N (original), then after
+     * the second password change, the reference to "previous" key will be N + 1 instead of N, so there is no longer a reference
+     * to the original keypair. This is not a problem, and in fact even if the message were decryptable, it would be skipped
+     * because we do not want to re-send keypair changed messages.
+     */
+
     await context.changePassword('new password 2')
 
     const messages = await contactContext.asymmetric.getInboundMessages()
@@ -440,7 +476,7 @@ describe('asymmetric messages', function () {
     expect(messages.getValue().length).to.equal(2)
 
     contactContext.unlockSyncing()
-    await contactContext.syncAndAwaitMessageProcessing()
+    await contactContext.syncAndAwaitInviteProcessing()
 
     const invites = contactContext.vaultInvites.getCachedPendingInviteRecords()
     expect(invites.length).to.equal(1)

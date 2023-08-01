@@ -47,6 +47,28 @@ export class AppContext {
       this.host,
       this.crypto || new FakeWebCrypto(),
     )
+
+    this.disableSubscriptionFetching()
+  }
+
+  disableSubscriptionFetching() {
+    this.application.subscriptions.fetchAvailableSubscriptions = () => {}
+  }
+
+  async launch({ awaitDatabaseLoad = true, receiveChallenge } = { awaitDatabaseLoad: true }) {
+    await this.application.prepareForLaunch({
+      receiveChallenge: receiveChallenge || this.handleChallenge,
+    })
+
+    await this.application.launch(awaitDatabaseLoad)
+
+    await this.awaitUserPrefsSingletonCreation()
+
+    this.application.http.loggingEnabled = true
+  }
+
+  async deinit() {
+    await Utils.safeDeinit(this.application)
   }
 
   get sessions() {
@@ -483,18 +505,6 @@ export class AppContext {
         }
       })
     })
-  }
-
-  async launch({ awaitDatabaseLoad = true, receiveChallenge } = { awaitDatabaseLoad: true }) {
-    await this.application.prepareForLaunch({
-      receiveChallenge: receiveChallenge || this.handleChallenge,
-    })
-    await this.application.launch(awaitDatabaseLoad)
-    await this.awaitUserPrefsSingletonCreation()
-  }
-
-  async deinit() {
-    await Utils.safeDeinit(this.application)
   }
 
   async sync(options) {

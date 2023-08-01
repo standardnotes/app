@@ -234,6 +234,8 @@ export class VaultInviteService
     }
 
     for (const invite of invites) {
+      delete this.pendingInvites[invite.uuid]
+
       const sender = this._findContact.execute({ userUuid: invite.sender_uuid })
       if (!sender.isFailed()) {
         const trustedMessage = this._getTrustedPayload.execute<AsymmetricMessageSharedVaultInvite>({

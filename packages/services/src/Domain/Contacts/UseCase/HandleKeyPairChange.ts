@@ -10,6 +10,7 @@ import { AsymmetricMessageServer, SharedVaultInvitesServer } from '@standardnote
 import { PortablePublicKeySet } from '@standardnotes/models'
 import { InternalFeature } from '../../InternalFeatures/InternalFeature'
 import { CreateOrEditContact } from './CreateOrEditContact'
+import { isErrorResponse } from '@standardnotes/responses'
 
 type Dto = {
   newKeys: {
@@ -40,7 +41,7 @@ export class HandleKeyPairChange implements UseCaseInterface<void> {
       signing: dto.newKeys.signing.publicKey,
     })
 
-    await Promise.all([
+    const results = await Promise.all([
       this._reuploadAllInvites.execute({
         keys: dto.newKeys,
         previousKeys: dto.previousKeys,
@@ -52,9 +53,24 @@ export class HandleKeyPairChange implements UseCaseInterface<void> {
       }),
     ])
 
+    for (const result of results) {
+      if (result.isFailed()) {
+        console.error(result.getError())
+      }
+    }
+
     await this.sendOwnContactChangeEventToAllContacts(dto)
 
-    await Promise.all([this.messageServer.deleteAllInboundMessages(), this.invitesServer.deleteAllInboundInvites()])
+    const deleteResponses = await Promise.all([
+      this.messageServer.deleteAllInboundMessages(),
+      this.invitesServer.deleteAllInboundInvites(),
+    ])
+
+    for (const response of deleteResponses) {
+      if (isErrorResponse(response)) {
+        console.error(response)
+      }
+    }
 
     return Result.ok()
   }

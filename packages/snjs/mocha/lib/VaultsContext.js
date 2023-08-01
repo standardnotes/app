@@ -34,4 +34,12 @@ export class VaultsContext extends AppContext {
 
     await this.awaitPromiseOrThrow(promise, undefined, 'Waiting for messages to process')
   }
+
+  async syncAndAwaitInviteProcessing() {
+    const promise = this.resolveWhenAsyncFunctionCompletes(this.vaultInvites, 'processInboundInvites')
+
+    await this.sync()
+
+    await this.awaitPromiseOrThrow(promise, undefined, 'Waiting for invites to process')
+  }
 }
