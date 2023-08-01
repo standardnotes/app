@@ -6,7 +6,8 @@ const expect = chai.expect
 
 describe('payload manager', () => {
   beforeEach(async function () {
-    this.payloadManager = new PayloadManager()
+    const logger = new Logger('test')
+    this.payloadManager = new PayloadManager(logger)
     this.createNotePayload = async () => {
       return new DecryptedPayload({
         uuid: Factory.generateUuidish(),
