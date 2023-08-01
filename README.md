@@ -10,7 +10,7 @@ Standard Notes is an end-to-end encrypted note-taking app for digitalists and pr
 
 - End-to-end encrypted sync. Only you can read your notes.
 - Fast, free, and encrypted cross-platform sync on unlimited devices.
-- Open-source with ability to self-host your own server in a [few easy steps](https://standardnotes.com/help/self-hosting/getting-started).
+- Public source code with ability to self-host your own server in a [few easy steps](https://standardnotes.com/help/self-hosting/getting-started).
 - A strong focus on longevity and sustainability. [Learn more](https://standardnotes.com/longevity).
 
 ### Creating your private notes account
