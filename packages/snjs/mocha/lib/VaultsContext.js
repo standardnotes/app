@@ -42,4 +42,13 @@ export class VaultsContext extends AppContext {
 
     await this.awaitPromiseOrThrow(promise, undefined, 'Waiting for invites to process')
   }
+
+  /**
+   * Run a request to keep refresh token from expiring due to long bouts of inactivity for contact context
+   * while main context changes password. Tests have a refresh token age of 10s typically, and changing password
+   * on CI environment may be time consuming.
+   */
+  async runAnyRequestToPreventRefreshTokenFromExpiring() {
+    await this.asymmetric.getInboundMessages()
+  }
 }

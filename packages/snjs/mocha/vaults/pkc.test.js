@@ -51,6 +51,8 @@ describe('public key cryptography', function () {
 
     expect(recreatedContext.sessions.getSigningPublicKey()).to.not.be.undefined
     expect(recreatedContext.encryption.getSigningKeyPair().privateKey).to.not.be.undefined
+
+    await recreatedContext.deinit()
   })
 
   it('should rotate keypair during password change', async () => {
@@ -94,5 +96,7 @@ describe('public key cryptography', function () {
     expect(result.error).to.be.undefined
 
     expect(newContext.application.sessions.isUserMissingKeyPair()).to.be.false
+
+    await newContext.deinit()
   })
 })

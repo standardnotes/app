@@ -442,20 +442,11 @@ describe('asymmetric messages', function () {
       SharedVaultUserPermission.PERMISSIONS.Write,
     )
 
-    const runAnyRequestToPreventRefreshTokenFromExpiring = async () => {
-      /**
-       * Run a request to keep refresh token from expiring due to long bouts of inactivity for contact context
-       * while main context changes password. Tests have a refresh token age of 10s typically, and changing password
-       * on CI environment may be time consuming.
-       */
-      await contactContext.asymmetric.getInboundMessages()
-    }
-
-    await runAnyRequestToPreventRefreshTokenFromExpiring()
+    await contactContext.runAnyRequestToPreventRefreshTokenFromExpiring()
 
     await context.changePassword('new password')
 
-    await runAnyRequestToPreventRefreshTokenFromExpiring()
+    await contactContext.runAnyRequestToPreventRefreshTokenFromExpiring()
 
     /**
      * When resending keypair changed messages here, we expect that one of their previous messages will fail to decrypt.

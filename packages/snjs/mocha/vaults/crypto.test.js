@@ -33,6 +33,8 @@ describe('shared vault crypto', function () {
 
       expect(recreatedContext.encryption.getKeyPair()).to.not.be.undefined
       expect(recreatedContext.encryption.getSigningKeyPair()).to.not.be.undefined
+
+      await recreatedContext.deinit()
     })
 
     it('changing user password should re-encrypt all key system root keys and contacts with new user root key', async () => {
