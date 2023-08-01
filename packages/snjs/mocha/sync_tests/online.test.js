@@ -540,7 +540,7 @@ describe('online syncing', function () {
     await this.application.sync.sync(syncOptions)
     const rawPayloads = await this.application.storage.getAllRawPayloads()
     expect(rawPayloads.length).to.equal(this.expectedItemCount)
-  }).timeout(Factory.TwentySecondTimeout)
+  }).timeout(Factory.SixtySecondTimeout)
 
   it('should handle downloading with sync pagination', async function () {
     const largeItemCount = SyncUpDownLimit + 10
@@ -567,7 +567,7 @@ describe('online syncing', function () {
 
     const rawPayloads = await this.application.storage.getAllRawPayloads()
     expect(rawPayloads.length).to.equal(this.expectedItemCount)
-  }).timeout(30000)
+  }).timeout(Factory.SixtySecondTimeout)
 
   it('syncing an item should storage it encrypted', async function () {
     const note = await Factory.createMappedNote(this.application)

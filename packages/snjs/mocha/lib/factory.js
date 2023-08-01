@@ -11,6 +11,7 @@ import { createItemParams, createNoteParams, createTagParams } from './Items.js'
 export const TenSecondTimeout = 10_000
 export const TwentySecondTimeout = 20_000
 export const ThirtySecondTimeout = 30_000
+export const SixtySecondTimeout = 60_000
 
 export const syncOptions = {
   checkIntegrity: true,
