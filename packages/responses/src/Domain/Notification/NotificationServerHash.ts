@@ -1,4 +1,4 @@
-export type UserEventServerHash = {
+export type NotificationServerHash = {
   uuid: string
   user_uuid: string
   type: string

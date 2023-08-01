@@ -17,7 +17,7 @@ describe('vault key rotation', function () {
   beforeEach(async function () {
     localStorage.clear()
 
-    context = await Factory.createAppContextWithRealCrypto()
+    context = await Factory.createVaultsContextWithRealCrypto()
 
     await context.launch()
     await context.register()
@@ -99,7 +99,7 @@ describe('vault key rotation', function () {
     await context.vaults.rotateVaultRootKey(sharedVault)
     await promise
 
-    const outboundMessages = await context.asymmetric.getOutboundMessages()
+    const outboundMessages = (await context.asymmetric.getOutboundMessages()).getValue()
     const expectedMessages = ['root key change', 'vault metadata change']
     expect(outboundMessages.length).to.equal(expectedMessages.length)
 
@@ -154,10 +154,8 @@ describe('vault key rotation', function () {
     await context.vaults.rotateVaultRootKey(sharedVault)
     await promise
 
-    const contactPromise = contactContext.resolveWhenAsymmetricMessageProcessingCompletes()
     contactContext.unlockSyncing()
-    await contactContext.sync()
-    await contactPromise
+    await contactContext.syncAndAwaitMessageProcessing()
 
     const newPrimaryItemsKey = contactContext.keys.getPrimaryKeySystemItemsKey(sharedVault.systemIdentifier)
     expect(newPrimaryItemsKey).to.not.be.undefined
@@ -217,7 +215,7 @@ describe('vault key rotation', function () {
     await context.vaults.rotateVaultRootKey(sharedVault)
     await firstPromise
 
-    const asymmetricMessageAfterFirstChange = await context.asymmetric.getOutboundMessages()
+    const asymmetricMessageAfterFirstChange = (await context.asymmetric.getOutboundMessages()).getValue()
     const expectedMessages = ['root key change', 'vault metadata change']
     expect(asymmetricMessageAfterFirstChange.length).to.equal(expectedMessages.length)
 
@@ -227,7 +225,7 @@ describe('vault key rotation', function () {
     await context.vaults.rotateVaultRootKey(sharedVault)
     await secondPromise
 
-    const asymmetricMessageAfterSecondChange = await context.asymmetric.getOutboundMessages()
+    const asymmetricMessageAfterSecondChange = (await context.asymmetric.getOutboundMessages()).getValue()
     expect(asymmetricMessageAfterSecondChange.length).to.equal(expectedMessages.length)
 
     const messageAfterSecondChange = asymmetricMessageAfterSecondChange[0]

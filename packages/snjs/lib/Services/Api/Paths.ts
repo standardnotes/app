@@ -51,10 +51,6 @@ const SubscriptionPaths = {
   subscriptionTokens: '/v1/subscription-tokens',
 }
 
-const SubscriptionPathsV2 = {
-  subscriptions: '/v2/subscriptions',
-}
-
 const UserPathsV2 = {
   keyParams: '/v2/login-params',
   signIn: '/v2/login',
@@ -75,7 +71,6 @@ export const Paths = {
     ...UserPaths,
   },
   v2: {
-    ...SubscriptionPathsV2,
     ...UserPathsV2,
   },
 }

@@ -11,6 +11,7 @@ import { SyncServiceInterface } from '../Sync/SyncServiceInterface'
 import { FileService } from './FileService'
 import { BackupServiceInterface } from '@standardnotes/files'
 import { HttpServiceInterface } from '@standardnotes/api'
+import { LoggerInterface } from '@standardnotes/utils'
 
 describe('fileService', () => {
   let apiService: LegacyApiServiceInterface
@@ -25,6 +26,8 @@ describe('fileService', () => {
   let internalEventBus: InternalEventBusInterface
   let backupService: BackupServiceInterface
   let http: HttpServiceInterface
+
+  let logger: LoggerInterface
 
   beforeEach(() => {
     apiService = {} as jest.Mocked<LegacyApiServiceInterface>
@@ -82,6 +85,9 @@ describe('fileService', () => {
     backupService.readEncryptedFileFromBackup = jest.fn()
     backupService.getFileBackupInfo = jest.fn()
 
+    logger = {} as jest.Mocked<LoggerInterface>
+    logger.info = jest.fn()
+
     http = {} as jest.Mocked<HttpServiceInterface>
 
     fileService = new FileService(
@@ -94,6 +100,7 @@ describe('fileService', () => {
       alertService,
       crypto,
       internalEventBus,
+      logger,
       backupService,
     )
 

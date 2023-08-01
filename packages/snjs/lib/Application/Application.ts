@@ -73,7 +73,7 @@ import {
   EncryptionProviderInterface,
   VaultUserServiceInterface,
   VaultInviteServiceInterface,
-  UserEventServiceEvent,
+  NotificationServiceEvent,
   VaultServiceEvent,
   VaultLockServiceInterface,
 } from '@standardnotes/services'
@@ -116,6 +116,7 @@ import {
   sleep,
   UuidGenerator,
   useBoolean,
+  LoggerInterface,
 } from '@standardnotes/utils'
 import { UuidString, ApplicationEventPayload } from '../Types'
 import { applicationEventForSyncEvent } from '@Lib/Application/Event'
@@ -504,7 +505,8 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
 
   private beginAutoSyncTimer() {
     this.autoSyncInterval = setInterval(() => {
-      this.sync.log('Syncing from autosync')
+      const logger = this.dependencies.get<LoggerInterface>(TYPES.Logger)
+      logger.info('Syncing from autosync')
       void this.sync.sync({ sourceDescription: 'Auto Sync' })
     }, DEFAULT_AUTO_SYNC_INTERVAL)
   }
@@ -807,7 +809,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       await promise
     } else {
       /** Await up to maxWait. If not resolved by then, return. */
-      await Promise.race([promise, sleep(maxWait)])
+      await Promise.race([promise, sleep(maxWait, false, 'Preparing for deinit...')])
     }
   }
 
@@ -1120,7 +1122,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   }
 
   private createBackgroundDependencies() {
-    this.dependencies.get(TYPES.UserEventService)
+    this.dependencies.get(TYPES.NotificationService)
     this.dependencies.get(TYPES.KeyRecoveryService)
   }
 
@@ -1133,12 +1135,11 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.events.addEventHandler(this.dependencies.get(TYPES.SubscriptionManager), SessionEvent.Restored)
 
     this.events.addEventHandler(this.dependencies.get(TYPES.VaultInviteService), SyncEvent.ReceivedSharedVaultInvites)
-    this.events.addEventHandler(this.dependencies.get(TYPES.VaultInviteService), SessionEvent.UserKeyPairChanged)
 
     this.events.addEventHandler(this.dependencies.get(TYPES.SharedVaultService), SessionEvent.UserKeyPairChanged)
     this.events.addEventHandler(
       this.dependencies.get(TYPES.SharedVaultService),
-      UserEventServiceEvent.UserEventReceived,
+      NotificationServiceEvent.NotificationReceived,
     )
     this.events.addEventHandler(this.dependencies.get(TYPES.SharedVaultService), VaultServiceEvent.VaultRootKeyRotated)
     this.events.addEventHandler(this.dependencies.get(TYPES.SharedVaultService), SyncEvent.ReceivedRemoteSharedVaults)
@@ -1147,7 +1148,6 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       this.dependencies.get(TYPES.AsymmetricMessageService),
       SyncEvent.ReceivedAsymmetricMessages,
     )
-    this.events.addEventHandler(this.dependencies.get(TYPES.AsymmetricMessageService), SessionEvent.UserKeyPairChanged)
 
     if (this.dependencies.get(TYPES.FilesBackupService)) {
       this.events.addEventHandler(

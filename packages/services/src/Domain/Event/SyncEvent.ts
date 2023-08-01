@@ -2,7 +2,7 @@ import {
   AsymmetricMessageServerHash,
   SharedVaultInviteServerHash,
   SharedVaultServerHash,
-  UserEventServerHash,
+  NotificationServerHash,
 } from '@standardnotes/responses'
 
 /* istanbul ignore file */
@@ -31,11 +31,11 @@ export enum SyncEvent {
   SyncRequestsIntegrityCheck = 'sync:requests-integrity-check',
   ReceivedRemoteSharedVaults = 'received-shared-vaults',
   ReceivedSharedVaultInvites = 'received-shared-vault-invites',
-  ReceivedUserEvents = 'received-user-events',
+  ReceivedNotifications = 'received-user-events',
   ReceivedAsymmetricMessages = 'received-asymmetric-messages',
 }
 
 export type SyncEventReceivedRemoteSharedVaultsData = SharedVaultServerHash[]
 export type SyncEventReceivedSharedVaultInvitesData = SharedVaultInviteServerHash[]
 export type SyncEventReceivedAsymmetricMessagesData = AsymmetricMessageServerHash[]
-export type SyncEventReceivedUserEventsData = UserEventServerHash[]
+export type SyncEventReceivedNotificationsData = NotificationServerHash[]

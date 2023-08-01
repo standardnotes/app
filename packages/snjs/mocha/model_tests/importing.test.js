@@ -843,8 +843,6 @@ describe('importing', function () {
   })
 
   it('importing another accounts notes/tags should correctly keep relationships', async function () {
-    this.timeout(Factory.TwentySecondTimeout)
-
     await setup({ fakeCrypto: true })
 
     await Factory.registerUserToApplication({
@@ -881,5 +879,5 @@ describe('importing', function () {
     const importedTag = application.items.getDisplayableTags()[0]
     expect(application.items.referencesForItem(importedTag).length).to.equal(1)
     expect(application.items.itemsReferencingItem(importedNote).length).to.equal(1)
-  })
+  }).timeout(Factory.TwentySecondTimeout)
 })

@@ -207,7 +207,6 @@ describe('basic auth', function () {
     await specContext.launch()
     await specContext.register()
     await specContext.signout()
-    await specContext.deinit()
 
     specContext = await Factory.createAppContextWithFakeCrypto(Math.random(), uppercase, password)
 
@@ -217,6 +216,7 @@ describe('basic auth', function () {
     expect(response).to.be.ok
     expect(response.data.error).to.not.be.ok
     expect(await specContext.application.encryption.getRootKey()).to.be.ok
+    await specContext.deinit()
   }).timeout(20000)
 
   it('can sign into account regardless of whitespace', async function () {
@@ -232,7 +232,6 @@ describe('basic auth', function () {
     await specContext.launch()
     await specContext.register()
     await specContext.signout()
-    await specContext.deinit()
 
     specContext = await Factory.createAppContextWithFakeCrypto(Math.random(), withspace, password)
     await specContext.launch()
@@ -241,6 +240,7 @@ describe('basic auth', function () {
     expect(response).to.be.ok
     expect(response.data.error).to.not.be.ok
     expect(await specContext.application.encryption.getRootKey()).to.be.ok
+    await specContext.deinit()
   }).timeout(20000)
 
   it('fails login with wrong password', async function () {
@@ -367,7 +367,7 @@ describe('basic auth', function () {
 
   it('successfully changes password', changePassword).timeout(40000)
 
-  it.skip('successfully changes password when passcode is set', async function () {
+  it('successfully changes password when passcode is set', async function () {
     const passcode = 'passcode'
     const promptValueReply = (prompts) => {
       const values = []
@@ -393,7 +393,7 @@ describe('basic auth', function () {
         context.application.submitValuesForChallenge(challenge, initialValues)
       },
     })
-    await context.application.setPasscode(passcode)
+    await context.application.addPasscode(passcode)
     await changePassword.bind(this)()
   }).timeout(20000)
 
@@ -550,6 +550,8 @@ describe('basic auth', function () {
 
       expect(response.status).to.equal(401)
       expect(response.data.error.message).to.equal('Operation not allowed.')
+
+      await secondContext.deinit()
     })
   })
 })

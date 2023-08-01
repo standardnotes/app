@@ -1,6 +1,7 @@
+import { SyncServiceInterface } from './../Sync/SyncServiceInterface'
 import { SessionsClientInterface } from './../Session/SessionsClientInterface'
 import { MutatorClientInterface } from './../Mutator/MutatorClientInterface'
-import { AsymmetricMessageServerHash, ClientDisplayableError, isClientDisplayableError } from '@standardnotes/responses'
+import { AsymmetricMessageServerHash } from '@standardnotes/responses'
 import { SyncEvent, SyncEventReceivedAsymmetricMessagesData } from '../Event/SyncEvent'
 import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
 import { InternalEventHandlerInterface } from '../Internal/InternalEventHandlerInterface'
@@ -20,7 +21,6 @@ import {
   VaultListingInterface,
 } from '@standardnotes/models'
 import { HandleRootKeyChangedMessage } from './UseCase/HandleRootKeyChangedMessage'
-import { SessionEvent } from '../Session/SessionEvent'
 import { AsymmetricMessageServer } from '@standardnotes/api'
 import { GetOutboundMessages } from './UseCase/GetOutboundMessages'
 import { GetInboundMessages } from './UseCase/GetInboundMessages'
@@ -31,15 +31,19 @@ import { FindContact } from '../Contacts/UseCase/FindContact'
 import { CreateOrEditContact } from '../Contacts/UseCase/CreateOrEditContact'
 import { ReplaceContactData } from '../Contacts/UseCase/ReplaceContactData'
 import { EncryptionProviderInterface } from '../Encryption/EncryptionProviderInterface'
+import { Result } from '@standardnotes/domain-core'
 
 export class AsymmetricMessageService
   extends AbstractService
   implements AsymmetricMessageServiceInterface, InternalEventHandlerInterface
 {
+  private handledMessages = new Set<string>()
+
   constructor(
     private encryption: EncryptionProviderInterface,
     private mutator: MutatorClientInterface,
     private sessions: SessionsClientInterface,
+    private sync: SyncServiceInterface,
     private messageServer: AsymmetricMessageServer,
     private _createOrEditContact: CreateOrEditContact,
     private _findContact: FindContact,
@@ -73,30 +77,27 @@ export class AsymmetricMessageService
 
   async handleEvent(event: InternalEventInterface): Promise<void> {
     switch (event.type) {
-      case SessionEvent.UserKeyPairChanged:
-        void this.messageServer.deleteAllInboundMessages()
-        break
       case SyncEvent.ReceivedAsymmetricMessages:
         void this.handleRemoteReceivedAsymmetricMessages(event.payload as SyncEventReceivedAsymmetricMessagesData)
         break
     }
   }
 
-  public async getOutboundMessages(): Promise<AsymmetricMessageServerHash[] | ClientDisplayableError> {
+  public async getOutboundMessages(): Promise<Result<AsymmetricMessageServerHash[]>> {
     return this._getOutboundMessagesUseCase.execute()
   }
 
-  public async getInboundMessages(): Promise<AsymmetricMessageServerHash[] | ClientDisplayableError> {
+  public async getInboundMessages(): Promise<Result<AsymmetricMessageServerHash[]>> {
     return this._getInboundMessagesUseCase.execute()
   }
 
   public async downloadAndProcessInboundMessages(): Promise<void> {
     const messages = await this.getInboundMessages()
-    if (isClientDisplayableError(messages)) {
+    if (messages.isFailed()) {
       return
     }
 
-    await this.handleRemoteReceivedAsymmetricMessages(messages)
+    await this.handleRemoteReceivedAsymmetricMessages(messages.getValue())
   }
 
   sortServerMessages(messages: AsymmetricMessageServerHash[]): AsymmetricMessageServerHash[] {
@@ -143,11 +144,11 @@ export class AsymmetricMessageService
   getServerMessageType(message: AsymmetricMessageServerHash): AsymmetricMessagePayloadType | undefined {
     const result = this.getUntrustedMessagePayload(message)
 
-    if (!result) {
+    if (result.isFailed()) {
       return undefined
     }
 
-    return result.type
+    return result.getValue().type
   }
 
   async handleRemoteReceivedAsymmetricMessages(messages: AsymmetricMessageServerHash[]): Promise<void> {
@@ -159,18 +160,26 @@ export class AsymmetricMessageService
 
     for (const message of sortedMessages) {
       const trustedPayload = this.getTrustedMessagePayload(message)
-      if (!trustedPayload) {
+      if (trustedPayload.isFailed()) {
         continue
       }
 
-      await this.handleTrustedMessageResult(message, trustedPayload)
+      await this.handleTrustedMessageResult(message, trustedPayload.getValue())
     }
+
+    void this.sync.sync()
   }
 
-  private async handleTrustedMessageResult(
+  async handleTrustedMessageResult(
     message: AsymmetricMessageServerHash,
     payload: AsymmetricMessagePayload,
   ): Promise<void> {
+    if (this.handledMessages.has(message.uuid)) {
+      return
+    }
+
+    this.handledMessages.add(message.uuid)
+
     if (payload.type === AsymmetricMessagePayloadType.ContactShare) {
       await this.handleTrustedContactShareMessage(message, payload)
     } else if (payload.type === AsymmetricMessagePayloadType.SenderKeypairChanged) {
@@ -186,23 +195,23 @@ export class AsymmetricMessageService
     await this.deleteMessageAfterProcessing(message)
   }
 
-  getUntrustedMessagePayload(message: AsymmetricMessageServerHash): AsymmetricMessagePayload | undefined {
+  getUntrustedMessagePayload(message: AsymmetricMessageServerHash): Result<AsymmetricMessagePayload> {
     const result = this._getUntrustedPayload.execute({
       privateKey: this.encryption.getKeyPair().privateKey,
       message,
     })
 
     if (result.isFailed()) {
-      return undefined
+      return Result.fail(result.getError())
     }
 
-    return result.getValue()
+    return result
   }
 
-  getTrustedMessagePayload(message: AsymmetricMessageServerHash): AsymmetricMessagePayload | undefined {
+  getTrustedMessagePayload(message: AsymmetricMessageServerHash): Result<AsymmetricMessagePayload> {
     const contact = this._findContact.execute({ userUuid: message.sender_uuid })
     if (contact.isFailed()) {
-      return undefined
+      return Result.fail(contact.getError())
     }
 
     const result = this._getTrustedPayload.execute({
@@ -213,10 +222,10 @@ export class AsymmetricMessageService
     })
 
     if (result.isFailed()) {
-      return undefined
+      return Result.fail(result.getError())
     }
 
-    return result.getValue()
+    return result
   }
 
   async deleteMessageAfterProcessing(message: AsymmetricMessageServerHash): Promise<void> {

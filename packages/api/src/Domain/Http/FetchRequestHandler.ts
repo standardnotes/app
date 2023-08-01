@@ -11,12 +11,14 @@ import { RequestHandlerInterface } from './RequestHandlerInterface'
 import { Environment } from '@standardnotes/models'
 import { isString } from 'lodash'
 import { ErrorMessage } from '../Error'
+import { LoggerInterface } from '@standardnotes/utils'
 
 export class FetchRequestHandler implements RequestHandlerInterface {
   constructor(
     protected readonly snjsVersion: string,
     protected readonly appVersion: string,
     protected readonly environment: Environment,
+    private logger: LoggerInterface,
   ) {}
 
   async handleRequest<T>(httpRequest: HttpRequest): Promise<HttpResponse<T>> {
@@ -122,7 +124,7 @@ export class FetchRequestHandler implements RequestHandlerInterface {
         }
       }
     } catch (error) {
-      console.error(error)
+      this.logger.error(JSON.stringify(error))
     }
 
     if (httpStatus >= HttpStatusCode.Success && httpStatus < HttpStatusCode.InternalServerError) {

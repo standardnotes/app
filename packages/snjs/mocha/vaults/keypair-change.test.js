@@ -17,13 +17,13 @@ describe('keypair change', function () {
   beforeEach(async function () {
     localStorage.clear()
 
-    context = await Factory.createAppContextWithRealCrypto()
+    context = await Factory.createVaultsContextWithRealCrypto()
 
     await context.launch()
     await context.register()
   })
 
-  it.skip('contacts should be able to handle receiving multiple keypair changed messages and trust them in order', async () => {
+  it('contacts should be able to handle receiving multiple keypair changed messages and trust them in order', async () => {
     const { note, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithAcceptedInviteAndNote(context)
 
@@ -39,20 +39,24 @@ describe('keypair change', function () {
     publicKeyChain.push(context.publicKey)
     signingPublicKeyChain.push(context.signingPublicKey)
 
+    await contactContext.runAnyRequestToPreventRefreshTokenFromExpiring()
+
     await context.changePassword('new_password-2')
     publicKeyChain.push(context.publicKey)
     signingPublicKeyChain.push(context.signingPublicKey)
+
+    await contactContext.runAnyRequestToPreventRefreshTokenFromExpiring()
 
     await context.changePassword('new_password-3')
     publicKeyChain.push(context.publicKey)
     signingPublicKeyChain.push(context.signingPublicKey)
 
+    await contactContext.runAnyRequestToPreventRefreshTokenFromExpiring()
+
     await context.changeNoteTitleAndSync(note, 'new title')
 
     contactContext.unlockSyncing()
-    const promise = contactContext.resolveWhenAsymmetricMessageProcessingCompletes()
-    await contactContext.sync()
-    await promise
+    await contactContext.syncAndAwaitMessageProcessing()
 
     const originatorContact = contactContext.contacts.findContact(context.userUuid)
     let currentKeySet = originatorContact.publicKeySet
@@ -70,7 +74,7 @@ describe('keypair change', function () {
     expect(receivedNote.signatureData.result.passes).to.be.true
 
     await deinitContactContext()
-  })
+  }).timeout(Factory.ThirtySecondTimeout)
 
   it('should not trust messages sent with previous key pair', async () => {
     const { sharedVault, contactContext, deinitContactContext } =
@@ -86,15 +90,13 @@ describe('keypair change', function () {
     sinon.stub(context.encryption, 'getKeyPair').returns(previousKeyPair)
     sinon.stub(context.encryption, 'getSigningKeyPair').returns(previousSigningKeyPair)
 
-    await context.vaults.changeVaultNameAndDescription(sharedVault, {
+    await context.changeVaultName(sharedVault, {
       name: 'New Name',
       description: 'New Description',
     })
 
     contactContext.unlockSyncing()
-    const promise = contactContext.resolveWhenAsymmetricMessageProcessingCompletes()
-    await contactContext.sync()
-    await promise
+    await contactContext.syncAndAwaitMessageProcessing()
 
     const updatedVault = contactContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })
     expect(updatedVault.name).to.equal(sharedVault.name)
@@ -133,23 +135,18 @@ describe('keypair change', function () {
 
     contactContext.lockSyncing()
 
-    await context.vaults.changeVaultNameAndDescription(sharedVault, {
+    await context.changeVaultName(sharedVault, {
       name: 'New Name',
       description: 'New Description',
     })
 
-    const originalMessages = await contactContext.asymmetric.getInboundMessages()
+    const originalMessages = (await contactContext.asymmetric.getInboundMessages()).getValue()
     expect(originalMessages.length).to.equal(1)
     const originalMessage = originalMessages[0]
 
-    const promise = context.resolveWhenAsyncFunctionCompletes(
-      context.application.dependencies.get(TYPES.HandleKeyPairChange),
-      'execute',
-    )
     await context.changePassword('new_password')
-    await promise
 
-    const updatedMessages = await contactContext.asymmetric.getInboundMessages()
+    const updatedMessages = (await contactContext.asymmetric.getInboundMessages()).getValue()
     const expectedMessages = ['keypair-change', 'vault-change']
     expect(updatedMessages.length).to.equal(expectedMessages.length)
 

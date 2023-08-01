@@ -112,7 +112,7 @@ describe('application instances', () => {
     await app.lock()
   })
 
-  describe.skip('signOut()', () => {
+  describe('signOut()', () => {
     let testNote1
     let confirmAlert
     let deinit
@@ -129,7 +129,7 @@ describe('application instances', () => {
     beforeEach(async () => {
       testSNApp = await Factory.createAndInitializeApplication('test-application')
       testNote1 = await Factory.createMappedNote(testSNApp, 'Note 1', 'This is a test note!', false)
-      confirmAlert = sinon.spy(testSNApp.alertService, 'confirm')
+      confirmAlert = sinon.spy(testSNApp.alerts, 'confirm')
       deinit = sinon.spy(testSNApp, 'deinit')
     })
 
@@ -164,7 +164,7 @@ describe('application instances', () => {
 
     it('cancels sign out if confirmation dialog is rejected', async () => {
       confirmAlert.restore()
-      confirmAlert = sinon.stub(testSNApp.alertService, 'confirm').callsFake((_message) => false)
+      confirmAlert = sinon.stub(testSNApp.alerts, 'confirm').callsFake((_message) => false)
 
       await testSNApp.mutator.setItemDirty(testNote1)
       await testSNApp.user.signOut()

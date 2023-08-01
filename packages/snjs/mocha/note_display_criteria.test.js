@@ -4,7 +4,9 @@ const expect = chai.expect
 
 describe('note display criteria', function () {
   beforeEach(async function () {
-    this.payloadManager = new PayloadManager()
+    const logger = new Logger('test')
+
+    this.payloadManager = new PayloadManager(logger)
     this.itemManager = new ItemManager(this.payloadManager)
     this.mutator = new MutatorService(this.itemManager, this.payloadManager)
 
@@ -616,7 +618,10 @@ describe('note display criteria', function () {
   describe.skip('multiple tags', function () {
     it('normal note', async function () {
       await this.createNote()
-
+      /**
+       * This test presently fails because the compound predicate created
+       * when using multiple views is an AND predicate instead of OR
+       */
       expect(
         notesAndFilesMatchingOptions(
           {

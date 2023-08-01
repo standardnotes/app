@@ -65,13 +65,13 @@ import {
   extendArray,
   Copy,
   removeFromArray,
-  log,
   nonSecureRandomIdentifier,
   UuidGenerator,
   Uuids,
   sureSearchArray,
   isNotUndefined,
   uniqueArray,
+  LoggerInterface,
 } from '@standardnotes/utils'
 import { ContentType, Uuid } from '@standardnotes/domain-core'
 
@@ -80,7 +80,6 @@ export class ComponentViewer implements ComponentViewerInterface {
   private streamContextItemOriginalMessage?: ComponentMessage
   private streamItemsOriginalMessage?: ComponentMessage
   private removeItemObserver: () => void
-  private loggingEnabled = false
   public identifier = nonSecureRandomIdentifier()
   private actionObservers: ActionObserver[] = []
 
@@ -102,6 +101,7 @@ export class ComponentViewer implements ComponentViewerInterface {
       alerts: AlertService
       preferences: PreferenceServiceInterface
       features: FeaturesService
+      logger: LoggerInterface
     },
     private options: {
       item: ComponentViewerItem
@@ -143,7 +143,7 @@ export class ComponentViewer implements ComponentViewerInterface {
       }
     })
 
-    this.log('Constructor', this)
+    this.services.logger.info('Constructor', this)
   }
 
   public getComponentOrFeatureItem(): UIFeature<IframeComponentFeatureDescription> {
@@ -163,7 +163,7 @@ export class ComponentViewer implements ComponentViewerInterface {
   }
 
   public destroy(): void {
-    this.log('Destroying', this)
+    this.services.logger.info('Destroying', this)
     this.deinit()
   }
 
@@ -347,7 +347,7 @@ export class ComponentViewer implements ComponentViewerInterface {
       this.componentUniqueIdentifier.value,
       requiredContextPermissions,
       () => {
-        this.log(
+        this.services.logger.info(
           'Send context item in reply',
           'component:',
           this.componentOrFeature,
@@ -364,18 +364,12 @@ export class ComponentViewer implements ComponentViewerInterface {
     )
   }
 
-  private log(message: string, ...args: unknown[]): void {
-    if (this.loggingEnabled) {
-      log('ComponentViewer', message, args)
-    }
-  }
-
   private sendItemsInReply(
     items: (DecryptedItemInterface | DeletedItemInterface)[],
     message: ComponentMessage,
     source?: PayloadEmitSource,
   ): void {
-    this.log('Send items in reply', this.componentOrFeature, items, message)
+    this.services.logger.info('Send items in reply', this.componentOrFeature, items, message)
 
     const responseData: MessageReplyData = {}
 
@@ -453,10 +447,14 @@ export class ComponentViewer implements ComponentViewerInterface {
    */
   private sendMessage(message: ComponentMessage | MessageReply, essential = true): void {
     if (!this.window && message.action === ComponentAction.Reply) {
-      this.log('Component has been deallocated in between message send and reply', this.componentOrFeature, message)
+      this.services.logger.info(
+        'Component has been deallocated in between message send and reply',
+        this.componentOrFeature,
+        message,
+      )
       return
     }
-    this.log('Send message to component', this.componentOrFeature, 'message: ', message)
+    this.services.logger.info('Send message to component', this.componentOrFeature, 'message: ', message)
 
     if (!this.window) {
       if (essential) {
@@ -518,7 +516,7 @@ export class ComponentViewer implements ComponentViewerInterface {
       throw Error('Attempting to override component viewer window. Create a new component viewer instead.')
     }
 
-    this.log('setWindow', 'component: ', this.componentOrFeature, 'window: ', window)
+    this.services.logger.info('setWindow', 'component: ', this.componentOrFeature, 'window: ', window)
 
     this.window = window
     this.sessionKey = UuidGenerator.GenerateUuid()
@@ -537,7 +535,7 @@ export class ComponentViewer implements ComponentViewerInterface {
       },
     })
 
-    this.log('setWindow got new sessionKey', this.sessionKey)
+    this.services.logger.info('setWindow got new sessionKey', this.sessionKey)
 
     this.postActiveThemes()
   }
@@ -557,9 +555,9 @@ export class ComponentViewer implements ComponentViewerInterface {
   }
 
   handleMessage(message: ComponentMessage): void {
-    this.log('Handle message', message, this)
+    this.services.logger.info('Handle message', message, this)
     if (!this.componentOrFeature) {
-      this.log('Component not defined for message, returning', message)
+      this.services.logger.info('Component not defined for message, returning', message)
       void this.services.alerts.alert(
         'A component is trying to communicate with Standard Notes, ' +
           'but there is an error establishing a bridge. Please restart the app and try again.',

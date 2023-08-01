@@ -8,14 +8,16 @@ import { IntegrityApiInterface } from './IntegrityApiInterface'
 import { IntegrityService } from './IntegrityService'
 import { PayloadManagerInterface } from '../Payloads/PayloadManagerInterface'
 import { IntegrityPayload } from '@standardnotes/responses'
+import { LoggerInterface } from '@standardnotes/utils'
 
 describe('IntegrityService', () => {
   let integrityApi: IntegrityApiInterface
   let itemApi: ItemsServerInterface
   let payloadManager: PayloadManagerInterface
+  let logger: LoggerInterface
   let internalEventBus: InternalEventBusInterface
 
-  const createService = () => new IntegrityService(integrityApi, itemApi, payloadManager, internalEventBus)
+  const createService = () => new IntegrityService(integrityApi, itemApi, payloadManager, logger, internalEventBus)
 
   beforeEach(() => {
     integrityApi = {} as jest.Mocked<IntegrityApiInterface>
@@ -29,6 +31,10 @@ describe('IntegrityService', () => {
 
     internalEventBus = {} as jest.Mocked<InternalEventBusInterface>
     internalEventBus.publishSync = jest.fn()
+
+    logger = {} as jest.Mocked<LoggerInterface>
+    logger.info = jest.fn()
+    logger.error = jest.fn()
   })
 
   it('should check integrity of payloads and publish mismatches', async () => {
@@ -63,7 +69,7 @@ describe('IntegrityService', () => {
               uuid: '1-2-3',
             },
           ],
-          source: "AfterDownloadFirst",
+          source: 'AfterDownloadFirst',
         },
         type: 'IntegrityCheckCompleted',
       },
@@ -90,7 +96,7 @@ describe('IntegrityService', () => {
       {
         payload: {
           rawPayloads: [],
-          source: "AfterDownloadFirst",
+          source: 'AfterDownloadFirst',
         },
         type: 'IntegrityCheckCompleted',
       },
@@ -140,7 +146,7 @@ describe('IntegrityService', () => {
       {
         payload: {
           rawPayloads: [],
-          source: "AfterDownloadFirst",
+          source: 'AfterDownloadFirst',
         },
         type: 'IntegrityCheckCompleted',
       },

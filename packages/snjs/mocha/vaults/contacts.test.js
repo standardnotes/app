@@ -17,7 +17,7 @@ describe('contacts', function () {
   beforeEach(async function () {
     localStorage.clear()
 
-    context = await Factory.createAppContextWithRealCrypto()
+    context = await Factory.createVaultsContextWithRealCrypto()
 
     await context.launch()
     await context.register()
@@ -101,6 +101,5 @@ describe('contacts', function () {
     await deinitContactContext()
   })
 
-  it.skip('should be able to refresh a contact using a collaborationID that includes full chain of previous public keys', async () => {
-  })
+  it.skip('should be able to refresh a contact using a collaborationID that includes full chain of previous public keys', async () => {})
 })

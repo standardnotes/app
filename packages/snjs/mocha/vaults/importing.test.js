@@ -17,7 +17,7 @@ describe.skip('vault importing', function () {
   beforeEach(async function () {
     localStorage.clear()
 
-    context = await Factory.createAppContextWithRealCrypto()
+    context = await Factory.createVaultsContextWithRealCrypto()
 
     await context.launch()
     await context.register()
@@ -39,7 +39,7 @@ describe.skip('vault importing', function () {
 
     const backupData = await context.application.createEncryptedBackupFileForAutomatedDesktopBackups()
 
-    const otherContext = await Factory.createAppContextWithRealCrypto()
+    const otherContext = await Factory.createVaultsContextWithRealCrypto()
     await otherContext.launch()
 
     await otherContext.application.importData(backupData)

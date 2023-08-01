@@ -10,15 +10,10 @@ describe('shared vaults', function () {
   let context
   let vaults
 
-  afterEach(async function () {
-    await context.deinit()
-    localStorage.clear()
-  })
-
   beforeEach(async function () {
     localStorage.clear()
 
-    context = await Factory.createAppContextWithRealCrypto()
+    context = await Factory.createVaultsContextWithRealCrypto()
 
     await context.launch()
     await context.register()
@@ -26,11 +21,18 @@ describe('shared vaults', function () {
     vaults = context.vaults
   })
 
+  afterEach(async function () {
+    await context.deinit()
+    localStorage.clear()
+  })
+
   it('should update vault name and description', async () => {
     const { sharedVault, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithAcceptedInvite(context)
 
-    await vaults.changeVaultNameAndDescription(sharedVault, {
+    contactContext.lockSyncing()
+
+    await context.changeVaultName(sharedVault, {
       name: 'new vault name',
       description: 'new vault description',
     })
@@ -39,9 +41,8 @@ describe('shared vaults', function () {
     expect(updatedVault.name).to.equal('new vault name')
     expect(updatedVault.description).to.equal('new vault description')
 
-    const promise = contactContext.resolveWhenAsymmetricMessageProcessingCompletes()
-    await contactContext.sync()
-    await promise
+    contactContext.unlockSyncing()
+    await contactContext.syncAndAwaitMessageProcessing()
 
     const contactVault = contactContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })
     expect(contactVault.name).to.equal('new vault name')
@@ -65,7 +66,7 @@ describe('shared vaults', function () {
     expect(contactContext.keys.getPrimaryKeySystemRootKey(sharedVault.systemIdentifier)).to.be.undefined
     expect(contactContext.keys.getKeySystemItemsKeys(sharedVault.systemIdentifier)).to.be.empty
 
-    const recreatedContext = await Factory.createAppContextWithRealCrypto(contactContext.identifier)
+    const recreatedContext = await Factory.createVaultsContextWithRealCrypto(contactContext.identifier)
     await recreatedContext.launch()
 
     expect(recreatedContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })).to.be.undefined
@@ -92,7 +93,7 @@ describe('shared vaults', function () {
     expect(contactContext.keys.getPrimaryKeySystemRootKey(sharedVault.systemIdentifier)).to.be.undefined
     expect(contactContext.keys.getKeySystemItemsKeys(sharedVault.systemIdentifier)).to.be.empty
 
-    const recreatedContext = await Factory.createAppContextWithRealCrypto(contactContext.identifier)
+    const recreatedContext = await Factory.createVaultsContextWithRealCrypto(contactContext.identifier)
     await recreatedContext.launch()
 
     expect(recreatedContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })).to.be.undefined
@@ -126,5 +127,53 @@ describe('shared vaults', function () {
     expect(contextNote.text).to.equal(note.text)
 
     await deinitThirdPartyContext()
+  })
+
+  it('syncing a shared vault exclusively should not retrieve non vault items', async () => {
+    const { sharedVault, contactContext, deinitContactContext } =
+      await Collaboration.createSharedVaultWithAcceptedInvite(context)
+
+    await contactContext.createSyncedNote('foo', 'bar')
+
+    const syncPromise = contactContext.awaitNextSyncSharedVaultFromScratchEvent()
+
+    await contactContext.application.sync.syncSharedVaultsFromScratch([sharedVault.sharing.sharedVaultUuid])
+
+    const syncResponse = await syncPromise
+
+    const expectedItems = ['key system items key']
+
+    expect(syncResponse.retrievedPayloads.length).to.equal(expectedItems.length)
+
+    await deinitContactContext()
+  })
+
+  it('syncing a shared vault with note exclusively should retrieve note and items key', async () => {
+    const { sharedVault, contactContext, deinitContactContext } =
+      await Collaboration.createSharedVaultWithAcceptedInviteAndNote(context)
+
+    const syncPromise = contactContext.awaitNextSyncSharedVaultFromScratchEvent()
+
+    await contactContext.application.sync.syncSharedVaultsFromScratch([sharedVault.sharing.sharedVaultUuid])
+
+    const syncResponse = await syncPromise
+
+    const expectedItems = ['key system items key', 'note']
+
+    expect(syncResponse.retrievedPayloads.length).to.equal(expectedItems.length)
+
+    await deinitContactContext()
+  })
+
+  it('regular sync should not needlessly return vault items', async () => {
+    await Collaboration.createSharedVault(context)
+
+    const promise = context.resolveWithSyncRetrievedPayloads()
+
+    await context.sync()
+
+    const retrievedPayloads = await promise
+
+    expect(retrievedPayloads.length).to.equal(0)
   })
 })

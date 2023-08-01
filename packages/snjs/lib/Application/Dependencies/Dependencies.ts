@@ -52,7 +52,7 @@ import {
   SelfContactManager,
   StatusService,
   SubscriptionManager,
-  UserEventService,
+  NotificationService,
   UserService,
   ValidateItemSigner,
   isDesktopDevice,
@@ -147,7 +147,7 @@ import {
 import { FullyResolvedApplicationOptions } from '../Options/ApplicationOptions'
 import { TYPES } from './Types'
 import { isDeinitable } from './isDeinitable'
-import { isNotUndefined } from '@standardnotes/utils'
+import { Logger, isNotUndefined } from '@standardnotes/utils'
 import { EncryptionOperators } from '@standardnotes/encryption'
 
 export class Dependencies {
@@ -225,7 +225,7 @@ export class Dependencies {
     })
 
     this.factory.set(TYPES.DecryptBackupFile, () => {
-      return new DecryptBackupFile(this.get(TYPES.EncryptionService))
+      return new DecryptBackupFile(this.get(TYPES.EncryptionService), this.get(TYPES.Logger))
     })
 
     this.factory.set(TYPES.DiscardItemsLocally, () => {
@@ -254,7 +254,7 @@ export class Dependencies {
     })
 
     this.factory.set(TYPES.EditContact, () => {
-      return new EditContact(this.get(TYPES.MutatorService), this.get(TYPES.SyncService))
+      return new EditContact(this.get(TYPES.MutatorService))
     })
 
     this.factory.set(TYPES.GetAllContacts, () => {
@@ -268,7 +268,6 @@ export class Dependencies {
     this.factory.set(TYPES.CreateOrEditContact, () => {
       return new CreateOrEditContact(
         this.get(TYPES.MutatorService),
-        this.get(TYPES.SyncService),
         this.get(TYPES.FindContact),
         this.get(TYPES.EditContact),
       )
@@ -364,6 +363,7 @@ export class Dependencies {
     this.factory.set(TYPES.ResendAllMessages, () => {
       return new ResendAllMessages(
         this.get(TYPES.ResendMessage),
+        this.get(TYPES.DecryptOwnMessage),
         this.get(TYPES.AsymmetricMessageServer),
         this.get(TYPES.FindContact),
       )
@@ -380,7 +380,17 @@ export class Dependencies {
     })
 
     this.factory.set(TYPES.HandleKeyPairChange, () => {
-      return new HandleKeyPairChange(this.get(TYPES.ReuploadAllInvites), this.get(TYPES.ResendAllMessages))
+      return new HandleKeyPairChange(
+        this.get(TYPES.SelfContactManager),
+        this.get(TYPES.SharedVaultInvitesServer),
+        this.get(TYPES.AsymmetricMessageServer),
+        this.get(TYPES.ReuploadAllInvites),
+        this.get(TYPES.ResendAllMessages),
+        this.get(TYPES.GetAllContacts),
+        this.get(TYPES.SendOwnContactChangeMessage),
+        this.get(TYPES.CreateOrEditContact),
+        this.get(TYPES.Logger),
+      )
     })
 
     this.factory.set(TYPES.NotifyVaultUsersOfKeyRotation, () => {
@@ -515,11 +525,7 @@ export class Dependencies {
     })
 
     this.factory.set(TYPES.ResendMessage, () => {
-      return new ResendMessage(
-        this.get(TYPES.DecryptOwnMessage),
-        this.get(TYPES.SendMessage),
-        this.get(TYPES.EncryptMessage),
-      )
+      return new ResendMessage(this.get(TYPES.SendMessage), this.get(TYPES.EncryptMessage))
     })
 
     this.factory.set(TYPES.SendMessage, () => {
@@ -613,6 +619,10 @@ export class Dependencies {
   }
 
   private registerServiceMakers() {
+    this.factory.set(TYPES.Logger, () => {
+      return new Logger(this.options.identifier)
+    })
+
     this.factory.set(TYPES.UserServer, () => {
       return new UserServer(this.get(TYPES.HttpService))
     })
@@ -703,6 +713,7 @@ export class Dependencies {
         this.get(TYPES.EncryptionService),
         this.get(TYPES.MutatorService),
         this.get(TYPES.SessionManager),
+        this.get(TYPES.SyncService),
         this.get(TYPES.AsymmetricMessageServer),
         this.get(TYPES.CreateOrEditContact),
         this.get(TYPES.FindContact),
@@ -774,7 +785,6 @@ export class Dependencies {
         this.get(TYPES.ItemManager),
         this.get(TYPES.SessionManager),
         this.get(TYPES.SingletonManager),
-        this.get(TYPES.CreateOrEditContact),
       )
     })
 
@@ -793,7 +803,6 @@ export class Dependencies {
         this.get(TYPES.CreateOrEditContact),
         this.get(TYPES.EditContact),
         this.get(TYPES.ValidateItemSigner),
-        this.get(TYPES.SendOwnContactChangeMessage),
         this.get(TYPES.InternalEventBus),
       )
     })
@@ -921,6 +930,7 @@ export class Dependencies {
         this.get(TYPES.LegacyApiService),
         this.get(TYPES.LegacyApiService),
         this.get(TYPES.PayloadManager),
+        this.get(TYPES.Logger),
         this.get(TYPES.InternalEventBus),
       )
     })
@@ -936,6 +946,7 @@ export class Dependencies {
         this.get(TYPES.AlertService),
         this.get(TYPES.Crypto),
         this.get(TYPES.InternalEventBus),
+        this.get(TYPES.Logger),
         this.get(TYPES.FilesBackupService),
       )
     })
@@ -1014,6 +1025,7 @@ export class Dependencies {
         this.options.environment,
         this.options.platform,
         this.get(TYPES.DeviceInterface),
+        this.get(TYPES.Logger),
         this.get(TYPES.InternalEventBus),
       )
     })
@@ -1032,6 +1044,7 @@ export class Dependencies {
         this.get(TYPES.AlertService),
         this.get(TYPES.SessionManager),
         this.get(TYPES.Crypto),
+        this.get(TYPES.Logger),
         this.get(TYPES.InternalEventBus),
       )
     })
@@ -1120,6 +1133,7 @@ export class Dependencies {
           loadBatchSize: this.options.loadBatchSize,
           sleepBetweenBatches: this.options.sleepBetweenBatches,
         },
+        this.get(TYPES.Logger),
         this.get(TYPES.InternalEventBus),
       )
     })
@@ -1198,7 +1212,7 @@ export class Dependencies {
     })
 
     this.factory.set(TYPES.PayloadManager, () => {
-      return new PayloadManager(this.get(TYPES.InternalEventBus))
+      return new PayloadManager(this.get(TYPES.Logger), this.get(TYPES.InternalEventBus))
     })
 
     this.factory.set(TYPES.ItemManager, () => {
@@ -1222,8 +1236,8 @@ export class Dependencies {
       )
     })
 
-    this.factory.set(TYPES.UserEventService, () => {
-      return new UserEventService(this.get(TYPES.InternalEventBus))
+    this.factory.set(TYPES.NotificationService, () => {
+      return new NotificationService(this.get(TYPES.InternalEventBus))
     })
 
     this.factory.set(TYPES.InMemoryStore, () => {
@@ -1278,7 +1292,7 @@ export class Dependencies {
     })
 
     this.factory.set(TYPES.HttpService, () => {
-      return new HttpService(this.options.environment, this.options.appVersion, SnjsVersion)
+      return new HttpService(this.options.environment, this.options.appVersion, SnjsVersion, this.get(TYPES.Logger))
     })
 
     this.factory.set(TYPES.LegacyApiService, () => {

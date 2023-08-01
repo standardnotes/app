@@ -1,7 +1,7 @@
 import { ConflictParams, ConflictType } from '@standardnotes/responses'
-import { log, LoggingDomain } from './../../Logging'
 import { AccountSyncOperation } from '@Lib/Services/Sync/Account/Operation'
 import {
+  LoggerInterface,
   Uuids,
   extendArray,
   isNotUndefined,
@@ -80,7 +80,7 @@ import {
   isChunkFullEntry,
   SyncEventReceivedSharedVaultInvitesData,
   SyncEventReceivedRemoteSharedVaultsData,
-  SyncEventReceivedUserEventsData,
+  SyncEventReceivedNotificationsData,
   SyncEventReceivedAsymmetricMessagesData,
   SyncOpStatus,
 } from '@standardnotes/services'
@@ -160,6 +160,7 @@ export class SyncService
     private device: DeviceInterface,
     private identifier: string,
     private readonly options: ApplicationSyncOptions,
+    private logger: LoggerInterface,
     protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)
@@ -258,7 +259,7 @@ export class SyncService
   }
 
   public async loadDatabasePayloads(): Promise<void> {
-    log(LoggingDomain.DatabaseLoad, 'Loading database payloads')
+    this.logger.debug('Loading database payloads')
 
     if (this.databaseLoaded) {
       throw 'Attempting to initialize already initialized local database.'
@@ -353,7 +354,7 @@ export class SyncService
     currentPosition?: number,
     payloadCount?: number,
   ) {
-    log(LoggingDomain.DatabaseLoad, 'Processing batch at index', currentPosition, 'length', batch.length)
+    this.logger.debug('Processing batch at index', currentPosition, 'length', batch.length)
     const encrypted: EncryptedPayloadInterface[] = []
     const nonencrypted: (DecryptedPayloadInterface | DeletedPayloadInterface)[] = []
 
@@ -419,7 +420,7 @@ export class SyncService
   }
 
   public async markAllItemsAsNeedingSyncAndPersist(): Promise<void> {
-    log(LoggingDomain.Sync, 'Marking all items as needing sync')
+    this.logger.debug('Marking all items as needing sync')
 
     const items = this.itemManager.items
     const payloads = items.map((item) => {
@@ -485,7 +486,7 @@ export class SyncService
 
     const promise = this.spawnQueue[0]
     removeFromIndex(this.spawnQueue, 0)
-    log(LoggingDomain.Sync, 'Syncing again from spawn queue')
+    this.logger.debug('Syncing again from spawn queue')
 
     return this.sync({
       queueStrategy: SyncQueueStrategy.ForceSpawnNew,
@@ -547,7 +548,7 @@ export class SyncService
 
   public async sync(options: Partial<SyncOptions> = {}): Promise<unknown> {
     if (this.clientLocked) {
-      log(LoggingDomain.Sync, 'Sync locked by client')
+      this.logger.debug('Sync locked by client')
       return
     }
 
@@ -613,8 +614,7 @@ export class SyncService
     if (shouldExecuteSync) {
       this.syncLock = true
     } else {
-      log(
-        LoggingDomain.Sync,
+      this.logger.debug(
         !canExecuteSync
           ? 'Another function call has begun preparing for sync.'
           : syncInProgress
@@ -727,8 +727,7 @@ export class SyncService
     payloads: (DeletedPayloadInterface | DecryptedPayloadInterface)[],
     options: SyncOptions,
   ) {
-    log(
-      LoggingDomain.Sync,
+    this.logger.debug(
       'Syncing offline user',
       'source:',
       SyncSource[options.source],
@@ -812,8 +811,7 @@ export class SyncService
       },
     )
 
-    log(
-      LoggingDomain.Sync,
+    this.logger.debug(
       'Syncing online user',
       'source',
       SyncSource[options.source],
@@ -925,7 +923,7 @@ export class SyncService
   }
 
   private async handleOfflineResponse(response: OfflineSyncResponse) {
-    log(LoggingDomain.Sync, 'Offline Sync Response', response)
+    this.logger.debug('Offline Sync Response', response)
 
     const masterCollection = this.payloadManager.getMasterCollection()
 
@@ -943,7 +941,7 @@ export class SyncService
   }
 
   private handleErrorServerResponse(response: ServerSyncResponse) {
-    log(LoggingDomain.Sync, 'Sync Error', response)
+    this.logger.debug('Sync Error', response)
 
     if (response.status === INVALID_SESSION_RESPONSE_STATUS) {
       void this.notifyEvent(SyncEvent.InvalidSession)
@@ -968,7 +966,10 @@ export class SyncService
     const historyMap = this.historyService.getHistoryMapCopy()
 
     if (response.userEvents && response.userEvents.length > 0) {
-      await this.notifyEventSync(SyncEvent.ReceivedUserEvents, response.userEvents as SyncEventReceivedUserEventsData)
+      await this.notifyEventSync(
+        SyncEvent.ReceivedNotifications,
+        response.userEvents as SyncEventReceivedNotificationsData,
+      )
     }
 
     if (response.asymmetricMessages && response.asymmetricMessages.length > 0) {
@@ -1003,8 +1004,7 @@ export class SyncService
       historyMap,
     )
 
-    log(
-      LoggingDomain.Sync,
+    this.logger.debug(
       'Online Sync Response',
       'Operator ID',
       operation.id,
@@ -1263,7 +1263,7 @@ export class SyncService
   }
 
   private async syncAgainByHandlingRequestsWaitingInResolveQueue(options: SyncOptions) {
-    log(LoggingDomain.Sync, 'Syncing again from resolve queue')
+    this.logger.debug('Syncing again from resolve queue')
     const promise = this.sync({
       source: SyncSource.ResolveQueue,
       checkIntegrity: options.checkIntegrity,

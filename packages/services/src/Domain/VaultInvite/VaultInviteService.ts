@@ -1,6 +1,5 @@
 import { AcceptVaultInvite } from './UseCase/AcceptVaultInvite'
 import { SyncEvent, SyncEventReceivedSharedVaultInvitesData } from './../Event/SyncEvent'
-import { SessionEvent } from './../Session/SessionEvent'
 import { InternalEventInterface } from './../Internal/InternalEventInterface'
 import { InternalEventHandlerInterface } from './../Internal/InternalEventHandlerInterface'
 import { ItemManagerInterface } from './../Item/ItemManagerInterface'
@@ -92,9 +91,6 @@ export class VaultInviteService
 
   async handleEvent(event: InternalEventInterface): Promise<void> {
     switch (event.type) {
-      case SessionEvent.UserKeyPairChanged:
-        void this.invitesServer.deleteAllInboundInvites()
-        break
       case SyncEvent.ReceivedSharedVaultInvites:
         await this.processInboundInvites(event.payload as SyncEventReceivedSharedVaultInvitesData)
         break
@@ -238,6 +234,8 @@ export class VaultInviteService
     }
 
     for (const invite of invites) {
+      delete this.pendingInvites[invite.uuid]
+
       const sender = this._findContact.execute({ userUuid: invite.sender_uuid })
       if (!sender.isFailed()) {
         const trustedMessage = this._getTrustedPayload.execute<AsymmetricMessageSharedVaultInvite>({

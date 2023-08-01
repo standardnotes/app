@@ -8,16 +8,21 @@ import {
 import { PayloadManager } from './PayloadManager'
 import { InternalEventBusInterface } from '@standardnotes/services'
 import { ContentType } from '@standardnotes/domain-core'
+import { LoggerInterface } from '@standardnotes/utils'
 
 describe('payload manager', () => {
   let payloadManager: PayloadManager
   let internalEventBus: InternalEventBusInterface
+  let logger: LoggerInterface
 
   beforeEach(() => {
     internalEventBus = {} as jest.Mocked<InternalEventBusInterface>
     internalEventBus.publish = jest.fn()
 
-    payloadManager = new PayloadManager(internalEventBus)
+    logger = {} as jest.Mocked<LoggerInterface>
+    logger.debug = jest.fn()
+
+    payloadManager = new PayloadManager(logger, internalEventBus)
   })
 
   it('emitting a payload should emit as-is and not merge on top of existing payload', async () => {
