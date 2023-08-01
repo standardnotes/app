@@ -257,9 +257,10 @@ describe('server session', function () {
   }).timeout(Factory.TwentySecondTimeout)
 
   it('change email request should fail with an expired refresh token', async function () {
-    let { application, email, password } = await Factory.createAndInitSimpleAppContext({
+    let { application, password } = await Factory.createAndInitSimpleAppContext({
       registerUser: true,
     })
+    application.sync.lockSyncing()
     /** Waiting for the refresh token to expire. */
     await sleepUntilSessionExpires(application, false)
 
@@ -348,6 +349,8 @@ describe('server session', function () {
       password: this.password,
     })
 
+    this.application.sync.lockSyncing()
+
     /** Waiting for the refresh token to expire. */
     await sleepUntilSessionExpires(this.application, false)
 
@@ -384,6 +387,8 @@ describe('server session', function () {
       email: this.email,
       password: this.password,
     })
+
+    this.application.sync.lockSyncing()
 
     await sleepUntilSessionExpires(this.application, false)
 

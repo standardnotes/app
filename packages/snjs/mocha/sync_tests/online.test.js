@@ -540,7 +540,7 @@ describe('online syncing', function () {
     await this.application.sync.sync(syncOptions)
     const rawPayloads = await this.application.storage.getAllRawPayloads()
     expect(rawPayloads.length).to.equal(this.expectedItemCount)
-  }).timeout(15000)
+  }).timeout(Factory.TwentySecondTimeout)
 
   it('should handle downloading with sync pagination', async function () {
     const largeItemCount = SyncUpDownLimit + 10

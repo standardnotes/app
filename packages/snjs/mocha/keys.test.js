@@ -449,6 +449,7 @@ describe('keys', function () {
       },
     })
     expect(payload.items_key_id).to.equal(newDefaultItemsKey.uuid)
+    await Factory.safeDeinit(application)
   })
 
   it('compares root keys', async function () {
@@ -859,5 +860,6 @@ describe('keys', function () {
     const notePayload = rawPayloads.find((p) => p.content_type === ContentType.TYPES.Note)
 
     expect(notePayload.items_key_id).to.equal(itemsKey.uuid)
+    await otherClient.deinit()
   })
 })
