@@ -61,7 +61,9 @@ describe('contacts', function () {
   it('should update self contact on password change', async () => {
     const selfContact = context.contacts.getSelfContact()
 
+    const promise = context.resolveWhenAsyncFunctionCompletes(context.sharedVaults._handleKeyPairChange, 'execute')
     await context.changePassword('new_password')
+    await promise
 
     const updatedSelfContact = context.contacts.getSelfContact()
 
@@ -101,6 +103,5 @@ describe('contacts', function () {
     await deinitContactContext()
   })
 
-  it.skip('should be able to refresh a contact using a collaborationID that includes full chain of previous public keys', async () => {
-  })
+  it.skip('should be able to refresh a contact using a collaborationID that includes full chain of previous public keys', async () => {})
 })
