@@ -31,6 +31,7 @@ export interface ComponentManagerInterface {
 
   setPermissionDialogUIHandler(handler: (dialog: PermissionDialog) => void): void
 
+  findComponentWithPackageIdentifier(identifier: string): ComponentInterface | undefined
   editorForNote(note: SNNote): UIFeature<EditorFeatureDescription | IframeComponentFeatureDescription>
   getDefaultEditorIdentifier(currentTag?: SNTag): string
 
