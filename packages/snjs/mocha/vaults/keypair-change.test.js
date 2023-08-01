@@ -24,8 +24,19 @@ describe('keypair change', function () {
   })
 
   it('contacts should be able to handle receiving multiple keypair changed messages and trust them in order', async () => {
+    this.timeout(Factory.ThirtySecondTimeout)
+
     const { note, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithAcceptedInviteAndNote(context)
+
+    const runAnyRequestToPreventRefreshTokenFromExpiring = async () => {
+      /**
+       * Run a request to keep refresh token from expiring due to long bouts of inactivity for contact context
+       * while main context changes password. Tests have a refresh token age of 10s typically, and changing password
+       * on CI environment may be time consuming.
+       */
+      await contactContext.asymmetric.getInboundMessages()
+    }
 
     contactContext.lockSyncing()
 
@@ -39,13 +50,19 @@ describe('keypair change', function () {
     publicKeyChain.push(context.publicKey)
     signingPublicKeyChain.push(context.signingPublicKey)
 
+    await runAnyRequestToPreventRefreshTokenFromExpiring()
+
     await context.changePassword('new_password-2')
     publicKeyChain.push(context.publicKey)
     signingPublicKeyChain.push(context.signingPublicKey)
 
+    await runAnyRequestToPreventRefreshTokenFromExpiring()
+
     await context.changePassword('new_password-3')
     publicKeyChain.push(context.publicKey)
     signingPublicKeyChain.push(context.signingPublicKey)
+
+    await runAnyRequestToPreventRefreshTokenFromExpiring()
 
     await context.changeNoteTitleAndSync(note, 'new title')
 
