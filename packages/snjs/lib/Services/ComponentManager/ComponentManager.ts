@@ -29,7 +29,7 @@ import {
   GetNativeThemes,
   NativeFeatureIdentifier,
 } from '@standardnotes/features'
-import { Copy, removeFromArray, sleep, isNotUndefined } from '@standardnotes/utils'
+import { Copy, removeFromArray, sleep, isNotUndefined, LoggerInterface } from '@standardnotes/utils'
 import { ComponentViewer } from '@Lib/Services/ComponentManager/ComponentViewer'
 import {
   AbstractService,
@@ -98,6 +98,7 @@ export class SNComponentManager
     private environment: Environment,
     private platform: Platform,
     private device: DeviceInterface,
+    private logger: LoggerInterface,
     protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)
@@ -177,6 +178,7 @@ export class SNComponentManager
         alerts: this.alerts,
         preferences: this.preferences,
         features: this.features,
+        logger: this.logger,
       },
       {
         url: this.urlForFeature(component) ?? '',
@@ -312,7 +314,7 @@ export class SNComponentManager
   onWindowMessage = (event: MessageEvent): void => {
     const data = event.data as ComponentMessage
     if (data.sessionKey) {
-      this.log('Component manager received message', data)
+      this.logger.info('Component manager received message', data)
       this.componentViewerForSessionKey(data.sessionKey)?.handleMessage(data)
     }
   }
@@ -363,7 +365,7 @@ export class SNComponentManager
   }
 
   public async toggleTheme(uiFeature: UIFeature<ThemeFeatureDescription>): Promise<void> {
-    this.log('Toggling theme', uiFeature.uniqueIdentifier)
+    this.logger.info('Toggling theme', uiFeature.uniqueIdentifier)
 
     if (this.isThemeActive(uiFeature)) {
       await this.removeActiveTheme(uiFeature)
@@ -443,7 +445,7 @@ export class SNComponentManager
   }
 
   public async toggleComponent(component: ComponentInterface): Promise<void> {
-    this.log('Toggling component', component.uuid)
+    this.logger.info('Toggling component', component.uuid)
 
     if (this.isComponentActive(component)) {
       await this.removeActiveComponent(component)

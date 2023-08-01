@@ -48,6 +48,8 @@ export class AppContext {
       this.crypto || new FakeWebCrypto(),
     )
 
+    this.application.dependencies.get(TYPES.Logger).setLevel('error')
+
     this.disableSubscriptionFetching()
   }
 

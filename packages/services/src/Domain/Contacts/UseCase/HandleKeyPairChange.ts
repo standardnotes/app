@@ -11,6 +11,7 @@ import { PortablePublicKeySet } from '@standardnotes/models'
 import { InternalFeature } from '../../InternalFeatures/InternalFeature'
 import { CreateOrEditContact } from './CreateOrEditContact'
 import { isErrorResponse } from '@standardnotes/responses'
+import { LoggerInterface } from '@standardnotes/utils'
 
 type Dto = {
   newKeys: {
@@ -33,6 +34,7 @@ export class HandleKeyPairChange implements UseCaseInterface<void> {
     private _getAllContacts: GetAllContacts,
     private _sendOwnContactChangedMessage: SendOwnContactChangeMessage,
     private _createOrEditContact: CreateOrEditContact,
+    private logger: LoggerInterface,
   ) {}
 
   async execute(dto: Dto): Promise<Result<void>> {
@@ -55,7 +57,7 @@ export class HandleKeyPairChange implements UseCaseInterface<void> {
 
     for (const result of results) {
       if (result.isFailed()) {
-        console.error(result.getError())
+        this.logger.error(result.getError())
       }
     }
 
@@ -68,7 +70,7 @@ export class HandleKeyPairChange implements UseCaseInterface<void> {
 
     for (const response of deleteResponses) {
       if (isErrorResponse(response)) {
-        console.error(response)
+        this.logger.error(JSON.stringify(response))
       }
     }
 

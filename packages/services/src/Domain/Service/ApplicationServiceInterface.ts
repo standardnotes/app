@@ -6,5 +6,4 @@ export interface ApplicationServiceInterface<E, D> extends ServiceDiagnostics {
   addEventObserver(observer: EventObserver<E, D>): () => void
   blockDeinit(): Promise<void>
   deinit(): void
-  log(message: string, ...args: unknown[]): void
 }

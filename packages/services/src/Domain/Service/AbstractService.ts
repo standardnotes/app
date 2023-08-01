@@ -1,6 +1,6 @@
 /* istanbul ignore file */
 
-import { log, removeFromArray } from '@standardnotes/utils'
+import { removeFromArray } from '@standardnotes/utils'
 import { EventObserver } from '../Event/EventObserver'
 import { ApplicationServiceInterface } from './ApplicationServiceInterface'
 import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
@@ -98,12 +98,5 @@ export abstract class AbstractService<EventName = string, EventData = unknown>
 
   isApplicationService(): true {
     return true
-  }
-
-  log(..._args: unknown[]): void {
-    if (this.loggingEnabled) {
-      // eslint-disable-next-line prefer-rest-params
-      log(this.getServiceName(), ...arguments)
-    }
   }
 }

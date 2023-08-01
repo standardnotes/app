@@ -27,6 +27,7 @@ import { LegacyApiService, SessionManager } from '../Api'
 import { ItemManager } from '../Items'
 import { DiskStorageService } from '../Storage/DiskStorageService'
 import { SettingsClientInterface } from '../Settings/SettingsClientInterface'
+import { LoggerInterface } from '@standardnotes/utils'
 
 describe('FeaturesService', () => {
   let storageService: StorageServiceInterface
@@ -45,26 +46,12 @@ describe('FeaturesService', () => {
   let items: ItemInterface[]
   let internalEventBus: InternalEventBusInterface
   let featureService: FeaturesService
-
-  const createService = () => {
-    return new FeaturesService(
-      storageService,
-      itemManager,
-      mutator,
-      subscriptions,
-      apiService,
-      webSocketsService,
-      settingsService,
-      userService,
-      syncService,
-      alertService,
-      sessionManager,
-      crypto,
-      internalEventBus,
-    )
-  }
+  let logger: LoggerInterface
 
   beforeEach(() => {
+    logger = {} as jest.Mocked<LoggerInterface>
+    logger.info = jest.fn()
+
     roles = [RoleName.NAMES.CoreUser, RoleName.NAMES.PlusUser]
 
     items = [] as jest.Mocked<ItemInterface[]>
@@ -133,6 +120,7 @@ describe('FeaturesService', () => {
       alertService,
       sessionManager,
       crypto,
+      logger,
       internalEventBus,
     )
   })
@@ -199,6 +187,25 @@ describe('FeaturesService', () => {
 
   describe('loadUserRoles()', () => {
     it('retrieves user roles and features from storage', async () => {
+      const createService = () => {
+        return new FeaturesService(
+          storageService,
+          itemManager,
+          mutator,
+          subscriptions,
+          apiService,
+          webSocketsService,
+          settingsService,
+          userService,
+          syncService,
+          alertService,
+          sessionManager,
+          crypto,
+          logger,
+          internalEventBus,
+        )
+      }
+
       createService().initializeFromDisk()
       expect(storageService.getValue).toHaveBeenCalledWith(StorageKey.UserRoles, undefined, [])
     })

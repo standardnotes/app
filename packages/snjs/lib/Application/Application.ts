@@ -116,6 +116,7 @@ import {
   sleep,
   UuidGenerator,
   useBoolean,
+  LoggerInterface,
 } from '@standardnotes/utils'
 import { UuidString, ApplicationEventPayload } from '../Types'
 import { applicationEventForSyncEvent } from '@Lib/Application/Event'
@@ -504,7 +505,8 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
 
   private beginAutoSyncTimer() {
     this.autoSyncInterval = setInterval(() => {
-      this.sync.log('Syncing from autosync')
+      const logger = this.dependencies.get<LoggerInterface>(TYPES.Logger)
+      logger.info('Syncing from autosync')
       void this.sync.sync({ sourceDescription: 'Auto Sync' })
     }, DEFAULT_AUTO_SYNC_INTERVAL)
   }

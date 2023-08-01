@@ -36,12 +36,15 @@ import {
   RootKeyParamsInterface,
 } from '@standardnotes/models'
 import { ClientDisplayableError } from '@standardnotes/responses'
-import { extendArray } from '@standardnotes/utils'
+import { extendArray, LoggerInterface } from '@standardnotes/utils'
 import { EncryptionService } from '../EncryptionService'
 import { ContentType } from '@standardnotes/domain-core'
 
 export class DecryptBackupFile {
-  constructor(private encryption: EncryptionService) {}
+  constructor(
+    private encryption: EncryptionService,
+    private logger: LoggerInterface,
+  ) {}
 
   async execute(
     file: BackupFile,
@@ -273,7 +276,7 @@ export class DecryptBackupFile {
             errorDecrypting: true,
           }),
         )
-        console.error('Error decrypting payload', encryptedPayload, e)
+        this.logger.error('Error decrypting payload', encryptedPayload, e)
       }
     }
 

@@ -1,6 +1,7 @@
 import { HandleKeyPairChange } from './HandleKeyPairChange'
 import { Result } from '@standardnotes/domain-core'
 import { PkcKeyPair } from '@standardnotes/sncrypto-common'
+import { LoggerInterface } from '@standardnotes/utils'
 
 describe('HandleKeyPairChange', () => {
   let useCase: HandleKeyPairChange
@@ -12,6 +13,7 @@ describe('HandleKeyPairChange', () => {
   let mockGetAllContacts: any
   let mockCreateOrEditContact: any
   let mockSendOwnContactChangedMessage: any
+  let logger: LoggerInterface
 
   const dto = {
     newKeys: {
@@ -69,6 +71,9 @@ describe('HandleKeyPairChange', () => {
       execute: jest.fn().mockReturnValue(Result.ok()),
     }
 
+    logger = {} as jest.Mocked<LoggerInterface>
+    logger.error = jest.fn()
+
     useCase = new HandleKeyPairChange(
       mockSelfContactManager,
       mockInvitesServer,
@@ -78,6 +83,7 @@ describe('HandleKeyPairChange', () => {
       mockGetAllContacts,
       mockSendOwnContactChangedMessage,
       mockCreateOrEditContact,
+      logger,
     )
   })
 

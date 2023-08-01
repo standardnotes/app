@@ -147,7 +147,7 @@ import {
 import { FullyResolvedApplicationOptions } from '../Options/ApplicationOptions'
 import { TYPES } from './Types'
 import { isDeinitable } from './isDeinitable'
-import { isNotUndefined } from '@standardnotes/utils'
+import { Logger, isNotUndefined } from '@standardnotes/utils'
 import { EncryptionOperators } from '@standardnotes/encryption'
 
 export class Dependencies {
@@ -225,7 +225,7 @@ export class Dependencies {
     })
 
     this.factory.set(TYPES.DecryptBackupFile, () => {
-      return new DecryptBackupFile(this.get(TYPES.EncryptionService))
+      return new DecryptBackupFile(this.get(TYPES.EncryptionService), this.get(TYPES.Logger))
     })
 
     this.factory.set(TYPES.DiscardItemsLocally, () => {
@@ -389,6 +389,7 @@ export class Dependencies {
         this.get(TYPES.GetAllContacts),
         this.get(TYPES.SendOwnContactChangeMessage),
         this.get(TYPES.CreateOrEditContact),
+        this.get(TYPES.Logger),
       )
     })
 
@@ -618,6 +619,10 @@ export class Dependencies {
   }
 
   private registerServiceMakers() {
+    this.factory.set(TYPES.Logger, () => {
+      return new Logger(this.options.identifier)
+    })
+
     this.factory.set(TYPES.UserServer, () => {
       return new UserServer(this.get(TYPES.HttpService))
     })
@@ -925,6 +930,7 @@ export class Dependencies {
         this.get(TYPES.LegacyApiService),
         this.get(TYPES.LegacyApiService),
         this.get(TYPES.PayloadManager),
+        this.get(TYPES.Logger),
         this.get(TYPES.InternalEventBus),
       )
     })
@@ -1018,6 +1024,7 @@ export class Dependencies {
         this.options.environment,
         this.options.platform,
         this.get(TYPES.DeviceInterface),
+        this.get(TYPES.Logger),
         this.get(TYPES.InternalEventBus),
       )
     })
@@ -1036,6 +1043,7 @@ export class Dependencies {
         this.get(TYPES.AlertService),
         this.get(TYPES.SessionManager),
         this.get(TYPES.Crypto),
+        this.get(TYPES.Logger),
         this.get(TYPES.InternalEventBus),
       )
     })
@@ -1124,6 +1132,7 @@ export class Dependencies {
           loadBatchSize: this.options.loadBatchSize,
           sleepBetweenBatches: this.options.sleepBetweenBatches,
         },
+        this.get(TYPES.Logger),
         this.get(TYPES.InternalEventBus),
       )
     })
@@ -1202,7 +1211,7 @@ export class Dependencies {
     })
 
     this.factory.set(TYPES.PayloadManager, () => {
-      return new PayloadManager(this.get(TYPES.InternalEventBus))
+      return new PayloadManager(this.get(TYPES.Logger), this.get(TYPES.InternalEventBus))
     })
 
     this.factory.set(TYPES.ItemManager, () => {
@@ -1282,7 +1291,7 @@ export class Dependencies {
     })
 
     this.factory.set(TYPES.HttpService, () => {
-      return new HttpService(this.options.environment, this.options.appVersion, SnjsVersion)
+      return new HttpService(this.options.environment, this.options.appVersion, SnjsVersion, this.get(TYPES.Logger))
     })
 
     this.factory.set(TYPES.LegacyApiService, () => {

@@ -1,5 +1,5 @@
 import { MigrateFeatureRepoToUserSettingUseCase } from './UseCase/MigrateFeatureRepoToUserSetting'
-import { arraysEqual, removeFromArray, lastElement } from '@standardnotes/utils'
+import { arraysEqual, removeFromArray, lastElement, LoggerInterface } from '@standardnotes/utils'
 import { ClientDisplayableError } from '@standardnotes/responses'
 import { RoleName, ContentType, Uuid } from '@standardnotes/domain-core'
 import { PROD_OFFLINE_FEATURES_URL } from '../../Hosts'
@@ -81,6 +81,7 @@ export class FeaturesService
     private alerts: AlertService,
     private sessions: SessionsClientInterface,
     private crypto: PureCryptoInterface,
+    private logger: LoggerInterface,
     protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)
@@ -146,7 +147,7 @@ export class FeaturesService
     switch (event.type) {
       case ApiServiceEvent.MetaReceived: {
         if (!this.sync) {
-          this.log('Handling events interrupted. Sync service is not yet initialized.', event)
+          this.logger.warn('Handling events interrupted. Sync service is not yet initialized.', event)
           return
         }
 

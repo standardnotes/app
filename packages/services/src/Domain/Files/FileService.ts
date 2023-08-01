@@ -19,7 +19,7 @@ import {
   SharedVaultListingInterface,
 } from '@standardnotes/models'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
-import { spaceSeparatedStrings, UuidGenerator } from '@standardnotes/utils'
+import { LoggerInterface, spaceSeparatedStrings, UuidGenerator } from '@standardnotes/utils'
 import { SNItemsKey } from '@standardnotes/encryption'
 import {
   DownloadAndDecryptFileOperation,
@@ -47,7 +47,6 @@ import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface
 import { AbstractService } from '../Service/AbstractService'
 import { SyncServiceInterface } from '../Sync/SyncServiceInterface'
 import { DecryptItemsKeyWithUserFallback } from '../Encryption/Functions'
-import { log, LoggingDomain } from '../Logging'
 import { SharedVaultServer, SharedVaultServerInterface, HttpServiceInterface } from '@standardnotes/api'
 import { ContentType } from '@standardnotes/domain-core'
 import { EncryptionProviderInterface } from '../Encryption/EncryptionProviderInterface'
@@ -68,6 +67,7 @@ export class FileService extends AbstractService implements FilesClientInterface
     private alertService: AlertService,
     private crypto: PureCryptoInterface,
     protected override internalEventBus: InternalEventBusInterface,
+    private logger: LoggerInterface,
     private backupsService?: BackupServiceInterface,
   ) {
     super(internalEventBus)
@@ -317,19 +317,19 @@ export class FileService extends AbstractService implements FilesClientInterface
     const fileBackup = await this.backupsService?.getFileBackupInfo(file)
 
     if (this.backupsService && fileBackup) {
-      log(LoggingDomain.FilesService, 'Downloading file from backup', fileBackup)
+      this.logger.info('Downloading file from backup', fileBackup)
 
       await readAndDecryptBackupFileUsingBackupService(file, this.backupsService, this.crypto, async (chunk) => {
-        log(LoggingDomain.FilesService, 'Got local file chunk', chunk.progress)
+        this.logger.info('Got local file chunk', chunk.progress)
 
         return onDecryptedBytes(chunk.data, chunk.progress)
       })
 
-      log(LoggingDomain.FilesService, 'Finished downloading file from backup')
+      this.logger.info('Finished downloading file from backup')
 
       return undefined
     } else {
-      log(LoggingDomain.FilesService, 'Downloading file from network')
+      this.logger.info('Downloading file from network')
 
       const addToCache = file.encryptedSize < this.encryptedCache.maxSize
 
