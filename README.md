@@ -47,7 +47,7 @@ Questions? Find answers on our [Help page](https://standardnotes.com/help).
 
 ### Docker setup
 
-Docker is the quickest way to try out Standard Notes. We recommend using our official [Docker hub image](https://hub.docker.com/repository/docker/standardnotes/web).
+If you'd like to self-host the web application, we recommend using our official [Docker hub image](https://hub.docker.com/repository/docker/standardnotes/web).
 
 ```
 docker run -d -p 3001:3001 --env-file=.env.sample standardnotes/web:stable
