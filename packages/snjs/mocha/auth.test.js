@@ -393,7 +393,7 @@ describe('basic auth', function () {
         context.application.submitValuesForChallenge(challenge, initialValues)
       },
     })
-    await context.application.setPasscode(passcode)
+    await context.application.addPasscode(passcode)
     await changePassword.bind(this)()
   }).timeout(20000)
 
