@@ -155,12 +155,7 @@ describe('keypair change', function () {
     expect(originalMessages.length).to.equal(1)
     const originalMessage = originalMessages[0]
 
-    const promise = context.resolveWhenAsyncFunctionCompletes(
-      context.application.dependencies.get(TYPES.HandleKeyPairChange),
-      'execute',
-    )
     await context.changePassword('new_password')
-    await promise
 
     const updatedMessages = (await contactContext.asymmetric.getInboundMessages()).getValue()
     const expectedMessages = ['keypair-change', 'vault-change']

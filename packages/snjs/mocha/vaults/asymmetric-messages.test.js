@@ -427,15 +427,11 @@ describe('asymmetric messages', function () {
 
     await runAnyRequestToPreventRefreshTokenFromExpiring()
 
-    const sendPromise = context.resolveWhenAsyncFunctionCompletes(context.sharedVaults._handleKeyPairChange, 'execute')
     await context.changePassword('new password')
-    await sendPromise
 
     await runAnyRequestToPreventRefreshTokenFromExpiring()
 
-    const sendPromise2 = context.resolveWhenAsyncFunctionCompletes(context.sharedVaults._handleKeyPairChange, 'execute')
     await context.changePassword('new password 2')
-    await sendPromise2
 
     const messages = await contactContext.asymmetric.getInboundMessages()
     if (messages.isFailed()) {
