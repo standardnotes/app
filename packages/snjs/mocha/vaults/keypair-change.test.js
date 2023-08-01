@@ -24,8 +24,6 @@ describe('keypair change', function () {
   })
 
   it('contacts should be able to handle receiving multiple keypair changed messages and trust them in order', async () => {
-    this.timeout(Factory.ThirtySecondTimeout)
-
     const { note, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithAcceptedInviteAndNote(context)
 
@@ -85,7 +83,7 @@ describe('keypair change', function () {
     expect(receivedNote.signatureData.result.passes).to.be.true
 
     await deinitContactContext()
-  })
+  }).timeout(Factory.ThirtySecondTimeout)
 
   it('should not trust messages sent with previous key pair', async () => {
     const { sharedVault, contactContext, deinitContactContext } =

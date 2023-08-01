@@ -400,8 +400,6 @@ describe('asymmetric messages', function () {
   })
 
   it('sending a new vault invite to a trusted contact then changing account password should still allow contact to trust invite', async () => {
-    this.timeout(Factory.ThirtySecondTimeout)
-
     const { contactContext, contact, deinitContactContext } = await Collaboration.createSharedVaultWithAcceptedInvite(
       context,
     )
@@ -453,5 +451,5 @@ describe('asymmetric messages', function () {
     await contactContext.vaultInvites.acceptInvite(invite)
 
     await deinitContactContext()
-  })
+  }).timeout(Factory.ThirtySecondTimeout)
 })

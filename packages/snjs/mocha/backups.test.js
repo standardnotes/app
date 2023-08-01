@@ -81,7 +81,6 @@ describe('backups', function () {
   })
 
   it('passcode + account backup file should have correct number of items', async function () {
-    this.timeout(10000)
     const passcode = 'passcode'
     await this.application.register(this.email, this.password)
     Factory.handlePasswordChallenges(this.application, this.password)
@@ -101,7 +100,7 @@ describe('backups', function () {
     // Encrypted backup with authorization
     const authorizedEncryptedData = await this.application.createEncryptedBackupFileForAutomatedDesktopBackups()
     expect(authorizedEncryptedData.items.length).to.equal(BaseItemCounts.DefaultItemsWithAccount + 2)
-  })
+  }).timeout(10000)
 
   it('backup file item should have correct fields', async function () {
     await Factory.createSyncedNote(this.application)
