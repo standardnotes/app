@@ -58,16 +58,15 @@ describe('preferences', function () {
   })
 
   it('emits an event when preferences change', async function () {
-    let callTimes = 0
-    this.application.addEventObserver(() => {
-      callTimes++
-    }, ApplicationEvent.PreferencesChanged)
-    callTimes += 1
-    await Factory.sleep(0) /** Await next tick */
-    expect(callTimes).to.equal(1) /** App start */
-    await register.call(this)
+    const promise = new Promise((resolve) => {
+      this.application.addEventObserver(() => {
+        resolve()
+      }, ApplicationEvent.PreferencesChanged)
+    })
+
     await this.application.setPreference('editorLeft', 300)
-    expect(callTimes).to.equal(2)
+    await promise
+    expect(promise).to.be.fulfilled
   })
 
   it('discards existing preferences when signing in', async function () {

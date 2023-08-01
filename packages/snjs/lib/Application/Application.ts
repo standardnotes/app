@@ -807,7 +807,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       await promise
     } else {
       /** Await up to maxWait. If not resolved by then, return. */
-      await Promise.race([promise, sleep(maxWait)])
+      await Promise.race([promise, sleep(maxWait, false, 'Preparing for deinit...')])
     }
   }
 
