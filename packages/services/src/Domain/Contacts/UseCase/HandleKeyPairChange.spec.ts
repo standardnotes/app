@@ -38,35 +38,35 @@ describe('HandleKeyPairChange', () => {
 
   beforeEach(() => {
     mockSelfContactManager = {
-      updateWithNewPublicKeySet: jest.fn(),
+      updateWithNewPublicKeySet: jest.fn().mockReturnValue({}),
     }
 
     mockInvitesServer = {
-      deleteAllInboundInvites: jest.fn(),
+      deleteAllInboundInvites: jest.fn().mockReturnValue({}),
     }
 
     mockMessageServer = {
-      deleteAllInboundMessages: jest.fn(),
+      deleteAllInboundMessages: jest.fn().mockReturnValue({}),
     }
 
     mockReuploadAllInvites = {
-      execute: jest.fn(),
+      execute: jest.fn().mockReturnValue(Result.ok()),
     }
 
     mockResendAllMessages = {
-      execute: jest.fn(),
+      execute: jest.fn().mockReturnValue(Result.ok()),
     }
 
     mockGetAllContacts = {
-      execute: jest.fn(),
+      execute: jest.fn().mockReturnValue(Result.ok()),
     }
 
     mockSendOwnContactChangedMessage = {
-      execute: jest.fn(),
+      execute: jest.fn().mockReturnValue(Result.ok()),
     }
 
     mockCreateOrEditContact = {
-      execute: jest.fn(),
+      execute: jest.fn().mockReturnValue(Result.ok()),
     }
 
     useCase = new HandleKeyPairChange(
