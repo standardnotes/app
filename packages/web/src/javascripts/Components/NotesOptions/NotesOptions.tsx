@@ -55,6 +55,7 @@ const NotesOptions = ({
   navigationController,
   notesController,
   linkingController,
+  selectionController,
   historyModalController,
   closeMenu,
 }: NotesOptionsProps) => {
@@ -150,10 +151,32 @@ const NotesOptions = ({
   }, [closeMenu, toggleAppPane])
 
   const duplicateSelectedItems = useCallback(async () => {
-    await Promise.all(notes.map((note) => application.mutator.duplicateItem(note).catch(console.error)))
+    await Promise.all(
+      notes.map((note) =>
+        application.mutator
+          .duplicateItem(note)
+          .then((duplicated) =>
+            addToast({
+              type: ToastType.Regular,
+              message: `Duplicated note "${duplicated.title}"`,
+              actions: [
+                {
+                  label: 'Open',
+                  handler: (toastId) => {
+                    selectionController.selectItem(duplicated.uuid, true).catch(console.error)
+                    dismissToast(toastId)
+                  },
+                },
+              ],
+              autoClose: true,
+            }),
+          )
+          .catch(console.error),
+      ),
+    )
     void application.sync.sync()
     closeMenuAndToggleNotesList()
-  }, [application.mutator, application.sync, closeMenuAndToggleNotesList, notes])
+  }, [application.mutator, application.sync, closeMenuAndToggleNotesList, notes, selectionController])
 
   const openRevisionHistoryModal = useCallback(() => {
     historyModalController.openModal(notesController.firstSelectedNote)

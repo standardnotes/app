@@ -41,6 +41,7 @@ import { useItemLinks } from '@/Hooks/useItemLinks'
 import { ItemLink } from '@/Utils/Items/Search/ItemLink'
 import { ItemListController } from '@/Controllers/ItemList/ItemListController'
 import ListItemVaultInfo from '../ContentListView/ListItemVaultInfo'
+import { SelectedItemsController } from '@/Controllers/SelectedItemsController'
 
 const ContextMenuCell = ({
   items,
@@ -49,6 +50,7 @@ const ContextMenuCell = ({
   linkingController,
   notesController,
   historyModalController,
+  selectionController,
 }: {
   items: DecryptedItemInterface[]
   filesController: FilesController
@@ -56,6 +58,7 @@ const ContextMenuCell = ({
   linkingController: LinkingController
   notesController: NotesController
   historyModalController: HistoryModalController
+  selectionController: SelectedItemsController
 }) => {
   const [contextMenuVisible, setContextMenuVisible] = useState(false)
   const anchorElementRef = useRef<HTMLButtonElement>(null)
@@ -117,6 +120,7 @@ const ContextMenuCell = ({
               notesController={notesController}
               linkingController={linkingController}
               historyModalController={historyModalController}
+              selectionController={selectionController}
               closeMenu={() => {
                 setContextMenuVisible(false)
               }}
@@ -266,6 +270,7 @@ type Props = {
   notesController: NotesController
   historyModalController: HistoryModalController
   itemListController: ItemListController
+  selectionController: SelectedItemsController
 }
 
 const ContentTableView = ({
@@ -278,6 +283,7 @@ const ContentTableView = ({
   notesController,
   historyModalController,
   itemListController,
+  selectionController,
 }: Props) => {
   const listHasFiles = items.some((item) => item instanceof FileItem)
 
@@ -406,6 +412,7 @@ const ContentTableView = ({
             navigationController={navigationController}
             notesController={notesController}
             historyModalController={historyModalController}
+            selectionController={selectionController}
           />
         </div>
       )
@@ -418,6 +425,7 @@ const ContentTableView = ({
         navigationController={navigationController}
         notesController={notesController}
         historyModalController={historyModalController}
+        selectionController={selectionController}
       />
     ),
     showSelectionActions: true,
@@ -465,6 +473,7 @@ const ContentTableView = ({
                 notesController={notesController}
                 linkingController={linkingController}
                 historyModalController={historyModalController}
+                selectionController={selectionController}
                 closeMenu={closeContextMenu}
               />
             </Menu>

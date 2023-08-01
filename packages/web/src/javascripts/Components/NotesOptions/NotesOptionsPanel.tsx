@@ -8,12 +8,14 @@ import Popover from '../Popover/Popover'
 import { LinkingController } from '@/Controllers/LinkingController'
 import RoundIconButton from '../Button/RoundIconButton'
 import Menu from '../Menu/Menu'
+import { SelectedItemsController } from '@/Controllers/SelectedItemsController'
 
 type Props = {
   navigationController: NavigationController
   notesController: NotesController
   linkingController: LinkingController
   historyModalController: HistoryModalController
+  selectionController: SelectedItemsController
   onClickPreprocessing?: () => Promise<void>
 }
 
@@ -22,6 +24,7 @@ const NotesOptionsPanel = ({
   notesController,
   linkingController,
   historyModalController,
+  selectionController,
   onClickPreprocessing,
 }: Props) => {
   const [isOpen, setIsOpen] = useState(false)
@@ -58,6 +61,7 @@ const NotesOptionsPanel = ({
             notesController={notesController}
             linkingController={linkingController}
             historyModalController={historyModalController}
+            selectionController={selectionController}
             requestDisableClickOutside={handleDisableClickOutsideRequest}
             closeMenu={toggleMenu}
           />
