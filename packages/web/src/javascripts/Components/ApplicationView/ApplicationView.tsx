@@ -261,6 +261,7 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
                       notesController={viewControllerManager.notesController}
                       linkingController={viewControllerManager.linkingController}
                       historyModalController={viewControllerManager.historyModalController}
+                      selectionController={viewControllerManager.selectionController}
                     />
                     <TagContextMenuWrapper
                       navigationController={viewControllerManager.navigationController}

@@ -12,6 +12,7 @@ import { PayloadManager } from '../Payloads/PayloadManager'
 import { TagsToFoldersMigrationApplicator } from '@Lib/Migrations/Applicators/TagsToFolders'
 import {
   ActionsExtensionMutator,
+  AppDataField,
   ComponentInterface,
   ComponentMutator,
   CreateDecryptedMutatorForItem,
@@ -19,6 +20,7 @@ import {
   DecryptedItemMutator,
   DecryptedPayload,
   DecryptedPayloadInterface,
+  DefaultAppDomain,
   DeleteItemMutator,
   EncryptedItemInterface,
   FeatureRepoMutator,
@@ -319,7 +321,14 @@ export class MutatorService extends AbstractService implements MutatorClientInte
       payload,
       baseCollection: this.payloadManager.getMasterCollection(),
       isConflict,
-      additionalContent,
+      additionalContent: {
+        appData: {
+          [DefaultAppDomain]: {
+            [AppDataField.UserModifiedDate]: new Date(),
+          },
+        },
+        ...additionalContent,
+      },
     })
 
     await this.payloadManager.emitPayloads(resultingPayloads, PayloadEmitSource.LocalChanged)
