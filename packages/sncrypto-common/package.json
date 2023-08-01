@@ -11,7 +11,7 @@
   "files": [
     "dist"
   ],
-  "license": "AGPL-3.0-or-later",
+  "license": "CC BY-NC-SA 4.0",
   "publishConfig": {
     "access": "public"
   },

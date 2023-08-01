@@ -39,7 +39,7 @@ export function getDropdownItemsForAllEditors(application: WebApplicationInterfa
 
         return {
           label: editor.displayName,
-          value: editor.uuid,
+          value: editor.identifier,
           ...(iconType ? { icon: iconType } : null),
           ...(tint ? { iconClassName: `text-accessory-tint-${tint}` } : null),
         }

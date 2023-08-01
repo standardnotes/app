@@ -360,6 +360,12 @@ export class SNComponentManager
     return this.viewers.find((viewer) => viewer.identifier === identifier)
   }
 
+  public findComponentWithPackageIdentifier(identifier: string): ComponentInterface | undefined {
+    return this.items.getDisplayableComponents().find((component) => {
+      return component.identifier === identifier
+    })
+  }
+
   private componentViewerForSessionKey(key: string): ComponentViewerInterface | undefined {
     return this.viewers.find((viewer) => viewer.sessionKey === key)
   }

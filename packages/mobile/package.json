@@ -3,7 +3,7 @@
   "version": "3.56.40",
   "author": "Standard Notes.",
   "private": true,
-  "license": "AGPL-3.0-or-later",
+  "license": "CC BY-NC-SA 4.0",
   "scripts": {
     "android-dev": "react-native run-android --variant devDebug --appIdSuffix dev",
     "android-prod-debug": "react-native run-android --variant prodDebug",

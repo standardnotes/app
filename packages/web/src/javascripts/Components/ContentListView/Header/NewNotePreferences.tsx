@@ -119,12 +119,23 @@ const NewNotePreferences: FunctionComponent<Props> = ({
 
   const selectEditorForNewNoteDefault = useCallback(
     (value: EditorOption['value']) => {
-      const uuid = Uuid.create(value)
+      let identifier: NativeFeatureIdentifier | Uuid | undefined = undefined
+
       const feature = NativeFeatureIdentifier.create(value)
-      if (
-        application.features.getFeatureStatus(!uuid.isFailed() ? uuid.getValue() : feature.getValue()) !==
-        FeatureStatus.Entitled
-      ) {
+      if (!feature.isFailed()) {
+        identifier = feature.getValue()
+      } else {
+        const thirdPartyEditor = application.componentManager.findComponentWithPackageIdentifier(value)
+        if (thirdPartyEditor) {
+          identifier = Uuid.create(thirdPartyEditor.uuid).getValue()
+        }
+      }
+
+      if (!identifier) {
+        return
+      }
+
+      if (application.features.getFeatureStatus(identifier) !== FeatureStatus.Entitled) {
         const editorItem = editorItems.find((item) => item.value === value)
         if (editorItem) {
           premiumModal.activate(editorItem.label)

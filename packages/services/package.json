@@ -8,7 +8,7 @@
   "main": "./src/index.ts",
   "author": "Standard Notes",
   "private": true,
-  "license": "AGPL-3.0-or-later",
+  "license": "CC BY-NC-SA 4.0",
   "scripts": {
     "tsc": "tsc --project tsconfig.json",
     "lint": "eslint src --ext .ts && yarn tsc",
