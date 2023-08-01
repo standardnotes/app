@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.167.28](https://github.com/standardnotes/app/compare/@standardnotes/web@3.167.27...@standardnotes/web@3.167.28) (2023-08-01)
+
+### Bug Fixes
+
+* Fixes issue where selecting a third-party editor/note-type as default for a tag would not correctly apply editor ([73609ca](https://github.com/standardnotes/app/commit/73609ca7e31c6cc628f46319f0b9502f7b8afcd3))
+
 ## [3.167.27](https://github.com/standardnotes/app/compare/@standardnotes/web@3.167.26...@standardnotes/web@3.167.27) (2023-08-01)
 
 **Note:** Version bump only for package @standardnotes/web

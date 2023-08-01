@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.63.19](https://github.com/standardnotes/app/compare/@standardnotes/services@1.63.18...@standardnotes/services@1.63.19) (2023-08-01)
+
+### Bug Fixes
+
+* Fixes issue where selecting a third-party editor/note-type as default for a tag would not correctly apply editor ([73609ca](https://github.com/standardnotes/app/commit/73609ca7e31c6cc628f46319f0b9502f7b8afcd3))
+
 ## [1.63.18](https://github.com/standardnotes/app/compare/@standardnotes/services@1.63.17...@standardnotes/services@1.63.18) (2023-07-31)
 
 **Note:** Version bump only for package @standardnotes/services

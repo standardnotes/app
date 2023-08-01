@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.13.7](https://github.com/standardnotes/app/compare/@standardnotes/sncrypto-common@1.13.6...@standardnotes/sncrypto-common@1.13.7) (2023-08-01)
+
+**Note:** Version bump only for package @standardnotes/sncrypto-common
+
 ## [1.13.6](https://github.com/standardnotes/app/compare/@standardnotes/sncrypto-common@1.13.5...@standardnotes/sncrypto-common@1.13.6) (2023-07-28)
 
 **Note:** Version bump only for package @standardnotes/sncrypto-common
