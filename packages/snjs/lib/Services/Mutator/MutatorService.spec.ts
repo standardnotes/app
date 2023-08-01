@@ -68,7 +68,7 @@ describe('mutator service', () => {
 
     it('should update the modification date of duplicated notes', async () => {
       const note = await insertNote('hello')
-      await sleep(1, false)
+      await sleep(1, false, 'Delaying duplication by 1ms to create unique timestamps')
       const duplicatedNote = await mutatorService.duplicateItem(note)
 
       expect(duplicatedNote.userModifiedDate.getTime()).toBeGreaterThan(note.userModifiedDate.getTime())
