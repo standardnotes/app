@@ -210,5 +210,4 @@ jobs:
         continue-on-error: true
         run: |
           sudo snap install snapcraft --classic
-          snapcraft login
           snapcraft upload dist/standard-notes-${{ env.APP_VERSION }}-linux-amd64.snap --release stable,candidate,beta,edge
