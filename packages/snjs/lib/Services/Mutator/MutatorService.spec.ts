@@ -70,7 +70,7 @@ describe('mutator service', () => {
       const note = await insertNote('hello')
       const duplicatedNote = await mutatorService.duplicateItem(note)
 
-      expect(duplicatedNote.userModifiedDate).not.toEqual(note.userModifiedDate)
+      expect(duplicatedNote.userModifiedDate.getTime()).toBeGreaterThan(note.userModifiedDate.getTime())
     })
   })
 
