@@ -61,9 +61,7 @@ describe('contacts', function () {
   it('should update self contact on password change', async () => {
     const selfContact = context.contacts.getSelfContact()
 
-    const promise = context.resolveWhenAsyncFunctionCompletes(context.sharedVaults._handleKeyPairChange, 'execute')
     await context.changePassword('new_password')
-    await promise
 
     const updatedSelfContact = context.contacts.getSelfContact()
 

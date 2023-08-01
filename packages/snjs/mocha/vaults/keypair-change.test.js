@@ -67,9 +67,7 @@ describe('keypair change', function () {
     await context.changeNoteTitleAndSync(note, 'new title')
 
     contactContext.unlockSyncing()
-    const promise = contactContext.resolveWhenAsymmetricMessageProcessingCompletes()
-    await contactContext.sync()
-    await promise
+    await contactContext.syncAndAwaitMessageProcessing()
 
     const originatorContact = contactContext.contacts.findContact(context.userUuid)
     let currentKeySet = originatorContact.publicKeySet
@@ -109,9 +107,7 @@ describe('keypair change', function () {
     })
 
     contactContext.unlockSyncing()
-    const promise = contactContext.resolveWhenAsymmetricMessageProcessingCompletes()
-    await contactContext.sync()
-    await promise
+    await contactContext.syncAndAwaitMessageProcessing()
 
     const updatedVault = contactContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })
     expect(updatedVault.name).to.equal(sharedVault.name)

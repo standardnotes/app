@@ -403,10 +403,6 @@ export class AppContext {
     })
   }
 
-  resolveWhenAsymmetricMessageProcessingCompletes() {
-    return this.resolveWhenAsyncFunctionCompletes(this.asymmetric, 'handleRemoteReceivedAsymmetricMessages')
-  }
-
   resolveWhenUserMessagesProcessingCompletes() {
     const objectToSpy = this.application.dependencies.get(TYPES.NotificationService)
     return this.resolveWhenAsyncFunctionCompletes(objectToSpy, 'handleReceivedNotifications')

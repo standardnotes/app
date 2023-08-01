@@ -41,10 +41,8 @@ describe('shared vaults', function () {
     expect(updatedVault.name).to.equal('new vault name')
     expect(updatedVault.description).to.equal('new vault description')
 
-    const promise = contactContext.resolveWhenAsymmetricMessageProcessingCompletes()
     contactContext.unlockSyncing()
-    await contactContext.sync()
-    await promise
+    await contactContext.syncAndAwaitMessageProcessing()
 
     const contactVault = contactContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })
     expect(contactVault.name).to.equal('new vault name')

@@ -38,11 +38,8 @@ describe('asymmetric messages', function () {
       get: () => 'invalid user uuid',
     })
 
-    const completedProcessingMessagesPromise = contactContext.resolveWhenAsymmetricMessageProcessingCompletes()
-
     contactContext.unlockSyncing()
-    await contactContext.sync()
-    await completedProcessingMessagesPromise
+    await contactContext.syncAndAwaitMessageProcessing()
 
     const updatedVault = contactContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })
 
@@ -63,11 +60,7 @@ describe('asymmetric messages', function () {
 
     const deleteFunction = sinon.spy(contactContext.asymmetric, 'deleteMessageAfterProcessing')
 
-    const promise = contactContext.resolveWhenAsymmetricMessageProcessingCompletes()
-
-    await contactContext.sync()
-
-    await promise
+    await contactContext.syncAndAwaitMessageProcessing()
 
     expect(deleteFunction.callCount).to.equal(1)
 
@@ -99,10 +92,7 @@ describe('asymmetric messages', function () {
 
     await sendContactSharePromise
 
-    const completedProcessingMessagesPromise = contactContext.resolveWhenAsymmetricMessageProcessingCompletes()
-
-    await contactContext.sync()
-    await completedProcessingMessagesPromise
+    await contactContext.syncAndAwaitMessageProcessing()
 
     const updatedContact = contactContext.contacts.findContact(thirdPartyContext.userUuid)
     expect(updatedContact.name).to.equal('Changed 3rd Party Name')
@@ -115,7 +105,10 @@ describe('asymmetric messages', function () {
     const { sharedVault, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithAcceptedInvite(context)
 
-    const handleInitialContactShareMessage = contactContext.resolveWhenAsymmetricMessageProcessingCompletes()
+    const handleInitialContactShareMessage = contactContext.resolveWhenAsyncFunctionCompletes(
+      contactContext.asymmetric,
+      'handleRemoteReceivedAsymmetricMessages',
+    )()
 
     const { thirdPartyContext, deinitThirdPartyContext } = await Collaboration.inviteNewPartyToSharedVault(
       context,
@@ -247,17 +240,13 @@ describe('asymmetric messages', function () {
 
     contactContext.lockSyncing()
 
-    const sendPromise = context.resolveWhenAsyncFunctionCompletes(context.sharedVaults._handleKeyPairChange, 'execute')
     await context.changePassword('new password')
-    await sendPromise
 
     const firstPartySpy = sinon.spy(context.asymmetric, 'handleTrustedSenderKeypairChangedMessage')
     const secondPartySpy = sinon.spy(contactContext.asymmetric, 'handleTrustedSenderKeypairChangedMessage')
 
-    const completedProcessingMessagesPromise = contactContext.resolveWhenAsymmetricMessageProcessingCompletes()
     contactContext.unlockSyncing()
-    await contactContext.sync()
-    await completedProcessingMessagesPromise
+    await contactContext.syncAndAwaitMessageProcessing()
 
     expect(firstPartySpy.callCount).to.equal(0)
     expect(secondPartySpy.callCount).to.equal(1)
@@ -280,9 +269,7 @@ describe('asymmetric messages', function () {
       description: 'New Description',
     })
 
-    const completedProcessingMessagesPromise = contactContext.resolveWhenAsymmetricMessageProcessingCompletes()
-    await contactContext.sync()
-    await completedProcessingMessagesPromise
+    await contactContext.syncAndAwaitMessageProcessing()
 
     const updatedVault = contactContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })
     expect(updatedVault.name).to.equal('New Name')
@@ -308,9 +295,7 @@ describe('asymmetric messages', function () {
 
     context.lockSyncing()
 
-    const completedProcessingMessagesPromise = contactContext.resolveWhenAsymmetricMessageProcessingCompletes()
-    await contactContext.sync()
-    await completedProcessingMessagesPromise
+    await contactContext.syncAndAwaitMessageProcessing()
 
     /**
      * There's really no good way to await the exact call since
@@ -332,9 +317,7 @@ describe('asymmetric messages', function () {
 
     await context.changePassword('new_password')
 
-    const completedProcessingMessagesPromise = contactContext.resolveWhenAsymmetricMessageProcessingCompletes()
-    await contactContext.sync()
-    await completedProcessingMessagesPromise
+    await contactContext.syncAndAwaitMessageProcessing()
 
     const updatedContact = contactContext.contacts.findContact(context.userUuid)
 
@@ -358,9 +341,7 @@ describe('asymmetric messages', function () {
     const secondPartySpy = sinon.spy(contactContext.asymmetric, 'handleTrustedSenderKeypairChangedMessage')
 
     await context.sync()
-    const completedProcessingMessagesPromise = contactContext.resolveWhenAsymmetricMessageProcessingCompletes()
-    await contactContext.sync()
-    await completedProcessingMessagesPromise
+    await contactContext.syncAndAwaitMessageProcessing()
 
     const message = secondPartySpy.args[0][0]
     const encryptedMessage = message.encrypted_message
@@ -382,9 +363,7 @@ describe('asymmetric messages', function () {
     const newKeyPair = context.encryption.getKeyPair()
     const newSigningKeyPair = context.encryption.getSigningKeyPair()
 
-    const completedProcessingMessagesPromise = contactContext.resolveWhenAsymmetricMessageProcessingCompletes()
-    await contactContext.sync()
-    await completedProcessingMessagesPromise
+    await contactContext.syncAndAwaitMessageProcessing()
 
     const updatedContact = contactContext.contacts.findContact(context.userUuid)
     expect(updatedContact.publicKeySet.encryption).to.equal(newKeyPair.publicKey)
@@ -466,10 +445,8 @@ describe('asymmetric messages', function () {
     expect(messages.isFailed()).to.be.false
     expect(messages.getValue().length).to.equal(2)
 
-    const completedProcessingMessagesPromise = contactContext.resolveWhenAsymmetricMessageProcessingCompletes()
     contactContext.unlockSyncing()
-    await contactContext.sync()
-    await completedProcessingMessagesPromise
+    await contactContext.syncAndAwaitMessageProcessing()
 
     const invites = contactContext.vaultInvites.getCachedPendingInviteRecords()
     expect(invites.length).to.equal(1)

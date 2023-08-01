@@ -154,10 +154,8 @@ describe('vault key rotation', function () {
     await context.vaults.rotateVaultRootKey(sharedVault)
     await promise
 
-    const contactPromise = contactContext.resolveWhenAsymmetricMessageProcessingCompletes()
     contactContext.unlockSyncing()
-    await contactContext.sync()
-    await contactPromise
+    await contactContext.syncAndAwaitMessageProcessing()
 
     const newPrimaryItemsKey = contactContext.keys.getPrimaryKeySystemItemsKey(sharedVault.systemIdentifier)
     expect(newPrimaryItemsKey).to.not.be.undefined

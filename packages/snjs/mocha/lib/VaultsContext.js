@@ -18,4 +18,20 @@ export class VaultsContext extends AppContext {
 
     await this.awaitPromiseOrThrow(sendDataChangePromise)
   }
+
+  async changePassword(password) {
+    const promise = this.resolveWhenAsyncFunctionCompletes(this.sharedVaults._handleKeyPairChange, 'execute')
+
+    await super.changePassword(password)
+
+    await this.awaitPromiseOrThrow(promise)
+  }
+
+  async syncAndAwaitMessageProcessing() {
+    const promise = this.resolveWhenAsyncFunctionCompletes(this.asymmetric, 'handleRemoteReceivedAsymmetricMessages')
+
+    await this.sync()
+
+    await this.awaitPromiseOrThrow(promise)
+  }
 }
