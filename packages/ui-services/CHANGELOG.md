@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.28.21](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.28.20...@standardnotes/ui-services@1.28.21) (2023-07-31)
+
+### Bug Fixes
+
+* Fixed issue on iOS where status bar colors would not adjust according to the theme ([9e95774](https://github.com/standardnotes/app/commit/9e957742038474c0845f0fe590a985ed4c6edde7))
+
 ## [1.28.20](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.28.19...@standardnotes/ui-services@1.28.20) (2023-07-31)
 
 **Note:** Version bump only for package @standardnotes/ui-services

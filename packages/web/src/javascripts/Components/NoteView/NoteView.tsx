@@ -932,6 +932,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
                     notesController={this.viewControllerManager.notesController}
                     linkingController={this.viewControllerManager.linkingController}
                     historyModalController={this.viewControllerManager.historyModalController}
+                    selectionController={this.viewControllerManager.selectionController}
                     onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
                   />
                 </div>

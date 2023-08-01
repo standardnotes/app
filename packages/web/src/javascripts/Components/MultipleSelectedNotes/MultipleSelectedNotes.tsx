@@ -51,6 +51,7 @@ const MultipleSelectedNotes = ({
             notesController={notesController}
             linkingController={linkingController}
             historyModalController={historyModalController}
+            selectionController={selectionController}
           />
         </div>
       </div>

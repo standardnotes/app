@@ -1,6 +1,50 @@
 {
   "versions": [
     {
+      "version": "3.167.27",
+      "title": "[3.167.27](https://github.com/standardnotes/app/compare/@standardnotes/web@3.167.26...@standardnotes/web@3.167.27) (2023-08-01)",
+      "date": null,
+      "body": "**Note:** Version bump only for package @standardnotes/web",
+      "parsed": {
+        "_": [
+          "Note: Version bump only for package @standardnotes/web"
+        ]
+      }
+    },
+    {
+      "version": "3.167.26",
+      "title": "[3.167.26](https://github.com/standardnotes/app/compare/@standardnotes/web@3.167.25...@standardnotes/web@3.167.26) (2023-08-01)",
+      "date": null,
+      "body": "**Note:** Version bump only for package @standardnotes/web",
+      "parsed": {
+        "_": [
+          "Note: Version bump only for package @standardnotes/web"
+        ]
+      }
+    },
+    {
+      "version": "3.167.25",
+      "title": "[3.167.25](https://github.com/standardnotes/app/compare/@standardnotes/web@3.167.24...@standardnotes/web@3.167.25) (2023-08-01)",
+      "date": null,
+      "body": "**Note:** Version bump only for package @standardnotes/web",
+      "parsed": {
+        "_": [
+          "Note: Version bump only for package @standardnotes/web"
+        ]
+      }
+    },
+    {
+      "version": "3.167.24",
+      "title": "[3.167.24](https://github.com/standardnotes/app/compare/@standardnotes/web@3.167.23...@standardnotes/web@3.167.24) (2023-07-31)",
+      "date": null,
+      "body": "**Note:** Version bump only for package @standardnotes/web",
+      "parsed": {
+        "_": [
+          "Note: Version bump only for package @standardnotes/web"
+        ]
+      }
+    },
+    {
       "version": "3.167.23",
       "title": "[3.167.23](https://github.com/standardnotes/app/compare/@standardnotes/web@3.167.22...@standardnotes/web@3.167.23) (2023-07-31)",
       "date": null,
