@@ -29,7 +29,7 @@ describe('shared vault files', function () {
   })
 
   describe('private vaults', () => {
-    it('should be able to upload and download file to vault as owner', async () => {
+    it('should be able to upload and download file to private vault as owner', async () => {
       const vault = await Collaboration.createPrivateVault(context)
       const response = await fetch('/mocha/assets/small_file.md')
       const buffer = new Uint8Array(await response.arrayBuffer())
@@ -45,7 +45,7 @@ describe('shared vault files', function () {
     })
   })
 
-  it('should be able to upload and download file to vault as owner', async () => {
+  it('should be able to upload and download file to shared vault as owner', async () => {
     const sharedVault = await Collaboration.createSharedVault(context)
     const response = await fetch('/mocha/assets/small_file.md')
     const buffer = new Uint8Array(await response.arrayBuffer())

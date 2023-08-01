@@ -946,6 +946,7 @@ export class Dependencies {
         this.get(TYPES.AlertService),
         this.get(TYPES.Crypto),
         this.get(TYPES.InternalEventBus),
+        this.get(TYPES.Logger),
         this.get(TYPES.FilesBackupService),
       )
     })
