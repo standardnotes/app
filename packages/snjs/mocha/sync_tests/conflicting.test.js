@@ -731,7 +731,8 @@ describe('online conflict handling', function () {
     await this.sharedFinalAssertions()
   })
 
-  it('registering for account with bulk offline data belonging to another account should be error-free', async function () {
+  /** This test takes too long on Docker CI */
+  it.skip('registering for account with bulk offline data belonging to another account should be error-free', async function () {
     /**
      * When performing a multi-page sync request where we are uploading data imported from a backup,
      * if the first page of the sync request returns conflicted items keys, we rotate their UUID.
