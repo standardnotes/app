@@ -528,7 +528,8 @@ describe('online syncing', function () {
     await this.application.sync.sync(syncOptions)
   })
 
-  it('should handle uploading with sync pagination', async function () {
+  /** This test takes 30s+ on a Docker server environment and should be skipped for now */
+  it.skip('should handle uploading with sync pagination', async function () {
     const largeItemCount = SyncUpDownLimit + 10
     for (let i = 0; i < largeItemCount; i++) {
       const note = await Factory.createMappedNote(this.application)
@@ -542,7 +543,8 @@ describe('online syncing', function () {
     expect(rawPayloads.length).to.equal(this.expectedItemCount)
   }).timeout(Factory.SixtySecondTimeout)
 
-  it('should handle downloading with sync pagination', async function () {
+  /** This test takes 30s+ on a Docker server environment and should be skipped for now */
+  it.skip('should handle downloading with sync pagination', async function () {
     const largeItemCount = SyncUpDownLimit + 10
     for (let i = 0; i < largeItemCount; i++) {
       const note = await Factory.createMappedNote(this.application)

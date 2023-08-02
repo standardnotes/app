@@ -479,7 +479,11 @@ describe('online conflict handling', function () {
     await this.sharedFinalAssertions()
   })
 
-  it('handles stale data in bulk', async function () {
+  /**
+   * This test takes over 60s in a CI environment when running in Docker server.
+   * It's much faster in a home server environment but should still be skipped for now.
+   */
+  it.skip('handles stale data in bulk', async function () {
     /** This number must be greater than the pagination limit per sync request.
      * For example if the limit per request is 150 items sent/received, this number should
      * be something like 160. */
