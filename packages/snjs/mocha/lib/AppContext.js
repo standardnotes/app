@@ -693,21 +693,21 @@ export class AppContext {
         payAmount: 59.0,
       })
 
-      await Utils.sleep(2)
+      await Utils.sleep(2, 'Waiting for premium features to be activated')
     } catch (error) {
       console.warn(
         `Mock events service not available. You are probably running a test suite for home server: ${error.message}`,
       )
-    }
 
-    try {
-      await HomeServer.activatePremiumFeatures(this.email, options.subscriptionPlanName, options.expiresAt)
+      try {
+        await HomeServer.activatePremiumFeatures(this.email, options.subscriptionPlanName, options.expiresAt)
 
-      await Utils.sleep(1, 'Waiting for premium features to be activated')
-    } catch (error) {
-      console.warn(
-        `Home server not available. You are probably running a test suite for self hosted setup: ${error.message}`,
-      )
+        await Utils.sleep(1, 'Waiting for premium features to be activated')
+      } catch (error) {
+        console.warn(
+          `Home server not available. You are probably running a test suite for self hosted setup: ${error.message}`,
+        )
+      }
     }
   }
 }
