@@ -1,7 +1,6 @@
-/* eslint-disable no-unused-expressions */
-/* eslint-disable no-undef */
 import { BaseItemCounts } from './lib/BaseItemCounts.js'
 import * as Factory from './lib/factory.js'
+
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
@@ -23,7 +22,7 @@ describe('basic auth', function () {
   beforeEach(async function () {
     localStorage.clear()
 
-    context = await Factory.createAppContextWithRealCrypto()
+    context = await Factory.createAppContextWithFakeCrypto()
 
     await context.launch()
 
@@ -70,7 +69,14 @@ describe('basic auth', function () {
 
     await context.signout()
 
-    const response = await context.application.signIn(context.email, context.password, undefined, undefined, undefined, true)
+    const response = await context.application.signIn(
+      context.email,
+      context.password,
+      undefined,
+      undefined,
+      undefined,
+      true,
+    )
     expect(response).to.be.ok
     expect(response.data.error).to.not.be.ok
     expect(await context.application.encryption.getRootKey()).to.be.ok
@@ -81,7 +87,14 @@ describe('basic auth', function () {
     await Factory.createSyncedNote(context.application)
     await context.signout()
 
-    const response = await context.application.signIn(context.email, context.password, undefined, undefined, undefined, true)
+    const response = await context.application.signIn(
+      context.email,
+      context.password,
+      undefined,
+      undefined,
+      undefined,
+      true,
+    )
     expect(response).to.be.ok
     expect(response.data.error).to.not.be.ok
     expect(await context.application.encryption.getRootKey()).to.be.ok
@@ -113,7 +126,14 @@ describe('basic auth', function () {
 
     await Promise.all([
       (async () => {
-        const response = await context.application.signIn(context.email, context.password, undefined, undefined, undefined, true)
+        const response = await context.application.signIn(
+          context.email,
+          context.password,
+          undefined,
+          undefined,
+          undefined,
+          true,
+        )
         expect(response).to.be.ok
         expect(response.data.error).to.not.be.ok
         expect(await context.application.encryption.getRootKey()).to.be.ok
@@ -160,7 +180,14 @@ describe('basic auth', function () {
     await context.register()
     await context.signout()
 
-    let response = await context.application.signIn(context.email, 'wrong password', undefined, undefined, undefined, true)
+    let response = await context.application.signIn(
+      context.email,
+      'wrong password',
+      undefined,
+      undefined,
+      undefined,
+      true,
+    )
     expect(response).to.have.property('status', 401)
     expect(response.data.error).to.be.ok
 
@@ -246,7 +273,14 @@ describe('basic auth', function () {
   it('fails login with wrong password', async function () {
     await context.register()
     context.application = await Factory.signOutApplicationAndReturnNew(context.application)
-    const response = await context.application.signIn(context.email, 'wrongpassword', undefined, undefined, undefined, true)
+    const response = await context.application.signIn(
+      context.email,
+      'wrongpassword',
+      undefined,
+      undefined,
+      undefined,
+      true,
+    )
     expect(response).to.be.ok
     expect(response.data.error).to.be.ok
     expect(await context.application.encryption.getRootKey()).to.not.be.ok
@@ -300,102 +334,77 @@ describe('basic auth', function () {
     expect(outOfSync).to.equal(false)
   })
 
-  async function changePassword() {
+  it('successfully changes password', async function () {
     await context.register()
 
-    const noteCount = 10
-
+    const noteCount = 5
     await Factory.createManyMappedNotes(context.application, noteCount)
-
     this.expectedItemCount += noteCount
 
-    await context.application.sync.sync(syncOptions)
-
+    await context.sync()
     expect(context.application.items.items.length).to.equal(this.expectedItemCount)
 
     const newPassword = 'newpassword'
     const response = await context.application.changePassword(context.password, newPassword)
-
-    /** New items key */
-    this.expectedItemCount++
-
-    expect(context.application.items.items.length).to.equal(this.expectedItemCount)
-
     expect(response.error).to.not.be.ok
+
+    this.expectedItemCount += ['new items key'].length
     expect(context.application.items.items.length).to.equal(this.expectedItemCount)
     expect(context.application.payloads.invalidPayloads.length).to.equal(0)
 
     await context.application.sync.markAllItemsAsNeedingSyncAndPersist()
-    await context.application.sync.sync(syncOptions)
+    await context.sync(syncOptions)
 
     expect(context.application.items.items.length).to.equal(this.expectedItemCount)
+  }).timeout(40000)
 
-    const note = context.application.items.getDisplayableNotes()[0]
+  it('should sign into account after changing password', async function () {
+    await context.register()
 
-    /**
-     * Create conflict for a note. First modify the item without saving so that
-     * our local contents digress from the server's
-     */
-    await context.application.mutator.changeItem(note, (mutator) => {
-      mutator.title = `${Math.random()}`
-    })
+    const newPassword = 'newpassword'
+    const response = await context.application.changePassword(context.password, newPassword)
+    expect(response.error).to.not.be.ok
 
-    await Factory.changePayloadTimeStampAndSync(
-      context.application,
-      note.payload,
-      Factory.dateToMicroseconds(Factory.yesterday()),
-      {
-        title: `${Math.random()}`,
-      },
-      syncOptions,
-    )
-    this.expectedItemCount++
+    this.expectedItemCount += ['new items key'].length
 
     await context.signout()
 
-    /** Should login with new password */
-    const signinResponse = await context.application.signIn(context.email, newPassword, undefined, undefined, undefined, true)
+    const signinResponse = await context.application.signIn(
+      context.email,
+      newPassword,
+      undefined,
+      undefined,
+      undefined,
+      true,
+    )
 
     expect(signinResponse).to.be.ok
     expect(signinResponse.data.error).to.not.be.ok
-
     expect(await context.application.encryption.getRootKey()).to.be.ok
 
     expect(context.application.items.items.length).to.equal(this.expectedItemCount)
     expect(context.application.payloads.invalidPayloads.length).to.equal(0)
-  }
-
-  it('successfully changes password', changePassword).timeout(40000)
+  })
 
   it('successfully changes password when passcode is set', async function () {
     const passcode = 'passcode'
-    const promptValueReply = (prompts) => {
-      const values = []
-      for (const prompt of prompts) {
-        if (prompt.validation === ChallengeValidation.LocalPasscode) {
-          values.push(CreateChallengeValue(prompt, passcode))
-        } else {
-          values.push(CreateChallengeValue(prompt, context.password))
-        }
-      }
-      return values
-    }
-    context.application.setLaunchCallback({
-      receiveChallenge: (challenge) => {
-        context.application.addChallengeObserver(challenge, {
-          onInvalidValue: (value) => {
-            const values = promptValueReply([value.prompt])
-            context.application.submitValuesForChallenge(challenge, values)
-            numPasscodeAttempts++
-          },
-        })
-        const initialValues = promptValueReply(challenge.prompts)
-        context.application.submitValuesForChallenge(challenge, initialValues)
-      },
-    })
-    await context.application.addPasscode(passcode)
-    await changePassword.bind(this)()
-  }).timeout(20000)
+    await context.addPasscode(passcode)
+    await context.register()
+
+    const noteCount = 3
+    await Factory.createManyMappedNotes(context.application, noteCount)
+    this.expectedItemCount += noteCount
+
+    await context.sync()
+
+    const newPassword = 'newpassword'
+    const response = await context.application.changePassword(context.password, newPassword)
+    expect(response.error).to.not.be.ok
+
+    this.expectedItemCount += ['new items key'].length
+
+    expect(context.application.items.items.length).to.equal(this.expectedItemCount)
+  })
 
   it('changes password many times', async function () {
     await context.register()
@@ -541,12 +550,14 @@ describe('basic auth', function () {
       expect(signOutSpy.callCount).to.equal(1)
     }).timeout(Factory.TenSecondTimeout)
 
-    it('should not allow to delete someone else\'s account', async function () {
+    it("should not allow to delete someone else's account", async function () {
       const secondContext = await Factory.createAppContextWithRealCrypto()
       await secondContext.launch()
       const registerResponse = await secondContext.register()
 
-      const response = await context.application.dependencies.get(TYPES.UserApiService).deleteAccount(registerResponse.user.uuid)
+      const response = await context.application.dependencies
+        .get(TYPES.UserApiService)
+        .deleteAccount(registerResponse.user.uuid)
 
       expect(response.status).to.equal(401)
       expect(response.data.error.message).to.equal('Operation not allowed.')

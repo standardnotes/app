@@ -226,6 +226,12 @@ export class AppContext {
     return this.application.register(this.email, this.password)
   }
 
+  async addPasscode(passcode) {
+    this.passcode = passcode
+
+    await this.application.addPasscode(passcode)
+  }
+
   receiveServerResponse({ retrievedItems }) {
     const response = new ServerSyncResponse({
       data: {
