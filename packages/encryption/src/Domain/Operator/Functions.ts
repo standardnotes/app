@@ -16,6 +16,6 @@ export function createOperatorForVersion(version: ProtocolVersion, crypto: PureC
   } else if (version === ProtocolVersion.V004) {
     return new SNProtocolOperator004(crypto)
   } else {
-    throw Error(`Unable to find operator for version ${version}`)
+    throw Error(`Unable to find operator for version ${version as string}`)
   }
 }

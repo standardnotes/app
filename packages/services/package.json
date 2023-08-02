@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/services",
-  "version": "1.63.9",
+  "version": "1.63.20",
   "engines": {
     "node": ">=16.0.0 <17.0.0"
   },
@@ -8,7 +8,7 @@
   "main": "./src/index.ts",
   "author": "Standard Notes",
   "private": true,
-  "license": "AGPL-3.0-or-later",
+  "license": "CC BY-NC-SA 4.0",
   "scripts": {
     "tsc": "tsc --project tsconfig.json",
     "lint": "eslint src --ext .ts && yarn tsc",
@@ -18,7 +18,7 @@
   "dependencies": {
     "@standardnotes/api": "workspace:^",
     "@standardnotes/common": "^1.50.0",
-    "@standardnotes/domain-core": "^1.22.0",
+    "@standardnotes/domain-core": "^1.24.0",
     "@standardnotes/encryption": "workspace:^",
     "@standardnotes/features": "workspace:^",
     "@standardnotes/files": "workspace:^",
@@ -33,7 +33,7 @@
     "@types/node": "^20.2.5",
     "@typescript-eslint/eslint-plugin": "*",
     "@typescript-eslint/parser": "*",
-    "eslint": "^8.27.0",
+    "eslint": "*",
     "eslint-plugin-prettier": "*",
     "jest": "^29.3.1",
     "ts-jest": "^29.0.3",

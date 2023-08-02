@@ -1,8 +1,8 @@
-import { SharedVaultPermission } from '@standardnotes/responses'
+import { SharedVaultUserPermission } from '@standardnotes/domain-core'
 
 export type UpdateSharedVaultInviteParams = {
   sharedVaultUuid: string
   inviteUuid: string
   encryptedMessage: string
-  permissions?: SharedVaultPermission
+  permission?: SharedVaultUserPermission
 }

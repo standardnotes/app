@@ -11,7 +11,7 @@ import {
 import { ContentType } from '@standardnotes/domain-core'
 import { AlertService, InternalEventBusInterface } from '@standardnotes/services'
 import { MutatorService, PayloadManager, ItemManager } from '../'
-import { UuidGenerator } from '@standardnotes/utils'
+import { UuidGenerator, sleep, LoggerInterface } from '@standardnotes/utils'
 
 const setupRandomUuid = () => {
   UuidGenerator.SetGenerator(() => String(Math.random()))
@@ -23,13 +23,17 @@ describe('mutator service', () => {
   let itemManager: ItemManager
 
   let internalEventBus: InternalEventBusInterface
+  let logger: LoggerInterface
 
   beforeEach(() => {
     setupRandomUuid()
     internalEventBus = {} as jest.Mocked<InternalEventBusInterface>
     internalEventBus.publish = jest.fn()
 
-    payloadManager = new PayloadManager(internalEventBus)
+    logger = {} as jest.Mocked<LoggerInterface>
+    logger.debug = jest.fn()
+
+    payloadManager = new PayloadManager(logger, internalEventBus)
     itemManager = new ItemManager(payloadManager, internalEventBus)
 
     const alerts = {} as jest.Mocked<AlertService>
@@ -64,6 +68,14 @@ describe('mutator service', () => {
       )
 
       expect(note.userModifiedDate).toEqual(pinnedNote?.userModifiedDate)
+    })
+
+    it('should update the modification date of duplicated notes', async () => {
+      const note = await insertNote('hello')
+      await sleep(1, false, 'Delaying duplication by 1ms to create unique timestamps')
+      const duplicatedNote = await mutatorService.duplicateItem(note)
+
+      expect(duplicatedNote.userModifiedDate.getTime()).toBeGreaterThan(note.userModifiedDate.getTime())
     })
   })
 

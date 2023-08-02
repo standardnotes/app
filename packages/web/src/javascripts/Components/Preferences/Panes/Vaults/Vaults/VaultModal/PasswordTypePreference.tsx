@@ -1,22 +1,22 @@
-import { KeySystemRootKeyPasswordType } from '@standardnotes/snjs'
+import { KeySystemPasswordType } from '@standardnotes/snjs'
 import StyledRadioInput from '@/Components/Radio/StyledRadioInput'
 import DecoratedPasswordInput from '@/Components/Input/DecoratedPasswordInput'
 import { useState } from 'react'
 
 type PasswordTypePreference = {
-  value: KeySystemRootKeyPasswordType
+  value: KeySystemPasswordType
   label: string
   description: string
 }
 
 const options: PasswordTypePreference[] = [
   {
-    value: KeySystemRootKeyPasswordType.Randomized,
+    value: KeySystemPasswordType.Randomized,
     label: 'Randomized (Recommended)',
     description: 'Your vault key will be randomly generated and synced to your account.',
   },
   {
-    value: KeySystemRootKeyPasswordType.UserInputted,
+    value: KeySystemPasswordType.UserInputted,
     label: 'Custom (Advanced)',
     description:
       'Choose your own key for your vault. This is an advanced option and is not recommended for most users.',
@@ -28,8 +28,8 @@ export const PasswordTypePreference = ({
   onChange,
   onCustomKeyChange,
 }: {
-  value: KeySystemRootKeyPasswordType
-  onChange: (value: KeySystemRootKeyPasswordType) => void
+  value: KeySystemPasswordType
+  onChange: (value: KeySystemPasswordType) => void
   onCustomKeyChange: (value: string) => void
 }) => {
   const [customKey, setCustomKey] = useState('')
@@ -57,7 +57,7 @@ export const PasswordTypePreference = ({
         )
       })}
 
-      {value === KeySystemRootKeyPasswordType.UserInputted && (
+      {value === KeySystemPasswordType.UserInputted && (
         <div>
           <div className="text-gray-500 mt-3 text-sm">{options[1].description}</div>
 

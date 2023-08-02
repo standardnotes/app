@@ -29,6 +29,7 @@ import BoldIcon from './ic-bold.svg'
 import BoxFilledIcon from './ic-box-filled.svg'
 import BoxIcon from './ic-box.svg'
 import CameraIcon from './ic-camera.svg'
+import CaretRightIcon from './ic-caret-right.svg'
 import CheckAllIcon from './ic-check-all.svg'
 import CheckBoldIcon from './ic-check-bold.svg'
 import CheckCircleFilledIcon from './ic-check-circle-filled.svg'
@@ -242,6 +243,7 @@ export {
   BoxFilledIcon,
   BoxIcon,
   CameraIcon,
+  CaretRightIcon,
   CheckAllIcon,
   CheckBoldIcon,
   CheckCircleFilledIcon,

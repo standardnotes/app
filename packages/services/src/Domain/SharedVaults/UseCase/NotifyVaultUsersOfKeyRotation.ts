@@ -70,7 +70,7 @@ export class NotifyVaultUsersOfKeyRotation implements UseCaseInterface<void> {
         sharedVault: params.sharedVault,
         sharedVaultContacts: !contacts.isFailed() ? contacts.getValue() : [],
         recipient: recipient.getValue(),
-        permissions: invite.permissions,
+        permission: invite.permission,
         senderUuid: params.senderUuid,
       })
     }
@@ -99,7 +99,7 @@ export class NotifyVaultUsersOfKeyRotation implements UseCaseInterface<void> {
     })
 
     if (isErrorResponse(response)) {
-      return Result.fail(`Failed to delete existing invites ${response}`)
+      return Result.fail(`Failed to delete existing invites ${JSON.stringify(response)}`)
     }
 
     return Result.ok()
@@ -109,7 +109,7 @@ export class NotifyVaultUsersOfKeyRotation implements UseCaseInterface<void> {
     const response = await this.inviteServer.getOutboundUserInvites()
 
     if (isErrorResponse(response)) {
-      return Result.fail(`Failed to get outbound user invites ${response}`)
+      return Result.fail(`Failed to get outbound user invites ${JSON.stringify(response)}`)
     }
 
     const invites = response.data.invites

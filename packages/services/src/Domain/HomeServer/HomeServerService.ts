@@ -170,6 +170,9 @@ export class HomeServerService
     let location = await this.getHomeServerDataLocation()
     if (!location) {
       const documentsDirectory = await this.desktopDevice.getUserDocumentsDirectory()
+      if (!documentsDirectory) {
+        return
+      }
       location = `${documentsDirectory}/${this.HOME_SERVER_DATA_DIRECTORY_NAME}`
     }
 

@@ -18,7 +18,7 @@ describe('shared vault deletion', function () {
   beforeEach(async function () {
     localStorage.clear()
 
-    context = await Factory.createAppContextWithRealCrypto()
+    context = await Factory.createVaultsContextWithRealCrypto()
 
     await context.launch()
     await context.register()
@@ -102,7 +102,7 @@ describe('shared vault deletion', function () {
 
   it('leaving a shared vault should remove its items locally', async () => {
     const { sharedVault, note, contactContext, deinitContactContext } =
-      await Collaboration.createSharedVaultWithAcceptedInviteAndNote(context, SharedVaultPermission.Admin)
+      await Collaboration.createSharedVaultWithAcceptedInviteAndNote(context, SharedVaultUserPermission.PERMISSIONS.Admin)
 
     const originalNote = contactContext.items.findItem(note.uuid)
     expect(originalNote).to.not.be.undefined

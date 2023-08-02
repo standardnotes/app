@@ -18,7 +18,7 @@ describe('public key cryptography', function () {
   beforeEach(async function () {
     localStorage.clear()
 
-    context = await Factory.createAppContextWithRealCrypto()
+    context = await Factory.createVaultsContextWithRealCrypto()
 
     await context.launch()
     await context.register()
@@ -40,7 +40,7 @@ describe('public key cryptography', function () {
     const password = context.password
     await context.signout()
 
-    const recreatedContext = await Factory.createAppContextWithRealCrypto()
+    const recreatedContext = await Factory.createVaultsContextWithRealCrypto()
     await recreatedContext.launch()
     recreatedContext.email = email
     recreatedContext.password = password
@@ -51,6 +51,8 @@ describe('public key cryptography', function () {
 
     expect(recreatedContext.sessions.getSigningPublicKey()).to.not.be.undefined
     expect(recreatedContext.encryption.getSigningKeyPair().privateKey).to.not.be.undefined
+
+    await recreatedContext.deinit()
   })
 
   it('should rotate keypair during password change', async () => {
@@ -74,7 +76,7 @@ describe('public key cryptography', function () {
   })
 
   it('should allow option to enable collaboration for previously signed in accounts', async () => {
-    const newContext = await Factory.createAppContextWithRealCrypto()
+    const newContext = await Factory.createVaultsContextWithRealCrypto()
     await newContext.launch()
 
     await newContext.register()
@@ -94,5 +96,7 @@ describe('public key cryptography', function () {
     expect(result.error).to.be.undefined
 
     expect(newContext.application.sessions.isUserMissingKeyPair()).to.be.false
+
+    await newContext.deinit()
   })
 })

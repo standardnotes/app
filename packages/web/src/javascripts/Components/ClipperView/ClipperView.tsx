@@ -15,7 +15,7 @@ import {
   ApplicationEvent,
   ContentType,
   DecryptedItem,
-  FeatureIdentifier,
+  NativeFeatureIdentifier,
   FeatureStatus,
   NoteContent,
   NoteType,
@@ -61,7 +61,10 @@ const ClipperView = ({
 
   const [user, setUser] = useState(() => application.getUser())
   const [isEntitledToExtension, setIsEntitled] = useState(
-    () => application.features.getFeatureStatus(FeatureIdentifier.Extension) === FeatureStatus.Entitled,
+    () =>
+      application.features.getFeatureStatus(
+        NativeFeatureIdentifier.create(NativeFeatureIdentifier.TYPES.Clipper).getValue(),
+      ) === FeatureStatus.Entitled,
   )
   const isEntitledRef = useStateRef(isEntitledToExtension)
   const hasSubscription = application.hasValidFirstPartySubscription()
@@ -72,10 +75,18 @@ const ClipperView = ({
         case ApplicationEvent.SignedOut:
         case ApplicationEvent.UserRolesChanged:
           setUser(application.getUser())
-          setIsEntitled(application.features.getFeatureStatus(FeatureIdentifier.Extension) === FeatureStatus.Entitled)
+          setIsEntitled(
+            application.features.getFeatureStatus(
+              NativeFeatureIdentifier.create(NativeFeatureIdentifier.TYPES.Clipper).getValue(),
+            ) === FeatureStatus.Entitled,
+          )
           break
         case ApplicationEvent.FeaturesAvailabilityChanged:
-          setIsEntitled(application.features.getFeatureStatus(FeatureIdentifier.Extension) === FeatureStatus.Entitled)
+          setIsEntitled(
+            application.features.getFeatureStatus(
+              NativeFeatureIdentifier.create(NativeFeatureIdentifier.TYPES.Clipper).getValue(),
+            ) === FeatureStatus.Entitled,
+          )
           break
       }
     })
@@ -212,7 +223,7 @@ const ClipperView = ({
       const note = application.items.createTemplateItem<NoteContent, SNNote>(ContentType.TYPES.Note, {
         title: clipPayload.title,
         text: editorStateJSON,
-        editorIdentifier: FeatureIdentifier.SuperEditor,
+        editorIdentifier: NativeFeatureIdentifier.TYPES.SuperEditor,
         noteType: NoteType.Super,
         references: [],
       })

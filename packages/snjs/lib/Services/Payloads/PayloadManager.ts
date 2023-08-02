@@ -1,6 +1,6 @@
 import { ContentType } from '@standardnotes/domain-core'
 import { PayloadsChangeObserver, QueueElement, PayloadsChangeObserverCallback, EmitQueue } from './Types'
-import { removeFromArray, Uuids } from '@standardnotes/utils'
+import { LoggerInterface, removeFromArray, Uuids } from '@standardnotes/utils'
 import {
   DeltaFileImport,
   isDeletedPayload,
@@ -42,7 +42,10 @@ export class PayloadManager extends AbstractService implements PayloadManagerInt
   public collection: PayloadCollection<FullyFormedPayloadInterface>
   private emitQueue: EmitQueue<FullyFormedPayloadInterface> = []
 
-  constructor(protected override internalEventBus: InternalEventBusInterface) {
+  constructor(
+    private logger: LoggerInterface,
+    protected override internalEventBus: InternalEventBusInterface,
+  ) {
     super(internalEventBus)
     this.collection = new PayloadCollection()
   }
@@ -183,7 +186,7 @@ export class PayloadManager extends AbstractService implements PayloadManagerInt
         continue
       }
 
-      this.log(
+      this.logger.debug(
         'applying payload',
         apply.uuid,
         'globalDirtyIndexAtLastSync',
@@ -286,13 +289,11 @@ export class PayloadManager extends AbstractService implements PayloadManagerInt
   /**
    * Imports an array of payloads from an external source (such as a backup file)
    * and marks the items as dirty.
-   * @returns Resulting items
    */
-  public async importPayloads(payloads: DecryptedPayloadInterface[], historyMap: HistoryMap): Promise<string[]> {
+  public async importPayloads(payloads: FullyFormedPayloadInterface[], historyMap: HistoryMap): Promise<string[]> {
     const sourcedPayloads = payloads.map((p) => p.copy(undefined, PayloadSource.FileImport))
 
     const delta = new DeltaFileImport(this.getMasterCollection(), sourcedPayloads, historyMap)
-
     const emit = delta.result()
 
     await this.emitDeltaEmit(emit)

@@ -17,7 +17,7 @@ describe('shared vault conflicts', function () {
   beforeEach(async function () {
     localStorage.clear()
 
-    context = await Factory.createAppContextWithRealCrypto()
+    context = await Factory.createVaultsContextWithRealCrypto()
 
     await context.launch()
     await context.register()
@@ -81,7 +81,7 @@ describe('shared vault conflicts', function () {
 
   it('attempting to modify note as read user should result in SharedVaultInsufficientPermissionsError', async () => {
     const { note, contactContext, deinitContactContext } =
-      await Collaboration.createSharedVaultWithAcceptedInviteAndNote(context, SharedVaultPermission.Read)
+      await Collaboration.createSharedVaultWithAcceptedInviteAndNote(context, SharedVaultUserPermission.PERMISSIONS.Read)
 
     const promise = contactContext.resolveWithConflicts()
     await contactContext.changeNoteTitleAndSync(note, 'new title')
@@ -123,8 +123,9 @@ describe('shared vault conflicts', function () {
     sinon.stub(objectToSpy, 'payloadsByPreparingForServer').callsFake(async (params) => {
       objectToSpy.payloadsByPreparingForServer.restore()
       const payloads = await objectToSpy.payloadsByPreparingForServer(params)
+      const nonExistentSharedVaultUuid = '00000000-0000-0000-0000-000000000000'
       for (const payload of payloads) {
-        payload.shared_vault_uuid = 'non-existent-vault-uuid-123'
+        payload.shared_vault_uuid = nonExistentSharedVaultUuid
       }
 
       return payloads

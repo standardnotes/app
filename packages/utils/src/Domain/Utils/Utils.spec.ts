@@ -1,11 +1,46 @@
 import * as DOMPurifyLib from 'dompurify'
 import { JSDOM } from 'jsdom'
-import { sortByKey, withoutLastElement } from './Utils'
+import { sortByKey, withoutLastElement, compareArrayReferences } from './Utils'
 
 const window = new JSDOM('').window
 const DOMPurify = DOMPurifyLib(window as never)
 
 describe('Utils', () => {
+  describe('compareArrayReferences', () => {
+    it('should return true when both arrays are empty', () => {
+      expect(compareArrayReferences([], [])).toBe(true)
+    })
+
+    it('should return true when both arrays have the same reference', () => {
+      const obj = {}
+      expect(compareArrayReferences([obj], [obj])).toBe(true)
+    })
+
+    it('should return false when arrays have different lengths', () => {
+      const obj1 = {}
+      const obj2 = {}
+      expect(compareArrayReferences([obj1], [obj1, obj2])).toBe(false)
+    })
+
+    it('should return false when arrays have the same length but different references', () => {
+      const obj1 = {}
+      const obj2 = {}
+      expect(compareArrayReferences([obj1], [obj2])).toBe(false)
+    })
+
+    it('should return true when arrays have multiple identical references', () => {
+      const obj1 = {}
+      const obj2 = {}
+      expect(compareArrayReferences([obj1, obj2], [obj1, obj2])).toBe(true)
+    })
+
+    it('should return false when arrays have the same references in different order', () => {
+      const obj1 = {}
+      const obj2 = {}
+      expect(compareArrayReferences([obj1, obj2], [obj2, obj1])).toBe(false)
+    })
+  })
+
   it('sanitizeHtmlString', () => {
     const dirty = '<svg><animate onbegin=alert(1) attributeName=x dur=1s>'
     const cleaned = DOMPurify.sanitize(dirty)

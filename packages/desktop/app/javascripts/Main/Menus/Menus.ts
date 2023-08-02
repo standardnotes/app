@@ -17,9 +17,7 @@ import { TrayManager } from '../TrayManager'
 import { autoUpdatingAvailable } from '../Types/Constants'
 import { isLinux, isMac } from '../Types/Platforms'
 import { checkForUpdate, openChangelog, showUpdateInstallationDialog } from '../UpdateManager'
-import { handleTestMessage } from '../Utils/Testing'
-import { isDev, isTesting } from '../Utils/Utils'
-import { MessageType } from './../../../../test/TestIpcMessage'
+import { isDev } from '../Utils/Utils'
 import { SpellcheckerManager } from './../SpellcheckerManager'
 import { MenuManagerInterface } from './MenuManagerInterface'
 
@@ -123,42 +121,7 @@ export function createMenuManager({
 }): MenuManagerInterface {
   let menu: Menu
 
-  if (isTesting()) {
-    // eslint-disable-next-line no-var
-    var hasReloaded = false
-    // eslint-disable-next-line no-var
-    var hasReloadedTimeout: any
-    handleTestMessage(MessageType.AppMenuItems, () =>
-      menu.items.map((item) => ({
-        label: item.label,
-        role: item.role,
-        submenu: {
-          items: item.submenu?.items?.map((subItem) => ({
-            id: subItem.id,
-            label: subItem.label,
-          })),
-        },
-      })),
-    )
-    handleTestMessage(MessageType.ClickLanguage, (code) => {
-      menu.getMenuItemById(MessageType.ClickLanguage + code)!.click()
-    })
-    handleTestMessage(MessageType.HasReloadedMenu, () => hasReloaded)
-  }
-
   function reload() {
-    if (isTesting()) {
-      // eslint-disable-next-line block-scoped-var
-      hasReloaded = true
-      // eslint-disable-next-line block-scoped-var
-      clearTimeout(hasReloadedTimeout)
-      // eslint-disable-next-line block-scoped-var
-      hasReloadedTimeout = setTimeout(() => {
-        // eslint-disable-next-line block-scoped-var
-        hasReloaded = false
-      }, 300)
-    }
-
     menu = Menu.buildFromTemplate([
       ...(isMac() ? [macAppMenu(app.name)] : []),
       editMenu(spellcheckerManager, reload),
@@ -270,7 +233,10 @@ function macAppMenu(appName: string): MenuItemConstructorOptions {
   }
 }
 
-function editMenu(spellcheckerManager: SpellcheckerManager | undefined, reload: () => any): MenuItemConstructorOptions {
+function editMenu(
+  spellcheckerManager: SpellcheckerManager | undefined,
+  reload: () => void,
+): MenuItemConstructorOptions {
   if (isDev()) {
     /** Check for invalid state */
     if (!isMac() && spellcheckerManager === undefined) {
@@ -323,13 +289,13 @@ function macSpeechMenu(): MenuItemConstructorOptions {
   }
 }
 
-function spellcheckerMenu(spellcheckerManager: SpellcheckerManager, reload: () => any): MenuItemConstructorOptions {
+function spellcheckerMenu(spellcheckerManager: SpellcheckerManager, reload: () => void): MenuItemConstructorOptions {
   return {
     id: MenuId.SpellcheckerLanguages,
     label: str().spellcheckerLanguages,
     submenu: spellcheckerManager.languages().map(
       ({ name, code, enabled }): MenuItemConstructorOptions => ({
-        ...(isTesting() ? { id: MessageType.ClickLanguage + code } : {}),
+        ...{},
         label: name,
         type: MenuItemTypes.CheckBox,
         checked: enabled,
@@ -346,7 +312,7 @@ function spellcheckerMenu(spellcheckerManager: SpellcheckerManager, reload: () =
   }
 }
 
-function viewMenu(window: Electron.BrowserWindow, store: Store, reload: () => any): MenuItemConstructorOptions {
+function viewMenu(window: Electron.BrowserWindow, store: Store, reload: () => void): MenuItemConstructorOptions {
   return {
     label: str().view,
     submenu: [
@@ -375,7 +341,7 @@ function viewMenu(window: Electron.BrowserWindow, store: Store, reload: () => an
   }
 }
 
-function menuBarOptions(window: Electron.BrowserWindow, store: Store, reload: () => any) {
+function menuBarOptions(window: Electron.BrowserWindow, store: Store, reload: () => void) {
   const useSystemMenuBar = store.get(StoreKeys.UseSystemMenuBar)
   let isMenuBarVisible = store.get(StoreKeys.MenuBarVisible)
   window.setMenuBarVisibility(isMenuBarVisible)
@@ -406,7 +372,7 @@ function menuBarOptions(window: Electron.BrowserWindow, store: Store, reload: ()
   ]
 }
 
-function windowMenu(store: Store, trayManager: TrayManager, reload: () => any): MenuItemConstructorOptions {
+function windowMenu(store: Store, trayManager: TrayManager, reload: () => void): MenuItemConstructorOptions {
   return {
     role: Roles.Window,
     submenu: [
@@ -446,7 +412,7 @@ function macWindowItems(): MenuItemConstructorOptions[] {
   ]
 }
 
-function minimizeToTrayItem(store: Store, trayManager: TrayManager, reload: () => any) {
+function minimizeToTrayItem(store: Store, trayManager: TrayManager, reload: () => void) {
   const minimizeToTray = trayManager.shouldMinimizeToTray()
   return {
     label: str().minimizeToTrayOnClose,

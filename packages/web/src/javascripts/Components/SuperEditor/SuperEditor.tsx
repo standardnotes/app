@@ -7,7 +7,7 @@ import {
   isPayloadSourceRetrieved,
   PrefKey,
   PrefDefaults,
-  FeatureIdentifier,
+  NativeFeatureIdentifier,
   FeatureStatus,
   GetSuperNoteFeature,
 } from '@standardnotes/snjs'
@@ -39,7 +39,6 @@ import { SUPER_SHOW_MARKDOWN_PREVIEW } from '@standardnotes/ui-services'
 import { SuperNoteMarkdownPreview } from './SuperNoteMarkdownPreview'
 import { ExportPlugin } from './Plugins/ExportPlugin/ExportPlugin'
 import GetMarkdownPlugin, { GetMarkdownPluginInterface } from './Plugins/GetMarkdownPlugin/GetMarkdownPlugin'
-import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin'
 import { getPlaintextFontSize } from '@/Utils/getPlaintextFontSize'
 import ReadonlyPlugin from './Plugins/ReadonlyPlugin/ReadonlyPlugin'
 import { SuperSearchContextProvider } from './Plugins/SearchPlugin/Context'
@@ -49,6 +48,7 @@ import MobileToolbarPlugin from './Plugins/MobileToolbarPlugin/MobileToolbarPlug
 import CodeOptionsPlugin from './Plugins/CodeOptionsPlugin/CodeOptions'
 import RemoteImagePlugin from './Plugins/RemoteImagePlugin/RemoteImagePlugin'
 import NotEntitledBanner from '../ComponentView/NotEntitledBanner'
+import AutoFocusPlugin from './Plugins/AutoFocusPlugin'
 
 export const SuperNotePreviewCharLimit = 160
 
@@ -76,7 +76,12 @@ export const SuperEditor: FunctionComponent<Props> = ({
 
   useEffect(() => {
     setFeatureStatus(
-      application.features.getFeatureStatus(FeatureIdentifier.SuperEditor, { inContextOfItem: note.current }),
+      application.features.getFeatureStatus(
+        NativeFeatureIdentifier.create(NativeFeatureIdentifier.TYPES.SuperEditor).getValue(),
+        {
+          inContextOfItem: note.current,
+        },
+      ),
     )
   }, [application.features])
 
@@ -237,7 +242,7 @@ export const SuperEditor: FunctionComponent<Props> = ({
                 <NodeObserverPlugin nodeType={FileNode} onRemove={handleBubbleRemove} />
                 <ExportPlugin />
                 <ReadonlyPlugin note={note.current} />
-                {controller.isTemplateNote ? <AutoFocusPlugin /> : null}
+                <AutoFocusPlugin isEnabled={controller.isTemplateNote} />
                 <SuperSearchContextProvider>
                   <SearchPlugin />
                 </SuperSearchContextProvider>

@@ -17,7 +17,7 @@ describe('shared vault crypto', function () {
   beforeEach(async function () {
     localStorage.clear()
 
-    context = await Factory.createAppContextWithRealCrypto()
+    context = await Factory.createVaultsContextWithRealCrypto()
 
     await context.launch()
     await context.register()
@@ -28,19 +28,34 @@ describe('shared vault crypto', function () {
       const appIdentifier = context.identifier
       await context.deinit()
 
-      let recreatedContext = await Factory.createAppContextWithRealCrypto(appIdentifier)
+      let recreatedContext = await Factory.createVaultsContextWithRealCrypto(appIdentifier)
       await recreatedContext.launch()
 
       expect(recreatedContext.encryption.getKeyPair()).to.not.be.undefined
       expect(recreatedContext.encryption.getSigningKeyPair()).to.not.be.undefined
+
+      await recreatedContext.deinit()
     })
 
-    it('changing user password should re-encrypt all key system root keys', async () => {
-      console.error('TODO: implement')
-    })
+    it('changing user password should re-encrypt all key system root keys and contacts with new user root key', async () => {
+      await Collaboration.createPrivateVault(context)
+      const spy = context.spyOnFunctionResult(context.application.sync, 'payloadsByPreparingForServer')
+      await context.changePassword('new_password')
 
-    it('changing user password should re-encrypt all trusted contacts', async () => {
-      console.error('TODO: implement')
+      const payloads = await spy
+      const keyPayloads = payloads.filter(
+        (payload) =>
+          payload.content_type === ContentType.TYPES.KeySystemRootKey ||
+          payload.content_type === ContentType.TYPES.TrustedContact,
+      )
+      expect(keyPayloads.length).to.equal(2)
+
+      for (const payload of payloads) {
+        const keyParams = context.encryption.getEmbeddedPayloadAuthenticatedData(new EncryptedPayload(payload)).kp
+
+        const userKeyParams = context.encryption.getRootKeyParams().content
+        expect(keyParams).to.eql(userKeyParams)
+      }
     })
   })
 
@@ -81,7 +96,9 @@ describe('shared vault crypto', function () {
       const { note, contactContext, deinitContactContext } =
         await Collaboration.createSharedVaultWithAcceptedInviteAndNote(context)
 
-      await contactContext.changeNoteTitleAndSync(note, 'new title')
+      const contactNote = contactContext.items.findItem(note.uuid)
+
+      await contactContext.changeNoteTitleAndSync(contactNote, 'new title')
 
       /** Override decrypt result to return failing signature */
       const objectToSpy = context.encryption
@@ -90,6 +107,7 @@ describe('shared vault crypto', function () {
 
         const decryptedPayloads = await objectToSpy.decryptSplit(split)
         expect(decryptedPayloads.length).to.equal(1)
+        expect(decryptedPayloads[0].content_type).to.equal(ContentType.TYPES.Note)
 
         const payload = decryptedPayloads[0]
         const mutatedPayload = new DecryptedPayload({
@@ -105,6 +123,7 @@ describe('shared vault crypto', function () {
 
         return [mutatedPayload]
       })
+
       await context.sync()
 
       let updatedNote = context.items.findItem(note.uuid)
@@ -114,7 +133,7 @@ describe('shared vault crypto', function () {
       const appIdentifier = context.identifier
       await context.deinit()
 
-      let recreatedContext = await Factory.createAppContextWithRealCrypto(appIdentifier)
+      let recreatedContext = await Factory.createVaultsContextWithRealCrypto(appIdentifier)
       await recreatedContext.launch()
 
       updatedNote = recreatedContext.items.findItem(note.uuid)
@@ -127,7 +146,7 @@ describe('shared vault crypto', function () {
 
       await recreatedContext.deinit()
 
-      recreatedContext = await Factory.createAppContextWithRealCrypto(appIdentifier)
+      recreatedContext = await Factory.createVaultsContextWithRealCrypto(appIdentifier)
       await recreatedContext.launch()
 
       /** Decrypting from storage will now verify current user symmetric signature only */

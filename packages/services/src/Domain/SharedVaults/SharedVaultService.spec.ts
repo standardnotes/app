@@ -1,3 +1,4 @@
+import { DiscardItemsLocally } from './../UseCase/DiscardItemsLocally'
 import { InternalEventBusInterface } from './../Internal/InternalEventBusInterface'
 import { GetOwnedSharedVaults } from './UseCase/GetOwnedSharedVaults'
 import { IsVaultOwner } from './../VaultUser/UseCase/IsVaultOwner'
@@ -42,6 +43,7 @@ describe('SharedVaultService', () => {
     const convertToSharedVault = {} as jest.Mocked<ConvertToSharedVault>
     const deleteSharedVaultUseCase = {} as jest.Mocked<DeleteSharedVault>
     const isVaultAdmin = {} as jest.Mocked<IsVaultOwner>
+    const discardItemsLocally = {} as jest.Mocked<DiscardItemsLocally>
 
     const eventBus = {} as jest.Mocked<InternalEventBusInterface>
     eventBus.addEventHandler = jest.fn()
@@ -62,6 +64,7 @@ describe('SharedVaultService', () => {
       convertToSharedVault,
       deleteSharedVaultUseCase,
       isVaultAdmin,
+      discardItemsLocally,
       eventBus,
     )
   })

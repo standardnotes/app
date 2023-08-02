@@ -3,7 +3,7 @@ import { ClientDisplayableError, isClientDisplayableError } from '@standardnotes
 import {
   KeySystemIdentifier,
   KeySystemRootKeyInterface,
-  KeySystemRootKeyPasswordType,
+  KeySystemPasswordType,
   KeySystemRootKeyStorageMode,
   VaultListingInterface,
   VaultListingMutator,
@@ -31,7 +31,7 @@ export class RotateVaultKey {
 
     let newRootKey: KeySystemRootKeyInterface | undefined
 
-    if (currentRootKey.keyParams.passwordType === KeySystemRootKeyPasswordType.UserInputted) {
+    if (currentRootKey.keyParams.passwordType === KeySystemPasswordType.UserInputted) {
       if (!params.userInputtedPassword) {
         throw new Error('Cannot rotate key system root key; user inputted password required')
       }
@@ -40,7 +40,7 @@ export class RotateVaultKey {
         systemIdentifier: params.vault.systemIdentifier,
         userInputtedPassword: params.userInputtedPassword,
       })
-    } else if (currentRootKey.keyParams.passwordType === KeySystemRootKeyPasswordType.Randomized) {
+    } else if (currentRootKey.keyParams.passwordType === KeySystemPasswordType.Randomized) {
       newRootKey = this.encryption.createRandomizedKeySystemRootKey({
         systemIdentifier: params.vault.systemIdentifier,
       })
@@ -53,7 +53,7 @@ export class RotateVaultKey {
     if (params.vault.keyStorageMode === KeySystemRootKeyStorageMode.Synced) {
       await this.mutator.insertItem(newRootKey, true)
     } else {
-      this.keys.intakeNonPersistentKeySystemRootKey(newRootKey, params.vault.keyStorageMode)
+      this.keys.cacheKey(newRootKey, params.vault.keyStorageMode)
     }
 
     await this.mutator.changeItem<VaultListingMutator>(params.vault, (mutator) => {
@@ -73,7 +73,7 @@ export class RotateVaultKey {
       errors.push(updateKeySystemItemsKeyResult)
     }
 
-    await this.keys.reencryptKeySystemItemsKeysForVault(params.vault.systemIdentifier)
+    await this.keys.queueVaultItemsKeysForReencryption(params.vault.systemIdentifier)
 
     return errors
   }

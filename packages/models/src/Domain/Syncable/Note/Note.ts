@@ -1,5 +1,5 @@
 import { AppDataField } from './../../Abstract/Item/Types/AppDataField'
-import { FeatureIdentifier, NoteType } from '@standardnotes/features'
+import { NoteType } from '@standardnotes/features'
 import { DecryptedItem } from '../../Abstract/Item/Implementations/DecryptedItem'
 import { ItemInterface } from '../../Abstract/Item/Interfaces/ItemInterface'
 import { DecryptedPayloadInterface } from '../../Abstract/Payload/Interfaces/DecryptedPayload'
@@ -21,7 +21,7 @@ export class SNNote extends DecryptedItem<NoteContent> implements NoteContentSpe
   public readonly authorizedForListed: boolean
 
   /** The package_info.identifier of the editor (not its uuid), such as org.standardnotes.advanced-markdown */
-  public readonly editorIdentifier?: FeatureIdentifier | string
+  public readonly editorIdentifier?: string
 
   constructor(payload: DecryptedPayloadInterface<NoteContent>) {
     super(payload)

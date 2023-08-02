@@ -10,7 +10,7 @@ Standard Notes is an end-to-end encrypted note-taking app for digitalists and pr
 
 - End-to-end encrypted sync. Only you can read your notes.
 - Fast, free, and encrypted cross-platform sync on unlimited devices.
-- Open-source with ability to self-host your own server in a [few easy steps](https://standardnotes.com/help/self-hosting/getting-started).
+- Public source code with ability to self-host your own server in a [few easy steps](https://standardnotes.com/help/self-hosting/getting-started).
 - A strong focus on longevity and sustainability. [Learn more](https://standardnotes.com/longevity).
 
 ### Creating your private notes account
@@ -47,7 +47,7 @@ Questions? Find answers on our [Help page](https://standardnotes.com/help).
 
 ### Docker setup
 
-Docker is the quickest way to try out Standard Notes. We recommend using our official [Docker hub image](https://hub.docker.com/repository/docker/standardnotes/web).
+If you'd like to self-host the web application, we recommend using our official [Docker hub image](https://hub.docker.com/repository/docker/standardnotes/web).
 
 ```
 docker run -d -p 3001:3001 --env-file=.env.sample standardnotes/web:stable

@@ -18,7 +18,10 @@ export class PreferencesSessionController {
   private _menu: PreferencesMenuItem[]
   private _extensionLatestVersions: PackageProvider = new PackageProvider(new Map())
 
-  constructor(private application: WebApplication, private readonly _enableUnfinishedFeatures: boolean) {
+  constructor(
+    private application: WebApplication,
+    private readonly _enableUnfinishedFeatures: boolean,
+  ) {
     const menuItems = this._enableUnfinishedFeatures
       ? PREFERENCES_MENU_ITEMS.slice()
       : READY_PREFERENCES_MENU_ITEMS.slice()

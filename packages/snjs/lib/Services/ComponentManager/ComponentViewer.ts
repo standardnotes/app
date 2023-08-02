@@ -58,28 +58,28 @@ import {
   ComponentPermission,
   ComponentArea,
   IframeComponentFeatureDescription,
+  NativeFeatureIdentifier,
 } from '@standardnotes/features'
 import {
   isString,
   extendArray,
   Copy,
   removeFromArray,
-  log,
   nonSecureRandomIdentifier,
   UuidGenerator,
   Uuids,
   sureSearchArray,
   isNotUndefined,
   uniqueArray,
+  LoggerInterface,
 } from '@standardnotes/utils'
-import { ContentType } from '@standardnotes/domain-core'
+import { ContentType, Uuid } from '@standardnotes/domain-core'
 
 export class ComponentViewer implements ComponentViewerInterface {
   private streamItems?: string[]
   private streamContextItemOriginalMessage?: ComponentMessage
   private streamItemsOriginalMessage?: ComponentMessage
   private removeItemObserver: () => void
-  private loggingEnabled = false
   public identifier = nonSecureRandomIdentifier()
   private actionObservers: ActionObserver[] = []
 
@@ -101,6 +101,7 @@ export class ComponentViewer implements ComponentViewerInterface {
       alerts: AlertService
       preferences: PreferenceServiceInterface
       features: FeaturesService
+      logger: LoggerInterface
     },
     private options: {
       item: ComponentViewerItem
@@ -142,7 +143,7 @@ export class ComponentViewer implements ComponentViewerInterface {
       }
     })
 
-    this.log('Constructor', this)
+    this.services.logger.info('Constructor', this)
   }
 
   public getComponentOrFeatureItem(): UIFeature<IframeComponentFeatureDescription> {
@@ -162,7 +163,7 @@ export class ComponentViewer implements ComponentViewerInterface {
   }
 
   public destroy(): void {
-    this.log('Destroying', this)
+    this.services.logger.info('Destroying', this)
     this.deinit()
   }
 
@@ -214,12 +215,12 @@ export class ComponentViewer implements ComponentViewerInterface {
     this.readonly = readonly
   }
 
-  get componentUniqueIdentifier(): string {
+  get componentUniqueIdentifier(): NativeFeatureIdentifier | Uuid {
     return this.componentOrFeature.uniqueIdentifier
   }
 
   public getFeatureStatus(): FeatureStatus {
-    return this.services.features.getFeatureStatus(this.componentOrFeature.featureIdentifier, {
+    return this.services.features.getFeatureStatus(this.componentUniqueIdentifier, {
       inContextOfItem: this.getContextItem(),
     })
   }
@@ -269,7 +270,9 @@ export class ComponentViewer implements ComponentViewerInterface {
       return
     }
 
-    const updatedComponent = items.find((item) => item.uuid === this.componentUniqueIdentifier) as ComponentInterface
+    const updatedComponent = items.find(
+      (item) => item.uuid === this.componentUniqueIdentifier.value,
+    ) as ComponentInterface
     if (!updatedComponent) {
       return
     }
@@ -289,7 +292,7 @@ export class ComponentViewer implements ComponentViewerInterface {
 
     this.updateOurComponentRefFromChangedItems(nondeletedItems)
 
-    const areWeOriginator = sourceKey && sourceKey === this.componentUniqueIdentifier
+    const areWeOriginator = sourceKey && sourceKey === this.componentUniqueIdentifier.value
     if (areWeOriginator) {
       return
     }
@@ -326,7 +329,7 @@ export class ComponentViewer implements ComponentViewerInterface {
     ]
 
     this.config.componentManagerFunctions.runWithPermissionsUseCase.execute(
-      this.componentUniqueIdentifier,
+      this.componentUniqueIdentifier.value,
       requiredPermissions,
       () => {
         this.sendItemsInReply(items, this.streamItemsOriginalMessage as ComponentMessage)
@@ -341,10 +344,10 @@ export class ComponentViewer implements ComponentViewerInterface {
       },
     ] as ComponentPermission[]
     this.config.componentManagerFunctions.runWithPermissionsUseCase.execute(
-      this.componentUniqueIdentifier,
+      this.componentUniqueIdentifier.value,
       requiredContextPermissions,
       () => {
-        this.log(
+        this.services.logger.info(
           'Send context item in reply',
           'component:',
           this.componentOrFeature,
@@ -361,18 +364,12 @@ export class ComponentViewer implements ComponentViewerInterface {
     )
   }
 
-  private log(message: string, ...args: unknown[]): void {
-    if (this.loggingEnabled) {
-      log('ComponentViewer', message, args)
-    }
-  }
-
   private sendItemsInReply(
     items: (DecryptedItemInterface | DeletedItemInterface)[],
     message: ComponentMessage,
     source?: PayloadEmitSource,
   ): void {
-    this.log('Send items in reply', this.componentOrFeature, items, message)
+    this.services.logger.info('Send items in reply', this.componentOrFeature, items, message)
 
     const responseData: MessageReplyData = {}
 
@@ -414,7 +411,7 @@ export class ComponentViewer implements ComponentViewerInterface {
 
   private getClientData(item: DecryptedItemInterface): Record<string, unknown> {
     const globalComponentData = item.getDomainData(ComponentDataDomain) || {}
-    const thisComponentData = globalComponentData[this.componentUniqueIdentifier] || {}
+    const thisComponentData = globalComponentData[this.componentUniqueIdentifier.value] || {}
     return thisComponentData as Record<string, unknown>
   }
 
@@ -450,13 +447,16 @@ export class ComponentViewer implements ComponentViewerInterface {
    */
   private sendMessage(message: ComponentMessage | MessageReply, essential = true): void {
     if (!this.window && message.action === ComponentAction.Reply) {
-      this.log('Component has been deallocated in between message send and reply', this.componentOrFeature, message)
+      this.services.logger.info(
+        'Component has been deallocated in between message send and reply',
+        this.componentOrFeature,
+        message,
+      )
       return
     }
-    this.log('Send message to component', this.componentOrFeature, 'message: ', message)
+    this.services.logger.info('Send message to component', this.componentOrFeature, 'message: ', message)
 
-    let origin = this.options.url
-    if (!origin || !this.window) {
+    if (!this.window) {
       if (essential) {
         void this.services.alerts.alert(
           `Standard Notes is trying to communicate with ${this.componentOrFeature.displayName}, ` +
@@ -466,13 +466,11 @@ export class ComponentViewer implements ComponentViewerInterface {
       return
     }
 
-    if (!origin.startsWith('http') && !origin.startsWith('file')) {
-      /* Native extension running in web, prefix current host */
-      origin = window.location.href + origin
-    }
+    /** Because iframes do not allow-same-origin, their origin is `null`, and so we can't target their explicit origin */
+    const nullOrigin = '*'
 
     /* Mobile messaging requires json */
-    this.window.postMessage(this.isMobile ? JSON.stringify(message) : message, origin)
+    this.window.postMessage(this.isMobile ? JSON.stringify(message) : message, nullOrigin)
   }
 
   private responseItemsByRemovingPrivateProperties<T extends OutgoingItemMessagePayload | IncomingComponentItemPayload>(
@@ -518,7 +516,7 @@ export class ComponentViewer implements ComponentViewerInterface {
       throw Error('Attempting to override component viewer window. Create a new component viewer instead.')
     }
 
-    this.log('setWindow', 'component: ', this.componentOrFeature, 'window: ', window)
+    this.services.logger.info('setWindow', 'component: ', this.componentOrFeature, 'window: ', window)
 
     this.window = window
     this.sessionKey = UuidGenerator.GenerateUuid()
@@ -530,14 +528,14 @@ export class ComponentViewer implements ComponentViewerInterface {
       sessionKey: this.sessionKey,
       componentData: componentData,
       data: {
-        uuid: this.componentUniqueIdentifier,
+        uuid: this.componentUniqueIdentifier.value,
         environment: environmentToString(this.config.environment),
         platform: platformToString(this.config.platform),
         activeThemeUrls: this.config.componentManagerFunctions.urlsForActiveThemes(),
       },
     })
 
-    this.log('setWindow got new sessionKey', this.sessionKey)
+    this.services.logger.info('setWindow got new sessionKey', this.sessionKey)
 
     this.postActiveThemes()
   }
@@ -557,9 +555,9 @@ export class ComponentViewer implements ComponentViewerInterface {
   }
 
   handleMessage(message: ComponentMessage): void {
-    this.log('Handle message', message, this)
+    this.services.logger.info('Handle message', message, this)
     if (!this.componentOrFeature) {
-      this.log('Component not defined for message, returning', message)
+      this.services.logger.info('Component not defined for message, returning', message)
       void this.services.alerts.alert(
         'A component is trying to communicate with Standard Notes, ' +
           'but there is an error establishing a bridge. Please restart the app and try again.',
@@ -602,7 +600,7 @@ export class ComponentViewer implements ComponentViewerInterface {
       },
     ]
     this.config.componentManagerFunctions.runWithPermissionsUseCase.execute(
-      this.componentUniqueIdentifier,
+      this.componentUniqueIdentifier.value,
       requiredPermissions,
       () => {
         if (!this.streamItems) {
@@ -627,7 +625,7 @@ export class ComponentViewer implements ComponentViewerInterface {
     ]
 
     this.config.componentManagerFunctions.runWithPermissionsUseCase.execute(
-      this.componentUniqueIdentifier,
+      this.componentUniqueIdentifier.value,
       requiredPermissions,
       () => {
         if (!this.streamContextItemOriginalMessage) {
@@ -684,7 +682,7 @@ export class ComponentViewer implements ComponentViewerInterface {
     }
 
     this.config.componentManagerFunctions.runWithPermissionsUseCase.execute(
-      this.componentUniqueIdentifier,
+      this.componentUniqueIdentifier.value,
       requiredPermissions,
 
       async () => {
@@ -766,13 +764,13 @@ export class ComponentViewer implements ComponentViewerInterface {
               const allComponentData = Copy<Record<string, unknown>>(
                 mutator.getItem().getDomainData(ComponentDataDomain) || {},
               )
-              allComponentData[this.componentUniqueIdentifier] = responseItem.clientData
+              allComponentData[this.componentUniqueIdentifier.value] = responseItem.clientData
               mutator.setDomainData(allComponentData, ComponentDataDomain)
             }
           },
           MutationType.UpdateUserTimestamps,
           PayloadEmitSource.ComponentRetrieved,
-          this.componentUniqueIdentifier,
+          this.componentUniqueIdentifier.value,
         )
 
         this.services.sync
@@ -807,7 +805,7 @@ export class ComponentViewer implements ComponentViewerInterface {
     ]
 
     this.config.componentManagerFunctions.runWithPermissionsUseCase.execute(
-      this.componentUniqueIdentifier,
+      this.componentUniqueIdentifier.value,
       requiredPermissions,
       async () => {
         responseItems = this.responseItemsByRemovingPrivateProperties(responseItems)
@@ -834,13 +832,13 @@ export class ComponentViewer implements ComponentViewerInterface {
                 const allComponentClientData = Copy<Record<string, unknown>>(
                   item.getDomainData(ComponentDataDomain) || {},
                 )
-                allComponentClientData[this.componentUniqueIdentifier] = responseItem.clientData
+                allComponentClientData[this.componentUniqueIdentifier.value] = responseItem.clientData
                 mutator.setDomainData(allComponentClientData, ComponentDataDomain)
               }
             },
             MutationType.UpdateUserTimestamps,
             PayloadEmitSource.ComponentCreated,
-            this.componentUniqueIdentifier,
+            this.componentUniqueIdentifier.value,
           )
           processedItems.push(item)
         }
@@ -874,7 +872,7 @@ export class ComponentViewer implements ComponentViewerInterface {
     ]
 
     this.config.componentManagerFunctions.runWithPermissionsUseCase.execute(
-      this.componentUniqueIdentifier,
+      this.componentUniqueIdentifier.value,
       requiredPermissions,
       async () => {
         const itemsData = items
@@ -911,7 +909,7 @@ export class ComponentViewer implements ComponentViewerInterface {
   private handleSetComponentPreferencesMessage(message: ComponentMessage): void {
     const noPermissionsRequired: ComponentPermission[] = []
     this.config.componentManagerFunctions.runWithPermissionsUseCase.execute(
-      this.componentUniqueIdentifier,
+      this.componentUniqueIdentifier.value,
       noPermissionsRequired,
       async () => {
         const newPreferences = <ComponentPreferencesEntry | undefined>message.data.componentData

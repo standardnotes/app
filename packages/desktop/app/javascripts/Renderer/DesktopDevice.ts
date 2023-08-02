@@ -152,7 +152,7 @@ export class DesktopDevice extends WebOrDesktopDevice implements DesktopDeviceIn
     return this.remoteBridge.wasLegacyTextBackupsExplicitlyDisabled()
   }
 
-  getUserDocumentsDirectory(): Promise<string> {
+  getUserDocumentsDirectory(): Promise<string | undefined> {
     return this.remoteBridge.getUserDocumentsDirectory()
   }
 

@@ -7,7 +7,7 @@ import {
   HttpResponse,
   isErrorResponse,
   RawSyncResponse,
-  UserEventServerHash,
+  NotificationServerHash,
   AsymmetricMessageServerHash,
   getErrorFromErrorResponse,
 } from '@standardnotes/responses'
@@ -29,7 +29,7 @@ export class ServerSyncResponse {
   readonly asymmetricMessages: AsymmetricMessageServerHash[]
   readonly vaults: SharedVaultServerHash[]
   readonly vaultInvites: SharedVaultInviteServerHash[]
-  readonly userEvents: UserEventServerHash[]
+  readonly userEvents: NotificationServerHash[]
 
   private readonly rawConflictObjects: ConflictParams[]
 
@@ -58,9 +58,9 @@ export class ServerSyncResponse {
 
     this.vaultInvites = this.successResponseData?.shared_vault_invites || []
 
-    this.asymmetricMessages = this.successResponseData?.asymmetric_messages || []
+    this.asymmetricMessages = this.successResponseData?.messages || []
 
-    this.userEvents = this.successResponseData?.user_events || []
+    this.userEvents = this.successResponseData?.notifications || []
 
     deepFreeze(this)
   }

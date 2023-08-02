@@ -23,7 +23,10 @@ export class NoteSyncController {
 
   private saveTimeout?: ReturnType<typeof setTimeout>
 
-  constructor(private application: WebApplication, private item: SNNote) {}
+  constructor(
+    private application: WebApplication,
+    private item: SNNote,
+  ) {}
 
   setItem(item: SNNote) {
     this.item = item

@@ -1,5 +1,5 @@
 import { PermissionName } from '../Permission/PermissionName'
-import { FeatureIdentifier } from '../Feature/FeatureIdentifier'
+import { NativeFeatureIdentifier } from '../Feature/NativeFeatureIdentifier'
 import { RoleName } from '@standardnotes/domain-core'
 import { ClientFeatureDescription } from '../Feature/ClientFeatureDescription'
 
@@ -8,7 +8,7 @@ export function clientFeatures(): ClientFeatureDescription[] {
     {
       name: 'Tag Nesting',
       availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
-      identifier: FeatureIdentifier.TagNesting,
+      identifier: NativeFeatureIdentifier.TYPES.TagNesting,
       permission_name: PermissionName.TagNesting,
       description: 'Organize your tags into folders.',
     },
@@ -16,22 +16,22 @@ export function clientFeatures(): ClientFeatureDescription[] {
     {
       name: 'Smart Filters',
       availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
-      identifier: FeatureIdentifier.SmartFilters,
+      identifier: NativeFeatureIdentifier.TYPES.SmartFilters,
       permission_name: PermissionName.SmartFilters,
       description: 'Create smart filters for viewing notes matching specific criteria.',
     },
     {
       name: 'Encrypted files',
       availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
-      identifier: FeatureIdentifier.Files,
+      identifier: NativeFeatureIdentifier.TYPES.Files,
       permission_name: PermissionName.Files,
       description: '',
     },
     {
-      name: 'Extension',
+      name: 'Clipper',
       availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
-      identifier: FeatureIdentifier.Extension,
-      permission_name: PermissionName.Extension,
+      identifier: NativeFeatureIdentifier.TYPES.Clipper,
+      permission_name: PermissionName.Clipper,
       description: '',
     },
   ]

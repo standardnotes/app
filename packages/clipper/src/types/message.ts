@@ -12,7 +12,7 @@ export const RuntimeMessageTypes = {
   RunHttpRequest: 'run-http-request',
 } as const
 
-export type RuntimeMessageType = typeof RuntimeMessageTypes[keyof typeof RuntimeMessageTypes]
+export type RuntimeMessageType = (typeof RuntimeMessageTypes)[keyof typeof RuntimeMessageTypes]
 
 type MessagesWithClipPayload = typeof RuntimeMessageTypes.OpenPopupWithSelection
 

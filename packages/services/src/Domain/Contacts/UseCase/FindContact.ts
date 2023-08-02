@@ -8,16 +8,20 @@ export class FindContact implements SyncUseCaseInterface<TrustedContactInterface
 
   execute(query: FindContactQuery): Result<TrustedContactInterface> {
     if ('userUuid' in query && query.userUuid) {
-      const contact = this.items.itemsMatchingPredicate<TrustedContactInterface>(
+      const contacts = this.items.itemsMatchingPredicate<TrustedContactInterface>(
         ContentType.TYPES.TrustedContact,
         new Predicate<TrustedContactInterface>('contactUuid', '=', query.userUuid),
-      )[0]
+      )
 
-      if (contact) {
-        return Result.ok(contact)
-      } else {
-        return Result.fail('Contact not found')
+      if (contacts.length === 0) {
+        return Result.fail(`Contact not found for user ${query.userUuid}`)
       }
+
+      if (contacts.length > 1) {
+        return Result.fail(`Multiple contacts found for user ${query.userUuid}`)
+      }
+
+      return Result.ok(contacts[0])
     }
 
     if ('signingPublicKey' in query && query.signingPublicKey) {

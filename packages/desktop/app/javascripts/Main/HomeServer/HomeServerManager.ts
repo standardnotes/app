@@ -33,7 +33,10 @@ export class HomeServerManager implements HomeServerManagerInterface {
 
   private homeServer?: TempHomeServerInterface
 
-  constructor(private webContents: WebContents, private filesManager: FilesManagerInterface) {}
+  constructor(
+    private webContents: WebContents,
+    private filesManager: FilesManagerInterface,
+  ) {}
 
   async getHomeServerUrl(): Promise<string | undefined> {
     const homeServerConfiguration = await this.getHomeServerConfigurationObject()

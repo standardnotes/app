@@ -404,7 +404,7 @@ describe('history manager', () => {
 
       expect(noteHistory.length).to.equal(expectedRevisions)
       expect(dupeHistory.length).to.equal(expectedRevisions + 1)
-    })
+    }).timeout(Factory.ThirtySecondTimeout)
 
     it('can decrypt revisions for duplicate_of items', async function () {
       const note = await Factory.createSyncedNote(this.application)

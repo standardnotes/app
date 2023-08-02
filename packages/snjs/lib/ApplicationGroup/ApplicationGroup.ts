@@ -26,7 +26,10 @@ export class SNApplicationGroup<D extends DeviceInterface = DeviceInterface> ext
   private descriptorRecord!: DescriptorRecord
   callback!: AppGroupCallback<D>
 
-  constructor(public device: D, internalEventBus?: InternalEventBusInterface) {
+  constructor(
+    public device: D,
+    internalEventBus?: InternalEventBusInterface,
+  ) {
     if (internalEventBus === undefined) {
       internalEventBus = new InternalEventBus()
     }

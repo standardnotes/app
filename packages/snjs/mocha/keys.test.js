@@ -190,7 +190,7 @@ describe('keys', function () {
 
     const itemsKey = this.application.encryption.itemsKeyForEncryptedPayload(encryptedPayload)
 
-    await this.application.items.removeItemLocally(itemsKey)
+    await this.application.items.removeItemFromMemory(itemsKey)
 
     const erroredPayload = await this.application.encryption.decryptSplitSingle({
       usesItemsKeyWithKeyLookup: {
@@ -449,6 +449,7 @@ describe('keys', function () {
       },
     })
     expect(payload.items_key_id).to.equal(newDefaultItemsKey.uuid)
+    await Factory.safeDeinit(application)
   })
 
   it('compares root keys', async function () {
@@ -642,7 +643,7 @@ describe('keys', function () {
     await contextB.deinit()
   })
 
-  describe('changing password on 003 client while signed into 004 client', function () {
+  describe('changing password on 003 account while signed into 004 client', function () {
     /**
      * When an 004 client signs into 003 account, it creates a root key based items key.
      * Then, if the 003 client changes its account password, and the 004 client
@@ -755,7 +756,7 @@ describe('keys', function () {
         currentServerPassword: currentRootKey.serverPassword,
         newRootKey,
       })
-      await this.application.encryption.reencryptApplicableItemsAfterUserRootKeyChange()
+      await this.application.dependencies.get(TYPES.ReencryptTypeAItems).execute()
       /** Note: this may result in a deadlock if features_service syncs and results in an error */
       await this.application.sync.sync({ awaitAll: true })
 
@@ -859,5 +860,6 @@ describe('keys', function () {
     const notePayload = rawPayloads.find((p) => p.content_type === ContentType.TYPES.Note)
 
     expect(notePayload.items_key_id).to.equal(itemsKey.uuid)
+    await otherClient.deinit()
   })
 })

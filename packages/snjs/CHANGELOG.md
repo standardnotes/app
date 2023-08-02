@@ -3,6 +3,58 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.202.25](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.202.24...@standardnotes/snjs@2.202.25) (2023-08-02)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.202.24](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.202.23...@standardnotes/snjs@2.202.24) (2023-08-01)
+
+### Bug Fixes
+
+* Fixes issue where selecting a third-party editor/note-type as default for a tag would not correctly apply editor ([73609ca](https://github.com/standardnotes/app/commit/73609ca7e31c6cc628f46319f0b9502f7b8afcd3))
+
+## [2.202.23](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.202.22...@standardnotes/snjs@2.202.23) (2023-08-01)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.202.22](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.202.21...@standardnotes/snjs@2.202.22) (2023-07-31)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.202.21](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.202.20...@standardnotes/snjs@2.202.21) (2023-07-28)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.202.20](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.202.19...@standardnotes/snjs@2.202.20) (2023-07-28)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.202.19](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.202.18...@standardnotes/snjs@2.202.19) (2023-07-27)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.202.18](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.202.17...@standardnotes/snjs@2.202.18) (2023-07-27)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.202.17](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.202.16...@standardnotes/snjs@2.202.17) (2023-07-27)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.202.16](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.202.15...@standardnotes/snjs@2.202.16) (2023-07-26)
+
+### Bug Fixes
+
+* Fixes issue where lock screen would not use previously active theme ([#2372](https://github.com/standardnotes/app/issues/2372)) ([d268c02](https://github.com/standardnotes/app/commit/d268c02ab31beb5e2fd9e6547610f9a4dd61bed4))
+
+## [2.202.15](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.202.14...@standardnotes/snjs@2.202.15) (2023-07-26)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.202.14](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.202.13...@standardnotes/snjs@2.202.14) (2023-07-26)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
 ## [2.202.13](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.202.12...@standardnotes/snjs@2.202.13) (2023-07-25)
 
 **Note:** Version bump only for package @standardnotes/snjs

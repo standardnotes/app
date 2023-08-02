@@ -1,4 +1,3 @@
-import LexicalCaretRightFill from './caret-right-fill.svg'
 import LexicalCheck from './square-check.svg'
 import LexicalCode from './code.svg'
 import LexicalHorizontalRule from './horizontal-rule.svg'
@@ -30,7 +29,6 @@ import LexicalPencilFill from './pencil-fill.svg'
 import LexicalDraggableBlockMenu from './draggable-block-menu.svg'
 
 export {
-  LexicalCaretRightFill,
   LexicalCheck,
   LexicalCode,
   LexicalHorizontalRule,

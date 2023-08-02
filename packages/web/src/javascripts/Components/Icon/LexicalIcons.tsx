@@ -6,7 +6,6 @@ export const LexicalIconNameToSvgMapping = {
   'align-justify': icons.LexicalTextJustify,
   'align-left': icons.LexicalTextLeft,
   'align-right': icons.LexicalTextRight,
-  'caret-right-fill': icons.LexicalCaretRightFill,
   'horizontal-rule': icons.LexicalHorizontalRule,
   'list-ol': icons.LexicalListOL,
   'list-ul': icons.LexicalListUL,

@@ -1,3 +1,4 @@
+import { SessionEvent } from './../Session/SessionEvent'
 import { StorageKey } from './../Storage/StorageKeys'
 import { ApplicationStage } from './../Application/ApplicationStage'
 import { StorageServiceInterface } from './../Storage/StorageServiceInterface'
@@ -51,6 +52,7 @@ export class SubscriptionManager
       }
 
       case ApplicationEvent.UserRolesChanged:
+      case SessionEvent.Restored:
       case ApplicationEvent.SignedIn:
         void this.fetchOnlineSubscription()
         break
@@ -58,11 +60,15 @@ export class SubscriptionManager
       case ApplicationEvent.ApplicationStageChanged: {
         const stage = (event.payload as ApplicationStageChangedEventPayload).stage
         if (stage === ApplicationStage.StorageDecrypted_09) {
-          this.onlineSubscription = this.storage.getValue(StorageKey.Subscription)
-          void this.notifyEvent(SubscriptionManagerEvent.DidFetchSubscription)
+          this.loadSubscriptionFromStorage()
         }
       }
     }
+  }
+
+  loadSubscriptionFromStorage(): void {
+    this.onlineSubscription = this.storage.getValue(StorageKey.Subscription)
+    void this.notifyEvent(SubscriptionManagerEvent.DidFetchSubscription)
   }
 
   hasOnlineSubscription(): boolean {
@@ -204,7 +210,7 @@ export class SubscriptionManager
     void this.notifyEvent(SubscriptionManagerEvent.DidFetchSubscription)
   }
 
-  private async fetchAvailableSubscriptions(): Promise<void> {
+  async fetchAvailableSubscriptions(): Promise<void> {
     try {
       const response = await this.subscriptionApiService.getAvailableSubscriptions()
 

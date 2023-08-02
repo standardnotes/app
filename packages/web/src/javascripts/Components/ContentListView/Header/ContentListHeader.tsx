@@ -108,7 +108,7 @@ const ContentListHeader = ({
       <div className="flex">
         <div className="relative" ref={displayOptionsContainerRef}>
           <RoundIconButton
-            className={classNames(showDisplayOptionsMenu && 'bg-contrast')}
+            className={classNames(showDisplayOptionsMenu ? 'bg-contrast' : undefined)}
             onClick={toggleDisplayOptionsMenu}
             ref={displayOptionsButtonRef}
             icon="sort-descending"

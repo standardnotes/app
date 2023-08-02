@@ -17,7 +17,7 @@ describe('shared vault invites', function () {
   beforeEach(async function () {
     localStorage.clear()
 
-    context = await Factory.createAppContextWithRealCrypto()
+    context = await Factory.createVaultsContextWithRealCrypto()
     await context.launch()
     await context.register()
   })
@@ -28,14 +28,14 @@ describe('shared vault invites', function () {
     const contact = await Collaboration.createTrustedContactForUserOfContext(context, contactContext)
 
     const vaultInvite = (
-      await context.vaultInvites.inviteContactToSharedVault(sharedVault, contact, SharedVaultPermission.Write)
+      await context.vaultInvites.inviteContactToSharedVault(sharedVault, contact, SharedVaultUserPermission.PERMISSIONS.Write)
     ).getValue()
 
     expect(vaultInvite).to.not.be.undefined
     expect(vaultInvite.shared_vault_uuid).to.equal(sharedVault.sharing.sharedVaultUuid)
     expect(vaultInvite.user_uuid).to.equal(contact.contactUuid)
     expect(vaultInvite.encrypted_message).to.not.be.undefined
-    expect(vaultInvite.permissions).to.equal(SharedVaultPermission.Write)
+    expect(vaultInvite.permission).to.equal(SharedVaultUserPermission.PERMISSIONS.Write)
     expect(vaultInvite.updated_at_timestamp).to.not.be.undefined
     expect(vaultInvite.created_at_timestamp).to.not.be.undefined
 
@@ -100,7 +100,7 @@ describe('shared vault invites', function () {
     /** Sync the contact context so that they wouldn't naturally receive changes made before this point */
     await contactContext.sync()
 
-    await context.vaultInvites.inviteContactToSharedVault(sharedVault, contact, SharedVaultPermission.Write)
+    await context.vaultInvites.inviteContactToSharedVault(sharedVault, contact, SharedVaultUserPermission.PERMISSIONS.Write)
 
     /** Contact should now sync and expect to find note */
     const promise = contactContext.awaitNextSyncSharedVaultFromScratchEvent()
@@ -125,7 +125,7 @@ describe('shared vault invites', function () {
     await context.vaultInvites.inviteContactToSharedVault(
       sharedVault,
       currentContextContact,
-      SharedVaultPermission.Write,
+      SharedVaultUserPermission.PERMISSIONS.Write,
     )
 
     await contactContext.vaultInvites.downloadInboundInvites()
@@ -143,7 +143,7 @@ describe('shared vault invites', function () {
     await context.vaultInvites.inviteContactToSharedVault(
       sharedVault,
       currentContextContact,
-      SharedVaultPermission.Write,
+      SharedVaultUserPermission.PERMISSIONS.Write,
     )
 
     await contactContext.vaultInvites.downloadInboundInvites()

@@ -133,11 +133,12 @@ describe('features', () => {
       await promise
     })
 
-    it.skip('migrated ext repo should have property indicating it was migrated', async () => {
+    it('migrated ext repo should have property indicating it was migrated', async () => {
       sinon.stub(application.legacyApi, 'isThirdPartyHostUsed').callsFake(() => {
         return false
       })
-      expect(await application.settings.getDoesSensitiveSettingExist(SettingName.ExtensionKey)).to.equal(false)
+      const setting = SettingName.create(SettingName.NAMES.ExtensionKey).getValue()
+      expect(await application.settings.getDoesSensitiveSettingExist(setting)).to.equal(false)
       const extensionKey = UuidGenerator.GenerateUuid().split('-').join('')
       const promise = new Promise((resolve) => {
         application.streamItems(ContentType.TYPES.ExtensionRepo, ({ changed }) => {

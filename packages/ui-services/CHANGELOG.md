@@ -3,6 +3,58 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.28.23](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.28.22...@standardnotes/ui-services@1.28.23) (2023-08-02)
+
+**Note:** Version bump only for package @standardnotes/ui-services
+
+## [1.28.22](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.28.21...@standardnotes/ui-services@1.28.22) (2023-08-01)
+
+**Note:** Version bump only for package @standardnotes/ui-services
+
+## [1.28.21](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.28.20...@standardnotes/ui-services@1.28.21) (2023-07-31)
+
+### Bug Fixes
+
+* Fixed issue on iOS where status bar colors would not adjust according to the theme ([9e95774](https://github.com/standardnotes/app/commit/9e957742038474c0845f0fe590a985ed4c6edde7))
+
+## [1.28.20](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.28.19...@standardnotes/ui-services@1.28.20) (2023-07-31)
+
+**Note:** Version bump only for package @standardnotes/ui-services
+
+## [1.28.19](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.28.18...@standardnotes/ui-services@1.28.19) (2023-07-28)
+
+**Note:** Version bump only for package @standardnotes/ui-services
+
+## [1.28.18](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.28.17...@standardnotes/ui-services@1.28.18) (2023-07-28)
+
+**Note:** Version bump only for package @standardnotes/ui-services
+
+## [1.28.17](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.28.16...@standardnotes/ui-services@1.28.17) (2023-07-27)
+
+**Note:** Version bump only for package @standardnotes/ui-services
+
+## [1.28.16](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.28.15...@standardnotes/ui-services@1.28.16) (2023-07-27)
+
+**Note:** Version bump only for package @standardnotes/ui-services
+
+## [1.28.15](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.28.14...@standardnotes/ui-services@1.28.15) (2023-07-27)
+
+**Note:** Version bump only for package @standardnotes/ui-services
+
+## [1.28.14](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.28.13...@standardnotes/ui-services@1.28.14) (2023-07-26)
+
+### Bug Fixes
+
+* Fixes issue where lock screen would not use previously active theme ([#2372](https://github.com/standardnotes/app/issues/2372)) ([d268c02](https://github.com/standardnotes/app/commit/d268c02ab31beb5e2fd9e6547610f9a4dd61bed4))
+
+## [1.28.13](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.28.12...@standardnotes/ui-services@1.28.13) (2023-07-26)
+
+**Note:** Version bump only for package @standardnotes/ui-services
+
+## [1.28.12](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.28.11...@standardnotes/ui-services@1.28.12) (2023-07-26)
+
+**Note:** Version bump only for package @standardnotes/ui-services
+
 ## [1.28.11](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.28.10...@standardnotes/ui-services@1.28.11) (2023-07-25)
 
 **Note:** Version bump only for package @standardnotes/ui-services

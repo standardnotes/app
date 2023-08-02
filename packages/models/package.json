@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/models",
-  "version": "1.46.12",
+  "version": "1.46.20",
   "engines": {
     "node": ">=16.0.0 <17.0.0"
   },
@@ -11,7 +11,7 @@
   "author": "Standard Notes",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "license": "AGPL-3.0-or-later",
+  "license": "CC BY-NC-SA 4.0",
   "scripts": {
     "clean": "rm -fr dist",
     "prestart": "yarn clean",
@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "@standardnotes/common": "^1.50.0",
-    "@standardnotes/domain-core": "^1.22.0",
+    "@standardnotes/domain-core": "^1.24.0",
     "@standardnotes/features": "workspace:*",
     "@standardnotes/responses": "workspace:*",
     "@standardnotes/sncrypto-common": "workspace:^",

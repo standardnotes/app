@@ -1,4 +1,4 @@
-import { ComponentArea, ComponentAction, FeatureIdentifier, LegacyFileSafeIdentifier } from '@standardnotes/features'
+import { ComponentArea, ComponentAction, NativeFeatureIdentifier } from '@standardnotes/features'
 import { ComponentMessage, MessageData, OutgoingItemMessagePayload } from '@standardnotes/models'
 import { UuidString } from '@Lib/Types/UuidString'
 import { ContentType } from '@standardnotes/domain-core'
@@ -17,9 +17,9 @@ export type Writeable<T> = { -readonly [P in keyof T]: T[P] }
  * Extensions allowed to batch stream AllowedBatchContentTypes
  */
 export const AllowedBatchStreaming = Object.freeze([
-  LegacyFileSafeIdentifier,
-  FeatureIdentifier.DeprecatedFileSafe,
-  FeatureIdentifier.DeprecatedBoldEditor,
+  NativeFeatureIdentifier.TYPES.LegacyFileSafeIdentifier,
+  NativeFeatureIdentifier.TYPES.DeprecatedFileSafe,
+  NativeFeatureIdentifier.TYPES.DeprecatedBoldEditor,
 ])
 
 /**

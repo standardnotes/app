@@ -1,5 +1,4 @@
 import { CollectionSortProperty } from '../../Runtime/Collection/CollectionSort'
-import { EditorIdentifier, FeatureIdentifier } from '@standardnotes/features'
 import { SystemViewId } from '../SmartView'
 import { TagPreferences } from '../Tag'
 import { NewNoteTitleFormat } from './NewNoteTitleFormat'
@@ -67,8 +66,8 @@ export type PrefValue = {
   [PrefKey.NotesHideTags]: boolean
   [PrefKey.NotesHideEditorIcon]: boolean
   [PrefKey.UseSystemColorScheme]: boolean
-  [PrefKey.AutoLightThemeIdentifier]: FeatureIdentifier | 'Default' | 'Dark'
-  [PrefKey.AutoDarkThemeIdentifier]: FeatureIdentifier | 'Default' | 'Dark'
+  [PrefKey.AutoLightThemeIdentifier]: string
+  [PrefKey.AutoDarkThemeIdentifier]: string
   [PrefKey.NoteAddToParentFolders]: boolean
   [PrefKey.NewNoteTitleFormat]: NewNoteTitleFormat
   [PrefKey.CustomNoteTitleFormat]: string
@@ -76,7 +75,7 @@ export type PrefValue = {
   [PrefKey.EditorLineWidth]: EditorLineWidth
   [PrefKey.EditorFontSize]: EditorFontSize
   [PrefKey.UpdateSavingStatusIndicator]: boolean
-  [PrefKey.DefaultEditorIdentifier]: EditorIdentifier
+  [PrefKey.DefaultEditorIdentifier]: string
   [PrefKey.MomentsDefaultTagUuid]: string | undefined
   [PrefKey.ClipperDefaultTagUuid]: string | undefined
   [PrefKey.SystemViewPreferences]: Partial<Record<SystemViewId, TagPreferences>>

@@ -47,6 +47,30 @@ export class AppContext {
       this.host,
       this.crypto || new FakeWebCrypto(),
     )
+
+    this.application.dependencies.get(TYPES.Logger).setLevel('error')
+
+    this.disableSubscriptionFetching()
+  }
+
+  disableSubscriptionFetching() {
+    this.application.subscriptions.fetchAvailableSubscriptions = () => {}
+  }
+
+  async launch({ awaitDatabaseLoad = true, receiveChallenge } = { awaitDatabaseLoad: true }) {
+    await this.application.prepareForLaunch({
+      receiveChallenge: receiveChallenge || this.handleChallenge,
+    })
+
+    await this.application.launch(awaitDatabaseLoad)
+
+    await this.awaitUserPrefsSingletonCreation()
+
+    this.application.http.loggingEnabled = true
+  }
+
+  async deinit() {
+    await Utils.safeDeinit(this.application)
   }
 
   get sessions() {
@@ -202,6 +226,12 @@ export class AppContext {
     return this.application.register(this.email, this.password)
   }
 
+  async addPasscode(passcode) {
+    this.passcode = passcode
+
+    await this.application.addPasscode(passcode)
+  }
+
   receiveServerResponse({ retrievedItems }) {
     const response = new ServerSyncResponse({
       data: {
@@ -253,10 +283,10 @@ export class AppContext {
 
   awaitNextSucessfulSync() {
     return new Promise((resolve) => {
-      const removeObserver = this.application.sync.addEventObserver((event) => {
+      const removeObserver = this.application.sync.addEventObserver((event, data) => {
         if (event === SyncEvent.SyncCompletedWithAllItemsUploadedAndDownloaded) {
           removeObserver()
-          resolve()
+          resolve(data)
         }
       })
     })
@@ -289,6 +319,16 @@ export class AppContext {
       this.application.sync.addEventObserver((event, data) => {
         if (event === SyncEvent.PaginatedSyncRequestCompleted) {
           resolve(data.uploadedPayloads)
+        }
+      })
+    })
+  }
+
+  resolveWithSyncRetrievedPayloads() {
+    return new Promise((resolve) => {
+      this.application.sync.addEventObserver((event, data) => {
+        if (event === SyncEvent.PaginatedSyncRequestCompleted) {
+          resolve(data.retrievedPayloads)
         }
       })
     })
@@ -358,64 +398,59 @@ export class AppContext {
     })
   }
 
-  resolveWhenAsymmetricMessageProcessingCompletes() {
+  resolveWhenAsyncFunctionCompletes(object, functionName) {
+    if (!object[functionName]) {
+      throw new Error(`Object does not have function ${functionName}`)
+    }
+
+    const originalFunction = object[functionName].bind(object)
+
     return new Promise((resolve) => {
-      const objectToSpy = this.asymmetric
-      sinon.stub(objectToSpy, 'handleRemoteReceivedAsymmetricMessages').callsFake(async (messages) => {
-        objectToSpy.handleRemoteReceivedAsymmetricMessages.restore()
-        const result = await objectToSpy.handleRemoteReceivedAsymmetricMessages(messages)
+      sinon.stub(object, functionName).callsFake(async (params) => {
+        object[functionName].restore()
+        const result = await originalFunction(params)
         resolve()
         return result
       })
+    })
+  }
+
+  spyOnFunctionResult(object, functionName) {
+    const originalFunction = object[functionName].bind(object)
+    return new Promise((resolve, reject) => {
+      try {
+        sinon.stub(object, functionName).callsFake(async (params) => {
+          const result = await originalFunction(params)
+          object[functionName].restore()
+          setTimeout(() => {
+            resolve(result)
+          }, 0)
+          return result
+        })
+      } catch (err) {
+        reject(err)
+      }
     })
   }
 
   resolveWhenUserMessagesProcessingCompletes() {
-    return new Promise((resolve) => {
-      const objectToSpy = this.application.dependencies.get(TYPES.UserEventService)
-      sinon.stub(objectToSpy, 'handleReceivedUserEvents').callsFake(async (params) => {
-        objectToSpy.handleReceivedUserEvents.restore()
-        const result = await objectToSpy.handleReceivedUserEvents(params)
-        resolve()
-        return result
-      })
-    })
+    const objectToSpy = this.application.dependencies.get(TYPES.NotificationService)
+    return this.resolveWhenAsyncFunctionCompletes(objectToSpy, 'handleReceivedNotifications')
   }
 
   resolveWhenAllInboundAsymmetricMessagesAreDeleted() {
-    return new Promise((resolve) => {
-      const objectToSpy = this.application.dependencies.get(TYPES.AsymmetricMessageServer)
-      sinon.stub(objectToSpy, 'deleteAllInboundMessages').callsFake(async (params) => {
-        objectToSpy.deleteAllInboundMessages.restore()
-        const result = await objectToSpy.deleteAllInboundMessages(params)
-        resolve()
-        return result
-      })
-    })
+    const objectToSpy = this.application.dependencies.get(TYPES.AsymmetricMessageServer)
+    return this.resolveWhenAsyncFunctionCompletes(objectToSpy, 'deleteAllInboundMessages')
   }
 
   resolveWhenAllInboundSharedVaultInvitesAreDeleted() {
-    return new Promise((resolve) => {
-      const objectToSpy = this.application.vaultInvites.invitesServer
-      sinon.stub(objectToSpy, 'deleteAllInboundInvites').callsFake(async (params) => {
-        objectToSpy.deleteAllInboundInvites.restore()
-        const result = await objectToSpy.deleteAllInboundInvites(params)
-        resolve()
-        return result
-      })
-    })
+    const objectToSpy = this.application.vaultInvites.invitesServer
+    return this.resolveWhenAsyncFunctionCompletes(objectToSpy, 'deleteAllInboundInvites')
   }
 
   resolveWhenSharedVaultServiceSendsContactShareMessage() {
-    return new Promise((resolve) => {
-      const objectToSpy = this.sharedVaults
-      sinon.stub(objectToSpy, 'shareContactWithVaults').callsFake(async (contact) => {
-        objectToSpy.shareContactWithVaults.restore()
-        const result = await objectToSpy.shareContactWithVaults(contact)
-        resolve()
-        return result
-      })
-    })
+    const objectToSpy = this.sharedVaults
+    return this.resolveWhenAsyncFunctionCompletes(objectToSpy, 'shareContactWithVaults')
   }
 
   resolveWhenSharedVaultKeyRotationInvitesGetSent(targetVault) {
@@ -478,18 +513,6 @@ export class AppContext {
         }
       })
     })
-  }
-
-  async launch({ awaitDatabaseLoad = true, receiveChallenge } = { awaitDatabaseLoad: true }) {
-    await this.application.prepareForLaunch({
-      receiveChallenge: receiveChallenge || this.handleChallenge,
-    })
-    await this.application.launch(awaitDatabaseLoad)
-    await this.awaitUserPrefsSingletonCreation()
-  }
-
-  async deinit() {
-    await Utils.safeDeinit(this.application)
   }
 
   async sync(options) {
@@ -642,6 +665,10 @@ export class AppContext {
     console.warn('Anticipating a console error with message:', message)
   }
 
+  awaitPromiseOrThrow(promise, maxWait = 2.0, reason = 'Awaiting promise timed out; No description provided') {
+    return Utils.awaitPromiseOrThrow(promise, maxWait, reason)
+  }
+
   async activatePaidSubscriptionForUser(options = {}) {
     const dateInAnHour = new Date()
     dateInAnHour.setHours(dateInAnHour.getHours() + 1)
@@ -669,17 +696,17 @@ export class AppContext {
       await Utils.sleep(2)
     } catch (error) {
       console.warn(
-        `Mock events service not available. You are probalby running a test suite for home server: ${error.message}`,
+        `Mock events service not available. You are probably running a test suite for home server: ${error.message}`,
       )
     }
 
     try {
       await HomeServer.activatePremiumFeatures(this.email, options.subscriptionPlanName, options.expiresAt)
 
-      await Utils.sleep(1)
+      await Utils.sleep(1, 'Waiting for premium features to be activated')
     } catch (error) {
       console.warn(
-        `Home server not available. You are probalby running a test suite for self hosted setup: ${error.message}`,
+        `Home server not available. You are probably running a test suite for self hosted setup: ${error.message}`,
       )
     }
   }

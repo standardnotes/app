@@ -7,7 +7,7 @@ import {
   ComponentInterface,
   SubscriptionManagerEvent,
 } from '@standardnotes/snjs'
-import { FunctionComponent, useCallback, useEffect, useRef, useState } from 'react'
+import { FunctionComponent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import OfflineRestricted from '@/Components/ComponentView/OfflineRestricted'
 import UrlMissing from '@/Components/ComponentView/UrlMissing'
@@ -168,7 +168,7 @@ const IframeFeatureView: FunctionComponent<Props> = ({ onLoad, componentViewer, 
     const unregisterDesktopObserver = application
       .getDesktopService()
       ?.registerUpdateObserver((updatedComponent: ComponentInterface) => {
-        if (updatedComponent.uuid === uiFeature.uniqueIdentifier) {
+        if (updatedComponent.uuid === uiFeature.uniqueIdentifier.value) {
           requestReload?.(componentViewer)
         }
       })
@@ -177,6 +177,37 @@ const IframeFeatureView: FunctionComponent<Props> = ({ onLoad, componentViewer, 
       unregisterDesktopObserver?.()
     }
   }, [application, requestReload, componentViewer, uiFeature])
+
+  const sandboxAttributes = useMemo(() => {
+    const attributes = [
+      'allow-scripts',
+      'allow-top-navigation-by-user-activation',
+      'allow-popups',
+      'allow-modals',
+      'allow-forms',
+      'allow-downloads',
+    ]
+
+    if (uiFeature.isNativeFeature) {
+      attributes.push('allow-popups-to-escape-sandbox')
+    }
+
+    if (application.isNativeMobileWeb()) {
+      /**
+       * Native mobile web serves native components through the file:// protocol.
+       * Native mobile web also does not use localStorage, unlike the web app.
+       * So, components served through the file:// (precompiled editors) will be treated
+       * as same origin as the parent app, but will not have meaningful access.
+       *
+       * Third party components will have a non-file:// origin, and thus don't need this attribute.
+       */
+      if (uiFeature.isNativeFeature) {
+        attributes.push('allow-same-origin')
+      }
+    }
+
+    return attributes
+  }, [application, uiFeature])
 
   return (
     <>
@@ -208,7 +239,7 @@ const IframeFeatureView: FunctionComponent<Props> = ({ onLoad, componentViewer, 
           data-component-viewer-id={componentViewer.identifier}
           frameBorder={0}
           src={componentViewer.url || ''}
-          sandbox="allow-scripts allow-top-navigation-by-user-activation allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-modals allow-forms allow-downloads"
+          sandbox={sandboxAttributes.join(' ')}
         >
           Loading
         </iframe>

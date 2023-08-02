@@ -209,7 +209,7 @@ const Modal = ({
                   <Button
                     primary={action.type === 'primary'}
                     colorStyle={action.type === 'destructive' ? 'danger' : undefined}
-                    key={action.label.toString()}
+                    key={index}
                     onClick={action.onClick}
                     className={classNames(
                       action.mobileSlot ? 'hidden md:block' : '',

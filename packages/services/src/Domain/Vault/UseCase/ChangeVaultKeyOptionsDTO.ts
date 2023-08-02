@@ -1,10 +1,10 @@
-import { KeySystemRootKeyPasswordType, KeySystemRootKeyStorageMode, VaultListingInterface } from '@standardnotes/models'
+import { KeySystemPasswordType, KeySystemRootKeyStorageMode, VaultListingInterface } from '@standardnotes/models'
 
 export type ChangeVaultKeyOptionsDTO = {
   vault: VaultListingInterface
   newPasswordType:
-    | { passwordType: KeySystemRootKeyPasswordType.Randomized }
-    | { passwordType: KeySystemRootKeyPasswordType.UserInputted; userInputtedPassword: string }
+    | { passwordType: KeySystemPasswordType.Randomized }
+    | { passwordType: KeySystemPasswordType.UserInputted; userInputtedPassword: string }
     | undefined
-  newKeyStorageMode: KeySystemRootKeyStorageMode | undefined
+  newStorageMode: KeySystemRootKeyStorageMode | undefined
 }

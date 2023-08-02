@@ -3,13 +3,14 @@ import {
   ComponentArea,
   ComponentFeatureDescription,
   EditorFeatureDescription,
-  EditorIdentifier,
   IframeComponentFeatureDescription,
+  NativeFeatureIdentifier,
   ThemeFeatureDescription,
 } from '@standardnotes/features'
 import { ActionObserver, ComponentInterface, UIFeature, PermissionDialog, SNNote, SNTag } from '@standardnotes/models'
 import { DesktopManagerInterface } from '../Device/DesktopManagerInterface'
 import { ComponentViewerInterface } from './ComponentViewerInterface'
+import { Uuid } from '@standardnotes/domain-core'
 
 export interface ComponentManagerInterface {
   urlForFeature(uiFeature: UIFeature<ComponentFeatureDescription>): string | undefined
@@ -30,13 +31,14 @@ export interface ComponentManagerInterface {
 
   setPermissionDialogUIHandler(handler: (dialog: PermissionDialog) => void): void
 
+  findComponentWithPackageIdentifier(identifier: string): ComponentInterface | undefined
   editorForNote(note: SNNote): UIFeature<EditorFeatureDescription | IframeComponentFeatureDescription>
-  getDefaultEditorIdentifier(currentTag?: SNTag): EditorIdentifier
+  getDefaultEditorIdentifier(currentTag?: SNTag): string
 
   isThemeActive(theme: UIFeature<ThemeFeatureDescription>): boolean
   toggleTheme(theme: UIFeature<ThemeFeatureDescription>): Promise<void>
   getActiveThemes(): UIFeature<ThemeFeatureDescription>[]
-  getActiveThemesIdentifiers(): string[]
+  getActiveThemesIdentifiers(): { features: NativeFeatureIdentifier[]; uuids: Uuid[] }
 
   isComponentActive(component: ComponentInterface): boolean
   toggleComponent(component: ComponentInterface): Promise<void>

@@ -1,4 +1,4 @@
-import { joinPaths, sleep } from '@standardnotes/utils'
+import { LoggerInterface, joinPaths, sleep } from '@standardnotes/utils'
 import { Environment } from '@standardnotes/models'
 import { LegacySession, Session, SessionToken } from '@standardnotes/domain-core'
 import {
@@ -21,6 +21,7 @@ export class HttpService implements HttpServiceInterface {
   private session?: Session | LegacySession
   private __latencySimulatorMs?: number
   private declare host: string
+  loggingEnabled = false
 
   private inProgressRefreshSessionPromise?: Promise<boolean>
   private updateMetaCallback!: (meta: HttpResponseMeta) => void
@@ -28,8 +29,13 @@ export class HttpService implements HttpServiceInterface {
 
   private requestHandler: RequestHandlerInterface
 
-  constructor(private environment: Environment, private appVersion: string, private snjsVersion: string) {
-    this.requestHandler = new FetchRequestHandler(this.snjsVersion, this.appVersion, this.environment)
+  constructor(
+    private environment: Environment,
+    private appVersion: string,
+    private snjsVersion: string,
+    private logger: LoggerInterface,
+  ) {
+    this.requestHandler = new FetchRequestHandler(this.snjsVersion, this.appVersion, this.environment, this.logger)
   }
 
   setCallbacks(
@@ -145,6 +151,10 @@ export class HttpService implements HttpServiceInterface {
     }
 
     const response = await this.requestHandler.handleRequest<T>(httpRequest)
+
+    if (this.loggingEnabled && isErrorResponse(response)) {
+      this.logger.error('Request failed', httpRequest, response)
+    }
 
     if (response.meta && !httpRequest.external) {
       this.updateMetaCallback?.(response.meta)

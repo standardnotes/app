@@ -46,8 +46,6 @@ describe('server session', function () {
   }
 
   it('should succeed when a sync request is perfomed with an expired access token', async function () {
-    this.timeout(Factory.TwentySecondTimeout)
-
     await Factory.registerUserToApplication({
       application: this.application,
       email: this.email,
@@ -59,7 +57,7 @@ describe('server session', function () {
     const response = await this.application.legacyApi.sync([])
 
     expect(response.status).to.equal(200)
-  })
+  }).timeout(Factory.TwentySecondTimeout)
 
   it('should return the new session in the response when refreshed', async function () {
     await Factory.registerUserToApplication({
@@ -78,8 +76,6 @@ describe('server session', function () {
   })
 
   it('should be refreshed on any api call if access token is expired', async function () {
-    this.timeout(Factory.TwentySecondTimeout)
-
     await Factory.registerUserToApplication({
       application: this.application,
       email: this.email,
@@ -103,11 +99,9 @@ describe('server session', function () {
     expect(sessionBeforeSync.accessToken.expiresAt).to.be.lessThan(sessionAfterSync.accessToken.expiresAt)
     // New token should expire in the future.
     expect(sessionAfterSync.accessToken.expiresAt).to.be.greaterThan(Date.now())
-  })
+  }).timeout(Factory.TwentySecondTimeout)
 
   it('should not deadlock while renewing session', async function () {
-    this.timeout(Factory.TwentySecondTimeout)
-
     await Factory.registerUserToApplication({
       application: this.application,
       email: this.email,
@@ -125,7 +119,7 @@ describe('server session', function () {
     const sessionAfterSync = this.application.legacyApi.getSession()
 
     expect(sessionAfterSync.accessToken.expiresAt).to.be.greaterThan(Date.now())
-  })
+  }).timeout(Factory.TwentySecondTimeout)
 
   it('should succeed when a sync request is perfomed after signing into an ephemeral session', async function () {
     await Factory.registerUserToApplication({
@@ -199,8 +193,6 @@ describe('server session', function () {
   })
 
   it('sign out request should be performed successfully and terminate session with expired access token', async function () {
-    this.timeout(Factory.TwentySecondTimeout)
-
     await Factory.registerUserToApplication({
       application: this.application,
       email: this.email,
@@ -218,11 +210,9 @@ describe('server session', function () {
     expect(syncResponse.status).to.equal(401)
     expect(syncResponse.data.error.tag).to.equal('invalid-auth')
     expect(syncResponse.data.error.message).to.equal('Invalid login credentials.')
-  })
+  }).timeout(Factory.TwentySecondTimeout)
 
   it('change email request should be successful with a valid access token', async function () {
-    this.timeout(Factory.TwentySecondTimeout)
-
     let { application, password } = await Factory.createAndInitSimpleAppContext({
       registerUser: true,
     })
@@ -241,11 +231,9 @@ describe('server session', function () {
     expect(loginResponse).to.be.ok
     expect(loginResponse.status).to.equal(200)
     await Factory.safeDeinit(application)
-  })
+  }).timeout(Factory.TwentySecondTimeout)
 
   it('change email request should fail with an invalid access token', async function () {
-    this.timeout(Factory.TwentySecondTimeout)
-
     let { application, password } = await Factory.createAndInitSimpleAppContext({
       registerUser: true,
     })
@@ -266,14 +254,13 @@ describe('server session', function () {
     expect(changeEmailResponse.error.message).to.equal('Invalid login credentials.')
 
     await Factory.safeDeinit(application)
-  })
+  }).timeout(Factory.TwentySecondTimeout)
 
   it('change email request should fail with an expired refresh token', async function () {
-    this.timeout(Factory.ThirtySecondTimeout)
-
-    let { application, email, password } = await Factory.createAndInitSimpleAppContext({
+    let { application, password } = await Factory.createAndInitSimpleAppContext({
       registerUser: true,
     })
+    application.sync.lockSyncing()
     /** Waiting for the refresh token to expire. */
     await sleepUntilSessionExpires(application, false)
 
@@ -285,11 +272,9 @@ describe('server session', function () {
     expect(changeEmailResponse.error.message).to.equal('Invalid login credentials.')
 
     await Factory.safeDeinit(application)
-  })
+  }).timeout(Factory.ThirtySecondTimeout)
 
   it('change password request should be successful with a valid access token', async function () {
-    this.timeout(Factory.TwentySecondTimeout)
-
     await Factory.registerUserToApplication({
       application: this.application,
       email: this.email,
@@ -309,11 +294,9 @@ describe('server session', function () {
 
     expect(loginResponse).to.be.ok
     expect(loginResponse.status).to.be.equal(200)
-  })
+  }).timeout(Factory.TwentySecondTimeout)
 
   it('change password request should be successful after the expired access token is refreshed', async function () {
-    this.timeout(Factory.TwentySecondTimeout)
-
     await Factory.registerUserToApplication({
       application: this.application,
       email: this.email,
@@ -336,7 +319,7 @@ describe('server session', function () {
 
     expect(loginResponse).to.be.ok
     expect(loginResponse.status).to.be.equal(200)
-  })
+  }).timeout(Factory.TwentySecondTimeout)
 
   it('change password request should fail with an invalid access token', async function () {
     await Factory.registerUserToApplication({
@@ -360,13 +343,13 @@ describe('server session', function () {
   })
 
   it('change password request should fail with an expired refresh token', async function () {
-    this.timeout(Factory.TwentySecondTimeout)
-
     await Factory.registerUserToApplication({
       application: this.application,
       email: this.email,
       password: this.password,
     })
+
+    this.application.sync.lockSyncing()
 
     /** Waiting for the refresh token to expire. */
     await sleepUntilSessionExpires(this.application, false)
@@ -399,13 +382,13 @@ describe('server session', function () {
   })
 
   it('should fail when renewing a session with an expired refresh token', async function () {
-    this.timeout(Factory.TwentySecondTimeout)
-
     await Factory.registerUserToApplication({
       application: this.application,
       email: this.email,
       password: this.password,
     })
+
+    this.application.sync.lockSyncing()
 
     await sleepUntilSessionExpires(this.application, false)
 
@@ -424,7 +407,7 @@ describe('server session', function () {
     expect(syncResponse.status).to.equal(401)
     expect(syncResponse.data.error.tag).to.equal('invalid-auth')
     expect(syncResponse.data.error.message).to.equal('Invalid login credentials.')
-  })
+  }).timeout(Factory.TwentySecondTimeout)
 
   it('should fail when renewing a session with an invalid refresh token', async function () {
     await Factory.registerUserToApplication({
@@ -474,8 +457,6 @@ describe('server session', function () {
   })
 
   it('notes should be synced as expected after refreshing a session', async function () {
-    this.timeout(Factory.TwentySecondTimeout)
-
     await Factory.registerUserToApplication({
       application: this.application,
       email: this.email,
@@ -500,7 +481,7 @@ describe('server session', function () {
       const noteResult = await this.application.items.findItem(aNoteBeforeSync.uuid)
       expect(aNoteBeforeSync.isItemContentEqualWith(noteResult)).to.equal(true)
     }
-  })
+  }).timeout(Factory.TwentySecondTimeout)
 
   it('changing password on one client should not invalidate other sessions', async function () {
     await Factory.registerUserToApplication({
@@ -635,8 +616,6 @@ describe('server session', function () {
   })
 
   it('revoking a session should destroy local data', async function () {
-    this.timeout(Factory.TwentySecondTimeout)
-
     Factory.handlePasswordChallenges(this.application, this.password)
     await Factory.registerUserToApplication({
       application: this.application,
@@ -662,11 +641,9 @@ describe('server session', function () {
     const deviceInterface = new WebDeviceInterface()
     const payloads = await deviceInterface.getAllDatabaseEntries(app2identifier)
     expect(payloads).to.be.empty
-  })
+  }).timeout(Factory.TwentySecondTimeout)
 
   it('revoking other sessions should destroy their local data', async function () {
-    this.timeout(Factory.TwentySecondTimeout)
-
     Factory.handlePasswordChallenges(this.application, this.password)
     await Factory.registerUserToApplication({
       application: this.application,
@@ -690,7 +667,7 @@ describe('server session', function () {
     const deviceInterface = new WebDeviceInterface()
     const payloads = await deviceInterface.getAllDatabaseEntries(app2identifier)
     expect(payloads).to.be.empty
-  })
+  }).timeout(Factory.TwentySecondTimeout)
 
   it('signing out with invalid session token should still delete local data', async function () {
     await Factory.registerUserToApplication({

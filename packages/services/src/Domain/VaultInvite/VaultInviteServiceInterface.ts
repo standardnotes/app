@@ -1,7 +1,7 @@
 import { InviteRecord } from './InviteRecord'
 import { ApplicationServiceInterface } from '../Service/ApplicationServiceInterface'
 import { SharedVaultListingInterface, TrustedContactInterface } from '@standardnotes/models'
-import { ClientDisplayableError, SharedVaultInviteServerHash, SharedVaultPermission } from '@standardnotes/responses'
+import { ClientDisplayableError, SharedVaultInviteServerHash } from '@standardnotes/responses'
 import { VaultInviteServiceEvent } from './VaultInviteServiceEvent'
 import { Result } from '@standardnotes/domain-core'
 
@@ -10,7 +10,7 @@ export interface VaultInviteServiceInterface extends ApplicationServiceInterface
   inviteContactToSharedVault(
     sharedVault: SharedVaultListingInterface,
     contact: TrustedContactInterface,
-    permissions: SharedVaultPermission,
+    permission: string,
   ): Promise<Result<SharedVaultInviteServerHash>>
   getCachedPendingInviteRecords(): InviteRecord[]
   deleteInvite(invite: SharedVaultInviteServerHash): Promise<ClientDisplayableError | void>

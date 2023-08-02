@@ -3,6 +3,86 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.167.29](https://github.com/standardnotes/app/compare/@standardnotes/web@3.167.28...@standardnotes/web@3.167.29) (2023-08-02)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.167.28](https://github.com/standardnotes/app/compare/@standardnotes/web@3.167.27...@standardnotes/web@3.167.28) (2023-08-01)
+
+### Bug Fixes
+
+* Fixes issue where selecting a third-party editor/note-type as default for a tag would not correctly apply editor ([73609ca](https://github.com/standardnotes/app/commit/73609ca7e31c6cc628f46319f0b9502f7b8afcd3))
+
+## [3.167.27](https://github.com/standardnotes/app/compare/@standardnotes/web@3.167.26...@standardnotes/web@3.167.27) (2023-08-01)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.167.26](https://github.com/standardnotes/app/compare/@standardnotes/web@3.167.25...@standardnotes/web@3.167.26) (2023-08-01)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.167.25](https://github.com/standardnotes/app/compare/@standardnotes/web@3.167.24...@standardnotes/web@3.167.25) (2023-08-01)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.167.24](https://github.com/standardnotes/app/compare/@standardnotes/web@3.167.23...@standardnotes/web@3.167.24) (2023-07-31)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.167.23](https://github.com/standardnotes/app/compare/@standardnotes/web@3.167.22...@standardnotes/web@3.167.23) (2023-07-31)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.167.22](https://github.com/standardnotes/app/compare/@standardnotes/web@3.167.21...@standardnotes/web@3.167.22) (2023-07-29)
+
+### Bug Fixes
+
+* Fixed issue where autocapitalization wouldn't work on iOS for newly created Super notes ([c42afa4](https://github.com/standardnotes/app/commit/c42afa45b42f6d4afcc120cd053ceff14fe2089e))
+
+## [3.167.21](https://github.com/standardnotes/app/compare/@standardnotes/web@3.167.20...@standardnotes/web@3.167.21) (2023-07-29)
+
+### Bug Fixes
+
+* Fixed issue where links in Super would not open ([6485531](https://github.com/standardnotes/app/commit/64855315e8ec66f8d9397838b62f1a4d15a66937))
+
+## [3.167.20](https://github.com/standardnotes/app/compare/@standardnotes/web@3.167.19...@standardnotes/web@3.167.20) (2023-07-28)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.167.19](https://github.com/standardnotes/app/compare/@standardnotes/web@3.167.18...@standardnotes/web@3.167.19) (2023-07-28)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.167.18](https://github.com/standardnotes/app/compare/@standardnotes/web@3.167.17...@standardnotes/web@3.167.18) (2023-07-28)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.167.17](https://github.com/standardnotes/app/compare/@standardnotes/web@3.167.16...@standardnotes/web@3.167.17) (2023-07-27)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.167.16](https://github.com/standardnotes/app/compare/@standardnotes/web@3.167.15...@standardnotes/web@3.167.16) (2023-07-27)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.167.15](https://github.com/standardnotes/app/compare/@standardnotes/web@3.167.14...@standardnotes/web@3.167.15) (2023-07-27)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.167.14](https://github.com/standardnotes/app/compare/@standardnotes/web@3.167.13...@standardnotes/web@3.167.14) (2023-07-26)
+
+### Bug Fixes
+
+* Fixes issue where lock screen would not use previously active theme ([#2372](https://github.com/standardnotes/app/issues/2372)) ([d268c02](https://github.com/standardnotes/app/commit/d268c02ab31beb5e2fd9e6547610f9a4dd61bed4))
+
+## [3.167.13](https://github.com/standardnotes/app/compare/@standardnotes/web@3.167.12...@standardnotes/web@3.167.13) (2023-07-26)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.167.12](https://github.com/standardnotes/app/compare/@standardnotes/web@3.167.11...@standardnotes/web@3.167.12) (2023-07-26)
+
+**Note:** Version bump only for package @standardnotes/web
+
 ## [3.167.11](https://github.com/standardnotes/app/compare/@standardnotes/web@3.167.10...@standardnotes/web@3.167.11) (2023-07-25)
 
 **Note:** Version bump only for package @standardnotes/web

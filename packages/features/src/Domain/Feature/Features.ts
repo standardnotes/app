@@ -1,7 +1,7 @@
 import { AnyFeatureDescription } from './AnyFeatureDescription'
 import { ThemeFeatureDescription } from './ThemeFeatureDescription'
 import { EditorFeatureDescription } from './EditorFeatureDescription'
-import { FeatureIdentifier } from './FeatureIdentifier'
+import { NativeFeatureIdentifier } from './NativeFeatureIdentifier'
 import { serverFeatures } from '../Lists/ServerFeatures'
 import { clientFeatures } from '../Lists/ClientFeatures'
 import { GetDeprecatedFeatures } from '../Lists/DeprecatedFeatures'
@@ -23,11 +23,11 @@ export function GetFeatures(): AnyFeatureDescription[] {
   ]
 }
 
-export function FindNativeFeature<T extends AnyFeatureDescription>(identifier: FeatureIdentifier): T | undefined {
+export function FindNativeFeature<T extends AnyFeatureDescription>(identifier: string): T | undefined {
   return GetFeatures().find((f) => f.identifier === identifier) as T
 }
 
-export function FindNativeTheme(identifier: FeatureIdentifier): ThemeFeatureDescription | undefined {
+export function FindNativeTheme(identifier: string): ThemeFeatureDescription | undefined {
   return themes().find((t) => t.identifier === identifier)
 }
 
@@ -40,11 +40,11 @@ export function GetIframeEditors(): IframeComponentFeatureDescription[] {
 }
 
 export function GetSuperNoteFeature(): EditorFeatureDescription {
-  return FindNativeFeature(FeatureIdentifier.SuperEditor) as EditorFeatureDescription
+  return FindNativeFeature(NativeFeatureIdentifier.TYPES.SuperEditor) as EditorFeatureDescription
 }
 
 export function GetPlainNoteFeature(): EditorFeatureDescription {
-  return FindNativeFeature(FeatureIdentifier.PlainEditor) as EditorFeatureDescription
+  return FindNativeFeature(NativeFeatureIdentifier.TYPES.PlainEditor) as EditorFeatureDescription
 }
 
 export function GetNativeThemes(): ThemeFeatureDescription[] {
@@ -52,5 +52,5 @@ export function GetNativeThemes(): ThemeFeatureDescription[] {
 }
 
 export function GetDarkThemeFeature(): ThemeFeatureDescription {
-  return themes().find((t) => t.identifier === FeatureIdentifier.DarkTheme) as ThemeFeatureDescription
+  return themes().find((t) => t.identifier === NativeFeatureIdentifier.TYPES.DarkTheme) as ThemeFeatureDescription
 }

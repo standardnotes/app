@@ -13,6 +13,7 @@ import { ItemManager } from '@Lib/Services/Items/ItemManager'
 import { FeaturesService } from '@Lib/Services/Features/FeaturesService'
 import { SNComponentManager } from './ComponentManager'
 import { SyncService } from '../Sync/SyncService'
+import { LoggerInterface } from '@standardnotes/utils'
 
 describe('featuresService', () => {
   let items: ItemManagerInterface
@@ -23,6 +24,7 @@ describe('featuresService', () => {
   let prefs: PreferenceServiceInterface
   let eventBus: InternalEventBusInterface
   let device: DeviceInterface
+  let logger: LoggerInterface
 
   const createManager = (environment: Environment, platform: Platform) => {
     const manager = new SNComponentManager(
@@ -35,6 +37,7 @@ describe('featuresService', () => {
       environment,
       platform,
       device,
+      logger,
       eventBus,
     )
 
@@ -46,6 +49,8 @@ describe('featuresService', () => {
       addEventListener: jest.fn(),
       attachEvent: jest.fn(),
     } as unknown as Window & typeof globalThis
+    logger = {} as jest.Mocked<LoggerInterface>
+    logger.info = jest.fn()
 
     sync = {} as jest.Mocked<SyncService>
     sync.sync = jest.fn()

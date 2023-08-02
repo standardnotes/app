@@ -1,4 +1,4 @@
-import { SharedVaultInviteServerHash, SharedVaultPermission } from '@standardnotes/responses'
+import { SharedVaultInviteServerHash } from '@standardnotes/responses'
 import {
   TrustedContactInterface,
   SharedVaultListingInterface,
@@ -8,7 +8,7 @@ import {
 import { SendVaultInvite } from './SendVaultInvite'
 import { PkcKeyPair } from '@standardnotes/sncrypto-common'
 import { EncryptMessage } from '../../Encryption/UseCase/Asymmetric/EncryptMessage'
-import { Result, UseCaseInterface } from '@standardnotes/domain-core'
+import { Result, SharedVaultUserPermission, UseCaseInterface } from '@standardnotes/domain-core'
 import { ShareContactWithVault } from '../../SharedVaults/UseCase/ShareContactWithVault'
 import { KeySystemKeyManagerInterface } from '../../KeySystem/KeySystemKeyManagerInterface'
 
@@ -29,7 +29,7 @@ export class InviteToVault implements UseCaseInterface<SharedVaultInviteServerHa
     sharedVault: SharedVaultListingInterface
     sharedVaultContacts: TrustedContactInterface[]
     recipient: TrustedContactInterface
-    permissions: SharedVaultPermission
+    permission: string
   }): Promise<Result<SharedVaultInviteServerHash>> {
     const createInviteResult = await this.inviteContact(params)
 
@@ -74,8 +74,14 @@ export class InviteToVault implements UseCaseInterface<SharedVaultInviteServerHa
     sharedVault: SharedVaultListingInterface
     sharedVaultContacts: TrustedContactInterface[]
     recipient: TrustedContactInterface
-    permissions: SharedVaultPermission
+    permission: string
   }): Promise<Result<SharedVaultInviteServerHash>> {
+    const permissionOrError = SharedVaultUserPermission.create(params.permission)
+    if (permissionOrError.isFailed()) {
+      return Result.fail(permissionOrError.getError())
+    }
+    const permission = permissionOrError.getValue()
+
     const keySystemRootKey = this.keyManager.getPrimaryKeySystemRootKey(params.sharedVault.systemIdentifier)
     if (!keySystemRootKey) {
       return Result.fail('Cannot invite contact; key system root key not found')
@@ -127,7 +133,7 @@ export class InviteToVault implements UseCaseInterface<SharedVaultInviteServerHa
       sharedVaultUuid: params.sharedVault.sharing.sharedVaultUuid,
       recipientUuid: params.recipient.contactUuid,
       encryptedMessage: encryptedMessage.getValue(),
-      permissions: params.permissions,
+      permission: permission.value,
     })
 
     return createInviteResult

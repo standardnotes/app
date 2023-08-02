@@ -3,7 +3,7 @@ import { ApiEndpointParam } from './ApiEndpointParam'
 import { ConflictParams } from './ConflictParams'
 import { ServerItemResponse } from './ServerItemResponse'
 import { SharedVaultServerHash } from '../SharedVaults/SharedVaultServerHash'
-import { UserEventServerHash } from '../UserEvent/UserEventServerHash'
+import { NotificationServerHash } from '../Notification/NotificationServerHash'
 import { AsymmetricMessageServerHash } from '../AsymmetricMessage/AsymmetricMessageServerHash'
 
 export type RawSyncData = {
@@ -16,7 +16,7 @@ export type RawSyncData = {
   unsaved?: ConflictParams[]
   shared_vaults?: SharedVaultServerHash[]
   shared_vault_invites?: SharedVaultInviteServerHash[]
-  user_events?: UserEventServerHash[]
-  asymmetric_messages?: AsymmetricMessageServerHash[]
+  notifications?: NotificationServerHash[]
+  messages?: AsymmetricMessageServerHash[]
   status?: number
 }

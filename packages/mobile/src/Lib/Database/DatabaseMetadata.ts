@@ -2,7 +2,10 @@ import { DatabaseItemMetadata, isNotUndefined, TransferPayload } from '@standard
 import { FlashKeyValueStore } from './FlashKeyValueStore'
 
 export class DatabaseMetadata {
-  constructor(private identifier: string, private flashStorage: FlashKeyValueStore) {}
+  constructor(
+    private identifier: string,
+    private flashStorage: FlashKeyValueStore,
+  ) {}
 
   runMigration(payloads: TransferPayload[]) {
     const metadataItems = this.setMetadataForPayloads(payloads)

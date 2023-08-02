@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/sncrypto-common",
-  "version": "1.13.5",
+  "version": "1.13.7",
   "engines": {
     "node": ">=16.0.0 <17.0.0"
   },
@@ -11,7 +11,7 @@
   "files": [
     "dist"
   ],
-  "license": "AGPL-3.0-or-later",
+  "license": "CC BY-NC-SA 4.0",
   "publishConfig": {
     "access": "public"
   },
@@ -27,7 +27,7 @@
     "@typescript-eslint/eslint-plugin": "*",
     "@typescript-eslint/parser": "*",
     "eslint": "*",
-    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-prettier": "*",
     "typescript": "*"
   },
   "dependencies": {

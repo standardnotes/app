@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.17.10](https://github.com/standardnotes/app/compare/@standardnotes/utils@1.17.9...@standardnotes/utils@1.17.10) (2023-08-02)
+
+**Note:** Version bump only for package @standardnotes/utils
+
+## [1.17.9](https://github.com/standardnotes/app/compare/@standardnotes/utils@1.17.8...@standardnotes/utils@1.17.9) (2023-08-01)
+
+**Note:** Version bump only for package @standardnotes/utils
+
+## [1.17.8](https://github.com/standardnotes/app/compare/@standardnotes/utils@1.17.7...@standardnotes/utils@1.17.8) (2023-07-28)
+
+**Note:** Version bump only for package @standardnotes/utils
+
+## [1.17.7](https://github.com/standardnotes/app/compare/@standardnotes/utils@1.17.6...@standardnotes/utils@1.17.7) (2023-07-26)
+
+### Bug Fixes
+
+* Fixes issue where lock screen would not use previously active theme ([#2372](https://github.com/standardnotes/app/issues/2372)) ([d268c02](https://github.com/standardnotes/app/commit/d268c02ab31beb5e2fd9e6547610f9a4dd61bed4))
+
 ## [1.17.6](https://github.com/standardnotes/app/compare/@standardnotes/utils@1.17.5...@standardnotes/utils@1.17.6) (2023-07-12)
 
 **Note:** Version bump only for package @standardnotes/utils

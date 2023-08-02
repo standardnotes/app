@@ -3,6 +3,80 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.56.42](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.56.41...@standardnotes/mobile@3.56.42) (2023-08-02)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.56.41](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.56.40...@standardnotes/mobile@3.56.41) (2023-08-01)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.56.40](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.56.39...@standardnotes/mobile@3.56.40) (2023-08-01)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.56.39](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.56.38...@standardnotes/mobile@3.56.39) (2023-08-01)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.56.38](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.56.37...@standardnotes/mobile@3.56.38) (2023-08-01)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.56.37](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.56.36...@standardnotes/mobile@3.56.37) (2023-07-31)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.56.36](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.56.35...@standardnotes/mobile@3.56.36) (2023-07-31)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.56.35](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.56.34...@standardnotes/mobile@3.56.35) (2023-07-29)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.56.34](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.56.33...@standardnotes/mobile@3.56.34) (2023-07-29)
+
+### Bug Fixes
+
+* Fixed issue where links in Super would not open ([6485531](https://github.com/standardnotes/app/commit/64855315e8ec66f8d9397838b62f1a4d15a66937))
+
+## [3.56.33](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.56.32...@standardnotes/mobile@3.56.33) (2023-07-28)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.56.32](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.56.31...@standardnotes/mobile@3.56.32) (2023-07-28)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.56.31](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.56.30...@standardnotes/mobile@3.56.31) (2023-07-28)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.56.30](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.56.29...@standardnotes/mobile@3.56.30) (2023-07-27)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.56.29](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.56.28...@standardnotes/mobile@3.56.29) (2023-07-27)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.56.28](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.56.27...@standardnotes/mobile@3.56.28) (2023-07-27)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.56.27](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.56.26...@standardnotes/mobile@3.56.27) (2023-07-26)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.56.26](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.56.25...@standardnotes/mobile@3.56.26) (2023-07-26)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.56.25](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.56.24...@standardnotes/mobile@3.56.25) (2023-07-26)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
 ## [3.56.24](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.56.23...@standardnotes/mobile@3.56.24) (2023-07-25)
 
 **Note:** Version bump only for package @standardnotes/mobile

@@ -1,9 +1,8 @@
 import { PermissionName } from '../Permission/PermissionName'
-import { FeatureIdentifier } from './FeatureIdentifier'
 import { RoleFields } from './RoleFields'
 
 export type ClientFeatureDescription = RoleFields & {
-  identifier: FeatureIdentifier
+  identifier: string
   permission_name: PermissionName
   description: string
   name: string

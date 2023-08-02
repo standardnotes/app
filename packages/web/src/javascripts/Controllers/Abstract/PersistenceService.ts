@@ -8,7 +8,10 @@ export class PersistenceService {
   private unsubAppEventObserver: () => void
   private didHydrateOnce = false
 
-  constructor(private application: WebApplication, private eventBus: InternalEventBusInterface) {
+  constructor(
+    private application: WebApplication,
+    private eventBus: InternalEventBusInterface,
+  ) {
     this.unsubAppEventObserver = this.application.addEventObserver(async (eventName) => {
       if (!this.application) {
         return

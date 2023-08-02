@@ -1,11 +1,15 @@
-import { FeatureIdentifier } from '@standardnotes/snjs'
-import { ComponentArea, FindNativeFeature, GetIframeAndNativeEditors } from '@standardnotes/features'
+import {
+  ComponentArea,
+  FindNativeFeature,
+  GetIframeAndNativeEditors,
+  NativeFeatureIdentifier,
+} from '@standardnotes/features'
 import { getIconAndTintForNoteType } from './Items/Icons/getIconAndTintForNoteType'
 import { DropdownItem } from '@/Components/Dropdown/DropdownItem'
 import { WebApplicationInterface } from '@standardnotes/ui-services'
 
 export type EditorOption = DropdownItem & {
-  value: FeatureIdentifier
+  value: string
   isLabs?: boolean
 }
 
@@ -19,6 +23,7 @@ export function getDropdownItemsForAllEditors(application: WebApplicationInterfa
       return {
         label: editor.name,
         value: editor.identifier,
+        id: NativeFeatureIdentifier.create(editor.identifier).getValue(),
         ...(iconType ? { icon: iconType } : null),
         ...(tint ? { iconClassName: `text-accessory-tint-${tint}` } : null),
       }
@@ -30,12 +35,11 @@ export function getDropdownItemsForAllEditors(application: WebApplicationInterfa
       .thirdPartyComponentsForArea(ComponentArea.Editor)
       .filter((component) => FindNativeFeature(component.identifier) === undefined)
       .map((editor): EditorOption => {
-        const identifier = editor.package_info.identifier
         const [iconType, tint] = getIconAndTintForNoteType(editor.noteType)
 
         return {
           label: editor.displayName,
-          value: identifier,
+          value: editor.identifier,
           ...(iconType ? { icon: iconType } : null),
           ...(tint ? { iconClassName: `text-accessory-tint-${tint}` } : null),
         }

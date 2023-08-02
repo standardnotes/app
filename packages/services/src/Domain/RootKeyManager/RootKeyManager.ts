@@ -13,7 +13,6 @@ import {
   EncryptionOperatorsInterface,
 } from '@standardnotes/encryption'
 import {
-  ContentTypesUsingRootKeyEncryption,
   DecryptedPayload,
   DecryptedTransferPayload,
   EncryptedPayload,
@@ -32,12 +31,11 @@ import { StorageValueModes } from '../Storage/StorageTypes'
 import { EncryptTypeAPayload } from '../Encryption/UseCase/TypeA/EncryptPayload'
 import { DecryptTypeAPayload } from '../Encryption/UseCase/TypeA/DecryptPayload'
 import { AbstractService } from '../Service/AbstractService'
-import { ItemManagerInterface } from '../Item/ItemManagerInterface'
-import { MutatorClientInterface } from '../Mutator/MutatorClientInterface'
 import { RootKeyManagerEvent } from './RootKeyManagerEvent'
 import { ValidatePasscodeResult } from './ValidatePasscodeResult'
 import { ValidateAccountPasswordResult } from './ValidateAccountPasswordResult'
 import { KeyMode } from './KeyMode'
+import { ReencryptTypeAItems } from '../Encryption/UseCase/TypeA/ReencryptTypeAItems'
 
 export class RootKeyManager extends AbstractService<RootKeyManagerEvent> {
   private rootKey?: RootKeyInterface
@@ -47,10 +45,9 @@ export class RootKeyManager extends AbstractService<RootKeyManagerEvent> {
   constructor(
     private device: DeviceInterface,
     private storage: StorageServiceInterface,
-    private items: ItemManagerInterface,
-    private mutator: MutatorClientInterface,
     private operators: EncryptionOperatorsInterface,
     private identifier: ApplicationIdentifier,
+    private _reencryptTypeAItems: ReencryptTypeAItems,
     eventBus: InternalEventBusInterface,
   ) {
     super(eventBus)
@@ -58,6 +55,12 @@ export class RootKeyManager extends AbstractService<RootKeyManagerEvent> {
 
   override deinit() {
     super.deinit()
+    ;(this.device as unknown) = undefined
+    ;(this.storage as unknown) = undefined
+    ;(this.operators as unknown) = undefined
+    ;(this.identifier as unknown) = undefined
+    ;(this._reencryptTypeAItems as unknown) = undefined
+
     this.rootKey = undefined
     this.memoizedRootKeyParams = undefined
   }
@@ -126,7 +129,7 @@ export class RootKeyManager extends AbstractService<RootKeyManagerEvent> {
       case KeyMode.RootKeyPlusWrapper:
         return true
       default:
-        throw Error(`Unhandled keyMode value '${this.keyMode}'.`)
+        throw Error('Unhandled keyMode value.')
     }
   }
 
@@ -307,7 +310,7 @@ export class RootKeyManager extends AbstractService<RootKeyManagerEvent> {
     if (this.keyMode === KeyMode.WrapperOnly || this.keyMode === KeyMode.RootKeyPlusWrapper) {
       if (this.keyMode === KeyMode.WrapperOnly) {
         this.setRootKeyInstance(wrappingKey)
-        await this.reencryptApplicableItemsAfterUserRootKeyChange()
+        await this._reencryptTypeAItems.execute()
       } else {
         await this.wrapAndPersistRootKey(wrappingKey)
       }
@@ -366,7 +369,7 @@ export class RootKeyManager extends AbstractService<RootKeyManagerEvent> {
       /** Root key is simply changing, mode stays the same */
       /** this.keyMode = this.keyMode; */
     } else {
-      throw Error(`Unhandled key mode for setNewRootKey ${this.keyMode}`)
+      throw Error('Unhandled key mode for setNewRootKey')
     }
 
     this.setRootKeyInstance(key)
@@ -393,7 +396,7 @@ export class RootKeyManager extends AbstractService<RootKeyManagerEvent> {
     } else if (this.keyMode === KeyMode.RootKeyNone) {
       return undefined
     } else {
-      throw `Unhandled key mode for getRootKeyParams ${this.keyMode}`
+      throw 'Unhandled key mode for getRootKeyParams'
     }
   }
 
@@ -472,20 +475,5 @@ export class RootKeyManager extends AbstractService<RootKeyManagerEvent> {
       ...rawKey,
       keyParams: keyParams.getPortableValue(),
     })
-  }
-
-  /**
-   * When the root key changes, we must re-encrypt all relevant items with this new root key (by simply re-syncing).
-   */
-  public async reencryptApplicableItemsAfterUserRootKeyChange(): Promise<void> {
-    const items = this.items.getItems(ContentTypesUsingRootKeyEncryption())
-    if (items.length > 0) {
-      /**
-       * Do not call sync after marking dirty.
-       * Re-encrypting items keys is called by consumers who have specific flows who
-       * will sync on their own timing
-       */
-      await this.mutator.setItemsDirty(items)
-    }
   }
 }

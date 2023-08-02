@@ -59,7 +59,7 @@ export abstract class Collection<
   }
 
   isErrorDecryptingElement = (e: Decrypted | Encrypted | Deleted): e is Encrypted => {
-    return this.isEncryptedElement(e) && e.errorDecrypting === true
+    return this.isEncryptedElement(e)
   }
 
   isDeletedElement = (e: Decrypted | Encrypted | Deleted): e is Deleted => {
@@ -78,10 +78,10 @@ export abstract class Collection<
     conflictMapCopy?: UuidMap,
   ) {
     if (copy) {
-      this.map = mapCopy!
-      this.typedMap = typedMapCopy!
-      this.referenceMap = referenceMapCopy!
-      this.conflictMap = conflictMapCopy!
+      this.map = mapCopy as Record<string, Element>
+      this.typedMap = typedMapCopy as Record<string, Element[]>
+      this.referenceMap = referenceMapCopy as UuidMap
+      this.conflictMap = conflictMapCopy as UuidMap
     } else {
       this.referenceMap = new UuidMap()
       this.conflictMap = new UuidMap()

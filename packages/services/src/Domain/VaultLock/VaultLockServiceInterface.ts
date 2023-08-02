@@ -7,6 +7,6 @@ export interface VaultLockServiceInterface
   getLockedvaults(): VaultListingInterface[]
   isVaultLocked(vault: VaultListingInterface): boolean
   isVaultLockable(vault: VaultListingInterface): boolean
-  lockNonPersistentVault(vault: VaultListingInterface): void
+  lockNonPersistentVault(vault: VaultListingInterface): Promise<void>
   unlockNonPersistentVault(vault: VaultListingInterface, password: string): Promise<boolean>
 }

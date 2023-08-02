@@ -1,9 +1,5 @@
 import { DeleteContact } from './UseCase/DeleteContact'
 import { MutatorClientInterface } from './../Mutator/MutatorClientInterface'
-import { UserKeyPairChangedEventData } from './../Session/UserKeyPairChangedEventData'
-import { SessionEvent } from './../Session/SessionEvent'
-import { InternalEventInterface } from './../Internal/InternalEventInterface'
-import { InternalEventHandlerInterface } from './../Internal/InternalEventHandlerInterface'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { SharedVaultInviteServerHash, SharedVaultUserServerHash } from '@standardnotes/responses'
 import { TrustedContactInterface, TrustedContactMutator, DecryptedItemInterface } from '@standardnotes/models'
@@ -24,10 +20,7 @@ import { GetAllContacts } from './UseCase/GetAllContacts'
 import { EncryptionProviderInterface } from '../Encryption/EncryptionProviderInterface'
 import { Result } from '@standardnotes/domain-core'
 
-export class ContactService
-  extends AbstractService<ContactServiceEvent>
-  implements ContactServiceInterface, InternalEventHandlerInterface
-{
+export class ContactService extends AbstractService<ContactServiceEvent> implements ContactServiceInterface {
   constructor(
     private sync: SyncServiceInterface,
     private mutator: MutatorClientInterface,
@@ -45,19 +38,22 @@ export class ContactService
     eventBus: InternalEventBusInterface,
   ) {
     super(eventBus)
-
-    eventBus.addEventHandler(this, SessionEvent.UserKeyPairChanged)
   }
 
-  async handleEvent(event: InternalEventInterface): Promise<void> {
-    if (event.type === SessionEvent.UserKeyPairChanged) {
-      const data = event.payload as UserKeyPairChangedEventData
-
-      await this.selfContactManager.updateWithNewPublicKeySet({
-        encryption: data.current.encryption.publicKey,
-        signing: data.current.signing.publicKey,
-      })
-    }
+  override deinit(): void {
+    super.deinit()
+    ;(this.sync as unknown) = undefined
+    ;(this.mutator as unknown) = undefined
+    ;(this.session as unknown) = undefined
+    ;(this.crypto as unknown) = undefined
+    ;(this.user as unknown) = undefined
+    ;(this.selfContactManager as unknown) = undefined
+    ;(this.encryption as unknown) = undefined
+    ;(this._findContact as unknown) = undefined
+    ;(this._getAllContacts as unknown) = undefined
+    ;(this._createOrEditContact as unknown) = undefined
+    ;(this._editContact as unknown) = undefined
+    ;(this._validateItemSigner as unknown) = undefined
   }
 
   getSelfContact(): TrustedContactInterface | undefined {
@@ -156,6 +152,8 @@ export class ContactService
   ): Promise<TrustedContactInterface> {
     const updatedContact = await this._editContact.execute(contact, params)
 
+    void this.sync.sync()
+
     return updatedContact
   }
 
@@ -167,6 +165,9 @@ export class ContactService
     isMe?: boolean
   }): Promise<TrustedContactInterface | undefined> {
     const contact = await this._createOrEditContact.execute(params)
+
+    void this.sync.sync()
+
     return contact
   }
 
@@ -205,21 +206,5 @@ export class ContactService
 
   getItemSignatureStatus(item: DecryptedItemInterface): ItemSignatureValidationResult {
     return this._validateItemSigner.execute(item)
-  }
-
-  override deinit(): void {
-    super.deinit()
-    ;(this.sync as unknown) = undefined
-    ;(this.mutator as unknown) = undefined
-    ;(this.session as unknown) = undefined
-    ;(this.crypto as unknown) = undefined
-    ;(this.user as unknown) = undefined
-    ;(this.selfContactManager as unknown) = undefined
-    ;(this.encryption as unknown) = undefined
-    ;(this._findContact as unknown) = undefined
-    ;(this._getAllContacts as unknown) = undefined
-    ;(this._createOrEditContact as unknown) = undefined
-    ;(this._editContact as unknown) = undefined
-    ;(this._validateItemSigner as unknown) = undefined
   }
 }

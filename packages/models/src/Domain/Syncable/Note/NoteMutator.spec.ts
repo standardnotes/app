@@ -1,7 +1,7 @@
 import { NoteMutator } from './NoteMutator'
 import { createNote } from './../../Utilities/Test/SpecUtils'
 import { MutationType } from '../../Abstract/Item'
-import { FeatureIdentifier, NoteType } from '@standardnotes/features'
+import { NativeFeatureIdentifier, NoteType } from '@standardnotes/features'
 
 describe('note mutator', () => {
   it('sets noteType', () => {
@@ -16,9 +16,9 @@ describe('note mutator', () => {
   it('sets componentIdentifier', () => {
     const note = createNote({})
     const mutator = new NoteMutator(note, MutationType.NoUpdateUserTimestamps)
-    mutator.editorIdentifier = FeatureIdentifier.MarkdownProEditor
+    mutator.editorIdentifier = NativeFeatureIdentifier.TYPES.MarkdownProEditor
     const result = mutator.getResult()
 
-    expect(result.content.editorIdentifier).toEqual(FeatureIdentifier.MarkdownProEditor)
+    expect(result.content.editorIdentifier).toEqual(NativeFeatureIdentifier.TYPES.MarkdownProEditor)
   })
 })

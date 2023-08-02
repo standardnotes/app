@@ -58,10 +58,15 @@
 
     if (MainRegistry.VaultTests.enabled) {
       InternalFeatureService.get().enableFeature(InternalFeature.Vaults);
-      await loadTests(MainRegistry.VaultTests.files);
-    }
-
-    if (!MainRegistry.VaultTests.enabled || !MainRegistry.VaultTests.enabled.exclusive) {
+      if (MainRegistry.VaultTests.exclusive) {
+        await loadTests(MainRegistry.VaultTests.files);
+      } else {
+        await loadTests([
+          ...MainRegistry.BaseTests,
+          ...MainRegistry.VaultTests.files
+        ]);
+      }
+    } else {
       await loadTests(MainRegistry.BaseTests);
     }
 

@@ -19,7 +19,7 @@ describe('shared vault files', function () {
   beforeEach(async function () {
     localStorage.clear()
 
-    context = await Factory.createAppContextWithRealCrypto()
+    context = await Factory.createVaultsContextWithRealCrypto()
 
     await context.launch()
     await context.register()
@@ -29,7 +29,7 @@ describe('shared vault files', function () {
   })
 
   describe('private vaults', () => {
-    it('should be able to upload and download file to vault as owner', async () => {
+    it('should be able to upload and download file to private vault as owner', async () => {
       const vault = await Collaboration.createPrivateVault(context)
       const response = await fetch('/mocha/assets/small_file.md')
       const buffer = new Uint8Array(await response.arrayBuffer())
@@ -45,7 +45,7 @@ describe('shared vault files', function () {
     })
   })
 
-  it('should be able to upload and download file to vault as owner', async () => {
+  it('should be able to upload and download file to shared vault as owner', async () => {
     const sharedVault = await Collaboration.createSharedVault(context)
     const response = await fetch('/mocha/assets/small_file.md')
     const buffer = new Uint8Array(await response.arrayBuffer())
@@ -179,7 +179,7 @@ describe('shared vault files', function () {
 
   it('should be able to delete vault file as write user', async () => {
     const { sharedVault, contactContext, deinitContactContext } =
-      await Collaboration.createSharedVaultWithAcceptedInvite(context, SharedVaultPermission.Write)
+      await Collaboration.createSharedVaultWithAcceptedInvite(context, SharedVaultUserPermission.PERMISSIONS.Write)
     const response = await fetch('/mocha/assets/small_file.md')
     const buffer = new Uint8Array(await response.arrayBuffer())
 
@@ -201,7 +201,7 @@ describe('shared vault files', function () {
     context.anticipateConsoleError('Could not create valet token')
 
     const { sharedVault, contactContext, deinitContactContext } =
-      await Collaboration.createSharedVaultWithAcceptedInvite(context, SharedVaultPermission.Read)
+      await Collaboration.createSharedVaultWithAcceptedInvite(context, SharedVaultUserPermission.PERMISSIONS.Read)
     const response = await fetch('/mocha/assets/small_file.md')
     const buffer = new Uint8Array(await response.arrayBuffer())
 

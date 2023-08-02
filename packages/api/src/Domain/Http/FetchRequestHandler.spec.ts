@@ -4,12 +4,14 @@ import { FetchRequestHandler } from './FetchRequestHandler'
 import { HttpErrorResponseBody, HttpRequest } from '@standardnotes/responses'
 
 import { ErrorMessage } from '../Error'
+import { LoggerInterface } from '@standardnotes/utils'
 
 describe('FetchRequestHandler', () => {
   const snjsVersion = 'snjsVersion'
   const appVersion = 'appVersion'
   const environment = Environment.Web
-  const requestHandler = new FetchRequestHandler(snjsVersion, appVersion, environment)
+  const logger: LoggerInterface = {} as jest.Mocked<LoggerInterface>
+  const requestHandler = new FetchRequestHandler(snjsVersion, appVersion, environment, logger)
 
   it('should create a request', () => {
     const httpRequest: HttpRequest = {

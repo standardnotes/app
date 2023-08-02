@@ -17,6 +17,9 @@ module.exports = (env, argv) => {
     },
     plugins: [new ReactRefreshWebpackPlugin()],
     devServer: {
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+      },
       hot: true,
       static: './dist',
       port,

@@ -3,6 +3,44 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.16.17](https://github.com/standardnotes/app/compare/@standardnotes/files@1.16.16...@standardnotes/files@1.16.17) (2023-08-02)
+
+**Note:** Version bump only for package @standardnotes/files
+
+## [1.16.16](https://github.com/standardnotes/app/compare/@standardnotes/files@1.16.15...@standardnotes/files@1.16.16) (2023-08-01)
+
+**Note:** Version bump only for package @standardnotes/files
+
+## [1.16.15](https://github.com/standardnotes/app/compare/@standardnotes/files@1.16.14...@standardnotes/files@1.16.15) (2023-07-28)
+
+**Note:** Version bump only for package @standardnotes/files
+
+## [1.16.14](https://github.com/standardnotes/app/compare/@standardnotes/files@1.16.13...@standardnotes/files@1.16.14) (2023-07-28)
+
+**Note:** Version bump only for package @standardnotes/files
+
+## [1.16.13](https://github.com/standardnotes/app/compare/@standardnotes/files@1.16.12...@standardnotes/files@1.16.13) (2023-07-27)
+
+### Bug Fixes
+
+* handle bad access when accessing paths ([#2375](https://github.com/standardnotes/app/issues/2375)) ([804a39d](https://github.com/standardnotes/app/commit/804a39dabc595579aba3643ef6d6ef0c10263f9c))
+
+## [1.16.12](https://github.com/standardnotes/app/compare/@standardnotes/files@1.16.11...@standardnotes/files@1.16.12) (2023-07-27)
+
+**Note:** Version bump only for package @standardnotes/files
+
+## [1.16.11](https://github.com/standardnotes/app/compare/@standardnotes/files@1.16.10...@standardnotes/files@1.16.11) (2023-07-27)
+
+**Note:** Version bump only for package @standardnotes/files
+
+## [1.16.10](https://github.com/standardnotes/app/compare/@standardnotes/files@1.16.9...@standardnotes/files@1.16.10) (2023-07-26)
+
+**Note:** Version bump only for package @standardnotes/files
+
+## [1.16.9](https://github.com/standardnotes/app/compare/@standardnotes/files@1.16.8...@standardnotes/files@1.16.9) (2023-07-26)
+
+**Note:** Version bump only for package @standardnotes/files
+
 ## [1.16.8](https://github.com/standardnotes/app/compare/@standardnotes/files@1.16.7...@standardnotes/files@1.16.8) (2023-07-23)
 
 **Note:** Version bump only for package @standardnotes/files

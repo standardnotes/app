@@ -1,6 +1,6 @@
 export interface AsymmetricMessageServerHash {
   uuid: string
-  user_uuid: string
+  recipient_uuid: string
   sender_uuid: string
   replaceabilityIdentifier?: string
   encrypted_message: string

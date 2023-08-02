@@ -1,12 +1,15 @@
 import { Result, SyncUseCaseInterface } from '@standardnotes/domain-core'
-import { ComponentArea, EditorIdentifier, FeatureIdentifier } from '@standardnotes/features'
+import { ComponentArea, NativeFeatureIdentifier } from '@standardnotes/features'
 import { ComponentInterface, PrefKey, SNTag } from '@standardnotes/models'
 import { ItemManagerInterface, PreferenceServiceInterface } from '@standardnotes/services'
 
-export class GetDefaultEditorIdentifier implements SyncUseCaseInterface<EditorIdentifier> {
-  constructor(private preferences: PreferenceServiceInterface, private items: ItemManagerInterface) {}
+export class GetDefaultEditorIdentifier implements SyncUseCaseInterface<string> {
+  constructor(
+    private preferences: PreferenceServiceInterface,
+    private items: ItemManagerInterface,
+  ) {}
 
-  execute(currentTag?: SNTag): Result<EditorIdentifier> {
+  execute(currentTag?: SNTag): Result<string> {
     if (currentTag) {
       const editorIdentifier = currentTag?.preferences?.editorIdentifier
       if (editorIdentifier) {
@@ -25,7 +28,7 @@ export class GetDefaultEditorIdentifier implements SyncUseCaseInterface<EditorId
       return Result.ok(matchingEditor.identifier)
     }
 
-    return Result.ok(FeatureIdentifier.PlainEditor)
+    return Result.ok(NativeFeatureIdentifier.TYPES.PlainEditor)
   }
 
   thirdPartyComponentsForArea(area: ComponentArea): ComponentInterface[] {

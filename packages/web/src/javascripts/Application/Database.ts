@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { isString, AlertService, uniqueArray } from '@standardnotes/snjs'
 
 const STORE_NAME = 'items'
@@ -19,7 +20,10 @@ export class Database {
   private locked = true
   private db?: IDBDatabase
 
-  constructor(public databaseName: string, private alertService?: AlertService) {}
+  constructor(
+    public databaseName: string,
+    private alertService?: AlertService,
+  ) {}
 
   public deinit(): void {
     ;(this.alertService as unknown) = undefined
@@ -140,10 +144,6 @@ export class Database {
     })
   }
 
-  /**
-   * This function is actually unused, but implemented to conform to protocol in case it is eventually needed.
-   * We could remove implementation and throw instead, but it might be better to offer a functional alternative instead.
-   */
   public async getPayloadsForKeys(keys: string[]): Promise<any[]> {
     const db = (await this.openDatabase()) as IDBDatabase
     return new Promise((resolve) => {

@@ -3,6 +3,56 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.63.20](https://github.com/standardnotes/app/compare/@standardnotes/services@1.63.19...@standardnotes/services@1.63.20) (2023-08-02)
+
+**Note:** Version bump only for package @standardnotes/services
+
+## [1.63.19](https://github.com/standardnotes/app/compare/@standardnotes/services@1.63.18...@standardnotes/services@1.63.19) (2023-08-01)
+
+### Bug Fixes
+
+* Fixes issue where selecting a third-party editor/note-type as default for a tag would not correctly apply editor ([73609ca](https://github.com/standardnotes/app/commit/73609ca7e31c6cc628f46319f0b9502f7b8afcd3))
+
+## [1.63.18](https://github.com/standardnotes/app/compare/@standardnotes/services@1.63.17...@standardnotes/services@1.63.18) (2023-07-31)
+
+**Note:** Version bump only for package @standardnotes/services
+
+## [1.63.17](https://github.com/standardnotes/app/compare/@standardnotes/services@1.63.16...@standardnotes/services@1.63.17) (2023-07-28)
+
+**Note:** Version bump only for package @standardnotes/services
+
+## [1.63.16](https://github.com/standardnotes/app/compare/@standardnotes/services@1.63.15...@standardnotes/services@1.63.16) (2023-07-28)
+
+**Note:** Version bump only for package @standardnotes/services
+
+## [1.63.15](https://github.com/standardnotes/app/compare/@standardnotes/services@1.63.14...@standardnotes/services@1.63.15) (2023-07-27)
+
+### Bug Fixes
+
+* handle bad access when accessing paths ([#2375](https://github.com/standardnotes/app/issues/2375)) ([804a39d](https://github.com/standardnotes/app/commit/804a39dabc595579aba3643ef6d6ef0c10263f9c))
+
+## [1.63.14](https://github.com/standardnotes/app/compare/@standardnotes/services@1.63.13...@standardnotes/services@1.63.14) (2023-07-27)
+
+**Note:** Version bump only for package @standardnotes/services
+
+## [1.63.13](https://github.com/standardnotes/app/compare/@standardnotes/services@1.63.12...@standardnotes/services@1.63.13) (2023-07-27)
+
+**Note:** Version bump only for package @standardnotes/services
+
+## [1.63.12](https://github.com/standardnotes/app/compare/@standardnotes/services@1.63.11...@standardnotes/services@1.63.12) (2023-07-26)
+
+### Bug Fixes
+
+* Fixes issue where lock screen would not use previously active theme ([#2372](https://github.com/standardnotes/app/issues/2372)) ([d268c02](https://github.com/standardnotes/app/commit/d268c02ab31beb5e2fd9e6547610f9a4dd61bed4))
+
+## [1.63.11](https://github.com/standardnotes/app/compare/@standardnotes/services@1.63.10...@standardnotes/services@1.63.11) (2023-07-26)
+
+**Note:** Version bump only for package @standardnotes/services
+
+## [1.63.10](https://github.com/standardnotes/app/compare/@standardnotes/services@1.63.9...@standardnotes/services@1.63.10) (2023-07-26)
+
+**Note:** Version bump only for package @standardnotes/services
+
 ## [1.63.9](https://github.com/standardnotes/app/compare/@standardnotes/services@1.63.8...@standardnotes/services@1.63.9) (2023-07-25)
 
 **Note:** Version bump only for package @standardnotes/services

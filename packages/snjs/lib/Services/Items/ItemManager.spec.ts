@@ -2,7 +2,7 @@ import { ContentType } from '@standardnotes/domain-core'
 import { AlertService, InternalEventBusInterface, ItemRelationshipDirection } from '@standardnotes/services'
 import { ItemManager } from './ItemManager'
 import { PayloadManager } from '../Payloads/PayloadManager'
-import { UuidGenerator, assert } from '@standardnotes/utils'
+import { LoggerInterface, UuidGenerator, assert } from '@standardnotes/utils'
 import * as Models from '@standardnotes/models'
 import {
   DecryptedPayload,
@@ -48,14 +48,18 @@ describe('itemManager', () => {
   let payloadManager: PayloadManager
   let itemManager: ItemManager
   let internalEventBus: InternalEventBusInterface
+  let logger: LoggerInterface
 
   beforeEach(() => {
     setupRandomUuid()
 
+    logger = {} as jest.Mocked<LoggerInterface>
+    logger.debug = jest.fn()
+
     internalEventBus = {} as jest.Mocked<InternalEventBusInterface>
     internalEventBus.publish = jest.fn()
 
-    payloadManager = new PayloadManager(internalEventBus)
+    payloadManager = new PayloadManager(logger, internalEventBus)
     itemManager = new ItemManager(payloadManager, internalEventBus)
 
     mutator = new MutatorService(itemManager, payloadManager, {} as jest.Mocked<AlertService>, internalEventBus)

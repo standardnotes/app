@@ -7,13 +7,14 @@ import { LegacyAnonymousReference } from './LegacyAnonymousReference'
 import { LegacyTagToNoteReference } from './LegacyTagToNoteReference'
 import { Reference } from './Reference'
 import { TagToParentTagReference } from './TagToParentTagReference'
+import { AnonymousReference } from './AnonymousReference'
 
 export const isLegacyAnonymousReference = (x: ContentReference): x is LegacyAnonymousReference => {
-  return (x as any).reference_type === undefined
+  return (x as AnonymousReference).reference_type === undefined
 }
 
 export const isReference = (x: ContentReference): x is Reference => {
-  return (x as any).reference_type !== undefined
+  return (x as AnonymousReference).reference_type !== undefined
 }
 
 export const isLegacyTagToNoteReference = (

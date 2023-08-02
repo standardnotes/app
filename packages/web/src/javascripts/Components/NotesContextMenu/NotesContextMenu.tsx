@@ -7,12 +7,14 @@ import { HistoryModalController } from '@/Controllers/NoteHistory/HistoryModalCo
 import Popover from '../Popover/Popover'
 import { LinkingController } from '@/Controllers/LinkingController'
 import Menu from '../Menu/Menu'
+import { SelectedItemsController } from '@/Controllers/SelectedItemsController'
 
 type Props = {
   navigationController: NavigationController
   notesController: NotesController
   linkingController: LinkingController
   historyModalController: HistoryModalController
+  selectionController: SelectedItemsController
 }
 
 const NotesContextMenu = ({
@@ -20,6 +22,7 @@ const NotesContextMenu = ({
   notesController,
   linkingController,
   historyModalController,
+  selectionController,
 }: Props) => {
   const { contextMenuOpen, contextMenuClickLocation, setContextMenuOpen } = notesController
 
@@ -50,6 +53,7 @@ const NotesContextMenu = ({
           notesController={notesController}
           linkingController={linkingController}
           historyModalController={historyModalController}
+          selectionController={selectionController}
           requestDisableClickOutside={handleDisableClickOutsideRequest}
           closeMenu={closeMenu}
         />

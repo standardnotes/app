@@ -4,11 +4,9 @@ import { EncryptionProviderInterface } from './../Encryption/EncryptionProviderI
 import { GetUntrustedPayload } from './UseCase/GetUntrustedPayload'
 import { GetInboundMessages } from './UseCase/GetInboundMessages'
 import { GetOutboundMessages } from './UseCase/GetOutboundMessages'
-import { SendOwnContactChangeMessage } from './UseCase/SendOwnContactChangeMessage'
 import { HandleRootKeyChangedMessage } from './UseCase/HandleRootKeyChangedMessage'
 import { GetTrustedPayload } from './UseCase/GetTrustedPayload'
 import { ReplaceContactData } from './../Contacts/UseCase/ReplaceContactData'
-import { GetAllContacts } from './../Contacts/UseCase/GetAllContacts'
 import { FindContact } from './../Contacts/UseCase/FindContact'
 import { CreateOrEditContact } from './../Contacts/UseCase/CreateOrEditContact'
 import { MutatorClientInterface } from './../Mutator/MutatorClientInterface'
@@ -27,6 +25,7 @@ import {
   KeySystemRootKeyContentSpecialized,
   TrustedContactInterface,
 } from '@standardnotes/models'
+import { Result } from '@standardnotes/domain-core'
 
 describe('AsymmetricMessageService', () => {
   let sync: jest.Mocked<SyncServiceInterface>
@@ -42,12 +41,10 @@ describe('AsymmetricMessageService', () => {
     encryption = {} as jest.Mocked<EncryptionProviderInterface>
     const createOrEditContact = {} as jest.Mocked<CreateOrEditContact>
     const findContact = {} as jest.Mocked<FindContact>
-    const getAllContacts = {} as jest.Mocked<GetAllContacts>
     const replaceContactData = {} as jest.Mocked<ReplaceContactData>
     const getTrustedPayload = {} as jest.Mocked<GetTrustedPayload>
     const getVault = {} as jest.Mocked<GetVault>
     const handleRootKeyChangedMessage = {} as jest.Mocked<HandleRootKeyChangedMessage>
-    const sendOwnContactChangedMessage = {} as jest.Mocked<SendOwnContactChangeMessage>
     const getOutboundMessagesUseCase = {} as jest.Mocked<GetOutboundMessages>
     const getInboundMessagesUseCase = {} as jest.Mocked<GetInboundMessages>
     const getUntrustedPayload = {} as jest.Mocked<GetUntrustedPayload>
@@ -65,15 +62,14 @@ describe('AsymmetricMessageService', () => {
       encryption,
       mutator,
       sessions,
+      sync,
       messageServer,
       createOrEditContact,
       findContact,
-      getAllContacts,
       replaceContactData,
       getTrustedPayload,
       getVault,
       handleRootKeyChangedMessage,
-      sendOwnContactChangedMessage,
       getOutboundMessagesUseCase,
       getInboundMessagesUseCase,
       getUntrustedPayload,
@@ -86,7 +82,7 @@ describe('AsymmetricMessageService', () => {
       const messages: AsymmetricMessageServerHash[] = [
         {
           uuid: 'keypair-changed-message',
-          user_uuid: '1',
+          recipient_uuid: '1',
           sender_uuid: '2',
           encrypted_message: 'encrypted_message',
           created_at_timestamp: 2,
@@ -94,7 +90,7 @@ describe('AsymmetricMessageService', () => {
         },
         {
           uuid: 'misc-message',
-          user_uuid: '1',
+          recipient_uuid: '1',
           sender_uuid: '2',
           encrypted_message: 'encrypted_message',
           created_at_timestamp: 1,
@@ -121,11 +117,50 @@ describe('AsymmetricMessageService', () => {
     })
   })
 
+  describe('handleTrustedMessageResult', () => {
+    it('should not double handle the same message', async () => {
+      /**
+       * Because message retrieval is based on a syncToken, and the server aligns syncTokens to items sent back
+       * rather than messages, we may receive the same message twice. We want to keep track of processed messages
+       * and avoid double processing.
+       */
+
+      const message: AsymmetricMessageServerHash = {
+        uuid: 'message',
+        recipient_uuid: '1',
+        sender_uuid: '2',
+        encrypted_message: 'encrypted_message',
+        created_at_timestamp: 2,
+        updated_at_timestamp: 2,
+      }
+
+      const decryptedMessagePayload: AsymmetricMessageTrustedContactShare = {
+        type: AsymmetricMessagePayloadType.ContactShare,
+        data: {
+          recipientUuid: '1',
+          trustedContact: {} as TrustedContactInterface,
+        },
+      }
+
+      service.getTrustedMessagePayload = service.getUntrustedMessagePayload = jest
+        .fn()
+        .mockReturnValue(Result.ok(decryptedMessagePayload))
+
+      service.handleTrustedContactShareMessage = jest.fn()
+      await service.handleTrustedMessageResult(message, decryptedMessagePayload)
+      expect(service.handleTrustedContactShareMessage).toHaveBeenCalledTimes(1)
+
+      service.handleTrustedContactShareMessage = jest.fn()
+      await service.handleTrustedMessageResult(message, decryptedMessagePayload)
+      expect(service.handleTrustedContactShareMessage).toHaveBeenCalledTimes(0)
+    })
+  })
+
   it('should process incoming messages oldest first', async () => {
     const messages: AsymmetricMessageServerHash[] = [
       {
         uuid: 'newer-message',
-        user_uuid: '1',
+        recipient_uuid: '1',
         sender_uuid: '2',
         encrypted_message: 'encrypted_message',
         created_at_timestamp: 2,
@@ -133,7 +168,7 @@ describe('AsymmetricMessageService', () => {
       },
       {
         uuid: 'older-message',
-        user_uuid: '1',
+        recipient_uuid: '1',
         sender_uuid: '2',
         encrypted_message: 'encrypted_message',
         created_at_timestamp: 1,
@@ -145,7 +180,7 @@ describe('AsymmetricMessageService', () => {
 
     service.getTrustedMessagePayload = service.getUntrustedMessagePayload = jest
       .fn()
-      .mockReturnValue(trustedPayloadMock)
+      .mockReturnValue(Result.ok(trustedPayloadMock))
 
     const handleTrustedContactShareMessageMock = jest.fn()
     service.handleTrustedContactShareMessage = handleTrustedContactShareMessageMock
@@ -159,7 +194,7 @@ describe('AsymmetricMessageService', () => {
   it('should handle ContactShare message', async () => {
     const message: AsymmetricMessageServerHash = {
       uuid: 'message',
-      user_uuid: '1',
+      recipient_uuid: '1',
       sender_uuid: '2',
       encrypted_message: 'encrypted_message',
       created_at_timestamp: 2,
@@ -177,7 +212,7 @@ describe('AsymmetricMessageService', () => {
     service.handleTrustedContactShareMessage = jest.fn()
     service.getTrustedMessagePayload = service.getUntrustedMessagePayload = jest
       .fn()
-      .mockReturnValue(decryptedMessagePayload)
+      .mockReturnValue(Result.ok(decryptedMessagePayload))
 
     await service.handleRemoteReceivedAsymmetricMessages([message])
 
@@ -187,7 +222,7 @@ describe('AsymmetricMessageService', () => {
   it('should handle SenderKeypairChanged message', async () => {
     const message: AsymmetricMessageServerHash = {
       uuid: 'message',
-      user_uuid: '1',
+      recipient_uuid: '1',
       sender_uuid: '2',
       encrypted_message: 'encrypted_message',
       created_at_timestamp: 2,
@@ -206,7 +241,7 @@ describe('AsymmetricMessageService', () => {
     service.handleTrustedSenderKeypairChangedMessage = jest.fn()
     service.getTrustedMessagePayload = service.getUntrustedMessagePayload = jest
       .fn()
-      .mockReturnValue(decryptedMessagePayload)
+      .mockReturnValue(Result.ok(decryptedMessagePayload))
 
     await service.handleRemoteReceivedAsymmetricMessages([message])
 
@@ -216,7 +251,7 @@ describe('AsymmetricMessageService', () => {
   it('should handle SharedVaultRootKeyChanged message', async () => {
     const message: AsymmetricMessageServerHash = {
       uuid: 'message',
-      user_uuid: '1',
+      recipient_uuid: '1',
       sender_uuid: '2',
       encrypted_message: 'encrypted_message',
       created_at_timestamp: 2,
@@ -234,7 +269,7 @@ describe('AsymmetricMessageService', () => {
     service.handleTrustedSharedVaultRootKeyChangedMessage = jest.fn()
     service.getTrustedMessagePayload = service.getUntrustedMessagePayload = jest
       .fn()
-      .mockReturnValue(decryptedMessagePayload)
+      .mockReturnValue(Result.ok(decryptedMessagePayload))
 
     await service.handleRemoteReceivedAsymmetricMessages([message])
 
@@ -244,7 +279,7 @@ describe('AsymmetricMessageService', () => {
   it('should handle SharedVaultMetadataChanged message', async () => {
     const message: AsymmetricMessageServerHash = {
       uuid: 'message',
-      user_uuid: '1',
+      recipient_uuid: '1',
       sender_uuid: '2',
       encrypted_message: 'encrypted_message',
       created_at_timestamp: 2,
@@ -264,7 +299,7 @@ describe('AsymmetricMessageService', () => {
     service.handleTrustedVaultMetadataChangedMessage = jest.fn()
     service.getTrustedMessagePayload = service.getUntrustedMessagePayload = jest
       .fn()
-      .mockReturnValue(decryptedMessagePayload)
+      .mockReturnValue(Result.ok(decryptedMessagePayload))
 
     await service.handleRemoteReceivedAsymmetricMessages([message])
 
@@ -274,7 +309,7 @@ describe('AsymmetricMessageService', () => {
   it('should throw if message type is SharedVaultInvite', async () => {
     const message: AsymmetricMessageServerHash = {
       uuid: 'message',
-      user_uuid: '1',
+      recipient_uuid: '1',
       sender_uuid: '2',
       encrypted_message: 'encrypted_message',
       created_at_timestamp: 2,
@@ -290,7 +325,7 @@ describe('AsymmetricMessageService', () => {
 
     service.getTrustedMessagePayload = service.getUntrustedMessagePayload = jest
       .fn()
-      .mockReturnValue(decryptedMessagePayload)
+      .mockReturnValue(Result.ok(decryptedMessagePayload))
 
     await expect(service.handleRemoteReceivedAsymmetricMessages([message])).rejects.toThrow(
       'Shared vault invites payloads are not handled as part of asymmetric messages',
@@ -300,7 +335,7 @@ describe('AsymmetricMessageService', () => {
   it('should delete message from server after processing', async () => {
     const message: AsymmetricMessageServerHash = {
       uuid: 'message',
-      user_uuid: '1',
+      recipient_uuid: '1',
       sender_uuid: '2',
       encrypted_message: 'encrypted_message',
       created_at_timestamp: 2,
@@ -319,7 +354,7 @@ describe('AsymmetricMessageService', () => {
     service.handleTrustedContactShareMessage = jest.fn()
     service.getTrustedMessagePayload = service.getUntrustedMessagePayload = jest
       .fn()
-      .mockReturnValue(decryptedMessagePayload)
+      .mockReturnValue(Result.ok(decryptedMessagePayload))
 
     await service.handleRemoteReceivedAsymmetricMessages([message])
 

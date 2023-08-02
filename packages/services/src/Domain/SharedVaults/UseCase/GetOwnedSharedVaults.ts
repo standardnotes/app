@@ -4,7 +4,10 @@ import { SharedVaultListingInterface } from '@standardnotes/models'
 import { GetSharedVaults } from './GetSharedVaults'
 
 export class GetOwnedSharedVaults implements SyncUseCaseInterface<SharedVaultListingInterface[]> {
-  constructor(private getSharedVaults: GetSharedVaults, private isVaultOwnwer: IsVaultOwner) {}
+  constructor(
+    private getSharedVaults: GetSharedVaults,
+    private isVaultOwnwer: IsVaultOwner,
+  ) {}
 
   execute(dto: { userUuid: string }): Result<SharedVaultListingInterface[]> {
     const sharedVaults = this.getSharedVaults.execute().getValue()

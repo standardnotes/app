@@ -1,14 +1,14 @@
 import {
-  FeatureIdentifier,
+  NativeFeatureIdentifier,
   NewNoteTitleFormat,
   PrefKey,
-  EditorIdentifier,
   TagPreferences,
   isSmartView,
   isSystemView,
   SystemViewId,
   PrefDefaults,
   FeatureStatus,
+  Uuid,
 } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { ChangeEventHandler, FunctionComponent, useCallback, useEffect, useRef, useState } from 'react'
@@ -17,18 +17,12 @@ import { DropdownItem } from '@/Components/Dropdown/DropdownItem'
 import { WebApplication } from '@/Application/WebApplication'
 import { AnyTag } from '@/Controllers/Navigation/AnyTagType'
 import { PreferenceMode } from './PreferenceMode'
-import dayjs from 'dayjs'
-import dayjsAdvancedFormat from 'dayjs/plugin/advancedFormat'
-import dayjsUTC from 'dayjs/plugin/utc'
-import dayjsTimezone from 'dayjs/plugin/timezone'
-dayjs.extend(dayjsAdvancedFormat)
-dayjs.extend(dayjsUTC)
-dayjs.extend(dayjsTimezone)
 import { EditorOption, getDropdownItemsForAllEditors } from '@/Utils/DropdownItemsForEditors'
 import { classNames } from '@standardnotes/utils'
 import { NoteTitleFormatOptions } from './NoteTitleFormatOptions'
-
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
+import { getDayjsFormattedString } from '@/Utils/GetDayjsFormattedString'
+import { ErrorBoundary } from '@/Utils/ErrorBoundary'
 
 const PrefChangeDebounceTimeInMs = 25
 
@@ -40,6 +34,10 @@ type Props = {
   mode: PreferenceMode
   changePreferencesCallback: (properties: Partial<TagPreferences>) => Promise<void>
   disabled?: boolean
+}
+
+function CustomNoteTitleFormatPreview({ format }: { format: string }) {
+  return <em>{getDayjsFormattedString(undefined, format)}</em>
 }
 
 const NewNotePreferences: FunctionComponent<Props> = ({
@@ -57,8 +55,8 @@ const NewNotePreferences: FunctionComponent<Props> = ({
     : selectedTag.preferences
 
   const [editorItems, setEditorItems] = useState<DropdownItem[]>([])
-  const [defaultEditorIdentifier, setDefaultEditorIdentifier] = useState<EditorIdentifier>(
-    FeatureIdentifier.PlainEditor,
+  const [defaultEditorIdentifier, setDefaultEditorIdentifier] = useState<string>(
+    NativeFeatureIdentifier.TYPES.PlainEditor,
   )
   const [newNoteTitleFormat, setNewNoteTitleFormat] = useState<NewNoteTitleFormat>(
     NewNoteTitleFormat.CurrentDateAndTime,
@@ -121,14 +119,30 @@ const NewNotePreferences: FunctionComponent<Props> = ({
 
   const selectEditorForNewNoteDefault = useCallback(
     (value: EditorOption['value']) => {
-      if (application.features.getFeatureStatus(value) !== FeatureStatus.Entitled) {
+      let identifier: NativeFeatureIdentifier | Uuid | undefined = undefined
+
+      const feature = NativeFeatureIdentifier.create(value)
+      if (!feature.isFailed()) {
+        identifier = feature.getValue()
+      } else {
+        const thirdPartyEditor = application.componentManager.findComponentWithPackageIdentifier(value)
+        if (thirdPartyEditor) {
+          identifier = Uuid.create(thirdPartyEditor.uuid).getValue()
+        }
+      }
+
+      if (!identifier) {
+        return
+      }
+
+      if (application.features.getFeatureStatus(identifier) !== FeatureStatus.Entitled) {
         const editorItem = editorItems.find((item) => item.value === value)
         if (editorItem) {
           premiumModal.activate(editorItem.label)
         }
         return
       }
-      setDefaultEditorIdentifier(value as FeatureIdentifier)
+      setDefaultEditorIdentifier(value)
 
       if (mode === 'global') {
         void application.setPreference(PrefKey.DefaultEditorIdentifier, value)
@@ -204,7 +218,9 @@ const NewNotePreferences: FunctionComponent<Props> = ({
           </div>
           <div className="mt-3 text-neutral">
             <span className="font-bold">Preview: </span>
-            <em>{dayjs().format(customNoteTitleFormat)}</em>
+            <ErrorBoundary>
+              <CustomNoteTitleFormatPreview format={customNoteTitleFormat} />
+            </ErrorBoundary>
           </div>
           <div className="mt-2 text-neutral">
             <a

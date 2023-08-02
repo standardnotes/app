@@ -1,6 +1,5 @@
 import { AcceptVaultInvite } from './UseCase/AcceptVaultInvite'
 import { SyncEvent, SyncEventReceivedSharedVaultInvitesData } from './../Event/SyncEvent'
-import { SessionEvent } from './../Session/SessionEvent'
 import { InternalEventInterface } from './../Internal/InternalEventInterface'
 import { InternalEventHandlerInterface } from './../Internal/InternalEventHandlerInterface'
 import { ItemManagerInterface } from './../Item/ItemManagerInterface'
@@ -27,7 +26,6 @@ import { VaultInviteServiceInterface } from './VaultInviteServiceInterface'
 import {
   ClientDisplayableError,
   SharedVaultInviteServerHash,
-  SharedVaultPermission,
   SharedVaultUserServerHash,
   isErrorResponse,
 } from '@standardnotes/responses'
@@ -93,9 +91,6 @@ export class VaultInviteService
 
   async handleEvent(event: InternalEventInterface): Promise<void> {
     switch (event.type) {
-      case SessionEvent.UserKeyPairChanged:
-        void this.invitesServer.deleteAllInboundInvites()
-        break
       case SyncEvent.ReceivedSharedVaultInvites:
         await this.processInboundInvites(event.payload as SyncEventReceivedSharedVaultInvitesData)
         break
@@ -110,7 +105,7 @@ export class VaultInviteService
     const response = await this.invitesServer.getInboundUserInvites()
 
     if (isErrorResponse(response)) {
-      return ClientDisplayableError.FromString(`Failed to get inbound user invites ${response}`)
+      return ClientDisplayableError.FromString(`Failed to get inbound user invites ${JSON.stringify(response)}`)
     }
 
     this.pendingInvites = {}
@@ -126,7 +121,7 @@ export class VaultInviteService
     const response = await this.invitesServer.getOutboundUserInvites()
 
     if (isErrorResponse(response)) {
-      return ClientDisplayableError.FromString(`Failed to get outbound user invites ${response}`)
+      return ClientDisplayableError.FromString(`Failed to get outbound user invites ${JSON.stringify(response)}`)
     }
 
     if (sharedVault) {
@@ -173,7 +168,7 @@ export class VaultInviteService
   public async inviteContactToSharedVault(
     sharedVault: SharedVaultListingInterface,
     contact: TrustedContactInterface,
-    permissions: SharedVaultPermission,
+    permission: string,
   ): Promise<Result<SharedVaultInviteServerHash>> {
     const contactsResult = await this._getVaultContacts.execute({
       sharedVaultUuid: sharedVault.sharing.sharedVaultUuid,
@@ -194,7 +189,7 @@ export class VaultInviteService
       sharedVault,
       recipient: contact,
       sharedVaultContacts: contacts,
-      permissions,
+      permission,
     })
 
     void this.notifyEvent(VaultInviteServiceEvent.InviteSent)
@@ -221,7 +216,7 @@ export class VaultInviteService
     })
 
     if (isErrorResponse(response)) {
-      return ClientDisplayableError.FromString(`Failed to delete invite ${response}`)
+      return ClientDisplayableError.FromString(`Failed to delete invite ${JSON.stringify(response)}`)
     }
 
     delete this.pendingInvites[invite.uuid]
@@ -239,6 +234,8 @@ export class VaultInviteService
     }
 
     for (const invite of invites) {
+      delete this.pendingInvites[invite.uuid]
+
       const sender = this._findContact.execute({ userUuid: invite.sender_uuid })
       if (!sender.isFailed()) {
         const trustedMessage = this._getTrustedPayload.execute<AsymmetricMessageSharedVaultInvite>({

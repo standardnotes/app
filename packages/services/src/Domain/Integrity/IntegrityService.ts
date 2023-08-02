@@ -10,6 +10,7 @@ import { SyncEvent } from '../Event/SyncEvent'
 import { IntegrityEventPayload } from './IntegrityEventPayload'
 import { SyncSource } from '../Sync/SyncSource'
 import { PayloadManagerInterface } from '../Payloads/PayloadManagerInterface'
+import { LoggerInterface } from '@standardnotes/utils'
 
 export class IntegrityService
   extends AbstractService<IntegrityEvent, IntegrityEventPayload>
@@ -19,6 +20,7 @@ export class IntegrityService
     private integrityApi: IntegrityApiInterface,
     private itemApi: ItemsServerInterface,
     private payloadManager: PayloadManagerInterface,
+    private logger: LoggerInterface,
     protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)
@@ -31,7 +33,7 @@ export class IntegrityService
 
     const integrityCheckResponse = await this.integrityApi.checkIntegrity(this.payloadManager.integrityPayloads)
     if (isErrorResponse(integrityCheckResponse)) {
-      this.log(`Could not obtain integrity check: ${integrityCheckResponse.data.error}`)
+      this.logger.error(`Could not obtain integrity check: ${integrityCheckResponse.data.error?.message}`)
 
       return
     }
@@ -50,9 +52,9 @@ export class IntegrityService
         isErrorResponse(serverItemResponse) ||
         !('item' in serverItemResponse.data)
       ) {
-        this.log(
+        this.logger.error(
           `Could not obtain item for integrity adjustments: ${
-            isErrorResponse(serverItemResponse) ? serverItemResponse.data.error : ''
+            isErrorResponse(serverItemResponse) ? serverItemResponse.data.error?.message : ''
           }`,
         )
 

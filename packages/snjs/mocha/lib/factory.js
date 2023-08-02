@@ -2,6 +2,7 @@
 /* eslint-disable no-undef */
 import FakeWebCrypto from './fake_web_crypto.js'
 import { AppContext } from './AppContext.js'
+import { VaultsContext } from './VaultsContext.js'
 import * as Applications from './Applications.js'
 import * as Defaults from './Defaults.js'
 import * as Utils from './Utils.js'
@@ -10,6 +11,7 @@ import { createItemParams, createNoteParams, createTagParams } from './Items.js'
 export const TenSecondTimeout = 10_000
 export const TwentySecondTimeout = 20_000
 export const ThirtySecondTimeout = 30_000
+export const SixtySecondTimeout = 60_000
 
 export const syncOptions = {
   checkIntegrity: true,
@@ -53,6 +55,16 @@ export async function createAppContextWithRealCrypto(identifier) {
 
 export async function createAppContext({ identifier, crypto, email, password, host } = {}) {
   const context = new AppContext({ identifier, crypto, email, password, host })
+  await context.initialize()
+  return context
+}
+
+export async function createVaultsContextWithRealCrypto(identifier) {
+  return createVaultsContext({ identifier, crypto: new SNWebCrypto() })
+}
+
+export async function createVaultsContext({ identifier, crypto, email, password, host } = {}) {
+  const context = new VaultsContext({ identifier, crypto, email, password, host })
   await context.initialize()
   return context
 }
@@ -288,7 +300,7 @@ export function tomorrow() {
 }
 
 export async function sleep(seconds, reason) {
-  console.log('Sleeping for reason', reason)
+  console.log('[Factory] Sleeping for reason', reason)
   return Utils.sleep(seconds)
 }
 

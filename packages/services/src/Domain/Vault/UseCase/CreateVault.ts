@@ -2,7 +2,7 @@ import { SyncServiceInterface } from '../../Sync/SyncServiceInterface'
 import { UuidGenerator } from '@standardnotes/utils'
 import {
   KeySystemRootKeyParamsInterface,
-  KeySystemRootKeyPasswordType,
+  KeySystemPasswordType,
   VaultListingContentSpecialized,
   VaultListingInterface,
   KeySystemRootKeyStorageMode,
@@ -44,9 +44,7 @@ export class CreateVault {
       keySystemIdentifier,
       vaultName: dto.vaultName,
       vaultDescription: dto.vaultDescription,
-      passwordType: dto.userInputtedPassword
-        ? KeySystemRootKeyPasswordType.UserInputted
-        : KeySystemRootKeyPasswordType.Randomized,
+      passwordType: dto.userInputtedPassword ? KeySystemPasswordType.UserInputted : KeySystemPasswordType.Randomized,
       rootKeyParams: rootKey.keyParams,
       storage: dto.storagePreference,
     })
@@ -60,7 +58,7 @@ export class CreateVault {
     keySystemIdentifier: string
     vaultName: string
     vaultDescription?: string
-    passwordType: KeySystemRootKeyPasswordType
+    passwordType: KeySystemPasswordType
     rootKeyParams: KeySystemRootKeyParamsInterface
     storage: KeySystemRootKeyStorageMode
   }): Promise<VaultListingInterface> {
@@ -109,7 +107,7 @@ export class CreateVault {
     if (dto.storagePreference === KeySystemRootKeyStorageMode.Synced) {
       await this.mutator.insertItem(newRootKey, true)
     } else {
-      this.keys.intakeNonPersistentKeySystemRootKey(newRootKey, dto.storagePreference)
+      this.keys.cacheKey(newRootKey, dto.storagePreference)
     }
 
     return newRootKey

@@ -816,14 +816,14 @@ export class ItemManager extends Services.AbstractService implements Services.It
   /**
    * Important: Caller must coordinate with storage service separately to delete item from persistent database.
    */
-  public removeItemLocally(item: Models.AnyItemInterface): void {
-    this.removeItemsLocally([item])
+  public removeItemFromMemory(item: Models.AnyItemInterface): void {
+    this.removeItemsFromMemory([item])
   }
 
   /**
    * Important: Caller must coordinate with storage service separately to delete item from persistent database.
    */
-  public removeItemsLocally(items: Models.AnyItemInterface[]): void {
+  public removeItemsFromMemory(items: Models.AnyItemInterface[]): void {
     this.collection.discard(items)
     this.payloadManager.removePayloadLocally(items.map((item) => item.payload))
 

@@ -29,7 +29,7 @@ export function BlockPickerMenuItem({
       onMouseEnter={onMouseEnter}
       onClick={onClick}
     >
-      <Icon type={option.iconName} className="mt-1.5 h-5 w-5" />
+      <Icon type={option.iconName} className="h-5 w-5 flex-shrink-0" />
       <div className="text-editor">{option.title}</div>
     </li>
   )

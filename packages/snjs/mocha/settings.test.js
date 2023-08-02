@@ -14,7 +14,6 @@ describe('settings service', function () {
 
   let application
   let context
-  let subscriptionId = 2001
 
   beforeEach(async function () {
     localStorage.clear()

@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/ui-services",
-  "version": "1.28.11",
+  "version": "1.28.23",
   "engines": {
     "node": ">=16.0.0 <17.0.0"
   },
@@ -8,15 +8,15 @@
   "main": "./src/index.ts",
   "author": "Standard Notes",
   "private": true,
-  "license": "AGPL-3.0-or-later",
+  "license": "CC BY-NC-SA 4.0",
   "scripts": {
     "tsc": "tsc --project tsconfig.json",
     "lint": "eslint src --ext .ts",
-    "test": "jest spec"
+    "test": "jest"
   },
   "dependencies": {
     "@standardnotes/common": "^1.50.0",
-    "@standardnotes/domain-core": "^1.22.0",
+    "@standardnotes/domain-core": "^1.24.0",
     "@standardnotes/features": "workspace:^",
     "@standardnotes/filepicker": "workspace:^",
     "@standardnotes/models": "workspace:^",

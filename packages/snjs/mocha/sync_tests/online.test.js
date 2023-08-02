@@ -528,7 +528,7 @@ describe('online syncing', function () {
     await this.application.sync.sync(syncOptions)
   })
 
-  /** Temporarily skipping due to long run time */
+  /** This test takes 30s+ on a Docker server environment and should be skipped for now */
   it.skip('should handle uploading with sync pagination', async function () {
     const largeItemCount = SyncUpDownLimit + 10
     for (let i = 0; i < largeItemCount; i++) {
@@ -541,9 +541,9 @@ describe('online syncing', function () {
     await this.application.sync.sync(syncOptions)
     const rawPayloads = await this.application.storage.getAllRawPayloads()
     expect(rawPayloads.length).to.equal(this.expectedItemCount)
-  }).timeout(15000)
+  }).timeout(Factory.SixtySecondTimeout)
 
-  /** Temporarily skipping due to long run time */
+  /** This test takes 30s+ on a Docker server environment and should be skipped for now */
   it.skip('should handle downloading with sync pagination', async function () {
     const largeItemCount = SyncUpDownLimit + 10
     for (let i = 0; i < largeItemCount; i++) {
@@ -569,7 +569,7 @@ describe('online syncing', function () {
 
     const rawPayloads = await this.application.storage.getAllRawPayloads()
     expect(rawPayloads.length).to.equal(this.expectedItemCount)
-  }).timeout(30000)
+  }).timeout(Factory.SixtySecondTimeout)
 
   it('syncing an item should storage it encrypted', async function () {
     const note = await Factory.createMappedNote(this.application)

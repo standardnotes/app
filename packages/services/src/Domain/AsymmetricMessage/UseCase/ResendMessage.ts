@@ -1,4 +1,3 @@
-import { DecryptOwnMessage } from '../../Encryption/UseCase/Asymmetric/DecryptOwnMessage'
 import { AsymmetricMessagePayload, TrustedContactInterface } from '@standardnotes/models'
 import { AsymmetricMessageServerHash } from '@standardnotes/responses'
 import { PkcKeyPair } from '@standardnotes/sncrypto-common'
@@ -8,7 +7,6 @@ import { SendMessage } from './SendMessage'
 
 export class ResendMessage implements UseCaseInterface<void> {
   constructor(
-    private decryptOwnMessage: DecryptOwnMessage<AsymmetricMessagePayload>,
     private sendMessage: SendMessage,
     private encryptMessage: EncryptMessage,
   ) {}
@@ -23,22 +21,11 @@ export class ResendMessage implements UseCaseInterface<void> {
       signing: PkcKeyPair
     }
     recipient: TrustedContactInterface
-    message: AsymmetricMessageServerHash
+    rawMessage: AsymmetricMessageServerHash
+    decryptedMessage: AsymmetricMessagePayload
   }): Promise<Result<AsymmetricMessageServerHash>> {
-    const decryptionResult = this.decryptOwnMessage.execute({
-      message: params.message.encrypted_message,
-      privateKey: params.previousKeys?.encryption.privateKey ?? params.keys.encryption.privateKey,
-      recipientPublicKey: params.recipient.publicKeySet.encryption,
-    })
-
-    if (decryptionResult.isFailed()) {
-      return Result.fail(decryptionResult.getError())
-    }
-
-    const decryptedMessage = decryptionResult.getValue()
-
     const encryptedMessage = this.encryptMessage.execute({
-      message: decryptedMessage,
+      message: params.decryptedMessage,
       keys: params.keys,
       recipientPublicKey: params.recipient.publicKeySet.encryption,
     })
@@ -50,7 +37,7 @@ export class ResendMessage implements UseCaseInterface<void> {
     const sendMessageResult = await this.sendMessage.execute({
       recipientUuid: params.recipient.contactUuid,
       encryptedMessage: encryptedMessage.getValue(),
-      replaceabilityIdentifier: params.message.replaceabilityIdentifier,
+      replaceabilityIdentifier: params.rawMessage.replaceabilityIdentifier,
     })
 
     return sendMessageResult

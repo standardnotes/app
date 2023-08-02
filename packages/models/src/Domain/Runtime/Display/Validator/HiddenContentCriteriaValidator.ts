@@ -2,7 +2,10 @@ import { DecryptedItemInterface } from './../../../Abstract/Item/Interfaces/Decr
 import { CriteriaValidatorInterface } from './CriteriaValidatorInterface'
 
 export class HiddenContentCriteriaValidator implements CriteriaValidatorInterface {
-  constructor(private hiddenContentTypes: string[], private element: DecryptedItemInterface) {}
+  constructor(
+    private hiddenContentTypes: string[],
+    private element: DecryptedItemInterface,
+  ) {}
 
   public passes(): boolean {
     return !this.hiddenContentTypes.includes(this.element.content_type)

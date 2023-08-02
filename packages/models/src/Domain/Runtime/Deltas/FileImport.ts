@@ -1,7 +1,6 @@
 import { ImmutablePayloadCollection } from '../Collection/Payload/ImmutablePayloadCollection'
 import { ConflictDelta } from './Conflict'
-import { DecryptedPayloadInterface } from '../../Abstract/Payload/Interfaces/DecryptedPayload'
-import { DeletedPayloadInterface, isDecryptedPayload, PayloadEmitSource } from '../../Abstract/Payload'
+import { FullyFormedPayloadInterface, isDecryptedPayload, PayloadEmitSource } from '../../Abstract/Payload'
 import { HistoryMap } from '../History'
 import { extendSyncDelta, SourcelessSyncDeltaEmit, SyncDeltaEmit } from './Abstract/DeltaEmit'
 import { DeltaInterface } from './Abstract/DeltaInterface'
@@ -11,7 +10,7 @@ import { getIncrementedDirtyIndex } from '../DirtyCounter/DirtyCounter'
 export class DeltaFileImport implements DeltaInterface {
   constructor(
     readonly baseCollection: ImmutablePayloadCollection,
-    private readonly applyPayloads: DecryptedPayloadInterface[],
+    private readonly applyPayloads: FullyFormedPayloadInterface[],
     protected readonly historyMap: HistoryMap,
   ) {}
 
@@ -31,10 +30,7 @@ export class DeltaFileImport implements DeltaInterface {
     return result
   }
 
-  private resolvePayload(
-    payload: DecryptedPayloadInterface | DeletedPayloadInterface,
-    currentResults: SyncDeltaEmit,
-  ): SourcelessSyncDeltaEmit {
+  private resolvePayload(payload: FullyFormedPayloadInterface, currentResults: SyncDeltaEmit): SourcelessSyncDeltaEmit {
     /**
      * Check to see if we've already processed a payload for this id.
      * If so, that would be the latest value, and not what's in the base collection.
