@@ -1,5 +1,4 @@
 import { ConflictParams, ConflictType, HttpRequest } from '@standardnotes/responses'
-import { log, LoggingDomain } from './../../Logging'
 import { AccountSyncOperation } from '@Lib/Services/Sync/Account/Operation'
 import {
   LoggerInterface,
