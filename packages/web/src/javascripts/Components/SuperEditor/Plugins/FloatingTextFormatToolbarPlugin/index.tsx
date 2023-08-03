@@ -23,6 +23,8 @@ import {
   RangeSelection,
   GridSelection,
   NodeSelection,
+  KEY_MODIFIER_COMMAND,
+  COMMAND_PRIORITY_NORMAL,
 } from 'lexical'
 import { $isHeadingNode } from '@lexical/rich-text'
 import {
@@ -265,6 +267,25 @@ function TextFormatFloatingToolbar({
       ),
     )
   }, [editor, updateToolbar])
+
+  useEffect(() => {
+    return editor.registerCommand(
+      KEY_MODIFIER_COMMAND,
+      (payload) => {
+        const event: KeyboardEvent = payload
+        const { code, ctrlKey, metaKey } = event
+
+        if (code === 'KeyK' && (ctrlKey || metaKey)) {
+          event.preventDefault()
+          const dispatched = editor.dispatchCommand(TOGGLE_LINK_COMMAND, sanitizeUrl('https://'))
+          setIsLinkEditMode(true)
+          return dispatched
+        }
+        return false
+      },
+      COMMAND_PRIORITY_NORMAL,
+    )
+  }, [editor])
 
   useEffect(() => {
     editor.getEditorState().read(() => updateToolbar())
