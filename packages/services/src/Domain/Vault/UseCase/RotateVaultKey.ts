@@ -48,27 +48,6 @@ export class RotateVaultKey implements UseCaseInterface<void> {
     return Result.ok()
   }
 
-  private async shareNewKeyWithMembers(params: {
-    vault: VaultListingInterface
-    newRootKey: KeySystemRootKeyInterface
-  }): Promise<Result<void>> {
-    if (!params.vault.isSharedVaultListing()) {
-      return Result.ok()
-    }
-
-    const isOwner = this._isVaultOwner.execute({ sharedVault: params.vault }).getValue()
-
-    if (!isOwner) {
-      return Result.ok()
-    }
-
-    const result = await this._notifyVaultUsersOfKeyRotation.execute({
-      sharedVault: params.vault,
-    })
-
-    return result
-  }
-
   private async updateRootKeyparams(params: {
     vault: VaultListingInterface
     userInputtedPassword: string | undefined
@@ -95,7 +74,9 @@ export class RotateVaultKey implements UseCaseInterface<void> {
       throw new Error('Cannot rotate key system root key; new root key not created')
     }
 
-    if (params.vault.keyStorageMode === KeySystemRootKeyStorageMode.Synced) {
+    const newTypeUsesRandomizedPassword = params.userInputtedPassword == undefined
+
+    if (newTypeUsesRandomizedPassword) {
       await this.mutator.insertItem(newRootKey, true)
     } else {
       this.keys.cacheKey(newRootKey, params.vault.keyStorageMode)
@@ -104,6 +85,9 @@ export class RotateVaultKey implements UseCaseInterface<void> {
     await this.mutator.changeItem<VaultListingMutator>(params.vault, (mutator) => {
       assert(newRootKey)
       mutator.rootKeyParams = newRootKey.keyParams
+      if (newTypeUsesRandomizedPassword) {
+        mutator.keyStorageMode = KeySystemRootKeyStorageMode.Synced
+      }
     })
 
     return newRootKey
@@ -122,5 +106,26 @@ export class RotateVaultKey implements UseCaseInterface<void> {
       params.rootKeyToken,
     )
     await this.mutator.insertItem(newItemsKey)
+  }
+
+  private async shareNewKeyWithMembers(params: {
+    vault: VaultListingInterface
+    newRootKey: KeySystemRootKeyInterface
+  }): Promise<Result<void>> {
+    if (!params.vault.isSharedVaultListing()) {
+      return Result.ok()
+    }
+
+    const isOwner = this._isVaultOwner.execute({ sharedVault: params.vault }).getValue()
+
+    if (!isOwner) {
+      return Result.ok()
+    }
+
+    const result = await this._notifyVaultUsersOfKeyRotation.execute({
+      sharedVault: params.vault,
+    })
+
+    return result
   }
 }

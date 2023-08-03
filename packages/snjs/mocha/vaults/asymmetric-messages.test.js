@@ -205,7 +205,7 @@ describe('asymmetric messages', function () {
     await deinitContactContext()
   })
 
-  it.only('should send shared vault metadata change message after shared vault name change', async () => {
+  it('should send shared vault metadata change message after shared vault name change', async () => {
     const { sharedVault, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithAcceptedInvite(context)
 
@@ -328,8 +328,8 @@ describe('asymmetric messages', function () {
   it('sender keypair changed message should be signed using old key pair', async () => {
     const { contactContext, deinitContactContext } = await Collaboration.createSharedVaultWithAcceptedInvite(context)
 
-    const oldKeyPair = context.encryption.getKeyPair()
-    const oldSigningKeyPair = context.encryption.getSigningKeyPair()
+    const oldKeyPair = context.getKeyPair()
+    const oldSigningKeyPair = context.getSigningKeyPair()
 
     await context.changePassword('new password')
 
@@ -355,8 +355,8 @@ describe('asymmetric messages', function () {
 
     await context.changePassword('new password')
 
-    const newKeyPair = context.encryption.getKeyPair()
-    const newSigningKeyPair = context.encryption.getSigningKeyPair()
+    const newKeyPair = context.getKeyPair()
+    const newSigningKeyPair = context.getSigningKeyPair()
 
     await contactContext.syncAndAwaitMessageProcessing()
 
@@ -408,12 +408,12 @@ describe('asymmetric messages', function () {
     const usecase = context.application.dependencies.get(TYPES.ResendAllMessages)
     const result = await usecase.execute({
       keys: {
-        encryption: context.encryption.getKeyPair(),
-        signing: context.encryption.getSigningKeyPair(),
+        encryption: context.getKeyPair(),
+        signing: context.getSigningKeyPair(),
       },
       previousKeys: {
-        encryption: context.encryption.getKeyPair(),
-        signing: context.encryption.getSigningKeyPair(),
+        encryption: context.getKeyPair(),
+        signing: context.getSigningKeyPair(),
       },
     })
 

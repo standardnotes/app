@@ -82,13 +82,14 @@ describe('keypair change', function () {
 
     contactContext.lockSyncing()
 
-    const previousKeyPair = context.encryption.getKeyPair()
-    const previousSigningKeyPair = context.encryption.getSigningKeyPair()
+    const previousKeyPair = context.getKeyPair()
+    const previousSigningKeyPair = context.getSigningKeyPair()
 
     await context.changePassword('new_password')
 
-    sinon.stub(context.encryption, 'getKeyPair').returns(previousKeyPair)
-    sinon.stub(context.encryption, 'getSigningKeyPair').returns(previousSigningKeyPair)
+    sinon
+      .stub(context.application.dependencies.get(TYPES.GetKeyPairs), 'execute')
+      .returns(Result.ok({ encryption: previousKeyPair, signing: previousSigningKeyPair }))
 
     await context.changeVaultName(sharedVault, {
       name: 'New Name',

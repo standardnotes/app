@@ -13,6 +13,18 @@ export class VaultsContext extends AppContext {
     })
   }
 
+  getKeyPair() {
+    const result = this.application.dependencies.get(TYPES.GetKeyPairs).execute()
+
+    return result.getValue().encryption
+  }
+
+  getSigningKeyPair() {
+    const result = this.application.dependencies.get(TYPES.GetKeyPairs).execute()
+
+    return result.getValue().signing
+  }
+
   async changePassword(password) {
     const promise = this.resolveWhenAsyncFunctionCompletes(this.sharedVaults._handleKeyPairChange, 'execute')
 

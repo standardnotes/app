@@ -4,8 +4,8 @@ import { WebSocketsService } from './../Services/Api/WebsocketsService'
 import { MigrationService } from './../Services/Migration/MigrationService'
 import { LegacyApiService } from './../Services/Api/ApiService'
 import { FeaturesService } from '@Lib/Services/Features/FeaturesService'
-import { SNPreferencesService } from './../Services/Preferences/PreferencesService'
-import { SNProtectionService } from './../Services/Protection/ProtectionService'
+import { PreferencesService } from './../Services/Preferences/PreferencesService'
+import { ProtectionService } from './../Services/Protection/ProtectionService'
 import { SessionManager } from './../Services/Session/SessionManager'
 import { HttpService, HttpServiceInterface, UserRegistrationResponseBody } from '@standardnotes/api'
 import { ApplicationIdentifier, compareVersions, ProtocolVersion, KeyParamsOrigination } from '@standardnotes/common'
@@ -296,7 +296,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     const uninstall = syncService.addEventObserver(syncEventCallback)
     this.serviceObservers.push(uninstall)
 
-    const protectionService = this.dependencies.get<SNProtectionService>(TYPES.ProtectionService)
+    const protectionService = this.dependencies.get<ProtectionService>(TYPES.ProtectionService)
     this.serviceObservers.push(
       protectionService.addEventObserver((event) => {
         if (event === ProtectionEvent.UnprotectedSessionBegan) {
@@ -328,7 +328,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       }),
     )
 
-    const preferencesService = this.dependencies.get<SNPreferencesService>(TYPES.PreferencesService)
+    const preferencesService = this.dependencies.get<PreferencesService>(TYPES.PreferencesService)
     this.serviceObservers.push(
       preferencesService.addEventObserver(() => {
         void this.notifyEvent(ApplicationEvent.PreferencesChanged)

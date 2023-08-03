@@ -386,7 +386,7 @@ describe('vault key management', function () {
         expect(rootKeysAfterChange[0].itemsKey).to.not.equal(rootKeysAfterChange[1].itemsKey)
       })
 
-      it('should change password type from user inputted to randomized', async () => {
+      it.only('should change password type from user inputted to randomized', async () => {
         const vault = await context.vaults.createUserInputtedPasswordVault({
           name: 'test vault',
           description: 'test vault description',

@@ -47,10 +47,10 @@ describe('public key cryptography', function () {
     await recreatedContext.signIn()
 
     expect(recreatedContext.sessions.getPublicKey()).to.not.be.undefined
-    expect(recreatedContext.encryption.getKeyPair().privateKey).to.not.be.undefined
+    expect(recreatedContext.getKeyPair().privateKey).to.not.be.undefined
 
     expect(recreatedContext.sessions.getSigningPublicKey()).to.not.be.undefined
-    expect(recreatedContext.encryption.getSigningKeyPair().privateKey).to.not.be.undefined
+    expect(recreatedContext.getSigningKeyPair().privateKey).to.not.be.undefined
 
     await recreatedContext.deinit()
   })
@@ -65,14 +65,14 @@ describe('public key cryptography', function () {
     await context.changePassword('new_password')
 
     expect(sessions.getPublicKey()).to.not.be.undefined
-    expect(encryption.getKeyPair().privateKey).to.not.be.undefined
+    expect(context.getKeyPair().privateKey).to.not.be.undefined
     expect(sessions.getPublicKey()).to.not.equal(oldPublicKey)
-    expect(encryption.getKeyPair().privateKey).to.not.equal(oldPrivateKey)
+    expect(context.getKeyPair().privateKey).to.not.equal(oldPrivateKey)
 
     expect(sessions.getSigningPublicKey()).to.not.be.undefined
-    expect(encryption.getSigningKeyPair().privateKey).to.not.be.undefined
+    expect(context.getSigningKeyPair().privateKey).to.not.be.undefined
     expect(sessions.getSigningPublicKey()).to.not.equal(oldSigningPublicKey)
-    expect(encryption.getSigningKeyPair().privateKey).to.not.equal(oldSigningPrivateKey)
+    expect(context.getSigningKeyPair().privateKey).to.not.equal(oldSigningPrivateKey)
   })
 
   it('should allow option to enable collaboration for previously signed in accounts', async () => {

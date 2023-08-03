@@ -49,6 +49,13 @@ export class ChangeVaultKeyOptions implements UseCaseInterface<void> {
       return Result.fail('Vault password type is already set to this type')
     }
 
+    if (
+      dto.newPasswordOptions.passwordType === KeySystemPasswordType.UserInputted &&
+      !dto.newPasswordOptions.userInputtedPassword
+    ) {
+      return Result.fail('User inputted password is required')
+    }
+
     const result = await this._rotateVaultKey.execute({
       vault: dto.vault,
       userInputtedPassword:

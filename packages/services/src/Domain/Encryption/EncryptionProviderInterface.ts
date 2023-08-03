@@ -20,7 +20,6 @@ import {
   KeySystemRootKeyParamsInterface,
   PortablePublicKeySet,
 } from '@standardnotes/models'
-import { PkcKeyPair } from '@standardnotes/sncrypto-common'
 
 export interface EncryptionProviderInterface {
   initialize(): Promise<void>
@@ -108,9 +107,6 @@ export interface EncryptionProviderInterface {
     sharedVaultUuid: string | undefined,
     rootKeyToken: string,
   ): KeySystemItemsKeyInterface
-
-  getKeyPair(): PkcKeyPair
-  getSigningKeyPair(): PkcKeyPair
 
   asymmetricSignatureVerifyDetached(
     encryptedString: AsymmetricallyEncryptedString,

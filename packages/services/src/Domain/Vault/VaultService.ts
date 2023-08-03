@@ -194,9 +194,9 @@ export class VaultService
 
     await this.sync.sync()
 
-    if (vault.isSharedVaultListing()) {
+    if (updatedVault.isSharedVaultListing()) {
       await this._sendVaultDataChangeMessage.execute({
-        vault,
+        vault: updatedVault,
       })
     }
 

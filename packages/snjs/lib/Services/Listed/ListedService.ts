@@ -14,7 +14,7 @@ import {
   MutatorClientInterface,
   SyncServiceInterface,
 } from '@standardnotes/services'
-import { SNProtectionService } from '../Protection'
+import { ProtectionService } from '../Protection'
 import { ContentType } from '@standardnotes/domain-core'
 
 export class ListedService extends AbstractService implements ListedClientInterface {
@@ -23,7 +23,7 @@ export class ListedService extends AbstractService implements ListedClientInterf
     private itemManager: ItemManager,
     private settingsService: SettingsService,
     private httpSerivce: DeprecatedHttpService,
-    private protectionService: SNProtectionService,
+    private protectionService: ProtectionService,
     private mutator: MutatorClientInterface,
     private sync: SyncServiceInterface,
     protected override internalEventBus: InternalEventBusInterface,

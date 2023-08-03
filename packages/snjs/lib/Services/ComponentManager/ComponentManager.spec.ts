@@ -1,4 +1,4 @@
-import { SNPreferencesService } from '../Preferences/PreferencesService'
+import { PreferencesService } from '../Preferences/PreferencesService'
 import { GenericItem, Environment, Platform } from '@standardnotes/models'
 import {
   InternalEventBusInterface,
@@ -68,7 +68,7 @@ describe('featuresService', () => {
 
     features = {} as jest.Mocked<FeaturesService>
 
-    prefs = {} as jest.Mocked<SNPreferencesService>
+    prefs = {} as jest.Mocked<PreferencesService>
     prefs.addEventObserver = jest.fn()
 
     alerts = {} as jest.Mocked<AlertService>

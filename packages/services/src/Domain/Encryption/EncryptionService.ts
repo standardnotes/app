@@ -1,3 +1,4 @@
+import { GetKeyPairs } from './UseCase/GetKeyPairs'
 import { FindDefaultItemsKey } from './UseCase/ItemsKey/FindDefaultItemsKey'
 import { InternalEventInterface } from './../Internal/InternalEventInterface'
 import { InternalEventHandlerInterface } from './../Internal/InternalEventHandlerInterface'
@@ -43,7 +44,7 @@ import {
   PortablePublicKeySet,
   RootKeyParamsInterface,
 } from '@standardnotes/models'
-import { PkcKeyPair, PureCryptoInterface } from '@standardnotes/sncrypto-common'
+import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import {
   extendArray,
   isNotUndefined,
@@ -130,6 +131,7 @@ export class EncryptionService
     private _rootKeyDecryptPayload: DecryptTypeAPayload,
     private _rootKeyDecryptPayloadWithKeyLookup: DecryptTypeAPayloadWithKeyLookup,
     private _createDefaultItemsKey: CreateNewDefaultItemsKey,
+    private _getKeyPairs: GetKeyPairs,
     protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)
@@ -162,28 +164,6 @@ export class EncryptionService
     ;(this._createDefaultItemsKey as unknown) = undefined
 
     super.deinit()
-  }
-
-  /** @throws */
-  getKeyPair(): PkcKeyPair {
-    const rootKey = this.getRootKey()
-
-    if (!rootKey?.encryptionKeyPair) {
-      throw new Error('Account keypair not found')
-    }
-
-    return rootKey.encryptionKeyPair
-  }
-
-  /** @throws */
-  getSigningKeyPair(): PkcKeyPair {
-    const rootKey = this.getRootKey()
-
-    if (!rootKey?.signingKeyPair) {
-      throw new Error('Account keypair not found')
-    }
-
-    return rootKey.signingKeyPair
   }
 
   hasSigningKeyPair(): boolean {
@@ -270,7 +250,9 @@ export class EncryptionService
       usesKeySystemRootKeyWithKeyLookup,
     } = split
 
-    const signingKeyPair = this.hasSigningKeyPair() ? this.getSigningKeyPair() : undefined
+    const keys = this._getKeyPairs.execute()
+
+    const signingKeyPair = keys.isFailed() ? undefined : keys.getValue().signing
 
     if (usesRootKey) {
       const rootKeyEncrypted = await this._rootKeyEncryptPayload.executeMany(
