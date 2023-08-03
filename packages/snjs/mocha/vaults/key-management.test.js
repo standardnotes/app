@@ -404,7 +404,7 @@ describe('vault key management', function () {
         expect(result.isFailed()).to.be.false
 
         const rootKeysAfterChange = context.keys.getSyncedKeySystemRootKeysForVault(vault.systemIdentifier)
-        expect(rootKeysAfterChange.length).to.equal(1)
+        expect(rootKeysAfterChange.length).to.equal(2)
 
         const storedKey = context.keys.getRootKeyFromStorageForVault(vault.systemIdentifier)
         expect(storedKey).to.be.undefined

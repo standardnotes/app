@@ -155,6 +155,7 @@ export const TYPES = {
   ReencryptTypeAItems: Symbol.for('ReencryptTypeAItems'),
   DecryptErroredPayloads: Symbol.for('DecryptErroredPayloads'),
   GetKeyPairs: Symbol.for('GetKeyPairs'),
+  ChangeVaultStorageMode: Symbol.for('ChangeVaultStorageMode'),
 
   // Mappers
   SessionStorageMapper: Symbol.for('SessionStorageMapper'),

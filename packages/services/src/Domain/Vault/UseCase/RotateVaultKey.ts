@@ -13,7 +13,7 @@ import { EncryptionProviderInterface } from '../../Encryption/EncryptionProvider
 import { KeySystemKeyManagerInterface } from '../../KeySystem/KeySystemKeyManagerInterface'
 import { Result, UseCaseInterface } from '@standardnotes/domain-core'
 
-export class RotateVaultKey implements UseCaseInterface<void> {
+export class RotateVaultKey implements UseCaseInterface<VaultListingInterface> {
   constructor(
     private mutator: MutatorClientInterface,
     private encryption: EncryptionProviderInterface,
@@ -25,19 +25,19 @@ export class RotateVaultKey implements UseCaseInterface<void> {
   async execute(params: {
     vault: VaultListingInterface
     userInputtedPassword: string | undefined
-  }): Promise<Result<void>> {
-    const newRootKey = await this.updateRootKeyparams(params)
+  }): Promise<Result<VaultListingInterface>> {
+    const { newRootKey, updatedVault } = await this.updateRootKeyparams(params)
 
     await this.createNewKeySystemItemsKey({
-      keySystemIdentifier: params.vault.systemIdentifier,
-      sharedVaultUuid: params.vault.isSharedVaultListing() ? params.vault.sharing.sharedVaultUuid : undefined,
+      keySystemIdentifier: updatedVault.systemIdentifier,
+      sharedVaultUuid: updatedVault.isSharedVaultListing() ? updatedVault.sharing.sharedVaultUuid : undefined,
       rootKeyToken: newRootKey.token,
     })
 
-    await this.keys.queueVaultItemsKeysForReencryption(params.vault.systemIdentifier)
+    await this.keys.queueVaultItemsKeysForReencryption(updatedVault.systemIdentifier)
 
     const shareResult = await this.shareNewKeyWithMembers({
-      vault: params.vault,
+      vault: updatedVault,
       newRootKey,
     })
 
@@ -45,13 +45,13 @@ export class RotateVaultKey implements UseCaseInterface<void> {
       return Result.fail(shareResult.getError())
     }
 
-    return Result.ok()
+    return Result.ok(updatedVault)
   }
 
   private async updateRootKeyparams(params: {
     vault: VaultListingInterface
     userInputtedPassword: string | undefined
-  }): Promise<KeySystemRootKeyInterface> {
+  }): Promise<{ newRootKey: KeySystemRootKeyInterface; updatedVault: VaultListingInterface }> {
     const currentRootKey = this.keys.getPrimaryKeySystemRootKey(params.vault.systemIdentifier)
     if (!currentRootKey) {
       throw new Error('Cannot rotate key system root key; key system root key not found')
@@ -74,23 +74,21 @@ export class RotateVaultKey implements UseCaseInterface<void> {
       throw new Error('Cannot rotate key system root key; new root key not created')
     }
 
-    const newTypeUsesRandomizedPassword = params.userInputtedPassword == undefined
-
-    if (newTypeUsesRandomizedPassword) {
+    if (!params.userInputtedPassword || params.vault.keyStorageMode === KeySystemRootKeyStorageMode.Synced) {
       await this.mutator.insertItem(newRootKey, true)
     } else {
       this.keys.cacheKey(newRootKey, params.vault.keyStorageMode)
     }
 
-    await this.mutator.changeItem<VaultListingMutator>(params.vault, (mutator) => {
-      assert(newRootKey)
-      mutator.rootKeyParams = newRootKey.keyParams
-      if (newTypeUsesRandomizedPassword) {
-        mutator.keyStorageMode = KeySystemRootKeyStorageMode.Synced
-      }
-    })
+    const updatedVault = await this.mutator.changeItem<VaultListingMutator, VaultListingInterface>(
+      params.vault,
+      (mutator) => {
+        assert(newRootKey)
+        mutator.rootKeyParams = newRootKey.keyParams
+      },
+    )
 
-    return newRootKey
+    return { newRootKey, updatedVault }
   }
 
   private async createNewKeySystemItemsKey(params: {

@@ -125,6 +125,7 @@ import {
   DeviceInterface,
   AlertService,
   DesktopDeviceInterface,
+  ChangeVaultStorageMode,
 } from '@standardnotes/services'
 import { ItemManager } from '../../Services/Items/ItemManager'
 import { PayloadManager } from '../../Services/Payloads/PayloadManager'
@@ -321,13 +322,20 @@ export class Dependencies {
       return new ContactBelongsToVault(this.get<GetVaultUsers>(TYPES.GetVaultUsers))
     })
 
-    this.factory.set(TYPES.ChangeVaultKeyOptions, () => {
-      return new ChangeVaultKeyOptions(
+    this.factory.set(TYPES.ChangeVaultStorageMode, () => {
+      return new ChangeVaultStorageMode(
         this.get<MutatorService>(TYPES.MutatorService),
         this.get<SyncService>(TYPES.SyncService),
         this.get<KeySystemKeyManager>(TYPES.KeySystemKeyManager),
         this.get<GetVault>(TYPES.GetVault),
+      )
+    })
+
+    this.factory.set(TYPES.ChangeVaultKeyOptions, () => {
+      return new ChangeVaultKeyOptions(
+        this.get<SyncService>(TYPES.SyncService),
         this.get<RotateVaultKey>(TYPES.RotateVaultKey),
+        this.get<ChangeVaultStorageMode>(TYPES.ChangeVaultStorageMode),
       )
     })
 
