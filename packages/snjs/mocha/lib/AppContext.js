@@ -453,34 +453,6 @@ export class AppContext {
     return this.resolveWhenAsyncFunctionCompletes(objectToSpy, 'shareContactWithVaults')
   }
 
-  resolveWhenSharedVaultKeyRotationInvitesGetSent(targetVault) {
-    return new Promise((resolve) => {
-      const objectToSpy = this.sharedVaults
-      sinon.stub(objectToSpy, 'handleVaultRootKeyRotatedEvent').callsFake(async (vault) => {
-        objectToSpy.handleVaultRootKeyRotatedEvent.restore()
-        const result = await objectToSpy.handleVaultRootKeyRotatedEvent(vault)
-        if (vault.systemIdentifier === targetVault.systemIdentifier) {
-          resolve()
-        }
-        return result
-      })
-    })
-  }
-
-  resolveWhenSharedVaultChangeInvitesAreSent(sharedVaultUuid) {
-    return new Promise((resolve) => {
-      const objectToSpy = this.sharedVaults
-      sinon.stub(objectToSpy, 'handleVaultRootKeyRotatedEvent').callsFake(async (vault) => {
-        objectToSpy.handleVaultRootKeyRotatedEvent.restore()
-        const result = await objectToSpy.handleVaultRootKeyRotatedEvent(vault)
-        if (vault.sharing.sharedVaultUuid === sharedVaultUuid) {
-          resolve()
-        }
-        return result
-      })
-    })
-  }
-
   awaitUserPrefsSingletonCreation() {
     const preferences = this.application.preferences.preferences
     if (preferences) {

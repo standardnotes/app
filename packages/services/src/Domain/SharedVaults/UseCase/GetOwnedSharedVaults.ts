@@ -5,18 +5,17 @@ import { GetSharedVaults } from './GetSharedVaults'
 
 export class GetOwnedSharedVaults implements SyncUseCaseInterface<SharedVaultListingInterface[]> {
   constructor(
-    private getSharedVaults: GetSharedVaults,
-    private isVaultOwnwer: IsVaultOwner,
+    private _getSharedVaults: GetSharedVaults,
+    private _isVaultOwnwer: IsVaultOwner,
   ) {}
 
-  execute(dto: { userUuid: string }): Result<SharedVaultListingInterface[]> {
-    const sharedVaults = this.getSharedVaults.execute().getValue()
+  execute(): Result<SharedVaultListingInterface[]> {
+    const sharedVaults = this._getSharedVaults.execute().getValue()
 
     const ownedVaults = sharedVaults.filter((vault) => {
-      return this.isVaultOwnwer
+      return this._isVaultOwnwer
         .execute({
           sharedVault: vault,
-          userUuid: dto.userUuid,
         })
         .getValue()
     })

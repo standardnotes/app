@@ -17,7 +17,7 @@ import {
   SyncOpStatus,
   SyncServiceInterface,
   User,
-  UserClientInterface,
+  UserServiceInterface,
   UserRequestType,
 } from '@standardnotes/snjs'
 
@@ -41,7 +41,7 @@ describe('ApplicationEventObserver', () => {
   let sessionManager: SessionsClientInterface
   let subscriptionManager: SubscriptionManagerInterface
   let toastService: ToastServiceInterface
-  let userService: UserClientInterface
+  let userService: UserServiceInterface
 
   const createObserver = () =>
     new ApplicationEventObserver(
@@ -94,7 +94,7 @@ describe('ApplicationEventObserver', () => {
     toastService.showToast = jest.fn().mockReturnValue('1')
     toastService.hideToast = jest.fn()
 
-    userService = {} as jest.Mocked<UserClientInterface>
+    userService = {} as jest.Mocked<UserServiceInterface>
     userService.submitUserRequest = jest.fn().mockReturnValue(true)
   })
 

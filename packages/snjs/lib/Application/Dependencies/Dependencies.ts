@@ -120,6 +120,8 @@ import {
   VaultLockService,
   RemoveItemsFromMemory,
   ReencryptTypeAItems,
+  DecryptErroredPayloads,
+  GetKeyPairs,
 } from '@standardnotes/services'
 import { ItemManager } from '../../Services/Items/ItemManager'
 import { PayloadManager } from '../../Services/Payloads/PayloadManager'
@@ -204,6 +206,17 @@ export class Dependencies {
   }
 
   private registerUseCaseMakers() {
+    this.factory.set(TYPES.DecryptErroredPayloads, () => {
+      return new DecryptErroredPayloads(
+        this.get(TYPES.ItemsEncryptionService),
+        this.get(TYPES.DecryptErroredTypeAPayloads),
+      )
+    })
+
+    this.factory.set(TYPES.GetKeyPairs, () => {
+      return new GetKeyPairs(this.get(TYPES.RootKeyManager))
+    })
+
     this.factory.set(TYPES.ReencryptTypeAItems, () => {
       return new ReencryptTypeAItems(this.get(TYPES.ItemManager), this.get(TYPES.MutatorService))
     })
@@ -222,7 +235,7 @@ export class Dependencies {
     })
 
     this.factory.set(TYPES.IsVaultOwner, () => {
-      return new IsVaultOwner()
+      return new IsVaultOwner(this.get(TYPES.UserService))
     })
 
     this.factory.set(TYPES.DecryptBackupFile, () => {
@@ -298,9 +311,9 @@ export class Dependencies {
       return new ChangeVaultKeyOptions(
         this.get(TYPES.MutatorService),
         this.get(TYPES.SyncService),
-        this.get(TYPES.EncryptionService),
         this.get(TYPES.KeySystemKeyManager),
         this.get(TYPES.GetVault),
+        this.get(TYPES.RotateVaultKey),
       )
     })
 
@@ -342,6 +355,8 @@ export class Dependencies {
         this.get(TYPES.MutatorService),
         this.get(TYPES.EncryptionService),
         this.get(TYPES.KeySystemKeyManager),
+        this.get(TYPES.NotifyVaultUsersOfKeyRotation),
+        this.get(TYPES.IsVaultOwner),
       )
     })
 
@@ -402,25 +417,31 @@ export class Dependencies {
         this.get(TYPES.SharedVaultInvitesServer),
         this.get(TYPES.GetVaultContacts),
         this.get(TYPES.DecryptOwnMessage),
+        this.get(TYPES.GetKeyPairs),
       )
     })
 
     this.factory.set(TYPES.SendVaultKeyChangedMessage, () => {
       return new SendVaultKeyChangedMessage(
+        this.get(TYPES.UserService),
         this.get(TYPES.EncryptMessage),
         this.get(TYPES.KeySystemKeyManager),
         this.get(TYPES.FindContact),
         this.get(TYPES.SendMessage),
         this.get(TYPES.GetVaultUsers),
+        this.get(TYPES.GetKeyPairs),
       )
     })
 
     this.factory.set(TYPES.SendVaultDataChangedMessage, () => {
       return new SendVaultDataChangedMessage(
+        this.get(TYPES.UserService),
         this.get(TYPES.EncryptMessage),
         this.get(TYPES.FindContact),
         this.get(TYPES.GetVaultUsers),
         this.get(TYPES.SendMessage),
+        this.get(TYPES.IsVaultOwner),
+        this.get(TYPES.GetKeyPairs),
       )
     })
 
@@ -454,6 +475,7 @@ export class Dependencies {
         this.get(TYPES.EncryptMessage),
         this.get(TYPES.SendVaultInvite),
         this.get(TYPES.ShareContactWithVault),
+        this.get(TYPES.GetKeyPairs),
       )
     })
 
@@ -473,6 +495,7 @@ export class Dependencies {
 
     this.factory.set(TYPES.LeaveVault, () => {
       return new LeaveVault(
+        this.get(TYPES.UserService),
         this.get(TYPES.SharedVaultUsersServer),
         this.get(TYPES.ItemManager),
         this.get(TYPES.DeleteThirdPartyVault),
@@ -481,10 +504,12 @@ export class Dependencies {
 
     this.factory.set(TYPES.ShareContactWithVault, () => {
       return new ShareContactWithVault(
+        this.get(TYPES.UserService),
         this.get(TYPES.FindContact),
         this.get(TYPES.EncryptMessage),
         this.get(TYPES.SendMessage),
         this.get(TYPES.GetVaultUsers),
+        this.get(TYPES.GetKeyPairs),
       )
     })
 
@@ -673,7 +698,6 @@ export class Dependencies {
 
     this.factory.set(TYPES.VaultUserService, () => {
       return new VaultUserService(
-        this.get(TYPES.SessionManager),
         this.get(TYPES.VaultService),
         this.get(TYPES.VaultLockService),
         this.get(TYPES.GetVaultUsers),
@@ -695,7 +719,6 @@ export class Dependencies {
         this.get(TYPES.SessionManager),
         this.get(TYPES.VaultUserService),
         this.get(TYPES.SyncService),
-        this.get(TYPES.EncryptionService),
         this.get(TYPES.SharedVaultInvitesServer),
         this.get(TYPES.GetAllContacts),
         this.get(TYPES.GetVault),
@@ -705,6 +728,8 @@ export class Dependencies {
         this.get(TYPES.GetUntrustedPayload),
         this.get(TYPES.FindContact),
         this.get(TYPES.AcceptVaultInvite),
+        this.get(TYPES.GetKeyPairs),
+        this.get(TYPES.DecryptErroredPayloads),
         this.get(TYPES.InternalEventBus),
       )
     })
@@ -732,20 +757,16 @@ export class Dependencies {
     this.factory.set(TYPES.SharedVaultService, () => {
       return new SharedVaultService(
         this.get(TYPES.ItemManager),
-        this.get(TYPES.EncryptionService),
         this.get(TYPES.SessionManager),
         this.get(TYPES.GetVault),
         this.get(TYPES.GetOwnedSharedVaults),
         this.get(TYPES.CreateSharedVault),
         this.get(TYPES.HandleKeyPairChange),
-        this.get(TYPES.NotifyVaultUsersOfKeyRotation),
-        this.get(TYPES.SendVaultDataChangedMessage),
         this.get(TYPES.FindContact),
         this.get(TYPES.DeleteThirdPartyVault),
         this.get(TYPES.ShareContactWithVault),
         this.get(TYPES.ConvertToSharedVault),
         this.get(TYPES.DeleteSharedVault),
-        this.get(TYPES.IsVaultOwner),
         this.get(TYPES.DiscardItemsLocally),
         this.get(TYPES.InternalEventBus),
       )
@@ -757,6 +778,7 @@ export class Dependencies {
         this.get(TYPES.EncryptionService),
         this.get(TYPES.KeySystemKeyManager),
         this.get(TYPES.GetVaults),
+        this.get(TYPES.DecryptErroredPayloads),
         this.get(TYPES.InternalEventBus),
       )
     })
@@ -776,6 +798,7 @@ export class Dependencies {
         this.get(TYPES.RemoveItemFromVault),
         this.get(TYPES.DeleteVault),
         this.get(TYPES.RotateVaultKey),
+        this.get(TYPES.SendVaultDataChangedMessage),
         this.get(TYPES.InternalEventBus),
       )
     })
@@ -1105,6 +1128,7 @@ export class Dependencies {
         this.get(TYPES.ProtectionService),
         this.get(TYPES.UserApiService),
         this.get(TYPES.ReencryptTypeAItems),
+        this.get(TYPES.DecryptErroredPayloads),
         this.get(TYPES.InternalEventBus),
       )
     })
@@ -1274,7 +1298,6 @@ export class Dependencies {
         this.get(TYPES.Crypto),
         this.get(TYPES.CreateNewItemsKeyWithRollback),
         this.get(TYPES.FindDefaultItemsKey),
-        this.get(TYPES.DecryptErroredTypeAPayloads),
         this.get(TYPES.EncryptTypeAPayloadWithKeyLookup),
         this.get(TYPES.EncryptTypeAPayload),
         this.get(TYPES.DecryptTypeAPayload),

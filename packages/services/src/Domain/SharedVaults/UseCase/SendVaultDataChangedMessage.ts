@@ -1,3 +1,5 @@
+import { UserServiceInterface } from './../../User/UserServiceInterface'
+import { IsVaultOwner } from './../../VaultUser/UseCase/IsVaultOwner'
 import {
   AsymmetricMessagePayloadType,
   AsymmetricMessageSharedVaultMetadataChanged,
@@ -12,24 +14,26 @@ import { EncryptMessage } from '../../Encryption/UseCase/Asymmetric/EncryptMessa
 import { Result, UseCaseInterface } from '@standardnotes/domain-core'
 import { GetReplaceabilityIdentifier } from '../../AsymmetricMessage/UseCase/GetReplaceabilityIdentifier'
 import { FindContact } from '../../Contacts/UseCase/FindContact'
+import { GetKeyPairs } from '../../Encryption/UseCase/GetKeyPairs'
 
 export class SendVaultDataChangedMessage implements UseCaseInterface<void> {
   constructor(
-    private encryptMessage: EncryptMessage,
-    private findContact: FindContact,
-    private getVaultUsers: GetVaultUsers,
-    private sendMessage: SendMessage,
+    private users: UserServiceInterface,
+    private _encryptMessage: EncryptMessage,
+    private _findContact: FindContact,
+    private _getVaultUsers: GetVaultUsers,
+    private _sendMessage: SendMessage,
+    private _isVaultOwner: IsVaultOwner,
+    private _getKeyPairs: GetKeyPairs,
   ) {}
 
-  async execute(params: {
-    vault: SharedVaultListingInterface
-    senderUuid: string
-    keys: {
-      encryption: PkcKeyPair
-      signing: PkcKeyPair
+  async execute(params: { vault: SharedVaultListingInterface }): Promise<Result<void>> {
+    const isOwner = this._isVaultOwner.execute({ sharedVault: params.vault }).getValue()
+    if (!isOwner) {
+      return Result.ok()
     }
-  }): Promise<Result<void>> {
-    const users = await this.getVaultUsers.execute({
+
+    const users = await this._getVaultUsers.execute({
       sharedVaultUuid: params.vault.sharing.sharedVaultUuid,
       readFromCache: false,
     })
@@ -37,20 +41,25 @@ export class SendVaultDataChangedMessage implements UseCaseInterface<void> {
       return Result.fail('Cannot send metadata changed message; users not found')
     }
 
+    const keys = this._getKeyPairs.execute()
+    if (keys.isFailed()) {
+      return Result.fail('Cannot send metadata changed message; keys not found')
+    }
+
     const errors: string[] = []
     for (const user of users.getValue()) {
-      if (user.user_uuid === params.senderUuid) {
+      if (user.user_uuid === this.users.sureUser.uuid) {
         continue
       }
 
-      const trustedContact = this.findContact.execute({ userUuid: user.user_uuid })
+      const trustedContact = this._findContact.execute({ userUuid: user.user_uuid })
       if (trustedContact.isFailed()) {
         continue
       }
 
       const sendMessageResult = await this.sendToContact({
         vault: params.vault,
-        keys: params.keys,
+        keys: keys.getValue(),
         contact: trustedContact.getValue(),
       })
 
@@ -84,7 +93,7 @@ export class SendVaultDataChangedMessage implements UseCaseInterface<void> {
       },
     }
 
-    const encryptedMessage = this.encryptMessage.execute({
+    const encryptedMessage = this._encryptMessage.execute({
       message: message,
       keys: params.keys,
       recipientPublicKey: params.contact.publicKeySet.encryption,
@@ -100,7 +109,7 @@ export class SendVaultDataChangedMessage implements UseCaseInterface<void> {
       params.vault.systemIdentifier,
     )
 
-    const sendMessageResult = await this.sendMessage.execute({
+    const sendMessageResult = await this._sendMessage.execute({
       recipientUuid: params.contact.contactUuid,
       encryptedMessage: encryptedMessage.getValue(),
       replaceabilityIdentifier,

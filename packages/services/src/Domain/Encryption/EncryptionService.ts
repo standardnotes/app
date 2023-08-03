@@ -73,7 +73,6 @@ import { DecryptedParameters } from '@standardnotes/encryption/src/Domain/Types/
 import { RootKeyManager } from '../RootKeyManager/RootKeyManager'
 import { RootKeyManagerEvent } from '../RootKeyManager/RootKeyManagerEvent'
 import { CreateNewItemsKeyWithRollback } from './UseCase/ItemsKey/CreateNewItemsKeyWithRollback'
-import { DecryptErroredTypeAPayloads } from './UseCase/TypeA/DecryptErroredPayloads'
 import { CreateNewDefaultItemsKey } from './UseCase/ItemsKey/CreateNewDefaultItemsKey'
 import { DecryptTypeAPayload } from './UseCase/TypeA/DecryptPayload'
 import { DecryptTypeAPayloadWithKeyLookup } from './UseCase/TypeA/DecryptPayloadWithKeyLookup'
@@ -126,7 +125,6 @@ export class EncryptionService
     private crypto: PureCryptoInterface,
     private _createNewItemsKeyWithRollback: CreateNewItemsKeyWithRollback,
     private _findDefaultItemsKey: FindDefaultItemsKey,
-    private _decryptErroredRootPayloads: DecryptErroredTypeAPayloads,
     private _rootKeyEncryptPayloadWithKeyLookup: EncryptTypeAPayloadWithKeyLookup,
     private _rootKeyEncryptPayload: EncryptTypeAPayload,
     private _rootKeyDecryptPayload: DecryptTypeAPayload,
@@ -157,7 +155,6 @@ export class EncryptionService
     ;(this.crypto as unknown) = undefined
     ;(this._createNewItemsKeyWithRollback as unknown) = undefined
     ;(this._findDefaultItemsKey as unknown) = undefined
-    ;(this._decryptErroredRootPayloads as unknown) = undefined
     ;(this._rootKeyEncryptPayloadWithKeyLookup as unknown) = undefined
     ;(this._rootKeyEncryptPayload as unknown) = undefined
     ;(this._rootKeyDecryptPayload as unknown) = undefined
@@ -242,12 +239,6 @@ export class EncryptionService
 
   public async createNewItemsKeyWithRollback(): Promise<() => Promise<void>> {
     return this._createNewItemsKeyWithRollback.execute()
-  }
-
-  public async decryptErroredPayloads(): Promise<void> {
-    await this._decryptErroredRootPayloads.execute()
-
-    await this.itemsEncryption.decryptErroredItemPayloads()
   }
 
   public itemsKeyForEncryptedPayload(

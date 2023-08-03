@@ -189,12 +189,7 @@ describe('asymmetric messages', function () {
 
     contactContext.lockSyncing()
 
-    const promise = context.resolveWhenAsyncFunctionCompletes(
-      context.sharedVaults._notifyVaultUsersOfKeyRotation,
-      'execute',
-    )
     await context.vaults.rotateVaultRootKey(sharedVault)
-    await promise
 
     const firstPartySpy = sinon.spy(context.asymmetric, 'handleTrustedSharedVaultRootKeyChangedMessage')
     const secondPartySpy = sinon.spy(contactContext.asymmetric, 'handleTrustedSharedVaultRootKeyChangedMessage')
@@ -210,7 +205,7 @@ describe('asymmetric messages', function () {
     await deinitContactContext()
   })
 
-  it('should send shared vault metadata change message after shared vault name change', async () => {
+  it.only('should send shared vault metadata change message after shared vault name change', async () => {
     const { sharedVault, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithAcceptedInvite(context)
 

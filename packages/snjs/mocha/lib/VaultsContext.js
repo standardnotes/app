@@ -1,4 +1,5 @@
 import { AppContext } from './AppContext.js'
+import * as Collaboration from './Collaboration.js'
 
 export class VaultsContext extends AppContext {
   constructor(params) {
@@ -6,17 +7,10 @@ export class VaultsContext extends AppContext {
   }
 
   async changeVaultName(vault, nameAndDesc) {
-    const sendDataChangePromise = this.resolveWhenAsyncFunctionCompletes(
-      this.sharedVaults._sendVaultDataChangeMessage,
-      'execute',
-    )
-
     await this.vaults.changeVaultNameAndDescription(vault, {
       name: nameAndDesc.name,
       description: nameAndDesc.description,
     })
-
-    await this.awaitPromiseOrThrow(sendDataChangePromise, undefined, 'Waiting for vault data change message to process')
   }
 
   async changePassword(password) {
@@ -50,5 +44,29 @@ export class VaultsContext extends AppContext {
    */
   async runAnyRequestToPreventRefreshTokenFromExpiring() {
     await this.asymmetric.getInboundMessages()
+  }
+
+  async createSharedPasswordVault(password) {
+    const privateVault = await this.vaults.createUserInputtedPasswordVault({
+      name: 'Our Vault',
+      userInputtedPassword: password,
+      storagePreference: KeySystemRootKeyStorageMode.Ephemeral,
+    })
+
+    const note = await this.createSyncedNote('foo', 'bar')
+
+    await this.vaults.moveItemToVault(privateVault, note)
+
+    const sharedVault = await this.sharedVaults.convertVaultToSharedVault(privateVault)
+    console.log('createSharedPasswordVault > sharedVault:', sharedVault)
+
+    const { thirdPartyContext, deinitThirdPartyContext } = await Collaboration.inviteNewPartyToSharedVault(
+      this,
+      sharedVault,
+    )
+
+    await Collaboration.acceptAllInvites(thirdPartyContext)
+
+    return { sharedVault, thirdPartyContext, deinitThirdPartyContext }
   }
 }

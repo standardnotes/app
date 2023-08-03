@@ -2,7 +2,7 @@ import { KeySystemPasswordType, KeySystemRootKeyStorageMode, VaultListingInterfa
 
 export type ChangeVaultKeyOptionsDTO = {
   vault: VaultListingInterface
-  newPasswordType:
+  newPasswordOptions:
     | { passwordType: KeySystemPasswordType.Randomized }
     | { passwordType: KeySystemPasswordType.UserInputted; userInputtedPassword: string }
     | undefined

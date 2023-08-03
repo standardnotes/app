@@ -32,7 +32,7 @@ import {
   FeaturesClientInterface,
   ItemManagerInterface,
   SyncServiceInterface,
-  UserClientInterface,
+  UserServiceInterface,
   MutatorClientInterface,
   StatusServiceInterface,
   AlertService,
@@ -74,7 +74,6 @@ import {
   VaultUserServiceInterface,
   VaultInviteServiceInterface,
   NotificationServiceEvent,
-  VaultServiceEvent,
   VaultLockServiceInterface,
 } from '@standardnotes/services'
 import {
@@ -1141,7 +1140,6 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       this.dependencies.get(TYPES.SharedVaultService),
       NotificationServiceEvent.NotificationReceived,
     )
-    this.events.addEventHandler(this.dependencies.get(TYPES.SharedVaultService), VaultServiceEvent.VaultRootKeyRotated)
     this.events.addEventHandler(this.dependencies.get(TYPES.SharedVaultService), SyncEvent.ReceivedRemoteSharedVaults)
 
     this.events.addEventHandler(
@@ -1267,8 +1265,8 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return this.dependencies.get<SyncServiceInterface>(TYPES.SyncService)
   }
 
-  public get user(): UserClientInterface {
-    return this.dependencies.get<UserClientInterface>(TYPES.UserService)
+  public get user(): UserServiceInterface {
+    return this.dependencies.get<UserServiceInterface>(TYPES.UserService)
   }
 
   public get settings(): SettingsService {

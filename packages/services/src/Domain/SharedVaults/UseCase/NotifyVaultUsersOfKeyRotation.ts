@@ -2,30 +2,26 @@ import { SharedVaultInvitesServerInterface } from '@standardnotes/api'
 import { AsymmetricMessageSharedVaultInvite, SharedVaultListingInterface } from '@standardnotes/models'
 import { SharedVaultInviteServerHash, isErrorResponse } from '@standardnotes/responses'
 import { SendVaultKeyChangedMessage } from './SendVaultKeyChangedMessage'
-import { PkcKeyPair } from '@standardnotes/sncrypto-common'
 import { Result, UseCaseInterface } from '@standardnotes/domain-core'
 import { InviteToVault } from '../../VaultInvite/UseCase/InviteToVault'
 import { GetVaultContacts } from '../../VaultUser/UseCase/GetVaultContacts'
 import { DecryptOwnMessage } from '../../Encryption/UseCase/Asymmetric/DecryptOwnMessage'
 import { FindContact } from '../../Contacts/UseCase/FindContact'
+import { GetKeyPairs } from '../../Encryption/UseCase/GetKeyPairs'
 
 type Params = {
-  keys: {
-    encryption: PkcKeyPair
-    signing: PkcKeyPair
-  }
   sharedVault: SharedVaultListingInterface
-  senderUuid: string
 }
 
 export class NotifyVaultUsersOfKeyRotation implements UseCaseInterface<void> {
   constructor(
-    private findContact: FindContact,
-    private sendKeyChangedMessage: SendVaultKeyChangedMessage,
-    private inviteToVault: InviteToVault,
-    private inviteServer: SharedVaultInvitesServerInterface,
-    private getVaultContacts: GetVaultContacts,
-    private decryptOwnMessage: DecryptOwnMessage<AsymmetricMessageSharedVaultInvite>,
+    private _findContact: FindContact,
+    private _sendKeyChangedMessage: SendVaultKeyChangedMessage,
+    private _inviteToVault: InviteToVault,
+    private _inviteServer: SharedVaultInvitesServerInterface,
+    private _getVaultContacts: GetVaultContacts,
+    private _decryptOwnMessage: DecryptOwnMessage<AsymmetricMessageSharedVaultInvite>,
+    private _getKeyPairs: GetKeyPairs,
   ) {}
 
   async execute(params: Params): Promise<Result<void>> {
@@ -44,20 +40,25 @@ export class NotifyVaultUsersOfKeyRotation implements UseCaseInterface<void> {
 
     await this.deleteAllInvites(params.sharedVault.sharing.sharedVaultUuid)
 
-    const contacts = await this.getVaultContacts.execute({
+    const contacts = await this._getVaultContacts.execute({
       sharedVaultUuid: params.sharedVault.sharing.sharedVaultUuid,
       readFromCache: false,
     })
 
+    const keys = this._getKeyPairs.execute()
+    if (keys.isFailed()) {
+      return Result.fail('Cannot send metadata changed message; keys not found')
+    }
+
     for (const invite of existingInvites.getValue()) {
-      const recipient = this.findContact.execute({ userUuid: invite.user_uuid })
+      const recipient = this._findContact.execute({ userUuid: invite.user_uuid })
       if (recipient.isFailed()) {
         continue
       }
 
-      const decryptedPreviousInvite = this.decryptOwnMessage.execute({
+      const decryptedPreviousInvite = this._decryptOwnMessage.execute({
         message: invite.encrypted_message,
-        privateKey: params.keys.encryption.privateKey,
+        privateKey: keys.getValue().encryption.privateKey,
         recipientPublicKey: recipient.getValue().publicKeySet.encryption,
       })
 
@@ -65,13 +66,11 @@ export class NotifyVaultUsersOfKeyRotation implements UseCaseInterface<void> {
         return Result.fail(decryptedPreviousInvite.getError())
       }
 
-      await this.inviteToVault.execute({
-        keys: params.keys,
+      await this._inviteToVault.execute({
         sharedVault: params.sharedVault,
         sharedVaultContacts: !contacts.isFailed() ? contacts.getValue() : [],
         recipient: recipient.getValue(),
         permission: invite.permission,
-        senderUuid: params.senderUuid,
       })
     }
 
@@ -79,11 +78,9 @@ export class NotifyVaultUsersOfKeyRotation implements UseCaseInterface<void> {
   }
 
   private async performSendKeyChangeMessage(params: Params): Promise<Result<void>> {
-    const result = await this.sendKeyChangedMessage.execute({
+    const result = await this._sendKeyChangedMessage.execute({
       keySystemIdentifier: params.sharedVault.systemIdentifier,
       sharedVaultUuid: params.sharedVault.sharing.sharedVaultUuid,
-      senderUuid: params.senderUuid,
-      keys: params.keys,
     })
 
     if (result.isFailed()) {
@@ -94,7 +91,7 @@ export class NotifyVaultUsersOfKeyRotation implements UseCaseInterface<void> {
   }
 
   private async deleteAllInvites(sharedVaultUuid: string): Promise<Result<void>> {
-    const response = await this.inviteServer.deleteAllSharedVaultInvites({
+    const response = await this._inviteServer.deleteAllSharedVaultInvites({
       sharedVaultUuid: sharedVaultUuid,
     })
 
@@ -106,7 +103,7 @@ export class NotifyVaultUsersOfKeyRotation implements UseCaseInterface<void> {
   }
 
   private async getExistingInvites(sharedVaultUuid: string): Promise<Result<SharedVaultInviteServerHash[]>> {
-    const response = await this.inviteServer.getOutboundUserInvites()
+    const response = await this._inviteServer.getOutboundUserInvites()
 
     if (isErrorResponse(response)) {
       return Result.fail(`Failed to get outbound user invites ${JSON.stringify(response)}`)

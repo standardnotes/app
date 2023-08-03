@@ -72,7 +72,6 @@ export interface EncryptionProviderInterface {
       }
   >
 
-  decryptErroredPayloads(): Promise<void>
   deleteWorkspaceSpecificKeyStateFromDevice(): Promise<void>
 
   unwrapRootKey(wrappingKey: RootKeyInterface): Promise<void>

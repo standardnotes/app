@@ -11,27 +11,35 @@ import { EncryptMessage } from '../../Encryption/UseCase/Asymmetric/EncryptMessa
 import { Result, SharedVaultUserPermission, UseCaseInterface } from '@standardnotes/domain-core'
 import { ShareContactWithVault } from '../../SharedVaults/UseCase/ShareContactWithVault'
 import { KeySystemKeyManagerInterface } from '../../KeySystem/KeySystemKeyManagerInterface'
+import { GetKeyPairs } from '../../Encryption/UseCase/GetKeyPairs'
 
 export class InviteToVault implements UseCaseInterface<SharedVaultInviteServerHash> {
   constructor(
     private keyManager: KeySystemKeyManagerInterface,
-    private encryptMessage: EncryptMessage,
-    private sendInvite: SendVaultInvite,
-    private shareContact: ShareContactWithVault,
+    private _encryptMessage: EncryptMessage,
+    private _sendInvite: SendVaultInvite,
+    private _shareContact: ShareContactWithVault,
+    private _getKeyPairs: GetKeyPairs,
   ) {}
 
   async execute(params: {
-    keys: {
-      encryption: PkcKeyPair
-      signing: PkcKeyPair
-    }
-    senderUuid: string
     sharedVault: SharedVaultListingInterface
     sharedVaultContacts: TrustedContactInterface[]
     recipient: TrustedContactInterface
     permission: string
   }): Promise<Result<SharedVaultInviteServerHash>> {
-    const createInviteResult = await this.inviteContact(params)
+    const keys = this._getKeyPairs.execute()
+    if (keys.isFailed()) {
+      return Result.fail('Cannot invite contact; keys not found')
+    }
+
+    const createInviteResult = await this.inviteContact({
+      keys: keys.getValue(),
+      sharedVault: params.sharedVault,
+      sharedVaultContacts: params.sharedVaultContacts,
+      recipient: params.recipient,
+      permission: params.permission,
+    })
 
     if (createInviteResult.isFailed()) {
       return createInviteResult
@@ -39,8 +47,7 @@ export class InviteToVault implements UseCaseInterface<SharedVaultInviteServerHa
 
     await this.shareContactWithOtherVaultMembers({
       contact: params.recipient,
-      senderUuid: params.senderUuid,
-      keys: params.keys,
+      keys: keys.getValue(),
       sharedVault: params.sharedVault,
     })
 
@@ -49,16 +56,13 @@ export class InviteToVault implements UseCaseInterface<SharedVaultInviteServerHa
 
   private async shareContactWithOtherVaultMembers(params: {
     contact: TrustedContactInterface
-    senderUuid: string
     keys: {
       encryption: PkcKeyPair
       signing: PkcKeyPair
     }
     sharedVault: SharedVaultListingInterface
   }): Promise<Result<void>> {
-    const result = await this.shareContact.execute({
-      keys: params.keys,
-      senderUserUuid: params.senderUuid,
+    const result = await this._shareContact.execute({
       sharedVault: params.sharedVault,
       contactToShare: params.contact,
     })
@@ -108,7 +112,7 @@ export class InviteToVault implements UseCaseInterface<SharedVaultInviteServerHa
         }
       })
 
-    const encryptedMessage = this.encryptMessage.execute({
+    const encryptedMessage = this._encryptMessage.execute({
       message: {
         type: AsymmetricMessagePayloadType.SharedVaultInvite,
         data: {
@@ -129,7 +133,7 @@ export class InviteToVault implements UseCaseInterface<SharedVaultInviteServerHa
       return Result.fail(encryptedMessage.getError())
     }
 
-    const createInviteResult = await this.sendInvite.execute({
+    const createInviteResult = await this._sendInvite.execute({
       sharedVaultUuid: params.sharedVault.sharing.sharedVaultUuid,
       recipientUuid: params.recipient.contactUuid,
       encryptedMessage: encryptedMessage.getValue(),

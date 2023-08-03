@@ -1,3 +1,4 @@
+import { SendVaultDataChangedMessage } from './../SharedVaults/UseCase/SendVaultDataChangedMessage'
 import { isClientDisplayableError } from '@standardnotes/responses'
 import {
   DecryptedItemInterface,
@@ -46,6 +47,7 @@ export class VaultService
     private _removeItemFromVault: RemoveItemFromVault,
     private _deleteVault: DeleteVault,
     private _rotateVaultKey: RotateVaultKey,
+    private _sendVaultDataChangeMessage: SendVaultDataChangedMessage,
     eventBus: InternalEventBusInterface,
   ) {
     super(eventBus)
@@ -192,6 +194,12 @@ export class VaultService
 
     await this.sync.sync()
 
+    if (vault.isSharedVaultListing()) {
+      await this._sendVaultDataChangeMessage.execute({
+        vault,
+      })
+    }
+
     return updatedVault
   }
 
@@ -202,11 +210,8 @@ export class VaultService
 
     await this._rotateVaultKey.execute({
       vault,
-      sharedVaultUuid: vault.isSharedVaultListing() ? vault.sharing.sharedVaultUuid : undefined,
       userInputtedPassword: vaultPassword,
     })
-
-    await this.notifyEventSync(VaultServiceEvent.VaultRootKeyRotated, { vault })
 
     await this.sync.sync()
   }
@@ -228,16 +233,12 @@ export class VaultService
     return this.getVault({ keySystemIdentifier: latestItem.key_system_identifier })
   }
 
-  async changeVaultOptions(dto: ChangeVaultKeyOptionsDTO): Promise<Result<void>> {
+  async changeVaultKeyOptions(dto: ChangeVaultKeyOptionsDTO): Promise<Result<void>> {
     if (this.vaultLocks.isVaultLocked(dto.vault)) {
       throw new Error('Attempting to change vault options on a locked vault')
     }
 
     const result = await this._changeVaultKeyOptions.execute(dto)
-
-    if (dto.newPasswordType) {
-      await this.notifyEventSync(VaultServiceEvent.VaultRootKeyRotated, { vault: dto.vault })
-    }
 
     return result
   }

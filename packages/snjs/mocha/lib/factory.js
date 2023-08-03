@@ -158,7 +158,8 @@ export async function registerOldUser({ application, email, password, version })
     mode: SyncMode.DownloadFirst,
     ...syncOptions,
   })
-  await application.encryption.decryptErroredPayloads()
+
+  await application.dependencies.get(TYPES.DecryptErroredPayloads).execute()
 }
 
 export function createStorageItemPayload(contentType) {

@@ -1,3 +1,4 @@
+import { UserServiceInterface } from './../../User/UserServiceInterface'
 import {
   AsymmetricMessagePayloadType,
   AsymmetricMessageSharedVaultRootKeyChanged,
@@ -13,38 +14,38 @@ import { Result, UseCaseInterface } from '@standardnotes/domain-core'
 import { GetReplaceabilityIdentifier } from '../../AsymmetricMessage/UseCase/GetReplaceabilityIdentifier'
 import { FindContact } from '../../Contacts/UseCase/FindContact'
 import { KeySystemKeyManagerInterface } from '../../KeySystem/KeySystemKeyManagerInterface'
+import { GetKeyPairs } from '../../Encryption/UseCase/GetKeyPairs'
 
 export class SendVaultKeyChangedMessage implements UseCaseInterface<void> {
   constructor(
-    private encryptMessage: EncryptMessage,
-    private keyManager: KeySystemKeyManagerInterface,
-    private findContact: FindContact,
-    private sendMessage: SendMessage,
-    private getVaultUsers: GetVaultUsers,
+    private users: UserServiceInterface,
+    private _encryptMessage: EncryptMessage,
+    private _keyManager: KeySystemKeyManagerInterface,
+    private _findContact: FindContact,
+    private _sendMessage: SendMessage,
+    private _getVaultUsers: GetVaultUsers,
+    private _getKeyPairs: GetKeyPairs,
   ) {}
 
-  async execute(params: {
-    keySystemIdentifier: KeySystemIdentifier
-    sharedVaultUuid: string
-    senderUuid: string
-    keys: {
-      encryption: PkcKeyPair
-      signing: PkcKeyPair
-    }
-  }): Promise<Result<void>> {
-    const users = await this.getVaultUsers.execute({ sharedVaultUuid: params.sharedVaultUuid, readFromCache: false })
+  async execute(params: { keySystemIdentifier: KeySystemIdentifier; sharedVaultUuid: string }): Promise<Result<void>> {
+    const users = await this._getVaultUsers.execute({ sharedVaultUuid: params.sharedVaultUuid, readFromCache: false })
     if (users.isFailed()) {
       return Result.fail('Cannot send root key changed message; users not found')
+    }
+
+    const keys = this._getKeyPairs.execute()
+    if (keys.isFailed()) {
+      return Result.fail('Cannot send root key changed message; keys not found')
     }
 
     const errors: string[] = []
 
     for (const user of users.getValue()) {
-      if (user.user_uuid === params.senderUuid) {
+      if (user.user_uuid === this.users.sureUser.uuid) {
         continue
       }
 
-      const trustedContact = this.findContact.execute({ userUuid: user.user_uuid })
+      const trustedContact = this._findContact.execute({ userUuid: user.user_uuid })
       if (trustedContact.isFailed()) {
         continue
       }
@@ -52,7 +53,7 @@ export class SendVaultKeyChangedMessage implements UseCaseInterface<void> {
       const result = await this.sendToContact({
         keySystemIdentifier: params.keySystemIdentifier,
         sharedVaultUuid: params.sharedVaultUuid,
-        keys: params.keys,
+        keys: keys.getValue(),
         contact: trustedContact.getValue(),
       })
 
@@ -77,7 +78,7 @@ export class SendVaultKeyChangedMessage implements UseCaseInterface<void> {
     }
     contact: TrustedContactInterface
   }): Promise<Result<AsymmetricMessageServerHash>> {
-    const keySystemRootKey = this.keyManager.getPrimaryKeySystemRootKey(params.keySystemIdentifier)
+    const keySystemRootKey = this._keyManager.getPrimaryKeySystemRootKey(params.keySystemIdentifier)
     if (!keySystemRootKey) {
       throw new Error(`Vault key not found for keySystemIdentifier ${params.keySystemIdentifier}`)
     }
@@ -87,7 +88,7 @@ export class SendVaultKeyChangedMessage implements UseCaseInterface<void> {
       data: { recipientUuid: params.contact.contactUuid, rootKey: keySystemRootKey.content },
     }
 
-    const encryptedMessage = this.encryptMessage.execute({
+    const encryptedMessage = this._encryptMessage.execute({
       message: message,
       keys: params.keys,
       recipientPublicKey: params.contact.publicKeySet.encryption,
@@ -103,7 +104,7 @@ export class SendVaultKeyChangedMessage implements UseCaseInterface<void> {
       params.keySystemIdentifier,
     )
 
-    const sendMessageResult = await this.sendMessage.execute({
+    const sendMessageResult = await this._sendMessage.execute({
       recipientUuid: params.contact.contactUuid,
       encryptedMessage: encryptedMessage.getValue(),
       replaceabilityIdentifier,

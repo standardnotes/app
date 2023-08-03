@@ -16,13 +16,13 @@ export class ProcessAcceptedVaultInvite {
   constructor(
     private mutator: MutatorClientInterface,
     private sync: SyncServiceInterface,
-    private createOrEditContact: CreateOrEditContact,
+    private _createOrEditContact: CreateOrEditContact,
   ) {}
 
   async execute(
     message: AsymmetricMessageSharedVaultInvite,
     sharedVaultUuid: string,
-    senderUuid: string,
+    ownerUuid: string,
   ): Promise<void> {
     const { rootKey: rootKeyContent, trustedContacts, metadata } = message.data
 
@@ -34,7 +34,7 @@ export class ProcessAcceptedVaultInvite {
       description: metadata.description,
       sharing: {
         sharedVaultUuid: sharedVaultUuid,
-        ownerUserUuid: senderUuid,
+        ownerUserUuid: ownerUuid,
       },
     }
 
@@ -47,7 +47,7 @@ export class ProcessAcceptedVaultInvite {
     await this.mutator.createItem(ContentType.TYPES.VaultListing, FillItemContentSpecialized(content), true)
 
     for (const contact of trustedContacts) {
-      await this.createOrEditContact.execute({
+      await this._createOrEditContact.execute({
         name: contact.name,
         contactUuid: contact.contactUuid,
         publicKey: contact.publicKeySet.encryption,
