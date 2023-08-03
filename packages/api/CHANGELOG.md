@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.26.39](https://github.com/standardnotes/app/compare/@standardnotes/api@1.26.38...@standardnotes/api@1.26.39) (2023-08-03)
+
+### Bug Fixes
+
+* exit interview discount link not working ([#2381](https://github.com/standardnotes/app/issues/2381)) ([027dd41](https://github.com/standardnotes/app/commit/027dd4114720d46cccf215a71c04b67f91315ddc))
+
 ## [1.26.38](https://github.com/standardnotes/app/compare/@standardnotes/api@1.26.37...@standardnotes/api@1.26.38) (2023-08-02)
 
 **Note:** Version bump only for package @standardnotes/api
