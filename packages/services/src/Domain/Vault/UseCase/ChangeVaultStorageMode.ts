@@ -1,5 +1,10 @@
 import { MutatorClientInterface, SyncServiceInterface } from '@standardnotes/services'
-import { KeySystemRootKeyStorageMode, VaultListingInterface, VaultListingMutator } from '@standardnotes/models'
+import {
+  KeySystemPasswordType,
+  KeySystemRootKeyStorageMode,
+  VaultListingInterface,
+  VaultListingMutator,
+} from '@standardnotes/models'
 import { GetVault } from './GetVault'
 import { KeySystemKeyManagerInterface } from '../../KeySystem/KeySystemKeyManagerInterface'
 import { Result, UseCaseInterface } from '@standardnotes/domain-core'
@@ -19,6 +24,14 @@ export class ChangeVaultStorageMode implements UseCaseInterface<VaultListingInte
     const result = this._getVault.execute({ keySystemIdentifier: dto.vault.systemIdentifier })
     if (result.isFailed()) {
       return Result.fail('Vault not found')
+    }
+
+    const vault = result.getValue()
+    if (
+      vault.keyPasswordType === KeySystemPasswordType.Randomized &&
+      dto.newStorageMode !== KeySystemRootKeyStorageMode.Synced
+    ) {
+      return Result.fail('Cannot change storage mode to non-synced for randomized vault')
     }
 
     const latestVault = result.getValue()

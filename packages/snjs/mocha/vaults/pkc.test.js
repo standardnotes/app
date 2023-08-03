@@ -28,11 +28,11 @@ describe('public key cryptography', function () {
   })
 
   it('should create keypair during registration', () => {
-    expect(sessions.getPublicKey()).to.not.be.undefined
-    expect(encryption.getKeyPair().privateKey).to.not.be.undefined
+    expect(context.publicKey).to.not.be.undefined
+    expect(context.keyPair.privateKey).to.not.be.undefined
 
-    expect(sessions.getSigningPublicKey()).to.not.be.undefined
-    expect(encryption.getSigningKeyPair().privateKey).to.not.be.undefined
+    expect(context.signingPublicKey).to.not.be.undefined
+    expect(context.signingKeyPair.privateKey).to.not.be.undefined
   })
 
   it('should populate keypair during sign in', async () => {
@@ -46,33 +46,33 @@ describe('public key cryptography', function () {
     recreatedContext.password = password
     await recreatedContext.signIn()
 
-    expect(recreatedContext.sessions.getPublicKey()).to.not.be.undefined
-    expect(recreatedContext.getKeyPair().privateKey).to.not.be.undefined
+    expect(recreatedContext.publicKey).to.not.be.undefined
+    expect(recreatedContext.privateKey).to.not.be.undefined
 
-    expect(recreatedContext.sessions.getSigningPublicKey()).to.not.be.undefined
-    expect(recreatedContext.getSigningKeyPair().privateKey).to.not.be.undefined
+    expect(recreatedContext.signingPublicKey).to.not.be.undefined
+    expect(recreatedContext.signingKeyPair.privateKey).to.not.be.undefined
 
     await recreatedContext.deinit()
   })
 
   it('should rotate keypair during password change', async () => {
-    const oldPublicKey = sessions.getPublicKey()
-    const oldPrivateKey = encryption.getKeyPair().privateKey
+    const oldPublicKey = context.publicKey
+    const oldPrivateKey = context.privateKey
 
-    const oldSigningPublicKey = sessions.getSigningPublicKey()
-    const oldSigningPrivateKey = encryption.getSigningKeyPair().privateKey
+    const oldSigningPublicKey = context.signingPublicKey
+    const oldSigningPrivateKey = context.signingKeyPair.privateKey
 
     await context.changePassword('new_password')
 
-    expect(sessions.getPublicKey()).to.not.be.undefined
-    expect(context.getKeyPair().privateKey).to.not.be.undefined
-    expect(sessions.getPublicKey()).to.not.equal(oldPublicKey)
-    expect(context.getKeyPair().privateKey).to.not.equal(oldPrivateKey)
+    expect(context.publicKey).to.not.be.undefined
+    expect(context.keyPair.privateKey).to.not.be.undefined
+    expect(context.publicKey).to.not.equal(oldPublicKey)
+    expect(context.keyPair.privateKey).to.not.equal(oldPrivateKey)
 
-    expect(sessions.getSigningPublicKey()).to.not.be.undefined
-    expect(context.getSigningKeyPair().privateKey).to.not.be.undefined
-    expect(sessions.getSigningPublicKey()).to.not.equal(oldSigningPublicKey)
-    expect(context.getSigningKeyPair().privateKey).to.not.equal(oldSigningPrivateKey)
+    expect(context.signingPublicKey).to.not.be.undefined
+    expect(context.signingKeyPair.privateKey).to.not.be.undefined
+    expect(context.signingPublicKey).to.not.equal(oldSigningPublicKey)
+    expect(context.signingKeyPair.privateKey).to.not.equal(oldSigningPrivateKey)
   })
 
   it('should allow option to enable collaboration for previously signed in accounts', async () => {

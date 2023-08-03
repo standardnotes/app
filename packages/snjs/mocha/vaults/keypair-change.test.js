@@ -82,8 +82,8 @@ describe('keypair change', function () {
 
     contactContext.lockSyncing()
 
-    const previousKeyPair = context.getKeyPair()
-    const previousSigningKeyPair = context.getSigningKeyPair()
+    const previousKeyPair = context.keyPair
+    const previousSigningKeyPair = context.signingKeyPair
 
     await context.changePassword('new_password')
 

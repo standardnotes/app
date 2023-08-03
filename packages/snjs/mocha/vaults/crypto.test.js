@@ -31,8 +31,8 @@ describe('shared vault crypto', function () {
       let recreatedContext = await Factory.createVaultsContextWithRealCrypto(appIdentifier)
       await recreatedContext.launch()
 
-      expect(recreatedContext.getKeyPair()).to.not.be.undefined
-      expect(recreatedContext.getSigningKeyPair()).to.not.be.undefined
+      expect(recreatedContext.keyPair).to.not.be.undefined
+      expect(recreatedContext.signingKeyPair).to.not.be.undefined
 
       await recreatedContext.deinit()
     })

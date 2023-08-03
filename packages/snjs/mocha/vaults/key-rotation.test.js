@@ -96,7 +96,7 @@ describe('vault key rotation', function () {
     await context.vaults.rotateVaultRootKey(sharedVault)
 
     const outboundMessages = (await context.asymmetric.getOutboundMessages()).getValue()
-    const expectedMessages = ['root key change', 'vault metadata change']
+    const expectedMessages = ['root key change']
     expect(outboundMessages.length).to.equal(expectedMessages.length)
 
     const message = outboundMessages[0]
@@ -204,7 +204,7 @@ describe('vault key rotation', function () {
     await context.vaults.rotateVaultRootKey(sharedVault)
 
     const asymmetricMessageAfterFirstChange = (await context.asymmetric.getOutboundMessages()).getValue()
-    const expectedMessages = ['root key change', 'vault metadata change']
+    const expectedMessages = ['root key change']
     expect(asymmetricMessageAfterFirstChange.length).to.equal(expectedMessages.length)
 
     const messageAfterFirstChange = asymmetricMessageAfterFirstChange[0]

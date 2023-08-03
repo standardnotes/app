@@ -328,8 +328,8 @@ describe('asymmetric messages', function () {
   it('sender keypair changed message should be signed using old key pair', async () => {
     const { contactContext, deinitContactContext } = await Collaboration.createSharedVaultWithAcceptedInvite(context)
 
-    const oldKeyPair = context.getKeyPair()
-    const oldSigningKeyPair = context.getSigningKeyPair()
+    const oldKeyPair = context.keyPair
+    const oldSigningKeyPair = context.signingKeyPair
 
     await context.changePassword('new password')
 
@@ -355,8 +355,8 @@ describe('asymmetric messages', function () {
 
     await context.changePassword('new password')
 
-    const newKeyPair = context.getKeyPair()
-    const newSigningKeyPair = context.getSigningKeyPair()
+    const newKeyPair = context.keyPair
+    const newSigningKeyPair = context.signingKeyPair
 
     await contactContext.syncAndAwaitMessageProcessing()
 
@@ -408,12 +408,12 @@ describe('asymmetric messages', function () {
     const usecase = context.application.dependencies.get(TYPES.ResendAllMessages)
     const result = await usecase.execute({
       keys: {
-        encryption: context.getKeyPair(),
-        signing: context.getSigningKeyPair(),
+        encryption: context.keyPair,
+        signing: context.signingKeyPair,
       },
       previousKeys: {
-        encryption: context.getKeyPair(),
-        signing: context.getSigningKeyPair(),
+        encryption: context.keyPair,
+        signing: context.signingKeyPair,
       },
     })
 

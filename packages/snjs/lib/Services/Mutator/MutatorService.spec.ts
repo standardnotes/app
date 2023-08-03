@@ -56,6 +56,14 @@ describe('mutator service', () => {
     return mutatorService.insertItem(note)
   }
 
+  describe('insertItem', () => {
+    it('should throw if attempting to insert already inserted item', async () => {
+      const note = await insertNote('hello')
+
+      expect(mutatorService.insertItem(note)).rejects.toThrow()
+    })
+  })
+
   describe('note modifications', () => {
     it('pinning should not update timestamps', async () => {
       const note = await insertNote('hello')

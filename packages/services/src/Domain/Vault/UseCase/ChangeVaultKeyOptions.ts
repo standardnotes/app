@@ -17,6 +17,21 @@ export class ChangeVaultKeyOptions implements UseCaseInterface<void> {
     let vault = dto.vault
 
     if (dto.newPasswordOptions) {
+      if (
+        dto.newPasswordOptions.passwordType === KeySystemPasswordType.Randomized &&
+        dto.newStorageMode &&
+        dto.newStorageMode !== KeySystemRootKeyStorageMode.Synced
+      ) {
+        return Result.fail('Cannot change storage mode to non-synced for randomized vault')
+      }
+
+      if (
+        dto.newPasswordOptions.passwordType === KeySystemPasswordType.UserInputted &&
+        !dto.newPasswordOptions.userInputtedPassword
+      ) {
+        return Result.fail('User inputted password required')
+      }
+
       const result = await this._rotateVaultKey.execute({
         vault: dto.vault,
         userInputtedPassword:

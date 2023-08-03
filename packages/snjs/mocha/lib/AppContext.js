@@ -149,16 +149,24 @@ export class AppContext {
     return this.application.asymmetric
   }
 
+  get keyPair() {
+    return this.application.dependencies.get(TYPES.GetKeyPairs).execute().getValue().encryption
+  }
+
+  get signingKeyPair() {
+    return this.application.dependencies.get(TYPES.GetKeyPairs).execute().getValue().signing
+  }
+
   get publicKey() {
-    return this.sessions.getPublicKey()
+    return this.keyPair.publicKey
   }
 
   get signingPublicKey() {
-    return this.sessions.getSigningPublicKey()
+    return this.signingKeyPair.publicKey
   }
 
   get privateKey() {
-    return this.encryption.getKeyPair().privateKey
+    return this.keyPair.privateKey
   }
 
   ignoreChallenges() {
