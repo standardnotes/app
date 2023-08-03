@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.202.27](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.202.26...@standardnotes/snjs@2.202.27) (2023-08-03)
+
+### Bug Fixes
+
+* exit interview discount link not working ([#2381](https://github.com/standardnotes/app/issues/2381)) ([027dd41](https://github.com/standardnotes/app/commit/027dd4114720d46cccf215a71c04b67f91315ddc))
+
 ## [2.202.26](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.202.25...@standardnotes/snjs@2.202.26) (2023-08-02)
 
 **Note:** Version bump only for package @standardnotes/snjs
