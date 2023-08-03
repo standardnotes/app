@@ -52,7 +52,6 @@ import {
   ListNumbered,
 } from '@standardnotes/icons'
 import { IconComponent } from '../../Lexical/Theme/IconComponent'
-import { sanitizeUrl } from '../../Lexical/Utils/sanitizeUrl'
 import { classNames } from '@standardnotes/snjs'
 import { getDOMRangeRect } from '../../Lexical/Utils/getDOMRangeRect'
 import { getPositionedPopoverStyles } from '@/Components/Popover/GetPositionedPopoverStyles'
@@ -151,13 +150,7 @@ function TextFormatFloatingToolbar({
   const insertLink = useCallback(() => {
     if (!isLink) {
       editor.update(() => {
-        const selection = $getSelection()
-        const textContent = selection?.getTextContent()
-        if (!textContent) {
-          editor.dispatchCommand(TOGGLE_LINK_AND_EDIT_COMMAND, 'https://')
-          return
-        }
-        editor.dispatchCommand(TOGGLE_LINK_AND_EDIT_COMMAND, sanitizeUrl(textContent))
+        editor.dispatchCommand(TOGGLE_LINK_AND_EDIT_COMMAND, 'https://')
       })
     } else {
       editor.dispatchCommand(TOGGLE_LINK_AND_EDIT_COMMAND, null)
@@ -298,7 +291,7 @@ function TextFormatFloatingToolbar({
 
         if (code === 'KeyK' && (ctrlKey || metaKey)) {
           event.preventDefault()
-          const dispatched = editor.dispatchCommand(TOGGLE_LINK_AND_EDIT_COMMAND, sanitizeUrl('https://'))
+          const dispatched = editor.dispatchCommand(TOGGLE_LINK_AND_EDIT_COMMAND, 'https://')
           setIsLinkEditMode(true)
           return dispatched
         }
