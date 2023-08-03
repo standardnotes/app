@@ -58,7 +58,7 @@ export class UserApiService implements UserApiServiceInterface {
 
       return response
     } catch (error) {
-      throw new ApiCallError(ErrorMessage.GenericRegistrationFail)
+      throw new ApiCallError(ErrorMessage.GenericFail)
     }
   }
 

@@ -140,6 +140,7 @@ import {
   SubscriptionApiService,
   SubscriptionServer,
   UserApiService,
+  UserRequestServer,
   UserServer,
   WebSocketApiService,
   WebSocketServer,
@@ -1204,7 +1205,7 @@ export class Dependencies {
     })
 
     this.factory.set(TYPES.UserRequestServer, () => {
-      return new UserServer(this.get(TYPES.HttpService))
+      return new UserRequestServer(this.get(TYPES.HttpService))
     })
 
     this.factory.set(TYPES.InternalEventBus, () => {
