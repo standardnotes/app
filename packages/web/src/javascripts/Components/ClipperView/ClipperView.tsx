@@ -65,7 +65,7 @@ const ClipperView = ({
   const [isSyncing, setIsSyncing] = useState(false)
   const [hasSyncError, setHasSyncError] = useState(false)
   useEffect(() => {
-    application.sessions.checkAndRefreshSession().catch(console.error)
+    application.sessions.refreshSessionIfExpiringSoon().catch(console.error)
   }, [application.sessions])
   const [isEntitledToExtension, setIsEntitled] = useState(
     () =>

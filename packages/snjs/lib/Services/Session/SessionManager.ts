@@ -839,7 +839,7 @@ export class SessionManager
     return Result.ok(sessionOrError.getValue())
   }
 
-  async checkAndRefreshSession(): Promise<boolean> {
+  async refreshSessionIfExpiringSoon(): Promise<boolean> {
     const session = this.getSession()
 
     if (!session) {
