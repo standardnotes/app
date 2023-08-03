@@ -25,6 +25,7 @@ import {
   NodeSelection,
   KEY_MODIFIER_COMMAND,
   COMMAND_PRIORITY_NORMAL,
+  createCommand,
 } from 'lexical'
 import { $isHeadingNode } from '@lexical/rich-text'
 import {
@@ -75,6 +76,8 @@ const blockTypeToBlockName = {
 }
 
 const IconSize = 15
+
+const TOGGLE_LINK_AND_EDIT_COMMAND = createCommand<string | null>('TOGGLE_LINK_AND_EDIT_COMMAND')
 
 const ToolbarButton = ({ active, ...props }: { active?: boolean } & ComponentPropsWithoutRef<'button'>) => {
   return (
@@ -127,19 +130,37 @@ function TextFormatFloatingToolbar({
   const [isLinkEditMode, setIsLinkEditMode] = useState(false)
   const [lastSelection, setLastSelection] = useState<RangeSelection | GridSelection | NodeSelection | null>(null)
 
+  useEffect(() => {
+    return editor.registerCommand(
+      TOGGLE_LINK_AND_EDIT_COMMAND,
+      (payload) => {
+        if (payload === null) {
+          return editor.dispatchCommand(TOGGLE_LINK_COMMAND, null)
+        } else if (typeof payload === 'string') {
+          const dispatched = editor.dispatchCommand(TOGGLE_LINK_COMMAND, payload)
+          setLinkUrl(payload)
+          setIsLinkEditMode(true)
+          return dispatched
+        }
+        return false
+      },
+      COMMAND_PRIORITY_LOW,
+    )
+  }, [editor])
+
   const insertLink = useCallback(() => {
     if (!isLink) {
       editor.update(() => {
         const selection = $getSelection()
         const textContent = selection?.getTextContent()
         if (!textContent) {
-          editor.dispatchCommand(TOGGLE_LINK_COMMAND, 'https://')
+          editor.dispatchCommand(TOGGLE_LINK_AND_EDIT_COMMAND, 'https://')
           return
         }
-        editor.dispatchCommand(TOGGLE_LINK_COMMAND, sanitizeUrl(textContent))
+        editor.dispatchCommand(TOGGLE_LINK_AND_EDIT_COMMAND, sanitizeUrl(textContent))
       })
     } else {
-      editor.dispatchCommand(TOGGLE_LINK_COMMAND, null)
+      editor.dispatchCommand(TOGGLE_LINK_AND_EDIT_COMMAND, null)
     }
   }, [editor, isLink])
 
@@ -277,7 +298,7 @@ function TextFormatFloatingToolbar({
 
         if (code === 'KeyK' && (ctrlKey || metaKey)) {
           event.preventDefault()
-          const dispatched = editor.dispatchCommand(TOGGLE_LINK_COMMAND, sanitizeUrl('https://'))
+          const dispatched = editor.dispatchCommand(TOGGLE_LINK_AND_EDIT_COMMAND, sanitizeUrl('https://'))
           setIsLinkEditMode(true)
           return dispatched
         }
