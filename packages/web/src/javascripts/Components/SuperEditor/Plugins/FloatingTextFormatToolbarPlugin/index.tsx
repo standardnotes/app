@@ -78,7 +78,7 @@ const ToolbarButton = ({ active, ...props }: { active?: boolean } & ComponentPro
   return (
     <button
       className={classNames(
-        'flex rounded-lg p-3 hover:bg-contrast hover:text-text disabled:cursor-not-allowed',
+        'flex rounded-lg p-3 hover:bg-default hover:text-text disabled:cursor-not-allowed',
         active && 'bg-info text-info-contrast',
       )}
       {...props}
