@@ -2,7 +2,7 @@
 
 import { ApplicationEvent, ReactNativeToWebEvent } from '@standardnotes/snjs'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Button, Keyboard, Platform, Text, View } from 'react-native'
+import { Button, Dimensions, Keyboard, Platform, Text, View } from 'react-native'
 import VersionInfo from 'react-native-version-info'
 import { WebView, WebViewMessageEvent } from 'react-native-webview'
 import { OnShouldStartLoadWithRequest } from 'react-native-webview/lib/WebViewTypes'
@@ -84,7 +84,11 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
         JSON.stringify({
           reactNativeEvent: ReactNativeToWebEvent.KeyboardFrameWillChange,
           messageType: 'event',
-          messageData: { height: e.endCoordinates.height, contentHeight: e.endCoordinates.screenY },
+          messageData: {
+            height: e.endCoordinates.height,
+            contentHeight: e.endCoordinates.screenY,
+            isFloatingKeyboard: e.endCoordinates.width !== Dimensions.get('window').width,
+          },
         }),
       )
     })
