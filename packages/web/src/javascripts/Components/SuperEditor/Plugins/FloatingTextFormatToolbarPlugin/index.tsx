@@ -277,7 +277,7 @@ function TextFormatFloatingToolbar({
   return (
     <div
       ref={toolbarRef}
-      className="absolute left-0 top-0 rounded-lg border border-border bg-default px-2 py-1 shadow shadow-contrast"
+      className="absolute left-0 top-0 rounded-lg border border-border bg-contrast px-2 py-1 shadow-sm shadow-contrast"
     >
       {isLink && (
         <LinkEditor
