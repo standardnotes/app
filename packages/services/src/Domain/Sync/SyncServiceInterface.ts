@@ -1,13 +1,18 @@
 /* istanbul ignore file */
 
-import { FullyFormedPayloadInterface } from '@standardnotes/models'
+import { DecryptedItemInterface, DeletedItemInterface, FullyFormedPayloadInterface } from '@standardnotes/models'
 import { SyncOptions } from './SyncOptions'
 import { AbstractService } from '../Service/AbstractService'
 import { SyncEvent } from '../Event/SyncEvent'
 import { SyncOpStatus } from './SyncOpStatus'
+import { HttpRequest } from '@standardnotes/responses'
 
 export interface SyncServiceInterface extends AbstractService<SyncEvent> {
   sync(options?: Partial<SyncOptions>): Promise<unknown>
+  getRawSyncRequestForExternalUse(
+    items: (DecryptedItemInterface | DeletedItemInterface)[],
+  ): Promise<HttpRequest | undefined>
+
   isDatabaseLoaded(): boolean
   onNewDatabaseCreated(): Promise<void>
   loadDatabasePayloads(): Promise<void>

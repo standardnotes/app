@@ -1,4 +1,4 @@
-import { ConflictParams, ConflictType } from '@standardnotes/responses'
+import { ConflictParams, ConflictType, HttpRequest } from '@standardnotes/responses'
 import { AccountSyncOperation } from '@Lib/Services/Sync/Account/Operation'
 import {
   LoggerInterface,
@@ -920,6 +920,26 @@ export class SyncService
     this.resolvePendingSyncRequestsThatMadeItInTimeOfCurrentRequest(inTimeResolveQueue)
 
     return undefined
+  }
+
+  async getRawSyncRequestForExternalUse(
+    items: (DecryptedItemInterface | DeletedItemInterface)[],
+  ): Promise<HttpRequest | undefined> {
+    if (this.dealloced) {
+      return
+    }
+
+    const online = this.sessionManager.online()
+
+    if (!online) {
+      return
+    }
+
+    const payloads = await this.payloadsByPreparingForServer(items.map((i) => i.payloadRepresentation()))
+    const syncToken = await this.getLastSyncToken()
+    const paginationToken = await this.getPaginationToken()
+
+    return this.apiService.getSyncHttpRequest(payloads, syncToken, paginationToken, 150)
   }
 
   private async handleOfflineResponse(response: OfflineSyncResponse) {

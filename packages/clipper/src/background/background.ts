@@ -1,5 +1,7 @@
 import { runtime, action, browserAction, windows, storage, tabs } from 'webextension-polyfill'
 import { ClipPayload, RuntimeMessage, RuntimeMessageTypes } from '../types/message'
+import { Environment, FetchRequestHandler, Logger, SnjsVersion } from '@standardnotes/snjs'
+import packageInfo from '../../package.json'
 
 const isFirefox = navigator.userAgent.indexOf('Firefox/') !== -1
 
@@ -22,6 +24,9 @@ const openPopupAndClipSelection = async (payload: ClipPayload) => {
   void openPopup()
 }
 
+const logger = new Logger('clipper')
+const requestHandler = new FetchRequestHandler(SnjsVersion, packageInfo.version, Environment.Clipper, logger)
+
 runtime.onMessage.addListener(async (message: RuntimeMessage) => {
   if (message.type === RuntimeMessageTypes.OpenPopupWithSelection) {
     if (!message.payload) {
@@ -32,5 +37,7 @@ runtime.onMessage.addListener(async (message: RuntimeMessage) => {
     return await tabs.captureVisibleTab(undefined, {
       format: 'png',
     })
+  } else if (message.type === RuntimeMessageTypes.RunHttpRequest) {
+    requestHandler.handleRequest(message.payload).catch(console.error)
   }
 })

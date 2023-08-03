@@ -1,3 +1,5 @@
+import { HttpRequest } from '@standardnotes/snjs'
+
 export const RuntimeMessageTypes = {
   GetArticle: 'get-article',
   GetSelection: 'get-selection',
@@ -7,6 +9,7 @@ export const RuntimeMessageTypes = {
   StartNodeSelection: 'start-node-selection',
   ToggleScreenshotMode: 'toggle-screenshot-mode',
   CaptureVisibleTab: 'capture-visible-tab',
+  RunHttpRequest: 'run-http-request',
 } as const
 
 export type RuntimeMessageType = (typeof RuntimeMessageTypes)[keyof typeof RuntimeMessageTypes]
@@ -29,6 +32,7 @@ export type RuntimeMessageReturnTypes = {
   [RuntimeMessageTypes.OpenPopupWithSelection]: void
   [RuntimeMessageTypes.StartNodeSelection]: void
   [RuntimeMessageTypes.ToggleScreenshotMode]: void
+  [RuntimeMessageTypes.RunHttpRequest]: void
 }
 
 export type RuntimeMessage =
@@ -37,9 +41,18 @@ export type RuntimeMessage =
       payload: ClipPayload
     }
   | {
+      type: typeof RuntimeMessageTypes.RunHttpRequest
+      payload: HttpRequest
+    }
+  | {
       type: typeof RuntimeMessageTypes.ToggleScreenshotMode
       enabled: boolean
     }
   | {
-      type: Exclude<RuntimeMessageType, MessagesWithClipPayload | typeof RuntimeMessageTypes.ToggleScreenshotMode>
+      type: Exclude<
+        RuntimeMessageType,
+        | MessagesWithClipPayload
+        | typeof RuntimeMessageTypes.ToggleScreenshotMode
+        | typeof RuntimeMessageTypes.RunHttpRequest
+      >
     }

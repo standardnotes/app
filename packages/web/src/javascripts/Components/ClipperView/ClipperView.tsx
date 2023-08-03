@@ -7,7 +7,7 @@ import { useApplication } from '../ApplicationProvider'
 import Icon from '../Icon/Icon'
 import Menu from '../Menu/Menu'
 import MenuItem from '../Menu/MenuItem'
-import { storage as extensionStorage, windows } from 'webextension-polyfill'
+import { storage as extensionStorage, runtime, windows } from 'webextension-polyfill'
 import sendMessageToActiveTab from '@standardnotes/clipper/src/utils/sendMessageToActiveTab'
 import { ClipPayload, RuntimeMessageTypes } from '@standardnotes/clipper/src/types/message'
 import { confirmDialog } from '@standardnotes/ui-services'
@@ -22,6 +22,7 @@ import {
   PrefKey,
   SNNote,
   SNTag,
+  classNames,
 } from '@standardnotes/snjs'
 import { addToast, ToastType } from '@standardnotes/toast'
 import { getSuperJSONFromClipPayload } from './getSuperJSONFromClipHTML'
@@ -36,6 +37,7 @@ import ItemSelectionDropdown from '../ItemSelectionDropdown/ItemSelectionDropdow
 import LinkedItemBubble from '../LinkedItems/LinkedItemBubble'
 import StyledTooltip from '../StyledTooltip/StyledTooltip'
 import MenuSwitchButtonItem from '../Menu/MenuSwitchButtonItem'
+import Spinner from '../Spinner/Spinner'
 
 const ClipperView = ({
   viewControllerManager,
@@ -60,6 +62,11 @@ const ClipperView = ({
   const isFirefoxPopup = !!currentWindow && currentWindow.type === 'popup' && currentWindow.incognito === false
 
   const [user, setUser] = useState(() => application.getUser())
+  const [isSyncing, setIsSyncing] = useState(false)
+  const [hasSyncError, setHasSyncError] = useState(false)
+  useEffect(() => {
+    application.sessions.refreshSessionIfExpiringSoon().catch(console.error)
+  }, [application.sessions])
   const [isEntitledToExtension, setIsEntitled] = useState(
     () =>
       application.features.getFeatureStatus(
@@ -88,6 +95,13 @@ const ClipperView = ({
             ) === FeatureStatus.Entitled,
           )
           break
+        case ApplicationEvent.SyncStatusChanged:
+        case ApplicationEvent.FailedSync: {
+          const status = application.sync.getSyncStatus()
+          setIsSyncing(status.syncInProgress)
+          setHasSyncError(status.hasError())
+          break
+        }
       }
     })
   }, [application])
@@ -241,10 +255,19 @@ const ClipperView = ({
         message: 'Note clipped successfully',
       })
 
-      void application.sync.sync()
+      const syncRequest = await application.sync.getRawSyncRequestForExternalUse([insertedNote])
+
+      if (syncRequest) {
+        runtime
+          .sendMessage({
+            type: RuntimeMessageTypes.RunHttpRequest,
+            payload: syncRequest,
+          })
+          .catch(console.error)
+      }
     }
 
-    void createNoteFromClip()
+    createNoteFromClip().catch(console.error)
   }, [
     application.items,
     application.linkingController,
@@ -431,6 +454,22 @@ const ClipperView = ({
             <Icon type="signOut" className="text-neutral" />
           </button>
         </div>
+        {isSyncing || hasSyncError ? (
+          <div className={classNames('flex items-center border-t border-border', hasSyncError && 'text-danger')}>
+            {isSyncing && (
+              <>
+                <Spinner className="w-4 h-4 mx-2.5" />
+                <div className="flex-grow py-2 text-sm font-semibold text-info">Syncing...</div>
+              </>
+            )}
+            {hasSyncError && (
+              <>
+                <Icon type="warning" className="mx-2.5" />
+                <div className="flex-grow py-2 text-sm font-semibold">Unable to sync</div>
+              </>
+            )}
+          </div>
+        ) : null}
       </Menu>
     </div>
   )

@@ -14,6 +14,7 @@ export interface HttpServiceInterface {
   runHttp<T>(httpRequest: HttpRequest): Promise<HttpResponse<T>>
 
   setSession(session: Session | LegacySession): void
+  refreshSession(): Promise<boolean>
   setCallbacks(
     updateMetaCallback: (meta: HttpResponseMeta) => void,
     refreshSessionCallback: (session: Session) => void,

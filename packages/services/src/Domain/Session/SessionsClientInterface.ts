@@ -25,6 +25,7 @@ export interface SessionsClientInterface {
   isSignedIntoFirstPartyServer(): boolean
 
   getSessionsList(): Promise<HttpResponse<SessionListEntry[]>>
+  refreshSessionIfExpiringSoon(): Promise<boolean>
   revokeSession(sessionId: string): Promise<HttpResponse<SessionListResponse>>
   revokeAllOtherSessions(): Promise<void>
 
