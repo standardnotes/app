@@ -71,6 +71,7 @@ import {
 
 export const MINIMUM_PASSWORD_LENGTH = 8
 export const MissingAccountParams = 'missing-params'
+const ThirtyMinutes = 30 * 60 * 1000
 
 const cleanedEmailString = (email: string) => {
   return email.trim().toLowerCase()
@@ -836,5 +837,28 @@ export class SessionManager
     }
 
     return Result.ok(sessionOrError.getValue())
+  }
+
+  async checkAndRefreshSession(): Promise<boolean> {
+    const session = this.getSession()
+
+    if (!session) {
+      return false
+    }
+    if (session instanceof LegacySession) {
+      return false
+    }
+
+    const accessTokenExpiration = new Date(session.accessToken.expiresAt)
+    const refreshTokenExpiration = new Date(session.refreshToken.expiresAt)
+
+    const willAccessTokenExpireSoon = accessTokenExpiration.getTime() - Date.now() < ThirtyMinutes
+    const willRefreshTokenExpireSoon = refreshTokenExpiration.getTime() - Date.now() < ThirtyMinutes
+
+    if (willAccessTokenExpireSoon || willRefreshTokenExpireSoon) {
+      return this.httpService.refreshSession()
+    }
+
+    return false
   }
 }

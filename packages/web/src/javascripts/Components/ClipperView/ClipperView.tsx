@@ -60,6 +60,9 @@ const ClipperView = ({
   const isFirefoxPopup = !!currentWindow && currentWindow.type === 'popup' && currentWindow.incognito === false
 
   const [user, setUser] = useState(() => application.getUser())
+  useEffect(() => {
+    application.sessions.checkAndRefreshSession().catch(console.error)
+  }, [application.sessions])
   const [isEntitledToExtension, setIsEntitled] = useState(
     () =>
       application.features.getFeatureStatus(

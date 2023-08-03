@@ -181,7 +181,7 @@ export class HttpService implements HttpServiceInterface {
     return response
   }
 
-  private async refreshSession(): Promise<boolean> {
+  async refreshSession(): Promise<boolean> {
     if (!this.session) {
       return false
     }
