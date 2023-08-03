@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.28.26](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.28.25...@standardnotes/ui-services@1.28.26) (2023-08-03)
+
+### Bug Fixes
+
+* Fixed issue where moving the floating keyboard on iPad would lead to blank space on screen ([f7a1c6e](https://github.com/standardnotes/app/commit/f7a1c6ea65201af80ca6859c0e83c5b49c94e11d))
+
 ## [1.28.25](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.28.24...@standardnotes/ui-services@1.28.25) (2023-08-03)
 
 **Note:** Version bump only for package @standardnotes/ui-services
