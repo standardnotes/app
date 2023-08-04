@@ -6,6 +6,7 @@ import {
   NativeFeatureIdentifier,
   PreferencesServiceEvent,
   ThemeFeatureDescription,
+  PrefKey,
 } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useEffect, useRef, useState } from 'react'
@@ -13,7 +14,6 @@ import Icon from '@/Components/Icon/Icon'
 import FocusModeSwitch from './FocusModeSwitch'
 import ThemesMenuButton from './ThemesMenuButton'
 import { sortThemes } from '@/Utils/SortThemes'
-import HorizontalSeparator from '../Shared/HorizontalSeparator'
 import { QuickSettingsController } from '@/Controllers/QuickSettingsController'
 import PanelSettingsSection from './PanelSettingsSection'
 import Menu from '../Menu/Menu'
@@ -21,6 +21,8 @@ import MenuSwitchButtonItem from '../Menu/MenuSwitchButtonItem'
 import MenuRadioButtonItem from '../Menu/MenuRadioButtonItem'
 import { useApplication } from '../ApplicationProvider'
 import { GetAllThemesUseCase } from '@standardnotes/ui-services'
+import usePreference from '@/Hooks/usePreference'
+import MenuItemSeparator from '../Menu/MenuItemSeparator'
 
 type MenuProps = {
   quickSettingsMenuController: QuickSettingsController
@@ -33,6 +35,11 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ quickSettingsMenuCont
   const { closeQuickSettingsMenu } = quickSettingsMenuController
   const [themes, setThemes] = useState<UIFeature<ThemeFeatureDescription>[]>([])
   const [editorStackComponents, setEditorStackComponents] = useState<ComponentInterface[]>([])
+
+  const useTranslucentUI = usePreference(PrefKey.UseTranslucentUI)
+  const toggleTranslucentUI = () => {
+    application.setPreference(PrefKey.UseTranslucentUI, !useTranslucentUI).catch(console.error)
+  }
 
   const activeThemes = application.componentManager.getActiveThemes()
   const hasNonLayerableActiveTheme = activeThemes.find((theme) => !theme.layerable)
@@ -133,7 +140,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ quickSettingsMenuCont
               {component.displayName}
             </MenuSwitchButtonItem>
           ))}
-          <HorizontalSeparator classes="my-2" />
+          <MenuItemSeparator />
         </>
       )}
       <div className="my-1 px-3 text-sm font-semibold uppercase text-text">Appearance</div>
@@ -143,7 +150,10 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ quickSettingsMenuCont
       {themes.map((theme) => (
         <ThemesMenuButton uiFeature={theme} key={theme.uniqueIdentifier.value} />
       ))}
-      <HorizontalSeparator classes="my-2" />
+      <MenuItemSeparator />
+      <MenuSwitchButtonItem onChange={toggleTranslucentUI} checked={useTranslucentUI}>
+        Use translucent UI
+      </MenuSwitchButtonItem>
       <FocusModeSwitch
         application={application}
         onToggle={setFocusModeEnabled}

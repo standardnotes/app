@@ -32,9 +32,6 @@ const Appearance: FunctionComponent<Props> = ({ application }) => {
   const [useDeviceSettings, setUseDeviceSettings] = useState(() =>
     application.getPreference(PrefKey.UseSystemColorScheme, PrefDefaults[PrefKey.UseSystemColorScheme]),
   )
-  const [useTranslucentUI, setUseTranslucentUI] = useState(() =>
-    application.getPreference(PrefKey.UseTranslucentUI, PrefDefaults[PrefKey.UseTranslucentUI]),
-  )
 
   useEffect(() => {
     const usecase = new GetAllThemesUseCase(application.items)
@@ -83,11 +80,6 @@ const Appearance: FunctionComponent<Props> = ({ application }) => {
     setUseDeviceSettings(!useDeviceSettings)
   }
 
-  const toggleUseTranslucentUI = () => {
-    application.setPreference(PrefKey.UseTranslucentUI, !useTranslucentUI).catch(console.error)
-    setUseTranslucentUI(!useTranslucentUI)
-  }
-
   const changeAutoLightTheme = (value: string) => {
     const item = themeItems.find((item) => item.value === value)
     if (item && item.icon === PremiumFeatureIconName) {
@@ -114,14 +106,6 @@ const Appearance: FunctionComponent<Props> = ({ application }) => {
         <PreferencesSegment>
           <Title>Themes</Title>
           <div className="mt-2">
-            <div className="flex justify-between gap-2 md:items-center">
-              <div className="flex flex-col">
-                <Subtitle>Use transclucent menus and dialogs</Subtitle>
-                <Text>Adds translucency to backgrounds for menus, alerts and dialogs.</Text>
-              </div>
-              <Switch onChange={toggleUseTranslucentUI} checked={useTranslucentUI} />
-            </div>
-            <HorizontalSeparator classes="my-4" />
             <div className="flex justify-between gap-2 md:items-center">
               <div className="flex flex-col">
                 <Subtitle>Use system color scheme</Subtitle>
