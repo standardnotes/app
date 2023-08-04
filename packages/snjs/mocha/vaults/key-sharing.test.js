@@ -42,6 +42,9 @@ describe('vault key sharing', function () {
 
     await Collaboration.acceptAllInvites(thirdPartyContext)
 
+    const rootKey = thirdPartyContext.keys.getPrimaryKeySystemRootKey(sharedVault.systemIdentifier)
+    expect(rootKey).to.not.be.undefined
+
     const contextNote = thirdPartyContext.items.findItem(note.uuid)
     expect(contextNote).to.not.be.undefined
     expect(contextNote.title).to.equal('foo')
