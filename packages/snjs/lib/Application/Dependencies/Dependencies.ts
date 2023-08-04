@@ -446,8 +446,8 @@ export class Dependencies {
     this.factory.set(TYPES.SendVaultKeyChangedMessage, () => {
       return new SendVaultKeyChangedMessage(
         this.get<UserService>(TYPES.UserService),
-        this.get<EncryptMessage>(TYPES.EncryptMessage),
         this.get<KeySystemKeyManager>(TYPES.KeySystemKeyManager),
+        this.get<EncryptMessage>(TYPES.EncryptMessage),
         this.get<FindContact>(TYPES.FindContact),
         this.get<SendMessage>(TYPES.SendMessage),
         this.get<GetVaultUsers>(TYPES.GetVaultUsers),

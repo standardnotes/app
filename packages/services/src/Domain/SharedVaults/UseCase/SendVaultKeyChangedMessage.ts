@@ -19,8 +19,8 @@ import { GetKeyPairs } from '../../Encryption/UseCase/GetKeyPairs'
 export class SendVaultKeyChangedMessage implements UseCaseInterface<void> {
   constructor(
     private users: UserServiceInterface,
+    private keyManager: KeySystemKeyManagerInterface,
     private _encryptMessage: EncryptMessage,
-    private _keyManager: KeySystemKeyManagerInterface,
     private _findContact: FindContact,
     private _sendMessage: SendMessage,
     private _getVaultUsers: GetVaultUsers,
@@ -78,7 +78,7 @@ export class SendVaultKeyChangedMessage implements UseCaseInterface<void> {
     }
     contact: TrustedContactInterface
   }): Promise<Result<AsymmetricMessageServerHash>> {
-    const keySystemRootKey = this._keyManager.getPrimaryKeySystemRootKey(params.keySystemIdentifier)
+    const keySystemRootKey = this.keyManager.getPrimaryKeySystemRootKey(params.keySystemIdentifier)
     if (!keySystemRootKey) {
       throw new Error(`Vault key not found for keySystemIdentifier ${params.keySystemIdentifier}`)
     }
