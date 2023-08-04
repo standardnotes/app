@@ -20,7 +20,7 @@ import {
   StorageServiceInterface,
   SubscriptionManagerInterface,
   SyncServiceInterface,
-  UserClientInterface,
+  UserServiceInterface,
   UserService,
 } from '@standardnotes/services'
 import { LegacyApiService, SessionManager } from '../Api'
@@ -37,7 +37,7 @@ describe('FeaturesService', () => {
   let apiService: LegacyApiServiceInterface
   let webSocketsService: WebSocketsService
   let settingsService: SettingsClientInterface
-  let userService: UserClientInterface
+  let userService: UserServiceInterface
   let syncService: SyncServiceInterface
   let alertService: AlertService
   let sessionManager: SessionsClientInterface

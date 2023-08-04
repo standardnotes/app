@@ -17,7 +17,7 @@ import {
 } from '@standardnotes/services'
 import { ContentType } from '@standardnotes/domain-core'
 
-export class SNPreferencesService
+export class PreferencesService
   extends AbstractService<PreferencesServiceEvent>
   implements PreferenceServiceInterface, InternalEventHandlerInterface
 {

@@ -1,3 +1,4 @@
+import { DecryptErroredPayloads } from './../Encryption/UseCase/DecryptErroredPayloads'
 import { ReencryptTypeAItems } from './../Encryption/UseCase/TypeA/ReencryptTypeAItems'
 import { EncryptionProviderInterface } from './../Encryption/EncryptionProviderInterface'
 import { UserApiServiceInterface } from '@standardnotes/api'
@@ -27,6 +28,7 @@ describe('UserService', () => {
   let protectionService: ProtectionsClientInterface
   let userApiService: UserApiServiceInterface
   let reencryptTypeAItems: ReencryptTypeAItems
+  let decryptErroredPayloads: DecryptErroredPayloads
   let internalEventBus: InternalEventBusInterface
 
   const createService = () =>
@@ -41,6 +43,7 @@ describe('UserService', () => {
       protectionService,
       userApiService,
       reencryptTypeAItems,
+      decryptErroredPayloads,
       internalEventBus,
     )
 

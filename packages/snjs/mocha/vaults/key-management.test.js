@@ -110,7 +110,7 @@ describe('vault key management', function () {
       await context.vaultLocks.lockNonPersistentVault(vault)
 
       await Factory.expectThrowsAsync(
-        () => context.vaults.changeVaultOptions({ vault }),
+        () => context.vaults.changeVaultKeyOptions({ vault }),
         'Attempting to change vault options on a locked vault',
       )
     })
@@ -206,7 +206,7 @@ describe('vault key management', function () {
     })
   })
 
-  describe('changeVaultOptions', () => {
+  describe('changeVaultKeyOptions', () => {
     describe('change storage type', () => {
       it('should not be able to change randomized vault from synced to local', async () => {
         const vault = await context.vaults.createRandomizedVault({
@@ -214,13 +214,13 @@ describe('vault key management', function () {
           description: 'test vault description',
         })
 
-        const result = await context.vaults.changeVaultOptions({
+        const result = await context.vaults.changeVaultKeyOptions({
           vault,
           newStorageMode: KeySystemRootKeyStorageMode.Local,
         })
 
         expect(result.isFailed()).to.be.true
-        expect(result.getError()).to.equal('Vault uses randomized password and cannot change its storage preference')
+        expect(result.getError()).to.equal('Cannot change storage mode to non-synced for randomized vault')
       })
 
       it('should not be able to change randomized vault from synced to ephemeral', async () => {
@@ -229,13 +229,13 @@ describe('vault key management', function () {
           description: 'test vault description',
         })
 
-        const result = await context.vaults.changeVaultOptions({
+        const result = await context.vaults.changeVaultKeyOptions({
           vault,
-          newStorageMode: KeySystemRootKeyStorageMode.Local,
+          newStorageMode: KeySystemRootKeyStorageMode.Ephemeral,
         })
 
         expect(result.isFailed()).to.be.true
-        expect(result.getError()).to.equal('Vault uses randomized password and cannot change its storage preference')
+        expect(result.getError()).to.equal('Cannot change storage mode to non-synced for randomized vault')
       })
 
       it('should change user password vault from synced to local', async () => {
@@ -248,7 +248,7 @@ describe('vault key management', function () {
 
         let syncedKeys = context.keys.getSyncedKeySystemRootKeysForVault(vault.systemIdentifier)
 
-        const result = await context.vaults.changeVaultOptions({
+        const result = await context.vaults.changeVaultKeyOptions({
           vault,
           newStorageMode: KeySystemRootKeyStorageMode.Local,
         })
@@ -272,7 +272,7 @@ describe('vault key management', function () {
 
         let syncedKeys = context.keys.getSyncedKeySystemRootKeysForVault(vault.systemIdentifier)
 
-        const result = await context.vaults.changeVaultOptions({
+        const result = await context.vaults.changeVaultKeyOptions({
           vault,
           newStorageMode: KeySystemRootKeyStorageMode.Ephemeral,
         })
@@ -299,7 +299,7 @@ describe('vault key management', function () {
 
         let syncedKeys = context.keys.getSyncedKeySystemRootKeysForVault(vault.systemIdentifier)
 
-        const result = await context.vaults.changeVaultOptions({
+        const result = await context.vaults.changeVaultKeyOptions({
           vault,
           newStorageMode: KeySystemRootKeyStorageMode.Synced,
         })
@@ -326,7 +326,7 @@ describe('vault key management', function () {
 
         let syncedKeys = context.keys.getSyncedKeySystemRootKeysForVault(vault.systemIdentifier)
 
-        const result = await context.vaults.changeVaultOptions({
+        const result = await context.vaults.changeVaultKeyOptions({
           vault,
           newStorageMode: KeySystemRootKeyStorageMode.Ephemeral,
         })
@@ -351,9 +351,9 @@ describe('vault key management', function () {
           description: 'test vault description',
         })
 
-        const result = await context.vaults.changeVaultOptions({
+        const result = await context.vaults.changeVaultKeyOptions({
           vault,
-          newPasswordType: {
+          newPasswordOptions: {
             passwordType: KeySystemPasswordType.UserInputted,
           },
         })
@@ -370,9 +370,9 @@ describe('vault key management', function () {
         const rootKeysBeforeChange = context.keys.getSyncedKeySystemRootKeysForVault(vault.systemIdentifier)
         expect(rootKeysBeforeChange.length).to.equal(1)
 
-        const result = await context.vaults.changeVaultOptions({
+        const result = await context.vaults.changeVaultKeyOptions({
           vault,
-          newPasswordType: {
+          newPasswordOptions: {
             passwordType: KeySystemPasswordType.UserInputted,
             userInputtedPassword: 'test password',
           },
@@ -394,9 +394,9 @@ describe('vault key management', function () {
           storagePreference: KeySystemRootKeyStorageMode.Local,
         })
 
-        const result = await context.vaults.changeVaultOptions({
+        const result = await context.vaults.changeVaultKeyOptions({
           vault,
-          newPasswordType: {
+          newPasswordOptions: {
             passwordType: KeySystemPasswordType.Randomized,
           },
         })
@@ -404,7 +404,7 @@ describe('vault key management', function () {
         expect(result.isFailed()).to.be.false
 
         const rootKeysAfterChange = context.keys.getSyncedKeySystemRootKeysForVault(vault.systemIdentifier)
-        expect(rootKeysAfterChange.length).to.equal(1)
+        expect(rootKeysAfterChange.length).to.equal(2)
 
         const storedKey = context.keys.getRootKeyFromStorageForVault(vault.systemIdentifier)
         expect(storedKey).to.be.undefined
@@ -421,9 +421,9 @@ describe('vault key management', function () {
           storagePreference: KeySystemRootKeyStorageMode.Local,
         })
 
-        const result = await context.vaults.changeVaultOptions({
+        const result = await context.vaults.changeVaultKeyOptions({
           vault,
-          newPasswordType: {
+          newPasswordOptions: {
             passwordType: KeySystemPasswordType.Randomized,
           },
           newStorageMode: KeySystemRootKeyStorageMode.Local,
@@ -431,7 +431,7 @@ describe('vault key management', function () {
 
         expect(result.isFailed()).to.be.true
 
-        expect(result.getError()).to.equal('Vault uses randomized password and cannot change its storage preference')
+        expect(result.getError()).to.equal('Cannot change storage mode to non-synced for randomized vault')
       })
     })
   })

@@ -1,3 +1,5 @@
+import * as Factory from './lib/factory.js'
+
 describe.skip('session invalidation tests to revisit', function () {
   this.timeout(Factory.TwentySecondTimeout)
 

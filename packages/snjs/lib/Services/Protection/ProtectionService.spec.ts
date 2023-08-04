@@ -1,6 +1,6 @@
 import { ChallengeService } from '../Challenge'
 import { DiskStorageService } from '../Storage/DiskStorageService'
-import { SNProtectionService } from './ProtectionService'
+import { ProtectionService } from './ProtectionService'
 import {
   InternalEventBus,
   InternalEventBusInterface,
@@ -28,10 +28,10 @@ describe('protectionService', () => {
   let challengeService: ChallengeService
   let storageService: DiskStorageService
   let internalEventBus: InternalEventBusInterface
-  let protectionService: SNProtectionService
+  let protectionService: ProtectionService
 
   const createService = () => {
-    return new SNProtectionService(encryptionService, mutator, challengeService, storageService, internalEventBus)
+    return new ProtectionService(encryptionService, mutator, challengeService, storageService, internalEventBus)
   }
 
   const createFile = (name: string, isProtected?: boolean) => {
