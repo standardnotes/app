@@ -12,6 +12,7 @@ import { KeyboardKey } from '@standardnotes/ui-services'
 import { getAdjustedStylesForNonPortalPopover } from './Utils/getAdjustedStylesForNonPortal'
 import { DialogWithClose } from '@/Utils/CloseOpenModalsAndPopovers'
 import { mergeRefs } from '@/Hooks/mergeRefs'
+import { useTranslucentUI } from '@/Hooks/useTranslucentUI'
 
 const PositionedPopoverContent = ({
   align = 'end',
@@ -93,6 +94,8 @@ const PositionedPopoverContent = ({
     [togglePopover],
   )
 
+  const backgroundStyles = useTranslucentUI()
+
   return (
     <Portal disabled={!portal}>
       <div
@@ -109,6 +112,7 @@ const PositionedPopoverContent = ({
           {
             ...styles,
             ...adjustedStyles,
+            ...backgroundStyles,
           } as CSSProperties
         }
         ref={mergeRefs([setPopoverElement, addCloseMethod])}
