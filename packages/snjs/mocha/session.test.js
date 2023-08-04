@@ -274,6 +274,120 @@ describe('server session', function () {
     await Factory.safeDeinit(application)
   }).timeout(Factory.ThirtySecondTimeout)
 
+  it('changing password on one client should invalidate other sessions', async function () {
+    await Factory.registerUserToApplication({
+      application: this.application,
+      email: this.email,
+      password: this.password,
+    })
+
+    const appA = await Factory.createApplicationWithFakeCrypto(Factory.randomString())
+    const email = `${Math.random()}`
+    const password = `${Math.random()}`
+    const newPassword = UuidGenerator.GenerateUuid()
+
+    let didPromptForSignIn = false
+    const receiveChallenge = async (challenge) => {
+      didPromptForSignIn = true
+      appA.submitValuesForChallenge(challenge, [
+        CreateChallengeValue(challenge.prompts[0], email),
+        CreateChallengeValue(challenge.prompts[1], newPassword),
+      ])
+    }
+
+    await appA.prepareForLaunch({ receiveChallenge })
+    await appA.launch(true)
+
+    await Factory.registerUserToApplication({
+      application: appA,
+      email: email,
+      password: password,
+    })
+
+    /** Create simultaneous appB signed into same account */
+    const appB = await Factory.createApplicationWithFakeCrypto('another-namespace')
+    await appB.prepareForLaunch({})
+    await appB.launch(true)
+    await Factory.loginToApplication({
+      application: appB,
+      email: email,
+      password: password,
+    })
+
+    /** Change password on appB */
+    const response = await appB.changePassword(password, newPassword)
+
+    expect(response.error).to.not.be.ok
+
+    /** Create an item and sync it */
+    const note = await Factory.createSyncedNote(appB)
+
+    /** Expect appA session to be invalid */
+    await appA.sync.sync()
+
+    expect(didPromptForSignIn).to.equal(true)
+
+    await Factory.safeDeinit(appA)
+    await Factory.safeDeinit(appB)
+  })
+
+  it('change email request on one client should invalidate other sessions', async function () {
+    await Factory.registerUserToApplication({
+      application: this.application,
+      email: this.email,
+      password: this.password,
+    })
+
+    const appA = await Factory.createApplicationWithFakeCrypto(Factory.randomString())
+    const email = `${Math.random()}`
+    const password = `${Math.random()}`
+    const newEmail = UuidGenerator.GenerateUuid()
+
+    let didPromptForSignIn = false
+    const receiveChallenge = async (challenge) => {
+      didPromptForSignIn = true
+      appA.submitValuesForChallenge(challenge, [
+        CreateChallengeValue(challenge.prompts[0], email),
+        CreateChallengeValue(challenge.prompts[1], password),
+      ])
+    }
+
+    await appA.prepareForLaunch({ receiveChallenge })
+    await appA.launch(true)
+
+    await Factory.registerUserToApplication({
+      application: appA,
+      email: email,
+      password: password,
+    })
+
+    /** Create simultaneous appB signed into same account */
+    const appB = await Factory.createApplicationWithFakeCrypto('another-namespace')
+    await appB.prepareForLaunch({})
+    await appB.launch(true)
+    await Factory.loginToApplication({
+      application: appB,
+      email: email,
+      password: password,
+    })
+
+    /** Change email on appB */
+    const changeEmailResponse = await appB.changeEmail(newEmail, password)
+
+    expect(changeEmailResponse.error).to.not.be.ok
+
+    /** Create an item and sync it */
+    const note = await Factory.createSyncedNote(appB)
+
+    /** Expect appA session to be invalid */
+    await appA.sync.sync()
+
+    expect(didPromptForSignIn).to.equal(true)
+
+    await Factory.safeDeinit(appA)
+    await Factory.safeDeinit(appB)
+  })
+
   it('change password request should be successful with a valid access token', async function () {
     await Factory.registerUserToApplication({
       application: this.application,
