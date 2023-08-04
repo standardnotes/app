@@ -28,7 +28,7 @@ export const PrefDefaults = {
   [PrefKey.NotesHideTags]: false,
   [PrefKey.NotesHideEditorIcon]: false,
   [PrefKey.UseSystemColorScheme]: false,
-  [PrefKey.UseTranslucentUI]: true,
+  [PrefKey.UseTranslucentUI]: false,
   [PrefKey.AutoLightThemeIdentifier]: 'Default',
   [PrefKey.AutoDarkThemeIdentifier]: NativeFeatureIdentifier.TYPES.DarkTheme,
   [PrefKey.NoteAddToParentFolders]: true,
