@@ -362,8 +362,11 @@ export class ThemeManager extends AbstractUIServicee {
 
     this.themesActiveInTheUI.remove(id)
 
-    if (this.themesActiveInTheUI.isEmpty() && this.application.isNativeMobileWeb()) {
-      this.application.mobileDevice().handleThemeSchemeChange(false, '#ffffff')
+    if (this.themesActiveInTheUI.isEmpty()) {
+      if (this.application.isNativeMobileWeb()) {
+        this.application.mobileDevice().handleThemeSchemeChange(false, '#ffffff')
+      }
+      this.toggleTranslucentUIColors()
     }
   }
 
