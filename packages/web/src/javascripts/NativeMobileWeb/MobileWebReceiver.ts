@@ -75,7 +75,7 @@ export class MobileWebReceiver {
         break
       case ReactNativeToWebEvent.KeyboardFrameWillChange:
         void this.application.handleMobileKeyboardWillChangeFrameEvent(
-          messageData as { height: number; contentHeight: number },
+          messageData as { height: number; contentHeight: number; isFloatingKeyboard: boolean },
         )
         break
       case ReactNativeToWebEvent.KeyboardFrameDidChange:

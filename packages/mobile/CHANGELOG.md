@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.56.46](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.56.45...@standardnotes/mobile@3.56.46) (2023-08-03)
+
+### Bug Fixes
+
+* Fixed issue where moving the floating keyboard on iPad would lead to blank space on screen ([f7a1c6e](https://github.com/standardnotes/app/commit/f7a1c6ea65201af80ca6859c0e83c5b49c94e11d))
+
 ## [3.56.45](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.56.44...@standardnotes/mobile@3.56.45) (2023-08-03)
 
 **Note:** Version bump only for package @standardnotes/mobile

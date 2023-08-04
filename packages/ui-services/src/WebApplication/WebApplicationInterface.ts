@@ -14,7 +14,11 @@ export interface WebApplicationInterface extends ApplicationInterface {
   handleMobileLosingFocusEvent(): Promise<void>
   handleMobileResumingFromBackgroundEvent(): Promise<void>
   handleMobileColorSchemeChangeEvent(): void
-  handleMobileKeyboardWillChangeFrameEvent(frame: { height: number; contentHeight: number }): void
+  handleMobileKeyboardWillChangeFrameEvent(frame: {
+    height: number
+    contentHeight: number
+    isFloatingKeyboard: boolean
+  }): void
   handleMobileKeyboardDidChangeFrameEvent(frame: { height: number; contentHeight: number }): void
   handleReceivedFileEvent(file: { name: string; mimeType: string; data: string }): void
   handleReceivedTextEvent(item: { text: string; title?: string }): Promise<void>
