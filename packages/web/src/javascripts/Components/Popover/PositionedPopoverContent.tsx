@@ -12,7 +12,6 @@ import { KeyboardKey } from '@standardnotes/ui-services'
 import { getAdjustedStylesForNonPortalPopover } from './Utils/getAdjustedStylesForNonPortal'
 import { DialogWithClose } from '@/Utils/CloseOpenModalsAndPopovers'
 import { mergeRefs } from '@/Hooks/mergeRefs'
-import { useTranslucentUI } from '@/Hooks/useTranslucentUI'
 
 const PositionedPopoverContent = ({
   align = 'end',
@@ -94,14 +93,12 @@ const PositionedPopoverContent = ({
     [togglePopover],
   )
 
-  const backgroundStyles = useTranslucentUI()
-
   return (
     <Portal disabled={!portal}>
       <div
         className={classNames(
           'absolute left-0 top-0 flex w-full min-w-80 cursor-auto flex-col',
-          'overflow-y-auto rounded border border-[--menu-border-color] bg-default shadow-main md:h-auto md:max-w-xs',
+          'overflow-y-auto rounded border border-[--popover-border-color] bg-[--popover-background-color] shadow-main md:h-auto md:max-w-xs',
           !disableMobileFullscreenTakeover && 'h-full',
           overrideZIndex ? overrideZIndex : 'z-dropdown-menu',
           !isDesktopScreen && !disableMobileFullscreenTakeover ? 'pb-safe-bottom pt-safe-top' : '',
@@ -112,7 +109,7 @@ const PositionedPopoverContent = ({
           {
             ...styles,
             ...adjustedStyles,
-            ...backgroundStyles,
+            backdropFilter: 'var(--popover-backdrop-filter)',
           } as CSSProperties
         }
         ref={mergeRefs([setPopoverElement, addCloseMethod])}

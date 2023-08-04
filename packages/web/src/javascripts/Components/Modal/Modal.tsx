@@ -104,7 +104,7 @@ const Modal = ({
       />
       <div
         className={classNames(
-          'z-[1] m-0 flex h-full w-full flex-col border-solid border-border bg-default p-0 md:h-auto md:max-h-[85vh] md:w-160 md:rounded md:border md:shadow-main',
+          'z-[1] m-0 flex h-full w-full flex-col border-solid border-[--popover-border-color] bg-[--popover-background-color] p-0 md:h-auto md:max-h-[85vh] md:w-160 md:rounded md:border md:shadow-main',
           className?.content,
         )}
       >
