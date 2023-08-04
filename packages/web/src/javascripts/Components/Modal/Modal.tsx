@@ -116,7 +116,7 @@ const Modal = ({
         ) : (
           <div
             className={classNames(
-              'flex w-full flex-shrink-0 select-none items-center justify-between rounded-t border-b border-solid border-border bg-default px-2 text-text md:px-4.5 md:py-3',
+              'flex w-full flex-shrink-0 select-none items-center justify-between rounded-t border-b border-solid border-border bg-default px-2 text-text md:px-4.5 md:py-3 md:translucent-ui:bg-transparent',
               hasTopInset ? 'pb-1.5 pt-safe-top' : 'py-1.5',
             )}
           >

@@ -380,6 +380,7 @@ export class ThemeManager extends AbstractUIServicee {
     if (!this.shouldUseTranslucentUI()) {
       document.documentElement.style.removeProperty('--popover-background-color')
       document.documentElement.style.removeProperty('--popover-backdrop-filter')
+      document.body.classList.remove('translucent-ui')
       return
     }
     try {
@@ -390,6 +391,7 @@ export class ThemeManager extends AbstractUIServicee {
       const translucentBackgroundColor = backgroundColor.setAlpha(0.65).toString()
       document.documentElement.style.setProperty('--popover-background-color', translucentBackgroundColor)
       document.documentElement.style.setProperty('--popover-backdrop-filter', backdropFilter)
+      document.body.classList.add('translucent-ui')
     } catch (error) {
       console.error(error)
     }
