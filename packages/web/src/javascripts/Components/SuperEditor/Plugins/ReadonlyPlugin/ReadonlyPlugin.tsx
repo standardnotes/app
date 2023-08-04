@@ -9,7 +9,7 @@ const ReadonlyPlugin = ({ note }: { note: SNNote }) => {
   const [readOnly, setReadOnly] = useState(note.locked)
 
   useEffect(() => {
-    return application.streamItems<SNNote>(ContentType.TYPES.Note, ({ changed }) => {
+    return application.items.streamItems<SNNote>(ContentType.TYPES.Note, ({ changed }) => {
       const changedNoteItem = changed.find((changedItem) => changedItem.uuid === note.uuid)
 
       if (changedNoteItem) {

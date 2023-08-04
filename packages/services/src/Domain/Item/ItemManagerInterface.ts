@@ -22,6 +22,7 @@ import {
   NotesAndFilesDisplayControllerOptions,
   ThemeInterface,
   ComponentInterface,
+  ItemStream,
 } from '@standardnotes/models'
 import { AbstractService } from '../Service/AbstractService'
 
@@ -55,6 +56,11 @@ export interface ItemManagerInterface extends AbstractService {
   addObserver<I extends DecryptedItemInterface = DecryptedItemInterface>(
     contentType: string | string[],
     callback: ItemManagerChangeObserverCallback<I>,
+  ): () => void
+
+  streamItems<I extends DecryptedItemInterface = DecryptedItemInterface>(
+    contentType: string | string[],
+    stream: ItemStream<I>,
   ): () => void
 
   get items(): DecryptedItemInterface[]

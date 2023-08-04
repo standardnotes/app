@@ -30,7 +30,7 @@ const FileViewWithoutProtection = ({ application, viewControllerManager, file }:
         clearTimeout(syncTimeoutRef.current)
       }
 
-      const shouldNotDebounce = application.noAccount()
+      const shouldNotDebounce = application.sessions.isSignedOut()
       const syncDebounceMs = shouldNotDebounce ? SyncTimeoutNoDebounceMs : SyncTimeoutDebounceMs
 
       syncTimeoutRef.current = window.setTimeout(async () => {

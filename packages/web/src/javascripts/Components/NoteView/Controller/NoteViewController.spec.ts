@@ -19,9 +19,7 @@ describe('note view controller', () => {
 
   beforeEach(() => {
     application = {} as jest.Mocked<WebApplication>
-    application.streamItems = jest.fn().mockReturnValue(() => {})
     application.getPreference = jest.fn().mockReturnValue(true)
-    application.noAccount = jest.fn().mockReturnValue(false)
     application.isNativeMobileWeb = jest.fn().mockReturnValue(false)
 
     const items = {} as jest.Mocked<ItemManagerInterface>

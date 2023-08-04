@@ -1,6 +1,11 @@
-import { WebApplication } from '@/Application/WebApplication'
 import { DecryptedTransferPayload, SNTag, TagContent } from '@standardnotes/models'
-import { ContentType, pluralize, UuidGenerator } from '@standardnotes/snjs'
+import {
+  ContentType,
+  ItemManagerInterface,
+  MutatorClientInterface,
+  pluralize,
+  UuidGenerator,
+} from '@standardnotes/snjs'
 import { Importer, NoteImportType } from '@standardnotes/ui-services'
 import { action, makeObservable, observable } from 'mobx'
 import { NavigationController } from './Navigation/NavigationController'
@@ -23,13 +28,14 @@ export type ImportModalFile = (
 
 export class ImportModalController {
   isVisible = false
-  importer: Importer
   files: ImportModalFile[] = []
   importTag: SNTag | undefined = undefined
 
   constructor(
-    private application: WebApplication,
+    private importer: Importer,
     private navigationController: NavigationController,
+    private items: ItemManagerInterface,
+    private mutator: MutatorClientInterface,
   ) {
     makeObservable(this, {
       isVisible: observable,
@@ -43,8 +49,6 @@ export class ImportModalController {
       importTag: observable,
       setImportTag: action,
     })
-
-    this.importer = new Importer(application)
   }
 
   setIsVisible = (isVisible: boolean) => {
@@ -152,7 +156,7 @@ export class ImportModalController {
       }
     }
     const currentDate = new Date()
-    const importTagItem = this.application.items.createTemplateItem<TagContent, SNTag>(ContentType.TYPES.Tag, {
+    const importTagItem = this.items.createTemplateItem<TagContent, SNTag>(ContentType.TYPES.Tag, {
       title: `Imported on ${currentDate.toLocaleString()}`,
       expanded: false,
       iconString: '',
@@ -163,7 +167,7 @@ export class ImportModalController {
           uuid: payload.uuid,
         })),
     })
-    const importTag = await this.application.mutator.insertItem(importTagItem)
+    const importTag = await this.mutator.insertItem(importTagItem)
     if (importTag) {
       this.setImportTag(importTag as SNTag)
     }

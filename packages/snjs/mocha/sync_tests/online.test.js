@@ -1015,7 +1015,7 @@ describe('online syncing', function () {
   it('deleting an item permanently should include it in PayloadEmitSource.PreSyncSave item change observer', async function () {
     let conditionMet = false
 
-    this.application.streamItems([ContentType.TYPES.Note], async ({ removed, source }) => {
+    this.application.items.streamItems([ContentType.TYPES.Note], async ({ removed, source }) => {
       if (source === PayloadEmitSource.PreSyncSave && removed.length === 1) {
         conditionMet = true
       }

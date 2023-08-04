@@ -75,6 +75,9 @@ import {
   VaultInviteServiceInterface,
   NotificationServiceEvent,
   VaultLockServiceInterface,
+  ApplicationConstructorOptions,
+  FullyResolvedApplicationOptions,
+  ApplicationOptionsDefaults,
 } from '@standardnotes/services'
 import {
   PayloadEmitSource,
@@ -86,7 +89,6 @@ import {
   DecryptedItemInterface,
   EncryptedItemInterface,
   Environment,
-  ItemStream,
   Platform,
   MutationType,
 } from '@standardnotes/models'
@@ -122,8 +124,6 @@ import { applicationEventForSyncEvent } from '@Lib/Application/Event'
 import { BackupServiceInterface, FilesClientInterface } from '@standardnotes/files'
 import { ComputePrivateUsername } from '@standardnotes/encryption'
 import { SNLog } from '../Log'
-import { ApplicationConstructorOptions, FullyResolvedApplicationOptions } from './Options/ApplicationOptions'
-import { ApplicationOptionsDefaults } from './Options/Defaults'
 import { SignInWithRecoveryCodes } from '@Lib/Domain/UseCase/SignInWithRecoveryCodes/SignInWithRecoveryCodes'
 import { UseCaseContainerInterface } from '@Lib/Domain/UseCase/UseCaseContainerInterface'
 import { GetRecoveryCodes } from '@Lib/Domain/UseCase/GetRecoveryCodes/GetRecoveryCodes'
@@ -165,7 +165,6 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
 
   private eventHandlers: ApplicationObserver[] = []
 
-  private streamRemovers: ObserverRemover[] = []
   private serviceObservers: ObserverRemover[] = []
   private managedSubscribers: ObserverRemover[] = []
   private autoSyncInterval!: ReturnType<typeof setInterval>
@@ -595,39 +594,6 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   }
 
   /**
-   * Begin streaming items to display in the UI. The stream callback will be called
-   * immediately with the present items that match the constraint, and over time whenever
-   * items matching the constraint are added, changed, or deleted.
-   */
-  public streamItems<I extends DecryptedItemInterface = DecryptedItemInterface>(
-    contentType: string | string[],
-    stream: ItemStream<I>,
-  ): () => void {
-    const removeItemManagerObserver = this.items.addObserver<I>(
-      contentType,
-      ({ changed, inserted, removed, source }) => {
-        stream({ changed, inserted, removed, source })
-      },
-    )
-
-    const matches = this.items.getItems<I>(contentType)
-    stream({
-      inserted: matches,
-      changed: [],
-      removed: [],
-      source: PayloadEmitSource.InitialObserverRegistrationPush,
-    })
-
-    this.streamRemovers.push(removeItemManagerObserver)
-
-    return () => {
-      removeItemManagerObserver()
-
-      removeFromArray(this.streamRemovers, removeItemManagerObserver)
-    }
-  }
-
-  /**
    * Set the server's URL
    */
   public async setHost(host: string): Promise<void> {
@@ -644,13 +610,6 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     await this.setHost(host)
 
     this.sockets.setWebSocketUrl(undefined)
-  }
-
-  public getUser(): User | undefined {
-    if (!this.launched) {
-      throw Error('Attempting to access user before application unlocked')
-    }
-    return this.sessions.getUser()
   }
 
   public getUserPasswordCreationDate(): Date | undefined {
@@ -699,10 +658,6 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return result
   }
 
-  public noAccount(): boolean {
-    return !this.hasAccount()
-  }
-
   public hasAccount(): boolean {
     return this.encryption.hasAccount()
   }
@@ -713,10 +668,6 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
    */
   public hasProtectionSources(): boolean {
     return this.protections.hasProtectionSources()
-  }
-
-  public hasUnprotectedAccessSession(): boolean {
-    return this.protections.hasUnprotectedAccessSession()
   }
 
   /**
@@ -744,10 +695,6 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
 
   public authorizeAutolockIntervalChange(): Promise<boolean> {
     return this.protections.authorizeAutolockIntervalChange()
-  }
-
-  public authorizeSearchingProtectedNotesText(): Promise<boolean> {
-    return this.protections.authorizeSearchingProtectedNotesText()
   }
 
   public async createEncryptedBackupFileForAutomatedDesktopBackups(): Promise<BackupFile | undefined> {
@@ -852,7 +799,6 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
 
     this.serviceObservers.length = 0
     this.managedSubscribers.length = 0
-    this.streamRemovers.length = 0
 
     this.started = false
 
@@ -1100,10 +1046,6 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     if (await this.protections.authorizeMfaDisable()) {
       return this.mfa.disableMfa()
     }
-  }
-
-  public getNewSubscriptionToken(): Promise<string | undefined> {
-    return this.legacyApi.getNewSubscriptionToken()
   }
 
   public isThirdPartyHostUsed(): boolean {

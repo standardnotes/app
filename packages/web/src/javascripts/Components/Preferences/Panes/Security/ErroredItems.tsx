@@ -14,7 +14,7 @@ const ErroredItems: FunctionComponent = () => {
   const [erroredItems, setErroredItems] = useState(application.items.invalidNonVaultedItems)
 
   useEffect(() => {
-    return application.streamItems(ContentType.TYPES.Any, () => {
+    return application.items.streamItems(ContentType.TYPES.Any, () => {
       setErroredItems(application.items.invalidNonVaultedItems)
     })
   }, [application])

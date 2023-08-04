@@ -20,6 +20,7 @@ export interface SessionsClientInterface {
 
   getUser(): User | undefined
   isSignedIn(): boolean
+  isSignedOut(): boolean
   get userUuid(): string
   getSureUser(): User
   isSignedIntoFirstPartyServer(): boolean

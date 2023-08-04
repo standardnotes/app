@@ -215,7 +215,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
 
     this.autorun(() => {
       this.setState({
-        showProtectedWarning: this.viewControllerManager.notesController.showProtectedWarning,
+        showProtectedWarning: this.notesController.showProtectedWarning,
       })
     })
 
@@ -224,7 +224,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
 
     const showProtectedWarning =
       this.note.protected &&
-      (!this.application.hasProtectionSources() || !this.application.hasUnprotectedAccessSession())
+      (!this.application.hasProtectionSources() || !this.application.protections.hasUnprotectedAccessSession())
     this.setShowProtectedOverlay(showProtectedWarning)
 
     this.reloadPreferences().catch(console.error)
@@ -429,7 +429,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
   }
 
   streamItems() {
-    this.removeNoteStreamObserver = this.application.streamItems<SNNote>(ContentType.TYPES.Note, async () => {
+    this.removeNoteStreamObserver = this.application.items.streamItems<SNNote>(ContentType.TYPES.Note, async () => {
       if (!this.note) {
         return
       }
@@ -541,7 +541,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
     })
     this.setStatus({
       type: 'saved',
-      message: 'All changes saved' + (this.application.noAccount() ? ' offline' : ''),
+      message: 'All changes saved' + (this.application.sessions.isSignedOut() ? ' offline' : ''),
     })
   }
 

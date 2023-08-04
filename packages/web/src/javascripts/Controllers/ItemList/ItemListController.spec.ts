@@ -16,7 +16,6 @@ describe('item list controller', () => {
 
   beforeEach(() => {
     application = {} as jest.Mocked<WebApplication>
-    application.streamItems = jest.fn()
     application.addEventObserver = jest.fn()
     application.addWebEventObserver = jest.fn()
     application.isNativeMobileWeb = jest.fn().mockReturnValue(false)

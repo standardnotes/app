@@ -1,10 +1,12 @@
 import {
   ApplicationInterface,
+  DesktopDeviceInterface,
   DesktopManagerInterface,
   MobileDeviceInterface,
   WebAppEvent,
 } from '@standardnotes/services'
 import { KeyboardService } from '../Keyboard/KeyboardService'
+import { RouteServiceInterface } from '../Route/RouteServiceInterface'
 
 export interface WebApplicationInterface extends ApplicationInterface {
   notifyWebEvent(event: WebAppEvent, data?: unknown): void
@@ -28,6 +30,11 @@ export interface WebApplicationInterface extends ApplicationInterface {
   handleAndroidBackButtonPressed(): void
   addAndroidBackHandlerEventListener(listener: () => boolean): (() => void) | undefined
   setAndroidBackHandlerFallbackListener(listener: () => boolean): void
+  handleInitialMobileScreenshotPrivacy(): void
   generateUUID(): string
+
+  get isMobileDevice(): boolean
+  get desktopDevice(): DesktopDeviceInterface | undefined
   get keyboardService(): KeyboardService
+  get routeService(): RouteServiceInterface
 }

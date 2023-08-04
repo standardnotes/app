@@ -67,7 +67,6 @@ describe('LinkingController', () => {
 
     application.getPreference = jest.fn()
     application.addSingleEventObserver = jest.fn()
-    application.streamItems = jest.fn()
     application.sync.sync = jest.fn()
 
     Object.defineProperty(application, 'items', { value: {} as jest.Mocked<ItemManagerInterface> })

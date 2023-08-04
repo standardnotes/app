@@ -1,4 +1,3 @@
-import { WebApplication } from '@/Application/WebApplication'
 import { noteTypeForEditorIdentifier } from '@standardnotes/features'
 import {
   SNNote,
@@ -9,13 +8,14 @@ import {
   PrefKey,
   PayloadVaultOverrides,
 } from '@standardnotes/models'
-import { UuidString } from '@standardnotes/snjs'
+import { ItemManagerInterface, UuidString } from '@standardnotes/snjs'
 import { removeFromArray } from '@standardnotes/utils'
 import { ContentType } from '@standardnotes/domain-core'
 import { ItemViewControllerInterface } from './ItemViewControllerInterface'
 import { TemplateNoteViewControllerOptions } from './TemplateNoteViewControllerOptions'
 import { log, LoggingDomain } from '@/Logging'
 import { NoteSaveFunctionParams, NoteSyncController } from '../../../Controllers/NoteSyncController'
+import { WebApplicationInterface } from '@standardnotes/ui-services'
 
 export type EditorValues = {
   title: string
@@ -37,7 +37,7 @@ export class NoteViewController implements ItemViewControllerInterface {
   private syncController!: NoteSyncController
 
   constructor(
-    private application: WebApplication,
+    private items: ItemManagerInterface,
     item?: SNNote,
     public templateNoteOptions?: TemplateNoteViewControllerOptions,
   ) {
@@ -50,7 +50,7 @@ export class NoteViewController implements ItemViewControllerInterface {
     }
 
     if (this.defaultTagUuid) {
-      this.defaultTag = this.application.items.findItem(this.defaultTagUuid) as SNTag
+      this.defaultTag = this.items.findItem(this.defaultTagUuid) as SNTag
     }
 
     this.syncController = new NoteSyncController(this.application, this.item)
@@ -74,7 +74,7 @@ export class NoteViewController implements ItemViewControllerInterface {
       disposer()
     }
     this.disposers.length = 0
-    ;(this.application as unknown) = undefined
+    ;(this.items as unknown) = undefined
     ;(this.item as unknown) = undefined
 
     this.innerValueChangeObservers.length = 0
@@ -140,7 +140,7 @@ export class NoteViewController implements ItemViewControllerInterface {
     }
 
     this.disposers.push(
-      this.application.streamItems<SNNote>(ContentType.TYPES.Note, ({ changed, inserted, source }) => {
+      this.items.streamItems<SNNote>(ContentType.TYPES.Note, ({ changed, inserted, source }) => {
         if (this.dealloced) {
           return
         }

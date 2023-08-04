@@ -1,8 +1,11 @@
 import {
   confirmDialog,
   CREATE_NEW_TAG_COMMAND,
+  KeyboardService,
   NavigationControllerPersistableValue,
+  VaultDisplayService,
   VaultDisplayServiceEvent,
+  WebApplicationInterface,
 } from '@standardnotes/ui-services'
 import { STRING_DELETE_TAG } from '@/Constants/Strings'
 import { MAX_MENU_SIZE_MULTIPLIER, MENU_MARGIN_FROM_APP_BORDER, SMART_TAGS_FEATURE_NAME } from '@/Constants/Constants'
@@ -22,9 +25,12 @@ import {
   InternalEventBusInterface,
   InternalEventHandlerInterface,
   InternalEventInterface,
+  ItemManagerInterface,
+  SyncServiceInterface,
+  MutatorClientInterface,
+  AlertService,
 } from '@standardnotes/snjs'
 import { action, computed, makeObservable, observable, reaction, runInAction } from 'mobx'
-import { WebApplication } from '../../Application/WebApplication'
 import { FeaturesController } from '../FeaturesController'
 import { destroyAllObjectProperties } from '@/Utils'
 import { isValidFutureSiblings, rootTags, tagSiblings } from './Utils'
@@ -35,6 +41,7 @@ import { Persistable } from '../Abstract/Persistable'
 import { TagListSectionType } from '@/Components/Tags/TagListSection'
 import { PaneLayout } from '../PaneController/PaneLayout'
 import { TagsCountsState } from './TagsCountsState'
+import { PaneController } from '../PaneController/PaneController'
 
 export class NavigationController
   extends AbstractViewController
@@ -63,16 +70,23 @@ export class NavigationController
   private readonly tagsCountsState: TagsCountsState
 
   constructor(
-    application: WebApplication,
+    application: WebApplicationInterface,
     private featuresController: FeaturesController,
+    private vaultDisplayService: VaultDisplayService,
+    private keyboardService: KeyboardService,
+    private paneController: PaneController,
+    private sync: SyncServiceInterface,
+    private mutator: MutatorClientInterface,
+    private items: ItemManagerInterface,
+    private alerts: AlertService,
     eventBus: InternalEventBusInterface,
   ) {
     super(application, eventBus)
 
     eventBus.addEventHandler(this, VaultDisplayServiceEvent.VaultDisplayOptionsChanged)
 
-    this.tagsCountsState = new TagsCountsState(this.application)
-    this.smartViews = this.application.items.getSmartViews()
+    this.tagsCountsState = new TagsCountsState(items)
+    this.smartViews = items.getSmartViews()
 
     makeObservable(this, {
       tags: observable,
@@ -122,7 +136,7 @@ export class NavigationController
     })
 
     this.disposers.push(
-      this.application.streamItems([ContentType.TYPES.Tag, ContentType.TYPES.SmartView], ({ changed, removed }) => {
+      this.items.streamItems([ContentType.TYPES.Tag, ContentType.TYPES.SmartView], ({ changed, removed }) => {
         this.reloadTags()
 
         runInAction(() => {
@@ -150,12 +164,12 @@ export class NavigationController
     )
 
     this.disposers.push(
-      this.application.items.addNoteCountChangeObserver((tagUuid) => {
+      this.items.addNoteCountChangeObserver((tagUuid) => {
         if (!tagUuid) {
-          this.setAllNotesCount(this.application.items.allCountableNotesCount())
-          this.setAllFilesCount(this.application.items.allCountableFilesCount())
+          this.setAllNotesCount(this.items.allCountableNotesCount())
+          this.setAllFilesCount(this.items.allCountableFilesCount())
         } else {
-          const tag = this.application.items.findItem<SNTag>(tagUuid)
+          const tag = this.items.findItem<SNTag>(tagUuid)
           if (tag) {
             this.tagsCountsState.update([tag])
           }
@@ -176,7 +190,7 @@ export class NavigationController
     )
 
     this.disposers.push(
-      this.application.keyboardService.addCommandHandler({
+      this.keyboardService.addCommandHandler({
         command: CREATE_NEW_TAG_COMMAND,
         onKeyDown: () => {
           this.createNewTemplate()
@@ -187,9 +201,9 @@ export class NavigationController
 
   private reloadTags(): void {
     runInAction(() => {
-      this.tags = this.application.items.getDisplayableTags()
+      this.tags = this.items.getDisplayableTags()
       this.starredTags = this.tags.filter((tag) => tag.starred)
-      this.smartViews = this.application.items.getSmartViews()
+      this.smartViews = this.items.getSmartViews()
     })
   }
 
@@ -258,12 +272,12 @@ export class NavigationController
       return
     }
 
-    const createdTag = await this.application.mutator.createTagOrSmartView<SNTag>(
+    const createdTag = await this.mutator.createTagOrSmartView<SNTag>(
       title,
-      this.application.vaultDisplayService.exclusivelyShownVault,
+      this.vaultDisplayService.exclusivelyShownVault,
     )
 
-    const futureSiblings = this.application.items.getTagChildren(parent)
+    const futureSiblings = this.items.getTagChildren(parent)
 
     if (!isValidFutureSiblings(this.application, futureSiblings, createdTag)) {
       this.setAddingSubtagTo(undefined)
@@ -273,7 +287,7 @@ export class NavigationController
 
     this.assignParent(createdTag.uuid, parent.uuid).catch(console.error)
 
-    this.application.sync.sync().catch(console.error)
+    this.sync.sync().catch(console.error)
 
     runInAction(() => {
       void this.setSelectedTag(createdTag as SNTag, 'all')
@@ -390,7 +404,7 @@ export class NavigationController
   }
 
   public get allLocalRootTags(): SNTag[] {
-    if (this.editing_ instanceof SNTag && this.application.items.isTemplateItem(this.editing_)) {
+    if (this.editing_ instanceof SNTag && this.items.isTemplateItem(this.editing_)) {
       return [this.editing_, ...this.rootTags]
     }
     return this.rootTags
@@ -401,11 +415,11 @@ export class NavigationController
   }
 
   getChildren(tag: SNTag): SNTag[] {
-    if (this.application.items.isTemplateItem(tag)) {
+    if (this.items.isTemplateItem(tag)) {
       return []
     }
 
-    const children = this.application.items.getTagChildren(tag)
+    const children = this.items.getTagChildren(tag)
 
     const childrenUuids = children.map((childTag) => childTag.uuid)
     const childrenTags = this.tags.filter((tag) => childrenUuids.includes(tag.uuid))
@@ -413,45 +427,45 @@ export class NavigationController
   }
 
   isValidTagParent(parent: SNTag, tag: SNTag): boolean {
-    return this.application.items.isValidTagParent(parent, tag)
+    return this.items.isValidTagParent(parent, tag)
   }
 
   public hasParent(tagUuid: UuidString): boolean {
-    const item = this.application.items.findItem(tagUuid)
+    const item = this.items.findItem(tagUuid)
     return !!item && !!(item as SNTag).parentId
   }
 
   public async assignParent(tagUuid: string, futureParentUuid: string | undefined): Promise<void> {
-    const tag = this.application.items.findItem(tagUuid) as SNTag
+    const tag = this.items.findItem(tagUuid) as SNTag
 
-    const currentParent = this.application.items.getTagParent(tag)
+    const currentParent = this.items.getTagParent(tag)
     const currentParentUuid = currentParent?.uuid
 
     if (currentParentUuid === futureParentUuid) {
       return
     }
 
-    const futureParent = futureParentUuid && (this.application.items.findItem(futureParentUuid) as SNTag)
+    const futureParent = futureParentUuid && (this.items.findItem(futureParentUuid) as SNTag)
 
     if (!futureParent) {
       const futureSiblings = rootTags(this.application)
       if (!isValidFutureSiblings(this.application, futureSiblings, tag)) {
         return
       }
-      await this.application.mutator.unsetTagParent(tag)
+      await this.mutator.unsetTagParent(tag)
     } else {
-      const futureSiblings = this.application.items.getTagChildren(futureParent)
+      const futureSiblings = this.items.getTagChildren(futureParent)
       if (!isValidFutureSiblings(this.application, futureSiblings, tag)) {
         return
       }
-      await this.application.mutator.setTagParent(futureParent, tag)
+      await this.mutator.setTagParent(futureParent, tag)
     }
 
-    await this.application.sync.sync()
+    await this.sync.sync()
   }
 
   get rootTags(): SNTag[] {
-    return this.tags.filter((tag) => !this.application.items.getTagParent(tag))
+    return this.tags.filter((tag) => !this.items.getTagParent(tag))
   }
 
   get tagsCount(): number {
@@ -505,9 +519,9 @@ export class NavigationController
     }
 
     if (tag && (this.isTagFilesView(tag) || this.tagUsesTableView(tag))) {
-      this.application.paneController.setPaneLayout(PaneLayout.TableView)
+      this.paneController.setPaneLayout(PaneLayout.TableView)
     } else if (userTriggered) {
-      this.application.paneController.setPaneLayout(PaneLayout.ItemSelection)
+      this.paneController.setPaneLayout(PaneLayout.ItemSelection)
     }
 
     this.previouslySelected_ = this.selected_
@@ -516,7 +530,7 @@ export class NavigationController
       this.setSelectedTagInstance(tag)
       this.selectedLocation = location
 
-      if (tag && this.application.items.isTemplateItem(tag)) {
+      if (tag && this.items.isTemplateItem(tag)) {
         return
       }
 
@@ -593,13 +607,13 @@ export class NavigationController
   }
 
   public createNewTemplate() {
-    const isAlreadyEditingATemplate = this.editing_ && this.application.items.isTemplateItem(this.editing_)
+    const isAlreadyEditingATemplate = this.editing_ && this.items.isTemplateItem(this.editing_)
 
     if (isAlreadyEditingATemplate) {
       return
     }
 
-    const newTag = this.application.items.createTemplateItem(ContentType.TYPES.Tag) as SNTag
+    const newTag = this.items.createTemplateItem(ContentType.TYPES.Tag) as SNTag
 
     runInAction(() => {
       this.selectedLocation = 'all'
@@ -622,9 +636,9 @@ export class NavigationController
       })
     }
     if (shouldDelete) {
-      this.application.mutator
+      this.mutator
         .deleteItem(tag)
-        .then(() => this.application.sync.sync())
+        .then(() => this.sync.sync())
         .catch(console.error)
       await this.setSelectedTag(this.smartViews[0], 'views')
     }
@@ -633,7 +647,7 @@ export class NavigationController
   public async save(tag: SNTag | SmartView, newTitle: string) {
     const hasEmptyTitle = newTitle.length === 0
     const hasNotChangedTitle = newTitle === tag.title
-    const isTemplateChange = this.application.items.isTemplateItem(tag)
+    const isTemplateChange = this.items.isTemplateItem(tag)
 
     const siblings = tag instanceof SNTag ? tagSiblings(this.application, tag) : []
     const hasDuplicatedTitle = siblings.some((other) => other.title.toLowerCase() === newTitle.toLowerCase())
@@ -653,12 +667,12 @@ export class NavigationController
       if (isTemplateChange) {
         this.undoCreateNewTag()
       }
-      this.application.alerts?.alert('A tag with this name already exists.').catch(console.error)
+      this.alerts.alert('A tag with this name already exists.').catch(console.error)
       return
     }
 
     if (isTemplateChange) {
-      const isSmartViewTitle = this.application.items.isSmartViewTitle(newTitle)
+      const isSmartViewTitle = this.items.isSmartViewTitle(newTitle)
 
       if (isSmartViewTitle) {
         if (!this.featuresController.hasSmartViews) {
@@ -667,11 +681,11 @@ export class NavigationController
         }
       }
 
-      const insertedTag = await this.application.mutator.createTagOrSmartView<SNTag>(
+      const insertedTag = await this.mutator.createTagOrSmartView<SNTag>(
         newTitle,
-        this.application.vaultDisplayService.exclusivelyShownVault,
+        this.vaultDisplayService.exclusivelyShownVault,
       )
-      this.application.sync.sync().catch(console.error)
+      this.sync.sync().catch(console.error)
       runInAction(() => {
         void this.setSelectedTag(insertedTag, this.selectedLocation || 'views')
       })

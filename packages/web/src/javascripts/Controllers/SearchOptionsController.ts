@@ -1,15 +1,23 @@
-import { ApplicationEvent, InternalEventBusInterface } from '@standardnotes/snjs'
+import { ProtectionsClientInterface } from '@standardnotes/services'
+import {
+  ApplicationEvent,
+  InternalEventBusInterface,
+  InternalEventHandlerInterface,
+  InternalEventInterface,
+} from '@standardnotes/snjs'
 import { makeObservable, observable, action, runInAction } from 'mobx'
-import { WebApplication } from '../Application/WebApplication'
 import { AbstractViewController } from './Abstract/AbstractViewController'
 
-export class SearchOptionsController extends AbstractViewController {
+export class SearchOptionsController extends AbstractViewController implements InternalEventHandlerInterface {
   includeProtectedContents = false
   includeArchived = false
   includeTrashed = false
 
-  constructor(application: WebApplication, eventBus: InternalEventBusInterface) {
-    super(application, eventBus)
+  constructor(
+    private protections: ProtectionsClientInterface,
+    eventBus: InternalEventBusInterface,
+  ) {
+    super(eventBus)
 
     makeObservable(this, {
       includeProtectedContents: observable,
@@ -22,14 +30,16 @@ export class SearchOptionsController extends AbstractViewController {
       refreshIncludeProtectedContents: action,
     })
 
-    this.disposers.push(
-      this.application.addEventObserver(async () => {
-        this.refreshIncludeProtectedContents()
-      }, ApplicationEvent.UnprotectedSessionBegan),
-      this.application.addEventObserver(async () => {
-        this.refreshIncludeProtectedContents()
-      }, ApplicationEvent.UnprotectedSessionExpired),
-    )
+    eventBus.addEventHandler(this, ApplicationEvent.UnprotectedSessionBegan)
+    eventBus.addEventHandler(this, ApplicationEvent.UnprotectedSessionExpired)
+  }
+
+  async handleEvent(event: InternalEventInterface): Promise<void> {
+    if (event.type === ApplicationEvent.UnprotectedSessionBegan) {
+      this.refreshIncludeProtectedContents()
+    } else if (event.type === ApplicationEvent.UnprotectedSessionExpired) {
+      this.refreshIncludeProtectedContents()
+    }
   }
 
   toggleIncludeArchived = (): void => {
@@ -41,14 +51,14 @@ export class SearchOptionsController extends AbstractViewController {
   }
 
   refreshIncludeProtectedContents = (): void => {
-    this.includeProtectedContents = this.application.hasUnprotectedAccessSession()
+    this.includeProtectedContents = this.protections.hasUnprotectedAccessSession()
   }
 
   toggleIncludeProtectedContents = async (): Promise<void> => {
     if (this.includeProtectedContents) {
       this.includeProtectedContents = false
     } else {
-      await this.application.authorizeSearchingProtectedNotesText()
+      await this.protections.authorizeSearchingProtectedNotesText()
       runInAction(() => {
         this.refreshIncludeProtectedContents()
       })

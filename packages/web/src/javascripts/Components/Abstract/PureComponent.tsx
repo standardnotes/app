@@ -1,8 +1,7 @@
 import { ApplicationEvent } from '@standardnotes/snjs'
-import { WebApplication } from '@/Application/WebApplication'
-import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { autorun, IReactionDisposer, IReactionPublic } from 'mobx'
 import { Component } from 'react'
+import { WebApplicationInterface } from '@standardnotes/ui-services'
 
 export type PureComponentState = Partial<Record<string, unknown>>
 export type PureComponentProps = Partial<Record<string, unknown>>
@@ -13,7 +12,7 @@ export abstract class AbstractComponent<P = PureComponentProps, S = PureComponen
 
   constructor(
     props: P,
-    protected application: WebApplication,
+    public readonly application: WebApplicationInterface,
   ) {
     super(props)
   }
@@ -38,10 +37,6 @@ export abstract class AbstractComponent<P = PureComponentProps, S = PureComponen
 
   override componentWillUnmount(): void {
     this.deinit()
-  }
-
-  public get viewControllerManager(): ViewControllerManager {
-    return this.application.controllers
   }
 
   autorun(view: (r: IReactionPublic) => void): void {

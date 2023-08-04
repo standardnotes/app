@@ -270,7 +270,7 @@ class Footer extends AbstractComponent<Props, State> {
 
   updateOfflineStatus() {
     this.setState({
-      offline: this.application.noAccount(),
+      offline: this.application.sessions.isSignedOut(),
     })
   }
 

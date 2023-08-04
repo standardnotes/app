@@ -1,9 +1,9 @@
-import { WebApplication } from '@/Application/WebApplication'
 import { removeFromArray } from '@standardnotes/utils'
 import { FileItem, SNNote } from '@standardnotes/snjs'
 import { NoteViewController } from './NoteViewController'
 import { FileViewController } from './FileViewController'
 import { TemplateNoteViewControllerOptions } from './TemplateNoteViewControllerOptions'
+import { WebApplicationInterface } from '@standardnotes/ui-services'
 
 type ItemControllerGroupChangeCallback = (activeController: NoteViewController | FileViewController | undefined) => void
 
@@ -12,7 +12,7 @@ export class ItemGroupController {
   changeObservers: ItemControllerGroupChangeCallback[] = []
   eventObservers: (() => void)[] = []
 
-  constructor(private application: WebApplication) {}
+  constructor(private application: WebApplicationInterface) {}
 
   public deinit(): void {
     ;(this.application as unknown) = undefined

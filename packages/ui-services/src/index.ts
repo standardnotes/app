@@ -29,6 +29,11 @@ export * from './Route/RouteServiceEvent'
 export * from './Security/AutolockService'
 export * from './Storage/LocalStorage'
 
+export * from './UseCase/IsGlobalSpellcheckEnabled'
+export * from './UseCase/IsNativeMobileWeb'
+export * from './UseCase/IsNativeIOS'
+export * from './UseCase/GetItemTags'
+
 export * from './Theme/ThemeManager'
 export * from './Theme/GetAllThemesUseCase'
 

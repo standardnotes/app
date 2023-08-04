@@ -1,5 +1,6 @@
 export * from './Application'
 export * from './Application/Dependencies/Types'
+export * from './Application/Dependencies/isDeinitable'
 export * from './ApplicationGroup'
 export * from './Client'
 export * from './Domain'

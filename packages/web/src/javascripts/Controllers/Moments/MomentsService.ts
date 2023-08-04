@@ -5,9 +5,10 @@ import { FileItem, PrefKey, sleep, SNTag } from '@standardnotes/snjs'
 import { FilesController } from '../FilesController'
 import { action, makeObservable, observable } from 'mobx'
 import { AbstractViewController } from '@/Controllers/Abstract/AbstractViewController'
-import { WebApplication } from '@/Application/WebApplication'
 import { dateToStringStyle1 } from '@/Utils/DateUtils'
 import { PhotoRecorder } from './PhotoRecorder'
+import { WebApplicationInterface } from '@standardnotes/ui-services'
+import { LinkingController } from '../LinkingController'
 
 const EVERY_HOUR = 1000 * 60 * 60
 const EVERY_TEN_SECONDS = 1000 * 10
@@ -20,8 +21,9 @@ export class MomentsService extends AbstractViewController {
   private intervalReference: ReturnType<typeof setInterval> | undefined
 
   constructor(
-    application: WebApplication,
+    application: WebApplicationInterface,
     private filesController: FilesController,
+    private linkingController: LinkingController,
     eventBus: InternalEventBusInterface,
   ) {
     super(application, eventBus)
@@ -168,12 +170,12 @@ export class MomentsService extends AbstractViewController {
 
     if (uploadedFile) {
       if (isAppInForeground) {
-        void this.application.linkingController.linkItemToSelectedItem(uploadedFile)
+        void this.linkingController.linkItemToSelectedItem(uploadedFile)
       }
 
       const defaultTag = this.getDefaultTag()
       if (defaultTag) {
-        void this.application.linkingController.linkItems(uploadedFile, defaultTag)
+        void this.linkingController.linkItems(uploadedFile, defaultTag)
       }
     }
 

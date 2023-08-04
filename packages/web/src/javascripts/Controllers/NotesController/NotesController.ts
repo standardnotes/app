@@ -1,5 +1,12 @@
 import { destroyAllObjectProperties } from '@/Utils'
-import { confirmDialog, PIN_NOTE_COMMAND, STAR_NOTE_COMMAND } from '@standardnotes/ui-services'
+import {
+  confirmDialog,
+  GetItemTags,
+  IsGlobalSpellcheckEnabled,
+  KeyboardService,
+  PIN_NOTE_COMMAND,
+  STAR_NOTE_COMMAND,
+} from '@standardnotes/ui-services'
 import { StringEmptyTrash, Strings, StringUtils } from '@/Constants/Strings'
 import { MENU_MARGIN_FROM_APP_BORDER } from '@/Constants/Constants'
 import {
@@ -13,16 +20,27 @@ import {
   InternalEventBusInterface,
   MutationType,
   PrefDefaults,
+  PreferenceServiceInterface,
+  InternalEventHandlerInterface,
+  InternalEventInterface,
+  ItemManagerInterface,
+  MutatorClientInterface,
+  SyncServiceInterface,
+  AlertService,
+  ProtectionsClientInterface,
 } from '@standardnotes/snjs'
 import { makeObservable, observable, action, computed, runInAction } from 'mobx'
-import { WebApplication } from '../../Application/WebApplication'
 import { AbstractViewController } from '../Abstract/AbstractViewController'
 import { SelectedItemsController } from '../SelectedItemsController'
 import { ItemListController } from '../ItemList/ItemListController'
 import { NavigationController } from '../Navigation/NavigationController'
 import { NotesControllerInterface } from './NotesControllerInterface'
+import { ItemGroupController } from '@/Components/NoteView/Controller/ItemGroupController'
 
-export class NotesController extends AbstractViewController implements NotesControllerInterface {
+export class NotesController
+  extends AbstractViewController
+  implements NotesControllerInterface, InternalEventHandlerInterface
+{
   shouldLinkToParentFolders: boolean
   lastSelectedNote: SNNote | undefined
   contextMenuOpen = false
@@ -35,23 +53,22 @@ export class NotesController extends AbstractViewController implements NotesCont
   showProtectedWarning = false
   private itemListController!: ItemListController
 
-  override deinit() {
-    super.deinit()
-    ;(this.lastSelectedNote as unknown) = undefined
-    ;(this.selectionController as unknown) = undefined
-    ;(this.navigationController as unknown) = undefined
-    ;(this.itemListController as unknown) = undefined
-
-    destroyAllObjectProperties(this)
-  }
-
   constructor(
-    application: WebApplication,
     private selectionController: SelectedItemsController,
     private navigationController: NavigationController,
+    private itemControllerGroup: ItemGroupController,
+    private keyboardService: KeyboardService,
+    private preferences: PreferenceServiceInterface,
+    private items: ItemManagerInterface,
+    private mutator: MutatorClientInterface,
+    private sync: SyncServiceInterface,
+    private protections: ProtectionsClientInterface,
+    private alerts: AlertService,
+    private _isGlobalSpellcheckEnabled: IsGlobalSpellcheckEnabled,
+    private _getItemTags: GetItemTags,
     eventBus: InternalEventBusInterface,
   ) {
-    super(application, eventBus)
+    super(eventBus)
 
     makeObservable(this, {
       contextMenuOpen: observable,
@@ -71,39 +88,54 @@ export class NotesController extends AbstractViewController implements NotesCont
       unselectNotes: action,
     })
 
-    this.shouldLinkToParentFolders = application.getPreference(
+    this.shouldLinkToParentFolders = preferences.getValue(
       PrefKey.NoteAddToParentFolders,
       PrefDefaults[PrefKey.NoteAddToParentFolders],
     )
 
+    eventBus.addEventHandler(this, ApplicationEvent.PreferencesChanged)
+
     this.disposers.push(
-      this.application.keyboardService.addCommandHandler({
+      this.keyboardService.addCommandHandler({
         command: PIN_NOTE_COMMAND,
         onKeyDown: () => {
           this.togglePinSelectedNotes()
         },
       }),
-      this.application.keyboardService.addCommandHandler({
+      this.keyboardService.addCommandHandler({
         command: STAR_NOTE_COMMAND,
         onKeyDown: () => {
           this.toggleStarSelectedNotes()
         },
       }),
-      this.application.addSingleEventObserver(ApplicationEvent.PreferencesChanged, async () => {
-        this.shouldLinkToParentFolders = this.application.getPreference(
-          PrefKey.NoteAddToParentFolders,
-          PrefDefaults[PrefKey.NoteAddToParentFolders],
-        )
-      }),
     )
+  }
+
+  async handleEvent(event: InternalEventInterface): Promise<void> {
+    if (event.type === ApplicationEvent.PreferencesChanged) {
+      this.shouldLinkToParentFolders = this.preferences.getValue(
+        PrefKey.NoteAddToParentFolders,
+        PrefDefaults[PrefKey.NoteAddToParentFolders],
+      )
+    }
+  }
+
+  override deinit() {
+    super.deinit()
+    ;(this.lastSelectedNote as unknown) = undefined
+    ;(this.selectionController as unknown) = undefined
+    ;(this.navigationController as unknown) = undefined
+    ;(this.itemListController as unknown) = undefined
+
+    destroyAllObjectProperties(this)
   }
 
   public setServicesPostConstruction(itemListController: ItemListController) {
     this.itemListController = itemListController
 
     this.disposers.push(
-      this.application.itemControllerGroup.addActiveControllerChangeObserver(() => {
-        const controllers = this.application.itemControllerGroup.itemControllers
+      this.itemControllerGroup.addActiveControllerChangeObserver(() => {
+        const controllers = this.itemControllerGroup.itemControllers
 
         const activeNoteUuids = controllers.map((controller) => controller.item.uuid)
 
@@ -135,7 +167,7 @@ export class NotesController extends AbstractViewController implements NotesCont
   }
 
   get trashedNotesCount(): number {
-    return this.application.items.trashedItems.length
+    return this.items.trashedItems.length
   }
 
   setContextMenuOpen = (open: boolean) => {
@@ -202,8 +234,8 @@ export class NotesController extends AbstractViewController implements NotesCont
   }
 
   async changeSelectedNotes(mutate: (mutator: NoteMutator) => void): Promise<void> {
-    await this.application.mutator.changeItems(this.getSelectedNotesList(), mutate, MutationType.NoUpdateUserTimestamps)
-    this.application.sync.sync().catch(console.error)
+    await this.mutator.changeItems(this.getSelectedNotesList(), mutate, MutationType.NoUpdateUserTimestamps)
+    this.sync.sync().catch(console.error)
   }
 
   setHideSelectedNotePreviews(hide: boolean): void {
@@ -243,7 +275,7 @@ export class NotesController extends AbstractViewController implements NotesCont
   async deleteNotes(permanently: boolean): Promise<boolean> {
     if (this.getSelectedNotesList().some((note) => note.locked)) {
       const text = StringUtils.deleteLockedNotesAttempt(this.selectedNotesCount)
-      this.application.alerts.alert(text).catch(console.error)
+      this.alerts.alert(text).catch(console.error)
       return false
     }
 
@@ -264,8 +296,8 @@ export class NotesController extends AbstractViewController implements NotesCont
     ) {
       this.selectionController.selectNextItem()
       if (permanently) {
-        await this.application.mutator.deleteItems(this.getSelectedNotesList())
-        void this.application.sync.sync()
+        await this.mutator.deleteItems(this.getSelectedNotesList())
+        void this.sync.sync()
       } else {
         await this.changeSelectedNotes((mutator) => {
           mutator.trashed = true
@@ -313,9 +345,7 @@ export class NotesController extends AbstractViewController implements NotesCont
 
   async setArchiveSelectedNotes(archived: boolean): Promise<void> {
     if (this.getSelectedNotesList().some((note) => note.locked)) {
-      this.application.alerts
-        .alert(StringUtils.archiveLockedNotesAttempt(archived, this.selectedNotesCount))
-        .catch(console.error)
+      this.alerts.alert(StringUtils.archiveLockedNotesAttempt(archived, this.selectedNotesCount)).catch(console.error)
       return
     }
 
@@ -332,14 +362,14 @@ export class NotesController extends AbstractViewController implements NotesCont
   async setProtectSelectedNotes(protect: boolean): Promise<void> {
     const selectedNotes = this.getSelectedNotesList()
     if (protect) {
-      await this.application.protections.protectNotes(selectedNotes)
+      await this.protections.protectNotes(selectedNotes)
       this.setShowProtectedWarning(true)
     } else {
-      await this.application.protections.unprotectNotes(selectedNotes)
+      await this.protections.unprotectNotes(selectedNotes)
       this.setShowProtectedWarning(false)
     }
 
-    void this.application.sync.sync()
+    void this.sync.sync()
   }
 
   unselectNotes(): void {
@@ -347,61 +377,62 @@ export class NotesController extends AbstractViewController implements NotesCont
   }
 
   getSpellcheckStateForNote(note: SNNote) {
-    return note.spellcheck != undefined ? note.spellcheck : this.application.isGlobalSpellcheckEnabled()
+    return note.spellcheck != undefined ? note.spellcheck : this._isGlobalSpellcheckEnabled.execute().getValue()
   }
 
   async toggleGlobalSpellcheckForNote(note: SNNote) {
-    await this.application.mutator.changeItem<NoteMutator>(
+    await this.mutator.changeItem<NoteMutator>(
       note,
       (mutator) => {
         mutator.toggleSpellcheck()
       },
       MutationType.NoUpdateUserTimestamps,
     )
-    this.application.sync.sync().catch(console.error)
+    this.sync.sync().catch(console.error)
   }
 
   getEditorWidthForNote(note: SNNote) {
-    return (
-      note.editorWidth ?? this.application.getPreference(PrefKey.EditorLineWidth, PrefDefaults[PrefKey.EditorLineWidth])
-    )
+    return note.editorWidth ?? this.preferences.getValue(PrefKey.EditorLineWidth, PrefDefaults[PrefKey.EditorLineWidth])
   }
 
   async setNoteEditorWidth(note: SNNote, editorWidth: EditorLineWidth) {
-    await this.application.mutator.changeItem<NoteMutator>(
+    await this.mutator.changeItem<NoteMutator>(
       note,
       (mutator) => {
         mutator.editorWidth = editorWidth
       },
       MutationType.NoUpdateUserTimestamps,
     )
-    this.application.sync.sync().catch(console.error)
+    this.sync.sync().catch(console.error)
   }
 
   async addTagToSelectedNotes(tag: SNTag): Promise<void> {
     const selectedNotes = this.getSelectedNotesList()
     await Promise.all(
       selectedNotes.map(async (note) => {
-        await this.application.mutator.addTagToNote(note, tag, this.shouldLinkToParentFolders)
+        await this.mutator.addTagToNote(note, tag, this.shouldLinkToParentFolders)
       }),
     )
-    this.application.sync.sync().catch(console.error)
+    this.sync.sync().catch(console.error)
   }
 
   async removeTagFromSelectedNotes(tag: SNTag): Promise<void> {
     const selectedNotes = this.getSelectedNotesList()
-    await this.application.mutator.changeItem(tag, (mutator) => {
+    await this.mutator.changeItem(tag, (mutator) => {
       for (const note of selectedNotes) {
         mutator.removeItemAsRelationship(note)
       }
     })
-    this.application.sync.sync().catch(console.error)
+    this.sync.sync().catch(console.error)
   }
 
   isTagInSelectedNotes(tag: SNTag): boolean {
     const selectedNotes = this.getSelectedNotesList()
     return selectedNotes.every((note) =>
-      this.application.getItemTags(note).find((noteTag) => noteTag.uuid === tag.uuid),
+      this._getItemTags
+        .execute(note)
+        .getValue()
+        .find((noteTag) => noteTag.uuid === tag.uuid),
     )
   }
 
@@ -416,8 +447,8 @@ export class NotesController extends AbstractViewController implements NotesCont
         confirmButtonStyle: 'danger',
       })
     ) {
-      await this.application.mutator.emptyTrash()
-      this.application.sync.sync().catch(console.error)
+      await this.mutator.emptyTrash()
+      this.sync.sync().catch(console.error)
     }
   }
 

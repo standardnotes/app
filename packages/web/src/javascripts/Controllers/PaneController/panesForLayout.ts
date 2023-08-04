@@ -1,9 +1,9 @@
+import { WebApplicationInterface } from '@standardnotes/ui-services'
 import { AppPaneId } from '../../Components/Panes/AppPaneMetadata'
 import { PaneLayout } from './PaneLayout'
-import { WebApplication } from '@/Application/WebApplication'
 import { getIsTabletOrMobileScreen } from '@/Hooks/useIsTabletOrMobileScreen'
 
-export function panesForLayout(layout: PaneLayout, application: WebApplication): AppPaneId[] {
+export function panesForLayout(layout: PaneLayout, application: WebApplicationInterface): AppPaneId[] {
   const screen = getIsTabletOrMobileScreen(application)
   if (screen.isTablet) {
     if (layout === PaneLayout.TagSelection || layout === PaneLayout.TableView) {

@@ -24,4 +24,6 @@ export interface LegacyApiServiceInterface
     limit: number,
     sharedVaultUuids?: string[],
   ): HttpRequest
+
+  getNewSubscriptionToken(): Promise<string | undefined>
 }

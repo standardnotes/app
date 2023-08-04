@@ -268,6 +268,10 @@ export class SessionManager
     return this.getUser() != undefined
   }
 
+  public isSignedOut(): boolean {
+    return !this.isSignedIn()
+  }
+
   public isSignedIntoFirstPartyServer(): boolean {
     return this.isSignedIn() && !this.apiService.isThirdPartyHostUsed()
   }

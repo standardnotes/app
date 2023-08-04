@@ -12,16 +12,19 @@ import {
   Uuids,
   isNote,
   InternalEventBusInterface,
+  ItemManagerInterface,
+  FullyResolvedApplicationOptions,
+  ProtectionsClientInterface,
 } from '@standardnotes/snjs'
-import { SelectionControllerPersistableValue } from '@standardnotes/ui-services'
+import { KeyboardService, SelectionControllerPersistableValue } from '@standardnotes/ui-services'
 import { action, computed, makeObservable, observable, reaction, runInAction } from 'mobx'
-import { WebApplication } from '../Application/WebApplication'
 import { AbstractViewController } from './Abstract/AbstractViewController'
 import { Persistable } from './Abstract/Persistable'
 import { CrossControllerEvent } from './CrossControllerEvent'
 import { ItemListController } from './ItemList/ItemListController'
 import { PaneLayout } from './PaneController/PaneLayout'
 import { requestCloseAllOpenModalsAndPopovers } from '@/Utils/CloseOpenModalsAndPopovers'
+import { PaneController } from './PaneController/PaneController'
 
 export class SelectedItemsController
   extends AbstractViewController
@@ -37,8 +40,15 @@ export class SelectedItemsController
     ;(this.itemListController as unknown) = undefined
   }
 
-  constructor(application: WebApplication, eventBus: InternalEventBusInterface) {
-    super(application, eventBus)
+  constructor(
+    private keyboardService: KeyboardService,
+    private paneController: PaneController,
+    private items: ItemManagerInterface,
+    private protections: ProtectionsClientInterface,
+    private options: FullyResolvedApplicationOptions,
+    eventBus: InternalEventBusInterface,
+  ) {
+    super(eventBus)
 
     makeObservable(this, {
       selectedUuids: observable,
@@ -81,8 +91,8 @@ export class SelectedItemsController
     }
 
     if (!this.selectedUuids.size && state.selectedUuids.length > 0) {
-      if (!this.application.options.allowNoteSelectionStatePersistence) {
-        const items = this.application.items.findItems(state.selectedUuids).filter((item) => !isNote(item))
+      if (!this.options.allowNoteSelectionStatePersistence) {
+        const items = this.items.findItems(state.selectedUuids).filter((item) => !isNote(item))
         void this.selectUuids(Uuids(items))
       } else {
         void this.selectUuids(state.selectedUuids)
@@ -94,7 +104,7 @@ export class SelectedItemsController
     this.itemListController = itemListController
 
     this.disposers.push(
-      this.application.streamItems<SNNote | FileItem>(
+      this.items.streamItems<SNNote | FileItem>(
         [ContentType.TYPES.Note, ContentType.TYPES.File],
         ({ changed, inserted, removed }) => {
           runInAction(() => {
@@ -111,10 +121,6 @@ export class SelectedItemsController
         },
       ),
     )
-  }
-
-  private get keyboardService() {
-    return this.application.keyboardService
   }
 
   get selectedItemsCount(): number {
@@ -135,7 +141,7 @@ export class SelectedItemsController
 
   getSelectedItems = () => {
     const uuids = Array.from(this.selectedUuids)
-    return uuids.map((uuid) => this.application.items.findSureItem<SNNote | FileItem>(uuid)).filter((item) => !!item)
+    return uuids.map((uuid) => this.items.findSureItem<SNNote | FileItem>(uuid)).filter((item) => !!item)
   }
 
   getFilteredSelectedItems = <T extends ListableContentItem = ListableContentItem>(contentType?: string): T[] => {
@@ -194,7 +200,7 @@ export class SelectedItemsController
       itemsToSelect = items.slice(selectedItemIndex, lastSelectedItemIndex + 1)
     }
 
-    const authorizedItems = await this.application.protections.authorizeProtectedActionForItems(
+    const authorizedItems = await this.protections.authorizeProtectedActionForItems(
       itemsToSelect,
       ChallengeReason.SelectProtectedNote,
     )
@@ -250,11 +256,11 @@ export class SelectedItemsController
         await this.itemListController.openFile(item.uuid)
       }
 
-      if (!this.application.paneController.isInMobileView || userTriggered) {
-        void this.application.paneController.setPaneLayout(PaneLayout.Editing)
+      if (!this.paneController.isInMobileView || userTriggered) {
+        void this.paneController.setPaneLayout(PaneLayout.Editing)
       }
 
-      if (this.application.paneController.isInMobileView && userTriggered) {
+      if (this.paneController.isInMobileView && userTriggered) {
         requestCloseAllOpenModalsAndPopovers()
       }
     }
@@ -266,7 +272,7 @@ export class SelectedItemsController
   ): Promise<{
     didSelect: boolean
   }> => {
-    const item = this.application.items.findItem<ListableContentItem>(uuid)
+    const item = this.items.findItem<ListableContentItem>(uuid)
 
     if (!item) {
       return {
@@ -276,12 +282,12 @@ export class SelectedItemsController
 
     log(LoggingDomain.Selection, 'Select item', item.uuid)
 
-    const supportsMultipleSelection = this.application.options.allowMultipleSelection
+    const supportsMultipleSelection = this.options.allowMultipleSelection
     const hasMeta = this.keyboardService.activeModifiers.has(KeyboardModifier.Meta)
     const hasCtrl = this.keyboardService.activeModifiers.has(KeyboardModifier.Ctrl)
     const hasShift = this.keyboardService.activeModifiers.has(KeyboardModifier.Shift)
     const hasMoreThanOneSelected = this.selectedItemsCount > 1
-    const isAuthorizedForAccess = await this.application.protections.authorizeItemAccess(item)
+    const isAuthorizedForAccess = await this.protections.authorizeItemAccess(item)
 
     if (supportsMultipleSelection && userTriggered && (hasMeta || hasCtrl)) {
       if (this.selectedUuids.has(uuid) && hasMoreThanOneSelected) {
@@ -330,7 +336,7 @@ export class SelectedItemsController
   }
 
   selectUuids = async (uuids: UuidString[], userTriggered = false) => {
-    const itemsForUuids = this.application.items.findItems(uuids).filter((item) => !isFile(item))
+    const itemsForUuids = this.items.findItems(uuids).filter((item) => !isFile(item))
 
     if (itemsForUuids.length < 1) {
       return

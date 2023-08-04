@@ -1,12 +1,18 @@
 import {
   FileDownloadProgress,
   fileProgressToHumanReadableString,
+  FilesClientInterface,
   OnChunkCallbackNoProgress,
 } from '@standardnotes/files'
 import { FilePreviewModalController } from './FilePreviewModalController'
 import { FileItemAction, FileItemActionType } from '@/Components/AttachedFilesPopover/PopoverFileItemAction'
 import { BYTES_IN_ONE_MEGABYTE } from '@/Constants/Constants'
-import { confirmDialog } from '@standardnotes/ui-services'
+import {
+  ArchiveManager,
+  confirmDialog,
+  IsNativeMobileWeb,
+  VaultDisplayServiceInterface,
+} from '@standardnotes/ui-services'
 import { Strings, StringUtils } from '@/Constants/Strings'
 import { concatenateUint8Arrays } from '@/Utils/ConcatenateUint8Arrays'
 import {
@@ -17,17 +23,22 @@ import {
   parseFileName,
 } from '@standardnotes/filepicker'
 import {
+  AlertService,
   ChallengeReason,
   ClientDisplayableError,
   ContentType,
   FileItem,
   InternalEventBusInterface,
   isFile,
+  ItemManagerInterface,
+  MobileDeviceInterface,
+  MutatorClientInterface,
   Platform,
+  ProtectionsClientInterface,
+  SyncServiceInterface,
 } from '@standardnotes/snjs'
 import { addToast, dismissToast, ToastType, updateToast } from '@standardnotes/toast'
 import { action, makeObservable, observable, reaction } from 'mobx'
-import { WebApplication } from '../Application/WebApplication'
 import { AbstractViewController } from './Abstract/AbstractViewController'
 import { NotesController } from './NotesController/NotesController'
 import { downloadOrShareBlobBasedOnPlatform } from '@/Utils/DownloadOrShareBasedOnPlatform'
@@ -65,12 +76,22 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
   }
 
   constructor(
-    application: WebApplication,
     private notesController: NotesController,
     private filePreviewModalController: FilePreviewModalController,
+    private archiveService: ArchiveManager,
+    private vaultDisplayService: VaultDisplayServiceInterface,
+    private items: ItemManagerInterface,
+    private files: FilesClientInterface,
+    private mutator: MutatorClientInterface,
+    private sync: SyncServiceInterface,
+    private protections: ProtectionsClientInterface,
+    private alerts: AlertService,
+    private platform: Platform,
+    private mobileDevice: MobileDeviceInterface | undefined,
+    private _isNativeMobileWeb: IsNativeMobileWeb,
     eventBus: InternalEventBusInterface,
   ) {
-    super(application, eventBus)
+    super(eventBus)
 
     makeObservable(this, {
       allFiles: observable,
@@ -88,7 +109,7 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
     })
 
     this.disposers.push(
-      application.streamItems(ContentType.TYPES.File, () => {
+      items.streamItems(ContentType.TYPES.File, () => {
         this.reloadAllFiles()
         this.reloadAttachedFiles()
       }),
@@ -117,13 +138,13 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
   }
 
   reloadAllFiles = () => {
-    this.allFiles = this.application.items.getDisplayableFiles()
+    this.allFiles = this.items.getDisplayableFiles()
   }
 
   reloadAttachedFiles = () => {
     const note = this.notesController.firstSelectedNote
     if (note) {
-      this.attachedFiles = this.application.items.itemsReferencingItem(note).filter(isFile)
+      this.attachedFiles = this.items.itemsReferencingItem(note).filter(isFile)
     }
   }
 
@@ -137,7 +158,7 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
         type: ToastType.Loading,
         message: `Deleting file "${file.name}"...`,
       })
-      await this.application.files.deleteFile(file)
+      await this.files.deleteFile(file)
       addToast({
         type: ToastType.Success,
         message: `Deleted file "${file.name}"`,
@@ -156,8 +177,8 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
       return
     }
 
-    await this.application.mutator.associateFileWithNote(file, note)
-    void this.application.sync.sync()
+    await this.mutator.associateFileWithNote(file, note)
+    void this.sync.sync()
   }
 
   detachFileFromNote = async (file: FileItem) => {
@@ -169,31 +190,31 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
       })
       return
     }
-    await this.application.mutator.disassociateFileWithNote(file, note)
-    void this.application.sync.sync()
+    await this.mutator.disassociateFileWithNote(file, note)
+    void this.sync.sync()
   }
 
   toggleFileProtection = async (file: FileItem) => {
     let result: FileItem | undefined
     if (file.protected) {
-      result = await this.application.protections.unprotectFile(file)
+      result = await this.protections.unprotectFile(file)
     } else {
-      result = await this.application.protections.protectFile(file)
+      result = await this.protections.protectFile(file)
     }
-    void this.application.sync.sync()
+    void this.sync.sync()
     const isProtected = result ? result.protected : file.protected
     return isProtected
   }
 
   authorizeProtectedActionForFile = async (file: FileItem, challengeReason: ChallengeReason) => {
-    const authorizedFiles = await this.application.protections.authorizeProtectedActionForItems([file], challengeReason)
+    const authorizedFiles = await this.protections.authorizeProtectedActionForItems([file], challengeReason)
     const isAuthorized = authorizedFiles.length > 0 && authorizedFiles.includes(file)
     return isAuthorized
   }
 
   renameFile = async (file: FileItem, fileName: string) => {
-    await this.application.mutator.renameFile(file, fileName)
-    void this.application.sync.sync()
+    await this.mutator.renameFile(file, fileName)
+    void this.sync.sync()
   }
 
   handleFileAction = async (
@@ -243,7 +264,7 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
     }
 
     if (!NonMutatingFileActions.includes(action.type)) {
-      this.application.sync.sync().catch(console.error)
+      this.sync.sync().catch(console.error)
     }
 
     return {
@@ -273,7 +294,7 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
 
       let lastProgress: FileDownloadProgress | undefined
 
-      const result = await this.application.files.downloadFile(file, async (decryptedBytes, progress) => {
+      const result = await this.files.downloadFile(file, async (decryptedBytes, progress) => {
         if (isUsingStreamingSaver) {
           await saver.pushBytes(decryptedBytes)
         } else {
@@ -301,7 +322,16 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
         const blob = new Blob([finalBytes], {
           type: file.mimeType,
         })
-        await downloadOrShareBlobBasedOnPlatform(this.application, blob, file.name, false)
+        // await downloadOrShareBlobBasedOnPlatform(this, blob, file.name, false)
+        await downloadOrShareBlobBasedOnPlatform({
+          archiveService: this.archiveService,
+          platform: this.platform,
+          mobileDevice: this.mobileDevice,
+          blob,
+          filename: file.name,
+          isNativeMobileWeb: this._isNativeMobileWeb.execute().getValue(),
+          showToastOnAndroid: false,
+        })
       }
 
       addToast({
@@ -326,7 +356,7 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
 
   alertIfFileExceedsSizeLimit = (file: File): boolean => {
     if (!this.shouldUseStreamingReader && this.maxFileSize && file.size >= this.maxFileSize) {
-      this.application.alerts
+      this.alerts
         .alert(
           `This file exceeds the limits supported in this browser. To upload files greater than ${
             this.maxFileSize / BYTES_IN_ONE_MEGABYTE
@@ -360,7 +390,7 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
     let toastId: string | undefined
 
     try {
-      const minimumChunkSize = this.application.files.minimumChunkSize()
+      const minimumChunkSize = this.files.minimumChunkSize()
 
       const fileToUpload =
         fileOrHandle instanceof File
@@ -377,9 +407,9 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
         return
       }
 
-      const operation = await this.application.files.beginNewFileUpload(
+      const operation = await this.files.beginNewFileUpload(
         fileToUpload.size,
-        this.application.vaultDisplayService.exclusivelyShownVault,
+        this.vaultDisplayService.exclusivelyShownVault,
       )
 
       if (operation instanceof ClientDisplayableError) {
@@ -401,7 +431,7 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
       }
 
       const onChunk: OnChunkCallbackNoProgress = async ({ data, index, isLast }) => {
-        await this.application.files.pushBytesForUpload(operation, data, index, isLast)
+        await this.files.pushBytesForUpload(operation, data, index, isLast)
 
         const percentComplete = Math.round(operation.getProgress().percentComplete)
         if (toastId) {
@@ -416,10 +446,10 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
 
       if (!fileResult.mimeType) {
         const { ext } = parseFileName(fileToUpload.name)
-        fileResult.mimeType = await this.application.getArchiveService().getMimeType(ext)
+        fileResult.mimeType = await this.archiveService.getMimeType(ext)
       }
 
-      const uploadedFile = await this.application.files.finishUpload(operation, fileResult)
+      const uploadedFile = await this.files.finishUpload(operation, fileResult)
 
       if (uploadedFile instanceof ClientDisplayableError) {
         addToast({
@@ -485,28 +515,28 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
         confirmButtonStyle: 'danger',
       })
     ) {
-      await Promise.all(files.map((file) => this.application.files.deleteFile(file)))
-      void this.application.sync.sync()
+      await Promise.all(files.map((file) => this.files.deleteFile(file)))
+      void this.sync.sync()
     }
   }
 
   setProtectionForFiles = async (protect: boolean, files: FileItem[]) => {
     if (protect) {
-      const protectedItems = await this.application.protections.protectItems(files)
+      const protectedItems = await this.protections.protectItems(files)
       if (protectedItems) {
         this.setShowProtectedOverlay(true)
       }
     } else {
-      const unprotectedItems = await this.application.protections.unprotectItems(files, ChallengeReason.UnprotectFile)
+      const unprotectedItems = await this.protections.unprotectItems(files, ChallengeReason.UnprotectFile)
       if (unprotectedItems) {
         this.setShowProtectedOverlay(false)
       }
     }
-    void this.application.sync.sync()
+    void this.sync.sync()
   }
 
   downloadFiles = async (files: FileItem[]) => {
-    if (this.application.platform === Platform.MacDesktop) {
+    if (this.platform === Platform.MacDesktop) {
       for (const file of files) {
         await this.handleFileAction({
           type: FileItemActionType.DownloadFile,

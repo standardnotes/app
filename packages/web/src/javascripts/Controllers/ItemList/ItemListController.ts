@@ -23,6 +23,7 @@ import {
   NotesAndFilesDisplayControllerOptions,
   InternalEventBusInterface,
   PrefDefaults,
+  ItemManagerInterface,
 } from '@standardnotes/snjs'
 import { action, computed, makeObservable, observable, reaction, runInAction } from 'mobx'
 import { WebApplication } from '../../Application/WebApplication'
@@ -90,14 +91,14 @@ export class ItemListController extends AbstractViewController implements Intern
   }
 
   constructor(
-    application: WebApplication,
     private navigationController: NavigationController,
     private searchOptionsController: SearchOptionsController,
     private selectionController: SelectedItemsController,
     private notesController: NotesController,
+    private items: ItemManagerInterface,
     eventBus: InternalEventBusInterface,
   ) {
-    super(application, eventBus)
+    super(eventBus)
 
     eventBus.addEventHandler(this, CrossControllerEvent.TagChanged)
     eventBus.addEventHandler(this, CrossControllerEvent.ActiveEditorChanged)
@@ -106,33 +107,27 @@ export class ItemListController extends AbstractViewController implements Intern
     this.resetPagination()
 
     this.disposers.push(
-      application.streamItems<SNNote>([ContentType.TYPES.Note, ContentType.TYPES.File], () => {
+      items.streamItems<SNNote>([ContentType.TYPES.Note, ContentType.TYPES.File], () => {
         void this.reloadItems(ItemsReloadSource.ItemStream)
       }),
     )
 
     this.disposers.push(
-      application.streamItems<SNTag>(
-        [ContentType.TYPES.Tag, ContentType.TYPES.SmartView],
-        async ({ changed, inserted }) => {
-          const tags = [...changed, ...inserted]
+      items.streamItems<SNTag>([ContentType.TYPES.Tag, ContentType.TYPES.SmartView], async ({ changed, inserted }) => {
+        const tags = [...changed, ...inserted]
 
-          const { didReloadItems } = await this.reloadDisplayPreferences({ userTriggered: false })
-          if (!didReloadItems) {
-            /** A tag could have changed its relationships, so we need to reload the filter */
-            this.reloadNotesDisplayOptions()
-            void this.reloadItems(ItemsReloadSource.ItemStream)
-          }
+        const { didReloadItems } = await this.reloadDisplayPreferences({ userTriggered: false })
+        if (!didReloadItems) {
+          /** A tag could have changed its relationships, so we need to reload the filter */
+          this.reloadNotesDisplayOptions()
+          void this.reloadItems(ItemsReloadSource.ItemStream)
+        }
 
-          if (
-            this.navigationController.selected &&
-            findInArray(tags, 'uuid', this.navigationController.selected.uuid)
-          ) {
-            /** Tag title could have changed */
-            this.reloadPanelTitle()
-          }
-        },
-      ),
+        if (this.navigationController.selected && findInArray(tags, 'uuid', this.navigationController.selected.uuid)) {
+          /** Tag title could have changed */
+          this.reloadPanelTitle()
+        }
+      }),
     )
 
     this.disposers.push(

@@ -1,6 +1,6 @@
-import { SNApplication, SNTag } from '@standardnotes/snjs'
+import { ApplicationInterface, SNTag } from '@standardnotes/snjs'
 
-export const rootTags = (application: SNApplication): SNTag[] => {
+export const rootTags = (application: ApplicationInterface): SNTag[] => {
   const hasNoParent = (tag: SNTag) => !application.items.getTagParent(tag)
 
   const allTags = application.items.getDisplayableTags()
@@ -9,7 +9,7 @@ export const rootTags = (application: SNApplication): SNTag[] => {
   return rootTags
 }
 
-export const tagSiblings = (application: SNApplication, tag: SNTag): SNTag[] => {
+export const tagSiblings = (application: ApplicationInterface, tag: SNTag): SNTag[] => {
   const withoutCurrentTag = (tags: SNTag[]) => tags.filter((other) => other.uuid !== tag.uuid)
 
   const isTemplateTag = application.items.isTemplateItem(tag)
@@ -23,7 +23,11 @@ export const tagSiblings = (application: SNApplication, tag: SNTag): SNTag[] => 
   return withoutCurrentTag(rootTags(application))
 }
 
-export const isValidFutureSiblings = (application: SNApplication, futureSiblings: SNTag[], tag: SNTag): boolean => {
+export const isValidFutureSiblings = (
+  application: ApplicationInterface,
+  futureSiblings: SNTag[],
+  tag: SNTag,
+): boolean => {
   const siblingWithSameName = futureSiblings.find((otherTag) => otherTag.title === tag.title)
 
   if (siblingWithSameName) {

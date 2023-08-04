@@ -1,5 +1,4 @@
 import { WebCrypto } from '@/Application/Crypto'
-import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { WebOrDesktopDevice } from '@/Application/Device/WebOrDesktopDevice'
 import {
   DeinitSource,
@@ -19,14 +18,12 @@ import {
   DecryptedItem,
   Environment,
   ApplicationOptionsDefaults,
-  BackupServiceInterface,
   InternalFeatureService,
   InternalFeatureServiceInterface,
-  PrefDefaults,
   NoteContent,
   SNNote,
 } from '@standardnotes/snjs'
-import { makeObservable, observable } from 'mobx'
+import { action, makeObservable, observable } from 'mobx'
 import { startAuthentication, startRegistration } from '@simplewebauthn/browser'
 import { PanelResizedData } from '@/Types/PanelResizedData'
 import { getBlobFromBase64, isAndroid, isDesktopApplication, isDev, isIOS } from '@/Utils'
@@ -35,39 +32,50 @@ import {
   ArchiveManager,
   AutolockService,
   ChangelogService,
+  IsGlobalSpellcheckEnabled,
+  IsNativeIOS,
+  IsNativeMobileWeb,
   KeyboardService,
   PreferenceId,
-  RouteService,
   RouteServiceInterface,
   ThemeManager,
-  VaultDisplayService,
   VaultDisplayServiceInterface,
   WebAlertService,
   WebApplicationInterface,
 } from '@standardnotes/ui-services'
 import { MobileWebReceiver, NativeMobileEventListener } from '../NativeMobileWeb/MobileWebReceiver'
-import { AndroidBackHandler } from '@/NativeMobileWeb/AndroidBackHandler'
 import { setCustomViewportHeight } from '@/setViewportHeightWithFallback'
-import { WebServices } from './WebServices'
 import { FeatureName } from '@/Controllers/FeatureName'
-import { ItemGroupController } from '@/Components/NoteView/Controller/ItemGroupController'
 import { VisibilityObserver } from './VisibilityObserver'
-import { MomentsService } from '@/Controllers/Moments/MomentsService'
 import { DevMode } from './DevMode'
 import { ToastType, addToast, dismissToast } from '@standardnotes/toast'
+import { WebDependencies } from './Dependencies/WebDependencies'
+import { Web_TYPES } from './Dependencies/Types'
+import { ApplicationEventObserver } from '@/Event/ApplicationEventObserver'
+import { PaneController } from '@/Controllers/PaneController/PaneController'
+import { LinkingController } from '@/Controllers/LinkingController'
+import { MomentsService } from '@/Controllers/Moments/MomentsService'
+import { FeaturesController } from '@/Controllers/FeaturesController'
+import { FilesController } from '@/Controllers/FilesController'
+import { SelectedItemsController } from '@/Controllers/SelectedItemsController'
+import { ItemListController } from '@/Controllers/ItemList/ItemListController'
+import { AndroidBackHandler } from '@/NativeMobileWeb/AndroidBackHandler'
+import { SubscriptionController } from '@/Controllers/Subscription/SubscriptionController'
+import { PurchaseFlowController } from '@/Controllers/PurchaseFlow/PurchaseFlowController'
+import { AccountMenuController } from '@/Controllers/AccountMenu/AccountMenuController'
+import { PreferencesController } from '@/Controllers/PreferencesController'
+import { NotesController } from '@/Controllers/NotesController/NotesController'
 
 export type WebEventObserver = (event: WebAppEvent, data?: unknown) => void
 
 export class WebApplication extends SNApplication implements WebApplicationInterface {
-  public readonly itemControllerGroup: ItemGroupController
-  public readonly routeService: RouteServiceInterface
+  private readonly deps = new WebDependencies(this)
 
-  private readonly webServices!: WebServices
+  private visibilityObserver?: VisibilityObserver
   private readonly webEventObservers: WebEventObserver[] = []
-  private readonly mobileWebReceiver?: MobileWebReceiver
-  private readonly androidBackHandler?: AndroidBackHandler
-  private readonly visibilityObserver?: VisibilityObserver
-  private readonly mobileAppEventObserver?: () => void
+  private disposers: (() => void)[] = []
+
+  public isSessionsModalVisible = false
 
   public readonly devMode?: DevMode
 
@@ -114,32 +122,15 @@ export class WebApplication extends SNApplication implements WebApplicationInter
       deviceInterface.setApplication(this)
     }
 
-    this.itemControllerGroup = new ItemGroupController(this)
-    this.routeService = new RouteService(this, this.events)
-
-    this.webServices = {} as WebServices
-    this.webServices.keyboardService = new KeyboardService(platform, this.environment)
-    this.webServices.archiveService = new ArchiveManager(this)
-    this.webServices.themeService = new ThemeManager(this, this.preferences, this.componentManager, this.events)
-    this.webServices.autolockService = this.isNativeMobileWeb() ? undefined : new AutolockService(this, this.events)
-    this.webServices.desktopService = isDesktopDevice(deviceInterface)
-      ? new DesktopManager(this, deviceInterface, this.fileBackups as BackupServiceInterface)
-      : undefined
-    this.webServices.viewControllerManager = new ViewControllerManager(this, deviceInterface)
-    this.webServices.changelogService = new ChangelogService(this.environment, this.storage)
-    this.webServices.momentsService = new MomentsService(
-      this,
-      this.webServices.viewControllerManager.filesController,
-      this.events,
-    )
-    this.webServices.vaultDisplayService = new VaultDisplayService(this, this.events)
+    const appEventObserver = this.deps.get<ApplicationEventObserver>(Web_TYPES.ApplicationEventObserver)
+    this.disposers.push(this.addEventObserver(appEventObserver.handle.bind(appEventObserver)))
 
     if (this.isNativeMobileWeb()) {
-      this.mobileWebReceiver = new MobileWebReceiver(this)
-      this.androidBackHandler = new AndroidBackHandler()
-      this.mobileAppEventObserver = this.addEventObserver(async (event) => {
-        this.mobileDevice().notifyApplicationEvent(event)
-      })
+      this.disposers.push(
+        this.addEventObserver(async (event) => {
+          this.mobileDevice().notifyApplicationEvent(event)
+        }),
+      )
 
       // eslint-disable-next-line no-console
       console.log = (...args) => {
@@ -152,6 +143,23 @@ export class WebApplication extends SNApplication implements WebApplicationInter
         this.notifyWebEvent(event)
       })
     }
+
+    this.notesController.setServicesPostConstruction(this.itemListController)
+    this.selectionController.setServicesPostConstruction(this.itemListController)
+
+    this.linkingController.setServicesPostConstruction(
+      this.itemListController,
+      this.filesController,
+      this.subscriptionController,
+    )
+
+    makeObservable(this, {
+      preferencesController: observable,
+      isSessionsModalVisible: observable,
+
+      openSessionsModal: action,
+      closeSessionsModal: action,
+    })
   }
 
   override deinit(mode: DeinitMode, source: DeinitSource): void {
@@ -161,38 +169,19 @@ export class WebApplication extends SNApplication implements WebApplicationInter
       this.webOrDesktopDevice().removeApplication(this)
     }
 
+    for (const disposer of this.disposers) {
+      disposer()
+    }
+    this.disposers.length = 0
+
+    this.deps.deinit()
+
     try {
-      for (const service of Object.values(this.webServices)) {
-        if (!service) {
-          continue
-        }
-
-        if ('deinit' in service) {
-          service.deinit?.(source)
-        }
-
-        ;(service as { application?: WebApplication }).application = undefined
-      }
-
-      ;(this.webServices as unknown) = undefined
-
-      this.itemControllerGroup.deinit()
-      ;(this.itemControllerGroup as unknown) = undefined
-      ;(this.mobileWebReceiver as unknown) = undefined
-
-      this.routeService.deinit()
-      ;(this.routeService as unknown) = undefined
-
       this.webEventObservers.length = 0
 
       if (this.visibilityObserver) {
         this.visibilityObserver.deinit()
         ;(this.visibilityObserver as unknown) = undefined
-      }
-
-      if (this.mobileAppEventObserver) {
-        this.mobileAppEventObserver()
-        ;(this.mobileAppEventObserver as unknown) = undefined
       }
     } catch (error) {
       console.error('Error while deiniting application', error)
@@ -225,46 +214,6 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     this.notifyWebEvent(WebAppEvent.PanelResized, data)
   }
 
-  public get vaultDisplayService(): VaultDisplayServiceInterface {
-    return this.webServices.vaultDisplayService
-  }
-
-  public get controllers(): ViewControllerManager {
-    return this.webServices.viewControllerManager
-  }
-
-  public getDesktopService(): DesktopManager | undefined {
-    return this.webServices.desktopService
-  }
-
-  public getAutolockService() {
-    return this.webServices.autolockService
-  }
-
-  public getArchiveService() {
-    return this.webServices.archiveService
-  }
-
-  public get paneController() {
-    return this.webServices.viewControllerManager.paneController
-  }
-
-  public get linkingController() {
-    return this.webServices.viewControllerManager.linkingController
-  }
-
-  public get changelogService() {
-    return this.webServices.changelogService
-  }
-
-  public get momentsService() {
-    return this.webServices.momentsService
-  }
-
-  public get featuresController() {
-    return this.controllers.featuresController
-  }
-
   public get desktopDevice(): DesktopDeviceInterface | undefined {
     if (isDesktopDevice(this.device)) {
       return this.device
@@ -278,7 +227,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
   }
 
   isNativeIOS() {
-    return this.isNativeMobileWeb() && this.platform === Platform.Ios
+    return this.deps.get<IsNativeIOS>(Web_TYPES.IsNativeIOS).execute().getValue()
   }
 
   get isMobileDevice() {
@@ -300,14 +249,6 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     return this.device as WebOrDesktopDevice
   }
 
-  public getThemeService() {
-    return this.webServices.themeService
-  }
-
-  public get keyboardService() {
-    return this.webServices.keyboardService
-  }
-
   async checkForSecurityUpdate() {
     return this.protocolUpgradeAvailable()
   }
@@ -317,13 +258,13 @@ export class WebApplication extends SNApplication implements WebApplicationInter
   }
 
   isGlobalSpellcheckEnabled(): boolean {
-    return this.getPreference(PrefKey.EditorSpellcheck, PrefDefaults[PrefKey.EditorSpellcheck])
+    return this.deps.get<IsGlobalSpellcheckEnabled>(Web_TYPES.IsGlobalSpellcheckEnabled).execute().getValue()
   }
 
   public getItemTags(item: DecryptedItemInterface) {
-    return this.items.itemsReferencingItem(item).filter((ref) => {
+    return this.items.itemsReferencingItem<SNTag>(item).filter((ref) => {
       return ref.content_type === ContentType.TYPES.Tag
-    }) as SNTag[]
+    })
   }
 
   public get version(): string {
@@ -373,6 +314,14 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     void this.getThemeService().handleMobileColorSchemeChangeEvent()
   }
 
+  openSessionsModal = () => {
+    this.isSessionsModalVisible = true
+  }
+
+  closeSessionsModal = () => {
+    this.isSessionsModalVisible = false
+  }
+
   handleMobileKeyboardWillChangeFrameEvent(frame: {
     height: number
     contentHeight: number
@@ -392,14 +341,14 @@ export class WebApplication extends SNApplication implements WebApplicationInter
   }
 
   handleReceivedFileEvent(file: { name: string; mimeType: string; data: string }): void {
-    const filesController = this.controllers.filesController
+    const filesController = this.filesController
     const blob = getBlobFromBase64(file.data, file.mimeType)
     const mappedFile = new File([blob], file.name, { type: file.mimeType })
     filesController.uploadNewFile(mappedFile, true).catch(console.error)
   }
 
   async handleReceivedTextEvent({ text, title }: { text: string; title?: string | undefined }) {
-    const titleForNote = title || this.controllers.itemListController.titleForNewNote()
+    const titleForNote = title || this.itemListController.titleForNewNote()
 
     const note = this.items.createTemplateItem<NoteContent, SNNote>(ContentType.TYPES.Note, {
       title: titleForNote,
@@ -409,7 +358,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
 
     const insertedNote = await this.mutator.insertItem(note)
 
-    this.controllers.selectionController.selectItem(insertedNote.uuid, true).catch(console.error)
+    this.selectionController.selectItem(insertedNote.uuid, true).catch(console.error)
 
     addToast({
       type: ToastType.Success,
@@ -437,7 +386,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
         const file = new File([imgBlob], finalPath, {
           type: imgBlob.type,
         })
-        this.controllers.filesController.uploadNewFile(file, true).catch(console.error)
+        this.filesController.uploadNewFile(file, true).catch(console.error)
       } catch (error) {
         console.error(error)
       } finally {
@@ -494,7 +443,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
 
   isAuthorizedToRenderItem(item: DecryptedItem): boolean {
     if (item.protected && this.hasProtectionSources()) {
-      return this.hasUnprotectedAccessSession()
+      return this.protections.hasUnprotectedAccessSession()
     }
 
     return true
@@ -505,19 +454,19 @@ export class WebApplication extends SNApplication implements WebApplicationInter
   }
 
   get entitledToFiles(): boolean {
-    return this.controllers.featuresController.entitledToFiles
+    return this.featuresController.entitledToFiles
   }
 
   showPremiumModal(featureName?: FeatureName): void {
-    void this.controllers.featuresController.showPremiumAlert(featureName)
+    void this.featuresController.showPremiumAlert(featureName)
   }
 
   hasValidFirstPartySubscription(): boolean {
-    return this.controllers.subscriptionController.hasFirstPartyOnlineOrOfflineSubscription
+    return this.subscriptionController.hasFirstPartyOnlineOrOfflineSubscription
   }
 
   async openPurchaseFlow() {
-    await this.controllers.purchaseFlowController.openPurchaseFlow()
+    await this.purchaseFlowController.openPurchaseFlow()
   }
 
   addNativeMobileEventListener = (listener: NativeMobileEventListener) => {
@@ -529,11 +478,11 @@ export class WebApplication extends SNApplication implements WebApplicationInter
   }
 
   showAccountMenu(): void {
-    this.controllers.accountMenuController.setShow(true)
+    this.accountMenuController.setShow(true)
   }
 
   hideAccountMenu(): void {
-    this.controllers.accountMenuController.setShow(false)
+    this.accountMenuController.setShow(false)
   }
 
   /**
@@ -545,13 +494,110 @@ export class WebApplication extends SNApplication implements WebApplicationInter
   }
 
   openPreferences(pane?: PreferenceId): void {
-    this.controllers.preferencesController.openPreferences()
+    this.preferencesController.openPreferences()
     if (pane) {
-      this.controllers.preferencesController.setCurrentPane(pane)
+      this.preferencesController.setCurrentPane(pane)
     }
   }
 
   generateUUID(): string {
     return this.options.crypto.generateUUID()
+  }
+
+  /**
+   * Dependency
+   * Accessors
+   */
+
+  get routeService(): RouteServiceInterface {
+    return this.deps.get<RouteServiceInterface>(Web_TYPES.RouteService)
+  }
+
+  get androidBackHandler(): AndroidBackHandler {
+    return this.deps.get<AndroidBackHandler>(Web_TYPES.AndroidBackHandler)
+  }
+
+  get vaultDisplayService(): VaultDisplayServiceInterface {
+    return this.deps.get<VaultDisplayServiceInterface>(Web_TYPES.VaultDisplayService)
+  }
+
+  getDesktopService(): DesktopManager | undefined {
+    return this.deps.get<DesktopManager | undefined>(Web_TYPES.DesktopManager)
+  }
+
+  getAutolockService(): AutolockService {
+    return this.deps.get<AutolockService>(Web_TYPES.AutolockService)
+  }
+
+  getArchiveService(): ArchiveManager {
+    return this.deps.get<ArchiveManager>(Web_TYPES.ArchiveManager)
+  }
+
+  get paneController(): PaneController {
+    return this.deps.get<PaneController>(Web_TYPES.PaneController)
+  }
+
+  get linkingController(): LinkingController {
+    return this.deps.get<LinkingController>(Web_TYPES.LinkingController)
+  }
+
+  get changelogService(): ChangelogService {
+    return this.deps.get<ChangelogService>(Web_TYPES.ChangelogService)
+  }
+
+  get momentsService(): MomentsService {
+    return this.deps.get<MomentsService>(Web_TYPES.MomentsService)
+  }
+
+  getThemeService(): ThemeManager {
+    return this.deps.get<ThemeManager>(Web_TYPES.ThemeManager)
+  }
+
+  get keyboardService(): KeyboardService {
+    return this.deps.get<KeyboardService>(Web_TYPES.KeyboardService)
+  }
+
+  get featuresController(): FeaturesController {
+    return this.deps.get<FeaturesController>(Web_TYPES.FeaturesController)
+  }
+
+  get filesController(): FilesController {
+    return this.deps.get<FilesController>(Web_TYPES.FilesController)
+  }
+
+  get selectionController(): SelectedItemsController {
+    return this.deps.get<SelectedItemsController>(Web_TYPES.SelectedItemsController)
+  }
+
+  get notesController(): NotesController {
+    return this.deps.get<NotesController>(Web_TYPES.NotesController)
+  }
+
+  get itemListController(): ItemListController {
+    return this.deps.get<ItemListController>(Web_TYPES.ItemListController)
+  }
+
+  get subscriptionController(): SubscriptionController {
+    return this.deps.get<SubscriptionController>(Web_TYPES.SubscriptionController)
+  }
+
+  get purchaseFlowController(): PurchaseFlowController {
+    return this.deps.get<PurchaseFlowController>(Web_TYPES.PurchaseFlowController)
+  }
+
+  get mobileWebReceiver(): MobileWebReceiver | undefined {
+    return this.deps.get<MobileWebReceiver | undefined>(Web_TYPES.MobileWebReceiver)
+  }
+
+  get accountMenuController(): AccountMenuController {
+    return this.deps.get<AccountMenuController>(Web_TYPES.AccountMenuController)
+  }
+
+  get preferencesController(): PreferencesController {
+    return this.deps.get<PreferencesController>(Web_TYPES.PreferencesController)
+  }
+
+  get isNativeMobileWebUseCase(): IsNativeMobileWeb {
+    return this.deps.get<IsNativeMobileWeb>(Web_TYPES.IsNativeMobileWeb)
   }
 }

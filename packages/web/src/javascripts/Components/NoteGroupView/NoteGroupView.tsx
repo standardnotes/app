@@ -1,6 +1,5 @@
 import { FileItem } from '@standardnotes/snjs'
 import { AbstractComponent } from '@/Components/Abstract/PureComponent'
-import { WebApplication } from '@/Application/WebApplication'
 import MultipleSelectedNotes from '@/Components/MultipleSelectedNotes/MultipleSelectedNotes'
 import MultipleSelectedFiles from '../MultipleSelectedFiles/MultipleSelectedFiles'
 import { AppPaneId } from '../Panes/AppPaneMetadata'
@@ -8,6 +7,7 @@ import FileView from '../FileView/FileView'
 import NoteView from '../NoteView/NoteView'
 import { NoteViewController } from '../NoteView/Controller/NoteViewController'
 import { FileViewController } from '../NoteView/Controller/FileViewController'
+import { WebApplicationInterface } from '@standardnotes/ui-services'
 
 type State = {
   showMultipleSelectedNotes: boolean
@@ -19,7 +19,7 @@ type State = {
 }
 
 type Props = {
-  application: WebApplication
+  application: WebApplicationInterface
   className?: string
 }
 
@@ -48,10 +48,6 @@ class NoteGroupView extends AbstractComponent<Props, State> {
     })
 
     this.autorun(() => {
-      if (!this.viewControllerManager) {
-        return
-      }
-
       if (this.viewControllerManager && this.viewControllerManager.notesController) {
         this.setState({
           showMultipleSelectedNotes: this.viewControllerManager.notesController.selectedNotesCount > 1,

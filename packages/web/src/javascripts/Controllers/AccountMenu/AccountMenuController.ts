@@ -1,7 +1,6 @@
 import { destroyAllObjectProperties, isDev } from '@/Utils'
 import { action, computed, makeObservable, observable, runInAction } from 'mobx'
 import { ApplicationEvent, ContentType, InternalEventBusInterface, SNNote, SNTag } from '@standardnotes/snjs'
-import { WebApplication } from '@/Application/WebApplication'
 import { AccountMenuPane } from '@/Components/AccountMenu/AccountMenuPane'
 import { AbstractViewController } from '../Abstract/AbstractViewController'
 
@@ -28,8 +27,11 @@ export class AccountMenuController extends AbstractViewController {
     destroyAllObjectProperties(this)
   }
 
-  constructor(application: WebApplication, eventBus: InternalEventBusInterface) {
-    super(application, eventBus)
+  constructor(
+    private items: ItemManagerInterface,
+    eventBus: InternalEventBusInterface,
+  ) {
+    super(eventBus)
 
     makeObservable(this, {
       show: observable,
@@ -77,9 +79,9 @@ export class AccountMenuController extends AbstractViewController {
     )
 
     this.disposers.push(
-      this.application.streamItems([ContentType.TYPES.Note, ContentType.TYPES.Tag], () => {
+      this.items.streamItems([ContentType.TYPES.Note, ContentType.TYPES.Tag], () => {
         runInAction(() => {
-          this.notesAndTags = this.application.items.getItems([ContentType.TYPES.Note, ContentType.TYPES.Tag])
+          this.notesAndTags = this.items.getItems([ContentType.TYPES.Note, ContentType.TYPES.Tag])
         })
       }),
     )

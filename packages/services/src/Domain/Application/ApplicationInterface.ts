@@ -1,4 +1,11 @@
-import { VaultUserServiceInterface, VaultInviteServiceInterface } from '@standardnotes/services'
+import {
+  VaultUserServiceInterface,
+  VaultInviteServiceInterface,
+  StorageServiceInterface,
+  SyncServiceInterface,
+  FullyResolvedApplicationOptions,
+  ProtectionsClientInterface,
+} from '@standardnotes/services'
 import { VaultLockServiceInterface } from './../VaultLock/VaultLockServiceInterface'
 import { HistoryServiceInterface } from './../History/HistoryServiceInterface'
 import { InternalEventBusInterface } from './../Internal/InternalEventBusInterface'
@@ -13,6 +20,7 @@ import {
   BackupFile,
   DecryptedItemInterface,
   DecryptedItemMutator,
+  Environment,
   ItemStream,
   PayloadEmitSource,
   Platform,
@@ -37,7 +45,6 @@ import { DeinitSource } from './DeinitSource'
 import { UserServiceInterface } from '../User/UserServiceInterface'
 import { SessionsClientInterface } from '../Session/SessionsClientInterface'
 import { HomeServerServiceInterface } from '../HomeServer/HomeServerServiceInterface'
-import { User } from '@standardnotes/responses'
 import { EncryptionProviderInterface } from '../Encryption/EncryptionProviderInterface'
 
 export interface ApplicationInterface {
@@ -52,6 +59,7 @@ export interface ApplicationInterface {
   createEncryptedBackupFile(): Promise<BackupFile | undefined>
   createDecryptedBackupFile(): Promise<BackupFile | undefined>
   hasPasscode(): boolean
+  isDatabaseLoaded(): boolean
   lock(): Promise<void>
   softLockBiometrics(): void
   setValue(key: string, value: unknown, mode?: StorageValueModes): void
@@ -62,17 +70,11 @@ export interface ApplicationInterface {
   getPreference<K extends PrefKey>(key: K, defaultValue: PrefValue[K]): PrefValue[K]
   getPreference<K extends PrefKey>(key: K, defaultValue?: PrefValue[K]): PrefValue[K] | undefined
   setPreference<K extends PrefKey>(key: K, value: PrefValue[K]): Promise<void>
-  streamItems<I extends DecryptedItemInterface = DecryptedItemInterface>(
-    contentType: string | string[],
-    stream: ItemStream<I>,
-  ): () => void
 
-  getUser(): User | undefined
   hasAccount(): boolean
   setCustomHost(host: string): Promise<void>
   isThirdPartyHostUsed(): boolean
   isUsingHomeServer(): Promise<boolean>
-  getNewSubscriptionToken(): Promise<string | undefined>
 
   importData(data: BackupFile, awaitSync?: boolean): Promise<ImportDataReturnType>
   /**
@@ -111,14 +113,19 @@ export interface ApplicationInterface {
   get items(): ItemManagerInterface
   get mutator(): MutatorClientInterface
   get preferences(): PreferenceServiceInterface
+  get protections(): ProtectionsClientInterface
   get sessions(): SessionsClientInterface
+  get storage(): StorageServiceInterface
+  get sync(): SyncServiceInterface
   get subscriptions(): SubscriptionManagerInterface
   get user(): UserServiceInterface
-  get vaults(): VaultServiceInterface
-  get vaultLocks(): VaultLockServiceInterface
-  get vaultUsers(): VaultUserServiceInterface
   get vaultInvites(): VaultInviteServiceInterface
+  get vaultLocks(): VaultLockServiceInterface
+  get vaults(): VaultServiceInterface
+  get vaultUsers(): VaultUserServiceInterface
 
+  readonly options: FullyResolvedApplicationOptions
+  readonly environment: Environment
   readonly identifier: ApplicationIdentifier
   readonly platform: Platform
   device: DeviceInterface

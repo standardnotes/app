@@ -3,15 +3,15 @@ import { readFileAsText } from '../Utils'
 import dayjs from 'dayjs'
 import customParseFormat from 'dayjs/plugin/customParseFormat'
 import utc from 'dayjs/plugin/utc'
-import { WebApplicationInterface } from '../../WebApplication/WebApplicationInterface'
 import { ContentType } from '@standardnotes/domain-core'
+import { UuidGenerator } from '@standardnotes/utils'
 dayjs.extend(customParseFormat)
 dayjs.extend(utc)
 
 const dateFormat = 'YYYYMMDDTHHmmss'
 
 export class EvernoteConverter {
-  constructor(protected application: WebApplicationInterface) {}
+  constructor() {}
 
   async convertENEXFileToNotesAndTags(file: File, stripHTML: boolean): Promise<DecryptedTransferPayload[]> {
     const content = await readFileAsText(file)
@@ -35,7 +35,7 @@ export class EvernoteConverter {
         created_at_timestamp: now.getTime(),
         updated_at: now,
         updated_at_timestamp: now.getTime(),
-        uuid: this.application.generateUUID(),
+        uuid: UuidGenerator.GenerateUuid(),
         content_type: ContentType.TYPES.Tag,
         content: {
           title: defaultTagName,
@@ -88,7 +88,7 @@ export class EvernoteConverter {
         created_at_timestamp: createdAtDate.getTime(),
         updated_at: updatedAtDate,
         updated_at_timestamp: updatedAtDate.getTime(),
-        uuid: this.application.generateUUID(),
+        uuid: UuidGenerator.GenerateUuid(),
         content_type: ContentType.TYPES.Note,
         content: {
           title: !title ? `Imported note ${index + 1} from Evernote` : title,
@@ -111,7 +111,7 @@ export class EvernoteConverter {
         if (!tag) {
           const now = new Date()
           tag = {
-            uuid: this.application.generateUUID(),
+            uuid: UuidGenerator.GenerateUuid(),
             content_type: ContentType.TYPES.Tag,
             created_at: now,
             created_at_timestamp: now.getTime(),

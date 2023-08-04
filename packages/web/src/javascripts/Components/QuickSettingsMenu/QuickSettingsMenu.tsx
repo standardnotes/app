@@ -67,7 +67,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ quickSettingsMenuCont
   }, [reloadThemes, themes.length])
 
   useEffect(() => {
-    const cleanupItemStream = application.streamItems(ContentType.TYPES.Theme, () => {
+    const cleanupItemStream = application.items.streamItems(ContentType.TYPES.Theme, () => {
       reloadThemes()
     })
 
@@ -85,7 +85,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ quickSettingsMenuCont
   }, [application, reloadThemes])
 
   useEffect(() => {
-    const cleanupItemStream = application.streamItems(ContentType.TYPES.Component, () => {
+    const cleanupItemStream = application.items.streamItems(ContentType.TYPES.Component, () => {
       reloadEditorStackComponents()
     })
 

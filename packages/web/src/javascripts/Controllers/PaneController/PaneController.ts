@@ -1,7 +1,9 @@
+import { PreferenceServiceInterface } from '@standardnotes/services'
 import {
   TOGGLE_FOCUS_MODE_COMMAND,
   TOGGLE_LIST_PANE_KEYBOARD_COMMAND,
   TOGGLE_NAVIGATION_PANE_KEYBOARD_COMMAND,
+  WebApplicationInterface,
 } from '@standardnotes/ui-services'
 import {
   ApplicationEvent,
@@ -15,7 +17,6 @@ import { isMobileScreen } from '@/Utils'
 import { makeObservable, observable, action, computed } from 'mobx'
 import { Disposer } from '@/Types/Disposer'
 import { MediaQueryBreakpoints } from '@/Hooks/useMediaQuery'
-import { WebApplication } from '@/Application/WebApplication'
 import { AbstractViewController } from '../Abstract/AbstractViewController'
 import { log, LoggingDomain } from '@/Logging'
 import { PaneLayout } from './PaneLayout'
@@ -40,8 +41,11 @@ export class PaneController extends AbstractViewController {
   listPaneExplicitelyCollapsed = false
   navigationPaneExplicitelyCollapsed = false
 
-  constructor(application: WebApplication, eventBus: InternalEventBusInterface) {
-    super(application, eventBus)
+  constructor(
+    private preferences: PreferenceServiceInterface,
+    eventBus: InternalEventBusInterface,
+  ) {
+    super(eventBus)
 
     makeObservable(this, {
       panes: observable,
@@ -70,8 +74,8 @@ export class PaneController extends AbstractViewController {
       setFocusModeEnabled: action,
     })
 
-    this.setCurrentNavPanelWidth(application.getPreference(PrefKey.TagsPanelWidth, MinimumNavPanelWidth))
-    this.setCurrentItemsPanelWidth(application.getPreference(PrefKey.NotesPanelWidth, MinimumNotesPanelWidth))
+    this.setCurrentNavPanelWidth(preferences.getValue(PrefKey.TagsPanelWidth, MinimumNavPanelWidth))
+    this.setCurrentItemsPanelWidth(preferences.getValue(PrefKey.NotesPanelWidth, MinimumNotesPanelWidth))
 
     const screen = getIsTabletOrMobileScreen(application)
 

@@ -4,6 +4,7 @@ import {
   RouteServiceInterface,
   RouteType,
   ToastServiceInterface,
+  WebApplicationInterface,
 } from '@standardnotes/ui-services'
 import {
   ApplicationEvent,
@@ -21,13 +22,12 @@ import { SyncStatusController } from '@/Controllers/SyncStatusController'
 import { AccountMenuPane } from '@/Components/AccountMenu/AccountMenuPane'
 
 import { EventObserverInterface } from './EventObserverInterface'
-import { WebApplication } from '@/Application/WebApplication'
 
 export const JoinWorkspaceSuccessString = 'Successfully joined a shared subscription.'
 
 export class ApplicationEventObserver implements EventObserverInterface {
   constructor(
-    private application: WebApplication,
+    private application: WebApplicationInterface,
     private routeService: RouteServiceInterface,
     private purchaseFlowController: PurchaseFlowController,
     private accountMenuController: AccountMenuController,

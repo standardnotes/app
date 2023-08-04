@@ -1,7 +1,7 @@
 import { FileItem } from '@standardnotes/models'
 import { ContentType } from '@standardnotes/domain-core'
-import { SNApplication } from '@standardnotes/snjs'
 import { ItemViewControllerInterface } from './ItemViewControllerInterface'
+import { ItemManagerInterface } from '@standardnotes/snjs'
 
 export class FileViewController implements ItemViewControllerInterface {
   public dealloced = false
@@ -9,7 +9,7 @@ export class FileViewController implements ItemViewControllerInterface {
   public runtimeId = `${Math.random()}`
 
   constructor(
-    private application: SNApplication,
+    private items: ItemManagerInterface,
     public item: FileItem,
   ) {}
 
@@ -17,7 +17,6 @@ export class FileViewController implements ItemViewControllerInterface {
     this.dealloced = true
     this.removeStreamObserver?.()
     ;(this.removeStreamObserver as unknown) = undefined
-    ;(this.application as unknown) = undefined
     ;(this.item as unknown) = undefined
   }
 
@@ -26,23 +25,20 @@ export class FileViewController implements ItemViewControllerInterface {
   }
 
   private streamItems() {
-    this.removeStreamObserver = this.application.streamItems<FileItem>(
-      ContentType.TYPES.File,
-      ({ changed, inserted }) => {
-        if (this.dealloced) {
-          return
-        }
+    this.removeStreamObserver = this.items.streamItems<FileItem>(ContentType.TYPES.File, ({ changed, inserted }) => {
+      if (this.dealloced) {
+        return
+      }
 
-        const files = changed.concat(inserted)
+      const files = changed.concat(inserted)
 
-        const matchingFile = files.find((item) => {
-          return item.uuid === this.item.uuid
-        })
+      const matchingFile = files.find((item) => {
+        return item.uuid === this.item.uuid
+      })
 
-        if (matchingFile) {
-          this.item = matchingFile
-        }
-      },
-    )
+      if (matchingFile) {
+        this.item = matchingFile
+      }
+    })
   }
 }
