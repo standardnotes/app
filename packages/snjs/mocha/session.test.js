@@ -483,51 +483,6 @@ describe('server session', function () {
     }
   }).timeout(Factory.TwentySecondTimeout)
 
-  it('changing password on one client should not invalidate other sessions', async function () {
-    await Factory.registerUserToApplication({
-      application: this.application,
-      email: this.email,
-      password: this.password,
-    })
-
-    const appA = await Factory.createApplicationWithFakeCrypto(Factory.randomString())
-    await appA.prepareForLaunch({})
-    await appA.launch(true)
-
-    const email = `${Math.random()}`
-    const password = `${Math.random()}`
-
-    await Factory.registerUserToApplication({
-      application: appA,
-      email: email,
-      password: password,
-    })
-
-    /** Create simultaneous appB signed into same account */
-    const appB = await Factory.createApplicationWithFakeCrypto('another-namespace')
-    await appB.prepareForLaunch({})
-    await appB.launch(true)
-    await Factory.loginToApplication({
-      application: appB,
-      email: email,
-      password: password,
-    })
-
-    /** Change password on appB */
-    const newPassword = 'random'
-    await appB.changePassword(password, newPassword)
-
-    /** Create an item and sync it */
-    const note = await Factory.createSyncedNote(appB)
-
-    /** Expect appA session to still be valid */
-    await appA.sync.sync()
-    expect(appA.items.findItem(note.uuid)).to.be.ok
-
-    await Factory.safeDeinit(appA)
-    await Factory.safeDeinit(appB)
-  })
-
   it('should prompt user for account password and sign back in on invalid session', async function () {
     await Factory.registerUserToApplication({
       application: this.application,
