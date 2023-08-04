@@ -19,8 +19,8 @@ export const getAdjustedStylesForNonPortalPopover = (
 
   const parentRect = absoluteParent.getBoundingClientRect()
 
-  const adjustedTranslateX = parsedTranslateX - parentRect.left
-  const adjustedTranslateY = parsedTranslateY - parentRect.top
+  const adjustedTranslateX = Math.floor(parsedTranslateX - parentRect.left)
+  const adjustedTranslateY = Math.floor(parsedTranslateY - parentRect.top)
 
   return {
     ...styles,
