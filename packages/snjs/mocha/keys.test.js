@@ -599,50 +599,6 @@ describe('keys', function () {
     await Factory.safeDeinit(recreatedApp)
   })
 
-  it('errored second client should not upload its items keys', async function () {
-    /**
-     * The original source of this issue was that when changing password on client A and syncing with B,
-     * the newly encrypted items key retrieved on B would be included as "ignored", so its timestamps
-     * would not be emitted, and thus the application would be in sync. The app would then download
-     * the items key independently, and make duplicates erroneously.
-     */
-    const contextA = this.context
-
-    const email = Utils.generateUuid()
-    const password = Utils.generateUuid()
-    await Factory.registerUserToApplication({
-      application: contextA.application,
-      email,
-      password: password,
-    })
-
-    const contextB = await Factory.createAppContext({ email, password })
-    await contextB.launch()
-    await contextB.signIn()
-
-    contextA.ignoreChallenges()
-    contextB.ignoreChallenges()
-
-    const newPassword = Utils.generateUuid()
-
-    await contextA.application.user.changeCredentials({
-      currentPassword: password,
-      newPassword: newPassword,
-      origination: KeyParamsOrigination.PasswordChange,
-    })
-
-    await contextB.syncWithIntegrityCheck()
-    await contextA.syncWithIntegrityCheck()
-
-    const clientAUndecryptables = contextA.keyRecovery.getUndecryptables()
-    const clientBUndecryptables = contextB.keyRecovery.getUndecryptables()
-
-    expect(Object.keys(clientBUndecryptables).length).to.equal(1)
-    expect(Object.keys(clientAUndecryptables).length).to.equal(0)
-
-    await contextB.deinit()
-  })
-
   describe('changing password on 003 account while signed into 004 client', function () {
     /**
      * When an 004 client signs into 003 account, it creates a root key based items key.

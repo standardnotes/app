@@ -29,8 +29,8 @@ const getStylesFromRect = (
 
   return {
     willChange: 'transform',
-    '--translate-x': `${shouldApplyMobileWidth ? marginForMobile / 2 : rect.x}px`,
-    '--translate-y': `${rect.y}px`,
+    '--translate-x': `${shouldApplyMobileWidth ? marginForMobile / 2 : Math.floor(rect.x)}px`,
+    '--translate-y': `${Math.floor(rect.y)}px`,
     '--offset': `${options.offset}px`,
     transform: 'translate(var(--translate-x), var(--translate-y))',
     visibility: 'visible',

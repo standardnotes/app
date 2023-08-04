@@ -8,18 +8,18 @@ export const movePopoverToFitInsideRect = (popoverElement: HTMLElement, rect: DO
   const overflows = getOverflows(popoverRect, rect)
 
   if (overflows['top'] > 0) {
-    popoverElement.style.setProperty('--translate-y', `${y + overflows['top'] + offset}px`)
+    popoverElement.style.setProperty('--translate-y', `${Math.floor(y + overflows['top'] + offset)}px`)
   }
 
   if (overflows['bottom'] > 0) {
-    popoverElement.style.setProperty('--translate-y', `${y - overflows['bottom'] - offset}px`)
+    popoverElement.style.setProperty('--translate-y', `${Math.floor(y - overflows['bottom'] - offset)}px`)
   }
 
   if (overflows['left'] > 0) {
-    popoverElement.style.setProperty('--translate-x', `${x + overflows['left'] + offset}px`)
+    popoverElement.style.setProperty('--translate-x', `${Math.floor(x + overflows['left'] + offset)}px`)
   }
 
   if (overflows['right'] > 0) {
-    popoverElement.style.setProperty('--translate-x', `${x - overflows['right'] - offset}px`)
+    popoverElement.style.setProperty('--translate-x', `${Math.floor(x - overflows['right'] - offset)}px`)
   }
 }

@@ -27,7 +27,7 @@ const AlertDialog = ({
     <Dialog
       store={dialog}
       role="alertdialog"
-      className="fixed left-0 top-0 z-modal h-full w-full"
+      className="fixed left-0 top-0 z-modal h-full w-full flex items-center justify-center"
       modal={false}
       portal={true}
       preventBodyScroll={true}
@@ -40,7 +40,7 @@ const AlertDialog = ({
       />
       <div
         className={classNames(
-          'absolute left-1/2 top-1/2 z-[1] w-[95vw] -translate-x-1/2 -translate-y-1/2 rounded border border-border bg-default px-6 py-5 shadow-xl md:w-auto',
+          'w-[95vw] rounded border border-border bg-default px-6 py-5 shadow-xl md:w-auto',
           !className?.includes('max-w-') && 'max-w-[600px]',
           className,
         )}

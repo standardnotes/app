@@ -373,9 +373,16 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     void this.getThemeService().handleMobileColorSchemeChangeEvent()
   }
 
-  handleMobileKeyboardWillChangeFrameEvent(frame: { height: number; contentHeight: number }): void {
+  handleMobileKeyboardWillChangeFrameEvent(frame: {
+    height: number
+    contentHeight: number
+    isFloatingKeyboard: boolean
+  }): void {
     if (frame.contentHeight > 0) {
       setCustomViewportHeight(frame.contentHeight, 'px', true)
+    }
+    if (frame.isFloatingKeyboard) {
+      setCustomViewportHeight(100, 'vh', true)
     }
     this.notifyWebEvent(WebAppEvent.MobileKeyboardWillChangeFrame, frame)
   }
