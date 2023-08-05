@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.168.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.167.38...@standardnotes/web@3.168.0) (2023-08-05)
+
+### Features
+
+* Added translucency effect to menus, dialogs and alerts. Can be turned off from Preferences > Appeareance ([#2387](https://github.com/standardnotes/app/issues/2387)) [skip e2e] ([ec309d6](https://github.com/standardnotes/app/commit/ec309d6fb54c6cbb28414d1fe9d6119db5943d9c))
+
 ## [3.167.38](https://github.com/standardnotes/app/compare/@standardnotes/web@3.167.37...@standardnotes/web@3.167.38) (2023-08-04)
 
 **Note:** Version bump only for package @standardnotes/web

@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/web",
-  "version": "3.167.38",
+  "version": "3.168.0",
   "license": "CC BY-NC-SA 4.0",
   "main": "dist/app.js",
   "author": "Standard Notes",
