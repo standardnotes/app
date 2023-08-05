@@ -1,6 +1,6 @@
-import { MfaProvider, UserProvider } from '@/Components/Preferences/Providers'
 import { action, makeAutoObservable, observable } from 'mobx'
 import { TwoFactorActivation } from './TwoFactorActivation'
+import { MfaServiceInterface, SessionsClientInterface } from '@standardnotes/snjs'
 
 type TwoFactorStatus = 'two-factor-enabled' | TwoFactorActivation | 'two-factor-disabled'
 
@@ -17,8 +17,8 @@ export class TwoFactorAuth {
   private _errorMessage: string | null
 
   constructor(
-    private readonly mfaProvider: MfaProvider,
-    private readonly userProvider: UserProvider,
+    private readonly sessions: SessionsClientInterface,
+    private readonly mfa: MfaServiceInterface,
   ) {
     this._errorMessage = null
 
@@ -40,13 +40,13 @@ export class TwoFactorAuth {
       this._status = 'two-factor-enabled'
       this.fetchStatus()
     })
-    this.mfaProvider
+    this.mfa
       .generateMfaSecret()
       .then(
         action((secret) => {
           this._status = new TwoFactorActivation(
-            this.mfaProvider,
-            this.userProvider.getUser()?.email as string,
+            this.mfa,
+            this.sessions.getUser()?.email as string,
             secret,
             setDisabled,
             setEnabled,
@@ -61,7 +61,7 @@ export class TwoFactorAuth {
   }
 
   private deactivate2FA(): void {
-    this.mfaProvider
+    this.mfa
       .disableMfa()
       .then(
         action(() => {
@@ -76,7 +76,7 @@ export class TwoFactorAuth {
   }
 
   isLoggedIn(): boolean {
-    return this.userProvider.getUser() != undefined
+    return this.sessions.getUser() != undefined
   }
 
   fetchStatus(): void {
@@ -84,7 +84,7 @@ export class TwoFactorAuth {
       return
     }
 
-    this.mfaProvider
+    this.mfa
       .isMfaActivated()
       .then(
         action((active) => {

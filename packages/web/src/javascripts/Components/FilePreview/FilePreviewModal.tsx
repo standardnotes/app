@@ -227,9 +227,6 @@ const FilePreviewModal = observer(({ application }: Props) => {
             >
               <Menu a11yLabel="File context menu" isOpen={showOptionsMenu}>
                 <FileMenuOptions
-                  filesController={application.filesController}
-                  linkingController={application.linkingController}
-                  navigationController={application.navigationController}
                   selectedFiles={[currentFile]}
                   closeMenu={closeOptionsMenu}
                   shouldShowRenameOption={false}

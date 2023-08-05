@@ -294,18 +294,6 @@ const PanesSystemComponent = () => {
               key={'content-list-view'}
               application={application}
               onPanelWidthLoad={handleInitialItemsListPanelWidthLoad}
-              accountMenuController={application.accountMenuController}
-              filesController={application.filesController}
-              itemListController={application.itemListController}
-              navigationController={application.navigationController}
-              noAccountWarningController={application.noAccountWarningController}
-              notesController={application.notesController}
-              selectionController={application.selectionController}
-              searchOptionsController={application.searchOptionsController}
-              linkingController={application.linkingController}
-              featuresController={application.featuresController}
-              historyModalController={application.historyModalController}
-              paneController={application.paneController}
             >
               {showPanelResizers && listRef && (
                 <PanelResizer

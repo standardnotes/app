@@ -3,13 +3,13 @@ import { ChallengePrompt } from '@standardnotes/services'
 import { RefObject, useState } from 'react'
 
 import { WebApplication } from '@/Application/WebApplication'
-import { isAndroid } from '@/Utils'
 
 import Button from '../Button/Button'
 import Icon from '../Icon/Icon'
 
 import { InputValue } from './InputValue'
 import U2FPromptIframeContainer from './U2FPromptIframeContainer'
+import { isAndroid } from '@standardnotes/ui-services'
 
 type Props = {
   application: WebApplication
@@ -60,9 +60,9 @@ const U2FPrompt = ({ application, onValueChange, prompt, buttonRef, contextData 
               }
               const authenticatorOptions = authenticatorOptionsOrError.getValue()
 
-              authenticatorResponse = await application
-                .mobileDevice()
-                .authenticateWithU2F(JSON.stringify(authenticatorOptions))
+              authenticatorResponse = await application.mobileDevice.authenticateWithU2F(
+                JSON.stringify(authenticatorOptions),
+              )
             } else {
               const authenticatorResponseOrError = await application.getAuthenticatorAuthenticationResponse.execute({
                 username: username.value,

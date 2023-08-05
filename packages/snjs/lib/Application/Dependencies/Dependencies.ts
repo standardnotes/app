@@ -11,7 +11,7 @@ import { GetRecoveryCodes } from '../../Domain/UseCase/GetRecoveryCodes/GetRecov
 import { SignInWithRecoveryCodes } from '../../Domain/UseCase/SignInWithRecoveryCodes/SignInWithRecoveryCodes'
 import { ListedService } from '../../Services/Listed/ListedService'
 import { MigrationService } from '../../Services/Migration/MigrationService'
-import { SNMfaService } from '../../Services/Mfa/MfaService'
+import { MfaService } from '../../Services/Mfa/MfaService'
 import { SNComponentManager } from '../../Services/ComponentManager/ComponentManager'
 import { FeaturesService } from '@Lib/Services/Features/FeaturesService'
 import { SettingsService } from '../../Services/Settings/SNSettingsService'
@@ -1094,7 +1094,7 @@ export class Dependencies {
     })
 
     this.factory.set(TYPES.MfaService, () => {
-      return new SNMfaService(
+      return new MfaService(
         this.get<SettingsService>(TYPES.SettingsService),
         this.get<PureCryptoInterface>(TYPES.Crypto),
         this.get<FeaturesService>(TYPES.FeaturesService),

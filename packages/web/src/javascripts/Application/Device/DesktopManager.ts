@@ -90,7 +90,7 @@ export class DesktopManager
     }
   }
 
-  async saveDesktopBackup() {
+  async saveDesktopBackup(): Promise<void> {
     this.webApplication.notifyWebEvent(WebAppEvent.BeganBackupDownload)
 
     const data = await this.getBackupFile()
@@ -149,12 +149,12 @@ export class DesktopManager
     }
   }
 
-  searchText(text?: string) {
+  searchText(text?: string): void {
     this.lastSearchedText = text
     this.device.onSearch(text)
   }
 
-  redoSearch() {
+  redoSearch(): void {
     if (this.lastSearchedText) {
       this.searchText(this.lastSearchedText)
     }

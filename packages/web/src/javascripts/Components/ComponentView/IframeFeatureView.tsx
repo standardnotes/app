@@ -153,7 +153,7 @@ const IframeFeatureView: FunctionComponent<Props> = ({ onLoad, componentViewer, 
           application.keyboardService.handleComponentKeyUp(data.keyboardModifier)
           break
         case ComponentAction.Click:
-          application.controllers.notesController.setContextMenuOpen(false)
+          application.notesController.setContextMenuOpen(false)
           break
         default:
           return
@@ -165,13 +165,13 @@ const IframeFeatureView: FunctionComponent<Props> = ({ onLoad, componentViewer, 
   }, [componentViewer, application])
 
   useEffect(() => {
-    const unregisterDesktopObserver = application
-      .getDesktopService()
-      ?.registerUpdateObserver((updatedComponent: ComponentInterface) => {
+    const unregisterDesktopObserver = application.desktopManager?.registerUpdateObserver(
+      (updatedComponent: ComponentInterface) => {
         if (updatedComponent.uuid === uiFeature.uniqueIdentifier.value) {
           requestReload?.(componentViewer)
         }
-      })
+      },
+    )
 
     return () => {
       unregisterDesktopObserver?.()

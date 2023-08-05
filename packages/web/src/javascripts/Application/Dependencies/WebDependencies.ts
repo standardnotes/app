@@ -19,7 +19,6 @@ import { DependencyContainer } from './Dependencies'
 import { Web_TYPES } from './Types'
 import { BackupServiceInterface, isDesktopDevice } from '@standardnotes/snjs'
 import { DesktopManager } from '../Device/DesktopManager'
-import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { MomentsService } from '@/Controllers/Moments/MomentsService'
 import { PersistenceService } from '@/Controllers/Abstract/PersistenceService'
 import { FilePreviewModalController } from '@/Controllers/FilePreviewModalController'
@@ -90,7 +89,16 @@ export class WebDependencies extends DependencyContainer {
     this.bind(Web_TYPES.Application, () => this.application)
 
     this.bind(Web_TYPES.ItemGroupController, () => {
-      return new ItemGroupController(application.items)
+      return new ItemGroupController(
+        application.items,
+        application.mutator,
+        application.sync,
+        application.sessions,
+        application.preferences,
+        application.componentManager,
+        application.alerts,
+        this.get<IsNativeMobileWeb>(Web_TYPES.IsNativeMobileWeb),
+      )
     })
 
     this.bind(Web_TYPES.RouteService, () => {
@@ -117,16 +125,6 @@ export class WebDependencies extends DependencyContainer {
       return isDesktopDevice(application.device)
         ? new DesktopManager(application, application.device, application.fileBackups as BackupServiceInterface)
         : undefined
-    })
-
-    this.bind(Web_TYPES.ViewControllerManager, () => {
-      return new ViewControllerManager(
-        this.get<PersistenceService>(Web_TYPES.PersistenceService),
-        this.get<SelectedItemsController>(Web_TYPES.SelectedItemsController),
-        this.get<NavigationController>(Web_TYPES.NavigationController),
-        application.sync,
-        application.events,
-      )
     })
 
     this.bind(Web_TYPES.ChangelogService, () => {
@@ -156,7 +154,14 @@ export class WebDependencies extends DependencyContainer {
     })
 
     this.bind(Web_TYPES.PersistenceService, () => {
-      return new PersistenceService(application.storage, application.items, application.sync, application.events)
+      return new PersistenceService(
+        this.get<SelectedItemsController>(Web_TYPES.SelectedItemsController),
+        this.get<NavigationController>(Web_TYPES.NavigationController),
+        application.storage,
+        application.items,
+        application.sync,
+        application.events,
+      )
     })
 
     this.bind(Web_TYPES.FilePreviewModalController, () => {
@@ -222,10 +227,6 @@ export class WebDependencies extends DependencyContainer {
         application.changeAndSaveItem,
         application.events,
       )
-    })
-
-    this.bind(Web_TYPES.ItemGroupController, () => {
-      return new ItemGroupController(application.items)
     })
 
     this.bind(Web_TYPES.NotesController, () => {
@@ -309,7 +310,7 @@ export class WebDependencies extends DependencyContainer {
         application.subscriptions,
         application.legacyApi,
         application.alerts,
-        application.mobileDevice(),
+        application.mobileDevice,
         this.get<LoadPurchaseFlowUrl>(Web_TYPES.LoadPurchaseFlowUrl),
         this.get<IsNativeIOS>(Web_TYPES.IsNativeIOS),
         application.events,
@@ -345,7 +346,7 @@ export class WebDependencies extends DependencyContainer {
         application.protections,
         application.alerts,
         application.platform,
-        application.mobileDevice(),
+        application.mobileDevice,
         this.get<IsNativeMobileWeb>(Web_TYPES.IsNativeMobileWeb),
         application.events,
       )

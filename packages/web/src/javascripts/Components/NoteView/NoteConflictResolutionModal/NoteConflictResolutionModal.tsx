@@ -105,7 +105,7 @@ const NoteConflictResolutionModal = ({
         mutator.conflictOf = undefined
       })
       setIsPerformingAction(false)
-      void application.controllers.selectionController.selectItem(selectedNotes[0].uuid, true)
+      void application.selectionController.selectItem(selectedNotes[0].uuid, true)
       void application.sync.sync()
       close()
     }

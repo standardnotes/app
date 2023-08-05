@@ -11,14 +11,29 @@ import { HistoryModalMobileTab } from './utils'
 import MobileModalAction from '../Modal/MobileModalAction'
 import Popover from '../Popover/Popover'
 import MobileModalHeader from '../Modal/MobileModalHeader'
+import { useApplication } from '../ApplicationProvider'
 
-const HistoryModalDialogContent = ({
-  application,
-  dismissModal,
-  note,
-  selectionController,
-}: RevisionHistoryModalContentProps) => {
-  const [noteHistoryController] = useState(() => new NoteHistoryController(application, note, selectionController))
+const HistoryModalDialogContent = ({ dismissModal, note }: RevisionHistoryModalContentProps) => {
+  const application = useApplication()
+
+  const [noteHistoryController] = useState(
+    () =>
+      new NoteHistoryController(
+        note,
+        application.selectionController,
+        application.features,
+        application.items,
+        application.mutator,
+        application.sync,
+        application.actions,
+        application.history,
+        application.alerts,
+        application.getRevision,
+        application.listRevisions,
+        application.deleteRevision,
+        application.changeAndSaveItem,
+      ),
+  )
 
   const [selectedMobileTab, setSelectedMobileTab] = useState<HistoryModalMobileTab>('List')
   const tabOptionRef = useRef<HTMLButtonElement>(null)

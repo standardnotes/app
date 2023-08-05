@@ -14,6 +14,7 @@ import {
   ItemInterface,
   InternalFeatureService,
   InternalFeature,
+  PreferenceServiceInterface,
 } from '@standardnotes/snjs'
 import { FilesController } from './FilesController'
 import { ItemListController } from './ItemList/ItemListController'
@@ -46,15 +47,8 @@ const createFile = (name: string, options?: Partial<FileItem>) => {
 }
 
 describe('LinkingController', () => {
-  let linkingController: LinkingController
   let application: WebApplication
-  let navigationController: NavigationController
-  let selectionController: SelectedItemsController
   let eventBus: InternalEventBus
-
-  let itemListController: ItemListController
-  let filesController: FilesController
-  let subscriptionController: SubscriptionController
 
   beforeEach(() => {
     application = {
@@ -62,7 +56,15 @@ describe('LinkingController', () => {
       alerts: {} as jest.Mocked<WebApplication['alerts']>,
       sync: {} as jest.Mocked<WebApplication['sync']>,
       mutator: {} as jest.Mocked<WebApplication['mutator']>,
+      preferences: {
+        getValue: jest.fn().mockReturnValue(true),
+      } as unknown as jest.Mocked<PreferenceServiceInterface>,
       itemControllerGroup: {} as jest.Mocked<WebApplication['itemControllerGroup']>,
+      navigationController: {} as jest.Mocked<NavigationController>,
+      selectionController: {} as jest.Mocked<SelectedItemsController>,
+      itemListController: {} as jest.Mocked<ItemListController>,
+      filesController: {} as jest.Mocked<FilesController>,
+      subscriptionController: {} as jest.Mocked<SubscriptionController>,
     } as unknown as jest.Mocked<WebApplication>
 
     application.getPreference = jest.fn()
@@ -71,18 +73,31 @@ describe('LinkingController', () => {
 
     Object.defineProperty(application, 'items', { value: {} as jest.Mocked<ItemManagerInterface> })
 
-    navigationController = {} as jest.Mocked<NavigationController>
-
-    selectionController = {} as jest.Mocked<SelectedItemsController>
-
     eventBus = {} as jest.Mocked<InternalEventBus>
+    eventBus.addEventHandler = jest.fn()
 
-    itemListController = {} as jest.Mocked<ItemListController>
-    filesController = {} as jest.Mocked<FilesController>
-    subscriptionController = {} as jest.Mocked<SubscriptionController>
+    Object.defineProperty(application, 'linkingController', {
+      get: () =>
+        new LinkingController(
+          application.navigationController,
+          application.itemControllerGroup,
+          application.selectionController,
+          application.vaultDisplayService,
+          application.preferences,
+          application.items,
+          application.mutator,
+          application.sync,
+          application.vaults,
+          eventBus,
+        ),
+      configurable: true,
+    })
 
-    linkingController = new LinkingController(application, navigationController, selectionController, eventBus)
-    linkingController.setServicesPostConstruction(itemListController, filesController, subscriptionController)
+    application.linkingController.setServicesPostConstruction(
+      application.itemListController,
+      application.filesController,
+      application.subscriptionController,
+    )
   })
 
   describe('isValidSearchResult', () => {
@@ -256,7 +271,7 @@ describe('LinkingController', () => {
         return undefined
       })
 
-      await linkingController.linkItems(note, file)
+      await application.linkingController.linkItems(note, file)
 
       expect(moveToVaultSpy).toHaveBeenCalled()
     })

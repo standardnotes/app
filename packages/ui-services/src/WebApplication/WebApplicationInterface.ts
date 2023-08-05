@@ -10,7 +10,6 @@ import { RouteServiceInterface } from '../Route/RouteServiceInterface'
 
 export interface WebApplicationInterface extends ApplicationInterface {
   notifyWebEvent(event: WebAppEvent, data?: unknown): void
-  getDesktopService(): DesktopManagerInterface | undefined
   handleMobileEnteringBackgroundEvent(): Promise<void>
   handleMobileGainingFocusEvent(): Promise<void>
   handleMobileLosingFocusEvent(): Promise<void>
@@ -26,7 +25,6 @@ export interface WebApplicationInterface extends ApplicationInterface {
   handleReceivedTextEvent(item: { text: string; title?: string }): Promise<void>
   handleReceivedLinkEvent(item: { link: string; title: string }): Promise<void>
   isNativeMobileWeb(): boolean
-  mobileDevice(): MobileDeviceInterface
   handleAndroidBackButtonPressed(): void
   addAndroidBackHandlerEventListener(listener: () => boolean): (() => void) | undefined
   setAndroidBackHandlerFallbackListener(listener: () => boolean): void
@@ -34,6 +32,8 @@ export interface WebApplicationInterface extends ApplicationInterface {
   generateUUID(): string
   checkForSecurityUpdate(): Promise<boolean>
 
+  get desktopManager(): DesktopManagerInterface | undefined
+  get mobileDevice(): MobileDeviceInterface
   get isMobileDevice(): boolean
   get desktopDevice(): DesktopDeviceInterface | undefined
   get keyboardService(): KeyboardService

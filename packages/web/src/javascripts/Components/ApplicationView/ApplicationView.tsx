@@ -49,7 +49,7 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
   const currentLoadErrorDialog = useRef<Promise<void> | null>(null)
 
   useEffect(() => {
-    const desktopService = application.getDesktopService()
+    const desktopService = application.desktopManager
 
     if (desktopService) {
       application.componentManager.setDesktopManager(desktopService)
@@ -249,8 +249,6 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
                     <FileContextMenuWrapper
                       filesController={application.filesController}
                       selectionController={application.selectionController}
-                      navigationController={application.navigationController}
-                      linkingController={application.linkingController}
                     />
                     <PurchaseFlowWrapper application={application} />
                     <ConfirmSignoutContainer applicationGroup={mainApplicationGroup} application={application} />

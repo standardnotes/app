@@ -14,22 +14,13 @@ import { observer } from 'mobx-react-lite'
 import { forwardRef, useCallback, useEffect, useMemo } from 'react'
 import ContentList from '@/Components/ContentListView/ContentList'
 import NoAccountWarning from '@/Components/NoAccountWarning/NoAccountWarning'
-import { ItemListController } from '@/Controllers/ItemList/ItemListController'
-import { SelectedItemsController } from '@/Controllers/SelectedItemsController'
-import { NavigationController } from '@/Controllers/Navigation/NavigationController'
-import { FilesController } from '@/Controllers/FilesController'
-import { NoAccountWarningController } from '@/Controllers/NoAccountWarningController'
-import { NotesController } from '@/Controllers/NotesController/NotesController'
-import { AccountMenuController } from '@/Controllers/AccountMenu/AccountMenuController'
 import { ElementIds } from '@/Constants/ElementIDs'
 import ContentListHeader from './Header/ContentListHeader'
 import { AppPaneId } from '../Panes/AppPaneMetadata'
 import { useResponsiveAppPane } from '../Panes/ResponsivePaneProvider'
 import SearchBar from '../SearchBar/SearchBar'
-import { SearchOptionsController } from '@/Controllers/SearchOptionsController'
 import { classNames } from '@standardnotes/utils'
 import { useFileDragNDrop } from '../FileDragNDropProvider'
-import { LinkingController } from '@/Controllers/LinkingController'
 import DailyContentList from './Daily/DailyContentList'
 import { ListableContentItem } from './Types/ListableContentItem'
 import { FeatureName } from '@/Controllers/FeatureName'
@@ -37,29 +28,14 @@ import { PanelResizedData } from '@/Types/PanelResizedData'
 import { useForwardedRef } from '@/Hooks/useForwardedRef'
 import FloatingAddButton from './FloatingAddButton'
 import ContentTableView from '../ContentTableView/ContentTableView'
-import { FeaturesController } from '@/Controllers/FeaturesController'
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
-import { HistoryModalController } from '@/Controllers/NoteHistory/HistoryModalController'
-import { PaneController } from '@/Controllers/PaneController/PaneController'
 import EmptyFilesView from './EmptyFilesView'
 import { PaneLayout } from '@/Controllers/PaneController/PaneLayout'
 import { usePaneSwipeGesture } from '../Panes/usePaneGesture'
 import { mergeRefs } from '@/Hooks/mergeRefs'
 
 type Props = {
-  accountMenuController: AccountMenuController
   application: WebApplication
-  filesController: FilesController
-  itemListController: ItemListController
-  navigationController: NavigationController
-  noAccountWarningController: NoAccountWarningController
-  notesController: NotesController
-  selectionController: SelectedItemsController
-  searchOptionsController: SearchOptionsController
-  linkingController: LinkingController
-  featuresController: FeaturesController
-  historyModalController: HistoryModalController
-  paneController: PaneController
   className?: string
   id: string
   children?: React.ReactNode
@@ -67,28 +43,19 @@ type Props = {
 }
 
 const ContentListView = forwardRef<HTMLDivElement, Props>(
-  (
-    {
+  ({ application, className, id, children, onPanelWidthLoad }, ref) => {
+    const {
+      paneController,
       accountMenuController,
-      application,
       filesController,
       itemListController,
       navigationController,
       noAccountWarningController,
-      notesController,
       selectionController,
       searchOptionsController,
       linkingController,
-      featuresController,
-      historyModalController,
-      paneController,
-      className,
-      id,
-      children,
-      onPanelWidthLoad,
-    },
-    ref,
-  ) => {
+    } = application
+
     const { setPaneLayout, panes } = useResponsiveAppPane()
     const { selectedUuids, selectNextItem, selectPreviousItem } = selectionController
     const { selected: selectedTag, selectedAsTag } = navigationController
@@ -371,29 +338,13 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
         ) : null}
         {!dailyMode && renderedItems.length ? (
           shouldUseTableView ? (
-            <ContentTableView
-              items={items}
-              application={application}
-              filesController={filesController}
-              featuresController={featuresController}
-              linkingController={linkingController}
-              navigationController={navigationController}
-              notesController={notesController}
-              historyModalController={historyModalController}
-              itemListController={itemListController}
-              selectionController={selectionController}
-            />
+            <ContentTableView items={items} application={application} />
           ) : (
             <ContentList
               items={renderedItems}
               selectedUuids={selectedUuids}
               application={application}
               paginate={paginate}
-              filesController={filesController}
-              itemListController={itemListController}
-              navigationController={navigationController}
-              notesController={notesController}
-              selectionController={selectionController}
             />
           )
         ) : null}

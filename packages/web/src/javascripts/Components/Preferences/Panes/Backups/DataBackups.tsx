@@ -76,7 +76,7 @@ const DataBackups = ({ application }: Props) => {
       void downloadOrShareBlobBasedOnPlatform({
         archiveService: application.archiveService,
         platform: application.platform,
-        mobileDevice: application.mobileDevice(),
+        mobileDevice: application.mobileDevice,
         blob: blobData,
         filename: sanitizedFilename,
         isNativeMobileWeb: application.isNativeMobileWeb(),
@@ -89,7 +89,7 @@ const DataBackups = ({ application }: Props) => {
       void downloadOrShareBlobBasedOnPlatform({
         archiveService: application.archiveService,
         platform: application.platform,
-        mobileDevice: application.mobileDevice(),
+        mobileDevice: application.mobileDevice,
         blob: zippedDecryptedItemsBlob,
         filename: sanitizedFilename,
         isNativeMobileWeb: application.isNativeMobileWeb(),

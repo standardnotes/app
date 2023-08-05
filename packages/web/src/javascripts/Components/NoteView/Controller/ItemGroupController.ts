@@ -1,8 +1,19 @@
 import { removeFromArray } from '@standardnotes/utils'
-import { FileItem, ItemManagerInterface, SNNote } from '@standardnotes/snjs'
+import {
+  AlertService,
+  ComponentManagerInterface,
+  FileItem,
+  ItemManagerInterface,
+  MutatorClientInterface,
+  PreferenceServiceInterface,
+  SNNote,
+  SessionsClientInterface,
+  SyncServiceInterface,
+} from '@standardnotes/snjs'
 import { NoteViewController } from './NoteViewController'
 import { FileViewController } from './FileViewController'
 import { TemplateNoteViewControllerOptions } from './TemplateNoteViewControllerOptions'
+import { IsNativeMobileWeb } from '@standardnotes/ui-services'
 
 type ItemControllerGroupChangeCallback = (activeController: NoteViewController | FileViewController | undefined) => void
 
@@ -11,7 +22,16 @@ export class ItemGroupController {
   changeObservers: ItemControllerGroupChangeCallback[] = []
   eventObservers: (() => void)[] = []
 
-  constructor(private items: ItemManagerInterface) {}
+  constructor(
+    private items: ItemManagerInterface,
+    private mutator: MutatorClientInterface,
+    private sync: SyncServiceInterface,
+    private sessions: SessionsClientInterface,
+    private preferences: PreferenceServiceInterface,
+    private components: ComponentManagerInterface,
+    private alerts: AlertService,
+    private _isNativeMobileWeb: IsNativeMobileWeb,
+  ) {}
 
   public deinit(): void {
     ;(this.items as unknown) = undefined
@@ -41,11 +61,32 @@ export class ItemGroupController {
     let controller!: NoteViewController | FileViewController
 
     if (context.file) {
-      controller = new FileViewController(this.items, context.file)
+      controller = new FileViewController(context.file, this.items)
     } else if (context.note) {
-      controller = new NoteViewController(this.items, context.note)
+      controller = new NoteViewController(
+        context.note,
+        this.items,
+        this.mutator,
+        this.sync,
+        this.sessions,
+        this.preferences,
+        this.components,
+        this.alerts,
+        this._isNativeMobileWeb,
+      )
     } else if (context.templateOptions) {
-      controller = new NoteViewController(this.items, undefined, context.templateOptions)
+      controller = new NoteViewController(
+        undefined,
+        this.items,
+        this.mutator,
+        this.sync,
+        this.sessions,
+        this.preferences,
+        this.components,
+        this.alerts,
+        this._isNativeMobileWeb,
+        context.templateOptions,
+      )
     } else {
       throw Error('Invalid input to createItemController')
     }

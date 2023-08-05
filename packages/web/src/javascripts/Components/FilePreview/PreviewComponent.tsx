@@ -61,7 +61,7 @@ const PreviewComponent: FunctionComponent<Props> = ({
     const sanitizedName = sanitizeFileName(name)
     const filename = `${sanitizedName}.${ext}`
 
-    void application.mobileDevice().previewFile(fileBase64, filename)
+    void application.mobileDevice.previewFile(fileBase64, filename)
   }, [application, bytes, file.mimeType, file.name, isNativeMobileWeb])
 
   if (isNativeMobileWeb && requiresNativePreview) {

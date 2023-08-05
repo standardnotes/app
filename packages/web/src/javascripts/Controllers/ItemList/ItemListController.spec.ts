@@ -1,5 +1,5 @@
-import { ContentType, SNTag } from '@standardnotes/snjs'
-import { InternalEventBus } from '@standardnotes/services'
+import { ContentType, Result, SNTag } from '@standardnotes/snjs'
+import { InternalEventBus, ItemManagerInterface } from '@standardnotes/services'
 import { WebApplication } from '@/Application/WebApplication'
 import { NavigationController } from '../Navigation/NavigationController'
 import { NotesController } from '../NotesController/NotesController'
@@ -7,32 +7,44 @@ import { SearchOptionsController } from '../SearchOptionsController'
 import { SelectedItemsController } from '../SelectedItemsController'
 import { ItemListController } from './ItemListController'
 import { ItemsReloadSource } from './ItemsReloadSource'
+import { IsNativeMobileWeb } from '@standardnotes/ui-services'
 
 describe('item list controller', () => {
   let application: WebApplication
   let controller: ItemListController
-  let navigationController: NavigationController
-  let selectionController: SelectedItemsController
 
   beforeEach(() => {
-    application = {} as jest.Mocked<WebApplication>
+    application = {
+      navigationController: {} as jest.Mocked<NavigationController>,
+      selectionController: {} as jest.Mocked<SelectedItemsController>,
+      searchOptionsController: {} as jest.Mocked<SearchOptionsController>,
+      notesController: {} as jest.Mocked<NotesController>,
+      isNativeMobileWebUseCase: {
+        execute: jest.fn().mockReturnValue(Result.ok(false)),
+      } as unknown as jest.Mocked<IsNativeMobileWeb>,
+      items: {
+        streamItems: jest.fn(),
+      } as unknown as jest.Mocked<ItemManagerInterface>,
+    } as unknown as jest.Mocked<WebApplication>
+
     application.addEventObserver = jest.fn()
     application.addWebEventObserver = jest.fn()
     application.isNativeMobileWeb = jest.fn().mockReturnValue(false)
 
-    navigationController = {} as jest.Mocked<NavigationController>
-    selectionController = {} as jest.Mocked<SelectedItemsController>
-
-    const searchOptionsController = {} as jest.Mocked<SearchOptionsController>
-    const notesController = {} as jest.Mocked<NotesController>
     const eventBus = new InternalEventBus()
 
     controller = new ItemListController(
-      application,
-      navigationController,
-      searchOptionsController,
-      selectionController,
-      notesController,
+      application.navigationController,
+      application.searchOptionsController,
+      application.selectionController,
+      application.notesController,
+      application.items,
+      application.preferences,
+      application.itemControllerGroup,
+      application.vaultDisplayService,
+      application.desktopManager,
+      application.isNativeMobileWebUseCase,
+      application.changeAndSaveItem,
       eventBus,
     )
   })
@@ -41,14 +53,14 @@ describe('item list controller', () => {
     beforeEach(() => {
       controller.getFirstNonProtectedItem = jest.fn()
 
-      Object.defineProperty(selectionController, 'selectedUuids', {
+      Object.defineProperty(application.selectionController, 'selectedUuids', {
         get: () => new Set(),
         configurable: true,
       })
     })
 
-    it('should return false is platform is native mobile web', () => {
-      application.isNativeMobileWeb = jest.fn().mockReturnValue(true)
+    it('should return false if platform is native mobile web', () => {
+      application.isNativeMobileWebUseCase.execute = jest.fn().mockReturnValue(Result.ok(true))
 
       expect(controller.shouldSelectFirstItem(ItemsReloadSource.TagChange)).toBe(false)
     })
@@ -67,7 +79,7 @@ describe('item list controller', () => {
         content_type: ContentType.TYPES.Tag,
       } as jest.Mocked<SNTag>
 
-      Object.defineProperty(navigationController, 'selected', {
+      Object.defineProperty(application.navigationController, 'selected', {
         get: () => tag,
       })
 
@@ -79,7 +91,7 @@ describe('item list controller', () => {
         content_type: ContentType.TYPES.Tag,
       } as jest.Mocked<SNTag>
 
-      Object.defineProperty(navigationController, 'selected', {
+      Object.defineProperty(application.navigationController, 'selected', {
         get: () => tag,
       })
 
@@ -91,11 +103,11 @@ describe('item list controller', () => {
         content_type: ContentType.TYPES.Tag,
       } as jest.Mocked<SNTag>
 
-      Object.defineProperty(selectionController, 'selectedUuids', {
+      Object.defineProperty(application.selectionController, 'selectedUuids', {
         get: () => new Set(['123']),
       })
 
-      Object.defineProperty(navigationController, 'selected', {
+      Object.defineProperty(application.navigationController, 'selected', {
         get: () => tag,
       })
 

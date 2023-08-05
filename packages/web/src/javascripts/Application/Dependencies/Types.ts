@@ -9,7 +9,6 @@ export const Web_TYPES = {
   ThemeManager: Symbol.for('ThemeManager'),
   AutolockService: Symbol.for('AutolockService'),
   DesktopManager: Symbol.for('DesktopManager'),
-  ViewControllerManager: Symbol.for('ViewControllerManager'),
   ChangelogService: Symbol.for('ChangelogService'),
   MomentsService: Symbol.for('MomentsService'),
   VaultDisplayService: Symbol.for('VaultDisplayService'),

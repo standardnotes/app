@@ -90,7 +90,7 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
         })
       }
 
-      await application.controllers.itemListController.insertCurrentIfTemplate()
+      await application.itemListController.insertCurrentIfTemplate()
 
       await application.changeAndSaveItem.execute(note, (mutator) => {
         const noteMutator = mutator as NoteMutator

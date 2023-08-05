@@ -9,13 +9,17 @@ import {
   StorageServiceInterface,
   SyncServiceInterface,
 } from '@standardnotes/snjs'
-import { PersistedStateValue, StorageKey } from '@standardnotes/ui-services'
+import { PersistedStateValue, PersistenceKey, StorageKey } from '@standardnotes/ui-services'
 import { CrossControllerEvent } from '../CrossControllerEvent'
+import { SelectedItemsController } from '../SelectedItemsController'
+import { NavigationController } from '../Navigation/NavigationController'
 
 export class PersistenceService implements InternalEventHandlerInterface {
   private didHydrateOnce = false
 
   constructor(
+    private selectionController: SelectedItemsController,
+    private navigationController: NavigationController,
     private storage: StorageServiceInterface,
     private items: ItemManagerInterface,
     private sync: SyncServiceInterface,
@@ -23,6 +27,8 @@ export class PersistenceService implements InternalEventHandlerInterface {
   ) {
     eventBus.addEventHandler(this, ApplicationEvent.LocalDataLoaded)
     eventBus.addEventHandler(this, ApplicationEvent.LocalDataIncrementalLoad)
+    eventBus.addEventHandler(this, CrossControllerEvent.HydrateFromPersistedValues)
+    eventBus.addEventHandler(this, CrossControllerEvent.RequestValuePersistence)
   }
 
   async handleEvent(event: InternalEventInterface): Promise<void> {
@@ -46,6 +52,16 @@ export class PersistenceService implements InternalEventHandlerInterface {
         this.didHydrateOnce = true
         break
       }
+
+      case CrossControllerEvent.HydrateFromPersistedValues: {
+        this.hydrateFromPersistedValues(event.payload as PersistedStateValue | undefined)
+        break
+      }
+
+      case CrossControllerEvent.RequestValuePersistence: {
+        this.persistCurrentState()
+        break
+      }
     }
   }
 
@@ -58,6 +74,35 @@ export class PersistenceService implements InternalEventHandlerInterface {
       type: CrossControllerEvent.HydrateFromPersistedValues,
       payload: this.persistenceEnabled ? this.getPersistedValues() : undefined,
     })
+  }
+
+  persistCurrentState(): void {
+    const values: PersistedStateValue = {
+      [PersistenceKey.SelectedItemsController]: this.selectionController.getPersistableValue(),
+      [PersistenceKey.NavigationController]: this.navigationController.getPersistableValue(),
+    }
+
+    this.persistValues(values)
+
+    const selectedItemsState = values['selected-items-controller']
+    const navigationSelectionState = values['navigation-controller']
+    const launchPriorityUuids: string[] = []
+    if (selectedItemsState.selectedUuids.length) {
+      launchPriorityUuids.push(...selectedItemsState.selectedUuids)
+    }
+    if (navigationSelectionState.selectedTagUuid) {
+      launchPriorityUuids.push(navigationSelectionState.selectedTagUuid)
+    }
+
+    this.sync.setLaunchPriorityUuids(launchPriorityUuids)
+  }
+
+  hydrateFromPersistedValues(values: PersistedStateValue | undefined): void {
+    const navigationState = values?.[PersistenceKey.NavigationController]
+    this.navigationController.hydrateFromPersistedValue(navigationState)
+
+    const selectedItemsState = values?.[PersistenceKey.SelectedItemsController]
+    this.selectionController.hydrateFromPersistedValue(selectedItemsState)
   }
 
   persistValues(values: PersistedStateValue): void {

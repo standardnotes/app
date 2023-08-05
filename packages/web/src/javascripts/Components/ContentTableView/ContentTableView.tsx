@@ -1,5 +1,4 @@
 import { WebApplication } from '@/Application/WebApplication'
-import { FilesController } from '@/Controllers/FilesController'
 import { formatDateForContextMenu } from '@/Utils/DateUtils'
 import { getIconForFileType } from '@/Utils/Items/Icons/getIconForFileType'
 import { formatSizeToReadableString } from '@standardnotes/filepicker'
@@ -28,38 +27,15 @@ import FileMenuOptions from '../FileContextMenu/FileMenuOptions'
 import Icon from '../Icon/Icon'
 import LinkedItemBubble from '../LinkedItems/LinkedItemBubble'
 import LinkedItemsPanel from '../LinkedItems/LinkedItemsPanel'
-import { LinkingController } from '@/Controllers/LinkingController'
-import { FeaturesController } from '@/Controllers/FeaturesController'
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 import { useApplication } from '../ApplicationProvider'
-import { NavigationController } from '@/Controllers/Navigation/NavigationController'
 import { getIconAndTintForNoteType } from '@/Utils/Items/Icons/getIconAndTintForNoteType'
 import NotesOptions from '../NotesOptions/NotesOptions'
-import { NotesController } from '@/Controllers/NotesController/NotesController'
-import { HistoryModalController } from '@/Controllers/NoteHistory/HistoryModalController'
 import { useItemLinks } from '@/Hooks/useItemLinks'
 import { ItemLink } from '@/Utils/Items/Search/ItemLink'
-import { ItemListController } from '@/Controllers/ItemList/ItemListController'
 import ListItemVaultInfo from '../ContentListView/ListItemVaultInfo'
-import { SelectedItemsController } from '@/Controllers/SelectedItemsController'
 
-const ContextMenuCell = ({
-  items,
-  filesController,
-  navigationController,
-  linkingController,
-  notesController,
-  historyModalController,
-  selectionController,
-}: {
-  items: DecryptedItemInterface[]
-  filesController: FilesController
-  navigationController: NavigationController
-  linkingController: LinkingController
-  notesController: NotesController
-  historyModalController: HistoryModalController
-  selectionController: SelectedItemsController
-}) => {
+const ContextMenuCell = ({ items }: { items: DecryptedItemInterface[] }) => {
   const [contextMenuVisible, setContextMenuVisible] = useState(false)
   const anchorElementRef = useRef<HTMLButtonElement>(null)
 
@@ -102,12 +78,9 @@ const ContextMenuCell = ({
         <Menu a11yLabel="File context menu" isOpen={contextMenuVisible}>
           {allItemsAreFiles && (
             <FileMenuOptions
-              linkingController={linkingController}
-              navigationController={navigationController}
               closeMenu={() => {
                 setContextMenuVisible(false)
               }}
-              filesController={filesController}
               shouldShowRenameOption={false}
               shouldShowAttachOption={false}
               selectedFiles={items as FileItem[]}
@@ -116,11 +89,6 @@ const ContextMenuCell = ({
           {allItemsAreNotes && (
             <NotesOptions
               notes={items as SNNote[]}
-              navigationController={navigationController}
-              notesController={notesController}
-              linkingController={linkingController}
-              historyModalController={historyModalController}
-              selectionController={selectionController}
               closeMenu={() => {
                 setContextMenuVisible(false)
               }}
@@ -132,17 +100,7 @@ const ContextMenuCell = ({
   )
 }
 
-const ItemLinksCell = ({
-  item,
-  filesController,
-  linkingController,
-  featuresController,
-}: {
-  item: DecryptedItemInterface
-  filesController: FilesController
-  linkingController: LinkingController
-  featuresController: FeaturesController
-}) => {
+const ItemLinksCell = ({ item }: { item: DecryptedItemInterface }) => {
   const [contextMenuVisible, setContextMenuVisible] = useState(false)
   const anchorElementRef = useRef<HTMLButtonElement>(null)
 
@@ -170,13 +128,7 @@ const ItemLinksCell = ({
         align="start"
         className="py-2"
       >
-        <LinkedItemsPanel
-          linkingController={linkingController}
-          filesController={filesController}
-          featuresController={featuresController}
-          isOpen={contextMenuVisible}
-          item={item}
-        />
+        <LinkedItemsPanel isOpen={contextMenuVisible} item={item} />
       </Popover>
     </>
   )
@@ -263,37 +215,18 @@ const AttachedToCell = ({ item }: { item: DecryptedItemInterface }) => {
 type Props = {
   application: WebApplication
   items: DecryptedItemInterface[]
-  filesController: FilesController
-  featuresController: FeaturesController
-  linkingController: LinkingController
-  navigationController: NavigationController
-  notesController: NotesController
-  historyModalController: HistoryModalController
-  itemListController: ItemListController
-  selectionController: SelectedItemsController
 }
 
-const ContentTableView = ({
-  application,
-  items,
-  filesController,
-  featuresController,
-  linkingController,
-  navigationController,
-  notesController,
-  historyModalController,
-  itemListController,
-  selectionController,
-}: Props) => {
+const ContentTableView = ({ application, items }: Props) => {
   const listHasFiles = items.some((item) => item instanceof FileItem)
 
-  const { sortBy, sortDirection } = itemListController.displayOptions
+  const { sortBy, sortDirection } = application.itemListController.displayOptions
   const sortReversed = sortDirection === 'asc'
-  const { hideDate, hideEditorIcon: hideIcon, hideTags } = itemListController.webDisplayOptions
+  const { hideDate, hideEditorIcon: hideIcon, hideTags } = application.itemListController.webDisplayOptions
 
   const onSortChange = useCallback(
     async (sortBy: keyof SortableItem, sortReversed: boolean) => {
-      const selectedTag = navigationController.selected
+      const selectedTag = application.navigationController.selected
 
       if (!selectedTag) {
         return
@@ -328,7 +261,7 @@ const ContentTableView = ({
         }
       })
     },
-    [application, navigationController.selected],
+    [application],
   )
 
   const [contextMenuItem, setContextMenuItem] = useState<DecryptedItemInterface | undefined>(undefined)
@@ -383,7 +316,7 @@ const ContentTableView = ({
     enableMultipleRowSelection: true,
     onRowActivate(item) {
       if (item instanceof FileItem) {
-        void filesController.handleFileAction({
+        void application.filesController.handleFileAction({
           type: FileItemActionType.PreviewFile,
           payload: {
             file: item,
@@ -399,35 +332,12 @@ const ContentTableView = ({
     rowActions: (item) => {
       return (
         <div className="flex items-center gap-2">
-          <ItemLinksCell
-            item={item}
-            filesController={filesController}
-            featuresController={featuresController}
-            linkingController={linkingController}
-          />
-          <ContextMenuCell
-            items={[item]}
-            filesController={filesController}
-            linkingController={linkingController}
-            navigationController={navigationController}
-            notesController={notesController}
-            historyModalController={historyModalController}
-            selectionController={selectionController}
-          />
+          <ItemLinksCell item={item} />
+          <ContextMenuCell items={[item]} />
         </div>
       )
     },
-    selectionActions: (itemIds) => (
-      <ContextMenuCell
-        items={items.filter((item) => itemIds.includes(item.uuid))}
-        filesController={filesController}
-        linkingController={linkingController}
-        navigationController={navigationController}
-        notesController={notesController}
-        historyModalController={historyModalController}
-        selectionController={selectionController}
-      />
-    ),
+    selectionActions: (itemIds) => <ContextMenuCell items={items.filter((item) => itemIds.includes(item.uuid))} />,
     showSelectionActions: true,
   })
 
@@ -456,26 +366,15 @@ const ContentTableView = ({
             <Menu a11yLabel="File context menu" isOpen={true}>
               <FileMenuOptions
                 closeMenu={closeContextMenu}
-                filesController={filesController}
                 shouldShowRenameOption={false}
                 shouldShowAttachOption={false}
                 selectedFiles={[contextMenuItem]}
-                linkingController={linkingController}
-                navigationController={navigationController}
               />
             </Menu>
           )}
           {contextMenuItem instanceof SNNote && (
             <Menu className="select-none" a11yLabel="Note context menu" isOpen={true}>
-              <NotesOptions
-                notes={[contextMenuItem]}
-                navigationController={navigationController}
-                notesController={notesController}
-                linkingController={linkingController}
-                historyModalController={historyModalController}
-                selectionController={selectionController}
-                closeMenu={closeContextMenu}
-              />
+              <NotesOptions notes={[contextMenuItem]} closeMenu={closeContextMenu} />
             </Menu>
           )}
         </Popover>

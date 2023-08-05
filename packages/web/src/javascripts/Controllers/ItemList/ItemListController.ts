@@ -26,6 +26,7 @@ import {
   ItemManagerInterface,
   PreferenceServiceInterface,
   ChangeAndSaveItem,
+  DesktopManagerInterface,
 } from '@standardnotes/snjs'
 import { action, computed, makeObservable, observable, reaction, runInAction } from 'mobx'
 import { WebDisplayOptions } from './WebDisplayOptions'
@@ -45,7 +46,6 @@ import { ItemsReloadSource } from './ItemsReloadSource'
 import { IsNativeMobileWeb, VaultDisplayServiceEvent, VaultDisplayServiceInterface } from '@standardnotes/ui-services'
 import { getDayjsFormattedString } from '@/Utils/GetDayjsFormattedString'
 import { ItemGroupController } from '@/Components/NoteView/Controller/ItemGroupController'
-import { DesktopManager } from '@/Application/Device/DesktopManager'
 
 const MinNoteCellHeight = 51.0
 const DefaultListNumNotes = 20
@@ -102,7 +102,7 @@ export class ItemListController extends AbstractViewController implements Intern
     private preferences: PreferenceServiceInterface,
     private itemControllerGroup: ItemGroupController,
     private vaultDisplayService: VaultDisplayServiceInterface,
-    private desktopManager: DesktopManager | undefined,
+    private desktopManager: DesktopManagerInterface | undefined,
     private _isNativeMobileWeb: IsNativeMobileWeb,
     private _changeAndSaveItem: ChangeAndSaveItem,
     eventBus: InternalEventBusInterface,

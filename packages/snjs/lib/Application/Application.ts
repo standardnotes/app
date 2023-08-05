@@ -1,4 +1,4 @@
-import { SNMfaService } from './../Services/Mfa/MfaService'
+import { MfaService } from './../Services/Mfa/MfaService'
 import { KeyRecoveryService } from './../Services/KeyRecovery/KeyRecoveryService'
 import { WebSocketsService } from './../Services/Api/WebsocketsService'
 import { MigrationService } from './../Services/Migration/MigrationService'
@@ -80,6 +80,7 @@ import {
   ProtectionEvent,
   GetHost,
   SetHost,
+  MfaServiceInterface,
 } from '@standardnotes/services'
 import {
   SNNote,
@@ -1238,6 +1239,10 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return this.dependencies.get<LegacyApiService>(TYPES.LegacyApiService)
   }
 
+  public get mfa(): MfaServiceInterface {
+    return this.dependencies.get<MfaService>(TYPES.MfaService)
+  }
+
   private get migrations(): MigrationService {
     return this.dependencies.get<MigrationService>(TYPES.MigrationService)
   }
@@ -1248,9 +1253,5 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
 
   private get sockets(): WebSocketsService {
     return this.dependencies.get<WebSocketsService>(TYPES.WebSocketsService)
-  }
-
-  private get mfa(): SNMfaService {
-    return this.dependencies.get<SNMfaService>(TYPES.MfaService)
   }
 }

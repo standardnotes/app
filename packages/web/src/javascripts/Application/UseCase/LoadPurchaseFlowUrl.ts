@@ -24,7 +24,7 @@ export class LoadPurchaseFlowUrl implements UseCaseInterface<void> {
       const finalUrl = `${url}${period}${plan}`
 
       if (this.application.isNativeMobileWeb()) {
-        this.application.mobileDevice().openUrl(finalUrl)
+        this.application.mobileDevice.openUrl(finalUrl)
       } else if (this.application.environment === Environment.Desktop) {
         this.application.desktopDevice?.openUrl(finalUrl)
       } else {

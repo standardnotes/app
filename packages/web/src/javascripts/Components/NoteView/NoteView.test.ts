@@ -36,7 +36,11 @@ describe('NoteView', () => {
     notesController.getSpellcheckStateForNote = jest.fn()
     notesController.getEditorWidthForNote = jest.fn()
 
-    application = {} as jest.Mocked<WebApplication>
+    application = {
+      notesController,
+      noteViewController,
+    } as unknown as jest.Mocked<WebApplication>
+
     application.hasProtectionSources = jest.fn().mockReturnValue(true)
     application.authorizeNoteAccess = jest.fn()
     application.addWebEventObserver = jest.fn()

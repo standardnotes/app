@@ -22,16 +22,17 @@ import {
   InternalFeatureServiceInterface,
   NoteContent,
   SNNote,
+  DesktopManagerInterface,
 } from '@standardnotes/snjs'
-import { action, makeObservable, observable } from 'mobx'
+import { action, computed, makeObservable, observable } from 'mobx'
 import { startAuthentication, startRegistration } from '@simplewebauthn/browser'
 import { PanelResizedData } from '@/Types/PanelResizedData'
 import { getBlobFromBase64, isDesktopApplication, isDev } from '@/Utils'
-import { DesktopManager } from './Device/DesktopManager'
 import {
   ArchiveManager,
   AutolockService,
   ChangelogService,
+  Importer,
   IsGlobalSpellcheckEnabled,
   IsMobileDevice,
   IsNativeIOS,
@@ -77,6 +78,7 @@ import { VaultSelectionMenuController } from '@/Controllers/VaultSelectionMenuCo
 import { ItemGroupController } from '@/Components/NoteView/Controller/ItemGroupController'
 import { NoAccountWarningController } from '@/Controllers/NoAccountWarningController'
 import { SearchOptionsController } from '@/Controllers/SearchOptionsController'
+import { PersistenceService } from '@/Controllers/Abstract/PersistenceService'
 
 export type WebEventObserver = (event: WebAppEvent, data?: unknown) => void
 
@@ -142,13 +144,13 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     if (this.isNativeMobileWeb()) {
       this.disposers.push(
         this.addEventObserver(async (event) => {
-          this.mobileDevice().notifyApplicationEvent(event)
+          this.mobileDevice.notifyApplicationEvent(event)
         }),
       )
 
       // eslint-disable-next-line no-console
       console.log = (...args) => {
-        this.mobileDevice().consoleLog(...args)
+        this.mobileDevice.consoleLog(...args)
       }
     }
 
@@ -168,7 +170,8 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     )
 
     makeObservable(this, {
-      preferencesController: observable,
+      preferencesController: computed,
+
       isSessionsModalVisible: observable,
 
       openSessionsModal: action,
@@ -252,10 +255,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     return this.isNativeIOS()
   }
 
-  mobileDevice(): MobileDeviceInterface {
-    if (!this.isNativeMobileWeb()) {
-      throw Error('Attempting to access device as mobile device on non mobile platform')
-    }
+  get mobileDevice(): MobileDeviceInterface {
     return this.device as MobileDeviceInterface
   }
 
@@ -268,7 +268,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
   }
 
   performDesktopTextBackup(): void | Promise<void> {
-    return this.getDesktopService()?.saveDesktopBackup()
+    return this.desktopManager?.saveDesktopBackup()
   }
 
   isGlobalSpellcheckEnabled(): boolean {
@@ -304,15 +304,15 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     }
 
     if (this.protections.getMobileScreenshotPrivacyEnabled()) {
-      this.mobileDevice().setAndroidScreenshotPrivacy(true)
+      this.mobileDevice.setAndroidScreenshotPrivacy(true)
     } else {
-      this.mobileDevice().setAndroidScreenshotPrivacy(false)
+      this.mobileDevice.setAndroidScreenshotPrivacy(false)
     }
   }
 
   async handleMobileLosingFocusEvent(): Promise<void> {
     if (this.protections.getMobileScreenshotPrivacyEnabled()) {
-      this.mobileDevice().stopHidingMobileInterfaceFromScreenshots()
+      this.mobileDevice.stopHidingMobileInterfaceFromScreenshots()
     }
 
     await this.lockApplicationAfterMobileEventIfApplicable()
@@ -320,7 +320,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
 
   async handleMobileResumingFromBackgroundEvent(): Promise<void> {
     if (this.protections.getMobileScreenshotPrivacyEnabled()) {
-      this.mobileDevice().hideMobileInterfaceFromScreenshots()
+      this.mobileDevice.hideMobileInterfaceFromScreenshots()
     }
   }
 
@@ -535,8 +535,8 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     return this.deps.get<VaultDisplayServiceInterface>(Web_TYPES.VaultDisplayService)
   }
 
-  getDesktopService(): DesktopManager | undefined {
-    return this.deps.get<DesktopManager | undefined>(Web_TYPES.DesktopManager)
+  get desktopManager(): DesktopManagerInterface | undefined {
+    return this.deps.get<DesktopManagerInterface | undefined>(Web_TYPES.DesktopManager)
   }
 
   getAutolockService(): AutolockService {
@@ -611,6 +611,10 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     return this.deps.get<ItemListController>(Web_TYPES.ItemListController)
   }
 
+  get importer(): Importer {
+    return this.deps.get<Importer>(Web_TYPES.Importer)
+  }
+
   get subscriptionController(): SubscriptionController {
     return this.deps.get<SubscriptionController>(Web_TYPES.SubscriptionController)
   }
@@ -621,6 +625,10 @@ export class WebApplication extends SNApplication implements WebApplicationInter
 
   get quickSettingsMenuController(): QuickSettingsController {
     return this.deps.get<QuickSettingsController>(Web_TYPES.QuickSettingsController)
+  }
+
+  get persistence(): PersistenceService {
+    return this.deps.get<PersistenceService>(Web_TYPES.PersistenceService)
   }
 
   get itemControllerGroup(): ItemGroupController {

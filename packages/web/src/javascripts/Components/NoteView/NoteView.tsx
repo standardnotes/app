@@ -111,7 +111,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
       if (!this.controller || this.controller.dealloced) {
         return
       }
-      this.application.getDesktopService()?.redoSearch()
+      this.application.desktopManager?.redoSearch()
     }
 
     this.debounceReloadEditorComponent = debounce(this.debounceReloadEditorComponent.bind(this), 25)
@@ -913,10 +913,8 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
                 <div className="note-view-options-buttons flex items-center gap-3">
                   <CollaborationInfoHUD item={this.note} />
                   <LinkedItemsButton
-                    filesController={this.application.filesController}
                     linkingController={this.application.linkingController}
                     onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
-                    featuresController={this.application.featuresController}
                   />
                   <ChangeEditorButton
                     noteViewController={this.controller}
@@ -927,11 +925,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
                     onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
                   />
                   <NotesOptionsPanel
-                    navigationController={this.application.navigationController}
                     notesController={this.application.notesController}
-                    linkingController={this.application.linkingController}
-                    historyModalController={this.application.historyModalController}
-                    selectionController={this.application.selectionController}
                     onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
                   />
                 </div>

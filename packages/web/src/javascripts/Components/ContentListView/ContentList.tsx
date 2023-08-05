@@ -5,38 +5,28 @@ import { FunctionComponent, KeyboardEventHandler, UIEventHandler, useCallback } 
 import { FOCUSABLE_BUT_NOT_TABBABLE, NOTES_LIST_SCROLL_THRESHOLD } from '@/Constants/Constants'
 import { ListableContentItem } from './Types/ListableContentItem'
 import ContentListItem from './ContentListItem'
-import { ItemListController } from '@/Controllers/ItemList/ItemListController'
-import { FilesController } from '@/Controllers/FilesController'
 import { SelectedItemsController } from '@/Controllers/SelectedItemsController'
-import { NavigationController } from '@/Controllers/Navigation/NavigationController'
-import { NotesController } from '@/Controllers/NotesController/NotesController'
 import { ElementIds } from '@/Constants/ElementIDs'
 import { classNames } from '@standardnotes/utils'
 import { ContentType, SNTag } from '@standardnotes/snjs'
 
 type Props = {
   application: WebApplication
-  filesController: FilesController
-  itemListController: ItemListController
   items: ListableContentItem[]
-  navigationController: NavigationController
-  notesController: NotesController
-  selectionController: SelectedItemsController
   selectedUuids: SelectedItemsController['selectedUuids']
   paginate: () => void
 }
 
 const ContentList: FunctionComponent<Props> = ({
   application,
-  filesController,
-  itemListController,
   items,
-  navigationController,
-  notesController,
-  selectionController,
+
   selectedUuids,
   paginate,
 }) => {
+  const { filesController, itemListController, navigationController, notesController, selectionController } =
+    application
+
   const { selectPreviousItem, selectNextItem } = selectionController
   const { hideTags, hideDate, hideNotePreview, hideEditorIcon } = itemListController.webDisplayOptions
   const { sortBy } = itemListController.displayOptions

@@ -2,31 +2,16 @@ import { useCallback, useRef, useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import NotesOptions from './NotesOptions'
 import { NotesController } from '@/Controllers/NotesController/NotesController'
-import { NavigationController } from '@/Controllers/Navigation/NavigationController'
-import { HistoryModalController } from '@/Controllers/NoteHistory/HistoryModalController'
 import Popover from '../Popover/Popover'
-import { LinkingController } from '@/Controllers/LinkingController'
 import RoundIconButton from '../Button/RoundIconButton'
 import Menu from '../Menu/Menu'
-import { SelectedItemsController } from '@/Controllers/SelectedItemsController'
 
 type Props = {
-  navigationController: NavigationController
   notesController: NotesController
-  linkingController: LinkingController
-  historyModalController: HistoryModalController
-  selectionController: SelectedItemsController
   onClickPreprocessing?: () => Promise<void>
 }
 
-const NotesOptionsPanel = ({
-  navigationController,
-  notesController,
-  linkingController,
-  historyModalController,
-  selectionController,
-  onClickPreprocessing,
-}: Props) => {
+const NotesOptionsPanel = ({ notesController, onClickPreprocessing }: Props) => {
   const [isOpen, setIsOpen] = useState(false)
   const buttonRef = useRef<HTMLButtonElement>(null)
 
@@ -57,11 +42,6 @@ const NotesOptionsPanel = ({
         <Menu a11yLabel="Note options menu" isOpen={isOpen}>
           <NotesOptions
             notes={notesController.selectedNotes}
-            navigationController={navigationController}
-            notesController={notesController}
-            linkingController={linkingController}
-            historyModalController={historyModalController}
-            selectionController={selectionController}
             requestDisableClickOutside={handleDisableClickOutsideRequest}
             closeMenu={toggleMenu}
           />

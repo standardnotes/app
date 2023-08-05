@@ -9,8 +9,8 @@ export class FileViewController implements ItemViewControllerInterface {
   public runtimeId = `${Math.random()}`
 
   constructor(
-    private items: ItemManagerInterface,
     public item: FileItem,
+    private items: ItemManagerInterface,
   ) {}
 
   deinit() {

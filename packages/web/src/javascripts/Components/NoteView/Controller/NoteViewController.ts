@@ -8,14 +8,23 @@ import {
   PrefKey,
   PayloadVaultOverrides,
 } from '@standardnotes/models'
-import { ItemManagerInterface, UuidString } from '@standardnotes/snjs'
+import {
+  AlertService,
+  ComponentManagerInterface,
+  ItemManagerInterface,
+  MutatorClientInterface,
+  PreferenceServiceInterface,
+  SessionsClientInterface,
+  SyncServiceInterface,
+  UuidString,
+} from '@standardnotes/snjs'
 import { removeFromArray } from '@standardnotes/utils'
 import { ContentType } from '@standardnotes/domain-core'
 import { ItemViewControllerInterface } from './ItemViewControllerInterface'
 import { TemplateNoteViewControllerOptions } from './TemplateNoteViewControllerOptions'
 import { log, LoggingDomain } from '@/Logging'
 import { NoteSaveFunctionParams, NoteSyncController } from '../../../Controllers/NoteSyncController'
-import { WebApplicationInterface } from '@standardnotes/ui-services'
+import { IsNativeMobileWeb } from '@standardnotes/ui-services'
 
 export type EditorValues = {
   title: string
@@ -37,8 +46,15 @@ export class NoteViewController implements ItemViewControllerInterface {
   private syncController!: NoteSyncController
 
   constructor(
+    item: SNNote | undefined,
     private items: ItemManagerInterface,
-    item?: SNNote,
+    private mutator: MutatorClientInterface,
+    private sync: SyncServiceInterface,
+    private sessions: SessionsClientInterface,
+    private preferences: PreferenceServiceInterface,
+    private components: ComponentManagerInterface,
+    private alerts: AlertService,
+    private _isNativeMobileWeb: IsNativeMobileWeb,
     public templateNoteOptions?: TemplateNoteViewControllerOptions,
   ) {
     if (item) {
@@ -53,7 +69,15 @@ export class NoteViewController implements ItemViewControllerInterface {
       this.defaultTag = this.items.findItem(this.defaultTagUuid) as SNTag
     }
 
-    this.syncController = new NoteSyncController(this.application, this.item)
+    this.syncController = new NoteSyncController(
+      this.item,
+      this.items,
+      this.mutator,
+      this.sessions,
+      this.sync,
+      this.alerts,
+      this._isNativeMobileWeb,
+    )
   }
 
   deinit(): void {
@@ -89,16 +113,16 @@ export class NoteViewController implements ItemViewControllerInterface {
 
     this.needsInit = false
 
-    const addTagHierarchy = this.application.getPreference(PrefKey.NoteAddToParentFolders, true)
+    const addTagHierarchy = this.preferences.getValue(PrefKey.NoteAddToParentFolders, true)
 
     if (!this.item) {
       log(LoggingDomain.NoteView, 'Initializing as template note')
 
-      const editorIdentifier = this.application.componentManager.getDefaultEditorIdentifier(this.defaultTag)
+      const editorIdentifier = this.components.getDefaultEditorIdentifier(this.defaultTag)
 
       const noteType = noteTypeForEditorIdentifier(editorIdentifier)
 
-      const note = this.application.items.createTemplateItem<NoteContent, SNNote>(
+      const note = this.items.createTemplateItem<NoteContent, SNNote>(
         ContentType.TYPES.Note,
         {
           text: '',
@@ -118,8 +142,8 @@ export class NoteViewController implements ItemViewControllerInterface {
       this.syncController.setItem(this.item)
 
       if (this.defaultTagUuid) {
-        const tag = this.application.items.findItem(this.defaultTagUuid) as SNTag
-        await this.application.mutator.addTagToNote(note, tag, addTagHierarchy)
+        const tag = this.items.findItem(this.defaultTagUuid) as SNTag
+        await this.mutator.addTagToNote(note, tag, addTagHierarchy)
       }
 
       this.notifyObservers(this.item, PayloadEmitSource.InitialObserverRegistrationPush)
@@ -163,7 +187,7 @@ export class NoteViewController implements ItemViewControllerInterface {
   public insertTemplatedNote(): Promise<DecryptedItemInterface> {
     log(LoggingDomain.NoteView, 'Inserting template note')
     this.isTemplateNote = false
-    return this.application.mutator.insertItem(this.item)
+    return this.mutator.insertItem(this.item)
   }
 
   /**

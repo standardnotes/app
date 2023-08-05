@@ -109,7 +109,7 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
     if (notes.length === 1) {
       const note = notes[0]
       const blob = getNoteBlob(application, note)
-      application.getArchiveService().downloadData(blob, getNoteFileName(application, note))
+      application.archiveService.downloadData(blob, getNoteFileName(application, note))
       return
     }
 
@@ -118,7 +118,7 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
         type: ToastType.Loading,
         message: `Exporting ${notes.length} notes...`,
       })
-      await application.getArchiveService().downloadDataAsZip(
+      await application.archiveService.downloadDataAsZip(
         notes.map((note) => {
           return {
             name: getNoteFileName(application, note),

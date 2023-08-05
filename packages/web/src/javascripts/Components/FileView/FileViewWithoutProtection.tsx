@@ -89,11 +89,7 @@ const FileViewWithoutProtection = ({ application, file }: FileViewProps) => {
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <LinkedItemsButton
-                filesController={application.filesController}
-                linkingController={application.linkingController}
-                featuresController={application.featuresController}
-              />
+              <LinkedItemsButton linkingController={application.linkingController} />
               <RoundIconButton
                 label="File information panel"
                 onClick={toggleFileInfoPanel}
@@ -110,12 +106,7 @@ const FileViewWithoutProtection = ({ application, file }: FileViewProps) => {
               >
                 <FilePreviewInfoPanel file={file} />
               </Popover>
-              <FileOptionsPanel
-                filesController={application.filesController}
-                selectionController={application.selectionController}
-                linkingController={application.linkingController}
-                navigationController={application.navigationController}
-              />
+              <FileOptionsPanel selectionController={application.selectionController} />
             </div>
           </div>
           <div className="hidden md:flex">

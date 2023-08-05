@@ -94,23 +94,9 @@ class NoteGroupView extends AbstractComponent<Props, State> {
 
     return (
       <>
-        {this.state.showMultipleSelectedNotes && (
-          <MultipleSelectedNotes
-            application={this.application}
-            selectionController={this.application.selectionController}
-            navigationController={this.application.navigationController}
-            notesController={this.application.notesController}
-            linkingController={this.application.linkingController}
-            historyModalController={this.application.historyModalController}
-          />
-        )}
+        {this.state.showMultipleSelectedNotes && <MultipleSelectedNotes application={this.application} />}
         {this.state.showMultipleSelectedFiles && (
-          <MultipleSelectedFiles
-            filesController={this.application.filesController}
-            selectionController={this.application.selectionController}
-            navigationController={this.application.navigationController}
-            linkingController={this.application.linkingController}
-          />
+          <MultipleSelectedFiles selectionController={this.application.selectionController} />
         )}
         {shouldNotShowMultipleSelectedItems && hasControllers && (
           <>

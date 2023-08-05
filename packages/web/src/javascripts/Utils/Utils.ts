@@ -2,6 +2,7 @@ import { DeviceInterface, MobileDeviceInterface, Platform, platformFromString } 
 import { IsDesktopPlatform, IsWebPlatform } from '@/Constants/Version'
 import { EMAIL_REGEX } from '../Constants/Constants'
 import { MutuallyExclusiveMediaQueryBreakpoints } from '@/Hooks/useMediaQuery'
+import { isIOS } from '@standardnotes/ui-services'
 
 declare const process: {
   env: {

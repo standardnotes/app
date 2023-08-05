@@ -2,7 +2,6 @@ import { FunctionComponent, useCallback, useMemo } from 'react'
 import { FileItemActionType } from '../AttachedFilesPopover/PopoverFileItemAction'
 import Icon from '@/Components/Icon/Icon'
 import { observer } from 'mobx-react-lite'
-import { FilesController } from '@/Controllers/FilesController'
 import HorizontalSeparator from '../Shared/HorizontalSeparator'
 import { formatSizeToReadableString } from '@standardnotes/filepicker'
 import { useResponsiveAppPane } from '../Panes/ResponsivePaneProvider'
@@ -13,17 +12,13 @@ import MenuSwitchButtonItem from '../Menu/MenuSwitchButtonItem'
 import { FileItem } from '@standardnotes/snjs'
 import AddTagOption from '../NotesOptions/AddTagOption'
 import { MenuItemIconSize } from '@/Constants/TailwindClassNames'
-import { LinkingController } from '@/Controllers/LinkingController'
-import { NavigationController } from '@/Controllers/Navigation/NavigationController'
 import AddToVaultMenuOption from '../Vaults/AddToVaultMenuOption'
 import { iconClass } from '../NotesOptions/ClassNames'
 import { featureTrunkVaultsEnabled } from '@/FeatureTrunk'
+import { useApplication } from '../ApplicationProvider'
 
 type Props = {
   closeMenu: () => void
-  filesController: FilesController
-  linkingController: LinkingController
-  navigationController: NavigationController
   isFileAttachedToNote?: boolean
   renameToggleCallback?: (isRenamingFile: boolean) => void
   shouldShowRenameOption: boolean
@@ -33,16 +28,15 @@ type Props = {
 
 const FileMenuOptions: FunctionComponent<Props> = ({
   closeMenu,
-  filesController,
-  linkingController,
-  navigationController,
   isFileAttachedToNote,
   renameToggleCallback,
   shouldShowRenameOption,
   shouldShowAttachOption,
   selectedFiles,
 }) => {
-  const { handleFileAction } = filesController
+  const application = useApplication()
+
+  const { handleFileAction } = application.filesController
   const { toggleAppPane } = useResponsiveAppPane()
 
   const hasProtectedFiles = useMemo(() => selectedFiles.some((file) => file.protected), [selectedFiles])
@@ -95,15 +89,15 @@ const FileMenuOptions: FunctionComponent<Props> = ({
       )}
       {featureTrunkVaultsEnabled() && <AddToVaultMenuOption iconClassName={iconClass} items={selectedFiles} />}
       <AddTagOption
-        navigationController={navigationController}
-        linkingController={linkingController}
+        navigationController={application.navigationController}
+        linkingController={application.linkingController}
         selectedItems={selectedFiles}
         iconClassName={`text-neutral mr-2 ${MenuItemIconSize}`}
       />
       <MenuSwitchButtonItem
         checked={hasProtectedFiles}
         onChange={(hasProtectedFiles) => {
-          void filesController.setProtectionForFiles(hasProtectedFiles, selectedFiles)
+          void application.filesController.setProtectionForFiles(hasProtectedFiles, selectedFiles)
         }}
       >
         <Icon type="lock" className={`mr-2 text-neutral ${MenuItemIconSize}`} />
@@ -112,7 +106,7 @@ const FileMenuOptions: FunctionComponent<Props> = ({
       <HorizontalSeparator classes="my-1" />
       <MenuItem
         onClick={() => {
-          void filesController.downloadFiles(selectedFiles)
+          void application.filesController.downloadFiles(selectedFiles)
           closeMenu()
         }}
       >
@@ -132,7 +126,7 @@ const FileMenuOptions: FunctionComponent<Props> = ({
       <MenuItem
         onClick={() => {
           closeMenuAndToggleFilesList()
-          void filesController.deleteFilesPermanently(selectedFiles)
+          void application.filesController.deleteFilesPermanently(selectedFiles)
         }}
       >
         <Icon type="trash" className={`mr-2 text-danger ${MenuItemIconSize}`} />
