@@ -36,7 +36,6 @@ export const Web_TYPES = {
   PurchaseFlowController: Symbol.for('PurchaseFlowController'),
   QuickSettingsController: Symbol.for('QuickSettingsController'),
   SearchOptionsController: Symbol.for('SearchOptionsController'),
-  SelectedItemsController: Symbol.for('SelectedItemsController'),
   SubscriptionController: Symbol.for('SubscriptionController'),
   SyncStatusController: Symbol.for('SyncStatusController'),
   ToastService: Symbol.for('ToastService'),

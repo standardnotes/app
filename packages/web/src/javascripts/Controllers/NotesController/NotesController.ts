@@ -31,11 +31,11 @@ import {
 } from '@standardnotes/snjs'
 import { makeObservable, observable, action, computed, runInAction } from 'mobx'
 import { AbstractViewController } from '../Abstract/AbstractViewController'
-import { SelectedItemsController } from '../SelectedItemsController'
-import { ItemListController } from '../ItemList/ItemListController'
 import { NavigationController } from '../Navigation/NavigationController'
 import { NotesControllerInterface } from './NotesControllerInterface'
 import { ItemGroupController } from '@/Components/NoteView/Controller/ItemGroupController'
+import { CrossControllerEvent } from '../CrossControllerEvent'
+import { ItemListController } from '../ItemList/ItemListController'
 
 export class NotesController
   extends AbstractViewController
@@ -51,10 +51,9 @@ export class NotesController
   contextMenuClickLocation: { x: number; y: number } = { x: 0, y: 0 }
   contextMenuMaxHeight: number | 'auto' = 'auto'
   showProtectedWarning = false
-  private itemListController!: ItemListController
 
   constructor(
-    private selectionController: SelectedItemsController,
+    private itemListController: ItemListController,
     private navigationController: NavigationController,
     private itemControllerGroup: ItemGroupController,
     private keyboardService: KeyboardService,
@@ -94,6 +93,7 @@ export class NotesController
     )
 
     eventBus.addEventHandler(this, ApplicationEvent.PreferencesChanged)
+    eventBus.addEventHandler(this, CrossControllerEvent.UnselectAllNotes)
 
     this.disposers.push(
       this.keyboardService.addCommandHandler({
@@ -109,29 +109,6 @@ export class NotesController
         },
       }),
     )
-  }
-
-  async handleEvent(event: InternalEventInterface): Promise<void> {
-    if (event.type === ApplicationEvent.PreferencesChanged) {
-      this.shouldLinkToParentFolders = this.preferences.getValue(
-        PrefKey.NoteAddToParentFolders,
-        PrefDefaults[PrefKey.NoteAddToParentFolders],
-      )
-    }
-  }
-
-  override deinit() {
-    super.deinit()
-    ;(this.lastSelectedNote as unknown) = undefined
-    ;(this.selectionController as unknown) = undefined
-    ;(this.navigationController as unknown) = undefined
-    ;(this.itemListController as unknown) = undefined
-
-    destroyAllObjectProperties(this)
-  }
-
-  public setServicesPostConstruction(itemListController: ItemListController) {
-    this.itemListController = itemListController
 
     this.disposers.push(
       this.itemControllerGroup.addActiveControllerChangeObserver(() => {
@@ -143,15 +120,35 @@ export class NotesController
 
         for (const selectedId of selectedUuids) {
           if (!activeNoteUuids.includes(selectedId)) {
-            this.selectionController.deselectItem({ uuid: selectedId })
+            this.itemListController.deselectItem({ uuid: selectedId })
           }
         }
       }),
     )
   }
 
+  async handleEvent(event: InternalEventInterface): Promise<void> {
+    if (event.type === ApplicationEvent.PreferencesChanged) {
+      this.shouldLinkToParentFolders = this.preferences.getValue(
+        PrefKey.NoteAddToParentFolders,
+        PrefDefaults[PrefKey.NoteAddToParentFolders],
+      )
+    } else if (event.type === CrossControllerEvent.UnselectAllNotes) {
+      this.unselectNotes()
+    }
+  }
+
+  override deinit() {
+    super.deinit()
+    ;(this.lastSelectedNote as unknown) = undefined
+    ;(this.itemListController as unknown) = undefined
+    ;(this.navigationController as unknown) = undefined
+
+    destroyAllObjectProperties(this)
+  }
+
   public get selectedNotes(): SNNote[] {
-    return this.selectionController.getFilteredSelectedItems<SNNote>(ContentType.TYPES.Note)
+    return this.itemListController.getFilteredSelectedItems<SNNote>(ContentType.TYPES.Note)
   }
 
   get firstSelectedNote(): SNNote | undefined {
@@ -294,7 +291,7 @@ export class NotesController
         confirmButtonStyle: 'danger',
       })
     ) {
-      this.selectionController.selectNextItem()
+      this.itemListController.selectNextItem()
       if (permanently) {
         await this.mutator.deleteItems(this.getSelectedNotesList())
         void this.sync.sync()
@@ -354,7 +351,7 @@ export class NotesController
     })
 
     runInAction(() => {
-      this.selectionController.deselectAll()
+      this.itemListController.deselectAll()
       this.contextMenuOpen = false
     })
   }
@@ -373,7 +370,7 @@ export class NotesController
   }
 
   unselectNotes(): void {
-    this.selectionController.deselectAll()
+    this.itemListController.deselectAll()
   }
 
   getSpellcheckStateForNote(note: SNNote) {

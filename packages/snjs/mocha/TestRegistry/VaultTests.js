@@ -1,6 +1,6 @@
 export const VaultTests = {
   enabled: true,
-  exclusive: false,
+  exclusive: true,
   files: [
     'vaults/vaults.test.js',
     'vaults/pkc.test.js',

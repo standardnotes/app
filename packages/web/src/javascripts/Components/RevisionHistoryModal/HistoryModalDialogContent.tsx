@@ -20,7 +20,7 @@ const HistoryModalDialogContent = ({ dismissModal, note }: RevisionHistoryModalC
     () =>
       new NoteHistoryController(
         note,
-        application.selectionController,
+        application.itemListController,
         application.features,
         application.items,
         application.mutator,

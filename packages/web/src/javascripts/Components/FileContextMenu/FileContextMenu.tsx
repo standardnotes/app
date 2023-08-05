@@ -1,19 +1,19 @@
 import { FilesController } from '@/Controllers/FilesController'
-import { SelectedItemsController } from '@/Controllers/SelectedItemsController'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'react'
 import Menu from '../Menu/Menu'
 import Popover from '../Popover/Popover'
 import FileMenuOptions from './FileMenuOptions'
+import { ItemListController } from '@/Controllers/ItemList/ItemListController'
 
 type Props = {
   filesController: FilesController
-  selectionController: SelectedItemsController
+  itemListController: ItemListController
 }
 
-const FileContextMenu: FunctionComponent<Props> = observer(({ filesController, selectionController }) => {
+const FileContextMenu: FunctionComponent<Props> = observer(({ filesController, itemListController }) => {
   const { showFileContextMenu, setShowFileContextMenu, fileContextMenuLocation } = filesController
-  const { selectedFiles } = selectionController
+  const { selectedFiles } = itemListController
 
   return (
     <Popover
@@ -38,9 +38,9 @@ const FileContextMenu: FunctionComponent<Props> = observer(({ filesController, s
 
 FileContextMenu.displayName = 'FileContextMenu'
 
-const FileContextMenuWrapper: FunctionComponent<Props> = ({ filesController, selectionController }) => {
+const FileContextMenuWrapper: FunctionComponent<Props> = ({ filesController, itemListController }) => {
   const { showFileContextMenu } = filesController
-  const { selectedFiles } = selectionController
+  const { selectedFiles } = itemListController
 
   const selectedFile = selectedFiles[0]
 
@@ -48,7 +48,7 @@ const FileContextMenuWrapper: FunctionComponent<Props> = ({ filesController, sel
     return null
   }
 
-  return <FileContextMenu filesController={filesController} selectionController={selectionController} />
+  return <FileContextMenu filesController={filesController} itemListController={itemListController} />
 }
 
 export default observer(FileContextMenuWrapper)

@@ -12,12 +12,12 @@ type Props = {
 }
 
 const MultipleSelectedNotes = ({ application }: Props) => {
-  const { notesController, selectionController } = application
+  const { notesController, itemListController } = application
   const count = notesController.selectedNotesCount
 
   const cancelMultipleSelection = useCallback(() => {
-    selectionController.cancelMultipleSelection()
-  }, [selectionController])
+    itemListController.cancelMultipleSelection()
+  }, [itemListController])
 
   return (
     <div className="flex h-full flex-col items-center">

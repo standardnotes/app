@@ -106,7 +106,7 @@ const FileViewWithoutProtection = ({ application, file }: FileViewProps) => {
               >
                 <FilePreviewInfoPanel file={file} />
               </Popover>
-              <FileOptionsPanel selectionController={application.selectionController} />
+              <FileOptionsPanel itemListController={application.itemListController} />
             </div>
           </div>
           <div className="hidden md:flex">

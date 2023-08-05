@@ -24,7 +24,6 @@ import {
   SyncServiceInterface,
 } from '@standardnotes/snjs'
 import { makeObservable, observable, action } from 'mobx'
-import { SelectedItemsController } from '../SelectedItemsController'
 import {
   RemoteHistory,
   SessionHistory,
@@ -33,6 +32,7 @@ import {
   SelectedEntry,
   RevisionContentState,
 } from './Types'
+import { ItemListController } from '../ItemList/ItemListController'
 
 export class NoteHistoryController {
   remoteHistory: RemoteHistory = []
@@ -49,7 +49,7 @@ export class NoteHistoryController {
 
   constructor(
     private note: SNNote,
-    private selectionController: SelectedItemsController,
+    private itemListController: ItemListController,
     private features: FeaturesClientInterface,
     private items: ItemManagerInterface,
     private mutator: MutatorClientInterface,
@@ -355,7 +355,7 @@ export class NoteHistoryController {
 
     void this.sync.sync()
 
-    this.selectionController.selectItem(duplicatedItem.uuid).catch(console.error)
+    this.itemListController.selectItem(duplicatedItem.uuid).catch(console.error)
   }
 
   deleteRemoteRevision = async (revisionEntry: RevisionMetadata) => {

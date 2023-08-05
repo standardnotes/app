@@ -31,7 +31,6 @@ import { CrossControllerEvent } from './CrossControllerEvent'
 import { FilesController } from './FilesController'
 import { ItemListController } from './ItemList/ItemListController'
 import { NavigationController } from './Navigation/NavigationController'
-import { SelectedItemsController } from './SelectedItemsController'
 import { SubscriptionController } from './Subscription/SubscriptionController'
 import { featureTrunkVaultsEnabled } from '@/FeatureTrunk'
 import { ItemGroupController } from '@/Components/NoteView/Controller/ItemGroupController'
@@ -47,7 +46,6 @@ export class LinkingController extends AbstractViewController implements Interna
   constructor(
     private navigationController: NavigationController,
     private itemControllerGroup: ItemGroupController,
-    private selectionController: SelectedItemsController,
     private vaultDisplayService: VaultDisplayServiceInterface,
     private preferences: PreferenceServiceInterface,
     private items: ItemManagerInterface,
@@ -171,7 +169,7 @@ export class LinkingController extends AbstractViewController implements Interna
       return AppPaneId.Items
     } else if (item instanceof SNNote) {
       await this.navigationController.selectHomeNavigationView()
-      const { didSelect } = await this.selectionController.selectItem(item.uuid, true)
+      const { didSelect } = await this.itemListController.selectItem(item.uuid, true)
       if (didSelect) {
         return AppPaneId.Editor
       }
@@ -199,7 +197,7 @@ export class LinkingController extends AbstractViewController implements Interna
   }
 
   unlinkItemFromSelectedItem = async (itemToUnlink: LinkableItem) => {
-    const selectedItem = this.selectionController.firstSelectedItem
+    const selectedItem = this.itemListController.firstSelectedItem
 
     if (!selectedItem) {
       return

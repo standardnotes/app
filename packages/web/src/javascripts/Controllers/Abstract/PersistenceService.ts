@@ -11,14 +11,14 @@ import {
 } from '@standardnotes/snjs'
 import { PersistedStateValue, PersistenceKey, StorageKey } from '@standardnotes/ui-services'
 import { CrossControllerEvent } from '../CrossControllerEvent'
-import { SelectedItemsController } from '../SelectedItemsController'
 import { NavigationController } from '../Navigation/NavigationController'
+import { ItemListController } from '../ItemList/ItemListController'
 
 export class PersistenceService implements InternalEventHandlerInterface {
   private didHydrateOnce = false
 
   constructor(
-    private selectionController: SelectedItemsController,
+    private itemListController: ItemListController,
     private navigationController: NavigationController,
     private storage: StorageServiceInterface,
     private items: ItemManagerInterface,
@@ -78,7 +78,7 @@ export class PersistenceService implements InternalEventHandlerInterface {
 
   persistCurrentState(): void {
     const values: PersistedStateValue = {
-      [PersistenceKey.SelectedItemsController]: this.selectionController.getPersistableValue(),
+      [PersistenceKey.ItemListController]: this.itemListController.getPersistableValue(),
       [PersistenceKey.NavigationController]: this.navigationController.getPersistableValue(),
     }
 
@@ -101,8 +101,8 @@ export class PersistenceService implements InternalEventHandlerInterface {
     const navigationState = values?.[PersistenceKey.NavigationController]
     this.navigationController.hydrateFromPersistedValue(navigationState)
 
-    const selectedItemsState = values?.[PersistenceKey.SelectedItemsController]
-    this.selectionController.hydrateFromPersistedValue(selectedItemsState)
+    const selectedItemsState = values?.[PersistenceKey.ItemListController]
+    this.itemListController.hydrateFromPersistedValue(selectedItemsState)
   }
 
   persistValues(values: PersistedStateValue): void {

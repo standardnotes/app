@@ -4,7 +4,6 @@ import { WebApplication } from '@/Application/WebApplication'
 import { NavigationController } from '../Navigation/NavigationController'
 import { NotesController } from '../NotesController/NotesController'
 import { SearchOptionsController } from '../SearchOptionsController'
-import { SelectedItemsController } from '../SelectedItemsController'
 import { ItemListController } from './ItemListController'
 import { ItemsReloadSource } from './ItemsReloadSource'
 import { IsNativeMobileWeb } from '@standardnotes/ui-services'
@@ -16,7 +15,6 @@ describe('item list controller', () => {
   beforeEach(() => {
     application = {
       navigationController: {} as jest.Mocked<NavigationController>,
-      selectionController: {} as jest.Mocked<SelectedItemsController>,
       searchOptionsController: {} as jest.Mocked<SearchOptionsController>,
       notesController: {} as jest.Mocked<NotesController>,
       isNativeMobileWebUseCase: {
@@ -34,15 +32,17 @@ describe('item list controller', () => {
     const eventBus = new InternalEventBus()
 
     controller = new ItemListController(
+      application.keyboardService,
+      application.paneController,
       application.navigationController,
       application.searchOptionsController,
-      application.selectionController,
-      application.notesController,
       application.items,
       application.preferences,
       application.itemControllerGroup,
       application.vaultDisplayService,
       application.desktopManager,
+      application.protections,
+      application.options,
       application.isNativeMobileWebUseCase,
       application.changeAndSaveItem,
       eventBus,
@@ -53,7 +53,7 @@ describe('item list controller', () => {
     beforeEach(() => {
       controller.getFirstNonProtectedItem = jest.fn()
 
-      Object.defineProperty(application.selectionController, 'selectedUuids', {
+      Object.defineProperty(application.itemListController, 'selectedUuids', {
         get: () => new Set(),
         configurable: true,
       })
@@ -103,7 +103,7 @@ describe('item list controller', () => {
         content_type: ContentType.TYPES.Tag,
       } as jest.Mocked<SNTag>
 
-      Object.defineProperty(application.selectionController, 'selectedUuids', {
+      Object.defineProperty(application.itemListController, 'selectedUuids', {
         get: () => new Set(['123']),
       })
 

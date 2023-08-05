@@ -20,7 +20,6 @@ import { FilesController } from './FilesController'
 import { ItemListController } from './ItemList/ItemListController'
 import { LinkingController } from './LinkingController'
 import { NavigationController } from './Navigation/NavigationController'
-import { SelectedItemsController } from './SelectedItemsController'
 import { SubscriptionController } from './Subscription/SubscriptionController'
 import { getLinkingSearchResults } from '@/Utils/Items/Search/getSearchResults'
 
@@ -61,7 +60,6 @@ describe('LinkingController', () => {
       } as unknown as jest.Mocked<PreferenceServiceInterface>,
       itemControllerGroup: {} as jest.Mocked<WebApplication['itemControllerGroup']>,
       navigationController: {} as jest.Mocked<NavigationController>,
-      selectionController: {} as jest.Mocked<SelectedItemsController>,
       itemListController: {} as jest.Mocked<ItemListController>,
       filesController: {} as jest.Mocked<FilesController>,
       subscriptionController: {} as jest.Mocked<SubscriptionController>,
@@ -81,7 +79,6 @@ describe('LinkingController', () => {
         new LinkingController(
           application.navigationController,
           application.itemControllerGroup,
-          application.selectionController,
           application.vaultDisplayService,
           application.preferences,
           application.items,

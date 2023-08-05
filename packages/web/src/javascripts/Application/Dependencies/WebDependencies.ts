@@ -26,7 +26,6 @@ import { QuickSettingsController } from '@/Controllers/QuickSettingsController'
 import { VaultSelectionMenuController } from '@/Controllers/VaultSelectionMenuController'
 import { PaneController } from '@/Controllers/PaneController/PaneController'
 import { PreferencesController } from '@/Controllers/PreferencesController'
-import { SelectedItemsController } from '@/Controllers/SelectedItemsController'
 import { FeaturesController } from '@/Controllers/FeaturesController'
 import { NavigationController } from '@/Controllers/Navigation/NavigationController'
 import { NotesController } from '@/Controllers/NotesController/NotesController'
@@ -161,7 +160,7 @@ export class WebDependencies extends DependencyContainer {
 
     this.bind(Web_TYPES.PersistenceService, () => {
       return new PersistenceService(
-        this.get<SelectedItemsController>(Web_TYPES.SelectedItemsController),
+        this.get<ItemListController>(Web_TYPES.ItemListController),
         this.get<NavigationController>(Web_TYPES.NavigationController),
         application.storage,
         application.items,
@@ -204,17 +203,6 @@ export class WebDependencies extends DependencyContainer {
       return new PreferencesController(this.get<RouteService>(Web_TYPES.RouteService), application.events)
     })
 
-    this.bind(Web_TYPES.SelectedItemsController, () => {
-      return new SelectedItemsController(
-        this.get<KeyboardService>(Web_TYPES.KeyboardService),
-        this.get<PaneController>(Web_TYPES.PaneController),
-        application.items,
-        application.protections,
-        application.options,
-        application.events,
-      )
-    })
-
     this.bind(Web_TYPES.FeaturesController, () => {
       return new FeaturesController(application.features, application.events)
     })
@@ -237,7 +225,7 @@ export class WebDependencies extends DependencyContainer {
 
     this.bind(Web_TYPES.NotesController, () => {
       return new NotesController(
-        this.get<SelectedItemsController>(Web_TYPES.SelectedItemsController),
+        this.get<ItemListController>(Web_TYPES.ItemListController),
         this.get<NavigationController>(Web_TYPES.NavigationController),
         this.get<ItemGroupController>(Web_TYPES.ItemGroupController),
         this.get<KeyboardService>(Web_TYPES.KeyboardService),
@@ -265,7 +253,6 @@ export class WebDependencies extends DependencyContainer {
       return new LinkingController(
         this.get<NavigationController>(Web_TYPES.NavigationController),
         this.get<ItemGroupController>(Web_TYPES.ItemGroupController),
-        this.get<SelectedItemsController>(Web_TYPES.SelectedItemsController),
         this.get<VaultDisplayService>(Web_TYPES.VaultDisplayService),
         application.preferences,
         application.items,
@@ -278,15 +265,17 @@ export class WebDependencies extends DependencyContainer {
 
     this.bind(Web_TYPES.ItemListController, () => {
       return new ItemListController(
+        this.get<KeyboardService>(Web_TYPES.KeyboardService),
+        this.get<PaneController>(Web_TYPES.PaneController),
         this.get<NavigationController>(Web_TYPES.NavigationController),
         this.get<SearchOptionsController>(Web_TYPES.SearchOptionsController),
-        this.get<SelectedItemsController>(Web_TYPES.SelectedItemsController),
-        this.get<NotesController>(Web_TYPES.NotesController),
         application.items,
         application.preferences,
         this.get<ItemGroupController>(Web_TYPES.ItemGroupController),
         this.get<VaultDisplayService>(Web_TYPES.VaultDisplayService),
         this.get<DesktopManager>(Web_TYPES.DesktopManager),
+        application.protections,
+        application.options,
         this.get<IsNativeMobileWeb>(Web_TYPES.IsNativeMobileWeb),
         application.changeAndSaveItem,
         application.events,

@@ -54,17 +54,17 @@ class NoteGroupView extends AbstractComponent<Props, State> {
         })
       }
 
-      if (this.application.selectionController) {
+      if (this.application.itemListController) {
         this.setState({
-          showMultipleSelectedFiles: this.application.selectionController.selectedFilesCount > 1,
+          showMultipleSelectedFiles: this.application.itemListController.selectedFilesCount > 1,
         })
       }
     })
 
     this.autorun(() => {
-      if (this.application.selectionController) {
+      if (this.application.itemListController) {
         this.setState({
-          selectedFile: this.application.selectionController.selectedFiles[0],
+          selectedFile: this.application.itemListController.selectedFiles[0],
         })
       }
     })
@@ -96,7 +96,7 @@ class NoteGroupView extends AbstractComponent<Props, State> {
       <>
         {this.state.showMultipleSelectedNotes && <MultipleSelectedNotes application={this.application} />}
         {this.state.showMultipleSelectedFiles && (
-          <MultipleSelectedFiles selectionController={this.application.selectionController} />
+          <MultipleSelectedFiles itemListController={this.application.itemListController} />
         )}
         {shouldNotShowMultipleSelectedItems && hasControllers && (
           <>

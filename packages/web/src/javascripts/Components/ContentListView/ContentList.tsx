@@ -5,23 +5,22 @@ import { FunctionComponent, KeyboardEventHandler, UIEventHandler, useCallback } 
 import { FOCUSABLE_BUT_NOT_TABBABLE, NOTES_LIST_SCROLL_THRESHOLD } from '@/Constants/Constants'
 import { ListableContentItem } from './Types/ListableContentItem'
 import ContentListItem from './ContentListItem'
-import { SelectedItemsController } from '@/Controllers/SelectedItemsController'
 import { ElementIds } from '@/Constants/ElementIDs'
 import { classNames } from '@standardnotes/utils'
 import { ContentType, SNTag } from '@standardnotes/snjs'
+import { ItemListController } from '@/Controllers/ItemList/ItemListController'
 
 type Props = {
   application: WebApplication
   items: ListableContentItem[]
-  selectedUuids: SelectedItemsController['selectedUuids']
+  selectedUuids: ItemListController['selectedUuids']
   paginate: () => void
 }
 
 const ContentList: FunctionComponent<Props> = ({ application, items, selectedUuids, paginate }) => {
-  const { filesController, itemListController, navigationController, notesController, selectionController } =
-    application
+  const { filesController, itemListController, navigationController, notesController } = application
 
-  const { selectPreviousItem, selectNextItem } = selectionController
+  const { selectPreviousItem, selectNextItem } = itemListController
   const { hideTags, hideDate, hideNotePreview, hideEditorIcon } = itemListController.webDisplayOptions
   const { sortBy } = itemListController.displayOptions
   const selectedTag = navigationController.selected
@@ -52,9 +51,9 @@ const ContentList: FunctionComponent<Props> = ({ application, items, selectedUui
 
   const selectItem = useCallback(
     (item: ListableContentItem, userTriggered?: boolean) => {
-      return selectionController.selectItem(item.uuid, userTriggered)
+      return itemListController.selectItem(item.uuid, userTriggered)
     },
-    [selectionController],
+    [itemListController],
   )
 
   const getTagsForItem = useCallback(

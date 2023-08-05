@@ -248,7 +248,7 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
                     />
                     <FileContextMenuWrapper
                       filesController={application.filesController}
-                      selectionController={application.selectionController}
+                      itemListController={application.itemListController}
                     />
                     <PurchaseFlowWrapper application={application} />
                     <ConfirmSignoutContainer applicationGroup={mainApplicationGroup} application={application} />

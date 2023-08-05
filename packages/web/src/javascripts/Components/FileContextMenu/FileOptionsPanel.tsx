@@ -1,16 +1,16 @@
 import { useCallback, useRef, useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import FileMenuOptions from './FileMenuOptions'
-import { SelectedItemsController } from '@/Controllers/SelectedItemsController'
 import Popover from '../Popover/Popover'
 import RoundIconButton from '../Button/RoundIconButton'
 import Menu from '../Menu/Menu'
+import { ItemListController } from '@/Controllers/ItemList/ItemListController'
 
 type Props = {
-  selectionController: SelectedItemsController
+  itemListController: ItemListController
 }
 
-const FilesOptionsPanel = ({ selectionController }: Props) => {
+const FilesOptionsPanel = ({ itemListController }: Props) => {
   const [isOpen, setIsOpen] = useState(false)
   const buttonRef = useRef<HTMLButtonElement>(null)
 
@@ -28,7 +28,7 @@ const FilesOptionsPanel = ({ selectionController }: Props) => {
       >
         <Menu a11yLabel="File options panel" isOpen={isOpen}>
           <FileMenuOptions
-            selectedFiles={selectionController.selectedFiles}
+            selectedFiles={itemListController.selectedFiles}
             closeMenu={() => {
               setIsOpen(false)
             }}

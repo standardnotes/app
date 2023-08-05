@@ -58,7 +58,6 @@ import { LinkingController } from '@/Controllers/LinkingController'
 import { MomentsService } from '@/Controllers/Moments/MomentsService'
 import { FeaturesController } from '@/Controllers/FeaturesController'
 import { FilesController } from '@/Controllers/FilesController'
-import { SelectedItemsController } from '@/Controllers/SelectedItemsController'
 import { ItemListController } from '@/Controllers/ItemList/ItemListController'
 import { AndroidBackHandler } from '@/NativeMobileWeb/AndroidBackHandler'
 import { SubscriptionController } from '@/Controllers/Subscription/SubscriptionController'
@@ -161,9 +160,6 @@ export class WebApplication extends SNApplication implements WebApplicationInter
         this.notifyWebEvent(event)
       })
     }
-
-    this.notesController.setServicesPostConstruction(this.itemListController)
-    this.selectionController.setServicesPostConstruction(this.itemListController)
 
     this.linkingController.setServicesPostConstruction(
       this.itemListController,
@@ -383,7 +379,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
 
     const insertedNote = await this.mutator.insertItem(note)
 
-    this.selectionController.selectItem(insertedNote.uuid, true).catch(console.error)
+    this.itemListController.selectItem(insertedNote.uuid, true).catch(console.error)
 
     addToast({
       type: ToastType.Success,
@@ -588,10 +584,6 @@ export class WebApplication extends SNApplication implements WebApplicationInter
 
   get filesController(): FilesController {
     return this.deps.get<FilesController>(Web_TYPES.FilesController)
-  }
-
-  get selectionController(): SelectedItemsController {
-    return this.deps.get<SelectedItemsController>(Web_TYPES.SelectedItemsController)
   }
 
   get filePreviewModalController(): FilePreviewModalController {

@@ -51,13 +51,12 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
       itemListController,
       navigationController,
       noAccountWarningController,
-      selectionController,
       searchOptionsController,
       linkingController,
     } = application
 
     const { setPaneLayout, panes } = useResponsiveAppPane()
-    const { selectedUuids, selectNextItem, selectPreviousItem } = selectionController
+
     const { selected: selectedTag, selectedAsTag } = navigationController
     const {
       completedFullSync,
@@ -69,6 +68,9 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
       items,
       isCurrentNoteTemplate,
       isTableViewEnabled,
+      selectedUuids,
+      selectNextItem,
+      selectPreviousItem,
     } = itemListController
 
     const innerRef = useForwardedRef(ref)
@@ -227,7 +229,7 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
             }
 
             event.preventDefault()
-            selectionController.selectAll()
+            itemListController.selectAll()
           },
         },
       ])
@@ -235,9 +237,9 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
       addNewItem,
       application.keyboardService,
       createNewNote,
+      itemListController,
       selectNextItem,
       selectPreviousItem,
-      selectionController,
       shouldUseTableView,
     ])
 
@@ -256,13 +258,13 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
 
     const handleDailyListSelection = useCallback(
       async (item: ListableContentItem, userTriggered: boolean) => {
-        await selectionController.selectItemWithScrollHandling(item, {
+        await itemListController.selectItemWithScrollHandling(item, {
           userTriggered: true,
           scrollIntoView: userTriggered === false,
           animated: false,
         })
       },
-      [selectionController],
+      [itemListController],
     )
 
     useEffect(() => {

@@ -155,7 +155,7 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
                 {
                   label: 'Open',
                   handler: (toastId) => {
-                    application.selectionController.selectItem(duplicated.uuid, true).catch(console.error)
+                    application.itemListController.selectItem(duplicated.uuid, true).catch(console.error)
                     dismissToast(toastId)
                   },
                 },
@@ -168,7 +168,7 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
     )
     void application.sync.sync()
     closeMenuAndToggleNotesList()
-  }, [application.mutator, application.selectionController, application.sync, closeMenuAndToggleNotesList, notes])
+  }, [application.mutator, application.itemListController, application.sync, closeMenuAndToggleNotesList, notes])
 
   const openRevisionHistoryModal = useCallback(() => {
     application.historyModalController.openModal(application.notesController.firstSelectedNote)
