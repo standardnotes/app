@@ -173,6 +173,8 @@ export class ThemeManager extends AbstractUIServicee {
   }
 
   private async handlePreferencesChangeEvent() {
+    this.toggleTranslucentUIColors()
+
     const useDeviceThemeSettings = this.application.getPreference(PrefKey.UseSystemColorScheme, false)
 
     const hasPreferenceChanged = useDeviceThemeSettings !== this.lastUseDeviceThemeSettings
