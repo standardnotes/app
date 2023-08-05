@@ -253,7 +253,7 @@ const ChallengeModal: FunctionComponent<Props> = ({
         close={cancelChallenge}
         className={{
           content: classNames(
-            'sn-component challenge-modal relative m-0 flex h-full w-full flex-col items-center rounded border-solid border-border bg-default p-0 md:h-auto md:!w-max md:border',
+            'sn-component challenge-modal relative m-0 flex h-full w-full flex-col items-center rounded border-solid border-border bg-default p-0 md:h-auto md:!w-max md:border md:translucent-ui:bg-[--popover-background-color] translucent-ui:[backdrop-filter:var(--popover-backdrop-filter)]',
             !isMobileScreen && 'shadow-overlay-light',
             isMobileOverlay && 'shadow-overlay-light border border-solid border-border',
           ),

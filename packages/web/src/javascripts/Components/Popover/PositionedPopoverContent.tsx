@@ -98,7 +98,7 @@ const PositionedPopoverContent = ({
       <div
         className={classNames(
           'absolute left-0 top-0 flex w-full min-w-80 cursor-auto flex-col',
-          'overflow-y-auto rounded border border-[--menu-border-color] bg-default shadow-main md:h-auto md:max-w-xs',
+          'overflow-y-auto rounded border border-[--popover-border-color] bg-[--popover-background-color] shadow-main md:h-auto md:max-w-xs',
           !disableMobileFullscreenTakeover && 'h-full',
           overrideZIndex ? overrideZIndex : 'z-dropdown-menu',
           !isDesktopScreen && !disableMobileFullscreenTakeover ? 'pb-safe-bottom pt-safe-top' : '',
@@ -109,6 +109,7 @@ const PositionedPopoverContent = ({
           {
             ...styles,
             ...adjustedStyles,
+            backdropFilter: 'var(--popover-backdrop-filter)',
           } as CSSProperties
         }
         ref={mergeRefs([setPopoverElement, addCloseMethod])}

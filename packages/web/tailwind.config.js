@@ -170,6 +170,7 @@ module.exports = {
   plugins: [
     plugin(function ({ addVariant }) {
       addVariant('pointer-coarse', '@media (pointer: coarse)')
+      addVariant('translucent-ui', '.translucent-ui &')
     }),
   ],
 }
