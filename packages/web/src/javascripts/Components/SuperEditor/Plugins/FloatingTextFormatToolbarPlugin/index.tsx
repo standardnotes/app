@@ -308,11 +308,14 @@ function TextFormatFloatingToolbar({
                 if (URL_REGEX.test(text)) {
                   editor.dispatchCommand(TOGGLE_LINK_COMMAND, text)
                 } else {
-                  editor.dispatchCommand(TOGGLE_LINK_AND_EDIT_COMMAND, '')
-                  setIsLinkEditMode(true)
+                  throw new Error('Not a valid URL')
                 }
               })
-              .catch(console.error)
+              .catch((error) => {
+                console.error(error)
+                editor.dispatchCommand(TOGGLE_LINK_AND_EDIT_COMMAND, '')
+                setIsLinkEditMode(true)
+              })
           } else {
             editor.dispatchCommand(TOGGLE_LINK_AND_EDIT_COMMAND, '')
             setIsLinkEditMode(true)

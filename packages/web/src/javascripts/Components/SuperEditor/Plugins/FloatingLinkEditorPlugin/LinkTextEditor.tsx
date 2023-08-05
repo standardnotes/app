@@ -1,6 +1,5 @@
 import Icon from '@/Components/Icon/Icon'
 import { CloseIcon, CheckIcon, PencilFilledIcon } from '@standardnotes/icons'
-// import { classNames } from '@standardnotes/snjs'
 import { KeyboardKey } from '@standardnotes/ui-services'
 import { IconComponent } from '../../Lexical/Theme/IconComponent'
 import { $isRangeSelection, $isTextNode, GridSelection, LexicalEditor, NodeSelection, RangeSelection } from 'lexical'
