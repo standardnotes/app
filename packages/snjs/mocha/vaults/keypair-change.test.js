@@ -39,19 +39,19 @@ describe('keypair change', function () {
     publicKeyChain.push(context.publicKey)
     signingPublicKeyChain.push(context.signingPublicKey)
 
-    await contactContext.runAnyRequestToPreventRefreshTokenFromExpiring()
+    await contactContext.forceRefreshSession()
 
     await context.changePassword('new_password-2')
     publicKeyChain.push(context.publicKey)
     signingPublicKeyChain.push(context.signingPublicKey)
 
-    await contactContext.runAnyRequestToPreventRefreshTokenFromExpiring()
+    await contactContext.forceRefreshSession()
 
     await context.changePassword('new_password-3')
     publicKeyChain.push(context.publicKey)
     signingPublicKeyChain.push(context.signingPublicKey)
 
-    await contactContext.runAnyRequestToPreventRefreshTokenFromExpiring()
+    await contactContext.forceRefreshSession()
 
     await context.changeNoteTitleAndSync(note, 'new title')
 
@@ -74,7 +74,7 @@ describe('keypair change', function () {
     expect(receivedNote.signatureData.result.passes).to.be.true
 
     await deinitContactContext()
-  }).timeout(Factory.ThirtySecondTimeout)
+  }).timeout(Factory.SixtySecondTimeout)
 
   it('should not trust messages sent with previous key pair', async () => {
     const { sharedVault, contactContext, deinitContactContext } =
