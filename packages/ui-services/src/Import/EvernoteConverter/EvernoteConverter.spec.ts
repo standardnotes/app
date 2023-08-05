@@ -6,7 +6,7 @@ import { ContentType } from '@standardnotes/domain-core'
 import { DecryptedTransferPayload, NoteContent, TagContent } from '@standardnotes/models'
 import { EvernoteConverter } from './EvernoteConverter'
 import data from './testData'
-import { WebApplicationInterface } from '../../WebApplication/WebApplicationInterface'
+import { UuidGenerator } from '@standardnotes/utils'
 
 // Mock dayjs so dayjs.extend() doesn't throw an error in EvernoteConverter.ts
 jest.mock('dayjs', () => {
@@ -21,17 +21,11 @@ jest.mock('dayjs', () => {
   }
 })
 
+UuidGenerator.SetGenerator(() => String(Math.random()))
+
 describe('EvernoteConverter', () => {
-  let application: WebApplicationInterface
-
-  beforeEach(() => {
-    application = {
-      generateUUID: jest.fn().mockReturnValue(Math.random()),
-    } as any as WebApplicationInterface
-  })
-
   it('should parse and strip html', () => {
-    const converter = new EvernoteConverter(application)
+    const converter = new EvernoteConverter()
 
     const result = converter.parseENEXData(data, true)
 
@@ -51,7 +45,7 @@ describe('EvernoteConverter', () => {
   })
 
   it('should parse and not strip html', () => {
-    const converter = new EvernoteConverter(application)
+    const converter = new EvernoteConverter()
 
     const result = converter.parseENEXData(data, false)
 
