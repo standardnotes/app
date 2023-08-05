@@ -58,6 +58,7 @@ import { getPositionedPopoverStyles } from '@/Components/Popover/GetPositionedPo
 import { getAdjustedStylesForNonPortalPopover } from '@/Components/Popover/Utils/getAdjustedStylesForNonPortal'
 import LinkEditor from '../FloatingLinkEditorPlugin/LinkEditor'
 import { movePopoverToFitInsideRect } from '@/Components/Popover/Utils/movePopoverToFitInsideRect'
+import LinkTextEditor, { $isLinkTextNode } from '../FloatingLinkEditorPlugin/LinkTextEditor'
 
 const blockTypeToBlockName = {
   bullet: 'Bulleted List',
@@ -97,6 +98,7 @@ function TextFormatFloatingToolbar({
   anchorElem,
   isText,
   isLink,
+  isLinkText,
   isAutoLink,
   isBold,
   isItalic,
@@ -115,6 +117,7 @@ function TextFormatFloatingToolbar({
   isCode: boolean
   isItalic: boolean
   isLink: boolean
+  isLinkText: boolean
   isAutoLink: boolean
   isStrikethrough: boolean
   isSubscript: boolean
@@ -126,6 +129,7 @@ function TextFormatFloatingToolbar({
   const toolbarRef = useRef<HTMLDivElement | null>(null)
 
   const [linkUrl, setLinkUrl] = useState('')
+  const [linkText, setLinkText] = useState('')
   const [isLinkEditMode, setIsLinkEditMode] = useState(false)
   const [lastSelection, setLastSelection] = useState<RangeSelection | GridSelection | NodeSelection | null>(null)
 
@@ -184,6 +188,11 @@ function TextFormatFloatingToolbar({
         setLinkUrl(node.getURL())
       } else {
         setLinkUrl('')
+      }
+      if ($isLinkTextNode(node, selection)) {
+        setLinkText(node.getTextContent())
+      } else {
+        setLinkText('')
       }
     }
 
@@ -314,6 +323,12 @@ function TextFormatFloatingToolbar({
       ref={toolbarRef}
       className="absolute left-0 top-0 rounded-lg border border-border bg-contrast translucent-ui:bg-[--popover-background-color] translucent-ui:[backdrop-filter:var(--popover-backdrop-filter)] px-2 py-1 shadow-sm shadow-contrast"
     >
+      {isLinkText && !isAutoLink && (
+        <>
+          <LinkTextEditor linkText={linkText} editor={editor} lastSelection={lastSelection} />
+          <div role="presentation" className="mb-1.5 mt-0.5 h-px bg-border" />
+        </>
+      )}
       {isLink && (
         <LinkEditor
           linkUrl={linkUrl}
@@ -432,6 +447,7 @@ function useFloatingTextFormatToolbar(editor: LexicalEditor, anchorElem: HTMLEle
   const [isText, setIsText] = useState(false)
   const [isLink, setIsLink] = useState(false)
   const [isAutoLink, setIsAutoLink] = useState(false)
+  const [isLinkText, setIsLinkText] = useState(false)
   const [isBold, setIsBold] = useState(false)
   const [isItalic, setIsItalic] = useState(false)
   const [isUnderline, setIsUnderline] = useState(false)
@@ -521,6 +537,11 @@ function useFloatingTextFormatToolbar(editor: LexicalEditor, anchorElem: HTMLEle
       } else {
         setIsAutoLink(false)
       }
+      if ($isLinkTextNode(node, selection)) {
+        setIsLinkText(true)
+      } else {
+        setIsLinkText(false)
+      }
 
       if (!$isCodeHighlightNode(selection.anchor.getNode()) && selection.getTextContent() !== '') {
         setIsText($isTextNode(node))
@@ -565,6 +586,7 @@ function useFloatingTextFormatToolbar(editor: LexicalEditor, anchorElem: HTMLEle
       anchorElem={anchorElem}
       isText={isText}
       isLink={isLink}
+      isLinkText={isLinkText}
       isAutoLink={isAutoLink}
       isBold={isBold}
       isItalic={isItalic}
