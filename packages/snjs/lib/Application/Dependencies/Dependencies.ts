@@ -129,6 +129,7 @@ import {
   ChangeAndSaveItem,
   FullyResolvedApplicationOptions,
   GetHost,
+  SetHost,
 } from '@standardnotes/services'
 import { ItemManager } from '../../Services/Items/ItemManager'
 import { PayloadManager } from '../../Services/Payloads/PayloadManager'
@@ -222,6 +223,10 @@ export class Dependencies {
 
     this.factory.set(TYPES.GetHost, () => {
       return new GetHost(this.get<LegacyApiService>(TYPES.LegacyApiService))
+    })
+
+    this.factory.set(TYPES.SetHost, () => {
+      return new SetHost(this.get<HttpService>(TYPES.HttpService), this.get<LegacyApiService>(TYPES.LegacyApiService))
     })
 
     this.factory.set(TYPES.GetKeyPairs, () => {
