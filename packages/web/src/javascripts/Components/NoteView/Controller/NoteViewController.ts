@@ -98,9 +98,6 @@ export class NoteViewController implements ItemViewControllerInterface {
       disposer()
     }
     this.disposers.length = 0
-    ;(this.items as unknown) = undefined
-    ;(this.item as unknown) = undefined
-
     this.innerValueChangeObservers.length = 0
   }
 

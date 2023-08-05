@@ -77,6 +77,9 @@ describe('LinkingController', () => {
     Object.defineProperty(application, 'linkingController', {
       get: () =>
         new LinkingController(
+          application.itemListController,
+          application.filesController,
+          application.subscriptionController,
           application.navigationController,
           application.itemControllerGroup,
           application.vaultDisplayService,
@@ -89,12 +92,6 @@ describe('LinkingController', () => {
         ),
       configurable: true,
     })
-
-    application.linkingController.setServicesPostConstruction(
-      application.itemListController,
-      application.filesController,
-      application.subscriptionController,
-    )
   })
 
   describe('isValidSearchResult', () => {

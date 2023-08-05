@@ -7,6 +7,7 @@ import { SearchOptionsController } from '../SearchOptionsController'
 import { ItemListController } from './ItemListController'
 import { ItemsReloadSource } from './ItemsReloadSource'
 import { IsNativeMobileWeb } from '@standardnotes/ui-services'
+import { runInAction } from 'mobx'
 
 describe('item list controller', () => {
   let application: WebApplication
@@ -53,9 +54,8 @@ describe('item list controller', () => {
     beforeEach(() => {
       controller.getFirstNonProtectedItem = jest.fn()
 
-      Object.defineProperty(application.itemListController, 'selectedUuids', {
-        get: () => new Set(),
-        configurable: true,
+      runInAction(() => {
+        controller.selectedUuids = new Set()
       })
     })
 
@@ -103,8 +103,8 @@ describe('item list controller', () => {
         content_type: ContentType.TYPES.Tag,
       } as jest.Mocked<SNTag>
 
-      Object.defineProperty(application.itemListController, 'selectedUuids', {
-        get: () => new Set(['123']),
+      runInAction(() => {
+        controller.selectedUuids = new Set(['123'])
       })
 
       Object.defineProperty(application.navigationController, 'selected', {
