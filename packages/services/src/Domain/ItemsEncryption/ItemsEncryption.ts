@@ -97,7 +97,7 @@ export class ItemsEncryptionService extends AbstractService {
     return this._findDefaultItemsKey.execute(this.getItemsKeys()).getValue()
   }
 
-  private keyToUseForItemEncryption(
+  keyToUseForItemEncryption(
     payload: DecryptedPayloadInterface,
   ): ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface | StandardException {
     if (payload.key_system_identifier) {
@@ -132,7 +132,7 @@ export class ItemsEncryptionService extends AbstractService {
     return result
   }
 
-  private keyToUseForDecryptionOfPayload(
+  keyToUseForDecryptionOfPayload(
     payload: EncryptedPayloadInterface,
   ): ItemsKeyInterface | KeySystemItemsKeyInterface | undefined {
     if (payload.items_key_id) {
