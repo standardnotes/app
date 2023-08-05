@@ -154,7 +154,7 @@ function TextFormatFloatingToolbar({
   const insertLink = useCallback(() => {
     if (!isLink) {
       editor.update(() => {
-        editor.dispatchCommand(TOGGLE_LINK_AND_EDIT_COMMAND, 'https://')
+        editor.dispatchCommand(TOGGLE_LINK_AND_EDIT_COMMAND, '')
       })
     } else {
       editor.dispatchCommand(TOGGLE_LINK_AND_EDIT_COMMAND, null)
@@ -300,7 +300,7 @@ function TextFormatFloatingToolbar({
 
         if (code === 'KeyK' && (ctrlKey || metaKey)) {
           event.preventDefault()
-          const dispatched = editor.dispatchCommand(TOGGLE_LINK_AND_EDIT_COMMAND, 'https://')
+          const dispatched = editor.dispatchCommand(TOGGLE_LINK_AND_EDIT_COMMAND, '')
           setIsLinkEditMode(true)
           return dispatched
         }
