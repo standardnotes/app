@@ -22,18 +22,13 @@ import { InternalEventInterface } from '../Internal/InternalEventInterface'
 import { NotificationServiceEvent, NotificationServiceEventPayload } from '../UserEvent/NotificationServiceEvent'
 import { DeleteThirdPartyVault } from './UseCase/DeleteExternalSharedVault'
 import { DeleteSharedVault } from './UseCase/DeleteSharedVault'
-import { VaultServiceEvent, VaultServiceEventPayload } from '../Vault/VaultServiceEvent'
 import { ShareContactWithVault } from './UseCase/ShareContactWithVault'
-import { NotifyVaultUsersOfKeyRotation } from './UseCase/NotifyVaultUsersOfKeyRotation'
 import { CreateSharedVault } from './UseCase/CreateSharedVault'
-import { SendVaultDataChangedMessage } from './UseCase/SendVaultDataChangedMessage'
 import { ConvertToSharedVault } from './UseCase/ConvertToSharedVault'
 import { GetVault } from '../Vault/UseCase/GetVault'
 import { ContentType, NotificationType, Uuid } from '@standardnotes/domain-core'
 import { HandleKeyPairChange } from '../Contacts/UseCase/HandleKeyPairChange'
 import { FindContact } from '../Contacts/UseCase/FindContact'
-import { EncryptionProviderInterface } from '../Encryption/EncryptionProviderInterface'
-import { IsVaultOwner } from '../VaultUser/UseCase/IsVaultOwner'
 import { GetOwnedSharedVaults } from './UseCase/GetOwnedSharedVaults'
 
 export class SharedVaultService
@@ -42,20 +37,16 @@ export class SharedVaultService
 {
   constructor(
     private items: ItemManagerInterface,
-    private encryption: EncryptionProviderInterface,
     private session: SessionsClientInterface,
     private _getVault: GetVault,
     private _getOwnedSharedVaults: GetOwnedSharedVaults,
     private _createSharedVault: CreateSharedVault,
     private _handleKeyPairChange: HandleKeyPairChange,
-    private _notifyVaultUsersOfKeyRotation: NotifyVaultUsersOfKeyRotation,
-    private _sendVaultDataChangeMessage: SendVaultDataChangedMessage,
     private _findContact: FindContact,
     private _deleteThirdPartyVault: DeleteThirdPartyVault,
     private _shareContactWithVault: ShareContactWithVault,
     private _convertToSharedVault: ConvertToSharedVault,
     private _deleteSharedVault: DeleteSharedVault,
-    private _isVaultAdmin: IsVaultOwner,
     private _discardItemsLocally: DiscardItemsLocally,
     eventBus: InternalEventBusInterface,
   ) {
@@ -68,32 +59,20 @@ export class SharedVaultService
         }
       }),
     )
-
-    this.eventDisposers.push(
-      items.addObserver<VaultListingInterface>(ContentType.TYPES.VaultListing, ({ changed, source }) => {
-        if (source === PayloadEmitSource.LocalChanged && changed.length > 0) {
-          void this.handleVaultListingsChange(changed)
-        }
-      }),
-    )
   }
 
   override deinit(): void {
     super.deinit()
     ;(this.items as unknown) = undefined
-    ;(this.encryption as unknown) = undefined
     ;(this.session as unknown) = undefined
     ;(this._getVault as unknown) = undefined
     ;(this._createSharedVault as unknown) = undefined
     ;(this._handleKeyPairChange as unknown) = undefined
-    ;(this._notifyVaultUsersOfKeyRotation as unknown) = undefined
-    ;(this._sendVaultDataChangeMessage as unknown) = undefined
     ;(this._findContact as unknown) = undefined
     ;(this._deleteThirdPartyVault as unknown) = undefined
     ;(this._shareContactWithVault as unknown) = undefined
     ;(this._convertToSharedVault as unknown) = undefined
     ;(this._deleteSharedVault as unknown) = undefined
-    ;(this._isVaultAdmin as unknown) = undefined
   }
 
   async handleEvent(event: InternalEventInterface): Promise<void> {
@@ -109,11 +88,6 @@ export class SharedVaultService
       case NotificationServiceEvent.NotificationReceived:
         await this.handleUserEvent(event.payload as NotificationServiceEventPayload)
         break
-      case VaultServiceEvent.VaultRootKeyRotated: {
-        const payload = event.payload as VaultServiceEventPayload[VaultServiceEvent.VaultRootKeyRotated]
-        await this.handleVaultRootKeyRotatedEvent(payload.vault)
-        break
-      }
       case SyncEvent.ReceivedRemoteSharedVaults:
         void this.notifyEventSync(SharedVaultServiceEvent.SharedVaultStatusChanged)
         break
@@ -139,33 +113,6 @@ export class SharedVaultService
         break
       }
     }
-  }
-
-  private isCurrentUserVaultOwner(sharedVault: SharedVaultListingInterface): boolean {
-    if (!sharedVault.sharing.ownerUserUuid) {
-      throw new Error(`Shared vault ${sharedVault.sharing.sharedVaultUuid} does not have an owner user uuid`)
-    }
-
-    return sharedVault.sharing.ownerUserUuid === this.session.userUuid
-  }
-
-  private async handleVaultRootKeyRotatedEvent(vault: VaultListingInterface): Promise<void> {
-    if (!vault.isSharedVaultListing()) {
-      return
-    }
-
-    if (!this.isCurrentUserVaultOwner(vault)) {
-      return
-    }
-
-    await this._notifyVaultUsersOfKeyRotation.execute({
-      sharedVault: vault,
-      senderUuid: this.session.getSureUser().uuid,
-      keys: {
-        encryption: this.encryption.getKeyPair(),
-        signing: this.encryption.getSigningKeyPair(),
-      },
-    })
   }
 
   async createSharedVault(dto: {
@@ -198,23 +145,6 @@ export class SharedVaultService
     }
   }
 
-  private async handleVaultListingsChange(vaults: VaultListingInterface[]): Promise<void> {
-    for (const vault of vaults) {
-      if (!vault.isSharedVaultListing()) {
-        continue
-      }
-
-      await this._sendVaultDataChangeMessage.execute({
-        vault,
-        senderUuid: this.session.getSureUser().uuid,
-        keys: {
-          encryption: this.encryption.getKeyPair(),
-          signing: this.encryption.getSigningKeyPair(),
-        },
-      })
-    }
-  }
-
   public async deleteSharedVault(sharedVault: SharedVaultListingInterface): Promise<ClientDisplayableError | void> {
     return this._deleteSharedVault.execute({ sharedVault })
   }
@@ -224,17 +154,12 @@ export class SharedVaultService
       throw new Error('Cannot share self contact')
     }
 
-    const ownedVaults = this._getOwnedSharedVaults.execute({ userUuid: this.session.userUuid }).getValue()
+    const ownedVaults = this._getOwnedSharedVaults.execute().getValue()
 
     for (const vault of ownedVaults) {
       await this._shareContactWithVault.execute({
-        keys: {
-          encryption: this.encryption.getKeyPair(),
-          signing: this.encryption.getSigningKeyPair(),
-        },
         sharedVault: vault,
         contactToShare: contact,
-        senderUserUuid: this.session.getSureUser().uuid,
       })
     }
   }

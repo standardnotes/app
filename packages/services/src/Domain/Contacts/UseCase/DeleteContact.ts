@@ -18,7 +18,7 @@ export class DeleteContact implements UseCaseInterface<void> {
       throw new Error('Cannot delete self')
     }
 
-    const vaults = this.getOwnedVaults.execute({ userUuid: dto.ownUserUuid })
+    const vaults = this.getOwnedVaults.execute()
     if (vaults.isFailed()) {
       return Result.fail('Failed to get owned vaults')
     }

@@ -38,7 +38,7 @@ const Tooltip = ({ text }: { text: string }) => {
         onMouseEnter={() => setVisible(true)}
         onMouseLeave={() => setVisible(false)}
       >
-        <Icon type={'notes'} className="text-border" size="large" />
+        <Icon type={'notes'} className="text-border translucent-ui:text-[--popover-border-color]" size="large" />
       </div>
       <Popover
         open={visible}

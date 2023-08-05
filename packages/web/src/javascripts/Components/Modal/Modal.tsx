@@ -104,16 +104,19 @@ const Modal = ({
       />
       <div
         className={classNames(
-          'z-[1] m-0 flex h-full w-full flex-col border-solid border-border bg-default p-0 md:h-auto md:max-h-[85vh] md:w-160 md:rounded md:border md:shadow-main',
+          'z-[1] m-0 flex h-full w-full flex-col border-solid border-[--popover-border-color] bg-[--popover-background-color] p-0 md:h-auto md:max-h-[85vh] md:w-160 md:rounded md:border md:shadow-main',
           className?.content,
         )}
+        style={{
+          backdropFilter: 'var(--popover-backdrop-filter)',
+        }}
       >
         {customHeader && !disableCustomHeader ? (
           customHeader
         ) : (
           <div
             className={classNames(
-              'flex w-full flex-shrink-0 select-none items-center justify-between rounded-t border-b border-solid border-border bg-default px-2 text-text md:px-4.5 md:py-3',
+              'flex w-full flex-shrink-0 select-none items-center justify-between rounded-t border-b border-solid border-border bg-default px-2 text-text md:px-4.5 md:py-3 md:translucent-ui:bg-transparent',
               hasTopInset ? 'pb-1.5 pt-safe-top' : 'py-1.5',
             )}
           >

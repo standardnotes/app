@@ -87,7 +87,7 @@ const EditVaultModal: FunctionComponent<Props> = ({ onCloseDialog, existingVault
       const isChangingPasswordType = vault.keyPasswordType !== passwordType
       const isChangingKeyStorageMode = vault.keyStorageMode !== keyStorageMode
 
-      const getPasswordTypeParams = (): ChangeVaultKeyOptionsDTO['newPasswordType'] => {
+      const getPasswordTypeParams = (): ChangeVaultKeyOptionsDTO['newPasswordOptions'] => {
         if (!isChangingPasswordType) {
           throw new Error('Password type is not changing')
         }
@@ -108,9 +108,9 @@ const EditVaultModal: FunctionComponent<Props> = ({ onCloseDialog, existingVault
       }
 
       if (isChangingPasswordType || isChangingKeyStorageMode) {
-        await application.vaults.changeVaultOptions({
+        await application.vaults.changeVaultKeyOptions({
           vault,
-          newPasswordType: isChangingPasswordType ? getPasswordTypeParams() : undefined,
+          newPasswordOptions: isChangingPasswordType ? getPasswordTypeParams() : undefined,
           newStorageMode: isChangingKeyStorageMode ? keyStorageMode : undefined,
         })
       }

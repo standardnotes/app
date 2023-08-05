@@ -4,7 +4,6 @@ import { GetVault } from '../Vault/UseCase/GetVault'
 import { InternalEventBusInterface } from './../Internal/InternalEventBusInterface'
 import { RemoveVaultMember } from './UseCase/RemoveSharedVaultMember'
 import { VaultServiceInterface } from '../Vault/VaultServiceInterface'
-import { SessionsClientInterface } from './../Session/SessionsClientInterface'
 import { GetVaultUsers } from './UseCase/GetVaultUsers'
 import { SharedVaultListingInterface } from '@standardnotes/models'
 import { VaultUserServiceInterface } from './VaultUserServiceInterface'
@@ -16,7 +15,6 @@ import { IsVaultOwner } from './UseCase/IsVaultOwner'
 
 export class VaultUserService extends AbstractService<VaultUserServiceEvent> implements VaultUserServiceInterface {
   constructor(
-    private session: SessionsClientInterface,
     private vaults: VaultServiceInterface,
     private vaultLocks: VaultLockServiceInterface,
     private _getVaultUsers: GetVaultUsers,
@@ -31,7 +29,6 @@ export class VaultUserService extends AbstractService<VaultUserServiceEvent> imp
 
   override deinit(): void {
     super.deinit()
-    ;(this.session as unknown) = undefined
     ;(this.vaults as unknown) = undefined
     ;(this._getVaultUsers as unknown) = undefined
     ;(this._removeVaultMember as unknown) = undefined
@@ -58,7 +55,6 @@ export class VaultUserService extends AbstractService<VaultUserServiceEvent> imp
     return this._isVaultOwner
       .execute({
         sharedVault,
-        userUuid: this.session.userUuid,
       })
       .getValue()
   }
@@ -101,7 +97,6 @@ export class VaultUserService extends AbstractService<VaultUserServiceEvent> imp
   async leaveSharedVault(sharedVault: SharedVaultListingInterface): Promise<ClientDisplayableError | void> {
     const result = await this._leaveVault.execute({
       sharedVault: sharedVault,
-      userUuid: this.session.getSureUser().uuid,
     })
 
     if (isClientDisplayableError(result)) {

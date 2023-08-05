@@ -47,5 +47,10 @@
   --sn-stylekit-menu-border: 1px solid #424242;
   --navigation-item-selected-background-color: var(--background-color);
   --normal-button-background-color: var(--sn-stylekit-passive-color-5);
-  --menu-border-color: var(--sn-stylekit-border-color);
+  --popover-border-color: var(--sn-stylekit-passive-color-3);
+  --separator-color: var(--sn-stylekit-passive-color-3);
+}
+
+.translucent-ui [role='dialog'] {
+  --sn-stylekit-border-color: var(--sn-stylekit-passive-color-3);
 }

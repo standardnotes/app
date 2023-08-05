@@ -4,8 +4,8 @@ import { WebSocketsService } from './../Services/Api/WebsocketsService'
 import { MigrationService } from './../Services/Migration/MigrationService'
 import { LegacyApiService } from './../Services/Api/ApiService'
 import { FeaturesService } from '@Lib/Services/Features/FeaturesService'
-import { SNPreferencesService } from './../Services/Preferences/PreferencesService'
-import { SNProtectionService } from './../Services/Protection/ProtectionService'
+import { PreferencesService } from './../Services/Preferences/PreferencesService'
+import { ProtectionService } from './../Services/Protection/ProtectionService'
 import { SessionManager } from './../Services/Session/SessionManager'
 import { HttpService, HttpServiceInterface, UserRegistrationResponseBody } from '@standardnotes/api'
 import { ApplicationIdentifier, compareVersions, ProtocolVersion, KeyParamsOrigination } from '@standardnotes/common'
@@ -32,7 +32,7 @@ import {
   FeaturesClientInterface,
   ItemManagerInterface,
   SyncServiceInterface,
-  UserClientInterface,
+  UserServiceInterface,
   MutatorClientInterface,
   StatusServiceInterface,
   AlertService,
@@ -74,7 +74,6 @@ import {
   VaultUserServiceInterface,
   VaultInviteServiceInterface,
   NotificationServiceEvent,
-  VaultServiceEvent,
   VaultLockServiceInterface,
 } from '@standardnotes/services'
 import {
@@ -297,7 +296,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     const uninstall = syncService.addEventObserver(syncEventCallback)
     this.serviceObservers.push(uninstall)
 
-    const protectionService = this.dependencies.get<SNProtectionService>(TYPES.ProtectionService)
+    const protectionService = this.dependencies.get<ProtectionService>(TYPES.ProtectionService)
     this.serviceObservers.push(
       protectionService.addEventObserver((event) => {
         if (event === ProtectionEvent.UnprotectedSessionBegan) {
@@ -329,7 +328,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       }),
     )
 
-    const preferencesService = this.dependencies.get<SNPreferencesService>(TYPES.PreferencesService)
+    const preferencesService = this.dependencies.get<PreferencesService>(TYPES.PreferencesService)
     this.serviceObservers.push(
       preferencesService.addEventObserver(() => {
         void this.notifyEvent(ApplicationEvent.PreferencesChanged)
@@ -1141,7 +1140,6 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       this.dependencies.get(TYPES.SharedVaultService),
       NotificationServiceEvent.NotificationReceived,
     )
-    this.events.addEventHandler(this.dependencies.get(TYPES.SharedVaultService), VaultServiceEvent.VaultRootKeyRotated)
     this.events.addEventHandler(this.dependencies.get(TYPES.SharedVaultService), SyncEvent.ReceivedRemoteSharedVaults)
 
     this.events.addEventHandler(
@@ -1267,8 +1265,8 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return this.dependencies.get<SyncServiceInterface>(TYPES.SyncService)
   }
 
-  public get user(): UserClientInterface {
-    return this.dependencies.get<UserClientInterface>(TYPES.UserService)
+  public get user(): UserServiceInterface {
+    return this.dependencies.get<UserServiceInterface>(TYPES.UserService)
   }
 
   public get settings(): SettingsService {

@@ -1,3 +1,4 @@
+import { GetKeyPairs } from './../Encryption/UseCase/GetKeyPairs'
 import { SyncServiceInterface } from './../Sync/SyncServiceInterface'
 import { SessionsClientInterface } from './../Session/SessionsClientInterface'
 import { MutatorClientInterface } from './../Mutator/MutatorClientInterface'
@@ -54,6 +55,7 @@ export class AsymmetricMessageService
     private _getOutboundMessagesUseCase: GetOutboundMessages,
     private _getInboundMessagesUseCase: GetInboundMessages,
     private _getUntrustedPayload: GetUntrustedPayload,
+    private _getKeyPairs: GetKeyPairs,
     eventBus: InternalEventBusInterface,
   ) {
     super(eventBus)
@@ -196,8 +198,13 @@ export class AsymmetricMessageService
   }
 
   getUntrustedMessagePayload(message: AsymmetricMessageServerHash): Result<AsymmetricMessagePayload> {
+    const keys = this._getKeyPairs.execute()
+    if (keys.isFailed()) {
+      return Result.fail(keys.getError())
+    }
+
     const result = this._getUntrustedPayload.execute({
-      privateKey: this.encryption.getKeyPair().privateKey,
+      privateKey: keys.getValue().encryption.privateKey,
       message,
     })
 
@@ -214,8 +221,13 @@ export class AsymmetricMessageService
       return Result.fail(contact.getError())
     }
 
+    const keys = this._getKeyPairs.execute()
+    if (keys.isFailed()) {
+      return Result.fail(keys.getError())
+    }
+
     const result = this._getTrustedPayload.execute({
-      privateKey: this.encryption.getKeyPair().privateKey,
+      privateKey: keys.getValue().encryption.privateKey,
       sender: contact.getValue(),
       ownUserUuid: this.sessions.userUuid,
       message,

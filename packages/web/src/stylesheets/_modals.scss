@@ -56,6 +56,12 @@
   justify-content: center;
   flex-direction: column;
 
+  .sk-panel {
+    border-color: var(--popover-border-color);
+    background-color: var(--popover-background-color);
+    backdrop-filter: var(--popover-backdrop-filter);
+  }
+
   .sn-component {
     height: 100%;
     .sk-panel {

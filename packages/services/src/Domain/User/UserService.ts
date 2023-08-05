@@ -25,7 +25,7 @@ import {
 } from '../Challenge'
 import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
 import { AbstractService } from '../Service/AbstractService'
-import { UserClientInterface } from './UserClientInterface'
+import { UserServiceInterface } from './UserServiceInterface'
 import { DeinitSource } from '../Application/DeinitSource'
 import { StoragePersistencePolicies } from '../Storage/StorageTypes'
 import { SessionsClientInterface } from '../Session/SessionsClientInterface'
@@ -38,10 +38,11 @@ import { SignedInOrRegisteredEventPayload } from './SignedInOrRegisteredEventPay
 import { CredentialsChangeFunctionResponse } from './CredentialsChangeFunctionResponse'
 import { EncryptionProviderInterface } from '../Encryption/EncryptionProviderInterface'
 import { ReencryptTypeAItems } from '../Encryption/UseCase/TypeA/ReencryptTypeAItems'
+import { DecryptErroredPayloads } from '../Encryption/UseCase/DecryptErroredPayloads'
 
 export class UserService
   extends AbstractService<AccountEvent, AccountEventData>
-  implements UserClientInterface, InternalEventHandlerInterface
+  implements UserServiceInterface, InternalEventHandlerInterface
 {
   private signingIn = false
   private registering = false
@@ -60,6 +61,7 @@ export class UserService
     private protections: ProtectionsClientInterface,
     private userApi: UserApiServiceInterface,
     private _reencryptTypeAItems: ReencryptTypeAItems,
+    private _decryptErroredPayloads: DecryptErroredPayloads,
     protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)
@@ -77,6 +79,7 @@ export class UserService
     ;(this.protections as unknown) = undefined
     ;(this.userApi as unknown) = undefined
     ;(this._reencryptTypeAItems as unknown) = undefined
+    ;(this._decryptErroredPayloads as unknown) = undefined
   }
 
   async handleEvent(event: InternalEventInterface): Promise<void> {
@@ -104,16 +107,24 @@ export class UserService
         })
         .then(() => {
           if (!payload.awaitSync) {
-            void this.encryption.decryptErroredPayloads()
+            void this._decryptErroredPayloads.execute()
           }
         })
 
       if (payload.awaitSync) {
         await syncPromise
 
-        await this.encryption.decryptErroredPayloads()
+        await this._decryptErroredPayloads.execute()
       }
     }
+  }
+
+  get user(): User | undefined {
+    return this.sessions.getUser()
+  }
+
+  get sureUser(): User {
+    return this.sessions.getSureUser()
   }
 
   getUserUuid(): string {

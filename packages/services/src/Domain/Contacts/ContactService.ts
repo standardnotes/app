@@ -8,7 +8,7 @@ import { SyncServiceInterface } from '../Sync/SyncServiceInterface'
 import { SessionsClientInterface } from '../Session/SessionsClientInterface'
 import { ContactServiceEvent, ContactServiceInterface } from '../Contacts/ContactServiceInterface'
 import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
-import { UserClientInterface } from '../User/UserClientInterface'
+import { UserServiceInterface } from '../User/UserServiceInterface'
 import { CollaborationIDData, Version1CollaborationId } from './CollaborationID'
 import { ValidateItemSigner } from './UseCase/ValidateItemSigner'
 import { ItemSignatureValidationResult } from './UseCase/Types/ItemSignatureValidationResult'
@@ -26,7 +26,7 @@ export class ContactService extends AbstractService<ContactServiceEvent> impleme
     private mutator: MutatorClientInterface,
     private session: SessionsClientInterface,
     private crypto: PureCryptoInterface,
-    private user: UserClientInterface,
+    private user: UserServiceInterface,
     private selfContactManager: SelfContactManager,
     private encryption: EncryptionProviderInterface,
     private _deleteContact: DeleteContact,

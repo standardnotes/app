@@ -74,7 +74,7 @@ export const ProtectionSessionDurations = [
  * like viewing a protected note, as well as managing how long that
  * authentication should be valid for.
  */
-export class SNProtectionService
+export class ProtectionService
   extends AbstractService<ProtectionEvent>
   implements ProtectionsClientInterface, InternalEventHandlerInterface
 {

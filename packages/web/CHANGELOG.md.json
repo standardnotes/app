@@ -1,6 +1,75 @@
 {
   "versions": [
     {
+      "version": "3.168.0",
+      "title": "[3.168.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.167.38...@standardnotes/web@3.168.0) (2023-08-05)",
+      "date": null,
+      "body": "### Features\n\n* Added translucency effect to menus, dialogs and alerts. Can be turned off from Preferences > Appeareance ([#2387](https://github.com/standardnotes/app/issues/2387)) [skip e2e] ([ec309d6](https://github.com/standardnotes/app/commit/ec309d6fb54c6cbb28414d1fe9d6119db5943d9c))",
+      "parsed": {
+        "_": [
+          "Added translucency effect to menus, dialogs and alerts. Can be turned off from Preferences > Appeareance (#2387) skip e2e] ([ec309d6)"
+        ],
+        "Features": [
+          "Added translucency effect to menus, dialogs and alerts. Can be turned off from Preferences > Appeareance (#2387) skip e2e] ([ec309d6)"
+        ]
+      }
+    },
+    {
+      "version": "3.167.38",
+      "title": "[3.167.38](https://github.com/standardnotes/app/compare/@standardnotes/web@3.167.37...@standardnotes/web@3.167.38) (2023-08-04)",
+      "date": null,
+      "body": "**Note:** Version bump only for package @standardnotes/web",
+      "parsed": {
+        "_": [
+          "Note: Version bump only for package @standardnotes/web"
+        ]
+      }
+    },
+    {
+      "version": "3.167.37",
+      "title": "[3.167.37](https://github.com/standardnotes/app/compare/@standardnotes/web@3.167.36...@standardnotes/web@3.167.37) (2023-08-04)",
+      "date": null,
+      "body": "**Note:** Version bump only for package @standardnotes/web",
+      "parsed": {
+        "_": [
+          "Note: Version bump only for package @standardnotes/web"
+        ]
+      }
+    },
+    {
+      "version": "3.167.36",
+      "title": "[3.167.36](https://github.com/standardnotes/app/compare/@standardnotes/web@3.167.35...@standardnotes/web@3.167.36) (2023-08-04)",
+      "date": null,
+      "body": "**Note:** Version bump only for package @standardnotes/web",
+      "parsed": {
+        "_": [
+          "Note: Version bump only for package @standardnotes/web"
+        ]
+      }
+    },
+    {
+      "version": "3.167.35",
+      "title": "[3.167.35](https://github.com/standardnotes/app/compare/@standardnotes/web@3.167.34...@standardnotes/web@3.167.35) (2023-08-04)",
+      "date": null,
+      "body": "**Note:** Version bump only for package @standardnotes/web",
+      "parsed": {
+        "_": [
+          "Note: Version bump only for package @standardnotes/web"
+        ]
+      }
+    },
+    {
+      "version": "3.167.34",
+      "title": "[3.167.34](https://github.com/standardnotes/app/compare/@standardnotes/web@3.167.33...@standardnotes/web@3.167.34) (2023-08-04)",
+      "date": null,
+      "body": "**Note:** Version bump only for package @standardnotes/web",
+      "parsed": {
+        "_": [
+          "Note: Version bump only for package @standardnotes/web"
+        ]
+      }
+    },
+    {
       "version": "3.167.33",
       "title": "[3.167.33](https://github.com/standardnotes/app/compare/@standardnotes/web@3.167.32...@standardnotes/web@3.167.33) (2023-08-03)",
       "date": null,

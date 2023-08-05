@@ -121,7 +121,7 @@ const FilePreviewModal = observer(({ application, viewControllerManager }: Props
       close={dismiss}
       className={{
         content: classNames(
-          'm-0 flex h-full w-full flex-col rounded bg-[color:var(--modal-background-color)] p-0 shadow-main md:!h-full md:max-h-[90%] md:!w-full md:max-w-[90%]',
+          'm-0 flex h-full w-full flex-col rounded bg-[--popover-background-color] p-0 shadow-main md:!h-full md:max-h-[90%] md:!w-full md:max-w-[90%]',
         ),
       }}
       actions={[
