@@ -8,6 +8,8 @@ import {
   ChangeAndSaveItem,
   GetHost,
   SetHost,
+  LegacyApiServiceInterface,
+  StatusServiceInterface,
 } from '@standardnotes/services'
 import { VaultLockServiceInterface } from './../VaultLock/VaultLockServiceInterface'
 import { HistoryServiceInterface } from './../History/HistoryServiceInterface'
@@ -82,12 +84,14 @@ export interface ApplicationInterface {
   get files(): FilesClientInterface
   get history(): HistoryServiceInterface
   get homeServer(): HomeServerServiceInterface | undefined
+  get legacyApi(): LegacyApiServiceInterface
   get items(): ItemManagerInterface
   get mutator(): MutatorClientInterface
   get preferences(): PreferenceServiceInterface
   get protections(): ProtectionsClientInterface
   get sessions(): SessionsClientInterface
   get storage(): StorageServiceInterface
+  get status(): StatusServiceInterface
   get sync(): SyncServiceInterface
   get subscriptions(): SubscriptionManagerInterface
   get user(): UserServiceInterface

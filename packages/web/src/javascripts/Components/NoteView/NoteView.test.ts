@@ -3,7 +3,6 @@
  */
 
 import { WebApplication } from '@/Application/WebApplication'
-import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { NotesController } from '@/Controllers/NotesController/NotesController'
 import {
   ApplicationEvent,
@@ -18,7 +17,7 @@ import { NoteViewController } from './Controller/NoteViewController'
 describe('NoteView', () => {
   let noteViewController: NoteViewController
   let application: WebApplication
-  let viewControllerManager: ViewControllerManager
+
   let notesController: NotesController
 
   const createNoteView = () =>
@@ -37,13 +36,7 @@ describe('NoteView', () => {
     notesController.getSpellcheckStateForNote = jest.fn()
     notesController.getEditorWidthForNote = jest.fn()
 
-    viewControllerManager = {
-      notesController: notesController,
-    } as jest.Mocked<ViewControllerManager>
-
-    application = {
-      controllers: viewControllerManager,
-    } as jest.Mocked<WebApplication>
+    application = {} as jest.Mocked<WebApplication>
     application.hasProtectionSources = jest.fn().mockReturnValue(true)
     application.authorizeNoteAccess = jest.fn()
     application.addWebEventObserver = jest.fn()

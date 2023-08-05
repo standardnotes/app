@@ -50,15 +50,7 @@ const iconClassDanger = `text-danger mr-2 ${iconSize}`
 const iconClassWarning = `text-warning mr-2 ${iconSize}`
 const iconClassSuccess = `text-success mr-2 ${iconSize}`
 
-const NotesOptions = ({
-  notes,
-  navigationController,
-  notesController,
-  linkingController,
-  selectionController,
-  historyModalController,
-  closeMenu,
-}: NotesOptionsProps) => {
+const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
   const application = useApplication()
 
   const [altKeyDown, setAltKeyDown] = useState(false)
@@ -163,7 +155,7 @@ const NotesOptions = ({
                 {
                   label: 'Open',
                   handler: (toastId) => {
-                    selectionController.selectItem(duplicated.uuid, true).catch(console.error)
+                    application.selectionController.selectItem(duplicated.uuid, true).catch(console.error)
                     dismissToast(toastId)
                   },
                 },
@@ -176,11 +168,11 @@ const NotesOptions = ({
     )
     void application.sync.sync()
     closeMenuAndToggleNotesList()
-  }, [application.mutator, application.sync, closeMenuAndToggleNotesList, notes, selectionController])
+  }, [application.mutator, application.selectionController, application.sync, closeMenuAndToggleNotesList, notes])
 
   const openRevisionHistoryModal = useCallback(() => {
-    historyModalController.openModal(notesController.firstSelectedNote)
-  }, [historyModalController, notesController.firstSelectedNote])
+    application.historyModalController.openModal(application.notesController.firstSelectedNote)
+  }, [application.historyModalController, application.notesController.firstSelectedNote])
 
   const historyShortcut = useMemo(
     () => application.keyboardService.keyboardShortcutForCommand(OPEN_NOTE_HISTORY_COMMAND),
@@ -243,7 +235,7 @@ const NotesOptions = ({
       <MenuSwitchButtonItem
         checked={locked}
         onChange={(locked) => {
-          notesController.setLockSelectedNotes(locked)
+          application.notesController.setLockSelectedNotes(locked)
         }}
       >
         <Icon type="pencil-off" className={iconClass} />
@@ -252,7 +244,7 @@ const NotesOptions = ({
       <MenuSwitchButtonItem
         checked={!hidePreviews}
         onChange={(hidePreviews) => {
-          notesController.setHideSelectedNotePreviews(!hidePreviews)
+          application.notesController.setHideSelectedNotePreviews(!hidePreviews)
         }}
       >
         <Icon type="rich-text" className={iconClass} />
@@ -261,7 +253,7 @@ const NotesOptions = ({
       <MenuSwitchButtonItem
         checked={protect}
         onChange={(protect) => {
-          notesController.setProtectSelectedNotes(protect).catch(console.error)
+          application.notesController.setProtectSelectedNotes(protect).catch(console.error)
         }}
       >
         <Icon type="lock" className={iconClass} />
@@ -277,17 +269,17 @@ const NotesOptions = ({
 
       {featureTrunkVaultsEnabled() && <AddToVaultMenuOption iconClassName={iconClass} items={notes} />}
 
-      {navigationController.tagsCount > 0 && (
+      {application.navigationController.tagsCount > 0 && (
         <AddTagOption
           iconClassName={iconClass}
-          navigationController={navigationController}
+          navigationController={application.navigationController}
           selectedItems={notes}
-          linkingController={linkingController}
+          linkingController={application.linkingController}
         />
       )}
       <MenuItem
         onClick={() => {
-          notesController.setStarSelectedNotes(!starred)
+          application.notesController.setStarSelectedNotes(!starred)
         }}
       >
         <Icon type="star" className={iconClass} />
@@ -298,7 +290,7 @@ const NotesOptions = ({
       {unpinned && (
         <MenuItem
           onClick={() => {
-            notesController.setPinSelectedNotes(true)
+            application.notesController.setPinSelectedNotes(true)
           }}
         >
           <Icon type="pin" className={iconClass} />
@@ -309,7 +301,7 @@ const NotesOptions = ({
       {pinned && (
         <MenuItem
           onClick={() => {
-            notesController.setPinSelectedNotes(false)
+            application.notesController.setPinSelectedNotes(false)
           }}
         >
           <Icon type="unpin" className={iconClass} />
@@ -394,7 +386,7 @@ const NotesOptions = ({
       {unarchived && (
         <MenuItem
           onClick={async () => {
-            await notesController.setArchiveSelectedNotes(true).catch(console.error)
+            await application.notesController.setArchiveSelectedNotes(true).catch(console.error)
             closeMenuAndToggleNotesList()
           }}
         >
@@ -405,7 +397,7 @@ const NotesOptions = ({
       {archived && (
         <MenuItem
           onClick={async () => {
-            await notesController.setArchiveSelectedNotes(false).catch(console.error)
+            await application.notesController.setArchiveSelectedNotes(false).catch(console.error)
             closeMenuAndToggleNotesList()
           }}
         >
@@ -417,14 +409,14 @@ const NotesOptions = ({
         (altKeyDown ? (
           <DeletePermanentlyButton
             onClick={async () => {
-              await notesController.deleteNotesPermanently()
+              await application.notesController.deleteNotesPermanently()
               closeMenuAndToggleNotesList()
             }}
           />
         ) : (
           <MenuItem
             onClick={async () => {
-              await notesController.setTrashSelectedNotes(true)
+              await application.notesController.setTrashSelectedNotes(true)
               closeMenuAndToggleNotesList()
             }}
           >
@@ -436,7 +428,7 @@ const NotesOptions = ({
         <>
           <MenuItem
             onClick={async () => {
-              await notesController.setTrashSelectedNotes(false)
+              await application.notesController.setTrashSelectedNotes(false)
               closeMenuAndToggleNotesList()
             }}
           >
@@ -445,13 +437,13 @@ const NotesOptions = ({
           </MenuItem>
           <DeletePermanentlyButton
             onClick={async () => {
-              await notesController.deleteNotesPermanently()
+              await application.notesController.deleteNotesPermanently()
               closeMenuAndToggleNotesList()
             }}
           />
           <MenuItem
             onClick={async () => {
-              await notesController.emptyTrash()
+              await application.notesController.emptyTrash()
               closeMenuAndToggleNotesList()
             }}
           >
@@ -459,7 +451,7 @@ const NotesOptions = ({
               <Icon type="trash-sweep" className="mr-2 text-danger" />
               <div className="flex-row">
                 <div className="text-danger">Empty Trash</div>
-                <div className="text-xs">{notesController.trashedNotesCount} notes in Trash</div>
+                <div className="text-xs">{application.notesController.trashedNotesCount} notes in Trash</div>
               </div>
             </div>
           </MenuItem>
@@ -482,7 +474,11 @@ const NotesOptions = ({
           <HorizontalSeparator classes="my-2" />
 
           {editorForNote && (
-            <SpellcheckOptions editorForNote={editorForNote} notesController={notesController} note={notes[0]} />
+            <SpellcheckOptions
+              editorForNote={editorForNote}
+              notesController={application.notesController}
+              note={notes[0]}
+            />
           )}
 
           <HorizontalSeparator classes="my-2" />

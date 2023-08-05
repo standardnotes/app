@@ -1,6 +1,4 @@
-import { WebApplication } from '@/Application/WebApplication'
 import { WebApplicationGroup } from '@/Application/WebApplicationGroup'
-import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useState } from 'react'
 import { AccountMenuPane } from './AccountMenuPane'
@@ -10,22 +8,13 @@ import GeneralAccountMenu from './GeneralAccountMenu'
 import SignInPane from './SignIn'
 
 type Props = {
-  viewControllerManager: ViewControllerManager
-  application: WebApplication
   mainApplicationGroup: WebApplicationGroup
   menuPane: AccountMenuPane
   setMenuPane: (pane: AccountMenuPane) => void
   closeMenu: () => void
 }
 
-const MenuPaneSelector: FunctionComponent<Props> = ({
-  application,
-  viewControllerManager,
-  menuPane,
-  setMenuPane,
-  closeMenu,
-  mainApplicationGroup,
-}) => {
+const MenuPaneSelector: FunctionComponent<Props> = ({ menuPane, setMenuPane, closeMenu, mainApplicationGroup }) => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
@@ -33,22 +22,16 @@ const MenuPaneSelector: FunctionComponent<Props> = ({
     case AccountMenuPane.GeneralMenu:
       return (
         <GeneralAccountMenu
-          viewControllerManager={viewControllerManager}
-          application={application}
           mainApplicationGroup={mainApplicationGroup}
           setMenuPane={setMenuPane}
           closeMenu={closeMenu}
         />
       )
     case AccountMenuPane.SignIn:
-      return (
-        <SignInPane viewControllerManager={viewControllerManager} application={application} setMenuPane={setMenuPane} />
-      )
+      return <SignInPane setMenuPane={setMenuPane} />
     case AccountMenuPane.Register:
       return (
         <CreateAccount
-          viewControllerManager={viewControllerManager}
-          application={application}
           setMenuPane={setMenuPane}
           email={email}
           setEmail={setEmail}
@@ -57,15 +40,7 @@ const MenuPaneSelector: FunctionComponent<Props> = ({
         />
       )
     case AccountMenuPane.ConfirmPassword:
-      return (
-        <ConfirmPassword
-          viewControllerManager={viewControllerManager}
-          application={application}
-          setMenuPane={setMenuPane}
-          email={email}
-          password={password}
-        />
-      )
+      return <ConfirmPassword setMenuPane={setMenuPane} email={email} password={password} />
   }
 }
 

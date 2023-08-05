@@ -1,6 +1,4 @@
 import { WebApplication } from '@/Application/WebApplication'
-import { FeaturesController } from '@/Controllers/FeaturesController'
-import { FilesController } from '@/Controllers/FilesController'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import { classNames } from '@standardnotes/utils'
 import { isHandlingFileDrag } from '@/Utils/DragTypeCheck'
@@ -35,8 +33,6 @@ export const useFileDragNDrop = () => {
 
 type Props = {
   application: WebApplication
-  featuresController: FeaturesController
-  filesController: FilesController
   children: ReactNode
 }
 
@@ -47,7 +43,7 @@ const MemoizedChildren = memo(({ children }: { children: ReactNode }) => {
   return <>{children}</>
 })
 
-const FileDragNDropProvider = ({ application, children, featuresController, filesController }: Props) => {
+const FileDragNDropProvider = ({ application, children }: Props) => {
   const premiumModal = usePremiumModal()
   const [isDraggingFiles, setIsDraggingFiles] = useState(false)
   const [tooltipText, setTooltipText] = useState('')
@@ -189,7 +185,7 @@ const FileDragNDropProvider = ({ application, children, featuresController, file
 
       resetState()
 
-      if (!featuresController.entitledToFiles) {
+      if (!application.featuresController.entitledToFiles) {
         premiumModal.activate('Files')
         return
       }
@@ -204,7 +200,7 @@ const FileDragNDropProvider = ({ application, children, featuresController, file
             return
           }
 
-          const uploadedFile = await filesController.uploadNewFile(fileOrHandle)
+          const uploadedFile = await application.filesController.uploadNewFile(fileOrHandle)
 
           if (!uploadedFile) {
             return
@@ -218,7 +214,7 @@ const FileDragNDropProvider = ({ application, children, featuresController, file
         dragCounter.current = 0
       }
     },
-    [application, featuresController.entitledToFiles, filesController, premiumModal, resetState],
+    [application, premiumModal, resetState],
   )
 
   useEffect(() => {

@@ -1,7 +1,7 @@
 import { ApplicationEvent } from '@standardnotes/snjs'
 import { autorun, IReactionDisposer, IReactionPublic } from 'mobx'
 import { Component } from 'react'
-import { WebApplicationInterface } from '@standardnotes/ui-services'
+import { WebApplication } from '@/Application/WebApplication'
 
 export type PureComponentState = Partial<Record<string, unknown>>
 export type PureComponentProps = Partial<Record<string, unknown>>
@@ -12,7 +12,7 @@ export abstract class AbstractComponent<P = PureComponentProps, S = PureComponen
 
   constructor(
     props: P,
-    public readonly application: WebApplicationInterface,
+    public readonly application: WebApplication,
   ) {
     super(props)
   }

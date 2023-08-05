@@ -1,4 +1,3 @@
-import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import ChangeEditorMenu from './ChangeEditorMenu'
@@ -11,19 +10,14 @@ import { NoteViewController } from '../NoteView/Controller/NoteViewController'
 import { NoteType, noteTypeForEditorIdentifier } from '@standardnotes/snjs'
 
 type Props = {
-  viewControllerManager: ViewControllerManager
   noteViewController?: NoteViewController
   onClickPreprocessing?: () => Promise<void>
 }
 
-const ChangeEditorButton: FunctionComponent<Props> = ({
-  viewControllerManager,
-  noteViewController,
-  onClickPreprocessing,
-}: Props) => {
+const ChangeEditorButton: FunctionComponent<Props> = ({ noteViewController, onClickPreprocessing }: Props) => {
   const application = useApplication()
 
-  const note = viewControllerManager.notesController.firstSelectedNote
+  const note = application.notesController.firstSelectedNote
   const [isOpen, setIsOpen] = useState(false)
   const buttonRef = useRef<HTMLButtonElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)

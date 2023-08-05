@@ -12,7 +12,6 @@ import { NavigationController } from './Navigation/NavigationController'
 import { PersistenceService } from './Abstract/PersistenceService'
 
 export class ViewControllerManager implements InternalEventHandlerInterface {
-  readonly enableUnfinishedFeatures: boolean = window?.enabledUnfinishedFeatures
   private appEventObserverRemovers: (() => void)[] = []
   public dealloced = false
 

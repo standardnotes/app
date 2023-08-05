@@ -5,7 +5,6 @@ import Icon from '@/Components/Icon/Icon'
 import FilePreviewInfoPanel from './FilePreviewInfoPanel'
 import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
 import { KeyboardKey } from '@standardnotes/ui-services'
-import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
 import FilePreview from './FilePreview'
 import { getIconForFileType } from '@/Utils/Items/Icons/getIconForFileType'
@@ -23,11 +22,10 @@ import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/u
 
 type Props = {
   application: WebApplication
-  viewControllerManager: ViewControllerManager
 }
 
-const FilePreviewModal = observer(({ application, viewControllerManager }: Props) => {
-  const { currentFile, setCurrentFile, otherFiles, dismiss } = viewControllerManager.filePreviewModalController
+const FilePreviewModal = observer(({ application }: Props) => {
+  const { currentFile, setCurrentFile, otherFiles, dismiss } = application.filePreviewModalController
 
   const [isRenaming, setIsRenaming] = useState(false)
   const renameInputRef = useRef<HTMLInputElement>(null)
@@ -229,9 +227,9 @@ const FilePreviewModal = observer(({ application, viewControllerManager }: Props
             >
               <Menu a11yLabel="File context menu" isOpen={showOptionsMenu}>
                 <FileMenuOptions
-                  filesController={viewControllerManager.filesController}
-                  linkingController={viewControllerManager.linkingController}
-                  navigationController={viewControllerManager.navigationController}
+                  filesController={application.filesController}
+                  linkingController={application.linkingController}
+                  navigationController={application.navigationController}
                   selectedFiles={[currentFile]}
                   closeMenu={closeOptionsMenu}
                   shouldShowRenameOption={false}
@@ -260,10 +258,7 @@ const FilePreviewModal = observer(({ application, viewControllerManager }: Props
         </div>
         {showLinkedBubblesContainer && (
           <div className="-mt-1 min-h-0 flex-shrink-0 border-b border-border px-3.5 py-1.5">
-            <LinkedItemBubblesContainer
-              linkingController={viewControllerManager.linkingController}
-              item={currentFile}
-            />
+            <LinkedItemBubblesContainer linkingController={application.linkingController} item={currentFile} />
           </div>
         )}
         <div className="flex min-h-0 flex-grow flex-col-reverse md:flex-row">
@@ -284,14 +279,14 @@ const FilePreviewModal = observer(({ application, viewControllerManager }: Props
 
 FilePreviewModal.displayName = 'FilePreviewModal'
 
-const FilePreviewModalWrapper: FunctionComponent<Props> = ({ application, viewControllerManager }) => {
+const FilePreviewModalWrapper: FunctionComponent<Props> = ({ application }) => {
   return (
     <ModalOverlay
       aria-label="File preview modal"
-      isOpen={viewControllerManager.filePreviewModalController.isOpen}
-      close={viewControllerManager.filePreviewModalController.dismiss}
+      isOpen={application.filePreviewModalController.isOpen}
+      close={application.filePreviewModalController.dismiss}
     >
-      <FilePreviewModal application={application} viewControllerManager={viewControllerManager} />
+      <FilePreviewModal application={application} />
     </ModalOverlay>
   )
 }

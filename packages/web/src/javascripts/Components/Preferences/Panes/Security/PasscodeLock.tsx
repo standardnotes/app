@@ -14,7 +14,6 @@ import { alertDialog } from '@standardnotes/ui-services'
 import { FormEvent, useCallback, useEffect, useRef, useState } from 'react'
 import { ApplicationEvent, MobileUnlockTiming } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
-import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { Title, Text } from '@/Components/Preferences/PreferencesComponents/Content'
 import Button from '@/Components/Button/Button'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
@@ -24,15 +23,13 @@ import { classNames } from '@standardnotes/utils'
 
 type Props = {
   application: WebApplication
-  viewControllerManager: ViewControllerManager
 }
 
-const PasscodeLock = ({ application, viewControllerManager }: Props) => {
+const PasscodeLock = ({ application }: Props) => {
   const isNativeMobileWeb = application.isNativeMobileWeb()
   const keyStorageInfo = StringUtils.keyStorageInfo(application)
 
-  const { setIsEncryptionEnabled, setIsBackupEncrypted, setEncryptionStatusString } =
-    viewControllerManager.accountMenuController
+  const { setIsEncryptionEnabled, setIsBackupEncrypted, setEncryptionStatusString } = application.accountMenuController
 
   const passcodeInputRef = useRef<HTMLInputElement>(null)
 

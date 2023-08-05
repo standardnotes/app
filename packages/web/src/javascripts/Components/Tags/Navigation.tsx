@@ -3,7 +3,7 @@ import TagsSection from '@/Components/Tags/TagsSection'
 import { WebApplication } from '@/Application/WebApplication'
 import { ApplicationEvent, PrefKey, WebAppEvent } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
-import { forwardRef, useEffect, useMemo, useState } from 'react'
+import { forwardRef, useEffect, useState } from 'react'
 import { classNames } from '@standardnotes/utils'
 import { useResponsiveAppPane } from '../Panes/ResponsivePaneProvider'
 import UpgradeNow from '../Footer/UpgradeNow'
@@ -24,7 +24,6 @@ type Props = {
 }
 
 const Navigation = forwardRef<HTMLDivElement, Props>(({ application, className, children, id }, ref) => {
-  const viewControllerManager = useMemo(() => application.controllers, [application])
   const { setPaneLayout } = useResponsiveAppPane()
 
   const [hasPasscode, setHasPasscode] = useState(() => application.hasPasscode())
@@ -79,10 +78,10 @@ const Navigation = forwardRef<HTMLDivElement, Props>(({ application, className, 
       >
         <SmartViewsSection
           application={application}
-          featuresController={viewControllerManager.featuresController}
-          navigationController={viewControllerManager.navigationController}
+          featuresController={application.featuresController}
+          navigationController={application.navigationController}
         />
-        <TagsSection viewControllerManager={viewControllerManager} />
+        <TagsSection />
       </div>
       <div
         className={classNames(
@@ -101,13 +100,13 @@ const Navigation = forwardRef<HTMLDivElement, Props>(({ application, className, 
         />
         <UpgradeNow
           application={application}
-          subscriptionContoller={viewControllerManager.subscriptionController}
-          featuresController={viewControllerManager.featuresController}
+          subscriptionContoller={application.subscriptionController}
+          featuresController={application.featuresController}
         />
         <RoundIconButton
           className="ml-2.5 bg-default"
           onClick={() => {
-            viewControllerManager.accountMenuController.toggleShow()
+            application.accountMenuController.toggleShow()
           }}
           label="Go to account menu"
           icon="account-circle"
@@ -124,7 +123,7 @@ const Navigation = forwardRef<HTMLDivElement, Props>(({ application, className, 
         <RoundIconButton
           className="ml-2.5 bg-default"
           onClick={() => {
-            viewControllerManager.preferencesController.openPreferences()
+            application.preferencesController.openPreferences()
           }}
           label="Go to preferences"
           icon="tune"
@@ -132,7 +131,7 @@ const Navigation = forwardRef<HTMLDivElement, Props>(({ application, className, 
         <RoundIconButton
           className="ml-2.5 bg-default"
           onClick={() => {
-            viewControllerManager.quickSettingsMenuController.toggle()
+            application.quickSettingsMenuController.toggle()
           }}
           label="Go to quick settings menu"
           icon="themes"
@@ -141,7 +140,7 @@ const Navigation = forwardRef<HTMLDivElement, Props>(({ application, className, 
           <RoundIconButton
             className="ml-2.5 bg-default"
             onClick={() => {
-              viewControllerManager.vaultSelectionController.toggle()
+              application.vaultSelectionController.toggle()
             }}
             label="Go to vaults menu"
             icon="safe-square"

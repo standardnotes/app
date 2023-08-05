@@ -1,25 +1,20 @@
 import { observer } from 'mobx-react-lite'
-import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
-import { WebApplication } from '@/Application/WebApplication'
 import { User as UserType } from '@standardnotes/snjs'
+import { useApplication } from '../ApplicationProvider'
 
-type Props = {
-  viewControllerManager: ViewControllerManager
-  application: WebApplication
-}
+const User = () => {
+  const application = useApplication()
 
-const User = ({ viewControllerManager, application }: Props) => {
-  const { server } = viewControllerManager.accountMenuController
-  const user = application.getUser() as UserType
+  const { server } = application.accountMenuController
+  const user = application.sessions.getUser() as UserType
 
   return (
     <div className="sk-panel-section">
-      {viewControllerManager.syncStatusController.errorMessage && (
+      {application.syncStatusController.errorMessage && (
         <div className="sk-notification danger">
           <div className="sk-notification-title">Sync Unreachable</div>
           <div className="sk-notification-text">
-            Hmm...we can't seem to sync your account. The reason:{' '}
-            {viewControllerManager.syncStatusController.errorMessage}
+            Hmm...we can't seem to sync your account. The reason: {application.syncStatusController.errorMessage}
           </div>
           <a
             className="sk-a info-contrast sk-bold sk-panel-row"

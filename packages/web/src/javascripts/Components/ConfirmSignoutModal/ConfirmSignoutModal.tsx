@@ -1,7 +1,6 @@
 import { FunctionComponent, useCallback, useRef } from 'react'
 import { STRING_SIGN_OUT_CONFIRMATION } from '@/Constants/Strings'
 import { WebApplication } from '@/Application/WebApplication'
-import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
 import { WebApplicationGroup } from '@/Application/WebApplicationGroup'
 import { isDesktopApplication } from '@/Utils'
@@ -12,11 +11,10 @@ import HorizontalSeparator from '../Shared/HorizontalSeparator'
 
 type Props = {
   application: WebApplication
-  viewControllerManager: ViewControllerManager
   applicationGroup: WebApplicationGroup
 }
 
-const ConfirmSignoutModal: FunctionComponent<Props> = ({ application, viewControllerManager, applicationGroup }) => {
+const ConfirmSignoutModal: FunctionComponent<Props> = ({ application, applicationGroup }) => {
   const hasAnyBackupsEnabled =
     application.fileBackups?.isFilesBackupsEnabled() ||
     application.fileBackups?.isPlaintextBackupsEnabled() ||
@@ -24,8 +22,8 @@ const ConfirmSignoutModal: FunctionComponent<Props> = ({ application, viewContro
 
   const cancelRef = useRef<HTMLButtonElement>(null)
   const closeDialog = useCallback(() => {
-    viewControllerManager.accountMenuController.setSigningOut(false)
-  }, [viewControllerManager.accountMenuController])
+    application.accountMenuController.setSigningOut(false)
+  }, [application.accountMenuController])
 
   const workspaces = applicationGroup.getDescriptors()
   const showWorkspaceWarning = workspaces.length > 1 && isDesktopApplication()
@@ -98,7 +96,7 @@ const ConfirmSignoutModal: FunctionComponent<Props> = ({ application, viewContro
 ConfirmSignoutModal.displayName = 'ConfirmSignoutModal'
 
 const ConfirmSignoutContainer = (props: Props) => {
-  if (!props.viewControllerManager.accountMenuController.signingOut) {
+  if (!props.application.accountMenuController.signingOut) {
     return null
   }
   return <ConfirmSignoutModal {...props} />

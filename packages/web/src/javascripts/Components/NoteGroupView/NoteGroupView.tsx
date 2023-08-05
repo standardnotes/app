@@ -7,7 +7,7 @@ import FileView from '../FileView/FileView'
 import NoteView from '../NoteView/NoteView'
 import { NoteViewController } from '../NoteView/Controller/NoteViewController'
 import { FileViewController } from '../NoteView/Controller/FileViewController'
-import { WebApplicationInterface } from '@standardnotes/ui-services'
+import { WebApplication } from '@/Application/WebApplication'
 
 type State = {
   showMultipleSelectedNotes: boolean
@@ -19,7 +19,7 @@ type State = {
 }
 
 type Props = {
-  application: WebApplicationInterface
+  application: WebApplication
   className?: string
 }
 
@@ -48,32 +48,32 @@ class NoteGroupView extends AbstractComponent<Props, State> {
     })
 
     this.autorun(() => {
-      if (this.viewControllerManager && this.viewControllerManager.notesController) {
+      if (this.application.notesController) {
         this.setState({
-          showMultipleSelectedNotes: this.viewControllerManager.notesController.selectedNotesCount > 1,
+          showMultipleSelectedNotes: this.application.notesController.selectedNotesCount > 1,
         })
       }
 
-      if (this.viewControllerManager.selectionController) {
+      if (this.application.selectionController) {
         this.setState({
-          showMultipleSelectedFiles: this.viewControllerManager.selectionController.selectedFilesCount > 1,
-        })
-      }
-    })
-
-    this.autorun(() => {
-      if (this.viewControllerManager && this.viewControllerManager.selectionController) {
-        this.setState({
-          selectedFile: this.viewControllerManager.selectionController.selectedFiles[0],
+          showMultipleSelectedFiles: this.application.selectionController.selectedFilesCount > 1,
         })
       }
     })
 
     this.autorun(() => {
-      if (this.viewControllerManager && this.viewControllerManager.paneController) {
+      if (this.application.selectionController) {
         this.setState({
-          selectedPane: this.viewControllerManager.paneController.currentPane,
-          isInMobileView: this.viewControllerManager.paneController.isInMobileView,
+          selectedFile: this.application.selectionController.selectedFiles[0],
+        })
+      }
+    })
+
+    this.autorun(() => {
+      if (this.application.paneController) {
+        this.setState({
+          selectedPane: this.application.paneController.currentPane,
+          isInMobileView: this.application.paneController.isInMobileView,
         })
       }
     })
@@ -97,19 +97,19 @@ class NoteGroupView extends AbstractComponent<Props, State> {
         {this.state.showMultipleSelectedNotes && (
           <MultipleSelectedNotes
             application={this.application}
-            selectionController={this.viewControllerManager.selectionController}
-            navigationController={this.viewControllerManager.navigationController}
-            notesController={this.viewControllerManager.notesController}
-            linkingController={this.viewControllerManager.linkingController}
-            historyModalController={this.viewControllerManager.historyModalController}
+            selectionController={this.application.selectionController}
+            navigationController={this.application.navigationController}
+            notesController={this.application.notesController}
+            linkingController={this.application.linkingController}
+            historyModalController={this.application.historyModalController}
           />
         )}
         {this.state.showMultipleSelectedFiles && (
           <MultipleSelectedFiles
-            filesController={this.viewControllerManager.filesController}
-            selectionController={this.viewControllerManager.selectionController}
-            navigationController={this.viewControllerManager.navigationController}
-            linkingController={this.viewControllerManager.linkingController}
+            filesController={this.application.filesController}
+            selectionController={this.application.selectionController}
+            navigationController={this.application.navigationController}
+            linkingController={this.application.linkingController}
           />
         )}
         {shouldNotShowMultipleSelectedItems && hasControllers && (
@@ -118,12 +118,7 @@ class NoteGroupView extends AbstractComponent<Props, State> {
               return controller instanceof NoteViewController ? (
                 <NoteView key={controller.runtimeId} application={this.application} controller={controller} />
               ) : (
-                <FileView
-                  key={controller.runtimeId}
-                  application={this.application}
-                  viewControllerManager={this.viewControllerManager}
-                  file={controller.item}
-                />
+                <FileView key={controller.runtimeId} application={this.application} file={controller.item} />
               )
             })}
           </>

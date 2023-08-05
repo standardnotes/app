@@ -1,9 +1,8 @@
 import { removeFromArray } from '@standardnotes/utils'
-import { FileItem, SNNote } from '@standardnotes/snjs'
+import { FileItem, ItemManagerInterface, SNNote } from '@standardnotes/snjs'
 import { NoteViewController } from './NoteViewController'
 import { FileViewController } from './FileViewController'
 import { TemplateNoteViewControllerOptions } from './TemplateNoteViewControllerOptions'
-import { WebApplicationInterface } from '@standardnotes/ui-services'
 
 type ItemControllerGroupChangeCallback = (activeController: NoteViewController | FileViewController | undefined) => void
 
@@ -12,10 +11,10 @@ export class ItemGroupController {
   changeObservers: ItemControllerGroupChangeCallback[] = []
   eventObservers: (() => void)[] = []
 
-  constructor(private application: WebApplicationInterface) {}
+  constructor(private items: ItemManagerInterface) {}
 
   public deinit(): void {
-    ;(this.application as unknown) = undefined
+    ;(this.items as unknown) = undefined
 
     this.eventObservers.forEach((removeObserver) => {
       removeObserver()
@@ -42,11 +41,11 @@ export class ItemGroupController {
     let controller!: NoteViewController | FileViewController
 
     if (context.file) {
-      controller = new FileViewController(this.application, context.file)
+      controller = new FileViewController(this.items, context.file)
     } else if (context.note) {
-      controller = new NoteViewController(this.application, context.note)
+      controller = new NoteViewController(this.items, context.note)
     } else if (context.templateOptions) {
-      controller = new NoteViewController(this.application, undefined, context.templateOptions)
+      controller = new NoteViewController(this.items, undefined, context.templateOptions)
     } else {
       throw Error('Invalid input to createItemController')
     }

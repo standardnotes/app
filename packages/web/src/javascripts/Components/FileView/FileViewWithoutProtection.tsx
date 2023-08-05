@@ -15,7 +15,7 @@ import RoundIconButton from '../Button/RoundIconButton'
 const SyncTimeoutNoDebounceMs = 100
 const SyncTimeoutDebounceMs = 350
 
-const FileViewWithoutProtection = ({ application, viewControllerManager, file }: FileViewProps) => {
+const FileViewWithoutProtection = ({ application, file }: FileViewProps) => {
   const syncTimeoutRef = useRef<number>()
   const fileInfoButtonRef = useRef<HTMLButtonElement>(null)
 
@@ -52,7 +52,7 @@ const FileViewWithoutProtection = ({ application, viewControllerManager, file }:
       addDragTarget(target, {
         tooltipText: 'Drop your files to upload and link them to the current file',
         async callback(uploadedFile) {
-          await viewControllerManager.linkingController.linkItems(uploadedFile, file)
+          await application.linkingController.linkItems(uploadedFile, file)
         },
       })
     }
@@ -62,7 +62,7 @@ const FileViewWithoutProtection = ({ application, viewControllerManager, file }:
         removeDragTarget(target)
       }
     }
-  }, [addDragTarget, file, removeDragTarget, viewControllerManager.linkingController])
+  }, [addDragTarget, file, removeDragTarget, application.linkingController])
 
   return (
     <div className="sn-component section editor" aria-label="File" ref={fileDragTargetRef}>
@@ -90,9 +90,9 @@ const FileViewWithoutProtection = ({ application, viewControllerManager, file }:
             </div>
             <div className="flex items-center gap-3">
               <LinkedItemsButton
-                filesController={viewControllerManager.filesController}
-                linkingController={viewControllerManager.linkingController}
-                featuresController={viewControllerManager.featuresController}
+                filesController={application.filesController}
+                linkingController={application.linkingController}
+                featuresController={application.featuresController}
               />
               <RoundIconButton
                 label="File information panel"
@@ -111,15 +111,15 @@ const FileViewWithoutProtection = ({ application, viewControllerManager, file }:
                 <FilePreviewInfoPanel file={file} />
               </Popover>
               <FileOptionsPanel
-                filesController={viewControllerManager.filesController}
-                selectionController={viewControllerManager.selectionController}
-                linkingController={viewControllerManager.linkingController}
-                navigationController={viewControllerManager.navigationController}
+                filesController={application.filesController}
+                selectionController={application.selectionController}
+                linkingController={application.linkingController}
+                navigationController={application.navigationController}
               />
             </div>
           </div>
           <div className="hidden md:flex">
-            <LinkedItemBubblesContainer item={file} linkingController={viewControllerManager.linkingController} />
+            <LinkedItemBubblesContainer item={file} linkingController={application.linkingController} />
           </div>
         </div>
       </div>

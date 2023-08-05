@@ -1,10 +1,8 @@
 import { FeatureStatus, NativeFeatureIdentifier } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useState } from 'react'
-
 import { Title } from '@/Components/Preferences/PreferencesComponents/Content'
 import { WebApplication } from '@/Application/WebApplication'
-import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import PreferencesGroup from '@/Components/Preferences/PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '@/Components/Preferences/PreferencesComponents/PreferencesSegment'
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
@@ -18,13 +16,12 @@ import ModalOverlay from '@/Components/Modal/ModalOverlay'
 
 type Props = {
   application: WebApplication
-  viewControllerManager: ViewControllerManager
 }
 
-const SubscriptionSharing: FunctionComponent<Props> = ({ application, viewControllerManager }: Props) => {
+const SubscriptionSharing: FunctionComponent<Props> = ({ application }: Props) => {
   const [isInviteDialogOpen, setIsInviteDialogOpen] = useState(false)
 
-  const subscriptionState = viewControllerManager.subscriptionController
+  const subscriptionState = application.subscriptionController
 
   const isReadOnlySession = application.sessions.isCurrentSessionReadOnly()
 

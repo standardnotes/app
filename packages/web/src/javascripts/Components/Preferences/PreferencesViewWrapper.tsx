@@ -9,18 +9,15 @@ import { usePaneSwipeGesture } from '../Panes/usePaneGesture'
 import { performSafariAnimationFix } from '../Panes/PaneAnimator'
 import { IosModalAnimationEasing } from '../Modal/useModalAnimation'
 
-const PreferencesViewWrapper: FunctionComponent<PreferencesViewWrapperProps> = ({
-  viewControllerManager,
-  application,
-}) => {
+const PreferencesViewWrapper: FunctionComponent<PreferencesViewWrapperProps> = ({ application }) => {
   const commandService = useCommandService()
 
   useEffect(() => {
     return commandService.addCommandHandler({
       command: OPEN_PREFERENCES_COMMAND,
-      onKeyDown: () => viewControllerManager.preferencesController.openPreferences(),
+      onKeyDown: () => application.preferencesController.openPreferences(),
     })
-  }, [commandService, viewControllerManager])
+  }, [commandService, application])
 
   const [setElement] = usePaneSwipeGesture('right', async (element) => {
     const animation = element.animate(
@@ -43,22 +40,19 @@ const PreferencesViewWrapper: FunctionComponent<PreferencesViewWrapperProps> = (
 
     animation.finish()
 
-    viewControllerManager.preferencesController.closePreferences()
+    application.preferencesController.closePreferences()
   })
 
   return (
     <ModalOverlay
-      isOpen={viewControllerManager.preferencesController.isOpen}
+      isOpen={application.preferencesController.isOpen}
       ref={setElement}
       animationVariant="horizontal"
-      close={viewControllerManager.preferencesController.closePreferences}
+      close={application.preferencesController.closePreferences}
     >
       <PreferencesView
-        closePreferences={viewControllerManager.preferencesController.closePreferences}
+        closePreferences={application.preferencesController.closePreferences}
         application={application}
-        viewControllerManager={viewControllerManager}
-        mfaProvider={application}
-        userProvider={application}
       />
     </ModalOverlay>
   )

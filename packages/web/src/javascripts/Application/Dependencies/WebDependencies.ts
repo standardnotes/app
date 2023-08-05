@@ -2,8 +2,10 @@ import {
   ArchiveManager,
   AutolockService,
   ChangelogService,
+  GetItemTags,
   Importer,
   IsGlobalSpellcheckEnabled,
+  IsMobileDevice,
   IsNativeIOS,
   IsNativeMobileWeb,
   KeyboardService,
@@ -45,17 +47,26 @@ import { ActionsMenuController } from '@/Controllers/ActionsMenuController'
 import { ItemGroupController } from '@/Components/NoteView/Controller/ItemGroupController'
 import { MobileWebReceiver } from '@/NativeMobileWeb/MobileWebReceiver'
 import { AndroidBackHandler } from '@/NativeMobileWeb/AndroidBackHandler'
+import { IsTabletOrMobileScreen } from '../UseCase/IsTabletOrMobileScreen'
+import { PanesForLayout } from '../UseCase/PanesForLayout'
+import { LoadPurchaseFlowUrl } from '../UseCase/LoadPurchaseFlowUrl'
+import { GetPurchaseFlowUrl } from '../UseCase/GetPurchaseFlowUrl'
+import { OpenSubscriptionDashboard } from '../UseCase/OpenSubscriptionDashboard'
 
 export class WebDependencies extends DependencyContainer {
   constructor(private application: WebApplicationInterface) {
     super()
 
     this.bind(Web_TYPES.Importer, () => {
-      return new Importer(application)
+      return new Importer(application.features, application.mutator, application.items)
     })
 
     this.bind(Web_TYPES.IsNativeIOS, () => {
       return new IsNativeIOS(application.environment, application.platform)
+    })
+
+    this.bind(Web_TYPES.OpenSubscriptionDashboard, () => {
+      return new OpenSubscriptionDashboard(application, application.legacyApi)
     })
 
     this.bind(Web_TYPES.IsNativeMobileWeb, () => {
@@ -79,7 +90,7 @@ export class WebDependencies extends DependencyContainer {
     this.bind(Web_TYPES.Application, () => this.application)
 
     this.bind(Web_TYPES.ItemGroupController, () => {
-      return new ItemGroupController(this.application)
+      return new ItemGroupController(application.items)
     })
 
     this.bind(Web_TYPES.RouteService, () => {
@@ -122,11 +133,20 @@ export class WebDependencies extends DependencyContainer {
       return new ChangelogService(application.environment, application.storage)
     })
 
+    this.bind(Web_TYPES.IsMobileDevice, () => {
+      return new IsMobileDevice(this.get<IsNativeMobileWeb>(Web_TYPES.IsNativeMobileWeb))
+    })
+
     this.bind(Web_TYPES.MomentsService, () => {
       return new MomentsService(
-        application,
         this.get<FilesController>(Web_TYPES.FilesController),
         this.get<LinkingController>(Web_TYPES.LinkingController),
+        application.storage,
+        application.preferences,
+        application.items,
+        application.protections,
+        application.desktopDevice,
+        this.get<IsMobileDevice>(Web_TYPES.IsMobileDevice),
         application.events,
       )
     })
@@ -136,45 +156,60 @@ export class WebDependencies extends DependencyContainer {
     })
 
     this.bind(Web_TYPES.PersistenceService, () => {
-      return new PersistenceService(application, application.events)
+      return new PersistenceService(application.storage, application.items, application.sync, application.events)
     })
 
     this.bind(Web_TYPES.FilePreviewModalController, () => {
-      return new FilePreviewModalController(application)
+      return new FilePreviewModalController(application.items)
     })
 
     this.bind(Web_TYPES.QuickSettingsController, () => {
-      return new QuickSettingsController(application, application.events)
+      return new QuickSettingsController(application.events)
     })
 
     this.bind(Web_TYPES.VaultSelectionMenuController, () => {
-      return new VaultSelectionMenuController(application, application.events)
+      return new VaultSelectionMenuController(application.events)
     })
 
     this.bind(Web_TYPES.PaneController, () => {
-      return new PaneController(application, application.events)
+      return new PaneController(
+        application.preferences,
+        this.get<KeyboardService>(Web_TYPES.KeyboardService),
+        this.get<IsTabletOrMobileScreen>(Web_TYPES.IsTabletOrMobileScreen),
+        this.get<PanesForLayout>(Web_TYPES.PanesForLayout),
+        application.events,
+      )
+    })
+
+    this.bind(Web_TYPES.PanesForLayout, () => {
+      return new PanesForLayout(this.get<IsTabletOrMobileScreen>(Web_TYPES.IsTabletOrMobileScreen))
+    })
+
+    this.bind(Web_TYPES.IsTabletOrMobileScreen, () => {
+      return new IsTabletOrMobileScreen(application.environment)
     })
 
     this.bind(Web_TYPES.PreferencesController, () => {
-      return new PreferencesController(application, application.events)
+      return new PreferencesController(this.get<RouteService>(Web_TYPES.RouteService), application.events)
     })
 
     this.bind(Web_TYPES.SelectedItemsController, () => {
       return new SelectedItemsController(
-        application,
         this.get<KeyboardService>(Web_TYPES.KeyboardService),
         this.get<PaneController>(Web_TYPES.PaneController),
+        application.items,
+        application.protections,
+        application.options,
         application.events,
       )
     })
 
     this.bind(Web_TYPES.FeaturesController, () => {
-      return new FeaturesController(application, application.events)
+      return new FeaturesController(application.features, application.events)
     })
 
     this.bind(Web_TYPES.NavigationController, () => {
       return new NavigationController(
-        application,
         this.get<FeaturesController>(Web_TYPES.FeaturesController),
         this.get<VaultDisplayService>(Web_TYPES.VaultDisplayService),
         this.get<KeyboardService>(Web_TYPES.KeyboardService),
@@ -182,58 +217,111 @@ export class WebDependencies extends DependencyContainer {
         application.sync,
         application.mutator,
         application.items,
+        application.preferences,
         application.alerts,
+        application.changeAndSaveItem,
         application.events,
       )
+    })
+
+    this.bind(Web_TYPES.ItemGroupController, () => {
+      return new ItemGroupController(application.items)
     })
 
     this.bind(Web_TYPES.NotesController, () => {
       return new NotesController(
-        application,
         this.get<SelectedItemsController>(Web_TYPES.SelectedItemsController),
         this.get<NavigationController>(Web_TYPES.NavigationController),
+        this.get<ItemGroupController>(Web_TYPES.ItemGroupController),
+        this.get<KeyboardService>(Web_TYPES.KeyboardService),
+        application.preferences,
+        application.items,
+        application.mutator,
+        application.sync,
+        application.protections,
+        application.alerts,
+        this.get<IsGlobalSpellcheckEnabled>(Web_TYPES.IsGlobalSpellcheckEnabled),
+        this.get<GetItemTags>(Web_TYPES.GetItemTags),
         application.events,
       )
     })
 
+    this.bind(Web_TYPES.GetItemTags, () => {
+      return new GetItemTags(application.items)
+    })
+
     this.bind(Web_TYPES.SearchOptionsController, () => {
-      return new SearchOptionsController(application, application.events)
+      return new SearchOptionsController(application.protections, application.events)
     })
 
     this.bind(Web_TYPES.LinkingController, () => {
       return new LinkingController(
-        application,
         this.get<NavigationController>(Web_TYPES.NavigationController),
+        this.get<ItemGroupController>(Web_TYPES.ItemGroupController),
         this.get<SelectedItemsController>(Web_TYPES.SelectedItemsController),
+        this.get<VaultDisplayService>(Web_TYPES.VaultDisplayService),
+        application.preferences,
+        application.items,
+        application.mutator,
+        application.sync,
+        application.vaults,
         application.events,
       )
     })
 
     this.bind(Web_TYPES.ItemListController, () => {
       return new ItemListController(
-        application,
         this.get<NavigationController>(Web_TYPES.NavigationController),
         this.get<SearchOptionsController>(Web_TYPES.SearchOptionsController),
         this.get<SelectedItemsController>(Web_TYPES.SelectedItemsController),
         this.get<NotesController>(Web_TYPES.NotesController),
+        application.items,
+        application.preferences,
+        this.get<ItemGroupController>(Web_TYPES.ItemGroupController),
+        this.get<VaultDisplayService>(Web_TYPES.VaultDisplayService),
+        this.get<DesktopManager>(Web_TYPES.DesktopManager),
+        this.get<IsNativeMobileWeb>(Web_TYPES.IsNativeMobileWeb),
+        application.changeAndSaveItem,
         application.events,
       )
     })
 
     this.bind(Web_TYPES.NoAccountWarningController, () => {
-      return new NoAccountWarningController(application, application.events)
+      return new NoAccountWarningController(application.sessions, application.events)
     })
 
     this.bind(Web_TYPES.AccountMenuController, () => {
-      return new AccountMenuController(application, application.events)
+      return new AccountMenuController(application.items, application.getHost, application.events)
     })
 
     this.bind(Web_TYPES.SubscriptionController, () => {
-      return new SubscriptionController(application, application.events, application.subscriptions)
+      return new SubscriptionController(
+        application.subscriptions,
+        application.sessions,
+        application.features,
+        application.events,
+      )
     })
 
     this.bind(Web_TYPES.PurchaseFlowController, () => {
-      return new PurchaseFlowController(application, application.events)
+      return new PurchaseFlowController(
+        application.sessions,
+        application.subscriptions,
+        application.legacyApi,
+        application.alerts,
+        application.mobileDevice(),
+        this.get<LoadPurchaseFlowUrl>(Web_TYPES.LoadPurchaseFlowUrl),
+        this.get<IsNativeIOS>(Web_TYPES.IsNativeIOS),
+        application.events,
+      )
+    })
+
+    this.bind(Web_TYPES.LoadPurchaseFlowUrl, () => {
+      return new LoadPurchaseFlowUrl(application, this.get<GetPurchaseFlowUrl>(Web_TYPES.GetPurchaseFlowUrl))
+    })
+
+    this.bind(Web_TYPES.GetPurchaseFlowUrl, () => {
+      return new GetPurchaseFlowUrl(application, application.legacyApi)
     })
 
     this.bind(Web_TYPES.SyncStatusController, () => {
@@ -246,23 +334,38 @@ export class WebDependencies extends DependencyContainer {
 
     this.bind(Web_TYPES.FilesController, () => {
       return new FilesController(
-        application,
         this.get<NotesController>(Web_TYPES.NotesController),
         this.get<FilePreviewModalController>(Web_TYPES.FilePreviewModalController),
+        this.get<ArchiveManager>(Web_TYPES.ArchiveManager),
+        this.get<VaultDisplayService>(Web_TYPES.VaultDisplayService),
+        application.items,
+        application.files,
+        application.mutator,
+        application.sync,
+        application.protections,
+        application.alerts,
+        application.platform,
+        application.mobileDevice(),
+        this.get<IsNativeMobileWeb>(Web_TYPES.IsNativeMobileWeb),
         application.events,
       )
     })
 
     this.bind(Web_TYPES.HistoryModalController, () => {
       return new HistoryModalController(
-        this.application,
-        application.events,
         this.get<NotesController>(Web_TYPES.NotesController),
+        this.get<KeyboardService>(Web_TYPES.KeyboardService),
+        application.events,
       )
     })
 
     this.bind(Web_TYPES.ImportModalController, () => {
-      return new ImportModalController(this.application, this.get<NavigationController>(Web_TYPES.NavigationController))
+      return new ImportModalController(
+        this.get<Importer>(Web_TYPES.Importer),
+        this.get<NavigationController>(Web_TYPES.NavigationController),
+        application.items,
+        application.mutator,
+      )
     })
 
     this.bind(Web_TYPES.ToastService, () => {

@@ -12,16 +12,7 @@ type Props = AccountMenuProps & {
   user: unknown
 }
 
-const AccountMenuButton = ({
-  application,
-  hasError,
-  isOpen,
-  mainApplicationGroup,
-  onClickOutside,
-  toggleMenu,
-  user,
-  viewControllerManager,
-}: Props) => {
+const AccountMenuButton = ({ hasError, isOpen, mainApplicationGroup, onClickOutside, toggleMenu, user }: Props) => {
   const buttonRef = useRef<HTMLButtonElement>(null)
 
   return (
@@ -49,12 +40,7 @@ const AccountMenuButton = ({
         align="start"
         className="py-2"
       >
-        <AccountMenu
-          onClickOutside={onClickOutside}
-          viewControllerManager={viewControllerManager}
-          application={application}
-          mainApplicationGroup={mainApplicationGroup}
-        />
+        <AccountMenu onClickOutside={onClickOutside} mainApplicationGroup={mainApplicationGroup} />
       </Popover>
     </>
   )

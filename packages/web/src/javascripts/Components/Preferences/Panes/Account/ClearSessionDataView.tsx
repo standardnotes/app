@@ -1,14 +1,14 @@
 import Button from '@/Components/Button/Button'
-import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'react'
 import { Title, Text } from '../../PreferencesComponents/Content'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
+import { useApplication } from '@/Components/ApplicationProvider'
 
-const ClearSessionDataView: FunctionComponent<{
-  viewControllerManager: ViewControllerManager
-}> = ({ viewControllerManager }) => {
+const ClearSessionDataView: FunctionComponent = () => {
+  const application = useApplication()
+
   return (
     <PreferencesGroup>
       <PreferencesSegment>
@@ -18,7 +18,7 @@ const ClearSessionDataView: FunctionComponent<{
           colorStyle="danger"
           label="Clear workspace"
           onClick={() => {
-            viewControllerManager.accountMenuController.setSigningOut(true)
+            application.accountMenuController.setSigningOut(true)
           }}
         />
       </PreferencesSegment>

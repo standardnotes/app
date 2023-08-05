@@ -66,10 +66,23 @@ import { PurchaseFlowController } from '@/Controllers/PurchaseFlow/PurchaseFlowC
 import { AccountMenuController } from '@/Controllers/AccountMenu/AccountMenuController'
 import { PreferencesController } from '@/Controllers/PreferencesController'
 import { NotesController } from '@/Controllers/NotesController/NotesController'
+import { ImportModalController } from '@/Controllers/ImportModalController'
+import { SyncStatusController } from '@/Controllers/SyncStatusController'
+import { HistoryModalController } from '@/Controllers/NoteHistory/HistoryModalController'
+import { NavigationController } from '@/Controllers/Navigation/NavigationController'
+import { FilePreviewModalController } from '@/Controllers/FilePreviewModalController'
+import { OpenSubscriptionDashboard } from './UseCase/OpenSubscriptionDashboard'
+import { QuickSettingsController } from '@/Controllers/QuickSettingsController'
+import { VaultSelectionMenuController } from '@/Controllers/VaultSelectionMenuController'
+import { ItemGroupController } from '@/Components/NoteView/Controller/ItemGroupController'
+import { NoAccountWarningController } from '@/Controllers/NoAccountWarningController'
+import { SearchOptionsController } from '@/Controllers/SearchOptionsController'
 
 export type WebEventObserver = (event: WebAppEvent, data?: unknown) => void
 
 export class WebApplication extends SNApplication implements WebApplicationInterface {
+  readonly enableUnfinishedFeatures: boolean = window?.enabledUnfinishedFeatures
+
   private readonly deps = new WebDependencies(this)
 
   private visibilityObserver?: VisibilityObserver
@@ -250,7 +263,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     return this.device as WebOrDesktopDevice
   }
 
-  async checkForSecurityUpdate() {
+  async checkForSecurityUpdate(): Promise<boolean> {
     return this.protocolUpgradeAvailable()
   }
 
@@ -530,7 +543,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     return this.deps.get<AutolockService>(Web_TYPES.AutolockService)
   }
 
-  getArchiveService(): ArchiveManager {
+  get archiveService(): ArchiveManager {
     return this.deps.get<ArchiveManager>(Web_TYPES.ArchiveManager)
   }
 
@@ -570,8 +583,28 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     return this.deps.get<SelectedItemsController>(Web_TYPES.SelectedItemsController)
   }
 
+  get filePreviewModalController(): FilePreviewModalController {
+    return this.deps.get<FilePreviewModalController>(Web_TYPES.FilePreviewModalController)
+  }
+
   get notesController(): NotesController {
     return this.deps.get<NotesController>(Web_TYPES.NotesController)
+  }
+
+  get importModalController(): ImportModalController {
+    return this.deps.get<ImportModalController>(Web_TYPES.ImportModalController)
+  }
+
+  get navigationController(): NavigationController {
+    return this.deps.get<NavigationController>(Web_TYPES.NavigationController)
+  }
+
+  get historyModalController(): HistoryModalController {
+    return this.deps.get<HistoryModalController>(Web_TYPES.HistoryModalController)
+  }
+
+  get syncStatusController(): SyncStatusController {
+    return this.deps.get<SyncStatusController>(Web_TYPES.SyncStatusController)
   }
 
   get itemListController(): ItemListController {
@@ -584,6 +617,30 @@ export class WebApplication extends SNApplication implements WebApplicationInter
 
   get purchaseFlowController(): PurchaseFlowController {
     return this.deps.get<PurchaseFlowController>(Web_TYPES.PurchaseFlowController)
+  }
+
+  get quickSettingsMenuController(): QuickSettingsController {
+    return this.deps.get<QuickSettingsController>(Web_TYPES.QuickSettingsController)
+  }
+
+  get itemControllerGroup(): ItemGroupController {
+    return this.deps.get<ItemGroupController>(Web_TYPES.ItemGroupController)
+  }
+
+  get noAccountWarningController(): NoAccountWarningController {
+    return this.deps.get<NoAccountWarningController>(Web_TYPES.NoAccountWarningController)
+  }
+
+  get searchOptionsController(): SearchOptionsController {
+    return this.deps.get<SearchOptionsController>(Web_TYPES.SearchOptionsController)
+  }
+
+  get vaultSelectionController(): VaultSelectionMenuController {
+    return this.deps.get<VaultSelectionMenuController>(Web_TYPES.VaultSelectionMenuController)
+  }
+
+  get openSubscriptionDashboard(): OpenSubscriptionDashboard {
+    return this.deps.get<OpenSubscriptionDashboard>(Web_TYPES.OpenSubscriptionDashboard)
   }
 
   get mobileWebReceiver(): MobileWebReceiver | undefined {

@@ -1,7 +1,6 @@
 import { observer } from 'mobx-react-lite'
 
 import { WebApplication } from '@/Application/WebApplication'
-import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import Authentication from './Authentication'
 import Credentials from './Credentials'
 import Sync from './Sync'
@@ -15,30 +14,29 @@ import DeleteAccount from '@/Components/Preferences/Panes/Account/DeleteAccount'
 
 type Props = {
   application: WebApplication
-  viewControllerManager: ViewControllerManager
 }
 
-const AccountPreferences = ({ application, viewControllerManager }: Props) => {
+const AccountPreferences = ({ application }: Props) => {
   const isUsingThirdPartyServer = application.isThirdPartyHostUsed()
 
   return (
     <PreferencesPane>
       {!application.hasAccount() ? (
-        <Authentication application={application} viewControllerManager={viewControllerManager} />
+        <Authentication application={application} />
       ) : (
         <>
-          <Credentials application={application} viewControllerManager={viewControllerManager} />
+          <Credentials application={application} />
           <Sync application={application} />
         </>
       )}
       <Subscription />
-      <SubscriptionSharing application={application} viewControllerManager={viewControllerManager} />
-      {application.hasAccount() && viewControllerManager.featuresController.entitledToFiles && (
+      <SubscriptionSharing application={application} />
+      {application.hasAccount() && application.featuresController.entitledToFiles && (
         <FilesSection application={application} />
       )}
       {application.hasAccount() && !isUsingThirdPartyServer && <Email application={application} />}
-      <SignOutWrapper application={application} viewControllerManager={viewControllerManager} />
-      <DeleteAccount application={application} viewControllerManager={viewControllerManager} />
+      <SignOutWrapper application={application} />
+      <DeleteAccount application={application} />
     </PreferencesPane>
   )
 }

@@ -1,7 +1,7 @@
 import { WebApplicationGroup } from '@/Application/WebApplicationGroup'
-import { getPlatformString, isIOS } from '@/Utils'
+import { getPlatformString } from '@/Utils'
 import { ApplicationEvent, Challenge, removeFromArray, WebAppEvent } from '@standardnotes/snjs'
-import { alertDialog, RouteType } from '@standardnotes/ui-services'
+import { alertDialog, isIOS, RouteType } from '@standardnotes/ui-services'
 import { WebApplication } from '@/Application/WebApplication'
 import Footer from '@/Components/Footer/Footer'
 import SessionsModal from '@/Components/SessionsModal/SessionsModal'
@@ -47,8 +47,6 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
 
   const currentWriteErrorDialog = useRef<Promise<void> | null>(null)
   const currentLoadErrorDialog = useRef<Promise<void> | null>(null)
-
-  const viewControllerManager = application.controllers
 
   useEffect(() => {
     const desktopService = application.getDesktopService()
@@ -187,14 +185,13 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
         <ChallengeModal
           key={`${challenge.id}${application.ephemeralIdentifier}`}
           application={application}
-          viewControllerManager={viewControllerManager}
           mainApplicationGroup={mainApplicationGroup}
           challenge={challenge}
           onDismiss={removeChallenge}
         />
       </div>
     ))
-  }, [viewControllerManager, challenges, mainApplicationGroup, removeChallenge, application])
+  }, [challenges, mainApplicationGroup, removeChallenge, application])
 
   if (!renderAppContents) {
     return <AndroidBackHandlerProvider application={application}>{renderChallenges()}</AndroidBackHandlerProvider>
@@ -207,23 +204,13 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
       <ApplicationProvider application={application}>
         <CommandProvider service={application.keyboardService}>
           <AndroidBackHandlerProvider application={application}>
-            <ResponsivePaneProvider paneController={application.controllers.paneController}>
-              <PremiumModalProvider
-                application={application}
-                featuresController={viewControllerManager.featuresController}
-              >
-                <LinkingControllerProvider controller={viewControllerManager.linkingController}>
-                  <FileDragNDropProvider
-                    application={application}
-                    featuresController={viewControllerManager.featuresController}
-                    filesController={viewControllerManager.filesController}
-                  >
-                    <LazyLoadedClipperView
-                      viewControllerManager={viewControllerManager}
-                      applicationGroup={mainApplicationGroup}
-                    />
+            <ResponsivePaneProvider paneController={application.paneController}>
+              <PremiumModalProvider application={application}>
+                <LinkingControllerProvider controller={application.linkingController}>
+                  <FileDragNDropProvider application={application}>
+                    <LazyLoadedClipperView applicationGroup={mainApplicationGroup} />
                     <ToastContainer />
-                    <FilePreviewModalWrapper application={application} viewControllerManager={viewControllerManager} />
+                    <FilePreviewModalWrapper application={application} />
                     {renderChallenges()}
                   </FileDragNDropProvider>
                 </LinkingControllerProvider>
@@ -239,64 +226,40 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
     <ApplicationProvider application={application}>
       <CommandProvider service={application.keyboardService}>
         <AndroidBackHandlerProvider application={application}>
-          <ResponsivePaneProvider paneController={application.controllers.paneController}>
-            <PremiumModalProvider
-              application={application}
-              featuresController={viewControllerManager.featuresController}
-            >
-              <LinkingControllerProvider controller={viewControllerManager.linkingController}>
+          <ResponsivePaneProvider paneController={application.paneController}>
+            <PremiumModalProvider application={application}>
+              <LinkingControllerProvider controller={application.linkingController}>
                 <div className={platformString + ' main-ui-view sn-component h-full'}>
-                  <FileDragNDropProvider
-                    application={application}
-                    featuresController={viewControllerManager.featuresController}
-                    filesController={viewControllerManager.filesController}
-                  >
+                  <FileDragNDropProvider application={application}>
                     <PanesSystemComponent />
                   </FileDragNDropProvider>
                   <>
                     <Footer application={application} applicationGroup={mainApplicationGroup} />
-                    <SessionsModal application={application} viewControllerManager={viewControllerManager} />
-                    <PreferencesViewWrapper viewControllerManager={viewControllerManager} application={application} />
-                    <RevisionHistoryModal
-                      application={application}
-                      historyModalController={viewControllerManager.historyModalController}
-                      selectionController={viewControllerManager.selectionController}
-                    />
+                    <SessionsModal application={application} />
+                    <PreferencesViewWrapper application={application} />
+                    <RevisionHistoryModal application={application} />
                   </>
                   {renderChallenges()}
                   <>
-                    <NotesContextMenu
-                      navigationController={viewControllerManager.navigationController}
-                      notesController={viewControllerManager.notesController}
-                      linkingController={viewControllerManager.linkingController}
-                      historyModalController={viewControllerManager.historyModalController}
-                      selectionController={viewControllerManager.selectionController}
-                    />
+                    <NotesContextMenu />
                     <TagContextMenuWrapper
-                      navigationController={viewControllerManager.navigationController}
-                      featuresController={viewControllerManager.featuresController}
+                      navigationController={application.navigationController}
+                      featuresController={application.featuresController}
                     />
                     <FileContextMenuWrapper
-                      filesController={viewControllerManager.filesController}
-                      selectionController={viewControllerManager.selectionController}
-                      navigationController={viewControllerManager.navigationController}
-                      linkingController={viewControllerManager.linkingController}
+                      filesController={application.filesController}
+                      selectionController={application.selectionController}
+                      navigationController={application.navigationController}
+                      linkingController={application.linkingController}
                     />
-                    <PurchaseFlowWrapper application={application} viewControllerManager={viewControllerManager} />
-                    <ConfirmSignoutContainer
-                      applicationGroup={mainApplicationGroup}
-                      viewControllerManager={viewControllerManager}
-                      application={application}
-                    />
+                    <PurchaseFlowWrapper application={application} />
+                    <ConfirmSignoutContainer applicationGroup={mainApplicationGroup} application={application} />
                     <ToastContainer />
-                    <FilePreviewModalWrapper application={application} viewControllerManager={viewControllerManager} />
+                    <FilePreviewModalWrapper application={application} />
                     <PermissionsModalWrapper application={application} />
                     <EditorWidthSelectionModalWrapper />
-                    <ConfirmDeleteAccountContainer
-                      application={application}
-                      viewControllerManager={viewControllerManager}
-                    />
-                    <ImportModal importModalController={viewControllerManager.importModalController} />
+                    <ConfirmDeleteAccountContainer application={application} />
+                    <ImportModal importModalController={application.importModalController} />
                   </>
                   {application.routeService.isDotOrg && <DotOrgNotice />}
                   {isIOS() && <IosKeyboardClose />}

@@ -25,7 +25,6 @@ const HomeServerSettings = () => {
   const homeServerService = application.homeServer as HomeServerServiceInterface
   const featuresService = application.features
   const sessionsService = application.sessions
-  const viewControllerManager = application.controllers
 
   const logsTextarea = useRef<HTMLTextAreaElement>(null)
 
@@ -392,7 +391,6 @@ const HomeServerSettings = () => {
                     {showOfflineSubscriptionActivation && (
                       <OfflineSubscription
                         application={application}
-                        viewControllerManager={viewControllerManager}
                         onSuccess={() => {
                           setIsAPremiumUser(true)
                           setShowOfflineSubscriptionActivation(false)

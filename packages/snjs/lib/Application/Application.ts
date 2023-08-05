@@ -1234,12 +1234,12 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return this.dependencies.get<SetHost>(TYPES.SetHost)
   }
 
-  private get migrations(): MigrationService {
-    return this.dependencies.get<MigrationService>(TYPES.MigrationService)
+  public get legacyApi(): LegacyApiService {
+    return this.dependencies.get<LegacyApiService>(TYPES.LegacyApiService)
   }
 
-  private get legacyApi(): LegacyApiService {
-    return this.dependencies.get<LegacyApiService>(TYPES.LegacyApiService)
+  private get migrations(): MigrationService {
+    return this.dependencies.get<MigrationService>(TYPES.MigrationService)
   }
 
   private get http(): HttpServiceInterface {

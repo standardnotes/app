@@ -32,6 +32,7 @@ export interface WebApplicationInterface extends ApplicationInterface {
   setAndroidBackHandlerFallbackListener(listener: () => boolean): void
   handleInitialMobileScreenshotPrivacy(): void
   generateUUID(): string
+  checkForSecurityUpdate(): Promise<boolean>
 
   get isMobileDevice(): boolean
   get desktopDevice(): DesktopDeviceInterface | undefined

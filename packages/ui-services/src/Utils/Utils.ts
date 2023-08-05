@@ -7,7 +7,7 @@ declare global {
 
   interface Window {
     MSStream?: unknown
-    platform: Platform
+    platform?: Platform
   }
 }
 

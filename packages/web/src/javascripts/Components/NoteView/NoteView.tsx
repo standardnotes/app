@@ -215,7 +215,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
 
     this.autorun(() => {
       this.setState({
-        showProtectedWarning: this.notesController.showProtectedWarning,
+        showProtectedWarning: this.application.notesController.showProtectedWarning,
       })
     })
 
@@ -615,7 +615,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
   }
 
   setShowProtectedOverlay(show: boolean) {
-    this.viewControllerManager.notesController.setShowProtectedWarning(show)
+    this.application.notesController.setShowProtectedWarning(show)
   }
 
   async deleteNote(permanently: boolean) {
@@ -677,7 +677,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
   }
 
   async reloadSpellcheck() {
-    const spellcheck = this.viewControllerManager.notesController.getSpellcheckStateForNote(this.note)
+    const spellcheck = this.application.notesController.getSpellcheckStateForNote(this.note)
     if (spellcheck !== this.state.spellcheck) {
       reloadFont(this.state.monospaceFont)
       this.setState({ spellcheck })
@@ -685,7 +685,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
   }
 
   reloadLineWidth() {
-    const editorLineWidth = this.viewControllerManager.notesController.getEditorWidthForNote(this.note)
+    const editorLineWidth = this.application.notesController.getEditorWidthForNote(this.note)
 
     this.setState({
       editorLineWidth,
@@ -849,15 +849,15 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
         {this.note && (
           <NoteViewFileDropTarget
             note={this.note}
-            linkingController={this.viewControllerManager.linkingController}
-            filesController={this.viewControllerManager.filesController}
+            linkingController={this.application.linkingController}
+            filesController={this.application.filesController}
             noteViewElement={this.noteViewElementRef.current}
           />
         )}
 
         {this.state.noteLocked && (
           <EditingDisabledBanner
-            onClick={() => this.viewControllerManager.notesController.setLockSelectedNotes(!this.state.noteLocked)}
+            onClick={() => this.application.notesController.setLockSelectedNotes(!this.state.noteLocked)}
             noteLocked={this.state.noteLocked}
           />
         )}
@@ -913,36 +913,32 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
                 <div className="note-view-options-buttons flex items-center gap-3">
                   <CollaborationInfoHUD item={this.note} />
                   <LinkedItemsButton
-                    filesController={this.viewControllerManager.filesController}
-                    linkingController={this.viewControllerManager.linkingController}
+                    filesController={this.application.filesController}
+                    linkingController={this.application.linkingController}
                     onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
-                    featuresController={this.viewControllerManager.featuresController}
+                    featuresController={this.application.featuresController}
                   />
                   <ChangeEditorButton
-                    viewControllerManager={this.viewControllerManager}
                     noteViewController={this.controller}
                     onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
                   />
                   <PinNoteButton
-                    notesController={this.viewControllerManager.notesController}
+                    notesController={this.application.notesController}
                     onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
                   />
                   <NotesOptionsPanel
-                    navigationController={this.viewControllerManager.navigationController}
-                    notesController={this.viewControllerManager.notesController}
-                    linkingController={this.viewControllerManager.linkingController}
-                    historyModalController={this.viewControllerManager.historyModalController}
-                    selectionController={this.viewControllerManager.selectionController}
+                    navigationController={this.application.navigationController}
+                    notesController={this.application.notesController}
+                    linkingController={this.application.linkingController}
+                    historyModalController={this.application.historyModalController}
+                    selectionController={this.application.selectionController}
                     onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
                   />
                 </div>
               )}
             </div>
             <div className="hidden md:block">
-              <LinkedItemBubblesContainer
-                item={this.note}
-                linkingController={this.viewControllerManager.linkingController}
-              />
+              <LinkedItemBubblesContainer item={this.note} linkingController={this.application.linkingController} />
             </div>
           </div>
         )}
@@ -990,8 +986,8 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
               <SuperEditor
                 key={this.note.uuid}
                 application={this.application}
-                linkingController={this.viewControllerManager.linkingController}
-                filesController={this.viewControllerManager.filesController}
+                linkingController={this.application.linkingController}
+                filesController={this.application.filesController}
                 spellcheck={this.state.spellcheck}
                 controller={this.controller}
               />
