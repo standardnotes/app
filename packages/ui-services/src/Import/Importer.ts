@@ -1,5 +1,10 @@
 import { parseFileName } from '@standardnotes/filepicker'
-import { FeatureStatus } from '@standardnotes/services'
+import {
+  FeatureStatus,
+  FeaturesClientInterface,
+  ItemManagerInterface,
+  MutatorClientInterface,
+} from '@standardnotes/services'
 import { NativeFeatureIdentifier } from '@standardnotes/features'
 import { AegisToAuthenticatorConverter } from './AegisConverter/AegisToAuthenticatorConverter'
 import { EvernoteConverter } from './EvernoteConverter/EvernoteConverter'
@@ -8,7 +13,6 @@ import { PlaintextConverter } from './PlaintextConverter/PlaintextConverter'
 import { SimplenoteConverter } from './SimplenoteConverter/SimplenoteConverter'
 import { readFileAsText } from './Utils'
 import { DecryptedTransferPayload, NoteContent } from '@standardnotes/models'
-import { WebApplicationInterface } from '../WebApplication/WebApplicationInterface'
 
 export type NoteImportType = 'plaintext' | 'evernote' | 'google-keep' | 'simplenote' | 'aegis'
 
@@ -19,12 +23,16 @@ export class Importer {
   plaintextConverter: PlaintextConverter
   evernoteConverter: EvernoteConverter
 
-  constructor(protected application: WebApplicationInterface) {
-    this.aegisConverter = new AegisToAuthenticatorConverter(application)
-    this.googleKeepConverter = new GoogleKeepConverter(application)
-    this.simplenoteConverter = new SimplenoteConverter(application)
-    this.plaintextConverter = new PlaintextConverter(application)
-    this.evernoteConverter = new EvernoteConverter(application)
+  constructor(
+    private features: FeaturesClientInterface,
+    private mutator: MutatorClientInterface,
+    private items: ItemManagerInterface,
+  ) {
+    this.aegisConverter = new AegisToAuthenticatorConverter()
+    this.googleKeepConverter = new GoogleKeepConverter()
+    this.simplenoteConverter = new SimplenoteConverter()
+    this.plaintextConverter = new PlaintextConverter()
+    this.evernoteConverter = new EvernoteConverter()
   }
 
   static detectService = async (file: File): Promise<NoteImportType | null> => {
@@ -64,7 +72,7 @@ export class Importer {
   async getPayloadsFromFile(file: File, type: NoteImportType): Promise<DecryptedTransferPayload[]> {
     if (type === 'aegis') {
       const isEntitledToAuthenticator =
-        this.application.features.getFeatureStatus(
+        this.features.getFeatureStatus(
           NativeFeatureIdentifier.create(NativeFeatureIdentifier.TYPES.TokenVaultEditor).getValue(),
         ) === FeatureStatus.Entitled
       return [await this.aegisConverter.convertAegisBackupFileToNote(file, isEntitledToAuthenticator)]
@@ -85,7 +93,7 @@ export class Importer {
     const insertedItems = await Promise.all(
       payloads.map(async (payload) => {
         const content = payload.content as NoteContent
-        const note = this.application.items.createTemplateItem(
+        const note = this.items.createTemplateItem(
           payload.content_type,
           {
             text: content.text,
@@ -100,7 +108,7 @@ export class Importer {
             uuid: payload.uuid,
           },
         )
-        return this.application.mutator.insertItem(note)
+        return this.mutator.insertItem(note)
       }),
     )
     return insertedItems

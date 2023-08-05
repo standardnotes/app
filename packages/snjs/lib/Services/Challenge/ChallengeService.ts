@@ -1,7 +1,7 @@
 import { RootKeyInterface } from '@standardnotes/models'
 import { DiskStorageService } from '../Storage/DiskStorageService'
 import { removeFromArray } from '@standardnotes/utils'
-import { isValidProtectionSessionLength } from '../Protection/ProtectionService'
+import { isValidProtectionSessionLength } from '../Protection/isValidProtectionSessionLength'
 import {
   AbstractService,
   ChallengeServiceInterface,
@@ -156,10 +156,6 @@ export class ChallengeService extends AbstractService implements ChallengeServic
 
     const wrappingKey = await this.encryptionService.computeWrappingKey(passcode)
     return { wrappingKey }
-  }
-
-  public isPasscodeLocked(): Promise<boolean> {
-    return this.encryptionService.isPasscodeLocked()
   }
 
   public addChallengeObserver(challenge: Challenge, observer: ChallengeObserver): () => void {

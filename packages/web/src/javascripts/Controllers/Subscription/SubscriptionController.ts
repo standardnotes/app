@@ -2,37 +2,34 @@ import { Subscription } from '@standardnotes/responses'
 import { destroyAllObjectProperties } from '@/Utils'
 import {
   ApplicationEvent,
+  FeaturesClientInterface,
   InternalEventBusInterface,
+  InternalEventHandlerInterface,
+  InternalEventInterface,
   Invitation,
   InvitationStatus,
+  SessionsClientInterface,
   SubscriptionManagerEvent,
   SubscriptionManagerInterface,
 } from '@standardnotes/snjs'
 import { computed, makeObservable, observable, runInAction } from 'mobx'
-import { WebApplication } from '../../Application/WebApplication'
 import { AbstractViewController } from '../Abstract/AbstractViewController'
 
-export class SubscriptionController extends AbstractViewController {
+export class SubscriptionController extends AbstractViewController implements InternalEventHandlerInterface {
   private readonly ALLOWED_SUBSCRIPTION_INVITATIONS = 5
 
   subscriptionInvitations: Invitation[] | undefined = undefined
   hasAccount: boolean
   onlineSubscription: Subscription | undefined = undefined
 
-  override deinit() {
-    super.deinit()
-    ;(this.subscriptionInvitations as unknown) = undefined
-
-    destroyAllObjectProperties(this)
-  }
-
   constructor(
-    application: WebApplication,
+    private subscriptions: SubscriptionManagerInterface,
+    private sessions: SessionsClientInterface,
+    private features: FeaturesClientInterface,
     eventBus: InternalEventBusInterface,
-    private subscriptionManager: SubscriptionManagerInterface,
   ) {
-    super(application, eventBus)
-    this.hasAccount = application.hasAccount()
+    super(eventBus)
+    this.hasAccount = sessions.isSignedIn()
 
     makeObservable(this, {
       subscriptionInvitations: observable,
@@ -45,52 +42,62 @@ export class SubscriptionController extends AbstractViewController {
       allInvitationsUsed: computed,
     })
 
-    this.disposers.push(
-      application.addEventObserver(async () => {
-        if (application.hasAccount()) {
+    eventBus.addEventHandler(this, ApplicationEvent.Launched)
+    eventBus.addEventHandler(this, ApplicationEvent.SignedIn)
+    eventBus.addEventHandler(this, ApplicationEvent.UserRolesChanged)
+    eventBus.addEventHandler(this, SubscriptionManagerEvent.DidFetchSubscription)
+  }
+
+  override deinit() {
+    super.deinit()
+    ;(this.subscriptionInvitations as unknown) = undefined
+
+    destroyAllObjectProperties(this)
+  }
+
+  async handleEvent(event: InternalEventInterface): Promise<void> {
+    switch (event.type) {
+      case ApplicationEvent.Launched: {
+        if (this.sessions.isSignedIn()) {
           this.reloadSubscriptionInvitations().catch(console.error)
         }
         runInAction(() => {
-          this.hasAccount = application.hasAccount()
+          this.hasAccount = this.sessions.isSignedIn()
         })
-      }, ApplicationEvent.Launched),
-    )
+        break
+      }
 
-    this.disposers.push(
-      application.addEventObserver(async () => {
+      case ApplicationEvent.SignedIn: {
         this.reloadSubscriptionInvitations().catch(console.error)
         runInAction(() => {
-          this.hasAccount = application.hasAccount()
+          this.hasAccount = this.sessions.isSignedIn()
         })
-      }, ApplicationEvent.SignedIn),
-    )
+        break
+      }
 
-    this.disposers.push(
-      application.subscriptions.addEventObserver(async (event) => {
-        if (event === SubscriptionManagerEvent.DidFetchSubscription) {
-          runInAction(() => {
-            this.onlineSubscription = application.subscriptions.getOnlineSubscription()
-          })
-        }
-      }),
-    )
+      case SubscriptionManagerEvent.DidFetchSubscription: {
+        runInAction(() => {
+          this.onlineSubscription = this.subscriptions.getOnlineSubscription()
+        })
+        break
+      }
 
-    this.disposers.push(
-      application.addEventObserver(async () => {
+      case ApplicationEvent.UserRolesChanged: {
         this.reloadSubscriptionInvitations().catch(console.error)
-      }, ApplicationEvent.UserRolesChanged),
-    )
+        break
+      }
+    }
   }
 
   get hasFirstPartyOnlineOrOfflineSubscription(): boolean {
-    if (this.application.sessions.isSignedIn()) {
-      if (!this.application.sessions.isSignedIntoFirstPartyServer()) {
+    if (this.sessions.isSignedIn()) {
+      if (!this.sessions.isSignedIntoFirstPartyServer()) {
         return false
       }
 
-      return this.application.subscriptions.getOnlineSubscription() !== undefined
+      return this.subscriptions.getOnlineSubscription() !== undefined
     } else {
-      return this.application.features.hasFirstPartyOfflineSubscription()
+      return this.features.hasFirstPartyOfflineSubscription()
     }
   }
 
@@ -111,7 +118,7 @@ export class SubscriptionController extends AbstractViewController {
   }
 
   async sendSubscriptionInvitation(inviteeEmail: string): Promise<boolean> {
-    const success = await this.subscriptionManager.inviteToSubscription(inviteeEmail)
+    const success = await this.subscriptions.inviteToSubscription(inviteeEmail)
 
     if (success) {
       await this.reloadSubscriptionInvitations()
@@ -121,7 +128,7 @@ export class SubscriptionController extends AbstractViewController {
   }
 
   async cancelSubscriptionInvitation(invitationUuid: string): Promise<boolean> {
-    const success = await this.subscriptionManager.cancelInvitation(invitationUuid)
+    const success = await this.subscriptions.cancelInvitation(invitationUuid)
 
     if (success) {
       await this.reloadSubscriptionInvitations()
@@ -131,6 +138,6 @@ export class SubscriptionController extends AbstractViewController {
   }
 
   private async reloadSubscriptionInvitations(): Promise<void> {
-    this.subscriptionInvitations = await this.subscriptionManager.listSubscriptionInvitations()
+    this.subscriptionInvitations = await this.subscriptions.listSubscriptionInvitations()
   }
 }

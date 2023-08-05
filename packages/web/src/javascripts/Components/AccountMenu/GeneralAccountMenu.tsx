@@ -1,5 +1,3 @@
-import { WebApplication } from '@/Application/WebApplication'
-import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
 import Icon from '@/Components/Icon/Icon'
 import { SyncQueueStrategy } from '@standardnotes/snjs'
@@ -14,10 +12,9 @@ import { WebApplicationGroup } from '@/Application/WebApplicationGroup'
 import { formatLastSyncDate } from '@/Utils/DateUtils'
 import Spinner from '@/Components/Spinner/Spinner'
 import { MenuItemIconSize } from '@/Constants/TailwindClassNames'
+import { useApplication } from '../ApplicationProvider'
 
 type Props = {
-  viewControllerManager: ViewControllerManager
-  application: WebApplication
   mainApplicationGroup: WebApplicationGroup
   setMenuPane: (pane: AccountMenuPane) => void
   closeMenu: () => void
@@ -25,13 +22,9 @@ type Props = {
 
 const iconClassName = `text-neutral mr-2 ${MenuItemIconSize}`
 
-const GeneralAccountMenu: FunctionComponent<Props> = ({
-  application,
-  viewControllerManager,
-  setMenuPane,
-  closeMenu,
-  mainApplicationGroup,
-}) => {
+const GeneralAccountMenu: FunctionComponent<Props> = ({ setMenuPane, closeMenu, mainApplicationGroup }) => {
+  const application = useApplication()
+
   const [isSyncingInProgress, setIsSyncingInProgress] = useState(false)
   const [lastSyncDate, setLastSyncDate] = useState(formatLastSyncDate(application.sync.getLastSyncDate() as Date))
 
@@ -58,23 +51,23 @@ const GeneralAccountMenu: FunctionComponent<Props> = ({
       })
   }, [application])
 
-  const user = useMemo(() => application.getUser(), [application])
+  const user = useMemo(() => application.sessions.getUser(), [application])
 
   const openPreferences = useCallback(() => {
-    viewControllerManager.accountMenuController.closeAccountMenu()
-    viewControllerManager.preferencesController.setCurrentPane('account')
-    viewControllerManager.preferencesController.openPreferences()
-  }, [viewControllerManager])
+    application.accountMenuController.closeAccountMenu()
+    application.preferencesController.setCurrentPane('account')
+    application.preferencesController.openPreferences()
+  }, [application])
 
   const openHelp = useCallback(() => {
-    viewControllerManager.accountMenuController.closeAccountMenu()
-    viewControllerManager.preferencesController.setCurrentPane('help-feedback')
-    viewControllerManager.preferencesController.openPreferences()
-  }, [viewControllerManager])
+    application.accountMenuController.closeAccountMenu()
+    application.preferencesController.setCurrentPane('help-feedback')
+    application.preferencesController.openPreferences()
+  }, [application])
 
   const signOut = useCallback(() => {
-    viewControllerManager.accountMenuController.setSigningOut(true)
-  }, [viewControllerManager])
+    application.accountMenuController.setSigningOut(true)
+  }, [application])
 
   const activateRegisterPane = useCallback(() => {
     setMenuPane(AccountMenuPane.Register)
@@ -100,7 +93,7 @@ const GeneralAccountMenu: FunctionComponent<Props> = ({
           <div className="mb-3 px-3 text-lg text-foreground lg:text-sm">
             <div>You're signed in as:</div>
             <div className="wrap my-0.5 font-bold">{user.email}</div>
-            <span className="text-neutral">{application.getHost()}</span>
+            <span className="text-neutral">{application.getHost.execute().getValue()}</span>
           </div>
           <div className="mb-2 flex items-start justify-between px-3 text-mobile-menu-item md:text-tablet-menu-item lg:text-menu-item">
             {isSyncingInProgress ? (
@@ -137,16 +130,13 @@ const GeneralAccountMenu: FunctionComponent<Props> = ({
         </>
       )}
       <Menu
-        isOpen={viewControllerManager.accountMenuController.show}
+        isOpen={application.accountMenuController.show}
         a11yLabel="General account menu"
         closeMenu={closeMenu}
         initialFocus={!application.hasAccount() ? CREATE_ACCOUNT_INDEX : SWITCHER_INDEX}
       >
         <MenuItemSeparator />
-        <WorkspaceSwitcherOption
-          mainApplicationGroup={mainApplicationGroup}
-          viewControllerManager={viewControllerManager}
-        />
+        <WorkspaceSwitcherOption mainApplicationGroup={mainApplicationGroup} />
         <MenuItemSeparator />
         {user ? (
           <MenuItem onClick={openPreferences}>
@@ -167,8 +157,8 @@ const GeneralAccountMenu: FunctionComponent<Props> = ({
         )}
         <MenuItem
           onClick={() => {
-            viewControllerManager.importModalController.setIsVisible(true)
-            viewControllerManager.accountMenuController.closeAccountMenu()
+            application.importModalController.setIsVisible(true)
+            application.accountMenuController.closeAccountMenu()
           }}
         >
           <Icon type="archive" className={iconClassName} />

@@ -17,6 +17,13 @@ import {
   InternalEventBusInterface,
   isTag,
   PrefDefaults,
+  PreferenceServiceInterface,
+  InternalEventHandlerInterface,
+  InternalEventInterface,
+  ItemManagerInterface,
+  MutatorClientInterface,
+  SyncServiceInterface,
+  VaultServiceInterface,
 } from '@standardnotes/snjs'
 import { action, computed, makeObservable, observable } from 'mobx'
 import { AbstractViewController } from './Abstract/AbstractViewController'
@@ -24,25 +31,30 @@ import { CrossControllerEvent } from './CrossControllerEvent'
 import { FilesController } from './FilesController'
 import { ItemListController } from './ItemList/ItemListController'
 import { NavigationController } from './Navigation/NavigationController'
-import { SelectedItemsController } from './SelectedItemsController'
 import { SubscriptionController } from './Subscription/SubscriptionController'
-import { WebApplication } from '@/Application/WebApplication'
 import { featureTrunkVaultsEnabled } from '@/FeatureTrunk'
+import { ItemGroupController } from '@/Components/NoteView/Controller/ItemGroupController'
+import { VaultDisplayServiceInterface } from '@standardnotes/ui-services'
 
-export class LinkingController extends AbstractViewController {
+export class LinkingController extends AbstractViewController implements InternalEventHandlerInterface {
   shouldLinkToParentFolders: boolean
   isLinkingPanelOpen = false
-  private itemListController!: ItemListController
-  private filesController!: FilesController
-  private subscriptionController!: SubscriptionController
 
   constructor(
-    application: WebApplication,
+    private itemListController: ItemListController,
+    private filesController: FilesController,
+    private subscriptionController: SubscriptionController,
     private navigationController: NavigationController,
-    private selectionController: SelectedItemsController,
+    private itemControllerGroup: ItemGroupController,
+    private vaultDisplayService: VaultDisplayServiceInterface,
+    private preferences: PreferenceServiceInterface,
+    private items: ItemManagerInterface,
+    private mutator: MutatorClientInterface,
+    private sync: SyncServiceInterface,
+    private vaults: VaultServiceInterface,
     eventBus: InternalEventBusInterface,
   ) {
-    super(application, eventBus)
+    super(eventBus)
 
     makeObservable(this, {
       isLinkingPanelOpen: observable,
@@ -52,29 +64,26 @@ export class LinkingController extends AbstractViewController {
       setIsLinkingPanelOpen: action,
     })
 
-    this.shouldLinkToParentFolders = application.getPreference(
+    this.shouldLinkToParentFolders = preferences.getValue(
       PrefKey.NoteAddToParentFolders,
       PrefDefaults[PrefKey.NoteAddToParentFolders],
     )
 
-    this.disposers.push(
-      this.application.addSingleEventObserver(ApplicationEvent.PreferencesChanged, async () => {
-        this.shouldLinkToParentFolders = this.application.getPreference(
+    eventBus.addEventHandler(this, ApplicationEvent.PreferencesChanged)
+  }
+
+  handleEvent(event: InternalEventInterface): Promise<void> {
+    switch (event.type) {
+      case ApplicationEvent.PreferencesChanged: {
+        this.shouldLinkToParentFolders = this.preferences.getValue(
           PrefKey.NoteAddToParentFolders,
           PrefDefaults[PrefKey.NoteAddToParentFolders],
         )
-      }),
-    )
-  }
+        break
+      }
+    }
 
-  public setServicesPostConstruction(
-    itemListController: ItemListController,
-    filesController: FilesController,
-    subscriptionController: SubscriptionController,
-  ) {
-    this.itemListController = itemListController
-    this.filesController = filesController
-    this.subscriptionController = subscriptionController
+    return Promise.resolve()
   }
 
   get isEntitledToNoteLinking() {
@@ -86,20 +95,20 @@ export class LinkingController extends AbstractViewController {
   }
 
   get activeItem() {
-    return this.application.itemControllerGroup.activeItemViewController?.item
+    return this.itemControllerGroup.activeItemViewController?.item
   }
 
   getFilesLinksForItem = (item: LinkableItem | undefined) => {
-    if (!item || this.application.items.isTemplateItem(item)) {
+    if (!item || this.items.isTemplateItem(item)) {
       return {
         filesLinkedToItem: [],
         filesLinkingToItem: [],
       }
     }
 
-    const referencesOfItem = naturalSort(this.application.items.referencesForItem(item).filter(isFile), 'title')
+    const referencesOfItem = naturalSort(this.items.referencesForItem(item).filter(isFile), 'title')
 
-    const referencingItem = naturalSort(this.application.items.itemsReferencingItem(item).filter(isFile), 'title')
+    const referencingItem = naturalSort(this.items.itemsReferencingItem(item).filter(isFile), 'title')
 
     if (item.content_type === ContentType.TYPES.File) {
       return {
@@ -119,15 +128,15 @@ export class LinkingController extends AbstractViewController {
       return
     }
 
-    return this.application.items.getSortedTagsForItem(item).map((tag) => createLinkFromItem(tag, 'linked'))
+    return this.items.getSortedTagsForItem(item).map((tag) => createLinkFromItem(tag, 'linked'))
   }
 
   getLinkedNotesForItem = (item: LinkableItem | undefined) => {
-    if (!item || this.application.items.isTemplateItem(item)) {
+    if (!item || this.items.isTemplateItem(item)) {
       return []
     }
 
-    return naturalSort(this.application.items.referencesForItem(item).filter(isNote), 'title').map((item) =>
+    return naturalSort(this.items.referencesForItem(item).filter(isNote), 'title').map((item) =>
       createLinkFromItem(item, 'linked'),
     )
   }
@@ -137,7 +146,7 @@ export class LinkingController extends AbstractViewController {
       return []
     }
 
-    return naturalSort(this.application.items.itemsReferencingItem(item).filter(isNote), 'title').map((item) =>
+    return naturalSort(this.items.itemsReferencingItem(item).filter(isNote), 'title').map((item) =>
       createLinkFromItem(item, 'linked-by'),
     )
   }
@@ -150,7 +159,7 @@ export class LinkingController extends AbstractViewController {
       return AppPaneId.Items
     } else if (item instanceof SNNote) {
       await this.navigationController.selectHomeNavigationView()
-      const { didSelect } = await this.selectionController.selectItem(item.uuid, true)
+      const { didSelect } = await this.itemListController.selectItem(item.uuid, true)
       if (didSelect) {
         return AppPaneId.Editor
       }
@@ -169,16 +178,16 @@ export class LinkingController extends AbstractViewController {
 
   unlinkItems = async (item: LinkableItem, itemToUnlink: LinkableItem) => {
     try {
-      await this.application.mutator.unlinkItems(item, itemToUnlink)
+      await this.mutator.unlinkItems(item, itemToUnlink)
     } catch (error) {
       console.error(error)
     }
 
-    void this.application.sync.sync()
+    void this.sync.sync()
   }
 
   unlinkItemFromSelectedItem = async (itemToUnlink: LinkableItem) => {
-    const selectedItem = this.selectionController.firstSelectedItem
+    const selectedItem = this.itemListController.firstSelectedItem
 
     if (!selectedItem) {
       return
@@ -196,25 +205,25 @@ export class LinkingController extends AbstractViewController {
 
   linkItems = async (item: LinkableItem, itemToLink: LinkableItem) => {
     const linkNoteAndFile = async (note: SNNote, file: FileItem) => {
-      const updatedFile = await this.application.mutator.associateFileWithNote(file, note)
+      const updatedFile = await this.mutator.associateFileWithNote(file, note)
 
       if (featureTrunkVaultsEnabled()) {
         if (updatedFile) {
-          const noteVault = this.application.vaults.getItemVault(note)
-          const fileVault = this.application.vaults.getItemVault(updatedFile)
+          const noteVault = this.vaults.getItemVault(note)
+          const fileVault = this.vaults.getItemVault(updatedFile)
           if (noteVault && !fileVault) {
-            await this.application.vaults.moveItemToVault(noteVault, file)
+            await this.vaults.moveItemToVault(noteVault, file)
           }
         }
       }
     }
 
     const linkFileAndFile = async (file1: FileItem, file2: FileItem) => {
-      await this.application.mutator.linkFileToFile(file1, file2)
+      await this.mutator.linkFileToFile(file1, file2)
     }
 
     const linkNoteToNote = async (note1: SNNote, note2: SNNote) => {
-      await this.application.mutator.linkNoteToNote(note1, note2)
+      await this.mutator.linkNoteToNote(note1, note2)
     }
 
     const linkTagToNote = async (tag: SNTag, note: SNNote) => {
@@ -260,7 +269,7 @@ export class LinkingController extends AbstractViewController {
       throw new Error('First item must be a note or file')
     }
 
-    void this.application.sync.sync()
+    void this.sync.sync()
   }
 
   linkItemToSelectedItem = async (itemToLink: LinkableItem): Promise<boolean> => {
@@ -286,9 +295,9 @@ export class LinkingController extends AbstractViewController {
   createAndAddNewTag = async (title: string): Promise<SNTag> => {
     await this.ensureActiveItemIsInserted()
 
-    const vault = this.application.vaultDisplayService.exclusivelyShownVault
+    const vault = this.vaultDisplayService.exclusivelyShownVault
 
-    const newTag = await this.application.mutator.findOrCreateTag(title, vault)
+    const newTag = await this.mutator.findOrCreateTag(title, vault)
 
     const activeItem = this.activeItem
     if (activeItem) {
@@ -300,11 +309,11 @@ export class LinkingController extends AbstractViewController {
 
   addTagToItem = async (tag: SNTag, item: FileItem | SNNote) => {
     if (item instanceof SNNote) {
-      await this.application.mutator.addTagToNote(item, tag, this.shouldLinkToParentFolders)
+      await this.mutator.addTagToNote(item, tag, this.shouldLinkToParentFolders)
     } else if (item instanceof FileItem) {
-      await this.application.mutator.addTagToFile(item, tag, this.shouldLinkToParentFolders)
+      await this.mutator.addTagToFile(item, tag, this.shouldLinkToParentFolders)
     }
 
-    this.application.sync.sync().catch(console.error)
+    this.sync.sync().catch(console.error)
   }
 }

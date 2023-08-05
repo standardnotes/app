@@ -79,8 +79,8 @@ describe('application instances', () => {
     })
     await recreatedContext.launch()
 
-    expect(recreatedContext.application.getHost()).to.not.equal('http://nonsense.host')
-    expect(recreatedContext.application.getHost()).to.equal(Factory.getDefaultHost())
+    expect(recreatedContext.application.getHost.execute().getValue()).to.not.equal('http://nonsense.host')
+    expect(recreatedContext.application.getHost.execute().getValue()).to.equal(Factory.getDefaultHost())
 
     await recreatedContext.deinit()
   })

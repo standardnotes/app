@@ -141,7 +141,7 @@ describe('features', () => {
       expect(await application.settings.getDoesSensitiveSettingExist(setting)).to.equal(false)
       const extensionKey = UuidGenerator.GenerateUuid().split('-').join('')
       const promise = new Promise((resolve) => {
-        application.streamItems(ContentType.TYPES.ExtensionRepo, ({ changed }) => {
+        application.items.streamItems(ContentType.TYPES.ExtensionRepo, ({ changed }) => {
           for (const item of changed) {
             if (item.content.migratedToUserSetting) {
               resolve()

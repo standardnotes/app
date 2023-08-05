@@ -3,7 +3,6 @@ import { FunctionComponent, useCallback } from 'react'
 import Button from '@/Components/Button/Button'
 import { WarningCircle } from '../UIElements/WarningCircle'
 import { useApplication } from '../ApplicationProvider'
-import { openSubscriptionDashboard } from '@/Utils/ManageSubscription'
 
 type Props = {
   feature: AnyFeatureDescription
@@ -33,7 +32,7 @@ const NotEntitledBanner: FunctionComponent<Props> = ({ featureStatus, feature })
   const expiredDate = application.subscriptions.userSubscriptionExpirationDate
 
   const manageSubscription = useCallback(() => {
-    void openSubscriptionDashboard(application)
+    void application.openSubscriptionDashboard.execute()
   }, [application])
 
   return (

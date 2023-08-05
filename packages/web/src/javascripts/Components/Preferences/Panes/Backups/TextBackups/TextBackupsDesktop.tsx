@@ -41,7 +41,7 @@ const TextBackupsDesktop = ({ backupsService }: Props) => {
   }, [backupsEnabled, backupsService])
 
   const performBackup = useCallback(async () => {
-    void application.getDesktopService()?.saveDesktopBackup()
+    void application.desktopManager?.saveDesktopBackup()
   }, [application])
 
   return (

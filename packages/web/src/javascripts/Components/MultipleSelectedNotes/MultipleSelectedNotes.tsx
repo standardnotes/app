@@ -5,35 +5,19 @@ import { WebApplication } from '@/Application/WebApplication'
 import PinNoteButton from '@/Components/PinNoteButton/PinNoteButton'
 import Button from '../Button/Button'
 import { useCallback } from 'react'
-import { NavigationController } from '@/Controllers/Navigation/NavigationController'
-import { NotesController } from '@/Controllers/NotesController/NotesController'
-import { SelectedItemsController } from '@/Controllers/SelectedItemsController'
-import { HistoryModalController } from '@/Controllers/NoteHistory/HistoryModalController'
-import { LinkingController } from '@/Controllers/LinkingController'
 import ChangeMultipleButton from '../ChangeEditor/ChangeMultipleButton'
 
 type Props = {
   application: WebApplication
-  navigationController: NavigationController
-  notesController: NotesController
-  selectionController: SelectedItemsController
-  historyModalController: HistoryModalController
-  linkingController: LinkingController
 }
 
-const MultipleSelectedNotes = ({
-  application,
-  navigationController,
-  notesController,
-  linkingController,
-  selectionController,
-  historyModalController,
-}: Props) => {
+const MultipleSelectedNotes = ({ application }: Props) => {
+  const { notesController, itemListController } = application
   const count = notesController.selectedNotesCount
 
   const cancelMultipleSelection = useCallback(() => {
-    selectionController.cancelMultipleSelection()
-  }, [selectionController])
+    itemListController.cancelMultipleSelection()
+  }, [itemListController])
 
   return (
     <div className="flex h-full flex-col items-center">
@@ -46,13 +30,7 @@ const MultipleSelectedNotes = ({
           <div className="mr-3">
             <PinNoteButton notesController={notesController} />
           </div>
-          <NotesOptionsPanel
-            navigationController={navigationController}
-            notesController={notesController}
-            linkingController={linkingController}
-            historyModalController={historyModalController}
-            selectionController={selectionController}
-          />
+          <NotesOptionsPanel notesController={notesController} />
         </div>
       </div>
       <div className="flex min-h-full w-full max-w-md flex-grow flex-col items-center justify-center md:min-h-0">

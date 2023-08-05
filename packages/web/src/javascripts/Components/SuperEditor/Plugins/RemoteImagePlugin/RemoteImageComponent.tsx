@@ -1,7 +1,7 @@
 import { useApplication } from '@/Components/ApplicationProvider'
 import Icon from '@/Components/Icon/Icon'
 import Spinner from '@/Components/Spinner/Spinner'
-import { isDesktopApplication, isIOS } from '@/Utils'
+import { isDesktopApplication } from '@/Utils'
 import { BlockWithAlignableContents } from '@lexical/react/LexicalBlockWithAlignableContents'
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
 import { classNames, Platform } from '@standardnotes/snjs'
@@ -9,6 +9,7 @@ import { ElementFormatType, NodeKey } from 'lexical'
 import { useCallback, useState } from 'react'
 import { $createFileNode } from '../EncryptedFilePlugin/Nodes/FileUtils'
 import { RemoteImageNode } from './RemoteImageNode'
+import { isIOS } from '@standardnotes/ui-services'
 
 type Props = {
   src: string
@@ -41,7 +42,7 @@ const RemoteImageComponent = ({ className, src, alt, node, format, nodeKey }: Pr
       const blob = await response.blob()
       const file = new File([blob], src, { type: blob.type })
 
-      const { filesController, linkingController } = application.controllers
+      const { filesController, linkingController } = application
 
       const uploadedFile = await filesController.uploadNewFile(file, false)
 

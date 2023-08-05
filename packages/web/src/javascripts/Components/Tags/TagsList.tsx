@@ -1,38 +1,39 @@
-import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { SNTag } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback } from 'react'
 import RootTagDropZone from './RootTagDropZone'
 import { TagListSectionType } from './TagListSection'
 import { TagsListItem } from './TagsListItem'
+import { useApplication } from '../ApplicationProvider'
 
 type Props = {
-  viewControllerManager: ViewControllerManager
   type: TagListSectionType
 }
 
-const TagsList: FunctionComponent<Props> = ({ viewControllerManager, type }: Props) => {
-  const navigationController = viewControllerManager.navigationController
-  const allTags = type === 'all' ? navigationController.allLocalRootTags : navigationController.starredTags
+const TagsList: FunctionComponent<Props> = ({ type }: Props) => {
+  const application = useApplication()
+
+  const allTags =
+    type === 'all' ? application.navigationController.allLocalRootTags : application.navigationController.starredTags
 
   const openTagContextMenu = useCallback(
     (posX: number, posY: number) => {
-      viewControllerManager.navigationController.setContextMenuClickLocation({
+      application.navigationController.setContextMenuClickLocation({
         x: posX,
         y: posY,
       })
-      viewControllerManager.navigationController.reloadContextMenuLayout()
-      viewControllerManager.navigationController.setContextMenuOpen(true)
+      application.navigationController.reloadContextMenuLayout()
+      application.navigationController.setContextMenuOpen(true)
     },
-    [viewControllerManager],
+    [application],
   )
 
   const onContextMenu = useCallback(
     (tag: SNTag, posX: number, posY: number) => {
-      void viewControllerManager.navigationController.setSelectedTag(tag, type)
+      void application.navigationController.setSelectedTag(tag, type)
       openTagContextMenu(posX, posY)
     },
-    [viewControllerManager, openTagContextMenu, type],
+    [application, openTagContextMenu, type],
   )
 
   return (
@@ -50,14 +51,14 @@ const TagsList: FunctionComponent<Props> = ({ viewControllerManager, type }: Pro
                 key={tag.uuid}
                 tag={tag}
                 type={type}
-                navigationController={navigationController}
-                features={viewControllerManager.featuresController}
-                linkingController={viewControllerManager.linkingController}
+                navigationController={application.navigationController}
+                features={application.featuresController}
+                linkingController={application.linkingController}
                 onContextMenu={onContextMenu}
               />
             )
           })}
-          {type === 'all' && <RootTagDropZone tagsState={viewControllerManager.navigationController} />}
+          {type === 'all' && <RootTagDropZone tagsState={application.navigationController} />}
         </>
       )}
     </>

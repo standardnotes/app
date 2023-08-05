@@ -184,15 +184,17 @@ describe('notes and tags', () => {
     expect(note.content.references.length).to.equal(0)
     expect(tag.content.references.length).to.equal(1)
 
-    tag = await this.application.changeAndSaveItem(
-      tag,
-      (mutator) => {
-        mutator.removeItemAsRelationship(note)
-      },
-      undefined,
-      undefined,
-      syncOptions,
-    )
+    tag = (
+      await this.application.changeAndSaveItem.execute(
+        tag,
+        (mutator) => {
+          mutator.removeItemAsRelationship(note)
+        },
+        undefined,
+        undefined,
+        syncOptions,
+      )
+    ).getValue()
 
     expect(this.application.items.itemsReferencingItem(note).length).to.equal(0)
     expect(tag.noteCount).to.equal(0)
@@ -265,15 +267,17 @@ describe('notes and tags', () => {
     const notePayload = Factory.createNotePayload()
     await this.application.mutator.emitItemsFromPayloads([notePayload], PayloadEmitSource.LocalChanged)
     let note = this.application.items.getItems([ContentType.TYPES.Note])[0]
-    note = await this.application.changeAndSaveItem(
-      note,
-      (mutator) => {
-        mutator.mutableContent.title = Math.random()
-      },
-      undefined,
-      undefined,
-      syncOptions,
-    )
+    note = (
+      await this.application.changeAndSaveItem.execute(
+        note,
+        (mutator) => {
+          mutator.mutableContent.title = Math.random()
+        },
+        undefined,
+        undefined,
+        syncOptions,
+      )
+    ).getValue()
     expect(note.content.title).to.not.equal(notePayload.content.title)
   })
 

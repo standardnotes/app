@@ -1,5 +1,3 @@
-import { WebApplication } from '@/Application/WebApplication'
-import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
 import {
   FormEventHandler,
@@ -20,8 +18,6 @@ import AdvancedOptions from './AdvancedOptions'
 import HorizontalSeparator from '../Shared/HorizontalSeparator'
 
 type Props = {
-  viewControllerManager: ViewControllerManager
-  application: WebApplication
   setMenuPane: (pane: AccountMenuPane) => void
   email: string
   setEmail: React.Dispatch<React.SetStateAction<string>>
@@ -29,15 +25,7 @@ type Props = {
   setPassword: React.Dispatch<React.SetStateAction<string>>
 }
 
-const CreateAccount: FunctionComponent<Props> = ({
-  viewControllerManager,
-  application,
-  setMenuPane,
-  email,
-  setEmail,
-  password,
-  setPassword,
-}) => {
+const CreateAccount: FunctionComponent<Props> = ({ setMenuPane, email, setEmail, password, setPassword }) => {
   const emailInputRef = useRef<HTMLInputElement>(null)
   const passwordInputRef = useRef<HTMLInputElement>(null)
   const [isPrivateUsername, setIsPrivateUsername] = useState(false)
@@ -145,11 +133,7 @@ const CreateAccount: FunctionComponent<Props> = ({
         <Button className="mt-1" label="Next" primary onClick={handleRegisterFormSubmit} fullWidth={true} />
       </form>
       <HorizontalSeparator classes="my-2" />
-      <AdvancedOptions
-        application={application}
-        viewControllerManager={viewControllerManager}
-        onPrivateUsernameModeChange={onPrivateUsernameChange}
-      />
+      <AdvancedOptions onPrivateUsernameModeChange={onPrivateUsernameChange} />
     </>
   )
 }

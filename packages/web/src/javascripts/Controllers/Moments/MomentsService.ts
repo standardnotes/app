@@ -1,13 +1,26 @@
 import { addToast, dismissToast, ToastType } from '@standardnotes/toast'
-import { ApplicationEvent, InternalEventBusInterface, StorageKey } from '@standardnotes/services'
+import {
+  ApplicationEvent,
+  DesktopDeviceInterface,
+  InternalEventBusInterface,
+  InternalEventHandlerInterface,
+  InternalEventInterface,
+  ItemManagerInterface,
+  PreferenceServiceInterface,
+  ProtectionEvent,
+  ProtectionsClientInterface,
+  StorageKey,
+  StorageServiceInterface,
+} from '@standardnotes/services'
 import { isDev } from '@/Utils'
 import { FileItem, PrefKey, sleep, SNTag } from '@standardnotes/snjs'
 import { FilesController } from '../FilesController'
 import { action, makeObservable, observable } from 'mobx'
 import { AbstractViewController } from '@/Controllers/Abstract/AbstractViewController'
-import { WebApplication } from '@/Application/WebApplication'
 import { dateToStringStyle1 } from '@/Utils/DateUtils'
 import { PhotoRecorder } from './PhotoRecorder'
+import { LinkingController } from '../LinkingController'
+import { IsMobileDevice } from '@standardnotes/ui-services'
 
 const EVERY_HOUR = 1000 * 60 * 60
 const EVERY_TEN_SECONDS = 1000 * 10
@@ -15,33 +28,22 @@ const DEBUG_MODE = isDev && false
 
 const DELAY_AFTER_STARTING_CAMERA_TO_ALLOW_MOBILE_AUTOFOCUS = 2000
 
-export class MomentsService extends AbstractViewController {
+export class MomentsService extends AbstractViewController implements InternalEventHandlerInterface {
   isEnabled = false
   private intervalReference: ReturnType<typeof setInterval> | undefined
 
   constructor(
-    application: WebApplication,
     private filesController: FilesController,
+    private linkingController: LinkingController,
+    private storage: StorageServiceInterface,
+    private preferences: PreferenceServiceInterface,
+    private items: ItemManagerInterface,
+    private protections: ProtectionsClientInterface,
+    private desktopDevice: DesktopDeviceInterface | undefined,
+    private _isMobileDevice: IsMobileDevice,
     eventBus: InternalEventBusInterface,
   ) {
-    super(application, eventBus)
-
-    this.disposers.push(
-      application.addEventObserver(async () => {
-        this.isEnabled = (this.application.getValue(StorageKey.MomentsEnabled) as boolean) ?? false
-        if (this.isEnabled) {
-          void this.beginTakingPhotos()
-        }
-      }, ApplicationEvent.LocalDataLoaded),
-
-      application.addEventObserver(async () => {
-        this.pauseMoments()
-      }, ApplicationEvent.BiometricsSoftLockEngaged),
-
-      application.addEventObserver(async () => {
-        this.resumeMoments()
-      }, ApplicationEvent.BiometricsSoftLockDisengaged),
-    )
+    super(eventBus)
 
     makeObservable(this, {
       isEnabled: observable,
@@ -49,16 +51,41 @@ export class MomentsService extends AbstractViewController {
       enableMoments: action,
       disableMoments: action,
     })
+
+    eventBus.addEventHandler(this, ApplicationEvent.LocalDataLoaded)
+    eventBus.addEventHandler(this, ProtectionEvent.BiometricsSoftLockEngaged)
+    eventBus.addEventHandler(this, ProtectionEvent.BiometricsSoftLockDisengaged)
+  }
+
+  async handleEvent(event: InternalEventInterface): Promise<void> {
+    switch (event.type) {
+      case ApplicationEvent.LocalDataLoaded: {
+        this.isEnabled = (this.storage.getValue(StorageKey.MomentsEnabled) as boolean) ?? false
+        if (this.isEnabled) {
+          void this.beginTakingPhotos()
+        }
+        break
+      }
+
+      case ProtectionEvent.BiometricsSoftLockEngaged: {
+        this.pauseMoments()
+        break
+      }
+
+      case ProtectionEvent.BiometricsSoftLockDisengaged: {
+        this.resumeMoments()
+        break
+      }
+    }
   }
 
   override deinit() {
     super.deinit()
-    ;(this.application as unknown) = undefined
     ;(this.filesController as unknown) = undefined
   }
 
   public enableMoments = (): void => {
-    this.application.setValue(StorageKey.MomentsEnabled, true)
+    this.storage.setValue(StorageKey.MomentsEnabled, true)
 
     this.isEnabled = true
 
@@ -66,7 +93,7 @@ export class MomentsService extends AbstractViewController {
   }
 
   public disableMoments = (): void => {
-    this.application.setValue(StorageKey.MomentsEnabled, false)
+    this.storage.setValue(StorageKey.MomentsEnabled, false)
 
     this.isEnabled = false
 
@@ -101,15 +128,15 @@ export class MomentsService extends AbstractViewController {
   }
 
   private getDefaultTag(): SNTag | undefined {
-    const defaultTagId = this.application.getPreference(PrefKey.MomentsDefaultTagUuid)
+    const defaultTagId = this.preferences.getValue(PrefKey.MomentsDefaultTagUuid)
 
     if (defaultTagId) {
-      return this.application.items.findItem(defaultTagId)
+      return this.items.findItem(defaultTagId)
     }
   }
 
   public takePhoto = async (): Promise<FileItem | undefined> => {
-    const isAppLocked = await this.application.isLocked()
+    const isAppLocked = await this.protections.isLocked()
 
     if (isAppLocked) {
       return
@@ -127,8 +154,8 @@ export class MomentsService extends AbstractViewController {
       })
     }
 
-    if (this.application.desktopDevice) {
-      const granted = await this.application.desktopDevice.askForMediaAccess('camera')
+    if (this.desktopDevice) {
+      const granted = await this.desktopDevice.askForMediaAccess('camera')
       if (!granted) {
         if (toastId) {
           dismissToast(toastId)
@@ -147,7 +174,7 @@ export class MomentsService extends AbstractViewController {
     const camera = new PhotoRecorder()
     await camera.initialize()
 
-    if (this.application.isMobileDevice) {
+    if (this._isMobileDevice.execute().getValue()) {
       await sleep(DELAY_AFTER_STARTING_CAMERA_TO_ALLOW_MOBILE_AUTOFOCUS)
     }
 
@@ -168,12 +195,12 @@ export class MomentsService extends AbstractViewController {
 
     if (uploadedFile) {
       if (isAppInForeground) {
-        void this.application.linkingController.linkItemToSelectedItem(uploadedFile)
+        void this.linkingController.linkItemToSelectedItem(uploadedFile)
       }
 
       const defaultTag = this.getDefaultTag()
       if (defaultTag) {
-        void this.application.linkingController.linkItems(uploadedFile, defaultTag)
+        void this.linkingController.linkItems(uploadedFile, defaultTag)
       }
     }
 

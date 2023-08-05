@@ -14,11 +14,11 @@ export const shareSelectedNotes = async (application: WebApplication, notes: SNN
     const blob = getNoteBlob(application, note)
     const { name, ext } = parseFileName(getNoteFileName(application, note))
     const filename = `${sanitizeFileName(name)}.${ext}`
-    void shareBlobOnMobile(application, blob, filename)
+    void shareBlobOnMobile(application.mobileDevice, application.isNativeMobileWeb(), blob, filename)
     return
   }
   if (notes.length > 1) {
-    const zippedDataBlob = await application.getArchiveService().zipData(
+    const zippedDataBlob = await application.archiveService.zipData(
       notes.map((note) => {
         return {
           name: getNoteFileName(application, note),
@@ -27,9 +27,10 @@ export const shareSelectedNotes = async (application: WebApplication, notes: SNN
       }),
     )
     void shareBlobOnMobile(
-      application,
+      application.mobileDevice,
+      application.isNativeMobileWeb(),
       zippedDataBlob,
-      `Standard Notes Export - ${application.getArchiveService().formattedDateForExports()}.zip`,
+      `Standard Notes Export - ${application.archiveService.formattedDateForExports()}.zip`,
     )
   }
 }

@@ -1,6 +1,5 @@
 import Button from '@/Components/Button/Button'
 import { WebApplication } from '@/Application/WebApplication'
-import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { PurchaseFlowPane } from '@/Controllers/PurchaseFlow/PurchaseFlowPane'
 import { observer } from 'mobx-react-lite'
 import { ChangeEventHandler, FunctionComponent, useEffect, useRef, useState } from 'react'
@@ -9,12 +8,11 @@ import { isEmailValid } from '@/Utils'
 import { BlueDotIcon, CircleIcon, DiamondIcon, CreateAccountIllustration } from '@standardnotes/icons'
 
 type Props = {
-  viewControllerManager: ViewControllerManager
   application: WebApplication
 }
 
-const CreateAccount: FunctionComponent<Props> = ({ viewControllerManager, application }) => {
-  const { setCurrentPane } = viewControllerManager.purchaseFlowController
+const CreateAccount: FunctionComponent<Props> = ({ application }) => {
+  const { setCurrentPane } = application.purchaseFlowController
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
@@ -51,7 +49,7 @@ const CreateAccount: FunctionComponent<Props> = ({ viewControllerManager, applic
   }
 
   const subscribeWithoutAccount = () => {
-    application.controllers.purchaseFlowController.openPurchaseWebpage()
+    void application.purchaseFlowController.openPurchaseWebpage()
   }
 
   const handleCreateAccount = async () => {
@@ -88,8 +86,8 @@ const CreateAccount: FunctionComponent<Props> = ({ viewControllerManager, applic
     try {
       await application.register(email, password)
 
-      viewControllerManager.purchaseFlowController.closePurchaseFlow()
-      void viewControllerManager.purchaseFlowController.openPurchaseFlow()
+      application.purchaseFlowController.closePurchaseFlow()
+      void application.purchaseFlowController.openPurchaseFlow()
     } catch (err) {
       console.error(err)
       application.alerts.alert(err as string).catch(console.error)

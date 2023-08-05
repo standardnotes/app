@@ -29,45 +29,11 @@ import {
   InternalEventInterface,
   ApplicationEvent,
   ApplicationStageChangedEventPayload,
+  ProtectionEvent,
 } from '@standardnotes/services'
 import { ContentType } from '@standardnotes/domain-core'
-
-export enum ProtectionEvent {
-  UnprotectedSessionBegan = 'UnprotectedSessionBegan',
-  UnprotectedSessionExpired = 'UnprotectedSessionExpired',
-}
-
-export const ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction = 30
-
-export enum UnprotectedAccessSecondsDuration {
-  OneMinute = 60,
-  FiveMinutes = 300,
-  OneHour = 3600,
-  OneWeek = 604800,
-}
-
-export function isValidProtectionSessionLength(number: unknown): boolean {
-  return typeof number === 'number' && Object.values(UnprotectedAccessSecondsDuration).includes(number)
-}
-
-export const ProtectionSessionDurations = [
-  {
-    valueInSeconds: UnprotectedAccessSecondsDuration.OneMinute,
-    label: '1 Minute',
-  },
-  {
-    valueInSeconds: UnprotectedAccessSecondsDuration.FiveMinutes,
-    label: '5 Minutes',
-  },
-  {
-    valueInSeconds: UnprotectedAccessSecondsDuration.OneHour,
-    label: '1 Hour',
-  },
-  {
-    valueInSeconds: UnprotectedAccessSecondsDuration.OneWeek,
-    label: '1 Week',
-  },
-]
+import { isValidProtectionSessionLength } from './isValidProtectionSessionLength'
+import { UnprotectedAccessSecondsDuration } from './UnprotectedAccessSecondsDuration'
 
 /**
  * Enforces certain actions to require extra authentication,
@@ -82,11 +48,14 @@ export class ProtectionService
   private mobilePasscodeTiming: MobileUnlockTiming | undefined = MobileUnlockTiming.OnQuit
   private mobileBiometricsTiming: MobileUnlockTiming | undefined = MobileUnlockTiming.OnQuit
 
+  private isBiometricsSoftLockEngaged = false
+  private applicationStarted = false
+
   constructor(
-    private encryptionService: EncryptionService,
+    private encryption: EncryptionService,
     private mutator: MutatorClientInterface,
-    private challengeService: ChallengeService,
-    private storageService: DiskStorageService,
+    private challenges: ChallengeService,
+    private storage: DiskStorageService,
     protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)
@@ -94,9 +63,9 @@ export class ProtectionService
 
   public override deinit(): void {
     clearTimeout(this.sessionExpiryTimeout)
-    ;(this.encryptionService as unknown) = undefined
-    ;(this.challengeService as unknown) = undefined
-    ;(this.storageService as unknown) = undefined
+    ;(this.encryption as unknown) = undefined
+    ;(this.challenges as unknown) = undefined
+    ;(this.storage as unknown) = undefined
     super.deinit()
   }
 
@@ -108,11 +77,42 @@ export class ProtectionService
         this.mobilePasscodeTiming = this.getMobilePasscodeTiming()
         this.mobileBiometricsTiming = this.getMobileBiometricsTiming()
       }
+    } else if (event.type === ApplicationEvent.Started) {
+      this.applicationStarted = true
     }
   }
 
+  async isLocked(): Promise<boolean> {
+    if (!this.applicationStarted) {
+      return true
+    }
+
+    const isPasscodeLocked = await this.encryption.isPasscodeLocked()
+    return isPasscodeLocked || this.isBiometricsSoftLockEngaged
+  }
+
+  public softLockBiometrics(): void {
+    const challenge = new Challenge(
+      [new ChallengePrompt(ChallengeValidation.Biometric)],
+      ChallengeReason.ApplicationUnlock,
+      false,
+    )
+
+    void this.challenges.promptForChallengeResponse(challenge)
+
+    this.isBiometricsSoftLockEngaged = true
+    void this.notifyEvent(ProtectionEvent.BiometricsSoftLockEngaged)
+
+    this.challenges.addChallengeObserver(challenge, {
+      onComplete: () => {
+        this.isBiometricsSoftLockEngaged = false
+        void this.notifyEvent(ProtectionEvent.BiometricsSoftLockDisengaged)
+      },
+    })
+  }
+
   public hasProtectionSources(): boolean {
-    return this.encryptionService.hasAccount() || this.encryptionService.hasPasscode() || this.hasBiometricsEnabled()
+    return this.encryption.hasAccount() || this.encryption.hasPasscode() || this.hasBiometricsEnabled()
   }
 
   public hasUnprotectedAccessSession(): boolean {
@@ -123,7 +123,7 @@ export class ProtectionService
   }
 
   public hasBiometricsEnabled(): boolean {
-    const biometricsState = this.storageService.getValue(StorageKey.BiometricsState, StorageValueModes.Nonwrapped)
+    const biometricsState = this.storage.getValue(StorageKey.BiometricsState, StorageValueModes.Nonwrapped)
     return Boolean(biometricsState)
   }
 
@@ -133,7 +133,7 @@ export class ProtectionService
       return false
     }
 
-    this.storageService.setValue(StorageKey.BiometricsState, true, StorageValueModes.Nonwrapped)
+    this.storage.setValue(StorageKey.BiometricsState, true, StorageValueModes.Nonwrapped)
 
     return true
   }
@@ -145,7 +145,7 @@ export class ProtectionService
     }
 
     if (await this.validateOrRenewSession(ChallengeReason.DisableBiometrics)) {
-      this.storageService.setValue(StorageKey.BiometricsState, false, StorageValueModes.Nonwrapped)
+      this.storage.setValue(StorageKey.BiometricsState, false, StorageValueModes.Nonwrapped)
       return true
     } else {
       return false
@@ -157,7 +157,7 @@ export class ProtectionService
     if (this.hasBiometricsEnabled()) {
       prompts.push(new ChallengePrompt(ChallengeValidation.Biometric))
     }
-    if (this.encryptionService.hasPasscode()) {
+    if (this.encryption.hasPasscode()) {
       prompts.push(new ChallengePrompt(ChallengeValidation.LocalPasscode))
     }
     if (prompts.length > 0) {
@@ -316,7 +316,7 @@ export class ProtectionService
   }
 
   getMobileBiometricsTiming(): MobileUnlockTiming | undefined {
-    return this.storageService.getValue<MobileUnlockTiming | undefined>(
+    return this.storage.getValue<MobileUnlockTiming | undefined>(
       StorageKey.MobileBiometricsTiming,
       StorageValueModes.Nonwrapped,
       MobileUnlockTiming.OnQuit,
@@ -324,7 +324,7 @@ export class ProtectionService
   }
 
   getMobilePasscodeTiming(): MobileUnlockTiming | undefined {
-    return this.storageService.getValue<MobileUnlockTiming | undefined>(
+    return this.storage.getValue<MobileUnlockTiming | undefined>(
       StorageKey.MobilePasscodeTiming,
       StorageValueModes.Nonwrapped,
       MobileUnlockTiming.OnQuit,
@@ -332,21 +332,21 @@ export class ProtectionService
   }
 
   setMobileBiometricsTiming(timing: MobileUnlockTiming): void {
-    this.storageService.setValue(StorageKey.MobileBiometricsTiming, timing, StorageValueModes.Nonwrapped)
+    this.storage.setValue(StorageKey.MobileBiometricsTiming, timing, StorageValueModes.Nonwrapped)
     this.mobileBiometricsTiming = timing
   }
 
   setMobilePasscodeTiming(timing: MobileUnlockTiming): void {
-    this.storageService.setValue(StorageKey.MobilePasscodeTiming, timing, StorageValueModes.Nonwrapped)
+    this.storage.setValue(StorageKey.MobilePasscodeTiming, timing, StorageValueModes.Nonwrapped)
     this.mobilePasscodeTiming = timing
   }
 
   setMobileScreenshotPrivacyEnabled(isEnabled: boolean) {
-    return this.storageService.setValue(StorageKey.MobileScreenshotPrivacyEnabled, isEnabled, StorageValueModes.Default)
+    return this.storage.setValue(StorageKey.MobileScreenshotPrivacyEnabled, isEnabled, StorageValueModes.Default)
   }
 
   getMobileScreenshotPrivacyEnabled(): boolean {
-    return this.storageService.getValue(StorageKey.MobileScreenshotPrivacyEnabled, StorageValueModes.Default, false)
+    return this.storage.getValue(StorageKey.MobileScreenshotPrivacyEnabled, StorageValueModes.Default, false)
   }
 
   private async validateOrRenewSession(
@@ -363,19 +363,19 @@ export class ProtectionService
       prompts.push(new ChallengePrompt(ChallengeValidation.Biometric))
     }
 
-    if (this.encryptionService.hasPasscode()) {
+    if (this.encryption.hasPasscode()) {
       prompts.push(new ChallengePrompt(ChallengeValidation.LocalPasscode))
     }
 
     if (requireAccountPassword) {
-      if (!this.encryptionService.hasAccount()) {
+      if (!this.encryption.hasAccount()) {
         throw Error('Requiring account password for challenge with no account')
       }
       prompts.push(new ChallengePrompt(ChallengeValidation.AccountPassword))
     }
 
     if (prompts.length === 0) {
-      if (fallBackToAccountPassword && this.encryptionService.hasAccount()) {
+      if (fallBackToAccountPassword && this.encryption.hasAccount()) {
         prompts.push(new ChallengePrompt(ChallengeValidation.AccountPassword))
       } else {
         return true
@@ -396,7 +396,7 @@ export class ProtectionService
       ),
     )
 
-    const response = await this.challengeService.promptForChallengeResponse(new Challenge(prompts, reason, true))
+    const response = await this.challenges.promptForChallengeResponse(new Challenge(prompts, reason, true))
 
     if (response) {
       const length = response.values.find(
@@ -414,7 +414,7 @@ export class ProtectionService
   }
 
   public getSessionExpiryDate(): Date {
-    const expiresAt = this.storageService.getValue<number>(StorageKey.ProtectionExpirey)
+    const expiresAt = this.storage.getValue<number>(StorageKey.ProtectionExpirey)
     if (expiresAt) {
       return new Date(expiresAt)
     } else {
@@ -428,15 +428,15 @@ export class ProtectionService
   }
 
   private setSessionExpiryDate(date: Date) {
-    this.storageService.setValue(StorageKey.ProtectionExpirey, date)
+    this.storage.setValue(StorageKey.ProtectionExpirey, date)
   }
 
   private getLastSessionLength(): UnprotectedAccessSecondsDuration | undefined {
-    return this.storageService.getValue(StorageKey.ProtectionSessionLength)
+    return this.storage.getValue(StorageKey.ProtectionSessionLength)
   }
 
   private setSessionLength(length: UnprotectedAccessSecondsDuration): void {
-    this.storageService.setValue(StorageKey.ProtectionSessionLength, length)
+    this.storage.setValue(StorageKey.ProtectionSessionLength, length)
     const expiresAt = new Date()
     expiresAt.setSeconds(expiresAt.getSeconds() + length)
     this.setSessionExpiryDate(expiresAt)

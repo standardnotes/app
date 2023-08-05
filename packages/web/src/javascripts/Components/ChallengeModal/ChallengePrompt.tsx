@@ -39,7 +39,7 @@ const ChallengeModalPrompt: FunctionComponent<Props> = ({
   const activatePrompt = useCallback(async () => {
     if (prompt.validation === ChallengeValidation.Biometric) {
       if (application.isNativeMobileWeb()) {
-        const appState = await application.mobileDevice().getAppState()
+        const appState = await application.mobileDevice.getAppState()
 
         if (appState !== 'active') {
           return

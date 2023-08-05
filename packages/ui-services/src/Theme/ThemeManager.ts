@@ -60,7 +60,7 @@ export class ThemeManager extends AbstractUIServicee {
   }
 
   override async onAppStart() {
-    const desktopService = this.application.getDesktopService()
+    const desktopService = this.application.desktopManager
     if (desktopService) {
       this.eventDisposers.push(
         desktopService.registerUpdateObserver((component) => {
@@ -167,7 +167,7 @@ export class ThemeManager extends AbstractUIServicee {
     const useDeviceThemeSettings = this.application.getPreference(PrefKey.UseSystemColorScheme, false)
 
     if (useDeviceThemeSettings) {
-      const prefersDarkColorScheme = (await this.application.mobileDevice().getColorScheme()) === 'dark'
+      const prefersDarkColorScheme = (await this.application.mobileDevice.getColorScheme()) === 'dark'
       this.setThemeAsPerColorScheme(prefersDarkColorScheme)
     }
   }
@@ -187,7 +187,7 @@ export class ThemeManager extends AbstractUIServicee {
       let prefersDarkColorScheme = window.matchMedia('(prefers-color-scheme: dark)').matches
 
       if (this.application.isNativeMobileWeb()) {
-        prefersDarkColorScheme = (await this.application.mobileDevice().getColorScheme()) === 'dark'
+        prefersDarkColorScheme = (await this.application.mobileDevice.getColorScheme()) === 'dark'
       }
 
       this.setThemeAsPerColorScheme(prefersDarkColorScheme)
@@ -340,9 +340,7 @@ export class ThemeManager extends AbstractUIServicee {
       if (this.application.isNativeMobileWeb() && !theme.layerable) {
         const packageInfo = theme.featureDescription
         setTimeout(() => {
-          this.application
-            .mobileDevice()
-            .handleThemeSchemeChange(packageInfo.isDark ?? false, this.getBackgroundColor())
+          this.application.mobileDevice.handleThemeSchemeChange(packageInfo.isDark ?? false, this.getBackgroundColor())
         })
       }
 
@@ -366,7 +364,7 @@ export class ThemeManager extends AbstractUIServicee {
 
     if (this.themesActiveInTheUI.isEmpty()) {
       if (this.application.isNativeMobileWeb()) {
-        this.application.mobileDevice().handleThemeSchemeChange(false, '#ffffff')
+        this.application.mobileDevice.handleThemeSchemeChange(false, '#ffffff')
       }
       this.toggleTranslucentUIColors()
     }

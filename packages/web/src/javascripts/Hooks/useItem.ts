@@ -12,7 +12,7 @@ const useItem = <T extends DecryptedItemInterface>(uuid: string | undefined) => 
       return
     }
 
-    const live = new LiveItem<T>(uuid, application, (item) => {
+    const live = new LiveItem<T>(uuid, application.items, (item) => {
       setItem(item)
     })
 

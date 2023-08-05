@@ -14,11 +14,11 @@ export const downloadSelectedNotesOnAndroid = async (application: WebApplication
     const blob = getNoteBlob(application, note)
     const { name, ext } = parseFileName(getNoteFileName(application, note))
     const filename = `${sanitizeFileName(name)}.${ext}`
-    await downloadBlobOnAndroid(application, blob, filename)
+    await downloadBlobOnAndroid(application.mobileDevice, blob, filename)
     return
   }
   if (notes.length > 1) {
-    const zippedDataBlob = await application.getArchiveService().zipData(
+    const zippedDataBlob = await application.archiveService.zipData(
       notes.map((note) => {
         return {
           name: getNoteFileName(application, note),
@@ -26,7 +26,7 @@ export const downloadSelectedNotesOnAndroid = async (application: WebApplication
         }
       }),
     )
-    const filename = `Standard Notes Export - ${application.getArchiveService().formattedDateForExports()}.zip`
-    await downloadBlobOnAndroid(application, zippedDataBlob, filename)
+    const filename = `Standard Notes Export - ${application.archiveService.formattedDateForExports()}.zip`
+    await downloadBlobOnAndroid(application.mobileDevice, zippedDataBlob, filename)
   }
 }

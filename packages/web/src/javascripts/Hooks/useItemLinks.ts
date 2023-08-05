@@ -17,7 +17,7 @@ export const useItemLinks = (item: DecryptedItem | undefined) => {
 
   useEffect(
     () =>
-      application.streamItems([ContentType.TYPES.Note, ContentType.TYPES.File, ContentType.TYPES.Tag], () => {
+      application.items.streamItems([ContentType.TYPES.Note, ContentType.TYPES.File, ContentType.TYPES.Tag], () => {
         refresh(Date.now())
       }),
     [application],

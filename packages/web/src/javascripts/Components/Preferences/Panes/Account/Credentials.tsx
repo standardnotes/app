@@ -6,7 +6,6 @@ import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import { dateToLocalizedString } from '@standardnotes/snjs'
 import { useCallback, useState, FunctionComponent } from 'react'
 import ChangeEmail from '@/Components/Preferences/Panes/Account/ChangeEmail/ChangeEmail'
-import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import PasswordWizard from '@/Components/PasswordWizard/PasswordWizard'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
@@ -14,14 +13,13 @@ import ModalOverlay from '@/Components/Modal/ModalOverlay'
 
 type Props = {
   application: WebApplication
-  viewControllerManager: ViewControllerManager
 }
 
 const Credentials: FunctionComponent<Props> = ({ application }: Props) => {
   const [isChangeEmailDialogOpen, setIsChangeEmailDialogOpen] = useState(false)
   const [shouldShowPasswordWizard, setShouldShowPasswordWizard] = useState(false)
 
-  const user = application.getUser()
+  const user = application.sessions.getUser()
 
   const passwordCreatedAtTimestamp = application.getUserPasswordCreationDate() as Date
   const passwordCreatedOn = dateToLocalizedString(passwordCreatedAtTimestamp)

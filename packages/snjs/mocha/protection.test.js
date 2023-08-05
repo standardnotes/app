@@ -382,19 +382,19 @@ describe('protections', function () {
       this.foo = 'tar'
       application = await Factory.createInitAppWithFakeCrypto()
       await application.addPasscode('passcode')
-      expect(application.hasUnprotectedAccessSession()).to.be.false
+      expect(application.protections.hasUnprotectedAccessSession()).to.be.false
     })
 
     it('should return true when session length has been set', async function () {
       application = await Factory.createInitAppWithFakeCrypto()
       await application.addPasscode('passcode')
       await application.protections.setSessionLength(UnprotectedAccessSecondsDuration.OneMinute)
-      expect(application.hasUnprotectedAccessSession()).to.be.true
+      expect(application.protections.hasUnprotectedAccessSession()).to.be.true
     })
 
     it('should return true when there are no protection sources', async function () {
       application = await Factory.createInitAppWithFakeCrypto()
-      expect(application.hasUnprotectedAccessSession()).to.be.true
+      expect(application.protections.hasUnprotectedAccessSession()).to.be.true
     })
   })
 

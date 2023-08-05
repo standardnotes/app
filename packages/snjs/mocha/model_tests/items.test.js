@@ -50,17 +50,19 @@ describe('items', () => {
     const item = this.application.items.items[0]
     expect(item.pinned).to.not.be.ok
 
-    const refreshedItem = await this.application.changeAndSaveItem(
-      item,
-      (mutator) => {
-        mutator.pinned = true
-        mutator.archived = true
-        mutator.locked = true
-      },
-      undefined,
-      undefined,
-      syncOptions,
-    )
+    const refreshedItem = (
+      await this.application.changeAndSaveItem.execute(
+        item,
+        (mutator) => {
+          mutator.pinned = true
+          mutator.archived = true
+          mutator.locked = true
+        },
+        undefined,
+        undefined,
+        syncOptions,
+      )
+    ).getValue()
     expect(refreshedItem.pinned).to.equal(true)
     expect(refreshedItem.archived).to.equal(true)
     expect(refreshedItem.locked).to.equal(true)
@@ -77,94 +79,110 @@ describe('items', () => {
     expect(item1.isItemContentEqualWith(item2)).to.equal(true)
 
     // items should ignore this field when checking for equality
-    item1 = await this.application.changeAndSaveItem(
-      item1,
-      (mutator) => {
-        mutator.userModifiedDate = new Date()
-      },
-      undefined,
-      undefined,
-      syncOptions,
-    )
-    item2 = await this.application.changeAndSaveItem(
-      item2,
-      (mutator) => {
-        mutator.userModifiedDate = undefined
-      },
-      undefined,
-      undefined,
-      syncOptions,
-    )
+    item1 = (
+      await this.application.changeAndSaveItem.execute(
+        item1,
+        (mutator) => {
+          mutator.userModifiedDate = new Date()
+        },
+        undefined,
+        undefined,
+        syncOptions,
+      )
+    ).getValue()
+    item2 = (
+      await this.application.changeAndSaveItem.execute(
+        item2,
+        (mutator) => {
+          mutator.userModifiedDate = undefined
+        },
+        undefined,
+        undefined,
+        syncOptions,
+      )
+    ).getValue()
 
     expect(item1.isItemContentEqualWith(item2)).to.equal(true)
 
-    item1 = await this.application.changeAndSaveItem(
-      item1,
-      (mutator) => {
-        mutator.mutableContent.foo = 'bar'
-      },
-      undefined,
-      undefined,
-      syncOptions,
-    )
+    item1 = (
+      await this.application.changeAndSaveItem.execute(
+        item1,
+        (mutator) => {
+          mutator.mutableContent.foo = 'bar'
+        },
+        undefined,
+        undefined,
+        syncOptions,
+      )
+    ).getValue()
 
     expect(item1.isItemContentEqualWith(item2)).to.equal(false)
 
-    item2 = await this.application.changeAndSaveItem(
-      item2,
-      (mutator) => {
-        mutator.mutableContent.foo = 'bar'
-      },
-      undefined,
-      undefined,
-      syncOptions,
-    )
+    item2 = (
+      await this.application.changeAndSaveItem.execute(
+        item2,
+        (mutator) => {
+          mutator.mutableContent.foo = 'bar'
+        },
+        undefined,
+        undefined,
+        syncOptions,
+      )
+    ).getValue()
 
     expect(item1.isItemContentEqualWith(item2)).to.equal(true)
     expect(item2.isItemContentEqualWith(item1)).to.equal(true)
 
-    item1 = await this.application.changeAndSaveItem(
-      item1,
-      (mutator) => {
-        mutator.e2ePendingRefactor_addItemAsRelationship(item2)
-      },
-      undefined,
-      undefined,
-      syncOptions,
-    )
-    item2 = await this.application.changeAndSaveItem(
-      item2,
-      (mutator) => {
-        mutator.e2ePendingRefactor_addItemAsRelationship(item1)
-      },
-      undefined,
-      undefined,
-      syncOptions,
-    )
+    item1 = (
+      await this.application.changeAndSaveItem.execute(
+        item1,
+        (mutator) => {
+          mutator.e2ePendingRefactor_addItemAsRelationship(item2)
+        },
+        undefined,
+        undefined,
+        syncOptions,
+      )
+    ).getValue()
+    item2 = (
+      await this.application.changeAndSaveItem.execute(
+        item2,
+        (mutator) => {
+          mutator.e2ePendingRefactor_addItemAsRelationship(item1)
+        },
+        undefined,
+        undefined,
+        syncOptions,
+      )
+    ).getValue()
 
     expect(item1.content.references.length).to.equal(1)
     expect(item2.content.references.length).to.equal(1)
 
     expect(item1.isItemContentEqualWith(item2)).to.equal(false)
 
-    item1 = await this.application.changeAndSaveItem(
-      item1,
-      (mutator) => {
-        mutator.removeItemAsRelationship(item2)
-      },
-      undefined,
-      undefined,
-      syncOptions,
-    )
-    item2 = await this.application.changeAndSaveItem(
-      item2,
-      (mutator) => {
-        mutator.removeItemAsRelationship(item1)
-      },
-      undefined,
-      undefined,
-      syncOptions,
-    )
+    item1 = (
+      await this.application.changeAndSaveItem.execute(
+        item1,
+        (mutator) => {
+          mutator.removeItemAsRelationship(item2)
+        },
+        undefined,
+        undefined,
+        syncOptions,
+      )
+    ).getValue()
+    item2 = (
+      await this.application.changeAndSaveItem.execute(
+        item2,
+        (mutator) => {
+          mutator.removeItemAsRelationship(item1)
+        },
+        undefined,
+        undefined,
+        syncOptions,
+      )
+    ).getValue()
 
     expect(item1.isItemContentEqualWith(item2)).to.equal(true)
     expect(item1.content.references.length).to.equal(0)
@@ -179,15 +197,17 @@ describe('items', () => {
     let item1 = this.application.items.getDisplayableNotes()[0]
     const item2 = this.application.items.getDisplayableNotes()[1]
 
-    item1 = await this.application.changeAndSaveItem(
-      item1,
-      (mutator) => {
-        mutator.mutableContent.foo = 'bar'
-      },
-      undefined,
-      undefined,
-      syncOptions,
-    )
+    item1 = (
+      await this.application.changeAndSaveItem.execute(
+        item1,
+        (mutator) => {
+          mutator.mutableContent.foo = 'bar'
+        },
+        undefined,
+        undefined,
+        syncOptions,
+      )
+    ).getValue()
 
     expect(item1.content.foo).to.equal('bar')
 

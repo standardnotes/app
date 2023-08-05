@@ -58,7 +58,7 @@ describe('GetFeatureUrl', () => {
   })
 
   describe('desktop', () => {
-    let desktopManager: DesktopManagerInterface | undefined
+    let desktopManager: jest.Mocked<DesktopManagerInterface | undefined>
 
     beforeEach(() => {
       desktopManager = {
@@ -69,7 +69,7 @@ describe('GetFeatureUrl', () => {
         getExtServerHost() {
           return desktopExtHost
         },
-      }
+      } as unknown as jest.Mocked<DesktopManagerInterface | undefined>
 
       usecase = new GetFeatureUrl(desktopManager, Environment.Desktop, Platform.MacDesktop)
     })

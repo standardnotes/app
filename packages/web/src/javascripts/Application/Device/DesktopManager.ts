@@ -90,7 +90,7 @@ export class DesktopManager
     }
   }
 
-  async saveDesktopBackup() {
+  async saveDesktopBackup(): Promise<void> {
     this.webApplication.notifyWebEvent(WebAppEvent.BeganBackupDownload)
 
     const data = await this.getBackupFile()
@@ -149,12 +149,12 @@ export class DesktopManager
     }
   }
 
-  searchText(text?: string) {
+  searchText(text?: string): void {
     this.lastSearchedText = text
     this.device.onSearch(text)
   }
 
-  redoSearch() {
+  redoSearch(): void {
     if (this.lastSearchedText) {
       this.searchText(this.lastSearchedText)
     }
@@ -188,18 +188,20 @@ export class DesktopManager
       return
     }
 
-    const updatedComponent = await this.application.changeAndSaveItem(
-      component,
-      (m) => {
-        const mutator = m as ComponentMutator
-        // eslint-disable-next-line camelcase
-        mutator.local_url = componentData.content.local_url as string
-        // eslint-disable-next-line camelcase
-        mutator.package_info = componentData.content.package_info
-        mutator.setAppDataItem(AppDataField.ComponentInstallError, undefined)
-      },
-      undefined,
-    )
+    const updatedComponent = (
+      await this.application.changeAndSaveItem.execute(
+        component,
+        (m) => {
+          const mutator = m as ComponentMutator
+          // eslint-disable-next-line camelcase
+          mutator.local_url = componentData.content.local_url as string
+          // eslint-disable-next-line camelcase
+          mutator.package_info = componentData.content.package_info
+          mutator.setAppDataItem(AppDataField.ComponentInstallError, undefined)
+        },
+        undefined,
+      )
+    ).getValue()
 
     for (const observer of this.updateObservers) {
       observer.callback(updatedComponent as SNComponent)

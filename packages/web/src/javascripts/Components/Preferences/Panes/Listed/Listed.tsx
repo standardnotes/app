@@ -84,13 +84,14 @@ const Listed = ({ application }: Props) => {
           <Subtitle>What is Listed?</Subtitle>
           <Text>
             Listed is a free blogging platform that allows you to create a public journal published directly from your
-            notes. {!application.getUser() && 'To get started, sign in or register for a Standard Notes account.'}
+            notes.{' '}
+            {!application.sessions.getUser() && 'To get started, sign in or register for a Standard Notes account.'}
           </Text>
           <a className="mt-2 text-info" target="_blank" href="https://listed.to" rel="noreferrer noopener">
             Learn more
           </a>
         </PreferencesSegment>
-        {application.getUser() && (
+        {application.sessions.getUser() && (
           <>
             <HorizontalSeparator classes="my-4" />
             <PreferencesSegment>

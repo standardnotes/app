@@ -12,16 +12,16 @@ const Subscription: FunctionComponent = () => {
   const application = useApplication()
 
   const [onlineSubscription, setOnlineSubscription] = useState<Subscription | undefined>(
-    application.controllers.subscriptionController.onlineSubscription,
+    application.subscriptionController.onlineSubscription,
   )
 
   useEffect(() => {
     return application.subscriptions.addEventObserver((event) => {
       if (event === SubscriptionManagerEvent.DidFetchSubscription) {
-        setOnlineSubscription(application.controllers.subscriptionController.onlineSubscription)
+        setOnlineSubscription(application.subscriptionController.onlineSubscription)
       }
     })
-  }, [application.subscriptions, application.controllers.subscriptionController])
+  }, [application.subscriptions, application.subscriptionController])
 
   useEffect(() => {
     void application.subscriptions.fetchOnlineSubscription()

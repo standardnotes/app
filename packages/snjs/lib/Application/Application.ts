@@ -1,4 +1,4 @@
-import { SNMfaService } from './../Services/Mfa/MfaService'
+import { MfaService } from './../Services/Mfa/MfaService'
 import { KeyRecoveryService } from './../Services/KeyRecovery/KeyRecoveryService'
 import { WebSocketsService } from './../Services/Api/WebsocketsService'
 import { MigrationService } from './../Services/Migration/MigrationService'
@@ -20,7 +20,6 @@ import {
   ApplicationStageChangedEventPayload,
   StorageValueModes,
   ChallengeObserver,
-  SyncOptions,
   ImportDataReturnType,
   ImportDataUseCase,
   StoragePersistencePolicies,
@@ -57,7 +56,6 @@ import {
   ApplicationInterface,
   EncryptionService,
   EncryptionServiceEvent,
-  ChallengePrompt,
   Challenge,
   ErrorAlertStrings,
   SessionsClientInterface,
@@ -75,32 +73,33 @@ import {
   VaultInviteServiceInterface,
   NotificationServiceEvent,
   VaultLockServiceInterface,
+  ApplicationConstructorOptions,
+  FullyResolvedApplicationOptions,
+  ApplicationOptionsDefaults,
+  ChangeAndSaveItem,
+  ProtectionEvent,
+  GetHost,
+  SetHost,
+  MfaServiceInterface,
 } from '@standardnotes/services'
 import {
-  PayloadEmitSource,
   SNNote,
   PrefKey,
   PrefValue,
-  DecryptedItemMutator,
   BackupFile,
-  DecryptedItemInterface,
   EncryptedItemInterface,
   Environment,
-  ItemStream,
   Platform,
-  MutationType,
 } from '@standardnotes/models'
 import {
   HttpResponse,
   SessionListResponse,
-  User,
   SignInResponse,
   ClientDisplayableError,
   SessionListEntry,
 } from '@standardnotes/responses'
 import {
   SyncService,
-  ProtectionEvent,
   SettingsService,
   ActionsService,
   ChallengeResponse,
@@ -116,14 +115,13 @@ import {
   UuidGenerator,
   useBoolean,
   LoggerInterface,
+  canBlockDeinit,
 } from '@standardnotes/utils'
 import { UuidString, ApplicationEventPayload } from '../Types'
 import { applicationEventForSyncEvent } from '@Lib/Application/Event'
 import { BackupServiceInterface, FilesClientInterface } from '@standardnotes/files'
 import { ComputePrivateUsername } from '@standardnotes/encryption'
 import { SNLog } from '../Log'
-import { ApplicationConstructorOptions, FullyResolvedApplicationOptions } from './Options/ApplicationOptions'
-import { ApplicationOptionsDefaults } from './Options/Defaults'
 import { SignInWithRecoveryCodes } from '@Lib/Domain/UseCase/SignInWithRecoveryCodes/SignInWithRecoveryCodes'
 import { UseCaseContainerInterface } from '@Lib/Domain/UseCase/UseCaseContainerInterface'
 import { GetRecoveryCodes } from '@Lib/Domain/UseCase/GetRecoveryCodes/GetRecoveryCodes'
@@ -137,7 +135,6 @@ import { GetAuthenticatorAuthenticationResponse } from '@Lib/Domain/UseCase/GetA
 import { GetAuthenticatorAuthenticationOptions } from '@Lib/Domain/UseCase/GetAuthenticatorAuthenticationOptions/GetAuthenticatorAuthenticationOptions'
 import { Dependencies } from './Dependencies/Dependencies'
 import { TYPES } from './Dependencies/Types'
-import { canBlockDeinit } from './Dependencies/isDeinitable'
 
 /** How often to automatically sync, in milliseconds */
 const DEFAULT_AUTO_SYNC_INTERVAL = 30_000
@@ -165,7 +162,6 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
 
   private eventHandlers: ApplicationObserver[] = []
 
-  private streamRemovers: ObserverRemover[] = []
   private serviceObservers: ObserverRemover[] = []
   private managedSubscribers: ObserverRemover[] = []
   private autoSyncInterval!: ReturnType<typeof setInterval>
@@ -178,7 +174,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   private launched = false
   /** Whether the application has been destroyed via .deinit() */
   public dealloced = false
-  private isBiometricsSoftLockEngaged = false
+
   private revokingSession = false
   private handledFullSyncStage = false
 
@@ -561,13 +557,6 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     void this.migrations.handleApplicationEvent(event)
   }
 
-  /**
-   * Whether the local database has completed loading local items.
-   */
-  public isDatabaseLoaded(): boolean {
-    return this.sync.isDatabaseLoaded()
-  }
-
   public getSessions(): Promise<HttpResponse<SessionListEntry[]>> {
     return this.sessions.getSessionsList()
   }
@@ -594,63 +583,10 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return compareVersions(userVersion, ProtocolVersion.V004) >= 0
   }
 
-  /**
-   * Begin streaming items to display in the UI. The stream callback will be called
-   * immediately with the present items that match the constraint, and over time whenever
-   * items matching the constraint are added, changed, or deleted.
-   */
-  public streamItems<I extends DecryptedItemInterface = DecryptedItemInterface>(
-    contentType: string | string[],
-    stream: ItemStream<I>,
-  ): () => void {
-    const removeItemManagerObserver = this.items.addObserver<I>(
-      contentType,
-      ({ changed, inserted, removed, source }) => {
-        stream({ changed, inserted, removed, source })
-      },
-    )
-
-    const matches = this.items.getItems<I>(contentType)
-    stream({
-      inserted: matches,
-      changed: [],
-      removed: [],
-      source: PayloadEmitSource.InitialObserverRegistrationPush,
-    })
-
-    this.streamRemovers.push(removeItemManagerObserver)
-
-    return () => {
-      removeItemManagerObserver()
-
-      removeFromArray(this.streamRemovers, removeItemManagerObserver)
-    }
-  }
-
-  /**
-   * Set the server's URL
-   */
-  public async setHost(host: string): Promise<void> {
-    this.http.setHost(host)
-
-    await this.legacyApi.setHost(host)
-  }
-
-  public getHost(): string {
-    return this.legacyApi.getHost()
-  }
-
   public async setCustomHost(host: string): Promise<void> {
-    await this.setHost(host)
+    await this.setHost.execute(host)
 
     this.sockets.setWebSocketUrl(undefined)
-  }
-
-  public getUser(): User | undefined {
-    if (!this.launched) {
-      throw Error('Attempting to access user before application unlocked')
-    }
-    return this.sessions.getUser()
   }
 
   public getUserPasswordCreationDate(): Date | undefined {
@@ -699,10 +635,6 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return result
   }
 
-  public noAccount(): boolean {
-    return !this.hasAccount()
-  }
-
   public hasAccount(): boolean {
     return this.encryption.hasAccount()
   }
@@ -713,10 +645,6 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
    */
   public hasProtectionSources(): boolean {
     return this.protections.hasProtectionSources()
-  }
-
-  public hasUnprotectedAccessSession(): boolean {
-    return this.protections.hasUnprotectedAccessSession()
   }
 
   /**
@@ -744,10 +672,6 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
 
   public authorizeAutolockIntervalChange(): Promise<boolean> {
     return this.protections.authorizeAutolockIntervalChange()
-  }
-
-  public authorizeSearchingProtectedNotesText(): Promise<boolean> {
-    return this.protections.authorizeSearchingProtectedNotesText()
   }
 
   public async createEncryptedBackupFileForAutomatedDesktopBackups(): Promise<BackupFile | undefined> {
@@ -852,7 +776,6 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
 
     this.serviceObservers.length = 0
     this.managedSubscribers.length = 0
-    this.streamRemovers.length = 0
 
     this.started = false
 
@@ -921,39 +844,6 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     })
   }
 
-  public async changeAndSaveItem<M extends DecryptedItemMutator = DecryptedItemMutator>(
-    itemToLookupUuidFor: DecryptedItemInterface,
-    mutate: (mutator: M) => void,
-    updateTimestamps = true,
-    emitSource?: PayloadEmitSource,
-    syncOptions?: SyncOptions,
-  ): Promise<DecryptedItemInterface | undefined> {
-    await this.mutator.changeItems(
-      [itemToLookupUuidFor],
-      mutate,
-      updateTimestamps ? MutationType.UpdateUserTimestamps : MutationType.NoUpdateUserTimestamps,
-      emitSource,
-    )
-    await this.sync.sync(syncOptions)
-    return this.items.findItem(itemToLookupUuidFor.uuid)
-  }
-
-  public async changeAndSaveItems<M extends DecryptedItemMutator = DecryptedItemMutator>(
-    itemsToLookupUuidsFor: DecryptedItemInterface[],
-    mutate: (mutator: M) => void,
-    updateTimestamps = true,
-    emitSource?: PayloadEmitSource,
-    syncOptions?: SyncOptions,
-  ): Promise<void> {
-    await this.mutator.changeItems(
-      itemsToLookupUuidsFor,
-      mutate,
-      updateTimestamps ? MutationType.UpdateUserTimestamps : MutationType.NoUpdateUserTimestamps,
-      emitSource,
-    )
-    await this.sync.sync(syncOptions)
-  }
-
   public async importData(data: BackupFile, awaitSync = false): Promise<ImportDataReturnType> {
     const usecase = this.dependencies.get<ImportDataUseCase>(TYPES.ImportDataUseCase)
     return usecase.execute(data, awaitSync)
@@ -991,40 +881,16 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return this.encryption.hasPasscode()
   }
 
-  async isLocked(): Promise<boolean> {
-    if (!this.started) {
-      return Promise.resolve(true)
-    }
-    const isPasscodeLocked = await this.challenges.isPasscodeLocked()
-    return isPasscodeLocked || this.isBiometricsSoftLockEngaged
-  }
-
   public async lock(): Promise<void> {
-    /** Because locking is a critical operation, we want to try to do it safely,
-     * but only up to a certain limit. */
+    /**
+     * Because locking is a critical operation, we want to try to do it safely,
+     * but only up to a certain limit.
+     */
     const MaximumWaitTime = 500
+
     await this.prepareForDeinit(MaximumWaitTime)
+
     return this.deinit(this.getDeinitMode(), DeinitSource.Lock)
-  }
-
-  public softLockBiometrics(): void {
-    const challenge = new Challenge(
-      [new ChallengePrompt(ChallengeValidation.Biometric)],
-      ChallengeReason.ApplicationUnlock,
-      false,
-    )
-
-    void this.challenges.promptForChallengeResponse(challenge)
-
-    this.isBiometricsSoftLockEngaged = true
-    void this.notifyEvent(ApplicationEvent.BiometricsSoftLockEngaged)
-
-    this.addChallengeObserver(challenge, {
-      onComplete: () => {
-        this.isBiometricsSoftLockEngaged = false
-        void this.notifyEvent(ApplicationEvent.BiometricsSoftLockDisengaged)
-      },
-    })
   }
 
   isNativeMobileWeb() {
@@ -1102,10 +968,6 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     }
   }
 
-  public getNewSubscriptionToken(): Promise<string | undefined> {
-    return this.legacyApi.getNewSubscriptionToken()
-  }
-
   public isThirdPartyHostUsed(): boolean {
     return this.legacyApi.isThirdPartyHostUsed()
   }
@@ -1117,7 +979,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       return false
     }
 
-    return this.getHost() === (await homeServerService.getHomeServerUrl())
+    return this.getHost.execute().getValue() === (await homeServerService.getHomeServerUrl())
   }
 
   private createBackgroundDependencies() {
@@ -1361,12 +1223,28 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return this.dependencies.get<SharedVaultServiceInterface>(TYPES.SharedVaultService)
   }
 
-  private get migrations(): MigrationService {
-    return this.dependencies.get<MigrationService>(TYPES.MigrationService)
+  public get changeAndSaveItem(): ChangeAndSaveItem {
+    return this.dependencies.get<ChangeAndSaveItem>(TYPES.ChangeAndSaveItem)
   }
 
-  private get legacyApi(): LegacyApiService {
+  public get getHost(): GetHost {
+    return this.dependencies.get<GetHost>(TYPES.GetHost)
+  }
+
+  public get setHost(): SetHost {
+    return this.dependencies.get<SetHost>(TYPES.SetHost)
+  }
+
+  public get legacyApi(): LegacyApiService {
     return this.dependencies.get<LegacyApiService>(TYPES.LegacyApiService)
+  }
+
+  public get mfa(): MfaServiceInterface {
+    return this.dependencies.get<MfaService>(TYPES.MfaService)
+  }
+
+  private get migrations(): MigrationService {
+    return this.dependencies.get<MigrationService>(TYPES.MigrationService)
   }
 
   private get http(): HttpServiceInterface {
@@ -1375,9 +1253,5 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
 
   private get sockets(): WebSocketsService {
     return this.dependencies.get<WebSocketsService>(TYPES.WebSocketsService)
-  }
-
-  private get mfa(): SNMfaService {
-    return this.dependencies.get<SNMfaService>(TYPES.MfaService)
   }
 }

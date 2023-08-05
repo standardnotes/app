@@ -4,7 +4,6 @@ import { observer } from 'mobx-react-lite'
 import PreferencesGroup from '@/Components/Preferences/PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '@/Components/Preferences/PreferencesComponents/PreferencesSegment'
 import { WebApplication } from '@/Application/WebApplication'
-import { UserProvider } from '@/Components/Preferences/Providers'
 
 import U2FTitle from './U2FTitle'
 import U2FDescription from './U2FDescription'
@@ -16,10 +15,9 @@ import RecoveryCodeBanner from '@/Components/RecoveryCodeBanner/RecoveryCodeBann
 
 type Props = {
   application: WebApplication
-  userProvider: UserProvider
 }
 
-const U2FView: FunctionComponent<Props> = ({ application, userProvider }) => {
+const U2FView: FunctionComponent<Props> = ({ application }) => {
   const [showDeviceAddingModal, setShowDeviceAddingModal] = useState(false)
   const [devices, setDevices] = useState<Array<{ id: string; name: string }>>([])
   const [error, setError] = useState('')
@@ -48,8 +46,8 @@ const U2FView: FunctionComponent<Props> = ({ application, userProvider }) => {
       <PreferencesGroup>
         <PreferencesSegment>
           <div className="flex flex-col">
-            <U2FTitle userProvider={userProvider} />
-            <U2FDescription userProvider={userProvider} />
+            <U2FTitle />
+            <U2FDescription />
           </div>
         </PreferencesSegment>
         <PreferencesSegment classes="mt-2">
@@ -80,7 +78,6 @@ const U2FView: FunctionComponent<Props> = ({ application, userProvider }) => {
         <U2FAddDeviceView
           onDeviceAddingModalToggle={setShowDeviceAddingModal}
           onDeviceAdded={loadAuthenticatorDevices}
-          userProvider={userProvider}
           addAuthenticator={application.addAuthenticator}
         />
       </ModalOverlay>

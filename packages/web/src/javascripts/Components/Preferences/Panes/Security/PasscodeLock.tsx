@@ -14,7 +14,6 @@ import { alertDialog } from '@standardnotes/ui-services'
 import { FormEvent, useCallback, useEffect, useRef, useState } from 'react'
 import { ApplicationEvent, MobileUnlockTiming } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
-import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { Title, Text } from '@/Components/Preferences/PreferencesComponents/Content'
 import Button from '@/Components/Button/Button'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
@@ -24,15 +23,13 @@ import { classNames } from '@standardnotes/utils'
 
 type Props = {
   application: WebApplication
-  viewControllerManager: ViewControllerManager
 }
 
-const PasscodeLock = ({ application, viewControllerManager }: Props) => {
+const PasscodeLock = ({ application }: Props) => {
   const isNativeMobileWeb = application.isNativeMobileWeb()
   const keyStorageInfo = StringUtils.keyStorageInfo(application)
 
-  const { setIsEncryptionEnabled, setIsBackupEncrypted, setEncryptionStatusString } =
-    viewControllerManager.accountMenuController
+  const { setIsEncryptionEnabled, setIsBackupEncrypted, setEncryptionStatusString } = application.accountMenuController
 
   const passcodeInputRef = useRef<HTMLInputElement>(null)
 
@@ -58,7 +55,7 @@ const PasscodeLock = ({ application, viewControllerManager }: Props) => {
   }
 
   const reloadDesktopAutoLockInterval = useCallback(async () => {
-    const interval = await application.getAutolockService()?.getAutoLockInterval()
+    const interval = await application.autolockService?.getAutoLockInterval()
     setSelectedAutoLockInterval(interval)
   }, [application])
 
@@ -86,7 +83,7 @@ const PasscodeLock = ({ application, viewControllerManager }: Props) => {
       return
     }
 
-    await application.getAutolockService()?.setAutoLockInterval(interval)
+    await application.autolockService?.setAutoLockInterval(interval)
     reloadDesktopAutoLockInterval().catch(console.error)
   }
 
@@ -99,7 +96,7 @@ const PasscodeLock = ({ application, viewControllerManager }: Props) => {
     await preventRefreshing(STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_REMOVAL, async () => {
       if (await application.removePasscode()) {
         if (!isNativeMobileWeb) {
-          await application.getAutolockService()?.deleteAutolockPreference()
+          await application.autolockService?.deleteAutolockPreference()
           await reloadDesktopAutoLockInterval()
         }
         refreshEncryptionStatus()
@@ -184,7 +181,7 @@ const PasscodeLock = ({ application, viewControllerManager }: Props) => {
     setPasscodeConfirmation(undefined)
   }
 
-  const autolockService = application.getAutolockService()
+  const autolockService = application.autolockService
 
   return (
     <>

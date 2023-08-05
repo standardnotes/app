@@ -6,9 +6,9 @@ export enum PreferencesServiceEvent {
 }
 
 export interface PreferenceServiceInterface extends AbstractService<PreferencesServiceEvent> {
-  getValue<K extends PrefKey>(key: K, defaultValue: PrefValue[K] | undefined): PrefValue[K] | undefined
   getValue<K extends PrefKey>(key: K, defaultValue: PrefValue[K]): PrefValue[K]
   getValue<K extends PrefKey>(key: K, defaultValue?: PrefValue[K]): PrefValue[K] | undefined
+  getValue<K extends PrefKey>(key: K, defaultValue: PrefValue[K] | undefined): PrefValue[K] | undefined
 
   setValue<K extends PrefKey>(key: K, value: PrefValue[K]): Promise<void>
   /** Set value without triggering sync or event notifications */

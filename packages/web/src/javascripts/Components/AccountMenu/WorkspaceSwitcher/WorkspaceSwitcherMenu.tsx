@@ -1,5 +1,4 @@
 import { WebApplicationGroup } from '@/Application/WebApplicationGroup'
-import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { ApplicationDescriptor, ApplicationGroupEvent, ButtonType } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useEffect, useState } from 'react'
@@ -8,20 +7,21 @@ import Menu from '@/Components/Menu/Menu'
 import MenuItem from '@/Components/Menu/MenuItem'
 import MenuItemSeparator from '@/Components/Menu/MenuItemSeparator'
 import WorkspaceMenuItem from './WorkspaceMenuItem'
+import { useApplication } from '@/Components/ApplicationProvider'
 
 type Props = {
   mainApplicationGroup: WebApplicationGroup
-  viewControllerManager: ViewControllerManager
   isOpen: boolean
   hideWorkspaceOptions?: boolean
 }
 
 const WorkspaceSwitcherMenu: FunctionComponent<Props> = ({
   mainApplicationGroup,
-  viewControllerManager,
   isOpen,
   hideWorkspaceOptions = false,
 }: Props) => {
+  const application = useApplication()
+
   const [applicationDescriptors, setApplicationDescriptors] = useState<ApplicationDescriptor[]>(
     mainApplicationGroup.getDescriptors(),
   )
@@ -43,7 +43,7 @@ const WorkspaceSwitcherMenu: FunctionComponent<Props> = ({
   }, [mainApplicationGroup])
 
   const signoutAll = useCallback(async () => {
-    const confirmed = await viewControllerManager.application.alerts.confirm(
+    const confirmed = await application.alerts.confirm(
       'Are you sure you want to sign out of all workspaces on this device?',
       undefined,
       'Sign out all',
@@ -53,11 +53,11 @@ const WorkspaceSwitcherMenu: FunctionComponent<Props> = ({
       return
     }
     mainApplicationGroup.signOutAllWorkspaces().catch(console.error)
-  }, [mainApplicationGroup, viewControllerManager])
+  }, [mainApplicationGroup, application])
 
   const destroyWorkspace = useCallback(() => {
-    viewControllerManager.accountMenuController.setSigningOut(true)
-  }, [viewControllerManager])
+    application.accountMenuController.setSigningOut(true)
+  }, [application])
 
   const activateWorkspace = useCallback(
     async (descriptor: ApplicationDescriptor) => {

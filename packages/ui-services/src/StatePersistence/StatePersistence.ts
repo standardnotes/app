@@ -1,5 +1,5 @@
 export enum PersistenceKey {
-  SelectedItemsController = 'selected-items-controller',
+  ItemListController = 'selected-items-controller',
   NavigationController = 'navigation-controller',
 }
 
@@ -12,6 +12,6 @@ export type NavigationControllerPersistableValue = {
 }
 
 export type PersistedStateValue = {
-  [PersistenceKey.SelectedItemsController]: SelectionControllerPersistableValue
+  [PersistenceKey.ItemListController]: SelectionControllerPersistableValue
   [PersistenceKey.NavigationController]: NavigationControllerPersistableValue
 }

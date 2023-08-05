@@ -264,8 +264,13 @@ export class SessionManager
     }
   }
 
+  /** Unlike EncryptionService.hasAccount, isSignedIn can only be read once the application is unlocked */
   public isSignedIn(): boolean {
     return this.getUser() != undefined
+  }
+
+  public isSignedOut(): boolean {
+    return !this.isSignedIn()
   }
 
   public isSignedIntoFirstPartyServer(): boolean {

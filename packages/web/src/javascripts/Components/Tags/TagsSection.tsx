@@ -1,24 +1,22 @@
 import TagsList from '@/Components/Tags/TagsList'
-import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { ApplicationEvent } from '@/__mocks__/@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useEffect, useState } from 'react'
 import TagsSectionAddButton from './TagsSectionAddButton'
 import TagsSectionTitle from './TagsSectionTitle'
+import { useApplication } from '../ApplicationProvider'
 
-type Props = {
-  viewControllerManager: ViewControllerManager
-}
+const TagsSection: FunctionComponent = () => {
+  const application = useApplication()
 
-const TagsSection: FunctionComponent<Props> = ({ viewControllerManager }) => {
   const [hasMigration, setHasMigration] = useState<boolean>(false)
 
   const checkIfMigrationNeeded = useCallback(() => {
-    setHasMigration(viewControllerManager.application.items.hasTagsNeedingFoldersMigration())
-  }, [viewControllerManager])
+    setHasMigration(application.items.hasTagsNeedingFoldersMigration())
+  }, [application])
 
   useEffect(() => {
-    const removeObserver = viewControllerManager.application.addEventObserver(async (event) => {
+    const removeObserver = application.addEventObserver(async (event) => {
       const events = [ApplicationEvent.CompletedInitialSync, ApplicationEvent.SignedIn]
       if (events.includes(event)) {
         checkIfMigrationNeeded()
@@ -28,11 +26,11 @@ const TagsSection: FunctionComponent<Props> = ({ viewControllerManager }) => {
     return () => {
       removeObserver()
     }
-  }, [viewControllerManager, checkIfMigrationNeeded])
+  }, [application, checkIfMigrationNeeded])
 
   const runMigration = useCallback(async () => {
     if (
-      await viewControllerManager.application.alerts.confirm(
+      await application.alerts.confirm(
         '<i>Introducing native, built-in nested tags without requiring the legacy Folders extension.</i><br/></br> ' +
           " To get started, we'll need to migrate any tags containing a dot character to the new system.<br/></br> " +
           ' This migration will convert any tags with dots appearing in their name into a natural' +
@@ -42,19 +40,19 @@ const TagsSection: FunctionComponent<Props> = ({ viewControllerManager }) => {
         'Run Migration',
       )
     ) {
-      viewControllerManager.application.mutator
+      application.mutator
         .migrateTagsToFolders()
         .then(() => {
-          void viewControllerManager.application.sync.sync()
+          void application.sync.sync()
           checkIfMigrationNeeded()
         })
         .catch(console.error)
     }
-  }, [viewControllerManager, checkIfMigrationNeeded])
+  }, [application, checkIfMigrationNeeded])
 
   return (
     <>
-      {viewControllerManager.navigationController.starredTags.length > 0 && (
+      {application.navigationController.starredTags.length > 0 && (
         <section>
           <div className={'section-title-bar'}>
             <div className="section-title-bar-header">
@@ -63,7 +61,7 @@ const TagsSection: FunctionComponent<Props> = ({ viewControllerManager }) => {
               </div>
             </div>
           </div>
-          <TagsList type="favorites" viewControllerManager={viewControllerManager} />
+          <TagsList type="favorites" />
         </section>
       )}
 
@@ -71,17 +69,14 @@ const TagsSection: FunctionComponent<Props> = ({ viewControllerManager }) => {
         <div className={'section-title-bar'}>
           <div className="section-title-bar-header">
             <TagsSectionTitle
-              features={viewControllerManager.featuresController}
+              features={application.featuresController}
               hasMigration={hasMigration}
               onClickMigration={runMigration}
             />
-            <TagsSectionAddButton
-              tags={viewControllerManager.navigationController}
-              features={viewControllerManager.featuresController}
-            />
+            <TagsSectionAddButton tags={application.navigationController} features={application.featuresController} />
           </div>
         </div>
-        <TagsList type="all" viewControllerManager={viewControllerManager} />
+        <TagsList type="all" />
       </section>
     </>
   )
