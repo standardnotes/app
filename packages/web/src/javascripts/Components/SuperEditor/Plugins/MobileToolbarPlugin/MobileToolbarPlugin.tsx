@@ -3,7 +3,6 @@ import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext
 import useModal from '../../Lexical/Hooks/useModal'
 import { InsertTableDialog } from '../../Plugins/TablePlugin'
 import { getSelectedNode } from '../../Lexical/Utils/getSelectedNode'
-import { sanitizeUrl } from '../../Lexical/Utils/sanitizeUrl'
 import {
   $getSelection,
   $isRangeSelection,
@@ -69,13 +68,7 @@ const MobileToolbarPlugin = () => {
     const isLink = $isLinkNode(parent) || $isLinkNode(node)
     if (!isLink) {
       editor.update(() => {
-        const selection = $getSelection()
-        const textContent = selection?.getTextContent()
-        if (!textContent) {
-          editor.dispatchCommand(TOGGLE_LINK_COMMAND, 'https://')
-          return
-        }
-        editor.dispatchCommand(TOGGLE_LINK_COMMAND, sanitizeUrl(textContent))
+        editor.dispatchCommand(TOGGLE_LINK_COMMAND, 'https://')
       })
     } else {
       editor.dispatchCommand(TOGGLE_LINK_COMMAND, null)
