@@ -44,13 +44,6 @@ export class FeaturesController extends AbstractViewController implements Intern
     this.entitledToFiles = this.isEntitledToFiles()
     this.premiumAlertFeatureName = undefined
 
-    eventBus.addEventHandler(this, CrossControllerEvent.DisplayPremiumModal)
-    eventBus.addEventHandler(this, ApplicationEvent.DidPurchaseSubscription)
-    eventBus.addEventHandler(this, ApplicationEvent.FeaturesAvailabilityChanged)
-    eventBus.addEventHandler(this, ApplicationEvent.Launched)
-    eventBus.addEventHandler(this, ApplicationEvent.LocalDataLoaded)
-    eventBus.addEventHandler(this, ApplicationEvent.UserRolesChanged)
-
     makeObservable(this, {
       hasFolders: observable,
       hasSmartViews: observable,
@@ -61,6 +54,13 @@ export class FeaturesController extends AbstractViewController implements Intern
       closePremiumAlert: action,
       showPurchaseSuccessAlert: action,
     })
+
+    eventBus.addEventHandler(this, CrossControllerEvent.DisplayPremiumModal)
+    eventBus.addEventHandler(this, ApplicationEvent.DidPurchaseSubscription)
+    eventBus.addEventHandler(this, ApplicationEvent.FeaturesAvailabilityChanged)
+    eventBus.addEventHandler(this, ApplicationEvent.Launched)
+    eventBus.addEventHandler(this, ApplicationEvent.LocalDataLoaded)
+    eventBus.addEventHandler(this, ApplicationEvent.UserRolesChanged)
 
     this.showPremiumAlert = this.showPremiumAlert.bind(this)
     this.closePremiumAlert = this.closePremiumAlert.bind(this)

@@ -62,8 +62,6 @@ export class NoteHistoryController {
     private _deleteRevision: DeleteRevision,
     private _changeAndSaveItem: ChangeAndSaveItem,
   ) {
-    void this.fetchAllHistory()
-
     makeObservable(this, {
       selectedRevision: observable,
       setSelectedRevision: action,
@@ -90,6 +88,8 @@ export class NoteHistoryController {
       contentState: observable,
       setContentState: action,
     })
+
+    void this.fetchAllHistory()
   }
 
   setSelectedRevision = (revision: SelectedRevision) => {

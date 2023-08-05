@@ -39,11 +39,11 @@ import { VaultDisplayServiceInterface } from '@standardnotes/ui-services'
 export class LinkingController extends AbstractViewController implements InternalEventHandlerInterface {
   shouldLinkToParentFolders: boolean
   isLinkingPanelOpen = false
-  private itemListController!: ItemListController
-  private filesController!: FilesController
-  private subscriptionController!: SubscriptionController
 
   constructor(
+    private itemListController: ItemListController,
+    private filesController: FilesController,
+    private subscriptionController: SubscriptionController,
     private navigationController: NavigationController,
     private itemControllerGroup: ItemGroupController,
     private vaultDisplayService: VaultDisplayServiceInterface,
@@ -84,16 +84,6 @@ export class LinkingController extends AbstractViewController implements Interna
     }
 
     return Promise.resolve()
-  }
-
-  public setServicesPostConstruction(
-    itemListController: ItemListController,
-    filesController: FilesController,
-    subscriptionController: SubscriptionController,
-  ) {
-    this.itemListController = itemListController
-    this.filesController = filesController
-    this.subscriptionController = subscriptionController
   }
 
   get isEntitledToNoteLinking() {

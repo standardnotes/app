@@ -92,7 +92,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
 
   public isSessionsModalVisible = false
 
-  public readonly devMode?: DevMode
+  public devMode?: DevMode
 
   constructor(
     deviceInterface: WebOrDesktopDevice,
@@ -125,19 +125,35 @@ export class WebApplication extends SNApplication implements WebApplicationInter
       ) => Promise<Record<string, unknown>>,
     })
 
+    makeObservable(this, {
+      dealloced: observable,
+
+      preferencesController: computed,
+
+      isSessionsModalVisible: observable,
+
+      openSessionsModal: action,
+      closeSessionsModal: action,
+    })
+
+    this.createBackgroundServices()
+  }
+
+  private createBackgroundServices(): void {
+    void this.mobileWebReceiver
+    void this.autolockService
+    void this.persistence
+    void this.themeManager
+    void this.momentsService
+    void this.routeService
+
     if (isDev) {
       this.devMode = new DevMode(this)
     }
 
-    makeObservable(this, {
-      dealloced: observable,
-    })
-
     if (!this.isNativeMobileWeb()) {
-      deviceInterface.setApplication(this)
+      this.webOrDesktopDevice.setApplication(this)
     }
-
-    this.createBackgroundServices()
 
     const appEventObserver = this.deps.get<ApplicationEventObserver>(Web_TYPES.ApplicationEventObserver)
     this.disposers.push(this.addEventObserver(appEventObserver.handle.bind(appEventObserver)))
@@ -160,37 +176,13 @@ export class WebApplication extends SNApplication implements WebApplicationInter
         this.notifyWebEvent(event)
       })
     }
-
-    this.linkingController.setServicesPostConstruction(
-      this.itemListController,
-      this.filesController,
-      this.subscriptionController,
-    )
-
-    makeObservable(this, {
-      preferencesController: computed,
-
-      isSessionsModalVisible: observable,
-
-      openSessionsModal: action,
-      closeSessionsModal: action,
-    })
-  }
-
-  private createBackgroundServices(): void {
-    void this.mobileWebReceiver
-    void this.autolockService
-    void this.persistence
-    void this.themeManager
-    void this.momentsService
-    void this.routeService
   }
 
   override deinit(mode: DeinitMode, source: DeinitSource): void {
     super.deinit(mode, source)
 
     if (!this.isNativeMobileWeb()) {
-      this.webOrDesktopDevice().removeApplication(this)
+      this.webOrDesktopDevice.removeApplication(this)
     }
 
     for (const disposer of this.disposers) {
@@ -266,7 +258,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     return this.device as MobileDeviceInterface
   }
 
-  webOrDesktopDevice(): WebOrDesktopDevice {
+  get webOrDesktopDevice(): WebOrDesktopDevice {
     return this.device as WebOrDesktopDevice
   }
 

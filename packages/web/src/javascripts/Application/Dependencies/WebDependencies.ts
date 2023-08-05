@@ -251,6 +251,9 @@ export class WebDependencies extends DependencyContainer {
 
     this.bind(Web_TYPES.LinkingController, () => {
       return new LinkingController(
+        this.get<ItemListController>(Web_TYPES.ItemListController),
+        this.get<FilesController>(Web_TYPES.FilesController),
+        this.get<SubscriptionController>(Web_TYPES.SubscriptionController),
         this.get<NavigationController>(Web_TYPES.NavigationController),
         this.get<ItemGroupController>(Web_TYPES.ItemGroupController),
         this.get<VaultDisplayService>(Web_TYPES.VaultDisplayService),

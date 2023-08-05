@@ -45,16 +45,16 @@ export class MomentsService extends AbstractViewController implements InternalEv
   ) {
     super(eventBus)
 
-    eventBus.addEventHandler(this, ApplicationEvent.LocalDataLoaded)
-    eventBus.addEventHandler(this, ProtectionEvent.BiometricsSoftLockEngaged)
-    eventBus.addEventHandler(this, ProtectionEvent.BiometricsSoftLockDisengaged)
-
     makeObservable(this, {
       isEnabled: observable,
 
       enableMoments: action,
       disableMoments: action,
     })
+
+    eventBus.addEventHandler(this, ApplicationEvent.LocalDataLoaded)
+    eventBus.addEventHandler(this, ProtectionEvent.BiometricsSoftLockEngaged)
+    eventBus.addEventHandler(this, ProtectionEvent.BiometricsSoftLockDisengaged)
   }
 
   async handleEvent(event: InternalEventInterface): Promise<void> {

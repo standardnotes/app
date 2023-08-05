@@ -131,6 +131,46 @@ export class ItemListController
   ) {
     super(eventBus)
 
+    makeObservable(this, {
+      completedFullSync: observable,
+      displayOptions: observable.struct,
+      webDisplayOptions: observable.struct,
+      noteFilterText: observable,
+      notes: observable,
+      notesToDisplay: observable,
+      panelTitle: observable,
+      items: observable,
+      renderedItems: observable,
+      showDisplayOptionsMenu: observable,
+
+      reloadItems: action,
+      reloadPanelTitle: action,
+      reloadDisplayPreferences: action,
+      resetPagination: action,
+      setCompletedFullSync: action,
+      setNoteFilterText: action,
+      setShowDisplayOptionsMenu: action,
+      onFilterEnter: action,
+      handleFilterTextChanged: action,
+
+      optionsSubtitle: computed,
+      activeControllerItem: computed,
+
+      selectedUuids: observable,
+      selectedItems: observable,
+
+      selectedItemsCount: computed,
+      selectedFiles: computed,
+      selectedFilesCount: computed,
+      firstSelectedItem: computed,
+
+      selectItem: action,
+      setSelectedUuids: action,
+      setSelectedItems: action,
+
+      hydrateFromPersistedValue: action,
+    })
+
     eventBus.addEventHandler(this, CrossControllerEvent.TagChanged)
     eventBus.addEventHandler(this, CrossControllerEvent.ActiveEditorChanged)
     eventBus.addEventHandler(this, VaultDisplayServiceEvent.VaultDisplayOptionsChanged)
@@ -216,46 +256,6 @@ export class ItemListController
         },
       ),
     )
-
-    makeObservable(this, {
-      completedFullSync: observable,
-      displayOptions: observable.struct,
-      webDisplayOptions: observable.struct,
-      noteFilterText: observable,
-      notes: observable,
-      notesToDisplay: observable,
-      panelTitle: observable,
-      items: observable,
-      renderedItems: observable,
-      showDisplayOptionsMenu: observable,
-
-      reloadItems: action,
-      reloadPanelTitle: action,
-      reloadDisplayPreferences: action,
-      resetPagination: action,
-      setCompletedFullSync: action,
-      setNoteFilterText: action,
-      setShowDisplayOptionsMenu: action,
-      onFilterEnter: action,
-      handleFilterTextChanged: action,
-
-      optionsSubtitle: computed,
-      activeControllerItem: computed,
-
-      selectedUuids: observable,
-      selectedItems: observable,
-
-      selectedItemsCount: computed,
-      selectedFiles: computed,
-      selectedFilesCount: computed,
-      firstSelectedItem: computed,
-
-      selectItem: action,
-      setSelectedUuids: action,
-      setSelectedItems: action,
-
-      hydrateFromPersistedValue: action,
-    })
 
     window.onresize = () => {
       this.resetPagination(true)
