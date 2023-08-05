@@ -437,11 +437,12 @@ describe('asymmetric messages', function () {
       SharedVaultUserPermission.PERMISSIONS.Write,
     )
 
-    await contactContext.runAnyRequestToPreventRefreshTokenFromExpiring()
+    await context.forceRefreshSession()
+    await contactContext.forceRefreshSession()
 
     await context.changePassword('new password')
 
-    await contactContext.runAnyRequestToPreventRefreshTokenFromExpiring()
+    await contactContext.forceRefreshSession()
 
     /**
      * When resending keypair changed messages here, we expect that one of their previous messages will fail to decrypt.
@@ -453,6 +454,8 @@ describe('asymmetric messages', function () {
 
     await context.changePassword('new password 2')
 
+    await contactContext.forceRefreshSession()
+
     const messages = await contactContext.asymmetric.getInboundMessages()
     if (messages.isFailed()) {
       console.error(messages.getError())
@@ -462,7 +465,7 @@ describe('asymmetric messages', function () {
     expect(messages.getValue().length).to.equal(2)
 
     contactContext.unlockSyncing()
-    await contactContext.syncAndAwaitInviteProcessing()
+    await contactContext.syncAndAwaitInviteAndMessageProcessing()
 
     const invites = contactContext.vaultInvites.getCachedPendingInviteRecords()
     expect(invites.length).to.equal(1)

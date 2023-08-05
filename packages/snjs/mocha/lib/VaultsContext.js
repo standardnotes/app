@@ -49,6 +49,21 @@ export class VaultsContext extends AppContext {
     await this.awaitPromiseOrThrow(promise, undefined, 'Waiting for invites to process')
   }
 
+  async syncAndAwaitInviteAndMessageProcessing() {
+    const invitePromise = this.resolveWhenAsyncFunctionCompletes(this.vaultInvites, 'processInboundInvites')
+    const messagePromise = this.resolveWhenAsyncFunctionCompletes(
+      this.asymmetric,
+      'handleRemoteReceivedAsymmetricMessages',
+    )
+
+    await this.sync()
+
+    await Promise.all([
+      this.awaitPromiseOrThrow(invitePromise, undefined, 'Waiting for invites to process'),
+      this.awaitPromiseOrThrow(messagePromise, undefined, 'Waiting for messages to process'),
+    ])
+  }
+
   /**
    * Run a request to keep refresh token from expiring due to long bouts of inactivity for contact context
    * while main context changes password. Tests have a refresh token age of 10s typically, and changing password
@@ -56,6 +71,11 @@ export class VaultsContext extends AppContext {
    */
   async runAnyRequestToPreventRefreshTokenFromExpiring() {
     await this.asymmetric.getInboundMessages()
+  }
+
+  /** Used for long running tests to avoid 498 responses */
+  async forceRefreshSession() {
+    await this.application.http.refreshSession()
   }
 
   async createSharedPasswordVault(password) {
