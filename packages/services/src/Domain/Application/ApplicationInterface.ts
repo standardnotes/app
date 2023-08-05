@@ -1,24 +1,27 @@
-import { VaultUserServiceInterface, VaultInviteServiceInterface } from '@standardnotes/services'
+import {
+  VaultUserServiceInterface,
+  VaultInviteServiceInterface,
+  StorageServiceInterface,
+  SyncServiceInterface,
+  FullyResolvedApplicationOptions,
+  ProtectionsClientInterface,
+  ChangeAndSaveItem,
+  GetHost,
+  SetHost,
+  LegacyApiServiceInterface,
+  StatusServiceInterface,
+  MfaServiceInterface,
+} from '@standardnotes/services'
 import { VaultLockServiceInterface } from './../VaultLock/VaultLockServiceInterface'
 import { HistoryServiceInterface } from './../History/HistoryServiceInterface'
 import { InternalEventBusInterface } from './../Internal/InternalEventBusInterface'
 import { PreferenceServiceInterface } from './../Preferences/PreferenceServiceInterface'
 import { AsymmetricMessageServiceInterface } from './../AsymmetricMessage/AsymmetricMessageServiceInterface'
-import { SyncOptions } from './../Sync/SyncOptions'
 import { ImportDataReturnType } from './../Mutator/ImportDataUseCase'
 import { ChallengeServiceInterface } from './../Challenge/ChallengeServiceInterface'
 import { VaultServiceInterface } from '../Vault/VaultServiceInterface'
 import { ApplicationIdentifier } from '@standardnotes/common'
-import {
-  BackupFile,
-  DecryptedItemInterface,
-  DecryptedItemMutator,
-  ItemStream,
-  PayloadEmitSource,
-  Platform,
-  PrefKey,
-  PrefValue,
-} from '@standardnotes/models'
+import { BackupFile, Environment, Platform, PrefKey, PrefValue } from '@standardnotes/models'
 import { BackupServiceInterface, FilesClientInterface } from '@standardnotes/files'
 
 import { AlertService } from '../Alert/AlertService'
@@ -37,7 +40,6 @@ import { DeinitSource } from './DeinitSource'
 import { UserServiceInterface } from '../User/UserServiceInterface'
 import { SessionsClientInterface } from '../Session/SessionsClientInterface'
 import { HomeServerServiceInterface } from '../HomeServer/HomeServerServiceInterface'
-import { User } from '@standardnotes/responses'
 import { EncryptionProviderInterface } from '../Encryption/EncryptionProviderInterface'
 
 export interface ApplicationInterface {
@@ -53,49 +55,24 @@ export interface ApplicationInterface {
   createDecryptedBackupFile(): Promise<BackupFile | undefined>
   hasPasscode(): boolean
   lock(): Promise<void>
-  softLockBiometrics(): void
   setValue(key: string, value: unknown, mode?: StorageValueModes): void
   getValue<T>(key: string, mode?: StorageValueModes): T
   removeValue(key: string, mode?: StorageValueModes): Promise<void>
-  isLocked(): Promise<boolean>
   getPreference<K extends PrefKey>(key: K): PrefValue[K] | undefined
   getPreference<K extends PrefKey>(key: K, defaultValue: PrefValue[K]): PrefValue[K]
   getPreference<K extends PrefKey>(key: K, defaultValue?: PrefValue[K]): PrefValue[K] | undefined
   setPreference<K extends PrefKey>(key: K, value: PrefValue[K]): Promise<void>
-  streamItems<I extends DecryptedItemInterface = DecryptedItemInterface>(
-    contentType: string | string[],
-    stream: ItemStream<I>,
-  ): () => void
 
-  getUser(): User | undefined
   hasAccount(): boolean
   setCustomHost(host: string): Promise<void>
   isThirdPartyHostUsed(): boolean
   isUsingHomeServer(): Promise<boolean>
-  getNewSubscriptionToken(): Promise<string | undefined>
 
   importData(data: BackupFile, awaitSync?: boolean): Promise<ImportDataReturnType>
-  /**
-   * Mutates a pre-existing item, marks it as dirty, and syncs it
-   */
-  changeAndSaveItem<M extends DecryptedItemMutator = DecryptedItemMutator>(
-    itemToLookupUuidFor: DecryptedItemInterface,
-    mutate: (mutator: M) => void,
-    updateTimestamps?: boolean,
-    emitSource?: PayloadEmitSource,
-    syncOptions?: SyncOptions,
-  ): Promise<DecryptedItemInterface | undefined>
 
-  /**
-   * Mutates pre-existing items, marks them as dirty, and syncs
-   */
-  changeAndSaveItems<M extends DecryptedItemMutator = DecryptedItemMutator>(
-    itemsToLookupUuidsFor: DecryptedItemInterface[],
-    mutate: (mutator: M) => void,
-    updateTimestamps?: boolean,
-    emitSource?: PayloadEmitSource,
-    syncOptions?: SyncOptions,
-  ): Promise<void>
+  get changeAndSaveItem(): ChangeAndSaveItem
+  get getHost(): GetHost
+  get setHost(): SetHost
 
   get alerts(): AlertService
   get asymmetric(): AsymmetricMessageServiceInterface
@@ -109,16 +86,24 @@ export interface ApplicationInterface {
   get history(): HistoryServiceInterface
   get homeServer(): HomeServerServiceInterface | undefined
   get items(): ItemManagerInterface
+  get legacyApi(): LegacyApiServiceInterface
+  get mfa(): MfaServiceInterface
   get mutator(): MutatorClientInterface
   get preferences(): PreferenceServiceInterface
+  get protections(): ProtectionsClientInterface
   get sessions(): SessionsClientInterface
+  get status(): StatusServiceInterface
+  get storage(): StorageServiceInterface
   get subscriptions(): SubscriptionManagerInterface
+  get sync(): SyncServiceInterface
   get user(): UserServiceInterface
-  get vaults(): VaultServiceInterface
-  get vaultLocks(): VaultLockServiceInterface
-  get vaultUsers(): VaultUserServiceInterface
   get vaultInvites(): VaultInviteServiceInterface
+  get vaultLocks(): VaultLockServiceInterface
+  get vaults(): VaultServiceInterface
+  get vaultUsers(): VaultUserServiceInterface
 
+  readonly options: FullyResolvedApplicationOptions
+  readonly environment: Environment
   readonly identifier: ApplicationIdentifier
   readonly platform: Platform
   device: DeviceInterface

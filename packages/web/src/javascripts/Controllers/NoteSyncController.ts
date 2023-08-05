@@ -1,8 +1,15 @@
-import { WebApplication } from '@/Application/WebApplication'
 import { MutationType, NoteMutator, SNNote } from '@standardnotes/models'
-import { InfoStrings } from '@standardnotes/snjs'
+import {
+  AlertService,
+  InfoStrings,
+  ItemManagerInterface,
+  MutatorClientInterface,
+  SessionsClientInterface,
+  SyncServiceInterface,
+} from '@standardnotes/snjs'
 import { Deferred } from '@standardnotes/utils'
 import { EditorSaveTimeoutDebounce } from '../Components/NoteView/Controller/EditorSaveTimeoutDebounce'
+import { IsNativeMobileWeb } from '@standardnotes/ui-services'
 
 const NotePreviewCharLimit = 160
 
@@ -24,8 +31,13 @@ export class NoteSyncController {
   private saveTimeout?: ReturnType<typeof setTimeout>
 
   constructor(
-    private application: WebApplication,
     private item: SNNote,
+    private items: ItemManagerInterface,
+    private mutator: MutatorClientInterface,
+    private sessions: SessionsClientInterface,
+    private sync: SyncServiceInterface,
+    private alerts: AlertService,
+    private _isNativeMobileWeb: IsNativeMobileWeb,
   ) {}
 
   setItem(item: SNNote) {
@@ -41,7 +53,6 @@ export class NoteSyncController {
     }
     this.savingLocallyPromise = null
     this.saveTimeout = undefined
-    ;(this.application as unknown) = undefined
     ;(this.item as unknown) = undefined
   }
 
@@ -52,11 +63,11 @@ export class NoteSyncController {
       clearTimeout(this.saveTimeout)
     }
 
-    const noDebounce = params.bypassDebouncer || this.application.noAccount()
+    const noDebounce = params.bypassDebouncer || this.sessions.isSignedOut()
 
     const syncDebouceMs = noDebounce
       ? EditorSaveTimeoutDebounce.ImmediateChange
-      : this.application.isNativeMobileWeb()
+      : this._isNativeMobileWeb.execute().getValue()
       ? EditorSaveTimeoutDebounce.NativeMobileWeb
       : EditorSaveTimeoutDebounce.Desktop
 
@@ -76,12 +87,12 @@ export class NoteSyncController {
   }
 
   private async undebouncedSave(params: NoteSaveFunctionParams): Promise<void> {
-    if (!this.application.items.findItem(this.item.uuid)) {
-      void this.application.alerts.alert(InfoStrings.InvalidNote)
+    if (!this.items.findItem(this.item.uuid)) {
+      void this.alerts.alert(InfoStrings.InvalidNote)
       return
     }
 
-    await this.application.mutator.changeItem(
+    await this.mutator.changeItem(
       this.item,
       (mutator) => {
         const noteMutator = mutator as NoteMutator
@@ -112,7 +123,7 @@ export class NoteSyncController {
       params.isUserModified ? MutationType.UpdateUserTimestamps : MutationType.NoUpdateUserTimestamps,
     )
 
-    void this.application.sync.sync().then(() => {
+    void this.sync.sync().then(() => {
       params.onRemoteSyncComplete?.()
     })
 

@@ -10,6 +10,8 @@ export interface LegacyApiServiceInterface
   extends AbstractService<ApiServiceEvent, ApiServiceEventData>,
     FilesApiInterface {
   isThirdPartyHostUsed(): boolean
+  setHost(host: string): Promise<void>
+  getHost(): string
 
   downloadOfflineFeaturesFromRepo(
     repo: SNFeatureRepo,
@@ -24,4 +26,6 @@ export interface LegacyApiServiceInterface
     limit: number,
     sharedVaultUuids?: string[],
   ): HttpRequest
+
+  getNewSubscriptionToken(): Promise<string | undefined>
 }

@@ -2,11 +2,9 @@ import { ContentType } from '@standardnotes/domain-core'
 import { parseFileName } from '@standardnotes/filepicker'
 import { DecryptedTransferPayload, NoteContent } from '@standardnotes/models'
 import { readFileAsText } from '../Utils'
-import { WebApplicationInterface } from '../../WebApplication/WebApplicationInterface'
+import { UuidGenerator } from '@standardnotes/utils'
 
 export class PlaintextConverter {
-  constructor(protected application: WebApplicationInterface) {}
-
   static isValidPlaintextFile(file: File): boolean {
     return file.type === 'text/plain' || file.type === 'text/markdown'
   }
@@ -24,7 +22,7 @@ export class PlaintextConverter {
       created_at_timestamp: createdAtDate.getTime(),
       updated_at: updatedAtDate,
       updated_at_timestamp: updatedAtDate.getTime(),
-      uuid: this.application.generateUUID(),
+      uuid: UuidGenerator.GenerateUuid(),
       content_type: ContentType.TYPES.Note,
       content: {
         title: name,

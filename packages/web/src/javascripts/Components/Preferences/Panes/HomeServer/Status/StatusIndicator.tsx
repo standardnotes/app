@@ -39,7 +39,7 @@ const StatusIndicator = ({ status, className, homeServerService }: Props) => {
 
   useEffect(() => {
     async function updateSignedInStatus() {
-      const signedInUser = application.getUser()
+      const signedInUser = application.sessions.getUser()
       if (signedInUser) {
         const isUsingHomeServer = await application.isUsingHomeServer()
         if (isUsingHomeServer) {

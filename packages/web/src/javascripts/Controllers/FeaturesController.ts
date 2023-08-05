@@ -1,5 +1,5 @@
+import { FeaturesClientInterface, InternalEventHandlerInterface } from '@standardnotes/services'
 import { FeatureName } from './FeatureName'
-import { WebApplication } from '@/Application/WebApplication'
 import { PremiumFeatureModalType } from '@/Components/PremiumFeaturesModal/PremiumFeatureModalType'
 import { destroyAllObjectProperties } from '@/Utils'
 import {
@@ -13,7 +13,7 @@ import { action, makeObservable, observable, runInAction, when } from 'mobx'
 import { AbstractViewController } from './Abstract/AbstractViewController'
 import { CrossControllerEvent } from './CrossControllerEvent'
 
-export class FeaturesController extends AbstractViewController {
+export class FeaturesController extends AbstractViewController implements InternalEventHandlerInterface {
   hasFolders: boolean
   hasSmartViews: boolean
   entitledToFiles: boolean
@@ -33,15 +33,16 @@ export class FeaturesController extends AbstractViewController {
     destroyAllObjectProperties(this)
   }
 
-  constructor(application: WebApplication, eventBus: InternalEventBusInterface) {
-    super(application, eventBus)
+  constructor(
+    private features: FeaturesClientInterface,
+    eventBus: InternalEventBusInterface,
+  ) {
+    super(eventBus)
 
     this.hasFolders = this.isEntitledToFolders()
     this.hasSmartViews = this.isEntitledToSmartViews()
     this.entitledToFiles = this.isEntitledToFiles()
     this.premiumAlertFeatureName = undefined
-
-    eventBus.addEventHandler(this, CrossControllerEvent.DisplayPremiumModal)
 
     makeObservable(this, {
       hasFolders: observable,
@@ -54,33 +55,38 @@ export class FeaturesController extends AbstractViewController {
       showPurchaseSuccessAlert: action,
     })
 
+    eventBus.addEventHandler(this, CrossControllerEvent.DisplayPremiumModal)
+    eventBus.addEventHandler(this, ApplicationEvent.DidPurchaseSubscription)
+    eventBus.addEventHandler(this, ApplicationEvent.FeaturesAvailabilityChanged)
+    eventBus.addEventHandler(this, ApplicationEvent.Launched)
+    eventBus.addEventHandler(this, ApplicationEvent.LocalDataLoaded)
+    eventBus.addEventHandler(this, ApplicationEvent.UserRolesChanged)
+
     this.showPremiumAlert = this.showPremiumAlert.bind(this)
     this.closePremiumAlert = this.closePremiumAlert.bind(this)
-
-    this.disposers.push(
-      application.addEventObserver(async (event) => {
-        switch (event) {
-          case ApplicationEvent.DidPurchaseSubscription:
-            this.showPurchaseSuccessAlert()
-            break
-          case ApplicationEvent.FeaturesAvailabilityChanged:
-          case ApplicationEvent.Launched:
-          case ApplicationEvent.LocalDataLoaded:
-          case ApplicationEvent.UserRolesChanged:
-            runInAction(() => {
-              this.hasFolders = this.isEntitledToFolders()
-              this.hasSmartViews = this.isEntitledToSmartViews()
-              this.entitledToFiles = this.isEntitledToFiles()
-            })
-        }
-      }),
-    )
   }
 
   async handleEvent(event: InternalEventInterface): Promise<void> {
-    if (event.type === CrossControllerEvent.DisplayPremiumModal) {
-      const payload = event.payload as { featureName: string }
-      void this.showPremiumAlert(payload.featureName)
+    switch (event.type) {
+      case ApplicationEvent.DidPurchaseSubscription:
+        this.showPurchaseSuccessAlert()
+        break
+      case ApplicationEvent.FeaturesAvailabilityChanged:
+      case ApplicationEvent.Launched:
+      case ApplicationEvent.LocalDataLoaded:
+      case ApplicationEvent.UserRolesChanged:
+        runInAction(() => {
+          this.hasFolders = this.isEntitledToFolders()
+          this.hasSmartViews = this.isEntitledToSmartViews()
+          this.entitledToFiles = this.isEntitledToFiles()
+        })
+        break
+      case CrossControllerEvent.DisplayPremiumModal:
+        {
+          const payload = event.payload as { featureName: string }
+          void this.showPremiumAlert(payload.featureName)
+        }
+        break
     }
   }
 
@@ -100,7 +106,7 @@ export class FeaturesController extends AbstractViewController {
   }
 
   private isEntitledToFiles(): boolean {
-    const status = this.application.features.getFeatureStatus(
+    const status = this.features.getFeatureStatus(
       NativeFeatureIdentifier.create(NativeFeatureIdentifier.TYPES.Files).getValue(),
     )
 
@@ -108,7 +114,7 @@ export class FeaturesController extends AbstractViewController {
   }
 
   private isEntitledToFolders(): boolean {
-    const status = this.application.features.getFeatureStatus(
+    const status = this.features.getFeatureStatus(
       NativeFeatureIdentifier.create(NativeFeatureIdentifier.TYPES.TagNesting).getValue(),
     )
 
@@ -116,7 +122,7 @@ export class FeaturesController extends AbstractViewController {
   }
 
   private isEntitledToSmartViews(): boolean {
-    const status = this.application.features.getFeatureStatus(
+    const status = this.features.getFeatureStatus(
       NativeFeatureIdentifier.create(NativeFeatureIdentifier.TYPES.SmartFilters).getValue(),
     )
 

@@ -1,5 +1,3 @@
-import { WebApplication } from '@/Application/WebApplication'
-import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { isDev } from '@/Utils'
 import { observer } from 'mobx-react-lite'
 import React, { FunctionComponent, KeyboardEventHandler, useCallback, useEffect, useRef, useState } from 'react'
@@ -13,15 +11,16 @@ import IconButton from '@/Components/Button/IconButton'
 import AdvancedOptions from './AdvancedOptions'
 import HorizontalSeparator from '../Shared/HorizontalSeparator'
 import { getErrorFromErrorResponse, isErrorResponse } from '@standardnotes/snjs'
+import { useApplication } from '../ApplicationProvider'
 
 type Props = {
-  viewControllerManager: ViewControllerManager
-  application: WebApplication
   setMenuPane: (pane: AccountMenuPane) => void
 }
 
-const SignInPane: FunctionComponent<Props> = ({ application, viewControllerManager, setMenuPane }) => {
-  const { notesAndTagsCount } = viewControllerManager.accountMenuController
+const SignInPane: FunctionComponent<Props> = ({ setMenuPane }) => {
+  const application = useApplication()
+
+  const { notesAndTagsCount } = application.accountMenuController
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [recoveryCodes, setRecoveryCodes] = useState('')
@@ -101,7 +100,7 @@ const SignInPane: FunctionComponent<Props> = ({ application, viewControllerManag
         if (isErrorResponse(response)) {
           throw new Error(getErrorFromErrorResponse(response).message)
         }
-        viewControllerManager.accountMenuController.closeAccountMenu()
+        application.accountMenuController.closeAccountMenu()
       })
       .catch((err) => {
         console.error(err)
@@ -112,7 +111,7 @@ const SignInPane: FunctionComponent<Props> = ({ application, viewControllerManag
       .finally(() => {
         setIsSigningIn(false)
       })
-  }, [viewControllerManager, application, email, isEphemeral, isStrictSignin, password, shouldMergeLocal])
+  }, [application, email, isEphemeral, isStrictSignin, password, shouldMergeLocal])
 
   const recoverySignIn = useCallback(() => {
     setIsSigningIn(true)
@@ -129,7 +128,7 @@ const SignInPane: FunctionComponent<Props> = ({ application, viewControllerManag
         if (result.isFailed()) {
           throw new Error(result.getError())
         }
-        viewControllerManager.accountMenuController.closeAccountMenu()
+        application.accountMenuController.closeAccountMenu()
       })
       .catch((err) => {
         console.error(err)
@@ -140,7 +139,7 @@ const SignInPane: FunctionComponent<Props> = ({ application, viewControllerManag
       .finally(() => {
         setIsSigningIn(false)
       })
-  }, [viewControllerManager, application, email, password, recoveryCodes])
+  }, [application, email, password, recoveryCodes])
 
   const onPrivateUsernameChange = useCallback(
     (newisPrivateUsername: boolean, privateUsernameIdentifier?: string) => {
@@ -251,8 +250,6 @@ const SignInPane: FunctionComponent<Props> = ({ application, viewControllerManag
       </div>
       <HorizontalSeparator classes="my-2" />
       <AdvancedOptions
-        viewControllerManager={viewControllerManager}
-        application={application}
         disabled={isSigningIn}
         onPrivateUsernameModeChange={onPrivateUsernameChange}
         onStrictSignInChange={handleStrictSigninChange}

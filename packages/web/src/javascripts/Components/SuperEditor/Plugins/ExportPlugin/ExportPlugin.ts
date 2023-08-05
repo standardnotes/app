@@ -23,14 +23,16 @@ export const ExportPlugin = () => {
   const downloadData = useCallback(
     (data: Blob, fileName: string) => {
       if (!application.isNativeMobileWeb()) {
-        application.getArchiveService().downloadData(data, fileName)
+        application.archiveService.downloadData(data, fileName)
         return
       }
 
       if (application.platform === Platform.Android) {
-        downloadBlobOnAndroid(application, data, fileName).catch(console.error)
+        downloadBlobOnAndroid(application.mobileDevice, data, fileName).catch(console.error)
       } else {
-        shareBlobOnMobile(application, data, fileName).catch(console.error)
+        shareBlobOnMobile(application.mobileDevice, application.isNativeMobileWeb(), data, fileName).catch(
+          console.error,
+        )
       }
     },
     [application],

@@ -24,7 +24,17 @@ const ClippedNoteView = ({
 }) => {
   const application = useApplication()
 
-  const syncController = useRef(new NoteSyncController(application, note))
+  const syncController = useRef(
+    new NoteSyncController(
+      note,
+      application.items,
+      application.mutator,
+      application.sessions,
+      application.sync,
+      application.alerts,
+      application.isNativeMobileWebUseCase,
+    ),
+  )
   useEffect(() => {
     const currentController = syncController.current
     return () => {

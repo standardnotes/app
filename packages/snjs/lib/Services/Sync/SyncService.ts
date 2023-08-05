@@ -83,6 +83,7 @@ import {
   SyncEventReceivedNotificationsData,
   SyncEventReceivedAsymmetricMessagesData,
   SyncOpStatus,
+  ApplicationSyncOptions,
 } from '@standardnotes/services'
 import { OfflineSyncResponse } from './Offline/Response'
 import {
@@ -92,7 +93,6 @@ import {
   SplitPayloadsByEncryptionType,
 } from '@standardnotes/encryption'
 import { CreatePayloadFromRawServerItem } from './Account/Utilities'
-import { ApplicationSyncOptions } from '@Lib/Application/Options/OptionalOptions'
 import { DecryptedServerConflictMap, TrustedServerConflictMap } from './Account/ServerConflictMap'
 import { ContentType } from '@standardnotes/domain-core'
 

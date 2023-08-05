@@ -15,39 +15,23 @@ import Vaults from './Panes/Vaults/Vaults'
 
 const PaneSelector: FunctionComponent<PreferencesProps & { menu: PreferencesSessionController }> = ({
   menu,
-  viewControllerManager,
   application,
-  mfaProvider,
-  userProvider,
 }) => {
   switch (menu.selectedPaneId) {
     case 'general':
-      return (
-        <General
-          viewControllerManager={viewControllerManager}
-          application={application}
-          extensionsLatestVersions={menu.extensionsLatestVersions}
-        />
-      )
+      return <General application={application} extensionsLatestVersions={menu.extensionsLatestVersions} />
     case 'account':
-      return <AccountPreferences application={application} viewControllerManager={viewControllerManager} />
+      return <AccountPreferences application={application} />
     case 'appearance':
       return <Appearance application={application} />
     case 'home-server':
       return <HomeServer />
     case 'security':
-      return (
-        <Security
-          mfaProvider={mfaProvider}
-          userProvider={userProvider}
-          viewControllerManager={viewControllerManager}
-          application={application}
-        />
-      )
+      return <Security application={application} />
     case 'vaults':
       return <Vaults />
     case 'backups':
-      return <Backups application={application} viewControllerManager={viewControllerManager} />
+      return <Backups application={application} />
     case 'listed':
       return <Listed application={application} />
     case 'shortcuts':
@@ -61,13 +45,7 @@ const PaneSelector: FunctionComponent<PreferencesProps & { menu: PreferencesSess
     case 'whats-new':
       return <WhatsNew application={application} />
     default:
-      return (
-        <General
-          viewControllerManager={viewControllerManager}
-          application={application}
-          extensionsLatestVersions={menu.extensionsLatestVersions}
-        />
-      )
+      return <General application={application} extensionsLatestVersions={menu.extensionsLatestVersions} />
   }
 }
 

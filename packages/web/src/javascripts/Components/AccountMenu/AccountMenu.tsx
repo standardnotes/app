@@ -1,35 +1,30 @@
 import { observer } from 'mobx-react-lite'
-import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
-import { WebApplication } from '@/Application/WebApplication'
 import { useCallback, FunctionComponent, KeyboardEventHandler } from 'react'
 import { WebApplicationGroup } from '@/Application/WebApplicationGroup'
 import { AccountMenuPane } from './AccountMenuPane'
 import MenuPaneSelector from './MenuPaneSelector'
 import { KeyboardKey } from '@standardnotes/ui-services'
+import { useApplication } from '../ApplicationProvider'
 
 export type AccountMenuProps = {
-  viewControllerManager: ViewControllerManager
-  application: WebApplication
   onClickOutside: () => void
   mainApplicationGroup: WebApplicationGroup
 }
 
-const AccountMenu: FunctionComponent<AccountMenuProps> = ({
-  application,
-  viewControllerManager,
-  mainApplicationGroup,
-}) => {
-  const { currentPane } = viewControllerManager.accountMenuController
+const AccountMenu: FunctionComponent<AccountMenuProps> = ({ mainApplicationGroup }) => {
+  const application = useApplication()
+
+  const { currentPane } = application.accountMenuController
 
   const closeAccountMenu = useCallback(() => {
-    viewControllerManager.accountMenuController.closeAccountMenu()
-  }, [viewControllerManager])
+    application.accountMenuController.closeAccountMenu()
+  }, [application])
 
   const setCurrentPane = useCallback(
     (pane: AccountMenuPane) => {
-      viewControllerManager.accountMenuController.setCurrentPane(pane)
+      application.accountMenuController.setCurrentPane(pane)
     },
-    [viewControllerManager],
+    [application],
   )
 
   const handleKeyDown: KeyboardEventHandler<HTMLDivElement> = useCallback(
@@ -50,8 +45,6 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({
   return (
     <div id="account-menu" className="sn-component" onKeyDown={handleKeyDown}>
       <MenuPaneSelector
-        viewControllerManager={viewControllerManager}
-        application={application}
         mainApplicationGroup={mainApplicationGroup}
         menuPane={currentPane}
         setMenuPane={setCurrentPane}

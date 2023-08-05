@@ -15,7 +15,6 @@ import Icon from '@/Components/Icon/Icon'
 import ChallengeModalPrompt from './ChallengePrompt'
 import LockscreenWorkspaceSwitcher from './LockscreenWorkspaceSwitcher'
 import { WebApplicationGroup } from '@/Application/WebApplicationGroup'
-import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { ChallengeModalValues } from './ChallengeModalValues'
 import { InputValue } from './InputValue'
 import { classNames } from '@standardnotes/utils'
@@ -26,7 +25,6 @@ import { useAutoElementRect } from '@/Hooks/useElementRect'
 
 type Props = {
   application: WebApplication
-  viewControllerManager: ViewControllerManager
   mainApplicationGroup: WebApplicationGroup
   challenge: Challenge
   onDismiss?: (challenge: Challenge) => void
@@ -48,13 +46,7 @@ const validateValues = (values: ChallengeModalValues, prompts: ChallengePrompt[]
   return undefined
 }
 
-const ChallengeModal: FunctionComponent<Props> = ({
-  application,
-  viewControllerManager,
-  mainApplicationGroup,
-  challenge,
-  onDismiss,
-}) => {
+const ChallengeModal: FunctionComponent<Props> = ({ application, mainApplicationGroup, challenge, onDismiss }) => {
   const promptsContainerRef = useRef<HTMLFormElement>(null)
 
   const [values, setValues] = useState<ChallengeModalValues>(() => {
@@ -341,12 +333,7 @@ const ChallengeModal: FunctionComponent<Props> = ({
               Forgot passcode?
             </Button>
           )}
-          {shouldShowWorkspaceSwitcher && (
-            <LockscreenWorkspaceSwitcher
-              mainApplicationGroup={mainApplicationGroup}
-              viewControllerManager={viewControllerManager}
-            />
-          )}
+          {shouldShowWorkspaceSwitcher && <LockscreenWorkspaceSwitcher mainApplicationGroup={mainApplicationGroup} />}
         </div>
       </Modal>
     </ModalOverlay>

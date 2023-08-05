@@ -11,21 +11,15 @@ import { useAvailableSafeAreaPadding } from '@/Hooks/useSafeAreaPadding'
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 import Icon from '../Icon/Icon'
 
-const PreferencesView: FunctionComponent<PreferencesProps> = ({
-  application,
-  viewControllerManager,
-  closePreferences,
-  userProvider,
-  mfaProvider,
-}) => {
+const PreferencesView: FunctionComponent<PreferencesProps> = ({ application, closePreferences }) => {
   const menu = useMemo(
-    () => new PreferencesSessionController(application, viewControllerManager.enableUnfinishedFeatures),
-    [viewControllerManager.enableUnfinishedFeatures, application],
+    () => new PreferencesSessionController(application, application.enableUnfinishedFeatures),
+    [application],
   )
 
   useEffect(() => {
-    menu.selectPane(viewControllerManager.preferencesController.currentPane)
-  }, [menu, viewControllerManager.preferencesController.currentPane])
+    menu.selectPane(application.preferencesController.currentPane)
+  }, [menu, application.preferencesController.currentPane])
 
   const isMobileScreen = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
 
@@ -92,14 +86,7 @@ const PreferencesView: FunctionComponent<PreferencesProps> = ({
       actions={modalActions}
       customFooter={<></>}
     >
-      <PreferencesCanvas
-        menu={menu}
-        application={application}
-        viewControllerManager={viewControllerManager}
-        closePreferences={closePreferences}
-        userProvider={userProvider}
-        mfaProvider={mfaProvider}
-      />
+      <PreferencesCanvas menu={menu} application={application} closePreferences={closePreferences} />
     </Modal>
   )
 }

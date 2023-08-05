@@ -141,7 +141,7 @@ const FilePreview = ({ file, application, isEmbeddedInSuper = false, imageZoomLe
   ) : (
     <FilePreviewError
       file={file}
-      filesController={application.controllers.filesController}
+      filesController={application.filesController}
       tryAgainCallback={() => {
         setDownloadedBytes(undefined)
       }}

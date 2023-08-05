@@ -37,7 +37,7 @@ const AndroidBackHandlerProvider = ({ application, children }: ProviderProps) =>
     application.setAndroidBackHandlerFallbackListener(() => {
       const shouldConfirm = (application.getValue(AndroidConfirmBeforeExitKey) as boolean) ?? true
 
-      application.mobileDevice().exitApp(shouldConfirm)
+      application.mobileDevice.exitApp(shouldConfirm)
 
       return true
     })

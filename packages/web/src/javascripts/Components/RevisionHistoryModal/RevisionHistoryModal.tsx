@@ -6,15 +6,12 @@ import { RevisionHistoryModalProps } from './RevisionHistoryModalProps'
 import { useAndroidBackHandler } from '@/NativeMobileWeb/useAndroidBackHandler'
 import { useModalAnimation } from '../Modal/useModalAnimation'
 
-const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> = ({
-  application,
-  historyModalController,
-  selectionController,
-}) => {
+const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> = ({ application }) => {
   const addAndroidBackHandler = useAndroidBackHandler()
 
   const isOpen = Boolean(
-    historyModalController.note && application.isAuthorizedToRenderItem(historyModalController.note),
+    application.historyModalController.note &&
+      application.isAuthorizedToRenderItem(application.historyModalController.note),
   )
 
   useEffect(() => {
@@ -22,7 +19,7 @@ const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> = ({
 
     if (isOpen) {
       removeListener = addAndroidBackHandler(() => {
-        historyModalController.dismissModal()
+        application.historyModalController.dismissModal()
         return true
       })
     }
@@ -32,7 +29,7 @@ const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> = ({
         removeListener()
       }
     }
-  }, [addAndroidBackHandler, historyModalController, isOpen])
+  }, [addAndroidBackHandler, application, isOpen])
 
   const [isMounted, setElement] = useModalAnimation(isOpen)
 
@@ -41,13 +38,12 @@ const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> = ({
   }
 
   return (
-    <HistoryModalDialog onDismiss={historyModalController.dismissModal} ref={setElement}>
-      {!!historyModalController.note && (
+    <HistoryModalDialog onDismiss={application.historyModalController.dismissModal} ref={setElement}>
+      {!!application.historyModalController.note && (
         <HistoryModalDialogContent
           application={application}
-          dismissModal={historyModalController.dismissModal}
-          note={historyModalController.note}
-          selectionController={selectionController}
+          dismissModal={application.historyModalController.dismissModal}
+          note={application.historyModalController.note}
         />
       )}
     </HistoryModalDialog>

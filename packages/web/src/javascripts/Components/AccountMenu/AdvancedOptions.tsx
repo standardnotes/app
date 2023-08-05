@@ -1,14 +1,11 @@
-import { WebApplication } from '@/Application/WebApplication'
-import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
 import { ChangeEventHandler, FunctionComponent, ReactNode, useCallback, useEffect, useState } from 'react'
 import Checkbox from '@/Components/Checkbox/Checkbox'
 import DecoratedInput from '@/Components/Input/DecoratedInput'
 import Icon from '@/Components/Icon/Icon'
+import { useApplication } from '../ApplicationProvider'
 
 type Props = {
-  application: WebApplication
-  viewControllerManager: ViewControllerManager
   disabled?: boolean
   onPrivateUsernameModeChange?: (isPrivate: boolean, identifier?: string) => void
   onStrictSignInChange?: (isStrictSignIn: boolean) => void
@@ -17,15 +14,15 @@ type Props = {
 }
 
 const AdvancedOptions: FunctionComponent<Props> = ({
-  viewControllerManager,
-  application,
   disabled = false,
   onPrivateUsernameModeChange,
   onStrictSignInChange,
   onRecoveryCodesChange,
   children,
 }) => {
-  const { server, setServer, enableServerOption, setEnableServerOption } = viewControllerManager.accountMenuController
+  const application = useApplication()
+
+  const { server, setServer, enableServerOption, setEnableServerOption } = application.accountMenuController
   const [showAdvanced, setShowAdvanced] = useState(false)
 
   const [isPrivateUsername, setIsPrivateUsername] = useState(false)

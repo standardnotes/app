@@ -813,7 +813,7 @@ describe('importing', function () {
       },
     })
     await application.launch(false)
-    await application.setHost(Factory.getDefaultHost())
+    await application.setHost.execute(Factory.getDefaultHost())
 
     const backupFile = {
       items: [

@@ -1,44 +1,72 @@
-import { WebApplication } from '@/Application/WebApplication'
 import { ShouldPersistNoteStateKey } from '@/Components/Preferences/Panes/General/Persistence'
-import { ApplicationEvent, ContentType, InternalEventBusInterface } from '@standardnotes/snjs'
-import { PersistedStateValue, StorageKey } from '@standardnotes/ui-services'
+import {
+  ApplicationEvent,
+  ContentType,
+  InternalEventBusInterface,
+  InternalEventHandlerInterface,
+  InternalEventInterface,
+  ItemManagerInterface,
+  StorageServiceInterface,
+  SyncServiceInterface,
+} from '@standardnotes/snjs'
+import { PersistedStateValue, PersistenceKey, StorageKey } from '@standardnotes/ui-services'
 import { CrossControllerEvent } from '../CrossControllerEvent'
+import { NavigationController } from '../Navigation/NavigationController'
+import { ItemListController } from '../ItemList/ItemListController'
 
-export class PersistenceService {
-  private unsubAppEventObserver: () => void
+export class PersistenceService implements InternalEventHandlerInterface {
   private didHydrateOnce = false
 
   constructor(
-    private application: WebApplication,
+    private itemListController: ItemListController,
+    private navigationController: NavigationController,
+    private storage: StorageServiceInterface,
+    private items: ItemManagerInterface,
+    private sync: SyncServiceInterface,
     private eventBus: InternalEventBusInterface,
   ) {
-    this.unsubAppEventObserver = this.application.addEventObserver(async (eventName) => {
-      if (!this.application) {
-        return
-      }
-
-      void this.onAppEvent(eventName)
-    })
+    eventBus.addEventHandler(this, ApplicationEvent.LocalDataLoaded)
+    eventBus.addEventHandler(this, ApplicationEvent.LocalDataIncrementalLoad)
+    eventBus.addEventHandler(this, CrossControllerEvent.HydrateFromPersistedValues)
+    eventBus.addEventHandler(this, CrossControllerEvent.RequestValuePersistence)
   }
 
-  async onAppEvent(eventName: ApplicationEvent) {
-    if (eventName === ApplicationEvent.LocalDataLoaded && !this.didHydrateOnce) {
-      this.hydratePersistedValues()
-      this.didHydrateOnce = true
-    } else if (eventName === ApplicationEvent.LocalDataIncrementalLoad) {
-      const canHydrate = this.application.items.getItems([ContentType.TYPES.Note, ContentType.TYPES.Tag]).length > 0
-
-      if (!canHydrate) {
-        return
+  async handleEvent(event: InternalEventInterface): Promise<void> {
+    switch (event.type) {
+      case ApplicationEvent.LocalDataLoaded: {
+        if (!this.didHydrateOnce) {
+          this.hydratePersistedValues()
+          this.didHydrateOnce = true
+        }
+        break
       }
 
-      this.hydratePersistedValues()
-      this.didHydrateOnce = true
+      case ApplicationEvent.LocalDataIncrementalLoad: {
+        const canHydrate = this.items.getItems([ContentType.TYPES.Note, ContentType.TYPES.Tag]).length > 0
+
+        if (!canHydrate) {
+          return
+        }
+
+        this.hydratePersistedValues()
+        this.didHydrateOnce = true
+        break
+      }
+
+      case CrossControllerEvent.HydrateFromPersistedValues: {
+        this.hydrateFromPersistedValues(event.payload as PersistedStateValue | undefined)
+        break
+      }
+
+      case CrossControllerEvent.RequestValuePersistence: {
+        this.persistCurrentState()
+        break
+      }
     }
   }
 
   get persistenceEnabled() {
-    return this.application.getValue(ShouldPersistNoteStateKey) ?? true
+    return this.storage.getValue(ShouldPersistNoteStateKey) ?? true
   }
 
   hydratePersistedValues = () => {
@@ -48,8 +76,37 @@ export class PersistenceService {
     })
   }
 
+  persistCurrentState(): void {
+    const values: PersistedStateValue = {
+      [PersistenceKey.ItemListController]: this.itemListController.getPersistableValue(),
+      [PersistenceKey.NavigationController]: this.navigationController.getPersistableValue(),
+    }
+
+    this.persistValues(values)
+
+    const selectedItemsState = values['selected-items-controller']
+    const navigationSelectionState = values['navigation-controller']
+    const launchPriorityUuids: string[] = []
+    if (selectedItemsState.selectedUuids.length) {
+      launchPriorityUuids.push(...selectedItemsState.selectedUuids)
+    }
+    if (navigationSelectionState.selectedTagUuid) {
+      launchPriorityUuids.push(navigationSelectionState.selectedTagUuid)
+    }
+
+    this.sync.setLaunchPriorityUuids(launchPriorityUuids)
+  }
+
+  hydrateFromPersistedValues(values: PersistedStateValue | undefined): void {
+    const navigationState = values?.[PersistenceKey.NavigationController]
+    this.navigationController.hydrateFromPersistedValue(navigationState)
+
+    const selectedItemsState = values?.[PersistenceKey.ItemListController]
+    this.itemListController.hydrateFromPersistedValue(selectedItemsState)
+  }
+
   persistValues(values: PersistedStateValue): void {
-    if (!this.application.isDatabaseLoaded()) {
+    if (!this.sync.isDatabaseLoaded()) {
       return
     }
 
@@ -57,22 +114,18 @@ export class PersistenceService {
       return
     }
 
-    this.application.setValue(StorageKey.MasterStatePersistenceKey, values)
+    this.storage.setValue(StorageKey.MasterStatePersistenceKey, values)
   }
 
   clearPersistedValues(): void {
-    if (!this.application.isDatabaseLoaded()) {
+    if (!this.sync.isDatabaseLoaded()) {
       return
     }
 
-    void this.application.removeValue(StorageKey.MasterStatePersistenceKey)
+    void this.storage.removeValue(StorageKey.MasterStatePersistenceKey)
   }
 
   getPersistedValues(): PersistedStateValue {
-    return this.application.getValue(StorageKey.MasterStatePersistenceKey) as PersistedStateValue
-  }
-
-  deinit() {
-    this.unsubAppEventObserver()
+    return this.storage.getValue(StorageKey.MasterStatePersistenceKey) as PersistedStateValue
   }
 }

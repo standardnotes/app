@@ -3,7 +3,6 @@ import { Subtitle } from '@/Components/Preferences/PreferencesComponents/Content
 import DecoratedInput from '@/Components/Input/DecoratedInput'
 import Button from '@/Components/Button/Button'
 import { WebApplication } from '@/Application/WebApplication'
-import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
 import { STRING_REMOVE_OFFLINE_KEY_CONFIRMATION } from '@/Constants/Strings'
 import { ButtonType, ClientDisplayableError } from '@standardnotes/snjs'
@@ -11,7 +10,6 @@ import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 
 type Props = {
   application: WebApplication
-  viewControllerManager: ViewControllerManager
   onSuccess?: () => void
 }
 
@@ -46,7 +44,7 @@ const OfflineSubscription: FunctionComponent<Props> = ({ application, onSuccess 
         return
       }
 
-      const signedInUser = application.getUser()
+      const signedInUser = application.sessions.getUser()
       if (!signedInUser) {
         return
       }

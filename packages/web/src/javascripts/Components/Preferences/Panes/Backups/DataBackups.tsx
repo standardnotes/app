@@ -12,7 +12,6 @@ import {
 import { BackupFile } from '@standardnotes/snjs'
 import { ChangeEventHandler, MouseEventHandler, useCallback, useEffect, useRef, useState } from 'react'
 import { WebApplication } from '@/Application/WebApplication'
-import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
 import { Title, Subtitle } from '@/Components/Preferences/PreferencesComponents/Content'
 import Button from '@/Components/Button/Button'
@@ -24,10 +23,9 @@ import { downloadOrShareBlobBasedOnPlatform } from '@/Utils/DownloadOrShareBased
 
 type Props = {
   application: WebApplication
-  viewControllerManager: ViewControllerManager
 }
 
-const DataBackups = ({ application, viewControllerManager }: Props) => {
+const DataBackups = ({ application }: Props) => {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [isImportDataLoading, setIsImportDataLoading] = useState(false)
   const {
@@ -36,7 +34,7 @@ const DataBackups = ({ application, viewControllerManager }: Props) => {
     setIsBackupEncrypted,
     setIsEncryptionEnabled,
     setEncryptionStatusString,
-  } = viewControllerManager.accountMenuController
+  } = application.accountMenuController
 
   const refreshEncryptionStatus = useCallback(() => {
     const hasUser = application.hasAccount()
@@ -73,16 +71,30 @@ const DataBackups = ({ application, viewControllerManager }: Props) => {
     })
 
     if (isBackupEncrypted) {
-      const filename = `Standard Notes Encrypted Backup and Import File - ${application
-        .getArchiveService()
-        .formattedDateForExports()}`
+      const filename = `Standard Notes Encrypted Backup and Import File - ${application.archiveService.formattedDateForExports()}`
       const sanitizedFilename = sanitizeFileName(filename) + '.txt'
-      void downloadOrShareBlobBasedOnPlatform(application, blobData, sanitizedFilename)
+      void downloadOrShareBlobBasedOnPlatform({
+        archiveService: application.archiveService,
+        platform: application.platform,
+        mobileDevice: application.mobileDevice,
+        blob: blobData,
+        filename: sanitizedFilename,
+        isNativeMobileWeb: application.isNativeMobileWeb(),
+        showToastOnAndroid: undefined,
+      })
     } else {
-      const zippedDecryptedItemsBlob = await application.getArchiveService().getZippedDecryptedItemsBlob(data)
-      const filename = `Standard Notes Backup - ${application.getArchiveService().formattedDateForExports()}`
+      const zippedDecryptedItemsBlob = await application.archiveService.getZippedDecryptedItemsBlob(data)
+      const filename = `Standard Notes Backup - ${application.archiveService.formattedDateForExports()}`
       const sanitizedFilename = sanitizeFileName(filename) + '.zip'
-      void downloadOrShareBlobBasedOnPlatform(application, zippedDecryptedItemsBlob, sanitizedFilename)
+      void downloadOrShareBlobBasedOnPlatform({
+        archiveService: application.archiveService,
+        platform: application.platform,
+        mobileDevice: application.mobileDevice,
+        blob: zippedDecryptedItemsBlob,
+        filename: sanitizedFilename,
+        isNativeMobileWeb: application.isNativeMobileWeb(),
+        showToastOnAndroid: undefined,
+      })
     }
   }
 

@@ -5,9 +5,12 @@ import ImportModalInitialPage from './InitialPage'
 import Modal, { ModalAction } from '../Modal/Modal'
 import ModalOverlay from '../Modal/ModalOverlay'
 import { ImportModalController } from '@/Controllers/ImportModalController'
+import { useApplication } from '../ApplicationProvider'
 
 const ImportModal = ({ importModalController }: { importModalController: ImportModalController }) => {
-  const { files, setFiles, updateFile, removeFile, importer, parseAndImport, isVisible, close } = importModalController
+  const application = useApplication()
+
+  const { files, setFiles, updateFile, removeFile, parseAndImport, isVisible, close } = importModalController
 
   const isReadyToImport = files.length > 0 && files.every((file) => file.status === 'ready')
   const importSuccessOrError =
@@ -45,7 +48,7 @@ const ImportModal = ({ importModalController }: { importModalController: ImportM
                   key={file.id}
                   updateFile={updateFile}
                   removeFile={removeFile}
-                  importer={importer}
+                  importer={application.importer}
                 />
               ))}
             </div>

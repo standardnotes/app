@@ -93,7 +93,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
     : selectedTag.preferences
   const [currentMode, setCurrentMode] = useState<PreferenceMode>(selectedTagPreferences ? 'tag' : 'global')
   const [preferences, setPreferences] = useState<TagPreferences>({})
-  const hasSubscription = application.controllers.subscriptionController.hasFirstPartyOnlineOrOfflineSubscription
+  const hasSubscription = application.subscriptionController.hasFirstPartyOnlineOrOfflineSubscription
   const controlsDisabled = currentMode === 'tag' && !hasSubscription
   const isDailyEntry = selectedTagPreferences?.entryMode === 'daily'
 
@@ -181,7 +181,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
       } else if (isSystemTag) {
         await changeSystemViewPreferences(properties)
       } else {
-        await application.changeAndSaveItem<TagMutator>(selectedTag, (mutator) => {
+        await application.changeAndSaveItem.execute<TagMutator>(selectedTag, (mutator) => {
           mutator.preferences = {
             ...mutator.preferences,
             ...properties,
@@ -202,7 +202,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
       return
     }
 
-    void application.changeAndSaveItem<TagMutator>(selectedTag, (mutator) => {
+    void application.changeAndSaveItem.execute<TagMutator>(selectedTag, (mutator) => {
       mutator.preferences = undefined
     })
   }, [application, isSystemTag, reloadPreferences, selectedTag])

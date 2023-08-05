@@ -125,12 +125,10 @@ class Footer extends AbstractComponent<Props, State> {
     })
 
     this.autorun(() => {
-      const showBetaWarning = this.viewControllerManager.showBetaWarning
       this.setState({
-        showBetaWarning: showBetaWarning,
-        showAccountMenu: this.viewControllerManager.accountMenuController.show,
-        showQuickSettingsMenu: this.viewControllerManager.quickSettingsMenuController.open,
-        showVaultSelectionMenu: this.viewControllerManager.vaultSelectionController.open,
+        showAccountMenu: this.application.accountMenuController.show,
+        showQuickSettingsMenu: this.application.quickSettingsMenuController.open,
+        showVaultSelectionMenu: this.application.vaultSelectionController.open,
       })
     })
   }
@@ -156,7 +154,7 @@ class Footer extends AbstractComponent<Props, State> {
   }
 
   reloadUser() {
-    this.user = this.application.getUser()
+    this.user = this.application.sessions.getUser()
   }
 
   async reloadPasscodeStatus() {
@@ -194,7 +192,7 @@ class Footer extends AbstractComponent<Props, State> {
         if (!this.didCheckForOffline) {
           this.didCheckForOffline = true
           if (this.state.offline && this.application.items.getNoteCount() === 0) {
-            this.viewControllerManager.accountMenuController.setShow(true)
+            this.application.accountMenuController.setShow(true)
           }
         }
         this.findErrors()
@@ -270,7 +268,7 @@ class Footer extends AbstractComponent<Props, State> {
 
   updateOfflineStatus() {
     this.setState({
-      offline: this.application.noAccount(),
+      offline: this.application.sessions.isSignedOut(),
     })
   }
 
@@ -295,15 +293,15 @@ class Footer extends AbstractComponent<Props, State> {
   }
 
   accountMenuClickHandler = () => {
-    this.viewControllerManager.accountMenuController.toggleShow()
+    this.application.accountMenuController.toggleShow()
   }
 
   quickSettingsClickHandler = () => {
-    this.viewControllerManager.quickSettingsMenuController.toggle()
+    this.application.quickSettingsMenuController.toggle()
   }
 
   vaultSelectionClickHandler = () => {
-    this.viewControllerManager.vaultSelectionController.toggle()
+    this.application.vaultSelectionController.toggle()
   }
 
   syncResolutionClickHandler = () => {
@@ -313,8 +311,8 @@ class Footer extends AbstractComponent<Props, State> {
   }
 
   closeAccountMenu = () => {
-    this.viewControllerManager.accountMenuController.setShow(false)
-    this.viewControllerManager.accountMenuController.setCurrentPane(AccountMenuPane.GeneralMenu)
+    this.application.accountMenuController.setShow(false)
+    this.application.accountMenuController.setCurrentPane(AccountMenuPane.GeneralMenu)
   }
 
   lockClickHandler = () => {
@@ -342,19 +340,19 @@ class Footer extends AbstractComponent<Props, State> {
   }
 
   clickOutsideAccountMenu = () => {
-    this.viewControllerManager.accountMenuController.closeAccountMenu()
+    this.application.accountMenuController.closeAccountMenu()
   }
 
   clickOutsideQuickSettingsMenu = () => {
-    this.viewControllerManager.quickSettingsMenuController.closeQuickSettingsMenu()
+    this.application.quickSettingsMenuController.closeQuickSettingsMenu()
   }
 
   openPreferences = (openWhatsNew: boolean) => {
     this.clickOutsideQuickSettingsMenu()
     if (openWhatsNew) {
-      this.viewControllerManager.preferencesController.setCurrentPane('whats-new')
+      this.application.preferencesController.setCurrentPane('whats-new')
     }
-    this.viewControllerManager.preferencesController.openPreferences()
+    this.application.preferencesController.openPreferences()
   }
 
   override render() {
@@ -367,14 +365,12 @@ class Footer extends AbstractComponent<Props, State> {
           <div className="left flex h-full flex-shrink-0">
             <div className="sk-app-bar-item relative z-footer-bar-item ml-0 select-none">
               <AccountMenuButton
-                application={this.application}
                 hasError={this.state.hasError}
                 isOpen={this.state.showAccountMenu}
                 mainApplicationGroup={this.props.applicationGroup}
                 onClickOutside={this.clickOutsideAccountMenu}
                 toggleMenu={this.accountMenuClickHandler}
                 user={this.user}
-                viewControllerManager={this.viewControllerManager}
               />
             </div>
 
@@ -387,7 +383,7 @@ class Footer extends AbstractComponent<Props, State> {
                 isOpen={this.state.showQuickSettingsMenu}
                 toggleMenu={this.quickSettingsClickHandler}
                 application={this.application}
-                quickSettingsMenuController={this.viewControllerManager.quickSettingsMenuController}
+                quickSettingsMenuController={this.application.quickSettingsMenuController}
               />
             </div>
 
@@ -395,13 +391,13 @@ class Footer extends AbstractComponent<Props, State> {
               <VaultSelectionButton
                 isOpen={this.state.showVaultSelectionMenu}
                 toggleMenu={this.vaultSelectionClickHandler}
-                controller={this.viewControllerManager.vaultSelectionController}
+                controller={this.application.vaultSelectionController}
               />
             </div>
             <UpgradeNow
               application={this.application}
-              featuresController={this.viewControllerManager.featuresController}
-              subscriptionContoller={this.viewControllerManager.subscriptionController}
+              featuresController={this.application.featuresController}
+              subscriptionContoller={this.application.subscriptionController}
             />
             {this.state.showBetaWarning && (
               <Fragment>

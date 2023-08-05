@@ -1,19 +1,13 @@
-import { WebApplicationInterface } from './../../WebApplication/WebApplicationInterface'
 import { NativeFeatureIdentifier, NoteType } from '@standardnotes/features'
 import { AegisToAuthenticatorConverter } from './AegisToAuthenticatorConverter'
 import data from './testData'
+import { UuidGenerator } from '@standardnotes/utils'
+
+UuidGenerator.SetGenerator(() => String(Math.random()))
 
 describe('AegisConverter', () => {
-  let application: WebApplicationInterface
-
-  beforeEach(() => {
-    application = {
-      generateUUID: jest.fn().mockReturnValue('test'),
-    } as unknown as WebApplicationInterface
-  })
-
   it('should parse entries', () => {
-    const converter = new AegisToAuthenticatorConverter(application)
+    const converter = new AegisToAuthenticatorConverter()
 
     const result = converter.parseEntries(data)
 
@@ -34,7 +28,7 @@ describe('AegisConverter', () => {
   })
 
   it('should create note from entries with editor info', () => {
-    const converter = new AegisToAuthenticatorConverter(application)
+    const converter = new AegisToAuthenticatorConverter()
 
     const parsedEntries = converter.parseEntries(data)
 
@@ -61,7 +55,7 @@ describe('AegisConverter', () => {
   })
 
   it('should create note from entries without editor info', () => {
-    const converter = new AegisToAuthenticatorConverter(application)
+    const converter = new AegisToAuthenticatorConverter()
 
     const parsedEntries = converter.parseEntries(data)
 

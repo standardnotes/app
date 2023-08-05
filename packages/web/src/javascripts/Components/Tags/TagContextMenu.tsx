@@ -14,6 +14,7 @@ import Popover from '../Popover/Popover'
 import IconPicker from '../Icon/IconPicker'
 import AddToVaultMenuOption from '../Vaults/AddToVaultMenuOption'
 import { featureTrunkVaultsEnabled } from '@/FeatureTrunk'
+import { useApplication } from '../ApplicationProvider'
 
 type ContextMenuProps = {
   navigationController: NavigationController
@@ -22,9 +23,11 @@ type ContextMenuProps = {
 }
 
 const TagContextMenu = ({ navigationController, isEntitledToFolders, selectedTag }: ContextMenuProps) => {
+  const application = useApplication()
+
   const premiumModal = usePremiumModal()
 
-  const { contextMenuOpen, contextMenuClickLocation, application } = navigationController
+  const { contextMenuOpen, contextMenuClickLocation } = navigationController
 
   const contextMenuRef = useRef<HTMLDivElement>(null)
 

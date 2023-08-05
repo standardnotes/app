@@ -1,39 +1,49 @@
 import { storage, StorageKey } from '@standardnotes/ui-services'
-import { ApplicationEvent, InternalEventBusInterface } from '@standardnotes/snjs'
+import {
+  ApplicationEvent,
+  InternalEventBusInterface,
+  InternalEventHandlerInterface,
+  InternalEventInterface,
+  SessionsClientInterface,
+} from '@standardnotes/snjs'
 import { runInAction, makeObservable, observable, action } from 'mobx'
-import { WebApplication } from '../Application/WebApplication'
 import { AbstractViewController } from './Abstract/AbstractViewController'
 
-export class NoAccountWarningController extends AbstractViewController {
+export class NoAccountWarningController extends AbstractViewController implements InternalEventHandlerInterface {
   show: boolean
 
-  constructor(application: WebApplication, eventBus: InternalEventBusInterface) {
-    super(application, eventBus)
+  constructor(
+    private sessions: SessionsClientInterface,
+    eventBus: InternalEventBusInterface,
+  ) {
+    super(eventBus)
 
-    this.show = application.hasAccount() ? false : storage.get(StorageKey.ShowNoAccountWarning) ?? true
+    this.show = sessions.isSignedIn() ? false : storage.get(StorageKey.ShowNoAccountWarning) ?? true
 
-    this.disposers.push(
-      application.addEventObserver(async () => {
-        runInAction(() => {
-          this.show = false
-        })
-      }, ApplicationEvent.SignedIn),
-    )
-
-    this.disposers.push(
-      application.addEventObserver(async () => {
-        if (application.hasAccount()) {
-          runInAction(() => {
-            this.show = false
-          })
-        }
-      }, ApplicationEvent.Started),
-    )
+    eventBus.addEventHandler(this, ApplicationEvent.SignedIn)
+    eventBus.addEventHandler(this, ApplicationEvent.Started)
 
     makeObservable(this, {
       show: observable,
       hide: action,
     })
+  }
+
+  async handleEvent(event: InternalEventInterface): Promise<void> {
+    switch (event.type) {
+      case ApplicationEvent.SignedIn:
+        runInAction(() => {
+          this.show = false
+        })
+        break
+      case ApplicationEvent.Started:
+        if (this.sessions.isSignedIn()) {
+          runInAction(() => {
+            this.show = false
+          })
+        }
+        break
+    }
   }
 
   hide = (): void => {

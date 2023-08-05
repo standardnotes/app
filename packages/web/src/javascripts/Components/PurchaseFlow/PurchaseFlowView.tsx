@@ -1,5 +1,4 @@
 import { WebApplication } from '@/Application/WebApplication'
-import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { PurchaseFlowPane } from '@/Controllers/PurchaseFlow/PurchaseFlowPane'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'react'
@@ -13,25 +12,20 @@ type PaneSelectorProps = {
 } & PurchaseFlowViewProps
 
 type PurchaseFlowViewProps = {
-  viewControllerManager: ViewControllerManager
   application: WebApplication
 }
 
-const PurchaseFlowPaneSelector: FunctionComponent<PaneSelectorProps> = ({
-  currentPane,
-  viewControllerManager,
-  application,
-}) => {
+const PurchaseFlowPaneSelector: FunctionComponent<PaneSelectorProps> = ({ currentPane, application }) => {
   switch (currentPane) {
     case PurchaseFlowPane.CreateAccount:
-      return <CreateAccount viewControllerManager={viewControllerManager} application={application} />
+      return <CreateAccount application={application} />
     case PurchaseFlowPane.SignIn:
-      return <SignIn viewControllerManager={viewControllerManager} application={application} />
+      return <SignIn application={application} />
   }
 }
 
-const PurchaseFlowView: FunctionComponent<PurchaseFlowViewProps> = ({ viewControllerManager, application }) => {
-  const { currentPane } = viewControllerManager.purchaseFlowController
+const PurchaseFlowView: FunctionComponent<PurchaseFlowViewProps> = ({ application }) => {
+  const { currentPane } = application.purchaseFlowController
 
   return (
     <div className="absolute left-0 top-0 z-purchase-flow flex h-full w-full items-center justify-center overflow-hidden bg-passive-super-light">
@@ -40,17 +34,13 @@ const PurchaseFlowView: FunctionComponent<PurchaseFlowViewProps> = ({ viewContro
           <button
             className="absolute right-4 top-4 rounded-full p-1 hover:bg-info-backdrop"
             onClick={() => {
-              viewControllerManager.purchaseFlowController.closePurchaseFlow()
+              application.purchaseFlowController.closePurchaseFlow()
             }}
           >
             <Icon type="close" className="text-neutral" />
           </button>
           <SNLogoFull className="mb-5 h-7" />
-          <PurchaseFlowPaneSelector
-            currentPane={currentPane}
-            viewControllerManager={viewControllerManager}
-            application={application}
-          />
+          <PurchaseFlowPaneSelector currentPane={currentPane} application={application} />
         </div>
         <div className="flex justify-end px-4 md:px-0">
           <a

@@ -4,7 +4,7 @@ import { TwoFactorAuth } from './TwoFactorAuth'
 import TwoFactorAuthView from './TwoFactorAuthView/TwoFactorAuthView'
 
 const TwoFactorAuthWrapper: FunctionComponent<MfaProps> = (props) => {
-  const [auth] = useState(() => new TwoFactorAuth(props.mfaProvider, props.userProvider))
+  const [auth] = useState(() => new TwoFactorAuth(props.application.sessions, props.application.mfa))
   auth.fetchStatus()
   return <TwoFactorAuthView auth={auth} application={props.application} />
 }

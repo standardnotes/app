@@ -1,4 +1,4 @@
-import { MfaProvider } from '@/Components/Preferences/Providers'
+import { MfaServiceInterface } from '@standardnotes/snjs'
 import { action, makeAutoObservable, observable } from 'mobx'
 
 type ActivationStep = 'scan-qr-code' | 'save-secret-key' | 'verification' | 'success'
@@ -15,7 +15,7 @@ export class TwoFactorActivation {
   private inputOtpToken = ''
 
   constructor(
-    private mfaProvider: MfaProvider,
+    private mfa: MfaServiceInterface,
     private readonly email: string,
     private readonly _secretKey: string,
     private _cancelActivation: () => void,
@@ -102,7 +102,7 @@ export class TwoFactorActivation {
       return
     }
 
-    this.mfaProvider
+    this.mfa
       .enableMfa(this.inputSecretKey, this.inputOtpToken)
       .then(
         action(() => {

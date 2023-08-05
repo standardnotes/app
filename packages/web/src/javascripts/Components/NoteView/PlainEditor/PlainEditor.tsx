@@ -46,12 +46,22 @@ export const PlainEditor = forwardRef<PlainEditorInterface, Props>(
     const note = useRef(controller.item)
 
     const tabObserverDisposer = useRef<Disposer>()
+    const mutationObserver = useRef<MutationObserver | null>(null)
 
     useImperativeHandle(ref, () => ({
       focus() {
         focusEditor()
       },
     }))
+
+    useEffect(() => {
+      return () => {
+        mutationObserver.current?.disconnect()
+        tabObserverDisposer.current?.()
+        tabObserverDisposer.current = undefined
+        mutationObserver.current = null
+      }
+    }, [])
 
     useEffect(() => {
       const disposer = controller.addNoteInnerValueChangeObserver((updatedNote, source) => {
@@ -219,15 +229,18 @@ export const PlainEditor = forwardRef<PlainEditorInterface, Props>(
       const observer = new MutationObserver((records) => {
         for (const record of records) {
           record.removedNodes.forEach((node) => {
-            if (node === editor) {
+            if (node.isEqualNode(editor)) {
               tabObserverDisposer.current?.()
               tabObserverDisposer.current = undefined
+              observer.disconnect()
             }
           })
         }
       })
 
       observer.observe(editor.parentElement as HTMLElement, { childList: true })
+
+      mutationObserver.current = observer
     }
 
     if (textareaUnloading) {

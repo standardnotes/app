@@ -11,7 +11,7 @@ import { GetRecoveryCodes } from '../../Domain/UseCase/GetRecoveryCodes/GetRecov
 import { SignInWithRecoveryCodes } from '../../Domain/UseCase/SignInWithRecoveryCodes/SignInWithRecoveryCodes'
 import { ListedService } from '../../Services/Listed/ListedService'
 import { MigrationService } from '../../Services/Migration/MigrationService'
-import { SNMfaService } from '../../Services/Mfa/MfaService'
+import { MfaService } from '../../Services/Mfa/MfaService'
 import { SNComponentManager } from '../../Services/ComponentManager/ComponentManager'
 import { FeaturesService } from '@Lib/Services/Features/FeaturesService'
 import { SettingsService } from '../../Services/Settings/SNSettingsService'
@@ -126,6 +126,10 @@ import {
   AlertService,
   DesktopDeviceInterface,
   ChangeVaultStorageMode,
+  ChangeAndSaveItem,
+  FullyResolvedApplicationOptions,
+  GetHost,
+  SetHost,
 } from '@standardnotes/services'
 import { ItemManager } from '../../Services/Items/ItemManager'
 import { PayloadManager } from '../../Services/Payloads/PayloadManager'
@@ -151,10 +155,8 @@ import {
   WebSocketApiService,
   WebSocketServer,
 } from '@standardnotes/api'
-import { FullyResolvedApplicationOptions } from '../Options/ApplicationOptions'
 import { TYPES } from './Types'
-import { isDeinitable } from './isDeinitable'
-import { Logger, isNotUndefined } from '@standardnotes/utils'
+import { Logger, isNotUndefined, isDeinitable } from '@standardnotes/utils'
 import { EncryptionOperators } from '@standardnotes/encryption'
 import { AsymmetricMessagePayload, AsymmetricMessageSharedVaultInvite } from '@standardnotes/models'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
@@ -217,6 +219,14 @@ export class Dependencies {
         this.get<ItemsEncryptionService>(TYPES.ItemsEncryptionService),
         this.get<DecryptErroredTypeAPayloads>(TYPES.DecryptErroredTypeAPayloads),
       )
+    })
+
+    this.factory.set(TYPES.GetHost, () => {
+      return new GetHost(this.get<LegacyApiService>(TYPES.LegacyApiService))
+    })
+
+    this.factory.set(TYPES.SetHost, () => {
+      return new SetHost(this.get<HttpService>(TYPES.HttpService), this.get<LegacyApiService>(TYPES.LegacyApiService))
     })
 
     this.factory.set(TYPES.GetKeyPairs, () => {
@@ -305,6 +315,14 @@ export class Dependencies {
 
     this.factory.set(TYPES.GetVaults, () => {
       return new GetVaults(this.get<ItemManager>(TYPES.ItemManager))
+    })
+
+    this.factory.set(TYPES.ChangeAndSaveItem, () => {
+      return new ChangeAndSaveItem(
+        this.get<ItemManager>(TYPES.ItemManager),
+        this.get<MutatorService>(TYPES.MutatorService),
+        this.get<SyncService>(TYPES.SyncService),
+      )
     })
 
     this.factory.set(TYPES.GetSharedVaults, () => {
@@ -1080,7 +1098,7 @@ export class Dependencies {
     })
 
     this.factory.set(TYPES.MfaService, () => {
-      return new SNMfaService(
+      return new MfaService(
         this.get<SettingsService>(TYPES.SettingsService),
         this.get<PureCryptoInterface>(TYPES.Crypto),
         this.get<FeaturesService>(TYPES.FeaturesService),

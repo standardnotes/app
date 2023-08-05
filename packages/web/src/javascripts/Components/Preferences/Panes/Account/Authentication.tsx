@@ -1,7 +1,6 @@
 import Button from '@/Components/Button/Button'
 import { Title } from '@/Components/Preferences/PreferencesComponents/Content'
 import { WebApplication } from '@/Application/WebApplication'
-import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'react'
 import { AccountIllustration } from '@standardnotes/icons'
@@ -11,20 +10,19 @@ import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 
 type Props = {
   application: WebApplication
-  viewControllerManager: ViewControllerManager
 }
 
-const Authentication: FunctionComponent<Props> = ({ viewControllerManager }) => {
+const Authentication: FunctionComponent<Props> = ({ application }) => {
   const clickSignIn = () => {
-    viewControllerManager.preferencesController.closePreferences()
-    viewControllerManager.accountMenuController.setCurrentPane(AccountMenuPane.SignIn)
-    viewControllerManager.accountMenuController.setShow(true)
+    application.preferencesController.closePreferences()
+    application.accountMenuController.setCurrentPane(AccountMenuPane.SignIn)
+    application.accountMenuController.setShow(true)
   }
 
   const clickRegister = () => {
-    viewControllerManager.preferencesController.closePreferences()
-    viewControllerManager.accountMenuController.setCurrentPane(AccountMenuPane.Register)
-    viewControllerManager.accountMenuController.setShow(true)
+    application.preferencesController.closePreferences()
+    application.accountMenuController.setCurrentPane(AccountMenuPane.Register)
+    application.accountMenuController.setShow(true)
   }
 
   return (

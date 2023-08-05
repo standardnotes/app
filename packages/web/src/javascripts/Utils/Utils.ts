@@ -2,6 +2,7 @@ import { DeviceInterface, MobileDeviceInterface, Platform, platformFromString } 
 import { IsDesktopPlatform, IsWebPlatform } from '@/Constants/Version'
 import { EMAIL_REGEX } from '../Constants/Constants'
 import { MutuallyExclusiveMediaQueryBreakpoints } from '@/Hooks/useMediaQuery'
+import { isIOS } from '@standardnotes/ui-services'
 
 declare const process: {
   env: {
@@ -175,14 +176,6 @@ export const openInNewTab = (url: string) => {
 export const convertStringifiedBooleanToBoolean = (value: string) => {
   return value !== 'false'
 }
-
-// https://stackoverflow.com/questions/9038625/detect-if-device-is-ios/9039885#9039885
-export const isIOS = () =>
-  (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) ||
-  (navigator.userAgent.includes('Mac') && 'ontouchend' in document && navigator.maxTouchPoints > 1) ||
-  window.platform === Platform.Ios
-
-export const isAndroid = () => navigator.userAgent.toLowerCase().includes('android')
 
 // https://stackoverflow.com/a/57527009/2504429
 export const disableIosTextFieldZoom = () => {

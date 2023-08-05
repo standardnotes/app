@@ -1,6 +1,5 @@
 import Button from '@/Components/Button/Button'
 import { WebApplication } from '@/Application/WebApplication'
-import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { PurchaseFlowPane } from '@/Controllers/PurchaseFlow/PurchaseFlowPane'
 import { observer } from 'mobx-react-lite'
 import { ChangeEventHandler, FunctionComponent, useEffect, useRef, useState } from 'react'
@@ -10,12 +9,11 @@ import { BlueDotIcon, CircleIcon, DiamondIcon } from '@standardnotes/icons'
 import { isErrorResponse } from '@standardnotes/snjs'
 
 type Props = {
-  viewControllerManager: ViewControllerManager
   application: WebApplication
 }
 
-const SignIn: FunctionComponent<Props> = ({ viewControllerManager, application }) => {
-  const { setCurrentPane } = viewControllerManager.purchaseFlowController
+const SignIn: FunctionComponent<Props> = ({ application }) => {
+  const { setCurrentPane } = application.purchaseFlowController
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [isSigningIn, setIsSigningIn] = useState(false)
@@ -74,8 +72,8 @@ const SignIn: FunctionComponent<Props> = ({ viewControllerManager, application }
       if (isErrorResponse(response)) {
         throw new Error(response.data.error?.message)
       } else {
-        viewControllerManager.purchaseFlowController.closePurchaseFlow()
-        void viewControllerManager.purchaseFlowController.openPurchaseFlow()
+        application.purchaseFlowController.closePurchaseFlow()
+        void application.purchaseFlowController.openPurchaseFlow()
       }
     } catch (err) {
       console.error(err)
