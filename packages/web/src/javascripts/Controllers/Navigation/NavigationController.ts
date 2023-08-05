@@ -5,7 +5,6 @@ import {
   NavigationControllerPersistableValue,
   VaultDisplayService,
   VaultDisplayServiceEvent,
-  WebApplicationInterface,
 } from '@standardnotes/ui-services'
 import { STRING_DELETE_TAG } from '@/Constants/Strings'
 import { MAX_MENU_SIZE_MULTIPLIER, MENU_MARGIN_FROM_APP_BORDER, SMART_TAGS_FEATURE_NAME } from '@/Constants/Constants'
@@ -29,6 +28,8 @@ import {
   SyncServiceInterface,
   MutatorClientInterface,
   AlertService,
+  PreferenceServiceInterface,
+  ChangeAndSaveItem,
 } from '@standardnotes/snjs'
 import { action, computed, makeObservable, observable, reaction, runInAction } from 'mobx'
 import { FeaturesController } from '../FeaturesController'
@@ -70,7 +71,6 @@ export class NavigationController
   private readonly tagsCountsState: TagsCountsState
 
   constructor(
-    application: WebApplicationInterface,
     private featuresController: FeaturesController,
     private vaultDisplayService: VaultDisplayService,
     private keyboardService: KeyboardService,
@@ -78,10 +78,12 @@ export class NavigationController
     private sync: SyncServiceInterface,
     private mutator: MutatorClientInterface,
     private items: ItemManagerInterface,
+    private preferences: PreferenceServiceInterface,
     private alerts: AlertService,
+    private _changeAndSaveItem: ChangeAndSaveItem,
     eventBus: InternalEventBusInterface,
   ) {
-    super(application, eventBus)
+    super(eventBus)
 
     eventBus.addEventHandler(this, VaultDisplayServiceEvent.VaultDisplayOptionsChanged)
 
@@ -279,7 +281,7 @@ export class NavigationController
 
     const futureSiblings = this.items.getTagChildren(parent)
 
-    if (!isValidFutureSiblings(this.application, futureSiblings, createdTag)) {
+    if (!isValidFutureSiblings(this.alerts, futureSiblings, createdTag)) {
       this.setAddingSubtagTo(undefined)
       this.remove(createdTag, false).catch(console.error)
       return
@@ -315,7 +317,7 @@ export class NavigationController
   tagUsesTableView(tag: AnyTag): boolean {
     const isSystemView = tag instanceof SmartView && Object.values(SystemViewId).includes(tag.uuid as SystemViewId)
     const useTableView = isSystemView
-      ? this.application.getPreference(PrefKey.SystemViewPreferences)?.[tag.uuid as SystemViewId]
+      ? this.preferences.getValue(PrefKey.SystemViewPreferences)?.[tag.uuid as SystemViewId]
       : tag?.preferences
     return Boolean(useTableView)
   }
@@ -448,14 +450,14 @@ export class NavigationController
     const futureParent = futureParentUuid && (this.items.findItem(futureParentUuid) as SNTag)
 
     if (!futureParent) {
-      const futureSiblings = rootTags(this.application)
-      if (!isValidFutureSiblings(this.application, futureSiblings, tag)) {
+      const futureSiblings = rootTags(this.items)
+      if (!isValidFutureSiblings(this.alerts, futureSiblings, tag)) {
         return
       }
       await this.mutator.unsetTagParent(tag)
     } else {
       const futureSiblings = this.items.getTagChildren(futureParent)
-      if (!isValidFutureSiblings(this.application, futureSiblings, tag)) {
+      if (!isValidFutureSiblings(this.alerts, futureSiblings, tag)) {
         return
       }
       await this.mutator.setTagParent(futureParent, tag)
@@ -497,7 +499,7 @@ export class NavigationController
   }
 
   public async setPanelWidthForTag(tag: SNTag, width: number): Promise<void> {
-    await this.application.changeAndSaveItem<TagMutator>(tag, (mutator) => {
+    await this._changeAndSaveItem.execute<TagMutator>(tag, (mutator) => {
       mutator.preferences = {
         ...mutator.preferences,
         panelWidth: width,
@@ -511,8 +513,8 @@ export class NavigationController
     { userTriggered } = { userTriggered: false },
   ) {
     if (tag && tag.conflictOf) {
-      this.application
-        .changeAndSaveItem(tag, (mutator) => {
+      this._changeAndSaveItem
+        .execute(tag, (mutator) => {
           mutator.conflictOf = undefined
         })
         .catch(console.error)
@@ -572,24 +574,24 @@ export class NavigationController
       return
     }
 
-    this.application
-      .changeAndSaveItem<TagMutator>(tag, (mutator) => {
+    this._changeAndSaveItem
+      .execute<TagMutator>(tag, (mutator) => {
         mutator.expanded = expanded
       })
       .catch(console.error)
   }
 
   public async setFavorite(tag: SNTag, favorite: boolean) {
-    return this.application
-      .changeAndSaveItem<TagMutator>(tag, (mutator) => {
+    return this._changeAndSaveItem
+      .execute<TagMutator>(tag, (mutator) => {
         mutator.starred = favorite
       })
       .catch(console.error)
   }
 
   public setIcon(tag: SNTag, icon: VectorIconNameOrEmoji) {
-    this.application
-      .changeAndSaveItem<TagMutator>(tag, (mutator) => {
+    this._changeAndSaveItem
+      .execute<TagMutator>(tag, (mutator) => {
         mutator.iconString = icon as string
       })
       .catch(console.error)
@@ -649,7 +651,7 @@ export class NavigationController
     const hasNotChangedTitle = newTitle === tag.title
     const isTemplateChange = this.items.isTemplateItem(tag)
 
-    const siblings = tag instanceof SNTag ? tagSiblings(this.application, tag) : []
+    const siblings = tag instanceof SNTag ? tagSiblings(this.items, tag) : []
     const hasDuplicatedTitle = siblings.some((other) => other.title.toLowerCase() === newTitle.toLowerCase())
 
     runInAction(() => {
@@ -690,7 +692,7 @@ export class NavigationController
         void this.setSelectedTag(insertedTag, this.selectedLocation || 'views')
       })
     } else {
-      await this.application.changeAndSaveItem<TagMutator>(tag, (mutator) => {
+      await this._changeAndSaveItem.execute<TagMutator>(tag, (mutator) => {
         mutator.title = newTitle
       })
     }

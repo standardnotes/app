@@ -1,9 +1,14 @@
-import { PreferenceServiceInterface } from '@standardnotes/services'
+import { PanesForLayout } from './../../Application/UseCase/PanesForLayout'
 import {
+  InternalEventHandlerInterface,
+  InternalEventInterface,
+  PreferenceServiceInterface,
+} from '@standardnotes/services'
+import {
+  KeyboardService,
   TOGGLE_FOCUS_MODE_COMMAND,
   TOGGLE_LIST_PANE_KEYBOARD_COMMAND,
   TOGGLE_NAVIGATION_PANE_KEYBOARD_COMMAND,
-  WebApplicationInterface,
 } from '@standardnotes/ui-services'
 import {
   ApplicationEvent,
@@ -20,8 +25,7 @@ import { MediaQueryBreakpoints } from '@/Hooks/useMediaQuery'
 import { AbstractViewController } from '../Abstract/AbstractViewController'
 import { log, LoggingDomain } from '@/Logging'
 import { PaneLayout } from './PaneLayout'
-import { panesForLayout } from './panesForLayout'
-import { getIsTabletOrMobileScreen } from '@/Hooks/useIsTabletOrMobileScreen'
+import { IsTabletOrMobileScreen } from '@/Application/UseCase/IsTabletOrMobileScreen'
 
 const MinimumNavPanelWidth = PrefDefaults[PrefKey.TagsPanelWidth]
 const MinimumNotesPanelWidth = PrefDefaults[PrefKey.NotesPanelWidth]
@@ -29,7 +33,7 @@ const FOCUS_MODE_CLASS_NAME = 'focus-mode'
 const DISABLING_FOCUS_MODE_CLASS_NAME = 'disable-focus-mode'
 const FOCUS_MODE_ANIMATION_DURATION = 1255
 
-export class PaneController extends AbstractViewController {
+export class PaneController extends AbstractViewController implements InternalEventHandlerInterface {
   isInMobileView = isMobileScreen()
   protected disposers: Disposer[] = []
   panes: AppPaneId[] = []
@@ -43,6 +47,9 @@ export class PaneController extends AbstractViewController {
 
   constructor(
     private preferences: PreferenceServiceInterface,
+    private keyboardService: KeyboardService,
+    private _isTabletOrMobileScreen: IsTabletOrMobileScreen,
+    private _panesForLayout: PanesForLayout,
     eventBus: InternalEventBusInterface,
   ) {
     super(eventBus)
@@ -77,7 +84,7 @@ export class PaneController extends AbstractViewController {
     this.setCurrentNavPanelWidth(preferences.getValue(PrefKey.TagsPanelWidth, MinimumNavPanelWidth))
     this.setCurrentItemsPanelWidth(preferences.getValue(PrefKey.NotesPanelWidth, MinimumNotesPanelWidth))
 
-    const screen = getIsTabletOrMobileScreen(application)
+    const screen = this._isTabletOrMobileScreen.execute().getValue()
 
     this.panes = screen.isTabletOrMobile
       ? [AppPaneId.Navigation, AppPaneId.Items]
@@ -90,13 +97,10 @@ export class PaneController extends AbstractViewController {
       mediaQuery.addListener(this.mediumScreenMQHandler)
     }
 
-    this.disposers.push(
-      application.addEventObserver(async () => {
-        this.setCurrentNavPanelWidth(application.getPreference(PrefKey.TagsPanelWidth, MinimumNavPanelWidth))
-        this.setCurrentItemsPanelWidth(application.getPreference(PrefKey.NotesPanelWidth, MinimumNotesPanelWidth))
-      }, ApplicationEvent.PreferencesChanged),
+    eventBus.addEventHandler(this, ApplicationEvent.PreferencesChanged)
 
-      application.keyboardService.addCommandHandler({
+    this.disposers.push(
+      keyboardService.addCommandHandler({
         command: TOGGLE_FOCUS_MODE_COMMAND,
         onKeyDown: (event) => {
           event.preventDefault()
@@ -104,14 +108,14 @@ export class PaneController extends AbstractViewController {
           return true
         },
       }),
-      application.keyboardService.addCommandHandler({
+      keyboardService.addCommandHandler({
         command: TOGGLE_LIST_PANE_KEYBOARD_COMMAND,
         onKeyDown: (event) => {
           event.preventDefault()
           this.toggleListPane()
         },
       }),
-      application.keyboardService.addCommandHandler({
+      keyboardService.addCommandHandler({
         command: TOGGLE_NAVIGATION_PANE_KEYBOARD_COMMAND,
         onKeyDown: (event) => {
           event.preventDefault()
@@ -119,6 +123,13 @@ export class PaneController extends AbstractViewController {
         },
       }),
     )
+  }
+
+  async handleEvent(event: InternalEventInterface): Promise<void> {
+    if (event.type === ApplicationEvent.PreferencesChanged) {
+      this.setCurrentNavPanelWidth(this.preferences.getValue(PrefKey.TagsPanelWidth, MinimumNavPanelWidth))
+      this.setCurrentItemsPanelWidth(this.preferences.getValue(PrefKey.NotesPanelWidth, MinimumNotesPanelWidth))
+    }
   }
 
   setCurrentNavPanelWidth(width: number) {
@@ -162,7 +173,7 @@ export class PaneController extends AbstractViewController {
   setPaneLayout = (layout: PaneLayout) => {
     log(LoggingDomain.Panes, 'Set pane layout', layout)
 
-    const panes = panesForLayout(layout, this.application)
+    const panes = this._panesForLayout.execute(layout).getValue()
 
     if (panes.includes(AppPaneId.Items) && this.listPaneExplicitelyCollapsed) {
       removeFromArray(panes, AppPaneId.Items)

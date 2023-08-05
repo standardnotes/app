@@ -24,9 +24,10 @@ import {
   InternalEventBusInterface,
   PrefDefaults,
   ItemManagerInterface,
+  PreferenceServiceInterface,
+  ChangeAndSaveItem,
 } from '@standardnotes/snjs'
 import { action, computed, makeObservable, observable, reaction, runInAction } from 'mobx'
-import { WebApplication } from '../../Application/WebApplication'
 import { WebDisplayOptions } from './WebDisplayOptions'
 import { NavigationController } from '../Navigation/NavigationController'
 import { CrossControllerEvent } from '../CrossControllerEvent'
@@ -41,8 +42,10 @@ import { NoteViewController } from '@/Components/NoteView/Controller/NoteViewCon
 import { FileViewController } from '@/Components/NoteView/Controller/FileViewController'
 import { TemplateNoteViewAutofocusBehavior } from '@/Components/NoteView/Controller/TemplateNoteViewControllerOptions'
 import { ItemsReloadSource } from './ItemsReloadSource'
-import { VaultDisplayServiceEvent } from '@standardnotes/ui-services'
+import { IsNativeMobileWeb, VaultDisplayServiceEvent, VaultDisplayServiceInterface } from '@standardnotes/ui-services'
 import { getDayjsFormattedString } from '@/Utils/GetDayjsFormattedString'
+import { ItemGroupController } from '@/Components/NoteView/Controller/ItemGroupController'
+import { DesktopManager } from '@/Application/Device/DesktopManager'
 
 const MinNoteCellHeight = 51.0
 const DefaultListNumNotes = 20
@@ -95,7 +98,13 @@ export class ItemListController extends AbstractViewController implements Intern
     private searchOptionsController: SearchOptionsController,
     private selectionController: SelectedItemsController,
     private notesController: NotesController,
-    private items: ItemManagerInterface,
+    private itemManager: ItemManagerInterface,
+    private preferences: PreferenceServiceInterface,
+    private itemControllerGroup: ItemGroupController,
+    private vaultDisplayService: VaultDisplayServiceInterface,
+    private desktopManager: DesktopManager | undefined,
+    private _isNativeMobileWeb: IsNativeMobileWeb,
+    private _changeAndSaveItem: ChangeAndSaveItem,
     eventBus: InternalEventBusInterface,
   ) {
     super(eventBus)
@@ -107,69 +116,39 @@ export class ItemListController extends AbstractViewController implements Intern
     this.resetPagination()
 
     this.disposers.push(
-      items.streamItems<SNNote>([ContentType.TYPES.Note, ContentType.TYPES.File], () => {
+      itemManager.streamItems<SNNote>([ContentType.TYPES.Note, ContentType.TYPES.File], () => {
         void this.reloadItems(ItemsReloadSource.ItemStream)
       }),
     )
 
     this.disposers.push(
-      items.streamItems<SNTag>([ContentType.TYPES.Tag, ContentType.TYPES.SmartView], async ({ changed, inserted }) => {
-        const tags = [...changed, ...inserted]
+      itemManager.streamItems<SNTag>(
+        [ContentType.TYPES.Tag, ContentType.TYPES.SmartView],
+        async ({ changed, inserted }) => {
+          const tags = [...changed, ...inserted]
 
-        const { didReloadItems } = await this.reloadDisplayPreferences({ userTriggered: false })
-        if (!didReloadItems) {
-          /** A tag could have changed its relationships, so we need to reload the filter */
-          this.reloadNotesDisplayOptions()
-          void this.reloadItems(ItemsReloadSource.ItemStream)
-        }
+          const { didReloadItems } = await this.reloadDisplayPreferences({ userTriggered: false })
+          if (!didReloadItems) {
+            /** A tag could have changed its relationships, so we need to reload the filter */
+            this.reloadNotesDisplayOptions()
+            void this.reloadItems(ItemsReloadSource.ItemStream)
+          }
 
-        if (this.navigationController.selected && findInArray(tags, 'uuid', this.navigationController.selected.uuid)) {
-          /** Tag title could have changed */
-          this.reloadPanelTitle()
-        }
-      }),
+          if (
+            this.navigationController.selected &&
+            findInArray(tags, 'uuid', this.navigationController.selected.uuid)
+          ) {
+            /** Tag title could have changed */
+            this.reloadPanelTitle()
+          }
+        },
+      ),
     )
 
-    this.disposers.push(
-      application.addEventObserver(async () => {
-        void this.reloadDisplayPreferences({ userTriggered: false })
-      }, ApplicationEvent.PreferencesChanged),
-    )
-
-    this.disposers.push(
-      application.addEventObserver(async () => {
-        this.application.itemControllerGroup.closeAllItemControllers()
-        void this.selectFirstItem()
-        this.setCompletedFullSync(false)
-      }, ApplicationEvent.SignedIn),
-    )
-
-    this.disposers.push(
-      application.addEventObserver(async () => {
-        if (!this.completedFullSync) {
-          void this.reloadItems(ItemsReloadSource.SyncEvent).then(() => {
-            if (
-              this.notes.length === 0 &&
-              this.navigationController.selected instanceof SmartView &&
-              this.navigationController.selected.uuid === SystemViewId.AllNotes &&
-              this.noteFilterText === '' &&
-              !this.getActiveItemController()
-            ) {
-              this.createPlaceholderNote()?.catch(console.error)
-            }
-          })
-          this.setCompletedFullSync(true)
-        }
-      }, ApplicationEvent.CompletedFullSync),
-    )
-
-    this.disposers.push(
-      application.addWebEventObserver((webEvent) => {
-        if (webEvent === WebAppEvent.EditorFocused) {
-          this.setShowDisplayOptionsMenu(false)
-        }
-      }),
-    )
+    eventBus.addEventHandler(this, ApplicationEvent.PreferencesChanged)
+    eventBus.addEventHandler(this, ApplicationEvent.SignedIn)
+    eventBus.addEventHandler(this, ApplicationEvent.CompletedFullSync)
+    eventBus.addEventHandler(this, WebAppEvent.EditorFocused)
 
     this.disposers.push(
       reaction(
@@ -217,13 +196,57 @@ export class ItemListController extends AbstractViewController implements Intern
   }
 
   async handleEvent(event: InternalEventInterface): Promise<void> {
-    if (event.type === CrossControllerEvent.TagChanged) {
-      const payload = event.payload as { userTriggered: boolean }
-      await this.handleTagChange(payload.userTriggered)
-    } else if (event.type === CrossControllerEvent.ActiveEditorChanged) {
-      this.handleEditorChange().catch(console.error)
-    } else if (event.type === VaultDisplayServiceEvent.VaultDisplayOptionsChanged) {
-      void this.reloadItems(ItemsReloadSource.DisplayOptionsChange)
+    switch (event.type) {
+      case CrossControllerEvent.TagChanged: {
+        const payload = event.payload as { userTriggered: boolean }
+        await this.handleTagChange(payload.userTriggered)
+        break
+      }
+
+      case CrossControllerEvent.ActiveEditorChanged: {
+        await this.handleEditorChange()
+        break
+      }
+
+      case VaultDisplayServiceEvent.VaultDisplayOptionsChanged: {
+        void this.reloadItems(ItemsReloadSource.DisplayOptionsChange)
+        break
+      }
+
+      case ApplicationEvent.PreferencesChanged: {
+        void this.reloadDisplayPreferences({ userTriggered: false })
+        break
+      }
+
+      case WebAppEvent.EditorFocused: {
+        this.setShowDisplayOptionsMenu(false)
+        break
+      }
+
+      case ApplicationEvent.SignedIn: {
+        this.itemControllerGroup.closeAllItemControllers()
+        void this.selectFirstItem()
+        this.setCompletedFullSync(false)
+        break
+      }
+
+      case ApplicationEvent.CompletedFullSync: {
+        if (!this.completedFullSync) {
+          void this.reloadItems(ItemsReloadSource.SyncEvent).then(() => {
+            if (
+              this.notes.length === 0 &&
+              this.navigationController.selected instanceof SmartView &&
+              this.navigationController.selected.uuid === SystemViewId.AllNotes &&
+              this.noteFilterText === '' &&
+              !this.getActiveItemController()
+            ) {
+              this.createPlaceholderNote()?.catch(console.error)
+            }
+          })
+          this.setCompletedFullSync(true)
+          break
+        }
+      }
     }
   }
 
@@ -232,7 +255,7 @@ export class ItemListController extends AbstractViewController implements Intern
   }
 
   public getActiveItemController(): NoteViewController | FileViewController | undefined {
-    return this.application.itemControllerGroup.activeItemViewController
+    return this.itemControllerGroup.activeItemViewController
   }
 
   public get activeControllerItem() {
@@ -244,13 +267,13 @@ export class ItemListController extends AbstractViewController implements Intern
       return
     }
 
-    const note = this.application.items.findItem<SNNote>(uuid)
+    const note = this.itemManager.findItem<SNNote>(uuid)
     if (!note) {
       console.warn('Tried accessing a non-existant note of UUID ' + uuid)
       return
     }
 
-    await this.application.itemControllerGroup.createItemController({ note })
+    await this.itemControllerGroup.createItemController({ note })
 
     await this.publishCrossControllerEventSync(CrossControllerEvent.ActiveEditorChanged)
   }
@@ -260,13 +283,13 @@ export class ItemListController extends AbstractViewController implements Intern
       return
     }
 
-    const file = this.application.items.findItem<FileItem>(fileUuid)
+    const file = this.itemManager.findItem<FileItem>(fileUuid)
     if (!file) {
       console.warn('Tried accessing a non-existant file of UUID ' + fileUuid)
       return
     }
 
-    await this.application.itemControllerGroup.createItemController({ file })
+    await this.itemControllerGroup.createItemController({ file })
   }
 
   setCompletedFullSync = (completed: boolean) => {
@@ -310,9 +333,9 @@ export class ItemListController extends AbstractViewController implements Intern
       return
     }
 
-    const notes = this.application.items.getDisplayableNotes()
+    const notes = this.itemManager.getDisplayableNotes()
 
-    const items = this.application.items.getDisplayableNotesAndFiles()
+    const items = this.itemManager.getDisplayableNotesAndFiles()
 
     const renderedItems = items.slice(0, this.notesToDisplay)
 
@@ -419,7 +442,7 @@ export class ItemListController extends AbstractViewController implements Intern
   }
 
   shouldSelectFirstItem = (itemsReloadSource: ItemsReloadSource) => {
-    if (this.application.isNativeMobileWeb()) {
+    if (this._isNativeMobileWeb.execute().getValue()) {
       return false
     }
 
@@ -506,7 +529,7 @@ export class ItemListController extends AbstractViewController implements Intern
       },
     }
 
-    this.application.items.setPrimaryItemDisplayOptions(criteria)
+    this.itemManager.setPrimaryItemDisplayOptions(criteria)
   }
 
   reloadDisplayPreferences = async ({
@@ -520,7 +543,7 @@ export class ItemListController extends AbstractViewController implements Intern
     const selectedTag = this.navigationController.selected
     const isSystemTag = selectedTag && isSmartView(selectedTag) && isSystemView(selectedTag)
     const selectedTagPreferences = isSystemTag
-      ? this.application.getPreference(PrefKey.SystemViewPreferences)?.[selectedTag.uuid as SystemViewId]
+      ? this.preferences.getValue(PrefKey.SystemViewPreferences)?.[selectedTag.uuid as SystemViewId]
       : selectedTag?.preferences
 
     this.isTableViewEnabled = Boolean(selectedTagPreferences?.useTableView)
@@ -528,7 +551,7 @@ export class ItemListController extends AbstractViewController implements Intern
     const currentSortBy = this.displayOptions.sortBy
     let sortBy =
       selectedTagPreferences?.sortBy ||
-      this.application.getPreference(PrefKey.SortNotesBy, PrefDefaults[PrefKey.SortNotesBy])
+      this.preferences.getValue(PrefKey.SortNotesBy, PrefDefaults[PrefKey.SortNotesBy])
     if (sortBy === CollectionSort.UpdatedAt || (sortBy as string) === 'client_updated_at') {
       sortBy = CollectionSort.UpdatedAt
     }
@@ -538,49 +561,49 @@ export class ItemListController extends AbstractViewController implements Intern
     newDisplayOptions.sortDirection =
       useBoolean(
         selectedTagPreferences?.sortReverse,
-        this.application.getPreference(PrefKey.SortNotesReverse, PrefDefaults[PrefKey.SortNotesReverse]),
+        this.preferences.getValue(PrefKey.SortNotesReverse, PrefDefaults[PrefKey.SortNotesReverse]),
       ) === false
         ? 'dsc'
         : 'asc'
 
     newDisplayOptions.includeArchived = useBoolean(
       selectedTagPreferences?.showArchived,
-      this.application.getPreference(PrefKey.NotesShowArchived, PrefDefaults[PrefKey.NotesShowArchived]),
+      this.preferences.getValue(PrefKey.NotesShowArchived, PrefDefaults[PrefKey.NotesShowArchived]),
     )
 
     newDisplayOptions.includeTrashed = useBoolean(
       selectedTagPreferences?.showTrashed,
-      this.application.getPreference(PrefKey.NotesShowTrashed, PrefDefaults[PrefKey.NotesShowTrashed]),
+      this.preferences.getValue(PrefKey.NotesShowTrashed, PrefDefaults[PrefKey.NotesShowTrashed]),
     )
 
     newDisplayOptions.includePinned = !useBoolean(
       selectedTagPreferences?.hidePinned,
-      this.application.getPreference(PrefKey.NotesHidePinned, PrefDefaults[PrefKey.NotesHidePinned]),
+      this.preferences.getValue(PrefKey.NotesHidePinned, PrefDefaults[PrefKey.NotesHidePinned]),
     )
 
     newDisplayOptions.includeProtected = !useBoolean(
       selectedTagPreferences?.hideProtected,
-      this.application.getPreference(PrefKey.NotesHideProtected, PrefDefaults[PrefKey.NotesHideProtected]),
+      this.preferences.getValue(PrefKey.NotesHideProtected, PrefDefaults[PrefKey.NotesHideProtected]),
     )
 
     newWebDisplayOptions.hideNotePreview = useBoolean(
       selectedTagPreferences?.hideNotePreview,
-      this.application.getPreference(PrefKey.NotesHideNotePreview, PrefDefaults[PrefKey.NotesHideNotePreview]),
+      this.preferences.getValue(PrefKey.NotesHideNotePreview, PrefDefaults[PrefKey.NotesHideNotePreview]),
     )
 
     newWebDisplayOptions.hideDate = useBoolean(
       selectedTagPreferences?.hideDate,
-      this.application.getPreference(PrefKey.NotesHideDate, PrefDefaults[PrefKey.NotesHideDate]),
+      this.preferences.getValue(PrefKey.NotesHideDate, PrefDefaults[PrefKey.NotesHideDate]),
     )
 
     newWebDisplayOptions.hideTags = useBoolean(
       selectedTagPreferences?.hideTags,
-      this.application.getPreference(PrefKey.NotesHideTags, PrefDefaults[PrefKey.NotesHideTags]),
+      this.preferences.getValue(PrefKey.NotesHideTags, PrefDefaults[PrefKey.NotesHideTags]),
     )
 
     newWebDisplayOptions.hideEditorIcon = useBoolean(
       selectedTagPreferences?.hideEditorIcon,
-      this.application.getPreference(PrefKey.NotesHideEditorIcon, PrefDefaults[PrefKey.NotesHideEditorIcon]),
+      this.preferences.getValue(PrefKey.NotesHideEditorIcon, PrefDefaults[PrefKey.NotesHideEditorIcon]),
     )
 
     const displayOptionsChanged =
@@ -628,13 +651,13 @@ export class ItemListController extends AbstractViewController implements Intern
 
     const activeRegularTagUuid = selectedTag instanceof SNTag ? selectedTag.uuid : undefined
 
-    return this.application.itemControllerGroup.createItemController({
+    return this.itemControllerGroup.createItemController({
       templateOptions: {
         title,
         tag: activeRegularTagUuid,
         createdAt,
         autofocusBehavior,
-        vault: this.application.vaultDisplayService.exclusivelyShownVault,
+        vault: this.vaultDisplayService.exclusivelyShownVault,
       },
     })
   }
@@ -647,12 +670,12 @@ export class ItemListController extends AbstractViewController implements Intern
     const selectedTag = this.navigationController.selected
     const isSystemTag = selectedTag && isSmartView(selectedTag) && isSystemView(selectedTag)
     const selectedTagPreferences = isSystemTag
-      ? this.application.getPreference(PrefKey.SystemViewPreferences)?.[selectedTag.uuid as SystemViewId]
+      ? this.preferences.getValue(PrefKey.SystemViewPreferences)?.[selectedTag.uuid as SystemViewId]
       : selectedTag?.preferences
 
     const titleFormat =
       selectedTagPreferences?.newNoteTitleFormat ||
-      this.application.getPreference(PrefKey.NewNoteTitleFormat, PrefDefaults[PrefKey.NewNoteTitleFormat])
+      this.preferences.getValue(PrefKey.NewNoteTitleFormat, PrefDefaults[PrefKey.NewNoteTitleFormat])
 
     if (titleFormat === NewNoteTitleFormat.CurrentNoteCount) {
       return `Note ${this.notes.length + 1}`
@@ -661,7 +684,7 @@ export class ItemListController extends AbstractViewController implements Intern
     if (titleFormat === NewNoteTitleFormat.CustomFormat) {
       const customFormat =
         this.navigationController.selected?.preferences?.customNoteTitleFormat ||
-        this.application.getPreference(PrefKey.CustomNoteTitleFormat, PrefDefaults[PrefKey.CustomNoteTitleFormat])
+        this.preferences.getValue(PrefKey.CustomNoteTitleFormat, PrefDefaults[PrefKey.CustomNoteTitleFormat])
 
       try {
         return getDayjsFormattedString(createdAt, customFormat)
@@ -720,7 +743,7 @@ export class ItemListController extends AbstractViewController implements Intern
     void this.reloadItems(ItemsReloadSource.Pagination)
 
     if (this.searchSubmitted) {
-      this.application.getDesktopService()?.searchText(this.noteFilterText)
+      this.desktopManager?.searchText(this.noteFilterText)
     }
   }
 
@@ -789,18 +812,16 @@ export class ItemListController extends AbstractViewController implements Intern
   }
 
   handleEditorChange = async () => {
-    const activeNote = this.application.itemControllerGroup.activeItemViewController?.item
+    const activeNote = this.itemControllerGroup.activeItemViewController?.item
 
     if (activeNote && activeNote.conflictOf) {
-      this.application
-        .changeAndSaveItem(activeNote, (mutator) => {
-          mutator.conflictOf = undefined
-        })
-        .catch(console.error)
+      void this._changeAndSaveItem.execute(activeNote, (mutator) => {
+        mutator.conflictOf = undefined
+      })
     }
 
     if (this.isFiltering) {
-      this.application.getDesktopService()?.searchText(this.noteFilterText)
+      this.desktopManager?.searchText(this.noteFilterText)
     }
   }
 
@@ -813,7 +834,7 @@ export class ItemListController extends AbstractViewController implements Intern
 
   private closeItemController(controller: NoteViewController | FileViewController): void {
     log(LoggingDomain.Selection, 'Closing item controller', controller.runtimeId)
-    this.application.itemControllerGroup.closeItemController(controller)
+    this.itemControllerGroup.closeItemController(controller)
   }
 
   handleTagChange = async (userTriggered: boolean) => {
@@ -828,7 +849,7 @@ export class ItemListController extends AbstractViewController implements Intern
 
     this.setNoteFilterText('')
 
-    this.application.getDesktopService()?.searchText()
+    this.desktopManager?.searchText()
 
     this.resetPagination()
 
@@ -848,7 +869,7 @@ export class ItemListController extends AbstractViewController implements Intern
      */
     this.searchSubmitted = true
 
-    this.application.getDesktopService()?.searchText(this.noteFilterText)
+    this.desktopManager?.searchText(this.noteFilterText)
   }
 
   get isCurrentNoteTemplate(): boolean {

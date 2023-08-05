@@ -31,6 +31,7 @@ export * from './Storage/LocalStorage'
 
 export * from './UseCase/IsGlobalSpellcheckEnabled'
 export * from './UseCase/IsNativeMobileWeb'
+export * from './UseCase/IsMobileDevice'
 export * from './UseCase/IsNativeIOS'
 export * from './UseCase/GetItemTags'
 
@@ -47,3 +48,4 @@ export * from './Vaults/VaultDisplayServiceEvent'
 export * from './Vaults/VaultDisplayServiceInterface'
 
 export * from './WebApplication/WebApplicationInterface'
+export * from './Utils/Utils'

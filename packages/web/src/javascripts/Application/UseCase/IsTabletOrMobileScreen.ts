@@ -1,11 +1,19 @@
 import { isMobileScreen, isTabletOrMobileScreen, isTabletScreen } from '@/Utils'
-import { Result, SyncUseCaseInterface } from '@standardnotes/snjs'
+import { Environment, Result, SyncUseCaseInterface } from '@standardnotes/snjs'
 import { IsNativeMobileWeb } from '@standardnotes/ui-services'
 
-export class IsTabletOrMobileScreen implements SyncUseCaseInterface<void> {
-  constructor(private _isNativeMobileWeb: IsNativeMobileWeb) {}
+type ReturnType = {
+  isTabletOrMobile: boolean
+  isTablet: boolean
+  isMobile: boolean
+}
 
-  execute(): Result<void> {
+export class IsTabletOrMobileScreen implements SyncUseCaseInterface<ReturnType> {
+  private _isNativeMobileWeb = new IsNativeMobileWeb(this.environment)
+
+  constructor(private environment: Environment) {}
+
+  execute(): Result<ReturnType> {
     const isNativeMobile = this._isNativeMobileWeb.execute().getValue()
     const isTabletOrMobile = isTabletOrMobileScreen() || isNativeMobile
     const isTablet = isTabletScreen() || (isNativeMobile && !isMobileScreen())

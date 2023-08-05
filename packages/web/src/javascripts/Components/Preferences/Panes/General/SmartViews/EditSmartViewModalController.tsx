@@ -88,7 +88,7 @@ export class EditSmartViewModalController {
 
     this.setIsSaving(true)
 
-    await this.application.changeAndSaveItem<SmartViewMutator>(this.view, (mutator) => {
+    await this.application.changeAndSaveItem.execute<SmartViewMutator>(this.view, (mutator) => {
       mutator.title = this.title
       mutator.iconString = (this.icon as string) || SmartViewDefaultIconName
       mutator.predicate = JSON.parse(this.predicateJson) as PredicateJsonForm

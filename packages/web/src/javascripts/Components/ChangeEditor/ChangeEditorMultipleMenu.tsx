@@ -42,12 +42,12 @@ const ChangeEditorMultipleMenu = ({ application, notes, setDisableClickOutside }
   const selectComponent = useCallback(
     async (uiFeature: UIFeature<EditorFeatureDescription | IframeComponentFeatureDescription>, note: SNNote) => {
       if (uiFeature.isComponent && uiFeature.asComponent.conflictOf) {
-        void application.changeAndSaveItem(uiFeature.asComponent, (mutator) => {
+        void application.changeAndSaveItem.execute(uiFeature.asComponent, (mutator) => {
           mutator.conflictOf = undefined
         })
       }
 
-      await application.changeAndSaveItem(note, (mutator) => {
+      await application.changeAndSaveItem.execute(note, (mutator) => {
         const noteMutator = mutator as NoteMutator
         noteMutator.noteType = uiFeature.noteType
         noteMutator.editorIdentifier = uiFeature.featureIdentifier

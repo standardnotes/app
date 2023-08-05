@@ -1,9 +1,14 @@
+import { ApplicationServiceInterface } from './../Service/ApplicationServiceInterface'
 import { DecryptedItem, DecryptedItemInterface, FileItem, SNNote } from '@standardnotes/models'
 import { ChallengeInterface, ChallengeReason } from '../Challenge'
 import { MobileUnlockTiming } from './MobileUnlockTiming'
 import { TimingDisplayOption } from './TimingDisplayOption'
+import { ProtectionEvent } from './ProtectionEvent'
 
-export interface ProtectionsClientInterface {
+export interface ProtectionsClientInterface extends ApplicationServiceInterface<ProtectionEvent, unknown> {
+  isLocked(): Promise<boolean>
+  softLockBiometrics(): void
+
   createLaunchChallenge(): ChallengeInterface | undefined
   authorizeProtectedActionForItems<T extends DecryptedItem>(files: T[], challengeReason: ChallengeReason): Promise<T[]>
   authorizeItemAccess(item: DecryptedItem): Promise<boolean>

@@ -1,42 +1,38 @@
-import { WebApplication } from '@/Application/WebApplication'
 import { RevisionType } from '@/Components/RevisionHistoryModal/RevisionType'
-import {
-  LegacyHistoryEntry,
-  ListGroup,
-  RemoteRevisionListGroup,
-  sortRevisionListIntoGroups,
-} from '@/Components/RevisionHistoryModal/utils'
+import { sortRevisionListIntoGroups } from '@/Components/RevisionHistoryModal/utils'
 import { STRING_RESTORE_LOCKED_ATTEMPT } from '@/Constants/Strings'
 import { confirmDialog } from '@standardnotes/ui-services'
 import {
   Action,
   ActionVerb,
+  ActionsService,
+  AlertService,
   ButtonType,
+  ChangeAndSaveItem,
+  DeleteRevision,
+  FeaturesClientInterface,
+  GetRevision,
   HistoryEntry,
+  HistoryServiceInterface,
+  ItemManagerInterface,
+  ListRevisions,
+  MutatorClientInterface,
   NoteHistoryEntry,
   PayloadEmitSource,
   RevisionMetadata,
   SNNote,
+  SyncServiceInterface,
 } from '@standardnotes/snjs'
 import { makeObservable, observable, action } from 'mobx'
 import { SelectedItemsController } from '../SelectedItemsController'
-
-type RemoteHistory = RemoteRevisionListGroup[]
-
-type SessionHistory = ListGroup<NoteHistoryEntry>[]
-
-type LegacyHistory = Action[]
-
-type SelectedRevision = HistoryEntry | LegacyHistoryEntry | undefined
-
-type SelectedEntry = RevisionMetadata | NoteHistoryEntry | Action | undefined
-
-export enum RevisionContentState {
-  Idle,
-  Loading,
-  Loaded,
-  NotEntitled,
-}
+import {
+  RemoteHistory,
+  SessionHistory,
+  LegacyHistory,
+  SelectedRevision,
+  SelectedEntry,
+  RevisionContentState,
+} from './Types'
 
 export class NoteHistoryController {
   remoteHistory: RemoteHistory = []
@@ -52,9 +48,19 @@ export class NoteHistoryController {
   currentTab = RevisionType.Remote
 
   constructor(
-    private application: WebApplication,
     private note: SNNote,
     private selectionController: SelectedItemsController,
+    private features: FeaturesClientInterface,
+    private items: ItemManagerInterface,
+    private mutator: MutatorClientInterface,
+    private sync: SyncServiceInterface,
+    private actions: ActionsService,
+    private history: HistoryServiceInterface,
+    private alerts: AlertService,
+    private _getRevision: GetRevision,
+    private _listRevisions: ListRevisions,
+    private _deleteRevision: DeleteRevision,
+    private _changeAndSaveItem: ChangeAndSaveItem,
   ) {
     void this.fetchAllHistory()
 
@@ -119,7 +125,7 @@ export class NoteHistoryController {
       return
     }
 
-    if (!this.application.features.hasMinimumRole(entry.required_role)) {
+    if (!this.features.hasMinimumRole(entry.required_role)) {
       this.setContentState(RevisionContentState.NotEntitled)
       this.setSelectedRevision(undefined)
       return
@@ -130,7 +136,7 @@ export class NoteHistoryController {
 
     try {
       this.setSelectedEntry(entry)
-      const remoteRevisionOrError = await this.application.getRevision.execute({
+      const remoteRevisionOrError = await this._getRevision.execute({
         itemUuid: this.note.uuid,
         revisionUuid: entry.uuid,
       })
@@ -162,7 +168,7 @@ export class NoteHistoryController {
 
       this.setSelectedEntry(entry)
 
-      const response = await this.application.actions.runAction(entry.subactions[0], this.note)
+      const response = await this.actions.runAction(entry.subactions[0], this.note)
 
       if (!response) {
         throw new Error('Could not fetch revision')
@@ -241,7 +247,7 @@ export class NoteHistoryController {
     if (this.note) {
       this.setIsFetchingRemoteHistory(true)
       try {
-        const revisionsListOrError = await this.application.listRevisions.execute({ itemUuid: this.note.uuid })
+        const revisionsListOrError = await this._listRevisions.execute({ itemUuid: this.note.uuid })
         if (revisionsListOrError.isFailed()) {
           throw new Error(revisionsListOrError.getError())
         }
@@ -261,14 +267,14 @@ export class NoteHistoryController {
   }
 
   fetchLegacyHistory = async () => {
-    const actionExtensions = this.application.actions.getExtensions()
+    const actionExtensions = this.actions.getExtensions()
 
     actionExtensions.forEach(async (ext) => {
       if (!this.note) {
         return
       }
 
-      const actionExtension = await this.application.actions.loadExtensionInContextOfItem(ext, this.note)
+      const actionExtension = await this.actions.loadExtensionInContextOfItem(ext, this.note)
 
       if (!actionExtension) {
         return
@@ -296,9 +302,7 @@ export class NoteHistoryController {
     }
 
     this.setSessionHistory(
-      sortRevisionListIntoGroups<NoteHistoryEntry>(
-        this.application.history.sessionHistoryForItem(this.note) as NoteHistoryEntry[],
-      ),
+      sortRevisionListIntoGroups<NoteHistoryEntry>(this.history.sessionHistoryForItem(this.note) as NoteHistoryEntry[]),
     )
     await this.fetchRemoteHistory()
     await this.fetchLegacyHistory()
@@ -313,10 +317,10 @@ export class NoteHistoryController {
   }
 
   restoreRevision = async (revision: NonNullable<SelectedRevision>) => {
-    const originalNote = this.application.items.findItem<SNNote>(revision.payload.uuid)
+    const originalNote = this.items.findItem<SNNote>(revision.payload.uuid)
 
     if (originalNote?.locked) {
-      this.application.alerts.alert(STRING_RESTORE_LOCKED_ATTEMPT).catch(console.error)
+      this.alerts.alert(STRING_RESTORE_LOCKED_ATTEMPT).catch(console.error)
       return
     }
 
@@ -330,7 +334,7 @@ export class NoteHistoryController {
     }
 
     if (didConfirm) {
-      void this.application.changeAndSaveItem(
+      void this._changeAndSaveItem.execute(
         originalNote,
         (mutator) => {
           mutator.setCustomContent(revision.payload.content)
@@ -342,20 +346,20 @@ export class NoteHistoryController {
   }
 
   restoreRevisionAsCopy = async (revision: NonNullable<SelectedRevision>) => {
-    const originalNote = this.application.items.findSureItem<SNNote>(revision.payload.uuid)
+    const originalNote = this.items.findSureItem<SNNote>(revision.payload.uuid)
 
-    const duplicatedItem = await this.application.mutator.duplicateItem(originalNote, false, {
+    const duplicatedItem = await this.mutator.duplicateItem(originalNote, false, {
       ...revision.payload.content,
       title: revision.payload.content.title ? revision.payload.content.title + ' (copy)' : undefined,
     })
 
-    void this.application.sync.sync()
+    void this.sync.sync()
 
     this.selectionController.selectItem(duplicatedItem.uuid).catch(console.error)
   }
 
   deleteRemoteRevision = async (revisionEntry: RevisionMetadata) => {
-    const shouldDelete = await this.application.alerts.confirm(
+    const shouldDelete = await this.alerts.confirm(
       'Are you sure you want to delete this revision?',
       'Delete revision?',
       'Delete revision',
@@ -367,7 +371,7 @@ export class NoteHistoryController {
       return
     }
 
-    const deleteRevisionOrError = await this.application.deleteRevision.execute({
+    const deleteRevisionOrError = await this._deleteRevision.execute({
       itemUuid: this.note.uuid,
       revisionUuid: revisionEntry.uuid,
     })

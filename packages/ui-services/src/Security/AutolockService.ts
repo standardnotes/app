@@ -21,7 +21,7 @@ const STORAGE_KEY_AUTOLOCK_INTERVAL = 'AutoLockIntervalKey'
 export class AutolockService extends AbstractService {
   private unsubApp!: () => void
 
-  private pollInterval: any
+  private pollInterval: ReturnType<typeof setInterval> | undefined
   private lastFocusState?: 'hidden' | 'visible'
   private lockAfterDate?: Date
 
@@ -100,7 +100,7 @@ export class AutolockService extends AbstractService {
    */
   beginPolling() {
     this.pollInterval = setInterval(async () => {
-      const locked = await this.application.isLocked()
+      const locked = await this.application.protections.isLocked()
       if (!locked && this.lockAfterDate && new Date() > this.lockAfterDate) {
         this.lockApplication()
       }

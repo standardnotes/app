@@ -625,7 +625,7 @@ export class EncryptionService
   /**
    * @returns True if the root key has not yet been unwrapped (passcode locked).
    */
-  public async isPasscodeLocked() {
+  public async isPasscodeLocked(): Promise<boolean> {
     return (await this.rootKeyManager.hasRootKeyWrapper()) && this.rootKeyManager.getRootKey() == undefined
   }
 

@@ -181,7 +181,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
       } else if (isSystemTag) {
         await changeSystemViewPreferences(properties)
       } else {
-        await application.changeAndSaveItem<TagMutator>(selectedTag, (mutator) => {
+        await application.changeAndSaveItem.execute<TagMutator>(selectedTag, (mutator) => {
           mutator.preferences = {
             ...mutator.preferences,
             ...properties,
@@ -202,7 +202,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
       return
     }
 
-    void application.changeAndSaveItem<TagMutator>(selectedTag, (mutator) => {
+    void application.changeAndSaveItem.execute<TagMutator>(selectedTag, (mutator) => {
       mutator.preferences = undefined
     })
   }, [application, isSystemTag, reloadPreferences, selectedTag])

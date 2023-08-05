@@ -10,6 +10,8 @@ export interface LegacyApiServiceInterface
   extends AbstractService<ApiServiceEvent, ApiServiceEventData>,
     FilesApiInterface {
   isThirdPartyHostUsed(): boolean
+  setHost(host: string): Promise<void>
+  getHost(): string
 
   downloadOfflineFeaturesFromRepo(
     repo: SNFeatureRepo,

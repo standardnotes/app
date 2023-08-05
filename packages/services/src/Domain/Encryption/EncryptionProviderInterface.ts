@@ -24,6 +24,8 @@ import {
 export interface EncryptionProviderInterface {
   initialize(): Promise<void>
 
+  isPasscodeLocked(): Promise<boolean>
+
   encryptSplitSingle(split: KeyedEncryptionSplit): Promise<EncryptedPayloadInterface>
   encryptSplit(split: KeyedEncryptionSplit): Promise<EncryptedPayloadInterface[]>
   decryptSplitSingle<

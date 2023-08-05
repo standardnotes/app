@@ -126,6 +126,9 @@ import {
   AlertService,
   DesktopDeviceInterface,
   ChangeVaultStorageMode,
+  ChangeAndSaveItem,
+  FullyResolvedApplicationOptions,
+  GetHost,
 } from '@standardnotes/services'
 import { ItemManager } from '../../Services/Items/ItemManager'
 import { PayloadManager } from '../../Services/Payloads/PayloadManager'
@@ -151,7 +154,6 @@ import {
   WebSocketApiService,
   WebSocketServer,
 } from '@standardnotes/api'
-import { FullyResolvedApplicationOptions } from '../Options/ApplicationOptions'
 import { TYPES } from './Types'
 import { isDeinitable } from './isDeinitable'
 import { Logger, isNotUndefined } from '@standardnotes/utils'
@@ -217,6 +219,10 @@ export class Dependencies {
         this.get<ItemsEncryptionService>(TYPES.ItemsEncryptionService),
         this.get<DecryptErroredTypeAPayloads>(TYPES.DecryptErroredTypeAPayloads),
       )
+    })
+
+    this.factory.set(TYPES.GetHost, () => {
+      return new GetHost(this.get<LegacyApiService>(TYPES.LegacyApiService))
     })
 
     this.factory.set(TYPES.GetKeyPairs, () => {
@@ -305,6 +311,14 @@ export class Dependencies {
 
     this.factory.set(TYPES.GetVaults, () => {
       return new GetVaults(this.get<ItemManager>(TYPES.ItemManager))
+    })
+
+    this.factory.set(TYPES.ChangeAndSaveItem, () => {
+      return new ChangeAndSaveItem(
+        this.get<ItemManager>(TYPES.ItemManager),
+        this.get<MutatorService>(TYPES.MutatorService),
+        this.get<SyncService>(TYPES.SyncService),
+      )
     })
 
     this.factory.set(TYPES.GetSharedVaults, () => {

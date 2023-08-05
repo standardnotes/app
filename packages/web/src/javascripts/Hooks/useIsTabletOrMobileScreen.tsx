@@ -1,11 +1,12 @@
+import { IsTabletOrMobileScreen } from '@/Application/UseCase/IsTabletOrMobileScreen'
 import { useApplication } from '@/Components/ApplicationProvider'
-import { debounce, isMobileScreen, isTabletOrMobileScreen, isTabletScreen } from '@/Utils'
-import { WebApplicationInterface } from '@standardnotes/ui-services'
-import { useEffect, useState } from 'react'
+import { debounce } from '@/Utils'
+import { useEffect, useMemo, useState } from 'react'
 
 export default function useIsTabletOrMobileScreen() {
   const [_windowSize, setWindowSize] = useState(0)
   const application = useApplication()
+  const usecase = useMemo(() => new IsTabletOrMobileScreen(application.environment), [application])
 
   useEffect(() => {
     const handleResize = debounce(() => {
@@ -20,5 +21,6 @@ export default function useIsTabletOrMobileScreen() {
     }
   }, [])
 
-  return getIsTabletOrMobileScreen(application)
+  const isTabletOrMobileScreen = usecase.execute().getValue()
+  return isTabletOrMobileScreen
 }

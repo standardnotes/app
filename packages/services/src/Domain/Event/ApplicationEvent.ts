@@ -55,7 +55,5 @@ export enum ApplicationEvent {
   UnprotectedSessionExpired = 'Application:UnprotectedSessionExpired',
   /** Called when the app first launches and after first sync request made after sign in */
   CompletedInitialSync = 'Application:CompletedInitialSync',
-  BiometricsSoftLockEngaged = 'Application:BiometricsSoftLockEngaged',
-  BiometricsSoftLockDisengaged = 'Application:BiometricsSoftLockDisengaged',
   DidPurchaseSubscription = 'Application:DidPurchaseSubscription',
 }

@@ -100,7 +100,7 @@ const GeneralAccountMenu: FunctionComponent<Props> = ({
           <div className="mb-3 px-3 text-lg text-foreground lg:text-sm">
             <div>You're signed in as:</div>
             <div className="wrap my-0.5 font-bold">{user.email}</div>
-            <span className="text-neutral">{application.getHost()}</span>
+            <span className="text-neutral">{application.getHost.execute().getValue()}</span>
           </div>
           <div className="mb-2 flex items-start justify-between px-3 text-mobile-menu-item md:text-tablet-menu-item lg:text-menu-item">
             {isSyncingInProgress ? (

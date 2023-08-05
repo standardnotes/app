@@ -20,7 +20,6 @@ import {
   ApplicationStageChangedEventPayload,
   StorageValueModes,
   ChallengeObserver,
-  SyncOptions,
   ImportDataReturnType,
   ImportDataUseCase,
   StoragePersistencePolicies,
@@ -57,7 +56,6 @@ import {
   ApplicationInterface,
   EncryptionService,
   EncryptionServiceEvent,
-  ChallengePrompt,
   Challenge,
   ErrorAlertStrings,
   SessionsClientInterface,
@@ -78,31 +76,29 @@ import {
   ApplicationConstructorOptions,
   FullyResolvedApplicationOptions,
   ApplicationOptionsDefaults,
+  ChangeAndSaveItem,
+  ProtectionEvent,
+  GetHost,
+  SetHost,
 } from '@standardnotes/services'
 import {
-  PayloadEmitSource,
   SNNote,
   PrefKey,
   PrefValue,
-  DecryptedItemMutator,
   BackupFile,
-  DecryptedItemInterface,
   EncryptedItemInterface,
   Environment,
   Platform,
-  MutationType,
 } from '@standardnotes/models'
 import {
   HttpResponse,
   SessionListResponse,
-  User,
   SignInResponse,
   ClientDisplayableError,
   SessionListEntry,
 } from '@standardnotes/responses'
 import {
   SyncService,
-  ProtectionEvent,
   SettingsService,
   ActionsService,
   ChallengeResponse,
@@ -177,7 +173,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   private launched = false
   /** Whether the application has been destroyed via .deinit() */
   public dealloced = false
-  private isBiometricsSoftLockEngaged = false
+
   private revokingSession = false
   private handledFullSyncStage = false
 
@@ -560,13 +556,6 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     void this.migrations.handleApplicationEvent(event)
   }
 
-  /**
-   * Whether the local database has completed loading local items.
-   */
-  public isDatabaseLoaded(): boolean {
-    return this.sync.isDatabaseLoaded()
-  }
-
   public getSessions(): Promise<HttpResponse<SessionListEntry[]>> {
     return this.sessions.getSessionsList()
   }
@@ -593,21 +582,8 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return compareVersions(userVersion, ProtocolVersion.V004) >= 0
   }
 
-  /**
-   * Set the server's URL
-   */
-  public async setHost(host: string): Promise<void> {
-    this.http.setHost(host)
-
-    await this.legacyApi.setHost(host)
-  }
-
-  public getHost(): string {
-    return this.legacyApi.getHost()
-  }
-
   public async setCustomHost(host: string): Promise<void> {
-    await this.setHost(host)
+    await this.setHost.execute(host)
 
     this.sockets.setWebSocketUrl(undefined)
   }
@@ -867,39 +843,6 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     })
   }
 
-  public async changeAndSaveItem<M extends DecryptedItemMutator = DecryptedItemMutator>(
-    itemToLookupUuidFor: DecryptedItemInterface,
-    mutate: (mutator: M) => void,
-    updateTimestamps = true,
-    emitSource?: PayloadEmitSource,
-    syncOptions?: SyncOptions,
-  ): Promise<DecryptedItemInterface | undefined> {
-    await this.mutator.changeItems(
-      [itemToLookupUuidFor],
-      mutate,
-      updateTimestamps ? MutationType.UpdateUserTimestamps : MutationType.NoUpdateUserTimestamps,
-      emitSource,
-    )
-    await this.sync.sync(syncOptions)
-    return this.items.findItem(itemToLookupUuidFor.uuid)
-  }
-
-  public async changeAndSaveItems<M extends DecryptedItemMutator = DecryptedItemMutator>(
-    itemsToLookupUuidsFor: DecryptedItemInterface[],
-    mutate: (mutator: M) => void,
-    updateTimestamps = true,
-    emitSource?: PayloadEmitSource,
-    syncOptions?: SyncOptions,
-  ): Promise<void> {
-    await this.mutator.changeItems(
-      itemsToLookupUuidsFor,
-      mutate,
-      updateTimestamps ? MutationType.UpdateUserTimestamps : MutationType.NoUpdateUserTimestamps,
-      emitSource,
-    )
-    await this.sync.sync(syncOptions)
-  }
-
   public async importData(data: BackupFile, awaitSync = false): Promise<ImportDataReturnType> {
     const usecase = this.dependencies.get<ImportDataUseCase>(TYPES.ImportDataUseCase)
     return usecase.execute(data, awaitSync)
@@ -937,40 +880,16 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return this.encryption.hasPasscode()
   }
 
-  async isLocked(): Promise<boolean> {
-    if (!this.started) {
-      return Promise.resolve(true)
-    }
-    const isPasscodeLocked = await this.challenges.isPasscodeLocked()
-    return isPasscodeLocked || this.isBiometricsSoftLockEngaged
-  }
-
   public async lock(): Promise<void> {
-    /** Because locking is a critical operation, we want to try to do it safely,
-     * but only up to a certain limit. */
+    /**
+     * Because locking is a critical operation, we want to try to do it safely,
+     * but only up to a certain limit.
+     */
     const MaximumWaitTime = 500
+
     await this.prepareForDeinit(MaximumWaitTime)
+
     return this.deinit(this.getDeinitMode(), DeinitSource.Lock)
-  }
-
-  public softLockBiometrics(): void {
-    const challenge = new Challenge(
-      [new ChallengePrompt(ChallengeValidation.Biometric)],
-      ChallengeReason.ApplicationUnlock,
-      false,
-    )
-
-    void this.challenges.promptForChallengeResponse(challenge)
-
-    this.isBiometricsSoftLockEngaged = true
-    void this.notifyEvent(ApplicationEvent.BiometricsSoftLockEngaged)
-
-    this.addChallengeObserver(challenge, {
-      onComplete: () => {
-        this.isBiometricsSoftLockEngaged = false
-        void this.notifyEvent(ApplicationEvent.BiometricsSoftLockDisengaged)
-      },
-    })
   }
 
   isNativeMobileWeb() {
@@ -1059,7 +978,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       return false
     }
 
-    return this.getHost() === (await homeServerService.getHomeServerUrl())
+    return this.getHost.execute().getValue() === (await homeServerService.getHomeServerUrl())
   }
 
   private createBackgroundDependencies() {
@@ -1301,6 +1220,18 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
 
   public get sharedVaults(): SharedVaultServiceInterface {
     return this.dependencies.get<SharedVaultServiceInterface>(TYPES.SharedVaultService)
+  }
+
+  public get changeAndSaveItem(): ChangeAndSaveItem {
+    return this.dependencies.get<ChangeAndSaveItem>(TYPES.ChangeAndSaveItem)
+  }
+
+  public get getHost(): GetHost {
+    return this.dependencies.get<GetHost>(TYPES.GetHost)
+  }
+
+  public get setHost(): SetHost {
+    return this.dependencies.get<SetHost>(TYPES.SetHost)
   }
 
   private get migrations(): MigrationService {

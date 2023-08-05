@@ -30,6 +30,7 @@ import LinkingControllerProvider from '@/Controllers/LinkingControllerProvider'
 import ImportModal from '../ImportModal/ImportModal'
 import IosKeyboardClose from '../IosKeyboardClose/IosKeyboardClose'
 import EditorWidthSelectionModalWrapper from '../EditorWidthSelectionModal/EditorWidthSelectionModal'
+import { ProtectionEvent } from '@standardnotes/services'
 
 type Props = {
   application: WebApplication
@@ -142,10 +143,6 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
             })
             .catch(console.error)
         }
-      } else if (eventName === ApplicationEvent.BiometricsSoftLockEngaged) {
-        setNeedsUnlock(true)
-      } else if (eventName === ApplicationEvent.BiometricsSoftLockDisengaged) {
-        setNeedsUnlock(false)
       }
     })
 
@@ -155,9 +152,21 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
   }, [application, onAppLaunch, onAppStart])
 
   useEffect(() => {
+    const disposer = application.protections.addEventObserver(async (eventName) => {
+      if (eventName === ProtectionEvent.BiometricsSoftLockEngaged) {
+        setNeedsUnlock(true)
+      } else if (eventName === ProtectionEvent.BiometricsSoftLockDisengaged) {
+        setNeedsUnlock(false)
+      }
+    })
+
+    return disposer
+  }, [application])
+
+  useEffect(() => {
     const removeObserver = application.addWebEventObserver(async (eventName) => {
       if (eventName === WebAppEvent.WindowDidFocus) {
-        if (!(await application.isLocked())) {
+        if (!(await application.protections.isLocked())) {
           application.sync.sync().catch(console.error)
         }
       }

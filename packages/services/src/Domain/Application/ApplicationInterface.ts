@@ -5,28 +5,20 @@ import {
   SyncServiceInterface,
   FullyResolvedApplicationOptions,
   ProtectionsClientInterface,
+  ChangeAndSaveItem,
+  GetHost,
+  SetHost,
 } from '@standardnotes/services'
 import { VaultLockServiceInterface } from './../VaultLock/VaultLockServiceInterface'
 import { HistoryServiceInterface } from './../History/HistoryServiceInterface'
 import { InternalEventBusInterface } from './../Internal/InternalEventBusInterface'
 import { PreferenceServiceInterface } from './../Preferences/PreferenceServiceInterface'
 import { AsymmetricMessageServiceInterface } from './../AsymmetricMessage/AsymmetricMessageServiceInterface'
-import { SyncOptions } from './../Sync/SyncOptions'
 import { ImportDataReturnType } from './../Mutator/ImportDataUseCase'
 import { ChallengeServiceInterface } from './../Challenge/ChallengeServiceInterface'
 import { VaultServiceInterface } from '../Vault/VaultServiceInterface'
 import { ApplicationIdentifier } from '@standardnotes/common'
-import {
-  BackupFile,
-  DecryptedItemInterface,
-  DecryptedItemMutator,
-  Environment,
-  ItemStream,
-  PayloadEmitSource,
-  Platform,
-  PrefKey,
-  PrefValue,
-} from '@standardnotes/models'
+import { BackupFile, Environment, Platform, PrefKey, PrefValue } from '@standardnotes/models'
 import { BackupServiceInterface, FilesClientInterface } from '@standardnotes/files'
 
 import { AlertService } from '../Alert/AlertService'
@@ -59,13 +51,10 @@ export interface ApplicationInterface {
   createEncryptedBackupFile(): Promise<BackupFile | undefined>
   createDecryptedBackupFile(): Promise<BackupFile | undefined>
   hasPasscode(): boolean
-  isDatabaseLoaded(): boolean
   lock(): Promise<void>
-  softLockBiometrics(): void
   setValue(key: string, value: unknown, mode?: StorageValueModes): void
   getValue<T>(key: string, mode?: StorageValueModes): T
   removeValue(key: string, mode?: StorageValueModes): Promise<void>
-  isLocked(): Promise<boolean>
   getPreference<K extends PrefKey>(key: K): PrefValue[K] | undefined
   getPreference<K extends PrefKey>(key: K, defaultValue: PrefValue[K]): PrefValue[K]
   getPreference<K extends PrefKey>(key: K, defaultValue?: PrefValue[K]): PrefValue[K] | undefined
@@ -77,27 +66,10 @@ export interface ApplicationInterface {
   isUsingHomeServer(): Promise<boolean>
 
   importData(data: BackupFile, awaitSync?: boolean): Promise<ImportDataReturnType>
-  /**
-   * Mutates a pre-existing item, marks it as dirty, and syncs it
-   */
-  changeAndSaveItem<M extends DecryptedItemMutator = DecryptedItemMutator>(
-    itemToLookupUuidFor: DecryptedItemInterface,
-    mutate: (mutator: M) => void,
-    updateTimestamps?: boolean,
-    emitSource?: PayloadEmitSource,
-    syncOptions?: SyncOptions,
-  ): Promise<DecryptedItemInterface | undefined>
 
-  /**
-   * Mutates pre-existing items, marks them as dirty, and syncs
-   */
-  changeAndSaveItems<M extends DecryptedItemMutator = DecryptedItemMutator>(
-    itemsToLookupUuidsFor: DecryptedItemInterface[],
-    mutate: (mutator: M) => void,
-    updateTimestamps?: boolean,
-    emitSource?: PayloadEmitSource,
-    syncOptions?: SyncOptions,
-  ): Promise<void>
+  get changeAndSaveItem(): ChangeAndSaveItem
+  get getHost(): GetHost
+  get setHost(): SetHost
 
   get alerts(): AlertService
   get asymmetric(): AsymmetricMessageServiceInterface

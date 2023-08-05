@@ -26,13 +26,14 @@ import {
 import { action, makeObservable, observable } from 'mobx'
 import { startAuthentication, startRegistration } from '@simplewebauthn/browser'
 import { PanelResizedData } from '@/Types/PanelResizedData'
-import { getBlobFromBase64, isAndroid, isDesktopApplication, isDev, isIOS } from '@/Utils'
+import { getBlobFromBase64, isDesktopApplication, isDev } from '@/Utils'
 import { DesktopManager } from './Device/DesktopManager'
 import {
   ArchiveManager,
   AutolockService,
   ChangelogService,
   IsGlobalSpellcheckEnabled,
+  IsMobileDevice,
   IsNativeIOS,
   IsNativeMobileWeb,
   KeyboardService,
@@ -226,12 +227,12 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     return InternalFeatureService.get()
   }
 
-  isNativeIOS() {
+  isNativeIOS(): boolean {
     return this.deps.get<IsNativeIOS>(Web_TYPES.IsNativeIOS).execute().getValue()
   }
 
-  get isMobileDevice() {
-    return this.isNativeMobileWeb() || isIOS() || isAndroid()
+  get isMobileDevice(): boolean {
+    return this.deps.get<IsMobileDevice>(Web_TYPES.IsMobileDevice).execute().getValue()
   }
 
   get hideOutboundSubscriptionLinks() {
@@ -402,7 +403,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
   }
 
   private async lockApplicationAfterMobileEventIfApplicable(): Promise<void> {
-    const isLocked = await this.isLocked()
+    const isLocked = await this.protections.isLocked()
     if (isLocked) {
       return
     }
@@ -418,7 +419,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     if (passcodeLockImmediately) {
       await this.lock()
     } else if (biometricsLockImmediately) {
-      this.softLockBiometrics()
+      this.protections.softLockBiometrics()
     }
   }
 

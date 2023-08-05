@@ -47,4 +47,5 @@ export const Web_TYPES = {
   IsGlobalSpellcheckEnabled: Symbol.for('IsGlobalSpellcheckEnabled'),
   IsNativeMobileWeb: Symbol.for('IsNativeMobileWeb'),
   IsNativeIOS: Symbol.for('IsNativeIOS'),
+  IsMobileDevice: Symbol.for('IsMobileDevice'),
 }

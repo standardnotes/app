@@ -320,7 +320,7 @@ const ContentTableView = ({
         return
       }
 
-      await application.changeAndSaveItem<TagMutator>(selectedTag, (mutator) => {
+      await application.changeAndSaveItem.execute<TagMutator>(selectedTag, (mutator) => {
         mutator.preferences = {
           ...mutator.preferences,
           sortBy,
