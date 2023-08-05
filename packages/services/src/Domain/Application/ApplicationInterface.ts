@@ -34,7 +34,7 @@ import { StorageValueModes } from '../Storage/StorageTypes'
 
 import { DeinitMode } from './DeinitMode'
 import { DeinitSource } from './DeinitSource'
-import { UserClientInterface } from '../User/UserClientInterface'
+import { UserServiceInterface } from '../User/UserServiceInterface'
 import { SessionsClientInterface } from '../Session/SessionsClientInterface'
 import { HomeServerServiceInterface } from '../HomeServer/HomeServerServiceInterface'
 import { User } from '@standardnotes/responses'
@@ -113,7 +113,7 @@ export interface ApplicationInterface {
   get preferences(): PreferenceServiceInterface
   get sessions(): SessionsClientInterface
   get subscriptions(): SubscriptionManagerInterface
-  get user(): UserClientInterface
+  get user(): UserServiceInterface
   get vaults(): VaultServiceInterface
   get vaultLocks(): VaultLockServiceInterface
   get vaultUsers(): VaultUserServiceInterface

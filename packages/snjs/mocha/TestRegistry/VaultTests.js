@@ -9,6 +9,7 @@ export const VaultTests = {
     'vaults/importing.test.js',
     'vaults/asymmetric-messages.test.js',
     'vaults/keypair-change.test.js',
+    'vaults/key-sharing.test.js',
     'vaults/signatures.test.js',
     'vaults/shared_vaults.test.js',
     'vaults/invites.test.js',

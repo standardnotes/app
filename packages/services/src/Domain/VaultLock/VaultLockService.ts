@@ -8,6 +8,7 @@ import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface
 import { ContentType } from '@standardnotes/domain-core'
 import { EncryptionProviderInterface } from '../Encryption/EncryptionProviderInterface'
 import { KeySystemKeyManagerInterface } from '../KeySystem/KeySystemKeyManagerInterface'
+import { DecryptErroredPayloads } from '../Encryption/UseCase/DecryptErroredPayloads'
 
 export class VaultLockService
   extends AbstractService<VaultLockServiceEvent, VaultLockServiceEventPayload[VaultLockServiceEvent]>
@@ -20,6 +21,7 @@ export class VaultLockService
     private encryption: EncryptionProviderInterface,
     private keys: KeySystemKeyManagerInterface,
     private _getVaults: GetVaults,
+    private _decryptErroredPayloads: DecryptErroredPayloads,
     eventBus: InternalEventBusInterface,
   ) {
     super(eventBus)
@@ -37,6 +39,7 @@ export class VaultLockService
     ;(this.encryption as unknown) = undefined
     ;(this.keys as unknown) = undefined
     ;(this._getVaults as unknown) = undefined
+    ;(this._decryptErroredPayloads as unknown) = undefined
 
     this.lockMap.clear()
   }
@@ -86,7 +89,7 @@ export class VaultLockService
 
     this.keys.cacheKey(derivedRootKey, vault.keyStorageMode)
 
-    await this.encryption.decryptErroredPayloads()
+    await this._decryptErroredPayloads.execute()
 
     if (this.computeVaultLockState(vault) === 'locked') {
       this.keys.removeKeyFromCache(vault.systemIdentifier)

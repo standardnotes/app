@@ -10,7 +10,7 @@ import {
   SessionsClientInterface,
   SubscriptionManagerInterface,
   SyncServiceInterface,
-  UserClientInterface,
+  UserServiceInterface,
 } from '@standardnotes/snjs'
 import { ToastType } from '@standardnotes/toast'
 
@@ -37,7 +37,7 @@ export class ApplicationEventObserver implements EventObserverInterface {
     private sessionManager: SessionsClientInterface,
     private subscriptionManager: SubscriptionManagerInterface,
     private toastService: ToastServiceInterface,
-    private userService: UserClientInterface,
+    private userService: UserServiceInterface,
   ) {}
 
   async handle(event: ApplicationEvent): Promise<void> {

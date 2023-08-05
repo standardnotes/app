@@ -6,12 +6,12 @@ import { Result, UseCaseInterface } from '@standardnotes/domain-core'
 
 export class GetVaultContacts implements UseCaseInterface<TrustedContactInterface[]> {
   constructor(
-    private findContact: FindContact,
-    private getVaultUsers: GetVaultUsers,
+    private _findContact: FindContact,
+    private _getVaultUsers: GetVaultUsers,
   ) {}
 
   async execute(dto: { sharedVaultUuid: string; readFromCache: boolean }): Promise<Result<TrustedContactInterface[]>> {
-    const users = await this.getVaultUsers.execute({
+    const users = await this._getVaultUsers.execute({
       sharedVaultUuid: dto.sharedVaultUuid,
       readFromCache: dto.readFromCache,
     })
@@ -21,7 +21,7 @@ export class GetVaultContacts implements UseCaseInterface<TrustedContactInterfac
 
     const contacts = users
       .getValue()
-      .map((user) => this.findContact.execute({ userUuid: user.user_uuid }))
+      .map((user) => this._findContact.execute({ userUuid: user.user_uuid }))
       .map((result) => (result.isFailed() ? undefined : result.getValue()))
       .filter(isNotUndefined)
 

@@ -12,7 +12,6 @@ import { GetVault } from '../Vault/UseCase/GetVault'
 import { InviteToVault } from './UseCase/InviteToVault'
 import { GetVaultContacts } from '../VaultUser/UseCase/GetVaultContacts'
 import { SyncServiceInterface } from './../Sync/SyncServiceInterface'
-import { EncryptionProviderInterface } from './../Encryption/EncryptionProviderInterface'
 import { InternalEventBusInterface } from './../Internal/InternalEventBusInterface'
 import { SessionsClientInterface } from './../Session/SessionsClientInterface'
 import { GetAllContacts } from './../Contacts/UseCase/GetAllContacts'
@@ -33,6 +32,8 @@ import { AbstractService } from './../Service/AbstractService'
 import { VaultInviteServiceEvent } from './VaultInviteServiceEvent'
 import { ContentType, Result } from '@standardnotes/domain-core'
 import { SharedVaultInvitesServer } from '@standardnotes/api'
+import { GetKeyPairs } from '../Encryption/UseCase/GetKeyPairs'
+import { DecryptErroredPayloads } from '../Encryption/UseCase/DecryptErroredPayloads'
 
 export class VaultInviteService
   extends AbstractService<VaultInviteServiceEvent>
@@ -45,7 +46,6 @@ export class VaultInviteService
     private session: SessionsClientInterface,
     private vaultUsers: VaultUserServiceInterface,
     private sync: SyncServiceInterface,
-    private encryption: EncryptionProviderInterface,
     private invitesServer: SharedVaultInvitesServer,
     private _getAllContacts: GetAllContacts,
     private _getVault: GetVault,
@@ -55,6 +55,8 @@ export class VaultInviteService
     private _getUntrustedPayload: GetUntrustedPayload,
     private _findContact: FindContact,
     private _acceptVaultInvite: AcceptVaultInvite,
+    private _getKeyPairs: GetKeyPairs,
+    private _decryptErroredPayloads: DecryptErroredPayloads,
     eventBus: InternalEventBusInterface,
   ) {
     super(eventBus)
@@ -75,7 +77,6 @@ export class VaultInviteService
     ;(this.session as unknown) = undefined
     ;(this.vaultUsers as unknown) = undefined
     ;(this.sync as unknown) = undefined
-    ;(this.encryption as unknown) = undefined
     ;(this.invitesServer as unknown) = undefined
     ;(this._getAllContacts as unknown) = undefined
     ;(this._getVault as unknown) = undefined
@@ -85,6 +86,8 @@ export class VaultInviteService
     ;(this._getUntrustedPayload as unknown) = undefined
     ;(this._findContact as unknown) = undefined
     ;(this._acceptVaultInvite as unknown) = undefined
+    ;(this._getKeyPairs as unknown) = undefined
+    ;(this._decryptErroredPayloads as unknown) = undefined
 
     this.pendingInvites = {}
   }
@@ -142,7 +145,7 @@ export class VaultInviteService
 
     void this.sync.sync()
 
-    await this.encryption.decryptErroredPayloads()
+    await this._decryptErroredPayloads.execute()
 
     await this.sync.syncSharedVaultsFromScratch([pendingInvite.invite.shared_vault_uuid])
   }
@@ -181,11 +184,6 @@ export class VaultInviteService
     const contacts = contactsResult.getValue()
 
     const result = await this._inviteToVault.execute({
-      keys: {
-        encryption: this.encryption.getKeyPair(),
-        signing: this.encryption.getSigningKeyPair(),
-      },
-      senderUuid: this.session.getSureUser().uuid,
       sharedVault,
       recipient: contact,
       sharedVaultContacts: contacts,
@@ -233,6 +231,11 @@ export class VaultInviteService
       return
     }
 
+    const keys = this._getKeyPairs.execute()
+    if (keys.isFailed()) {
+      return
+    }
+
     for (const invite of invites) {
       delete this.pendingInvites[invite.uuid]
 
@@ -240,7 +243,7 @@ export class VaultInviteService
       if (!sender.isFailed()) {
         const trustedMessage = this._getTrustedPayload.execute<AsymmetricMessageSharedVaultInvite>({
           message: invite,
-          privateKey: this.encryption.getKeyPair().privateKey,
+          privateKey: keys.getValue().encryption.privateKey,
           ownUserUuid: this.session.userUuid,
           sender: sender.getValue(),
         })
@@ -258,7 +261,7 @@ export class VaultInviteService
 
       const untrustedMessage = this._getUntrustedPayload.execute<AsymmetricMessageSharedVaultInvite>({
         message: invite,
-        privateKey: this.encryption.getKeyPair().privateKey,
+        privateKey: keys.getValue().encryption.privateKey,
       })
 
       if (!untrustedMessage.isFailed()) {
