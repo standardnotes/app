@@ -321,12 +321,15 @@ function TextFormatFloatingToolbar({
   return (
     <div
       ref={toolbarRef}
-      className="absolute left-0 top-0 rounded-lg border border-border bg-contrast translucent-ui:bg-[--popover-background-color] translucent-ui:[backdrop-filter:var(--popover-backdrop-filter)] px-2 py-1 shadow-sm shadow-contrast"
+      className="absolute left-0 top-0 rounded-lg border border-border bg-contrast translucent-ui:bg-[--popover-background-color] translucent-ui:[backdrop-filter:var(--popover-backdrop-filter)] translucent-ui:border-[--popover-border-color] px-2 py-1 shadow-sm shadow-contrast"
     >
       {isLinkText && !isAutoLink && (
         <>
           <LinkTextEditor linkText={linkText} editor={editor} lastSelection={lastSelection} />
-          <div role="presentation" className="mb-1.5 mt-0.5 h-px bg-border" />
+          <div
+            role="presentation"
+            className="mb-1.5 mt-0.5 h-px bg-border translucent-ui:bg-[--popover-border-color]"
+          />
         </>
       )}
       {isLink && (
@@ -339,7 +342,9 @@ function TextFormatFloatingToolbar({
           lastSelection={lastSelection}
         />
       )}
-      {isText && isLink && <div role="presentation" className="mb-1.5 mt-0.5 h-px bg-border" />}
+      {isText && isLink && (
+        <div role="presentation" className="mb-1.5 mt-0.5 h-px bg-border translucent-ui:bg-[--popover-border-color]" />
+      )}
       {isText && (
         <div className="flex gap-1">
           <ToolbarButton
