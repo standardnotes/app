@@ -98,7 +98,7 @@ describe('offline syncing', () => {
     this.expectedItemCount++
     await this.application.sync.sync(syncOptions)
     this.application = await Factory.signOutApplicationAndReturnNew(this.application)
-    expect(this.application.session.hasAccount()).to.equal(false)
+    expect(this.application.sessions.isSignedIn()).to.equal(false)
     expect(this.application.sessions.getUser()).to.not.be.ok
   })
 })
