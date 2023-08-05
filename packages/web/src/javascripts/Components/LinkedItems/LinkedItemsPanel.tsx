@@ -49,7 +49,7 @@ const LinkedItemsPanel = ({ isOpen, item }: { isOpen: boolean; item: DecryptedIt
     <div>
       <form
         className={classNames(
-          'sticky top-0 z-10 bg-default px-2.5 pt-2.5',
+          'sticky top-0 z-10 bg-default md:translucent-ui:bg-transparent px-2.5 pt-2.5',
           linkedResults.length || unlinkedItems.length || notesLinkingToItem.length
             ? 'border-b border-border pb-2.5'
             : 'pb-1',
@@ -57,7 +57,10 @@ const LinkedItemsPanel = ({ isOpen, item }: { isOpen: boolean; item: DecryptedIt
       >
         <DecoratedInput
           type="text"
-          className={{ container: !isSearching ? 'px-0.5 py-1.5' : 'py-0', input: 'placeholder:text-passive-0' }}
+          className={{
+            container: classNames(!isSearching ? 'px-0.5 py-1.5' : 'py-0', 'md:translucent-ui:bg-default'),
+            input: 'placeholder:text-passive-0',
+          }}
           placeholder="Search items to link..."
           value={searchQuery}
           onChange={setSearchQuery}

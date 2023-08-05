@@ -18,8 +18,18 @@ type Props = {
   onComplete: () => void
 }
 
+function isValidJson(string: string) {
+  try {
+    JSON.parse(string)
+  } catch (e) {
+    return false
+  }
+  return true
+}
+
 export const SuperNoteImporter: FunctionComponent<Props> = ({ note, application, closeDialog, onComplete }) => {
   const isSeamlessConvert = note.text.length === 0
+  const canBeConvertedAsIs = isValidJson(note.text)
   const [lastValue, setLastValue] = useState({ text: '', previewPlain: '' })
 
   const format =
@@ -89,8 +99,8 @@ export const SuperNoteImporter: FunctionComponent<Props> = ({ note, application,
     onComplete()
   }, [closeDialog, application, note, onComplete, performConvert])
 
-  const modalActions: ModalAction[] = useMemo(
-    () => [
+  const modalActions = useMemo(
+    (): ModalAction[] => [
       {
         label: 'Cancel',
         onClick: closeDialog,
@@ -107,9 +117,10 @@ export const SuperNoteImporter: FunctionComponent<Props> = ({ note, application,
         label: 'Convert As-Is',
         onClick: convertAsIs,
         type: 'secondary',
+        hidden: !canBeConvertedAsIs,
       },
     ],
-    [closeDialog, confirmConvert, convertAsIs],
+    [canBeConvertedAsIs, closeDialog, confirmConvert, convertAsIs],
   )
 
   if (isSeamlessConvert) {

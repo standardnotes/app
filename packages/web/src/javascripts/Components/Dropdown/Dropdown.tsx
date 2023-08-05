@@ -62,7 +62,7 @@ const Dropdown = ({
       </VisuallyHidden>
       <Select
         className={classNames(
-          'flex w-full min-w-55 items-center justify-between rounded border border-border bg-default px-3.5 py-1.5 text-sm text-foreground',
+          'flex w-full min-w-55 items-center justify-between rounded border border-passive-3 bg-default md:translucent-ui:bg-transparent px-3.5 py-1.5 text-sm text-foreground',
           disabled && 'opacity-50',
           classNameOverride.button,
           !fullWidth && 'md:w-fit',
@@ -83,9 +83,12 @@ const Dropdown = ({
       <SelectPopover
         store={select}
         className={classNames(
-          'z-dropdown-menu max-h-[var(--popover-available-height)] w-[var(--popover-anchor-width)] overflow-y-auto rounded border border-border bg-default py-1',
+          'z-dropdown-menu max-h-[var(--popover-available-height)] w-[var(--popover-anchor-width)] overflow-y-auto rounded border border-passive-3 bg-default py-1',
           classNameOverride.popover,
         )}
+        style={{
+          backdropFilter: 'var(--popover-backdrop-filter)',
+        }}
         portal={false}
       >
         {items.map((item) => (

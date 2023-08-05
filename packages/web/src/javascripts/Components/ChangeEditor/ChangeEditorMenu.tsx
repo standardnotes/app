@@ -203,7 +203,11 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
 
             return (
               <Fragment key={groupId}>
-                <div className={`border-0 border-t border-solid border-border py-1 ${index === 0 ? 'border-t-0' : ''}`}>
+                <div
+                  className={`border-0 border-t border-solid border-[--separator-color] py-1 ${
+                    index === 0 ? 'border-t-0' : ''
+                  }`}
+                >
                   {group.items.map((menuItem) => {
                     const onClickEditorItem = () => {
                       handleMenuSelection(menuItem).catch(console.error)
