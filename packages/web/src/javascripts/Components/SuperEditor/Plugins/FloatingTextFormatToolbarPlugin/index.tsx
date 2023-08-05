@@ -59,6 +59,7 @@ import { getAdjustedStylesForNonPortalPopover } from '@/Components/Popover/Utils
 import LinkEditor from '../FloatingLinkEditorPlugin/LinkEditor'
 import { movePopoverToFitInsideRect } from '@/Components/Popover/Utils/movePopoverToFitInsideRect'
 import LinkTextEditor, { $isLinkTextNode } from '../FloatingLinkEditorPlugin/LinkTextEditor'
+import { URL_REGEX } from '@/Constants/Constants'
 
 const blockTypeToBlockName = {
   bullet: 'Bulleted List',
@@ -300,9 +301,23 @@ function TextFormatFloatingToolbar({
 
         if (code === 'KeyK' && (ctrlKey || metaKey)) {
           event.preventDefault()
-          const dispatched = editor.dispatchCommand(TOGGLE_LINK_AND_EDIT_COMMAND, '')
-          setIsLinkEditMode(true)
-          return dispatched
+          if ('readText' in navigator.clipboard) {
+            navigator.clipboard
+              .readText()
+              .then((text) => {
+                if (URL_REGEX.test(text)) {
+                  editor.dispatchCommand(TOGGLE_LINK_COMMAND, text)
+                } else {
+                  editor.dispatchCommand(TOGGLE_LINK_AND_EDIT_COMMAND, '')
+                  setIsLinkEditMode(true)
+                }
+              })
+              .catch(console.error)
+          } else {
+            editor.dispatchCommand(TOGGLE_LINK_AND_EDIT_COMMAND, '')
+            setIsLinkEditMode(true)
+          }
+          return true
         }
         return false
       },
