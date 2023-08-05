@@ -85,14 +85,14 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
   const selectComponent = useCallback(
     async (uiFeature: UIFeature<EditorFeatureDescription | IframeComponentFeatureDescription>, note: SNNote) => {
       if (uiFeature.isComponent && uiFeature.asComponent.conflictOf) {
-        void application.changeAndSaveItem(uiFeature.asComponent, (mutator) => {
+        void application.changeAndSaveItem.execute(uiFeature.asComponent, (mutator) => {
           mutator.conflictOf = undefined
         })
       }
 
-      await application.controllers.itemListController.insertCurrentIfTemplate()
+      await application.itemListController.insertCurrentIfTemplate()
 
-      await application.changeAndSaveItem(note, (mutator) => {
+      await application.changeAndSaveItem.execute(note, (mutator) => {
         const noteMutator = mutator as NoteMutator
         noteMutator.noteType = uiFeature.noteType
         noteMutator.editorIdentifier = uiFeature.featureIdentifier
@@ -203,7 +203,11 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
 
             return (
               <Fragment key={groupId}>
-                <div className={`border-0 border-t border-solid border-border py-1 ${index === 0 ? 'border-t-0' : ''}`}>
+                <div
+                  className={`border-0 border-t border-solid border-[--separator-color] py-1 ${
+                    index === 0 ? 'border-t-0' : ''
+                  }`}
+                >
                   {group.items.map((menuItem) => {
                     const onClickEditorItem = () => {
                       handleMenuSelection(menuItem).catch(console.error)

@@ -1,17 +1,33 @@
+import {
+  AlertService,
+  LegacyApiServiceInterface,
+  MobileDeviceInterface,
+  SessionsClientInterface,
+  SubscriptionManagerInterface,
+} from '@standardnotes/services'
 import { LoggingDomain, log } from '@/Logging'
-import { loadPurchaseFlowUrl } from '@/Components/PurchaseFlow/PurchaseFlowFunctions'
 import { AppleIAPProductId, InternalEventBusInterface } from '@standardnotes/snjs'
 import { action, makeObservable, observable } from 'mobx'
-import { WebApplication } from '../../Application/WebApplication'
 import { AbstractViewController } from '../Abstract/AbstractViewController'
 import { PurchaseFlowPane } from './PurchaseFlowPane'
+import { LoadPurchaseFlowUrl } from '@/Application/UseCase/LoadPurchaseFlowUrl'
+import { IsNativeIOS } from '@standardnotes/ui-services'
 
 export class PurchaseFlowController extends AbstractViewController {
   isOpen = false
   currentPane = PurchaseFlowPane.CreateAccount
 
-  constructor(application: WebApplication, eventBus: InternalEventBusInterface) {
-    super(application, eventBus)
+  constructor(
+    private sessions: SessionsClientInterface,
+    private subscriptions: SubscriptionManagerInterface,
+    private legacyApi: LegacyApiServiceInterface,
+    private alerts: AlertService,
+    private mobileDevice: MobileDeviceInterface | undefined,
+    private _loadPurchaseFlowUrl: LoadPurchaseFlowUrl,
+    private _isNativeIOS: IsNativeIOS,
+    eventBus: InternalEventBusInterface,
+  ) {
+    super(eventBus)
 
     makeObservable(this, {
       isOpen: observable,
@@ -28,45 +44,46 @@ export class PurchaseFlowController extends AbstractViewController {
   }
 
   openPurchaseFlow = async (plan = AppleIAPProductId.ProPlanYearly) => {
-    const user = this.application.getUser()
+    const user = this.sessions.getUser()
     if (!user) {
       this.isOpen = true
       return
     }
 
-    if (this.application.isNativeIOS()) {
+    if (this._isNativeIOS.execute().getValue()) {
       await this.beginIosIapPurchaseFlow(plan)
     } else {
-      await loadPurchaseFlowUrl(this.application)
+      await this._loadPurchaseFlowUrl.execute()
     }
   }
 
-  openPurchaseWebpage = () => {
-    loadPurchaseFlowUrl(this.application).catch((err) => {
-      console.error(err)
-      this.application.alerts.alert(err).catch(console.error)
-    })
+  openPurchaseWebpage = async () => {
+    const result = await this._loadPurchaseFlowUrl.execute()
+    if (result.isFailed()) {
+      console.error(result.getError())
+      void this.alerts.alert(result.getError())
+    }
   }
 
   beginIosIapPurchaseFlow = async (plan: AppleIAPProductId): Promise<void> => {
-    const result = await this.application.mobileDevice().purchaseSubscriptionIAP(plan)
+    const result = await this.mobileDevice?.purchaseSubscriptionIAP(plan)
 
     log(LoggingDomain.Purchasing, 'BeginIosIapPurchaseFlow result', result)
 
     if (!result) {
-      void this.application.alerts.alert('Your purchase was canceled or failed. Please try again.')
+      void this.alerts.alert('Your purchase was canceled or failed. Please try again.')
       return
     }
 
     const showGenericError = () => {
-      void this.application.alerts.alert(
+      void this.alerts.alert(
         'There was an error confirming your purchase. Please contact support at help@standardnotes.com.',
       )
     }
 
     log(LoggingDomain.Purchasing, 'Confirming result with our server')
 
-    const token = await this.application.getNewSubscriptionToken()
+    const token = await this.legacyApi.getNewSubscriptionToken()
 
     if (!token) {
       log(LoggingDomain.Purchasing, 'Unable to generate subscription token')
@@ -74,12 +91,12 @@ export class PurchaseFlowController extends AbstractViewController {
       return
     }
 
-    const confirmResult = await this.application.subscriptions.confirmAppleIAP(result, token)
+    const confirmResult = await this.subscriptions.confirmAppleIAP(result, token)
 
     log(LoggingDomain.Purchasing, 'Server confirm result', confirmResult)
 
     if (confirmResult) {
-      void this.application.alerts.alert(
+      void this.alerts.alert(
         'Please allow a few minutes for your subscription benefits to activate. You will see a confirmation alert in the app when your subscription is ready.',
         'Your purchase was successful!',
       )

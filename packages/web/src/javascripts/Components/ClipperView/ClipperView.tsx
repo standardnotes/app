@@ -1,5 +1,4 @@
 import { WebApplicationGroup } from '@/Application/WebApplicationGroup'
-import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { useCallback, useEffect, useState } from 'react'
 import { AccountMenuPane } from '../AccountMenu/AccountMenuPane'
 import MenuPaneSelector from '../AccountMenu/MenuPaneSelector'
@@ -29,7 +28,7 @@ import { getSuperJSONFromClipPayload } from './getSuperJSONFromClipHTML'
 import ClippedNoteView from './ClippedNoteView'
 import { PremiumFeatureIconClass, PremiumFeatureIconName } from '../Icon/PremiumFeatureIcon'
 import Button from '../Button/Button'
-import { openSubscriptionDashboard } from '@/Utils/ManageSubscription'
+
 import { useStateRef } from '@/Hooks/useStateRef'
 import usePreference from '@/Hooks/usePreference'
 import { createLinkFromItem } from '@/Utils/Items/Search/createLinkFromItem'
@@ -39,13 +38,7 @@ import StyledTooltip from '../StyledTooltip/StyledTooltip'
 import MenuSwitchButtonItem from '../Menu/MenuSwitchButtonItem'
 import Spinner from '../Spinner/Spinner'
 
-const ClipperView = ({
-  viewControllerManager,
-  applicationGroup,
-}: {
-  viewControllerManager: ViewControllerManager
-  applicationGroup: WebApplicationGroup
-}) => {
+const ClipperView = ({ applicationGroup }: { applicationGroup: WebApplicationGroup }) => {
   const application = useApplication()
 
   const [currentWindow, setCurrentWindow] = useState<Awaited<ReturnType<typeof windows.getCurrent>>>()
@@ -61,7 +54,7 @@ const ClipperView = ({
   }, [])
   const isFirefoxPopup = !!currentWindow && currentWindow.type === 'popup' && currentWindow.incognito === false
 
-  const [user, setUser] = useState(() => application.getUser())
+  const [user, setUser] = useState(() => application.sessions.getUser())
   const [isSyncing, setIsSyncing] = useState(false)
   const [hasSyncError, setHasSyncError] = useState(false)
   useEffect(() => {
@@ -81,7 +74,7 @@ const ClipperView = ({
         case ApplicationEvent.SignedIn:
         case ApplicationEvent.SignedOut:
         case ApplicationEvent.UserRolesChanged:
-          setUser(application.getUser())
+          setUser(application.sessions.getUser())
           setIsEntitled(
             application.features.getFeatureStatus(
               NativeFeatureIdentifier.create(NativeFeatureIdentifier.TYPES.Clipper).getValue(),
@@ -223,7 +216,7 @@ const ClipperView = ({
           type: 'image/png',
         })
 
-        const uploadedFile = await viewControllerManager.filesController.uploadNewFile(file).catch(console.error)
+        const uploadedFile = await application.filesController.uploadNewFile(file).catch(console.error)
 
         if (uploadedFile && defaultTagRef.current) {
           await application.linkingController.linkItems(uploadedFile, defaultTagRef.current)
@@ -269,6 +262,7 @@ const ClipperView = ({
 
     createNoteFromClip().catch(console.error)
   }, [
+    application.filesController,
     application.items,
     application.linkingController,
     application.mutator,
@@ -276,12 +270,11 @@ const ClipperView = ({
     clipPayload,
     defaultTagRef,
     isEntitledRef,
-    viewControllerManager.filesController,
   ])
 
   const upgradePlan = useCallback(async () => {
     if (hasSubscription) {
-      await openSubscriptionDashboard(application)
+      await application.openSubscriptionDashboard.execute()
     } else {
       await application.openPurchaseFlow()
     }
@@ -317,7 +310,7 @@ const ClipperView = ({
       <ClippedNoteView
         note={clippedNote}
         key={clippedNote.uuid}
-        linkingController={viewControllerManager.linkingController}
+        linkingController={application.linkingController}
         clearClip={clearClip}
         isFirefoxPopup={isFirefoxPopup}
       />
@@ -328,8 +321,6 @@ const ClipperView = ({
     return menuPane ? (
       <div className="py-1">
         <MenuPaneSelector
-          viewControllerManager={viewControllerManager}
-          application={application}
           mainApplicationGroup={applicationGroup}
           menuPane={menuPane}
           setMenuPane={setMenuPane}

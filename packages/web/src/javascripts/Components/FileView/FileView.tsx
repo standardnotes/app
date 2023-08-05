@@ -5,16 +5,16 @@ import FileViewWithoutProtection from './FileViewWithoutProtection'
 import { FileViewProps } from './FileViewProps'
 import { ApplicationEvent } from '@standardnotes/snjs'
 
-const FileView = ({ application, viewControllerManager, file }: FileViewProps) => {
+const FileView = ({ application, file }: FileViewProps) => {
   const [shouldShowProtectedOverlay, setShouldShowProtectedOverlay] = useState(false)
 
   useEffect(() => {
-    viewControllerManager.filesController.setShowProtectedOverlay(!application.isAuthorizedToRenderItem(file))
-  }, [application, file, viewControllerManager.filesController])
+    application.filesController.setShowProtectedOverlay(!application.isAuthorizedToRenderItem(file))
+  }, [application, file, application.filesController])
 
   useEffect(() => {
-    setShouldShowProtectedOverlay(viewControllerManager.filesController.showProtectedOverlay)
-  }, [viewControllerManager.filesController.showProtectedOverlay])
+    setShouldShowProtectedOverlay(application.filesController.showProtectedOverlay)
+  }, [application.filesController.showProtectedOverlay])
 
   const dismissProtectedOverlay = useCallback(async () => {
     let showFileContents = true
@@ -48,7 +48,7 @@ const FileView = ({ application, viewControllerManager, file }: FileViewProps) =
       itemType={'file'}
     />
   ) : (
-    <FileViewWithoutProtection application={application} viewControllerManager={viewControllerManager} file={file} />
+    <FileViewWithoutProtection application={application} file={file} />
   )
 }
 

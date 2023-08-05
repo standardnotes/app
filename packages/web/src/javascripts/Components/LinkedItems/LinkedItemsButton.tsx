@@ -1,5 +1,3 @@
-import { FeaturesController } from '@/Controllers/FeaturesController'
-import { FilesController } from '@/Controllers/FilesController'
 import { LinkingController } from '@/Controllers/LinkingController'
 import { observer } from 'mobx-react-lite'
 import { useRef, useCallback } from 'react'
@@ -10,11 +8,9 @@ import LinkedItemsPanel from './LinkedItemsPanel'
 type Props = {
   linkingController: LinkingController
   onClickPreprocessing?: () => Promise<void>
-  filesController: FilesController
-  featuresController: FeaturesController
 }
 
-const LinkedItemsButton = ({ linkingController, filesController, onClickPreprocessing, featuresController }: Props) => {
+const LinkedItemsButton = ({ linkingController, onClickPreprocessing }: Props) => {
   const { activeItem, isLinkingPanelOpen, setIsLinkingPanelOpen } = linkingController
   const buttonRef = useRef<HTMLButtonElement>(null)
 
@@ -40,13 +36,7 @@ const LinkedItemsButton = ({ linkingController, filesController, onClickPreproce
         open={isLinkingPanelOpen}
         className="pb-2"
       >
-        <LinkedItemsPanel
-          item={activeItem}
-          isOpen={isLinkingPanelOpen}
-          linkingController={linkingController}
-          filesController={filesController}
-          featuresController={featuresController}
-        />
+        <LinkedItemsPanel item={activeItem} isOpen={isLinkingPanelOpen} />
       </Popover>
     </>
   )

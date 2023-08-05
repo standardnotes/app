@@ -1,8 +1,8 @@
 import { DecryptedTransferPayload, NoteContent } from '@standardnotes/models'
 import { readFileAsText } from '../Utils'
 import { NativeFeatureIdentifier, NoteType } from '@standardnotes/features'
-import { WebApplicationInterface } from '../../WebApplication/WebApplicationInterface'
 import { ContentType } from '@standardnotes/domain-core'
+import { UuidGenerator } from '@standardnotes/utils'
 
 type AegisData = {
   db: {
@@ -27,9 +27,11 @@ type AuthenticatorEntry = {
 }
 
 export class AegisToAuthenticatorConverter {
-  constructor(protected application: WebApplicationInterface) {}
+  constructor() {}
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   static isValidAegisJson(json: any): boolean {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return json.db && json.db.entries && json.db.entries.every((entry: any) => AegisEntryTypes.includes(entry.type))
   }
 
@@ -61,7 +63,7 @@ export class AegisToAuthenticatorConverter {
       created_at_timestamp: file.lastModified,
       updated_at: new Date(file.lastModified),
       updated_at_timestamp: file.lastModified,
-      uuid: this.application.generateUUID(),
+      uuid: UuidGenerator.GenerateUuid(),
       content_type: ContentType.TYPES.Note,
       content: {
         title: file.name.split('.')[0],

@@ -3,15 +3,13 @@ import PreferencesSegment from '@/Components/Preferences/PreferencesComponents/P
 import { Text, Title } from '@/Components/Preferences/PreferencesComponents/Content'
 import Button from '@/Components/Button/Button'
 import PreferencesGroup from '@/Components/Preferences/PreferencesComponents/PreferencesGroup'
-import { ViewControllerManager } from '@Controllers/ViewControllerManager'
 import { WebApplication } from '@/Application/WebApplication'
 
 type Props = {
   application: WebApplication
-  viewControllerManager: ViewControllerManager
 }
 
-const DeleteAccount = ({ application, viewControllerManager }: Props) => {
+const DeleteAccount = ({ application }: Props) => {
   if (!application.hasAccount()) {
     return null
   }
@@ -25,7 +23,7 @@ const DeleteAccount = ({ application, viewControllerManager }: Props) => {
             colorStyle="danger"
             label="Delete my account"
             onClick={() => {
-              viewControllerManager.accountMenuController.setDeletingAccount(true)
+              application.accountMenuController.setDeletingAccount(true)
             }}
           />
         </div>

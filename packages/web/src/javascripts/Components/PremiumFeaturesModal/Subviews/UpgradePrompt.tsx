@@ -1,6 +1,5 @@
 import { useCallback } from 'react'
 import { WebApplication } from '@/Application/WebApplication'
-import { openSubscriptionDashboard } from '@/Utils/ManageSubscription'
 import Icon from '@/Components/Icon/Icon'
 import { PremiumFeatureIconClass, PremiumFeatureIconName } from '@/Components/Icon/PremiumFeatureIcon'
 
@@ -19,7 +18,7 @@ export const UpgradePrompt = ({
 }) => {
   const handleClick = useCallback(() => {
     if (hasSubscription) {
-      void openSubscriptionDashboard(application)
+      void application.openSubscriptionDashboard.execute()
     } else {
       void application.openPurchaseFlow()
     }

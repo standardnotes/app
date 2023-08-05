@@ -20,10 +20,11 @@ import {
   KeySystemRootKeyParamsInterface,
   PortablePublicKeySet,
 } from '@standardnotes/models'
-import { PkcKeyPair } from '@standardnotes/sncrypto-common'
 
 export interface EncryptionProviderInterface {
   initialize(): Promise<void>
+
+  isPasscodeLocked(): Promise<boolean>
 
   encryptSplitSingle(split: KeyedEncryptionSplit): Promise<EncryptedPayloadInterface>
   encryptSplit(split: KeyedEncryptionSplit): Promise<EncryptedPayloadInterface[]>
@@ -72,7 +73,6 @@ export interface EncryptionProviderInterface {
       }
   >
 
-  decryptErroredPayloads(): Promise<void>
   deleteWorkspaceSpecificKeyStateFromDevice(): Promise<void>
 
   unwrapRootKey(wrappingKey: RootKeyInterface): Promise<void>
@@ -109,9 +109,6 @@ export interface EncryptionProviderInterface {
     sharedVaultUuid: string | undefined,
     rootKeyToken: string,
   ): KeySystemItemsKeyInterface
-
-  getKeyPair(): PkcKeyPair
-  getSigningKeyPair(): PkcKeyPair
 
   asymmetricSignatureVerifyDetached(
     encryptedString: AsymmetricallyEncryptedString,

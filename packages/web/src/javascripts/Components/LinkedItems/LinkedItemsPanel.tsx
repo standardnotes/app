@@ -1,7 +1,4 @@
 import { FeatureName } from '@/Controllers/FeatureName'
-import { FeaturesController } from '@/Controllers/FeaturesController'
-import { FilesController } from '@/Controllers/FilesController'
-import { LinkingController } from '@/Controllers/LinkingController'
 import { classNames } from '@standardnotes/utils'
 import { getLinkingSearchResults } from '@/Utils/Items/Search/getSearchResults'
 import { observer } from 'mobx-react-lite'
@@ -15,26 +12,16 @@ import { LinkedItemsSectionItem } from './LinkedItemsSectionItem'
 import { DecryptedItem } from '@standardnotes/snjs'
 import { useItemLinks } from '@/Hooks/useItemLinks'
 
-const LinkedItemsPanel = ({
-  linkingController,
-  filesController,
-  featuresController,
-  isOpen,
-  item,
-}: {
-  linkingController: LinkingController
-  filesController: FilesController
-  featuresController: FeaturesController
-  isOpen: boolean
-  item: DecryptedItem
-}) => {
-  const { linkItems, unlinkItems, activateItem, createAndAddNewTag, isEntitledToNoteLinking } = linkingController
+const LinkedItemsPanel = ({ isOpen, item }: { isOpen: boolean; item: DecryptedItem }) => {
+  const application = useApplication()
+
+  const { linkItems, unlinkItems, activateItem, createAndAddNewTag, isEntitledToNoteLinking } =
+    application.linkingController
 
   const { notesLinkedToItem, notesLinkingToItem, filesLinkedToItem, filesLinkingToItem, tagsLinkedToItem } =
     useItemLinks(item)
 
-  const { entitledToFiles } = featuresController
-  const application = useApplication()
+  const { entitledToFiles } = application.featuresController
 
   const searchInputRef = useRef<HTMLInputElement | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
@@ -49,11 +36,11 @@ const LinkedItemsPanel = ({
 
   const selectAndUploadFiles = async () => {
     if (!entitledToFiles) {
-      void featuresController.showPremiumAlert(FeatureName.Files)
+      void application.featuresController.showPremiumAlert(FeatureName.Files)
       return
     }
 
-    void filesController.selectAndUploadNewFiles((file) => {
+    void application.filesController.selectAndUploadNewFiles((file) => {
       void linkItems(item, file)
     })
   }
@@ -62,7 +49,7 @@ const LinkedItemsPanel = ({
     <div>
       <form
         className={classNames(
-          'sticky top-0 z-10 bg-default px-2.5 pt-2.5',
+          'sticky top-0 z-10 bg-default md:translucent-ui:bg-transparent px-2.5 pt-2.5',
           linkedResults.length || unlinkedItems.length || notesLinkingToItem.length
             ? 'border-b border-border pb-2.5'
             : 'pb-1',
@@ -70,7 +57,10 @@ const LinkedItemsPanel = ({
       >
         <DecoratedInput
           type="text"
-          className={{ container: !isSearching ? 'px-0.5 py-1.5' : 'py-0', input: 'placeholder:text-passive-0' }}
+          className={{
+            container: classNames(!isSearching ? 'px-0.5 py-1.5' : 'py-0', 'md:translucent-ui:bg-default'),
+            input: 'placeholder:text-passive-0',
+          }}
           placeholder="Search items to link..."
           value={searchQuery}
           onChange={setSearchQuery}
@@ -119,7 +109,7 @@ const LinkedItemsPanel = ({
                       searchQuery={searchQuery}
                       unlinkItem={() => unlinkItems(item, link.item)}
                       activateItem={activateItem}
-                      handleFileAction={filesController.handleFileAction}
+                      handleFileAction={application.filesController.handleFileAction}
                     />
                   ))}
                 </div>
@@ -139,7 +129,7 @@ const LinkedItemsPanel = ({
                       searchQuery={searchQuery}
                       unlinkItem={() => unlinkItems(item, link.item)}
                       activateItem={activateItem}
-                      handleFileAction={filesController.handleFileAction}
+                      handleFileAction={application.filesController.handleFileAction}
                     />
                   ))}
                 </div>
@@ -163,7 +153,7 @@ const LinkedItemsPanel = ({
                     searchQuery={searchQuery}
                     unlinkItem={() => unlinkItems(item, link.item)}
                     activateItem={activateItem}
-                    handleFileAction={filesController.handleFileAction}
+                    handleFileAction={application.filesController.handleFileAction}
                   />
                 ))}
               </div>
@@ -182,7 +172,7 @@ const LinkedItemsPanel = ({
                       searchQuery={searchQuery}
                       unlinkItem={() => unlinkItems(item, link.item)}
                       activateItem={activateItem}
-                      handleFileAction={filesController.handleFileAction}
+                      handleFileAction={application.filesController.handleFileAction}
                     />
                   ))}
                 </div>
@@ -199,7 +189,7 @@ const LinkedItemsPanel = ({
                       searchQuery={searchQuery}
                       unlinkItem={() => unlinkItems(item, link.item)}
                       activateItem={activateItem}
-                      handleFileAction={filesController.handleFileAction}
+                      handleFileAction={application.filesController.handleFileAction}
                     />
                   ))}
                 </div>
@@ -218,7 +208,7 @@ const LinkedItemsPanel = ({
                       searchQuery={searchQuery}
                       unlinkItem={() => unlinkItems(item, link.item)}
                       activateItem={activateItem}
-                      handleFileAction={filesController.handleFileAction}
+                      handleFileAction={application.filesController.handleFileAction}
                     />
                   ))}
                 </div>

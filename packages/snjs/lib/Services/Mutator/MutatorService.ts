@@ -358,6 +358,11 @@ export class MutatorService extends AbstractService implements MutatorClientInte
   }
 
   public async insertItem<T extends DecryptedItemInterface>(item: DecryptedItemInterface, setDirty = true): Promise<T> {
+    const existingItem = this.itemManager.findItem<T>(item.uuid)
+    if (existingItem) {
+      throw Error('Attempting to insert item that already exists')
+    }
+
     if (setDirty) {
       const mutator = CreateDecryptedMutatorForItem(item, MutationType.UpdateUserTimestamps)
       const dirtiedPayload = mutator.getResult()

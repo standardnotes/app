@@ -1,26 +1,29 @@
-import { WebApplication } from '@/Application/WebApplication'
 import { downloadBlobOnAndroid } from '@/NativeMobileWeb/DownloadBlobOnAndroid'
 import { shareBlobOnMobile } from '@/NativeMobileWeb/ShareBlobOnMobile'
-import { Platform } from '@standardnotes/snjs'
+import { MobileDeviceInterface, Platform } from '@standardnotes/snjs'
+import { ArchiveManager } from '@standardnotes/ui-services'
 
-export const downloadOrShareBlobBasedOnPlatform = async (
-  application: WebApplication,
-  blob: Blob,
-  filename: string,
-  showToastOnAndroid = true,
-) => {
-  if (!application.isNativeMobileWeb()) {
-    application.getArchiveService().downloadData(blob, filename)
+export const downloadOrShareBlobBasedOnPlatform = async (dto: {
+  archiveService: ArchiveManager
+  platform: Platform
+  mobileDevice: MobileDeviceInterface | undefined
+  blob: Blob
+  filename: string
+  isNativeMobileWeb: boolean
+  showToastOnAndroid?: boolean
+}) => {
+  if (!dto.isNativeMobileWeb) {
+    dto.archiveService.downloadData(dto.blob, dto.filename)
     return
   }
 
-  if (application.platform === Platform.Ios) {
-    void shareBlobOnMobile(application, blob, filename)
+  if (dto.mobileDevice && dto.platform === Platform.Ios) {
+    void shareBlobOnMobile(dto.mobileDevice, dto.isNativeMobileWeb, dto.blob, dto.filename)
     return
   }
 
-  if (application.platform === Platform.Android) {
-    void downloadBlobOnAndroid(application, blob, filename, showToastOnAndroid)
+  if (dto.mobileDevice && dto.platform === Platform.Android) {
+    void downloadBlobOnAndroid(dto.mobileDevice, dto.blob, dto.filename, dto.showToastOnAndroid ?? true)
     return
   }
 }

@@ -1,4 +1,3 @@
-import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import {
   SNApplication,
   SessionStrings,
@@ -85,9 +84,8 @@ function useSessions(
 }
 
 const SessionsModalContent: FunctionComponent<{
-  viewControllerManager: ViewControllerManager
-  application: SNApplication
-}> = ({ viewControllerManager, application }) => {
+  application: WebApplication
+}> = ({ application }) => {
   const [sessions, refresh, refreshing, revokeSession, errorMessage] = useSessions(application)
 
   const [confirmRevokingSessionUuid, setRevokingSessionUuid] = useState('')
@@ -115,7 +113,7 @@ const SessionsModalContent: FunctionComponent<{
     (): ModalAction[] => [
       {
         label: 'Close',
-        onClick: viewControllerManager.closeSessionsModal,
+        onClick: application.closeSessionsModal,
         type: 'cancel',
         mobileSlot: 'left',
       },
@@ -126,14 +124,14 @@ const SessionsModalContent: FunctionComponent<{
         mobileSlot: 'right',
       },
     ],
-    [refresh, viewControllerManager.closeSessionsModal],
+    [refresh, application.closeSessionsModal],
   )
 
   return (
     <>
       <Modal
         title="Active Sessions"
-        close={viewControllerManager.closeSessionsModal}
+        close={application.closeSessionsModal}
         actions={sessionModalActions}
         className={{
           content: 'sessions-modal',
@@ -214,15 +212,11 @@ const SessionsModalContent: FunctionComponent<{
 }
 
 const SessionsModal: FunctionComponent<{
-  viewControllerManager: ViewControllerManager
   application: WebApplication
-}> = ({ viewControllerManager, application }) => {
+}> = ({ application }) => {
   return (
-    <ModalOverlay
-      isOpen={viewControllerManager.isSessionsModalVisible}
-      close={viewControllerManager.closeSessionsModal}
-    >
-      <SessionsModalContent application={application} viewControllerManager={viewControllerManager} />
+    <ModalOverlay isOpen={application.isSessionsModalVisible} close={application.closeSessionsModal}>
+      <SessionsModalContent application={application} />
     </ModalOverlay>
   )
 }

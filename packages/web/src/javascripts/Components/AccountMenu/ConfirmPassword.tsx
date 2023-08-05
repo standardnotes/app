@@ -1,6 +1,4 @@
 import { STRING_NON_MATCHING_PASSWORDS } from '@/Constants/Strings'
-import { WebApplication } from '@/Application/WebApplication'
-import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
 import {
   FormEventHandler,
@@ -17,23 +15,18 @@ import Checkbox from '@/Components/Checkbox/Checkbox'
 import DecoratedPasswordInput from '@/Components/Input/DecoratedPasswordInput'
 import Icon from '@/Components/Icon/Icon'
 import IconButton from '@/Components/Button/IconButton'
+import { useApplication } from '../ApplicationProvider'
 
 type Props = {
-  viewControllerManager: ViewControllerManager
-  application: WebApplication
   setMenuPane: (pane: AccountMenuPane) => void
   email: string
   password: string
 }
 
-const ConfirmPassword: FunctionComponent<Props> = ({
-  application,
-  viewControllerManager,
-  setMenuPane,
-  email,
-  password,
-}) => {
-  const { notesAndTagsCount } = viewControllerManager.accountMenuController
+const ConfirmPassword: FunctionComponent<Props> = ({ setMenuPane, email, password }) => {
+  const application = useApplication()
+
+  const { notesAndTagsCount } = application.accountMenuController
   const [confirmPassword, setConfirmPassword] = useState('')
   const [isRegistering, setIsRegistering] = useState(false)
   const [isEphemeral, setIsEphemeral] = useState(false)
@@ -72,8 +65,8 @@ const ConfirmPassword: FunctionComponent<Props> = ({
         application
           .register(email, password, isEphemeral, shouldMergeLocal)
           .then(() => {
-            viewControllerManager.accountMenuController.closeAccountMenu()
-            viewControllerManager.accountMenuController.setCurrentPane(AccountMenuPane.GeneralMenu)
+            application.accountMenuController.closeAccountMenu()
+            application.accountMenuController.setCurrentPane(AccountMenuPane.GeneralMenu)
           })
           .catch((err) => {
             console.error(err)
@@ -88,7 +81,7 @@ const ConfirmPassword: FunctionComponent<Props> = ({
         passwordInputRef.current?.focus()
       }
     },
-    [viewControllerManager, application, confirmPassword, email, isEphemeral, password, shouldMergeLocal],
+    [application, confirmPassword, email, isEphemeral, password, shouldMergeLocal],
   )
 
   const handleKeyDown: KeyboardEventHandler = useCallback(

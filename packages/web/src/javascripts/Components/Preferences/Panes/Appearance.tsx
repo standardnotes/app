@@ -14,6 +14,7 @@ import PreferencesSegment from '../PreferencesComponents/PreferencesSegment'
 import { PremiumFeatureIconName } from '@/Components/Icon/PremiumFeatureIcon'
 import EditorAppearance from './Appearance/EditorAppearance'
 import { GetAllThemesUseCase } from '@standardnotes/ui-services'
+import usePreference from '@/Hooks/usePreference'
 
 type Props = {
   application: WebApplication
@@ -32,6 +33,11 @@ const Appearance: FunctionComponent<Props> = ({ application }) => {
   const [useDeviceSettings, setUseDeviceSettings] = useState(() =>
     application.getPreference(PrefKey.UseSystemColorScheme, PrefDefaults[PrefKey.UseSystemColorScheme]),
   )
+
+  const useTranslucentUI = usePreference(PrefKey.UseTranslucentUI)
+  const toggleTranslucentUI = () => {
+    application.setPreference(PrefKey.UseTranslucentUI, !useTranslucentUI).catch(console.error)
+  }
 
   useEffect(() => {
     const usecase = new GetAllThemesUseCase(application.items)
@@ -106,6 +112,14 @@ const Appearance: FunctionComponent<Props> = ({ application }) => {
         <PreferencesSegment>
           <Title>Themes</Title>
           <div className="mt-2">
+            <div className="flex justify-between gap-2 md:items-center">
+              <div className="flex flex-col">
+                <Subtitle>Disable translucent UI</Subtitle>
+                <Text>Use opaque style for UI elements instead of translucency</Text>
+              </div>
+              <Switch onChange={toggleTranslucentUI} checked={!useTranslucentUI} />
+            </div>
+            <HorizontalSeparator classes="my-4" />
             <div className="flex justify-between gap-2 md:items-center">
               <div className="flex flex-col">
                 <Subtitle>Use system color scheme</Subtitle>

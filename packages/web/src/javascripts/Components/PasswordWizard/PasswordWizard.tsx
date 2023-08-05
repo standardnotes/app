@@ -153,7 +153,7 @@ class PasswordWizard extends AbstractComponent<Props, State> {
       return false
     }
 
-    if (!this.application.getUser()?.email) {
+    if (!this.application.sessions.getUser()?.email) {
       this.application.alerts
         .alert("We don't have your email stored. Please sign out then log back in to fix this issue.")
         .catch(console.error)

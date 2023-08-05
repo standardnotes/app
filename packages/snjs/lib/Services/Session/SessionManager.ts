@@ -32,8 +32,9 @@ import {
   ApplicationEvent,
   ApplicationStageChangedEventPayload,
   ApplicationStage,
+  GetKeyPairs,
 } from '@standardnotes/services'
-import { Base64String, PkcKeyPair, PureCryptoInterface } from '@standardnotes/sncrypto-common'
+import { Base64String, PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import {
   SessionBody,
   ErrorTag,
@@ -103,6 +104,7 @@ export class SessionManager
     private sessionStorageMapper: MapperInterface<Session, Record<string, unknown>>,
     private legacySessionStorageMapper: MapperInterface<LegacySession, Record<string, unknown>>,
     private workspaceIdentifier: string,
+    private _getKeyPairs: GetKeyPairs,
     protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)
@@ -215,11 +217,15 @@ export class SessionManager
   }
 
   public getPublicKey(): string {
-    return this.encryptionService.getKeyPair().publicKey
+    const keys = this._getKeyPairs.execute()
+
+    return keys.getValue().encryption.publicKey
   }
 
   public getSigningPublicKey(): string {
-    return this.encryptionService.getSigningKeyPair().publicKey
+    const keys = this._getKeyPairs.execute()
+
+    return keys.getValue().signing.publicKey
   }
 
   public get userUuid(): string {
@@ -258,8 +264,13 @@ export class SessionManager
     }
   }
 
+  /** Unlike EncryptionService.hasAccount, isSignedIn can only be read once the application is unlocked */
   public isSignedIn(): boolean {
     return this.getUser() != undefined
+  }
+
+  public isSignedOut(): boolean {
+    return !this.isSignedIn()
   }
 
   public isSignedIntoFirstPartyServer(): boolean {
@@ -625,15 +636,7 @@ export class SessionManager
       newEmail: parameters.newEmail,
     })
 
-    let oldKeyPair: PkcKeyPair | undefined
-    let oldSigningKeyPair: PkcKeyPair | undefined
-
-    try {
-      oldKeyPair = this.encryptionService.getKeyPair()
-      oldSigningKeyPair = this.encryptionService.getSigningKeyPair()
-    } catch (error) {
-      void error
-    }
+    const oldKeys = this._getKeyPairs.execute()
 
     const processedResponse = await this.processChangeCredentialsResponse(
       rawResponse,
@@ -644,13 +647,12 @@ export class SessionManager
     if (!isErrorResponse(rawResponse)) {
       if (InternalFeatureService.get().isFeatureEnabled(InternalFeature.Vaults)) {
         const eventData: UserKeyPairChangedEventData = {
-          previous:
-            oldKeyPair && oldSigningKeyPair
-              ? {
-                  encryption: oldKeyPair,
-                  signing: oldSigningKeyPair,
-                }
-              : undefined,
+          previous: !oldKeys.isFailed()
+            ? {
+                encryption: oldKeys.getValue().encryption,
+                signing: oldKeys.getValue().signing,
+              }
+            : undefined,
           current: {
             encryption: parameters.newRootKey.encryptionKeyPair,
             signing: parameters.newRootKey.signingKeyPair,

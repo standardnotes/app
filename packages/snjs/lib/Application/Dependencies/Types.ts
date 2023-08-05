@@ -153,6 +153,12 @@ export const TYPES = {
   IsVaultOwner: Symbol.for('IsVaultOwner'),
   RemoveItemsFromMemory: Symbol.for('RemoveItemsFromMemory'),
   ReencryptTypeAItems: Symbol.for('ReencryptTypeAItems'),
+  DecryptErroredPayloads: Symbol.for('DecryptErroredPayloads'),
+  GetKeyPairs: Symbol.for('GetKeyPairs'),
+  ChangeVaultStorageMode: Symbol.for('ChangeVaultStorageMode'),
+  ChangeAndSaveItem: Symbol.for('ChangeAndSaveItem'),
+  GetHost: Symbol.for('GetHost'),
+  SetHost: Symbol.for('SetHost'),
 
   // Mappers
   SessionStorageMapper: Symbol.for('SessionStorageMapper'),

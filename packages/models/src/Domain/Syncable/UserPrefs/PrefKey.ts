@@ -29,6 +29,7 @@ export enum PrefKey {
   NotesHideTags = 'hideTags',
   NotesHideEditorIcon = 'hideEditorIcon',
   UseSystemColorScheme = 'useSystemColorScheme',
+  UseTranslucentUI = 'useTranslucentUI',
   AutoLightThemeIdentifier = 'autoLightThemeIdentifier',
   AutoDarkThemeIdentifier = 'autoDarkThemeIdentifier',
   NoteAddToParentFolders = 'noteAddToParentFolders',
@@ -66,6 +67,7 @@ export type PrefValue = {
   [PrefKey.NotesHideTags]: boolean
   [PrefKey.NotesHideEditorIcon]: boolean
   [PrefKey.UseSystemColorScheme]: boolean
+  [PrefKey.UseTranslucentUI]: boolean
   [PrefKey.AutoLightThemeIdentifier]: string
   [PrefKey.AutoDarkThemeIdentifier]: string
   [PrefKey.NoteAddToParentFolders]: boolean

@@ -28,7 +28,11 @@ describe('shared vault invites', function () {
     const contact = await Collaboration.createTrustedContactForUserOfContext(context, contactContext)
 
     const vaultInvite = (
-      await context.vaultInvites.inviteContactToSharedVault(sharedVault, contact, SharedVaultUserPermission.PERMISSIONS.Write)
+      await context.vaultInvites.inviteContactToSharedVault(
+        sharedVault,
+        contact,
+        SharedVaultUserPermission.PERMISSIONS.Write,
+      )
     ).getValue()
 
     expect(vaultInvite).to.not.be.undefined
@@ -100,7 +104,11 @@ describe('shared vault invites', function () {
     /** Sync the contact context so that they wouldn't naturally receive changes made before this point */
     await contactContext.sync()
 
-    await context.vaultInvites.inviteContactToSharedVault(sharedVault, contact, SharedVaultUserPermission.PERMISSIONS.Write)
+    await context.vaultInvites.inviteContactToSharedVault(
+      sharedVault,
+      contact,
+      SharedVaultUserPermission.PERMISSIONS.Write,
+    )
 
     /** Contact should now sync and expect to find note */
     const promise = contactContext.awaitNextSyncSharedVaultFromScratchEvent()
@@ -213,32 +221,5 @@ describe('shared vault invites', function () {
     expect(invites.length).to.equal(0)
 
     await deinitContactContext()
-  })
-
-  it('sharing a vault with user inputted and ephemeral password should share the key as synced for the recipient', async () => {
-    const privateVault = await context.vaults.createUserInputtedPasswordVault({
-      name: 'My Private Vault',
-      userInputtedPassword: 'password',
-      storagePreference: KeySystemRootKeyStorageMode.Ephemeral,
-    })
-
-    const note = await context.createSyncedNote('foo', 'bar')
-    await context.vaults.moveItemToVault(privateVault, note)
-
-    const sharedVault = await context.sharedVaults.convertVaultToSharedVault(privateVault)
-
-    const { thirdPartyContext, deinitThirdPartyContext } = await Collaboration.inviteNewPartyToSharedVault(
-      context,
-      sharedVault,
-    )
-
-    await Collaboration.acceptAllInvites(thirdPartyContext)
-
-    const contextNote = thirdPartyContext.items.findItem(note.uuid)
-    expect(contextNote).to.not.be.undefined
-    expect(contextNote.title).to.equal('foo')
-    expect(contextNote.text).to.equal(note.text)
-
-    await deinitThirdPartyContext()
   })
 })

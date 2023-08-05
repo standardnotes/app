@@ -15,7 +15,6 @@ import Icon from '@/Components/Icon/Icon'
 import ChallengeModalPrompt from './ChallengePrompt'
 import LockscreenWorkspaceSwitcher from './LockscreenWorkspaceSwitcher'
 import { WebApplicationGroup } from '@/Application/WebApplicationGroup'
-import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { ChallengeModalValues } from './ChallengeModalValues'
 import { InputValue } from './InputValue'
 import { classNames } from '@standardnotes/utils'
@@ -26,7 +25,6 @@ import { useAutoElementRect } from '@/Hooks/useElementRect'
 
 type Props = {
   application: WebApplication
-  viewControllerManager: ViewControllerManager
   mainApplicationGroup: WebApplicationGroup
   challenge: Challenge
   onDismiss?: (challenge: Challenge) => void
@@ -48,13 +46,7 @@ const validateValues = (values: ChallengeModalValues, prompts: ChallengePrompt[]
   return undefined
 }
 
-const ChallengeModal: FunctionComponent<Props> = ({
-  application,
-  viewControllerManager,
-  mainApplicationGroup,
-  challenge,
-  onDismiss,
-}) => {
+const ChallengeModal: FunctionComponent<Props> = ({ application, mainApplicationGroup, challenge, onDismiss }) => {
   const promptsContainerRef = useRef<HTMLFormElement>(null)
 
   const [values, setValues] = useState<ChallengeModalValues>(() => {
@@ -253,7 +245,7 @@ const ChallengeModal: FunctionComponent<Props> = ({
         close={cancelChallenge}
         className={{
           content: classNames(
-            'sn-component challenge-modal relative m-0 flex h-full w-full flex-col items-center rounded border-solid border-border bg-default p-0 md:h-auto md:!w-max md:border',
+            'sn-component challenge-modal relative m-0 flex h-full w-full flex-col items-center rounded border-solid border-border bg-default p-0 md:h-auto md:!w-max md:border md:translucent-ui:bg-[--popover-background-color] translucent-ui:[backdrop-filter:var(--popover-backdrop-filter)]',
             !isMobileScreen && 'shadow-overlay-light',
             isMobileOverlay && 'shadow-overlay-light border border-solid border-border',
           ),
@@ -341,12 +333,7 @@ const ChallengeModal: FunctionComponent<Props> = ({
               Forgot passcode?
             </Button>
           )}
-          {shouldShowWorkspaceSwitcher && (
-            <LockscreenWorkspaceSwitcher
-              mainApplicationGroup={mainApplicationGroup}
-              viewControllerManager={viewControllerManager}
-            />
-          )}
+          {shouldShowWorkspaceSwitcher && <LockscreenWorkspaceSwitcher mainApplicationGroup={mainApplicationGroup} />}
         </div>
       </Modal>
     </ModalOverlay>

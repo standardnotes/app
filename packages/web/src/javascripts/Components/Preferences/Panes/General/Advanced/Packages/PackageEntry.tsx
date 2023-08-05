@@ -34,12 +34,12 @@ const PackageEntry: FunctionComponent<PackageEntryProps> = ({ application, exten
   const toggleOfflineOnly = () => {
     const newOfflineOnly = !offlineOnly
     setOfflineOnly(newOfflineOnly)
-    application
-      .changeAndSaveItem<ComponentMutator>(extension, (mutator) => {
+    application.changeAndSaveItem
+      .execute<ComponentMutator>(extension, (mutator) => {
         mutator.offlineOnly = newOfflineOnly
       })
-      .then((item) => {
-        const component = item as ComponentInterface
+      .then((result) => {
+        const component = result.getValue() as ComponentInterface
         setOfflineOnly(component.offlineOnly)
       })
       .catch((e) => {
@@ -49,12 +49,12 @@ const PackageEntry: FunctionComponent<PackageEntryProps> = ({ application, exten
 
   const changeExtensionName = (newName: string) => {
     setExtensionName(newName)
-    application
-      .changeAndSaveItem<ComponentMutator>(extension, (mutator) => {
+    application.changeAndSaveItem
+      .execute<ComponentMutator>(extension, (mutator) => {
         mutator.name = newName
       })
-      .then((item) => {
-        const component = item as ComponentInterface
+      .then((result) => {
+        const component = result.getValue() as ComponentInterface
         setExtensionName(component.name)
       })
       .catch(console.error)

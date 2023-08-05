@@ -1,5 +1,4 @@
-import { WebApplication } from '@/Application/WebApplication'
-import { ContentType, FileItem } from '@standardnotes/snjs'
+import { ContentType, FileItem, ItemManagerInterface } from '@standardnotes/snjs'
 import { action, makeObservable, observable } from 'mobx'
 
 export class FilePreviewModalController {
@@ -9,7 +8,7 @@ export class FilePreviewModalController {
 
   eventObservers: (() => void)[] = []
 
-  constructor(application: WebApplication) {
+  constructor(items: ItemManagerInterface) {
     makeObservable(this, {
       isOpen: observable,
       currentFile: observable,
@@ -21,7 +20,7 @@ export class FilePreviewModalController {
     })
 
     this.eventObservers.push(
-      application.streamItems(ContentType.TYPES.File, ({ changed, removed }) => {
+      items.streamItems(ContentType.TYPES.File, ({ changed, removed }) => {
         if (!this.currentFile) {
           return
         }

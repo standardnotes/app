@@ -57,7 +57,13 @@ const SuperNoteConverter = ({
       return note.text
     }
 
-    return new HeadlessSuperConverter().convertString(note.text, format)
+    try {
+      return new HeadlessSuperConverter().convertString(note.text, format)
+    } catch (error) {
+      console.error(error)
+    }
+
+    return note.text
   }, [format, note])
 
   const componentViewer = useMemo(() => {
@@ -88,7 +94,17 @@ const SuperNoteConverter = ({
 
   const performConvert = useCallback(
     async (text: string) => {
-      const controller = new NoteViewController(application, note)
+      const controller = new NoteViewController(
+        note,
+        application.items,
+        application.mutator,
+        application.sync,
+        application.sessions,
+        application.preferences,
+        application.componentManager,
+        application.alerts,
+        application.isNativeMobileWebUseCase,
+      )
       await controller.initialize()
       await controller.saveAndAwaitLocalPropagation({
         text,

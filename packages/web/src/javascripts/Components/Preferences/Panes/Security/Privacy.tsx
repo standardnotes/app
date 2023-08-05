@@ -30,7 +30,7 @@ const Privacy: FunctionComponent<Props> = ({ application }: Props) => {
   }
 
   const loadSettings = useCallback(async () => {
-    if (!application.getUser()) {
+    if (!application.sessions.getUser()) {
       return
     }
     setIsLoading(true)

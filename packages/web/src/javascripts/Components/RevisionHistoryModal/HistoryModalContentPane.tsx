@@ -1,6 +1,7 @@
 import RevisionContentLocked from './RevisionContentLocked'
 import { observer } from 'mobx-react-lite'
-import { NoteHistoryController, RevisionContentState } from '@/Controllers/NoteHistory/NoteHistoryController'
+import { NoteHistoryController } from '@/Controllers/NoteHistory/NoteHistoryController'
+import { RevisionContentState } from '@/Controllers/NoteHistory/Types'
 import Spinner from '@/Components/Spinner/Spinner'
 import { ReadonlyNoteContent } from '../NoteView/ReadonlyNoteContent'
 import { SNNote } from '@standardnotes/snjs'

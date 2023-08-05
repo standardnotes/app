@@ -38,8 +38,6 @@ const PanesSystemComponent = () => {
   const [panesPendingEntrance, setPanesPendingEntrance] = useState<AppPaneId[]>([])
   const [panesPendingExit, setPanesPendingExit] = useState<AppPaneId[]>([])
 
-  const viewControllerManager = application.controllers
-
   const [navigationPanelWidth, setNavigationPanelWidth] = useState<number>(
     application.getPreference(PrefKey.TagsPanelWidth, PLACEHOLDER_NAVIGATION_PANEL_WIDTH),
   )
@@ -296,18 +294,6 @@ const PanesSystemComponent = () => {
               key={'content-list-view'}
               application={application}
               onPanelWidthLoad={handleInitialItemsListPanelWidthLoad}
-              accountMenuController={viewControllerManager.accountMenuController}
-              filesController={viewControllerManager.filesController}
-              itemListController={viewControllerManager.itemListController}
-              navigationController={viewControllerManager.navigationController}
-              noAccountWarningController={viewControllerManager.noAccountWarningController}
-              notesController={viewControllerManager.notesController}
-              selectionController={viewControllerManager.selectionController}
-              searchOptionsController={viewControllerManager.searchOptionsController}
-              linkingController={viewControllerManager.linkingController}
-              featuresController={viewControllerManager.featuresController}
-              historyModalController={viewControllerManager.historyModalController}
-              paneController={viewControllerManager.paneController}
             >
               {showPanelResizers && listRef && (
                 <PanelResizer

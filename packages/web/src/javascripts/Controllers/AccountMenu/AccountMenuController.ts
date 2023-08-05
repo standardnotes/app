@@ -1,11 +1,20 @@
-import { destroyAllObjectProperties, isDev } from '@/Utils'
+import { destroyAllObjectProperties } from '@/Utils'
 import { action, computed, makeObservable, observable, runInAction } from 'mobx'
-import { ApplicationEvent, ContentType, InternalEventBusInterface, SNNote, SNTag } from '@standardnotes/snjs'
-import { WebApplication } from '@/Application/WebApplication'
+import {
+  ApplicationEvent,
+  ContentType,
+  GetHost,
+  InternalEventBusInterface,
+  InternalEventHandlerInterface,
+  InternalEventInterface,
+  ItemManagerInterface,
+  SNNote,
+  SNTag,
+} from '@standardnotes/snjs'
 import { AccountMenuPane } from '@/Components/AccountMenu/AccountMenuPane'
 import { AbstractViewController } from '../Abstract/AbstractViewController'
 
-export class AccountMenuController extends AbstractViewController {
+export class AccountMenuController extends AbstractViewController implements InternalEventHandlerInterface {
   show = false
   signingOut = false
   otherSessionsSignOut = false
@@ -28,8 +37,12 @@ export class AccountMenuController extends AbstractViewController {
     destroyAllObjectProperties(this)
   }
 
-  constructor(application: WebApplication, eventBus: InternalEventBusInterface) {
-    super(application, eventBus)
+  constructor(
+    private items: ItemManagerInterface,
+    private _getHost: GetHost,
+    eventBus: InternalEventBusInterface,
+  ) {
+    super(eventBus)
 
     makeObservable(this, {
       show: observable,
@@ -63,26 +76,25 @@ export class AccountMenuController extends AbstractViewController {
       notesAndTagsCount: computed,
     })
 
-    this.disposers.push(
-      this.application.addEventObserver(async () => {
-        runInAction(() => {
-          if (isDev && window.devAccountServer) {
-            this.setServer(window.devAccountServer)
-            this.application.setCustomHost(window.devAccountServer).catch(console.error)
-          } else {
-            this.setServer(this.application.getHost())
-          }
-        })
-      }, ApplicationEvent.Launched),
-    )
+    eventBus.addEventHandler(this, ApplicationEvent.Launched)
 
     this.disposers.push(
-      this.application.streamItems([ContentType.TYPES.Note, ContentType.TYPES.Tag], () => {
+      this.items.streamItems([ContentType.TYPES.Note, ContentType.TYPES.Tag], () => {
         runInAction(() => {
-          this.notesAndTags = this.application.items.getItems([ContentType.TYPES.Note, ContentType.TYPES.Tag])
+          this.notesAndTags = this.items.getItems([ContentType.TYPES.Note, ContentType.TYPES.Tag])
         })
       }),
     )
+  }
+  async handleEvent(event: InternalEventInterface): Promise<void> {
+    switch (event.type) {
+      case ApplicationEvent.Launched: {
+        runInAction(() => {
+          this.setServer(this._getHost.execute().getValue())
+        })
+        break
+      }
+    }
   }
 
   setShow = (show: boolean): void => {

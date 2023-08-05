@@ -1,7 +1,7 @@
 import { ContentType } from '@standardnotes/domain-core'
 import { DecryptedTransferPayload, NoteContent } from '@standardnotes/models'
 import { readFileAsText } from '../Utils'
-import { WebApplicationInterface } from '../../WebApplication/WebApplicationInterface'
+import { UuidGenerator } from '@standardnotes/utils'
 
 type GoogleKeepJsonNote = {
   color: string
@@ -14,7 +14,7 @@ type GoogleKeepJsonNote = {
 }
 
 export class GoogleKeepConverter {
-  constructor(protected application: WebApplicationInterface) {}
+  constructor() {}
 
   async convertGoogleKeepBackupFileToNote(
     file: File,
@@ -66,7 +66,7 @@ export class GoogleKeepConverter {
       created_at_timestamp: date.getTime(),
       updated_at: date,
       updated_at_timestamp: date.getTime(),
-      uuid: this.application.generateUUID(),
+      uuid: UuidGenerator.GenerateUuid(),
       content_type: ContentType.TYPES.Note,
       content: {
         title: title,
@@ -96,6 +96,7 @@ export class GoogleKeepConverter {
     return
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   static isValidGoogleKeepJson(json: any): boolean {
     return (
       typeof json.title === 'string' &&
@@ -120,7 +121,7 @@ export class GoogleKeepConverter {
         created_at_timestamp: date.getTime(),
         updated_at: date,
         updated_at_timestamp: date.getTime(),
-        uuid: this.application.generateUUID(),
+        uuid: UuidGenerator.GenerateUuid(),
         content_type: ContentType.TYPES.Note,
         content: {
           title: parsed.title,

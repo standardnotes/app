@@ -4,19 +4,13 @@
 
 import { jsonTestData, htmlTestData } from './testData'
 import { GoogleKeepConverter } from './GoogleKeepConverter'
-import { WebApplicationInterface } from '../../WebApplication/WebApplicationInterface'
+import { UuidGenerator } from '@standardnotes/utils'
+
+UuidGenerator.SetGenerator(() => String(Math.random()))
 
 describe('GoogleKeepConverter', () => {
-  let application: WebApplicationInterface
-
-  beforeEach(() => {
-    application = {
-      generateUUID: jest.fn().mockReturnValue('uuid'),
-    } as unknown as WebApplicationInterface
-  })
-
   it('should parse json data', () => {
-    const converter = new GoogleKeepConverter(application)
+    const converter = new GoogleKeepConverter()
 
     const result = converter.tryParseAsJson(jsonTestData)
 
@@ -33,7 +27,7 @@ describe('GoogleKeepConverter', () => {
   })
 
   it('should parse html data', () => {
-    const converter = new GoogleKeepConverter(application)
+    const converter = new GoogleKeepConverter()
 
     const result = converter.tryParseAsHtml(
       htmlTestData,

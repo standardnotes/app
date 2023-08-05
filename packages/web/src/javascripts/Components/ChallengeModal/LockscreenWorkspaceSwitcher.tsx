@@ -1,5 +1,4 @@
 import { WebApplicationGroup } from '@/Application/WebApplicationGroup'
-import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { FunctionComponent, useCallback, useRef, useState } from 'react'
 import WorkspaceSwitcherMenu from '@/Components/AccountMenu/WorkspaceSwitcher/WorkspaceSwitcherMenu'
 import Button from '@/Components/Button/Button'
@@ -8,10 +7,9 @@ import Popover from '../Popover/Popover'
 
 type Props = {
   mainApplicationGroup: WebApplicationGroup
-  viewControllerManager: ViewControllerManager
 }
 
-const LockscreenWorkspaceSwitcher: FunctionComponent<Props> = ({ mainApplicationGroup, viewControllerManager }) => {
+const LockscreenWorkspaceSwitcher: FunctionComponent<Props> = ({ mainApplicationGroup }) => {
   const buttonRef = useRef<HTMLButtonElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const [isOpen, setIsOpen] = useState(false)
@@ -38,7 +36,6 @@ const LockscreenWorkspaceSwitcher: FunctionComponent<Props> = ({ mainApplication
       >
         <WorkspaceSwitcherMenu
           mainApplicationGroup={mainApplicationGroup}
-          viewControllerManager={viewControllerManager}
           isOpen={isOpen}
           hideWorkspaceOptions={true}
         />

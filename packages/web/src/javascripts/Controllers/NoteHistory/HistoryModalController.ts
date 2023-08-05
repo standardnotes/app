@@ -1,6 +1,5 @@
-import { WebApplication } from '@/Application/WebApplication'
 import { InternalEventBusInterface, SNNote } from '@standardnotes/snjs'
-import { OPEN_NOTE_HISTORY_COMMAND } from '@standardnotes/ui-services'
+import { KeyboardService, OPEN_NOTE_HISTORY_COMMAND } from '@standardnotes/ui-services'
 import { action, makeObservable, observable } from 'mobx'
 import { AbstractViewController } from '../Abstract/AbstractViewController'
 import { NotesControllerInterface } from '../NotesController/NotesControllerInterface'
@@ -14,11 +13,11 @@ export class HistoryModalController extends AbstractViewController {
   }
 
   constructor(
-    application: WebApplication,
-    eventBus: InternalEventBusInterface,
     notesController: NotesControllerInterface,
+    keyboardService: KeyboardService,
+    eventBus: InternalEventBusInterface,
   ) {
-    super(application, eventBus)
+    super(eventBus)
 
     makeObservable(this, {
       note: observable,
@@ -26,7 +25,7 @@ export class HistoryModalController extends AbstractViewController {
     })
 
     this.disposers.push(
-      application.keyboardService.addCommandHandler({
+      keyboardService.addCommandHandler({
         command: OPEN_NOTE_HISTORY_COMMAND,
         onKeyDown: () => {
           this.openModal(notesController.firstSelectedNote)

@@ -1,4 +1,4 @@
-import { isIOS } from '@/Utils'
+import { isIOS } from '@standardnotes/ui-services'
 import { useEffect, useState } from 'react'
 
 const DebounceTimeInMs = 100

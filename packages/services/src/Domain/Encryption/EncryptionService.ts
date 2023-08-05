@@ -1,3 +1,4 @@
+import { GetKeyPairs } from './UseCase/GetKeyPairs'
 import { FindDefaultItemsKey } from './UseCase/ItemsKey/FindDefaultItemsKey'
 import { InternalEventInterface } from './../Internal/InternalEventInterface'
 import { InternalEventHandlerInterface } from './../Internal/InternalEventHandlerInterface'
@@ -43,7 +44,7 @@ import {
   PortablePublicKeySet,
   RootKeyParamsInterface,
 } from '@standardnotes/models'
-import { PkcKeyPair, PureCryptoInterface } from '@standardnotes/sncrypto-common'
+import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import {
   extendArray,
   isNotUndefined,
@@ -73,7 +74,6 @@ import { DecryptedParameters } from '@standardnotes/encryption/src/Domain/Types/
 import { RootKeyManager } from '../RootKeyManager/RootKeyManager'
 import { RootKeyManagerEvent } from '../RootKeyManager/RootKeyManagerEvent'
 import { CreateNewItemsKeyWithRollback } from './UseCase/ItemsKey/CreateNewItemsKeyWithRollback'
-import { DecryptErroredTypeAPayloads } from './UseCase/TypeA/DecryptErroredPayloads'
 import { CreateNewDefaultItemsKey } from './UseCase/ItemsKey/CreateNewDefaultItemsKey'
 import { DecryptTypeAPayload } from './UseCase/TypeA/DecryptPayload'
 import { DecryptTypeAPayloadWithKeyLookup } from './UseCase/TypeA/DecryptPayloadWithKeyLookup'
@@ -126,12 +126,12 @@ export class EncryptionService
     private crypto: PureCryptoInterface,
     private _createNewItemsKeyWithRollback: CreateNewItemsKeyWithRollback,
     private _findDefaultItemsKey: FindDefaultItemsKey,
-    private _decryptErroredRootPayloads: DecryptErroredTypeAPayloads,
     private _rootKeyEncryptPayloadWithKeyLookup: EncryptTypeAPayloadWithKeyLookup,
     private _rootKeyEncryptPayload: EncryptTypeAPayload,
     private _rootKeyDecryptPayload: DecryptTypeAPayload,
     private _rootKeyDecryptPayloadWithKeyLookup: DecryptTypeAPayloadWithKeyLookup,
     private _createDefaultItemsKey: CreateNewDefaultItemsKey,
+    private _getKeyPairs: GetKeyPairs,
     protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)
@@ -157,7 +157,6 @@ export class EncryptionService
     ;(this.crypto as unknown) = undefined
     ;(this._createNewItemsKeyWithRollback as unknown) = undefined
     ;(this._findDefaultItemsKey as unknown) = undefined
-    ;(this._decryptErroredRootPayloads as unknown) = undefined
     ;(this._rootKeyEncryptPayloadWithKeyLookup as unknown) = undefined
     ;(this._rootKeyEncryptPayload as unknown) = undefined
     ;(this._rootKeyDecryptPayload as unknown) = undefined
@@ -165,28 +164,6 @@ export class EncryptionService
     ;(this._createDefaultItemsKey as unknown) = undefined
 
     super.deinit()
-  }
-
-  /** @throws */
-  getKeyPair(): PkcKeyPair {
-    const rootKey = this.getRootKey()
-
-    if (!rootKey?.encryptionKeyPair) {
-      throw new Error('Account keypair not found')
-    }
-
-    return rootKey.encryptionKeyPair
-  }
-
-  /** @throws */
-  getSigningKeyPair(): PkcKeyPair {
-    const rootKey = this.getRootKey()
-
-    if (!rootKey?.signingKeyPair) {
-      throw new Error('Account keypair not found')
-    }
-
-    return rootKey.signingKeyPair
   }
 
   hasSigningKeyPair(): boolean {
@@ -214,6 +191,7 @@ export class EncryptionService
     return ProtocolVersionLatest
   }
 
+  /** Unlike SessionManager.isSignedIn, hasAccount can be read before the application is unlocked and is based on the key state */
   public hasAccount() {
     return this.rootKeyManager.hasAccount()
   }
@@ -242,12 +220,6 @@ export class EncryptionService
 
   public async createNewItemsKeyWithRollback(): Promise<() => Promise<void>> {
     return this._createNewItemsKeyWithRollback.execute()
-  }
-
-  public async decryptErroredPayloads(): Promise<void> {
-    await this._decryptErroredRootPayloads.execute()
-
-    await this.itemsEncryption.decryptErroredItemPayloads()
   }
 
   public itemsKeyForEncryptedPayload(
@@ -279,7 +251,9 @@ export class EncryptionService
       usesKeySystemRootKeyWithKeyLookup,
     } = split
 
-    const signingKeyPair = this.hasSigningKeyPair() ? this.getSigningKeyPair() : undefined
+    const keys = this._getKeyPairs.execute()
+
+    const signingKeyPair = keys.isFailed() ? undefined : keys.getValue().signing
 
     if (usesRootKey) {
       const rootKeyEncrypted = await this._rootKeyEncryptPayload.executeMany(
@@ -652,7 +626,7 @@ export class EncryptionService
   /**
    * @returns True if the root key has not yet been unwrapped (passcode locked).
    */
-  public async isPasscodeLocked() {
+  public async isPasscodeLocked(): Promise<boolean> {
     return (await this.rootKeyManager.hasRootKeyWrapper()) && this.rootKeyManager.getRootKey() == undefined
   }
 

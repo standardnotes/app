@@ -1,6 +1,5 @@
 import { FileItem } from '@standardnotes/snjs'
 import { AbstractComponent } from '@/Components/Abstract/PureComponent'
-import { WebApplication } from '@/Application/WebApplication'
 import MultipleSelectedNotes from '@/Components/MultipleSelectedNotes/MultipleSelectedNotes'
 import MultipleSelectedFiles from '../MultipleSelectedFiles/MultipleSelectedFiles'
 import { AppPaneId } from '../Panes/AppPaneMetadata'
@@ -8,6 +7,7 @@ import FileView from '../FileView/FileView'
 import NoteView from '../NoteView/NoteView'
 import { NoteViewController } from '../NoteView/Controller/NoteViewController'
 import { FileViewController } from '../NoteView/Controller/FileViewController'
+import { WebApplication } from '@/Application/WebApplication'
 
 type State = {
   showMultipleSelectedNotes: boolean
@@ -48,36 +48,32 @@ class NoteGroupView extends AbstractComponent<Props, State> {
     })
 
     this.autorun(() => {
-      if (!this.viewControllerManager) {
-        return
-      }
-
-      if (this.viewControllerManager && this.viewControllerManager.notesController) {
+      if (this.application.notesController) {
         this.setState({
-          showMultipleSelectedNotes: this.viewControllerManager.notesController.selectedNotesCount > 1,
+          showMultipleSelectedNotes: this.application.notesController.selectedNotesCount > 1,
         })
       }
 
-      if (this.viewControllerManager.selectionController) {
+      if (this.application.itemListController) {
         this.setState({
-          showMultipleSelectedFiles: this.viewControllerManager.selectionController.selectedFilesCount > 1,
+          showMultipleSelectedFiles: this.application.itemListController.selectedFilesCount > 1,
         })
       }
     })
 
     this.autorun(() => {
-      if (this.viewControllerManager && this.viewControllerManager.selectionController) {
+      if (this.application.itemListController) {
         this.setState({
-          selectedFile: this.viewControllerManager.selectionController.selectedFiles[0],
+          selectedFile: this.application.itemListController.selectedFiles[0],
         })
       }
     })
 
     this.autorun(() => {
-      if (this.viewControllerManager && this.viewControllerManager.paneController) {
+      if (this.application.paneController) {
         this.setState({
-          selectedPane: this.viewControllerManager.paneController.currentPane,
-          isInMobileView: this.viewControllerManager.paneController.isInMobileView,
+          selectedPane: this.application.paneController.currentPane,
+          isInMobileView: this.application.paneController.isInMobileView,
         })
       }
     })
@@ -98,23 +94,9 @@ class NoteGroupView extends AbstractComponent<Props, State> {
 
     return (
       <>
-        {this.state.showMultipleSelectedNotes && (
-          <MultipleSelectedNotes
-            application={this.application}
-            selectionController={this.viewControllerManager.selectionController}
-            navigationController={this.viewControllerManager.navigationController}
-            notesController={this.viewControllerManager.notesController}
-            linkingController={this.viewControllerManager.linkingController}
-            historyModalController={this.viewControllerManager.historyModalController}
-          />
-        )}
+        {this.state.showMultipleSelectedNotes && <MultipleSelectedNotes application={this.application} />}
         {this.state.showMultipleSelectedFiles && (
-          <MultipleSelectedFiles
-            filesController={this.viewControllerManager.filesController}
-            selectionController={this.viewControllerManager.selectionController}
-            navigationController={this.viewControllerManager.navigationController}
-            linkingController={this.viewControllerManager.linkingController}
-          />
+          <MultipleSelectedFiles itemListController={this.application.itemListController} />
         )}
         {shouldNotShowMultipleSelectedItems && hasControllers && (
           <>
@@ -122,12 +104,7 @@ class NoteGroupView extends AbstractComponent<Props, State> {
               return controller instanceof NoteViewController ? (
                 <NoteView key={controller.runtimeId} application={this.application} controller={controller} />
               ) : (
-                <FileView
-                  key={controller.runtimeId}
-                  application={this.application}
-                  viewControllerManager={this.viewControllerManager}
-                  file={controller.item}
-                />
+                <FileView key={controller.runtimeId} application={this.application} file={controller.item} />
               )
             })}
           </>

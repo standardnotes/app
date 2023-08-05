@@ -1,15 +1,11 @@
 import { DiscardItemsLocally } from './../UseCase/DiscardItemsLocally'
 import { InternalEventBusInterface } from './../Internal/InternalEventBusInterface'
 import { GetOwnedSharedVaults } from './UseCase/GetOwnedSharedVaults'
-import { IsVaultOwner } from './../VaultUser/UseCase/IsVaultOwner'
-import { EncryptionProviderInterface } from './../Encryption/EncryptionProviderInterface'
 import { DeleteSharedVault } from './UseCase/DeleteSharedVault'
 import { ConvertToSharedVault } from './UseCase/ConvertToSharedVault'
 import { ShareContactWithVault } from './UseCase/ShareContactWithVault'
 import { DeleteThirdPartyVault } from './UseCase/DeleteExternalSharedVault'
 import { FindContact } from './../Contacts/UseCase/FindContact'
-import { SendVaultDataChangedMessage } from './UseCase/SendVaultDataChangedMessage'
-import { NotifyVaultUsersOfKeyRotation } from './UseCase/NotifyVaultUsersOfKeyRotation'
 import { HandleKeyPairChange } from './../Contacts/UseCase/HandleKeyPairChange'
 import { CreateSharedVault } from './UseCase/CreateSharedVault'
 import { GetVault } from './../Vault/UseCase/GetVault'
@@ -29,20 +25,16 @@ describe('SharedVaultService', () => {
     const items = {} as jest.Mocked<ItemManagerInterface>
     items.addObserver = jest.fn()
 
-    const encryption = {} as jest.Mocked<EncryptionProviderInterface>
     const session = {} as jest.Mocked<SessionsClientInterface>
     const getVault = {} as jest.Mocked<GetVault>
     const getOwnedVaults = {} as jest.Mocked<GetOwnedSharedVaults>
     const createSharedVaultUseCase = {} as jest.Mocked<CreateSharedVault>
     const handleKeyPairChange = {} as jest.Mocked<HandleKeyPairChange>
-    const notifyVaultUsersOfKeyRotation = {} as jest.Mocked<NotifyVaultUsersOfKeyRotation>
-    const sendVaultDataChangeMessage = {} as jest.Mocked<SendVaultDataChangedMessage>
     const findContact = {} as jest.Mocked<FindContact>
     const deleteThirdPartyVault = {} as jest.Mocked<DeleteThirdPartyVault>
     const shareContactWithVault = {} as jest.Mocked<ShareContactWithVault>
     const convertToSharedVault = {} as jest.Mocked<ConvertToSharedVault>
     const deleteSharedVaultUseCase = {} as jest.Mocked<DeleteSharedVault>
-    const isVaultAdmin = {} as jest.Mocked<IsVaultOwner>
     const discardItemsLocally = {} as jest.Mocked<DiscardItemsLocally>
 
     const eventBus = {} as jest.Mocked<InternalEventBusInterface>
@@ -50,20 +42,16 @@ describe('SharedVaultService', () => {
 
     service = new SharedVaultService(
       items,
-      encryption,
       session,
       getVault,
       getOwnedVaults,
       createSharedVaultUseCase,
       handleKeyPairChange,
-      notifyVaultUsersOfKeyRotation,
-      sendVaultDataChangeMessage,
       findContact,
       deleteThirdPartyVault,
       shareContactWithVault,
       convertToSharedVault,
       deleteSharedVaultUseCase,
-      isVaultAdmin,
       discardItemsLocally,
       eventBus,
     )

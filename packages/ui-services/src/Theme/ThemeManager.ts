@@ -5,6 +5,7 @@ import {
   LocalStorageDecryptedContextualPayload,
   PrefKey,
   ThemeInterface,
+  PrefDefaults,
 } from '@standardnotes/models'
 import {
   InternalEventBusInterface,
@@ -21,6 +22,7 @@ import { AbstractUIServicee } from '../Abstract/AbstractUIService'
 import { GetAllThemesUseCase } from './GetAllThemesUseCase'
 import { Uuid } from '@standardnotes/domain-core'
 import { ActiveThemeList } from './ActiveThemeList'
+import { Color } from './Color'
 
 const CachedThemesKey = 'cachedThemes'
 const TimeBeforeApplyingColorScheme = 5
@@ -58,7 +60,7 @@ export class ThemeManager extends AbstractUIServicee {
   }
 
   override async onAppStart() {
-    const desktopService = this.application.getDesktopService()
+    const desktopService = this.application.desktopManager
     if (desktopService) {
       this.eventDisposers.push(
         desktopService.registerUpdateObserver((component) => {
@@ -81,6 +83,8 @@ export class ThemeManager extends AbstractUIServicee {
         if (event !== PreferencesServiceEvent.PreferencesChanged) {
           return
         }
+
+        this.toggleTranslucentUIColors()
 
         let hasChange = false
 
@@ -163,12 +167,14 @@ export class ThemeManager extends AbstractUIServicee {
     const useDeviceThemeSettings = this.application.getPreference(PrefKey.UseSystemColorScheme, false)
 
     if (useDeviceThemeSettings) {
-      const prefersDarkColorScheme = (await this.application.mobileDevice().getColorScheme()) === 'dark'
+      const prefersDarkColorScheme = (await this.application.mobileDevice.getColorScheme()) === 'dark'
       this.setThemeAsPerColorScheme(prefersDarkColorScheme)
     }
   }
 
   private async handlePreferencesChangeEvent() {
+    this.toggleTranslucentUIColors()
+
     const useDeviceThemeSettings = this.application.getPreference(PrefKey.UseSystemColorScheme, false)
 
     const hasPreferenceChanged = useDeviceThemeSettings !== this.lastUseDeviceThemeSettings
@@ -181,7 +187,7 @@ export class ThemeManager extends AbstractUIServicee {
       let prefersDarkColorScheme = window.matchMedia('(prefers-color-scheme: dark)').matches
 
       if (this.application.isNativeMobileWeb()) {
-        prefersDarkColorScheme = (await this.application.mobileDevice().getColorScheme()) === 'dark'
+        prefersDarkColorScheme = (await this.application.mobileDevice.getColorScheme()) === 'dark'
       }
 
       this.setThemeAsPerColorScheme(prefersDarkColorScheme)
@@ -334,11 +340,11 @@ export class ThemeManager extends AbstractUIServicee {
       if (this.application.isNativeMobileWeb() && !theme.layerable) {
         const packageInfo = theme.featureDescription
         setTimeout(() => {
-          this.application
-            .mobileDevice()
-            .handleThemeSchemeChange(packageInfo.isDark ?? false, this.getBackgroundColor())
+          this.application.mobileDevice.handleThemeSchemeChange(packageInfo.isDark ?? false, this.getBackgroundColor())
         })
       }
+
+      this.toggleTranslucentUIColors()
     }
     document.getElementsByTagName('head')[0].appendChild(link)
   }
@@ -356,14 +362,42 @@ export class ThemeManager extends AbstractUIServicee {
 
     this.themesActiveInTheUI.remove(id)
 
-    if (this.themesActiveInTheUI.isEmpty() && this.application.isNativeMobileWeb()) {
-      this.application.mobileDevice().handleThemeSchemeChange(false, '#ffffff')
+    if (this.themesActiveInTheUI.isEmpty()) {
+      if (this.application.isNativeMobileWeb()) {
+        this.application.mobileDevice.handleThemeSchemeChange(false, '#ffffff')
+      }
+      this.toggleTranslucentUIColors()
     }
   }
 
   private getBackgroundColor() {
     const bgColor = getComputedStyle(document.documentElement).getPropertyValue('--sn-stylekit-background-color').trim()
     return bgColor.length ? bgColor : '#ffffff'
+  }
+
+  private shouldUseTranslucentUI() {
+    return this.application.getPreference(PrefKey.UseTranslucentUI, PrefDefaults[PrefKey.UseTranslucentUI])
+  }
+
+  private toggleTranslucentUIColors() {
+    if (!this.shouldUseTranslucentUI()) {
+      document.documentElement.style.removeProperty('--popover-background-color')
+      document.documentElement.style.removeProperty('--popover-backdrop-filter')
+      document.body.classList.remove('translucent-ui')
+      return
+    }
+    try {
+      const backgroundColor = new Color(this.getBackgroundColor())
+      const backdropFilter = backgroundColor.isDark()
+        ? 'blur(12px) saturate(190%) contrast(70%) brightness(80%)'
+        : 'blur(12px) saturate(190%) contrast(50%) brightness(130%)'
+      const translucentBackgroundColor = backgroundColor.setAlpha(0.65).toString()
+      document.documentElement.style.setProperty('--popover-background-color', translucentBackgroundColor)
+      document.documentElement.style.setProperty('--popover-backdrop-filter', backdropFilter)
+      document.body.classList.add('translucent-ui')
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   /**

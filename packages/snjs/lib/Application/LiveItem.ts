@@ -1,17 +1,17 @@
 import { DecryptedItemInterface } from '@standardnotes/models'
-import { ApplicationInterface } from '@standardnotes/services'
+import { ItemManagerInterface } from '@standardnotes/services'
 
 /** Keeps an item reference up to date with changes */
 export class LiveItem<T extends DecryptedItemInterface> {
   public item: T
   private removeObserver: () => void
 
-  constructor(uuid: string, application: ApplicationInterface, onChange?: (item: T) => void) {
-    this.item = application.items.findSureItem(uuid)
+  constructor(uuid: string, items: ItemManagerInterface, onChange?: (item: T) => void) {
+    this.item = items.findSureItem(uuid)
 
     onChange && onChange(this.item)
 
-    this.removeObserver = application.streamItems(this.item.content_type, ({ changed, inserted }) => {
+    this.removeObserver = items.streamItems(this.item.content_type, ({ changed, inserted }) => {
       const matchingItem = [...changed, ...inserted].find((item) => {
         return item.uuid === uuid
       })

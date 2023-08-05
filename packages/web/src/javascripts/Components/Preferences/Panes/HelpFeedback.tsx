@@ -9,7 +9,7 @@ import { MouseEventHandler } from 'react'
 const HelpAndFeedback = ({ application }: { application: WebApplication }) => {
   const openLinkOnMobile = (link: string) => {
     if (application.isNativeMobileWeb()) {
-      application.mobileDevice().openUrl(link)
+      application.mobileDevice.openUrl(link)
     }
   }
 

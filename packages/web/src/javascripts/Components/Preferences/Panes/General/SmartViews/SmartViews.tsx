@@ -33,7 +33,7 @@ const SmartViews = ({ application, featuresController }: Props) => {
   )
 
   useEffect(() => {
-    const disposeItemStream = application.streamItems([ContentType.TYPES.SmartView], () => {
+    const disposeItemStream = application.items.streamItems([ContentType.TYPES.SmartView], () => {
       setSmartViews(application.items.getSmartViews().filter((view) => !isSystemView(view)))
     })
 

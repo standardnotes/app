@@ -36,5 +36,5 @@ export interface VaultServiceInterface
     params: { name: string; description: string },
   ): Promise<VaultListingInterface>
   rotateVaultRootKey(vault: VaultListingInterface, vaultPassword?: string): Promise<void>
-  changeVaultOptions(dto: ChangeVaultKeyOptionsDTO): Promise<Result<void>>
+  changeVaultKeyOptions(dto: ChangeVaultKeyOptionsDTO): Promise<Result<void>>
 }

@@ -1,7 +1,8 @@
 export enum CrossControllerEvent {
-  TagChanged = 'TagChanged',
-  ActiveEditorChanged = 'ActiveEditorChanged',
-  HydrateFromPersistedValues = 'HydrateFromPersistedValues',
-  RequestValuePersistence = 'RequestValuePersistence',
-  DisplayPremiumModal = 'DisplayPremiumModal',
+  TagChanged = 'CrossControllerEvent:TagChanged',
+  ActiveEditorChanged = 'CrossControllerEvent:ActiveEditorChanged',
+  HydrateFromPersistedValues = 'CrossControllerEvent:HydrateFromPersistedValues',
+  RequestValuePersistence = 'CrossControllerEvent:RequestValuePersistence',
+  DisplayPremiumModal = 'CrossControllerEvent:DisplayPremiumModal',
+  UnselectAllNotes = 'CrossControllerEvent:UnselectAllNotes',
 }

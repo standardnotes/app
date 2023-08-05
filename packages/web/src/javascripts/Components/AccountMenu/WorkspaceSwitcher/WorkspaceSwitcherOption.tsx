@@ -1,6 +1,5 @@
 import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
 import { WebApplicationGroup } from '@/Application/WebApplicationGroup'
-import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useRef, useState } from 'react'
 import Icon from '@/Components/Icon/Icon'
@@ -11,10 +10,9 @@ import { MenuItemIconSize } from '@/Constants/TailwindClassNames'
 
 type Props = {
   mainApplicationGroup: WebApplicationGroup
-  viewControllerManager: ViewControllerManager
 }
 
-const WorkspaceSwitcherOption: FunctionComponent<Props> = ({ mainApplicationGroup, viewControllerManager }) => {
+const WorkspaceSwitcherOption: FunctionComponent<Props> = ({ mainApplicationGroup }) => {
   const buttonRef = useRef<HTMLButtonElement>(null)
   const [isOpen, setIsOpen] = useState(false)
 
@@ -40,11 +38,7 @@ const WorkspaceSwitcherOption: FunctionComponent<Props> = ({ mainApplicationGrou
         side="right"
         togglePopover={toggleMenu}
       >
-        <WorkspaceSwitcherMenu
-          mainApplicationGroup={mainApplicationGroup}
-          viewControllerManager={viewControllerManager}
-          isOpen={isOpen}
-        />
+        <WorkspaceSwitcherMenu mainApplicationGroup={mainApplicationGroup} isOpen={isOpen} />
       </Popover>
     </>
   )

@@ -28,6 +28,7 @@ export class ItemManager extends Services.AbstractService implements Services.It
   private collection!: Models.ItemCollection
   private systemSmartViews: Models.SmartView[]
   private itemCounter!: Models.ItemCounter
+  private streamDisposers: (() => void)[] = []
 
   private navigationDisplayController!: Models.ItemDisplayController<
     Models.SNNote | Models.FileItem,
@@ -230,6 +231,7 @@ export class ItemManager extends Services.AbstractService implements Services.It
 
   public override deinit(): void {
     this.unsubChangeObserver()
+    this.streamDisposers.length = 0
     ;(this.unsubChangeObserver as unknown) = undefined
     ;(this.payloadManager as unknown) = undefined
     ;(this.collection as unknown) = undefined
@@ -864,5 +866,35 @@ export class ItemManager extends Services.AbstractService implements Services.It
 
   getNoteLinkedFiles(note: Models.SNNote): Models.FileItem[] {
     return this.itemsReferencingItem(note).filter(Models.isFile)
+  }
+
+  /**
+   * Begin streaming items to display in the UI. The stream callback will be called
+   * immediately with the present items that match the constraint, and over time whenever
+   * items matching the constraint are added, changed, or deleted.
+   */
+  public streamItems<I extends Models.DecryptedItemInterface = Models.DecryptedItemInterface>(
+    contentType: string | string[],
+    stream: Models.ItemStream<I>,
+  ): () => void {
+    const removeItemManagerObserver = this.addObserver<I>(contentType, ({ changed, inserted, removed, source }) => {
+      stream({ changed, inserted, removed, source })
+    })
+
+    const matches = this.getItems<I>(contentType)
+    stream({
+      inserted: matches,
+      changed: [],
+      removed: [],
+      source: Models.PayloadEmitSource.InitialObserverRegistrationPush,
+    })
+
+    this.streamDisposers.push(removeItemManagerObserver)
+
+    return () => {
+      removeItemManagerObserver()
+
+      removeFromArray(this.streamDisposers, removeItemManagerObserver)
+    }
   }
 }

@@ -37,7 +37,7 @@ export default function FilePlugin({ currentNote }: { currentNote: SNNote }): JS
           if (uploadedFile) {
             editor.dispatchCommand(INSERT_FILE_COMMAND, uploadedFile.uuid)
             void linkingController.linkItemToSelectedItem(uploadedFile)
-            void application.changeAndSaveItem(uploadedFile, (mutator) => {
+            void application.changeAndSaveItem.execute(uploadedFile, (mutator) => {
               mutator.protected = currentNote.protected
             })
           }

@@ -1,12 +1,12 @@
 import { observer } from 'mobx-react-lite'
 import { WebApplication } from '@/Application/WebApplication'
-import { isIOS } from '@/Utils'
 import { useEffect, useState } from 'react'
 import { MobileDeviceInterface } from '@standardnotes/services'
 import PreferencesSegment from '@/Components/Preferences/PreferencesComponents/PreferencesSegment'
 import { Title } from '@/Components/Preferences/PreferencesComponents/Content'
 import Button from '@/Components/Button/Button'
 import PreferencesGroup from '@/Components/Preferences/PreferencesComponents/PreferencesGroup'
+import { isIOS } from '@standardnotes/ui-services'
 
 type Props = {
   application: WebApplication

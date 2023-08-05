@@ -1,11 +1,3 @@
-import { VaultListingInterface } from '@standardnotes/models'
+export enum VaultServiceEvent {}
 
-export enum VaultServiceEvent {
-  VaultRootKeyRotated = 'VaultRootKeyRotated',
-}
-
-export type VaultServiceEventPayload = {
-  [VaultServiceEvent.VaultRootKeyRotated]: {
-    vault: VaultListingInterface
-  }
-}
+export type VaultServiceEventPayload = Record<string, unknown>

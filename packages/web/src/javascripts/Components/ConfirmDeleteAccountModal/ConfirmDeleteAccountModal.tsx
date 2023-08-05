@@ -1,5 +1,4 @@
 import { observer } from 'mobx-react-lite'
-import { ViewControllerManager } from '@Controllers/ViewControllerManager'
 import { useCallback, useRef } from 'react'
 import { STRING_DELETE_ACCOUNT_CONFIRMATION } from '@/Constants/Strings'
 import Button from '@/Components/Button/Button'
@@ -8,14 +7,13 @@ import Icon from '../Icon/Icon'
 import AlertDialog from '../AlertDialog/AlertDialog'
 
 type Props = {
-  viewControllerManager: ViewControllerManager
   application: WebApplication
 }
 
-const ConfirmDeleteAccountModal = ({ application, viewControllerManager }: Props) => {
+const ConfirmDeleteAccountModal = ({ application }: Props) => {
   const closeDialog = useCallback(() => {
-    viewControllerManager.accountMenuController.setDeletingAccount(false)
-  }, [viewControllerManager.accountMenuController])
+    application.accountMenuController.setDeletingAccount(false)
+  }, [application.accountMenuController])
 
   const cancelRef = useRef<HTMLButtonElement>(null)
 
@@ -52,7 +50,7 @@ const ConfirmDeleteAccountModal = ({ application, viewControllerManager }: Props
 ConfirmDeleteAccountModal.displayName = 'ConfirmDeleteAccountModal'
 
 const ConfirmDeleteAccountContainer = (props: Props) => {
-  if (!props.viewControllerManager.accountMenuController.deletingAccount) {
+  if (!props.application.accountMenuController.deletingAccount) {
     return null
   }
   return <ConfirmDeleteAccountModal {...props} />

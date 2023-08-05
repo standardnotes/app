@@ -1,30 +1,14 @@
 import { observer } from 'mobx-react-lite'
 import NotesOptions from '@/Components/NotesOptions/NotesOptions'
 import { useCallback, useState } from 'react'
-import { NotesController } from '@/Controllers/NotesController/NotesController'
-import { NavigationController } from '@/Controllers/Navigation/NavigationController'
-import { HistoryModalController } from '@/Controllers/NoteHistory/HistoryModalController'
 import Popover from '../Popover/Popover'
-import { LinkingController } from '@/Controllers/LinkingController'
 import Menu from '../Menu/Menu'
-import { SelectedItemsController } from '@/Controllers/SelectedItemsController'
+import { useApplication } from '../ApplicationProvider'
 
-type Props = {
-  navigationController: NavigationController
-  notesController: NotesController
-  linkingController: LinkingController
-  historyModalController: HistoryModalController
-  selectionController: SelectedItemsController
-}
+const NotesContextMenu = () => {
+  const application = useApplication()
 
-const NotesContextMenu = ({
-  navigationController,
-  notesController,
-  linkingController,
-  historyModalController,
-  selectionController,
-}: Props) => {
-  const { contextMenuOpen, contextMenuClickLocation, setContextMenuOpen } = notesController
+  const { contextMenuOpen, contextMenuClickLocation, setContextMenuOpen } = application.notesController
 
   const closeMenu = () => setContextMenuOpen(!contextMenuOpen)
 
@@ -48,12 +32,7 @@ const NotesContextMenu = ({
     >
       <Menu className="select-none" a11yLabel="Note context menu" isOpen={contextMenuOpen}>
         <NotesOptions
-          notes={notesController.selectedNotes}
-          navigationController={navigationController}
-          notesController={notesController}
-          linkingController={linkingController}
-          historyModalController={historyModalController}
-          selectionController={selectionController}
+          notes={application.notesController.selectedNotes}
           requestDisableClickOutside={handleDisableClickOutsideRequest}
           closeMenu={closeMenu}
         />

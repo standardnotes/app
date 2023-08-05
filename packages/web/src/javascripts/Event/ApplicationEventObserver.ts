@@ -4,13 +4,14 @@ import {
   RouteServiceInterface,
   RouteType,
   ToastServiceInterface,
+  WebApplicationInterface,
 } from '@standardnotes/ui-services'
 import {
   ApplicationEvent,
   SessionsClientInterface,
   SubscriptionManagerInterface,
   SyncServiceInterface,
-  UserClientInterface,
+  UserServiceInterface,
 } from '@standardnotes/snjs'
 import { ToastType } from '@standardnotes/toast'
 
@@ -21,13 +22,12 @@ import { SyncStatusController } from '@/Controllers/SyncStatusController'
 import { AccountMenuPane } from '@/Components/AccountMenu/AccountMenuPane'
 
 import { EventObserverInterface } from './EventObserverInterface'
-import { WebApplication } from '@/Application/WebApplication'
 
 export const JoinWorkspaceSuccessString = 'Successfully joined a shared subscription.'
 
 export class ApplicationEventObserver implements EventObserverInterface {
   constructor(
-    private application: WebApplication,
+    private application: WebApplicationInterface,
     private routeService: RouteServiceInterface,
     private purchaseFlowController: PurchaseFlowController,
     private accountMenuController: AccountMenuController,
@@ -37,7 +37,7 @@ export class ApplicationEventObserver implements EventObserverInterface {
     private sessionManager: SessionsClientInterface,
     private subscriptionManager: SubscriptionManagerInterface,
     private toastService: ToastServiceInterface,
-    private userService: UserClientInterface,
+    private userService: UserServiceInterface,
   ) {}
 
   async handle(event: ApplicationEvent): Promise<void> {

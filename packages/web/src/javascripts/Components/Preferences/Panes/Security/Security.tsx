@@ -1,7 +1,6 @@
 import { NativeFeatureIdentifier, FeatureStatus } from '@standardnotes/snjs'
 
 import { WebApplication } from '@/Application/WebApplication'
-import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { FunctionComponent } from 'react'
 import TwoFactorAuthWrapper from './TwoFactorAuth/TwoFactorAuthWrapper'
 import { MfaProps } from './TwoFactorAuth/MfaProps'
@@ -16,7 +15,6 @@ import MultitaskingPrivacy from '@/Components/Preferences/Panes/Security/Multita
 import U2FWrapper from './U2F/U2FWrapper'
 
 interface SecurityProps extends MfaProps {
-  viewControllerManager: ViewControllerManager
   application: WebApplication
 }
 
@@ -26,23 +24,19 @@ const Security: FunctionComponent<SecurityProps> = (props) => {
   const isU2FFeatureAvailable =
     props.application.features.getFeatureStatus(
       NativeFeatureIdentifier.create(NativeFeatureIdentifier.TYPES.UniversalSecondFactor).getValue(),
-    ) === FeatureStatus.Entitled && props.userProvider.getUser() !== undefined
+    ) === FeatureStatus.Entitled && props.application.sessions.getUser() !== undefined
 
   return (
     <PreferencesPane>
-      <Encryption viewControllerManager={props.viewControllerManager} />
+      <Encryption />
       {props.application.items.invalidNonVaultedItems.length > 0 && <ErroredItems />}
       <Protections application={props.application} />
-      <TwoFactorAuthWrapper
-        mfaProvider={props.mfaProvider}
-        userProvider={props.userProvider}
-        application={props.application}
-      />
-      {isU2FFeatureAvailable && <U2FWrapper userProvider={props.userProvider} application={props.application} />}
+      <TwoFactorAuthWrapper application={props.application} />
+      {isU2FFeatureAvailable && <U2FWrapper application={props.application} />}
       {isNativeMobileWeb && <MultitaskingPrivacy application={props.application} />}
-      <PasscodeLock viewControllerManager={props.viewControllerManager} application={props.application} />
+      <PasscodeLock application={props.application} />
       {isNativeMobileWeb && <BiometricsLock application={props.application} />}
-      {props.application.getUser() && <Privacy application={props.application} />}
+      {props.application.sessions.getUser() && <Privacy application={props.application} />}
     </PreferencesPane>
   )
 }

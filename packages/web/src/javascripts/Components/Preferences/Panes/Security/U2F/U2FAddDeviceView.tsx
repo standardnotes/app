@@ -3,23 +3,19 @@ import { observer } from 'mobx-react-lite'
 import { AddAuthenticator } from '@standardnotes/snjs'
 
 import DecoratedInput from '@/Components/Input/DecoratedInput'
-import { UserProvider } from '@/Components/Preferences/Providers'
 import Modal from '@/Components/Modal/Modal'
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
+import { useApplication } from '@/Components/ApplicationProvider'
 
 type Props = {
-  userProvider: UserProvider
   addAuthenticator: AddAuthenticator
   onDeviceAddingModalToggle: (show: boolean) => void
   onDeviceAdded: () => Promise<void>
 }
 
-const U2FAddDeviceView: FunctionComponent<Props> = ({
-  userProvider,
-  addAuthenticator,
-  onDeviceAddingModalToggle,
-  onDeviceAdded,
-}) => {
+const U2FAddDeviceView: FunctionComponent<Props> = ({ addAuthenticator, onDeviceAddingModalToggle, onDeviceAdded }) => {
+  const application = useApplication()
+
   const [deviceName, setDeviceName] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
 
@@ -33,7 +29,7 @@ const U2FAddDeviceView: FunctionComponent<Props> = ({
       return
     }
 
-    const user = userProvider.getUser()
+    const user = application.sessions.getUser()
     if (user === undefined) {
       setErrorMessage('User not found')
       return
@@ -50,7 +46,7 @@ const U2FAddDeviceView: FunctionComponent<Props> = ({
 
     onDeviceAddingModalToggle(false)
     await onDeviceAdded()
-  }, [deviceName, setErrorMessage, userProvider, addAuthenticator, onDeviceAddingModalToggle, onDeviceAdded])
+  }, [deviceName, setErrorMessage, application, addAuthenticator, onDeviceAddingModalToggle, onDeviceAdded])
 
   const closeModal = () => {
     onDeviceAddingModalToggle(false)

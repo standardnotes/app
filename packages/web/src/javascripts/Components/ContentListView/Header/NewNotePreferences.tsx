@@ -207,7 +207,7 @@ const NewNotePreferences: FunctionComponent<Props> = ({
             <input
               disabled={disabled}
               className={classNames(
-                'w-full min-w-55 rounded border border-solid border-passive-3 bg-default px-2 py-1.5 text-sm',
+                'w-full min-w-55 rounded border border-solid border-passive-3 bg-default md:translucent-ui:bg-transparent px-2 py-1.5 text-sm',
                 'focus-within:ring-2 focus-within:ring-info',
               )}
               placeholder="e.g. YYYY-MM-DD"
@@ -231,7 +231,7 @@ const NewNotePreferences: FunctionComponent<Props> = ({
               onClick={(event) => {
                 if (application.isNativeMobileWeb()) {
                   event.preventDefault()
-                  application.mobileDevice().openUrl(HelpPageUrl)
+                  application.mobileDevice.openUrl(HelpPageUrl)
                 }
               }}
             >

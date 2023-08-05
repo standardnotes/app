@@ -14,7 +14,7 @@ const ErroredItems: FunctionComponent = () => {
   const [erroredItems, setErroredItems] = useState(application.items.invalidNonVaultedItems)
 
   useEffect(() => {
-    return application.streamItems(ContentType.TYPES.Any, () => {
+    return application.items.streamItems(ContentType.TYPES.Any, () => {
       setErroredItems(application.items.invalidNonVaultedItems)
     })
   }, [application])
@@ -83,7 +83,7 @@ const ErroredItems: FunctionComponent = () => {
             className="mr-2 mt-3 min-w-20"
             label="Export all"
             onClick={() => {
-              void application.getArchiveService().downloadEncryptedItems(erroredItems)
+              void application.archiveService.downloadEncryptedItems(erroredItems)
             }}
           />
           <Button
@@ -117,7 +117,7 @@ const ErroredItems: FunctionComponent = () => {
                       className="mr-2 mt-3 min-w-20"
                       label="Export"
                       onClick={() => {
-                        void application.getArchiveService().downloadEncryptedItem(item)
+                        void application.archiveService.downloadEncryptedItem(item)
                       }}
                     />
                     <Button

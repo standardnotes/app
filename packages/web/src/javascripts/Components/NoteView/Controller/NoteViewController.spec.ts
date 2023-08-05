@@ -9,6 +9,7 @@ import {
   SyncServiceInterface,
   ItemManagerInterface,
   MutatorClientInterface,
+  PreferenceServiceInterface,
 } from '@standardnotes/snjs'
 import { NativeFeatureIdentifier, NoteType } from '@standardnotes/features'
 import { NoteViewController } from './NoteViewController'
@@ -18,24 +19,24 @@ describe('note view controller', () => {
   let componentManager: SNComponentManager
 
   beforeEach(() => {
-    application = {} as jest.Mocked<WebApplication>
-    application.streamItems = jest.fn().mockReturnValue(() => {})
-    application.getPreference = jest.fn().mockReturnValue(true)
-    application.noAccount = jest.fn().mockReturnValue(false)
-    application.isNativeMobileWeb = jest.fn().mockReturnValue(false)
+    application = {
+      preferences: {
+        getValue: jest.fn().mockReturnValue(true),
+      } as unknown as jest.Mocked<PreferenceServiceInterface>,
+      items: {
+        streamItems: jest.fn().mockReturnValue(() => {}),
+        createTemplateItem: jest.fn().mockReturnValue({} as SNNote),
+      } as unknown as jest.Mocked<ItemManagerInterface>,
+      mutator: {} as jest.Mocked<MutatorClientInterface>,
+    } as unknown as jest.Mocked<WebApplication>
 
-    const items = {} as jest.Mocked<ItemManagerInterface>
-    items.createTemplateItem = jest.fn().mockReturnValue({} as SNNote)
-    Object.defineProperty(application, 'items', { value: items })
+    application.isNativeMobileWeb = jest.fn().mockReturnValue(false)
 
     Object.defineProperty(application, 'sync', { value: {} as jest.Mocked<SyncServiceInterface> })
     application.sync.sync = jest.fn().mockReturnValue(Promise.resolve())
 
     componentManager = {} as jest.Mocked<SNComponentManager>
     Object.defineProperty(application, 'componentManager', { value: componentManager })
-
-    const mutator = {} as jest.Mocked<MutatorClientInterface>
-    Object.defineProperty(application, 'mutator', { value: mutator })
   })
 
   it('should create notes with plaintext note type', async () => {
@@ -43,7 +44,17 @@ describe('note view controller', () => {
       .fn()
       .mockReturnValue(NativeFeatureIdentifier.TYPES.PlainEditor)
 
-    const controller = new NoteViewController(application)
+    const controller = new NoteViewController(
+      undefined,
+      application.items,
+      application.mutator,
+      application.sync,
+      application.sessions,
+      application.preferences,
+      application.componentManager,
+      application.alerts,
+      application.isNativeMobileWebUseCase,
+    )
     await controller.initialize()
 
     expect(application.items.createTemplateItem).toHaveBeenCalledWith(
@@ -64,7 +75,17 @@ describe('note view controller', () => {
       .fn()
       .mockReturnValue(NativeFeatureIdentifier.TYPES.MarkdownProEditor)
 
-    const controller = new NoteViewController(application)
+    const controller = new NoteViewController(
+      undefined,
+      application.items,
+      application.mutator,
+      application.sync,
+      application.sessions,
+      application.preferences,
+      application.componentManager,
+      application.alerts,
+      application.isNativeMobileWebUseCase,
+    )
     await controller.initialize()
 
     expect(application.items.createTemplateItem).toHaveBeenCalledWith(
@@ -86,7 +107,18 @@ describe('note view controller', () => {
     application.items.findItem = jest.fn().mockReturnValue(tag)
     application.mutator.addTagToNote = jest.fn()
 
-    const controller = new NoteViewController(application, undefined, { tag: tag.uuid })
+    const controller = new NoteViewController(
+      undefined,
+      application.items,
+      application.mutator,
+      application.sync,
+      application.sessions,
+      application.preferences,
+      application.componentManager,
+      application.alerts,
+      application.isNativeMobileWebUseCase,
+      { tag: tag.uuid },
+    )
     await controller.initialize()
 
     expect(controller['defaultTag']).toEqual(tag)
@@ -100,7 +132,17 @@ describe('note view controller', () => {
 
     application.items.findItem = jest.fn().mockReturnValue(note)
 
-    const controller = new NoteViewController(application, note)
+    const controller = new NoteViewController(
+      note,
+      application.items,
+      application.mutator,
+      application.sync,
+      application.sessions,
+      application.preferences,
+      application.componentManager,
+      application.alerts,
+      application.isNativeMobileWebUseCase,
+    )
     await controller.initialize()
 
     const changePromise = Deferred()

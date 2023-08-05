@@ -1,7 +1,6 @@
 import { FunctionComponent, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { ListableContentItem } from '../Types/ListableContentItem'
 import { ItemListController } from '@/Controllers/ItemList/ItemListController'
-import { SelectedItemsController } from '@/Controllers/SelectedItemsController'
 import { useResponsiveAppPane } from '../../Panes/ResponsivePaneProvider'
 import { AppPaneId } from '../../Panes/AppPaneMetadata'
 import {
@@ -25,7 +24,7 @@ type Props = {
   items: ListableContentItem[]
   onSelect: (item: ListableContentItem, userTriggered: boolean) => Promise<void>
   selectedTag: SNTag
-  selectedUuids: SelectedItemsController['selectedUuids']
+  selectedUuids: ItemListController['selectedUuids']
 }
 
 const PageSize = 10

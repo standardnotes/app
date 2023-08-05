@@ -25,7 +25,7 @@ const EmailBackups = ({ application }: Props) => {
   const hasAccount = application.hasAccount()
 
   const loadEmailFrequencySetting = useCallback(async () => {
-    if (!application.getUser()) {
+    if (!application.sessions.getUser()) {
       return
     }
     setIsLoading(true)

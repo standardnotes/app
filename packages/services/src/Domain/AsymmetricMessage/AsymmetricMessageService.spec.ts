@@ -1,3 +1,4 @@
+import { GetKeyPairs } from './../Encryption/UseCase/GetKeyPairs'
 import { GetVault } from './../Vault/UseCase/GetVault'
 import { SessionsClientInterface } from './../Session/SessionsClientInterface'
 import { EncryptionProviderInterface } from './../Encryption/EncryptionProviderInterface'
@@ -48,6 +49,7 @@ describe('AsymmetricMessageService', () => {
     const getOutboundMessagesUseCase = {} as jest.Mocked<GetOutboundMessages>
     const getInboundMessagesUseCase = {} as jest.Mocked<GetInboundMessages>
     const getUntrustedPayload = {} as jest.Mocked<GetUntrustedPayload>
+    const getKeyPairs = {} as jest.Mocked<GetKeyPairs>
 
     sync = {} as jest.Mocked<SyncServiceInterface>
     sync.sync = jest.fn()
@@ -73,6 +75,7 @@ describe('AsymmetricMessageService', () => {
       getOutboundMessagesUseCase,
       getInboundMessagesUseCase,
       getUntrustedPayload,
+      getKeyPairs,
       eventBus,
     )
   })

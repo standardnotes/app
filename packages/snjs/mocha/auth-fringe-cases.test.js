@@ -85,7 +85,7 @@ describe('auth fringe cases', () => {
 
       const serverText = 'server text'
 
-      await context.application.changeAndSaveItem(firstVersionOfNote, (mutator) => {
+      await context.application.changeAndSaveItem.execute(firstVersionOfNote, (mutator) => {
         mutator.text = serverText
       })
 

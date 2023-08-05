@@ -33,10 +33,6 @@ export class VaultDisplayService
 
     this.options = new VaultDisplayOptions({ exclude: [], locked: [] })
 
-    internalEventBus.addEventHandler(this, VaultLockServiceEvent.VaultLocked)
-    internalEventBus.addEventHandler(this, VaultLockServiceEvent.VaultUnlocked)
-    internalEventBus.addEventHandler(this, ApplicationEvent.ApplicationStageChanged)
-
     makeObservable(this, {
       options: observable,
 
@@ -48,6 +44,10 @@ export class VaultDisplayService
       unhideVault: action,
       showOnlyVault: action,
     })
+
+    internalEventBus.addEventHandler(this, VaultLockServiceEvent.VaultLocked)
+    internalEventBus.addEventHandler(this, VaultLockServiceEvent.VaultUnlocked)
+    internalEventBus.addEventHandler(this, ApplicationEvent.ApplicationStageChanged)
   }
 
   async handleEvent(event: InternalEventInterface): Promise<void> {

@@ -11,14 +11,14 @@ import {
 
 import { ContentType } from '@standardnotes/domain-core'
 import { GetVault } from '../../Vault/UseCase/GetVault'
-import { EncryptionProviderInterface } from '../../Encryption/EncryptionProviderInterface'
+import { DecryptErroredPayloads } from '../../Encryption/UseCase/DecryptErroredPayloads'
 
 export class HandleRootKeyChangedMessage {
   constructor(
     private mutator: MutatorClientInterface,
     private sync: SyncServiceInterface,
-    private encryption: EncryptionProviderInterface,
-    private getVault: GetVault,
+    private _getVault: GetVault,
+    private _decryptErroredPayloads: DecryptErroredPayloads,
   ) {}
 
   async execute(message: AsymmetricMessageSharedVaultRootKeyChanged): Promise<void> {
@@ -30,14 +30,16 @@ export class HandleRootKeyChangedMessage {
       true,
     )
 
-    const vault = this.getVault.execute<VaultListingInterface>({ keySystemIdentifier: rootKeyContent.systemIdentifier })
+    const vault = this._getVault.execute<VaultListingInterface>({
+      keySystemIdentifier: rootKeyContent.systemIdentifier,
+    })
     if (!vault.isFailed()) {
       await this.mutator.changeItem<VaultListingMutator>(vault.getValue(), (mutator) => {
         mutator.rootKeyParams = rootKeyContent.keyParams
       })
     }
 
-    await this.encryption.decryptErroredPayloads()
+    await this._decryptErroredPayloads.execute()
 
     void this.sync.sync({ sourceDescription: 'Not awaiting due to this event handler running from sync response' })
   }

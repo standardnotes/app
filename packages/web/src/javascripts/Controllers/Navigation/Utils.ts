@@ -1,33 +1,33 @@
-import { SNApplication, SNTag } from '@standardnotes/snjs'
+import { AlertService, ItemManagerInterface, SNTag } from '@standardnotes/snjs'
 
-export const rootTags = (application: SNApplication): SNTag[] => {
-  const hasNoParent = (tag: SNTag) => !application.items.getTagParent(tag)
+export const rootTags = (items: ItemManagerInterface): SNTag[] => {
+  const hasNoParent = (tag: SNTag) => !items.getTagParent(tag)
 
-  const allTags = application.items.getDisplayableTags()
+  const allTags = items.getDisplayableTags()
   const rootTags = allTags.filter(hasNoParent)
 
   return rootTags
 }
 
-export const tagSiblings = (application: SNApplication, tag: SNTag): SNTag[] => {
+export const tagSiblings = (items: ItemManagerInterface, tag: SNTag): SNTag[] => {
   const withoutCurrentTag = (tags: SNTag[]) => tags.filter((other) => other.uuid !== tag.uuid)
 
-  const isTemplateTag = application.items.isTemplateItem(tag)
-  const parentTag = !isTemplateTag && application.items.getTagParent(tag)
+  const isTemplateTag = items.isTemplateItem(tag)
+  const parentTag = !isTemplateTag && items.getTagParent(tag)
 
   if (parentTag) {
-    const siblingsAndTag = application.items.getTagChildren(parentTag)
+    const siblingsAndTag = items.getTagChildren(parentTag)
     return withoutCurrentTag(siblingsAndTag)
   }
 
-  return withoutCurrentTag(rootTags(application))
+  return withoutCurrentTag(rootTags(items))
 }
 
-export const isValidFutureSiblings = (application: SNApplication, futureSiblings: SNTag[], tag: SNTag): boolean => {
+export const isValidFutureSiblings = (alerts: AlertService, futureSiblings: SNTag[], tag: SNTag): boolean => {
   const siblingWithSameName = futureSiblings.find((otherTag) => otherTag.title === tag.title)
 
   if (siblingWithSameName) {
-    application.alerts
+    alerts
       ?.alert(
         `A tag with the name ${tag.title} already exists at this destination. Please rename this tag before moving and try again.`,
       )

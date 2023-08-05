@@ -2,13 +2,15 @@ import { Base64String } from '@standardnotes/sncrypto-common'
 import { KeyParamsOrigination, UserRequestType } from '@standardnotes/common'
 import { DeinitSource } from '../Application/DeinitSource'
 import { UserRegistrationResponseBody } from '@standardnotes/api'
-import { HttpResponse, SignInResponse } from '@standardnotes/responses'
+import { HttpResponse, SignInResponse, User } from '@standardnotes/responses'
 import { AbstractService } from '../Service/AbstractService'
 import { AccountEventData } from './AccountEventData'
 import { AccountEvent } from './AccountEvent'
 import { CredentialsChangeFunctionResponse } from './CredentialsChangeFunctionResponse'
 
-export interface UserClientInterface extends AbstractService<AccountEvent, AccountEventData> {
+export interface UserServiceInterface extends AbstractService<AccountEvent, AccountEventData> {
+  get user(): User | undefined
+  get sureUser(): User
   getUserUuid(): string
   isSignedIn(): boolean
 
