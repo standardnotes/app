@@ -15,7 +15,7 @@ import {
   VaultDisplayService,
   WebApplicationInterface,
 } from '@standardnotes/ui-services'
-import { DependencyContainer } from './Dependencies'
+import { DependencyContainer } from '@standardnotes/utils'
 import { Web_TYPES } from './Types'
 import { BackupServiceInterface, isDesktopDevice } from '@standardnotes/snjs'
 import { DesktopManager } from '../Device/DesktopManager'
@@ -76,15 +76,21 @@ export class WebDependencies extends DependencyContainer {
       return new IsGlobalSpellcheckEnabled(application.preferences)
     })
 
-    if (application.isNativeMobileWeb()) {
-      this.bind(Web_TYPES.MobileWebReceiver, () => {
-        return new MobileWebReceiver(application)
-      })
+    this.bind(Web_TYPES.MobileWebReceiver, () => {
+      if (!application.isNativeMobileWeb()) {
+        return undefined
+      }
 
-      this.bind(Web_TYPES.AndroidBackHandler, () => {
-        return new AndroidBackHandler()
-      })
-    }
+      return new MobileWebReceiver(application)
+    })
+
+    this.bind(Web_TYPES.AndroidBackHandler, () => {
+      if (!application.isNativeMobileWeb()) {
+        return undefined
+      }
+
+      return new AndroidBackHandler()
+    })
 
     this.bind(Web_TYPES.Application, () => this.application)
 

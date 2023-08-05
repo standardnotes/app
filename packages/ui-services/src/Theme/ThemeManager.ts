@@ -334,9 +334,7 @@ export class ThemeManager extends AbstractUIServicee {
       if (this.application.isNativeMobileWeb() && !theme.layerable) {
         const packageInfo = theme.featureDescription
         setTimeout(() => {
-          this.application
-            .mobileDevice
-            .handleThemeSchemeChange(packageInfo.isDark ?? false, this.getBackgroundColor())
+          this.application.mobileDevice.handleThemeSchemeChange(packageInfo.isDark ?? false, this.getBackgroundColor())
         })
       }
     }

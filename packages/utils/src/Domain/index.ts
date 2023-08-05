@@ -1,5 +1,7 @@
 export * from './Date/DateUtils'
 export * from './Deferred/Deferred'
+export * from './Dependency/DependencyContainer'
+export * from './Dependency/isDeinitable'
 export * from './Logger/Logger'
 export * from './Logger/LoggerInterface'
 export * from './Logger/LogLevel'

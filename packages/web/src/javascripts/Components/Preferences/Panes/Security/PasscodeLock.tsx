@@ -55,7 +55,7 @@ const PasscodeLock = ({ application }: Props) => {
   }
 
   const reloadDesktopAutoLockInterval = useCallback(async () => {
-    const interval = await application.getAutolockService()?.getAutoLockInterval()
+    const interval = await application.autolockService?.getAutoLockInterval()
     setSelectedAutoLockInterval(interval)
   }, [application])
 
@@ -83,7 +83,7 @@ const PasscodeLock = ({ application }: Props) => {
       return
     }
 
-    await application.getAutolockService()?.setAutoLockInterval(interval)
+    await application.autolockService?.setAutoLockInterval(interval)
     reloadDesktopAutoLockInterval().catch(console.error)
   }
 
@@ -96,7 +96,7 @@ const PasscodeLock = ({ application }: Props) => {
     await preventRefreshing(STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_REMOVAL, async () => {
       if (await application.removePasscode()) {
         if (!isNativeMobileWeb) {
-          await application.getAutolockService()?.deleteAutolockPreference()
+          await application.autolockService?.deleteAutolockPreference()
           await reloadDesktopAutoLockInterval()
         }
         refreshEncryptionStatus()
@@ -181,7 +181,7 @@ const PasscodeLock = ({ application }: Props) => {
     setPasscodeConfirmation(undefined)
   }
 
-  const autolockService = application.getAutolockService()
+  const autolockService = application.autolockService
 
   return (
     <>

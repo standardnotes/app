@@ -4,7 +4,6 @@ import {
   DeinitSource,
   Platform,
   SNApplication,
-  removeFromArray,
   DesktopDeviceInterface,
   isDesktopDevice,
   DeinitMode,
@@ -79,6 +78,7 @@ import { ItemGroupController } from '@/Components/NoteView/Controller/ItemGroupC
 import { NoAccountWarningController } from '@/Controllers/NoAccountWarningController'
 import { SearchOptionsController } from '@/Controllers/SearchOptionsController'
 import { PersistenceService } from '@/Controllers/Abstract/PersistenceService'
+import { removeFromArray } from '@standardnotes/utils'
 
 export type WebEventObserver = (event: WebAppEvent, data?: unknown) => void
 
@@ -138,6 +138,8 @@ export class WebApplication extends SNApplication implements WebApplicationInter
       deviceInterface.setApplication(this)
     }
 
+    this.createBackgroundServices()
+
     const appEventObserver = this.deps.get<ApplicationEventObserver>(Web_TYPES.ApplicationEventObserver)
     this.disposers.push(this.addEventObserver(appEventObserver.handle.bind(appEventObserver)))
 
@@ -177,6 +179,15 @@ export class WebApplication extends SNApplication implements WebApplicationInter
       openSessionsModal: action,
       closeSessionsModal: action,
     })
+  }
+
+  private createBackgroundServices(): void {
+    void this.mobileWebReceiver
+    void this.autolockService
+    void this.persistence
+    void this.themeManager
+    void this.momentsService
+    void this.routeService
   }
 
   override deinit(mode: DeinitMode, source: DeinitSource): void {
@@ -325,7 +336,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
   }
 
   handleMobileColorSchemeChangeEvent() {
-    void this.getThemeService().handleMobileColorSchemeChangeEvent()
+    void this.themeManager.handleMobileColorSchemeChangeEvent()
   }
 
   openSessionsModal = () => {
@@ -539,8 +550,8 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     return this.deps.get<DesktopManagerInterface | undefined>(Web_TYPES.DesktopManager)
   }
 
-  getAutolockService(): AutolockService {
-    return this.deps.get<AutolockService>(Web_TYPES.AutolockService)
+  get autolockService(): AutolockService | undefined {
+    return this.deps.get<AutolockService | undefined>(Web_TYPES.AutolockService)
   }
 
   get archiveService(): ArchiveManager {
@@ -563,7 +574,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     return this.deps.get<MomentsService>(Web_TYPES.MomentsService)
   }
 
-  getThemeService(): ThemeManager {
+  get themeManager(): ThemeManager {
     return this.deps.get<ThemeManager>(Web_TYPES.ThemeManager)
   }
 

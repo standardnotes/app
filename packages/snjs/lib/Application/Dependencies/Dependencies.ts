@@ -155,8 +155,7 @@ import {
   WebSocketServer,
 } from '@standardnotes/api'
 import { TYPES } from './Types'
-import { isDeinitable } from './isDeinitable'
-import { Logger, isNotUndefined } from '@standardnotes/utils'
+import { Logger, isNotUndefined, isDeinitable } from '@standardnotes/utils'
 import { EncryptionOperators } from '@standardnotes/encryption'
 import { AsymmetricMessagePayload, AsymmetricMessageSharedVaultInvite } from '@standardnotes/models'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'

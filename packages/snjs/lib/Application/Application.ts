@@ -115,6 +115,7 @@ import {
   UuidGenerator,
   useBoolean,
   LoggerInterface,
+  canBlockDeinit,
 } from '@standardnotes/utils'
 import { UuidString, ApplicationEventPayload } from '../Types'
 import { applicationEventForSyncEvent } from '@Lib/Application/Event'
@@ -134,7 +135,6 @@ import { GetAuthenticatorAuthenticationResponse } from '@Lib/Domain/UseCase/GetA
 import { GetAuthenticatorAuthenticationOptions } from '@Lib/Domain/UseCase/GetAuthenticatorAuthenticationOptions/GetAuthenticatorAuthenticationOptions'
 import { Dependencies } from './Dependencies/Dependencies'
 import { TYPES } from './Dependencies/Types'
-import { canBlockDeinit } from './Dependencies/isDeinitable'
 
 /** How often to automatically sync, in milliseconds */
 const DEFAULT_AUTO_SYNC_INTERVAL = 30_000

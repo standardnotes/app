@@ -17,13 +17,7 @@ type Props = {
   paginate: () => void
 }
 
-const ContentList: FunctionComponent<Props> = ({
-  application,
-  items,
-
-  selectedUuids,
-  paginate,
-}) => {
+const ContentList: FunctionComponent<Props> = ({ application, items, selectedUuids, paginate }) => {
   const { filesController, itemListController, navigationController, notesController, selectionController } =
     application
 

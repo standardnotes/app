@@ -1,11 +1,9 @@
-import { isDeinitable } from '@standardnotes/snjs'
-import { isNotUndefined } from '@standardnotes/utils'
+import { isNotUndefined } from '../Utils/Utils'
+import { isDeinitable } from './isDeinitable'
 
 export class DependencyContainer {
   private factory = new Map<symbol, () => unknown>()
   private dependencies = new Map<symbol, unknown>()
-
-  constructor() {}
 
   public deinit() {
     this.factory.clear()
