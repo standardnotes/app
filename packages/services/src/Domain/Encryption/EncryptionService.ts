@@ -191,6 +191,7 @@ export class EncryptionService
     return ProtocolVersionLatest
   }
 
+  /** Unlike SessionManager.isSignedIn, hasAccount can be read before the application is unlocked and is based on the key state */
   public hasAccount() {
     return this.rootKeyManager.hasAccount()
   }

@@ -264,6 +264,7 @@ export class SessionManager
     }
   }
 
+  /** Unlike EncryptionService.hasAccount, isSignedIn can only be read once the application is unlocked */
   public isSignedIn(): boolean {
     return this.getUser() != undefined
   }
