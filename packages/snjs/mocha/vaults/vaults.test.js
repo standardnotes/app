@@ -9,11 +9,6 @@ describe('vaults', function () {
   let context
   let vaults
 
-  afterEach(async function () {
-    await context.deinit()
-    localStorage.clear()
-  })
-
   beforeEach(async function () {
     localStorage.clear()
 
@@ -22,6 +17,14 @@ describe('vaults', function () {
     await context.launch()
 
     vaults = context.vaults
+  })
+
+  afterEach(async function () {
+    await context.deinit()
+    localStorage.clear()
+    sinon.restore()
+    context = undefined
+    vaults = undefined
   })
 
   describe('offline', function () {

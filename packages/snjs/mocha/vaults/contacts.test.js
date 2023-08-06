@@ -9,11 +9,6 @@ describe('contacts', function () {
 
   let context
 
-  afterEach(async function () {
-    await context.deinit()
-    localStorage.clear()
-  })
-
   beforeEach(async function () {
     localStorage.clear()
 
@@ -21,6 +16,12 @@ describe('contacts', function () {
 
     await context.launch()
     await context.register()
+  })
+
+  afterEach(async function () {
+    await context.deinit()
+    localStorage.clear()
+    sinon.restore()
   })
 
   it('should create contact', async () => {

@@ -9,17 +9,18 @@ describe('shared vault invites', function () {
 
   let context
 
-  afterEach(async function () {
-    await context.deinit()
-    localStorage.clear()
-  })
-
   beforeEach(async function () {
     localStorage.clear()
 
     context = await Factory.createVaultsContextWithRealCrypto()
     await context.launch()
     await context.register()
+  })
+
+  afterEach(async function () {
+    await context.deinit()
+    localStorage.clear()
+    sinon.restore()
   })
 
   it('should invite contact to vault', async () => {

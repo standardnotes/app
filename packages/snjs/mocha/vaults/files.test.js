@@ -11,11 +11,6 @@ describe('shared vault files', function () {
   let context
   let vaults
 
-  afterEach(async function () {
-    await context.deinit()
-    localStorage.clear()
-  })
-
   beforeEach(async function () {
     localStorage.clear()
 
@@ -26,6 +21,12 @@ describe('shared vault files', function () {
 
     vaults = context.vaults
     await context.activatePaidSubscriptionForUser()
+  })
+
+  afterEach(async function () {
+    await context.deinit()
+    localStorage.clear()
+    sinon.restore()
   })
 
   describe('private vaults', () => {

@@ -21,6 +21,8 @@ describe('public key cryptography', function () {
     await context.deinit()
     localStorage.clear()
 
+    sinon.restore()
+
     context = undefined
   })
 
@@ -35,7 +37,7 @@ describe('public key cryptography', function () {
   it('should populate keypair during sign in', async () => {
     const email = context.email
     const password = context.password
-    await context.signout()
+    await context.deinit()
 
     const recreatedContext = await Factory.createVaultsContextWithRealCrypto()
     await recreatedContext.launch()

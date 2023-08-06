@@ -9,11 +9,6 @@ describe('shared vault conflicts', function () {
 
   let context
 
-  afterEach(async function () {
-    await context.deinit()
-    localStorage.clear()
-  })
-
   beforeEach(async function () {
     localStorage.clear()
 
@@ -21,6 +16,12 @@ describe('shared vault conflicts', function () {
 
     await context.launch()
     await context.register()
+  })
+
+  afterEach(async function () {
+    await context.deinit()
+    localStorage.clear()
+    sinon.restore()
   })
 
   it('after being removed from shared vault, attempting to sync previous vault item should result in SharedVaultNotMemberError. The item should be duplicated then removed.', async () => {
@@ -81,7 +82,10 @@ describe('shared vault conflicts', function () {
 
   it('attempting to modify note as read user should result in SharedVaultInsufficientPermissionsError', async () => {
     const { note, contactContext, deinitContactContext } =
-      await Collaboration.createSharedVaultWithAcceptedInviteAndNote(context, SharedVaultUserPermission.PERMISSIONS.Read)
+      await Collaboration.createSharedVaultWithAcceptedInviteAndNote(
+        context,
+        SharedVaultUserPermission.PERMISSIONS.Read,
+      )
 
     const promise = contactContext.resolveWithConflicts()
     await contactContext.changeNoteTitleAndSync(note, 'new title')

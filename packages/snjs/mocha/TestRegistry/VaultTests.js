@@ -1,5 +1,5 @@
 export const VaultTests = {
-  enabled: false,
+  enabled: true,
   exclusive: false,
   files: [
     'vaults/vaults.test.js',

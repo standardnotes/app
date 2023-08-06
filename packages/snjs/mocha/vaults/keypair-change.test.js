@@ -9,11 +9,6 @@ describe('keypair change', function () {
 
   let context
 
-  afterEach(async function () {
-    await context.deinit()
-    localStorage.clear()
-  })
-
   beforeEach(async function () {
     localStorage.clear()
 
@@ -21,6 +16,12 @@ describe('keypair change', function () {
 
     await context.launch()
     await context.register()
+  })
+
+  afterEach(async function () {
+    await context.deinit()
+    localStorage.clear()
+    sinon.restore()
   })
 
   it('contacts should be able to handle receiving multiple keypair changed messages and trust them in order', async () => {
