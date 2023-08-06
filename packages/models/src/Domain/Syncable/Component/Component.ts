@@ -43,7 +43,6 @@ export class ComponentItem extends DecryptedItem<ComponentContent> implements Co
   public readonly valid_until: Date
   public readonly legacyActive: boolean
   public readonly legacy_url?: string
-  public readonly isMobileDefault: boolean
 
   constructor(payload: DecryptedPayloadInterface<ComponentContent>) {
     super(payload)
@@ -72,7 +71,6 @@ export class ComponentItem extends DecryptedItem<ComponentContent> implements Co
     this.autoupdateDisabled = payload.content.autoupdateDisabled ?? false
     this.disassociatedItemIds = payload.content.disassociatedItemIds || []
     this.associatedItemIds = payload.content.associatedItemIds || []
-    this.isMobileDefault = payload.content.isMobileDefault ?? false
 
     /**
      * @legacy
@@ -109,10 +107,6 @@ export class ComponentItem extends DecryptedItem<ComponentContent> implements Co
     return uniqueIdentifierPredicate
   }
 
-  public isEditor(): boolean {
-    return this.area === ComponentArea.Editor
-  }
-
   public isTheme(): boolean {
     return this.content_type === ContentType.TYPES.Theme || this.area === ComponentArea.Themes
   }
@@ -120,10 +114,6 @@ export class ComponentItem extends DecryptedItem<ComponentContent> implements Co
   /** @deprecated Use global application PrefKey.DefaultEditorIdentifier */
   public legacyIsDefaultEditor(): boolean {
     return this.getAppDomainValue(AppDataField.DefaultEditor) === true
-  }
-
-  public getLastSize(): unknown {
-    return this.getAppDomainValue(AppDataField.LastSize)
   }
 
   public hasValidHostedUrl(): boolean {

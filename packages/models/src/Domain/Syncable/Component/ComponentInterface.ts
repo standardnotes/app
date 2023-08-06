@@ -21,7 +21,6 @@ export interface ComponentInterface<P extends ComponentPackageInfo | ThemePackag
   area: ComponentArea
   permissions: ComponentPermission[]
   valid_until: Date
-  isMobileDefault: boolean
   isDeprecated: boolean
 
   isExplicitlyEnabledForItem(uuid: string): boolean
