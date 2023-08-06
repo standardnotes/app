@@ -7,24 +7,21 @@ describe('public key cryptography', function () {
   this.timeout(Factory.TwentySecondTimeout)
 
   let context
-  let sessions
-  let encryption
 
-  afterEach(async function () {
-    await context.deinit()
-    localStorage.clear()
-  })
-
-  beforeEach(async function () {
+  beforeEach(async () => {
     localStorage.clear()
 
     context = await Factory.createVaultsContextWithRealCrypto()
 
     await context.launch()
     await context.register()
+  })
 
-    sessions = context.application.sessions
-    encryption = context.encryption
+  afterEach(async () => {
+    await context.deinit()
+    localStorage.clear()
+
+    context = undefined
   })
 
   it('should create keypair during registration', () => {

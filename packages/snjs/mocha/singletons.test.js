@@ -1,8 +1,6 @@
-/* eslint-disable no-unused-expressions */
-/* eslint-disable no-undef */
 import { BaseItemCounts } from './lib/BaseItemCounts.js'
 import * as Factory from './lib/factory.js'
-import WebDeviceInterface from './lib/web_device_interface.js'
+
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
@@ -28,48 +26,60 @@ describe('singletons', function () {
     return context.singletons.findOrCreateContentTypeSingleton(ContentType.TYPES.UserPrefs, FillItemContent({}))
   }
 
+  let expectedItemCount
+  let application
+  let context
+  let email
+  let password
+  let registerUser
+  let signIn
+  let signOut
+  let extManagerId
+  let extPred
+  let createExtMgr
+
   beforeEach(async function () {
     localStorage.clear()
-    this.expectedItemCount = BaseItemCounts.DefaultItems
+    expectedItemCount = BaseItemCounts.DefaultItems
 
-    this.context = await Factory.createAppContext()
-    await this.context.launch()
-    this.application = this.context.application
+    context = await Factory.createAppContext()
+    await context.launch()
+    application = context.application
 
-    this.email = UuidGenerator.GenerateUuid()
-    this.password = UuidGenerator.GenerateUuid()
+    email = UuidGenerator.GenerateUuid()
+    password = UuidGenerator.GenerateUuid()
 
-    this.registerUser = async () => {
-      this.expectedItemCount = BaseItemCounts.DefaultItemsWithAccount
+    registerUser = async () => {
+      expectedItemCount = BaseItemCounts.DefaultItemsWithAccount
       await Factory.registerUserToApplication({
-        application: this.application,
-        email: this.email,
-        password: this.password,
+        application: application,
+        email: email,
+        password: password,
       })
     }
 
-    this.signOut = async () => {
-      this.application = await this.context.signout()
+    signOut = async () => {
+      application = await context.signout()
     }
 
-    this.signIn = async () => {
-      await this.application.signIn(this.email, this.password, undefined, undefined, undefined, true)
+    signIn = async () => {
+      await application.signIn(email, password, undefined, undefined, undefined, true)
     }
 
-    this.extManagerId = 'org.standardnotes.extensions-manager'
+    extManagerId = 'org.standardnotes.extensions-manager'
 
-    this.extPred = new CompoundPredicate('and', [
+    extPred = new CompoundPredicate('and', [
       new Predicate('content_type', '=', ContentType.TYPES.Component),
-      new Predicate('package_info.identifier', '=', this.extManagerId),
+      new Predicate('package_info.identifier', '=', extManagerId),
     ])
 
-    this.createExtMgr = () => {
-      return this.application.mutator.createItem(
+    createExtMgr = () => {
+      return application.mutator.createItem(
         ContentType.TYPES.Component,
         {
           package_info: {
             name: 'Extensions',
-            identifier: this.extManagerId,
+            identifier: extManagerId,
           },
         },
         true,
@@ -78,13 +88,13 @@ describe('singletons', function () {
   })
 
   afterEach(async function () {
-    expect(this.application.sync.isOutOfSync()).to.equal(false)
-    expect(this.application.items.items.length).to.equal(this.expectedItemCount)
+    expect(application.sync.isOutOfSync()).to.equal(false)
+    expect(application.items.items.length).to.equal(expectedItemCount)
 
-    const rawPayloads = await this.application.storage.getAllRawPayloads()
-    expect(rawPayloads.length).to.equal(this.expectedItemCount)
+    const rawPayloads = await application.storage.getAllRawPayloads()
+    expect(rawPayloads.length).to.equal(expectedItemCount)
 
-    await Factory.safeDeinit(this.application)
+    await Factory.safeDeinit(application)
 
     localStorage.clear()
   })
@@ -95,99 +105,99 @@ describe('singletons', function () {
     const prefs2 = createPrefsPayload()
     const prefs3 = createPrefsPayload()
 
-    const items = await this.application.mutator.emitItemsFromPayloads(
+    const items = await application.mutator.emitItemsFromPayloads(
       [prefs1, prefs2, prefs3],
       PayloadEmitSource.LocalChanged,
     )
-    await this.application.mutator.setItemsDirty(items)
-    await this.application.sync.sync(syncOptions)
-    expect(this.application.items.items.length).to.equal(this.expectedItemCount)
+    await application.mutator.setItemsDirty(items)
+    await application.sync.sync(syncOptions)
+    expect(application.items.items.length).to.equal(expectedItemCount)
   })
 
   it('duplicate components should auto-resolve to 1', async function () {
-    const extManager = await this.createExtMgr()
-    this.expectedItemCount += 1
+    const extManager = await createExtMgr()
+    expectedItemCount += 1
 
     /** Call needlessly */
-    await this.createExtMgr()
-    await this.createExtMgr()
-    await this.createExtMgr()
+    await createExtMgr()
+    await createExtMgr()
+    await createExtMgr()
 
     expect(extManager).to.be.ok
 
-    const refreshedExtMgr = this.application.items.findItem(extManager.uuid)
+    const refreshedExtMgr = application.items.findItem(extManager.uuid)
 
     expect(refreshedExtMgr).to.be.ok
 
-    await this.application.sync.sync(syncOptions)
+    await application.sync.sync(syncOptions)
 
-    expect(this.application.items.itemsMatchingPredicate(ContentType.TYPES.Component, this.extPred).length).to.equal(1)
+    expect(application.items.itemsMatchingPredicate(ContentType.TYPES.Component, extPred).length).to.equal(1)
   })
 
   it('resolves via find or create', async function () {
     /* Set to never synced as singleton manager will attempt to sync before resolving */
-    this.application.sync.ut_clearLastSyncDate()
-    this.application.sync.ut_setDatabaseLoaded(false)
+    application.sync.ut_clearLastSyncDate()
+    application.sync.ut_setDatabaseLoaded(false)
     const contentType = ContentType.TYPES.UserPrefs
     const predicate = new Predicate('content_type', '=', contentType)
     /* Start a sync right after we await singleton resolve below */
     setTimeout(() => {
-      this.application.sync.ut_setDatabaseLoaded(true)
-      this.application.sync.sync({
+      application.sync.ut_setDatabaseLoaded(true)
+      application.sync.sync({
         /* Simulate the first sync occuring as that is handled specially by sync service */
         mode: SyncMode.DownloadFirst,
       })
     })
-    const userPreferences = await this.context.singletons.findOrCreateContentTypeSingleton(contentType, {})
+    const userPreferences = await context.singletons.findOrCreateContentTypeSingleton(contentType, {})
 
     expect(userPreferences).to.be.ok
-    const refreshedUserPrefs = this.application.items.findItem(userPreferences.uuid)
+    const refreshedUserPrefs = application.items.findItem(userPreferences.uuid)
     expect(refreshedUserPrefs).to.be.ok
-    await this.application.sync.sync(syncOptions)
-    expect(this.application.items.itemsMatchingPredicate(contentType, predicate).length).to.equal(1)
+    await application.sync.sync(syncOptions)
+    expect(application.items.itemsMatchingPredicate(contentType, predicate).length).to.equal(1)
   })
 
   it('resolves registered predicate with signing in/out', async function () {
-    await this.registerUser()
+    await registerUser()
 
-    await this.signOut()
+    await signOut()
 
-    this.email = UuidGenerator.GenerateUuid()
-    this.password = UuidGenerator.GenerateUuid()
+    email = UuidGenerator.GenerateUuid()
+    password = UuidGenerator.GenerateUuid()
 
-    await this.createExtMgr()
+    await createExtMgr()
 
-    this.expectedItemCount += 1
+    expectedItemCount += 1
 
     await Factory.registerUserToApplication({
-      application: this.application,
-      email: this.email,
-      password: this.password,
+      application: application,
+      email: email,
+      password: password,
     })
 
-    await this.signOut()
+    await signOut()
 
-    await this.createExtMgr()
+    await createExtMgr()
 
-    await this.application.sync.sync(syncOptions)
+    await application.sync.sync(syncOptions)
 
-    const extraSync = this.application.sync.sync(syncOptions)
+    const extraSync = application.sync.sync(syncOptions)
 
-    await this.signIn()
+    await signIn()
 
     await extraSync
   }).timeout(15000)
 
   it('singletons that are deleted after download first sync should not sync to server', async function () {
-    await this.registerUser()
-    await this.createExtMgr()
-    await this.createExtMgr()
-    await this.createExtMgr()
-    this.expectedItemCount++
+    await registerUser()
+    await createExtMgr()
+    await createExtMgr()
+    await createExtMgr()
+    expectedItemCount++
 
     let didCompleteRelevantSync = false
     let beginCheckingResponse = false
-    this.application.sync.addEventObserver(async (eventName, data) => {
+    application.sync.addEventObserver(async (eventName, data) => {
       if (eventName === SyncEvent.DownloadFirstSyncCompleted) {
         beginCheckingResponse = true
       }
@@ -202,59 +212,59 @@ describe('singletons', function () {
         expect(matching).to.not.be.ok
       }
     })
-    await this.application.sync.sync({ mode: SyncMode.DownloadFirst })
+    await application.sync.sync({ mode: SyncMode.DownloadFirst })
     expect(didCompleteRelevantSync).to.equal(true)
   }).timeout(10000)
 
   it('signing into account and retrieving singleton shouldnt put us in deadlock', async function () {
-    await this.registerUser()
+    await registerUser()
 
     /** Create prefs */
-    const ogPrefs = await findOrCreatePrefsSingleton(this.context)
-    await this.application.sync.sync(syncOptions)
+    const ogPrefs = await findOrCreatePrefsSingleton(context)
+    await application.sync.sync(syncOptions)
 
-    this.application = await this.context.signout()
+    application = await context.signout()
 
     /** Create another instance while signed out */
-    await findOrCreatePrefsSingleton(this.context)
+    await findOrCreatePrefsSingleton(context)
 
     await Factory.loginToApplication({
-      application: this.application,
-      email: this.email,
-      password: this.password,
+      application: application,
+      email: email,
+      password: password,
     })
 
     /** After signing in, the instance retrieved from the server should be the one kept */
-    const latestPrefs = await findOrCreatePrefsSingleton(this.context)
+    const latestPrefs = await findOrCreatePrefsSingleton(context)
     expect(latestPrefs.uuid).to.equal(ogPrefs.uuid)
 
-    const allPrefs = this.application.items.getItems(ogPrefs.content_type)
+    const allPrefs = application.items.getItems(ogPrefs.content_type)
     expect(allPrefs.length).to.equal(1)
   })
 
   it('resolving singleton before first sync, then signing in, should result in correct number of instances', async function () {
-    await this.registerUser()
+    await registerUser()
     /** Create prefs and associate them with account */
-    const ogPrefs = await findOrCreatePrefsSingleton(this.context)
-    await this.application.sync.sync(syncOptions)
-    this.application = await this.context.signout()
+    const ogPrefs = await findOrCreatePrefsSingleton(context)
+    await application.sync.sync(syncOptions)
+    application = await context.signout()
 
     /** Create another instance while signed out */
-    await findOrCreatePrefsSingleton(this.context)
+    await findOrCreatePrefsSingleton(context)
     await Factory.loginToApplication({
-      application: this.application,
-      email: this.email,
-      password: this.password,
+      application: application,
+      email: email,
+      password: password,
     })
     /** After signing in, the instance retrieved from the server should be the one kept */
-    const latestPrefs = await findOrCreatePrefsSingleton(this.context)
+    const latestPrefs = await findOrCreatePrefsSingleton(context)
     expect(latestPrefs.uuid).to.equal(ogPrefs.uuid)
-    const allPrefs = this.application.items.getItems(ogPrefs.content_type)
+    const allPrefs = application.items.getItems(ogPrefs.content_type)
     expect(allPrefs.length).to.equal(1)
   })
 
   it('if only result is errorDecrypting, create new item', async function () {
-    const item = this.application.items.items.find((item) => item.content_type === ContentType.TYPES.UserPrefs)
+    const item = application.items.items.find((item) => item.content_type === ContentType.TYPES.UserPrefs)
 
     const erroredPayload = new EncryptedPayload({
       ...item.payload.ejected(),
@@ -262,13 +272,13 @@ describe('singletons', function () {
       errorDecrypting: true,
     })
 
-    await this.application.payloads.emitPayload(erroredPayload)
+    await application.payloads.emitPayload(erroredPayload)
 
-    const resolvedItem = await this.context.singletons.findOrCreateContentTypeSingleton(item.content_type, item.content)
+    const resolvedItem = await context.singletons.findOrCreateContentTypeSingleton(item.content_type, item.content)
 
-    await this.application.sync.sync({ awaitAll: true })
+    await application.sync.sync({ awaitAll: true })
 
-    expect(this.application.items.items.length).to.equal(this.expectedItemCount)
+    expect(application.items.items.length).to.equal(expectedItemCount)
     expect(resolvedItem.uuid).to.not.equal(item.uuid)
     expect(resolvedItem.errorDecrypting).to.not.be.ok
   })
@@ -284,13 +294,13 @@ describe('singletons', function () {
     const sharedContent = {
       package_info: {
         name: 'Extensions',
-        identifier: this.extManagerId,
+        identifier: extManagerId,
       },
     }
 
     const errorDecryptingFalse = false
     await Factory.insertItemWithOverride(
-      this.application,
+      application,
       ContentType.TYPES.Component,
       sharedContent,
       true,
@@ -299,16 +309,16 @@ describe('singletons', function () {
 
     const errorDecryptingTrue = true
     const errored = await Factory.insertItemWithOverride(
-      this.application,
+      application,
       ContentType.TYPES.Component,
       sharedContent,
       true,
       errorDecryptingTrue,
     )
 
-    this.expectedItemCount += 1
+    expectedItemCount += 1
 
-    await this.application.sync.sync(syncOptions)
+    await application.sync.sync(syncOptions)
 
     /** Now mark errored as not errorDecrypting and sync */
     const notErrored = new DecryptedPayload({
@@ -317,34 +327,31 @@ describe('singletons', function () {
       errorDecrypting: false,
     })
 
-    await this.application.payloads.emitPayload(notErrored)
+    await application.payloads.emitPayload(notErrored)
 
     /** Item will get decrypted on current tick, so wait one before syncing */
     await Factory.sleep(0)
-    await this.application.sync.sync(syncOptions)
+    await application.sync.sync(syncOptions)
 
-    expect(this.application.items.itemsMatchingPredicate(ContentType.TYPES.Component, this.extPred).length).to.equal(1)
+    expect(application.items.itemsMatchingPredicate(ContentType.TYPES.Component, extPred).length).to.equal(1)
   })
 
   it('alternating the uuid of a singleton should return correct result', async function () {
     const payload = createPrefsPayload()
-    const item = await this.application.mutator.emitItemFromPayload(payload, PayloadEmitSource.LocalChanged)
-    await this.application.sync.sync(syncOptions)
+    const item = await application.mutator.emitItemFromPayload(payload, PayloadEmitSource.LocalChanged)
+    await application.sync.sync(syncOptions)
     const predicate = new Predicate('content_type', '=', item.content_type)
-    let resolvedItem = await this.context.singletons.findOrCreateContentTypeSingleton(
-      payload.content_type,
-      payload.content,
-    )
+    let resolvedItem = await context.singletons.findOrCreateContentTypeSingleton(payload.content_type, payload.content)
     const originalUuid = resolvedItem.uuid
-    await Factory.alternateUuidForItem(this.application, resolvedItem.uuid)
-    await this.application.sync.sync(syncOptions)
-    const resolvedItem2 = await this.context.singletons.findOrCreateContentTypeSingleton(
+    await Factory.alternateUuidForItem(application, resolvedItem.uuid)
+    await application.sync.sync(syncOptions)
+    const resolvedItem2 = await context.singletons.findOrCreateContentTypeSingleton(
       payload.content_type,
       payload.content,
     )
-    resolvedItem = this.application.items.findItem(resolvedItem.uuid)
+    resolvedItem = application.items.findItem(resolvedItem.uuid)
     expect(resolvedItem).to.not.be.ok
     expect(resolvedItem2.uuid).to.not.equal(originalUuid)
-    expect(this.application.items.items.length).to.equal(this.expectedItemCount)
+    expect(application.items.items.length).to.equal(expectedItemCount)
   })
 })

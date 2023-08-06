@@ -1,6 +1,5 @@
-/* eslint-disable no-unused-expressions */
-/* eslint-disable no-undef */
 import * as Factory from './lib/factory.js'
+
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
@@ -9,6 +8,7 @@ const expect = chai.expect
  * Then check browser Memory tool to make sure there are no leaks.
  */
 describe('memory', function () {
+  let application
   before(async function () {
     localStorage.clear()
   })
@@ -18,12 +18,12 @@ describe('memory', function () {
   })
 
   beforeEach(async function () {
-    this.application = await Factory.createInitAppWithFakeCrypto()
+    application = await Factory.createInitAppWithFakeCrypto()
   })
 
   afterEach(async function () {
-    await Factory.safeDeinit(this.application)
-    this.application = null
+    await Factory.safeDeinit(application)
+    application = undefined
   })
 
   it('passes', async function () {

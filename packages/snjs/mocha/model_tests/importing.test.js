@@ -1,8 +1,7 @@
-/* eslint-disable no-unused-expressions */
-/* eslint-disable no-undef */
 import { BaseItemCounts } from '../lib/BaseItemCounts.js'
 import * as Factory from '../lib/factory.js'
 import { createRelatedNoteTagPairPayload } from '../lib/Items.js'
+
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
@@ -17,6 +16,13 @@ describe('importing', function () {
 
   beforeEach(function () {
     localStorage.clear()
+  })
+
+  afterEach(async function () {
+    await Factory.safeDeinit(application)
+    localStorage.clear()
+    application = undefined
+    context = undefined
   })
 
   const setup = async ({ fakeCrypto }) => {
@@ -35,11 +41,6 @@ describe('importing', function () {
     password = UuidGenerator.GenerateUuid()
     Factory.handlePasswordChallenges(application, password)
   }
-
-  afterEach(async function () {
-    await Factory.safeDeinit(application)
-    localStorage.clear()
-  })
 
   it('should not import backups made from unsupported versions', async function () {
     await setup({ fakeCrypto: true })

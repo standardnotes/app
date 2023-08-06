@@ -1,10 +1,17 @@
-/* eslint-disable no-unused-expressions */
-/* eslint-disable no-undef */
 import * as Factory from '../lib/factory.js'
+
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
 describe('mapping performance', () => {
+  beforeEach(function () {
+    localStorage.clear()
+  })
+
+  afterEach(async function () {
+    localStorage.clear()
+  })
+
   it('shouldnt take a long time', async () => {
     /*
     There was an issue with mapping where we were using arrays for everything instead of hashes (like items, missedReferences),

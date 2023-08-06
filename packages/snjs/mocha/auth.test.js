@@ -13,11 +13,7 @@ describe('basic auth', function () {
   }
 
   let context
-
-  afterEach(async function () {
-    await context.deinit()
-    localStorage.clear()
-  })
+  let expectedItemCount
 
   beforeEach(async function () {
     localStorage.clear()
@@ -26,12 +22,21 @@ describe('basic auth', function () {
 
     await context.launch()
 
-    this.expectedItemCount = BaseItemCounts.DefaultItemsWithAccount
+    expectedItemCount = BaseItemCounts.DefaultItemsWithAccount
+  })
+
+  afterEach(async function () {
+    await context.deinit()
+
+    localStorage.clear()
+
+    context = undefined
   })
 
   it('successfully register new account', async function () {
     const response = await context.register()
     expect(response).to.be.ok
+
     expect(await context.application.encryption.getRootKey()).to.be.ok
   })
 
@@ -339,23 +344,23 @@ describe('basic auth', function () {
 
     const noteCount = 5
     await Factory.createManyMappedNotes(context.application, noteCount)
-    this.expectedItemCount += noteCount
+    expectedItemCount += noteCount
 
     await context.sync()
-    expect(context.application.items.items.length).to.equal(this.expectedItemCount)
+    expect(context.application.items.items.length).to.equal(expectedItemCount)
 
     const newPassword = 'newpassword'
     const response = await context.application.changePassword(context.password, newPassword)
     expect(response.error).to.not.be.ok
 
-    this.expectedItemCount += ['new items key'].length
-    expect(context.application.items.items.length).to.equal(this.expectedItemCount)
+    expectedItemCount += ['new items key'].length
+    expect(context.application.items.items.length).to.equal(expectedItemCount)
     expect(context.application.payloads.invalidPayloads.length).to.equal(0)
 
     await context.application.sync.markAllItemsAsNeedingSyncAndPersist()
     await context.sync(syncOptions)
 
-    expect(context.application.items.items.length).to.equal(this.expectedItemCount)
+    expect(context.application.items.items.length).to.equal(expectedItemCount)
   }).timeout(40000)
 
   it('should sign into account after changing password', async function () {
@@ -365,7 +370,7 @@ describe('basic auth', function () {
     const response = await context.application.changePassword(context.password, newPassword)
     expect(response.error).to.not.be.ok
 
-    this.expectedItemCount += ['new items key'].length
+    expectedItemCount += ['new items key'].length
 
     await context.signout()
 
@@ -382,7 +387,7 @@ describe('basic auth', function () {
     expect(signinResponse.data.error).to.not.be.ok
     expect(await context.application.encryption.getRootKey()).to.be.ok
 
-    expect(context.application.items.items.length).to.equal(this.expectedItemCount)
+    expect(context.application.items.items.length).to.equal(expectedItemCount)
     expect(context.application.payloads.invalidPayloads.length).to.equal(0)
   })
 
@@ -393,7 +398,7 @@ describe('basic auth', function () {
 
     const noteCount = 3
     await Factory.createManyMappedNotes(context.application, noteCount)
-    this.expectedItemCount += noteCount
+    expectedItemCount += noteCount
 
     await context.sync()
 
@@ -401,9 +406,9 @@ describe('basic auth', function () {
     const response = await context.application.changePassword(context.password, newPassword)
     expect(response.error).to.not.be.ok
 
-    this.expectedItemCount += ['new items key'].length
+    expectedItemCount += ['new items key'].length
 
-    expect(context.application.items.items.length).to.equal(this.expectedItemCount)
+    expect(context.application.items.items.length).to.equal(expectedItemCount)
   })
 
   it('changes password many times', async function () {
@@ -411,7 +416,7 @@ describe('basic auth', function () {
 
     const noteCount = 10
     await Factory.createManyMappedNotes(context.application, noteCount)
-    this.expectedItemCount += noteCount
+    expectedItemCount += noteCount
     await context.application.sync.sync(syncOptions)
 
     const numTimesToChangePw = 3
@@ -422,12 +427,12 @@ describe('basic auth', function () {
       await context.application.changePassword(currentPassword, newPassword)
 
       /** New items key */
-      this.expectedItemCount++
+      expectedItemCount++
 
       currentPassword = newPassword
       newPassword = Factory.randomString()
 
-      expect(context.application.items.items.length).to.equal(this.expectedItemCount)
+      expect(context.application.items.items.length).to.equal(expectedItemCount)
       expect(context.application.payloads.invalidPayloads.length).to.equal(0)
 
       await context.application.sync.markAllItemsAsNeedingSyncAndPersist()

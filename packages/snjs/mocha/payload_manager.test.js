@@ -1,14 +1,17 @@
-/* eslint-disable no-unused-expressions */
-/* eslint-disable no-undef */
 import * as Factory from './lib/factory.js'
+
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
 describe('payload manager', () => {
+  let payloadManager
+  let createNotePayload
+
   beforeEach(async function () {
     const logger = new Logger('test')
-    this.payloadManager = new PayloadManager(logger)
-    this.createNotePayload = async () => {
+    payloadManager = new PayloadManager(logger)
+
+    createNotePayload = async () => {
       return new DecryptedPayload({
         uuid: Factory.generateUuidish(),
         content_type: ContentType.TYPES.Note,
@@ -21,15 +24,15 @@ describe('payload manager', () => {
   })
 
   it('emit payload should create local record', async function () {
-    const payload = await this.createNotePayload()
-    await this.payloadManager.emitPayload(payload)
+    const payload = await createNotePayload()
+    await payloadManager.emitPayload(payload)
 
-    expect(this.payloadManager.collection.find(payload.uuid)).to.be.ok
+    expect(payloadManager.collection.find(payload.uuid)).to.be.ok
   })
 
   it('merge payloads onto master', async function () {
-    const payload = await this.createNotePayload()
-    await this.payloadManager.emitPayload(payload)
+    const payload = await createNotePayload()
+    await payloadManager.emitPayload(payload)
 
     const newTitle = `${Math.random()}`
     const changedPayload = payload.copy({
@@ -38,19 +41,19 @@ describe('payload manager', () => {
         title: newTitle,
       },
     })
-    const { changed, inserted } = await this.payloadManager.applyPayloads([changedPayload])
+    const { changed, inserted } = await payloadManager.applyPayloads([changedPayload])
     expect(changed.length).to.equal(1)
     expect(inserted.length).to.equal(0)
-    expect(this.payloadManager.collection.find(payload.uuid).content.title).to.equal(newTitle)
+    expect(payloadManager.collection.find(payload.uuid).content.title).to.equal(newTitle)
   })
 
   it('insertion observer', async function () {
     const observations = []
-    this.payloadManager.addObserver(ContentType.TYPES.Any, ({ inserted }) => {
+    payloadManager.addObserver(ContentType.TYPES.Any, ({ inserted }) => {
       observations.push({ inserted })
     })
-    const payload = await this.createNotePayload()
-    await this.payloadManager.emitPayload(payload)
+    const payload = await createNotePayload()
+    await payloadManager.emitPayload(payload)
 
     expect(observations.length).equal(1)
     expect(observations[0].inserted[0]).equal(payload)
@@ -58,14 +61,14 @@ describe('payload manager', () => {
 
   it('change observer', async function () {
     const observations = []
-    this.payloadManager.addObserver(ContentType.TYPES.Any, ({ changed }) => {
+    payloadManager.addObserver(ContentType.TYPES.Any, ({ changed }) => {
       if (changed.length > 0) {
         observations.push({ changed })
       }
     })
-    const payload = await this.createNotePayload()
-    await this.payloadManager.emitPayload(payload)
-    await this.payloadManager.emitPayload(
+    const payload = await createNotePayload()
+    await payloadManager.emitPayload(payload)
+    await payloadManager.emitPayload(
       payload.copy({
         content: {
           ...payload.content,
@@ -79,12 +82,12 @@ describe('payload manager', () => {
   })
 
   it('reset state', async function () {
-    this.payloadManager.addObserver(ContentType.TYPES.Any, ({}) => {})
-    const payload = await this.createNotePayload()
-    await this.payloadManager.emitPayload(payload)
-    await this.payloadManager.resetState()
+    payloadManager.addObserver(ContentType.TYPES.Any, ({}) => {})
+    const payload = await createNotePayload()
+    await payloadManager.emitPayload(payload)
+    await payloadManager.resetState()
 
-    expect(this.payloadManager.collection.all().length).to.equal(0)
-    expect(this.payloadManager.changeObservers.length).equal(1)
+    expect(payloadManager.collection.all().length).to.equal(0)
+    expect(payloadManager.changeObservers.length).equal(1)
   })
 })

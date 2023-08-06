@@ -1,5 +1,4 @@
-/* eslint-disable no-unused-expressions */
-/* eslint-disable no-undef */
+
 import FakeWebCrypto from './fake_web_crypto.js'
 import { AppContext } from './AppContext.js'
 import { VaultsContext } from './VaultsContext.js'
