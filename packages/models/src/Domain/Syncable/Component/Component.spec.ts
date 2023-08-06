@@ -2,14 +2,14 @@ import { PayloadSource } from './../../Abstract/Payload/Types/PayloadSource'
 import { DecryptedPayload } from './../../Abstract/Payload/Implementations/DecryptedPayload'
 import { ContentType } from '@standardnotes/domain-core'
 import { FillItemContent } from '../../Abstract/Content/ItemContent'
-import { SNComponent } from './Component'
+import { ComponentItem } from './Component'
 import { ComponentContent } from './ComponentContent'
 import { PayloadTimestampDefaults } from '../../Abstract/Payload'
 import { NoteType } from '@standardnotes/features'
 
 describe('component model', () => {
   it('valid hosted url should ignore url', () => {
-    const component = new SNComponent(
+    const component = new ComponentItem(
       new DecryptedPayload(
         {
           uuid: String(Math.random()),
@@ -29,7 +29,7 @@ describe('component model', () => {
   })
 
   it('invalid hosted url should fallback to url', () => {
-    const component = new SNComponent(
+    const component = new ComponentItem(
       new DecryptedPayload(
         {
           uuid: String(Math.random()),
@@ -49,7 +49,7 @@ describe('component model', () => {
   })
 
   it('should return noteType as specified in package_info', () => {
-    const component = new SNComponent(
+    const component = new ComponentItem(
       new DecryptedPayload(
         {
           uuid: String(Math.random()),
@@ -69,7 +69,7 @@ describe('component model', () => {
   })
 
   it('should return unknown as noteType if no note type defined in package_info', () => {
-    const component = new SNComponent(
+    const component = new ComponentItem(
       new DecryptedPayload(
         {
           uuid: String(Math.random()),

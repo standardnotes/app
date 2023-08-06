@@ -3,7 +3,7 @@ import { DecryptedPayloadInterface } from '../../Abstract/Payload/Interfaces/Dec
 import { FileItem } from '../../Syncable/File/File'
 import { SNFeatureRepo } from '../../Syncable/FeatureRepo/FeatureRepo'
 import { SNActionsExtension } from '../../Syncable/ActionsExtension/ActionsExtension'
-import { SNComponent } from '../../Syncable/Component/Component'
+import { ComponentItem } from '../../Syncable/Component/Component'
 import { SNEditor } from '../../Syncable/Editor/Editor'
 import { DecryptedItem } from '../../Abstract/Item/Implementations/DecryptedItem'
 import { SNNote } from '../../Syncable/Note/Note'
@@ -56,7 +56,7 @@ const ContentTypeClassMapping: Partial<Record<string, MappingEntry>> = {
     itemClass: SNActionsExtension,
     mutatorClass: ActionsExtensionMutator,
   },
-  [ContentType.TYPES.Component]: { itemClass: SNComponent, mutatorClass: ComponentMutator },
+  [ContentType.TYPES.Component]: { itemClass: ComponentItem, mutatorClass: ComponentMutator },
   [ContentType.TYPES.KeySystemRootKey]: { itemClass: KeySystemRootKey, mutatorClass: KeySystemRootKeyMutator },
   [ContentType.TYPES.TrustedContact]: { itemClass: TrustedContact, mutatorClass: TrustedContactMutator },
   [ContentType.TYPES.VaultListing]: { itemClass: VaultListing, mutatorClass: VaultListingMutator },
@@ -66,7 +66,7 @@ const ContentTypeClassMapping: Partial<Record<string, MappingEntry>> = {
   [ContentType.TYPES.Note]: { itemClass: SNNote, mutatorClass: NoteMutator },
   [ContentType.TYPES.SmartView]: { itemClass: SmartView, mutatorClass: SmartViewMutator },
   [ContentType.TYPES.Tag]: { itemClass: SNTag, mutatorClass: TagMutator },
-  [ContentType.TYPES.Theme]: { itemClass: SNComponent, mutatorClass: ComponentMutator },
+  [ContentType.TYPES.Theme]: { itemClass: ComponentItem, mutatorClass: ComponentMutator },
   [ContentType.TYPES.UserPrefs]: { itemClass: SNUserPrefs, mutatorClass: UserPrefsMutator },
 } as unknown as Partial<Record<string, MappingEntry>>
 

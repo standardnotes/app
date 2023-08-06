@@ -26,7 +26,7 @@ import { ContentType } from '@standardnotes/domain-core'
  * via the postMessage API. However, a theme can also be a component, which is activated
  * only by its url.
  */
-export class SNComponent extends DecryptedItem<ComponentContent> implements ComponentInterface {
+export class ComponentItem extends DecryptedItem<ComponentContent> implements ComponentInterface {
   public readonly legacyComponentData: Record<string, unknown>
   /** Items that have requested a component to be disabled in its context */
   public readonly disassociatedItemIds: string[]
@@ -104,8 +104,8 @@ export class SNComponent extends DecryptedItem<ComponentContent> implements Comp
     return FindNativeFeature(this.identifier)?.name || this.name
   }
 
-  public override singletonPredicate(): Predicate<SNComponent> {
-    const uniqueIdentifierPredicate = new Predicate<SNComponent>('identifier', '=', this.identifier)
+  public override singletonPredicate(): Predicate<ComponentItem> {
+    const uniqueIdentifierPredicate = new Predicate<ComponentItem>('identifier', '=', this.identifier)
     return uniqueIdentifierPredicate
   }
 

@@ -1,6 +1,6 @@
 import { HeadlessSuperConverter } from '@/Components/SuperEditor/Tools/HeadlessSuperConverter'
 import {
-  SNComponent,
+  ComponentItem,
   ComponentMutator,
   AppDataField,
   ApplicationService,
@@ -26,7 +26,7 @@ export class DesktopManager
   implements DesktopManagerInterface, DesktopClientRequiresWebMethods
 {
   updateObservers: {
-    callback: (component: SNComponent) => void
+    callback: (component: ComponentItem) => void
   }[] = []
 
   dataLoaded = false
@@ -204,7 +204,7 @@ export class DesktopManager
     ).getValue()
 
     for (const observer of this.updateObservers) {
-      observer.callback(updatedComponent as SNComponent)
+      observer.callback(updatedComponent as ComponentItem)
     }
   }
 }

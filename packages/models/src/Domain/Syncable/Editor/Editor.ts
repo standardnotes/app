@@ -14,7 +14,7 @@ interface EditorContent extends ItemContent {
 
 /**
  * @deprecated
- * Editor objects are depracated in favor of SNComponent objects
+ * Editor objects are depracated in favor of ComponentItem objects
  */
 export class SNEditor extends DecryptedItem<EditorContent> {
   public readonly notes: SNNote[] = []
