@@ -1,7 +1,7 @@
 import { ItemManagerInterface, PreferenceServiceInterface } from '@standardnotes/services'
 import { GetDefaultEditorIdentifier } from './GetDefaultEditorIdentifier'
 import { ComponentArea, NativeFeatureIdentifier } from '@standardnotes/features'
-import { SNComponent, SNTag } from '@standardnotes/models'
+import { ComponentItem, SNTag } from '@standardnotes/models'
 
 describe('getDefaultEditorIdentifier', () => {
   let usecase: GetDefaultEditorIdentifier
@@ -49,7 +49,7 @@ describe('getDefaultEditorIdentifier', () => {
       legacyIsDefaultEditor: jest.fn().mockReturnValue(true),
       identifier: NativeFeatureIdentifier.TYPES.MarkdownProEditor,
       area: ComponentArea.Editor,
-    } as unknown as jest.Mocked<SNComponent>
+    } as unknown as jest.Mocked<ComponentItem>
 
     items.getDisplayableComponents = jest.fn().mockReturnValue([editor])
 

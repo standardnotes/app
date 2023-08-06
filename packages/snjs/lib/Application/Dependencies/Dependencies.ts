@@ -12,7 +12,7 @@ import { SignInWithRecoveryCodes } from '../../Domain/UseCase/SignInWithRecovery
 import { ListedService } from '../../Services/Listed/ListedService'
 import { MigrationService } from '../../Services/Migration/MigrationService'
 import { MfaService } from '../../Services/Mfa/MfaService'
-import { SNComponentManager } from '../../Services/ComponentManager/ComponentManager'
+import { ComponentManager } from '../../Services/ComponentManager/ComponentManager'
 import { FeaturesService } from '@Lib/Services/Features/FeaturesService'
 import { SettingsService } from '../../Services/Settings/SNSettingsService'
 import { PreferencesService } from '../../Services/Preferences/PreferencesService'
@@ -1107,7 +1107,7 @@ export class Dependencies {
     })
 
     this.factory.set(TYPES.ComponentManager, () => {
-      return new SNComponentManager(
+      return new ComponentManager(
         this.get<ItemManager>(TYPES.ItemManager),
         this.get<MutatorService>(TYPES.MutatorService),
         this.get<SyncService>(TYPES.SyncService),

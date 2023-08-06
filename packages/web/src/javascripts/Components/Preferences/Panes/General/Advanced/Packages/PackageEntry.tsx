@@ -1,5 +1,5 @@
 import { FunctionComponent, useState } from 'react'
-import { ComponentInterface, ComponentMutator, SNComponent } from '@standardnotes/snjs'
+import { ComponentInterface, ComponentMutator, ComponentItem } from '@standardnotes/snjs'
 import { SubtitleLight } from '@/Components/Preferences/PreferencesComponents/Content'
 import Switch from '@/Components/Switch/Switch'
 import Button from '@/Components/Button/Button'
@@ -28,7 +28,7 @@ interface PackageEntryProps {
 }
 
 const PackageEntry: FunctionComponent<PackageEntryProps> = ({ application, extension, uninstall }) => {
-  const [offlineOnly, setOfflineOnly] = useState(extension instanceof SNComponent ? extension.offlineOnly : false)
+  const [offlineOnly, setOfflineOnly] = useState(extension instanceof ComponentItem ? extension.offlineOnly : false)
   const [extensionName, setExtensionName] = useState(extension.displayName)
 
   const toggleOfflineOnly = () => {

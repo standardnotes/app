@@ -1,4 +1,4 @@
-import { CompoundPredicate, Predicate, SNComponent } from '@standardnotes/models'
+import { CompoundPredicate, Predicate, ComponentItem } from '@standardnotes/models'
 import { Migration } from '@Lib/Migrations/Migration'
 import { ApplicationStage } from '@standardnotes/services'
 import { ContentType } from '@standardnotes/domain-core'
@@ -19,8 +19,8 @@ export class Migration2_7_0 extends Migration {
     const batchMgrId = 'org.standardnotes.batch-manager'
 
     const batchMgrPred = new CompoundPredicate('and', [
-      new Predicate<SNComponent>('content_type', '=', ContentType.TYPES.Component),
-      new Predicate<SNComponent>('identifier', '=', batchMgrId),
+      new Predicate<ComponentItem>('content_type', '=', ContentType.TYPES.Component),
+      new Predicate<ComponentItem>('identifier', '=', batchMgrId),
     ])
 
     const batchMgrSingleton = this.services.singletonManager.findSingleton(ContentType.TYPES.Component, batchMgrPred)

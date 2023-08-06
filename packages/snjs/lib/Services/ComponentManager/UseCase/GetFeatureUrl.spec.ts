@@ -13,7 +13,7 @@ import {
   Environment,
   PayloadTimestampDefaults,
   Platform,
-  SNComponent,
+  ComponentItem,
   UIFeature,
 } from '@standardnotes/models'
 import { DesktopManagerInterface } from '@standardnotes/services'
@@ -26,7 +26,7 @@ const nativeFeatureAsUIFeature = <F extends UIFeatureDescriptionTypes>(identifie
 }
 
 const thirdPartyFeature = () => {
-  const component = new SNComponent(
+  const component = new ComponentItem(
     new DecryptedPayload({
       uuid: '789',
       content_type: ContentType.TYPES.Component,
@@ -101,7 +101,7 @@ describe('GetFeatureUrl', () => {
     })
 
     it('returns hosted url for third party component with no local_url', () => {
-      const component = new SNComponent({
+      const component = new ComponentItem({
         uuid: '789',
         content_type: ContentType.TYPES.Component,
         content: {

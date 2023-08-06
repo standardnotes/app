@@ -15,7 +15,6 @@ import {
   FillItemContent,
   PayloadEmitSource,
   ComponentInterface,
-  ThemeInterface,
   DecryptedItemInterface,
 } from '@standardnotes/models'
 import {
@@ -191,7 +190,7 @@ export class FeaturesService
     void this.storage.setValue(StorageKey.ExperimentalFeatures, this.enabledExperimentalFeatures)
 
     const component = this.items
-      .getItems<ComponentInterface | ThemeInterface>([ContentType.TYPES.Component, ContentType.TYPES.Theme])
+      .getItems<ComponentInterface>([ContentType.TYPES.Component, ContentType.TYPES.Theme])
       .find((component) => component.identifier === identifier)
     if (!component) {
       return

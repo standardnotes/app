@@ -37,7 +37,7 @@ export class ItemManager extends Services.AbstractService implements Services.It
   private tagDisplayController!: Models.ItemDisplayController<Models.SNTag, Models.TagsDisplayOptions>
   private itemsKeyDisplayController!: Models.ItemDisplayController<SNItemsKey>
   private componentDisplayController!: Models.ItemDisplayController<Models.ComponentInterface>
-  private themeDisplayController!: Models.ItemDisplayController<Models.ThemeInterface>
+  private themeDisplayController!: Models.ItemDisplayController<Models.ComponentInterface>
   private fileDisplayController!: Models.ItemDisplayController<Models.FileItem>
   private smartViewDisplayController!: Models.ItemDisplayController<Models.SmartView>
 
@@ -225,7 +225,7 @@ export class ItemManager extends Services.AbstractService implements Services.It
     return this.itemsKeyDisplayController.items()
   }
 
-  public getDisplayableComponents(): (Models.ComponentInterface | Models.ThemeInterface)[] {
+  public getDisplayableComponents(): Models.ComponentInterface[] {
     return [...this.componentDisplayController.items(), ...this.themeDisplayController.items()]
   }
 

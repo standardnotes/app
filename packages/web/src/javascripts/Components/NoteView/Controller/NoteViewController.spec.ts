@@ -1,8 +1,8 @@
 import { WebApplication } from '@/Application/WebApplication'
 import { ContentType } from '@standardnotes/domain-core'
 import {
-  SNComponentManager,
-  SNComponent,
+  ComponentManager,
+  ComponentItem,
   SNTag,
   SNNote,
   Deferred,
@@ -16,7 +16,7 @@ import { NoteViewController } from './NoteViewController'
 
 describe('note view controller', () => {
   let application: WebApplication
-  let componentManager: SNComponentManager
+  let componentManager: ComponentManager
 
   beforeEach(() => {
     application = {
@@ -35,7 +35,7 @@ describe('note view controller', () => {
     Object.defineProperty(application, 'sync', { value: {} as jest.Mocked<SyncServiceInterface> })
     application.sync.sync = jest.fn().mockReturnValue(Promise.resolve())
 
-    componentManager = {} as jest.Mocked<SNComponentManager>
+    componentManager = {} as jest.Mocked<ComponentManager>
     Object.defineProperty(application, 'componentManager', { value: componentManager })
   })
 
@@ -68,7 +68,7 @@ describe('note view controller', () => {
     application.items.getDisplayableComponents = jest.fn().mockReturnValue([
       {
         identifier: NativeFeatureIdentifier.TYPES.MarkdownProEditor,
-      } as SNComponent,
+      } as ComponentItem,
     ])
 
     application.componentManager.getDefaultEditorIdentifier = jest
