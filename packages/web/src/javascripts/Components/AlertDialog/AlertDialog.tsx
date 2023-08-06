@@ -40,7 +40,7 @@ const AlertDialog = ({
       />
       <div
         className={classNames(
-          'w-[95vw] rounded border border-[--popover-border-color] bg-[--popover-background-color] [backdrop-filter:var(--popover-backdrop-filter)] px-6 py-5 shadow-xl md:w-auto',
+          'z-[1] w-[95vw] rounded border border-[--popover-border-color] bg-[--popover-background-color] [backdrop-filter:var(--popover-backdrop-filter)] px-6 py-5 shadow-xl md:w-auto',
           !className?.includes('max-w-') && 'max-w-[600px]',
           className,
         )}

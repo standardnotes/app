@@ -59,7 +59,7 @@ const IconPicker = ({ selectedValue, onIconChange, platform, className, useIconG
 
     return (
       <button
-        className={`relative mr-2 cursor-pointer border-0 bg-default pb-1.5 text-mobile-menu-item focus:shadow-none md:text-tablet-menu-item lg:text-menu-item ${
+        className={`relative mr-2 cursor-pointer border-0 pb-1.5 text-mobile-menu-item focus:shadow-none md:text-tablet-menu-item lg:text-menu-item ${
           isSelected ? 'font-medium text-info' : 'text-text'
         }`}
         onClick={() => {
