@@ -1,71 +1,70 @@
-/* eslint-disable no-unused-expressions */
-/* eslint-disable no-undef */
 import { BaseItemCounts } from '../lib/BaseItemCounts.js'
 import * as Factory from '../lib/factory.js'
+
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
 describe('offline syncing', () => {
+  let context
+  let application
+  let expectedItemCount
+
   const syncOptions = {
     checkIntegrity: true,
     awaitAll: true,
   }
 
   beforeEach(async function () {
-    this.expectedItemCount = BaseItemCounts.DefaultItems
-    this.context = await Factory.createAppContext()
-    await this.context.launch()
-    this.application = this.context.application
+    localStorage.clear()
+    expectedItemCount = BaseItemCounts.DefaultItems
+    context = await Factory.createAppContext()
+    await context.launch()
+    application = context.application
   })
 
   afterEach(async function () {
-    expect(this.application.sync.isOutOfSync()).to.equal(false)
-    await Factory.safeDeinit(this.application)
-  })
-
-  before(async function () {
+    expect(application.sync.isOutOfSync()).to.equal(false)
+    await Factory.safeDeinit(application)
     localStorage.clear()
-  })
-
-  after(async function () {
-    localStorage.clear()
+    application = undefined
+    context = undefined
   })
 
   it('uuid alternation should delete original payload', async function () {
-    const note = await Factory.createMappedNote(this.application)
-    this.expectedItemCount++
+    const note = await Factory.createMappedNote(application)
+    expectedItemCount++
 
-    await Factory.alternateUuidForItem(this.application, note.uuid)
-    await this.application.sync.sync(syncOptions)
+    await Factory.alternateUuidForItem(application, note.uuid)
+    await application.sync.sync(syncOptions)
 
-    const notes = this.application.items.getDisplayableNotes()
+    const notes = application.items.getDisplayableNotes()
     expect(notes.length).to.equal(1)
     expect(notes[0].uuid).to.not.equal(note.uuid)
 
-    const items = this.application.items.allTrackedItems()
-    expect(items.length).to.equal(this.expectedItemCount)
+    const items = application.items.allTrackedItems()
+    expect(items.length).to.equal(expectedItemCount)
   })
 
   it('should sync item with no passcode', async function () {
-    let note = await Factory.createMappedNote(this.application)
-    expect(Uuids(this.application.items.getDirtyItems()).includes(note.uuid))
+    let note = await Factory.createMappedNote(application)
+    expect(Uuids(application.items.getDirtyItems()).includes(note.uuid))
 
-    await this.application.sync.sync(syncOptions)
+    await application.sync.sync(syncOptions)
 
-    note = this.application.items.findItem(note.uuid)
+    note = application.items.findItem(note.uuid)
 
     /** In rare cases a sync can complete so fast that the dates are equal; this is ok. */
     expect(note.lastSyncEnd).to.be.at.least(note.lastSyncBegan)
 
-    this.expectedItemCount++
+    expectedItemCount++
 
-    expect(this.application.items.getDirtyItems().length).to.equal(0)
+    expect(application.items.getDirtyItems().length).to.equal(0)
 
-    const rawPayloads2 = await this.application.storage.getAllRawPayloads()
-    expect(rawPayloads2.length).to.equal(this.expectedItemCount)
+    const rawPayloads2 = await application.storage.getAllRawPayloads()
+    expect(rawPayloads2.length).to.equal(expectedItemCount)
 
-    const itemsKeyRaw = (await Factory.getStoragePayloadsOfType(this.application, ContentType.TYPES.ItemsKey))[0]
-    const noteRaw = (await Factory.getStoragePayloadsOfType(this.application, ContentType.TYPES.Note))[0]
+    const itemsKeyRaw = (await Factory.getStoragePayloadsOfType(application, ContentType.TYPES.ItemsKey))[0]
+    const noteRaw = (await Factory.getStoragePayloadsOfType(application, ContentType.TYPES.Note))[0]
 
     /** Encrypts with default items key */
     expect(typeof noteRaw.content).to.equal('string')
@@ -75,30 +74,30 @@ describe('offline syncing', () => {
   })
 
   it('should sync item encrypted with passcode', async function () {
-    await this.application.addPasscode('foobar')
-    await Factory.createMappedNote(this.application)
-    expect(this.application.items.getDirtyItems().length).to.equal(1)
-    const rawPayloads1 = await this.application.storage.getAllRawPayloads()
-    expect(rawPayloads1.length).to.equal(this.expectedItemCount)
+    await application.addPasscode('foobar')
+    await Factory.createMappedNote(application)
+    expect(application.items.getDirtyItems().length).to.equal(1)
+    const rawPayloads1 = await application.storage.getAllRawPayloads()
+    expect(rawPayloads1.length).to.equal(expectedItemCount)
 
-    await this.application.sync.sync(syncOptions)
-    this.expectedItemCount++
+    await application.sync.sync(syncOptions)
+    expectedItemCount++
 
-    expect(this.application.items.getDirtyItems().length).to.equal(0)
-    const rawPayloads2 = await this.application.storage.getAllRawPayloads()
-    expect(rawPayloads2.length).to.equal(this.expectedItemCount)
+    expect(application.items.getDirtyItems().length).to.equal(0)
+    const rawPayloads2 = await application.storage.getAllRawPayloads()
+    expect(rawPayloads2.length).to.equal(expectedItemCount)
 
     const payload = rawPayloads2[0]
     expect(typeof payload.content).to.equal('string')
-    expect(payload.content.startsWith(this.application.encryption.getLatestVersion())).to.equal(true)
+    expect(payload.content.startsWith(application.encryption.getLatestVersion())).to.equal(true)
   })
 
   it('signing out while offline should succeed', async function () {
-    await Factory.createMappedNote(this.application)
-    this.expectedItemCount++
-    await this.application.sync.sync(syncOptions)
-    this.application = await Factory.signOutApplicationAndReturnNew(this.application)
-    expect(this.application.sessions.isSignedIn()).to.equal(false)
-    expect(this.application.sessions.getUser()).to.not.be.ok
+    await Factory.createMappedNote(application)
+    expectedItemCount++
+    await application.sync.sync(syncOptions)
+    application = await Factory.signOutApplicationAndReturnNew(application)
+    expect(application.sessions.isSignedIn()).to.equal(false)
+    expect(application.sessions.getUser()).to.not.be.ok
   })
 })

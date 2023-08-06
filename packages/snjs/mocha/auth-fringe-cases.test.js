@@ -1,14 +1,16 @@
-/* eslint-disable no-unused-expressions */
-/* eslint-disable no-undef */
 import { BaseItemCounts } from './lib/BaseItemCounts.js'
 import * as Factory from './lib/factory.js'
+
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
 describe('auth fringe cases', () => {
-  const createContext = async () => {
+  let context
+
+  beforeEach(async function () {
+    localStorage.clear()
     const application = await Factory.createInitAppWithFakeCrypto()
-    return {
+    context = {
       expectedItemCount: BaseItemCounts.DefaultItems,
       application: application,
       email: UuidGenerator.GenerateUuid(),
@@ -17,10 +19,6 @@ describe('auth fringe cases', () => {
         await Factory.safeDeinit(application)
       },
     }
-  }
-
-  beforeEach(async function () {
-    localStorage.clear()
   })
 
   afterEach(async function () {
@@ -40,7 +38,6 @@ describe('auth fringe cases', () => {
 
   describe('localStorage improperly cleared with 1 item', function () {
     it('item should be errored', async function () {
-      const context = await createContext()
       await context.application.register(context.email, context.password)
       const note = await Factory.createSyncedNote(context.application)
       clearApplicationLocalStorageOfNonItems()
@@ -55,7 +52,6 @@ describe('auth fringe cases', () => {
     })
 
     it('signing in again should decrypt item', async function () {
-      const context = await createContext()
       await context.application.register(context.email, context.password)
       const note = await Factory.createSyncedNote(context.application)
       clearApplicationLocalStorageOfNonItems()
@@ -76,7 +72,6 @@ describe('auth fringe cases', () => {
 
   describe('having offline item matching remote item uuid', function () {
     it('offline item should not overwrite recently updated server item and conflict should be created', async function () {
-      const context = await createContext()
       await context.application.register(context.email, context.password)
 
       const staleText = 'stale text'

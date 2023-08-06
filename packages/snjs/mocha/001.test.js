@@ -1,27 +1,32 @@
-/* eslint-disable no-unused-expressions */
-/* eslint-disable no-undef */
 import * as Factory from './lib/factory.js'
+
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
 describe('001 protocol operations', () => {
-  const application = Factory.createApplicationWithRealCrypto()
-  const protocol001 = new SNProtocolOperator001(new SNWebCrypto())
+  let application
+  let protocol001
 
-  const _identifier = 'hello@test.com'
-  const _password = 'password'
+  let _identifier = 'hello@test.com'
+  let _password = 'password'
   let _keyParams, _key
 
-  // runs once before all tests in this block
-  before(async () => {
+  beforeEach(async () => {
     localStorage.clear()
+
+    application = Factory.createApplicationWithRealCrypto()
+    protocol001 = new SNProtocolOperator001(new SNWebCrypto())
+
     await Factory.initializeApplication(application)
+
     _key = await protocol001.createRootKey(_identifier, _password, KeyParamsOrigination.Registration)
     _keyParams = _key.keyParams
   })
 
-  after(async () => {
+  afterEach(async () => {
     await Factory.safeDeinit(application)
+    localStorage.clear()
+    application = undefined
   })
 
   it('generates random key', async () => {

@@ -1,47 +1,44 @@
-/* eslint-disable no-unused-expressions */
-/* eslint-disable no-undef */
 import * as Factory from './lib/factory.js'
+
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
 describe('item mutator', () => {
-  beforeEach(async function () {
-    this.createBarePayload = () => {
-      return new DecryptedPayload({
-        uuid: '123',
-        content_type: ContentType.TYPES.Note,
+  const createBarePayload = () => {
+    return new DecryptedPayload({
+      uuid: '123',
+      content_type: ContentType.TYPES.Note,
+      content: {
+        title: 'hello',
+      },
+    })
+  }
+
+  const createNote = () => {
+    return new DecryptedItem(createBarePayload())
+  }
+
+  const createTag = (notes = []) => {
+    const references = notes.map((note) => {
+      return {
+        uuid: note.uuid,
+        content_type: note.content_type,
+      }
+    })
+    return new SNTag(
+      new DecryptedPayload({
+        uuid: Factory.generateUuidish(),
+        content_type: ContentType.TYPES.Tag,
         content: {
-          title: 'hello',
+          title: 'thoughts',
+          references: references,
         },
-      })
-    }
-
-    this.createNote = () => {
-      return new DecryptedItem(this.createBarePayload())
-    }
-
-    this.createTag = (notes = []) => {
-      const references = notes.map((note) => {
-        return {
-          uuid: note.uuid,
-          content_type: note.content_type,
-        }
-      })
-      return new SNTag(
-        new DecryptedPayload({
-          uuid: Factory.generateUuidish(),
-          content_type: ContentType.TYPES.Tag,
-          content: {
-            title: 'thoughts',
-            references: references,
-          },
-        }),
-      )
-    }
-  })
+      }),
+    )
+  }
 
   it('mutate set domain data key', function () {
-    const item = this.createNote()
+    const item = createNote()
     const mutator = new DecryptedItemMutator(item)
     mutator.setDomainDataKey('somekey', 'somevalue', 'somedomain')
     const payload = mutator.getResult()
@@ -50,7 +47,7 @@ describe('item mutator', () => {
   })
 
   it('mutate set pinned', function () {
-    const item = this.createNote()
+    const item = createNote()
     const mutator = new DecryptedItemMutator(item)
     mutator.pinned = true
     const payload = mutator.getResult()
@@ -59,7 +56,7 @@ describe('item mutator', () => {
   })
 
   it('mutate set archived', function () {
-    const item = this.createNote()
+    const item = createNote()
     const mutator = new DecryptedItemMutator(item)
     mutator.archived = true
     const payload = mutator.getResult()
@@ -68,7 +65,7 @@ describe('item mutator', () => {
   })
 
   it('mutate set locked', function () {
-    const item = this.createNote()
+    const item = createNote()
     const mutator = new DecryptedItemMutator(item)
     mutator.locked = true
     const payload = mutator.getResult()
@@ -77,7 +74,7 @@ describe('item mutator', () => {
   })
 
   it('mutate set protected', function () {
-    const item = this.createNote()
+    const item = createNote()
     const mutator = new DecryptedItemMutator(item)
     mutator.protected = true
     const payload = mutator.getResult()
@@ -86,7 +83,7 @@ describe('item mutator', () => {
   })
 
   it('mutate set trashed', function () {
-    const item = this.createNote()
+    const item = createNote()
     const mutator = new DecryptedItemMutator(item)
     mutator.trashed = true
     const payload = mutator.getResult()
@@ -95,7 +92,7 @@ describe('item mutator', () => {
   })
 
   it('calling get result should set us dirty', function () {
-    const item = this.createNote()
+    const item = createNote()
     const mutator = new DecryptedItemMutator(item)
     const payload = mutator.getResult()
 
@@ -103,7 +100,7 @@ describe('item mutator', () => {
   })
 
   it('get result should always have userModifiedDate', function () {
-    const item = this.createNote()
+    const item = createNote()
     const mutator = new DecryptedItemMutator(item)
     const payload = mutator.getResult()
     const resultItem = CreateDecryptedItemFromPayload(payload)
@@ -111,7 +108,7 @@ describe('item mutator', () => {
   })
 
   it('mutate set deleted', function () {
-    const item = this.createNote()
+    const item = createNote()
     const mutator = new DeleteItemMutator(item)
     const payload = mutator.getDeletedResult()
 
@@ -121,7 +118,7 @@ describe('item mutator', () => {
   })
 
   it('mutate app data', function () {
-    const item = this.createNote()
+    const item = createNote()
     const mutator = new DecryptedItemMutator(item, MutationType.UpdateUserTimestamps)
     mutator.setAppDataItem('foo', 'bar')
     mutator.setAppDataItem('bar', 'foo')
@@ -131,8 +128,8 @@ describe('item mutator', () => {
   })
 
   it('mutate add item as relationship', function () {
-    const note = this.createNote()
-    const tag = this.createTag()
+    const note = createNote()
+    const tag = createTag()
     const mutator = new DecryptedItemMutator(tag)
     mutator.e2ePendingRefactor_addItemAsRelationship(note)
     const payload = mutator.getResult()
@@ -142,8 +139,8 @@ describe('item mutator', () => {
   })
 
   it('mutate remove item as relationship', function () {
-    const note = this.createNote()
-    const tag = this.createTag([note])
+    const note = createNote()
+    const tag = createTag([note])
     const mutator = new DecryptedItemMutator(tag)
     mutator.removeItemAsRelationship(note)
     const payload = mutator.getResult()

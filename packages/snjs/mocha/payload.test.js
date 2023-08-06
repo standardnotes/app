@@ -1,32 +1,29 @@
-/* eslint-disable no-unused-expressions */
-/* eslint-disable no-undef */
-chai.use(chaiAsPromised)
-const expect = chai.expect
 import * as Factory from './lib/factory.js'
 
-describe('payload', () => {
-  beforeEach(async function () {
-    this.createBarePayload = () => {
-      return new DecryptedPayload({
-        uuid: '123',
-        content_type: ContentType.TYPES.Note,
-        content: {
-          title: 'hello',
-        },
-      })
-    }
+chai.use(chaiAsPromised)
+const expect = chai.expect
 
-    this.createEncryptedPayload = () => {
-      return new EncryptedPayload({
-        uuid: '123',
-        content_type: ContentType.TYPES.Note,
-        content: '004:foo:bar',
-      })
-    }
-  })
+describe('payload', () => {
+  const createBarePayload = () => {
+    return new DecryptedPayload({
+      uuid: '123',
+      content_type: ContentType.TYPES.Note,
+      content: {
+        title: 'hello',
+      },
+    })
+  }
+
+  const createEncryptedPayload = () => {
+    return new EncryptedPayload({
+      uuid: '123',
+      content_type: ContentType.TYPES.Note,
+      content: '004:foo:bar',
+    })
+  }
 
   it('constructor should set expected fields', function () {
-    const payload = this.createBarePayload()
+    const payload = createBarePayload()
 
     expect(payload.uuid).to.be.ok
     expect(payload.content_type).to.be.ok
@@ -46,25 +43,25 @@ describe('payload', () => {
   })
 
   it('created at should default to present', function () {
-    const payload = this.createBarePayload()
+    const payload = createBarePayload()
 
     expect(payload.created_at - new Date()).to.be.below(1)
   })
 
   it('updated at should default to epoch', function () {
-    const payload = this.createBarePayload()
+    const payload = createBarePayload()
 
     expect(payload.updated_at.getTime()).to.equal(0)
   })
 
   it('payload format bare', function () {
-    const payload = this.createBarePayload()
+    const payload = createBarePayload()
 
     expect(isDecryptedPayload(payload)).to.equal(true)
   })
 
   it('payload format encrypted string', function () {
-    const payload = this.createEncryptedPayload()
+    const payload = createEncryptedPayload()
 
     expect(isEncryptedPayload(payload)).to.equal(true)
   })
@@ -92,13 +89,13 @@ describe('payload', () => {
   })
 
   it('payload version 004', function () {
-    const payload = this.createEncryptedPayload()
+    const payload = createEncryptedPayload()
 
     expect(payload.version).to.equal('004')
   })
 
   it('merged with absent content', function () {
-    const payload = this.createBarePayload()
+    const payload = createBarePayload()
     const merged = payload.copy({
       uuid: '123',
       content_type: ContentType.TYPES.Note,
@@ -125,7 +122,7 @@ describe('payload', () => {
   })
 
   it('should be immutable', async function () {
-    const payload = this.createBarePayload()
+    const payload = createBarePayload()
 
     await Factory.sleep(0.1)
 

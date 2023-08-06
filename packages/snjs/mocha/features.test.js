@@ -1,6 +1,6 @@
-/* eslint-disable no-undef */
 import * as Factory from './lib/factory.js'
 chai.use(chaiAsPromised)
+
 const expect = chai.expect
 
 describe('features', () => {
@@ -9,6 +9,7 @@ describe('features', () => {
   let password
 
   beforeEach(async function () {
+    localStorage.clear()
     application = await Factory.createInitAppWithFakeCrypto()
 
     sinon.spy(application.mutator, 'createItem')
@@ -28,6 +29,8 @@ describe('features', () => {
   afterEach(async function () {
     Factory.safeDeinit(application)
     sinon.restore()
+    localStorage.clear()
+    application = undefined
   })
 
   describe('new user roles received on api response meta', () => {

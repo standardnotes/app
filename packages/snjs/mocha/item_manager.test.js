@@ -1,5 +1,3 @@
-/* eslint-disable no-unused-expressions */
-/* eslint-disable no-undef */
 import * as Factory from './lib/factory.js'
 import { BaseItemCounts } from './lib/BaseItemCounts.js'
 
@@ -10,11 +8,6 @@ describe('item manager', function () {
   let context
   let application
 
-  afterEach(async function () {
-    await context.deinit()
-    localStorage.clear()
-  })
-
   beforeEach(async function () {
     localStorage.clear()
 
@@ -22,6 +15,14 @@ describe('item manager', function () {
     application = context.application
 
     await context.launch()
+  })
+
+  afterEach(async function () {
+    await context.deinit()
+    localStorage.clear()
+
+    context = undefined
+    application = undefined
   })
 
   const createNote = async () => {

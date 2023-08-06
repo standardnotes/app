@@ -1,68 +1,76 @@
 import * as Factory from './lib/factory.js'
+
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
-const createApp = async () => Factory.createInitAppWithFakeCrypto(Environment.Web, Platform.MacWeb)
-
 const accountPassword = 'password'
 
-const registerApp = async (snApp) => {
+const registerApp = async (application) => {
   const email = UuidGenerator.GenerateUuid()
   const password = accountPassword
   const ephemeral = false
   const mergeLocal = true
 
-  await snApp.register(email, password, ephemeral, mergeLocal)
-  return snApp
+  await application.register(email, password, ephemeral, mergeLocal)
+  return application
 }
 
 describe('mfa service', () => {
+  let application
+
+  beforeEach(async () => {
+    localStorage.clear()
+    application = await Factory.createInitAppWithFakeCrypto(Environment.Web, Platform.MacWeb)
+  })
+
+  afterEach(async () => {
+    Factory.safeDeinit(application)
+    localStorage.clear()
+    application = undefined
+    sinon.restore()
+  })
+
   it('generates 160 bit base32-encoded mfa secret', async () => {
     const RFC4648 = /[ABCDEFGHIJKLMNOPQRSTUVWXYZ234567]/g
 
-    const snApp = await createApp()
-    const secret = await snApp.generateMfaSecret()
+    const secret = await application.generateMfaSecret()
     expect(secret).to.have.lengthOf(32)
     expect(secret.replace(RFC4648, '')).to.have.lengthOf(0)
-
-    Factory.safeDeinit(snApp)
   })
 
   it('activates mfa, checks if enabled, deactivates mfa', async () => {
-    const snApp = await createApp().then(registerApp)
-    Factory.handlePasswordChallenges(snApp, accountPassword)
+    await registerApp(application)
 
-    expect(await snApp.isMfaActivated()).to.equal(false)
+    Factory.handlePasswordChallenges(application, accountPassword)
 
-    const secret = await snApp.generateMfaSecret()
-    const token = await snApp.getOtpToken(secret)
+    expect(await application.isMfaActivated()).to.equal(false)
 
-    await snApp.enableMfa(secret, token)
+    const secret = await application.generateMfaSecret()
+    const token = await application.getOtpToken(secret)
 
-    expect(await snApp.isMfaActivated()).to.equal(true)
+    await application.enableMfa(secret, token)
 
-    await snApp.disableMfa()
+    expect(await application.isMfaActivated()).to.equal(true)
 
-    expect(await snApp.isMfaActivated()).to.equal(false)
+    await application.disableMfa()
 
-    Factory.safeDeinit(snApp)
+    expect(await application.isMfaActivated()).to.equal(false)
   }).timeout(Factory.TenSecondTimeout)
 
   it('prompts for account password when disabling mfa', async () => {
-    const snApp = await createApp().then(registerApp)
-    Factory.handlePasswordChallenges(snApp, accountPassword)
-    const secret = await snApp.generateMfaSecret()
-    const token = await snApp.getOtpToken(secret)
+    await registerApp(application)
 
-    sinon.spy(snApp.challenges, 'sendChallenge')
-    await snApp.enableMfa(secret, token)
-    await snApp.disableMfa()
+    Factory.handlePasswordChallenges(application, accountPassword)
+    const secret = await application.generateMfaSecret()
+    const token = await application.getOtpToken(secret)
 
-    const spyCall = snApp.challenges.sendChallenge.getCall(0)
+    sinon.spy(application.challenges, 'sendChallenge')
+    await application.enableMfa(secret, token)
+    await application.disableMfa()
+
+    const spyCall = application.challenges.sendChallenge.getCall(0)
     const challenge = spyCall.firstArg
     expect(challenge.prompts).to.have.lengthOf(2)
     expect(challenge.prompts[0].validation).to.equal(ChallengeValidation.AccountPassword)
-
-    Factory.safeDeinit(snApp)
   }).timeout(Factory.TenSecondTimeout)
 })

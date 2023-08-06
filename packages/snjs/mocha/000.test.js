@@ -1,19 +1,17 @@
-/* eslint-disable no-unused-expressions */
-/* eslint-disable no-undef */
-import * as Factory from './lib/factory.js'
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
 describe('000 legacy protocol operations', () => {
-  const application = Factory.createApplicationWithRealCrypto()
-  const protocol004 = new SNProtocolOperator004(new SNWebCrypto())
+  let protocol004
 
-  before(async () => {
-    await Factory.initializeApplication(application)
+  beforeEach(async () => {
+    localStorage.clear()
+
+    protocol004 = new SNProtocolOperator004(new SNWebCrypto())
   })
 
-  after(async () => {
-    await Factory.safeDeinit(application)
+  afterEach(async () => {
+    localStorage.clear()
   })
 
   it('cannot decode 000 item', function () {

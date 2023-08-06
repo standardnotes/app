@@ -1,34 +1,31 @@
-/* eslint-disable no-unused-expressions */
-/* eslint-disable no-undef */
 import * as Factory from './lib/factory.js'
+
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
 describe('003 protocol operations', () => {
-  before(async () => {
-    localStorage.clear()
-  })
-
-  after(async () => {
-    localStorage.clear()
-  })
-
-  const _identifier = 'hello@test.com'
-  const _password = 'password'
+  let _identifier = 'hello@test.com'
+  let _password = 'password'
   let _keyParams, _key
 
-  const sharedApplication = Factory.createApplicationWithRealCrypto()
-  const protocol003 = new SNProtocolOperator003(new SNWebCrypto())
+  let application
+  let protocol003
 
-  // runs once before all tests in this block
-  before(async () => {
-    await Factory.initializeApplication(sharedApplication)
+  beforeEach(async () => {
+    localStorage.clear()
+
+    application = Factory.createApplicationWithRealCrypto()
+    protocol003 = new SNProtocolOperator003(new SNWebCrypto())
+
+    await Factory.initializeApplication(application)
     _key = await protocol003.createRootKey(_identifier, _password, KeyParamsOrigination.Registration)
     _keyParams = _key.keyParams
   })
 
-  after(async () => {
-    await Factory.safeDeinit(sharedApplication)
+  afterEach(async () => {
+    await Factory.safeDeinit(application)
+    localStorage.clear()
+    application = undefined
   })
 
   it('generates random key', async () => {
@@ -39,7 +36,7 @@ describe('003 protocol operations', () => {
 
   it('cost minimum should throw', () => {
     expect(() => {
-      sharedApplication.encryption.costMinimumForVersion('003')
+      application.encryption.costMinimumForVersion('003')
     }).to.throw('Cost minimums only apply to versions <= 002')
   })
 
@@ -59,7 +56,7 @@ describe('003 protocol operations', () => {
   it('computes proper keys for sign in', async () => {
     const identifier = 'foo@bar.com'
     const password = 'very_secure'
-    const keyParams = sharedApplication.encryption.createKeyParams({
+    const keyParams = application.encryption.createKeyParams({
       pw_nonce: 'baaec0131d677cf993381367eb082fe377cefe70118c1699cb9b38f0bc850e7b',
       identifier: identifier,
       version: '003',
@@ -73,7 +70,7 @@ describe('003 protocol operations', () => {
   it('can decrypt item generated with web version 3.3.6', async () => {
     const identifier = 'demo@standardnotes.org'
     const password = 'password'
-    const keyParams = sharedApplication.encryption.createKeyParams({
+    const keyParams = application.encryption.createKeyParams({
       pw_nonce: '31107837b44d86179140b7c602a55d694243e2e9ced0c4c914ac21ad90215055',
       identifier: identifier,
       version: '003',

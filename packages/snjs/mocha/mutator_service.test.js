@@ -1,7 +1,6 @@
-/* eslint-disable no-unused-expressions */
-/* eslint-disable no-undef */
 import * as Factory from './lib/factory.js'
 import { BaseItemCounts } from './lib/BaseItemCounts.js'
+
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
@@ -12,11 +11,6 @@ describe('mutator service', function () {
   let application
   let mutator
 
-  afterEach(async function () {
-    await context.deinit()
-    localStorage.clear()
-  })
-
   beforeEach(async function () {
     localStorage.clear()
 
@@ -25,6 +19,12 @@ describe('mutator service', function () {
     mutator = application.mutator
 
     await context.launch()
+  })
+
+  afterEach(async function () {
+    await context.deinit()
+    localStorage.clear()
+    context = undefined
   })
 
   const createNote = async () => {
@@ -154,8 +154,10 @@ describe('mutator service', function () {
   describe('duplicateItem', async function () {
     const sandbox = sinon.createSandbox()
 
+    let emitPayloads
+
     beforeEach(async function () {
-      this.emitPayloads = sandbox.spy(application.payloads, 'emitPayloads')
+      emitPayloads = sandbox.spy(application.payloads, 'emitPayloads')
     })
 
     afterEach(async function () {
@@ -165,7 +167,7 @@ describe('mutator service', function () {
     it('should duplicate the item and set the duplicate_of property', async function () {
       const note = await createNote()
       await mutator.duplicateItem(note)
-      sinon.assert.calledTwice(this.emitPayloads)
+      sinon.assert.calledTwice(emitPayloads)
 
       const originalNote = application.items.getDisplayableNotes()[0]
       const duplicatedNote = application.items.getDisplayableNotes()[1]
@@ -182,7 +184,7 @@ describe('mutator service', function () {
     it('should duplicate the item and set the duplicate_of and conflict_of properties', async function () {
       const note = await createNote()
       await mutator.duplicateItem(note, true)
-      sinon.assert.calledTwice(this.emitPayloads)
+      sinon.assert.calledTwice(emitPayloads)
 
       const originalNote = application.items.getDisplayableNotes()[0]
       const duplicatedNote = application.items.getDisplayableNotes()[1]

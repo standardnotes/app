@@ -1,6 +1,6 @@
-/* eslint-disable no-unused-expressions */
-/* eslint-disable no-undef */
+
 import * as Factory from './lib/factory.js'
+
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
