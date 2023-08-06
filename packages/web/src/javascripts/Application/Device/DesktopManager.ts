@@ -17,6 +17,7 @@ import {
   BackupServiceInterface,
   DesktopWatchedDirectoriesChanges,
   ComponentInterface,
+  PayloadEmitSource,
 } from '@standardnotes/snjs'
 import { WebApplicationInterface } from '@standardnotes/ui-services'
 
@@ -193,13 +194,12 @@ export class DesktopManager
         component,
         (m) => {
           const mutator = m as ComponentMutator
-          // eslint-disable-next-line camelcase
           mutator.local_url = componentData.content.local_url as string
-          // eslint-disable-next-line camelcase
           mutator.package_info = componentData.content.package_info
           mutator.setAppDataItem(AppDataField.ComponentInstallError, undefined)
         },
         undefined,
+        PayloadEmitSource.DesktopComponentSync,
       )
     ).getValue()
 
