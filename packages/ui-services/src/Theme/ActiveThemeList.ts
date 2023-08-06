@@ -1,4 +1,4 @@
-import { UIFeature, ThemeInterface } from '@standardnotes/models'
+import { UIFeature, ComponentInterface } from '@standardnotes/models'
 import { ItemManagerInterface } from '@standardnotes/services'
 import { NativeFeatureIdentifier, FindNativeTheme, ThemeFeatureDescription } from '@standardnotes/features'
 import { Uuid } from '@standardnotes/domain-core'
@@ -54,7 +54,7 @@ export class ActiveThemeList {
 
     for (const entry of this.list) {
       if (entry instanceof Uuid) {
-        const theme = this.items.findItem<ThemeInterface>(entry.value)
+        const theme = this.items.findItem<ComponentInterface>(entry.value)
         if (theme) {
           const uiFeature = new UIFeature<ThemeFeatureDescription>(theme)
           results.push(uiFeature)

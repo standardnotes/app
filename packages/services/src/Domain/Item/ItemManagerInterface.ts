@@ -20,7 +20,6 @@ import {
   FileItem,
   VaultDisplayOptions,
   NotesAndFilesDisplayControllerOptions,
-  ThemeInterface,
   ComponentInterface,
   ItemStream,
 } from '@standardnotes/models'
@@ -123,7 +122,7 @@ export interface ItemManagerInterface extends AbstractService {
   getTagParent(itemToLookupUuidFor: SNTag): SNTag | undefined
   isValidTagParent(parentTagToLookUpUuidFor: SNTag, childToLookUpUuidFor: SNTag): boolean
   isSmartViewTitle(title: string): boolean
-  getDisplayableComponents(): (ComponentInterface | ThemeInterface)[]
+  getDisplayableComponents(): ComponentInterface[]
   createItemFromPayload<T extends DecryptedItemInterface>(payload: DecryptedPayloadInterface): T
   createPayloadFromObject(object: DecryptedTransferPayload): DecryptedPayloadInterface
   getDisplayableFiles(): FileItem[]

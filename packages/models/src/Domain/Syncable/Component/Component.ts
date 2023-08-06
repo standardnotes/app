@@ -17,27 +17,9 @@ import { DecryptedPayloadInterface } from '../../Abstract/Payload/Interfaces/Dec
 import { HistoryEntryInterface } from '../../Runtime/History'
 import { ItemContent } from '../../Abstract/Content/ItemContent'
 import { Predicate } from '../../Runtime/Predicate/Predicate'
-import { ItemInterface } from '../../Abstract/Item/Interfaces/ItemInterface'
 import { DecryptedItemInterface } from './../../Abstract/Item/Interfaces/DecryptedItem'
-import { ComponentPackageInfo } from './PackageInfo'
-import { isDecryptedItem } from '../../Abstract/Item'
+import { ComponentPackageInfo, ThemePackageInfo } from './PackageInfo'
 import { ContentType } from '@standardnotes/domain-core'
-
-export function isComponent(x: ItemInterface): x is ComponentInterface {
-  if (!isDecryptedItem(x as DecryptedItemInterface)) {
-    return false
-  }
-
-  return x.content_type === ContentType.TYPES.Component
-}
-
-export function isComponentOrTheme(x: ItemInterface): x is ComponentInterface {
-  if (!isDecryptedItem(x as DecryptedItemInterface)) {
-    return false
-  }
-
-  return x.content_type === ContentType.TYPES.Component || x.content_type === ContentType.TYPES.Theme
-}
 
 /**
  * Components are mostly iframe based extensions that communicate with the SN parent
@@ -78,7 +60,13 @@ export class SNComponent extends DecryptedItem<ComponentContent> implements Comp
     this.valid_until = new Date(payload.content.valid_until || 0)
     this.offlineOnly = payload.content.offlineOnly ?? false
     this.name = payload.content.name
-    this.area = payload.content.area
+
+    if (this.content_type === ContentType.TYPES.Theme) {
+      this.area = ComponentArea.Themes
+    } else {
+      this.area = payload.content.area
+    }
+
     this.package_info = payload.content.package_info || {}
     this.permissions = payload.content.permissions || []
     this.autoupdateDisabled = payload.content.autoupdateDisabled ?? false
@@ -149,19 +137,6 @@ export class SNComponent extends DecryptedItem<ComponentContent> implements Comp
     return [...componentKeys, ...superKeys] as (keyof ItemContent)[]
   }
 
-  /**
-   * An associative component depends on being explicitly activated for a
-   * given item, compared to a dissaciative component, which is enabled by
-   * default in areas unrelated to a certain item.
-   */
-  public static associativeAreas(): ComponentArea[] {
-    return [ComponentArea.Editor]
-  }
-
-  public isAssociative(): boolean {
-    return SNComponent.associativeAreas().includes(this.area)
-  }
-
   public isExplicitlyEnabledForItem(uuid: string): boolean {
     return this.associatedItemIds.indexOf(uuid) !== -1
   }
@@ -198,5 +173,14 @@ export class SNComponent extends DecryptedItem<ComponentContent> implements Comp
 
   public get deprecationMessage(): string | undefined {
     return this.package_info.deprecation_message
+  }
+
+  get layerableTheme(): boolean {
+    if (!this.isTheme()) {
+      return false
+    }
+
+    const themePackageInfo = this.package_info as ThemePackageInfo
+    return themePackageInfo?.layerable ?? false
   }
 }

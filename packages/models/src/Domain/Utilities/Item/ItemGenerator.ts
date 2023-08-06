@@ -9,7 +9,6 @@ import { DecryptedItem } from '../../Abstract/Item/Implementations/DecryptedItem
 import { SNNote } from '../../Syncable/Note/Note'
 import { SmartView } from '../../Syncable/SmartView/SmartView'
 import { SNTag } from '../../Syncable/Tag/Tag'
-import { SNTheme } from '../../Syncable/Theme/Theme'
 import { SNUserPrefs } from '../../Syncable/UserPrefs/UserPrefs'
 import { FileMutator } from '../../Syncable/File/FileMutator'
 import { MutationType } from '../../Abstract/Item/Types/MutationType'
@@ -67,7 +66,7 @@ const ContentTypeClassMapping: Partial<Record<string, MappingEntry>> = {
   [ContentType.TYPES.Note]: { itemClass: SNNote, mutatorClass: NoteMutator },
   [ContentType.TYPES.SmartView]: { itemClass: SmartView, mutatorClass: SmartViewMutator },
   [ContentType.TYPES.Tag]: { itemClass: SNTag, mutatorClass: TagMutator },
-  [ContentType.TYPES.Theme]: { itemClass: SNTheme, mutatorClass: ComponentMutator },
+  [ContentType.TYPES.Theme]: { itemClass: SNComponent, mutatorClass: ComponentMutator },
   [ContentType.TYPES.UserPrefs]: { itemClass: SNUserPrefs, mutatorClass: UserPrefsMutator },
 } as unknown as Partial<Record<string, MappingEntry>>
 

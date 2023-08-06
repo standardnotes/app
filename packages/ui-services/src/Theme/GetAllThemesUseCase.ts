@@ -1,5 +1,5 @@
 import { FindNativeTheme, GetNativeThemes, ThemeFeatureDescription } from '@standardnotes/features'
-import { UIFeature, ThemeInterface } from '@standardnotes/models'
+import { ComponentInterface, UIFeature } from '@standardnotes/models'
 import { ItemManagerInterface } from '@standardnotes/services'
 
 export class GetAllThemesUseCase {
@@ -15,10 +15,10 @@ export class GetAllThemesUseCase {
       .getDisplayableComponents()
       .filter(
         (component) => component.isTheme() && FindNativeTheme(component.identifier) === undefined,
-      ) as ThemeInterface[]
+      ) as ComponentInterface[]
 
     const filteredThirdPartyThemes = allThirdPartyThemes.filter((theme) => {
-      return options.excludeLayerable ? !theme.layerable : true
+      return options.excludeLayerable ? !theme.layerableTheme : true
     })
 
     return {

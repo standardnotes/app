@@ -4,8 +4,8 @@ import {
   CreateDecryptedLocalStorageContextPayload,
   LocalStorageDecryptedContextualPayload,
   PrefKey,
-  ThemeInterface,
   PrefDefaults,
+  ComponentInterface,
 } from '@standardnotes/models'
 import {
   InternalEventBusInterface,
@@ -113,7 +113,7 @@ export class ThemeManager extends AbstractUIServicee {
 
         for (const uuid of uuids) {
           if (!this.themesActiveInTheUI.has(uuid)) {
-            const theme = this.application.items.findItem<ThemeInterface>(uuid.value)
+            const theme = this.application.items.findItem<ComponentInterface>(uuid.value)
             if (theme) {
               const uiFeature = new UIFeature<ThemeFeatureDescription>(theme)
               this.activateTheme(uiFeature)
@@ -444,7 +444,7 @@ export class ThemeManager extends AbstractUIServicee {
     for (const cachedTheme of cachedThemes) {
       if ('uuid' in cachedTheme) {
         const payload = this.application.items.createPayloadFromObject(cachedTheme)
-        const theme = this.application.items.createItemFromPayload<ThemeInterface>(payload)
+        const theme = this.application.items.createItemFromPayload<ComponentInterface>(payload)
         features.push(new UIFeature<ThemeFeatureDescription>(theme))
       } else if ('identifier' in cachedTheme) {
         const feature = FindNativeTheme((cachedTheme as ThemeFeatureDescription).identifier)

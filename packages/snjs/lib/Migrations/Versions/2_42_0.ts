@@ -1,7 +1,7 @@
 import { ApplicationStage } from '@standardnotes/services'
 import { Migration } from '@Lib/Migrations/Migration'
-import { ThemeInterface } from '@standardnotes/models'
 import { ContentType } from '@standardnotes/domain-core'
+import { ComponentInterface } from '@standardnotes/models'
 
 const NoDistractionIdentifier = 'org.standardnotes.theme-no-distraction'
 
@@ -18,7 +18,7 @@ export class Migration2_42_0 extends Migration {
   }
 
   private async deleteNoDistraction(): Promise<void> {
-    const themes = this.services.itemManager.getItems<ThemeInterface>(ContentType.TYPES.Theme).filter((theme) => {
+    const themes = this.services.itemManager.getItems<ComponentInterface>(ContentType.TYPES.Theme).filter((theme) => {
       return theme.identifier === NoDistractionIdentifier
     })
 
