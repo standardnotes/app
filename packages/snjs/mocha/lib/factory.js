@@ -62,6 +62,10 @@ export async function createVaultsContextWithRealCrypto(identifier) {
   return createVaultsContext({ identifier, crypto: new SNWebCrypto() })
 }
 
+export async function createVaultsContextWithFakeCrypto(identifier) {
+  return createVaultsContext({ identifier, crypto: new FakeWebCrypto() })
+}
+
 export async function createVaultsContext({ identifier, crypto, email, password, host } = {}) {
   const context = new VaultsContext({ identifier, crypto, email, password, host })
   await context.initialize()
