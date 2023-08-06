@@ -13,7 +13,6 @@ import { SNTheme } from '../../Syncable/Theme/Theme'
 import { SNUserPrefs } from '../../Syncable/UserPrefs/UserPrefs'
 import { FileMutator } from '../../Syncable/File/FileMutator'
 import { MutationType } from '../../Abstract/Item/Types/MutationType'
-import { ThemeMutator } from '../../Syncable/Theme/ThemeMutator'
 import { UserPrefsMutator } from '../../Syncable/UserPrefs/UserPrefsMutator'
 import { ActionsExtensionMutator } from '../../Syncable/ActionsExtension/ActionsExtensionMutator'
 import { ComponentMutator } from '../../Syncable/Component/ComponentMutator'
@@ -68,7 +67,7 @@ const ContentTypeClassMapping: Partial<Record<string, MappingEntry>> = {
   [ContentType.TYPES.Note]: { itemClass: SNNote, mutatorClass: NoteMutator },
   [ContentType.TYPES.SmartView]: { itemClass: SmartView, mutatorClass: SmartViewMutator },
   [ContentType.TYPES.Tag]: { itemClass: SNTag, mutatorClass: TagMutator },
-  [ContentType.TYPES.Theme]: { itemClass: SNTheme, mutatorClass: ThemeMutator },
+  [ContentType.TYPES.Theme]: { itemClass: SNTheme, mutatorClass: ComponentMutator },
   [ContentType.TYPES.UserPrefs]: { itemClass: SNUserPrefs, mutatorClass: UserPrefsMutator },
 } as unknown as Partial<Record<string, MappingEntry>>
 
