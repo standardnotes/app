@@ -30,7 +30,11 @@ describe('storage manager', function () {
   })
 
   afterEach(async function () {
-    await Factory.safeDeinit(application)
+    await context.deinit()
+
+    application = undefined
+    context = undefined
+
     localStorage.clear()
   })
 
@@ -190,11 +194,16 @@ describe('storage manager', function () {
       password: password,
       ephemeral: true,
     })
+
     application = await Factory.signOutApplicationAndReturnNew(application)
+
     await application.storage.setValueAndAwaitPersist('bar', 'foo')
     const wrappedValue = application.storage.values[ValueModesKeys.Wrapped]
     const payload = new DecryptedPayload(wrappedValue)
+
     expect(payload.content).to.be.an.instanceof(Object)
+
+    await Factory.safeDeinit(application)
   })
 
   it('adding account then passcode should encrypt storage with account keys', async function () {
@@ -276,8 +285,11 @@ describe('storage manager', function () {
     })
 
     application = await Factory.signOutApplicationAndReturnNew(application)
+
     const values = application.storage.values[ValueModesKeys.Unwrapped]
     expect(Object.keys(values).length).to.equal(0)
+
+    await Factory.safeDeinit(application)
   })
 
   it('signing out should clear payloads', async function () {
@@ -290,8 +302,12 @@ describe('storage manager', function () {
 
     await Factory.createSyncedNote(application)
     expect(await Factory.storagePayloadCount(application)).to.equal(BaseItemCounts.DefaultItemsWithAccount + 1)
+
     application = await Factory.signOutApplicationAndReturnNew(application)
+
     await Factory.sleep(0.1, 'Allow all untrackable singleton syncs to complete')
     expect(await Factory.storagePayloadCount(application)).to.equal(BaseItemCounts.DefaultItems)
+
+    await Factory.safeDeinit(application)
   })
 })

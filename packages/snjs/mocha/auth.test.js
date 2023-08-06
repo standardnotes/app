@@ -31,6 +31,8 @@ describe('basic auth', function () {
     localStorage.clear()
 
     context = undefined
+
+    sinon.restore()
   })
 
   it('successfully register new account', async function () {
@@ -63,7 +65,7 @@ describe('basic auth', function () {
 
     expect(await context.application.encryption.getRootKey()).to.be.ok
 
-    context.application = await Factory.signOutApplicationAndReturnNew(context.application)
+    await context.signout()
 
     expect(await context.application.encryption.getRootKey()).to.not.be.ok
     expect(context.application.encryption.rootKeyManager.getKeyMode()).to.equal(KeyMode.RootKeyNone)
@@ -238,7 +240,7 @@ describe('basic auth', function () {
 
     await specContext.launch()
     await specContext.register()
-    await specContext.signout()
+    await specContext.deinit()
 
     specContext = await Factory.createAppContextWithFakeCrypto(Math.random(), uppercase, password)
 
@@ -260,10 +262,11 @@ describe('basic auth', function () {
      * with an uppercase email
      */
     const password = UuidGenerator.GenerateUuid()
+
     let specContext = await Factory.createAppContextWithFakeCrypto(Math.random(), nospace, password)
     await specContext.launch()
     await specContext.register()
-    await specContext.signout()
+    await specContext.deinit()
 
     specContext = await Factory.createAppContextWithFakeCrypto(Math.random(), withspace, password)
     await specContext.launch()
@@ -277,7 +280,8 @@ describe('basic auth', function () {
 
   it('fails login with wrong password', async function () {
     await context.register()
-    context.application = await Factory.signOutApplicationAndReturnNew(context.application)
+    await context.signout()
+
     const response = await context.application.signIn(
       context.email,
       'wrongpassword',
@@ -304,7 +308,8 @@ describe('basic auth', function () {
     expect(response.error).to.be.ok
 
     /** Ensure we can still log in */
-    context.application = await Factory.signOutAndBackIn(context.application, context.email, context.password)
+    await context.signout()
+    await context.signIn()
   }).timeout(20000)
 
   it('registering for new account and completing first after download sync should not put us out of sync', async function () {
@@ -465,7 +470,7 @@ describe('basic auth', function () {
       email: context.email,
       password: context.password,
     })
-    context.application = await Factory.signOutApplicationAndReturnNew(context.application)
+    await context.signout()
     const performSignIn = sinon.spy(context.application.sessions, 'performSignIn')
     await context.application.signIn(context.email, 'wrong password', undefined, undefined, undefined, true)
     expect(performSignIn.callCount).to.equal(1)

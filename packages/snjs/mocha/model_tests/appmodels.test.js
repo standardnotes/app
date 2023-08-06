@@ -18,8 +18,9 @@ describe('app models', () => {
   })
 
   afterEach(async function () {
-    await Factory.safeDeinit(application)
+    await context.deinit()
     localStorage.clear()
+    sinon.restore()
   })
 
   it('item should be defined', () => {

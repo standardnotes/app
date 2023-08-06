@@ -1068,5 +1068,7 @@ describe('online syncing', function () {
 
     const note = contextB.application.items.findItem(notePayload.uuid)
     expect(note).to.be.ok
+
+    await contextB.deinit()
   })
 })
