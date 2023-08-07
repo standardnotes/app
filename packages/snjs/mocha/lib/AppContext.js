@@ -198,7 +198,7 @@ export class AppContext {
 
     const responses = []
 
-    const accountPassword = this.passwordToUseForAccountPasswordChallenge || this.password
+    const accountPassword = this.password
 
     for (const prompt of challenge.prompts) {
       if (prompt.validation === ChallengeValidation.LocalPasscode) {
@@ -300,6 +300,17 @@ export class AppContext {
     })
   }
 
+  awaitNextSyncError() {
+    return new Promise((resolve) => {
+      const removeObserver = this.application.sync.addEventObserver((event, data) => {
+        if (event === SyncEvent.SyncError) {
+          removeObserver()
+          resolve(data)
+        }
+      })
+    })
+  }
+
   awaitNextSyncEvent(eventName) {
     return new Promise((resolve) => {
       const removeObserver = this.application.sync.addEventObserver((event, data) => {
@@ -322,10 +333,30 @@ export class AppContext {
     })
   }
 
+  async restoreSession(latestPassword) {
+    const promise = this.resolveWhenSessionIsReauthenticated()
+    this.password = latestPassword
+    await this.sync()
+    await promise
+    await this.sync()
+  }
+
+  resolveWhenSessionIsReauthenticated() {
+    return new Promise((resolve) => {
+      const removeObserver = this.application.sessions.addEventObserver((event, data) => {
+        if (event === SessionEvent.Restored) {
+          removeObserver()
+          resolve()
+        }
+      })
+    })
+  }
+
   resolveWithUploadedPayloads() {
     return new Promise((resolve) => {
-      this.application.sync.addEventObserver((event, data) => {
+      const removeObserver = this.application.sync.addEventObserver((event, data) => {
         if (event === SyncEvent.PaginatedSyncRequestCompleted) {
+          removeObserver()
           resolve(data.uploadedPayloads)
         }
       })
@@ -334,8 +365,9 @@ export class AppContext {
 
   resolveWithSyncRetrievedPayloads() {
     return new Promise((resolve) => {
-      this.application.sync.addEventObserver((event, data) => {
+      const removeObserver = this.application.sync.addEventObserver((event, data) => {
         if (event === SyncEvent.PaginatedSyncRequestCompleted) {
+          removeObserver()
           resolve(data.retrievedPayloads)
         }
       })
@@ -344,8 +376,9 @@ export class AppContext {
 
   resolveWithConflicts() {
     return new Promise((resolve) => {
-      this.application.sync.addEventObserver((event, response) => {
+      const removeObserver = this.application.sync.addEventObserver((event, response) => {
         if (event === SyncEvent.PaginatedSyncRequestCompleted) {
+          removeObserver()
           resolve(response.rawConflictObjects)
         }
       })
@@ -354,10 +387,11 @@ export class AppContext {
 
   resolveWhenSavedSyncPayloadsIncludesItemUuid(uuid) {
     return new Promise((resolve) => {
-      this.application.sync.addEventObserver((event, response) => {
+      const removeObserver = this.application.sync.addEventObserver((event, response) => {
         if (event === SyncEvent.PaginatedSyncRequestCompleted) {
           const savedPayload = response.savedPayloads.find((payload) => payload.uuid === uuid)
           if (savedPayload) {
+            removeObserver()
             resolve()
           }
         }
@@ -367,10 +401,11 @@ export class AppContext {
 
   resolveWhenSavedSyncPayloadsIncludesItemThatIsDuplicatedOf(uuid) {
     return new Promise((resolve) => {
-      this.application.sync.addEventObserver((event, response) => {
+      const removeObserver = this.application.sync.addEventObserver((event, response) => {
         if (event === SyncEvent.PaginatedSyncRequestCompleted) {
           const savedPayload = response.savedPayloads.find((payload) => payload.duplicate_of === uuid)
           if (savedPayload) {
+            removeObserver()
             resolve()
           }
         }
@@ -513,6 +548,12 @@ export class AppContext {
     this.password = newPassword
   }
 
+  async changeEmail(newEmail) {
+    await this.application.changeEmail(newEmail, this.password, this.passcode)
+
+    this.email = newEmail
+  }
+
   findItem(uuid) {
     return this.application.items.findItem(uuid)
   }
@@ -533,26 +574,6 @@ export class AppContext {
 
       return result.filter((i) => !uuids.includes(i.uuid))
     }
-  }
-
-  disableKeyRecoveryServerSignIn() {
-    this.keyRecovery.performServerSignIn = () => {
-      console.warn('application.keyRecovery.performServerSignIn has been stubbed with an empty implementation')
-    }
-  }
-
-  preventKeyRecoveryOfKeys(ids) {
-    const originalImpl = this.keyRecovery.handleUndecryptableItemsKeys
-
-    this.keyRecovery.handleUndecryptableItemsKeys = function (keys) {
-      const filtered = keys.filter((k) => !ids.includes(k.uuid))
-
-      originalImpl.apply(this, [filtered])
-    }
-  }
-
-  respondToAccountPasswordChallengeWith(password) {
-    this.passwordToUseForAccountPasswordChallenge = password
   }
 
   spyOnChangedItems(callback) {
