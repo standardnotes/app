@@ -424,16 +424,14 @@ describe('asymmetric messages', function () {
   })
 
   it('sending a new vault invite to a trusted contact then changing account password should still allow contact to trust invite', async () => {
-    const { contactContext, contact, deinitContactContext } = await Collaboration.createSharedVaultWithAcceptedInvite(
+    const { sharedVault, contactContext, contact, deinitContactContext } = await Collaboration.createSharedVaultWithAcceptedInvite(
       context,
     )
 
     contactContext.lockSyncing()
 
-    const newVault = await Collaboration.createSharedVault(context)
-
     await context.vaultInvites.inviteContactToSharedVault(
-      newVault,
+      sharedVault,
       contact,
       SharedVaultUserPermission.PERMISSIONS.Write,
     )
