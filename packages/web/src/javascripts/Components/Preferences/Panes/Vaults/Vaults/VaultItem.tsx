@@ -107,15 +107,15 @@ const VaultItem = ({ vault }: Props) => {
         <EditVaultModal existingVaultUuid={vault.uuid} onCloseDialog={closeVaultModal} />
       </ModalOverlay>
 
-      <div className="bg-gray-100 flex flex-row gap-3.5 rounded-lg px-3.5 py-2.5 shadow-md">
-        <Icon type={'safe-square'} size="custom" className="mt-2.5 h-5.5 w-5.5 flex-shrink-0" />
+      <div className="flex flex-row gap-3.5 rounded-lg px-3.5 py-2.5 border border-border shadow">
+        <Icon type="safe-square" size="custom" className="mt-2.5 h-5.5 w-5.5 flex-shrink-0" />
         <div className="flex flex-col gap-2 py-1.5">
           <span className="mr-auto overflow-hidden text-ellipsis text-base font-bold">{vault.name}</span>
           <span className="mr-auto overflow-hidden text-ellipsis text-sm">{vault.description}</span>
           <span className="mr-auto overflow-hidden text-ellipsis text-sm">Vault ID: {vault.systemIdentifier}</span>
 
-          <div className="mt-2.5 flex w-full flex-row justify-between">
-            <div className="mt-2.5 flex flex-row">
+          <div className="mt-2 flex w-full flex-row justify-between">
+            <div className="flex flex-row">
               <Button label="Edit" className={'mr-3 text-xs'} onClick={openEditModal} />
               {isAdmin && (
                 <Button colorStyle="danger" label="Delete" className={'mr-3 text-xs'} onClick={deleteVault} />
@@ -124,7 +124,7 @@ const VaultItem = ({ vault }: Props) => {
                 <Button label="Leave Vault" className={'mr-3 text-xs'} onClick={leaveVault} />
               )}
             </div>
-            <div className="mt-2.5 flex flex-row">
+            <div className="flex flex-row">
               {vault.isSharedVaultListing() ? (
                 <Button label="Invite Contacts" className={'mr-3 text-xs'} onClick={openInviteModal} />
               ) : (

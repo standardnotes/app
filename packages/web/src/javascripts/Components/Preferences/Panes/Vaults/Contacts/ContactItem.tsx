@@ -28,7 +28,7 @@ const ContactItem = ({ contact }: Props) => {
         <EditContactModal editContactUuid={contact.contactUuid} onCloseDialog={closeContactModal} />
       </ModalOverlay>
 
-      <div className="bg-gray-100 flex flex-row gap-3.5 rounded-lg px-3.5 py-2.5 border border-border shadow">
+      <div className="flex flex-row gap-3.5 rounded-lg px-3.5 py-2.5 border border-border shadow">
         <Icon type="user" size="custom" className="mt-2 h-5 w-5 flex-shrink-0" />
         <div className="flex flex-col gap-1 py-1.5 overflow-hidden">
           <span
