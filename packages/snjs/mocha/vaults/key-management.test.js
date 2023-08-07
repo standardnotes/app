@@ -58,7 +58,7 @@ describe('vault key management', function () {
 
       await Factory.expectThrowsAsync(
         () => context.vaults.removeItemFromVault(item),
-        'Attempting to remove item from locked vault',
+        'Cannot find latest version of item to get vault for',
       )
     })
 
