@@ -44,7 +44,7 @@ const ContactItem = ({ contact }: Props) => {
 
           <div className="mt-2.5 flex flex-row">
             <Button label="Edit" className={'mr-3 text-xs'} onClick={() => setIsContactModalOpen(true)} />
-            <Button label="Delete" className={'mr-3 text-xs'} onClick={deleteContact} />
+            {!contact.isMe && <Button label="Delete" className={'mr-3 text-xs'} onClick={deleteContact} />}
           </div>
         </div>
       </div>

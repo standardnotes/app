@@ -109,29 +109,29 @@ const VaultItem = ({ vault }: Props) => {
 
       <div className="flex flex-row gap-3.5 rounded-lg px-3.5 py-2.5 border border-border shadow">
         <Icon type="safe-square" size="custom" className="mt-2.5 h-5.5 w-5.5 flex-shrink-0" />
-        <div className="flex flex-col gap-2 py-1.5">
+        <div className="flex flex-col gap-1.5 py-1.5">
           <span className="mr-auto overflow-hidden text-ellipsis text-base font-bold">{vault.name}</span>
-          <span className="mr-auto overflow-hidden text-ellipsis text-sm">{vault.description}</span>
+          {vault.description && (
+            <span className="mr-auto overflow-hidden text-ellipsis text-sm">{vault.description}</span>
+          )}
           <span className="mr-auto overflow-hidden text-ellipsis text-sm">Vault ID: {vault.systemIdentifier}</span>
 
           <div className="mt-2 flex w-full flex-row justify-between">
             <div className="flex flex-row">
-              <Button label="Edit" className={'mr-3 text-xs'} onClick={openEditModal} />
-              {isAdmin && (
-                <Button colorStyle="danger" label="Delete" className={'mr-3 text-xs'} onClick={deleteVault} />
-              )}
+              <Button label="Edit" className="mr-3 text-xs" onClick={openEditModal} />
+              {isAdmin && <Button colorStyle="danger" label="Delete" className="mr-3 text-xs" onClick={deleteVault} />}
               {!isAdmin && vault.isSharedVaultListing() && (
-                <Button label="Leave Vault" className={'mr-3 text-xs'} onClick={leaveVault} />
+                <Button label="Leave Vault" className="mr-3 text-xs" onClick={leaveVault} />
               )}
             </div>
             <div className="flex flex-row">
               {vault.isSharedVaultListing() ? (
-                <Button label="Invite Contacts" className={'mr-3 text-xs'} onClick={openInviteModal} />
+                <Button label="Invite Contacts" className="mr-3 text-xs" onClick={openInviteModal} />
               ) : (
                 <Button
                   colorStyle="info"
                   label="Enable Collaboration"
-                  className={'mr-3 text-xs'}
+                  className="mr-3 text-xs"
                   onClick={convertToSharedVault}
                 />
               )}
