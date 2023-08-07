@@ -1,3 +1,4 @@
+import { GetVaultItems } from './../../Vault/UseCase/GetVaultItems'
 import {
   KeySystemRootKeyStorageMode,
   SharedVaultListingInterface,
@@ -6,18 +7,17 @@ import {
 } from '@standardnotes/models'
 import { ClientDisplayableError, isErrorResponse } from '@standardnotes/responses'
 import { SharedVaultServerInterface } from '@standardnotes/api'
-import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
 import { CreateVault } from '../../Vault/UseCase/CreateVault'
 import { MoveItemsToVault } from '../../Vault/UseCase/MoveItemsToVault'
 import { MutatorClientInterface } from '../../Mutator/MutatorClientInterface'
 
 export class CreateSharedVault {
   constructor(
-    private items: ItemManagerInterface,
     private mutator: MutatorClientInterface,
     private sharedVaultServer: SharedVaultServerInterface,
-    private createVault: CreateVault,
-    private moveItemsToVault: MoveItemsToVault,
+    private _createVault: CreateVault,
+    private _moveItemsToVault: MoveItemsToVault,
+    private _getVaultItems: GetVaultItems,
   ) {}
 
   async execute(dto: {
@@ -26,7 +26,7 @@ export class CreateSharedVault {
     userInputtedPassword: string | undefined
     storagePreference: KeySystemRootKeyStorageMode
   }): Promise<SharedVaultListingInterface | ClientDisplayableError> {
-    const privateVault = await this.createVault.execute({
+    const privateVault = await this._createVault.execute({
       vaultName: dto.vaultName,
       vaultDescription: dto.vaultDescription,
       userInputtedPassword: dto.userInputtedPassword,
@@ -50,9 +50,9 @@ export class CreateSharedVault {
       },
     )
 
-    const vaultItems = this.items.itemsBelongingToKeySystem(sharedVaultListing.systemIdentifier)
+    const vaultItems = this._getVaultItems.execute(sharedVaultListing).getValue()
 
-    await this.moveItemsToVault.execute({ vault: sharedVaultListing, items: vaultItems })
+    await this._moveItemsToVault.execute({ vault: sharedVaultListing, items: vaultItems })
 
     return sharedVaultListing as SharedVaultListingInterface
   }

@@ -1,4 +1,5 @@
 import * as Factory from '../lib/factory.js'
+import * as Collaboration from '../lib/Collaboration.js'
 
 chai.use(chaiAsPromised)
 const expect = chai.expect
@@ -117,6 +118,64 @@ describe('vault key management', function () {
     })
   })
 
+  describe('locking memory management', () => {
+    it('locking a vault should clear decrypted items keys from memory', async () => {
+      const vault = await context.vaults.createUserInputtedPasswordVault({
+        name: 'test vault',
+        description: 'test vault description',
+        userInputtedPassword: 'test password',
+        storagePreference: KeySystemRootKeyStorageMode.Ephemeral,
+      })
+
+      const itemsKeys = context.keys.getKeySystemItemsKeys(vault.systemIdentifier)
+      expect(itemsKeys.length).to.equal(1)
+
+      await context.vaultLocks.lockNonPersistentVault(vault)
+
+      const itemsKeysAfterLock = context.keys.getKeySystemItemsKeys(vault.systemIdentifier)
+      expect(itemsKeysAfterLock.length).to.equal(0)
+    })
+
+    it('locking then unlocking a vault should bring items keys back into memory', async () => {
+      const vault = await context.vaults.createUserInputtedPasswordVault({
+        name: 'test vault',
+        description: 'test vault description',
+        userInputtedPassword: 'test password',
+        storagePreference: KeySystemRootKeyStorageMode.Ephemeral,
+      })
+
+      await context.vaultLocks.lockNonPersistentVault(vault)
+      await context.vaultLocks.unlockNonPersistentVault(vault, 'test password')
+
+      const itemsKeys = context.keys.getKeySystemItemsKeys(vault.systemIdentifier)
+      expect(itemsKeys.length).to.equal(1)
+
+      const rootKeys = context.keys.getAllKeySystemRootKeysForVault(vault.systemIdentifier)
+      expect(rootKeys.length).to.equal(1)
+    })
+
+    it('locking should clear vault items from memory', async () => {
+      const vault = await context.vaults.createUserInputtedPasswordVault({
+        name: 'test vault',
+        description: 'test vault description',
+        userInputtedPassword: 'test password',
+        storagePreference: KeySystemRootKeyStorageMode.Ephemeral,
+      })
+
+      const note = await context.createSyncedNote()
+      await Collaboration.moveItemToVault(context, vault, note)
+
+      await context.vaultLocks.lockNonPersistentVault(vault)
+
+      const decryptedNote = context.items.findItem(note.uuid)
+      expect(decryptedNote).to.be.undefined
+
+      const encryptedNote = context.items.findAnyItem(note.uuid)
+      expect(encryptedNote).to.not.be.undefined
+      expect(isEncryptedItem(encryptedNote)).to.be.true
+    })
+  })
+
   describe('key rotation and persistence', () => {
     it('rotating ephemeral vault should not persist keys', async () => {
       const vault = await context.vaults.createUserInputtedPasswordVault({
@@ -167,43 +226,6 @@ describe('vault key management', function () {
 
       const storedKey = context.keys.getRootKeyFromStorageForVault(vault.systemIdentifier)
       expect(storedKey).to.be.undefined
-    })
-  })
-
-  describe('memory management', () => {
-    it('locking a vault should clear decrypted items keys from memory', async () => {
-      const vault = await context.vaults.createUserInputtedPasswordVault({
-        name: 'test vault',
-        description: 'test vault description',
-        userInputtedPassword: 'test password',
-        storagePreference: KeySystemRootKeyStorageMode.Ephemeral,
-      })
-
-      const itemsKeys = context.keys.getKeySystemItemsKeys(vault.systemIdentifier)
-      expect(itemsKeys.length).to.equal(1)
-
-      await context.vaultLocks.lockNonPersistentVault(vault)
-
-      const itemsKeysAfterLock = context.keys.getKeySystemItemsKeys(vault.systemIdentifier)
-      expect(itemsKeysAfterLock.length).to.equal(0)
-    })
-
-    it('locking then unlocking a vault should bring items keys back into memory', async () => {
-      const vault = await context.vaults.createUserInputtedPasswordVault({
-        name: 'test vault',
-        description: 'test vault description',
-        userInputtedPassword: 'test password',
-        storagePreference: KeySystemRootKeyStorageMode.Ephemeral,
-      })
-
-      await context.vaultLocks.lockNonPersistentVault(vault)
-      await context.vaultLocks.unlockNonPersistentVault(vault, 'test password')
-
-      const itemsKeys = context.keys.getKeySystemItemsKeys(vault.systemIdentifier)
-      expect(itemsKeys.length).to.equal(1)
-
-      const rootKeys = context.keys.getAllKeySystemRootKeysForVault(vault.systemIdentifier)
-      expect(rootKeys.length).to.equal(1)
     })
   })
 

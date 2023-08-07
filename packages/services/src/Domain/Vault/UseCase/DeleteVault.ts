@@ -1,14 +1,14 @@
 import { ClientDisplayableError } from '@standardnotes/responses'
-import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
 import { VaultListingInterface } from '@standardnotes/models'
 import { MutatorClientInterface } from '../../Mutator/MutatorClientInterface'
 import { KeySystemKeyManagerInterface } from '../../KeySystem/KeySystemKeyManagerInterface'
+import { GetVaultItems } from './GetVaultItems'
 
 export class DeleteVault {
   constructor(
-    private items: ItemManagerInterface,
     private mutator: MutatorClientInterface,
     private keys: KeySystemKeyManagerInterface,
+    private _getVaultItems: GetVaultItems,
   ) {}
 
   async execute(vault: VaultListingInterface): Promise<ClientDisplayableError | void> {
@@ -24,7 +24,7 @@ export class DeleteVault {
     const itemsKeys = this.keys.getKeySystemItemsKeys(vault.systemIdentifier)
     await this.mutator.setItemsToBeDeleted(itemsKeys)
 
-    const vaultItems = this.items.itemsBelongingToKeySystem(vault.systemIdentifier)
+    const vaultItems = this._getVaultItems.execute(vault).getValue()
     await this.mutator.setItemsToBeDeleted(vaultItems)
 
     await this.mutator.setItemToBeDeleted(vault)

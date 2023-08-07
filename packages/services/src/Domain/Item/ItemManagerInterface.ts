@@ -10,7 +10,6 @@ import {
   SNTag,
   ItemInterface,
   AnyItemInterface,
-  KeySystemIdentifier,
   ItemCollection,
   SNNote,
   SmartView,
@@ -107,7 +106,6 @@ export interface ItemManagerInterface extends AbstractService {
   findItemsIncludingBlanks<T extends DecryptedItemInterface>(uuids: string[]): (T | undefined)[]
 
   get trashedItems(): SNNote[]
-  itemsBelongingToKeySystem(systemIdentifier: KeySystemIdentifier): DecryptedItemInterface[]
   hasTagsNeedingFoldersMigration(): boolean
   get invalidNonVaultedItems(): EncryptedItemInterface[]
   isTemplateItem(item: DecryptedItemInterface): boolean

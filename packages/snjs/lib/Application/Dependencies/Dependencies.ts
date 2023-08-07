@@ -131,6 +131,7 @@ import {
   GetHost,
   SetHost,
   GenerateUuid,
+  GetVaultItems,
 } from '@standardnotes/services'
 import { ItemManager } from '../../Services/Items/ItemManager'
 import { PayloadManager } from '../../Services/Payloads/PayloadManager'
@@ -217,6 +218,10 @@ export class Dependencies {
   private registerUseCaseMakers() {
     this.factory.set(TYPES.GenerateUuid, () => {
       return new GenerateUuid(this.get<PureCryptoInterface>(TYPES.Crypto))
+    })
+
+    this.factory.set(TYPES.GetVaultItems, () => {
+      return new GetVaultItems(this.get<ItemManager>(TYPES.ItemManager))
     })
 
     this.factory.set(TYPES.DecryptErroredPayloads, () => {
@@ -389,9 +394,9 @@ export class Dependencies {
 
     this.factory.set(TYPES.DeleteVault, () => {
       return new DeleteVault(
-        this.get<ItemManager>(TYPES.ItemManager),
         this.get<MutatorService>(TYPES.MutatorService),
         this.get<KeySystemKeyManager>(TYPES.KeySystemKeyManager),
+        this.get<GetVaultItems>(TYPES.GetVaultItems),
       )
     })
 
@@ -432,11 +437,11 @@ export class Dependencies {
 
     this.factory.set(TYPES.CreateSharedVault, () => {
       return new CreateSharedVault(
-        this.get<ItemManager>(TYPES.ItemManager),
         this.get<MutatorService>(TYPES.MutatorService),
         this.get<SharedVaultServer>(TYPES.SharedVaultServer),
         this.get<CreateVault>(TYPES.CreateVault),
         this.get<MoveItemsToVault>(TYPES.MoveItemsToVault),
+        this.get<GetVaultItems>(TYPES.GetVaultItems),
       )
     })
 
@@ -566,10 +571,10 @@ export class Dependencies {
 
     this.factory.set(TYPES.ConvertToSharedVault, () => {
       return new ConvertToSharedVault(
-        this.get<ItemManager>(TYPES.ItemManager),
         this.get<MutatorService>(TYPES.MutatorService),
         this.get<SharedVaultServer>(TYPES.SharedVaultServer),
         this.get<MoveItemsToVault>(TYPES.MoveItemsToVault),
+        this.get<GetVaultItems>(TYPES.GetVaultItems),
       )
     })
 
@@ -837,6 +842,8 @@ export class Dependencies {
         this.get<KeySystemKeyManager>(TYPES.KeySystemKeyManager),
         this.get<GetVaults>(TYPES.GetVaults),
         this.get<DecryptErroredPayloads>(TYPES.DecryptErroredPayloads),
+        this.get<RemoveItemsFromMemory>(TYPES.RemoveItemsFromMemory),
+        this.get<GetVaultItems>(TYPES.GetVaultItems),
         this.get<InternalEventBus>(TYPES.InternalEventBus),
       )
     })

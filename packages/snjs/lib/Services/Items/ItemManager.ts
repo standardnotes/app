@@ -852,10 +852,6 @@ export class ItemManager extends Services.AbstractService implements Services.It
       : ItemRelationshipDirection.NoRelationship
   }
 
-  itemsBelongingToKeySystem(systemIdentifier: Models.KeySystemIdentifier): Models.DecryptedItemInterface[] {
-    return this.items.filter((item) => item.key_system_identifier === systemIdentifier)
-  }
-
   public conflictsOf(uuid: string) {
     return this.collection.conflictsOf(uuid)
   }

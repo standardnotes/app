@@ -1,16 +1,16 @@
+import { GetVaultItems } from './../../Vault/UseCase/GetVaultItems'
 import { SharedVaultListingInterface, VaultListingInterface, VaultListingMutator } from '@standardnotes/models'
 import { ClientDisplayableError, isErrorResponse } from '@standardnotes/responses'
 import { SharedVaultServerInterface } from '@standardnotes/api'
-import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
 import { MoveItemsToVault } from '../../Vault/UseCase/MoveItemsToVault'
 import { MutatorClientInterface } from '../../Mutator/MutatorClientInterface'
 
 export class ConvertToSharedVault {
   constructor(
-    private items: ItemManagerInterface,
     private mutator: MutatorClientInterface,
     private sharedVaultServer: SharedVaultServerInterface,
-    private moveItemsToVault: MoveItemsToVault,
+    private _moveItemsToVault: MoveItemsToVault,
+    private _getVaultItems: GetVaultItems,
   ) {}
 
   async execute(dto: { vault: VaultListingInterface }): Promise<SharedVaultListingInterface | ClientDisplayableError> {
@@ -35,9 +35,9 @@ export class ConvertToSharedVault {
       },
     )
 
-    const vaultItems = this.items.itemsBelongingToKeySystem(sharedVaultListing.systemIdentifier)
+    const vaultItems = this._getVaultItems.execute(sharedVaultListing).getValue()
 
-    await this.moveItemsToVault.execute({ vault: sharedVaultListing, items: vaultItems })
+    await this._moveItemsToVault.execute({ vault: sharedVaultListing, items: vaultItems })
 
     return sharedVaultListing as SharedVaultListingInterface
   }

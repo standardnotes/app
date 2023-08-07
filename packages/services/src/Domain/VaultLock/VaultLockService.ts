@@ -1,3 +1,5 @@
+import { GetVaultItems } from './../Vault/UseCase/GetVaultItems'
+import { RemoveItemsFromMemory } from './../Storage/UseCase/RemoveItemsFromMemory'
 import { GetVaults } from '../Vault/UseCase/GetVaults'
 import { KeySystemPasswordType, KeySystemRootKeyStorageMode, VaultListingInterface } from '@standardnotes/models'
 import { VaultLockServiceInterface } from './VaultLockServiceInterface'
@@ -22,6 +24,8 @@ export class VaultLockService
     private keys: KeySystemKeyManagerInterface,
     private _getVaults: GetVaults,
     private _decryptErroredPayloads: DecryptErroredPayloads,
+    private _removeItemsFromMemory: RemoveItemsFromMemory,
+    private _getVaultItems: GetVaultItems,
     eventBus: InternalEventBusInterface,
   ) {
     super(eventBus)
@@ -40,6 +44,8 @@ export class VaultLockService
     ;(this.keys as unknown) = undefined
     ;(this._getVaults as unknown) = undefined
     ;(this._decryptErroredPayloads as unknown) = undefined
+    ;(this._removeItemsFromMemory as unknown) = undefined
+    ;(this._getVaultItems as unknown) = undefined
 
     this.lockMap.clear()
   }
@@ -67,6 +73,9 @@ export class VaultLockService
     }
 
     await this.keys.wipeVaultKeysFromMemory(vault)
+
+    const vaultItems = this._getVaultItems.execute(vault).getValue()
+    await this._removeItemsFromMemory.execute(vaultItems)
 
     this.lockMap.set(vault.uuid, true)
 
