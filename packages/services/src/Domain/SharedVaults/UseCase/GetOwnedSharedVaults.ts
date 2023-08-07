@@ -13,11 +13,7 @@ export class GetOwnedSharedVaults implements SyncUseCaseInterface<SharedVaultLis
     const sharedVaults = this._getSharedVaults.execute().getValue()
 
     const ownedVaults = sharedVaults.filter((vault) => {
-      return this._isVaultOwnwer
-        .execute({
-          sharedVault: vault,
-        })
-        .getValue()
+      return this._isVaultOwnwer.execute(vault).getValue()
     })
 
     return Result.ok(ownedVaults)

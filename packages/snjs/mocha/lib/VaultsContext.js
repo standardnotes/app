@@ -85,7 +85,6 @@ export class VaultsContext extends AppContext {
     await this.vaults.moveItemToVault(privateVault, note)
 
     const sharedVault = await this.sharedVaults.convertVaultToSharedVault(privateVault)
-    console.log('createSharedPasswordVault > sharedVault:', sharedVault)
 
     const { thirdPartyContext, deinitThirdPartyContext } = await Collaboration.inviteNewPartyToSharedVault(
       this,
@@ -94,6 +93,8 @@ export class VaultsContext extends AppContext {
 
     await Collaboration.acceptAllInvites(thirdPartyContext)
 
-    return { sharedVault, thirdPartyContext, deinitThirdPartyContext }
+    const contactVault = thirdPartyContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })
+
+    return { contactVault, sharedVault, thirdPartyContext, deinitThirdPartyContext }
   }
 }

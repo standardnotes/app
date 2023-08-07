@@ -2,6 +2,7 @@ import {
   DecryptedItemInterface,
   KeySystemIdentifier,
   KeySystemRootKeyStorageMode,
+  SharedVaultListingInterface,
   VaultListingInterface,
 } from '@standardnotes/models'
 import { AbstractService } from '../Service/AbstractService'
@@ -36,5 +37,11 @@ export interface VaultServiceInterface
     params: { name: string; description: string },
   ): Promise<VaultListingInterface>
   rotateVaultRootKey(vault: VaultListingInterface, vaultPassword?: string): Promise<void>
+
   changeVaultKeyOptions(dto: ChangeVaultKeyOptionsDTO): Promise<Result<void>>
+  changeThirdPartyVaultStorageOptions(dto: {
+    vault: SharedVaultListingInterface
+    newStorageMode: KeySystemRootKeyStorageMode | undefined
+    vaultPassword: string
+  }): Promise<Result<void>>
 }

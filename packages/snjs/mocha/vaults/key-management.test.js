@@ -365,6 +365,47 @@ describe('vault key management', function () {
         const memKeys = context.keys.getAllKeySystemRootKeysForVault(vault.systemIdentifier)
         expect(memKeys.length).to.equal(1)
       })
+
+      it('should throw if attempting to change key options of third party vault', async () => {
+        await context.register()
+
+        const { contactVault, contactContext, deinitContactContext } =
+          await Collaboration.createSharedVaultWithAcceptedInvite(context)
+
+        await Factory.expectThrowsAsync(
+          () => contactContext.vaults.changeVaultKeyOptions({ vault: contactVault }),
+          'Third party vault options should be changed via changeThirdPartyVaultStorageOptions',
+        )
+
+        await deinitContactContext()
+      })
+
+      it.only('changing storage options for third party vault should validate password', async () => {
+        await context.register()
+
+        const { contactVault, thirdPartyContext, deinitThirdPartyContext } = await context.createSharedPasswordVault(
+          'test password',
+        )
+
+        const invalidResult = await thirdPartyContext.vaults.changeThirdPartyVaultStorageOptions({
+          vault: contactVault,
+          vaultPassword: 'wrong password',
+          newStorageMode: KeySystemRootKeyStorageMode.Synced,
+        })
+
+        expect(invalidResult.isFailed()).to.be.true
+        expect(invalidResult.getError()).to.equal('Invalid vault password')
+
+        const validResult = await thirdPartyContext.vaults.changeThirdPartyVaultStorageOptions({
+          vault: contactVault,
+          vaultPassword: 'test password',
+          newStorageMode: KeySystemRootKeyStorageMode.Local,
+        })
+
+        expect(validResult.isFailed()).to.be.false
+
+        await deinitThirdPartyContext()
+      })
     })
 
     describe('change password type', () => {

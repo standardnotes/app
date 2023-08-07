@@ -161,6 +161,7 @@ export const TYPES = {
   SetHost: Symbol.for('SetHost'),
   GenerateUuid: Symbol.for('GenerateUuid'),
   GetVaultItems: Symbol.for('GetVaultItems'),
+  ValidateVaultPassword: Symbol.for('ValidateVaultPassword'),
 
   // Mappers
   SessionStorageMapper: Symbol.for('SessionStorageMapper'),

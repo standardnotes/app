@@ -52,4 +52,8 @@ export class KeySystemRootKey extends DecryptedItem<KeySystemRootKeyContent> imp
   override get shared_vault_uuid(): undefined {
     return undefined
   }
+
+  isEqual(other: KeySystemRootKeyInterface): boolean {
+    return this.itemsKey === other.itemsKey && this.token === other.token
+  }
 }

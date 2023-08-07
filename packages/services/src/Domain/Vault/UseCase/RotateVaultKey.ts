@@ -114,7 +114,7 @@ export class RotateVaultKey implements UseCaseInterface<VaultListingInterface> {
       return Result.ok()
     }
 
-    const isOwner = this._isVaultOwner.execute({ sharedVault: params.vault }).getValue()
+    const isOwner = this._isVaultOwner.execute(params.vault).getValue()
 
     if (!isOwner) {
       return Result.ok()
