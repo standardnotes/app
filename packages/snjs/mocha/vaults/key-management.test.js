@@ -380,7 +380,7 @@ describe('vault key management', function () {
         await deinitContactContext()
       })
 
-      it.only('changing storage options for third party vault should validate password', async () => {
+      it('changing storage options for third party vault should validate password', async () => {
         await context.register()
 
         const { contactVault, thirdPartyContext, deinitThirdPartyContext } = await context.createSharedPasswordVault(

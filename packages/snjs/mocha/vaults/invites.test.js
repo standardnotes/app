@@ -225,6 +225,18 @@ describe('shared vault invites', function () {
   })
 
   it.skip('should fail to invite user if already member of shared vault', async () => {
-    console.error('Implement')
+    const { sharedVault, contact, deinitContactContext } = await Collaboration.createSharedVaultWithAcceptedInvite(
+      context,
+    )
+
+    const result = await context.vaultInvites.inviteContactToSharedVault(
+      sharedVault,
+      contact,
+      SharedVaultUserPermission.PERMISSIONS.Write,
+    )
+
+    expect(result.isFailed()).to.be.true
+
+    await deinitContactContext()
   })
 })
