@@ -1,4 +1,4 @@
-import { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react'
+import { FunctionComponent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Modal, { ModalAction } from '@/Components/Modal/Modal'
 import DecoratedInput from '@/Components/Input/DecoratedInput'
 import { useApplication } from '@/Components/ApplicationProvider'
@@ -27,14 +27,17 @@ const EditVaultModal: FunctionComponent<Props> = ({ onCloseDialog, existingVault
 
   const existingVault = useItem<VaultListingInterface>(existingVaultUuid)
 
-  const [name, setName] = useState<string>('')
-  const [description, setDescription] = useState<string>('')
+  const [name, setName] = useState('')
+  const [description, setDescription] = useState('')
   const [members, setMembers] = useState<SharedVaultUserServerHash[]>([])
   const [invites, setInvites] = useState<SharedVaultInviteServerHash[]>([])
-  const [isAdmin, setIsAdmin] = useState<boolean>(true)
+  const [isAdmin, setIsAdmin] = useState(true)
   const [passwordType, setPasswordType] = useState<KeySystemPasswordType>(KeySystemPasswordType.Randomized)
   const [keyStorageMode, setKeyStorageMode] = useState<KeySystemRootKeyStorageMode>(KeySystemRootKeyStorageMode.Synced)
   const [customPassword, setCustomPassword] = useState<string | undefined>(undefined)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const nameInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     if (existingVault) {
@@ -77,6 +80,11 @@ const EditVaultModal: FunctionComponent<Props> = ({ onCloseDialog, existingVault
 
   const saveExistingVault = useCallback(
     async (vault: VaultListingInterface) => {
+      if (!name) {
+        nameInputRef.current?.focus()
+        return
+      }
+
       if (vault.name !== name || vault.description !== description) {
         await application.vaults.changeVaultNameAndDescription(vault, {
           name: name,
@@ -114,11 +122,18 @@ const EditVaultModal: FunctionComponent<Props> = ({ onCloseDialog, existingVault
           newStorageMode: isChangingKeyStorageMode ? keyStorageMode : undefined,
         })
       }
+
+      handleDialogClose()
     },
-    [application.vaults, customPassword, description, keyStorageMode, name, passwordType],
+    [application.vaults, customPassword, description, handleDialogClose, keyStorageMode, name, passwordType],
   )
 
   const createNewVault = useCallback(async () => {
+    if (!name) {
+      nameInputRef.current?.focus()
+      return
+    }
+
     if (passwordType === KeySystemPasswordType.UserInputted) {
       if (!customPassword) {
         throw new Error('Custom key is not set')
@@ -140,13 +155,17 @@ const EditVaultModal: FunctionComponent<Props> = ({ onCloseDialog, existingVault
   }, [application.vaults, customPassword, description, handleDialogClose, keyStorageMode, name, passwordType])
 
   const handleSubmit = useCallback(async () => {
+    if (isSubmitting) {
+      return
+    }
+    setIsSubmitting(true)
     if (existingVault) {
       await saveExistingVault(existingVault)
     } else {
       await createNewVault()
     }
-    handleDialogClose()
-  }, [existingVault, handleDialogClose, saveExistingVault, createNewVault])
+    setIsSubmitting(false)
+  }, [isSubmitting, existingVault, saveExistingVault, createNewVault])
 
   const modalActions = useMemo(
     (): ModalAction[] => [
@@ -155,6 +174,7 @@ const EditVaultModal: FunctionComponent<Props> = ({ onCloseDialog, existingVault
         onClick: handleSubmit,
         type: 'primary',
         mobileSlot: 'right',
+        disabled: isSubmitting,
       },
       {
         label: 'Cancel',
@@ -163,7 +183,7 @@ const EditVaultModal: FunctionComponent<Props> = ({ onCloseDialog, existingVault
         mobileSlot: 'left',
       },
     ],
-    [existingVault, handleDialogClose, handleSubmit],
+    [existingVault, handleDialogClose, handleSubmit, isSubmitting],
   )
 
   if (existingVault && application.vaultLocks.isVaultLocked(existingVault)) {
@@ -180,7 +200,7 @@ const EditVaultModal: FunctionComponent<Props> = ({ onCloseDialog, existingVault
 
             <DecoratedInput
               className={{ container: 'mt-4' }}
-              id="vault-name-input"
+              ref={nameInputRef}
               value={name}
               placeholder="Vault Name"
               onChange={(value) => {
@@ -190,7 +210,6 @@ const EditVaultModal: FunctionComponent<Props> = ({ onCloseDialog, existingVault
 
             <DecoratedInput
               className={{ container: 'mt-4' }}
-              id="vault-email-input"
               value={description}
               placeholder="Vault description"
               onChange={(value) => {

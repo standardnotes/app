@@ -123,7 +123,7 @@ const Vaults = () => {
       <PreferencesGroup>
         <PreferencesSegment>
           <Title>Incoming Invites</Title>
-          <div className="my-2 flex flex-col">
+          <div className="my-2 flex flex-col gap-3.5">
             {invites.map((invite) => {
               return <InviteItem inviteRecord={invite} key={invite.invite.uuid} />
             })}
@@ -134,7 +134,7 @@ const Vaults = () => {
       <PreferencesGroup>
         <PreferencesSegment>
           <Title>Contacts</Title>
-          <div className="my-2 flex flex-col">
+          <div className="my-2 flex flex-col gap-3.5">
             {contacts.map((contact) => {
               return <ContactItem contact={contact} key={contact.uuid} />
             })}
