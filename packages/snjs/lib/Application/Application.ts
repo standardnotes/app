@@ -24,8 +24,6 @@ import {
   ImportDataUseCase,
   StoragePersistencePolicies,
   HomeServerServiceInterface,
-  ApiServiceEvent,
-  IntegrityEvent,
   DeviceInterface,
   SubscriptionManagerInterface,
   FeaturesClientInterface,
@@ -71,7 +69,6 @@ import {
   EncryptionProviderInterface,
   VaultUserServiceInterface,
   VaultInviteServiceInterface,
-  NotificationServiceEvent,
   VaultLockServiceInterface,
   ApplicationConstructorOptions,
   FullyResolvedApplicationOptions,
@@ -135,6 +132,7 @@ import { GetAuthenticatorAuthenticationResponse } from '@Lib/Domain/UseCase/GetA
 import { GetAuthenticatorAuthenticationOptions } from '@Lib/Domain/UseCase/GetAuthenticatorAuthenticationOptions/GetAuthenticatorAuthenticationOptions'
 import { Dependencies } from './Dependencies/Dependencies'
 import { TYPES } from './Dependencies/Types'
+import { RegisterApplicationServicesEvents } from './Dependencies/DependencyEvents'
 
 /** How often to automatically sync, in milliseconds */
 const DEFAULT_AUTO_SYNC_INTERVAL = 30_000
@@ -225,8 +223,8 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.dependencies = new Dependencies(this.options)
 
     this.registerServiceObservers()
-    this.defineInternalEventHandlers()
-    this.createBackgroundDependencies()
+
+    RegisterApplicationServicesEvents(this.dependencies, this.events)
   }
 
   private registerServiceObservers() {
@@ -976,79 +974,6 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     }
 
     return this.getHost.execute().getValue() === (await homeServerService.getHomeServerUrl())
-  }
-
-  private createBackgroundDependencies() {
-    this.dependencies.get(TYPES.NotificationService)
-    this.dependencies.get(TYPES.KeyRecoveryService)
-  }
-
-  private defineInternalEventHandlers(): void {
-    this.events.addEventHandler(this.dependencies.get(TYPES.FeaturesService), ApiServiceEvent.MetaReceived)
-    this.events.addEventHandler(this.dependencies.get(TYPES.IntegrityService), SyncEvent.SyncRequestsIntegrityCheck)
-    this.events.addEventHandler(this.dependencies.get(TYPES.SyncService), IntegrityEvent.IntegrityCheckCompleted)
-    this.events.addEventHandler(this.dependencies.get(TYPES.UserService), AccountEvent.SignedInOrRegistered)
-    this.events.addEventHandler(this.dependencies.get(TYPES.SessionManager), ApiServiceEvent.SessionRefreshed)
-    this.events.addEventHandler(this.dependencies.get(TYPES.SubscriptionManager), SessionEvent.Restored)
-
-    this.events.addEventHandler(this.dependencies.get(TYPES.VaultInviteService), SyncEvent.ReceivedSharedVaultInvites)
-
-    this.events.addEventHandler(this.dependencies.get(TYPES.SharedVaultService), SessionEvent.UserKeyPairChanged)
-    this.events.addEventHandler(
-      this.dependencies.get(TYPES.SharedVaultService),
-      NotificationServiceEvent.NotificationReceived,
-    )
-    this.events.addEventHandler(this.dependencies.get(TYPES.SharedVaultService), SyncEvent.ReceivedRemoteSharedVaults)
-
-    this.events.addEventHandler(
-      this.dependencies.get(TYPES.AsymmetricMessageService),
-      SyncEvent.ReceivedAsymmetricMessages,
-    )
-
-    if (this.dependencies.get(TYPES.FilesBackupService)) {
-      this.events.addEventHandler(
-        this.dependencies.get(TYPES.FilesBackupService),
-        ApplicationEvent.ApplicationStageChanged,
-      )
-    }
-    if (this.dependencies.get(TYPES.HomeServerService)) {
-      this.events.addEventHandler(
-        this.dependencies.get(TYPES.HomeServerService),
-        ApplicationEvent.ApplicationStageChanged,
-      )
-    }
-
-    this.events.addEventHandler(this.dependencies.get(TYPES.SessionManager), ApplicationEvent.ApplicationStageChanged)
-    this.events.addEventHandler(
-      this.dependencies.get(TYPES.SelfContactManager),
-      ApplicationEvent.ApplicationStageChanged,
-    )
-    this.events.addEventHandler(
-      this.dependencies.get(TYPES.KeySystemKeyManager),
-      ApplicationEvent.ApplicationStageChanged,
-    )
-    this.events.addEventHandler(
-      this.dependencies.get(TYPES.SubscriptionManager),
-      ApplicationEvent.ApplicationStageChanged,
-    )
-    this.events.addEventHandler(this.dependencies.get(TYPES.FeaturesService), ApplicationEvent.ApplicationStageChanged)
-    this.events.addEventHandler(
-      this.dependencies.get(TYPES.KeyRecoveryService),
-      ApplicationEvent.ApplicationStageChanged,
-    )
-    this.events.addEventHandler(this.dependencies.get(TYPES.MigrationService), ApplicationEvent.ApplicationStageChanged)
-    this.events.addEventHandler(
-      this.dependencies.get(TYPES.PreferencesService),
-      ApplicationEvent.ApplicationStageChanged,
-    )
-    this.events.addEventHandler(
-      this.dependencies.get(TYPES.ProtectionService),
-      ApplicationEvent.ApplicationStageChanged,
-    )
-    this.events.addEventHandler(
-      this.dependencies.get(TYPES.DiskStorageService),
-      ApplicationEvent.ApplicationStageChanged,
-    )
   }
 
   get device(): DeviceInterface {

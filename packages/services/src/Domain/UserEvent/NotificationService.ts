@@ -15,8 +15,6 @@ export class NotificationService
 
   constructor(internalEventBus: InternalEventBusInterface) {
     super(internalEventBus)
-
-    internalEventBus.addEventHandler(this, SyncEvent.ReceivedNotifications)
   }
 
   async handleEvent(event: InternalEventInterface): Promise<void> {

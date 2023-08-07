@@ -37,10 +37,6 @@ export class SubscriptionManager
     protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)
-
-    internalEventBus.addEventHandler(this, ApplicationEvent.UserRolesChanged)
-    internalEventBus.addEventHandler(this, ApplicationEvent.Launched)
-    internalEventBus.addEventHandler(this, ApplicationEvent.SignedIn)
   }
 
   async handleEvent(event: InternalEventInterface): Promise<void> {
