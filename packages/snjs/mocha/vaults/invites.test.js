@@ -223,4 +223,8 @@ describe('shared vault invites', function () {
 
     await deinitContactContext()
   })
+
+  it.skip('should fail to invite user if already member of shared vault', async () => {
+    console.error('Implement')
+  })
 })
