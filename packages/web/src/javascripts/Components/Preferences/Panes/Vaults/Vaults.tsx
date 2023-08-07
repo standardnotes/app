@@ -14,6 +14,7 @@ import {
   ContentType,
   SharedVaultServiceEvent,
   VaultUserServiceEvent,
+  RoleName,
 } from '@standardnotes/snjs'
 import VaultItem from './Vaults/VaultItem'
 import Button from '@/Components/Button/Button'
@@ -21,11 +22,14 @@ import InviteItem from './Invites/InviteItem'
 import EditVaultModal from './Vaults/VaultModal/EditVaultModal'
 import PreferencesPane from '../../PreferencesComponents/PreferencesPane'
 import { ToastType, addToast } from '@standardnotes/toast'
+import NoProSubscription from '../Account/NoProSubscription'
+import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 
 const Vaults = () => {
   const application = useApplication()
 
   const [vaults, setVaults] = useState<VaultListingInterface[]>([])
+  const [canCreateMoreVaults, setCanCreateMoreVaults] = useState(true)
   const [invites, setInvites] = useState<InviteRecord[]>([])
   const [contacts, setContacts] = useState<TrustedContactInterface[]>([])
 
@@ -37,10 +41,21 @@ const Vaults = () => {
 
   const vaultService = application.vaults
   const contactService = application.contacts
+  const featuresService = application.features
 
   const updateVaults = useCallback(async () => {
-    setVaults(vaultService.getVaults())
-  }, [vaultService])
+    const vaults = vaultService.getVaults()
+
+    if (featuresService.hasMinimumRole(RoleName.NAMES.ProUser)) {
+      setCanCreateMoreVaults(true)
+    } else if (featuresService.hasMinimumRole(RoleName.NAMES.PlusUser)) {
+      setCanCreateMoreVaults(vaults.length < 3)
+    } else {
+      setCanCreateMoreVaults(vaults.length < 1)
+    }
+
+    setVaults(vaults)
+  }, [vaultService, featuresService])
 
   const updateInvites = useCallback(async () => {
     setInvites(application.vaultInvites.getCachedPendingInviteRecords())
@@ -138,9 +153,20 @@ const Vaults = () => {
               return <VaultItem vault={vault} key={vault.uuid} />
             })}
           </div>
-          <div className="mt-2.5 flex flex-row">
-            <Button label="Create New Vault" className={'mr-3 text-xs'} onClick={createNewVault} />
-          </div>
+          {canCreateMoreVaults ? (
+            <div className="mt-2.5 flex flex-row">
+              <Button label="Create New Vault" className={'mr-3 text-xs'} onClick={createNewVault} />
+            </div>
+          ) : (
+            <div>
+              <HorizontalSeparator classes="my-4" />
+              <NoProSubscription
+                application={application}
+                text={<span>Please upgrade in order to increase your shared vault limit.</span>}
+              />
+              <HorizontalSeparator classes="my-4" />
+            </div>
+          )}
         </PreferencesSegment>
       </PreferencesGroup>
 
