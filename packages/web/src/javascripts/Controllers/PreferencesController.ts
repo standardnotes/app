@@ -29,7 +29,10 @@ export class PreferencesController extends AbstractViewController {
     this.currentPane = prefId
   }
 
-  openPreferences = (): void => {
+  openPreferences = (prefId?: PreferenceId): void => {
+    if (prefId) {
+      this.currentPane = prefId
+    }
     this._open = true
   }
 

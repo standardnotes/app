@@ -6,6 +6,8 @@ import RadioButtonGroup from '@/Components/RadioButtonGroup/RadioButtonGroup'
 import ManyVaultSelectionMenu from './ManyVaultSelectionMenu'
 import SingleVaultSelectionMenu from './SingleVaultSelectionMenu'
 import { useApplication } from '../ApplicationProvider'
+import MenuItemSeparator from '../Menu/MenuItemSeparator'
+import MenuItem from '../Menu/MenuItem'
 
 type MenuProps = {
   controller: VaultSelectionMenuController
@@ -41,9 +43,17 @@ const VaultSelectionMenu: FunctionComponent<MenuProps> = () => {
         onChange={(value) => changeSelectionMode(value as SettingsMode)}
         className="m-3 mt-1"
       />
-
       {mode === 'many' && <ManyVaultSelectionMenu />}
       {mode === 'single' && <SingleVaultSelectionMenu />}
+      <MenuItemSeparator />
+      <MenuItem
+        icon="settings"
+        onClick={() => {
+          application.preferencesController.openPreferences('vaults')
+        }}
+      >
+        Open vault settings
+      </MenuItem>
     </Menu>
   )
 }

@@ -21,7 +21,16 @@ type MenuItemProps = {
 
 const MenuItem = forwardRef(
   (
-    { children, className = '', icon, iconClassName, tabIndex, shortcut, disabled, ...props }: MenuItemProps,
+    {
+      children,
+      className = '',
+      icon,
+      iconClassName = 'w-6 h-6 md:w-5 md:h-5 text-neutral mr-2',
+      tabIndex,
+      shortcut,
+      disabled,
+      ...props
+    }: MenuItemProps,
     ref: Ref<HTMLButtonElement>,
   ) => {
     return (
