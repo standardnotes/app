@@ -159,7 +159,7 @@ const SessionsModalContent: FunctionComponent<{
                         <span className="font-bold text-info">Current session</span>
                       ) : (
                         <>
-                          <p>Signed in on {formatter.format(new Date(session.updated_at))}</p>
+                          <p>Signed in on {formatter.format(new Date(session.created_at))}</p>
                           <Button
                             primary
                             small
