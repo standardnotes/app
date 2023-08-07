@@ -23,6 +23,9 @@ import {
   RangeSelection,
   GridSelection,
   NodeSelection,
+  KEY_MODIFIER_COMMAND,
+  COMMAND_PRIORITY_NORMAL,
+  createCommand,
 } from 'lexical'
 import { $isHeadingNode } from '@lexical/rich-text'
 import {
@@ -49,13 +52,14 @@ import {
   ListNumbered,
 } from '@standardnotes/icons'
 import { IconComponent } from '../../Lexical/Theme/IconComponent'
-import { sanitizeUrl } from '../../Lexical/Utils/sanitizeUrl'
 import { classNames } from '@standardnotes/snjs'
 import { getDOMRangeRect } from '../../Lexical/Utils/getDOMRangeRect'
 import { getPositionedPopoverStyles } from '@/Components/Popover/GetPositionedPopoverStyles'
 import { getAdjustedStylesForNonPortalPopover } from '@/Components/Popover/Utils/getAdjustedStylesForNonPortal'
 import LinkEditor from '../FloatingLinkEditorPlugin/LinkEditor'
 import { movePopoverToFitInsideRect } from '@/Components/Popover/Utils/movePopoverToFitInsideRect'
+import LinkTextEditor, { $isLinkTextNode } from '../FloatingLinkEditorPlugin/LinkTextEditor'
+import { URL_REGEX } from '@/Constants/Constants'
 
 const blockTypeToBlockName = {
   bullet: 'Bulleted List',
@@ -73,6 +77,8 @@ const blockTypeToBlockName = {
 }
 
 const IconSize = 15
+
+const TOGGLE_LINK_AND_EDIT_COMMAND = createCommand<string | null>('TOGGLE_LINK_AND_EDIT_COMMAND')
 
 const ToolbarButton = ({ active, ...props }: { active?: boolean } & ComponentPropsWithoutRef<'button'>) => {
   return (
@@ -93,6 +99,7 @@ function TextFormatFloatingToolbar({
   anchorElem,
   isText,
   isLink,
+  isLinkText,
   isAutoLink,
   isBold,
   isItalic,
@@ -111,6 +118,7 @@ function TextFormatFloatingToolbar({
   isCode: boolean
   isItalic: boolean
   isLink: boolean
+  isLinkText: boolean
   isAutoLink: boolean
   isStrikethrough: boolean
   isSubscript: boolean
@@ -122,22 +130,35 @@ function TextFormatFloatingToolbar({
   const toolbarRef = useRef<HTMLDivElement | null>(null)
 
   const [linkUrl, setLinkUrl] = useState('')
+  const [linkText, setLinkText] = useState('')
   const [isLinkEditMode, setIsLinkEditMode] = useState(false)
   const [lastSelection, setLastSelection] = useState<RangeSelection | GridSelection | NodeSelection | null>(null)
+
+  useEffect(() => {
+    return editor.registerCommand(
+      TOGGLE_LINK_AND_EDIT_COMMAND,
+      (payload) => {
+        if (payload === null) {
+          return editor.dispatchCommand(TOGGLE_LINK_COMMAND, null)
+        } else if (typeof payload === 'string') {
+          const dispatched = editor.dispatchCommand(TOGGLE_LINK_COMMAND, payload)
+          setLinkUrl(payload)
+          setIsLinkEditMode(true)
+          return dispatched
+        }
+        return false
+      },
+      COMMAND_PRIORITY_LOW,
+    )
+  }, [editor])
 
   const insertLink = useCallback(() => {
     if (!isLink) {
       editor.update(() => {
-        const selection = $getSelection()
-        const textContent = selection?.getTextContent()
-        if (!textContent) {
-          editor.dispatchCommand(TOGGLE_LINK_COMMAND, 'https://')
-          return
-        }
-        editor.dispatchCommand(TOGGLE_LINK_COMMAND, sanitizeUrl(textContent))
+        editor.dispatchCommand(TOGGLE_LINK_AND_EDIT_COMMAND, '')
       })
     } else {
-      editor.dispatchCommand(TOGGLE_LINK_COMMAND, null)
+      editor.dispatchCommand(TOGGLE_LINK_AND_EDIT_COMMAND, null)
     }
   }, [editor, isLink])
 
@@ -168,6 +189,11 @@ function TextFormatFloatingToolbar({
         setLinkUrl(node.getURL())
       } else {
         setLinkUrl('')
+      }
+      if ($isLinkTextNode(node, selection)) {
+        setLinkText(node.getTextContent())
+      } else {
+        setLinkText('')
       }
     }
 
@@ -267,6 +293,42 @@ function TextFormatFloatingToolbar({
   }, [editor, updateToolbar])
 
   useEffect(() => {
+    return editor.registerCommand(
+      KEY_MODIFIER_COMMAND,
+      (payload) => {
+        const event: KeyboardEvent = payload
+        const { code, ctrlKey, metaKey } = event
+
+        if (code === 'KeyK' && (ctrlKey || metaKey)) {
+          event.preventDefault()
+          if ('readText' in navigator.clipboard) {
+            navigator.clipboard
+              .readText()
+              .then((text) => {
+                if (URL_REGEX.test(text)) {
+                  editor.dispatchCommand(TOGGLE_LINK_COMMAND, text)
+                } else {
+                  throw new Error('Not a valid URL')
+                }
+              })
+              .catch((error) => {
+                console.error(error)
+                editor.dispatchCommand(TOGGLE_LINK_AND_EDIT_COMMAND, '')
+                setIsLinkEditMode(true)
+              })
+          } else {
+            editor.dispatchCommand(TOGGLE_LINK_AND_EDIT_COMMAND, '')
+            setIsLinkEditMode(true)
+          }
+          return true
+        }
+        return false
+      },
+      COMMAND_PRIORITY_NORMAL,
+    )
+  }, [editor])
+
+  useEffect(() => {
     editor.getEditorState().read(() => updateToolbar())
   }, [editor, isLink, isText, updateToolbar])
 
@@ -277,8 +339,17 @@ function TextFormatFloatingToolbar({
   return (
     <div
       ref={toolbarRef}
-      className="absolute left-0 top-0 rounded-lg border border-border bg-contrast translucent-ui:bg-[--popover-background-color] translucent-ui:[backdrop-filter:var(--popover-backdrop-filter)] px-2 py-1 shadow-sm shadow-contrast"
+      className="absolute left-0 top-0 rounded-lg border border-border bg-contrast translucent-ui:bg-[--popover-background-color] translucent-ui:[backdrop-filter:var(--popover-backdrop-filter)] translucent-ui:border-[--popover-border-color] px-2 py-1 shadow-sm shadow-contrast"
     >
+      {isLinkText && !isAutoLink && (
+        <>
+          <LinkTextEditor linkText={linkText} editor={editor} lastSelection={lastSelection} />
+          <div
+            role="presentation"
+            className="mb-1.5 mt-0.5 h-px bg-border translucent-ui:bg-[--popover-border-color]"
+          />
+        </>
+      )}
       {isLink && (
         <LinkEditor
           linkUrl={linkUrl}
@@ -289,7 +360,9 @@ function TextFormatFloatingToolbar({
           lastSelection={lastSelection}
         />
       )}
-      {isText && isLink && <div role="presentation" className="mb-1.5 mt-0.5 h-px bg-border" />}
+      {isText && isLink && (
+        <div role="presentation" className="mb-1.5 mt-0.5 h-px bg-border translucent-ui:bg-[--popover-border-color]" />
+      )}
       {isText && (
         <div className="flex gap-1">
           <ToolbarButton
@@ -397,6 +470,7 @@ function useFloatingTextFormatToolbar(editor: LexicalEditor, anchorElem: HTMLEle
   const [isText, setIsText] = useState(false)
   const [isLink, setIsLink] = useState(false)
   const [isAutoLink, setIsAutoLink] = useState(false)
+  const [isLinkText, setIsLinkText] = useState(false)
   const [isBold, setIsBold] = useState(false)
   const [isItalic, setIsItalic] = useState(false)
   const [isUnderline, setIsUnderline] = useState(false)
@@ -486,6 +560,11 @@ function useFloatingTextFormatToolbar(editor: LexicalEditor, anchorElem: HTMLEle
       } else {
         setIsAutoLink(false)
       }
+      if ($isLinkTextNode(node, selection)) {
+        setIsLinkText(true)
+      } else {
+        setIsLinkText(false)
+      }
 
       if (!$isCodeHighlightNode(selection.anchor.getNode()) && selection.getTextContent() !== '') {
         setIsText($isTextNode(node))
@@ -530,6 +609,7 @@ function useFloatingTextFormatToolbar(editor: LexicalEditor, anchorElem: HTMLEle
       anchorElem={anchorElem}
       isText={isText}
       isLink={isLink}
+      isLinkText={isLinkText}
       isAutoLink={isAutoLink}
       isBold={isBold}
       isItalic={isItalic}

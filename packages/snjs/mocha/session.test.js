@@ -1,13 +1,16 @@
-/* eslint-disable no-unused-expressions */
-/* eslint-disable no-undef */
-import { BaseItemCounts } from './lib/BaseItemCounts.js'
 import * as Factory from './lib/factory.js'
 import WebDeviceInterface from './lib/web_device_interface.js'
+
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
 describe('server session', function () {
   this.timeout(Factory.TenSecondTimeout)
+
+  let application
+  let email
+  let password
+  let newPassword
 
   const syncOptions = {
     checkIntegrity: true,
@@ -16,16 +19,15 @@ describe('server session', function () {
 
   beforeEach(async function () {
     localStorage.clear()
-    this.expectedItemCount = BaseItemCounts.DefaultItems
-    this.application = await Factory.createInitAppWithFakeCrypto()
-    this.email = UuidGenerator.GenerateUuid()
-    this.password = UuidGenerator.GenerateUuid()
-    this.newPassword = Factory.randomString()
+    application = await Factory.createInitAppWithFakeCrypto()
+    email = UuidGenerator.GenerateUuid()
+    password = UuidGenerator.GenerateUuid()
+    newPassword = Factory.randomString()
   })
 
   afterEach(async function () {
-    await Factory.safeDeinit(this.application)
-    this.application = null
+    await Factory.safeDeinit(application)
+    application = null
     localStorage.clear()
   })
 
@@ -47,26 +49,26 @@ describe('server session', function () {
 
   it('should succeed when a sync request is perfomed with an expired access token', async function () {
     await Factory.registerUserToApplication({
-      application: this.application,
-      email: this.email,
-      password: this.password,
+      application: application,
+      email: email,
+      password: password,
     })
 
-    await sleepUntilSessionExpires(this.application)
+    await sleepUntilSessionExpires(application)
 
-    const response = await this.application.legacyApi.sync([])
+    const response = await application.legacyApi.sync([])
 
     expect(response.status).to.equal(200)
   }).timeout(Factory.TwentySecondTimeout)
 
   it('should return the new session in the response when refreshed', async function () {
     await Factory.registerUserToApplication({
-      application: this.application,
-      email: this.email,
-      password: this.password,
+      application: application,
+      email: email,
+      password: password,
     })
 
-    const response = await this.application.legacyApi.refreshSession()
+    const response = await application.legacyApi.refreshSession()
 
     expect(response.status).to.equal(200)
     expect(response.data.session.access_token).to.be.a('string')
@@ -77,22 +79,22 @@ describe('server session', function () {
 
   it('should be refreshed on any api call if access token is expired', async function () {
     await Factory.registerUserToApplication({
-      application: this.application,
-      email: this.email,
-      password: this.password,
+      application: application,
+      email: email,
+      password: password,
     })
 
     // Saving the current session information for later...
-    const sessionBeforeSync = this.application.legacyApi.getSession()
+    const sessionBeforeSync = application.legacyApi.getSession()
 
     // Waiting enough time for the access token to expire, before performing a new sync request.
-    await sleepUntilSessionExpires(this.application)
+    await sleepUntilSessionExpires(application)
 
     // Performing a sync request with an expired access token.
-    await this.application.sync.sync(syncOptions)
+    await application.sync.sync(syncOptions)
 
     // After the above sync request is completed, we obtain the session information.
-    const sessionAfterSync = this.application.legacyApi.getSession()
+    const sessionAfterSync = application.legacyApi.getSession()
 
     expect(sessionBeforeSync.accessToken.value).to.not.equal(sessionAfterSync.accessToken.value)
     expect(sessionBeforeSync.refreshToken.value).to.not.equal(sessionAfterSync.refreshToken.value)
@@ -103,59 +105,59 @@ describe('server session', function () {
 
   it('should not deadlock while renewing session', async function () {
     await Factory.registerUserToApplication({
-      application: this.application,
-      email: this.email,
-      password: this.password,
+      application: application,
+      email: email,
+      password: password,
     })
 
-    await sleepUntilSessionExpires(this.application)
+    await sleepUntilSessionExpires(application)
 
-    // Apply a latency simulation so that ` this.inProgressRefreshSessionPromise = this.refreshSession()` does
+    // Apply a latency simulation so that ` inProgressRefreshSessionPromise = refreshSession()` does
     // not have the chance to complete before it is assigned to the variable. This test came along with a fix
     // where runHttp does not await a pending refreshSession promise if the request being made is itself a refreshSession request.
-    this.application.http.__latencySimulatorMs = 1000
-    await this.application.sync.sync(syncOptions)
+    application.http.__latencySimulatorMs = 1000
+    await application.sync.sync(syncOptions)
 
-    const sessionAfterSync = this.application.legacyApi.getSession()
+    const sessionAfterSync = application.legacyApi.getSession()
 
     expect(sessionAfterSync.accessToken.expiresAt).to.be.greaterThan(Date.now())
   }).timeout(Factory.TwentySecondTimeout)
 
   it('should succeed when a sync request is perfomed after signing into an ephemeral session', async function () {
     await Factory.registerUserToApplication({
-      application: this.application,
-      email: this.email,
-      password: this.password,
+      application: application,
+      email: email,
+      password: password,
     })
-    this.application = await Factory.signOutApplicationAndReturnNew(this.application)
+    application = await Factory.signOutApplicationAndReturnNew(application)
 
-    await this.application.signIn(this.email, this.password, false, true)
+    await application.signIn(email, password, false, true)
 
-    const response = await this.application.legacyApi.sync([])
+    const response = await application.legacyApi.sync([])
     expect(response.status).to.equal(200)
   })
 
   it('should succeed when a sync request is perfomed after registering into an ephemeral session', async function () {
     await Factory.registerUserToApplication({
-      application: this.application,
-      email: this.email,
-      password: this.password,
+      application: application,
+      email: email,
+      password: password,
       ephemeral: true,
     })
 
-    const response = await this.application.legacyApi.sync([])
+    const response = await application.legacyApi.sync([])
     expect(response.status).to.equal(200)
   })
 
   it('should be consistent between storage and apiService', async function () {
     await Factory.registerUserToApplication({
-      application: this.application,
-      email: this.email,
-      password: this.password,
+      application: application,
+      email: email,
+      password: password,
     })
 
-    const sessionFromStorage = await getSessionFromStorage(this.application)
-    const sessionFromApiService = this.application.legacyApi.getSession()
+    const sessionFromStorage = await getSessionFromStorage(application)
+    const sessionFromApiService = application.legacyApi.getSession()
 
     expect(sessionFromStorage.accessToken).to.equal(sessionFromApiService.accessToken.value)
     expect(sessionFromStorage.refreshToken).to.equal(sessionFromApiService.refreshToken.value)
@@ -163,10 +165,10 @@ describe('server session', function () {
     expect(sessionFromStorage.refreshExpiration).to.equal(sessionFromApiService.refreshToken.expiresAt)
     expect(sessionFromStorage.readonlyAccess).to.equal(sessionFromApiService.isReadOnly())
 
-    await this.application.legacyApi.refreshSession()
+    await application.legacyApi.refreshSession()
 
-    const updatedSessionFromStorage = await getSessionFromStorage(this.application)
-    const updatedSessionFromApiService = this.application.legacyApi.getSession()
+    const updatedSessionFromStorage = await getSessionFromStorage(application)
+    const updatedSessionFromApiService = application.legacyApi.getSession()
 
     expect(updatedSessionFromStorage.accessToken).to.equal(updatedSessionFromApiService.accessToken.value)
     expect(updatedSessionFromStorage.refreshToken).to.equal(updatedSessionFromApiService.refreshToken.value)
@@ -177,16 +179,16 @@ describe('server session', function () {
 
   it('should be performed successfully and terminate session with a valid access token', async function () {
     await Factory.registerUserToApplication({
-      application: this.application,
-      email: this.email,
-      password: this.password,
+      application: application,
+      email: email,
+      password: password,
     })
 
-    const signOutResponse = await this.application.legacyApi.signOut()
+    const signOutResponse = await application.legacyApi.signOut()
     expect(signOutResponse.status).to.equal(204)
 
-    Factory.ignoreChallenges(this.application)
-    const syncResponse = await this.application.legacyApi.sync([])
+    Factory.ignoreChallenges(application)
+    const syncResponse = await application.legacyApi.sync([])
     expect(syncResponse.status).to.equal(401)
     expect(syncResponse.data.error.tag).to.equal('invalid-auth')
     expect(syncResponse.data.error.message).to.equal('Invalid login credentials.')
@@ -194,19 +196,19 @@ describe('server session', function () {
 
   it('sign out request should be performed successfully and terminate session with expired access token', async function () {
     await Factory.registerUserToApplication({
-      application: this.application,
-      email: this.email,
-      password: this.password,
+      application: application,
+      email: email,
+      password: password,
     })
 
     // Waiting enough time for the access token to expire, before performing a sign out request.
-    await sleepUntilSessionExpires(this.application)
+    await sleepUntilSessionExpires(application)
 
-    const signOutResponse = await this.application.legacyApi.signOut()
+    const signOutResponse = await application.legacyApi.signOut()
     expect(signOutResponse.status).to.equal(204)
 
-    Factory.ignoreChallenges(this.application)
-    const syncResponse = await this.application.legacyApi.sync([])
+    Factory.ignoreChallenges(application)
+    const syncResponse = await application.legacyApi.sync([])
     expect(syncResponse.status).to.equal(401)
     expect(syncResponse.data.error.tag).to.equal('invalid-auth')
     expect(syncResponse.data.error.message).to.equal('Invalid login credentials.')
@@ -276,20 +278,20 @@ describe('server session', function () {
 
   it('change password request should be successful with a valid access token', async function () {
     await Factory.registerUserToApplication({
-      application: this.application,
-      email: this.email,
-      password: this.password,
+      application: application,
+      email: email,
+      password: password,
     })
 
-    const changePasswordResponse = await this.application.changePassword(this.password, this.newPassword)
+    const changePasswordResponse = await application.changePassword(password, newPassword)
 
     expect(changePasswordResponse.error).to.not.be.ok
 
-    this.application = await Factory.signOutApplicationAndReturnNew(this.application)
+    application = await Factory.signOutApplicationAndReturnNew(application)
     const loginResponse = await Factory.loginToApplication({
-      application: this.application,
-      email: this.email,
-      password: this.newPassword,
+      application: application,
+      email: email,
+      password: newPassword,
     })
 
     expect(loginResponse).to.be.ok
@@ -298,23 +300,23 @@ describe('server session', function () {
 
   it('change password request should be successful after the expired access token is refreshed', async function () {
     await Factory.registerUserToApplication({
-      application: this.application,
-      email: this.email,
-      password: this.password,
+      application: application,
+      email: email,
+      password: password,
     })
 
     // Waiting enough time for the access token to expire.
-    await sleepUntilSessionExpires(this.application)
+    await sleepUntilSessionExpires(application)
 
-    const changePasswordResponse = await this.application.changePassword(this.password, this.newPassword)
+    const changePasswordResponse = await application.changePassword(password, newPassword)
 
     expect(changePasswordResponse.error).to.not.be.ok
 
-    this.application = await Factory.signOutApplicationAndReturnNew(this.application)
+    application = await Factory.signOutApplicationAndReturnNew(application)
     const loginResponse = await Factory.loginToApplication({
-      application: this.application,
-      email: this.email,
-      password: this.newPassword,
+      application: application,
+      email: email,
+      password: newPassword,
     })
 
     expect(loginResponse).to.be.ok
@@ -323,39 +325,39 @@ describe('server session', function () {
 
   it('change password request should fail with an invalid access token', async function () {
     await Factory.registerUserToApplication({
-      application: this.application,
-      email: this.email,
-      password: this.password,
+      application: application,
+      email: email,
+      password: password,
     })
 
-    this.application.storage.setValue(StorageKey.Session, {
+    application.storage.setValue(StorageKey.Session, {
       accessToken: 'this-is-a-fake-token-1234',
       refreshToken: 'this-is-a-fake-token-1234',
       accessExpiration: 999999999999999,
       refreshExpiration: 99999999999999,
       readonlyAccess: false,
     })
-    this.application.sessions.initializeFromDisk()
+    application.sessions.initializeFromDisk()
 
-    Factory.ignoreChallenges(this.application)
-    const changePasswordResponse = await this.application.changePassword(this.password, this.newPassword)
+    Factory.ignoreChallenges(application)
+    const changePasswordResponse = await application.changePassword(password, newPassword)
     expect(changePasswordResponse.error.message).to.equal('Invalid login credentials.')
   })
 
   it('change password request should fail with an expired refresh token', async function () {
     await Factory.registerUserToApplication({
-      application: this.application,
-      email: this.email,
-      password: this.password,
+      application: application,
+      email: email,
+      password: password,
     })
 
-    this.application.sync.lockSyncing()
+    application.sync.lockSyncing()
 
     /** Waiting for the refresh token to expire. */
-    await sleepUntilSessionExpires(this.application, false)
+    await sleepUntilSessionExpires(application, false)
 
-    Factory.ignoreChallenges(this.application)
-    const changePasswordResponse = await this.application.changePassword(this.password, this.newPassword)
+    Factory.ignoreChallenges(application)
+    const changePasswordResponse = await application.changePassword(password, newPassword)
 
     expect(changePasswordResponse).to.be.ok
     expect(changePasswordResponse.error.message).to.equal('Invalid login credentials.')
@@ -363,17 +365,17 @@ describe('server session', function () {
 
   it('should sign in successfully after signing out', async function () {
     await Factory.registerUserToApplication({
-      application: this.application,
-      email: this.email,
-      password: this.password,
+      application: application,
+      email: email,
+      password: password,
     })
 
-    await this.application.legacyApi.signOut()
-    this.application.legacyApi.session = undefined
+    await application.legacyApi.signOut()
+    application.legacyApi.session = undefined
 
-    await this.application.sessions.signIn(this.email, this.password)
+    await application.sessions.signIn(email, password)
 
-    const currentSession = this.application.legacyApi.getSession()
+    const currentSession = application.legacyApi.getSession()
 
     expect(currentSession).to.be.ok
     expect(currentSession.accessToken).to.be.ok
@@ -383,16 +385,16 @@ describe('server session', function () {
 
   it('should fail when renewing a session with an expired refresh token', async function () {
     await Factory.registerUserToApplication({
-      application: this.application,
-      email: this.email,
-      password: this.password,
+      application: application,
+      email: email,
+      password: password,
     })
 
-    this.application.sync.lockSyncing()
+    application.sync.lockSyncing()
 
-    await sleepUntilSessionExpires(this.application, false)
+    await sleepUntilSessionExpires(application, false)
 
-    const refreshSessionResponse = await this.application.legacyApi.refreshSession()
+    const refreshSessionResponse = await application.legacyApi.refreshSession()
 
     expect(refreshSessionResponse.status).to.equal(400)
     expect(refreshSessionResponse.data.error.tag).to.equal('expired-refresh-token')
@@ -402,8 +404,8 @@ describe('server session', function () {
       The access token and refresh token should be expired up to this point.
       Here we make sure that any subsequent requests will fail.
     */
-    Factory.ignoreChallenges(this.application)
-    const syncResponse = await this.application.legacyApi.sync([])
+    Factory.ignoreChallenges(application)
+    const syncResponse = await application.legacyApi.sync([])
     expect(syncResponse.status).to.equal(401)
     expect(syncResponse.data.error.tag).to.equal('invalid-auth')
     expect(syncResponse.data.error.message).to.equal('Invalid login credentials.')
@@ -411,42 +413,42 @@ describe('server session', function () {
 
   it('should fail when renewing a session with an invalid refresh token', async function () {
     await Factory.registerUserToApplication({
-      application: this.application,
-      email: this.email,
-      password: this.password,
+      application: application,
+      email: email,
+      password: password,
     })
 
-    const originalSession = this.application.legacyApi.getSession()
+    const originalSession = application.legacyApi.getSession()
 
-    this.application.storage.setValue(StorageKey.Session, {
+    application.storage.setValue(StorageKey.Session, {
       accessToken: originalSession.accessToken.value,
       refreshToken: 'this-is-a-fake-token-1234',
       accessExpiration: originalSession.accessToken.expiresAt,
       refreshExpiration: originalSession.refreshToken.expiresAt,
       readonlyAccess: false,
     })
-    this.application.sessions.initializeFromDisk()
+    application.sessions.initializeFromDisk()
 
-    const refreshSessionResponse = await this.application.legacyApi.refreshSession()
+    const refreshSessionResponse = await application.legacyApi.refreshSession()
 
     expect(refreshSessionResponse.status).to.equal(400)
     expect(refreshSessionResponse.data.error.tag).to.equal('invalid-refresh-token')
     expect(refreshSessionResponse.data.error.message).to.equal('The refresh token is not valid.')
 
     // Access token should remain valid.
-    const syncResponse = await this.application.legacyApi.sync([])
+    const syncResponse = await application.legacyApi.sync([])
     expect(syncResponse.status).to.equal(200)
   })
 
   it('should fail if syncing while a session refresh is in progress', async function () {
     await Factory.registerUserToApplication({
-      application: this.application,
-      email: this.email,
-      password: this.password,
+      application: application,
+      email: email,
+      password: password,
     })
 
-    const refreshPromise = this.application.legacyApi.refreshSession()
-    const syncResponse = await this.application.legacyApi.sync([])
+    const refreshPromise = application.legacyApi.refreshSession()
+    const syncResponse = await application.legacyApi.sync([])
 
     expect(syncResponse.data.error).to.be.ok
 
@@ -458,40 +460,40 @@ describe('server session', function () {
 
   it('notes should be synced as expected after refreshing a session', async function () {
     await Factory.registerUserToApplication({
-      application: this.application,
-      email: this.email,
-      password: this.password,
+      application: application,
+      email: email,
+      password: password,
     })
 
-    const notesBeforeSync = await Factory.createManyMappedNotes(this.application, 5)
+    const notesBeforeSync = await Factory.createManyMappedNotes(application, 5)
 
-    await sleepUntilSessionExpires(this.application)
-    await this.application.sync.sync(syncOptions)
-    expect(this.application.sync.isOutOfSync()).to.equal(false)
+    await sleepUntilSessionExpires(application)
+    await application.sync.sync(syncOptions)
+    expect(application.sync.isOutOfSync()).to.equal(false)
 
-    this.application = await Factory.signOutApplicationAndReturnNew(this.application)
-    await this.application.signIn(this.email, this.password, undefined, undefined, undefined, true)
+    application = await Factory.signOutApplicationAndReturnNew(application)
+    await application.signIn(email, password, undefined, undefined, undefined, true)
 
     const expectedNotesUuids = notesBeforeSync.map((n) => n.uuid)
-    const notesResults = await this.application.items.findItems(expectedNotesUuids)
+    const notesResults = await application.items.findItems(expectedNotesUuids)
 
     expect(notesResults.length).to.equal(notesBeforeSync.length)
 
     for (const aNoteBeforeSync of notesBeforeSync) {
-      const noteResult = await this.application.items.findItem(aNoteBeforeSync.uuid)
+      const noteResult = await application.items.findItem(aNoteBeforeSync.uuid)
       expect(aNoteBeforeSync.isItemContentEqualWith(noteResult)).to.equal(true)
     }
   }).timeout(Factory.TwentySecondTimeout)
 
   it('should prompt user for account password and sign back in on invalid session', async function () {
     await Factory.registerUserToApplication({
-      application: this.application,
-      email: this.email,
-      password: this.password,
+      application: application,
+      email: email,
+      password: password,
     })
 
-    const email = `${Math.random()}`
-    const password = `${Math.random()}`
+    email = `${Math.random()}`
+    password = `${Math.random()}`
     let didPromptForSignIn = false
     const receiveChallenge = async (challenge) => {
       didPromptForSignIn = true
@@ -541,55 +543,55 @@ describe('server session', function () {
 
   it('should return current session in list of sessions', async function () {
     await Factory.registerUserToApplication({
-      application: this.application,
-      email: this.email,
-      password: this.password,
+      application: application,
+      email: email,
+      password: password,
     })
 
-    const response = await this.application.legacyApi.getSessionsList()
+    const response = await application.legacyApi.getSessionsList()
     expect(response.data[0].current).to.equal(true)
   })
 
   it('signing out should delete session from all list', async function () {
     await Factory.registerUserToApplication({
-      application: this.application,
-      email: this.email,
-      password: this.password,
+      application: application,
+      email: email,
+      password: password,
     })
 
     /** Create new session aside from existing one */
     const app2 = await Factory.createAndInitializeApplication('app2')
-    await app2.signIn(this.email, this.password)
+    await app2.signIn(email, password)
 
-    const response = await this.application.legacyApi.getSessionsList()
+    const response = await application.legacyApi.getSessionsList()
     expect(response.data.length).to.equal(2)
 
     await app2.user.signOut()
 
-    const response2 = await this.application.legacyApi.getSessionsList()
+    const response2 = await application.legacyApi.getSessionsList()
     expect(response2.data.length).to.equal(1)
   })
 
   it('revoking a session should destroy local data', async function () {
-    Factory.handlePasswordChallenges(this.application, this.password)
+    Factory.handlePasswordChallenges(application, password)
     await Factory.registerUserToApplication({
-      application: this.application,
-      email: this.email,
-      password: this.password,
+      application: application,
+      email: email,
+      password: password,
     })
 
     const app2identifier = 'app2'
     const app2 = await Factory.createAndInitializeApplication(app2identifier)
-    await app2.signIn(this.email, this.password)
+    await app2.signIn(email, password)
     const app2Deinit = new Promise((resolve) => {
       app2.setOnDeinit(() => {
         resolve()
       })
     })
 
-    const { data: sessions } = await this.application.getSessions()
+    const { data: sessions } = await application.getSessions()
     const app2session = sessions.find((session) => !session.current)
-    await this.application.revokeSession(app2session.uuid)
+    await application.revokeSession(app2session.uuid)
     void app2.sync.sync()
     await app2Deinit
 
@@ -599,23 +601,23 @@ describe('server session', function () {
   }).timeout(Factory.TwentySecondTimeout)
 
   it('revoking other sessions should destroy their local data', async function () {
-    Factory.handlePasswordChallenges(this.application, this.password)
+    Factory.handlePasswordChallenges(application, password)
     await Factory.registerUserToApplication({
-      application: this.application,
-      email: this.email,
-      password: this.password,
+      application: application,
+      email: email,
+      password: password,
     })
 
     const app2identifier = 'app2'
     const app2 = await Factory.createAndInitializeApplication(app2identifier)
-    await app2.signIn(this.email, this.password)
+    await app2.signIn(email, password)
     const app2Deinit = new Promise((resolve) => {
       app2.setOnDeinit(() => {
         resolve()
       })
     })
 
-    await this.application.revokeAllOtherSessions()
+    await application.revokeAllOtherSessions()
     void app2.sync.sync()
     await app2Deinit
 
@@ -626,24 +628,24 @@ describe('server session', function () {
 
   it('signing out with invalid session token should still delete local data', async function () {
     await Factory.registerUserToApplication({
-      application: this.application,
-      email: this.email,
-      password: this.password,
+      application: application,
+      email: email,
+      password: password,
     })
 
-    this.application.storage.setValue(StorageKey.Session, {
+    application.storage.setValue(StorageKey.Session, {
       accessToken: undefined,
       refreshToken: undefined,
       accessExpiration: 999999999999999,
       refreshExpiration: 999999999999999,
       readonlyAccess: false,
     })
-    this.application.sessions.initializeFromDisk()
+    application.sessions.initializeFromDisk()
 
-    const storageKey = this.application.storage.getPersistenceKey()
+    const storageKey = application.storage.getPersistenceKey()
     expect(localStorage.getItem(storageKey)).to.be.ok
 
-    await this.application.user.signOut()
+    await application.user.signOut()
     expect(localStorage.getItem(storageKey)).to.not.be.ok
   })
 })

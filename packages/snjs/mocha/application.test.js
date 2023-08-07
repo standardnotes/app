@@ -1,7 +1,6 @@
-/* eslint-disable no-unused-expressions */
-/* eslint-disable no-undef */
 import { BaseItemCounts } from './lib/BaseItemCounts.js'
 import * as Factory from './lib/factory.js'
+
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
@@ -131,6 +130,12 @@ describe('application instances', () => {
       testNote1 = await Factory.createMappedNote(testSNApp, 'Note 1', 'This is a test note!', false)
       confirmAlert = sinon.spy(testSNApp.alerts, 'confirm')
       deinit = sinon.spy(testSNApp, 'deinit')
+    })
+
+    afterEach(async () => {
+      await Factory.safeDeinit(testSNApp)
+      localStorage.clear()
+      sinon.restore()
     })
 
     it('shows confirmation dialog when there are unsaved changes', async () => {

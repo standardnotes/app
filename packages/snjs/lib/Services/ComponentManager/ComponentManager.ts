@@ -69,7 +69,7 @@ declare global {
  * and other components. The component manager primarily deals with iframes, and orchestrates
  * sending and receiving messages to and from frames via the postMessage API.
  */
-export class SNComponentManager
+export class ComponentManager
   extends AbstractService<ComponentManagerEvent, ComponentManagerEventData>
   implements ComponentManagerInterface
 {

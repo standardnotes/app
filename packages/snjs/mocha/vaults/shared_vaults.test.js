@@ -24,6 +24,8 @@ describe('shared vaults', function () {
   afterEach(async function () {
     await context.deinit()
     localStorage.clear()
+    sinon.restore()
+    context = undefined
   })
 
   it('should update vault name and description', async () => {

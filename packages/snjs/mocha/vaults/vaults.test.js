@@ -9,19 +9,22 @@ describe('vaults', function () {
   let context
   let vaults
 
-  afterEach(async function () {
-    await context.deinit()
-    localStorage.clear()
-  })
-
   beforeEach(async function () {
     localStorage.clear()
 
-    context = await Factory.createVaultsContextWithRealCrypto()
+    context = await Factory.createVaultsContextWithFakeCrypto()
 
     await context.launch()
 
     vaults = context.vaults
+  })
+
+  afterEach(async function () {
+    await context.deinit()
+    localStorage.clear()
+    sinon.restore()
+    context = undefined
+    vaults = undefined
   })
 
   describe('offline', function () {
@@ -77,7 +80,7 @@ describe('vaults', function () {
       await vaults.moveItemToVault(vault, note)
       await context.deinit()
 
-      const recreatedContext = await Factory.createVaultsContextWithRealCrypto(appIdentifier)
+      const recreatedContext = await Factory.createVaultsContextWithFakeCrypto(appIdentifier)
       await recreatedContext.launch()
 
       const updatedNote = recreatedContext.items.findItem(note.uuid)
@@ -101,7 +104,7 @@ describe('vaults', function () {
 
         await context.deinit()
 
-        const recreatedContext = await Factory.createVaultsContextWithRealCrypto(appIdentifier)
+        const recreatedContext = await Factory.createVaultsContextWithFakeCrypto(appIdentifier)
         await recreatedContext.launch()
 
         const notes = recreatedContext.notes
@@ -128,7 +131,7 @@ describe('vaults', function () {
 
         await context.deinit()
 
-        const recreatedContext = await Factory.createVaultsContextWithRealCrypto(appIdentifier)
+        const recreatedContext = await Factory.createVaultsContextWithFakeCrypto(appIdentifier)
         await recreatedContext.launch()
 
         const updatedNote = recreatedContext.items.findItem(note.uuid)
@@ -181,7 +184,7 @@ describe('vaults', function () {
         await vaults.moveItemToVault(vault, note)
         await context.deinit()
 
-        const recreatedContext = await Factory.createVaultsContextWithRealCrypto(appIdentifier)
+        const recreatedContext = await Factory.createVaultsContextWithFakeCrypto(appIdentifier)
         await recreatedContext.launch()
 
         const updatedNote = recreatedContext.items.findItem(note.uuid)

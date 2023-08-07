@@ -1,16 +1,10 @@
-/* eslint-disable no-unused-expressions */
-/* eslint-disable no-undef */
 import * as Factory from './lib/factory.js'
+
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
 describe('key recovery service', function () {
   this.timeout(Factory.TwentySecondTimeout)
-
-  const syncOptions = {
-    checkIntegrity: true,
-    awaitAll: true,
-  }
 
   beforeEach(function () {
     localStorage.clear()
@@ -18,6 +12,7 @@ describe('key recovery service', function () {
 
   afterEach(function () {
     localStorage.clear()
+    sinon.restore()
   })
 
   it('when encountering an undecryptable items key, should recover through recovery wizard', async function () {
@@ -433,9 +428,7 @@ describe('key recovery service', function () {
       KeyParamsOrigination.Registration,
       ProtocolVersion.V003,
     )
-    const randomItemsKey = await context.operators
-      .operatorForVersion(ProtocolVersion.V003)
-      .createItemsKey()
+    const randomItemsKey = await context.operators.operatorForVersion(ProtocolVersion.V003).createItemsKey()
 
     const encrypted = await application.encryption.encryptSplitSingle({
       usesRootKey: {

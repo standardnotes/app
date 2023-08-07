@@ -65,15 +65,10 @@ export class VaultsContext extends AppContext {
   }
 
   /**
-   * Run a request to keep refresh token from expiring due to long bouts of inactivity for contact context
+   * Keep refresh token from expiring due to long bouts of inactivity for contact context
    * while main context changes password. Tests have a refresh token age of 10s typically, and changing password
    * on CI environment may be time consuming.
    */
-  async runAnyRequestToPreventRefreshTokenFromExpiring() {
-    await this.asymmetric.getInboundMessages()
-  }
-
-  /** Used for long running tests to avoid 498 responses */
   async forceRefreshSession() {
     await this.application.http.refreshSession()
   }

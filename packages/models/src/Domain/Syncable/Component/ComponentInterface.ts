@@ -1,9 +1,10 @@
 import { ComponentArea, ComponentPermission, NoteType, ThirdPartyFeatureDescription } from '@standardnotes/features'
-import { ComponentPackageInfo } from './PackageInfo'
+import { ComponentPackageInfo, ThemePackageInfo } from './PackageInfo'
 import { DecryptedItemInterface } from '../../Abstract/Item'
 import { ComponentContent } from './ComponentContent'
 
-export interface ComponentInterface extends DecryptedItemInterface<ComponentContent> {
+export interface ComponentInterface<P extends ComponentPackageInfo | ThemePackageInfo = ComponentPackageInfo>
+  extends DecryptedItemInterface<ComponentContent> {
   /** Items that have requested a component to be disabled in its context */
   disassociatedItemIds: string[]
 
@@ -16,16 +17,18 @@ export interface ComponentInterface extends DecryptedItemInterface<ComponentCont
   offlineOnly: boolean
   name: string
   autoupdateDisabled: boolean
-  package_info: ComponentPackageInfo
+  package_info: P
   area: ComponentArea
   permissions: ComponentPermission[]
   valid_until: Date
-  isMobileDefault: boolean
   isDeprecated: boolean
 
   isExplicitlyEnabledForItem(uuid: string): boolean
   hasValidHostedUrl(): boolean
+
   isTheme(): boolean
+  get layerableTheme(): boolean
+
   isExplicitlyDisabledForItem(uuid: string): boolean
   legacyIsDefaultEditor(): boolean
 

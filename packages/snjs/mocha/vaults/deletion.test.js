@@ -10,11 +10,6 @@ describe('shared vault deletion', function () {
   let context
   let sharedVaults
 
-  afterEach(async function () {
-    await context.deinit()
-    localStorage.clear()
-  })
-
   beforeEach(async function () {
     localStorage.clear()
 
@@ -24,6 +19,12 @@ describe('shared vault deletion', function () {
     await context.register()
 
     sharedVaults = context.sharedVaults
+  })
+
+  afterEach(async function () {
+    await context.deinit()
+    localStorage.clear()
+    sinon.restore()
   })
 
   it('should remove item from all user devices when item is deleted permanently', async () => {
@@ -102,7 +103,10 @@ describe('shared vault deletion', function () {
 
   it('leaving a shared vault should remove its items locally', async () => {
     const { sharedVault, note, contactContext, deinitContactContext } =
-      await Collaboration.createSharedVaultWithAcceptedInviteAndNote(context, SharedVaultUserPermission.PERMISSIONS.Admin)
+      await Collaboration.createSharedVaultWithAcceptedInviteAndNote(
+        context,
+        SharedVaultUserPermission.PERMISSIONS.Admin,
+      )
 
     const originalNote = contactContext.items.findItem(note.uuid)
     expect(originalNote).to.not.be.undefined

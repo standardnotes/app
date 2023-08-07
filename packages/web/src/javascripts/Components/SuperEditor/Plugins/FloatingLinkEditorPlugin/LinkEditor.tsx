@@ -4,7 +4,7 @@ import { KeyboardKey } from '@standardnotes/ui-services'
 import { IconComponent } from '../../Lexical/Theme/IconComponent'
 import { sanitizeUrl } from '../../Lexical/Utils/sanitizeUrl'
 import { TOGGLE_LINK_COMMAND } from '@lexical/link'
-import { useCallback, useState, useRef } from 'react'
+import { useCallback, useState, useRef, useEffect } from 'react'
 import { GridSelection, LexicalEditor, NodeSelection, RangeSelection } from 'lexical'
 import { classNames } from '@standardnotes/snjs'
 
@@ -35,6 +35,10 @@ const LinkEditor = ({ linkUrl, isEditMode, setEditMode, editor, lastSelection, i
       input.focus()
     }
   }, [])
+
+  useEffect(() => {
+    setEditedLinkUrl(linkUrl)
+  }, [linkUrl])
 
   return isEditMode ? (
     <div className="flex items-center gap-2" ref={editModeContainer}>

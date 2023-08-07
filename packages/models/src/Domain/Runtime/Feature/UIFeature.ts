@@ -12,10 +12,10 @@ import {
   isThemeFeatureDescription,
 } from '@standardnotes/features'
 import { ComponentInterface } from '../../Syncable/Component/ComponentInterface'
-import { isTheme } from '../../Syncable/Theme'
 import { isItemBasedFeature, isNativeFeature } from './TypeGuards'
 import { UIFeatureInterface } from './UIFeatureInterface'
 import { Uuid } from '@standardnotes/domain-core'
+import { ThemePackageInfo, isTheme } from '../../Syncable/Component'
 
 export class UIFeature<F extends UIFeatureDescriptionTypes> implements UIFeatureInterface<F> {
   constructor(public readonly item: ComponentInterface | F) {}
@@ -33,6 +33,14 @@ export class UIFeature<F extends UIFeatureDescriptionTypes> implements UIFeature
   }
 
   get asComponent(): ComponentInterface {
+    if (isItemBasedFeature(this.item)) {
+      return this.item
+    }
+
+    throw new Error('Cannot cast item to component')
+  }
+
+  get asTheme(): ComponentInterface<ThemePackageInfo> {
     if (isItemBasedFeature(this.item)) {
       return this.item
     }
@@ -145,7 +153,7 @@ export class UIFeature<F extends UIFeatureDescriptionTypes> implements UIFeature
 
   get layerable(): boolean {
     if (isItemBasedFeature(this.item) && isTheme(this.item)) {
-      return this.item.layerable
+      return this.item.layerableTheme
     } else if (isThemeFeatureDescription(this.asFeatureDescription)) {
       return this.asFeatureDescription.layerable ?? false
     }
@@ -155,7 +163,7 @@ export class UIFeature<F extends UIFeatureDescriptionTypes> implements UIFeature
 
   get dockIcon(): ThemeDockIcon | undefined {
     if (isItemBasedFeature(this.item) && isTheme(this.item)) {
-      return this.item.package_info.dock_icon
+      return this.asTheme.package_info.dock_icon
     } else if (isThemeFeatureDescription(this.asFeatureDescription)) {
       return this.asFeatureDescription.dock_icon
     }

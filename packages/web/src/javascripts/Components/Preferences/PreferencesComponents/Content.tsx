@@ -23,18 +23,21 @@ export const Text: FunctionComponent<Props> = ({ children, className }) => (
   <p className={classNames('text-base lg:text-xs', className)}>{children}</p>
 )
 
-const buttonClasses =
-  'block bg-passive-5 text-text rounded border-solid \
-border px-4 py-1.5 font-bold text-base lg:text-sm w-fit \
-focus:bg-contrast hover:bg-contrast border-border'
-
 export const LinkButton: FunctionComponent<{
   label: string
   link: string
   className?: string
   onClick?: MouseEventHandler<HTMLAnchorElement>
 }> = ({ label, link, className, onClick }) => (
-  <a target="_blank" className={`${className} ${buttonClasses}`} href={link} onClick={onClick}>
+  <a
+    target="_blank"
+    className={classNames(
+      'block bg-normal-button text-text rounded border-solid border px-4 py-1.5 font-bold text-base lg:text-sm w-fit focus:bg-contrast hover:bg-contrast border-border',
+      className,
+    )}
+    href={link}
+    onClick={onClick}
+  >
     {label}
   </a>
 )

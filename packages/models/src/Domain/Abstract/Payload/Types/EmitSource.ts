@@ -28,6 +28,7 @@ export enum PayloadEmitSource {
 
   RemoteRetrieved,
   RemoteSaved,
+  DesktopComponentSync,
 }
 
 /**

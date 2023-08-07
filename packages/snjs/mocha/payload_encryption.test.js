@@ -1,31 +1,33 @@
-/* eslint-disable no-unused-expressions */
-/* eslint-disable no-undef */
 import * as Factory from './lib/factory.js'
 import { createRelatedNoteTagPairPayload } from './lib/Items.js'
+
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
 describe('payload encryption', function () {
+  let application
+
   beforeEach(async function () {
     this.timeout(Factory.TenSecondTimeout)
     localStorage.clear()
-    this.application = await Factory.createInitAppWithFakeCrypto()
+    application = await Factory.createInitAppWithFakeCrypto()
   })
 
   afterEach(async function () {
-    await Factory.safeDeinit(this.application)
+    await Factory.safeDeinit(application)
     localStorage.clear()
+    application = undefined
   })
 
   it('creating payload from item should create copy not by reference', async function () {
-    const item = await Factory.createMappedNote(this.application)
+    const item = await Factory.createMappedNote(application)
     const payload = new DecryptedPayload(item.payload.ejected())
     expect(item.content === payload.content).to.equal(false)
     expect(item.content.references === payload.content.references).to.equal(false)
   })
 
   it('creating payload from item should preserve appData', async function () {
-    const item = await Factory.createMappedNote(this.application)
+    const item = await Factory.createMappedNote(application)
     const payload = new DecryptedPayload(item.payload.ejected())
     expect(item.content.appData).to.be.ok
     expect(JSON.stringify(item.content)).to.equal(JSON.stringify(payload.content))
@@ -40,7 +42,7 @@ describe('payload encryption', function () {
       lastSyncBegan: new Date(),
     })
 
-    const encryptedPayload = await this.application.encryption.encryptSplitSingle({
+    const encryptedPayload = await application.encryption.encryptSplitSingle({
       usesItemsKeyWithKeyLookup: {
         items: [notePayload],
       },
@@ -85,7 +87,7 @@ describe('payload encryption', function () {
   })
 
   it('copying payload with override content should override completely', async function () {
-    const item = await Factory.createMappedNote(this.application)
+    const item = await Factory.createMappedNote(application)
     const payload = new DecryptedPayload(item.payload.ejected())
     const mutated = new DecryptedPayload({
       ...payload,
@@ -114,7 +116,7 @@ describe('payload encryption', function () {
   it('returns valid encrypted params for syncing', async function () {
     const payload = Factory.createNotePayload()
     const encryptedPayload = CreateEncryptedServerSyncPushPayload(
-      await this.application.encryption.encryptSplitSingle({
+      await application.encryption.encryptSplitSingle({
         usesItemsKeyWithKeyLookup: {
           items: [payload],
         },
@@ -126,7 +128,7 @@ describe('payload encryption', function () {
     expect(encryptedPayload.content_type).to.be.ok
     expect(encryptedPayload.created_at).to.be.ok
     expect(encryptedPayload.content).to.satisfy((string) => {
-      return string.startsWith(this.application.encryption.getLatestVersion())
+      return string.startsWith(application.encryption.getLatestVersion())
     })
   }).timeout(5000)
 
@@ -134,7 +136,7 @@ describe('payload encryption', function () {
     const payload = Factory.createNotePayload()
 
     const encryptedPayload = CreateEncryptedLocalStorageContextPayload(
-      await this.application.encryption.encryptSplitSingle({
+      await application.encryption.encryptSplitSingle({
         usesItemsKeyWithKeyLookup: {
           items: [payload],
         },
@@ -150,14 +152,14 @@ describe('payload encryption', function () {
     expect(encryptedPayload.deleted).to.not.be.ok
     expect(encryptedPayload.errorDecrypting).to.not.be.ok
     expect(encryptedPayload.content).to.satisfy((string) => {
-      return string.startsWith(this.application.encryption.getLatestVersion())
+      return string.startsWith(application.encryption.getLatestVersion())
     })
   })
 
   it('omits deleted for export file', async function () {
     const payload = Factory.createNotePayload()
     const encryptedPayload = CreateEncryptedBackupFileContextPayload(
-      await this.application.encryption.encryptSplitSingle({
+      await application.encryption.encryptSplitSingle({
         usesItemsKeyWithKeyLookup: {
           items: [payload],
         },
@@ -170,7 +172,7 @@ describe('payload encryption', function () {
     expect(encryptedPayload.created_at).to.be.ok
     expect(encryptedPayload.deleted).to.not.be.ok
     expect(encryptedPayload.content).to.satisfy((string) => {
-      return string.startsWith(this.application.encryption.getLatestVersion())
+      return string.startsWith(application.encryption.getLatestVersion())
     })
   })
 

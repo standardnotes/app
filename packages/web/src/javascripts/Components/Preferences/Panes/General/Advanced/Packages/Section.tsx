@@ -45,7 +45,7 @@ const PackagesPreferencesSection: FunctionComponent<Props> = ({
     application.alerts
       .confirm(
         'Are you sure you want to uninstall this plugin? Note that plugins managed by your subscription will automatically be re-installed on application restart.',
-        'Uninstall Extension?',
+        'Uninstall Plugin?',
         'Uninstall',
         ButtonType.Danger,
         'Cancel',

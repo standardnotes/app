@@ -1,41 +1,49 @@
-/* eslint-disable no-unused-expressions */
-/* eslint-disable no-undef */
 import * as Factory from './lib/factory.js'
+
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
 describe('upgrading', () => {
+  let application
+  let context
+  let email
+  let password
+  let passcode
+  let receiveChallenge
+  let receiveChallengeWithApp
+
   beforeEach(async function () {
     localStorage.clear()
 
-    this.context = await Factory.createAppContext()
-    await this.context.launch()
+    context = await Factory.createAppContext()
+    await context.launch()
 
-    this.application = this.context.application
-    this.email = UuidGenerator.GenerateUuid()
-    this.password = UuidGenerator.GenerateUuid()
-    this.passcode = '1234'
+    application = context.application
+    email = UuidGenerator.GenerateUuid()
+    password = UuidGenerator.GenerateUuid()
+    passcode = '1234'
 
     const promptValueReply = (prompts) => {
       const values = []
       for (const prompt of prompts) {
         if (prompt.validation === ChallengeValidation.LocalPasscode) {
-          values.push(CreateChallengeValue(prompt, this.passcode))
+          values.push(CreateChallengeValue(prompt, passcode))
         } else {
-          values.push(CreateChallengeValue(prompt, this.password))
+          values.push(CreateChallengeValue(prompt, password))
         }
       }
       return values
     }
-    this.receiveChallenge = (challenge) => {
-      void this.receiveChallengeWithApp(this.application, challenge)
+
+    receiveChallenge = (challenge) => {
+      void receiveChallengeWithApp(application, challenge)
     }
-    this.receiveChallengeWithApp = (application, challenge) => {
+
+    receiveChallengeWithApp = (application, challenge) => {
       application.addChallengeObserver(challenge, {
         onInvalidValue: (value) => {
           const values = promptValueReply([value.prompt])
           application.submitValuesForChallenge(challenge, values)
-          numPasscodeAttempts++
         },
       })
       const initialValues = promptValueReply(challenge.prompts)
@@ -44,7 +52,7 @@ describe('upgrading', () => {
   })
 
   afterEach(async function () {
-    await Factory.safeDeinit(this.application)
+    await Factory.safeDeinit(application)
     localStorage.clear()
   })
 
@@ -52,76 +60,72 @@ describe('upgrading', () => {
     const oldVersion = ProtocolVersion.V003
     /** Register with 003 version */
     await Factory.registerOldUser({
-      application: this.application,
-      email: this.email,
-      password: this.password,
+      application: application,
+      email: email,
+      password: password,
       version: oldVersion,
     })
 
-    expect(await this.application.protocolUpgradeAvailable()).to.equal(true)
+    expect(await application.protocolUpgradeAvailable()).to.equal(true)
   })
 
   it('upgrade should be available when passcode only', async function () {
     const oldVersion = ProtocolVersion.V003
     await Factory.setOldVersionPasscode({
-      application: this.application,
-      passcode: this.passcode,
+      application: application,
+      passcode: passcode,
       version: oldVersion,
     })
 
-    expect(await this.application.protocolUpgradeAvailable()).to.equal(true)
+    expect(await application.protocolUpgradeAvailable()).to.equal(true)
   })
 
   it('upgrades application protocol from 003 to 004', async function () {
     const oldVersion = ProtocolVersion.V003
     const newVersion = ProtocolVersion.V004
 
-    await Factory.createMappedNote(this.application)
+    await Factory.createMappedNote(application)
 
     /** Register with 003 version */
     await Factory.registerOldUser({
-      application: this.application,
-      email: this.email,
-      password: this.password,
+      application: application,
+      email: email,
+      password: password,
       version: oldVersion,
     })
 
     await Factory.setOldVersionPasscode({
-      application: this.application,
-      passcode: this.passcode,
+      application: application,
+      passcode: passcode,
       version: oldVersion,
     })
 
-    expect((await this.application.encryption.rootKeyManager.getRootKeyWrapperKeyParams()).version).to.equal(
-      oldVersion,
-    )
-    expect((await this.application.encryption.getRootKeyParams()).version).to.equal(oldVersion)
-    expect((await this.application.encryption.getRootKey()).keyVersion).to.equal(oldVersion)
+    expect((await application.encryption.rootKeyManager.getRootKeyWrapperKeyParams()).version).to.equal(oldVersion)
+    expect((await application.encryption.getRootKeyParams()).version).to.equal(oldVersion)
+    expect((await application.encryption.getRootKey()).keyVersion).to.equal(oldVersion)
 
-    this.application.setLaunchCallback({
-      receiveChallenge: this.receiveChallenge,
+    application.setLaunchCallback({
+      receiveChallenge: receiveChallenge,
     })
-    const result = await this.application.upgradeProtocolVersion()
+    const result = await application.upgradeProtocolVersion()
     expect(result).to.deep.equal({ success: true })
 
-    const wrappedRootKey = await this.application.encryption.rootKeyManager.getWrappedRootKey()
+    const wrappedRootKey = await application.encryption.rootKeyManager.getWrappedRootKey()
     const payload = new EncryptedPayload(wrappedRootKey)
     expect(payload.version).to.equal(newVersion)
 
-    expect((await this.application.encryption.rootKeyManager.getRootKeyWrapperKeyParams()).version).to.equal(
-      newVersion,
-    )
-    expect((await this.application.encryption.getRootKeyParams()).version).to.equal(newVersion)
-    expect((await this.application.encryption.getRootKey()).keyVersion).to.equal(newVersion)
+    expect((await application.encryption.rootKeyManager.getRootKeyWrapperKeyParams()).version).to.equal(newVersion)
+    expect((await application.encryption.getRootKeyParams()).version).to.equal(newVersion)
+    expect((await application.encryption.getRootKey()).keyVersion).to.equal(newVersion)
 
     /**
      * Immediately logging out ensures we don't rely on subsequent
      * sync events to complete the upgrade
      */
-    this.application = await Factory.signOutApplicationAndReturnNew(this.application)
-    await this.application.signIn(this.email, this.password, undefined, undefined, undefined, true)
-    expect(this.application.items.getDisplayableNotes().length).to.equal(1)
-    expect(this.application.payloads.invalidPayloads).to.be.empty
+    application = await Factory.signOutApplicationAndReturnNew(application)
+    await application.signIn(email, password, undefined, undefined, undefined, true)
+    expect(application.items.getDisplayableNotes().length).to.equal(1)
+    expect(application.payloads.invalidPayloads).to.be.empty
   }).timeout(15000)
 
   it('upgrading from 003 to 004 with passcode only then reiniting app should create valid state', async function () {
@@ -133,23 +137,23 @@ describe('upgrading', () => {
     const oldVersion = ProtocolVersion.V003
 
     await Factory.setOldVersionPasscode({
-      application: this.application,
-      passcode: this.passcode,
+      application: application,
+      passcode: passcode,
       version: oldVersion,
     })
-    await Factory.createSyncedNote(this.application)
+    await Factory.createSyncedNote(application)
 
-    this.application.setLaunchCallback({
-      receiveChallenge: this.receiveChallenge,
+    application.setLaunchCallback({
+      receiveChallenge: receiveChallenge,
     })
 
-    const identifier = this.application.identifier
+    const identifier = application.identifier
 
     /** Recreate the app once */
     const appFirst = Factory.createApplicationWithFakeCrypto(identifier)
     await appFirst.prepareForLaunch({
       receiveChallenge: (challenge) => {
-        this.receiveChallengeWithApp(appFirst, challenge)
+        receiveChallengeWithApp(appFirst, challenge)
       },
     })
     await appFirst.launch(true)
@@ -162,7 +166,7 @@ describe('upgrading', () => {
     const appSecond = Factory.createApplicationWithFakeCrypto(identifier)
     await appSecond.prepareForLaunch({
       receiveChallenge: (challenge) => {
-        this.receiveChallengeWithApp(appSecond, challenge)
+        receiveChallengeWithApp(appSecond, challenge)
       },
     })
     await appSecond.launch(true)
@@ -172,46 +176,46 @@ describe('upgrading', () => {
 
   it('protocol version should be upgraded on password change', async function () {
     /** Delete default items key that is created on launch */
-    const itemsKey = await this.application.encryption.getSureDefaultItemsKey()
-    await this.application.mutator.setItemToBeDeleted(itemsKey)
-    expect(Uuids(this.application.items.getDisplayableItemsKeys()).includes(itemsKey.uuid)).to.equal(false)
+    const itemsKey = await application.encryption.getSureDefaultItemsKey()
+    await application.mutator.setItemToBeDeleted(itemsKey)
+    expect(Uuids(application.items.getDisplayableItemsKeys()).includes(itemsKey.uuid)).to.equal(false)
 
-    Factory.createMappedNote(this.application)
+    Factory.createMappedNote(application)
 
     /** Register with 003 version */
     await Factory.registerOldUser({
-      application: this.application,
-      email: this.email,
-      password: this.password,
+      application: application,
+      email: email,
+      password: password,
       version: ProtocolVersion.V003,
     })
 
-    expect(this.application.items.getDisplayableItemsKeys().length).to.equal(1)
+    expect(application.items.getDisplayableItemsKeys().length).to.equal(1)
 
-    expect((await this.application.encryption.getRootKeyParams()).version).to.equal(ProtocolVersion.V003)
-    expect((await this.application.encryption.getRootKey()).keyVersion).to.equal(ProtocolVersion.V003)
+    expect((await application.encryption.getRootKeyParams()).version).to.equal(ProtocolVersion.V003)
+    expect((await application.encryption.getRootKey()).keyVersion).to.equal(ProtocolVersion.V003)
 
     /** Ensure note is encrypted with 003 */
-    const notePayloads = await Factory.getStoragePayloadsOfType(this.application, ContentType.TYPES.Note)
+    const notePayloads = await Factory.getStoragePayloadsOfType(application, ContentType.TYPES.Note)
     expect(notePayloads.length).to.equal(1)
     expect(notePayloads[0].version).to.equal(ProtocolVersion.V003)
 
-    const { error } = await this.application.changePassword(this.password, 'foobarfoo')
+    const { error } = await application.changePassword(password, 'foobarfoo')
     expect(error).to.not.exist
 
-    const latestVersion = this.application.encryption.getLatestVersion()
-    expect((await this.application.encryption.getRootKeyParams()).version).to.equal(latestVersion)
-    expect((await this.application.encryption.getRootKey()).keyVersion).to.equal(latestVersion)
+    const latestVersion = application.encryption.getLatestVersion()
+    expect((await application.encryption.getRootKeyParams()).version).to.equal(latestVersion)
+    expect((await application.encryption.getRootKey()).keyVersion).to.equal(latestVersion)
 
-    const defaultItemsKey = await this.application.encryption.getSureDefaultItemsKey()
+    const defaultItemsKey = await application.encryption.getSureDefaultItemsKey()
     expect(defaultItemsKey.keyVersion).to.equal(latestVersion)
 
     /** After change, note should now be encrypted with latest protocol version */
 
-    const note = this.application.items.getDisplayableNotes()[0]
-    await Factory.markDirtyAndSyncItem(this.application, note)
+    const note = application.items.getDisplayableNotes()[0]
+    await Factory.markDirtyAndSyncItem(application, note)
 
-    const refreshedNotePayloads = await Factory.getStoragePayloadsOfType(this.application, ContentType.TYPES.Note)
+    const refreshedNotePayloads = await Factory.getStoragePayloadsOfType(application, ContentType.TYPES.Note)
     const refreshedNotePayload = refreshedNotePayloads[0]
     expect(refreshedNotePayload.version).to.equal(latestVersion)
   }).timeout(5000)
@@ -221,19 +225,19 @@ describe('upgrading', () => {
     const oldVersion = ProtocolVersion.V003
 
     beforeEach(async function () {
-      await Factory.createMappedNote(this.application)
+      await Factory.createMappedNote(application)
 
       /** Register with 003 version */
       await Factory.registerOldUser({
-        application: this.application,
-        email: this.email,
-        password: this.password,
+        application: application,
+        email: email,
+        password: password,
         version: oldVersion,
       })
 
       await Factory.setOldVersionPasscode({
-        application: this.application,
-        passcode: this.passcode,
+        application: application,
+        passcode: passcode,
         version: oldVersion,
       })
     })
@@ -243,44 +247,36 @@ describe('upgrading', () => {
     })
 
     it('rolls back the local protocol upgrade if syncing fails', async function () {
-      sinon.replace(this.application.sync, 'sync', sinon.fake())
-      this.application.setLaunchCallback({
-        receiveChallenge: this.receiveChallenge,
+      sinon.replace(application.sync, 'sync', sinon.fake())
+      application.setLaunchCallback({
+        receiveChallenge: receiveChallenge,
       })
-      expect((await this.application.encryption.rootKeyManager.getRootKeyWrapperKeyParams()).version).to.equal(
-        oldVersion,
-      )
-      const errors = await this.application.upgradeProtocolVersion()
+      expect((await application.encryption.rootKeyManager.getRootKeyWrapperKeyParams()).version).to.equal(oldVersion)
+      const errors = await application.upgradeProtocolVersion()
       expect(errors).to.not.be.empty
 
       /** Ensure we're still on 003 */
-      expect((await this.application.encryption.rootKeyManager.getRootKeyWrapperKeyParams()).version).to.equal(
-        oldVersion,
-      )
-      expect((await this.application.encryption.getRootKeyParams()).version).to.equal(oldVersion)
-      expect((await this.application.encryption.getRootKey()).keyVersion).to.equal(oldVersion)
-      expect((await this.application.encryption.getSureDefaultItemsKey()).keyVersion).to.equal(oldVersion)
+      expect((await application.encryption.rootKeyManager.getRootKeyWrapperKeyParams()).version).to.equal(oldVersion)
+      expect((await application.encryption.getRootKeyParams()).version).to.equal(oldVersion)
+      expect((await application.encryption.getRootKey()).keyVersion).to.equal(oldVersion)
+      expect((await application.encryption.getSureDefaultItemsKey()).keyVersion).to.equal(oldVersion)
     })
 
     it('rolls back the local protocol upgrade if the server responds with an error', async function () {
-      sinon.replace(this.application.sessions, 'changeCredentials', () => [Error()])
+      sinon.replace(application.sessions, 'changeCredentials', () => [Error()])
 
-      this.application.setLaunchCallback({
-        receiveChallenge: this.receiveChallenge,
+      application.setLaunchCallback({
+        receiveChallenge: receiveChallenge,
       })
-      expect((await this.application.encryption.rootKeyManager.getRootKeyWrapperKeyParams()).version).to.equal(
-        oldVersion,
-      )
-      const errors = await this.application.upgradeProtocolVersion()
+      expect((await application.encryption.rootKeyManager.getRootKeyWrapperKeyParams()).version).to.equal(oldVersion)
+      const errors = await application.upgradeProtocolVersion()
       expect(errors).to.not.be.empty
 
       /** Ensure we're still on 003 */
-      expect((await this.application.encryption.rootKeyManager.getRootKeyWrapperKeyParams()).version).to.equal(
-        oldVersion,
-      )
-      expect((await this.application.encryption.getRootKeyParams()).version).to.equal(oldVersion)
-      expect((await this.application.encryption.getRootKey()).keyVersion).to.equal(oldVersion)
-      expect((await this.application.encryption.getSureDefaultItemsKey()).keyVersion).to.equal(oldVersion)
+      expect((await application.encryption.rootKeyManager.getRootKeyWrapperKeyParams()).version).to.equal(oldVersion)
+      expect((await application.encryption.getRootKeyParams()).version).to.equal(oldVersion)
+      expect((await application.encryption.getRootKey()).keyVersion).to.equal(oldVersion)
+      expect((await application.encryption.getSureDefaultItemsKey()).keyVersion).to.equal(oldVersion)
     })
   })
 })

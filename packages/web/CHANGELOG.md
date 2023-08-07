@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.169.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.169.3...@standardnotes/web@3.169.4) (2023-08-06)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.169.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.169.2...@standardnotes/web@3.169.3) (2023-08-06)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.169.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.169.1...@standardnotes/web@3.169.2) (2023-08-06)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.169.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.169.0...@standardnotes/web@3.169.1) (2023-08-06)
+
+**Note:** Version bump only for package @standardnotes/web
+
+# [3.169.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.168.0...@standardnotes/web@3.169.0) (2023-08-06)
+
+### Features
+
+* Improved link editing and creation in Super notes ([#2382](https://github.com/standardnotes/app/issues/2382)) [skip e2e] ([4b24b58](https://github.com/standardnotes/app/commit/4b24b58f2152a5e55a328003708f607b2ea3ea4d))
+
 # [3.168.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.167.38...@standardnotes/web@3.168.0) (2023-08-05)
 
 ### Features

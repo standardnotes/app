@@ -1,16 +1,15 @@
-/* eslint-disable no-unused-expressions */
-/* eslint-disable no-undef */
 import * as Factory from './lib/factory.js'
 import { createRelatedNoteTagPairPayload } from './lib/Items.js'
+
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
 describe('payload collections', () => {
-  before(async () => {
+  beforeEach(async () => {
     localStorage.clear()
   })
 
-  after(async () => {
+  afterEach(async () => {
     localStorage.clear()
   })
 

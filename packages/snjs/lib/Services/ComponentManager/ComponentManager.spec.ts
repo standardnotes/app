@@ -11,7 +11,7 @@ import {
 } from '@standardnotes/services'
 import { ItemManager } from '@Lib/Services/Items/ItemManager'
 import { FeaturesService } from '@Lib/Services/Features/FeaturesService'
-import { SNComponentManager } from './ComponentManager'
+import { ComponentManager } from './ComponentManager'
 import { SyncService } from '../Sync/SyncService'
 import { LoggerInterface } from '@standardnotes/utils'
 
@@ -27,7 +27,7 @@ describe('featuresService', () => {
   let logger: LoggerInterface
 
   const createManager = (environment: Environment, platform: Platform) => {
-    const manager = new SNComponentManager(
+    const manager = new ComponentManager(
       items,
       mutator,
       sync,

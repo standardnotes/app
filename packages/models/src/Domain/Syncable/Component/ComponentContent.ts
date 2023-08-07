@@ -21,7 +21,6 @@ export type ComponentContentSpecialized = {
   valid_until: Date | number
 
   legacy_url?: string
-  isMobileDefault?: boolean
   isDeprecated?: boolean
 
   /** @deprecated */

@@ -1,14 +1,9 @@
 import { addIfUnique, removeFromArray } from '@standardnotes/utils'
 import { ComponentFeatureDescription, ComponentPermission } from '@standardnotes/features'
-import { AppDataField } from '../../Abstract/Item/Types/AppDataField'
 import { ComponentContent } from './ComponentContent'
 import { DecryptedItemMutator } from '../../Abstract/Item/Mutator/DecryptedItemMutator'
 
 export class ComponentMutator extends DecryptedItemMutator<ComponentContent> {
-  set isMobileDefault(isMobileDefault: boolean) {
-    this.mutableContent.isMobileDefault = isMobileDefault
-  }
-
   set package_info(package_info: ComponentFeatureDescription) {
     this.mutableContent.package_info = package_info
   }
@@ -55,9 +50,5 @@ export class ComponentMutator extends DecryptedItemMutator<ComponentContent> {
 
   public removeDisassociatedItemId(uuid: string): void {
     removeFromArray(this.mutableContent.disassociatedItemIds || [], uuid)
-  }
-
-  public setLastSize(size: string): void {
-    this.setAppDataItem(AppDataField.LastSize, size)
   }
 }

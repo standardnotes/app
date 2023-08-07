@@ -17,6 +17,14 @@ describe('files', function () {
     localStorage.clear()
   })
 
+  afterEach(async function () {
+    await Factory.safeDeinit(application)
+    localStorage.clear()
+
+    application = undefined
+    context = undefined
+  })
+
   const setup = async ({ fakeCrypto, subscription = true }) => {
     if (fakeCrypto) {
       context = await Factory.createAppContextWithFakeCrypto()
@@ -40,11 +48,6 @@ describe('files', function () {
       await context.activatePaidSubscriptionForUser()
     }
   }
-
-  afterEach(async function () {
-    await Factory.safeDeinit(application)
-    localStorage.clear()
-  })
 
   it('should create valet token from server', async function () {
     await setup({ fakeCrypto: true, subscription: true })

@@ -10,11 +10,6 @@ describe('subscriptions', function () {
   let context
   let subscriptionManager
 
-  afterEach(async function () {
-    await Factory.safeDeinit(application)
-    localStorage.clear()
-  })
-
   beforeEach(async function () {
     localStorage.clear()
 
@@ -32,6 +27,11 @@ describe('subscriptions', function () {
     })
 
     await context.activatePaidSubscriptionForUser()
+  })
+
+  afterEach(async function () {
+    await Factory.safeDeinit(application)
+    localStorage.clear()
   })
 
   it('should invite a user by email to a shared subscription', async () => {

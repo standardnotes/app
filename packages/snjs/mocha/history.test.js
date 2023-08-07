@@ -1,12 +1,13 @@
-/* eslint-disable no-unused-expressions */
-/* eslint-disable no-undef */
 import * as Factory from './lib/factory.js'
 import { createNoteParams } from './lib/Items.js'
+
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
 describe('history manager', () => {
   const largeCharacterChange = 25
+
+  let application, history, email, password
 
   const syncOptions = {
     checkIntegrity: true,
@@ -23,15 +24,15 @@ describe('history manager', () => {
 
   describe('session', function () {
     beforeEach(async function () {
-      this.application = await Factory.createInitAppWithFakeCrypto()
-      this.history = this.application.dependencies.get(TYPES.HistoryManager)
-      this.payloadManager = this.application.payloads
+      application = await Factory.createInitAppWithFakeCrypto()
+      history = application.dependencies.get(TYPES.HistoryManager)
+
       /** Automatically optimize after every revision by setting this to 0 */
-      this.history.itemRevisionThreshold = 0
+      history.itemRevisionThreshold = 0
     })
 
     afterEach(async function () {
-      await Factory.safeDeinit(this.application)
+      await Factory.safeDeinit(application)
     })
 
     async function setTextAndSync(application, item, text) {
@@ -53,15 +54,15 @@ describe('history manager', () => {
     }
 
     it('create basic history entries 1', async function () {
-      const item = await Factory.createSyncedNote(this.application)
-      expect(this.history.sessionHistoryForItem(item).length).to.equal(0)
+      const item = await Factory.createSyncedNote(application)
+      expect(history.sessionHistoryForItem(item).length).to.equal(0)
 
       /** Sync with same contents, should not create new entry */
-      await Factory.markDirtyAndSyncItem(this.application, item)
-      expect(this.history.sessionHistoryForItem(item).length).to.equal(0)
+      await Factory.markDirtyAndSyncItem(application, item)
+      expect(history.sessionHistoryForItem(item).length).to.equal(0)
 
       /** Sync with different contents, should create new entry */
-      await this.application.changeAndSaveItem.execute(
+      await application.changeAndSaveItem.execute(
         item,
         (mutator) => {
           mutator.title = Math.random()
@@ -70,12 +71,12 @@ describe('history manager', () => {
         undefined,
         syncOptions,
       )
-      expect(this.history.sessionHistoryForItem(item).length).to.equal(1)
+      expect(history.sessionHistoryForItem(item).length).to.equal(1)
     })
 
     it('first change should create revision with previous value', async function () {
-      const identifier = this.application.identifier
-      const item = await Factory.createSyncedNote(this.application)
+      const identifier = application.identifier
+      const item = await Factory.createSyncedNote(application)
 
       /** Simulate loading new application session */
       const context = await Factory.createAppContext({ identifier })
@@ -119,53 +120,41 @@ describe('history manager', () => {
     })
 
     it('should optimize basic entries', async function () {
-      let item = await Factory.createSyncedNote(this.application)
+      let item = await Factory.createSyncedNote(application)
       /**
        * Add 1 character. This typically would be discarded as an entry, but it
        * won't here because it's the first change, which we want to keep.
        */
-      await setTextAndSync(this.application, item, item.content.text + '1')
-      expect(this.history.sessionHistoryForItem(item).length).to.equal(1)
+      await setTextAndSync(application, item, item.content.text + '1')
+      expect(history.sessionHistoryForItem(item).length).to.equal(1)
 
       /**
        * Changing it by one character should keep this entry,
        * since it's now the last (and will keep the first)
        */
-      item = await setTextAndSync(this.application, item, item.content.text + '2')
-      expect(this.history.sessionHistoryForItem(item).length).to.equal(2)
+      item = await setTextAndSync(application, item, item.content.text + '2')
+      expect(history.sessionHistoryForItem(item).length).to.equal(2)
       /**
        * Change it over the largeCharacterChange threshold. It should keep this
        * revision, but now remove the previous revision, since it's no longer
        * the last, and is a small change.
        */
-      item = await setTextAndSync(
-        this.application,
-        item,
-        item.content.text + Factory.randomString(largeCharacterChange + 1),
-      )
-      expect(this.history.sessionHistoryForItem(item).length).to.equal(2)
+      item = await setTextAndSync(application, item, item.content.text + Factory.randomString(largeCharacterChange + 1))
+      expect(history.sessionHistoryForItem(item).length).to.equal(2)
 
-      item = await setTextAndSync(
-        this.application,
-        item,
-        item.content.text + Factory.randomString(largeCharacterChange + 1),
-      )
-      expect(this.history.sessionHistoryForItem(item).length).to.equal(2)
+      item = await setTextAndSync(application, item, item.content.text + Factory.randomString(largeCharacterChange + 1))
+      expect(history.sessionHistoryForItem(item).length).to.equal(2)
       /** Delete over threshold text. */
-      item = await setTextAndSync(
-        this.application,
-        item,
-        deleteCharsFromString(item.content.text, largeCharacterChange + 1),
-      )
-      expect(this.history.sessionHistoryForItem(item).length).to.equal(3)
+      item = await setTextAndSync(application, item, deleteCharsFromString(item.content.text, largeCharacterChange + 1))
+      expect(history.sessionHistoryForItem(item).length).to.equal(3)
       /**
        * Delete just 1 character. It should now retain the previous revision, as well as the
        * one previous to that.
        */
-      item = await setTextAndSync(this.application, item, deleteCharsFromString(item.content.text, 1))
-      expect(this.history.sessionHistoryForItem(item).length).to.equal(4)
-      item = await setTextAndSync(this.application, item, deleteCharsFromString(item.content.text, 1))
-      expect(this.history.sessionHistoryForItem(item).length).to.equal(5)
+      item = await setTextAndSync(application, item, deleteCharsFromString(item.content.text, 1))
+      expect(history.sessionHistoryForItem(item).length).to.equal(4)
+      item = await setTextAndSync(application, item, deleteCharsFromString(item.content.text, 1))
+      expect(history.sessionHistoryForItem(item).length).to.equal(5)
     })
 
     it('should keep the entry right before a large deletion, regardless of its delta', async function () {
@@ -174,27 +163,19 @@ describe('history manager', () => {
           text: Factory.randomString(100),
         }),
       )
-      let item = await this.application.mutator.emitItemFromPayload(payload, PayloadEmitSource.LocalChanged)
-      await this.application.mutator.setItemDirty(item)
-      await this.application.sync.sync(syncOptions)
+      let item = await application.mutator.emitItemFromPayload(payload, PayloadEmitSource.LocalChanged)
+      await application.mutator.setItemDirty(item)
+      await application.sync.sync(syncOptions)
       /** It should keep the first and last by default */
-      item = await setTextAndSync(this.application, item, item.content.text)
-      item = await setTextAndSync(this.application, item, item.content.text + Factory.randomString(1))
-      expect(this.history.sessionHistoryForItem(item).length).to.equal(2)
-      item = await setTextAndSync(
-        this.application,
-        item,
-        deleteCharsFromString(item.content.text, largeCharacterChange + 1),
-      )
-      expect(this.history.sessionHistoryForItem(item).length).to.equal(2)
-      item = await setTextAndSync(this.application, item, item.content.text + Factory.randomString(1))
-      expect(this.history.sessionHistoryForItem(item).length).to.equal(3)
-      item = await setTextAndSync(
-        this.application,
-        item,
-        item.content.text + Factory.randomString(largeCharacterChange + 1),
-      )
-      expect(this.history.sessionHistoryForItem(item).length).to.equal(4)
+      item = await setTextAndSync(application, item, item.content.text)
+      item = await setTextAndSync(application, item, item.content.text + Factory.randomString(1))
+      expect(history.sessionHistoryForItem(item).length).to.equal(2)
+      item = await setTextAndSync(application, item, deleteCharsFromString(item.content.text, largeCharacterChange + 1))
+      expect(history.sessionHistoryForItem(item).length).to.equal(2)
+      item = await setTextAndSync(application, item, item.content.text + Factory.randomString(1))
+      expect(history.sessionHistoryForItem(item).length).to.equal(3)
+      item = await setTextAndSync(application, item, item.content.text + Factory.randomString(largeCharacterChange + 1))
+      expect(history.sessionHistoryForItem(item).length).to.equal(4)
     })
 
     it('entries should be ordered from newest to oldest', async function () {
@@ -204,32 +185,23 @@ describe('history manager', () => {
         }),
       )
 
-      let item = await this.application.mutator.emitItemFromPayload(payload, PayloadEmitSource.LocalChanged)
+      let item = await application.mutator.emitItemFromPayload(payload, PayloadEmitSource.LocalChanged)
 
-      await this.application.mutator.setItemDirty(item)
-      await this.application.sync.sync(syncOptions)
+      await application.mutator.setItemDirty(item)
+      await application.sync.sync(syncOptions)
 
-      item = await setTextAndSync(this.application, item, item.content.text + Factory.randomString(1))
+      item = await setTextAndSync(application, item, item.content.text + Factory.randomString(1))
 
-      item = await setTextAndSync(
-        this.application,
-        item,
-        deleteCharsFromString(item.content.text, largeCharacterChange + 1),
-      )
+      item = await setTextAndSync(application, item, deleteCharsFromString(item.content.text, largeCharacterChange + 1))
 
-      item = await setTextAndSync(this.application, item, item.content.text + Factory.randomString(1))
+      item = await setTextAndSync(application, item, item.content.text + Factory.randomString(1))
 
-      item = await setTextAndSync(
-        this.application,
-        item,
-        item.content.text + Factory.randomString(largeCharacterChange + 1),
-      )
+      item = await setTextAndSync(application, item, item.content.text + Factory.randomString(largeCharacterChange + 1))
 
       /** First entry should be the latest revision. */
-      const latestRevision = this.history.sessionHistoryForItem(item)[0]
+      const latestRevision = history.sessionHistoryForItem(item)[0]
       /** Last entry should be the initial revision. */
-      const initialRevision =
-        this.history.sessionHistoryForItem(item)[this.history.sessionHistoryForItem(item).length - 1]
+      const initialRevision = history.sessionHistoryForItem(item)[history.sessionHistoryForItem(item).length - 1]
 
       expect(latestRevision).to.not.equal(initialRevision)
 
@@ -243,9 +215,9 @@ describe('history manager', () => {
 
     it('unsynced entries should use payload created_at for preview titles', async function () {
       const payload = Factory.createNotePayload()
-      await this.application.mutator.emitItemFromPayload(payload, PayloadEmitSource.LocalChanged)
-      const item = this.application.items.findItem(payload.uuid)
-      await this.application.changeAndSaveItem.execute(
+      await application.mutator.emitItemFromPayload(payload, PayloadEmitSource.LocalChanged)
+      const item = application.items.findItem(payload.uuid)
+      await application.changeAndSaveItem.execute(
         item,
         (mutator) => {
           mutator.title = Math.random()
@@ -254,7 +226,7 @@ describe('history manager', () => {
         undefined,
         syncOptions,
       )
-      const historyItem = this.history.sessionHistoryForItem(item)[0]
+      const historyItem = history.sessionHistoryForItem(item)[0]
       expect(historyItem.previewTitle()).to.equal(historyItem.payload.created_at.toLocaleString())
     })
   })
@@ -263,52 +235,54 @@ describe('history manager', () => {
     this.timeout(Factory.TwentySecondTimeout)
 
     beforeEach(async function () {
-      this.application = await Factory.createInitAppWithFakeCrypto()
-      this.history = this.application.dependencies.get(TYPES.HistoryManager)
-      this.payloadManager = this.application.payloads
-      this.email = UuidGenerator.GenerateUuid()
-      this.password = UuidGenerator.GenerateUuid()
+      localStorage.clear()
+
+      application = await Factory.createInitAppWithFakeCrypto()
+      history = application.dependencies.get(TYPES.HistoryManager)
+      email = UuidGenerator.GenerateUuid()
+      password = UuidGenerator.GenerateUuid()
       await Factory.registerUserToApplication({
-        application: this.application,
-        email: this.email,
-        password: this.password,
+        application: application,
+        email: email,
+        password: password,
       })
     })
 
     afterEach(async function () {
-      await Factory.safeDeinit(this.application)
+      await Factory.safeDeinit(application)
+      localStorage.clear()
     })
 
     it('response from server should be failed if not signed in', async function () {
-      await this.application.user.signOut()
-      this.application = await Factory.createInitAppWithFakeCrypto()
-      this.history = this.application.dependencies.get(TYPES.HistoryManager)
-      this.payloadManager = this.application.payloads
-      const item = await Factory.createSyncedNote(this.application)
-      await this.application.sync.sync(syncOptions)
-      const itemHistoryOrError = await this.application.listRevisions.execute({ itemUuid: item.uuid })
+      await application.user.signOut()
+      application = await Factory.createInitAppWithFakeCrypto()
+      history = application.dependencies.get(TYPES.HistoryManager)
+
+      const item = await Factory.createSyncedNote(application)
+      await application.sync.sync(syncOptions)
+      const itemHistoryOrError = await application.listRevisions.execute({ itemUuid: item.uuid })
 
       expect(itemHistoryOrError.isFailed()).to.equal(true)
     })
 
     it('create basic history entries 2', async function () {
-      const item = await Factory.createSyncedNote(this.application)
+      const item = await Factory.createSyncedNote(application)
       await Factory.sleep(Factory.ServerRevisionCreationDelay)
 
-      let itemHistoryOrError = await this.application.listRevisions.execute({ itemUuid: item.uuid })
+      let itemHistoryOrError = await application.listRevisions.execute({ itemUuid: item.uuid })
       let itemHistory = itemHistoryOrError.getValue()
 
       /** Server history should save initial revision */
       expect(itemHistory.length).to.equal(1)
 
       /** Sync within 5 seconds (ENV VAR dependend on self-hosted setup), should not create a new entry */
-      await Factory.markDirtyAndSyncItem(this.application, item)
-      itemHistoryOrError = await this.application.listRevisions.execute({ itemUuid: item.uuid })
+      await Factory.markDirtyAndSyncItem(application, item)
+      itemHistoryOrError = await application.listRevisions.execute({ itemUuid: item.uuid })
       itemHistory = itemHistoryOrError.getValue()
       expect(itemHistory.length).to.equal(1)
 
       /** Sync with different contents, should not create a new entry */
-      await this.application.changeAndSaveItem.execute(
+      await application.changeAndSaveItem.execute(
         item,
         (mutator) => {
           mutator.title = Math.random()
@@ -318,18 +292,18 @@ describe('history manager', () => {
         syncOptions,
       )
       await Factory.sleep(Factory.ServerRevisionCreationDelay)
-      itemHistoryOrError = await this.application.listRevisions.execute({ itemUuid: item.uuid })
+      itemHistoryOrError = await application.listRevisions.execute({ itemUuid: item.uuid })
       itemHistory = itemHistoryOrError.getValue()
       expect(itemHistory.length).to.equal(1)
     })
 
     it('returns revisions from server', async function () {
-      let item = await Factory.createSyncedNote(this.application)
+      let item = await Factory.createSyncedNote(application)
 
       await Factory.sleep(Factory.ServerRevisionFrequency)
       /** Sync with different contents, should create new entry */
       const newTitleAfterFirstChange = `The title should be: ${Math.random()}`
-      await this.application.changeAndSaveItem.execute(
+      await application.changeAndSaveItem.execute(
         item,
         (mutator) => {
           mutator.title = newTitleAfterFirstChange
@@ -340,12 +314,12 @@ describe('history manager', () => {
       )
       await Factory.sleep(Factory.ServerRevisionCreationDelay)
 
-      const itemHistoryOrError = await this.application.listRevisions.execute({ itemUuid: item.uuid })
+      const itemHistoryOrError = await application.listRevisions.execute({ itemUuid: item.uuid })
       const itemHistory = itemHistoryOrError.getValue()
       expect(itemHistory.length).to.equal(2)
 
       const oldestEntry = lastElement(itemHistory)
-      let revisionFromServerOrError = await this.application.getRevision.execute({
+      let revisionFromServerOrError = await application.getRevision.execute({
         itemUuid: item.uuid,
         revisionUuid: oldestEntry.uuid,
       })
@@ -357,22 +331,22 @@ describe('history manager', () => {
       expect(payloadFromServer.uuid).to.eq(item.payload.uuid)
       expect(payloadFromServer.content).to.eql(item.payload.content)
 
-      item = this.application.items.findItem(item.uuid)
+      item = application.items.findItem(item.uuid)
       expect(payloadFromServer.content).to.not.eql(item.payload.content)
     })
 
     it('duplicate revisions should not have the originals uuid', async function () {
-      const note = await Factory.createSyncedNote(this.application)
-      await Factory.markDirtyAndSyncItem(this.application, note)
-      const dupe = await this.application.mutator.duplicateItem(note, true)
-      await Factory.markDirtyAndSyncItem(this.application, dupe)
+      const note = await Factory.createSyncedNote(application)
+      await Factory.markDirtyAndSyncItem(application, note)
+      const dupe = await application.mutator.duplicateItem(note, true)
+      await Factory.markDirtyAndSyncItem(application, dupe)
 
       await Factory.sleep(Factory.ServerRevisionCreationDelay)
 
-      const dupeHistoryOrError = await this.application.listRevisions.execute({ itemUuid: dupe.uuid })
+      const dupeHistoryOrError = await application.listRevisions.execute({ itemUuid: dupe.uuid })
       const dupeHistory = dupeHistoryOrError.getValue()
 
-      const dupeRevisionOrError = await this.application.getRevision.execute({
+      const dupeRevisionOrError = await application.getRevision.execute({
         itemUuid: dupe.uuid,
         revisionUuid: dupeHistory[0].uuid,
       })
@@ -381,54 +355,54 @@ describe('history manager', () => {
     })
 
     it('revisions count matches original for duplicated items', async function () {
-      const note = await Factory.createSyncedNote(this.application)
+      const note = await Factory.createSyncedNote(application)
 
       await Factory.sleep(Factory.ServerRevisionFrequency)
-      await Factory.markDirtyAndSyncItem(this.application, note)
+      await Factory.markDirtyAndSyncItem(application, note)
 
       await Factory.sleep(Factory.ServerRevisionFrequency)
-      await Factory.markDirtyAndSyncItem(this.application, note)
+      await Factory.markDirtyAndSyncItem(application, note)
 
       await Factory.sleep(Factory.ServerRevisionFrequency)
-      await Factory.markDirtyAndSyncItem(this.application, note)
+      await Factory.markDirtyAndSyncItem(application, note)
 
-      const dupe = await this.application.mutator.duplicateItem(note, true)
-      await Factory.markDirtyAndSyncItem(this.application, dupe)
+      const dupe = await application.mutator.duplicateItem(note, true)
+      await Factory.markDirtyAndSyncItem(application, dupe)
 
       await Factory.sleep(Factory.ServerRevisionCreationDelay)
 
       const expectedRevisions = 4
-      const noteHistoryOrError = await this.application.listRevisions.execute({ itemUuid: note.uuid })
+      const noteHistoryOrError = await application.listRevisions.execute({ itemUuid: note.uuid })
       const noteHistory = noteHistoryOrError.getValue()
 
-      const dupeHistoryOrError = await this.application.listRevisions.execute({ itemUuid: dupe.uuid })
+      const dupeHistoryOrError = await application.listRevisions.execute({ itemUuid: dupe.uuid })
       const dupeHistory = dupeHistoryOrError.getValue()
 
       expect(noteHistory.length).to.equal(expectedRevisions)
       expect(dupeHistory.length).to.equal(expectedRevisions + 1)
-    }).timeout(Factory.ThirtySecondTimeout)
+    }).timeout(Factory.SixtySecondTimeout)
 
     it('can decrypt revisions for duplicate_of items', async function () {
-      const note = await Factory.createSyncedNote(this.application)
+      const note = await Factory.createSyncedNote(application)
       await Factory.sleep(Factory.ServerRevisionFrequency)
 
       const changedText = `${Math.random()}`
-      await this.application.changeAndSaveItem.execute(note, (mutator) => {
+      await application.changeAndSaveItem.execute(note, (mutator) => {
         mutator.title = changedText
       })
-      await Factory.markDirtyAndSyncItem(this.application, note)
+      await Factory.markDirtyAndSyncItem(application, note)
 
-      const dupe = await this.application.mutator.duplicateItem(note, true)
-      await Factory.markDirtyAndSyncItem(this.application, dupe)
+      const dupe = await application.mutator.duplicateItem(note, true)
+      await Factory.markDirtyAndSyncItem(application, dupe)
 
       await Factory.sleep(Factory.ServerRevisionCreationDelay)
 
-      const itemHistoryOrError = await this.application.listRevisions.execute({ itemUuid: dupe.uuid })
+      const itemHistoryOrError = await application.listRevisions.execute({ itemUuid: dupe.uuid })
       const itemHistory = itemHistoryOrError.getValue()
       expect(itemHistory.length).to.be.above(1)
       const newestRevision = itemHistory[0]
 
-      const fetchedOrError = await this.application.getRevision.execute({
+      const fetchedOrError = await application.getRevision.execute({
         itemUuid: dupe.uuid,
         revisionUuid: newestRevision.uuid,
       })

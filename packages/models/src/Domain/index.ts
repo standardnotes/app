@@ -93,7 +93,6 @@ export * from './Syncable/ItemsKey/ItemsKeyMutatorInterface'
 export * from './Syncable/Note'
 export * from './Syncable/SmartView'
 export * from './Syncable/Tag'
-export * from './Syncable/Theme'
 export * from './Syncable/UserPrefs'
 
 export * from './Syncable/TrustedContact/TrustedContact'

@@ -9,11 +9,6 @@ describe('shared vault permissions', function () {
 
   let context
 
-  afterEach(async function () {
-    await context.deinit()
-    localStorage.clear()
-  })
-
   beforeEach(async function () {
     localStorage.clear()
 
@@ -21,6 +16,12 @@ describe('shared vault permissions', function () {
 
     await context.launch()
     await context.register()
+  })
+
+  afterEach(async function () {
+    await context.deinit()
+    localStorage.clear()
+    sinon.restore()
   })
 
   it('non-admin user should not be able to invite user', async () => {
@@ -41,6 +42,8 @@ describe('shared vault permissions', function () {
     )
 
     expect(result.isFailed()).to.be.true
+
+    await thirdParty.deinitContactContext()
 
     await deinitContactContext()
   })

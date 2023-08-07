@@ -8,17 +8,18 @@ describe('vault key management', function () {
 
   let context
 
-  afterEach(async function () {
-    await context.deinit()
-    localStorage.clear()
-  })
-
   beforeEach(async function () {
     localStorage.clear()
 
     context = await Factory.createVaultsContextWithRealCrypto()
 
     await context.launch()
+  })
+
+  afterEach(async function () {
+    await context.deinit()
+    localStorage.clear()
+    sinon.restore()
   })
 
   describe('locking', () => {

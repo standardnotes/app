@@ -30,6 +30,11 @@ describe('settings service', function () {
     })
   })
 
+  afterEach(async function () {
+    await Factory.safeDeinit(application)
+    localStorage.clear()
+  })
+
   const reInitializeApplicationWithRealCrypto = async () => {
     await Factory.safeDeinit(application)
 
@@ -45,11 +50,6 @@ describe('settings service', function () {
       password: context.password,
     })
   }
-
-  afterEach(async function () {
-    await Factory.safeDeinit(application)
-    localStorage.clear()
-  })
 
   it('creates and reads a setting', async function () {
     await application.settings.updateSetting(validSetting, fakePayload)

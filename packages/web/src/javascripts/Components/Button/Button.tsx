@@ -59,7 +59,7 @@ const getClassName = (
 
   let focusHoverStates = primary
     ? 'hover:brightness-125 focus:outline-none focus-visible:brightness-125'
-    : 'focus:bg-contrast focus:outline-none hover:border-info hover:text-info hover:bg-contrast'
+    : 'focus:bg-contrast focus:outline-none hover:bg-contrast'
 
   if (disabled) {
     colors = primary ? 'bg-passive-2 text-info-contrast' : 'bg-default text-passive-2'

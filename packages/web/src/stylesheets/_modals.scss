@@ -60,6 +60,7 @@
     border-color: var(--popover-border-color);
     background-color: var(--popover-background-color);
     backdrop-filter: var(--popover-backdrop-filter);
+    -webkit-backdrop-filter: var(--popover-backdrop-filter);
   }
 
   .sn-component {

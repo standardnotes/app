@@ -1,17 +1,17 @@
-/* eslint-disable no-unused-expressions */
-/* eslint-disable no-undef */
+
 import * as Factory from './lib/factory.js'
+
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
 describe('key params', function () {
   this.timeout(Factory.TenSecondTimeout)
 
-  before(async function () {
+  beforeEach(async function () {
     localStorage.clear()
   })
 
-  after(async function () {
+  afterEach(async function () {
     localStorage.clear()
   })
 

@@ -1,5 +1,4 @@
-/* eslint-disable no-unused-expressions */
-/* eslint-disable no-undef */
+
 import FakeWebCrypto from './fake_web_crypto.js'
 import { AppContext } from './AppContext.js'
 import { VaultsContext } from './VaultsContext.js'
@@ -61,6 +60,10 @@ export async function createAppContext({ identifier, crypto, email, password, ho
 
 export async function createVaultsContextWithRealCrypto(identifier) {
   return createVaultsContext({ identifier, crypto: new SNWebCrypto() })
+}
+
+export async function createVaultsContextWithFakeCrypto(identifier) {
+  return createVaultsContext({ identifier, crypto: new FakeWebCrypto() })
 }
 
 export async function createVaultsContext({ identifier, crypto, email, password, host } = {}) {

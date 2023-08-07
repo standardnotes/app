@@ -1,5 +1,4 @@
-/* eslint-disable no-unused-expressions */
-/* eslint-disable no-undef */
+
 chai.use(chaiAsPromised)
 const expect = chai.expect
 

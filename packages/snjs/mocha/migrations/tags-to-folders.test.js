@@ -1,6 +1,5 @@
-/* eslint-disable no-unused-expressions */
-/* eslint-disable no-undef */
 import * as Factory from '../lib/factory.js'
+
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
@@ -11,25 +10,29 @@ const setupRandomUuid = () => {
 }
 
 describe('web native folders migration', () => {
+  let application
+
   beforeEach(async function () {
-    this.application = await Factory.createInitAppWithFakeCrypto()
+    localStorage.clear()
+    application = await Factory.createInitAppWithFakeCrypto()
     setupRandomUuid()
   })
 
   afterEach(async function () {
-    await Factory.safeDeinit(this.application)
-    // TODO: cleanup uuid behind us or we'll mess other tests.
+    await Factory.safeDeinit(application)
+    application = undefined
+    localStorage.clear()
   })
 
   it('migration with flat tag folders', async function () {
     const titles = ['a', 'b', 'c']
-    await makeTags(this.application, titles)
+    await makeTags(application, titles)
 
     // Run the migration
-    await this.application.mutator.migrateTagsToFolders()
+    await application.mutator.migrateTagsToFolders()
 
     // Check new tags
-    const result = extractTagHierarchy(this.application)
+    const result = extractTagHierarchy(application)
 
     expect(result).to.deep.equal({
       a: { _uuid: 'a' },
@@ -40,13 +43,13 @@ describe('web native folders migration', () => {
 
   it('migration with simple tag folders', async function () {
     const titles = ['a.b.c', 'b', 'a.b']
-    await makeTags(this.application, titles)
+    await makeTags(application, titles)
 
     // Run the migration
-    await this.application.mutator.migrateTagsToFolders()
+    await application.mutator.migrateTagsToFolders()
 
     // Check new tags
-    const result = extractTagHierarchy(this.application)
+    const result = extractTagHierarchy(application)
 
     expect(result).to.deep.equal({
       a: {
@@ -62,13 +65,13 @@ describe('web native folders migration', () => {
 
   it('migration with more complex cases', async function () {
     const titles = ['a.b.c', 'b', 'a.b']
-    await makeTags(this.application, titles)
+    await makeTags(application, titles)
 
     // Run the migration
-    await this.application.mutator.migrateTagsToFolders()
+    await application.mutator.migrateTagsToFolders()
 
     // Check new tags
-    const result = extractTagHierarchy(this.application)
+    const result = extractTagHierarchy(application)
 
     expect(result).to.deep.equal({
       a: {
@@ -84,13 +87,13 @@ describe('web native folders migration', () => {
 
   it('should produce a valid hierarchy cases with  missing intermediate tags or unordered', async function () {
     const titles = ['y.2', 'w.3', 'y']
-    await makeTags(this.application, titles)
+    await makeTags(application, titles)
 
     // Run the migration
-    await this.application.mutator.migrateTagsToFolders()
+    await application.mutator.migrateTagsToFolders()
 
     // Check new tags
-    const result = extractTagHierarchy(this.application)
+    const result = extractTagHierarchy(application)
 
     expect(result).to.deep.equal({
       w: {
@@ -105,13 +108,13 @@ describe('web native folders migration', () => {
 
   it('skip prefixed names', async function () {
     const titles = ['.something', '.something...something', 'something.a.b.c']
-    await makeTags(this.application, titles)
+    await makeTags(application, titles)
 
     // Run the migration
-    await this.application.mutator.migrateTagsToFolders()
+    await application.mutator.migrateTagsToFolders()
 
     // Check new tags
-    const result = extractTagHierarchy(this.application)
+    const result = extractTagHierarchy(application)
 
     expect(result).to.deep.equal({
       '.something': { _uuid: '.something' },
@@ -132,13 +135,13 @@ describe('web native folders migration', () => {
       'a',
       'something..another.thing..anyway',
     ]
-    await makeTags(this.application, titles)
+    await makeTags(application, titles)
 
     // Run the migration
-    await this.application.mutator.migrateTagsToFolders()
+    await application.mutator.migrateTagsToFolders()
 
     // Check new tags
-    const result = extractTagHierarchy(this.application)
+    const result = extractTagHierarchy(application)
 
     expect(result).to.deep.equal({
       'something.': { _uuid: 'something.' },

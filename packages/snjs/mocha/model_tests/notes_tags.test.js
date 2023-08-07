@@ -1,39 +1,44 @@
-/* eslint-disable no-undef */
 import * as Factory from '../lib/factory.js'
 import * as Utils from '../lib/Utils.js'
 import { createRelatedNoteTagPairPayload } from '../lib/Items.js'
-import { BaseItemCounts } from '../lib/BaseItemCounts.js'
+
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
 describe('notes and tags', () => {
+  let application
+  let context
+
   const syncOptions = {
     checkIntegrity: true,
     awaitAll: true,
   }
 
   beforeEach(async function () {
-    this.expectedItemCount = BaseItemCounts.DefaultItems
-    this.context = await Factory.createAppContext()
-    await this.context.launch()
-    this.application = this.context.application
+    localStorage.clear()
+    context = await Factory.createAppContext()
+    await context.launch()
+    application = context.application
   })
 
   afterEach(async function () {
-    await Factory.safeDeinit(this.application)
+    await Factory.safeDeinit(application)
+    localStorage.clear()
+    application = undefined
+    context = undefined
   })
 
   it('uses proper class for note', async function () {
     const payload = Factory.createNotePayload()
-    await this.application.mutator.emitItemFromPayload(payload, PayloadEmitSource.LocalChanged)
-    const note = this.application.items.getItems([ContentType.TYPES.Note])[0]
+    await application.mutator.emitItemFromPayload(payload, PayloadEmitSource.LocalChanged)
+    const note = application.items.getItems([ContentType.TYPES.Note])[0]
     expect(note.constructor === SNNote).to.equal(true)
   })
 
   it('properly constructs syncing params', async function () {
     const title = 'Foo'
     const text = 'Bar'
-    const note = await this.application.items.createTemplateItem(ContentType.TYPES.Note, {
+    const note = await application.items.createTemplateItem(ContentType.TYPES.Note, {
       title,
       text,
     })
@@ -41,7 +46,7 @@ describe('notes and tags', () => {
     expect(note.content.title).to.equal(title)
     expect(note.content.text).to.equal(text)
 
-    const tag = await this.application.items.createTemplateItem(ContentType.TYPES.Tag, {
+    const tag = await application.items.createTemplateItem(ContentType.TYPES.Tag, {
       title,
     })
 
@@ -73,12 +78,12 @@ describe('notes and tags', () => {
       },
     })
 
-    await this.application.mutator.emitItemsFromPayloads([mutatedNote, mutatedTag], PayloadEmitSource.LocalChanged)
-    const note = this.application.items.getItems([ContentType.TYPES.Note])[0]
-    const tag = this.application.items.getItems([ContentType.TYPES.Tag])[0]
+    await application.mutator.emitItemsFromPayloads([mutatedNote, mutatedTag], PayloadEmitSource.LocalChanged)
+    const note = application.items.getItems([ContentType.TYPES.Note])[0]
+    const tag = application.items.getItems([ContentType.TYPES.Tag])[0]
 
     expect(note.content.references.length).to.equal(1)
-    expect(this.application.items.itemsReferencingItem(tag).length).to.equal(1)
+    expect(application.items.itemsReferencingItem(tag).length).to.equal(1)
   })
 
   it('creates relationship between note and tag', async function () {
@@ -89,9 +94,9 @@ describe('notes and tags', () => {
     expect(notePayload.content.references.length).to.equal(0)
     expect(tagPayload.content.references.length).to.equal(1)
 
-    await this.application.mutator.emitItemsFromPayloads([notePayload, tagPayload], PayloadEmitSource.LocalChanged)
-    let note = this.application.items.getDisplayableNotes()[0]
-    let tag = this.application.items.getDisplayableTags()[0]
+    await application.mutator.emitItemsFromPayloads([notePayload, tagPayload], PayloadEmitSource.LocalChanged)
+    let note = application.items.getDisplayableNotes()[0]
+    let tag = application.items.getDisplayableTags()[0]
 
     expect(note.dirty).to.not.be.ok
     expect(tag.dirty).to.not.be.ok
@@ -102,26 +107,26 @@ describe('notes and tags', () => {
     expect(note.isReferencingItem(tag)).to.equal(false)
     expect(tag.isReferencingItem(note)).to.equal(true)
 
-    expect(this.application.items.itemsReferencingItem(note).length).to.equal(1)
+    expect(application.items.itemsReferencingItem(note).length).to.equal(1)
     expect(note.payload.references.length).to.equal(0)
     expect(tag.noteCount).to.equal(1)
 
-    await this.application.mutator.setItemToBeDeleted(note)
+    await application.mutator.setItemToBeDeleted(note)
 
-    tag = this.application.items.getDisplayableTags()[0]
+    tag = application.items.getDisplayableTags()[0]
 
-    const deletedNotePayload = this.application.payloads.findOne(note.uuid)
+    const deletedNotePayload = application.payloads.findOne(note.uuid)
     expect(deletedNotePayload.dirty).to.be.true
     expect(tag.dirty).to.be.true
 
-    await this.application.sync.sync(syncOptions)
+    await application.sync.sync(syncOptions)
 
     expect(tag.content.references.length).to.equal(0)
-    expect(this.application.items.itemsReferencingItem(note).length).to.equal(0)
+    expect(application.items.itemsReferencingItem(note).length).to.equal(0)
     expect(tag.noteCount).to.equal(0)
 
-    tag = this.application.items.getDisplayableTags()[0]
-    expect(this.application.items.getDisplayableNotes().length).to.equal(0)
+    tag = application.items.getDisplayableTags()[0]
+    expect(application.items.getDisplayableNotes().length).to.equal(0)
     expect(tag.dirty).to.be.false
   })
 
@@ -130,14 +135,14 @@ describe('notes and tags', () => {
     const notePayload = pair[0]
     const tagPayload = pair[1]
 
-    await this.application.mutator.emitItemsFromPayloads(pair, PayloadEmitSource.LocalChanged)
-    let note = this.application.items.getItems([ContentType.TYPES.Note])[0]
-    let tag = this.application.items.getItems([ContentType.TYPES.Tag])[0]
+    await application.mutator.emitItemsFromPayloads(pair, PayloadEmitSource.LocalChanged)
+    let note = application.items.getItems([ContentType.TYPES.Note])[0]
+    let tag = application.items.getItems([ContentType.TYPES.Tag])[0]
 
     expect(note.content.references.length).to.equal(0)
     expect(tag.content.references.length).to.equal(1)
 
-    await this.application.sync.sync(syncOptions)
+    await application.sync.sync(syncOptions)
 
     const mutatedTag = new DecryptedPayload({
       ...tagPayload,
@@ -147,13 +152,13 @@ describe('notes and tags', () => {
         references: [],
       },
     })
-    await this.application.mutator.emitItemsFromPayloads([mutatedTag], PayloadEmitSource.LocalChanged)
+    await application.mutator.emitItemsFromPayloads([mutatedTag], PayloadEmitSource.LocalChanged)
 
-    note = this.application.items.findItem(note.uuid)
-    tag = this.application.items.findItem(tag.uuid)
+    note = application.items.findItem(note.uuid)
+    tag = application.items.findItem(tag.uuid)
 
     expect(tag.content.references.length).to.equal(0)
-    expect(this.application.items.itemsReferencingItem(note).length).to.equal(0)
+    expect(application.items.itemsReferencingItem(note).length).to.equal(0)
     expect(tag.noteCount).to.equal(0)
 
     // expect to be false
@@ -162,13 +167,13 @@ describe('notes and tags', () => {
   })
 
   it('creating basic note should have text set', async function () {
-    const note = await Factory.createMappedNote(this.application)
+    const note = await Factory.createMappedNote(application)
     expect(note.title).to.be.ok
     expect(note.text).to.be.ok
   })
 
   it('creating basic tag should have title', async function () {
-    const tag = await Factory.createMappedTag(this.application)
+    const tag = await Factory.createMappedTag(application)
     expect(tag.title).to.be.ok
   })
 
@@ -177,15 +182,15 @@ describe('notes and tags', () => {
     const notePayload = pair[0]
     const tagPayload = pair[1]
 
-    await this.application.mutator.emitItemsFromPayloads([notePayload, tagPayload], PayloadEmitSource.LocalChanged)
-    const note = this.application.items.getItems([ContentType.TYPES.Note])[0]
-    let tag = this.application.items.getItems([ContentType.TYPES.Tag])[0]
+    await application.mutator.emitItemsFromPayloads([notePayload, tagPayload], PayloadEmitSource.LocalChanged)
+    const note = application.items.getItems([ContentType.TYPES.Note])[0]
+    let tag = application.items.getItems([ContentType.TYPES.Tag])[0]
 
     expect(note.content.references.length).to.equal(0)
     expect(tag.content.references.length).to.equal(1)
 
     tag = (
-      await this.application.changeAndSaveItem.execute(
+      await application.changeAndSaveItem.execute(
         tag,
         (mutator) => {
           mutator.removeItemAsRelationship(note)
@@ -196,21 +201,21 @@ describe('notes and tags', () => {
       )
     ).getValue()
 
-    expect(this.application.items.itemsReferencingItem(note).length).to.equal(0)
+    expect(application.items.itemsReferencingItem(note).length).to.equal(0)
     expect(tag.noteCount).to.equal(0)
   })
 
   it('properly handles tag duplication', async function () {
     const pair = createRelatedNoteTagPairPayload()
-    await this.application.mutator.emitItemsFromPayloads(pair, PayloadEmitSource.LocalChanged)
-    let note = this.application.items.getDisplayableNotes()[0]
-    let tag = this.application.items.getDisplayableTags()[0]
+    await application.mutator.emitItemsFromPayloads(pair, PayloadEmitSource.LocalChanged)
+    let note = application.items.getDisplayableNotes()[0]
+    let tag = application.items.getDisplayableTags()[0]
 
-    const duplicateTag = await this.application.mutator.duplicateItem(tag, true)
-    await this.application.sync.sync(syncOptions)
+    const duplicateTag = await application.mutator.duplicateItem(tag, true)
+    await application.sync.sync(syncOptions)
 
-    note = this.application.items.findItem(note.uuid)
-    tag = this.application.items.findItem(tag.uuid)
+    note = application.items.findItem(note.uuid)
+    tag = application.items.findItem(tag.uuid)
 
     expect(tag.uuid).to.not.equal(duplicateTag.uuid)
     expect(tag.content.references.length).to.equal(1)
@@ -218,7 +223,7 @@ describe('notes and tags', () => {
     expect(duplicateTag.content.references.length).to.equal(1)
     expect(duplicateTag.noteCount).to.equal(1)
 
-    const noteTags = this.application.items.itemsReferencingItem(note)
+    const noteTags = application.items.itemsReferencingItem(note)
     expect(noteTags.length).to.equal(2)
 
     const noteTag1 = noteTags[0]
@@ -234,13 +239,13 @@ describe('notes and tags', () => {
     const pair = createRelatedNoteTagPairPayload()
     const notePayload = pair[0]
     const tagPayload = pair[1]
-    await this.application.mutator.emitItemsFromPayloads([notePayload, tagPayload], PayloadEmitSource.LocalChanged)
-    const note = this.application.items.getItems([ContentType.TYPES.Note])[0]
-    const duplicateNote = await this.application.mutator.duplicateItem(note, true)
+    await application.mutator.emitItemsFromPayloads([notePayload, tagPayload], PayloadEmitSource.LocalChanged)
+    const note = application.items.getItems([ContentType.TYPES.Note])[0]
+    const duplicateNote = await application.mutator.duplicateItem(note, true)
     expect(note.uuid).to.not.equal(duplicateNote.uuid)
 
-    expect(this.application.items.itemsReferencingItem(duplicateNote).length).to.equal(
-      this.application.items.itemsReferencingItem(note).length,
+    expect(application.items.itemsReferencingItem(duplicateNote).length).to.equal(
+      application.items.itemsReferencingItem(note).length,
     )
   })
 
@@ -248,27 +253,27 @@ describe('notes and tags', () => {
     const pair = createRelatedNoteTagPairPayload()
     const notePayload = pair[0]
     const tagPayload = pair[1]
-    await this.application.mutator.emitItemsFromPayloads([notePayload, tagPayload], PayloadEmitSource.LocalChanged)
-    const note = this.application.items.getItems([ContentType.TYPES.Note])[0]
-    let tag = this.application.items.getItems([ContentType.TYPES.Tag])[0]
+    await application.mutator.emitItemsFromPayloads([notePayload, tagPayload], PayloadEmitSource.LocalChanged)
+    const note = application.items.getItems([ContentType.TYPES.Note])[0]
+    let tag = application.items.getItems([ContentType.TYPES.Tag])[0]
 
     expect(tag.content.references.length).to.equal(1)
     expect(tag.noteCount).to.equal(1)
 
     expect(note.content.references.length).to.equal(0)
-    expect(this.application.items.itemsReferencingItem(note).length).to.equal(1)
+    expect(application.items.itemsReferencingItem(note).length).to.equal(1)
 
-    await this.application.mutator.setItemToBeDeleted(tag)
-    tag = this.application.items.findItem(tag.uuid)
+    await application.mutator.setItemToBeDeleted(tag)
+    tag = application.items.findItem(tag.uuid)
     expect(tag).to.not.be.ok
   })
 
   it('modifying item content should not modify payload content', async function () {
     const notePayload = Factory.createNotePayload()
-    await this.application.mutator.emitItemsFromPayloads([notePayload], PayloadEmitSource.LocalChanged)
-    let note = this.application.items.getItems([ContentType.TYPES.Note])[0]
+    await application.mutator.emitItemsFromPayloads([notePayload], PayloadEmitSource.LocalChanged)
+    let note = application.items.getItems([ContentType.TYPES.Note])[0]
     note = (
-      await this.application.changeAndSaveItem.execute(
+      await application.changeAndSaveItem.execute(
         note,
         (mutator) => {
           mutator.mutableContent.title = Math.random()
@@ -289,15 +294,15 @@ describe('notes and tags', () => {
     const notePayload = pair[0]
     const tagPayload = pair[1]
 
-    await this.application.mutator.emitItemsFromPayloads([notePayload, tagPayload], PayloadEmitSource.LocalChanged)
-    let note = this.application.items.getItems([ContentType.TYPES.Note])[0]
-    let tag = this.application.items.getItems([ContentType.TYPES.Tag])[0]
+    await application.mutator.emitItemsFromPayloads([notePayload, tagPayload], PayloadEmitSource.LocalChanged)
+    let note = application.items.getItems([ContentType.TYPES.Note])[0]
+    let tag = application.items.getItems([ContentType.TYPES.Tag])[0]
 
-    await this.application.sync.sync(syncOptions)
-    await this.application.mutator.setItemToBeDeleted(tag)
+    await application.sync.sync(syncOptions)
+    await application.mutator.setItemToBeDeleted(tag)
 
-    note = this.application.items.findItem(note.uuid)
-    this.application.items.findItem(tag.uuid)
+    note = application.items.findItem(note.uuid)
+    application.items.findItem(tag.uuid)
 
     expect(note.dirty).to.not.be.ok
   })
@@ -305,26 +310,26 @@ describe('notes and tags', () => {
   it('should sort notes', async function () {
     await Promise.all(
       ['Y', 'Z', 'A', 'B'].map(async (title) => {
-        return this.application.mutator.insertItem(
-          await this.application.items.createTemplateItem(ContentType.TYPES.Note, { title }),
+        return application.mutator.insertItem(
+          await application.items.createTemplateItem(ContentType.TYPES.Note, { title }),
         )
       }),
     )
-    this.application.items.setPrimaryItemDisplayOptions({
+    application.items.setPrimaryItemDisplayOptions({
       sortBy: 'title',
       sortDirection: 'dsc',
     })
-    const titles = this.application.items.getDisplayableNotes().map((note) => note.title)
+    const titles = application.items.getDisplayableNotes().map((note) => note.title)
     /** setPrimaryItemDisplayOptions inverses sort for title */
     expect(titles).to.deep.equal(['A', 'B', 'Y', 'Z'])
   })
 
   it('setting a note dirty should collapse its properties into content', async function () {
-    let note = await this.application.items.createTemplateItem(ContentType.TYPES.Note, {
+    let note = await application.items.createTemplateItem(ContentType.TYPES.Note, {
       title: 'Foo',
     })
-    await this.application.mutator.insertItem(note)
-    note = this.application.items.findItem(note.uuid)
+    await application.mutator.insertItem(note)
+    note = application.items.findItem(note.uuid)
     expect(note.content.title).to.equal('Foo')
   })
 
@@ -332,49 +337,49 @@ describe('notes and tags', () => {
     it('should sort tags in ascending alphabetical order by default', async function () {
       const titles = ['1', 'A', 'b', '2']
       const sortedTitles = titles.sort((a, b) => a.localeCompare(b))
-      await Promise.all(titles.map((title) => this.application.mutator.findOrCreateTag(title)))
-      expect(this.application.items.tagDisplayController.items().map((t) => t.title)).to.deep.equal(sortedTitles)
+      await Promise.all(titles.map((title) => application.mutator.findOrCreateTag(title)))
+      expect(application.items.tagDisplayController.items().map((t) => t.title)).to.deep.equal(sortedTitles)
     })
 
     it('should match a tag', async function () {
-      const taggedNote = await Factory.createMappedNote(this.application)
-      const tag = await this.application.mutator.findOrCreateTag('A')
-      await this.application.mutator.changeItem(tag, (mutator) => {
+      const taggedNote = await Factory.createMappedNote(application)
+      const tag = await application.mutator.findOrCreateTag('A')
+      await application.mutator.changeItem(tag, (mutator) => {
         mutator.e2ePendingRefactor_addItemAsRelationship(taggedNote)
       })
-      await this.application.mutator.insertItem(
-        await this.application.items.createTemplateItem(ContentType.TYPES.Note, {
+      await application.mutator.insertItem(
+        await application.items.createTemplateItem(ContentType.TYPES.Note, {
           title: 'A',
         }),
       )
-      this.application.items.setPrimaryItemDisplayOptions({
+      application.items.setPrimaryItemDisplayOptions({
         sortBy: 'title',
         sortDirection: 'dsc',
         tags: [tag],
       })
-      const displayedNotes = this.application.items.getDisplayableNotes()
+      const displayedNotes = application.items.getDisplayableNotes()
       expect(displayedNotes.length).to.equal(1)
       expect(displayedNotes[0].uuid).to.equal(taggedNote.uuid)
     })
 
     it('should not show trashed notes when displaying a tag', async function () {
-      const taggedNote = await Factory.createMappedNote(this.application)
-      const trashedNote = await Factory.createMappedNote(this.application)
-      const tag = await this.application.mutator.findOrCreateTag('A')
-      await this.application.mutator.changeItem(tag, (mutator) => {
+      const taggedNote = await Factory.createMappedNote(application)
+      const trashedNote = await Factory.createMappedNote(application)
+      const tag = await application.mutator.findOrCreateTag('A')
+      await application.mutator.changeItem(tag, (mutator) => {
         mutator.e2ePendingRefactor_addItemAsRelationship(taggedNote)
         mutator.e2ePendingRefactor_addItemAsRelationship(trashedNote)
       })
-      await this.application.mutator.changeItem(trashedNote, (mutator) => {
+      await application.mutator.changeItem(trashedNote, (mutator) => {
         mutator.trashed = true
       })
-      this.application.items.setPrimaryItemDisplayOptions({
+      application.items.setPrimaryItemDisplayOptions({
         sortBy: 'title',
         sortDirection: 'dsc',
         tags: [tag],
         includeTrashed: false,
       })
-      const displayedNotes = this.application.items.getDisplayableNotes()
+      const displayedNotes = application.items.getDisplayableNotes()
       expect(displayedNotes.length).to.equal(1)
       expect(displayedNotes[0].uuid).to.equal(taggedNote.uuid)
     })
@@ -382,31 +387,31 @@ describe('notes and tags', () => {
     it('should sort notes when displaying tag', async function () {
       await Promise.all(
         ['Y', 'Z', 'A', 'B'].map(async (title) => {
-          return this.application.mutator.insertItem(
-            await this.application.items.createTemplateItem(ContentType.TYPES.Note, {
+          return application.mutator.insertItem(
+            await application.items.createTemplateItem(ContentType.TYPES.Note, {
               title,
             }),
           )
         }),
       )
-      const pinnedNote = this.application.items.getDisplayableNotes().find((note) => note.title === 'B')
-      await this.application.mutator.changeItem(pinnedNote, (mutator) => {
+      const pinnedNote = application.items.getDisplayableNotes().find((note) => note.title === 'B')
+      await application.mutator.changeItem(pinnedNote, (mutator) => {
         mutator.pinned = true
       })
-      const tag = await this.application.mutator.findOrCreateTag('A')
-      await this.application.mutator.changeItem(tag, (mutator) => {
-        for (const note of this.application.items.getDisplayableNotes()) {
+      const tag = await application.mutator.findOrCreateTag('A')
+      await application.mutator.changeItem(tag, (mutator) => {
+        for (const note of application.items.getDisplayableNotes()) {
           mutator.e2ePendingRefactor_addItemAsRelationship(note)
         }
       })
 
-      this.application.items.setPrimaryItemDisplayOptions({
+      application.items.setPrimaryItemDisplayOptions({
         sortBy: 'title',
         sortDirection: 'dsc',
         tags: [tag],
       })
 
-      const displayedNotes = this.application.items.getDisplayableNotes()
+      const displayedNotes = application.items.getDisplayableNotes()
       expect(displayedNotes).to.have.length(4)
       /** setPrimaryItemDisplayOptions inverses sort for title */
       expect(displayedNotes[0].title).to.equal('B')
@@ -416,18 +421,18 @@ describe('notes and tags', () => {
 
   describe('Smart views', function () {
     it('"title", "startsWith", "Foo"', async function () {
-      const note = await this.application.mutator.insertItem(
-        await this.application.items.createTemplateItem(ContentType.TYPES.Note, {
+      const note = await application.mutator.insertItem(
+        await application.items.createTemplateItem(ContentType.TYPES.Note, {
           title: 'Foo 🎲',
         }),
       )
-      await this.application.mutator.insertItem(
-        await this.application.items.createTemplateItem(ContentType.TYPES.Note, {
+      await application.mutator.insertItem(
+        await application.items.createTemplateItem(ContentType.TYPES.Note, {
           title: 'Not Foo 🎲',
         }),
       )
-      const view = await this.application.mutator.insertItem(
-        await this.application.items.createTemplateItem(ContentType.TYPES.SmartView, {
+      const view = await application.mutator.insertItem(
+        await application.items.createTemplateItem(ContentType.TYPES.SmartView, {
           title: 'Foo Notes',
           predicate: {
             keypath: 'title',
@@ -436,36 +441,36 @@ describe('notes and tags', () => {
           },
         }),
       )
-      const matches = this.application.items.notesMatchingSmartView(view)
-      this.application.items.setPrimaryItemDisplayOptions({
+      const matches = application.items.notesMatchingSmartView(view)
+      application.items.setPrimaryItemDisplayOptions({
         sortBy: 'title',
         sortDirection: 'asc',
         views: [view],
       })
 
-      const displayedNotes = this.application.items.getDisplayableNotes()
+      const displayedNotes = application.items.getDisplayableNotes()
       expect(displayedNotes).to.deep.equal(matches)
       expect(matches.length).to.equal(1)
       expect(matches[0].uuid).to.equal(note.uuid)
     })
 
     it('"pinned", "=", true', async function () {
-      const note = await this.application.mutator.insertItem(
-        await this.application.items.createTemplateItem(ContentType.TYPES.Note, {
+      const note = await application.mutator.insertItem(
+        await application.items.createTemplateItem(ContentType.TYPES.Note, {
           title: 'A',
         }),
       )
-      await this.application.mutator.changeItem(note, (mutator) => {
+      await application.mutator.changeItem(note, (mutator) => {
         mutator.pinned = true
       })
-      await this.application.mutator.insertItem(
-        await this.application.items.createTemplateItem(ContentType.TYPES.Note, {
+      await application.mutator.insertItem(
+        await application.items.createTemplateItem(ContentType.TYPES.Note, {
           title: 'B',
           pinned: false,
         }),
       )
-      const view = await this.application.mutator.insertItem(
-        await this.application.items.createTemplateItem(ContentType.TYPES.SmartView, {
+      const view = await application.mutator.insertItem(
+        await application.items.createTemplateItem(ContentType.TYPES.SmartView, {
           title: 'Pinned',
           predicate: {
             keypath: 'pinned',
@@ -474,35 +479,35 @@ describe('notes and tags', () => {
           },
         }),
       )
-      const matches = this.application.items.notesMatchingSmartView(view)
-      this.application.items.setPrimaryItemDisplayOptions({
+      const matches = application.items.notesMatchingSmartView(view)
+      application.items.setPrimaryItemDisplayOptions({
         sortBy: 'title',
         sortDirection: 'asc',
         views: [view],
       })
 
-      const displayedNotes = this.application.items.getDisplayableNotes()
+      const displayedNotes = application.items.getDisplayableNotes()
       expect(displayedNotes).to.deep.equal(matches)
       expect(matches.length).to.equal(1)
       expect(matches[0].uuid).to.equal(note.uuid)
     })
 
     it('"pinned", "=", false', async function () {
-      const pinnedNote = await this.application.mutator.insertItem(
-        await this.application.items.createTemplateItem(ContentType.TYPES.Note, {
+      const pinnedNote = await application.mutator.insertItem(
+        await application.items.createTemplateItem(ContentType.TYPES.Note, {
           title: 'A',
         }),
       )
-      await this.application.mutator.changeItem(pinnedNote, (mutator) => {
+      await application.mutator.changeItem(pinnedNote, (mutator) => {
         mutator.pinned = true
       })
-      const unpinnedNote = await this.application.mutator.insertItem(
-        await this.application.items.createTemplateItem(ContentType.TYPES.Note, {
+      const unpinnedNote = await application.mutator.insertItem(
+        await application.items.createTemplateItem(ContentType.TYPES.Note, {
           title: 'B',
         }),
       )
-      const view = await this.application.mutator.insertItem(
-        await this.application.items.createTemplateItem(ContentType.TYPES.SmartView, {
+      const view = await application.mutator.insertItem(
+        await application.items.createTemplateItem(ContentType.TYPES.SmartView, {
           title: 'Not pinned',
           predicate: {
             keypath: 'pinned',
@@ -511,34 +516,34 @@ describe('notes and tags', () => {
           },
         }),
       )
-      const matches = this.application.items.notesMatchingSmartView(view)
-      this.application.items.setPrimaryItemDisplayOptions({
+      const matches = application.items.notesMatchingSmartView(view)
+      application.items.setPrimaryItemDisplayOptions({
         sortBy: 'title',
         sortDirection: 'asc',
         views: [view],
       })
 
-      const displayedNotes = this.application.items.getDisplayableNotes()
+      const displayedNotes = application.items.getDisplayableNotes()
       expect(displayedNotes).to.deep.equal(matches)
       expect(matches.length).to.equal(1)
       expect(matches[0].uuid).to.equal(unpinnedNote.uuid)
     })
 
     it('"text.length", ">", 500', async function () {
-      const longNote = await this.application.mutator.insertItem(
-        await this.application.items.createTemplateItem(ContentType.TYPES.Note, {
+      const longNote = await application.mutator.insertItem(
+        await application.items.createTemplateItem(ContentType.TYPES.Note, {
           title: 'A',
           text: Array(501).fill(0).join(''),
         }),
       )
-      await this.application.mutator.insertItem(
-        await this.application.items.createTemplateItem(ContentType.TYPES.Note, {
+      await application.mutator.insertItem(
+        await application.items.createTemplateItem(ContentType.TYPES.Note, {
           title: 'B',
           text: 'b',
         }),
       )
-      const view = await this.application.mutator.insertItem(
-        await this.application.items.createTemplateItem(ContentType.TYPES.SmartView, {
+      const view = await application.mutator.insertItem(
+        await application.items.createTemplateItem(ContentType.TYPES.SmartView, {
           title: 'Long',
           predicate: {
             keypath: 'text.length',
@@ -547,13 +552,13 @@ describe('notes and tags', () => {
           },
         }),
       )
-      const matches = this.application.items.notesMatchingSmartView(view)
-      this.application.items.setPrimaryItemDisplayOptions({
+      const matches = application.items.notesMatchingSmartView(view)
+      application.items.setPrimaryItemDisplayOptions({
         sortBy: 'title',
         sortDirection: 'asc',
         views: [view],
       })
-      const displayedNotes = this.application.items.getDisplayableNotes()
+      const displayedNotes = application.items.getDisplayableNotes()
       expect(displayedNotes).to.deep.equal(matches)
       expect(matches.length).to.equal(1)
       expect(matches[0].uuid).to.equal(longNote.uuid)
@@ -561,22 +566,22 @@ describe('notes and tags', () => {
 
     it('"updated_at", ">", "1.days.ago"', async function () {
       await Factory.registerUserToApplication({
-        application: this.application,
+        application: application,
         email: Utils.generateUuid(),
         password: Utils.generateUuid(),
       })
 
-      const recentNote = await this.application.mutator.insertItem(
-        await this.application.items.createTemplateItem(ContentType.TYPES.Note, {
+      const recentNote = await application.mutator.insertItem(
+        await application.items.createTemplateItem(ContentType.TYPES.Note, {
           title: 'A',
         }),
         true,
       )
 
-      await this.application.sync.sync()
+      await application.sync.sync()
 
-      const olderNote = await this.application.mutator.insertItem(
-        await this.application.items.createTemplateItem(ContentType.TYPES.Note, {
+      const olderNote = await application.mutator.insertItem(
+        await application.items.createTemplateItem(ContentType.TYPES.Note, {
           title: 'B',
           text: 'b',
         }),
@@ -584,17 +589,17 @@ describe('notes and tags', () => {
       )
 
       const threeDays = 3 * 24 * 60 * 60 * 1000
-      await Factory.changePayloadUpdatedAt(this.application, olderNote.payload, new Date(Date.now() - threeDays))
+      await Factory.changePayloadUpdatedAt(application, olderNote.payload, new Date(Date.now() - threeDays))
 
       /** Create an unsynced note which shouldn't get an updated_at */
-      await this.application.mutator.insertItem(
-        await this.application.items.createTemplateItem(ContentType.TYPES.Note, {
+      await application.mutator.insertItem(
+        await application.items.createTemplateItem(ContentType.TYPES.Note, {
           title: 'B',
           text: 'b',
         }),
       )
-      const view = await this.application.mutator.insertItem(
-        await this.application.items.createTemplateItem(ContentType.TYPES.SmartView, {
+      const view = await application.mutator.insertItem(
+        await application.items.createTemplateItem(ContentType.TYPES.SmartView, {
           title: 'One day ago',
           predicate: {
             keypath: 'serverUpdatedAt',
@@ -603,33 +608,33 @@ describe('notes and tags', () => {
           },
         }),
       )
-      const matches = this.application.items.notesMatchingSmartView(view)
+      const matches = application.items.notesMatchingSmartView(view)
       expect(matches.length).to.equal(1)
       expect(matches[0].uuid).to.equal(recentNote.uuid)
 
-      this.application.items.setPrimaryItemDisplayOptions({
+      application.items.setPrimaryItemDisplayOptions({
         sortBy: 'title',
         sortDirection: 'asc',
         views: [view],
       })
-      const displayedNotes = this.application.items.getDisplayableNotes()
+      const displayedNotes = application.items.getDisplayableNotes()
       expect(displayedNotes).to.deep.equal(matches)
     })
 
     it('"tags.length", "=", 0', async function () {
-      const untaggedNote = await this.application.mutator.insertItem(
-        await this.application.items.createTemplateItem(ContentType.TYPES.Note, {
+      const untaggedNote = await application.mutator.insertItem(
+        await application.items.createTemplateItem(ContentType.TYPES.Note, {
           title: 'A',
         }),
       )
-      const taggedNote = await Factory.createMappedNote(this.application)
-      const tag = await this.application.mutator.findOrCreateTag('A')
-      await this.application.mutator.changeItem(tag, (mutator) => {
+      const taggedNote = await Factory.createMappedNote(application)
+      const tag = await application.mutator.findOrCreateTag('A')
+      await application.mutator.changeItem(tag, (mutator) => {
         mutator.e2ePendingRefactor_addItemAsRelationship(taggedNote)
       })
 
-      const view = await this.application.mutator.insertItem(
-        await this.application.items.createTemplateItem(ContentType.TYPES.SmartView, {
+      const view = await application.mutator.insertItem(
+        await application.items.createTemplateItem(ContentType.TYPES.SmartView, {
           title: 'Untagged',
           predicate: {
             keypath: 'tags.length',
@@ -638,32 +643,32 @@ describe('notes and tags', () => {
           },
         }),
       )
-      const matches = this.application.items.notesMatchingSmartView(view)
-      this.application.items.setPrimaryItemDisplayOptions({
+      const matches = application.items.notesMatchingSmartView(view)
+      application.items.setPrimaryItemDisplayOptions({
         sortBy: 'title',
         sortDirection: 'asc',
         views: [view],
       })
-      const displayedNotes = this.application.items.getDisplayableNotes()
+      const displayedNotes = application.items.getDisplayableNotes()
       expect(displayedNotes).to.deep.equal(matches)
       expect(matches.length).to.equal(1)
       expect(matches[0].uuid).to.equal(untaggedNote.uuid)
     })
 
     it('"tags", "includes", ["title", "startsWith", "b"]', async function () {
-      const taggedNote = await Factory.createMappedNote(this.application)
-      const tag = await this.application.mutator.findOrCreateTag('B')
-      await this.application.mutator.changeItem(tag, (mutator) => {
+      const taggedNote = await Factory.createMappedNote(application)
+      const tag = await application.mutator.findOrCreateTag('B')
+      await application.mutator.changeItem(tag, (mutator) => {
         mutator.e2ePendingRefactor_addItemAsRelationship(taggedNote)
       })
-      await this.application.mutator.insertItem(
-        await this.application.items.createTemplateItem(ContentType.TYPES.Note, {
+      await application.mutator.insertItem(
+        await application.items.createTemplateItem(ContentType.TYPES.Note, {
           title: 'A',
         }),
       )
 
-      const view = await this.application.mutator.insertItem(
-        await this.application.items.createTemplateItem(ContentType.TYPES.SmartView, {
+      const view = await application.mutator.insertItem(
+        await application.items.createTemplateItem(ContentType.TYPES.SmartView, {
           title: 'B-tags',
           predicate: {
             keypath: 'tags',
@@ -672,45 +677,45 @@ describe('notes and tags', () => {
           },
         }),
       )
-      const matches = this.application.items.notesMatchingSmartView(view)
-      this.application.items.setPrimaryItemDisplayOptions({
+      const matches = application.items.notesMatchingSmartView(view)
+      application.items.setPrimaryItemDisplayOptions({
         sortBy: 'title',
         sortDirection: 'asc',
         views: [view],
       })
-      const displayedNotes = this.application.items.getDisplayableNotes()
+      const displayedNotes = application.items.getDisplayableNotes()
       expect(displayedNotes).to.deep.equal(matches)
       expect(matches.length).to.equal(1)
       expect(matches[0].uuid).to.equal(taggedNote.uuid)
     })
 
     it('"ignored", "and", [["pinned", "=", true], ["locked", "=", true]]', async function () {
-      const pinnedAndLockedNote = await Factory.createMappedNote(this.application)
-      await this.application.mutator.changeItem(pinnedAndLockedNote, (mutator) => {
+      const pinnedAndLockedNote = await Factory.createMappedNote(application)
+      await application.mutator.changeItem(pinnedAndLockedNote, (mutator) => {
         mutator.pinned = true
         mutator.locked = true
       })
 
-      const pinnedNote = await this.application.mutator.insertItem(
-        await this.application.items.createTemplateItem(ContentType.TYPES.Note, {
+      const pinnedNote = await application.mutator.insertItem(
+        await application.items.createTemplateItem(ContentType.TYPES.Note, {
           title: 'A',
         }),
       )
-      await this.application.mutator.changeItem(pinnedNote, (mutator) => {
+      await application.mutator.changeItem(pinnedNote, (mutator) => {
         mutator.pinned = true
       })
 
-      const lockedNote = await this.application.mutator.insertItem(
-        await this.application.items.createTemplateItem(ContentType.TYPES.Note, {
+      const lockedNote = await application.mutator.insertItem(
+        await application.items.createTemplateItem(ContentType.TYPES.Note, {
           title: 'A',
         }),
       )
-      await this.application.mutator.changeItem(lockedNote, (mutator) => {
+      await application.mutator.changeItem(lockedNote, (mutator) => {
         mutator.locked = true
       })
 
-      const view = await this.application.mutator.insertItem(
-        await this.application.items.createTemplateItem(ContentType.TYPES.SmartView, {
+      const view = await application.mutator.insertItem(
+        await application.items.createTemplateItem(ContentType.TYPES.SmartView, {
           title: 'Pinned & Locked',
           predicate: {
             operator: 'and',
@@ -721,51 +726,51 @@ describe('notes and tags', () => {
           },
         }),
       )
-      const matches = this.application.items.notesMatchingSmartView(view)
-      this.application.items.setPrimaryItemDisplayOptions({
+      const matches = application.items.notesMatchingSmartView(view)
+      application.items.setPrimaryItemDisplayOptions({
         sortBy: 'title',
         sortDirection: 'asc',
         views: [view],
       })
-      const displayedNotes = this.application.items.getDisplayableNotes()
+      const displayedNotes = application.items.getDisplayableNotes()
       expect(displayedNotes).to.deep.equal(matches)
       expect(matches.length).to.equal(1)
       expect(matches[0].uuid).to.equal(pinnedAndLockedNote.uuid)
     })
 
     it('"ignored", "or", [["content.protected", "=", true], ["pinned", "=", true]]', async function () {
-      const protectedNote = await Factory.createMappedNote(this.application)
-      await this.application.mutator.changeItem(protectedNote, (mutator) => {
+      const protectedNote = await Factory.createMappedNote(application)
+      await application.mutator.changeItem(protectedNote, (mutator) => {
         mutator.protected = true
       })
 
-      const pinnedNote = await this.application.mutator.insertItem(
-        await this.application.items.createTemplateItem(ContentType.TYPES.Note, {
+      const pinnedNote = await application.mutator.insertItem(
+        await application.items.createTemplateItem(ContentType.TYPES.Note, {
           title: 'A',
         }),
       )
-      await this.application.mutator.changeItem(pinnedNote, (mutator) => {
+      await application.mutator.changeItem(pinnedNote, (mutator) => {
         mutator.pinned = true
       })
 
-      const pinnedAndProtectedNote = await this.application.mutator.insertItem(
-        await this.application.items.createTemplateItem(ContentType.TYPES.Note, {
+      const pinnedAndProtectedNote = await application.mutator.insertItem(
+        await application.items.createTemplateItem(ContentType.TYPES.Note, {
           title: 'A',
         }),
       )
-      await this.application.mutator.changeItem(pinnedAndProtectedNote, (mutator) => {
+      await application.mutator.changeItem(pinnedAndProtectedNote, (mutator) => {
         mutator.pinned = true
         mutator.protected = true
       })
 
-      await this.application.mutator.insertItem(
-        await this.application.items.createTemplateItem(ContentType.TYPES.Note, {
+      await application.mutator.insertItem(
+        await application.items.createTemplateItem(ContentType.TYPES.Note, {
           title: 'A',
         }),
       )
 
-      const view = await this.application.mutator.insertItem(
-        await this.application.items.createTemplateItem(ContentType.TYPES.SmartView, {
+      const view = await application.mutator.insertItem(
+        await application.items.createTemplateItem(ContentType.TYPES.SmartView, {
           title: 'Protected or Pinned',
           predicate: {
             operator: 'or',
@@ -776,13 +781,13 @@ describe('notes and tags', () => {
           },
         }),
       )
-      const matches = this.application.items.notesMatchingSmartView(view)
-      this.application.items.setPrimaryItemDisplayOptions({
+      const matches = application.items.notesMatchingSmartView(view)
+      application.items.setPrimaryItemDisplayOptions({
         sortBy: 'created_at',
         sortDirection: 'asc',
         views: [view],
       })
-      const displayedNotes = this.application.items.getDisplayableNotes()
+      const displayedNotes = application.items.getDisplayableNotes()
       expect(displayedNotes.length).to.equal(matches.length)
       expect(matches.length).to.equal(3)
       expect(matches.find((note) => note.uuid === protectedNote.uuid)).to.exist
@@ -801,12 +806,12 @@ describe('notes and tags', () => {
     const notePayload3 = Factory.createNotePayload('Bar')
     const notePayload4 = Factory.createNotePayload('Testing')
 
-    await this.application.mutator.emitItemsFromPayloads(
+    await application.mutator.emitItemsFromPayloads(
       [notePayload1, notePayload2, notePayload3, notePayload4, tagPayload1],
       PayloadEmitSource.LocalChanged,
     )
 
-    this.application.items.setPrimaryItemDisplayOptions({
+    application.items.setPrimaryItemDisplayOptions({
       sortBy: 'title',
       sortDirection: 'dsc',
       searchQuery: {
@@ -814,7 +819,7 @@ describe('notes and tags', () => {
       },
     })
 
-    const displayedNotes = this.application.items.getDisplayableNotes()
+    const displayedNotes = application.items.getDisplayableNotes()
     expect(displayedNotes.length).to.equal(2)
     /** setPrimaryItemDisplayOptions inverses sort for title */
     expect(displayedNotes[0].uuid).to.equal(notePayload1.uuid)
@@ -831,12 +836,12 @@ describe('notes and tags', () => {
     const notePayload3 = Factory.createNotePayload('Testing FOO (Bar)')
     const notePayload4 = Factory.createNotePayload('This should not match')
 
-    await this.application.mutator.emitItemsFromPayloads(
+    await application.mutator.emitItemsFromPayloads(
       [notePayload1, notePayload2, notePayload3, notePayload4, tagPayload1],
       PayloadEmitSource.LocalChanged,
     )
 
-    this.application.items.setPrimaryItemDisplayOptions({
+    application.items.setPrimaryItemDisplayOptions({
       sortBy: 'title',
       sortDirection: 'dsc',
       searchQuery: {
@@ -844,7 +849,7 @@ describe('notes and tags', () => {
       },
     })
 
-    const displayedNotes = this.application.items.getDisplayableNotes()
+    const displayedNotes = application.items.getDisplayableNotes()
     expect(displayedNotes.length).to.equal(3)
     /** setPrimaryItemDisplayOptions inverses sort for title */
     expect(displayedNotes[0].uuid).to.equal(notePayload1.uuid)

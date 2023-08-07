@@ -83,12 +83,9 @@ const Dropdown = ({
       <SelectPopover
         store={select}
         className={classNames(
-          'z-dropdown-menu max-h-[var(--popover-available-height)] w-[var(--popover-anchor-width)] overflow-y-auto rounded border border-passive-3 bg-default py-1',
+          'z-dropdown-menu max-h-[var(--popover-available-height)] w-[var(--popover-anchor-width)] [backdrop-filter:var(--popover-backdrop-filter)] overflow-y-auto rounded border border-passive-3 bg-default py-1',
           classNameOverride.popover,
         )}
-        style={{
-          backdropFilter: 'var(--popover-backdrop-filter)',
-        }}
         portal={false}
       >
         {items.map((item) => (

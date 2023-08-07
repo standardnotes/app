@@ -3,6 +3,9 @@ import { IconType } from '@standardnotes/snjs'
 export const PANEL_NAME_NOTES = 'notes'
 export const PANEL_NAME_NAVIGATION = 'navigation'
 
+export const URL_REGEX =
+  /((https?:\/\/(www\.)?)|(www\.))[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/
+
 export const EMAIL_REGEX =
   /^([a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\.)+[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?)$/
 
