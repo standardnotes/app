@@ -124,6 +124,8 @@ describe('shared vault items', function () {
   })
 
   it('adding item to vault while belonging to other vault should move the item to new vault', async () => {
+    context.activatePaidSubscriptionForUser()
+
     const { note, contactContext, contact, deinitContactContext } =
       await Collaboration.createSharedVaultWithAcceptedInviteAndNote(context)
 
