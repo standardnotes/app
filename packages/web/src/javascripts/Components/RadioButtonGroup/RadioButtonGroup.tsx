@@ -18,7 +18,12 @@ const RadioButtonGroup = ({ value, items, onChange, className }: Props) => {
   })
 
   return (
-    <RadioGroup store={radio} className={`flex divide-x divide-border rounded border border-border ${className ?? ''}`}>
+    <RadioGroup
+      store={radio}
+      className={`flex divide-x divide-border rounded border border-border md:translucent-ui:border-[--popover-border-color] ${
+        className ?? ''
+      }`}
+    >
       {items.map(({ label, value: itemValue }) => (
         <label
           className={classNames(

@@ -26,6 +26,7 @@ const SingleVaultSelectionMenu: FunctionComponent = () => {
 
   return (
     <Menu a11yLabel="Vault selection menu" isOpen>
+      {!vaults.length && <div className="text-center py-1">No vaults found</div>}
       {vaults.map((vault) => (
         <MenuRadioButtonItem key={vault.uuid} checked={isVaultVisible(vault)} onClick={() => selectVault(vault)}>
           <div className="flex w-full items-center gap-1">

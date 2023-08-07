@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent, useCallback, useRef, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import Icon from '@/Components/Icon/Icon'
 import { KeyboardKey } from '@standardnotes/ui-services'
 import Popover from '../Popover/Popover'
@@ -9,23 +9,9 @@ import MenuItem from '../Menu/MenuItem'
 import Menu from '../Menu/Menu'
 import { featureTrunkVaultsEnabled } from '@/FeatureTrunk'
 
-type Props = {
-  iconClassName: string
-  items: DecryptedItemInterface[]
-}
-
-const AddToVaultMenuOption: FunctionComponent<Props> = ({ iconClassName, items }) => {
+const VaultMenu = ({ items }: { items: DecryptedItemInterface[] }) => {
   const application = useApplication()
-  const menuContainerRef = useRef<HTMLDivElement>(null)
-  const buttonRef = useRef<HTMLButtonElement>(null)
-
   const vaults = application.vaults.getVaults()
-
-  const [isSubMenuOpen, setIsSubMenuOpen] = useState(false)
-
-  const toggleSubMenu = useCallback(() => {
-    setIsSubMenuOpen((isOpen) => !isOpen)
-  }, [])
 
   const addItemsToVault = useCallback(
     async (vault: VaultListingInterface) => {
@@ -68,6 +54,68 @@ const AddToVaultMenuOption: FunctionComponent<Props> = ({ iconClassName, items }
 
   const singleItemVault = items.length === 1 ? application.vaults.getItemVault(items[0]) : undefined
 
+  return (
+    <Menu a11yLabel="Vault selection menu" isOpen={true}>
+      {doSomeItemsBelongToVault && (
+        <MenuItem
+          onClick={() => {
+            void removeItemsFromVault()
+          }}
+        >
+          <span className="flex overflow-hidden overflow-ellipsis whitespace-nowrap">
+            <Icon type="close" className="mr-2 text-neutral" />
+            <div className="flex w-full items-center gap-1">
+              Move out of {singleItemVault ? singleItemVault.name : 'vaults'}
+            </div>
+          </span>
+        </MenuItem>
+      )}
+      {!vaults.length && <div className="flex flex-col items-center justify-center py-1">No vaults found</div>}
+      {vaults.map((vault) => {
+        if (singleItemVault) {
+          return null
+        }
+
+        return (
+          <MenuItem
+            key={vault.uuid}
+            onClick={() => {
+              doesVaultContainItems(vault) ? void removeItemsFromVault() : void addItemsToVault(vault)
+            }}
+          >
+            <span
+              className={classNames(
+                'flex overflow-ellipsis whitespace-nowrap',
+                doesVaultContainItems(vault) ? 'font-bold' : '',
+              )}
+            >
+              <Icon
+                type="safe-square"
+                size="large"
+                className={classNames('mr-2 text-neutral', doesVaultContainItems(vault) ? 'text-info' : '')}
+              />
+              <div className="flex w-full items-center">
+                {vault.name}
+                {application.vaultLocks.isVaultLocked(vault) && <Icon className="ml-1" type="lock" size={'small'} />}
+              </div>
+            </span>
+          </MenuItem>
+        )
+      })}
+    </Menu>
+  )
+}
+
+const AddToVaultMenuOption = ({ iconClassName, items }: { iconClassName: string; items: DecryptedItemInterface[] }) => {
+  const menuContainerRef = useRef<HTMLDivElement>(null)
+  const buttonRef = useRef<HTMLButtonElement>(null)
+
+  const [isSubMenuOpen, setIsSubMenuOpen] = useState(false)
+
+  const toggleSubMenu = useCallback(() => {
+    setIsSubMenuOpen((isOpen) => !isOpen)
+  }, [])
+
   if (!featureTrunkVaultsEnabled()) {
     return null
   }
@@ -100,55 +148,7 @@ const AddToVaultMenuOption: FunctionComponent<Props> = ({ iconClassName, items }
         className="py-2"
         overrideZIndex="z-modal"
       >
-        <Menu a11yLabel="Vault selection menu" isOpen={isSubMenuOpen}>
-          {doSomeItemsBelongToVault && (
-            <MenuItem
-              onClick={() => {
-                void removeItemsFromVault()
-              }}
-            >
-              <span className="flex overflow-hidden overflow-ellipsis whitespace-nowrap">
-                <Icon type="close" className="mr-2 text-neutral" />
-                <div className="flex w-full items-center gap-1">
-                  Move out of {singleItemVault ? singleItemVault.name : 'vaults'}
-                </div>
-              </span>
-            </MenuItem>
-          )}
-          {vaults.map((vault) => {
-            if (singleItemVault) {
-              return null
-            }
-
-            return (
-              <MenuItem
-                key={vault.uuid}
-                onClick={() => {
-                  doesVaultContainItems(vault) ? void removeItemsFromVault() : void addItemsToVault(vault)
-                }}
-              >
-                <span
-                  className={classNames(
-                    'flex overflow-ellipsis whitespace-nowrap',
-                    doesVaultContainItems(vault) ? 'font-bold' : '',
-                  )}
-                >
-                  <Icon
-                    type="safe-square"
-                    size="large"
-                    className={`mr-2 text-neutral ${doesVaultContainItems(vault) ? 'text-info' : ''}`}
-                  />
-                  <div className="flex w-full items-center">
-                    {vault.name}
-                    {application.vaultLocks.isVaultLocked(vault) && (
-                      <Icon className="ml-1" type="lock" size={'small'} />
-                    )}
-                  </div>
-                </span>
-              </MenuItem>
-            )
-          })}
-        </Menu>
+        <VaultMenu items={items} />
       </Popover>
     </div>
   )

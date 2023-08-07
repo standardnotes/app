@@ -1,7 +1,7 @@
 import Button from '@/Components/Button/Button'
 import Icon from '@/Components/Icon/Icon'
 import ModalOverlay from '@/Components/Modal/ModalOverlay'
-import { TrustedContactInterface } from '@standardnotes/snjs'
+import { TrustedContactInterface, classNames } from '@standardnotes/snjs'
 import EditContactModal from './EditContactModal'
 import { useCallback, useState } from 'react'
 import { useApplication } from '@/Components/ApplicationProvider'
@@ -28,15 +28,19 @@ const ContactItem = ({ contact }: Props) => {
         <EditContactModal editContactUuid={contact.contactUuid} onCloseDialog={closeContactModal} />
       </ModalOverlay>
 
-      <div className="bg-gray-100 flex flex-row gap-3.5 rounded-lg px-3.5 py-2.5 shadow-md">
-        <Icon type={'user'} size="custom" className="mt-2.5 h-5.5 w-5.5 flex-shrink-0" />
-        <div className="flex flex-col gap-2 py-1.5">
+      <div className="bg-gray-100 flex flex-row gap-3.5 rounded-lg px-3.5 py-2.5 border border-border shadow">
+        <Icon type="user" size="custom" className="mt-2 h-5 w-5 flex-shrink-0" />
+        <div className="flex flex-col gap-1 py-1.5 overflow-hidden">
           <span
-            className={`mr-auto overflow-hidden text-ellipsis text-base font-bold ${contact.isMe ? 'text-info' : ''}`}
+            className={classNames(
+              'mr-auto overflow-hidden text-ellipsis text-base font-bold w-full',
+              contact.isMe ? 'text-info' : '',
+            )}
           >
             {contact.name}
           </span>
-          <span className="mr-auto overflow-hidden text-ellipsis text-sm">{collaborationID}</span>
+
+          <span className="mr-auto overflow-hidden text-ellipsis text-sm w-full">{collaborationID}</span>
 
           <div className="mt-2.5 flex flex-row">
             <Button label="Edit" className={'mr-3 text-xs'} onClick={() => setIsContactModalOpen(true)} />

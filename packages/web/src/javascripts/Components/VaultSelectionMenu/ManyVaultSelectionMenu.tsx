@@ -30,6 +30,7 @@ const ManyVaultSelectionMenu: FunctionComponent = () => {
 
   return (
     <Menu a11yLabel="Vault selection menu" isOpen>
+      {!vaults.length && <div className="text-center py-1">No vaults found</div>}
       {vaults.map((vault) => (
         <MenuSwitchButtonItem
           onChange={() => {

@@ -19,6 +19,8 @@ import VaultItem from './Vaults/VaultItem'
 import Button from '@/Components/Button/Button'
 import InviteItem from './Invites/InviteItem'
 import EditVaultModal from './Vaults/VaultModal/EditVaultModal'
+import PreferencesPane from '../../PreferencesComponents/PreferencesPane'
+import { ToastType, addToast } from '@standardnotes/toast'
 
 const Vaults = () => {
   const application = useApplication()
@@ -94,7 +96,7 @@ const Vaults = () => {
   }, [])
 
   return (
-    <>
+    <PreferencesPane>
       <ModalOverlay isOpen={isAddContactModalOpen} close={closeAddContactModal}>
         <EditContactModal onCloseDialog={closeAddContactModal} />
       </ModalOverlay>
@@ -147,23 +149,42 @@ const Vaults = () => {
           <Title>CollaborationID</Title>
           <Subtitle>Share your CollaborationID with collaborators to join their vaults.</Subtitle>
           {contactService.isCollaborationEnabled() ? (
-            <div className="mt-2.5 flex flex-row">
-              <code>
-                <pre>{contactService.getCollaborationID()}</pre>
+            <>
+              <code className="mt-2.5 overflow-hidden whitespace-pre-wrap break-words p-3 border border-border rounded bg-contrast">
+                {contactService.getCollaborationID()}
               </code>
-            </div>
+              <Button
+                label="Copy ID"
+                className="mt-2"
+                onClick={async () => {
+                  try {
+                    await navigator.clipboard.writeText(contactService.getCollaborationID())
+                    addToast({
+                      type: ToastType.Success,
+                      message: 'Copied to clipboard',
+                    })
+                  } catch (error) {
+                    addToast({
+                      type: ToastType.Error,
+                      message: 'Failed to copy to clipboard',
+                    })
+                    console.error(error)
+                  }
+                }}
+              />
+            </>
           ) : (
             <div className="mt-2.5 flex flex-row">
               <Button
                 label="Enable Vault Sharing"
-                className={'mr-3 text-xs'}
+                className="mr-3 text-xs"
                 onClick={() => contactService.enableCollaboration()}
               />
             </div>
           )}
         </PreferencesSegment>
       </PreferencesGroup>
-    </>
+    </PreferencesPane>
   )
 }
 
