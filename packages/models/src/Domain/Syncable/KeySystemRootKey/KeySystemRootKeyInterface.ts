@@ -35,4 +35,6 @@ export interface KeySystemRootKeyInterface extends DecryptedItemInterface<KeySys
    */
   get key_system_identifier(): undefined
   get shared_vault_uuid(): undefined
+
+  isEqual(other: KeySystemRootKeyInterface): boolean
 }

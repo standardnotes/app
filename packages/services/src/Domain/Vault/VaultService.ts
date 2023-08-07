@@ -1,3 +1,5 @@
+import { ValidateVaultPassword } from './../VaultLock/UseCase/ValidateVaultPassword'
+import { IsVaultOwner } from './../VaultUser/UseCase/IsVaultOwner'
 import { SendVaultDataChangedMessage } from './../SharedVaults/UseCase/SendVaultDataChangedMessage'
 import { isClientDisplayableError } from '@standardnotes/responses'
 import {
@@ -5,6 +7,7 @@ import {
   FileItem,
   KeySystemIdentifier,
   KeySystemRootKeyStorageMode,
+  SharedVaultListingInterface,
   VaultListingInterface,
   VaultListingMutator,
   isNote,
@@ -48,6 +51,8 @@ export class VaultService
     private _deleteVault: DeleteVault,
     private _rotateVaultKey: RotateVaultKey,
     private _sendVaultDataChangeMessage: SendVaultDataChangedMessage,
+    private _isVaultOwner: IsVaultOwner,
+    private _validateVaultPassword: ValidateVaultPassword,
     eventBus: InternalEventBusInterface,
   ) {
     super(eventBus)
@@ -238,7 +243,38 @@ export class VaultService
       throw new Error('Attempting to change vault options on a locked vault')
     }
 
+    if (!this._isVaultOwner.execute(dto.vault).getValue()) {
+      throw new Error('Third party vault options should be changed via changeThirdPartyVaultStorageOptions')
+    }
+
     const result = await this._changeVaultKeyOptions.execute(dto)
+
+    return result
+  }
+
+  async changeThirdPartyVaultStorageOptions(dto: {
+    vault: SharedVaultListingInterface
+    newStorageMode: KeySystemRootKeyStorageMode | undefined
+    vaultPassword: string
+  }): Promise<Result<void>> {
+    if (this.vaultLocks.isVaultLocked(dto.vault)) {
+      throw new Error('Attempting to change vault options on a locked vault')
+    }
+
+    if (this._isVaultOwner.execute(dto.vault).getValue()) {
+      throw new Error('First party vault options should be changed via changeVaultKeyOptions')
+    }
+
+    const validPassword = this._validateVaultPassword.execute(dto.vault, dto.vaultPassword).getValue()
+    if (!validPassword) {
+      return Result.fail('Invalid vault password')
+    }
+
+    const result = await this._changeVaultKeyOptions.execute({
+      vault: dto.vault,
+      newStorageMode: dto.newStorageMode,
+      newPasswordOptions: undefined,
+    })
 
     return result
   }

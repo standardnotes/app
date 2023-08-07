@@ -1,4 +1,5 @@
 import * as Factory from '../lib/factory.js'
+import * as Collaboration from '../lib/Collaboration.js'
 
 chai.use(chaiAsPromised)
 const expect = chai.expect
@@ -57,7 +58,7 @@ describe('vault key management', function () {
 
       await Factory.expectThrowsAsync(
         () => context.vaults.removeItemFromVault(item),
-        'Attempting to remove item from locked vault',
+        'Cannot find latest version of item to get vault for',
       )
     })
 
@@ -117,6 +118,64 @@ describe('vault key management', function () {
     })
   })
 
+  describe('locking memory management', () => {
+    it('locking a vault should clear decrypted items keys from memory', async () => {
+      const vault = await context.vaults.createUserInputtedPasswordVault({
+        name: 'test vault',
+        description: 'test vault description',
+        userInputtedPassword: 'test password',
+        storagePreference: KeySystemRootKeyStorageMode.Ephemeral,
+      })
+
+      const itemsKeys = context.keys.getKeySystemItemsKeys(vault.systemIdentifier)
+      expect(itemsKeys.length).to.equal(1)
+
+      await context.vaultLocks.lockNonPersistentVault(vault)
+
+      const itemsKeysAfterLock = context.keys.getKeySystemItemsKeys(vault.systemIdentifier)
+      expect(itemsKeysAfterLock.length).to.equal(0)
+    })
+
+    it('locking then unlocking a vault should bring items keys back into memory', async () => {
+      const vault = await context.vaults.createUserInputtedPasswordVault({
+        name: 'test vault',
+        description: 'test vault description',
+        userInputtedPassword: 'test password',
+        storagePreference: KeySystemRootKeyStorageMode.Ephemeral,
+      })
+
+      await context.vaultLocks.lockNonPersistentVault(vault)
+      await context.vaultLocks.unlockNonPersistentVault(vault, 'test password')
+
+      const itemsKeys = context.keys.getKeySystemItemsKeys(vault.systemIdentifier)
+      expect(itemsKeys.length).to.equal(1)
+
+      const rootKeys = context.keys.getAllKeySystemRootKeysForVault(vault.systemIdentifier)
+      expect(rootKeys.length).to.equal(1)
+    })
+
+    it('locking should clear vault items from memory', async () => {
+      const vault = await context.vaults.createUserInputtedPasswordVault({
+        name: 'test vault',
+        description: 'test vault description',
+        userInputtedPassword: 'test password',
+        storagePreference: KeySystemRootKeyStorageMode.Ephemeral,
+      })
+
+      const note = await context.createSyncedNote()
+      await Collaboration.moveItemToVault(context, vault, note)
+
+      await context.vaultLocks.lockNonPersistentVault(vault)
+
+      const decryptedNote = context.items.findItem(note.uuid)
+      expect(decryptedNote).to.be.undefined
+
+      const encryptedNote = context.items.findAnyItem(note.uuid)
+      expect(encryptedNote).to.not.be.undefined
+      expect(isEncryptedItem(encryptedNote)).to.be.true
+    })
+  })
+
   describe('key rotation and persistence', () => {
     it('rotating ephemeral vault should not persist keys', async () => {
       const vault = await context.vaults.createUserInputtedPasswordVault({
@@ -167,43 +226,6 @@ describe('vault key management', function () {
 
       const storedKey = context.keys.getRootKeyFromStorageForVault(vault.systemIdentifier)
       expect(storedKey).to.be.undefined
-    })
-  })
-
-  describe('memory management', () => {
-    it('locking a vault should clear decrypted items keys from memory', async () => {
-      const vault = await context.vaults.createUserInputtedPasswordVault({
-        name: 'test vault',
-        description: 'test vault description',
-        userInputtedPassword: 'test password',
-        storagePreference: KeySystemRootKeyStorageMode.Ephemeral,
-      })
-
-      const itemsKeys = context.keys.getKeySystemItemsKeys(vault.systemIdentifier)
-      expect(itemsKeys.length).to.equal(1)
-
-      await context.vaultLocks.lockNonPersistentVault(vault)
-
-      const itemsKeysAfterLock = context.keys.getKeySystemItemsKeys(vault.systemIdentifier)
-      expect(itemsKeysAfterLock.length).to.equal(0)
-    })
-
-    it('locking then unlocking a vault should bring items keys back into memory', async () => {
-      const vault = await context.vaults.createUserInputtedPasswordVault({
-        name: 'test vault',
-        description: 'test vault description',
-        userInputtedPassword: 'test password',
-        storagePreference: KeySystemRootKeyStorageMode.Ephemeral,
-      })
-
-      await context.vaultLocks.lockNonPersistentVault(vault)
-      await context.vaultLocks.unlockNonPersistentVault(vault, 'test password')
-
-      const itemsKeys = context.keys.getKeySystemItemsKeys(vault.systemIdentifier)
-      expect(itemsKeys.length).to.equal(1)
-
-      const rootKeys = context.keys.getAllKeySystemRootKeysForVault(vault.systemIdentifier)
-      expect(rootKeys.length).to.equal(1)
     })
   })
 
@@ -342,6 +364,47 @@ describe('vault key management', function () {
 
         const memKeys = context.keys.getAllKeySystemRootKeysForVault(vault.systemIdentifier)
         expect(memKeys.length).to.equal(1)
+      })
+
+      it('should throw if attempting to change key options of third party vault', async () => {
+        await context.register()
+
+        const { contactVault, contactContext, deinitContactContext } =
+          await Collaboration.createSharedVaultWithAcceptedInvite(context)
+
+        await Factory.expectThrowsAsync(
+          () => contactContext.vaults.changeVaultKeyOptions({ vault: contactVault }),
+          'Third party vault options should be changed via changeThirdPartyVaultStorageOptions',
+        )
+
+        await deinitContactContext()
+      })
+
+      it('changing storage options for third party vault should validate password', async () => {
+        await context.register()
+
+        const { contactVault, thirdPartyContext, deinitThirdPartyContext } = await context.createSharedPasswordVault(
+          'test password',
+        )
+
+        const invalidResult = await thirdPartyContext.vaults.changeThirdPartyVaultStorageOptions({
+          vault: contactVault,
+          vaultPassword: 'wrong password',
+          newStorageMode: KeySystemRootKeyStorageMode.Synced,
+        })
+
+        expect(invalidResult.isFailed()).to.be.true
+        expect(invalidResult.getError()).to.equal('Invalid vault password')
+
+        const validResult = await thirdPartyContext.vaults.changeThirdPartyVaultStorageOptions({
+          vault: contactVault,
+          vaultPassword: 'test password',
+          newStorageMode: KeySystemRootKeyStorageMode.Local,
+        })
+
+        expect(validResult.isFailed()).to.be.false
+
+        await deinitThirdPartyContext()
       })
     })
 

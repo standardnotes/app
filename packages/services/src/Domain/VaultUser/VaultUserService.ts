@@ -52,11 +52,7 @@ export class VaultUserService extends AbstractService<VaultUserServiceEvent> imp
   }
 
   public isCurrentUserSharedVaultAdmin(sharedVault: SharedVaultListingInterface): boolean {
-    return this._isVaultOwner
-      .execute({
-        sharedVault,
-      })
-      .getValue()
+    return this._isVaultOwner.execute(sharedVault).getValue()
   }
 
   async removeUserFromSharedVault(sharedVault: SharedVaultListingInterface, userUuid: string): Promise<Result<void>> {

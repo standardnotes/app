@@ -28,7 +28,7 @@ export class SendVaultDataChangedMessage implements UseCaseInterface<void> {
   ) {}
 
   async execute(params: { vault: SharedVaultListingInterface }): Promise<Result<void>> {
-    const isOwner = this._isVaultOwner.execute({ sharedVault: params.vault }).getValue()
+    const isOwner = this._isVaultOwner.execute(params.vault).getValue()
     if (!isOwner) {
       return Result.ok()
     }
