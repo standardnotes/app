@@ -11,6 +11,7 @@ import {
   LegacyApiServiceInterface,
   StatusServiceInterface,
   MfaServiceInterface,
+  GenerateUuid,
 } from '@standardnotes/services'
 import { VaultLockServiceInterface } from './../VaultLock/VaultLockServiceInterface'
 import { HistoryServiceInterface } from './../History/HistoryServiceInterface'
@@ -85,6 +86,7 @@ export interface ApplicationInterface {
   get files(): FilesClientInterface
   get history(): HistoryServiceInterface
   get homeServer(): HomeServerServiceInterface | undefined
+  get generateUuid(): GenerateUuid
   get items(): ItemManagerInterface
   get legacyApi(): LegacyApiServiceInterface
   get mfa(): MfaServiceInterface

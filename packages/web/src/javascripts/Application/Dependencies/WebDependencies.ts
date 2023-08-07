@@ -56,7 +56,7 @@ export class WebDependencies extends DependencyContainer {
     super()
 
     this.bind(Web_TYPES.Importer, () => {
-      return new Importer(application.features, application.mutator, application.items)
+      return new Importer(application.features, application.mutator, application.items, application.generateUuid)
     })
 
     this.bind(Web_TYPES.IsNativeIOS, () => {

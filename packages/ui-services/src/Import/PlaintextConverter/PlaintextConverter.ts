@@ -2,9 +2,11 @@ import { ContentType } from '@standardnotes/domain-core'
 import { parseFileName } from '@standardnotes/filepicker'
 import { DecryptedTransferPayload, NoteContent } from '@standardnotes/models'
 import { readFileAsText } from '../Utils'
-import { UuidGenerator } from '@standardnotes/utils'
+import { GenerateUuid } from '@standardnotes/services'
 
 export class PlaintextConverter {
+  constructor(private _generateUuid: GenerateUuid) {}
+
   static isValidPlaintextFile(file: File): boolean {
     return file.type === 'text/plain' || file.type === 'text/markdown'
   }
@@ -22,7 +24,7 @@ export class PlaintextConverter {
       created_at_timestamp: createdAtDate.getTime(),
       updated_at: updatedAtDate,
       updated_at_timestamp: updatedAtDate.getTime(),
-      uuid: UuidGenerator.GenerateUuid(),
+      uuid: this._generateUuid.execute().getValue(),
       content_type: ContentType.TYPES.Note,
       content: {
         title: name,

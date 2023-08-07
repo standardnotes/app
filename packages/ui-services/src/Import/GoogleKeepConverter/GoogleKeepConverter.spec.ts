@@ -4,13 +4,18 @@
 
 import { jsonTestData, htmlTestData } from './testData'
 import { GoogleKeepConverter } from './GoogleKeepConverter'
-import { UuidGenerator } from '@standardnotes/utils'
-
-UuidGenerator.SetGenerator(() => String(Math.random()))
+import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
+import { GenerateUuid } from '@standardnotes/services'
 
 describe('GoogleKeepConverter', () => {
+  const crypto = {
+    generateUUID: () => String(Math.random()),
+  } as unknown as PureCryptoInterface
+
+  const generateUuid = new GenerateUuid(crypto)
+
   it('should parse json data', () => {
-    const converter = new GoogleKeepConverter()
+    const converter = new GoogleKeepConverter(generateUuid)
 
     const result = converter.tryParseAsJson(jsonTestData)
 
@@ -27,7 +32,7 @@ describe('GoogleKeepConverter', () => {
   })
 
   it('should parse html data', () => {
-    const converter = new GoogleKeepConverter()
+    const converter = new GoogleKeepConverter(generateUuid)
 
     const result = converter.tryParseAsHtml(
       htmlTestData,

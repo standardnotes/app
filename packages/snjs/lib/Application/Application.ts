@@ -81,6 +81,7 @@ import {
   GetHost,
   SetHost,
   MfaServiceInterface,
+  GenerateUuid,
 } from '@standardnotes/services'
 import {
   SNNote,
@@ -112,7 +113,6 @@ import {
   removeFromArray,
   isNullOrUndefined,
   sleep,
-  UuidGenerator,
   useBoolean,
   LoggerInterface,
   canBlockDeinit,
@@ -932,10 +932,6 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return this.migrations.hasPendingMigrations()
   }
 
-  public generateUuid(): string {
-    return UuidGenerator.GenerateUuid()
-  }
-
   public presentKeyRecoveryWizard(): void {
     const service = this.dependencies.get<KeyRecoveryService>(TYPES.KeyRecoveryService)
     return service.presentKeyRecoveryWizard()
@@ -1241,6 +1237,10 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
 
   public get mfa(): MfaServiceInterface {
     return this.dependencies.get<MfaService>(TYPES.MfaService)
+  }
+
+  public get generateUuid(): GenerateUuid {
+    return this.dependencies.get<GenerateUuid>(TYPES.GenerateUuid)
   }
 
   private get migrations(): MigrationService {

@@ -1,7 +1,7 @@
 import { DecryptedTransferPayload, NoteContent } from '@standardnotes/models'
 import { ContentType } from '@standardnotes/domain-core'
 import { readFileAsText } from '../Utils'
-import { UuidGenerator } from '@standardnotes/utils'
+import { GenerateUuid } from '@standardnotes/services'
 
 type SimplenoteItem = {
   creationDate: string
@@ -18,7 +18,7 @@ type SimplenoteData = {
 const isSimplenoteEntry = (entry: any): boolean => entry.id && entry.content && entry.creationDate && entry.lastModified
 
 export class SimplenoteConverter {
-  constructor() {}
+  constructor(private _generateUuid: GenerateUuid) {}
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   static isValidSimplenoteJson(json: any): boolean {
@@ -55,7 +55,7 @@ export class SimplenoteConverter {
       created_at_timestamp: createdAtDate.getTime(),
       updated_at: updatedAtDate,
       updated_at_timestamp: updatedAtDate.getTime(),
-      uuid: UuidGenerator.GenerateUuid(),
+      uuid: this._generateUuid.execute().getValue(),
       content_type: ContentType.TYPES.Note,
       content: {
         title,

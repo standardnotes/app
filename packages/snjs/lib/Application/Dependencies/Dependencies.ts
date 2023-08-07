@@ -130,6 +130,7 @@ import {
   FullyResolvedApplicationOptions,
   GetHost,
   SetHost,
+  GenerateUuid,
 } from '@standardnotes/services'
 import { ItemManager } from '../../Services/Items/ItemManager'
 import { PayloadManager } from '../../Services/Payloads/PayloadManager'
@@ -214,6 +215,10 @@ export class Dependencies {
   }
 
   private registerUseCaseMakers() {
+    this.factory.set(TYPES.GenerateUuid, () => {
+      return new GenerateUuid(this.get<PureCryptoInterface>(TYPES.Crypto))
+    })
+
     this.factory.set(TYPES.DecryptErroredPayloads, () => {
       return new DecryptErroredPayloads(
         this.get<ItemsEncryptionService>(TYPES.ItemsEncryptionService),

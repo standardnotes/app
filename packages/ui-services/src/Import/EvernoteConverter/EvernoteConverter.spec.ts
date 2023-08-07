@@ -6,7 +6,8 @@ import { ContentType } from '@standardnotes/domain-core'
 import { DecryptedTransferPayload, NoteContent, TagContent } from '@standardnotes/models'
 import { EvernoteConverter } from './EvernoteConverter'
 import data from './testData'
-import { UuidGenerator } from '@standardnotes/utils'
+import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
+import { GenerateUuid } from '@standardnotes/services'
 
 // Mock dayjs so dayjs.extend() doesn't throw an error in EvernoteConverter.ts
 jest.mock('dayjs', () => {
@@ -21,11 +22,17 @@ jest.mock('dayjs', () => {
   }
 })
 
-UuidGenerator.SetGenerator(() => String(Math.random()))
+
 
 describe('EvernoteConverter', () => {
+  const crypto = {
+    generateUUID: () => String(Math.random()),
+  } as unknown as PureCryptoInterface
+
+  const generateUuid = new GenerateUuid(crypto)
+
   it('should parse and strip html', () => {
-    const converter = new EvernoteConverter()
+    const converter = new EvernoteConverter(generateUuid)
 
     const result = converter.parseENEXData(data, true)
 
@@ -45,7 +52,7 @@ describe('EvernoteConverter', () => {
   })
 
   it('should parse and not strip html', () => {
-    const converter = new EvernoteConverter()
+    const converter = new EvernoteConverter(generateUuid)
 
     const result = converter.parseENEXData(data, false)
 

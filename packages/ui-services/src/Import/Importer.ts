@@ -2,6 +2,7 @@ import { parseFileName } from '@standardnotes/filepicker'
 import {
   FeatureStatus,
   FeaturesClientInterface,
+  GenerateUuid,
   ItemManagerInterface,
   MutatorClientInterface,
 } from '@standardnotes/services'
@@ -27,12 +28,13 @@ export class Importer {
     private features: FeaturesClientInterface,
     private mutator: MutatorClientInterface,
     private items: ItemManagerInterface,
+    _generateUuid: GenerateUuid,
   ) {
-    this.aegisConverter = new AegisToAuthenticatorConverter()
-    this.googleKeepConverter = new GoogleKeepConverter()
-    this.simplenoteConverter = new SimplenoteConverter()
-    this.plaintextConverter = new PlaintextConverter()
-    this.evernoteConverter = new EvernoteConverter()
+    this.aegisConverter = new AegisToAuthenticatorConverter(_generateUuid)
+    this.googleKeepConverter = new GoogleKeepConverter(_generateUuid)
+    this.simplenoteConverter = new SimplenoteConverter(_generateUuid)
+    this.plaintextConverter = new PlaintextConverter(_generateUuid)
+    this.evernoteConverter = new EvernoteConverter(_generateUuid)
   }
 
   static detectService = async (file: File): Promise<NoteImportType | null> => {

@@ -2,7 +2,7 @@ import { DecryptedTransferPayload, NoteContent } from '@standardnotes/models'
 import { readFileAsText } from '../Utils'
 import { NativeFeatureIdentifier, NoteType } from '@standardnotes/features'
 import { ContentType } from '@standardnotes/domain-core'
-import { UuidGenerator } from '@standardnotes/utils'
+import { GenerateUuid } from '@standardnotes/services'
 
 type AegisData = {
   db: {
@@ -27,7 +27,7 @@ type AuthenticatorEntry = {
 }
 
 export class AegisToAuthenticatorConverter {
-  constructor() {}
+  constructor(private _generateUuid: GenerateUuid) {}
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   static isValidAegisJson(json: any): boolean {
@@ -63,7 +63,7 @@ export class AegisToAuthenticatorConverter {
       created_at_timestamp: file.lastModified,
       updated_at: new Date(file.lastModified),
       updated_at_timestamp: file.lastModified,
-      uuid: UuidGenerator.GenerateUuid(),
+      uuid: this._generateUuid.execute().getValue(),
       content_type: ContentType.TYPES.Note,
       content: {
         title: file.name.split('.')[0],

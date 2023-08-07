@@ -1,12 +1,17 @@
-import { UuidGenerator } from '@standardnotes/utils'
+import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { SimplenoteConverter } from './SimplenoteConverter'
 import data from './testData'
-
-UuidGenerator.SetGenerator(() => String(Math.random()))
+import { GenerateUuid } from '@standardnotes/services'
 
 describe('SimplenoteConverter', () => {
+  const crypto = {
+    generateUUID: () => String(Math.random()),
+  } as unknown as PureCryptoInterface
+
+  const generateUuid = new GenerateUuid(crypto)
+
   it('should parse', () => {
-    const converter = new SimplenoteConverter()
+    const converter = new SimplenoteConverter(generateUuid)
 
     const result = converter.parse(data)
 

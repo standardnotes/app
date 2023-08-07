@@ -159,6 +159,7 @@ export const TYPES = {
   ChangeAndSaveItem: Symbol.for('ChangeAndSaveItem'),
   GetHost: Symbol.for('GetHost'),
   SetHost: Symbol.for('SetHost'),
+  GenerateUuid: Symbol.for('GenerateUuid'),
 
   // Mappers
   SessionStorageMapper: Symbol.for('SessionStorageMapper'),
