@@ -8,11 +8,9 @@ type Props = {
 
 const VaultNameBadge: FunctionComponent<Props> = ({ vault }) => {
   return (
-    <div className={'rounded bg-success px-1.5 py-1 text-danger-contrast'}>
-      <span className="flex items-center" title="Vault name">
-        <Icon ariaLabel="Vault name" type="safe-square" className="mr-1 text-info-contrast" size="medium" />
-        <div className="text-center text-xs font-bold">{vault.name}</div>
-      </span>
+    <div title="Vault name" className="flex rounded bg-success px-1.5 py-1 text-success-contrast select-none">
+      <Icon ariaLabel="Shared in vault" type="safe-square" className="mr-1 text-info-contrast" size="medium" />
+      <span className="mr-auto overflow-hidden text-ellipsis text-xs">{vault.name}</span>
     </div>
   )
 }
