@@ -3,6 +3,7 @@ import Icon from '../Icon/Icon'
 import { useApplication } from '../ApplicationProvider'
 import { DecryptedItemInterface } from '@standardnotes/snjs'
 import { featureTrunkVaultsEnabled } from '@/FeatureTrunk'
+import VaultNameBadge from '../Vaults/VaultNameBadge'
 
 type Props = {
   item: DecryptedItemInterface
@@ -28,13 +29,10 @@ const CollaborationInfoHUD: FunctionComponent<Props> = ({ item }) => {
 
   return (
     <div className="flex flex-wrap items-start gap-2">
-      <div title="Vault name" className={'flex rounded bg-success px-1.5 py-1 text-success-contrast'}>
-        <Icon ariaLabel="Shared in vault" type="safe-square" className="mr-1 text-info-contrast" size="medium" />
-        <span className="mr-auto overflow-hidden text-ellipsis text-xs">{vault.name}</span>
-      </div>
+      <VaultNameBadge vault={vault} />
 
       {lastEditedBy && (
-        <div title="Last edited by" className={'flex rounded bg-info px-1.5 py-1 text-info-contrast'}>
+        <div title="Last edited by" className="flex rounded bg-info px-1.5 py-1 text-info-contrast select-none">
           <Icon ariaLabel="Shared by" type="pencil" className="mr-1 text-info-contrast" size="medium" />
           <span className="mr-auto overflow-hidden text-ellipsis text-xs">{lastEditedBy?.name}</span>
         </div>

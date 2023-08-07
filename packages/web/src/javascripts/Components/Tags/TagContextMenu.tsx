@@ -1,11 +1,10 @@
 import { observer } from 'mobx-react-lite'
-import { useCallback, useRef, useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 import Icon from '@/Components/Icon/Icon'
 import Menu from '@/Components/Menu/Menu'
 import MenuItem from '@/Components/Menu/MenuItem'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import { SNTag, VectorIconNameOrEmoji, DefaultTagIconName } from '@standardnotes/snjs'
-import { useCloseOnClickOutside } from '@/Hooks/useCloseOnClickOutside'
 import { NavigationController } from '@/Controllers/Navigation/NavigationController'
 import HorizontalSeparator from '../Shared/HorizontalSeparator'
 import { formatDateForContextMenu } from '@/Utils/DateUtils'
@@ -28,11 +27,6 @@ const TagContextMenu = ({ navigationController, isEntitledToFolders, selectedTag
   const premiumModal = usePremiumModal()
 
   const { contextMenuOpen, contextMenuClickLocation } = navigationController
-
-  const contextMenuRef = useRef<HTMLDivElement>(null)
-
-  /** @TODO Needs fixing to handle clicking on the vault selection sub menu */
-  useCloseOnClickOutside(contextMenuRef, () => navigationController.setContextMenuOpen(false))
 
   const onClickAddSubtag = useCallback(() => {
     if (!isEntitledToFolders) {
@@ -77,54 +71,52 @@ const TagContextMenu = ({ navigationController, isEntitledToFolders, selectedTag
       togglePopover={() => navigationController.setContextMenuOpen(!contextMenuOpen)}
       className="py-2"
     >
-      <div ref={contextMenuRef}>
-        <Menu a11yLabel="Tag context menu" isOpen={contextMenuOpen}>
-          <IconPicker
-            key={'icon-picker'}
-            onIconChange={handleIconChange}
-            selectedValue={selectedTag.iconString}
-            platform={application.platform}
-            className={'px-3 py-1.5'}
-            useIconGrid={true}
-            iconGridClassName="max-h-30"
-          />
-          <HorizontalSeparator classes="my-2" />
-          {featureTrunkVaultsEnabled() && (
-            <AddToVaultMenuOption iconClassName="mr-2 text-neutral" items={[selectedTag]} />
-          )}
-          <MenuItem className={'justify-between py-1.5'} onClick={onClickStar}>
-            <div className="flex items-center">
-              <Icon type="star" className="mr-2 text-neutral" />
-              {selectedTag.starred ? 'Unfavorite' : 'Favorite'}
-            </div>
-          </MenuItem>
-          <MenuItem className={'justify-between py-1.5'} onClick={onClickAddSubtag}>
-            <div className="flex items-center">
-              <Icon type="add" className="mr-2 text-neutral" />
-              Add subtag
-            </div>
-            {!isEntitledToFolders && <Icon type={PremiumFeatureIconName} className={PremiumFeatureIconClass} />}
-          </MenuItem>
-          <MenuItem className={'py-1.5'} onClick={onClickRename}>
-            <Icon type="pencil-filled" className="mr-2 text-neutral" />
-            Rename
-          </MenuItem>
-          <MenuItem className={'py-1.5'} onClick={onClickDelete}>
-            <Icon type="trash" className="mr-2 text-danger" />
-            <span className="text-danger">Delete</span>
-          </MenuItem>
-        </Menu>
+      <Menu a11yLabel="Tag context menu" isOpen={contextMenuOpen}>
+        <IconPicker
+          key={'icon-picker'}
+          onIconChange={handleIconChange}
+          selectedValue={selectedTag.iconString}
+          platform={application.platform}
+          className={'px-3 py-1.5'}
+          useIconGrid={true}
+          iconGridClassName="max-h-30"
+        />
         <HorizontalSeparator classes="my-2" />
-        <div className="px-3 pb-1.5 pt-1 text-sm font-medium text-neutral lg:text-xs">
-          <div className="mb-1">
-            <span className="font-semibold">Last modified:</span> {tagLastModified}
+        {featureTrunkVaultsEnabled() && (
+          <AddToVaultMenuOption iconClassName="mr-2 text-neutral" items={[selectedTag]} />
+        )}
+        <MenuItem className={'justify-between py-1.5'} onClick={onClickStar}>
+          <div className="flex items-center">
+            <Icon type="star" className="mr-2 text-neutral" />
+            {selectedTag.starred ? 'Unfavorite' : 'Favorite'}
           </div>
-          <div className="mb-1">
-            <span className="font-semibold">Created:</span> {tagCreatedAt}
+        </MenuItem>
+        <MenuItem className={'justify-between py-1.5'} onClick={onClickAddSubtag}>
+          <div className="flex items-center">
+            <Icon type="add" className="mr-2 text-neutral" />
+            Add subtag
           </div>
-          <div>
-            <span className="font-semibold">Tag ID:</span> {selectedTag.uuid}
-          </div>
+          {!isEntitledToFolders && <Icon type={PremiumFeatureIconName} className={PremiumFeatureIconClass} />}
+        </MenuItem>
+        <MenuItem className={'py-1.5'} onClick={onClickRename}>
+          <Icon type="pencil-filled" className="mr-2 text-neutral" />
+          Rename
+        </MenuItem>
+        <MenuItem className={'py-1.5'} onClick={onClickDelete}>
+          <Icon type="trash" className="mr-2 text-danger" />
+          <span className="text-danger">Delete</span>
+        </MenuItem>
+      </Menu>
+      <HorizontalSeparator classes="my-2" />
+      <div className="px-3 pb-1.5 pt-1 text-sm font-medium text-neutral lg:text-xs">
+        <div className="mb-1">
+          <span className="font-semibold">Last modified:</span> {tagLastModified}
+        </div>
+        <div className="mb-1">
+          <span className="font-semibold">Created:</span> {tagCreatedAt}
+        </div>
+        <div>
+          <span className="font-semibold">Tag ID:</span> {selectedTag.uuid}
         </div>
       </div>
     </Popover>

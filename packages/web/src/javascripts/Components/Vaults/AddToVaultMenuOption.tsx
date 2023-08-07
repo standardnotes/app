@@ -107,7 +107,6 @@ const VaultMenu = ({ items }: { items: DecryptedItemInterface[] }) => {
 }
 
 const AddToVaultMenuOption = ({ iconClassName, items }: { iconClassName: string; items: DecryptedItemInterface[] }) => {
-  const menuContainerRef = useRef<HTMLDivElement>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
 
   const [isSubMenuOpen, setIsSubMenuOpen] = useState(false)
@@ -121,7 +120,7 @@ const AddToVaultMenuOption = ({ iconClassName, items }: { iconClassName: string;
   }
 
   return (
-    <div ref={menuContainerRef}>
+    <>
       <MenuItem
         className="justify-between"
         onClick={toggleSubMenu}
@@ -150,7 +149,7 @@ const AddToVaultMenuOption = ({ iconClassName, items }: { iconClassName: string;
       >
         <VaultMenu items={items} />
       </Popover>
-    </div>
+    </>
   )
 }
 

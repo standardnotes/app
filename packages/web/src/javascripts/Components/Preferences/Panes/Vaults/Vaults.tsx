@@ -148,7 +148,7 @@ const Vaults = () => {
       <PreferencesGroup>
         <PreferencesSegment>
           <Title>Vaults</Title>
-          <div className="my-2 flex flex-col">
+          <div className="my-2 flex flex-col gap-3.5">
             {vaults.map((vault) => {
               return <VaultItem vault={vault} key={vault.uuid} />
             })}
