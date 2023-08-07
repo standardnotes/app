@@ -25,6 +25,7 @@ import { handleEditorChange } from './Utils'
 import { SuperEditorContentId } from './Constants'
 import { classNames } from '@standardnotes/utils'
 import { MarkdownTransformers } from './MarkdownTransformers'
+import { RemoveBrokenTablesPlugin } from './Plugins/TablePlugin'
 
 type BlocksEditorProps = {
   onChange?: (value: string, preview: string) => void
@@ -105,6 +106,7 @@ export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
       <YouTubePlugin />
       <CollapsiblePlugin />
       <TabIndentationPlugin />
+      <RemoveBrokenTablesPlugin />
       {!readonly && floatingAnchorElem && (
         <>
           <FloatingTextFormatToolbarPlugin anchorElem={floatingAnchorElem} />

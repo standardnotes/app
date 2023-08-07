@@ -6,12 +6,14 @@
  *
  */
 
-import { INSERT_TABLE_COMMAND } from '@lexical/table'
+import { INSERT_TABLE_COMMAND, TableNode, TableRowNode } from '@lexical/table'
 import { LexicalEditor } from 'lexical'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Button from '../Lexical/UI/Button'
 import { DialogActions } from '../Lexical/UI/Dialog'
 import TextInput from '../Lexical/UI/TextInput'
+import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
+import { mergeRegister } from '@lexical/utils'
 
 export function InsertTableDialog({
   activeEditor,
@@ -37,4 +39,32 @@ export function InsertTableDialog({
       </DialogActions>
     </>
   )
+}
+
+/**
+ * Sometimes copy/pasting tables from other sources can result
+ * in adding extra table nodes which don't have any children.
+ * This causes an error when copying the table or exporting the
+ * note as HTML.
+ * This plugin removes any tables which don't have any children.
+ */
+export function RemoveBrokenTablesPlugin() {
+  const [editor] = useLexicalComposerContext()
+
+  useEffect(() => {
+    return mergeRegister(
+      editor.registerNodeTransform(TableRowNode, (node) => {
+        if (!node.getFirstChild()) {
+          node.remove()
+        }
+      }),
+      editor.registerNodeTransform(TableNode, (node) => {
+        if (!node.getFirstChild()) {
+          node.remove()
+        }
+      }),
+    )
+  }, [editor])
+
+  return null
 }

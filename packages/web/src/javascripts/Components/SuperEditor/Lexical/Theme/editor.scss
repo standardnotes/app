@@ -149,7 +149,7 @@
   top: 0;
 }
 .Lexical__tableCellHeader {
-  background-color: var(--sn-stylekit-contrast-background-color);
+  background-color: var(--sn-stylekit-contrast-background-color) !important;
   border-color: var(--sn-stylekit-contrast-border-color);
   text-align: start;
 }
