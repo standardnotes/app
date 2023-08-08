@@ -1,6 +1,6 @@
 import { WebApplication } from '@/Application/WebApplication'
 import { getBase64FromBlob } from '@/Utils'
-import { FileItem } from '@standardnotes/snjs'
+import { FileItem, classNames } from '@standardnotes/snjs'
 import { FunctionComponent, useCallback, useEffect, useMemo, useRef } from 'react'
 import Button from '../Button/Button'
 import { createObjectURLWithRef } from './CreateObjectURLWithRef'
@@ -108,7 +108,14 @@ const PreviewComponent: FunctionComponent<Props> = ({
     return <TextPreview bytes={bytes} />
   }
 
-  return <object className="h-full w-full" data={objectUrl} />
+  const isPDF = file.mimeType === 'application/pdf'
+
+  return (
+    <object
+      className={classNames('h-full w-full', isPDF && 'min-h-[65vh]')}
+      data={isPDF ? objectUrl + '#view=FitV' : objectUrl}
+    />
+  )
 }
 
 export default PreviewComponent
