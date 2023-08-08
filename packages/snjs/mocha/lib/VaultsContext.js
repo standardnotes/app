@@ -7,9 +7,10 @@ export class VaultsContext extends AppContext {
   }
 
   async changeVaultName(vault, nameAndDesc) {
-    await this.vaults.changeVaultNameAndDescription(vault, {
+    await this.vaults.changeVaultMetadata(vault, {
       name: nameAndDesc.name,
       description: nameAndDesc.description,
+      iconString: 'icon-vault',
     })
   }
 
