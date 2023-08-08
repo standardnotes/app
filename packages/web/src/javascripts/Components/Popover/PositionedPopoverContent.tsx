@@ -122,6 +122,13 @@ const PositionedPopoverContent = ({
             }
           }
         }}
+        onBlur={() => {
+          setTimeout(() => {
+            if (document.activeElement && document.activeElement.tagName === 'IFRAME') {
+              togglePopover?.()
+            }
+          })
+        }}
       >
         {children}
       </div>
