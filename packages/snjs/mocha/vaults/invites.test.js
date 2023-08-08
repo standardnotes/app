@@ -224,7 +224,7 @@ describe('shared vault invites', function () {
     await deinitContactContext()
   })
 
-  it.skip('should fail to invite user if already member of shared vault', async () => {
+  it('should fail to invite user if already member of shared vault', async () => {
     const { sharedVault, contact, deinitContactContext } = await Collaboration.createSharedVaultWithAcceptedInvite(
       context,
     )
