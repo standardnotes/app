@@ -1,5 +1,7 @@
 import { GetVaultItems } from './../../Vault/UseCase/GetVaultItems'
 import {
+  EmojiString,
+  IconType,
   KeySystemRootKeyStorageMode,
   SharedVaultListingInterface,
   VaultListingInterface,
@@ -23,12 +25,14 @@ export class CreateSharedVault {
   async execute(dto: {
     vaultName: string
     vaultDescription?: string
+    vaultIcon: IconType | EmojiString
     userInputtedPassword: string | undefined
     storagePreference: KeySystemRootKeyStorageMode
   }): Promise<SharedVaultListingInterface | ClientDisplayableError> {
     const privateVault = await this._createVault.execute({
       vaultName: dto.vaultName,
       vaultDescription: dto.vaultDescription,
+      vaultIcon: dto.vaultIcon,
       userInputtedPassword: dto.userInputtedPassword,
       storagePreference: dto.storagePreference,
     })

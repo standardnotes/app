@@ -1,5 +1,6 @@
 import { KeySystemRootKeyContentSpecialized } from '../../../Syncable/KeySystemRootKey/KeySystemRootKeyContent'
 import { ContactPublicKeySetJsonInterface } from '../../../Syncable/TrustedContact/PublicKeySet/ContactPublicKeySetJsonInterface'
+import { EmojiString, IconType } from '../../../Utilities/Icon/IconType'
 import { AsymmetricMessageDataCommon } from '../AsymmetricMessageDataCommon'
 import { AsymmetricMessagePayloadType } from '../AsymmetricMessagePayloadType'
 
@@ -17,6 +18,7 @@ export type AsymmetricMessageSharedVaultInvite = {
     metadata: {
       name: string
       description?: string
+      iconString: IconType | EmojiString
     }
   }
 }

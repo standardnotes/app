@@ -32,6 +32,7 @@ export class ProcessAcceptedVaultInvite {
       keyStorageMode: KeySystemRootKeyStorageMode.Synced,
       name: metadata.name,
       description: metadata.description,
+      iconString: metadata.iconString,
       sharing: {
         sharedVaultUuid: sharedVaultUuid,
         ownerUserUuid: ownerUuid,

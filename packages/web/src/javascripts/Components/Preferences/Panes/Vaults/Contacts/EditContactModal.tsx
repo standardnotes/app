@@ -84,7 +84,6 @@ const EditContactModal: FunctionComponent<Props> = ({ onCloseDialog, fromInvite,
         <div className="flex w-full flex-col">
           <div className="mb-3">
             <DecoratedInput
-              className={{ container: 'mt-4' }}
               id="invite-name-input"
               value={name}
               placeholder="Contact Name"
@@ -93,15 +92,17 @@ const EditContactModal: FunctionComponent<Props> = ({ onCloseDialog, fromInvite,
               }}
             />
 
-            <DecoratedInput
-              className={{ container: 'mt-4' }}
-              id="invite-email-input"
-              value={collaborationID}
-              placeholder="Contact CollaborationID"
-              onChange={(value) => {
-                setCollaborationID(value)
-              }}
-            />
+            {!editingContact?.isMe && (
+              <DecoratedInput
+                className={{ container: 'mt-4' }}
+                id="invite-email-input"
+                value={collaborationID}
+                placeholder="Contact CollaborationID"
+                onChange={(value) => {
+                  setCollaborationID(value)
+                }}
+              />
+            )}
 
             {!editContactUuid && (
               <p className="mt-4">
