@@ -287,7 +287,9 @@ const EditVaultModal: FunctionComponent<Props> = ({ onCloseDialog, existingVault
             <VaultModalMembers vault={existingVault} members={members} onChange={reloadVaultInfo} isAdmin={isAdmin} />
           )}
 
-          {existingVault && <VaultModalInvites invites={invites} onChange={reloadVaultInfo} isAdmin={isAdmin} />}
+          {existingVault && invites.length > 0 && (
+            <VaultModalInvites invites={invites} onChange={reloadVaultInfo} isAdmin={isAdmin} />
+          )}
 
           <PasswordTypePreference
             value={passwordType}

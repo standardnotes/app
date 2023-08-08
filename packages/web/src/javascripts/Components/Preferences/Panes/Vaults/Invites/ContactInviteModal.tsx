@@ -1,7 +1,13 @@
 import { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react'
 import Modal, { ModalAction } from '@/Components/Modal/Modal'
 import { useApplication } from '@/Components/ApplicationProvider'
-import { SharedVaultListingInterface, TrustedContactInterface, SharedVaultUserPermission } from '@standardnotes/snjs'
+import {
+  SharedVaultListingInterface,
+  TrustedContactInterface,
+  SharedVaultUserPermission,
+  classNames,
+} from '@standardnotes/snjs'
+import Spinner from '@/Components/Spinner/Spinner'
 
 type Props = {
   vault: SharedVaultListingInterface
@@ -12,15 +18,18 @@ const ContactInviteModal: FunctionComponent<Props> = ({ vault, onCloseDialog }) 
   const application = useApplication()
 
   const [selectedContacts, setSelectedContacts] = useState<TrustedContactInterface[]>([])
+  const [isLoadingContacts, setIsLoadingContacts] = useState(false)
   const [contacts, setContacts] = useState<TrustedContactInterface[]>([])
 
   useEffect(() => {
     const loadContacts = async () => {
+      setIsLoadingContacts(true)
       const contacts = await application.vaultInvites.getInvitableContactsForSharedVault(vault)
       setContacts(contacts)
+      setIsLoadingContacts(false)
     }
     void loadContacts()
-  }, [application.vaultInvites, vault])
+  }, [application.vaultInvites, contacts.length, vault])
 
   const handleDialogClose = useCallback(() => {
     onCloseDialog()
@@ -71,28 +80,25 @@ const ContactInviteModal: FunctionComponent<Props> = ({ vault, onCloseDialog }) 
 
   return (
     <Modal title="Add New Contact" close={handleDialogClose} actions={modalActions}>
-      <div className="px-4.5 py-4">
-        <div className="flex w-full flex-col">
-          <div className="mb-3">
-            {contacts.map((contact) => {
-              return (
-                <div key={contact.uuid} onClick={() => toggleContact(contact)}>
-                  <div>
-                    <input
-                      type="checkbox"
-                      checked={selectedContacts.includes(contact)}
-                      onChange={() => toggleContact(contact)}
-                    />
-                  </div>
-                  <div>
-                    {contact.name}
-                    {contact.contactUuid}
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-        </div>
+      <div className={classNames('px-4.5 py-4 flex w-full flex-col gap-3', isLoadingContacts && 'items-center')}>
+        {isLoadingContacts ? (
+          <Spinner className="w-5 h-5" />
+        ) : (
+          contacts.map((contact) => {
+            return (
+              <label className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-0.5" key={contact.uuid}>
+                <input
+                  className="accent-info w-4 h-4 self-center"
+                  type="checkbox"
+                  checked={selectedContacts.includes(contact)}
+                  onChange={() => toggleContact(contact)}
+                />
+                <div className="col-start-2 font-semibold text-sm">{contact.name}</div>
+                <div className="col-start-2">{contact.contactUuid}</div>
+              </label>
+            )
+          })
+        )}
       </div>
     </Modal>
   )

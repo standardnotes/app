@@ -116,26 +116,22 @@ const VaultItem = ({ vault }: Props) => {
           )}
           <span className="mr-auto overflow-hidden text-ellipsis text-sm">Vault ID: {vault.systemIdentifier}</span>
 
-          <div className="mt-2 flex w-full flex-row justify-between">
-            <div className="flex flex-row">
-              <Button label="Edit" className="mr-3 text-xs" onClick={openEditModal} />
-              {isAdmin && <Button colorStyle="danger" label="Delete" className="mr-3 text-xs" onClick={deleteVault} />}
-              {!isAdmin && vault.isSharedVaultListing() && (
-                <Button label="Leave Vault" className="mr-3 text-xs" onClick={leaveVault} />
-              )}
-            </div>
-            <div className="flex flex-row">
-              {vault.isSharedVaultListing() ? (
-                <Button label="Invite Contacts" className="mr-3 text-xs" onClick={openInviteModal} />
-              ) : (
-                <Button
-                  colorStyle="info"
-                  label="Enable Collaboration"
-                  className="mr-3 text-xs"
-                  onClick={convertToSharedVault}
-                />
-              )}
-            </div>
+          <div className="mt-2 flex w-full">
+            <Button label="Edit" className="mr-3 text-xs" onClick={openEditModal} />
+            {isAdmin && <Button colorStyle="danger" label="Delete" className="mr-3 text-xs" onClick={deleteVault} />}
+            {!isAdmin && vault.isSharedVaultListing() && (
+              <Button label="Leave Vault" className="mr-3 text-xs" onClick={leaveVault} />
+            )}
+            {vault.isSharedVaultListing() ? (
+              <Button colorStyle="info" label="Invite Contacts" className="mr-3 text-xs" onClick={openInviteModal} />
+            ) : (
+              <Button
+                colorStyle="info"
+                label="Enable Collaboration"
+                className="mr-3 text-xs"
+                onClick={convertToSharedVault}
+              />
+            )}
           </div>
         </div>
       </div>

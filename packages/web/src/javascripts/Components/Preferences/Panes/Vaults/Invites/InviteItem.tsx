@@ -37,34 +37,36 @@ const InviteItem = ({ inviteRecord }: Props) => {
         <EditContactModal fromInvite={inviteRecord} onCloseDialog={closeAddContactModal} />
       </ModalOverlay>
 
-      <div className="bg-gray-100 flex flex-row gap-3.5 rounded-lg px-3.5 py-2.5 shadow-md">
-        <Icon type={'archive'} size="custom" className="mt-2.5 h-5.5 w-5.5 flex-shrink-0" />
-        <div className="flex flex-col gap-2 py-1.5">
-          <span className="mr-auto overflow-hidden text-ellipsis text-sm">Vault Name: {inviteData.metadata.name}</span>
-          <span className="mr-auto overflow-hidden text-ellipsis text-sm">
-            Vault Description: {inviteData.metadata.description}
-          </span>
+      <div className="flex gap-3.5 rounded-lg px-3.5 py-2.5 border border-border shadow">
+        <Icon type="archive" size="custom" className="mt-1.5 h-5.5 w-5.5 flex-shrink-0" />
+        <div className="flex flex-col gap-2 py-1.5 overflow-hidden">
+          <div className="mr-auto overflow-hidden text-ellipsis text-sm">Vault Name: {inviteData.metadata.name}</div>
+          {inviteData.metadata.description && (
+            <div className="mr-auto overflow-hidden text-ellipsis text-sm">
+              Vault Description: {inviteData.metadata.description}
+            </div>
+          )}
           {trustedContact ? (
-            <div className="flex flex-row gap-2">
+            <div className="flex items-center gap-1">
               <span className="overflow-hidden text-ellipsis text-sm">Trusted Sender: {trustedContact.name}</span>
-              <CheckmarkCircle />
+              <CheckmarkCircle className="!w-4 !h-4" />
             </div>
           ) : (
-            <span className="mr-auto overflow-hidden text-ellipsis text-sm">
-              Sender CollaborationID: {collaborationId}
-            </span>
+            <div className="mr-auto text-sm w-full whitespace-pre-wrap break-words overflow-hidden">
+              Sender CollaborationID: <span className="text-xs font-mono">{collaborationId}</span>
+            </div>
           )}
 
-          <div className="mt-2.5 flex flex-row">
+          <div className="mt-1.5">
             {isTrusted ? (
-              <Button label="Accept Invite" className={'mr-3 text-xs'} onClick={acceptInvite} />
+              <Button label="Accept Invite" className="text-xs" onClick={acceptInvite} />
             ) : (
               <div>
                 <div>
                   The sender of this invite is not trusted. To accept this invite, first add the sender as a trusted
                   contact.
                 </div>
-                <Button label="Add Trusted Contact" className={'mr-3 text-xs'} onClick={addAsTrustedContact} />
+                <Button label="Add Trusted Contact" className="mr-3 mt-2 text-xs" onClick={addAsTrustedContact} />
               </div>
             )}
           </div>
