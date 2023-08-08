@@ -90,7 +90,7 @@ const VaultMenu = ({ items }: { items: DecryptedItemInterface[] }) => {
               )}
             >
               <Icon
-                type="safe-square"
+                type={vault.iconString}
                 size="large"
                 className={classNames('mr-2 text-neutral', doesVaultContainItems(vault) ? 'text-info' : '')}
               />

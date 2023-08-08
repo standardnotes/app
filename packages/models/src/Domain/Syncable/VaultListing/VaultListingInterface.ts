@@ -5,6 +5,7 @@ import { KeySystemRootKeyStorageMode } from '../KeySystemRootKey/KeySystemRootKe
 import { VaultListingSharingInfo } from './VaultListingSharingInfo'
 import { VaultListingContent } from './VaultListingContent'
 import { DecryptedItemInterface } from '../../Abstract/Item'
+import { EmojiString, IconType } from '../../Utilities/Icon/IconType'
 
 export interface VaultListingInterface extends DecryptedItemInterface<VaultListingContent> {
   systemIdentifier: KeySystemIdentifier
@@ -14,6 +15,7 @@ export interface VaultListingInterface extends DecryptedItemInterface<VaultListi
 
   name: string
   description?: string
+  iconString: IconType | EmojiString
 
   sharing?: VaultListingSharingInfo
 

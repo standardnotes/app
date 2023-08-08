@@ -4,7 +4,9 @@ import { SendVaultDataChangedMessage } from './../SharedVaults/UseCase/SendVault
 import { isClientDisplayableError } from '@standardnotes/responses'
 import {
   DecryptedItemInterface,
+  EmojiString,
   FileItem,
+  IconType,
   KeySystemIdentifier,
   KeySystemRootKeyStorageMode,
   SharedVaultListingInterface,
@@ -97,10 +99,15 @@ export class VaultService
     return vault
   }
 
-  async createRandomizedVault(dto: { name: string; description?: string }): Promise<VaultListingInterface> {
+  async createRandomizedVault(dto: {
+    name: string
+    description?: string
+    iconString: IconType | EmojiString
+  }): Promise<VaultListingInterface> {
     return this.createVaultWithParameters({
       name: dto.name,
       description: dto.description,
+      iconString: dto.iconString,
       userInputtedPassword: undefined,
       storagePreference: KeySystemRootKeyStorageMode.Synced,
     })
@@ -109,6 +116,7 @@ export class VaultService
   async createUserInputtedPasswordVault(dto: {
     name: string
     description?: string
+    iconString: IconType | EmojiString
     userInputtedPassword: string
     storagePreference: KeySystemRootKeyStorageMode
   }): Promise<VaultListingInterface> {
@@ -118,12 +126,14 @@ export class VaultService
   private async createVaultWithParameters(dto: {
     name: string
     description?: string
+    iconString: IconType | EmojiString
     userInputtedPassword: string | undefined
     storagePreference: KeySystemRootKeyStorageMode
   }): Promise<VaultListingInterface> {
     const result = await this._createVault.execute({
       vaultName: dto.name,
       vaultDescription: dto.description,
+      vaultIcon: dto.iconString,
       userInputtedPassword: dto.userInputtedPassword,
       storagePreference: dto.storagePreference,
     })
@@ -188,13 +198,14 @@ export class VaultService
     return true
   }
 
-  async changeVaultNameAndDescription(
+  async changeVaultMetadata(
     vault: VaultListingInterface,
-    params: { name: string; description?: string },
+    params: { name: string; description?: string; iconString: IconType | EmojiString },
   ): Promise<VaultListingInterface> {
     const updatedVault = await this.mutator.changeItem<VaultListingMutator, VaultListingInterface>(vault, (mutator) => {
       mutator.name = params.name
       mutator.description = params.description
+      mutator.iconString = params.iconString
     })
 
     await this.sync.sync()

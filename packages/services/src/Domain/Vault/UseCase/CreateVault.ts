@@ -8,6 +8,8 @@ import {
   KeySystemRootKeyStorageMode,
   FillItemContentSpecialized,
   KeySystemRootKeyInterface,
+  EmojiString,
+  IconType,
 } from '@standardnotes/models'
 import { MutatorClientInterface } from '../../Mutator/MutatorClientInterface'
 import { ContentType } from '@standardnotes/domain-core'
@@ -25,6 +27,7 @@ export class CreateVault {
   async execute(dto: {
     vaultName: string
     vaultDescription?: string
+    vaultIcon: IconType | EmojiString
     userInputtedPassword: string | undefined
     storagePreference: KeySystemRootKeyStorageMode
   }): Promise<VaultListingInterface> {
@@ -44,6 +47,7 @@ export class CreateVault {
       keySystemIdentifier,
       vaultName: dto.vaultName,
       vaultDescription: dto.vaultDescription,
+      vaultIcon: dto.vaultIcon,
       passwordType: dto.userInputtedPassword ? KeySystemPasswordType.UserInputted : KeySystemPasswordType.Randomized,
       rootKeyParams: rootKey.keyParams,
       storage: dto.storagePreference,
@@ -58,6 +62,7 @@ export class CreateVault {
     keySystemIdentifier: string
     vaultName: string
     vaultDescription?: string
+    vaultIcon: IconType | EmojiString
     passwordType: KeySystemPasswordType
     rootKeyParams: KeySystemRootKeyParamsInterface
     storage: KeySystemRootKeyStorageMode
@@ -68,6 +73,7 @@ export class CreateVault {
       keyStorageMode: dto.storage,
       name: dto.vaultName,
       description: dto.vaultDescription,
+      iconString: dto.vaultIcon,
     }
 
     return this.mutator.createItem(ContentType.TYPES.VaultListing, FillItemContentSpecialized(content), true)

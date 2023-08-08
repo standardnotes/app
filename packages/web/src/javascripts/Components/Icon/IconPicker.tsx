@@ -1,6 +1,6 @@
 import { classNames } from '@standardnotes/utils'
 import { EmojiString, Platform, VectorIconNameOrEmoji } from '@standardnotes/snjs'
-import { FunctionComponent, useMemo, useRef, useState } from 'react'
+import { ForwardedRef, forwardRef, useCallback, useMemo, useRef, useState } from 'react'
 import Dropdown from '../Dropdown/Dropdown'
 import { DropdownItem } from '../Dropdown/DropdownItem'
 import { getEmojiLength } from './EmojiLength'
@@ -16,6 +16,39 @@ type Props = {
   iconGridClassName?: string
   className?: string
 }
+
+const TabButton = forwardRef(
+  (
+    {
+      type,
+      label,
+      currentType,
+      selectTab,
+    }: {
+      label: string
+      type: IconPickerType | 'reset'
+      currentType: IconPickerType
+      selectTab: (type: IconPickerType | 'reset') => void
+    },
+    ref: ForwardedRef<HTMLButtonElement>,
+  ) => {
+    const isSelected = currentType === type
+
+    return (
+      <button
+        className={`relative mr-2 cursor-pointer border-0 pb-1.5 text-mobile-menu-item focus:shadow-none md:text-tablet-menu-item lg:text-menu-item ${
+          isSelected ? 'font-medium text-info' : 'text-text'
+        }`}
+        onClick={() => {
+          selectTab(type)
+        }}
+        ref={ref}
+      >
+        {label}
+      </button>
+    )
+  },
+)
 
 const IconPicker = ({ selectedValue, onIconChange, platform, className, useIconGrid, iconGridClassName }: Props) => {
   const iconKeys = useMemo(() => Object.keys(IconNameToSvgMapping), [])
@@ -51,26 +84,6 @@ const IconPicker = ({ selectedValue, onIconChange, platform, className, useIconG
     }
   }
 
-  const TabButton: FunctionComponent<{
-    label: string
-    type: IconPickerType | 'reset'
-  }> = ({ type, label }) => {
-    const isSelected = currentType === type
-
-    return (
-      <button
-        className={`relative mr-2 cursor-pointer border-0 pb-1.5 text-mobile-menu-item focus:shadow-none md:text-tablet-menu-item lg:text-menu-item ${
-          isSelected ? 'font-medium text-info' : 'text-text'
-        }`}
-        onClick={() => {
-          selectTab(type)
-        }}
-      >
-        {label}
-      </button>
-    )
-  }
-
   const handleIconChange = (value: string) => {
     onIconChange(value)
   }
@@ -88,12 +101,20 @@ const IconPicker = ({ selectedValue, onIconChange, platform, className, useIconG
     }
   }
 
+  const focusOnMount = useCallback((element: HTMLButtonElement | null) => {
+    if (element) {
+      setTimeout(() => {
+        element.focus()
+      })
+    }
+  }, [])
+
   return (
     <div className={`flex h-full flex-grow flex-col overflow-auto ${className}`}>
       <div className="flex">
-        <TabButton label="Icon" type={'icon'} />
-        <TabButton label="Emoji" type={'emoji'} />
-        <TabButton label="Reset" type={'reset'} />
+        <TabButton label="Icon" type={'icon'} currentType={currentType} selectTab={selectTab} />
+        <TabButton label="Emoji" type={'emoji'} currentType={currentType} selectTab={selectTab} />
+        <TabButton label="Reset" type={'reset'} currentType={currentType} selectTab={selectTab} />
       </div>
       <div className={'mt-2 h-full min-h-0 overflow-auto'}>
         {currentType === 'icon' &&
@@ -104,12 +125,13 @@ const IconPicker = ({ selectedValue, onIconChange, platform, className, useIconG
                 iconGridClassName,
               )}
             >
-              {iconKeys.map((iconName) => (
+              {iconKeys.map((iconName, index) => (
                 <button
                   key={iconName}
                   onClick={() => {
                     handleIconChange(iconName)
                   }}
+                  ref={index === 0 ? focusOnMount : undefined}
                 >
                   <Icon type={iconName} />
                 </button>

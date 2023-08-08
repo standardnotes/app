@@ -9,6 +9,7 @@ import {
   SharedVaultInviteServerHash,
   SharedVaultUserServerHash,
   VaultListingInterface,
+  VectorIconNameOrEmoji,
   isClientDisplayableError,
 } from '@standardnotes/snjs'
 import { VaultModalMembers } from './VaultModalMembers'
@@ -16,6 +17,11 @@ import { VaultModalInvites } from './VaultModalInvites'
 import { PasswordTypePreference } from './PasswordTypePreference'
 import { KeyStoragePreference } from './KeyStoragePreference'
 import useItem from '@/Hooks/useItem'
+import Button from '@/Components/Button/Button'
+import Icon from '@/Components/Icon/Icon'
+import StyledTooltip from '@/Components/StyledTooltip/StyledTooltip'
+import Popover from '@/Components/Popover/Popover'
+import IconPicker from '@/Components/Icon/IconPicker'
 
 type Props = {
   existingVaultUuid?: string
@@ -29,6 +35,7 @@ const EditVaultModal: FunctionComponent<Props> = ({ onCloseDialog, existingVault
 
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
+  const [iconString, setIconString] = useState<VectorIconNameOrEmoji>('safe-square')
   const [members, setMembers] = useState<SharedVaultUserServerHash[]>([])
   const [invites, setInvites] = useState<SharedVaultInviteServerHash[]>([])
   const [isAdmin, setIsAdmin] = useState(true)
@@ -43,6 +50,7 @@ const EditVaultModal: FunctionComponent<Props> = ({ onCloseDialog, existingVault
     if (existingVault) {
       setName(existingVault.name ?? '')
       setDescription(existingVault.description ?? '')
+      setIconString(existingVault.iconString)
       setPasswordType(existingVault.rootKeyParams.passwordType)
       setKeyStorageMode(existingVault.keyStorageMode)
     }
@@ -85,10 +93,11 @@ const EditVaultModal: FunctionComponent<Props> = ({ onCloseDialog, existingVault
         return
       }
 
-      if (vault.name !== name || vault.description !== description) {
-        await application.vaults.changeVaultNameAndDescription(vault, {
+      if (vault.name !== name || vault.description !== description || vault.iconString !== iconString) {
+        await application.vaults.changeVaultMetadata(vault, {
           name: name,
           description: description,
+          iconString: iconString,
         })
       }
 
@@ -125,7 +134,16 @@ const EditVaultModal: FunctionComponent<Props> = ({ onCloseDialog, existingVault
 
       handleDialogClose()
     },
-    [application.vaults, customPassword, description, handleDialogClose, keyStorageMode, name, passwordType],
+    [
+      application.vaults,
+      customPassword,
+      description,
+      handleDialogClose,
+      iconString,
+      keyStorageMode,
+      name,
+      passwordType,
+    ],
   )
 
   const createNewVault = useCallback(async () => {
@@ -141,6 +159,7 @@ const EditVaultModal: FunctionComponent<Props> = ({ onCloseDialog, existingVault
       await application.vaults.createUserInputtedPasswordVault({
         name,
         description,
+        iconString: iconString,
         storagePreference: keyStorageMode,
         userInputtedPassword: customPassword,
       })
@@ -148,11 +167,21 @@ const EditVaultModal: FunctionComponent<Props> = ({ onCloseDialog, existingVault
       await application.vaults.createRandomizedVault({
         name,
         description,
+        iconString: iconString,
       })
     }
 
     handleDialogClose()
-  }, [application.vaults, customPassword, description, handleDialogClose, keyStorageMode, name, passwordType])
+  }, [
+    application.vaults,
+    customPassword,
+    description,
+    handleDialogClose,
+    iconString,
+    keyStorageMode,
+    name,
+    passwordType,
+  ])
 
   const handleSubmit = useCallback(async () => {
     if (isSubmitting) {
@@ -186,6 +215,12 @@ const EditVaultModal: FunctionComponent<Props> = ({ onCloseDialog, existingVault
     [existingVault, handleDialogClose, handleSubmit, isSubmitting],
   )
 
+  const [shouldShowIconPicker, setShouldShowIconPicker] = useState(false)
+  const iconPickerButtonRef = useRef<HTMLButtonElement>(null)
+  const toggleIconPicker = useCallback(() => {
+    setShouldShowIconPicker((shouldShow) => !shouldShow)
+  }, [])
+
   if (existingVault && application.vaultLocks.isVaultLocked(existingVault)) {
     return <div>Vault is locked.</div>
   }
@@ -198,15 +233,45 @@ const EditVaultModal: FunctionComponent<Props> = ({ onCloseDialog, existingVault
             <div className="text-lg">Vault Info</div>
             <div className="mt-1">The vault name and description are end-to-end encrypted.</div>
 
-            <DecoratedInput
-              className={{ container: 'mt-4' }}
-              ref={nameInputRef}
-              value={name}
-              placeholder="Vault Name"
-              onChange={(value) => {
-                setName(value)
-              }}
-            />
+            <div className="flex items-center mt-4 gap-4">
+              <StyledTooltip className="!z-modal" label="Choose icon">
+                <Button className="!px-1.5" ref={iconPickerButtonRef} onClick={toggleIconPicker}>
+                  <Icon type={iconString} />
+                </Button>
+              </StyledTooltip>
+              <Popover
+                title="Choose icon"
+                open={shouldShowIconPicker}
+                anchorElement={iconPickerButtonRef.current}
+                togglePopover={toggleIconPicker}
+                align="start"
+                overrideZIndex="z-modal"
+                hideOnClickInModal
+              >
+                <div className="p-2">
+                  <IconPicker
+                    selectedValue={iconString || 'safe-square'}
+                    onIconChange={(value?: VectorIconNameOrEmoji) => {
+                      setIconString(value ?? 'safe-square')
+                      toggleIconPicker()
+                    }}
+                    platform={application.platform}
+                    useIconGrid={true}
+                  />
+                </div>
+              </Popover>
+              <DecoratedInput
+                className={{
+                  container: 'flex-grow',
+                }}
+                ref={nameInputRef}
+                value={name}
+                placeholder="Vault Name"
+                onChange={(value) => {
+                  setName(value)
+                }}
+              />
+            </div>
 
             <DecoratedInput
               className={{ container: 'mt-4' }}

@@ -39,7 +39,7 @@ const ManyVaultSelectionMenu: FunctionComponent = () => {
           checked={isVaultVisible(vault)}
           key={vault.uuid}
         >
-          <Icon type="safe-square" className="mr-2 text-neutral" />
+          <Icon type={vault.iconString} className="mr-2 text-neutral" />
           <div className="flex w-full items-center gap-1">
             {vault.name}
             {application.vaultLocks.isVaultLocked(vault) && <Icon className="ml-1" type="lock" size={'small'} />}

@@ -8,6 +8,9 @@ import { VaultListingContent } from './VaultListingContent'
 import { KeySystemRootKeyStorageMode } from '../KeySystemRootKey/KeySystemRootKeyStorageMode'
 import { VaultListingSharingInfo } from './VaultListingSharingInfo'
 import { KeySystemIdentifier } from '../KeySystemRootKey/KeySystemIdentifier'
+import { EmojiString, IconType } from '../../Utilities/Icon/IconType'
+
+export const DefaultVaultIconName: IconType = 'safe-square'
 
 export class VaultListing extends DecryptedItem<VaultListingContent> implements VaultListingInterface {
   systemIdentifier: KeySystemIdentifier
@@ -17,6 +20,7 @@ export class VaultListing extends DecryptedItem<VaultListingContent> implements 
 
   name: string
   description?: string
+  iconString: IconType | EmojiString
 
   sharing?: VaultListingSharingInfo
 
@@ -30,6 +34,7 @@ export class VaultListing extends DecryptedItem<VaultListingContent> implements 
 
     this.name = payload.content.name
     this.description = payload.content.description
+    this.iconString = payload.content.iconString || DefaultVaultIconName
 
     this.sharing = payload.content.sharing
   }

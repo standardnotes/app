@@ -48,6 +48,7 @@ const ModalOverlay = forwardRef(
         modal={false}
         portal={true}
         preventBodyScroll={true}
+        hideOnInteractOutside={false}
         {...props}
       >
         {children}

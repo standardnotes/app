@@ -1,5 +1,7 @@
 import {
   DecryptedItemInterface,
+  EmojiString,
+  IconType,
   KeySystemIdentifier,
   KeySystemRootKeyStorageMode,
   SharedVaultListingInterface,
@@ -12,10 +14,15 @@ import { Result } from '@standardnotes/domain-core'
 
 export interface VaultServiceInterface
   extends AbstractService<VaultServiceEvent, VaultServiceEventPayload[VaultServiceEvent]> {
-  createRandomizedVault(dto: { name: string; description?: string }): Promise<VaultListingInterface>
+  createRandomizedVault(dto: {
+    name: string
+    description?: string
+    iconString: IconType | EmojiString
+  }): Promise<VaultListingInterface>
   createUserInputtedPasswordVault(dto: {
     name: string
     description?: string
+    iconString: IconType | EmojiString
     userInputtedPassword: string
     storagePreference: KeySystemRootKeyStorageMode
   }): Promise<VaultListingInterface>
@@ -32,9 +39,9 @@ export interface VaultServiceInterface
   isItemInVault(item: DecryptedItemInterface): boolean
   getItemVault(item: DecryptedItemInterface): VaultListingInterface | undefined
 
-  changeVaultNameAndDescription(
+  changeVaultMetadata(
     vault: VaultListingInterface,
-    params: { name: string; description: string },
+    params: { name: string; description: string; iconString: IconType | EmojiString },
   ): Promise<VaultListingInterface>
   rotateVaultRootKey(vault: VaultListingInterface, vaultPassword?: string): Promise<void>
 
