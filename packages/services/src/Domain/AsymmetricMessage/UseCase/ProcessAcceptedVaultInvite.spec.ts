@@ -37,6 +37,7 @@ describe('ProcessAcceptedVaultInvite', () => {
         } as jest.Mocked<KeySystemRootKeyContent>,
         metadata: {
           name: 'test-name',
+          iconString: 'safe-square',
         },
         trustedContacts: [],
       },
