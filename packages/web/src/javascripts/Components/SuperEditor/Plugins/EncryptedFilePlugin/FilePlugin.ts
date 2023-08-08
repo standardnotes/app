@@ -57,7 +57,7 @@ export default function FilePlugin({ currentNote }: { currentNote: SNNote }): JS
             $wrapNodeInElement(fileNode, $createParagraphNode).selectEnd()
           }
           const newLineNode = $createParagraphNode()
-          $insertNodes([newLineNode])
+          fileNode.getParentOrThrow().insertAfter(newLineNode)
 
           return true
         },
