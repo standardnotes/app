@@ -8,6 +8,8 @@ import {
   SharedVaultListingInterface,
   VaultListingInterface,
   KeySystemRootKeyStorageMode,
+  EmojiString,
+  IconType,
 } from '@standardnotes/models'
 import { SharedVaultServiceInterface } from './SharedVaultServiceInterface'
 import { SharedVaultServiceEvent, SharedVaultServiceEventPayload } from './SharedVaultServiceEvent'
@@ -118,12 +120,14 @@ export class SharedVaultService
   async createSharedVault(dto: {
     name: string
     description?: string
+    iconString: IconType | EmojiString
     userInputtedPassword: string | undefined
     storagePreference?: KeySystemRootKeyStorageMode
   }): Promise<VaultListingInterface | ClientDisplayableError> {
     return this._createSharedVault.execute({
       vaultName: dto.name,
       vaultDescription: dto.description,
+      vaultIcon: dto.iconString,
       userInputtedPassword: dto.userInputtedPassword,
       storagePreference: dto.storagePreference ?? KeySystemRootKeyStorageMode.Synced,
     })
