@@ -28,7 +28,7 @@ describe.skip('vault importing', function () {
     console.error('TODO: implement')
   })
 
-  it('should import vaulted items with non-present root key', async () => {
+  it('should import vaulted items with non-present root key as-is without decrypting', async () => {
     const vault = await context.vaults.createUserInputtedPasswordVault({
       name: 'test vault',
       userInputtedPassword: 'test password',

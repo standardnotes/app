@@ -42,7 +42,7 @@ import {
   GetAllContacts,
   GetVault,
   HomeServerService,
-  ImportDataUseCase,
+  ImportData,
   InMemoryStore,
   IntegrityService,
   InternalEventBus,
@@ -133,6 +133,10 @@ import {
   GenerateUuid,
   GetVaultItems,
   ValidateVaultPassword,
+  DecryptBackupPayloads,
+  DetermineKeyToUse,
+  GetBackupFileType,
+  GetFilePassword,
 } from '@standardnotes/services'
 import { ItemManager } from '../../Services/Items/ItemManager'
 import { PayloadManager } from '../../Services/Payloads/PayloadManager'
@@ -159,7 +163,7 @@ import {
   WebSocketServer,
 } from '@standardnotes/api'
 import { TYPES } from './Types'
-import { Logger, isNotUndefined, isDeinitable } from '@standardnotes/utils'
+import { Logger, isNotUndefined, isDeinitable, LoggerInterface } from '@standardnotes/utils'
 import { EncryptionOperators } from '@standardnotes/encryption'
 import { AsymmetricMessagePayload, AsymmetricMessageSharedVaultInvite } from '@standardnotes/models'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
@@ -217,6 +221,26 @@ export class Dependencies {
   }
 
   private registerUseCaseMakers() {
+    this.factory.set(TYPES.DecryptBackupPayloads, () => {
+      return new DecryptBackupPayloads(
+        this.get<EncryptionService>(TYPES.EncryptionService),
+        this.get<DetermineKeyToUse>(TYPES.DetermineKeyToUse),
+        this.get<LoggerInterface>(TYPES.Logger),
+      )
+    })
+
+    this.factory.set(TYPES.DetermineKeyToUse, () => {
+      return new DetermineKeyToUse(this.get<EncryptionService>(TYPES.EncryptionService))
+    })
+
+    this.factory.set(TYPES.GetBackupFileType, () => {
+      return new GetBackupFileType()
+    })
+
+    this.factory.set(TYPES.GetFilePassword, () => {
+      return new GetFilePassword(this.get<ChallengeService>(TYPES.ChallengeService))
+    })
+
     this.factory.set(TYPES.ValidateVaultPassword, () => {
       return new ValidateVaultPassword(
         this.get<EncryptionService>(TYPES.EncryptionService),
@@ -258,16 +282,16 @@ export class Dependencies {
       )
     })
 
-    this.factory.set(TYPES.ImportDataUseCase, () => {
-      return new ImportDataUseCase(
+    this.factory.set(TYPES.ImportData, () => {
+      return new ImportData(
         this.get<ItemManager>(TYPES.ItemManager),
         this.get<SyncService>(TYPES.SyncService),
         this.get<ProtectionService>(TYPES.ProtectionService),
         this.get<EncryptionService>(TYPES.EncryptionService),
         this.get<PayloadManager>(TYPES.PayloadManager),
-        this.get<ChallengeService>(TYPES.ChallengeService),
         this.get<HistoryManager>(TYPES.HistoryManager),
         this.get<DecryptBackupFile>(TYPES.DecryptBackupFile),
+        this.get<GetFilePassword>(TYPES.GetFilePassword),
       )
     })
 
@@ -276,7 +300,11 @@ export class Dependencies {
     })
 
     this.factory.set(TYPES.DecryptBackupFile, () => {
-      return new DecryptBackupFile(this.get<EncryptionService>(TYPES.EncryptionService), this.get<Logger>(TYPES.Logger))
+      return new DecryptBackupFile(
+        this.get<EncryptionService>(TYPES.EncryptionService),
+        this.get<GetBackupFileType>(TYPES.GetBackupFileType),
+        this.get<DecryptBackupPayloads>(TYPES.DecryptBackupPayloads),
+      )
     })
 
     this.factory.set(TYPES.DiscardItemsLocally, () => {

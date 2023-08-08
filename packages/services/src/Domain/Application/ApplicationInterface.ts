@@ -18,7 +18,7 @@ import { HistoryServiceInterface } from './../History/HistoryServiceInterface'
 import { InternalEventBusInterface } from './../Internal/InternalEventBusInterface'
 import { PreferenceServiceInterface } from './../Preferences/PreferenceServiceInterface'
 import { AsymmetricMessageServiceInterface } from './../AsymmetricMessage/AsymmetricMessageServiceInterface'
-import { ImportDataReturnType } from './../Mutator/ImportDataUseCase'
+import { ImportDataResult } from '../Import/ImportDataResult'
 import { ChallengeServiceInterface } from './../Challenge/ChallengeServiceInterface'
 import { VaultServiceInterface } from '../Vault/VaultServiceInterface'
 import { ApplicationIdentifier } from '@standardnotes/common'
@@ -42,6 +42,7 @@ import { UserServiceInterface } from '../User/UserServiceInterface'
 import { SessionsClientInterface } from '../Session/SessionsClientInterface'
 import { HomeServerServiceInterface } from '../HomeServer/HomeServerServiceInterface'
 import { EncryptionProviderInterface } from '../Encryption/EncryptionProviderInterface'
+import { Result } from '@standardnotes/domain-core'
 
 export interface ApplicationInterface {
   deinit(mode: DeinitMode, source: DeinitSource): void
@@ -69,7 +70,7 @@ export interface ApplicationInterface {
   isThirdPartyHostUsed(): boolean
   isUsingHomeServer(): Promise<boolean>
 
-  importData(data: BackupFile, awaitSync?: boolean): Promise<ImportDataReturnType>
+  importData(data: BackupFile, awaitSync?: boolean): Promise<Result<ImportDataResult>>
 
   get changeAndSaveItem(): ChangeAndSaveItem
   get getHost(): GetHost

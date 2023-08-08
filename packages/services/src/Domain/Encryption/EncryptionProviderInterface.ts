@@ -75,6 +75,11 @@ export interface EncryptionProviderInterface {
 
   deleteWorkspaceSpecificKeyStateFromDevice(): Promise<void>
 
+  itemsKeyForEncryptedPayload(
+    payload: EncryptedPayloadInterface,
+  ): ItemsKeyInterface | KeySystemItemsKeyInterface | undefined
+  defaultItemsKeyForItemVersion(version: ProtocolVersion, fromKeys?: ItemsKeyInterface[]): ItemsKeyInterface | undefined
+
   unwrapRootKey(wrappingKey: RootKeyInterface): Promise<void>
   computeRootKey(password: string, keyParams: SNRootKeyParams): Promise<RootKeyInterface>
   computeWrappingKey(passcode: string): Promise<RootKeyInterface>
