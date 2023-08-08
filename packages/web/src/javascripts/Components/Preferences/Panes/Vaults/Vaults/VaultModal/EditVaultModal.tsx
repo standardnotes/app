@@ -221,84 +221,81 @@ const EditVaultModal: FunctionComponent<Props> = ({ onCloseDialog, existingVault
     setShouldShowIconPicker((shouldShow) => !shouldShow)
   }, [])
 
+  const canShowMembers =
+    members.length > 0 && !members.every((member) => application.vaultUsers.isVaultUserOwner(member))
+
   if (existingVault && application.vaultLocks.isVaultLocked(existingVault)) {
     return <div>Vault is locked.</div>
   }
 
   return (
     <Modal title={existingVault ? 'Edit Vault' : 'Create New Vault'} close={handleDialogClose} actions={modalActions}>
-      <div className="px-4.5 pb-1.5 pt-4">
-        <div className="flex w-full flex-col">
-          <div className="mb-3">
-            <div className="text-lg">Vault Info</div>
-            <div className="mt-1">The vault name and description are end-to-end encrypted.</div>
+      <div className="px-4.5 pb-1.5 pt-4 flex w-full flex-col">
+        <div className="mb-3">
+          <div className="text-lg">Vault Info</div>
+          <div className="mt-1">The vault name and description are end-to-end encrypted.</div>
 
-            <div className="flex items-center mt-4 gap-4">
-              <StyledTooltip className="!z-modal" label="Choose icon">
-                <Button className="!px-1.5" ref={iconPickerButtonRef} onClick={toggleIconPicker}>
-                  <Icon type={iconString} />
-                </Button>
-              </StyledTooltip>
-              <Popover
-                title="Choose icon"
-                open={shouldShowIconPicker}
-                anchorElement={iconPickerButtonRef.current}
-                togglePopover={toggleIconPicker}
-                align="start"
-                overrideZIndex="z-modal"
-                hideOnClickInModal
-              >
-                <div className="p-2">
-                  <IconPicker
-                    selectedValue={iconString || 'safe-square'}
-                    onIconChange={(value?: VectorIconNameOrEmoji) => {
-                      setIconString(value ?? 'safe-square')
-                      toggleIconPicker()
-                    }}
-                    platform={application.platform}
-                    useIconGrid={true}
-                  />
-                </div>
-              </Popover>
-              <DecoratedInput
-                className={{
-                  container: 'flex-grow',
-                }}
-                ref={nameInputRef}
-                value={name}
-                placeholder="Vault Name"
-                onChange={(value) => {
-                  setName(value)
-                }}
-              />
-            </div>
-
+          <div className="flex items-center mt-4 gap-4">
+            <StyledTooltip className="!z-modal" label="Choose icon">
+              <Button className="!px-1.5" ref={iconPickerButtonRef} onClick={toggleIconPicker}>
+                <Icon type={iconString} />
+              </Button>
+            </StyledTooltip>
+            <Popover
+              title="Choose icon"
+              open={shouldShowIconPicker}
+              anchorElement={iconPickerButtonRef.current}
+              togglePopover={toggleIconPicker}
+              align="start"
+              overrideZIndex="z-modal"
+              hideOnClickInModal
+            >
+              <div className="p-2">
+                <IconPicker
+                  selectedValue={iconString || 'safe-square'}
+                  onIconChange={(value?: VectorIconNameOrEmoji) => {
+                    setIconString(value ?? 'safe-square')
+                    toggleIconPicker()
+                  }}
+                  platform={application.platform}
+                  useIconGrid={true}
+                />
+              </div>
+            </Popover>
             <DecoratedInput
-              className={{ container: 'mt-4' }}
-              value={description}
-              placeholder="Vault description"
+              className={{
+                container: 'flex-grow',
+              }}
+              ref={nameInputRef}
+              value={name}
+              placeholder="Vault Name"
               onChange={(value) => {
-                setDescription(value)
+                setName(value)
               }}
             />
           </div>
 
-          {existingVault && (
-            <VaultModalMembers vault={existingVault} members={members} onChange={reloadVaultInfo} isAdmin={isAdmin} />
-          )}
-
-          {existingVault && invites.length > 0 && (
-            <VaultModalInvites invites={invites} onChange={reloadVaultInfo} isAdmin={isAdmin} />
-          )}
-
-          <PasswordTypePreference
-            value={passwordType}
-            onChange={setPasswordType}
-            onCustomKeyChange={setCustomPassword}
+          <DecoratedInput
+            className={{ container: 'mt-4' }}
+            value={description}
+            placeholder="Vault description"
+            onChange={(value) => {
+              setDescription(value)
+            }}
           />
-
-          <KeyStoragePreference value={keyStorageMode} onChange={setKeyStorageMode} />
         </div>
+
+        {existingVault && canShowMembers && (
+          <VaultModalMembers vault={existingVault} members={members} onChange={reloadVaultInfo} isAdmin={isAdmin} />
+        )}
+
+        {existingVault && invites.length > 0 && (
+          <VaultModalInvites invites={invites} onChange={reloadVaultInfo} isAdmin={isAdmin} />
+        )}
+
+        <PasswordTypePreference value={passwordType} onChange={setPasswordType} onCustomKeyChange={setCustomPassword} />
+
+        <KeyStoragePreference value={keyStorageMode} onChange={setKeyStorageMode} />
       </div>
     </Modal>
   )
