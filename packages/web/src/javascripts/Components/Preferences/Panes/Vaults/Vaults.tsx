@@ -120,16 +120,18 @@ const Vaults = () => {
         <EditVaultModal onCloseDialog={closeVaultModal} />
       </ModalOverlay>
 
-      <PreferencesGroup>
-        <PreferencesSegment>
-          <Title>Incoming Invites</Title>
-          <div className="my-2 flex flex-col gap-3.5">
-            {invites.map((invite) => {
-              return <InviteItem inviteRecord={invite} key={invite.invite.uuid} />
-            })}
-          </div>
-        </PreferencesSegment>
-      </PreferencesGroup>
+      {invites.length > 0 && (
+        <PreferencesGroup>
+          <PreferencesSegment>
+            <Title>Incoming Invites</Title>
+            <div className="my-2 flex flex-col gap-3.5">
+              {invites.map((invite) => {
+                return <InviteItem inviteRecord={invite} key={invite.invite.uuid} />
+              })}
+            </div>
+          </PreferencesSegment>
+        </PreferencesGroup>
+      )}
 
       <PreferencesGroup>
         <PreferencesSegment>
