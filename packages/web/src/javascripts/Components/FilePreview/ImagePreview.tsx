@@ -103,7 +103,7 @@ const ImagePreview: FunctionComponent<Props> = ({
           <div className="mx-2">
             <input
               type="number"
-              className="w-10 text-center"
+              className="w-10 text-center bg-default"
               defaultValue={imageZoomPercent}
               onKeyDown={(event) => {
                 event.stopPropagation()

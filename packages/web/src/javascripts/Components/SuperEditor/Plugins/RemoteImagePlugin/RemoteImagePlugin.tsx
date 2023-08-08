@@ -44,7 +44,7 @@ export default function RemoteImagePlugin() {
           $wrapNodeInElement(imageNode, $createParagraphNode).selectEnd()
         }
         const newLineNode = $createParagraphNode()
-        $insertNodes([newLineNode])
+        imageNode.getParentOrThrow().insertAfter(newLineNode)
 
         return true
       },
