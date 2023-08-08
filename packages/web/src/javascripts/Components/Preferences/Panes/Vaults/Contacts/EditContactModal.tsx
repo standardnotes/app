@@ -74,6 +74,14 @@ const EditContactModal: FunctionComponent<Props> = ({ onCloseDialog, fromInvite,
     [editContactUuid, handleDialogClose, handleSubmit],
   )
 
+  const focusInput = useCallback((input: HTMLInputElement | null) => {
+    if (input) {
+      setTimeout(() => {
+        input.focus()
+      })
+    }
+  }, [])
+
   return (
     <Modal
       title={editContactUuid ? 'Edit Contact' : 'Add New Contact'}
@@ -90,6 +98,8 @@ const EditContactModal: FunctionComponent<Props> = ({ onCloseDialog, fromInvite,
               onChange={(value) => {
                 setName(value)
               }}
+              ref={focusInput}
+              onEnter={handleSubmit}
             />
 
             {!editingContact?.isMe && (
@@ -101,6 +111,7 @@ const EditContactModal: FunctionComponent<Props> = ({ onCloseDialog, fromInvite,
                 onChange={(value) => {
                   setCollaborationID(value)
                 }}
+                onEnter={handleSubmit}
               />
             )}
 
