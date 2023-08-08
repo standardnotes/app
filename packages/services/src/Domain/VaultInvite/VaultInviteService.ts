@@ -189,6 +189,9 @@ export class VaultInviteService
       sharedVaultContacts: contacts,
       permission,
     })
+    if (result.isFailed()) {
+      return Result.fail(result.getError())
+    }
 
     void this.notifyEvent(VaultInviteServiceEvent.InviteSent)
 
