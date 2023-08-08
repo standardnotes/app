@@ -4,11 +4,14 @@ import { IconNameToSvgMapping } from './IconNameToSvgMapping'
 import { classNames } from '@standardnotes/utils'
 import { LexicalIconName, LexicalIconNameToSvgMapping } from './LexicalIcons'
 
+type Size = 'small' | 'medium' | 'normal' | 'large' | 'custom'
+
 type Props = {
   type: VectorIconNameOrEmoji | LexicalIconName
   className?: string
   ariaLabel?: string
-  size?: 'small' | 'medium' | 'normal' | 'large' | 'custom'
+  size?: Size
+  emojiSize?: Size
 }
 
 const ContainerDimensions = {
@@ -54,7 +57,7 @@ export const isIconEmoji = (type: VectorIconNameOrEmoji): boolean => {
   return getIconComponent(type) == undefined
 }
 
-const Icon: FunctionComponent<Props> = ({ type, className = '', ariaLabel, size = 'normal' }) => {
+const Icon: FunctionComponent<Props> = ({ type, className = '', ariaLabel, size = 'normal', emojiSize }) => {
   const IconComponent = getIconComponent(type)
   if (!IconComponent) {
     return (
@@ -62,9 +65,9 @@ const Icon: FunctionComponent<Props> = ({ type, className = '', ariaLabel, size 
         className={classNames(
           'fill-current',
           'text-center',
-          EmojiSize[size],
-          EmojiContainerDimensions[size],
-          EmojiOffset[size],
+          EmojiSize[emojiSize || size],
+          EmojiContainerDimensions[emojiSize || size],
+          EmojiOffset[emojiSize || size],
           className,
         )}
       >

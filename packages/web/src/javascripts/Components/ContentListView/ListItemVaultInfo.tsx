@@ -28,11 +28,11 @@ const ListItemVaultInfo: FunctionComponent<Props> = ({ item }) => {
   const sharedByContact = application.sharedVaults.getItemSharedBy(item)
 
   return (
-    <div className="mt-1 flex flex-wrap items-center gap-2">
+    <div className="mt-2.5 flex flex-wrap items-center gap-2">
       <VaultNameBadge vault={vault} />
 
       {sharedByContact && (
-        <div title="Shared by contact" className={'mt-2 rounded bg-info px-1.5 py-1 text-neutral-contrast'}>
+        <div title="Shared by contact" className="rounded bg-info px-1.5 py-1 text-neutral-contrast">
           <span className="flex items-center" title="Shared by contact">
             <Icon ariaLabel="Shared by contact" type="archive" className="mr-1 text-info-contrast" size="medium" />
             <div className="text-center text-xs font-bold">{sharedByContact?.name}</div>
