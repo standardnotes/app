@@ -164,6 +164,7 @@ import { Logger, isNotUndefined, isDeinitable } from '@standardnotes/utils'
 import { EncryptionOperators } from '@standardnotes/encryption'
 import { AsymmetricMessagePayload, AsymmetricMessageSharedVaultInvite } from '@standardnotes/models'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
+import { AuthorizeVaultDeletion } from '@standardnotes/services/src/Domain/Vault/UseCase/AuthorizeVaultDeletion'
 
 export class Dependencies {
   private factory = new Map<symbol, () => unknown>()
@@ -222,6 +223,15 @@ export class Dependencies {
       return new ValidateVaultPassword(
         this.get<EncryptionService>(TYPES.EncryptionService),
         this.get<KeySystemKeyManager>(TYPES.KeySystemKeyManager),
+      )
+    })
+
+    this.factory.set(TYPES.AuthorizeVaultDeletion, () => {
+      return new AuthorizeVaultDeletion(
+        this.get<VaultLockService>(TYPES.VaultLockService),
+        this.get<ProtectionService>(TYPES.ProtectionService),
+        this.get<ChallengeService>(TYPES.ChallengeService),
+        this.get<ValidateVaultPassword>(TYPES.ValidateVaultPassword),
       )
     })
 
@@ -879,6 +889,7 @@ export class Dependencies {
         this.get<SendVaultDataChangedMessage>(TYPES.SendVaultDataChangedMessage),
         this.get<IsVaultOwner>(TYPES.IsVaultOwner),
         this.get<ValidateVaultPassword>(TYPES.ValidateVaultPassword),
+        this.get<AuthorizeVaultDeletion>(TYPES.AuthorizeVaultDeletion),
         this.get<InternalEventBus>(TYPES.InternalEventBus),
       )
     })
