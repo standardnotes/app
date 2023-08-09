@@ -10,8 +10,9 @@ import {
 } from '../../Challenge'
 import { ChallengeStrings } from '../../Strings/Messages'
 import { ValidateVaultPassword } from '../../VaultLock/UseCase/ValidateVaultPassword'
+import { Result, UseCaseInterface } from '@standardnotes/domain-core'
 
-export class AuthorizeVaultDeletion {
+export class AuthorizeVaultDeletion implements UseCaseInterface<boolean> {
   constructor(
     private vaultLocks: VaultLockServiceInterface,
     private protection: ProtectionsClientInterface,
@@ -19,13 +20,14 @@ export class AuthorizeVaultDeletion {
     private _validateVaultPassword: ValidateVaultPassword,
   ) {}
 
-  execute(vault: VaultListingInterface): Promise<boolean> {
+  async execute(vault: VaultListingInterface): Promise<Result<boolean>> {
     if (!this.vaultLocks.isVaultLockable(vault)) {
-      return this.protection.authorizeAction(ChallengeReason.Custom, {
+      const authorized = await this.protection.authorizeAction(ChallengeReason.Custom, {
         fallBackToAccountPassword: true,
         requireAccountPassword: false,
         forcePrompt: true,
       })
+      return Result.ok(authorized)
     }
 
     const challenge = new Challenge(
@@ -39,13 +41,13 @@ export class AuthorizeVaultDeletion {
     return new Promise((resolve) => {
       this.challenges.addChallengeObserver(challenge, {
         onCancel() {
-          resolve(false)
+          resolve(Result.ok(false))
         },
         onNonvalidatedSubmit: async (challengeResponse) => {
           const value = challengeResponse.getDefaultValue()
           if (!value) {
             this.challenges.completeChallenge(challenge)
-            resolve(false)
+            resolve(Result.ok(false))
             return
           }
 
@@ -54,12 +56,12 @@ export class AuthorizeVaultDeletion {
           const validPassword = this._validateVaultPassword.execute(vault, password).getValue()
           if (!validPassword) {
             this.challenges.setValidationStatusForChallenge(challenge, value, false)
-            resolve(false)
+            resolve(Result.ok(false))
             return
           }
 
           this.challenges.completeChallenge(challenge)
-          resolve(true)
+          resolve(Result.ok(true))
         },
       })
 

@@ -36,7 +36,7 @@ const VaultItem = ({ vault }: Props) => {
 
     const authorized = await application.vaults.authorizeVaultDeletion(vault)
 
-    if (!authorized) {
+    if (!authorized.getValue()) {
       return
     }
 

@@ -185,7 +185,7 @@ export class VaultService
     return this.items.findSureItem(item.uuid)
   }
 
-  authorizeVaultDeletion(vault: VaultListingInterface): Promise<boolean> {
+  authorizeVaultDeletion(vault: VaultListingInterface): Promise<Result<boolean>> {
     return this._authorizeVaultDeletion.execute(vault)
   }
 
