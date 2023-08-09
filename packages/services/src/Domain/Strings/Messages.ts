@@ -168,6 +168,7 @@ export const ChallengeStrings = {
   DeleteAccount: 'Authentication is required to delete your account',
   ListedAuthorization: 'Authentication is required to approve this note for Listed',
   UnlockVault: (vaultName: string) => `Unlock ${vaultName}`,
+  DeleteVault: (vaultName: string) => `Delete ${vaultName}`,
   EnterVaultPassword: 'Enter the password for this vault',
 }
 

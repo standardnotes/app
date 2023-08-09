@@ -29,7 +29,14 @@ const VaultItem = ({ vault }: Props) => {
       undefined,
       ButtonType.Danger,
     )
+
     if (!confirm) {
+      return
+    }
+
+    const authorized = await application.vaults.authorizeVaultDeletion(vault)
+
+    if (!authorized) {
       return
     }
 

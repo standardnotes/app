@@ -868,6 +868,8 @@ export class Dependencies {
         this.get<MutatorService>(TYPES.MutatorService),
         this.get<VaultLockService>(TYPES.VaultLockService),
         this.get<AlertService>(TYPES.AlertService),
+        this.get<ChallengeService>(TYPES.ChallengeService),
+        this.get<ProtectionService>(TYPES.ProtectionService),
         this.get<GetVault>(TYPES.GetVault),
         this.get<GetVaults>(TYPES.GetVaults),
         this.get<ChangeVaultKeyOptions>(TYPES.ChangeVaultKeyOptions),
