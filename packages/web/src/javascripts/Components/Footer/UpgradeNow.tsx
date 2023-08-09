@@ -13,7 +13,7 @@ type Props = {
 const UpgradeNow = ({ application, featuresController, subscriptionContoller }: Props) => {
   const shouldShowCTA = !featuresController.hasFolders
   const hasAccount = subscriptionContoller.hasAccount
-  const hasAccessToFeatures = subscriptionContoller.hasFirstPartyOnlineOrOfflineSubscription
+  const hasAccessToFeatures = subscriptionContoller.hasFirstPartyOnlineOrOfflineSubscription()
 
   const onClick = useCallback(() => {
     if (hasAccount && application.isNativeIOS()) {

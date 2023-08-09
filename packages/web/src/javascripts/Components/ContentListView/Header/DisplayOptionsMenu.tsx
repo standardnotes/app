@@ -93,7 +93,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
     : selectedTag.preferences
   const [currentMode, setCurrentMode] = useState<PreferenceMode>(selectedTagPreferences ? 'tag' : 'global')
   const [preferences, setPreferences] = useState<TagPreferences>({})
-  const hasSubscription = application.subscriptionController.hasFirstPartyOnlineOrOfflineSubscription
+  const hasSubscription = application.subscriptionController.hasFirstPartyOnlineOrOfflineSubscription()
   const controlsDisabled = currentMode === 'tag' && !hasSubscription
   const isDailyEntry = selectedTagPreferences?.entryMode === 'daily'
 
@@ -441,7 +441,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
             <div className="flex flex-col pr-5">
               <div className="flex flex-row items-center">
                 <div className="text-base font-semibold uppercase text-text lg:text-xs">Daily Notebook</div>
-                <Pill className="px-1.5 py-0" style="success">
+                <Pill className="px-1.5 !py-0.5" style="success">
                   Labs
                 </Pill>
               </div>
@@ -463,7 +463,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
             <div className="flex flex-col pr-5">
               <div className="flex flex-row items-center">
                 <div className="text-base font-semibold uppercase text-text lg:text-xs">Table view</div>
-                <Pill className="px-1.5 py-0" style="success">
+                <Pill className="px-1.5 !py-0.5" style="success">
                   Labs
                 </Pill>
               </div>

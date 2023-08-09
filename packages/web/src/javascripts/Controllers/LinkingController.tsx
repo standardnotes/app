@@ -87,7 +87,7 @@ export class LinkingController extends AbstractViewController implements Interna
   }
 
   get isEntitledToNoteLinking() {
-    return !!this.subscriptionController.hasFirstPartyOnlineOrOfflineSubscription
+    return this.subscriptionController.hasFirstPartyOnlineOrOfflineSubscription()
   }
 
   setIsLinkingPanelOpen = (open: boolean) => {
