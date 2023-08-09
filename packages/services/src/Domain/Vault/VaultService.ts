@@ -41,7 +41,7 @@ import {
   ChallengeValidation,
 } from '../Challenge'
 import { ChallengeStrings } from '../Strings/Messages'
-import { ProtectionsClientInterface } from '@standardnotes/snjs'
+import { ProtectionsClientInterface } from '../Protection/ProtectionClientInterface'
 
 export class VaultService
   extends AbstractService<VaultServiceEvent, VaultServiceEventPayload[VaultServiceEvent]>
