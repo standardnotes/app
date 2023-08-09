@@ -163,6 +163,7 @@ export const TYPES = {
   GenerateUuid: Symbol.for('GenerateUuid'),
   GetVaultItems: Symbol.for('GetVaultItems'),
   ValidateVaultPassword: Symbol.for('ValidateVaultPassword'),
+  AuthorizeVaultDeletion: Symbol.for('AuthorizeVaultDeletion'),
 
   // Mappers
   SessionStorageMapper: Symbol.for('SessionStorageMapper'),

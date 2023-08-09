@@ -33,15 +33,7 @@ import { AlertService } from '../Alert/AlertService'
 import { GetVaults } from './UseCase/GetVaults'
 import { VaultLockServiceInterface } from '../VaultLock/VaultLockServiceInterface'
 import { Result } from '@standardnotes/domain-core'
-import {
-  Challenge,
-  ChallengePrompt,
-  ChallengeReason,
-  ChallengeServiceInterface,
-  ChallengeValidation,
-} from '../Challenge'
-import { ChallengeStrings } from '../Strings/Messages'
-import { ProtectionsClientInterface } from '../Protection/ProtectionClientInterface'
+import { AuthorizeVaultDeletion } from './UseCase/AuthorizeVaultDeletion'
 
 export class VaultService
   extends AbstractService<VaultServiceEvent, VaultServiceEventPayload[VaultServiceEvent]>
@@ -53,8 +45,6 @@ export class VaultService
     private mutator: MutatorClientInterface,
     private vaultLocks: VaultLockServiceInterface,
     private alerts: AlertService,
-    private challenges: ChallengeServiceInterface,
-    private protection: ProtectionsClientInterface,
     private _getVault: GetVault,
     private _getVaults: GetVaults,
     private _changeVaultKeyOptions: ChangeVaultKeyOptions,
@@ -66,6 +56,7 @@ export class VaultService
     private _sendVaultDataChangeMessage: SendVaultDataChangedMessage,
     private _isVaultOwner: IsVaultOwner,
     private _validateVaultPassword: ValidateVaultPassword,
+    private _authorizeVaultDeletion: AuthorizeVaultDeletion,
     eventBus: InternalEventBusInterface,
   ) {
     super(eventBus)
@@ -195,51 +186,7 @@ export class VaultService
   }
 
   authorizeVaultDeletion(vault: VaultListingInterface): Promise<boolean> {
-    if (!this.vaultLocks.isVaultLockable(vault)) {
-      return this.protection.authorizeAction(ChallengeReason.Custom, {
-        fallBackToAccountPassword: true,
-        requireAccountPassword: false,
-        forcePrompt: true,
-      })
-    }
-
-    const challenge = new Challenge(
-      [new ChallengePrompt(ChallengeValidation.None, undefined, 'Password')],
-      ChallengeReason.Custom,
-      true,
-      ChallengeStrings.DeleteVault(vault.name),
-      ChallengeStrings.EnterVaultPassword,
-    )
-
-    return new Promise((resolve) => {
-      this.challenges.addChallengeObserver(challenge, {
-        onCancel() {
-          resolve(false)
-        },
-        onNonvalidatedSubmit: async (challengeResponse) => {
-          const value = challengeResponse.getDefaultValue()
-          if (!value) {
-            this.challenges.completeChallenge(challenge)
-            resolve(false)
-            return
-          }
-
-          const password = value.value as string
-
-          const validPassword = this._validateVaultPassword.execute(vault, password).getValue()
-          if (!validPassword) {
-            this.challenges.setValidationStatusForChallenge(challenge, value, false)
-            resolve(false)
-            return
-          }
-
-          this.challenges.completeChallenge(challenge)
-          resolve(true)
-        },
-      })
-
-      void this.challenges.promptForChallengeResponse(challenge)
-    })
+    return this._authorizeVaultDeletion.execute(vault)
   }
 
   async deleteVault(vault: VaultListingInterface): Promise<boolean> {
