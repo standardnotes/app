@@ -22,6 +22,7 @@ describe('asymmetric messages', function () {
     await context.deinit()
     localStorage.clear()
     sinon.restore()
+    context = undefined
   })
 
   it('should not trust message if the trusted payload data recipientUuid does not match the message user uuid', async () => {

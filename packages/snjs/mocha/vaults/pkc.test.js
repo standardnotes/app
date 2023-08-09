@@ -20,9 +20,7 @@ describe('public key cryptography', function () {
   afterEach(async () => {
     await context.deinit()
     localStorage.clear()
-
     sinon.restore()
-
     context = undefined
   })
 

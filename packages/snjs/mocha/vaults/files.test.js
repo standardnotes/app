@@ -9,7 +9,6 @@ describe('shared vault files', function () {
   this.timeout(Factory.TwentySecondTimeout)
 
   let context
-  let vaults
 
   beforeEach(async function () {
     localStorage.clear()
@@ -19,7 +18,6 @@ describe('shared vault files', function () {
     await context.launch()
     await context.register()
 
-    vaults = context.vaults
     await context.activatePaidSubscriptionForUser()
   })
 
@@ -27,6 +25,7 @@ describe('shared vault files', function () {
     await context.deinit()
     localStorage.clear()
     sinon.restore()
+    context = undefined
   })
 
   describe('private vaults', () => {
@@ -68,7 +67,7 @@ describe('shared vault files', function () {
     const uploadedFile = await Files.uploadFile(context.files, buffer, 'my-file', 'md', 1000)
 
     const sharedVault = await Collaboration.createSharedVault(context)
-    const addedFile = await vaults.moveItemToVault(sharedVault, uploadedFile)
+    const addedFile = await context.vaults.moveItemToVault(sharedVault, uploadedFile)
 
     const downloadedBytes = await Files.downloadFile(context.files, addedFile)
     expect(downloadedBytes).to.eql(buffer)
@@ -82,7 +81,7 @@ describe('shared vault files', function () {
     const uploadedFile = await Files.uploadFile(context.files, buffer, 'my-file', 'md', 1000, firstVault)
 
     const secondVault = await Collaboration.createSharedVault(context)
-    const movedFile = await vaults.moveItemToVault(secondVault, uploadedFile)
+    const movedFile = await context.vaults.moveItemToVault(secondVault, uploadedFile)
 
     const downloadedBytes = await Files.downloadFile(context.files, movedFile)
     expect(downloadedBytes).to.eql(buffer)
@@ -96,7 +95,7 @@ describe('shared vault files', function () {
     const uploadedFile = await Files.uploadFile(context.files, buffer, 'my-file', 'md', 1000, firstVault)
     const privateVault = await Collaboration.createPrivateVault(context)
 
-    const addedFile = await vaults.moveItemToVault(privateVault, uploadedFile)
+    const addedFile = await context.vaults.moveItemToVault(privateVault, uploadedFile)
 
     const downloadedBytes = await Files.downloadFile(context.files, addedFile)
     expect(downloadedBytes).to.eql(buffer)
@@ -112,14 +111,14 @@ describe('shared vault files', function () {
 
     const sharedVault = await Collaboration.createSharedVault(context)
 
-    vaults.alerts.confirmV2 = () => Promise.resolve(true)
+    context.vaults.alerts.confirmV2 = () => Promise.resolve(true)
 
-    await vaults.moveItemToVault(sharedVault, note)
+    await context.vaults.moveItemToVault(sharedVault, note)
 
     const latestFile = context.items.findItem(updatedFile.uuid)
 
-    expect(vaults.getItemVault(latestFile).uuid).to.equal(sharedVault.uuid)
-    expect(vaults.getItemVault(context.items.findItem(note.uuid)).uuid).to.equal(sharedVault.uuid)
+    expect(context.vaults.getItemVault(latestFile).uuid).to.equal(sharedVault.uuid)
+    expect(context.vaults.getItemVault(context.items.findItem(note.uuid)).uuid).to.equal(sharedVault.uuid)
 
     const downloadedBytes = await Files.downloadFile(context.files, latestFile)
     expect(downloadedBytes).to.eql(buffer)
@@ -132,7 +131,7 @@ describe('shared vault files', function () {
     const sharedVault = await Collaboration.createSharedVault(context)
     const uploadedFile = await Files.uploadFile(context.files, buffer, 'my-file', 'md', 1000, sharedVault)
 
-    const removedFile = await vaults.removeItemFromVault(uploadedFile)
+    const removedFile = await context.vaults.removeItemFromVault(uploadedFile)
     expect(removedFile.key_system_identifier).to.not.be.ok
 
     const downloadedBytes = await Files.downloadFile(context.files, removedFile)
@@ -226,7 +225,7 @@ describe('shared vault files', function () {
     const response = await fetch('/mocha/assets/small_file.md')
     const buffer = new Uint8Array(await response.arrayBuffer())
     const uploadedFile = await Files.uploadFile(context.files, buffer, 'my-file', 'md', 1000)
-    const addedFile = await vaults.moveItemToVault(sharedVault, uploadedFile)
+    const addedFile = await context.vaults.moveItemToVault(sharedVault, uploadedFile)
 
     await contactContext.sync()
 

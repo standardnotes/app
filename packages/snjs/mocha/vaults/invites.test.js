@@ -21,6 +21,7 @@ describe('shared vault invites', function () {
     await context.deinit()
     localStorage.clear()
     sinon.restore()
+    context = undefined
   })
 
   it('should invite contact to vault', async () => {

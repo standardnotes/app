@@ -22,6 +22,7 @@ describe('vault key rotation', function () {
     await context.deinit()
     localStorage.clear()
     sinon.restore()
+    context = undefined
   })
 
   it('should reencrypt all items keys belonging to key system', async () => {

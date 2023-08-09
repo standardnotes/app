@@ -3,11 +3,10 @@ import * as Factory from '../lib/factory.js'
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
-describe('vaults', function () {
+describe.only('vaults', function () {
   this.timeout(Factory.TwentySecondTimeout)
 
   let context
-  let vaults
 
   beforeEach(async function () {
     localStorage.clear()
@@ -15,8 +14,6 @@ describe('vaults', function () {
     context = await Factory.createVaultsContextWithFakeCrypto()
 
     await context.launch()
-
-    vaults = context.vaults
   })
 
   afterEach(async function () {
@@ -24,12 +21,11 @@ describe('vaults', function () {
     localStorage.clear()
     sinon.restore()
     context = undefined
-    vaults = undefined
   })
 
   describe('offline', function () {
     it('should be able to create an offline vault', async () => {
-      const vault = await vaults.createRandomizedVault({
+      const vault = await context.vaults.createRandomizedVault({
         name: 'My Vault',
       })
 
@@ -45,7 +41,7 @@ describe('vaults', function () {
 
     it('should be able to create an offline vault with app passcode', async () => {
       await context.application.addPasscode('123')
-      const vault = await vaults.createRandomizedVault({
+      const vault = await context.vaults.createRandomizedVault({
         name: 'My Vault',
       })
 
@@ -60,12 +56,12 @@ describe('vaults', function () {
     })
 
     it('should add item to offline vault', async () => {
-      const vault = await vaults.createRandomizedVault({
+      const vault = await context.vaults.createRandomizedVault({
         name: 'My Vault',
       })
       const item = await context.createSyncedNote()
 
-      await vaults.moveItemToVault(vault, item)
+      await context.vaults.moveItemToVault(vault, item)
 
       const updatedItem = context.items.findItem(item.uuid)
       expect(updatedItem.key_system_identifier).to.equal(vault.systemIdentifier)
@@ -73,11 +69,11 @@ describe('vaults', function () {
 
     it('should load data in the correct order at startup to allow vault items and their keys to decrypt', async () => {
       const appIdentifier = context.identifier
-      const vault = await vaults.createRandomizedVault({
+      const vault = await context.vaults.createRandomizedVault({
         name: 'My Vault',
       })
       const note = await context.createSyncedNote('foo', 'bar')
-      await vaults.moveItemToVault(vault, note)
+      await context.vaults.moveItemToVault(vault, note)
       await context.deinit()
 
       const recreatedContext = await Factory.createVaultsContextWithFakeCrypto(appIdentifier)
@@ -93,11 +89,11 @@ describe('vaults', function () {
     describe('porting from offline to online', () => {
       it('should maintain vault system identifiers across items after registration', async () => {
         const appIdentifier = context.identifier
-        const vault = await vaults.createRandomizedVault({
+        const vault = await context.vaults.createRandomizedVault({
           name: 'My Vault',
         })
         const note = await context.createSyncedNote('foo', 'bar')
-        await vaults.moveItemToVault(vault, note)
+        await context.vaults.moveItemToVault(vault, note)
 
         await context.register()
         await context.sync()
@@ -120,11 +116,11 @@ describe('vaults', function () {
 
       it('should decrypt vault items', async () => {
         const appIdentifier = context.identifier
-        const vault = await vaults.createRandomizedVault({
+        const vault = await context.vaults.createRandomizedVault({
           name: 'My Vault',
         })
         const note = await context.createSyncedNote('foo', 'bar')
-        await vaults.moveItemToVault(vault, note)
+        await context.vaults.moveItemToVault(vault, note)
 
         await context.register()
         await context.sync()
@@ -149,7 +145,7 @@ describe('vaults', function () {
     })
 
     it('should create a vault', async () => {
-      const vault = await vaults.createRandomizedVault({
+      const vault = await context.vaults.createRandomizedVault({
         name: 'My Vault',
       })
       expect(vault).to.not.be.undefined
@@ -164,11 +160,11 @@ describe('vaults', function () {
 
     it('should add item to vault', async () => {
       const note = await context.createSyncedNote('foo', 'bar')
-      const vault = await vaults.createRandomizedVault({
+      const vault = await context.vaults.createRandomizedVault({
         name: 'My Vault',
       })
 
-      await vaults.moveItemToVault(vault, note)
+      await context.vaults.moveItemToVault(vault, note)
 
       const updatedNote = context.items.findItem(note.uuid)
       expect(updatedNote.key_system_identifier).to.equal(vault.systemIdentifier)
@@ -177,11 +173,11 @@ describe('vaults', function () {
     describe('client timing', () => {
       it('should load data in the correct order at startup to allow vault items and their keys to decrypt', async () => {
         const appIdentifier = context.identifier
-        const vault = await vaults.createRandomizedVault({
+        const vault = await context.vaults.createRandomizedVault({
           name: 'My Vault',
         })
         const note = await context.createSyncedNote('foo', 'bar')
-        await vaults.moveItemToVault(vault, note)
+        await context.vaults.moveItemToVault(vault, note)
         await context.deinit()
 
         const recreatedContext = await Factory.createVaultsContextWithFakeCrypto(appIdentifier)
@@ -197,13 +193,13 @@ describe('vaults', function () {
 
     describe('key system root key rotation', () => {
       it('rotating a key system root key should create a new vault items key', async () => {
-        const vault = await vaults.createRandomizedVault({
+        const vault = await context.vaults.createRandomizedVault({
           name: 'My Vault',
         })
 
         const keySystemItemsKey = context.keys.getKeySystemItemsKeys(vault.systemIdentifier)[0]
 
-        await vaults.rotateVaultRootKey(vault)
+        await context.vaults.rotateVaultRootKey(vault)
 
         const updatedKeySystemItemsKey = context.keys.getKeySystemItemsKeys(vault.systemIdentifier)[0]
 
@@ -212,13 +208,13 @@ describe('vaults', function () {
       })
 
       it('deleting a vault should delete all its items', async () => {
-        const vault = await vaults.createRandomizedVault({
+        const vault = await context.vaults.createRandomizedVault({
           name: 'My Vault',
         })
         const note = await context.createSyncedNote('foo', 'bar')
-        await vaults.moveItemToVault(vault, note)
+        await context.vaults.moveItemToVault(vault, note)
 
-        await vaults.deleteVault(vault)
+        await context.vaults.deleteVault(vault)
 
         const updatedNote = context.items.findItem(note.uuid)
         expect(updatedNote).to.be.undefined

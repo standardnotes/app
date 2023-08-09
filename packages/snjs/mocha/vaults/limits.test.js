@@ -22,6 +22,7 @@ describe('shared vault limits', function () {
     await context.deinit()
     localStorage.clear()
     sinon.restore()
+    context = undefined
   })
 
   describe('free users', () => {

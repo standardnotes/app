@@ -21,6 +21,7 @@ describe('vault importing', function () {
     await context.deinit()
     localStorage.clear()
     sinon.restore()
+    context = undefined
   })
 
   describe('randomized vaults', () => {
