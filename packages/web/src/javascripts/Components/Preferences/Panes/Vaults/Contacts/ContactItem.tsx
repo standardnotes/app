@@ -19,8 +19,10 @@ const ContactItem = ({ contact }: Props) => {
   const collaborationID = application.contacts.getCollaborationIDForTrustedContact(contact)
 
   const deleteContact = useCallback(async () => {
-    void application.contacts.deleteContact(contact)
-  }, [application.contacts, contact])
+    if (await application.alerts.confirm('Are you sure you want to delete this contact?')) {
+      void application.contacts.deleteContact(contact)
+    }
+  }, [application.alerts, application.contacts, contact])
 
   return (
     <>
