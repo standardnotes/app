@@ -140,6 +140,7 @@ import {
   IsApplicationUsingThirdPartyHost,
   CreateDecryptedBackupFile,
   CreateEncryptedBackupFile,
+  SyncLocalVaultsWithRemoteSharedVaults,
 } from '@standardnotes/services'
 import { ItemManager } from '../../Services/Items/ItemManager'
 import { PayloadManager } from '../../Services/Payloads/PayloadManager'
@@ -397,6 +398,13 @@ export class Dependencies {
 
     this.factory.set(TYPES.GetVaults, () => {
       return new GetVaults(this.get<ItemManager>(TYPES.ItemManager))
+    })
+
+    this.factory.set(TYPES.SyncLocalVaultsWithRemoteSharedVaults, () => {
+      return new SyncLocalVaultsWithRemoteSharedVaults(
+        this.get<SharedVaultServer>(TYPES.SharedVaultServer),
+        this.get<MutatorService>(TYPES.MutatorService),
+      )
     })
 
     this.factory.set(TYPES.ChangeAndSaveItem, () => {
@@ -893,6 +901,7 @@ export class Dependencies {
       return new SharedVaultService(
         this.get<ItemManager>(TYPES.ItemManager),
         this.get<SessionManager>(TYPES.SessionManager),
+        this.get<SyncLocalVaultsWithRemoteSharedVaults>(TYPES.SyncLocalVaultsWithRemoteSharedVaults),
         this.get<GetVault>(TYPES.GetVault),
         this.get<GetOwnedSharedVaults>(TYPES.GetOwnedSharedVaults),
         this.get<CreateSharedVault>(TYPES.CreateSharedVault),

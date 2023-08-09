@@ -31,6 +31,7 @@ export class ConvertToSharedVault {
         mutator.sharing = {
           sharedVaultUuid: serverVaultHash.uuid,
           ownerUserUuid: serverVaultHash.user_uuid,
+          fileBytesUsed: serverVaultHash.file_upload_bytes_used,
         }
       },
     )

@@ -98,6 +98,7 @@ export const TYPES = {
   ValidateItemSigner: Symbol.for('ValidateItemSigner'),
   GetVault: Symbol.for('GetVault'),
   GetVaults: Symbol.for('GetVaults'),
+  SyncLocalVaultsWithRemoteSharedVaults: Symbol.for('SyncLocalVaultsWithRemoteSharedVaults'),
   GetSharedVaults: Symbol.for('GetSharedVaults'),
   GetOwnedSharedVaults: Symbol.for('GetOwnedSharedVaults'),
   ChangeVaultKeyOptions: Symbol.for('ChangeVaultKeyOptions'),
