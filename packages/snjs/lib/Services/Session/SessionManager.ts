@@ -33,6 +33,7 @@ import {
   ApplicationStageChangedEventPayload,
   ApplicationStage,
   GetKeyPairs,
+  IsApplicationUsingThirdPartyHost,
 } from '@standardnotes/services'
 import { Base64String, PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import {
@@ -105,6 +106,7 @@ export class SessionManager
     private legacySessionStorageMapper: MapperInterface<LegacySession, Record<string, unknown>>,
     private workspaceIdentifier: string,
     private _getKeyPairs: GetKeyPairs,
+    private isApplicationUsingThirdPartyHostUseCase: IsApplicationUsingThirdPartyHost,
     protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)
@@ -274,7 +276,13 @@ export class SessionManager
   }
 
   public isSignedIntoFirstPartyServer(): boolean {
-    return this.isSignedIn() && !this.apiService.isThirdPartyHostUsed()
+    const isThirdPartyHostUsedOrError = this.isApplicationUsingThirdPartyHostUseCase.execute()
+    if (isThirdPartyHostUsedOrError.isFailed()) {
+      return false
+    }
+    const isThirdPartyHostUsed = isThirdPartyHostUsedOrError.getValue()
+
+    return this.isSignedIn() && !isThirdPartyHostUsed
   }
 
   public async reauthenticateInvalidSession(

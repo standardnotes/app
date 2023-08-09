@@ -158,6 +158,7 @@ export const TYPES = {
   ChangeVaultStorageMode: Symbol.for('ChangeVaultStorageMode'),
   ChangeAndSaveItem: Symbol.for('ChangeAndSaveItem'),
   GetHost: Symbol.for('GetHost'),
+  IsApplicationUsingThirdPartyHost: Symbol.for('IsApplicationUsingThirdPartyHost'),
   SetHost: Symbol.for('SetHost'),
   GenerateUuid: Symbol.for('GenerateUuid'),
   GetVaultItems: Symbol.for('GetVaultItems'),

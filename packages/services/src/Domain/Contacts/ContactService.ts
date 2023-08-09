@@ -1,7 +1,11 @@
 import { DeleteContact } from './UseCase/DeleteContact'
 import { MutatorClientInterface } from './../Mutator/MutatorClientInterface'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
-import { SharedVaultInviteServerHash, SharedVaultUserServerHash } from '@standardnotes/responses'
+import {
+  ClientDisplayableError,
+  SharedVaultInviteServerHash,
+  SharedVaultUserServerHash,
+} from '@standardnotes/responses'
 import { TrustedContactInterface, TrustedContactMutator, DecryptedItemInterface } from '@standardnotes/models'
 import { AbstractService } from '../Service/AbstractService'
 import { SyncServiceInterface } from '../Sync/SyncServiceInterface'
@@ -110,6 +114,9 @@ export class ContactService extends AbstractService<ContactServiceEvent> impleme
     name?: string,
   ): Promise<TrustedContactInterface | undefined> {
     const { userUuid, publicKey, signingPublicKey } = this.parseCollaborationID(collaborationID)
+    if (userUuid === this.user.getUserUuid()) {
+      throw new ClientDisplayableError('You cannot add yourself as a trusted contact')
+    }
     return this.createOrEditTrustedContact({
       name: name ?? '',
       contactUuid: userUuid,

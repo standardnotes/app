@@ -1,17 +1,30 @@
 import { isDesktopApplication } from '@/Utils'
-import { ApplicationInterface, LegacyApiServiceInterface, Result, UseCaseInterface } from '@standardnotes/snjs'
+import {
+  ApplicationInterface,
+  IsApplicationUsingThirdPartyHost,
+  LegacyApiServiceInterface,
+  Result,
+  UseCaseInterface,
+} from '@standardnotes/snjs'
 
 export class GetPurchaseFlowUrl implements UseCaseInterface<string> {
   constructor(
     private application: ApplicationInterface,
     private legacyApi: LegacyApiServiceInterface,
+    private isApplicationUsingThirdPartyHostUseCase: IsApplicationUsingThirdPartyHost,
   ) {}
 
   async execute(): Promise<Result<string>> {
     const currentUrl = window.location.origin
     const successUrl = isDesktopApplication() ? 'standardnotes://' : currentUrl
 
-    if (this.application.sessions.isSignedOut() || this.application.isThirdPartyHostUsed()) {
+    const isThirdPartyHostUsedOrError = this.isApplicationUsingThirdPartyHostUseCase.execute()
+    if (isThirdPartyHostUsedOrError.isFailed()) {
+      return Result.fail(isThirdPartyHostUsedOrError.getError()!)
+    }
+    const isThirdPartyHostUsed = isThirdPartyHostUsedOrError.getValue()
+
+    if (this.application.sessions.isSignedOut() || isThirdPartyHostUsed) {
       return Result.ok(`${window.purchaseUrl}/offline?&success_url=${successUrl}`)
     }
 

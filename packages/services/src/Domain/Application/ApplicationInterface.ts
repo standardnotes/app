@@ -67,7 +67,6 @@ export interface ApplicationInterface {
 
   hasAccount(): boolean
   setCustomHost(host: string): Promise<void>
-  isThirdPartyHostUsed(): boolean
   isUsingHomeServer(): Promise<boolean>
 
   importData(data: BackupFile, awaitSync?: boolean): Promise<Result<ImportDataResult>>

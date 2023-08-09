@@ -26,7 +26,9 @@ const OfflineSubscription: FunctionComponent<Props> = ({ application, onSuccess 
   }, [application])
 
   const shouldShowOfflineSubscription = () => {
-    return !application.hasAccount() || application.isThirdPartyHostUsed() || hasUserPreviouslyStoredCode
+    return (
+      !application.hasAccount() || !application.sessions.isSignedIntoFirstPartyServer() || hasUserPreviouslyStoredCode
+    )
   }
 
   const handleSubscriptionCodeSubmit = async (event: React.FormEvent) => {

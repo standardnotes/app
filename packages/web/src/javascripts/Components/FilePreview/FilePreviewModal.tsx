@@ -223,7 +223,6 @@ const FilePreviewModal = observer(({ application }: Props) => {
               align="start"
               className="py-2"
               overrideZIndex="z-modal"
-              portal={false}
             >
               <Menu a11yLabel="File context menu" isOpen={showOptionsMenu}>
                 <FileMenuOptions

@@ -22,6 +22,7 @@ import {
 } from '@standardnotes/responses'
 import { SubscriptionManagerEvent } from './SubscriptionManagerEvent'
 import { ApplicationStageChangedEventPayload } from '../Event/ApplicationStageChangedEventPayload'
+import { IsApplicationUsingThirdPartyHost } from '../UseCase/IsApplicationUsingThirdPartyHost'
 
 export class SubscriptionManager
   extends AbstractService<SubscriptionManagerEvent>
@@ -34,6 +35,7 @@ export class SubscriptionManager
     private subscriptionApiService: SubscriptionApiServiceInterface,
     private sessions: SessionsClientInterface,
     private storage: StorageServiceInterface,
+    private isApplicationUsingThirdPartyHostUseCase: IsApplicationUsingThirdPartyHost,
     protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)
@@ -43,7 +45,15 @@ export class SubscriptionManager
     switch (event.type) {
       case ApplicationEvent.Launched: {
         void this.fetchOnlineSubscription()
-        void this.fetchAvailableSubscriptions()
+
+        const isThirdPartyHostUsedOrError = this.isApplicationUsingThirdPartyHostUseCase.execute()
+        if (isThirdPartyHostUsedOrError.isFailed()) {
+          break
+        }
+        const isThirdPartyHostUsed = isThirdPartyHostUsedOrError.getValue()
+        if (!isThirdPartyHostUsed) {
+          void this.fetchAvailableSubscriptions()
+        }
         break
       }
 

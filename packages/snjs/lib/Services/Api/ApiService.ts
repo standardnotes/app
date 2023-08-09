@@ -73,7 +73,6 @@ import { LegacySession, MapperInterface, Session, SessionToken } from '@standard
 import { HttpServiceInterface } from '@standardnotes/api'
 import { SNRootKeyParams } from '@standardnotes/encryption'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
-import { isUrlFirstParty, TRUSTED_FEATURE_HOSTS } from '@Lib/Hosts'
 import { Paths } from './Paths'
 import { DiskStorageService } from '../Storage/DiskStorageService'
 import { UuidString } from '../../Types/UuidString'
@@ -155,11 +154,6 @@ export class LegacyApiService
 
   public getHost(): string {
     return this.host
-  }
-
-  public isThirdPartyHostUsed(): boolean {
-    const applicationHost = this.getHost() || ''
-    return !isUrlFirstParty(applicationHost)
   }
 
   public getFilesHost(): string {
@@ -620,19 +614,20 @@ export class LegacyApiService
     return response.data.token
   }
 
-  public async downloadOfflineFeaturesFromRepo(
-    repo: SNFeatureRepo,
-  ): Promise<{ features: AnyFeatureDescription[]; roles: string[] } | ClientDisplayableError> {
+  public async downloadOfflineFeaturesFromRepo(dto: {
+    repo: SNFeatureRepo
+    trustedFeatureHosts: string[]
+  }): Promise<{ features: AnyFeatureDescription[]; roles: string[] } | ClientDisplayableError> {
     try {
-      const featuresUrl = repo.offlineFeaturesUrl
-      const extensionKey = repo.offlineKey
+      const featuresUrl = dto.repo.offlineFeaturesUrl
+      const extensionKey = dto.repo.offlineKey
       if (!featuresUrl || !extensionKey) {
         throw Error('Cannot download offline repo without url and offlineKEy')
       }
 
       const { hostname } = new URL(featuresUrl)
 
-      if (!TRUSTED_FEATURE_HOSTS.includes(hostname)) {
+      if (!dto.trustedFeatureHosts.includes(hostname)) {
         return new ClientDisplayableError(`The offline features host ${hostname} is not in the trusted allowlist.`)
       }
 

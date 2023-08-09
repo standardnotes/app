@@ -25,7 +25,7 @@ const FilesSection: FunctionComponent<Props> = ({ application }) => {
         setFilesQuotaUsed(parseFloat(filesQuotaUsed))
       }
 
-      if (!application.isThirdPartyHostUsed()) {
+      if (application.sessions.isSignedIntoFirstPartyServer()) {
         const filesQuotaTotal = await application.settings.getSubscriptionSetting(
           SettingName.create(SettingName.NAMES.FileUploadBytesLimit).getValue(),
         )
@@ -54,7 +54,12 @@ const FilesSection: FunctionComponent<Props> = ({ application }) => {
           <>
             <div className="mb-1 mt-1">
               <span className="font-semibold">{formatSizeToReadableString(filesQuotaUsed)}</span> of{' '}
-              <span>{application.isThirdPartyHostUsed() ? '∞' : formatSizeToReadableString(filesQuotaTotal)}</span> used
+              <span>
+                {application.sessions.isSignedIntoFirstPartyServer()
+                  ? formatSizeToReadableString(filesQuotaTotal)
+                  : '∞'}
+              </span>{' '}
+              used
             </div>
             <progress
               className="progress-bar w-full"

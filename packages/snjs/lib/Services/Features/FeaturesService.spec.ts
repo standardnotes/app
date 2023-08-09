@@ -2,7 +2,7 @@ import { ItemInterface, SNFeatureRepo } from '@standardnotes/models'
 import { SyncService } from '../Sync/SyncService'
 import { SettingName } from '@standardnotes/settings'
 import { FeaturesService } from '@Lib/Services/Features'
-import { RoleName, ContentType, Uuid } from '@standardnotes/domain-core'
+import { RoleName, ContentType, Uuid, Result } from '@standardnotes/domain-core'
 import { NativeFeatureIdentifier, GetFeatures } from '@standardnotes/features'
 import { WebSocketsService } from '../Api/WebsocketsService'
 import { SettingsService } from '../Settings'
@@ -22,6 +22,7 @@ import {
   SyncServiceInterface,
   UserServiceInterface,
   UserService,
+  IsApplicationUsingThirdPartyHost,
 } from '@standardnotes/services'
 import { LegacyApiService, SessionManager } from '../Api'
 import { ItemManager } from '../Items'
@@ -47,6 +48,7 @@ describe('FeaturesService', () => {
   let internalEventBus: InternalEventBusInterface
   let featureService: FeaturesService
   let logger: LoggerInterface
+  let isApplicationUsingThirdPartyHostUseCase: IsApplicationUsingThirdPartyHost
 
   beforeEach(() => {
     logger = {} as jest.Mocked<LoggerInterface>
@@ -62,7 +64,6 @@ describe('FeaturesService', () => {
 
     apiService = {} as jest.Mocked<LegacyApiService>
     apiService.addEventObserver = jest.fn()
-    apiService.isThirdPartyHostUsed = jest.fn().mockReturnValue(false)
 
     itemManager = {} as jest.Mocked<ItemManager>
     itemManager.getItems = jest.fn().mockReturnValue(items)
@@ -107,6 +108,9 @@ describe('FeaturesService', () => {
     internalEventBus.publish = jest.fn()
     internalEventBus.addEventHandler = jest.fn()
 
+    isApplicationUsingThirdPartyHostUseCase = {} as jest.Mocked<IsApplicationUsingThirdPartyHost>
+    isApplicationUsingThirdPartyHostUseCase.execute = jest.fn().mockReturnValue(Result.ok(false))
+
     featureService = new FeaturesService(
       storageService,
       itemManager,
@@ -121,6 +125,7 @@ describe('FeaturesService', () => {
       sessionManager,
       crypto,
       logger,
+      isApplicationUsingThirdPartyHostUseCase,
       internalEventBus,
     )
   })
@@ -202,6 +207,7 @@ describe('FeaturesService', () => {
           sessionManager,
           crypto,
           logger,
+          isApplicationUsingThirdPartyHostUseCase,
           internalEventBus,
         )
       }
