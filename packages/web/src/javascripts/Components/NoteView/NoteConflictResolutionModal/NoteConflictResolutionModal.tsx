@@ -337,7 +337,6 @@ const NoteConflictResolutionModal = ({
                 className="!z-modal !max-w-[50ch]"
                 label={shouldSyncComparisonScroll ? 'Scrolling is synced' : 'Scrolling is not synced. Click to sync.'}
                 showOnMobile
-                portal={false}
               >
                 <div className="relative rounded-full p-1 hover:bg-contrast">
                   <Icon type={shouldSyncComparisonScroll ? 'link' : 'link-off'} className="text-neutral" />
@@ -382,7 +381,6 @@ const NoteConflictResolutionModal = ({
                 }
                 showOnMobile
                 showOnHover={false}
-                portal={false}
               >
                 <button className="rounded-full p-1 hover:bg-contrast">
                   <Icon type="info" className="text-neutral" />

@@ -9,7 +9,7 @@ import MenuItem from '../Menu/MenuItem'
 import Menu from '../Menu/Menu'
 import { featureTrunkVaultsEnabled } from '@/FeatureTrunk'
 
-const VaultMenu = ({ items }: { items: DecryptedItemInterface[] }) => {
+const VaultMenu = observer(({ items }: { items: DecryptedItemInterface[] }) => {
   const application = useApplication()
   const vaults = application.vaults.getVaults()
 
@@ -104,7 +104,7 @@ const VaultMenu = ({ items }: { items: DecryptedItemInterface[] }) => {
       })}
     </Menu>
   )
-}
+})
 
 const AddToVaultMenuOption = ({ iconClassName, items }: { iconClassName: string; items: DecryptedItemInterface[] }) => {
   const buttonRef = useRef<HTMLButtonElement>(null)
