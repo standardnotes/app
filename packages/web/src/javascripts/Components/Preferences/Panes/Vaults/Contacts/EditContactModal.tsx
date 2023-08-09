@@ -2,7 +2,7 @@ import { FunctionComponent, useCallback, useEffect, useMemo, useState } from 're
 import Modal, { ModalAction } from '@/Components/Modal/Modal'
 import DecoratedInput from '@/Components/Input/DecoratedInput'
 import { useApplication } from '@/Components/ApplicationProvider'
-import { InviteRecord, TrustedContactInterface } from '@standardnotes/snjs'
+import { ClientDisplayableError, InviteRecord, TrustedContactInterface } from '@standardnotes/snjs'
 
 type Props = {
   fromInvite?: InviteRecord
@@ -46,12 +46,19 @@ const EditContactModal: FunctionComponent<Props> = ({ onCloseDialog, fromInvite,
       void application.contacts.editTrustedContactFromCollaborationID(editingContact, { name, collaborationID })
       handleDialogClose()
     } else {
-      const contact = await application.contacts.addTrustedContactFromCollaborationID(collaborationID, name)
-      if (contact) {
-        onAddContact?.(contact)
-        handleDialogClose()
-      } else {
-        void application.alerts.alert('Unable to create contact. Please try again.')
+      try {
+        const contact = await application.contacts.addTrustedContactFromCollaborationID(collaborationID, name)
+        if (contact) {
+          onAddContact?.(contact)
+          handleDialogClose()
+        } else {
+          void application.alerts.alert('Unable to create contact. Please try again.')
+        }
+      } catch (error) {
+        if (error instanceof ClientDisplayableError) {
+          application.alerts.showErrorAlert(error).catch(console.error)
+        }
+        console.error(error)
       }
     }
   }, [editingContact, application.contacts, application.alerts, name, collaborationID, handleDialogClose, onAddContact])
