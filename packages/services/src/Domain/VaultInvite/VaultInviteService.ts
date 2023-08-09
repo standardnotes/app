@@ -26,6 +26,7 @@ import {
   ClientDisplayableError,
   SharedVaultInviteServerHash,
   SharedVaultUserServerHash,
+  isClientDisplayableError,
   isErrorResponse,
 } from '@standardnotes/responses'
 import { AbstractService } from './../Service/AbstractService'
@@ -162,9 +163,16 @@ export class VaultInviteService
     if (contacts.isFailed()) {
       return []
     }
+
+    const outboundInvites = await this.getOutboundInvites(sharedVault)
+    if (isClientDisplayableError(outboundInvites)) {
+      return []
+    }
+
     return contacts.getValue().filter((contact) => {
       const isContactAlreadyInVault = users.some((user) => user.user_uuid === contact.contactUuid)
-      return !isContactAlreadyInVault
+      const isContactAlreadyInvited = outboundInvites.some((invite) => invite.user_uuid === contact.contactUuid)
+      return !isContactAlreadyInVault && !isContactAlreadyInvited
     })
   }
 
