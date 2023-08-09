@@ -2,7 +2,7 @@ import { FeatureName } from '@/Controllers/FeatureName'
 import { classNames } from '@standardnotes/utils'
 import { getLinkingSearchResults } from '@/Utils/Items/Search/getSearchResults'
 import { observer } from 'mobx-react-lite'
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { useApplication } from '../ApplicationProvider'
 import ClearInputButton from '../ClearInputButton/ClearInputButton'
 import Icon from '../Icon/Icon'
@@ -11,8 +11,9 @@ import LinkedItemSearchResults from './LinkedItemSearchResults'
 import { LinkedItemsSectionItem } from './LinkedItemsSectionItem'
 import { DecryptedItem } from '@standardnotes/snjs'
 import { useItemLinks } from '@/Hooks/useItemLinks'
+import { mergeRefs } from '@/Hooks/mergeRefs'
 
-const LinkedItemsPanel = ({ isOpen, item }: { isOpen: boolean; item: DecryptedItem }) => {
+const LinkedItemsPanel = ({ item }: { item: DecryptedItem }) => {
   const application = useApplication()
 
   const { linkItems, unlinkItems, activateItem, createAndAddNewTag, isEntitledToNoteLinking } =
@@ -28,11 +29,11 @@ const LinkedItemsPanel = ({ isOpen, item }: { isOpen: boolean; item: DecryptedIt
   const isSearching = !!searchQuery.length
   const { linkedResults, unlinkedItems, shouldShowCreateTag } = getLinkingSearchResults(searchQuery, application, item)
 
-  useEffect(() => {
-    if (isOpen && searchInputRef.current) {
-      searchInputRef.current.focus()
+  const focusInput = useCallback((element: HTMLInputElement | null) => {
+    if (element) {
+      element.focus()
     }
-  }, [isOpen])
+  }, [])
 
   const selectAndUploadFiles = async () => {
     if (!entitledToFiles) {
@@ -64,7 +65,7 @@ const LinkedItemsPanel = ({ isOpen, item }: { isOpen: boolean; item: DecryptedIt
           placeholder="Search items to link..."
           value={searchQuery}
           onChange={setSearchQuery}
-          ref={searchInputRef}
+          ref={mergeRefs([focusInput, searchInputRef])}
           right={[
             isSearching && (
               <ClearInputButton

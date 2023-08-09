@@ -36,7 +36,7 @@ const LinkedItemsButton = ({ linkingController, onClickPreprocessing }: Props) =
         open={isLinkingPanelOpen}
         className="pb-2"
       >
-        <LinkedItemsPanel item={activeItem} isOpen={isLinkingPanelOpen} />
+        <LinkedItemsPanel item={activeItem} />
       </Popover>
     </>
   )

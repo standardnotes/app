@@ -128,7 +128,7 @@ const ItemLinksCell = ({ item }: { item: DecryptedItemInterface }) => {
         align="start"
         className="py-2"
       >
-        <LinkedItemsPanel isOpen={contextMenuVisible} item={item} />
+        <LinkedItemsPanel item={item} />
       </Popover>
     </>
   )
