@@ -133,6 +133,7 @@ import {
   GenerateUuid,
   GetVaultItems,
   ValidateVaultPassword,
+  IsApplicationUsingThirdPartyHost,
 } from '@standardnotes/services'
 import { ItemManager } from '../../Services/Items/ItemManager'
 import { PayloadManager } from '../../Services/Payloads/PayloadManager'
@@ -241,6 +242,10 @@ export class Dependencies {
 
     this.factory.set(TYPES.GetHost, () => {
       return new GetHost(this.get<LegacyApiService>(TYPES.LegacyApiService))
+    })
+
+    this.factory.set(TYPES.IsApplicationUsingThirdPartyHost, () => {
+      return new IsApplicationUsingThirdPartyHost(this.get<GetHost>(TYPES.GetHost))
     })
 
     this.factory.set(TYPES.SetHost, () => {
@@ -1159,6 +1164,7 @@ export class Dependencies {
         this.get<SessionManager>(TYPES.SessionManager),
         this.get<PureCryptoInterface>(TYPES.Crypto),
         this.get<Logger>(TYPES.Logger),
+        this.get<IsApplicationUsingThirdPartyHost>(TYPES.IsApplicationUsingThirdPartyHost),
         this.get<InternalEventBus>(TYPES.InternalEventBus),
       )
     })
@@ -1267,6 +1273,7 @@ export class Dependencies {
         this.get<SubscriptionApiService>(TYPES.SubscriptionApiService),
         this.get<SessionManager>(TYPES.SessionManager),
         this.get<DiskStorageService>(TYPES.DiskStorageService),
+        this.get<IsApplicationUsingThirdPartyHost>(TYPES.IsApplicationUsingThirdPartyHost),
         this.get<InternalEventBus>(TYPES.InternalEventBus),
       )
     })
@@ -1286,6 +1293,7 @@ export class Dependencies {
         this.get<LegacySessionStorageMapper>(TYPES.LegacySessionStorageMapper),
         this.options.identifier,
         this.get<GetKeyPairs>(TYPES.GetKeyPairs),
+        this.get<IsApplicationUsingThirdPartyHost>(TYPES.IsApplicationUsingThirdPartyHost),
         this.get<InternalEventBus>(TYPES.InternalEventBus),
       )
     })

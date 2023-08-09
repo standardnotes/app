@@ -962,10 +962,6 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     }
   }
 
-  public isThirdPartyHostUsed(): boolean {
-    return this.legacyApi.isThirdPartyHostUsed()
-  }
-
   async isUsingHomeServer(): Promise<boolean> {
     const homeServerService = this.dependencies.get<HomeServerServiceInterface>(TYPES.HomeServerService)
 

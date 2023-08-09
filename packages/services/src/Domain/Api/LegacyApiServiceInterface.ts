@@ -9,13 +9,13 @@ import { AnyFeatureDescription } from '@standardnotes/features'
 export interface LegacyApiServiceInterface
   extends AbstractService<ApiServiceEvent, ApiServiceEventData>,
     FilesApiInterface {
-  isThirdPartyHostUsed(): boolean
   setHost(host: string): Promise<void>
   getHost(): string
 
-  downloadOfflineFeaturesFromRepo(
-    repo: SNFeatureRepo,
-  ): Promise<{ features: AnyFeatureDescription[]; roles: string[] } | ClientDisplayableError>
+  downloadOfflineFeaturesFromRepo(dto: {
+    repo: SNFeatureRepo
+    trustedFeatureHosts: string[]
+  }): Promise<{ features: AnyFeatureDescription[]; roles: string[] } | ClientDisplayableError>
 
   downloadFeatureUrl(url: string): Promise<HttpResponse>
 

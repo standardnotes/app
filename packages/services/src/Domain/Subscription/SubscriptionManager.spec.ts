@@ -7,14 +7,17 @@ import { SubscriptionApiServiceInterface } from '@standardnotes/api'
 import { Invitation } from '@standardnotes/models'
 import { InternalEventBusInterface } from '..'
 import { SubscriptionManager } from './SubscriptionManager'
+import { IsApplicationUsingThirdPartyHost } from '../UseCase/IsApplicationUsingThirdPartyHost'
+import { Result } from '@standardnotes/domain-core'
 
 describe('SubscriptionManager', () => {
   let subscriptionApiService: SubscriptionApiServiceInterface
   let internalEventBus: InternalEventBusInterface
   let sessions: SessionsClientInterface
   let storage: StorageServiceInterface
+  let isApplicationUsingThirdPartyHostUseCase: IsApplicationUsingThirdPartyHost
 
-  const createManager = () => new SubscriptionManager(subscriptionApiService, sessions, storage, internalEventBus)
+  const createManager = () => new SubscriptionManager(subscriptionApiService, sessions, storage, isApplicationUsingThirdPartyHostUseCase, internalEventBus)
 
   beforeEach(() => {
     subscriptionApiService = {} as jest.Mocked<SubscriptionApiServiceInterface>
@@ -31,6 +34,9 @@ describe('SubscriptionManager', () => {
     internalEventBus = {} as jest.Mocked<InternalEventBusInterface>
     internalEventBus.addEventHandler = jest.fn()
     internalEventBus.publish = jest.fn()
+
+    isApplicationUsingThirdPartyHostUseCase = {} as jest.Mocked<IsApplicationUsingThirdPartyHost>
+    isApplicationUsingThirdPartyHostUseCase.execute = jest.fn().mockReturnValue(Result.ok(false))
   })
 
   describe('event handling', () => {

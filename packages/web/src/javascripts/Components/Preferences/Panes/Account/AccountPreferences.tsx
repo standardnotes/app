@@ -17,7 +17,7 @@ type Props = {
 }
 
 const AccountPreferences = ({ application }: Props) => {
-  const isUsingThirdPartyServer = application.isThirdPartyHostUsed()
+  const isUsingThirdPartyServer = !application.sessions.isSignedIntoFirstPartyServer()
 
   return (
     <PreferencesPane>

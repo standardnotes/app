@@ -2,11 +2,9 @@ import { MigrateFeatureRepoToUserSettingUseCase } from './UseCase/MigrateFeature
 import { arraysEqual, removeFromArray, lastElement, LoggerInterface } from '@standardnotes/utils'
 import { ClientDisplayableError } from '@standardnotes/responses'
 import { RoleName, ContentType, Uuid } from '@standardnotes/domain-core'
-import { PROD_OFFLINE_FEATURES_URL } from '../../Hosts'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { WebSocketsService } from '../Api/WebsocketsService'
 import { WebSocketsServiceEvent } from '../Api/WebSocketsServiceEvent'
-import { TRUSTED_CUSTOM_EXTENSIONS_HOSTS, TRUSTED_FEATURE_HOSTS } from '@Lib/Hosts'
 import { UserRolesChangedEvent } from '@standardnotes/domain-events'
 import { ExperimentalFeatures, FindNativeFeature, NativeFeatureIdentifier } from '@standardnotes/features'
 import {
@@ -48,6 +46,7 @@ import {
   SubscriptionManagerEvent,
   ApplicationEvent,
   ApplicationStageChangedEventPayload,
+  IsApplicationUsingThirdPartyHost,
 } from '@standardnotes/services'
 
 import { DownloadRemoteThirdPartyFeatureUseCase } from './UseCase/DownloadRemoteThirdPartyFeature'
@@ -67,6 +66,18 @@ export class FeaturesService
 
   private getFeatureStatusUseCase = new GetFeatureStatusUseCase(this.items)
 
+  private readonly TRUSTED_FEATURE_HOSTS = [
+    'api.standardnotes.com',
+    'extensions.standardnotes.com',
+    'extensions.standardnotes.org',
+    'features.standardnotes.com',
+    'localhost',
+  ]
+
+  private readonly TRUSTED_CUSTOM_EXTENSIONS_HOSTS = ['listed.to']
+
+  private readonly PROD_OFFLINE_FEATURES_URL = 'https://api.standardnotes.com/v1/offline/features'
+
   constructor(
     private storage: StorageServiceInterface,
     private items: ItemManagerInterface,
@@ -81,6 +92,7 @@ export class FeaturesService
     private sessions: SessionsClientInterface,
     private crypto: PureCryptoInterface,
     private logger: LoggerInterface,
+    private isApplicationUsingThirdPartyHostUseCase: IsApplicationUsingThirdPartyHost,
     protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)
@@ -128,7 +140,12 @@ export class FeaturesService
         if (eventName === AccountEvent.SignedInOrRegistered) {
           const featureRepos = this.items.getItems(ContentType.TYPES.ExtensionRepo) as SNFeatureRepo[]
 
-          if (!this.api.isThirdPartyHostUsed()) {
+          const isThirdPartyHostUsedOrError = this.isApplicationUsingThirdPartyHostUseCase.execute()
+          if (isThirdPartyHostUsedOrError.isFailed()) {
+            return
+          }
+          const isThirdPartyHostUsed = isThirdPartyHostUsedOrError.getValue()
+          if (!isThirdPartyHostUsed) {
             void this.migrateFeatureRepoToUserSetting(featureRepos)
           }
         }
@@ -285,7 +302,10 @@ export class FeaturesService
   }
 
   private async downloadOfflineRoles(repo: SNFeatureRepo): Promise<SetOfflineFeaturesFunctionResponse> {
-    const result = await this.api.downloadOfflineFeaturesFromRepo(repo)
+    const result = await this.api.downloadOfflineFeaturesFromRepo({
+      repo,
+      trustedFeatureHosts: this.TRUSTED_FEATURE_HOSTS,
+    })
 
     if (result instanceof ClientDisplayableError) {
       return result
@@ -301,7 +321,7 @@ export class FeaturesService
 
   public async migrateFeatureRepoToOfflineEntitlements(featureRepos: SNFeatureRepo[] = []): Promise<void> {
     const usecase = new MigrateFeatureRepoToOfflineEntitlementsUseCase(this.mutator)
-    const updatedRepos = await usecase.execute(featureRepos)
+    const updatedRepos = await usecase.execute({ featureRepos, prodOfflineFeaturesUrl: this.PROD_OFFLINE_FEATURES_URL })
 
     if (updatedRepos.length > 0) {
       await this.downloadOfflineRoles(updatedRepos[0])
@@ -322,7 +342,7 @@ export class FeaturesService
       return false
     }
 
-    const hasFirstPartyOfflineSubscription = offlineRepo.content.offlineFeaturesUrl === PROD_OFFLINE_FEATURES_URL
+    const hasFirstPartyOfflineSubscription = offlineRepo.content.offlineFeaturesUrl === this.PROD_OFFLINE_FEATURES_URL
     return hasFirstPartyOfflineSubscription || new URL(offlineRepo.content.offlineFeaturesUrl).hostname === 'localhost'
   }
 
@@ -427,7 +447,7 @@ export class FeaturesService
     }
 
     try {
-      const trustedCustomExtensionsUrls = [...TRUSTED_FEATURE_HOSTS, ...TRUSTED_CUSTOM_EXTENSIONS_HOSTS]
+      const trustedCustomExtensionsUrls = [...this.TRUSTED_FEATURE_HOSTS, ...this.TRUSTED_CUSTOM_EXTENSIONS_HOSTS]
       const { host } = new URL(url)
 
       const usecase = new DownloadRemoteThirdPartyFeatureUseCase(this.api, this.items, this.alerts)

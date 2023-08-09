@@ -52,4 +52,6 @@ export const Web_TYPES = {
   LoadPurchaseFlowUrl: Symbol.for('LoadPurchaseFlowUrl'),
   OpenSubscriptionDashboard: Symbol.for('OpenSubscriptionDashboard'),
   PanesForLayout: Symbol.for('PanesForLayout'),
+  GetHost: Symbol.for('GetHost'),
+  IsApplicationUsingThirdPartyHost: Symbol.for('IsApplicationUsingThirdPartyHost'),
 }
