@@ -9,17 +9,23 @@ import {
   RootKeyInterface,
   KeySystemRootKeyInterface,
   RootKeyParamsInterface,
+  isKeySystemRootKey,
 } from '@standardnotes/models'
 import { EncryptionProviderInterface } from '../Encryption/EncryptionProviderInterface'
+import { KeySystemKeyManagerInterface } from '../KeySystem/KeySystemKeyManagerInterface'
+import { isItemsKey } from '@standardnotes/encryption'
 
 type AnyKey = ItemsKeyInterface | RootKeyInterface | KeySystemRootKeyInterface | KeySystemItemsKeyInterface
 
 export class DetermineKeyToUse implements SyncUseCaseInterface<AnyKey | undefined> {
-  constructor(private encryption: EncryptionProviderInterface) {}
+  constructor(
+    private encryption: EncryptionProviderInterface,
+    private keys: KeySystemKeyManagerInterface,
+  ) {}
 
   execute(dto: {
     payload: EncryptedPayloadInterface
-    recentlyDecryptedKeys: ItemsKeyInterface[]
+    recentlyDecryptedKeys: (ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface)[]
     keyParams?: RootKeyParamsInterface
     rootKey?: RootKeyInterface
   }): Result<AnyKey | undefined> {
@@ -31,7 +37,32 @@ export class DetermineKeyToUse implements SyncUseCaseInterface<AnyKey | undefine
     }
 
     if (ContentTypeUsesKeySystemRootKeyEncryption(dto.payload.content_type)) {
-      throw new Error('Backup file key system root key encryption is not supported')
+      if (!dto.payload.key_system_identifier) {
+        throw new Error('Attempting to decrypt key system root key encrypted payload with no key system identifier')
+      }
+      try {
+        const recentlyDecrypted = dto.recentlyDecryptedKeys.filter(isKeySystemRootKey)
+        let keySystemRootKey = recentlyDecrypted.find(
+          (key) => key.systemIdentifier === dto.payload.key_system_identifier,
+        )
+        if (!keySystemRootKey) {
+          keySystemRootKey = this.keys.getPrimaryKeySystemRootKey(dto.payload.key_system_identifier)
+        }
+
+        return Result.ok(keySystemRootKey)
+      } catch (error) {
+        return Result.fail(JSON.stringify(error))
+      }
+    }
+
+    if (dto.payload.key_system_identifier) {
+      const keySystemItemsKey: KeySystemItemsKeyInterface | undefined = dto.recentlyDecryptedKeys.find(
+        (key) => key.key_system_identifier === dto.payload.key_system_identifier,
+      ) as KeySystemItemsKeyInterface | undefined
+
+      if (keySystemItemsKey) {
+        return Result.ok(keySystemItemsKey)
+      }
     }
 
     let itemsKey: ItemsKeyInterface | RootKeyInterface | KeySystemItemsKeyInterface | undefined
@@ -43,7 +74,7 @@ export class DetermineKeyToUse implements SyncUseCaseInterface<AnyKey | undefine
       }
     }
 
-    itemsKey = dto.recentlyDecryptedKeys.find((itemsKeyPayload) => {
+    itemsKey = dto.recentlyDecryptedKeys.filter(isItemsKey).find((itemsKeyPayload) => {
       return Result.ok(dto.payload.items_key_id === itemsKeyPayload.uuid)
     })
 
@@ -64,7 +95,10 @@ export class DetermineKeyToUse implements SyncUseCaseInterface<AnyKey | undefine
      * root key directly because it's missing dataAuthenticationKey.
      */
     if (leftVersionGreaterThanOrEqualToRight(dto.keyParams.version, ProtocolVersion.V004)) {
-      itemsKey = this.encryption.defaultItemsKeyForItemVersion(payloadVersion, dto.recentlyDecryptedKeys)
+      itemsKey = this.encryption.defaultItemsKeyForItemVersion(
+        payloadVersion,
+        dto.recentlyDecryptedKeys.filter(isItemsKey),
+      )
     } else if (compareVersions(payloadVersion, ProtocolVersion.V003) <= 0) {
       itemsKey = dto.rootKey
     }

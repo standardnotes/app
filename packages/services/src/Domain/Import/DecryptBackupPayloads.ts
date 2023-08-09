@@ -6,6 +6,8 @@ import {
   RootKeyParamsInterface,
   DecryptedPayloadInterface,
   isKeySystemRootKey,
+  KeySystemRootKeyInterface,
+  KeySystemItemsKeyInterface,
 } from '@standardnotes/models'
 import { EncryptionProviderInterface } from '../Encryption/EncryptionProviderInterface'
 import { DetermineKeyToUse } from './DetermineKeyToUse'
@@ -23,7 +25,7 @@ export class DecryptBackupPayloads implements UseCaseInterface<EncryptedOrDecryp
 
   async execute(dto: {
     payloads: EncryptedPayloadInterface[]
-    recentlyDecryptedKeys: ItemsKeyInterface[]
+    recentlyDecryptedKeys: (ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface)[]
     rootKey: RootKeyInterface | undefined
     keyParams?: RootKeyParamsInterface
   }): Promise<Result<EncryptedOrDecrypted>> {

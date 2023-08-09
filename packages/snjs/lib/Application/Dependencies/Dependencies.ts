@@ -230,7 +230,10 @@ export class Dependencies {
     })
 
     this.factory.set(TYPES.DetermineKeyToUse, () => {
-      return new DetermineKeyToUse(this.get<EncryptionService>(TYPES.EncryptionService))
+      return new DetermineKeyToUse(
+        this.get<EncryptionService>(TYPES.EncryptionService),
+        this.get<KeySystemKeyManager>(TYPES.KeySystemKeyManager),
+      )
     })
 
     this.factory.set(TYPES.GetBackupFileType, () => {
@@ -302,6 +305,7 @@ export class Dependencies {
     this.factory.set(TYPES.DecryptBackupFile, () => {
       return new DecryptBackupFile(
         this.get<EncryptionService>(TYPES.EncryptionService),
+        this.get<KeySystemKeyManager>(TYPES.KeySystemKeyManager),
         this.get<GetBackupFileType>(TYPES.GetBackupFileType),
         this.get<DecryptBackupPayloads>(TYPES.DecryptBackupPayloads),
       )
