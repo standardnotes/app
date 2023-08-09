@@ -29,7 +29,7 @@ const ContactInviteModal: FunctionComponent<Props> = ({ vault, onCloseDialog }) 
       setIsLoadingContacts(false)
     }
     void loadContacts()
-  }, [application.vaultInvites, contacts.length, vault])
+  }, [application.vaultInvites, vault])
 
   const handleDialogClose = useCallback(() => {
     onCloseDialog()
