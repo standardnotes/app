@@ -13,7 +13,7 @@ type Props = {
 }
 
 const Backups: FunctionComponent<Props> = ({ application }) => {
-  const isUsingThirdPartyServer = application.isThirdPartyHostUsed()
+  const isUsingThirdPartyServer = !application.sessions.isSignedIntoFirstPartyServer()
 
   return (
     <PreferencesPane>

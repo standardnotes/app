@@ -17,7 +17,7 @@ import {
 } from '@standardnotes/ui-services'
 import { DependencyContainer } from '@standardnotes/utils'
 import { Web_TYPES } from './Types'
-import { BackupServiceInterface, isDesktopDevice } from '@standardnotes/snjs'
+import { BackupServiceInterface, GetHost, IsApplicationUsingThirdPartyHost, isDesktopDevice } from '@standardnotes/snjs'
 import { DesktopManager } from '../Device/DesktopManager'
 import { MomentsService } from '@/Controllers/Moments/MomentsService'
 import { PersistenceService } from '@/Controllers/Abstract/PersistenceService'
@@ -195,6 +195,14 @@ export class WebDependencies extends DependencyContainer {
       return new PanesForLayout(this.get<IsTabletOrMobileScreen>(Web_TYPES.IsTabletOrMobileScreen))
     })
 
+    this.bind(Web_TYPES.GetHost, () => {
+      return new GetHost(application.legacyApi)
+    })
+
+    this.bind(Web_TYPES.IsApplicationUsingThirdPartyHost, () => {
+      return new IsApplicationUsingThirdPartyHost(this.get<GetHost>(Web_TYPES.GetHost))
+    })
+
     this.bind(Web_TYPES.IsTabletOrMobileScreen, () => {
       return new IsTabletOrMobileScreen(application.environment)
     })
@@ -320,7 +328,11 @@ export class WebDependencies extends DependencyContainer {
     })
 
     this.bind(Web_TYPES.GetPurchaseFlowUrl, () => {
-      return new GetPurchaseFlowUrl(application, application.legacyApi)
+      return new GetPurchaseFlowUrl(
+        application,
+        application.legacyApi,
+        this.get<IsApplicationUsingThirdPartyHost>(Web_TYPES.IsApplicationUsingThirdPartyHost),
+      )
     })
 
     this.bind(Web_TYPES.SyncStatusController, () => {

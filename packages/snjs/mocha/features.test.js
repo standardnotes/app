@@ -47,8 +47,8 @@ describe('features', () => {
 
   describe('extension repo items observer', () => {
     it('should migrate to user setting when extension repo is added', async () => {
-      sinon.stub(application.legacyApi, 'isThirdPartyHostUsed').callsFake(() => {
-        return false
+      sinon.stub(application.features.isApplicationUsingThirdPartyHostUseCase, 'execute').callsFake(() => {
+        return Result.ok(false)
       })
 
       expect(
@@ -74,8 +74,8 @@ describe('features', () => {
     })
 
     it('signing into account with ext repo should migrate it', async () => {
-      sinon.stub(application.legacyApi, 'isThirdPartyHostUsed').callsFake(() => {
-        return false
+      sinon.stub(application.features.isApplicationUsingThirdPartyHostUseCase, 'execute').callsFake(() => {
+        return Result.ok(false)
       })
       /** Attach an ExtensionRepo object to an account, but prevent it from being migrated.
        * Then sign out, sign back in, and ensure the item is migrated. */
@@ -96,8 +96,8 @@ describe('features', () => {
       application = await Factory.signOutApplicationAndReturnNew(application)
 
       sinon.restore()
-      sinon.stub(application.legacyApi, 'isThirdPartyHostUsed').callsFake(() => {
-        return false
+      sinon.stub(application.features.isApplicationUsingThirdPartyHostUseCase, 'execute').callsFake(() => {
+        return Result.ok(false)
       })
       const promise = new Promise((resolve) => {
         sinon.stub(application.features, 'migrateFeatureRepoToUserSetting').callsFake(resolve)
@@ -112,8 +112,8 @@ describe('features', () => {
 
     it('having an ext repo with no account, then signing into account, should migrate it', async () => {
       application = await Factory.signOutApplicationAndReturnNew(application)
-      sinon.stub(application.legacyApi, 'isThirdPartyHostUsed').callsFake(() => {
-        return false
+      sinon.stub(application.features.isApplicationUsingThirdPartyHostUseCase, 'execute').callsFake(() => {
+        return Result.ok(false)
       })
       const extensionKey = UuidGenerator.GenerateUuid().split('-').join('')
       await application.mutator.createItem(
@@ -137,8 +137,8 @@ describe('features', () => {
     })
 
     it('migrated ext repo should have property indicating it was migrated', async () => {
-      sinon.stub(application.legacyApi, 'isThirdPartyHostUsed').callsFake(() => {
-        return false
+      sinon.stub(application.features.isApplicationUsingThirdPartyHostUseCase, 'execute').callsFake(() => {
+        return Result.ok(false)
       })
       const setting = SettingName.create(SettingName.NAMES.ExtensionKey).getValue()
       expect(await application.settings.getDoesSensitiveSettingExist(setting)).to.equal(false)
