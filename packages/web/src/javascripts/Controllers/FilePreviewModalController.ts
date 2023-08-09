@@ -24,8 +24,9 @@ export class FilePreviewModalController {
         if (!this.currentFile) {
           return
         }
-        if (changed.includes(this.currentFile)) {
-          this.setCurrentFile(this.currentFile)
+        const changedCurrentFile = changed.find((f) => f.uuid === this.currentFile?.uuid) as FileItem | undefined
+        if (changedCurrentFile) {
+          this.setCurrentFile(changedCurrentFile)
         }
         if (removed.find((f) => f.uuid === this.currentFile?.uuid)) {
           if (!this.otherFiles.length) {
