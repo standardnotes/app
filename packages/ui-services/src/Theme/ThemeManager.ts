@@ -18,7 +18,7 @@ import {
 } from '@standardnotes/services'
 import { NativeFeatureIdentifier, FindNativeTheme, ThemeFeatureDescription } from '@standardnotes/features'
 import { WebApplicationInterface } from '../WebApplication/WebApplicationInterface'
-import { AbstractUIServicee } from '../Abstract/AbstractUIService'
+import { AbstractUIService } from '../Abstract/AbstractUIService'
 import { GetAllThemesUseCase } from './GetAllThemesUseCase'
 import { Uuid } from '@standardnotes/domain-core'
 import { ActiveThemeList } from './ActiveThemeList'
@@ -28,7 +28,7 @@ const CachedThemesKey = 'cachedThemes'
 const TimeBeforeApplyingColorScheme = 5
 const DefaultThemeIdentifier = 'Default'
 
-export class ThemeManager extends AbstractUIServicee {
+export class ThemeManager extends AbstractUIService {
   private themesActiveInTheUI: ActiveThemeList
   private lastUseDeviceThemeSettings = false
 
