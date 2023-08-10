@@ -12,14 +12,38 @@ function CreateFilteredServerItem(item: ServerItemResponse): FilteredServerItem 
   }
 }
 
-export function FilterDisallowedRemotePayloadsAndMap(payloads: ServerItemResponse[]): FilteredServerItem[] {
-  return payloads.filter(isRemotePayloadAllowed).map(CreateFilteredServerItem)
-}
-
-export function isRemotePayloadAllowed(payload: ServerItemResponse): boolean {
-  if (isCorruptTransferPayload(payload)) {
-    return false
+export function FilterDisallowedRemotePayloadsAndMap(payloads: ServerItemResponse[]): {
+  filtered: FilteredServerItem[]
+  disallowed: ServerItemResponse[]
+} {
+  const filtered = []
+  const disallowed = []
+  for (const payload of payloads) {
+    const result = checkRemotePayloadAllowed(payload)
+    if (result.allowed === undefined) {
+      disallowed.push(payload)
+    } else {
+      filtered.push(CreateFilteredServerItem(result.allowed))
+    }
   }
 
-  return isEncryptedTransferPayload(payload) || payload.content == undefined
+  return {
+    filtered,
+    disallowed,
+  }
+}
+
+export function checkRemotePayloadAllowed(payload: ServerItemResponse): {
+  allowed?: ServerItemResponse
+  disallowed?: ServerItemResponse
+} {
+  if (isCorruptTransferPayload(payload)) {
+    return { disallowed: payload }
+  }
+
+  if (isEncryptedTransferPayload(payload) || payload.content == undefined) {
+    return { allowed: payload }
+  } else {
+    return { disallowed: payload }
+  }
 }

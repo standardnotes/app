@@ -44,13 +44,15 @@ export class ServerSyncResponse {
     const legacyConflicts = this.successResponseData?.unsaved || []
     this.rawConflictObjects = conflicts.concat(legacyConflicts)
 
-    this.savedPayloads = FilterDisallowedRemotePayloadsAndMap(this.successResponseData?.saved_items || []).map(
-      (rawItem) => {
-        return CreateServerSyncSavedPayload(rawItem)
-      },
-    )
+    const savedItemsFilteringResult = FilterDisallowedRemotePayloadsAndMap(this.successResponseData?.saved_items || [])
+    this.savedPayloads = savedItemsFilteringResult.filtered.map((rawItem) => {
+      return CreateServerSyncSavedPayload(rawItem)
+    })
 
-    this.retrievedPayloads = FilterDisallowedRemotePayloadsAndMap(this.successResponseData?.retrieved_items || [])
+    const retrievedItemsFilteringResult = FilterDisallowedRemotePayloadsAndMap(
+      this.successResponseData?.retrieved_items || [],
+    )
+    this.retrievedPayloads = retrievedItemsFilteringResult.filtered
 
     this.conflicts = this.filterConflicts()
 
@@ -74,11 +76,17 @@ export class ServerSyncResponse {
       let unsavedItem: FilteredServerItem | undefined
 
       if (conflict.unsaved_item) {
-        unsavedItem = FilterDisallowedRemotePayloadsAndMap([conflict.unsaved_item])[0]
+        const unsavedItemFilteringResult = FilterDisallowedRemotePayloadsAndMap([conflict.unsaved_item])
+        if (unsavedItemFilteringResult.filtered.length === 1) {
+          unsavedItem = unsavedItemFilteringResult.filtered[0]
+        }
       }
 
       if (conflict.server_item) {
-        serverItem = FilterDisallowedRemotePayloadsAndMap([conflict.server_item])[0]
+        const serverItemFilteringResult = FilterDisallowedRemotePayloadsAndMap([conflict.server_item])
+        if (serverItemFilteringResult.filtered.length === 1) {
+          serverItem = serverItemFilteringResult.filtered[0]
+        }
       }
 
       if (!trustedConflicts[conflict.type]) {

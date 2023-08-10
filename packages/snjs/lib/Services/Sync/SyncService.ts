@@ -1408,7 +1408,8 @@ export class SyncService
       return
     }
 
-    const receivedPayloads = FilterDisallowedRemotePayloadsAndMap(rawPayloads).map((rawPayload) => {
+    const rawPayloadsFilteringResult = FilterDisallowedRemotePayloadsAndMap(rawPayloads)
+    const receivedPayloads = rawPayloadsFilteringResult.filtered.map((rawPayload) => {
       return CreatePayloadFromRawServerItem(rawPayload, PayloadSource.RemoteRetrieved)
     })
 
