@@ -23,7 +23,6 @@ import { MomentsService } from '@/Controllers/Moments/MomentsService'
 import { PersistenceService } from '@/Controllers/Abstract/PersistenceService'
 import { FilePreviewModalController } from '@/Controllers/FilePreviewModalController'
 import { QuickSettingsController } from '@/Controllers/QuickSettingsController'
-import { VaultSelectionMenuController } from '@/Controllers/VaultSelectionMenuController'
 import { PaneController } from '@/Controllers/PaneController/PaneController'
 import { PreferencesController } from '@/Controllers/PreferencesController'
 import { FeaturesController } from '@/Controllers/FeaturesController'
@@ -175,10 +174,6 @@ export class WebDependencies extends DependencyContainer {
 
     this.bind(Web_TYPES.QuickSettingsController, () => {
       return new QuickSettingsController(application.events)
-    })
-
-    this.bind(Web_TYPES.VaultSelectionMenuController, () => {
-      return new VaultSelectionMenuController(application.events)
     })
 
     this.bind(Web_TYPES.PaneController, () => {

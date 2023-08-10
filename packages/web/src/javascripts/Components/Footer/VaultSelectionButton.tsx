@@ -1,24 +1,19 @@
 import { classNames } from '@standardnotes/utils'
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import Icon from '../Icon/Icon'
 import Popover from '../Popover/Popover'
 import StyledTooltip from '../StyledTooltip/StyledTooltip'
-import { VaultSelectionMenuController } from '@/Controllers/VaultSelectionMenuController'
 import VaultSelectionMenu from '../VaultSelectionMenu/VaultSelectionMenu'
 import { useApplication } from '../ApplicationProvider'
-import { observer } from 'mobx-react-lite'
 import { featureTrunkVaultsEnabled } from '@/FeatureTrunk'
 
-type Props = {
-  isOpen: boolean
-  toggleMenu: () => void
-  controller: VaultSelectionMenuController
-}
-
-const VaultSelectionButton = ({ isOpen, toggleMenu, controller }: Props) => {
+const VaultSelectionButton = () => {
   const application = useApplication()
   const buttonRef = useRef<HTMLButtonElement>(null)
   const exclusivelyShownVault = application.vaultDisplayService.exclusivelyShownVault
+
+  const [isOpen, setIsOpen] = useState(false)
+  const toggleMenu = () => setIsOpen(!isOpen)
 
   if (!featureTrunkVaultsEnabled()) {
     return null
@@ -53,10 +48,10 @@ const VaultSelectionButton = ({ isOpen, toggleMenu, controller }: Props) => {
         align="start"
         className="py-2"
       >
-        <VaultSelectionMenu controller={controller} />
+        <VaultSelectionMenu />
       </Popover>
     </>
   )
 }
 
-export default observer(VaultSelectionButton)
+export default VaultSelectionButton

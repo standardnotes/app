@@ -1,7 +1,6 @@
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent, useState } from 'react'
+import { useState } from 'react'
 import Menu from '../Menu/Menu'
-import { VaultSelectionMenuController } from '@/Controllers/VaultSelectionMenuController'
 import RadioButtonGroup from '@/Components/RadioButtonGroup/RadioButtonGroup'
 import ManyVaultSelectionMenu from './ManyVaultSelectionMenu'
 import SingleVaultSelectionMenu from './SingleVaultSelectionMenu'
@@ -9,13 +8,9 @@ import { useApplication } from '../ApplicationProvider'
 import MenuItemSeparator from '../Menu/MenuItemSeparator'
 import MenuItem from '../Menu/MenuItem'
 
-type MenuProps = {
-  controller: VaultSelectionMenuController
-}
-
 type SettingsMode = 'many' | 'single'
 
-const VaultSelectionMenu: FunctionComponent<MenuProps> = () => {
+const VaultSelectionMenu = () => {
   const application = useApplication()
 
   const [mode, setMode] = useState<SettingsMode>(

@@ -72,7 +72,6 @@ import { NavigationController } from '@/Controllers/Navigation/NavigationControl
 import { FilePreviewModalController } from '@/Controllers/FilePreviewModalController'
 import { OpenSubscriptionDashboard } from './UseCase/OpenSubscriptionDashboard'
 import { QuickSettingsController } from '@/Controllers/QuickSettingsController'
-import { VaultSelectionMenuController } from '@/Controllers/VaultSelectionMenuController'
 import { ItemGroupController } from '@/Components/NoteView/Controller/ItemGroupController'
 import { NoAccountWarningController } from '@/Controllers/NoAccountWarningController'
 import { SearchOptionsController } from '@/Controllers/SearchOptionsController'
@@ -636,10 +635,6 @@ export class WebApplication extends SNApplication implements WebApplicationInter
 
   get searchOptionsController(): SearchOptionsController {
     return this.deps.get<SearchOptionsController>(Web_TYPES.SearchOptionsController)
-  }
-
-  get vaultSelectionController(): VaultSelectionMenuController {
-    return this.deps.get<VaultSelectionMenuController>(Web_TYPES.VaultSelectionMenuController)
   }
 
   get openSubscriptionDashboard(): OpenSubscriptionDashboard {

@@ -38,7 +38,6 @@ type State = {
   newUpdateAvailable: boolean
   showAccountMenu: boolean
   showQuickSettingsMenu: boolean
-  showVaultSelectionMenu: boolean
   offline: boolean
   hasError: boolean
   arbitraryStatusMessage?: string
@@ -66,7 +65,6 @@ class Footer extends AbstractComponent<Props, State> {
       newUpdateAvailable: false,
       showAccountMenu: false,
       showQuickSettingsMenu: false,
-      showVaultSelectionMenu: false,
     }
 
     this.webEventListenerDestroyer = props.application.addWebEventObserver((event, data) => {
@@ -128,7 +126,6 @@ class Footer extends AbstractComponent<Props, State> {
       this.setState({
         showAccountMenu: this.application.accountMenuController.show,
         showQuickSettingsMenu: this.application.quickSettingsMenuController.open,
-        showVaultSelectionMenu: this.application.vaultSelectionController.open,
       })
     })
   }
@@ -300,10 +297,6 @@ class Footer extends AbstractComponent<Props, State> {
     this.application.quickSettingsMenuController.toggle()
   }
 
-  vaultSelectionClickHandler = () => {
-    this.application.vaultSelectionController.toggle()
-  }
-
   syncResolutionClickHandler = () => {
     this.setState({
       showSyncResolution: !this.state.showSyncResolution,
@@ -388,11 +381,7 @@ class Footer extends AbstractComponent<Props, State> {
             </div>
 
             <div className="relative z-footer-bar-item  ml-1.5 select-none">
-              <VaultSelectionButton
-                isOpen={this.state.showVaultSelectionMenu}
-                toggleMenu={this.vaultSelectionClickHandler}
-                controller={this.application.vaultSelectionController}
-              />
+              <VaultSelectionButton />
             </div>
             <UpgradeNow
               application={this.application}
