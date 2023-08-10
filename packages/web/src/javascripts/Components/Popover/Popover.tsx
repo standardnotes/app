@@ -5,6 +5,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef, use
 import MobilePopoverContent from './MobilePopoverContent'
 import PositionedPopoverContent from './PositionedPopoverContent'
 import { PopoverProps } from './Types'
+import { useLifecycleAnimation } from '@/Hooks/useLifecycleAnimation'
 
 type PopoverContextData = {
   registerChildPopover: (id: string) => void
@@ -27,28 +28,35 @@ const useRegisterPopoverToParent = (popoverId: string) => {
   }, [parentPopoverContext, popoverId])
 }
 
-type Props = PopoverProps & {
-  open: boolean
+const PositionedPopoverContentWithAnimation = (
+  props: PopoverProps & {
+    childPopovers: Set<string>
+    id: string
+  },
+) => {
+  const [isMounted, setElement] = useLifecycleAnimation({
+    open: props.open,
+    exit: {
+      keyframes: [
+        {
+          opacity: 0,
+          transform: 'scale(0.95)',
+        },
+      ],
+      options: {
+        duration: 75,
+      },
+    },
+  })
+
+  return isMounted ? (
+    <PositionedPopoverContent setAnimationElement={setElement} {...props}>
+      {props.children}
+    </PositionedPopoverContent>
+  ) : null
 }
 
-const Popover = ({
-  align,
-  anchorElement,
-  anchorPoint,
-  children,
-  className,
-  open,
-  overrideZIndex,
-  side,
-  title,
-  togglePopover,
-  disableClickOutside,
-  disableMobileFullscreenTakeover,
-  maxHeight,
-  portal,
-  offset,
-  hideOnClickInModal,
-}: Props) => {
+const Popover = (props: PopoverProps) => {
   const popoverId = useRef(UuidGenerator.GenerateUuid())
 
   const addAndroidBackHandler = useAndroidBackHandler()
@@ -79,9 +87,9 @@ const Popover = ({
   useEffect(() => {
     let removeListener: (() => void) | undefined
 
-    if (open) {
+    if (props.open) {
       removeListener = addAndroidBackHandler(() => {
-        togglePopover?.()
+        props.togglePopover?.()
         return true
       })
     }
@@ -91,50 +99,31 @@ const Popover = ({
         removeListener()
       }
     }
-  }, [addAndroidBackHandler, open, togglePopover])
+  }, [addAndroidBackHandler, props, props.open])
 
   const isMobileScreen = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
 
-  if (isMobileScreen && !disableMobileFullscreenTakeover) {
+  if (isMobileScreen && !props.disableMobileFullscreenTakeover) {
     return (
       <MobilePopoverContent
-        open={open}
+        open={props.open}
         requestClose={() => {
-          togglePopover?.()
+          props.togglePopover?.()
         }}
-        title={title}
-        className={className}
+        title={props.title}
+        className={props.className}
         id={popoverId.current}
       >
-        {children}
+        {props.children}
       </MobilePopoverContent>
     )
   }
 
-  return open ? (
+  return (
     <PopoverContext.Provider value={contextValue}>
-      <PositionedPopoverContent
-        align={align}
-        anchorElement={anchorElement}
-        anchorPoint={anchorPoint}
-        childPopovers={childPopovers}
-        className={`popover-content-container ${className ?? ''}`}
-        disableClickOutside={disableClickOutside}
-        disableMobileFullscreenTakeover={disableMobileFullscreenTakeover}
-        id={popoverId.current}
-        maxHeight={maxHeight}
-        overrideZIndex={overrideZIndex}
-        side={side}
-        title={title}
-        togglePopover={togglePopover}
-        portal={portal}
-        offset={offset}
-        hideOnClickInModal={hideOnClickInModal}
-      >
-        {children}
-      </PositionedPopoverContent>
+      <PositionedPopoverContentWithAnimation {...props} childPopovers={childPopovers} id={popoverId.current} />
     </PopoverContext.Provider>
-  ) : null
+  )
 }
 
 export default Popover

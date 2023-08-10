@@ -44,6 +44,7 @@ type CommonPopoverProps = {
   portal?: boolean
   offset?: number
   hideOnClickInModal?: boolean
+  open: boolean
 }
 
 export type PopoverContentProps = CommonPopoverProps & {
@@ -53,6 +54,7 @@ export type PopoverContentProps = CommonPopoverProps & {
   togglePopover?: () => void
   disableMobileFullscreenTakeover?: boolean
   id: string
+  setAnimationElement: (element: HTMLElement | null) => void
 }
 
 export type PopoverProps =

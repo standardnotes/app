@@ -4,9 +4,9 @@ import { useStateRef } from './useStateRef'
 
 type Options = {
   open: boolean
-  enter: AnimationConfig
+  enter?: AnimationConfig
   enterCallback?: (element: HTMLElement) => void
-  exit: AnimationConfig
+  exit?: AnimationConfig
   exitCallback?: (element: HTMLElement) => void
 }
 
@@ -63,6 +63,11 @@ export const useLifecycleAnimation = (
     const exitCallback = exitCallbackRef.current
 
     if (open) {
+      if (!enter) {
+        setIsMounted(true)
+        enterCallback?.(element)
+        return
+      }
       if (enter.initialStyle) {
         Object.assign(element.style, enter.initialStyle)
       }
@@ -76,6 +81,11 @@ export const useLifecycleAnimation = (
         })
         .catch(console.error)
     } else {
+      if (!exit) {
+        setIsMounted(false)
+        exitCallback?.(element)
+        return
+      }
       if (exit.initialStyle) {
         Object.assign(element.style, exit.initialStyle)
       }
