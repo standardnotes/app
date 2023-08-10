@@ -12,7 +12,7 @@
     "@nanostores/react": "^0.4.0",
     "@standardnotes/icons": "workspace:*",
     "nanoid": "^4.0.0",
-    "nanostores": "^0.7.1",
+    "nanostores": "^0.8.0",
     "react": "link:../web/node_modules/react",
     "react-dom": "link:../web/node_modules/react-dom"
   },
