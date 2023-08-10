@@ -68,8 +68,7 @@ describe('shared vaults', function () {
     const recreatedContext = await Factory.createVaultsContextWithRealCrypto(contactContext.identifier)
     await recreatedContext.launch()
 
-    expect(recreatedContext.context.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })).to.be
-      .undefined
+    expect(recreatedContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })).to.be.undefined
     expect(recreatedContext.keys.getPrimaryKeySystemRootKey(sharedVault.systemIdentifier)).to.be.undefined
     expect(recreatedContext.keys.getKeySystemItemsKeys(sharedVault.systemIdentifier)).to.be.empty
 
@@ -96,8 +95,7 @@ describe('shared vaults', function () {
     const recreatedContext = await Factory.createVaultsContextWithRealCrypto(contactContext.identifier)
     await recreatedContext.launch()
 
-    expect(recreatedContext.context.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })).to.be
-      .undefined
+    expect(recreatedContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })).to.be.undefined
     expect(recreatedContext.keys.getPrimaryKeySystemRootKey(sharedVault.systemIdentifier)).to.be.undefined
     expect(recreatedContext.keys.getKeySystemItemsKeys(sharedVault.systemIdentifier)).to.be.empty
 
