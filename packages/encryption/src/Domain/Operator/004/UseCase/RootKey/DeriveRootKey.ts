@@ -2,10 +2,9 @@ import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { splitString, truncateHexString } from '@standardnotes/utils'
 import { V004PartitionCharacter } from '../../V004AlgorithmTypes'
 import { V004Algorithm } from '../../../../Algorithm'
-import { RootKeyInterface } from '@standardnotes/models'
+import { RootKeyInterface, ProtocolVersion } from '@standardnotes/models'
 import { SNRootKeyParams } from '../../../../Keys/RootKey/RootKeyParams'
 import { CreateNewRootKey } from '../../../../Keys/RootKey/Functions'
-import { ProtocolVersion } from '@standardnotes/common'
 
 export class DeriveRootKeyUseCase {
   constructor(private readonly crypto: PureCryptoInterface) {}

@@ -1,5 +1,5 @@
-import { ApplicationIdentifier } from '@standardnotes/common'
 import {
+  ApplicationIdentifier,
   FullyFormedTransferPayload,
   TransferPayload,
   NamespacedRootKeyInKeychain,

@@ -1,9 +1,9 @@
 import { PkcKeyPair } from '@standardnotes/sncrypto-common'
-import { ProtocolVersion } from '@standardnotes/common'
 import { DecryptedItemInterface } from '../../Abstract/Item/Interfaces/DecryptedItem'
 import { RootKeyParamsInterface } from '../KeyParams/RootKeyParamsInterface'
 import { NamespacedRootKeyInKeychain, RootKeyContentInStorage } from './KeychainTypes'
 import { RootKeyContent } from './RootKeyContent'
+import { ProtocolVersion } from '../Protocol/ProtocolVersion'
 
 export interface RootKeyInterface extends DecryptedItemInterface<RootKeyContent> {
   readonly keyParams: RootKeyParamsInterface

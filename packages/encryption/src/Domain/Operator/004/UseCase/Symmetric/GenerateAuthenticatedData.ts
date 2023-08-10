@@ -7,11 +7,11 @@ import {
   isKeySystemRootKey,
   ContentTypeUsesRootKeyEncryption,
   ContentTypeUsesKeySystemRootKeyEncryption,
+  ProtocolVersion,
 } from '@standardnotes/models'
 import { ItemAuthenticatedData } from '../../../../Types/ItemAuthenticatedData'
 import { RootKeyEncryptedAuthenticatedData } from '../../../../Types/RootKeyEncryptedAuthenticatedData'
 import { KeySystemItemsKeyAuthenticatedData } from '../../../../Types/KeySystemItemsKeyAuthenticatedData'
-import { ProtocolVersion } from '@standardnotes/common'
 import { isItemsKey } from '../../../../Keys/ItemsKey/ItemsKey'
 import { isKeySystemItemsKey } from '../../../../Keys/KeySystemItemsKey/KeySystemItemsKey'
 

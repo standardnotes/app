@@ -1,4 +1,3 @@
-
 import FakeWebCrypto from './fake_web_crypto.js'
 import { AppContext } from './AppContext.js'
 import { VaultsContext } from './VaultsContext.js'
@@ -303,8 +302,10 @@ export function tomorrow() {
   return new Date(new Date().setDate(new Date().getDate() + 1))
 }
 
-export async function sleep(seconds, reason) {
-  console.log('[Factory] Sleeping for reason', reason)
+export async function sleep(seconds, reason, dontLog = false) {
+  if (!dontLog) {
+    console.log('[Factory] Sleeping for reason', reason)
+  }
   return Utils.sleep(seconds)
 }
 

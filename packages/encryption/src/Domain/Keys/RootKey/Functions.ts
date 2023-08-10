@@ -1,5 +1,5 @@
-import { ProtocolVersion } from '@standardnotes/common'
 import {
+  ProtocolVersion,
   DecryptedPayload,
   FillItemContentSpecialized,
   PayloadTimestampDefaults,

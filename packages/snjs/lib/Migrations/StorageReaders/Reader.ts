@@ -1,5 +1,4 @@
-import { Environment } from '@standardnotes/models'
-import { ApplicationIdentifier } from '@standardnotes/common'
+import { Environment, ApplicationIdentifier } from '@standardnotes/models'
 import { DeviceInterface } from '@standardnotes/services'
 
 /**

@@ -1,5 +1,10 @@
-import { ProtocolVersion } from '@standardnotes/common'
-import { DecryptedPayload, ItemContent, ItemsKeyContent, PayloadTimestampDefaults } from '@standardnotes/models'
+import {
+  DecryptedPayload,
+  ItemContent,
+  ItemsKeyContent,
+  PayloadTimestampDefaults,
+  ProtocolVersion,
+} from '@standardnotes/models'
 import { SNItemsKey } from '../../Keys/ItemsKey/ItemsKey'
 import { SNProtocolOperator004 } from './Operator004'
 import { getMockedCrypto } from './MockedCrypto'

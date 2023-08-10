@@ -1,4 +1,5 @@
-import { ProtocolVersion, protocolVersionFromEncryptedString } from '@standardnotes/common'
+import { ProtocolVersion } from '../../../Local/Protocol/ProtocolVersion'
+import { ProtocolVersionFromEncryptedString } from '../../../Local/Protocol/ProtocolVersionFromEncryptedString'
 import { SyncResolvedParams, SyncResolvedPayload } from '../../../Runtime/Deltas/Utilities/SyncResolvedPayload'
 import { EncryptedTransferPayload } from '../../TransferPayload/Interfaces/EncryptedTransferPayload'
 import { EncryptedPayloadInterface } from '../Interfaces/EncryptedPayload'
@@ -18,13 +19,18 @@ export class EncryptedPayload extends PurePayload<EncryptedTransferPayload> impl
   constructor(rawPayload: EncryptedTransferPayload, source = PayloadSource.Constructor) {
     super(rawPayload, source)
 
+    const versionResult = ProtocolVersionFromEncryptedString(rawPayload.content)
+    if (versionResult.isFailed()) {
+      throw new Error('EncryptedPayload constructor versionResult is failed')
+    }
+
     this.auth_hash = rawPayload.auth_hash
     this.content = rawPayload.content
     this.deleted = false
     this.enc_item_key = rawPayload.enc_item_key
     this.errorDecrypting = rawPayload.errorDecrypting
     this.items_key_id = rawPayload.items_key_id
-    this.version = protocolVersionFromEncryptedString(this.content)
+    this.version = versionResult.getValue()
     this.waitingForKey = rawPayload.waitingForKey
   }
 

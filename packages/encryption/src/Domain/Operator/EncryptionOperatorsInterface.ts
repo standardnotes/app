@@ -1,4 +1,4 @@
-import { ProtocolVersion } from '@standardnotes/common'
+import { ProtocolVersion } from '@standardnotes/models'
 import { AnyOperatorInterface } from './OperatorInterface/TypeCheck'
 
 export interface EncryptionOperatorsInterface {

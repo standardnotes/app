@@ -1,3 +1,4 @@
+import { Result } from '@standardnotes/domain-core'
 import {
   EncryptedPayloadInterface,
   DeletedPayloadInterface,
@@ -10,22 +11,27 @@ import {
 export function CreatePayloadFromRawServerItem(
   rawItem: FilteredServerItem,
   source: PayloadSource,
-): EncryptedPayloadInterface | DeletedPayloadInterface {
+): Result<EncryptedPayloadInterface | DeletedPayloadInterface> {
   if (rawItem.deleted) {
-    return new DeletedPayload({ ...rawItem, content: undefined, deleted: true }, source)
+    return Result.ok(new DeletedPayload({ ...rawItem, content: undefined, deleted: true }, source))
   } else if (rawItem.content != undefined) {
-    return new EncryptedPayload(
-      {
-        ...rawItem,
-        items_key_id: rawItem.items_key_id,
-        content: rawItem.content,
-        deleted: false,
-        errorDecrypting: false,
-        waitingForKey: false,
-      },
-      source,
-    )
-  } else {
-    throw Error('Unhandled case in createPayloadFromRawItem')
+    try {
+      return Result.ok(
+        new EncryptedPayload(
+          {
+            ...rawItem,
+            items_key_id: rawItem.items_key_id,
+            content: rawItem.content,
+            deleted: false,
+            errorDecrypting: false,
+            waitingForKey: false,
+          },
+          source,
+        ),
+      )
+    } catch (error) {
+      return Result.fail(JSON.stringify(error))
+    }
   }
+  return Result.fail('Unhandled case in createPayloadFromRawItem')
 }

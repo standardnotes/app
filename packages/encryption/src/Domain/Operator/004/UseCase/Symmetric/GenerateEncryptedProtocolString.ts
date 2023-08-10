@@ -1,6 +1,6 @@
 import { Base64String, HexString, PureCryptoInterface, Utf8String } from '@standardnotes/sncrypto-common'
 import { V004PartitionCharacter, V004StringComponents } from '../../V004AlgorithmTypes'
-import { ProtocolVersion } from '@standardnotes/common'
+import { ProtocolVersion } from '@standardnotes/models'
 import { V004Algorithm } from '../../../../Algorithm'
 
 export class GenerateEncryptedProtocolStringUseCase {

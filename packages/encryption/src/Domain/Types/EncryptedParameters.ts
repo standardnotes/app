@@ -1,5 +1,9 @@
-import { ProtocolVersion } from '@standardnotes/common'
-import { EncryptedPayloadInterface, DecryptedPayloadInterface, PersistentSignatureData } from '@standardnotes/models'
+import {
+  EncryptedPayloadInterface,
+  DecryptedPayloadInterface,
+  PersistentSignatureData,
+  ProtocolVersion,
+} from '@standardnotes/models'
 import { DecryptedParameters } from './DecryptedParameters'
 
 export type EncryptedOutputParameters = {

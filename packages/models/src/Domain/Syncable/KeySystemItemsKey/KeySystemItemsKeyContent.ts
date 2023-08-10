@@ -1,5 +1,5 @@
-import { ProtocolVersion } from '@standardnotes/common'
 import { ItemContent, SpecializedContent } from '../../Abstract/Content/ItemContent'
+import { ProtocolVersion } from '../../Local/Protocol/ProtocolVersion'
 
 export interface KeySystemItemsKeyContentSpecialized extends SpecializedContent {
   version: ProtocolVersion

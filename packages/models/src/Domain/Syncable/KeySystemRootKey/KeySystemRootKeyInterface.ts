@@ -1,8 +1,8 @@
-import { ProtocolVersion } from '@standardnotes/common'
 import { DecryptedItemInterface } from '../../Abstract/Item/Interfaces/DecryptedItem'
 import { KeySystemRootKeyContent } from './KeySystemRootKeyContent'
 import { KeySystemIdentifier } from './KeySystemIdentifier'
 import { KeySystemRootKeyParamsInterface } from '../../Local/KeyParams/KeySystemRootKeyParamsInterface'
+import { ProtocolVersion } from '../../Local/Protocol/ProtocolVersion'
 
 export interface KeySystemRootKeyInterface extends DecryptedItemInterface<KeySystemRootKeyContent> {
   keyParams: KeySystemRootKeyParamsInterface

@@ -1,5 +1,5 @@
 import { BackupServiceInterface } from '@standardnotes/files'
-import { Environment, Platform } from '@standardnotes/models'
+import { Environment, Platform, ApplicationIdentifier } from '@standardnotes/models'
 import {
   DeviceInterface,
   InternalEventBusInterface,
@@ -8,7 +8,6 @@ import {
   PreferenceServiceInterface,
 } from '@standardnotes/services'
 import { SessionManager } from '../Services/Session/SessionManager'
-import { ApplicationIdentifier } from '@standardnotes/common'
 import { ItemManager } from '@Lib/Services/Items/ItemManager'
 import { ChallengeService, SingletonManager, FeaturesService, DiskStorageService } from '@Lib/Services'
 import { LegacySession, MapperInterface } from '@standardnotes/domain-core'

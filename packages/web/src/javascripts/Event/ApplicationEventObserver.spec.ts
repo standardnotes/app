@@ -18,8 +18,8 @@ import {
   SyncServiceInterface,
   User,
   UserServiceInterface,
-  UserRequestType,
 } from '@standardnotes/snjs'
+import { UserRequestType } from '@standardnotes/common'
 
 import { AccountMenuController } from '@/Controllers/AccountMenu/AccountMenuController'
 import { PreferencesController } from '@/Controllers/PreferencesController'

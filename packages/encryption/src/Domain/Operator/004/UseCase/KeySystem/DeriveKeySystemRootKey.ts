@@ -11,8 +11,8 @@ import {
   KeySystemRootKeyInterface,
   PayloadTimestampDefaults,
   KeySystemRootKeyParamsInterface,
+  ProtocolVersion,
 } from '@standardnotes/models'
-import { ProtocolVersion } from '@standardnotes/common'
 import { ContentType } from '@standardnotes/domain-core'
 
 export class DeriveKeySystemRootKeyUseCase {
