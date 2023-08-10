@@ -288,7 +288,7 @@ export async function storagePayloadCount(application) {
  * The number of seconds between changes before a server creates a new revision.
  * Controlled via docker/syncing-server-js.env
  */
-export const ServerRevisionFrequency = 5.1
+export const ServerRevisionFrequency = 2.1
 export const ServerRevisionCreationDelay = 1.5
 
 export function yesterday() {
