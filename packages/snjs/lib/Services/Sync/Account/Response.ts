@@ -10,6 +10,8 @@ import {
   NotificationServerHash,
   AsymmetricMessageServerHash,
   getErrorFromErrorResponse,
+  ConflictType,
+  ServerItemResponse,
 } from '@standardnotes/responses'
 import {
   FilterDisallowedRemotePayloadsAndMap,
@@ -44,17 +46,21 @@ export class ServerSyncResponse {
     const legacyConflicts = this.successResponseData?.unsaved || []
     this.rawConflictObjects = conflicts.concat(legacyConflicts)
 
+    const disallowedPayloads = []
+
     const savedItemsFilteringResult = FilterDisallowedRemotePayloadsAndMap(this.successResponseData?.saved_items || [])
     this.savedPayloads = savedItemsFilteringResult.filtered.map((rawItem) => {
       return CreateServerSyncSavedPayload(rawItem)
     })
+    disallowedPayloads.push(...savedItemsFilteringResult.disallowed)
 
     const retrievedItemsFilteringResult = FilterDisallowedRemotePayloadsAndMap(
       this.successResponseData?.retrieved_items || [],
     )
     this.retrievedPayloads = retrievedItemsFilteringResult.filtered
+    disallowedPayloads.push(...retrievedItemsFilteringResult.disallowed)
 
-    this.conflicts = this.filterConflicts()
+    this.conflicts = this.filterConflictsAndDisallowedPayloads(disallowedPayloads)
 
     this.vaults = this.successResponseData?.shared_vaults || []
 
@@ -67,9 +73,19 @@ export class ServerSyncResponse {
     deepFreeze(this)
   }
 
-  private filterConflicts(): TrustedServerConflictMap {
+  private filterConflictsAndDisallowedPayloads(disallowedPayloads: ServerItemResponse[]): TrustedServerConflictMap {
     const conflicts = this.rawConflictObjects
     const trustedConflicts: TrustedServerConflictMap = {}
+
+    trustedConflicts[ConflictType.InvalidServerItem] = []
+    const invalidServerConflictsArray = trustedConflicts[ConflictType.InvalidServerItem]
+
+    for (const payload of disallowedPayloads) {
+      invalidServerConflictsArray.push(<TrustedConflictParams>{
+        type: ConflictType.InvalidServerItem,
+        server_item: payload,
+      })
+    }
 
     for (const conflict of conflicts) {
       let serverItem: FilteredServerItem | undefined
@@ -80,12 +96,24 @@ export class ServerSyncResponse {
         if (unsavedItemFilteringResult.filtered.length === 1) {
           unsavedItem = unsavedItemFilteringResult.filtered[0]
         }
+        if (unsavedItemFilteringResult.disallowed.length === 1) {
+          invalidServerConflictsArray.push(<TrustedConflictParams>{
+            type: ConflictType.InvalidServerItem,
+            unsaved_item: unsavedItemFilteringResult.disallowed[0],
+          })
+        }
       }
 
       if (conflict.server_item) {
         const serverItemFilteringResult = FilterDisallowedRemotePayloadsAndMap([conflict.server_item])
         if (serverItemFilteringResult.filtered.length === 1) {
           serverItem = serverItemFilteringResult.filtered[0]
+        }
+        if (serverItemFilteringResult.disallowed.length === 1) {
+          invalidServerConflictsArray.push(<TrustedConflictParams>{
+            type: ConflictType.InvalidServerItem,
+            server_item: serverItemFilteringResult.disallowed[0],
+          })
         }
       }
 
