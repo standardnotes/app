@@ -45,10 +45,8 @@ const Tooltip = ({ text }: { text: string }) => {
         title="Info"
         anchorElement={anchorElement}
         disableMobileFullscreenTakeover
-        className={classNames(
-          'w-60 translate-x-2 translate-y-1 select-none rounded border border-border shadow-main',
-          'z-modal bg-default px-3 py-1.5 text-left',
-        )}
+        className="z-modal bg-default px-3 py-1.5 text-left"
+        containerClassName="w-60"
       >
         {text}
       </Popover>

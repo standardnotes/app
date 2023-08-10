@@ -30,6 +30,8 @@ const PositionedPopoverContent = ({
   portal = true,
   offset,
   hideOnClickInModal = false,
+  setAnimationElement,
+  containerClassName,
 }: PopoverContentProps) => {
   const [popoverElement, setPopoverElement] = useState<HTMLDivElement | null>(null)
   const popoverRect = useAutoElementRect(popoverElement)
@@ -54,6 +56,16 @@ const PositionedPopoverContent = ({
     maxHeightFunction: maxHeight,
     offset,
   })
+
+  if (!styles) {
+    document.body.style.overflow = 'hidden'
+  }
+
+  useLayoutEffect(() => {
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [])
 
   let adjustedStyles: PopoverCSSProperties | undefined = undefined
 
@@ -97,13 +109,11 @@ const PositionedPopoverContent = ({
     <Portal disabled={!portal}>
       <div
         className={classNames(
-          'absolute left-0 top-0 flex w-full min-w-80 cursor-auto flex-col',
-          'overflow-y-auto rounded border border-[--popover-border-color] bg-[--popover-background-color] [backdrop-filter:var(--popover-backdrop-filter)] shadow-main md:h-auto md:max-w-xs',
+          'absolute left-0 top-0 flex w-full min-w-80 cursor-auto flex-col md:h-auto md:max-w-xs',
           !disableMobileFullscreenTakeover && 'h-full',
           overrideZIndex ? overrideZIndex : 'z-dropdown-menu',
-          !isDesktopScreen && !disableMobileFullscreenTakeover ? 'pb-safe-bottom pt-safe-top' : '',
           isDesktopScreen || disableMobileFullscreenTakeover ? 'invisible' : '',
-          className,
+          containerClassName,
         )}
         style={
           {
@@ -130,7 +140,18 @@ const PositionedPopoverContent = ({
           })
         }}
       >
-        {children}
+        <div
+          className={classNames(
+            'overflow-y-auto rounded border border-[--popover-border-color] bg-[--popover-background-color] [backdrop-filter:var(--popover-backdrop-filter)] shadow-main',
+            !isDesktopScreen && !disableMobileFullscreenTakeover ? 'pb-safe-bottom pt-safe-top' : '',
+            'transition-[transform,opacity] motion-reduce:transition-opacity duration-75 [transform-origin:var(--transform-origin)]',
+            styles ? 'scale-100 opacity-100' : 'scale-95 opacity-0',
+            className,
+          )}
+          ref={setAnimationElement}
+        >
+          {children}
+        </div>
       </div>
     </Portal>
   )
