@@ -8,12 +8,14 @@ import Icon from '../Icon/Icon'
 import Popover from '../Popover/Popover'
 import QuickSettingsMenu from '../QuickSettingsMenu/QuickSettingsMenu'
 import StyledTooltip from '../StyledTooltip/StyledTooltip'
+import RoundIconButton from '../Button/RoundIconButton'
 
 type Props = {
   application: WebApplication
+  isMobileNavigation?: boolean
 }
 
-const QuickSettingsButton = ({ application }: Props) => {
+const QuickSettingsButton = ({ application, isMobileNavigation = false }: Props) => {
   const buttonRef = useRef<HTMLButtonElement>(null)
   const commandService = useCommandService()
 
@@ -32,15 +34,19 @@ const QuickSettingsButton = ({ application }: Props) => {
   return (
     <>
       <StyledTooltip label="Open quick settings menu">
-        <button
-          onClick={toggleMenu}
-          className="flex h-full w-8 cursor-pointer items-center justify-center"
-          ref={buttonRef}
-        >
-          <div className="h-5">
-            <Icon type="themes" className={classNames(isOpen && 'text-info', 'rounded hover:text-info')} />
-          </div>
-        </button>
+        {isMobileNavigation ? (
+          <RoundIconButton className="ml-2.5 bg-default" onClick={toggleMenu} label="Go to vaults menu" icon="themes" />
+        ) : (
+          <button
+            onClick={toggleMenu}
+            className="flex h-full w-8 cursor-pointer items-center justify-center"
+            ref={buttonRef}
+          >
+            <div className="h-5">
+              <Icon type="themes" className={classNames(isOpen && 'text-info', 'rounded hover:text-info')} />
+            </div>
+          </button>
+        )}
       </StyledTooltip>
       <Popover
         title="Quick settings"

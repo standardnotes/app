@@ -15,6 +15,8 @@ import { usePaneSwipeGesture } from '../Panes/usePaneGesture'
 import { mergeRefs } from '@/Hooks/mergeRefs'
 import { useAvailableSafeAreaPadding } from '@/Hooks/useSafeAreaPadding'
 import { featureTrunkVaultsEnabled } from '@/FeatureTrunk'
+import QuickSettingsButton from '../Footer/QuickSettingsButton'
+import VaultSelectionButton from '../Footer/VaultSelectionButton'
 
 type Props = {
   application: WebApplication
@@ -128,24 +130,8 @@ const Navigation = forwardRef<HTMLDivElement, Props>(({ application, className, 
           label="Go to preferences"
           icon="tune"
         />
-        <RoundIconButton
-          className="ml-2.5 bg-default"
-          onClick={() => {
-            application.quickSettingsMenuController.toggle()
-          }}
-          label="Go to quick settings menu"
-          icon="themes"
-        />
-        {featureTrunkVaultsEnabled() && (
-          <RoundIconButton
-            className="ml-2.5 bg-default"
-            onClick={() => {
-              application.vaultSelectionController.toggle()
-            }}
-            label="Go to vaults menu"
-            icon="safe-square"
-          />
-        )}
+        <QuickSettingsButton application={application} isMobileNavigation />
+        {featureTrunkVaultsEnabled() && <VaultSelectionButton isMobileNavigation />}
       </div>
       {children}
     </div>

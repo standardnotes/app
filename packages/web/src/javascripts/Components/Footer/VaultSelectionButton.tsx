@@ -6,8 +6,9 @@ import StyledTooltip from '../StyledTooltip/StyledTooltip'
 import VaultSelectionMenu from '../VaultSelectionMenu/VaultSelectionMenu'
 import { useApplication } from '../ApplicationProvider'
 import { featureTrunkVaultsEnabled } from '@/FeatureTrunk'
+import RoundIconButton from '../Button/RoundIconButton'
 
-const VaultSelectionButton = () => {
+const VaultSelectionButton = ({ isMobileNavigation = false }: { isMobileNavigation?: boolean }) => {
   const application = useApplication()
   const buttonRef = useRef<HTMLButtonElement>(null)
   const exclusivelyShownVault = application.vaultDisplayService.exclusivelyShownVault
@@ -22,22 +23,35 @@ const VaultSelectionButton = () => {
   return (
     <>
       <StyledTooltip label="Open vault selection menu">
-        <button onClick={toggleMenu} className="flex h-full cursor-pointer items-center justify-center" ref={buttonRef}>
-          <div className="flex items-center">
-            <Icon
-              type="safe-square"
-              className={classNames(
-                isOpen ? 'text-info' : exclusivelyShownVault ? 'text-success' : '',
-                'rounded hover:text-info',
+        {isMobileNavigation ? (
+          <RoundIconButton
+            className="ml-2.5 bg-default"
+            onClick={toggleMenu}
+            label="Go to vaults menu"
+            icon="safe-square"
+          />
+        ) : (
+          <button
+            onClick={toggleMenu}
+            className="flex h-full cursor-pointer items-center justify-center"
+            ref={buttonRef}
+          >
+            <div className="flex items-center">
+              <Icon
+                type="safe-square"
+                className={classNames(
+                  isOpen ? 'text-info' : exclusivelyShownVault ? 'text-success' : '',
+                  'rounded hover:text-info',
+                )}
+              />
+              {exclusivelyShownVault && (
+                <div className={classNames('ml-1 text-xs font-bold', isOpen && 'text-info')}>
+                  {exclusivelyShownVault.name}
+                </div>
               )}
-            />
-            {exclusivelyShownVault && (
-              <div className={classNames('ml-1 text-xs font-bold', isOpen && 'text-info')}>
-                {exclusivelyShownVault.name}
-              </div>
-            )}
-          </div>
-        </button>
+            </div>
+          </button>
+        )}
       </StyledTooltip>
       <Popover
         title="Vault options"
