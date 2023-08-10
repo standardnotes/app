@@ -27,7 +27,6 @@ export class AccountMenuController extends AbstractViewController implements Int
   showSignIn = false
   deletingAccount = false
   showRegister = false
-  shouldAnimateCloseMenu = false
   currentPane = AccountMenuPane.GeneralMenu
 
   override deinit() {
@@ -58,10 +57,8 @@ export class AccountMenuController extends AbstractViewController implements Int
       deletingAccount: observable,
       showRegister: observable,
       currentPane: observable,
-      shouldAnimateCloseMenu: observable,
 
       setShow: action,
-      setShouldAnimateClose: action,
       toggleShow: action,
       setSigningOut: action,
       setIsEncryptionEnabled: action,
@@ -101,17 +98,9 @@ export class AccountMenuController extends AbstractViewController implements Int
     this.show = show
   }
 
-  setShouldAnimateClose = (shouldAnimateCloseMenu: boolean): void => {
-    this.shouldAnimateCloseMenu = shouldAnimateCloseMenu
-  }
-
   closeAccountMenu = (): void => {
-    this.setShouldAnimateClose(true)
-    setTimeout(() => {
-      this.setShow(false)
-      this.setShouldAnimateClose(false)
-      this.setCurrentPane(AccountMenuPane.GeneralMenu)
-    }, 150)
+    this.setShow(false)
+    this.setCurrentPane(AccountMenuPane.GeneralMenu)
   }
 
   setSigningOut = (signingOut: boolean): void => {
