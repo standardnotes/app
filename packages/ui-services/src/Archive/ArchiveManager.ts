@@ -39,13 +39,15 @@ export class ArchiveManager {
   }
 
   public async downloadBackup(encrypted: boolean): Promise<void> {
-    const data = encrypted
-      ? await this.application.createEncryptedBackupFile()
-      : await this.application.createDecryptedBackupFile()
+    const result = encrypted
+      ? await this.application.createEncryptedBackupFile.execute()
+      : await this.application.createDecryptedBackupFile.execute()
 
-    if (!data) {
+    if (result.isFailed()) {
       return
     }
+
+    const data = result.getValue()
 
     const blobData = new Blob([JSON.stringify(data, null, 2)], {
       type: 'text/json',

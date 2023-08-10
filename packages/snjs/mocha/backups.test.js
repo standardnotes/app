@@ -23,16 +23,16 @@ describe('backups', function () {
   })
 
   it('backup file should have a version number', async function () {
-    let data = await application.createDecryptedBackupFile()
+    let data = (await application.createDecryptedBackupFile.execute()).getValue()
     expect(data.version).to.equal(application.encryption.getLatestVersion())
     await application.addPasscode('passcode')
-    data = await application.createEncryptedBackupFileForAutomatedDesktopBackups()
+    data = (await application.createEncryptedBackupFile.execute({ skipAuthorization: true })).getValue()
     expect(data.version).to.equal(application.encryption.getLatestVersion())
   })
 
   it('no passcode + no account backup file should have correct number of items', async function () {
     await Promise.all([Factory.createSyncedNote(application), Factory.createSyncedNote(application)])
-    const data = await application.createDecryptedBackupFile()
+    const data = (await application.createDecryptedBackupFile.execute()).getValue()
     const offsetForNewItems = 2
     const offsetForNoItemsKey = -1
     expect(data.items.length).to.equal(BaseItemCounts.DefaultItems + offsetForNewItems + offsetForNoItemsKey)
@@ -44,12 +44,12 @@ describe('backups', function () {
     await Promise.all([Factory.createSyncedNote(application), Factory.createSyncedNote(application)])
 
     // Encrypted backup without authorization
-    const encryptedData = await application.createEncryptedBackupFileForAutomatedDesktopBackups()
+    const encryptedData = (await application.createEncryptedBackupFile.execute({ skipAuthorization: true })).getValue()
     expect(encryptedData.items.length).to.equal(BaseItemCounts.DefaultItems + 2)
 
     // Encrypted backup with authorization
     Factory.handlePasswordChallenges(application, passcode)
-    const authorizedEncryptedData = await application.createEncryptedBackupFile()
+    const authorizedEncryptedData = (await application.createEncryptedBackupFile.execute()).getValue()
     expect(authorizedEncryptedData.items.length).to.equal(BaseItemCounts.DefaultItems + 2)
   })
 
@@ -63,17 +63,17 @@ describe('backups', function () {
     await Promise.all([Factory.createSyncedNote(application), Factory.createSyncedNote(application)])
 
     // Encrypted backup without authorization
-    const encryptedData = await application.createEncryptedBackupFileForAutomatedDesktopBackups()
+    const encryptedData = (await application.createEncryptedBackupFile.execute({ skipAuthorization: true })).getValue()
     expect(encryptedData.items.length).to.equal(BaseItemCounts.DefaultItemsWithAccount + 2)
 
     Factory.handlePasswordChallenges(application, password)
 
     // Decrypted backup
-    const decryptedData = await application.createDecryptedBackupFile()
+    const decryptedData = (await application.createDecryptedBackupFile.execute()).getValue()
     expect(decryptedData.items.length).to.equal(BaseItemCounts.DefaultItemsWithAccountWithoutItemsKey + 2)
 
     // Encrypted backup with authorization
-    const authorizedEncryptedData = await application.createEncryptedBackupFile()
+    const authorizedEncryptedData = (await application.createEncryptedBackupFile.execute()).getValue()
     expect(authorizedEncryptedData.items.length).to.equal(BaseItemCounts.DefaultItemsWithAccount + 2)
   })
 
@@ -85,23 +85,25 @@ describe('backups', function () {
     await Promise.all([Factory.createSyncedNote(application), Factory.createSyncedNote(application)])
 
     // Encrypted backup without authorization
-    const encryptedData = await application.createEncryptedBackupFileForAutomatedDesktopBackups()
+    const encryptedData = (await application.createEncryptedBackupFile.execute({ skipAuthorization: true })).getValue()
     expect(encryptedData.items.length).to.equal(BaseItemCounts.DefaultItemsWithAccount + 2)
 
     Factory.handlePasswordChallenges(application, passcode)
 
     // Decrypted backup
-    const decryptedData = await application.createDecryptedBackupFile()
+    const decryptedData = (await application.createDecryptedBackupFile.execute()).getValue()
     expect(decryptedData.items.length).to.equal(BaseItemCounts.DefaultItemsWithAccountWithoutItemsKey + 2)
 
     // Encrypted backup with authorization
-    const authorizedEncryptedData = await application.createEncryptedBackupFileForAutomatedDesktopBackups()
+    const authorizedEncryptedData = (
+      await application.createEncryptedBackupFile.execute({ skipAuthorization: true })
+    ).getValue()
     expect(authorizedEncryptedData.items.length).to.equal(BaseItemCounts.DefaultItemsWithAccount + 2)
   }).timeout(10000)
 
   it('backup file item should have correct fields', async function () {
     await Factory.createSyncedNote(application)
-    let backupData = await application.createDecryptedBackupFile()
+    let backupData = (await application.createDecryptedBackupFile.execute()).getValue()
     let rawItem = backupData.items.find((i) => i.content_type === ContentType.TYPES.Note)
 
     expect(rawItem.fields).to.not.be.ok
@@ -120,7 +122,7 @@ describe('backups', function () {
       password: password,
     })
 
-    backupData = await application.createEncryptedBackupFileForAutomatedDesktopBackups()
+    backupData = (await application.createEncryptedBackupFile.execute({ skipAuthorization: true })).getValue()
     rawItem = backupData.items.find((i) => i.content_type === ContentType.TYPES.Note)
 
     expect(rawItem.fields).to.not.be.ok
@@ -155,13 +157,13 @@ describe('backups', function () {
 
     expect(erroredItem.errorDecrypting).to.equal(true)
 
-    const backupData = await application.createDecryptedBackupFile()
+    const backupData = (await application.createDecryptedBackupFile.execute()).getValue()
 
     expect(backupData.items.length).to.equal(BaseItemCounts.DefaultItemsNoAccounNoItemsKey + 2)
   })
 
   it('decrypted backup file should not have keyParams', async function () {
-    const backup = await application.createDecryptedBackupFile()
+    const backup = (await application.createDecryptedBackupFile.execute()).getValue()
     expect(backup).to.not.haveOwnProperty('keyParams')
   })
 
@@ -176,7 +178,7 @@ describe('backups', function () {
 
     Factory.handlePasswordChallenges(application, password)
 
-    const backup = await application.createDecryptedBackupFile()
+    const backup = (await application.createDecryptedBackupFile.execute()).getValue()
 
     expect(backup).to.not.haveOwnProperty('keyParams')
 
@@ -185,30 +187,30 @@ describe('backups', function () {
 
   it('encrypted backup file should have keyParams', async function () {
     await application.addPasscode('passcode')
-    const backup = await application.createEncryptedBackupFileForAutomatedDesktopBackups()
+    const backup = (await application.createEncryptedBackupFile.execute({ skipAuthorization: true })).getValue()
     expect(backup).to.haveOwnProperty('keyParams')
   })
 
   it('decrypted backup file should not have itemsKeys', async function () {
-    const backup = await application.createDecryptedBackupFile()
+    const backup = (await application.createDecryptedBackupFile.execute()).getValue()
     expect(backup.items.some((item) => item.content_type === ContentType.TYPES.ItemsKey)).to.be.false
   })
 
   it('encrypted backup file should have itemsKeys', async function () {
     await application.addPasscode('passcode')
-    const backup = await application.createEncryptedBackupFileForAutomatedDesktopBackups()
+    const backup = (await application.createEncryptedBackupFile.execute({ skipAuthorization: true })).getValue()
     expect(backup.items.some((item) => item.content_type === ContentType.TYPES.ItemsKey)).to.be.true
   })
 
   it('backup file with no account and no passcode should be decrypted', async function () {
     const note = await Factory.createSyncedNote(application)
-    const backup = await application.createDecryptedBackupFile()
+    const backup = (await application.createDecryptedBackupFile.execute()).getValue()
     expect(backup).to.not.haveOwnProperty('keyParams')
     expect(backup.items.some((item) => item.content_type === ContentType.TYPES.ItemsKey)).to.be.false
     expect(backup.items.find((item) => item.content_type === ContentType.TYPES.Note).uuid).to.equal(note.uuid)
     let error
     try {
-      await application.createEncryptedBackupFileForAutomatedDesktopBackups()
+      ;(await application.createEncryptedBackupFile.execute({ skipAuthorization: true })).getValue()
     } catch (e) {
       error = e
     }

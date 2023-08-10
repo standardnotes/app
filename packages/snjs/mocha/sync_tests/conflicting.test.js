@@ -778,7 +778,7 @@ describe('online conflict handling', function () {
   it('importing data belonging to another account should not result in duplication', async () => {
     /** Create primary account and export data */
     await createSyncedNoteWithTag(application)
-    let backupFile = await application.createEncryptedBackupFileForAutomatedDesktopBackups()
+    let backupFile = (await application.createEncryptedBackupFile.execute({ skipAuthorization: true })).getValue()
     /** Sort matters, and is the cause of the original issue, where tag comes before the note */
     backupFile.items = [
       backupFile.items.find((i) => i.content_type === ContentType.TYPES.ItemsKey),
@@ -813,7 +813,7 @@ describe('online conflict handling', function () {
     await application.changeAndSaveItem.execute(tag, (mutator) => {
       mutator.e2ePendingRefactor_addItemAsRelationship(note2)
     })
-    let backupFile = await application.createEncryptedBackupFileForAutomatedDesktopBackups()
+    let backupFile = (await application.createEncryptedBackupFile.execute({ skipAuthorization: true })).getValue()
     backupFile.items = [
       backupFile.items.find((i) => i.content_type === ContentType.TYPES.ItemsKey),
       backupFile.items.filter((i) => i.content_type === ContentType.TYPES.Note)[0],

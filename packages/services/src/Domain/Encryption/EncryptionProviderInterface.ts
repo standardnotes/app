@@ -8,7 +8,6 @@ import {
 } from '@standardnotes/encryption'
 import { KeyParamsOrigination, ProtocolVersion } from '@standardnotes/common'
 import {
-  BackupFile,
   DecryptedPayloadInterface,
   EncryptedPayloadInterface,
   ItemContent,
@@ -53,9 +52,6 @@ export interface EncryptionProviderInterface {
   getPasswordCreatedDate(): Date | undefined
   getEncryptionDisplayName(): Promise<string>
   upgradeAvailable(): Promise<boolean>
-
-  createEncryptedBackupFile(): Promise<BackupFile>
-  createDecryptedBackupFile(): BackupFile
 
   getUserVersion(): ProtocolVersion | undefined
   hasAccount(): boolean

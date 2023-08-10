@@ -103,15 +103,15 @@ export class DesktopManager
 
   private async getBackupFile(): Promise<string | undefined> {
     const encrypted = this.application.hasProtectionSources()
-    const data = encrypted
-      ? await this.application.createEncryptedBackupFileForAutomatedDesktopBackups()
-      : await this.application.createDecryptedBackupFile()
+    const result = encrypted
+      ? await this.application.createEncryptedBackupFile.execute({ skipAuthorization: true })
+      : await this.application.createDecryptedBackupFile.execute()
 
-    if (data) {
-      return JSON.stringify(data, null, 2)
+    if (result.isFailed()) {
+      return undefined
     }
 
-    return undefined
+    return JSON.stringify(result.getValue(), null, 2)
   }
 
   getExtServerHost(): string {

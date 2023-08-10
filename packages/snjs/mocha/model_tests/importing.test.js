@@ -361,7 +361,7 @@ describe('importing', function () {
         Factory.createMappedTag(application),
       ])
 
-      const backupData = await application.createEncryptedBackupFileForAutomatedDesktopBackups()
+      const backupData = (await application.createEncryptedBackupFile.execute({ skipAuthorization: true })).getValue()
 
       await application.sync.sync({ awaitAll: true })
 
@@ -394,7 +394,7 @@ describe('importing', function () {
         Factory.createMappedTag(application),
       ])
 
-      const backupData = await application.createEncryptedBackupFileForAutomatedDesktopBackups()
+      const backupData = (await application.createEncryptedBackupFile.execute({ skipAuthorization: true })).getValue()
 
       await Factory.safeDeinit(application)
       application = await Factory.createInitAppWithFakeCrypto()
@@ -421,7 +421,7 @@ describe('importing', function () {
         Factory.createMappedTag(application),
       ])
 
-      const backupData = await application.createEncryptedBackupFileForAutomatedDesktopBackups()
+      const backupData = (await application.createEncryptedBackupFile.execute({ skipAuthorization: true })).getValue()
 
       await Factory.safeDeinit(application)
       application = await Factory.createInitAppWithFakeCrypto()
@@ -449,7 +449,7 @@ describe('importing', function () {
         text: 'On protocol version 003.',
       })
 
-      const backupData = await application.createEncryptedBackupFileForAutomatedDesktopBackups()
+      const backupData = (await application.createEncryptedBackupFile.execute({ skipAuthorization: true })).getValue()
 
       await Factory.safeDeinit(application)
       application = await Factory.createInitAppWithFakeCrypto()
@@ -477,7 +477,7 @@ describe('importing', function () {
         text: 'On protocol version 004.',
       })
 
-      const backupData = await application.createEncryptedBackupFileForAutomatedDesktopBackups()
+      const backupData = (await application.createEncryptedBackupFile.execute({ skipAuthorization: true })).getValue()
 
       await Factory.safeDeinit(application)
       application = await Factory.createInitAppWithFakeCrypto()
@@ -505,7 +505,7 @@ describe('importing', function () {
         text: 'On protocol version 004.',
       })
 
-      const backupData = await application.createEncryptedBackupFileForAutomatedDesktopBackups()
+      const backupData = (await application.createEncryptedBackupFile.execute({ skipAuthorization: true })).getValue()
 
       await Factory.safeDeinit(application)
       application = await Factory.createInitAppWithFakeCrypto()
@@ -540,7 +540,7 @@ describe('importing', function () {
         text: 'On protocol version 003.',
       })
 
-      const backupData = await application.createEncryptedBackupFileForAutomatedDesktopBackups()
+      const backupData = (await application.createEncryptedBackupFile.execute({ skipAuthorization: true })).getValue()
 
       await Factory.safeDeinit(application)
       application = await Factory.createInitAppWithFakeCrypto()
@@ -575,7 +575,7 @@ describe('importing', function () {
         text: 'On protocol version 004.',
       })
 
-      const backupData = await application.createEncryptedBackupFileForAutomatedDesktopBackups()
+      const backupData = (await application.createEncryptedBackupFile.execute({ skipAuthorization: true })).getValue()
 
       await Factory.safeDeinit(application)
       application = await Factory.createInitAppWithFakeCrypto()
@@ -604,7 +604,7 @@ describe('importing', function () {
         text: 'On protocol version 004.',
       })
 
-      const backupData = await application.createEncryptedBackupFileForAutomatedDesktopBackups()
+      const backupData = (await application.createEncryptedBackupFile.execute({ skipAuthorization: true })).getValue()
       delete backupData.keyParams
 
       await Factory.safeDeinit(application)
@@ -628,7 +628,7 @@ describe('importing', function () {
         text: 'On protocol version 004.',
       })
 
-      const backupData = await application.createEncryptedBackupFileForAutomatedDesktopBackups()
+      const backupData = (await application.createEncryptedBackupFile.execute({ skipAuthorization: true })).getValue()
       backupData.items = backupData.items.filter((payload) => payload.content_type !== ContentType.TYPES.ItemsKey)
 
       await Factory.safeDeinit(application)
@@ -657,7 +657,7 @@ describe('importing', function () {
 
       await application.sync.sync()
 
-      const backupData = await application.createEncryptedBackupFileForAutomatedDesktopBackups()
+      const backupData = (await application.createEncryptedBackupFile.execute({ skipAuthorization: true })).getValue()
 
       await Factory.safeDeinit(application)
       application = await Factory.createInitAppWithFakeCrypto()

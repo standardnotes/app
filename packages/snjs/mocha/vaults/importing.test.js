@@ -33,7 +33,7 @@ describe('vault importing', function () {
       const note = await context.createSyncedNote('foo', 'bar')
       await Collaboration.moveItemToVault(context, vault, note)
 
-      const backupData = await context.application.createDecryptedBackupFile()
+      const backupData = (await context.application.createDecryptedBackupFile.execute()).getValue()
 
       const otherContext = await Factory.createVaultsContextWithRealCrypto()
       otherContext.password = context.password
@@ -71,7 +71,9 @@ describe('vault importing', function () {
       const note = await context.createSyncedNote('foo', 'bar')
       await Collaboration.moveItemToVault(context, vault, note)
 
-      const backupData = await context.application.createEncryptedBackupFileForAutomatedDesktopBackups()
+      const backupData = (
+        await context.application.createEncryptedBackupFile.execute({ skipAuthorization: true })
+      ).getValue()
 
       const otherContext = await Factory.createVaultsContextWithRealCrypto()
       otherContext.password = context.password
@@ -113,7 +115,7 @@ describe('vault importing', function () {
 
       await context.application.vaultLocks.lockNonPersistentVault(vault)
 
-      const backupData = await context.application.createDecryptedBackupFile()
+      const backupData = (await context.application.createDecryptedBackupFile.execute()).getValue()
 
       const encryptedItemsKey = backupData.items.find(
         (item) => item.content_type === ContentType.TYPES.KeySystemItemsKey,
@@ -126,7 +128,7 @@ describe('vault importing', function () {
       expect(isEncryptedPayload(encryptedNote)).to.be.true
     })
 
-    it.skip('should export *unlocked* password vaulted items as encrypted even if no account and no passcode', async () => {
+    it.only('should export *unlocked* password vaulted items as encrypted even if no account and no passcode', async () => {
       const vault = await context.vaults.createUserInputtedPasswordVault({
         name: 'test vault',
         userInputtedPassword: 'test password',
@@ -136,7 +138,7 @@ describe('vault importing', function () {
       const note = await context.createSyncedNote('foo', 'bar')
       await Collaboration.moveItemToVault(context, vault, note)
 
-      const backupData = await context.application.createDecryptedBackupFile()
+      const backupData = (await context.application.createDecryptedBackupFile.execute()).getValue()
 
       const encryptedItemsKey = backupData.items.find(
         (item) => item.content_type === ContentType.TYPES.KeySystemItemsKey,
@@ -161,7 +163,9 @@ describe('vault importing', function () {
       const note = await context.createSyncedNote('foo', 'bar')
       await Collaboration.moveItemToVault(context, vault, note)
 
-      const backupData = await context.application.createEncryptedBackupFileForAutomatedDesktopBackups()
+      const backupData = (
+        await context.application.createEncryptedBackupFile.execute({ skipAuthorization: true })
+      ).getValue()
 
       const otherContext = await Factory.createVaultsContextWithRealCrypto()
       otherContext.password = context.password

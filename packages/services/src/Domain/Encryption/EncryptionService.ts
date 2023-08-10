@@ -5,7 +5,6 @@ import { InternalEventHandlerInterface } from './../Internal/InternalEventHandle
 import { MutatorClientInterface } from './../Mutator/MutatorClientInterface'
 import {
   CreateAnyKeyParams,
-  CreateEncryptionSplitWithKeyLookup,
   encryptedInputParametersFromPayload,
   ErrorDecryptingParameters,
   FindPayloadInDecryptionSplit,
@@ -16,7 +15,6 @@ import {
   KeyedEncryptionSplit,
   LegacyAttachedData,
   RootKeyEncryptedAuthenticatedData,
-  SplitPayloadsByEncryptionType,
   V001Algorithm,
   V002Algorithm,
   EncryptedOutputParameters,
@@ -25,15 +23,10 @@ import {
   EncryptionOperatorsInterface,
 } from '@standardnotes/encryption'
 import {
-  BackupFile,
-  CreateDecryptedBackupFileContextPayload,
-  CreateEncryptedBackupFileContextPayload,
   DecryptedPayload,
   DecryptedPayloadInterface,
   EncryptedPayload,
   EncryptedPayloadInterface,
-  isDecryptedPayload,
-  isEncryptedPayload,
   ItemContent,
   ItemsKeyInterface,
   RootKeyInterface,
@@ -47,7 +40,6 @@ import {
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import {
   extendArray,
-  isNotUndefined,
   isNullOrUndefined,
   isReactNativeEnvironment,
   isWebCryptoAvailable,
@@ -81,7 +73,6 @@ import { EncryptTypeAPayloadWithKeyLookup } from './UseCase/TypeA/EncryptPayload
 import { EncryptTypeAPayload } from './UseCase/TypeA/EncryptPayload'
 import { ValidateAccountPasswordResult } from '../RootKeyManager/ValidateAccountPasswordResult'
 import { ValidatePasscodeResult } from '../RootKeyManager/ValidatePasscodeResult'
-import { ContentType } from '@standardnotes/domain-core'
 import { EncryptionProviderInterface } from './EncryptionProviderInterface'
 import { KeyMode } from '../RootKeyManager/KeyMode'
 
@@ -576,47 +567,6 @@ export class EncryptionService
    */
   public createKeyParams(keyParams: AnyKeyParamsContent) {
     return CreateAnyKeyParams(keyParams)
-  }
-
-  public async createEncryptedBackupFile(): Promise<BackupFile> {
-    const payloads = this.items.items.map((item) => item.payload)
-
-    const split = SplitPayloadsByEncryptionType(payloads)
-
-    const keyLookupSplit = CreateEncryptionSplitWithKeyLookup(split)
-
-    const result = await this.encryptSplit(keyLookupSplit)
-
-    const ejected = result.map((payload) => CreateEncryptedBackupFileContextPayload(payload))
-
-    const data: BackupFile = {
-      version: ProtocolVersionLatest,
-      items: ejected,
-    }
-
-    const keyParams = this.getRootKeyParams()
-    data.keyParams = keyParams?.getPortableValue()
-    return data
-  }
-
-  public createDecryptedBackupFile(): BackupFile {
-    const payloads = this.payloads.nonDeletedItems.filter((item) => item.content_type !== ContentType.TYPES.ItemsKey)
-
-    const data: BackupFile = {
-      version: ProtocolVersionLatest,
-      items: payloads
-        .map((payload) => {
-          if (isDecryptedPayload(payload)) {
-            return CreateDecryptedBackupFileContextPayload(payload)
-          } else if (isEncryptedPayload(payload)) {
-            return CreateEncryptedBackupFileContextPayload(payload)
-          }
-          return undefined
-        })
-        .filter(isNotUndefined),
-    }
-
-    return data
   }
 
   public hasPasscode(): boolean {

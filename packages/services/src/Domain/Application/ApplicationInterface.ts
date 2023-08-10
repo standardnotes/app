@@ -12,6 +12,7 @@ import {
   StatusServiceInterface,
   MfaServiceInterface,
   GenerateUuid,
+  CreateDecryptedBackupFile,
 } from '@standardnotes/services'
 import { VaultLockServiceInterface } from './../VaultLock/VaultLockServiceInterface'
 import { HistoryServiceInterface } from './../History/HistoryServiceInterface'
@@ -43,6 +44,7 @@ import { SessionsClientInterface } from '../Session/SessionsClientInterface'
 import { HomeServerServiceInterface } from '../HomeServer/HomeServerServiceInterface'
 import { EncryptionProviderInterface } from '../Encryption/EncryptionProviderInterface'
 import { Result } from '@standardnotes/domain-core'
+import { CreateEncryptedBackupFile } from '../Import/CreateEncryptedBackupFile'
 
 export interface ApplicationInterface {
   deinit(mode: DeinitMode, source: DeinitSource): void
@@ -52,9 +54,6 @@ export interface ApplicationInterface {
   addEventObserver(callback: ApplicationEventCallback, singleEvent?: ApplicationEvent): () => void
   addSingleEventObserver(event: ApplicationEvent, callback: ApplicationEventCallback): () => void
   hasProtectionSources(): boolean
-  createEncryptedBackupFileForAutomatedDesktopBackups(): Promise<BackupFile | undefined>
-  createEncryptedBackupFile(): Promise<BackupFile | undefined>
-  createDecryptedBackupFile(): Promise<BackupFile | undefined>
   hasPasscode(): boolean
   lock(): Promise<void>
   setValue(key: string, value: unknown, mode?: StorageValueModes): void
@@ -71,10 +70,15 @@ export interface ApplicationInterface {
 
   importData(data: BackupFile, awaitSync?: boolean): Promise<Result<ImportDataResult>>
 
+  // Use cases
   get changeAndSaveItem(): ChangeAndSaveItem
+  get createDecryptedBackupFile(): CreateDecryptedBackupFile
+  get createEncryptedBackupFile(): CreateEncryptedBackupFile
+  get generateUuid(): GenerateUuid
   get getHost(): GetHost
   get setHost(): SetHost
 
+  // Services
   get alerts(): AlertService
   get asymmetric(): AsymmetricMessageServiceInterface
   get challenges(): ChallengeServiceInterface
@@ -86,7 +90,6 @@ export interface ApplicationInterface {
   get files(): FilesClientInterface
   get history(): HistoryServiceInterface
   get homeServer(): HomeServerServiceInterface | undefined
-  get generateUuid(): GenerateUuid
   get items(): ItemManagerInterface
   get legacyApi(): LegacyApiServiceInterface
   get mfa(): MfaServiceInterface

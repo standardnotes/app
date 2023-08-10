@@ -79,6 +79,8 @@ import {
   SetHost,
   MfaServiceInterface,
   GenerateUuid,
+  CreateDecryptedBackupFile,
+  CreateEncryptedBackupFile,
 } from '@standardnotes/services'
 import {
   SNNote,
@@ -673,26 +675,6 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return this.protections.authorizeAutolockIntervalChange()
   }
 
-  public async createEncryptedBackupFileForAutomatedDesktopBackups(): Promise<BackupFile | undefined> {
-    return this.encryption.createEncryptedBackupFile()
-  }
-
-  public async createEncryptedBackupFile(): Promise<BackupFile | undefined> {
-    if (!(await this.protections.authorizeBackupCreation())) {
-      return
-    }
-
-    return this.encryption.createEncryptedBackupFile()
-  }
-
-  public async createDecryptedBackupFile(): Promise<BackupFile | undefined> {
-    if (!(await this.protections.authorizeBackupCreation())) {
-      return
-    }
-
-    return this.encryption.createDecryptedBackupFile()
-  }
-
   public isEphemeralSession(): boolean {
     return this.storage.isEphemeralSession()
   }
@@ -1163,6 +1145,14 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
 
   public get generateUuid(): GenerateUuid {
     return this.dependencies.get<GenerateUuid>(TYPES.GenerateUuid)
+  }
+
+  public get createDecryptedBackupFile(): CreateDecryptedBackupFile {
+    return this.dependencies.get<CreateDecryptedBackupFile>(TYPES.CreateDecryptedBackupFile)
+  }
+
+  public get createEncryptedBackupFile(): CreateEncryptedBackupFile {
+    return this.dependencies.get<CreateEncryptedBackupFile>(TYPES.CreateEncryptedBackupFile)
   }
 
   private get migrations(): MigrationService {

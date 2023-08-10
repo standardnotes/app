@@ -138,6 +138,8 @@ import {
   GetBackupFileType,
   GetFilePassword,
   IsApplicationUsingThirdPartyHost,
+  CreateDecryptedBackupFile,
+  CreateEncryptedBackupFile,
 } from '@standardnotes/services'
 import { ItemManager } from '../../Services/Items/ItemManager'
 import { PayloadManager } from '../../Services/Payloads/PayloadManager'
@@ -297,6 +299,21 @@ export class Dependencies {
       return new ReencryptTypeAItems(
         this.get<ItemManager>(TYPES.ItemManager),
         this.get<MutatorService>(TYPES.MutatorService),
+      )
+    })
+
+    this.factory.set(TYPES.CreateDecryptedBackupFile, () => {
+      return new CreateDecryptedBackupFile(
+        this.get<PayloadManager>(TYPES.PayloadManager),
+        this.get<ProtectionService>(TYPES.ProtectionService),
+      )
+    })
+
+    this.factory.set(TYPES.CreateEncryptedBackupFile, () => {
+      return new CreateEncryptedBackupFile(
+        this.get<ItemManager>(TYPES.ItemManager),
+        this.get<ProtectionService>(TYPES.ProtectionService),
+        this.get<EncryptionService>(TYPES.EncryptionService),
       )
     })
 

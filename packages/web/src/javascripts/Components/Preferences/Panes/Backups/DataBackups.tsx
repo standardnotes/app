@@ -58,13 +58,15 @@ const DataBackups = ({ application }: Props) => {
   }, [refreshEncryptionStatus])
 
   const downloadDataArchive = async () => {
-    const data = isBackupEncrypted
-      ? await application.createEncryptedBackupFile()
-      : await application.createDecryptedBackupFile()
+    const result = isBackupEncrypted
+      ? await application.createEncryptedBackupFile.execute()
+      : await application.createDecryptedBackupFile.execute()
 
-    if (!data) {
+    if (result.isFailed()) {
       return
     }
+
+    const data = result.getValue()
 
     const blobData = new Blob([JSON.stringify(data, null, 2)], {
       type: 'text/json',
