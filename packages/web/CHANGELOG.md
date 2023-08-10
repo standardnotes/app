@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.169.20](https://github.com/standardnotes/app/compare/@standardnotes/web@3.169.19...@standardnotes/web@3.169.20) (2023-08-09)
+
+### Bug Fixes
+
+* Fixed issue where per-tag preferences were not accessible with offline subscription ([f9d9520](https://github.com/standardnotes/app/commit/f9d9520bcac7102f4ee30f7a710bfff8911b8637))
+
+## [3.169.19](https://github.com/standardnotes/app/compare/@standardnotes/web@3.169.18...@standardnotes/web@3.169.19) (2023-08-09)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.169.18](https://github.com/standardnotes/app/compare/@standardnotes/web@3.169.17...@standardnotes/web@3.169.18) (2023-08-09)
+
+**Note:** Version bump only for package @standardnotes/web
+
 ## [3.169.17](https://github.com/standardnotes/app/compare/@standardnotes/web@3.169.16...@standardnotes/web@3.169.17) (2023-08-09)
 
 **Note:** Version bump only for package @standardnotes/web

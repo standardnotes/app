@@ -475,7 +475,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
   }
 
   hasValidFirstPartySubscription(): boolean {
-    return this.subscriptionController.hasFirstPartyOnlineOrOfflineSubscription
+    return this.subscriptionController.hasFirstPartyOnlineOrOfflineSubscription()
   }
 
   async openPurchaseFlow() {

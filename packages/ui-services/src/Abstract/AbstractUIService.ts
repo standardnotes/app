@@ -2,11 +2,12 @@ import { AbstractService, InternalEventBusInterface, ApplicationEvent } from '@s
 import { AbstractUIServiceInterface } from './AbstractUIServiceInterface'
 import { WebApplicationInterface } from '../WebApplication/WebApplicationInterface'
 
-export class AbstractUIServicee<EventName = string, EventData = unknown>
+export class AbstractUIService<EventName = string, EventData = unknown>
   extends AbstractService<EventName, EventData>
   implements AbstractUIServiceInterface<EventName, EventData>
 {
   private unsubApp!: () => void
+  private observers = new Set<() => void>()
 
   constructor(
     protected application: WebApplicationInterface,
@@ -43,8 +44,13 @@ export class AbstractUIServicee<EventName = string, EventData = unknown>
     })
   }
 
+  addObserver(observer: () => void): void {
+    this.observers.add(observer)
+  }
+
   override deinit() {
     ;(this.application as unknown) = undefined
+    this.observers.forEach((unsubObserver) => unsubObserver())
     this.unsubApp()
     ;(this.unsubApp as unknown) = undefined
     super.deinit()

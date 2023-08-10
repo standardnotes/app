@@ -15,13 +15,14 @@ import {
 } from '@standardnotes/services'
 import { VaultDisplayOptions, VaultDisplayOptionsPersistable, VaultListingInterface } from '@standardnotes/models'
 import { VaultDisplayServiceEvent } from './VaultDisplayServiceEvent'
-import { AbstractUIServicee } from '../Abstract/AbstractUIService'
+import { AbstractUIService } from '../Abstract/AbstractUIService'
 import { WebApplicationInterface } from '../WebApplication/WebApplicationInterface'
 import { VaultDisplayServiceInterface } from './VaultDisplayServiceInterface'
 import { action, makeObservable, observable } from 'mobx'
+import { ContentType } from '@standardnotes/domain-core'
 
 export class VaultDisplayService
-  extends AbstractUIServicee<VaultDisplayServiceEvent>
+  extends AbstractUIService<VaultDisplayServiceEvent>
   implements VaultDisplayServiceInterface, InternalEventHandlerInterface
 {
   options: VaultDisplayOptions
@@ -48,6 +49,14 @@ export class VaultDisplayService
     internalEventBus.addEventHandler(this, VaultLockServiceEvent.VaultLocked)
     internalEventBus.addEventHandler(this, VaultLockServiceEvent.VaultUnlocked)
     internalEventBus.addEventHandler(this, ApplicationEvent.ApplicationStageChanged)
+
+    this.addObserver(
+      application.items.streamItems(ContentType.TYPES.VaultListing, ({ removed }) => {
+        if (removed.some((vault) => vault.uuid === this.exclusivelyShownVault?.uuid)) {
+          this.changeToMultipleVaultDisplayMode()
+        }
+      }),
+    )
   }
 
   async handleEvent(event: InternalEventInterface): Promise<void> {

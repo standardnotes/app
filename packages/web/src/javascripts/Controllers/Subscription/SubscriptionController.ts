@@ -36,7 +36,6 @@ export class SubscriptionController extends AbstractViewController implements In
       hasAccount: observable,
       onlineSubscription: observable,
 
-      hasFirstPartyOnlineOrOfflineSubscription: computed,
       usedInvitationsCount: computed,
       allowedInvitationsCount: computed,
       allInvitationsUsed: computed,
@@ -89,7 +88,7 @@ export class SubscriptionController extends AbstractViewController implements In
     }
   }
 
-  get hasFirstPartyOnlineOrOfflineSubscription(): boolean {
+  hasFirstPartyOnlineOrOfflineSubscription(): boolean {
     if (this.sessions.isSignedIn()) {
       if (!this.sessions.isSignedIntoFirstPartyServer()) {
         return false
@@ -97,7 +96,8 @@ export class SubscriptionController extends AbstractViewController implements In
 
       return this.subscriptions.getOnlineSubscription() !== undefined
     } else {
-      return this.features.hasFirstPartyOfflineSubscription()
+      const offline = this.features.hasFirstPartyOfflineSubscription()
+      return offline
     }
   }
 

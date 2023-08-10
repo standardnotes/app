@@ -43,7 +43,7 @@ describe('shared vaults', function () {
     contactContext.unlockSyncing()
     await contactContext.syncAndAwaitMessageProcessing()
 
-    const contactVault = contactContext.context.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })
+    const contactVault = contactContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })
     expect(contactVault.name).to.equal('new vault name')
     expect(contactVault.description).to.equal('new vault description')
 
@@ -61,8 +61,7 @@ describe('shared vaults', function () {
     await contactContext.sync()
     await promise
 
-    expect(contactContext.context.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })).to.be
-      .undefined
+    expect(contactContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })).to.be.undefined
     expect(contactContext.keys.getPrimaryKeySystemRootKey(sharedVault.systemIdentifier)).to.be.undefined
     expect(contactContext.keys.getKeySystemItemsKeys(sharedVault.systemIdentifier)).to.be.empty
 
@@ -90,8 +89,7 @@ describe('shared vaults', function () {
     await contactContext.sync()
     await promise
 
-    expect(contactContext.context.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })).to.be
-      .undefined
+    expect(contactContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })).to.be.undefined
     expect(contactContext.keys.getPrimaryKeySystemRootKey(sharedVault.systemIdentifier)).to.be.undefined
     expect(contactContext.keys.getKeySystemItemsKeys(sharedVault.systemIdentifier)).to.be.empty
 

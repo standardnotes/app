@@ -167,6 +167,7 @@ export const TYPES = {
   DetermineKeyToUse: Symbol.for('DetermineKeyToUse'),
   GetBackupFileType: Symbol.for('GetBackupFileType'),
   GetFilePassword: Symbol.for('GetFilePassword'),
+  AuthorizeVaultDeletion: Symbol.for('AuthorizeVaultDeletion'),
 
   // Mappers
   SessionStorageMapper: Symbol.for('SessionStorageMapper'),

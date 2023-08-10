@@ -33,6 +33,7 @@ import { AlertService } from '../Alert/AlertService'
 import { GetVaults } from './UseCase/GetVaults'
 import { VaultLockServiceInterface } from '../VaultLock/VaultLockServiceInterface'
 import { Result } from '@standardnotes/domain-core'
+import { AuthorizeVaultDeletion } from './UseCase/AuthorizeVaultDeletion'
 
 export class VaultService
   extends AbstractService<VaultServiceEvent, VaultServiceEventPayload[VaultServiceEvent]>
@@ -55,6 +56,7 @@ export class VaultService
     private _sendVaultDataChangeMessage: SendVaultDataChangedMessage,
     private _isVaultOwner: IsVaultOwner,
     private _validateVaultPassword: ValidateVaultPassword,
+    private _authorizeVaultDeletion: AuthorizeVaultDeletion,
     eventBus: InternalEventBusInterface,
   ) {
     super(eventBus)
@@ -181,6 +183,10 @@ export class VaultService
 
     await this._removeItemFromVault.execute({ item })
     return this.items.findSureItem(item.uuid)
+  }
+
+  authorizeVaultDeletion(vault: VaultListingInterface): Promise<Result<boolean>> {
+    return this._authorizeVaultDeletion.execute(vault)
   }
 
   async deleteVault(vault: VaultListingInterface): Promise<boolean> {
