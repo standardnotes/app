@@ -36,6 +36,7 @@ type CommonPopoverProps = {
   side?: PopoverSide
   overrideZIndex?: string
   className?: string
+  containerClassName?: string
   disableClickOutside?: boolean
   maxHeight?: (calculatedMaxHeight: number) => number
   togglePopover?: () => void
@@ -44,6 +45,7 @@ type CommonPopoverProps = {
   portal?: boolean
   offset?: number
   hideOnClickInModal?: boolean
+  open: boolean
 }
 
 export type PopoverContentProps = CommonPopoverProps & {
@@ -53,6 +55,7 @@ export type PopoverContentProps = CommonPopoverProps & {
   togglePopover?: () => void
   disableMobileFullscreenTakeover?: boolean
   id: string
+  setAnimationElement: (element: HTMLElement | null) => void
 }
 
 export type PopoverProps =
