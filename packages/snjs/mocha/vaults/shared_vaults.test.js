@@ -8,7 +8,6 @@ describe('shared vaults', function () {
   this.timeout(Factory.TwentySecondTimeout)
 
   let context
-  let vaults
 
   beforeEach(async function () {
     localStorage.clear()
@@ -17,8 +16,6 @@ describe('shared vaults', function () {
 
     await context.launch()
     await context.register()
-
-    vaults = context.vaults
   })
 
   afterEach(async function () {
@@ -39,7 +36,7 @@ describe('shared vaults', function () {
       description: 'new vault description',
     })
 
-    const updatedVault = vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })
+    const updatedVault = context.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })
     expect(updatedVault.name).to.equal('new vault name')
     expect(updatedVault.description).to.equal('new vault description')
 

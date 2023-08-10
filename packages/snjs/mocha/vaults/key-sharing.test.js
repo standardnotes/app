@@ -22,6 +22,7 @@ describe('vault key sharing', function () {
     await context.deinit()
     localStorage.clear()
     sinon.restore()
+    context = undefined
   })
 
   it('sharing a vault with user inputted and ephemeral password should share the key as synced for the recipient', async () => {

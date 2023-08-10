@@ -22,6 +22,7 @@ describe('shared vault permissions', function () {
     await context.deinit()
     localStorage.clear()
     sinon.restore()
+    context = undefined
   })
 
   it('non-admin user should not be able to invite user', async () => {

@@ -22,6 +22,7 @@ describe('shared vault items', function () {
     await context.deinit()
     localStorage.clear()
     sinon.restore()
+    context = undefined
   })
 
   it('should add item to shared vault with no other members', async () => {

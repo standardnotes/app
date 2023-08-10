@@ -58,13 +58,15 @@ const DataBackups = ({ application }: Props) => {
   }, [refreshEncryptionStatus])
 
   const downloadDataArchive = async () => {
-    const data = isBackupEncrypted
-      ? await application.createEncryptedBackupFile()
-      : await application.createDecryptedBackupFile()
+    const result = isBackupEncrypted
+      ? await application.createEncryptedBackupFile.execute()
+      : await application.createDecryptedBackupFile.execute()
 
-    if (!data) {
+    if (result.isFailed()) {
       return
     }
+
+    const data = result.getValue()
 
     const blobData = new Blob([JSON.stringify(data, null, 2)], {
       type: 'text/json',
@@ -126,15 +128,11 @@ const DataBackups = ({ application }: Props) => {
 
     setIsImportDataLoading(false)
 
-    if (!result) {
-      return
-    }
-
     let statusText = STRING_IMPORT_SUCCESS
-    if ('error' in result) {
-      statusText = result.error.text
-    } else if (result.errorCount) {
-      statusText = StringImportError(result.errorCount)
+    if (result.isFailed()) {
+      statusText = result.getError()
+    } else if (result.getValue().errorCount) {
+      statusText = StringImportError(result.getValue().errorCount)
     }
     void alertDialog({
       text: statusText,

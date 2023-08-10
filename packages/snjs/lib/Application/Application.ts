@@ -20,8 +20,8 @@ import {
   ApplicationStageChangedEventPayload,
   StorageValueModes,
   ChallengeObserver,
-  ImportDataReturnType,
-  ImportDataUseCase,
+  ImportDataResult,
+  ImportData,
   StoragePersistencePolicies,
   HomeServerServiceInterface,
   DeviceInterface,
@@ -79,6 +79,8 @@ import {
   SetHost,
   MfaServiceInterface,
   GenerateUuid,
+  CreateDecryptedBackupFile,
+  CreateEncryptedBackupFile,
 } from '@standardnotes/services'
 import {
   SNNote,
@@ -133,6 +135,7 @@ import { GetAuthenticatorAuthenticationOptions } from '@Lib/Domain/UseCase/GetAu
 import { Dependencies } from './Dependencies/Dependencies'
 import { TYPES } from './Dependencies/Types'
 import { RegisterApplicationServicesEvents } from './Dependencies/DependencyEvents'
+import { Result } from '@standardnotes/domain-core'
 
 /** How often to automatically sync, in milliseconds */
 const DEFAULT_AUTO_SYNC_INTERVAL = 30_000
@@ -672,26 +675,6 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return this.protections.authorizeAutolockIntervalChange()
   }
 
-  public async createEncryptedBackupFileForAutomatedDesktopBackups(): Promise<BackupFile | undefined> {
-    return this.encryption.createEncryptedBackupFile()
-  }
-
-  public async createEncryptedBackupFile(): Promise<BackupFile | undefined> {
-    if (!(await this.protections.authorizeBackupCreation())) {
-      return
-    }
-
-    return this.encryption.createEncryptedBackupFile()
-  }
-
-  public async createDecryptedBackupFile(): Promise<BackupFile | undefined> {
-    if (!(await this.protections.authorizeBackupCreation())) {
-      return
-    }
-
-    return this.encryption.createDecryptedBackupFile()
-  }
-
   public isEphemeralSession(): boolean {
     return this.storage.isEphemeralSession()
   }
@@ -842,8 +825,8 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     })
   }
 
-  public async importData(data: BackupFile, awaitSync = false): Promise<ImportDataReturnType> {
-    const usecase = this.dependencies.get<ImportDataUseCase>(TYPES.ImportDataUseCase)
+  public async importData(data: BackupFile, awaitSync = false): Promise<Result<ImportDataResult>> {
+    const usecase = this.dependencies.get<ImportData>(TYPES.ImportData)
     return usecase.execute(data, awaitSync)
   }
 
@@ -1162,6 +1145,14 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
 
   public get generateUuid(): GenerateUuid {
     return this.dependencies.get<GenerateUuid>(TYPES.GenerateUuid)
+  }
+
+  public get createDecryptedBackupFile(): CreateDecryptedBackupFile {
+    return this.dependencies.get<CreateDecryptedBackupFile>(TYPES.CreateDecryptedBackupFile)
+  }
+
+  public get createEncryptedBackupFile(): CreateEncryptedBackupFile {
+    return this.dependencies.get<CreateEncryptedBackupFile>(TYPES.CreateEncryptedBackupFile)
   }
 
   private get migrations(): MigrationService {

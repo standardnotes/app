@@ -22,6 +22,7 @@ describe('shared vault crypto', function () {
     await context.deinit()
     localStorage.clear()
     sinon.restore()
+    context = undefined
   })
 
   describe('root key', () => {

@@ -43,7 +43,7 @@ describe('importing', function () {
         version: '-1',
         items: [],
       })
-      expect(result.error).to.exist
+      expect(result.isFailed()).to.be.true
     })
 
     it('should not import backups made from 004 into 003 account', async function () {
@@ -57,7 +57,7 @@ describe('importing', function () {
         version: ProtocolVersion.V004,
         items: [],
       })
-      expect(result.error).to.exist
+      expect(result.isFailed()).to.be.true
     })
 
     it('importing existing data should keep relationships valid', async function () {
@@ -361,7 +361,7 @@ describe('importing', function () {
         Factory.createMappedTag(application),
       ])
 
-      const backupData = await application.createEncryptedBackupFileForAutomatedDesktopBackups()
+      const backupData = (await application.createEncryptedBackupFile.execute({ skipAuthorization: true })).getValue()
 
       await application.sync.sync({ awaitAll: true })
 
@@ -394,7 +394,7 @@ describe('importing', function () {
         Factory.createMappedTag(application),
       ])
 
-      const backupData = await application.createEncryptedBackupFileForAutomatedDesktopBackups()
+      const backupData = (await application.createEncryptedBackupFile.execute({ skipAuthorization: true })).getValue()
 
       await Factory.safeDeinit(application)
       application = await Factory.createInitAppWithFakeCrypto()
@@ -421,7 +421,7 @@ describe('importing', function () {
         Factory.createMappedTag(application),
       ])
 
-      const backupData = await application.createEncryptedBackupFileForAutomatedDesktopBackups()
+      const backupData = (await application.createEncryptedBackupFile.execute({ skipAuthorization: true })).getValue()
 
       await Factory.safeDeinit(application)
       application = await Factory.createInitAppWithFakeCrypto()
@@ -449,14 +449,13 @@ describe('importing', function () {
         text: 'On protocol version 003.',
       })
 
-      const backupData = await application.createEncryptedBackupFileForAutomatedDesktopBackups()
+      const backupData = (await application.createEncryptedBackupFile.execute({ skipAuthorization: true })).getValue()
 
       await Factory.safeDeinit(application)
       application = await Factory.createInitAppWithFakeCrypto()
       Factory.handlePasswordChallenges(application, password)
 
-      const result = await application.importData(backupData, true)
-      expect(result).to.not.be.undefined
+      const result = (await application.importData(backupData, true)).getValue()
       expect(result.affectedItems.length).to.be.eq(backupData.items.length)
       expect(result.errorCount).to.be.eq(0)
 
@@ -478,14 +477,13 @@ describe('importing', function () {
         text: 'On protocol version 004.',
       })
 
-      const backupData = await application.createEncryptedBackupFileForAutomatedDesktopBackups()
+      const backupData = (await application.createEncryptedBackupFile.execute({ skipAuthorization: true })).getValue()
 
       await Factory.safeDeinit(application)
       application = await Factory.createInitAppWithFakeCrypto()
       Factory.handlePasswordChallenges(application, password)
 
-      const result = await application.importData(backupData, true)
-      expect(result).to.not.be.undefined
+      const result = (await application.importData(backupData, true)).getValue()
       expect(result.affectedItems.length).to.be.eq(backupData.items.length)
       expect(result.errorCount).to.be.eq(0)
 
@@ -507,7 +505,7 @@ describe('importing', function () {
         text: 'On protocol version 004.',
       })
 
-      const backupData = await application.createEncryptedBackupFileForAutomatedDesktopBackups()
+      const backupData = (await application.createEncryptedBackupFile.execute({ skipAuthorization: true })).getValue()
 
       await Factory.safeDeinit(application)
       application = await Factory.createInitAppWithFakeCrypto()
@@ -523,8 +521,7 @@ describe('importing', function () {
 
       backupData.items = [...backupData.items, madeUpPayload]
 
-      const result = await application.importData(backupData, true)
-      expect(result).to.not.be.undefined
+      const result = (await application.importData(backupData, true)).getValue()
       expect(result.affectedItems.length).to.be.eq(backupData.items.length - 1)
       expect(result.errorCount).to.be.eq(1)
     })
@@ -543,7 +540,7 @@ describe('importing', function () {
         text: 'On protocol version 003.',
       })
 
-      const backupData = await application.createEncryptedBackupFileForAutomatedDesktopBackups()
+      const backupData = (await application.createEncryptedBackupFile.execute({ skipAuthorization: true })).getValue()
 
       await Factory.safeDeinit(application)
       application = await Factory.createInitAppWithFakeCrypto()
@@ -559,8 +556,7 @@ describe('importing', function () {
         },
       })
 
-      const result = await application.importData(backupData, true)
-      expect(result).to.not.be.undefined
+      const result = (await application.importData(backupData, true)).getValue()
 
       expect(result.affectedItems.length).to.be.eq(0)
       expect(result.errorCount).to.be.eq(backupData.items.length)
@@ -579,7 +575,7 @@ describe('importing', function () {
         text: 'On protocol version 004.',
       })
 
-      const backupData = await application.createEncryptedBackupFileForAutomatedDesktopBackups()
+      const backupData = (await application.createEncryptedBackupFile.execute({ skipAuthorization: true })).getValue()
 
       await Factory.safeDeinit(application)
       application = await Factory.createInitAppWithFakeCrypto()
@@ -590,8 +586,7 @@ describe('importing', function () {
         },
       })
 
-      const result = await application.importData(backupData, true)
-      expect(result).to.not.be.undefined
+      const result = (await application.importData(backupData, true)).getValue()
       expect(result.affectedItems.length).to.be.eq(0)
       expect(result.errorCount).to.be.eq(backupData.items.length)
       expect(application.items.getDisplayableNotes().length).to.equal(0)
@@ -609,7 +604,7 @@ describe('importing', function () {
         text: 'On protocol version 004.',
       })
 
-      const backupData = await application.createEncryptedBackupFileForAutomatedDesktopBackups()
+      const backupData = (await application.createEncryptedBackupFile.execute({ skipAuthorization: true })).getValue()
       delete backupData.keyParams
 
       await Factory.safeDeinit(application)
@@ -617,7 +612,7 @@ describe('importing', function () {
 
       const result = await application.importData(backupData)
 
-      expect(result.error).to.be.ok
+      expect(result.isFailed()).to.be.true
     })
 
     it('should not import payloads if the corresponding ItemsKey is not present within the backup file', async function () {
@@ -633,16 +628,14 @@ describe('importing', function () {
         text: 'On protocol version 004.',
       })
 
-      const backupData = await application.createEncryptedBackupFileForAutomatedDesktopBackups()
+      const backupData = (await application.createEncryptedBackupFile.execute({ skipAuthorization: true })).getValue()
       backupData.items = backupData.items.filter((payload) => payload.content_type !== ContentType.TYPES.ItemsKey)
 
       await Factory.safeDeinit(application)
       application = await Factory.createInitAppWithFakeCrypto()
       Factory.handlePasswordChallenges(application, password)
 
-      const result = await application.importData(backupData, true)
-
-      expect(result).to.not.be.undefined
+      const result = (await application.importData(backupData, true)).getValue()
 
       expect(result.affectedItems.length).to.equal(BaseItemCounts.BackupFileRootKeyEncryptedItems)
 
@@ -664,7 +657,7 @@ describe('importing', function () {
 
       await application.sync.sync()
 
-      const backupData = await application.createEncryptedBackupFileForAutomatedDesktopBackups()
+      const backupData = (await application.createEncryptedBackupFile.execute({ skipAuthorization: true })).getValue()
 
       await Factory.safeDeinit(application)
       application = await Factory.createInitAppWithFakeCrypto()
@@ -739,8 +732,7 @@ describe('importing', function () {
 
       Factory.handlePasswordChallenges(application, 'password')
 
-      const result = await application.importData(backupData, true)
-      expect(result).to.not.be.undefined
+      const result = (await application.importData(backupData, true)).getValue()
       expect(result.affectedItems.length).to.be.eq(backupData.items.length)
       expect(result.errorCount).to.be.eq(0)
     })
@@ -867,7 +859,7 @@ describe('importing', function () {
         },
       }
 
-      const result = await application.importData(backupFile, false)
+      const result = (await application.importData(backupFile, false)).getValue()
       expect(result.errorCount).to.equal(0)
       await Factory.safeDeinit(application)
     })

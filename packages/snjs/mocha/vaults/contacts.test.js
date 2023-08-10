@@ -22,6 +22,7 @@ describe('contacts', function () {
     await context.deinit()
     localStorage.clear()
     sinon.restore()
+    context = undefined
   })
 
   it('should create contact', async () => {

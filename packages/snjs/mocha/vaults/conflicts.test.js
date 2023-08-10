@@ -22,6 +22,7 @@ describe('shared vault conflicts', function () {
     await context.deinit()
     localStorage.clear()
     sinon.restore()
+    context = undefined
   })
 
   it('after being removed from shared vault, attempting to sync previous vault item should result in SharedVaultNotMemberError. The item should be duplicated then removed.', async () => {

@@ -22,6 +22,7 @@ describe('keypair change', function () {
     await context.deinit()
     localStorage.clear()
     sinon.restore()
+    context = undefined
   })
 
   it('contacts should be able to handle receiving multiple keypair changed messages and trust them in order', async () => {

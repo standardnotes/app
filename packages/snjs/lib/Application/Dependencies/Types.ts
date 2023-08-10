@@ -89,7 +89,7 @@ export const TYPES = {
   ListRevisions: Symbol.for('ListRevisions'),
   GetRevision: Symbol.for('GetRevision'),
   DeleteRevision: Symbol.for('DeleteRevision'),
-  ImportDataUseCase: Symbol.for('ImportDataUseCase'),
+  ImportData: Symbol.for('ImportData'),
   DiscardItemsLocally: Symbol.for('DiscardItemsLocally'),
   FindContact: Symbol.for('FindContact'),
   GetAllContacts: Symbol.for('GetAllContacts'),
@@ -163,7 +163,13 @@ export const TYPES = {
   GenerateUuid: Symbol.for('GenerateUuid'),
   GetVaultItems: Symbol.for('GetVaultItems'),
   ValidateVaultPassword: Symbol.for('ValidateVaultPassword'),
+  DecryptBackupPayloads: Symbol.for('DecryptBackupPayloads'),
+  DetermineKeyToUse: Symbol.for('DetermineKeyToUse'),
+  GetBackupFileType: Symbol.for('GetBackupFileType'),
+  GetFilePassword: Symbol.for('GetFilePassword'),
   AuthorizeVaultDeletion: Symbol.for('AuthorizeVaultDeletion'),
+  CreateDecryptedBackupFile: Symbol.for('CreateDecryptedBackupFile'),
+  CreateEncryptedBackupFile: Symbol.for('CreateEncryptedBackupFile'),
 
   // Mappers
   SessionStorageMapper: Symbol.for('SessionStorageMapper'),

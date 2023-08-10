@@ -21,6 +21,7 @@ describe('vault key management', function () {
     await context.deinit()
     localStorage.clear()
     sinon.restore()
+    context = undefined
   })
 
   describe('locking', () => {

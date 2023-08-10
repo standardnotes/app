@@ -8,7 +8,6 @@ import {
 } from '@standardnotes/encryption'
 import { KeyParamsOrigination, ProtocolVersion } from '@standardnotes/common'
 import {
-  BackupFile,
   DecryptedPayloadInterface,
   EncryptedPayloadInterface,
   ItemContent,
@@ -54,9 +53,6 @@ export interface EncryptionProviderInterface {
   getEncryptionDisplayName(): Promise<string>
   upgradeAvailable(): Promise<boolean>
 
-  createEncryptedBackupFile(): Promise<BackupFile>
-  createDecryptedBackupFile(): BackupFile
-
   getUserVersion(): ProtocolVersion | undefined
   hasAccount(): boolean
   hasPasscode(): boolean
@@ -74,6 +70,11 @@ export interface EncryptionProviderInterface {
   >
 
   deleteWorkspaceSpecificKeyStateFromDevice(): Promise<void>
+
+  itemsKeyForEncryptedPayload(
+    payload: EncryptedPayloadInterface,
+  ): ItemsKeyInterface | KeySystemItemsKeyInterface | undefined
+  defaultItemsKeyForItemVersion(version: ProtocolVersion, fromKeys?: ItemsKeyInterface[]): ItemsKeyInterface | undefined
 
   unwrapRootKey(wrappingKey: RootKeyInterface): Promise<void>
   computeRootKey(password: string, keyParams: SNRootKeyParams): Promise<RootKeyInterface>
