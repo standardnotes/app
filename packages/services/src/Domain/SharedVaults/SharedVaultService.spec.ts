@@ -14,9 +14,11 @@ import { SyncServiceInterface } from '../Sync/SyncServiceInterface'
 import { ItemManagerInterface } from '../Item/ItemManagerInterface'
 import { SessionsClientInterface } from '../Session/SessionsClientInterface'
 import { ContactPublicKeySetInterface, TrustedContactInterface } from '@standardnotes/models'
+import { SyncLocalVaultsWithRemoteSharedVaults } from './UseCase/SyncLocalVaultsWithRemoteSharedVaults'
 
 describe('SharedVaultService', () => {
   let service: SharedVaultService
+  let syncLocalVaultsWithRemoteSharedVaults: SyncLocalVaultsWithRemoteSharedVaults
 
   beforeEach(() => {
     const sync = {} as jest.Mocked<SyncServiceInterface>
@@ -37,12 +39,16 @@ describe('SharedVaultService', () => {
     const deleteSharedVaultUseCase = {} as jest.Mocked<DeleteSharedVault>
     const discardItemsLocally = {} as jest.Mocked<DiscardItemsLocally>
 
+    syncLocalVaultsWithRemoteSharedVaults = {} as jest.Mocked<SyncLocalVaultsWithRemoteSharedVaults>
+    syncLocalVaultsWithRemoteSharedVaults.execute = jest.fn()
+
     const eventBus = {} as jest.Mocked<InternalEventBusInterface>
     eventBus.addEventHandler = jest.fn()
 
     service = new SharedVaultService(
       items,
       session,
+      syncLocalVaultsWithRemoteSharedVaults,
       getVault,
       getOwnedVaults,
       createSharedVaultUseCase,
