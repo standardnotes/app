@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.29.13](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.29.12...@standardnotes/ui-services@1.29.13) (2023-08-10)
+
+**Note:** Version bump only for package @standardnotes/ui-services
+
 ## [1.29.12](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.29.11...@standardnotes/ui-services@1.29.12) (2023-08-09)
 
 **Note:** Version bump only for package @standardnotes/ui-services
