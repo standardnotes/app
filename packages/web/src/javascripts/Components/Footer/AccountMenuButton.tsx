@@ -4,16 +4,19 @@ import AccountMenu, { AccountMenuProps } from '../AccountMenu/AccountMenu'
 import Icon from '../Icon/Icon'
 import Popover from '../Popover/Popover'
 import StyledTooltip from '../StyledTooltip/StyledTooltip'
+import { observer } from 'mobx-react-lite'
+import { AccountMenuController } from '@/Controllers/AccountMenu/AccountMenuController'
 
 type Props = AccountMenuProps & {
-  isOpen: boolean
+  controller: AccountMenuController
   hasError: boolean
   toggleMenu: () => void
   user: unknown
 }
 
-const AccountMenuButton = ({ hasError, isOpen, mainApplicationGroup, onClickOutside, toggleMenu, user }: Props) => {
+const AccountMenuButton = ({ hasError, controller, mainApplicationGroup, onClickOutside, toggleMenu, user }: Props) => {
   const buttonRef = useRef<HTMLButtonElement>(null)
+  const { show: isOpen } = controller
 
   return (
     <>
@@ -46,4 +49,4 @@ const AccountMenuButton = ({ hasError, isOpen, mainApplicationGroup, onClickOuts
   )
 }
 
-export default AccountMenuButton
+export default observer(AccountMenuButton)

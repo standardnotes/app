@@ -36,7 +36,6 @@ type State = {
   showBetaWarning: boolean
   showSyncResolution: boolean
   newUpdateAvailable: boolean
-  showAccountMenu: boolean
   offline: boolean
   hasError: boolean
   arbitraryStatusMessage?: string
@@ -62,7 +61,6 @@ class Footer extends AbstractComponent<Props, State> {
       showBetaWarning: false,
       showSyncResolution: false,
       newUpdateAvailable: false,
-      showAccountMenu: false,
     }
 
     this.webEventListenerDestroyer = props.application.addWebEventObserver((event, data) => {
@@ -117,12 +115,6 @@ class Footer extends AbstractComponent<Props, State> {
     this.removeStatusObserver = this.application.status.addEventObserver((_event, message) => {
       this.setState({
         arbitraryStatusMessage: message,
-      })
-    })
-
-    this.autorun(() => {
-      this.setState({
-        showAccountMenu: this.application.accountMenuController.show,
       })
     })
   }
@@ -347,7 +339,7 @@ class Footer extends AbstractComponent<Props, State> {
             <div className="sk-app-bar-item relative z-footer-bar-item ml-0 select-none">
               <AccountMenuButton
                 hasError={this.state.hasError}
-                isOpen={this.state.showAccountMenu}
+                controller={this.application.accountMenuController}
                 mainApplicationGroup={this.props.applicationGroup}
                 onClickOutside={this.clickOutsideAccountMenu}
                 toggleMenu={this.accountMenuClickHandler}
