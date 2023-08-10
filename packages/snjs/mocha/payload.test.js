@@ -74,7 +74,7 @@ describe('payload', () => {
           content_type: ContentType.TYPES.Note,
           content: '000:somebase64string',
         }),
-      'Unrecognized protocol version 000',
+      'EncryptedPayload constructor versionResult is failed',
     )
   })
 
