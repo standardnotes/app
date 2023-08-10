@@ -37,7 +37,6 @@ type State = {
   showSyncResolution: boolean
   newUpdateAvailable: boolean
   showAccountMenu: boolean
-  showQuickSettingsMenu: boolean
   offline: boolean
   hasError: boolean
   arbitraryStatusMessage?: string
@@ -64,7 +63,6 @@ class Footer extends AbstractComponent<Props, State> {
       showSyncResolution: false,
       newUpdateAvailable: false,
       showAccountMenu: false,
-      showQuickSettingsMenu: false,
     }
 
     this.webEventListenerDestroyer = props.application.addWebEventObserver((event, data) => {
@@ -125,7 +123,6 @@ class Footer extends AbstractComponent<Props, State> {
     this.autorun(() => {
       this.setState({
         showAccountMenu: this.application.accountMenuController.show,
-        showQuickSettingsMenu: this.application.quickSettingsMenuController.open,
       })
     })
   }
@@ -293,10 +290,6 @@ class Footer extends AbstractComponent<Props, State> {
     this.application.accountMenuController.toggleShow()
   }
 
-  quickSettingsClickHandler = () => {
-    this.application.quickSettingsMenuController.toggle()
-  }
-
   syncResolutionClickHandler = () => {
     this.setState({
       showSyncResolution: !this.state.showSyncResolution,
@@ -336,12 +329,7 @@ class Footer extends AbstractComponent<Props, State> {
     this.application.accountMenuController.closeAccountMenu()
   }
 
-  clickOutsideQuickSettingsMenu = () => {
-    this.application.quickSettingsMenuController.closeQuickSettingsMenu()
-  }
-
   openPreferences = (openWhatsNew: boolean) => {
-    this.clickOutsideQuickSettingsMenu()
     if (openWhatsNew) {
       this.application.preferencesController.setCurrentPane('whats-new')
     }
@@ -372,12 +360,7 @@ class Footer extends AbstractComponent<Props, State> {
             </div>
 
             <div className="relative z-footer-bar-item select-none">
-              <QuickSettingsButton
-                isOpen={this.state.showQuickSettingsMenu}
-                toggleMenu={this.quickSettingsClickHandler}
-                application={this.application}
-                quickSettingsMenuController={this.application.quickSettingsMenuController}
-              />
+              <QuickSettingsButton application={this.application} />
             </div>
 
             <div className="relative z-footer-bar-item  ml-1.5 select-none">

@@ -13,7 +13,6 @@ import Icon from '@/Components/Icon/Icon'
 import FocusModeSwitch from './FocusModeSwitch'
 import ThemesMenuButton from './ThemesMenuButton'
 import { sortThemes } from '@/Utils/SortThemes'
-import { QuickSettingsController } from '@/Controllers/QuickSettingsController'
 import PanelSettingsSection from './PanelSettingsSection'
 import Menu from '../Menu/Menu'
 import MenuSwitchButtonItem from '../Menu/MenuSwitchButtonItem'
@@ -23,14 +22,13 @@ import { GetAllThemesUseCase } from '@standardnotes/ui-services'
 import MenuItemSeparator from '../Menu/MenuItemSeparator'
 
 type MenuProps = {
-  quickSettingsMenuController: QuickSettingsController
+  closeMenu: () => void
 }
 
-const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ quickSettingsMenuController }) => {
+const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ closeMenu }) => {
   const application = useApplication()
 
   const { focusModeEnabled, setFocusModeEnabled } = application.paneController
-  const { closeQuickSettingsMenu } = quickSettingsMenuController
   const [themes, setThemes] = useState<UIFeature<ThemeFeatureDescription>[]>([])
   const [editorStackComponents, setEditorStackComponents] = useState<ComponentInterface[]>([])
 
@@ -147,7 +145,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ quickSettingsMenuCont
       <FocusModeSwitch
         application={application}
         onToggle={setFocusModeEnabled}
-        onClose={closeQuickSettingsMenu}
+        onClose={closeMenu}
         isEnabled={focusModeEnabled}
       />
       <PanelSettingsSection />

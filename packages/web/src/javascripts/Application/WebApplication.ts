@@ -71,7 +71,6 @@ import { HistoryModalController } from '@/Controllers/NoteHistory/HistoryModalCo
 import { NavigationController } from '@/Controllers/Navigation/NavigationController'
 import { FilePreviewModalController } from '@/Controllers/FilePreviewModalController'
 import { OpenSubscriptionDashboard } from './UseCase/OpenSubscriptionDashboard'
-import { QuickSettingsController } from '@/Controllers/QuickSettingsController'
 import { ItemGroupController } from '@/Components/NoteView/Controller/ItemGroupController'
 import { NoAccountWarningController } from '@/Controllers/NoAccountWarningController'
 import { SearchOptionsController } from '@/Controllers/SearchOptionsController'
@@ -615,10 +614,6 @@ export class WebApplication extends SNApplication implements WebApplicationInter
 
   get purchaseFlowController(): PurchaseFlowController {
     return this.deps.get<PurchaseFlowController>(Web_TYPES.PurchaseFlowController)
-  }
-
-  get quickSettingsMenuController(): QuickSettingsController {
-    return this.deps.get<QuickSettingsController>(Web_TYPES.QuickSettingsController)
   }
 
   get persistence(): PersistenceService {

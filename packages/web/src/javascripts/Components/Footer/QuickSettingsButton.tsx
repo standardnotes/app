@@ -1,9 +1,8 @@
 import { WebApplication } from '@/Application/WebApplication'
-import { QuickSettingsController } from '@/Controllers/QuickSettingsController'
 import { UIFeature, GetDarkThemeFeature } from '@standardnotes/snjs'
 import { TOGGLE_DARK_MODE_COMMAND } from '@standardnotes/ui-services'
 import { classNames } from '@standardnotes/utils'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useCommandService } from '../CommandProvider'
 import Icon from '../Icon/Icon'
 import Popover from '../Popover/Popover'
@@ -11,15 +10,15 @@ import QuickSettingsMenu from '../QuickSettingsMenu/QuickSettingsMenu'
 import StyledTooltip from '../StyledTooltip/StyledTooltip'
 
 type Props = {
-  isOpen: boolean
-  toggleMenu: () => void
   application: WebApplication
-  quickSettingsMenuController: QuickSettingsController
 }
 
-const QuickSettingsButton = ({ application, isOpen, toggleMenu, quickSettingsMenuController }: Props) => {
+const QuickSettingsButton = ({ application }: Props) => {
   const buttonRef = useRef<HTMLButtonElement>(null)
   const commandService = useCommandService()
+
+  const [isOpen, setIsOpen] = useState(false)
+  const toggleMenu = () => setIsOpen(!isOpen)
 
   useEffect(() => {
     return commandService.addCommandHandler({
@@ -52,7 +51,7 @@ const QuickSettingsButton = ({ application, isOpen, toggleMenu, quickSettingsMen
         align="start"
         className="py-2"
       >
-        <QuickSettingsMenu quickSettingsMenuController={quickSettingsMenuController} />
+        <QuickSettingsMenu closeMenu={toggleMenu} />
       </Popover>
     </>
   )

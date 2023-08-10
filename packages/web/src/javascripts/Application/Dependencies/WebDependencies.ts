@@ -22,7 +22,6 @@ import { DesktopManager } from '../Device/DesktopManager'
 import { MomentsService } from '@/Controllers/Moments/MomentsService'
 import { PersistenceService } from '@/Controllers/Abstract/PersistenceService'
 import { FilePreviewModalController } from '@/Controllers/FilePreviewModalController'
-import { QuickSettingsController } from '@/Controllers/QuickSettingsController'
 import { PaneController } from '@/Controllers/PaneController/PaneController'
 import { PreferencesController } from '@/Controllers/PreferencesController'
 import { FeaturesController } from '@/Controllers/FeaturesController'
@@ -170,10 +169,6 @@ export class WebDependencies extends DependencyContainer {
 
     this.bind(Web_TYPES.FilePreviewModalController, () => {
       return new FilePreviewModalController(application.items)
-    })
-
-    this.bind(Web_TYPES.QuickSettingsController, () => {
-      return new QuickSettingsController(application.events)
     })
 
     this.bind(Web_TYPES.PaneController, () => {
