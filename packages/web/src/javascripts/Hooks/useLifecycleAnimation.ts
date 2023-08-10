@@ -52,15 +52,15 @@ export const useLifecycleAnimation = (
 
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-    if (prefersReducedMotion) {
-      setIsMounted(open)
-      return
-    }
-
     const enter = enterRef.current
     const enterCallback = enterCallbackRef.current
     const exit = exitRef.current
     const exitCallback = exitCallbackRef.current
+
+    if (prefersReducedMotion && !enter?.reducedMotionKeyframes && !exit?.reducedMotionKeyframes) {
+      setIsMounted(open)
+      return
+    }
 
     if (open) {
       if (!enter) {
@@ -71,10 +71,13 @@ export const useLifecycleAnimation = (
       if (enter.initialStyle) {
         Object.assign(element.style, enter.initialStyle)
       }
-      const animation = element.animate(enter.keyframes, {
-        ...enter.options,
-        fill: 'forwards',
-      })
+      const animation = element.animate(
+        prefersReducedMotion && enter.reducedMotionKeyframes ? enter.reducedMotionKeyframes : enter.keyframes,
+        {
+          ...enter.options,
+          fill: 'forwards',
+        },
+      )
       animation.finished
         .then(() => {
           enterCallback?.(element)
@@ -89,10 +92,13 @@ export const useLifecycleAnimation = (
       if (exit.initialStyle) {
         Object.assign(element.style, exit.initialStyle)
       }
-      const animation = element.animate(exit.keyframes, {
-        ...exit.options,
-        fill: 'forwards',
-      })
+      const animation = element.animate(
+        prefersReducedMotion && exit.reducedMotionKeyframes ? exit.reducedMotionKeyframes : exit.keyframes,
+        {
+          ...exit.options,
+          fill: 'forwards',
+        },
+      )
       animation.finished
         .then(() => {
           setIsMounted(false)

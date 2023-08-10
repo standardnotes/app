@@ -1,5 +1,6 @@
 export type AnimationConfig = {
   keyframes: Keyframe[]
+  reducedMotionKeyframes?: Keyframe[]
   options: KeyframeAnimationOptions
   initialStyle?: Partial<CSSStyleDeclaration>
 }

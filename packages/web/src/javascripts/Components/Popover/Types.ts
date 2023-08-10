@@ -36,6 +36,7 @@ type CommonPopoverProps = {
   side?: PopoverSide
   overrideZIndex?: string
   className?: string
+  containerClassName?: string
   disableClickOutside?: boolean
   maxHeight?: (calculatedMaxHeight: number) => number
   togglePopover?: () => void
