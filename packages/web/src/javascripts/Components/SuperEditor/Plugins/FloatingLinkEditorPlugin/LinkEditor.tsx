@@ -23,7 +23,7 @@ const LinkEditor = ({ linkUrl, isEditMode, setEditMode, editor, lastSelection, i
 
   const handleLinkSubmission = () => {
     if (lastSelection !== null) {
-      if (linkUrl !== '') {
+      if (editedLinkUrl !== '') {
         editor.dispatchCommand(TOGGLE_LINK_COMMAND, sanitizeUrl(editedLinkUrl))
       }
       setEditMode(false)
