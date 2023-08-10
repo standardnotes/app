@@ -57,6 +57,16 @@ const PositionedPopoverContent = ({
     offset,
   })
 
+  if (!styles) {
+    document.body.style.overflow = 'hidden'
+  }
+
+  useLayoutEffect(() => {
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [])
+
   let adjustedStyles: PopoverCSSProperties | undefined = undefined
 
   if (!portal && popoverElement && styles) {
