@@ -12,6 +12,7 @@ const StyledTooltip = ({
   label,
   showOnMobile = false,
   showOnHover = true,
+  interactive = false,
   ...props
 }: {
   children: ReactNode
@@ -19,11 +20,14 @@ const StyledTooltip = ({
   className?: string
   showOnMobile?: boolean
   showOnHover?: boolean
+  interactive?: boolean
 } & Partial<TooltipOptions>) => {
   const [forceOpen, setForceOpen] = useState<boolean | undefined>()
 
   const tooltip = useTooltipStore({
-    timeout: 350,
+    timeout: 500,
+    hideTimeout: 0,
+    skipTimeout: 0,
     open: forceOpen,
   })
   const isMobile = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
@@ -35,7 +39,7 @@ const StyledTooltip = ({
   return (
     <>
       <TooltipAnchor
-        onFocus={() => setForceOpen(true)}
+        onClick={() => setForceOpen(false)}
         onBlur={() => setForceOpen(undefined)}
         store={tooltip}
         as={Slot}
@@ -44,6 +48,7 @@ const StyledTooltip = ({
         {children}
       </TooltipAnchor>
       <Tooltip
+        tabIndex={undefined}
         autoFocusOnShow={!showOnHover}
         store={tooltip}
         className={classNames(
@@ -52,6 +57,10 @@ const StyledTooltip = ({
         )}
         updatePosition={() => {
           const { popoverElement, anchorElement, open } = tooltip.getState()
+
+          if (!interactive && popoverElement) {
+            popoverElement.style.pointerEvents = 'none'
+          }
 
           const documentElement = document.querySelector('.main-ui-view')
 
