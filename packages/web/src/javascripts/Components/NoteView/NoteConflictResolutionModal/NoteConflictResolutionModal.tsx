@@ -362,6 +362,7 @@ const NoteConflictResolutionModal = ({
             <div className={isPreviewMode ? 'mr-9' : ''}>Diff Mode</div>
             {showSuperConversionInfo && (
               <StyledTooltip
+                interactive
                 className="!z-modal !max-w-[50ch]"
                 label={
                   <>
