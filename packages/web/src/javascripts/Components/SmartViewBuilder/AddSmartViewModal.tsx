@@ -147,7 +147,7 @@ const AddSmartViewModal = ({ controller, platform }: Props) => {
           <div className="flex items-center gap-2.5">
             <div className="text-sm font-semibold">Title:</div>
             <input
-              className="rounded border border-border bg-default px-2 py-1"
+              className="rounded border border-border bg-default md:translucent-ui:bg-transparent px-2 py-1"
               value={title}
               onChange={(event) => {
                 setTitle(event.target.value)
