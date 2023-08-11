@@ -3142,15 +3142,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nanostores/react@npm:^0.4.0":
-  version: 0.4.1
-  resolution: "@nanostores/react@npm:0.4.1"
-  dependencies:
-    use-sync-external-store: ^1.2.0
+"@nanostores/react@npm:^0.7.1":
+  version: 0.7.1
+  resolution: "@nanostores/react@npm:0.7.1"
   peerDependencies:
-    nanostores: ^0.7.0
+    nanostores: ^0.9.0
     react: ">=18.0.0"
-  checksum: e0dae7e5127bc712383035453483b712851428a888f029ee8f966d9f272e154595a81f98e16f6b276bb1ce6a2eb505dcde01b133f634fbc9238158a14343d187
+  checksum: 74437e518952cc17651046a056b84cd966cd880b2eb6720dee0957c31257a6946a5f14938a4beb723b01a12be919b5fdb9d0cb195d46d0ab6ef6606c1ceeb9e2
   languageName: node
   linkType: hard
 
@@ -4926,13 +4924,13 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@standardnotes/toast@workspace:packages/toast"
   dependencies:
-    "@nanostores/react": ^0.4.0
+    "@nanostores/react": ^0.7.1
     "@standardnotes/icons": "workspace:*"
     "@types/react": "link:../web/node_modules/@types/react"
     "@types/react-dom": "link:../web/node_modules/@types/react-dom"
     eslint: "*"
     nanoid: ^4.0.0
-    nanostores: ^0.7.1
+    nanostores: ^0.9.3
     prettier: "*"
     react: "link:../web/node_modules/react"
     react-dom: "link:../web/node_modules/react-dom"
@@ -17149,10 +17147,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nanostores@npm:^0.7.1":
-  version: 0.7.4
-  resolution: "nanostores@npm:0.7.4"
-  checksum: 8c135e2a1f86b970535924bd2e04f0a44d2acf87f3372b5f1167fbae454a10c430957bf3b6d49686044d90be277b775d95fca11f6f8dba21b92b2f186492d0e0
+"nanostores@npm:^0.9.3":
+  version: 0.9.3
+  resolution: "nanostores@npm:0.9.3"
+  checksum: aad0db366a3fa82d1e3664199145cd28f71ecb4fc6f3fcaeb758400485efbd8f888fcb9db3cca4827c5ee54a5f79451ae6f8bf5080b54befad50469c411001d0
   languageName: node
   linkType: hard
 
