@@ -57,7 +57,6 @@ import { getDOMRangeRect } from '../../Lexical/Utils/getDOMRangeRect'
 import { getPositionedPopoverStyles } from '@/Components/Popover/GetPositionedPopoverStyles'
 import { getAdjustedStylesForNonPortalPopover } from '@/Components/Popover/Utils/getAdjustedStylesForNonPortal'
 import LinkEditor from '../FloatingLinkEditorPlugin/LinkEditor'
-import { movePopoverToFitInsideRect } from '@/Components/Popover/Utils/movePopoverToFitInsideRect'
 import LinkTextEditor, { $isLinkTextNode } from '../FloatingLinkEditorPlugin/LinkTextEditor'
 import { URL_REGEX } from '@/Constants/Constants'
 
@@ -237,7 +236,6 @@ function TextFormatFloatingToolbar({
         const adjustedStyles = getAdjustedStylesForNonPortalPopover(toolbarElement, calculatedStyles, rootElement)
         toolbarElement.style.setProperty('--translate-x', adjustedStyles['--translate-x'])
         toolbarElement.style.setProperty('--translate-y', adjustedStyles['--translate-y'])
-        movePopoverToFitInsideRect(toolbarElement, rootElementRect)
       }
     } else if (!activeElement || activeElement.id !== 'link-input') {
       setLastSelection(null)

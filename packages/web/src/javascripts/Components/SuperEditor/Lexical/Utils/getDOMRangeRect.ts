@@ -1,10 +1,12 @@
-/**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- */
+function mergeRects(rects: DOMRect[]): DOMRect {
+  const left = Math.min(...rects.map((rect) => rect.left))
+  const top = Math.min(...rects.map((rect) => rect.top))
+  const right = Math.max(...rects.map((rect) => rect.right))
+  const bottom = Math.max(...rects.map((rect) => rect.bottom))
+
+  return new DOMRect(left, top, right - left, bottom - top)
+}
+
 export function getDOMRangeRect(nativeSelection: Selection, rootElement: HTMLElement): DOMRect {
   const domRange = nativeSelection.getRangeAt(0)
 
@@ -17,7 +19,8 @@ export function getDOMRangeRect(nativeSelection: Selection, rootElement: HTMLEle
     }
     rect = inner.getBoundingClientRect()
   } else {
-    rect = domRange.getBoundingClientRect()
+    const clientRects = domRange.getClientRects()
+    rect = mergeRects(Array.from(clientRects))
   }
 
   return rect

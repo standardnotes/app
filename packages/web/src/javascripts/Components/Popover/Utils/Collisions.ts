@@ -1,5 +1,5 @@
 import { PopoverSide, PopoverAlignment, RectCollisions } from '../Types'
-import { getAppRect, getPositionedPopoverRect } from './Rect'
+import { getPositionedPopoverRect } from './Rect'
 
 export const OppositeSide: Record<PopoverSide, PopoverSide> = {
   top: 'bottom',
@@ -20,7 +20,7 @@ export const getOverflows = (popoverRect: DOMRect, documentRect: DOMRect): Recor
 }
 
 export const checkCollisions = (popoverRect: DOMRect, containerRect: DOMRect): RectCollisions => {
-  const appRect = getAppRect(containerRect)
+  const appRect = containerRect
 
   return {
     top: popoverRect.top < appRect.top,

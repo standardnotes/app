@@ -2,7 +2,7 @@ import { MediaQueryBreakpoints } from '@/Hooks/useMediaQuery'
 import { isMobileScreen } from '@/Utils'
 import { CSSProperties } from 'react'
 import { PopoverAlignment, PopoverSide } from './Types'
-import { OppositeSide, checkCollisions, getNonCollidingAlignment, getOverflows } from './Utils/Collisions'
+import { OppositeSide, checkCollisions, getNonCollidingAlignment } from './Utils/Collisions'
 import { getAppRect, getPopoverMaxHeight, getPositionedPopoverRect } from './Utils/Rect'
 
 const percentOf = (percent: number, value: number) => (percent / 100) * value
@@ -122,13 +122,10 @@ export const getPositionedPopoverStyles = ({
 
   const rectForPreferredSide = getPositionedPopoverRect(popoverRect, anchorRect, side, align)
   const preferredSideRectCollisions = checkCollisions(rectForPreferredSide, documentRect)
-  const preferredSideOverflows = getOverflows(rectForPreferredSide, documentRect)
 
   const oppositeSide = OppositeSide[side]
-  const rectForOppositeSide = getPositionedPopoverRect(popoverRect, anchorRect, oppositeSide, align)
-  const oppositeSideOverflows = getOverflows(rectForOppositeSide, documentRect)
 
-  const sideWithLessOverflows = preferredSideOverflows[side] < oppositeSideOverflows[oppositeSide] ? side : oppositeSide
+  const sideWithLessOverflows = preferredSideRectCollisions[side] ? oppositeSide : side
   const finalAlignment = getNonCollidingAlignment({
     finalSide: sideWithLessOverflows,
     preferredAlignment: align,
