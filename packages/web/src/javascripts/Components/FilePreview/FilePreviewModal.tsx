@@ -117,11 +117,6 @@ const FilePreviewModal = observer(({ application }: Props) => {
     <Modal
       title={currentFile.name}
       close={dismiss}
-      className={{
-        content: classNames(
-          'm-0 flex h-full w-full flex-col rounded bg-[--popover-background-color] p-0 shadow-main md:!h-full md:max-h-[90%] md:!w-full md:max-w-[90%]',
-        ),
-      }}
       actions={[
         {
           label: 'Done',
@@ -281,6 +276,7 @@ const FilePreviewModalWrapper: FunctionComponent<Props> = ({ application }) => {
       aria-label="File preview modal"
       isOpen={application.filePreviewModalController.isOpen}
       close={application.filePreviewModalController.dismiss}
+      className="md:!h-full md:max-h-[90%] md:!w-full md:max-w-[90%]"
     >
       <FilePreviewModal application={application} />
     </ModalOverlay>

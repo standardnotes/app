@@ -1,4 +1,4 @@
-import { ReactNode, useState, useEffect } from 'react'
+import { ReactNode, useState, useEffect, useId } from 'react'
 import { createPortal } from 'react-dom'
 
 type Props = {
@@ -6,18 +6,17 @@ type Props = {
   disabled?: boolean
 }
 
-const randomPortalId = () => Math.random()
-
 const Portal = ({ children, disabled = false }: Props) => {
   const [container, setContainer] = useState<HTMLElement>()
+  const id = 'portal/' + useId()
 
   useEffect(() => {
     const container = document.createElement('div')
-    container.id = `react-portal-${randomPortalId()}`
+    container.id = id
     document.body.append(container)
     setContainer(container)
     return () => container.remove()
-  }, [])
+  }, [id])
 
   if (disabled) {
     return <>{children}</>

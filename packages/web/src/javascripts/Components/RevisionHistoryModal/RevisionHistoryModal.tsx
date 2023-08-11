@@ -5,6 +5,7 @@ import HistoryModalDialog from './HistoryModalDialog'
 import { RevisionHistoryModalProps } from './RevisionHistoryModalProps'
 import { useAndroidBackHandler } from '@/NativeMobileWeb/useAndroidBackHandler'
 import { useModalAnimation } from '../Modal/useModalAnimation'
+import { useMediaQuery, MutuallyExclusiveMediaQueryBreakpoints } from '@/Hooks/useMediaQuery'
 
 const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> = ({ application }) => {
   const addAndroidBackHandler = useAndroidBackHandler()
@@ -31,7 +32,8 @@ const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> = ({ ap
     }
   }, [addAndroidBackHandler, application, isOpen])
 
-  const [isMounted, setElement] = useModalAnimation(isOpen)
+  const isMobileScreen = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
+  const [isMounted, setElement] = useModalAnimation(isOpen, isMobileScreen)
 
   if (!isMounted) {
     return null

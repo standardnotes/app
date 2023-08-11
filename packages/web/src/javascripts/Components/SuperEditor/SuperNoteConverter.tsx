@@ -175,10 +175,7 @@ const SuperNoteConverter = ({
       title={`Convert to ${uiFeature.displayName}`}
       close={closeDialog}
       actions={modalActions}
-      className={{
-        content: 'md:h-full md:max-h-[90%]',
-        description: 'flex flex-col !overflow-hidden',
-      }}
+      className="flex flex-col !overflow-hidden"
     >
       {format === 'txt' || format === 'md' ? (
         <div className="flex items-start border-b border-border p-4 text-sm">

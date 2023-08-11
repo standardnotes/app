@@ -103,10 +103,7 @@ const EditorWidthSelectionModal = ({
       customFooter={<></>}
       disableCustomHeader={isMobileScreen}
       actions={actions}
-      className={{
-        content: 'select-none md:min-w-[40vw]',
-        description: 'flex min-h-[50vh] flex-col',
-      }}
+      className="flex min-h-[50vh] flex-col"
     >
       <div className="flex min-h-0 flex-grow flex-col overflow-hidden rounded bg-passive-5 p-4 pb-0">
         <div
@@ -195,7 +192,7 @@ const EditorWidthSelectionModalWrapper = () => {
   }, [application, toggle])
 
   return (
-    <ModalOverlay isOpen={isOpen} close={toggle}>
+    <ModalOverlay isOpen={isOpen} close={toggle} className="select-none md:min-w-[40vw]">
       <EditorWidthSelectionModal initialValue={lineWidth} handleChange={setLineWidth} close={toggle} note={note} />
     </ModalOverlay>
   )

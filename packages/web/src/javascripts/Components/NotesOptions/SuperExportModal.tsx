@@ -16,9 +16,7 @@ const SuperExportModal = ({ exportNotes, close }: Props) => {
   return (
     <Modal
       title="Export notes"
-      className={{
-        description: 'p-4',
-      }}
+      className="p-4"
       close={close}
       actions={[
         {

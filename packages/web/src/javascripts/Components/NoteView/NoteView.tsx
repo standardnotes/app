@@ -1031,7 +1031,11 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
           </div>
         </div>
 
-        <ModalOverlay isOpen={this.state.showConflictResolutionModal} close={this.toggleConflictResolutionModal}>
+        <ModalOverlay
+          isOpen={this.state.showConflictResolutionModal}
+          close={this.toggleConflictResolutionModal}
+          className="md:h-full md:w-[70vw]"
+        >
           <NoteConflictResolutionModal
             currentNote={this.note}
             conflictedNotes={this.state.conflictedNotes}

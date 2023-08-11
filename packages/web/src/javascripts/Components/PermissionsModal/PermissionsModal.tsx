@@ -35,7 +35,6 @@ const PermissionsModal = ({ callback, component, dismiss, permissionsString }: P
           mobileSlot: 'right',
         },
       ]}
-      className={{ content: 'md:!w-[350px]' }}
       customFooter={
         <ModalDialogButtons className="hidden md:flex">
           <Button primary fullWidth onClick={accept} className="block">

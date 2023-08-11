@@ -60,10 +60,7 @@ const PreferencesView: FunctionComponent<PreferencesProps> = ({ application, clo
     <Modal
       close={closePreferences}
       title="Preferences"
-      className={{
-        content: 'md:h-full md:!max-h-full md:!w-full',
-        description: 'flex flex-col',
-      }}
+      className="flex flex-col"
       customHeader={
         <div
           className={classNames(

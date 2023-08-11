@@ -253,7 +253,11 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
           />
         )}
       </ModalOverlay>
-      <ModalOverlay isOpen={showSuperNoteConverter} close={closeSuperNoteConverter}>
+      <ModalOverlay
+        isOpen={showSuperNoteConverter}
+        close={closeSuperNoteConverter}
+        className="md:h-full md:max-h-[90%]"
+      >
         {note && pendingConversionItem && (
           <SuperNoteConverter
             note={note}

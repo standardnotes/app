@@ -1,5 +1,4 @@
 import { useLifecycleAnimation } from '@/Hooks/useLifecycleAnimation'
-import { useMediaQuery, MutuallyExclusiveMediaQueryBreakpoints } from '@/Hooks/useMediaQuery'
 
 export const IosModalAnimationEasing = 'cubic-bezier(.36,.66,.04,1)'
 
@@ -52,40 +51,80 @@ const Animations = {
       transformOrigin: 'right',
     },
   },
+  nonMobile: {
+    enter: {
+      keyframes: [
+        {
+          transform: 'scale(0.95)',
+          opacity: 0,
+        },
+        {
+          transform: 'scale(1)',
+          opacity: 1,
+        },
+      ],
+      transformOrigin: 'center',
+    },
+    exit: {
+      keyframes: [
+        {
+          transform: 'scale(1)',
+          opacity: 1,
+        },
+        {
+          transform: 'scale(0.95)',
+          opacity: 0,
+        },
+      ],
+      transformOrigin: 'center',
+    },
+  },
 }
 
-export const useModalAnimation = (isOpen: boolean, variant: 'horizontal' | 'vertical' = 'vertical') => {
-  const isMobileScreen = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
+const MobileOptions = {
+  easing: IosModalAnimationEasing,
+  duration: 250,
+  fill: 'forwards',
+}
 
+const NonMobileOptions = {
+  duration: 75,
+}
+
+export const useModalAnimation = (
+  isOpen: boolean,
+  isMobileScreen: boolean,
+  variant: 'horizontal' | 'vertical' = 'vertical',
+  disabled = false,
+) => {
   return useLifecycleAnimation(
     {
       open: isOpen,
       enter: {
-        keyframes: Animations[variant].enter.keyframes,
-        options: {
-          easing: IosModalAnimationEasing,
-          duration: 250,
-          fill: 'forwards',
-        },
+        keyframes: isMobileScreen ? Animations[variant].enter.keyframes : Animations.nonMobile.enter.keyframes,
+        options: isMobileScreen ? MobileOptions : NonMobileOptions,
         initialStyle: {
-          transformOrigin: Animations[variant].enter.transformOrigin,
+          transformOrigin: isMobileScreen
+            ? Animations[variant].enter.transformOrigin
+            : Animations.nonMobile.enter.transformOrigin,
         },
       },
       enterCallback: (element) => {
+        if (!isMobileScreen) {
+          return
+        }
         element.scrollTop = 0
       },
       exit: {
-        keyframes: Animations[variant].exit.keyframes,
-        options: {
-          easing: IosModalAnimationEasing,
-          duration: 250,
-          fill: 'forwards',
-        },
+        keyframes: isMobileScreen ? Animations[variant].exit.keyframes : Animations.nonMobile.exit.keyframes,
+        options: isMobileScreen ? MobileOptions : NonMobileOptions,
         initialStyle: {
-          transformOrigin: Animations[variant].exit.transformOrigin,
+          transformOrigin: isMobileScreen
+            ? Animations[variant].exit.transformOrigin
+            : Animations.nonMobile.exit.transformOrigin,
         },
       },
     },
-    !isMobileScreen,
+    disabled,
   )
 }

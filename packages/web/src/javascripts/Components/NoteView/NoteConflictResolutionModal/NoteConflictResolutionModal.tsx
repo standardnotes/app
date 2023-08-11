@@ -165,10 +165,7 @@ const NoteConflictResolutionModal = ({
   return (
     <Modal
       title="Resolve conflicts"
-      className={{
-        content: 'md:h-full md:w-[70vw]',
-        description: 'flex flex-col overflow-x-hidden md:flex-row',
-      }}
+      className="flex flex-col overflow-x-hidden md:flex-row"
       actions={actions}
       close={close}
       customFooter={

@@ -40,7 +40,7 @@ const PermissionsModalWrapper: FunctionComponent<Props> = ({ application }) => {
   }, [application, onAppStart])
 
   return (
-    <ModalOverlay isOpen={!!dialog} close={dismissPermissionsDialog}>
+    <ModalOverlay isOpen={!!dialog} close={dismissPermissionsDialog} className="md:!w-[350px]">
       {dialog && (
         <PermissionsModal
           callback={dialog.callback}

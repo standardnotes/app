@@ -7,6 +7,7 @@ import { useModalAnimation } from '../Modal/useModalAnimation'
 import MobileModalHeader from '../Modal/MobileModalHeader'
 import { mergeRefs } from '@/Hooks/mergeRefs'
 import { DialogWithClose } from '@/Utils/CloseOpenModalsAndPopovers'
+import { useMediaQuery, MutuallyExclusiveMediaQueryBreakpoints } from '@/Hooks/useMediaQuery'
 
 const DisableScroll = () => {
   useDisableBodyScrollOnMobile()
@@ -29,7 +30,8 @@ const MobilePopoverContent = ({
   id: string
   className?: string
 }) => {
-  const [isMounted, setPopoverElement] = useModalAnimation(open)
+  const isMobileScreen = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
+  const [isMounted, setPopoverElement] = useModalAnimation(open, isMobileScreen)
 
   const addCloseMethod = useCallback(
     (element: HTMLDivElement | null) => {

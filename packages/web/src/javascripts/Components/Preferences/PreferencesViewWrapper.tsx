@@ -47,8 +47,10 @@ const PreferencesViewWrapper: FunctionComponent<PreferencesViewWrapperProps> = (
     <ModalOverlay
       isOpen={application.preferencesController.isOpen}
       ref={setElement}
+      animate="mobile"
       animationVariant="horizontal"
       close={application.preferencesController.closePreferences}
+      className="md:h-full md:!max-h-full md:!w-full"
     >
       <PreferencesView
         closePreferences={application.preferencesController.closePreferences}
