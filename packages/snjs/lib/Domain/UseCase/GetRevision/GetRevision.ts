@@ -5,7 +5,7 @@ import {
   EncryptedPayload,
   HistoryEntry,
   isErrorDecryptingPayload,
-  isRemotePayloadAllowed,
+  checkRemotePayloadAllowed,
   NoteContent,
   PayloadTimestampDefaults,
 } from '@standardnotes/models'
@@ -71,7 +71,8 @@ export class GetRevision implements UseCaseInterface<HistoryEntry> {
       uuid: sourceItemUuid || revision.item_uuid,
     })
 
-    if (!isRemotePayloadAllowed(payload as ServerItemResponse)) {
+    const remotePayloadAllowedResult = checkRemotePayloadAllowed(payload as ServerItemResponse)
+    if (remotePayloadAllowedResult.disallowed !== undefined) {
       return Result.fail(`Remote payload is disallowed: ${JSON.stringify(payload)}`)
     }
 

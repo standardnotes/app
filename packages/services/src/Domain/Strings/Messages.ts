@@ -1,4 +1,4 @@
-import { ProtocolVersion } from '@standardnotes/common'
+import { ProtocolVersion } from '@standardnotes/models'
 
 export const API_MESSAGE_GENERIC_INVALID_LOGIN = 'A server error occurred while trying to sign in. Please try again.'
 export const API_MESSAGE_GENERIC_REGISTRATION_FAIL =

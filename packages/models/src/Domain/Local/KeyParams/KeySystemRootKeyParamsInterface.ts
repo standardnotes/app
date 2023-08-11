@@ -1,5 +1,5 @@
-import { ProtocolVersion } from '@standardnotes/common'
 import { KeySystemIdentifier } from '../../Syncable/KeySystemRootKey/KeySystemIdentifier'
+import { ProtocolVersion } from '../Protocol/ProtocolVersion'
 import { KeySystemPasswordType } from './KeySystemPasswordType'
 
 /**

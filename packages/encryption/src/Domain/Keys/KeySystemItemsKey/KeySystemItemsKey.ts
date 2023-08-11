@@ -1,6 +1,6 @@
-import { ProtocolVersion } from '@standardnotes/common'
 import { ContentType } from '@standardnotes/domain-core'
 import {
+  ProtocolVersion,
   ConflictStrategy,
   DecryptedItem,
   DecryptedItemInterface,

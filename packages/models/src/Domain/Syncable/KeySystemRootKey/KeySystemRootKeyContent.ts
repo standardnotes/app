@@ -1,7 +1,7 @@
-import { ProtocolVersion } from '@standardnotes/common'
 import { ItemContent } from '../../Abstract/Content/ItemContent'
 import { KeySystemIdentifier } from './KeySystemIdentifier'
 import { KeySystemRootKeyParamsInterface } from '../../Local/KeyParams/KeySystemRootKeyParamsInterface'
+import { ProtocolVersion } from '../../Local/Protocol/ProtocolVersion'
 
 export type KeySystemRootKeyContentSpecialized = {
   keyParams: KeySystemRootKeyParamsInterface

@@ -1,4 +1,4 @@
-import { ProtocolVersion } from '@standardnotes/common'
+import { ProtocolVersion } from '@standardnotes/models'
 
 type UserUuid = string
 type KeySystemIdentifier = string

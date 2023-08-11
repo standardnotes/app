@@ -1,5 +1,4 @@
-import { Environment, Platform } from '@standardnotes/models'
-import { ApplicationIdentifier } from '@standardnotes/common'
+import { Environment, Platform, ApplicationIdentifier } from '@standardnotes/models'
 import { AlertService, DeviceInterface } from '@standardnotes/services'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 

@@ -1,4 +1,4 @@
-import { ProtocolVersion } from '@standardnotes/common'
+import { ProtocolVersion } from '@standardnotes/models'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { SNProtocolOperator001 } from '../Operator/001/Operator001'
 import { SNProtocolOperator002 } from '../Operator/002/Operator002'

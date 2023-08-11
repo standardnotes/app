@@ -19,6 +19,7 @@ export type AsymmetricMessageSharedVaultInvite = {
       name: string
       description?: string
       iconString: IconType | EmojiString
+      fileBytesUsed: number
     }
   }
 }

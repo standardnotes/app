@@ -1110,7 +1110,12 @@ export class SyncService
     items: FilteredServerItem[],
     source: PayloadSource,
   ): Promise<FullyFormedPayloadInterface[]> {
-    const payloads = items.map((i) => CreatePayloadFromRawServerItem(i, source))
+    const payloads = items
+      .map((i) => {
+        const result = CreatePayloadFromRawServerItem(i, source)
+        return result.isFailed() ? undefined : result.getValue()
+      })
+      .filter(isNotUndefined)
 
     const { encrypted, deleted } = CreateNonDecryptedPayloadSplit(payloads)
 
@@ -1408,9 +1413,16 @@ export class SyncService
       return
     }
 
-    const receivedPayloads = FilterDisallowedRemotePayloadsAndMap(rawPayloads).map((rawPayload) => {
-      return CreatePayloadFromRawServerItem(rawPayload, PayloadSource.RemoteRetrieved)
-    })
+    const rawPayloadsFilteringResult = FilterDisallowedRemotePayloadsAndMap(rawPayloads)
+    const receivedPayloads = rawPayloadsFilteringResult.filtered
+      .map((rawPayload) => {
+        const result = CreatePayloadFromRawServerItem(rawPayload, PayloadSource.RemoteRetrieved)
+        if (result.isFailed()) {
+          return undefined
+        }
+        return result.getValue()
+      })
+      .filter(isNotUndefined)
 
     const payloadSplit = CreateNonDecryptedPayloadSplit(receivedPayloads)
 

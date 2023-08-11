@@ -3,10 +3,10 @@ import {
   ContactPublicKeySetInterface,
   PublicKeyTrustStatus,
   TrustedContactInterface,
+  ProtocolVersion,
 } from '@standardnotes/models'
 import { DecryptMessage } from './DecryptMessage'
 import { OperatorInterface, EncryptionOperatorsInterface } from '@standardnotes/encryption'
-import { ProtocolVersion } from '@standardnotes/common'
 
 function createMockPublicKeySetChain(): ContactPublicKeySetInterface {
   const nMinusOne = new ContactPublicKeySet({

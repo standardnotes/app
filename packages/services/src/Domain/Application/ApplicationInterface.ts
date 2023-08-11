@@ -22,8 +22,7 @@ import { AsymmetricMessageServiceInterface } from './../AsymmetricMessage/Asymme
 import { ImportDataResult } from '../Import/ImportDataResult'
 import { ChallengeServiceInterface } from './../Challenge/ChallengeServiceInterface'
 import { VaultServiceInterface } from '../Vault/VaultServiceInterface'
-import { ApplicationIdentifier } from '@standardnotes/common'
-import { BackupFile, Environment, Platform, PrefKey, PrefValue } from '@standardnotes/models'
+import { BackupFile, Environment, Platform, PrefKey, PrefValue, ApplicationIdentifier } from '@standardnotes/models'
 import { BackupServiceInterface, FilesClientInterface } from '@standardnotes/files'
 
 import { AlertService } from '../Alert/AlertService'

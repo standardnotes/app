@@ -1,12 +1,13 @@
+import { formatSizeToReadableString } from '@standardnotes/filepicker'
+import { ButtonType, VaultListingInterface, isClientDisplayableError } from '@standardnotes/snjs'
+import { useCallback, useState } from 'react'
+
 import { useApplication } from '@/Components/ApplicationProvider'
 import Button from '@/Components/Button/Button'
 import Icon from '@/Components/Icon/Icon'
 import ModalOverlay from '@/Components/Modal/ModalOverlay'
-import { ButtonType, VaultListingInterface, isClientDisplayableError } from '@standardnotes/snjs'
-import { useCallback, useState } from 'react'
 import ContactInviteModal from '../Invites/ContactInviteModal'
 import EditVaultModal from './VaultModal/EditVaultModal'
-
 type Props = {
   vault: VaultListingInterface
 }
@@ -122,6 +123,10 @@ const VaultItem = ({ vault }: Props) => {
             <span className="mr-auto overflow-hidden text-ellipsis text-sm">{vault.description}</span>
           )}
           <span className="mr-auto overflow-hidden text-ellipsis text-sm">Vault ID: {vault.systemIdentifier}</span>
+
+          <span className="mr-auto overflow-hidden text-ellipsis text-sm">
+            File storage used: {formatSizeToReadableString(vault.sharing?.fileBytesUsed ?? 0)}
+          </span>
 
           <div className="mt-2 flex w-full">
             <Button label="Edit" className="mr-3 text-xs" onClick={openEditModal} />

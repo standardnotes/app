@@ -1,6 +1,5 @@
-import { ProtocolVersion } from '@standardnotes/common'
+import { ProtocolVersion } from '@standardnotes/models'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
-
 import { ItemAuthenticatedData } from './../../../../Types/ItemAuthenticatedData'
 import { GenerateEncryptedProtocolStringUseCase } from './GenerateEncryptedProtocolString'
 import { AdditionalData } from '../../../../Types/EncryptionAdditionalData'

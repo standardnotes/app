@@ -1,4 +1,4 @@
-import { ApplicationIdentifier } from '@standardnotes/common'
+import { ApplicationIdentifier } from '@standardnotes/models'
 
 export type ApplicationDescriptor = {
   identifier: ApplicationIdentifier

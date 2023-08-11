@@ -5,10 +5,10 @@ jest.mock('@standardnotes/models', () => {
 
   return {
     ...original,
-    isRemotePayloadAllowed: jest.fn(),
+    checkRemotePayloadAllowed: jest.fn(),
   }
 })
-const isRemotePayloadAllowed = require('@standardnotes/models').isRemotePayloadAllowed
+const checkRemotePayloadAllowed = require('@standardnotes/models').checkRemotePayloadAllowed
 
 import { Revision } from '../../Revision/Revision'
 
@@ -44,7 +44,7 @@ describe('GetRevision', () => {
     encryptedPayload.copy = jest.fn().mockReturnValue(encryptedPayload)
     encryptionService.decryptSplitSingle = jest.fn().mockReturnValue(encryptedPayload)
 
-    isRemotePayloadAllowed.mockImplementation(() => true)
+    checkRemotePayloadAllowed.mockImplementation(() => ({ allowed: {} }))
   })
 
   it('should get revision', async () => {
@@ -145,7 +145,7 @@ describe('GetRevision', () => {
   })
 
   it('should fail if remote payload is not allowed', async () => {
-    isRemotePayloadAllowed.mockImplementation(() => false)
+    checkRemotePayloadAllowed.mockImplementation(() => ({ disallowed: {} }))
 
     const useCase = createUseCase()
 

@@ -1,5 +1,4 @@
-import { ApplicationIdentifier } from '@standardnotes/common'
-import { Environment } from '@standardnotes/models'
+import { Environment, ApplicationIdentifier } from '@standardnotes/models'
 import { compareSemVersions, isRightVersionGreaterThanLeft } from '@Lib/Version'
 import { DeviceInterface } from '@standardnotes/services'
 import { StorageReader } from './Reader'

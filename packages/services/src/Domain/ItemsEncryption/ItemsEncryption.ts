@@ -1,5 +1,4 @@
 import { FindDefaultItemsKey } from './../Encryption/UseCase/ItemsKey/FindDefaultItemsKey'
-import { ProtocolVersion } from '@standardnotes/common'
 import {
   DecryptedParameters,
   ErrorDecryptingParameters,
@@ -23,6 +22,7 @@ import {
   PayloadEmitSource,
   KeySystemItemsKeyInterface,
   SureFindPayload,
+  ProtocolVersion,
   ContentTypeUsesRootKeyEncryption,
 } from '@standardnotes/models'
 import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'

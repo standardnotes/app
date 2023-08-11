@@ -78,6 +78,14 @@ const Vaults = () => {
   }, [application.sharedVaults, updateAllData])
 
   useEffect(() => {
+    return application.sharedVaults.addEventObserver((event) => {
+      if (event === SharedVaultServiceEvent.SharedVaultFileStorageUsageChanged) {
+        void updateAllData()
+      }
+    })
+  }, [application.sharedVaults, updateAllData])
+
+  useEffect(() => {
     return application.vaultUsers.addEventObserver((event) => {
       if (event === VaultUserServiceEvent.UsersChanged) {
         void updateAllData()

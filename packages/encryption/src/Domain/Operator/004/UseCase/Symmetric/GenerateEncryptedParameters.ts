@@ -1,4 +1,3 @@
-import { ProtocolVersion } from '@standardnotes/common'
 import { PkcKeyPair, PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import {
   DecryptedPayloadInterface,
@@ -6,6 +5,7 @@ import {
   KeySystemItemsKeyInterface,
   KeySystemRootKeyInterface,
   RootKeyInterface,
+  ProtocolVersion,
 } from '@standardnotes/models'
 import { CreateConsistentBase64JsonPayloadUseCase } from '../Utils/CreateConsistentBase64JsonPayload'
 import { doesPayloadRequireSigning } from '../../V004AlgorithmHelpers'

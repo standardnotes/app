@@ -5,8 +5,8 @@ import {
   KeySystemRootKeyInterface,
   KeySystemRootKeyParamsInterface,
   KeySystemPasswordType,
+  ProtocolVersion,
 } from '@standardnotes/models'
-import { ProtocolVersion } from '@standardnotes/common'
 import { DeriveKeySystemRootKeyUseCase } from './DeriveKeySystemRootKey'
 
 export class CreateUserInputKeySystemRootKey {

@@ -32,6 +32,7 @@ import { ContentType, NotificationType, Uuid } from '@standardnotes/domain-core'
 import { HandleKeyPairChange } from '../Contacts/UseCase/HandleKeyPairChange'
 import { FindContact } from '../Contacts/UseCase/FindContact'
 import { GetOwnedSharedVaults } from './UseCase/GetOwnedSharedVaults'
+import { SyncLocalVaultsWithRemoteSharedVaults } from './UseCase/SyncLocalVaultsWithRemoteSharedVaults'
 
 export class SharedVaultService
   extends AbstractService<SharedVaultServiceEvent, SharedVaultServiceEventPayload>
@@ -40,6 +41,7 @@ export class SharedVaultService
   constructor(
     private items: ItemManagerInterface,
     private session: SessionsClientInterface,
+    private _syncLocalVaultsWithRemoteSharedVaults: SyncLocalVaultsWithRemoteSharedVaults,
     private _getVault: GetVault,
     private _getOwnedSharedVaults: GetOwnedSharedVaults,
     private _createSharedVault: CreateSharedVault,
@@ -67,6 +69,7 @@ export class SharedVaultService
     super.deinit()
     ;(this.items as unknown) = undefined
     ;(this.session as unknown) = undefined
+    ;(this._syncLocalVaultsWithRemoteSharedVaults as unknown) = undefined
     ;(this._getVault as unknown) = undefined
     ;(this._createSharedVault as unknown) = undefined
     ;(this._handleKeyPairChange as unknown) = undefined
@@ -88,7 +91,7 @@ export class SharedVaultService
         break
       }
       case NotificationServiceEvent.NotificationReceived:
-        await this.handleUserEvent(event.payload as NotificationServiceEventPayload)
+        await this.handleNotification(event.payload as NotificationServiceEventPayload)
         break
       case SyncEvent.ReceivedRemoteSharedVaults:
         void this.notifyEventSync(SharedVaultServiceEvent.SharedVaultStatusChanged)
@@ -96,7 +99,7 @@ export class SharedVaultService
     }
   }
 
-  private async handleUserEvent(event: NotificationServiceEventPayload): Promise<void> {
+  private async handleNotification(event: NotificationServiceEventPayload): Promise<void> {
     switch (event.eventPayload.props.type.value) {
       case NotificationType.TYPES.RemovedFromSharedVault: {
         const vault = this._getVault.execute<SharedVaultListingInterface>({
@@ -112,6 +115,19 @@ export class SharedVaultService
         if (item) {
           void this._discardItemsLocally.execute([item])
         }
+        break
+      }
+      case NotificationType.TYPES.SharedVaultFileRemoved:
+      case NotificationType.TYPES.SharedVaultFileUploaded: {
+        const vaultOrError = this._getVault.execute<SharedVaultListingInterface>({
+          sharedVaultUuid: event.eventPayload.props.sharedVaultUuid.value,
+        })
+        if (!vaultOrError.isFailed()) {
+          await this._syncLocalVaultsWithRemoteSharedVaults.execute([vaultOrError.getValue()])
+
+          void this.notifyEventSync(SharedVaultServiceEvent.SharedVaultStatusChanged)
+        }
+
         break
       }
     }

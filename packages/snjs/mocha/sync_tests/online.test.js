@@ -113,7 +113,7 @@ describe('online syncing', function () {
 
     for (let i = 0; i < syncCount; i++) {
       application.sync.sync(syncOptions)
-      await Factory.sleep(0.01)
+      await Factory.sleep(0.01, undefined, true)
     }
     await promise
     expect(promise).to.be.fulfilled
@@ -957,6 +957,11 @@ describe('online syncing', function () {
         retrieved_items: [invalidPayload.ejected(), validPayload.ejected()],
       },
     })
+
+    context.anticipateConsoleError(
+      'Error decrypting payload',
+      'The encrypted payload above is not a valid encrypted payload.',
+    )
 
     await application.sync.handleSuccessServerResponse({ payloadsSavedOrSaving: [], options: {} }, response)
 

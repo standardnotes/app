@@ -1,7 +1,6 @@
 import { UserRegistrationResponseBody } from '@standardnotes/api'
-import { ProtocolVersion } from '@standardnotes/common'
 import { SNRootKey } from '@standardnotes/encryption'
-import { RootKeyInterface } from '@standardnotes/models'
+import { RootKeyInterface, ProtocolVersion } from '@standardnotes/models'
 import {
   SessionBody,
   SignInResponse,

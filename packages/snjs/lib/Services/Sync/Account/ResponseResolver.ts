@@ -92,6 +92,7 @@ export class ServerSyncResponseResolver {
       ...this.getConflictsForType(ConflictType.SharedVaultInsufficientPermissionsError),
       ...this.getConflictsForType(ConflictType.SharedVaultNotMemberError),
       ...this.getConflictsForType(ConflictType.SharedVaultInvalidState),
+      ...this.getConflictsForType(ConflictType.InvalidServerItem),
     ]
 
     const delta = new DeltaRemoteRejected(this.baseCollection, conflicts)

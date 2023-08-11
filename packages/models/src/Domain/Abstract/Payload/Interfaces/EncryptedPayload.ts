@@ -1,4 +1,4 @@
-import { ProtocolVersion } from '@standardnotes/common'
+import { ProtocolVersion } from '../../../Local/Protocol/ProtocolVersion'
 import { EncryptedTransferPayload } from '../../TransferPayload/Interfaces/EncryptedTransferPayload'
 import { PayloadInterface } from './PayloadInterface'
 

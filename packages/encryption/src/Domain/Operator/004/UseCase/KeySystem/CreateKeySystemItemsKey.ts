@@ -7,10 +7,10 @@ import {
   KeySystemItemsKeyContentSpecialized,
   KeySystemItemsKeyInterface,
   PayloadTimestampDefaults,
+  ProtocolVersion,
 } from '@standardnotes/models'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { V004Algorithm } from '../../../../Algorithm'
-import { ProtocolVersion } from '@standardnotes/common'
 import { ContentType } from '@standardnotes/domain-core'
 
 export class CreateKeySystemItemsKeyUseCase {

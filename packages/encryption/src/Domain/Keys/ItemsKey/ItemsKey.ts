@@ -1,4 +1,3 @@
-import { ProtocolVersion } from '@standardnotes/common'
 import { ContentType } from '@standardnotes/domain-core'
 import {
   ConflictStrategy,
@@ -8,6 +7,7 @@ import {
   HistoryEntryInterface,
   ItemsKeyContent,
   ItemsKeyInterface,
+  ProtocolVersion,
 } from '@standardnotes/models'
 
 export function isItemsKey(x: unknown): x is ItemsKeyInterface {

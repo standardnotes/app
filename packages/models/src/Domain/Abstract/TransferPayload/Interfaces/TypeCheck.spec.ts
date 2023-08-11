@@ -42,7 +42,7 @@ describe('type check', () => {
       expect(
         isCorruptTransferPayload({
           uuid: '123',
-          content_type: ContentType.TYPES.Unknown,
+          content_type: 'Unknown',
           content: '123',
           ...PayloadTimestampDefaults(),
         }),
