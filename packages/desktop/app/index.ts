@@ -104,7 +104,11 @@ function migrateSnapStorage() {
 
     const snapUserData = process.env['SNAP_USER_DATA']
     const store = new Store(snapUserCommonDir)
-    if (snapUserData && store.data.backupsLocation.startsWith(path.resolve(snapUserData, '..'))) {
+    if (
+      snapUserData &&
+      store.data.backupsLocation &&
+      store.data.backupsLocation.startsWith(path.resolve(snapUserData, '..'))
+    ) {
       /**
        * Backups location has not been altered by the user. Move it to the
        * user documents directory
