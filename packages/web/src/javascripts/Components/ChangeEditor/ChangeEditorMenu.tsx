@@ -52,6 +52,7 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
   const showSuperNoteImporter =
     !!pendingConversionItem &&
     note?.noteType !== NoteType.Super &&
+    !!note?.text.length &&
     pendingConversionItem.uiFeature.noteType === NoteType.Super
   const showSuperNoteConverter =
     !!pendingConversionItem &&
@@ -107,6 +108,20 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
     [application],
   )
 
+  const handleConversionCompletion = useCallback(
+    (item?: EditorMenuItem) => {
+      const conversionItem = item || pendingConversionItem
+
+      if (!conversionItem || !note) {
+        return
+      }
+
+      selectComponent(conversionItem.uiFeature, note).catch(console.error)
+      closeMenu()
+    },
+    [pendingConversionItem, note, closeMenu, selectComponent],
+  )
+
   const handleMenuSelection = useCallback(
     async (menuItem: EditorMenuItem) => {
       if (!menuItem.isEntitled) {
@@ -124,6 +139,11 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
       }
 
       if (menuItem.uiFeature.noteType === NoteType.Super) {
+        if (note.text.length === 0) {
+          handleConversionCompletion(menuItem)
+          return
+        }
+
         if (note.noteType === NoteType.Super) {
           return
         }
@@ -170,19 +190,11 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
       application.alerts,
       application.componentManager,
       setDisableClickOutside,
+      handleConversionCompletion,
       currentFeature,
       selectComponent,
     ],
   )
-
-  const handleConversionCompletion = useCallback(() => {
-    if (!pendingConversionItem || !note) {
-      return
-    }
-
-    selectComponent(pendingConversionItem.uiFeature, note).catch(console.error)
-    closeMenu()
-  }, [pendingConversionItem, note, closeMenu, selectComponent])
 
   const closeSuperNoteImporter = () => {
     setPendingConversionItem(null)
