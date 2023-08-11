@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.108.100](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.169.25...@standardnotes/desktop@3.108.100) (2023-08-11)
+
+### Bug Fixes
+
+* Fixed issue where app would not load when using snap ([c5c0bd6](https://github.com/standardnotes/app/commit/c5c0bd6871718980c854a925dae7fc29f2b239d7))
+
 ## [3.108.99](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.169.24...@standardnotes/desktop@3.108.99) (2023-08-11)
 
 **Note:** Version bump only for package @standardnotes/desktop
