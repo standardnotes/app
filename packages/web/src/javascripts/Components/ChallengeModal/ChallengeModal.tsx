@@ -275,7 +275,7 @@ const ChallengeModal: FunctionComponent<Props> = ({ application, mainApplication
           <ProtectedIllustration
             className={classNames(
               'mb-4 h-30 w-30 flex-shrink-0',
-              modalElementRect && modalElementRect.height < 500 ? 'hidden' : '',
+              modalElementRect && modalElementRect.height < 500 ? 'hidden md:block' : '',
             )}
           />
           <div className="mb-3 max-w-76 text-center text-lg font-bold">{challenge.heading}</div>
