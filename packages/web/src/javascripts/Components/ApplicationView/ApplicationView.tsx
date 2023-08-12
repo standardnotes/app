@@ -194,7 +194,11 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
   }, [challenges, mainApplicationGroup, removeChallenge, application])
 
   if (!renderAppContents) {
-    return <AndroidBackHandlerProvider application={application}>{renderChallenges()}</AndroidBackHandlerProvider>
+    return (
+      <ApplicationProvider application={application}>
+        <AndroidBackHandlerProvider application={application}>{renderChallenges()}</AndroidBackHandlerProvider>
+      </ApplicationProvider>
+    )
   }
 
   const route = application.routeService.getRoute()
