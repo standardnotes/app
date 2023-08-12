@@ -6,18 +6,14 @@ import {
   PayloadEmitSource,
   SureFindPayload,
 } from '@standardnotes/models'
+import { isErrorDecryptingParameters } from '@standardnotes/encryption'
 import { PayloadManagerInterface } from '../../../Payloads/PayloadManagerInterface'
-import { isErrorDecryptingParameters, EncryptionOperatorsInterface } from '@standardnotes/encryption'
 import { DecryptTypeAPayloadWithKeyLookup } from './DecryptPayloadWithKeyLookup'
-import { RootKeyManager } from '../../../RootKeyManager/RootKeyManager'
-import { KeySystemKeyManagerInterface } from '../../../KeySystem/KeySystemKeyManagerInterface'
 
 export class DecryptErroredTypeAPayloads {
   constructor(
     private payloads: PayloadManagerInterface,
-    private operatorManager: EncryptionOperatorsInterface,
-    private keySystemKeyManager: KeySystemKeyManagerInterface,
-    private rootKeyManager: RootKeyManager,
+    private _decryptTypeAPayloadWithKeyLookup: DecryptTypeAPayloadWithKeyLookup,
   ) {}
 
   async execute(): Promise<void> {
@@ -29,12 +25,7 @@ export class DecryptErroredTypeAPayloads {
       return
     }
 
-    const usecase = new DecryptTypeAPayloadWithKeyLookup(
-      this.operatorManager,
-      this.keySystemKeyManager,
-      this.rootKeyManager,
-    )
-    const resultParams = await usecase.executeMany(erroredRootPayloads)
+    const resultParams = await this._decryptTypeAPayloadWithKeyLookup.executeMany(erroredRootPayloads)
 
     const decryptedPayloads = resultParams.map((params) => {
       const original = SureFindPayload(erroredRootPayloads, params.uuid)

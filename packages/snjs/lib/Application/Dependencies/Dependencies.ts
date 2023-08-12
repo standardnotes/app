@@ -755,9 +755,7 @@ export class Dependencies {
     this.factory.set(TYPES.DecryptErroredTypeAPayloads, () => {
       return new DecryptErroredTypeAPayloads(
         this.get<PayloadManager>(TYPES.PayloadManager),
-        this.get<EncryptionOperators>(TYPES.EncryptionOperators),
-        this.get<KeySystemKeyManager>(TYPES.KeySystemKeyManager),
-        this.get<RootKeyManager>(TYPES.RootKeyManager),
+        this.get<DecryptTypeAPayloadWithKeyLookup>(TYPES.DecryptTypeAPayloadWithKeyLookup),
       )
     })
 
