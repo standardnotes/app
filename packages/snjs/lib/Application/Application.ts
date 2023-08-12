@@ -225,6 +225,9 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
 
     this.dependencies = new Dependencies(this.options)
 
+    const logger = this.dependencies.get<LoggerInterface>(TYPES.Logger)
+    logger.setLevel('error')
+
     this.registerServiceObservers()
 
     RegisterApplicationServicesEvents(this.dependencies, this.events)

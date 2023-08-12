@@ -10,12 +10,14 @@ import {
 import { DecryptTypeAPayload } from './DecryptPayload'
 import { RootKeyManager } from '../../../RootKeyManager/RootKeyManager'
 import { KeySystemKeyManagerInterface } from '../../../KeySystem/KeySystemKeyManagerInterface'
+import { LoggerInterface } from '@standardnotes/utils'
 
 export class DecryptTypeAPayloadWithKeyLookup {
   constructor(
     private operators: EncryptionOperatorsInterface,
     private keySystemKeyManager: KeySystemKeyManagerInterface,
     private rootKeyManager: RootKeyManager,
+    private logger: LoggerInterface,
   ) {}
 
   async executeOne<C extends ItemContent = ItemContent>(
@@ -24,7 +26,11 @@ export class DecryptTypeAPayloadWithKeyLookup {
     let key: RootKeyInterface | KeySystemRootKeyInterface | undefined
     if (ContentTypeUsesKeySystemRootKeyEncryption(payload.content_type)) {
       if (!payload.key_system_identifier) {
-        throw Error('Key system root key encrypted payload is missing key_system_identifier')
+        this.logger.error('Payload is missing key system identifier', payload)
+        return {
+          uuid: payload.uuid,
+          errorDecrypting: true,
+        }
       }
       key = this.keySystemKeyManager.getPrimaryKeySystemRootKey(payload.key_system_identifier)
     } else {

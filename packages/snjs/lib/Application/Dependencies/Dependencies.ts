@@ -770,6 +770,7 @@ export class Dependencies {
         this.get<EncryptionOperators>(TYPES.EncryptionOperators),
         this.get<KeySystemKeyManager>(TYPES.KeySystemKeyManager),
         this.get<RootKeyManager>(TYPES.RootKeyManager),
+        this.get<Logger>(TYPES.Logger),
       )
     })
 
