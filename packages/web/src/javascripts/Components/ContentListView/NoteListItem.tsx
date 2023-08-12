@@ -43,12 +43,10 @@ const NoteListItem: FunctionComponent<DisplayableListItemProps<SNNote>> = ({
   const hasFiles = application.items.itemsReferencingItem(item).filter(isFile).length > 0
 
   const openNoteContextMenu = (posX: number, posY: number) => {
-    notesController.setContextMenuOpen(false)
     notesController.setContextMenuClickLocation({
       x: posX,
       y: posY,
     })
-    notesController.reloadContextMenuLayout()
     notesController.setContextMenuOpen(true)
   }
 

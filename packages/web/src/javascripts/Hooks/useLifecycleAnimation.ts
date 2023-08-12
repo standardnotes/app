@@ -62,6 +62,8 @@ export const useLifecycleAnimation = (
       return
     }
 
+    let animation: Animation | undefined
+
     if (open) {
       if (!enter) {
         setIsMounted(true)
@@ -71,7 +73,7 @@ export const useLifecycleAnimation = (
       if (enter.initialStyle) {
         Object.assign(element.style, enter.initialStyle)
       }
-      const animation = element.animate(
+      animation = element.animate(
         prefersReducedMotion && enter.reducedMotionKeyframes ? enter.reducedMotionKeyframes : enter.keyframes,
         {
           ...enter.options,
@@ -82,7 +84,12 @@ export const useLifecycleAnimation = (
         .then(() => {
           enterCallback?.(element)
         })
-        .catch(console.error)
+        .catch((error) => {
+          if (animation?.currentTime === null) {
+            return
+          }
+          console.error(error)
+        })
     } else {
       if (!exit) {
         setIsMounted(false)
@@ -92,7 +99,7 @@ export const useLifecycleAnimation = (
       if (exit.initialStyle) {
         Object.assign(element.style, exit.initialStyle)
       }
-      const animation = element.animate(
+      animation = element.animate(
         prefersReducedMotion && exit.reducedMotionKeyframes ? exit.reducedMotionKeyframes : exit.keyframes,
         {
           ...exit.options,
@@ -104,7 +111,16 @@ export const useLifecycleAnimation = (
           setIsMounted(false)
           exitCallback?.(element)
         })
-        .catch(console.error)
+        .catch((error) => {
+          if (animation?.currentTime === null) {
+            return
+          }
+          console.error(error)
+        })
+    }
+
+    return () => {
+      animation?.cancel()
     }
   }, [open, element, enterRef, enterCallbackRef, exitRef, exitCallbackRef, disabled])
 
