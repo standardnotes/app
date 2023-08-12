@@ -59,7 +59,7 @@ export class RunWithPermissionsUseCase {
       return
     }
 
-    if (uiFeature.isFeatureDescription) {
+    if (uiFeature.isNativeFeature) {
       runFunction()
       return
     }

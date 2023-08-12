@@ -19,10 +19,10 @@ export class GetFeatureUrl {
       return this.urlForFeatureOnDesktop(uiFeature)
     }
 
-    if (uiFeature.isFeatureDescription) {
+    if (uiFeature.isNativeFeature) {
       return this.urlForNativeComponent(
-        uiFeature.asFeatureDescription.identifier,
-        uiFeature.asFeatureDescription.index_path,
+        uiFeature.featureDescription.identifier,
+        uiFeature.featureDescription.index_path,
       )
     }
 
@@ -55,9 +55,9 @@ export class GetFeatureUrl {
       throw new Error('Desktop manager is not defined')
     }
 
-    if (uiFeature.isFeatureDescription) {
+    if (uiFeature.isNativeFeature) {
       return `${this.desktopManager.getExtServerHost()}/components/${uiFeature.featureIdentifier}/${
-        uiFeature.asFeatureDescription.index_path
+        uiFeature.featureDescription.index_path
       }`
     } else {
       if (uiFeature.asComponent.local_url) {

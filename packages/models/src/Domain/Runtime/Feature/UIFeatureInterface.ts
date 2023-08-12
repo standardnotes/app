@@ -13,7 +13,6 @@ import { Uuid } from '@standardnotes/domain-core'
 export interface UIFeatureInterface<F extends UIFeatureDescriptionTypes> {
   item: ComponentInterface | F
   get isComponent(): boolean
-  get isFeatureDescription(): boolean
   get isThemeComponent(): boolean
   get asComponent(): ComponentInterface
   get asFeatureDescription(): F

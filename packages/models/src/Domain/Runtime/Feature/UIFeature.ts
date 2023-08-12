@@ -24,10 +24,6 @@ export class UIFeature<F extends UIFeatureDescriptionTypes> implements UIFeature
     return isItemBasedFeature(this.item)
   }
 
-  get isFeatureDescription(): boolean {
-    return isNativeFeature(this.item)
-  }
-
   get isThemeComponent(): boolean {
     return isItemBasedFeature(this.item) && isTheme(this.item)
   }
