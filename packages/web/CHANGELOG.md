@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.169.30](https://github.com/standardnotes/app/compare/@standardnotes/web@3.169.29...@standardnotes/web@3.169.30) (2023-08-12)
+
+### Bug Fixes
+
+* Fixed issue where note context menu would not open if right-clicking multiple times ([5af0ff8](https://github.com/standardnotes/app/commit/5af0ff8f2eba32bce46f4e2359e9198f86bf7f4e))
+
 ## [3.169.29](https://github.com/standardnotes/app/compare/@standardnotes/web@3.169.28...@standardnotes/web@3.169.29) (2023-08-12)
 
 **Note:** Version bump only for package @standardnotes/web

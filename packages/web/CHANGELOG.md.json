@@ -1,6 +1,20 @@
 {
   "versions": [
     {
+      "version": "3.169.30",
+      "title": "[3.169.30](https://github.com/standardnotes/app/compare/@standardnotes/web@3.169.29...@standardnotes/web@3.169.30) (2023-08-12)",
+      "date": null,
+      "body": "### Bug Fixes\n\n* Fixed issue where note context menu would not open if right-clicking multiple times ([5af0ff8](https://github.com/standardnotes/app/commit/5af0ff8f2eba32bce46f4e2359e9198f86bf7f4e))",
+      "parsed": {
+        "_": [
+          "Fixed issue where note context menu would not open if right-clicking multiple times (5af0ff8)"
+        ],
+        "Bug Fixes": [
+          "Fixed issue where note context menu would not open if right-clicking multiple times (5af0ff8)"
+        ]
+      }
+    },
+    {
       "version": "3.169.29",
       "title": "[3.169.29](https://github.com/standardnotes/app/compare/@standardnotes/web@3.169.28...@standardnotes/web@3.169.29) (2023-08-12)",
       "date": null,
