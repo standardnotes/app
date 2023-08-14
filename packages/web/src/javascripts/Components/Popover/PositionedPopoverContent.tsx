@@ -85,17 +85,11 @@ const PositionedPopoverContent = ({
 
   useDisableBodyScrollOnMobile()
 
-  const correctInitialScrollForOverflowedContent = useCallback(() => {
-    if (popoverElement) {
-      setTimeout(() => {
-        popoverElement.scrollTop = 0
-      }, 10)
+  const correctInitialScrollForOverflowedContent = useCallback((element: HTMLElement | null) => {
+    if (element && element.scrollTop > 0) {
+      element.scrollTop = 0
     }
-  }, [popoverElement])
-
-  useLayoutEffect(() => {
-    correctInitialScrollForOverflowedContent()
-  }, [popoverElement, correctInitialScrollForOverflowedContent])
+  }, [])
 
   const addCloseMethod = useCallback(
     (element: HTMLDivElement | null) => {
@@ -150,7 +144,7 @@ const PositionedPopoverContent = ({
             styles ? 'scale-100 opacity-100' : 'scale-95 opacity-0',
             className,
           )}
-          ref={setAnimationElement}
+          ref={mergeRefs([correctInitialScrollForOverflowedContent, setAnimationElement])}
         >
           {children}
         </div>
