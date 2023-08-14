@@ -1,7 +1,6 @@
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 import { useAndroidBackHandler } from '@/NativeMobileWeb/useAndroidBackHandler'
-import { UuidGenerator } from '@standardnotes/snjs'
-import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
+import { createContext, useCallback, useContext, useEffect, useId, useMemo, useState } from 'react'
 import MobilePopoverContent from './MobilePopoverContent'
 import PositionedPopoverContent from './PositionedPopoverContent'
 import { PopoverProps } from './Types'
@@ -62,11 +61,11 @@ const PositionedPopoverContentWithAnimation = (
 }
 
 const Popover = (props: PopoverProps) => {
-  const popoverId = useRef(UuidGenerator.GenerateUuid())
+  const popoverId = useId()
 
   const addAndroidBackHandler = useAndroidBackHandler()
 
-  useRegisterPopoverToParent(popoverId.current)
+  useRegisterPopoverToParent(popoverId)
 
   const [childPopovers, setChildPopovers] = useState<Set<string>>(new Set())
 
@@ -106,6 +105,27 @@ const Popover = (props: PopoverProps) => {
     }
   }, [addAndroidBackHandler, props, props.open])
 
+  useEffect(() => {
+    const anchorElement =
+      props.anchorElement && 'current' in props.anchorElement ? props.anchorElement.current : props.anchorElement
+
+    if (anchorElement) {
+      anchorElement.setAttribute('aria-haspopup', 'true')
+      if (props.open) {
+        anchorElement.setAttribute('aria-expanded', 'true')
+      } else {
+        anchorElement.removeAttribute('aria-expanded')
+      }
+    }
+
+    return () => {
+      if (anchorElement) {
+        anchorElement.removeAttribute('aria-haspopup')
+        anchorElement.removeAttribute('aria-expanded')
+      }
+    }
+  }, [props.anchorElement, props.open])
+
   const isMobileScreen = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
 
   if (isMobileScreen && !props.disableMobileFullscreenTakeover) {
@@ -117,7 +137,7 @@ const Popover = (props: PopoverProps) => {
         }}
         title={props.title}
         className={props.className}
-        id={popoverId.current}
+        id={popoverId}
       >
         {props.children}
       </MobilePopoverContent>
@@ -126,7 +146,7 @@ const Popover = (props: PopoverProps) => {
 
   return (
     <PopoverContext.Provider value={contextValue}>
-      <PositionedPopoverContentWithAnimation {...props} childPopovers={childPopovers} id={popoverId.current} />
+      <PositionedPopoverContentWithAnimation {...props} childPopovers={childPopovers} id={popoverId} />
     </PopoverContext.Provider>
   )
 }

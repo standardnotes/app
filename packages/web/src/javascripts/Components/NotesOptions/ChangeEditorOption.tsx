@@ -52,7 +52,7 @@ const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({ applic
       <Popover
         title="Change note type"
         align="start"
-        anchorElement={buttonRef.current}
+        anchorElement={buttonRef}
         className="pt-2 md:pt-0"
         open={isOpen}
         side="right"

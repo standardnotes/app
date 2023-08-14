@@ -100,7 +100,7 @@ const FileViewWithoutProtection = ({ application, file }: FileViewProps) => {
                 title="Details"
                 open={isFileInfoPanelOpen}
                 togglePopover={toggleFileInfoPanel}
-                anchorElement={fileInfoButtonRef.current}
+                anchorElement={fileInfoButtonRef}
                 side="bottom"
                 align="center"
               >

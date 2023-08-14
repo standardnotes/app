@@ -212,7 +212,7 @@ const FilePreviewModal = observer(({ application }: Props) => {
             <Popover
               title="File options"
               open={showOptionsMenu}
-              anchorElement={menuButtonRef.current}
+              anchorElement={menuButtonRef}
               togglePopover={closeOptionsMenu}
               side="bottom"
               align="start"

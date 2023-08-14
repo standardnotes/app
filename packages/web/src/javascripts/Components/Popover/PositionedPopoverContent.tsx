@@ -35,7 +35,8 @@ const PositionedPopoverContent = ({
 }: PopoverContentProps) => {
   const [popoverElement, setPopoverElement] = useState<HTMLDivElement | null>(null)
   const popoverRect = useAutoElementRect(popoverElement)
-  const anchorElementRect = useAutoElementRect(anchorElement, {
+  const resolvedAnchorElement = anchorElement && 'current' in anchorElement ? anchorElement.current : anchorElement
+  const anchorElementRect = useAutoElementRect(resolvedAnchorElement, {
     updateOnWindowResize: true,
   })
   const anchorPointRect = DOMRect.fromRect({
@@ -75,7 +76,7 @@ const PositionedPopoverContent = ({
 
   usePopoverCloseOnClickOutside({
     popoverElement,
-    anchorElement,
+    anchorElement: resolvedAnchorElement,
     togglePopover,
     childPopovers,
     hideOnClickInModal,
@@ -122,13 +123,14 @@ const PositionedPopoverContent = ({
           } as CSSProperties
         }
         ref={mergeRefs([setPopoverElement, addCloseMethod])}
+        id={'popover/' + id}
         data-popover={id}
         onKeyDown={(event) => {
           if (event.key === KeyboardKey.Escape) {
             event.stopPropagation()
             togglePopover?.()
-            if (anchorElement) {
-              anchorElement.focus()
+            if (resolvedAnchorElement) {
+              resolvedAnchorElement.focus()
             }
           }
         }}

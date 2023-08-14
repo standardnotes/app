@@ -35,7 +35,7 @@ const NotesOptionsPanel = ({ notesController, onClickPreprocessing }: Props) => 
         title="Note options"
         disableClickOutside={disableClickOutside}
         togglePopover={toggleMenu}
-        anchorElement={buttonRef.current}
+        anchorElement={buttonRef}
         open={isOpen}
         className="select-none pt-2"
       >

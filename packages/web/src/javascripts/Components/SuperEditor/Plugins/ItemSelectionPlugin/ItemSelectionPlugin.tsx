@@ -98,7 +98,7 @@ export const ItemSelectionPlugin: FunctionComponent<Props> = ({ currentNote }) =
           <Popover
             title="Select item"
             align="start"
-            anchorElement={anchorElementRef.current}
+            anchorElement={anchorElementRef}
             open={true}
             disableMobileFullscreenTakeover={true}
             side={isMobileScreen() ? 'top' : 'bottom'}

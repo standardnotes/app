@@ -140,7 +140,7 @@ const AddToVaultMenuOption = ({ iconClassName, items }: { iconClassName: string;
       <Popover
         title="Move to vault"
         togglePopover={toggleSubMenu}
-        anchorElement={buttonRef.current}
+        anchorElement={buttonRef}
         open={isSubMenuOpen}
         side="right"
         align="start"

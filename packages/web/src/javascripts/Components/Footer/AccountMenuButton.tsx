@@ -36,7 +36,7 @@ const AccountMenuButton = ({ hasError, controller, mainApplicationGroup, onClick
       </StyledTooltip>
       <Popover
         title="Account"
-        anchorElement={buttonRef.current}
+        anchorElement={buttonRef}
         open={isOpen}
         togglePopover={toggleMenu}
         side="top"

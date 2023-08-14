@@ -56,7 +56,7 @@ const VaultSelectionButton = ({ isMobileNavigation = false }: { isMobileNavigati
       <Popover
         title="Vault options"
         togglePopover={toggleMenu}
-        anchorElement={buttonRef.current}
+        anchorElement={buttonRef}
         open={isOpen}
         side="top"
         align="start"

@@ -19,13 +19,7 @@ const FilesOptionsPanel = ({ itemListController }: Props) => {
   return (
     <>
       <RoundIconButton label="File options menu" onClick={toggleMenu} ref={buttonRef} icon="more" />
-      <Popover
-        title="File options"
-        togglePopover={toggleMenu}
-        anchorElement={buttonRef.current}
-        open={isOpen}
-        className="py-2"
-      >
+      <Popover title="File options" togglePopover={toggleMenu} anchorElement={buttonRef} open={isOpen} className="py-2">
         <Menu a11yLabel="File options panel" isOpen={isOpen}>
           <FileMenuOptions
             selectedFiles={itemListController.selectedFiles}

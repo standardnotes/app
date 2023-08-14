@@ -67,47 +67,49 @@ const AddItemMenuButton = ({
           <Icon type="add" size="custom" className="h-5 w-5" />
         </button>
       </StyledTooltip>
-      <Popover
-        title="Add item"
-        open={canShowMenu && isMenuOpen}
-        anchorElement={addItemButtonRef.current}
-        togglePopover={() => {
-          setIsMenuOpen((isOpen) => !isOpen)
-        }}
-        side="bottom"
-        align="center"
-        className="py-2"
-      >
-        <Menu a11yLabel={'test'} isOpen={isMenuOpen}>
-          <MenuItem
-            onClick={() => {
-              addNewItem()
-              setIsMenuOpen(false)
-            }}
-          >
-            <Icon type="add" className="mr-2" />
-            {addButtonLabel}
-          </MenuItem>
-          <MenuItem
-            onClick={async () => {
-              setCaptureType('photo')
-              setIsMenuOpen(false)
-            }}
-          >
-            <Icon type="camera" className="mr-2" />
-            Take photo
-          </MenuItem>
-          <MenuItem
-            onClick={async () => {
-              setCaptureType('video')
-              setIsMenuOpen(false)
-            }}
-          >
-            <Icon type="camera" className="mr-2" />
-            Record video
-          </MenuItem>
-        </Menu>
-      </Popover>
+      {canShowMenu && (
+        <Popover
+          title="Add item"
+          open={isMenuOpen}
+          anchorElement={addItemButtonRef}
+          togglePopover={() => {
+            setIsMenuOpen((isOpen) => !isOpen)
+          }}
+          side="bottom"
+          align="center"
+          className="py-2"
+        >
+          <Menu a11yLabel={'test'} isOpen={isMenuOpen}>
+            <MenuItem
+              onClick={() => {
+                addNewItem()
+                setIsMenuOpen(false)
+              }}
+            >
+              <Icon type="add" className="mr-2" />
+              {addButtonLabel}
+            </MenuItem>
+            <MenuItem
+              onClick={async () => {
+                setCaptureType('photo')
+                setIsMenuOpen(false)
+              }}
+            >
+              <Icon type="camera" className="mr-2" />
+              Take photo
+            </MenuItem>
+            <MenuItem
+              onClick={async () => {
+                setCaptureType('video')
+                setIsMenuOpen(false)
+              }}
+            >
+              <Icon type="camera" className="mr-2" />
+              Record video
+            </MenuItem>
+          </Menu>
+        </Popover>
+      )}
       <ModalOverlay isOpen={captureType === 'photo'} close={closeCaptureModal}>
         <PhotoCaptureModal filesController={filesController} close={closeCaptureModal} />
       </ModalOverlay>

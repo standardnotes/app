@@ -51,7 +51,7 @@ const QuickSettingsButton = ({ application, isMobileNavigation = false }: Props)
       <Popover
         title="Quick settings"
         togglePopover={toggleMenu}
-        anchorElement={buttonRef.current}
+        anchorElement={buttonRef}
         open={isOpen}
         side="top"
         align="start"

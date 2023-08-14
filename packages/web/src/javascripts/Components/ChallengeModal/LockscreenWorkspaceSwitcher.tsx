@@ -27,7 +27,7 @@ const LockscreenWorkspaceSwitcher: FunctionComponent<Props> = ({ mainApplication
       <Popover
         title="Switch workspace"
         align="center"
-        anchorElement={buttonRef.current}
+        anchorElement={buttonRef}
         className="py-2"
         open={isOpen}
         overrideZIndex="z-modal"

@@ -168,7 +168,7 @@ const AddSmartViewModal = ({ controller, platform }: Props) => {
             <Popover
               title="Choose icon"
               open={shouldShowIconPicker}
-              anchorElement={iconPickerButtonRef.current}
+              anchorElement={iconPickerButtonRef}
               togglePopover={toggleIconPicker}
               align="start"
               overrideZIndex="z-modal"

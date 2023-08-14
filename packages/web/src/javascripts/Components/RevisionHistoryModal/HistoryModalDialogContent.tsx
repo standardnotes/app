@@ -51,7 +51,7 @@ const HistoryModalDialogContent = ({ dismissModal, note }: RevisionHistoryModalC
         <Popover
           title="Advanced"
           open={showTabMenu}
-          anchorElement={tabOptionRef.current}
+          anchorElement={tabOptionRef}
           disableMobileFullscreenTakeover={true}
           togglePopover={toggleTabMenu}
           align="start"

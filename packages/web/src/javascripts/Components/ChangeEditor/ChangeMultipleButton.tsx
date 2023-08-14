@@ -23,7 +23,7 @@ const ChangeMultipleButton = ({ application, notesController }: Props) => {
         title="Change note type"
         togglePopover={toggleMenu}
         disableClickOutside={disableClickOutside}
-        anchorElement={changeButtonRef.current}
+        anchorElement={changeButtonRef}
         open={isChangeMenuOpen}
         className="pt-2 md:pt-0"
       >

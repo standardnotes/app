@@ -50,7 +50,7 @@ const ListedActionsOption: FunctionComponent<Props> = ({ application, note, icon
       <Popover
         title="Listed"
         togglePopover={toggleMenu}
-        anchorElement={buttonRef.current}
+        anchorElement={buttonRef}
         open={isOpen}
         side="right"
         align="end"

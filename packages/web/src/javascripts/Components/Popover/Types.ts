@@ -1,4 +1,4 @@
-import { ReactNode } from 'react'
+import { ReactNode, RefObject } from 'react'
 
 export type PopoverState = 'closed' | 'positioning' | 'open'
 
@@ -20,8 +20,10 @@ type Point = {
   y: number
 }
 
+type AnchorElementOrRef = RefObject<HTMLElement | null> | HTMLElement | null
+
 type PopoverAnchorElementProps = {
-  anchorElement: HTMLElement | null
+  anchorElement: AnchorElementOrRef
   anchorPoint?: never
 }
 
@@ -49,7 +51,7 @@ type CommonPopoverProps = {
 }
 
 export type PopoverContentProps = CommonPopoverProps & {
-  anchorElement?: HTMLElement | null
+  anchorElement?: AnchorElementOrRef
   anchorPoint?: Point
   childPopovers: Set<string>
   togglePopover?: () => void

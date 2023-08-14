@@ -52,6 +52,7 @@ const MobilePopoverContent = ({
       <div
         ref={mergeRefs([setPopoverElement, addCloseMethod])}
         className="fixed left-0 top-0 z-modal flex h-full w-full flex-col bg-default pb-safe-bottom pt-safe-top"
+        id={'popover/' + id}
         data-popover={id}
         data-mobile-popover
       >

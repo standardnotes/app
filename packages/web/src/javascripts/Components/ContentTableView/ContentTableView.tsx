@@ -67,7 +67,7 @@ const ContextMenuCell = ({ items }: { items: DecryptedItemInterface[] }) => {
       <Popover
         title="File options"
         open={contextMenuVisible}
-        anchorElement={anchorElementRef.current}
+        anchorElement={anchorElementRef}
         togglePopover={() => {
           setContextMenuVisible(false)
         }}
@@ -120,7 +120,7 @@ const ItemLinksCell = ({ item }: { item: DecryptedItemInterface }) => {
       <Popover
         title="Linked items"
         open={contextMenuVisible}
-        anchorElement={anchorElementRef.current}
+        anchorElement={anchorElementRef}
         togglePopover={() => {
           setContextMenuVisible(false)
         }}

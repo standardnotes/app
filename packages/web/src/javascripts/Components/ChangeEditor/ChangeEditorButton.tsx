@@ -77,7 +77,7 @@ const ChangeEditorButton: FunctionComponent<Props> = ({ noteViewController, onCl
         title="Change note type"
         togglePopover={toggleMenu}
         disableClickOutside={isClickOutsideDisabled}
-        anchorElement={buttonRef.current}
+        anchorElement={buttonRef}
         open={isOpen}
         className="pt-2 md:pt-0"
       >

@@ -32,7 +32,7 @@ const LinkedItemsButton = ({ linkingController, onClickPreprocessing }: Props) =
       <Popover
         title="Linked items"
         togglePopover={toggleMenu}
-        anchorElement={buttonRef.current}
+        anchorElement={buttonRef}
         open={isLinkingPanelOpen}
         className="pb-2"
       >

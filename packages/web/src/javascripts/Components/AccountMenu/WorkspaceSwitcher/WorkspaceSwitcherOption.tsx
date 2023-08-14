@@ -32,7 +32,7 @@ const WorkspaceSwitcherOption: FunctionComponent<Props> = ({ mainApplicationGrou
       <Popover
         title="Switch workspace"
         align="end"
-        anchorElement={buttonRef.current}
+        anchorElement={buttonRef}
         className="py-2"
         open={isOpen}
         side="right"

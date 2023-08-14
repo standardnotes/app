@@ -131,7 +131,7 @@ const Modal = ({
                   <Popover
                     title="Advanced"
                     open={showAdvanced}
-                    anchorElement={advancedOptionRef.current}
+                    anchorElement={advancedOptionRef}
                     disableMobileFullscreenTakeover={true}
                     togglePopover={() => setShowAdvanced((show) => !show)}
                     align="start"

@@ -8,6 +8,7 @@ import {
   MouseEventHandler,
   ReactNode,
   useCallback,
+  useRef,
   useState,
 } from 'react'
 import Icon from '../Icon/Icon'
@@ -27,12 +28,12 @@ const Tooltip = ({ text }: { text: string }) => {
     [visible],
   )
 
-  const [anchorElement, setAnchorElement] = useState<HTMLDivElement | null>(null)
+  const anchorElement = useRef(null)
 
   return (
     <div className="relative">
       <div
-        ref={setAnchorElement}
+        ref={anchorElement}
         className={classNames('peer z-0 flex h-5 w-5 items-center justify-center rounded-full')}
         onClick={onClickMobile}
         onMouseEnter={() => setVisible(true)}

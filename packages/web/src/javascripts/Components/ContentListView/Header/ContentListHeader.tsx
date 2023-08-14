@@ -116,7 +116,7 @@ const ContentListHeader = ({
           />
           <Popover
             open={showDisplayOptionsMenu}
-            anchorElement={displayOptionsButtonRef.current}
+            anchorElement={displayOptionsButtonRef}
             togglePopover={toggleDisplayOptionsMenu}
             align="start"
             className="py-2"
