@@ -87,7 +87,7 @@
     "postcss": "^8.4.19",
     "postcss-loader": "^7.0.2",
     "prettier": "*",
-    "prettier-plugin-tailwindcss": "^0.4.1",
+    "prettier-plugin-tailwindcss": "^0.5.2",
     "qrcode.react": "^3.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
