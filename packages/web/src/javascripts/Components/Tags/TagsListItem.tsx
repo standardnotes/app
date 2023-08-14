@@ -260,7 +260,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(
         <div
           role="button"
           tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
-          className={classNames('tag px-3.5', isSelected && 'selected', isBeingDraggedOver && 'is-drag-over')}
+          className={classNames('tag group px-3.5', isSelected && 'selected', isBeingDraggedOver && 'is-drag-over')}
           onClick={selectCurrentTag}
           ref={tagRef}
           style={{
@@ -282,7 +282,10 @@ export const TagsListItem: FunctionComponent<Props> = observer(
             <div onClick={selectCurrentTag} className={'tag-icon draggable mr-2'}>
               <Icon
                 type={tag.iconString as IconType}
-                className={`cursor-pointer ${isSelected ? 'text-info' : 'text-neutral'}`}
+                className={classNames(
+                  'cursor-pointer group-hover:text-text',
+                  isSelected ? 'text-info' : 'text-neutral',
+                )}
               />
             </div>
 

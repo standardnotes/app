@@ -115,7 +115,7 @@ const SmartViewsListItem: FunctionComponent<Props> = ({ view, tagsState, setEdit
       <div
         role="button"
         tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
-        className={classNames('tag px-3.5', isSelected && 'selected', isFaded && 'opacity-50')}
+        className={classNames('tag group px-3.5', isSelected && 'selected', isFaded && 'opacity-50')}
         onClick={selectCurrentTag}
         onContextMenu={(event) => {
           event.preventDefault()
@@ -131,7 +131,7 @@ const SmartViewsListItem: FunctionComponent<Props> = ({ view, tagsState, setEdit
       >
         <div className="tag-info">
           <div className={'tag-icon mr-2'}>
-            <Icon type={view.iconString} className={iconClass} />
+            <Icon type={view.iconString} className={classNames(iconClass, 'group-hover:text-text')} />
           </div>
           {isEditing ? (
             <input
