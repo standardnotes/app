@@ -1,17 +1,16 @@
-import AlertDialog from '../AlertDialog/AlertDialog'
 import { FunctionComponent, useRef } from 'react'
 import { WebApplication } from '@/Application/WebApplication'
 import { PremiumFeatureModalType } from './PremiumFeatureModalType'
 import { FeatureName } from '@/Controllers/FeatureName'
 import { SuccessPrompt } from './Subviews/SuccessPrompt'
 import { UpgradePrompt } from './Subviews/UpgradePrompt'
+import Modal from '../Modal/Modal'
 
 type Props = {
   application: WebApplication
   featureName?: FeatureName | string
   hasSubscription: boolean
   onClose: () => void
-  showModal: boolean
   type: PremiumFeatureModalType
 }
 
@@ -20,17 +19,12 @@ const PremiumFeaturesModal: FunctionComponent<Props> = ({
   featureName,
   hasSubscription,
   onClose,
-  showModal,
   type = PremiumFeatureModalType.UpgradePrompt,
 }) => {
   const ctaButtonRef = useRef<HTMLButtonElement>(null)
 
-  if (!showModal) {
-    return null
-  }
-
   return (
-    <AlertDialog closeDialog={onClose} className="w-full max-w-[90vw] md:max-w-89">
+    <Modal close={onClose} title="Upgrade" className="px-6 py-5" customHeader={<></>}>
       <div tabIndex={-1} className="sn-component">
         <div tabIndex={0}>
           {type === PremiumFeatureModalType.UpgradePrompt && (
@@ -46,7 +40,7 @@ const PremiumFeaturesModal: FunctionComponent<Props> = ({
           {type === PremiumFeatureModalType.UpgradeSuccess && <SuccessPrompt ctaRef={ctaButtonRef} onClose={onClose} />}
         </div>
       </div>
-    </AlertDialog>
+    </Modal>
   )
 }
 

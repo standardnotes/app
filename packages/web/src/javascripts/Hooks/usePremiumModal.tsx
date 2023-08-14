@@ -2,6 +2,7 @@ import { WebApplication } from '@/Application/WebApplication'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, createContext, useCallback, useContext, ReactNode } from 'react'
 import PremiumFeaturesModal from '@/Components/PremiumFeaturesModal/PremiumFeaturesModal'
+import ModalOverlay from '@/Components/Modal/ModalOverlay'
 
 type PremiumModalContextData = {
   activate: (featureName: string) => void
@@ -44,16 +45,19 @@ const PremiumModalProvider: FunctionComponent<Props> = observer(({ application, 
 
   return (
     <>
-      {application.featuresController.premiumAlertType != undefined && (
+      <ModalOverlay
+        isOpen={application.featuresController.premiumAlertType != undefined}
+        close={close}
+        className="w-full max-w-[90vw] md:max-w-89"
+      >
         <PremiumFeaturesModal
           application={application}
           featureName={featureName}
           hasSubscription={hasSubscription}
           onClose={close}
-          showModal={application.featuresController.premiumAlertType != undefined}
-          type={application.featuresController.premiumAlertType}
+          type={application.featuresController.premiumAlertType!}
         />
-      )}
+      </ModalOverlay>
       <PremiumModalProvider_ value={{ activate }}>{children}</PremiumModalProvider_>
     </>
   )
