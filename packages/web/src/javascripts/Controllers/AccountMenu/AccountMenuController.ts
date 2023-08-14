@@ -96,11 +96,13 @@ export class AccountMenuController extends AbstractViewController implements Int
 
   setShow = (show: boolean): void => {
     this.show = show
+    if (show) {
+      this.setCurrentPane(AccountMenuPane.GeneralMenu)
+    }
   }
 
   closeAccountMenu = (): void => {
     this.setShow(false)
-    this.setCurrentPane(AccountMenuPane.GeneralMenu)
   }
 
   setSigningOut = (signingOut: boolean): void => {
