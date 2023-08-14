@@ -69,8 +69,6 @@ export const useListKeyboardNavigation = (
         return
       }
 
-      listItems.current = Array.from(container.current?.querySelectorAll('button') as NodeListOf<HTMLButtonElement>)
-
       if (e.key === KeyboardKey.Up) {
         const previousIndex = getPreviousFocusableIndex(focusedItemIndex.current, listItems.current)
         focusItemWithIndex(previousIndex)
@@ -81,14 +79,13 @@ export const useListKeyboardNavigation = (
         focusItemWithIndex(nextIndex)
       }
     },
-    [container, focusItemWithIndex, getNextFocusableIndex, getPreviousFocusableIndex],
+    [focusItemWithIndex, getNextFocusableIndex, getPreviousFocusableIndex],
   )
 
   const FIRST_ITEM_FOCUS_TIMEOUT = 20
 
   const setInitialFocus = useCallback(() => {
-    const items = Array.from(container.current?.querySelectorAll('button') as NodeListOf<HTMLButtonElement>)
-    listItems.current = items
+    const items = listItems.current
 
     if (items.length < 1) {
       return
@@ -99,7 +96,7 @@ export const useListKeyboardNavigation = (
     indexToFocus = getNextFocusableIndex(indexToFocus - 1, items)
 
     focusItemWithIndex(indexToFocus, items)
-  }, [container, focusItemWithIndex, getNextFocusableIndex, initialFocus])
+  }, [focusItemWithIndex, getNextFocusableIndex, initialFocus])
 
   useEffect(() => {
     if (shouldAutoFocus) {
@@ -117,10 +114,25 @@ export const useListKeyboardNavigation = (
 
   useEffect(() => {
     const containerElement = container.current
-    containerElement?.addEventListener('keydown', keyDownHandler)
+
+    if (!containerElement) {
+      return
+    }
+
+    containerElement.addEventListener('keydown', keyDownHandler)
+
+    const containerMutationObserver = new MutationObserver(() => {
+      listItems.current = Array.from(containerElement.querySelectorAll('button'))
+    })
+
+    containerMutationObserver.observe(containerElement, {
+      childList: true,
+      subtree: true,
+    })
 
     return () => {
       containerElement?.removeEventListener('keydown', keyDownHandler)
+      containerMutationObserver.disconnect()
     }
   }, [container, setInitialFocus, keyDownHandler])
 
