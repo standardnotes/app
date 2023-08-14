@@ -26,7 +26,9 @@ export const usePopoverCloseOnClickOutside = ({
       const closestPopoverId = target.closest('[data-popover]')?.getAttribute('data-popover')
       const isDescendantOfChildPopover = closestPopoverId && childPopovers.has(closestPopoverId)
       const isPopoverInModal = popoverElement?.closest('[data-dialog], .sk-modal')
-      const isDescendantOfModal = isPopoverInModal ? false : !!target.closest('[data-dialog], .sk-modal')
+      const isDescendantOfModal = isPopoverInModal
+        ? false
+        : !!target.closest('[data-dialog], [data-backdrop], .sk-modal')
       const isDescendantOfDesktopTitlebar = !!target.closest('#desktop-title-bar')
 
       if (
