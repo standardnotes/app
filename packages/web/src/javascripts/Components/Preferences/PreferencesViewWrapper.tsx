@@ -50,7 +50,7 @@ const PreferencesViewWrapper: FunctionComponent<PreferencesViewWrapperProps> = (
       animate="mobile"
       animationVariant="horizontal"
       close={application.preferencesController.closePreferences}
-      className="md:h-full md:!max-h-full md:!w-full"
+      className="md:!border-0 md:h-full md:!max-h-full md:!w-full"
     >
       <PreferencesView
         closePreferences={application.preferencesController.closePreferences}
