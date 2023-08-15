@@ -4880,12 +4880,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/spreadsheets@npm:^1.8.0":
-  version: 1.8.0
-  resolution: "@standardnotes/spreadsheets@npm:1.8.0"
+"@standardnotes/spreadsheets@npm:^1.8.1":
+  version: 1.8.1
+  resolution: "@standardnotes/spreadsheets@npm:1.8.1"
   dependencies:
     "@standardnotes/component-relay": "github:standardnotes/component-relay#839ff5db9bc92db9d42cad8d202ddc4df729597d"
-  checksum: 95bb76dac0e717f0dc76110686539092be68945655e780197fb2696bdc06230b02baa2334c309b42f37f8b929c266c939b8d3691fc326fdf3fe93315da64d6e7
+  checksum: d3c66eda2ae8d35215cdfb3c275ae9da23b8114cc03586793cd24985db5394b2e42fdaf9bf9088efb1d0b7e5703aadc2dde8962e0c3da6c244701f99ce5b6b87
   languageName: node
   linkType: hard
 
@@ -5022,7 +5022,7 @@ __metadata:
     "@standardnotes/sncrypto-web": "workspace:*"
     "@standardnotes/snjs": "workspace:*"
     "@standardnotes/solarized-dark-theme": ^1.4.6
-    "@standardnotes/spreadsheets": ^1.8.0
+    "@standardnotes/spreadsheets": ^1.8.1
     "@standardnotes/styles": "workspace:*"
     "@standardnotes/titanium-theme": ^1.4.7
     "@standardnotes/toast": "workspace:*"

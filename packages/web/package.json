@@ -51,7 +51,7 @@
     "@standardnotes/sncrypto-web": "workspace:*",
     "@standardnotes/snjs": "workspace:*",
     "@standardnotes/solarized-dark-theme": "^1.4.6",
-    "@standardnotes/spreadsheets": "^1.8.0",
+    "@standardnotes/spreadsheets": "^1.8.1",
     "@standardnotes/styles": "workspace:*",
     "@standardnotes/titanium-theme": "^1.4.7",
     "@standardnotes/toast": "workspace:*",
