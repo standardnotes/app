@@ -337,10 +337,11 @@ export class ThemeManager extends AbstractUIService {
     link.onload = () => {
       this.syncThemeColorMetadata()
 
-      if (this.application.isNativeMobileWeb() && !theme.layerable) {
-        const packageInfo = theme.featureDescription
+      if (this.application.isNativeMobileWeb()) {
         setTimeout(() => {
-          this.application.mobileDevice.handleThemeSchemeChange(packageInfo.isDark ?? false, this.getBackgroundColor())
+          const backgroundColorString = this.getBackgroundColor()
+          const backgroundColor = new Color(backgroundColorString)
+          this.application.mobileDevice.handleThemeSchemeChange(backgroundColor.isDark(), backgroundColorString)
         })
       }
 
