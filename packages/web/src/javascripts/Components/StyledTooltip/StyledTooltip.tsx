@@ -1,10 +1,11 @@
 import { classNames } from '@standardnotes/snjs'
-import { ReactNode, useState } from 'react'
+import { ReactNode, useState, useRef, useEffect } from 'react'
 import { Tooltip, TooltipAnchor, TooltipOptions, useTooltipStore } from '@ariakit/react'
 import { Slot } from '@radix-ui/react-slot'
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 import { getPositionedPopoverStyles } from '../Popover/GetPositionedPopoverStyles'
 import { getAdjustedStylesForNonPortalPopover } from '../Popover/Utils/getAdjustedStylesForNonPortal'
+import { useLongPressEvent } from '@/Hooks/useLongPress'
 
 const StyledTooltip = ({
   children,
@@ -24,13 +25,43 @@ const StyledTooltip = ({
 } & Partial<TooltipOptions>) => {
   const [forceOpen, setForceOpen] = useState<boolean | undefined>()
 
+  const isMobile = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
   const tooltip = useTooltipStore({
-    timeout: 500,
+    timeout: isMobile && showOnMobile ? 100 : 500,
     hideTimeout: 0,
     skipTimeout: 0,
     open: forceOpen,
+    animated: true,
   })
-  const isMobile = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
+
+  const anchorRef = useRef<HTMLElement>(null)
+  const { attachEvents: attachLongPressEvents, cleanupEvents: cleanupLongPressEvents } = useLongPressEvent(
+    anchorRef,
+    () => {
+      tooltip.show()
+      setTimeout(() => {
+        tooltip.hide()
+      }, 2000)
+    },
+  )
+
+  useEffect(() => {
+    if (!isMobile || !showOnMobile) {
+      return
+    }
+
+    attachLongPressEvents()
+
+    return () => {
+      cleanupLongPressEvents()
+    }
+  }, [attachLongPressEvents, cleanupLongPressEvents, isMobile, showOnMobile])
+
+  const clickProps = isMobile
+    ? {}
+    : {
+        onClick: () => setForceOpen(false),
+      }
 
   if (isMobile && !showOnMobile) {
     return <>{children}</>
@@ -39,7 +70,8 @@ const StyledTooltip = ({
   return (
     <>
       <TooltipAnchor
-        onClick={() => setForceOpen(false)}
+        ref={anchorRef}
+        {...clickProps}
         onBlur={() => setForceOpen(undefined)}
         store={tooltip}
         as={Slot}
@@ -53,6 +85,7 @@ const StyledTooltip = ({
         store={tooltip}
         className={classNames(
           'z-tooltip max-w-max rounded border border-border translucent-ui:border-[--popover-border-color] bg-contrast translucent-ui:bg-[--popover-background-color] [backdrop-filter:var(--popover-backdrop-filter)] px-3 py-1.5 text-sm text-foreground shadow',
+          'opacity-60 [&[data-enter]]:opacity-100 [&[data-leave]]:opacity-60 transition-opacity duration-75',
           className,
         )}
         updatePosition={() => {
@@ -79,6 +112,7 @@ const StyledTooltip = ({
             popoverRect,
             documentRect,
             disableMobileFullscreenTakeover: true,
+            disableApplyingMobileWidth: true,
             offset: props.gutter ? props.gutter : 6,
           })
 

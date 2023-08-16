@@ -63,13 +63,19 @@ const getStylesFromRect = (options: {
   side: PopoverSide
   align: PopoverAlignment
   disableMobileFullscreenTakeover?: boolean
+  disableApplyingMobileWidth?: boolean
   maxHeight?: number | 'none'
   offset?: number
 }): PopoverCSSProperties => {
-  const { rect, disableMobileFullscreenTakeover = false, maxHeight = 'none' } = options
+  const {
+    rect,
+    disableMobileFullscreenTakeover = false,
+    disableApplyingMobileWidth = false,
+    maxHeight = 'none',
+  } = options
 
   const canApplyMaxHeight = maxHeight !== 'none' && (!isMobileScreen() || disableMobileFullscreenTakeover)
-  const shouldApplyMobileWidth = isMobileScreen() && disableMobileFullscreenTakeover
+  const shouldApplyMobileWidth = isMobileScreen() && disableMobileFullscreenTakeover && !disableApplyingMobileWidth
   const marginForMobile = percentOf(10, window.innerWidth)
 
   return {
@@ -96,6 +102,7 @@ type Options = {
   popoverRect?: DOMRect
   side: PopoverSide
   disableMobileFullscreenTakeover?: boolean
+  disableApplyingMobileWidth?: boolean
   maxHeightFunction?: (calculatedMaxHeight: number) => number | 'none'
   offset?: number
 }
@@ -107,6 +114,7 @@ export const getPositionedPopoverStyles = ({
   popoverRect,
   side,
   disableMobileFullscreenTakeover,
+  disableApplyingMobileWidth,
   maxHeightFunction,
   offset,
 }: Options): PopoverCSSProperties | null => {
@@ -159,6 +167,7 @@ export const getPositionedPopoverStyles = ({
     side: sideWithLessOverflows,
     align: finalAlignment,
     disableMobileFullscreenTakeover,
+    disableApplyingMobileWidth,
     maxHeight,
     offset,
   })

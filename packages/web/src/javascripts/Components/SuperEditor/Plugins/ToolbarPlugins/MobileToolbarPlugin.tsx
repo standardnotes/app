@@ -1,7 +1,7 @@
 import Icon from '@/Components/Icon/Icon'
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
 import useModal from '../../Lexical/Hooks/useModal'
-import { InsertTableDialog } from '../../Plugins/TablePlugin'
+import { InsertTableDialog } from '../TablePlugin'
 import { getSelectedNode } from '../../Lexical/Utils/getSelectedNode'
 import {
   $getSelection,
@@ -41,8 +41,10 @@ import { SUPER_TOGGLE_SEARCH } from '@standardnotes/ui-services'
 import { useApplication } from '@/Components/ApplicationProvider'
 import { GetRemoteImageBlock } from '../Blocks/RemoteImage'
 import { InsertRemoteImageDialog } from '../RemoteImagePlugin/RemoteImagePlugin'
-import LinkEditor from '../FloatingLinkEditorPlugin/LinkEditor'
+import LinkEditor from '../LinkEditor/LinkEditor'
 import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
+import { useSelectedTextFormatInfo } from './useSelectedTextFormatInfo'
+import StyledTooltip from '@/Components/StyledTooltip/StyledTooltip'
 
 const MobileToolbarPlugin = () => {
   const application = useApplication()
@@ -75,6 +77,10 @@ const MobileToolbarPlugin = () => {
     }
   }, [editor])
 
+  const { isBold, isItalic, isUnderline, isSubscript, isSuperscript, isStrikethrough, blockType } =
+    useSelectedTextFormatInfo()
+  const [isSelectionLink, setIsSelectionLink] = useState(false)
+
   const [canUndo, setCanUndo] = useState(false)
   const [canRedo, setCanRedo] = useState(false)
   useEffect(() => {
@@ -103,6 +109,7 @@ const MobileToolbarPlugin = () => {
       name: string
       iconName: string
       keywords?: string[]
+      active?: boolean
       disabled?: boolean
       onSelect: () => void
     }[] => [
@@ -128,6 +135,7 @@ const MobileToolbarPlugin = () => {
         onSelect: () => {
           editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'bold')
         },
+        active: isBold,
       },
       {
         name: 'Italic',
@@ -135,6 +143,7 @@ const MobileToolbarPlugin = () => {
         onSelect: () => {
           editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'italic')
         },
+        active: isItalic,
       },
       {
         name: 'Underline',
@@ -142,6 +151,7 @@ const MobileToolbarPlugin = () => {
         onSelect: () => {
           editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'underline')
         },
+        active: isUnderline,
       },
       {
         name: 'Strikethrough',
@@ -149,6 +159,7 @@ const MobileToolbarPlugin = () => {
         onSelect: () => {
           editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'strikethrough')
         },
+        active: isStrikethrough,
       },
       {
         name: 'Subscript',
@@ -156,6 +167,7 @@ const MobileToolbarPlugin = () => {
         onSelect: () => {
           editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'subscript')
         },
+        active: isSubscript,
       },
       {
         name: 'Superscript',
@@ -163,6 +175,7 @@ const MobileToolbarPlugin = () => {
         onSelect: () => {
           editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'superscript')
         },
+        active: isSuperscript,
       },
       {
         name: 'Link',
@@ -172,6 +185,7 @@ const MobileToolbarPlugin = () => {
             insertLink()
           })
         },
+        active: isSelectionLink,
       },
       {
         name: 'Search',
@@ -189,8 +203,8 @@ const MobileToolbarPlugin = () => {
       GetRemoteImageBlock(() => {
         showModal('Insert image from URL', (onClose) => <InsertRemoteImageDialog onClose={onClose} />)
       }),
-      GetNumberedListBlock(editor),
-      GetBulletedListBlock(editor),
+      GetNumberedListBlock(editor, blockType === 'number'),
+      GetBulletedListBlock(editor, blockType === 'bullet'),
       GetChecklistBlock(editor),
       GetQuoteBlock(editor),
       GetCodeBlock(editor),
@@ -201,7 +215,22 @@ const MobileToolbarPlugin = () => {
       GetCollapsibleBlock(editor),
       ...GetEmbedsBlocks(editor),
     ],
-    [application.keyboardService, canRedo, canUndo, editor, insertLink, showModal],
+    [
+      application.keyboardService,
+      blockType,
+      canRedo,
+      canUndo,
+      editor,
+      insertLink,
+      isBold,
+      isItalic,
+      isSelectionLink,
+      isStrikethrough,
+      isSubscript,
+      isSuperscript,
+      isUnderline,
+      showModal,
+    ],
   )
 
   useEffect(() => {
@@ -272,8 +301,6 @@ const MobileToolbarPlugin = () => {
       linkEditor?.removeEventListener('blur', handleLinkEditorBlur)
     }
   }, [])
-
-  const [isSelectionLink, setIsSelectionLink] = useState(false)
   const [isSelectionAutoLink, setIsSelectionAutoLink] = useState(false)
   const [linkUrl, setLinkUrl] = useState('')
   const [isLinkEditMode, setIsLinkEditMode] = useState(false)
@@ -372,20 +399,35 @@ const MobileToolbarPlugin = () => {
         <div className="flex w-full flex-shrink-0 border-t border-border bg-contrast">
           <div
             tabIndex={-1}
-            className={classNames('flex items-center gap-1 overflow-x-auto', '[&::-webkit-scrollbar]:h-0')}
+            className="flex items-center gap-1 overflow-x-auto pl-1 [&::-webkit-scrollbar]:h-0"
             ref={toolbarRef}
           >
             {items.map((item) => {
               return (
-                <button
-                  className="flex items-center justify-center rounded px-3 py-3 disabled:opacity-50"
-                  aria-label={item.name}
-                  onClick={item.onSelect}
-                  key={item.name}
-                  disabled={item.disabled}
-                >
-                  <Icon type={item.iconName} size="medium" className="!text-current [&>path]:!text-current" />
-                </button>
+                <StyledTooltip showOnMobile showOnHover label={item.name} key={item.name}>
+                  <button
+                    className="flex items-center justify-center rounded p-0.5 disabled:opacity-50 select-none hover:bg-default"
+                    aria-label={item.name}
+                    onMouseDown={(event) => {
+                      event.preventDefault()
+                      item.onSelect()
+                    }}
+                    onContextMenu={(event) => {
+                      editor.focus()
+                      event.preventDefault()
+                    }}
+                    disabled={item.disabled}
+                  >
+                    <div
+                      className={classNames(
+                        'flex items-center justify-center p-2 rounded transition-colors duration-75',
+                        item.active && 'bg-info text-info-contrast',
+                      )}
+                    >
+                      <Icon type={item.iconName} size="medium" className="!text-current [&>path]:!text-current" />
+                    </div>
+                  </button>
+                </StyledTooltip>
               )
             })}
           </div>

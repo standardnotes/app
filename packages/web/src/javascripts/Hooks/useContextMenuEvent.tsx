@@ -3,7 +3,7 @@ import { useLongPressEvent } from './useLongPress'
 import { isIOS } from '@standardnotes/ui-services'
 
 export const useContextMenuEvent = (elementRef: RefObject<HTMLElement>, listener: (x: number, y: number) => void) => {
-  const { attachEvents, cleanupEvents } = useLongPressEvent(elementRef, listener)
+  const { attachEvents, cleanupEvents } = useLongPressEvent(elementRef, listener, true)
 
   const handleContextMenuEvent = useCallback(
     (event: MouseEvent) => {
