@@ -404,10 +404,7 @@ const MobileToolbarPlugin = () => {
             {items.map((item) => {
               return (
                 <button
-                  className={classNames(
-                    'flex items-center justify-center rounded px-3 py-3 disabled:opacity-50 select-none',
-                    item.active && 'bg-info text-info-contrast',
-                  )}
+                  className="flex items-center justify-center rounded p-0.5 disabled:opacity-50 select-none"
                   aria-label={item.name}
                   onClick={item.onSelect}
                   onContextMenu={(event) => {
@@ -416,7 +413,14 @@ const MobileToolbarPlugin = () => {
                   key={item.name}
                   disabled={item.disabled}
                 >
-                  <Icon type={item.iconName} size="medium" className="!text-current [&>path]:!text-current" />
+                  <div
+                    className={classNames(
+                      'flex items-center justify-center p-2 rounded',
+                      item.active && 'bg-info text-info-contrast',
+                    )}
+                  >
+                    <Icon type={item.iconName} size="medium" className="!text-current [&>path]:!text-current" />
+                  </div>
                 </button>
               )
             })}
