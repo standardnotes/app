@@ -44,6 +44,7 @@ import { InsertRemoteImageDialog } from '../RemoteImagePlugin/RemoteImagePlugin'
 import LinkEditor from '../LinkEditor/LinkEditor'
 import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
 import { useSelectedTextFormatInfo } from './useSelectedTextFormatInfo'
+import StyledTooltip from '@/Components/StyledTooltip/StyledTooltip'
 
 const MobileToolbarPlugin = () => {
   const application = useApplication()
@@ -403,25 +404,24 @@ const MobileToolbarPlugin = () => {
           >
             {items.map((item) => {
               return (
-                <button
-                  className="flex items-center justify-center rounded p-0.5 disabled:opacity-50 select-none"
-                  aria-label={item.name}
-                  onClick={item.onSelect}
-                  onContextMenu={(event) => {
-                    event.preventDefault()
-                  }}
-                  key={item.name}
-                  disabled={item.disabled}
-                >
-                  <div
-                    className={classNames(
-                      'flex items-center justify-center p-2 rounded',
-                      item.active && 'bg-info text-info-contrast',
-                    )}
+                <StyledTooltip showOnMobile showOnHover label={item.name}>
+                  <button
+                    className="flex items-center justify-center rounded p-0.5 disabled:opacity-50 select-none"
+                    aria-label={item.name}
+                    onClick={item.onSelect}
+                    key={item.name}
+                    disabled={item.disabled}
                   >
-                    <Icon type={item.iconName} size="medium" className="!text-current [&>path]:!text-current" />
-                  </div>
-                </button>
+                    <div
+                      className={classNames(
+                        'flex items-center justify-center p-2 rounded transition-colors duration-75',
+                        item.active && 'bg-info text-info-contrast',
+                      )}
+                    >
+                      <Icon type={item.iconName} size="medium" className="!text-current [&>path]:!text-current" />
+                    </div>
+                  </button>
+                </StyledTooltip>
               )
             })}
           </div>

@@ -1,5 +1,5 @@
 import { classNames } from '@standardnotes/snjs'
-import { ReactNode, useState } from 'react'
+import { ReactNode, useState, MouseEvent } from 'react'
 import { Tooltip, TooltipAnchor, TooltipOptions, useTooltipStore } from '@ariakit/react'
 import { Slot } from '@radix-ui/react-slot'
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
@@ -24,13 +24,13 @@ const StyledTooltip = ({
 } & Partial<TooltipOptions>) => {
   const [forceOpen, setForceOpen] = useState<boolean | undefined>()
 
+  const isMobile = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
   const tooltip = useTooltipStore({
-    timeout: 500,
+    timeout: isMobile && showOnMobile ? 100 : 500,
     hideTimeout: 0,
     skipTimeout: 0,
     open: forceOpen,
   })
-  const isMobile = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
 
   if (isMobile && !showOnMobile) {
     return <>{children}</>
@@ -40,6 +40,12 @@ const StyledTooltip = ({
     <>
       <TooltipAnchor
         onClick={() => setForceOpen(false)}
+        onContextMenu={(event: MouseEvent) => {
+          if (isMobile && showOnMobile) {
+            event.preventDefault()
+            tooltip.show()
+          }
+        }}
         onBlur={() => setForceOpen(undefined)}
         store={tooltip}
         as={Slot}
@@ -79,6 +85,7 @@ const StyledTooltip = ({
             popoverRect,
             documentRect,
             disableMobileFullscreenTakeover: true,
+            disableApplyingMobileWidth: true,
             offset: props.gutter ? props.gutter : 6,
           })
 
