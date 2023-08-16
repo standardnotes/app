@@ -76,7 +76,8 @@ const MobileToolbarPlugin = () => {
     }
   }, [editor])
 
-  const { isBold, isItalic, isUnderline, isSubscript, isSuperscript, isStrikethrough } = useSelectedTextFormatInfo()
+  const { isBold, isItalic, isUnderline, isSubscript, isSuperscript, isStrikethrough, blockType } =
+    useSelectedTextFormatInfo()
   const [isSelectionLink, setIsSelectionLink] = useState(false)
 
   const [canUndo, setCanUndo] = useState(false)
@@ -201,8 +202,8 @@ const MobileToolbarPlugin = () => {
       GetRemoteImageBlock(() => {
         showModal('Insert image from URL', (onClose) => <InsertRemoteImageDialog onClose={onClose} />)
       }),
-      GetNumberedListBlock(editor),
-      GetBulletedListBlock(editor),
+      GetNumberedListBlock(editor, blockType === 'number'),
+      GetBulletedListBlock(editor, blockType === 'bullet'),
       GetChecklistBlock(editor),
       GetQuoteBlock(editor),
       GetCodeBlock(editor),
@@ -215,6 +216,7 @@ const MobileToolbarPlugin = () => {
     ],
     [
       application.keyboardService,
+      blockType,
       canRedo,
       canUndo,
       editor,
