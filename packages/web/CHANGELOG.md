@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.170.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.169.35...@standardnotes/web@3.170.0) (2023-08-16)
+
+### Features
+
+* Super formatting toolbar on mobile now shows whether an option is active in the selection, and also shows hints when an option is long-pressed ([#2432](https://github.com/standardnotes/app/issues/2432)) ([77f72ff](https://github.com/standardnotes/app/commit/77f72ff7b67a5dab502d1db95dc512e3bf348541))
+
 ## [3.169.35](https://github.com/standardnotes/app/compare/@standardnotes/web@3.169.34...@standardnotes/web@3.169.35) (2023-08-15)
 
 **Note:** Version bump only for package @standardnotes/web
