@@ -41,7 +41,7 @@ import { SUPER_TOGGLE_SEARCH } from '@standardnotes/ui-services'
 import { useApplication } from '@/Components/ApplicationProvider'
 import { GetRemoteImageBlock } from '../Blocks/RemoteImage'
 import { InsertRemoteImageDialog } from '../RemoteImagePlugin/RemoteImagePlugin'
-import LinkEditor from '../FloatingLinkEditorPlugin/LinkEditor'
+import LinkEditor from '../LinkEditor/LinkEditor'
 import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
 
 const MobileToolbarPlugin = () => {
@@ -378,9 +378,12 @@ const MobileToolbarPlugin = () => {
             {items.map((item) => {
               return (
                 <button
-                  className="flex items-center justify-center rounded px-3 py-3 disabled:opacity-50"
+                  className="flex items-center justify-center rounded px-3 py-3 disabled:opacity-50 select-none"
                   aria-label={item.name}
                   onClick={item.onSelect}
+                  onContextMenu={(event) => {
+                    event.preventDefault()
+                  }}
                   key={item.name}
                   disabled={item.disabled}
                 >

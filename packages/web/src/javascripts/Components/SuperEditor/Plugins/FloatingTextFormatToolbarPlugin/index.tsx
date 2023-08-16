@@ -56,8 +56,8 @@ import { classNames } from '@standardnotes/snjs'
 import { getDOMRangeRect } from '../../Lexical/Utils/getDOMRangeRect'
 import { getPositionedPopoverStyles } from '@/Components/Popover/GetPositionedPopoverStyles'
 import { getAdjustedStylesForNonPortalPopover } from '@/Components/Popover/Utils/getAdjustedStylesForNonPortal'
-import LinkEditor from '../FloatingLinkEditorPlugin/LinkEditor'
-import LinkTextEditor, { $isLinkTextNode } from '../FloatingLinkEditorPlugin/LinkTextEditor'
+import LinkEditor from '../LinkEditor/LinkEditor'
+import LinkTextEditor, { $isLinkTextNode } from '../LinkEditor/LinkTextEditor'
 import { URL_REGEX } from '@/Constants/Constants'
 
 const blockTypeToBlockName = {
