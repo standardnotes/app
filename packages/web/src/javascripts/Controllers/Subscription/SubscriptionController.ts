@@ -94,7 +94,7 @@ export class SubscriptionController extends AbstractViewController implements In
         return false
       }
 
-      return this.subscriptions.getOnlineSubscription() !== undefined
+      return !!this.subscriptions.getOnlineSubscription()
     } else {
       const offline = this.features.hasFirstPartyOfflineSubscription()
       return offline

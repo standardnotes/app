@@ -7,6 +7,7 @@ import { PackageProvider } from '@/Components/Preferences/Panes/General/Advanced
 import AccordionItem from '@/Components/Shared/AccordionItem'
 import PreferencesGroup from '../../../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../../../PreferencesComponents/PreferencesSegment'
+import { Platform } from '@standardnotes/snjs'
 
 type Props = {
   application: WebApplication
@@ -20,7 +21,7 @@ const Advanced: FunctionComponent<Props> = ({ application, extensionsLatestVersi
         <AccordionItem title={'Advanced options'}>
           <div className="flex flex-row items-center">
             <div className="flex max-w-full flex-grow flex-col">
-              <OfflineSubscription application={application} />
+              {application.platform !== Platform.Ios && <OfflineSubscription application={application} />}
               <PackagesPreferencesSection
                 className={'mt-3'}
                 application={application}
