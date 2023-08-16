@@ -23,13 +23,22 @@ export const useLongPressEvent = (
       clearLongPressTimeout()
       pointerPosition.current = { x: event.clientX, y: event.clientY }
       longPressTimeout.current = window.setTimeout(() => {
+        elementRef.current?.addEventListener(
+          'mousedown',
+          (event) => {
+            event.preventDefault()
+            event.stopPropagation()
+          },
+          { once: true, capture: true },
+        )
+
         const x = event.clientX
         const y = event.clientY
 
         listener(x, y)
       }, delay)
     },
-    [clearLongPressTimeout, delay, listener],
+    [clearLongPressTimeout, delay, elementRef, listener],
   )
 
   const clearLongPressTimeoutIfMoved = useCallback(
