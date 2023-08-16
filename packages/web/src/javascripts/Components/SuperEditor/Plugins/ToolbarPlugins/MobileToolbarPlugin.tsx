@@ -398,7 +398,7 @@ const MobileToolbarPlugin = () => {
         <div className="flex w-full flex-shrink-0 border-t border-border bg-contrast">
           <div
             tabIndex={-1}
-            className={classNames('flex items-center gap-1 overflow-x-auto', '[&::-webkit-scrollbar]:h-0')}
+            className="flex items-center gap-1 overflow-x-auto pl-1 [&::-webkit-scrollbar]:h-0"
             ref={toolbarRef}
           >
             {items.map((item) => {
