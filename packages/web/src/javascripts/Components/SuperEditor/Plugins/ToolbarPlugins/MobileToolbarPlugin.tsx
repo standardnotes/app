@@ -1,7 +1,7 @@
 import Icon from '@/Components/Icon/Icon'
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
 import useModal from '../../Lexical/Hooks/useModal'
-import { InsertTableDialog } from '../../Plugins/TablePlugin'
+import { InsertTableDialog } from '../TablePlugin'
 import { getSelectedNode } from '../../Lexical/Utils/getSelectedNode'
 import {
   $getSelection,
