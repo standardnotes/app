@@ -43,6 +43,7 @@ import { GetRemoteImageBlock } from '../Blocks/RemoteImage'
 import { InsertRemoteImageDialog } from '../RemoteImagePlugin/RemoteImagePlugin'
 import LinkEditor from '../LinkEditor/LinkEditor'
 import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
+import { useSelectedTextFormatInfo } from './useSelectedTextFormatInfo'
 
 const MobileToolbarPlugin = () => {
   const application = useApplication()
@@ -75,6 +76,9 @@ const MobileToolbarPlugin = () => {
     }
   }, [editor])
 
+  const { isBold, isItalic, isUnderline, isSubscript, isSuperscript, isStrikethrough } = useSelectedTextFormatInfo()
+  const [isSelectionLink, setIsSelectionLink] = useState(false)
+
   const [canUndo, setCanUndo] = useState(false)
   const [canRedo, setCanRedo] = useState(false)
   useEffect(() => {
@@ -103,6 +107,7 @@ const MobileToolbarPlugin = () => {
       name: string
       iconName: string
       keywords?: string[]
+      active?: boolean
       disabled?: boolean
       onSelect: () => void
     }[] => [
@@ -128,6 +133,7 @@ const MobileToolbarPlugin = () => {
         onSelect: () => {
           editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'bold')
         },
+        active: isBold,
       },
       {
         name: 'Italic',
@@ -135,6 +141,7 @@ const MobileToolbarPlugin = () => {
         onSelect: () => {
           editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'italic')
         },
+        active: isItalic,
       },
       {
         name: 'Underline',
@@ -142,6 +149,7 @@ const MobileToolbarPlugin = () => {
         onSelect: () => {
           editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'underline')
         },
+        active: isUnderline,
       },
       {
         name: 'Strikethrough',
@@ -149,6 +157,7 @@ const MobileToolbarPlugin = () => {
         onSelect: () => {
           editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'strikethrough')
         },
+        active: isStrikethrough,
       },
       {
         name: 'Subscript',
@@ -156,6 +165,7 @@ const MobileToolbarPlugin = () => {
         onSelect: () => {
           editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'subscript')
         },
+        active: isSubscript,
       },
       {
         name: 'Superscript',
@@ -163,6 +173,7 @@ const MobileToolbarPlugin = () => {
         onSelect: () => {
           editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'superscript')
         },
+        active: isSuperscript,
       },
       {
         name: 'Link',
@@ -172,6 +183,7 @@ const MobileToolbarPlugin = () => {
             insertLink()
           })
         },
+        active: isSelectionLink,
       },
       {
         name: 'Search',
@@ -201,7 +213,21 @@ const MobileToolbarPlugin = () => {
       GetCollapsibleBlock(editor),
       ...GetEmbedsBlocks(editor),
     ],
-    [application.keyboardService, canRedo, canUndo, editor, insertLink, showModal],
+    [
+      application.keyboardService,
+      canRedo,
+      canUndo,
+      editor,
+      insertLink,
+      isBold,
+      isItalic,
+      isSelectionLink,
+      isStrikethrough,
+      isSubscript,
+      isSuperscript,
+      isUnderline,
+      showModal,
+    ],
   )
 
   useEffect(() => {
@@ -272,8 +298,6 @@ const MobileToolbarPlugin = () => {
       linkEditor?.removeEventListener('blur', handleLinkEditorBlur)
     }
   }, [])
-
-  const [isSelectionLink, setIsSelectionLink] = useState(false)
   const [isSelectionAutoLink, setIsSelectionAutoLink] = useState(false)
   const [linkUrl, setLinkUrl] = useState('')
   const [isLinkEditMode, setIsLinkEditMode] = useState(false)
@@ -378,7 +402,10 @@ const MobileToolbarPlugin = () => {
             {items.map((item) => {
               return (
                 <button
-                  className="flex items-center justify-center rounded px-3 py-3 disabled:opacity-50 select-none"
+                  className={classNames(
+                    'flex items-center justify-center rounded px-3 py-3 disabled:opacity-50 select-none',
+                    item.active && 'bg-info text-info-contrast',
+                  )}
                   aria-label={item.name}
                   onClick={item.onSelect}
                   onContextMenu={(event) => {
