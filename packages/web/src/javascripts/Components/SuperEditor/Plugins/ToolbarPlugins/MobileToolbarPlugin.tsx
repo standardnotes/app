@@ -408,7 +408,14 @@ const MobileToolbarPlugin = () => {
                   <button
                     className="flex items-center justify-center rounded p-0.5 disabled:opacity-50 select-none hover:bg-default"
                     aria-label={item.name}
-                    onClick={item.onSelect}
+                    onMouseDown={(event) => {
+                      event.preventDefault()
+                      item.onSelect()
+                    }}
+                    onContextMenu={(event) => {
+                      editor.focus()
+                      event.preventDefault()
+                    }}
                     disabled={item.disabled}
                   >
                     <div

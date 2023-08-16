@@ -1,5 +1,5 @@
 import { classNames } from '@standardnotes/snjs'
-import { ReactNode, useState, useRef, useEffect, MouseEvent } from 'react'
+import { ReactNode, useState, useRef, useEffect } from 'react'
 import { Tooltip, TooltipAnchor, TooltipOptions, useTooltipStore } from '@ariakit/react'
 import { Slot } from '@radix-ui/react-slot'
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
@@ -57,6 +57,12 @@ const StyledTooltip = ({
     }
   }, [attachLongPressEvents, cleanupLongPressEvents, isMobile, showOnMobile])
 
+  const clickProps = isMobile
+    ? {}
+    : {
+        onClick: () => setForceOpen(false),
+      }
+
   if (isMobile && !showOnMobile) {
     return <>{children}</>
   }
@@ -65,12 +71,7 @@ const StyledTooltip = ({
     <>
       <TooltipAnchor
         ref={anchorRef}
-        onClick={() => setForceOpen(false)}
-        onContextMenu={(event: MouseEvent) => {
-          if (isMobile && showOnMobile) {
-            event.preventDefault()
-          }
-        }}
+        {...clickProps}
         onBlur={() => setForceOpen(undefined)}
         store={tooltip}
         as={Slot}
