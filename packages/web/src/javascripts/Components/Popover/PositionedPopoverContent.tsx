@@ -1,7 +1,7 @@
 import { useDocumentRect } from '@/Hooks/useDocumentRect'
 import { useAutoElementRect } from '@/Hooks/useElementRect'
 import { classNames } from '@standardnotes/utils'
-import { CSSProperties, useCallback, useLayoutEffect, useState } from 'react'
+import { CSSProperties, useCallback, useLayoutEffect, useRef, useState } from 'react'
 import Portal from '../Portal/Portal'
 import { PopoverCSSProperties, getPositionedPopoverStyles } from './GetPositionedPopoverStyles'
 import { PopoverContentProps } from './Types'
@@ -85,9 +85,11 @@ const PositionedPopoverContent = ({
 
   useDisableBodyScrollOnMobile()
 
+  const canCorrectInitialScroll = useRef(true)
   const correctInitialScrollForOverflowedContent = useCallback((element: HTMLElement | null) => {
-    if (element && element.scrollTop > 0) {
+    if (element && element.scrollTop > 0 && canCorrectInitialScroll.current) {
       element.scrollTop = 0
+      canCorrectInitialScroll.current = false
     }
   }, [])
 
@@ -145,6 +147,9 @@ const PositionedPopoverContent = ({
             className,
           )}
           ref={mergeRefs([correctInitialScrollForOverflowedContent, setAnimationElement])}
+          onScroll={() => {
+            canCorrectInitialScroll.current = false
+          }}
         >
           {children}
         </div>
