@@ -1,10 +1,11 @@
 import { classNames } from '@standardnotes/snjs'
-import { ReactNode, useState, MouseEvent } from 'react'
+import { ReactNode, useState, useRef, useEffect, MouseEvent } from 'react'
 import { Tooltip, TooltipAnchor, TooltipOptions, useTooltipStore } from '@ariakit/react'
 import { Slot } from '@radix-ui/react-slot'
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 import { getPositionedPopoverStyles } from '../Popover/GetPositionedPopoverStyles'
 import { getAdjustedStylesForNonPortalPopover } from '../Popover/Utils/getAdjustedStylesForNonPortal'
+import { useLongPressEvent } from '@/Hooks/useLongPress'
 
 const StyledTooltip = ({
   children,
@@ -30,7 +31,31 @@ const StyledTooltip = ({
     hideTimeout: 0,
     skipTimeout: 0,
     open: forceOpen,
+    animated: true,
   })
+
+  const anchorRef = useRef<HTMLElement>(null)
+  const { attachEvents: attachLongPressEvents, cleanupEvents: cleanupLongPressEvents } = useLongPressEvent(
+    anchorRef,
+    () => {
+      tooltip.show()
+      setTimeout(() => {
+        tooltip.hide()
+      }, 2000)
+    },
+  )
+
+  useEffect(() => {
+    if (!isMobile || !showOnMobile) {
+      return
+    }
+
+    attachLongPressEvents()
+
+    return () => {
+      cleanupLongPressEvents()
+    }
+  }, [attachLongPressEvents, cleanupLongPressEvents, isMobile, showOnMobile])
 
   if (isMobile && !showOnMobile) {
     return <>{children}</>
@@ -39,11 +64,11 @@ const StyledTooltip = ({
   return (
     <>
       <TooltipAnchor
+        ref={anchorRef}
         onClick={() => setForceOpen(false)}
         onContextMenu={(event: MouseEvent) => {
           if (isMobile && showOnMobile) {
             event.preventDefault()
-            tooltip.show()
           }
         }}
         onBlur={() => setForceOpen(undefined)}
@@ -59,6 +84,7 @@ const StyledTooltip = ({
         store={tooltip}
         className={classNames(
           'z-tooltip max-w-max rounded border border-border translucent-ui:border-[--popover-border-color] bg-contrast translucent-ui:bg-[--popover-background-color] [backdrop-filter:var(--popover-backdrop-filter)] px-3 py-1.5 text-sm text-foreground shadow',
+          'opacity-60 [&[data-enter]]:opacity-100 [&[data-leave]]:opacity-60 transition-opacity duration-75',
           className,
         )}
         updatePosition={() => {

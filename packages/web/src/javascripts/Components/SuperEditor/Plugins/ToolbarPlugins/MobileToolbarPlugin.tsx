@@ -404,12 +404,11 @@ const MobileToolbarPlugin = () => {
           >
             {items.map((item) => {
               return (
-                <StyledTooltip showOnMobile showOnHover label={item.name}>
+                <StyledTooltip showOnMobile showOnHover label={item.name} key={item.name}>
                   <button
-                    className="flex items-center justify-center rounded p-0.5 disabled:opacity-50 select-none"
+                    className="flex items-center justify-center rounded p-0.5 disabled:opacity-50 select-none hover:bg-default"
                     aria-label={item.name}
                     onClick={item.onSelect}
-                    key={item.name}
                     disabled={item.disabled}
                   >
                     <div

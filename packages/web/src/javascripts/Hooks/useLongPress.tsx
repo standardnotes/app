@@ -6,9 +6,11 @@ const ReactNativeLongpressDelay = 370
 export const useLongPressEvent = (
   elementRef: RefObject<HTMLElement>,
   listener: (x: number, y: number) => void,
+  clearOnPointerMove = false,
   delay = ReactNativeLongpressDelay,
 ) => {
   const longPressTimeout = useRef<number>()
+  const pointerPosition = useRef<{ x: number; y: number }>()
 
   const clearLongPressTimeout = useCallback(() => {
     if (longPressTimeout.current) {
@@ -19,6 +21,7 @@ export const useLongPressEvent = (
   const createLongPressTimeout = useCallback(
     (event: PointerEvent) => {
       clearLongPressTimeout()
+      pointerPosition.current = { x: event.clientX, y: event.clientY }
       longPressTimeout.current = window.setTimeout(() => {
         const x = event.clientX
         const y = event.clientY
@@ -29,16 +32,30 @@ export const useLongPressEvent = (
     [clearLongPressTimeout, delay, listener],
   )
 
+  const clearLongPressTimeoutIfMoved = useCallback(
+    (event: PointerEvent) => {
+      if (
+        pointerPosition.current &&
+        (event.clientX !== pointerPosition.current.x || event.clientY !== pointerPosition.current.y)
+      ) {
+        clearLongPressTimeout()
+      }
+    },
+    [clearLongPressTimeout],
+  )
+
   const attachEvents = useCallback(() => {
     if (!elementRef.current) {
       return
     }
 
     elementRef.current.addEventListener('pointerdown', createLongPressTimeout)
-    elementRef.current.addEventListener('pointermove', clearLongPressTimeout)
+    if (clearOnPointerMove) {
+      elementRef.current.addEventListener('pointermove', clearLongPressTimeoutIfMoved)
+    }
     elementRef.current.addEventListener('pointercancel', clearLongPressTimeout)
     elementRef.current.addEventListener('pointerup', clearLongPressTimeout)
-  }, [clearLongPressTimeout, createLongPressTimeout, elementRef])
+  }, [clearLongPressTimeout, clearLongPressTimeoutIfMoved, clearOnPointerMove, createLongPressTimeout, elementRef])
 
   const cleanupEvents = useCallback(() => {
     if (!elementRef.current) {
@@ -46,10 +63,12 @@ export const useLongPressEvent = (
     }
 
     elementRef.current.removeEventListener('pointerdown', createLongPressTimeout)
-    elementRef.current.removeEventListener('pointermove', clearLongPressTimeout)
+    if (clearOnPointerMove) {
+      elementRef.current.removeEventListener('pointermove', clearLongPressTimeoutIfMoved)
+    }
     elementRef.current.removeEventListener('pointercancel', clearLongPressTimeout)
     elementRef.current.removeEventListener('pointerup', clearLongPressTimeout)
-  }, [clearLongPressTimeout, createLongPressTimeout, elementRef])
+  }, [clearLongPressTimeout, clearLongPressTimeoutIfMoved, clearOnPointerMove, createLongPressTimeout, elementRef])
 
   const memoizedReturn = useMemo(
     () => ({
