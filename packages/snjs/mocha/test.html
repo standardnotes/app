@@ -38,6 +38,10 @@
   <script type="module">
     import MainRegistry from './TestRegistry/MainRegistry.js'
 
+    const vaultTestsEnabled = urlParams.get('vaults') === 'enabled' ? true : false;
+
+    MainRegistry.VaultTests.enabled = MainRegistry.VaultTests.enabled || vaultTestsEnabled;
+
     const loadTest = (fileName) => {
       return new Promise((resolve) => {
         const script = document.createElement('script');
