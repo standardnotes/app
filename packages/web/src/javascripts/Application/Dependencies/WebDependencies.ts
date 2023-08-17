@@ -48,13 +48,24 @@ import { PanesForLayout } from '../UseCase/PanesForLayout'
 import { LoadPurchaseFlowUrl } from '../UseCase/LoadPurchaseFlowUrl'
 import { GetPurchaseFlowUrl } from '../UseCase/GetPurchaseFlowUrl'
 import { OpenSubscriptionDashboard } from '../UseCase/OpenSubscriptionDashboard'
+import { HeadlessSuperConverter } from '@/Components/SuperEditor/Tools/HeadlessSuperConverter'
 
 export class WebDependencies extends DependencyContainer {
   constructor(private application: WebApplicationInterface) {
     super()
 
+    this.bind(Web_TYPES.SuperConverter, () => {
+      return new HeadlessSuperConverter()
+    })
+
     this.bind(Web_TYPES.Importer, () => {
-      return new Importer(application.features, application.mutator, application.items, application.generateUuid)
+      return new Importer(
+        application.features,
+        application.mutator,
+        application.items,
+        this.get<HeadlessSuperConverter>(Web_TYPES.SuperConverter),
+        application.generateUuid,
+      )
     })
 
     this.bind(Web_TYPES.IsNativeIOS, () => {

@@ -38,41 +38,33 @@ const ImportModalInitialPage = ({ setFiles }: Props) => {
       </button>
       <div className="text-center my-4 w-full">or import from:</div>
       <div className="flex flex-wrap items-center justify-center gap-4">
-        <Button
-          className="flex items-center bg-[#14cc45] !py-2 text-[#000]"
-          primary
-          onClick={() => selectFiles('evernote')}
-        >
-          <Icon type="evernote" className="mr-2" />
+        <Button className="flex items-center !py-2" onClick={() => selectFiles('evernote')}>
+          <Icon type="evernote" className="text-[#14cc45] mr-2" />
           Evernote
         </Button>
-        <Button
-          className="flex items-center bg-[#fbbd00] !py-2 text-[#000]"
-          primary
-          onClick={() => selectFiles('google-keep')}
-        >
-          <Icon type="gkeep" className="mr-2" />
+        <Button className="flex items-center !py-2" onClick={() => selectFiles('google-keep')}>
+          <Icon type="gkeep" className="text-[#fbbd00] mr-2" />
           Google Keep
         </Button>
-        <Button className="flex items-center bg-[#3360cc] !py-2" primary onClick={() => selectFiles('simplenote')}>
-          <Icon type="simplenote" className="mr-2" />
+        <Button className="flex items-center !py-2" onClick={() => selectFiles('simplenote')}>
+          <Icon type="simplenote" className="text-[#3360cc] mr-2" />
           Simplenote
         </Button>
-        <Button className="flex items-center bg-[#0d47a1] !py-2" primary onClick={() => selectFiles('aegis')}>
-          <Icon type="aegis" className="mr-2" />
-          Aegis Authenticator
+        <Button className="flex items-center !py-2" onClick={() => selectFiles('aegis')}>
+          <Icon type="aegis" className="bg-[#0d47a1] text-[#fff] rounded mr-2 p-1" size="normal" />
+          Aegis
         </Button>
-        <Button className="flex items-center bg-info !py-2" onClick={() => selectFiles('plaintext')} primary>
-          <Icon type="plain-text" className="mr-2" />
-          Plaintext
+        <Button className="flex items-center !py-2" onClick={() => selectFiles('plaintext')}>
+          <Icon type="plain-text" className="text-info mr-2" />
+          Plaintext / Markdown
         </Button>
-        <Button
-          className="flex items-center bg-accessory-tint-4 !py-2"
-          primary
-          onClick={() => selectFiles('plaintext')}
-        >
-          <Icon type="markdown" className="mr-2" />
-          Markdown
+        {/* <Button className="flex items-center !py-2" onClick={() => selectFiles('rich-text')}>
+          <Icon type="rich-text" className="text-accessory-tint-2 mr-2" />
+          HTML
+        </Button> */}
+        <Button className="flex items-center !py-2" onClick={() => selectFiles('super')}>
+          <Icon type="file-doc" className="text-accessory-tint-1 mr-2" />
+          Super (JSON)
         </Button>
       </div>
     </>

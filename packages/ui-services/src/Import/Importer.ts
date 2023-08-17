@@ -14,8 +14,11 @@ import { PlaintextConverter } from './PlaintextConverter/PlaintextConverter'
 import { SimplenoteConverter } from './SimplenoteConverter/SimplenoteConverter'
 import { readFileAsText } from './Utils'
 import { DecryptedTransferPayload, NoteContent } from '@standardnotes/models'
+import { HTMLConverter } from './HTMLConverter/HTMLConverter'
+import { SuperConverterServiceInterface } from '@standardnotes/snjs/dist/@types'
+import { SuperConverter } from './SuperConverter/SuperConverter'
 
-export type NoteImportType = 'plaintext' | 'evernote' | 'google-keep' | 'simplenote' | 'aegis'
+export type NoteImportType = 'plaintext' | 'evernote' | 'google-keep' | 'simplenote' | 'aegis' | 'html' | 'super'
 
 export class Importer {
   aegisConverter: AegisToAuthenticatorConverter
@@ -23,11 +26,14 @@ export class Importer {
   simplenoteConverter: SimplenoteConverter
   plaintextConverter: PlaintextConverter
   evernoteConverter: EvernoteConverter
+  htmlConverter: HTMLConverter
+  superConverter: SuperConverter
 
   constructor(
     private features: FeaturesClientInterface,
     private mutator: MutatorClientInterface,
     private items: ItemManagerInterface,
+    private superConverterService: SuperConverterServiceInterface,
     _generateUuid: GenerateUuid,
   ) {
     this.aegisConverter = new AegisToAuthenticatorConverter(_generateUuid)
@@ -35,15 +41,21 @@ export class Importer {
     this.simplenoteConverter = new SimplenoteConverter(_generateUuid)
     this.plaintextConverter = new PlaintextConverter(_generateUuid)
     this.evernoteConverter = new EvernoteConverter(_generateUuid)
+    this.htmlConverter = new HTMLConverter(_generateUuid)
+    this.superConverter = new SuperConverter(this.superConverterService, _generateUuid)
   }
 
-  static detectService = async (file: File): Promise<NoteImportType | null> => {
+  detectService = async (file: File): Promise<NoteImportType | null> => {
     const content = await readFileAsText(file)
 
     const { ext } = parseFileName(file.name)
 
     if (ext === 'enex') {
       return 'evernote'
+    }
+
+    if (file.type === 'application/json' && this.superConverterService.isValidSuperString(content)) {
+      return 'super'
     }
 
     try {
@@ -68,11 +80,24 @@ export class Importer {
       return 'plaintext'
     }
 
+    if (HTMLConverter.isHTMLFile(file)) {
+      return 'html'
+    }
+
     return null
   }
 
   async getPayloadsFromFile(file: File, type: NoteImportType): Promise<DecryptedTransferPayload[]> {
-    if (type === 'aegis') {
+    if (type === 'super') {
+      const isEntitledToSuper =
+        this.features.getFeatureStatus(
+          NativeFeatureIdentifier.create(NativeFeatureIdentifier.TYPES.SuperEditor).getValue(),
+        ) === FeatureStatus.Entitled
+      if (!isEntitledToSuper) {
+        throw new Error('Importing Super notes requires a subscription.')
+      }
+      return [await this.superConverter.convertSuperFileToNote(file)]
+    } else if (type === 'aegis') {
       const isEntitledToAuthenticator =
         this.features.getFeatureStatus(
           NativeFeatureIdentifier.create(NativeFeatureIdentifier.TYPES.TokenVaultEditor).getValue(),

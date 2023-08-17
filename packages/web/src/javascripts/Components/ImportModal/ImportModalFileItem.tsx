@@ -11,6 +11,8 @@ const NoteImportTypeColors: Record<NoteImportType, string> = {
   'google-keep': 'bg-[#fbbd00] text-[#000]',
   aegis: 'bg-[#0d47a1] text-default',
   plaintext: 'bg-default border border-border',
+  html: 'bg-accessory-tint-2',
+  super: 'bg-accessory-tint-1',
 }
 
 const NoteImportTypeIcons: Record<NoteImportType, string> = {
@@ -19,6 +21,8 @@ const NoteImportTypeIcons: Record<NoteImportType, string> = {
   'google-keep': 'gkeep',
   aegis: 'aegis',
   plaintext: 'plain-text',
+  html: 'rich-text',
+  super: 'file-doc',
 }
 
 const ImportModalFileItem = ({
@@ -53,13 +57,13 @@ const ImportModalFileItem = ({
 
   useEffect(() => {
     const detect = async () => {
-      const detectedService = await Importer.detectService(file.file)
+      const detectedService = await importer.detectService(file.file)
       void setFileService(detectedService)
     }
     if (file.service === undefined) {
       void detect()
     }
-  }, [file, setFileService])
+  }, [file, importer, setFileService])
 
   const notePayloads =
     file.status === 'ready' && file.payloads

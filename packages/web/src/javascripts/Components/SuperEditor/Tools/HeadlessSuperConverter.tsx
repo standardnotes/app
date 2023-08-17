@@ -20,6 +20,15 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
     })
   }
 
+  isValidSuperString(superString: string): boolean {
+    try {
+      this.editor.parseEditorState(superString)
+      return true
+    } catch (error) {
+      return false
+    }
+  }
+
   convertString(superString: string, format: 'txt' | 'md' | 'html' | 'json'): string {
     if (superString.length === 0) {
       return superString
