@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.171.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.171.0...@standardnotes/web@3.171.1) (2023-08-18)
+
+### Bug Fixes
+
+* Fixed issue where dragging a list item with a link in Super would only re-order the link ([d794847](https://github.com/standardnotes/app/commit/d79484739b2a324f09cb821c39f402f8c65d477e))
+
 # [3.171.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.170.4...@standardnotes/web@3.171.0) (2023-08-18)
 
 ### Features

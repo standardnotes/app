@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/releases",
-  "version": "1.4.467",
+  "version": "1.4.468",
   "license": "CC BY-NC-SA 4.0",
   "main": "dist/releases.json",
   "types": "dist/index.d.ts",
