@@ -5,12 +5,17 @@ import { observer } from 'mobx-react-lite'
 import { useCallback } from 'react'
 import Button from '../Button/Button'
 import Icon from '../Icon/Icon'
+import { useApplication } from '../ApplicationProvider'
+import { FeatureStatus, NativeFeatureIdentifier } from '@standardnotes/snjs'
+import { FeatureName } from '@/Controllers/FeatureName'
 
 type Props = {
   setFiles: ImportModalController['setFiles']
 }
 
 const ImportModalInitialPage = ({ setFiles }: Props) => {
+  const application = useApplication()
+
   const selectFiles = useCallback(
     async (service?: NoteImportType) => {
       const files = await ClassicFileReader.selectFiles()
@@ -62,7 +67,20 @@ const ImportModalInitialPage = ({ setFiles }: Props) => {
           <Icon type="rich-text" className="text-accessory-tint-2 mr-2" />
           HTML
         </Button>
-        <Button className="flex items-center !py-2" onClick={() => selectFiles('super')}>
+        <Button
+          className="flex items-center !py-2"
+          onClick={() => {
+            const isEntitledToSuper =
+              application.features.getFeatureStatus(
+                NativeFeatureIdentifier.create(NativeFeatureIdentifier.TYPES.UniversalSecondFactor).getValue(),
+              ) === FeatureStatus.Entitled
+            if (!isEntitledToSuper) {
+              application.showPremiumModal(FeatureName.Super)
+              return
+            }
+            selectFiles('super').catch(console.error)
+          }}
+        >
           <Icon type="file-doc" className="text-accessory-tint-1 mr-2" />
           Super (JSON)
         </Button>
