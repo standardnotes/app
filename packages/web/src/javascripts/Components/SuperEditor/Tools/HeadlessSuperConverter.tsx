@@ -6,7 +6,6 @@ import {
   $getRoot,
   $insertNodes,
   $nodesOfType,
-  CLEAR_EDITOR_COMMAND,
   LexicalEditor,
   LexicalNode,
   ParagraphNode,
@@ -89,11 +88,12 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
       return otherFormatString
     }
 
-    this.editor.dispatchCommand(CLEAR_EDITOR_COMMAND, undefined)
-
     if (fromFormat === 'html') {
       this.editor.update(
         () => {
+          const root = $getRoot()
+          root.clear()
+
           const parser = new DOMParser()
           const dom = parser.parseFromString(otherFormatString, 'text/html')
           const generatedNodes = $generateNodesFromDOM(this.editor, dom)
