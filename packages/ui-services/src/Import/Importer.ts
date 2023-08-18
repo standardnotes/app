@@ -54,10 +54,6 @@ export class Importer {
       return 'evernote'
     }
 
-    if (file.type === 'application/json' && this.superConverterService.isValidSuperString(content)) {
-      return 'super'
-    }
-
     try {
       const json = JSON.parse(content)
 
@@ -74,6 +70,10 @@ export class Importer {
       }
     } catch {
       /* empty */
+    }
+
+    if (file.type === 'application/json' && this.superConverterService.isValidSuperString(content)) {
+      return 'super'
     }
 
     if (PlaintextConverter.isValidPlaintextFile(file)) {
