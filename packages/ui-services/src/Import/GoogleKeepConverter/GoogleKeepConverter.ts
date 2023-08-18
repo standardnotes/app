@@ -5,15 +5,25 @@ import { GenerateUuid } from '@standardnotes/services'
 import { SuperConverterServiceInterface } from '@standardnotes/files'
 import { NativeFeatureIdentifier, NoteType } from '@standardnotes/features'
 
+type Content =
+  | {
+      textContent: string
+    }
+  | {
+      listContent: {
+        text: string
+        isChecked: boolean
+      }[]
+    }
+
 type GoogleKeepJsonNote = {
   color: string
   isTrashed: boolean
   isPinned: boolean
   isArchived: boolean
-  textContent: string
   title: string
   userEditedTimestampUsec: number
-}
+} & Content
 
 export class GoogleKeepConverter {
   constructor(
@@ -94,9 +104,18 @@ export class GoogleKeepConverter {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   static isValidGoogleKeepJson(json: any): boolean {
+    if (typeof json.textContent !== 'string') {
+      if (typeof json.listContent === 'object' && Array.isArray(json.listContent)) {
+        return json.listContent.every(
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (item: any) => typeof item.text === 'string' && typeof item.isChecked === 'boolean',
+        )
+      }
+      return false
+    }
+
     return (
       typeof json.title === 'string' &&
-      typeof json.textContent === 'string' &&
       typeof json.userEditedTimestampUsec === 'number' &&
       typeof json.isArchived === 'boolean' &&
       typeof json.isTrashed === 'boolean' &&
@@ -112,6 +131,16 @@ export class GoogleKeepConverter {
         return null
       }
       const date = new Date(parsed.userEditedTimestampUsec / 1000)
+      let text: string
+      if ('textContent' in parsed) {
+        text = parsed.textContent
+      } else {
+        text = parsed.listContent
+          .map((item) => {
+            return item.isChecked ? `- [x] ${item.text}` : `- [ ] ${item.text}`
+          })
+          .join('\n')
+      }
       return {
         created_at: date,
         created_at_timestamp: date.getTime(),
@@ -121,7 +150,7 @@ export class GoogleKeepConverter {
         content_type: ContentType.TYPES.Note,
         content: {
           title: parsed.title,
-          text: parsed.textContent,
+          text,
           references: [],
           archived: Boolean(parsed.isArchived),
           trashed: Boolean(parsed.isTrashed),

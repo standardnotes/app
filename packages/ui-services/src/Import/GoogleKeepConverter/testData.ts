@@ -1,4 +1,4 @@
-const json = {
+const jsonWithTextContent = {
   color: 'DEFAULT',
   isTrashed: false,
   isPinned: false,
@@ -8,7 +8,28 @@ const json = {
   userEditedTimestampUsec: 1618528050144000,
 }
 
-export const jsonTestData = JSON.stringify(json)
+export const jsonTextContentData = JSON.stringify(jsonWithTextContent)
+
+const jsonWithListContent = {
+  color: 'DEFAULT',
+  isTrashed: false,
+  isPinned: false,
+  isArchived: false,
+  listContent: [
+    {
+      text: 'Test 1',
+      isChecked: false,
+    },
+    {
+      text: 'Test 2',
+      isChecked: true,
+    },
+  ],
+  title: 'Testing 1',
+  userEditedTimestampUsec: 1618528050144000,
+}
+
+export const jsonListContentData = JSON.stringify(jsonWithListContent)
 
 export const htmlTestData = `<?xml version="1.0" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
