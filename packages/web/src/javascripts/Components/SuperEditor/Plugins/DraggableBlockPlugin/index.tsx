@@ -74,12 +74,16 @@ function elementContainingEventLocation(
 
   const children = Array.from(element.children)
 
-  const shouldRecurseIntoChildren = ['UL', 'OL', 'LI'].includes(element.tagName)
+  const recursableTags = ['UL', 'OL', 'LI']
+  const shouldRecurseIntoChildren = recursableTags.includes(element.tagName)
 
   if (shouldRecurseIntoChildren) {
     for (const child of children) {
       const isLeaf = child.children.length === 0
       if (isLeaf) {
+        continue
+      }
+      if (!recursableTags.includes(child.tagName)) {
         continue
       }
       const childResult = elementContainingEventLocation(anchorElem, child as HTMLElement, eventLocation)
