@@ -1,11 +1,20 @@
 import { createHeadlessEditor } from '@lexical/headless'
-import { $convertToMarkdownString } from '@lexical/markdown'
+import { $convertToMarkdownString, $convertFromMarkdownString } from '@lexical/markdown'
 import { SuperConverterServiceInterface } from '@standardnotes/snjs'
-import { $nodesOfType, LexicalEditor, ParagraphNode } from 'lexical'
+import {
+  $createParagraphNode,
+  $getRoot,
+  $insertNodes,
+  $nodesOfType,
+  CLEAR_EDITOR_COMMAND,
+  LexicalEditor,
+  LexicalNode,
+  ParagraphNode,
+} from 'lexical'
 import BlocksEditorTheme from '../Lexical/Theme/Theme'
 import { BlockEditorNodes } from '../Lexical/Nodes/AllNodes'
 import { MarkdownTransformers } from '../MarkdownTransformers'
-import { $generateHtmlFromNodes } from '@lexical/html'
+import { $generateHtmlFromNodes, $generateNodesFromDOM } from '@lexical/html'
 
 export class HeadlessSuperConverter implements SuperConverterServiceInterface {
   private editor: LexicalEditor
@@ -29,7 +38,7 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
     }
   }
 
-  convertString(superString: string, format: 'txt' | 'md' | 'html' | 'json'): string {
+  convertSuperStringToOtherFormat(superString: string, toFormat: 'txt' | 'md' | 'html' | 'json'): string {
     if (superString.length === 0) {
       return superString
     }
@@ -40,7 +49,7 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
 
     this.editor.update(
       () => {
-        switch (format) {
+        switch (toFormat) {
           case 'txt':
           case 'md': {
             const paragraphs = $nodesOfType(ParagraphNode)
@@ -69,5 +78,51 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
     }
 
     return content
+  }
+
+  convertOtherFormatToSuperString(otherFormatString: string, fromFormat: 'txt' | 'md' | 'html' | 'json'): string {
+    if (otherFormatString.length === 0) {
+      return otherFormatString
+    }
+
+    if (fromFormat === 'json' && this.isValidSuperString(otherFormatString)) {
+      return otherFormatString
+    }
+
+    this.editor.dispatchCommand(CLEAR_EDITOR_COMMAND, undefined)
+
+    if (fromFormat === 'html') {
+      this.editor.update(
+        () => {
+          const parser = new DOMParser()
+          const dom = parser.parseFromString(otherFormatString, 'text/html')
+          const generatedNodes = $generateNodesFromDOM(this.editor, dom)
+          const nodesToInsert: LexicalNode[] = []
+          generatedNodes.forEach((node) => {
+            const type = node.getType()
+
+            // Wrap text & link nodes with paragraph since they can't
+            // be top-level nodes in Super
+            if (type === 'text' || type === 'link') {
+              const paragraphNode = $createParagraphNode()
+              paragraphNode.append(node)
+              nodesToInsert.push(paragraphNode)
+              return
+            } else {
+              nodesToInsert.push(node)
+            }
+
+            nodesToInsert.push($createParagraphNode())
+          })
+          $getRoot().selectEnd()
+          $insertNodes(nodesToInsert.concat($createParagraphNode()))
+        },
+        { discrete: true },
+      )
+    } else {
+      $convertFromMarkdownString(otherFormatString, MarkdownTransformers)
+    }
+
+    return JSON.stringify(this.editor.getEditorState())
   }
 }

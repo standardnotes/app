@@ -58,10 +58,10 @@ const ImportModalInitialPage = ({ setFiles }: Props) => {
           <Icon type="plain-text" className="text-info mr-2" />
           Plaintext / Markdown
         </Button>
-        {/* <Button className="flex items-center !py-2" onClick={() => selectFiles('rich-text')}>
+        <Button className="flex items-center !py-2" onClick={() => selectFiles('html')}>
           <Icon type="rich-text" className="text-accessory-tint-2 mr-2" />
           HTML
-        </Button> */}
+        </Button>
         <Button className="flex items-center !py-2" onClick={() => selectFiles('super')}>
           <Icon type="file-doc" className="text-accessory-tint-1 mr-2" />
           Super (JSON)

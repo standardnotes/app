@@ -41,7 +41,7 @@ export class Importer {
     this.simplenoteConverter = new SimplenoteConverter(_generateUuid)
     this.plaintextConverter = new PlaintextConverter(_generateUuid)
     this.evernoteConverter = new EvernoteConverter(_generateUuid)
-    this.htmlConverter = new HTMLConverter(_generateUuid)
+    this.htmlConverter = new HTMLConverter(this.superConverterService, _generateUuid)
     this.superConverter = new SuperConverter(this.superConverterService, _generateUuid)
   }
 
@@ -88,11 +88,11 @@ export class Importer {
   }
 
   async getPayloadsFromFile(file: File, type: NoteImportType): Promise<DecryptedTransferPayload[]> {
+    const isEntitledToSuper =
+      this.features.getFeatureStatus(
+        NativeFeatureIdentifier.create(NativeFeatureIdentifier.TYPES.SuperEditor).getValue(),
+      ) === FeatureStatus.Entitled
     if (type === 'super') {
-      const isEntitledToSuper =
-        this.features.getFeatureStatus(
-          NativeFeatureIdentifier.create(NativeFeatureIdentifier.TYPES.SuperEditor).getValue(),
-        ) === FeatureStatus.Entitled
       if (!isEntitledToSuper) {
         throw new Error('Importing Super notes requires a subscription.')
       }
@@ -111,6 +111,8 @@ export class Importer {
       return await this.evernoteConverter.convertENEXFileToNotesAndTags(file, false)
     } else if (type === 'plaintext') {
       return [await this.plaintextConverter.convertPlaintextFileToNote(file)]
+    } else if (type === 'html') {
+      return [await this.htmlConverter.convertHTMLFileToNote(file, isEntitledToSuper)]
     }
 
     return []

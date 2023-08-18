@@ -1,4 +1,5 @@
 export interface SuperConverterServiceInterface {
   isValidSuperString(superString: string): boolean
-  convertString: (superString: string, toFormat: 'txt' | 'md' | 'html' | 'json') => string
+  convertSuperStringToOtherFormat: (superString: string, toFormat: 'txt' | 'md' | 'html' | 'json') => string
+  convertOtherFormatToSuperString: (otherFormatString: string, fromFormat: 'txt' | 'md' | 'html' | 'json') => string
 }
