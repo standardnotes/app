@@ -460,7 +460,10 @@ export class FilesBackupService
     for (const note of notes) {
       const tags = this.items.getSortedTagsForItem(note)
       const tagNames = tags.map((tag) => this.items.getTagLongTitle(tag))
-      const text = note.noteType === NoteType.Super ? this.markdownConverter.convertString(note.text, 'md') : note.text
+      const text =
+        note.noteType === NoteType.Super
+          ? this.markdownConverter.convertSuperStringToOtherFormat(note.text, 'md')
+          : note.text
       await this.device.savePlaintextNoteBackup(location, note.uuid, note.title, tagNames, text)
     }
 
