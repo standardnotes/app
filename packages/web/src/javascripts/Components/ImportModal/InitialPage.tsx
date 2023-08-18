@@ -72,7 +72,7 @@ const ImportModalInitialPage = ({ setFiles }: Props) => {
           onClick={() => {
             const isEntitledToSuper =
               application.features.getFeatureStatus(
-                NativeFeatureIdentifier.create(NativeFeatureIdentifier.TYPES.UniversalSecondFactor).getValue(),
+                NativeFeatureIdentifier.create(NativeFeatureIdentifier.TYPES.SuperEditor).getValue(),
               ) === FeatureStatus.Entitled
             if (!isEntitledToSuper) {
               application.showPremiumModal(FeatureName.Super)
