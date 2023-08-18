@@ -86,6 +86,7 @@ const StyledTooltip = ({
         className={classNames(
           'z-tooltip max-w-max rounded border border-border translucent-ui:border-[--popover-border-color] bg-contrast translucent-ui:bg-[--popover-background-color] [backdrop-filter:var(--popover-backdrop-filter)] px-3 py-1.5 text-sm text-foreground shadow',
           'opacity-60 [&[data-enter]]:opacity-100 [&[data-leave]]:opacity-60 transition-opacity duration-75',
+          'focus-visible:shadow-none focus-visible:outline-none',
           className,
         )}
         updatePosition={() => {

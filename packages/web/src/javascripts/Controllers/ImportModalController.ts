@@ -155,6 +155,9 @@ export class ImportModalController {
         console.error(error)
       }
     }
+    if (!importedPayloads.length) {
+      return
+    }
     const currentDate = new Date()
     const importTagItem = this.items.createTemplateItem<TagContent, SNTag>(ContentType.TYPES.Tag, {
       title: `Imported on ${currentDate.toLocaleString()}`,

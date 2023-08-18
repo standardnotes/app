@@ -7,6 +7,7 @@ export const Web_TYPES = {
   AutolockService: Symbol.for('AutolockService'),
   ChangelogService: Symbol.for('ChangelogService'),
   DesktopManager: Symbol.for('DesktopManager'),
+  SuperConverter: Symbol.for('SuperConverter'),
   Importer: Symbol.for('Importer'),
   ItemGroupController: Symbol.for('ItemGroupController'),
   KeyboardService: Symbol.for('KeyboardService'),

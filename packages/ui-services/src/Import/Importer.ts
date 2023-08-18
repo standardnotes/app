@@ -14,8 +14,11 @@ import { PlaintextConverter } from './PlaintextConverter/PlaintextConverter'
 import { SimplenoteConverter } from './SimplenoteConverter/SimplenoteConverter'
 import { readFileAsText } from './Utils'
 import { DecryptedTransferPayload, NoteContent } from '@standardnotes/models'
+import { HTMLConverter } from './HTMLConverter/HTMLConverter'
+import { SuperConverterServiceInterface } from '@standardnotes/snjs/dist/@types'
+import { SuperConverter } from './SuperConverter/SuperConverter'
 
-export type NoteImportType = 'plaintext' | 'evernote' | 'google-keep' | 'simplenote' | 'aegis'
+export type NoteImportType = 'plaintext' | 'evernote' | 'google-keep' | 'simplenote' | 'aegis' | 'html' | 'super'
 
 export class Importer {
   aegisConverter: AegisToAuthenticatorConverter
@@ -23,27 +26,36 @@ export class Importer {
   simplenoteConverter: SimplenoteConverter
   plaintextConverter: PlaintextConverter
   evernoteConverter: EvernoteConverter
+  htmlConverter: HTMLConverter
+  superConverter: SuperConverter
 
   constructor(
     private features: FeaturesClientInterface,
     private mutator: MutatorClientInterface,
     private items: ItemManagerInterface,
+    private superConverterService: SuperConverterServiceInterface,
     _generateUuid: GenerateUuid,
   ) {
     this.aegisConverter = new AegisToAuthenticatorConverter(_generateUuid)
-    this.googleKeepConverter = new GoogleKeepConverter(_generateUuid)
+    this.googleKeepConverter = new GoogleKeepConverter(this.superConverterService, _generateUuid)
     this.simplenoteConverter = new SimplenoteConverter(_generateUuid)
     this.plaintextConverter = new PlaintextConverter(_generateUuid)
     this.evernoteConverter = new EvernoteConverter(_generateUuid)
+    this.htmlConverter = new HTMLConverter(this.superConverterService, _generateUuid)
+    this.superConverter = new SuperConverter(this.superConverterService, _generateUuid)
   }
 
-  static detectService = async (file: File): Promise<NoteImportType | null> => {
+  detectService = async (file: File): Promise<NoteImportType | null> => {
     const content = await readFileAsText(file)
 
     const { ext } = parseFileName(file.name)
 
     if (ext === 'enex') {
       return 'evernote'
+    }
+
+    if (file.type === 'application/json' && this.superConverterService.isValidSuperString(content)) {
+      return 'super'
     }
 
     try {
@@ -68,24 +80,39 @@ export class Importer {
       return 'plaintext'
     }
 
+    if (HTMLConverter.isHTMLFile(file)) {
+      return 'html'
+    }
+
     return null
   }
 
   async getPayloadsFromFile(file: File, type: NoteImportType): Promise<DecryptedTransferPayload[]> {
-    if (type === 'aegis') {
+    const isEntitledToSuper =
+      this.features.getFeatureStatus(
+        NativeFeatureIdentifier.create(NativeFeatureIdentifier.TYPES.SuperEditor).getValue(),
+      ) === FeatureStatus.Entitled
+    if (type === 'super') {
+      if (!isEntitledToSuper) {
+        throw new Error('Importing Super notes requires a subscription.')
+      }
+      return [await this.superConverter.convertSuperFileToNote(file)]
+    } else if (type === 'aegis') {
       const isEntitledToAuthenticator =
         this.features.getFeatureStatus(
           NativeFeatureIdentifier.create(NativeFeatureIdentifier.TYPES.TokenVaultEditor).getValue(),
         ) === FeatureStatus.Entitled
       return [await this.aegisConverter.convertAegisBackupFileToNote(file, isEntitledToAuthenticator)]
     } else if (type === 'google-keep') {
-      return [await this.googleKeepConverter.convertGoogleKeepBackupFileToNote(file, true)]
+      return [await this.googleKeepConverter.convertGoogleKeepBackupFileToNote(file, isEntitledToSuper)]
     } else if (type === 'simplenote') {
       return await this.simplenoteConverter.convertSimplenoteBackupFileToNotes(file)
     } else if (type === 'evernote') {
       return await this.evernoteConverter.convertENEXFileToNotesAndTags(file, false)
     } else if (type === 'plaintext') {
       return [await this.plaintextConverter.convertPlaintextFileToNote(file)]
+    } else if (type === 'html') {
+      return [await this.htmlConverter.convertHTMLFileToNote(file, isEntitledToSuper)]
     }
 
     return []
