@@ -50,6 +50,10 @@ export class GoogleKeepConverter {
     const rootElement = document.createElement('html')
     rootElement.innerHTML = data
 
+    const headingElement = rootElement.getElementsByClassName('heading')[0]
+    const date = new Date(headingElement?.textContent || '')
+    headingElement?.remove()
+
     const contentElement = rootElement.getElementsByClassName('content')[0]
     let content: string | null
 
@@ -58,7 +62,7 @@ export class GoogleKeepConverter {
       contentElement.innerHTML = contentElement.innerHTML.replace(/<br>/g, '\n')
       content = contentElement.textContent
     } else {
-      content = this.superConverterService.convertOtherFormatToSuperString(contentElement.innerHTML, 'html')
+      content = this.superConverterService.convertOtherFormatToSuperString(rootElement.innerHTML, 'html')
     }
 
     if (!content) {
@@ -66,8 +70,6 @@ export class GoogleKeepConverter {
     }
 
     const title = rootElement.getElementsByClassName('title')[0]?.textContent || file.name
-
-    const date = this.getDateFromGKeepNote(data) || new Date()
 
     return {
       created_at: date,
@@ -88,26 +90,6 @@ export class GoogleKeepConverter {
           : {}),
       },
     }
-  }
-
-  getDateFromGKeepNote(note: string) {
-    const regexWithTitle = /.*(?=<\/div>\n<div class="title">)/
-    const regexWithoutTitle = /.*(?=<\/div>\n\n<div class="content">)/
-    const possibleDateStringWithTitle = regexWithTitle.exec(note)?.[0]
-    const possibleDateStringWithoutTitle = regexWithoutTitle.exec(note)?.[0]
-    if (possibleDateStringWithTitle) {
-      const date = new Date(possibleDateStringWithTitle)
-      if (date.toString() !== 'Invalid Date' && date.toString() !== 'NaN') {
-        return date
-      }
-    }
-    if (possibleDateStringWithoutTitle) {
-      const date = new Date(possibleDateStringWithoutTitle)
-      if (date.toString() !== 'Invalid Date' && date.toString() !== 'NaN') {
-        return date
-      }
-    }
-    return
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

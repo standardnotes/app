@@ -6,16 +6,22 @@ import { jsonTestData, htmlTestData } from './testData'
 import { GoogleKeepConverter } from './GoogleKeepConverter'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { GenerateUuid } from '@standardnotes/services'
+import { SuperConverterServiceInterface } from '@standardnotes/snjs'
 
 describe('GoogleKeepConverter', () => {
   const crypto = {
     generateUUID: () => String(Math.random()),
   } as unknown as PureCryptoInterface
 
+  const superConverterService: SuperConverterServiceInterface = {
+    isValidSuperString: (data: string) => true,
+    convertOtherFormatToSuperString: (data: string, format: string) => data,
+    convertSuperStringToOtherFormat: (data: string, format: string) => data,
+  }
   const generateUuid = new GenerateUuid(crypto)
 
   it('should parse json data', () => {
-    const converter = new GoogleKeepConverter(generateUuid)
+    const converter = new GoogleKeepConverter(superConverterService, generateUuid)
 
     const result = converter.tryParseAsJson(jsonTestData)
 
@@ -32,7 +38,7 @@ describe('GoogleKeepConverter', () => {
   })
 
   it('should parse html data', () => {
-    const converter = new GoogleKeepConverter(generateUuid)
+    const converter = new GoogleKeepConverter(superConverterService, generateUuid)
 
     const result = converter.tryParseAsHtml(
       htmlTestData,
