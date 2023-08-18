@@ -17,7 +17,7 @@ export const UpgradePrompt = ({
   onClose: () => void
 }) => {
   const handleClick = useCallback(() => {
-    if (hasSubscription) {
+    if (hasSubscription && !application.isNativeIOS()) {
       void application.openSubscriptionDashboard.execute()
     } else {
       void application.openPurchaseFlow()

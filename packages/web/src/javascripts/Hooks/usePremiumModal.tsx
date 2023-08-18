@@ -48,7 +48,8 @@ const PremiumModalProvider: FunctionComponent<Props> = observer(({ application, 
       <ModalOverlay
         isOpen={application.featuresController.premiumAlertType != undefined}
         close={close}
-        className="w-full max-w-[90vw] md:max-w-89"
+        className="w-full max-w-[90vw] !h-auto md:max-w-89"
+        backdropClassName="!opacity-50"
       >
         <PremiumFeaturesModal
           application={application}
