@@ -12,7 +12,7 @@ const NoteImportTypeColors: Record<NoteImportType, string> = {
   aegis: 'bg-[#0d47a1] text-default',
   plaintext: 'bg-default border border-border',
   html: 'bg-accessory-tint-2',
-  super: 'bg-accessory-tint-1',
+  super: 'bg-accessory-tint-1 text-accessory-tint-1',
 }
 
 const NoteImportTypeIcons: Record<NoteImportType, string> = {
