@@ -96,7 +96,7 @@ const EditSmartViewModal = ({ controller, platform }: Props) => {
           <div className="flex items-center gap-2.5">
             <div className="text-sm font-semibold">Title:</div>
             <input
-              className="rounded border border-border bg-default px-2 py-1"
+              className="rounded border border-border bg-default md:translucent-ui:bg-transparent px-2 py-1"
               value={title}
               onChange={(event) => {
                 setTitle(event.target.value)
@@ -139,7 +139,7 @@ const EditSmartViewModal = ({ controller, platform }: Props) => {
             <div className="text-sm font-semibold">Predicate:</div>
             <div className="flex flex-grow flex-col overflow-hidden rounded-md border border-border">
               <textarea
-                className="h-full min-h-[10rem] w-full flex-grow resize-none bg-default px-2.5 py-1.5 font-mono text-sm"
+                className="h-full min-h-[10rem] w-full flex-grow resize-none bg-default px-2.5 py-1.5 font-mono text-sm md:translucent-ui:bg-transparent"
                 value={predicateJson}
                 onChange={(event) => {
                   setPredicateJson(event.target.value)
