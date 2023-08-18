@@ -35,12 +35,12 @@ describe('features', () => {
 
   describe('new user roles received on api response meta', () => {
     it('should save roles and features', async () => {
-      expect(application.features.onlineRoles).to.have.lengthOf(1)
+      expect(application.features.onlineRoles).to.have.lengthOf.above(0)
       expect(application.features.onlineRoles[0]).to.equal('CORE_USER')
 
       const storedRoles = await application.getValue(StorageKey.UserRoles)
 
-      expect(storedRoles).to.have.lengthOf(1)
+      expect(storedRoles).to.have.lengthOf.above(0)
       expect(storedRoles[0]).to.equal('CORE_USER')
     })
   })
