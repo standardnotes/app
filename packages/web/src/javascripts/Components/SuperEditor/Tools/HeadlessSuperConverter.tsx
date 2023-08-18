@@ -120,7 +120,14 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
         { discrete: true },
       )
     } else {
-      $convertFromMarkdownString(otherFormatString, MarkdownTransformers)
+      this.editor.update(
+        () => {
+          $convertFromMarkdownString(otherFormatString, MarkdownTransformers)
+        },
+        {
+          discrete: true,
+        },
+      )
     }
 
     return JSON.stringify(this.editor.getEditorState())

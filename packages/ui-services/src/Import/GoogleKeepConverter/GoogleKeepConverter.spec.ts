@@ -23,7 +23,7 @@ describe('GoogleKeepConverter', () => {
   it('should parse json data', () => {
     const converter = new GoogleKeepConverter(superConverterService, generateUuid)
 
-    const textContent = converter.tryParseAsJson(jsonTextContentData)
+    const textContent = converter.tryParseAsJson(jsonTextContentData, false)
 
     expect(textContent).not.toBeNull()
     expect(textContent?.created_at).toBeInstanceOf(Date)
@@ -36,7 +36,7 @@ describe('GoogleKeepConverter', () => {
     expect(textContent?.content.archived).toBe(false)
     expect(textContent?.content.pinned).toBe(false)
 
-    const listContent = converter.tryParseAsJson(jsonListContentData)
+    const listContent = converter.tryParseAsJson(jsonListContentData, false)
 
     expect(listContent).not.toBeNull()
     expect(listContent?.created_at).toBeInstanceOf(Date)

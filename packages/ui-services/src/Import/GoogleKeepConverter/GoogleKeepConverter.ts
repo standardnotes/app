@@ -37,7 +37,7 @@ export class GoogleKeepConverter {
   ): Promise<DecryptedTransferPayload<NoteContent>> {
     const content = await readFileAsText(file)
 
-    const possiblePayloadFromJson = this.tryParseAsJson(content)
+    const possiblePayloadFromJson = this.tryParseAsJson(content, isEntitledToSuper)
 
     if (possiblePayloadFromJson) {
       return possiblePayloadFromJson
@@ -124,7 +124,7 @@ export class GoogleKeepConverter {
     )
   }
 
-  tryParseAsJson(data: string): DecryptedTransferPayload<NoteContent> | null {
+  tryParseAsJson(data: string, isEntitledToSuper: boolean): DecryptedTransferPayload<NoteContent> | null {
     try {
       const parsed = JSON.parse(data) as GoogleKeepJsonNote
       if (!GoogleKeepConverter.isValidGoogleKeepJson(parsed)) {
@@ -141,6 +141,9 @@ export class GoogleKeepConverter {
           })
           .join('\n')
       }
+      if (isEntitledToSuper) {
+        text = this.superConverterService.convertOtherFormatToSuperString(text, 'md')
+      }
       return {
         created_at: date,
         created_at_timestamp: date.getTime(),
@@ -155,9 +158,16 @@ export class GoogleKeepConverter {
           archived: Boolean(parsed.isArchived),
           trashed: Boolean(parsed.isTrashed),
           pinned: Boolean(parsed.isPinned),
+          ...(isEntitledToSuper
+            ? {
+                noteType: NoteType.Super,
+                editorIdentifier: NativeFeatureIdentifier.TYPES.SuperEditor,
+              }
+            : {}),
         },
       }
     } catch (e) {
+      console.error(e)
       return null
     }
   }
