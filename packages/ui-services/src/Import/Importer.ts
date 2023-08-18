@@ -37,7 +37,7 @@ export class Importer {
     _generateUuid: GenerateUuid,
   ) {
     this.aegisConverter = new AegisToAuthenticatorConverter(_generateUuid)
-    this.googleKeepConverter = new GoogleKeepConverter(_generateUuid)
+    this.googleKeepConverter = new GoogleKeepConverter(this.superConverterService, _generateUuid)
     this.simplenoteConverter = new SimplenoteConverter(_generateUuid)
     this.plaintextConverter = new PlaintextConverter(_generateUuid)
     this.evernoteConverter = new EvernoteConverter(_generateUuid)
@@ -104,7 +104,7 @@ export class Importer {
         ) === FeatureStatus.Entitled
       return [await this.aegisConverter.convertAegisBackupFileToNote(file, isEntitledToAuthenticator)]
     } else if (type === 'google-keep') {
-      return [await this.googleKeepConverter.convertGoogleKeepBackupFileToNote(file, true)]
+      return [await this.googleKeepConverter.convertGoogleKeepBackupFileToNote(file, isEntitledToSuper)]
     } else if (type === 'simplenote') {
       return await this.simplenoteConverter.convertSimplenoteBackupFileToNotes(file)
     } else if (type === 'evernote') {

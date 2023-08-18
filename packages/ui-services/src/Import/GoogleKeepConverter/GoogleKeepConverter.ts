@@ -2,6 +2,8 @@ import { ContentType } from '@standardnotes/domain-core'
 import { DecryptedTransferPayload, NoteContent } from '@standardnotes/models'
 import { readFileAsText } from '../Utils'
 import { GenerateUuid } from '@standardnotes/services'
+import { SuperConverterServiceInterface } from '@standardnotes/files'
+import { NativeFeatureIdentifier, NoteType } from '@standardnotes/features'
 
 type GoogleKeepJsonNote = {
   color: string
@@ -14,11 +16,14 @@ type GoogleKeepJsonNote = {
 }
 
 export class GoogleKeepConverter {
-  constructor(private _generateUuid: GenerateUuid) {}
+  constructor(
+    private superConverterService: SuperConverterServiceInterface,
+    private _generateUuid: GenerateUuid,
+  ) {}
 
   async convertGoogleKeepBackupFileToNote(
     file: File,
-    stripHtml: boolean,
+    isEntitledToSuper: boolean,
   ): Promise<DecryptedTransferPayload<NoteContent>> {
     const content = await readFileAsText(file)
 
@@ -28,7 +33,7 @@ export class GoogleKeepConverter {
       return possiblePayloadFromJson
     }
 
-    const possiblePayloadFromHtml = this.tryParseAsHtml(content, file, stripHtml)
+    const possiblePayloadFromHtml = this.tryParseAsHtml(content, file, isEntitledToSuper)
 
     if (possiblePayloadFromHtml) {
       return possiblePayloadFromHtml
@@ -37,20 +42,23 @@ export class GoogleKeepConverter {
     throw new Error('Could not parse Google Keep backup file')
   }
 
-  tryParseAsHtml(data: string, file: { name: string }, stripHtml: boolean): DecryptedTransferPayload<NoteContent> {
+  tryParseAsHtml(
+    data: string,
+    file: { name: string },
+    isEntitledToSuper: boolean,
+  ): DecryptedTransferPayload<NoteContent> {
     const rootElement = document.createElement('html')
     rootElement.innerHTML = data
 
     const contentElement = rootElement.getElementsByClassName('content')[0]
     let content: string | null
 
-    // Replace <br> with \n so line breaks get recognised
-    contentElement.innerHTML = contentElement.innerHTML.replace(/<br>/g, '\n')
-
-    if (stripHtml) {
+    if (!isEntitledToSuper) {
+      // Replace <br> with \n so line breaks get recognised
+      contentElement.innerHTML = contentElement.innerHTML.replace(/<br>/g, '\n')
       content = contentElement.textContent
     } else {
-      content = contentElement.innerHTML
+      content = this.superConverterService.convertOtherFormatToSuperString(contentElement.innerHTML, 'html')
     }
 
     if (!content) {
@@ -72,6 +80,12 @@ export class GoogleKeepConverter {
         title: title,
         text: content,
         references: [],
+        ...(isEntitledToSuper
+          ? {
+              noteType: NoteType.Super,
+              editorIdentifier: NativeFeatureIdentifier.TYPES.SuperEditor,
+            }
+          : {}),
       },
     }
   }
