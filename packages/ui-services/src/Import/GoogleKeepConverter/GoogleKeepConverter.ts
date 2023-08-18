@@ -65,7 +65,31 @@ export class GoogleKeepConverter {
     headingElement?.remove()
 
     const contentElement = rootElement.getElementsByClassName('content')[0]
+    if (!contentElement) {
+      throw new Error('Could not parse content. Content element not found.')
+    }
+
     let content: string | null
+
+    // Convert lists to readable plaintext format
+    // or Super-convertable format
+    const lists = contentElement.getElementsByTagName('ul')
+    Array.from(lists).forEach((list) => {
+      list.setAttribute('__lexicallisttype', 'check')
+
+      const items = list.getElementsByTagName('li')
+      Array.from(items).forEach((item) => {
+        const bulletSpan = item.getElementsByClassName('bullet')[0]
+        bulletSpan?.remove()
+
+        const checked = item.classList.contains('checked')
+        item.setAttribute('aria-checked', checked ? 'true' : 'false')
+
+        if (!isEntitledToSuper) {
+          item.textContent = `- ${checked ? '[x]' : '[ ]'} ${item.textContent?.trim()}\n`
+        }
+      })
+    })
 
     if (!isEntitledToSuper) {
       // Replace <br> with \n so line breaks get recognised
