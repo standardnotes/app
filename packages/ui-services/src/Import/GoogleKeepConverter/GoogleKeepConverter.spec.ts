@@ -14,9 +14,9 @@ describe('GoogleKeepConverter', () => {
   } as unknown as PureCryptoInterface
 
   const superConverterService: SuperConverterServiceInterface = {
-    isValidSuperString: (data: string) => true,
-    convertOtherFormatToSuperString: (data: string, format: string) => data,
-    convertSuperStringToOtherFormat: (data: string, format: string) => data,
+    isValidSuperString: () => true,
+    convertOtherFormatToSuperString: (data: string) => data,
+    convertSuperStringToOtherFormat: (data: string) => data,
   }
   const generateUuid = new GenerateUuid(crypto)
 
