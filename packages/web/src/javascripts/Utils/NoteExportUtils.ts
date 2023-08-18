@@ -39,7 +39,9 @@ export const getNoteBlob = (application: WebApplicationInterface, note: SNNote) 
       break
   }
   const content =
-    note.noteType === NoteType.Super ? new HeadlessSuperConverter().convertString(note.text, format) : note.text
+    note.noteType === NoteType.Super
+      ? new HeadlessSuperConverter().convertSuperStringToOtherFormat(note.text, format)
+      : note.text
   const blob = new Blob([content], {
     type,
   })

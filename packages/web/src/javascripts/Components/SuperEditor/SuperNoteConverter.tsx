@@ -58,7 +58,7 @@ const SuperNoteConverter = ({
     }
 
     try {
-      return new HeadlessSuperConverter().convertString(note.text, format)
+      return new HeadlessSuperConverter().convertSuperStringToOtherFormat(note.text, format)
     } catch (error) {
       console.error(error)
     }

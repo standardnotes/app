@@ -31,14 +31,14 @@ export const DiffView = ({
     const firstTitle = firstNote.title
     const firstText =
       firstNote.noteType === NoteType.Super && convertSuperToMarkdown
-        ? new HeadlessSuperConverter().convertString(firstNote.text, 'md')
+        ? new HeadlessSuperConverter().convertSuperStringToOtherFormat(firstNote.text, 'md')
         : firstNote.text
 
     const secondNote = selectedNotes[1]
     const secondTitle = secondNote.title
     const secondText =
       secondNote.noteType === NoteType.Super && convertSuperToMarkdown
-        ? new HeadlessSuperConverter().convertString(secondNote.text, 'md')
+        ? new HeadlessSuperConverter().convertSuperStringToOtherFormat(secondNote.text, 'md')
         : secondNote.text
 
     const titleDiff = fastdiff(firstTitle, secondTitle, undefined, true)
