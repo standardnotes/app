@@ -6,11 +6,22 @@ import Modal, { ModalAction } from '../Modal/Modal'
 import ModalOverlay from '../Modal/ModalOverlay'
 import { ImportModalController } from '@/Controllers/ImportModalController'
 import { useApplication } from '../ApplicationProvider'
+import Switch from '../Switch/Switch'
 
 const ImportModal = ({ importModalController }: { importModalController: ImportModalController }) => {
   const application = useApplication()
 
-  const { files, setFiles, updateFile, removeFile, parseAndImport, isVisible, close } = importModalController
+  const {
+    files,
+    setFiles,
+    shouldCreateTag,
+    setShouldCreateTag,
+    updateFile,
+    removeFile,
+    parseAndImport,
+    isVisible,
+    close,
+  } = importModalController
 
   const isReadyToImport = files.length > 0 && files.every((file) => file.status === 'ready')
   const importSuccessOrError =
@@ -54,6 +65,12 @@ const ImportModal = ({ importModalController }: { importModalController: ImportM
             </div>
           )}
         </div>
+        {files.length > 0 && (
+          <label className="py-2 px-4 flex items-center gap-2 border-t border-border">
+            <Switch checked={shouldCreateTag} onChange={setShouldCreateTag} />
+            <span className="text-sm">Create tag with all imported notes</span>
+          </label>
+        )}
       </Modal>
     </ModalOverlay>
   )

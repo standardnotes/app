@@ -28,6 +28,7 @@ export type ImportModalFile = (
 
 export class ImportModalController {
   isVisible = false
+  shouldCreateTag = true
   files: ImportModalFile[] = []
   importTag: SNTag | undefined = undefined
 
@@ -41,6 +42,9 @@ export class ImportModalController {
       isVisible: observable,
       setIsVisible: action,
 
+      shouldCreateTag: observable,
+      setShouldCreateTag: action,
+
       files: observable,
       setFiles: action,
       updateFile: action,
@@ -53,6 +57,10 @@ export class ImportModalController {
 
   setIsVisible = (isVisible: boolean) => {
     this.isVisible = isVisible
+  }
+
+  setShouldCreateTag = (shouldCreateTag: boolean) => {
+    this.shouldCreateTag = shouldCreateTag
   }
 
   setFiles = (files: File[], service?: NoteImportType) => {
@@ -78,6 +86,7 @@ export class ImportModalController {
 
   close = () => {
     this.setIsVisible(false)
+    this.setShouldCreateTag(true)
     if (this.importTag) {
       this.navigationController
         .setSelectedTag(this.importTag, 'all', {
@@ -158,21 +167,23 @@ export class ImportModalController {
     if (!importedPayloads.length) {
       return
     }
-    const currentDate = new Date()
-    const importTagItem = this.items.createTemplateItem<TagContent, SNTag>(ContentType.TYPES.Tag, {
-      title: `Imported on ${currentDate.toLocaleString()}`,
-      expanded: false,
-      iconString: '',
-      references: importedPayloads
-        .filter((payload) => payload.content_type === ContentType.TYPES.Note)
-        .map((payload) => ({
-          content_type: ContentType.TYPES.Note,
-          uuid: payload.uuid,
-        })),
-    })
-    const importTag = await this.mutator.insertItem(importTagItem)
-    if (importTag) {
-      this.setImportTag(importTag as SNTag)
+    if (this.shouldCreateTag) {
+      const currentDate = new Date()
+      const importTagItem = this.items.createTemplateItem<TagContent, SNTag>(ContentType.TYPES.Tag, {
+        title: `Imported on ${currentDate.toLocaleString()}`,
+        expanded: false,
+        iconString: '',
+        references: importedPayloads
+          .filter((payload) => payload.content_type === ContentType.TYPES.Note)
+          .map((payload) => ({
+            content_type: ContentType.TYPES.Note,
+            uuid: payload.uuid,
+          })),
+      })
+      const importTag = await this.mutator.insertItem(importTagItem)
+      if (importTag) {
+        this.setImportTag(importTag as SNTag)
+      }
     }
   }
 }
