@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.64.0](https://github.com/standardnotes/app/compare/@standardnotes/services@1.63.38...@standardnotes/services@1.64.0) (2023-08-18)
+
+### Features
+
+* Added Super & HTML import options in Import modal. Google Keep notes will now also be imported as Super notes, with attachments if importing from HTML ([#2433](https://github.com/standardnotes/app/issues/2433)) ([ca9895c](https://github.com/standardnotes/app/commit/ca9895cac117aad16cd2f89633d7613ed54b67bf))
+
 ## [1.63.38](https://github.com/standardnotes/app/compare/@standardnotes/services@1.63.37...@standardnotes/services@1.63.38) (2023-08-12)
 
 **Note:** Version bump only for package @standardnotes/services
