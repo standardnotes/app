@@ -27,7 +27,7 @@ export class SharedVaultServer implements SharedVaultServerInterface {
   ): Promise<HttpResponse<CreateSharedVaultValetTokenResponse>> {
     let headers = undefined
     if (params.sharedVaultOwnerUuid) {
-      headers = [{ 'x-shared-vault-owner-context': params.sharedVaultOwnerUuid }]
+      headers = [{ key: 'x-shared-vault-owner-context', value: params.sharedVaultOwnerUuid }]
     }
     return this.httpService.post(
       SharedVaultsPaths.createSharedVaultFileValetToken(params.sharedVaultUuid),
