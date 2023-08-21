@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.202.53](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.202.52...@standardnotes/snjs@2.202.53) (2023-08-21)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
 ## [2.202.52](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.202.51...@standardnotes/snjs@2.202.52) (2023-08-21)
 
 **Note:** Version bump only for package @standardnotes/snjs
