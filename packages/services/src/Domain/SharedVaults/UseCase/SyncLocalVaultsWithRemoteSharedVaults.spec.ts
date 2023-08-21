@@ -13,7 +13,6 @@ describe('SyncLocalVaultsWithRemoteSharedVaults', () => {
       uuid: '1-2-3',
       user_uuid: '2-3-4',
       file_upload_bytes_used: 123,
-      file_upload_bytes_limit: 10000000,
       created_at_timestamp: 123,
       updated_at_timestamp: 123,
     }] } })
