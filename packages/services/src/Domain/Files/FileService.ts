@@ -115,7 +115,7 @@ export class FileService extends AbstractService implements FilesClientInterface
 
     const valetTokenResponse = await this.sharedVault.createSharedVaultFileValetToken({
       sharedVaultUuid: params.sharedVaultUuid,
-      sharedVaultOwnerUuid: params.sharedVaultUuid,
+      sharedVaultOwnerUuid: params.sharedVaultOwnerUuid,
       fileUuid: params.fileUuidRequiredForExistingFiles,
       remoteIdentifier: params.remoteIdentifier,
       operation: params.operation,
