@@ -16,6 +16,7 @@ import { Paths } from '../Server/Auth/Paths'
 import { SessionRefreshResponseBody } from '../Response/Auth/SessionRefreshResponseBody'
 import { FetchRequestHandler } from './FetchRequestHandler'
 import { RequestHandlerInterface } from './RequestHandlerInterface'
+import { HttpRequestOptions } from './HttpRequestOptions'
 
 export class HttpService implements HttpServiceInterface {
   private session?: Session | LegacySession
@@ -76,7 +77,7 @@ export class HttpService implements HttpServiceInterface {
     }
   }
 
-  async get<T>(path: string, params?: HttpRequestParams, authentication?: string): Promise<HttpResponse<T>> {
+  async get<T>(path: string, params?: HttpRequestParams, options?: HttpRequestOptions): Promise<HttpResponse<T>> {
     if (!this.host) {
       throw new Error('Attempting to make network request before host is set')
     }
@@ -85,7 +86,7 @@ export class HttpService implements HttpServiceInterface {
       url: joinPaths(this.host, path),
       params,
       verb: HttpVerb.Get,
-      authentication: authentication ?? this.getSessionAccessToken(),
+      authentication: options?.authentication ?? this.getSessionAccessToken(),
     })
   }
 
@@ -98,7 +99,7 @@ export class HttpService implements HttpServiceInterface {
     })
   }
 
-  async post<T>(path: string, params?: HttpRequestParams, authentication?: string): Promise<HttpResponse<T>> {
+  async post<T>(path: string, params?: HttpRequestParams, options?: HttpRequestOptions): Promise<HttpResponse<T>> {
     if (!this.host) {
       throw new Error('Attempting to make network request before host is set')
     }
@@ -107,34 +108,35 @@ export class HttpService implements HttpServiceInterface {
       url: joinPaths(this.host, path),
       params,
       verb: HttpVerb.Post,
-      authentication: authentication ?? this.getSessionAccessToken(),
+      authentication: options?.authentication ?? this.getSessionAccessToken(),
+      customHeaders: options?.headers,
     })
   }
 
-  async put<T>(path: string, params?: HttpRequestParams, authentication?: string): Promise<HttpResponse<T>> {
+  async put<T>(path: string, params?: HttpRequestParams, options?: HttpRequestOptions): Promise<HttpResponse<T>> {
     return this.runHttp({
       url: joinPaths(this.host, path),
       params,
       verb: HttpVerb.Put,
-      authentication: authentication ?? this.getSessionAccessToken(),
+      authentication: options?.authentication ?? this.getSessionAccessToken(),
     })
   }
 
-  async patch<T>(path: string, params: HttpRequestParams, authentication?: string): Promise<HttpResponse<T>> {
+  async patch<T>(path: string, params: HttpRequestParams, options?: HttpRequestOptions): Promise<HttpResponse<T>> {
     return this.runHttp({
       url: joinPaths(this.host, path),
       params,
       verb: HttpVerb.Patch,
-      authentication: authentication ?? this.getSessionAccessToken(),
+      authentication: options?.authentication ?? this.getSessionAccessToken(),
     })
   }
 
-  async delete<T>(path: string, params?: HttpRequestParams, authentication?: string): Promise<HttpResponse<T>> {
+  async delete<T>(path: string, params?: HttpRequestParams, options?: HttpRequestOptions): Promise<HttpResponse<T>> {
     return this.runHttp({
       url: joinPaths(this.host, path),
       params,
       verb: HttpVerb.Delete,
-      authentication: authentication ?? this.getSessionAccessToken(),
+      authentication: options?.authentication ?? this.getSessionAccessToken(),
     })
   }
 

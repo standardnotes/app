@@ -25,13 +25,23 @@ export class SharedVaultServer implements SharedVaultServerInterface {
   createSharedVaultFileValetToken(
     params: CreateSharedVaultValetTokenParams,
   ): Promise<HttpResponse<CreateSharedVaultValetTokenResponse>> {
-    return this.httpService.post(SharedVaultsPaths.createSharedVaultFileValetToken(params.sharedVaultUuid), {
-      file_uuid: params.fileUuid,
-      remote_identifier: params.remoteIdentifier,
-      operation: params.operation,
-      unencrypted_file_size: params.unencryptedFileSize,
-      move_operation_type: params.moveOperationType,
-      shared_vault_to_shared_vault_move_target_uuid: params.sharedVaultToSharedVaultMoveTargetUuid,
-    })
+    let headers = undefined
+    if (params.sharedVaultOwnerUuid) {
+      headers = [{ 'x-shared-vault-owner-context': params.sharedVaultOwnerUuid }]
+    }
+    return this.httpService.post(
+      SharedVaultsPaths.createSharedVaultFileValetToken(params.sharedVaultUuid),
+      {
+        file_uuid: params.fileUuid,
+        remote_identifier: params.remoteIdentifier,
+        operation: params.operation,
+        unencrypted_file_size: params.unencryptedFileSize,
+        move_operation_type: params.moveOperationType,
+        shared_vault_to_shared_vault_move_target_uuid: params.sharedVaultToSharedVaultMoveTargetUuid,
+      },
+      {
+        headers,
+      },
+    )
   }
 }

@@ -107,6 +107,7 @@ export class FileService extends AbstractService implements FilesClientInterface
     unencryptedFileSizeForUpload?: number | undefined
     moveOperationType?: SharedVaultMoveType
     sharedVaultToSharedVaultMoveTargetUuid?: string
+    sharedVaultOwnerUuid?: string
   }): Promise<string | ClientDisplayableError> {
     if (params.operation !== ValetTokenOperation.Write && !params.fileUuidRequiredForExistingFiles) {
       throw new Error('File UUID is required for for non-write operations')
@@ -114,6 +115,7 @@ export class FileService extends AbstractService implements FilesClientInterface
 
     const valetTokenResponse = await this.sharedVault.createSharedVaultFileValetToken({
       sharedVaultUuid: params.sharedVaultUuid,
+      sharedVaultOwnerUuid: params.sharedVaultUuid,
       fileUuid: params.fileUuidRequiredForExistingFiles,
       remoteIdentifier: params.remoteIdentifier,
       operation: params.operation,
@@ -135,6 +137,7 @@ export class FileService extends AbstractService implements FilesClientInterface
   ): Promise<void | ClientDisplayableError> {
     const valetTokenResult = await this.createSharedVaultValetToken({
       sharedVaultUuid: file.shared_vault_uuid ? file.shared_vault_uuid : sharedVault.sharing.sharedVaultUuid,
+      sharedVaultOwnerUuid: sharedVault.sharing.ownerUserUuid,
       remoteIdentifier: file.remoteIdentifier,
       operation: ValetTokenOperation.Move,
       fileUuidRequiredForExistingFiles: file.uuid,
@@ -186,6 +189,7 @@ export class FileService extends AbstractService implements FilesClientInterface
       vault && vault.isSharedVaultListing()
         ? await this.createSharedVaultValetToken({
             sharedVaultUuid: vault.sharing.sharedVaultUuid,
+            sharedVaultOwnerUuid: vault.sharing.ownerUserUuid,
             remoteIdentifier,
             operation: ValetTokenOperation.Write,
             unencryptedFileSizeForUpload: sizeInBytes,

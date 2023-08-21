@@ -8,4 +8,5 @@ export type CreateSharedVaultValetTokenParams = {
   unencryptedFileSize?: number
   moveOperationType?: SharedVaultMoveType
   sharedVaultToSharedVaultMoveTargetUuid?: string
+  sharedVaultOwnerUuid?: string
 }
