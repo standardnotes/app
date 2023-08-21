@@ -318,7 +318,9 @@ export class LegacyApiService
   }
 
   signOut(): Promise<HttpResponse<SignOutResponse>> {
-    return this.httpService.post<SignOutResponse>(Paths.v1.signOut, undefined, this.getSessionAccessToken())
+    return this.httpService.post<SignOutResponse>(Paths.v1.signOut, undefined, {
+      authentication: this.getSessionAccessToken(),
+    })
   }
 
   async changeCredentials(parameters: {
@@ -344,7 +346,9 @@ export class LegacyApiService
       ...parameters.newKeyParams.getPortableValue(),
     })
 
-    const response = await this.httpService.put<ChangeCredentialsResponse>(path, params, this.getSessionAccessToken())
+    const response = await this.httpService.put<ChangeCredentialsResponse>(path, params, {
+      authentication: this.getSessionAccessToken(),
+    })
 
     this.changing = false
 
@@ -481,7 +485,11 @@ export class LegacyApiService
       return preprocessingError
     }
     const path = Paths.v1.sessions
-    const response = await this.httpService.get<SessionListResponse>(path, {}, this.getSessionAccessToken())
+    const response = await this.httpService.get<SessionListResponse>(
+      path,
+      {},
+      { authentication: this.getSessionAccessToken() },
+    )
 
     if (isErrorResponse(response)) {
       this.preprocessAuthenticatedErrorResponse(response)
@@ -502,7 +510,7 @@ export class LegacyApiService
     const response = await this.httpService.delete<SessionListResponse>(
       path,
       { uuid: sessionId },
-      this.getSessionAccessToken(),
+      { authentication: this.getSessionAccessToken() },
     )
 
     if (isErrorResponse(response)) {
