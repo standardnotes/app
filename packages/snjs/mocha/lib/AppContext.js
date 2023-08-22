@@ -149,6 +149,10 @@ export class AppContext {
     return this.application.asymmetric
   }
 
+  get notifications() {
+    return this.application.dependencies.get(TYPES.NotificationService)
+  }
+
   get keyPair() {
     return this.application.dependencies.get(TYPES.GetKeyPairs).execute().getValue().encryption
   }
@@ -476,11 +480,6 @@ export class AppContext {
     })
   }
 
-  resolveWhenUserMessagesProcessingCompletes() {
-    const objectToSpy = this.application.dependencies.get(TYPES.NotificationService)
-    return this.resolveWhenAsyncFunctionCompletes(objectToSpy, 'handleReceivedNotifications')
-  }
-
   resolveWhenAllInboundAsymmetricMessagesAreDeleted() {
     const objectToSpy = this.application.dependencies.get(TYPES.AsymmetricMessageServer)
     return this.resolveWhenAsyncFunctionCompletes(objectToSpy, 'deleteAllInboundMessages')
@@ -676,6 +675,15 @@ export class AppContext {
 
     options.expiresAt = options.expiresAt || dateInAnHour
     options.subscriptionPlanName = options.subscriptionPlanName || 'PRO_PLAN'
+    let uploadBytesLimit = -1
+    switch (options.subscriptionPlanName) {
+      case 'PLUS_PLAN':
+        uploadBytesLimit = 104_857_600
+        break
+      case 'PRO_PLAN':
+        uploadBytesLimit = 107_374_182_400
+        break
+    }
 
     try {
       await Events.publishMockedEvent('SUBSCRIPTION_PURCHASED', {
@@ -701,7 +709,7 @@ export class AppContext {
       )
 
       try {
-        await HomeServer.activatePremiumFeatures(this.email, options.subscriptionPlanName, options.expiresAt)
+        await HomeServer.activatePremiumFeatures(this.email, options.subscriptionPlanName, options.expiresAt, uploadBytesLimit)
 
         await Utils.sleep(1, 'Waiting for premium features to be activated')
       } catch (error) {

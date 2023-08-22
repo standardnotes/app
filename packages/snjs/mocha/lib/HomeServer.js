@@ -1,6 +1,6 @@
 import * as Defaults from './Defaults.js'
 
-export async function activatePremiumFeatures(username, subscriptionPlanName, endsAt) {
+export async function activatePremiumFeatures(username, subscriptionPlanName, endsAt, uploadBytesLimit) {
   await fetch(`${Defaults.getDefaultHost()}/e2e/activate-premium`, {
     method: 'POST',
     headers: {
@@ -11,6 +11,7 @@ export async function activatePremiumFeatures(username, subscriptionPlanName, en
       username,
       subscriptionPlanName,
       endsAt,
+      uploadBytesLimit,
     }),
   })
 }

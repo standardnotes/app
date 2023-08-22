@@ -22,5 +22,6 @@ export const VaultTests = {
     'vaults/key-rotation.test.js',
     'vaults/files.test.js',
     'vaults/limits.test.js',
+    'vaults/quota.test.js',
   ],
 }

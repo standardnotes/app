@@ -57,9 +57,7 @@ describe('shared vaults', function () {
     const result = await context.vaultUsers.removeUserFromSharedVault(sharedVault, contactContext.userUuid)
     expect(result.isFailed()).to.be.false
 
-    const promise = contactContext.resolveWhenUserMessagesProcessingCompletes()
-    await contactContext.sync()
-    await promise
+    await contactContext.syncAndAwaitNotificationsProcessing()
 
     expect(contactContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })).to.be.undefined
     expect(contactContext.keys.getPrimaryKeySystemRootKey(sharedVault.systemIdentifier)).to.be.undefined
@@ -84,9 +82,7 @@ describe('shared vaults', function () {
 
     expect(result).to.be.undefined
 
-    const promise = contactContext.resolveWhenUserMessagesProcessingCompletes()
-    await contactContext.sync()
-    await promise
+    await contactContext.syncAndAwaitNotificationsProcessing()
 
     expect(contactContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })).to.be.undefined
     expect(contactContext.keys.getPrimaryKeySystemRootKey(sharedVault.systemIdentifier)).to.be.undefined
