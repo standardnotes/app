@@ -151,7 +151,7 @@
 }
 
 [data-mobile-popover],
-[role='dialog'] {
+[data-dialog-portal] {
   max-height: none;
   max-height: var(--ios-viewport-height, none);
 }

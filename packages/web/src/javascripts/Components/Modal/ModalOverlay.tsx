@@ -57,6 +57,7 @@ const ModalOverlay = forwardRef(
       const div = document.createElement('div')
       div.id = id
       div.className = 'fixed flex items-center justify-center left-0 top-0 z-modal h-full w-full pointer-events-none'
+      div.setAttribute('data-dialog-portal', '')
       document.body.appendChild(div)
       return div
     }, [portalId])
