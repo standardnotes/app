@@ -135,12 +135,18 @@ export class VaultInviteService
     return response.data.invites
   }
 
-  public async acceptInvite(pendingInvite: InviteRecord): Promise<void> {
+  public async acceptInvite(pendingInvite: InviteRecord): Promise<Result<void>> {
     if (!pendingInvite.trusted) {
-      throw new Error('Cannot accept untrusted invite')
+      return Result.fail('Cannot accept untrusted invite')
     }
 
-    await this._acceptVaultInvite.execute({ invite: pendingInvite.invite, message: pendingInvite.message })
+    const acceptResult = await this._acceptVaultInvite.execute({
+      invite: pendingInvite.invite,
+      message: pendingInvite.message,
+    })
+    if (acceptResult.isFailed()) {
+      return Result.fail(acceptResult.getError())
+    }
 
     delete this.pendingInvites[pendingInvite.invite.uuid]
 
@@ -149,6 +155,8 @@ export class VaultInviteService
     await this._decryptErroredPayloads.execute()
 
     await this.sync.syncSharedVaultsFromScratch([pendingInvite.invite.shared_vault_uuid])
+
+    return Result.ok()
   }
 
   public async getInvitableContactsForSharedVault(
