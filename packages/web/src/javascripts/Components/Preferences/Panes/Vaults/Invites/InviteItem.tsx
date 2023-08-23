@@ -23,7 +23,10 @@ const InviteItem = ({ inviteRecord }: Props) => {
   }, [])
 
   const acceptInvite = useCallback(async () => {
-    await application.vaultInvites.acceptInvite(inviteRecord)
+    const result = await application.vaultInvites.acceptInvite(inviteRecord)
+    if (result.isFailed()) {
+      await application.alerts.alert(result.getError())
+    }
   }, [application, inviteRecord])
 
   const closeAddContactModal = () => setIsAddContactModalOpen(false)

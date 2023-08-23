@@ -18,5 +18,5 @@ export interface VaultInviteServiceInterface extends ApplicationServiceInterface
   getOutboundInvites(
     sharedVault?: SharedVaultListingInterface,
   ): Promise<SharedVaultInviteServerHash[] | ClientDisplayableError>
-  acceptInvite(pendingInvite: InviteRecord): Promise<void>
+  acceptInvite(pendingInvite: InviteRecord): Promise<Result<void>>
 }
