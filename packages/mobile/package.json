@@ -48,7 +48,7 @@
     "eslint": "*",
     "eslint-plugin-prettier": "*",
     "get-yarn-workspaces": "^1.0.2",
-    "metro-react-native-babel-preset": "^0.76.8",
+    "metro-react-native-babel-preset": "^0.77.0",
     "npm-check-updates": "*",
     "pod-install": "^0.1.38",
     "prettier": "*",
