@@ -1,5 +1,7 @@
 package com.standardnotes;
 
+import com.reactnativecommunity.webview.RNCWebView;
+import com.reactnativecommunity.webview.RNCWebViewClient;
 import com.reactnativecommunity.webview.RNCWebViewManager;
 import com.facebook.react.uimanager.ThemedReactContext;
 import android.view.inputmethod.InputConnectionWrapper;
@@ -58,8 +60,8 @@ public class CustomWebViewManager extends RNCWebViewManager {
 	}
 
 	@Override
-	protected RNCWebView createRNCWebViewInstance(ThemedReactContext reactContext) {
-		return new CustomWebView(reactContext);
+	public RNCWebView createViewInstance(ThemedReactContext reactContext) {
+		return super.createViewInstance(reactContext, new CustomWebView(reactContext));
 	}
 
 	@Override
@@ -68,7 +70,7 @@ public class CustomWebViewManager extends RNCWebViewManager {
 	}
 
 	@Override
-	protected void addEventEmitters(ThemedReactContext reactContext, WebView view) {
+	protected void addEventEmitters(ThemedReactContext reactContext, RNCWebView view) {
 		view.setWebViewClient(new CustomWebViewClient());
 	}
 }
