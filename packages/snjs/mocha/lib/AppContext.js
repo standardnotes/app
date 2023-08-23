@@ -657,8 +657,8 @@ export class AppContext {
     return this.application.sessions.user.uuid
   }
 
-  sleep(seconds) {
-    return Utils.sleep(seconds)
+  sleep(seconds, reason = undefined) {
+    return Utils.sleep(seconds, reason)
   }
 
   anticipateConsoleError(message, _reason) {

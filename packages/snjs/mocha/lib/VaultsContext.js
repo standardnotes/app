@@ -35,6 +35,8 @@ export class VaultsContext extends AppContext {
   }
 
   async syncAndAwaitNotificationsProcessing() {
+    await this.sleep(0.25, 'Waiting for notifications to propagate')
+
     const promise = this.resolveWhenAsyncFunctionCompletes(this.notifications, 'handleReceivedNotifications')
 
     await this.sync()
