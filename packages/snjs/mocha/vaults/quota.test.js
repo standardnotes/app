@@ -149,5 +149,59 @@ describe('shared vault files', function () {
 
       await deinitContactContext()
     })
+
+    it('should utilize my quota when my contact is moving a shared file from contact vault to my vault', async () => {
+      await context.activatePaidSubscriptionForUser()
+
+      const { sharedVault, contactContext, deinitContactContext } =
+        await Collaboration.createSharedVaultWithAcceptedInvite(context)
+      await contactContext.activatePaidSubscriptionForUser()
+
+      const secondVault = await Collaboration.createSharedVault(contactContext)
+
+      const response = await fetch('/mocha/assets/small_file.md')
+      const buffer = new Uint8Array(await response.arrayBuffer())
+
+      const uploadedFile = await Files.uploadFile(contactContext.files, buffer, 'my-file', 'md', 1000, secondVault)
+
+      let updatedSharedVault = context.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })
+      expect(updatedSharedVault.sharing.fileBytesUsed).to.equal(0)
+
+      let updatedSecondVault = contactContext.vaults.getVault({ keySystemIdentifier: secondVault.systemIdentifier })
+      expect(updatedSecondVault.sharing.fileBytesUsed).to.equal(1374)
+
+      let myBytesUsedSetting = await context.application.settings.getSubscriptionSetting(
+        SettingName.create(SettingName.NAMES.FileUploadBytesUsed).getValue(),
+      )
+      expect(+myBytesUsedSetting).to.equal(0)
+
+      let contactBytesUsedSetting = await contactContext.application.settings.getSubscriptionSetting(
+        SettingName.create(SettingName.NAMES.FileUploadBytesUsed).getValue(),
+      )
+      expect(+contactBytesUsedSetting).to.equal(1374)
+
+      await contactContext.vaults.moveItemToVault(sharedVault, uploadedFile)
+
+      await context.syncAndAwaitNotificationsProcessing()
+      await contactContext.syncAndAwaitNotificationsProcessing()
+
+      updatedSharedVault = context.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })
+      expect(updatedSharedVault.sharing.fileBytesUsed).to.equal(1374)
+
+      updatedSecondVault = contactContext.vaults.getVault({ keySystemIdentifier: secondVault.systemIdentifier })
+      expect(updatedSecondVault.sharing.fileBytesUsed).to.equal(0)
+
+      myBytesUsedSetting = await context.application.settings.getSubscriptionSetting(
+        SettingName.create(SettingName.NAMES.FileUploadBytesUsed).getValue(),
+      )
+      expect(+myBytesUsedSetting).to.equal(1374)
+
+      contactBytesUsedSetting = await contactContext.application.settings.getSubscriptionSetting(
+        SettingName.create(SettingName.NAMES.FileUploadBytesUsed).getValue(),
+      )
+      expect(+contactBytesUsedSetting).to.equal(0)
+
+      await deinitContactContext()
+    })
   })
 })
