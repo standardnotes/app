@@ -4611,7 +4611,7 @@ __metadata:
     react-native-flag-secure-android: "standardnotes/react-native-flag-secure-android#cb08e74583c22a5d912842459b35ebbbb4bcd852"
     react-native-fs: ^2.20.0
     react-native-iap: ^12.7.4
-    react-native-keychain: "standardnotes/react-native-keychain#d277d360494cbd02be4accb4a360772a8e0e97b6"
+    react-native-keychain: 8.1.2
     react-native-mmkv: ^2.6.2
     react-native-privacy-snapshot: "standardnotes/react-native-privacy-snapshot#653e904c90fc6f2b578da59138f2bfe5d7f942fe"
     react-native-share: ^9.2.3
@@ -19822,10 +19822,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-keychain@standardnotes/react-native-keychain#d277d360494cbd02be4accb4a360772a8e0e97b6":
-  version: 8.0.0
-  resolution: "react-native-keychain@https://github.com/standardnotes/react-native-keychain.git#commit=d277d360494cbd02be4accb4a360772a8e0e97b6"
-  checksum: a8a1484446a24db4f90bc72ba7b22a4637cc4f75421f9b3c30b22bfe753c2c349a165dc848cb0ed4508f64f96e5d2220e41aae57647629d9a70aff933152e8df
+"react-native-keychain@npm:8.1.2":
+  version: 8.1.2
+  resolution: "react-native-keychain@npm:8.1.2"
+  checksum: 0602f0c8c664ee73aedfe7704c5199e90ecf91d933c218d1d74f8a4ea2bfe39814abe2a65492ba19478f416f8ba2cccb82e56878ebf4618712aac0f5a9e6a855
   languageName: node
   linkType: hard
 
