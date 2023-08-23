@@ -27,7 +27,7 @@ const AlertDialog = ({
     <Dialog
       store={dialog}
       role="alertdialog"
-      className="fixed left-0 top-0 z-modal h-full w-full flex items-center justify-center"
+      className="fixed left-0 top-0 z-modal h-full w-full flex items-center justify-center pointer-events-auto"
       modal={false}
       portal={true}
       preventBodyScroll={true}
