@@ -34,6 +34,24 @@ export class VaultsContext extends AppContext {
     await this.awaitPromiseOrThrow(promise, undefined, 'Waiting for keypair change message to process')
   }
 
+  async syncAndAwaitNotificationsProcessing() {
+    await this.sleep(0.25, 'Waiting for notifications to propagate')
+
+    const promise = this.resolveWhenAsyncFunctionCompletes(this.notifications, 'handleReceivedNotifications')
+
+    await this.sync()
+
+    await this.awaitPromiseOrDoNothing(
+      promise,
+      0.25,
+      'Waiting for notifications timed out. Notifications might have been processed in previous sync.'
+    )
+
+    if (this.notifications['handleReceivedNotifications'].restore) {
+      this.notifications['handleReceivedNotifications'].restore()
+    }
+  }
+
   async syncAndAwaitMessageProcessing() {
     const promise = this.resolveWhenAsyncFunctionCompletes(this.asymmetric, 'handleRemoteReceivedAsymmetricMessages')
 

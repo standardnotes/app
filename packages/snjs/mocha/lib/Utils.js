@@ -53,3 +53,23 @@ export async function awaitPromiseOrThrow(promise, maxWait, reason) {
     return result
   })
 }
+
+export async function awaitPromiseOrDoNothing(promise, maxWait, reason) {
+  let timer = undefined
+
+  // Create a promise that resolves in <maxWait> milliseconds
+  const timeout = new Promise((resolve, reject) => {
+    timer = setTimeout(() => {
+      clearTimeout(timer)
+      const message = reason || `Promise timed out after ${maxWait} milliseconds: ${reason}`
+      console.warn(message)
+      resolve()
+    }, maxWait * 1000)
+  })
+
+  // Returns a race between our timeout and the passed in promise
+  return Promise.race([promise, timeout]).then((result) => {
+    clearTimeout(timer)
+    return result
+  })
+}

@@ -149,6 +149,10 @@ export class AppContext {
     return this.application.asymmetric
   }
 
+  get notifications() {
+    return this.application.dependencies.get(TYPES.NotificationService)
+  }
+
   get keyPair() {
     return this.application.dependencies.get(TYPES.GetKeyPairs).execute().getValue().encryption
   }
@@ -476,11 +480,6 @@ export class AppContext {
     })
   }
 
-  resolveWhenUserMessagesProcessingCompletes() {
-    const objectToSpy = this.application.dependencies.get(TYPES.NotificationService)
-    return this.resolveWhenAsyncFunctionCompletes(objectToSpy, 'handleReceivedNotifications')
-  }
-
   resolveWhenAllInboundAsymmetricMessagesAreDeleted() {
     const objectToSpy = this.application.dependencies.get(TYPES.AsymmetricMessageServer)
     return this.resolveWhenAsyncFunctionCompletes(objectToSpy, 'deleteAllInboundMessages')
@@ -658,8 +657,8 @@ export class AppContext {
     return this.application.sessions.user.uuid
   }
 
-  sleep(seconds) {
-    return Utils.sleep(seconds)
+  sleep(seconds, reason = undefined) {
+    return Utils.sleep(seconds, reason)
   }
 
   anticipateConsoleError(message, _reason) {
@@ -670,12 +669,25 @@ export class AppContext {
     return Utils.awaitPromiseOrThrow(promise, maxWait, reason)
   }
 
+  awaitPromiseOrDoNothing(promise, maxWait = 2.0, reason = 'Awaiting promise timed out; No description provided') {
+    return Utils.awaitPromiseOrDoNothing(promise, maxWait, reason)
+  }
+
   async activatePaidSubscriptionForUser(options = {}) {
     const dateInAnHour = new Date()
     dateInAnHour.setHours(dateInAnHour.getHours() + 1)
 
     options.expiresAt = options.expiresAt || dateInAnHour
     options.subscriptionPlanName = options.subscriptionPlanName || 'PRO_PLAN'
+    let uploadBytesLimit = -1
+    switch (options.subscriptionPlanName) {
+      case 'PLUS_PLAN':
+        uploadBytesLimit = 104_857_600
+        break
+      case 'PRO_PLAN':
+        uploadBytesLimit = 107_374_182_400
+        break
+    }
 
     try {
       await Events.publishMockedEvent('SUBSCRIPTION_PURCHASED', {
@@ -694,16 +706,16 @@ export class AppContext {
         payAmount: 59.0,
       })
 
-      await Utils.sleep(2, 'Waiting for premium features to be activated')
+      await this.sleep(2, 'Waiting for premium features to be activated')
     } catch (error) {
       console.warn(
         `Mock events service not available. You are probably running a test suite for home server: ${error.message}`,
       )
 
       try {
-        await HomeServer.activatePremiumFeatures(this.email, options.subscriptionPlanName, options.expiresAt)
+        await HomeServer.activatePremiumFeatures(this.email, options.subscriptionPlanName, options.expiresAt, uploadBytesLimit)
 
-        await Utils.sleep(1, 'Waiting for premium features to be activated')
+        await this.sleep(1, 'Waiting for premium features to be activated')
       } catch (error) {
         console.warn(
           `Home server not available. You are probably running a test suite for self hosted setup: ${error.message}`,
