@@ -4017,7 +4017,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native/virtualized-lists@npm:^0.72.8":
+"@react-native/virtualized-lists@npm:^0.72.4, @react-native/virtualized-lists@npm:^0.72.8":
   version: 0.72.8
   resolution: "@react-native/virtualized-lists@npm:0.72.8"
   dependencies:
@@ -4589,9 +4589,9 @@ __metadata:
     "@standardnotes/react-native-utils": 1.0.1
     "@standardnotes/snjs": "workspace:*"
     "@standardnotes/web": "workspace:*"
-    "@tsconfig/react-native": ^3.0.0
+    "@tsconfig/react-native": ^3.0.2
     "@types/react": ^18.0.25
-    "@types/react-native": ^0.70.6
+    "@types/react-native": ^0.72.2
     "@typescript-eslint/eslint-plugin": "*"
     "@typescript-eslint/parser": "*"
     babel-jest: ^29.3.1
@@ -4616,7 +4616,7 @@ __metadata:
     react-native-privacy-snapshot: "standardnotes/react-native-privacy-snapshot#653e904c90fc6f2b578da59138f2bfe5d7f942fe"
     react-native-share: ^8.2.0
     react-native-version-info: ^1.1.1
-    react-native-webview: 11.26.1
+    react-native-webview: 13.3.1
     typescript: ^4.9.3
   languageName: unknown
   linkType: soft
@@ -5300,7 +5300,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tsconfig/react-native@npm:^3.0.0":
+"@tsconfig/react-native@npm:^3.0.2":
   version: 3.0.2
   resolution: "@tsconfig/react-native@npm:3.0.2"
   checksum: 792146b5e249614cc03786ee861297a32188358ba760ef8f2881ea5261021f3757a9c8d75e84814c9a0e22920468939ebc617a66c37f0128f2d817e5eb9d224f
@@ -5788,12 +5788,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-native@npm:^0.70.6":
-  version: 0.70.14
-  resolution: "@types/react-native@npm:0.70.14"
+"@types/react-native@npm:^0.72.2":
+  version: 0.72.2
+  resolution: "@types/react-native@npm:0.72.2"
   dependencies:
+    "@react-native/virtualized-lists": ^0.72.4
     "@types/react": "*"
-  checksum: 6df79ca70fe0643229dc23ad5121b4bdc80347a10ea8b352e89a97dda6e6f234c5a035e1d88debd3452f91964b95e7cc9a157105c9e09d93cadd28fd079394ba
+  checksum: b2915594381365ea379cb46b9a65219c6b6c7446d97d15f4da9615b8f180972bacba7cae584f4a8f83cce3a180f8a9a08a9c6b57081b37e2543f23f5717693d4
   languageName: node
   linkType: hard
 
@@ -19864,16 +19865,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-webview@npm:11.26.1":
-  version: 11.26.1
-  resolution: "react-native-webview@npm:11.26.1"
+"react-native-webview@npm:13.3.1":
+  version: 13.3.1
+  resolution: "react-native-webview@npm:13.3.1"
   dependencies:
     escape-string-regexp: 2.0.0
     invariant: 2.2.4
   peerDependencies:
     react: "*"
     react-native: "*"
-  checksum: d2f95a89e944a2f1e8cf402e4e274f3568edae42e7ef190915e9fba8004a01d699c962459bdc9688c159060538e90aea3017cab24e6f4112021cbbc10ef57104
+  checksum: c455279ccc42f4787e75c5c0e4609b535bb417eb35536c978079f23474c1135f39f5b8aed32445dd5422913c07651db77343e3c348e193c0b17329fdaa35e1a7
   languageName: node
   linkType: hard
 
