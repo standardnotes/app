@@ -5,7 +5,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Button, Dimensions, Keyboard, Platform, Text, View } from 'react-native'
 import VersionInfo from 'react-native-version-info'
 import { WebView, WebViewMessageEvent } from 'react-native-webview'
-import { OnShouldStartLoadWithRequest } from 'react-native-webview/lib/WebViewTypes'
+import { OnShouldStartLoadWithRequest, WebViewNativeConfig } from 'react-native-webview/lib/WebViewTypes'
 import { AndroidBackHandlerService } from './AndroidBackHandlerService'
 import { AppStateObserverService } from './AppStateObserverService'
 import { ColorSchemeObserverService } from './ColorSchemeObserverService'
@@ -381,7 +381,7 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
       nativeConfig={Platform.select({
         android: {
           component: CustomAndroidWebView,
-        },
+        } as WebViewNativeConfig,
       })}
     />
   )
