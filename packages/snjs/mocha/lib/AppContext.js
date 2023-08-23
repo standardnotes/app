@@ -669,6 +669,10 @@ export class AppContext {
     return Utils.awaitPromiseOrThrow(promise, maxWait, reason)
   }
 
+  awaitPromiseOrDoNothing(promise, maxWait = 2.0, reason = 'Awaiting promise timed out; No description provided') {
+    return Utils.awaitPromiseOrDoNothing(promise, maxWait, reason)
+  }
+
   async activatePaidSubscriptionForUser(options = {}) {
     const dateInAnHour = new Date()
     dateInAnHour.setHours(dateInAnHour.getHours() + 1)
@@ -702,7 +706,7 @@ export class AppContext {
         payAmount: 59.0,
       })
 
-      await Utils.sleep(2, 'Waiting for premium features to be activated')
+      await this.sleep(2, 'Waiting for premium features to be activated')
     } catch (error) {
       console.warn(
         `Mock events service not available. You are probably running a test suite for home server: ${error.message}`,
@@ -711,7 +715,7 @@ export class AppContext {
       try {
         await HomeServer.activatePremiumFeatures(this.email, options.subscriptionPlanName, options.expiresAt, uploadBytesLimit)
 
-        await Utils.sleep(1, 'Waiting for premium features to be activated')
+        await this.sleep(1, 'Waiting for premium features to be activated')
       } catch (error) {
         console.warn(
           `Home server not available. You are probably running a test suite for self hosted setup: ${error.message}`,

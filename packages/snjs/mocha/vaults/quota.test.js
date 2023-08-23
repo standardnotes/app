@@ -35,6 +35,8 @@ describe('shared vault quota', function () {
       const buffer = new Uint8Array(await response.arrayBuffer())
       await Files.uploadFile(context.files, buffer, 'my-file', 'md', 1000, sharedVault)
 
+      await context.syncAndAwaitNotificationsProcessing()
+
       const updatedVault = context.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })
       expect(updatedVault.sharing.fileBytesUsed).to.equal(1374)
 
@@ -101,7 +103,8 @@ describe('shared vault quota', function () {
 
       await Files.uploadFile(contactContext.files, buffer, 'my-file', 'md', 1000, sharedVault)
 
-      await context.sync()
+      await context.syncAndAwaitNotificationsProcessing()
+      await contactContext.syncAndAwaitNotificationsProcessing()
 
       const updatedVault = context.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })
       expect(updatedVault.sharing.fileBytesUsed).to.equal(1374)
@@ -163,6 +166,9 @@ describe('shared vault quota', function () {
       const buffer = new Uint8Array(await response.arrayBuffer())
 
       const uploadedFile = await Files.uploadFile(contactContext.files, buffer, 'my-file', 'md', 1000, secondVault)
+
+      await context.syncAndAwaitNotificationsProcessing()
+      await contactContext.syncAndAwaitNotificationsProcessing()
 
       let updatedSharedVault = context.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })
       expect(updatedSharedVault.sharing.fileBytesUsed).to.equal(0)
