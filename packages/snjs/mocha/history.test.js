@@ -265,7 +265,7 @@ describe('history manager', () => {
       expect(itemHistoryOrError.isFailed()).to.equal(true)
     })
 
-    it.skip('create basic history entries 2', async function () {
+    it('create basic history entries 2', async function () {
       const item = await Factory.createSyncedNote(application)
       await Factory.sleep(Factory.ServerRevisionCreationDelay)
 
