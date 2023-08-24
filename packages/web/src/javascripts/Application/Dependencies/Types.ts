@@ -1,6 +1,4 @@
 export const Web_TYPES = {
-  Application: Symbol.for('Application'),
-
   // Services
   AndroidBackHandler: Symbol.for('AndroidBackHandler'),
   ArchiveManager: Symbol.for('ArchiveManager'),

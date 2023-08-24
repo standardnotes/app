@@ -177,11 +177,11 @@ export class WebApplication extends SNApplication implements WebApplicationInter
   }
 
   override deinit(mode: DeinitMode, source: DeinitSource): void {
-    super.deinit(mode, source)
-
     if (!this.isNativeMobileWeb()) {
       this.webOrDesktopDevice.removeApplication(this)
     }
+
+    super.deinit(mode, source)
 
     for (const disposer of this.disposers) {
       disposer()
