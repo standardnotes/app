@@ -20,7 +20,7 @@ describe('GetTransitionStatus', () => {
     const result = await useCase.execute()
 
     expect(result.isFailed()).toBe(false)
-    expect(result.getValue).toBe('TO-DO')
+    expect(result.getValue()).toBe('TO-DO')
   })
 
   it('should fail to get transition status', async () => {
