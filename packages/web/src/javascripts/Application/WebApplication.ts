@@ -355,7 +355,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     const filesController = this.filesController
     const blob = getBlobFromBase64(file.data, file.mimeType)
     const mappedFile = new File([blob], file.name, { type: file.mimeType })
-    filesController.uploadNewFile(mappedFile, true).catch(console.error)
+    filesController.uploadNewFile(mappedFile).catch(console.error)
   }
 
   async handleReceivedTextEvent({ text, title }: { text: string; title?: string | undefined }) {
@@ -397,7 +397,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
         const file = new File([imgBlob], finalPath, {
           type: imgBlob.type,
         })
-        this.filesController.uploadNewFile(file, true).catch(console.error)
+        this.filesController.uploadNewFile(file).catch(console.error)
       } catch (error) {
         console.error(error)
       } finally {

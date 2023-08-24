@@ -44,7 +44,7 @@ const RemoteImageComponent = ({ className, src, alt, node, format, nodeKey }: Pr
 
       const { filesController, linkingController } = application
 
-      const uploadedFile = await filesController.uploadNewFile(file, false)
+      const uploadedFile = await filesController.uploadNewFile(file, { showToast: false })
 
       if (!uploadedFile) {
         return
