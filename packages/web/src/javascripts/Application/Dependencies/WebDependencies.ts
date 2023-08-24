@@ -100,8 +100,6 @@ export class WebDependencies extends DependencyContainer {
       return new AndroidBackHandler()
     })
 
-    this.bind(Web_TYPES.Application, () => this.application)
-
     this.bind(Web_TYPES.ItemGroupController, () => {
       return new ItemGroupController(
         application.items,
@@ -124,7 +122,7 @@ export class WebDependencies extends DependencyContainer {
     })
 
     this.bind(Web_TYPES.ArchiveManager, () => {
-      return new ArchiveManager(this.get<WebApplicationInterface>(Web_TYPES.Application))
+      return new ArchiveManager(application)
     })
 
     this.bind(Web_TYPES.ThemeManager, () => {

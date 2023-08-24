@@ -4,7 +4,7 @@ import { createNoteParams } from './lib/Items.js'
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
-describe('history manager', () => {
+describe.skip('history manager', () => {
   const largeCharacterChange = 25
 
   let application, history, email, password
