@@ -9,7 +9,7 @@ import Icon from '../Icon/Icon'
 import DecoratedInput from '../Input/DecoratedInput'
 import LinkedItemSearchResults from './LinkedItemSearchResults'
 import { LinkedItemsSectionItem } from './LinkedItemsSectionItem'
-import { DecryptedItem } from '@standardnotes/snjs'
+import { DecryptedItem, SNNote } from '@standardnotes/snjs'
 import { useItemLinks } from '@/Hooks/useItemLinks'
 import { mergeRefs } from '@/Hooks/mergeRefs'
 
@@ -41,7 +41,7 @@ const LinkedItemsPanel = ({ item }: { item: DecryptedItem }) => {
       return
     }
 
-    void application.filesController.selectAndUploadNewFiles((file) => {
+    void application.filesController.selectAndUploadNewFiles(item instanceof SNNote ? item : undefined, (file) => {
       void linkItems(item, file)
     })
   }

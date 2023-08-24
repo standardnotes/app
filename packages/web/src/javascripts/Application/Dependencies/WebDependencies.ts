@@ -350,6 +350,7 @@ export class WebDependencies extends DependencyContainer {
         this.get<FilePreviewModalController>(Web_TYPES.FilePreviewModalController),
         this.get<ArchiveManager>(Web_TYPES.ArchiveManager),
         this.get<VaultDisplayService>(Web_TYPES.VaultDisplayService),
+        application.vaults,
         application.items,
         application.files,
         application.mutator,

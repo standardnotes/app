@@ -3,7 +3,7 @@ import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import { classNames } from '@standardnotes/utils'
 import { isHandlingFileDrag } from '@/Utils/DragTypeCheck'
 import { StreamingFileReader } from '@standardnotes/filepicker'
-import { FileItem } from '@standardnotes/snjs'
+import { FileItem, SNNote } from '@standardnotes/snjs'
 import { useMemo, useState, createContext, ReactNode, useRef, useCallback, useEffect, useContext, memo } from 'react'
 import Portal from './Portal/Portal'
 import { ElementIds } from '@/Constants/ElementIDs'
@@ -11,6 +11,7 @@ import { ElementIds } from '@/Constants/ElementIDs'
 type FileDragTargetData = {
   tooltipText: string
   callback: (files: FileItem) => void
+  note?: SNNote
 }
 
 type FileDnDContextData = {
@@ -200,15 +201,17 @@ const FileDragNDropProvider = ({ application, children }: Props) => {
             return
           }
 
-          const uploadedFile = await application.filesController.uploadNewFile(fileOrHandle)
+          const dragTarget = closestDragTarget ? dragTargets.current.get(closestDragTarget) : undefined
+
+          const uploadedFile = await application.filesController.uploadNewFile(fileOrHandle, {
+            note: dragTarget?.note,
+          })
 
           if (!uploadedFile) {
             return
           }
 
-          if (closestDragTarget && dragTargets.current.has(closestDragTarget)) {
-            dragTargets.current.get(closestDragTarget)?.callback(uploadedFile)
-          }
+          dragTarget?.callback(uploadedFile)
         })
 
         dragCounter.current = 0

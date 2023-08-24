@@ -35,7 +35,9 @@ import {
   MutatorClientInterface,
   Platform,
   ProtectionsClientInterface,
+  SNNote,
   SyncServiceInterface,
+  VaultServiceInterface,
 } from '@standardnotes/snjs'
 import { addToast, dismissToast, ToastType, updateToast } from '@standardnotes/toast'
 import { action, makeObservable, observable, reaction } from 'mobx'
@@ -80,6 +82,7 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
     private filePreviewModalController: FilePreviewModalController,
     private archiveService: ArchiveManager,
     private vaultDisplayService: VaultDisplayServiceInterface,
+    private vaults: VaultServiceInterface,
     private items: ItemManagerInterface,
     private files: FilesClientInterface,
     private mutator: MutatorClientInterface,
@@ -369,14 +372,16 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
     return false
   }
 
-  public async selectAndUploadNewFiles(callback?: (file: FileItem) => void) {
+  public async selectAndUploadNewFiles(note?: SNNote, callback?: (file: FileItem) => void) {
     const selectedFiles = await this.reader.selectFiles()
 
     selectedFiles.forEach(async (file) => {
       if (this.alertIfFileExceedsSizeLimit(file)) {
         return
       }
-      const uploadedFile = await this.uploadNewFile(file)
+      const uploadedFile = await this.uploadNewFile(file, {
+        note,
+      })
       if (uploadedFile && callback) {
         callback(uploadedFile)
       }
@@ -385,7 +390,15 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
 
   public async uploadNewFile(
     fileOrHandle: File | FileSystemFileHandle,
-    showToast = true,
+    {
+      showToast,
+      note,
+    }: {
+      showToast?: boolean
+      note?: SNNote
+    } = {
+      showToast: true,
+    },
   ): Promise<FileItem | undefined> {
     let toastId: string | undefined
 
@@ -407,9 +420,11 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
         return
       }
 
+      const vaultForNote = note ? this.vaults.getItemVault(note) : undefined
+
       const operation = await this.files.beginNewFileUpload(
         fileToUpload.size,
-        this.vaultDisplayService.exclusivelyShownVault,
+        vaultForNote || this.vaultDisplayService.exclusivelyShownVault,
       )
 
       if (operation instanceof ClientDisplayableError) {

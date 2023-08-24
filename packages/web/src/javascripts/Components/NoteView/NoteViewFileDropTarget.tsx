@@ -29,6 +29,7 @@ const NoteViewFileDropTarget = ({ note, linkingController, noteViewElement, file
           })
           filesController.notifyObserversOfUploadedFileLinkingToCurrentNote(uploadedFile.uuid)
         },
+        note,
       })
     }
 
