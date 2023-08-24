@@ -13,6 +13,8 @@ import {
   MfaServiceInterface,
   GenerateUuid,
   CreateDecryptedBackupFile,
+  GetTransitionStatus,
+  StartTransition,
 } from '@standardnotes/services'
 import { VaultLockServiceInterface } from './../VaultLock/VaultLockServiceInterface'
 import { HistoryServiceInterface } from './../History/HistoryServiceInterface'
@@ -76,6 +78,8 @@ export interface ApplicationInterface {
   get generateUuid(): GenerateUuid
   get getHost(): GetHost
   get setHost(): SetHost
+  get getTransitionStatus(): GetTransitionStatus
+  get startTransition(): StartTransition
 
   // Services
   get alerts(): AlertService
