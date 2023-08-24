@@ -171,6 +171,8 @@ export const TYPES = {
   AuthorizeVaultDeletion: Symbol.for('AuthorizeVaultDeletion'),
   CreateDecryptedBackupFile: Symbol.for('CreateDecryptedBackupFile'),
   CreateEncryptedBackupFile: Symbol.for('CreateEncryptedBackupFile'),
+  GetTransitionStatus: Symbol.for('GetTransitionStatus'),
+  StartTransition: Symbol.for('StartTransition'),
 
   // Mappers
   SessionStorageMapper: Symbol.for('SessionStorageMapper'),
