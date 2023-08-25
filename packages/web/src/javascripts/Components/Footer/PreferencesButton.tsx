@@ -1,4 +1,4 @@
-import { compareSemVersions } from '@standardnotes/snjs'
+import { compareSemVersions, StatusServiceEvent } from '@standardnotes/snjs'
 import { keyboardStringForShortcut, OPEN_PREFERENCES_COMMAND } from '@standardnotes/ui-services'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useApplication } from '../ApplicationProvider'
@@ -36,11 +36,26 @@ const PreferencesButton = ({ openPreferences }: Props) => {
     openPreferences(isChangelogUnread)
   }, [isChangelogUnread, openPreferences])
 
+  const [bubbleCount, setBubbleCount] = useState<string | undefined>()
+  useEffect(() => {
+    return application.status.addEventObserver((event, message) => {
+      if (event !== StatusServiceEvent.PreferencesBubbleCountChanged) {
+        return
+      }
+      setBubbleCount(message)
+    })
+  }, [application.status])
+
   return (
     <StyledTooltip label={`Open preferences (${shortcut})`}>
-      <button onClick={onClick} className="relative flex h-full w-8 cursor-pointer items-center justify-center">
-        <div className="h-5">
-          <Icon type="tune" className="rounded hover:text-info" />
+      <button onClick={onClick} className="group relative flex h-full w-8 cursor-pointer items-center justify-center">
+        <div className="relative h-5">
+          <Icon type="tune" className="rounded group-hover:text-info" />
+          {bubbleCount && (
+            <div className="absolute left-full bottom-full -translate-x-1/2 translate-y-1/2 py-px px-1.5 text-[0.575rem] rounded-full border border-info-contrast text-info-contrast bg-info font-bold aspect-square">
+              {bubbleCount}
+            </div>
+          )}
         </div>
         {isChangelogUnread && <div className="absolute right-0.5 top-0.5 h-2 w-2 rounded-full bg-info" />}
       </button>

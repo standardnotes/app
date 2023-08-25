@@ -1,5 +1,5 @@
-import { PreferenceId } from '../../Preferences/PreferenceId'
+import { PreferencePaneId } from '@standardnotes/services'
 
 export type SettingsParams = {
-  panel: PreferenceId
+  panel: PreferencePaneId
 }

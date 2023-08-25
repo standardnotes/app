@@ -35,6 +35,7 @@ import { ContentType, Result } from '@standardnotes/domain-core'
 import { SharedVaultInvitesServer } from '@standardnotes/api'
 import { GetKeyPairs } from '../Encryption/UseCase/GetKeyPairs'
 import { DecryptErroredPayloads } from '../Encryption/UseCase/DecryptErroredPayloads'
+import { StatusServiceInterface } from '../Status/StatusServiceInterface'
 
 export class VaultInviteService
   extends AbstractService<VaultInviteServiceEvent>
@@ -48,6 +49,7 @@ export class VaultInviteService
     private vaultUsers: VaultUserServiceInterface,
     private sync: SyncServiceInterface,
     private invitesServer: SharedVaultInvitesServer,
+    private status: StatusServiceInterface,
     private _getAllContacts: GetAllContacts,
     private _getVault: GetVault,
     private _getVaultContacts: GetVaultContacts,
@@ -91,6 +93,20 @@ export class VaultInviteService
     ;(this._decryptErroredPayloads as unknown) = undefined
 
     this.pendingInvites = {}
+  }
+
+  updatePendingInviteCount() {
+    this.status.setPreferencesBubbleCount('vaults', Object.keys(this.pendingInvites).length)
+  }
+
+  addPendingInvite(invite: InviteRecord): void {
+    this.pendingInvites[invite.invite.uuid] = invite
+    this.updatePendingInviteCount()
+  }
+
+  removePendingInvite(uuid: string): void {
+    delete this.pendingInvites[uuid]
+    this.updatePendingInviteCount()
   }
 
   async handleEvent(event: InternalEventInterface): Promise<void> {
@@ -148,7 +164,7 @@ export class VaultInviteService
       return Result.fail(acceptResult.getError())
     }
 
-    delete this.pendingInvites[pendingInvite.invite.uuid]
+    this.removePendingInvite(pendingInvite.invite.uuid)
 
     void this.sync.sync()
 
@@ -236,7 +252,7 @@ export class VaultInviteService
       return ClientDisplayableError.FromString(`Failed to delete invite ${JSON.stringify(response)}`)
     }
 
-    delete this.pendingInvites[invite.uuid]
+    this.removePendingInvite(invite.uuid)
   }
 
   private async reprocessCachedInvitesTrustStatusAfterTrustedContactsChange(): Promise<void> {
@@ -268,11 +284,11 @@ export class VaultInviteService
         })
 
         if (!trustedMessage.isFailed()) {
-          this.pendingInvites[invite.uuid] = {
+          this.addPendingInvite({
             invite,
             message: trustedMessage.getValue(),
             trusted: true,
-          }
+          })
 
           continue
         }
@@ -284,11 +300,11 @@ export class VaultInviteService
       })
 
       if (!untrustedMessage.isFailed()) {
-        this.pendingInvites[invite.uuid] = {
+        this.addPendingInvite({
           invite,
           message: untrustedMessage.getValue(),
           trusted: false,
-        }
+        })
       }
     }
 

@@ -37,13 +37,13 @@ import {
   IsNativeIOS,
   IsNativeMobileWeb,
   KeyboardService,
-  PreferenceId,
   RouteServiceInterface,
   ThemeManager,
   VaultDisplayServiceInterface,
   WebAlertService,
   WebApplicationInterface,
 } from '@standardnotes/ui-services'
+import { PreferencePaneId } from '@standardnotes/services'
 import { MobileWebReceiver, NativeMobileEventListener } from '../NativeMobileWeb/MobileWebReceiver'
 import { setCustomViewportHeight } from '@/setViewportHeightWithFallback'
 import { FeatureName } from '@/Controllers/FeatureName'
@@ -504,7 +504,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     return this.environment === Environment.Web
   }
 
-  openPreferences(pane?: PreferenceId): void {
+  openPreferences(pane?: PreferencePaneId): void {
     this.preferencesController.openPreferences()
     if (pane) {
       this.preferencesController.setCurrentPane(pane)

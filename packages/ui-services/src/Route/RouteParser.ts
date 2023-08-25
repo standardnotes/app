@@ -1,5 +1,5 @@
 import { UserRequestType } from '@standardnotes/common'
-import { PreferenceId } from './../Preferences/PreferenceId'
+import { PreferencePaneId } from '@standardnotes/services'
 import { AppViewRouteParam, ValidAppViewRoutes } from './Params/AppViewRouteParams'
 import { DemoParams } from './Params/DemoParams'
 import { OnboardingParams } from './Params/OnboardingParams'
@@ -58,7 +58,7 @@ export class RouteParser implements RouteParserInterface {
     this.checkForProperRouteType(RouteType.Settings)
 
     return {
-      panel: this.searchParams.get(RootQueryParam.Settings) as PreferenceId,
+      panel: this.searchParams.get(RootQueryParam.Settings) as PreferencePaneId,
     }
   }
 

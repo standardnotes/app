@@ -864,6 +864,7 @@ export class Dependencies {
         this.get<VaultUserService>(TYPES.VaultUserService),
         this.get<SyncService>(TYPES.SyncService),
         this.get<SharedVaultInvitesServer>(TYPES.SharedVaultInvitesServer),
+        this.get<StatusService>(TYPES.StatusService),
         this.get<GetAllContacts>(TYPES.GetAllContacts),
         this.get<GetVault>(TYPES.GetVault),
         this.get<GetVaultContacts>(TYPES.GetVaultContacts),

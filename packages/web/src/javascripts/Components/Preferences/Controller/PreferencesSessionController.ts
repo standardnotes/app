@@ -2,7 +2,7 @@ import { action, makeAutoObservable, observable } from 'mobx'
 import { WebApplication } from '@/Application/WebApplication'
 import { PackageProvider } from '../Panes/General/Advanced/Packages/Provider/PackageProvider'
 import { securityPrefsHasBubble } from '../Panes/Security/securityPrefsHasBubble'
-import { PreferenceId } from '@standardnotes/ui-services'
+import { PreferencePaneId } from '@standardnotes/services'
 import { isDesktopApplication } from '@/Utils'
 import { featureTrunkHomeServerEnabled, featureTrunkVaultsEnabled } from '@/FeatureTrunk'
 import { PreferencesMenuItem } from './PreferencesMenuItem'
@@ -14,7 +14,7 @@ import { PREFERENCES_MENU_ITEMS, READY_PREFERENCES_MENU_ITEMS } from './MenuItem
  * Preferences menu. It is created and destroyed each time the menu is opened and closed.
  */
 export class PreferencesSessionController {
-  private _selectedPane: PreferenceId = 'account'
+  private _selectedPane: PreferencePaneId = 'account'
   private _menu: PreferencesMenuItem[]
   private _extensionLatestVersions: PackageProvider = new PackageProvider(new Map())
 
@@ -81,7 +81,7 @@ export class PreferencesSessionController {
     return this._menu.find((item) => item.id === this._selectedPane)
   }
 
-  get selectedPaneId(): PreferenceId {
+  get selectedPaneId(): PreferencePaneId {
     if (this.selectedMenuItem != undefined) {
       return this.selectedMenuItem.id
     }
@@ -89,11 +89,11 @@ export class PreferencesSessionController {
     return 'account'
   }
 
-  selectPane = (key: PreferenceId) => {
+  selectPane = (key: PreferencePaneId) => {
     this._selectedPane = key
   }
 
-  sectionHasBubble(id: PreferenceId): boolean {
+  sectionHasBubble(id: PreferencePaneId): boolean {
     if (id === 'security') {
       return securityPrefsHasBubble(this.application)
     }

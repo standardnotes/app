@@ -1,10 +1,42 @@
 import { removeFromArray } from '@standardnotes/utils'
 import { AbstractService } from '../Service/AbstractService'
 import { StatusServiceEvent, StatusServiceInterface, StatusMessageIdentifier } from './StatusServiceInterface'
+import { PreferencePaneId } from '../Preferences/PreferenceId'
 
 /* istanbul ignore file */
 
 export class StatusService extends AbstractService<StatusServiceEvent, string> implements StatusServiceInterface {
+  private preferencesBubbleCounts: Record<PreferencePaneId, number> = {
+    general: 0,
+    account: 0,
+    security: 0,
+    'home-server': 0,
+    vaults: 0,
+    appearance: 0,
+    backups: 0,
+    listed: 0,
+    shortcuts: 0,
+    accessibility: 0,
+    'get-free-month': 0,
+    'help-feedback': 0,
+    'whats-new': 0,
+  }
+
+  setPreferencesBubbleCount(preferencePaneId: PreferencePaneId, count: number): void {
+    this.preferencesBubbleCounts[preferencePaneId] = count
+    console.log(this.preferencesBubbleCounts)
+    const totalCount = this.totalPreferencesBubbleCount
+    console.log(totalCount)
+    void this.notifyEvent(
+      StatusServiceEvent.PreferencesBubbleCountChanged,
+      totalCount > 0 ? totalCount.toString() : undefined,
+    )
+  }
+
+  get totalPreferencesBubbleCount(): number {
+    return Object.values(this.preferencesBubbleCounts).reduce((total, count) => total + count, 0)
+  }
+
   private _message = ''
   private directSetMessage?: string
   private dynamicMessages: string[] = []
