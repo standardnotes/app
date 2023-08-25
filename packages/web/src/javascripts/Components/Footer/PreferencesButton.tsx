@@ -52,7 +52,7 @@ const PreferencesButton = ({ openPreferences }: Props) => {
         <div className="relative h-5">
           <Icon type="tune" className="rounded group-hover:text-info" />
           {bubbleCount && (
-            <div className="absolute left-full bottom-full -translate-x-1/2 translate-y-1/2 py-px px-1.5 text-[0.575rem] rounded-full border border-info-contrast text-info-contrast bg-info font-bold aspect-square">
+            <div className="absolute bottom-full left-full aspect-square -translate-x-1/2 translate-y-1/2 rounded-full border border-info-contrast bg-info px-1.5 py-px text-[0.575rem] font-bold text-info-contrast">
               {bubbleCount}
             </div>
           )}
