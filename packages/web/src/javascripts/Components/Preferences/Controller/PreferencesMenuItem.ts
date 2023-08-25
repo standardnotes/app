@@ -6,5 +6,6 @@ export interface PreferencesMenuItem {
   readonly icon: IconType
   readonly label: string
   readonly order: number
-  readonly hasBubble?: boolean
+  readonly bubbleCount?: number
+  readonly hasErrorIndicator?: boolean
 }

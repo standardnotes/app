@@ -11,6 +11,7 @@ export enum StatusServiceEvent {
 export type StatusMessageIdentifier = string
 
 export interface StatusServiceInterface extends AbstractService<StatusServiceEvent, string> {
+  getPreferencesBubbleCount(preferencePaneId: PreferencePaneId): number
   setPreferencesBubbleCount(preferencePaneId: PreferencePaneId, count: number): void
   get totalPreferencesBubbleCount(): number
 

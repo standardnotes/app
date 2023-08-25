@@ -19,7 +19,11 @@ export class StatusService extends AbstractService<StatusServiceEvent, string> i
     accessibility: 0,
     'get-free-month': 0,
     'help-feedback': 0,
-    'whats-new': 0,
+    'whats-new': 1,
+  }
+
+  getPreferencesBubbleCount(preferencePaneId: PreferencePaneId): number {
+    return this.preferencesBubbleCounts[preferencePaneId]
   }
 
   setPreferencesBubbleCount(preferencePaneId: PreferencePaneId, count: number): void {

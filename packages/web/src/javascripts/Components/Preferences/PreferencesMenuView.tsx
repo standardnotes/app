@@ -32,7 +32,8 @@ const PreferencesMenuView: FunctionComponent<Props> = ({ menu }) => {
             iconType={pref.icon}
             label={pref.label}
             selected={pref.selected}
-            hasBubble={pref.hasBubble}
+            bubbleCount={pref.bubbleCount}
+            hasErrorIndicator={pref.hasErrorIndicator}
             onClick={() => {
               selectPane(pref.id)
             }}
