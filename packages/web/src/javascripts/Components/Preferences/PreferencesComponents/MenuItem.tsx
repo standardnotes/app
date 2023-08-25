@@ -32,7 +32,7 @@ const PreferencesMenuItem: FunctionComponent<Props> = ({
     <div className="relative mr-1">
       <Icon className={classNames('text-base', selected ? 'text-info' : 'text-neutral')} type={iconType} />
       {bubbleCount ? (
-        <div className="absolute bottom-full left-full flex aspect-square h-4 w-4 -translate-x-3 translate-y-2 items-center justify-center rounded-full border border-info-contrast bg-info text-[0.5rem] font-bold text-info-contrast">
+        <div className="absolute bottom-full right-full flex aspect-square h-4 w-4 translate-x-2 translate-y-2 items-center justify-center rounded-full border border-info-contrast bg-info text-[0.5rem] font-bold text-info-contrast">
           {bubbleCount}
         </div>
       ) : null}
