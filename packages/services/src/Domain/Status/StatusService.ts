@@ -24,9 +24,7 @@ export class StatusService extends AbstractService<StatusServiceEvent, string> i
 
   setPreferencesBubbleCount(preferencePaneId: PreferencePaneId, count: number): void {
     this.preferencesBubbleCounts[preferencePaneId] = count
-    console.log(this.preferencesBubbleCounts)
     const totalCount = this.totalPreferencesBubbleCount
-    console.log(totalCount)
     void this.notifyEvent(
       StatusServiceEvent.PreferencesBubbleCountChanged,
       totalCount > 0 ? totalCount.toString() : undefined,
