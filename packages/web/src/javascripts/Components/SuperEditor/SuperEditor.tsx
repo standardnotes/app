@@ -39,7 +39,7 @@ import { SUPER_SHOW_MARKDOWN_PREVIEW } from '@standardnotes/ui-services'
 import { SuperNoteMarkdownPreview } from './SuperNoteMarkdownPreview'
 import { ExportPlugin } from './Plugins/ExportPlugin/ExportPlugin'
 import GetMarkdownPlugin, { GetMarkdownPluginInterface } from './Plugins/GetMarkdownPlugin/GetMarkdownPlugin'
-import { getPlaintextFontSize } from '@/Utils/getPlaintextFontSize'
+import { useResponsiveEditorFontSize } from '@/Utils/getPlaintextFontSize'
 import ReadonlyPlugin from './Plugins/ReadonlyPlugin/ReadonlyPlugin'
 import { SuperSearchContextProvider } from './Plugins/SearchPlugin/Context'
 import { SearchPlugin } from './Plugins/SearchPlugin/SearchPlugin'
@@ -162,9 +162,10 @@ export const SuperEditor: FunctionComponent<Props> = ({
   const [lineHeight, setLineHeight] = useState<EditorLineHeight>(() =>
     application.getPreference(PrefKey.EditorLineHeight, PrefDefaults[PrefKey.EditorLineHeight]),
   )
-  const [fontSize, setFontSize] = useState<EditorFontSize | undefined>(() =>
+  const [fontSize, setFontSize] = useState<EditorFontSize>(() =>
     application.getPreference(PrefKey.EditorFontSize, PrefDefaults[PrefKey.EditorFontSize]),
   )
+  const responsiveFontSize = useResponsiveEditorFontSize(fontSize)
 
   const reloadPreferences = useCallback(() => {
     const lineHeight = application.getPreference(PrefKey.EditorLineHeight, PrefDefaults[PrefKey.EditorLineHeight])
@@ -222,7 +223,7 @@ export const SuperEditor: FunctionComponent<Props> = ({
                 className={classNames(
                   'blocks-editor relative h-full resize-none px-4 py-4 focus:shadow-none focus:outline-none',
                   lineHeight && `leading-${lineHeight.toLowerCase()}`,
-                  fontSize ? getPlaintextFontSize(fontSize) : 'text-base',
+                  responsiveFontSize,
                 )}
                 previewLength={SuperNotePreviewCharLimit}
                 spellcheck={spellcheck}
