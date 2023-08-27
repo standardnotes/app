@@ -63,7 +63,7 @@ jobs:
           cache: 'yarn'
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
-      - name: "Install rpm"
+      - name: Install RPM
         run: sudo apt-get install -y rpm
       - name: Install FPM
         run: sudo gem install fpm -f
@@ -97,7 +97,7 @@ jobs:
       - name: Rpm
         run: |
           yarn run webpack --config desktop.webpack.prod.js --env rpm
-          yarn run electron-builder --c.--linux --x64 -c.linux.target=rpm --publish=never --c.extraMetadata.version=${{ env.APP_VERSION }} --c.rpm.packageName="standardnotes-app"
+          yarn run electron-builder --linux --x64 -c.linux.target=rpm --publish=never --c.extraMetadata.version=${{ env.APP_VERSION }} --c.rpm.packageName="standardnotes-app"
 
       - name: Dir
         run: |
