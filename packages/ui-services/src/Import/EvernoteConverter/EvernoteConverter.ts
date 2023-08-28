@@ -66,6 +66,35 @@ export class EvernoteConverter {
       const created = xmlNote.getElementsByTagName('created')[0].textContent
       const updatedNodes = xmlNote.getElementsByTagName('updated')
       const updated = updatedNodes.length ? updatedNodes[0].textContent : null
+      const resources = Array.from(xmlNote.getElementsByTagName('resource'))
+        .map((resourceElement) => {
+          const attributes = resourceElement.getElementsByTagName('resource-attributes')[0]
+          const sourceUrl = attributes.getElementsByTagName('source-url')[0].textContent
+          if (!sourceUrl) {
+            return
+          }
+          const mimeType = resourceElement.getElementsByTagName('mime')[0].textContent
+          if (!mimeType) {
+            return
+          }
+          const fileName = attributes.getElementsByTagName('file-name')[0].textContent
+          if (!fileName) {
+            return
+          }
+          const dataElement = resourceElement.getElementsByTagName('data')[0]
+          const encoding = dataElement.getAttribute('encoding')
+          const data = 'data:' + mimeType + ';' + encoding + ',' + dataElement.textContent?.replace(/\n/g, '')
+          const splitSourceUrl = sourceUrl.split('+')
+          const hash = splitSourceUrl[splitSourceUrl.length - 2]
+          return {
+            hash,
+            data,
+            fileName,
+            mimeType,
+          }
+        })
+        .filter(Boolean)
+
       const contentNode = xmlNote.getElementsByTagName('content')[0]
       let contentXmlString
       /** Find the node with the content */
@@ -79,6 +108,21 @@ export class EvernoteConverter {
         continue
       }
       const contentXml = this.loadXMLString(contentXmlString, 'html')
+
+      const noteElement = contentXml.getElementsByTagName('en-note')[0]
+      const mediaElements = noteElement.getElementsByTagName('en-media')
+      for (const mediaElement of Array.from(mediaElements)) {
+        const hash = mediaElement.getAttribute('hash')
+        const resource = resources.find((resource) => resource && resource.hash === hash)
+        if (!resource) {
+          continue
+        }
+        const imgElement = document.createElement('img')
+        imgElement.setAttribute('src', resource.data)
+        imgElement.setAttribute('alt', resource.fileName)
+        mediaElement.parentNode?.replaceChild(imgElement, mediaElement)
+      }
+
       let contentHTML = contentXml.getElementsByTagName('en-note')[0].innerHTML
       if (!isEntitledToSuper) {
         contentHTML = contentHTML.replace(/<\/div>/g, '</div>\n')
