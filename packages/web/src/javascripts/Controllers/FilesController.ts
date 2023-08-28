@@ -393,7 +393,7 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
     options: {
       showToast?: boolean
       note?: SNNote
-    },
+    } = {},
   ): Promise<FileItem | undefined> {
     const { showToast = true, note } = options
 
