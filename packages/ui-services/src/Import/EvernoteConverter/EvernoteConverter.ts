@@ -51,7 +51,7 @@ export class EvernoteConverter {
 
     for (const [index, xmlNote] of Array.from(xmlNotes).entries()) {
       const title = xmlNote.getElementsByTagName('title')[0].textContent
-      const created = xmlNote.getElementsByTagName('created')[0].textContent
+      const created = xmlNote.getElementsByTagName('created')[0]?.textContent
       const updatedNodes = xmlNote.getElementsByTagName('updated')
       const updated = updatedNodes.length ? updatedNodes[0].textContent : null
       const resources = Array.from(xmlNote.getElementsByTagName('resource'))
