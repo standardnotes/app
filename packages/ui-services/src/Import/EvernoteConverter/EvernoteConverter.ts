@@ -14,9 +14,11 @@ dayjs.extend(utc)
 
 const dateFormat = 'YYYYMMDDTHHmmss'
 
-const getMD5HashFromBase64 = (b64Data: string) => {
-  const bytes = Base64.parse(b64Data)
-  return MD5(bytes).toString()
+type EvernoteResource = {
+  hash: string
+  data: string
+  fileName: string
+  mimeType: string
 }
 
 export class EvernoteConverter {
@@ -55,39 +57,7 @@ export class EvernoteConverter {
       const updatedNodes = xmlNote.getElementsByTagName('updated')
       const updated = updatedNodes.length ? updatedNodes[0].textContent : null
       const resources = Array.from(xmlNote.getElementsByTagName('resource'))
-        .map((resourceElement, resourceIndex) => {
-          const mimeType = resourceElement.getElementsByTagName('mime')[0].textContent
-          if (!mimeType) {
-            return
-          }
-          const attributes = resourceElement.getElementsByTagName('resource-attributes')[0]
-          const sourceUrl = attributes.getElementsByTagName('source-url')[0]?.textContent
-          const fileName =
-            attributes.getElementsByTagName('file-name')[0]?.textContent || `${mimeType}-${resourceIndex}`
-          const dataElement = resourceElement.getElementsByTagName('data')[0]
-          const encoding = dataElement.getAttribute('encoding')
-          const dataContentWithoutNewLines = dataElement.textContent?.replace(/\n/g, '')
-          if (!dataContentWithoutNewLines) {
-            return
-          }
-          const data = 'data:' + mimeType + ';' + encoding + ',' + dataContentWithoutNewLines
-          let hash = ''
-          if (sourceUrl && sourceUrl.startsWith('en-cache')) {
-            const splitSourceUrl = sourceUrl.split('+')
-            hash = splitSourceUrl[splitSourceUrl.length - 2]
-          } else if (encoding === 'base64') {
-            hash = getMD5HashFromBase64(dataContentWithoutNewLines)
-          }
-          if (!hash) {
-            return
-          }
-          return {
-            hash,
-            data,
-            fileName,
-            mimeType,
-          }
-        })
+        .map(this.getResourceFromElement)
         .filter(Boolean)
 
       const contentNode = xmlNote.getElementsByTagName('content')[0]
@@ -185,6 +155,53 @@ export class EvernoteConverter {
     }
 
     return allItems
+  }
+
+  getMD5HashFromBase64(b64Data: string) {
+    const bytes = Base64.parse(b64Data)
+    return MD5(bytes).toString()
+  }
+
+  getResourceFromElement(element: Element, index: number): EvernoteResource | undefined {
+    const mimeType = element.getElementsByTagName('mime')[0]?.textContent
+
+    if (!mimeType) {
+      return
+    }
+
+    const attributes = element.getElementsByTagName('resource-attributes')[0]
+    const sourceUrl = attributes.getElementsByTagName('source-url')[0]?.textContent
+
+    const fileName = attributes.getElementsByTagName('file-name')[0]?.textContent || `${mimeType}-${index}`
+
+    const dataElement = element.getElementsByTagName('data')[0]
+    const encoding = dataElement.getAttribute('encoding')
+    const dataContentWithoutNewLines = dataElement.textContent?.replace(/\n/g, '')
+
+    if (!dataContentWithoutNewLines) {
+      return
+    }
+
+    const data = 'data:' + mimeType + ';' + encoding + ',' + dataContentWithoutNewLines
+
+    let hash = ''
+    if (sourceUrl && sourceUrl.startsWith('en-cache')) {
+      const splitSourceUrl = sourceUrl.split('+')
+      hash = splitSourceUrl[splitSourceUrl.length - 2]
+    } else if (encoding === 'base64') {
+      hash = this.getMD5HashFromBase64(dataContentWithoutNewLines)
+    }
+
+    if (!hash) {
+      return
+    }
+
+    return {
+      hash,
+      data,
+      fileName,
+      mimeType,
+    } as EvernoteResource
   }
 
   loadXMLString(string: string, type: 'html' | 'xml') {
