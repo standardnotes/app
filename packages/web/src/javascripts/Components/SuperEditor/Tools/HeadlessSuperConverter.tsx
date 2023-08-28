@@ -111,7 +111,7 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
 
               // Wrap text & link nodes with paragraph since they can't
               // be top-level nodes in Super
-              if (type === 'text' || type === 'link') {
+              if (type === 'text' || type === 'link' || type === 'unencrypted-image') {
                 const paragraphNode = $createParagraphNode()
                 paragraphNode.append(node)
                 nodesToInsert.push(paragraphNode)

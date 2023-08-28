@@ -28,7 +28,8 @@ export type ImportModalFile = (
 
 export class ImportModalController {
   isVisible = false
-  shouldCreateTag = true
+  /** @TODO change back after debugging */
+  shouldCreateTag = false
   files: ImportModalFile[] = []
   importTag: SNTag | undefined = undefined
 
@@ -86,7 +87,7 @@ export class ImportModalController {
 
   close = () => {
     this.setIsVisible(false)
-    this.setShouldCreateTag(true)
+    this.setShouldCreateTag(false)
     if (this.importTag) {
       this.navigationController
         .setSelectedTag(this.importTag, 'all', {

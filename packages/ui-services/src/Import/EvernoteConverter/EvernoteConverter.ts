@@ -7,10 +7,17 @@ import { ContentType } from '@standardnotes/domain-core'
 import { GenerateUuid } from '@standardnotes/services'
 import { SuperConverterServiceInterface } from '@standardnotes/files'
 import { NativeFeatureIdentifier, NoteType } from '@standardnotes/features'
+import MD5 from 'crypto-js/md5'
+import Base64 from 'crypto-js/enc-base64'
 dayjs.extend(customParseFormat)
 dayjs.extend(utc)
 
 const dateFormat = 'YYYYMMDDTHHmmss'
+
+const getMD5HashFromBase64 = (b64Data: string) => {
+  const bytes = Base64.parse(b64Data)
+  return MD5(bytes).toString()
+}
 
 export class EvernoteConverter {
   constructor(
@@ -48,25 +55,32 @@ export class EvernoteConverter {
       const updatedNodes = xmlNote.getElementsByTagName('updated')
       const updated = updatedNodes.length ? updatedNodes[0].textContent : null
       const resources = Array.from(xmlNote.getElementsByTagName('resource'))
-        .map((resourceElement) => {
-          const attributes = resourceElement.getElementsByTagName('resource-attributes')[0]
-          const sourceUrl = attributes.getElementsByTagName('source-url')[0].textContent
-          if (!sourceUrl) {
-            return
-          }
+        .map((resourceElement, resourceIndex) => {
           const mimeType = resourceElement.getElementsByTagName('mime')[0].textContent
           if (!mimeType) {
             return
           }
-          const fileName = attributes.getElementsByTagName('file-name')[0].textContent
-          if (!fileName) {
-            return
-          }
+          const attributes = resourceElement.getElementsByTagName('resource-attributes')[0]
+          const sourceUrl = attributes.getElementsByTagName('source-url')[0]?.textContent
+          const fileName =
+            attributes.getElementsByTagName('file-name')[0]?.textContent || `${mimeType}-${resourceIndex}`
           const dataElement = resourceElement.getElementsByTagName('data')[0]
           const encoding = dataElement.getAttribute('encoding')
-          const data = 'data:' + mimeType + ';' + encoding + ',' + dataElement.textContent?.replace(/\n/g, '')
-          const splitSourceUrl = sourceUrl.split('+')
-          const hash = splitSourceUrl[splitSourceUrl.length - 2]
+          const dataContentWithoutNewLines = dataElement.textContent?.replace(/\n/g, '')
+          if (!dataContentWithoutNewLines) {
+            return
+          }
+          const data = 'data:' + mimeType + ';' + encoding + ',' + dataContentWithoutNewLines
+          let hash = ''
+          if (sourceUrl && sourceUrl.startsWith('en-cache')) {
+            const splitSourceUrl = sourceUrl.split('+')
+            hash = splitSourceUrl[splitSourceUrl.length - 2]
+          } else if (encoding === 'base64') {
+            hash = getMD5HashFromBase64(dataContentWithoutNewLines)
+          }
+          if (!hash) {
+            return
+          }
           return {
             hash,
             data,
