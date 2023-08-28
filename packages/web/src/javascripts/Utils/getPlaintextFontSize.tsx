@@ -1,7 +1,7 @@
-import { isMobileScreen, isTabletScreen } from '@/Utils'
+import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 import { EditorFontSize } from '@standardnotes/snjs'
 
-export const getPlaintextFontSize = (key: EditorFontSize): string => {
+export const useResponsiveEditorFontSize = (key: EditorFontSize): string => {
   const desktopMapping: Record<EditorFontSize, string> = {
     ExtraSmall: 'text-xs',
     Small: 'text-sm',
@@ -26,9 +26,12 @@ export const getPlaintextFontSize = (key: EditorFontSize): string => {
     Large: 'text-2xl',
   }
 
-  if (isTabletScreen()) {
+  const isTabletScreen = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.md)
+  const isMobileScreen = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
+
+  if (isTabletScreen) {
     return tabletMapping[key]
   }
 
-  return isMobileScreen() ? mobileMapping[key] : desktopMapping[key]
+  return isMobileScreen ? mobileMapping[key] : desktopMapping[key]
 }

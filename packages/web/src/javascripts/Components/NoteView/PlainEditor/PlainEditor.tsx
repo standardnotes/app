@@ -5,7 +5,7 @@ import { log, LoggingDomain } from '@/Logging'
 import { Disposer } from '@/Types/Disposer'
 import { EditorEventSource } from '@/Types/EditorEventSource'
 import { classNames } from '@standardnotes/utils'
-import { getPlaintextFontSize } from '@/Utils/getPlaintextFontSize'
+import { useResponsiveEditorFontSize } from '@/Utils/getPlaintextFontSize'
 import {
   ApplicationEvent,
   EditorFontSize,
@@ -38,6 +38,7 @@ export const PlainEditor = forwardRef<PlainEditorInterface, Props>(
     const [textareaUnloading, setTextareaUnloading] = useState(false)
     const [lineHeight, setLineHeight] = useState<EditorLineHeight | undefined>()
     const [fontSize, setFontSize] = useState<EditorFontSize | undefined>()
+    const responsiveFontSize = useResponsiveEditorFontSize(fontSize || EditorFontSize.Normal)
     const previousSpellcheck = usePrevious(spellcheck)
 
     const lastEditorFocusEventSource = useRef<EditorEventSource | undefined>()
@@ -262,7 +263,7 @@ export const PlainEditor = forwardRef<PlainEditorInterface, Props>(
         className={classNames(
           'editable font-editor flex-grow',
           lineHeight && `leading-${lineHeight.toLowerCase()}`,
-          fontSize && getPlaintextFontSize(fontSize),
+          responsiveFontSize,
         )}
       ></textarea>
     )

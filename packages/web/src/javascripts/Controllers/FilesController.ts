@@ -390,16 +390,13 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
 
   public async uploadNewFile(
     fileOrHandle: File | FileSystemFileHandle,
-    {
-      showToast,
-      note,
-    }: {
+    options: {
       showToast?: boolean
       note?: SNNote
-    } = {
-      showToast: true,
-    },
+    } = {},
   ): Promise<FileItem | undefined> {
+    const { showToast = true, note } = options
+
     let toastId: string | undefined
 
     try {
