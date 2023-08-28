@@ -88,12 +88,18 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
       return otherFormatString
     }
 
+    this.editor.update(
+      () => {
+        $getRoot().clear()
+      },
+      {
+        discrete: true,
+      },
+    )
+
     if (fromFormat === 'html') {
       this.editor.update(
         () => {
-          const root = $getRoot()
-          root.clear()
-
           const parser = new DOMParser()
           const dom = parser.parseFromString(otherFormatString, 'text/html')
           const generatedNodes = $generateNodesFromDOM(this.editor, dom)
