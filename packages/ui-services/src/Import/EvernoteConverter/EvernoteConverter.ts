@@ -26,30 +26,11 @@ export class EvernoteConverter {
     return notesAndTags
   }
 
-  parseENEXData(data: string, isEntitledToSuper = false, defaultTagName = 'evernote') {
+  parseENEXData(data: string, isEntitledToSuper = false) {
     const xmlDoc = this.loadXMLString(data, 'xml')
     const xmlNotes = xmlDoc.getElementsByTagName('note')
     const notes: DecryptedTransferPayload<NoteContent>[] = []
     const tags: DecryptedTransferPayload<TagContent>[] = []
-    let defaultTag: DecryptedTransferPayload<TagContent> | undefined
-
-    if (defaultTagName) {
-      const now = new Date()
-      defaultTag = {
-        created_at: now,
-        created_at_timestamp: now.getTime(),
-        updated_at: now,
-        updated_at_timestamp: now.getTime(),
-        uuid: this._generateUuid.execute().getValue(),
-        content_type: ContentType.TYPES.Tag,
-        content: {
-          title: defaultTagName,
-          expanded: false,
-          iconString: '',
-          references: [],
-        },
-      }
-    }
 
     function findTag(title: string | null) {
       return tags.filter(function (tag) {
@@ -154,13 +135,6 @@ export class EvernoteConverter {
         },
       }
 
-      if (defaultTag) {
-        defaultTag.content.references.push({
-          content_type: ContentType.TYPES.Note,
-          uuid: note.uuid,
-        })
-      }
-
       const xmlTags = xmlNote.getElementsByTagName('tag')
       for (const tagXml of Array.from(xmlTags)) {
         const tagName = tagXml.childNodes[0].nodeValue
@@ -194,9 +168,6 @@ export class EvernoteConverter {
     const allItems: DecryptedTransferPayload[] = [...notes, ...tags]
     if (allItems.length === 0) {
       throw new Error('Could not parse any notes or tags from Evernote file.')
-    }
-    if (defaultTag) {
-      allItems.push(defaultTag)
     }
 
     return allItems
