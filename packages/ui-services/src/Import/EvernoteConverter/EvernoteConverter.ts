@@ -5,23 +5,28 @@ import customParseFormat from 'dayjs/plugin/customParseFormat'
 import utc from 'dayjs/plugin/utc'
 import { ContentType } from '@standardnotes/domain-core'
 import { GenerateUuid } from '@standardnotes/services'
+import { SuperConverterServiceInterface } from '@standardnotes/files'
+import { NativeFeatureIdentifier, NoteType } from '@standardnotes/features'
 dayjs.extend(customParseFormat)
 dayjs.extend(utc)
 
 const dateFormat = 'YYYYMMDDTHHmmss'
 
 export class EvernoteConverter {
-  constructor(private _generateUuid: GenerateUuid) {}
+  constructor(
+    private superConverterService: SuperConverterServiceInterface,
+    private _generateUuid: GenerateUuid,
+  ) {}
 
-  async convertENEXFileToNotesAndTags(file: File, stripHTML: boolean): Promise<DecryptedTransferPayload[]> {
+  async convertENEXFileToNotesAndTags(file: File, isEntitledToSuper: boolean): Promise<DecryptedTransferPayload[]> {
     const content = await readFileAsText(file)
 
-    const notesAndTags = this.parseENEXData(content, stripHTML)
+    const notesAndTags = this.parseENEXData(content, isEntitledToSuper)
 
     return notesAndTags
   }
 
-  parseENEXData(data: string, stripHTML = false, defaultTagName = 'evernote') {
+  parseENEXData(data: string, isEntitledToSuper = false, defaultTagName = 'evernote') {
     const xmlDoc = this.loadXMLString(data, 'xml')
     const xmlNotes = xmlDoc.getElementsByTagName('note')
     const notes: DecryptedTransferPayload<NoteContent>[] = []
@@ -75,12 +80,14 @@ export class EvernoteConverter {
       }
       const contentXml = this.loadXMLString(contentXmlString, 'html')
       let contentHTML = contentXml.getElementsByTagName('en-note')[0].innerHTML
-      if (stripHTML) {
+      if (!isEntitledToSuper) {
         contentHTML = contentHTML.replace(/<\/div>/g, '</div>\n')
         contentHTML = contentHTML.replace(/<li[^>]*>/g, '\n')
         contentHTML = contentHTML.trim()
       }
-      const text = stripHTML ? this.stripHTML(contentHTML) : contentHTML
+      const text = !isEntitledToSuper
+        ? this.stripHTML(contentHTML)
+        : this.superConverterService.convertOtherFormatToSuperString(contentHTML, 'html')
       const createdAtDate = created ? dayjs.utc(created, dateFormat).toDate() : new Date()
       const updatedAtDate = updated ? dayjs.utc(updated, dateFormat).toDate() : createdAtDate
       const note: DecryptedTransferPayload<NoteContent> = {
@@ -94,6 +101,12 @@ export class EvernoteConverter {
           title: !title ? `Imported note ${index + 1} from Evernote` : title,
           text,
           references: [],
+          ...(isEntitledToSuper
+            ? {
+                noteType: NoteType.Super,
+                editorIdentifier: NativeFeatureIdentifier.TYPES.SuperEditor,
+              }
+            : {}),
         },
       }
 

@@ -8,6 +8,7 @@ import { EvernoteConverter } from './EvernoteConverter'
 import data from './testData'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { GenerateUuid } from '@standardnotes/services'
+import { SuperConverterServiceInterface } from '@standardnotes/files'
 
 // Mock dayjs so dayjs.extend() doesn't throw an error in EvernoteConverter.ts
 jest.mock('dayjs', () => {
@@ -22,17 +23,21 @@ jest.mock('dayjs', () => {
   }
 })
 
-
-
 describe('EvernoteConverter', () => {
   const crypto = {
     generateUUID: () => String(Math.random()),
   } as unknown as PureCryptoInterface
 
+  const superConverterService: SuperConverterServiceInterface = {
+    isValidSuperString: () => true,
+    convertOtherFormatToSuperString: (data: string) => data,
+    convertSuperStringToOtherFormat: (data: string) => data,
+  }
+
   const generateUuid = new GenerateUuid(crypto)
 
   it('should parse and strip html', () => {
-    const converter = new EvernoteConverter(generateUuid)
+    const converter = new EvernoteConverter(superConverterService, generateUuid)
 
     const result = converter.parseENEXData(data, true)
 
@@ -52,7 +57,7 @@ describe('EvernoteConverter', () => {
   })
 
   it('should parse and not strip html', () => {
-    const converter = new EvernoteConverter(generateUuid)
+    const converter = new EvernoteConverter(superConverterService, generateUuid)
 
     const result = converter.parseENEXData(data, false)
 

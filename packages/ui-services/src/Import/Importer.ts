@@ -40,7 +40,7 @@ export class Importer {
     this.googleKeepConverter = new GoogleKeepConverter(this.superConverterService, _generateUuid)
     this.simplenoteConverter = new SimplenoteConverter(_generateUuid)
     this.plaintextConverter = new PlaintextConverter(_generateUuid)
-    this.evernoteConverter = new EvernoteConverter(_generateUuid)
+    this.evernoteConverter = new EvernoteConverter(this.superConverterService, _generateUuid)
     this.htmlConverter = new HTMLConverter(this.superConverterService, _generateUuid)
     this.superConverter = new SuperConverter(this.superConverterService, _generateUuid)
   }
@@ -108,7 +108,7 @@ export class Importer {
     } else if (type === 'simplenote') {
       return await this.simplenoteConverter.convertSimplenoteBackupFileToNotes(file)
     } else if (type === 'evernote') {
-      return await this.evernoteConverter.convertENEXFileToNotesAndTags(file, false)
+      return await this.evernoteConverter.convertENEXFileToNotesAndTags(file, isEntitledToSuper)
     } else if (type === 'plaintext') {
       return [await this.plaintextConverter.convertPlaintextFileToNote(file)]
     } else if (type === 'html') {
