@@ -62,7 +62,7 @@ describe('EvernoteConverter', () => {
     expect(result).not.toBeNull()
     expect(result?.length).toBe(3)
     expect(result?.[0].content_type).toBe(ContentType.TYPES.Note)
-    expect((result?.[0] as DecryptedTransferPayload<NoteContent>).content.text).toBe('This is a test.')
+    expect((result?.[0] as DecryptedTransferPayload<NoteContent>).content.text).toBe('This is a test.\nh e ')
     expect(result?.[1].content_type).toBe(ContentType.TYPES.Note)
     expect((result?.[1] as DecryptedTransferPayload<NoteContent>).content.text).toBe(
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
@@ -82,7 +82,9 @@ describe('EvernoteConverter', () => {
     expect(result).not.toBeNull()
     expect(result?.length).toBe(3)
     expect(result?.[0].content_type).toBe(ContentType.TYPES.Note)
-    expect((result?.[0] as DecryptedTransferPayload<NoteContent>).content.text).toBe('<div>This is a test.</div>')
+    expect((result?.[0] as DecryptedTransferPayload<NoteContent>).content.text).toBe(
+      '<div>This is a test.</div><font><span>h </span><span>e </span></font>',
+    )
     expect(result?.[1].content_type).toBe(ContentType.TYPES.Note)
     expect((result?.[1] as DecryptedTransferPayload<NoteContent>).content.text).toBe(
       '<div>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div>',

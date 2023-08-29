@@ -10,7 +10,7 @@ export const enex = `<?xml version="1.0" encoding="UTF-8"?>
     </note-attributes>
     <content>
       <![CDATA[<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE en-note SYSTEM "http://xml.evernote.com/pub/enml2.dtd"><en-note><div>This is a test.</div></en-note>      ]]>
+<!DOCTYPE en-note SYSTEM "http://xml.evernote.com/pub/enml2.dtd"><en-note><div>This is a test.</div><ul></ul><li></li><ol></ol><font><span>h</span><span>e</span></font></en-note>      ]]>
     </content>
   </note>
   <note>
