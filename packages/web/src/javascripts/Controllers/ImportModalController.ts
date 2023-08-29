@@ -28,7 +28,6 @@ export type ImportModalFile = (
 
 export class ImportModalController {
   isVisible = false
-  /** @TODO change back after debugging */
   shouldCreateTag = false
   files: ImportModalFile[] = []
   importTag: SNTag | undefined = undefined
