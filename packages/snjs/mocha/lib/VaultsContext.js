@@ -35,7 +35,7 @@ export class VaultsContext extends AppContext {
   }
 
   async syncAndAwaitNotificationsProcessing() {
-    await this.sleep(0.25, 'Waiting for notifications to propagate')
+    await this.sleep(1, 'Waiting for notifications to propagate')
 
     const promise = this.resolveWhenAsyncFunctionCompletes(this.notifications, 'handleReceivedNotifications')
 
@@ -43,7 +43,7 @@ export class VaultsContext extends AppContext {
 
     await this.awaitPromiseOrDoNothing(
       promise,
-      0.25,
+      1,
       'Waiting for notifications timed out. Notifications might have been processed in previous sync.'
     )
 
