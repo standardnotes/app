@@ -4,8 +4,8 @@
 
 import { ContentType } from '@standardnotes/domain-core'
 import { DecryptedTransferPayload, NoteContent, TagContent } from '@standardnotes/models'
-import { EvernoteConverter } from './EvernoteConverter'
-import { createTestResourceElement, enex } from './testData'
+import { EvernoteConverter, EvernoteResource } from './EvernoteConverter'
+import { createTestResourceElement, enex, enexWithNoNoteOrTag } from './testData'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { GenerateUuid } from '@standardnotes/services'
 import { SuperConverterServiceInterface } from '@standardnotes/files'
@@ -48,6 +48,12 @@ describe('EvernoteConverter', () => {
     window.DOMParser = originalDOMParser
   })
 
+  it('should throw error if no note or tag in enex', () => {
+    const converter = new EvernoteConverter(superConverterService, generateUuid)
+
+    expect(() => converter.parseENEXData(enexWithNoNoteOrTag)).toThrowError()
+  })
+
   it('should parse and strip html', () => {
     const converter = new EvernoteConverter(superConverterService, generateUuid)
 
@@ -86,6 +92,57 @@ describe('EvernoteConverter', () => {
     expect((result?.[2] as DecryptedTransferPayload<TagContent>).content.references.length).toBe(2)
     expect((result?.[2] as DecryptedTransferPayload<TagContent>).content.references[0].uuid).toBe(result?.[0].uuid)
     expect((result?.[2] as DecryptedTransferPayload<TagContent>).content.references[1].uuid).toBe(result?.[1].uuid)
+  })
+
+  it('should convert lists to super format if applicable', () => {
+    const unorderedList1 = document.createElement('ul')
+    unorderedList1.style.setProperty('--en-todo', 'true')
+    const listItem1 = document.createElement('li')
+    listItem1.style.setProperty('--en-checked', 'true')
+    const listItem2 = document.createElement('li')
+    listItem2.style.setProperty('--en-checked', 'false')
+    unorderedList1.appendChild(listItem1)
+    unorderedList1.appendChild(listItem2)
+
+    const unorderedList2 = document.createElement('ul')
+
+    const array = [unorderedList1, unorderedList2]
+
+    const converter = new EvernoteConverter(superConverterService, generateUuid)
+    converter.convertListsToSuperFormatIfApplicable(array)
+
+    expect(unorderedList1.getAttribute('__lexicallisttype')).toBe('check')
+    expect(listItem1.getAttribute('aria-checked')).toBe('true')
+    expect(listItem2.getAttribute('aria-checked')).toBe('false')
+    expect(unorderedList2.getAttribute('__lexicallisttype')).toBeFalsy()
+  })
+
+  it('should replace media elements with resources', () => {
+    const resources: EvernoteResource[] = [
+      {
+        hash: 'hash1',
+        mimeType: 'image/png',
+        data: 'data1',
+        fileName: 'file1',
+      },
+    ]
+
+    const parentElement = document.createElement('div')
+    const mediaElement1 = document.createElement('en-media')
+    mediaElement1.setAttribute('hash', 'hash1')
+    const mediaElement2 = document.createElement('en-media')
+    mediaElement2.setAttribute('hash', 'hash2')
+    const mediaElement3 = document.createElement('en-media')
+    mediaElement3.setAttribute('hash', 'hash1')
+    parentElement.appendChild(mediaElement1)
+    parentElement.appendChild(mediaElement2)
+
+    const array = [mediaElement1, mediaElement2, mediaElement3]
+
+    const converter = new EvernoteConverter(superConverterService, generateUuid)
+    const replacedCount = converter.replaceMediaElementsWithResources(array, resources)
+
+    expect(replacedCount).toBe(1)
   })
 
   describe('getResourceFromElement', () => {

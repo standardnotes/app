@@ -14,7 +14,7 @@ dayjs.extend(utc)
 
 const dateFormat = 'YYYYMMDDTHHmmss'
 
-type EvernoteResource = {
+export type EvernoteResource = {
   hash: string
   data: string
   fileName: string
@@ -75,7 +75,7 @@ export class EvernoteConverter {
       }
 
       const mediaElements = Array.from(noteElement.getElementsByTagName('en-media'))
-      this.replaceMediaElementsWithImages(mediaElements, resources)
+      this.replaceMediaElementsWithResources(mediaElements, resources)
 
       let contentHTML = contentXml.getElementsByTagName('en-note')[0].innerHTML
       if (!isEntitledToSuper) {
@@ -222,7 +222,8 @@ export class EvernoteConverter {
     }
   }
 
-  replaceMediaElementsWithImages(mediaElements: Element[], resources: EvernoteResource[]) {
+  replaceMediaElementsWithResources(mediaElements: Element[], resources: EvernoteResource[]): number {
+    let replacedElements = 0
     for (const mediaElement of mediaElements) {
       const hash = mediaElement.getAttribute('hash')
       const resource = resources.find((resource) => resource && resource.hash === hash)
@@ -232,8 +233,13 @@ export class EvernoteConverter {
       const imgElement = document.createElement('img')
       imgElement.setAttribute('src', resource.data)
       imgElement.setAttribute('alt', resource.fileName)
-      mediaElement.parentNode?.replaceChild(imgElement, mediaElement)
+      if (!mediaElement.parentNode) {
+        continue
+      }
+      mediaElement.parentNode.replaceChild(imgElement, mediaElement)
+      replacedElements++
     }
+    return replacedElements
   }
 
   loadXMLString(string: string, type: 'html' | 'xml') {
