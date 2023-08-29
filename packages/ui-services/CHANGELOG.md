@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.31.0](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.30.6...@standardnotes/ui-services@1.31.0) (2023-08-29)
+
+### Features
+
+* Notes from Evernote ENEX files are now correctly imported as Super notes with attachments ([#2467](https://github.com/standardnotes/app/issues/2467)) ([600afa5](https://github.com/standardnotes/app/commit/600afa538295df166ca2020557983e565839f9d3))
+
 ## [1.30.6](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.30.5...@standardnotes/ui-services@1.30.6) (2023-08-24)
 
 **Note:** Version bump only for package @standardnotes/ui-services
