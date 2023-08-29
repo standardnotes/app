@@ -77,7 +77,17 @@ export class EvernoteConverter {
       const mediaElements = Array.from(noteElement.getElementsByTagName('en-media'))
       this.replaceMediaElementsWithResources(mediaElements, resources)
 
-      let contentHTML = contentXml.getElementsByTagName('en-note')[0].innerHTML
+      // Some notes have <font> tags that contain separate <span> tags with text
+      // which causes broken paragraphs in the note.
+      const fontElements = Array.from(noteElement.getElementsByTagName('font'))
+      for (const fontElement of fontElements) {
+        fontElement.childNodes.forEach((childNode) => {
+          childNode.textContent += ' '
+        })
+        fontElement.innerText = fontElement.textContent || ''
+      }
+
+      let contentHTML = noteElement.innerHTML
       if (!isEntitledToSuper) {
         contentHTML = contentHTML.replace(/<\/div>/g, '</div>\n')
         contentHTML = contentHTML.replace(/<li[^>]*>/g, '\n')
