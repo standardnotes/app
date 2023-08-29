@@ -15,6 +15,7 @@ import { CollapsibleTitleNode } from '../../Plugins/CollapsiblePlugin/Collapsibl
 import { FileNode } from '../../Plugins/EncryptedFilePlugin/Nodes/FileNode'
 import { BubbleNode } from '../../Plugins/ItemBubblePlugin/Nodes/BubbleNode'
 import { RemoteImageNode } from '../../Plugins/RemoteImagePlugin/RemoteImageNode'
+import { InlineFileNode } from '../../Plugins/InlineFilePlugin/InlineFileNode'
 
 export const BlockEditorNodes = [
   AutoLinkNode,
@@ -40,4 +41,5 @@ export const BlockEditorNodes = [
   FileNode,
   BubbleNode,
   RemoteImageNode,
+  InlineFileNode,
 ]

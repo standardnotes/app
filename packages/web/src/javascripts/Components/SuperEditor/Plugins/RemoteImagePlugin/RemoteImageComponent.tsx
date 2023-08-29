@@ -63,7 +63,8 @@ const RemoteImageComponent = ({ className, src, alt, node, format, nodeKey }: Pr
     }
   }, [application, editor, node, src])
 
-  const canShowSaveButton = application.isNativeMobileWeb() || isDesktopApplication()
+  const isBase64OrDataUrl = src.startsWith('data:')
+  const canShowSaveButton = application.isNativeMobileWeb() || isDesktopApplication() || isBase64OrDataUrl
 
   return (
     <BlockWithAlignableContents className={className} format={format} nodeKey={nodeKey}>

@@ -88,46 +88,67 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
       return otherFormatString
     }
 
+    this.editor.update(
+      () => {
+        $getRoot().clear()
+      },
+      {
+        discrete: true,
+      },
+    )
+
+    let didThrow = false
     if (fromFormat === 'html') {
       this.editor.update(
         () => {
-          const root = $getRoot()
-          root.clear()
+          try {
+            const parser = new DOMParser()
+            const dom = parser.parseFromString(otherFormatString, 'text/html')
+            const generatedNodes = $generateNodesFromDOM(this.editor, dom)
+            const nodesToInsert: LexicalNode[] = []
+            generatedNodes.forEach((node) => {
+              const type = node.getType()
 
-          const parser = new DOMParser()
-          const dom = parser.parseFromString(otherFormatString, 'text/html')
-          const generatedNodes = $generateNodesFromDOM(this.editor, dom)
-          const nodesToInsert: LexicalNode[] = []
-          generatedNodes.forEach((node) => {
-            const type = node.getType()
+              // Wrap text & link nodes with paragraph since they can't
+              // be top-level nodes in Super
+              if (type === 'text' || type === 'link' || type === 'unencrypted-image' || type === 'inline-file') {
+                const paragraphNode = $createParagraphNode()
+                paragraphNode.append(node)
+                nodesToInsert.push(paragraphNode)
+                return
+              } else {
+                nodesToInsert.push(node)
+              }
 
-            // Wrap text & link nodes with paragraph since they can't
-            // be top-level nodes in Super
-            if (type === 'text' || type === 'link') {
-              const paragraphNode = $createParagraphNode()
-              paragraphNode.append(node)
-              nodesToInsert.push(paragraphNode)
-              return
-            } else {
-              nodesToInsert.push(node)
-            }
-
-            nodesToInsert.push($createParagraphNode())
-          })
-          $getRoot().selectEnd()
-          $insertNodes(nodesToInsert.concat($createParagraphNode()))
+              nodesToInsert.push($createParagraphNode())
+            })
+            $getRoot().selectEnd()
+            $insertNodes(nodesToInsert.concat($createParagraphNode()))
+          } catch (error) {
+            console.error(error)
+            didThrow = true
+          }
         },
         { discrete: true },
       )
     } else {
       this.editor.update(
         () => {
-          $convertFromMarkdownString(otherFormatString, MarkdownTransformers)
+          try {
+            $convertFromMarkdownString(otherFormatString, MarkdownTransformers)
+          } catch (error) {
+            console.error(error)
+            didThrow = true
+          }
         },
         {
           discrete: true,
         },
       )
+    }
+
+    if (didThrow) {
+      throw new Error('Could not import note')
     }
 
     return JSON.stringify(this.editor.getEditorState())
