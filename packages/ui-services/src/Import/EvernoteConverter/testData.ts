@@ -5,6 +5,7 @@ export const enex = `<?xml version="1.0" encoding="UTF-8"?>
     <title>Testing 1</title>
     <created>20210308T051614Z</created>
     <updated>20210308T051855Z</updated>
+    <tag>distant reading</tag>
     <note-attributes>
     </note-attributes>
     <content>
@@ -16,6 +17,7 @@ export const enex = `<?xml version="1.0" encoding="UTF-8"?>
     <title></title>
     <created>20200508T234829Z</created>
     <updated>20200508T235233Z</updated>
+    <tag>distant reading</tag>
     <note-attributes>
     </note-attributes>
     <content>
