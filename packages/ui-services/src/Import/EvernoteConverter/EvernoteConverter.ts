@@ -75,6 +75,12 @@ export class EvernoteConverter {
       const contentXml = this.loadXMLString(contentXmlString, 'html')
 
       const noteElement = contentXml.getElementsByTagName('en-note')[0]
+
+      const unorderedLists = Array.from(noteElement.getElementsByTagName('ul'))
+      if (isEntitledToSuper) {
+        this.convertListsToSuperFormatIfApplicable(unorderedLists)
+      }
+
       const mediaElements = noteElement.getElementsByTagName('en-media')
       for (const mediaElement of Array.from(mediaElements)) {
         const hash = mediaElement.getAttribute('hash')
@@ -97,8 +103,10 @@ export class EvernoteConverter {
       const text = !isEntitledToSuper
         ? this.stripHTML(contentHTML)
         : this.superConverterService.convertOtherFormatToSuperString(contentHTML, 'html')
+
       const createdAtDate = created ? dayjs.utc(created, dateFormat).toDate() : new Date()
       const updatedAtDate = updated ? dayjs.utc(updated, dateFormat).toDate() : createdAtDate
+
       const note: DecryptedTransferPayload<NoteContent> = {
         created_at: createdAtDate,
         created_at_timestamp: createdAtDate.getTime(),
@@ -202,6 +210,21 @@ export class EvernoteConverter {
       fileName,
       mimeType,
     } as EvernoteResource
+  }
+
+  convertListsToSuperFormatIfApplicable(unorderedLists: HTMLUListElement[]) {
+    for (const unorderedList of unorderedLists) {
+      if (unorderedList.style.getPropertyValue('--en-todo') !== 'true') {
+        continue
+      }
+
+      unorderedList.setAttribute('__lexicallisttype', 'check')
+
+      const listItems = unorderedList.getElementsByTagName('li')
+      for (const listItem of Array.from(listItems)) {
+        listItem.setAttribute('aria-checked', listItem.style.getPropertyValue('--en-checked'))
+      }
+    }
   }
 
   loadXMLString(string: string, type: 'html' | 'xml') {
