@@ -4,7 +4,7 @@ import { createNoteParams } from './lib/Items.js'
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
-describe.skip('history manager', () => {
+describe('history manager', () => {
   const largeCharacterChange = 25
 
   let application, history, email, password
@@ -265,23 +265,21 @@ describe.skip('history manager', () => {
       expect(itemHistoryOrError.isFailed()).to.equal(true)
     })
 
-    it('create basic history entries 2', async function () {
+    it('should save initial revisions on server', async () => {
       const item = await Factory.createSyncedNote(application)
+
       await Factory.sleep(Factory.ServerRevisionCreationDelay)
 
-      let itemHistoryOrError = await application.listRevisions.execute({ itemUuid: item.uuid })
-      let itemHistory = itemHistoryOrError.getValue()
+      const itemHistoryOrError = await application.listRevisions.execute({ itemUuid: item.uuid })
+      expect(itemHistoryOrError.isFailed()).to.equal(false)
 
-      /** Server history should save initial revision */
+      const itemHistory = itemHistoryOrError.getValue()
       expect(itemHistory.length).to.equal(1)
+    })
 
-      /** Sync within 5 seconds (ENV VAR dependend on self-hosted setup), should not create a new entry */
-      await Factory.markDirtyAndSyncItem(application, item)
-      itemHistoryOrError = await application.listRevisions.execute({ itemUuid: item.uuid })
-      itemHistory = itemHistoryOrError.getValue()
-      expect(itemHistory.length).to.equal(1)
+    it('should not create new revisions within the revision frequency window', async () => {
+      const item = await Factory.createSyncedNote(application)
 
-      /** Sync with different contents, should not create a new entry */
       await application.changeAndSaveItem.execute(
         item,
         (mutator) => {
@@ -291,13 +289,17 @@ describe.skip('history manager', () => {
         undefined,
         syncOptions,
       )
+
       await Factory.sleep(Factory.ServerRevisionCreationDelay)
-      itemHistoryOrError = await application.listRevisions.execute({ itemUuid: item.uuid })
-      itemHistory = itemHistoryOrError.getValue()
+
+      const itemHistoryOrError = await application.listRevisions.execute({ itemUuid: item.uuid })
+      expect(itemHistoryOrError.isFailed()).to.equal(false)
+
+      const itemHistory = itemHistoryOrError.getValue()
       expect(itemHistory.length).to.equal(1)
     })
 
-    it('returns revisions from server', async function () {
+    it('should create new revisions outside the revision frequency window', async function () {
       let item = await Factory.createSyncedNote(application)
 
       await Factory.sleep(Factory.ServerRevisionFrequency)
