@@ -61,14 +61,7 @@ export class EvernoteConverter {
         .filter(Boolean)
 
       const contentNode = xmlNote.getElementsByTagName('content')[0]
-      let contentXmlString
-      /** Find the node with the content */
-      for (const node of Array.from(contentNode.childNodes)) {
-        if (node instanceof CDATASection) {
-          contentXmlString = node.nodeValue
-          break
-        }
-      }
+      const contentXmlString = this.getXmlStringFromContentElement(contentNode)
       if (!contentXmlString) {
         continue
       }
@@ -163,6 +156,18 @@ export class EvernoteConverter {
     }
 
     return allItems
+  }
+
+  getXmlStringFromContentElement(contentElement: Element) {
+    let contentXmlString
+    /** Find the node with the content */
+    for (const node of Array.from(contentElement.childNodes)) {
+      if (node instanceof CDATASection) {
+        contentXmlString = node.nodeValue
+        break
+      }
+    }
+    return contentXmlString
   }
 
   getMD5HashFromBase64(b64Data: string) {
