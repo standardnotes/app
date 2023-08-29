@@ -58,7 +58,7 @@ export class EvernoteConverter {
       const updated = updatedNodes.length ? updatedNodes[0].textContent : null
       const resources = Array.from(xmlNote.getElementsByTagName('resource'))
         .map(this.getResourceFromElement)
-        .filter(Boolean)
+        .filter(Boolean) as EvernoteResource[]
 
       const contentNode = xmlNote.getElementsByTagName('content')[0]
       const contentXmlString = this.getXmlStringFromContentElement(contentNode)
@@ -74,18 +74,8 @@ export class EvernoteConverter {
         this.convertListsToSuperFormatIfApplicable(unorderedLists)
       }
 
-      const mediaElements = noteElement.getElementsByTagName('en-media')
-      for (const mediaElement of Array.from(mediaElements)) {
-        const hash = mediaElement.getAttribute('hash')
-        const resource = resources.find((resource) => resource && resource.hash === hash)
-        if (!resource) {
-          continue
-        }
-        const imgElement = document.createElement('img')
-        imgElement.setAttribute('src', resource.data)
-        imgElement.setAttribute('alt', resource.fileName)
-        mediaElement.parentNode?.replaceChild(imgElement, mediaElement)
-      }
+      const mediaElements = Array.from(noteElement.getElementsByTagName('en-media'))
+      this.replaceMediaElementsWithImages(mediaElements, resources)
 
       let contentHTML = contentXml.getElementsByTagName('en-note')[0].innerHTML
       if (!isEntitledToSuper) {
@@ -229,6 +219,20 @@ export class EvernoteConverter {
       for (const listItem of Array.from(listItems)) {
         listItem.setAttribute('aria-checked', listItem.style.getPropertyValue('--en-checked'))
       }
+    }
+  }
+
+  replaceMediaElementsWithImages(mediaElements: Element[], resources: EvernoteResource[]) {
+    for (const mediaElement of mediaElements) {
+      const hash = mediaElement.getAttribute('hash')
+      const resource = resources.find((resource) => resource && resource.hash === hash)
+      if (!resource) {
+        continue
+      }
+      const imgElement = document.createElement('img')
+      imgElement.setAttribute('src', resource.data)
+      imgElement.setAttribute('alt', resource.fileName)
+      mediaElement.parentNode?.replaceChild(imgElement, mediaElement)
     }
   }
 
