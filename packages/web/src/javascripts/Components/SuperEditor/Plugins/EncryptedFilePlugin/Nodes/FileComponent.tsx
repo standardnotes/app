@@ -67,7 +67,11 @@ export function FileComponent({ className, format, nodeKey, fileUuid, zoomLevel,
   )
 
   if (!file) {
-    return <div>Unable to find file {fileUuid}</div>
+    return (
+      <BlockWithAlignableContents className={className} format={format} nodeKey={nodeKey}>
+        <div>Unable to find file {fileUuid}</div>
+      </BlockWithAlignableContents>
+    )
   }
 
   return (

@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.171.13](https://github.com/standardnotes/app/compare/@standardnotes/web@3.171.12...@standardnotes/web@3.171.13) (2023-08-29)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.171.12](https://github.com/standardnotes/app/compare/@standardnotes/web@3.171.11...@standardnotes/web@3.171.12) (2023-08-29)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.171.11](https://github.com/standardnotes/app/compare/@standardnotes/web@3.171.10...@standardnotes/web@3.171.11) (2023-08-28)
+
+### Bug Fixes
+
+* Fixed issue where file upload progress was not visible ([2484d78](https://github.com/standardnotes/app/commit/2484d785882fd85efadc4521a80b819528acf16b))
+
 ## [3.171.10](https://github.com/standardnotes/app/compare/@standardnotes/web@3.171.9...@standardnotes/web@3.171.10) (2023-08-27)
 
 **Note:** Version bump only for package @standardnotes/web
