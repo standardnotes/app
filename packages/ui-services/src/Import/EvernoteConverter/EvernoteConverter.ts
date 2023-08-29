@@ -192,7 +192,7 @@ export class EvernoteConverter {
     return MD5(bytes).toString()
   }
 
-  getResourceFromElement = (element: Element, index: number): EvernoteResource | undefined => {
+  getResourceFromElement = (element: Element): EvernoteResource | undefined => {
     const mimeType = element.getElementsByTagName('mime')[0]?.textContent
 
     if (!mimeType) {
@@ -202,7 +202,8 @@ export class EvernoteConverter {
     const attributes = element.getElementsByTagName('resource-attributes')[0]
     const sourceUrl = attributes.getElementsByTagName('source-url')[0]?.textContent
 
-    const fileName = attributes.getElementsByTagName('file-name')[0]?.textContent || `${mimeType}-${index}`
+    const fileName =
+      attributes.getElementsByTagName('file-name')[0]?.textContent || this._generateUuid.execute().getValue()
 
     const dataElement = element.getElementsByTagName('data')[0]
     const encoding = dataElement.getAttribute('encoding')
@@ -257,13 +258,33 @@ export class EvernoteConverter {
       if (!resource) {
         continue
       }
-      const imgElement = document.createElement('img')
-      imgElement.setAttribute('src', resource.data)
-      imgElement.setAttribute('alt', resource.fileName)
+      let resourceElement: HTMLElement = document.createElement('object')
+      resourceElement.setAttribute('type', resource.mimeType)
+      resourceElement.setAttribute('data', resource.data)
+      if (resource.mimeType.startsWith('image/')) {
+        resourceElement = document.createElement('img')
+        resourceElement.setAttribute('src', resource.data)
+        resourceElement.setAttribute('data-mime-type', resource.mimeType)
+      } else if (resource.mimeType.startsWith('audio/')) {
+        resourceElement = document.createElement('audio')
+        resourceElement.setAttribute('controls', 'controls')
+        const sourceElement = document.createElement('source')
+        sourceElement.setAttribute('src', resource.data)
+        sourceElement.setAttribute('type', resource.mimeType)
+        resourceElement.appendChild(sourceElement)
+      } else if (resource.mimeType.startsWith('video/')) {
+        resourceElement = document.createElement('video')
+        resourceElement.setAttribute('controls', 'controls')
+        const sourceElement = document.createElement('source')
+        sourceElement.setAttribute('src', resource.data)
+        sourceElement.setAttribute('type', resource.mimeType)
+        resourceElement.appendChild(sourceElement)
+      }
+      resourceElement.setAttribute('data-filename', resource.fileName)
       if (!mediaElement.parentNode) {
         continue
       }
-      mediaElement.parentNode.replaceChild(imgElement, mediaElement)
+      mediaElement.parentNode.replaceChild(resourceElement, mediaElement)
       replacedElements++
     }
     return replacedElements

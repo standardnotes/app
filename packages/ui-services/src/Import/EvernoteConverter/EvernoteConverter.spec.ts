@@ -151,13 +151,13 @@ describe('EvernoteConverter', () => {
     it('should return undefined if no mime type is present', () => {
       const resourceElementWithoutMimeType = createTestResourceElement(false)
       converter.getMD5HashFromBase64 = jest.fn().mockReturnValue('hash')
-      expect(converter.getResourceFromElement(resourceElementWithoutMimeType, 0)).toBeUndefined()
+      expect(converter.getResourceFromElement(resourceElementWithoutMimeType)).toBeUndefined()
     })
 
     it('should generate md5 hash from base64 data if no source url is present', () => {
       const resourceElementWithoutSourceUrl = createTestResourceElement(true, false)
       converter.getMD5HashFromBase64 = jest.fn().mockReturnValue('hash')
-      const resourceWithoutSourceUrl = converter.getResourceFromElement(resourceElementWithoutSourceUrl, 0)
+      const resourceWithoutSourceUrl = converter.getResourceFromElement(resourceElementWithoutSourceUrl)
       expect(resourceWithoutSourceUrl).toBeDefined()
       expect(converter.getMD5HashFromBase64).toHaveBeenCalled()
     })
@@ -165,7 +165,7 @@ describe('EvernoteConverter', () => {
     it('should not generate md5 hash from base64 data if source url is present', () => {
       const resourceElementWithSourceUrl = createTestResourceElement(true, true)
       converter.getMD5HashFromBase64 = jest.fn().mockReturnValue('hash')
-      const resourceWithSourceUrl = converter.getResourceFromElement(resourceElementWithSourceUrl, 0)
+      const resourceWithSourceUrl = converter.getResourceFromElement(resourceElementWithSourceUrl)
       expect(resourceWithSourceUrl).toBeDefined()
       expect(converter.getMD5HashFromBase64).not.toHaveBeenCalled()
     })
@@ -173,14 +173,14 @@ describe('EvernoteConverter', () => {
     it('should return undefined if no data is present', () => {
       const resourceElementWithoutData = createTestResourceElement(true, false, true, false)
       converter.getMD5HashFromBase64 = jest.fn().mockReturnValue('hash')
-      const resourceWithoutData = converter.getResourceFromElement(resourceElementWithoutData, 0)
+      const resourceWithoutData = converter.getResourceFromElement(resourceElementWithoutData)
       expect(resourceWithoutData).toBeUndefined()
     })
 
     it('should return undefined if no source url and encoding is not base64', () => {
       const resourceElementWithoutSourceOrBase64 = createTestResourceElement(true, false, true, true, 'hex')
       converter.getMD5HashFromBase64 = jest.fn().mockReturnValue('hash')
-      const resourceWithoutSourceOrBase64 = converter.getResourceFromElement(resourceElementWithoutSourceOrBase64, 0)
+      const resourceWithoutSourceOrBase64 = converter.getResourceFromElement(resourceElementWithoutSourceOrBase64)
       expect(resourceWithoutSourceOrBase64).toBeUndefined()
     })
   })
