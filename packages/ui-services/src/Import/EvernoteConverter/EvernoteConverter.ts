@@ -74,6 +74,23 @@ export class EvernoteConverter {
         this.convertListsToSuperFormatIfApplicable(unorderedLists)
       }
 
+      // Remove empty lists and orphan list items
+      Array.from(noteElement.getElementsByTagName('ul')).forEach((ul) => {
+        if (ul.children.length === 0) {
+          ul.remove()
+        }
+      })
+      Array.from(noteElement.getElementsByTagName('ol')).forEach((ol) => {
+        if (ol.children.length === 0) {
+          ol.remove()
+        }
+      })
+      Array.from(noteElement.getElementsByTagName('li')).forEach((li) => {
+        if (li.children.length === 0 || li.closest('ul, ol') === null) {
+          li.remove()
+        }
+      })
+
       const mediaElements = Array.from(noteElement.getElementsByTagName('en-media'))
       this.replaceMediaElementsWithResources(mediaElements, resources)
 
@@ -175,7 +192,7 @@ export class EvernoteConverter {
     return MD5(bytes).toString()
   }
 
-  getResourceFromElement(element: Element, index: number): EvernoteResource | undefined {
+  getResourceFromElement = (element: Element, index: number): EvernoteResource | undefined => {
     const mimeType = element.getElementsByTagName('mime')[0]?.textContent
 
     if (!mimeType) {
