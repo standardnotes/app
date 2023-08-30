@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.172.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.172.0...@standardnotes/web@3.172.1) (2023-08-30)
+
+### Bug Fixes
+
+* Fixed issue where conflict resolution menu was not selectable [skip e2e] ([493d5e9](https://github.com/standardnotes/app/commit/493d5e91f6e9251c84717cc0823d26b5750e9942))
+
 # [3.172.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.171.13...@standardnotes/web@3.172.0) (2023-08-29)
 
 ### Features
