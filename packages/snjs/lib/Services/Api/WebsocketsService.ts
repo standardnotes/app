@@ -1,5 +1,5 @@
 import { isErrorResponse } from '@standardnotes/responses'
-import { UserRolesChangedEvent } from '@standardnotes/domain-events'
+import { DomainEventInterface, UserRolesChangedEvent } from '@standardnotes/domain-events'
 import {
   AbstractService,
   InternalEventBusInterface,
@@ -61,9 +61,11 @@ export class WebSocketsService extends AbstractService<WebSocketsServiceEvent, U
     this.webSocket?.close()
   }
 
-  private onWebSocketMessage(event: MessageEvent) {
-    const eventData: UserRolesChangedEvent = JSON.parse(event.data)
-    void this.notifyEvent(WebSocketsServiceEvent.UserRoleMessageReceived, eventData)
+  private onWebSocketMessage(messageEvent: MessageEvent) {
+    const eventData: DomainEventInterface = JSON.parse(messageEvent.data)
+    if (eventData.type === 'USER_ROLES_CHANGED') {
+      void this.notifyEvent(WebSocketsServiceEvent.UserRoleMessageReceived, eventData as UserRolesChangedEvent)
+    }
   }
 
   private onWebSocketClose() {
