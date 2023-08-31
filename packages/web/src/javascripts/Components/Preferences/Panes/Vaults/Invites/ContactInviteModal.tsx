@@ -80,24 +80,26 @@ const ContactInviteModal: FunctionComponent<Props> = ({ vault, onCloseDialog }) 
 
   return (
     <Modal title="Add New Contact" close={handleDialogClose} actions={modalActions}>
-      <div className={classNames('px-4.5 py-4 flex w-full flex-col gap-3', isLoadingContacts && 'items-center')}>
+      <div className={classNames('flex w-full flex-col gap-3 px-4.5 py-4', isLoadingContacts && 'items-center')}>
         {isLoadingContacts ? (
-          <Spinner className="w-5 h-5" />
-        ) : (
+          <Spinner className="h-5 w-5" />
+        ) : contacts.length > 0 ? (
           contacts.map((contact) => {
             return (
               <label className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-0.5" key={contact.uuid}>
                 <input
-                  className="accent-info w-4 h-4 self-center"
+                  className="h-4 w-4 self-center accent-info"
                   type="checkbox"
                   checked={selectedContacts.includes(contact)}
                   onChange={() => toggleContact(contact)}
                 />
-                <div className="col-start-2 font-semibold text-sm">{contact.name}</div>
+                <div className="col-start-2 text-sm font-semibold">{contact.name}</div>
                 <div className="col-start-2">{contact.contactUuid}</div>
               </label>
             )
           })
+        ) : (
+          <div className="text-sm">No contacts available to invite.</div>
         )}
       </div>
     </Modal>
