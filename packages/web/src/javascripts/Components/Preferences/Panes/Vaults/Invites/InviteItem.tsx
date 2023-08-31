@@ -30,9 +30,10 @@ const InviteItem = ({ inviteRecord }: Props) => {
   }, [application, inviteRecord])
 
   const closeAddContactModal = () => setIsAddContactModalOpen(false)
+
   const collaborationId = application.contacts.getCollaborationIDFromInvite(inviteRecord.invite)
 
-  const trustedContact = application.contacts.findContactForInvite(inviteRecord.invite)
+  const trustedContact = application.contacts.findSenderContactForInvite(inviteRecord.invite)
 
   return (
     <>
@@ -40,9 +41,9 @@ const InviteItem = ({ inviteRecord }: Props) => {
         <EditContactModal fromInvite={inviteRecord} onCloseDialog={closeAddContactModal} />
       </ModalOverlay>
 
-      <div className="flex gap-3.5 rounded-lg px-3.5 py-2.5 border border-border shadow">
+      <div className="flex gap-3.5 rounded-lg border border-border px-3.5 py-2.5 shadow">
         <Icon type="archive" size="custom" className="mt-1.5 h-5.5 w-5.5 flex-shrink-0" />
-        <div className="flex flex-col gap-2 py-1.5 overflow-hidden">
+        <div className="flex flex-col gap-2.5 overflow-hidden py-1.5">
           <div className="mr-auto overflow-hidden text-ellipsis text-sm">Vault Name: {inviteData.metadata.name}</div>
           {inviteData.metadata.description && (
             <div className="mr-auto overflow-hidden text-ellipsis text-sm">
@@ -52,15 +53,15 @@ const InviteItem = ({ inviteRecord }: Props) => {
           {trustedContact ? (
             <div className="flex items-center gap-1">
               <span className="overflow-hidden text-ellipsis text-sm">Trusted Sender: {trustedContact.name}</span>
-              <CheckmarkCircle className="!w-4 !h-4" />
+              <CheckmarkCircle className="!h-4 !w-4" />
             </div>
           ) : (
-            <div className="mr-auto text-sm w-full whitespace-pre-wrap break-words overflow-hidden">
-              Sender CollaborationID: <span className="text-xs font-mono">{collaborationId}</span>
+            <div className="mr-auto w-full overflow-hidden whitespace-pre-wrap break-words text-sm">
+              Sender CollaborationID: <span className="font-mono text-xs">{collaborationId}</span>
             </div>
           )}
 
-          <div className="mt-1.5">
+          <div className="">
             {isTrusted ? (
               <Button label="Accept Invite" className="text-xs" onClick={acceptInvite} />
             ) : (

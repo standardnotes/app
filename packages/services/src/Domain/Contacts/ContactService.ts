@@ -202,6 +202,10 @@ export class ContactService extends AbstractService<ContactServiceEvent> impleme
     return this.findContact(invite.user_uuid)
   }
 
+  findSenderContactForInvite(invite: SharedVaultInviteServerHash): TrustedContactInterface | undefined {
+    return this.findContact(invite.sender_uuid)
+  }
+
   getCollaborationIDForTrustedContact(contact: TrustedContactInterface): string {
     return this.buildCollaborationId({
       version: Version1CollaborationId,
