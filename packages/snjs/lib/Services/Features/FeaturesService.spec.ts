@@ -4,7 +4,6 @@ import { SettingName } from '@standardnotes/settings'
 import { FeaturesService } from '@Lib/Services/Features'
 import { RoleName, ContentType, Uuid, Result } from '@standardnotes/domain-core'
 import { NativeFeatureIdentifier, GetFeatures } from '@standardnotes/features'
-import { WebSocketsService } from '../Api/WebsocketsService'
 import { SettingsService } from '../Settings'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import {
@@ -23,6 +22,7 @@ import {
   UserServiceInterface,
   UserService,
   IsApplicationUsingThirdPartyHost,
+  WebSocketsService,
 } from '@standardnotes/services'
 import { LegacyApiService, SessionManager } from '../Api'
 import { ItemManager } from '../Items'

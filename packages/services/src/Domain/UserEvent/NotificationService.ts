@@ -1,4 +1,5 @@
 import { NotificationServerHash } from '@standardnotes/responses'
+import { NotificationAddedForUserEvent } from '@standardnotes/domain-events'
 import { SyncEvent, SyncEventReceivedNotificationsData } from '../Event/SyncEvent'
 import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
 import { InternalEventHandlerInterface } from '../Internal/InternalEventHandlerInterface'
@@ -6,6 +7,7 @@ import { InternalEventInterface } from '../Internal/InternalEventInterface'
 import { AbstractService } from '../Service/AbstractService'
 import { NotificationServiceEventPayload, NotificationServiceEvent } from './NotificationServiceEvent'
 import { NotificationPayload } from '@standardnotes/domain-core'
+import { WebSocketsServiceEvent } from '../Api/WebSocketsServiceEvent'
 
 export class NotificationService
   extends AbstractService<NotificationServiceEvent, NotificationServiceEventPayload>
@@ -18,8 +20,13 @@ export class NotificationService
   }
 
   async handleEvent(event: InternalEventInterface): Promise<void> {
-    if (event.type === SyncEvent.ReceivedNotifications) {
-      return this.handleReceivedNotifications(event.payload as SyncEventReceivedNotificationsData)
+    switch (event.type) {
+      case SyncEvent.ReceivedNotifications:
+        return this.handleReceivedNotifications(event.payload as SyncEventReceivedNotificationsData)
+      case WebSocketsServiceEvent.NotificationAddedForUser:
+        return this.handleReceivedNotifications([(event as NotificationAddedForUserEvent).payload.notification])
+      default:
+        break
     }
   }
 
