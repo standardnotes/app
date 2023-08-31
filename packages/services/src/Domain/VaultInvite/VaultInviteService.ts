@@ -36,6 +36,7 @@ import { SharedVaultInvitesServer } from '@standardnotes/api'
 import { GetKeyPairs } from '../Encryption/UseCase/GetKeyPairs'
 import { DecryptErroredPayloads } from '../Encryption/UseCase/DecryptErroredPayloads'
 import { StatusServiceInterface } from '../Status/StatusServiceInterface'
+import { ApplicationEvent } from '../Event/ApplicationEvent'
 
 export class VaultInviteService
   extends AbstractService<VaultInviteServiceEvent>
@@ -113,6 +114,9 @@ export class VaultInviteService
     switch (event.type) {
       case SyncEvent.ReceivedSharedVaultInvites:
         await this.processInboundInvites(event.payload as SyncEventReceivedSharedVaultInvitesData)
+        break
+      case ApplicationEvent.Launched:
+        void this.downloadInboundInvites()
         break
     }
   }
