@@ -1,15 +1,18 @@
 import { isErrorResponse } from '@standardnotes/responses'
-import { UserRolesChangedEvent } from '@standardnotes/domain-events'
 import {
-  AbstractService,
-  InternalEventBusInterface,
-  StorageKey,
-  StorageServiceInterface,
-} from '@standardnotes/services'
+  DomainEventInterface,
+  UserRolesChangedEvent,
+  NotificationAddedForUserEvent,
+} from '@standardnotes/domain-events'
 import { WebSocketApiServiceInterface } from '@standardnotes/api'
 import { WebSocketsServiceEvent } from './WebSocketsServiceEvent'
+import { StorageServiceInterface } from '../Storage/StorageServiceInterface'
+import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
+import { AbstractService } from '../Service/AbstractService'
+import { StorageKey } from '../Storage/StorageKeys'
+import { WebSocketsEventData } from './WebSocketsEventData'
 
-export class WebSocketsService extends AbstractService<WebSocketsServiceEvent, UserRolesChangedEvent> {
+export class WebSocketsService extends AbstractService<WebSocketsServiceEvent, WebSocketsEventData> {
   private webSocket?: WebSocket
 
   constructor(
@@ -61,9 +64,21 @@ export class WebSocketsService extends AbstractService<WebSocketsServiceEvent, U
     this.webSocket?.close()
   }
 
-  private onWebSocketMessage(event: MessageEvent) {
-    const eventData: UserRolesChangedEvent = JSON.parse(event.data)
-    void this.notifyEvent(WebSocketsServiceEvent.UserRoleMessageReceived, eventData)
+  private onWebSocketMessage(messageEvent: MessageEvent) {
+    const eventData: DomainEventInterface = JSON.parse(messageEvent.data)
+    switch (eventData.type) {
+      case 'USER_ROLES_CHANGED':
+        void this.notifyEvent(WebSocketsServiceEvent.UserRoleMessageReceived, eventData as UserRolesChangedEvent)
+        break
+      case 'NOTIFICATION_ADDED_FOR_USER':
+        void this.notifyEvent(
+          WebSocketsServiceEvent.NotificationAddedForUser,
+          eventData as NotificationAddedForUserEvent,
+        )
+        break
+      default:
+        break
+    }
   }
 
   private onWebSocketClose() {

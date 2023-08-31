@@ -22,7 +22,6 @@ import { ProtectionService } from '../../Services/Protection/ProtectionService'
 import { SyncService } from '../../Services/Sync/SyncService'
 import { HistoryManager } from '../../Services/History/HistoryManager'
 import { SessionManager } from '../../Services/Session/SessionManager'
-import { WebSocketsService } from '../../Services/Api/WebsocketsService'
 import { LegacyApiService } from '../../Services/Api/ApiService'
 import { SnjsVersion } from '../../Version'
 import { DeprecatedHttpService } from '../../Services/Api/DeprecatedHttpService'
@@ -143,6 +142,7 @@ import {
   SyncLocalVaultsWithRemoteSharedVaults,
   GetTransitionStatus,
   StartTransition,
+  WebSocketsService,
 } from '@standardnotes/services'
 import { ItemManager } from '../../Services/Items/ItemManager'
 import { PayloadManager } from '../../Services/Payloads/PayloadManager'

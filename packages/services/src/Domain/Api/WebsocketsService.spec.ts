@@ -1,13 +1,14 @@
-import { InternalEventBusInterface } from '@standardnotes/services'
 import { WebSocketApiServiceInterface } from '@standardnotes/api'
 
-import { StorageKey, DiskStorageService } from '@Lib/index'
 import { WebSocketsService } from './WebsocketsService'
+import { StorageServiceInterface } from '../Storage/StorageServiceInterface'
+import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
+import { StorageKey } from '../Storage/StorageKeys'
 
 describe('webSocketsService', () => {
   const webSocketUrl = ''
 
-  let storageService: DiskStorageService
+  let storageService: StorageServiceInterface
   let webSocketApiService: WebSocketApiServiceInterface
   let internalEventBus: InternalEventBusInterface
 
@@ -16,7 +17,7 @@ describe('webSocketsService', () => {
   }
 
   beforeEach(() => {
-    storageService = {} as jest.Mocked<DiskStorageService>
+    storageService = {} as jest.Mocked<StorageServiceInterface>
     storageService.setValue = jest.fn()
 
     internalEventBus = {} as jest.Mocked<InternalEventBusInterface>
@@ -27,9 +28,9 @@ describe('webSocketsService', () => {
   })
 
   describe('setWebSocketUrl()', () => {
-    it('saves url in local storage', async () => {
+    it('saves url in local storage', () => {
       const webSocketUrl = 'wss://test-websocket'
-      await createService().setWebSocketUrl(webSocketUrl)
+      createService().setWebSocketUrl(webSocketUrl)
       expect(storageService.setValue).toHaveBeenCalledWith(StorageKey.WebSocketUrl, webSocketUrl)
     })
   })

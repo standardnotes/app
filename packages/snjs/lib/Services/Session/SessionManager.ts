@@ -34,6 +34,7 @@ import {
   ApplicationStage,
   GetKeyPairs,
   IsApplicationUsingThirdPartyHost,
+  WebSocketsService,
 } from '@standardnotes/services'
 import { Base64String, PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import {
@@ -59,7 +60,6 @@ import { RawStorageValue } from './Sessions/Types'
 import { ShareToken } from './ShareToken'
 import { LegacyApiService } from '../Api/ApiService'
 import { DiskStorageService } from '../Storage/DiskStorageService'
-import { WebSocketsService } from '../Api/WebsocketsService'
 import { Strings } from '@Lib/Strings'
 import { UuidString } from '@Lib/Types/UuidString'
 import { ChallengeResponse, ChallengeService } from '../Challenge'
