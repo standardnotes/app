@@ -3,8 +3,6 @@ import { arraysEqual, removeFromArray, lastElement, LoggerInterface } from '@sta
 import { ClientDisplayableError } from '@standardnotes/responses'
 import { RoleName, ContentType, Uuid } from '@standardnotes/domain-core'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
-import { WebSocketsService } from '../Api/WebsocketsService'
-import { WebSocketsServiceEvent } from '../Api/WebSocketsServiceEvent'
 import { UserRolesChangedEvent } from '@standardnotes/domain-events'
 import { ExperimentalFeatures, FindNativeFeature, NativeFeatureIdentifier } from '@standardnotes/features'
 import {
@@ -47,6 +45,8 @@ import {
   ApplicationEvent,
   ApplicationStageChangedEventPayload,
   IsApplicationUsingThirdPartyHost,
+  WebSocketsServiceEvent,
+  WebSocketsService,
 } from '@standardnotes/services'
 
 import { DownloadRemoteThirdPartyFeatureUseCase } from './UseCase/DownloadRemoteThirdPartyFeature'

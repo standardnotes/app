@@ -4349,13 +4349,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/domain-events@npm:^2.108.1":
-  version: 2.113.1
-  resolution: "@standardnotes/domain-events@npm:2.113.1"
+"@standardnotes/domain-events@npm:^2.120.0":
+  version: 2.120.0
+  resolution: "@standardnotes/domain-events@npm:2.120.0"
   dependencies:
     "@standardnotes/predicates": 1.6.9
-    "@standardnotes/security": 1.8.1
-  checksum: de7a64b5882c2126fb6c7c7485c330e7065f38cfad83d6bfe3b4025bd42b28e6de6b7fb137086661b8ab16e8ff63b9b9a91e1b52b23ba413f108605d02f8e61a
+    "@standardnotes/security": 1.12.0
+  checksum: bcd6caf10bc050199db4d0fb13605d43773418c1420efea583381ae6cd33a1a365451a61f3d8d6e08d19a52005e5d67ad2b4c8f3b8f951269b1a2a4bc0ac33cf
   languageName: node
   linkType: hard
 
@@ -4703,7 +4703,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/security@npm:1.8.1, @standardnotes/security@npm:^1.2.0":
+"@standardnotes/security@npm:1.12.0":
+  version: 1.12.0
+  resolution: "@standardnotes/security@npm:1.12.0"
+  dependencies:
+    jsonwebtoken: ^9.0.0
+    reflect-metadata: ^0.1.13
+  checksum: 96d42255e79fc2cf4c52f3d370c04ae00296673993e1c0cea2356ca4a6c934d22d6100ba95f9ad602ffb72ee686367ef4a263dc6a6c51795d9b61dc835e635cd
+  languageName: node
+  linkType: hard
+
+"@standardnotes/security@npm:^1.2.0":
   version: 1.8.1
   resolution: "@standardnotes/security@npm:1.8.1"
   dependencies:
@@ -4819,7 +4829,7 @@ __metadata:
     "@standardnotes/api": "workspace:*"
     "@standardnotes/common": ^1.50.0
     "@standardnotes/domain-core": ^1.25.0
-    "@standardnotes/domain-events": ^2.108.1
+    "@standardnotes/domain-events": ^2.120.0
     "@standardnotes/encryption": "workspace:*"
     "@standardnotes/features": "workspace:*"
     "@standardnotes/files": "workspace:*"

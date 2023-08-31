@@ -34,6 +34,7 @@ export interface ContactServiceInterface extends AbstractService<ContactServiceE
   findContact(userUuid: string): TrustedContactInterface | undefined
   findContactForServerUser(user: SharedVaultUserServerHash): TrustedContactInterface | undefined
   findContactForInvite(invite: SharedVaultInviteServerHash): TrustedContactInterface | undefined
+  findSenderContactForInvite(invite: SharedVaultInviteServerHash): TrustedContactInterface | undefined
 
   getItemSignatureStatus(item: DecryptedItemInterface): ItemSignatureValidationResult
 }

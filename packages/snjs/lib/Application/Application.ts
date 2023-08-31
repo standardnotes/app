@@ -1,6 +1,5 @@
 import { MfaService } from './../Services/Mfa/MfaService'
 import { KeyRecoveryService } from './../Services/KeyRecovery/KeyRecoveryService'
-import { WebSocketsService } from './../Services/Api/WebsocketsService'
 import { MigrationService } from './../Services/Migration/MigrationService'
 import { LegacyApiService } from './../Services/Api/ApiService'
 import { FeaturesService } from '@Lib/Services/Features/FeaturesService'
@@ -83,6 +82,7 @@ import {
   CreateEncryptedBackupFile,
   GetTransitionStatus,
   StartTransition,
+  WebSocketsService,
 } from '@standardnotes/services'
 import {
   SNNote,
