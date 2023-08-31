@@ -267,6 +267,7 @@ export class VaultInviteService
 
   private async processInboundInvites(invites: SharedVaultInviteServerHash[]): Promise<void> {
     if (invites.length === 0) {
+      this.updatePendingInviteCount()
       return
     }
 
