@@ -33,6 +33,7 @@ import { CreateOrEditContact } from '../Contacts/UseCase/CreateOrEditContact'
 import { ReplaceContactData } from '../Contacts/UseCase/ReplaceContactData'
 import { EncryptionProviderInterface } from '../Encryption/EncryptionProviderInterface'
 import { Result } from '@standardnotes/domain-core'
+import { WebSocketsServiceEvent } from '../Api/WebSocketsServiceEvent'
 
 export class AsymmetricMessageService
   extends AbstractService
@@ -81,6 +82,9 @@ export class AsymmetricMessageService
     switch (event.type) {
       case SyncEvent.ReceivedAsymmetricMessages:
         void this.handleRemoteReceivedAsymmetricMessages(event.payload as SyncEventReceivedAsymmetricMessagesData)
+        break
+      case WebSocketsServiceEvent.MessageSentToUser:
+        void this.handleRemoteReceivedAsymmetricMessages([(event as MessageSentToUserEvent).payload.message])
         break
     }
   }

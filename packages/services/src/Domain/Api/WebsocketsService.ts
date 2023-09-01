@@ -76,6 +76,9 @@ export class WebSocketsService extends AbstractService<WebSocketsServiceEvent, W
           eventData as NotificationAddedForUserEvent,
         )
         break
+      case 'MESSAGE_SENT_TO_USER':
+        void this.notifyEvent(WebSocketsServiceEvent.MessageSentToUser, eventData as MessageSentToUserEvent)
+        break
       default:
         break
     }
