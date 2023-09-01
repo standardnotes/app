@@ -1,6 +1,20 @@
 {
   "versions": [
     {
+      "version": "3.172.4",
+      "title": "[3.172.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.172.3...@standardnotes/web@3.172.4) (2023-09-01)",
+      "date": null,
+      "body": "### Bug Fixes\n\n* Fixed issue where note history would only display the latest content ([2fc3d04](https://github.com/standardnotes/app/commit/2fc3d04ba99d66635fcf29be295509e439b9eecd))",
+      "parsed": {
+        "_": [
+          "Fixed issue where note history would only display the latest content (2fc3d04)"
+        ],
+        "Bug Fixes": [
+          "Fixed issue where note history would only display the latest content (2fc3d04)"
+        ]
+      }
+    },
+    {
       "version": "3.172.3",
       "title": "[3.172.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.172.2...@standardnotes/web@3.172.3) (2023-09-01)",
       "date": null,

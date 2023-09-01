@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.172.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.172.3...@standardnotes/web@3.172.4) (2023-09-01)
+
+### Bug Fixes
+
+* Fixed issue where note history would only display the latest content ([2fc3d04](https://github.com/standardnotes/app/commit/2fc3d04ba99d66635fcf29be295509e439b9eecd))
+
 ## [3.172.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.172.2...@standardnotes/web@3.172.3) (2023-09-01)
 
 **Note:** Version bump only for package @standardnotes/web
