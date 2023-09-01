@@ -67,3 +67,7 @@ export * from './User/SettingData'
 export * from './User/UpdateSettingResponse'
 
 export * from './Notification/NotificationServerHash'
+
+export * from './SharedVaults/SharedVaultInviteServerHash'
+export * from './SharedVaults/SharedVaultServerHash'
+export * from './SharedVaults/SharedVaultUserServerHash'

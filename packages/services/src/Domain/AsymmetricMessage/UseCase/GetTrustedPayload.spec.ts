@@ -18,7 +18,7 @@ describe('GetTrustedPayload', () => {
   describe('execute', () => {
     const mockDto = {
       privateKey: 'test-private-key',
-      message: {} as AsymmetricMessageServerHash,
+      payload: {} as AsymmetricMessageServerHash,
       sender: {} as TrustedContactInterface,
       ownUserUuid: 'test-user-uuid',
     }

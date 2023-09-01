@@ -211,7 +211,7 @@ export class AsymmetricMessageService
 
     const result = this._getUntrustedPayload.execute({
       privateKey: keys.getValue().encryption.privateKey,
-      message,
+      payload: message,
     })
 
     if (result.isFailed()) {
@@ -236,7 +236,7 @@ export class AsymmetricMessageService
       privateKey: keys.getValue().encryption.privateKey,
       sender: contact.getValue(),
       ownUserUuid: this.sessions.userUuid,
-      message,
+      payload: message,
     })
 
     if (result.isFailed()) {

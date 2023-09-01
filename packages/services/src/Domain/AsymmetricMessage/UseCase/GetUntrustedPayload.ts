@@ -1,4 +1,4 @@
-import { AsymmetricMessageServerHash } from '@standardnotes/responses'
+import { AsymmetricMessageServerHash, SharedVaultInviteServerHash } from '@standardnotes/responses'
 import { AsymmetricMessagePayload } from '@standardnotes/models'
 import { DecryptMessage } from '../../Encryption/UseCase/Asymmetric/DecryptMessage'
 import { Result, SyncUseCaseInterface } from '@standardnotes/domain-core'
@@ -8,10 +8,10 @@ export class GetUntrustedPayload implements SyncUseCaseInterface<AsymmetricMessa
 
   execute<M extends AsymmetricMessagePayload>(dto: {
     privateKey: string
-    message: AsymmetricMessageServerHash
+    payload: AsymmetricMessageServerHash | SharedVaultInviteServerHash
   }): Result<M> {
     const result = this.decryptMessage.execute<M>({
-      message: dto.message.encrypted_message,
+      message: dto.payload.encrypted_message,
       sender: undefined,
       privateKey: dto.privateKey,
     })
