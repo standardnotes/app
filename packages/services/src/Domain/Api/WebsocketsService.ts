@@ -71,6 +71,9 @@ export class WebSocketsService extends AbstractService<WebSocketsServiceEvent, D
       case 'MESSAGE_SENT_TO_USER':
         void this.notifyEvent(WebSocketsServiceEvent.MessageSentToUser, eventData)
         break
+      case 'USER_INVITED_TO_SHARED_VAULT':
+        void this.notifyEvent(WebSocketsServiceEvent.UserInvitedToSharedVault, eventData)
+        break
       default:
         break
     }
