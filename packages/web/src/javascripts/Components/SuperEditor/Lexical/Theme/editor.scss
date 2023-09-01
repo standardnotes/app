@@ -257,45 +257,41 @@
 .monospace-font {
   --lexical-ordered-list-left-margin: 42px;
 }
-.Lexical__ol1 {
-  padding: 0;
-  margin: 0;
-  margin-left: var(--lexical-ordered-list-left-margin);
-  list-style-position: outside;
+@for $i from 1 through 5 {
+  .Lexical__ol#{$i} {
+    padding: 0;
+    margin: 0;
+    margin-left: var(--lexical-ordered-list-left-margin);
+    list-style-position: outside;
+
+    &.Lexical__rtl {
+      margin-left: 0;
+      margin-right: var(--lexical-ordered-list-left-margin);
+    }
+  }
 }
 .Lexical__ol2 {
-  padding: 0;
-  margin: 0;
-  margin-left: var(--lexical-ordered-list-left-margin);
   list-style-type: upper-alpha;
-  list-style-position: outside;
 }
 .Lexical__ol3 {
-  padding: 0;
-  margin: 0;
-  margin-left: var(--lexical-ordered-list-left-margin);
   list-style-type: lower-alpha;
-  list-style-position: outside;
 }
 .Lexical__ol4 {
-  padding: 0;
-  margin: 0;
-  margin-left: var(--lexical-ordered-list-left-margin);
   list-style-type: upper-roman;
-  list-style-position: outside;
 }
 .Lexical__ol5 {
-  padding: 0;
-  margin: 0;
-  margin-left: var(--lexical-ordered-list-left-margin);
   list-style-type: lower-roman;
-  list-style-position: outside;
 }
 .Lexical__ul {
   padding: 0;
   margin: 0;
   margin-left: 16px;
   list-style-position: outside;
+
+  &.Lexical__rtl {
+    margin-left: 0;
+    margin-right: 16px;
+  }
 }
 .Lexical__listItem {
   margin: 0 0px;
