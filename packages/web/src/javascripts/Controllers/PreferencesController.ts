@@ -1,13 +1,14 @@
 import { InternalEventBusInterface } from '@standardnotes/snjs'
 import { action, computed, makeObservable, observable } from 'mobx'
-import { PreferenceId, RootQueryParam, RouteServiceInterface } from '@standardnotes/ui-services'
+import { RootQueryParam, RouteServiceInterface } from '@standardnotes/ui-services'
 import { AbstractViewController } from './Abstract/AbstractViewController'
+import { PreferencePaneId } from '@standardnotes/services'
 
-const DEFAULT_PANE: PreferenceId = 'account'
+const DEFAULT_PANE: PreferencePaneId = 'account'
 
 export class PreferencesController extends AbstractViewController {
   private _open = false
-  currentPane: PreferenceId = DEFAULT_PANE
+  currentPane: PreferencePaneId = DEFAULT_PANE
 
   constructor(
     private routeService: RouteServiceInterface,
@@ -25,11 +26,11 @@ export class PreferencesController extends AbstractViewController {
     })
   }
 
-  setCurrentPane = (prefId: PreferenceId): void => {
+  setCurrentPane = (prefId: PreferencePaneId): void => {
     this.currentPane = prefId
   }
 
-  openPreferences = (prefId?: PreferenceId): void => {
+  openPreferences = (prefId?: PreferencePaneId): void => {
     if (prefId) {
       this.currentPane = prefId
     }

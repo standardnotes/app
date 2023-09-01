@@ -1,4 +1,4 @@
-const PREFERENCE_IDS = [
+const PREFERENCE_PANE_IDS = [
   'general',
   'account',
   'security',
@@ -14,4 +14,4 @@ const PREFERENCE_IDS = [
   'whats-new',
 ] as const
 
-export type PreferenceId = (typeof PREFERENCE_IDS)[number]
+export type PreferencePaneId = (typeof PREFERENCE_PANE_IDS)[number]

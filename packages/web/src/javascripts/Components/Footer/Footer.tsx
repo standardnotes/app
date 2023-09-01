@@ -2,7 +2,7 @@ import { WebApplication } from '@/Application/WebApplication'
 import { WebApplicationGroup } from '@/Application/WebApplicationGroup'
 import { AbstractComponent } from '@/Components/Abstract/PureComponent'
 import { destroyAllObjectProperties, preventRefreshing } from '@/Utils'
-import { ApplicationEvent, ApplicationDescriptor, WebAppEvent } from '@standardnotes/snjs'
+import { ApplicationEvent, ApplicationDescriptor, WebAppEvent, StatusServiceEvent } from '@standardnotes/snjs'
 import {
   STRING_NEW_UPDATE_READY,
   STRING_CONFIRM_APP_QUIT_DURING_UPGRADE,
@@ -112,7 +112,10 @@ class Footer extends AbstractComponent<Props, State> {
   override componentDidMount(): void {
     super.componentDidMount()
 
-    this.removeStatusObserver = this.application.status.addEventObserver((_event, message) => {
+    this.removeStatusObserver = this.application.status.addEventObserver((event, message) => {
+      if (event !== StatusServiceEvent.MessageChanged) {
+        return
+      }
       this.setState({
         arbitraryStatusMessage: message,
       })

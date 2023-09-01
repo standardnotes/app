@@ -1,10 +1,11 @@
 import { IconType } from '@standardnotes/snjs'
-import { PreferenceId } from '@standardnotes/ui-services'
+import { PreferencePaneId } from '@standardnotes/services'
 
 export interface PreferencesMenuItem {
-  readonly id: PreferenceId
+  readonly id: PreferencePaneId
   readonly icon: IconType
   readonly label: string
   readonly order: number
-  readonly hasBubble?: boolean
+  readonly bubbleCount?: number
+  readonly hasErrorIndicator?: boolean
 }

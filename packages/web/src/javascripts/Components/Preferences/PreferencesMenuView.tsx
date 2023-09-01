@@ -4,7 +4,7 @@ import Dropdown from '../Dropdown/Dropdown'
 import { DropdownItem } from '../Dropdown/DropdownItem'
 import PreferencesMenuItem from './PreferencesComponents/MenuItem'
 import { PreferencesSessionController } from './Controller/PreferencesSessionController'
-import { PreferenceId } from '@standardnotes/ui-services'
+import { PreferencePaneId } from '@standardnotes/services'
 
 type Props = {
   menu: PreferencesSessionController
@@ -32,7 +32,8 @@ const PreferencesMenuView: FunctionComponent<Props> = ({ menu }) => {
             iconType={pref.icon}
             label={pref.label}
             selected={pref.selected}
-            hasBubble={pref.hasBubble}
+            bubbleCount={pref.bubbleCount}
+            hasErrorIndicator={pref.hasErrorIndicator}
             onClick={() => {
               selectPane(pref.id)
             }}
@@ -45,7 +46,7 @@ const PreferencesMenuView: FunctionComponent<Props> = ({ menu }) => {
           label="Preferences Menu"
           value={selectedPaneId}
           onChange={(paneId) => {
-            selectPane(paneId as PreferenceId)
+            selectPane(paneId as PreferencePaneId)
           }}
           classNameOverride={{
             wrapper: 'relative',

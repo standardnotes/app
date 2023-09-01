@@ -158,11 +158,13 @@ const Vaults = () => {
       <PreferencesGroup>
         <PreferencesSegment>
           <Title>Vaults</Title>
-          <div className="my-2 flex flex-col gap-3.5">
-            {vaults.map((vault) => {
-              return <VaultItem vault={vault} key={vault.uuid} />
-            })}
-          </div>
+          {vaults.length > 0 && (
+            <div className="my-2 flex flex-col gap-3.5">
+              {vaults.map((vault) => {
+                return <VaultItem vault={vault} key={vault.uuid} />
+              })}
+            </div>
+          )}
           {canCreateMoreVaults ? (
             <div className="mt-2.5 flex flex-row">
               <Button label="Create New Vault" className={'mr-3 text-xs'} onClick={createNewVault} />
@@ -186,7 +188,7 @@ const Vaults = () => {
           <Subtitle>Share your CollaborationID with collaborators to join their vaults.</Subtitle>
           {contactService.isCollaborationEnabled() ? (
             <>
-              <code className="mt-2.5 overflow-hidden whitespace-pre-wrap break-words p-3 border border-border rounded bg-contrast">
+              <code className="mt-2.5 overflow-hidden whitespace-pre-wrap break-words rounded border border-border bg-contrast p-3">
                 {contactService.getCollaborationID()}
               </code>
               <Button

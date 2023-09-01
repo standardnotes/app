@@ -37,6 +37,8 @@ import { AbstractService } from './../Service/AbstractService'
 import { VaultInviteServiceEvent } from './VaultInviteServiceEvent'
 import { GetKeyPairs } from '../Encryption/UseCase/GetKeyPairs'
 import { DecryptErroredPayloads } from '../Encryption/UseCase/DecryptErroredPayloads'
+import { StatusServiceInterface } from '../Status/StatusServiceInterface'
+import { ApplicationEvent } from '../Event/ApplicationEvent'
 import { WebSocketsServiceEvent } from '../Api/WebSocketsServiceEvent'
 
 export class VaultInviteService
@@ -51,6 +53,7 @@ export class VaultInviteService
     private vaultUsers: VaultUserServiceInterface,
     private sync: SyncServiceInterface,
     private invitesServer: SharedVaultInvitesServer,
+    private status: StatusServiceInterface,
     private _getAllContacts: GetAllContacts,
     private _getVault: GetVault,
     private _getVaultContacts: GetVaultContacts,
@@ -96,10 +99,27 @@ export class VaultInviteService
     this.pendingInvites = {}
   }
 
+  updatePendingInviteCount() {
+    this.status.setPreferencesBubbleCount('vaults', Object.keys(this.pendingInvites).length)
+  }
+
+  addPendingInvite(invite: InviteRecord): void {
+    this.pendingInvites[invite.invite.uuid] = invite
+    this.updatePendingInviteCount()
+  }
+
+  removePendingInvite(uuid: string): void {
+    delete this.pendingInvites[uuid]
+    this.updatePendingInviteCount()
+  }
+
   async handleEvent(event: InternalEventInterface): Promise<void> {
     switch (event.type) {
       case SyncEvent.ReceivedSharedVaultInvites:
         await this.processInboundInvites(event.payload as SyncEventReceivedSharedVaultInvitesData)
+        break
+      case ApplicationEvent.Launched:
+        void this.downloadInboundInvites()
         break
       case WebSocketsServiceEvent.UserInvitedToSharedVault:
         await this.processInboundInvites([(event as UserInvitedToSharedVaultEvent).payload.invite])
@@ -154,7 +174,7 @@ export class VaultInviteService
       return Result.fail(acceptResult.getError())
     }
 
-    delete this.pendingInvites[pendingInvite.invite.uuid]
+    this.removePendingInvite(pendingInvite.invite.uuid)
 
     void this.sync.sync()
 
@@ -242,7 +262,7 @@ export class VaultInviteService
       return ClientDisplayableError.FromString(`Failed to delete invite ${JSON.stringify(response)}`)
     }
 
-    delete this.pendingInvites[invite.uuid]
+    this.removePendingInvite(invite.uuid)
   }
 
   private async reprocessCachedInvitesTrustStatusAfterTrustedContactsChange(): Promise<void> {
@@ -253,6 +273,7 @@ export class VaultInviteService
 
   private async processInboundInvites(invites: SharedVaultInviteServerHash[]): Promise<void> {
     if (invites.length === 0) {
+      this.updatePendingInviteCount()
       return
     }
 
@@ -274,11 +295,11 @@ export class VaultInviteService
         })
 
         if (!trustedMessage.isFailed()) {
-          this.pendingInvites[invite.uuid] = {
+          this.addPendingInvite({
             invite,
             message: trustedMessage.getValue(),
             trusted: true,
-          }
+          })
 
           continue
         }
@@ -290,11 +311,11 @@ export class VaultInviteService
       })
 
       if (!untrustedMessage.isFailed()) {
-        this.pendingInvites[invite.uuid] = {
+        this.addPendingInvite({
           invite,
           message: untrustedMessage.getValue(),
           trusted: false,
-        }
+        })
       }
     }
 
