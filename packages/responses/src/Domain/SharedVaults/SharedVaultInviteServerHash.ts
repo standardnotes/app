@@ -1,6 +1,4 @@
-import { AsymmetricMessageServerHash } from '../AsymmetricMessage/AsymmetricMessageServerHash'
-
-export interface SharedVaultInviteServerHash extends AsymmetricMessageServerHash {
+export interface SharedVaultInviteServerHash {
   uuid: string
   shared_vault_uuid: string
   user_uuid: string

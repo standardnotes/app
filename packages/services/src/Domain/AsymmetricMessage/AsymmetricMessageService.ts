@@ -1,14 +1,6 @@
-import { GetKeyPairs } from './../Encryption/UseCase/GetKeyPairs'
-import { SyncServiceInterface } from './../Sync/SyncServiceInterface'
-import { SessionsClientInterface } from './../Session/SessionsClientInterface'
-import { MutatorClientInterface } from './../Mutator/MutatorClientInterface'
+import { MessageSentToUserEvent } from '@standardnotes/domain-events'
 import { AsymmetricMessageServerHash } from '@standardnotes/responses'
-import { SyncEvent, SyncEventReceivedAsymmetricMessagesData } from '../Event/SyncEvent'
-import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
-import { InternalEventHandlerInterface } from '../Internal/InternalEventHandlerInterface'
-import { InternalEventInterface } from '../Internal/InternalEventInterface'
-import { AbstractService } from '../Service/AbstractService'
-import { GetTrustedPayload } from './UseCase/GetTrustedPayload'
+import { AsymmetricMessageServer } from '@standardnotes/api'
 import {
   AsymmetricMessageSharedVaultRootKeyChanged,
   AsymmetricMessagePayloadType,
@@ -21,8 +13,19 @@ import {
   PayloadEmitSource,
   VaultListingInterface,
 } from '@standardnotes/models'
+import { Result } from '@standardnotes/domain-core'
+
+import { GetKeyPairs } from './../Encryption/UseCase/GetKeyPairs'
+import { SyncServiceInterface } from './../Sync/SyncServiceInterface'
+import { SessionsClientInterface } from './../Session/SessionsClientInterface'
+import { MutatorClientInterface } from './../Mutator/MutatorClientInterface'
+import { SyncEvent, SyncEventReceivedAsymmetricMessagesData } from '../Event/SyncEvent'
+import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
+import { InternalEventHandlerInterface } from '../Internal/InternalEventHandlerInterface'
+import { InternalEventInterface } from '../Internal/InternalEventInterface'
+import { AbstractService } from '../Service/AbstractService'
+import { GetTrustedPayload } from './UseCase/GetTrustedPayload'
 import { HandleRootKeyChangedMessage } from './UseCase/HandleRootKeyChangedMessage'
-import { AsymmetricMessageServer } from '@standardnotes/api'
 import { GetOutboundMessages } from './UseCase/GetOutboundMessages'
 import { GetInboundMessages } from './UseCase/GetInboundMessages'
 import { GetVault } from '../Vault/UseCase/GetVault'
@@ -32,7 +35,7 @@ import { FindContact } from '../Contacts/UseCase/FindContact'
 import { CreateOrEditContact } from '../Contacts/UseCase/CreateOrEditContact'
 import { ReplaceContactData } from '../Contacts/UseCase/ReplaceContactData'
 import { EncryptionProviderInterface } from '../Encryption/EncryptionProviderInterface'
-import { Result } from '@standardnotes/domain-core'
+import { WebSocketsServiceEvent } from '../Api/WebSocketsServiceEvent'
 
 export class AsymmetricMessageService
   extends AbstractService
@@ -81,6 +84,9 @@ export class AsymmetricMessageService
     switch (event.type) {
       case SyncEvent.ReceivedAsymmetricMessages:
         void this.handleRemoteReceivedAsymmetricMessages(event.payload as SyncEventReceivedAsymmetricMessagesData)
+        break
+      case WebSocketsServiceEvent.MessageSentToUser:
+        void this.handleRemoteReceivedAsymmetricMessages([(event as MessageSentToUserEvent).payload.message])
         break
     }
   }
@@ -205,7 +211,7 @@ export class AsymmetricMessageService
 
     const result = this._getUntrustedPayload.execute({
       privateKey: keys.getValue().encryption.privateKey,
-      message,
+      payload: message,
     })
 
     if (result.isFailed()) {
@@ -230,7 +236,7 @@ export class AsymmetricMessageService
       privateKey: keys.getValue().encryption.privateKey,
       sender: contact.getValue(),
       ownUserUuid: this.sessions.userUuid,
-      message,
+      payload: message,
     })
 
     if (result.isFailed()) {

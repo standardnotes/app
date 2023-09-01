@@ -1,18 +1,13 @@
 import { isErrorResponse } from '@standardnotes/responses'
-import {
-  DomainEventInterface,
-  UserRolesChangedEvent,
-  NotificationAddedForUserEvent,
-} from '@standardnotes/domain-events'
+import { DomainEventInterface } from '@standardnotes/domain-events'
 import { WebSocketApiServiceInterface } from '@standardnotes/api'
 import { WebSocketsServiceEvent } from './WebSocketsServiceEvent'
 import { StorageServiceInterface } from '../Storage/StorageServiceInterface'
 import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
 import { AbstractService } from '../Service/AbstractService'
 import { StorageKey } from '../Storage/StorageKeys'
-import { WebSocketsEventData } from './WebSocketsEventData'
 
-export class WebSocketsService extends AbstractService<WebSocketsServiceEvent, WebSocketsEventData> {
+export class WebSocketsService extends AbstractService<WebSocketsServiceEvent, DomainEventInterface> {
   private webSocket?: WebSocket
 
   constructor(
@@ -68,13 +63,16 @@ export class WebSocketsService extends AbstractService<WebSocketsServiceEvent, W
     const eventData: DomainEventInterface = JSON.parse(messageEvent.data)
     switch (eventData.type) {
       case 'USER_ROLES_CHANGED':
-        void this.notifyEvent(WebSocketsServiceEvent.UserRoleMessageReceived, eventData as UserRolesChangedEvent)
+        void this.notifyEvent(WebSocketsServiceEvent.UserRoleMessageReceived, eventData)
         break
       case 'NOTIFICATION_ADDED_FOR_USER':
-        void this.notifyEvent(
-          WebSocketsServiceEvent.NotificationAddedForUser,
-          eventData as NotificationAddedForUserEvent,
-        )
+        void this.notifyEvent(WebSocketsServiceEvent.NotificationAddedForUser, eventData)
+        break
+      case 'MESSAGE_SENT_TO_USER':
+        void this.notifyEvent(WebSocketsServiceEvent.MessageSentToUser, eventData)
+        break
+      case 'USER_INVITED_TO_SHARED_VAULT':
+        void this.notifyEvent(WebSocketsServiceEvent.UserInvitedToSharedVault, eventData)
         break
       default:
         break

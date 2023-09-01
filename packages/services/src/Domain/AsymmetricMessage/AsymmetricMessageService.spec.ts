@@ -90,6 +90,7 @@ describe('AsymmetricMessageService', () => {
           encrypted_message: 'encrypted_message',
           created_at_timestamp: 2,
           updated_at_timestamp: 2,
+          replaceability_identifier: null,
         },
         {
           uuid: 'misc-message',
@@ -98,6 +99,7 @@ describe('AsymmetricMessageService', () => {
           encrypted_message: 'encrypted_message',
           created_at_timestamp: 1,
           updated_at_timestamp: 1,
+          replaceability_identifier: null,
         },
       ]
 
@@ -135,6 +137,7 @@ describe('AsymmetricMessageService', () => {
         encrypted_message: 'encrypted_message',
         created_at_timestamp: 2,
         updated_at_timestamp: 2,
+        replaceability_identifier: null,
       }
 
       const decryptedMessagePayload: AsymmetricMessageTrustedContactShare = {
@@ -168,6 +171,7 @@ describe('AsymmetricMessageService', () => {
         encrypted_message: 'encrypted_message',
         created_at_timestamp: 2,
         updated_at_timestamp: 2,
+        replaceability_identifier: null,
       },
       {
         uuid: 'older-message',
@@ -176,6 +180,7 @@ describe('AsymmetricMessageService', () => {
         encrypted_message: 'encrypted_message',
         created_at_timestamp: 1,
         updated_at_timestamp: 1,
+        replaceability_identifier: null,
       },
     ]
 
@@ -202,6 +207,7 @@ describe('AsymmetricMessageService', () => {
       encrypted_message: 'encrypted_message',
       created_at_timestamp: 2,
       updated_at_timestamp: 2,
+      replaceability_identifier: null,
     }
 
     const decryptedMessagePayload: AsymmetricMessageTrustedContactShare = {
@@ -230,6 +236,7 @@ describe('AsymmetricMessageService', () => {
       encrypted_message: 'encrypted_message',
       created_at_timestamp: 2,
       updated_at_timestamp: 2,
+      replaceability_identifier: null,
     }
 
     const decryptedMessagePayload: AsymmetricMessageSenderKeypairChanged = {
@@ -259,6 +266,7 @@ describe('AsymmetricMessageService', () => {
       encrypted_message: 'encrypted_message',
       created_at_timestamp: 2,
       updated_at_timestamp: 2,
+      replaceability_identifier: null,
     }
 
     const decryptedMessagePayload: AsymmetricMessageSharedVaultRootKeyChanged = {
@@ -287,6 +295,7 @@ describe('AsymmetricMessageService', () => {
       encrypted_message: 'encrypted_message',
       created_at_timestamp: 2,
       updated_at_timestamp: 2,
+      replaceability_identifier: null,
     }
 
     const decryptedMessagePayload: AsymmetricMessageSharedVaultMetadataChanged = {
@@ -317,6 +326,7 @@ describe('AsymmetricMessageService', () => {
       encrypted_message: 'encrypted_message',
       created_at_timestamp: 2,
       updated_at_timestamp: 2,
+      replaceability_identifier: null,
     }
 
     const decryptedMessagePayload: AsymmetricMessageSharedVaultInvite = {
@@ -343,6 +353,7 @@ describe('AsymmetricMessageService', () => {
       encrypted_message: 'encrypted_message',
       created_at_timestamp: 2,
       updated_at_timestamp: 2,
+      replaceability_identifier: null,
     }
 
     const decryptedMessagePayload: AsymmetricMessageTrustedContactShare = {

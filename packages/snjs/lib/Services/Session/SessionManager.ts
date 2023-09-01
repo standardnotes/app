@@ -169,6 +169,12 @@ export class SessionManager
       }
     }
 
+    const serverHost = this.storage.getValue<string>(StorageKey.ServerHost)
+    if (serverHost) {
+      void this.apiService.setHost(serverHost)
+      this.httpService.setHost(serverHost)
+    }
+
     const rawSession = this.storage.getValue<RawStorageValue>(StorageKey.Session)
     if (rawSession) {
       try {

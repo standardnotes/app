@@ -1,3 +1,20 @@
+import { UserInvitedToSharedVaultEvent } from '@standardnotes/domain-events'
+import {
+  ClientDisplayableError,
+  SharedVaultInviteServerHash,
+  SharedVaultUserServerHash,
+  isClientDisplayableError,
+  isErrorResponse,
+} from '@standardnotes/responses'
+import { ContentType, Result } from '@standardnotes/domain-core'
+import { SharedVaultInvitesServer } from '@standardnotes/api'
+import {
+  AsymmetricMessageSharedVaultInvite,
+  PayloadEmitSource,
+  SharedVaultListingInterface,
+  TrustedContactInterface,
+} from '@standardnotes/models'
+
 import { AcceptVaultInvite } from './UseCase/AcceptVaultInvite'
 import { SyncEvent, SyncEventReceivedSharedVaultInvitesData } from './../Event/SyncEvent'
 import { InternalEventInterface } from './../Internal/InternalEventInterface'
@@ -15,28 +32,14 @@ import { SyncServiceInterface } from './../Sync/SyncServiceInterface'
 import { InternalEventBusInterface } from './../Internal/InternalEventBusInterface'
 import { SessionsClientInterface } from './../Session/SessionsClientInterface'
 import { GetAllContacts } from './../Contacts/UseCase/GetAllContacts'
-import {
-  AsymmetricMessageSharedVaultInvite,
-  PayloadEmitSource,
-  SharedVaultListingInterface,
-  TrustedContactInterface,
-} from '@standardnotes/models'
 import { VaultInviteServiceInterface } from './VaultInviteServiceInterface'
-import {
-  ClientDisplayableError,
-  SharedVaultInviteServerHash,
-  SharedVaultUserServerHash,
-  isClientDisplayableError,
-  isErrorResponse,
-} from '@standardnotes/responses'
 import { AbstractService } from './../Service/AbstractService'
 import { VaultInviteServiceEvent } from './VaultInviteServiceEvent'
-import { ContentType, Result } from '@standardnotes/domain-core'
-import { SharedVaultInvitesServer } from '@standardnotes/api'
 import { GetKeyPairs } from '../Encryption/UseCase/GetKeyPairs'
 import { DecryptErroredPayloads } from '../Encryption/UseCase/DecryptErroredPayloads'
 import { StatusServiceInterface } from '../Status/StatusServiceInterface'
 import { ApplicationEvent } from '../Event/ApplicationEvent'
+import { WebSocketsServiceEvent } from '../Api/WebSocketsServiceEvent'
 
 export class VaultInviteService
   extends AbstractService<VaultInviteServiceEvent>
@@ -117,6 +120,8 @@ export class VaultInviteService
         break
       case ApplicationEvent.Launched:
         void this.downloadInboundInvites()
+      case WebSocketsServiceEvent.UserInvitedToSharedVault:
+        await this.processInboundInvites([(event as UserInvitedToSharedVaultEvent).payload.invite])
         break
     }
   }
@@ -282,7 +287,7 @@ export class VaultInviteService
       const sender = this._findContact.execute({ userUuid: invite.sender_uuid })
       if (!sender.isFailed()) {
         const trustedMessage = this._getTrustedPayload.execute<AsymmetricMessageSharedVaultInvite>({
-          message: invite,
+          payload: invite,
           privateKey: keys.getValue().encryption.privateKey,
           ownUserUuid: this.session.userUuid,
           sender: sender.getValue(),
@@ -300,7 +305,7 @@ export class VaultInviteService
       }
 
       const untrustedMessage = this._getUntrustedPayload.execute<AsymmetricMessageSharedVaultInvite>({
-        message: invite,
+        payload: invite,
         privateKey: keys.getValue().encryption.privateKey,
       })
 

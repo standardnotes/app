@@ -267,6 +267,7 @@ describe('history manager', () => {
 
     it('should save initial revisions on server', async () => {
       const item = await Factory.createSyncedNote(application)
+      expect(item).to.be.ok
 
       await Factory.sleep(Factory.ServerRevisionCreationDelay)
 
