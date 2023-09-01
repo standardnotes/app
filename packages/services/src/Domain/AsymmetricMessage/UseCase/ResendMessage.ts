@@ -37,7 +37,7 @@ export class ResendMessage implements UseCaseInterface<void> {
     const sendMessageResult = await this.sendMessage.execute({
       recipientUuid: params.recipient.contactUuid,
       encryptedMessage: encryptedMessage.getValue(),
-      replaceabilityIdentifier: params.rawMessage.replaceabilityIdentifier,
+      replaceabilityIdentifier: params.rawMessage.replaceability_identifier || undefined,
     })
 
     return sendMessageResult

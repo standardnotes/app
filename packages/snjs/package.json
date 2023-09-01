@@ -38,7 +38,7 @@
     "@standardnotes/api": "workspace:*",
     "@standardnotes/common": "^1.50.0",
     "@standardnotes/domain-core": "^1.25.0",
-    "@standardnotes/domain-events": "^2.120.0",
+    "@standardnotes/domain-events": "^2.121.0",
     "@standardnotes/encryption": "workspace:*",
     "@standardnotes/features": "workspace:*",
     "@standardnotes/files": "workspace:*",

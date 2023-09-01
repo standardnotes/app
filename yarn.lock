@@ -4349,13 +4349,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/domain-events@npm:^2.120.0":
-  version: 2.120.0
-  resolution: "@standardnotes/domain-events@npm:2.120.0"
+"@standardnotes/domain-events@npm:^2.121.0":
+  version: 2.121.0
+  resolution: "@standardnotes/domain-events@npm:2.121.0"
   dependencies:
     "@standardnotes/predicates": 1.6.9
     "@standardnotes/security": 1.12.0
-  checksum: bcd6caf10bc050199db4d0fb13605d43773418c1420efea583381ae6cd33a1a365451a61f3d8d6e08d19a52005e5d67ad2b4c8f3b8f951269b1a2a4bc0ac33cf
+  checksum: 49d4a834212f24b4469487ce6126d554e50145dee665326e2fc0536a1890febbca4e8c07e37666bfced9d5bfd36d175edfeb1483876326a4c964805993dba7ec
   languageName: node
   linkType: hard
 
@@ -4829,7 +4829,7 @@ __metadata:
     "@standardnotes/api": "workspace:*"
     "@standardnotes/common": ^1.50.0
     "@standardnotes/domain-core": ^1.25.0
-    "@standardnotes/domain-events": ^2.120.0
+    "@standardnotes/domain-events": ^2.121.0
     "@standardnotes/encryption": "workspace:*"
     "@standardnotes/features": "workspace:*"
     "@standardnotes/files": "workspace:*"
