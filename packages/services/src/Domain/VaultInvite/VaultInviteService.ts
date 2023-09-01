@@ -120,6 +120,7 @@ export class VaultInviteService
         break
       case ApplicationEvent.Launched:
         void this.downloadInboundInvites()
+        break
       case WebSocketsServiceEvent.UserInvitedToSharedVault:
         await this.processInboundInvites([(event as UserInvitedToSharedVaultEvent).payload.invite])
         break
