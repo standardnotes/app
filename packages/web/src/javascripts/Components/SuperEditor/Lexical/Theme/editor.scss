@@ -13,11 +13,21 @@
   margin-left: 20px;
   margin-bottom: 10px;
   font-size: 15px;
-  color: rgb(101, 103, 107);
-  border-left-color: rgb(206, 208, 212);
+  color: var(--sn-stylekit-passive-color-1);
+  border-left-color: var(--sn-stylekit-passive-color-1);
   border-left-width: 4px;
   border-left-style: solid;
   padding-left: 16px;
+
+  &.Lexical__rtl {
+    margin-left: 0;
+    margin-right: 20px;
+    border-left-color: transparent;
+    border-right-color: var(--sn-stylekit-passive-color-1);
+    border-right-width: 4px;
+    border-right-style: solid;
+    padding-right: 16px;
+  }
 }
 .Lexical__h1 {
   font-size: 26px;
