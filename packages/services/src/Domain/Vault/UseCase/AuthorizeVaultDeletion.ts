@@ -53,6 +53,15 @@ export class AuthorizeVaultDeletion implements UseCaseInterface<boolean> {
 
           const password = value.value as string
 
+          if (this.vaultLocks.isVaultLocked(vault)) {
+            const unlocked = await this.vaultLocks.unlockNonPersistentVault(vault, password)
+            if (unlocked) {
+              this.challenges.completeChallenge(challenge)
+              resolve(Result.ok(true))
+              return
+            }
+          }
+
           const validPassword = this._validateVaultPassword.execute(vault, password).getValue()
           if (!validPassword) {
             this.challenges.setValidationStatusForChallenge(challenge, value, false)
