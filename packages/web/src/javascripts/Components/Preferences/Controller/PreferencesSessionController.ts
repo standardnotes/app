@@ -2,7 +2,7 @@ import { action, makeAutoObservable, observable } from 'mobx'
 import { WebApplication } from '@/Application/WebApplication'
 import { PackageProvider } from '../Panes/General/Advanced/Packages/Provider/PackageProvider'
 import { securityPrefsHasBubble } from '../Panes/Security/securityPrefsHasBubble'
-import { PreferencePaneId } from '@standardnotes/services'
+import { PreferencePaneId, StatusServiceEvent } from '@standardnotes/services'
 import { isDesktopApplication } from '@/Utils'
 import { featureTrunkHomeServerEnabled, featureTrunkVaultsEnabled } from '@/FeatureTrunk'
 import { PreferencesMenuItem } from './PreferencesMenuItem'
@@ -40,13 +40,34 @@ export class PreferencesSessionController {
 
     makeAutoObservable<
       PreferencesSessionController,
-      '_selectedPane' | '_twoFactorAuth' | '_extensionPanes' | '_extensionLatestVersions' | 'loadLatestVersions'
+      | '_selectedPane'
+      | '_twoFactorAuth'
+      | '_extensionPanes'
+      | '_extensionLatestVersions'
+      | 'loadLatestVersions'
+      | 'updateMenuBubbleCounts'
     >(this, {
       _twoFactorAuth: observable,
       _selectedPane: observable,
       _extensionPanes: observable.ref,
       _extensionLatestVersions: observable.ref,
       loadLatestVersions: action,
+      updateMenuBubbleCounts: action,
+    })
+
+    this.application.status.addEventObserver((event) => {
+      if (event === StatusServiceEvent.PreferencesBubbleCountChanged) {
+        this.updateMenuBubbleCounts()
+      }
+    })
+  }
+
+  private updateMenuBubbleCounts(): void {
+    this._menu = this._menu.map((item) => {
+      return {
+        ...item,
+        bubbleCount: this.application.status.getPreferencesBubbleCount(item.id),
+      }
     })
   }
 
@@ -69,7 +90,6 @@ export class PreferencesSessionController {
       const item: SelectableMenuItem = {
         ...preference,
         selected: preference.id === this._selectedPane,
-        bubbleCount: this.application.status.getPreferencesBubbleCount(preference.id),
         hasErrorIndicator: this.sectionHasBubble(preference.id),
       }
       return item
