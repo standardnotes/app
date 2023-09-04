@@ -69,9 +69,10 @@ const VaultItem = ({ vault }: Props) => {
       return
     }
 
-    const success = await application.vaultUsers.leaveSharedVault(vault)
-    if (!success) {
+    const response = await application.vaultUsers.leaveSharedVault(vault)
+    if (isClientDisplayableError(response)) {
       void application.alerts.alert('Unable to leave vault. Please try again.')
+      console.error(response)
     }
   }, [application, vault])
 
@@ -115,7 +116,7 @@ const VaultItem = ({ vault }: Props) => {
         <EditVaultModal existingVaultUuid={vault.uuid} onCloseDialog={closeVaultModal} />
       </ModalOverlay>
 
-      <div className="flex flex-row gap-3.5 rounded-lg px-3.5 py-2.5 border border-border shadow">
+      <div className="flex flex-row gap-3.5 rounded-lg border border-border px-3.5 py-2.5 shadow">
         <Icon type={vault.iconString} size="custom" className="mt-2.5 h-5.5 w-5.5 flex-shrink-0" />
         <div className="flex flex-col gap-1.5 py-1.5">
           <span className="mr-auto overflow-hidden text-ellipsis text-base font-bold">{vault.name}</span>
