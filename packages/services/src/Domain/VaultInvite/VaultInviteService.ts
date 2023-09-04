@@ -119,6 +119,9 @@ export class VaultInviteService
         await this.processInboundInvites(event.payload as SyncEventReceivedSharedVaultInvitesData)
         break
       case ApplicationEvent.Launched:
+        if (!this.session.isSignedIn()) {
+          return
+        }
         void this.downloadInboundInvites()
         break
       case WebSocketsServiceEvent.UserInvitedToSharedVault:
