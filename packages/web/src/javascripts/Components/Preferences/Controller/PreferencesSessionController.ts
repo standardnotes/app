@@ -90,6 +90,7 @@ export class PreferencesSessionController {
       const item: SelectableMenuItem = {
         ...preference,
         selected: preference.id === this._selectedPane,
+        bubbleCount: this.application.status.getPreferencesBubbleCount(preference.id),
         hasErrorIndicator: this.sectionHasBubble(preference.id),
       }
       return item
