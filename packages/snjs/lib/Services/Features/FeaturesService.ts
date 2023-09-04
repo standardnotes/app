@@ -360,8 +360,8 @@ export class FeaturesService
 
     const isInitialLoadRolesChange = previousRoles.length === 0
     if (!isInitialLoadRolesChange) {
-      const didPreviousRolesIncludePaidSubscription = this.rolesIncludePaidSubscription(previousRoles)
-      if (this.onlineRolesIncludePaidSubscription() && !didPreviousRolesIncludePaidSubscription) {
+      const newRolesIncludePaidSubscription = this.rolesIncludePaidSubscription(roles)
+      if (newRolesIncludePaidSubscription) {
         await this.notifyEvent(FeaturesEvent.DidPurchaseSubscription)
       }
     }
