@@ -7,12 +7,14 @@ import {
   NotificationServiceEvent,
   SessionEvent,
   SyncEvent,
+  WebSocketsServiceEvent,
 } from '@standardnotes/services'
 import { Dependencies } from './Dependencies'
 import { TYPES } from './Types'
 
 export function RegisterApplicationServicesEvents(container: Dependencies, events: InternalEventBusInterface): void {
   events.addEventHandler(container.get(TYPES.AsymmetricMessageService), SyncEvent.ReceivedAsymmetricMessages)
+  events.addEventHandler(container.get(TYPES.AsymmetricMessageService), WebSocketsServiceEvent.MessageSentToUser)
   events.addEventHandler(container.get(TYPES.DiskStorageService), ApplicationEvent.ApplicationStageChanged)
   events.addEventHandler(container.get(TYPES.FeaturesService), ApiServiceEvent.MetaReceived)
   events.addEventHandler(container.get(TYPES.FeaturesService), ApplicationEvent.ApplicationStageChanged)
@@ -21,6 +23,7 @@ export function RegisterApplicationServicesEvents(container: Dependencies, event
   events.addEventHandler(container.get(TYPES.KeySystemKeyManager), ApplicationEvent.ApplicationStageChanged)
   events.addEventHandler(container.get(TYPES.MigrationService), ApplicationEvent.ApplicationStageChanged)
   events.addEventHandler(container.get(TYPES.NotificationService), SyncEvent.ReceivedNotifications)
+  events.addEventHandler(container.get(TYPES.NotificationService), WebSocketsServiceEvent.NotificationAddedForUser)
   events.addEventHandler(container.get(TYPES.PreferencesService), ApplicationEvent.ApplicationStageChanged)
   events.addEventHandler(container.get(TYPES.ProtectionService), ApplicationEvent.ApplicationStageChanged)
   events.addEventHandler(container.get(TYPES.ProtectionService), ApplicationEvent.Started)
@@ -39,6 +42,7 @@ export function RegisterApplicationServicesEvents(container: Dependencies, event
   events.addEventHandler(container.get(TYPES.UserService), AccountEvent.SignedInOrRegistered)
   events.addEventHandler(container.get(TYPES.VaultInviteService), ApplicationEvent.Launched)
   events.addEventHandler(container.get(TYPES.VaultInviteService), SyncEvent.ReceivedSharedVaultInvites)
+  events.addEventHandler(container.get(TYPES.VaultInviteService), WebSocketsServiceEvent.UserInvitedToSharedVault)
 
   if (container.get(TYPES.FilesBackupService)) {
     events.addEventHandler(container.get(TYPES.FilesBackupService), ApplicationEvent.ApplicationStageChanged)
