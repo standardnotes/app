@@ -145,6 +145,9 @@ export class Database {
   }
 
   public async getPayloadsForKeys(keys: string[]): Promise<any[]> {
+    if (keys.length === 0) {
+      return []
+    }
     const db = (await this.openDatabase()) as IDBDatabase
     return new Promise((resolve) => {
       const objectStore = db.transaction(STORE_NAME).objectStore(STORE_NAME)
