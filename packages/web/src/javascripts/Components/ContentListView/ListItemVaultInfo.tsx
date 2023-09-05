@@ -1,15 +1,16 @@
 import { FunctionComponent } from 'react'
 import { useApplication } from '../ApplicationProvider'
 import Icon from '../Icon/Icon'
-import { DecryptedItemInterface } from '@standardnotes/snjs'
+import { DecryptedItemInterface, classNames } from '@standardnotes/snjs'
 import VaultNameBadge from '../Vaults/VaultNameBadge'
 import { featureTrunkVaultsEnabled } from '@/FeatureTrunk'
 
 type Props = {
   item: DecryptedItemInterface
+  className?: string
 }
 
-const ListItemVaultInfo: FunctionComponent<Props> = ({ item }) => {
+const ListItemVaultInfo: FunctionComponent<Props> = ({ item, className }) => {
   const application = useApplication()
 
   if (!featureTrunkVaultsEnabled()) {
@@ -28,7 +29,7 @@ const ListItemVaultInfo: FunctionComponent<Props> = ({ item }) => {
   const sharedByContact = application.sharedVaults.getItemSharedBy(item)
 
   return (
-    <div className="flex flex-wrap items-center gap-2">
+    <div className={classNames('flex flex-wrap items-center gap-2', className)}>
       <VaultNameBadge vault={vault} />
 
       {sharedByContact && (

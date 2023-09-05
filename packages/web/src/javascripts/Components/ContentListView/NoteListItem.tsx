@@ -146,7 +146,7 @@ const NoteListItem: FunctionComponent<DisplayableListItemProps<SNNote>> = ({
         <ListItemMetadata item={item} hideDate={hideDate} sortBy={sortBy} />
         <ListItemTags hideTags={hideTags} tags={tags} />
         <ListItemConflictIndicator item={item} />
-        <ListItemVaultInfo item={item} />
+        <ListItemVaultInfo item={item} className="mt-1.5" />
       </div>
       <ListItemFlagIcons className="p-4" item={item} hasFiles={hasFiles} hasBorder={hasOffsetBorder} />
     </div>

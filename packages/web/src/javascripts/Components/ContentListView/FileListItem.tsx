@@ -104,7 +104,7 @@ const FileListItemCard: FunctionComponent<DisplayableListItemProps<FileItem>> = 
         <ListItemMetadata item={file} hideDate={hideDate} sortBy={sortBy} />
         <ListItemTags hideTags={hideTags} tags={tags} />
         <ListItemConflictIndicator item={file} />
-        <ListItemVaultInfo item={file} />
+        <ListItemVaultInfo item={file} className="mt-1.5" />
       </div>
       <ListItemFlagIcons className="p-4" item={file} isFileBackedUp={!!backupInfo} />
     </div>
