@@ -159,17 +159,14 @@ const ContentListHeader = ({
     return (
       <div className="flex min-w-0 flex-grow flex-col break-words pt-1 lg:pt-0">
         <div
-          className={classNames(
-            'flex min-w-0 flex-grow flex-row',
-            !optionsSubtitle && !showSyncSubtitle ? 'items-center' : '',
-          )}
+          className={classNames('flex min-w-0 flex-grow', !optionsSubtitle && !showSyncSubtitle ? 'items-center' : '')}
         >
           {icon && (
             <Icon
               type={icon}
               size="custom"
               className={classNames(
-                'ml-0.5 mr-1.5 h-7 w-7 flex-shrink-0 text-2xl text-neutral lg:h-6 lg:w-6 lg:text-lg',
+                'ml-0.5 mr-2 h-7 w-7 flex-shrink-0 text-2xl text-neutral lg:h-6 lg:w-6 lg:text-lg',
                 optionsSubtitle && 'md:mt-0.5',
               )}
             />
@@ -182,8 +179,8 @@ const ContentListHeader = ({
               </div>
             )}
             {optionsSubtitle && <div className="text-xs text-passive-0">{optionsSubtitle}</div>}
+            <ListItemVaultInfo className="mt-1" item={selectedTag} />
           </div>
-          <ListItemVaultInfo item={selectedTag} />
         </div>
       </div>
     )
