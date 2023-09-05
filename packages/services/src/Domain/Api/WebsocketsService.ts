@@ -60,19 +60,19 @@ export class WebSocketsService extends AbstractService<WebSocketsServiceEvent, D
   }
 
   private onWebSocketMessage(messageEvent: MessageEvent) {
-    const eventData: DomainEventInterface = JSON.parse(messageEvent.data)
+    const eventData = JSON.parse(messageEvent.data)
     switch (eventData.type) {
       case 'USER_ROLES_CHANGED':
         void this.notifyEvent(WebSocketsServiceEvent.UserRoleMessageReceived, eventData)
         break
       case 'NOTIFICATION_ADDED_FOR_USER':
-        void this.notifyEvent(WebSocketsServiceEvent.NotificationAddedForUser, eventData)
+        void this.notifyEvent(WebSocketsServiceEvent.NotificationAddedForUser, eventData.payload)
         break
       case 'MESSAGE_SENT_TO_USER':
-        void this.notifyEvent(WebSocketsServiceEvent.MessageSentToUser, eventData)
+        void this.notifyEvent(WebSocketsServiceEvent.MessageSentToUser, eventData.payload)
         break
       case 'USER_INVITED_TO_SHARED_VAULT':
-        void this.notifyEvent(WebSocketsServiceEvent.UserInvitedToSharedVault, eventData)
+        void this.notifyEvent(WebSocketsServiceEvent.UserInvitedToSharedVault, eventData.payload)
         break
       default:
         break
