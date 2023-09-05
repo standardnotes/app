@@ -23,7 +23,6 @@ import EditVaultModal from './Vaults/VaultModal/EditVaultModal'
 import PreferencesPane from '../../PreferencesComponents/PreferencesPane'
 import { ToastType, addToast } from '@standardnotes/toast'
 import NoProSubscription from '../Account/NoProSubscription'
-import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 
 const Vaults = () => {
   const application = useApplication()
@@ -170,13 +169,11 @@ const Vaults = () => {
               <Button label="Create New Vault" className={'mr-3 text-xs'} onClick={createNewVault} />
             </div>
           ) : (
-            <div>
-              <HorizontalSeparator classes="my-4" />
+            <div className="mt-3.5">
               <NoProSubscription
                 application={application}
                 text={<span>Please upgrade in order to increase your shared vault limit.</span>}
               />
-              <HorizontalSeparator classes="my-4" />
             </div>
           )}
         </PreferencesSegment>
