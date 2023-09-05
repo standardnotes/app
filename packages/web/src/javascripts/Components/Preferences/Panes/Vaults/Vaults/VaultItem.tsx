@@ -1,6 +1,6 @@
 import { formatSizeToReadableString } from '@standardnotes/filepicker'
-import { ButtonType, VaultListingInterface, isClientDisplayableError } from '@standardnotes/snjs'
-import { useCallback, useState } from 'react'
+import { ButtonType, VaultListingInterface, VaultLockServiceEvent, isClientDisplayableError } from '@standardnotes/snjs'
+import { useCallback, useEffect, useState } from 'react'
 
 import { useApplication } from '@/Components/ApplicationProvider'
 import Button from '@/Components/Button/Button'
@@ -20,6 +20,28 @@ const VaultItem = ({ vault }: Props) => {
 
   const [isVaultModalOpen, setIsVaultModalOpen] = useState(false)
   const closeVaultModal = () => setIsVaultModalOpen(false)
+
+  const isVaultLockable = application.vaultLocks.isVaultLockable(vault)
+  const [isVaultLocked, setIsVaultLocked] = useState(() => application.vaultLocks.isVaultLocked(vault))
+  useEffect(() => {
+    return application.vaultLocks.addEventObserver((event) => {
+      if (event === VaultLockServiceEvent.VaultLocked || event === VaultLockServiceEvent.VaultUnlocked) {
+        setIsVaultLocked(application.vaultLocks.isVaultLocked(vault))
+      }
+    })
+  }, [application.vaultLocks, vault])
+
+  const toggleLock = useCallback(async () => {
+    if (!isVaultLockable) {
+      return
+    }
+
+    if (isVaultLocked) {
+      application.vaultDisplayService.unlockVault(vault).catch(console.error)
+    } else {
+      application.vaultLocks.lockNonPersistentVault(vault).catch(console.error)
+    }
+  }, [application.vaultDisplayService, application.vaultLocks, isVaultLockable, isVaultLocked, vault])
 
   const isAdmin = !vault.isSharedVaultListing() ? true : application.vaultUsers.isCurrentUserSharedVaultAdmin(vault)
 
@@ -129,19 +151,22 @@ const VaultItem = ({ vault }: Props) => {
             File storage used: {formatSizeToReadableString(vault.sharing?.fileBytesUsed ?? 0)}
           </span>
 
-          <div className="mt-2 flex w-full">
-            <Button label="Edit" className="mr-3 text-xs" onClick={openEditModal} />
-            {isAdmin && <Button colorStyle="danger" label="Delete" className="mr-3 text-xs" onClick={deleteVault} />}
+          <div className="mt-2 flex w-full flex-wrap gap-3">
+            <Button label="Edit" className="text-xs" onClick={openEditModal} />
+            {isVaultLockable && (
+              <Button label={isVaultLocked ? 'Unlock' : 'Lock'} className="text-xs" onClick={toggleLock} />
+            )}
+            {isAdmin && <Button colorStyle="danger" label="Delete" className="text-xs" onClick={deleteVault} />}
             {!isAdmin && vault.isSharedVaultListing() && (
-              <Button label="Leave Vault" className="mr-3 text-xs" onClick={leaveVault} />
+              <Button label="Leave Vault" className="text-xs" onClick={leaveVault} />
             )}
             {vault.isSharedVaultListing() ? (
-              <Button colorStyle="info" label="Invite Contacts" className="mr-3 text-xs" onClick={openInviteModal} />
+              <Button colorStyle="info" label="Invite Contacts" className="text-xs" onClick={openInviteModal} />
             ) : (
               <Button
                 colorStyle="info"
                 label="Enable Collaboration"
-                className="mr-3 text-xs"
+                className="text-xs"
                 onClick={convertToSharedVault}
               />
             )}
