@@ -143,11 +143,13 @@ const Vaults = () => {
       <PreferencesGroup>
         <PreferencesSegment>
           <Title>Contacts</Title>
-          <div className="my-2 flex flex-col gap-3.5">
-            {contacts.map((contact) => {
-              return <ContactItem contact={contact} key={contact.uuid} />
-            })}
-          </div>
+          {contacts.length > 0 && (
+            <div className="my-2 flex flex-col gap-3.5">
+              {contacts.map((contact) => {
+                return <ContactItem contact={contact} key={contact.uuid} />
+              })}
+            </div>
+          )}
           <div className="mt-2.5 flex flex-row">
             <Button label="Add New Contact" className={'mr-3 text-xs'} onClick={createNewContact} />
           </div>
