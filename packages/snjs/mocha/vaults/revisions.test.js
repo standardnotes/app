@@ -26,8 +26,8 @@ describe('shared vault revisions', function () {
   })
 
   it('should be able to access shared item revisions as third party user', async () => {
-    const revisionsOfAnItem =  0
-    const revisionsAfterMovingToSharedVault = 0
+    let revisionsOfAnItem =  0
+    let revisionsAfterMovingToSharedVault = 0
 
     const { note, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithAcceptedInviteAndNote(context)
