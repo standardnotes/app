@@ -269,7 +269,7 @@ describe('history manager', () => {
       const item = await Factory.createSyncedNote(application)
       expect(item).to.be.ok
 
-      await Factory.sleep(Factory.ServerRevisionCreationDelay)
+      await Factory.sleep(2 * Factory.ServerRevisionCreationDelay)
 
       const itemHistoryOrError = await application.listRevisions.execute({ itemUuid: item.uuid })
       expect(itemHistoryOrError.isFailed()).to.equal(false)
@@ -291,7 +291,7 @@ describe('history manager', () => {
         syncOptions,
       )
 
-      await Factory.sleep(Factory.ServerRevisionCreationDelay)
+      await Factory.sleep(2 * Factory.ServerRevisionCreationDelay)
 
       const itemHistoryOrError = await application.listRevisions.execute({ itemUuid: item.uuid })
       expect(itemHistoryOrError.isFailed()).to.equal(false)
