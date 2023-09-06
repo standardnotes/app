@@ -49,10 +49,13 @@ describe('shared vault revisions', function () {
     revisionsOfAnItem++
     revisionsAfterMovingToSharedVault++
 
-    const itemHistoryOrError = await contactContext.application.listRevisions.execute({ itemUuid: note.uuid })
+    const contactItemHistoryOrError = await contactContext.application.listRevisions.execute({ itemUuid: note.uuid })
+    const contactItemHistory = contactItemHistoryOrError.getValue()
+    expect(contactItemHistory.length).to.equal(revisionsAfterMovingToSharedVault)
+
+    const itemHistoryOrError = await context.application.listRevisions.execute({ itemUuid: note.uuid })
     const itemHistory = itemHistoryOrError.getValue()
-    expect(itemHistory.length).not.to.equal(revisionsOfAnItem)
-    expect(itemHistory.length).to.equal(revisionsAfterMovingToSharedVault)
+    expect(itemHistory.length).to.equal(revisionsOfAnItem)
 
     await deinitContactContext()
   })
