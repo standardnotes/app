@@ -360,8 +360,10 @@ export class FeaturesService
 
     const isInitialLoadRolesChange = previousRoles.length === 0
     if (!isInitialLoadRolesChange) {
-      const newRolesIncludePaidSubscription = this.rolesIncludePaidSubscription(roles)
-      if (newRolesIncludePaidSubscription) {
+      const changedRoles = roles.filter((role) => !previousRoles.includes(role))
+      const changedRolesIncludePaidSubscription = this.rolesIncludePaidSubscription(changedRoles)
+
+      if (changedRolesIncludePaidSubscription) {
         await this.notifyEvent(FeaturesEvent.DidPurchaseSubscription)
       }
     }
@@ -397,11 +399,9 @@ export class FeaturesService
   }
 
   private rolesIncludePaidSubscription(roles: string[]) {
-    {
-      const unpaidRoles = [RoleName.NAMES.CoreUser]
+    const paidRoles = [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser]
 
-      return roles.some((role) => !unpaidRoles.includes(role))
-    }
+    return roles.some((role) => paidRoles.includes(role))
   }
 
   onlineRolesIncludePaidSubscription(): boolean {

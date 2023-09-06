@@ -259,6 +259,20 @@ describe('FeaturesService', () => {
       expect(triggeredEvents).not.toContain(FeaturesEvent.DidPurchaseSubscription)
     })
 
+    it('should not notify of subscription purchase if new roles are not paid', async () => {
+      storageService.getValue = jest.fn().mockReturnValue(roles)
+
+      featureService.initializeFromDisk()
+
+      const spy = jest.spyOn(featureService, 'notifyEvent' as never)
+
+      const newRoles = [...roles, 'TRANSITION_USER']
+      await featureService.updateOnlineRolesWithNewValues(newRoles)
+
+      const triggeredEvents = spy.mock.calls.map((call) => call[0])
+      expect(triggeredEvents).not.toContain(FeaturesEvent.DidPurchaseSubscription)
+    })
+
     it('saves new roles to storage if a role has been added', async () => {
       storageService.getValue = jest.fn().mockReturnValue(roles)
 
