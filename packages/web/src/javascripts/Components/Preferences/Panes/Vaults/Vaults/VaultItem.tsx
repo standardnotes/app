@@ -147,9 +147,11 @@ const VaultItem = ({ vault }: Props) => {
           )}
           <span className="mr-auto overflow-hidden text-ellipsis text-sm">Vault ID: {vault.systemIdentifier}</span>
 
-          <span className="mr-auto overflow-hidden text-ellipsis text-sm">
-            File storage used: {formatSizeToReadableString(vault.sharing?.fileBytesUsed ?? 0)}
-          </span>
+          {!!vault.sharing?.fileBytesUsed && (
+            <span className="mr-auto overflow-hidden text-ellipsis text-sm">
+              File storage used: {formatSizeToReadableString(vault.sharing?.fileBytesUsed ?? 0)}
+            </span>
+          )}
 
           <div className="mt-2 flex w-full flex-wrap gap-3">
             <Button label="Edit" className="text-xs" onClick={openEditModal} />
