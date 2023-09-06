@@ -4,7 +4,7 @@ import * as Collaboration from '../lib/Collaboration.js'
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
-describe.skip('shared vault revisions', function () {
+describe('shared vault revisions', function () {
   this.timeout(Factory.TwentySecondTimeout)
 
   let context
@@ -26,26 +26,38 @@ describe.skip('shared vault revisions', function () {
   })
 
   it('should be able to access shared item revisions as third party user', async () => {
+    const revisionsOfAnItem =  0
+    const revisionsAfterMovingToSharedVault = 0
+
     const { note, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithAcceptedInviteAndNote(context)
+
+    revisionsOfAnItem++
 
     await Factory.sleep(Factory.ServerRevisionFrequency)
 
     await context.changeNoteTitleAndSync(note, 'new title 1')
     await Factory.sleep(Factory.ServerRevisionFrequency)
 
+    revisionsOfAnItem++
+    revisionsAfterMovingToSharedVault++
+
     await context.changeNoteTitleAndSync(note, 'new title 2')
 
     await Factory.sleep(Factory.ServerRevisionCreationDelay)
 
+    revisionsOfAnItem++
+    revisionsAfterMovingToSharedVault++
+
     const itemHistoryOrError = await contactContext.application.listRevisions.execute({ itemUuid: note.uuid })
     const itemHistory = itemHistoryOrError.getValue()
-    expect(itemHistory.length).to.equal(3)
+    expect(itemHistory.length).not.to.equal(revisionsOfAnItem)
+    expect(itemHistory.length).to.equal(revisionsAfterMovingToSharedVault)
 
     await deinitContactContext()
   })
 
-  it('should create revision if other vault member edits node', async () => {
+  it.skip('should create revision if other vault member edits node', async () => {
     const { note, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithAcceptedInviteAndNote(context)
 
@@ -63,7 +75,7 @@ describe.skip('shared vault revisions', function () {
     await deinitContactContext()
   })
 
-  it('should be able to decrypt revisions as third party user', async () => {
+  it.skip('should be able to decrypt revisions as third party user', async () => {
     const { note, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithAcceptedInviteAndNote(context)
 
@@ -87,7 +99,7 @@ describe.skip('shared vault revisions', function () {
     await deinitContactContext()
   })
 
-  it('should not be able to access history of item removed from vault', async () => {
+  it.skip('should not be able to access history of item removed from vault', async () => {
     const { note, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithAcceptedInviteAndNote(context)
 
@@ -104,7 +116,7 @@ describe.skip('shared vault revisions', function () {
     await deinitContactContext()
   })
 
-  it('should not be able to access history of item after user is removed from vault', async () => {
+  it.skip('should not be able to access history of item after user is removed from vault', async () => {
     const { note, sharedVault, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithAcceptedInviteAndNote(context)
 
