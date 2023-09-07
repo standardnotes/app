@@ -60,7 +60,7 @@ describe('shared vault revisions', function () {
     await deinitContactContext()
   })
 
-  it.skip('should create revision if other vault member edits node', async () => {
+  it('should create revision if other vault member edits node', async () => {
     const { note, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithAcceptedInviteAndNote(context)
 
@@ -78,7 +78,7 @@ describe('shared vault revisions', function () {
     await deinitContactContext()
   })
 
-  it.skip('should be able to decrypt revisions as third party user', async () => {
+  it('should be able to decrypt revisions as third party user', async () => {
     const { note, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithAcceptedInviteAndNote(context)
 
@@ -102,7 +102,7 @@ describe('shared vault revisions', function () {
     await deinitContactContext()
   })
 
-  it.skip('should not be able to access history of item removed from vault', async () => {
+  it('should not be able to access history of item removed from vault', async () => {
     const { note, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithAcceptedInviteAndNote(context)
 
