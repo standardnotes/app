@@ -6,7 +6,6 @@ import Spinner from '../Spinner/Spinner'
 import { PasswordStep } from './PasswordStep'
 import { FinishStep } from './FinishStep'
 import { PreprocessingStep } from './PreprocessingStep'
-import { featureTrunkVaultsEnabled } from '@/FeatureTrunk'
 
 interface Props {
   application: WebApplication
@@ -50,7 +49,7 @@ class PasswordWizard extends AbstractComponent<Props, State> {
       continueTitle: DEFAULT_CONTINUE_TITLE,
     }
 
-    if (featureTrunkVaultsEnabled()) {
+    if (props.application.featuresController.isEntitledToVaults()) {
       this.state = {
         ...baseState,
         lockContinue: true,

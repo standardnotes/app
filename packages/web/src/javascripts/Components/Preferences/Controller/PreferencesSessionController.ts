@@ -4,7 +4,7 @@ import { PackageProvider } from '../Panes/General/Advanced/Packages/Provider/Pac
 import { securityPrefsHasBubble } from '../Panes/Security/securityPrefsHasBubble'
 import { PreferencePaneId, StatusServiceEvent } from '@standardnotes/services'
 import { isDesktopApplication } from '@/Utils'
-import { featureTrunkHomeServerEnabled, featureTrunkVaultsEnabled } from '@/FeatureTrunk'
+import { featureTrunkHomeServerEnabled } from '@/FeatureTrunk'
 import { PreferencesMenuItem } from './PreferencesMenuItem'
 import { SelectableMenuItem } from './SelectableMenuItem'
 import { PREFERENCES_MENU_ITEMS, READY_PREFERENCES_MENU_ITEMS } from './MenuItems'
@@ -26,7 +26,7 @@ export class PreferencesSessionController {
       ? PREFERENCES_MENU_ITEMS.slice()
       : READY_PREFERENCES_MENU_ITEMS.slice()
 
-    if (featureTrunkVaultsEnabled()) {
+    if (application.featuresController.isEntitledToVaults()) {
       menuItems.push({ id: 'vaults', label: 'Vaults', icon: 'safe-square', order: 5 })
     }
 

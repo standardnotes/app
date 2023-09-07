@@ -41,7 +41,6 @@ import SuperExportModal from './SuperExportModal'
 import { useApplication } from '../ApplicationProvider'
 import { MutuallyExclusiveMediaQueryBreakpoints } from '@/Hooks/useMediaQuery'
 import AddToVaultMenuOption from '../Vaults/AddToVaultMenuOption'
-import { featureTrunkVaultsEnabled } from '@/FeatureTrunk'
 import Menu from '../Menu/Menu'
 import Popover from '../Popover/Popover'
 
@@ -267,7 +266,9 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
       )}
       <HorizontalSeparator classes="my-2" />
 
-      {featureTrunkVaultsEnabled() && <AddToVaultMenuOption iconClassName={iconClass} items={notes} />}
+      {application.featuresController.isEntitledToVaults() && (
+        <AddToVaultMenuOption iconClassName={iconClass} items={notes} />
+      )}
 
       {application.navigationController.tagsCount > 0 && (
         <AddTagOption

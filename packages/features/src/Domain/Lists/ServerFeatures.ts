@@ -65,5 +65,11 @@ export function serverFeatures(): ServerFeatureDescription[] {
       permission_name: PermissionName.ListedCustomDomain,
       availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
     },
+    {
+      name: 'Shared Vaults',
+      identifier: NativeFeatureIdentifier.TYPES.SharedVaults,
+      permission_name: PermissionName.SharedVaults,
+      availableInRoles: [RoleName.NAMES.VaultsUser],
+    },
   ]
 }
