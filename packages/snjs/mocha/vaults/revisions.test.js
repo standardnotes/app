@@ -119,7 +119,7 @@ describe('shared vault revisions', function () {
     await deinitContactContext()
   })
 
-  it.skip('should not be able to access history of item after user is removed from vault', async () => {
+  it('should not be able to access history of item after user is removed from vault', async () => {
     const { note, sharedVault, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithAcceptedInviteAndNote(context)
 
@@ -128,10 +128,19 @@ describe('shared vault revisions', function () {
 
     await Factory.sleep(Factory.ServerRevisionCreationDelay)
 
+    let itemHistoryOrError = await contactContext.application.listRevisions.execute({ itemUuid: note.uuid })
+    expect(itemHistoryOrError.isFailed()).to.be.false
+
+    let itemHistory = itemHistoryOrError.getValue()
+    expect(itemHistory.length).to.equal(1)
+
     await context.vaultUsers.removeUserFromSharedVault(sharedVault, contactContext.userUuid)
 
-    const itemHistoryOrError = await contactContext.application.listRevisions.execute({ itemUuid: note.uuid })
-    expect(itemHistoryOrError.isFailed()).to.be.true
+    itemHistoryOrError = await contactContext.application.listRevisions.execute({ itemUuid: note.uuid })
+    expect(itemHistoryOrError.isFailed()).to.be.false
+
+    itemHistory = itemHistoryOrError.getValue()
+    expect(itemHistory.length).to.equal(0)
 
     await deinitContactContext()
   })
