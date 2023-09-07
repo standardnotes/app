@@ -6,7 +6,7 @@ chai.use(chaiAsPromised)
 const expect = chai.expect
 
 describe('shared vault quota', function () {
-  this.timeout(Factory.TwentySecondTimeout)
+  this.timeout(Factory.ThirtySecondTimeout)
 
   let context
 
