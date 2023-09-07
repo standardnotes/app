@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "@standardnotes/common": "^1.50.0",
-    "@standardnotes/domain-core": "^1.25.0",
+    "@standardnotes/domain-core": "^1.28.0",
     "@standardnotes/features": "workspace:*",
     "@standardnotes/responses": "workspace:*",
     "@standardnotes/sncrypto-common": "workspace:^",

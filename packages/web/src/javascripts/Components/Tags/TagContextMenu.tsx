@@ -12,7 +12,6 @@ import { PremiumFeatureIconClass, PremiumFeatureIconName } from '../Icon/Premium
 import Popover from '../Popover/Popover'
 import IconPicker from '../Icon/IconPicker'
 import AddToVaultMenuOption from '../Vaults/AddToVaultMenuOption'
-import { featureTrunkVaultsEnabled } from '@/FeatureTrunk'
 import { useApplication } from '../ApplicationProvider'
 
 type ContextMenuProps = {
@@ -82,7 +81,7 @@ const TagContextMenu = ({ navigationController, isEntitledToFolders, selectedTag
           iconGridClassName="max-h-30"
         />
         <HorizontalSeparator classes="my-2" />
-        {featureTrunkVaultsEnabled() && (
+        {application.featuresController.isEntitledToVaults() && (
           <AddToVaultMenuOption iconClassName="mr-2 text-neutral" items={[selectedTag]} />
         )}
         <MenuItem className={'justify-between py-1.5'} onClick={onClickStar}>

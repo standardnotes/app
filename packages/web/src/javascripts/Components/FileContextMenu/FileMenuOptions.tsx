@@ -14,7 +14,6 @@ import AddTagOption from '../NotesOptions/AddTagOption'
 import { MenuItemIconSize } from '@/Constants/TailwindClassNames'
 import AddToVaultMenuOption from '../Vaults/AddToVaultMenuOption'
 import { iconClass } from '../NotesOptions/ClassNames'
-import { featureTrunkVaultsEnabled } from '@/FeatureTrunk'
 import { useApplication } from '../ApplicationProvider'
 
 type Props = {
@@ -87,7 +86,9 @@ const FileMenuOptions: FunctionComponent<Props> = ({
           ) : null}
         </>
       )}
-      {featureTrunkVaultsEnabled() && <AddToVaultMenuOption iconClassName={iconClass} items={selectedFiles} />}
+      {application.featuresController.isEntitledToVaults() && (
+        <AddToVaultMenuOption iconClassName={iconClass} items={selectedFiles} />
+      )}
       <AddTagOption
         navigationController={application.navigationController}
         linkingController={application.linkingController}

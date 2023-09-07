@@ -14,7 +14,6 @@ import { PaneLayout } from '@/Controllers/PaneController/PaneLayout'
 import { usePaneSwipeGesture } from '../Panes/usePaneGesture'
 import { mergeRefs } from '@/Hooks/mergeRefs'
 import { useAvailableSafeAreaPadding } from '@/Hooks/useSafeAreaPadding'
-import { featureTrunkVaultsEnabled } from '@/FeatureTrunk'
 import QuickSettingsButton from '../Footer/QuickSettingsButton'
 import VaultSelectionButton from '../Footer/VaultSelectionButton'
 
@@ -131,7 +130,7 @@ const Navigation = forwardRef<HTMLDivElement, Props>(({ application, className, 
           icon="tune"
         />
         <QuickSettingsButton application={application} isMobileNavigation />
-        {featureTrunkVaultsEnabled() && <VaultSelectionButton isMobileNavigation />}
+        {application.featuresController.isEntitledToVaults() && <VaultSelectionButton isMobileNavigation />}
       </div>
       {children}
     </div>

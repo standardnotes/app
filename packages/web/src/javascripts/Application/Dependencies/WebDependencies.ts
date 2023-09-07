@@ -262,6 +262,7 @@ export class WebDependencies extends DependencyContainer {
         this.get<FilesController>(Web_TYPES.FilesController),
         this.get<SubscriptionController>(Web_TYPES.SubscriptionController),
         this.get<NavigationController>(Web_TYPES.NavigationController),
+        this.get<FeaturesController>(Web_TYPES.FeaturesController),
         this.get<ItemGroupController>(Web_TYPES.ItemGroupController),
         this.get<VaultDisplayService>(Web_TYPES.VaultDisplayService),
         application.preferences,

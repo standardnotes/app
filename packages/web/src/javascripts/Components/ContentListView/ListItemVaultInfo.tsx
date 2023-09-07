@@ -3,7 +3,6 @@ import { useApplication } from '../ApplicationProvider'
 import Icon from '../Icon/Icon'
 import { DecryptedItemInterface, classNames } from '@standardnotes/snjs'
 import VaultNameBadge from '../Vaults/VaultNameBadge'
-import { featureTrunkVaultsEnabled } from '@/FeatureTrunk'
 
 type Props = {
   item: DecryptedItemInterface
@@ -13,7 +12,7 @@ type Props = {
 const ListItemVaultInfo: FunctionComponent<Props> = ({ item, className }) => {
   const application = useApplication()
 
-  if (!featureTrunkVaultsEnabled()) {
+  if (!application.featuresController.isEntitledToVaults()) {
     return null
   }
 

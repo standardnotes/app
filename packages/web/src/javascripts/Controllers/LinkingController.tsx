@@ -32,9 +32,9 @@ import { FilesController } from './FilesController'
 import { ItemListController } from './ItemList/ItemListController'
 import { NavigationController } from './Navigation/NavigationController'
 import { SubscriptionController } from './Subscription/SubscriptionController'
-import { featureTrunkVaultsEnabled } from '@/FeatureTrunk'
 import { ItemGroupController } from '@/Components/NoteView/Controller/ItemGroupController'
 import { VaultDisplayServiceInterface } from '@standardnotes/ui-services'
+import { FeaturesController } from './FeaturesController'
 
 export class LinkingController extends AbstractViewController implements InternalEventHandlerInterface {
   shouldLinkToParentFolders: boolean
@@ -45,6 +45,7 @@ export class LinkingController extends AbstractViewController implements Interna
     private filesController: FilesController,
     private subscriptionController: SubscriptionController,
     private navigationController: NavigationController,
+    private featuresController: FeaturesController,
     private itemControllerGroup: ItemGroupController,
     private vaultDisplayService: VaultDisplayServiceInterface,
     private preferences: PreferenceServiceInterface,
@@ -207,7 +208,7 @@ export class LinkingController extends AbstractViewController implements Interna
     const linkNoteAndFile = async (note: SNNote, file: FileItem) => {
       const updatedFile = await this.mutator.associateFileWithNote(file, note)
 
-      if (featureTrunkVaultsEnabled()) {
+      if (this.featuresController.isEntitledToVaults()) {
         if (updatedFile) {
           const noteVault = this.vaults.getItemVault(note)
           const fileVault = this.vaults.getItemVault(updatedFile)

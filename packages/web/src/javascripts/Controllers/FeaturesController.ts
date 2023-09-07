@@ -12,6 +12,7 @@ import {
 import { action, makeObservable, observable, runInAction, when } from 'mobx'
 import { AbstractViewController } from './Abstract/AbstractViewController'
 import { CrossControllerEvent } from './CrossControllerEvent'
+import { featureTrunkVaultsEnabled } from '@/FeatureTrunk'
 
 export class FeaturesController extends AbstractViewController implements InternalEventHandlerInterface {
   hasFolders: boolean
@@ -127,5 +128,14 @@ export class FeaturesController extends AbstractViewController implements Intern
     )
 
     return status === FeatureStatus.Entitled
+  }
+
+  isEntitledToVaults(): boolean {
+    const status = this.features.getFeatureStatus(
+      NativeFeatureIdentifier.create(NativeFeatureIdentifier.TYPES.SharedVaults).getValue(),
+    )
+    const isEntitledToFeature = status === FeatureStatus.Entitled
+
+    return featureTrunkVaultsEnabled() || isEntitledToFeature
   }
 }

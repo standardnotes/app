@@ -41,6 +41,8 @@ export class NativeFeatureIdentifier extends ValueObject<NativeFeatureIdentifier
 
     Clipper: 'org.standardnotes.clipper',
 
+    SharedVaults: 'org.standardnotes.shared-vaults',
+
     DeprecatedMarkdownVisualEditor: 'org.standardnotes.markdown-visual-editor',
     DeprecatedBoldEditor: 'org.standardnotes.bold-editor',
     DeprecatedMarkdownBasicEditor: 'org.standardnotes.simple-markdown-editor',

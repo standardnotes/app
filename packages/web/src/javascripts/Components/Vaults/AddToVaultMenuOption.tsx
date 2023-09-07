@@ -7,7 +7,6 @@ import { classNames, DecryptedItemInterface, VaultListingInterface } from '@stan
 import { useApplication } from '../ApplicationProvider'
 import MenuItem from '../Menu/MenuItem'
 import Menu from '../Menu/Menu'
-import { featureTrunkVaultsEnabled } from '@/FeatureTrunk'
 
 const VaultMenu = observer(({ items }: { items: DecryptedItemInterface[] }) => {
   const application = useApplication()
@@ -107,6 +106,7 @@ const VaultMenu = observer(({ items }: { items: DecryptedItemInterface[] }) => {
 })
 
 const AddToVaultMenuOption = ({ iconClassName, items }: { iconClassName: string; items: DecryptedItemInterface[] }) => {
+  const application = useApplication()
   const buttonRef = useRef<HTMLButtonElement>(null)
 
   const [isSubMenuOpen, setIsSubMenuOpen] = useState(false)
@@ -115,7 +115,7 @@ const AddToVaultMenuOption = ({ iconClassName, items }: { iconClassName: string;
     setIsSubMenuOpen((isOpen) => !isOpen)
   }, [])
 
-  if (!featureTrunkVaultsEnabled()) {
+  if (!application.featuresController.isEntitledToVaults()) {
     return null
   }
 

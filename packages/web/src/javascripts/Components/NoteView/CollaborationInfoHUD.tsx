@@ -2,7 +2,6 @@ import { FunctionComponent } from 'react'
 import Icon from '../Icon/Icon'
 import { useApplication } from '../ApplicationProvider'
 import { DecryptedItemInterface } from '@standardnotes/snjs'
-import { featureTrunkVaultsEnabled } from '@/FeatureTrunk'
 import VaultNameBadge from '../Vaults/VaultNameBadge'
 
 type Props = {
@@ -12,7 +11,7 @@ type Props = {
 const CollaborationInfoHUD: FunctionComponent<Props> = ({ item }) => {
   const application = useApplication()
 
-  if (!featureTrunkVaultsEnabled()) {
+  if (!application.featuresController.isEntitledToVaults()) {
     return null
   }
 
@@ -32,7 +31,7 @@ const CollaborationInfoHUD: FunctionComponent<Props> = ({ item }) => {
       <VaultNameBadge vault={vault} />
 
       {lastEditedBy && (
-        <div title="Last edited by" className="flex rounded bg-info px-1.5 py-1 text-info-contrast select-none">
+        <div title="Last edited by" className="flex select-none rounded bg-info px-1.5 py-1 text-info-contrast">
           <Icon ariaLabel="Shared by" type="pencil" className="mr-1 text-info-contrast" size="medium" />
           <span className="mr-auto overflow-hidden text-ellipsis text-xs">{lastEditedBy?.name}</span>
         </div>

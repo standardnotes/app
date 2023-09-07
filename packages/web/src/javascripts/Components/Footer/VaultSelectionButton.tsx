@@ -5,7 +5,6 @@ import Popover from '../Popover/Popover'
 import StyledTooltip from '../StyledTooltip/StyledTooltip'
 import VaultSelectionMenu from '../VaultSelectionMenu/VaultSelectionMenu'
 import { useApplication } from '../ApplicationProvider'
-import { featureTrunkVaultsEnabled } from '@/FeatureTrunk'
 import RoundIconButton from '../Button/RoundIconButton'
 
 const VaultSelectionButton = ({ isMobileNavigation = false }: { isMobileNavigation?: boolean }) => {
@@ -16,7 +15,7 @@ const VaultSelectionButton = ({ isMobileNavigation = false }: { isMobileNavigati
   const [isOpen, setIsOpen] = useState(false)
   const toggleMenu = () => setIsOpen(!isOpen)
 
-  if (!featureTrunkVaultsEnabled()) {
+  if (!application.featuresController.isEntitledToVaults()) {
     return null
   }
 
