@@ -25,7 +25,7 @@ describe.only('shared vault revisions', function () {
     context = undefined
   })
 
-  it('should be able to access shared item revisions as third party user', async () => {
+  it.only('should be able to access shared item revisions as third party user', async () => {
     let revisionsOfAnItem =  0
     let revisionsAfterMovingToSharedVault = 0
 
@@ -37,6 +37,7 @@ describe.only('shared vault revisions', function () {
     await Factory.sleep(Factory.ServerRevisionFrequency)
 
     await context.changeNoteTitleAndSync(note, 'new title 1')
+
     await Factory.sleep(Factory.ServerRevisionFrequency)
 
     revisionsOfAnItem++
@@ -44,7 +45,7 @@ describe.only('shared vault revisions', function () {
 
     await context.changeNoteTitleAndSync(note, 'new title 2')
 
-    await Factory.sleep(Factory.ServerRevisionCreationDelay)
+    await Factory.sleep(2 * Factory.ServerRevisionCreationDelay)
 
     revisionsOfAnItem++
     revisionsAfterMovingToSharedVault++
