@@ -22,6 +22,7 @@ import { LinkingController } from './LinkingController'
 import { NavigationController } from './Navigation/NavigationController'
 import { SubscriptionController } from './Subscription/SubscriptionController'
 import { getLinkingSearchResults } from '@/Utils/Items/Search/getSearchResults'
+import { FeaturesController } from './FeaturesController'
 
 const createNote = (name: string, options?: Partial<SNNote>) => {
   return {
@@ -63,6 +64,7 @@ describe('LinkingController', () => {
       itemListController: {} as jest.Mocked<ItemListController>,
       filesController: {} as jest.Mocked<FilesController>,
       subscriptionController: {} as jest.Mocked<SubscriptionController>,
+      featuresController: {} as jest.Mocked<FeaturesController>,
     } as unknown as jest.Mocked<WebApplication>
 
     application.getPreference = jest.fn()
@@ -81,6 +83,7 @@ describe('LinkingController', () => {
           application.filesController,
           application.subscriptionController,
           application.navigationController,
+          application.featuresController,
           application.itemControllerGroup,
           application.vaultDisplayService,
           application.preferences,
