@@ -911,7 +911,6 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
               )}
               {renderHeaderOptions && (
                 <div className="note-view-options-buttons flex items-center gap-3">
-                  <CollaborationInfoHUD item={this.note} />
                   <LinkedItemsButton
                     linkingController={this.application.linkingController}
                     onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
@@ -930,6 +929,9 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
                   />
                 </div>
               )}
+            </div>
+            <div className="mb-1 mt-2.5 md:hidden">
+              <CollaborationInfoHUD item={this.note} />
             </div>
             <div className="hidden md:block">
               <LinkedItemBubblesContainer item={this.note} linkingController={this.application.linkingController} />
