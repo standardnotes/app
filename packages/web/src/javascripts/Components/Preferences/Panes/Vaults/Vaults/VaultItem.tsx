@@ -138,7 +138,7 @@ const VaultItem = ({ vault }: Props) => {
         <EditVaultModal existingVaultUuid={vault.uuid} onCloseDialog={closeVaultModal} />
       </ModalOverlay>
 
-      <div className="flex flex-row gap-3.5 rounded-lg border border-border px-3.5 py-2.5 shadow">
+      <div className="flex flex-row gap-3.5 rounded-lg border border-border px-3.5 py-2.5 shadow-sm">
         <Icon type={vault.iconString} size="custom" className="mt-2.5 h-5.5 w-5.5 flex-shrink-0" />
         <div className="flex flex-col gap-1.5 py-1.5">
           <span className="mr-auto overflow-hidden text-ellipsis text-base font-bold">{vault.name}</span>
@@ -164,14 +164,14 @@ const VaultItem = ({ vault }: Props) => {
             )}
             {vault.isSharedVaultListing() ? (
               <Button colorStyle="info" label="Invite Contacts" className="text-xs" onClick={openInviteModal} />
-            ) : (
+            ) : application.hasAccount() ? (
               <Button
                 colorStyle="info"
                 label="Enable Collaboration"
                 className="text-xs"
                 onClick={convertToSharedVault}
               />
-            )}
+            ) : null}
           </div>
         </div>
       </div>
