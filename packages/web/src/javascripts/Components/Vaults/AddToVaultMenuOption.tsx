@@ -61,12 +61,8 @@ const VaultMenu = observer(({ items }: { items: DecryptedItemInterface[] }) => {
             void removeItemsFromVault()
           }}
         >
-          <span className="flex overflow-hidden overflow-ellipsis whitespace-nowrap">
-            <Icon type="close" className="mr-2 text-neutral" />
-            <div className="flex w-full items-center gap-1">
-              Move out of {singleItemVault ? singleItemVault.name : 'vaults'}
-            </div>
-          </span>
+          <Icon type="close" className="mr-2 text-neutral" />
+          Move out of {singleItemVault ? singleItemVault.name : 'vaults'}
         </MenuItem>
       )}
       {!vaults.length && <div className="flex flex-col items-center justify-center py-1">No vaults found</div>}
@@ -81,23 +77,20 @@ const VaultMenu = observer(({ items }: { items: DecryptedItemInterface[] }) => {
             onClick={() => {
               doesVaultContainItems(vault) ? void removeItemsFromVault() : void addItemsToVault(vault)
             }}
+            className={doesVaultContainItems(vault) ? 'font-bold' : ''}
           >
-            <span
+            <Icon
+              type={vault.iconString}
+              size="custom"
               className={classNames(
-                'flex overflow-ellipsis whitespace-nowrap',
-                doesVaultContainItems(vault) ? 'font-bold' : '',
+                'mr-2 h-6 w-6 text-neutral md:h-5 md:w-5',
+                doesVaultContainItems(vault) ? 'text-info' : '',
               )}
-            >
-              <Icon
-                type={vault.iconString}
-                size="large"
-                className={classNames('mr-2 text-neutral', doesVaultContainItems(vault) ? 'text-info' : '')}
-              />
-              <div className="flex w-full items-center">
-                {vault.name}
-                {application.vaultLocks.isVaultLocked(vault) && <Icon className="ml-1" type="lock" size={'small'} />}
-              </div>
-            </span>
+            />
+            <div className="flex w-full items-center">
+              {vault.name}
+              {application.vaultLocks.isVaultLocked(vault) && <Icon className="ml-1" type="lock" size={'small'} />}
+            </div>
           </MenuItem>
         )
       })}

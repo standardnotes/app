@@ -154,7 +154,7 @@ const Vaults = () => {
               </div>
             )}
             <div className="mt-2.5 flex flex-row">
-              <Button label="Add New Contact" className={'mr-3 text-xs'} onClick={createNewContact} />
+              <Button label="Add New Contact" className="mr-3" onClick={createNewContact} />
             </div>
           </PreferencesSegment>
         </PreferencesGroup>
@@ -172,7 +172,7 @@ const Vaults = () => {
           )}
           {canCreateMoreVaults ? (
             <div className="mt-2.5 flex flex-row">
-              <Button label="Create New Vault" className={'mr-3 text-xs'} onClick={createNewVault} />
+              <Button label="Create New Vault" className="mr-3" onClick={createNewVault} />
             </div>
           ) : (
             <div className="mt-3.5">

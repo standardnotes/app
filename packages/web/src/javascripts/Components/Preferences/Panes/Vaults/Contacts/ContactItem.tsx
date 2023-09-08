@@ -30,23 +30,23 @@ const ContactItem = ({ contact }: Props) => {
         <EditContactModal editContactUuid={contact.contactUuid} onCloseDialog={closeContactModal} />
       </ModalOverlay>
 
-      <div className="flex flex-row gap-3.5 rounded-lg px-3.5 py-2.5 border border-border shadow">
+      <div className="flex flex-row gap-3.5 rounded-lg border border-border px-3.5 py-2.5 shadow-sm">
         <Icon type="user" size="custom" className="mt-2 h-5 w-5 flex-shrink-0" />
-        <div className="flex flex-col gap-1 py-1.5 overflow-hidden">
+        <div className="flex flex-col gap-1 overflow-hidden py-1.5">
           <span
             className={classNames(
-              'mr-auto overflow-hidden text-ellipsis text-base font-bold w-full',
+              'w-full overflow-hidden text-ellipsis text-base font-bold',
               contact.isMe ? 'text-info' : '',
             )}
           >
             {contact.name}
           </span>
 
-          <span className="mr-auto overflow-hidden text-ellipsis text-sm w-full">{collaborationID}</span>
+          <span className="w-full overflow-hidden text-ellipsis text-sm">{collaborationID}</span>
 
-          <div className="mt-2.5 flex flex-row">
-            <Button label="Edit" className={'mr-3 text-xs'} onClick={() => setIsContactModalOpen(true)} />
-            {!contact.isMe && <Button label="Delete" className={'mr-3 text-xs'} onClick={deleteContact} />}
+          <div className="mt-1.5 flex flex-row">
+            <Button label="Edit" className="mr-3" onClick={() => setIsContactModalOpen(true)} />
+            {!contact.isMe && <Button label="Delete" className="mr-3" onClick={deleteContact} />}
           </div>
         </div>
       </div>

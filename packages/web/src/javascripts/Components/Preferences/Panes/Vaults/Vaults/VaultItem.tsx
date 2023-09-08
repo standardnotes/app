@@ -141,36 +141,23 @@ const VaultItem = ({ vault }: Props) => {
       <div className="flex flex-row gap-3.5 rounded-lg border border-border px-3.5 py-2.5 shadow-sm">
         <Icon type={vault.iconString} size="custom" className="mt-2.5 h-5.5 w-5.5 flex-shrink-0" />
         <div className="flex flex-col gap-1.5 py-1.5">
-          <span className="mr-auto overflow-hidden text-ellipsis text-base font-bold">{vault.name}</span>
-          {vault.description && (
-            <span className="mr-auto overflow-hidden text-ellipsis text-sm">{vault.description}</span>
-          )}
-          <span className="mr-auto overflow-hidden text-ellipsis text-sm">Vault ID: {vault.systemIdentifier}</span>
-
+          <span className="overflow-hidden text-ellipsis text-base font-bold">{vault.name}</span>
+          {vault.description && <span className="overflow-hidden text-ellipsis text-sm">{vault.description}</span>}
+          <span className="overflow-hidden text-ellipsis text-sm">Vault ID: {vault.systemIdentifier}</span>
           {!!vault.sharing?.fileBytesUsed && (
-            <span className="mr-auto overflow-hidden text-ellipsis text-sm">
+            <span className="overflow-hidden text-ellipsis text-sm">
               File storage used: {formatSizeToReadableString(vault.sharing?.fileBytesUsed ?? 0)}
             </span>
           )}
-
           <div className="mt-2 flex w-full flex-wrap gap-3">
-            <Button label="Edit" className="text-xs" onClick={openEditModal} />
-            {isVaultLockable && (
-              <Button label={isVaultLocked ? 'Unlock' : 'Lock'} className="text-xs" onClick={toggleLock} />
-            )}
-            {isAdmin && <Button colorStyle="danger" label="Delete" className="text-xs" onClick={deleteVault} />}
-            {!isAdmin && vault.isSharedVaultListing() && (
-              <Button label="Leave Vault" className="text-xs" onClick={leaveVault} />
-            )}
+            <Button label="Edit" onClick={openEditModal} />
+            {isVaultLockable && <Button label={isVaultLocked ? 'Unlock' : 'Lock'} onClick={toggleLock} />}
+            {isAdmin && <Button colorStyle="danger" label="Delete" onClick={deleteVault} />}
+            {!isAdmin && vault.isSharedVaultListing() && <Button label="Leave Vault" onClick={leaveVault} />}
             {vault.isSharedVaultListing() ? (
-              <Button colorStyle="info" label="Invite Contacts" className="text-xs" onClick={openInviteModal} />
+              <Button colorStyle="info" label="Invite Contacts" onClick={openInviteModal} />
             ) : application.hasAccount() ? (
-              <Button
-                colorStyle="info"
-                label="Enable Collaboration"
-                className="text-xs"
-                onClick={convertToSharedVault}
-              />
+              <Button colorStyle="info" label="Enable Collaboration" onClick={convertToSharedVault} />
             ) : null}
           </div>
         </div>
