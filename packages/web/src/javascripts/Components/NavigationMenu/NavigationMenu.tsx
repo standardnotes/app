@@ -12,9 +12,11 @@ export const NavigationMenuButton = () => {
   const { setPaneLayout } = useResponsiveAppPane()
   const { isTabletOrMobile, isMobile } = useIsTabletOrMobileScreen()
 
-  const [bubbleCount, setBubbleCount] = useState<string | undefined>(() =>
-    application.status.totalPreferencesBubbleCount.toString(),
-  )
+  const [bubbleCount, setBubbleCount] = useState<string | undefined>(() => {
+    return application.status.totalPreferencesBubbleCount
+      ? application.status.totalPreferencesBubbleCount.toString()
+      : undefined
+  })
   useEffect(() => {
     return application.status.addEventObserver((event, message) => {
       if (event !== StatusServiceEvent.PreferencesBubbleCountChanged) {
