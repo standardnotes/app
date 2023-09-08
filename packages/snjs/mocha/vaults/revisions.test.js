@@ -114,7 +114,10 @@ describe('shared vault revisions', function () {
     await context.vaults.removeItemFromVault(note)
 
     const itemHistoryOrError = await contactContext.application.listRevisions.execute({ itemUuid: note.uuid })
-    expect(itemHistoryOrError.isFailed()).to.be.true
+    expect(itemHistoryOrError.isFailed()).to.be.false
+
+    const itemHistory = itemHistoryOrError.getValue()
+    expect(itemHistory.length).to.equal(0)
 
     await deinitContactContext()
   })
