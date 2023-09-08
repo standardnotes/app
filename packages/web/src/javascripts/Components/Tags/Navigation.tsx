@@ -16,6 +16,7 @@ import { mergeRefs } from '@/Hooks/mergeRefs'
 import { useAvailableSafeAreaPadding } from '@/Hooks/useSafeAreaPadding'
 import QuickSettingsButton from '../Footer/QuickSettingsButton'
 import VaultSelectionButton from '../Footer/VaultSelectionButton'
+import PreferencesButton from '../Footer/PreferencesButton'
 
 type Props = {
   application: WebApplication
@@ -121,14 +122,7 @@ const Navigation = forwardRef<HTMLDivElement, Props>(({ application, className, 
             icon="lock-filled"
           />
         )}
-        <RoundIconButton
-          className="ml-2.5 bg-default"
-          onClick={() => {
-            application.preferencesController.openPreferences()
-          }}
-          label="Go to preferences"
-          icon="tune"
-        />
+        <PreferencesButton openPreferences={() => application.preferencesController.openPreferences()} />
         <QuickSettingsButton application={application} isMobileNavigation />
         {application.featuresController.isEntitledToVaults() && <VaultSelectionButton isMobileNavigation />}
       </div>

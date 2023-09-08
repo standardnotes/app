@@ -5,6 +5,8 @@ import { useApplication } from '../ApplicationProvider'
 import { useCommandService } from '../CommandProvider'
 import Icon from '../Icon/Icon'
 import StyledTooltip from '../StyledTooltip/StyledTooltip'
+import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
+import RoundIconButton from '../Button/RoundIconButton'
 
 type Props = {
   openPreferences: (openWhatsNew: boolean) => void
@@ -45,6 +47,21 @@ const PreferencesButton = ({ openPreferences }: Props) => {
       setBubbleCount(message)
     })
   }, [application.status])
+
+  const isMobileScreen = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
+
+  if (isMobileScreen) {
+    return (
+      <div className="relative">
+        <RoundIconButton className="ml-2.5 bg-default" onClick={onClick} label="Go to preferences" icon="tune" />
+        {bubbleCount && (
+          <div className="absolute right-0 top-0 aspect-square -translate-y-1/2 translate-x-2 rounded-full border border-info-contrast bg-info px-2 py-0.5 text-[0.65rem] font-bold text-info-contrast">
+            {bubbleCount}
+          </div>
+        )}
+      </div>
+    )
+  }
 
   return (
     <StyledTooltip label={`Open preferences (${shortcut})`}>
