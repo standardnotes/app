@@ -44,7 +44,7 @@ describe('shared vault revisions', function () {
 
     await context.changeNoteTitleAndSync(note, 'new title 2')
 
-    await Factory.sleep(Factory.ServerRevisionCreationDelay)
+    await Factory.sleep(Factory.ServerRevisionFrequency)
 
     revisionsOfAnItem++
     revisionsAfterMovingToSharedVault++
@@ -107,11 +107,14 @@ describe('shared vault revisions', function () {
       await Collaboration.createSharedVaultWithAcceptedInviteAndNote(context)
 
     await Factory.sleep(Factory.ServerRevisionFrequency)
+
     await context.changeNoteTitleAndSync(note, 'new title 1')
 
-    await Factory.sleep(Factory.ServerRevisionCreationDelay)
+    await Factory.sleep(Factory.ServerRevisionFrequency)
 
     await context.vaults.removeItemFromVault(note)
+
+    await Factory.sleep(Factory.ServerRevisionCreationDelay)
 
     const itemHistoryOrError = await contactContext.application.listRevisions.execute({ itemUuid: note.uuid })
     expect(itemHistoryOrError.isFailed()).to.be.false
@@ -127,9 +130,10 @@ describe('shared vault revisions', function () {
       await Collaboration.createSharedVaultWithAcceptedInviteAndNote(context)
 
     await Factory.sleep(Factory.ServerRevisionFrequency)
+
     await context.changeNoteTitleAndSync(note, 'new title 1')
 
-    await Factory.sleep(Factory.ServerRevisionCreationDelay)
+    await Factory.sleep(Factory.ServerRevisionFrequency)
 
     let itemHistoryOrError = await contactContext.application.listRevisions.execute({ itemUuid: note.uuid })
     expect(itemHistoryOrError.isFailed()).to.be.false
@@ -138,6 +142,8 @@ describe('shared vault revisions', function () {
     expect(itemHistory.length).to.equal(1)
 
     await context.vaultUsers.removeUserFromSharedVault(sharedVault, contactContext.userUuid)
+
+    await Factory.sleep(Factory.ServerRevisionCreationDelay)
 
     itemHistoryOrError = await contactContext.application.listRevisions.execute({ itemUuid: note.uuid })
     expect(itemHistoryOrError.isFailed()).to.be.false
