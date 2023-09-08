@@ -32,7 +32,7 @@ const WhatsNew = ({ application }: { application: WebApplication }) => {
   const lastReadVersion = useMemo(() => application.changelogService.getLastReadVersion(), [application])
 
   useEffect(() => {
-    void application.changelogService.getChangelog().then(setChangelog)
+    application.changelogService.getChangelog().then(setChangelog).catch(console.error)
   }, [application])
 
   useEffect(() => {
