@@ -47,6 +47,7 @@ import { NoteViewController } from './Controller/NoteViewController'
 import { PlainEditor, PlainEditorInterface } from './PlainEditor/PlainEditor'
 import { EditorMargins, EditorMaxWidths } from '../EditorWidthSelectionModal/EditorWidths'
 import NoteStatusIndicator, { NoteStatus } from './NoteStatusIndicator'
+import CollaborationInfoHUD from './CollaborationInfoHUD'
 import Button from '../Button/Button'
 import ModalOverlay from '../Modal/ModalOverlay'
 import NoteConflictResolutionModal from './NoteConflictResolutionModal/NoteConflictResolutionModal'
@@ -928,6 +929,9 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
                   />
                 </div>
               )}
+            </div>
+            <div className="mb-1 mt-2.5 md:hidden">
+              <CollaborationInfoHUD item={this.note} />
             </div>
             <div className="hidden md:block">
               <LinkedItemBubblesContainer item={this.note} linkingController={this.application.linkingController} />
