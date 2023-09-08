@@ -47,7 +47,6 @@ import { NoteViewController } from './Controller/NoteViewController'
 import { PlainEditor, PlainEditorInterface } from './PlainEditor/PlainEditor'
 import { EditorMargins, EditorMaxWidths } from '../EditorWidthSelectionModal/EditorWidths'
 import NoteStatusIndicator, { NoteStatus } from './NoteStatusIndicator'
-import CollaborationInfoHUD from './CollaborationInfoHUD'
 import Button from '../Button/Button'
 import ModalOverlay from '../Modal/ModalOverlay'
 import NoteConflictResolutionModal from './NoteConflictResolutionModal/NoteConflictResolutionModal'
@@ -911,7 +910,6 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
               )}
               {renderHeaderOptions && (
                 <div className="note-view-options-buttons flex items-center gap-3">
-                  <CollaborationInfoHUD item={this.note} />
                   <LinkedItemsButton
                     linkingController={this.application.linkingController}
                     onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}

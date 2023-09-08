@@ -13,6 +13,9 @@ import { FOCUS_TAGS_INPUT_COMMAND, keyboardStringForShortcut } from '@standardno
 import { useCommandService } from '../CommandProvider'
 import { useItemLinks } from '@/Hooks/useItemLinks'
 import RoundIconButton from '../Button/RoundIconButton'
+import { useApplication } from '../ApplicationProvider'
+import VaultNameBadge from '../Vaults/VaultNameBadge'
+import LastEditedByBadge from '../Vaults/LastEditedByBadge'
 
 type Props = {
   linkingController: LinkingController
@@ -36,6 +39,7 @@ const LinkedItemBubblesContainer = ({
 }: Props) => {
   const { toggleAppPane } = useResponsiveAppPane()
 
+  const application = useApplication()
   const commandService = useCommandService()
 
   const { unlinkItems, activateItem } = linkingController
@@ -161,6 +165,9 @@ const LinkedItemBubblesContainer = ({
 
   const shouldHideToggle = hideToggle || (!canShowContainerToggle && !isCollapsed)
 
+  const vault = application.vaults.getItemVault(item)
+  const lastEditedByContact = application.sharedVaults.getItemLastEditedBy(item)
+
   if (readonly && itemsToDisplay.length === 0) {
     return null
   }
@@ -183,6 +190,8 @@ const LinkedItemBubblesContainer = ({
         )}
         ref={setLinkContainer}
       >
+        {!!vault && <VaultNameBadge vault={vault} />}
+        {!!lastEditedByContact && <LastEditedByBadge contact={lastEditedByContact} />}
         {visibleItems.map((link) => (
           <LinkedItemBubble
             link={link}
