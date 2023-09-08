@@ -245,6 +245,8 @@ export async function awaitFunctionInvokation(object, functionName) {
   })
 }
 
+export const ServerTransitionDelay = 1.5
+
 /**
  * Signing out of an application deinits it.
  * A new one must be created.
@@ -252,6 +254,7 @@ export async function awaitFunctionInvokation(object, functionName) {
 export async function signOutApplicationAndReturnNew(application) {
   const isRealCrypto = application.crypto instanceof SNWebCrypto
   await application.user.signOut()
+  await sleep(ServerTransitionDelay, 'transition triggered during sign out')
   if (isRealCrypto) {
     return createInitAppWithRealCrypto()
   } else {
@@ -262,6 +265,7 @@ export async function signOutApplicationAndReturnNew(application) {
 export async function signOutAndBackIn(application, email, password) {
   const isRealCrypto = application.crypto instanceof SNWebCrypto
   await application.user.signOut()
+  await sleep(ServerTransitionDelay, 'transition triggered during sign out')
   const newApplication = isRealCrypto ? await createInitAppWithRealCrypto() : await createInitAppWithFakeCrypto()
   await this.loginToApplication({
     application: newApplication,
