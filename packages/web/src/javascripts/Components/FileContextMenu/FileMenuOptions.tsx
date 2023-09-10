@@ -69,6 +69,10 @@ const FileMenuOptions: FunctionComponent<Props> = ({
     closeMenu()
   }, [closeMenu, toggleAppPane])
 
+  if (selectedFiles.length === 0) {
+    return <div className="text-center">No files selected</div>
+  }
+
   return (
     <>
       {selectedFiles.length === 1 && (
