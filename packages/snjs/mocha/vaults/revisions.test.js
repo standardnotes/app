@@ -51,6 +51,10 @@ describe('shared vault revisions', function () {
 
     const contactItemHistoryOrError = await contactContext.application.listRevisions.execute({ itemUuid: note.uuid })
     const contactItemHistory = contactItemHistoryOrError.getValue()
+    if (contactItemHistory.length !== revisionsAfterMovingToSharedVault) {
+      console.log('contactItemHistory', contactItemHistory)
+    }
+
     expect(contactItemHistory.length).to.equal(revisionsAfterMovingToSharedVault)
 
     const itemHistoryOrError = await context.application.listRevisions.execute({ itemUuid: note.uuid })
@@ -139,6 +143,10 @@ describe('shared vault revisions', function () {
     expect(itemHistoryOrError.isFailed()).to.be.false
 
     let itemHistory = itemHistoryOrError.getValue()
+    if (itemHistory.length !== 1) {
+      console.log('itemHistory', itemHistory)
+    }
+
     expect(itemHistory.length).to.equal(1)
 
     await context.vaultUsers.removeUserFromSharedVault(sharedVault, contactContext.userUuid)
