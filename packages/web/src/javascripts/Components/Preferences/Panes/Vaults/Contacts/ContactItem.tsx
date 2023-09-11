@@ -5,6 +5,8 @@ import { TrustedContactInterface, classNames } from '@standardnotes/snjs'
 import EditContactModal from './EditContactModal'
 import { useCallback, useState } from 'react'
 import { useApplication } from '@/Components/ApplicationProvider'
+import { VisuallyHidden } from '@ariakit/react'
+import StyledTooltip from '@/Components/StyledTooltip/StyledTooltip'
 
 type Props = {
   contact: TrustedContactInterface
@@ -30,9 +32,9 @@ const ContactItem = ({ contact }: Props) => {
         <EditContactModal editContactUuid={contact.contactUuid} onCloseDialog={closeContactModal} />
       </ModalOverlay>
 
-      <div className="flex flex-row gap-3.5 rounded-lg border border-border px-3.5 py-2.5 shadow-sm">
-        <Icon type="user" size="custom" className="mt-2 h-5 w-5 flex-shrink-0" />
-        <div className="flex flex-col gap-1 overflow-hidden py-1.5">
+      <div className="flex items-start gap-3.5 rounded-lg border border-border px-3.5 py-2.5 shadow-sm">
+        <div className="grid grid-cols-[1fr,auto] grid-rows-2 place-items-center overflow-hidden [column-gap:0.875rem] [row-gap:0.25rem]">
+          <Icon type="user" size="custom" className="h-5 w-5 flex-shrink-0" />
           <span
             className={classNames(
               'w-full overflow-hidden text-ellipsis text-base font-bold',
@@ -41,13 +43,25 @@ const ContactItem = ({ contact }: Props) => {
           >
             {contact.name}
           </span>
-
-          <span className="w-full overflow-hidden text-ellipsis text-sm">{collaborationID}</span>
-
-          <div className="mt-1.5 flex flex-row">
-            <Button label="Edit" className="mr-3" onClick={() => setIsContactModalOpen(true)} />
-            {!contact.isMe && <Button label="Delete" className="mr-3" onClick={deleteContact} />}
-          </div>
+          <span className="col-start-2 w-full overflow-hidden text-ellipsis text-sm brightness-75">
+            {collaborationID}
+          </span>
+        </div>
+        <div className="flex gap-3">
+          <StyledTooltip label="Edit contact">
+            <Button className="!px-2 py-2" onClick={() => setIsContactModalOpen(true)}>
+              <VisuallyHidden>Edit</VisuallyHidden>
+              <Icon type="pencil-filled" size="medium" />
+            </Button>
+          </StyledTooltip>
+          {!contact.isMe && (
+            <StyledTooltip label="Delete contact">
+              <Button className="!px-2 py-2" onClick={deleteContact}>
+                <VisuallyHidden>Delete</VisuallyHidden>
+                <Icon type="trash-filled" className="text-danger" size="medium" />
+              </Button>
+            </StyledTooltip>
+          )}
         </div>
       </div>
     </>

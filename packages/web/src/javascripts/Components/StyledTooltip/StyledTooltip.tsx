@@ -1,6 +1,6 @@
 import { classNames } from '@standardnotes/snjs'
 import { ReactNode, useState, useRef, useEffect } from 'react'
-import { Tooltip, TooltipAnchor, TooltipOptions, useTooltipStore } from '@ariakit/react'
+import { Tooltip, TooltipAnchor, TooltipOptions, TooltipStoreProps, useTooltipStore } from '@ariakit/react'
 import { Slot } from '@radix-ui/react-slot'
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 import { getPositionedPopoverStyles } from '../Popover/GetPositionedPopoverStyles'
@@ -14,6 +14,7 @@ const StyledTooltip = ({
   showOnMobile = false,
   showOnHover = true,
   interactive = false,
+  type = 'label',
   ...props
 }: {
   children: ReactNode
@@ -22,6 +23,7 @@ const StyledTooltip = ({
   showOnMobile?: boolean
   showOnHover?: boolean
   interactive?: boolean
+  type?: TooltipStoreProps['type']
 } & Partial<TooltipOptions>) => {
   const [forceOpen, setForceOpen] = useState<boolean | undefined>()
 
@@ -32,6 +34,7 @@ const StyledTooltip = ({
     skipTimeout: 0,
     open: forceOpen,
     animated: true,
+    type,
   })
 
   const anchorRef = useRef<HTMLElement>(null)
@@ -84,8 +87,8 @@ const StyledTooltip = ({
         autoFocusOnShow={!showOnHover}
         store={tooltip}
         className={classNames(
-          'z-tooltip max-w-max rounded border border-border translucent-ui:border-[--popover-border-color] bg-contrast translucent-ui:bg-[--popover-background-color] [backdrop-filter:var(--popover-backdrop-filter)] px-3 py-1.5 text-sm text-foreground shadow',
-          'opacity-60 [&[data-enter]]:opacity-100 [&[data-leave]]:opacity-60 transition-opacity duration-75',
+          'z-tooltip max-w-max rounded border border-border bg-contrast px-3 py-1.5 text-sm text-foreground shadow [backdrop-filter:var(--popover-backdrop-filter)] translucent-ui:border-[--popover-border-color] translucent-ui:bg-[--popover-background-color]',
+          'opacity-60 transition-opacity duration-75 [&[data-enter]]:opacity-100 [&[data-leave]]:opacity-60',
           'focus-visible:shadow-none focus-visible:outline-none',
           className,
         )}
