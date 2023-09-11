@@ -7,6 +7,7 @@ import Icon from '../Icon/Icon'
 import StyledTooltip from '../StyledTooltip/StyledTooltip'
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 import RoundIconButton from '../Button/RoundIconButton'
+import CountBubble from '../Preferences/PreferencesComponents/CountBubble'
 
 type Props = {
   openPreferences: (openWhatsNew: boolean) => void
@@ -54,11 +55,7 @@ const PreferencesButton = ({ openPreferences }: Props) => {
     return (
       <div className="relative">
         <RoundIconButton className="ml-2.5 bg-default" onClick={onClick} label="Go to preferences" icon="tune" />
-        {bubbleCount && (
-          <div className="absolute right-0 top-0 aspect-square -translate-y-1/2 translate-x-2 rounded-full border border-info-contrast bg-info px-2 py-0.5 text-[0.65rem] font-bold text-info-contrast">
-            {bubbleCount}
-          </div>
-        )}
+        <CountBubble position="right" count={bubbleCount} />
       </div>
     )
   }
@@ -68,11 +65,7 @@ const PreferencesButton = ({ openPreferences }: Props) => {
       <button onClick={onClick} className="group relative flex h-full w-8 cursor-pointer items-center justify-center">
         <div className="relative h-5">
           <Icon type="tune" className="rounded group-hover:text-info" />
-          {bubbleCount && (
-            <div className="absolute bottom-full left-full aspect-square -translate-x-1/2 translate-y-1/2 rounded-full border border-info-contrast bg-info px-1.5 py-px text-[0.575rem] font-bold text-info-contrast">
-              {bubbleCount}
-            </div>
-          )}
+          <CountBubble position="right" count={bubbleCount} />
         </div>
         {isChangelogUnread && <div className="absolute right-0.5 top-0.5 h-2 w-2 rounded-full bg-info" />}
       </button>
