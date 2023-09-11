@@ -1,9 +1,11 @@
 import { useApplication } from '@/Components/ApplicationProvider'
 import { DecryptedItemInterface, TrustedContactInterface, VaultListingInterface } from '@standardnotes/snjs'
+import useItem from './useItem'
 
 type ItemVaultInfo = {
   vault?: VaultListingInterface
   lastEditedByContact?: TrustedContactInterface
+  sharedByContact?: TrustedContactInterface
 }
 
 export const useItemVaultInfo = (item: DecryptedItemInterface): ItemVaultInfo => {
@@ -14,16 +16,14 @@ export const useItemVaultInfo = (item: DecryptedItemInterface): ItemVaultInfo =>
     lastEditedByContact: undefined,
   }
 
+  info.vault = useItem(application.vaults.getItemVault(item)?.uuid)
+
   if (!application.featuresController.isEntitledToVaults()) {
     return info
   }
 
-  if (application.items.isTemplateItem(item)) {
-    return info
-  }
-
-  info.vault = application.vaults.getItemVault(item)
   info.lastEditedByContact = application.sharedVaults.getItemLastEditedBy(item)
+  info.sharedByContact = application.sharedVaults.getItemSharedBy(item)
 
   return info
 }

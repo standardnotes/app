@@ -1,8 +1,8 @@
 import { FunctionComponent } from 'react'
-import { useApplication } from '../ApplicationProvider'
 import { DecryptedItemInterface, classNames } from '@standardnotes/snjs'
 import VaultNameBadge from '../Vaults/VaultNameBadge'
 import SharedByContactBadge from '../Vaults/SharedByContactBadge'
+import { useItemVaultInfo } from '@/Hooks/useItemVaultInfo'
 
 type Props = {
   item: DecryptedItemInterface
@@ -10,22 +10,11 @@ type Props = {
 }
 
 const ListItemVaultInfo: FunctionComponent<Props> = ({ item, className }) => {
-  const application = useApplication()
+  const { vault, sharedByContact } = useItemVaultInfo(item)
 
-  if (!application.featuresController.isEntitledToVaults()) {
-    return null
-  }
-
-  if (application.items.isTemplateItem(item)) {
-    return null
-  }
-
-  const vault = application.vaults.getItemVault(item)
   if (!vault) {
     return null
   }
-
-  const sharedByContact = application.sharedVaults.getItemSharedBy(item)
 
   return (
     <div className={classNames('flex flex-wrap items-center gap-2', className)}>
