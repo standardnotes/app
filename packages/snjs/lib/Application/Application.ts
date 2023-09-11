@@ -80,8 +80,6 @@ import {
   GenerateUuid,
   CreateDecryptedBackupFile,
   CreateEncryptedBackupFile,
-  GetTransitionStatus,
-  StartTransition,
   WebSocketsService,
 } from '@standardnotes/services'
 import {
@@ -1138,14 +1136,6 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
 
   public get setHost(): SetHost {
     return this.dependencies.get<SetHost>(TYPES.SetHost)
-  }
-
-  get getTransitionStatus(): GetTransitionStatus {
-    return this.dependencies.get<GetTransitionStatus>(TYPES.GetTransitionStatus)
-  }
-
-  get startTransition(): StartTransition {
-    return this.dependencies.get<StartTransition>(TYPES.StartTransition)
   }
 
   public get legacyApi(): LegacyApiService {

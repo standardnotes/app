@@ -140,8 +140,6 @@ import {
   CreateDecryptedBackupFile,
   CreateEncryptedBackupFile,
   SyncLocalVaultsWithRemoteSharedVaults,
-  GetTransitionStatus,
-  StartTransition,
   WebSocketsService,
 } from '@standardnotes/services'
 import { ItemManager } from '../../Services/Items/ItemManager'
@@ -155,7 +153,6 @@ import {
   AuthenticatorApiService,
   AuthenticatorServer,
   HttpService,
-  HttpServiceInterface,
   RevisionApiService,
   RevisionServer,
   SharedVaultInvitesServer,
@@ -1025,14 +1022,6 @@ export class Dependencies {
         this.get<GetAuthenticatorAuthenticationOptions>(TYPES.GetAuthenticatorAuthenticationOptions),
         this.options.u2fAuthenticatorVerificationPromptFunction,
       )
-    })
-
-    this.factory.set(TYPES.GetTransitionStatus, () => {
-      return new GetTransitionStatus(this.get<HttpServiceInterface>(TYPES.HttpService))
-    })
-
-    this.factory.set(TYPES.StartTransition, () => {
-      return new StartTransition(this.get<HttpServiceInterface>(TYPES.HttpService))
     })
 
     this.factory.set(TYPES.ListRevisions, () => {
