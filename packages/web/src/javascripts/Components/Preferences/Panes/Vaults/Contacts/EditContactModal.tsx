@@ -95,41 +95,40 @@ const EditContactModal: FunctionComponent<Props> = ({ onCloseDialog, fromInvite,
       close={handleDialogClose}
       actions={modalActions}
     >
-      <div className="px-4.5 pb-1.5 pt-4">
-        <div className="flex w-full flex-col">
-          <div className="mb-3">
+      <div className="mb-3 flex w-full flex-col gap-4 px-4.5 pb-1.5 pt-4">
+        <label>
+          <div className="mb-1">Contact Name</div>
+          <DecoratedInput
+            id="invite-name-input"
+            value={name}
+            onChange={(value) => {
+              setName(value)
+            }}
+            ref={focusInput}
+            onEnter={handleSubmit}
+          />
+        </label>
+
+        {!editingContact?.isMe && (
+          <label>
+            <div className="mb-1">CollaborationID</div>
             <DecoratedInput
-              id="invite-name-input"
-              value={name}
-              placeholder="Contact Name"
+              id="invite-email-input"
+              value={collaborationID}
               onChange={(value) => {
-                setName(value)
+                setCollaborationID(value)
               }}
-              ref={focusInput}
               onEnter={handleSubmit}
             />
+          </label>
+        )}
 
-            {!editingContact?.isMe && (
-              <DecoratedInput
-                className={{ container: 'mt-4' }}
-                id="invite-email-input"
-                value={collaborationID}
-                placeholder="Contact CollaborationID"
-                onChange={(value) => {
-                  setCollaborationID(value)
-                }}
-                onEnter={handleSubmit}
-              />
-            )}
-
-            {!editContactUuid && (
-              <p className="mt-4">
-                Ask your contact for their Standard Notes CollaborationID via secure email or chat. Then, enter it here
-                to add them as a contact.
-              </p>
-            )}
-          </div>
-        </div>
+        {!editContactUuid && (
+          <p>
+            Ask your contact for their Standard Notes CollaborationID via secure email or chat. Then, enter it here to
+            add them as a contact.
+          </p>
+        )}
       </div>
     </Modal>
   )
