@@ -7,7 +7,7 @@ import { PreferencePaneId } from '../Preferences/PreferenceId'
 
 export class StatusService extends AbstractService<StatusServiceEvent, string> implements StatusServiceInterface {
   private preferencesBubbleCounts: Record<PreferencePaneId, number> = {
-    general: 2,
+    general: 0,
     account: 0,
     security: 0,
     'home-server': 0,
