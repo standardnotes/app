@@ -158,6 +158,21 @@ export class VaultService
       movableLinkedItems = movableLinkedItems.concat(this.items.getItemLinkedFiles(item))
       movableLinkedItems = movableLinkedItems.concat(this.items.getItemLinkedNotes(item))
 
+      const linkedItemInAnotherVault = movableLinkedItems.find((item) => {
+        const itemVault = this.getItemVault(item)
+        return itemVault && itemVault.uuid !== vault.uuid
+      })
+
+      if (linkedItemInAnotherVault) {
+        this.alerts
+          .alertV2({
+            title: 'Cannot move item to vault',
+            text: 'An item linked to this note is in another vault. Please move it to this vault first.',
+          })
+          .catch(console.error)
+        return undefined
+      }
+
       if (movableLinkedItems.length > 0) {
         const itemType = isNote(item) ? 'note' : 'file'
         const confirmed = await this.alerts.confirmV2({
