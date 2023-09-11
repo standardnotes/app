@@ -860,8 +860,14 @@ export class ItemManager extends Services.AbstractService implements Services.It
     return this.findItems(this.collection.uuidsOfItemsWithConflicts()).filter(Models.isNote).length
   }
 
-  getNoteLinkedFiles(note: Models.SNNote): Models.FileItem[] {
-    return this.itemsReferencingItem(note).filter(Models.isFile)
+  getItemLinkedFiles(item: Models.DecryptedItemInterface): Models.FileItem[] {
+    return Models.isFile(item)
+      ? this.referencesForItem(item).filter(Models.isFile)
+      : this.itemsReferencingItem(item).filter(Models.isFile)
+  }
+
+  getItemLinkedNotes(item: Models.DecryptedItemInterface): Models.SNNote[] {
+    return this.referencesForItem(item).filter(Models.isNote)
   }
 
   /**

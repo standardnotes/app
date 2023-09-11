@@ -6,12 +6,14 @@ import {
   DecryptedItemInterface,
   EmojiString,
   FileItem,
+  SNNote,
   IconType,
   KeySystemIdentifier,
   KeySystemRootKeyStorageMode,
   SharedVaultListingInterface,
   VaultListingInterface,
   VaultListingMutator,
+  isFile,
   isNote,
 } from '@standardnotes/models'
 import { VaultServiceInterface } from './VaultServiceInterface'
@@ -151,14 +153,16 @@ export class VaultService
       throw new Error('Attempting to add item to locked vault')
     }
 
-    let linkedFiles: FileItem[] = []
-    if (isNote(item)) {
-      linkedFiles = this.items.getNoteLinkedFiles(item)
+    let movableLinkedItems: (SNNote | FileItem)[] = []
+    if (isNote(item) || isFile(item)) {
+      movableLinkedItems = movableLinkedItems.concat(this.items.getItemLinkedFiles(item))
+      movableLinkedItems = movableLinkedItems.concat(this.items.getItemLinkedNotes(item))
 
-      if (linkedFiles.length > 0) {
+      if (movableLinkedItems.length > 0) {
+        const itemType = isNote(item) ? 'note' : 'file'
         const confirmed = await this.alerts.confirmV2({
-          title: 'Linked files will be moved to vault',
-          text: `This note has ${linkedFiles.length} linked files. They will also be moved to the vault. Do you want to continue?`,
+          title: 'Linked files and notes will be moved to vault',
+          text: `This ${itemType} has ${movableLinkedItems.length} linked files and notes. They will also be moved to the vault. Do you want to continue?`,
         })
         if (!confirmed) {
           return undefined
@@ -166,7 +170,7 @@ export class VaultService
       }
     }
 
-    await this._moveItemsToVault.execute({ vault, items: [item, ...linkedFiles] })
+    await this._moveItemsToVault.execute({ vault, items: [item, ...movableLinkedItems] })
 
     return this.items.findSureItem(item.uuid)
   }
