@@ -1,29 +1,32 @@
 import { useApplication } from '@/Components/ApplicationProvider'
 import { DecryptedItemInterface, TrustedContactInterface, VaultListingInterface } from '@standardnotes/snjs'
+import useItem from './useItem'
+import { useRef } from 'react'
 
 type ItemVaultInfo = {
   vault?: VaultListingInterface
   lastEditedByContact?: TrustedContactInterface
+  sharedByContact?: TrustedContactInterface
 }
 
 export const useItemVaultInfo = (item: DecryptedItemInterface): ItemVaultInfo => {
   const application = useApplication()
 
-  const info: ItemVaultInfo = {
+  const info = useRef<ItemVaultInfo>({
     vault: undefined,
     lastEditedByContact: undefined,
-  }
+    sharedByContact: undefined,
+  })
+
+  info.current.vault = useItem(application.vaults.getItemVault(item)?.uuid)
+
+  const lastEditedBy = application.sharedVaults.getItemLastEditedBy(item)
+  info.current.lastEditedByContact = lastEditedBy || info.current.lastEditedByContact
+  info.current.sharedByContact = application.sharedVaults.getItemSharedBy(item)
 
   if (!application.featuresController.isEntitledToVaults()) {
-    return info
+    return info.current
   }
 
-  if (application.items.isTemplateItem(item)) {
-    return info
-  }
-
-  info.vault = application.vaults.getItemVault(item)
-  info.lastEditedByContact = application.sharedVaults.getItemLastEditedBy(item)
-
-  return info
+  return info.current
 }

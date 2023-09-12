@@ -48,7 +48,7 @@ jobs:
           github_token: ${{ secrets.CI_PAT_TOKEN }}
           workflow_file_name: e2e-test-suite.yml
           wait_interval: 30
-          client_payload: '{"snjs_image_tag": "${{ github.sha }}", "author": "${{ github.actor }}", "ref_name": "${{ github.ref_name }}"}'
+          client_payload: '{"snjs_image_tag": "${{ github.sha }}", "author": "${{ github.actor }}", "ref_name": "app:${{ github.ref }}"}'
           propagate_failure: true
           trigger_workflow: true
           wait_workflow: true

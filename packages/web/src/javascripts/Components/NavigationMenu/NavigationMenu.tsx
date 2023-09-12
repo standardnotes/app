@@ -5,6 +5,7 @@ import RoundIconButton from '../Button/RoundIconButton'
 import { useResponsiveAppPane } from '../Panes/ResponsivePaneProvider'
 import { useState, useEffect } from 'react'
 import { useApplication } from '../ApplicationProvider'
+import CountBubble from '../Preferences/PreferencesComponents/CountBubble'
 
 /** This button is displayed in the items list header */
 export const NavigationMenuButton = () => {
@@ -35,11 +36,7 @@ export const NavigationMenuButton = () => {
         label="Open navigation menu"
         icon="menu-variant"
       />
-      {isMobile && bubbleCount && (
-        <div className="absolute -right-2 -top-2 aspect-square rounded-full border border-info-contrast bg-info px-2 py-0.5 text-[0.65rem] font-bold text-info-contrast">
-          {bubbleCount}
-        </div>
-      )}
+      {isMobile && bubbleCount && <CountBubble position="right" count={bubbleCount} />}
     </div>
   )
 }
