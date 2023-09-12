@@ -17,6 +17,7 @@ import {
 } from './../../../../Types/EncryptedParameters'
 import { DecryptedParameters } from '../../../../Types/DecryptedParameters'
 import { DeriveHashingKeyUseCase } from '../Hash/DeriveHashingKey'
+import { V004Components } from '../../V004AlgorithmTypes'
 
 export class GenerateDecryptedParametersUseCase {
   private base64DataUsecase = new CreateConsistentBase64JsonPayloadUseCase(this.crypto)
@@ -39,7 +40,7 @@ export class GenerateDecryptedParametersUseCase {
       }
     }
 
-    const contentResult = this.decryptContent(encrypted, contentKeyResult.contentKey)
+    const contentResult = this.decryptContent(encrypted, contentKeyResult.decrypted)
     if (!contentResult) {
       return {
         uuid: encrypted.uuid,
@@ -54,17 +55,17 @@ export class GenerateDecryptedParametersUseCase {
       hashingKey,
       {
         additionalData: contentKeyResult.components.additionalData,
-        plaintext: contentKeyResult.contentKey,
+        plaintext: contentKeyResult.decrypted,
       },
       {
         additionalData: contentResult.components.additionalData,
-        plaintext: contentResult.content,
+        plaintext: contentResult.decrypted,
       },
     )
 
     return {
       uuid: encrypted.uuid,
-      content: JSON.parse(contentResult.content),
+      content: JSON.parse(contentResult.decrypted),
       signatureData: signatureVerificationResult,
     }
   }
@@ -72,34 +73,7 @@ export class GenerateDecryptedParametersUseCase {
   private decryptContent(encrypted: EncryptedOutputParameters, contentKey: string) {
     const contentComponents = deconstructEncryptedPayloadString(encrypted.content)
 
-    const contentAuthenticatedData = this.stringToAuthenticatedDataUseCase.execute(
-      contentComponents.authenticatedData,
-      {
-        u: encrypted.uuid,
-        v: encrypted.version,
-        ksi: encrypted.key_system_identifier,
-        svu: encrypted.shared_vault_uuid,
-      },
-    )
-
-    const authenticatedDataString = this.base64DataUsecase.execute(contentAuthenticatedData)
-
-    const content = this.crypto.xchacha20Decrypt(
-      contentComponents.ciphertext,
-      contentComponents.nonce,
-      contentKey,
-      authenticatedDataString,
-    )
-
-    if (!content) {
-      return null
-    }
-
-    return {
-      content,
-      components: contentComponents,
-      authenticatedDataString,
-    }
+    return this.decrypt(encrypted, contentComponents, contentKey)
   }
 
   private decryptContentKey(
@@ -108,32 +82,37 @@ export class GenerateDecryptedParametersUseCase {
   ) {
     const contentKeyComponents = deconstructEncryptedPayloadString(encrypted.enc_item_key)
 
-    const contentKeyAuthenticatedData = this.stringToAuthenticatedDataUseCase.execute(
-      contentKeyComponents.authenticatedData,
-      {
-        u: encrypted.uuid,
-        v: encrypted.version,
-        ksi: encrypted.key_system_identifier,
-        svu: encrypted.shared_vault_uuid,
-      },
-    )
+    return this.decrypt(encrypted, contentKeyComponents, key.itemsKey)
+  }
 
-    const authenticatedDataString = this.base64DataUsecase.execute(contentKeyAuthenticatedData)
+  private decrypt(encrypted: EncryptedOutputParameters, components: V004Components, key: string) {
+    const rawAuthenticatedData = this.stringToAuthenticatedDataUseCase.executeRaw(components.authenticatedData)
 
-    const contentKey = this.crypto.xchacha20Decrypt(
-      contentKeyComponents.ciphertext,
-      contentKeyComponents.nonce,
-      key.itemsKey,
+    const doesRawContainLegacyUppercaseUuid = /[A-Z]/.test(rawAuthenticatedData.u)
+
+    const authenticatedData = this.stringToAuthenticatedDataUseCase.execute(components.authenticatedData, {
+      u: doesRawContainLegacyUppercaseUuid ? encrypted.uuid.toUpperCase() : encrypted.uuid,
+      v: encrypted.version,
+      ksi: encrypted.key_system_identifier,
+      svu: encrypted.shared_vault_uuid,
+    })
+
+    const authenticatedDataString = this.base64DataUsecase.execute(authenticatedData)
+
+    const decrypted = this.crypto.xchacha20Decrypt(
+      components.ciphertext,
+      components.nonce,
+      key,
       authenticatedDataString,
     )
 
-    if (!contentKey) {
+    if (!decrypted) {
       return null
     }
 
     return {
-      contentKey,
-      components: contentKeyComponents,
+      decrypted,
+      components: components,
       authenticatedDataString,
     }
   }

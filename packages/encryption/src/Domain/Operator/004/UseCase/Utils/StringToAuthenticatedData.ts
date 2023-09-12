@@ -16,4 +16,9 @@ export class StringToAuthenticatedDataUseCase {
       ...override,
     })
   }
+
+  executeRaw(rawAuthenticatedData: string): RootKeyEncryptedAuthenticatedData | ItemAuthenticatedData {
+    const base = JSON.parse(this.crypto.base64Decode(rawAuthenticatedData))
+    return base
+  }
 }
