@@ -225,9 +225,6 @@ const EditVaultModalContent: FunctionComponent<{
     setShouldShowIconPicker((shouldShow) => !shouldShow)
   }, [])
 
-  const canShowMembers =
-    members.length > 0 && !members.every((member) => application.vaultUsers.isVaultUserOwner(member))
-
   const advancedOptionsDisclosure = useDisclosureStore()
   const isShowingAdvancedOptions = advancedOptionsDisclosure.useState('open')
 
@@ -299,12 +296,12 @@ const EditVaultModalContent: FunctionComponent<{
             </div>
           ) : (
             <>
-              {canShowMembers && (
+              {members.length > 0 && (
                 <VaultModalMembers
                   vault={existingVault}
                   members={members}
                   onChange={reloadVaultInfo}
-                  isAdmin={isAdmin}
+                  isCurrentUserAdmin={isAdmin}
                 />
               )}
               {invites.length > 0 && (

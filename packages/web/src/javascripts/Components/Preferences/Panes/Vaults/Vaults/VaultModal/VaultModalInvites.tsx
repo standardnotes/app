@@ -24,33 +24,39 @@ export const VaultModalInvites = ({
   )
 
   return (
-    <div className="mb-3">
+    <div>
       <div className="mb-3 text-lg">Pending Invites</div>
-      <div className="flex flex-col gap-3">
+      <div className="space-y-3.5">
         {invites.map((invite) => {
           const contact = application.contacts.findContactForInvite(invite)
           return (
-            <div key={invite.uuid} className="flex gap-3.5 rounded-lg px-3.5 py-2.5 border border-border shadow">
-              <Icon type="user" size="custom" className="mt-2 h-5.5 w-5.5 flex-shrink-0" />
-              <div className="flex flex-col gap-2 py-1.5">
-                <div className="flex items-center gap-2 overflow-hidden text-ellipsis text-base font-bold">
-                  <span>{contact?.name || invite.user_uuid}</span>
-                  {contact ? (
-                    <div className="flex items-center bg-success text-success-contrast rounded gap-1 text-xs px-1 py-0.5">
-                      <Icon type="check-circle" size="small" />
-                      Trusted
-                    </div>
-                  ) : (
-                    <div className="flex items-center bg-danger text-danger-contrast rounded gap-1 text-xs px-1 pr-1.5 py-0.5">
-                      <Icon type="clear-circle-filled" size="small" />
-                      Untrusted
-                    </div>
-                  )}
-                </div>
-                {isAdmin && (
-                  <Button label="Cancel Invite" className="mt-1 mr-3 text-xs" onClick={() => deleteInvite(invite)} />
+            <div
+              key={invite.uuid}
+              className="grid grid-cols-[auto,1fr] text-base font-medium [column-gap:0.65rem] [row-gap:0.5rem] md:text-sm"
+            >
+              <Icon type="user" className="col-start-1 col-end-2 place-self-center" />
+              <div className="flex items-center gap-2 overflow-hidden text-ellipsis text-base font-bold">
+                <span>{contact?.name || invite.user_uuid}</span>
+                {contact ? (
+                  <div className="flex items-center gap-1 rounded bg-success px-1 py-0.5 text-xs text-success-contrast">
+                    <Icon type="check-circle" size="small" />
+                    Trusted
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-1 rounded bg-danger px-1 py-0.5 pr-1.5 text-xs text-danger-contrast">
+                    <Icon type="clear-circle-filled" size="small" />
+                    Untrusted
+                  </div>
                 )}
               </div>
+              {isAdmin && (
+                <Button
+                  label="Cancel Invite"
+                  className="col-start-2 row-start-2"
+                  onClick={() => deleteInvite(invite)}
+                  small
+                />
+              )}
             </div>
           )
         })}
