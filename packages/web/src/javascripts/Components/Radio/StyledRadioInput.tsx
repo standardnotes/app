@@ -4,10 +4,10 @@ import RadioIndicator from './RadioIndicator'
 
 type Props = ComponentPropsWithoutRef<'input'>
 
-const StyledRadioInput = (props: Props) => {
+const StyledRadioInput = ({ className, ...props }: Props) => {
   return (
-    <div className="flex">
-      <input type="radio" className={classNames('h-0 w-0 opacity-0', props.className)} {...props} />
+    <div className={classNames('flex', className)}>
+      <input type="radio" className="h-0 w-0 opacity-0" {...props} />
       <RadioIndicator checked={!!props.checked} />
     </div>
   )

@@ -1,4 +1,4 @@
-import { KeySystemPasswordType } from '@standardnotes/snjs'
+import { KeySystemPasswordType, classNames } from '@standardnotes/snjs'
 import StyledRadioInput from '@/Components/Radio/StyledRadioInput'
 import DecoratedPasswordInput from '@/Components/Input/DecoratedPasswordInput'
 import { useState } from 'react'
@@ -42,25 +42,30 @@ export const PasswordTypePreference = ({
   return (
     <div className="mb-3">
       <div className="mb-3 text-lg">Vault Key Type</div>
-      {options.map((option) => {
-        return (
-          <label key={option.value} className="mb-2 flex items-center gap-2 text-base font-medium md:text-sm">
-            <StyledRadioInput
-              name="option"
-              checked={value === option.value}
-              onChange={() => {
-                onChange(option.value)
-              }}
-            />
-            {option.label}
-          </label>
-        )
-      })}
-
+      <div className="mb-1 space-y-3">
+        {options.map((option) => {
+          const isSelected = value === option.value
+          return (
+            <label
+              key={option.value}
+              className="grid grid-cols-[auto,1fr] text-base font-medium [column-gap:0.5rem] [row-gap:0.25rem] md:text-sm"
+            >
+              <StyledRadioInput
+                className="col-start-1 col-end-2 place-self-center"
+                name="option"
+                checked={isSelected}
+                onChange={() => {
+                  onChange(option.value)
+                }}
+              />
+              <div className={classNames('select-none', isSelected ? 'font-semibold' : '')}>{option.label}</div>
+              <div className="col-start-2 row-start-2 text-sm opacity-80">{option.description}</div>
+            </label>
+          )
+        })}
+      </div>
       {value === KeySystemPasswordType.UserInputted && (
-        <div>
-          <div className="text-gray-500 mt-3 text-sm">{options[1].description}</div>
-
+        <div className="mt-2">
           <DecoratedPasswordInput
             placeholder="Choose a password"
             id="key-input"
