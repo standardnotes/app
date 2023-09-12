@@ -8,6 +8,7 @@ import Icon from '@/Components/Icon/Icon'
 import ModalOverlay from '@/Components/Modal/ModalOverlay'
 import ContactInviteModal from '../Invites/ContactInviteModal'
 import EditVaultModal from './VaultModal/EditVaultModal'
+
 type Props = {
   vault: VaultListingInterface
 }
@@ -134,9 +135,7 @@ const VaultItem = ({ vault }: Props) => {
         </ModalOverlay>
       )}
 
-      <ModalOverlay isOpen={isVaultModalOpen} close={closeVaultModal}>
-        <EditVaultModal existingVaultUuid={vault.uuid} onCloseDialog={closeVaultModal} />
-      </ModalOverlay>
+      <EditVaultModal vault={vault} isVaultModalOpen={isVaultModalOpen} closeVaultModal={closeVaultModal} />
 
       <div className="flex flex-row gap-3.5 rounded-lg border border-border px-3.5 py-2.5 shadow-sm">
         <Icon type={vault.iconString} size="custom" className="mt-2.5 h-5.5 w-5.5 flex-shrink-0" />

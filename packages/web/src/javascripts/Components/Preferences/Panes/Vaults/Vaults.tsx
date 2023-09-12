@@ -125,9 +125,7 @@ const Vaults = () => {
         <EditContactModal onCloseDialog={closeAddContactModal} />
       </ModalOverlay>
 
-      <ModalOverlay isOpen={isVaultModalOpen} close={closeVaultModal}>
-        <EditVaultModal onCloseDialog={closeVaultModal} />
-      </ModalOverlay>
+      <EditVaultModal isVaultModalOpen={isVaultModalOpen} closeVaultModal={closeVaultModal} />
 
       {invites.length > 0 && (
         <PreferencesGroup>

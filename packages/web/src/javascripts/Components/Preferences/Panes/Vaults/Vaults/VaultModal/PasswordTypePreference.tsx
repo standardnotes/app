@@ -40,7 +40,7 @@ export const PasswordTypePreference = ({
   }
 
   return (
-    <div className="mb-3">
+    <div>
       <div className="mb-3 text-lg">Vault Key Type</div>
       <div className="mb-1 space-y-3">
         {options.map((option) => {
@@ -48,7 +48,7 @@ export const PasswordTypePreference = ({
           return (
             <label
               key={option.value}
-              className="grid grid-cols-[auto,1fr] text-base font-medium [column-gap:0.5rem] [row-gap:0.25rem] md:text-sm"
+              className="grid grid-cols-[auto,1fr] text-base font-medium [column-gap:0.65rem] [row-gap:0.25rem] md:text-sm"
             >
               <StyledRadioInput
                 className="col-start-1 col-end-2 place-self-center"

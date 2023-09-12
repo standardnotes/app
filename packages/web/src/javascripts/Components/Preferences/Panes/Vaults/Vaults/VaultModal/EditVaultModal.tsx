@@ -22,13 +22,13 @@ import Icon from '@/Components/Icon/Icon'
 import StyledTooltip from '@/Components/StyledTooltip/StyledTooltip'
 import Popover from '@/Components/Popover/Popover'
 import IconPicker from '@/Components/Icon/IconPicker'
+import ModalOverlay from '@/Components/Modal/ModalOverlay'
+import { Disclosure, DisclosureContent, useDisclosureStore } from '@ariakit/react'
 
-type Props = {
+const EditVaultModalContent: FunctionComponent<{
   existingVaultUuid?: string
   onCloseDialog: () => void
-}
-
-const EditVaultModal: FunctionComponent<Props> = ({ onCloseDialog, existingVaultUuid }) => {
+}> = ({ onCloseDialog, existingVaultUuid }) => {
   const application = useApplication()
 
   const existingVault = useItem<VaultListingInterface>(existingVaultUuid)
@@ -224,18 +224,21 @@ const EditVaultModal: FunctionComponent<Props> = ({ onCloseDialog, existingVault
   const canShowMembers =
     members.length > 0 && !members.every((member) => application.vaultUsers.isVaultUserOwner(member))
 
+  const advancedOptionsDisclosure = useDisclosureStore()
+  const isShowingAdvancedOptions = advancedOptionsDisclosure.useState('open')
+
   if (existingVault && application.vaultLocks.isVaultLocked(existingVault)) {
     return <div>Vault is locked.</div>
   }
 
   return (
     <Modal title={existingVault ? 'Edit Vault' : 'Create New Vault'} close={handleDialogClose} actions={modalActions}>
-      <div className="px-4.5 pb-1.5 pt-4 flex w-full flex-col">
-        <div className="mb-3">
+      <div className="flex w-full flex-col space-y-3.5 px-4.5 pb-3 pt-3">
+        <div>
           <div className="text-lg">Vault Info</div>
           <div className="mt-1">The vault name and description are end-to-end encrypted.</div>
 
-          <div className="flex items-center mt-4 gap-4">
+          <div className="mt-3.5 flex items-center gap-3">
             <StyledTooltip className="!z-modal" label="Choose icon">
               <Button className="!px-1.5" ref={iconPickerButtonRef} onClick={toggleIconPicker}>
                 <Icon type={iconString} />
@@ -276,7 +279,7 @@ const EditVaultModal: FunctionComponent<Props> = ({ onCloseDialog, existingVault
           </div>
 
           <DecoratedInput
-            className={{ container: 'mt-4' }}
+            className={{ container: 'mt-3' }}
             value={description}
             placeholder="Vault description"
             onChange={(value) => {
@@ -284,20 +287,45 @@ const EditVaultModal: FunctionComponent<Props> = ({ onCloseDialog, existingVault
             }}
           />
         </div>
-
         {existingVault && canShowMembers && (
           <VaultModalMembers vault={existingVault} members={members} onChange={reloadVaultInfo} isAdmin={isAdmin} />
         )}
-
         {existingVault && invites.length > 0 && (
           <VaultModalInvites invites={invites} onChange={reloadVaultInfo} isAdmin={isAdmin} />
         )}
-
-        <PasswordTypePreference value={passwordType} onChange={setPasswordType} onCustomKeyChange={setCustomPassword} />
-
-        <KeyStoragePreference value={keyStorageMode} onChange={setKeyStorageMode} />
+        <Disclosure
+          store={advancedOptionsDisclosure}
+          className="flex items-center justify-between focus:shadow-none focus:outline-none"
+        >
+          <div className="text-lg">Advanced options</div>
+          <Icon type={isShowingAdvancedOptions ? 'chevron-up' : 'chevron-down'} />
+        </Disclosure>
+        <DisclosureContent className="space-y-3.5 pb-3" store={advancedOptionsDisclosure}>
+          <PasswordTypePreference
+            value={passwordType}
+            onChange={setPasswordType}
+            onCustomKeyChange={setCustomPassword}
+          />
+          <KeyStoragePreference value={keyStorageMode} onChange={setKeyStorageMode} />
+        </DisclosureContent>
       </div>
     </Modal>
+  )
+}
+
+const EditVaultModal = ({
+  isVaultModalOpen,
+  closeVaultModal,
+  vault,
+}: {
+  isVaultModalOpen: boolean
+  closeVaultModal: () => void
+  vault?: VaultListingInterface
+}) => {
+  return (
+    <ModalOverlay className="md:max-h-[70vh]" isOpen={isVaultModalOpen} close={closeVaultModal}>
+      <EditVaultModalContent existingVaultUuid={vault?.uuid} onCloseDialog={closeVaultModal} />
+    </ModalOverlay>
   )
 }
 
