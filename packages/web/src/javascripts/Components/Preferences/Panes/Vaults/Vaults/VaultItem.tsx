@@ -153,10 +153,12 @@ const VaultItem = ({ vault }: Props) => {
             {isVaultLockable && <Button label={isVaultLocked ? 'Unlock' : 'Lock'} onClick={toggleLock} />}
             {isAdmin && <Button colorStyle="danger" label="Delete" onClick={deleteVault} />}
             {!isAdmin && vault.isSharedVaultListing() && <Button label="Leave Vault" onClick={leaveVault} />}
-            {vault.isSharedVaultListing() ? (
-              <Button colorStyle="info" label="Invite Contacts" onClick={openInviteModal} />
-            ) : application.hasAccount() ? (
-              <Button colorStyle="info" label="Enable Collaboration" onClick={convertToSharedVault} />
+            {isAdmin ? (
+              vault.isSharedVaultListing() ? (
+                <Button colorStyle="info" label="Invite Contacts" onClick={openInviteModal} />
+              ) : application.hasAccount() ? (
+                <Button colorStyle="info" label="Enable Collaboration" onClick={convertToSharedVault} />
+              ) : null
             ) : null}
           </div>
         </div>
