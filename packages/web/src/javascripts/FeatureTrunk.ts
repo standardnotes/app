@@ -15,7 +15,3 @@ export function featureTrunkVaultsEnabled(): boolean {
 export function featureTrunkHomeServerEnabled(): boolean {
   return InternalFeatureService.get().isFeatureEnabled(InternalFeature.HomeServer)
 }
-
-export function featureTrunkTransitionEnabled(): boolean {
-  return InternalFeatureService.get().isFeatureEnabled(InternalFeature.Transition)
-}
