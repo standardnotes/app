@@ -1,6 +1,6 @@
 import { classNames } from '@standardnotes/utils'
 import { EmojiString, Platform, VectorIconNameOrEmoji } from '@standardnotes/snjs'
-import { ForwardedRef, forwardRef, useCallback, useMemo, useRef, useState } from 'react'
+import { ForwardedRef, forwardRef, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Dropdown from '../Dropdown/Dropdown'
 import { DropdownItem } from '../Dropdown/DropdownItem'
 import { getEmojiLength } from './EmojiLength'
@@ -74,6 +74,10 @@ const IconPicker = ({ selectedValue, onIconChange, platform, className, useIconG
   const [emojiInputFocused, setEmojiInputFocused] = useState(true)
   const [currentType, setCurrentType] = useState<IconPickerType>(isSelectedEmoji ? 'emoji' : 'icon')
   const [emojiInputValue, setEmojiInputValue] = useState(isSelectedEmoji ? selectedValue : '')
+
+  useEffect(() => {
+    setEmojiInputValue(isSelectedEmoji ? selectedValue : '')
+  }, [isSelectedEmoji, selectedValue])
 
   const selectTab = (type: IconPickerType | 'reset') => {
     if (type === 'reset') {
