@@ -24,6 +24,7 @@ import Popover from '@/Components/Popover/Popover'
 import IconPicker from '@/Components/Icon/IconPicker'
 import ModalOverlay from '@/Components/Modal/ModalOverlay'
 import { Disclosure, DisclosureContent, useDisclosureStore } from '@ariakit/react'
+import Spinner from '@/Components/Spinner/Spinner'
 
 const EditVaultModalContent: FunctionComponent<{
   existingVaultUuid?: string
@@ -38,6 +39,7 @@ const EditVaultModalContent: FunctionComponent<{
   const [iconString, setIconString] = useState<VectorIconNameOrEmoji>('safe-square')
   const [members, setMembers] = useState<SharedVaultUserServerHash[]>([])
   const [invites, setInvites] = useState<SharedVaultInviteServerHash[]>([])
+  const [isLoadingCollaborationInfo, setIsLoadingCollaborationInfo] = useState(false)
   const [isAdmin, setIsAdmin] = useState(true)
   const [passwordType, setPasswordType] = useState<KeySystemPasswordType>(KeySystemPasswordType.Randomized)
   const [keyStorageMode, setKeyStorageMode] = useState<KeySystemRootKeyStorageMode>(KeySystemRootKeyStorageMode.Synced)
@@ -66,6 +68,7 @@ const EditVaultModalContent: FunctionComponent<{
         existingVault.isSharedVaultListing() && application.vaultUsers.isCurrentUserSharedVaultAdmin(existingVault),
       )
 
+      setIsLoadingCollaborationInfo(true)
       const users = await application.vaultUsers.getSharedVaultUsers(existingVault)
       if (users) {
         setMembers(users)
@@ -75,6 +78,7 @@ const EditVaultModalContent: FunctionComponent<{
       if (!isClientDisplayableError(invites)) {
         setInvites(invites)
       }
+      setIsLoadingCollaborationInfo(false)
     }
   }, [application, existingVault])
 
@@ -233,7 +237,7 @@ const EditVaultModalContent: FunctionComponent<{
 
   return (
     <Modal title={existingVault ? 'Edit Vault' : 'Create New Vault'} close={handleDialogClose} actions={modalActions}>
-      <div className="flex w-full flex-col space-y-3.5 px-4.5 pb-3 pt-3">
+      <div className="flex w-full flex-col space-y-3.5 px-4.5 py-4">
         <div>
           <div className="text-lg">Vault Info</div>
           <div className="mt-1">The vault name and description are end-to-end encrypted.</div>
@@ -287,12 +291,28 @@ const EditVaultModalContent: FunctionComponent<{
             }}
           />
         </div>
-        {existingVault && canShowMembers && (
-          <VaultModalMembers vault={existingVault} members={members} onChange={reloadVaultInfo} isAdmin={isAdmin} />
-        )}
-        {existingVault && invites.length > 0 && (
-          <VaultModalInvites invites={invites} onChange={reloadVaultInfo} isAdmin={isAdmin} />
-        )}
+        {existingVault ? (
+          isLoadingCollaborationInfo ? (
+            <div className="flex items-center gap-3 py-2 text-base">
+              <Spinner className="h-5 w-5" />
+              Loading collaboration info...
+            </div>
+          ) : (
+            <>
+              {canShowMembers && (
+                <VaultModalMembers
+                  vault={existingVault}
+                  members={members}
+                  onChange={reloadVaultInfo}
+                  isAdmin={isAdmin}
+                />
+              )}
+              {invites.length > 0 && (
+                <VaultModalInvites invites={invites} onChange={reloadVaultInfo} isAdmin={isAdmin} />
+              )}
+            </>
+          )
+        ) : null}
         <Disclosure
           store={advancedOptionsDisclosure}
           className="flex items-center justify-between focus:shadow-none focus:outline-none"
