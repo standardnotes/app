@@ -6,6 +6,7 @@ import StyledTooltip from '../StyledTooltip/StyledTooltip'
 import VaultSelectionMenu from '../VaultSelectionMenu/VaultSelectionMenu'
 import { useApplication } from '../ApplicationProvider'
 import RoundIconButton from '../Button/RoundIconButton'
+import { observer } from 'mobx-react-lite'
 
 const VaultSelectionButton = ({ isMobileNavigation = false }: { isMobileNavigation?: boolean }) => {
   const application = useApplication()
@@ -67,4 +68,4 @@ const VaultSelectionButton = ({ isMobileNavigation = false }: { isMobileNavigati
   )
 }
 
-export default VaultSelectionButton
+export default observer(VaultSelectionButton)
