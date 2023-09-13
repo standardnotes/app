@@ -8,18 +8,25 @@ import {
   classNames,
 } from '@standardnotes/snjs'
 import Spinner from '@/Components/Spinner/Spinner'
+import Dropdown from '@/Components/Dropdown/Dropdown'
 
 type Props = {
   vault: SharedVaultListingInterface
   onCloseDialog: () => void
 }
 
+type SelectedContact = {
+  uuid: string
+  permission: keyof typeof SharedVaultUserPermission.PERMISSIONS
+}
+
 const ContactInviteModal: FunctionComponent<Props> = ({ vault, onCloseDialog }) => {
   const application = useApplication()
 
-  const [selectedContacts, setSelectedContacts] = useState<TrustedContactInterface[]>([])
+  const [selectedContacts, setSelectedContacts] = useState<SelectedContact[]>([])
   const [isLoadingContacts, setIsLoadingContacts] = useState(false)
   const [contacts, setContacts] = useState<TrustedContactInterface[]>([])
+  const [isInvitingContacts, setIsInvitingContacts] = useState(false)
 
   useEffect(() => {
     const loadContacts = async () => {
@@ -36,37 +43,48 @@ const ContactInviteModal: FunctionComponent<Props> = ({ vault, onCloseDialog }) 
   }, [onCloseDialog])
 
   const inviteSelectedContacts = useCallback(async () => {
-    for (const contact of selectedContacts) {
+    setIsInvitingContacts(true)
+    for (const selectedContact of selectedContacts) {
+      const contact = contacts.find((contact) => contact.uuid === selectedContact.uuid)
+      if (!contact) {
+        continue
+      }
       await application.vaultInvites.inviteContactToSharedVault(
         vault,
         contact,
-        SharedVaultUserPermission.PERMISSIONS.Write,
+        SharedVaultUserPermission.PERMISSIONS[selectedContact.permission],
       )
     }
+    setIsInvitingContacts(false)
     handleDialogClose()
-  }, [application.vaultInvites, vault, handleDialogClose, selectedContacts])
+  }, [handleDialogClose, selectedContacts, contacts, application.vaultInvites, vault])
 
   const toggleContact = useCallback(
     (contact: TrustedContactInterface) => {
-      if (selectedContacts.includes(contact)) {
-        const index = selectedContacts.indexOf(contact)
-        const updatedContacts = [...selectedContacts]
-        updatedContacts.splice(index, 1)
-        setSelectedContacts(updatedContacts)
-      } else {
-        setSelectedContacts([...selectedContacts, contact])
+      const contactWithPermission: SelectedContact = {
+        uuid: contact.uuid,
+        permission: 'Read',
       }
+      setSelectedContacts((selectedContacts) => {
+        if (selectedContacts.find((c) => c.uuid === contact.uuid)) {
+          return selectedContacts.filter((selectedContact) => selectedContact.uuid !== contact.uuid)
+        } else {
+          return [...selectedContacts, contactWithPermission]
+        }
+      })
     },
-    [selectedContacts, setSelectedContacts],
+    [setSelectedContacts],
   )
 
   const modalActions = useMemo(
     (): ModalAction[] => [
       {
-        label: 'Invite Selected Contacts',
+        label: isInvitingContacts ? <Spinner className="h-5 w-5 border-info-contrast" /> : 'Invite Selected Contacts',
         onClick: inviteSelectedContacts,
         type: 'primary',
         mobileSlot: 'right',
+        disabled: isInvitingContacts,
+        hidden: contacts.length === 0,
       },
       {
         label: 'Cancel',
@@ -75,7 +93,7 @@ const ContactInviteModal: FunctionComponent<Props> = ({ vault, onCloseDialog }) 
         mobileSlot: 'left',
       },
     ],
-    [handleDialogClose, inviteSelectedContacts],
+    [contacts.length, handleDialogClose, inviteSelectedContacts, isInvitingContacts],
   )
 
   return (
@@ -85,17 +103,54 @@ const ContactInviteModal: FunctionComponent<Props> = ({ vault, onCloseDialog }) 
           <Spinner className="h-5 w-5" />
         ) : contacts.length > 0 ? (
           contacts.map((contact) => {
+            const selectedContact = selectedContacts.find((c) => c.uuid === contact.uuid)
+            const isSelected = !!selectedContact
+
             return (
-              <label className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-0.5" key={contact.uuid}>
+              <div
+                className={classNames('grid grid-cols-[auto_1fr] gap-x-3 gap-y-0.5', isSelected && 'py-0.5')}
+                key={contact.uuid}
+              >
                 <input
+                  id={contact.uuid}
                   className="h-4 w-4 self-center accent-info"
                   type="checkbox"
-                  checked={selectedContacts.includes(contact)}
+                  checked={isSelected}
                   onChange={() => toggleContact(contact)}
                 />
-                <div className="col-start-2 text-sm font-semibold">{contact.name}</div>
-                <div className="col-start-2">{contact.contactUuid}</div>
-              </label>
+                <label htmlFor={contact.uuid} className="col-start-2">
+                  <div className="text-sm font-semibold">{contact.name}</div>
+                  <div className="opacity-90">{contact.contactUuid}</div>
+                </label>
+                {isSelected && (
+                  <Dropdown
+                    showLabel
+                    label={'Permission:'}
+                    classNameOverride={{
+                      wrapper: 'col-start-2',
+                    }}
+                    items={Object.keys(SharedVaultUserPermission.PERMISSIONS).map((key) => ({
+                      label: key === 'Write' ? 'Read/Write' : key,
+                      value: key,
+                    }))}
+                    value={selectedContact.permission}
+                    onChange={(value) => {
+                      setSelectedContacts((selectedContacts) =>
+                        selectedContacts.map((c) => {
+                          if (c.uuid === contact.uuid) {
+                            return {
+                              ...c,
+                              permission: value as keyof typeof SharedVaultUserPermission.PERMISSIONS,
+                            }
+                          } else {
+                            return c
+                          }
+                        }),
+                      )
+                    }}
+                  />
+                )}
+              </div>
             )
           })
         ) : (

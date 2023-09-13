@@ -1,15 +1,7 @@
 import Icon from '@/Components/Icon/Icon'
 import { DropdownItem } from './DropdownItem'
 import { classNames } from '@standardnotes/snjs'
-import {
-  Select,
-  SelectItem,
-  SelectLabel,
-  SelectPopover,
-  SelectStoreProps,
-  useSelectStore,
-  VisuallyHidden,
-} from '@ariakit/react'
+import { Select, SelectItem, SelectLabel, SelectPopover, SelectStoreProps, useSelectStore } from '@ariakit/react'
 import { KeyboardKey } from '@standardnotes/ui-services'
 
 type DropdownProps = {
@@ -25,6 +17,7 @@ type DropdownProps = {
   }
   fullWidth?: boolean
   popoverPlacement?: SelectStoreProps['placement']
+  showLabel?: boolean
 }
 
 const Dropdown = ({
@@ -36,6 +29,7 @@ const Dropdown = ({
   fullWidth,
   classNameOverride = {},
   popoverPlacement,
+  showLabel,
 }: DropdownProps) => {
   const select = useSelectStore({
     value,
@@ -57,12 +51,12 @@ const Dropdown = ({
         }
       }}
     >
-      <VisuallyHidden>
-        <SelectLabel store={select}>{label}</SelectLabel>
-      </VisuallyHidden>
+      <SelectLabel className={!showLabel ? 'sr-only' : ''} store={select}>
+        {label}
+      </SelectLabel>
       <Select
         className={classNames(
-          'flex w-full min-w-55 items-center justify-between rounded border border-passive-3 bg-default md:translucent-ui:bg-transparent px-3.5 py-1.5 text-sm text-foreground',
+          'flex w-full min-w-55 items-center justify-between rounded border border-passive-3 bg-default px-3.5 py-1.5 text-sm text-foreground md:translucent-ui:bg-transparent',
           disabled && 'opacity-50',
           classNameOverride.button,
           !fullWidth && 'md:w-fit',
@@ -83,7 +77,7 @@ const Dropdown = ({
       <SelectPopover
         store={select}
         className={classNames(
-          'z-dropdown-menu max-h-[var(--popover-available-height)] w-[var(--popover-anchor-width)] [backdrop-filter:var(--popover-backdrop-filter)] overflow-y-auto rounded border border-passive-3 bg-default py-1',
+          'z-dropdown-menu max-h-[var(--popover-available-height)] w-[var(--popover-anchor-width)] overflow-y-auto rounded border border-passive-3 bg-default py-1 [backdrop-filter:var(--popover-backdrop-filter)]',
           classNameOverride.popover,
         )}
         portal={false}

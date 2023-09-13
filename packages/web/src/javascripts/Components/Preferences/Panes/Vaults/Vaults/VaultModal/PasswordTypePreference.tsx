@@ -48,7 +48,7 @@ export const PasswordTypePreference = ({
           return (
             <label
               key={option.value}
-              className="grid grid-cols-[auto,1fr] text-base font-medium [column-gap:0.65rem] [row-gap:0.25rem] md:text-sm"
+              className="grid grid-cols-[auto,1fr] gap-x-[0.65rem] gap-y-1 text-base font-medium md:text-sm"
             >
               <StyledRadioInput
                 className="col-start-1 col-end-2 place-self-center"

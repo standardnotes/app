@@ -32,7 +32,7 @@ export const VaultModalInvites = ({
           return (
             <div
               key={invite.uuid}
-              className="grid grid-cols-[auto,1fr] text-base font-medium [column-gap:0.65rem] [row-gap:0.5rem] md:text-sm"
+              className="grid grid-cols-[auto,1fr] gap-x-[0.65rem] gap-y-2 text-base font-medium md:text-sm"
             >
               <Icon type="user" className="col-start-1 col-end-2 place-self-center" />
               <div className="flex items-center gap-2 overflow-hidden text-ellipsis text-base font-bold">
