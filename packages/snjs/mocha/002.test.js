@@ -78,6 +78,29 @@ describe('002 protocol operations', () => {
     expect(decrypted.content.text).to.equal('Decryptable Sentence')
   })
 
+  it('should decrypt string with case-insensitive uuid check for aad', async () => {
+    /** If the server returns a lowercase uuid for the item, but the encrypted payload uses uppercase uuids, should still decrypt */
+    const uppercaseUuid = '959B042A-3892-461E-8C50-477C10C7C40A'
+    const lowercaseUuid = '959b042a-3892-461e-8c50-477c10c7c40a'
+
+    const payload = new DecryptedPayload({
+      uuid: uppercaseUuid,
+      content_type: ContentType.TYPES.Note,
+      content: FillItemContent({
+        title: 'hello',
+        text: 'world',
+      }),
+    })
+
+    const key = await protocol002.createItemsKey()
+    const params = await protocol002.generateEncryptedParametersAsync(payload, key)
+
+    params.uuid = lowercaseUuid
+
+    const decrypted = await protocol002.generateDecryptedParametersAsync(params, key)
+    expect(decrypted.content).to.eql(payload.content)
+  })
+
   it('properly encrypts and decrypts strings', async () => {
     const text = 'hello world'
     const key = _key.masterKey
