@@ -13,7 +13,12 @@ import {
   StorageKey,
   VaultLockServiceEvent,
 } from '@standardnotes/services'
-import { VaultDisplayOptions, VaultDisplayOptionsPersistable, VaultListingInterface } from '@standardnotes/models'
+import {
+  ExclusionaryOptions,
+  VaultDisplayOptions,
+  VaultDisplayOptionsPersistable,
+  VaultListingInterface,
+} from '@standardnotes/models'
 import { VaultDisplayServiceEvent } from './VaultDisplayServiceEvent'
 import { AbstractUIService } from '../Abstract/AbstractUIService'
 import { WebApplicationInterface } from '../WebApplication/WebApplicationInterface'
@@ -25,6 +30,7 @@ export class VaultDisplayService
   extends AbstractUIService<VaultDisplayServiceEvent>
   implements VaultDisplayServiceInterface, InternalEventHandlerInterface
 {
+  previousMultipleSelectionOptions?: VaultDisplayOptions
   options: VaultDisplayOptions
 
   public exclusivelyShownVault: VaultListingInterface | undefined = undefined
@@ -101,10 +107,14 @@ export class VaultDisplayService
     const vaults = this.application.vaults.getVaults()
     const lockedVaults = this.application.vaultLocks.getLockedvaults()
 
+    const exclude = this.previousMultipleSelectionOptions
+      ? (this.previousMultipleSelectionOptions.getOptions() as ExclusionaryOptions).exclude
+      : vaults
+          .map((vault) => vault.systemIdentifier)
+          .filter((identifier) => identifier !== this.exclusivelyShownVault?.systemIdentifier)
+
     const newOptions = new VaultDisplayOptions({
-      exclude: vaults
-        .map((vault) => vault.systemIdentifier)
-        .filter((identifier) => identifier !== this.exclusivelyShownVault?.systemIdentifier),
+      exclude,
       locked: lockedVaults.map((vault) => vault.systemIdentifier),
     })
 
@@ -187,7 +197,15 @@ export class VaultDisplayService
   }
 
   private setVaultSelectionOptions = (options: VaultDisplayOptions) => {
+    const previousOptions = this.options
     this.options = options
+
+    const changingFromMultipleToExclusive =
+      !previousOptions.isInExclusiveDisplayMode() && options.isInExclusiveDisplayMode()
+
+    if (changingFromMultipleToExclusive) {
+      this.previousMultipleSelectionOptions = previousOptions
+    }
 
     if (this.isInExclusiveDisplayMode()) {
       this.exclusivelyShownVault = this.application.vaults.getVault({
