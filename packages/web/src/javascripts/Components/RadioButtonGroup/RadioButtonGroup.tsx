@@ -1,19 +1,19 @@
 import { VisuallyHidden, Radio, RadioGroup, useRadioStore } from '@ariakit/react'
 import { classNames } from '@standardnotes/utils'
 
-type Props = {
-  items: { label: string; value: string }[]
-  value: string
-  onChange: (value: string) => void
+type Props<Value extends string> = {
+  items: { label: string; value: Value }[]
+  value: Value
+  onChange: (value: Value) => void
   className?: string
 }
 
-const RadioButtonGroup = ({ value, items, onChange, className }: Props) => {
+function RadioButtonGroup<Value extends string>({ value, items, onChange, className }: Props<Value>) {
   const radio = useRadioStore({
     value,
     orientation: 'horizontal',
     setValue(value) {
-      onChange(value as string)
+      onChange(value as Value)
     },
   })
 

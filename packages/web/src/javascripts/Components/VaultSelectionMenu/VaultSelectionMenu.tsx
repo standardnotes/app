@@ -35,7 +35,7 @@ const VaultSelectionMenu = () => {
           { label: 'One', value: 'single' },
         ]}
         value={mode}
-        onChange={(value) => changeSelectionMode(value as SettingsMode)}
+        onChange={(value) => changeSelectionMode(value)}
         className="m-3 mt-1"
       />
       {mode === 'many' && <ManyVaultSelectionMenu />}
