@@ -206,17 +206,17 @@ export class NavigationController
       this.tags = this.items.getDisplayableTags()
       this.starredTags = this.tags.filter((tag) => tag.starred)
       this.smartViews = this.items.getSmartViews()
-      if (this.selectedUuid) {
-        this.findAndSetTag(this.selectedUuid)
-      } else {
-        this.selectHomeNavigationView().catch(console.error)
-      }
     })
   }
 
   async handleEvent(event: InternalEventInterface): Promise<void> {
     if (event.type === VaultDisplayServiceEvent.VaultDisplayOptionsChanged) {
       this.reloadTags()
+      if (this.selectedUuid) {
+        this.findAndSetTag(this.selectedUuid)
+      } else {
+        this.selectHomeNavigationView().catch(console.error)
+      }
     }
   }
 
