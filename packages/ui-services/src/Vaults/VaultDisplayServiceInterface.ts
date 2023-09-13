@@ -7,7 +7,7 @@ export interface VaultDisplayServiceInterface extends AbstractUIServiceInterface
   getOptions(): VaultDisplayOptions
 
   isVaultDisabledOrLocked(vault: VaultListingInterface): boolean
-  isVaultExplicitelyExcluded: (vault: VaultListingInterface) => boolean
+  isVaultExplicitlyExcluded: (vault: VaultListingInterface) => boolean
   isVaultExclusivelyShown: (vault: VaultListingInterface) => boolean
   isInExclusiveDisplayMode(): boolean
 

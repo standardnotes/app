@@ -1,10 +1,10 @@
 import { VaultListingInterface } from '../../Syncable/VaultListing/VaultListingInterface'
 import { uniqueArray } from '@standardnotes/utils'
 import {
-  ExclusioanaryOptions,
+  ExclusionaryOptions,
   ExclusiveOptions,
   VaultDisplayOptionsPersistable,
-  isExclusioanaryOptionsValue,
+  isExclusionaryOptionsValue,
 } from './VaultDisplayOptionsTypes'
 import { KeySystemIdentifier } from '../../Syncable/KeySystemRootKey/KeySystemIdentifier'
 
@@ -13,14 +13,14 @@ function KeySystemIdentifiers(vaults: VaultListingInterface[]): KeySystemIdentif
 }
 
 export class VaultDisplayOptions {
-  constructor(private readonly options: ExclusioanaryOptions | ExclusiveOptions) {}
+  constructor(private readonly options: ExclusionaryOptions | ExclusiveOptions) {}
 
-  public getOptions(): ExclusioanaryOptions | ExclusiveOptions {
+  public getOptions(): ExclusionaryOptions | ExclusiveOptions {
     return this.options
   }
 
   public getExclusivelyShownVault(): KeySystemIdentifier {
-    if (isExclusioanaryOptionsValue(this.options)) {
+    if (isExclusionaryOptionsValue(this.options)) {
       throw new Error('Not in exclusive display mode')
     }
 
@@ -28,11 +28,11 @@ export class VaultDisplayOptions {
   }
 
   public isInExclusiveDisplayMode(): boolean {
-    return !isExclusioanaryOptionsValue(this.options)
+    return !isExclusionaryOptionsValue(this.options)
   }
 
-  public isVaultExplicitelyExcluded(vault: VaultListingInterface): boolean {
-    if (isExclusioanaryOptionsValue(this.options)) {
+  public isVaultExplicitlyExcluded(vault: VaultListingInterface): boolean {
+    if (isExclusionaryOptionsValue(this.options)) {
       return this.options.exclude.some((excludedVault) => excludedVault === vault.systemIdentifier)
     } else if (this.options.exclusive) {
       return this.options.exclusive !== vault.systemIdentifier
@@ -42,18 +42,18 @@ export class VaultDisplayOptions {
   }
 
   isVaultExclusivelyShown(vault: VaultListingInterface): boolean {
-    return !isExclusioanaryOptionsValue(this.options) && this.options.exclusive === vault.systemIdentifier
+    return !isExclusionaryOptionsValue(this.options) && this.options.exclusive === vault.systemIdentifier
   }
 
   isVaultDisabledOrLocked(vault: VaultListingInterface): boolean {
-    if (isExclusioanaryOptionsValue(this.options)) {
+    if (isExclusionaryOptionsValue(this.options)) {
       const matchingLocked = this.options.locked.find((lockedVault) => lockedVault === vault.systemIdentifier)
       if (matchingLocked) {
         return true
       }
     }
 
-    return this.isVaultExplicitelyExcluded(vault)
+    return this.isVaultExplicitlyExcluded(vault)
   }
 
   getPersistableValue(): VaultDisplayOptionsPersistable {
@@ -61,7 +61,7 @@ export class VaultDisplayOptions {
   }
 
   newOptionsByIntakingLockedVaults(lockedVaults: VaultListingInterface[]): VaultDisplayOptions {
-    if (isExclusioanaryOptionsValue(this.options)) {
+    if (isExclusionaryOptionsValue(this.options)) {
       return new VaultDisplayOptions({ exclude: this.options.exclude, locked: KeySystemIdentifiers(lockedVaults) })
     } else {
       return new VaultDisplayOptions({ exclusive: this.options.exclusive })
@@ -76,7 +76,7 @@ export class VaultDisplayOptions {
     vaults: VaultListingInterface[],
     lockedVaults: VaultListingInterface[],
   ): VaultDisplayOptions {
-    if (isExclusioanaryOptionsValue(this.options)) {
+    if (isExclusionaryOptionsValue(this.options)) {
       return new VaultDisplayOptions({
         exclude: uniqueArray([...this.options.exclude, ...KeySystemIdentifiers(vaults)]),
         locked: KeySystemIdentifiers(lockedVaults),
@@ -93,7 +93,7 @@ export class VaultDisplayOptions {
     vault: VaultListingInterface,
     lockedVaults: VaultListingInterface[],
   ): VaultDisplayOptions {
-    if (isExclusioanaryOptionsValue(this.options)) {
+    if (isExclusionaryOptionsValue(this.options)) {
       return new VaultDisplayOptions({
         exclude: this.options.exclude.filter((excludedVault) => excludedVault !== vault.systemIdentifier),
         locked: KeySystemIdentifiers(lockedVaults),

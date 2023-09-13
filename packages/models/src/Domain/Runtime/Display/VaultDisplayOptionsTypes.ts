@@ -1,12 +1,12 @@
 import { KeySystemIdentifier } from '../../Syncable/KeySystemRootKey/KeySystemIdentifier'
 
-export type ExclusioanaryOptions = { exclude: KeySystemIdentifier[]; locked: KeySystemIdentifier[] }
+export type ExclusionaryOptions = { exclude: KeySystemIdentifier[]; locked: KeySystemIdentifier[] }
 export type ExclusiveOptions = { exclusive: KeySystemIdentifier }
 
-export function isExclusioanaryOptionsValue(
-  options: ExclusioanaryOptions | ExclusiveOptions,
-): options is ExclusioanaryOptions {
+export function isExclusionaryOptionsValue(
+  options: ExclusionaryOptions | ExclusiveOptions,
+): options is ExclusionaryOptions {
   return 'exclude' in options || 'locked' in options
 }
 
-export type VaultDisplayOptionsPersistable = ExclusioanaryOptions | ExclusiveOptions
+export type VaultDisplayOptionsPersistable = ExclusionaryOptions | ExclusiveOptions

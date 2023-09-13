@@ -11,7 +11,7 @@ import { ExclusiveVaultCriteriaValidator } from '../../Display/Validator/Exclusi
 import { HiddenContentCriteriaValidator } from '../../Display/Validator/HiddenContentCriteriaValidator'
 import { CustomFilterCriteriaValidator } from '../../Display/Validator/CustomFilterCriteriaValidator'
 import { AnyDisplayOptions, VaultDisplayOptions } from '../../Display'
-import { isExclusioanaryOptionsValue } from '../../Display/VaultDisplayOptionsTypes'
+import { isExclusionaryOptionsValue } from '../../Display/VaultDisplayOptionsTypes'
 import { ContentType } from '@standardnotes/domain-core'
 
 type AllNotesUuidSignifier = undefined
@@ -83,7 +83,7 @@ export class ItemCounter implements SNIndex {
 
     if (this.vaultDisplayOptions) {
       const options = this.vaultDisplayOptions.getOptions()
-      if (isExclusioanaryOptionsValue(options)) {
+      if (isExclusionaryOptionsValue(options)) {
         filters.push(new ExcludeVaultsCriteriaValidator([...options.exclude, ...options.locked], element))
       } else {
         filters.push(new ExclusiveVaultCriteriaValidator(options.exclusive, element))

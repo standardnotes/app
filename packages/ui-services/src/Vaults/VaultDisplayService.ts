@@ -37,7 +37,7 @@ export class VaultDisplayService
     makeObservable(this, {
       options: observable,
 
-      isVaultExplicitelyExcluded: observable,
+      isVaultExplicitlyExcluded: observable,
       isVaultExclusivelyShown: observable,
       exclusivelyShownVault: observable,
 
@@ -81,8 +81,8 @@ export class VaultDisplayService
     return this.options
   }
 
-  isVaultExplicitelyExcluded = (vault: VaultListingInterface): boolean => {
-    return this.options.isVaultExplicitelyExcluded(vault) ?? false
+  isVaultExplicitlyExcluded = (vault: VaultListingInterface): boolean => {
+    return this.options.isVaultExplicitlyExcluded(vault) ?? false
   }
 
   isVaultDisabledOrLocked(vault: VaultListingInterface): boolean {

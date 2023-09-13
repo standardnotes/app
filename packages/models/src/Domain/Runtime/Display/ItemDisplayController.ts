@@ -11,7 +11,7 @@ import { ExcludeVaultsCriteriaValidator } from './Validator/ExcludeVaultsCriteri
 import { ExclusiveVaultCriteriaValidator } from './Validator/ExclusiveVaultCriteriaValidator'
 import { HiddenContentCriteriaValidator } from './Validator/HiddenContentCriteriaValidator'
 import { VaultDisplayOptions } from './VaultDisplayOptions'
-import { isExclusioanaryOptionsValue } from './VaultDisplayOptionsTypes'
+import { isExclusionaryOptionsValue } from './VaultDisplayOptionsTypes'
 
 export class ItemDisplayController<I extends DisplayItem, O extends AnyDisplayOptions = GenericDisplayOptions> {
   private sortMap: UuidToSortedPositionMap = {}
@@ -61,7 +61,7 @@ export class ItemDisplayController<I extends DisplayItem, O extends AnyDisplayOp
 
     if (this.vaultOptions) {
       const options = this.vaultOptions.getOptions()
-      if (isExclusioanaryOptionsValue(options)) {
+      if (isExclusionaryOptionsValue(options)) {
         filters.push(new ExcludeVaultsCriteriaValidator([...options.exclude, ...options.locked], element))
       } else {
         filters.push(new ExclusiveVaultCriteriaValidator(options.exclusive, element))
