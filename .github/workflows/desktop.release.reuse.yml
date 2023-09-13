@@ -199,6 +199,16 @@ jobs:
           draft: false
           files: packages/desktop/dist/*
 
+      - name: Publish Snap
+        continue-on-error: true
+        run: |
+          sudo snap install snapcraft --classic
+          snapcraft upload dist/standard-notes-${{ env.APP_VERSION }}-linux-amd64.snap --release stable,candidate,beta,edge
+
+  Notify:
+    runs-on: ubuntu-latest
+    needs: [Publish]
+    steps:
       - name: Notify Release Update
         uses: peter-evans/repository-dispatch@v2
         with:
@@ -206,8 +216,4 @@ jobs:
           repository: ${{ secrets.RELEASES_EVENT_RECEIVING_REPO }}
           event-type: releases-updated-event
 
-      - name: Publish Snap
-        continue-on-error: true
-        run: |
-          sudo snap install snapcraft --classic
-          snapcraft upload dist/standard-notes-${{ env.APP_VERSION }}-linux-amd64.snap --release stable,candidate,beta,edge
+
