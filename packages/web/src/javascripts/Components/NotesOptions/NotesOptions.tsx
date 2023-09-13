@@ -208,6 +208,8 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
     return <ProtectedUnauthorizedLabel />
   }
 
+  const areSomeNotesInSharedVault = notes.some((note) => application.vaults.getItemVault(note)?.isSharedVaultListing())
+
   if (notes.length === 0) {
     return null
   }
@@ -468,9 +470,13 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
               enableSuperMarkdownPreview={enableSuperMarkdownPreview}
             />
           )}
-          <HorizontalSeparator classes="my-2" />
 
-          <ListedActionsOption iconClassName={iconClass} application={application} note={notes[0]} />
+          {!areSomeNotesInSharedVault && (
+            <>
+              <HorizontalSeparator classes="my-2" />
+              <ListedActionsOption iconClassName={iconClass} application={application} note={notes[0]} />
+            </>
+          )}
 
           <HorizontalSeparator classes="my-2" />
 
