@@ -1,14 +1,20 @@
-import { FunctionComponent, useCallback } from 'react'
+import { FunctionComponent, useCallback, useEffect, useState } from 'react'
 import Menu from '../Menu/Menu'
 import { useApplication } from '../ApplicationProvider'
 import MenuSwitchButtonItem from '../Menu/MenuSwitchButtonItem'
 import Icon from '../Icon/Icon'
-import { VaultListingInterface } from '@standardnotes/snjs'
+import { ContentType, VaultListingInterface } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 
 const ManyVaultSelectionMenu: FunctionComponent = () => {
   const application = useApplication()
-  const vaults = application.vaults.getVaults()
+
+  const [vaults, setVaults] = useState(() => application.vaults.getVaults())
+  useEffect(() => {
+    return application.items.streamItems(ContentType.TYPES.VaultListing, () => {
+      setVaults(application.vaults.getVaults())
+    })
+  }, [application.items, application.vaults])
 
   const isVaultVisible = useCallback(
     (vault: VaultListingInterface) => {
@@ -30,7 +36,7 @@ const ManyVaultSelectionMenu: FunctionComponent = () => {
 
   return (
     <Menu a11yLabel="Vault selection menu" isOpen>
-      {!vaults.length && <div className="text-center py-1">No vaults found</div>}
+      {!vaults.length && <div className="py-1 text-center">No vaults found</div>}
       {vaults.map((vault) => (
         <MenuSwitchButtonItem
           onChange={() => {
