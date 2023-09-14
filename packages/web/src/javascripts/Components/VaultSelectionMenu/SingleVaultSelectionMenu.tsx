@@ -5,6 +5,7 @@ import { ContentType, VaultListingInterface } from '@standardnotes/snjs'
 import MenuRadioButtonItem from '../Menu/MenuRadioButtonItem'
 import { observer } from 'mobx-react-lite'
 import Icon from '../Icon/Icon'
+import VaultSelectMenuItemWithOptions from './MenuItemWithVaultOption'
 
 const SingleVaultSelectionMenu: FunctionComponent = () => {
   const application = useApplication()
@@ -34,12 +35,17 @@ const SingleVaultSelectionMenu: FunctionComponent = () => {
     <Menu a11yLabel="Vault selection menu" isOpen>
       {!vaults.length && <div className="py-1 text-center">No vaults found</div>}
       {vaults.map((vault) => (
-        <MenuRadioButtonItem key={vault.uuid} checked={isVaultVisible(vault)} onClick={() => selectVault(vault)}>
-          <div className="flex w-full items-center gap-1">
+        <VaultSelectMenuItemWithOptions vault={vault}>
+          <MenuRadioButtonItem
+            className="!px-0 focus:!bg-transparent md:!py-[0.455rem]"
+            key={vault.uuid}
+            checked={isVaultVisible(vault)}
+            onClick={() => selectVault(vault)}
+          >
             {vault.name}
             {application.vaultLocks.isVaultLocked(vault) && <Icon className="ml-1" type="lock" size={'small'} />}
-          </div>
-        </MenuRadioButtonItem>
+          </MenuRadioButtonItem>
+        </VaultSelectMenuItemWithOptions>
       ))}
     </Menu>
   )

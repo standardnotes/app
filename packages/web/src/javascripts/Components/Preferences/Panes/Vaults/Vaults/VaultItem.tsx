@@ -1,6 +1,6 @@
 import { formatSizeToReadableString } from '@standardnotes/filepicker'
-import { ButtonType, VaultListingInterface, VaultLockServiceEvent, isClientDisplayableError } from '@standardnotes/snjs'
-import { useCallback, useEffect, useState } from 'react'
+import { ButtonType, VaultListingInterface, isClientDisplayableError } from '@standardnotes/snjs'
+import { useCallback, useState } from 'react'
 
 import { useApplication } from '@/Components/ApplicationProvider'
 import Button from '@/Components/Button/Button'
@@ -8,6 +8,7 @@ import Icon from '@/Components/Icon/Icon'
 import ModalOverlay from '@/Components/Modal/ModalOverlay'
 import ContactInviteModal from '../Invites/ContactInviteModal'
 import EditVaultModal from './VaultModal/EditVaultModal'
+import { useVault } from '@/Hooks/useVault'
 
 type Props = {
   vault: VaultListingInterface
@@ -22,29 +23,7 @@ const VaultItem = ({ vault }: Props) => {
   const [isVaultModalOpen, setIsVaultModalOpen] = useState(false)
   const closeVaultModal = () => setIsVaultModalOpen(false)
 
-  const isVaultLockable = application.vaultLocks.isVaultLockable(vault)
-  const [isVaultLocked, setIsVaultLocked] = useState(() => application.vaultLocks.isVaultLocked(vault))
-  useEffect(() => {
-    return application.vaultLocks.addEventObserver((event) => {
-      if (event === VaultLockServiceEvent.VaultLocked || event === VaultLockServiceEvent.VaultUnlocked) {
-        setIsVaultLocked(application.vaultLocks.isVaultLocked(vault))
-      }
-    })
-  }, [application.vaultLocks, vault])
-
-  const toggleLock = useCallback(async () => {
-    if (!isVaultLockable) {
-      return
-    }
-
-    if (isVaultLocked) {
-      application.vaultDisplayService.unlockVault(vault).catch(console.error)
-    } else {
-      application.vaultLocks.lockNonPersistentVault(vault).catch(console.error)
-    }
-  }, [application.vaultDisplayService, application.vaultLocks, isVaultLockable, isVaultLocked, vault])
-
-  const isAdmin = !vault.isSharedVaultListing() ? true : application.vaultUsers.isCurrentUserSharedVaultAdmin(vault)
+  const { isCurrentUserAdmin, isLocked, canShowLockOption, toggleLock, ensureVaultIsUnlocked } = useVault(vault)
 
   const deleteVault = useCallback(async () => {
     const confirm = await application.alerts.confirm(
@@ -103,14 +82,6 @@ const VaultItem = ({ vault }: Props) => {
     await application.sharedVaults.convertVaultToSharedVault(vault)
   }, [application.sharedVaults, vault])
 
-  const ensureVaultIsUnlocked = useCallback(async () => {
-    if (!application.vaultLocks.isVaultLocked(vault)) {
-      return true
-    }
-    const unlocked = await application.vaultDisplayService.unlockVault(vault)
-    return unlocked
-  }, [application, vault])
-
   const openEditModal = useCallback(async () => {
     if (!(await ensureVaultIsUnlocked())) {
       return
@@ -150,10 +121,10 @@ const VaultItem = ({ vault }: Props) => {
           )}
           <div className="mt-2 flex w-full flex-wrap gap-3">
             <Button label="Edit" onClick={openEditModal} />
-            {isVaultLockable && <Button label={isVaultLocked ? 'Unlock' : 'Lock'} onClick={toggleLock} />}
-            {isAdmin && <Button colorStyle="danger" label="Delete" onClick={deleteVault} />}
-            {!isAdmin && vault.isSharedVaultListing() && <Button label="Leave Vault" onClick={leaveVault} />}
-            {isAdmin ? (
+            {canShowLockOption && <Button label={isLocked ? 'Unlock' : 'Lock'} onClick={toggleLock} />}
+            {isCurrentUserAdmin && <Button colorStyle="danger" label="Delete" onClick={deleteVault} />}
+            {!isCurrentUserAdmin && vault.isSharedVaultListing() && <Button label="Leave Vault" onClick={leaveVault} />}
+            {isCurrentUserAdmin ? (
               vault.isSharedVaultListing() ? (
                 <Button colorStyle="info" label="Invite Contacts" onClick={openInviteModal} />
               ) : application.hasAccount() ? (
