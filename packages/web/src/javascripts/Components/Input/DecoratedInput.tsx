@@ -4,7 +4,7 @@ import { DecoratedInputProps } from './DecoratedInputProps'
 
 const getClassNames = (hasLeftDecorations: boolean, hasRightDecorations: boolean, roundedFull?: boolean) => {
   return {
-    container: `position-relative flex items-stretch overflow-hidden border border-solid border-passive-3 bg-default translucent-ui:bg-transparent text-sm focus-within:ring-2 focus-within:ring-info bg-clip-padding ${
+    container: `position-relative flex items-stretch overflow-hidden border border-border bg-default translucent-ui:bg-transparent text-sm focus-within:ring-2 focus-within:ring-info bg-clip-padding ${
       !hasLeftDecorations && !hasRightDecorations ? 'px-2 py-1.5' : ''
     } ${roundedFull ? 'rounded-full' : 'rounded'}`,
     input: `focus:ring-none w-full border-0 bg-transparent text-text focus:shadow-none focus:outline-none ${
