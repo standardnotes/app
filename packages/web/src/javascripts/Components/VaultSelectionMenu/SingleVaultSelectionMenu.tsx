@@ -35,7 +35,7 @@ const SingleVaultSelectionMenu: FunctionComponent = () => {
     <Menu a11yLabel="Vault selection menu" isOpen>
       {!vaults.length && <div className="py-1 text-center">No vaults found</div>}
       {vaults.map((vault) => (
-        <VaultSelectMenuItemWithOptions vault={vault}>
+        <VaultSelectMenuItemWithOptions vault={vault} key={vault.uuid}>
           <MenuRadioButtonItem
             className="!px-0 focus:!bg-transparent md:!py-[0.455rem]"
             key={vault.uuid}

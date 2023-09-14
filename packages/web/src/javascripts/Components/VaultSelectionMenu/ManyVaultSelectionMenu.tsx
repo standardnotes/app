@@ -39,14 +39,13 @@ const ManyVaultSelectionMenu: FunctionComponent = () => {
     <Menu a11yLabel="Vault selection menu" isOpen>
       {!vaults.length && <div className="py-1 text-center">No vaults found</div>}
       {vaults.map((vault) => (
-        <VaultSelectMenuItemWithOptions vault={vault}>
+        <VaultSelectMenuItemWithOptions vault={vault} key={vault.uuid}>
           <MenuSwitchButtonItem
             className="flex-grow !px-0 focus:!bg-transparent"
             onChange={() => {
               toggleVault(vault)
             }}
             checked={isVaultVisible(vault)}
-            key={vault.uuid}
           >
             <Icon type={vault.iconString} className="mr-2 text-neutral" />
             <div className="flex w-full items-center gap-1">
