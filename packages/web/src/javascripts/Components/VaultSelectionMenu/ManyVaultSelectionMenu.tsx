@@ -1,10 +1,11 @@
 import { FunctionComponent, useCallback, useEffect, useState } from 'react'
 import Menu from '../Menu/Menu'
 import { useApplication } from '../ApplicationProvider'
-import MenuSwitchButtonItem from '../Menu/MenuSwitchButtonItem'
-import Icon from '../Icon/Icon'
 import { ContentType, VaultListingInterface } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
+import VaultSelectMenuItemWithOptions from './MenuItemWithVaultOption'
+import Icon from '../Icon/Icon'
+import MenuSwitchButtonItem from '../Menu/MenuSwitchButtonItem'
 
 const ManyVaultSelectionMenu: FunctionComponent = () => {
   const application = useApplication()
@@ -38,19 +39,22 @@ const ManyVaultSelectionMenu: FunctionComponent = () => {
     <Menu a11yLabel="Vault selection menu" isOpen>
       {!vaults.length && <div className="py-1 text-center">No vaults found</div>}
       {vaults.map((vault) => (
-        <MenuSwitchButtonItem
-          onChange={() => {
-            toggleVault(vault)
-          }}
-          checked={isVaultVisible(vault)}
-          key={vault.uuid}
-        >
-          <Icon type={vault.iconString} className="mr-2 text-neutral" />
-          <div className="flex w-full items-center gap-1">
-            {vault.name}
-            {application.vaultLocks.isVaultLocked(vault) && <Icon className="ml-1" type="lock" size={'small'} />}
-          </div>
-        </MenuSwitchButtonItem>
+        <VaultSelectMenuItemWithOptions vault={vault}>
+          <MenuSwitchButtonItem
+            className="flex-grow !px-0 focus:!bg-transparent"
+            onChange={() => {
+              toggleVault(vault)
+            }}
+            checked={isVaultVisible(vault)}
+            key={vault.uuid}
+          >
+            <Icon type={vault.iconString} className="mr-2 text-neutral" />
+            <div className="flex w-full items-center gap-1">
+              {vault.name}
+              {application.vaultLocks.isVaultLocked(vault) && <Icon className="ml-1" type="lock" size={'small'} />}
+            </div>
+          </MenuSwitchButtonItem>
+        </VaultSelectMenuItemWithOptions>
       ))}
     </Menu>
   )
