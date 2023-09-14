@@ -1,8 +1,10 @@
-import { VaultDisplayOptions, VaultListingInterface } from '@standardnotes/models'
+import { DecryptedItemInterface, VaultDisplayOptions, VaultListingInterface } from '@standardnotes/models'
 import { AbstractUIServiceInterface } from '../Abstract/AbstractUIServiceInterface'
 
 export interface VaultDisplayServiceInterface extends AbstractUIServiceInterface {
   exclusivelyShownVault?: VaultListingInterface
+
+  getItemVault(item: DecryptedItemInterface): VaultListingInterface | undefined
 
   getOptions(): VaultDisplayOptions
 

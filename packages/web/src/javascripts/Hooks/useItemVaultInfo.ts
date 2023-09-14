@@ -1,7 +1,12 @@
 import { useApplication } from '@/Components/ApplicationProvider'
-import { DecryptedItemInterface, TrustedContactInterface, VaultListingInterface } from '@standardnotes/snjs'
-import useItem from './useItem'
-import { useRef } from 'react'
+import {
+  ContentType,
+  DecryptedItemInterface,
+  TrustedContactInterface,
+  VaultListingInterface,
+} from '@standardnotes/snjs'
+import { useCallback, useEffect, useLayoutEffect, useState } from 'react'
+import { useStateRef } from './useStateRef'
 
 type ItemVaultInfo = {
   vault?: VaultListingInterface
@@ -12,21 +17,37 @@ type ItemVaultInfo = {
 export const useItemVaultInfo = (item: DecryptedItemInterface): ItemVaultInfo => {
   const application = useApplication()
 
-  const info = useRef<ItemVaultInfo>({
-    vault: undefined,
-    lastEditedByContact: undefined,
-    sharedByContact: undefined,
-  })
+  const [vault, setVault] = useState<VaultListingInterface>()
+  const vaultRef = useStateRef(vault)
+  const [lastEditedByContact, setLastEditedByContact] = useState<TrustedContactInterface>()
+  const [sharedByContact, setSharedByContact] = useState<TrustedContactInterface>()
 
-  info.current.vault = useItem(application.vaults.getItemVault(item)?.uuid)
+  const updateInfo = useCallback(() => {
+    if (!application.featuresController.isEntitledToVaults()) {
+      return
+    }
 
-  const lastEditedBy = application.sharedVaults.getItemLastEditedBy(item)
-  info.current.lastEditedByContact = lastEditedBy || info.current.lastEditedByContact
-  info.current.sharedByContact = application.sharedVaults.getItemSharedBy(item)
+    setVault(application.vaultDisplayService.getItemVault(item))
+    setLastEditedByContact((lastEditedBy) => application.sharedVaults.getItemLastEditedBy(item) || lastEditedBy)
+    setSharedByContact(application.sharedVaults.getItemSharedBy(item))
+  }, [application.featuresController, application.sharedVaults, application.vaultDisplayService, item])
 
-  if (!application.featuresController.isEntitledToVaults()) {
-    return info.current
+  useLayoutEffect(() => {
+    updateInfo()
+  }, [updateInfo])
+
+  useEffect(() => {
+    return application.items.streamItems(ContentType.TYPES.VaultListing, ({ changed, inserted }) => {
+      const matchingItem = changed.concat(inserted).find((vault) => vault.uuid === vaultRef.current?.uuid)
+      if (matchingItem) {
+        setVault(matchingItem as VaultListingInterface)
+      }
+    })
+  }, [application.items, vaultRef])
+
+  return {
+    vault,
+    lastEditedByContact,
+    sharedByContact,
   }
-
-  return info.current
 }

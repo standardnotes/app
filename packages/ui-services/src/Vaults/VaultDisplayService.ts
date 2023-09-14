@@ -14,6 +14,7 @@ import {
   VaultLockServiceEvent,
 } from '@standardnotes/services'
 import {
+  DecryptedItemInterface,
   ExclusionaryOptions,
   VaultDisplayOptions,
   VaultDisplayOptionsPersistable,
@@ -101,6 +102,19 @@ export class VaultDisplayService
 
   isInExclusiveDisplayMode(): boolean {
     return this.options.isInExclusiveDisplayMode()
+  }
+
+  getItemVault(item: DecryptedItemInterface): VaultListingInterface | undefined {
+    if (this.application.items.isTemplateItem(item)) {
+      if (this.exclusivelyShownVault) {
+        return this.exclusivelyShownVault
+      }
+
+      return undefined
+    }
+
+    const vault = this.application.vaults.getItemVault(item)
+    return vault
   }
 
   changeToMultipleVaultDisplayMode(): void {
