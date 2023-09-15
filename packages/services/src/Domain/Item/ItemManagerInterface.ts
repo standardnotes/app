@@ -87,7 +87,6 @@ export interface ItemManagerInterface extends AbstractService {
   removeItemsFromMemory(items: AnyItemInterface[]): void
   getDirtyItems(): (DecryptedItemInterface | DeletedItemInterface)[]
   getTagLongTitle(tag: SNTag): string
-  getSortedTagsForItem(item: DecryptedItemInterface<ItemContent>): SNTag[]
   itemsReferencingItem<I extends DecryptedItemInterface = DecryptedItemInterface>(
     itemToLookupUuidFor: { uuid: string },
     contentType?: string,
@@ -130,6 +129,9 @@ export interface ItemManagerInterface extends AbstractService {
   getDisplayableNotesAndFiles(): (SNNote | FileItem)[]
   setPrimaryItemDisplayOptions(options: NotesAndFilesDisplayControllerOptions): void
   getTagPrefixTitle(tag: SNTag): string | undefined
-  getNoteLinkedFiles(note: SNNote): FileItem[]
+  getItemLinkedFiles(item: DecryptedItemInterface): FileItem[]
+  getItemLinkedNotes(item: DecryptedItemInterface): SNNote[]
+  getSortedTagsForItem(item: DecryptedItemInterface<ItemContent>): SNTag[]
+  getUnsortedTagsForItem(item: DecryptedItemInterface<ItemContent>): SNTag[]
   conflictsOf(uuid: string): AnyItemInterface[]
 }

@@ -5,13 +5,13 @@ import { isClientDisplayableError } from '@standardnotes/responses'
 import {
   DecryptedItemInterface,
   EmojiString,
-  FileItem,
   IconType,
   KeySystemIdentifier,
   KeySystemRootKeyStorageMode,
   SharedVaultListingInterface,
   VaultListingInterface,
   VaultListingMutator,
+  isFile,
   isNote,
 } from '@standardnotes/models'
 import { VaultServiceInterface } from './VaultServiceInterface'
@@ -151,22 +151,27 @@ export class VaultService
       throw new Error('Attempting to add item to locked vault')
     }
 
-    let linkedFiles: FileItem[] = []
-    if (isNote(item)) {
-      linkedFiles = this.items.getNoteLinkedFiles(item)
+    if (isNote(item) || isFile(item)) {
+      const linkedFiles = this.items.getItemLinkedFiles(item)
+      const linkedNotes = this.items.getItemLinkedNotes(item)
+      const linkedTags = this.items.getUnsortedTagsForItem(item)
 
-      if (linkedFiles.length > 0) {
-        const confirmed = await this.alerts.confirmV2({
-          title: 'Linked files will be moved to vault',
-          text: `This note has ${linkedFiles.length} linked files. They will also be moved to the vault. Do you want to continue?`,
-        })
-        if (!confirmed) {
-          return undefined
-        }
+      const areAnyLinkedItemsInOtherVaults = [...linkedFiles, ...linkedNotes, ...linkedTags].some((linkedItem) => {
+        return linkedItem.key_system_identifier !== vault.systemIdentifier
+      })
+
+      if (areAnyLinkedItemsInOtherVaults) {
+        this.alerts
+          .alertV2({
+            title: 'Cannot move item to vault',
+            text: 'This item is linked to other items that are not in the same vault. Please move those items to this vault first.',
+          })
+          .catch(console.error)
+        return undefined
       }
     }
 
-    await this._moveItemsToVault.execute({ vault, items: [item, ...linkedFiles] })
+    await this._moveItemsToVault.execute({ vault, items: [item] })
 
     return this.items.findSureItem(item.uuid)
   }
