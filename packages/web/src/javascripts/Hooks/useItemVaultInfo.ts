@@ -45,6 +45,15 @@ export const useItemVaultInfo = (item: DecryptedItemInterface): ItemVaultInfo =>
     })
   }, [application.items, vaultRef])
 
+  useEffect(() => {
+    return application.items.streamItems(ContentType.TYPES.Note, ({ changed }) => {
+      const matchingItem = changed.find((note) => note.uuid === item.uuid)
+      if (matchingItem) {
+        updateInfo()
+      }
+    })
+  }, [application.items, item.uuid, updateInfo])
+
   return {
     vault,
     lastEditedByContact,
