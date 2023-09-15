@@ -25,3 +25,7 @@ export const splitQueryInString = (string: string, query: string) => {
 
   return splitRangeWithinString(string, indexOfQueryInTitle, indexOfQueryInTitle + query.length)
 }
+
+export const capitalizeString = (string: string) => {
+  return string.charAt(0).toUpperCase() + string.slice(1)
+}

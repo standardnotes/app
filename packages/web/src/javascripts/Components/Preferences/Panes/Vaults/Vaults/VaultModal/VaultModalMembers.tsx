@@ -1,8 +1,9 @@
 import { useCallback } from 'react'
 import { useApplication } from '@/Components/ApplicationProvider'
-import { SharedVaultUserServerHash, VaultListingInterface } from '@standardnotes/snjs'
+import { SharedVaultUserPermission, SharedVaultUserServerHash, VaultListingInterface } from '@standardnotes/snjs'
 import Icon from '@/Components/Icon/Icon'
 import Button from '@/Components/Button/Button'
+import { capitalizeString } from '@/Utils'
 
 export const VaultModalMembers = ({
   members,
@@ -34,10 +35,15 @@ export const VaultModalMembers = ({
         {members.map((member) => {
           const isMemberVaultOwner = application.vaultUsers.isVaultUserOwner(member)
           const contact = application.contacts.findContactForServerUser(member)
+          const permission =
+            member.permission === SharedVaultUserPermission.PERMISSIONS.Write
+              ? 'Read / Write'
+              : capitalizeString(member.permission)
+
           return (
             <div
               key={contact?.uuid || member.user_uuid}
-              className="grid grid-cols-[auto,1fr] gap-x-[0.65rem] gap-y-2 text-base font-medium md:text-sm"
+              className="grid grid-cols-[auto,1fr] gap-x-[0.65rem] gap-y-0.5 text-base font-medium md:text-sm"
             >
               <Icon type="user" className="col-start-1 col-end-2 place-self-center" />
               <div className="flex items-center gap-2 overflow-hidden text-ellipsis text-base font-bold">
@@ -54,9 +60,10 @@ export const VaultModalMembers = ({
                   </div>
                 )}
               </div>
+              <div className="col-start-2 row-start-2">{permission}</div>
               {isCurrentUserAdmin && !isMemberVaultOwner && (
                 <Button
-                  className="col-start-2 row-start-2"
+                  className="col-start-2 row-start-3 mt-1"
                   label="Remove From Vault"
                   onClick={() => removeMemberFromVault(member)}
                   small

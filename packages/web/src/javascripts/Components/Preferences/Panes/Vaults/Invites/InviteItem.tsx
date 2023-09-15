@@ -2,10 +2,11 @@ import { useApplication } from '@/Components/ApplicationProvider'
 import Button from '@/Components/Button/Button'
 import Icon from '@/Components/Icon/Icon'
 import ModalOverlay from '@/Components/Modal/ModalOverlay'
-import { InviteRecord } from '@standardnotes/snjs'
+import { InviteRecord, SharedVaultUserPermission } from '@standardnotes/snjs'
 import { useCallback, useState } from 'react'
 import EditContactModal from '../Contacts/EditContactModal'
 import { CheckmarkCircle } from '../../../../UIElements/CheckmarkCircle'
+import { capitalizeString } from '@/Utils'
 
 type Props = {
   inviteRecord: InviteRecord
@@ -35,6 +36,11 @@ const InviteItem = ({ inviteRecord }: Props) => {
 
   const trustedContact = application.contacts.findSenderContactForInvite(inviteRecord.invite)
 
+  const permission =
+    inviteRecord.invite.permission === SharedVaultUserPermission.PERMISSIONS.Write
+      ? 'Read / Write'
+      : capitalizeString(inviteRecord.invite.permission)
+
   return (
     <>
       <ModalOverlay isOpen={isAddContactModalOpen} close={closeAddContactModal}>
@@ -43,10 +49,10 @@ const InviteItem = ({ inviteRecord }: Props) => {
 
       <div className="flex gap-3.5 rounded-lg border border-border px-3.5 py-2.5 shadow">
         <Icon type="archive" size="custom" className="mt-1.5 h-5.5 w-5.5 flex-shrink-0" />
-        <div className="flex flex-col gap-2.5 overflow-hidden py-1.5">
-          <div className="mr-auto overflow-hidden text-ellipsis text-sm">Vault Name: {inviteData.metadata.name}</div>
+        <div className="flex flex-col gap-2 overflow-hidden py-1.5">
+          <div className="overflow-hidden text-ellipsis text-sm">Vault Name: {inviteData.metadata.name}</div>
           {inviteData.metadata.description && (
-            <div className="mr-auto overflow-hidden text-ellipsis text-sm">
+            <div className="overflow-hidden text-ellipsis text-sm">
               Vault Description: {inviteData.metadata.description}
             </div>
           )}
@@ -56,11 +62,11 @@ const InviteItem = ({ inviteRecord }: Props) => {
               <CheckmarkCircle className="!h-4 !w-4" />
             </div>
           ) : (
-            <div className="mr-auto w-full overflow-hidden whitespace-pre-wrap break-words text-sm">
+            <div className="w-full overflow-hidden whitespace-pre-wrap break-words text-sm">
               Sender CollaborationID: <span className="font-mono text-xs">{collaborationId}</span>
             </div>
           )}
-
+          <div className="overflow-hidden text-ellipsis text-sm">Permission: {permission}</div>
           <div className="">
             {isTrusted ? (
               <Button label="Accept Invite" className="text-xs" onClick={acceptInvite} />
