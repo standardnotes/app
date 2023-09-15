@@ -640,6 +640,18 @@ export class ItemManager extends Services.AbstractService implements Services.It
     return undefined
   }
 
+  getDisplayableTagParent(itemToLookupUuidFor: Models.SNTag): Models.SNTag | undefined {
+    const tag = this.findItem<Models.SNTag>(itemToLookupUuidFor.uuid)
+    if (!tag) {
+      return undefined
+    }
+    const parentId = tag.parentId
+    if (parentId) {
+      return this.tagDisplayController.items().find((displayableTag) => displayableTag.uuid === parentId)
+    }
+    return undefined
+  }
+
   public getTagPrefixTitle(tag: Models.SNTag): string | undefined {
     const hierarchy = this.getTagParentChain(tag)
 

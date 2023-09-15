@@ -117,6 +117,7 @@ export interface ItemManagerInterface extends AbstractService {
   getDisplayableTags(): SNTag[]
   getTagChildren(itemToLookupUuidFor: SNTag): SNTag[]
   getTagParent(itemToLookupUuidFor: SNTag): SNTag | undefined
+  getDisplayableTagParent(itemToLookupUuidFor: SNTag): SNTag | undefined
   isValidTagParent(parentTagToLookUpUuidFor: SNTag, childToLookUpUuidFor: SNTag): boolean
   isSmartViewTitle(title: string): boolean
   getDisplayableComponents(): ComponentInterface[]
