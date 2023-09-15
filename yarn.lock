@@ -4078,19 +4078,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@simplewebauthn/browser@npm:^7.1.0":
-  version: 7.4.0
-  resolution: "@simplewebauthn/browser@npm:7.4.0"
+"@simplewebauthn/browser@npm:^8.0.2":
+  version: 8.0.2
+  resolution: "@simplewebauthn/browser@npm:8.0.2"
   dependencies:
-    "@simplewebauthn/typescript-types": ^7.4.0
-  checksum: dd5fdebeb2910422e18659697c9a96d0cc13a5af7406b35ea3e44269c2430b8619df5e7a91b360dca220e509d6686514c21119f60e73e64b721f0e82bfc9565f
+    "@simplewebauthn/typescript-types": ^8.0.0
+  checksum: 3837a8a80dad90e4eecc116ecf42c61c4e51d0948bea41240bd18665c753425f50df89b4f9c18f99d862b931cd2c24d7bde23a9d7626fbe7a4d8b308160afc56
   languageName: node
   linkType: hard
 
-"@simplewebauthn/typescript-types@npm:^7.4.0":
-  version: 7.4.0
-  resolution: "@simplewebauthn/typescript-types@npm:7.4.0"
-  checksum: c53fd44eaf9a905ec79f3a7956bebb275dde47079bc8a05e20cf0b5b79cd358f63f60997efcad49d468110ae6d317782becf75c338aa6c48cacd09b839a583b7
+"@simplewebauthn/typescript-types@npm:^8.0.0":
+  version: 8.0.0
+  resolution: "@simplewebauthn/typescript-types@npm:8.0.0"
+  checksum: 59b4ac9804170edbee50703428f5adcada70211117c8f458c805a4b6d4772b9ec678664dd3f00e400aee2e392c9da8e5a8c38448fb0c3d792aba535a3329bfe7
   languageName: node
   linkType: hard
 
@@ -5013,7 +5013,7 @@ __metadata:
     "@lexical/react": 0.12.2
     "@pmmmwh/react-refresh-webpack-plugin": ^0.5.10
     "@radix-ui/react-slot": ^1.0.1
-    "@simplewebauthn/browser": ^7.1.0
+    "@simplewebauthn/browser": ^8.0.2
     "@standardnotes/authenticator": ^2.4.0
     "@standardnotes/autobiography-theme": ^1.2.7
     "@standardnotes/bold-editor": ^1.6.4
