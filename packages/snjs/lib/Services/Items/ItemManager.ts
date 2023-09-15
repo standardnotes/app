@@ -740,6 +740,12 @@ export class ItemManager extends Services.AbstractService implements Services.It
     )
   }
 
+  public getUnsortedTagsForItem(item: Models.DecryptedItemInterface<Models.ItemContent>): Models.SNTag[] {
+    return this.itemsReferencingItem(item).filter((ref) => {
+      return ref?.content_type === ContentType.TYPES.Tag
+    }) as Models.SNTag[]
+  }
+
   public isSmartViewTitle(title: string): boolean {
     return title.startsWith(Models.SMART_TAG_DSL_PREFIX)
   }
@@ -860,8 +866,14 @@ export class ItemManager extends Services.AbstractService implements Services.It
     return this.findItems(this.collection.uuidsOfItemsWithConflicts()).filter(Models.isNote).length
   }
 
-  getNoteLinkedFiles(note: Models.SNNote): Models.FileItem[] {
-    return this.itemsReferencingItem(note).filter(Models.isFile)
+  getItemLinkedFiles(item: Models.DecryptedItemInterface): Models.FileItem[] {
+    return item.content_type === ContentType.TYPES.File
+      ? this.referencesForItem(item).filter(Models.isFile)
+      : this.itemsReferencingItem(item).filter(Models.isFile)
+  }
+
+  getItemLinkedNotes(item: Models.DecryptedItemInterface<Models.ItemContent>): Models.SNNote[] {
+    return this.referencesForItem(item).filter(Models.isNote)
   }
 
   /**
