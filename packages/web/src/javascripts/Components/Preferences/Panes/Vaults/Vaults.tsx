@@ -37,8 +37,12 @@ const Vaults = () => {
   const [isAddContactModalOpen, setIsAddContactModalOpen] = useState(false)
   const closeAddContactModal = () => setIsAddContactModalOpen(false)
 
+  const [isCreatingSharedVault, setIsCreatingSharedVault] = useState(false)
   const [isVaultModalOpen, setIsVaultModalOpen] = useState(false)
-  const closeVaultModal = () => setIsVaultModalOpen(false)
+  const closeVaultModal = () => {
+    setIsVaultModalOpen(false)
+    setIsCreatingSharedVault(false)
+  }
 
   const vaultService = application.vaults
   const contactService = application.contacts
@@ -46,17 +50,20 @@ const Vaults = () => {
 
   const updateVaults = useCallback(async () => {
     const vaults = vaultService.getVaults()
+    const ownedVaults = vaults.filter((vault) => {
+      return !vault.isSharedVaultListing() ? true : application.vaultUsers.isCurrentUserSharedVaultOwner(vault)
+    })
 
     if (featuresService.hasMinimumRole(RoleName.NAMES.ProUser)) {
       setCanCreateMoreVaults(true)
     } else if (featuresService.hasMinimumRole(RoleName.NAMES.PlusUser)) {
-      setCanCreateMoreVaults(vaults.length < 3)
+      setCanCreateMoreVaults(ownedVaults.length < 3)
     } else {
-      setCanCreateMoreVaults(vaults.length < 1)
+      setCanCreateMoreVaults(ownedVaults.length < 1)
     }
 
     setVaults(vaults)
-  }, [vaultService, featuresService])
+  }, [vaultService, featuresService, application.vaultUsers])
 
   const updateInvites = useCallback(async () => {
     setInvites(application.vaultInvites.getCachedPendingInviteRecords())
@@ -115,6 +122,11 @@ const Vaults = () => {
     setIsVaultModalOpen(true)
   }, [])
 
+  const createNewSharedVault = useCallback(async () => {
+    setIsCreatingSharedVault(true)
+    setIsVaultModalOpen(true)
+  }, [])
+
   const createNewContact = useCallback(() => {
     setIsAddContactModalOpen(true)
   }, [])
@@ -125,7 +137,11 @@ const Vaults = () => {
         <EditContactModal onCloseDialog={closeAddContactModal} />
       </ModalOverlay>
 
-      <EditVaultModal isVaultModalOpen={isVaultModalOpen} closeVaultModal={closeVaultModal} />
+      <EditVaultModal
+        isVaultModalOpen={isVaultModalOpen}
+        creatingSharedVault={isCreatingSharedVault}
+        closeVaultModal={closeVaultModal}
+      />
 
       {invites.length > 0 && (
         <PreferencesGroup>
@@ -169,8 +185,9 @@ const Vaults = () => {
             </div>
           )}
           {canCreateMoreVaults ? (
-            <div className="mt-2.5 flex flex-row">
-              <Button label="Create New Vault" className="mr-3" onClick={createNewVault} />
+            <div className="mt-2.5 flex gap-3">
+              <Button label="Create Vault" onClick={createNewVault} />
+              <Button label="Create Shared Vault" onClick={createNewSharedVault} />
             </div>
           ) : (
             <div className="mt-3.5">

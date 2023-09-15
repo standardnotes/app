@@ -28,8 +28,9 @@ import Spinner from '@/Components/Spinner/Spinner'
 
 const EditVaultModalContent: FunctionComponent<{
   existingVaultUuid?: string
+  creatingSharedVault?: boolean
   onCloseDialog: () => void
-}> = ({ onCloseDialog, existingVaultUuid }) => {
+}> = ({ onCloseDialog, existingVaultUuid, creatingSharedVault }) => {
   const application = useApplication()
 
   const existingVault = useItem<VaultListingInterface>(existingVaultUuid)
@@ -65,7 +66,7 @@ const EditVaultModalContent: FunctionComponent<{
 
     if (existingVault.isSharedVaultListing()) {
       setIsAdmin(
-        existingVault.isSharedVaultListing() && application.vaultUsers.isCurrentUserSharedVaultAdmin(existingVault),
+        existingVault.isSharedVaultListing() && application.vaultUsers.isCurrentUserSharedVaultOwner(existingVault),
       )
 
       setIsLoadingCollaborationInfo(true)
@@ -160,12 +161,30 @@ const EditVaultModalContent: FunctionComponent<{
       if (!customPassword) {
         throw new Error('Custom key is not set')
       }
-      await application.vaults.createUserInputtedPasswordVault({
+      if (creatingSharedVault) {
+        await application.sharedVaults.createSharedVault({
+          name,
+          description,
+          iconString: iconString,
+          storagePreference: keyStorageMode,
+          userInputtedPassword: customPassword,
+        })
+      } else {
+        await application.vaults.createUserInputtedPasswordVault({
+          name,
+          description,
+          iconString: iconString,
+          storagePreference: keyStorageMode,
+          userInputtedPassword: customPassword,
+        })
+      }
+    } else if (creatingSharedVault) {
+      await application.sharedVaults.createSharedVault({
         name,
         description,
         iconString: iconString,
         storagePreference: keyStorageMode,
-        userInputtedPassword: customPassword,
+        userInputtedPassword: undefined,
       })
     } else {
       await application.vaults.createRandomizedVault({
@@ -177,7 +196,9 @@ const EditVaultModalContent: FunctionComponent<{
 
     handleDialogClose()
   }, [
+    application.sharedVaults,
     application.vaults,
+    creatingSharedVault,
     customPassword,
     description,
     handleDialogClose,
@@ -203,7 +224,7 @@ const EditVaultModalContent: FunctionComponent<{
   const modalActions = useMemo(
     (): ModalAction[] => [
       {
-        label: existingVault ? 'Save Vault' : 'Create Vault',
+        label: existingVault ? 'Save Vault' : creatingSharedVault ? 'Create Shared Vault' : 'Create Vault',
         onClick: handleSubmit,
         type: 'primary',
         mobileSlot: 'right',
@@ -216,7 +237,7 @@ const EditVaultModalContent: FunctionComponent<{
         mobileSlot: 'left',
       },
     ],
-    [existingVault, handleDialogClose, handleSubmit, isSubmitting],
+    [creatingSharedVault, existingVault, handleDialogClose, handleSubmit, isSubmitting],
   )
 
   const [shouldShowIconPicker, setShouldShowIconPicker] = useState(false)
@@ -334,14 +355,20 @@ const EditVaultModal = ({
   isVaultModalOpen,
   closeVaultModal,
   vault,
+  creatingSharedVault,
 }: {
   isVaultModalOpen: boolean
   closeVaultModal: () => void
   vault?: VaultListingInterface
+  creatingSharedVault?: boolean
 }) => {
   return (
     <ModalOverlay className="md:max-h-[70vh]" isOpen={isVaultModalOpen} close={closeVaultModal}>
-      <EditVaultModalContent existingVaultUuid={vault?.uuid} onCloseDialog={closeVaultModal} />
+      <EditVaultModalContent
+        creatingSharedVault={creatingSharedVault}
+        existingVaultUuid={vault?.uuid}
+        onCloseDialog={closeVaultModal}
+      />
     </ModalOverlay>
   )
 }

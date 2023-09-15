@@ -51,12 +51,12 @@ export class VaultUserService extends AbstractService<VaultUserServiceEvent> imp
     return result.getValue()
   }
 
-  public isCurrentUserSharedVaultAdmin(sharedVault: SharedVaultListingInterface): boolean {
+  public isCurrentUserSharedVaultOwner(sharedVault: SharedVaultListingInterface): boolean {
     return this._isVaultOwner.execute(sharedVault).getValue()
   }
 
   async removeUserFromSharedVault(sharedVault: SharedVaultListingInterface, userUuid: string): Promise<Result<void>> {
-    if (!this.isCurrentUserSharedVaultAdmin(sharedVault)) {
+    if (!this.isCurrentUserSharedVaultOwner(sharedVault)) {
       throw new Error('Only vault admins can remove users')
     }
 
