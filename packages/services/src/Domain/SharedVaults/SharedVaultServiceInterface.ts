@@ -5,6 +5,8 @@ import {
   SharedVaultListingInterface,
   VaultListingInterface,
   KeySystemRootKeyStorageMode,
+  EmojiString,
+  IconType,
 } from '@standardnotes/models'
 import { AbstractService } from '../Service/AbstractService'
 import { SharedVaultServiceEvent, SharedVaultServiceEventPayload } from './SharedVaultServiceEvent'
@@ -14,6 +16,7 @@ export interface SharedVaultServiceInterface
   createSharedVault(dto: {
     name: string
     description?: string
+    iconString: IconType | EmojiString
     userInputtedPassword: string | undefined
     storagePreference?: KeySystemRootKeyStorageMode
   }): Promise<VaultListingInterface | ClientDisplayableError>
