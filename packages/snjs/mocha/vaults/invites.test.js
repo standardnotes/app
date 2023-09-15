@@ -126,6 +126,97 @@ describe('shared vault invites', function () {
     await deinitContactContext()
   })
 
+  it('should sync a shared vault after leaving and rejoining', async () => {
+    const sharedVault = await Collaboration.createSharedVault(context)
+
+    const note = await context.createSyncedNote('foo', 'bar')
+    await Collaboration.moveItemToVault(context, sharedVault, note)
+
+    const { contactContext, deinitContactContext } = await Collaboration.createContactContext()
+    const contact = await Collaboration.createTrustedContactForUserOfContext(context, contactContext)
+    await Collaboration.createTrustedContactForUserOfContext(contactContext, context)
+
+    await contactContext.sync()
+
+    await context.vaultInvites.inviteContactToSharedVault(
+      sharedVault,
+      contact,
+      SharedVaultUserPermission.PERMISSIONS.Write,
+    )
+
+    const promise = contactContext.awaitNextSyncSharedVaultFromScratchEvent()
+    await contactContext.sync()
+    await Collaboration.acceptAllInvites(contactContext)
+    await promise
+
+    const contactVaultListing = contactContext.items.getItems('SN|VaultListing')[0]
+    await contactContext.vaultUsers.leaveSharedVault(contactVaultListing)
+
+    await contactContext.sync()
+    await context.vaultInvites.inviteContactToSharedVault(
+      sharedVault,
+      contact,
+      SharedVaultUserPermission.PERMISSIONS.Write,
+    )
+    const _promise = contactContext.awaitNextSyncSharedVaultFromScratchEvent()
+    await contactContext.sync()
+    await Collaboration.acceptAllInvites(contactContext)
+    await _promise
+
+    const receivedNote = contactContext.items.findItem(note.uuid)
+    expect(receivedNote).to.not.be.undefined
+    expect(receivedNote.title).to.equal('foo')
+    expect(receivedNote.text).to.equal(note.text)
+
+    await deinitContactContext()
+  })
+
+  it('should sync a shared vault after accepting, leaving, refreshing, and rejoining', async () => {
+    const sharedVault = await Collaboration.createSharedVault(context)
+
+    const note = await context.createSyncedNote('foo', 'bar')
+    await Collaboration.moveItemToVault(context, sharedVault, note)
+
+    const { contactContext, deinitContactContext } = await Collaboration.createContactContext()
+    const contact = await Collaboration.createTrustedContactForUserOfContext(context, contactContext)
+    await Collaboration.createTrustedContactForUserOfContext(contactContext, context)
+
+    await contactContext.sync()
+
+    await context.vaultInvites.inviteContactToSharedVault(
+      sharedVault,
+      contact,
+      SharedVaultUserPermission.PERMISSIONS.Write,
+    )
+
+    const promise = contactContext.awaitNextSyncSharedVaultFromScratchEvent()
+    await contactContext.sync()
+    await Collaboration.acceptAllInvites(contactContext)
+    await promise
+
+    const contactVaultListing = contactContext.items.getItems('SN|VaultListing')[0]
+    await contactContext.vaultUsers.leaveSharedVault(contactVaultListing)
+    await contactContext.restart()
+
+    await contactContext.sync()
+    await context.vaultInvites.inviteContactToSharedVault(
+      sharedVault,
+      contact,
+      SharedVaultUserPermission.PERMISSIONS.Write,
+    )
+    const _promise = contactContext.awaitNextSyncSharedVaultFromScratchEvent()
+    await contactContext.sync()
+    await Collaboration.acceptAllInvites(contactContext)
+    await _promise
+
+    const receivedNote = contactContext.items.findItem(note.uuid)
+    expect(receivedNote).to.not.be.undefined
+    expect(receivedNote.title).to.equal('foo')
+    expect(receivedNote.text).to.equal(note.text)
+
+    await deinitContactContext()
+  })
+
   it('received invites from untrusted contact should not be trusted', async () => {
     await context.createSyncedNote('foo', 'bar')
     const { contactContext, deinitContactContext } = await Collaboration.createContactContext()
