@@ -472,7 +472,7 @@ export class NavigationController
   }
 
   get rootTags(): SNTag[] {
-    return this.tags.filter((tag) => !this.items.getTagParent(tag))
+    return this.tags.filter((tag) => !this.items.getDisplayableTagParent(tag))
   }
 
   get tagsCount(): number {
