@@ -135,4 +135,17 @@ export class VaultUserService
 
     void this.notifyEvent(VaultUserServiceEvent.UsersChanged)
   }
+
+  getFormattedMemberPermission(permission: string): string {
+    switch (permission) {
+      case 'admin':
+        return 'Admin'
+      case 'write':
+        return 'Read / Write'
+      case 'read':
+        return 'Read-only'
+      default:
+        return 'Unknown'
+    }
+  }
 }

@@ -2,11 +2,10 @@ import { useApplication } from '@/Components/ApplicationProvider'
 import Button from '@/Components/Button/Button'
 import Icon from '@/Components/Icon/Icon'
 import ModalOverlay from '@/Components/Modal/ModalOverlay'
-import { InviteRecord, SharedVaultUserPermission } from '@standardnotes/snjs'
+import { InviteRecord } from '@standardnotes/snjs'
 import { useCallback, useState } from 'react'
 import EditContactModal from '../Contacts/EditContactModal'
 import { CheckmarkCircle } from '../../../../UIElements/CheckmarkCircle'
-import { capitalizeString } from '@/Utils'
 
 type Props = {
   inviteRecord: InviteRecord
@@ -36,10 +35,7 @@ const InviteItem = ({ inviteRecord }: Props) => {
 
   const trustedContact = application.contacts.findSenderContactForInvite(inviteRecord.invite)
 
-  const permission =
-    inviteRecord.invite.permission === SharedVaultUserPermission.PERMISSIONS.Write
-      ? 'Read / Write'
-      : capitalizeString(inviteRecord.invite.permission)
+  const permission = application.vaultUsers.getFormattedMemberPermission(inviteRecord.invite.permission)
 
   return (
     <>

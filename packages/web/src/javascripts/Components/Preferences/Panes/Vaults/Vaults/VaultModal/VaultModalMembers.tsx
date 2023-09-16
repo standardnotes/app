@@ -1,9 +1,8 @@
 import { useCallback } from 'react'
 import { useApplication } from '@/Components/ApplicationProvider'
-import { SharedVaultUserPermission, SharedVaultUserServerHash, VaultListingInterface } from '@standardnotes/snjs'
+import { SharedVaultUserServerHash, VaultListingInterface } from '@standardnotes/snjs'
 import Icon from '@/Components/Icon/Icon'
 import Button from '@/Components/Button/Button'
-import { capitalizeString } from '@/Utils'
 
 export const VaultModalMembers = ({
   members,
@@ -35,10 +34,7 @@ export const VaultModalMembers = ({
         {members.map((member) => {
           const isMemberVaultOwner = application.vaultUsers.isVaultUserOwner(member)
           const contact = application.contacts.findContactForServerUser(member)
-          const permission =
-            member.permission === SharedVaultUserPermission.PERMISSIONS.Write
-              ? 'Read / Write'
-              : capitalizeString(member.permission)
+          const permission = application.vaultUsers.getFormattedMemberPermission(member.permission)
 
           return (
             <div
