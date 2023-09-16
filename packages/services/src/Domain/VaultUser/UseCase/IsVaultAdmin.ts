@@ -22,6 +22,8 @@ export class IsVaultAdmin implements SyncUseCaseInterface<boolean> {
     const vaultUsers = this.cache.get(vault.sharing.sharedVaultUuid)
     const userPermission = vaultUsers?.find((vaultUser) => vaultUser.user_uuid === user.uuid)?.permission
 
-    return Result.ok(userPermission === SharedVaultUserPermission.PERMISSIONS.Admin)
+    return Result.ok(
+      userPermission === SharedVaultUserPermission.PERMISSIONS.Admin || vault.sharing.ownerUserUuid === user.uuid,
+    )
   }
 }
