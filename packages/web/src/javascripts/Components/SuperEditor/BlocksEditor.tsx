@@ -93,7 +93,7 @@ export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
       />
       <ListPlugin />
       <MarkdownShortcutPlugin transformers={MarkdownTransformers} />
-      <TablePlugin />
+      <TablePlugin hasCellMerge />
       <OnChangePlugin onChange={handleChange} ignoreSelectionChange={true} />
       <HistoryPlugin />
       <HorizontalRulePlugin />
@@ -112,7 +112,7 @@ export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
         <>
           <FloatingTextFormatToolbarPlugin anchorElem={floatingAnchorElem} />
           <DraggableBlockPlugin anchorElem={floatingAnchorElem} />
-          <TableActionMenuPlugin anchorElem={floatingAnchorElem} />
+          <TableActionMenuPlugin anchorElem={floatingAnchorElem} cellMerge />
         </>
       )}
       {children}
