@@ -294,71 +294,87 @@ function TableActionMenu({ onClose, tableCellNode: _tableCellNode, cellMerge }: 
     })
   }, [editor, onClose])
 
-  const toggleTableRowIsHeader = useCallback(() => {
-    editor.update(() => {
-      const tableNode = $getTableNodeFromLexicalNodeOrThrow(tableCellNode)
+  const toggleTableRowIsHeader = useCallback(
+    (headerState?: number) => {
+      editor.update(() => {
+        const tableNode = $getTableNodeFromLexicalNodeOrThrow(tableCellNode)
 
-      const tableRowIndex = $getTableRowIndexFromTableCellNode(tableCellNode)
+        const tableRowIndex = $getTableRowIndexFromTableCellNode(tableCellNode)
 
-      const tableRows = tableNode.getChildren()
+        const tableRows = tableNode.getChildren()
 
-      if (tableRowIndex >= tableRows.length || tableRowIndex < 0) {
-        throw new Error('Expected table cell to be inside of table row.')
-      }
-
-      const tableRow = tableRows[tableRowIndex]
-
-      if (!$isTableRowNode(tableRow)) {
-        throw new Error('Expected table row')
-      }
-
-      tableRow.getChildren().forEach((tableCell) => {
-        if (!$isTableCellNode(tableCell)) {
-          throw new Error('Expected table cell')
+        if (tableRowIndex >= tableRows.length || tableRowIndex < 0) {
+          throw new Error('Expected table cell to be inside of table row.')
         }
 
-        tableCell.toggleHeaderStyle(TableCellHeaderStates.ROW)
-      })
-
-      clearTableSelection()
-      onClose()
-    })
-  }, [editor, tableCellNode, clearTableSelection, onClose])
-
-  const toggleTableColumnIsHeader = useCallback(() => {
-    editor.update(() => {
-      const tableNode = $getTableNodeFromLexicalNodeOrThrow(tableCellNode)
-
-      const tableColumnIndex = $getTableColumnIndexFromTableCellNode(tableCellNode)
-
-      const tableRows = tableNode.getChildren()
-
-      for (let r = 0; r < tableRows.length; r++) {
-        const tableRow = tableRows[r]
+        const tableRow = tableRows[tableRowIndex]
 
         if (!$isTableRowNode(tableRow)) {
           throw new Error('Expected table row')
         }
 
-        const tableCells = tableRow.getChildren()
+        tableRow.getChildren().forEach((tableCell) => {
+          if (!$isTableCellNode(tableCell)) {
+            throw new Error('Expected table cell')
+          }
 
-        if (tableColumnIndex >= tableCells.length || tableColumnIndex < 0) {
-          throw new Error('Expected table cell to be inside of table row.')
+          if (headerState === undefined) {
+            tableCell.toggleHeaderStyle(TableCellHeaderStates.ROW)
+            return
+          }
+
+          tableCell.setHeaderStyles(headerState)
+        })
+
+        clearTableSelection()
+        onClose()
+      })
+    },
+    [editor, tableCellNode, clearTableSelection, onClose],
+  )
+
+  const toggleTableColumnIsHeader = useCallback(
+    (headerState?: number) => {
+      editor.update(() => {
+        const tableNode = $getTableNodeFromLexicalNodeOrThrow(tableCellNode)
+
+        const tableColumnIndex = $getTableColumnIndexFromTableCellNode(tableCellNode)
+
+        const tableRows = tableNode.getChildren()
+
+        for (let r = 0; r < tableRows.length; r++) {
+          const tableRow = tableRows[r]
+
+          if (!$isTableRowNode(tableRow)) {
+            throw new Error('Expected table row')
+          }
+
+          const tableCells = tableRow.getChildren()
+
+          if (tableColumnIndex >= tableCells.length || tableColumnIndex < 0) {
+            throw new Error('Expected table cell to be inside of table row.')
+          }
+
+          const tableCell = tableCells[tableColumnIndex]
+
+          if (!$isTableCellNode(tableCell)) {
+            throw new Error('Expected table cell')
+          }
+
+          if (headerState === undefined) {
+            tableCell.toggleHeaderStyle(TableCellHeaderStates.COLUMN)
+            continue
+          }
+
+          tableCell.setHeaderStyles(headerState)
         }
 
-        const tableCell = tableCells[tableColumnIndex]
-
-        if (!$isTableCellNode(tableCell)) {
-          throw new Error('Expected table cell')
-        }
-
-        tableCell.toggleHeaderStyle(TableCellHeaderStates.COLUMN)
-      }
-
-      clearTableSelection()
-      onClose()
-    })
-  }, [editor, tableCellNode, clearTableSelection, onClose])
+        clearTableSelection()
+        onClose()
+      })
+    },
+    [editor, tableCellNode, clearTableSelection, onClose],
+  )
 
   let mergeCellButton: null | JSX.Element = null
   if (cellMerge) {
@@ -368,6 +384,10 @@ function TableActionMenu({ onClose, tableCellNode: _tableCellNode, cellMerge }: 
       mergeCellButton = <MenuItem onClick={unmergeTableCellsAtSelection}>Unmerge cells</MenuItem>
     }
   }
+
+  const isCurrentCellRowHeader = (tableCellNode.__headerState & TableCellHeaderStates.ROW) === TableCellHeaderStates.ROW
+  const isCurrentCellColumnHeader =
+    (tableCellNode.__headerState & TableCellHeaderStates.COLUMN) === TableCellHeaderStates.COLUMN
 
   return (
     <Menu className="dropdown" ref={dropDownRef} a11yLabel="Table actions menu" isOpen>
@@ -391,15 +411,21 @@ function TableActionMenu({ onClose, tableCellNode: _tableCellNode, cellMerge }: 
       <MenuItem onClick={deleteTableRowAtSelection}>Delete row</MenuItem>
       <MenuItem onClick={deleteTableAtSelection}>Delete table</MenuItem>
       <MenuItemSeparator />
-      <MenuItem onClick={toggleTableRowIsHeader}>
-        {(tableCellNode.__headerState & TableCellHeaderStates.ROW) === TableCellHeaderStates.ROW ? 'Remove' : 'Add'} row
-        header
+      <MenuItem
+        onClick={() => {
+          toggleTableRowIsHeader(isCurrentCellRowHeader ? TableCellHeaderStates.NO_STATUS : TableCellHeaderStates.ROW)
+        }}
+      >
+        {isCurrentCellRowHeader ? 'Remove' : 'Add'} row header
       </MenuItem>
-      <MenuItem onClick={toggleTableColumnIsHeader}>
-        {(tableCellNode.__headerState & TableCellHeaderStates.COLUMN) === TableCellHeaderStates.COLUMN
-          ? 'Remove'
-          : 'Add'}{' '}
-        column header
+      <MenuItem
+        onClick={() => {
+          toggleTableColumnIsHeader(
+            isCurrentCellColumnHeader ? TableCellHeaderStates.NO_STATUS : TableCellHeaderStates.COLUMN,
+          )
+        }}
+      >
+        {isCurrentCellColumnHeader ? 'Remove' : 'Add'} column header
       </MenuItem>
     </Menu>
   )
