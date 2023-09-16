@@ -493,7 +493,7 @@ function TableCellActionMenuContainer({
     })
   })
 
-  useEffect(() => {
+  const setMenuButtonPosition = useCallback(() => {
     const menuButtonDOM = menuButtonRef.current as HTMLButtonElement | null
 
     if (menuButtonDOM != null && tableCellNode != null) {
@@ -516,6 +516,32 @@ function TableCellActionMenuContainer({
     }
   }, [menuButtonRef, tableCellNode, editor, anchorElem])
 
+  useEffect(() => {
+    setMenuButtonPosition()
+  }, [setMenuButtonPosition])
+
+  useEffect(() => {
+    const scrollerElem = editor.getRootElement()
+
+    const update = () => {
+      editor.getEditorState().read(() => {
+        setMenuButtonPosition()
+      })
+    }
+
+    window.addEventListener('resize', update)
+    if (scrollerElem) {
+      scrollerElem.addEventListener('scroll', update)
+    }
+
+    return () => {
+      window.removeEventListener('resize', update)
+      if (scrollerElem) {
+        scrollerElem.removeEventListener('scroll', update)
+      }
+    }
+  }, [editor, anchorElem, setMenuButtonPosition])
+
   const prevTableCellDOM = useRef(tableCellNode)
 
   useEffect(() => {
@@ -536,7 +562,7 @@ function TableCellActionMenuContainer({
             iconProps={{
               size: 'small',
             }}
-            className="!h-5 !min-w-5 bg-default"
+            className="!h-6 !min-w-6 bg-default md:!h-5 md:!min-w-5"
             onClick={(e) => {
               e.stopPropagation()
               setIsMenuOpen(!isMenuOpen)
