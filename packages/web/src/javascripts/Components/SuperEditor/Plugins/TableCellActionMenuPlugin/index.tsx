@@ -527,6 +527,7 @@ function TableCellActionMenuContainer({
       editor.getEditorState().read(() => {
         setMenuButtonPosition()
       })
+      setIsMenuOpen(false)
     }
 
     window.addEventListener('resize', update)
