@@ -291,7 +291,9 @@ body {
     z-index: 10;
     display: block;
     position: fixed;
-    box-shadow: 0 12px 28px 0 rgba(0, 0, 0, 0.2), 0 2px 4px 0 rgba(0, 0, 0, 0.1),
+    box-shadow:
+      0 12px 28px 0 rgba(0, 0, 0, 0.2),
+      0 2px 4px 0 rgba(0, 0, 0, 0.1),
       inset 0 0 0 1px rgba(255, 255, 255, 0.5);
     border-radius: 8px;
     min-height: 40px;
@@ -657,15 +659,6 @@ body {
     cursor: pointer;
   }
 
-  i.chevron-down {
-    background-color: transparent;
-    background-size: contain;
-    display: inline-block;
-    height: 8px;
-    width: 8px;
-    background-image: url(#{$blocks-editor-icons-path}/chevron-down.svg);
-  }
-
   .action-button {
     background-color: #eee;
     border: 0;
@@ -858,24 +851,6 @@ body {
     margin-right: 8px;
     line-height: 16px;
     background-size: contain;
-  }
-
-  .toolbar i.chevron-down {
-    margin-top: 3px;
-    width: 16px;
-    height: 16px;
-    display: flex;
-    user-select: none;
-  }
-
-  .toolbar i.chevron-down.inside {
-    width: 16px;
-    height: 16px;
-    display: flex;
-    margin-left: -25px;
-    margin-top: 11px;
-    margin-right: 10px;
-    pointer-events: none;
   }
 
   .toolbar .divider {
