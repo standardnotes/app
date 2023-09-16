@@ -38,7 +38,7 @@ export const useVault = (vault: VaultListingInterface) => {
 
   const isCurrentUserAdmin = !vault.isSharedVaultListing()
     ? true
-    : application.vaultUsers.isCurrentUserSharedVaultOwner(vault)
+    : application.vaultUsers.isCurrentUserSharedVaultAdmin(vault)
 
   const ensureVaultIsUnlocked = useCallback(async () => {
     if (!application.vaultLocks.isVaultLocked(vault)) {

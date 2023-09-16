@@ -12,14 +12,24 @@ import { AbstractService } from './../Service/AbstractService'
 import { VaultUserServiceEvent } from './VaultUserServiceEvent'
 import { Result } from '@standardnotes/domain-core'
 import { IsVaultOwner } from './UseCase/IsVaultOwner'
+import { InternalEventInterface } from '../Internal/InternalEventInterface'
+import { InternalEventHandlerInterface } from '../Internal/InternalEventHandlerInterface'
+import { ApplicationEvent } from '../Event/ApplicationEvent'
+import { IsReadonlyVaultMember } from './UseCase/IsReadonlyVaultMember'
+import { IsVaultAdmin } from './UseCase/IsVaultAdmin'
 
-export class VaultUserService extends AbstractService<VaultUserServiceEvent> implements VaultUserServiceInterface {
+export class VaultUserService
+  extends AbstractService<VaultUserServiceEvent>
+  implements VaultUserServiceInterface, InternalEventHandlerInterface
+{
   constructor(
     private vaults: VaultServiceInterface,
     private vaultLocks: VaultLockServiceInterface,
     private _getVaultUsers: GetVaultUsers,
     private _removeVaultMember: RemoveVaultMember,
     private _isVaultOwner: IsVaultOwner,
+    private _isVaultAdmin: IsVaultAdmin,
+    private _isReadonlyVaultMember: IsReadonlyVaultMember,
     private _getVault: GetVault,
     private _leaveVault: LeaveVault,
     eventBus: InternalEventBusInterface,
@@ -37,7 +47,23 @@ export class VaultUserService extends AbstractService<VaultUserServiceEvent> imp
     ;(this._leaveVault as unknown) = undefined
   }
 
-  public async getSharedVaultUsers(
+  async handleEvent(event: InternalEventInterface): Promise<void> {
+    if (event.type === ApplicationEvent.CompletedFullSync) {
+      this.vaults.getVaults().forEach((vault) => {
+        if (!vault.isSharedVaultListing()) {
+          return
+        }
+        this._getVaultUsers
+          .execute({
+            sharedVaultUuid: vault.sharing.sharedVaultUuid,
+            readFromCache: false,
+          })
+          .catch(console.error)
+      })
+    }
+  }
+
+  public async getSharedVaultUsersFromServer(
     sharedVault: SharedVaultListingInterface,
   ): Promise<SharedVaultUserServerHash[] | undefined> {
     const result = await this._getVaultUsers.execute({
@@ -53,6 +79,14 @@ export class VaultUserService extends AbstractService<VaultUserServiceEvent> imp
 
   public isCurrentUserSharedVaultOwner(sharedVault: SharedVaultListingInterface): boolean {
     return this._isVaultOwner.execute(sharedVault).getValue()
+  }
+
+  public isCurrentUserSharedVaultAdmin(sharedVault: SharedVaultListingInterface): boolean {
+    return this._isVaultAdmin.execute(sharedVault).getValue()
+  }
+
+  public isCurrentUserSharedVaultReadonlyMember(sharedVault: SharedVaultListingInterface): boolean {
+    return this._isReadonlyVaultMember.execute(sharedVault).getValue()
   }
 
   async removeUserFromSharedVault(sharedVault: SharedVaultListingInterface, userUuid: string): Promise<Result<void>> {
