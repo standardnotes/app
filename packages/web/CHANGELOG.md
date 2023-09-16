@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.173.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.172.28...@standardnotes/web@3.173.0) (2023-09-16)
+
+### Features
+
+* Added table cell menu for adding/removing rows and columns to Super note tables and merging cells ([#2508](https://github.com/standardnotes/app/issues/2508)) ([896372f](https://github.com/standardnotes/app/commit/896372f04dfd2f302395077433e3ece32b251242))
+
 ## [3.172.28](https://github.com/standardnotes/app/compare/@standardnotes/web@3.172.27...@standardnotes/web@3.172.28) (2023-09-15)
 
 **Note:** Version bump only for package @standardnotes/web
