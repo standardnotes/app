@@ -12,9 +12,15 @@ type ChangeEditorOptionProps = {
   application: WebApplication
   note: SNNote
   iconClassName: string
+  disabled?: boolean
 }
 
-const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({ application, note, iconClassName }) => {
+const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
+  application,
+  note,
+  iconClassName,
+  disabled,
+}) => {
   const [isOpen, setIsOpen] = useState(false)
   const menuContainerRef = useRef<HTMLDivElement>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
@@ -38,6 +44,7 @@ const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({ applic
             setIsOpen(false)
           }
         }}
+        disabled={disabled}
         ref={buttonRef}
       >
         <div className="flex items-center">

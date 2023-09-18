@@ -98,7 +98,15 @@ const VaultMenu = observer(({ items }: { items: DecryptedItemInterface[] }) => {
   )
 })
 
-const AddToVaultMenuOption = ({ iconClassName, items }: { iconClassName: string; items: DecryptedItemInterface[] }) => {
+const AddToVaultMenuOption = ({
+  iconClassName,
+  items,
+  disabled,
+}: {
+  iconClassName: string
+  items: DecryptedItemInterface[]
+  disabled?: boolean
+}) => {
   const application = useApplication()
   const buttonRef = useRef<HTMLButtonElement>(null)
 
@@ -123,6 +131,7 @@ const AddToVaultMenuOption = ({ iconClassName, items }: { iconClassName: string;
           }
         }}
         ref={buttonRef}
+        disabled={disabled}
       >
         <div className="flex items-center">
           <Icon type="safe-square" className={iconClassName} />
