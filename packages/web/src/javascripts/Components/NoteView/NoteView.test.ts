@@ -10,6 +10,7 @@ import {
   SNNote,
   NoteType,
   PayloadEmitSource,
+  VaultServiceInterface,
 } from '@standardnotes/snjs'
 import NoteView from './NoteView'
 import { NoteViewController } from './Controller/NoteViewController'
@@ -35,6 +36,9 @@ describe('NoteView', () => {
     notesController.setShowProtectedWarning = jest.fn()
     notesController.getSpellcheckStateForNote = jest.fn()
     notesController.getEditorWidthForNote = jest.fn()
+
+    const vaults = {} as jest.Mocked<VaultServiceInterface>
+    vaults.getItemVault = jest.fn().mockReturnValue(undefined)
 
     application = {
       notesController,
