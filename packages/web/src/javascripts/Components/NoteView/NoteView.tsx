@@ -68,6 +68,7 @@ type State = {
   isDesktop?: boolean
   editorLineWidth: EditorLineWidth
   noteLocked: boolean
+  readonly: boolean
   noteStatus?: NoteStatus
   saveError?: boolean
   showProtectedWarning: boolean
@@ -116,6 +117,8 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
 
     this.debounceReloadEditorComponent = debounce(this.debounceReloadEditorComponent.bind(this), 25)
 
+    const itemVault = this.application.vaults.getItemVault(this.controller.item)
+
     this.state = {
       availableStackComponents: [],
       editorStateDidLoad: false,
@@ -124,6 +127,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
       isDesktop: isDesktopApplication(),
       noteStatus: undefined,
       noteLocked: this.controller.item.locked,
+      readonly: itemVault ? this.application.vaultUsers.isCurrentUserReadonlyVaultMember(itemVault) : false,
       showProtectedWarning: false,
       spellcheck: true,
       stackComponentViewers: [],
@@ -853,6 +857,13 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
             filesController={this.application.filesController}
             noteViewElement={this.noteViewElementRef.current}
           />
+        )}
+
+        {this.state.readonly && (
+          <div className="bg-warning-faded flex items-center px-3.5 py-2 text-sm text-accessory-tint-3">
+            <Icon type="pencil-off" className="mr-3" />
+            You don't have permission to edit this note
+          </div>
         )}
 
         {this.state.noteLocked && (

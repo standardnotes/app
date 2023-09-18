@@ -5,7 +5,7 @@ import { InternalEventBusInterface } from './../Internal/InternalEventBusInterfa
 import { RemoveVaultMember } from './UseCase/RemoveSharedVaultMember'
 import { VaultServiceInterface } from '../Vault/VaultServiceInterface'
 import { GetVaultUsers } from './UseCase/GetVaultUsers'
-import { SharedVaultListingInterface } from '@standardnotes/models'
+import { SharedVaultListingInterface, VaultListingInterface } from '@standardnotes/models'
 import { VaultUserServiceInterface } from './VaultUserServiceInterface'
 import { ClientDisplayableError, SharedVaultUserServerHash, isClientDisplayableError } from '@standardnotes/responses'
 import { AbstractService } from './../Service/AbstractService'
@@ -85,8 +85,11 @@ export class VaultUserService
     return this._isVaultAdmin.execute(sharedVault).getValue()
   }
 
-  public isCurrentUserSharedVaultReadonlyMember(sharedVault: SharedVaultListingInterface): boolean {
-    return this._isReadonlyVaultMember.execute(sharedVault).getValue()
+  public isCurrentUserReadonlyVaultMember(vault: VaultListingInterface): boolean {
+    if (!vault.isSharedVaultListing()) {
+      return false
+    }
+    return this._isReadonlyVaultMember.execute(vault).getValue()
   }
 
   async removeUserFromSharedVault(sharedVault: SharedVaultListingInterface, userUuid: string): Promise<Result<void>> {

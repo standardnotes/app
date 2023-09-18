@@ -78,6 +78,7 @@ const VaultMenu = observer(({ items }: { items: DecryptedItemInterface[] }) => {
               doesVaultContainItems(vault) ? void removeItemsFromVault() : void addItemsToVault(vault)
             }}
             className={doesVaultContainItems(vault) ? 'font-bold' : ''}
+            disabled={vault.isSharedVaultListing() && application.vaultUsers.isCurrentUserReadonlyVaultMember(vault)}
           >
             <Icon
               type={vault.iconString}

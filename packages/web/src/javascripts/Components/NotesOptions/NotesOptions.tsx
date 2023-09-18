@@ -210,14 +210,14 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
   const areSomeNotesInSharedVault = notes.some((note) => application.vaults.getItemVault(note)?.isSharedVaultListing())
   const areSomeNotesInReadonlySharedVault = notes.some((note) => {
     const vault = application.vaults.getItemVault(note)
-    return vault?.isSharedVaultListing() && application.vaultUsers.isCurrentUserSharedVaultReadonlyMember(vault)
+    return vault?.isSharedVaultListing() && application.vaultUsers.isCurrentUserReadonlyVaultMember(vault)
   })
-  const hasOwnerPermissionForAllSharedNotes = notes.every((note) => {
+  const hasAdminPermissionForAllSharedNotes = notes.every((note) => {
     const vault = application.vaults.getItemVault(note)
     if (!vault?.isSharedVaultListing()) {
       return true
     }
-    return application.vaultUsers.isCurrentUserSharedVaultOwner(vault)
+    return application.vaultUsers.isCurrentUserSharedVaultAdmin(vault)
   })
 
   if (notes.length === 0) {
@@ -287,7 +287,7 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
       <HorizontalSeparator classes="my-2" />
 
       {application.featuresController.isEntitledToVaults() && (
-        <AddToVaultMenuOption iconClassName={iconClass} items={notes} disabled={!hasOwnerPermissionForAllSharedNotes} />
+        <AddToVaultMenuOption iconClassName={iconClass} items={notes} disabled={!hasAdminPermissionForAllSharedNotes} />
       )}
 
       {application.navigationController.tagsCount > 0 && (
