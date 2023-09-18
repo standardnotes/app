@@ -263,6 +263,9 @@ describe('history manager', () => {
       await Factory.sleep(Factory.ServerRevisionCreationDelay)
 
       const itemHistoryOrError = await context.application.listRevisions.execute({ itemUuid: note.uuid })
+      if (itemHistoryOrError.isFailed()) {
+        console.error(itemHistoryOrError.getError())
+      }
       expect(itemHistoryOrError.isFailed()).to.equal(false)
 
       const itemHistory = itemHistoryOrError.getValue()
