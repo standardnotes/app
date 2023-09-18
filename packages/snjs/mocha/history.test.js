@@ -248,7 +248,7 @@ describe('history manager', () => {
     })
 
     it('response from server should be failed if not signed in', async function () {
-      const note = context.createSyncedNote('test note')
+      const note = await context.createSyncedNote('test note')
 
       await context.signout()
 
@@ -257,7 +257,7 @@ describe('history manager', () => {
     })
 
     it('should save initial revisions on server', async () => {
-      const note = context.createSyncedNote('test note')
+      const note = await context.createSyncedNote('test note')
       expect(note).to.be.ok
 
       await Factory.sleep(Factory.ServerRevisionCreationDelay)
@@ -273,7 +273,7 @@ describe('history manager', () => {
     })
 
     it('should not create new revisions within the revision frequency window', async () => {
-      const note = context.createSyncedNote('test note')
+      const note = await context.createSyncedNote('test note')
 
       await context.changeNoteTitleAndSync(note, 'new title 1')
 
@@ -287,7 +287,7 @@ describe('history manager', () => {
     })
 
     it('should create new revisions outside the revision frequency window', async function () {
-      const note = context.createSyncedNote('test note')
+      const note = await context.createSyncedNote('test note')
 
       await Factory.sleep(Factory.ServerRevisionFrequency)
 
@@ -316,7 +316,7 @@ describe('history manager', () => {
     })
 
     it('duplicate revisions should not have the originals uuid', async function () {
-      const note = context.createSyncedNote('test note')
+      const note = await context.createSyncedNote('test note')
       await Factory.markDirtyAndSyncItem(context.application, note)
 
       const dupe = await context.application.mutator.duplicateItem(note, true)
@@ -336,7 +336,7 @@ describe('history manager', () => {
     })
 
     it('revisions count matches original for duplicated items', async function () {
-      const note = context.createSyncedNote('test note')
+      const note = await context.createSyncedNote('test note')
 
       await Factory.sleep(Factory.ServerRevisionFrequency)
       await Factory.markDirtyAndSyncItem(context.application, note)
@@ -364,7 +364,7 @@ describe('history manager', () => {
     }).timeout(Factory.SixtySecondTimeout)
 
     it('can decrypt revisions for duplicate_of items', async function () {
-      const note = context.createSyncedNote('test note')
+      const note = await context.createSyncedNote('test note')
       await Factory.sleep(Factory.ServerRevisionFrequency)
 
       const changedText = `${Math.random()}`
