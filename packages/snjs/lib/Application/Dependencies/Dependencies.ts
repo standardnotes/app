@@ -172,6 +172,8 @@ import { EncryptionOperators } from '@standardnotes/encryption'
 import { AsymmetricMessagePayload, AsymmetricMessageSharedVaultInvite } from '@standardnotes/models'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { AuthorizeVaultDeletion } from '@standardnotes/services/src/Domain/Vault/UseCase/AuthorizeVaultDeletion'
+import { IsVaultAdmin } from '@standardnotes/services/src/Domain/VaultUser/UseCase/IsVaultAdmin'
+import { IsReadonlyVaultMember } from '@standardnotes/services/src/Domain/VaultUser/UseCase/IsReadonlyVaultMember'
 
 export class Dependencies {
   private factory = new Map<symbol, () => unknown>()
@@ -333,6 +335,17 @@ export class Dependencies {
 
     this.factory.set(TYPES.IsVaultOwner, () => {
       return new IsVaultOwner(this.get<UserService>(TYPES.UserService))
+    })
+
+    this.factory.set(TYPES.IsVaultAdmin, () => {
+      return new IsVaultAdmin(this.get<UserService>(TYPES.UserService), this.get<VaultUserCache>(TYPES.VaultUserCache))
+    })
+
+    this.factory.set(TYPES.IsReadonlyVaultMember, () => {
+      return new IsReadonlyVaultMember(
+        this.get<UserService>(TYPES.UserService),
+        this.get<VaultUserCache>(TYPES.VaultUserCache),
+      )
     })
 
     this.factory.set(TYPES.DecryptBackupFile, () => {
@@ -844,6 +857,8 @@ export class Dependencies {
         this.get<GetVaultUsers>(TYPES.GetVaultUsers),
         this.get<RemoveVaultMember>(TYPES.RemoveVaultMember),
         this.get<IsVaultOwner>(TYPES.IsVaultOwner),
+        this.get<IsVaultAdmin>(TYPES.IsVaultAdmin),
+        this.get<IsReadonlyVaultMember>(TYPES.IsReadonlyVaultMember),
         this.get<GetVault>(TYPES.GetVault),
         this.get<LeaveVault>(TYPES.LeaveVault),
         this.get<InternalEventBus>(TYPES.InternalEventBus),

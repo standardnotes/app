@@ -30,7 +30,6 @@ import { KeyboardShortcutIndicator } from '../KeyboardShortcutIndicator/Keyboard
 import { NoteAttributes } from './NoteAttributes'
 import { SpellcheckOptions } from './SpellcheckOptions'
 import { NoteSizeWarning } from './NoteSizeWarning'
-import { DeletePermanentlyButton } from './DeletePermanentlyButton'
 import { useCommandService } from '../CommandProvider'
 import { iconClass } from './ClassNames'
 import SuperNoteOptions from './SuperNoteOptions'
@@ -209,6 +208,17 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
   }
 
   const areSomeNotesInSharedVault = notes.some((note) => application.vaults.getItemVault(note)?.isSharedVaultListing())
+  const areSomeNotesInReadonlySharedVault = notes.some((note) => {
+    const vault = application.vaults.getItemVault(note)
+    return vault?.isSharedVaultListing() && application.vaultUsers.isCurrentUserReadonlyVaultMember(vault)
+  })
+  const hasAdminPermissionForAllSharedNotes = notes.every((note) => {
+    const vault = application.vaults.getItemVault(note)
+    if (!vault?.isSharedVaultListing()) {
+      return true
+    }
+    return application.vaultUsers.isCurrentUserSharedVaultAdmin(vault)
+  })
 
   if (notes.length === 0) {
     return null
@@ -220,13 +230,13 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
     <>
       {notes.length === 1 && (
         <>
-          <MenuItem onClick={openRevisionHistoryModal}>
+          <MenuItem onClick={openRevisionHistoryModal} disabled={areSomeNotesInReadonlySharedVault}>
             <Icon type="history" className={iconClass} />
             Note history
             {historyShortcut && <KeyboardShortcutIndicator className="ml-auto" shortcut={historyShortcut} />}
           </MenuItem>
           <HorizontalSeparator classes="my-2" />
-          <MenuItem onClick={toggleLineWidthModal}>
+          <MenuItem onClick={toggleLineWidthModal} disabled={areSomeNotesInReadonlySharedVault}>
             <Icon type="line-width" className={iconClass} />
             Editor width
             {editorWidthShortcut && <KeyboardShortcutIndicator className="ml-auto" shortcut={editorWidthShortcut} />}
@@ -238,6 +248,7 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
         onChange={(locked) => {
           application.notesController.setLockSelectedNotes(locked)
         }}
+        disabled={areSomeNotesInReadonlySharedVault}
       >
         <Icon type="pencil-off" className={iconClass} />
         Prevent editing
@@ -247,6 +258,7 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
         onChange={(hidePreviews) => {
           application.notesController.setHideSelectedNotePreviews(!hidePreviews)
         }}
+        disabled={areSomeNotesInReadonlySharedVault}
       >
         <Icon type="rich-text" className={iconClass} />
         Show preview
@@ -256,6 +268,7 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
         onChange={(protect) => {
           application.notesController.setProtectSelectedNotes(protect).catch(console.error)
         }}
+        disabled={areSomeNotesInReadonlySharedVault}
       >
         <Icon type="lock" className={iconClass} />
         Password protect
@@ -263,13 +276,18 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
       {notes.length === 1 && (
         <>
           <HorizontalSeparator classes="my-2" />
-          <ChangeEditorOption iconClassName={iconClass} application={application} note={notes[0]} />
+          <ChangeEditorOption
+            iconClassName={iconClass}
+            application={application}
+            note={notes[0]}
+            disabled={areSomeNotesInReadonlySharedVault}
+          />
         </>
       )}
       <HorizontalSeparator classes="my-2" />
 
       {application.featuresController.isEntitledToVaults() && (
-        <AddToVaultMenuOption iconClassName={iconClass} items={notes} />
+        <AddToVaultMenuOption iconClassName={iconClass} items={notes} disabled={!hasAdminPermissionForAllSharedNotes} />
       )}
 
       {application.navigationController.tagsCount > 0 && (
@@ -278,12 +296,14 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
           navigationController={application.navigationController}
           selectedItems={notes}
           linkingController={application.linkingController}
+          disabled={areSomeNotesInReadonlySharedVault}
         />
       )}
       <MenuItem
         onClick={() => {
           application.notesController.setStarSelectedNotes(!starred)
         }}
+        disabled={areSomeNotesInReadonlySharedVault}
       >
         <Icon type="star" className={iconClass} />
         {starred ? 'Unstar' : 'Star'}
@@ -295,6 +315,7 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
           onClick={() => {
             application.notesController.setPinSelectedNotes(true)
           }}
+          disabled={areSomeNotesInReadonlySharedVault}
         >
           <Icon type="pin" className={iconClass} />
           Pin to top
@@ -306,6 +327,7 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
           onClick={() => {
             application.notesController.setPinSelectedNotes(false)
           }}
+          disabled={areSomeNotesInReadonlySharedVault}
         >
           <Icon type="unpin" className={iconClass} />
           Unpin
@@ -382,7 +404,7 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
           )}
         </>
       )}
-      <MenuItem onClick={duplicateSelectedItems}>
+      <MenuItem onClick={duplicateSelectedItems} disabled={areSomeNotesInReadonlySharedVault}>
         <Icon type="copy" className={iconClass} />
         Duplicate
       </MenuItem>
@@ -392,6 +414,7 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
             await application.notesController.setArchiveSelectedNotes(true).catch(console.error)
             closeMenuAndToggleNotesList()
           }}
+          disabled={areSomeNotesInReadonlySharedVault}
         >
           <Icon type="archive" className={iconClassWarning} />
           <span className="text-warning">Archive</span>
@@ -403,6 +426,7 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
             await application.notesController.setArchiveSelectedNotes(false).catch(console.error)
             closeMenuAndToggleNotesList()
           }}
+          disabled={areSomeNotesInReadonlySharedVault}
         >
           <Icon type="unarchive" className={iconClassWarning} />
           <span className="text-warning">Unarchive</span>
@@ -410,18 +434,23 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
       )}
       {notTrashed &&
         (altKeyDown ? (
-          <DeletePermanentlyButton
+          <MenuItem
+            disabled={areSomeNotesInReadonlySharedVault}
             onClick={async () => {
               await application.notesController.deleteNotesPermanently()
               closeMenuAndToggleNotesList()
             }}
-          />
+          >
+            <Icon type="close" className="mr-2 text-danger" />
+            <span className="text-danger">Delete permanently</span>
+          </MenuItem>
         ) : (
           <MenuItem
             onClick={async () => {
               await application.notesController.setTrashSelectedNotes(true)
               closeMenuAndToggleNotesList()
             }}
+            disabled={areSomeNotesInReadonlySharedVault}
           >
             <Icon type="trash" className={iconClassDanger} />
             <span className="text-danger">Move to trash</span>
@@ -434,21 +463,27 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
               await application.notesController.setTrashSelectedNotes(false)
               closeMenuAndToggleNotesList()
             }}
+            disabled={areSomeNotesInReadonlySharedVault}
           >
             <Icon type="restore" className={iconClassSuccess} />
             <span className="text-success">Restore</span>
           </MenuItem>
-          <DeletePermanentlyButton
+          <MenuItem
+            disabled={areSomeNotesInReadonlySharedVault}
             onClick={async () => {
               await application.notesController.deleteNotesPermanently()
               closeMenuAndToggleNotesList()
             }}
-          />
+          >
+            <Icon type="close" className="mr-2 text-danger" />
+            <span className="text-danger">Delete permanently</span>
+          </MenuItem>
           <MenuItem
             onClick={async () => {
               await application.notesController.emptyTrash()
               closeMenuAndToggleNotesList()
             }}
+            disabled={areSomeNotesInReadonlySharedVault}
           >
             <div className="flex items-start">
               <Icon type="trash-sweep" className="mr-2 text-danger" />
@@ -485,16 +520,19 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
               editorForNote={editorForNote}
               notesController={application.notesController}
               note={notes[0]}
+              disabled={areSomeNotesInReadonlySharedVault}
             />
           )}
 
           <HorizontalSeparator classes="my-2" />
 
-          <NoteAttributes application={application} note={notes[0]} />
+          <NoteAttributes className="mb-2" application={application} note={notes[0]} />
 
           <NoteSizeWarning note={notes[0]} />
         </>
-      ) : null}
+      ) : (
+        <div className="h-2" />
+      )}
 
       <ModalOverlay isOpen={showExportSuperModal} close={closeSuperExportModal}>
         <SuperExportModal exportNotes={downloadSelectedItems} close={closeSuperExportModal} />

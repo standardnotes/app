@@ -152,6 +152,8 @@ export const TYPES = {
   EncryptTypeAPayloadWithKeyLookup: Symbol.for('EncryptTypeAPayloadWithKeyLookup'),
   DecryptBackupFile: Symbol.for('DecryptBackupFile'),
   IsVaultOwner: Symbol.for('IsVaultOwner'),
+  IsVaultAdmin: Symbol.for('IsVaultAdmin'),
+  IsReadonlyVaultMember: Symbol.for('IsReadonlyVaultMember'),
   RemoveItemsFromMemory: Symbol.for('RemoveItemsFromMemory'),
   ReencryptTypeAItems: Symbol.for('ReencryptTypeAItems'),
   DecryptErroredPayloads: Symbol.for('DecryptErroredPayloads'),

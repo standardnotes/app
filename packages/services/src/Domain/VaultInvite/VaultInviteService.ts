@@ -191,7 +191,7 @@ export class VaultInviteService
   public async getInvitableContactsForSharedVault(
     sharedVault: SharedVaultListingInterface,
   ): Promise<TrustedContactInterface[]> {
-    const users = await this.vaultUsers.getSharedVaultUsers(sharedVault)
+    const users = await this.vaultUsers.getSharedVaultUsersFromServer(sharedVault)
     if (!users) {
       return []
     }

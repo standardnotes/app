@@ -16,6 +16,7 @@ type Props = {
   linkingController: LinkingController
   selectedItems: DecryptedItemInterface[]
   iconClassName: string
+  disabled?: boolean
 }
 
 const AddTagOption: FunctionComponent<Props> = ({
@@ -23,6 +24,7 @@ const AddTagOption: FunctionComponent<Props> = ({
   linkingController,
   selectedItems,
   iconClassName,
+  disabled,
 }) => {
   const application = useApplication()
   const menuContainerRef = useRef<HTMLDivElement>(null)
@@ -57,6 +59,7 @@ const AddTagOption: FunctionComponent<Props> = ({
           }
         }}
         ref={buttonRef}
+        disabled={disabled}
       >
         <div className="flex items-center">
           <Icon type="hashtag" className={iconClassName} />

@@ -130,7 +130,7 @@ const ContactInviteModal: FunctionComponent<Props> = ({ vault, onCloseDialog }) 
                       wrapper: 'col-start-2',
                     }}
                     items={Object.keys(SharedVaultUserPermission.PERMISSIONS).map((key) => ({
-                      label: key === 'Write' ? 'Read / Write' : key,
+                      label: application.vaultUsers.getFormattedMemberPermission(key),
                       value: key,
                     }))}
                     value={selectedContact.permission}

@@ -66,11 +66,11 @@ const EditVaultModalContent: FunctionComponent<{
 
     if (existingVault.isSharedVaultListing()) {
       setIsAdmin(
-        existingVault.isSharedVaultListing() && application.vaultUsers.isCurrentUserSharedVaultOwner(existingVault),
+        existingVault.isSharedVaultListing() && application.vaultUsers.isCurrentUserSharedVaultAdmin(existingVault),
       )
 
       setIsLoadingCollaborationInfo(true)
-      const users = await application.vaultUsers.getSharedVaultUsers(existingVault)
+      const users = await application.vaultUsers.getSharedVaultUsersFromServer(existingVault)
       if (users) {
         setMembers(users)
       }

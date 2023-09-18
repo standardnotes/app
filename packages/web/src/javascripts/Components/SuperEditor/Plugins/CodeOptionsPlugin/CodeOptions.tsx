@@ -25,6 +25,11 @@ const CodeOptionsPlugin = () => {
   const [selectedElementKey, setSelectedElementKey] = useState<NodeKey | null>(null)
 
   const updateToolbar = useCallback(() => {
+    if (!editor.isEditable()) {
+      setIsCode(false)
+      return
+    }
+
     const selection = $getSelection()
     if (!$isRangeSelection(selection)) {
       return

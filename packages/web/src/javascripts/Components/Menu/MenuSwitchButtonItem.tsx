@@ -37,8 +37,9 @@ const MenuSwitchButtonItem = forwardRef(
           ref={ref}
           className={classNames(
             'flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5',
-            'text-left text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none',
+            'text-left text-text focus:bg-info-backdrop focus:shadow-none enabled:hover:bg-contrast enabled:hover:text-foreground',
             'text-mobile-menu-item md:text-tablet-menu-item lg:text-menu-item',
+            'disabled:cursor-not-allowed disabled:opacity-60',
             className,
           )}
           onClick={() => {
