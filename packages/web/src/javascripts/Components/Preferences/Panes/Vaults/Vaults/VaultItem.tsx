@@ -23,7 +23,8 @@ const VaultItem = ({ vault }: Props) => {
   const [isVaultModalOpen, setIsVaultModalOpen] = useState(false)
   const closeVaultModal = () => setIsVaultModalOpen(false)
 
-  const { isCurrentUserAdmin, isLocked, canShowLockOption, toggleLock, ensureVaultIsUnlocked } = useVault(vault)
+  const { isCurrentUserAdmin, isCurrentUserOwner, isLocked, canShowLockOption, toggleLock, ensureVaultIsUnlocked } =
+    useVault(vault)
 
   const deleteVault = useCallback(async () => {
     const confirm = await application.alerts.confirm(
@@ -122,8 +123,8 @@ const VaultItem = ({ vault }: Props) => {
           <div className="mt-2 flex w-full flex-wrap gap-3">
             <Button label="Edit" onClick={openEditModal} />
             {canShowLockOption && <Button label={isLocked ? 'Unlock' : 'Lock'} onClick={toggleLock} />}
-            {isCurrentUserAdmin && <Button colorStyle="danger" label="Delete" onClick={deleteVault} />}
-            {!isCurrentUserAdmin && vault.isSharedVaultListing() && <Button label="Leave Vault" onClick={leaveVault} />}
+            {isCurrentUserOwner && <Button colorStyle="danger" label="Delete" onClick={deleteVault} />}
+            {!isCurrentUserOwner && vault.isSharedVaultListing() && <Button label="Leave Vault" onClick={leaveVault} />}
             {isCurrentUserAdmin ? (
               vault.isSharedVaultListing() ? (
                 <Button colorStyle="info" label="Invite Contacts" onClick={openInviteModal} />
