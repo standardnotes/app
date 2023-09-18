@@ -20,6 +20,7 @@ describe('NoteView', () => {
   let application: WebApplication
 
   let notesController: NotesController
+  let vaults: VaultServiceInterface
 
   const createNoteView = () =>
     new NoteView({
@@ -37,12 +38,13 @@ describe('NoteView', () => {
     notesController.getSpellcheckStateForNote = jest.fn()
     notesController.getEditorWidthForNote = jest.fn()
 
-    const vaults = {} as jest.Mocked<VaultServiceInterface>
+    vaults = {} as jest.Mocked<VaultServiceInterface>
     vaults.getItemVault = jest.fn().mockReturnValue(undefined)
 
     application = {
       notesController,
       noteViewController,
+      vaults,
     } as unknown as jest.Mocked<WebApplication>
 
     application.hasProtectionSources = jest.fn().mockReturnValue(true)
