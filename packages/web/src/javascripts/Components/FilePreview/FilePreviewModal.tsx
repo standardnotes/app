@@ -113,6 +113,9 @@ const FilePreviewModal = observer(({ application }: Props) => {
     return null
   }
 
+  const vault = application.vaults.getItemVault(currentFile)
+  const isReadonly = vault?.isSharedVaultListing() && application.vaultUsers.isCurrentUserReadonlyVaultMember(vault)
+
   return (
     <Modal
       title={currentFile.name}
@@ -181,15 +184,17 @@ const FilePreviewModal = observer(({ application }: Props) => {
             )}
           </div>
           <div className="flex items-center">
-            <StyledTooltip label="Rename file" className="!z-modal">
-              <button
-                className="mr-4 flex cursor-pointer rounded border border-solid border-border bg-transparent p-1.5 hover:bg-contrast"
-                onClick={() => setIsRenaming((isRenaming) => !isRenaming)}
-                aria-label="Rename file"
-              >
-                <Icon type="pencil-filled" className="text-neutral" />
-              </button>
-            </StyledTooltip>
+            {!isReadonly && (
+              <StyledTooltip label="Rename file" className="!z-modal">
+                <button
+                  className="mr-4 flex cursor-pointer rounded border border-solid border-border bg-transparent p-1.5 hover:bg-contrast"
+                  onClick={() => setIsRenaming((isRenaming) => !isRenaming)}
+                  aria-label="Rename file"
+                >
+                  <Icon type="pencil-filled" className="text-neutral" />
+                </button>
+              </StyledTooltip>
+            )}
             <StyledTooltip label="Show linked items" className="!z-modal">
               <button
                 className="mr-4 flex cursor-pointer rounded border border-solid border-border bg-transparent p-1.5 hover:bg-contrast"
@@ -249,7 +254,11 @@ const FilePreviewModal = observer(({ application }: Props) => {
         </div>
         {showLinkedBubblesContainer && (
           <div className="-mt-1 min-h-0 flex-shrink-0 border-b border-border px-3.5 py-1.5">
-            <LinkedItemBubblesContainer linkingController={application.linkingController} item={currentFile} />
+            <LinkedItemBubblesContainer
+              linkingController={application.linkingController}
+              item={currentFile}
+              readonly={isReadonly}
+            />
           </div>
         )}
         <div className="flex min-h-0 flex-grow flex-col-reverse md:flex-row">
