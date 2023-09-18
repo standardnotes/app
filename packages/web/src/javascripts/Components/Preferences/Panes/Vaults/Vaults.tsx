@@ -15,6 +15,8 @@ import {
   SharedVaultServiceEvent,
   VaultUserServiceEvent,
   RoleName,
+  ProtocolVersion,
+  compareVersions,
 } from '@standardnotes/snjs'
 import VaultItem from './Vaults/VaultItem'
 import Button from '@/Components/Button/Button'
@@ -24,7 +26,7 @@ import PreferencesPane from '../../PreferencesComponents/PreferencesPane'
 import { ToastType, addToast } from '@standardnotes/toast'
 import NoProSubscription from '../Account/NoProSubscription'
 
-const Vaults = () => {
+const Vaults = observer(() => {
   const application = useApplication()
 
   const hasAccount = application.hasAccount()
@@ -187,7 +189,7 @@ const Vaults = () => {
           {canCreateMoreVaults ? (
             <div className="mt-2.5 flex gap-3">
               <Button label="Create Vault" onClick={createNewVault} />
-              <Button label="Create Shared Vault" onClick={createNewSharedVault} />
+              {hasAccount && <Button label="Create Shared Vault" onClick={createNewSharedVault} />}
             </div>
           ) : (
             <div className="mt-3.5">
@@ -244,6 +246,32 @@ const Vaults = () => {
       )}
     </PreferencesPane>
   )
+})
+
+const VaultsWrapper = () => {
+  const application = useApplication()
+  const hasAccount = application.hasAccount()
+  const accountProtocolVersion = application.getUserVersion()
+  const isAccountProtocolNotSupported =
+    accountProtocolVersion && compareVersions(accountProtocolVersion, ProtocolVersion.V004) < 0
+
+  if (hasAccount && isAccountProtocolNotSupported) {
+    return (
+      <PreferencesPane>
+        <PreferencesGroup>
+          <Title>Account update required</Title>
+          <Subtitle>
+            In order to use Vaults, you must update your account to use the latest data encryption version.
+          </Subtitle>
+          <Button primary className="mt-3" onClick={() => application.upgradeProtocolVersion().catch(console.error)}>
+            Update Account
+          </Button>
+        </PreferencesGroup>
+      </PreferencesPane>
+    )
+  }
+
+  return <Vaults />
 }
 
-export default observer(Vaults)
+export default observer(VaultsWrapper)
