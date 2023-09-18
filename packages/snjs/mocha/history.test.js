@@ -300,7 +300,7 @@ describe('history manager', () => {
 
       const oldestEntry = lastElement(itemHistory)
       let revisionFromServerOrError = await context.application.getRevision.execute({
-        itemUuid: item.uuid,
+        itemUuid: note.uuid,
         revisionUuid: oldestEntry.uuid,
       })
       const revisionFromServer = revisionFromServerOrError.getValue()
@@ -308,10 +308,10 @@ describe('history manager', () => {
 
       let payloadFromServer = revisionFromServer.payload
       expect(payloadFromServer.errorDecrypting).to.be.undefined
-      expect(payloadFromServer.uuid).to.eq(item.payload.uuid)
-      expect(payloadFromServer.content).to.eql(item.payload.content)
+      expect(payloadFromServer.uuid).to.eq(note.payload.uuid)
+      expect(payloadFromServer.content).to.eql(note.payload.content)
 
-      const item = application.items.findItem(item.uuid)
+      const item = application.items.findItem(note.uuid)
       expect(payloadFromServer.content).to.not.eql(item.payload.content)
     })
 
