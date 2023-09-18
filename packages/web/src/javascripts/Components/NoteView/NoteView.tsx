@@ -889,7 +889,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
                 <div className="title flex-grow overflow-auto">
                   <input
                     className="input text-lg"
-                    disabled={this.state.noteLocked}
+                    disabled={this.state.noteLocked || this.state.readonly}
                     id={ElementIds.NoteTitleEditor}
                     onChange={this.onTitleChange}
                     onFocus={(event) => {
@@ -922,18 +922,22 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
               )}
               {renderHeaderOptions && (
                 <div className="note-view-options-buttons flex items-center gap-3">
-                  <LinkedItemsButton
-                    linkingController={this.application.linkingController}
-                    onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
-                  />
-                  <ChangeEditorButton
-                    noteViewController={this.controller}
-                    onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
-                  />
-                  <PinNoteButton
-                    notesController={this.application.notesController}
-                    onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
-                  />
+                  {!this.state.readonly && (
+                    <>
+                      <LinkedItemsButton
+                        linkingController={this.application.linkingController}
+                        onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
+                      />
+                      <ChangeEditorButton
+                        noteViewController={this.controller}
+                        onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
+                      />
+                      <PinNoteButton
+                        notesController={this.application.notesController}
+                        onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
+                      />
+                    </>
+                  )}
                   <NotesOptionsPanel
                     notesController={this.application.notesController}
                     onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
@@ -945,7 +949,11 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
               <CollaborationInfoHUD item={this.note} />
             </div>
             <div className="hidden md:block">
-              <LinkedItemBubblesContainer item={this.note} linkingController={this.application.linkingController} />
+              <LinkedItemBubblesContainer
+                item={this.note}
+                linkingController={this.application.linkingController}
+                readonly={this.state.readonly}
+              />
             </div>
           </div>
         )}
@@ -972,6 +980,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
                 componentViewer={this.state.editorComponentViewer}
                 onLoad={this.onEditorComponentLoad}
                 requestReload={this.editorComponentViewerRequestsReload}
+                readonly={this.state.readonly}
               />
             </div>
           )}
@@ -982,7 +991,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
               spellcheck={this.state.spellcheck}
               ref={this.setPlainEditorRef}
               controller={this.controller}
-              locked={this.state.noteLocked}
+              locked={this.state.noteLocked || this.state.readonly}
               onFocus={this.onPlainFocus}
               onBlur={this.onPlainBlur}
             />
@@ -997,6 +1006,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
                 filesController={this.application.filesController}
                 spellcheck={this.state.spellcheck}
                 controller={this.controller}
+                readonly={this.state.readonly}
               />
             </div>
           )}

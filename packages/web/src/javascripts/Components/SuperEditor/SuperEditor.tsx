@@ -58,6 +58,7 @@ type Props = {
   linkingController: LinkingController
   filesController: FilesController
   spellcheck: boolean
+  readonly?: boolean
 }
 
 export const SuperEditor: FunctionComponent<Props> = ({
@@ -66,6 +67,7 @@ export const SuperEditor: FunctionComponent<Props> = ({
   filesController,
   spellcheck,
   controller,
+  readonly,
 }) => {
   const note = useRef(controller.item)
   const changeEditorFunction = useRef<ChangeEditorFunction>()
@@ -217,7 +219,7 @@ export const SuperEditor: FunctionComponent<Props> = ({
       <ErrorBoundary>
         <LinkingControllerProvider controller={linkingController}>
           <FilesControllerProvider controller={filesController}>
-            <BlocksEditorComposer readonly={note.current.locked} initialValue={note.current.text}>
+            <BlocksEditorComposer readonly={note.current.locked || readonly} initialValue={note.current.text}>
               <BlocksEditor
                 onChange={handleChange}
                 className={classNames(
@@ -227,6 +229,7 @@ export const SuperEditor: FunctionComponent<Props> = ({
                 )}
                 previewLength={SuperNotePreviewCharLimit}
                 spellcheck={spellcheck}
+                readonly={note.current.locked || readonly}
               >
                 <ItemSelectionPlugin currentNote={note.current} />
                 <FilePlugin currentNote={note.current} />
@@ -242,7 +245,7 @@ export const SuperEditor: FunctionComponent<Props> = ({
                 <NodeObserverPlugin nodeType={BubbleNode} onRemove={handleBubbleRemove} />
                 <NodeObserverPlugin nodeType={FileNode} onRemove={handleBubbleRemove} />
                 <ExportPlugin />
-                <ReadonlyPlugin note={note.current} />
+                {readonly === undefined && <ReadonlyPlugin note={note.current} />}
                 <AutoFocusPlugin isEnabled={controller.isTemplateNote} />
                 <SuperSearchContextProvider>
                   <SearchPlugin />
