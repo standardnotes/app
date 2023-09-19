@@ -4,26 +4,20 @@ import { createNoteParams } from './lib/Items.js'
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
-describe.skip('history manager', () => {
+describe('history manager', () => {
   const largeCharacterChange = 25
-
-  let application, history, email, password
 
   const syncOptions = {
     checkIntegrity: true,
     awaitAll: true,
   }
 
-  beforeEach(function () {
-    localStorage.clear()
-  })
-
-  afterEach(function () {
-    localStorage.clear()
-  })
-
   describe('session', function () {
+    let application, history
+
     beforeEach(async function () {
+      localStorage.clear()
+
       application = await Factory.createInitAppWithFakeCrypto()
       history = application.dependencies.get(TYPES.HistoryManager)
 
@@ -33,6 +27,7 @@ describe.skip('history manager', () => {
 
     afterEach(async function () {
       await Factory.safeDeinit(application)
+      localStorage.clear()
     })
 
     async function setTextAndSync(application, item, text) {
@@ -234,44 +229,43 @@ describe.skip('history manager', () => {
   describe('remote', function () {
     this.timeout(Factory.TwentySecondTimeout)
 
+    let context
+
     beforeEach(async function () {
       localStorage.clear()
 
-      application = await Factory.createInitAppWithFakeCrypto()
-      history = application.dependencies.get(TYPES.HistoryManager)
-      email = UuidGenerator.GenerateUuid()
-      password = UuidGenerator.GenerateUuid()
-      await Factory.registerUserToApplication({
-        application: application,
-        email: email,
-        password: password,
-      })
+      context = await Factory.createVaultsContextWithRealCrypto()
+
+      await context.launch()
+      await context.register()
     })
 
     afterEach(async function () {
-      await Factory.safeDeinit(application)
+      await context.deinit()
       localStorage.clear()
+      sinon.restore()
+      context = undefined
     })
 
     it('response from server should be failed if not signed in', async function () {
-      await application.user.signOut()
-      application = await Factory.createInitAppWithFakeCrypto()
-      history = application.dependencies.get(TYPES.HistoryManager)
+      const note = await context.createSyncedNote('test note')
 
-      const item = await Factory.createSyncedNote(application)
-      await application.sync.sync(syncOptions)
-      const itemHistoryOrError = await application.listRevisions.execute({ itemUuid: item.uuid })
+      await context.signout()
 
+      const itemHistoryOrError = await context.application.listRevisions.execute({ itemUuid: note.uuid })
       expect(itemHistoryOrError.isFailed()).to.equal(true)
     })
 
     it('should save initial revisions on server', async () => {
-      const item = await Factory.createSyncedNote(application)
-      expect(item).to.be.ok
+      const note = await context.createSyncedNote('test note')
+      expect(note).to.be.ok
 
       await Factory.sleep(Factory.ServerRevisionCreationDelay)
 
-      const itemHistoryOrError = await application.listRevisions.execute({ itemUuid: item.uuid })
+      const itemHistoryOrError = await context.application.listRevisions.execute({ itemUuid: note.uuid })
+      if (itemHistoryOrError.isFailed()) {
+        console.error(itemHistoryOrError.getError())
+      }
       expect(itemHistoryOrError.isFailed()).to.equal(false)
 
       const itemHistory = itemHistoryOrError.getValue()
@@ -279,21 +273,13 @@ describe.skip('history manager', () => {
     })
 
     it('should not create new revisions within the revision frequency window', async () => {
-      const item = await Factory.createSyncedNote(application)
+      const note = await context.createSyncedNote('test note')
 
-      await application.changeAndSaveItem.execute(
-        item,
-        (mutator) => {
-          mutator.title = Math.random()
-        },
-        undefined,
-        undefined,
-        syncOptions,
-      )
+      await context.changeNoteTitleAndSync(note, 'new title 1')
 
       await Factory.sleep(Factory.ServerRevisionCreationDelay)
 
-      const itemHistoryOrError = await application.listRevisions.execute({ itemUuid: item.uuid })
+      const itemHistoryOrError = await context.application.listRevisions.execute({ itemUuid: note.uuid })
       expect(itemHistoryOrError.isFailed()).to.equal(false)
       const itemHistory = itemHistoryOrError.getValue()
 
@@ -301,29 +287,20 @@ describe.skip('history manager', () => {
     })
 
     it('should create new revisions outside the revision frequency window', async function () {
-      let item = await Factory.createSyncedNote(application)
+      const note = await context.createSyncedNote('test note')
 
       await Factory.sleep(Factory.ServerRevisionFrequency)
-      /** Sync with different contents, should create new entry */
-      const newTitleAfterFirstChange = `The title should be: ${Math.random()}`
-      await application.changeAndSaveItem.execute(
-        item,
-        (mutator) => {
-          mutator.title = newTitleAfterFirstChange
-        },
-        undefined,
-        undefined,
-        syncOptions,
-      )
+
+      await context.changeNoteTitleAndSync(note, `The title should be: ${Math.random()}`)
       await Factory.sleep(Factory.ServerRevisionCreationDelay)
 
-      const itemHistoryOrError = await application.listRevisions.execute({ itemUuid: item.uuid })
+      const itemHistoryOrError = await context.application.listRevisions.execute({ itemUuid: note.uuid })
       const itemHistory = itemHistoryOrError.getValue()
       expect(itemHistory.length).to.equal(2)
 
       const oldestEntry = lastElement(itemHistory)
-      let revisionFromServerOrError = await application.getRevision.execute({
-        itemUuid: item.uuid,
+      let revisionFromServerOrError = await context.application.getRevision.execute({
+        itemUuid: note.uuid,
         revisionUuid: oldestEntry.uuid,
       })
       const revisionFromServer = revisionFromServerOrError.getValue()
@@ -331,25 +308,26 @@ describe.skip('history manager', () => {
 
       let payloadFromServer = revisionFromServer.payload
       expect(payloadFromServer.errorDecrypting).to.be.undefined
-      expect(payloadFromServer.uuid).to.eq(item.payload.uuid)
-      expect(payloadFromServer.content).to.eql(item.payload.content)
+      expect(payloadFromServer.uuid).to.eq(note.payload.uuid)
+      expect(payloadFromServer.content).to.eql(note.payload.content)
 
-      item = application.items.findItem(item.uuid)
+      const item = context.application.items.findItem(note.uuid)
       expect(payloadFromServer.content).to.not.eql(item.payload.content)
     })
 
     it('duplicate revisions should not have the originals uuid', async function () {
-      const note = await Factory.createSyncedNote(application)
-      await Factory.markDirtyAndSyncItem(application, note)
-      const dupe = await application.mutator.duplicateItem(note, true)
-      await Factory.markDirtyAndSyncItem(application, dupe)
+      const note = await context.createSyncedNote('test note')
+      await Factory.markDirtyAndSyncItem(context.application, note)
+
+      const dupe = await context.application.mutator.duplicateItem(note, true)
+      await Factory.markDirtyAndSyncItem(context.application, dupe)
 
       await Factory.sleep(Factory.ServerRevisionCreationDelay)
 
-      const dupeHistoryOrError = await application.listRevisions.execute({ itemUuid: dupe.uuid })
+      const dupeHistoryOrError = await context.application.listRevisions.execute({ itemUuid: dupe.uuid })
       const dupeHistory = dupeHistoryOrError.getValue()
 
-      const dupeRevisionOrError = await application.getRevision.execute({
+      const dupeRevisionOrError = await context.application.getRevision.execute({
         itemUuid: dupe.uuid,
         revisionUuid: dupeHistory[0].uuid,
       })
@@ -358,27 +336,27 @@ describe.skip('history manager', () => {
     })
 
     it('revisions count matches original for duplicated items', async function () {
-      const note = await Factory.createSyncedNote(application)
+      const note = await context.createSyncedNote('test note')
 
       await Factory.sleep(Factory.ServerRevisionFrequency)
-      await Factory.markDirtyAndSyncItem(application, note)
+      await Factory.markDirtyAndSyncItem(context.application, note)
 
       await Factory.sleep(Factory.ServerRevisionFrequency)
-      await Factory.markDirtyAndSyncItem(application, note)
+      await Factory.markDirtyAndSyncItem(context.application, note)
 
       await Factory.sleep(Factory.ServerRevisionFrequency)
-      await Factory.markDirtyAndSyncItem(application, note)
+      await Factory.markDirtyAndSyncItem(context.application, note)
 
-      const dupe = await application.mutator.duplicateItem(note, true)
-      await Factory.markDirtyAndSyncItem(application, dupe)
+      const dupe = await context.application.mutator.duplicateItem(note, true)
+      await Factory.markDirtyAndSyncItem(context.application, dupe)
 
       await Factory.sleep(Factory.ServerRevisionCreationDelay)
 
       const expectedRevisions = 4
-      const noteHistoryOrError = await application.listRevisions.execute({ itemUuid: note.uuid })
+      const noteHistoryOrError = await context.application.listRevisions.execute({ itemUuid: note.uuid })
       const noteHistory = noteHistoryOrError.getValue()
 
-      const dupeHistoryOrError = await application.listRevisions.execute({ itemUuid: dupe.uuid })
+      const dupeHistoryOrError = await context.application.listRevisions.execute({ itemUuid: dupe.uuid })
       const dupeHistory = dupeHistoryOrError.getValue()
 
       expect(noteHistory.length).to.equal(expectedRevisions)
@@ -386,26 +364,24 @@ describe.skip('history manager', () => {
     }).timeout(Factory.SixtySecondTimeout)
 
     it('can decrypt revisions for duplicate_of items', async function () {
-      const note = await Factory.createSyncedNote(application)
+      const note = await context.createSyncedNote('test note')
       await Factory.sleep(Factory.ServerRevisionFrequency)
 
       const changedText = `${Math.random()}`
-      await application.changeAndSaveItem.execute(note, (mutator) => {
-        mutator.title = changedText
-      })
-      await Factory.markDirtyAndSyncItem(application, note)
+      await context.changeNoteTitleAndSync(note, changedText)
+      await Factory.markDirtyAndSyncItem(context.application, note)
 
-      const dupe = await application.mutator.duplicateItem(note, true)
-      await Factory.markDirtyAndSyncItem(application, dupe)
+      const dupe = await context.application.mutator.duplicateItem(note, true)
+      await Factory.markDirtyAndSyncItem(context.application, dupe)
 
       await Factory.sleep(Factory.ServerRevisionCreationDelay)
 
-      const itemHistoryOrError = await application.listRevisions.execute({ itemUuid: dupe.uuid })
+      const itemHistoryOrError = await context.application.listRevisions.execute({ itemUuid: dupe.uuid })
       const itemHistory = itemHistoryOrError.getValue()
       expect(itemHistory.length).to.be.above(1)
       const newestRevision = itemHistory[0]
 
-      const fetchedOrError = await application.getRevision.execute({
+      const fetchedOrError = await context.application.getRevision.execute({
         itemUuid: dupe.uuid,
         revisionUuid: newestRevision.uuid,
       })
