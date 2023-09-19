@@ -3,6 +3,26 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.108.161](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.173.2...@standardnotes/desktop@3.108.161) (2023-09-19)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
+## [3.108.160](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.173.1...@standardnotes/desktop@3.108.160) (2023-09-18)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
+## [3.108.159](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.173.0...@standardnotes/desktop@3.108.159) (2023-09-18)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
+## [3.108.158](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.172.28...@standardnotes/desktop@3.108.158) (2023-09-16)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
+## [3.108.157](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.172.27...@standardnotes/desktop@3.108.157) (2023-09-15)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
 ## [3.108.156](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.172.26...@standardnotes/desktop@3.108.156) (2023-09-15)
 
 **Note:** Version bump only for package @standardnotes/desktop

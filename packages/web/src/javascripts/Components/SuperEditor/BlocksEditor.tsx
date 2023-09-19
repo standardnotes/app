@@ -26,6 +26,7 @@ import { SuperEditorContentId } from './Constants'
 import { classNames } from '@standardnotes/utils'
 import { MarkdownTransformers } from './MarkdownTransformers'
 import { RemoveBrokenTablesPlugin } from './Plugins/TablePlugin'
+import TableActionMenuPlugin from './Plugins/TableCellActionMenuPlugin'
 
 type BlocksEditorProps = {
   onChange?: (value: string, preview: string) => void
@@ -92,7 +93,7 @@ export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
       />
       <ListPlugin />
       <MarkdownShortcutPlugin transformers={MarkdownTransformers} />
-      <TablePlugin />
+      <TablePlugin hasCellMerge />
       <OnChangePlugin onChange={handleChange} ignoreSelectionChange={true} />
       <HistoryPlugin />
       <HorizontalRulePlugin />
@@ -111,6 +112,7 @@ export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
         <>
           <FloatingTextFormatToolbarPlugin anchorElem={floatingAnchorElem} />
           <DraggableBlockPlugin anchorElem={floatingAnchorElem} />
+          <TableActionMenuPlugin anchorElem={floatingAnchorElem} cellMerge />
         </>
       )}
       {children}

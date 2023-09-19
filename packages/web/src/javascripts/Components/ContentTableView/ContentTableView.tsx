@@ -330,9 +330,12 @@ const ContentTableView = ({ application, items }: Props) => {
       setContextMenuItem(file)
     },
     rowActions: (item) => {
+      const vault = application.vaults.getItemVault(item)
+      const isReadonly = vault?.isSharedVaultListing() && application.vaultUsers.isCurrentUserReadonlyVaultMember(vault)
+
       return (
         <div className="flex items-center gap-2">
-          <ItemLinksCell item={item} />
+          {!isReadonly && <ItemLinksCell item={item} />}
           <ContextMenuCell items={[item]} />
         </div>
       )
