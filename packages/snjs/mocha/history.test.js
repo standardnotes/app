@@ -311,7 +311,7 @@ describe('history manager', () => {
       expect(payloadFromServer.uuid).to.eq(note.payload.uuid)
       expect(payloadFromServer.content).to.eql(note.payload.content)
 
-      const item = application.items.findItem(note.uuid)
+      const item = context.application.items.findItem(note.uuid)
       expect(payloadFromServer.content).to.not.eql(item.payload.content)
     })
 
