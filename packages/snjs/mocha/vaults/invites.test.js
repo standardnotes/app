@@ -189,25 +189,24 @@ describe('shared vault invites', function () {
       SharedVaultUserPermission.PERMISSIONS.Write,
     )
 
-    const promise = contactContext.awaitNextSyncSharedVaultFromScratchEvent()
     await contactContext.sync()
     await Collaboration.acceptAllInvites(contactContext)
-    await promise
 
     const contactVaultListing = contactContext.items.getItems('SN|VaultListing')[0]
     await contactContext.vaultUsers.leaveSharedVault(contactVaultListing)
     await contactContext.restart()
 
-    await contactContext.sync()
     await context.vaultInvites.inviteContactToSharedVault(
       sharedVault,
       contact,
       SharedVaultUserPermission.PERMISSIONS.Write,
     )
-    const _promise = contactContext.awaitNextSyncSharedVaultFromScratchEvent()
+
     await contactContext.sync()
     await Collaboration.acceptAllInvites(contactContext)
-    await _promise
+
+    const invalidItems = contactContext.items.invalidItems
+    expect(invalidItems).to.be.empty
 
     const receivedNote = contactContext.items.findItem(note.uuid)
     expect(receivedNote).to.not.be.undefined

@@ -276,8 +276,18 @@ export class AppContext {
 
   async restart() {
     const id = this.application.identifier
+    const isRealCrypto = this.crypto instanceof SNWebCrypto
+    const environment = this.application.environment
+    const platform = this.application.platform
+    const host = this.application.host
     await Utils.safeDeinit(this.application)
-    const newApplication = await Applications.createAndInitializeApplication(id)
+    const newApplication = await Applications.createAndInitializeApplication(
+      id,
+      environment,
+      platform,
+      host,
+      isRealCrypto ? new SNWebCrypto() : new FakeWebCrypto(),
+    )
     this.application = newApplication
     return newApplication
   }
@@ -713,7 +723,12 @@ export class AppContext {
       )
 
       try {
-        await HomeServer.activatePremiumFeatures(this.email, options.subscriptionPlanName, options.expiresAt, uploadBytesLimit)
+        await HomeServer.activatePremiumFeatures(
+          this.email,
+          options.subscriptionPlanName,
+          options.expiresAt,
+          uploadBytesLimit,
+        )
 
         await this.sleep(1, 'Waiting for premium features to be activated')
       } catch (error) {
