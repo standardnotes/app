@@ -101,7 +101,7 @@ export class SharedVaultService
 
   private async handleNotification(event: NotificationServiceEventPayload): Promise<void> {
     switch (event.eventPayload.props.type.value) {
-      case NotificationType.TYPES.RemovedFromSharedVault: {
+      case NotificationType.TYPES.SelfRemovedFromSharedVault: {
         const vault = this._getVault.execute<SharedVaultListingInterface>({
           sharedVaultUuid: event.eventPayload.props.sharedVaultUuid.value,
         })

@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/snjs",
-  "version": "2.202.80",
+  "version": "2.202.81",
   "engines": {
     "node": ">=16.0.0 <17.0.0"
   },
@@ -37,7 +37,7 @@
     "@babel/preset-env": "*",
     "@standardnotes/api": "workspace:*",
     "@standardnotes/common": "^1.50.0",
-    "@standardnotes/domain-core": "^1.28.0",
+    "@standardnotes/domain-core": "^1.32.0",
     "@standardnotes/domain-events": "^2.122.0",
     "@standardnotes/encryption": "workspace:*",
     "@standardnotes/features": "workspace:*",
