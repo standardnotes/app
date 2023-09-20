@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.64.21](https://github.com/standardnotes/app/compare/@standardnotes/services@1.64.20...@standardnotes/services@1.64.21) (2023-09-20)
+
+**Note:** Version bump only for package @standardnotes/services
+
 ## [1.64.20](https://github.com/standardnotes/app/compare/@standardnotes/services@1.64.19...@standardnotes/services@1.64.20) (2023-09-18)
 
 **Note:** Version bump only for package @standardnotes/services
