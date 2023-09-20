@@ -78,6 +78,7 @@ const VaultMenu = observer(({ items }: { items: DecryptedItemInterface[] }) => {
               doesVaultContainItems(vault) ? void removeItemsFromVault() : void addItemsToVault(vault)
             }}
             className={doesVaultContainItems(vault) ? 'font-bold' : ''}
+            disabled={vault.isSharedVaultListing() && application.vaultUsers.isCurrentUserReadonlyVaultMember(vault)}
           >
             <Icon
               type={vault.iconString}
@@ -98,7 +99,15 @@ const VaultMenu = observer(({ items }: { items: DecryptedItemInterface[] }) => {
   )
 })
 
-const AddToVaultMenuOption = ({ iconClassName, items }: { iconClassName: string; items: DecryptedItemInterface[] }) => {
+const AddToVaultMenuOption = ({
+  iconClassName,
+  items,
+  disabled,
+}: {
+  iconClassName: string
+  items: DecryptedItemInterface[]
+  disabled?: boolean
+}) => {
   const application = useApplication()
   const buttonRef = useRef<HTMLButtonElement>(null)
 
@@ -123,6 +132,7 @@ const AddToVaultMenuOption = ({ iconClassName, items }: { iconClassName: string;
           }
         }}
         ref={buttonRef}
+        disabled={disabled}
       >
         <div className="flex items-center">
           <Icon type="safe-square" className={iconClassName} />

@@ -5,22 +5,23 @@ import { classNames } from '@standardnotes/utils'
 import StyledTooltip from '../StyledTooltip/StyledTooltip'
 
 type Props = {
-  onClick: () => void
+  onClick: MouseEventHandler
   className?: string
   icon: IconType
   iconClassName?: string
+  iconProps?: Partial<Parameters<typeof Icon>[0]>
   label: string
   id?: string
 } & ComponentPropsWithoutRef<'button'>
 
 const RoundIconButton = forwardRef(
   (
-    { onClick, className, icon: iconType, iconClassName, id, label, ...props }: Props,
+    { onClick, className, icon: iconType, iconClassName, iconProps, id, label, ...props }: Props,
     ref: ForwardedRef<HTMLButtonElement>,
   ) => {
     const click: MouseEventHandler = (e) => {
       e.preventDefault()
-      onClick()
+      onClick(e)
     }
     return (
       <StyledTooltip label={label}>
@@ -37,7 +38,7 @@ const RoundIconButton = forwardRef(
           aria-label={label}
           {...props}
         >
-          <Icon type={iconType} className={iconClassName} />
+          <Icon {...iconProps} type={iconType} className={iconClassName} />
         </button>
       </StyledTooltip>
     )

@@ -5,13 +5,15 @@ import { InternalEventBusInterface } from './../Internal/InternalEventBusInterfa
 import { RemoveVaultMember } from './UseCase/RemoveSharedVaultMember'
 import { VaultServiceInterface } from '../Vault/VaultServiceInterface'
 import { GetVaultUsers } from './UseCase/GetVaultUsers'
-import { SharedVaultListingInterface } from '@standardnotes/models'
+import { SharedVaultListingInterface, VaultListingInterface } from '@standardnotes/models'
 import { VaultUserServiceInterface } from './VaultUserServiceInterface'
 import { ClientDisplayableError, SharedVaultUserServerHash, isClientDisplayableError } from '@standardnotes/responses'
 import { AbstractService } from './../Service/AbstractService'
 import { VaultUserServiceEvent } from './VaultUserServiceEvent'
 import { Result } from '@standardnotes/domain-core'
 import { IsVaultOwner } from './UseCase/IsVaultOwner'
+import { IsReadonlyVaultMember } from './UseCase/IsReadonlyVaultMember'
+import { IsVaultAdmin } from './UseCase/IsVaultAdmin'
 
 export class VaultUserService extends AbstractService<VaultUserServiceEvent> implements VaultUserServiceInterface {
   constructor(
@@ -20,6 +22,8 @@ export class VaultUserService extends AbstractService<VaultUserServiceEvent> imp
     private _getVaultUsers: GetVaultUsers,
     private _removeVaultMember: RemoveVaultMember,
     private _isVaultOwner: IsVaultOwner,
+    private _isVaultAdmin: IsVaultAdmin,
+    private _isReadonlyVaultMember: IsReadonlyVaultMember,
     private _getVault: GetVault,
     private _leaveVault: LeaveVault,
     eventBus: InternalEventBusInterface,
@@ -37,7 +41,31 @@ export class VaultUserService extends AbstractService<VaultUserServiceEvent> imp
     ;(this._leaveVault as unknown) = undefined
   }
 
-  public async getSharedVaultUsers(
+  async invalidateVaultUsersCache(sharedVaultUuid?: string) {
+    if (sharedVaultUuid) {
+      await this._getVaultUsers.execute({
+        sharedVaultUuid: sharedVaultUuid,
+        readFromCache: false,
+      })
+      void this.notifyEvent(VaultUserServiceEvent.InvalidatedUserCacheForVault, sharedVaultUuid)
+      return
+    }
+    await Promise.all(
+      this.vaults.getVaults().map(async (vault) => {
+        if (!vault.isSharedVaultListing()) {
+          return
+        }
+        await this._getVaultUsers.execute({
+          sharedVaultUuid: vault.sharing.sharedVaultUuid,
+          readFromCache: false,
+        })
+        void this.notifyEvent(VaultUserServiceEvent.InvalidatedUserCacheForVault, vault.sharing.sharedVaultUuid)
+      }),
+    )
+    void this.notifyEvent(VaultUserServiceEvent.InvalidatedAllUserCache)
+  }
+
+  public async getSharedVaultUsersFromServer(
     sharedVault: SharedVaultListingInterface,
   ): Promise<SharedVaultUserServerHash[] | undefined> {
     const result = await this._getVaultUsers.execute({
@@ -53,6 +81,17 @@ export class VaultUserService extends AbstractService<VaultUserServiceEvent> imp
 
   public isCurrentUserSharedVaultOwner(sharedVault: SharedVaultListingInterface): boolean {
     return this._isVaultOwner.execute(sharedVault).getValue()
+  }
+
+  public isCurrentUserSharedVaultAdmin(sharedVault: SharedVaultListingInterface): boolean {
+    return this._isVaultAdmin.execute(sharedVault).getValue()
+  }
+
+  public isCurrentUserReadonlyVaultMember(vault: VaultListingInterface): boolean {
+    if (!vault.isSharedVaultListing()) {
+      return false
+    }
+    return this._isReadonlyVaultMember.execute(vault).getValue()
   }
 
   async removeUserFromSharedVault(sharedVault: SharedVaultListingInterface, userUuid: string): Promise<Result<void>> {
@@ -100,5 +139,18 @@ export class VaultUserService extends AbstractService<VaultUserServiceEvent> imp
     }
 
     void this.notifyEvent(VaultUserServiceEvent.UsersChanged)
+  }
+
+  getFormattedMemberPermission(permission: string): string {
+    switch (permission) {
+      case 'admin':
+        return 'Admin'
+      case 'write':
+        return 'Read / Write'
+      case 'read':
+        return 'Read-only'
+      default:
+        return 'Unknown'
+    }
   }
 }

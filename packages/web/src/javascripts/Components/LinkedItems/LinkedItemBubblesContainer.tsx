@@ -166,7 +166,7 @@ const LinkedItemBubblesContainer = ({
 
   const { vault, lastEditedByContact } = useItemVaultInfo(item)
 
-  if (readonly && itemsToDisplay.length === 0) {
+  if (readonly && itemsToDisplay.length === 0 && !vault) {
     return null
   }
 

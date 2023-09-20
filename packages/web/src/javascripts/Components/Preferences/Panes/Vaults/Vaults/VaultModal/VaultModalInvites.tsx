@@ -1,9 +1,8 @@
 import { useCallback } from 'react'
 import { useApplication } from '@/Components/ApplicationProvider'
-import { SharedVaultInviteServerHash, SharedVaultUserPermission } from '@standardnotes/snjs'
+import { SharedVaultInviteServerHash } from '@standardnotes/snjs'
 import Icon from '@/Components/Icon/Icon'
 import Button from '@/Components/Button/Button'
-import { capitalizeString } from '@/Utils'
 
 export const VaultModalInvites = ({
   invites,
@@ -30,10 +29,7 @@ export const VaultModalInvites = ({
       <div className="space-y-3.5">
         {invites.map((invite) => {
           const contact = application.contacts.findContactForInvite(invite)
-          const permission =
-            invite.permission === SharedVaultUserPermission.PERMISSIONS.Write
-              ? 'Read / Write'
-              : capitalizeString(invite.permission)
+          const permission = application.vaultUsers.getFormattedMemberPermission(invite.permission)
 
           return (
             <div

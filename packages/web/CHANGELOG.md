@@ -3,6 +3,46 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.173.8](https://github.com/standardnotes/app/compare/@standardnotes/web@3.173.7...@standardnotes/web@3.173.8) (2023-09-20)
+
+### Bug Fixes
+
+* Fixed issue where using table or image option in Super mobile toolbar would make uninteractive ([ec61901](https://github.com/standardnotes/app/commit/ec61901aa5f0c08b7b77029e225e81c19decbd60))
+
+## [3.173.7](https://github.com/standardnotes/app/compare/@standardnotes/web@3.173.6...@standardnotes/web@3.173.7) (2023-09-20)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.173.6](https://github.com/standardnotes/app/compare/@standardnotes/web@3.173.5...@standardnotes/web@3.173.6) (2023-09-20)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.173.5](https://github.com/standardnotes/app/compare/@standardnotes/web@3.173.4...@standardnotes/web@3.173.5) (2023-09-20)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.173.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.173.3...@standardnotes/web@3.173.4) (2023-09-19)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.173.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.173.2...@standardnotes/web@3.173.3) (2023-09-19)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.173.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.173.1...@standardnotes/web@3.173.2) (2023-09-18)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.173.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.173.0...@standardnotes/web@3.173.1) (2023-09-18)
+
+**Note:** Version bump only for package @standardnotes/web
+
+# [3.173.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.172.28...@standardnotes/web@3.173.0) (2023-09-16)
+
+### Features
+
+* Added table cell menu for adding/removing rows and columns to Super note tables and merging cells ([#2508](https://github.com/standardnotes/app/issues/2508)) ([896372f](https://github.com/standardnotes/app/commit/896372f04dfd2f302395077433e3ece32b251242))
+
 ## [3.172.28](https://github.com/standardnotes/app/compare/@standardnotes/web@3.172.27...@standardnotes/web@3.172.28) (2023-09-15)
 
 **Note:** Version bump only for package @standardnotes/web

@@ -20,6 +20,7 @@ interface Props {
   componentViewer: ComponentViewerInterface
   requestReload?: (viewer: ComponentViewerInterface, force?: boolean) => void
   onLoad?: () => void
+  readonly?: boolean
 }
 
 /**
@@ -30,7 +31,7 @@ const MaxLoadThreshold = 4000
 const VisibilityChangeKey = 'visibilitychange'
 const MSToWaitAfterIframeLoadToAvoidFlicker = 35
 
-const IframeFeatureView: FunctionComponent<Props> = ({ onLoad, componentViewer, requestReload }) => {
+const IframeFeatureView: FunctionComponent<Props> = ({ onLoad, componentViewer, requestReload, readonly = false }) => {
   const application = useApplication()
 
   const iframeRef = useRef<HTMLIFrameElement | null>(null)
@@ -50,7 +51,7 @@ const IframeFeatureView: FunctionComponent<Props> = ({ onLoad, componentViewer, 
   const reloadValidityStatus = useCallback(() => {
     setFeatureStatus(componentViewer.getFeatureStatus())
     if (!componentViewer.lockReadonly) {
-      componentViewer.setReadonly(featureStatus !== FeatureStatus.Entitled)
+      componentViewer.setReadonly(featureStatus !== FeatureStatus.Entitled || readonly)
     }
     setIsComponentValid(componentViewer.shouldRender())
 
@@ -60,7 +61,7 @@ const IframeFeatureView: FunctionComponent<Props> = ({ onLoad, componentViewer, 
 
     setError(componentViewer.getError())
     setDeprecationMessage(uiFeature.deprecationMessage)
-  }, [componentViewer, uiFeature, featureStatus, isComponentValid, isLoading])
+  }, [componentViewer, isLoading, isComponentValid, uiFeature.deprecationMessage, featureStatus, readonly])
 
   useEffect(() => {
     reloadValidityStatus()

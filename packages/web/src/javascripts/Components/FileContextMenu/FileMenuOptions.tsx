@@ -69,6 +69,18 @@ const FileMenuOptions: FunctionComponent<Props> = ({
     closeMenu()
   }, [closeMenu, toggleAppPane])
 
+  const areSomeFilesInReadonlySharedVault = selectedFiles.some((file) => {
+    const vault = application.vaults.getItemVault(file)
+    return vault?.isSharedVaultListing() && application.vaultUsers.isCurrentUserReadonlyVaultMember(vault)
+  })
+  const hasAdminPermissionForAllSharedFiles = selectedFiles.every((file) => {
+    const vault = application.vaults.getItemVault(file)
+    if (!vault?.isSharedVaultListing()) {
+      return true
+    }
+    return application.vaultUsers.isCurrentUserSharedVaultAdmin(vault)
+  })
+
   if (selectedFiles.length === 0) {
     return <div className="text-center">No files selected</div>
   }
@@ -91,19 +103,25 @@ const FileMenuOptions: FunctionComponent<Props> = ({
         </>
       )}
       {application.featuresController.isEntitledToVaults() && (
-        <AddToVaultMenuOption iconClassName={iconClass} items={selectedFiles} />
+        <AddToVaultMenuOption
+          iconClassName={iconClass}
+          items={selectedFiles}
+          disabled={!hasAdminPermissionForAllSharedFiles}
+        />
       )}
       <AddTagOption
         navigationController={application.navigationController}
         linkingController={application.linkingController}
         selectedItems={selectedFiles}
         iconClassName={`text-neutral mr-2 ${MenuItemIconSize}`}
+        disabled={areSomeFilesInReadonlySharedVault}
       />
       <MenuSwitchButtonItem
         checked={hasProtectedFiles}
         onChange={(hasProtectedFiles) => {
           void application.filesController.setProtectionForFiles(hasProtectedFiles, selectedFiles)
         }}
+        disabled={areSomeFilesInReadonlySharedVault}
       >
         <Icon type="lock" className={`mr-2 text-neutral ${MenuItemIconSize}`} />
         Password protect
@@ -123,6 +141,7 @@ const FileMenuOptions: FunctionComponent<Props> = ({
           onClick={() => {
             renameToggleCallback?.(true)
           }}
+          disabled={areSomeFilesInReadonlySharedVault}
         >
           <Icon type="pencil" className={`mr-2 text-neutral ${MenuItemIconSize}`} />
           Rename
@@ -133,6 +152,7 @@ const FileMenuOptions: FunctionComponent<Props> = ({
           closeMenuAndToggleFilesList()
           void application.filesController.deleteFilesPermanently(selectedFiles)
         }}
+        disabled={areSomeFilesInReadonlySharedVault}
       >
         <Icon type="trash" className={`mr-2 text-danger ${MenuItemIconSize}`} />
         <span className="text-danger">Delete permanently</span>

@@ -9,7 +9,8 @@ export const SpellcheckOptions: FunctionComponent<{
   editorForNote: UIFeature<EditorFeatureDescription | IframeComponentFeatureDescription>
   notesController: NotesController
   note: SNNote
-}> = ({ editorForNote, notesController, note }) => {
+  disabled?: boolean
+}> = ({ editorForNote, notesController, note, disabled }) => {
   const spellcheckControllable = editorForNote.featureDescription.spellcheckControl
   const noteSpellcheck = !spellcheckControllable
     ? true
@@ -24,7 +25,7 @@ export const SpellcheckOptions: FunctionComponent<{
         onChange={() => {
           notesController.toggleGlobalSpellcheckForNote(note).catch(console.error)
         }}
-        disabled={!spellcheckControllable}
+        disabled={disabled || !spellcheckControllable}
       >
         <Icon type="notes" className={iconClass} />
         Spellcheck
