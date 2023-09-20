@@ -4304,7 +4304,7 @@ __metadata:
     copy-webpack-plugin: ^11.0.0
     decrypt: "github:standardnotes/decrypt#master"
     dotenv: ^16.0.3
-    electron: 22.1.0
+    electron: 26.2.1
     electron-builder: 23.6.0
     electron-log: ^4.4.8
     electron-notarize: ^1.2.1
@@ -5726,10 +5726,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^16.11.26":
-  version: 16.18.39
-  resolution: "@types/node@npm:16.18.39"
-  checksum: eac9b202b76013256cb517ca8d3e3f61df206edb1615ca8d8df4c80616e92879fe4d3f8570a11d60f4216a82724a3265d5888b24c6994c80b057a0423c9ff1d2
+"@types/node@npm:^18.11.18":
+  version: 18.17.18
+  resolution: "@types/node@npm:18.17.18"
+  checksum: 59cbd906363d37017fe9ba0c08c1446e440d4d977459609c5f90b8fb7eb41f273ce8af30c5a5b5d599d7de934c1b3702bc9fc27caf8d2270e5cdb659c5232991
   languageName: node
   linkType: hard
 
@@ -10526,16 +10526,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron@npm:22.1.0":
-  version: 22.1.0
-  resolution: "electron@npm:22.1.0"
+"electron@npm:26.2.1":
+  version: 26.2.1
+  resolution: "electron@npm:26.2.1"
   dependencies:
     "@electron/get": ^2.0.0
-    "@types/node": ^16.11.26
+    "@types/node": ^18.11.18
     extract-zip: ^2.0.1
   bin:
     electron: cli.js
-  checksum: d448cf785fe6c24c7338d48c8aa98765e384a3e3f91317ea6a6ebb363f6a25ceef40e05cec73de0bc3406e803ed5400e9fbbc1dd107249ac7a477c8ffc2da18a
+  checksum: 1790c8f96e08437c563e60f469553f9cdce514418f3df74a5a31c9839d74540d0ee91a9af0a5a25f125459bce5308a166bfcb4c496459ae21c8b9bd4e427b58c
   languageName: node
   linkType: hard
 
