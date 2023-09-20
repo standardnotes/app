@@ -41,13 +41,13 @@ export class VaultUserService extends AbstractService<VaultUserServiceEvent> imp
     ;(this._leaveVault as unknown) = undefined
   }
 
-  async invalidateVaultUsersCache(sharedVault?: SharedVaultListingInterface) {
-    if (sharedVault) {
+  async invalidateVaultUsersCache(sharedVaultUuid?: string) {
+    if (sharedVaultUuid) {
       await this._getVaultUsers.execute({
-        sharedVaultUuid: sharedVault.sharing.sharedVaultUuid,
+        sharedVaultUuid: sharedVaultUuid,
         readFromCache: false,
       })
-      void this.notifyEvent(VaultUserServiceEvent.InvalidatedUserCacheForVault, sharedVault.sharing.sharedVaultUuid)
+      void this.notifyEvent(VaultUserServiceEvent.InvalidatedUserCacheForVault, sharedVaultUuid)
       return
     }
     await Promise.all(
