@@ -372,17 +372,17 @@ const MobileToolbarPlugin = () => {
   }, [editor, updateEditorSelection])
 
   const isFocusInEditorOrToolbar = isInEditor || isInToolbar || isInLinkEditor
-  if (!isMobile || !isFocusInEditorOrToolbar) {
-    return null
-  }
 
   return (
     <>
       {modal}
-      <div className="bg-contrast" id="super-mobile-toolbar">
+      <div
+        className={classNames('bg-contrast', !isMobile || !isFocusInEditorOrToolbar ? 'hidden' : '')}
+        id="super-mobile-toolbar"
+      >
         {isSelectionLink && (
           <div
-            className="border-t border-border px-2 focus:outline-none focus:shadow-none"
+            className="border-t border-border px-2 focus:shadow-none focus:outline-none"
             ref={linkEditorRef}
             tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
           >
@@ -406,7 +406,7 @@ const MobileToolbarPlugin = () => {
               return (
                 <StyledTooltip showOnMobile showOnHover label={item.name} key={item.name}>
                   <button
-                    className="flex items-center justify-center rounded p-0.5 disabled:opacity-50 select-none hover:bg-default"
+                    className="flex select-none items-center justify-center rounded p-0.5 hover:bg-default disabled:opacity-50"
                     aria-label={item.name}
                     onMouseDown={(event) => {
                       event.preventDefault()
@@ -420,7 +420,7 @@ const MobileToolbarPlugin = () => {
                   >
                     <div
                       className={classNames(
-                        'flex items-center justify-center p-2 rounded transition-colors duration-75',
+                        'flex items-center justify-center rounded p-2 transition-colors duration-75',
                         item.active && 'bg-info text-info-contrast',
                       )}
                     >
