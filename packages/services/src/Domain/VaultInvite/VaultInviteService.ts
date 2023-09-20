@@ -179,7 +179,8 @@ export class VaultInviteService
 
     this.removePendingInvite(pendingInvite.invite.uuid)
 
-    void this.sync.sync()
+    this.sync.sync().catch(console.error)
+    this.vaultUsers.invalidateVaultUsersCache().catch(console.error)
 
     await this._decryptErroredPayloads.execute()
 

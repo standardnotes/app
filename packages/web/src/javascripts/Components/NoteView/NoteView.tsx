@@ -26,6 +26,7 @@ import {
   PrefKey,
   ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction,
   SNNote,
+  VaultUserServiceEvent,
 } from '@standardnotes/snjs'
 import { confirmDialog, DELETE_NOTE_KEYBOARD_COMMAND, KeyboardKey } from '@standardnotes/ui-services'
 import { ChangeEventHandler, createRef, CSSProperties, KeyboardEventHandler, RefObject } from 'react'
@@ -97,6 +98,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
   private removeNoteStreamObserver?: () => void
   private removeComponentManagerObserver?: () => void
   private removeInnerNoteObserver?: () => void
+  private removeVaultUsersEventHandler?: () => void
 
   private protectionTimeoutId: ReturnType<typeof setTimeout> | null = null
   private noteViewElementRef: RefObject<HTMLDivElement>
@@ -158,6 +160,9 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
     this.removeTrashKeyObserver?.()
     this.removeTrashKeyObserver = undefined
 
+    this.removeVaultUsersEventHandler?.()
+    this.removeVaultUsersEventHandler = undefined
+
     this.clearNoteProtectionInactivityTimer()
     ;(this.ensureNoteIsInsertedBeforeUIAction as unknown) = undefined
 
@@ -210,6 +215,18 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
 
   override componentDidMount(): void {
     super.componentDidMount()
+
+    this.removeVaultUsersEventHandler = this.application.vaultUsers.addEventObserver((event, data) => {
+      if (event === VaultUserServiceEvent.InvalidatedUserCacheForVault) {
+        const vault = this.application.vaults.getItemVault(this.note)
+        if ((data as string) !== vault?.sharing?.sharedVaultUuid) {
+          return
+        }
+        this.setState({
+          readonly: vault ? this.application.vaultUsers.isCurrentUserReadonlyVaultMember(vault) : false,
+        })
+      }
+    })
 
     this.registerKeyboardShortcuts()
 
