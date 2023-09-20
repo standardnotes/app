@@ -138,13 +138,11 @@ const Vaults = observer(() => {
       <ModalOverlay isOpen={isAddContactModalOpen} close={closeAddContactModal}>
         <EditContactModal onCloseDialog={closeAddContactModal} />
       </ModalOverlay>
-
       <EditVaultModal
         isVaultModalOpen={isVaultModalOpen}
         creatingSharedVault={isCreatingSharedVault}
         closeVaultModal={closeVaultModal}
       />
-
       {invites.length > 0 && (
         <PreferencesGroup>
           <PreferencesSegment>
@@ -157,7 +155,6 @@ const Vaults = observer(() => {
           </PreferencesSegment>
         </PreferencesGroup>
       )}
-
       {hasAccount && (
         <PreferencesGroup>
           <PreferencesSegment>
@@ -175,33 +172,6 @@ const Vaults = observer(() => {
           </PreferencesSegment>
         </PreferencesGroup>
       )}
-
-      <PreferencesGroup>
-        <PreferencesSegment>
-          <Title>Vaults</Title>
-          {vaults.length > 0 && (
-            <div className="my-2 flex flex-col gap-3.5">
-              {vaults.map((vault) => {
-                return <VaultItem vault={vault} key={vault.uuid} />
-              })}
-            </div>
-          )}
-          {canCreateMoreVaults ? (
-            <div className="mt-2.5 flex gap-3">
-              <Button label="Create Vault" onClick={createNewVault} />
-              {hasAccount && <Button label="Create Shared Vault" onClick={createNewSharedVault} />}
-            </div>
-          ) : (
-            <div className="mt-3.5">
-              <NoProSubscription
-                application={application}
-                text={<span>Please upgrade in order to increase your shared vault limit.</span>}
-              />
-            </div>
-          )}
-        </PreferencesSegment>
-      </PreferencesGroup>
-
       {hasAccount && (
         <PreferencesGroup>
           <PreferencesSegment>
@@ -244,6 +214,31 @@ const Vaults = observer(() => {
           </PreferencesSegment>
         </PreferencesGroup>
       )}
+      <PreferencesGroup>
+        <PreferencesSegment>
+          <Title>Vaults</Title>
+          {vaults.length > 0 && (
+            <div className="my-2 flex flex-col gap-3.5">
+              {vaults.map((vault) => {
+                return <VaultItem vault={vault} key={vault.uuid} />
+              })}
+            </div>
+          )}
+          {canCreateMoreVaults ? (
+            <div className="mt-2.5 flex gap-3">
+              <Button label="Create Vault" onClick={createNewVault} />
+              {hasAccount && <Button label="Create Shared Vault" onClick={createNewSharedVault} />}
+            </div>
+          ) : (
+            <div className="mt-3.5">
+              <NoProSubscription
+                application={application}
+                text={<span>Please upgrade in order to increase your shared vault limit.</span>}
+              />
+            </div>
+          )}
+        </PreferencesSegment>
+      </PreferencesGroup>
     </PreferencesPane>
   )
 })

@@ -12,16 +12,10 @@ import { AbstractService } from './../Service/AbstractService'
 import { VaultUserServiceEvent } from './VaultUserServiceEvent'
 import { Result } from '@standardnotes/domain-core'
 import { IsVaultOwner } from './UseCase/IsVaultOwner'
-import { InternalEventInterface } from '../Internal/InternalEventInterface'
-import { InternalEventHandlerInterface } from '../Internal/InternalEventHandlerInterface'
-import { ApplicationEvent } from '../Event/ApplicationEvent'
 import { IsReadonlyVaultMember } from './UseCase/IsReadonlyVaultMember'
 import { IsVaultAdmin } from './UseCase/IsVaultAdmin'
 
-export class VaultUserService
-  extends AbstractService<VaultUserServiceEvent>
-  implements VaultUserServiceInterface, InternalEventHandlerInterface
-{
+export class VaultUserService extends AbstractService<VaultUserServiceEvent> implements VaultUserServiceInterface {
   constructor(
     private vaults: VaultServiceInterface,
     private vaultLocks: VaultLockServiceInterface,
@@ -47,20 +41,28 @@ export class VaultUserService
     ;(this._leaveVault as unknown) = undefined
   }
 
-  async handleEvent(event: InternalEventInterface): Promise<void> {
-    if (event.type === ApplicationEvent.CompletedFullSync) {
-      this.vaults.getVaults().forEach((vault) => {
+  async invalidateVaultUsersCache(sharedVaultUuid?: string) {
+    if (sharedVaultUuid) {
+      await this._getVaultUsers.execute({
+        sharedVaultUuid: sharedVaultUuid,
+        readFromCache: false,
+      })
+      void this.notifyEvent(VaultUserServiceEvent.InvalidatedUserCacheForVault, sharedVaultUuid)
+      return
+    }
+    await Promise.all(
+      this.vaults.getVaults().map(async (vault) => {
         if (!vault.isSharedVaultListing()) {
           return
         }
-        this._getVaultUsers
-          .execute({
-            sharedVaultUuid: vault.sharing.sharedVaultUuid,
-            readFromCache: false,
-          })
-          .catch(console.error)
-      })
-    }
+        await this._getVaultUsers.execute({
+          sharedVaultUuid: vault.sharing.sharedVaultUuid,
+          readFromCache: false,
+        })
+        void this.notifyEvent(VaultUserServiceEvent.InvalidatedUserCacheForVault, vault.sharing.sharedVaultUuid)
+      }),
+    )
+    void this.notifyEvent(VaultUserServiceEvent.InvalidatedAllUserCache)
   }
 
   public async getSharedVaultUsersFromServer(

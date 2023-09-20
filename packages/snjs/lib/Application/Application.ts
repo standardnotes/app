@@ -469,6 +469,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
           source: SyncSource.External,
           sourceDescription: 'Application Launch',
         })
+        this.vaultUsers.invalidateVaultUsersCache().catch(console.error)
       })
       .catch((error) => {
         void this.notifyEvent(ApplicationEvent.LocalDatabaseReadError, error)

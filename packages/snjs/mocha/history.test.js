@@ -263,12 +263,18 @@ describe('history manager', () => {
       await Factory.sleep(Factory.ServerRevisionCreationDelay)
 
       const itemHistoryOrError = await context.application.listRevisions.execute({ itemUuid: note.uuid })
-      if (itemHistoryOrError.isFailed()) {
-        console.error(itemHistoryOrError.getError())
-      }
       expect(itemHistoryOrError.isFailed()).to.equal(false)
 
-      const itemHistory = itemHistoryOrError.getValue()
+      let itemHistory = itemHistoryOrError.getValue()
+      if (itemHistory.length === 0) {
+        await Factory.sleep(Factory.ServerRevisionCreationDelay, 'No revisions found on the server. This is likely a delay issue. Retrying...')
+
+        const itemHistoryOrError = await context.application.listRevisions.execute({ itemUuid: note.uuid })
+        expect(itemHistoryOrError.isFailed()).to.equal(false)
+
+        itemHistory = itemHistoryOrError.getValue()
+      }
+
       expect(itemHistory.length >= 1).to.be.true
     })
 
@@ -281,7 +287,15 @@ describe('history manager', () => {
 
       const itemHistoryOrError = await context.application.listRevisions.execute({ itemUuid: note.uuid })
       expect(itemHistoryOrError.isFailed()).to.equal(false)
-      const itemHistory = itemHistoryOrError.getValue()
+      let itemHistory = itemHistoryOrError.getValue()
+      if (itemHistory.length === 0) {
+        await Factory.sleep(Factory.ServerRevisionCreationDelay, 'No revisions found on the server. This is likely a delay issue. Retrying...')
+
+        const itemHistoryOrError = await context.application.listRevisions.execute({ itemUuid: note.uuid })
+        expect(itemHistoryOrError.isFailed()).to.equal(false)
+
+        itemHistory = itemHistoryOrError.getValue()
+      }
 
       expect(itemHistory.length >= 1).to.be.true
     })
@@ -295,7 +309,17 @@ describe('history manager', () => {
       await Factory.sleep(Factory.ServerRevisionCreationDelay)
 
       const itemHistoryOrError = await context.application.listRevisions.execute({ itemUuid: note.uuid })
-      const itemHistory = itemHistoryOrError.getValue()
+      expect(itemHistoryOrError.isFailed()).to.equal(false)
+      let itemHistory = itemHistoryOrError.getValue()
+      if (itemHistory.length !== 2) {
+        await Factory.sleep(Factory.ServerRevisionCreationDelay, 'Not enough revisions found on the server. This is likely a delay issue. Retrying...')
+
+        const itemHistoryOrError = await context.application.listRevisions.execute({ itemUuid: note.uuid })
+        expect(itemHistoryOrError.isFailed()).to.equal(false)
+
+        itemHistory = itemHistoryOrError.getValue()
+      }
+
       expect(itemHistory.length).to.equal(2)
 
       const oldestEntry = lastElement(itemHistory)
@@ -325,7 +349,17 @@ describe('history manager', () => {
       await Factory.sleep(Factory.ServerRevisionCreationDelay)
 
       const dupeHistoryOrError = await context.application.listRevisions.execute({ itemUuid: dupe.uuid })
-      const dupeHistory = dupeHistoryOrError.getValue()
+      expect(dupeHistoryOrError.isFailed()).to.equal(false)
+      let dupeHistory = dupeHistoryOrError.getValue()
+      if (dupeHistory.length === 0) {
+        await Factory.sleep(Factory.ServerRevisionCreationDelay, 'No revisions found on the server. This is likely a delay issue. Retrying...')
+
+        const dupeHistoryOrError = await context.application.listRevisions.execute({ itemUuid: dupe.uuid })
+        expect(dupeHistoryOrError.isFailed()).to.equal(false)
+
+        dupeHistory = dupeHistoryOrError.getValue()
+      }
+      expect(dupeHistory.length >= 1).to.be.true
 
       const dupeRevisionOrError = await context.application.getRevision.execute({
         itemUuid: dupe.uuid,
@@ -354,12 +388,29 @@ describe('history manager', () => {
 
       const expectedRevisions = 4
       const noteHistoryOrError = await context.application.listRevisions.execute({ itemUuid: note.uuid })
-      const noteHistory = noteHistoryOrError.getValue()
+      expect(noteHistoryOrError.isFailed()).to.equal(false)
+      let noteHistory = noteHistoryOrError.getValue()
+      if (noteHistory.length !== expectedRevisions) {
+        await Factory.sleep(Factory.ServerRevisionCreationDelay, 'No revisions found on the server. This is likely a delay issue. Retrying...')
+
+        const noteHistoryOrError = await context.application.listRevisions.execute({ itemUuid: note.uuid })
+        expect(noteHistoryOrError.isFailed()).to.equal(false)
+
+        noteHistory = noteHistoryOrError.getValue()
+      }
+      expect(noteHistory.length).to.equal(expectedRevisions)
 
       const dupeHistoryOrError = await context.application.listRevisions.execute({ itemUuid: dupe.uuid })
-      const dupeHistory = dupeHistoryOrError.getValue()
+      expect(dupeHistoryOrError.isFailed()).to.equal(false)
+      let dupeHistory = dupeHistoryOrError.getValue()
+      if (dupeHistory.length !== expectedRevisions + 1) {
+        await Factory.sleep(Factory.ServerRevisionCreationDelay, 'No revisions found on the server. This is likely a delay issue. Retrying...')
 
-      expect(noteHistory.length).to.equal(expectedRevisions)
+        const dupeHistoryOrError = await context.application.listRevisions.execute({ itemUuid: dupe.uuid })
+        expect(dupeHistoryOrError.isFailed()).to.equal(false)
+
+        dupeHistory = dupeHistoryOrError.getValue()
+      }
       expect(dupeHistory.length).to.equal(expectedRevisions + 1)
     }).timeout(Factory.SixtySecondTimeout)
 
@@ -377,8 +428,18 @@ describe('history manager', () => {
       await Factory.sleep(Factory.ServerRevisionCreationDelay)
 
       const itemHistoryOrError = await context.application.listRevisions.execute({ itemUuid: dupe.uuid })
-      const itemHistory = itemHistoryOrError.getValue()
+      expect(itemHistoryOrError.isFailed()).to.equal(false)
+      let itemHistory = itemHistoryOrError.getValue()
+      if (itemHistory.length <= 1) {
+        await Factory.sleep(Factory.ServerRevisionCreationDelay, 'No revisions found on the server. This is likely a delay issue. Retrying...')
+
+        const itemHistoryOrError = await context.application.listRevisions.execute({ itemUuid: dupe.uuid })
+        expect(itemHistoryOrError.isFailed()).to.equal(false)
+
+        itemHistory = itemHistoryOrError.getValue()
+      }
       expect(itemHistory.length).to.be.above(1)
+
       const newestRevision = itemHistory[0]
 
       const fetchedOrError = await context.application.getRevision.execute({

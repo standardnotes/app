@@ -11,11 +11,35 @@ import Popover from '../Popover/Popover'
 import FilePreviewInfoPanel from '../FilePreview/FilePreviewInfoPanel'
 import { useFileDragNDrop } from '../FileDragNDropProvider'
 import RoundIconButton from '../Button/RoundIconButton'
+import { useItemVaultInfo } from '@/Hooks/useItemVaultInfo'
+import Icon from '../Icon/Icon'
+import { VaultUserServiceEvent } from '@standardnotes/snjs'
 
 const SyncTimeoutNoDebounceMs = 100
 const SyncTimeoutDebounceMs = 350
 
 const FileViewWithoutProtection = ({ application, file }: FileViewProps) => {
+  const { vault } = useItemVaultInfo(file)
+
+  const [isReadonly, setIsReadonly] = useState(false)
+  useEffect(() => {
+    if (!vault) {
+      return
+    }
+
+    setIsReadonly(application.vaultUsers.isCurrentUserReadonlyVaultMember(vault))
+  }, [application.vaultUsers, vault])
+  useEffect(() => {
+    return application.vaultUsers.addEventObserver((event, data) => {
+      if (event === VaultUserServiceEvent.InvalidatedUserCacheForVault) {
+        if ((data as string) !== vault?.sharing?.sharedVaultUuid) {
+          return
+        }
+        setIsReadonly(vault ? application.vaultUsers.isCurrentUserReadonlyVaultMember(vault) : false)
+      }
+    })
+  }, [application.vaultUsers, vault])
+
   const syncTimeoutRef = useRef<number>()
   const fileInfoButtonRef = useRef<HTMLButtonElement>(null)
 
@@ -67,6 +91,12 @@ const FileViewWithoutProtection = ({ application, file }: FileViewProps) => {
   return (
     <div className="sn-component section editor" aria-label="File" ref={fileDragTargetRef}>
       <div className="flex flex-col">
+        {isReadonly && (
+          <div className="bg-warning-faded relative flex items-center px-3.5 py-2 text-sm text-accessory-tint-3">
+            <Icon type="pencil-off" className="mr-3" />
+            This file is readonly
+          </div>
+        )}
         <div
           className="content-title-bar section-title-bar section-title-bar z-editor-title-bar w-full"
           id="file-title-bar"
@@ -85,11 +115,12 @@ const FileViewWithoutProtection = ({ application, file }: FileViewProps) => {
                   spellCheck={false}
                   defaultValue={file.name}
                   autoComplete="off"
+                  disabled={isReadonly}
                 />
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <LinkedItemsButton linkingController={application.linkingController} />
+              {!isReadonly && <LinkedItemsButton linkingController={application.linkingController} />}
               <RoundIconButton
                 label="File information panel"
                 onClick={toggleFileInfoPanel}
@@ -110,7 +141,11 @@ const FileViewWithoutProtection = ({ application, file }: FileViewProps) => {
             </div>
           </div>
           <div className="hidden md:flex">
-            <LinkedItemBubblesContainer item={file} linkingController={application.linkingController} />
+            <LinkedItemBubblesContainer
+              item={file}
+              linkingController={application.linkingController}
+              readonly={isReadonly}
+            />
           </div>
         </div>
       </div>
