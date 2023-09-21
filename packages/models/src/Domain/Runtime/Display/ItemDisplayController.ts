@@ -31,7 +31,7 @@ export class ItemDisplayController<I extends DisplayItem, O extends AnyDisplayOp
     return this.sortedItems
   }
 
-  public hasExclusionaryVaultOptions(): boolean {
+  public hasExclusiveVaultOptions(): boolean {
     return this.vaultOptions ? !isExclusionaryOptionsValue(this.vaultOptions.getOptions()) : false
   }
 

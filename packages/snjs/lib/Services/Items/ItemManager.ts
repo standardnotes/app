@@ -876,7 +876,7 @@ export class ItemManager extends Services.AbstractService implements Services.It
 
   public numberOfNotesWithConflicts(): number {
     const uuids = this.collection.uuidsOfItemsWithConflicts()
-    const items = this.navigationDisplayController.hasExclusionaryVaultOptions()
+    const items = this.navigationDisplayController.hasExclusiveVaultOptions()
       ? this.navigationDisplayController
           .items()
           .filter((item) => Models.isNote(item) && this.collection.uuidsOfItemsWithConflicts().includes(item.uuid))
