@@ -213,7 +213,10 @@ export class LinkingController extends AbstractViewController implements Interna
           const noteVault = this.vaults.getItemVault(note)
           const fileVault = this.vaults.getItemVault(updatedFile)
           if (noteVault && !fileVault) {
-            await this.vaults.moveItemToVault(noteVault, file)
+            const result = await this.vaults.moveItemToVault(noteVault, file)
+            if (result.isFailed()) {
+              console.error(result.getError())
+            }
           }
         }
       }

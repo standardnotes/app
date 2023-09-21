@@ -15,6 +15,7 @@ import {
   InternalFeatureService,
   InternalFeature,
   PreferenceServiceInterface,
+  Result,
 } from '@standardnotes/snjs'
 import { FilesController } from './FilesController'
 import { ItemListController } from './ItemList/ItemListController'
@@ -246,7 +247,7 @@ describe('LinkingController', () => {
 
       application.mutator.associateFileWithNote = jest.fn().mockReturnValue({})
 
-      const moveToVaultSpy = (application.vaults.moveItemToVault = jest.fn())
+      const moveToVaultSpy = (application.vaults.moveItemToVault = jest.fn().mockReturnValue(Result.ok()))
 
       const note = createNote('test', {
         uuid: 'note',

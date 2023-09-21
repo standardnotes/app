@@ -22,7 +22,10 @@ const VaultMenu = observer(({ items }: { items: DecryptedItemInterface[] }) => {
       }
 
       for (const item of items) {
-        await application.vaults.moveItemToVault(vault, item)
+        const result = await application.vaults.moveItemToVault(vault, item)
+        if (result.isFailed()) {
+          console.error(result.getError())
+        }
       }
     },
     [application, items],
