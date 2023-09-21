@@ -377,6 +377,14 @@ class Footer extends AbstractComponent<Props, State> {
             )}
           </div>
           <div className="center max-h-full overflow-hidden px-4">
+            <button
+              onClick={() => {
+                const selectedNote = this.application.itemListController.firstSelectedItem
+                this.application.mutator.duplicateItem(selectedNote, true).catch(console.error)
+              }}
+            >
+              create conflict
+            </button>
             {this.state.arbitraryStatusMessage && (
               <div className="relative z-footer-bar-item max-h-full select-none items-center overflow-hidden text-ellipsis whitespace-nowrap text-xs font-bold text-neutral">
                 {this.state.arbitraryStatusMessage}
