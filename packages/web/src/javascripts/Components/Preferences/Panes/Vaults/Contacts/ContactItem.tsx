@@ -22,7 +22,14 @@ const ContactItem = ({ contact }: Props) => {
 
   const deleteContact = useCallback(async () => {
     if (await application.alerts.confirm('Are you sure you want to delete this contact?')) {
-      void application.contacts.deleteContact(contact)
+      const result = await application.contacts.deleteContact(contact)
+      if (result.isFailed()) {
+        application.alerts
+          .alertV2({
+            text: result.getError(),
+          })
+          .catch(console.error)
+      }
     }
   }, [application.alerts, application.contacts, contact])
 
