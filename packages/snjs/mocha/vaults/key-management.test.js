@@ -59,7 +59,7 @@ describe('vault key management', function () {
 
       await Factory.expectThrowsAsync(
         () => context.vaults.removeItemFromVault(item),
-        'Cannot find vault to remove item from',
+        'Cannot find latest version of item to get vault for',
       )
     })
 
