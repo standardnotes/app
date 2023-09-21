@@ -863,7 +863,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
         ? 'component'
         : 'plain'
 
-    const shouldShowConflictsButton = this.state.conflictedNotes.length > 0
+    const shouldShowConflictsButton = this.state.conflictedNotes.length > 0 && !this.state.readonly
 
     return (
       <div aria-label="Note" className="section editor sn-component h-full md:max-h-full" ref={this.noteViewElementRef}>
