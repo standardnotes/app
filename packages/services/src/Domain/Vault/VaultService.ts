@@ -253,12 +253,12 @@ export class VaultService
   getItemVault(item: DecryptedItemInterface): VaultListingInterface | undefined {
     const latestItem = this.items.findItem(item.uuid)
 
-    if (!latestItem) {
-      throw new Error('Cannot find latest version of item to get vault for')
-    }
-
     if (this.items.isTemplateItem(item)) {
       return undefined
+    }
+
+    if (!latestItem) {
+      throw new Error('Cannot find latest version of item to get vault for')
     }
 
     if (!latestItem.key_system_identifier) {
