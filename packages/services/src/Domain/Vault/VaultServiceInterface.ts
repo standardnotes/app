@@ -32,10 +32,7 @@ export interface VaultServiceInterface
   authorizeVaultDeletion(vault: VaultListingInterface): Promise<Result<boolean>>
   deleteVault(vault: VaultListingInterface): Promise<boolean>
 
-  moveItemToVault(
-    vault: VaultListingInterface,
-    item: DecryptedItemInterface,
-  ): Promise<DecryptedItemInterface | undefined>
+  moveItemToVault(vault: VaultListingInterface, item: DecryptedItemInterface): Promise<Result<DecryptedItemInterface>>
   removeItemFromVault(item: DecryptedItemInterface): Promise<DecryptedItemInterface>
   isItemInVault(item: DecryptedItemInterface): boolean
   getItemVault(item: DecryptedItemInterface): VaultListingInterface | undefined

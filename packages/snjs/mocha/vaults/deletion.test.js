@@ -142,13 +142,13 @@ describe('shared vault deletion', function () {
     const { sharedVault, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithAcceptedInvite(context)
 
-    const originalSharedVaultUsers = await context.vaultUsers.getSharedVaultUsers(sharedVault)
+    const originalSharedVaultUsers = await context.vaultUsers.getSharedVaultUsersFromServer(sharedVault)
     expect(originalSharedVaultUsers.length).to.equal(2)
 
     const result = await context.vaultUsers.removeUserFromSharedVault(sharedVault, contactContext.userUuid)
     expect(result.isFailed()).to.be.false
 
-    const updatedSharedVaultUsers = await context.vaultUsers.getSharedVaultUsers(sharedVault)
+    const updatedSharedVaultUsers = await context.vaultUsers.getSharedVaultUsersFromServer(sharedVault)
     expect(updatedSharedVaultUsers.length).to.equal(1)
 
     await deinitContactContext()

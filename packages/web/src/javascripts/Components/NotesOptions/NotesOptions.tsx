@@ -230,7 +230,7 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
     <>
       {notes.length === 1 && (
         <>
-          <MenuItem onClick={openRevisionHistoryModal} disabled={areSomeNotesInReadonlySharedVault}>
+          <MenuItem onClick={openRevisionHistoryModal}>
             <Icon type="history" className={iconClass} />
             Note history
             {historyShortcut && <KeyboardShortcutIndicator className="ml-auto" shortcut={historyShortcut} />}

@@ -18,18 +18,22 @@ export class SyncLocalVaultsWithRemoteSharedVaults implements UseCaseInterface<v
     }
     const remoteVaults = remoteVaultsResponse.data.sharedVaults
 
+    const designatedSurvivors = remoteVaultsResponse.data.designatedSurvivors || []
+
     for (const localVault of localVaults) {
       if (!localVault.isSharedVaultListing()) {
         continue
       }
       const remoteVault = remoteVaults.find((vault) => vault.uuid === localVault.sharing.sharedVaultUuid)
       if (remoteVault) {
+        const designatedSurvivor = designatedSurvivors.find((survivor) => survivor.sharedVaultUuid === remoteVault.uuid)
         await this.mutator.changeItem<VaultListingMutator, SharedVaultListingInterface>(localVault, (mutator) => {
           /* istanbul ignore next */
           mutator.sharing = {
             sharedVaultUuid: remoteVault.uuid,
             ownerUserUuid: remoteVault.user_uuid,
             fileBytesUsed: remoteVault.file_upload_bytes_used,
+            designatedSurvivor: designatedSurvivor ? designatedSurvivor.userUuid : null,
           }
         })
       }

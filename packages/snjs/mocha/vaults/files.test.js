@@ -67,7 +67,7 @@ describe('shared vault files', function () {
     const uploadedFile = await Files.uploadFile(context.files, buffer, 'my-file', 'md', 1000)
 
     const sharedVault = await Collaboration.createSharedVault(context)
-    const addedFile = await context.vaults.moveItemToVault(sharedVault, uploadedFile)
+    const addedFile = await Collaboration.moveItemToVault(context, sharedVault, uploadedFile)
 
     const downloadedBytes = await Files.downloadFile(context.files, addedFile)
     expect(downloadedBytes).to.eql(buffer)
@@ -81,7 +81,7 @@ describe('shared vault files', function () {
     const uploadedFile = await Files.uploadFile(context.files, buffer, 'my-file', 'md', 1000, firstVault)
 
     const secondVault = await Collaboration.createSharedVault(context)
-    const movedFile = await context.vaults.moveItemToVault(secondVault, uploadedFile)
+    const movedFile = await Collaboration.moveItemToVault(context, secondVault, uploadedFile)
 
     const downloadedBytes = await Files.downloadFile(context.files, movedFile)
     expect(downloadedBytes).to.eql(buffer)
@@ -95,13 +95,13 @@ describe('shared vault files', function () {
     const uploadedFile = await Files.uploadFile(context.files, buffer, 'my-file', 'md', 1000, firstVault)
     const privateVault = await Collaboration.createPrivateVault(context)
 
-    const addedFile = await context.vaults.moveItemToVault(privateVault, uploadedFile)
+    const addedFile = await Collaboration.moveItemToVault(context, privateVault, uploadedFile)
 
     const downloadedBytes = await Files.downloadFile(context.files, addedFile)
     expect(downloadedBytes).to.eql(buffer)
   })
 
-  it('moving a note to a vault should also moved linked files', async () => {
+  it('should not move a note to a vault that is linked with files ', async () => {
     const note = await context.createSyncedNote()
     const response = await fetch('/mocha/assets/small_file.md')
     const buffer = new Uint8Array(await response.arrayBuffer())
@@ -111,17 +111,12 @@ describe('shared vault files', function () {
 
     const sharedVault = await Collaboration.createSharedVault(context)
 
-    context.vaults.alerts.confirmV2 = () => Promise.resolve(true)
+    context.vaults.alerts.alertV2 = () => Promise.resolve(true)
 
-    await context.vaults.moveItemToVault(sharedVault, note)
-
-    const latestFile = context.items.findItem(updatedFile.uuid)
-
-    expect(context.vaults.getItemVault(latestFile).uuid).to.equal(sharedVault.uuid)
-    expect(context.vaults.getItemVault(context.items.findItem(note.uuid)).uuid).to.equal(sharedVault.uuid)
-
-    const downloadedBytes = await Files.downloadFile(context.files, latestFile)
-    expect(downloadedBytes).to.eql(buffer)
+    await Factory.expectThrowsAsync(
+      () => Collaboration.moveItemToVault(context, sharedVault, note),
+      'This item is linked to other items that are not in the same vault. Please move those items to this vault first.',
+    )
   })
 
   it('should be able to move a file out of its vault', async () => {
@@ -225,7 +220,7 @@ describe('shared vault files', function () {
     const response = await fetch('/mocha/assets/small_file.md')
     const buffer = new Uint8Array(await response.arrayBuffer())
     const uploadedFile = await Files.uploadFile(context.files, buffer, 'my-file', 'md', 1000)
-    const addedFile = await context.vaults.moveItemToVault(sharedVault, uploadedFile)
+    const addedFile = await Collaboration.moveItemToVault(context, sharedVault, uploadedFile)
 
     await contactContext.sync()
 

@@ -46,11 +46,29 @@ describe('shared vault revisions', function () {
     await Factory.sleep(Factory.ServerRevisionCreationDelay)
 
     const contactItemHistoryOrError = await contactContext.application.listRevisions.execute({ itemUuid: note.uuid })
-    const contactItemHistory = contactItemHistoryOrError.getValue()
+    expect(contactItemHistoryOrError.isFailed()).to.equal(false)
+    let contactItemHistory = contactItemHistoryOrError.getValue()
+    if (contactItemHistory.length < 2) {
+      await Factory.sleep(Factory.ServerRevisionCreationDelay, 'Not enough revisions found on the server. This is likely a delay issue. Retrying...')
+
+      const contactItemHistoryOrError = await contactContext.application.listRevisions.execute({ itemUuid: note.uuid })
+      expect(contactItemHistoryOrError.isFailed()).to.equal(false)
+
+      contactItemHistory = contactItemHistoryOrError.getValue()
+    }
     expect(contactItemHistory.length >= 2).to.be.true
 
     const itemHistoryOrError = await context.application.listRevisions.execute({ itemUuid: note.uuid })
-    const itemHistory = itemHistoryOrError.getValue()
+    expect(itemHistoryOrError.isFailed()).to.equal(false)
+    let itemHistory = itemHistoryOrError.getValue()
+    if (itemHistory.length < 2) {
+      await Factory.sleep(Factory.ServerRevisionCreationDelay, 'Not enough revisions found on the server. This is likely a delay issue. Retrying...')
+
+      const itemHistoryOrError = await context.application.listRevisions.execute({ itemUuid: note.uuid })
+      expect(itemHistoryOrError.isFailed()).to.equal(false)
+
+      itemHistory = itemHistoryOrError.getValue()
+    }
     expect(itemHistory.length >= 2).to.be.true
   })
 
@@ -67,7 +85,16 @@ describe('shared vault revisions', function () {
     await Factory.sleep(Factory.ServerRevisionCreationDelay)
 
     const itemHistoryOrError = await context.application.listRevisions.execute({ itemUuid: note.uuid })
-    const itemHistory = itemHistoryOrError.getValue()
+    expect(itemHistoryOrError.isFailed()).to.equal(false)
+    let itemHistory = itemHistoryOrError.getValue()
+    if (itemHistory.length < 2) {
+      await Factory.sleep(Factory.ServerRevisionCreationDelay, 'Not enough revisions found on the server. This is likely a delay issue. Retrying...')
+
+      const itemHistoryOrError = await context.application.listRevisions.execute({ itemUuid: note.uuid })
+      expect(itemHistoryOrError.isFailed()).to.equal(false)
+
+      itemHistory = itemHistoryOrError.getValue()
+    }
     expect(itemHistory.length >= 2).to.be.true
   })
 
@@ -82,7 +109,16 @@ describe('shared vault revisions', function () {
     await Factory.sleep(Factory.ServerRevisionCreationDelay)
 
     const itemHistoryOrError = await contactContext.application.listRevisions.execute({ itemUuid: note.uuid })
-    const itemHistory = itemHistoryOrError.getValue()
+    expect(itemHistoryOrError.isFailed()).to.equal(false)
+    let itemHistory = itemHistoryOrError.getValue()
+    if (itemHistory.length < 1) {
+      await Factory.sleep(Factory.ServerRevisionCreationDelay, 'Not enough revisions found on the server. This is likely a delay issue. Retrying...')
+
+      const itemHistoryOrError = await contactContext.application.listRevisions.execute({ itemUuid: note.uuid })
+      expect(itemHistoryOrError.isFailed()).to.equal(false)
+
+      itemHistory = itemHistoryOrError.getValue()
+    }
     const newestRevision = itemHistory[0]
 
     const fetchedOrError = await contactContext.application.getRevision.execute({
@@ -110,9 +146,16 @@ describe('shared vault revisions', function () {
     await Factory.sleep(Factory.ServerRevisionCreationDelay)
 
     const itemHistoryOrError = await contactContext.application.listRevisions.execute({ itemUuid: note.uuid })
-    expect(itemHistoryOrError.isFailed()).to.be.false
+    expect(itemHistoryOrError.isFailed()).to.equal(false)
+    let itemHistory = itemHistoryOrError.getValue()
+    if (itemHistory.length != 0) {
+      await Factory.sleep(Factory.ServerRevisionCreationDelay, 'Not enough revisions found on the server. This is likely a delay issue. Retrying...')
 
-    const itemHistory = itemHistoryOrError.getValue()
+      const itemHistoryOrError = await contactContext.application.listRevisions.execute({ itemUuid: note.uuid })
+      expect(itemHistoryOrError.isFailed()).to.equal(false)
+
+      itemHistory = itemHistoryOrError.getValue()
+    }
     expect(itemHistory.length).to.equal(0)
   })
 
@@ -127,19 +170,32 @@ describe('shared vault revisions', function () {
 
     await Factory.sleep(Factory.ServerRevisionCreationDelay)
 
-    let itemHistoryOrError = await contactContext.application.listRevisions.execute({ itemUuid: note.uuid })
-    expect(itemHistoryOrError.isFailed()).to.be.false
-    let itemHistory = itemHistoryOrError.getValue()
+    const itemHistoryBeforeOrError = await contactContext.application.listRevisions.execute({ itemUuid: note.uuid })
+    expect(itemHistoryBeforeOrError.isFailed()).to.equal(false)
+    let itemHistoryBefore = itemHistoryBeforeOrError.getValue()
+    if (itemHistoryBefore.length < 1) {
+      await Factory.sleep(Factory.ServerRevisionCreationDelay, 'Not enough revisions found on the server. This is likely a delay issue. Retrying...')
 
-    expect(itemHistory.length >= 1).to.be.true
+      const itemHistoryOrError = await contactContext.application.listRevisions.execute({ itemUuid: note.uuid })
+      expect(itemHistoryOrError.isFailed()).to.equal(false)
+
+      itemHistoryBefore = itemHistoryOrError.getValue()
+    }
+    expect(itemHistoryBefore.length >= 1).to.be.true
 
     await context.vaultUsers.removeUserFromSharedVault(sharedVault, contactContext.userUuid)
     await Factory.sleep(Factory.ServerRevisionCreationDelay)
 
-    itemHistoryOrError = await contactContext.application.listRevisions.execute({ itemUuid: note.uuid })
-    expect(itemHistoryOrError.isFailed()).to.be.false
-    itemHistory = itemHistoryOrError.getValue()
+    const itemHistoryAfterOrError = await contactContext.application.listRevisions.execute({ itemUuid: note.uuid })
+    let itemHistoryAfter = itemHistoryAfterOrError.getValue()
+    if (itemHistoryAfter.length != 0) {
+      await Factory.sleep(Factory.ServerRevisionCreationDelay, 'Not enough revisions found on the server. This is likely a delay issue. Retrying...')
 
-    expect(itemHistory.length).to.equal(0)
+      const itemHistoryOrError = await contactContext.application.listRevisions.execute({ itemUuid: note.uuid })
+      expect(itemHistoryOrError.isFailed()).to.equal(false)
+
+      itemHistoryAfter = itemHistoryOrError.getValue()
+    }
+    expect(itemHistoryAfter.length).to.equal(0)
   })
 })
