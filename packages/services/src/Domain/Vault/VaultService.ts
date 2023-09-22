@@ -146,7 +146,7 @@ export class VaultService
   async moveItemToVault(
     vault: VaultListingInterface,
     item: DecryptedItemInterface,
-  ): Promise<DecryptedItemInterface | undefined> {
+  ): Promise<Result<DecryptedItemInterface>> {
     if (this.vaultLocks.isVaultLocked(vault)) {
       throw new Error('Attempting to add item to locked vault')
     }
@@ -167,13 +167,16 @@ export class VaultService
             text: 'This item is linked to other items that are not in the same vault. Please move those items to this vault first.',
           })
           .catch(console.error)
-        return undefined
+
+        return Result.fail(
+          'This item is linked to other items that are not in the same vault. Please move those items to this vault first.',
+        )
       }
     }
 
     await this._moveItemsToVault.execute({ vault, items: [item] })
 
-    return this.items.findSureItem(item.uuid)
+    return Result.ok(this.items.findSureItem(item.uuid))
   }
 
   async removeItemFromVault(item: DecryptedItemInterface): Promise<DecryptedItemInterface> {
@@ -248,14 +251,14 @@ export class VaultService
   }
 
   getItemVault(item: DecryptedItemInterface): VaultListingInterface | undefined {
-    if (this.items.isTemplateItem(item)) {
-      return undefined
-    }
-
     const latestItem = this.items.findItem(item.uuid)
 
     if (!latestItem) {
       throw new Error('Cannot find latest version of item to get vault for')
+    }
+
+    if (this.items.isTemplateItem(item)) {
+      return undefined
     }
 
     if (!latestItem.key_system_identifier) {

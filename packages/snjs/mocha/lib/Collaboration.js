@@ -198,7 +198,12 @@ export const createSharedVaultWithNote = async (context) => {
 
 export const moveItemToVault = async (context, sharedVault, item) => {
   const promise = context.resolveWhenItemCompletesAddingToVault(item)
-  const updatedItem = await context.vaults.moveItemToVault(sharedVault, item)
+  const result = await context.vaults.moveItemToVault(sharedVault, item)
   await promise
-  return updatedItem
+
+  if (result.isFailed()) {
+    throw new Error(result.getError())
+  }
+
+  return result.getValue()
 }
