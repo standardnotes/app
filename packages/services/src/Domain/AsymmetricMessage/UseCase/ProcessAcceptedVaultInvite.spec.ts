@@ -39,6 +39,7 @@ describe('ProcessAcceptedVaultInvite', () => {
           name: 'test-name',
           iconString: 'safe-square',
           fileBytesUsed: 0,
+          designatedSurvivor: null,
         },
         trustedContacts: [],
       },

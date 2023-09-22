@@ -124,6 +124,7 @@ export class InviteToVault implements UseCaseInterface<SharedVaultInviteServerHa
             description: params.sharedVault.description,
             iconString: params.sharedVault.iconString,
             fileBytesUsed: params.sharedVault.sharing.fileBytesUsed,
+            designatedSurvivor: params.sharedVault.sharing.designatedSurvivor,
           },
         },
       },

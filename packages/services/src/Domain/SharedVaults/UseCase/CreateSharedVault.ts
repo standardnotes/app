@@ -51,6 +51,7 @@ export class CreateSharedVault {
           sharedVaultUuid: serverVaultHash.uuid,
           ownerUserUuid: serverVaultHash.user_uuid,
           fileBytesUsed: serverVaultHash.file_upload_bytes_used,
+          designatedSurvivor: null,
         }
       },
     )

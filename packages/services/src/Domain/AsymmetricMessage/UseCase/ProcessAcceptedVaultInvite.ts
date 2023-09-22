@@ -37,6 +37,7 @@ export class ProcessAcceptedVaultInvite {
         sharedVaultUuid: sharedVaultUuid,
         ownerUserUuid: ownerUuid,
         fileBytesUsed: metadata.fileBytesUsed,
+        designatedSurvivor: metadata.designatedSurvivor,
       },
     }
 
