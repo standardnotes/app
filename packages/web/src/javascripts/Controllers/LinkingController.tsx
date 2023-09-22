@@ -308,10 +308,12 @@ export class LinkingController extends AbstractViewController implements Interna
       const itemVault = this.vaults.getItemVault(activeItem)
 
       if (itemVault) {
-        const movedTag = await this.vaults.moveItemToVault(itemVault, newTag)
-        if (!movedTag) {
-          throw new Error('Failed to move tag to item vault')
+        const movedTagOrError = await this.vaults.moveItemToVault(itemVault, newTag)
+        if (movedTagOrError.isFailed()) {
+          throw new Error(`Failed to move tag to item vault: ${movedTagOrError.getError()}`)
         }
+        const movedTag = movedTagOrError.getValue()
+
         await this.addTagToItem(movedTag as SNTag, activeItem)
       } else {
         await this.addTagToItem(newTag, activeItem)
