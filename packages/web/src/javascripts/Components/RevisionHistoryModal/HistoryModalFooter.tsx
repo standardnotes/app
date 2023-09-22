@@ -8,9 +8,10 @@ import Spinner from '@/Components/Spinner/Spinner'
 type Props = {
   dismissModal: () => void
   noteHistoryController: NoteHistoryController
+  readonly?: boolean
 }
 
-const HistoryModalFooter = ({ dismissModal, noteHistoryController }: Props) => {
+const HistoryModalFooter = ({ dismissModal, noteHistoryController, readonly = false }: Props) => {
   const { selectedRevision, restoreRevision, restoreRevisionAsCopy, selectedEntry, deleteRemoteRevision } =
     noteHistoryController
 
@@ -43,7 +44,7 @@ const HistoryModalFooter = ({ dismissModal, noteHistoryController }: Props) => {
   return (
     <div className="min-h-6 flex flex-shrink-0 flex-wrap items-center gap-2.5 border-t border-solid border-border px-2.5 py-2 md:justify-between">
       <Button className="py-1.35" label="Close" onClick={dismissModal} />
-      {selectedRevision && selectedEntry && (
+      {selectedRevision && selectedEntry && !readonly && (
         <>
           {(selectedEntry as RevisionMetadata).uuid && (
             <Button className="md:ml-auto" onClick={deleteSelectedRevision}>

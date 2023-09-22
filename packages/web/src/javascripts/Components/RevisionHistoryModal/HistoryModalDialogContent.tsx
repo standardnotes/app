@@ -12,6 +12,7 @@ import MobileModalAction from '../Modal/MobileModalAction'
 import Popover from '../Popover/Popover'
 import MobileModalHeader from '../Modal/MobileModalHeader'
 import { useApplication } from '../ApplicationProvider'
+import { useItemVaultInfo } from '@/Hooks/useItemVaultInfo'
 
 const HistoryModalDialogContent = ({ dismissModal, note }: RevisionHistoryModalContentProps) => {
   const application = useApplication()
@@ -39,6 +40,9 @@ const HistoryModalDialogContent = ({ dismissModal, note }: RevisionHistoryModalC
   const tabOptionRef = useRef<HTMLButtonElement>(null)
   const [showTabMenu, setShowTabMenu] = useState(false)
   const toggleTabMenu = () => setShowTabMenu((show) => !show)
+
+  const { vault } = useItemVaultInfo(note)
+  const isReadonly = vault ? application.vaultUsers.isCurrentUserReadonlyVaultMember(vault) : false
 
   return (
     <>
@@ -104,7 +108,11 @@ const HistoryModalDialogContent = ({ dismissModal, note }: RevisionHistoryModalC
           <HistoryModalContentPane noteHistoryController={noteHistoryController} note={note} />
         </div>
       </div>
-      <HistoryModalFooter dismissModal={dismissModal} noteHistoryController={noteHistoryController} />
+      <HistoryModalFooter
+        dismissModal={dismissModal}
+        noteHistoryController={noteHistoryController}
+        readonly={isReadonly}
+      />
     </>
   )
 }
