@@ -302,7 +302,17 @@ export class LinkingController extends AbstractViewController implements Interna
 
     const activeItem = this.activeItem
     if (activeItem) {
-      await this.addTagToItem(newTag, activeItem)
+      const itemVault = this.vaults.getItemVault(activeItem)
+
+      if (itemVault) {
+        const movedTag = await this.vaults.moveItemToVault(itemVault, newTag)
+        if (!movedTag) {
+          throw new Error('Failed to move tag to item vault')
+        }
+        await this.addTagToItem(movedTag as SNTag, activeItem)
+      } else {
+        await this.addTagToItem(newTag, activeItem)
+      }
     }
 
     return newTag
