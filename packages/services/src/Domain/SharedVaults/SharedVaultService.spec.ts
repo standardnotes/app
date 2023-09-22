@@ -15,6 +15,7 @@ import { ItemManagerInterface } from '../Item/ItemManagerInterface'
 import { SessionsClientInterface } from '../Session/SessionsClientInterface'
 import { ContactPublicKeySetInterface, TrustedContactInterface } from '@standardnotes/models'
 import { SyncLocalVaultsWithRemoteSharedVaults } from './UseCase/SyncLocalVaultsWithRemoteSharedVaults'
+import { VaultUserServiceInterface } from '../VaultUser/VaultUserServiceInterface'
 
 describe('SharedVaultService', () => {
   let service: SharedVaultService
@@ -26,6 +27,8 @@ describe('SharedVaultService', () => {
 
     const items = {} as jest.Mocked<ItemManagerInterface>
     items.addObserver = jest.fn()
+
+    const vaultUsers = {} as jest.Mocked<VaultUserServiceInterface>
 
     const session = {} as jest.Mocked<SessionsClientInterface>
     const getVault = {} as jest.Mocked<GetVault>
@@ -48,6 +51,7 @@ describe('SharedVaultService', () => {
     service = new SharedVaultService(
       items,
       session,
+      vaultUsers,
       syncLocalVaultsWithRemoteSharedVaults,
       getVault,
       getOwnedVaults,
