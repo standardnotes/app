@@ -875,7 +875,13 @@ export class ItemManager extends Services.AbstractService implements Services.It
   }
 
   public numberOfNotesWithConflicts(): number {
-    return this.findItems(this.collection.uuidsOfItemsWithConflicts()).filter(Models.isNote).length
+    const uuids = this.collection.uuidsOfItemsWithConflicts()
+    const items = this.navigationDisplayController.hasExclusiveVaultOptions()
+      ? this.navigationDisplayController
+          .items()
+          .filter((item) => Models.isNote(item) && this.collection.uuidsOfItemsWithConflicts().includes(item.uuid))
+      : this.findItems(uuids)
+    return items.length
   }
 
   getItemLinkedFiles(item: Models.DecryptedItemInterface): Models.FileItem[] {

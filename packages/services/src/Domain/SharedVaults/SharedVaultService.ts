@@ -33,6 +33,7 @@ import { HandleKeyPairChange } from '../Contacts/UseCase/HandleKeyPairChange'
 import { FindContact } from '../Contacts/UseCase/FindContact'
 import { GetOwnedSharedVaults } from './UseCase/GetOwnedSharedVaults'
 import { SyncLocalVaultsWithRemoteSharedVaults } from './UseCase/SyncLocalVaultsWithRemoteSharedVaults'
+import { VaultUserServiceInterface } from '../VaultUser/VaultUserServiceInterface'
 
 export class SharedVaultService
   extends AbstractService<SharedVaultServiceEvent, SharedVaultServiceEventPayload>
@@ -41,6 +42,7 @@ export class SharedVaultService
   constructor(
     private items: ItemManagerInterface,
     private session: SessionsClientInterface,
+    private vaultUsers: VaultUserServiceInterface,
     private _syncLocalVaultsWithRemoteSharedVaults: SyncLocalVaultsWithRemoteSharedVaults,
     private _getVault: GetVault,
     private _getOwnedSharedVaults: GetOwnedSharedVaults,
@@ -108,6 +110,10 @@ export class SharedVaultService
         if (!vault.isFailed()) {
           await this._deleteThirdPartyVault.execute(vault.getValue())
         }
+        break
+      }
+      case NotificationType.TYPES.UserRemovedFromSharedVault: {
+        this.vaultUsers.invalidateVaultUsersCache(event.eventPayload.props.sharedVaultUuid.value).catch(console.error)
         break
       }
       case NotificationType.TYPES.SharedVaultItemRemoved: {

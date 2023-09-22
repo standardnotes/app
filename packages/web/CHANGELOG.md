@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.173.12](https://github.com/standardnotes/app/compare/@standardnotes/web@3.173.11...@standardnotes/web@3.173.12) (2023-09-21)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.173.11](https://github.com/standardnotes/app/compare/@standardnotes/web@3.173.10...@standardnotes/web@3.173.11) (2023-09-21)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.173.10](https://github.com/standardnotes/app/compare/@standardnotes/web@3.173.9...@standardnotes/web@3.173.10) (2023-09-21)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.173.9](https://github.com/standardnotes/app/compare/@standardnotes/web@3.173.8...@standardnotes/web@3.173.9) (2023-09-21)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.173.8](https://github.com/standardnotes/app/compare/@standardnotes/web@3.173.7...@standardnotes/web@3.173.8) (2023-09-20)
+
+### Bug Fixes
+
+* Fixed issue where using table or image option in Super mobile toolbar would make uninteractive ([ec61901](https://github.com/standardnotes/app/commit/ec61901aa5f0c08b7b77029e225e81c19decbd60))
+
 ## [3.173.7](https://github.com/standardnotes/app/compare/@standardnotes/web@3.173.6...@standardnotes/web@3.173.7) (2023-09-20)
 
 **Note:** Version bump only for package @standardnotes/web

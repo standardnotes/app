@@ -439,11 +439,7 @@ export class ItemListController
   }
 
   private shouldLeaveSelectionUnchanged = (activeController: NoteViewController | FileViewController | undefined) => {
-    const hasMultipleItemsSelected = this.selectedItemsCount >= 2
-
-    return (
-      hasMultipleItemsSelected || (activeController instanceof NoteViewController && activeController.isTemplateNote)
-    )
+    return activeController instanceof NoteViewController && activeController.isTemplateNote
   }
 
   /**

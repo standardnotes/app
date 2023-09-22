@@ -1,6 +1,64 @@
 {
   "versions": [
     {
+      "version": "3.173.12",
+      "title": "[3.173.12](https://github.com/standardnotes/app/compare/@standardnotes/web@3.173.11...@standardnotes/web@3.173.12) (2023-09-21)",
+      "date": null,
+      "body": "**Note:** Version bump only for package @standardnotes/web",
+      "parsed": {
+        "_": [
+          "Note: Version bump only for package @standardnotes/web"
+        ]
+      }
+    },
+    {
+      "version": "3.173.11",
+      "title": "[3.173.11](https://github.com/standardnotes/app/compare/@standardnotes/web@3.173.10...@standardnotes/web@3.173.11) (2023-09-21)",
+      "date": null,
+      "body": "**Note:** Version bump only for package @standardnotes/web",
+      "parsed": {
+        "_": [
+          "Note: Version bump only for package @standardnotes/web"
+        ]
+      }
+    },
+    {
+      "version": "3.173.10",
+      "title": "[3.173.10](https://github.com/standardnotes/app/compare/@standardnotes/web@3.173.9...@standardnotes/web@3.173.10) (2023-09-21)",
+      "date": null,
+      "body": "**Note:** Version bump only for package @standardnotes/web",
+      "parsed": {
+        "_": [
+          "Note: Version bump only for package @standardnotes/web"
+        ]
+      }
+    },
+    {
+      "version": "3.173.9",
+      "title": "[3.173.9](https://github.com/standardnotes/app/compare/@standardnotes/web@3.173.8...@standardnotes/web@3.173.9) (2023-09-21)",
+      "date": null,
+      "body": "**Note:** Version bump only for package @standardnotes/web",
+      "parsed": {
+        "_": [
+          "Note: Version bump only for package @standardnotes/web"
+        ]
+      }
+    },
+    {
+      "version": "3.173.8",
+      "title": "[3.173.8](https://github.com/standardnotes/app/compare/@standardnotes/web@3.173.7...@standardnotes/web@3.173.8) (2023-09-20)",
+      "date": null,
+      "body": "### Bug Fixes\n\n* Fixed issue where using table or image option in Super mobile toolbar would make uninteractive ([ec61901](https://github.com/standardnotes/app/commit/ec61901aa5f0c08b7b77029e225e81c19decbd60))",
+      "parsed": {
+        "_": [
+          "Fixed issue where using table or image option in Super mobile toolbar would make uninteractive (ec61901)"
+        ],
+        "Bug Fixes": [
+          "Fixed issue where using table or image option in Super mobile toolbar would make uninteractive (ec61901)"
+        ]
+      }
+    },
+    {
       "version": "3.173.7",
       "title": "[3.173.7](https://github.com/standardnotes/app/compare/@standardnotes/web@3.173.6...@standardnotes/web@3.173.7) (2023-09-20)",
       "date": null,

@@ -916,6 +916,7 @@ export class Dependencies {
       return new SharedVaultService(
         this.get<ItemManager>(TYPES.ItemManager),
         this.get<SessionManager>(TYPES.SessionManager),
+        this.get<VaultUserService>(TYPES.VaultUserService),
         this.get<SyncLocalVaultsWithRemoteSharedVaults>(TYPES.SyncLocalVaultsWithRemoteSharedVaults),
         this.get<GetVault>(TYPES.GetVault),
         this.get<GetOwnedSharedVaults>(TYPES.GetOwnedSharedVaults),
