@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.17.11](https://github.com/standardnotes/app/compare/@standardnotes/files@1.17.10...@standardnotes/files@1.17.11) (2023-09-22)
+
+**Note:** Version bump only for package @standardnotes/files
+
 ## [1.17.10](https://github.com/standardnotes/app/compare/@standardnotes/files@1.17.9...@standardnotes/files@1.17.10) (2023-09-21)
 
 **Note:** Version bump only for package @standardnotes/files
