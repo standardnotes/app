@@ -8,11 +8,13 @@ import {
   IconType,
   KeySystemIdentifier,
   KeySystemRootKeyStorageMode,
+  SNTag,
   SharedVaultListingInterface,
   VaultListingInterface,
   VaultListingMutator,
   isFile,
   isNote,
+  isTag,
 } from '@standardnotes/models'
 import { VaultServiceInterface } from './VaultServiceInterface'
 import { ChangeVaultKeyOptionsDTO } from './UseCase/ChangeVaultKeyOptionsDTO'
@@ -161,20 +163,39 @@ export class VaultService
       })
 
       if (areAnyLinkedItemsInOtherVaults) {
+        const reason =
+          'This item is linked to other items that are not in the same vault. Please move those items to this vault first.'
         this.alerts
           .alertV2({
             title: 'Cannot move item to vault',
-            text: 'This item is linked to other items that are not in the same vault. Please move those items to this vault first.',
+            text: reason,
           })
           .catch(console.error)
-
-        return Result.fail(
-          'This item is linked to other items that are not in the same vault. Please move those items to this vault first.',
-        )
+        return Result.fail(reason)
       }
     }
 
-    await this._moveItemsToVault.execute({ vault, items: [item] })
+    let moveableSubtags: SNTag[] = []
+    if (isTag(item)) {
+      const deepSubtags = this.items.getDeepTagChildren(item)
+      const anySubtagIsInOtherVault = deepSubtags.some((subtag) => {
+        return subtag.key_system_identifier && subtag.key_system_identifier !== vault.systemIdentifier
+      })
+      if (anySubtagIsInOtherVault) {
+        const reason =
+          'One or more subtags are in other vaults. Please remove those subtags from the vaults or move them to this vault first.'
+        this.alerts
+          .alertV2({
+            title: 'Cannot move item to vault',
+            text: reason,
+          })
+          .catch(console.error)
+        return Result.fail(reason)
+      }
+      moveableSubtags = deepSubtags
+    }
+
+    await this._moveItemsToVault.execute({ vault, items: [item, ...moveableSubtags] })
 
     return Result.ok(this.items.findSureItem(item.uuid))
   }
@@ -187,6 +208,13 @@ export class VaultService
 
     if (this.vaultLocks.isVaultLocked(vault)) {
       throw new Error('Attempting to remove item from locked vault')
+    }
+
+    if (isTag(item)) {
+      const deepSubtags = this.items.getDeepTagChildren(item)
+      for (const subtag of deepSubtags) {
+        await this._removeItemFromVault.execute({ item: subtag })
+      }
     }
 
     await this._removeItemFromVault.execute({ item })
