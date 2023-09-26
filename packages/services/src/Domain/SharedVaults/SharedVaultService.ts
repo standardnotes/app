@@ -105,7 +105,7 @@ export class SharedVaultService
     switch (event.eventPayload.props.type.value) {
       case NotificationType.TYPES.SelfRemovedFromSharedVault: {
         const vault = this._getVault.execute<SharedVaultListingInterface>({
-          sharedVaultUuid: event.eventPayload.props.sharedVaultUuid.value,
+          sharedVaultUuid: event.eventPayload.props.primaryIdentifier.value,
         })
         if (!vault.isFailed()) {
           await this._deleteThirdPartyVault.execute(vault.getValue())
@@ -113,11 +113,11 @@ export class SharedVaultService
         break
       }
       case NotificationType.TYPES.UserRemovedFromSharedVault: {
-        this.vaultUsers.invalidateVaultUsersCache(event.eventPayload.props.sharedVaultUuid.value).catch(console.error)
+        this.vaultUsers.invalidateVaultUsersCache(event.eventPayload.props.primaryIdentifier.value).catch(console.error)
         break
       }
       case NotificationType.TYPES.SharedVaultItemRemoved: {
-        const item = this.items.findItem((event.eventPayload.props.itemUuid as Uuid).value)
+        const item = this.items.findItem((event.eventPayload.props.secondaryIdentifier as Uuid).value)
         if (item) {
           void this._discardItemsLocally.execute([item])
         }
@@ -126,7 +126,7 @@ export class SharedVaultService
       case NotificationType.TYPES.SharedVaultFileRemoved:
       case NotificationType.TYPES.SharedVaultFileUploaded: {
         const vaultOrError = this._getVault.execute<SharedVaultListingInterface>({
-          sharedVaultUuid: event.eventPayload.props.sharedVaultUuid.value,
+          sharedVaultUuid: event.eventPayload.props.primaryIdentifier.value,
         })
         if (!vaultOrError.isFailed()) {
           await this._syncLocalVaultsWithRemoteSharedVaults.execute([vaultOrError.getValue()])
