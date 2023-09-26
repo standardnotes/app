@@ -116,6 +116,7 @@ export interface ItemManagerInterface extends AbstractService {
   getNoteCount(): number
   getDisplayableTags(): SNTag[]
   getTagChildren(itemToLookupUuidFor: SNTag): SNTag[]
+  getDeepTagChildren(itemToLookupUuidFor: SNTag): SNTag[]
   getTagParent(itemToLookupUuidFor: SNTag): SNTag | undefined
   getDisplayableTagParent(itemToLookupUuidFor: SNTag): SNTag | undefined
   isValidTagParent(parentTagToLookUpUuidFor: SNTag, childToLookUpUuidFor: SNTag): boolean
