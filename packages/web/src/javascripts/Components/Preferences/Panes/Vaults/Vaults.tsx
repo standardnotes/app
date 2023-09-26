@@ -17,6 +17,7 @@ import {
   RoleName,
   ProtocolVersion,
   compareVersions,
+  VaultInviteServiceEvent,
 } from '@standardnotes/snjs'
 import VaultItem from './Vaults/VaultItem'
 import Button from '@/Components/Button/Button'
@@ -70,6 +71,13 @@ const Vaults = observer(() => {
   const updateInvites = useCallback(async () => {
     setInvites(application.vaultInvites.getCachedPendingInviteRecords())
   }, [application.vaultInvites])
+  useEffect(() => {
+    return application.vaultInvites.addEventObserver((event) => {
+      if (event === VaultInviteServiceEvent.InvitesReloaded) {
+        void updateInvites()
+      }
+    })
+  }, [application.vaultInvites, updateInvites])
 
   const updateContacts = useCallback(async () => {
     setContacts(contactService.getAllContacts())
