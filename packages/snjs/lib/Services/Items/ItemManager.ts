@@ -892,7 +892,7 @@ export class ItemManager extends Services.AbstractService implements Services.It
       ? this.navigationDisplayController
           .items()
           .filter((item) => Models.isNote(item) && this.collection.uuidsOfItemsWithConflicts().includes(item.uuid))
-      : this.findItems(uuids)
+      : this.findItems(uuids).filter(Models.isNote)
     return items.length
   }
 
