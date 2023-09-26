@@ -46,6 +46,7 @@ describe('online conflict handling', function () {
     if (!application.dealloced) {
       await context.deinit()
     }
+    sinon.restore()
     localStorage.clear()
   })
 
@@ -991,4 +992,21 @@ describe('online conflict handling', function () {
     await sharedFinalAssertions()
     await contextB.deinit()
   }).timeout(20000)
+
+  it('should not duplicate if saving item with invalid content type', async () => {
+    const payload = new DecryptedPayload({
+      uuid: Utils.generateUuid(),
+      content_type: 'SN|Privileges',
+      dirty: true,
+      content: {},
+    })
+    expectedItemCount++
+    await context.mutator.emitItemsFromPayloads([payload])
+    await context.sync()
+
+    const items = context.items.getAnyItems('SN|Privileges')
+    expect(items.length).to.equal(1)
+
+    await sharedFinalAssertions()
+  })
 })
