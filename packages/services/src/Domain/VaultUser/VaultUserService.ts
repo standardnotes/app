@@ -14,6 +14,7 @@ import { Result } from '@standardnotes/domain-core'
 import { IsVaultOwner } from './UseCase/IsVaultOwner'
 import { IsReadonlyVaultMember } from './UseCase/IsReadonlyVaultMember'
 import { IsVaultAdmin } from './UseCase/IsVaultAdmin'
+import { DesignateSurvivor } from './UseCase/DesignateSurvivor/DesignateSurvivor'
 
 export class VaultUserService extends AbstractService<VaultUserServiceEvent> implements VaultUserServiceInterface {
   constructor(
@@ -26,6 +27,7 @@ export class VaultUserService extends AbstractService<VaultUserServiceEvent> imp
     private _isReadonlyVaultMember: IsReadonlyVaultMember,
     private _getVault: GetVault,
     private _leaveVault: LeaveVault,
+    private designateSurvivorUseCase: DesignateSurvivor,
     eventBus: InternalEventBusInterface,
   ) {
     super(eventBus)
@@ -39,6 +41,19 @@ export class VaultUserService extends AbstractService<VaultUserServiceEvent> imp
     ;(this._isVaultOwner as unknown) = undefined
     ;(this._getVault as unknown) = undefined
     ;(this._leaveVault as unknown) = undefined
+  }
+
+  async designateSurvivor(sharedVault: SharedVaultListingInterface, userUuid: string): Promise<Result<void>> {
+    const result = await this.designateSurvivorUseCase.execute({
+      sharedVaultMemberUuid: userUuid,
+      sharedVaultUuid: sharedVault.sharing.sharedVaultUuid,
+    })
+
+    if (result.isFailed()) {
+      return Result.fail(`Could not designate survivor: ${result.getError()}`)
+    }
+
+    return Result.ok()
   }
 
   async invalidateVaultUsersCache(sharedVaultUuid?: string) {
