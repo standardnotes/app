@@ -207,3 +207,12 @@ export const moveItemToVault = async (context, sharedVault, item) => {
 
   return result.getValue()
 }
+
+export const designateSharedVaultSurvior = async (context, sharedVault, survivorUuid) => {
+  const result = await context.vaultUsers.designateSurvivor(sharedVault, survivorUuid)
+  if (result.isFailed()) {
+    throw new Error(result.getError())
+  }
+
+  return result.getValue()
+}

@@ -113,7 +113,20 @@ export class SharedVaultService
         break
       }
       case NotificationType.TYPES.UserRemovedFromSharedVault: {
-        this.vaultUsers.invalidateVaultUsersCache(event.eventPayload.props.primaryIdentifier.value).catch(console.error)
+        const vaultOrError = this._getVault.execute<SharedVaultListingInterface>({
+          sharedVaultUuid: event.eventPayload.props.primaryIdentifier.value,
+        })
+        if (!vaultOrError.isFailed()) {
+          const vault = vaultOrError.getValue()
+
+          this.vaultUsers
+            .invalidateVaultUsersCache(event.eventPayload.props.primaryIdentifier.value)
+            .catch(console.error)
+
+          await this._syncLocalVaultsWithRemoteSharedVaults.execute([vault])
+
+          void this.notifyEventSync(SharedVaultServiceEvent.SharedVaultStatusChanged)
+        }
         break
       }
       case NotificationType.TYPES.SharedVaultItemRemoved: {
