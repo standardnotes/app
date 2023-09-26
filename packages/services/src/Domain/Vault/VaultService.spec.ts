@@ -8,8 +8,8 @@ import {
   PayloadSource,
   PayloadTimestampDefaults,
   SNNote,
-  // SNTag,
-  // TagContent,
+  SNTag,
+  TagContent,
   VaultListingInterface,
 } from '@standardnotes/models'
 import {
@@ -34,7 +34,6 @@ import {
 } from '../..'
 import { AuthorizeVaultDeletion } from './UseCase/AuthorizeVaultDeletion'
 import { ContentType } from '@standardnotes/domain-core'
-import { FilesClientInterface } from '@standardnotes/files'
 
 let currentId = 0
 
@@ -70,19 +69,20 @@ const createFile = (name: string) => {
   )
 }
 
-/* const createTagWithContent = (content: Partial<TagContent>): SNTag => {
+const createTagWithContent = (content: Partial<TagContent>, key_system_identifier?: string): SNTag => {
   return new SNTag(
     new DecryptedPayload(
       {
         uuid: mockUuid(),
         content_type: ContentType.TYPES.Tag,
         content: FillItemContent<TagContent>(content),
+        key_system_identifier,
         ...PayloadTimestampDefaults(),
       },
       PayloadSource.Constructor,
     ),
   )
-} */
+}
 
 describe('VaultService', () => {
   let sync: SyncServiceInterface
@@ -90,7 +90,6 @@ describe('VaultService', () => {
   let mutator: MutatorClientInterface
   let vaultLocks: VaultLockServiceInterface
   let alerts: AlertService
-  let files: FilesClientInterface
   let _getVault: GetVault
   let _getVaults: GetVaults
   let _changeVaultKeyOptions: ChangeVaultKeyOptions
@@ -119,12 +118,11 @@ describe('VaultService', () => {
 
     eventBus = {} as jest.Mocked<InternalEventBusInterface>
 
-    files = {} as jest.Mocked<FilesClientInterface>
-
     _getVault = {} as jest.Mocked<GetVault>
     _getVaults = {} as jest.Mocked<GetVaults>
     _changeVaultKeyOptions = {} as jest.Mocked<ChangeVaultKeyOptions>
-    _moveItemsToVault = new MoveItemsToVault(mutator, sync, files)
+    _moveItemsToVault = {} as jest.Mocked<MoveItemsToVault>
+    _moveItemsToVault.execute = jest.fn().mockResolvedValue({})
     _createVault = {} as jest.Mocked<CreateVault>
     _removeItemFromVault = {} as jest.Mocked<RemoveItemFromVault>
     _deleteVault = {} as jest.Mocked<DeleteVault>
@@ -203,9 +201,38 @@ describe('VaultService', () => {
     })
 
     describe('moving tag into vault', () => {
-      it('should not move tag if any subtag is already in another vault', async () => {})
+      it('should not move tag if any deeply nested subtag is already in another vault', async () => {
+        const vault = {
+          uuid: '123',
+          systemIdentifier: '456',
+        } as VaultListingInterface
 
-      it('should move parent tag and all deeply nested subtags into vault', async () => {})
+        const parentTag = createTagWithContent({ title: 'a' })
+        const subTag = createTagWithContent({ title: 'b' }, '123')
+        const anotherSubTag = createTagWithContent({ title: 'c' })
+
+        items.getDeepTagChildren = jest.fn().mockReturnValue([subTag, anotherSubTag])
+
+        const result = await service.moveItemToVault(vault, parentTag)
+        expect(result.isFailed()).toBe(true)
+      })
+
+      it('should move parent tag and all deeply nested subtags into vault', async () => {
+        const vault = {
+          uuid: '123',
+          systemIdentifier: '456',
+        } as VaultListingInterface
+
+        const parentTag = createTagWithContent({ title: 'a' })
+        const subTag = createTagWithContent({ title: 'b' })
+        const anotherSubTag = createTagWithContent({ title: 'c' })
+
+        items.getDeepTagChildren = jest.fn().mockReturnValue([subTag, anotherSubTag])
+        items.findSureItem = jest.fn().mockReturnValue(parentTag.uuid)
+
+        const result = await service.moveItemToVault(vault, parentTag)
+        expect(result.isFailed()).toBe(false)
+      })
     })
   })
 })
