@@ -6,7 +6,7 @@ import {
   isClientDisplayableError,
   isErrorResponse,
 } from '@standardnotes/responses'
-import { ContentType, Result } from '@standardnotes/domain-core'
+import { ContentType, NotificationType, Result } from '@standardnotes/domain-core'
 import { SharedVaultInvitesServer } from '@standardnotes/api'
 import {
   AsymmetricMessageSharedVaultInvite,
@@ -40,6 +40,7 @@ import { DecryptErroredPayloads } from '../Encryption/UseCase/DecryptErroredPayl
 import { StatusServiceInterface } from '../Status/StatusServiceInterface'
 import { ApplicationEvent } from '../Event/ApplicationEvent'
 import { WebSocketsServiceEvent } from '../Api/WebSocketsServiceEvent'
+import { NotificationServiceEvent, NotificationServiceEventPayload } from '../UserEvent/NotificationServiceEvent'
 
 export class VaultInviteService
   extends AbstractService<VaultInviteServiceEvent>
@@ -124,9 +125,22 @@ export class VaultInviteService
         }
         void this.downloadInboundInvites()
         break
+      case NotificationServiceEvent.NotificationReceived:
+        await this.handleNotification(event.payload as NotificationServiceEventPayload)
+        break
       case WebSocketsServiceEvent.UserInvitedToSharedVault:
         await this.processInboundInvites([(event as UserInvitedToSharedVaultEvent).payload.invite])
         break
+    }
+  }
+
+  private async handleNotification(event: NotificationServiceEventPayload): Promise<void> {
+    switch (event.eventPayload.props.type.value) {
+      case NotificationType.TYPES.SharedVaultInviteCanceled: {
+        this.removePendingInvite(event.eventPayload.props.primaryIdentifier.value)
+        void this.notifyEvent(VaultInviteServiceEvent.InvitesReloaded)
+        break
+      }
     }
   }
 
