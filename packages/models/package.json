@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/models",
-  "version": "1.47.17",
+  "version": "1.47.18",
   "publishConfig": {
     "access": "public"
   },
@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "@standardnotes/common": "^1.50.0",
-    "@standardnotes/domain-core": "^1.32.0",
+    "@standardnotes/domain-core": "^1.34.1",
     "@standardnotes/features": "workspace:*",
     "@standardnotes/responses": "workspace:*",
     "@standardnotes/sncrypto-common": "workspace:^",

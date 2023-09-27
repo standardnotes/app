@@ -141,6 +141,10 @@ import {
   CreateEncryptedBackupFile,
   SyncLocalVaultsWithRemoteSharedVaults,
   WebSocketsService,
+  AuthorizeVaultDeletion,
+  IsVaultAdmin,
+  IsReadonlyVaultMember,
+  DesignateSurvivor,
 } from '@standardnotes/services'
 import { ItemManager } from '../../Services/Items/ItemManager'
 import { PayloadManager } from '../../Services/Payloads/PayloadManager'
@@ -158,6 +162,7 @@ import {
   SharedVaultInvitesServer,
   SharedVaultServer,
   SharedVaultUsersServer,
+  SharedVaultUsersServerInterface,
   SubscriptionApiService,
   SubscriptionServer,
   UserApiService,
@@ -171,9 +176,6 @@ import { Logger, isNotUndefined, isDeinitable, LoggerInterface } from '@standard
 import { EncryptionOperators } from '@standardnotes/encryption'
 import { AsymmetricMessagePayload, AsymmetricMessageSharedVaultInvite } from '@standardnotes/models'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
-import { AuthorizeVaultDeletion } from '@standardnotes/services/src/Domain/Vault/UseCase/AuthorizeVaultDeletion'
-import { IsVaultAdmin } from '@standardnotes/services/src/Domain/VaultUser/UseCase/IsVaultAdmin'
-import { IsReadonlyVaultMember } from '@standardnotes/services/src/Domain/VaultUser/UseCase/IsReadonlyVaultMember'
 
 export class Dependencies {
   private factory = new Map<symbol, () => unknown>()
@@ -683,6 +685,10 @@ export class Dependencies {
       return new RemoveVaultMember(this.get<SharedVaultUsersServer>(TYPES.SharedVaultUsersServer))
     })
 
+    this.factory.set(TYPES.DesignateSurvivor, () => {
+      return new DesignateSurvivor(this.get<SharedVaultUsersServerInterface>(TYPES.SharedVaultUsersServer))
+    })
+
     this.factory.set(TYPES.GetVaultUsers, () => {
       return new GetVaultUsers(
         this.get<SharedVaultUsersServer>(TYPES.SharedVaultUsersServer),
@@ -861,6 +867,7 @@ export class Dependencies {
         this.get<IsReadonlyVaultMember>(TYPES.IsReadonlyVaultMember),
         this.get<GetVault>(TYPES.GetVault),
         this.get<LeaveVault>(TYPES.LeaveVault),
+        this.get<DesignateSurvivor>(TYPES.DesignateSurvivor),
         this.get<InternalEventBus>(TYPES.InternalEventBus),
       )
     })

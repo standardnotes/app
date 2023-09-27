@@ -43,7 +43,7 @@ describe('shared vault limits', function () {
 
   describe('plus users', () => {
     it('should not allow creating vaults over the limit', async () => {
-      context.activatePaidSubscriptionForUser({ subscriptionPlanName: 'PLUS_PLAN' })
+      await context.activatePaidSubscriptionForUser({ subscriptionPlanName: 'PLUS_PLAN' })
 
       for (let i = 0; i < 3; i++) {
         const vault = await Collaboration.createSharedVault(context)
@@ -63,12 +63,12 @@ describe('shared vault limits', function () {
 
   describe('pro users', () => {
     it('should allow creating vaults without limit', async () => {
-      context.activatePaidSubscriptionForUser()
+      await context.activatePaidSubscriptionForUser()
 
       for (let i = 0; i < 10; i++) {
         const vault = await Collaboration.createSharedVault(context)
         expect(vault).to.not.be.null
       }
-    })
+    }).timeout(Factory.SixtySecondTimeout)
   })
 })

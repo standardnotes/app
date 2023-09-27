@@ -702,6 +702,18 @@ export class ItemManager extends Services.AbstractService implements Services.It
     return tags.filter((tag) => tag.parentId === itemToLookupUuidFor.uuid)
   }
 
+  public getDeepTagChildren(itemToLookupUuidFor: Models.SNTag): Models.SNTag[] {
+    const allChildren: Models.SNTag[] = []
+
+    const children = this.getTagChildren(itemToLookupUuidFor)
+    for (const child of children) {
+      allChildren.push(child)
+      allChildren.push(...this.getDeepTagChildren(child))
+    }
+
+    return allChildren
+  }
+
   public isTagAncestor(tagToLookUpUuidFor: Models.SNTag, childToLookUpUuidFor: Models.SNTag): boolean {
     const tag = this.findItem<Models.SNTag>(childToLookUpUuidFor.uuid)
     if (!tag) {
@@ -880,7 +892,7 @@ export class ItemManager extends Services.AbstractService implements Services.It
       ? this.navigationDisplayController
           .items()
           .filter((item) => Models.isNote(item) && this.collection.uuidsOfItemsWithConflicts().includes(item.uuid))
-      : this.findItems(uuids)
+      : this.findItems(uuids).filter(Models.isNote)
     return items.length
   }
 

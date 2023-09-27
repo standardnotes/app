@@ -31,6 +31,7 @@ export function RegisterApplicationServicesEvents(container: Dependencies, event
   events.addEventHandler(container.get(TYPES.SessionManager), ApiServiceEvent.SessionRefreshed)
   events.addEventHandler(container.get(TYPES.SessionManager), ApplicationEvent.ApplicationStageChanged)
   events.addEventHandler(container.get(TYPES.SharedVaultService), NotificationServiceEvent.NotificationReceived)
+  events.addEventHandler(container.get(TYPES.VaultInviteService), NotificationServiceEvent.NotificationReceived)
   events.addEventHandler(container.get(TYPES.SharedVaultService), SessionEvent.UserKeyPairChanged)
   events.addEventHandler(container.get(TYPES.SharedVaultService), SyncEvent.ReceivedRemoteSharedVaults)
   events.addEventHandler(container.get(TYPES.SubscriptionManager), ApplicationEvent.ApplicationStageChanged)

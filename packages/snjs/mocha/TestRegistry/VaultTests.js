@@ -23,5 +23,6 @@ export const VaultTests = {
     'vaults/files.test.js',
     'vaults/limits.test.js',
     'vaults/quota.test.js',
+    'vaults/surviving.test.js',
   ],
 }

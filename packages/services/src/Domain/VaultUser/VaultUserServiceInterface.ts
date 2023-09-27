@@ -12,6 +12,7 @@ export interface VaultUserServiceInterface extends ApplicationServiceInterface<V
   isCurrentUserSharedVaultAdmin(sharedVault: SharedVaultListingInterface): boolean
   isCurrentUserReadonlyVaultMember(vault: VaultListingInterface): boolean
   removeUserFromSharedVault(sharedVault: SharedVaultListingInterface, userUuid: string): Promise<Result<void>>
+  designateSurvivor(sharedVault: SharedVaultListingInterface, userUuid: string): Promise<Result<void>>
   leaveSharedVault(sharedVault: SharedVaultListingInterface): Promise<ClientDisplayableError | void>
   isVaultUserOwner(user: SharedVaultUserServerHash): boolean
   getFormattedMemberPermission(permission: string): string
