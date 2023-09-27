@@ -1,4 +1,5 @@
 import * as Factory from '../lib/factory.js'
+import * as Utils from '../lib/Utils.js'
 import * as Collaboration from '../lib/Collaboration.js'
 
 chai.use(chaiAsPromised)
@@ -169,13 +170,31 @@ describe('shared vault deletion', function () {
   })
 
   it('should remove a user from all shared vaults upon account removal', async () => {
-    const { sharedVault, contactContext } =
-    await Collaboration.createSharedVaultWithAcceptedInvite(context)
-    secondContext = contactContext
+    const secondContext = await Factory.createVaultsContextWithRealCrypto()
+    await secondContext.launch()
+    await secondContext.register()
 
-    const result = await Collaboration.createSharedVaultWithAcceptedInvite(secondContext)
-    thirdContext = result.contactContext
-    const secondVault = result.sharedVault
+    const thirdContext = await Factory.createVaultsContextWithRealCrypto()
+    await thirdContext.launch()
+    await thirdContext.register()
+
+    const firstVault = await Collaboration.createSharedVault(context)
+    const secondVault = await Collaboration.createSharedVault(thirdContext)
+
+    const firstToSecondContact = await Collaboration.createTrustedContactForUserOfContext(context, secondContext)
+    await Collaboration.createTrustedContactForUserOfContext(secondContext, context)
+
+    const thirdToSecondContact = await Collaboration.createTrustedContactForUserOfContext(thirdContext, secondContext)
+    await Collaboration.createTrustedContactForUserOfContext(thirdContext, context)
+
+    await Collaboration.inviteContext(context, secondContext, firstVault, firstToSecondContact, SharedVaultUserPermission.PERMISSIONS.Write)
+    await Collaboration.inviteContext(thirdContext, secondContext, secondVault, thirdToSecondContact, SharedVaultUserPermission.PERMISSIONS.Write)
+
+    const promise = secondContext.awaitNextSyncSharedVaultFromScratchEvent()
+
+    await Collaboration.acceptAllInvites(secondContext)
+
+    await Utils.awaitPromiseOrThrow(promise, 2.0, 'Waiting for vault to sync')
 
     Factory.handlePasswordChallenges(secondContext.application, secondContext.password)
     await secondContext.application.user.deleteAccount()
@@ -183,10 +202,13 @@ describe('shared vault deletion', function () {
     await context.syncAndAwaitNotificationsProcessing()
     await thirdContext.syncAndAwaitNotificationsProcessing()
 
-    const sharedVaultUsersInFirstVault = await context.vaultUsers.getSharedVaultUsersFromServer(sharedVault)
+    const sharedVaultUsersInFirstVault = await context.vaultUsers.getSharedVaultUsersFromServer(firstVault)
     expect(sharedVaultUsersInFirstVault.length).to.equal(1)
 
     const sharedVaultUsersInSecondVault = await thirdContext.vaultUsers.getSharedVaultUsersFromServer(secondVault)
     expect(sharedVaultUsersInSecondVault.length).to.equal(1)
+
+    await secondContext.deinit()
+    await thirdContext.deinit()
   })
 })

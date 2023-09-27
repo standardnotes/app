@@ -41,7 +41,7 @@ export const acceptAllInvites = async (context) => {
   }
 }
 
-const inviteContext = async (context, contactContext, sharedVault, contact, permission) => {
+export const inviteContext = async (context, contactContext, sharedVault, contact, permission) => {
   contactContext.lockSyncing()
 
   const inviteOrError = await context.vaultInvites.inviteContactToSharedVault(sharedVault, contact, permission)
