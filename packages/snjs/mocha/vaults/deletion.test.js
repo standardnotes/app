@@ -167,4 +167,26 @@ describe('shared vault deletion', function () {
 
     await deinitContactContext()
   })
+
+  it('should remove a user from all shared vaults upon account removal', async () => {
+    const { sharedVault, contactContext } =
+    await Collaboration.createSharedVaultWithAcceptedInvite(context)
+    secondContext = contactContext
+
+    const result = await Collaboration.createSharedVaultWithAcceptedInvite(secondContext)
+    thirdContext = result.contactContext
+    const secondVault = result.sharedVault
+
+    Factory.handlePasswordChallenges(secondContext.application, secondContext.password)
+    await secondContext.application.user.deleteAccount()
+
+    await context.syncAndAwaitNotificationsProcessing()
+    await thirdContext.syncAndAwaitNotificationsProcessing()
+
+    const sharedVaultUsersInFirstVault = await context.vaultUsers.getSharedVaultUsersFromServer(sharedVault)
+    expect(sharedVaultUsersInFirstVault.length).to.equal(1)
+
+    const sharedVaultUsersInSecondVault = await thirdContext.vaultUsers.getSharedVaultUsersFromServer(secondVault)
+    expect(sharedVaultUsersInSecondVault.length).to.equal(1)
+  })
 })
