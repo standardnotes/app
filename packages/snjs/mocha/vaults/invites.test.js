@@ -70,25 +70,39 @@ describe('shared vault invites', function () {
     await deinitContactContext()
   })
 
-  it('invite should include delegated trusted contacts', async () => {
+  it('invite should include delegated trusted contacts and add them when accepted', async () => {
     const { sharedVault, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithAcceptedInvite(context)
 
-    const { thirdPartyContext, deinitThirdPartyContext } = await Collaboration.inviteNewPartyToSharedVault(
-      context,
-      sharedVault,
-    )
+    const { thirdPartyContext: party1Context, deinitThirdPartyContext: deinitParty1Context } =
+      await Collaboration.inviteNewPartyToSharedVault(context, sharedVault)
 
-    const invites = thirdPartyContext.vaultInvites.getCachedPendingInviteRecords()
+    await Collaboration.acceptAllInvites(party1Context)
+
+    const { thirdPartyContext: party2Context, deinitThirdPartyContext: deinitParty2Context } =
+      await Collaboration.inviteNewPartyToSharedVault(context, sharedVault)
+
+    const invites = party2Context.vaultInvites.getCachedPendingInviteRecords()
 
     const message = invites[0].message
     const delegatedContacts = message.data.trustedContacts
-    expect(delegatedContacts.length).to.equal(2)
+    expect(delegatedContacts.length).to.equal(3)
 
     expect(delegatedContacts.some((contact) => contact.contactUuid === context.userUuid)).to.be.true
     expect(delegatedContacts.some((contact) => contact.contactUuid === contactContext.userUuid)).to.be.true
+    expect(delegatedContacts.some((contact) => contact.contactUuid === party1Context.userUuid)).to.be.true
 
-    await deinitThirdPartyContext()
+    await Collaboration.acceptAllInvites(party2Context)
+
+    const trustedContacts = party2Context.contacts.getAllContacts()
+    expect(trustedContacts.length).to.equal(4)
+
+    expect(trustedContacts.some((contact) => contact.contactUuid === context.userUuid)).to.be.true
+    expect(trustedContacts.some((contact) => contact.contactUuid === contactContext.userUuid)).to.be.true
+    expect(trustedContacts.some((contact) => contact.contactUuid === party1Context.userUuid)).to.be.true
+
+    await deinitParty1Context()
+    await deinitParty2Context()
     await deinitContactContext()
   })
 
