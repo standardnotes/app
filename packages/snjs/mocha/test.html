@@ -38,6 +38,14 @@
   <script type="module">
     import MainRegistry from './TestRegistry/MainRegistry.js'
 
+    const urlSearchParams = new URLSearchParams(window.location.search);
+    const testSuite = urlSearchParams.get('suite');
+    if (testSuite === 'vaults') {
+      MainRegistry.VaultTests.exclusive = true;
+    } else if (testSuite === 'base') {
+      MainRegistry.BaseTests.exclusive = true;
+    }
+
     const loadTest = (fileName) => {
       return new Promise((resolve) => {
         const script = document.createElement('script');
@@ -56,18 +64,17 @@
       }
     }
 
-    if (MainRegistry.VaultTests.enabled) {
-      InternalFeatureService.get().enableFeature(InternalFeature.Vaults);
-      if (MainRegistry.VaultTests.exclusive) {
-        await loadTests(MainRegistry.VaultTests.files);
-      } else {
-        await loadTests([
-          ...MainRegistry.BaseTests,
-          ...MainRegistry.VaultTests.files
-        ]);
-      }
+    InternalFeatureService.get().enableFeature(InternalFeature.Vaults);
+
+    if (MainRegistry.VaultTests.exclusive) {
+      await loadTests(MainRegistry.VaultTests.files);
+    } else if (MainRegistry.BaseTests.exclusive) {
+      await loadTests(MainRegistry.BaseTests.files);
     } else {
-      await loadTests(MainRegistry.BaseTests);
+      await loadTests([
+        ...MainRegistry.BaseTests.files,
+        ...MainRegistry.VaultTests.files
+      ]);
     }
 
     mocha.run()

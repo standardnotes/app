@@ -41,7 +41,7 @@ export const acceptAllInvites = async (context) => {
   }
 }
 
-const inviteContext = async (context, contactContext, sharedVault, contact, permission) => {
+export const inviteContext = async (context, contactContext, sharedVault, contact, permission) => {
   contactContext.lockSyncing()
 
   const inviteOrError = await context.vaultInvites.inviteContactToSharedVault(sharedVault, contact, permission)
@@ -201,6 +201,15 @@ export const moveItemToVault = async (context, sharedVault, item) => {
   const result = await context.vaults.moveItemToVault(sharedVault, item)
   await promise
 
+  if (result.isFailed()) {
+    throw new Error(result.getError())
+  }
+
+  return result.getValue()
+}
+
+export const designateSharedVaultSurvior = async (context, sharedVault, survivorUuid) => {
+  const result = await context.vaultUsers.designateSurvivor(sharedVault, survivorUuid)
   if (result.isFailed()) {
     throw new Error(result.getError())
   }

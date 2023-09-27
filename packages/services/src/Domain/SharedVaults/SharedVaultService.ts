@@ -96,7 +96,7 @@ export class SharedVaultService
         await this.handleNotification(event.payload as NotificationServiceEventPayload)
         break
       case SyncEvent.ReceivedRemoteSharedVaults:
-        void this.notifyEventSync(SharedVaultServiceEvent.SharedVaultStatusChanged)
+        void this.notifyEvent(SharedVaultServiceEvent.SharedVaultStatusChanged)
         break
     }
   }
@@ -113,7 +113,20 @@ export class SharedVaultService
         break
       }
       case NotificationType.TYPES.UserRemovedFromSharedVault: {
-        this.vaultUsers.invalidateVaultUsersCache(event.eventPayload.props.primaryIdentifier.value).catch(console.error)
+        const vaultOrError = this._getVault.execute<SharedVaultListingInterface>({
+          sharedVaultUuid: event.eventPayload.props.primaryIdentifier.value,
+        })
+        if (!vaultOrError.isFailed()) {
+          const vault = vaultOrError.getValue()
+
+          this.vaultUsers
+            .invalidateVaultUsersCache(event.eventPayload.props.primaryIdentifier.value)
+            .catch(console.error)
+
+          await this._syncLocalVaultsWithRemoteSharedVaults.execute([vault])
+
+          void this.notifyEvent(SharedVaultServiceEvent.SharedVaultStatusChanged)
+        }
         break
       }
       case NotificationType.TYPES.SharedVaultItemRemoved: {
@@ -124,14 +137,15 @@ export class SharedVaultService
         break
       }
       case NotificationType.TYPES.SharedVaultFileRemoved:
-      case NotificationType.TYPES.SharedVaultFileUploaded: {
+      case NotificationType.TYPES.SharedVaultFileUploaded:
+      case NotificationType.TYPES.UserDesignatedAsSurvivor: {
         const vaultOrError = this._getVault.execute<SharedVaultListingInterface>({
           sharedVaultUuid: event.eventPayload.props.primaryIdentifier.value,
         })
         if (!vaultOrError.isFailed()) {
           await this._syncLocalVaultsWithRemoteSharedVaults.execute([vaultOrError.getValue()])
 
-          void this.notifyEventSync(SharedVaultServiceEvent.SharedVaultStatusChanged)
+          void this.notifyEvent(SharedVaultServiceEvent.SharedVaultStatusChanged)
         }
 
         break
