@@ -4,4 +4,5 @@ export interface SharedVaultUserServerHash {
   user_uuid: string
   permission: string
   updated_at_timestamp: number
+  is_designated_survivor: boolean
 }

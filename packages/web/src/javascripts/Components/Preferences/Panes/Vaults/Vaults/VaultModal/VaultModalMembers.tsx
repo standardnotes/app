@@ -1,8 +1,10 @@
-import { useCallback } from 'react'
+import { useCallback, useState } from 'react'
 import { useApplication } from '@/Components/ApplicationProvider'
 import { SharedVaultUserServerHash, VaultListingInterface } from '@standardnotes/snjs'
 import Icon from '@/Components/Icon/Icon'
 import Button from '@/Components/Button/Button'
+import ModalOverlay from '@/Components/Modal/ModalOverlay'
+import DesignateSurvivorModal from './DesignateSurvivorModal'
 
 export const VaultModalMembers = ({
   members,
@@ -27,9 +29,34 @@ export const VaultModalMembers = ({
     [application.vaultUsers, vault, onChange],
   )
 
+  const vaultHasNoDesignatedSurvivor = vault.isSharedVaultListing() && !vault.sharing.designatedSurvivor
+  const [isDesignateSurvivorModalOpen, setIsDesignateSurvivorModalOpen] = useState(false)
+  const openDesignateSurvivorModal = () => setIsDesignateSurvivorModalOpen(true)
+  const closeDesignateSurvivorModal = () => setIsDesignateSurvivorModalOpen(false)
+
   return (
     <div>
       <div className="mb-3 text-lg">Vault Members</div>
+      {vaultHasNoDesignatedSurvivor && members.length > 1 && (
+        <div className="bg-danger-faded mb-3 grid grid-cols-[auto,1fr] gap-x-[0.65rem] gap-y-0.5 overflow-hidden rounded p-2.5 text-danger">
+          <Icon type="warning" className="place-self-center" />
+          <div className="text-base font-semibold">No designated survivor</div>
+          <div className="col-start-2">
+            Vaults that have no designated survivor will be deleted when the owner account is deleted. In order to
+            ensure that no data is lost, please designate a survivor who will be transferred ownership of the vault.
+          </div>
+          {isCurrentUserAdmin && (
+            <>
+              <Button small className="col-start-2 mt-1.5" onClick={openDesignateSurvivorModal}>
+                Designate survivor
+              </Button>
+              <ModalOverlay isOpen={isDesignateSurvivorModalOpen} close={closeDesignateSurvivorModal}>
+                <DesignateSurvivorModal vault={vault} members={members} closeModal={closeDesignateSurvivorModal} />
+              </ModalOverlay>
+            </>
+          )}
+        </div>
+      )}
       <div className="space-y-3.5">
         {members.map((member) => {
           const isMemberVaultOwner = application.vaultUsers.isVaultUserOwner(member)
@@ -53,6 +80,12 @@ export const VaultModalMembers = ({
                   <div className="flex items-center gap-1 rounded bg-danger px-1 py-0.5 pr-1.5 text-xs text-danger-contrast">
                     <Icon type="clear-circle-filled" size="small" />
                     Untrusted
+                  </div>
+                )}
+                {member.is_designated_survivor && (
+                  <div className="flex items-center gap-1 rounded bg-info px-1 py-0.5 text-xs text-success-contrast">
+                    <Icon type="security" size="small" />
+                    Designated survivor
                   </div>
                 )}
               </div>
