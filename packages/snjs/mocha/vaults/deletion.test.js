@@ -116,8 +116,8 @@ describe('shared vault deletion', function () {
     const updatedContactNote = contactContext.items.findItem(note.uuid)
     expect(updatedContactNote).to.be.undefined
 
-    const vault = await contactContext.vaults.getVault({ keySystemIdentifier: contactVault.systemIdentifier }).getValue()
-    expect(vault).to.be.undefined
+    const vaultOrError = await contactContext.vaults.getVault({ keySystemIdentifier: contactVault.systemIdentifier })
+    expect(vaultOrError.isFailed()).to.be.true
 
     await deinitContactContext()
   })
@@ -163,8 +163,8 @@ describe('shared vault deletion', function () {
 
     await contactContext.sync()
 
-    const vault = contactContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier }).getValue()
-    expect(vault).to.be.undefined
+    const vaultOrError = contactContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })
+    expect(vaultOrError.isFailed()).to.be.true
 
     await deinitContactContext()
   })
