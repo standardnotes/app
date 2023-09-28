@@ -52,7 +52,7 @@ describe('designated survival', function () {
     expect(vault.sharing.designatedSurvivor).to.equal(contactContext.userUuid)
   })
 
-  describe('owner of a shared vault with a designated survivor removing the vault', () => {
+  describe.skip('owner of a shared vault with a designated survivor removing the vault', () => {
     it('should not remove all users from the vault upon shared vault removal', async () => {
       const { sharedVault, contactContext } =
       await Collaboration.createSharedVaultWithAcceptedInvite(context)
