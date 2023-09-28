@@ -112,7 +112,11 @@ export class VaultsContext extends AppContext {
 
     await Collaboration.acceptAllInvites(thirdPartyContext)
 
-    const contactVault = thirdPartyContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })
+    const contactVaultOrError = thirdPartyContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })
+    if (contactVaultOrError.isFailed()) {
+      throw new Error(contactVaultOrError.getError())
+    }
+    const contactVault = contactVaultOrError.getValue()
 
     return { contactVault, sharedVault, thirdPartyContext, deinitThirdPartyContext }
   }

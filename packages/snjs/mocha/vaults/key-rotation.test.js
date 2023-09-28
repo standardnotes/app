@@ -127,7 +127,7 @@ describe('vault key rotation', function () {
     contactContext.unlockSyncing()
     await contactContext.sync()
 
-    const vault = await contactContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })
+    const vault = await contactContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier }).getValue()
     expect(vault.rootKeyParams).to.eql(rootKey.keyParams)
 
     await deinitContactContext()

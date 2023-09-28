@@ -43,7 +43,7 @@ describe('asymmetric messages', function () {
     contactContext.unlockSyncing()
     await contactContext.syncAndAwaitMessageProcessing()
 
-    const updatedVault = contactContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })
+    const updatedVault = contactContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier }).getValue()
 
     expect(updatedVault.name).to.not.equal('new vault name')
     expect(updatedVault.description).to.not.equal('new vault description')
@@ -225,7 +225,7 @@ describe('asymmetric messages', function () {
     expect(firstPartySpy.callCount).to.equal(0)
     expect(secondPartySpy.callCount).to.equal(1)
 
-    const updatedVault = contactContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })
+    const updatedVault = contactContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier }).getValue()
     expect(updatedVault.name).to.equal('New Name')
     expect(updatedVault.description).to.equal('New Description')
 
@@ -268,7 +268,7 @@ describe('asymmetric messages', function () {
 
     await contactContext.syncAndAwaitMessageProcessing()
 
-    const updatedVault = contactContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })
+    const updatedVault = contactContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier }).getValue()
     expect(updatedVault.name).to.equal('New Name')
     expect(updatedVault.description).to.equal('New Description')
 
@@ -389,7 +389,7 @@ describe('asymmetric messages', function () {
     const messages = await contactContext.asymmetric.getInboundMessages()
     expect(messages.getValue().length).to.equal(0)
 
-    const updatedVault = contactContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })
+    const updatedVault = contactContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier }).getValue()
     expect(updatedVault.name).to.not.equal('New Name')
     expect(updatedVault.description).to.not.equal('New Description')
 

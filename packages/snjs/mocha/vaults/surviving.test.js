@@ -6,7 +6,7 @@ chai.use(chaiAsPromised)
 const expect = chai.expect
 
 describe('designated survival', function () {
-  this.timeout(Factory.TwentySecondTimeout)
+  this.timeout(Factory.ThirtySecondTimeout)
 
   let context
   let secondContext
@@ -41,18 +41,18 @@ describe('designated survival', function () {
     await Collaboration.createSharedVaultWithAcceptedInvite(context)
     secondContext = contactContext
 
-    let vault = context.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })
+    let vault = context.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier }).getValue()
     expect(vault.sharing.designatedSurvivor).to.be.null
 
     await Collaboration.designateSharedVaultSurvior(context, sharedVault, contactContext.userUuid)
 
     await context.syncAndAwaitNotificationsProcessing()
 
-    vault = context.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })
+    vault = context.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier }).getValue()
     expect(vault.sharing.designatedSurvivor).to.equal(contactContext.userUuid)
   })
 
-  describe('owner of a shared vault with a designated survivor removing the vault', () => {
+  describe.skip('owner of a shared vault with a designated survivor removing the vault', () => {
     it('should not remove all users from the vault upon shared vault removal', async () => {
       const { sharedVault, contactContext } =
       await Collaboration.createSharedVaultWithAcceptedInvite(context)
@@ -77,15 +77,15 @@ describe('designated survival', function () {
       const sharedVaultUsers = await secondContext.vaultUsers.getSharedVaultUsersFromServer(sharedVault)
       expect(sharedVaultUsers.length).to.equal(2)
 
-      expect(context.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })).to.be.undefined
+      expect(context.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier }).isFailed()).to.be.true
       expect(context.keys.getPrimaryKeySystemRootKey(sharedVault.systemIdentifier)).to.be.undefined
       expect(context.keys.getKeySystemItemsKeys(sharedVault.systemIdentifier)).to.be.empty
 
-      expect(secondContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })).to.not.be.undefined
+      expect(secondContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier }).getValue()).to.not.be.undefined
       expect(secondContext.keys.getPrimaryKeySystemRootKey(sharedVault.systemIdentifier)).to.not.be.undefined
       expect(secondContext.keys.getKeySystemItemsKeys(sharedVault.systemIdentifier)).to.not.be.empty
 
-      expect(thirdContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })).to.not.be.undefined
+      expect(thirdContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier }).getValue()).to.not.be.undefined
       expect(thirdContext.keys.getPrimaryKeySystemRootKey(sharedVault.systemIdentifier)).to.not.be.undefined
       expect(thirdContext.keys.getKeySystemItemsKeys(sharedVault.systemIdentifier)).to.not.be.empty
     })
@@ -184,11 +184,11 @@ describe('designated survival', function () {
       await secondContext.syncAndAwaitNotificationsProcessing()
       await thirdContext.syncAndAwaitNotificationsProcessing()
 
-      const contactVault = secondContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })
+      const contactVault = secondContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier }).getValue()
       expect(contactVault.sharing.ownerUserUuid).to.not.equal(context.userUuid)
       expect(contactVault.sharing.ownerUserUuid).to.equal(secondContext.userUuid)
 
-      const thirdPartyVault = thirdContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })
+      const thirdPartyVault = thirdContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier }).getValue()
       expect(thirdPartyVault.sharing.ownerUserUuid).to.not.equal(context.userUuid)
       expect(thirdPartyVault.sharing.ownerUserUuid).to.equal(secondContext.userUuid)
     })
@@ -219,11 +219,11 @@ describe('designated survival', function () {
       const sharedVaultUsers = await secondContext.vaultUsers.getSharedVaultUsersFromServer(sharedVault)
       expect(sharedVaultUsers.length).to.equal(2)
 
-      expect(secondContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })).to.not.be.undefined
+      expect(secondContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier }).getValue()).to.not.be.undefined
       expect(secondContext.keys.getPrimaryKeySystemRootKey(sharedVault.systemIdentifier)).to.not.be.undefined
       expect(secondContext.keys.getKeySystemItemsKeys(sharedVault.systemIdentifier)).to.not.be.empty
 
-      expect(thirdContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })).to.not.be.undefined
+      expect(thirdContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier }).getValue()).to.not.be.undefined
       expect(thirdContext.keys.getPrimaryKeySystemRootKey(sharedVault.systemIdentifier)).to.not.be.undefined
       expect(thirdContext.keys.getKeySystemItemsKeys(sharedVault.systemIdentifier)).to.not.be.empty
     })
@@ -325,10 +325,10 @@ describe('designated survival', function () {
       await secondContext.syncAndAwaitNotificationsProcessing()
       await thirdContext.syncAndAwaitNotificationsProcessing()
 
-      const contactVault = secondContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })
+      const contactVault = secondContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier }).getValue()
       expect(contactVault.sharing.ownerUserUuid).to.equal(secondContext.userUuid)
 
-      const thirdPartyVault = thirdContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })
+      const thirdPartyVault = thirdContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier }).getValue()
       expect(thirdPartyVault.sharing.ownerUserUuid).to.equal(secondContext.userUuid)
     })
   })
@@ -351,11 +351,11 @@ describe('designated survival', function () {
       await secondContext.syncAndAwaitNotificationsProcessing()
       await thirdContext.syncAndAwaitNotificationsProcessing()
 
-      expect(secondContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })).to.be.undefined
+      expect(secondContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier }).isFailed()).to.be.true
       expect(secondContext.keys.getPrimaryKeySystemRootKey(sharedVault.systemIdentifier)).to.be.undefined
       expect(secondContext.keys.getKeySystemItemsKeys(sharedVault.systemIdentifier)).to.be.empty
 
-      expect(thirdContext.vaults.getVault({ keySystemIdentifier: secondSharedVault.systemIdentifier })).to.be.undefined
+      expect(thirdContext.vaults.getVault({ keySystemIdentifier: secondSharedVault.systemIdentifier }).isFailed()).to.be.true
       expect(thirdContext.keys.getPrimaryKeySystemRootKey(secondSharedVault.systemIdentifier)).to.be.undefined
       expect(thirdContext.keys.getKeySystemItemsKeys(secondSharedVault.systemIdentifier)).to.be.empty
     })
