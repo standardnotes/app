@@ -37,7 +37,7 @@ export const VaultModalMembers = ({
   return (
     <div>
       <div className="mb-3 text-lg">Vault Members</div>
-      {vaultHasNoDesignatedSurvivor && members.length > 1 && (
+      {vaultHasNoDesignatedSurvivor && members.length > 1 && isCurrentUserAdmin && (
         <div className="bg-danger-faded mb-3 grid grid-cols-[auto,1fr] gap-x-[0.65rem] gap-y-0.5 overflow-hidden rounded p-2.5 text-danger">
           <Icon type="warning" className="place-self-center" />
           <div className="text-base font-semibold">No designated survivor</div>
