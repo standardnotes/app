@@ -52,8 +52,8 @@ describe('designated survival', function () {
     expect(vault.sharing.designatedSurvivor).to.equal(contactContext.userUuid)
   })
 
-  describe.skip('owner of a shared vault with a designated survivor removing the vault', () => {
-    it('should not remove all users from the vault upon shared vault removal', async () => {
+  describe('owner of a shared vault with a designated survivor removing the vault', () => {
+    it('should remove all users from the vault upon shared vault removal', async () => {
       const { sharedVault, contactContext } =
       await Collaboration.createSharedVaultWithAcceptedInvite(context)
       secondContext = contactContext
@@ -74,23 +74,20 @@ describe('designated survival', function () {
       await secondContext.syncAndAwaitNotificationsProcessing()
       await thirdContext.syncAndAwaitNotificationsProcessing()
 
-      const sharedVaultUsers = await secondContext.vaultUsers.getSharedVaultUsersFromServer(sharedVault)
-      expect(sharedVaultUsers.length).to.equal(2)
-
       expect(context.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier }).isFailed()).to.be.true
       expect(context.keys.getPrimaryKeySystemRootKey(sharedVault.systemIdentifier)).to.be.undefined
       expect(context.keys.getKeySystemItemsKeys(sharedVault.systemIdentifier)).to.be.empty
 
-      expect(secondContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier }).getValue()).to.not.be.undefined
-      expect(secondContext.keys.getPrimaryKeySystemRootKey(sharedVault.systemIdentifier)).to.not.be.undefined
-      expect(secondContext.keys.getKeySystemItemsKeys(sharedVault.systemIdentifier)).to.not.be.empty
+      expect(secondContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier }).isFailed()).to.be.true
+      expect(secondContext.keys.getPrimaryKeySystemRootKey(sharedVault.systemIdentifier)).to.be.undefined
+      expect(secondContext.keys.getKeySystemItemsKeys(sharedVault.systemIdentifier)).to.be.empty
 
-      expect(thirdContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier }).getValue()).to.not.be.undefined
-      expect(thirdContext.keys.getPrimaryKeySystemRootKey(sharedVault.systemIdentifier)).to.not.be.undefined
-      expect(thirdContext.keys.getKeySystemItemsKeys(sharedVault.systemIdentifier)).to.not.be.empty
+      expect(thirdContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier }).isFailed()).to.be.true
+      expect(thirdContext.keys.getPrimaryKeySystemRootKey(sharedVault.systemIdentifier)).to.be.undefined
+      expect(thirdContext.keys.getKeySystemItemsKeys(sharedVault.systemIdentifier)).to.be.empty
     })
 
-    it('should transition items of the owner in the vault to the designated survivor', async () => {
+    it('should not transition items of the owner in the vault to the designated survivor', async () => {
       const { sharedVault, contactContext } =
       await Collaboration.createSharedVaultWithAcceptedInvite(context)
       secondContext = contactContext
@@ -113,19 +110,14 @@ describe('designated survival', function () {
       await secondContext.syncAndAwaitNotificationsProcessing()
       await thirdContext.syncAndAwaitNotificationsProcessing()
 
-      const sharedVaultUsers = await secondContext.vaultUsers.getSharedVaultUsersFromServer(sharedVault)
-      expect(sharedVaultUsers.length).to.equal(2)
-
       const contactNote = secondContext.items.findItem(note.uuid)
-      expect(contactNote.key_system_identifier).to.equal(sharedVault.systemIdentifier)
-      expect(contactNote.user_uuid).to.equal(secondContext.userUuid)
+      expect(contactNote).to.be.undefined
 
       const thirdPartyNote = thirdContext.items.findItem(note.uuid)
-      expect(thirdPartyNote.key_system_identifier).to.equal(sharedVault.systemIdentifier)
-      expect(thirdPartyNote.user_uuid).to.equal(secondContext.userUuid)
+      expect(thirdPartyNote).to.be.undefined
     })
 
-    it('should still allow to download files of the owner in the vault', async () => {
+    it('should not allow to download files of the owner in the vault', async () => {
       await context.activatePaidSubscriptionForUser()
 
       const { sharedVault, contactContext } =
@@ -157,14 +149,10 @@ describe('designated survival', function () {
       await secondContext.syncAndAwaitNotificationsProcessing()
 
       const sharedFileAfter = secondContext.items.findItem(uploadedFile.uuid)
-      expect(sharedFileAfter).to.not.be.undefined
-      expect(sharedFileAfter.remoteIdentifier).to.equal(uploadedFile.remoteIdentifier)
-
-      const downloadedBytes = await Files.downloadFile(secondContext.files, sharedFileAfter)
-      expect(downloadedBytes).to.eql(buffer)
+      expect(sharedFileAfter).to.be.undefined
     })
 
-    it('should transition vault ownership to the designated survivor', async () => {
+    it('should not transition vault ownership to the designated survivor', async () => {
       const { sharedVault, contactContext } =
       await Collaboration.createSharedVaultWithAcceptedInvite(context)
       secondContext = contactContext
@@ -184,13 +172,11 @@ describe('designated survival', function () {
       await secondContext.syncAndAwaitNotificationsProcessing()
       await thirdContext.syncAndAwaitNotificationsProcessing()
 
-      const contactVault = secondContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier }).getValue()
-      expect(contactVault.sharing.ownerUserUuid).to.not.equal(context.userUuid)
-      expect(contactVault.sharing.ownerUserUuid).to.equal(secondContext.userUuid)
+      const contactVaultOrError = secondContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })
+      expect(contactVaultOrError.isFailed()).to.be.true
 
-      const thirdPartyVault = thirdContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier }).getValue()
-      expect(thirdPartyVault.sharing.ownerUserUuid).to.not.equal(context.userUuid)
-      expect(thirdPartyVault.sharing.ownerUserUuid).to.equal(secondContext.userUuid)
+      const thirdPartyVaultOrError = thirdContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })
+      expect(thirdPartyVaultOrError.isFailed()).to.be.true
     })
   })
 
