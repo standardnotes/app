@@ -264,7 +264,7 @@ describe('designated survival', function () {
       expect(thirdPartyNote.user_uuid).to.equal(secondContext.userUuid)
     })
 
-    it.only('should still allow to download files of the owner in the vault', async () => {
+    it('should still allow to download files of the owner in the vault', async () => {
       await context.activatePaidSubscriptionForUser()
 
       const { sharedVault, contactContext } =
