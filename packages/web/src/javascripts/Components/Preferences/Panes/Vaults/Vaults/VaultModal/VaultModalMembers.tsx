@@ -45,16 +45,12 @@ export const VaultModalMembers = ({
             Vaults that have no designated survivor will be deleted when the owner account is deleted. In order to
             ensure that no data is lost, please designate a survivor who will be transferred ownership of the vault.
           </div>
-          {isCurrentUserAdmin && (
-            <>
-              <Button small className="col-start-2 mt-1.5" onClick={openDesignateSurvivorModal}>
-                Designate survivor
-              </Button>
-              <ModalOverlay isOpen={isDesignateSurvivorModalOpen} close={closeDesignateSurvivorModal}>
-                <DesignateSurvivorModal vault={vault} members={members} closeModal={closeDesignateSurvivorModal} />
-              </ModalOverlay>
-            </>
-          )}
+          <Button small className="col-start-2 mt-1.5" onClick={openDesignateSurvivorModal}>
+            Designate survivor
+          </Button>
+          <ModalOverlay isOpen={isDesignateSurvivorModalOpen} close={closeDesignateSurvivorModal}>
+            <DesignateSurvivorModal vault={vault} members={members} closeModal={closeDesignateSurvivorModal} />
+          </ModalOverlay>
         </div>
       )}
       <div className="space-y-3.5">
