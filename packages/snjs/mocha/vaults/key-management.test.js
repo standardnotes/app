@@ -474,7 +474,7 @@ describe('vault key management', function () {
         const storedKey = context.keys.getRootKeyFromStorageForVault(vault.systemIdentifier)
         expect(storedKey).to.be.undefined
 
-        const updatedVault = context.vaults.getVault({ keySystemIdentifier: vault.systemIdentifier })
+        const updatedVault = context.vaults.getVault({ keySystemIdentifier: vault.systemIdentifier }).getValue()
         expect(updatedVault.keyStorageMode).to.equal(KeySystemRootKeyStorageMode.Synced)
       })
 

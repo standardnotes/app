@@ -222,9 +222,10 @@ export class VaultDisplayService
     }
 
     if (this.isInExclusiveDisplayMode()) {
-      this.exclusivelyShownVault = this.application.vaults.getVault({
+      const vaultOrError = this.application.vaults.getVault({
         keySystemIdentifier: this.options.getExclusivelyShownVault(),
       })
+      this.exclusivelyShownVault = vaultOrError.isFailed() ? undefined : vaultOrError.getValue()
     } else {
       this.exclusivelyShownVault = undefined
     }

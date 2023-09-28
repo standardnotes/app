@@ -101,7 +101,7 @@ describe('keypair change', function () {
     contactContext.unlockSyncing()
     await contactContext.syncAndAwaitMessageProcessing()
 
-    const updatedVault = contactContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })
+    const updatedVault = contactContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier }).getValue()
     expect(updatedVault.name).to.equal(sharedVault.name)
     expect(updatedVault.description).to.equal(sharedVault.description)
     expect(updatedVault.name).to.not.equal('New Name')

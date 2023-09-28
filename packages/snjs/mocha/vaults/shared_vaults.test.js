@@ -36,14 +36,14 @@ describe('shared vaults', function () {
       description: 'new vault description',
     })
 
-    const updatedVault = context.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })
+    const updatedVault = context.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier }).getValue()
     expect(updatedVault.name).to.equal('new vault name')
     expect(updatedVault.description).to.equal('new vault description')
 
     contactContext.unlockSyncing()
     await contactContext.syncAndAwaitMessageProcessing()
 
-    const contactVault = contactContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })
+    const contactVault = contactContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier }).getValue()
     expect(contactVault.name).to.equal('new vault name')
     expect(contactVault.description).to.equal('new vault description')
 
@@ -59,14 +59,14 @@ describe('shared vaults', function () {
 
     await contactContext.syncAndAwaitNotificationsProcessing()
 
-    expect(contactContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })).to.be.undefined
+    expect(contactContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier }).isFailed()).to.be.true
     expect(contactContext.keys.getPrimaryKeySystemRootKey(sharedVault.systemIdentifier)).to.be.undefined
     expect(contactContext.keys.getKeySystemItemsKeys(sharedVault.systemIdentifier)).to.be.empty
 
     const recreatedContext = await Factory.createVaultsContextWithRealCrypto(contactContext.identifier)
     await recreatedContext.launch()
 
-    expect(recreatedContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })).to.be.undefined
+    expect(recreatedContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier }).isFailed()).to.be.true
     expect(recreatedContext.keys.getPrimaryKeySystemRootKey(sharedVault.systemIdentifier)).to.be.undefined
     expect(recreatedContext.keys.getKeySystemItemsKeys(sharedVault.systemIdentifier)).to.be.empty
 
@@ -84,14 +84,14 @@ describe('shared vaults', function () {
 
     await contactContext.syncAndAwaitNotificationsProcessing()
 
-    expect(contactContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })).to.be.undefined
+    expect(contactContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier }).isFailed()).to.be.true
     expect(contactContext.keys.getPrimaryKeySystemRootKey(sharedVault.systemIdentifier)).to.be.undefined
     expect(contactContext.keys.getKeySystemItemsKeys(sharedVault.systemIdentifier)).to.be.empty
 
     const recreatedContext = await Factory.createVaultsContextWithRealCrypto(contactContext.identifier)
     await recreatedContext.launch()
 
-    expect(recreatedContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })).to.be.undefined
+    expect(recreatedContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier }).isFailed()).to.be.true
     expect(recreatedContext.keys.getPrimaryKeySystemRootKey(sharedVault.systemIdentifier)).to.be.undefined
     expect(recreatedContext.keys.getKeySystemItemsKeys(sharedVault.systemIdentifier)).to.be.empty
 

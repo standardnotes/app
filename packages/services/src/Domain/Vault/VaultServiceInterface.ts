@@ -28,7 +28,7 @@ export interface VaultServiceInterface
   }): Promise<VaultListingInterface>
 
   getVaults(): VaultListingInterface[]
-  getVault(dto: { keySystemIdentifier: KeySystemIdentifier }): VaultListingInterface | undefined
+  getVault(dto: { keySystemIdentifier: KeySystemIdentifier }): Result<VaultListingInterface>
   authorizeVaultDeletion(vault: VaultListingInterface): Promise<Result<boolean>>
   deleteVault(vault: VaultListingInterface): Promise<boolean>
 

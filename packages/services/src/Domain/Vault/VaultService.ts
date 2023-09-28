@@ -85,22 +85,8 @@ export class VaultService
     return this._getVaults.execute().getValue()
   }
 
-  public getVault(dto: { keySystemIdentifier: KeySystemIdentifier }): VaultListingInterface | undefined {
-    const result = this._getVault.execute(dto)
-    if (result.isFailed()) {
-      return undefined
-    }
-
-    return result.getValue()
-  }
-
-  public getSureVault(dto: { keySystemIdentifier: KeySystemIdentifier }): VaultListingInterface {
-    const vault = this.getVault(dto)
-    if (!vault) {
-      throw new Error('Vault not found')
-    }
-
-    return vault
+  getVault(dto: { keySystemIdentifier: KeySystemIdentifier }): Result<VaultListingInterface> {
+    return this._getVault.execute(dto)
   }
 
   async createRandomizedVault(dto: {
@@ -293,7 +279,12 @@ export class VaultService
       return undefined
     }
 
-    return this.getVault({ keySystemIdentifier: latestItem.key_system_identifier })
+    const vault = this.getVault({ keySystemIdentifier: latestItem.key_system_identifier })
+    if (vault.isFailed()) {
+      throw new Error('Cannot find vault for item')
+    }
+
+    return vault.getValue()
   }
 
   async changeVaultKeyOptions(dto: ChangeVaultKeyOptionsDTO): Promise<Result<void>> {

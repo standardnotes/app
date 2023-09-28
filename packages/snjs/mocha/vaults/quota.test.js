@@ -37,7 +37,7 @@ describe('shared vault quota', function () {
 
       await context.syncAndAwaitNotificationsProcessing()
 
-      const updatedVault = context.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })
+      const updatedVault = context.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier }).getValue()
       expect(updatedVault.sharing.fileBytesUsed).to.equal(1374)
 
       const bytesUsedSetting = await context.application.settings.getSubscriptionSetting(
@@ -80,7 +80,7 @@ describe('shared vault quota', function () {
 
       await context.syncAndAwaitNotificationsProcessing()
 
-      const updatedVault = context.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })
+      const updatedVault = context.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier }).getValue()
       expect(updatedVault.sharing.fileBytesUsed).to.equal(1374)
 
       const bytesUsedSetting = await context.application.settings.getSubscriptionSetting(
@@ -106,7 +106,7 @@ describe('shared vault quota', function () {
       await context.syncAndAwaitNotificationsProcessing()
       await contactContext.syncAndAwaitNotificationsProcessing()
 
-      const updatedVault = context.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })
+      const updatedVault = context.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier }).getValue()
       expect(updatedVault.sharing.fileBytesUsed).to.equal(1374)
 
       const myBytesUsedSetting = await context.application.settings.getSubscriptionSetting(
@@ -170,10 +170,10 @@ describe('shared vault quota', function () {
       await context.syncAndAwaitNotificationsProcessing()
       await contactContext.syncAndAwaitNotificationsProcessing()
 
-      let updatedSharedVault = context.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })
+      let updatedSharedVault = context.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier }).getValue()
       expect(updatedSharedVault.sharing.fileBytesUsed).to.equal(0)
 
-      let updatedSecondVault = contactContext.vaults.getVault({ keySystemIdentifier: secondVault.systemIdentifier })
+      let updatedSecondVault = contactContext.vaults.getVault({ keySystemIdentifier: secondVault.systemIdentifier }).getValue()
       expect(updatedSecondVault.sharing.fileBytesUsed).to.equal(1374)
 
       let myBytesUsedSetting = await context.application.settings.getSubscriptionSetting(
@@ -191,10 +191,10 @@ describe('shared vault quota', function () {
       await context.syncAndAwaitNotificationsProcessing()
       await contactContext.syncAndAwaitNotificationsProcessing()
 
-      updatedSharedVault = context.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })
+      updatedSharedVault = context.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier }).getValue()
       expect(updatedSharedVault.sharing.fileBytesUsed).to.equal(1374)
 
-      updatedSecondVault = contactContext.vaults.getVault({ keySystemIdentifier: secondVault.systemIdentifier })
+      updatedSecondVault = contactContext.vaults.getVault({ keySystemIdentifier: secondVault.systemIdentifier }).getValue()
       expect(updatedSecondVault.sharing.fileBytesUsed).to.equal(0)
 
       myBytesUsedSetting = await context.application.settings.getSubscriptionSetting(
