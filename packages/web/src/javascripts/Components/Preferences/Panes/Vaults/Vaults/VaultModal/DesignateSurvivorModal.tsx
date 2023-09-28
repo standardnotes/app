@@ -1,5 +1,6 @@
 import { useApplication } from '@/Components/ApplicationProvider'
 import Modal, { ModalAction } from '@/Components/Modal/Modal'
+import Spinner from '@/Components/Spinner/Spinner'
 import { SharedVaultUserServerHash, VaultListingInterface } from '@standardnotes/snjs'
 import { useCallback, useMemo, useState } from 'react'
 
@@ -14,6 +15,7 @@ const DesignateSurvivorModal = ({
 }) => {
   const application = useApplication()
   const [selectedSurvivor, setSelectedSurvivor] = useState<SharedVaultUserServerHash | null>(null)
+  const [isDesignating, setIsDesignating] = useState(false)
 
   const designateSelectedSurvivor = useCallback(async () => {
     if (!selectedSurvivor) {
@@ -25,24 +27,28 @@ const DesignateSurvivorModal = ({
     }
 
     try {
+      setIsDesignating(true)
       const result = await application.vaultUsers.designateSurvivor(vault, selectedSurvivor.user_uuid)
       if (result.isFailed()) {
         throw new Error(result.getError())
       }
+      await application.sync.sync()
       closeModal()
     } catch (error) {
       console.error(error)
+    } finally {
+      setIsDesignating(false)
     }
-  }, [application.vaultUsers, closeModal, selectedSurvivor, vault])
+  }, [application.sync, application.vaultUsers, closeModal, selectedSurvivor, vault])
 
   const modalActions = useMemo(
     (): ModalAction[] => [
       {
-        label: 'Designate survivor',
+        label: isDesignating ? <Spinner className="h-5 w-5 border-info-contrast" /> : 'Designate survivor',
         onClick: designateSelectedSurvivor,
         type: 'primary',
         mobileSlot: 'right',
-        disabled: !selectedSurvivor,
+        disabled: !selectedSurvivor || isDesignating,
         hidden: members.length === 0,
       },
       {
@@ -52,7 +58,7 @@ const DesignateSurvivorModal = ({
         mobileSlot: 'left',
       },
     ],
-    [closeModal, designateSelectedSurvivor, members.length, selectedSurvivor],
+    [closeModal, designateSelectedSurvivor, isDesignating, members.length, selectedSurvivor],
   )
 
   return (
