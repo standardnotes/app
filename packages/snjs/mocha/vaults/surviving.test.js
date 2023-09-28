@@ -77,7 +77,7 @@ describe('designated survival', function () {
       const sharedVaultUsers = await secondContext.vaultUsers.getSharedVaultUsersFromServer(sharedVault)
       expect(sharedVaultUsers.length).to.equal(2)
 
-      expect(context.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier }).getValue()).to.be.undefined
+      expect(context.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier }).isFailed()).to.be.true
       expect(context.keys.getPrimaryKeySystemRootKey(sharedVault.systemIdentifier)).to.be.undefined
       expect(context.keys.getKeySystemItemsKeys(sharedVault.systemIdentifier)).to.be.empty
 
@@ -351,11 +351,11 @@ describe('designated survival', function () {
       await secondContext.syncAndAwaitNotificationsProcessing()
       await thirdContext.syncAndAwaitNotificationsProcessing()
 
-      expect(secondContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier }).getValue()).to.be.undefined
+      expect(secondContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier }).isFailed()).to.be.true
       expect(secondContext.keys.getPrimaryKeySystemRootKey(sharedVault.systemIdentifier)).to.be.undefined
       expect(secondContext.keys.getKeySystemItemsKeys(sharedVault.systemIdentifier)).to.be.empty
 
-      expect(thirdContext.vaults.getVault({ keySystemIdentifier: secondSharedVault.systemIdentifier }).getValue()).to.be.undefined
+      expect(thirdContext.vaults.getVault({ keySystemIdentifier: secondSharedVault.systemIdentifier }).isFailed()).to.be.true
       expect(thirdContext.keys.getPrimaryKeySystemRootKey(secondSharedVault.systemIdentifier)).to.be.undefined
       expect(thirdContext.keys.getKeySystemItemsKeys(secondSharedVault.systemIdentifier)).to.be.empty
     })
