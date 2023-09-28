@@ -79,7 +79,11 @@ export const createSharedVaultWithAcceptedInvite = async (
 
   await Utils.awaitPromiseOrThrow(promise, 2.0, 'Waiting for vault to sync')
 
-  const contactVault = contactContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })
+  const contactVaultOrError = contactContext.vaults.getVault({ keySystemIdentifier: sharedVault.systemIdentifier })
+  if (contactVaultOrError.isFailed()) {
+    throw new Error(contactVaultOrError.getError())
+  }
+  const contactVault = contactVaultOrError.getValue()
 
   return { sharedVault, contact, contactVault, contactContext, deinitContactContext }
 }
