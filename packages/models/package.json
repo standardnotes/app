@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/models",
-  "version": "1.47.18",
+  "version": "1.47.19",
   "publishConfig": {
     "access": "public"
   },
