@@ -44,8 +44,10 @@ export class VaultsContext extends AppContext {
     await this.awaitPromiseOrDoNothing(
       promise,
       1,
-      'Waiting for notifications timed out. Notifications might have been processed in previous sync.'
+      'Waiting for notifications timed out. Notifications might have been processed in previous sync.',
     )
+
+    await this.sync()
 
     if (this.notifications['handleReceivedNotifications'].restore) {
       this.notifications['handleReceivedNotifications'].restore()
