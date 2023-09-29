@@ -274,6 +274,7 @@ describe('designated survival', function () {
       const uploadedFile = await Files.uploadFile(context.files, buffer, 'my-file', 'md', 1000, sharedVault)
 
       await secondContext.syncAndAwaitNotificationsProcessing()
+      await context.syncAndAwaitNotificationsProcessing()
 
       const sharedFileBefore = secondContext.items.findItem(uploadedFile.uuid)
       expect(sharedFileBefore).to.not.be.undefined
