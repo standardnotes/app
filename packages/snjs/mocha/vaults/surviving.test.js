@@ -71,6 +71,7 @@ describe('designated survival', function () {
       await Collaboration.acceptAllInvites(thirdContext)
 
       await context.sharedVaults.deleteSharedVault(sharedVault)
+      await Factory.sleep(2, 'Allow time for shared vault removal to propagate to server')
 
       await context.syncAndAwaitNotificationsProcessing()
       await secondContext.syncAndAwaitNotificationsProcessing()
@@ -108,6 +109,7 @@ describe('designated survival', function () {
       await Collaboration.moveItemToVault(context, sharedVault, note)
 
       await context.sharedVaults.deleteSharedVault(sharedVault)
+      await Factory.sleep(2, 'Allow time for shared vault removal to propagate to server')
 
       await secondContext.syncAndAwaitNotificationsProcessing()
       await thirdContext.syncAndAwaitNotificationsProcessing()
@@ -147,6 +149,7 @@ describe('designated survival', function () {
       expect(sharedFileBefore.remoteIdentifier).to.equal(uploadedFile.remoteIdentifier)
 
       await context.sharedVaults.deleteSharedVault(sharedVault)
+      await Factory.sleep(2, 'Allow time for shared vault removal to propagate to server')
 
       await secondContext.syncAndAwaitNotificationsProcessing()
 
@@ -170,6 +173,7 @@ describe('designated survival', function () {
       await Collaboration.acceptAllInvites(thirdContext)
 
       await context.sharedVaults.deleteSharedVault(sharedVault)
+      await Factory.sleep(2, 'Allow time for shared vault removal to propagate to server')
 
       await secondContext.syncAndAwaitNotificationsProcessing()
       await thirdContext.syncAndAwaitNotificationsProcessing()
@@ -200,6 +204,7 @@ describe('designated survival', function () {
 
       Factory.handlePasswordChallenges(context.application, context.password)
       await context.application.user.deleteAccount()
+      await Factory.sleep(2, 'Allow time for account removal to propagate to server')
 
       await secondContext.syncAndAwaitNotificationsProcessing()
       await thirdContext.syncAndAwaitNotificationsProcessing()
@@ -236,6 +241,7 @@ describe('designated survival', function () {
 
       Factory.handlePasswordChallenges(context.application, context.password)
       await context.application.user.deleteAccount()
+      await Factory.sleep(2, 'Allow time for account removal to propagate to server')
 
       await secondContext.syncAndAwaitNotificationsProcessing()
       await thirdContext.syncAndAwaitNotificationsProcessing()
@@ -282,6 +288,7 @@ describe('designated survival', function () {
 
       Factory.handlePasswordChallenges(context.application, context.password)
       await context.application.user.deleteAccount()
+      await Factory.sleep(2, 'Allow time for account removal to propagate to server')
 
       await secondContext.syncAndAwaitNotificationsProcessing()
 
@@ -310,6 +317,7 @@ describe('designated survival', function () {
 
       Factory.handlePasswordChallenges(context.application, context.password)
       await context.application.user.deleteAccount()
+      await Factory.sleep(2, 'Allow time for account removal to propagate to server')
 
       await secondContext.syncAndAwaitNotificationsProcessing()
       await thirdContext.syncAndAwaitNotificationsProcessing()
@@ -336,6 +344,7 @@ describe('designated survival', function () {
 
       Factory.handlePasswordChallenges(context.application, context.password)
       await context.application.user.deleteAccount()
+      await Factory.sleep(2, 'Allow time for account removal to propagate to server')
 
       await secondContext.syncAndAwaitNotificationsProcessing()
       await thirdContext.syncAndAwaitNotificationsProcessing()
