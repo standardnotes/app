@@ -34,12 +34,14 @@ import { FindContact } from '../Contacts/UseCase/FindContact'
 import { GetOwnedSharedVaults } from './UseCase/GetOwnedSharedVaults'
 import { SyncLocalVaultsWithRemoteSharedVaults } from './UseCase/SyncLocalVaultsWithRemoteSharedVaults'
 import { VaultUserServiceInterface } from '../VaultUser/VaultUserServiceInterface'
+import { SyncServiceInterface } from '../Sync/SyncServiceInterface'
 
 export class SharedVaultService
   extends AbstractService<SharedVaultServiceEvent, SharedVaultServiceEventPayload>
   implements SharedVaultServiceInterface, InternalEventHandlerInterface
 {
   constructor(
+    private sync: SyncServiceInterface,
     private items: ItemManagerInterface,
     private session: SessionsClientInterface,
     private vaultUsers: VaultUserServiceInterface,
@@ -123,9 +125,13 @@ export class SharedVaultService
             .invalidateVaultUsersCache(event.eventPayload.props.primaryIdentifier.value)
             .catch(console.error)
 
-          await this._syncLocalVaultsWithRemoteSharedVaults.execute([vault])
-
-          void this.notifyEvent(SharedVaultServiceEvent.SharedVaultStatusChanged)
+          this.sync
+            .sync()
+            .then(async () => {
+              await this._syncLocalVaultsWithRemoteSharedVaults.execute([vault])
+              void this.notifyEvent(SharedVaultServiceEvent.SharedVaultStatusChanged)
+            })
+            .catch(console.error)
         }
         break
       }
