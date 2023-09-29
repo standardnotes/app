@@ -22,7 +22,9 @@ describe('designated survival', function () {
   })
 
   afterEach(async function () {
-    await context.deinit()
+    if (context && !context.application.dealloced) {
+      await context.deinit()
+    }
     localStorage.clear()
     sinon.restore()
     context = undefined
