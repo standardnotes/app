@@ -1,4 +1,4 @@
-name: SNJS PR — E2E Tests
+name: SNJS PR — E2E Tests
 
 on:
   pull_request:
@@ -29,6 +29,14 @@ jobs:
         run: yarn install --immutable
       - name: Build
         run: yarn build:snjs
+      - name: ESLint
+        run: yarn lint
+      - name: Test
+        run: yarn test
+
+  build-docker:
+    runs-on: ubuntu-latest
+    steps:
       - name: Login to Docker Hub
         uses: docker/login-action@v2
         with:
@@ -40,6 +48,12 @@ jobs:
           docker push standardnotes/snjs:${{ github.sha }}
           docker tag standardnotes/snjs:${{ github.sha }} standardnotes/snjs:test
           docker push standardnotes/snjs:test
+
+  e2e-base:
+    name: E2E Base Test Suite
+    needs: build-docker
+    runs-on: ubuntu-latest
+    steps:
       - name: Run E2E test suite
         uses: convictional/trigger-workflow-and-wait@master
         with:
@@ -48,7 +62,25 @@ jobs:
           github_token: ${{ secrets.CI_PAT_TOKEN }}
           workflow_file_name: e2e-test-suite.yml
           wait_interval: 30
-          client_payload: '{"snjs_image_tag": "${{ github.sha }}", "author": "${{ github.actor }}", "ref_name": "app:${{ github.ref }}"}'
+          client_payload: '{"snjs_image_tag": "${{ github.sha }}", "suite": "base", "author": "${{ github.actor }}", "ref_name": "app:${{ github.ref }}"}'
+          propagate_failure: true
+          trigger_workflow: true
+          wait_workflow: true
+
+  e2e-vaults:
+    name: E2E Vaults Test Suite
+    needs: build-docker
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run E2E vaults test suite
+        uses: convictional/trigger-workflow-and-wait@master
+        with:
+          owner: standardnotes
+          repo: server
+          github_token: ${{ secrets.CI_PAT_TOKEN }}
+          workflow_file_name: e2e-test-suite.yml
+          wait_interval: 30
+          client_payload: '{"snjs_image_tag": "${{ github.sha }}", "suite": "vaults", "author": "${{ github.actor }}", "ref_name": "app:${{ github.ref }}"}'
           propagate_failure: true
           trigger_workflow: true
           wait_workflow: true
