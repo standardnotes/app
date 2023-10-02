@@ -79,12 +79,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Run E2E test suite
-        uses: standardnotes/server/.github/workflows/e2e-test-suite.yml@main
+        uses: convictional/trigger-workflow-and-wait@master
         with:
-          snjs_image_tag: ${{ github.sha }}
-          suite: base
-          author: ${{ github.actor }}
-          ref_name: "app:${{ github.ref }}"
+          owner: standardnotes
+          repo: server
+          github_token: ${{ secrets.CI_PAT_TOKEN }}
+          workflow_file_name: e2e-test-suite.yml
+          wait_interval: 30
+          client_payload: '{"snjs_image_tag": "${{ github.sha }}", "suite": "base", "author": "${{ github.actor }}", "ref_name": "app:${{ github.ref }}"}'
+          propagate_failure: true
+          trigger_workflow: true
+          wait_workflow: true
 
   e2e-vaults:
     name: E2E Vaults Test Suite
@@ -92,9 +97,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Run E2E vaults test suite
-        uses: standardnotes/server/.github/workflows/e2e-test-suite.yml@main
+        uses: convictional/trigger-workflow-and-wait@master
         with:
-          snjs_image_tag: ${{ github.sha }}
-          suite: vaults
-          author: ${{ github.actor }}
-          ref_name: "app:${{ github.ref }}"
+          owner: standardnotes
+          repo: server
+          github_token: ${{ secrets.CI_PAT_TOKEN }}
+          workflow_file_name: e2e-test-suite.yml
+          wait_interval: 30
+          client_payload: '{"snjs_image_tag": "${{ github.sha }}", "suite": "vaults", "author": "${{ github.actor }}", "ref_name": "app:${{ github.ref }}"}'
+          propagate_failure: true
+          trigger_workflow: true
+          wait_workflow: true
