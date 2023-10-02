@@ -69,7 +69,7 @@ type State = {
   isDesktop?: boolean
   editorLineWidth: EditorLineWidth
   noteLocked: boolean
-  readonly: boolean
+  readonly?: boolean
   noteStatus?: NoteStatus
   saveError?: boolean
   showProtectedWarning: boolean
@@ -129,7 +129,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
       isDesktop: isDesktopApplication(),
       noteStatus: undefined,
       noteLocked: this.controller.item.locked,
-      readonly: itemVault ? this.application.vaultUsers.isCurrentUserReadonlyVaultMember(itemVault) : false,
+      readonly: itemVault ? this.application.vaultUsers.isCurrentUserReadonlyVaultMember(itemVault) : undefined,
       showProtectedWarning: false,
       spellcheck: true,
       stackComponentViewers: [],
@@ -223,7 +223,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
           return
         }
         this.setState({
-          readonly: vault ? this.application.vaultUsers.isCurrentUserReadonlyVaultMember(vault) : false,
+          readonly: vault ? this.application.vaultUsers.isCurrentUserReadonlyVaultMember(vault) : undefined,
         })
       }
     })
@@ -1008,7 +1008,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
               spellcheck={this.state.spellcheck}
               ref={this.setPlainEditorRef}
               controller={this.controller}
-              locked={this.state.noteLocked || this.state.readonly}
+              locked={this.state.noteLocked || !!this.state.readonly}
               onFocus={this.onPlainFocus}
               onBlur={this.onPlainBlur}
             />

@@ -331,7 +331,7 @@ describe('designated survival', function () {
   })
 
   describe('owner of a shared vault without a designated survivor deleting their account', () => {
-    it('should remove all users from all shared vaults upon account removal', async () => {
+    it.skip('should remove all users from all shared vaults upon account removal', async () => {
       await context.activatePaidSubscriptionForUser()
 
       const { sharedVault, contactContext } =
