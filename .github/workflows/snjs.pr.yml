@@ -76,19 +76,17 @@ jobs:
   e2e-base:
     name: E2E Base Test Suite
     needs: build-docker
-    uses: standardnotes/server/.github/workflows/e2e-test-suite.yml@main
+    uses: standardnotes/server/.github/workflows/common-e2e.yml@main
     with:
       snjs_image_tag: ${{ github.sha }}
       suite: base
-      author: ${{ github.actor }}
-      ref_name: "app:${{ github.ref }}"
+    secrets: inherit
 
   e2e-vaults:
     name: E2E Vaults Test Suite
     needs: build-docker
-    uses: standardnotes/server/.github/workflows/e2e-test-suite.yml@main
+    uses: standardnotes/server/.github/workflows/common-e2e.yml@main
     with:
       snjs_image_tag: ${{ github.sha }}
       suite: vaults
-      author: ${{ github.actor }}
-      ref_name: "app:${{ github.ref }}"
+    secrets: inherit
