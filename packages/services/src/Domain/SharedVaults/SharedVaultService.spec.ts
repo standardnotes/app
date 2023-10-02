@@ -49,7 +49,6 @@ describe('SharedVaultService', () => {
     eventBus.addEventHandler = jest.fn()
 
     service = new SharedVaultService(
-      sync,
       items,
       session,
       vaultUsers,

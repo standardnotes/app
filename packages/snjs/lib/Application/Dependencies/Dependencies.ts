@@ -921,7 +921,6 @@ export class Dependencies {
 
     this.factory.set(TYPES.SharedVaultService, () => {
       return new SharedVaultService(
-        this.get<SyncService>(TYPES.SyncService),
         this.get<ItemManager>(TYPES.ItemManager),
         this.get<SessionManager>(TYPES.SessionManager),
         this.get<VaultUserService>(TYPES.VaultUserService),
