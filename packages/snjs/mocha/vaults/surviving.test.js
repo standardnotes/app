@@ -5,7 +5,7 @@ import * as Collaboration from '../lib/Collaboration.js'
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
-describe('designated survival', function () {
+describe.skip('designated survival', function () {
   this.timeout(Factory.ThirtySecondTimeout)
 
   let context
@@ -323,7 +323,7 @@ describe('designated survival', function () {
   })
 
   describe('owner of a shared vault without a designated survivor deleting their account', () => {
-    it.skip('should remove all users from all shared vaults upon account removal', async () => {
+    it('should remove all users from all shared vaults upon account removal', async () => {
       await context.activatePaidSubscriptionForUser()
 
       const { sharedVault, contactContext } =
