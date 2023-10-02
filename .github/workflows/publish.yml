@@ -21,17 +21,6 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
           node-version-file: '.nvmrc'
           cache: 'yarn'
-      - name: Setup git config
-        run: |
-          git config --global user.name "standardci"
-          git config --global user.email "ci@standardnotes.com"
-      - name: Import GPG key
-        uses: crazy-max/ghaction-import-gpg@v4
-        with:
-          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
-          passphrase: ${{ secrets.PASSPHRASE }}
-          git_user_signingkey: true
-          git_commit_gpgsign: true
       - name: Install dependencies
         run: yarn install --immutable
       - name: Build
@@ -48,6 +37,17 @@ jobs:
     if: "${{ contains(github.event.head_commit.message, 'chore(release): publish') == false }}"
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.CI_PAT_TOKEN }}
+          fetch-depth: 0
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          registry-url: 'https://registry.npmjs.org'
+          node-version-file: '.nvmrc'
+          cache: 'yarn'
       - name: Install dependencies
         run: yarn install --immutable
       - name: Build
@@ -108,6 +108,28 @@ jobs:
     needs: [e2e-base, e2e-vaults]
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.CI_PAT_TOKEN }}
+          fetch-depth: 0
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          registry-url: 'https://registry.npmjs.org'
+          node-version-file: '.nvmrc'
+          cache: 'yarn'
+      - name: Setup git config
+        run: |
+          git config --global user.name "standardci"
+          git config --global user.email "ci@standardnotes.com"
+      - name: Import GPG key
+        uses: crazy-max/ghaction-import-gpg@v4
+        with:
+          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.PASSPHRASE }}
+          git_user_signingkey: true
+          git_commit_gpgsign: true
       - name: Install dependencies
         run: yarn install --immutable
       - name: Build
@@ -127,5 +149,6 @@ jobs:
       - name: Publish SNJS Docker image as stable
         if: "${{ contains(github.event.head_commit.message, 'skip e2e') == false }}"
         run: |
+          docker pull standardnotes/snjs:${{ github.sha }}
           docker tag standardnotes/snjs:${{ github.sha }} standardnotes/snjs:latest
           docker push standardnotes/snjs:latest
