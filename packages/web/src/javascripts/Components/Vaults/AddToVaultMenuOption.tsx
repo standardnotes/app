@@ -120,7 +120,7 @@ const AddToVaultMenuOption = ({
     setIsSubMenuOpen((isOpen) => !isOpen)
   }, [])
 
-  if (!application.featuresController.isEntitledToVaults()) {
+  if (!application.featuresController.isVaultsEnabled()) {
     return null
   }
 

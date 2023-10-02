@@ -208,7 +208,7 @@ export class LinkingController extends AbstractViewController implements Interna
     const linkNoteAndFile = async (note: SNNote, file: FileItem) => {
       const updatedFile = await this.mutator.associateFileWithNote(file, note)
 
-      if (this.featuresController.isEntitledToVaults()) {
+      if (this.featuresController.isVaultsEnabled()) {
         if (updatedFile) {
           const noteVault = this.vaults.getItemVault(note)
           const fileVault = this.vaults.getItemVault(updatedFile)

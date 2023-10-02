@@ -49,7 +49,7 @@ class PasswordWizard extends AbstractComponent<Props, State> {
       continueTitle: DEFAULT_CONTINUE_TITLE,
     }
 
-    if (props.application.featuresController.isEntitledToVaults()) {
+    if (props.application.featuresController.isVaultsEnabled()) {
       this.state = {
         ...baseState,
         lockContinue: true,

@@ -31,6 +31,7 @@ const Vaults = observer(() => {
   const application = useApplication()
 
   const hasAccount = application.hasAccount()
+  const isSharedVaultsEnabled = application.featuresController.isEntitledToSharedVaults()
 
   const [vaults, setVaults] = useState<VaultListingInterface[]>([])
   const [canCreateMoreVaults, setCanCreateMoreVaults] = useState(true)
@@ -163,7 +164,7 @@ const Vaults = observer(() => {
           </PreferencesSegment>
         </PreferencesGroup>
       )}
-      {hasAccount && (
+      {hasAccount && isSharedVaultsEnabled && (
         <PreferencesGroup>
           <PreferencesSegment>
             <Title>Contacts</Title>
@@ -180,7 +181,7 @@ const Vaults = observer(() => {
           </PreferencesSegment>
         </PreferencesGroup>
       )}
-      {hasAccount && (
+      {hasAccount && isSharedVaultsEnabled && (
         <PreferencesGroup>
           <PreferencesSegment>
             <Title>CollaborationID</Title>
@@ -235,13 +236,15 @@ const Vaults = observer(() => {
           {canCreateMoreVaults ? (
             <div className="mt-2.5 flex gap-3">
               <Button label="Create Vault" onClick={createNewVault} />
-              {hasAccount && <Button label="Create Shared Vault" onClick={createNewSharedVault} />}
+              {hasAccount && isSharedVaultsEnabled && (
+                <Button label="Create Shared Vault" onClick={createNewSharedVault} />
+              )}
             </div>
           ) : (
             <div className="mt-3.5">
               <NoProSubscription
                 application={application}
-                text={<span>Please upgrade in order to increase your shared vault limit.</span>}
+                text={<span>Please upgrade in order to increase your vault limit.</span>}
               />
             </div>
           )}

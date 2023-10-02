@@ -130,7 +130,12 @@ export class FeaturesController extends AbstractViewController implements Intern
     return status === FeatureStatus.Entitled
   }
 
-  isEntitledToVaults(): boolean {
+  isVaultsEnabled(): boolean {
+    const enabled = this.features.isExperimentalFeatureEnabled(NativeFeatureIdentifier.TYPES.Vaults)
+    return featureTrunkVaultsEnabled() || enabled
+  }
+
+  isEntitledToSharedVaults(): boolean {
     const status = this.features.getFeatureStatus(
       NativeFeatureIdentifier.create(NativeFeatureIdentifier.TYPES.SharedVaults).getValue(),
     )

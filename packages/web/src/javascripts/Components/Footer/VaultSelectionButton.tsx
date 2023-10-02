@@ -16,7 +16,7 @@ const VaultSelectionButton = ({ isMobileNavigation = false }: { isMobileNavigati
   const [isOpen, setIsOpen] = useState(false)
   const toggleMenu = () => setIsOpen(!isOpen)
 
-  if (!application.featuresController.isEntitledToVaults()) {
+  if (!application.featuresController.isVaultsEnabled()) {
     return null
   }
 

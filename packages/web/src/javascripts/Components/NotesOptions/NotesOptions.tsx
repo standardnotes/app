@@ -286,7 +286,7 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
       )}
       <HorizontalSeparator classes="my-2" />
 
-      {application.featuresController.isEntitledToVaults() && (
+      {application.featuresController.isVaultsEnabled() && (
         <AddToVaultMenuOption iconClassName={iconClass} items={notes} disabled={!hasAdminPermissionForAllSharedNotes} />
       )}
 

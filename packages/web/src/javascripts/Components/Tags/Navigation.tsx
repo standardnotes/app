@@ -124,7 +124,7 @@ const Navigation = forwardRef<HTMLDivElement, Props>(({ application, className, 
         )}
         <PreferencesButton openPreferences={() => application.preferencesController.openPreferences()} />
         <QuickSettingsButton application={application} isMobileNavigation />
-        {application.featuresController.isEntitledToVaults() && <VaultSelectionButton isMobileNavigation />}
+        {application.featuresController.isVaultsEnabled() && <VaultSelectionButton isMobileNavigation />}
       </div>
       {children}
     </div>

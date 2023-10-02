@@ -41,6 +41,7 @@ export class NativeFeatureIdentifier extends ValueObject<NativeFeatureIdentifier
 
     Clipper: 'org.standardnotes.clipper',
 
+    Vaults: 'org.standardnotes.vaults',
     SharedVaults: 'org.standardnotes.shared-vaults',
 
     DeprecatedMarkdownVisualEditor: 'org.standardnotes.markdown-visual-editor',
@@ -74,4 +75,4 @@ export class NativeFeatureIdentifier extends ValueObject<NativeFeatureIdentifier
 /**
  * Identifier for standalone filesafe instance offered as legacy installable via extensions-server
  */
-export const ExperimentalFeatures = []
+export const ExperimentalFeatures = [NativeFeatureIdentifier.TYPES.Vaults]
