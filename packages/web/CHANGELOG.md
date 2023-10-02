@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.173.23](https://github.com/standardnotes/app/compare/@standardnotes/web@3.173.22...@standardnotes/web@3.173.23) (2023-10-02)
+
+### Bug Fixes
+
+* Fixed issue where super note would be editable even when "Prevent editing" is enabled ([d2fad22](https://github.com/standardnotes/app/commit/d2fad2241846733dceed4af6094999893d77584d))
+
 ## [3.173.22](https://github.com/standardnotes/app/compare/@standardnotes/web@3.173.21...@standardnotes/web@3.173.22) (2023-09-29)
 
 **Note:** Version bump only for package @standardnotes/web
