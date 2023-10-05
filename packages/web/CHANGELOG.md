@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.174.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.173.23...@standardnotes/web@3.174.0) (2023-10-05)
+
+### Features
+
+* Added "Private vaults" as a Labs feature. Can be enabled from Preferences > General > Labs ([#2562](https://github.com/standardnotes/app/issues/2562)) ([4724b08](https://github.com/standardnotes/app/commit/4724b08c65c48b6b7232885de205a44b080313b1))
+
 ## [3.173.23](https://github.com/standardnotes/app/compare/@standardnotes/web@3.173.22...@standardnotes/web@3.173.23) (2023-10-02)
 
 ### Bug Fixes
