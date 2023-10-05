@@ -81,7 +81,7 @@ const TagContextMenu = ({ navigationController, isEntitledToFolders, selectedTag
           iconGridClassName="max-h-30"
         />
         <HorizontalSeparator classes="my-2" />
-        {application.featuresController.isEntitledToVaults() && (
+        {application.featuresController.isVaultsEnabled() && (
           <AddToVaultMenuOption iconClassName="mr-2 text-neutral" items={[selectedTag]} />
         )}
         <MenuItem className={'justify-between py-1.5'} onClick={onClickStar}>

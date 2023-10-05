@@ -9,7 +9,8 @@ export function featureTrunkEnabled(trunk: FeatureTrunkName): boolean {
 }
 
 export function featureTrunkVaultsEnabled(): boolean {
-  return InternalFeatureService.get().isFeatureEnabled(InternalFeature.Vaults)
+  // return InternalFeatureService.get().isFeatureEnabled(InternalFeature.Vaults)
+  return false
 }
 
 export function featureTrunkHomeServerEnabled(): boolean {

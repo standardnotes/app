@@ -71,7 +71,8 @@ describe('LinkingController', () => {
     application.getPreference = jest.fn()
     application.addSingleEventObserver = jest.fn()
     application.sync.sync = jest.fn()
-    application.featuresController.isEntitledToVaults = jest.fn().mockReturnValue(true)
+    application.featuresController.isVaultsEnabled = jest.fn().mockReturnValue(true)
+    application.featuresController.isEntitledToSharedVaults = jest.fn().mockReturnValue(true)
 
     Object.defineProperty(application, 'items', { value: {} as jest.Mocked<ItemManagerInterface> })
 

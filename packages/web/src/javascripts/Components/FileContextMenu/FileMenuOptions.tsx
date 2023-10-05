@@ -102,7 +102,7 @@ const FileMenuOptions: FunctionComponent<Props> = ({
           ) : null}
         </>
       )}
-      {application.featuresController.isEntitledToVaults() && (
+      {application.featuresController.isVaultsEnabled() && (
         <AddToVaultMenuOption
           iconClassName={iconClass}
           items={selectedFiles}

@@ -23,7 +23,7 @@ export const useItemVaultInfo = (item: DecryptedItemInterface): ItemVaultInfo =>
   const [sharedByContact, setSharedByContact] = useState<TrustedContactInterface>()
 
   const updateInfo = useCallback(() => {
-    if (!application.featuresController.isEntitledToVaults()) {
+    if (!application.featuresController.isVaultsEnabled()) {
       return
     }
 

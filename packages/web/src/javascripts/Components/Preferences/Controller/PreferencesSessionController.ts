@@ -26,7 +26,7 @@ export class PreferencesSessionController {
       ? PREFERENCES_MENU_ITEMS.slice()
       : READY_PREFERENCES_MENU_ITEMS.slice()
 
-    if (application.featuresController.isEntitledToVaults()) {
+    if (application.featuresController.isVaultsEnabled()) {
       menuItems.push({ id: 'vaults', label: 'Vaults', icon: 'safe-square', order: 5 })
     }
 

@@ -17,6 +17,8 @@ type Props = {
 const VaultItem = ({ vault }: Props) => {
   const application = useApplication()
 
+  const canEnableCollaboration = application.hasAccount() && application.featuresController.isEntitledToSharedVaults()
+
   const [isInviteModalOpen, setIsAddContactModalOpen] = useState(false)
   const closeInviteModal = () => setIsAddContactModalOpen(false)
 
@@ -128,7 +130,7 @@ const VaultItem = ({ vault }: Props) => {
             {isCurrentUserAdmin ? (
               vault.isSharedVaultListing() ? (
                 <Button colorStyle="info" label="Invite Contacts" onClick={openInviteModal} />
-              ) : application.hasAccount() ? (
+              ) : canEnableCollaboration ? (
                 <Button colorStyle="info" label="Enable Collaboration" onClick={convertToSharedVault} />
               ) : null
             ) : null}

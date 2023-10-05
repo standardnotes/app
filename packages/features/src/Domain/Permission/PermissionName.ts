@@ -38,5 +38,6 @@ export enum PermissionName {
   SubscriptionSharing = 'server:subscription-sharing',
   SuperEditor = 'editor:super-editor',
   Clipper = 'app:clipper',
+  Vaults = 'app:vaults',
   SharedVaults = 'server:shared-vaults',
 }
