@@ -1,6 +1,20 @@
 {
   "versions": [
     {
+      "version": "3.175.0",
+      "title": "[3.175.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.174.0...@standardnotes/web@3.175.0) (2023-10-05)",
+      "date": null,
+      "body": "### Features\n\n* Added \"Highlight\" option to Super formatting toolbars ([22b9f5c](https://github.com/standardnotes/app/commit/22b9f5cb5867bae89830c33c168021de70cfb5cc))",
+      "parsed": {
+        "_": [
+          "Added \"Highlight\" option to Super formatting toolbars (22b9f5c)"
+        ],
+        "Features": [
+          "Added \"Highlight\" option to Super formatting toolbars (22b9f5c)"
+        ]
+      }
+    },
+    {
       "version": "3.174.0",
       "title": "[3.174.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.173.23...@standardnotes/web@3.174.0) (2023-10-05)",
       "date": null,

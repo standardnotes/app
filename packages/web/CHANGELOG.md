@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.175.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.174.0...@standardnotes/web@3.175.0) (2023-10-05)
+
+### Features
+
+* Added "Highlight" option to Super formatting toolbars ([22b9f5c](https://github.com/standardnotes/app/commit/22b9f5cb5867bae89830c33c168021de70cfb5cc))
+
 # [3.174.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.173.23...@standardnotes/web@3.174.0) (2023-10-05)
 
 ### Features
