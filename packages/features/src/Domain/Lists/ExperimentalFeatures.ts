@@ -7,8 +7,7 @@ export function experimentalFeatures(): AnyFeatureDescription[] {
   return [
     {
       name: 'Private vaults',
-      description:
-        'Private vaults allow you to store notes, files and tags into separate, encrypted vaults. You can hide items from a particular vault or only show items from a particular vault.',
+      description: 'Private vaults allow you to store notes, files and tags into separate, encrypted vaults.',
       availableInRoles: [RoleName.NAMES.CoreUser, RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
       identifier: NativeFeatureIdentifier.TYPES.Vaults,
       permission_name: PermissionName.Vaults,
