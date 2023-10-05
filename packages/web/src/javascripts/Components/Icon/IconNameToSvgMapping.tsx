@@ -87,6 +87,7 @@ export const IconNameToSvgMapping = {
   diamond: icons.DiamondIcon,
   download: icons.DownloadIcon,
   drag: icons.DragIcon,
+  draw: icons.DrawIcon,
   editor: icons.EditorIcon,
   email: icons.EmailIcon,
   evernote: icons.EvernoteIcon,

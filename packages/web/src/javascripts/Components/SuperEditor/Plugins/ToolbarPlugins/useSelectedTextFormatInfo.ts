@@ -41,6 +41,7 @@ export function useSelectedTextFormatInfo() {
   const [isBold, setIsBold] = useState(false)
   const [isItalic, setIsItalic] = useState(false)
   const [isUnderline, setIsUnderline] = useState(false)
+  const [isHighlighted, setIsHighlighted] = useState(false)
   const [isStrikethrough, setIsStrikethrough] = useState(false)
   const [isSubscript, setIsSubscript] = useState(false)
   const [isSuperscript, setIsSuperscript] = useState(false)
@@ -108,6 +109,7 @@ export function useSelectedTextFormatInfo() {
       setIsSubscript(selection.hasFormat('subscript'))
       setIsSuperscript(selection.hasFormat('superscript'))
       setIsCode(selection.hasFormat('code'))
+      setIsHighlighted(selection.hasFormat('highlight'))
 
       // Update links
       const parent = node.getParent()
@@ -171,6 +173,7 @@ export function useSelectedTextFormatInfo() {
     isStrikethrough,
     isSubscript,
     isSuperscript,
+    isHighlighted,
     isCode,
     blockType,
   }

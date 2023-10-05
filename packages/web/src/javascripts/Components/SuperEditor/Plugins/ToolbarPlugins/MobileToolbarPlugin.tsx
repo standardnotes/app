@@ -77,7 +77,7 @@ const MobileToolbarPlugin = () => {
     }
   }, [editor])
 
-  const { isBold, isItalic, isUnderline, isSubscript, isSuperscript, isStrikethrough, blockType } =
+  const { isBold, isItalic, isUnderline, isSubscript, isSuperscript, isStrikethrough, blockType, isHighlighted } =
     useSelectedTextFormatInfo()
   const [isSelectionLink, setIsSelectionLink] = useState(false)
 
@@ -154,6 +154,14 @@ const MobileToolbarPlugin = () => {
         active: isUnderline,
       },
       {
+        name: 'Highlight',
+        iconName: 'draw',
+        onSelect: () => {
+          editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'highlight')
+        },
+        active: isHighlighted,
+      },
+      {
         name: 'Strikethrough',
         iconName: 'strikethrough',
         onSelect: () => {
@@ -223,6 +231,7 @@ const MobileToolbarPlugin = () => {
       editor,
       insertLink,
       isBold,
+      isHighlighted,
       isItalic,
       isSelectionLink,
       isStrikethrough,
