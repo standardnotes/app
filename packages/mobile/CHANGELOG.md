@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.56.163](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.56.162...@standardnotes/mobile@3.56.163) (2023-10-06)
+
+### Bug Fixes
+
+* Fixes issue where keys would not correctly load on startup on Android 14 ([632b06e](https://github.com/standardnotes/app/commit/632b06e511072a481258a9f2a8817f4651841cf1))
+
 ## [3.56.162](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.56.161...@standardnotes/mobile@3.56.162) (2023-10-05)
 
 **Note:** Version bump only for package @standardnotes/mobile
