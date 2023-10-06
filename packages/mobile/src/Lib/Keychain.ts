@@ -15,7 +15,15 @@ export default class Keychain {
         if (!credentials || !credentials.password) {
           return null
         } else {
-          const keys = JSON.parse(credentials.password)
+          /**
+           * Android 14 returns the bel character (/u0007) for some reason appended several times at the end of the string.
+           * This value is oddly not present when the keys are stringified in setKeys above.
+           */
+          // eslint-disable-next-line no-control-regex
+          const cleanedString = credentials.password.replace(/\x07/g, '')
+
+          const keys = JSON.parse(cleanedString)
+
           return keys
         }
       })
