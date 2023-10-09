@@ -19,7 +19,6 @@ import AutoEmbedPlugin from './Plugins/AutoEmbedPlugin'
 import CollapsiblePlugin from './Plugins/CollapsiblePlugin'
 import DraggableBlockPlugin from './Plugins/DraggableBlockPlugin'
 import CodeHighlightPlugin from './Plugins/CodeHighlightPlugin'
-import FloatingTextFormatToolbarPlugin from './Plugins/ToolbarPlugins/FloatingTextFormatToolbarPlugin'
 import { TabIndentationPlugin } from './Plugins/TabIndentationPlugin'
 import { handleEditorChange } from './Utils'
 import { SuperEditorContentId } from './Constants'
@@ -110,7 +109,6 @@ export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
       <RemoveBrokenTablesPlugin />
       {!readonly && floatingAnchorElem && (
         <>
-          <FloatingTextFormatToolbarPlugin anchorElem={floatingAnchorElem} />
           <DraggableBlockPlugin anchorElem={floatingAnchorElem} />
           <TableActionMenuPlugin anchorElem={floatingAnchorElem} cellMerge />
         </>

@@ -56,6 +56,7 @@ const MobileToolbarPlugin = () => {
   const [isInToolbar, setIsInToolbar] = useState(false)
   const isMobile = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
 
+  const containerRef = useRef<HTMLDivElement>(null)
   const toolbarRef = useRef<HTMLDivElement>(null)
   const linkEditorRef = useRef<HTMLDivElement>(null)
   const backspaceButtonRef = useRef<HTMLButtonElement>(null)
@@ -310,6 +311,7 @@ const MobileToolbarPlugin = () => {
       linkEditor?.removeEventListener('blur', handleLinkEditorBlur)
     }
   }, [])
+
   const [isSelectionAutoLink, setIsSelectionAutoLink] = useState(false)
   const [linkUrl, setLinkUrl] = useState('')
   const [isLinkEditMode, setIsLinkEditMode] = useState(false)
@@ -380,18 +382,48 @@ const MobileToolbarPlugin = () => {
     )
   }, [editor, updateEditorSelection])
 
+  useEffect(() => {
+    const container = containerRef.current
+    const rootElement = editor.getRootElement()
+
+    if (!container || !rootElement) {
+      return
+    }
+
+    const resizeObserver = new ResizeObserver(() => {
+      if (isMobile) {
+        return
+      }
+
+      const containerHeight = container.offsetHeight
+
+      rootElement.style.paddingBottom = containerHeight ? `${containerHeight + 16 * 2}px` : ''
+    })
+
+    resizeObserver.observe(container)
+
+    return () => {
+      resizeObserver.disconnect()
+    }
+  }, [editor, isMobile])
+
   const isFocusInEditorOrToolbar = isInEditor || isInToolbar || isInLinkEditor
 
   return (
     <>
       {modal}
       <div
-        className={classNames('bg-contrast', !isMobile || !isFocusInEditorOrToolbar ? 'hidden' : '')}
+        className={classNames(
+          'bg-contrast',
+          'md:absolute md:bottom-4 md:left-1/2 md:max-w-[60%] md:-translate-x-1/2 md:divide-y md:divide-border md:rounded-lg md:border md:border-border md:px-2 md:py-1 md:translucent-ui:divide-[--popover-border-color] md:translucent-ui:border-[--popover-border-color] md:translucent-ui:bg-[--popover-background-color] md:translucent-ui:[backdrop-filter:var(--popover-backdrop-filter)]',
+          !isFocusInEditorOrToolbar ? 'hidden' : '',
+        )}
         id="super-mobile-toolbar"
+        ref={containerRef}
       >
         {isSelectionLink && (
           <div
-            className="border-t border-border px-2 focus:shadow-none focus:outline-none"
+            className="border-t border-border px-2 focus:shadow-none focus:outline-none md:border-0"
             ref={linkEditorRef}
             tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
           >
@@ -405,7 +437,7 @@ const MobileToolbarPlugin = () => {
             />
           </div>
         )}
-        <div className="flex w-full flex-shrink-0 border-t border-border bg-contrast">
+        <div className="flex w-full flex-shrink-0 border-t border-border md:border-0">
           <div
             tabIndex={-1}
             className="flex items-center gap-1 overflow-x-auto pl-1 [&::-webkit-scrollbar]:h-0"
@@ -415,7 +447,7 @@ const MobileToolbarPlugin = () => {
               return (
                 <StyledTooltip showOnMobile showOnHover label={item.name} key={item.name}>
                   <button
-                    className="flex select-none items-center justify-center rounded p-0.5 hover:bg-default disabled:opacity-50"
+                    className="flex select-none items-center justify-center rounded p-0.5 enabled:hover:bg-default disabled:opacity-50 md:border md:border-transparent enabled:hover:md:translucent-ui:border-[--popover-border-color]"
                     aria-label={item.name}
                     onMouseDown={(event) => {
                       event.preventDefault()
@@ -440,12 +472,14 @@ const MobileToolbarPlugin = () => {
               )
             })}
           </div>
-          <button
-            className="flex flex-shrink-0 items-center justify-center rounded border-l border-border px-3 py-3"
-            aria-label="Dismiss keyboard"
-          >
-            <Icon type="keyboard-close" size="medium" />
-          </button>
+          {isMobile && (
+            <button
+              className="flex flex-shrink-0 items-center justify-center rounded border-l border-border px-3 py-3"
+              aria-label="Dismiss keyboard"
+            >
+              <Icon type="keyboard-close" size="medium" />
+            </button>
+          )}
         </div>
       </div>
     </>
