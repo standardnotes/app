@@ -15,6 +15,7 @@ import PreferencesSegment from '../../../PreferencesComponents/PreferencesSegmen
 import LabsFeature from './LabsFeature'
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
+import { featureTrunkVaultsEnabled } from '@/FeatureTrunk'
 
 type ExperimentalFeatureItem = {
   identifier: string
@@ -48,18 +49,27 @@ const LabsPane: FunctionComponent<Props> = ({ application }) => {
   }, [application])
 
   const reloadExperimentalFeatures = useCallback(() => {
-    const experimentalFeatures = application.features.getExperimentalFeatures().map((featureIdentifier) => {
-      const feature = FindNativeFeature(featureIdentifier)
-      return {
-        identifier: featureIdentifier,
-        name: feature?.name ?? featureIdentifier,
-        description: feature?.description ?? '',
-        isEnabled: application.features.isExperimentalFeatureEnabled(featureIdentifier),
-        isEntitled:
-          application.features.getFeatureStatus(NativeFeatureIdentifier.create(featureIdentifier).getValue()) ===
-          FeatureStatus.Entitled,
-      }
-    })
+    const experimentalFeatures = application.features
+      .getExperimentalFeatures()
+      .map((featureIdentifier) => {
+        const feature = FindNativeFeature(featureIdentifier)
+        return {
+          identifier: featureIdentifier,
+          name: feature?.name ?? featureIdentifier,
+          description: feature?.description ?? '',
+          isEnabled: application.features.isExperimentalFeatureEnabled(featureIdentifier),
+          isEntitled:
+            application.features.getFeatureStatus(NativeFeatureIdentifier.create(featureIdentifier).getValue()) ===
+            FeatureStatus.Entitled,
+        }
+      })
+      .filter((feature) => {
+        if (feature.identifier !== NativeFeatureIdentifier.TYPES.Vaults) {
+          return true
+        }
+
+        return featureTrunkVaultsEnabled()
+      })
     setExperimentalFeatures(experimentalFeatures)
   }, [application])
 
