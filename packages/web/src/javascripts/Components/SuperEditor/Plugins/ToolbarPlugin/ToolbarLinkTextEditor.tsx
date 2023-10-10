@@ -1,12 +1,11 @@
 import Icon from '@/Components/Icon/Icon'
-import { CloseIcon, CheckIcon, PencilFilledIcon } from '@standardnotes/icons'
 import { KeyboardKey } from '@standardnotes/ui-services'
-import { IconComponent } from '../../Lexical/Theme/IconComponent'
 import { $isRangeSelection, $isTextNode, GridSelection, LexicalEditor, NodeSelection, RangeSelection } from 'lexical'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { VisuallyHidden } from '@ariakit/react'
 import { getSelectedNode } from '../../Lexical/Utils/getSelectedNode'
 import { $isLinkNode } from '@lexical/link'
+import StyledTooltip from '@/Components/StyledTooltip/StyledTooltip'
 
 type Props = {
   linkText: string
@@ -72,50 +71,47 @@ const LinkTextEditor = ({ linkText, editor, lastSelection }: Props) => {
         }}
         className="flex-grow rounded-sm bg-contrast p-1 text-text sm:min-w-[20ch]"
       />
-      <button
-        className="flex rounded-lg p-3 hover:bg-contrast hover:text-text disabled:cursor-not-allowed"
-        onClick={() => {
-          setEditMode(false)
-          editor.focus()
-        }}
-        aria-label="Cancel editing link"
-        onMouseDown={(event) => event.preventDefault()}
-      >
-        <IconComponent size={15}>
-          <CloseIcon />
-        </IconComponent>
-      </button>
-      <button
-        className="flex rounded-lg p-3 hover:bg-contrast hover:text-text disabled:cursor-not-allowed"
-        onClick={handleLinkTextSubmission}
-        aria-label="Save link"
-        onMouseDown={(event) => event.preventDefault()}
-      >
-        <IconComponent size={15}>
-          <CheckIcon />
-        </IconComponent>
-      </button>
+      <StyledTooltip showOnMobile showOnHover label="Cancel editing">
+        <button
+          className="flex select-none items-center justify-center rounded p-2 enabled:hover:bg-default disabled:opacity-50 md:border md:border-transparent enabled:hover:md:translucent-ui:border-[--popover-border-color]"
+          onClick={() => {
+            setEditMode(false)
+            editor.focus()
+          }}
+          onMouseDown={(event) => event.preventDefault()}
+        >
+          <Icon type="close" size="medium" />
+        </button>
+      </StyledTooltip>
+      <StyledTooltip showOnMobile showOnHover label="Save link text">
+        <button
+          className="flex select-none items-center justify-center rounded p-2 enabled:hover:bg-default disabled:opacity-50 md:border md:border-transparent enabled:hover:md:translucent-ui:border-[--popover-border-color]"
+          onClick={handleLinkTextSubmission}
+          onMouseDown={(event) => event.preventDefault()}
+        >
+          <Icon type="check" size="medium" />
+        </button>
+      </StyledTooltip>
     </div>
   ) : (
     <div className="flex items-center gap-1">
       <Icon type="plain-text" className="ml-1 mr-1 flex-shrink-0" />
-      <div className="flex-grow max-w-[35ch] overflow-hidden text-ellipsis whitespace-nowrap">
+      <div className="flex-grow overflow-hidden text-ellipsis whitespace-nowrap">
         <VisuallyHidden>Link text:</VisuallyHidden>
         {linkText}
       </div>
-      <button
-        className="flex rounded-lg p-3 hover:bg-contrast hover:text-text disabled:cursor-not-allowed ml-auto"
-        onClick={() => {
-          setEditedLinkText(linkText)
-          setEditMode(true)
-        }}
-        aria-label="Edit link"
-        onMouseDown={(event) => event.preventDefault()}
-      >
-        <IconComponent size={15}>
-          <PencilFilledIcon />
-        </IconComponent>
-      </button>
+      <StyledTooltip showOnMobile showOnHover label="Edit link text">
+        <button
+          className="flex select-none items-center justify-center rounded p-2 enabled:hover:bg-default disabled:opacity-50 md:border md:border-transparent enabled:hover:md:translucent-ui:border-[--popover-border-color]"
+          onClick={() => {
+            setEditedLinkText(linkText)
+            setEditMode(true)
+          }}
+          onMouseDown={(event) => event.preventDefault()}
+        >
+          <Icon type="pencil-filled" size="medium" />
+        </button>
+      </StyledTooltip>
     </div>
   )
 }

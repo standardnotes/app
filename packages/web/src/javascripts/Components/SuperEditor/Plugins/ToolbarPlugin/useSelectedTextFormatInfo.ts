@@ -14,7 +14,7 @@ import { $isHeadingNode } from '@lexical/rich-text'
 import { $isListNode, ListNode } from '@lexical/list'
 import { useCallback, useEffect, useState } from 'react'
 import { getSelectedNode } from '../../Lexical/Utils/getSelectedNode'
-import { $isLinkTextNode } from '../LinkEditor/LinkTextEditor'
+import { $isLinkTextNode } from './ToolbarLinkTextEditor'
 
 const blockTypeToBlockName = {
   bullet: 'Bulleted List',

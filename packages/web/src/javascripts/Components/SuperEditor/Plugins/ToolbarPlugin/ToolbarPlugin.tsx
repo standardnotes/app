@@ -18,8 +18,8 @@ import {
   UNDO_COMMAND,
 } from 'lexical'
 import { mergeRegister } from '@lexical/utils'
-import { $isLinkNode, $isAutoLinkNode, TOGGLE_LINK_COMMAND } from '@lexical/link'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { $isLinkNode, TOGGLE_LINK_COMMAND } from '@lexical/link'
+import { ComponentPropsWithoutRef, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { GetAlignmentBlocks } from '../Blocks/Alignment'
 import { GetBulletedListBlock } from '../Blocks/BulletedList'
 import { GetChecklistBlock } from '../Blocks/Checklist'
@@ -41,18 +41,56 @@ import { SUPER_TOGGLE_SEARCH } from '@standardnotes/ui-services'
 import { useApplication } from '@/Components/ApplicationProvider'
 import { GetRemoteImageBlock } from '../Blocks/RemoteImage'
 import { InsertRemoteImageDialog } from '../RemoteImagePlugin/RemoteImagePlugin'
-import LinkEditor from '../LinkEditor/LinkEditor'
+import LinkEditor from './ToolbarLinkEditor'
 import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
 import { useSelectedTextFormatInfo } from './useSelectedTextFormatInfo'
 import StyledTooltip from '@/Components/StyledTooltip/StyledTooltip'
+import LinkTextEditor, { $isLinkTextNode } from './ToolbarLinkTextEditor'
 
-const MobileToolbarPlugin = () => {
+interface ToolbarButtonProps extends ComponentPropsWithoutRef<'button'> {
+  name: string
+  active?: boolean
+  iconName: string
+  onSelect: () => void
+}
+
+const ToolbarButton = ({ name, active, iconName, onSelect, disabled, ...props }: ToolbarButtonProps) => {
+  const [editor] = useLexicalComposerContext()
+
+  return (
+    <StyledTooltip showOnMobile showOnHover label={name}>
+      <button
+        className="flex select-none items-center justify-center rounded p-0.5 enabled:hover:bg-default disabled:opacity-50 md:border md:border-transparent enabled:hover:md:translucent-ui:border-[--popover-border-color]"
+        onMouseDown={(event) => {
+          event.preventDefault()
+          onSelect()
+        }}
+        onContextMenu={(event) => {
+          editor.focus()
+          event.preventDefault()
+        }}
+        disabled={disabled}
+        {...props}
+      >
+        <div
+          className={classNames(
+            'flex items-center justify-center rounded p-2 transition-colors duration-75',
+            active && 'bg-info text-info-contrast',
+          )}
+        >
+          <Icon type={iconName} size="medium" className="!text-current [&>path]:!text-current" />
+        </div>
+      </button>
+    </StyledTooltip>
+  )
+}
+
+const ToolbarPlugin = () => {
   const application = useApplication()
   const [editor] = useLexicalComposerContext()
   const [modal, showModal] = useModal()
 
   const [isInEditor, setIsInEditor] = useState(false)
-  const [isInLinkEditor, setIsInLinkEditor] = useState(false)
   const [isInToolbar, setIsInToolbar] = useState(false)
   const isMobile = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
 
@@ -78,9 +116,19 @@ const MobileToolbarPlugin = () => {
     }
   }, [editor])
 
-  const { isBold, isItalic, isUnderline, isSubscript, isSuperscript, isStrikethrough, blockType, isHighlighted } =
-    useSelectedTextFormatInfo()
-  const [isSelectionLink, setIsSelectionLink] = useState(false)
+  const {
+    isBold,
+    isItalic,
+    isUnderline,
+    isSubscript,
+    isSuperscript,
+    isStrikethrough,
+    blockType,
+    isHighlighted,
+    isLink,
+    isLinkText,
+    isAutoLink,
+  } = useSelectedTextFormatInfo()
 
   const [canUndo, setCanUndo] = useState(false)
   const [canRedo, setCanRedo] = useState(false)
@@ -194,7 +242,7 @@ const MobileToolbarPlugin = () => {
             insertLink()
           })
         },
-        active: isSelectionLink,
+        active: isLink,
       },
       {
         name: 'Search',
@@ -206,6 +254,7 @@ const MobileToolbarPlugin = () => {
       GetParagraphBlock(editor),
       ...GetHeadingsBlocks(editor),
       ...GetIndentOutdentBlocks(editor),
+      ...GetAlignmentBlocks(editor),
       GetTableBlock(() =>
         showModal('Insert Table', (onClose) => <InsertTableDialog activeEditor={editor} onClose={onClose} />),
       ),
@@ -219,7 +268,6 @@ const MobileToolbarPlugin = () => {
       GetCodeBlock(editor),
       GetDividerBlock(editor),
       ...GetDatetimeBlocks(editor),
-      ...GetAlignmentBlocks(editor),
       ...[GetPasswordBlock(editor)],
       GetCollapsibleBlock(editor),
       ...GetEmbedsBlocks(editor),
@@ -234,7 +282,7 @@ const MobileToolbarPlugin = () => {
       isBold,
       isHighlighted,
       isItalic,
-      isSelectionLink,
+      isLink,
       isStrikethrough,
       isSubscript,
       isSuperscript,
@@ -274,11 +322,9 @@ const MobileToolbarPlugin = () => {
   }, [editor])
 
   useEffect(() => {
-    const toolbar = toolbarRef.current
-    const linkEditor = linkEditorRef.current
+    const container = containerRef.current
 
     const handleToolbarFocus = () => setIsInToolbar(true)
-    const handleLinkEditorFocus = () => setIsInLinkEditor(true)
     const handleToolbarBlur = (event: FocusEvent) => {
       const elementToBeFocused = event.relatedTarget as Node
       if (elementToBeFocused === backspaceButtonRef.current) {
@@ -286,34 +332,20 @@ const MobileToolbarPlugin = () => {
       }
       setIsInToolbar(false)
     }
-    const handleLinkEditorBlur = (event: FocusEvent) => {
-      const elementToBeFocused = event.relatedTarget as Node
-      if (elementToBeFocused === backspaceButtonRef.current) {
-        return
-      }
-      setIsInLinkEditor(false)
-    }
 
-    if (toolbar) {
-      toolbar.addEventListener('focus', handleToolbarFocus)
-      toolbar.addEventListener('blur', handleToolbarBlur)
-    }
-
-    if (linkEditor) {
-      linkEditor.addEventListener('focus', handleLinkEditorFocus)
-      linkEditor.addEventListener('blur', handleLinkEditorBlur)
+    if (container) {
+      container.addEventListener('focus', handleToolbarFocus)
+      container.addEventListener('blur', handleToolbarBlur)
     }
 
     return () => {
-      toolbar?.removeEventListener('focus', handleToolbarFocus)
-      toolbar?.removeEventListener('blur', handleToolbarBlur)
-      linkEditor?.removeEventListener('focus', handleLinkEditorFocus)
-      linkEditor?.removeEventListener('blur', handleLinkEditorBlur)
+      container?.removeEventListener('focus', handleToolbarFocus)
+      container?.removeEventListener('blur', handleToolbarBlur)
     }
   }, [])
 
-  const [isSelectionAutoLink, setIsSelectionAutoLink] = useState(false)
   const [linkUrl, setLinkUrl] = useState('')
+  const [linkText, setLinkText] = useState('')
   const [isLinkEditMode, setIsLinkEditMode] = useState(false)
   const [lastSelection, setLastSelection] = useState<RangeSelection | GridSelection | NodeSelection | null>(null)
 
@@ -331,24 +363,17 @@ const MobileToolbarPlugin = () => {
       const node = getSelectedNode(selection)
       const parent = node.getParent()
 
-      if ($isLinkNode(parent) || $isLinkNode(node)) {
-        setIsSelectionLink(true)
-      } else {
-        setIsSelectionLink(false)
-      }
-
-      if ($isAutoLinkNode(parent) || $isAutoLinkNode(node)) {
-        setIsSelectionAutoLink(true)
-      } else {
-        setIsSelectionAutoLink(false)
-      }
-
       if ($isLinkNode(parent)) {
         setLinkUrl(parent.getURL())
       } else if ($isLinkNode(node)) {
         setLinkUrl(node.getURL())
       } else {
         setLinkUrl('')
+      }
+      if ($isLinkTextNode(node, selection)) {
+        setLinkText(node.getTextContent())
+      } else {
+        setLinkText('')
       }
 
       if (
@@ -407,7 +432,7 @@ const MobileToolbarPlugin = () => {
     }
   }, [editor, isMobile])
 
-  const isFocusInEditorOrToolbar = isInEditor || isInToolbar || isInLinkEditor
+  const isFocusInEditorOrToolbar = isInEditor || isInToolbar
 
   return (
     <>
@@ -415,27 +440,44 @@ const MobileToolbarPlugin = () => {
       <div
         className={classNames(
           'bg-contrast',
-          'md:absolute md:bottom-4 md:left-1/2 md:max-w-[60%] md:-translate-x-1/2 md:divide-y md:divide-border md:rounded-lg md:border md:border-border md:px-2 md:py-1 md:translucent-ui:divide-[--popover-border-color] md:translucent-ui:border-[--popover-border-color] md:translucent-ui:bg-[--popover-background-color] md:translucent-ui:[backdrop-filter:var(--popover-backdrop-filter)]',
+          'md:absolute md:bottom-4 md:left-1/2 md:max-w-[60%] md:-translate-x-1/2 md:rounded-lg md:border md:border-border md:px-2 md:py-1 md:translucent-ui:border-[--popover-border-color] md:translucent-ui:bg-[--popover-background-color] md:translucent-ui:[backdrop-filter:var(--popover-backdrop-filter)]',
           !isFocusInEditorOrToolbar ? 'hidden' : '',
         )}
         id="super-mobile-toolbar"
         ref={containerRef}
       >
-        {isSelectionLink && (
-          <div
-            className="border-t border-border px-2 focus:shadow-none focus:outline-none md:border-0"
-            ref={linkEditorRef}
-            tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
-          >
-            <LinkEditor
-              linkUrl={linkUrl}
-              isEditMode={isLinkEditMode}
-              setEditMode={setIsLinkEditMode}
-              isAutoLink={isSelectionAutoLink}
-              editor={editor}
-              lastSelection={lastSelection}
+        {isLinkText && !isAutoLink && (
+          <>
+            <div className="border-t border-border px-1 py-1 md:border-0 md:px-0 md:py-0">
+              <LinkTextEditor linkText={linkText} editor={editor} lastSelection={lastSelection} />
+            </div>
+            <div
+              role="presentation"
+              className="my-1 hidden h-px bg-border translucent-ui:bg-[--popover-border-color] md:block"
             />
-          </div>
+          </>
+        )}
+        {isLink && (
+          <>
+            <div
+              className="border-t border-border px-1 py-1 focus:shadow-none focus:outline-none md:border-0 md:px-0 md:py-0"
+              ref={linkEditorRef}
+              tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
+            >
+              <LinkEditor
+                linkUrl={linkUrl}
+                isEditMode={isLinkEditMode}
+                setEditMode={setIsLinkEditMode}
+                isAutoLink={isAutoLink}
+                editor={editor}
+                lastSelection={lastSelection}
+              />
+            </div>
+            <div
+              role="presentation"
+              className="my-1 hidden h-px bg-border translucent-ui:bg-[--popover-border-color] md:block"
+            />
+          </>
         )}
         <div className="flex w-full flex-shrink-0 border-t border-border md:border-0">
           <div
@@ -445,30 +487,14 @@ const MobileToolbarPlugin = () => {
           >
             {items.map((item) => {
               return (
-                <StyledTooltip showOnMobile showOnHover label={item.name} key={item.name}>
-                  <button
-                    className="flex select-none items-center justify-center rounded p-0.5 enabled:hover:bg-default disabled:opacity-50 md:border md:border-transparent enabled:hover:md:translucent-ui:border-[--popover-border-color]"
-                    aria-label={item.name}
-                    onMouseDown={(event) => {
-                      event.preventDefault()
-                      item.onSelect()
-                    }}
-                    onContextMenu={(event) => {
-                      editor.focus()
-                      event.preventDefault()
-                    }}
-                    disabled={item.disabled}
-                  >
-                    <div
-                      className={classNames(
-                        'flex items-center justify-center rounded p-2 transition-colors duration-75',
-                        item.active && 'bg-info text-info-contrast',
-                      )}
-                    >
-                      <Icon type={item.iconName} size="medium" className="!text-current [&>path]:!text-current" />
-                    </div>
-                  </button>
-                </StyledTooltip>
+                <ToolbarButton
+                  name={item.name}
+                  iconName={item.iconName}
+                  active={item.active}
+                  disabled={item.disabled}
+                  onSelect={item.onSelect}
+                  key={item.name}
+                />
               )
             })}
           </div>
@@ -486,4 +512,4 @@ const MobileToolbarPlugin = () => {
   )
 }
 
-export default MobileToolbarPlugin
+export default ToolbarPlugin
