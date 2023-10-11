@@ -292,37 +292,12 @@ const ToolbarPlugin = () => {
   )
 
   useEffect(() => {
+    const container = containerRef.current
     const rootElement = editor.getRootElement()
 
     if (!rootElement) {
       return
     }
-
-    const handleFocus = () => setIsInEditor(true)
-    const handleBlur = (event: FocusEvent) => {
-      const elementToBeFocused = event.relatedTarget as Node
-      const toolbarContainsElementToFocus = toolbarRef.current && toolbarRef.current.contains(elementToBeFocused)
-      const linkEditorContainsElementToFocus =
-        linkEditorRef.current &&
-        (linkEditorRef.current.contains(elementToBeFocused) || elementToBeFocused === linkEditorRef.current)
-      const willFocusBackspaceButton = backspaceButtonRef.current && elementToBeFocused === backspaceButtonRef.current
-      if (toolbarContainsElementToFocus || linkEditorContainsElementToFocus || willFocusBackspaceButton) {
-        return
-      }
-      setIsInEditor(false)
-    }
-
-    rootElement.addEventListener('focus', handleFocus)
-    rootElement.addEventListener('blur', handleBlur)
-
-    return () => {
-      rootElement.removeEventListener('focus', handleFocus)
-      rootElement.removeEventListener('blur', handleBlur)
-    }
-  }, [editor])
-
-  useEffect(() => {
-    const container = containerRef.current
 
     const handleToolbarFocus = () => setIsInToolbar(true)
     const handleToolbarBlur = (event: FocusEvent) => {
@@ -333,20 +308,41 @@ const ToolbarPlugin = () => {
       setIsInToolbar(false)
     }
 
+    const handleRootFocus = () => setIsInEditor(true)
+    const handleRootBlur = (event: FocusEvent) => {
+      const elementToBeFocused = event.relatedTarget as Node
+
+      const containerContainsElementToFocus = container?.contains(elementToBeFocused)
+
+      const willFocusBackspaceButton = backspaceButtonRef.current && elementToBeFocused === backspaceButtonRef.current
+
+      if (containerContainsElementToFocus || willFocusBackspaceButton) {
+        return
+      }
+
+      setIsInEditor(false)
+    }
+
+    rootElement.addEventListener('focus', handleRootFocus)
+    rootElement.addEventListener('blur', handleRootBlur)
+
     if (container) {
       container.addEventListener('focus', handleToolbarFocus)
       container.addEventListener('blur', handleToolbarBlur)
     }
 
     return () => {
+      rootElement.removeEventListener('focus', handleRootFocus)
+      rootElement.removeEventListener('blur', handleRootBlur)
       container?.removeEventListener('focus', handleToolbarFocus)
       container?.removeEventListener('blur', handleToolbarBlur)
     }
-  }, [])
+  }, [editor])
 
   const [linkUrl, setLinkUrl] = useState('')
   const [linkText, setLinkText] = useState('')
   const [isLinkEditMode, setIsLinkEditMode] = useState(false)
+  const [isLinkTextEditMode, setIsLinkTextEditMode] = useState(false)
   const [lastSelection, setLastSelection] = useState<RangeSelection | GridSelection | NodeSelection | null>(null)
 
   const updateEditorSelection = useCallback(() => {
@@ -433,6 +429,7 @@ const ToolbarPlugin = () => {
   }, [editor, isMobile])
 
   const isFocusInEditorOrToolbar = isInEditor || isInToolbar
+  const canShowToolbar = isMobile ? isFocusInEditorOrToolbar : true
 
   return (
     <>
@@ -441,7 +438,7 @@ const ToolbarPlugin = () => {
         className={classNames(
           'bg-contrast',
           'md:absolute md:bottom-4 md:left-1/2 md:max-w-[60%] md:-translate-x-1/2 md:rounded-lg md:border md:border-border md:px-2 md:py-1 md:translucent-ui:border-[--popover-border-color] md:translucent-ui:bg-[--popover-background-color] md:translucent-ui:[backdrop-filter:var(--popover-backdrop-filter)]',
-          !isFocusInEditorOrToolbar ? 'hidden' : '',
+          !canShowToolbar ? 'hidden' : '',
         )}
         id="super-mobile-toolbar"
         ref={containerRef}
@@ -449,7 +446,13 @@ const ToolbarPlugin = () => {
         {isLinkText && !isAutoLink && (
           <>
             <div className="border-t border-border px-1 py-1 md:border-0 md:px-0 md:py-0">
-              <LinkTextEditor linkText={linkText} editor={editor} lastSelection={lastSelection} />
+              <LinkTextEditor
+                linkText={linkText}
+                editor={editor}
+                lastSelection={lastSelection}
+                isEditMode={isLinkTextEditMode}
+                setEditMode={setIsLinkTextEditMode}
+              />
             </div>
             <div
               role="presentation"

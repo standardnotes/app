@@ -11,6 +11,8 @@ type Props = {
   linkText: string
   editor: LexicalEditor
   lastSelection: RangeSelection | GridSelection | NodeSelection | null
+  isEditMode: boolean
+  setEditMode: (isEditMode: boolean) => void
 }
 
 export const $isLinkTextNode = (node: ReturnType<typeof getSelectedNode>, selection: RangeSelection) => {
@@ -18,9 +20,8 @@ export const $isLinkTextNode = (node: ReturnType<typeof getSelectedNode>, select
   return $isLinkNode(parent) && $isTextNode(node) && selection.anchor.getNode() === selection.focus.getNode()
 }
 
-const LinkTextEditor = ({ linkText, editor, lastSelection }: Props) => {
+const LinkTextEditor = ({ linkText, editor, isEditMode, setEditMode, lastSelection }: Props) => {
   const [editedLinkText, setEditedLinkText] = useState(() => linkText)
-  const [isEditMode, setEditMode] = useState(false)
   const editModeContainer = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
