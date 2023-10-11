@@ -104,6 +104,7 @@ import HistoryLockedIllustration from './il-history-locked.svg'
 import IconsSpriteStylekit from './icons-sprite-stylekit.svg'
 import IlNotesIcon from './il-notes.svg'
 import ImageIcon from './ic-image.svg'
+import IndentIcon from './ic-indent.svg'
 import InfoIcon from './ic-info.svg'
 import ItalicIcon from './ic-italic.svg'
 import KeyboardCloseIcon from './ic-keyboard-close.svg'
@@ -137,6 +138,7 @@ import NoPreviewIllustration from './il-no-preview.svg'
 import NotesFilledIcon from './ic-notes-filled.svg'
 import NotesIcon from './ic-notes.svg'
 import OpenInIcon from './ic-open-in.svg'
+import OutdentIcon from './ic-outdent.svg'
 import PasswordIcon from './ic-textbox-password.svg'
 import PencilFilledIcon from './ic-pencil-filled.svg'
 import PencilIcon from './ic-pencil.svg'
@@ -188,8 +190,8 @@ import SubtractIcon from './ic-subtract.svg'
 import SuperscriptIcon from './ic-superscript.svg'
 import SyncIcon from './ic-sync.svg'
 import TasksIcon from './ic-tasks.svg'
-import TextIcon from './ic-text.svg'
 import TextCircleIcon from './ic-text-circle.svg'
+import TextIcon from './ic-text.svg'
 import TextParagraphLongIcon from './ic-text-paragraph-long.svg'
 import ThemesFilledIcon from './ic-themes-filled.svg'
 import ThemesIcon from './ic-themes.svg'
@@ -221,6 +223,7 @@ export {
   AddBoldIcon,
   AddIcon,
   AddTextIcon,
+  AegisIcon,
   ArchiveIcon,
   ArrowDownCheckmarkIcon,
   ArrowDownIcon,
@@ -274,6 +277,7 @@ export {
   EmailFilledIcon,
   EmailIcon,
   EnterIcon,
+  EvernoteIcon,
   EyeFilledIcon,
   EyeIcon,
   EyeOffFilledIcon,
@@ -304,6 +308,7 @@ export {
   FullscreenExitIcon,
   FullscreenIcon,
   GiftOutlineIcon,
+  GoogleKeepIcon,
   GroupIcon,
   HashtagFilledIcon,
   HashtagIcon,
@@ -316,6 +321,7 @@ export {
   IconsSpriteStylekit,
   IlNotesIcon,
   ImageIcon,
+  IndentIcon,
   InfoIcon,
   ItalicIcon,
   KeyboardCloseIcon,
@@ -349,6 +355,7 @@ export {
   NotesFilledIcon,
   NotesIcon,
   OpenInIcon,
+  OutdentIcon,
   PasswordIcon,
   PencilFilledIcon,
   PencilIcon,
@@ -364,6 +371,8 @@ export {
   ProtectedIllustration,
   RedoIcon,
   ReorderIcon,
+  ReplaceAllIcon,
+  ReplaceIcon,
   RestoreIcon,
   RichTextIcon,
   SafeIcon,
@@ -382,6 +391,7 @@ export {
   ShortcutButtonIcon,
   SignInIcon,
   SignOutIcon,
+  SimplenoteIcon,
   SNLogoAltIcon,
   SNLogoFull,
   SNLogoIcon,
@@ -397,8 +407,8 @@ export {
   SuperscriptIcon,
   SyncIcon,
   TasksIcon,
-  TextIcon,
   TextCircleIcon,
+  TextIcon,
   TextParagraphLongIcon,
   ThemesFilledIcon,
   ThemesIcon,
@@ -420,10 +430,4 @@ export {
   ViewIcon,
   WarningIcon,
   WindowIcon,
-  EvernoteIcon,
-  GoogleKeepIcon,
-  SimplenoteIcon,
-  AegisIcon,
-  ReplaceIcon,
-  ReplaceAllIcon,
 }
