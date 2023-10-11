@@ -37,7 +37,7 @@ import { GetQuoteBlock } from '../Blocks/Quote'
 import { GetTableBlock } from '../Blocks/Table'
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 import { classNames } from '@standardnotes/snjs'
-import { SUPER_TOGGLE_SEARCH } from '@standardnotes/ui-services'
+import { SUPER_TOGGLE_SEARCH, SUPER_TOGGLE_TOOLBAR } from '@standardnotes/ui-services'
 import { useApplication } from '@/Components/ApplicationProvider'
 import { GetRemoteImageBlock } from '../Blocks/RemoteImage'
 import { InsertRemoteImageDialog } from '../RemoteImagePlugin/RemoteImagePlugin'
@@ -430,9 +430,38 @@ const ToolbarPlugin = () => {
   }, [editor, isMobile])
 
   const isFocusInEditorOrToolbar = isInEditor || isInToolbar
-  const canShowToolbar = isMobile ? isFocusInEditorOrToolbar : true
+  const [isToolbarVisible, setIsToolbarVisible] = useState(true)
+  const canShowToolbar = isMobile ? isFocusInEditorOrToolbar : isToolbarVisible
 
   const toolbarStore = useToolbarStore()
+
+  useEffect(() => {
+    return application.keyboardService.addCommandHandler({
+      command: SUPER_TOGGLE_TOOLBAR,
+      onKeyDown: (event) => {
+        if (isMobile) {
+          return
+        }
+
+        event.preventDefault()
+
+        const isFocusInContainer = containerRef.current?.contains(document.activeElement)
+
+        if (!isToolbarVisible) {
+          setIsToolbarVisible(true)
+          toolbarStore.move(toolbarStore.first())
+          return
+        }
+
+        if (isFocusInContainer) {
+          setIsToolbarVisible(false)
+          editor.focus()
+        } else {
+          toolbarStore.move(toolbarStore.first())
+        }
+      },
+    })
+  }, [application.keyboardService, editor, isMobile, isToolbarVisible, toolbarStore])
 
   return (
     <>
