@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.177.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.176.0...@standardnotes/web@3.177.0) (2023-10-11)
+
+### Features
+
+* Added "New Note Defaults" options to Preferences > General ([91c2e0d](https://github.com/standardnotes/app/commit/91c2e0dce2a87e6b5e67c27274059f7d0dab8dfc))
+
 # [3.176.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.175.2...@standardnotes/web@3.176.0) (2023-10-11)
 
 ### Features
