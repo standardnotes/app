@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.13.0](https://github.com/standardnotes/app/compare/@standardnotes/icons@1.12.3...@standardnotes/icons@1.13.0) (2023-10-11)
+
+### Features
+
+* Full toolbar is now shown in Super notes on non-mobile screens instead of floating formatting toolbar. It can be focused or toggled using Ctrl/Cmd+Shift+K ([#2576](https://github.com/standardnotes/app/issues/2576)) ([dac6ec2](https://github.com/standardnotes/app/commit/dac6ec22f221416ce6473fe99a3efa3b64373d04))
+
 ## [1.12.3](https://github.com/standardnotes/app/compare/@standardnotes/icons@1.12.2...@standardnotes/icons@1.12.3) (2023-08-01)
 
 **Note:** Version bump only for package @standardnotes/icons

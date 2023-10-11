@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.176.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.175.2...@standardnotes/web@3.176.0) (2023-10-11)
+
+### Features
+
+* Full toolbar is now shown in Super notes on non-mobile screens instead of floating formatting toolbar. It can be focused or toggled using Ctrl/Cmd+Shift+K ([#2576](https://github.com/standardnotes/app/issues/2576)) ([dac6ec2](https://github.com/standardnotes/app/commit/dac6ec22f221416ce6473fe99a3efa3b64373d04))
+
 ## [3.175.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.175.1...@standardnotes/web@3.175.2) (2023-10-09)
 
 **Note:** Version bump only for package @standardnotes/web
