@@ -46,6 +46,7 @@ import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
 import { useSelectedTextFormatInfo } from './useSelectedTextFormatInfo'
 import StyledTooltip from '@/Components/StyledTooltip/StyledTooltip'
 import LinkTextEditor, { $isLinkTextNode } from './ToolbarLinkTextEditor'
+import { Toolbar, ToolbarItem, useToolbarStore } from '@ariakit/react'
 
 interface ToolbarButtonProps extends ComponentPropsWithoutRef<'button'> {
   name: string
@@ -59,8 +60,8 @@ const ToolbarButton = ({ name, active, iconName, onSelect, disabled, ...props }:
 
   return (
     <StyledTooltip showOnMobile showOnHover label={name}>
-      <button
-        className="flex select-none items-center justify-center rounded p-0.5 enabled:hover:bg-default disabled:opacity-50 md:border md:border-transparent enabled:hover:md:translucent-ui:border-[--popover-border-color]"
+      <ToolbarItem
+        className="flex select-none items-center justify-center rounded p-0.5 focus:shadow-none focus:outline-none enabled:hover:bg-default enabled:focus-visible:bg-default disabled:opacity-50 md:border md:border-transparent enabled:hover:md:translucent-ui:border-[--popover-border-color]"
         onMouseDown={(event) => {
           event.preventDefault()
           onSelect()
@@ -80,7 +81,7 @@ const ToolbarButton = ({ name, active, iconName, onSelect, disabled, ...props }:
         >
           <Icon type={iconName} size="medium" className="!text-current [&>path]:!text-current" />
         </div>
-      </button>
+      </ToolbarItem>
     </StyledTooltip>
   )
 }
@@ -431,6 +432,8 @@ const ToolbarPlugin = () => {
   const isFocusInEditorOrToolbar = isInEditor || isInToolbar
   const canShowToolbar = isMobile ? isFocusInEditorOrToolbar : true
 
+  const toolbarStore = useToolbarStore()
+
   return (
     <>
       {modal}
@@ -483,10 +486,10 @@ const ToolbarPlugin = () => {
           </>
         )}
         <div className="flex w-full flex-shrink-0 border-t border-border md:border-0">
-          <div
-            tabIndex={-1}
+          <Toolbar
             className="flex items-center gap-1 overflow-x-auto pl-1 [&::-webkit-scrollbar]:h-0"
             ref={toolbarRef}
+            store={toolbarStore}
           >
             {items.map((item) => {
               return (
@@ -500,7 +503,7 @@ const ToolbarPlugin = () => {
                 />
               )
             })}
-          </div>
+          </Toolbar>
           {isMobile && (
             <button
               className="flex flex-shrink-0 items-center justify-center rounded border-l border-border px-3 py-3"
