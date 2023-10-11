@@ -1,12 +1,11 @@
 import Icon from '@/Components/Icon/Icon'
-import { CloseIcon, CheckIcon, PencilFilledIcon, TrashFilledIcon } from '@standardnotes/icons'
 import { KeyboardKey } from '@standardnotes/ui-services'
-import { IconComponent } from '../../Lexical/Theme/IconComponent'
 import { sanitizeUrl } from '../../Lexical/Utils/sanitizeUrl'
 import { TOGGLE_LINK_COMMAND } from '@lexical/link'
 import { useCallback, useState, useRef, useEffect } from 'react'
 import { GridSelection, LexicalEditor, NodeSelection, RangeSelection } from 'lexical'
 import { classNames } from '@standardnotes/snjs'
+import StyledTooltip from '@/Components/StyledTooltip/StyledTooltip'
 
 type Props = {
   linkUrl: string
@@ -65,29 +64,27 @@ const LinkEditor = ({ linkUrl, isEditMode, setEditMode, editor, lastSelection, i
         }}
         className="flex-grow rounded-sm bg-contrast p-1 text-text sm:min-w-[40ch]"
       />
-      <button
-        className="flex rounded-lg p-3 hover:bg-contrast hover:text-text disabled:cursor-not-allowed"
-        onClick={() => {
-          setEditMode(false)
-          editor.focus()
-        }}
-        aria-label="Cancel editing link"
-        onMouseDown={(event) => event.preventDefault()}
-      >
-        <IconComponent size={15}>
-          <CloseIcon />
-        </IconComponent>
-      </button>
-      <button
-        className="flex rounded-lg p-3 hover:bg-contrast hover:text-text disabled:cursor-not-allowed"
-        onClick={handleLinkSubmission}
-        aria-label="Save link"
-        onMouseDown={(event) => event.preventDefault()}
-      >
-        <IconComponent size={15}>
-          <CheckIcon />
-        </IconComponent>
-      </button>
+      <StyledTooltip showOnMobile showOnHover label="Cancel editing">
+        <button
+          className="flex select-none items-center justify-center rounded p-2 enabled:hover:bg-default disabled:opacity-50 md:border md:border-transparent enabled:hover:md:translucent-ui:border-[--popover-border-color]"
+          onClick={() => {
+            setEditMode(false)
+            editor.focus()
+          }}
+          onMouseDown={(event) => event.preventDefault()}
+        >
+          <Icon type="close" size="medium" />
+        </button>
+      </StyledTooltip>
+      <StyledTooltip showOnMobile showOnHover label="Save link">
+        <button
+          className="flex select-none items-center justify-center rounded p-2 enabled:hover:bg-default disabled:opacity-50 md:border md:border-transparent enabled:hover:md:translucent-ui:border-[--popover-border-color]"
+          onClick={handleLinkSubmission}
+          onMouseDown={(event) => event.preventDefault()}
+        >
+          <Icon type="check" size="medium" />
+        </button>
+      </StyledTooltip>
     </div>
   ) : (
     <div className="flex items-center gap-1">
@@ -105,31 +102,29 @@ const LinkEditor = ({ linkUrl, isEditMode, setEditMode, editor, lastSelection, i
       </a>
       {!isAutoLink && (
         <>
-          <button
-            className="flex rounded-lg p-3 hover:bg-contrast hover:text-text disabled:cursor-not-allowed"
-            onClick={() => {
-              setEditedLinkUrl(linkUrl)
-              setEditMode(true)
-            }}
-            aria-label="Edit link"
-            onMouseDown={(event) => event.preventDefault()}
-          >
-            <IconComponent size={15}>
-              <PencilFilledIcon />
-            </IconComponent>
-          </button>
-          <button
-            className="flex rounded-lg p-3 hover:bg-contrast hover:text-text disabled:cursor-not-allowed"
-            onClick={() => {
-              editor.dispatchCommand(TOGGLE_LINK_COMMAND, null)
-            }}
-            aria-label="Remove link"
-            onMouseDown={(event) => event.preventDefault()}
-          >
-            <IconComponent size={15}>
-              <TrashFilledIcon />
-            </IconComponent>
-          </button>
+          <StyledTooltip showOnMobile showOnHover label="Edit link">
+            <button
+              className="flex select-none items-center justify-center rounded p-2 enabled:hover:bg-default disabled:opacity-50 md:border md:border-transparent enabled:hover:md:translucent-ui:border-[--popover-border-color]"
+              onClick={() => {
+                setEditedLinkUrl(linkUrl)
+                setEditMode(true)
+              }}
+              onMouseDown={(event) => event.preventDefault()}
+            >
+              <Icon type="pencil-filled" size="medium" />
+            </button>
+          </StyledTooltip>
+          <StyledTooltip showOnMobile showOnHover label="Remove link">
+            <button
+              className="flex select-none items-center justify-center rounded p-2 enabled:hover:bg-default disabled:opacity-50 md:border md:border-transparent enabled:hover:md:translucent-ui:border-[--popover-border-color]"
+              onClick={() => {
+                editor.dispatchCommand(TOGGLE_LINK_COMMAND, null)
+              }}
+              onMouseDown={(event) => event.preventDefault()}
+            >
+              <Icon type="trash-filled" size="medium" />
+            </button>
+          </StyledTooltip>
         </>
       )}
     </div>

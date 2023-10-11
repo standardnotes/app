@@ -44,7 +44,7 @@ import ReadonlyPlugin from './Plugins/ReadonlyPlugin/ReadonlyPlugin'
 import { SuperSearchContextProvider } from './Plugins/SearchPlugin/Context'
 import { SearchPlugin } from './Plugins/SearchPlugin/SearchPlugin'
 import ModalOverlay from '@/Components/Modal/ModalOverlay'
-import MobileToolbarPlugin from './Plugins/ToolbarPlugins/MobileToolbarPlugin'
+import ToolbarPlugin from './Plugins/ToolbarPlugin/ToolbarPlugin'
 import CodeOptionsPlugin from './Plugins/CodeOptionsPlugin/CodeOptions'
 import RemoteImagePlugin from './Plugins/RemoteImagePlugin/RemoteImagePlugin'
 import NotEntitledBanner from '../ComponentView/NotEntitledBanner'
@@ -250,7 +250,7 @@ export const SuperEditor: FunctionComponent<Props> = ({
                 <SuperSearchContextProvider>
                   <SearchPlugin />
                 </SuperSearchContextProvider>
-                <MobileToolbarPlugin />
+                <ToolbarPlugin />
                 <CodeOptionsPlugin />
                 <RemoteImagePlugin />
               </BlocksEditor>

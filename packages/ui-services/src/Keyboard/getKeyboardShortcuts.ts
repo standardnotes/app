@@ -30,6 +30,7 @@ import {
   SUPER_SEARCH_PREVIOUS_RESULT,
   SUPER_SEARCH_TOGGLE_REPLACE_MODE,
   CHANGE_EDITOR_WIDTH_COMMAND,
+  SUPER_TOGGLE_TOOLBAR,
 } from './KeyboardCommands'
 import { KeyboardKey } from './KeyboardKey'
 import { KeyboardModifier } from './KeyboardModifier'
@@ -146,6 +147,11 @@ export function getKeyboardShortcuts(platform: Platform, _environment: Environme
       key: 'p',
       modifiers: [primaryModifier, KeyboardModifier.Shift],
       preventDefault: true,
+    },
+    {
+      command: SUPER_TOGGLE_TOOLBAR,
+      key: 'k',
+      modifiers: [primaryModifier, KeyboardModifier.Shift],
     },
     {
       command: SUPER_TOGGLE_SEARCH,

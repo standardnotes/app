@@ -27,6 +27,7 @@ export const STAR_NOTE_COMMAND = createKeyboardCommand('STAR_NOTE_COMMAND')
 export const PIN_NOTE_COMMAND = createKeyboardCommand('PIN_NOTE_COMMAND')
 
 export const SUPER_TOGGLE_SEARCH = createKeyboardCommand('SUPER_TOGGLE_SEARCH')
+export const SUPER_TOGGLE_TOOLBAR = createKeyboardCommand('SUPER_TOGGLE_TOOLBAR')
 export const SUPER_SEARCH_TOGGLE_CASE_SENSITIVE = createKeyboardCommand('SUPER_SEARCH_TOGGLE_CASE_SENSITIVE')
 export const SUPER_SEARCH_TOGGLE_REPLACE_MODE = createKeyboardCommand('SUPER_SEARCH_TOGGLE_REPLACE_MODE')
 export const SUPER_SEARCH_NEXT_RESULT = createKeyboardCommand('SUPER_SEARCH_NEXT_RESULT')
