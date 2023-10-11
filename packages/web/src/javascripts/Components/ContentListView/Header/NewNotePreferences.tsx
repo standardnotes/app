@@ -194,7 +194,7 @@ const NewNotePreferences: FunctionComponent<Props> = ({
           <Dropdown
             disabled={disabled}
             fullWidth={true}
-            label="Select the default note type"
+            label="Select the format for the note title"
             items={NoteTitleFormatOptions}
             value={newNoteTitleFormat}
             onChange={setNewNoteTitleFormatChange}
@@ -207,7 +207,7 @@ const NewNotePreferences: FunctionComponent<Props> = ({
             <input
               disabled={disabled}
               className={classNames(
-                'w-full min-w-55 rounded border border-solid border-passive-3 bg-default md:translucent-ui:bg-transparent px-2 py-1.5 text-sm',
+                'w-full min-w-55 rounded border border-solid border-passive-3 bg-default px-2 py-1.5 text-sm md:translucent-ui:bg-transparent',
                 'focus-within:ring-2 focus-within:ring-info',
               )}
               placeholder="e.g. YYYY-MM-DD"

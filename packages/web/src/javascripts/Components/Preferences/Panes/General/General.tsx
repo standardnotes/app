@@ -10,6 +10,7 @@ import PreferencesPane from '../../PreferencesComponents/PreferencesPane'
 import Persistence from './Persistence'
 import SmartViews from './SmartViews/SmartViews'
 import Moments from './Moments'
+import NewNoteDefaults from './NewNoteDefaults'
 
 type Props = {
   application: WebApplication
@@ -20,6 +21,7 @@ const General: FunctionComponent<Props> = ({ application, extensionsLatestVersio
   <PreferencesPane>
     <Persistence application={application} />
     <Defaults application={application} />
+    <NewNoteDefaults />
     <Tools application={application} />
     <SmartViews application={application} featuresController={application.featuresController} />
     <Moments application={application} />
