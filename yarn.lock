@@ -4590,8 +4590,8 @@ __metadata:
     "@standardnotes/snjs": "workspace:*"
     "@standardnotes/web": "workspace:*"
     "@tsconfig/react-native": ^3.0.2
-    "@types/react": ^18.0.25
-    "@types/react-native": ^0.72.2
+    "@types/react": ^18.2.28
+    "@types/react-native": ^0.72.3
     "@typescript-eslint/eslint-plugin": "*"
     "@typescript-eslint/parser": "*"
     babel-jest: ^29.3.1
@@ -4614,7 +4614,7 @@ __metadata:
     react-native-keychain: "standardnotes/react-native-keychain#4fd687461cecfa26d482d820ee43c0de61b964d4"
     react-native-mmkv: ^2.6.2
     react-native-privacy-snapshot: "standardnotes/react-native-privacy-snapshot#653e904c90fc6f2b578da59138f2bfe5d7f942fe"
-    react-native-share: ^9.2.3
+    react-native-share: ^9.4.1
     react-native-version-info: ^1.1.1
     react-native-webview: 13.6.0
     typescript: "*"
@@ -5800,13 +5800,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-native@npm:^0.72.2":
-  version: 0.72.2
-  resolution: "@types/react-native@npm:0.72.2"
+"@types/react-native@npm:^0.72.3":
+  version: 0.72.3
+  resolution: "@types/react-native@npm:0.72.3"
   dependencies:
     "@react-native/virtualized-lists": ^0.72.4
     "@types/react": "*"
-  checksum: b2915594381365ea379cb46b9a65219c6b6c7446d97d15f4da9615b8f180972bacba7cae584f4a8f83cce3a180f8a9a08a9c6b57081b37e2543f23f5717693d4
+  checksum: f801ab3945dc4400f5ae6db6080d848748458929cc0085f5dc2f1252eccfe2fa38935a7e3b0f560da7bed11508e405442c6808f82e5fcdcaf55f707c18b7b11c
   languageName: node
   linkType: hard
 
@@ -5816,7 +5816,7 @@ __metadata:
   languageName: node
   linkType: soft
 
-"@types/react@npm:*, @types/react@npm:^18.0.25, @types/react@npm:^18.0.26":
+"@types/react@npm:*, @types/react@npm:^18.0.26":
   version: 18.2.17
   resolution: "@types/react@npm:18.2.17"
   dependencies:
@@ -5834,6 +5834,17 @@ __metadata:
     "@types/prop-types": "*"
     csstype: ^3.0.2
   checksum: a5198857165feddcbfc7d33e3322460ac62b8894d702414496a825b0c82272911ec33a42ef7c9d623a59308070eef4dfee6ff834b0674aa3f87eeb644196ee3b
+  languageName: node
+  linkType: hard
+
+"@types/react@npm:^18.2.28":
+  version: 18.2.28
+  resolution: "@types/react@npm:18.2.28"
+  dependencies:
+    "@types/prop-types": "*"
+    "@types/scheduler": "*"
+    csstype: ^3.0.2
+  checksum: 81381bedeba83278f4c9febb0b83e0bd3f42a25897a50b9cb36ef53651d34b3d50f87ebf11211ea57ea575131f85d31e93e496ce46478a00b0f9bf7b26b5917a
   languageName: node
   linkType: hard
 
@@ -19603,10 +19614,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-share@npm:^9.2.3":
-  version: 9.2.3
-  resolution: "react-native-share@npm:9.2.3"
-  checksum: 8794b63ef981580f747cded2b0e13246ac5fa1efdf70042a0fbe3228d16a4a9875971febcb788a796e118a99f73cc2a1c037a25e6e65eab3aba75282a7639a76
+"react-native-share@npm:^9.4.1":
+  version: 9.4.1
+  resolution: "react-native-share@npm:9.4.1"
+  checksum: 22b0f38b79bfa791b105c3c809ed0199d233c0ccddb5060546ade710767cab68812e5c9456ce858141dd0218bbbd946180c97e74132389996e00fdef4fbc355b
   languageName: node
   linkType: hard
 
