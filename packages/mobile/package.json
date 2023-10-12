@@ -70,5 +70,8 @@
   },
   "engines": {
     "node": ">=16"
+  },
+  "dependencies": {
+    "react-native-store-review": "^0.4.1"
   }
 }
