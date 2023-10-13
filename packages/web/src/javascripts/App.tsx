@@ -17,6 +17,7 @@ declare global {
     electronRemoteBridge?: unknown
     reactNativeDevice?: WebDevice
     platform?: Platform
+    isClipper?: boolean
 
     application?: WebApplication
     mainApplicationGroup?: WebApplicationGroup
@@ -26,7 +27,7 @@ declare global {
 
 import { disableIosTextFieldZoom, getPlatform } from '@/Utils'
 import { IsWebPlatform, WebAppVersion } from '@/Constants/Version'
-import { DesktopManagerInterface, Platform, SNLog } from '@standardnotes/snjs'
+import { DesktopManagerInterface, Environment, Platform, SNLog } from '@standardnotes/snjs'
 import ApplicationGroupView from './Components/ApplicationGroupView/ApplicationGroupView'
 import { WebDevice } from './Application/Device/WebDevice'
 import { StartApplication } from './Application/Device/StartApplication'
@@ -110,6 +111,9 @@ if (IsWebPlatform) {
 
   setTimeout(() => {
     const device = window.reactNativeDevice || new WebDevice(WebAppVersion)
+    if (window.isClipper) {
+      device.environment = Environment.Clipper
+    }
     window.platform = getPlatform(device)
 
     startApplication(window.defaultSyncServer, device, window.enabledUnfinishedFeatures, window.websocketUrl).catch(

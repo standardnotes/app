@@ -141,7 +141,9 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     void this.mobileWebReceiver
     void this.autolockService
     void this.persistence
-    void this.themeManager
+    if (this.environment !== Environment.Clipper) {
+      void this.themeManager
+    }
     void this.momentsService
     void this.routeService
 

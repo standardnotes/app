@@ -5,3 +5,4 @@ window.websocketUrl = 'wss://sockets.standardnotes.com'
 window.purchaseUrl = 'https://standardnotes.com/purchase'
 window.plansUrl = 'https://standardnotes.com/plans'
 window.dashboardUrl = 'https://standardnotes.com/dashboard'
+window.isClipper = true
