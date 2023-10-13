@@ -67,6 +67,7 @@ const PreferencesView: FunctionComponent<PreferencesProps> = ({ application, clo
             'flex w-full flex-row items-center justify-between border-b border-solid border-border bg-default px-3 pb-2 md:p-3',
             hasTopInset ? 'pt-safe-top' : 'pt-2',
           )}
+          data-preferences-header
         >
           <div className="hidden h-8 w-8 md:block" />
           <h1 className="text-base font-bold md:text-lg">Your preferences for Standard Notes</h1>

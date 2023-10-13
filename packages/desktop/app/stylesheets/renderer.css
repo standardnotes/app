@@ -21,10 +21,6 @@
   }
 }
 
-panel-resizer {
-  -webkit-app-region: no-drag;
-}
-
 #desktop-title-bar {
   -webkit-app-region: drag;
   padding: 0;
@@ -70,49 +66,19 @@ panel-resizer {
 }
 
 /* https://github.com/electron/electron/issues/37789 */
-.mac-desktop #navigation {
+.mac-desktop #navigation,
+.mac-desktop #navigation-content .section-title-bar .title,
+.mac-desktop #items-title-bar,
+.mac-desktop #editor-title-bar,
+.mac-desktop [data-preferences-header] {
   -webkit-app-region: drag;
 }
 
-.mac-desktop #navigation-content {
-  -webkit-app-region: no-drag;
-}
-
-.mac-desktop #navigation-content .section-title-bar .title {
-  -webkit-app-region: drag;
-}
-
-.mac-desktop #items-title-bar {
-  -webkit-app-region: drag;
-}
-
-.mac-desktop #items-title-bar input,
-.mac-desktop #items-title-bar button {
-  -webkit-app-region: no-drag;
-}
-
-.mac-desktop #editor-title-bar {
-  -webkit-app-region: drag;
-}
-
-.mac-desktop #editor-title-bar input,
-.mac-desktop #editor-title-bar button {
-  -webkit-app-region: no-drag;
-}
-
-.mac-desktop [data-dialog]::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 36px;
-  -webkit-app-region: drag;
-}
-
+button,
 input,
 #navigation #navigation-content,
-.panel-resizer {
+.panel-resizer,
+panel-resizer {
   -webkit-app-region: no-drag;
 }
 
