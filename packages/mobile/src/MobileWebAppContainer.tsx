@@ -13,6 +13,7 @@ import CustomAndroidWebView from './CustomAndroidWebView'
 import { MobileDevice, MobileDeviceEvent } from './Lib/MobileDevice'
 import { IsDev } from './Lib/Utils'
 import { ReceivedSharedItemsHandler } from './ReceivedSharedItemsHandler'
+import { ReviewService } from './ReviewService'
 
 const LoggingEnabled = IsDev
 
@@ -37,6 +38,7 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
     () => new MobileDevice(stateService, androidBackHandlerService, colorSchemeService),
     [androidBackHandlerService, colorSchemeService, stateService],
   )
+  const _reviewService = useRef(new ReviewService(device))
 
   const [showAndroidWebviewUpdatePrompt, setShowAndroidWebviewUpdatePrompt] = useState(false)
 
