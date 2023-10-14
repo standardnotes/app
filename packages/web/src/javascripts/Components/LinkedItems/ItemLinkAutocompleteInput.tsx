@@ -128,7 +128,7 @@ const ItemLinkAutocompleteInput = forwardRef(
             {shouldShowCreateTag && (
               <ComboboxItem
                 hideOnClick
-                as={Slot}
+                render={<Slot />}
                 onClick={() => {
                   void createAndAddNewTag(searchQuery)
                   combobox.setValue('')
