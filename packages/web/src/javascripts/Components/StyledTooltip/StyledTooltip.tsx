@@ -73,11 +73,10 @@ const StyledTooltip = ({
   return (
     <>
       <TooltipAnchor
-        ref={anchorRef}
         {...clickProps}
         onBlur={() => setForceOpen(undefined)}
         store={tooltip}
-        as={Slot}
+        render={<Slot ref={anchorRef} />}
         showOnHover={showOnHover}
       >
         {children}
