@@ -9,13 +9,17 @@ import {
   CAN_REDO_COMMAND,
   CAN_UNDO_COMMAND,
   COMMAND_PRIORITY_CRITICAL,
+  COMMAND_PRIORITY_LOW,
+  COMMAND_PRIORITY_NORMAL,
   FORMAT_TEXT_COMMAND,
   GridSelection,
+  KEY_MODIFIER_COMMAND,
   NodeSelection,
   REDO_COMMAND,
   RangeSelection,
   SELECTION_CHANGE_COMMAND,
   UNDO_COMMAND,
+  createCommand,
 } from 'lexical'
 import { mergeRegister } from '@lexical/utils'
 import { $isLinkNode, TOGGLE_LINK_COMMAND } from '@lexical/link'
@@ -42,11 +46,13 @@ import { useApplication } from '@/Components/ApplicationProvider'
 import { GetRemoteImageBlock } from '../Blocks/RemoteImage'
 import { InsertRemoteImageDialog } from '../RemoteImagePlugin/RemoteImagePlugin'
 import LinkEditor from './ToolbarLinkEditor'
-import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
+import { FOCUSABLE_BUT_NOT_TABBABLE, URL_REGEX } from '@/Constants/Constants'
 import { useSelectedTextFormatInfo } from './useSelectedTextFormatInfo'
 import StyledTooltip from '@/Components/StyledTooltip/StyledTooltip'
 import LinkTextEditor, { $isLinkTextNode } from './ToolbarLinkTextEditor'
 import { Toolbar, ToolbarItem, useToolbarStore } from '@ariakit/react'
+
+const TOGGLE_LINK_AND_EDIT_COMMAND = createCommand<string | null>('TOGGLE_LINK_AND_EDIT_COMMAND')
 
 interface ToolbarButtonProps extends ComponentPropsWithoutRef<'button'> {
   name: string
@@ -150,6 +156,55 @@ const ToolbarPlugin = () => {
           return false
         },
         COMMAND_PRIORITY_CRITICAL,
+      ),
+      editor.registerCommand(
+        TOGGLE_LINK_AND_EDIT_COMMAND,
+        (payload) => {
+          if (payload === null) {
+            return editor.dispatchCommand(TOGGLE_LINK_COMMAND, null)
+          } else if (typeof payload === 'string') {
+            const dispatched = editor.dispatchCommand(TOGGLE_LINK_COMMAND, payload)
+            setLinkUrl(payload)
+            setIsLinkEditMode(true)
+            return dispatched
+          }
+          return false
+        },
+        COMMAND_PRIORITY_LOW,
+      ),
+      editor.registerCommand(
+        KEY_MODIFIER_COMMAND,
+        (payload) => {
+          const event: KeyboardEvent = payload
+          const { code, ctrlKey, metaKey } = event
+
+          if (code === 'KeyK' && (ctrlKey || metaKey)) {
+            event.preventDefault()
+            if ('readText' in navigator.clipboard) {
+              navigator.clipboard
+                .readText()
+                .then((text) => {
+                  if (URL_REGEX.test(text)) {
+                    editor.dispatchCommand(TOGGLE_LINK_COMMAND, text)
+                  } else {
+                    throw new Error('Not a valid URL')
+                  }
+                })
+                .catch((error) => {
+                  console.error(error)
+                  editor.dispatchCommand(TOGGLE_LINK_AND_EDIT_COMMAND, '')
+                  setIsLinkEditMode(true)
+                })
+            } else {
+              editor.dispatchCommand(TOGGLE_LINK_AND_EDIT_COMMAND, '')
+              setIsLinkEditMode(true)
+            }
+            return true
+          }
+
+          return false
+        },
+        COMMAND_PRIORITY_NORMAL,
       ),
     )
   }, [editor])
