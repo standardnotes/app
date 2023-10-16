@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.177.5](https://github.com/standardnotes/app/compare/@standardnotes/web@3.177.4...@standardnotes/web@3.177.5) (2023-10-16)
+
+### Bug Fixes
+
+* Fixed issue where Ctrl/Cmd+K shortcut would not work in Super notes ([9c2153a](https://github.com/standardnotes/app/commit/9c2153a66f7fa8cf6254c5c603f362c2db2ead0e))
+
 ## [3.177.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.177.3...@standardnotes/web@3.177.4) (2023-10-16)
 
 **Note:** Version bump only for package @standardnotes/web
