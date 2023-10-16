@@ -11,7 +11,7 @@
   "dependencies": {
     "@nanostores/react": "^0.7.1",
     "@standardnotes/icons": "workspace:*",
-    "nanoid": "^4.0.0",
+    "nanoid": "^5.0.2",
     "nanostores": "^0.9.3",
     "react": "link:../web/node_modules/react",
     "react-dom": "link:../web/node_modules/react-dom"
