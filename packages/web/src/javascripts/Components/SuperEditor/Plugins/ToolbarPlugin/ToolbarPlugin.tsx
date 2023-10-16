@@ -22,7 +22,7 @@ import {
   createCommand,
 } from 'lexical'
 import { mergeRegister } from '@lexical/utils'
-import { $isLinkNode, TOGGLE_LINK_COMMAND } from '@lexical/link'
+import { $isLinkNode, $isAutoLinkNode, TOGGLE_LINK_COMMAND } from '@lexical/link'
 import { ComponentPropsWithoutRef, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { GetAlignmentBlocks } from '../Blocks/Alignment'
 import { GetBulletedListBlock } from '../Blocks/BulletedList'
@@ -47,12 +47,26 @@ import { GetRemoteImageBlock } from '../Blocks/RemoteImage'
 import { InsertRemoteImageDialog } from '../RemoteImagePlugin/RemoteImagePlugin'
 import LinkEditor from './ToolbarLinkEditor'
 import { FOCUSABLE_BUT_NOT_TABBABLE, URL_REGEX } from '@/Constants/Constants'
-import { useSelectedTextFormatInfo } from './useSelectedTextFormatInfo'
 import StyledTooltip from '@/Components/StyledTooltip/StyledTooltip'
 import LinkTextEditor, { $isLinkTextNode } from './ToolbarLinkTextEditor'
 import { Toolbar, ToolbarItem, useToolbarStore } from '@ariakit/react'
 
 const TOGGLE_LINK_AND_EDIT_COMMAND = createCommand<string | null>('TOGGLE_LINK_AND_EDIT_COMMAND')
+
+const blockTypeToBlockName = {
+  bullet: 'Bulleted List',
+  check: 'Check List',
+  code: 'Code Block',
+  h1: 'Heading 1',
+  h2: 'Heading 2',
+  h3: 'Heading 3',
+  h4: 'Heading 4',
+  h5: 'Heading 5',
+  h6: 'Heading 6',
+  number: 'Numbered List',
+  paragraph: 'Normal',
+  quote: 'Quote',
+}
 
 interface ToolbarButtonProps extends ComponentPropsWithoutRef<'button'> {
   name: string
@@ -123,19 +137,17 @@ const ToolbarPlugin = () => {
     }
   }, [editor])
 
-  const {
-    isBold,
-    isItalic,
-    isUnderline,
-    isSubscript,
-    isSuperscript,
-    isStrikethrough,
-    blockType,
-    isHighlighted,
-    isLink,
-    isLinkText,
-    isAutoLink,
-  } = useSelectedTextFormatInfo()
+  const [isLink, setIsLink] = useState(false)
+  const [isAutoLink, setIsAutoLink] = useState(false)
+  const [isLinkText, setIsLinkText] = useState(false)
+  const [isBold, setIsBold] = useState(false)
+  const [isItalic, setIsItalic] = useState(false)
+  const [isUnderline, setIsUnderline] = useState(false)
+  const [isHighlighted, setIsHighlighted] = useState(false)
+  const [isStrikethrough, setIsStrikethrough] = useState(false)
+  const [isSubscript, setIsSubscript] = useState(false)
+  const [isSuperscript, setIsSuperscript] = useState(false)
+  const [blockType, setBlockType] = useState<keyof typeof blockTypeToBlockName>('paragraph')
 
   const [canUndo, setCanUndo] = useState(false)
   const [canRedo, setCanRedo] = useState(false)
@@ -401,46 +413,62 @@ const ToolbarPlugin = () => {
   const [isLinkTextEditMode, setIsLinkTextEditMode] = useState(false)
   const [lastSelection, setLastSelection] = useState<RangeSelection | GridSelection | NodeSelection | null>(null)
 
-  const updateEditorSelection = useCallback(() => {
-    editor.getEditorState().read(() => {
-      const selection = $getSelection()
-      const nativeSelection = window.getSelection()
-      const activeElement = document.activeElement
-      const rootElement = editor.getRootElement()
+  const $updateEditorSelection = useCallback(() => {
+    const selection = $getSelection()
+    if (!$isRangeSelection(selection)) {
+      return
+    }
 
-      if (!$isRangeSelection(selection)) {
-        return
-      }
+    setIsBold(selection.hasFormat('bold'))
+    setIsItalic(selection.hasFormat('italic'))
+    setIsUnderline(selection.hasFormat('underline'))
+    setIsStrikethrough(selection.hasFormat('strikethrough'))
+    setIsSubscript(selection.hasFormat('subscript'))
+    setIsSuperscript(selection.hasFormat('superscript'))
+    setIsHighlighted(selection.hasFormat('highlight'))
 
-      const node = getSelectedNode(selection)
-      const parent = node.getParent()
-
+    const node = getSelectedNode(selection)
+    const parent = node.getParent()
+    if ($isLinkNode(parent) || $isLinkNode(node)) {
+      setIsLink(true)
       if ($isLinkNode(parent)) {
         setLinkUrl(parent.getURL())
       } else if ($isLinkNode(node)) {
         setLinkUrl(node.getURL())
-      } else {
-        setLinkUrl('')
       }
-      if ($isLinkTextNode(node, selection)) {
-        setLinkText(node.getTextContent())
-      } else {
-        setLinkText('')
-      }
+    } else {
+      setIsLink(false)
+      setLinkUrl('')
+    }
+    if ($isAutoLinkNode(parent) || $isAutoLinkNode(node)) {
+      setIsAutoLink(true)
+    } else {
+      setIsAutoLink(false)
+    }
+    if ($isLinkTextNode(node, selection)) {
+      setIsLinkText(true)
+      setLinkText(node.getTextContent())
+    } else {
+      setIsLinkText(false)
+      setLinkText('')
+    }
 
-      if (
-        selection !== null &&
-        nativeSelection !== null &&
-        rootElement !== null &&
-        rootElement.contains(nativeSelection.anchorNode)
-      ) {
-        setLastSelection(selection)
-      } else if (!activeElement || activeElement.id !== 'link-input') {
-        setLastSelection(null)
-        setIsLinkEditMode(false)
-        setLinkUrl('')
-      }
-    })
+    const nativeSelection = window.getSelection()
+    const activeElement = document.activeElement
+    const rootElement = editor.getRootElement()
+
+    if (
+      selection !== null &&
+      nativeSelection !== null &&
+      rootElement !== null &&
+      rootElement.contains(nativeSelection.anchorNode)
+    ) {
+      // setLastSelection(selection)
+    } else if (!activeElement || activeElement.id !== 'link-input') {
+      // setLastSelection(null)
+      setIsLinkEditMode(false)
+      setLinkUrl('')
+    }
   }, [editor])
 
   useEffect(() => {
@@ -448,16 +476,16 @@ const ToolbarPlugin = () => {
       editor.registerCommand(
         SELECTION_CHANGE_COMMAND,
         () => {
-          updateEditorSelection()
+          $updateEditorSelection()
           return false
         },
         COMMAND_PRIORITY_CRITICAL,
       ),
-      editor.registerUpdateListener(() => {
-        updateEditorSelection()
+      editor.registerUpdateListener(({ editorState }) => {
+        editorState.read($updateEditorSelection)
       }),
     )
-  }, [editor, updateEditorSelection])
+  }, [editor, $updateEditorSelection])
 
   useEffect(() => {
     const container = containerRef.current
