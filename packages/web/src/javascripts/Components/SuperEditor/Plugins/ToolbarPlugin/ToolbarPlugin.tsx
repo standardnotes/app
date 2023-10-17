@@ -366,6 +366,30 @@ const ToolbarPlugin = () => {
       },
     })
   }, [application.keyboardService, editor, isMobile, isToolbarVisible, toolbarStore])
+  useEffect(() => {
+    const container = containerRef.current
+    const rootElement = editor.getRootElement()
+
+    if (!container || !rootElement) {
+      return
+    }
+
+    const resizeObserver = new ResizeObserver(() => {
+      if (isMobile) {
+        return
+      }
+
+      const containerHeight = container.offsetHeight
+
+      rootElement.style.paddingBottom = containerHeight ? `${containerHeight + 16 * 2}px` : ''
+    })
+
+    resizeObserver.observe(container)
+
+    return () => {
+      resizeObserver.disconnect()
+    }
+  }, [editor, isMobile])
 
   return (
     <>
