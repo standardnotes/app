@@ -13,7 +13,6 @@ import { GetDividerBlockOption } from './Options/Divider'
 import { GetCollapsibleBlockOption } from './Options/Collapsible'
 import { GetDynamicPasswordBlocks, GetPasswordBlockOption } from './Options/Password'
 import { GetQuoteBlockOption } from './Options/Quote'
-import { GetAlignmentBlockOptions } from './Options/Alignment'
 import { GetCodeBlockOption } from './Options/Code'
 import { GetEmbedsBlockOptions } from './Options/Embeds'
 import { GetDynamicTableBlocks, GetTableBlockOption } from './Options/Table'
@@ -22,11 +21,17 @@ import { PopoverClassNames } from '../ClassNames'
 import { GetDatetimeBlockOptions } from './Options/DateTime'
 import { isMobileScreen } from '@/Utils'
 import { useApplication } from '@/Components/ApplicationProvider'
-import { GetIndentOutdentBlockOptions } from './Options/IndentOutdent'
 import { GetRemoteImageBlockOption } from './Options/RemoteImage'
 import { InsertRemoteImageDialog } from '../RemoteImagePlugin/RemoteImagePlugin'
 import { GetParagraphBlockOption } from '../Blocks/Paragraph'
 import { GetH1BlockOption, GetH2BlockOption, GetH3BlockOption } from '../Blocks/Headings'
+import { GetIndentBlockOption, GetOutdentBlockOption } from '../Blocks/IndentOutdent'
+import {
+  GetCenterAlignBlockOption,
+  GetJustifyAlignBlockOption,
+  GetLeftAlignBlockOption,
+  GetRightAlignBlockOption,
+} from '../Blocks/Alignment'
 
 export default function BlockPickerMenuPlugin(): JSX.Element {
   const [editor] = useLexicalComposerContext()
@@ -39,7 +44,9 @@ export default function BlockPickerMenuPlugin(): JSX.Element {
   })
 
   const options = useMemo(() => {
-    const indentOutdentOptions = application.isNativeMobileWeb() ? GetIndentOutdentBlockOptions(editor) : []
+    const indentOutdentOptions = application.isNativeMobileWeb()
+      ? [GetIndentBlockOption(editor), GetOutdentBlockOption(editor)]
+      : []
 
     const baseOptions = [
       GetParagraphBlockOption(editor),
@@ -60,7 +67,10 @@ export default function BlockPickerMenuPlugin(): JSX.Element {
       GetCodeBlockOption(editor),
       GetDividerBlockOption(editor),
       ...GetDatetimeBlockOptions(editor),
-      ...GetAlignmentBlockOptions(editor),
+      GetLeftAlignBlockOption(editor),
+      GetCenterAlignBlockOption(editor),
+      GetRightAlignBlockOption(editor),
+      GetJustifyAlignBlockOption(editor),
       GetPasswordBlockOption(editor),
       GetCollapsibleBlockOption(editor),
       ...GetEmbedsBlockOptions(editor),

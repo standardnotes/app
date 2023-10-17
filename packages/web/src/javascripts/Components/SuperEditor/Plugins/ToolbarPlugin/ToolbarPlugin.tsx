@@ -29,7 +29,13 @@ import { $isLinkNode, $isAutoLinkNode, TOGGLE_LINK_COMMAND } from '@lexical/link
 import { $isListNode, ListNode } from '@lexical/list'
 import { $isHeadingNode } from '@lexical/rich-text'
 import { ComponentPropsWithoutRef, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { GetAlignmentBlocks } from '../Blocks/Alignment'
+import {
+  CenterAlignBlock,
+  GetAlignmentBlocks,
+  JustifyAlignBlock,
+  LeftAlignBlock,
+  RightAlignBlock,
+} from '../Blocks/Alignment'
 import { GetBulletedListBlock } from '../Blocks/BulletedList'
 import { GetChecklistBlock } from '../Blocks/Checklist'
 import { GetCodeBlock } from '../Blocks/Code'
@@ -38,7 +44,7 @@ import { GetDatetimeBlocks } from '../Blocks/DateTime'
 import { GetDividerBlock } from '../Blocks/Divider'
 import { GetEmbedsBlocks } from '../Blocks/Embeds'
 import { GetHeadingsBlocks, H1Block, H2Block, H3Block } from '../Blocks/Headings'
-import { GetIndentOutdentBlocks } from '../Blocks/IndentOutdent'
+import { GetIndentOutdentBlocks, IndentBlock, OutdentBlock } from '../Blocks/IndentOutdent'
 import { GetNumberedListBlock } from '../Blocks/NumberedList'
 import { GetParagraphBlock, ParagraphBlock } from '../Blocks/Paragraph'
 import { GetPasswordBlock } from '../Blocks/Password'
@@ -392,6 +398,40 @@ const ToolbarPlugin = () => {
               iconName={H3Block.iconName}
               active={blockType === 'h3'}
               onSelect={() => H3Block.onSelect(editor)}
+            />
+            <ToolbarButton
+              name={IndentBlock.name}
+              iconName={IndentBlock.iconName}
+              onSelect={() => IndentBlock.onSelect(editor)}
+            />
+            <ToolbarButton
+              name={OutdentBlock.name}
+              iconName={OutdentBlock.iconName}
+              onSelect={() => OutdentBlock.onSelect(editor)}
+            />
+            <ToolbarButton
+              name={LeftAlignBlock.name}
+              iconName={LeftAlignBlock.iconName}
+              active={elementFormat === 'left'}
+              onSelect={() => LeftAlignBlock.onSelect(editor)}
+            />
+            <ToolbarButton
+              name={CenterAlignBlock.name}
+              iconName={CenterAlignBlock.iconName}
+              active={elementFormat === 'center'}
+              onSelect={() => CenterAlignBlock.onSelect(editor)}
+            />
+            <ToolbarButton
+              name={RightAlignBlock.name}
+              iconName={RightAlignBlock.iconName}
+              active={elementFormat === 'right'}
+              onSelect={() => RightAlignBlock.onSelect(editor)}
+            />
+            <ToolbarButton
+              name={JustifyAlignBlock.name}
+              iconName={JustifyAlignBlock.iconName}
+              active={elementFormat === 'justify'}
+              onSelect={() => JustifyAlignBlock.onSelect(editor)}
             />
           </Toolbar>
           {isMobile && (
