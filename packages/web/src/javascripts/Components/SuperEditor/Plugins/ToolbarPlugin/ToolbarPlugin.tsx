@@ -75,7 +75,7 @@ const ToolbarButton = ({ name, active, iconName, onSelect, disabled, ...props }:
   const [editor] = useLexicalComposerContext()
 
   return (
-    <StyledTooltip showOnMobile showOnHover label={name}>
+    <StyledTooltip showOnMobile showOnHover label={name} side="top">
       <ToolbarItem
         className="flex select-none items-center justify-center rounded p-0.5 focus:shadow-none focus:outline-none enabled:hover:bg-default enabled:focus-visible:bg-default disabled:opacity-50 md:border md:border-transparent enabled:hover:md:translucent-ui:border-[--popover-border-color]"
         onMouseDown={(event) => {
