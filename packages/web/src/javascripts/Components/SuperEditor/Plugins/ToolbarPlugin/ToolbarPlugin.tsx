@@ -36,7 +36,7 @@ import {
   LeftAlignBlock,
   RightAlignBlock,
 } from '../Blocks/Alignment'
-import { GetBulletedListBlock } from '../Blocks/BulletedList'
+import { BulletedListBlock, ChecklistBlock, GetBulletedListBlock, NumberedListBlock } from '../Blocks/List'
 import { GetChecklistBlock } from '../Blocks/Checklist'
 import { GetCodeBlock } from '../Blocks/Code'
 import { GetCollapsibleBlock } from '../Blocks/Collapsible'
@@ -432,6 +432,24 @@ const ToolbarPlugin = () => {
               iconName={JustifyAlignBlock.iconName}
               active={elementFormat === 'justify'}
               onSelect={() => JustifyAlignBlock.onSelect(editor)}
+            />
+            <ToolbarButton
+              name={BulletedListBlock.name}
+              iconName={BulletedListBlock.iconName}
+              active={blockType === 'bullet'}
+              onSelect={() => BulletedListBlock.onSelect(editor)}
+            />
+            <ToolbarButton
+              name={NumberedListBlock.name}
+              iconName={NumberedListBlock.iconName}
+              active={blockType === 'number'}
+              onSelect={() => NumberedListBlock.onSelect(editor)}
+            />
+            <ToolbarButton
+              name={ChecklistBlock.name}
+              iconName={ChecklistBlock.iconName}
+              active={blockType === 'check'}
+              onSelect={() => ChecklistBlock.onSelect(editor)}
             />
           </Toolbar>
           {isMobile && (

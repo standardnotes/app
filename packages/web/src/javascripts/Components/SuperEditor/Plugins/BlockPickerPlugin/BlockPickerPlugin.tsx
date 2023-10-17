@@ -6,9 +6,6 @@ import useModal from '../../Lexical/Hooks/useModal'
 import { InsertTableDialog } from '../../Plugins/TablePlugin'
 import { BlockPickerOption } from './BlockPickerOption'
 import { BlockPickerMenuItem } from './BlockPickerMenuItem'
-import { GetNumberedListBlockOption } from './Options/NumberedList'
-import { GetBulletedListBlockOption } from './Options/BulletedList'
-import { GetChecklistBlockOption } from './Options/Checklist'
 import { GetDividerBlockOption } from './Options/Divider'
 import { GetCollapsibleBlockOption } from './Options/Collapsible'
 import { GetDynamicPasswordBlocks, GetPasswordBlockOption } from './Options/Password'
@@ -32,6 +29,7 @@ import {
   GetLeftAlignBlockOption,
   GetRightAlignBlockOption,
 } from '../Blocks/Alignment'
+import { GetNumberedListBlockOption, GetBulletedListBlockOption, GetChecklistBlockOption } from '../Blocks/List'
 
 export default function BlockPickerMenuPlugin(): JSX.Element {
   const [editor] = useLexicalComposerContext()
