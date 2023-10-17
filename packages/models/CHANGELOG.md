@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.47.23](https://github.com/standardnotes/app/compare/@standardnotes/models@1.47.22...@standardnotes/models@1.47.23) (2023-10-17)
+
+### Bug Fixes
+
+* Fixed performance regression in Super notes and improved toolbar ([#2590](https://github.com/standardnotes/app/issues/2590)) ([9e35e2e](https://github.com/standardnotes/app/commit/9e35e2ecebfd43c135d1e480e0c0e4c9d0ef39d9))
+
 ## [1.47.22](https://github.com/standardnotes/app/compare/@standardnotes/models@1.47.21...@standardnotes/models@1.47.22) (2023-10-09)
 
 **Note:** Version bump only for package @standardnotes/models
