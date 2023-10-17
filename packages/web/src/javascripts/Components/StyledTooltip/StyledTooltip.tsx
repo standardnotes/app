@@ -6,6 +6,8 @@ import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/u
 import { getPositionedPopoverStyles } from '../Popover/GetPositionedPopoverStyles'
 import { getAdjustedStylesForNonPortalPopover } from '../Popover/Utils/getAdjustedStylesForNonPortal'
 import { useLongPressEvent } from '@/Hooks/useLongPress'
+import { PopoverSide } from '../Popover/Types'
+import { getScrollParent } from '@/Utils'
 
 const StyledTooltip = ({
   children,
@@ -15,6 +17,7 @@ const StyledTooltip = ({
   showOnHover = true,
   interactive = false,
   type = 'label',
+  side,
   ...props
 }: {
   children: ReactNode
@@ -24,6 +27,7 @@ const StyledTooltip = ({
   showOnHover?: boolean
   interactive?: boolean
   type?: TooltipStoreProps['type']
+  side?: PopoverSide
 } & Partial<TooltipOptions>) => {
   const [forceOpen, setForceOpen] = useState<boolean | undefined>()
 
@@ -65,6 +69,27 @@ const StyledTooltip = ({
     : {
         onClick: () => setForceOpen(false),
       }
+
+  useEffect(() => {
+    const anchor = anchorRef.current
+    if (!anchor) {
+      return
+    }
+
+    const scrollParent = getScrollParent(anchor)
+    if (!scrollParent) {
+      return
+    }
+
+    const handleScroll = () => {
+      tooltip.hide()
+    }
+
+    scrollParent.addEventListener('scroll', handleScroll)
+    return () => {
+      scrollParent.removeEventListener('scroll', handleScroll)
+    }
+  }, [tooltip])
 
   if (isMobile && !showOnMobile) {
     return <>{children}</>
@@ -110,7 +135,7 @@ const StyledTooltip = ({
 
           const styles = getPositionedPopoverStyles({
             align: 'center',
-            side: 'bottom',
+            side: side || 'bottom',
             anchorRect,
             popoverRect,
             documentRect,

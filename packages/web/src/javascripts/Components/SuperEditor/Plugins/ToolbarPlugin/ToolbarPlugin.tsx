@@ -9,50 +9,60 @@ import {
   CAN_REDO_COMMAND,
   CAN_UNDO_COMMAND,
   COMMAND_PRIORITY_CRITICAL,
-  COMMAND_PRIORITY_LOW,
   COMMAND_PRIORITY_NORMAL,
   FORMAT_TEXT_COMMAND,
-  GridSelection,
   KEY_MODIFIER_COMMAND,
-  NodeSelection,
   REDO_COMMAND,
-  RangeSelection,
   SELECTION_CHANGE_COMMAND,
   UNDO_COMMAND,
   createCommand,
+  $isRootOrShadowRoot,
+  ElementFormatType,
+  $isElementNode,
+  COMMAND_PRIORITY_LOW,
 } from 'lexical'
-import { mergeRegister } from '@lexical/utils'
-import { $isLinkNode, TOGGLE_LINK_COMMAND } from '@lexical/link'
-import { ComponentPropsWithoutRef, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { GetAlignmentBlocks } from '../Blocks/Alignment'
-import { GetBulletedListBlock } from '../Blocks/BulletedList'
-import { GetChecklistBlock } from '../Blocks/Checklist'
-import { GetCodeBlock } from '../Blocks/Code'
-import { GetCollapsibleBlock } from '../Blocks/Collapsible'
-import { GetDatetimeBlocks } from '../Blocks/DateTime'
-import { GetDividerBlock } from '../Blocks/Divider'
-import { GetEmbedsBlocks } from '../Blocks/Embeds'
-import { GetHeadingsBlocks } from '../Blocks/Headings'
-import { GetIndentOutdentBlocks } from '../Blocks/IndentOutdent'
-import { GetNumberedListBlock } from '../Blocks/NumberedList'
-import { GetParagraphBlock } from '../Blocks/Paragraph'
-import { GetPasswordBlock } from '../Blocks/Password'
-import { GetQuoteBlock } from '../Blocks/Quote'
-import { GetTableBlock } from '../Blocks/Table'
+import { mergeRegister, $findMatchingParent, $getNearestNodeOfType } from '@lexical/utils'
+import { $isLinkNode, $isAutoLinkNode, TOGGLE_LINK_COMMAND } from '@lexical/link'
+import { $isListNode, ListNode } from '@lexical/list'
+import { $isHeadingNode } from '@lexical/rich-text'
+import { ComponentPropsWithoutRef, useCallback, useEffect, useRef, useState } from 'react'
+import { CenterAlignBlock, JustifyAlignBlock, LeftAlignBlock, RightAlignBlock } from '../Blocks/Alignment'
+import { BulletedListBlock, ChecklistBlock, NumberedListBlock } from '../Blocks/List'
+import { CodeBlock } from '../Blocks/Code'
+import { CollapsibleBlock } from '../Blocks/Collapsible'
+import { DividerBlock } from '../Blocks/Divider'
+import { H1Block, H2Block, H3Block } from '../Blocks/Headings'
+import { IndentBlock, OutdentBlock } from '../Blocks/IndentOutdent'
+import { ParagraphBlock } from '../Blocks/Paragraph'
+import { QuoteBlock } from '../Blocks/Quote'
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 import { classNames } from '@standardnotes/snjs'
 import { SUPER_TOGGLE_SEARCH, SUPER_TOGGLE_TOOLBAR } from '@standardnotes/ui-services'
 import { useApplication } from '@/Components/ApplicationProvider'
-import { GetRemoteImageBlock } from '../Blocks/RemoteImage'
 import { InsertRemoteImageDialog } from '../RemoteImagePlugin/RemoteImagePlugin'
+import StyledTooltip from '@/Components/StyledTooltip/StyledTooltip'
+import { Toolbar, ToolbarItem, useToolbarStore } from '@ariakit/react'
+import { PasswordBlock } from '../Blocks/Password'
 import LinkEditor from './ToolbarLinkEditor'
 import { FOCUSABLE_BUT_NOT_TABBABLE, URL_REGEX } from '@/Constants/Constants'
-import { useSelectedTextFormatInfo } from './useSelectedTextFormatInfo'
-import StyledTooltip from '@/Components/StyledTooltip/StyledTooltip'
 import LinkTextEditor, { $isLinkTextNode } from './ToolbarLinkTextEditor'
-import { Toolbar, ToolbarItem, useToolbarStore } from '@ariakit/react'
 
 const TOGGLE_LINK_AND_EDIT_COMMAND = createCommand<string | null>('TOGGLE_LINK_AND_EDIT_COMMAND')
+
+const blockTypeToBlockName = {
+  bullet: 'Bulleted List',
+  check: 'Check List',
+  code: 'Code Block',
+  h1: 'Heading 1',
+  h2: 'Heading 2',
+  h3: 'Heading 3',
+  h4: 'Heading 4',
+  h5: 'Heading 5',
+  h6: 'Heading 6',
+  number: 'Numbered List',
+  paragraph: 'Normal',
+  quote: 'Quote',
+}
 
 interface ToolbarButtonProps extends ComponentPropsWithoutRef<'button'> {
   name: string
@@ -65,7 +75,7 @@ const ToolbarButton = ({ name, active, iconName, onSelect, disabled, ...props }:
   const [editor] = useLexicalComposerContext()
 
   return (
-    <StyledTooltip showOnMobile showOnHover label={name}>
+    <StyledTooltip showOnMobile showOnHover label={name} side="top">
       <ToolbarItem
         className="flex select-none items-center justify-center rounded p-0.5 focus:shadow-none focus:outline-none enabled:hover:bg-default enabled:focus-visible:bg-default disabled:opacity-50 md:border md:border-transparent enabled:hover:md:translucent-ui:border-[--popover-border-color]"
         onMouseDown={(event) => {
@@ -94,54 +104,124 @@ const ToolbarButton = ({ name, active, iconName, onSelect, disabled, ...props }:
 
 const ToolbarPlugin = () => {
   const application = useApplication()
-  const [editor] = useLexicalComposerContext()
-  const [modal, showModal] = useModal()
-
-  const [isInEditor, setIsInEditor] = useState(false)
-  const [isInToolbar, setIsInToolbar] = useState(false)
   const isMobile = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
 
-  const containerRef = useRef<HTMLDivElement>(null)
-  const toolbarRef = useRef<HTMLDivElement>(null)
-  const linkEditorRef = useRef<HTMLDivElement>(null)
-  const backspaceButtonRef = useRef<HTMLButtonElement>(null)
+  const [modal, showModal] = useModal()
 
-  const insertLink = useCallback(() => {
-    const selection = $getSelection()
-    if (!$isRangeSelection(selection)) {
-      return
-    }
-    const node = getSelectedNode(selection)
-    const parent = node.getParent()
-    const isLink = $isLinkNode(parent) || $isLinkNode(node)
-    if (!isLink) {
-      editor.update(() => {
-        editor.dispatchCommand(TOGGLE_LINK_COMMAND, 'https://')
-      })
-    } else {
-      editor.dispatchCommand(TOGGLE_LINK_COMMAND, null)
-    }
-  }, [editor])
+  const [editor] = useLexicalComposerContext()
+  const [activeEditor, setActiveEditor] = useState(editor)
 
-  const {
-    isBold,
-    isItalic,
-    isUnderline,
-    isSubscript,
-    isSuperscript,
-    isStrikethrough,
-    blockType,
-    isHighlighted,
-    isLink,
-    isLinkText,
-    isAutoLink,
-  } = useSelectedTextFormatInfo()
+  const [blockType, setBlockType] = useState<keyof typeof blockTypeToBlockName>('paragraph')
+  const [elementFormat, setElementFormat] = useState<ElementFormatType>('left')
+
+  const [isBold, setIsBold] = useState(false)
+  const [isItalic, setIsItalic] = useState(false)
+  const [isUnderline, setIsUnderline] = useState(false)
+  const [isStrikethrough, setIsStrikethrough] = useState(false)
+  const [isSubscript, setIsSubscript] = useState(false)
+  const [isSuperscript, setIsSuperscript] = useState(false)
+  const [isCode, setIsCode] = useState(false)
+  const [isHighlight, setIsHighlight] = useState(false)
+
+  const [isLink, setIsLink] = useState(false)
+  const [isAutoLink, setIsAutoLink] = useState(false)
+  const [isLinkText, setIsLinkText] = useState(false)
+  const [isLinkEditMode, setIsLinkEditMode] = useState(false)
+  const [isLinkTextEditMode, setIsLinkTextEditMode] = useState(false)
+  const [linkText, setLinkText] = useState<string>('')
+  const [linkUrl, setLinkUrl] = useState<string>('')
 
   const [canUndo, setCanUndo] = useState(false)
   const [canRedo, setCanRedo] = useState(false)
+
+  const $updateToolbar = useCallback(() => {
+    const selection = $getSelection()
+    if ($isRangeSelection(selection)) {
+      const anchorNode = selection.anchor.getNode()
+      let element =
+        anchorNode.getKey() === 'root'
+          ? anchorNode
+          : $findMatchingParent(anchorNode, (e) => {
+              const parent = e.getParent()
+              return parent !== null && $isRootOrShadowRoot(parent)
+            })
+
+      if (element === null) {
+        element = anchorNode.getTopLevelElementOrThrow()
+      }
+
+      const elementKey = element.getKey()
+      const elementDOM = activeEditor.getElementByKey(elementKey)
+
+      // Update text format
+      setIsBold(selection.hasFormat('bold'))
+      setIsItalic(selection.hasFormat('italic'))
+      setIsUnderline(selection.hasFormat('underline'))
+      setIsStrikethrough(selection.hasFormat('strikethrough'))
+      setIsSubscript(selection.hasFormat('subscript'))
+      setIsSuperscript(selection.hasFormat('superscript'))
+      setIsCode(selection.hasFormat('code'))
+      setIsHighlight(selection.hasFormat('highlight'))
+
+      // Update links
+      const node = getSelectedNode(selection)
+      const parent = node.getParent()
+      if ($isLinkNode(parent) || $isLinkNode(node)) {
+        setIsLink(true)
+      } else {
+        setIsLink(false)
+      }
+      setLinkUrl($isLinkNode(parent) ? parent.getURL() : $isLinkNode(node) ? node.getURL() : '')
+      if ($isAutoLinkNode(parent) || $isAutoLinkNode(node)) {
+        setIsAutoLink(true)
+      } else {
+        setIsAutoLink(false)
+      }
+      if ($isLinkTextNode(node, selection)) {
+        setIsLinkText(true)
+        setLinkText(node.getTextContent())
+      } else {
+        setIsLinkText(false)
+        setLinkText('')
+      }
+
+      if (elementDOM !== null) {
+        if ($isListNode(element)) {
+          const parentList = $getNearestNodeOfType<ListNode>(anchorNode, ListNode)
+          const type = parentList ? parentList.getListType() : element.getListType()
+          setBlockType(type)
+        } else {
+          const type = $isHeadingNode(element) ? element.getTag() : element.getType()
+          if (type in blockTypeToBlockName) {
+            setBlockType(type as keyof typeof blockTypeToBlockName)
+          }
+        }
+      }
+
+      setElementFormat(($isElementNode(node) ? node.getFormatType() : parent?.getFormatType()) || 'left')
+    }
+  }, [activeEditor])
+
+  useEffect(() => {
+    return editor.registerCommand(
+      SELECTION_CHANGE_COMMAND,
+      (_payload, newEditor) => {
+        $updateToolbar()
+        setActiveEditor(newEditor)
+        return false
+      },
+      COMMAND_PRIORITY_CRITICAL,
+    )
+  }, [editor, $updateToolbar])
+
   useEffect(() => {
     return mergeRegister(
-      editor.registerCommand<boolean>(
+      activeEditor.registerUpdateListener(({ editorState }) => {
+        editorState.read(() => {
+          $updateToolbar()
+        })
+      }),
+      activeEditor.registerCommand<boolean>(
         CAN_UNDO_COMMAND,
         (payload) => {
           setCanUndo(payload)
@@ -149,7 +229,7 @@ const ToolbarPlugin = () => {
         },
         COMMAND_PRIORITY_CRITICAL,
       ),
-      editor.registerCommand<boolean>(
+      activeEditor.registerCommand<boolean>(
         CAN_REDO_COMMAND,
         (payload) => {
           setCanRedo(payload)
@@ -157,7 +237,7 @@ const ToolbarPlugin = () => {
         },
         COMMAND_PRIORITY_CRITICAL,
       ),
-      editor.registerCommand(
+      activeEditor.registerCommand(
         TOGGLE_LINK_AND_EDIT_COMMAND,
         (payload) => {
           if (payload === null) {
@@ -172,180 +252,54 @@ const ToolbarPlugin = () => {
         },
         COMMAND_PRIORITY_LOW,
       ),
-      editor.registerCommand(
-        KEY_MODIFIER_COMMAND,
-        (payload) => {
-          const event: KeyboardEvent = payload
-          const { code, ctrlKey, metaKey } = event
-
-          if (code === 'KeyK' && (ctrlKey || metaKey)) {
-            event.preventDefault()
-            if ('readText' in navigator.clipboard) {
-              navigator.clipboard
-                .readText()
-                .then((text) => {
-                  if (URL_REGEX.test(text)) {
-                    editor.dispatchCommand(TOGGLE_LINK_COMMAND, text)
-                  } else {
-                    throw new Error('Not a valid URL')
-                  }
-                })
-                .catch((error) => {
-                  console.error(error)
-                  editor.dispatchCommand(TOGGLE_LINK_AND_EDIT_COMMAND, '')
-                  setIsLinkEditMode(true)
-                })
-            } else {
-              editor.dispatchCommand(TOGGLE_LINK_AND_EDIT_COMMAND, '')
-              setIsLinkEditMode(true)
-            }
-            return true
-          }
-
-          return false
-        },
-        COMMAND_PRIORITY_NORMAL,
-      ),
     )
-  }, [editor])
+  }, [$updateToolbar, activeEditor, editor])
 
-  const items = useMemo(
-    (): {
-      name: string
-      iconName: string
-      keywords?: string[]
-      active?: boolean
-      disabled?: boolean
-      onSelect: () => void
-    }[] => [
-      {
-        name: 'Undo',
-        iconName: 'undo',
-        disabled: !canUndo,
-        onSelect: () => {
-          editor.dispatchCommand(UNDO_COMMAND, undefined)
-        },
+  useEffect(() => {
+    return activeEditor.registerCommand(
+      KEY_MODIFIER_COMMAND,
+      (payload) => {
+        const event: KeyboardEvent = payload
+        const { code, ctrlKey, metaKey, shiftKey } = event
+
+        if (code === 'KeyK' && (ctrlKey || metaKey) && !shiftKey) {
+          event.preventDefault()
+          if ('readText' in navigator.clipboard) {
+            navigator.clipboard
+              .readText()
+              .then((text) => {
+                if (URL_REGEX.test(text)) {
+                  activeEditor.dispatchCommand(TOGGLE_LINK_COMMAND, text)
+                } else {
+                  throw new Error('Not a valid URL')
+                }
+              })
+              .catch((error) => {
+                console.error(error)
+                activeEditor.dispatchCommand(TOGGLE_LINK_AND_EDIT_COMMAND, '')
+                setIsLinkEditMode(true)
+              })
+          } else {
+            activeEditor.dispatchCommand(TOGGLE_LINK_AND_EDIT_COMMAND, '')
+            setIsLinkEditMode(true)
+          }
+          return true
+        }
+
+        return false
       },
-      {
-        name: 'Redo',
-        iconName: 'redo',
-        disabled: !canRedo,
-        onSelect: () => {
-          editor.dispatchCommand(REDO_COMMAND, undefined)
-        },
-      },
-      {
-        name: 'Bold',
-        iconName: 'bold',
-        onSelect: () => {
-          editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'bold')
-        },
-        active: isBold,
-      },
-      {
-        name: 'Italic',
-        iconName: 'italic',
-        onSelect: () => {
-          editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'italic')
-        },
-        active: isItalic,
-      },
-      {
-        name: 'Underline',
-        iconName: 'underline',
-        onSelect: () => {
-          editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'underline')
-        },
-        active: isUnderline,
-      },
-      {
-        name: 'Highlight',
-        iconName: 'draw',
-        onSelect: () => {
-          editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'highlight')
-        },
-        active: isHighlighted,
-      },
-      {
-        name: 'Strikethrough',
-        iconName: 'strikethrough',
-        onSelect: () => {
-          editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'strikethrough')
-        },
-        active: isStrikethrough,
-      },
-      {
-        name: 'Subscript',
-        iconName: 'subscript',
-        onSelect: () => {
-          editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'subscript')
-        },
-        active: isSubscript,
-      },
-      {
-        name: 'Superscript',
-        iconName: 'superscript',
-        onSelect: () => {
-          editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'superscript')
-        },
-        active: isSuperscript,
-      },
-      {
-        name: 'Link',
-        iconName: 'link',
-        onSelect: () => {
-          editor.update(() => {
-            insertLink()
-          })
-        },
-        active: isLink,
-      },
-      {
-        name: 'Search',
-        iconName: 'search',
-        onSelect: () => {
-          application.keyboardService.triggerCommand(SUPER_TOGGLE_SEARCH)
-        },
-      },
-      GetParagraphBlock(editor),
-      ...GetHeadingsBlocks(editor),
-      ...GetIndentOutdentBlocks(editor),
-      ...GetAlignmentBlocks(editor),
-      GetTableBlock(() =>
-        showModal('Insert Table', (onClose) => <InsertTableDialog activeEditor={editor} onClose={onClose} />),
-      ),
-      GetRemoteImageBlock(() => {
-        showModal('Insert image from URL', (onClose) => <InsertRemoteImageDialog onClose={onClose} />)
-      }),
-      GetNumberedListBlock(editor, blockType === 'number'),
-      GetBulletedListBlock(editor, blockType === 'bullet'),
-      GetChecklistBlock(editor),
-      GetQuoteBlock(editor),
-      GetCodeBlock(editor),
-      GetDividerBlock(editor),
-      ...GetDatetimeBlocks(editor),
-      ...[GetPasswordBlock(editor)],
-      GetCollapsibleBlock(editor),
-      ...GetEmbedsBlocks(editor),
-    ],
-    [
-      application.keyboardService,
-      blockType,
-      canRedo,
-      canUndo,
-      editor,
-      insertLink,
-      isBold,
-      isHighlighted,
-      isItalic,
-      isLink,
-      isStrikethrough,
-      isSubscript,
-      isSuperscript,
-      isUnderline,
-      showModal,
-    ],
-  )
+      COMMAND_PRIORITY_NORMAL,
+    )
+  }, [activeEditor, isLink])
+
+  const containerRef = useRef<HTMLDivElement>(null)
+  const dismissButtonRef = useRef<HTMLButtonElement>(null)
+
+  const [isFocusInEditor, setIsFocusInEditor] = useState(false)
+  const [isFocusInToolbar, setIsFocusInToolbar] = useState(false)
+  const isFocusInEditorOrToolbar = isFocusInEditor || isFocusInToolbar
+  const [isToolbarVisible, setIsToolbarVisible] = useState(true)
+  const canShowToolbar = isMobile ? isFocusInEditorOrToolbar : isToolbarVisible
 
   useEffect(() => {
     const container = containerRef.current
@@ -355,28 +309,18 @@ const ToolbarPlugin = () => {
       return
     }
 
-    const handleToolbarFocus = () => setIsInToolbar(true)
-    const handleToolbarBlur = (event: FocusEvent) => {
-      const elementToBeFocused = event.relatedTarget as Node
-      if (elementToBeFocused === backspaceButtonRef.current) {
-        return
-      }
-      setIsInToolbar(false)
-    }
+    const handleToolbarFocus = () => setIsFocusInToolbar(true)
+    const handleToolbarBlur = () => setIsFocusInToolbar(false)
 
-    const handleRootFocus = () => setIsInEditor(true)
+    const handleRootFocus = () => setIsFocusInEditor(true)
     const handleRootBlur = (event: FocusEvent) => {
       const elementToBeFocused = event.relatedTarget as Node
-
       const containerContainsElementToFocus = container?.contains(elementToBeFocused)
-
-      const willFocusBackspaceButton = backspaceButtonRef.current && elementToBeFocused === backspaceButtonRef.current
-
-      if (containerContainsElementToFocus || willFocusBackspaceButton) {
+      const willFocusDismissButton = dismissButtonRef.current === elementToBeFocused
+      if (containerContainsElementToFocus && !willFocusDismissButton) {
         return
       }
-
-      setIsInEditor(false)
+      setIsFocusInEditor(false)
     }
 
     rootElement.addEventListener('focus', handleRootFocus)
@@ -395,70 +339,33 @@ const ToolbarPlugin = () => {
     }
   }, [editor])
 
-  const [linkUrl, setLinkUrl] = useState('')
-  const [linkText, setLinkText] = useState('')
-  const [isLinkEditMode, setIsLinkEditMode] = useState(false)
-  const [isLinkTextEditMode, setIsLinkTextEditMode] = useState(false)
-  const [lastSelection, setLastSelection] = useState<RangeSelection | GridSelection | NodeSelection | null>(null)
-
-  const updateEditorSelection = useCallback(() => {
-    editor.getEditorState().read(() => {
-      const selection = $getSelection()
-      const nativeSelection = window.getSelection()
-      const activeElement = document.activeElement
-      const rootElement = editor.getRootElement()
-
-      if (!$isRangeSelection(selection)) {
-        return
-      }
-
-      const node = getSelectedNode(selection)
-      const parent = node.getParent()
-
-      if ($isLinkNode(parent)) {
-        setLinkUrl(parent.getURL())
-      } else if ($isLinkNode(node)) {
-        setLinkUrl(node.getURL())
-      } else {
-        setLinkUrl('')
-      }
-      if ($isLinkTextNode(node, selection)) {
-        setLinkText(node.getTextContent())
-      } else {
-        setLinkText('')
-      }
-
-      if (
-        selection !== null &&
-        nativeSelection !== null &&
-        rootElement !== null &&
-        rootElement.contains(nativeSelection.anchorNode)
-      ) {
-        setLastSelection(selection)
-      } else if (!activeElement || activeElement.id !== 'link-input') {
-        setLastSelection(null)
-        setIsLinkEditMode(false)
-        setLinkUrl('')
-      }
-    })
-  }, [editor])
-
+  const toolbarRef = useRef<HTMLDivElement>(null)
+  const toolbarStore = useToolbarStore()
   useEffect(() => {
-    return mergeRegister(
-      editor.registerCommand(
-        SELECTION_CHANGE_COMMAND,
-        () => {
-          updateEditorSelection()
-          return false
-        },
-        COMMAND_PRIORITY_CRITICAL,
-      ),
-      editor.registerUpdateListener(() => {
-        updateEditorSelection()
-      }),
-    )
-  }, [editor, updateEditorSelection])
+    return application.keyboardService.addCommandHandler({
+      command: SUPER_TOGGLE_TOOLBAR,
+      onKeyDown(event) {
+        if (isMobile) {
+          return
+        }
+        event.preventDefault()
 
+        if (!isToolbarVisible) {
+          setIsToolbarVisible(true)
+          toolbarStore.move(toolbarStore.first())
+          return
+        }
+
+        const isFocusInContainer = containerRef.current?.contains(document.activeElement)
+        if (isFocusInContainer) {
+          setIsToolbarVisible(false)
+          editor.focus()
+        } else {
+          toolbarStore.move(toolbarStore.first())
+        }
+      },
+    })
+  }, [application.keyboardService, editor, isMobile, isToolbarVisible, toolbarStore])
   useEffect(() => {
     const container = containerRef.current
     const rootElement = editor.getRootElement()
@@ -474,7 +381,7 @@ const ToolbarPlugin = () => {
 
       const containerHeight = container.offsetHeight
 
-      rootElement.style.paddingBottom = containerHeight ? `${containerHeight + 16 * 2}px` : ''
+      rootElement.style.paddingBottom = containerHeight ? `${containerHeight + 8}px` : ''
     })
 
     resizeObserver.observe(container)
@@ -484,47 +391,13 @@ const ToolbarPlugin = () => {
     }
   }, [editor, isMobile])
 
-  const isFocusInEditorOrToolbar = isInEditor || isInToolbar
-  const [isToolbarVisible, setIsToolbarVisible] = useState(true)
-  const canShowToolbar = isMobile ? isFocusInEditorOrToolbar : isToolbarVisible
-
-  const toolbarStore = useToolbarStore()
-
-  useEffect(() => {
-    return application.keyboardService.addCommandHandler({
-      command: SUPER_TOGGLE_TOOLBAR,
-      onKeyDown: (event) => {
-        if (isMobile) {
-          return
-        }
-
-        event.preventDefault()
-
-        const isFocusInContainer = containerRef.current?.contains(document.activeElement)
-
-        if (!isToolbarVisible) {
-          setIsToolbarVisible(true)
-          toolbarStore.move(toolbarStore.first())
-          return
-        }
-
-        if (isFocusInContainer) {
-          setIsToolbarVisible(false)
-          editor.focus()
-        } else {
-          toolbarStore.move(toolbarStore.first())
-        }
-      },
-    })
-  }, [application.keyboardService, editor, isMobile, isToolbarVisible, toolbarStore])
-
   return (
     <>
       {modal}
       <div
         className={classNames(
           'bg-contrast',
-          'md:absolute md:bottom-4 md:left-1/2 md:max-w-[60%] md:-translate-x-1/2 md:rounded-lg md:border md:border-border md:px-2 md:py-1 md:translucent-ui:border-[--popover-border-color] md:translucent-ui:bg-[--popover-background-color] md:translucent-ui:[backdrop-filter:var(--popover-backdrop-filter)]',
+          'md:absolute md:bottom-0 md:left-1/2 md:max-w-[60%] md:-translate-x-1/2 md:rounded-t-lg md:border md:border-b-0 md:border-border md:px-2 md:py-1 md:translucent-ui:border-[--popover-border-color] md:translucent-ui:bg-[--popover-background-color] md:translucent-ui:[backdrop-filter:var(--popover-backdrop-filter)]',
           !canShowToolbar ? 'hidden' : '',
         )}
         id="super-mobile-toolbar"
@@ -536,7 +409,6 @@ const ToolbarPlugin = () => {
               <LinkTextEditor
                 linkText={linkText}
                 editor={editor}
-                lastSelection={lastSelection}
                 isEditMode={isLinkTextEditMode}
                 setEditMode={setIsLinkTextEditMode}
               />
@@ -551,7 +423,6 @@ const ToolbarPlugin = () => {
           <>
             <div
               className="border-t border-border px-1 py-1 focus:shadow-none focus:outline-none md:border-0 md:px-0 md:py-0"
-              ref={linkEditorRef}
               tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
             >
               <LinkEditor
@@ -560,7 +431,6 @@ const ToolbarPlugin = () => {
                 setEditMode={setIsLinkEditMode}
                 isAutoLink={isAutoLink}
                 editor={editor}
-                lastSelection={lastSelection}
               />
             </div>
             <div
@@ -571,27 +441,199 @@ const ToolbarPlugin = () => {
         )}
         <div className="flex w-full flex-shrink-0 border-t border-border md:border-0">
           <Toolbar
-            className="flex items-center gap-1 overflow-x-auto pl-1 [&::-webkit-scrollbar]:h-0"
+            className="flex items-center gap-1 overflow-x-auto px-1 [&::-webkit-scrollbar]:h-0"
             ref={toolbarRef}
             store={toolbarStore}
           >
-            {items.map((item) => {
-              return (
-                <ToolbarButton
-                  name={item.name}
-                  iconName={item.iconName}
-                  active={item.active}
-                  disabled={item.disabled}
-                  onSelect={item.onSelect}
-                  key={item.name}
-                />
-              )
-            })}
+            <ToolbarButton
+              name="Undo"
+              iconName="undo"
+              disabled={!canUndo}
+              onSelect={() => editor.dispatchCommand(UNDO_COMMAND, undefined)}
+            />
+            <ToolbarButton
+              name="Redo"
+              iconName="redo"
+              disabled={!canRedo}
+              onSelect={() => editor.dispatchCommand(REDO_COMMAND, undefined)}
+            />
+            <ToolbarButton
+              name="Bold"
+              iconName="bold"
+              active={isBold}
+              onSelect={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'bold')}
+            />
+            <ToolbarButton
+              name="Italic"
+              iconName="italic"
+              active={isItalic}
+              onSelect={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'italic')}
+            />
+            <ToolbarButton
+              name="Underline"
+              iconName="underline"
+              active={isUnderline}
+              onSelect={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'underline')}
+            />
+            <ToolbarButton
+              name="Highlight"
+              iconName="draw"
+              active={isHighlight}
+              onSelect={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'highlight')}
+            />
+            <ToolbarButton name="Link" iconName="link" active={isLink} onSelect={() => {}} />
+            <ToolbarButton
+              name="Strikethrough"
+              iconName="strikethrough"
+              active={isStrikethrough}
+              onSelect={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'strikethrough')}
+            />
+            <ToolbarButton
+              name="Subscript"
+              iconName="subscript"
+              active={isSubscript}
+              onSelect={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'subscript')}
+            />
+            <ToolbarButton
+              name="Superscript"
+              iconName="superscript"
+              active={isSuperscript}
+              onSelect={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'superscript')}
+            />
+            <ToolbarButton
+              name="Inline Code"
+              iconName="code-tags"
+              active={isCode}
+              onSelect={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'code')}
+            />
+            <ToolbarButton
+              name="Search"
+              iconName="search"
+              onSelect={() => application.keyboardService.triggerCommand(SUPER_TOGGLE_SEARCH)}
+            />
+            <ToolbarButton
+              name={ParagraphBlock.name}
+              iconName={ParagraphBlock.iconName}
+              active={blockType === 'paragraph'}
+              onSelect={() => ParagraphBlock.onSelect(editor)}
+            />
+            <ToolbarButton
+              name={H1Block.name}
+              iconName={H1Block.iconName}
+              active={blockType === 'h1'}
+              onSelect={() => H1Block.onSelect(editor)}
+            />
+            <ToolbarButton
+              name={H2Block.name}
+              iconName={H2Block.iconName}
+              active={blockType === 'h2'}
+              onSelect={() => H2Block.onSelect(editor)}
+            />
+            <ToolbarButton
+              name={H3Block.name}
+              iconName={H3Block.iconName}
+              active={blockType === 'h3'}
+              onSelect={() => H3Block.onSelect(editor)}
+            />
+            <ToolbarButton
+              name={IndentBlock.name}
+              iconName={IndentBlock.iconName}
+              onSelect={() => IndentBlock.onSelect(editor)}
+            />
+            <ToolbarButton
+              name={OutdentBlock.name}
+              iconName={OutdentBlock.iconName}
+              onSelect={() => OutdentBlock.onSelect(editor)}
+            />
+            <ToolbarButton
+              name={LeftAlignBlock.name}
+              iconName={LeftAlignBlock.iconName}
+              active={elementFormat === 'left'}
+              onSelect={() => LeftAlignBlock.onSelect(editor)}
+            />
+            <ToolbarButton
+              name={CenterAlignBlock.name}
+              iconName={CenterAlignBlock.iconName}
+              active={elementFormat === 'center'}
+              onSelect={() => CenterAlignBlock.onSelect(editor)}
+            />
+            <ToolbarButton
+              name={RightAlignBlock.name}
+              iconName={RightAlignBlock.iconName}
+              active={elementFormat === 'right'}
+              onSelect={() => RightAlignBlock.onSelect(editor)}
+            />
+            <ToolbarButton
+              name={JustifyAlignBlock.name}
+              iconName={JustifyAlignBlock.iconName}
+              active={elementFormat === 'justify'}
+              onSelect={() => JustifyAlignBlock.onSelect(editor)}
+            />
+            <ToolbarButton
+              name={BulletedListBlock.name}
+              iconName={BulletedListBlock.iconName}
+              active={blockType === 'bullet'}
+              onSelect={() => BulletedListBlock.onSelect(editor)}
+            />
+            <ToolbarButton
+              name={NumberedListBlock.name}
+              iconName={NumberedListBlock.iconName}
+              active={blockType === 'number'}
+              onSelect={() => NumberedListBlock.onSelect(editor)}
+            />
+            <ToolbarButton
+              name={ChecklistBlock.name}
+              iconName={ChecklistBlock.iconName}
+              active={blockType === 'check'}
+              onSelect={() => ChecklistBlock.onSelect(editor)}
+            />
+            <ToolbarButton
+              name="Table"
+              iconName="table"
+              onSelect={() =>
+                showModal('Insert Table', (onClose) => <InsertTableDialog activeEditor={editor} onClose={onClose} />)
+              }
+            />
+            <ToolbarButton
+              name="Image from URL"
+              iconName="image"
+              onSelect={() =>
+                showModal('Insert image from URL', (onClose) => <InsertRemoteImageDialog onClose={onClose} />)
+              }
+            />
+            <ToolbarButton
+              name={CodeBlock.name}
+              iconName={CodeBlock.iconName}
+              active={blockType === 'code'}
+              onSelect={() => CodeBlock.onSelect(editor)}
+            />
+            <ToolbarButton
+              name={QuoteBlock.name}
+              iconName={QuoteBlock.iconName}
+              active={blockType === 'quote'}
+              onSelect={() => QuoteBlock.onSelect(editor)}
+            />
+            <ToolbarButton
+              name={DividerBlock.name}
+              iconName={DividerBlock.iconName}
+              onSelect={() => DividerBlock.onSelect(editor)}
+            />
+            <ToolbarButton
+              name={CollapsibleBlock.name}
+              iconName={CollapsibleBlock.iconName}
+              onSelect={() => CollapsibleBlock.onSelect(editor)}
+            />
+            <ToolbarButton
+              name={PasswordBlock.name}
+              iconName={PasswordBlock.iconName}
+              onSelect={() => PasswordBlock.onSelect(editor)}
+            />
           </Toolbar>
           {isMobile && (
             <button
               className="flex flex-shrink-0 items-center justify-center rounded border-l border-border px-3 py-3"
               aria-label="Dismiss keyboard"
+              ref={dismissButtonRef}
             >
               <Icon type="keyboard-close" size="medium" />
             </button>

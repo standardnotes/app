@@ -243,3 +243,15 @@ export const getBlobFromBase64 = (b64Data: string, contentType = '', sliceSize =
   const blob = new Blob(byteArrays, { type: contentType })
   return blob
 }
+
+export function getScrollParent(node: HTMLElement | null): HTMLElement | null {
+  if (!node) {
+    return null
+  }
+
+  if (node.scrollHeight > node.clientHeight || node.scrollWidth > node.clientWidth) {
+    return node
+  } else {
+    return getScrollParent(node.parentElement)
+  }
+}

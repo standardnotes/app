@@ -1,6 +1,6 @@
 import Icon from '@/Components/Icon/Icon'
 import { KeyboardKey } from '@standardnotes/ui-services'
-import { $isRangeSelection, $isTextNode, GridSelection, LexicalEditor, NodeSelection, RangeSelection } from 'lexical'
+import { $getSelection, $isRangeSelection, $isTextNode, LexicalEditor, RangeSelection } from 'lexical'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { VisuallyHidden } from '@ariakit/react'
 import { getSelectedNode } from '../../Lexical/Utils/getSelectedNode'
@@ -10,7 +10,6 @@ import StyledTooltip from '@/Components/StyledTooltip/StyledTooltip'
 type Props = {
   linkText: string
   editor: LexicalEditor
-  lastSelection: RangeSelection | GridSelection | NodeSelection | null
   isEditMode: boolean
   setEditMode: (isEditMode: boolean) => void
 }
@@ -20,7 +19,7 @@ export const $isLinkTextNode = (node: ReturnType<typeof getSelectedNode>, select
   return $isLinkNode(parent) && $isTextNode(node) && selection.anchor.getNode() === selection.focus.getNode()
 }
 
-const LinkTextEditor = ({ linkText, editor, isEditMode, setEditMode, lastSelection }: Props) => {
+const LinkTextEditor = ({ linkText, editor, isEditMode, setEditMode }: Props) => {
   const [editedLinkText, setEditedLinkText] = useState(() => linkText)
   const editModeContainer = useRef<HTMLDivElement>(null)
 
@@ -36,13 +35,15 @@ const LinkTextEditor = ({ linkText, editor, isEditMode, setEditMode, lastSelecti
 
   const handleLinkTextSubmission = () => {
     editor.update(() => {
-      if ($isRangeSelection(lastSelection)) {
-        const node = getSelectedNode(lastSelection)
-        if (!$isLinkTextNode(node, lastSelection)) {
-          return
-        }
-        node.setTextContent(editedLinkText)
+      const selection = $getSelection()
+      if (!$isRangeSelection(selection)) {
+        return
       }
+      const node = getSelectedNode(selection)
+      if (!$isLinkTextNode(node, selection)) {
+        return
+      }
+      node.setTextContent(editedLinkText)
     })
     setEditMode(false)
   }

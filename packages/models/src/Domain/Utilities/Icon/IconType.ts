@@ -189,3 +189,4 @@ export type IconType =
   | 'view'
   | 'warning'
   | 'window'
+  | 'details-block'

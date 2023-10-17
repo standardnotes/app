@@ -24,6 +24,8 @@ export const IconNameToSvgMapping = {
   'chevron-up': icons.ChevronUpIcon,
   'clear-circle-filled': icons.ClearCircleFilledIcon,
   'cloud-off': icons.CloudOffIcon,
+  'code-tags': icons.CodeTagsIcon,
+  'details-block': icons.DetailsBlockIcon,
   'diamond-filled': icons.DiamondFilledIcon,
   'email-filled': icons.EmailFilledIcon,
   'eye-off': icons.EyeOffIcon,

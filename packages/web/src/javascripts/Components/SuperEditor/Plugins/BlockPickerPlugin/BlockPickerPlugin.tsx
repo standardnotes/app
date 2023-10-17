@@ -6,27 +6,30 @@ import useModal from '../../Lexical/Hooks/useModal'
 import { InsertTableDialog } from '../../Plugins/TablePlugin'
 import { BlockPickerOption } from './BlockPickerOption'
 import { BlockPickerMenuItem } from './BlockPickerMenuItem'
-import { GetNumberedListBlockOption } from './Options/NumberedList'
-import { GetBulletedListBlockOption } from './Options/BulletedList'
-import { GetChecklistBlockOption } from './Options/Checklist'
-import { GetDividerBlockOption } from './Options/Divider'
-import { GetCollapsibleBlockOption } from './Options/Collapsible'
-import { GetDynamicPasswordBlocks, GetPasswordBlockOption } from './Options/Password'
-import { GetParagraphBlockOption } from './Options/Paragraph'
-import { GetHeadingsBlockOptions } from './Options/Headings'
-import { GetQuoteBlockOption } from './Options/Quote'
-import { GetAlignmentBlockOptions } from './Options/Alignment'
-import { GetCodeBlockOption } from './Options/Code'
-import { GetEmbedsBlockOptions } from './Options/Embeds'
-import { GetDynamicTableBlocks, GetTableBlockOption } from './Options/Table'
+import { GetDynamicPasswordBlocks, GetPasswordBlockOption } from '../Blocks/Password'
+import { GetDynamicTableBlocks, GetTableBlockOption } from '../Blocks/Table'
 import Popover from '@/Components/Popover/Popover'
 import { PopoverClassNames } from '../ClassNames'
-import { GetDatetimeBlockOptions } from './Options/DateTime'
+import { GetDatetimeBlockOptions } from '../Blocks/DateTime'
 import { isMobileScreen } from '@/Utils'
 import { useApplication } from '@/Components/ApplicationProvider'
-import { GetIndentOutdentBlockOptions } from './Options/IndentOutdent'
-import { GetRemoteImageBlockOption } from './Options/RemoteImage'
+import { GetRemoteImageBlockOption } from '../Blocks/RemoteImage'
 import { InsertRemoteImageDialog } from '../RemoteImagePlugin/RemoteImagePlugin'
+import { GetParagraphBlockOption } from '../Blocks/Paragraph'
+import { GetH1BlockOption, GetH2BlockOption, GetH3BlockOption } from '../Blocks/Headings'
+import { GetIndentBlockOption, GetOutdentBlockOption } from '../Blocks/IndentOutdent'
+import {
+  GetCenterAlignBlockOption,
+  GetJustifyAlignBlockOption,
+  GetLeftAlignBlockOption,
+  GetRightAlignBlockOption,
+} from '../Blocks/Alignment'
+import { GetNumberedListBlockOption, GetBulletedListBlockOption, GetChecklistBlockOption } from '../Blocks/List'
+import { GetCodeBlockOption } from '../Blocks/Code'
+import { GetQuoteBlockOption } from '../Blocks/Quote'
+import { GetDividerBlockOption } from '../Blocks/Divider'
+import { GetCollapsibleBlockOption } from '../Blocks/Collapsible'
+import { GetEmbedsBlockOptions } from '../Blocks/Embeds'
 
 export default function BlockPickerMenuPlugin(): JSX.Element {
   const [editor] = useLexicalComposerContext()
@@ -39,11 +42,15 @@ export default function BlockPickerMenuPlugin(): JSX.Element {
   })
 
   const options = useMemo(() => {
-    const indentOutdentOptions = application.isNativeMobileWeb() ? GetIndentOutdentBlockOptions(editor) : []
+    const indentOutdentOptions = application.isNativeMobileWeb()
+      ? [GetIndentBlockOption(editor), GetOutdentBlockOption(editor)]
+      : []
 
     const baseOptions = [
       GetParagraphBlockOption(editor),
-      ...GetHeadingsBlockOptions(editor),
+      GetH1BlockOption(editor),
+      GetH2BlockOption(editor),
+      GetH3BlockOption(editor),
       ...indentOutdentOptions,
       GetTableBlockOption(() =>
         showModal('Insert Table', (onClose) => <InsertTableDialog activeEditor={editor} onClose={onClose} />),
@@ -58,7 +65,10 @@ export default function BlockPickerMenuPlugin(): JSX.Element {
       GetCodeBlockOption(editor),
       GetDividerBlockOption(editor),
       ...GetDatetimeBlockOptions(editor),
-      ...GetAlignmentBlockOptions(editor),
+      GetLeftAlignBlockOption(editor),
+      GetCenterAlignBlockOption(editor),
+      GetRightAlignBlockOption(editor),
+      GetJustifyAlignBlockOption(editor),
       GetPasswordBlockOption(editor),
       GetCollapsibleBlockOption(editor),
       ...GetEmbedsBlockOptions(editor),
