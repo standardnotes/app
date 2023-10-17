@@ -19,6 +19,7 @@ import {
   $isRootOrShadowRoot,
   ElementFormatType,
   $isElementNode,
+  COMMAND_PRIORITY_LOW,
 } from 'lexical'
 import { mergeRegister, $findMatchingParent, $getNearestNodeOfType } from '@lexical/utils'
 import { $isLinkNode, $isAutoLinkNode, TOGGLE_LINK_COMMAND } from '@lexical/link'
@@ -43,7 +44,7 @@ import StyledTooltip from '@/Components/StyledTooltip/StyledTooltip'
 import { Toolbar, ToolbarItem, useToolbarStore } from '@ariakit/react'
 import { PasswordBlock } from '../Blocks/Password'
 import LinkEditor from './ToolbarLinkEditor'
-import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
+import { FOCUSABLE_BUT_NOT_TABBABLE, URL_REGEX } from '@/Constants/Constants'
 import LinkTextEditor, { $isLinkTextNode } from './ToolbarLinkTextEditor'
 
 const TOGGLE_LINK_AND_EDIT_COMMAND = createCommand<string | null>('TOGGLE_LINK_AND_EDIT_COMMAND')
@@ -236,6 +237,21 @@ const ToolbarPlugin = () => {
         },
         COMMAND_PRIORITY_CRITICAL,
       ),
+      activeEditor.registerCommand(
+        TOGGLE_LINK_AND_EDIT_COMMAND,
+        (payload) => {
+          if (payload === null) {
+            return editor.dispatchCommand(TOGGLE_LINK_COMMAND, null)
+          } else if (typeof payload === 'string') {
+            const dispatched = editor.dispatchCommand(TOGGLE_LINK_COMMAND, payload)
+            setLinkUrl(payload)
+            setIsLinkEditMode(true)
+            return dispatched
+          }
+          return false
+        },
+        COMMAND_PRIORITY_LOW,
+      ),
     )
   }, [$updateToolbar, activeEditor, editor])
 
@@ -248,13 +264,28 @@ const ToolbarPlugin = () => {
 
         if (code === 'KeyK' && (ctrlKey || metaKey) && !shiftKey) {
           event.preventDefault()
-          if (!isLink) {
-            setIsLinkEditMode(true)
+          if ('readText' in navigator.clipboard) {
+            navigator.clipboard
+              .readText()
+              .then((text) => {
+                if (URL_REGEX.test(text)) {
+                  activeEditor.dispatchCommand(TOGGLE_LINK_COMMAND, text)
+                } else {
+                  throw new Error('Not a valid URL')
+                }
+              })
+              .catch((error) => {
+                console.error(error)
+                activeEditor.dispatchCommand(TOGGLE_LINK_AND_EDIT_COMMAND, '')
+                setIsLinkEditMode(true)
+              })
           } else {
-            setIsLinkEditMode(false)
+            activeEditor.dispatchCommand(TOGGLE_LINK_AND_EDIT_COMMAND, '')
+            setIsLinkEditMode(true)
           }
-          return activeEditor.dispatchCommand(TOGGLE_LINK_COMMAND, '')
+          return true
         }
+
         return false
       },
       COMMAND_PRIORITY_NORMAL,
