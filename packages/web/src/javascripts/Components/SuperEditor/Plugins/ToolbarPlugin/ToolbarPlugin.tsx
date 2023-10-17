@@ -698,7 +698,9 @@ const ToolbarPlugin = () => {
                         }
                         const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
                         domElement.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block: 'nearest' })
-                        editor.focus()
+                        if (isMobile) {
+                          editor.focus()
+                        }
                       })
                     }}
                   >
