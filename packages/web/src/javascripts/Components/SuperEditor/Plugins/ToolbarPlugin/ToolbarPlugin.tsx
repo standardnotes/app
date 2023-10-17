@@ -110,6 +110,7 @@ const ToolbarPlugin = () => {
 
   const [editor] = useLexicalComposerContext()
   const [activeEditor, setActiveEditor] = useState(editor)
+  const [isEditable, setIsEditable] = useState(() => editor.isEditable())
 
   const [blockType, setBlockType] = useState<keyof typeof blockTypeToBlockName>('paragraph')
   const [elementFormat, setElementFormat] = useState<ElementFormatType>('left')
@@ -203,14 +204,19 @@ const ToolbarPlugin = () => {
   }, [activeEditor])
 
   useEffect(() => {
-    return editor.registerCommand(
-      SELECTION_CHANGE_COMMAND,
-      (_payload, newEditor) => {
-        $updateToolbar()
-        setActiveEditor(newEditor)
-        return false
-      },
-      COMMAND_PRIORITY_CRITICAL,
+    return mergeRegister(
+      editor.registerEditableListener((editable) => {
+        setIsEditable(editable)
+      }),
+      editor.registerCommand(
+        SELECTION_CHANGE_COMMAND,
+        (_payload, newEditor) => {
+          $updateToolbar()
+          setActiveEditor(newEditor)
+          return false
+        },
+        COMMAND_PRIORITY_CRITICAL,
+      ),
     )
   }, [editor, $updateToolbar])
 
@@ -241,9 +247,9 @@ const ToolbarPlugin = () => {
         TOGGLE_LINK_AND_EDIT_COMMAND,
         (payload) => {
           if (payload === null) {
-            return editor.dispatchCommand(TOGGLE_LINK_COMMAND, null)
+            return activeEditor.dispatchCommand(TOGGLE_LINK_COMMAND, null)
           } else if (typeof payload === 'string') {
-            const dispatched = editor.dispatchCommand(TOGGLE_LINK_COMMAND, payload)
+            const dispatched = activeEditor.dispatchCommand(TOGGLE_LINK_COMMAND, payload)
             setLinkUrl(payload)
             setIsLinkEditMode(true)
             return dispatched
@@ -253,7 +259,7 @@ const ToolbarPlugin = () => {
         COMMAND_PRIORITY_LOW,
       ),
     )
-  }, [$updateToolbar, activeEditor, editor])
+  }, [$updateToolbar, activeEditor])
 
   useEffect(() => {
     return activeEditor.registerCommand(
@@ -398,7 +404,7 @@ const ToolbarPlugin = () => {
         className={classNames(
           'bg-contrast',
           'md:absolute md:bottom-0 md:left-1/2 md:max-w-[60%] md:-translate-x-1/2 md:rounded-t-lg md:border md:border-b-0 md:border-border md:px-2 md:py-1 md:translucent-ui:border-[--popover-border-color] md:translucent-ui:bg-[--popover-background-color] md:translucent-ui:[backdrop-filter:var(--popover-backdrop-filter)]',
-          !canShowToolbar ? 'hidden' : '',
+          !canShowToolbar || !isEditable ? 'hidden' : '',
         )}
         id="super-mobile-toolbar"
         ref={containerRef}
