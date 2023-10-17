@@ -3,7 +3,7 @@ import { KeyboardKey } from '@standardnotes/ui-services'
 import { sanitizeUrl } from '../../Lexical/Utils/sanitizeUrl'
 import { TOGGLE_LINK_COMMAND } from '@lexical/link'
 import { useCallback, useState, useRef, useEffect } from 'react'
-import { GridSelection, LexicalEditor, NodeSelection, RangeSelection } from 'lexical'
+import { LexicalEditor } from 'lexical'
 import { classNames } from '@standardnotes/snjs'
 import StyledTooltip from '@/Components/StyledTooltip/StyledTooltip'
 
@@ -12,21 +12,18 @@ type Props = {
   isEditMode: boolean
   setEditMode: (isEditMode: boolean) => void
   editor: LexicalEditor
-  lastSelection: RangeSelection | GridSelection | NodeSelection | null
   isAutoLink: boolean
 }
 
-const LinkEditor = ({ linkUrl, isEditMode, setEditMode, editor, lastSelection, isAutoLink }: Props) => {
+const LinkEditor = ({ linkUrl, isEditMode, setEditMode, editor, isAutoLink }: Props) => {
   const [editedLinkUrl, setEditedLinkUrl] = useState('')
   const editModeContainer = useRef<HTMLDivElement>(null)
 
   const handleLinkSubmission = () => {
-    if (lastSelection !== null) {
-      if (editedLinkUrl !== '') {
-        editor.dispatchCommand(TOGGLE_LINK_COMMAND, sanitizeUrl(editedLinkUrl))
-      }
-      setEditMode(false)
+    if (editedLinkUrl !== '') {
+      editor.dispatchCommand(TOGGLE_LINK_COMMAND, sanitizeUrl(editedLinkUrl))
     }
+    setEditMode(false)
   }
 
   const focusInput = useCallback((input: HTMLInputElement | null) => {

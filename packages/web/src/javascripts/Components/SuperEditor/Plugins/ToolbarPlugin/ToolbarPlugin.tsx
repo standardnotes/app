@@ -21,7 +21,7 @@ import {
   $isElementNode,
 } from 'lexical'
 import { mergeRegister, $findMatchingParent, $getNearestNodeOfType } from '@lexical/utils'
-import { $isLinkNode, TOGGLE_LINK_COMMAND } from '@lexical/link'
+import { $isLinkNode, $isAutoLinkNode, TOGGLE_LINK_COMMAND } from '@lexical/link'
 import { $isListNode, ListNode } from '@lexical/list'
 import { $isHeadingNode } from '@lexical/rich-text'
 import { ComponentPropsWithoutRef, useCallback, useEffect, useRef, useState } from 'react'
@@ -42,6 +42,9 @@ import { InsertRemoteImageDialog } from '../RemoteImagePlugin/RemoteImagePlugin'
 import StyledTooltip from '@/Components/StyledTooltip/StyledTooltip'
 import { Toolbar, ToolbarItem, useToolbarStore } from '@ariakit/react'
 import { PasswordBlock } from '../Blocks/Password'
+import LinkEditor from './ToolbarLinkEditor'
+import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
+import LinkTextEditor, { $isLinkTextNode } from './ToolbarLinkTextEditor'
 
 const TOGGLE_LINK_AND_EDIT_COMMAND = createCommand<string | null>('TOGGLE_LINK_AND_EDIT_COMMAND')
 
@@ -103,11 +106,13 @@ const ToolbarPlugin = () => {
   const isMobile = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
 
   const [modal, showModal] = useModal()
+
   const [editor] = useLexicalComposerContext()
   const [activeEditor, setActiveEditor] = useState(editor)
+
   const [blockType, setBlockType] = useState<keyof typeof blockTypeToBlockName>('paragraph')
   const [elementFormat, setElementFormat] = useState<ElementFormatType>('left')
-  const [isLink, setIsLink] = useState(false)
+
   const [isBold, setIsBold] = useState(false)
   const [isItalic, setIsItalic] = useState(false)
   const [isUnderline, setIsUnderline] = useState(false)
@@ -116,6 +121,15 @@ const ToolbarPlugin = () => {
   const [isSuperscript, setIsSuperscript] = useState(false)
   const [isCode, setIsCode] = useState(false)
   const [isHighlight, setIsHighlight] = useState(false)
+
+  const [isLink, setIsLink] = useState(false)
+  const [isAutoLink, setIsAutoLink] = useState(false)
+  const [isLinkText, setIsLinkText] = useState(false)
+  const [isLinkEditMode, setIsLinkEditMode] = useState(false)
+  const [isLinkTextEditMode, setIsLinkTextEditMode] = useState(false)
+  const [linkText, setLinkText] = useState<string>('')
+  const [linkUrl, setLinkUrl] = useState<string>('')
+
   const [canUndo, setCanUndo] = useState(false)
   const [canRedo, setCanRedo] = useState(false)
 
@@ -155,6 +169,19 @@ const ToolbarPlugin = () => {
         setIsLink(true)
       } else {
         setIsLink(false)
+      }
+      setLinkUrl($isLinkNode(parent) ? parent.getURL() : $isLinkNode(node) ? node.getURL() : '')
+      if ($isAutoLinkNode(parent) || $isAutoLinkNode(node)) {
+        setIsAutoLink(true)
+      } else {
+        setIsAutoLink(false)
+      }
+      if ($isLinkTextNode(node, selection)) {
+        setIsLinkText(true)
+        setLinkText(node.getTextContent())
+      } else {
+        setIsLinkText(false)
+        setLinkText('')
       }
 
       if (elementDOM !== null) {
@@ -221,11 +248,11 @@ const ToolbarPlugin = () => {
 
         if (code === 'KeyK' && (ctrlKey || metaKey) && !shiftKey) {
           event.preventDefault()
-          // if (!isLink) {
-          //   setIsLinkEditMode(true)
-          // } else {
-          //   setIsLinkEditMode(false)
-          // }
+          if (!isLink) {
+            setIsLinkEditMode(true)
+          } else {
+            setIsLinkEditMode(false)
+          }
           return activeEditor.dispatchCommand(TOGGLE_LINK_COMMAND, '')
         }
         return false
@@ -321,13 +348,12 @@ const ToolbarPlugin = () => {
         id="super-mobile-toolbar"
         ref={containerRef}
       >
-        {/* isLinkText && !isAutoLink && (
+        {isLinkText && !isAutoLink && (
           <>
             <div className="border-t border-border px-1 py-1 md:border-0 md:px-0 md:py-0">
               <LinkTextEditor
                 linkText={linkText}
                 editor={editor}
-                lastSelection={lastSelection}
                 isEditMode={isLinkTextEditMode}
                 setEditMode={setIsLinkTextEditMode}
               />
@@ -337,12 +363,11 @@ const ToolbarPlugin = () => {
               className="my-1 hidden h-px bg-border translucent-ui:bg-[--popover-border-color] md:block"
             />
           </>
-        ) */}
-        {/* isLink && (
+        )}
+        {isLink && (
           <>
             <div
               className="border-t border-border px-1 py-1 focus:shadow-none focus:outline-none md:border-0 md:px-0 md:py-0"
-              ref={linkEditorRef}
               tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
             >
               <LinkEditor
@@ -351,7 +376,6 @@ const ToolbarPlugin = () => {
                 setEditMode={setIsLinkEditMode}
                 isAutoLink={isAutoLink}
                 editor={editor}
-                lastSelection={lastSelection}
               />
             </div>
             <div
@@ -359,7 +383,7 @@ const ToolbarPlugin = () => {
               className="my-1 hidden h-px bg-border translucent-ui:bg-[--popover-border-color] md:block"
             />
           </>
-        ) */}
+        )}
         <div className="flex w-full flex-shrink-0 border-t border-border md:border-0">
           <Toolbar
             className="flex items-center gap-1 overflow-x-auto px-1 [&::-webkit-scrollbar]:h-0"
