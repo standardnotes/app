@@ -7,6 +7,7 @@ import { getPositionedPopoverStyles } from '../Popover/GetPositionedPopoverStyle
 import { getAdjustedStylesForNonPortalPopover } from '../Popover/Utils/getAdjustedStylesForNonPortal'
 import { useLongPressEvent } from '@/Hooks/useLongPress'
 import { PopoverSide } from '../Popover/Types'
+import { getScrollParent } from '@/Utils'
 
 const StyledTooltip = ({
   children,
@@ -68,6 +69,27 @@ const StyledTooltip = ({
     : {
         onClick: () => setForceOpen(false),
       }
+
+  useEffect(() => {
+    const anchor = anchorRef.current
+    if (!anchor) {
+      return
+    }
+
+    const scrollParent = getScrollParent(anchor)
+    if (!scrollParent) {
+      return
+    }
+
+    const handleScroll = () => {
+      tooltip.hide()
+    }
+
+    scrollParent.addEventListener('scroll', handleScroll)
+    return () => {
+      scrollParent.removeEventListener('scroll', handleScroll)
+    }
+  }, [tooltip])
 
   if (isMobile && !showOnMobile) {
     return <>{children}</>

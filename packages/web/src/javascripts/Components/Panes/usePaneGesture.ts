@@ -3,18 +3,7 @@ import { useEffect, useRef, useState } from 'react'
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 import { useApplication } from '../ApplicationProvider'
 import { ApplicationEvent, PrefKey, PrefDefaults } from '@standardnotes/snjs'
-
-function getScrollParent(node: HTMLElement | null): HTMLElement | null {
-  if (!node) {
-    return null
-  }
-
-  if (node.scrollHeight > node.clientHeight || node.scrollWidth > node.clientWidth) {
-    return node
-  } else {
-    return getScrollParent(node.parentElement)
-  }
-}
+import { getScrollParent } from '@/Utils'
 
 const supportsPassive = (() => {
   let supportsPassive = false
