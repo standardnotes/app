@@ -37,10 +37,10 @@ import { GetCollapsibleBlock } from '../Blocks/Collapsible'
 import { GetDatetimeBlocks } from '../Blocks/DateTime'
 import { GetDividerBlock } from '../Blocks/Divider'
 import { GetEmbedsBlocks } from '../Blocks/Embeds'
-import { GetHeadingsBlocks } from '../Blocks/Headings'
+import { GetHeadingsBlocks, H1Block, H2Block, H3Block } from '../Blocks/Headings'
 import { GetIndentOutdentBlocks } from '../Blocks/IndentOutdent'
 import { GetNumberedListBlock } from '../Blocks/NumberedList'
-import { GetParagraphBlock } from '../Blocks/Paragraph'
+import { GetParagraphBlock, ParagraphBlock } from '../Blocks/Paragraph'
 import { GetPasswordBlock } from '../Blocks/Password'
 import { GetQuoteBlock } from '../Blocks/Quote'
 import { GetTableBlock } from '../Blocks/Table'
@@ -113,6 +113,8 @@ const ToolbarButton = ({ name, active, iconName, onSelect, disabled, ...props }:
 
 const ToolbarPlugin = () => {
   const application = useApplication()
+  const isMobile = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
+
   const [editor] = useLexicalComposerContext()
   const [activeEditor, setActiveEditor] = useState(editor)
   const [blockType, setBlockType] = useState<keyof typeof blockTypeToBlockName>('paragraph')
@@ -125,6 +127,7 @@ const ToolbarPlugin = () => {
   const [isSubscript, setIsSubscript] = useState(false)
   const [isSuperscript, setIsSuperscript] = useState(false)
   const [isCode, setIsCode] = useState(false)
+  const [isHighlight, setIsHighlight] = useState(false)
   const [canUndo, setCanUndo] = useState(false)
   const [canRedo, setCanRedo] = useState(false)
 
@@ -155,6 +158,7 @@ const ToolbarPlugin = () => {
       setIsSubscript(selection.hasFormat('subscript'))
       setIsSuperscript(selection.hasFormat('superscript'))
       setIsCode(selection.hasFormat('code'))
+      setIsHighlight(selection.hasFormat('highlight'))
 
       // Update links
       const node = getSelectedNode(selection)
@@ -317,27 +321,87 @@ const ToolbarPlugin = () => {
               active={isBold}
               onSelect={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'bold')}
             />
-            {/* items.map((item) => {
-              return (
-                <ToolbarButton
-                  name={item.name}
-                  iconName={item.iconName}
-                  active={item.active}
-                  disabled={item.disabled}
-                  onSelect={item.onSelect}
-                  key={item.name}
-                />
-              )
-            }) */}
+            <ToolbarButton
+              name="Italic"
+              iconName="italic"
+              active={isItalic}
+              onSelect={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'italic')}
+            />
+            <ToolbarButton
+              name="Underline"
+              iconName="underline"
+              active={isUnderline}
+              onSelect={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'underline')}
+            />
+            <ToolbarButton
+              name="Highlight"
+              iconName="draw"
+              active={isHighlight}
+              onSelect={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'highlight')}
+            />
+            <ToolbarButton name="Link" iconName="link" active={isLink} onSelect={() => {}} />
+            <ToolbarButton
+              name="Strikethrough"
+              iconName="strikethrough"
+              active={isStrikethrough}
+              onSelect={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'strikethrough')}
+            />
+            <ToolbarButton
+              name="Subscript"
+              iconName="subscript"
+              active={isSubscript}
+              onSelect={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'subscript')}
+            />
+            <ToolbarButton
+              name="Superscript"
+              iconName="superscript"
+              active={isSuperscript}
+              onSelect={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'superscript')}
+            />
+            <ToolbarButton
+              name="Code"
+              iconName="code"
+              active={isCode}
+              onSelect={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'code')}
+            />
+            <ToolbarButton
+              name="Search"
+              iconName="search"
+              onSelect={() => application.keyboardService.triggerCommand(SUPER_TOGGLE_SEARCH)}
+            />
+            <ToolbarButton
+              name={ParagraphBlock.name}
+              iconName={ParagraphBlock.iconName}
+              active={blockType === 'paragraph'}
+              onSelect={() => ParagraphBlock.onSelect(editor)}
+            />
+            <ToolbarButton
+              name={H1Block.name}
+              iconName={H1Block.iconName}
+              active={blockType === 'h1'}
+              onSelect={() => H1Block.onSelect(editor)}
+            />
+            <ToolbarButton
+              name={H2Block.name}
+              iconName={H2Block.iconName}
+              active={blockType === 'h2'}
+              onSelect={() => H2Block.onSelect(editor)}
+            />
+            <ToolbarButton
+              name={H3Block.name}
+              iconName={H3Block.iconName}
+              active={blockType === 'h3'}
+              onSelect={() => H3Block.onSelect(editor)}
+            />
           </Toolbar>
-          {/* isMobile && (
+          {isMobile && (
             <button
               className="flex flex-shrink-0 items-center justify-center rounded border-l border-border px-3 py-3"
               aria-label="Dismiss keyboard"
             >
               <Icon type="keyboard-close" size="medium" />
             </button>
-          ) */}
+          )}
         </div>
       </div>
     </>

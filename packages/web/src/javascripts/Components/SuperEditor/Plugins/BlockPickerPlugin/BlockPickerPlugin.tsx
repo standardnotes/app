@@ -12,8 +12,6 @@ import { GetChecklistBlockOption } from './Options/Checklist'
 import { GetDividerBlockOption } from './Options/Divider'
 import { GetCollapsibleBlockOption } from './Options/Collapsible'
 import { GetDynamicPasswordBlocks, GetPasswordBlockOption } from './Options/Password'
-import { GetParagraphBlockOption } from './Options/Paragraph'
-import { GetHeadingsBlockOptions } from './Options/Headings'
 import { GetQuoteBlockOption } from './Options/Quote'
 import { GetAlignmentBlockOptions } from './Options/Alignment'
 import { GetCodeBlockOption } from './Options/Code'
@@ -27,6 +25,8 @@ import { useApplication } from '@/Components/ApplicationProvider'
 import { GetIndentOutdentBlockOptions } from './Options/IndentOutdent'
 import { GetRemoteImageBlockOption } from './Options/RemoteImage'
 import { InsertRemoteImageDialog } from '../RemoteImagePlugin/RemoteImagePlugin'
+import { GetParagraphBlockOption } from '../Blocks/Paragraph'
+import { GetH1BlockOption, GetH2BlockOption, GetH3BlockOption } from '../Blocks/Headings'
 
 export default function BlockPickerMenuPlugin(): JSX.Element {
   const [editor] = useLexicalComposerContext()
@@ -43,7 +43,9 @@ export default function BlockPickerMenuPlugin(): JSX.Element {
 
     const baseOptions = [
       GetParagraphBlockOption(editor),
-      ...GetHeadingsBlockOptions(editor),
+      GetH1BlockOption(editor),
+      GetH2BlockOption(editor),
+      GetH3BlockOption(editor),
       ...indentOutdentOptions,
       GetTableBlockOption(() =>
         showModal('Insert Table', (onClose) => <InsertTableDialog activeEditor={editor} onClose={onClose} />),
