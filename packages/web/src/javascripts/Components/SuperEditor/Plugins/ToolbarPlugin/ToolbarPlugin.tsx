@@ -38,17 +38,17 @@ import {
 } from '../Blocks/Alignment'
 import { BulletedListBlock, ChecklistBlock, GetBulletedListBlock, NumberedListBlock } from '../Blocks/List'
 import { GetChecklistBlock } from '../Blocks/Checklist'
-import { GetCodeBlock } from '../Blocks/Code'
-import { GetCollapsibleBlock } from '../Blocks/Collapsible'
+import { CodeBlock, GetCodeBlock } from '../Blocks/Code'
+import { CollapsibleBlock, GetCollapsibleBlock } from '../Blocks/Collapsible'
 import { GetDatetimeBlocks } from '../Blocks/DateTime'
-import { GetDividerBlock } from '../Blocks/Divider'
+import { DividerBlock, GetDividerBlock } from '../Blocks/Divider'
 import { GetEmbedsBlocks } from '../Blocks/Embeds'
 import { GetHeadingsBlocks, H1Block, H2Block, H3Block } from '../Blocks/Headings'
 import { GetIndentOutdentBlocks, IndentBlock, OutdentBlock } from '../Blocks/IndentOutdent'
 import { GetNumberedListBlock } from '../Blocks/NumberedList'
 import { GetParagraphBlock, ParagraphBlock } from '../Blocks/Paragraph'
 import { GetPasswordBlock } from '../Blocks/Password'
-import { GetQuoteBlock } from '../Blocks/Quote'
+import { GetQuoteBlock, QuoteBlock } from '../Blocks/Quote'
 import { GetTableBlock } from '../Blocks/Table'
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 import { classNames } from '@standardnotes/snjs'
@@ -61,6 +61,7 @@ import { FOCUSABLE_BUT_NOT_TABBABLE, URL_REGEX } from '@/Constants/Constants'
 import StyledTooltip from '@/Components/StyledTooltip/StyledTooltip'
 import LinkTextEditor, { $isLinkTextNode } from './ToolbarLinkTextEditor'
 import { Toolbar, ToolbarItem, useToolbarStore } from '@ariakit/react'
+import { PasswordBlock } from '../Blocks/Password'
 
 const TOGGLE_LINK_AND_EDIT_COMMAND = createCommand<string | null>('TOGGLE_LINK_AND_EDIT_COMMAND')
 
@@ -121,6 +122,7 @@ const ToolbarPlugin = () => {
   const application = useApplication()
   const isMobile = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
 
+  const [modal, showModal] = useModal()
   const [editor] = useLexicalComposerContext()
   const [activeEditor, setActiveEditor] = useState(editor)
   const [blockType, setBlockType] = useState<keyof typeof blockTypeToBlockName>('paragraph')
@@ -254,7 +256,7 @@ const ToolbarPlugin = () => {
 
   return (
     <>
-      {/* modal */}
+      {modal}
       <div
         className={classNames(
           'bg-contrast',
@@ -305,7 +307,7 @@ const ToolbarPlugin = () => {
         ) */}
         <div className="flex w-full flex-shrink-0 border-t border-border md:border-0">
           <Toolbar
-            className="flex items-center gap-1 overflow-x-auto pl-1 [&::-webkit-scrollbar]:h-0"
+            className="flex items-center gap-1 overflow-x-auto px-1 [&::-webkit-scrollbar]:h-0"
             // ref={toolbarRef}
             // store={toolbarStore}
           >
@@ -365,8 +367,8 @@ const ToolbarPlugin = () => {
               onSelect={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'superscript')}
             />
             <ToolbarButton
-              name="Code"
-              iconName="code"
+              name="Inline Code"
+              iconName="code-tags"
               active={isCode}
               onSelect={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'code')}
             />
@@ -450,6 +452,47 @@ const ToolbarPlugin = () => {
               iconName={ChecklistBlock.iconName}
               active={blockType === 'check'}
               onSelect={() => ChecklistBlock.onSelect(editor)}
+            />
+            <ToolbarButton
+              name="Table"
+              iconName="table"
+              onSelect={() =>
+                showModal('Insert Table', (onClose) => <InsertTableDialog activeEditor={editor} onClose={onClose} />)
+              }
+            />
+            <ToolbarButton
+              name="Image from URL"
+              iconName="image"
+              onSelect={() =>
+                showModal('Insert image from URL', (onClose) => <InsertRemoteImageDialog onClose={onClose} />)
+              }
+            />
+            <ToolbarButton
+              name={CodeBlock.name}
+              iconName={CodeBlock.iconName}
+              active={blockType === 'code'}
+              onSelect={() => CodeBlock.onSelect(editor)}
+            />
+            <ToolbarButton
+              name={QuoteBlock.name}
+              iconName={QuoteBlock.iconName}
+              active={blockType === 'quote'}
+              onSelect={() => QuoteBlock.onSelect(editor)}
+            />
+            <ToolbarButton
+              name={DividerBlock.name}
+              iconName={DividerBlock.iconName}
+              onSelect={() => DividerBlock.onSelect(editor)}
+            />
+            <ToolbarButton
+              name={CollapsibleBlock.name}
+              iconName={CollapsibleBlock.iconName}
+              onSelect={() => CollapsibleBlock.onSelect(editor)}
+            />
+            <ToolbarButton
+              name={PasswordBlock.name}
+              iconName={PasswordBlock.iconName}
+              onSelect={() => PasswordBlock.onSelect(editor)}
             />
           </Toolbar>
           {isMobile && (

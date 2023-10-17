@@ -213,6 +213,7 @@ import UserSwitch from './ic-user-switch.svg'
 import ViewIcon from './ic-view.svg'
 import WarningIcon from './ic-warning.svg'
 import WindowIcon from './ic-window.svg'
+import DetailsBlockIcon from './ic-details-block.svg'
 
 export {
   AccessibilityIcon,
@@ -267,6 +268,7 @@ export {
   CopyIcon,
   CreateAccountIllustration,
   DashboardIcon,
+  DetailsBlockIcon,
   DiamondFilledIcon,
   DiamondIcon,
   DownloadIcon,
