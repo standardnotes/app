@@ -67,7 +67,7 @@ const StyledTooltip = ({
   const clickProps = isMobile
     ? {}
     : {
-        onClick: () => setForceOpen(false),
+        onClick: () => tooltip.hide(),
       }
 
   useEffect(() => {

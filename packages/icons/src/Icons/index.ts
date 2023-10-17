@@ -214,6 +214,7 @@ import ViewIcon from './ic-view.svg'
 import WarningIcon from './ic-warning.svg'
 import WindowIcon from './ic-window.svg'
 import DetailsBlockIcon from './ic-details-block.svg'
+import TableOfContentsIcon from './ic-toc.svg'
 
 export {
   AccessibilityIcon,
@@ -408,6 +409,7 @@ export {
   SubtractIcon,
   SuperscriptIcon,
   SyncIcon,
+  TableOfContentsIcon,
   TasksIcon,
   TextCircleIcon,
   TextIcon,

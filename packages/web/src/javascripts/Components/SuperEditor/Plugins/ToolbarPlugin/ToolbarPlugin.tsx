@@ -25,7 +25,7 @@ import { mergeRegister, $findMatchingParent, $getNearestNodeOfType } from '@lexi
 import { $isLinkNode, $isAutoLinkNode, TOGGLE_LINK_COMMAND } from '@lexical/link'
 import { $isListNode, ListNode } from '@lexical/list'
 import { $isHeadingNode } from '@lexical/rich-text'
-import { ComponentPropsWithoutRef, useCallback, useEffect, useRef, useState } from 'react'
+import { ComponentPropsWithoutRef, ForwardedRef, forwardRef, useCallback, useEffect, useRef, useState } from 'react'
 import { CenterAlignBlock, JustifyAlignBlock, LeftAlignBlock, RightAlignBlock } from '../Blocks/Alignment'
 import { BulletedListBlock, ChecklistBlock, NumberedListBlock } from '../Blocks/List'
 import { CodeBlock } from '../Blocks/Code'
@@ -46,6 +46,10 @@ import { PasswordBlock } from '../Blocks/Password'
 import LinkEditor from './ToolbarLinkEditor'
 import { FOCUSABLE_BUT_NOT_TABBABLE, URL_REGEX } from '@/Constants/Constants'
 import LinkTextEditor, { $isLinkTextNode } from './ToolbarLinkTextEditor'
+import Popover from '@/Components/Popover/Popover'
+import LexicalTableOfContents from '@lexical/react/LexicalTableOfContents'
+import Menu from '@/Components/Menu/Menu'
+import MenuItem from '@/Components/Menu/MenuItem'
 
 const TOGGLE_LINK_AND_EDIT_COMMAND = createCommand<string | null>('TOGGLE_LINK_AND_EDIT_COMMAND')
 
@@ -71,36 +75,42 @@ interface ToolbarButtonProps extends ComponentPropsWithoutRef<'button'> {
   onSelect: () => void
 }
 
-const ToolbarButton = ({ name, active, iconName, onSelect, disabled, ...props }: ToolbarButtonProps) => {
-  const [editor] = useLexicalComposerContext()
+const ToolbarButton = forwardRef(
+  (
+    { name, active, iconName, onSelect, disabled, ...props }: ToolbarButtonProps,
+    ref: ForwardedRef<HTMLButtonElement>,
+  ) => {
+    const [editor] = useLexicalComposerContext()
 
-  return (
-    <StyledTooltip showOnMobile showOnHover label={name} side="top">
-      <ToolbarItem
-        className="flex select-none items-center justify-center rounded p-0.5 focus:shadow-none focus:outline-none enabled:hover:bg-default enabled:focus-visible:bg-default disabled:opacity-50 md:border md:border-transparent enabled:hover:md:translucent-ui:border-[--popover-border-color]"
-        onMouseDown={(event) => {
-          event.preventDefault()
-          onSelect()
-        }}
-        onContextMenu={(event) => {
-          editor.focus()
-          event.preventDefault()
-        }}
-        disabled={disabled}
-        {...props}
-      >
-        <div
-          className={classNames(
-            'flex items-center justify-center rounded p-2 transition-colors duration-75',
-            active && 'bg-info text-info-contrast',
-          )}
+    return (
+      <StyledTooltip showOnMobile showOnHover label={name} side="top">
+        <ToolbarItem
+          className="flex select-none items-center justify-center rounded p-0.5 focus:shadow-none focus:outline-none enabled:hover:bg-default enabled:focus-visible:bg-default disabled:opacity-50 md:border md:border-transparent enabled:hover:md:translucent-ui:border-[--popover-border-color]"
+          onMouseDown={(event) => {
+            event.preventDefault()
+            onSelect()
+          }}
+          onContextMenu={(event) => {
+            editor.focus()
+            event.preventDefault()
+          }}
+          disabled={disabled}
+          ref={ref}
+          {...props}
         >
-          <Icon type={iconName} size="medium" className="!text-current [&>path]:!text-current" />
-        </div>
-      </ToolbarItem>
-    </StyledTooltip>
-  )
-}
+          <div
+            className={classNames(
+              'flex items-center justify-center rounded p-2 transition-colors duration-75',
+              active && 'bg-info text-info-contrast',
+            )}
+          >
+            <Icon type={iconName} size="medium" className="!text-current [&>path]:!text-current" />
+          </div>
+        </ToolbarItem>
+      </StyledTooltip>
+    )
+  },
+)
 
 const ToolbarPlugin = () => {
   const application = useApplication()
@@ -131,6 +141,9 @@ const ToolbarPlugin = () => {
   const [isLinkTextEditMode, setIsLinkTextEditMode] = useState(false)
   const [linkText, setLinkText] = useState<string>('')
   const [linkUrl, setLinkUrl] = useState<string>('')
+
+  const [isTOCOpen, setIsTOCOpen] = useState(false)
+  const tocAnchorRef = useRef<HTMLButtonElement>(null)
 
   const [canUndo, setCanUndo] = useState(false)
   const [canRedo, setCanRedo] = useState(false)
@@ -452,6 +465,13 @@ const ToolbarPlugin = () => {
             store={toolbarStore}
           >
             <ToolbarButton
+              name="Table of Contents"
+              iconName="toc"
+              active={isTOCOpen}
+              onSelect={() => setIsTOCOpen(!isTOCOpen)}
+              ref={tocAnchorRef}
+            />
+            <ToolbarButton
               name="Undo"
               iconName="undo"
               disabled={!canUndo}
@@ -646,6 +666,51 @@ const ToolbarPlugin = () => {
           )}
         </div>
       </div>
+      <Popover
+        title="Table of contents"
+        anchorElement={tocAnchorRef}
+        open={isTOCOpen}
+        togglePopover={() => setIsTOCOpen(!isTOCOpen)}
+        side="top"
+        align="center"
+        className="py-1"
+        disableMobileFullscreenTakeover
+      >
+        <div className="mb-1.5 mt-1 px-3 text-sm font-semibold uppercase text-text">Table of Contents</div>
+        <LexicalTableOfContents>
+          {(tableOfContents) => {
+            if (!tableOfContents.length) {
+              return <div className="py-2 text-center">No headings found</div>
+            }
+
+            return (
+              <Menu a11yLabel="Table of contents" isOpen>
+                {tableOfContents.map(([key, text, tag]) => (
+                  <MenuItem
+                    key={key}
+                    className="overflow-hidden md:py-2"
+                    onClick={() => {
+                      setIsTOCOpen(false)
+                      editor.getEditorState().read(() => {
+                        const domElement = editor.getElementByKey(key)
+                        if (!domElement) {
+                          return
+                        }
+                        const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+                        domElement.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block: 'nearest' })
+                        editor.focus()
+                      })
+                    }}
+                  >
+                    <Icon type={tag} className="-mt-px mr-2.5 flex-shrink-0" />
+                    <span className="overflow-hidden text-ellipsis whitespace-nowrap">{text}</span>
+                  </MenuItem>
+                ))}
+              </Menu>
+            )
+          }}
+        </LexicalTableOfContents>
+      </Popover>
     </>
   )
 }

@@ -142,6 +142,7 @@ export const IconNameToSvgMapping = {
   themes: icons.ThemesIcon,
   trash: icons.TrashIcon,
   tune: icons.TuneIcon,
+  toc: icons.TableOfContentsIcon,
   unarchive: icons.UnarchiveIcon,
   underline: icons.UnderlineIcon,
   undo: icons.UndoIcon,
