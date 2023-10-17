@@ -381,7 +381,7 @@ const ToolbarPlugin = () => {
 
       const containerHeight = container.offsetHeight
 
-      rootElement.style.paddingBottom = containerHeight ? `${containerHeight + 16 * 2}px` : ''
+      rootElement.style.paddingBottom = containerHeight ? `${containerHeight + 8}px` : ''
     })
 
     resizeObserver.observe(container)
@@ -397,7 +397,7 @@ const ToolbarPlugin = () => {
       <div
         className={classNames(
           'bg-contrast',
-          'md:absolute md:bottom-4 md:left-1/2 md:max-w-[60%] md:-translate-x-1/2 md:rounded-lg md:border md:border-border md:px-2 md:py-1 md:translucent-ui:border-[--popover-border-color] md:translucent-ui:bg-[--popover-background-color] md:translucent-ui:[backdrop-filter:var(--popover-backdrop-filter)]',
+          'md:absolute md:bottom-0 md:left-1/2 md:max-w-[60%] md:-translate-x-1/2 md:rounded-t-lg md:border md:border-b-0 md:border-border md:px-2 md:py-1 md:translucent-ui:border-[--popover-border-color] md:translucent-ui:bg-[--popover-background-color] md:translucent-ui:[backdrop-filter:var(--popover-backdrop-filter)]',
           !canShowToolbar ? 'hidden' : '',
         )}
         id="super-mobile-toolbar"
