@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.178.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.177.7...@standardnotes/web@3.178.0) (2023-10-17)
+
+### Features
+
+* Added "Table of contents" option to Super notes toolbar ([7f14fe6](https://github.com/standardnotes/app/commit/7f14fe6342a4adb865a0099c538942e85f2d0e76))
+
 ## [3.177.7](https://github.com/standardnotes/app/compare/@standardnotes/web@3.177.6...@standardnotes/web@3.177.7) (2023-10-17)
 
 **Note:** Version bump only for package @standardnotes/web

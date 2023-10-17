@@ -1,6 +1,20 @@
 {
   "versions": [
     {
+      "version": "3.178.0",
+      "title": "[3.178.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.177.7...@standardnotes/web@3.178.0) (2023-10-17)",
+      "date": null,
+      "body": "### Features\n\n* Added \"Table of contents\" option to Super notes toolbar ([7f14fe6](https://github.com/standardnotes/app/commit/7f14fe6342a4adb865a0099c538942e85f2d0e76))",
+      "parsed": {
+        "_": [
+          "Added \"Table of contents\" option to Super notes toolbar (7f14fe6)"
+        ],
+        "Features": [
+          "Added \"Table of contents\" option to Super notes toolbar (7f14fe6)"
+        ]
+      }
+    },
+    {
       "version": "3.177.7",
       "title": "[3.177.7](https://github.com/standardnotes/app/compare/@standardnotes/web@3.177.6...@standardnotes/web@3.177.7) (2023-10-17)",
       "date": null,
