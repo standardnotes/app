@@ -9,14 +9,10 @@ import {
   CAN_REDO_COMMAND,
   CAN_UNDO_COMMAND,
   COMMAND_PRIORITY_CRITICAL,
-  COMMAND_PRIORITY_LOW,
   COMMAND_PRIORITY_NORMAL,
   FORMAT_TEXT_COMMAND,
-  GridSelection,
   KEY_MODIFIER_COMMAND,
-  NodeSelection,
   REDO_COMMAND,
-  RangeSelection,
   SELECTION_CHANGE_COMMAND,
   UNDO_COMMAND,
   createCommand,
@@ -25,41 +21,25 @@ import {
   $isElementNode,
 } from 'lexical'
 import { mergeRegister, $findMatchingParent, $getNearestNodeOfType } from '@lexical/utils'
-import { $isLinkNode, $isAutoLinkNode, TOGGLE_LINK_COMMAND } from '@lexical/link'
+import { $isLinkNode, TOGGLE_LINK_COMMAND } from '@lexical/link'
 import { $isListNode, ListNode } from '@lexical/list'
 import { $isHeadingNode } from '@lexical/rich-text'
-import { ComponentPropsWithoutRef, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import {
-  CenterAlignBlock,
-  GetAlignmentBlocks,
-  JustifyAlignBlock,
-  LeftAlignBlock,
-  RightAlignBlock,
-} from '../Blocks/Alignment'
-import { BulletedListBlock, ChecklistBlock, GetBulletedListBlock, NumberedListBlock } from '../Blocks/List'
-import { GetChecklistBlock } from '../Blocks/Checklist'
-import { CodeBlock, GetCodeBlock } from '../Blocks/Code'
-import { CollapsibleBlock, GetCollapsibleBlock } from '../Blocks/Collapsible'
-import { GetDatetimeBlocks } from '../Blocks/DateTime'
-import { DividerBlock, GetDividerBlock } from '../Blocks/Divider'
-import { GetEmbedsBlocks } from '../Blocks/Embeds'
-import { GetHeadingsBlocks, H1Block, H2Block, H3Block } from '../Blocks/Headings'
-import { GetIndentOutdentBlocks, IndentBlock, OutdentBlock } from '../Blocks/IndentOutdent'
-import { GetNumberedListBlock } from '../Blocks/NumberedList'
-import { GetParagraphBlock, ParagraphBlock } from '../Blocks/Paragraph'
-import { GetPasswordBlock } from '../Blocks/Password'
-import { GetQuoteBlock, QuoteBlock } from '../Blocks/Quote'
-import { GetTableBlock } from '../Blocks/Table'
+import { ComponentPropsWithoutRef, useCallback, useEffect, useRef, useState } from 'react'
+import { CenterAlignBlock, JustifyAlignBlock, LeftAlignBlock, RightAlignBlock } from '../Blocks/Alignment'
+import { BulletedListBlock, ChecklistBlock, NumberedListBlock } from '../Blocks/List'
+import { CodeBlock } from '../Blocks/Code'
+import { CollapsibleBlock } from '../Blocks/Collapsible'
+import { DividerBlock } from '../Blocks/Divider'
+import { H1Block, H2Block, H3Block } from '../Blocks/Headings'
+import { IndentBlock, OutdentBlock } from '../Blocks/IndentOutdent'
+import { ParagraphBlock } from '../Blocks/Paragraph'
+import { QuoteBlock } from '../Blocks/Quote'
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 import { classNames } from '@standardnotes/snjs'
 import { SUPER_TOGGLE_SEARCH, SUPER_TOGGLE_TOOLBAR } from '@standardnotes/ui-services'
 import { useApplication } from '@/Components/ApplicationProvider'
-import { GetRemoteImageBlock } from '../Blocks/RemoteImage'
 import { InsertRemoteImageDialog } from '../RemoteImagePlugin/RemoteImagePlugin'
-import LinkEditor from './ToolbarLinkEditor'
-import { FOCUSABLE_BUT_NOT_TABBABLE, URL_REGEX } from '@/Constants/Constants'
 import StyledTooltip from '@/Components/StyledTooltip/StyledTooltip'
-import LinkTextEditor, { $isLinkTextNode } from './ToolbarLinkTextEditor'
 import { Toolbar, ToolbarItem, useToolbarStore } from '@ariakit/react'
 import { PasswordBlock } from '../Blocks/Password'
 
@@ -237,9 +217,9 @@ const ToolbarPlugin = () => {
       KEY_MODIFIER_COMMAND,
       (payload) => {
         const event: KeyboardEvent = payload
-        const { code, ctrlKey, metaKey } = event
+        const { code, ctrlKey, metaKey, shiftKey } = event
 
-        if (code === 'KeyK' && (ctrlKey || metaKey)) {
+        if (code === 'KeyK' && (ctrlKey || metaKey) && !shiftKey) {
           event.preventDefault()
           // if (!isLink) {
           //   setIsLinkEditMode(true)
@@ -254,6 +234,81 @@ const ToolbarPlugin = () => {
     )
   }, [activeEditor, isLink])
 
+  const containerRef = useRef<HTMLDivElement>(null)
+  const dismissButtonRef = useRef<HTMLButtonElement>(null)
+
+  const [isFocusInEditor, setIsFocusInEditor] = useState(false)
+  const [isFocusInToolbar, setIsFocusInToolbar] = useState(false)
+  const isFocusInEditorOrToolbar = isFocusInEditor || isFocusInToolbar
+  const [isToolbarVisible, setIsToolbarVisible] = useState(true)
+  const canShowToolbar = isMobile ? isFocusInEditorOrToolbar : isToolbarVisible
+
+  useEffect(() => {
+    const container = containerRef.current
+    const rootElement = editor.getRootElement()
+
+    if (!rootElement) {
+      return
+    }
+
+    const handleToolbarFocus = () => setIsFocusInToolbar(true)
+    const handleToolbarBlur = () => setIsFocusInToolbar(false)
+
+    const handleRootFocus = () => setIsFocusInEditor(true)
+    const handleRootBlur = (event: FocusEvent) => {
+      const elementToBeFocused = event.relatedTarget as Node
+      const containerContainsElementToFocus = container?.contains(elementToBeFocused)
+      const willFocusDismissButton = dismissButtonRef.current === elementToBeFocused
+      if (containerContainsElementToFocus && !willFocusDismissButton) {
+        return
+      }
+      setIsFocusInEditor(false)
+    }
+
+    rootElement.addEventListener('focus', handleRootFocus)
+    rootElement.addEventListener('blur', handleRootBlur)
+
+    if (container) {
+      container.addEventListener('focus', handleToolbarFocus)
+      container.addEventListener('blur', handleToolbarBlur)
+    }
+
+    return () => {
+      rootElement.removeEventListener('focus', handleRootFocus)
+      rootElement.removeEventListener('blur', handleRootBlur)
+      container?.removeEventListener('focus', handleToolbarFocus)
+      container?.removeEventListener('blur', handleToolbarBlur)
+    }
+  }, [editor])
+
+  const toolbarRef = useRef<HTMLDivElement>(null)
+  const toolbarStore = useToolbarStore()
+  useEffect(() => {
+    return application.keyboardService.addCommandHandler({
+      command: SUPER_TOGGLE_TOOLBAR,
+      onKeyDown(event) {
+        if (isMobile) {
+          return
+        }
+        event.preventDefault()
+
+        if (!isToolbarVisible) {
+          setIsToolbarVisible(true)
+          toolbarStore.move(toolbarStore.first())
+          return
+        }
+
+        const isFocusInContainer = containerRef.current?.contains(document.activeElement)
+        if (isFocusInContainer) {
+          setIsToolbarVisible(false)
+          editor.focus()
+        } else {
+          toolbarStore.move(toolbarStore.first())
+        }
+      },
+    })
+  }, [application.keyboardService, editor, isMobile, isToolbarVisible, toolbarStore])
+
   return (
     <>
       {modal}
@@ -261,10 +316,10 @@ const ToolbarPlugin = () => {
         className={classNames(
           'bg-contrast',
           'md:absolute md:bottom-4 md:left-1/2 md:max-w-[60%] md:-translate-x-1/2 md:rounded-lg md:border md:border-border md:px-2 md:py-1 md:translucent-ui:border-[--popover-border-color] md:translucent-ui:bg-[--popover-background-color] md:translucent-ui:[backdrop-filter:var(--popover-backdrop-filter)]',
-          // !canShowToolbar ? 'hidden' : '',
+          !canShowToolbar ? 'hidden' : '',
         )}
         id="super-mobile-toolbar"
-        // ref={containerRef}
+        ref={containerRef}
       >
         {/* isLinkText && !isAutoLink && (
           <>
@@ -308,8 +363,8 @@ const ToolbarPlugin = () => {
         <div className="flex w-full flex-shrink-0 border-t border-border md:border-0">
           <Toolbar
             className="flex items-center gap-1 overflow-x-auto px-1 [&::-webkit-scrollbar]:h-0"
-            // ref={toolbarRef}
-            // store={toolbarStore}
+            ref={toolbarRef}
+            store={toolbarStore}
           >
             <ToolbarButton
               name="Undo"
@@ -499,6 +554,7 @@ const ToolbarPlugin = () => {
             <button
               className="flex flex-shrink-0 items-center justify-center rounded border-l border-border px-3 py-3"
               aria-label="Dismiss keyboard"
+              ref={dismissButtonRef}
             >
               <Icon type="keyboard-close" size="medium" />
             </button>
