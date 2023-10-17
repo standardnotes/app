@@ -12,7 +12,7 @@
     "mocha",
     "e2e-server.js"
   ],
-  "license": "CC BY-NC-SA 4.0",
+  "license": "AGPL-3.0",
   "publishConfig": {
     "access": "public"
   },

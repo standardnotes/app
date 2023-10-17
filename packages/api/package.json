@@ -14,7 +14,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "license": "CC BY-NC-SA 4.0",
+  "license": "AGPL-3.0",
   "scripts": {
     "clean": "rm -fr dist",
     "prestart": "yarn clean",

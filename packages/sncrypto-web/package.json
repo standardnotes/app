@@ -12,7 +12,7 @@
     "dist/**/*.js.map",
     "dist/**/*.d.ts"
   ],
-  "license": "CC BY-NC-SA 4.0",
+  "license": "AGPL-3.0",
   "private": true,
   "scripts": {
     "clean": "rm -fr dist",

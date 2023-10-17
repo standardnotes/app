@@ -9,7 +9,7 @@
   "author": "Standard Notes",
   "types": "./src/index.ts",
   "private": true,
-  "license": "CC BY-NC-SA 4.0",
+  "license": "AGPL-3.0",
   "scripts": {
     "build": "echo 'Empty build script required for yarn topological install'",
     "lint": "eslint src --ext .ts",

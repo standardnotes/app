@@ -12,7 +12,7 @@
     "dist"
   ],
   "private": true,
-  "license": "CC BY-NC-SA 4.0",
+  "license": "AGPL-3.0",
   "scripts": {
     "lint": "eslint src --ext .ts",
     "test": "jest",
