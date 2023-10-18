@@ -4232,6 +4232,7 @@ __metadata:
   resolution: "@standardnotes/clipper@workspace:packages/clipper"
   dependencies:
     "@mozilla/readability": ^0.4.2
+    "@standardnotes/snjs": "workspace:^"
     "@standardnotes/web": "workspace:*"
     "@types/webextension-polyfill": ^0.10.0
     babel-loader: ^9.1.0
@@ -4823,7 +4824,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/snjs@^2.41.1, @standardnotes/snjs@workspace:*, @standardnotes/snjs@workspace:packages/snjs":
+"@standardnotes/snjs@^2.41.1, @standardnotes/snjs@workspace:*, @standardnotes/snjs@workspace:^, @standardnotes/snjs@workspace:packages/snjs":
   version: 0.0.0-use.local
   resolution: "@standardnotes/snjs@workspace:packages/snjs"
   dependencies:

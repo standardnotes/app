@@ -32,6 +32,7 @@
     "webpack": "*"
   },
   "dependencies": {
-    "@mozilla/readability": "^0.4.2"
+    "@mozilla/readability": "^0.4.2",
+    "@standardnotes/snjs": "workspace:^"
   }
 }

@@ -5,7 +5,7 @@ import * as Collaboration from '../lib/Collaboration.js'
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
-describe.skip('designated survival', function () {
+describe('designated survival', function () {
   this.timeout(Factory.ThirtySecondTimeout)
 
   let context
@@ -336,6 +336,8 @@ describe.skip('designated survival', function () {
 
       Factory.handlePasswordChallenges(context.application, context.password)
       await context.application.user.deleteAccount()
+
+      await Factory.sleep(2)
 
       await secondContext.syncAndAwaitNotificationsProcessing()
       await thirdContext.syncAndAwaitNotificationsProcessing()
