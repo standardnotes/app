@@ -19,7 +19,7 @@ import MenuSwitchButtonItem from '../Menu/MenuSwitchButtonItem'
 import MenuRadioButtonItem from '../Menu/MenuRadioButtonItem'
 import { useApplication } from '../ApplicationProvider'
 import { GetAllThemesUseCase } from '@standardnotes/ui-services'
-import MenuItemSeparator from '../Menu/MenuItemSeparator'
+import MenuSection from '../Menu/MenuSection'
 
 type MenuProps = {
   closeMenu: () => void
@@ -117,8 +117,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ closeMenu }) => {
   return (
     <Menu a11yLabel="Quick settings menu" isOpen>
       {editorStackComponents.length > 0 && (
-        <>
-          <div className="my-1 px-3 text-sm font-semibold uppercase text-text">Tools</div>
+        <MenuSection title="Tools">
           {editorStackComponents.map((component) => (
             <MenuSwitchButtonItem
               onChange={() => {
@@ -131,17 +130,17 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ closeMenu }) => {
               {component.displayName}
             </MenuSwitchButtonItem>
           ))}
-          <MenuItemSeparator />
-        </>
+        </MenuSection>
       )}
-      <div className="my-1 px-3 text-sm font-semibold uppercase text-text">Appearance</div>
-      <MenuRadioButtonItem checked={defaultThemeOn} onClick={toggleDefaultTheme} ref={defaultThemeButtonRef}>
-        Default
-      </MenuRadioButtonItem>
-      {themes.map((theme) => (
-        <ThemesMenuButton uiFeature={theme} key={theme.uniqueIdentifier.value} />
-      ))}
-      <MenuItemSeparator />
+      <MenuSection title="Appearance">
+        <MenuRadioButtonItem checked={defaultThemeOn} onClick={toggleDefaultTheme} ref={defaultThemeButtonRef}>
+          Default
+        </MenuRadioButtonItem>
+        {themes.map((theme) => (
+          <ThemesMenuButton uiFeature={theme} key={theme.uniqueIdentifier.value} />
+        ))}
+      </MenuSection>
+
       <FocusModeSwitch
         application={application}
         onToggle={setFocusModeEnabled}

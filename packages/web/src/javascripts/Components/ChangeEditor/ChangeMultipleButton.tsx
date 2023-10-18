@@ -25,7 +25,7 @@ const ChangeMultipleButton = ({ application, notesController }: Props) => {
         disableClickOutside={disableClickOutside}
         anchorElement={changeButtonRef}
         open={isChangeMenuOpen}
-        className="pt-2 md:pt-0"
+        className="md:pb-1"
       >
         <ChangeEditorMultipleMenu
           application={application}

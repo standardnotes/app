@@ -4,6 +4,7 @@ import { useApplication } from '../ApplicationProvider'
 import { FileBackupRecord, FileItem } from '@standardnotes/snjs'
 import { dateToStringStyle1 } from '@/Utils/DateUtils'
 import { MenuItemIconSize } from '@/Constants/TailwindClassNames'
+import MenuSection from '../Menu/MenuSection'
 
 export const FileContextMenuBackupOption: FunctionComponent<{ file: FileItem }> = ({ file }) => {
   const application = useApplication()
@@ -33,8 +34,12 @@ export const FileContextMenuBackupOption: FunctionComponent<{ file: FileItem }> 
     application.openPreferences('backups')
   }, [application])
 
+  if (!application.fileBackups) {
+    return null
+  }
+
   return (
-    <>
+    <MenuSection>
       {backupInfo && (
         <MenuItem
           icon={'check-circle'}
@@ -62,6 +67,6 @@ export const FileContextMenuBackupOption: FunctionComponent<{ file: FileItem }> 
           </div>
         </MenuItem>
       )}
-    </>
+    </MenuSection>
   )
 }

@@ -15,7 +15,6 @@ import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useEffect, useState } from 'react'
 import Icon from '@/Components/Icon/Icon'
 import Menu from '@/Components/Menu/Menu'
-import MenuItemSeparator from '@/Components/Menu/MenuItemSeparator'
 import { DisplayOptionsMenuProps } from './DisplayOptionsMenuProps'
 import NewNotePreferences from './NewNotePreferences'
 import { PreferenceMode } from './PreferenceMode'
@@ -26,6 +25,7 @@ import MenuSwitchButtonItem from '@/Components/Menu/MenuSwitchButtonItem'
 import { Pill } from '@/Components/Preferences/PreferencesComponents/Content'
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 import { PaneLayout } from '@/Controllers/PaneController/PaneLayout'
+import MenuSection from '@/Components/Menu/MenuSection'
 
 const DailyEntryModeEnabled = true
 
@@ -316,45 +316,43 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
         />
       )}
 
-      <MenuItemSeparator />
+      <MenuSection title="Sort by">
+        <MenuRadioButtonItem
+          disabled={controlsDisabled || isDailyEntry}
+          className="py-2"
+          onClick={toggleSortByDateModified}
+          checked={preferences.sortBy === CollectionSort.UpdatedAt}
+        >
+          <div className="ml-1 flex flex-grow items-center justify-between md:ml-2">
+            <span>Date modified</span>
+            <SortIcon enabled={preferences.sortBy === CollectionSort.UpdatedAt} reverse={preferences.sortReverse} />
+          </div>
+        </MenuRadioButtonItem>
+        <MenuRadioButtonItem
+          disabled={controlsDisabled || isDailyEntry}
+          className="py-2"
+          onClick={toggleSortByCreationDate}
+          checked={preferences.sortBy === CollectionSort.CreatedAt}
+        >
+          <div className="ml-1 flex flex-grow items-center justify-between md:ml-2">
+            <span>Creation date</span>
+            <SortIcon enabled={preferences.sortBy === CollectionSort.CreatedAt} reverse={preferences.sortReverse} />
+          </div>
+        </MenuRadioButtonItem>
+        <MenuRadioButtonItem
+          disabled={controlsDisabled || isDailyEntry}
+          className="py-2"
+          onClick={toggleSortByTitle}
+          checked={preferences.sortBy === CollectionSort.Title}
+        >
+          <div className="ml-1 flex flex-grow items-center justify-between md:ml-2">
+            <span>Title</span>
+            <SortIcon enabled={preferences.sortBy === CollectionSort.Title} reverse={preferences.sortReverse} />
+          </div>
+        </MenuRadioButtonItem>
+      </MenuSection>
 
-      <div className="my-1 px-3 text-base font-semibold uppercase text-text lg:text-xs">Sort by</div>
-      <MenuRadioButtonItem
-        disabled={controlsDisabled || isDailyEntry}
-        className="py-2"
-        onClick={toggleSortByDateModified}
-        checked={preferences.sortBy === CollectionSort.UpdatedAt}
-      >
-        <div className="ml-1 flex flex-grow items-center justify-between md:ml-2">
-          <span>Date modified</span>
-          <SortIcon enabled={preferences.sortBy === CollectionSort.UpdatedAt} reverse={preferences.sortReverse} />
-        </div>
-      </MenuRadioButtonItem>
-      <MenuRadioButtonItem
-        disabled={controlsDisabled || isDailyEntry}
-        className="py-2"
-        onClick={toggleSortByCreationDate}
-        checked={preferences.sortBy === CollectionSort.CreatedAt}
-      >
-        <div className="ml-1 flex flex-grow items-center justify-between md:ml-2">
-          <span>Creation date</span>
-          <SortIcon enabled={preferences.sortBy === CollectionSort.CreatedAt} reverse={preferences.sortReverse} />
-        </div>
-      </MenuRadioButtonItem>
-      <MenuRadioButtonItem
-        disabled={controlsDisabled || isDailyEntry}
-        className="py-2"
-        onClick={toggleSortByTitle}
-        checked={preferences.sortBy === CollectionSort.Title}
-      >
-        <div className="ml-1 flex flex-grow items-center justify-between md:ml-2">
-          <span>Title</span>
-          <SortIcon enabled={preferences.sortBy === CollectionSort.Title} reverse={preferences.sortReverse} />
-        </div>
-      </MenuRadioButtonItem>
-      <>
-        <MenuItemSeparator />
-        <div className="px-3 py-1 text-base font-semibold uppercase text-text lg:text-xs">View</div>
+      <MenuSection title="View">
         {!shouldHideNonApplicableOptions && !isFilesSmartView && (
           <MenuSwitchButtonItem
             disabled={controlsDisabled}
@@ -389,49 +387,47 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
         >
           Show icon
         </MenuSwitchButtonItem>
-        {!shouldHideNonApplicableOptions && (
-          <>
-            <MenuItemSeparator />
-            <div className="px-3 py-1 text-base font-semibold uppercase text-text lg:text-xs">Other</div>
-            <MenuSwitchButtonItem
-              disabled={controlsDisabled}
-              className="py-1 hover:bg-contrast focus:bg-info-backdrop"
-              checked={!preferences.hidePinned}
-              onChange={toggleHidePinned}
-            >
-              Show pinned
-            </MenuSwitchButtonItem>
-            <MenuSwitchButtonItem
-              disabled={controlsDisabled}
-              className="py-1 hover:bg-contrast focus:bg-info-backdrop"
-              checked={!preferences.hideProtected}
-              onChange={toggleHideProtected}
-            >
-              Show protected
-            </MenuSwitchButtonItem>
-            <MenuSwitchButtonItem
-              disabled={controlsDisabled}
-              className="py-1 hover:bg-contrast focus:bg-info-backdrop"
-              checked={Boolean(preferences.showArchived)}
-              onChange={toggleShowArchived}
-            >
-              Show archived
-            </MenuSwitchButtonItem>
-            <MenuSwitchButtonItem
-              disabled={controlsDisabled}
-              className="py-1 hover:bg-contrast focus:bg-info-backdrop"
-              checked={Boolean(preferences.showTrashed)}
-              onChange={toggleShowTrashed}
-            >
-              Show trashed
-            </MenuSwitchButtonItem>
-          </>
-        )}
-      </>
+      </MenuSection>
+
+      {!shouldHideNonApplicableOptions && (
+        <MenuSection title="Other">
+          <MenuSwitchButtonItem
+            disabled={controlsDisabled}
+            className="py-1 hover:bg-contrast focus:bg-info-backdrop"
+            checked={!preferences.hidePinned}
+            onChange={toggleHidePinned}
+          >
+            Show pinned
+          </MenuSwitchButtonItem>
+          <MenuSwitchButtonItem
+            disabled={controlsDisabled}
+            className="py-1 hover:bg-contrast focus:bg-info-backdrop"
+            checked={!preferences.hideProtected}
+            onChange={toggleHideProtected}
+          >
+            Show protected
+          </MenuSwitchButtonItem>
+          <MenuSwitchButtonItem
+            disabled={controlsDisabled}
+            className="py-1 hover:bg-contrast focus:bg-info-backdrop"
+            checked={Boolean(preferences.showArchived)}
+            onChange={toggleShowArchived}
+          >
+            Show archived
+          </MenuSwitchButtonItem>
+          <MenuSwitchButtonItem
+            disabled={controlsDisabled}
+            className="py-1 hover:bg-contrast focus:bg-info-backdrop"
+            checked={Boolean(preferences.showTrashed)}
+            onChange={toggleShowTrashed}
+          >
+            Show trashed
+          </MenuSwitchButtonItem>
+        </MenuSection>
+      )}
 
       {currentMode === 'tag' && !isSystemTag && DailyEntryModeEnabled && !isTableViewEnabled && (
-        <>
-          <MenuItemSeparator />
+        <MenuSection>
           <MenuSwitchButtonItem
             disabled={controlsDisabled}
             className="py-1 hover:bg-contrast focus:bg-info-backdrop"
@@ -441,19 +437,18 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
             <div className="flex flex-col pr-5">
               <div className="flex flex-row items-center">
                 <div className="text-base font-semibold uppercase text-text lg:text-xs">Daily Notebook</div>
-                <Pill className="px-1.5 !py-0.5" style="success">
+                <Pill className="!py-0.5 px-1.5" style="success">
                   Labs
                 </Pill>
               </div>
               <div className="mt-1">Capture new notes daily with a calendar-based layout</div>
             </div>
           </MenuSwitchButtonItem>
-        </>
+        </MenuSection>
       )}
 
       {currentMode === 'tag' && !isSystemTag && !isDailyEntry && (
-        <>
-          <MenuItemSeparator />
+        <MenuSection>
           <MenuSwitchButtonItem
             disabled={controlsDisabled}
             className="py-1 hover:bg-contrast focus:bg-info-backdrop"
@@ -463,19 +458,18 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
             <div className="flex flex-col pr-5">
               <div className="flex flex-row items-center">
                 <div className="text-base font-semibold uppercase text-text lg:text-xs">Table view</div>
-                <Pill className="px-1.5 !py-0.5" style="success">
+                <Pill className="!py-0.5 px-1.5" style="success">
                   Labs
                 </Pill>
               </div>
               <div className="mt-1">Display the notes and files in the current tag in a table layout</div>
             </div>
           </MenuSwitchButtonItem>
-        </>
+        </MenuSection>
       )}
 
       {!shouldHideNonApplicableOptions && (!isSystemTag || currentMode === 'global') && (
-        <>
-          <MenuItemSeparator />
+        <MenuSection title="New note defaults">
           <NewNotePreferences
             disabled={controlsDisabled}
             application={application}
@@ -483,7 +477,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
             mode={currentMode}
             changePreferencesCallback={changePreferences}
           />
-        </>
+        </MenuSection>
       )}
     </Menu>
   )

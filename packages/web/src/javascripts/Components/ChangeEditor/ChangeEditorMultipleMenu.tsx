@@ -10,7 +10,7 @@ import {
   NoteType,
   SNNote,
 } from '@standardnotes/snjs'
-import { Fragment, useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import Icon from '../Icon/Icon'
 import { PremiumFeatureIconName, PremiumFeatureIconClass } from '../Icon/PremiumFeatureIcon'
 import Menu from '../Menu/Menu'
@@ -20,6 +20,7 @@ import { EditorMenuItem } from '../NotesOptions/EditorMenuItem'
 import { SuperNoteImporter } from '../SuperEditor/SuperNoteImporter'
 import { Pill } from '../Preferences/PreferencesComponents/Content'
 import ModalOverlay from '../Modal/ModalOverlay'
+import MenuSection from '../Menu/MenuSection'
 
 const getGroupId = (group: EditorMenuGroup) => group.title.toLowerCase().replace(/\s/, '-')
 
@@ -132,36 +133,34 @@ const ChangeEditorMultipleMenu = ({ application, notes, setDisableClickOutside }
   return (
     <>
       <Menu isOpen={true} a11yLabel="Change note type">
-        {groupsWithItems.map((group, index) => (
-          <Fragment key={getGroupId(group)}>
-            <div className={`border-0 border-t border-solid border-border py-1 ${index === 0 ? 'border-t-0' : ''}`}>
-              {group.items.map((item) => {
-                const onClickEditorItem = () => {
-                  handleMenuSelection(item).catch(console.error)
-                }
-                return (
-                  <MenuItem
-                    key={item.uiFeature.uniqueIdentifier.value}
-                    onClick={onClickEditorItem}
-                    className={'flex-row-reversed py-2'}
-                  >
-                    <div className="flex flex-grow items-center justify-between">
-                      <div className={'flex items-center'}>
-                        {group.icon && <Icon type={group.icon} className={`mr-2 ${group.iconClassName}`} />}
-                        {item.uiFeature.displayName}
-                        {item.isLabs && (
-                          <Pill className="px-1.5 py-0.5" style="success">
-                            Labs
-                          </Pill>
-                        )}
-                      </div>
-                      {!item.isEntitled && <Icon type={PremiumFeatureIconName} className={PremiumFeatureIconClass} />}
+        {groupsWithItems.map((group) => (
+          <MenuSection key={getGroupId(group)}>
+            {group.items.map((item) => {
+              const onClickEditorItem = () => {
+                handleMenuSelection(item).catch(console.error)
+              }
+              return (
+                <MenuItem
+                  key={item.uiFeature.uniqueIdentifier.value}
+                  onClick={onClickEditorItem}
+                  className={'flex-row-reversed py-2'}
+                >
+                  <div className="flex flex-grow items-center justify-between">
+                    <div className={'flex items-center'}>
+                      {group.icon && <Icon type={group.icon} className={`mr-2 ${group.iconClassName}`} />}
+                      {item.uiFeature.displayName}
+                      {item.isLabs && (
+                        <Pill className="px-1.5 py-0.5" style="success">
+                          Labs
+                        </Pill>
+                      )}
                     </div>
-                  </MenuItem>
-                )
-              })}
-            </div>
-          </Fragment>
+                    {!item.isEntitled && <Icon type={PremiumFeatureIconName} className={PremiumFeatureIconClass} />}
+                  </div>
+                </MenuItem>
+              )
+            })}
+          </MenuSection>
         ))}
       </Menu>
       <ModalOverlay isOpen={showSuperImporter} close={closeCurrentSuperNoteImporter}>

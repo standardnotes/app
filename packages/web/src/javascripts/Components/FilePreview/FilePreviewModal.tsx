@@ -221,7 +221,7 @@ const FilePreviewModal = observer(({ application }: Props) => {
               togglePopover={closeOptionsMenu}
               side="bottom"
               align="start"
-              className="py-2"
+              className="md:pb-2"
               overrideZIndex="z-modal"
             >
               <Menu a11yLabel="File context menu" isOpen={showOptionsMenu}>

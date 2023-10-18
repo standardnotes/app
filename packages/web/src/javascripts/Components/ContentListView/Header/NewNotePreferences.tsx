@@ -173,10 +173,9 @@ const NewNotePreferences: FunctionComponent<Props> = ({
   }
 
   return (
-    <div className="my-1 px-3 pb-2 pt-1">
-      <div className="text-base font-semibold uppercase text-text lg:text-xs">New Note Defaults</div>
+    <div className="px-3 py-3">
       <div>
-        <div className="mt-3 text-mobile-menu-item md:text-menu-item">Note Type</div>
+        <div className="text-mobile-menu-item md:text-menu-item">Note Type</div>
         <div className="mt-2">
           <Dropdown
             disabled={disabled}

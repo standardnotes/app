@@ -54,7 +54,7 @@ const ListedActionsOption: FunctionComponent<Props> = ({ application, note, icon
         open={isOpen}
         side="right"
         align="end"
-        className="pt-2 md:pt-0"
+        className="px-4 md:px-0 md:pt-0"
       >
         <ListedActionsMenu application={application} note={note} />
       </Popover>

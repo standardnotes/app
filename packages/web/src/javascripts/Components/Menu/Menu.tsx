@@ -68,7 +68,7 @@ const Menu = forwardRef(
 
     return (
       <menu
-        className={`m-0 list-none pl-0 focus:shadow-none ${className}`}
+        className={`m-0 list-none px-4 focus:shadow-none md:px-0 ${className}`}
         onKeyDown={handleKeyDown}
         ref={mergeRefs([menuElementRef, forwardedRef])}
         style={style}

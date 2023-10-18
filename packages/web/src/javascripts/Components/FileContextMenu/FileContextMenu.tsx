@@ -22,7 +22,7 @@ const FileContextMenu: FunctionComponent<Props> = observer(({ filesController, i
       anchorPoint={fileContextMenuLocation}
       togglePopover={() => setShowFileContextMenu(!showFileContextMenu)}
       align="start"
-      className="py-2"
+      className="md:pb-2"
     >
       <Menu a11yLabel="File context menu" isOpen={showFileContextMenu}>
         <FileMenuOptions

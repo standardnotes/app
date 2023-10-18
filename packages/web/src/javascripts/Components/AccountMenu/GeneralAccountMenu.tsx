@@ -6,13 +6,13 @@ import { useCallback, useMemo, useState, FunctionComponent } from 'react'
 import { AccountMenuPane } from './AccountMenuPane'
 import Menu from '@/Components/Menu/Menu'
 import MenuItem from '@/Components/Menu/MenuItem'
-import MenuItemSeparator from '@/Components/Menu/MenuItemSeparator'
 import WorkspaceSwitcherOption from './WorkspaceSwitcher/WorkspaceSwitcherOption'
 import { WebApplicationGroup } from '@/Application/WebApplicationGroup'
 import { formatLastSyncDate } from '@/Utils/DateUtils'
 import Spinner from '@/Components/Spinner/Spinner'
 import { MenuItemIconSize } from '@/Constants/TailwindClassNames'
 import { useApplication } from '../ApplicationProvider'
+import MenuSection from '../Menu/MenuSection'
 
 type Props = {
   mainApplicationGroup: WebApplicationGroup
@@ -92,7 +92,7 @@ const GeneralAccountMenu: FunctionComponent<Props> = ({ setMenuPane, closeMenu, 
 
   return (
     <>
-      <div className="mb-1 mt-1 hidden items-center justify-between px-3 md:flex">
+      <div className="mb-1 mt-1 hidden items-center justify-between px-4 md:flex md:px-3">
         <div className="text-lg font-bold lg:text-base">Account</div>
         <div className="flex cursor-pointer" onClick={closeMenu}>
           <Icon type="close" className="text-neutral" />
@@ -100,12 +100,12 @@ const GeneralAccountMenu: FunctionComponent<Props> = ({ setMenuPane, closeMenu, 
       </div>
       {user ? (
         <>
-          <div className="mb-3 px-3 text-lg text-foreground lg:text-sm">
+          <div className="mb-3 px-4 text-lg text-foreground md:px-3 lg:text-sm">
             <div>You're signed in as:</div>
             <div className="wrap my-0.5 font-bold">{user.email}</div>
             <span className="text-neutral">{application.getHost.execute().getValue()}</span>
           </div>
-          <div className="mb-2 flex items-start justify-between px-3 text-mobile-menu-item md:text-tablet-menu-item lg:text-menu-item">
+          <div className="mb-2 flex items-start justify-between px-4 text-mobile-menu-item md:px-3 md:text-tablet-menu-item lg:text-menu-item">
             {isSyncingInProgress ? (
               <div className="flex items-center font-semibold text-info">
                 <Spinner className="mr-2 h-5 w-5" />
@@ -127,7 +127,7 @@ const GeneralAccountMenu: FunctionComponent<Props> = ({ setMenuPane, closeMenu, 
         </>
       ) : (
         <>
-          <div className="mb-1 px-3">
+          <div className="mb-1 px-4 md:px-3">
             <div className="mb-3 text-base text-foreground lg:text-sm">
               You’re offline. Sign in to sync your notes and preferences across all your devices and enable end-to-end
               encryption.
@@ -145,56 +145,57 @@ const GeneralAccountMenu: FunctionComponent<Props> = ({ setMenuPane, closeMenu, 
         closeMenu={closeMenu}
         initialFocus={!application.hasAccount() ? CREATE_ACCOUNT_INDEX : SWITCHER_INDEX}
       >
-        <MenuItemSeparator />
-        <WorkspaceSwitcherOption mainApplicationGroup={mainApplicationGroup} />
-        <MenuItemSeparator />
-        {user ? (
-          <MenuItem onClick={openPreferences}>
-            <Icon type="user" className={iconClassName} />
-            Account settings
-          </MenuItem>
-        ) : (
-          <>
-            <MenuItem onClick={activateRegisterPane}>
+        <MenuSection className="md:border-t md:pt-2">
+          <WorkspaceSwitcherOption mainApplicationGroup={mainApplicationGroup} />
+        </MenuSection>
+        <MenuSection>
+          {user ? (
+            <MenuItem onClick={openPreferences}>
               <Icon type="user" className={iconClassName} />
-              Create free account
+              Account settings
             </MenuItem>
-            <MenuItem onClick={activateSignInPane}>
-              <Icon type="signIn" className={iconClassName} />
-              Sign in
-            </MenuItem>
-          </>
-        )}
-        <MenuItem
-          onClick={() => {
-            application.importModalController.setIsVisible(true)
-            application.accountMenuController.closeAccountMenu()
-          }}
-        >
-          <Icon type="archive" className={iconClassName} />
-          Import
-        </MenuItem>
-        {application.isNativeMobileWeb() && (
-          <MenuItem onClick={openEmail}>
-            <Icon type="email-filled" className={iconClassName} />
-            Email us
+          ) : (
+            <>
+              <MenuItem onClick={activateRegisterPane}>
+                <Icon type="user" className={iconClassName} />
+                Create free account
+              </MenuItem>
+              <MenuItem onClick={activateSignInPane}>
+                <Icon type="signIn" className={iconClassName} />
+                Sign in
+              </MenuItem>
+            </>
+          )}
+          <MenuItem
+            onClick={() => {
+              application.importModalController.setIsVisible(true)
+              application.accountMenuController.closeAccountMenu()
+            }}
+          >
+            <Icon type="archive" className={iconClassName} />
+            Import
           </MenuItem>
-        )}
-        <MenuItem className="justify-between" onClick={openHelp}>
-          <div className="flex items-center">
-            <Icon type="help" className={iconClassName} />
-            Help &amp; feedback
-          </div>
-          <span className="text-neutral">v{application.version}</span>
-        </MenuItem>
+          {application.isNativeMobileWeb() && (
+            <MenuItem onClick={openEmail}>
+              <Icon type="email-filled" className={iconClassName} />
+              Email us
+            </MenuItem>
+          )}
+          <MenuItem className="justify-between" onClick={openHelp}>
+            <div className="flex items-center">
+              <Icon type="help" className={iconClassName} />
+              Help &amp; feedback
+            </div>
+            <span className="text-neutral">v{application.version}</span>
+          </MenuItem>
+        </MenuSection>
         {user ? (
-          <>
-            <MenuItemSeparator />
+          <MenuSection>
             <MenuItem onClick={signOut}>
               <Icon type="signOut" className={iconClassName} />
               Sign out workspace
             </MenuItem>
-          </>
+          </MenuSection>
         ) : null}
       </Menu>
     </>

@@ -1,10 +1,11 @@
 import { WebApplication } from '@/Application/WebApplication'
 import { Action, SNNote } from '@standardnotes/snjs'
-import { Fragment, useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import Icon from '@/Components/Icon/Icon'
 import { ListedMenuGroup } from './ListedMenuGroup'
 import ListedMenuItem from './ListedMenuItem'
 import Spinner from '@/Components/Spinner/Spinner'
+import MenuSection from '@/Components/Menu/MenuSection'
 
 type ListedActionsMenuProps = {
   application: WebApplication
@@ -125,15 +126,15 @@ const ListedActionsMenu = ({ application, note }: ListedActionsMenuProps) => {
       )}
       {!isFetchingAccounts && menuGroups.length ? (
         <>
-          {menuGroups.map((group, index) => (
-            <Fragment key={group.account.authorId}>
-              <div
-                className={`text-input flex w-full items-center border-y border-solid border-border px-2.5 py-2 font-semibold text-text ${
-                  index === 0 ? 'mb-1 border-t-0' : 'my-1'
-                }`}
-              >
-                <Icon type="notes" className="mr-2 text-info" /> {group.name}
-              </div>
+          {menuGroups.map((group) => (
+            <MenuSection
+              key={group.account.authorId}
+              title={
+                <div className="flex items-center">
+                  <Icon type="notes" className="mr-2 text-info" /> {group.name}
+                </div>
+              }
+            >
               {group.actions.length ? (
                 group.actions.map((action) => (
                   <ListedMenuItem
@@ -148,7 +149,7 @@ const ListedActionsMenu = ({ application, note }: ListedActionsMenuProps) => {
               ) : (
                 <div className="select-none px-3 py-2 text-sm text-passive-0">No actions available</div>
               )}
-            </Fragment>
+            </MenuSection>
           ))}
         </>
       ) : null}

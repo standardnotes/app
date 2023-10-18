@@ -390,7 +390,7 @@ function TableActionMenu({ onClose, tableCellNode: _tableCellNode, cellMerge }: 
     (tableCellNode.__headerState & TableCellHeaderStates.COLUMN) === TableCellHeaderStates.COLUMN
 
   return (
-    <Menu className="dropdown" ref={dropDownRef} a11yLabel="Table actions menu" isOpen>
+    <Menu className="dropdown !px-0" ref={dropDownRef} a11yLabel="Table actions menu" isOpen>
       {mergeCellButton}
       {!!mergeCellButton && <MenuItemSeparator />}
       <MenuItem onClick={() => insertTableRowAtSelection(false)}>
