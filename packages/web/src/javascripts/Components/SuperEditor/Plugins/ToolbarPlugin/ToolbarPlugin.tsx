@@ -507,7 +507,14 @@ const ToolbarPlugin = () => {
               active={isHighlight}
               onSelect={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'highlight')}
             />
-            <ToolbarButton name="Link" iconName="link" active={isLink} onSelect={() => {}} />
+            <ToolbarButton
+              name="Link"
+              iconName="link"
+              active={isLink}
+              onSelect={() => {
+                editor.dispatchCommand(TOGGLE_LINK_AND_EDIT_COMMAND, '')
+              }}
+            />
             <ToolbarButton
               name="Strikethrough"
               iconName="strikethrough"
