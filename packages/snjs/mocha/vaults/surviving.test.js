@@ -337,6 +337,8 @@ describe('designated survival', function () {
       Factory.handlePasswordChallenges(context.application, context.password)
       await context.application.user.deleteAccount()
 
+      await Factory.sleep(2)
+
       await secondContext.syncAndAwaitNotificationsProcessing()
       await thirdContext.syncAndAwaitNotificationsProcessing()
 
