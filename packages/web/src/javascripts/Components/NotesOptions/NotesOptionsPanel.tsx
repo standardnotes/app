@@ -37,9 +37,9 @@ const NotesOptionsPanel = ({ notesController, onClickPreprocessing }: Props) => 
         togglePopover={toggleMenu}
         anchorElement={buttonRef}
         open={isOpen}
-        className="select-none pt-2"
+        className="select-none"
       >
-        <Menu a11yLabel="Note options menu" isOpen={isOpen}>
+        <Menu a11yLabel="Note options menu" isOpen={isOpen} className="pl-4 pr-4">
           <NotesOptions
             notes={notesController.selectedNotes}
             requestDisableClickOutside={handleDisableClickOutsideRequest}

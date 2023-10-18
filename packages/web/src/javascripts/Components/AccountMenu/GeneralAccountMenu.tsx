@@ -6,13 +6,13 @@ import { useCallback, useMemo, useState, FunctionComponent } from 'react'
 import { AccountMenuPane } from './AccountMenuPane'
 import Menu from '@/Components/Menu/Menu'
 import MenuItem from '@/Components/Menu/MenuItem'
-import MenuItemSeparator from '@/Components/Menu/MenuItemSeparator'
 import WorkspaceSwitcherOption from './WorkspaceSwitcher/WorkspaceSwitcherOption'
 import { WebApplicationGroup } from '@/Application/WebApplicationGroup'
 import { formatLastSyncDate } from '@/Utils/DateUtils'
 import Spinner from '@/Components/Spinner/Spinner'
 import { MenuItemIconSize } from '@/Constants/TailwindClassNames'
 import { useApplication } from '../ApplicationProvider'
+import MenuSection from '../Menu/MenuSection'
 
 type Props = {
   mainApplicationGroup: WebApplicationGroup
@@ -144,57 +144,59 @@ const GeneralAccountMenu: FunctionComponent<Props> = ({ setMenuPane, closeMenu, 
         a11yLabel="General account menu"
         closeMenu={closeMenu}
         initialFocus={!application.hasAccount() ? CREATE_ACCOUNT_INDEX : SWITCHER_INDEX}
+        className="pl-4 pr-4"
       >
-        <MenuItemSeparator />
-        <WorkspaceSwitcherOption mainApplicationGroup={mainApplicationGroup} />
-        <MenuItemSeparator />
-        {user ? (
-          <MenuItem onClick={openPreferences}>
-            <Icon type="user" className={iconClassName} />
-            Account settings
-          </MenuItem>
-        ) : (
-          <>
-            <MenuItem onClick={activateRegisterPane}>
+        <MenuSection>
+          <WorkspaceSwitcherOption mainApplicationGroup={mainApplicationGroup} />
+        </MenuSection>
+        <MenuSection>
+          {user ? (
+            <MenuItem onClick={openPreferences}>
               <Icon type="user" className={iconClassName} />
-              Create free account
+              Account settings
             </MenuItem>
-            <MenuItem onClick={activateSignInPane}>
-              <Icon type="signIn" className={iconClassName} />
-              Sign in
-            </MenuItem>
-          </>
-        )}
-        <MenuItem
-          onClick={() => {
-            application.importModalController.setIsVisible(true)
-            application.accountMenuController.closeAccountMenu()
-          }}
-        >
-          <Icon type="archive" className={iconClassName} />
-          Import
-        </MenuItem>
-        {application.isNativeMobileWeb() && (
-          <MenuItem onClick={openEmail}>
-            <Icon type="email-filled" className={iconClassName} />
-            Email us
+          ) : (
+            <>
+              <MenuItem onClick={activateRegisterPane}>
+                <Icon type="user" className={iconClassName} />
+                Create free account
+              </MenuItem>
+              <MenuItem onClick={activateSignInPane}>
+                <Icon type="signIn" className={iconClassName} />
+                Sign in
+              </MenuItem>
+            </>
+          )}
+          <MenuItem
+            onClick={() => {
+              application.importModalController.setIsVisible(true)
+              application.accountMenuController.closeAccountMenu()
+            }}
+          >
+            <Icon type="archive" className={iconClassName} />
+            Import
           </MenuItem>
-        )}
-        <MenuItem className="justify-between" onClick={openHelp}>
-          <div className="flex items-center">
-            <Icon type="help" className={iconClassName} />
-            Help &amp; feedback
-          </div>
-          <span className="text-neutral">v{application.version}</span>
-        </MenuItem>
+          {application.isNativeMobileWeb() && (
+            <MenuItem onClick={openEmail}>
+              <Icon type="email-filled" className={iconClassName} />
+              Email us
+            </MenuItem>
+          )}
+          <MenuItem className="justify-between" onClick={openHelp}>
+            <div className="flex items-center">
+              <Icon type="help" className={iconClassName} />
+              Help &amp; feedback
+            </div>
+            <span className="text-neutral">v{application.version}</span>
+          </MenuItem>
+        </MenuSection>
         {user ? (
-          <>
-            <MenuItemSeparator />
+          <MenuSection>
             <MenuItem onClick={signOut}>
               <Icon type="signOut" className={iconClassName} />
               Sign out workspace
             </MenuItem>
-          </>
+          </MenuSection>
         ) : null}
       </Menu>
     </>

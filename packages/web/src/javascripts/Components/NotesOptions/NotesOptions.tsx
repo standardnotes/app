@@ -18,7 +18,6 @@ import ListedActionsOption from './Listed/ListedActionsOption'
 import AddTagOption from './AddTagOption'
 import { addToast, dismissToast, ToastType } from '@standardnotes/toast'
 import { NotesOptionsProps } from './NotesOptionsProps'
-import HorizontalSeparator from '../Shared/HorizontalSeparator'
 import { useResponsiveAppPane } from '../Panes/ResponsivePaneProvider'
 import { AppPaneId } from '../Panes/AppPaneMetadata'
 import { getNoteBlob, getNoteFileName } from '@/Utils/NoteExportUtils'
@@ -42,6 +41,7 @@ import { MutuallyExclusiveMediaQueryBreakpoints } from '@/Hooks/useMediaQuery'
 import AddToVaultMenuOption from '../Vaults/AddToVaultMenuOption'
 import Menu from '../Menu/Menu'
 import Popover from '../Popover/Popover'
+import MenuSection from '../Menu/MenuSection'
 
 const iconSize = MenuItemIconSize
 const iconClassDanger = `text-danger mr-2 ${iconSize}`
@@ -230,271 +230,280 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
     <>
       {notes.length === 1 && (
         <>
-          <MenuItem onClick={openRevisionHistoryModal}>
-            <Icon type="history" className={iconClass} />
-            Note history
-            {historyShortcut && <KeyboardShortcutIndicator className="ml-auto" shortcut={historyShortcut} />}
-          </MenuItem>
-          <HorizontalSeparator classes="my-2" />
-          <MenuItem onClick={toggleLineWidthModal} disabled={areSomeNotesInReadonlySharedVault}>
-            <Icon type="line-width" className={iconClass} />
-            Editor width
-            {editorWidthShortcut && <KeyboardShortcutIndicator className="ml-auto" shortcut={editorWidthShortcut} />}
-          </MenuItem>
+          <MenuSection>
+            <MenuItem onClick={openRevisionHistoryModal}>
+              <Icon type="history" className={iconClass} />
+              Note history
+              {historyShortcut && <KeyboardShortcutIndicator className="ml-auto" shortcut={historyShortcut} />}
+            </MenuItem>
+          </MenuSection>
+          <MenuSection>
+            <MenuItem onClick={toggleLineWidthModal} disabled={areSomeNotesInReadonlySharedVault}>
+              <Icon type="line-width" className={iconClass} />
+              Editor width
+              {editorWidthShortcut && <KeyboardShortcutIndicator className="ml-auto" shortcut={editorWidthShortcut} />}
+            </MenuItem>
+          </MenuSection>
         </>
       )}
-      <MenuSwitchButtonItem
-        checked={locked}
-        onChange={(locked) => {
-          application.notesController.setLockSelectedNotes(locked)
-        }}
-        disabled={areSomeNotesInReadonlySharedVault}
-      >
-        <Icon type="pencil-off" className={iconClass} />
-        Prevent editing
-      </MenuSwitchButtonItem>
-      <MenuSwitchButtonItem
-        checked={!hidePreviews}
-        onChange={(hidePreviews) => {
-          application.notesController.setHideSelectedNotePreviews(!hidePreviews)
-        }}
-        disabled={areSomeNotesInReadonlySharedVault}
-      >
-        <Icon type="rich-text" className={iconClass} />
-        Show preview
-      </MenuSwitchButtonItem>
-      <MenuSwitchButtonItem
-        checked={protect}
-        onChange={(protect) => {
-          application.notesController.setProtectSelectedNotes(protect).catch(console.error)
-        }}
-        disabled={areSomeNotesInReadonlySharedVault}
-      >
-        <Icon type="lock" className={iconClass} />
-        Password protect
-      </MenuSwitchButtonItem>
+      <MenuSection>
+        <MenuSwitchButtonItem
+          checked={locked}
+          onChange={(locked) => {
+            application.notesController.setLockSelectedNotes(locked)
+          }}
+          disabled={areSomeNotesInReadonlySharedVault}
+        >
+          <Icon type="pencil-off" className={iconClass} />
+          Prevent editing
+        </MenuSwitchButtonItem>
+        <MenuSwitchButtonItem
+          checked={!hidePreviews}
+          onChange={(hidePreviews) => {
+            application.notesController.setHideSelectedNotePreviews(!hidePreviews)
+          }}
+          disabled={areSomeNotesInReadonlySharedVault}
+        >
+          <Icon type="rich-text" className={iconClass} />
+          Show preview
+        </MenuSwitchButtonItem>
+        <MenuSwitchButtonItem
+          checked={protect}
+          onChange={(protect) => {
+            application.notesController.setProtectSelectedNotes(protect).catch(console.error)
+          }}
+          disabled={areSomeNotesInReadonlySharedVault}
+        >
+          <Icon type="lock" className={iconClass} />
+          Password protect
+        </MenuSwitchButtonItem>
+      </MenuSection>
       {notes.length === 1 && (
-        <>
-          <HorizontalSeparator classes="my-2" />
+        <MenuSection>
           <ChangeEditorOption
             iconClassName={iconClass}
             application={application}
             note={notes[0]}
             disabled={areSomeNotesInReadonlySharedVault}
           />
-        </>
-      )}
-      <HorizontalSeparator classes="my-2" />
-
-      {application.featuresController.isVaultsEnabled() && (
-        <AddToVaultMenuOption iconClassName={iconClass} items={notes} disabled={!hasAdminPermissionForAllSharedNotes} />
+        </MenuSection>
       )}
 
-      {application.navigationController.tagsCount > 0 && (
-        <AddTagOption
-          iconClassName={iconClass}
-          navigationController={application.navigationController}
-          selectedItems={notes}
-          linkingController={application.linkingController}
-          disabled={areSomeNotesInReadonlySharedVault}
-        />
-      )}
-      <MenuItem
-        onClick={() => {
-          application.notesController.setStarSelectedNotes(!starred)
-        }}
-        disabled={areSomeNotesInReadonlySharedVault}
-      >
-        <Icon type="star" className={iconClass} />
-        {starred ? 'Unstar' : 'Star'}
-        {starShortcut && <KeyboardShortcutIndicator className="ml-auto" shortcut={starShortcut} />}
-      </MenuItem>
+      <MenuSection>
+        {application.featuresController.isVaultsEnabled() && (
+          <AddToVaultMenuOption
+            iconClassName={iconClass}
+            items={notes}
+            disabled={!hasAdminPermissionForAllSharedNotes}
+          />
+        )}
 
-      {unpinned && (
+        {application.navigationController.tagsCount > 0 && (
+          <AddTagOption
+            iconClassName={iconClass}
+            navigationController={application.navigationController}
+            selectedItems={notes}
+            linkingController={application.linkingController}
+            disabled={areSomeNotesInReadonlySharedVault}
+          />
+        )}
         <MenuItem
           onClick={() => {
-            application.notesController.setPinSelectedNotes(true)
+            application.notesController.setStarSelectedNotes(!starred)
           }}
           disabled={areSomeNotesInReadonlySharedVault}
         >
-          <Icon type="pin" className={iconClass} />
-          Pin to top
-          {pinShortcut && <KeyboardShortcutIndicator className="ml-auto" shortcut={pinShortcut} />}
+          <Icon type="star" className={iconClass} />
+          {starred ? 'Unstar' : 'Star'}
+          {starShortcut && <KeyboardShortcutIndicator className="ml-auto" shortcut={starShortcut} />}
         </MenuItem>
-      )}
-      {pinned && (
-        <MenuItem
-          onClick={() => {
-            application.notesController.setPinSelectedNotes(false)
-          }}
-          disabled={areSomeNotesInReadonlySharedVault}
-        >
-          <Icon type="unpin" className={iconClass} />
-          Unpin
-          {pinShortcut && <KeyboardShortcutIndicator className="ml-auto" shortcut={pinShortcut} />}
-        </MenuItem>
-      )}
-      {isOnlySuperNoteSelected ? (
-        <>
-          <MenuItem
-            ref={superExportButtonRef}
-            onClick={() => {
-              setIsSuperExportMenuOpen((open) => !open)
-            }}
-          >
-            <div className="flex items-center">
-              <Icon type="download" className={iconClass} />
-              Export
-            </div>
-            <Icon type="chevron-right" className="ml-auto text-neutral" />
-          </MenuItem>
-          <Popover
-            title="Export note"
-            side="left"
-            align="start"
-            open={isSuperExportMenuOpen}
-            anchorElement={superExportButtonRef.current}
-            togglePopover={() => {
-              setIsSuperExportMenuOpen(!isSuperExportMenuOpen)
-            }}
-            className="py-1"
-          >
-            <Menu a11yLabel={'Super note export menu'} isOpen={isSuperExportMenuOpen}>
-              <MenuItem onClick={() => commandService.triggerCommand(SUPER_EXPORT_JSON, notes[0].title)}>
-                <Icon type="code" className={iconClass} />
-                Export as JSON
-              </MenuItem>
-              <MenuItem onClick={() => commandService.triggerCommand(SUPER_EXPORT_MARKDOWN, notes[0].title)}>
-                <Icon type="markdown" className={iconClass} />
-                Export as Markdown
-              </MenuItem>
-              <MenuItem onClick={() => commandService.triggerCommand(SUPER_EXPORT_HTML, notes[0].title)}>
-                <Icon type="rich-text" className={iconClass} />
-                Export as HTML
-              </MenuItem>
-            </Menu>
-          </Popover>
-        </>
-      ) : (
-        <>
+
+        {unpinned && (
           <MenuItem
             onClick={() => {
-              if (application.isNativeMobileWeb()) {
-                void shareSelectedNotes(application, notes)
-              } else {
-                const hasSuperNote = notes.some((note) => note.noteType === NoteType.Super)
-
-                if (hasSuperNote) {
-                  setShowExportSuperModal(true)
-                  return
-                }
-
-                void downloadSelectedItems()
-              }
-            }}
-          >
-            <Icon type={application.platform === Platform.Android ? 'share' : 'download'} className={iconClass} />
-            {application.platform === Platform.Android ? 'Share' : 'Export'}
-          </MenuItem>
-          {application.platform === Platform.Android && (
-            <MenuItem onClick={() => downloadSelectedNotesOnAndroid(application, notes)}>
-              <Icon type="download" className={iconClass} />
-              Export
-            </MenuItem>
-          )}
-        </>
-      )}
-      <MenuItem onClick={duplicateSelectedItems} disabled={areSomeNotesInReadonlySharedVault}>
-        <Icon type="copy" className={iconClass} />
-        Duplicate
-      </MenuItem>
-      {unarchived && (
-        <MenuItem
-          onClick={async () => {
-            await application.notesController.setArchiveSelectedNotes(true).catch(console.error)
-            closeMenuAndToggleNotesList()
-          }}
-          disabled={areSomeNotesInReadonlySharedVault}
-        >
-          <Icon type="archive" className={iconClassWarning} />
-          <span className="text-warning">Archive</span>
-        </MenuItem>
-      )}
-      {archived && (
-        <MenuItem
-          onClick={async () => {
-            await application.notesController.setArchiveSelectedNotes(false).catch(console.error)
-            closeMenuAndToggleNotesList()
-          }}
-          disabled={areSomeNotesInReadonlySharedVault}
-        >
-          <Icon type="unarchive" className={iconClassWarning} />
-          <span className="text-warning">Unarchive</span>
-        </MenuItem>
-      )}
-      {notTrashed &&
-        (altKeyDown ? (
-          <MenuItem
-            disabled={areSomeNotesInReadonlySharedVault}
-            onClick={async () => {
-              await application.notesController.deleteNotesPermanently()
-              closeMenuAndToggleNotesList()
-            }}
-          >
-            <Icon type="close" className="mr-2 text-danger" />
-            <span className="text-danger">Delete permanently</span>
-          </MenuItem>
-        ) : (
-          <MenuItem
-            onClick={async () => {
-              await application.notesController.setTrashSelectedNotes(true)
-              closeMenuAndToggleNotesList()
+              application.notesController.setPinSelectedNotes(true)
             }}
             disabled={areSomeNotesInReadonlySharedVault}
           >
-            <Icon type="trash" className={iconClassDanger} />
-            <span className="text-danger">Move to trash</span>
+            <Icon type="pin" className={iconClass} />
+            Pin to top
+            {pinShortcut && <KeyboardShortcutIndicator className="ml-auto" shortcut={pinShortcut} />}
           </MenuItem>
-        ))}
-      {trashed && (
-        <>
+        )}
+        {pinned && (
           <MenuItem
-            onClick={async () => {
-              await application.notesController.setTrashSelectedNotes(false)
-              closeMenuAndToggleNotesList()
+            onClick={() => {
+              application.notesController.setPinSelectedNotes(false)
             }}
             disabled={areSomeNotesInReadonlySharedVault}
           >
-            <Icon type="restore" className={iconClassSuccess} />
-            <span className="text-success">Restore</span>
+            <Icon type="unpin" className={iconClass} />
+            Unpin
+            {pinShortcut && <KeyboardShortcutIndicator className="ml-auto" shortcut={pinShortcut} />}
           </MenuItem>
-          <MenuItem
-            disabled={areSomeNotesInReadonlySharedVault}
-            onClick={async () => {
-              await application.notesController.deleteNotesPermanently()
-              closeMenuAndToggleNotesList()
-            }}
-          >
-            <Icon type="close" className="mr-2 text-danger" />
-            <span className="text-danger">Delete permanently</span>
-          </MenuItem>
-          <MenuItem
-            onClick={async () => {
-              await application.notesController.emptyTrash()
-              closeMenuAndToggleNotesList()
-            }}
-            disabled={areSomeNotesInReadonlySharedVault}
-          >
-            <div className="flex items-start">
-              <Icon type="trash-sweep" className="mr-2 text-danger" />
-              <div className="flex-row">
-                <div className="text-danger">Empty Trash</div>
-                <div className="text-xs">{application.notesController.trashedNotesCount} notes in Trash</div>
+        )}
+        {isOnlySuperNoteSelected ? (
+          <>
+            <MenuItem
+              ref={superExportButtonRef}
+              onClick={() => {
+                setIsSuperExportMenuOpen((open) => !open)
+              }}
+            >
+              <div className="flex items-center">
+                <Icon type="download" className={iconClass} />
+                Export
               </div>
-            </div>
+              <Icon type="chevron-right" className="ml-auto text-neutral" />
+            </MenuItem>
+            <Popover
+              title="Export note"
+              side="left"
+              align="start"
+              open={isSuperExportMenuOpen}
+              anchorElement={superExportButtonRef.current}
+              togglePopover={() => {
+                setIsSuperExportMenuOpen(!isSuperExportMenuOpen)
+              }}
+              className="py-1"
+            >
+              <Menu a11yLabel={'Super note export menu'} isOpen={isSuperExportMenuOpen}>
+                <MenuItem onClick={() => commandService.triggerCommand(SUPER_EXPORT_JSON, notes[0].title)}>
+                  <Icon type="code" className={iconClass} />
+                  Export as JSON
+                </MenuItem>
+                <MenuItem onClick={() => commandService.triggerCommand(SUPER_EXPORT_MARKDOWN, notes[0].title)}>
+                  <Icon type="markdown" className={iconClass} />
+                  Export as Markdown
+                </MenuItem>
+                <MenuItem onClick={() => commandService.triggerCommand(SUPER_EXPORT_HTML, notes[0].title)}>
+                  <Icon type="rich-text" className={iconClass} />
+                  Export as HTML
+                </MenuItem>
+              </Menu>
+            </Popover>
+          </>
+        ) : (
+          <>
+            <MenuItem
+              onClick={() => {
+                if (application.isNativeMobileWeb()) {
+                  void shareSelectedNotes(application, notes)
+                } else {
+                  const hasSuperNote = notes.some((note) => note.noteType === NoteType.Super)
+
+                  if (hasSuperNote) {
+                    setShowExportSuperModal(true)
+                    return
+                  }
+
+                  void downloadSelectedItems()
+                }
+              }}
+            >
+              <Icon type={application.platform === Platform.Android ? 'share' : 'download'} className={iconClass} />
+              {application.platform === Platform.Android ? 'Share' : 'Export'}
+            </MenuItem>
+            {application.platform === Platform.Android && (
+              <MenuItem onClick={() => downloadSelectedNotesOnAndroid(application, notes)}>
+                <Icon type="download" className={iconClass} />
+                Export
+              </MenuItem>
+            )}
+          </>
+        )}
+        <MenuItem onClick={duplicateSelectedItems} disabled={areSomeNotesInReadonlySharedVault}>
+          <Icon type="copy" className={iconClass} />
+          Duplicate
+        </MenuItem>
+        {unarchived && (
+          <MenuItem
+            onClick={async () => {
+              await application.notesController.setArchiveSelectedNotes(true).catch(console.error)
+              closeMenuAndToggleNotesList()
+            }}
+            disabled={areSomeNotesInReadonlySharedVault}
+          >
+            <Icon type="archive" className={iconClassWarning} />
+            <span className="text-warning">Archive</span>
           </MenuItem>
-        </>
-      )}
+        )}
+        {archived && (
+          <MenuItem
+            onClick={async () => {
+              await application.notesController.setArchiveSelectedNotes(false).catch(console.error)
+              closeMenuAndToggleNotesList()
+            }}
+            disabled={areSomeNotesInReadonlySharedVault}
+          >
+            <Icon type="unarchive" className={iconClassWarning} />
+            <span className="text-warning">Unarchive</span>
+          </MenuItem>
+        )}
+        {notTrashed &&
+          (altKeyDown ? (
+            <MenuItem
+              disabled={areSomeNotesInReadonlySharedVault}
+              onClick={async () => {
+                await application.notesController.deleteNotesPermanently()
+                closeMenuAndToggleNotesList()
+              }}
+            >
+              <Icon type="close" className="mr-2 text-danger" />
+              <span className="text-danger">Delete permanently</span>
+            </MenuItem>
+          ) : (
+            <MenuItem
+              onClick={async () => {
+                await application.notesController.setTrashSelectedNotes(true)
+                closeMenuAndToggleNotesList()
+              }}
+              disabled={areSomeNotesInReadonlySharedVault}
+            >
+              <Icon type="trash" className={iconClassDanger} />
+              <span className="text-danger">Move to trash</span>
+            </MenuItem>
+          ))}
+        {trashed && (
+          <>
+            <MenuItem
+              onClick={async () => {
+                await application.notesController.setTrashSelectedNotes(false)
+                closeMenuAndToggleNotesList()
+              }}
+              disabled={areSomeNotesInReadonlySharedVault}
+            >
+              <Icon type="restore" className={iconClassSuccess} />
+              <span className="text-success">Restore</span>
+            </MenuItem>
+            <MenuItem
+              disabled={areSomeNotesInReadonlySharedVault}
+              onClick={async () => {
+                await application.notesController.deleteNotesPermanently()
+                closeMenuAndToggleNotesList()
+              }}
+            >
+              <Icon type="close" className="mr-2 text-danger" />
+              <span className="text-danger">Delete permanently</span>
+            </MenuItem>
+            <MenuItem
+              onClick={async () => {
+                await application.notesController.emptyTrash()
+                closeMenuAndToggleNotesList()
+              }}
+              disabled={areSomeNotesInReadonlySharedVault}
+            >
+              <div className="flex items-start">
+                <Icon type="trash-sweep" className="mr-2 text-danger" />
+                <div className="flex-row">
+                  <div className="text-danger">Empty Trash</div>
+                  <div className="text-xs">{application.notesController.trashedNotesCount} notes in Trash</div>
+                </div>
+              </div>
+            </MenuItem>
+          </>
+        )}
+      </MenuSection>
 
       {notes.length === 1 ? (
         <>
@@ -507,24 +516,21 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
           )}
 
           {!areSomeNotesInSharedVault && (
-            <>
-              <HorizontalSeparator classes="my-2" />
+            <MenuSection>
               <ListedActionsOption iconClassName={iconClass} application={application} note={notes[0]} />
-            </>
+            </MenuSection>
           )}
-
-          <HorizontalSeparator classes="my-2" />
 
           {editorForNote && (
-            <SpellcheckOptions
-              editorForNote={editorForNote}
-              notesController={application.notesController}
-              note={notes[0]}
-              disabled={areSomeNotesInReadonlySharedVault}
-            />
+            <MenuSection>
+              <SpellcheckOptions
+                editorForNote={editorForNote}
+                notesController={application.notesController}
+                note={notes[0]}
+                disabled={areSomeNotesInReadonlySharedVault}
+              />
+            </MenuSection>
           )}
-
-          <HorizontalSeparator classes="my-2" />
 
           <NoteAttributes className="mb-2" application={application} note={notes[0]} />
 
