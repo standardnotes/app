@@ -37,7 +37,7 @@ jobs:
       - name: Install dependencies
         run: yarn install --immutable
       - name: Build
-        run: yarn build:snjs
+        run: yarn build:web
       - name: ESLint
         run: yarn lint
       - name: Test
