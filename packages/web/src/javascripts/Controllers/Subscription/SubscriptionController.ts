@@ -101,6 +101,10 @@ export class SubscriptionController extends AbstractViewController implements In
     }
   }
 
+  hasFirstPartySubscriptionOrOfflineRepo(): boolean {
+    return this.hasFirstPartyOnlineOrOfflineSubscription() || this.features.hasOfflineRepo()
+  }
+
   get usedInvitationsCount(): number {
     return (
       this.subscriptionInvitations?.filter((invitation) =>
