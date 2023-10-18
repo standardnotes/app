@@ -2,7 +2,6 @@ import { FunctionComponent, useCallback, useMemo } from 'react'
 import { FileItemActionType } from '../AttachedFilesPopover/PopoverFileItemAction'
 import Icon from '@/Components/Icon/Icon'
 import { observer } from 'mobx-react-lite'
-import HorizontalSeparator from '../Shared/HorizontalSeparator'
 import { formatSizeToReadableString } from '@standardnotes/filepicker'
 import { useResponsiveAppPane } from '../Panes/ResponsivePaneProvider'
 import { AppPaneId } from '../Panes/AppPaneMetadata'
@@ -15,6 +14,7 @@ import { MenuItemIconSize } from '@/Constants/TailwindClassNames'
 import AddToVaultMenuOption from '../Vaults/AddToVaultMenuOption'
 import { iconClass } from '../NotesOptions/ClassNames'
 import { useApplication } from '../ApplicationProvider'
+import MenuSection from '../Menu/MenuSection'
 
 type Props = {
   closeMenu: () => void
@@ -87,8 +87,8 @@ const FileMenuOptions: FunctionComponent<Props> = ({
 
   return (
     <>
-      {selectedFiles.length === 1 && (
-        <>
+      {selectedFiles.length === 1 && (isFileAttachedToNote || shouldShowAttachOption) && (
+        <MenuSection>
           {isFileAttachedToNote ? (
             <MenuItem onClick={onDetach}>
               <Icon type="link-off" className="mr-2 text-neutral" />
@@ -100,67 +100,69 @@ const FileMenuOptions: FunctionComponent<Props> = ({
               Attach to note
             </MenuItem>
           ) : null}
-        </>
+        </MenuSection>
       )}
-      {application.featuresController.isVaultsEnabled() && (
-        <AddToVaultMenuOption
-          iconClassName={iconClass}
-          items={selectedFiles}
-          disabled={!hasAdminPermissionForAllSharedFiles}
+      <MenuSection>
+        {application.featuresController.isVaultsEnabled() && (
+          <AddToVaultMenuOption
+            iconClassName={iconClass}
+            items={selectedFiles}
+            disabled={!hasAdminPermissionForAllSharedFiles}
+          />
+        )}
+        <AddTagOption
+          navigationController={application.navigationController}
+          linkingController={application.linkingController}
+          selectedItems={selectedFiles}
+          iconClassName={`text-neutral mr-2 ${MenuItemIconSize}`}
+          disabled={areSomeFilesInReadonlySharedVault}
         />
-      )}
-      <AddTagOption
-        navigationController={application.navigationController}
-        linkingController={application.linkingController}
-        selectedItems={selectedFiles}
-        iconClassName={`text-neutral mr-2 ${MenuItemIconSize}`}
-        disabled={areSomeFilesInReadonlySharedVault}
-      />
-      <MenuSwitchButtonItem
-        checked={hasProtectedFiles}
-        onChange={(hasProtectedFiles) => {
-          void application.filesController.setProtectionForFiles(hasProtectedFiles, selectedFiles)
-        }}
-        disabled={areSomeFilesInReadonlySharedVault}
-      >
-        <Icon type="lock" className={`mr-2 text-neutral ${MenuItemIconSize}`} />
-        Password protect
-      </MenuSwitchButtonItem>
-      <HorizontalSeparator classes="my-1" />
-      <MenuItem
-        onClick={() => {
-          void application.filesController.downloadFiles(selectedFiles)
-          closeMenu()
-        }}
-      >
-        <Icon type="download" className={`mr-2 text-neutral ${MenuItemIconSize}`} />
-        Download
-      </MenuItem>
-      {shouldShowRenameOption && (
-        <MenuItem
-          onClick={() => {
-            renameToggleCallback?.(true)
+        <MenuSwitchButtonItem
+          checked={hasProtectedFiles}
+          onChange={(hasProtectedFiles) => {
+            void application.filesController.setProtectionForFiles(hasProtectedFiles, selectedFiles)
           }}
           disabled={areSomeFilesInReadonlySharedVault}
         >
-          <Icon type="pencil" className={`mr-2 text-neutral ${MenuItemIconSize}`} />
-          Rename
+          <Icon type="lock" className={`mr-2 text-neutral ${MenuItemIconSize}`} />
+          Password protect
+        </MenuSwitchButtonItem>
+      </MenuSection>
+      <MenuSection>
+        <MenuItem
+          onClick={() => {
+            void application.filesController.downloadFiles(selectedFiles)
+            closeMenu()
+          }}
+        >
+          <Icon type="download" className={`mr-2 text-neutral ${MenuItemIconSize}`} />
+          Download
         </MenuItem>
-      )}
-      <MenuItem
-        onClick={() => {
-          closeMenuAndToggleFilesList()
-          void application.filesController.deleteFilesPermanently(selectedFiles)
-        }}
-        disabled={areSomeFilesInReadonlySharedVault}
-      >
-        <Icon type="trash" className={`mr-2 text-danger ${MenuItemIconSize}`} />
-        <span className="text-danger">Delete permanently</span>
-      </MenuItem>
+        {shouldShowRenameOption && (
+          <MenuItem
+            onClick={() => {
+              renameToggleCallback?.(true)
+            }}
+            disabled={areSomeFilesInReadonlySharedVault}
+          >
+            <Icon type="pencil" className={`mr-2 text-neutral ${MenuItemIconSize}`} />
+            Rename
+          </MenuItem>
+        )}
+        <MenuItem
+          onClick={() => {
+            closeMenuAndToggleFilesList()
+            void application.filesController.deleteFilesPermanently(selectedFiles)
+          }}
+          disabled={areSomeFilesInReadonlySharedVault}
+        >
+          <Icon type="trash" className={`mr-2 text-danger ${MenuItemIconSize}`} />
+          <span className="text-danger">Delete permanently</span>
+        </MenuItem>
+      </MenuSection>
 
       <FileContextMenuBackupOption file={selectedFiles[0]} />
 
-      <HorizontalSeparator classes="my-2" />
       <div className="px-3 pb-0.5 pt-1 text-xs font-medium text-neutral">
         {!hasSelectedMultipleFiles && (
           <div className="mb-1">

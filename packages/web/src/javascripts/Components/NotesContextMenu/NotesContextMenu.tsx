@@ -26,7 +26,6 @@ const NotesContextMenu = () => {
         y: contextMenuClickLocation.y,
       }}
       disableClickOutside={disableClickOutside}
-      className="py-2"
       open={contextMenuOpen}
       togglePopover={closeMenu}
     >

@@ -55,7 +55,7 @@ const QuickSettingsButton = ({ application, isMobileNavigation = false }: Props)
         open={isOpen}
         side="top"
         align="start"
-        className="py-2"
+        className="md:py-2"
       >
         <QuickSettingsMenu closeMenu={toggleMenu} />
       </Popover>

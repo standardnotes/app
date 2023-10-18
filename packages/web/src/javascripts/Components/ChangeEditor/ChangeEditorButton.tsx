@@ -79,7 +79,7 @@ const ChangeEditorButton: FunctionComponent<Props> = ({ noteViewController, onCl
         disableClickOutside={isClickOutsideDisabled}
         anchorElement={buttonRef}
         open={isOpen}
-        className="pt-2 md:pt-0"
+        className="md:pb-1"
       >
         <ChangeEditorMenu
           application={application}

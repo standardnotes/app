@@ -365,21 +365,23 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
               togglePopover={() => {
                 setIsSuperExportMenuOpen(!isSuperExportMenuOpen)
               }}
-              className="py-1"
+              className="md:py-1"
             >
               <Menu a11yLabel={'Super note export menu'} isOpen={isSuperExportMenuOpen}>
-                <MenuItem onClick={() => commandService.triggerCommand(SUPER_EXPORT_JSON, notes[0].title)}>
-                  <Icon type="code" className={iconClass} />
-                  Export as JSON
-                </MenuItem>
-                <MenuItem onClick={() => commandService.triggerCommand(SUPER_EXPORT_MARKDOWN, notes[0].title)}>
-                  <Icon type="markdown" className={iconClass} />
-                  Export as Markdown
-                </MenuItem>
-                <MenuItem onClick={() => commandService.triggerCommand(SUPER_EXPORT_HTML, notes[0].title)}>
-                  <Icon type="rich-text" className={iconClass} />
-                  Export as HTML
-                </MenuItem>
+                <MenuSection>
+                  <MenuItem onClick={() => commandService.triggerCommand(SUPER_EXPORT_JSON, notes[0].title)}>
+                    <Icon type="code" className={iconClass} />
+                    Export as JSON
+                  </MenuItem>
+                  <MenuItem onClick={() => commandService.triggerCommand(SUPER_EXPORT_MARKDOWN, notes[0].title)}>
+                    <Icon type="markdown" className={iconClass} />
+                    Export as Markdown
+                  </MenuItem>
+                  <MenuItem onClick={() => commandService.triggerCommand(SUPER_EXPORT_HTML, notes[0].title)}>
+                    <Icon type="rich-text" className={iconClass} />
+                    Export as HTML
+                  </MenuItem>
+                </MenuSection>
               </Menu>
             </Popover>
           </>

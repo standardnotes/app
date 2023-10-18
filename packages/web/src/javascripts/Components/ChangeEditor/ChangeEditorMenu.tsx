@@ -13,7 +13,7 @@ import {
   PrefKey,
   SNNote,
 } from '@standardnotes/snjs'
-import { Fragment, FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react'
+import { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react'
 import { EditorMenuGroup } from '@/Components/NotesOptions/EditorMenuGroup'
 import { EditorMenuItem } from '@/Components/NotesOptions/EditorMenuItem'
 import { createEditorMenuGroups } from '../../Utils/createEditorMenuGroups'
@@ -24,6 +24,7 @@ import MenuRadioButtonItem from '../Menu/MenuRadioButtonItem'
 import { Pill } from '../Preferences/PreferencesComponents/Content'
 import ModalOverlay from '../Modal/ModalOverlay'
 import SuperNoteConverter from '../SuperEditor/SuperNoteConverter'
+import MenuSection from '../Menu/MenuSection'
 
 type ChangeEditorMenuProps = {
   application: WebApplication
@@ -210,48 +211,42 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
       <Menu className="pb-1 pt-0.5" a11yLabel="Change note type menu" isOpen={isVisible}>
         {groups
           .filter((group) => group.items && group.items.length)
-          .map((group, index) => {
+          .map((group) => {
             const groupId = getGroupId(group)
 
             return (
-              <Fragment key={groupId}>
-                <div
-                  className={`border-0 border-t border-solid border-[--separator-color] py-1 ${
-                    index === 0 ? 'border-t-0' : ''
-                  }`}
-                >
-                  {group.items.map((menuItem) => {
-                    const onClickEditorItem = () => {
-                      handleMenuSelection(menuItem).catch(console.error)
-                    }
+              <MenuSection key={groupId}>
+                {group.items.map((menuItem) => {
+                  const onClickEditorItem = () => {
+                    handleMenuSelection(menuItem).catch(console.error)
+                  }
 
-                    return (
-                      <MenuRadioButtonItem
-                        key={menuItem.uiFeature.uniqueIdentifier.value}
-                        onClick={onClickEditorItem}
-                        className={'flex-row-reversed py-2'}
-                        checked={isSelected(menuItem)}
-                        info={menuItem.uiFeature.description}
-                      >
-                        <div className="flex flex-grow items-center justify-between">
-                          <div className={`flex items-center ${group.featured ? 'font-bold' : ''}`}>
-                            {group.icon && <Icon type={group.icon} className={`mr-2 ${group.iconClassName}`} />}
-                            {menuItem.uiFeature.displayName}
-                            {menuItem.isLabs && (
-                              <Pill className="px-1.5 py-0.5" style="success">
-                                Labs
-                              </Pill>
-                            )}
-                          </div>
-                          {!menuItem.isEntitled && (
-                            <Icon type={PremiumFeatureIconName} className={PremiumFeatureIconClass} />
+                  return (
+                    <MenuRadioButtonItem
+                      key={menuItem.uiFeature.uniqueIdentifier.value}
+                      onClick={onClickEditorItem}
+                      className={'flex-row-reversed py-2'}
+                      checked={isSelected(menuItem)}
+                      info={menuItem.uiFeature.description}
+                    >
+                      <div className="flex flex-grow items-center justify-between">
+                        <div className={`flex items-center ${group.featured ? 'font-bold' : ''}`}>
+                          {group.icon && <Icon type={group.icon} className={`mr-2 ${group.iconClassName}`} />}
+                          {menuItem.uiFeature.displayName}
+                          {menuItem.isLabs && (
+                            <Pill className="px-1.5 py-0.5" style="success">
+                              Labs
+                            </Pill>
                           )}
                         </div>
-                      </MenuRadioButtonItem>
-                    )
-                  })}
-                </div>
-              </Fragment>
+                        {!menuItem.isEntitled && (
+                          <Icon type={PremiumFeatureIconName} className={PremiumFeatureIconClass} />
+                        )}
+                      </div>
+                    </MenuRadioButtonItem>
+                  )
+                })}
+              </MenuSection>
             )
           })}
       </Menu>

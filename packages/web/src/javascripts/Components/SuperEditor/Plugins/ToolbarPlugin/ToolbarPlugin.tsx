@@ -685,7 +685,7 @@ const ToolbarPlugin = () => {
             }
 
             return (
-              <Menu a11yLabel="Table of contents" isOpen>
+              <Menu a11yLabel="Table of contents" isOpen className="!px-0">
                 {tableOfContents.map(([key, text, tag]) => (
                   <MenuItem
                     key={key}

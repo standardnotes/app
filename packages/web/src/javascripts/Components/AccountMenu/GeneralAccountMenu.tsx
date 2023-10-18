@@ -144,9 +144,8 @@ const GeneralAccountMenu: FunctionComponent<Props> = ({ setMenuPane, closeMenu, 
         a11yLabel="General account menu"
         closeMenu={closeMenu}
         initialFocus={!application.hasAccount() ? CREATE_ACCOUNT_INDEX : SWITCHER_INDEX}
-        className="pl-4 pr-4 md:px-0"
       >
-        <MenuSection>
+        <MenuSection className="md:border-t md:pt-2">
           <WorkspaceSwitcherOption mainApplicationGroup={mainApplicationGroup} />
         </MenuSection>
         <MenuSection>
