@@ -92,7 +92,7 @@ const GeneralAccountMenu: FunctionComponent<Props> = ({ setMenuPane, closeMenu, 
 
   return (
     <>
-      <div className="mb-1 mt-1 hidden items-center justify-between px-3 md:flex">
+      <div className="mb-1 mt-1 hidden items-center justify-between px-4 md:flex md:px-3">
         <div className="text-lg font-bold lg:text-base">Account</div>
         <div className="flex cursor-pointer" onClick={closeMenu}>
           <Icon type="close" className="text-neutral" />
@@ -100,12 +100,12 @@ const GeneralAccountMenu: FunctionComponent<Props> = ({ setMenuPane, closeMenu, 
       </div>
       {user ? (
         <>
-          <div className="mb-3 px-3 text-lg text-foreground lg:text-sm">
+          <div className="mb-3 px-4 text-lg text-foreground md:px-3 lg:text-sm">
             <div>You're signed in as:</div>
             <div className="wrap my-0.5 font-bold">{user.email}</div>
             <span className="text-neutral">{application.getHost.execute().getValue()}</span>
           </div>
-          <div className="mb-2 flex items-start justify-between px-3 text-mobile-menu-item md:text-tablet-menu-item lg:text-menu-item">
+          <div className="mb-2 flex items-start justify-between px-4 text-mobile-menu-item md:px-3 md:text-tablet-menu-item lg:text-menu-item">
             {isSyncingInProgress ? (
               <div className="flex items-center font-semibold text-info">
                 <Spinner className="mr-2 h-5 w-5" />
@@ -127,7 +127,7 @@ const GeneralAccountMenu: FunctionComponent<Props> = ({ setMenuPane, closeMenu, 
         </>
       ) : (
         <>
-          <div className="mb-1 px-3">
+          <div className="mb-1 px-4 md:px-3">
             <div className="mb-3 text-base text-foreground lg:text-sm">
               You’re offline. Sign in to sync your notes and preferences across all your devices and enable end-to-end
               encryption.
