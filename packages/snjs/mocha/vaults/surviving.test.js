@@ -5,7 +5,7 @@ import * as Collaboration from '../lib/Collaboration.js'
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
-describe.skip('designated survival', function () {
+describe('designated survival', function () {
   this.timeout(Factory.ThirtySecondTimeout)
 
   let context
