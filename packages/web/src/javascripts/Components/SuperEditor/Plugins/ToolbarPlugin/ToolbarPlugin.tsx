@@ -675,6 +675,7 @@ const ToolbarPlugin = () => {
         align="center"
         className="py-1"
         disableMobileFullscreenTakeover
+        disableFlip
       >
         <div className="mb-1.5 mt-1 px-3 text-sm font-semibold uppercase text-text">Table of Contents</div>
         <LexicalTableOfContents>
@@ -690,14 +691,13 @@ const ToolbarPlugin = () => {
                     key={key}
                     className="overflow-hidden md:py-2"
                     onClick={() => {
-                      setIsTOCOpen(false)
                       editor.getEditorState().read(() => {
                         const domElement = editor.getElementByKey(key)
                         if (!domElement) {
                           return
                         }
-                        const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-                        domElement.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block: 'nearest' })
+                        domElement.scrollIntoView({ block: 'start' })
+                        setIsTOCOpen(false)
                       })
                     }}
                   >

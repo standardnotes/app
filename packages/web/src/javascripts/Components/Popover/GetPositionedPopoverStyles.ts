@@ -103,6 +103,7 @@ type Options = {
   side: PopoverSide
   disableMobileFullscreenTakeover?: boolean
   disableApplyingMobileWidth?: boolean
+  disableFlip?: boolean
   maxHeightFunction?: (calculatedMaxHeight: number) => number | 'none'
   offset?: number
 }
@@ -115,6 +116,7 @@ export const getPositionedPopoverStyles = ({
   side,
   disableMobileFullscreenTakeover,
   disableApplyingMobileWidth,
+  disableFlip,
   maxHeightFunction,
   offset,
 }: Options): PopoverCSSProperties | null => {
@@ -135,7 +137,7 @@ export const getPositionedPopoverStyles = ({
 
   const sideWithLessOverflows = preferredSideRectCollisions[side] ? oppositeSide : side
   const finalAlignment = getNonCollidingAlignment({
-    finalSide: sideWithLessOverflows,
+    finalSide: disableFlip ? side : sideWithLessOverflows,
     preferredAlignment: align,
     collisions: preferredSideRectCollisions,
     popoverRect,
@@ -145,7 +147,7 @@ export const getPositionedPopoverStyles = ({
   const finalPositionedRect = getPositionedPopoverRect(
     popoverRect,
     anchorRect,
-    sideWithLessOverflows,
+    disableFlip ? side : sideWithLessOverflows,
     finalAlignment,
     offset,
   )
@@ -153,7 +155,7 @@ export const getPositionedPopoverStyles = ({
   let maxHeight = getPopoverMaxHeight(
     getAppRect(),
     anchorRect,
-    sideWithLessOverflows,
+    disableFlip ? side : sideWithLessOverflows,
     finalAlignment,
     disableMobileFullscreenTakeover,
   )
@@ -164,7 +166,7 @@ export const getPositionedPopoverStyles = ({
 
   return getStylesFromRect({
     rect: finalPositionedRect,
-    side: sideWithLessOverflows,
+    side: disableFlip ? side : sideWithLessOverflows,
     align: finalAlignment,
     disableMobileFullscreenTakeover,
     disableApplyingMobileWidth,

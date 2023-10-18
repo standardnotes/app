@@ -43,6 +43,7 @@ type CommonPopoverProps = {
   maxHeight?: (calculatedMaxHeight: number) => number
   togglePopover?: () => void
   disableMobileFullscreenTakeover?: boolean
+  disableFlip?: boolean
   title: string
   portal?: boolean
   offset?: number
