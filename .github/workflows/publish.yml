@@ -105,7 +105,7 @@ jobs:
 
   publish:
     name: Publish to NPM
-    needs: [e2e-base]
+    needs: [e2e-base, e2e-vaults]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -143,7 +143,7 @@ jobs:
 
   publish-docker:
     name: Publish to Docker Hub
-    needs: [e2e-base]
+    needs: [e2e-base, e2e-vaults]
     runs-on: ubuntu-latest
     steps:
       - name: Login to Docker Hub
