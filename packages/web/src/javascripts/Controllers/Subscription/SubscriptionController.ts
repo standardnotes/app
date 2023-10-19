@@ -89,20 +89,11 @@ export class SubscriptionController extends AbstractViewController implements In
   }
 
   hasFirstPartyOnlineOrOfflineSubscription(): boolean {
-    if (this.sessions.isSignedIn()) {
-      if (!this.sessions.isSignedIntoFirstPartyServer()) {
-        return false
-      }
-
-      return !!this.subscriptions.getOnlineSubscription()
-    } else {
-      const offline = this.features.hasFirstPartyOfflineSubscription()
+    const offline = this.features.hasFirstPartyOfflineSubscription()
+    if (!this.sessions.isSignedIn() || !this.sessions.isSignedIntoFirstPartyServer()) {
       return offline
     }
-  }
-
-  hasFirstPartySubscriptionOrOfflineRepo(): boolean {
-    return this.hasFirstPartyOnlineOrOfflineSubscription() || this.features.hasOfflineRepo()
+    return !!this.subscriptions.getOnlineSubscription() || offline
   }
 
   get usedInvitationsCount(): number {
