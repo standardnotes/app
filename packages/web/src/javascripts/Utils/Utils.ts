@@ -255,3 +255,7 @@ export function getScrollParent(node: HTMLElement | null): HTMLElement | null {
     return getScrollParent(node.parentElement)
   }
 }
+
+export function remToPx(rem: number) {
+  return rem * parseFloat(getComputedStyle(document.documentElement).fontSize)
+}

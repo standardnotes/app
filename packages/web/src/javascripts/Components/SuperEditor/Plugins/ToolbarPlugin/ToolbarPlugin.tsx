@@ -50,6 +50,7 @@ import Popover from '@/Components/Popover/Popover'
 import LexicalTableOfContents from '@lexical/react/LexicalTableOfContents'
 import Menu from '@/Components/Menu/Menu'
 import MenuItem from '@/Components/Menu/MenuItem'
+import { remToPx } from '@/Utils'
 
 const TOGGLE_LINK_AND_EDIT_COMMAND = createCommand<string | null>('TOGGLE_LINK_AND_EDIT_COMMAND')
 
@@ -693,25 +694,34 @@ const ToolbarPlugin = () => {
 
             return (
               <Menu a11yLabel="Table of contents" isOpen className="!px-0">
-                {tableOfContents.map(([key, text, tag]) => (
-                  <MenuItem
-                    key={key}
-                    className="overflow-hidden md:py-2"
-                    onClick={() => {
-                      editor.getEditorState().read(() => {
-                        const domElement = editor.getElementByKey(key)
-                        if (!domElement) {
-                          return
-                        }
-                        domElement.scrollIntoView({ block: 'start' })
-                        setIsTOCOpen(false)
-                      })
-                    }}
-                  >
-                    <Icon type={tag} className="-mt-px mr-2.5 flex-shrink-0" />
-                    <span className="overflow-hidden text-ellipsis whitespace-nowrap">{text}</span>
-                  </MenuItem>
-                ))}
+                {tableOfContents.map(([key, text, tag]) => {
+                  const level = parseInt(tag.slice(1)) || 1
+                  if (level > 3) {
+                    return null
+                  }
+                  return (
+                    <MenuItem
+                      key={key}
+                      className="overflow-hidden md:py-2"
+                      onClick={() => {
+                        editor.getEditorState().read(() => {
+                          const domElement = editor.getElementByKey(key)
+                          if (!domElement) {
+                            return
+                          }
+                          domElement.scrollIntoView({ block: 'start' })
+                          setIsTOCOpen(false)
+                        })
+                      }}
+                      style={{
+                        paddingLeft: `${(level - 1) * remToPx(1) + remToPx(0.75)}px`,
+                      }}
+                    >
+                      <Icon type={tag} className="-mt-px mr-2.5 flex-shrink-0" />
+                      <span className="overflow-hidden text-ellipsis whitespace-nowrap">{text}</span>
+                    </MenuItem>
+                  )
+                })}
               </Menu>
             )
           }}
