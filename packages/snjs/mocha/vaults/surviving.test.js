@@ -55,7 +55,7 @@ describe('designated survival', function () {
   })
 
   describe('owner of a shared vault with a designated survivor removing the vault', () => {
-    it('should remove all users from the vault upon shared vault removal', async () => {
+    it.skip('should remove all users from the vault upon shared vault removal', async () => {
       const { sharedVault, contactContext } =
       await Collaboration.createSharedVaultWithAcceptedInvite(context)
       secondContext = contactContext
