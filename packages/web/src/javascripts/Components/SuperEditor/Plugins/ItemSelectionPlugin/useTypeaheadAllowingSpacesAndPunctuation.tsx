@@ -20,7 +20,7 @@ export function useTypeaheadAllowingSpacesAndPunctuation(
     (text: string) => {
       const validChars = '[^' + trigger + ']'
       const TypeaheadTriggerRegex = new RegExp(
-        '(^|\\s|\\()(' + '[' + trigger + ']' + '((?:' + validChars + '){0,' + maxLength + '})' + ')$',
+        '(^|\\s|\\()(' + '[' + trigger + ']' + '(\\S(?:' + validChars + '){0,' + maxLength + '})' + ')$',
       )
       const match = TypeaheadTriggerRegex.exec(text)
       if (match !== null) {
