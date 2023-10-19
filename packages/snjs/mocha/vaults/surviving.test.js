@@ -72,6 +72,8 @@ describe('designated survival', function () {
 
       await context.sharedVaults.deleteSharedVault(sharedVault)
 
+      await Factory.sleep(2)
+
       await context.syncAndAwaitNotificationsProcessing()
       await secondContext.syncAndAwaitNotificationsProcessing()
       await thirdContext.syncAndAwaitNotificationsProcessing()
