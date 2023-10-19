@@ -142,7 +142,7 @@ const PositionedPopoverContent = ({
       >
         <div
           className={classNames(
-            'overflow-y-auto rounded border border-[--popover-border-color] bg-[--popover-background-color] shadow-main [backdrop-filter:var(--popover-backdrop-filter)]',
+            'overflow-y-auto rounded border border-[--popover-border-color] bg-default shadow-main [backdrop-filter:var(--popover-backdrop-filter)] md:bg-[--popover-background-color]',
             !isDesktopScreen && !disableMobileFullscreenTakeover ? 'pb-safe-bottom pt-safe-top' : '',
             'transition-[transform,opacity] duration-75 [transform-origin:var(--transform-origin)] motion-reduce:transition-opacity',
             styles ? 'scale-100 opacity-100' : 'scale-95 opacity-0',
