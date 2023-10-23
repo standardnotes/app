@@ -163,9 +163,13 @@ describe('settings service', function () {
     )
     expect(usedSettingBefore).to.equal('196')
 
-    await context.activatePaidSubscriptionForUser()
+    await context.activatePaidSubscriptionForUser({
+      cancelPreviousSubscription: true,
+    })
 
-    await context.activatePaidSubscriptionForUser()
+    await context.activatePaidSubscriptionForUser({
+      cancelPreviousSubscription: true,
+    })
 
     const limitSettingAfter = await application.settings.getSubscriptionSetting(
       SettingName.create(SettingName.NAMES.FileUploadBytesLimit).getValue(),
@@ -176,5 +180,22 @@ describe('settings service', function () {
       SettingName.create(SettingName.NAMES.FileUploadBytesUsed).getValue(),
     )
     expect(usedSettingAfter).to.equal(usedSettingBefore)
+
+    const afterResponse = await fetch('/packages/snjs/mocha/assets/small_file.md')
+    const afterBuffer = new Uint8Array(await afterResponse.arrayBuffer())
+
+    await Files.uploadFile(application.files, afterBuffer, 'my-file', 'md', 1000)
+
+    await Factory.sleep(1)
+
+    const limitSettingAfterSecondUpload = await application.settings.getSubscriptionSetting(
+      SettingName.create(SettingName.NAMES.FileUploadBytesLimit).getValue(),
+    )
+    expect(limitSettingAfterSecondUpload).to.equal(limitSettingBefore)
+
+    const usedSettingAfterSecondUpload = await application.settings.getSubscriptionSetting(
+      SettingName.create(SettingName.NAMES.FileUploadBytesUsed).getValue(),
+    )
+    expect(usedSettingAfterSecondUpload).to.equal('392')
   })
 })
