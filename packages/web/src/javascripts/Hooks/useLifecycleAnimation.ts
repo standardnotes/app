@@ -1,4 +1,4 @@
-import { RefCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { AnimationConfig } from '../Constants/AnimationConfigs'
 import { useStateRef } from './useStateRef'
 
@@ -23,7 +23,7 @@ type Options = {
 export const useLifecycleAnimation = (
   { open, enter, enterCallback, exit, exitCallback }: Options,
   disabled = false,
-): [boolean, RefCallback<HTMLElement | null>] => {
+) => {
   const [element, setElement] = useState<HTMLElement | null>(null)
 
   const [isMounted, setIsMounted] = useState(() => open)
@@ -124,5 +124,5 @@ export const useLifecycleAnimation = (
     }
   }, [open, element, enterRef, enterCallbackRef, exitRef, exitCallbackRef, disabled])
 
-  return [isMounted, setElement]
+  return [isMounted, setElement, element] as const
 }
