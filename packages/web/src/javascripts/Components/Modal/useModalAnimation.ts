@@ -18,9 +18,6 @@ const Animations = {
     exit: {
       keyframes: [
         {
-          transform: 'translateY(0)',
-        },
-        {
           transform: 'translateY(100%)',
         },
       ],

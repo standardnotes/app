@@ -42,3 +42,19 @@ export const SuperEditorMetadata: EditorMetadata = {
   iconClassName: 'text-accessory-tint-1',
   iconTintNumber: 1,
 }
+
+export const SupportsPassiveListeners = (() => {
+  let supportsPassive = false
+  try {
+    const opts = Object.defineProperty({}, 'passive', {
+      get: () => {
+        supportsPassive = true
+      },
+    })
+    window.addEventListener('test', null as never, opts)
+    window.removeEventListener('test', null as never, opts)
+  } catch (e) {
+    /* empty */
+  }
+  return supportsPassive
+})()

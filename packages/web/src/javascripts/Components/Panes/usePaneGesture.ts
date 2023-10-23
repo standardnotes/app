@@ -4,22 +4,7 @@ import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/u
 import { useApplication } from '../ApplicationProvider'
 import { ApplicationEvent, PrefKey, PrefDefaults } from '@standardnotes/snjs'
 import { getScrollParent } from '@/Utils'
-
-const supportsPassive = (() => {
-  let supportsPassive = false
-  try {
-    const opts = Object.defineProperty({}, 'passive', {
-      get: () => {
-        supportsPassive = true
-      },
-    })
-    window.addEventListener('test', null as never, opts)
-    window.removeEventListener('test', null as never, opts)
-  } catch (e) {
-    /* empty */
-  }
-  return supportsPassive
-})()
+import { SupportsPassiveListeners } from '@/Constants/Constants'
 
 export const usePaneSwipeGesture = (
   direction: 'left' | 'right',
@@ -113,7 +98,11 @@ export const usePaneSwipeGesture = (
       closestScrollContainer = getScrollParent(event.target as HTMLElement)
       if (closestScrollContainer) {
         scrollContainerInitialOverflowY = closestScrollContainer.style.overflowY
-        closestScrollContainer.addEventListener('scroll', scrollListener, supportsPassive ? { passive: true } : false)
+        closestScrollContainer.addEventListener(
+          'scroll',
+          scrollListener,
+          SupportsPassiveListeners ? { passive: true } : false,
+        )
 
         if (closestScrollContainer.scrollWidth > closestScrollContainer.clientWidth) {
           scrollContainerAxis = 'x'
@@ -268,9 +257,9 @@ export const usePaneSwipeGesture = (
       disposeUnderlay()
     }
 
-    element.addEventListener('touchstart', touchStartListener, supportsPassive ? { passive: true } : false)
-    element.addEventListener('touchmove', touchMoveListener, supportsPassive ? { passive: true } : false)
-    element.addEventListener('touchend', touchEndListener, supportsPassive ? { passive: true } : false)
+    element.addEventListener('touchstart', touchStartListener, SupportsPassiveListeners ? { passive: true } : false)
+    element.addEventListener('touchmove', touchMoveListener, SupportsPassiveListeners ? { passive: true } : false)
+    element.addEventListener('touchend', touchEndListener, SupportsPassiveListeners ? { passive: true } : false)
 
     return () => {
       element.removeEventListener('touchstart', touchStartListener)
