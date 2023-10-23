@@ -78,11 +78,11 @@ const Animations = {
   },
 }
 
-const MobileOptions = {
+export const MobileModalAnimationOptions = {
   easing: IosModalAnimationEasing,
   duration: 250,
   fill: 'forwards',
-}
+} as const
 
 const NonMobileOptions = {
   duration: 75,
@@ -99,7 +99,7 @@ export const useModalAnimation = (
       open: isOpen,
       enter: {
         keyframes: isMobileScreen ? Animations[variant].enter.keyframes : Animations.nonMobile.enter.keyframes,
-        options: isMobileScreen ? MobileOptions : NonMobileOptions,
+        options: isMobileScreen ? MobileModalAnimationOptions : NonMobileOptions,
         initialStyle: {
           transformOrigin: isMobileScreen
             ? Animations[variant].enter.transformOrigin
@@ -114,7 +114,7 @@ export const useModalAnimation = (
       },
       exit: {
         keyframes: isMobileScreen ? Animations[variant].exit.keyframes : Animations.nonMobile.exit.keyframes,
-        options: isMobileScreen ? MobileOptions : NonMobileOptions,
+        options: isMobileScreen ? MobileModalAnimationOptions : NonMobileOptions,
         initialStyle: {
           transformOrigin: isMobileScreen
             ? Animations[variant].exit.transformOrigin

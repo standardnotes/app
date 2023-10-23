@@ -3,12 +3,13 @@ import { classNames } from '@standardnotes/snjs'
 import { ReactNode, useCallback, useEffect, useRef } from 'react'
 import Portal from '../Portal/Portal'
 import MobileModalAction from '../Modal/MobileModalAction'
-import { useModalAnimation } from '../Modal/useModalAnimation'
+import { MobileModalAnimationOptions, useModalAnimation } from '../Modal/useModalAnimation'
 import MobileModalHeader from '../Modal/MobileModalHeader'
 import { mergeRefs } from '@/Hooks/mergeRefs'
 import { DialogWithClose } from '@/Utils/CloseOpenModalsAndPopovers'
 import { useMediaQuery, MutuallyExclusiveMediaQueryBreakpoints } from '@/Hooks/useMediaQuery'
 import { SupportsPassiveListeners } from '@/Constants/Constants'
+import { useLifecycleAnimation } from '@/Hooks/useLifecycleAnimation'
 
 const DisableScroll = () => {
   useDisableBodyScrollOnMobile()
@@ -33,6 +34,31 @@ const MobilePopoverContent = ({
 }) => {
   const isMobileScreen = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
   const [isMounted, setPopoverElement, element] = useModalAnimation(open, isMobileScreen)
+  const [, setUnderlayElement] = useLifecycleAnimation({
+    open,
+    enter: {
+      keyframes: [
+        {
+          opacity: 0,
+        },
+        {
+          opacity: 0.6,
+        },
+      ],
+      options: MobileModalAnimationOptions,
+    },
+    exit: {
+      keyframes: [
+        {
+          opacity: 0.6,
+        },
+        {
+          opacity: 0,
+        },
+      ],
+      options: MobileModalAnimationOptions,
+    },
+  })
   const scrollContainerRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
@@ -139,7 +165,7 @@ const MobilePopoverContent = ({
     <Portal>
       <DisableScroll />
       <div className="fixed inset-0 z-modal">
-        <div className="absolute inset-0 z-0 bg-passive-4 opacity-60" />
+        <div className="absolute inset-0 z-0 bg-passive-4 opacity-0" ref={setUnderlayElement} />
         <div
           ref={mergeRefs([setPopoverElement, addCloseMethod])}
           className="z-1 absolute bottom-0 flex max-h-[calc(100%_-_max(var(--safe-area-inset-top),2rem))] min-h-[40%] w-full flex-col rounded-t-xl bg-default pb-safe-bottom"
