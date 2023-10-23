@@ -10,7 +10,8 @@ export const useNoteAttributes = (application: WebApplicationInterface, note: SN
 
   const readTime = useMemo(() => (typeof words === 'number' ? calculateReadTime(words) : 'N/A'), [words])
 
-  const dateLastModified = useMemo(() => formatDateForContextMenu(note.userModifiedDate), [note.userModifiedDate])
+  const userModifiedDate = useMemo(() => formatDateForContextMenu(note.userModifiedDate), [note.userModifiedDate])
+  const serverUpdatedAt = useMemo(() => formatDateForContextMenu(note.serverUpdatedAt), [note.serverUpdatedAt])
 
   const dateCreated = useMemo(() => formatDateForContextMenu(note.created_at), [note.created_at])
 
@@ -22,7 +23,8 @@ export const useNoteAttributes = (application: WebApplicationInterface, note: SN
     characters,
     paragraphs,
     readTime,
-    dateLastModified,
+    userModifiedDate,
+    serverUpdatedAt,
     dateCreated,
     format,
   }
@@ -33,7 +35,7 @@ export const NoteAttributes: FunctionComponent<{
   note: SNNote
   className?: string
 }> = ({ application, note, className }) => {
-  const { words, characters, paragraphs, readTime, dateLastModified, dateCreated, format } = useNoteAttributes(
+  const { words, characters, paragraphs, readTime, userModifiedDate, dateCreated, format } = useNoteAttributes(
     application,
     note,
   )
@@ -51,7 +53,7 @@ export const NoteAttributes: FunctionComponent<{
         </>
       ) : null}
       <div className="mb-1">
-        <span className="font-semibold">Last modified:</span> {dateLastModified}
+        <span className="font-semibold">Last modified:</span> {userModifiedDate}
       </div>
       <div className="mb-1">
         <span className="font-semibold">Created:</span> {dateCreated}

@@ -22,7 +22,7 @@ export const ConflictListItem = ({
   note: SNNote
 }) => {
   const application = useApplication()
-  const { words, characters, paragraphs, dateLastModified, dateCreated, format } = useNoteAttributes(application, note)
+  const { words, characters, paragraphs, serverUpdatedAt, dateCreated, format } = useNoteAttributes(application, note)
 
   return (
     <button
@@ -49,7 +49,7 @@ export const ConflictListItem = ({
               <Icon type="restore" size="medium" />
             </div>
           </StyledTooltip>
-          <VisuallyHidden>Last modified</VisuallyHidden> {dateLastModified}
+          <VisuallyHidden>Last modified</VisuallyHidden> {serverUpdatedAt}
         </div>
         <div className="mb-1.5 flex items-center gap-2">
           <StyledTooltip gutter={8} label="Created" className="!z-modal">
