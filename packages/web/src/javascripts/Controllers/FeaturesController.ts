@@ -8,6 +8,7 @@ import {
   FeatureStatus,
   InternalEventBusInterface,
   InternalEventInterface,
+  RoleName,
 } from '@standardnotes/snjs'
 import { action, makeObservable, observable, runInAction, when } from 'mobx'
 import { AbstractViewController } from './Abstract/AbstractViewController'
@@ -132,7 +133,7 @@ export class FeaturesController extends AbstractViewController implements Intern
 
   isVaultsEnabled(): boolean {
     const enabled = this.features.isExperimentalFeatureEnabled(NativeFeatureIdentifier.TYPES.Vaults)
-    return featureTrunkVaultsEnabled() || enabled
+    return featureTrunkVaultsEnabled() || enabled || this.features.hasMinimumRole(RoleName.NAMES.InternalTeamUser)
   }
 
   isEntitledToSharedVaults(): boolean {
