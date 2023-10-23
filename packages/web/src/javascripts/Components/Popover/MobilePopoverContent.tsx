@@ -139,15 +139,15 @@ const MobilePopoverContent = ({
     <Portal>
       <DisableScroll />
       <div className="fixed inset-0 z-modal">
-        <div className="absolute inset-0 z-0 bg-[rgba(0,0,0,0.4)]" />
+        <div className="absolute inset-0 z-0 bg-passive-4 opacity-60" />
         <div
           ref={mergeRefs([setPopoverElement, addCloseMethod])}
-          className="z-1 absolute bottom-0 flex max-h-[calc(100%_-_max(var(--safe-area-inset-top),2rem))] min-h-[60%] w-full flex-col rounded-t-xl bg-default pb-safe-bottom"
+          className="z-1 absolute bottom-0 flex max-h-[calc(100%_-_max(var(--safe-area-inset-top),2rem))] min-h-[40%] w-full flex-col rounded-t-xl bg-default pb-safe-bottom"
           id={'popover/' + id}
           data-popover={id}
           data-mobile-popover
         >
-          <div className="mx-auto mt-2 min-h-[0.375rem] w-12 rounded-full bg-passive-2" />
+          <div className="mx-auto mt-2 min-h-[0.3rem] w-12 rounded-full bg-passive-2" />
           <MobileModalHeader className="border-b border-border px-2 py-1.5 text-lg">
             <div />
             <div className="flex items-center justify-center font-semibold">{title}</div>
