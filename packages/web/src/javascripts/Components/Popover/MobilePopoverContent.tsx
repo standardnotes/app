@@ -147,7 +147,7 @@ const MobilePopoverContent = ({
               Done
             </MobileModalAction>
           </MobileModalHeader>
-          <div className={classNames('h-full overflow-y-auto', className)}>{children}</div>
+          <div className={classNames('h-full overflow-y-auto overscroll-none', className)}>{children}</div>
         </div>
       </div>
     </Portal>
