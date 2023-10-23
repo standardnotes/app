@@ -69,7 +69,7 @@ export function serverFeatures(): ServerFeatureDescription[] {
       name: 'Shared Vaults',
       identifier: NativeFeatureIdentifier.TYPES.SharedVaults,
       permission_name: PermissionName.SharedVaults,
-      availableInRoles: [RoleName.NAMES.VaultsUser],
+      availableInRoles: [RoleName.NAMES.InternalTeamUser],
     },
   ]
 }
