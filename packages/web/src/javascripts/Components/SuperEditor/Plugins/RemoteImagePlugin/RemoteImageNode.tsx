@@ -75,6 +75,10 @@ export class RemoteImageNode extends DecoratorBlockNode {
     return { element }
   }
 
+  override getTextContent(): string {
+    return `![${this.__alt || 'image'}](${this.__src})`
+  }
+
   decorate(_editor: LexicalEditor, config: EditorConfig): JSX.Element {
     const embedBlockTheme = config.theme.embedBlock || {}
     const className = {
