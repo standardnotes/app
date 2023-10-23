@@ -139,7 +139,7 @@ const MobilePopoverContent = ({
           data-popover={id}
           data-mobile-popover
         >
-          <div className="mx-auto mt-2 h-1.5 w-12 rounded-full bg-passive-2" />
+          <div className="mx-auto mt-2 min-h-[0.375rem] w-12 rounded-full bg-passive-2" />
           <MobileModalHeader className="border-b border-border px-2 py-1.5 text-lg">
             <div />
             <div className="flex items-center justify-center font-semibold">{title}</div>
