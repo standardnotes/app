@@ -679,6 +679,10 @@ export class AppContext {
 
     options.expiresAt = options.expiresAt || dateInAnHour
     options.subscriptionPlanName = options.subscriptionPlanName || 'PRO_PLAN'
+    options.cancelPreviousSubscription = options.cancelPreviousSubscription || false
+
+    const nextSubscriptionId = GlobalSubscriptionIdCounter++
+
     let uploadBytesLimit = -1
     switch (options.subscriptionPlanName) {
       case 'PLUS_PLAN':
@@ -690,9 +694,27 @@ export class AppContext {
     }
 
     try {
+      if (options.cancelPreviousSubscription) {
+        await Events.publishMockedEvent('SUBSCRIPTION_CANCELLED', {
+          userEmail: this.email,
+          subscriptionId: (nextSubscriptionId - 1),
+          subscriptionName: options.subscriptionPlanName,
+          subscriptionCreatedAt: 1,
+          subscriptionUpdatedAt: 1,
+          lastPayedAt: 1,
+          subscriptionEndsAt: (new Date()).getTime() * 1_000,
+          timestamp: (new Date()).getTime() * 1_000,
+          offline: false,
+          replaced: true,
+          userExistingSubscriptionsCount: 1,
+          billingFrequency: 12,
+          payAmount: 59.0,
+        })
+      }
+
       await Events.publishMockedEvent('SUBSCRIPTION_PURCHASED', {
         userEmail: this.email,
-        subscriptionId: GlobalSubscriptionIdCounter++,
+        subscriptionId: nextSubscriptionId,
         subscriptionName: options.subscriptionPlanName,
         subscriptionExpiresAt: options.expiresAt.getTime() * 1_000,
         timestamp: Date.now(),
@@ -713,7 +735,7 @@ export class AppContext {
       )
 
       try {
-        await HomeServer.activatePremiumFeatures(this.email, options.subscriptionPlanName, options.expiresAt, uploadBytesLimit)
+        await HomeServer.activatePremiumFeatures(this.email, nextSubscriptionId, options.subscriptionPlanName, options.expiresAt, uploadBytesLimit, options.cancelPreviousSubscription)
 
         await this.sleep(1, 'Waiting for premium features to be activated')
       } catch (error) {
