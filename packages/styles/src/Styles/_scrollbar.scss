@@ -32,12 +32,12 @@
   }
 
   .super-toolbar {
-    ::-webkit-scrollbar {
+    &::-webkit-scrollbar {
       height: 0;
     }
 
     @media screen and (min-width: 768px) {
-      ::-webkit-scrollbar {
+      &::-webkit-scrollbar {
         height: 13px;
       }
     }
