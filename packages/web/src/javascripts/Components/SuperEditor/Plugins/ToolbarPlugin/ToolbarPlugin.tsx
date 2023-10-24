@@ -105,7 +105,11 @@ const ToolbarButton = forwardRef(
               active && 'bg-info text-info-contrast',
             )}
           >
-            <Icon type={iconName} size="medium" className="!text-current [&>path]:!text-current" />
+            <Icon
+              type={iconName}
+              size="custom"
+              className="h-4 w-4 !text-current md:h-3.5 md:w-3.5 [&>path]:!text-current"
+            />
           </div>
         </ToolbarItem>
       </StyledTooltip>
@@ -417,7 +421,7 @@ const ToolbarPlugin = () => {
       <div
         className={classNames(
           'bg-contrast',
-          'md:absolute md:bottom-0 md:left-1/2 md:max-w-[60%] md:-translate-x-1/2 md:rounded-t-lg md:border md:border-b-0 md:border-border md:px-2 md:py-1 md:translucent-ui:border-[--popover-border-color] md:translucent-ui:bg-[--popover-background-color] md:translucent-ui:[backdrop-filter:var(--popover-backdrop-filter)]',
+          'md:absolute md:bottom-0 md:left-1/2 md:w-full md:-translate-x-1/2 md:border-t md:border-border md:px-2 md:py-1 md:translucent-ui:border-[--popover-border-color] md:translucent-ui:bg-[--popover-background-color] md:translucent-ui:[backdrop-filter:var(--popover-backdrop-filter)]',
           !canShowToolbar || !isEditable ? 'hidden' : '',
         )}
         id="super-mobile-toolbar"
@@ -461,7 +465,7 @@ const ToolbarPlugin = () => {
         )}
         <div className="flex w-full flex-shrink-0 border-t border-border md:border-0">
           <Toolbar
-            className="flex items-center gap-1 overflow-x-auto px-1 [&::-webkit-scrollbar]:h-0"
+            className="flex items-center gap-1 overflow-x-auto px-1 [&::-webkit-scrollbar]:h-[13px]"
             ref={toolbarRef}
             store={toolbarStore}
           >
