@@ -390,30 +390,6 @@ const ToolbarPlugin = () => {
       },
     })
   }, [application.keyboardService, editor, isMobile, isToolbarVisible, toolbarStore])
-  useEffect(() => {
-    const container = containerRef.current
-    const rootElement = editor.getRootElement()
-
-    if (!container || !rootElement) {
-      return
-    }
-
-    const resizeObserver = new ResizeObserver(() => {
-      if (isMobile) {
-        return
-      }
-
-      const containerHeight = container.offsetHeight
-
-      rootElement.style.paddingBottom = containerHeight ? `${containerHeight + 8}px` : ''
-    })
-
-    resizeObserver.observe(container)
-
-    return () => {
-      resizeObserver.disconnect()
-    }
-  }, [editor, isMobile])
 
   return (
     <>
@@ -421,7 +397,7 @@ const ToolbarPlugin = () => {
       <div
         className={classNames(
           'bg-contrast',
-          'md:absolute md:bottom-0 md:left-1/2 md:w-full md:-translate-x-1/2 md:border-t md:border-border md:px-2 md:py-1 md:translucent-ui:border-[--popover-border-color] md:translucent-ui:bg-[--popover-background-color] md:translucent-ui:[backdrop-filter:var(--popover-backdrop-filter)]',
+          'md:w-full md:border-b md:border-border md:px-2 md:py-1 md:translucent-ui:border-[--popover-border-color] md:translucent-ui:bg-[--popover-background-color] md:translucent-ui:[backdrop-filter:var(--popover-backdrop-filter)]',
           !canShowToolbar || !isEditable ? 'hidden' : '',
         )}
         id="super-mobile-toolbar"
@@ -465,7 +441,7 @@ const ToolbarPlugin = () => {
         )}
         <div className="flex w-full flex-shrink-0 border-t border-border md:border-0">
           <Toolbar
-            className="flex items-center gap-1 overflow-x-auto px-1 [&::-webkit-scrollbar]:h-0 md:[&::-webkit-scrollbar]:h-[13px]"
+            className="super-toolbar flex items-center gap-1 overflow-x-auto px-1"
             ref={toolbarRef}
             store={toolbarStore}
           >

@@ -26,6 +26,7 @@ import { classNames } from '@standardnotes/utils'
 import { MarkdownTransformers } from './MarkdownTransformers'
 import { RemoveBrokenTablesPlugin } from './Plugins/TablePlugin'
 import TableActionMenuPlugin from './Plugins/TableCellActionMenuPlugin'
+import ToolbarPlugin from './Plugins/ToolbarPlugin/ToolbarPlugin'
 
 type BlocksEditorProps = {
   onChange?: (value: string, preview: string) => void
@@ -73,6 +74,7 @@ export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
 
   return (
     <>
+      <ToolbarPlugin />
       <RichTextPlugin
         contentEditable={
           <div id="blocks-editor" className="editor-scroller h-full min-h-0">

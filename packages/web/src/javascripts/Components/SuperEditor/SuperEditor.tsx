@@ -44,7 +44,6 @@ import ReadonlyPlugin from './Plugins/ReadonlyPlugin/ReadonlyPlugin'
 import { SuperSearchContextProvider } from './Plugins/SearchPlugin/Context'
 import { SearchPlugin } from './Plugins/SearchPlugin/SearchPlugin'
 import ModalOverlay from '@/Components/Modal/ModalOverlay'
-import ToolbarPlugin from './Plugins/ToolbarPlugin/ToolbarPlugin'
 import CodeOptionsPlugin from './Plugins/CodeOptionsPlugin/CodeOptions'
 import RemoteImagePlugin from './Plugins/RemoteImagePlugin/RemoteImagePlugin'
 import NotEntitledBanner from '../ComponentView/NotEntitledBanner'
@@ -212,7 +211,7 @@ export const SuperEditor: FunctionComponent<Props> = ({
   }, [])
 
   return (
-    <div className="font-editor relative flex h-full w-full flex-col md:block" ref={ref}>
+    <div className="font-editor relative flex h-full w-full flex-col" ref={ref}>
       {featureStatus !== FeatureStatus.Entitled && (
         <NotEntitledBanner featureStatus={featureStatus} feature={GetSuperNoteFeature()} />
       )}
@@ -250,7 +249,6 @@ export const SuperEditor: FunctionComponent<Props> = ({
                 <SuperSearchContextProvider>
                   <SearchPlugin />
                 </SuperSearchContextProvider>
-                <ToolbarPlugin />
                 <CodeOptionsPlugin />
                 <RemoteImagePlugin />
               </BlocksEditor>
