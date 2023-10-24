@@ -465,7 +465,7 @@ const ToolbarPlugin = () => {
         )}
         <div className="flex w-full flex-shrink-0 border-t border-border md:border-0">
           <Toolbar
-            className="flex items-center gap-1 overflow-x-auto px-1 [&::-webkit-scrollbar]:h-[13px]"
+            className="flex items-center gap-1 overflow-x-auto px-1 [&::-webkit-scrollbar]:h-0 md:[&::-webkit-scrollbar]:h-[13px]"
             ref={toolbarRef}
             store={toolbarStore}
           >
