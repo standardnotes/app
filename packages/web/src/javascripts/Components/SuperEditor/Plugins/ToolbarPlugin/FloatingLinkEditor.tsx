@@ -50,6 +50,7 @@ const FloatingLinkEditor = ({
   }, [linkText])
 
   const linkEditorRef = useRef<HTMLDivElement>(null)
+  const rangeRect = useRef<DOMRect>()
 
   const updateLinkEditorPosition = useCallback(() => {
     if (isMobile) {
@@ -66,15 +67,17 @@ const FloatingLinkEditor = ({
     const nativeSelection = window.getSelection()
     const rootElement = editor.getRootElement()
 
-    if (nativeSelection !== null && rootElement !== null && rootElement.contains(nativeSelection.anchorNode)) {
-      const rangeRect = getDOMRangeRect(nativeSelection, rootElement)
+    if (nativeSelection !== null && rootElement !== null) {
+      if (rootElement.contains(nativeSelection.anchorNode)) {
+        rangeRect.current = getDOMRangeRect(nativeSelection, rootElement)
+      }
       const linkEditorRect = linkEditorElement.getBoundingClientRect()
       const rootElementRect = rootElement.getBoundingClientRect()
 
       const calculatedStyles = getPositionedPopoverStyles({
-        align: 'start',
+        align: 'center',
         side: 'top',
-        anchorRect: rangeRect,
+        anchorRect: rangeRect.current,
         popoverRect: linkEditorRect,
         documentRect: rootElementRect,
         offset: 12,
@@ -132,6 +135,10 @@ const FloatingLinkEditor = ({
     })
     setEditMode(false)
   }
+
+  useEffect(() => {
+    setTimeout(updateLinkEditorPosition)
+  }, [isEditMode, updateLinkEditorPosition])
 
   return (
     <Portal>
