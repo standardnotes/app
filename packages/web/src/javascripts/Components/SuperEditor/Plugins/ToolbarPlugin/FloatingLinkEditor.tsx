@@ -155,8 +155,10 @@ const FloatingLinkEditor = ({
         {isEditMode ? (
           <div
             className="flex flex-col gap-2 py-1"
-            onBlur={() => {
-              setEditMode(false)
+            onBlur={(event) => {
+              if (!linkEditorRef.current?.contains(event.relatedTarget as Node)) {
+                setEditMode(false)
+              }
             }}
           >
             {isLinkText && (
