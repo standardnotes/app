@@ -638,8 +638,8 @@ const ToolbarPlugin = () => {
         anchorElement={tocAnchorRef}
         open={isTOCOpen}
         togglePopover={() => setIsTOCOpen(!isTOCOpen)}
-        side="top"
-        align="center"
+        side="bottom"
+        align="start"
         className="py-1"
         disableMobileFullscreenTakeover
         disableFlip
