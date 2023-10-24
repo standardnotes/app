@@ -267,6 +267,7 @@ const ToolbarPlugin = () => {
             return activeEditor.dispatchCommand(TOGGLE_LINK_COMMAND, null)
           } else if (typeof payload === 'string') {
             const dispatched = activeEditor.dispatchCommand(TOGGLE_LINK_COMMAND, payload)
+            setIsLink(true)
             setLinkUrl(payload)
             setIsLinkEditMode(true)
             return dispatched

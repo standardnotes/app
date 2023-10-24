@@ -57,13 +57,6 @@ const FloatingLinkEditor = ({
       return
     }
 
-    const linkEditorElement = linkEditorRef.current
-
-    if (!linkEditorElement) {
-      setTimeout(updateLinkEditorPosition)
-      return
-    }
-
     const nativeSelection = window.getSelection()
     const rootElement = editor.getRootElement()
 
@@ -71,24 +64,36 @@ const FloatingLinkEditor = ({
       if (rootElement.contains(nativeSelection.anchorNode)) {
         rangeRect.current = getDOMRangeRect(nativeSelection, rootElement)
       }
-      const linkEditorRect = linkEditorElement.getBoundingClientRect()
-      const rootElementRect = rootElement.getBoundingClientRect()
+    }
 
-      const calculatedStyles = getPositionedPopoverStyles({
-        align: 'center',
-        side: 'top',
-        anchorRect: rangeRect.current,
-        popoverRect: linkEditorRect,
-        documentRect: rootElementRect,
-        offset: 12,
-        maxHeightFunction: () => 'none',
+    const linkEditorElement = linkEditorRef.current
+
+    if (!linkEditorElement) {
+      setTimeout(updateLinkEditorPosition)
+      return
+    }
+
+    if (!rootElement) {
+      return
+    }
+
+    const linkEditorRect = linkEditorElement.getBoundingClientRect()
+    const rootElementRect = rootElement.getBoundingClientRect()
+
+    const calculatedStyles = getPositionedPopoverStyles({
+      align: 'center',
+      side: 'top',
+      anchorRect: rangeRect.current,
+      popoverRect: linkEditorRect,
+      documentRect: rootElementRect,
+      offset: 12,
+      maxHeightFunction: () => 'none',
+    })
+    if (calculatedStyles) {
+      Object.entries(calculatedStyles).forEach(([key, value]) => {
+        linkEditorElement.style.setProperty(key, value)
       })
-      if (calculatedStyles) {
-        Object.entries(calculatedStyles).forEach(([key, value]) => {
-          linkEditorElement.style.setProperty(key, value)
-        })
-        linkEditorElement.style.opacity = '1'
-      }
+      linkEditorElement.style.opacity = '1'
     }
   }, [editor, isMobile])
 
