@@ -18,7 +18,7 @@ const MenuSection = ({
       )}
     >
       {title && <div className="px-3 py-1 text-sm font-semibold uppercase text-text lg:text-xs">{title}</div>}
-      <div className="divide-y divide-passive-3 overflow-hidden rounded-md bg-passive-4 md:divide-none md:bg-transparent">
+      <div className="divide-y divide-passive-3 overflow-hidden rounded-md bg-passive-4 md:divide-none md:rounded-none md:bg-transparent">
         {children}
       </div>
     </div>
