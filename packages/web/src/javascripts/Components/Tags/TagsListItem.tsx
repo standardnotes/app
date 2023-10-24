@@ -323,6 +323,10 @@ export const TagsListItem: FunctionComponent<Props> = observer(
                   role="button"
                   className={'mr-2 cursor-pointer border-0 bg-transparent hover:bg-contrast focus:shadow-inner'}
                   onClick={toggleContextMenu}
+                  onMouseDown={(e) => {
+                    e.stopPropagation()
+                    e.preventDefault()
+                  }}
                   ref={menuButtonRef}
                 >
                   <Icon type="more" className="text-neutral" />

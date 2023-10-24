@@ -13,6 +13,7 @@ import Popover from '../Popover/Popover'
 import IconPicker from '../Icon/IconPicker'
 import AddToVaultMenuOption from '../Vaults/AddToVaultMenuOption'
 import { useApplication } from '../ApplicationProvider'
+import MenuSection from '../Menu/MenuSection'
 
 type ContextMenuProps = {
   navigationController: NavigationController
@@ -80,31 +81,32 @@ const TagContextMenu = ({ navigationController, isEntitledToFolders, selectedTag
           useIconGrid={true}
           iconGridClassName="max-h-30"
         />
-        <HorizontalSeparator classes="my-2" />
-        {application.featuresController.isVaultsEnabled() && (
-          <AddToVaultMenuOption iconClassName="mr-2 text-neutral" items={[selectedTag]} />
-        )}
-        <MenuItem className={'justify-between py-1.5'} onClick={onClickStar}>
-          <div className="flex items-center">
-            <Icon type="star" className="mr-2 text-neutral" />
-            {selectedTag.starred ? 'Unfavorite' : 'Favorite'}
-          </div>
-        </MenuItem>
-        <MenuItem className={'justify-between py-1.5'} onClick={onClickAddSubtag}>
-          <div className="flex items-center">
-            <Icon type="add" className="mr-2 text-neutral" />
-            Add subtag
-          </div>
-          {!isEntitledToFolders && <Icon type={PremiumFeatureIconName} className={PremiumFeatureIconClass} />}
-        </MenuItem>
-        <MenuItem className={'py-1.5'} onClick={onClickRename}>
-          <Icon type="pencil-filled" className="mr-2 text-neutral" />
-          Rename
-        </MenuItem>
-        <MenuItem className={'py-1.5'} onClick={onClickDelete}>
-          <Icon type="trash" className="mr-2 text-danger" />
-          <span className="text-danger">Delete</span>
-        </MenuItem>
+        <MenuSection>
+          {application.featuresController.isVaultsEnabled() && (
+            <AddToVaultMenuOption iconClassName="mr-2 text-neutral" items={[selectedTag]} />
+          )}
+          <MenuItem className={'justify-between py-1.5'} onClick={onClickStar}>
+            <div className="flex items-center">
+              <Icon type="star" className="mr-2 text-neutral" />
+              {selectedTag.starred ? 'Unfavorite' : 'Favorite'}
+            </div>
+          </MenuItem>
+          <MenuItem className={'justify-between py-1.5'} onClick={onClickAddSubtag}>
+            <div className="flex items-center">
+              <Icon type="add" className="mr-2 text-neutral" />
+              Add subtag
+            </div>
+            {!isEntitledToFolders && <Icon type={PremiumFeatureIconName} className={PremiumFeatureIconClass} />}
+          </MenuItem>
+          <MenuItem className={'py-1.5'} onClick={onClickRename}>
+            <Icon type="pencil-filled" className="mr-2 text-neutral" />
+            Rename
+          </MenuItem>
+          <MenuItem className={'py-1.5'} onClick={onClickDelete}>
+            <Icon type="trash" className="mr-2 text-danger" />
+            <span className="text-danger">Delete</span>
+          </MenuItem>
+        </MenuSection>
       </Menu>
       <HorizontalSeparator classes="my-2" />
       <div className="px-3 pb-1.5 pt-1 text-sm font-medium text-neutral lg:text-xs">
