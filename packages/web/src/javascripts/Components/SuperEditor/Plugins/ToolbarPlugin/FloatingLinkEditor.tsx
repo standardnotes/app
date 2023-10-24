@@ -144,7 +144,8 @@ const FloatingLinkEditor = ({
     <Portal>
       <div
         id="super-link-editor"
-        className="absolute bottom-12 left-1/2 z-modal w-[calc(100%_-_1rem)] -translate-x-1/2 rounded-lg border border-border bg-contrast px-2 py-1 shadow-sm shadow-contrast translucent-ui:border-[--popover-border-color] translucent-ui:bg-[--popover-background-color] translucent-ui:[backdrop-filter:var(--popover-backdrop-filter)] md:bottom-0 md:left-0 md:w-auto md:translate-x-0 md:opacity-0"
+        className="absolute bottom-12 left-1/2 z-modal w-[calc(100%_-_1rem)] -translate-x-1/2 rounded-lg border border-border bg-contrast px-2 py-1 shadow-sm shadow-contrast translucent-ui:border-[--popover-border-color] translucent-ui:bg-[--popover-background-color] translucent-ui:[backdrop-filter:var(--popover-backdrop-filter)] md:bottom-[unset] md:left-0 md:top-0 md:w-auto md:translate-x-0 md:opacity-0"
+        ref={linkEditorRef}
       >
         {isEditMode ? (
           <div
