@@ -339,8 +339,11 @@ const ToolbarPlugin = () => {
     const handleRootBlur = (event: FocusEvent) => {
       const elementToBeFocused = event.relatedTarget as Node
       const containerContainsElementToFocus = container?.contains(elementToBeFocused)
+      const linkEditorContainsElementToFocus = document
+        .getElementById('super-link-editor')
+        ?.contains(elementToBeFocused)
       const willFocusDismissButton = dismissButtonRef.current === elementToBeFocused
-      if (containerContainsElementToFocus && !willFocusDismissButton) {
+      if ((containerContainsElementToFocus || linkEditorContainsElementToFocus) && !willFocusDismissButton) {
         return
       }
       setIsFocusInEditor(false)

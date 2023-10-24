@@ -27,6 +27,7 @@ import { MarkdownTransformers } from './MarkdownTransformers'
 import { RemoveBrokenTablesPlugin } from './Plugins/TablePlugin'
 import TableActionMenuPlugin from './Plugins/TableCellActionMenuPlugin'
 import ToolbarPlugin from './Plugins/ToolbarPlugin/ToolbarPlugin'
+import { useMediaQuery, MutuallyExclusiveMediaQueryBreakpoints } from '@/Hooks/useMediaQuery'
 
 type BlocksEditorProps = {
   onChange?: (value: string, preview: string) => void
@@ -72,9 +73,11 @@ export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
     }
   }
 
+  const isMobile = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
+
   return (
     <>
-      <ToolbarPlugin />
+      {!isMobile && <ToolbarPlugin />}
       <RichTextPlugin
         contentEditable={
           <div id="blocks-editor" className="editor-scroller h-full min-h-0">
@@ -92,6 +95,7 @@ export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
         placeholder={null}
         ErrorBoundary={LexicalErrorBoundary}
       />
+      {isMobile && <ToolbarPlugin />}
       <ListPlugin />
       <MarkdownShortcutPlugin transformers={MarkdownTransformers} />
       <TablePlugin hasCellMerge />
