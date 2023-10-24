@@ -51,3 +51,33 @@ export const useAutoElementRect = (
 
   return rect
 }
+
+export const useElementResize = (element: HTMLElement | null | undefined, callback: () => void) => {
+  useEffect(() => {
+    let windowResizeDebounceTimeout: number
+    let windowResizeHandler: () => void
+
+    if (element) {
+      const resizeObserver = new ResizeObserver(() => {
+        callback()
+      })
+      resizeObserver.observe(element)
+
+      windowResizeHandler = () => {
+        window.clearTimeout(windowResizeDebounceTimeout)
+
+        window.setTimeout(() => {
+          callback()
+        }, DebounceTimeInMs)
+      }
+      window.addEventListener('resize', windowResizeHandler)
+
+      return () => {
+        resizeObserver.unobserve(element)
+        window.removeEventListener('resize', windowResizeHandler)
+      }
+    } else {
+      return
+    }
+  }, [element, callback])
+}

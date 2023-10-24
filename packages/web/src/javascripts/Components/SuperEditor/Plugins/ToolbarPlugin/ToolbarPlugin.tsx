@@ -43,14 +43,14 @@ import { InsertRemoteImageDialog } from '../RemoteImagePlugin/RemoteImagePlugin'
 import StyledTooltip from '@/Components/StyledTooltip/StyledTooltip'
 import { Toolbar, ToolbarItem, useToolbarStore } from '@ariakit/react'
 import { PasswordBlock } from '../Blocks/Password'
-import LinkEditor from './ToolbarLinkEditor'
-import { FOCUSABLE_BUT_NOT_TABBABLE, URL_REGEX } from '@/Constants/Constants'
-import LinkTextEditor, { $isLinkTextNode } from './ToolbarLinkTextEditor'
+import { URL_REGEX } from '@/Constants/Constants'
+import { $isLinkTextNode } from './ToolbarLinkTextEditor'
 import Popover from '@/Components/Popover/Popover'
 import LexicalTableOfContents from '@lexical/react/LexicalTableOfContents'
 import Menu from '@/Components/Menu/Menu'
 import MenuItem from '@/Components/Menu/MenuItem'
 import { remToPx } from '@/Utils'
+import FloatingLinkEditor from './FloatingLinkEditor'
 
 const TOGGLE_LINK_AND_EDIT_COMMAND = createCommand<string | null>('TOGGLE_LINK_AND_EDIT_COMMAND')
 
@@ -143,7 +143,6 @@ const ToolbarPlugin = () => {
   const [isAutoLink, setIsAutoLink] = useState(false)
   const [isLinkText, setIsLinkText] = useState(false)
   const [isLinkEditMode, setIsLinkEditMode] = useState(false)
-  const [isLinkTextEditMode, setIsLinkTextEditMode] = useState(false)
   const [linkText, setLinkText] = useState<string>('')
   const [linkUrl, setLinkUrl] = useState<string>('')
 
@@ -403,41 +402,17 @@ const ToolbarPlugin = () => {
         id="super-mobile-toolbar"
         ref={containerRef}
       >
-        {isLinkText && !isAutoLink && (
-          <>
-            <div className="border-t border-border px-1 py-1 md:border-0 md:px-0 md:py-0">
-              <LinkTextEditor
-                linkText={linkText}
-                editor={editor}
-                isEditMode={isLinkTextEditMode}
-                setEditMode={setIsLinkTextEditMode}
-              />
-            </div>
-            <div
-              role="presentation"
-              className="my-1 hidden h-px bg-border translucent-ui:bg-[--popover-border-color] md:block"
-            />
-          </>
-        )}
         {isLink && (
-          <>
-            <div
-              className="border-t border-border px-1 py-1 focus:shadow-none focus:outline-none md:border-0 md:px-0 md:py-0"
-              tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
-            >
-              <LinkEditor
-                linkUrl={linkUrl}
-                isEditMode={isLinkEditMode}
-                setEditMode={setIsLinkEditMode}
-                isAutoLink={isAutoLink}
-                editor={editor}
-              />
-            </div>
-            <div
-              role="presentation"
-              className="my-1 hidden h-px bg-border translucent-ui:bg-[--popover-border-color] md:block"
-            />
-          </>
+          <FloatingLinkEditor
+            linkUrl={linkUrl}
+            linkText={linkText}
+            isEditMode={isLinkEditMode}
+            setEditMode={setIsLinkEditMode}
+            editor={editor}
+            isAutoLink={isAutoLink}
+            isLinkText={isLinkText}
+            isMobile={isMobile}
+          />
         )}
         <div className="flex w-full flex-shrink-0 border-t border-border md:border-0">
           <Toolbar
