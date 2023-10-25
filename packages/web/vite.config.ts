@@ -19,7 +19,7 @@ export default defineConfig({
         replacement: path.resolve(__dirname, 'src', 'javascripts'),
       },
     ],
-    extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.vue'],
+    extensions: ['.js', '.ts', '.tsx'],
     preserveSymlinks: true,
   },
   build: {

@@ -5213,6 +5213,7 @@ __metadata:
     tscpaths: 0.0.9
     typescript: "*"
     uuid: ^9.0.0
+    vite: "*"
     webpack: "*"
     webpack-cli: "*"
     webpack-merge: "*"

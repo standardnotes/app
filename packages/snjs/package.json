@@ -17,11 +17,11 @@
     "access": "public"
   },
   "scripts": {
-    "start": "webpack -w --config webpack.dev.js",
+    "start": "vite build -w",
     "start:test-server": "yarn node e2e-server.js",
     "clean": "rm -fr dist",
     "prebuild": "yarn clean",
-    "build": "yarn tsc && webpack --config webpack.prod.js",
+    "build": "yarn tsc && vite build",
     "watch": "webpack --config webpack.prod.js --watch",
     "docs": "jsdoc -c jsdoc.json",
     "tsc": "tsc --project lib/tsconfig.json && tscpaths -p lib/tsconfig.json -s lib -o dist/@types",
@@ -79,6 +79,7 @@
     "tscpaths": "0.0.9",
     "typescript": "*",
     "uuid": "^9.0.0",
+    "vite": "*",
     "webpack": "*",
     "webpack-cli": "*",
     "webpack-merge": "*"
