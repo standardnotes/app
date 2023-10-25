@@ -138,6 +138,7 @@ const Popover = (props: PopoverProps) => {
         title={props.title}
         className={props.className}
         id={popoverId}
+        forceFullHeightOnMobile={props.forceFullHeightOnMobile}
       >
         {props.children}
       </MobilePopoverContent>

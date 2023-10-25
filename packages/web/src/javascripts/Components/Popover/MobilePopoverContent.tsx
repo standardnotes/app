@@ -24,6 +24,7 @@ const MobilePopoverContent = ({
   title,
   className,
   id,
+  forceFullHeightOnMobile,
 }: {
   open: boolean
   requestClose: () => void
@@ -31,6 +32,7 @@ const MobilePopoverContent = ({
   title: string
   id: string
   className?: string
+  forceFullHeightOnMobile?: boolean
 }) => {
   const isMobileScreen = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
   const [isMounted, setPopoverElement, element] = useModalAnimation(open, isMobileScreen)
@@ -164,11 +166,14 @@ const MobilePopoverContent = ({
   return (
     <Portal>
       <DisableScroll />
-      <div className="fixed inset-0 z-modal">
-        <div className="absolute inset-0 z-0 bg-passive-4 opacity-0" ref={setUnderlayElement} />
+      <div className="fixed left-0 top-0 z-modal h-full max-h-[var(--ios-viewport-height,_none)] w-full">
+        <div className="absolute z-0 h-full w-full bg-passive-4 opacity-0" ref={setUnderlayElement} />
         <div
           ref={mergeRefs([setPopoverElement, addCloseMethod])}
-          className="z-1 absolute bottom-0 flex max-h-[calc(100%_-_max(var(--safe-area-inset-top),2rem))] min-h-[40%] w-full flex-col rounded-t-xl bg-default pb-safe-bottom"
+          className={classNames(
+            'z-1 absolute bottom-0 flex max-h-[calc(100%_-_max(var(--safe-area-inset-top),2rem))] min-h-[40%] w-full flex-col rounded-t-xl bg-default pb-safe-bottom',
+            forceFullHeightOnMobile && 'h-full',
+          )}
           id={'popover/' + id}
           data-popover={id}
           data-mobile-popover
