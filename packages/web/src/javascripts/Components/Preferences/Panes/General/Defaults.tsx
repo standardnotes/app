@@ -1,4 +1,4 @@
-import { PrefKey, Platform, PrefDefaults } from '@standardnotes/snjs'
+import { PrefKey, Platform } from '@standardnotes/snjs'
 import { Subtitle, Text, Title } from '@/Components/Preferences/PreferencesComponents/Content'
 import { WebApplication } from '@/Application/WebApplication'
 import { FunctionComponent, useState } from 'react'
@@ -6,6 +6,8 @@ import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import Switch from '@/Components/Switch/Switch'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
+import usePreference from '@/Hooks/usePreference'
+import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 
 type Props = {
   application: WebApplication
@@ -18,16 +20,15 @@ const Defaults: FunctionComponent<Props> = ({ application }) => {
     () => (application.getValue(AndroidConfirmBeforeExitKey) as boolean) ?? true,
   )
 
-  const [spellcheck, setSpellcheck] = useState(() =>
-    application.getPreference(PrefKey.EditorSpellcheck, PrefDefaults[PrefKey.EditorSpellcheck]),
-  )
+  const isMobile = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
 
-  const [addNoteToParentFolders, setAddNoteToParentFolders] = useState(() =>
-    application.getPreference(PrefKey.NoteAddToParentFolders, PrefDefaults[PrefKey.NoteAddToParentFolders]),
-  )
+  const spellcheck = usePreference(PrefKey.EditorSpellcheck)
+
+  const addNoteToParentFolders = usePreference(PrefKey.NoteAddToParentFolders)
+
+  const alwaysShowSuperToolbar = usePreference(PrefKey.AlwaysShowSuperToolbar)
 
   const toggleSpellcheck = () => {
-    setSpellcheck(!spellcheck)
     application.toggleGlobalSpellcheck().catch(console.error)
   }
 
@@ -72,11 +73,29 @@ const Defaults: FunctionComponent<Props> = ({ application }) => {
           <Switch
             onChange={() => {
               application.setPreference(PrefKey.NoteAddToParentFolders, !addNoteToParentFolders).catch(console.error)
-              setAddNoteToParentFolders(!addNoteToParentFolders)
             }}
             checked={addNoteToParentFolders}
           />
         </div>
+        <HorizontalSeparator classes="my-4" />
+        {!isMobile && (
+          <div className="flex justify-between gap-2 md:items-center">
+            <div className="flex flex-col">
+              <Subtitle>Use always-visible toolbar in Super notes</Subtitle>
+              <Text>
+                When enabled, the Super toolbar will always be shown at the top of the note. It can be temporarily
+                toggled using Cmd/Ctrl+Shift+K. When disabled, the Super toolbar will only be shown as a floating
+                toolbar when text is selected.
+              </Text>
+            </div>
+            <Switch
+              onChange={() => {
+                application.setPreference(PrefKey.AlwaysShowSuperToolbar, !alwaysShowSuperToolbar).catch(console.error)
+              }}
+              checked={alwaysShowSuperToolbar}
+            />
+          </div>
+        )}
       </PreferencesSegment>
     </PreferencesGroup>
   )
