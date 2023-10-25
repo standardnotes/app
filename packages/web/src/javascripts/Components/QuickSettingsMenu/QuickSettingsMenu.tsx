@@ -115,7 +115,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ closeMenu }) => {
   }, [deactivateAnyNonLayerableTheme])
 
   return (
-    <Menu a11yLabel="Quick settings menu" isOpen>
+    <Menu a11yLabel="Quick settings menu">
       {editorStackComponents.length > 0 && (
         <MenuSection title="Tools">
           {editorStackComponents.map((component) => (

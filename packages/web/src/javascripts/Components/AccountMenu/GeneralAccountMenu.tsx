@@ -140,7 +140,6 @@ const GeneralAccountMenu: FunctionComponent<Props> = ({ setMenuPane, closeMenu, 
         </>
       )}
       <Menu
-        isOpen={application.accountMenuController.show}
         a11yLabel="General account menu"
         closeMenu={closeMenu}
         initialFocus={!application.hasAccount() ? CREATE_ACCOUNT_INDEX : SWITCHER_INDEX}

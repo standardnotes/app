@@ -24,7 +24,7 @@ const VaultOptionsMenu = ({ vault }: Props) => {
 
   return (
     <>
-      <Menu a11yLabel="Vault options menu" isOpen>
+      <Menu a11yLabel="Vault options menu">
         <MenuItem onClick={openEditModal}>
           <Icon type="pencil-filled" className="mr-2" />
           Edit vault

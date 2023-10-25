@@ -77,7 +77,7 @@ const AddTagOption: FunctionComponent<Props> = ({
         className="py-2"
         overrideZIndex="z-modal"
       >
-        <Menu a11yLabel="Tag selection menu" isOpen={isOpen} className="!px-0">
+        <Menu a11yLabel="Tag selection menu" className="!px-0">
           {navigationController.tags.map((tag) => (
             <MenuItem
               key={tag.uuid}

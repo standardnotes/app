@@ -10,7 +10,6 @@ export type DisplayOptionsMenuPositionProps = {
 export type DisplayOptionsMenuProps = {
   application: WebApplication
   selectedTag: AnyTag
-  isOpen: boolean
   isFilesSmartView: boolean
   paneController: PaneController
 }

@@ -11,13 +11,11 @@ import MenuSection from '@/Components/Menu/MenuSection'
 
 type Props = {
   mainApplicationGroup: WebApplicationGroup
-  isOpen: boolean
   hideWorkspaceOptions?: boolean
 }
 
 const WorkspaceSwitcherMenu: FunctionComponent<Props> = ({
   mainApplicationGroup,
-  isOpen,
   hideWorkspaceOptions = false,
 }: Props) => {
   const application = useApplication()
@@ -71,7 +69,7 @@ const WorkspaceSwitcherMenu: FunctionComponent<Props> = ({
   }, [mainApplicationGroup])
 
   return (
-    <Menu a11yLabel="Workspace switcher menu" className="focus:shadow-none" isOpen={isOpen}>
+    <Menu a11yLabel="Workspace switcher menu" className="focus:shadow-none">
       <MenuSection>
         {applicationDescriptors.map((descriptor) => (
           <WorkspaceMenuItem

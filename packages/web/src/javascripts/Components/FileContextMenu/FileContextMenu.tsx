@@ -24,7 +24,7 @@ const FileContextMenu: FunctionComponent<Props> = observer(({ filesController, i
       align="start"
       className="md:pb-2"
     >
-      <Menu a11yLabel="File context menu" isOpen={showFileContextMenu}>
+      <Menu a11yLabel="File context menu">
         <FileMenuOptions
           selectedFiles={selectedFiles}
           closeMenu={() => setShowFileContextMenu(false)}

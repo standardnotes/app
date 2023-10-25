@@ -26,7 +26,7 @@ const FilesOptionsPanel = ({ itemListController }: Props) => {
         open={isOpen}
         className="md:pb-2"
       >
-        <Menu a11yLabel="File options panel" isOpen={isOpen}>
+        <Menu a11yLabel="File options panel">
           <FileMenuOptions
             selectedFiles={itemListController.selectedFiles}
             closeMenu={() => {

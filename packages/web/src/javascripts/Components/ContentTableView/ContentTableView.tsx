@@ -75,7 +75,7 @@ const ContextMenuCell = ({ items }: { items: DecryptedItemInterface[] }) => {
         align="start"
         className="py-2"
       >
-        <Menu a11yLabel="File context menu" isOpen={contextMenuVisible}>
+        <Menu a11yLabel="File context menu">
           {allItemsAreFiles && (
             <FileMenuOptions
               closeMenu={() => {
@@ -366,7 +366,7 @@ const ContentTableView = ({ application, items }: Props) => {
           className="py-2"
         >
           {contextMenuItem instanceof FileItem && (
-            <Menu a11yLabel="File context menu" isOpen={true}>
+            <Menu a11yLabel="File context menu">
               <FileMenuOptions
                 closeMenu={closeContextMenu}
                 shouldShowRenameOption={false}
@@ -376,7 +376,7 @@ const ContentTableView = ({ application, items }: Props) => {
             </Menu>
           )}
           {contextMenuItem instanceof SNNote && (
-            <Menu className="select-none" a11yLabel="Note context menu" isOpen={true}>
+            <Menu className="select-none" a11yLabel="Note context menu">
               <NotesOptions notes={[contextMenuItem]} closeMenu={closeContextMenu} />
             </Menu>
           )}

@@ -14,7 +14,6 @@ import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/u
 interface MenuProps extends ComponentPropsWithoutRef<'menu'> {
   a11yLabel: string
   closeMenu?: () => void
-  isOpen: boolean
   initialFocus?: number
   shouldAutoFocus?: boolean
 }

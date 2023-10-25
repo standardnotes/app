@@ -29,7 +29,7 @@ const NotesContextMenu = () => {
       open={contextMenuOpen}
       togglePopover={closeMenu}
     >
-      <Menu className="select-none" a11yLabel="Note context menu" isOpen={contextMenuOpen}>
+      <Menu className="select-none" a11yLabel="Note context menu">
         <NotesOptions
           notes={application.notesController.selectedNotes}
           requestDisableClickOutside={handleDisableClickOutsideRequest}
