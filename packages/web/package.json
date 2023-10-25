@@ -9,17 +9,16 @@
     "dist"
   ],
   "scripts": {
-    "build": "yarn clean && yarn copy:components && webpack --config web.webpack.prod.js && yarn tsc",
+    "build": "yarn clean && yarn copy:components && vite build && yarn tsc",
     "clean": "rm -fr dist",
     "format": "prettier --write src/javascripts",
     "lint": "eslint src/javascripts && yarn tsc",
     "lint:fix": "eslint src/javascripts --fix",
-    "start": "webpack-dev-server --config web.webpack.dev.js",
-    "start-secure": "yarn start --https",
+    "start": "vite",
     "test": "jest --config jest.config.js",
     "tsc": "tsc --project tsconfig.json",
     "upgrade:snjs": "ncu -u '@standardnotes/*'",
-    "watch": "webpack -w --config web.webpack.dev.js",
+    "watch": "vite build -w",
     "copy:components": "node scripts/CopyComponents.mjs"
   },
   "devDependencies": {
