@@ -30,6 +30,7 @@ const Menu = forwardRef(
       initialFocus,
       onKeyDown,
       shouldAutoFocus = true,
+      isOpen,
       ...props
     }: MenuProps,
     forwardedRef,

@@ -1,5 +1,5 @@
 import TagsList from '@/Components/Tags/TagsList'
-import { ApplicationEvent } from '@/__mocks__/@standardnotes/snjs'
+import { ApplicationEvent } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useEffect, useState } from 'react'
 import TagsSectionAddButton from './TagsSectionAddButton'

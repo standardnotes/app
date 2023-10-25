@@ -16,7 +16,7 @@ type TableCell = {
   colIndex: number
 }
 
-export type TableRow<Data> = {
+export type TableRowType<Data> = {
   id: string
   cells: TableCell[]
   isSelected: boolean
@@ -34,10 +34,10 @@ export type TableHeader = {
   colIndex: number
 }
 
-export type Table<Data> = {
+export type TableType<Data> = {
   id: string
   headers: TableHeader[]
-  rows: TableRow<Data>[]
+  rows: TableRowType<Data>[]
   rowCount: number
   colCount: number
   selectRow: (id: string) => void

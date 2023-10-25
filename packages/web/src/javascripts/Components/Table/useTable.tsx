@@ -1,6 +1,6 @@
 import { UuidGenerator } from '@standardnotes/snjs'
 import { MouseEventHandler, ReactNode, useCallback, useEffect, useMemo, useState, useRef } from 'react'
-import { Table, TableColumn, TableHeader, TableRow, TableSortBy } from './CommonTypes'
+import { TableType, TableColumn, TableHeader, TableRowType, TableSortBy } from './CommonTypes'
 
 type TableSortOptions =
   | {
@@ -62,7 +62,7 @@ export function useTable<Data>({
   rowActions,
   selectionActions,
   showSelectionActions,
-}: UseTableOptions<Data>): Table<Data> {
+}: UseTableOptions<Data>): TableType<Data> {
   const [selectedRows, setSelectedRows] = useState<string[]>(selectedRowIds || [])
   const id = useRef(UuidGenerator.GenerateUuid())
 
@@ -99,7 +99,7 @@ export function useTable<Data>({
     [columns, onSortChange, sortBy, sortReversed],
   )
 
-  const rows: TableRow<Data>[] = useMemo(
+  const rows: TableRowType<Data>[] = useMemo(
     () =>
       data.map((rowData, index) => {
         const cells = columns.map((column, index) => {
@@ -110,7 +110,7 @@ export function useTable<Data>({
           }
         })
         const id = getRowId ? getRowId(rowData) : index.toString()
-        const row: TableRow<Data> = {
+        const row: TableRowType<Data> = {
           id,
           isSelected: enableRowSelection ? selectedRows.includes(id) : false,
           cells,
@@ -194,7 +194,7 @@ export function useTable<Data>({
   const colCount = useMemo(() => columns.length, [columns])
   const rowCount = useMemo(() => data.length, [data.length])
 
-  const table: Table<Data> = useMemo(
+  const table: TableType<Data> = useMemo(
     () => ({
       id: id.current,
       headers,

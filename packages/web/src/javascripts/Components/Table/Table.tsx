@@ -3,7 +3,7 @@ import { KeyboardKey } from '@standardnotes/ui-services'
 import { useCallback, useState, useRef } from 'react'
 import { useApplication } from '../ApplicationProvider'
 import Icon from '../Icon/Icon'
-import { Table, TableRow } from './CommonTypes'
+import { TableType, TableRowType } from './CommonTypes'
 
 function TableRow<Data>({
   row,
@@ -13,12 +13,12 @@ function TableRow<Data>({
   handleRowContextMenu,
   handleActivateRow,
 }: {
-  row: TableRow<Data>
+  row: TableRowType<Data>
   index: number
-  canSelectRows: Table<Data>['canSelectRows']
+  canSelectRows: TableType<Data>['canSelectRows']
   handleRowClick: (event: React.MouseEvent<HTMLDivElement, MouseEvent>, id: string) => void
-  handleRowContextMenu: Table<Data>['handleRowContextMenu']
-  handleActivateRow: Table<Data>['handleActivateRow']
+  handleRowContextMenu: TableType<Data>['handleRowContextMenu']
+  handleActivateRow: TableType<Data>['handleActivateRow']
 }) {
   const [isHovered, setIsHovered] = useState(false)
   const [isFocused, setIsFocused] = useState(false)
@@ -96,7 +96,7 @@ const MinRowsToDisplay = 20
 const PageSize = Math.ceil(document.documentElement.clientHeight / MinTableRowHeight) || MinRowsToDisplay
 const PageScrollThreshold = 200
 
-function Table<Data>({ table }: { table: Table<Data> }) {
+function Table<Data>({ table }: { table: TableType<Data> }) {
   const application = useApplication()
 
   const [rowsToDisplay, setRowsToDisplay] = useState<number>(PageSize)
