@@ -5,9 +5,9 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "start": "webpack-dev-server --config webpack.config.js",
-    "watch": "webpack -w --config webpack.config.js",
-    "build": "webpack --config webpack.config.js && yarn run tsc",
+    "start": "vite",
+    "watch": "vite build -w",
+    "build": "vite build && yarn run tsc",
     "tsc": "tsc --project ./tsconfig.json"
   },
   "devDependencies": {
@@ -27,6 +27,8 @@
     "ts-jest": "^29.0.3",
     "ts-loader": "^9.4.1",
     "typescript": "*",
+    "vite": "*",
+    "vite-plugin-svgr": "^4.1.0",
     "webpack": "*",
     "webpack-cli": "*",
     "webpack-dev-server": "*"
