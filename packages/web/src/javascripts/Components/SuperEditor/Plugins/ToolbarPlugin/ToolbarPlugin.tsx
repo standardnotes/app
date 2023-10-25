@@ -577,6 +577,16 @@ const ToolbarPlugin = () => {
               <Icon type="chevron-down" size="custom" className="ml-2 h-4 w-4 md:h-3.5 md:w-3.5" />
             </ToolbarButton>
             <ToolbarButton
+              name={IndentBlock.name}
+              iconName={IndentBlock.iconName}
+              onSelect={() => IndentBlock.onSelect(editor)}
+            />
+            <ToolbarButton
+              name={OutdentBlock.name}
+              iconName={OutdentBlock.iconName}
+              onSelect={() => OutdentBlock.onSelect(editor)}
+            />
+            <ToolbarButton
               name="Insert"
               onSelect={() => {
                 setIsInsertMenuOpen(!isInsertMenuOpen)
@@ -804,9 +814,6 @@ const ToolbarPlugin = () => {
             active={elementFormat === 'justify'}
             onClick={() => JustifyAlignBlock.onSelect(editor)}
           />
-          <MenuItemSeparator />
-          <ToolbarMenuItem name="Indent" iconName="indent" onClick={() => IndentBlock.onSelect(editor)} />
-          <ToolbarMenuItem name="Outdent" iconName="outdent" onClick={() => OutdentBlock.onSelect(editor)} />
         </Menu>
       </Popover>
       <Popover
