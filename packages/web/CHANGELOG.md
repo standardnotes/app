@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.179.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.178.19...@standardnotes/web@3.179.0) (2023-10-25)
+
+### Features
+
+* Added preference to toggle Super note toolbar visibility. When toggled off, the toolbar will only be visible when text is selected as a floating toolbar. [skip e2e] ([a616750](https://github.com/standardnotes/app/commit/a616750aea3666079aa6ae301662ce4cd4d5c954))
+
 ## [3.178.19](https://github.com/standardnotes/app/compare/@standardnotes/web@3.178.18...@standardnotes/web@3.178.19) (2023-10-25)
 
 **Note:** Version bump only for package @standardnotes/web

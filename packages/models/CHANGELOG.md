@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.48.0](https://github.com/standardnotes/app/compare/@standardnotes/models@1.47.24...@standardnotes/models@1.48.0) (2023-10-25)
+
+### Features
+
+* Added preference to toggle Super note toolbar visibility. When toggled off, the toolbar will only be visible when text is selected as a floating toolbar. [skip e2e] ([a616750](https://github.com/standardnotes/app/commit/a616750aea3666079aa6ae301662ce4cd4d5c954))
+
 ## [1.47.24](https://github.com/standardnotes/app/compare/@standardnotes/models@1.47.23...@standardnotes/models@1.47.24) (2023-10-23)
 
 **Note:** Version bump only for package @standardnotes/models
