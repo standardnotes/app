@@ -49,6 +49,7 @@ export const IconNameToSvgMapping = {
   'link-off': icons.LinkOffIcon,
   'list-bulleted': icons.ListBulleted,
   'list-numbered': icons.ListNumbered,
+  'list-check': icons.CheckListIcon,
   'lock-filled': icons.LockFilledIcon,
   'menu-arrow-down-alt': icons.MenuArrowDownAlt,
   'menu-arrow-down': icons.MenuArrowDownIcon,

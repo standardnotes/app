@@ -35,6 +35,7 @@ import CheckBoldIcon from './ic-check-bold.svg'
 import CheckCircleFilledIcon from './ic-check-circle-filled.svg'
 import CheckCircleIcon from './ic-check-circle.svg'
 import CheckIcon from './ic-check.svg'
+import CheckListIcon from './ic-list-check.svg'
 import ChevronDownIcon from './ic-chevron-down.svg'
 import ChevronLeftIcon from './ic-chevron-left.svg'
 import ChevronRightIcon from './ic-chevron-right.svg'
@@ -254,6 +255,7 @@ export {
   CheckCircleFilledIcon,
   CheckCircleIcon,
   CheckIcon,
+  CheckListIcon,
   ChevronDownIcon,
   ChevronLeftIcon,
   ChevronRightIcon,

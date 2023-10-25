@@ -12,7 +12,7 @@ export const BulletedListBlock = {
 
 export const ChecklistBlock = {
   name: 'Check List',
-  iconName: 'check' as LexicalIconName,
+  iconName: 'list-check' as LexicalIconName,
   keywords: ['check list', 'todo list'],
   onSelect: (editor: LexicalEditor) => editor.dispatchCommand(INSERT_CHECK_LIST_COMMAND, undefined),
 }

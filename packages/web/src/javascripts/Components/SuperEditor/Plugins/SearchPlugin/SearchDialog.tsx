@@ -53,7 +53,7 @@ export const SearchDialog = ({ open, closeDialog }: { open: boolean; closeDialog
 
   return (
     <div
-      className="absolute right-6 top-4 z-10 flex select-none rounded border border-border bg-default"
+      className="absolute right-6 top-13 z-10 flex select-none rounded border border-border bg-default"
       ref={setElement}
     >
       <button

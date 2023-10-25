@@ -25,7 +25,16 @@ import { mergeRegister, $findMatchingParent, $getNearestNodeOfType } from '@lexi
 import { $isLinkNode, $isAutoLinkNode, TOGGLE_LINK_COMMAND } from '@lexical/link'
 import { $isListNode, ListNode } from '@lexical/list'
 import { $isHeadingNode } from '@lexical/rich-text'
-import { ComponentPropsWithoutRef, ForwardedRef, forwardRef, useCallback, useEffect, useRef, useState } from 'react'
+import {
+  ComponentPropsWithoutRef,
+  ForwardedRef,
+  ReactNode,
+  forwardRef,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 import { CenterAlignBlock, JustifyAlignBlock, LeftAlignBlock, RightAlignBlock } from '../Blocks/Alignment'
 import { BulletedListBlock, ChecklistBlock, NumberedListBlock } from '../Blocks/List'
 import { CodeBlock } from '../Blocks/Code'
@@ -48,9 +57,10 @@ import { $isLinkTextNode } from './ToolbarLinkTextEditor'
 import Popover from '@/Components/Popover/Popover'
 import LexicalTableOfContents from '@lexical/react/LexicalTableOfContents'
 import Menu from '@/Components/Menu/Menu'
-import MenuItem from '@/Components/Menu/MenuItem'
+import MenuItem, { MenuItemProps } from '@/Components/Menu/MenuItem'
 import { remToPx } from '@/Utils'
 import FloatingLinkEditor from './FloatingLinkEditor'
+import MenuItemSeparator from '@/Components/Menu/MenuItemSeparator'
 
 const TOGGLE_LINK_AND_EDIT_COMMAND = createCommand<string | null>('TOGGLE_LINK_AND_EDIT_COMMAND')
 
@@ -69,16 +79,32 @@ const blockTypeToBlockName = {
   quote: 'Quote',
 }
 
+const blockTypeToIconName = {
+  bullet: 'list-bulleted',
+  check: 'list-check',
+  code: 'code',
+  h1: 'h1',
+  h2: 'h2',
+  h3: 'h3',
+  h4: 'h4',
+  h5: 'h5',
+  h6: 'h6',
+  number: 'list-numbered',
+  paragraph: 'paragraph',
+  quote: 'quote',
+}
+
 interface ToolbarButtonProps extends ComponentPropsWithoutRef<'button'> {
   name: string
   active?: boolean
-  iconName: string
+  iconName?: string
+  children?: ReactNode
   onSelect: () => void
 }
 
 const ToolbarButton = forwardRef(
   (
-    { name, active, iconName, onSelect, disabled, ...props }: ToolbarButtonProps,
+    { name, active, iconName, children, onSelect, disabled, ...props }: ToolbarButtonProps,
     ref: ForwardedRef<HTMLButtonElement>,
   ) => {
     const [editor] = useLexicalComposerContext()
@@ -105,17 +131,39 @@ const ToolbarButton = forwardRef(
               active && 'bg-info text-info-contrast',
             )}
           >
-            <Icon
-              type={iconName}
-              size="custom"
-              className="h-4 w-4 !text-current md:h-3.5 md:w-3.5 [&>path]:!text-current"
-            />
+            {children ? (
+              children
+            ) : iconName ? (
+              <Icon
+                type={iconName}
+                size="custom"
+                className="h-4 w-4 !text-current md:h-3.5 md:w-3.5 [&>path]:!text-current"
+              />
+            ) : null}
           </div>
         </ToolbarItem>
       </StyledTooltip>
     )
   },
 )
+
+interface ToolbarMenuItemProps extends Omit<MenuItemProps, 'children'> {
+  name: string
+  iconName: string
+  active?: boolean
+}
+
+const ToolbarMenuItem = ({ name, iconName, active, ...props }: ToolbarMenuItemProps) => {
+  return (
+    <MenuItem
+      className={classNames('overflow-hidden md:py-2', active ? '!bg-info text-info-contrast' : 'hover:bg-contrast')}
+      {...props}
+    >
+      <Icon type={iconName} className="-mt-px mr-2.5 flex-shrink-0" />
+      <span className="overflow-hidden text-ellipsis whitespace-nowrap">{name}</span>
+    </MenuItem>
+  )
+}
 
 const ToolbarPlugin = () => {
   const application = useApplication()
@@ -148,6 +196,18 @@ const ToolbarPlugin = () => {
 
   const [isTOCOpen, setIsTOCOpen] = useState(false)
   const tocAnchorRef = useRef<HTMLButtonElement>(null)
+
+  const [isTextFormatMenuOpen, setIsTextFormatMenuOpen] = useState(false)
+  const textFormatAnchorRef = useRef<HTMLButtonElement>(null)
+
+  const [isTextStyleMenuOpen, setIsTextStyleMenuOpen] = useState(false)
+  const textStyleAnchorRef = useRef<HTMLButtonElement>(null)
+
+  const [isAlignmentMenuOpen, setIsAlignmentMenuOpen] = useState(false)
+  const alignmentAnchorRef = useRef<HTMLButtonElement>(null)
+
+  const [isInsertMenuOpen, setIsInsertMenuOpen] = useState(false)
+  const insertAnchorRef = useRef<HTMLButtonElement>(null)
 
   const [canUndo, setCanUndo] = useState(false)
   const [canRedo, setCanRedo] = useState(false)
@@ -400,7 +460,7 @@ const ToolbarPlugin = () => {
       <div
         className={classNames(
           'bg-contrast',
-          'md:w-full md:border-b md:border-border md:px-2 md:py-1 md:translucent-ui:border-[--popover-border-color] md:translucent-ui:bg-[--popover-background-color] md:translucent-ui:[backdrop-filter:var(--popover-backdrop-filter)]',
+          'md:w-full md:border-b md:border-border md:px-1 md:py-1 md:translucent-ui:border-[--popover-border-color] md:translucent-ui:bg-[--popover-background-color] md:translucent-ui:[backdrop-filter:var(--popover-backdrop-filter)]',
           !canShowToolbar || !isEditable ? 'hidden' : '',
         )}
         id="super-mobile-toolbar"
@@ -420,7 +480,7 @@ const ToolbarPlugin = () => {
         )}
         <div className="flex w-full flex-shrink-0 border-t border-border md:border-0">
           <Toolbar
-            className="super-toolbar flex items-center gap-1 overflow-x-auto px-1"
+            className="super-toolbar flex items-center gap-1 overflow-x-auto px-1 md:flex-wrap"
             ref={toolbarRef}
             store={toolbarStore}
           >
@@ -430,6 +490,11 @@ const ToolbarPlugin = () => {
               active={isTOCOpen}
               onSelect={() => setIsTOCOpen(!isTOCOpen)}
               ref={tocAnchorRef}
+            />
+            <ToolbarButton
+              name="Search"
+              iconName="search"
+              onSelect={() => application.keyboardService.triggerCommand(SUPER_TOGGLE_SEARCH)}
             />
             <ToolbarButton
               name="Undo"
@@ -462,12 +527,6 @@ const ToolbarPlugin = () => {
               onSelect={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'underline')}
             />
             <ToolbarButton
-              name="Highlight"
-              iconName="draw"
-              active={isHighlight}
-              onSelect={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'highlight')}
-            />
-            <ToolbarButton
               name="Link"
               iconName="link"
               active={isLink}
@@ -476,151 +535,51 @@ const ToolbarPlugin = () => {
               }}
             />
             <ToolbarButton
-              name="Strikethrough"
-              iconName="strikethrough"
-              active={isStrikethrough}
-              onSelect={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'strikethrough')}
-            />
-            <ToolbarButton
-              name="Subscript"
-              iconName="subscript"
-              active={isSubscript}
-              onSelect={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'subscript')}
-            />
-            <ToolbarButton
-              name="Superscript"
-              iconName="superscript"
-              active={isSuperscript}
-              onSelect={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'superscript')}
-            />
-            <ToolbarButton
               name="Inline Code"
               iconName="code-tags"
               active={isCode}
               onSelect={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'code')}
             />
             <ToolbarButton
-              name="Search"
-              iconName="search"
-              onSelect={() => application.keyboardService.triggerCommand(SUPER_TOGGLE_SEARCH)}
-            />
+              name="Formatting options"
+              onSelect={() => {
+                setIsTextFormatMenuOpen(!isTextFormatMenuOpen)
+              }}
+              ref={textFormatAnchorRef}
+            >
+              <Icon type="text" size="custom" className="h-4 w-4 md:h-3.5 md:w-3.5" />
+              <Icon type="chevron-down" size="custom" className="ml-1 h-4 w-4 md:h-3.5 md:w-3.5" />
+            </ToolbarButton>
             <ToolbarButton
-              name={ParagraphBlock.name}
-              iconName={ParagraphBlock.iconName}
-              active={blockType === 'paragraph'}
-              onSelect={() => ParagraphBlock.onSelect(editor)}
-            />
+              name="Text style"
+              onSelect={() => {
+                setIsTextStyleMenuOpen(!isTextStyleMenuOpen)
+              }}
+              ref={textStyleAnchorRef}
+            >
+              <Icon type={blockTypeToIconName[blockType]} size="custom" className="h-4 w-4 md:h-3.5 md:w-3.5" />
+              <Icon type="chevron-down" size="custom" className="ml-2 h-4 w-4 md:h-3.5 md:w-3.5" />
+            </ToolbarButton>
             <ToolbarButton
-              name={H1Block.name}
-              iconName={H1Block.iconName}
-              active={blockType === 'h1'}
-              onSelect={() => H1Block.onSelect(editor)}
-            />
+              name="Alignment"
+              onSelect={() => {
+                setIsAlignmentMenuOpen(!isAlignmentMenuOpen)
+              }}
+              ref={alignmentAnchorRef}
+            >
+              <Icon type="align-left" size="custom" className="h-4 w-4 md:h-3.5 md:w-3.5" />
+              <Icon type="chevron-down" size="custom" className="ml-2 h-4 w-4 md:h-3.5 md:w-3.5" />
+            </ToolbarButton>
             <ToolbarButton
-              name={H2Block.name}
-              iconName={H2Block.iconName}
-              active={blockType === 'h2'}
-              onSelect={() => H2Block.onSelect(editor)}
-            />
-            <ToolbarButton
-              name={H3Block.name}
-              iconName={H3Block.iconName}
-              active={blockType === 'h3'}
-              onSelect={() => H3Block.onSelect(editor)}
-            />
-            <ToolbarButton
-              name={IndentBlock.name}
-              iconName={IndentBlock.iconName}
-              onSelect={() => IndentBlock.onSelect(editor)}
-            />
-            <ToolbarButton
-              name={OutdentBlock.name}
-              iconName={OutdentBlock.iconName}
-              onSelect={() => OutdentBlock.onSelect(editor)}
-            />
-            <ToolbarButton
-              name={LeftAlignBlock.name}
-              iconName={LeftAlignBlock.iconName}
-              active={elementFormat === 'left'}
-              onSelect={() => LeftAlignBlock.onSelect(editor)}
-            />
-            <ToolbarButton
-              name={CenterAlignBlock.name}
-              iconName={CenterAlignBlock.iconName}
-              active={elementFormat === 'center'}
-              onSelect={() => CenterAlignBlock.onSelect(editor)}
-            />
-            <ToolbarButton
-              name={RightAlignBlock.name}
-              iconName={RightAlignBlock.iconName}
-              active={elementFormat === 'right'}
-              onSelect={() => RightAlignBlock.onSelect(editor)}
-            />
-            <ToolbarButton
-              name={JustifyAlignBlock.name}
-              iconName={JustifyAlignBlock.iconName}
-              active={elementFormat === 'justify'}
-              onSelect={() => JustifyAlignBlock.onSelect(editor)}
-            />
-            <ToolbarButton
-              name={BulletedListBlock.name}
-              iconName={BulletedListBlock.iconName}
-              active={blockType === 'bullet'}
-              onSelect={() => BulletedListBlock.onSelect(editor)}
-            />
-            <ToolbarButton
-              name={NumberedListBlock.name}
-              iconName={NumberedListBlock.iconName}
-              active={blockType === 'number'}
-              onSelect={() => NumberedListBlock.onSelect(editor)}
-            />
-            <ToolbarButton
-              name={ChecklistBlock.name}
-              iconName={ChecklistBlock.iconName}
-              active={blockType === 'check'}
-              onSelect={() => ChecklistBlock.onSelect(editor)}
-            />
-            <ToolbarButton
-              name="Table"
-              iconName="table"
-              onSelect={() =>
-                showModal('Insert Table', (onClose) => <InsertTableDialog activeEditor={editor} onClose={onClose} />)
-              }
-            />
-            <ToolbarButton
-              name="Image from URL"
-              iconName="image"
-              onSelect={() =>
-                showModal('Insert image from URL', (onClose) => <InsertRemoteImageDialog onClose={onClose} />)
-              }
-            />
-            <ToolbarButton
-              name={CodeBlock.name}
-              iconName={CodeBlock.iconName}
-              active={blockType === 'code'}
-              onSelect={() => CodeBlock.onSelect(editor)}
-            />
-            <ToolbarButton
-              name={QuoteBlock.name}
-              iconName={QuoteBlock.iconName}
-              active={blockType === 'quote'}
-              onSelect={() => QuoteBlock.onSelect(editor)}
-            />
-            <ToolbarButton
-              name={DividerBlock.name}
-              iconName={DividerBlock.iconName}
-              onSelect={() => DividerBlock.onSelect(editor)}
-            />
-            <ToolbarButton
-              name={CollapsibleBlock.name}
-              iconName={CollapsibleBlock.iconName}
-              onSelect={() => CollapsibleBlock.onSelect(editor)}
-            />
-            <ToolbarButton
-              name={PasswordBlock.name}
-              iconName={PasswordBlock.iconName}
-              onSelect={() => PasswordBlock.onSelect(editor)}
-            />
+              name="Insert"
+              onSelect={() => {
+                setIsInsertMenuOpen(!isInsertMenuOpen)
+              }}
+              ref={insertAnchorRef}
+            >
+              <Icon type="add" size="custom" className="h-4 w-4 md:h-3.5 md:w-3.5" />
+              <Icon type="chevron-down" size="custom" className="ml-2 h-4 w-4 md:h-3.5 md:w-3.5" />
+            </ToolbarButton>
           </Toolbar>
           {isMobile && (
             <button
@@ -638,7 +597,7 @@ const ToolbarPlugin = () => {
         anchorElement={tocAnchorRef}
         open={isTOCOpen}
         togglePopover={() => setIsTOCOpen(!isTOCOpen)}
-        side="bottom"
+        side={isMobile ? 'top' : 'bottom'}
         align="start"
         className="py-1"
         disableMobileFullscreenTakeover
@@ -685,6 +644,207 @@ const ToolbarPlugin = () => {
             )
           }}
         </LexicalTableOfContents>
+      </Popover>
+      <Popover
+        title="Text formatting options"
+        anchorElement={textFormatAnchorRef}
+        open={isTextFormatMenuOpen}
+        togglePopover={() => setIsTextFormatMenuOpen(!isTextFormatMenuOpen)}
+        side={isMobile ? 'top' : 'bottom'}
+        align="start"
+        className="py-1"
+        disableMobileFullscreenTakeover
+        disableFlip
+        containerClassName="md:!min-w-60 md:!w-auto"
+      >
+        <Menu
+          a11yLabel="Text formatting options"
+          isOpen
+          className="!px-0"
+          onClick={() => setIsTextFormatMenuOpen(false)}
+        >
+          <ToolbarMenuItem
+            name="Highlight"
+            iconName="draw"
+            active={isHighlight}
+            onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'highlight')}
+          />
+          <ToolbarMenuItem
+            name="Strikethrough"
+            iconName="strikethrough"
+            active={isStrikethrough}
+            onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'strikethrough')}
+          />
+          <ToolbarMenuItem
+            name="Subscript"
+            iconName="subscript"
+            active={isSubscript}
+            onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'subscript')}
+          />
+          <ToolbarMenuItem
+            name="Superscript"
+            iconName="superscript"
+            active={isSuperscript}
+            onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'superscript')}
+          />
+        </Menu>
+      </Popover>
+      <Popover
+        title="Text style"
+        anchorElement={textStyleAnchorRef}
+        open={isTextStyleMenuOpen}
+        togglePopover={() => setIsTextStyleMenuOpen(!isTextStyleMenuOpen)}
+        side={isMobile ? 'top' : 'bottom'}
+        align="start"
+        className="py-1"
+        disableMobileFullscreenTakeover
+        disableFlip
+        containerClassName="md:!min-w-60 md:!w-auto"
+      >
+        <Menu a11yLabel="Text style" isOpen className="!px-0" onClick={() => setIsTextStyleMenuOpen(false)}>
+          <ToolbarMenuItem
+            name="Normal"
+            iconName="paragraph"
+            active={blockType === 'paragraph'}
+            onClick={() => ParagraphBlock.onSelect(editor)}
+          />
+          <ToolbarMenuItem
+            name="Heading 1"
+            iconName="h1"
+            active={blockType === 'h1'}
+            onClick={() => H1Block.onSelect(editor)}
+          />
+          <ToolbarMenuItem
+            name="Heading 2"
+            iconName="h2"
+            active={blockType === 'h2'}
+            onClick={() => H2Block.onSelect(editor)}
+          />
+          <ToolbarMenuItem
+            name="Heading 3"
+            iconName="h3"
+            active={blockType === 'h3'}
+            onClick={() => H3Block.onSelect(editor)}
+          />
+          <MenuItemSeparator />
+          <ToolbarMenuItem
+            name="Bulleted List"
+            iconName="list-bulleted"
+            active={blockType === 'bullet'}
+            onClick={() => BulletedListBlock.onSelect(editor)}
+          />
+          <ToolbarMenuItem
+            name="Numbered List"
+            iconName="list-numbered"
+            active={blockType === 'number'}
+            onClick={() => NumberedListBlock.onSelect(editor)}
+          />
+          <ToolbarMenuItem
+            name="Check List"
+            iconName="list-check"
+            active={blockType === 'check'}
+            onClick={() => ChecklistBlock.onSelect(editor)}
+          />
+          <MenuItemSeparator />
+          <ToolbarMenuItem
+            name="Quote"
+            iconName="quote"
+            active={blockType === 'quote'}
+            onClick={() => QuoteBlock.onSelect(editor)}
+          />
+          <ToolbarMenuItem
+            name="Code Block"
+            iconName="code"
+            active={blockType === 'code'}
+            onClick={() => CodeBlock.onSelect(editor)}
+          />
+        </Menu>
+      </Popover>
+      <Popover
+        title="Alignment"
+        anchorElement={alignmentAnchorRef}
+        open={isAlignmentMenuOpen}
+        togglePopover={() => setIsAlignmentMenuOpen(!isAlignmentMenuOpen)}
+        side={isMobile ? 'top' : 'bottom'}
+        align="start"
+        className="py-1"
+        disableMobileFullscreenTakeover
+        disableFlip
+        containerClassName="md:!min-w-60 md:!w-auto"
+      >
+        <Menu a11yLabel="Alignment" isOpen className="!px-0" onClick={() => setIsAlignmentMenuOpen(false)}>
+          <ToolbarMenuItem
+            name="Left align"
+            iconName="align-left"
+            active={elementFormat === 'left'}
+            onClick={() => LeftAlignBlock.onSelect(editor)}
+          />
+          <ToolbarMenuItem
+            name="Center align"
+            iconName="align-center"
+            active={elementFormat === 'center'}
+            onClick={() => CenterAlignBlock.onSelect(editor)}
+          />
+          <ToolbarMenuItem
+            name="Right align"
+            iconName="align-right"
+            active={elementFormat === 'right'}
+            onClick={() => RightAlignBlock.onSelect(editor)}
+          />
+          <ToolbarMenuItem
+            name="Justify"
+            iconName="align-justify"
+            active={elementFormat === 'justify'}
+            onClick={() => JustifyAlignBlock.onSelect(editor)}
+          />
+          <MenuItemSeparator />
+          <ToolbarMenuItem name="Indent" iconName="indent" onClick={() => IndentBlock.onSelect(editor)} />
+          <ToolbarMenuItem name="Outdent" iconName="outdent" onClick={() => OutdentBlock.onSelect(editor)} />
+        </Menu>
+      </Popover>
+      <Popover
+        title="Insert"
+        anchorElement={insertAnchorRef}
+        open={isInsertMenuOpen}
+        togglePopover={() => setIsInsertMenuOpen(!isInsertMenuOpen)}
+        side={isMobile ? 'top' : 'bottom'}
+        align="start"
+        className="py-1"
+        disableMobileFullscreenTakeover
+        disableFlip
+        containerClassName="md:!min-w-60 md:!w-auto"
+      >
+        <Menu a11yLabel="Insert" isOpen className="!px-0" onClick={() => setIsInsertMenuOpen(false)}>
+          <ToolbarMenuItem
+            name="Table"
+            iconName="table"
+            onClick={() =>
+              showModal('Insert Table', (onClose) => <InsertTableDialog activeEditor={editor} onClose={onClose} />)
+            }
+          />
+          <ToolbarMenuItem
+            name="Image from URL"
+            iconName="image"
+            onClick={() =>
+              showModal('Insert image from URL', (onClose) => <InsertRemoteImageDialog onClose={onClose} />)
+            }
+          />
+          <ToolbarMenuItem
+            name={DividerBlock.name}
+            iconName={DividerBlock.iconName}
+            onClick={() => DividerBlock.onSelect(editor)}
+          />
+          <ToolbarMenuItem
+            name={CollapsibleBlock.name}
+            iconName={CollapsibleBlock.iconName}
+            onClick={() => CollapsibleBlock.onSelect(editor)}
+          />
+          <ToolbarMenuItem
+            name={PasswordBlock.name}
+            iconName={PasswordBlock.iconName}
+            onClick={() => PasswordBlock.onSelect(editor)}
+          />
+        </Menu>
       </Popover>
     </>
   )

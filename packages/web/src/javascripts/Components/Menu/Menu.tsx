@@ -1,8 +1,7 @@
 import {
-  CSSProperties,
+  ComponentPropsWithoutRef,
   forwardRef,
   KeyboardEventHandler,
-  ReactNode,
   useCallback,
   useImperativeHandle,
   useRef,
@@ -12,15 +11,11 @@ import { useListKeyboardNavigation } from '@/Hooks/useListKeyboardNavigation'
 import { mergeRefs } from '@/Hooks/mergeRefs'
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 
-type MenuProps = {
-  className?: string
-  style?: CSSProperties | undefined
+interface MenuProps extends ComponentPropsWithoutRef<'menu'> {
   a11yLabel: string
-  children: ReactNode
   closeMenu?: () => void
   isOpen: boolean
   initialFocus?: number
-  onKeyDown?: KeyboardEventHandler<HTMLMenuElement>
   shouldAutoFocus?: boolean
 }
 
@@ -35,6 +30,7 @@ const Menu = forwardRef(
       initialFocus,
       onKeyDown,
       shouldAutoFocus = true,
+      ...props
     }: MenuProps,
     forwardedRef,
   ) => {
@@ -73,6 +69,7 @@ const Menu = forwardRef(
         ref={mergeRefs([menuElementRef, forwardedRef])}
         style={style}
         aria-label={a11yLabel}
+        {...props}
       >
         {children}
       </menu>

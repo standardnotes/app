@@ -7,7 +7,7 @@ import { PlatformedKeyboardShortcut } from '@standardnotes/ui-services'
 import { KeyboardShortcutIndicator } from '../KeyboardShortcutIndicator/KeyboardShortcutIndicator'
 import MenuListItem from './MenuListItem'
 
-type MenuItemProps = {
+export interface MenuItemProps extends ComponentPropsWithoutRef<'button'> {
   children: ReactNode
   onClick?: MouseEventHandler<HTMLButtonElement>
   onBlur?: (event: { relatedTarget: EventTarget | null }) => void
@@ -17,7 +17,7 @@ type MenuItemProps = {
   tabIndex?: number
   disabled?: boolean
   shortcut?: PlatformedKeyboardShortcut
-} & ComponentPropsWithoutRef<'button'>
+}
 
 const MenuItem = forwardRef(
   (
