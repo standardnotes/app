@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.179.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.179.0...@standardnotes/web@3.179.1) (2023-10-25)
+
+### Bug Fixes
+
+* Fixed issue where some menus would get hidden behind the keyboard on iOS ([c1ee705](https://github.com/standardnotes/app/commit/c1ee705402ed63910ef733464796ab5f848c5ac4))
+
 # [3.179.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.178.19...@standardnotes/web@3.179.0) (2023-10-25)
 
 ### Features
