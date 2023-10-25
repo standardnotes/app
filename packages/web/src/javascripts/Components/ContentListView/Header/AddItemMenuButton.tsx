@@ -79,7 +79,7 @@ const AddItemMenuButton = ({
           align="center"
           className="py-2"
         >
-          <Menu a11yLabel={'test'} isOpen={isMenuOpen}>
+          <Menu a11yLabel={'test'}>
             <MenuItem
               onClick={() => {
                 addNewItem()

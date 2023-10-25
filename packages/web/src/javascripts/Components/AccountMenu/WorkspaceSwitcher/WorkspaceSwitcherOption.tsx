@@ -38,7 +38,7 @@ const WorkspaceSwitcherOption: FunctionComponent<Props> = ({ mainApplicationGrou
         side="right"
         togglePopover={toggleMenu}
       >
-        <WorkspaceSwitcherMenu mainApplicationGroup={mainApplicationGroup} isOpen={isOpen} />
+        <WorkspaceSwitcherMenu mainApplicationGroup={mainApplicationGroup} />
       </Popover>
     </>
   )

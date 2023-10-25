@@ -29,7 +29,6 @@ import MenuSection from '../Menu/MenuSection'
 type ChangeEditorMenuProps = {
   application: WebApplication
   closeMenu: () => void
-  isVisible: boolean
   note: SNNote | undefined
   onSelect?: (component: UIFeature<EditorFeatureDescription | IframeComponentFeatureDescription>) => void
   setDisableClickOutside?: (value: boolean) => void
@@ -40,7 +39,6 @@ const getGroupId = (group: EditorMenuGroup) => group.title.toLowerCase().replace
 const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
   application,
   closeMenu,
-  isVisible,
   note,
   onSelect,
   setDisableClickOutside,
@@ -208,7 +206,7 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
 
   return (
     <>
-      <Menu className="pb-1 pt-0.5" a11yLabel="Change note type menu" isOpen={isVisible}>
+      <Menu className="pb-1 pt-0.5" a11yLabel="Change note type menu">
         {groups
           .filter((group) => group.items && group.items.length)
           .map((group) => {

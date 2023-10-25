@@ -82,7 +82,6 @@ const TabButton: FunctionComponent<{
 
 const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
   application,
-  isOpen,
   isFilesSmartView,
   selectedTag,
   paneController,
@@ -283,7 +282,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
   const shouldHideNonApplicableOptions = isTableViewEnabled && !isMobileScreen
 
   return (
-    <Menu className="text-sm" a11yLabel="Notes list options menu" isOpen={isOpen}>
+    <Menu className="text-sm" a11yLabel="Notes list options menu">
       <div className="my-1 px-3 text-base font-semibold uppercase text-text lg:text-xs">Preferences for</div>
       <div className={classNames('mt-1.5 flex w-full justify-between px-3', !controlsDisabled && 'mb-3')}>
         <div className="flex items-center gap-1.5">

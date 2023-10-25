@@ -367,7 +367,7 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
               }}
               className="md:py-1"
             >
-              <Menu a11yLabel={'Super note export menu'} isOpen={isSuperExportMenuOpen}>
+              <Menu a11yLabel={'Super note export menu'}>
                 <MenuSection>
                   <MenuItem onClick={() => commandService.triggerCommand(SUPER_EXPORT_JSON, notes[0].title)}>
                     <Icon type="code" className={iconClass} />

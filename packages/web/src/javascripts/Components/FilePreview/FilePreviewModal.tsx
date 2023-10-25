@@ -224,7 +224,7 @@ const FilePreviewModal = observer(({ application }: Props) => {
               className="md:pb-2"
               overrideZIndex="z-modal"
             >
-              <Menu a11yLabel="File context menu" isOpen={showOptionsMenu}>
+              <Menu a11yLabel="File context menu">
                 <FileMenuOptions
                   selectedFiles={[currentFile]}
                   closeMenu={closeOptionsMenu}

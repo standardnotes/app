@@ -33,11 +33,7 @@ const LockscreenWorkspaceSwitcher: FunctionComponent<Props> = ({ mainApplication
         side="right"
         togglePopover={toggleMenu}
       >
-        <WorkspaceSwitcherMenu
-          mainApplicationGroup={mainApplicationGroup}
-          isOpen={isOpen}
-          hideWorkspaceOptions={true}
-        />
+        <WorkspaceSwitcherMenu mainApplicationGroup={mainApplicationGroup} hideWorkspaceOptions={true} />
       </Popover>
     </div>
   )

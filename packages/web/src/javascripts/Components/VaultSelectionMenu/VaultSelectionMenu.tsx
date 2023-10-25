@@ -28,7 +28,7 @@ const VaultSelectionMenu = () => {
   }
 
   return (
-    <Menu a11yLabel="Vault selection menu" isOpen>
+    <Menu a11yLabel="Vault selection menu">
       <RadioButtonGroup
         items={[
           { label: 'Multiple', value: 'many' },

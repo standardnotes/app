@@ -39,7 +39,7 @@ const NotesOptionsPanel = ({ notesController, onClickPreprocessing }: Props) => 
         open={isOpen}
         className="select-none"
       >
-        <Menu a11yLabel="Note options menu" isOpen={isOpen}>
+        <Menu a11yLabel="Note options menu">
           <NotesOptions
             notes={notesController.selectedNotes}
             requestDisableClickOutside={handleDisableClickOutsideRequest}

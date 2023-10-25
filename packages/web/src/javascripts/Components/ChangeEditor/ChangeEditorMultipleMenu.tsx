@@ -132,7 +132,7 @@ const ChangeEditorMultipleMenu = ({ application, notes, setDisableClickOutside }
 
   return (
     <>
-      <Menu isOpen={true} a11yLabel="Change note type">
+      <Menu a11yLabel="Change note type">
         {groupsWithItems.map((group) => (
           <MenuSection key={getGroupId(group)}>
             {group.items.map((item) => {

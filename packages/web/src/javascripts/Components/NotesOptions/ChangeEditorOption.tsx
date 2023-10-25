@@ -68,7 +68,6 @@ const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
         <ChangeEditorMenu
           application={application}
           note={note}
-          isVisible={isOpen}
           closeMenu={() => {
             setIsOpen(false)
           }}

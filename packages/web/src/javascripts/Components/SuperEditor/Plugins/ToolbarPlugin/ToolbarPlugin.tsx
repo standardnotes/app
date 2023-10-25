@@ -159,7 +159,7 @@ interface ToolbarMenuItemProps extends Omit<MenuItemProps, 'children'> {
 const ToolbarMenuItem = ({ name, iconName, active, ...props }: ToolbarMenuItemProps) => {
   return (
     <MenuItem
-      className={classNames('overflow-hidden md:py-2', active ? '!bg-info text-info-contrast' : 'hover:bg-contrast')}
+      className={classNames('overflow-hidden md:py-2', active ? '!bg-info !text-info-contrast' : 'hover:bg-contrast')}
       {...props}
     >
       <Icon type={iconName} className="-mt-px mr-2.5 flex-shrink-0" />
@@ -628,7 +628,7 @@ const ToolbarPlugin = () => {
             }
 
             return (
-              <Menu a11yLabel="Table of contents" isOpen className="!px-0">
+              <Menu a11yLabel="Table of contents" className="!px-0">
                 {tableOfContents.map(([key, text, tag]) => {
                   const level = parseInt(tag.slice(1)) || 1
                   if (level > 3) {
@@ -674,12 +674,7 @@ const ToolbarPlugin = () => {
         disableFlip
         containerClassName="md:!min-w-60 md:!w-auto"
       >
-        <Menu
-          a11yLabel="Text formatting options"
-          isOpen
-          className="!px-0"
-          onClick={() => setIsTextFormatMenuOpen(false)}
-        >
+        <Menu a11yLabel="Text formatting options" className="!px-0" onClick={() => setIsTextFormatMenuOpen(false)}>
           <ToolbarMenuItem
             name="Highlight"
             iconName="draw"
@@ -718,7 +713,7 @@ const ToolbarPlugin = () => {
         disableFlip
         containerClassName="md:!min-w-60 md:!w-auto"
       >
-        <Menu a11yLabel="Text style" isOpen className="!px-0" onClick={() => setIsTextStyleMenuOpen(false)}>
+        <Menu a11yLabel="Text style" className="!px-0" onClick={() => setIsTextStyleMenuOpen(false)}>
           <ToolbarMenuItem
             name="Normal"
             iconName="paragraph"
@@ -789,7 +784,7 @@ const ToolbarPlugin = () => {
         disableFlip
         containerClassName="md:!min-w-60 md:!w-auto"
       >
-        <Menu a11yLabel="Alignment" isOpen className="!px-0" onClick={() => setIsAlignmentMenuOpen(false)}>
+        <Menu a11yLabel="Alignment" className="!px-0" onClick={() => setIsAlignmentMenuOpen(false)}>
           <ToolbarMenuItem
             name="Left align"
             iconName="align-left"
@@ -828,7 +823,7 @@ const ToolbarPlugin = () => {
         disableFlip
         containerClassName="md:!min-w-60 md:!w-auto"
       >
-        <Menu a11yLabel="Insert" isOpen className="!px-0" onClick={() => setIsInsertMenuOpen(false)}>
+        <Menu a11yLabel="Insert" className="!px-0" onClick={() => setIsInsertMenuOpen(false)}>
           <ToolbarMenuItem
             name="Table"
             iconName="table"

@@ -83,7 +83,6 @@ const ChangeEditorButton: FunctionComponent<Props> = ({ noteViewController, onCl
       >
         <ChangeEditorMenu
           application={application}
-          isVisible={isOpen}
           note={note}
           setDisableClickOutside={setIsClickOutsideDisabled}
           closeMenu={() => {

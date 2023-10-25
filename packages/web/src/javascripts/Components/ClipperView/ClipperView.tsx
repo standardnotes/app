@@ -328,7 +328,7 @@ const ClipperView = ({ applicationGroup }: { applicationGroup: WebApplicationGro
         />
       </div>
     ) : (
-      <Menu a11yLabel="User account menu" isOpen={true}>
+      <Menu a11yLabel="User account menu">
         <MenuItem onClick={activateRegisterPane}>
           <Icon type="user" className="mr-2 h-6 w-6 text-neutral md:h-5 md:w-5" />
           Create free account
@@ -343,7 +343,7 @@ const ClipperView = ({ applicationGroup }: { applicationGroup: WebApplicationGro
 
   return (
     <div className="bg-contrast p-3">
-      <Menu a11yLabel="Extension menu" isOpen={true} className="rounded border border-border bg-default">
+      <Menu a11yLabel="Extension menu" className="rounded border border-border bg-default">
         {hasSelection && (
           <MenuItem
             className="border-b border-border"
@@ -449,7 +449,7 @@ const ClipperView = ({ applicationGroup }: { applicationGroup: WebApplicationGro
           <div className={classNames('flex items-center border-t border-border', hasSyncError && 'text-danger')}>
             {isSyncing && (
               <>
-                <Spinner className="w-4 h-4 mx-2.5" />
+                <Spinner className="mx-2.5 h-4 w-4" />
                 <div className="flex-grow py-2 text-sm font-semibold text-info">Syncing...</div>
               </>
             )}

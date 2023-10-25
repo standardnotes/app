@@ -57,7 +57,7 @@ const VaultMenu = observer(({ items }: { items: DecryptedItemInterface[] }) => {
   const singleItemVault = items.length === 1 ? application.vaults.getItemVault(items[0]) : undefined
 
   return (
-    <Menu a11yLabel="Vault selection menu" isOpen={true}>
+    <Menu a11yLabel="Vault selection menu">
       {doSomeItemsBelongToVault && (
         <MenuItem
           onClick={() => {

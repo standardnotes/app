@@ -32,7 +32,7 @@ const SingleVaultSelectionMenu: FunctionComponent = () => {
   )
 
   return (
-    <Menu a11yLabel="Vault selection menu" isOpen>
+    <Menu a11yLabel="Vault selection menu">
       {!vaults.length && <div className="py-1 text-center">No vaults found</div>}
       {vaults.map((vault) => (
         <VaultSelectMenuItemWithOptions vault={vault} key={vault.uuid}>

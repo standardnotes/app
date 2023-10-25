@@ -71,7 +71,7 @@ const TagContextMenu = ({ navigationController, isEntitledToFolders, selectedTag
       togglePopover={() => navigationController.setContextMenuOpen(!contextMenuOpen)}
       className="py-2"
     >
-      <Menu a11yLabel="Tag context menu" isOpen={contextMenuOpen}>
+      <Menu a11yLabel="Tag context menu">
         <IconPicker
           key={'icon-picker'}
           onIconChange={handleIconChange}
