@@ -104,7 +104,7 @@ interface ToolbarButtonProps extends ComponentPropsWithoutRef<'button'> {
 
 const ToolbarButton = forwardRef(
   (
-    { name, active, iconName, children, onSelect, disabled, ...props }: ToolbarButtonProps,
+    { name, active, iconName, children, onSelect, disabled, className, ...props }: ToolbarButtonProps,
     ref: ForwardedRef<HTMLButtonElement>,
   ) => {
     const [editor] = useLexicalComposerContext()
@@ -112,7 +112,10 @@ const ToolbarButton = forwardRef(
     return (
       <StyledTooltip showOnMobile showOnHover label={name} side="top">
         <ToolbarItem
-          className="flex select-none items-center justify-center rounded p-0.5 focus:shadow-none focus:outline-none enabled:hover:bg-default enabled:focus-visible:bg-default disabled:opacity-50 md:border md:border-transparent enabled:hover:md:translucent-ui:border-[--popover-border-color]"
+          className={classNames(
+            'flex select-none items-center justify-center rounded p-0.5 focus:shadow-none focus:outline-none enabled:hover:bg-default enabled:focus-visible:bg-default disabled:opacity-50 md:border md:border-transparent enabled:hover:md:translucent-ui:border-[--popover-border-color]',
+            className,
+          )}
           onMouseDown={(event) => {
             event.preventDefault()
             onSelect()
@@ -546,6 +549,7 @@ const ToolbarPlugin = () => {
                 setIsTextFormatMenuOpen(!isTextFormatMenuOpen)
               }}
               ref={textFormatAnchorRef}
+              className={isTextFormatMenuOpen ? 'md:bg-default' : ''}
             >
               <Icon type="text" size="custom" className="h-4 w-4 md:h-3.5 md:w-3.5" />
               <Icon type="chevron-down" size="custom" className="ml-1 h-4 w-4 md:h-3.5 md:w-3.5" />
@@ -556,6 +560,7 @@ const ToolbarPlugin = () => {
                 setIsTextStyleMenuOpen(!isTextStyleMenuOpen)
               }}
               ref={textStyleAnchorRef}
+              className={isTextStyleMenuOpen ? 'md:bg-default' : ''}
             >
               <Icon type={blockTypeToIconName[blockType]} size="custom" className="h-4 w-4 md:h-3.5 md:w-3.5" />
               <Icon type="chevron-down" size="custom" className="ml-2 h-4 w-4 md:h-3.5 md:w-3.5" />
@@ -566,6 +571,7 @@ const ToolbarPlugin = () => {
                 setIsAlignmentMenuOpen(!isAlignmentMenuOpen)
               }}
               ref={alignmentAnchorRef}
+              className={isAlignmentMenuOpen ? 'md:bg-default' : ''}
             >
               <Icon type="align-left" size="custom" className="h-4 w-4 md:h-3.5 md:w-3.5" />
               <Icon type="chevron-down" size="custom" className="ml-2 h-4 w-4 md:h-3.5 md:w-3.5" />
@@ -576,6 +582,7 @@ const ToolbarPlugin = () => {
                 setIsInsertMenuOpen(!isInsertMenuOpen)
               }}
               ref={insertAnchorRef}
+              className={isInsertMenuOpen ? 'md:bg-default' : ''}
             >
               <Icon type="add" size="custom" className="h-4 w-4 md:h-3.5 md:w-3.5" />
               <Icon type="chevron-down" size="custom" className="ml-2 h-4 w-4 md:h-3.5 md:w-3.5" />
