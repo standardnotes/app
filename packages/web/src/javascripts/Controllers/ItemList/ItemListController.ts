@@ -1167,12 +1167,11 @@ export class ItemListController
 
     log(LoggingDomain.Selection, 'Select item', item.uuid)
 
-    const supportsMultipleSelection = this.options.allowMultipleSelection
     const hasShift = this.keyboardService.activeModifiers.has(KeyboardModifier.Shift)
     const hasMoreThanOneSelected = this.selectedItemsCount > 1
     const isAuthorizedForAccess = await this.protections.authorizeItemAccess(item)
 
-    if (supportsMultipleSelection && userTriggered && this.isMultipleSelectionMode) {
+    if (userTriggered && this.isMultipleSelectionMode) {
       if (this.selectedUuids.has(uuid) && hasMoreThanOneSelected) {
         this.removeSelectedItem(uuid)
       } else if (isAuthorizedForAccess) {
@@ -1180,7 +1179,7 @@ export class ItemListController
         this.setSelectedUuids(this.selectedUuids)
         this.lastSelectedItem = item
       }
-    } else if (supportsMultipleSelection && userTriggered && hasShift) {
+    } else if (userTriggered && hasShift) {
       await this.selectItemsRange({ selectedItem: item })
     } else {
       const shouldSelectNote = hasMoreThanOneSelected || !this.selectedUuids.has(uuid)
