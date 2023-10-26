@@ -33,6 +33,7 @@ import EmptyFilesView from './EmptyFilesView'
 import { PaneLayout } from '@/Controllers/PaneController/PaneLayout'
 import { usePaneSwipeGesture } from '../Panes/usePaneGesture'
 import { mergeRefs } from '@/Hooks/mergeRefs'
+import Icon from '../Icon/Icon'
 
 type Props = {
   application: WebApplication
@@ -319,6 +320,22 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
             />
           </div>
         </div>
+        {isMobileScreen && itemListController.isMultipleSelectionMode && (
+          <div className="flex items-center border-b border-l-2 border-border border-l-transparent py-2.5 pr-4">
+            <div className="px-4">
+              <div className="w-5" />
+            </div>
+            <div className="text-base font-semibold">{itemListController.selectedItemsCount} selected</div>
+            <button
+              className="ml-auto rounded p-1.5 hover:bg-contrast"
+              onClick={() => {
+                itemListController.disableMultipleSelectionMode()
+              }}
+            >
+              <Icon type="close" size="small" />
+            </button>
+          </div>
+        )}
         {selectedAsTag && dailyMode && (
           <DailyContentList
             items={items}

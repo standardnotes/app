@@ -1,6 +1,6 @@
 import { isFile, SNNote } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent, useCallback, useRef } from 'react'
+import { FunctionComponent, MouseEvent, useCallback, useRef } from 'react'
 import Icon from '@/Components/Icon/Icon'
 import ListItemConflictIndicator from './ListItemConflictIndicator'
 import ListItemFlagIcons from './ListItemFlagIcons'
@@ -17,6 +17,7 @@ import ListItemVaultInfo from './ListItemVaultInfo'
 import { NoteDragDataFormat } from '../Tags/DragNDrop'
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 import useItem from '@/Hooks/useItem'
+import CheckIndicator from '../Checkbox/CheckIndicator'
 
 const NoteListItem: FunctionComponent<DisplayableListItemProps<SNNote>> = ({
   application,
@@ -50,7 +51,14 @@ const NoteListItem: FunctionComponent<DisplayableListItemProps<SNNote>> = ({
     notesController.setContextMenuOpen(true)
   }
 
-  const openContextMenu = async (posX: number, posY: number) => {
+  const handleContextMenuEvent = async (posX: number, posY: number) => {
+    const isMobile = window.matchMedia(MutuallyExclusiveMediaQueryBreakpoints.sm).matches
+    if (isMobile) {
+      application.itemListController.enableMultipleSelectionMode()
+      application.itemListController.replaceSelection(item)
+      return
+    }
+
     let shouldOpenContextMenu = selected
 
     if (!selected) {
@@ -65,11 +73,17 @@ const NoteListItem: FunctionComponent<DisplayableListItemProps<SNNote>> = ({
     }
   }
 
-  const onClick = useCallback(async () => {
-    await onSelect(item, true)
-  }, [item, onSelect])
+  const onClick = useCallback(
+    async (event: MouseEvent) => {
+      if ((event.ctrlKey || event.metaKey) && !application.itemListController.isMultipleSelectionMode) {
+        application.itemListController.enableMultipleSelectionMode()
+      }
+      await onSelect(item, true)
+    },
+    [application.itemListController, item, onSelect],
+  )
 
-  useContextMenuEvent(listItemRef, openContextMenu)
+  useContextMenuEvent(listItemRef, handleContextMenuEvent)
 
   log(LoggingDomain.ItemsList, 'Rendering note list item', item.title)
 
@@ -108,10 +122,10 @@ const NoteListItem: FunctionComponent<DisplayableListItemProps<SNNote>> = ({
       ref={listItemRef}
       role="button"
       className={classNames(
-        'content-list-item flex w-full cursor-pointer items-stretch text-text',
-        selected && `selected border-l-2 border-solid border-accessory-tint-${tint}`,
-        isPreviousItemTiled && 'mt-3 border-t border-solid border-t-border',
-        isNextItemTiled && 'mb-3 border-b border-solid border-b-border',
+        'content-list-item flex w-full cursor-pointer items-stretch border-l-2 text-text',
+        selected ? `selected border-accessory-tint-${tint}` : 'border-transparent',
+        isPreviousItemTiled && 'mt-3 border-t border-t-border',
+        isNextItemTiled && 'mb-3 border-b border-b-border',
       )}
       id={item.uuid}
       onClick={onClick}
@@ -133,7 +147,11 @@ const NoteListItem: FunctionComponent<DisplayableListItemProps<SNNote>> = ({
         }
       }}
     >
-      {!hideIcon ? (
+      {application.itemListController.isMultipleSelectionMode ? (
+        <div className="mr-0 flex flex-col items-center justify-between gap-2 p-4 pr-4">
+          <CheckIndicator className="md:!h-5 md:!w-5" checked={selected} />
+        </div>
+      ) : !hideIcon ? (
         <div className="mr-0 flex flex-col items-center justify-between gap-2 p-4 pr-4">
           <Icon type={icon} className={`text-accessory-tint-${tint}`} />
         </div>

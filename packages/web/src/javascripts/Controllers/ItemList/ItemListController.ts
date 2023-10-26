@@ -101,6 +101,8 @@ export class ItemListController
   selectedUuids: Set<UuidString> = observable(new Set<UuidString>())
   selectedItems: Record<UuidString, ListableContentItem> = {}
 
+  isMultipleSelectionMode = false
+
   override deinit() {
     super.deinit()
     ;(this.noteFilterText as unknown) = undefined
@@ -169,6 +171,10 @@ export class ItemListController
       setSelectedItems: action,
 
       hydrateFromPersistedValue: action,
+
+      isMultipleSelectionMode: observable,
+      enableMultipleSelectionMode: action,
+      disableMultipleSelectionMode: action,
     })
 
     eventBus.addEventHandler(this, CrossControllerEvent.TagChanged)
@@ -1095,7 +1101,7 @@ export class ItemListController
     }
   }
 
-  private replaceSelection = (item: ListableContentItem): void => {
+  replaceSelection = (item: ListableContentItem): void => {
     this.deselectAll()
     runInAction(() => this.setSelectedUuids(this.selectedUuids.add(item.uuid)))
 
@@ -1136,6 +1142,15 @@ export class ItemListController
     }
   }
 
+  enableMultipleSelectionMode = () => {
+    this.isMultipleSelectionMode = true
+  }
+
+  disableMultipleSelectionMode = () => {
+    this.isMultipleSelectionMode = false
+    this.cancelMultipleSelection()
+  }
+
   selectItem = async (
     uuid: UuidString,
     userTriggered?: boolean,
@@ -1153,13 +1168,11 @@ export class ItemListController
     log(LoggingDomain.Selection, 'Select item', item.uuid)
 
     const supportsMultipleSelection = this.options.allowMultipleSelection
-    const hasMeta = this.keyboardService.activeModifiers.has(KeyboardModifier.Meta)
-    const hasCtrl = this.keyboardService.activeModifiers.has(KeyboardModifier.Ctrl)
     const hasShift = this.keyboardService.activeModifiers.has(KeyboardModifier.Shift)
     const hasMoreThanOneSelected = this.selectedItemsCount > 1
     const isAuthorizedForAccess = await this.protections.authorizeItemAccess(item)
 
-    if (supportsMultipleSelection && userTriggered && (hasMeta || hasCtrl)) {
+    if (supportsMultipleSelection && userTriggered && this.isMultipleSelectionMode) {
       if (this.selectedUuids.has(uuid) && hasMoreThanOneSelected) {
         this.removeSelectedItem(uuid)
       } else if (isAuthorizedForAccess) {
@@ -1173,10 +1186,9 @@ export class ItemListController
       const shouldSelectNote = hasMoreThanOneSelected || !this.selectedUuids.has(uuid)
       if (shouldSelectNote && isAuthorizedForAccess) {
         this.replaceSelection(item)
+        await this.openSingleSelectedItem({ userTriggered: userTriggered ?? false })
       }
     }
-
-    await this.openSingleSelectedItem({ userTriggered: userTriggered ?? false })
 
     return {
       didSelect: this.selectedUuids.has(uuid),
