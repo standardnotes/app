@@ -51,9 +51,10 @@ const NoteListItem: FunctionComponent<DisplayableListItemProps<SNNote>> = ({
     notesController.setContextMenuOpen(true)
   }
 
+  const isMobileScreen = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
+
   const handleContextMenuEvent = async (posX: number, posY: number) => {
-    const isMobile = window.matchMedia(MutuallyExclusiveMediaQueryBreakpoints.sm).matches
-    if (isMobile) {
+    if (isMobileScreen) {
       if (!application.itemListController.isMultipleSelectionMode) {
         application.itemListController.replaceSelection(item)
       }
@@ -91,7 +92,6 @@ const NoteListItem: FunctionComponent<DisplayableListItemProps<SNNote>> = ({
 
   const hasOffsetBorder = !isNextItemTiled
 
-  const isMobileScreen = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
   const dragPreview = useRef<HTMLDivElement>()
 
   const createDragPreview = () => {

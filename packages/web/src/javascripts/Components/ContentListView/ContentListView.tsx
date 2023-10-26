@@ -330,7 +330,7 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
             <button
               className="ml-auto rounded p-1 hover:bg-contrast"
               onClick={() => {
-                itemListController.disableMultipleSelectionMode()
+                itemListController.cancelMultipleSelection()
               }}
             >
               <Icon type="close" size="medium" />

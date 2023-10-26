@@ -174,7 +174,7 @@ export class ItemListController
 
       isMultipleSelectionMode: observable,
       enableMultipleSelectionMode: action,
-      disableMultipleSelectionMode: action,
+      cancelMultipleSelection: action,
     })
 
     eventBus.addEventHandler(this, CrossControllerEvent.TagChanged)
@@ -1092,6 +1092,8 @@ export class ItemListController
   cancelMultipleSelection = () => {
     this.keyboardService.cancelAllKeyboardModifiers()
 
+    this.isMultipleSelectionMode = false
+
     const firstSelectedItem = this.firstSelectedItem
 
     if (firstSelectedItem) {
@@ -1146,11 +1148,6 @@ export class ItemListController
     this.isMultipleSelectionMode = true
   }
 
-  disableMultipleSelectionMode = () => {
-    this.isMultipleSelectionMode = false
-    this.cancelMultipleSelection()
-  }
-
   selectItem = async (
     uuid: UuidString,
     userTriggered?: boolean,
@@ -1180,7 +1177,7 @@ export class ItemListController
         this.lastSelectedItem = item
       }
       if (this.selectedItemsCount === 1) {
-        this.disableMultipleSelectionMode()
+        this.cancelMultipleSelection()
       }
     } else if (userTriggered && hasShift) {
       await this.selectItemsRange({ selectedItem: item })
