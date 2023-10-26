@@ -65,6 +65,7 @@ export const IconNameToSvgMapping = {
   'premium-feature': icons.PremiumFeatureIcon,
   'rich-text': icons.RichTextIcon,
   'safe-square': icons.SafeSquareIcon,
+  'select-all': icons.SelectAllIcon,
   'sort-descending': icons.SortDescendingIcon,
   'star-circle-filled': icons.StarCircleFilled,
   'star-filled': icons.StarFilledIcon,

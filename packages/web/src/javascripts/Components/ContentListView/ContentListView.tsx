@@ -54,6 +54,7 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
       noAccountWarningController,
       searchOptionsController,
       linkingController,
+      notesController,
     } = application
 
     const { setPaneLayout, panes } = useResponsiveAppPane()
@@ -286,7 +287,7 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
         aria-label={'Notes & Files'}
         ref={mergeRefs([innerRef, setElement])}
       >
-        {isMobileScreen && (
+        {isMobileScreen && !itemListController.isMultipleSelectionMode && (
           <FloatingAddButton onClick={addNewItem} label={addButtonLabel} style={dailyMode ? 'danger' : 'info'} />
         )}
         <div id="items-title-bar" className="section-title-bar border-b border-solid border-border">
@@ -327,12 +328,12 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
             </div>
             <div className="text-base font-semibold">{itemListController.selectedItemsCount} selected</div>
             <button
-              className="ml-auto rounded p-1.5 hover:bg-contrast"
+              className="ml-auto rounded p-1 hover:bg-contrast"
               onClick={() => {
                 itemListController.disableMultipleSelectionMode()
               }}
             >
-              <Icon type="close" size="small" />
+              <Icon type="close" size="medium" />
             </button>
           </div>
         )}
@@ -367,6 +368,34 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
             />
           )
         ) : null}
+        {isMobileScreen && itemListController.isMultipleSelectionMode && (
+          <div className="flex w-full bg-contrast pb-safe-bottom">
+            <button
+              className="flex-grow px-2 py-3 active:bg-passive-3"
+              onClick={() => notesController.togglePinSelectedNotes()}
+            >
+              <Icon type="pin" className="mx-auto text-info" size="large" />
+            </button>
+            <button
+              className="flex-grow px-2 py-3 active:bg-passive-3"
+              onClick={() => notesController.setArchiveSelectedNotes(true).catch(console.error)}
+            >
+              <Icon type="archive" className="mx-auto text-info" size="large" />
+            </button>
+            <button
+              className="flex-grow px-2 py-3 active:bg-passive-3"
+              onClick={() => notesController.setTrashSelectedNotes(true).catch(console.error)}
+            >
+              <Icon type="trash" className="mx-auto text-info" size="large" />
+            </button>
+            <button
+              className="flex-grow px-2 py-3 active:bg-passive-3"
+              onClick={() => notesController.setContextMenuOpen(true)}
+            >
+              <Icon type="more" className="mx-auto text-info" size="large" />
+            </button>
+          </div>
+        )}
         <div className="absolute bottom-0 h-safe-bottom w-full" />
         {children}
       </div>

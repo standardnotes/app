@@ -54,8 +54,10 @@ const NoteListItem: FunctionComponent<DisplayableListItemProps<SNNote>> = ({
   const handleContextMenuEvent = async (posX: number, posY: number) => {
     const isMobile = window.matchMedia(MutuallyExclusiveMediaQueryBreakpoints.sm).matches
     if (isMobile) {
+      if (!application.itemListController.isMultipleSelectionMode) {
+        application.itemListController.replaceSelection(item)
+      }
       application.itemListController.enableMultipleSelectionMode()
-      application.itemListController.replaceSelection(item)
       return
     }
 
