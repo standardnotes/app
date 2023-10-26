@@ -13,7 +13,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Features
 
-* Added preference to toggle Super note toolbar visibility. When toggled off, the toolbar will only be visible when text is selected as a floating toolbar. [skip e2e] ([a616750](https://github.com/standardnotes/app/commit/a616750aea3666079aa6ae301662ce4cd4d5c954))
+* Added preference to toggle Super note toolbar visibility. When toggled off, the toolbar will only be visible when text is selected as a floating toolbar. ([a616750](https://github.com/standardnotes/app/commit/a616750aea3666079aa6ae301662ce4cd4d5c954))
 
 ## [3.178.19](https://github.com/standardnotes/app/compare/@standardnotes/web@3.178.18...@standardnotes/web@3.178.19) (2023-10-25)
 
