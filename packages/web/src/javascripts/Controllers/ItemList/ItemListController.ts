@@ -1179,6 +1179,9 @@ export class ItemListController
         this.setSelectedUuids(this.selectedUuids)
         this.lastSelectedItem = item
       }
+      if (this.selectedItemsCount === 1) {
+        this.disableMultipleSelectionMode()
+      }
     } else if (userTriggered && hasShift) {
       await this.selectItemsRange({ selectedItem: item })
     } else {
