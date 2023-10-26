@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/services",
-  "version": "1.64.37",
+  "version": "1.64.38",
   "engines": {
     "node": ">=16.0.0 <17.0.0"
   },
