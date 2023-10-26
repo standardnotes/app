@@ -1,9 +1,10 @@
 import { LegacyApiService } from '../Api/ApiService'
 import { SettingsGateway } from './SettingsGateway'
 import { SessionManager } from '../Session/SessionManager'
-import { EmailBackupFrequency, SettingName } from '@standardnotes/settings'
+import { EmailBackupFrequency } from '@standardnotes/settings'
 import { AbstractService, InternalEventBusInterface } from '@standardnotes/services'
 import { SettingsClientInterface } from './SettingsClientInterface'
+import { SettingName } from '@standardnotes/domain-core'
 
 export class SettingsService extends AbstractService implements SettingsClientInterface {
   private provider!: SettingsGateway

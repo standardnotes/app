@@ -1,7 +1,7 @@
 import { SettingsClientInterface } from '@Lib/Services/Settings/SettingsClientInterface'
+import { SettingName } from '@standardnotes/domain-core'
 import { SNFeatureRepo } from '@standardnotes/models'
 import { MutatorClientInterface } from '@standardnotes/services'
-import { SettingName } from '@standardnotes/settings'
 
 export class MigrateFeatureRepoToUserSettingUseCase {
   constructor(

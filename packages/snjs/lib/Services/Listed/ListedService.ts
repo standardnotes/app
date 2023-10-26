@@ -2,7 +2,6 @@ import { isString, lastElement, sleep } from '@standardnotes/utils'
 import { UuidString } from '@Lib/Types/UuidString'
 import { ItemManager } from '@Lib/Services/Items/ItemManager'
 import { DeprecatedHttpService } from '../Api/DeprecatedHttpService'
-import { SettingName } from '@standardnotes/settings'
 import { SettingsService } from '../Settings/SNSettingsService'
 import { ListedClientInterface } from './ListedClientInterface'
 import { LegacyApiService } from '../Api/ApiService'
@@ -15,7 +14,7 @@ import {
   SyncServiceInterface,
 } from '@standardnotes/services'
 import { ProtectionService } from '../Protection'
-import { ContentType } from '@standardnotes/domain-core'
+import { ContentType, SettingName } from '@standardnotes/domain-core'
 
 export class ListedService extends AbstractService implements ListedClientInterface {
   constructor(

@@ -1,3 +1,4 @@
+import { SettingName } from '@standardnotes/domain-core'
 import { SettingData } from '@standardnotes/responses'
 import {
   MuteSignInEmailsOption,
@@ -5,7 +6,6 @@ import {
   EmailBackupFrequency,
   ListedAuthorSecretsData,
   LogSessionUserAgentOption,
-  SettingName,
   MuteMarketingEmailsOption,
 } from '@standardnotes/settings'
 

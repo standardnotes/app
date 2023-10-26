@@ -1,8 +1,8 @@
 import { SettingsList } from './SettingsList'
-import { SettingName } from '@standardnotes/settings'
 import { API_MESSAGE_INVALID_SESSION } from '@standardnotes/services'
 import { getErrorFromErrorResponse, HttpStatusCode, isErrorResponse, User } from '@standardnotes/responses'
 import { SettingsServerInterface } from './SettingsServerInterface'
+import { SettingName } from '@standardnotes/domain-core'
 
 /**
  * SettingsGateway coordinates communication with the API service
