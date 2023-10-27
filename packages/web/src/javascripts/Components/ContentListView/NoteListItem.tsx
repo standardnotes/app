@@ -139,7 +139,7 @@ const NoteListItem: FunctionComponent<DisplayableListItemProps<SNNote>> = ({
       )}
       id={item.uuid}
       onClick={onClick}
-      draggable={!isMobileScreen}
+      draggable={!isMobileScreen && !application.itemListController.isMultipleSelectionMode}
       onDragStart={(event) => {
         if (!listItemRef.current) {
           return

@@ -35,6 +35,7 @@ import { usePaneSwipeGesture } from '../Panes/usePaneGesture'
 import { mergeRefs } from '@/Hooks/mergeRefs'
 import Icon from '../Icon/Icon'
 import MobileMultiSelectionToolbar from './MobileMultiSelectionToolbar'
+import StyledTooltip from '../StyledTooltip/StyledTooltip'
 
 type Props = {
   application: WebApplication
@@ -322,20 +323,31 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
             />
           </div>
         </div>
-        {isMobileScreen && itemListController.isMultipleSelectionMode && (
+        {itemListController.isMultipleSelectionMode && (
           <div className="flex items-center border-b border-l-2 border-border border-l-transparent py-2.5 pr-4">
             <div className="px-4">
-              <div className="w-5" />
+              <StyledTooltip label="Select all items" showOnHover showOnMobile>
+                <button
+                  className="ml-auto rounded border border-border p-1 hover:bg-contrast"
+                  onClick={() => {
+                    itemListController.selectAll()
+                  }}
+                >
+                  <Icon type="select-all" size="medium" />
+                </button>
+              </StyledTooltip>
             </div>
-            <div className="text-base font-semibold">{itemListController.selectedItemsCount} selected</div>
-            <button
-              className="ml-auto rounded p-1 hover:bg-contrast"
-              onClick={() => {
-                itemListController.cancelMultipleSelection()
-              }}
-            >
-              <Icon type="close" size="medium" />
-            </button>
+            <div className="text-base font-semibold md:text-sm">{itemListController.selectedItemsCount} selected</div>
+            <StyledTooltip label="Cancel multiple selection" showOnHover showOnMobile>
+              <button
+                className="ml-auto rounded border border-border p-1 hover:bg-contrast"
+                onClick={() => {
+                  itemListController.cancelMultipleSelection()
+                }}
+              >
+                <Icon type="close" size="medium" />
+              </button>
+            </StyledTooltip>
           </div>
         )}
         {selectedAsTag && dailyMode && (

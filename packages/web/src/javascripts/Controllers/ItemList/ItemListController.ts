@@ -1125,10 +1125,11 @@ export class ItemListController
   }
 
   selectAll = () => {
-    void this.selectItemsRange({
-      startingIndex: 0,
-      endingIndex: this.listLength - 1,
-    })
+    const allItems = this.items.filter((item) => !item.protected)
+    const lastItem = allItems[allItems.length - 1]
+    this.setSelectedUuids(new Set(Uuids(allItems)))
+    this.lastSelectedItem = lastItem
+    this.enableMultipleSelectionMode()
   }
 
   deselectAll = (): void => {
