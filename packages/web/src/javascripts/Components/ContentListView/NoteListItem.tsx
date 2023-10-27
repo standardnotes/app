@@ -129,7 +129,11 @@ const NoteListItem: FunctionComponent<DisplayableListItemProps<SNNote>> = ({
       role="button"
       className={classNames(
         'content-list-item flex w-full cursor-pointer items-stretch border-l-2 text-text',
-        selected ? `selected border-accessory-tint-${tint}` : 'border-transparent',
+        selected
+          ? `selected ${
+              application.itemListController.isMultipleSelectionMode ? 'border-info' : `border-accessory-tint-${tint}`
+            }`
+          : 'border-transparent',
         isPreviousItemTiled && 'mt-3 border-t border-t-border',
         isNextItemTiled && 'mb-3 border-b border-b-border',
       )}

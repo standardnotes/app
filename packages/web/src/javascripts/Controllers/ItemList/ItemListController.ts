@@ -1096,6 +1096,9 @@ export class ItemListController
       runInAction(() => {
         this.setSelectedUuids(this.selectedUuids.add(item.uuid))
         this.lastSelectedItem = item
+        if (this.selectedItemsCount > 1 && !this.isMultipleSelectionMode) {
+          this.enableMultipleSelectionMode()
+        }
       })
     }
   }
@@ -1179,7 +1182,9 @@ export class ItemListController
     const hasMoreThanOneSelected = this.selectedItemsCount > 1
     const isAuthorizedForAccess = await this.protections.authorizeItemAccess(item)
 
-    if (userTriggered && this.isMultipleSelectionMode) {
+    if (userTriggered && hasShift) {
+      await this.selectItemsRange({ selectedItem: item })
+    } else if (userTriggered && this.isMultipleSelectionMode) {
       if (this.selectedUuids.has(uuid) && hasMoreThanOneSelected) {
         this.removeSelectedItem(uuid)
       } else if (isAuthorizedForAccess) {
@@ -1190,8 +1195,6 @@ export class ItemListController
       if (this.selectedItemsCount === 1) {
         this.cancelMultipleSelection()
       }
-    } else if (userTriggered && hasShift) {
-      await this.selectItemsRange({ selectedItem: item })
     } else {
       const shouldSelectNote = hasMoreThanOneSelected || !this.selectedUuids.has(uuid)
       if (shouldSelectNote && isAuthorizedForAccess) {
