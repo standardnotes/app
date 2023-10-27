@@ -1,6 +1,5 @@
 import { AuthClientInterface } from '@standardnotes/services'
-import { Result, UseCaseInterface } from '@standardnotes/domain-core'
-import { SettingName } from '@standardnotes/settings'
+import { Result, SettingName, UseCaseInterface } from '@standardnotes/domain-core'
 
 import { SettingsClientInterface } from '@Lib/Services/Settings/SettingsClientInterface'
 

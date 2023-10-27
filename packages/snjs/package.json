@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/snjs",
-  "version": "2.202.102",
+  "version": "2.202.103",
   "engines": {
     "node": ">=16.0.0 <17.0.0"
   },
@@ -37,7 +37,7 @@
     "@babel/preset-env": "*",
     "@standardnotes/api": "workspace:*",
     "@standardnotes/common": "^1.50.0",
-    "@standardnotes/domain-core": "^1.34.1",
+    "@standardnotes/domain-core": "^1.40.0",
     "@standardnotes/domain-events": "^2.122.0",
     "@standardnotes/encryption": "workspace:*",
     "@standardnotes/features": "workspace:*",
@@ -45,7 +45,7 @@
     "@standardnotes/models": "workspace:*",
     "@standardnotes/responses": "workspace:*",
     "@standardnotes/services": "workspace:*",
-    "@standardnotes/settings": "^1.20.0",
+    "@standardnotes/settings": "^1.22.0",
     "@standardnotes/sncrypto-common": "workspace:*",
     "@standardnotes/sncrypto-web": "workspace:*",
     "@standardnotes/utils": "workspace:*",
