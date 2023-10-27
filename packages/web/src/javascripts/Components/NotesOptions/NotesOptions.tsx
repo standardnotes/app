@@ -289,7 +289,7 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
         </MenuSection>
       )}
 
-      <MenuSection>
+      <MenuSection className={notes.length > 1 ? 'md:!mb-2' : ''}>
         {application.featuresController.isVaultsEnabled() && (
           <AddToVaultMenuOption
             iconClassName={iconClass}
@@ -507,7 +507,7 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
         )}
       </MenuSection>
 
-      {notes.length === 1 ? (
+      {notes.length === 1 && (
         <>
           {notes[0].noteType === NoteType.Super && (
             <SuperNoteOptions
@@ -538,8 +538,6 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
 
           <NoteSizeWarning note={notes[0]} />
         </>
-      ) : (
-        <div className="h-2" />
       )}
 
       <ModalOverlay isOpen={showExportSuperModal} close={closeSuperExportModal}>

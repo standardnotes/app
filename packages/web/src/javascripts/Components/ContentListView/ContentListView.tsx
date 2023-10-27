@@ -33,6 +33,9 @@ import EmptyFilesView from './EmptyFilesView'
 import { PaneLayout } from '@/Controllers/PaneController/PaneLayout'
 import { usePaneSwipeGesture } from '../Panes/usePaneGesture'
 import { mergeRefs } from '@/Hooks/mergeRefs'
+import Icon from '../Icon/Icon'
+import MobileMultiSelectionToolbar from './MobileMultiSelectionToolbar'
+import StyledTooltip from '../StyledTooltip/StyledTooltip'
 
 type Props = {
   application: WebApplication
@@ -53,6 +56,7 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
       noAccountWarningController,
       searchOptionsController,
       linkingController,
+      notesController,
     } = application
 
     const { setPaneLayout, panes } = useResponsiveAppPane()
@@ -285,7 +289,7 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
         aria-label={'Notes & Files'}
         ref={mergeRefs([innerRef, setElement])}
       >
-        {isMobileScreen && (
+        {isMobileScreen && !itemListController.isMultipleSelectionMode && (
           <FloatingAddButton onClick={addNewItem} label={addButtonLabel} style={dailyMode ? 'danger' : 'info'} />
         )}
         <div id="items-title-bar" className="section-title-bar border-b border-solid border-border">
@@ -319,6 +323,33 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
             />
           </div>
         </div>
+        {itemListController.isMultipleSelectionMode && (
+          <div className="flex items-center border-b border-l-2 border-border border-l-transparent py-2.5 pr-4">
+            <div className="px-4">
+              <StyledTooltip label="Select all items" showOnHover showOnMobile>
+                <button
+                  className="ml-auto rounded border border-border p-1 hover:bg-contrast"
+                  onClick={() => {
+                    itemListController.selectAll()
+                  }}
+                >
+                  <Icon type="select-all" size="medium" />
+                </button>
+              </StyledTooltip>
+            </div>
+            <div className="text-base font-semibold md:text-sm">{itemListController.selectedItemsCount} selected</div>
+            <StyledTooltip label="Cancel multiple selection" showOnHover showOnMobile>
+              <button
+                className="ml-auto rounded border border-border p-1 hover:bg-contrast"
+                onClick={() => {
+                  itemListController.cancelMultipleSelection()
+                }}
+              >
+                <Icon type="close" size="medium" />
+              </button>
+            </StyledTooltip>
+          </div>
+        )}
         {selectedAsTag && dailyMode && (
           <DailyContentList
             items={items}
@@ -350,6 +381,9 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
             />
           )
         ) : null}
+        {isMobileScreen && itemListController.isMultipleSelectionMode && (
+          <MobileMultiSelectionToolbar notesController={notesController} />
+        )}
         <div className="absolute bottom-0 h-safe-bottom w-full" />
         {children}
       </div>

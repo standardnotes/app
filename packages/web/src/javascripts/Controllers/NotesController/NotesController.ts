@@ -293,6 +293,17 @@ export class NotesController
     })
   }
 
+  async toggleArchiveSelectedNotes(): Promise<void> {
+    const notes = this.selectedNotes
+    const archived = notes.some((note) => note.archived)
+
+    if (!archived) {
+      await this.setArchiveSelectedNotes(true)
+    } else {
+      await this.setArchiveSelectedNotes(false)
+    }
+  }
+
   async setProtectSelectedNotes(protect: boolean): Promise<void> {
     const selectedNotes = this.getSelectedNotesList()
     if (protect) {
