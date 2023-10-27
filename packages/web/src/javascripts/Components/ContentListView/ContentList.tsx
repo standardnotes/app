@@ -7,7 +7,7 @@ import { ListableContentItem } from './Types/ListableContentItem'
 import ContentListItem from './ContentListItem'
 import { ElementIds } from '@/Constants/ElementIDs'
 import { classNames } from '@standardnotes/utils'
-import { ContentType, SNTag } from '@standardnotes/snjs'
+import { SNTag } from '@standardnotes/snjs'
 import { ItemListController } from '@/Controllers/ItemList/ItemListController'
 
 type Props = {
@@ -78,15 +78,12 @@ const ContentList: FunctionComponent<Props> = ({ application, items, selectedUui
     [hideTags, selectedTag, application],
   )
 
-  const hasNotes = items.some((item) => item.content_type === ContentType.TYPES.Note)
-
   return (
     <div
       className={classNames(
         'infinite-scroll overflow-y-auto overflow-x-hidden focus:shadow-none focus:outline-none',
         'md:max-h-full md:overflow-y-hidden md:hover:overflow-y-auto pointer-coarse:md:overflow-y-auto',
-        'flex flex-wrap pb-2 md:hover:[overflow-y:_overlay]',
-        hasNotes ? 'justify-center' : 'justify-center md:justify-start md:pl-1',
+        'flex-grow pb-2 md:hover:[overflow-y:_overlay]',
       )}
       id={ElementIds.ContentList}
       onScroll={onScroll}
