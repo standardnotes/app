@@ -1,10 +1,14 @@
 import { defineConfig } from 'vite'
 import path from 'path'
-import react from '@vitejs/plugin-react-swc'
+import react from '@vitejs/plugin-react'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react({
+      include: '**/*.{jsx,tsx}',
+    }),
+  ],
   define: {
     __WEB_VERSION__: JSON.stringify(require('./package.json').version),
   },

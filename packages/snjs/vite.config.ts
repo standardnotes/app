@@ -7,6 +7,7 @@ export default defineConfig({
     __IS_DEV__: process.env.NODE_ENV !== 'production',
   },
   build: {
+    outDir: './dist',
     lib: {
       entry: 'lib/index.ts',
       name: 'SNLibrary',
