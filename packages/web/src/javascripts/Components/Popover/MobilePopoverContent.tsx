@@ -24,6 +24,7 @@ const MobilePopoverContent = ({
   title,
   className,
   id,
+  forceFullHeightOnMobile,
 }: {
   open: boolean
   requestClose: () => void
@@ -31,6 +32,7 @@ const MobilePopoverContent = ({
   title: string
   id: string
   className?: string
+  forceFullHeightOnMobile?: boolean
 }) => {
   const isMobileScreen = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
   const [isMounted, setPopoverElement, element] = useModalAnimation(open, isMobileScreen)
@@ -164,24 +166,35 @@ const MobilePopoverContent = ({
   return (
     <Portal>
       <DisableScroll />
-      <div className="fixed inset-0 z-modal">
-        <div className="absolute inset-0 z-0 bg-passive-4 opacity-0" ref={setUnderlayElement} />
+      <div className="fixed left-0 top-0 z-modal h-full max-h-[var(--ios-viewport-height,_none)] w-full">
+        <div className="absolute z-0 h-full w-full bg-passive-4 opacity-0" ref={setUnderlayElement} />
         <div
           ref={mergeRefs([setPopoverElement, addCloseMethod])}
-          className="z-1 absolute bottom-0 flex max-h-[calc(100%_-_max(var(--safe-area-inset-top),2rem))] min-h-[40%] w-full flex-col rounded-t-xl bg-default pb-safe-bottom"
+          className={classNames(
+            'z-1 absolute bottom-0 flex max-h-[calc(100%_-_max(var(--safe-area-inset-top),2rem))] min-h-[40%] w-full flex-col rounded-t-xl bg-passive-5 pb-safe-bottom',
+            forceFullHeightOnMobile && 'h-full',
+          )}
+          style={{
+            boxShadow: '0px -4px 8px rgba(0, 0, 0, 0.075)',
+          }}
           id={'popover/' + id}
           data-popover={id}
           data-mobile-popover
         >
-          <div className="mx-auto mt-2 min-h-[0.3rem] w-12 rounded-full bg-passive-2" />
-          <MobileModalHeader className="border-b border-border px-2 py-1.5 text-lg">
+          <div className="w-full rounded-t-xl bg-default">
+            <div className="mx-auto mt-2 min-h-[0.3rem] w-12 rounded-full bg-passive-2" />
+          </div>
+          <MobileModalHeader className="border-b border-border bg-default px-2 py-1.5 text-lg">
             <div />
             <div className="flex items-center justify-center font-semibold">{title}</div>
             <MobileModalAction type="primary" slot="right" action={requestClose}>
               Done
             </MobileModalAction>
           </MobileModalHeader>
-          <div className={classNames('h-full overflow-y-auto overscroll-none', className)} ref={scrollContainerRef}>
+          <div
+            className={classNames('h-full overflow-y-auto overscroll-none bg-passive-5', className)}
+            ref={scrollContainerRef}
+          >
             {children}
           </div>
         </div>

@@ -45,7 +45,7 @@ import { IndentBlock, OutdentBlock } from '../Blocks/IndentOutdent'
 import { ParagraphBlock } from '../Blocks/Paragraph'
 import { QuoteBlock } from '../Blocks/Quote'
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
-import { classNames } from '@standardnotes/snjs'
+import { PrefKey, classNames } from '@standardnotes/snjs'
 import { SUPER_TOGGLE_SEARCH, SUPER_TOGGLE_TOOLBAR } from '@standardnotes/ui-services'
 import { useApplication } from '@/Components/ApplicationProvider'
 import { InsertRemoteImageDialog } from '../RemoteImagePlugin/RemoteImagePlugin'
@@ -58,9 +58,13 @@ import Popover from '@/Components/Popover/Popover'
 import LexicalTableOfContents from '@lexical/react/LexicalTableOfContents'
 import Menu from '@/Components/Menu/Menu'
 import MenuItem, { MenuItemProps } from '@/Components/Menu/MenuItem'
-import { remToPx } from '@/Utils'
+import { debounce, remToPx } from '@/Utils'
 import FloatingLinkEditor from './FloatingLinkEditor'
 import MenuItemSeparator from '@/Components/Menu/MenuItemSeparator'
+import { useStateRef } from '@/Hooks/useStateRef'
+import { getDOMRangeRect } from '../../Lexical/Utils/getDOMRangeRect'
+import { getPositionedPopoverStyles } from '@/Components/Popover/GetPositionedPopoverStyles'
+import usePreference from '@/Hooks/usePreference'
 
 const TOGGLE_LINK_AND_EDIT_COMMAND = createCommand<string | null>('TOGGLE_LINK_AND_EDIT_COMMAND')
 
@@ -215,73 +219,174 @@ const ToolbarPlugin = () => {
   const [canUndo, setCanUndo] = useState(false)
   const [canRedo, setCanRedo] = useState(false)
 
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  const alwaysShowToolbar = usePreference(PrefKey.AlwaysShowSuperToolbar)
+
+  const [isToolbarFixedToTop, setIsToolbarFixedToTop] = useState(alwaysShowToolbar)
+  const isToolbarFixedRef = useStateRef(isToolbarFixedToTop)
+
+  const updateToolbarFloatingPosition = useCallback(() => {
+    const selection = $getSelection()
+    if (!$isRangeSelection(selection)) {
+      return
+    }
+
+    if (isMobile) {
+      return
+    }
+
+    if (isToolbarFixedRef.current) {
+      return
+    }
+
+    const containerElement = containerRef.current
+
+    if (!containerElement) {
+      return
+    }
+
+    if (selection.getTextContent() === '') {
+      containerElement.style.removeProperty('opacity')
+      return
+    }
+
+    const nativeSelection = window.getSelection()
+    const rootElement = activeEditor.getRootElement()
+
+    if (nativeSelection !== null && rootElement !== null && rootElement.contains(nativeSelection.anchorNode)) {
+      const rangeRect = getDOMRangeRect(nativeSelection, rootElement)
+      const containerRect = containerElement.getBoundingClientRect()
+      const rootRect = rootElement.getBoundingClientRect()
+
+      const calculatedStyles = getPositionedPopoverStyles({
+        align: 'start',
+        side: 'top',
+        anchorRect: rangeRect,
+        popoverRect: containerRect,
+        documentRect: rootRect,
+        offset: 8,
+        maxHeightFunction: () => 'none',
+      })
+
+      if (calculatedStyles) {
+        Object.entries(calculatedStyles).forEach(([key, value]) => {
+          if (key === 'transform') {
+            return
+          }
+          containerElement.style.setProperty(key, value)
+        })
+        containerElement.style.setProperty('opacity', '1')
+      }
+    }
+  }, [activeEditor, isMobile, isToolbarFixedRef])
+
   const $updateToolbar = useCallback(() => {
     const selection = $getSelection()
-    if ($isRangeSelection(selection)) {
-      const anchorNode = selection.anchor.getNode()
-      let element =
-        anchorNode.getKey() === 'root'
-          ? anchorNode
-          : $findMatchingParent(anchorNode, (e) => {
-              const parent = e.getParent()
-              return parent !== null && $isRootOrShadowRoot(parent)
-            })
+    if (!$isRangeSelection(selection)) {
+      return
+    }
 
-      if (element === null) {
-        element = anchorNode.getTopLevelElementOrThrow()
-      }
+    const anchorNode = selection.anchor.getNode()
+    let element =
+      anchorNode.getKey() === 'root'
+        ? anchorNode
+        : $findMatchingParent(anchorNode, (e) => {
+            const parent = e.getParent()
+            return parent !== null && $isRootOrShadowRoot(parent)
+          })
 
-      const elementKey = element.getKey()
-      const elementDOM = activeEditor.getElementByKey(elementKey)
+    if (element === null) {
+      element = anchorNode.getTopLevelElementOrThrow()
+    }
 
-      // Update text format
-      setIsBold(selection.hasFormat('bold'))
-      setIsItalic(selection.hasFormat('italic'))
-      setIsUnderline(selection.hasFormat('underline'))
-      setIsStrikethrough(selection.hasFormat('strikethrough'))
-      setIsSubscript(selection.hasFormat('subscript'))
-      setIsSuperscript(selection.hasFormat('superscript'))
-      setIsCode(selection.hasFormat('code'))
-      setIsHighlight(selection.hasFormat('highlight'))
+    const elementKey = element.getKey()
+    const elementDOM = activeEditor.getElementByKey(elementKey)
 
-      // Update links
-      const node = getSelectedNode(selection)
-      const parent = node.getParent()
-      if ($isLinkNode(parent) || $isLinkNode(node)) {
-        setIsLink(true)
+    // Update text format
+    setIsBold(selection.hasFormat('bold'))
+    setIsItalic(selection.hasFormat('italic'))
+    setIsUnderline(selection.hasFormat('underline'))
+    setIsStrikethrough(selection.hasFormat('strikethrough'))
+    setIsSubscript(selection.hasFormat('subscript'))
+    setIsSuperscript(selection.hasFormat('superscript'))
+    setIsCode(selection.hasFormat('code'))
+    setIsHighlight(selection.hasFormat('highlight'))
+
+    // Update links
+    const node = getSelectedNode(selection)
+    const parent = node.getParent()
+    if ($isLinkNode(parent) || $isLinkNode(node)) {
+      setIsLink(true)
+    } else {
+      setIsLink(false)
+    }
+    setLinkUrl($isLinkNode(parent) ? parent.getURL() : $isLinkNode(node) ? node.getURL() : '')
+    if ($isAutoLinkNode(parent) || $isAutoLinkNode(node)) {
+      setIsAutoLink(true)
+    } else {
+      setIsAutoLink(false)
+    }
+    if ($isLinkTextNode(node, selection)) {
+      setIsLinkText(true)
+      setLinkText(node.getTextContent())
+    } else {
+      setIsLinkText(false)
+      setLinkText('')
+    }
+
+    if (elementDOM !== null) {
+      if ($isListNode(element)) {
+        const parentList = $getNearestNodeOfType<ListNode>(anchorNode, ListNode)
+        const type = parentList ? parentList.getListType() : element.getListType()
+        setBlockType(type)
       } else {
-        setIsLink(false)
-      }
-      setLinkUrl($isLinkNode(parent) ? parent.getURL() : $isLinkNode(node) ? node.getURL() : '')
-      if ($isAutoLinkNode(parent) || $isAutoLinkNode(node)) {
-        setIsAutoLink(true)
-      } else {
-        setIsAutoLink(false)
-      }
-      if ($isLinkTextNode(node, selection)) {
-        setIsLinkText(true)
-        setLinkText(node.getTextContent())
-      } else {
-        setIsLinkText(false)
-        setLinkText('')
-      }
-
-      if (elementDOM !== null) {
-        if ($isListNode(element)) {
-          const parentList = $getNearestNodeOfType<ListNode>(anchorNode, ListNode)
-          const type = parentList ? parentList.getListType() : element.getListType()
-          setBlockType(type)
-        } else {
-          const type = $isHeadingNode(element) ? element.getTag() : element.getType()
-          if (type in blockTypeToBlockName) {
-            setBlockType(type as keyof typeof blockTypeToBlockName)
-          }
+        const type = $isHeadingNode(element) ? element.getTag() : element.getType()
+        if (type in blockTypeToBlockName) {
+          setBlockType(type as keyof typeof blockTypeToBlockName)
         }
       }
-
-      setElementFormat(($isElementNode(node) ? node.getFormatType() : parent?.getFormatType()) || 'left')
     }
-  }, [activeEditor])
+
+    setElementFormat(($isElementNode(node) ? node.getFormatType() : parent?.getFormatType()) || 'left')
+
+    updateToolbarFloatingPosition()
+  }, [activeEditor, updateToolbarFloatingPosition])
+
+  const clearContainerFloatingStyles = useCallback(() => {
+    const containerElement = containerRef.current
+    if (!containerElement) {
+      return
+    }
+    containerElement.style.removeProperty('--translate-x')
+    containerElement.style.removeProperty('--translate-y')
+    containerElement.style.removeProperty('transform')
+    containerElement.style.removeProperty('transform-origin')
+    containerElement.style.removeProperty('opacity')
+  }, [])
+
+  useEffect(() => {
+    const scrollerElem = activeEditor.getRootElement()
+
+    const update = () => {
+      activeEditor.getEditorState().read(() => {
+        updateToolbarFloatingPosition()
+      })
+    }
+    const debouncedUpdate = debounce(update, 50)
+
+    window.addEventListener('resize', debouncedUpdate)
+    if (scrollerElem) {
+      scrollerElem.addEventListener('scroll', debouncedUpdate)
+    }
+
+    return () => {
+      window.removeEventListener('resize', debouncedUpdate)
+      if (scrollerElem) {
+        scrollerElem.removeEventListener('scroll', debouncedUpdate)
+      }
+    }
+  }, [activeEditor, updateToolbarFloatingPosition])
 
   useEffect(() => {
     return mergeRegister(
@@ -379,14 +484,12 @@ const ToolbarPlugin = () => {
     )
   }, [activeEditor, isLink])
 
-  const containerRef = useRef<HTMLDivElement>(null)
   const dismissButtonRef = useRef<HTMLButtonElement>(null)
 
   const [isFocusInEditor, setIsFocusInEditor] = useState(false)
   const [isFocusInToolbar, setIsFocusInToolbar] = useState(false)
-  const isFocusInEditorOrToolbar = isFocusInEditor || isFocusInToolbar
-  const [isToolbarVisible, setIsToolbarVisible] = useState(true)
-  const canShowToolbar = isMobile ? isFocusInEditorOrToolbar : isToolbarVisible
+  const canShowToolbarOnMobile = isFocusInEditor || isFocusInToolbar
+  const canShowAllItems = isMobile || isToolbarFixedToTop
 
   useEffect(() => {
     const container = containerRef.current
@@ -438,24 +541,32 @@ const ToolbarPlugin = () => {
         if (isMobile) {
           return
         }
-        event.preventDefault()
-
-        if (!isToolbarVisible) {
-          setIsToolbarVisible(true)
-          toolbarStore.move(toolbarStore.first())
+        if (!alwaysShowToolbar) {
           return
         }
 
-        const isFocusInContainer = containerRef.current?.contains(document.activeElement)
-        if (isFocusInContainer) {
-          setIsToolbarVisible(false)
-          editor.focus()
-        } else {
+        event.preventDefault()
+
+        if (!isToolbarFixedToTop) {
+          setIsToolbarFixedToTop(true)
+          clearContainerFloatingStyles()
           toolbarStore.move(toolbarStore.first())
+          return
+        } else {
+          setIsToolbarFixedToTop(false)
+          editor.focus()
         }
       },
     })
-  }, [application.keyboardService, editor, isMobile, isToolbarVisible, toolbarStore])
+  }, [
+    alwaysShowToolbar,
+    application.keyboardService,
+    clearContainerFloatingStyles,
+    editor,
+    isMobile,
+    isToolbarFixedToTop,
+    toolbarStore,
+  ])
 
   return (
     <>
@@ -463,8 +574,15 @@ const ToolbarPlugin = () => {
       <div
         className={classNames(
           'bg-contrast',
-          'md:w-full md:border-b md:border-border md:px-1 md:py-1 md:translucent-ui:border-[--popover-border-color] md:translucent-ui:bg-[--popover-background-color] md:translucent-ui:[backdrop-filter:var(--popover-backdrop-filter)]',
-          !canShowToolbar || !isEditable ? 'hidden' : '',
+          !isEditable ? 'hidden opacity-0' : '',
+          isMobile && !canShowToolbarOnMobile ? 'hidden' : '',
+          !isMobile &&
+            'border-b border-border translucent-ui:border-[--popover-border-color] translucent-ui:bg-[--popover-background-color] translucent-ui:[backdrop-filter:var(--popover-backdrop-filter)]',
+          !isMobile
+            ? !isToolbarFixedToTop
+              ? 'fixed left-0 top-0 z-tooltip translate-x-[--translate-x] translate-y-[--translate-y] rounded border py-0.5 opacity-0'
+              : 'w-full px-1 py-1'
+            : '',
         )}
         id="super-mobile-toolbar"
         ref={containerRef}
@@ -487,30 +605,34 @@ const ToolbarPlugin = () => {
             ref={toolbarRef}
             store={toolbarStore}
           >
-            <ToolbarButton
-              name="Table of Contents"
-              iconName="toc"
-              active={isTOCOpen}
-              onSelect={() => setIsTOCOpen(!isTOCOpen)}
-              ref={tocAnchorRef}
-            />
-            <ToolbarButton
-              name="Search"
-              iconName="search"
-              onSelect={() => application.keyboardService.triggerCommand(SUPER_TOGGLE_SEARCH)}
-            />
-            <ToolbarButton
-              name="Undo"
-              iconName="undo"
-              disabled={!canUndo}
-              onSelect={() => editor.dispatchCommand(UNDO_COMMAND, undefined)}
-            />
-            <ToolbarButton
-              name="Redo"
-              iconName="redo"
-              disabled={!canRedo}
-              onSelect={() => editor.dispatchCommand(REDO_COMMAND, undefined)}
-            />
+            {canShowAllItems && (
+              <>
+                <ToolbarButton
+                  name="Table of Contents"
+                  iconName="toc"
+                  active={isTOCOpen}
+                  onSelect={() => setIsTOCOpen(!isTOCOpen)}
+                  ref={tocAnchorRef}
+                />
+                <ToolbarButton
+                  name="Search"
+                  iconName="search"
+                  onSelect={() => application.keyboardService.triggerCommand(SUPER_TOGGLE_SEARCH)}
+                />
+                <ToolbarButton
+                  name="Undo"
+                  iconName="undo"
+                  disabled={!canUndo}
+                  onSelect={() => editor.dispatchCommand(UNDO_COMMAND, undefined)}
+                />
+                <ToolbarButton
+                  name="Redo"
+                  iconName="redo"
+                  disabled={!canRedo}
+                  onSelect={() => editor.dispatchCommand(REDO_COMMAND, undefined)}
+                />
+              </>
+            )}
             <ToolbarButton
               name="Bold"
               iconName="bold"
@@ -586,17 +708,19 @@ const ToolbarPlugin = () => {
               iconName={OutdentBlock.iconName}
               onSelect={() => OutdentBlock.onSelect(editor)}
             />
-            <ToolbarButton
-              name="Insert"
-              onSelect={() => {
-                setIsInsertMenuOpen(!isInsertMenuOpen)
-              }}
-              ref={insertAnchorRef}
-              className={isInsertMenuOpen ? 'md:bg-default' : ''}
-            >
-              <Icon type="add" size="custom" className="h-4 w-4 md:h-3.5 md:w-3.5" />
-              <Icon type="chevron-down" size="custom" className="ml-2 h-4 w-4 md:h-3.5 md:w-3.5" />
-            </ToolbarButton>
+            {canShowAllItems && (
+              <ToolbarButton
+                name="Insert"
+                onSelect={() => {
+                  setIsInsertMenuOpen(!isInsertMenuOpen)
+                }}
+                ref={insertAnchorRef}
+                className={isInsertMenuOpen ? 'md:bg-default' : ''}
+              >
+                <Icon type="add" size="custom" className="h-4 w-4 md:h-3.5 md:w-3.5" />
+                <Icon type="chevron-down" size="custom" className="ml-2 h-4 w-4 md:h-3.5 md:w-3.5" />
+              </ToolbarButton>
+            )}
           </Toolbar>
           {isMobile && (
             <button

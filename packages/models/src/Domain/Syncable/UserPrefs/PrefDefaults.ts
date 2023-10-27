@@ -45,6 +45,7 @@ export const PrefDefaults = {
   [PrefKey.ComponentPreferences]: {},
   [PrefKey.ActiveThemes]: [],
   [PrefKey.ActiveComponents]: [],
+  [PrefKey.AlwaysShowSuperToolbar]: true,
 } satisfies {
   [key in PrefKey]: PrefValue[key]
 }

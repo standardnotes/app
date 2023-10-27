@@ -35,6 +35,7 @@ const LinkedItemsButton = ({ linkingController, onClickPreprocessing }: Props) =
         anchorElement={buttonRef}
         open={isLinkingPanelOpen}
         className="pb-2"
+        forceFullHeightOnMobile
       >
         <LinkedItemsPanel item={activeItem} />
       </Popover>

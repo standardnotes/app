@@ -46,6 +46,7 @@ export enum PrefKey {
   ComponentPreferences = 'componentPreferences',
   ActiveThemes = 'activeThemes',
   ActiveComponents = 'activeComponents',
+  AlwaysShowSuperToolbar = 'alwaysShowSuperToolbar',
 }
 
 export type PrefValue = {
@@ -87,4 +88,5 @@ export type PrefValue = {
   [PrefKey.ComponentPreferences]: AllComponentPreferences
   [PrefKey.ActiveThemes]: string[]
   [PrefKey.ActiveComponents]: string[]
+  [PrefKey.AlwaysShowSuperToolbar]: boolean
 }

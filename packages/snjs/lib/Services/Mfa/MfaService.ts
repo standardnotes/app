@@ -1,9 +1,8 @@
-import { SettingName } from '@standardnotes/settings'
-
 import { SettingsService } from '../Settings'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { FeaturesService } from '../Features/FeaturesService'
 import { AbstractService, InternalEventBusInterface, MfaServiceInterface, SignInStrings } from '@standardnotes/services'
+import { SettingName } from '@standardnotes/domain-core'
 
 export class MfaService extends AbstractService implements MfaServiceInterface {
   constructor(

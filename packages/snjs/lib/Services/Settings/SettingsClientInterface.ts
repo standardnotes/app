@@ -1,5 +1,6 @@
-import { SettingName, EmailBackupFrequency } from '@standardnotes/settings'
+import { EmailBackupFrequency } from '@standardnotes/settings'
 import { SettingsList } from './SettingsList'
+import { SettingName } from '@standardnotes/domain-core'
 
 export interface SettingsClientInterface {
   listSettings(): Promise<SettingsList>
