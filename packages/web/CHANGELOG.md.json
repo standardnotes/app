@@ -1,6 +1,20 @@
 {
   "versions": [
     {
+      "version": "3.180.0",
+      "title": "[3.180.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.179.4...@standardnotes/web@3.180.0) (2023-10-27)",
+      "date": null,
+      "body": "### Features\n\n* Re-enabled multiple selection on mobile, with improved UI ([#2609](https://github.com/standardnotes/app/issues/2609)) ([c8dec9b](https://github.com/standardnotes/app/commit/c8dec9bfecc77257e686fe02e36973318145c16e))",
+      "parsed": {
+        "_": [
+          "Re-enabled multiple selection on mobile, with improved UI (#2609) (c8dec9b)"
+        ],
+        "Features": [
+          "Re-enabled multiple selection on mobile, with improved UI (#2609) (c8dec9b)"
+        ]
+      }
+    },
+    {
       "version": "3.179.4",
       "title": "[3.179.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.179.3...@standardnotes/web@3.179.4) (2023-10-26)",
       "date": null,

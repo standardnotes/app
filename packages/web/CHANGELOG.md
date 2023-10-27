@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.180.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.179.4...@standardnotes/web@3.180.0) (2023-10-27)
+
+### Features
+
+* Re-enabled multiple selection on mobile, with improved UI ([#2609](https://github.com/standardnotes/app/issues/2609)) ([c8dec9b](https://github.com/standardnotes/app/commit/c8dec9bfecc77257e686fe02e36973318145c16e))
+
 ## [3.179.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.179.3...@standardnotes/web@3.179.4) (2023-10-26)
 
 **Note:** Version bump only for package @standardnotes/web
