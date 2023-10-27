@@ -263,6 +263,17 @@ export class ItemListController
       ),
     )
 
+    this.disposers.push(
+      reaction(
+        () => this.selectedItemsCount,
+        () => {
+          if (this.selectedItemsCount === 0) {
+            this.cancelMultipleSelection()
+          }
+        },
+      ),
+    )
+
     window.onresize = () => {
       this.resetPagination(true)
     }

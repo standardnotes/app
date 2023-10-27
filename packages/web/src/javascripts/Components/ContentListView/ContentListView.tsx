@@ -34,6 +34,7 @@ import { PaneLayout } from '@/Controllers/PaneController/PaneLayout'
 import { usePaneSwipeGesture } from '../Panes/usePaneGesture'
 import { mergeRefs } from '@/Hooks/mergeRefs'
 import Icon from '../Icon/Icon'
+import MobileMultiSelectionToolbar from './MobileMultiSelectionToolbar'
 
 type Props = {
   application: WebApplication
@@ -369,32 +370,7 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
           )
         ) : null}
         {isMobileScreen && itemListController.isMultipleSelectionMode && (
-          <div className="flex w-full bg-contrast pb-safe-bottom">
-            <button
-              className="flex-grow px-2 py-3 active:bg-passive-3"
-              onClick={() => notesController.togglePinSelectedNotes()}
-            >
-              <Icon type="pin" className="mx-auto text-info" size="large" />
-            </button>
-            <button
-              className="flex-grow px-2 py-3 active:bg-passive-3"
-              onClick={() => notesController.setArchiveSelectedNotes(true).catch(console.error)}
-            >
-              <Icon type="archive" className="mx-auto text-info" size="large" />
-            </button>
-            <button
-              className="flex-grow px-2 py-3 active:bg-passive-3"
-              onClick={() => notesController.setTrashSelectedNotes(true).catch(console.error)}
-            >
-              <Icon type="trash" className="mx-auto text-info" size="large" />
-            </button>
-            <button
-              className="flex-grow px-2 py-3 active:bg-passive-3"
-              onClick={() => notesController.setContextMenuOpen(true)}
-            >
-              <Icon type="more" className="mx-auto text-info" size="large" />
-            </button>
-          </div>
+          <MobileMultiSelectionToolbar notesController={notesController} />
         )}
         <div className="absolute bottom-0 h-safe-bottom w-full" />
         {children}
