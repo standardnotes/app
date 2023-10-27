@@ -366,6 +366,10 @@ const ToolbarPlugin = () => {
   }, [])
 
   useEffect(() => {
+    if (isMobile) {
+      return
+    }
+
     const scrollerElem = activeEditor.getRootElement()
 
     const update = () => {
@@ -386,7 +390,7 @@ const ToolbarPlugin = () => {
         scrollerElem.removeEventListener('scroll', debouncedUpdate)
       }
     }
-  }, [activeEditor, updateToolbarFloatingPosition])
+  }, [activeEditor, isMobile, updateToolbarFloatingPosition])
 
   useEffect(() => {
     return mergeRegister(
