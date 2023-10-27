@@ -77,13 +77,17 @@ const NoteListItem: FunctionComponent<DisplayableListItemProps<SNNote>> = ({
   }
 
   const onClick = useCallback(
-    async (event: MouseEvent) => {
+    (event: MouseEvent) => {
       if ((event.ctrlKey || event.metaKey) && !application.itemListController.isMultipleSelectionMode) {
         application.itemListController.enableMultipleSelectionMode()
       }
-      await onSelect(item, true)
+      if (selected && !application.itemListController.isMultipleSelectionMode) {
+        application.itemListController.openSingleSelectedItem({ userTriggered: true }).catch(console.error)
+        return
+      }
+      onSelect(item, true).catch(console.error)
     },
-    [application.itemListController, item, onSelect],
+    [application.itemListController, item, onSelect, selected],
   )
 
   useContextMenuEvent(listItemRef, handleContextMenuEvent)
