@@ -266,8 +266,10 @@ export class ItemListController
     this.disposers.push(
       reaction(
         () => this.selectedItemsCount,
-        () => {
-          if (this.selectedItemsCount === 0) {
+        (count, prevCount) => {
+          const hasNoSelectedItem = count === 0
+          const onlyOneSelectedItemAfterChange = prevCount > count && count === 1
+          if (hasNoSelectedItem || onlyOneSelectedItemAfterChange) {
             this.cancelMultipleSelection()
           }
         },
@@ -1192,9 +1194,6 @@ export class ItemListController
         this.selectedUuids.add(uuid)
         this.setSelectedUuids(this.selectedUuids)
         this.lastSelectedItem = item
-      }
-      if (this.selectedItemsCount === 1) {
-        this.cancelMultipleSelection()
       }
     } else {
       const shouldSelectNote = hasMoreThanOneSelected || !this.selectedUuids.has(uuid)
