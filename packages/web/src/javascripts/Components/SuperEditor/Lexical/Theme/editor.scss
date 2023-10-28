@@ -303,14 +303,18 @@
     margin-right: 16px;
   }
 }
+.Lexical__checkList {
+  margin-left: 0;
+  .Lexical__nestedListItem & {
+    margin-left: 16px;
+  }
+}
 .Lexical__listItem {
   margin: 0 0px;
 }
 .Lexical__listItemChecked,
 .Lexical__listItemUnchecked {
   position: relative;
-  margin-left: 8px;
-  margin-right: 8px;
   padding-left: 24px;
   padding-right: 24px;
   list-style-type: none;
@@ -327,7 +331,7 @@
   width: 16px;
   height: 16px;
   left: 0;
-  top: 5px;
+  top: 7px;
   cursor: pointer;
   background-size: cover;
   position: absolute;
@@ -359,7 +363,7 @@
   border-style: solid;
   position: absolute;
   display: block;
-  top: 7px;
+  top: 9px;
   width: 5px;
   left: 6px;
   height: 10px;
@@ -368,6 +372,9 @@
 }
 .Lexical__nestedListItem {
   list-style-type: none;
+  &.Lexical__listItemUnchecked {
+    padding-left: 0;
+  }
 }
 .Lexical__nestedListItem:before,
 .Lexical__nestedListItem:after {
