@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.180.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.180.3...@standardnotes/web@3.180.4) (2023-10-28)
+
+### Bug Fixes
+
+* Fixed check list indentation in Super notes ([ce0db04](https://github.com/standardnotes/app/commit/ce0db04646737ec1dcb88ac989cd12927c46a156))
+
 ## [3.180.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.180.2...@standardnotes/web@3.180.3) (2023-10-27)
 
 **Note:** Version bump only for package @standardnotes/web

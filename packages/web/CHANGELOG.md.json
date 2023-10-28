@@ -1,6 +1,20 @@
 {
   "versions": [
     {
+      "version": "3.180.4",
+      "title": "[3.180.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.180.3...@standardnotes/web@3.180.4) (2023-10-28)",
+      "date": null,
+      "body": "### Bug Fixes\n\n* Fixed check list indentation in Super notes ([ce0db04](https://github.com/standardnotes/app/commit/ce0db04646737ec1dcb88ac989cd12927c46a156))",
+      "parsed": {
+        "_": [
+          "Fixed check list indentation in Super notes (ce0db04)"
+        ],
+        "Bug Fixes": [
+          "Fixed check list indentation in Super notes (ce0db04)"
+        ]
+      }
+    },
+    {
       "version": "3.180.3",
       "title": "[3.180.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.180.2...@standardnotes/web@3.180.3) (2023-10-27)",
       "date": null,
