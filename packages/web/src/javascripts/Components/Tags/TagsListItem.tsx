@@ -260,7 +260,11 @@ export const TagsListItem: FunctionComponent<Props> = observer(
         <div
           role="button"
           tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
-          className={classNames('tag group px-3.5', isSelected && 'selected', isBeingDraggedOver && 'is-drag-over')}
+          className={classNames(
+            'tag group px-3.5 py-1 md:py-0',
+            isSelected && 'selected',
+            isBeingDraggedOver && 'is-drag-over',
+          )}
           onClick={selectCurrentTag}
           ref={tagRef}
           style={{

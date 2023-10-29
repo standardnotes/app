@@ -30,7 +30,9 @@ const TagsList: FunctionComponent<Props> = ({ type }: Props) => {
 
   const onContextMenu = useCallback(
     (tag: SNTag, posX: number, posY: number) => {
-      void application.navigationController.setSelectedTag(tag, type)
+      if (application.navigationController.selected !== tag) {
+        void application.navigationController.setSelectedTag(tag, type)
+      }
       openTagContextMenu(posX, posY)
     },
     [application, openTagContextMenu, type],
