@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.180.7](https://github.com/standardnotes/app/compare/@standardnotes/web@3.180.6...@standardnotes/web@3.180.7) (2023-10-29)
+
+### Bug Fixes
+
+* Fixed issue with checklist items in Super notes not being correctly exported to HTML ([198efdc](https://github.com/standardnotes/app/commit/198efdc41c403ce10a40fc2f20345d5b44c83462))
+
 ## [3.180.6](https://github.com/standardnotes/app/compare/@standardnotes/web@3.180.5...@standardnotes/web@3.180.6) (2023-10-29)
 
 **Note:** Version bump only for package @standardnotes/web
