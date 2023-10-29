@@ -16,8 +16,10 @@ import { FileNode } from '../../Plugins/EncryptedFilePlugin/Nodes/FileNode'
 import { BubbleNode } from '../../Plugins/ItemBubblePlugin/Nodes/BubbleNode'
 import { RemoteImageNode } from '../../Plugins/RemoteImagePlugin/RemoteImageNode'
 import { InlineFileNode } from '../../Plugins/InlineFilePlugin/InlineFileNode'
+import { CreateEditorArgs } from 'lexical'
+import { ListHTMLExportNode } from '../../Plugins/List/ListHTMLExportNode'
 
-export const BlockEditorNodes = [
+const CommonNodes = [
   AutoLinkNode,
   CodeHighlightNode,
   CodeNode,
@@ -29,7 +31,6 @@ export const BlockEditorNodes = [
   HorizontalRuleNode,
   LinkNode,
   ListItemNode,
-  ListNode,
   MarkNode,
   OverflowNode,
   QuoteNode,
@@ -42,4 +43,16 @@ export const BlockEditorNodes = [
   BubbleNode,
   RemoteImageNode,
   InlineFileNode,
+]
+
+export const BlockEditorNodes = [...CommonNodes, ListNode]
+export const HTMLExportNodes: CreateEditorArgs['nodes'] = [
+  ...CommonNodes,
+  ListHTMLExportNode,
+  {
+    replace: ListNode,
+    with(node) {
+      return new ListHTMLExportNode(node.getListType(), node.getStart())
+    },
+  },
 ]

@@ -11,12 +11,13 @@ import {
   ParagraphNode,
 } from 'lexical'
 import BlocksEditorTheme from '../Lexical/Theme/Theme'
-import { BlockEditorNodes } from '../Lexical/Nodes/AllNodes'
+import { BlockEditorNodes, HTMLExportNodes } from '../Lexical/Nodes/AllNodes'
 import { MarkdownTransformers } from '../MarkdownTransformers'
 import { $generateHtmlFromNodes, $generateNodesFromDOM } from '@lexical/html'
 
 export class HeadlessSuperConverter implements SuperConverterServiceInterface {
   private editor: LexicalEditor
+  private htmlExportEditor: LexicalEditor
 
   constructor() {
     this.editor = createHeadlessEditor({
@@ -25,6 +26,13 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
       editable: false,
       onError: (error: Error) => console.error(error),
       nodes: [...BlockEditorNodes],
+    })
+    this.htmlExportEditor = createHeadlessEditor({
+      namespace: 'BlocksEditor',
+      theme: BlocksEditorTheme,
+      editable: false,
+      onError: (error: Error) => console.error(error),
+      nodes: HTMLExportNodes,
     })
   }
 
@@ -40,6 +48,25 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
   convertSuperStringToOtherFormat(superString: string, toFormat: 'txt' | 'md' | 'html' | 'json'): string {
     if (superString.length === 0) {
       return superString
+    }
+
+    if (toFormat === 'html') {
+      this.htmlExportEditor.setEditorState(this.htmlExportEditor.parseEditorState(superString))
+
+      let content: string | undefined
+
+      this.htmlExportEditor.update(
+        () => {
+          content = $generateHtmlFromNodes(this.htmlExportEditor)
+        },
+        { discrete: true },
+      )
+
+      if (typeof content !== 'string') {
+        throw new Error('Could not export note')
+      }
+
+      return content
     }
 
     this.editor.setEditorState(this.editor.parseEditorState(superString))
@@ -60,9 +87,6 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
             content = $convertToMarkdownString(MarkdownTransformers)
             break
           }
-          case 'html':
-            content = $generateHtmlFromNodes(this.editor)
-            break
           case 'json':
           default:
             content = superString

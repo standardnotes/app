@@ -13,6 +13,38 @@ import { useCallback, useEffect, useRef } from 'react'
 import { useCommandService } from '@/Components/CommandProvider'
 import { HeadlessSuperConverter } from '../../Tools/HeadlessSuperConverter'
 
+// @ts-expect-error Using inline loaders to load CSS as string
+import superEditorCSS from '!css-loader!sass-loader!../../Lexical/Theme/editor.scss'
+// @ts-expect-error Using inline loaders to load CSS as string
+import snColorsCSS from '!css-loader!sass-loader!@standardnotes/styles/src/Styles/_colors.scss'
+
+const html = (title: string, content: string) => `
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>${title}</title>
+    <style>
+      ${snColorsCSS.toString()}
+      ${superEditorCSS.toString()}
+      .Lexical__listItemUnchecked, .Lexical__listItemChecked {
+        min-height: 18px;
+        margin-bottom: 4px;
+      }
+      .Lexical__listItemUnchecked:before, .Lexical__listItemChecked:before {
+        top: 0px;
+      }
+      .Lexical__listItemChecked:after {
+        top: 1px;
+      }
+    </style>
+  </head>
+  <body>
+    ${content}
+  </body>
+</html>
+`
+
 export const ExportPlugin = () => {
   const application = useApplication()
   const [editor] = useLexicalComposerContext()
@@ -58,7 +90,10 @@ export const ExportPlugin = () => {
 
   const exportHtml = useCallback(
     (title: string) => {
-      const content = converter.current.convertSuperStringToOtherFormat(JSON.stringify(editor.getEditorState()), 'html')
+      const content = html(
+        title,
+        converter.current.convertSuperStringToOtherFormat(JSON.stringify(editor.getEditorState()), 'html'),
+      )
       const blob = new Blob([content], { type: 'text/html' })
       downloadData(blob, `${sanitizeFileName(title)}.html`)
     },
