@@ -17,6 +17,8 @@ import { HeadlessSuperConverter } from '../../Tools/HeadlessSuperConverter'
 import superEditorCSS from '!css-loader!sass-loader!../../Lexical/Theme/editor.scss'
 // @ts-expect-error Using inline loaders to load CSS as string
 import snColorsCSS from '!css-loader!sass-loader!@standardnotes/styles/src/Styles/_colors.scss'
+// @ts-expect-error Using inline loaders to load CSS as string
+import exportOverridesCSS from '!css-loader!sass-loader!../../Lexical/Theme/export-overrides.scss'
 
 const html = (title: string, content: string) => `
 <!DOCTYPE html>
@@ -27,16 +29,7 @@ const html = (title: string, content: string) => `
     <style>
       ${snColorsCSS.toString()}
       ${superEditorCSS.toString()}
-      .Lexical__listItemUnchecked, .Lexical__listItemChecked {
-        min-height: 18px;
-        margin-bottom: 4px;
-      }
-      .Lexical__listItemUnchecked:before, .Lexical__listItemChecked:before {
-        top: 0px;
-      }
-      .Lexical__listItemChecked:after {
-        top: 1px;
-      }
+      ${exportOverridesCSS.toString()}
     </style>
   </head>
   <body>
