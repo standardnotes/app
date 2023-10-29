@@ -900,8 +900,9 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
           >
             <div
               className={classNames(
-                'mb-2 flex flex-wrap justify-between gap-2 md:mb-0 md:flex-nowrap md:gap-4 xl:items-center',
+                'mb-2 flex justify-between md:mb-0 md:flex-nowrap md:gap-4 xl:items-center',
                 shouldShowConflictsButton ? 'items-center' : 'items-start',
+                !renderHeaderOptions ? 'flex-nowrap gap-4' : 'flex-wrap gap-2 ',
               )}
             >
               <div className={classNames(this.state.noteLocked && 'locked', 'flex flex-grow items-center')}>
