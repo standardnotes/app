@@ -29,7 +29,7 @@ import {
   VaultUserServiceEvent,
 } from '@standardnotes/snjs'
 import { confirmDialog, DELETE_NOTE_KEYBOARD_COMMAND, KeyboardKey } from '@standardnotes/ui-services'
-import { ChangeEventHandler, createRef, CSSProperties, KeyboardEventHandler, RefObject } from 'react'
+import { ChangeEventHandler, createRef, CSSProperties, FocusEvent, KeyboardEventHandler, RefObject } from 'react'
 import { SuperEditor } from '../SuperEditor/SuperEditor'
 import IndicatorCircle from '../IndicatorCircle/IndicatorCircle'
 import LinkedItemBubblesContainer from '../LinkedItems/LinkedItemBubblesContainer'
@@ -826,7 +826,10 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
     this.setState({ plainEditorFocused: true })
   }
 
-  onPlainBlur = () => {
+  onPlainBlur = (event: FocusEvent) => {
+    if (event.relatedTarget?.id === ElementIds.NoteOptionsButton) {
+      return
+    }
     this.setState({ plainEditorFocused: false })
   }
 
@@ -937,30 +940,33 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
                   {pluralize(this.state.conflictedNotes.length, 'conflict', 'conflicts')}
                 </Button>
               )}
-              {renderHeaderOptions && (
-                <div className="note-view-options-buttons flex items-center gap-3">
-                  {!this.state.readonly && (
-                    <>
-                      <LinkedItemsButton
-                        linkingController={this.application.linkingController}
-                        onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
-                      />
-                      <ChangeEditorButton
-                        noteViewController={this.controller}
-                        onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
-                      />
-                      <PinNoteButton
-                        notesController={this.application.notesController}
-                        onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
-                      />
-                    </>
-                  )}
-                  <NotesOptionsPanel
-                    notesController={this.application.notesController}
-                    onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
-                  />
-                </div>
-              )}
+              <div className="note-view-options-buttons flex items-center gap-3">
+                {!this.state.readonly && renderHeaderOptions && (
+                  <>
+                    <LinkedItemsButton
+                      linkingController={this.application.linkingController}
+                      onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
+                    />
+                    <ChangeEditorButton
+                      noteViewController={this.controller}
+                      onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
+                    />
+                    <PinNoteButton
+                      notesController={this.application.notesController}
+                      onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
+                    />
+                  </>
+                )}
+                <NotesOptionsPanel
+                  notesController={this.application.notesController}
+                  onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
+                  onButtonBlur={() => {
+                    this.setState({
+                      plainEditorFocused: false,
+                    })
+                  }}
+                />
+              </div>
             </div>
             <div className="mb-1 mt-2.5 md:hidden">
               <CollaborationInfoHUD item={this.note} />

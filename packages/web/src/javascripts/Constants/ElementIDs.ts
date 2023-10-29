@@ -8,6 +8,7 @@ export const ElementIds = {
   NavigationColumn: 'navigation',
   NoteTextEditor: 'note-text-editor',
   NoteTitleEditor: 'note-title-editor',
+  NoteOptionsButton: 'note-options-button',
   RootId: 'app-group-root',
   NoteStatusTooltip: 'note-status-tooltip',
   ItemLinkAutocompleteInput: 'item-link-autocomplete-input',

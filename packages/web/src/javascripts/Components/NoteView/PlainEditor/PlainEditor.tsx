@@ -16,7 +16,16 @@ import {
   PrefDefaults,
 } from '@standardnotes/snjs'
 import { TAB_COMMAND } from '@standardnotes/ui-services'
-import { ChangeEventHandler, forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
+import {
+  ChangeEventHandler,
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+  FocusEvent,
+} from 'react'
 import { NoteViewController } from '../Controller/NoteViewController'
 
 type Props = {
@@ -25,7 +34,7 @@ type Props = {
   controller: NoteViewController
   locked: boolean
   onFocus: () => void
-  onBlur: () => void
+  onBlur: (event: FocusEvent) => void
 }
 
 export type PlainEditorInterface = {
@@ -106,13 +115,16 @@ export const PlainEditor = forwardRef<PlainEditorInterface, Props>(
       onFocus()
     }, [application, isAdjustingMobileCursor, lastEditorFocusEventSource, onFocus])
 
-    const onContentBlur = useCallback(() => {
-      if (lastEditorFocusEventSource.current) {
-        application.notifyWebEvent(WebAppEvent.EditorFocused, { eventSource: lastEditorFocusEventSource })
-      }
-      lastEditorFocusEventSource.current = undefined
-      onBlur()
-    }, [application, lastEditorFocusEventSource, onBlur])
+    const onContentBlur = useCallback(
+      (event: FocusEvent) => {
+        if (lastEditorFocusEventSource.current) {
+          application.notifyWebEvent(WebAppEvent.EditorFocused, { eventSource: lastEditorFocusEventSource })
+        }
+        lastEditorFocusEventSource.current = undefined
+        onBlur(event)
+      },
+      [application, lastEditorFocusEventSource, onBlur],
+    )
 
     const scrollMobileCursorIntoViewAfterWebviewResize = useCallback(() => {
       if (needsAdjustMobileCursor.current) {
