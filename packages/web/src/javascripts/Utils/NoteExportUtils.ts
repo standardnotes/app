@@ -1,6 +1,6 @@
 import { WebApplication } from '@/Application/WebApplication'
 import { HeadlessSuperConverter } from '@/Components/SuperEditor/Tools/HeadlessSuperConverter'
-import { NoteType, PrefKey, SNNote, PrefDefaults, FileItem } from '@standardnotes/snjs'
+import { NoteType, PrefKey, SNNote, PrefDefaults, FileItem, PrefValue } from '@standardnotes/snjs'
 import { WebApplicationInterface, sanitizeFileName } from '@standardnotes/ui-services'
 
 export const getNoteFormat = (application: WebApplicationInterface, note: SNNote) => {
@@ -55,15 +55,42 @@ const isSuperNote = (note: SNNote) => {
   return note.noteType === NoteType.Super
 }
 
-const superNoteHasEmbeddedFiles = (note: SNNote) => {
-  return isSuperNote(note) && note.text.includes('"type":"snfile"')
+const noteHasEmbeddedFiles = (note: SNNote) => {
+  return note.text.includes('"type":"snfile"')
+}
+
+const noteRequiresFolder = (
+  note: SNNote,
+  superExportFormat: PrefValue[PrefKey.SuperNoteExportFormat],
+  superEmbedBehavior: PrefValue[PrefKey.SuperNoteExportEmbedBehavior],
+) => {
+  if (!isSuperNote(note)) {
+    return false
+  }
+  if (superExportFormat === 'json') {
+    return false
+  }
+  if (superEmbedBehavior !== 'separate') {
+    return false
+  }
+  return noteHasEmbeddedFiles(note)
 }
 
 export const exportNotes = async (application: WebApplication, notes: SNNote[]) => {
   if (notes.length === 0) {
     return
   }
-  if (notes.length === 1 && (!isSuperNote(notes[0]) || !superNoteHasEmbeddedFiles(notes[0]))) {
+
+  const superExportFormatPref = application.getPreference(
+    PrefKey.SuperNoteExportFormat,
+    PrefDefaults[PrefKey.SuperNoteExportFormat],
+  )
+  const superEmbedBehaviorPref = application.getPreference(
+    PrefKey.SuperNoteExportEmbedBehavior,
+    PrefDefaults[PrefKey.SuperNoteExportEmbedBehavior],
+  )
+
+  if (notes.length === 1 && !noteRequiresFolder(notes[0], superExportFormatPref, superEmbedBehaviorPref)) {
     const blob = getNoteBlob(application, notes[0])
     const fileName = getNoteFileName(application, notes[0])
     application.archiveService.downloadData(blob, fileName)
@@ -74,7 +101,7 @@ export const exportNotes = async (application: WebApplication, notes: SNNote[]) 
   const zipFS = new zip.fs.FS()
   const { root } = zipFS
 
-  if (notes.length === 1 && superNoteHasEmbeddedFiles(notes[0])) {
+  if (notes.length === 1 && noteRequiresFolder(notes[0], superExportFormatPref, superEmbedBehaviorPref)) {
     const blob = getNoteBlob(application, notes[0])
     const fileName = getNoteFileName(application, notes[0])
     root.addBlob(fileName, blob)
@@ -105,7 +132,7 @@ export const exportNotes = async (application: WebApplication, notes: SNNote[]) 
     const blob = getNoteBlob(application, note)
     const fileName = getNoteFileName(application, note)
 
-    if (note.noteType !== NoteType.Super) {
+    if (!noteRequiresFolder(note, superExportFormatPref, superEmbedBehaviorPref)) {
       root.addBlob(fileName, blob)
       continue
     }
