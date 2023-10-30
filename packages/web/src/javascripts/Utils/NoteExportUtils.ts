@@ -2,6 +2,7 @@ import { WebApplication } from '@/Application/WebApplication'
 import { HeadlessSuperConverter } from '@/Components/SuperEditor/Tools/HeadlessSuperConverter'
 import { NoteType, PrefKey, SNNote, PrefDefaults, FileItem, PrefValue } from '@standardnotes/snjs'
 import { WebApplicationInterface, sanitizeFileName } from '@standardnotes/ui-services'
+import { ZipDirectoryEntry } from '@zip.js/zip.js'
 
 export const getNoteFormat = (application: WebApplicationInterface, note: SNNote) => {
   if (note.noteType === NoteType.Super) {
@@ -76,6 +77,25 @@ const noteRequiresFolder = (
   return noteHasEmbeddedFiles(note)
 }
 
+const addEmbeddedFilesToFolder = async (application: WebApplication, note: SNNote, folder: ZipDirectoryEntry) => {
+  try {
+    const embeddedFileIDs = headlessSuperConverter.getEmbeddedFileIDsFromSuperString(note.text)
+    for (const embeddedFileID of embeddedFileIDs) {
+      const fileItem = application.items.findItem<FileItem>(embeddedFileID)
+      if (!fileItem) {
+        continue
+      }
+      const embeddedFileBlob = await application.filesController.getFileBlob(fileItem)
+      if (!embeddedFileBlob) {
+        continue
+      }
+      folder.addBlob(sanitizeFileName(fileItem.title), embeddedFileBlob)
+    }
+  } catch (error) {
+    console.error(error)
+  }
+}
+
 export const exportNotes = async (application: WebApplication, notes: SNNote[]) => {
   if (notes.length === 0) {
     return
@@ -106,22 +126,7 @@ export const exportNotes = async (application: WebApplication, notes: SNNote[]) 
     const fileName = getNoteFileName(application, notes[0])
     root.addBlob(fileName, blob)
 
-    try {
-      const embeddedFileIDs = headlessSuperConverter.getEmbeddedFileIDsFromSuperString(notes[0].text)
-      for (const embeddedFileID of embeddedFileIDs) {
-        const fileItem = application.items.findItem<FileItem>(embeddedFileID)
-        if (!fileItem) {
-          continue
-        }
-        const embeddedFileBlob = await application.filesController.getFileBlob(fileItem)
-        if (!embeddedFileBlob) {
-          continue
-        }
-        root.addBlob(sanitizeFileName(fileItem.title), embeddedFileBlob)
-      }
-    } catch (error) {
-      console.error(error)
-    }
+    await addEmbeddedFilesToFolder(application, notes[0], root)
 
     const zippedBlob = await zipFS.exportBlob()
     application.archiveService.downloadData(zippedBlob, `${sanitizeFileName(fileName)}.zip`)
@@ -136,6 +141,10 @@ export const exportNotes = async (application: WebApplication, notes: SNNote[]) 
       root.addBlob(fileName, blob)
       continue
     }
+
+    const folder = root.addDirectory(sanitizeFileName(note.title))
+    folder.addBlob(fileName, blob)
+    await addEmbeddedFilesToFolder(application, note, folder)
   }
 
   const zippedBlob = await zipFS.exportBlob()
