@@ -17,7 +17,7 @@ describe('GoogleKeepConverter', () => {
     isValidSuperString: () => true,
     convertOtherFormatToSuperString: (data: string) => data,
     convertSuperStringToOtherFormat: (data: string) => data,
-    getEmbeddedFileIDsFromSuperString: (superString: string) => [],
+    getEmbeddedFileIDsFromSuperString: () => [],
   }
   const generateUuid = new GenerateUuid(crypto)
 
