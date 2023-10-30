@@ -1,7 +1,7 @@
 import { WebApplication } from '@/Application/WebApplication'
 import { HeadlessSuperConverter } from '@/Components/SuperEditor/Tools/HeadlessSuperConverter'
 import { NoteType, PrefKey, SNNote, PrefDefaults, FileItem, PrefValue, pluralize } from '@standardnotes/snjs'
-import { WebApplicationInterface, sanitizeFileName } from '@standardnotes/ui-services'
+import { WebApplicationInterface, parseAndCreateZippableFileName, sanitizeFileName } from '@standardnotes/ui-services'
 import { ZipDirectoryEntry } from '@zip.js/zip.js'
 
 export const getNoteFormat = (application: WebApplicationInterface, note: SNNote) => {
@@ -205,7 +205,7 @@ export const createNoteExport = async (
 
   if (notes.length === 1 && noteRequiresFolder(notes[0], superExportFormatPref, superEmbedBehaviorPref)) {
     const blob = await getNoteBlob(application, notes[0], superEmbedBehaviorPref)
-    const fileName = sanitizeFileName(getNoteFileName(application, notes[0]))
+    const fileName = parseAndCreateZippableFileName(getNoteFileName(application, notes[0]))
     root.addBlob(fileName, blob)
 
     await addEmbeddedFilesToFolder(application, notes[0], root)
@@ -220,7 +220,7 @@ export const createNoteExport = async (
 
   for (const note of notes) {
     const blob = await getNoteBlob(application, note, superEmbedBehaviorPref)
-    const fileName = getNoteFileName(application, note)
+    const fileName = parseAndCreateZippableFileName(getNoteFileName(application, note))
 
     if (!noteRequiresFolder(note, superExportFormatPref, superEmbedBehaviorPref)) {
       root.addBlob(fileName, blob)

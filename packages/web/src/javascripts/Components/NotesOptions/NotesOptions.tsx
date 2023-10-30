@@ -122,6 +122,17 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
     }
   }, [application, notes])
 
+  const exportSelectedItems = useCallback(() => {
+    const hasSuperNote = notes.some((note) => note.noteType === NoteType.Super)
+
+    if (hasSuperNote) {
+      setShowExportSuperModal(true)
+      return
+    }
+
+    downloadSelectedItems().catch(console.error)
+  }, [downloadSelectedItems, notes])
+
   const closeMenuAndToggleNotesList = useCallback(() => {
     const isMobileScreen = matchMedia(MutuallyExclusiveMediaQueryBreakpoints.sm).matches
     if (isMobileScreen) {
@@ -344,14 +355,7 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
                 })
                 .catch(console.error)
             } else {
-              const hasSuperNote = notes.some((note) => note.noteType === NoteType.Super)
-
-              if (hasSuperNote) {
-                setShowExportSuperModal(true)
-                return
-              }
-
-              void downloadSelectedItems()
+              exportSelectedItems()
             }
           }}
         >
@@ -359,7 +363,7 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
           {application.platform === Platform.Android ? 'Share' : 'Export'}
         </MenuItem>
         {application.platform === Platform.Android && (
-          <MenuItem onClick={downloadSelectedItems}>
+          <MenuItem onClick={exportSelectedItems}>
             <Icon type="download" className={iconClass} />
             Export
           </MenuItem>
