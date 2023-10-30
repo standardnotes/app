@@ -609,7 +609,9 @@ export class NavigationController
   public setEditingTag(editingTag: SNTag | SmartView | undefined) {
     runInAction(() => {
       this.editing_ = editingTag
-      void this.setSelectedTag(editingTag, this.selectedLocation || 'all')
+      if (this.selected !== editingTag) {
+        void this.setSelectedTag(editingTag, this.selectedLocation || 'all')
+      }
     })
   }
 
