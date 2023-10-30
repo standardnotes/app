@@ -14,6 +14,7 @@ import BlocksEditorTheme from '../Lexical/Theme/Theme'
 import { BlockEditorNodes, HTMLExportNodes } from '../Lexical/Nodes/AllNodes'
 import { MarkdownTransformers } from '../MarkdownTransformers'
 import { $generateHtmlFromNodes, $generateNodesFromDOM } from '@lexical/html'
+import { FileNode } from '../Plugins/EncryptedFilePlugin/Nodes/FileNode'
 
 export class HeadlessSuperConverter implements SuperConverterServiceInterface {
   private editor: LexicalEditor
@@ -182,5 +183,24 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
     }
 
     return JSON.stringify(this.editor.getEditorState())
+  }
+
+  getEmbeddedFileIDsFromSuperString(superString: string): string[] {
+    if (superString.length === 0) {
+      return []
+    }
+
+    this.editor.setEditorState(this.editor.parseEditorState(superString))
+
+    const ids: string[] = []
+
+    this.editor.getEditorState().read(() => {
+      const fileNodes = $nodesOfType(FileNode)
+      fileNodes.forEach((fileNode) => {
+        ids.push(fileNode.getId())
+      })
+    })
+
+    return ids
   }
 }

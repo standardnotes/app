@@ -40,6 +40,7 @@ export const PrefDefaults = {
   [PrefKey.ClipperDefaultTagUuid]: undefined,
   [PrefKey.DefaultEditorIdentifier]: NativeFeatureIdentifier.TYPES.PlainEditor,
   [PrefKey.SuperNoteExportFormat]: 'json',
+  [PrefKey.SuperNoteExportEmbedBehavior]: 'reference',
   [PrefKey.SystemViewPreferences]: {},
   [PrefKey.AuthenticatorNames]: '',
   [PrefKey.ComponentPreferences]: {},

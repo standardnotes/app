@@ -41,6 +41,7 @@ export enum PrefKey {
   ClipperDefaultTagUuid = 'clipperDefaultTagUuid',
   SystemViewPreferences = 'systemViewPreferences',
   SuperNoteExportFormat = 'superNoteExportFormat',
+  SuperNoteExportEmbedBehavior = 'superNoteExportEmbedBehavior',
   AuthenticatorNames = 'authenticatorNames',
   PaneGesturesEnabled = 'paneGesturesEnabled',
   ComponentPreferences = 'componentPreferences',
@@ -83,6 +84,7 @@ export type PrefValue = {
   [PrefKey.ClipperDefaultTagUuid]: string | undefined
   [PrefKey.SystemViewPreferences]: Partial<Record<SystemViewId, TagPreferences>>
   [PrefKey.SuperNoteExportFormat]: 'json' | 'md' | 'html'
+  [PrefKey.SuperNoteExportEmbedBehavior]: 'reference' | 'inline' | 'separate'
   [PrefKey.AuthenticatorNames]: string
   [PrefKey.PaneGesturesEnabled]: boolean
   [PrefKey.ComponentPreferences]: AllComponentPreferences
