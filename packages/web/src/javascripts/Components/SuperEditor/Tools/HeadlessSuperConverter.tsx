@@ -16,6 +16,7 @@ import { MarkdownTransformers } from '../MarkdownTransformers'
 import { $generateHtmlFromNodes, $generateNodesFromDOM } from '@lexical/html'
 import { FileNode } from '../Plugins/EncryptedFilePlugin/Nodes/FileNode'
 import { $createFileExportNode } from '../Lexical/Nodes/FileExportNode'
+import { $createInlineFileNode } from '../Plugins/InlineFilePlugin/InlineFileNode'
 export class HeadlessSuperConverter implements SuperConverterServiceInterface {
   private editor: LexicalEditor
 
@@ -38,44 +39,77 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
     }
   }
 
-  convertSuperStringToOtherFormat(
+  async convertSuperStringToOtherFormat(
     superString: string,
     toFormat: 'txt' | 'md' | 'html' | 'json',
     config?: {
       embedBehavior?: PrefValue[PrefKey.SuperNoteExportEmbedBehavior]
       getFileItem?: (id: string) => FileItem | undefined
+      getFileBase64?: (id: string) => Promise<string | undefined>
     },
-  ): string {
+  ): Promise<string> {
     if (superString.length === 0) {
       return superString
     }
 
-    const { embedBehavior, getFileItem } = config ?? { embedBehavior: 'reference' }
+    const { embedBehavior, getFileItem, getFileBase64 } = config ?? { embedBehavior: 'reference' }
 
     if (embedBehavior === 'separate' && !getFileItem) {
       throw new Error('getFileItem must be provided when embedBehavior is "separate"')
+    }
+    if (embedBehavior === 'inline' && !getFileItem && !getFileBase64) {
+      throw new Error('getFileItem and getFileBase64 must be provided when embedBehavior is "inline"')
     }
 
     this.editor.setEditorState(this.editor.parseEditorState(superString))
 
     let content: string | undefined
 
-    this.editor.update(
-      () => {
-        if (embedBehavior === 'separate' && getFileItem) {
+    await new Promise<void>((resolve) => {
+      this.editor.update(
+        () => {
+          if (embedBehavior === 'reference') {
+            return
+          }
+          if (!getFileItem) {
+            return
+          }
           const fileNodes = $nodesOfType(FileNode)
-          fileNodes.forEach((fileNode) => {
-            const fileItem = getFileItem(fileNode.getId())
-            if (!fileItem) {
-              return
-            }
-            const fileExportNode = $createFileExportNode(fileItem.name, fileItem.mimeType)
-            fileNode.replace(fileExportNode)
-          })
-        }
-      },
-      { discrete: true },
-    )
+          Promise.all(
+            fileNodes.map(async (fileNode) => {
+              const fileItem = getFileItem(fileNode.getId())
+              if (!fileItem) {
+                return
+              }
+              if (embedBehavior === 'inline' && getFileBase64) {
+                const fileBase64 = await getFileBase64(fileNode.getId())
+                if (!fileBase64) {
+                  return
+                }
+                this.editor.update(
+                  () => {
+                    const inlineFileNode = $createInlineFileNode(fileBase64, fileItem.mimeType, fileItem.name)
+                    fileNode.replace(inlineFileNode)
+                  },
+                  { discrete: true },
+                )
+              } else {
+                this.editor.update(
+                  () => {
+                    const fileExportNode = $createFileExportNode(fileItem.name, fileItem.mimeType)
+                    fileNode.replace(fileExportNode)
+                  },
+                  { discrete: true },
+                )
+              }
+            }),
+          )
+            .then(() => resolve())
+            .catch(console.error)
+        },
+        { discrete: true },
+      )
+    })
 
     this.editor.update(
       () => {

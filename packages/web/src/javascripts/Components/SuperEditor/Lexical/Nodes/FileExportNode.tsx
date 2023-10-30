@@ -81,6 +81,11 @@ export class FileExportNode extends DecoratorBlockNode {
     object.setAttribute('type', this.__mimeType)
     return { element: object }
   }
+
+  decorate(): JSX.Element {
+    // Doesn't need to actually render anything since this is only used for export
+    return <></>
+  }
 }
 
 export function $createFileExportNode(name: string, mimeType: string): FileExportNode {

@@ -31,6 +31,7 @@ import superEditorCSS from '!css-loader!sass-loader!../Components/SuperEditor/Le
 import snColorsCSS from '!css-loader!sass-loader!@standardnotes/styles/src/Styles/_colors.scss'
 // @ts-expect-error Using inline loaders to load CSS as string
 import exportOverridesCSS from '!css-loader!sass-loader!../Components/SuperEditor/Lexical/Theme/export-overrides.scss'
+import { getBase64FromBlob } from './Utils'
 
 const superHTML = (note: SNNote, content: string) => `<!DOCTYPE html>
 <html>
@@ -59,8 +60,8 @@ uuid: ${note.uuid}
 ${content}
 `
 
-export const getNoteBlob = (
-  application: WebApplicationInterface,
+export const getNoteBlob = async (
+  application: WebApplication,
   note: SNNote,
   superEmbedBehavior: PrefValue[PrefKey.SuperNoteExportEmbedBehavior],
 ) => {
@@ -81,9 +82,20 @@ export const getNoteBlob = (
       break
   }
   if (note.noteType === NoteType.Super) {
-    const content = headlessSuperConverter.convertSuperStringToOtherFormat(note.text, format, {
+    const content = await headlessSuperConverter.convertSuperStringToOtherFormat(note.text, format, {
       embedBehavior: superEmbedBehavior,
       getFileItem: (id) => application.items.findItem<FileItem>(id),
+      getFileBase64: async (id) => {
+        const fileItem = application.items.findItem<FileItem>(id)
+        if (!fileItem) {
+          return
+        }
+        const fileBlob = await application.filesController.getFileBlob(fileItem)
+        if (!fileBlob) {
+          return
+        }
+        return await getBase64FromBlob(fileBlob)
+      },
     })
     const useMDFrontmatter =
       format === 'md' &&
@@ -163,7 +175,7 @@ export const exportNotes = async (application: WebApplication, notes: SNNote[]) 
   )
 
   if (notes.length === 1 && !noteRequiresFolder(notes[0], superExportFormatPref, superEmbedBehaviorPref)) {
-    const blob = getNoteBlob(application, notes[0], superEmbedBehaviorPref)
+    const blob = await getNoteBlob(application, notes[0], superEmbedBehaviorPref)
     const fileName = getNoteFileName(application, notes[0])
     application.archiveService.downloadData(blob, fileName)
     return
@@ -174,7 +186,7 @@ export const exportNotes = async (application: WebApplication, notes: SNNote[]) 
   const { root } = zipFS
 
   if (notes.length === 1 && noteRequiresFolder(notes[0], superExportFormatPref, superEmbedBehaviorPref)) {
-    const blob = getNoteBlob(application, notes[0], superEmbedBehaviorPref)
+    const blob = await getNoteBlob(application, notes[0], superEmbedBehaviorPref)
     const fileName = getNoteFileName(application, notes[0])
     root.addBlob(fileName, blob)
 
@@ -186,7 +198,7 @@ export const exportNotes = async (application: WebApplication, notes: SNNote[]) 
   }
 
   for (const note of notes) {
-    const blob = getNoteBlob(application, note, superEmbedBehaviorPref)
+    const blob = await getNoteBlob(application, note, superEmbedBehaviorPref)
     const fileName = getNoteFileName(application, note)
 
     if (!noteRequiresFolder(note, superExportFormatPref, superEmbedBehaviorPref)) {

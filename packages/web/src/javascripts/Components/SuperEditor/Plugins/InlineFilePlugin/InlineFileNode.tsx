@@ -148,6 +148,10 @@ export class InlineFileNode extends DecoratorBlockNode {
     return { element: object }
   }
 
+  getTextContent(): string {
+    return `${this.__mimeType.startsWith('image/') ? '!' : ''}[${this.__fileName}](${this.__src})`
+  }
+
   decorate(_editor: LexicalEditor, config: EditorConfig): JSX.Element {
     const embedBlockTheme = config.theme.embedBlock || {}
     const className = {
