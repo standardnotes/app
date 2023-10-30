@@ -18,6 +18,7 @@ import { RemoteImageNode } from '../../Plugins/RemoteImagePlugin/RemoteImageNode
 import { InlineFileNode } from '../../Plugins/InlineFilePlugin/InlineFileNode'
 import { CreateEditorArgs } from 'lexical'
 import { ListHTMLExportNode } from '../../Plugins/List/ListHTMLExportNode'
+import { FileExportNode } from './FileExportNode'
 
 const CommonNodes = [
   AutoLinkNode,
@@ -49,6 +50,7 @@ export const BlockEditorNodes = [...CommonNodes, ListNode]
 
 export const SuperExportNodes: CreateEditorArgs['nodes'] = [
   ...CommonNodes,
+  FileExportNode,
   ListHTMLExportNode,
   {
     replace: ListNode,

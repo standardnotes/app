@@ -3,7 +3,6 @@ import { $convertToMarkdownString, $convertFromMarkdownString } from '@lexical/m
 import { FileItem, PrefKey, PrefValue, SuperConverterServiceInterface } from '@standardnotes/snjs'
 import {
   $createParagraphNode,
-  $createTextNode,
   $getRoot,
   $insertNodes,
   $nodesOfType,
@@ -16,7 +15,7 @@ import { SuperExportNodes } from '../Lexical/Nodes/AllNodes'
 import { MarkdownTransformers } from '../MarkdownTransformers'
 import { $generateHtmlFromNodes, $generateNodesFromDOM } from '@lexical/html'
 import { FileNode } from '../Plugins/EncryptedFilePlugin/Nodes/FileNode'
-import { sanitizeFileName } from '@standardnotes/ui-services'
+import { $createFileExportNode } from '../Lexical/Nodes/FileExportNode'
 export class HeadlessSuperConverter implements SuperConverterServiceInterface {
   private editor: LexicalEditor
 
@@ -70,16 +69,8 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
             if (!fileItem) {
               return
             }
-            if (toFormat === 'md') {
-              const paragraphNode = $createParagraphNode()
-              const textNode = $createTextNode(
-                `${fileItem.mimeType.startsWith('image/') ? '!' : ''}[${fileItem.name}](./${sanitizeFileName(
-                  fileItem.name,
-                )})`,
-              )
-              paragraphNode.append(textNode)
-              fileNode.replace(paragraphNode)
-            }
+            const fileExportNode = $createFileExportNode(fileItem.name, fileItem.mimeType)
+            fileNode.replace(fileExportNode)
           })
         }
       },
