@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.18.0](https://github.com/standardnotes/app/compare/@standardnotes/files@1.17.20...@standardnotes/files@1.18.0) (2023-10-30)
+
+### Features
+
+* When exporting a Super note, embedded files can be inlined in the note or exported along the note in a zip file. You can now also choose to include frontmatter when exporting to Markdown format. ([991de1d](https://github.com/standardnotes/app/commit/991de1ddf5dbb1016348d603d244699c676d9b5f)), closes [#2610](https://github.com/standardnotes/app/issues/2610)
+
 ## [1.17.20](https://github.com/standardnotes/app/compare/@standardnotes/files@1.17.19...@standardnotes/files@1.17.20) (2023-10-26)
 
 **Note:** Version bump only for package @standardnotes/files
