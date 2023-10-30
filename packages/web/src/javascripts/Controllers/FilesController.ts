@@ -275,6 +275,20 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
     }
   }
 
+  getFileBlob = async (file: FileItem): Promise<Blob | undefined> => {
+    const chunks: Uint8Array[] = []
+    const error = await this.files.downloadFile(file, async (decryptedChunk) => {
+      chunks.push(decryptedChunk)
+    })
+    if (error) {
+      return
+    }
+    const finalDecryptedBytes = concatenateUint8Arrays(chunks)
+    return new Blob([finalDecryptedBytes], {
+      type: file.mimeType,
+    })
+  }
+
   private async downloadFile(file: FileItem): Promise<void> {
     let downloadingToastId = ''
 

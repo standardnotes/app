@@ -37,7 +37,6 @@ import PasswordPlugin from './Plugins/PasswordPlugin/PasswordPlugin'
 import { useCommandService } from '@/Components/CommandProvider'
 import { SUPER_SHOW_MARKDOWN_PREVIEW } from '@standardnotes/ui-services'
 import { SuperNoteMarkdownPreview } from './SuperNoteMarkdownPreview'
-import { ExportPlugin } from './Plugins/ExportPlugin/ExportPlugin'
 import GetMarkdownPlugin, { GetMarkdownPluginInterface } from './Plugins/GetMarkdownPlugin/GetMarkdownPlugin'
 import { useResponsiveEditorFontSize } from '@/Utils/getPlaintextFontSize'
 import ReadonlyPlugin from './Plugins/ReadonlyPlugin/ReadonlyPlugin'
@@ -243,7 +242,6 @@ export const SuperEditor: FunctionComponent<Props> = ({
                 />
                 <NodeObserverPlugin nodeType={BubbleNode} onRemove={handleBubbleRemove} />
                 <NodeObserverPlugin nodeType={FileNode} onRemove={handleBubbleRemove} />
-                <ExportPlugin />
                 {readonly === undefined && <ReadonlyPlugin note={note.current} />}
                 <AutoFocusPlugin isEnabled={controller.isTemplateNote} />
                 <SuperSearchContextProvider>

@@ -1,6 +1,6 @@
 import Icon from '@/Components/Icon/Icon'
 import { observer } from 'mobx-react-lite'
-import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import { NoteType, Platform, SNNote } from '@standardnotes/snjs'
 import {
   CHANGE_EDITOR_WIDTH_COMMAND,
@@ -8,9 +8,6 @@ import {
   PIN_NOTE_COMMAND,
   SHOW_HIDDEN_OPTIONS_KEYBOARD_COMMAND,
   STAR_NOTE_COMMAND,
-  SUPER_EXPORT_HTML,
-  SUPER_EXPORT_JSON,
-  SUPER_EXPORT_MARKDOWN,
   SUPER_SHOW_MARKDOWN_PREVIEW,
 } from '@standardnotes/ui-services'
 import ChangeEditorOption from './ChangeEditorOption'
@@ -20,9 +17,7 @@ import { addToast, dismissToast, ToastType } from '@standardnotes/toast'
 import { NotesOptionsProps } from './NotesOptionsProps'
 import { useResponsiveAppPane } from '../Panes/ResponsivePaneProvider'
 import { AppPaneId } from '../Panes/AppPaneMetadata'
-import { getNoteBlob, getNoteFileName } from '@/Utils/NoteExportUtils'
-import { shareSelectedNotes } from '@/NativeMobileWeb/ShareSelectedNotes'
-import { downloadSelectedNotesOnAndroid } from '@/NativeMobileWeb/DownloadSelectedNotesOnAndroid'
+import { createNoteExport } from '@/Utils/NoteExportUtils'
 import ProtectedUnauthorizedLabel from '../ProtectedItemOverlay/ProtectedUnauthorizedLabel'
 import { MenuItemIconSize } from '@/Constants/TailwindClassNames'
 import { KeyboardShortcutIndicator } from '../KeyboardShortcutIndicator/KeyboardShortcutIndicator'
@@ -39,9 +34,9 @@ import SuperExportModal from './SuperExportModal'
 import { useApplication } from '../ApplicationProvider'
 import { MutuallyExclusiveMediaQueryBreakpoints } from '@/Hooks/useMediaQuery'
 import AddToVaultMenuOption from '../Vaults/AddToVaultMenuOption'
-import Menu from '../Menu/Menu'
-import Popover from '../Popover/Popover'
 import MenuSection from '../Menu/MenuSection'
+import { downloadOrShareBlobBasedOnPlatform } from '@/Utils/DownloadOrShareBasedOnPlatform'
+import { shareBlobOnMobile } from '@/NativeMobileWeb/ShareBlobOnMobile'
 
 const iconSize = MenuItemIconSize
 const iconClassDanger = `text-danger mr-2 ${iconSize}`
@@ -104,33 +99,39 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
   }, [])
 
   const downloadSelectedItems = useCallback(async () => {
-    if (notes.length === 1) {
-      const note = notes[0]
-      const blob = getNoteBlob(application, note)
-      application.archiveService.downloadData(blob, getNoteFileName(application, note))
-      return
-    }
-
-    if (notes.length > 1) {
-      const loadingToastId = addToast({
-        type: ToastType.Loading,
-        message: `Exporting ${notes.length} notes...`,
+    try {
+      const result = await createNoteExport(application, notes)
+      if (!result) {
+        return
+      }
+      const { blob, fileName } = result
+      void downloadOrShareBlobBasedOnPlatform({
+        archiveService: application.archiveService,
+        platform: application.platform,
+        mobileDevice: application.mobileDevice,
+        blob: blob,
+        filename: fileName,
+        isNativeMobileWeb: application.isNativeMobileWeb(),
       })
-      await application.archiveService.downloadDataAsZip(
-        notes.map((note) => {
-          return {
-            name: getNoteFileName(application, note),
-            content: getNoteBlob(application, note),
-          }
-        }),
-      )
-      dismissToast(loadingToastId)
+    } catch (error) {
+      console.error(error)
       addToast({
-        type: ToastType.Success,
-        message: `Exported ${notes.length} notes`,
+        type: ToastType.Error,
+        message: 'Could not export notes',
       })
     }
   }, [application, notes])
+
+  const exportSelectedItems = useCallback(() => {
+    const hasSuperNote = notes.some((note) => note.noteType === NoteType.Super)
+
+    if (hasSuperNote) {
+      setShowExportSuperModal(true)
+      return
+    }
+
+    downloadSelectedItems().catch(console.error)
+  }, [downloadSelectedItems, notes])
 
   const closeMenuAndToggleNotesList = useCallback(() => {
     const isMobileScreen = matchMedia(MutuallyExclusiveMediaQueryBreakpoints.sm).matches
@@ -199,9 +200,6 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
     [application],
   )
 
-  const superExportButtonRef = useRef<HTMLButtonElement>(null)
-  const [isSuperExportMenuOpen, setIsSuperExportMenuOpen] = useState(false)
-
   const unauthorized = notes.some((note) => !application.isAuthorizedToRenderItem(note))
   if (unauthorized) {
     return <ProtectedUnauthorizedLabel />
@@ -223,8 +221,6 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
   if (notes.length === 0) {
     return null
   }
-
-  const isOnlySuperNoteSelected = notes.length === 1 && notes[0].noteType === NoteType.Super
 
   return (
     <>
@@ -342,77 +338,35 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
             {pinShortcut && <KeyboardShortcutIndicator className="ml-auto" shortcut={pinShortcut} />}
           </MenuItem>
         )}
-        {isOnlySuperNoteSelected ? (
-          <>
-            <MenuItem
-              ref={superExportButtonRef}
-              onClick={() => {
-                setIsSuperExportMenuOpen((open) => !open)
-              }}
-            >
-              <div className="flex items-center">
-                <Icon type="download" className={iconClass} />
-                Export
-              </div>
-              <Icon type="chevron-right" className="ml-auto text-neutral" />
-            </MenuItem>
-            <Popover
-              title="Export note"
-              side="left"
-              align="start"
-              open={isSuperExportMenuOpen}
-              anchorElement={superExportButtonRef.current}
-              togglePopover={() => {
-                setIsSuperExportMenuOpen(!isSuperExportMenuOpen)
-              }}
-              className="md:py-1"
-            >
-              <Menu a11yLabel={'Super note export menu'}>
-                <MenuSection>
-                  <MenuItem onClick={() => commandService.triggerCommand(SUPER_EXPORT_JSON, notes[0].title)}>
-                    <Icon type="code" className={iconClass} />
-                    Export as JSON
-                  </MenuItem>
-                  <MenuItem onClick={() => commandService.triggerCommand(SUPER_EXPORT_MARKDOWN, notes[0].title)}>
-                    <Icon type="markdown" className={iconClass} />
-                    Export as Markdown
-                  </MenuItem>
-                  <MenuItem onClick={() => commandService.triggerCommand(SUPER_EXPORT_HTML, notes[0].title)}>
-                    <Icon type="rich-text" className={iconClass} />
-                    Export as HTML
-                  </MenuItem>
-                </MenuSection>
-              </Menu>
-            </Popover>
-          </>
-        ) : (
-          <>
-            <MenuItem
-              onClick={() => {
-                if (application.isNativeMobileWeb()) {
-                  void shareSelectedNotes(application, notes)
-                } else {
-                  const hasSuperNote = notes.some((note) => note.noteType === NoteType.Super)
-
-                  if (hasSuperNote) {
-                    setShowExportSuperModal(true)
+        <MenuItem
+          onClick={() => {
+            if (application.isNativeMobileWeb()) {
+              createNoteExport(application, notes)
+                .then((result) => {
+                  if (!result) {
                     return
                   }
 
-                  void downloadSelectedItems()
-                }
-              }}
-            >
-              <Icon type={application.platform === Platform.Android ? 'share' : 'download'} className={iconClass} />
-              {application.platform === Platform.Android ? 'Share' : 'Export'}
-            </MenuItem>
-            {application.platform === Platform.Android && (
-              <MenuItem onClick={() => downloadSelectedNotesOnAndroid(application, notes)}>
-                <Icon type="download" className={iconClass} />
-                Export
-              </MenuItem>
-            )}
-          </>
+                  const { blob, fileName } = result
+
+                  shareBlobOnMobile(application.mobileDevice, application.isNativeMobileWeb(), blob, fileName).catch(
+                    console.error,
+                  )
+                })
+                .catch(console.error)
+            } else {
+              exportSelectedItems()
+            }
+          }}
+        >
+          <Icon type={application.platform === Platform.Android ? 'share' : 'download'} className={iconClass} />
+          {application.platform === Platform.Android ? 'Share' : 'Export'}
+        </MenuItem>
+        {application.platform === Platform.Android && (
+          <MenuItem onClick={exportSelectedItems}>
+            <Icon type="download" className={iconClass} />
+            Export
+          </MenuItem>
         )}
         <MenuItem onClick={duplicateSelectedItems} disabled={areSomeNotesInReadonlySharedVault}>
           <Icon type="copy" className={iconClass} />

@@ -1,6 +1,6 @@
 import { createHeadlessEditor } from '@lexical/headless'
 import { $convertToMarkdownString, $convertFromMarkdownString } from '@lexical/markdown'
-import { SuperConverterServiceInterface } from '@standardnotes/snjs'
+import { FileItem, PrefKey, PrefValue, SuperConverterServiceInterface } from '@standardnotes/snjs'
 import {
   $createParagraphNode,
   $getRoot,
@@ -11,13 +11,14 @@ import {
   ParagraphNode,
 } from 'lexical'
 import BlocksEditorTheme from '../Lexical/Theme/Theme'
-import { BlockEditorNodes, HTMLExportNodes } from '../Lexical/Nodes/AllNodes'
+import { SuperExportNodes } from '../Lexical/Nodes/AllNodes'
 import { MarkdownTransformers } from '../MarkdownTransformers'
 import { $generateHtmlFromNodes, $generateNodesFromDOM } from '@lexical/html'
-
+import { FileNode } from '../Plugins/EncryptedFilePlugin/Nodes/FileNode'
+import { $createFileExportNode } from '../Lexical/Nodes/FileExportNode'
+import { $createInlineFileNode } from '../Plugins/InlineFilePlugin/InlineFileNode'
 export class HeadlessSuperConverter implements SuperConverterServiceInterface {
   private editor: LexicalEditor
-  private htmlExportEditor: LexicalEditor
 
   constructor() {
     this.editor = createHeadlessEditor({
@@ -25,14 +26,7 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
       theme: BlocksEditorTheme,
       editable: false,
       onError: (error: Error) => console.error(error),
-      nodes: [...BlockEditorNodes],
-    })
-    this.htmlExportEditor = createHeadlessEditor({
-      namespace: 'BlocksEditor',
-      theme: BlocksEditorTheme,
-      editable: false,
-      onError: (error: Error) => console.error(error),
-      nodes: HTMLExportNodes,
+      nodes: SuperExportNodes,
     })
   }
 
@@ -45,33 +39,79 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
     }
   }
 
-  convertSuperStringToOtherFormat(superString: string, toFormat: 'txt' | 'md' | 'html' | 'json'): string {
+  async convertSuperStringToOtherFormat(
+    superString: string,
+    toFormat: 'txt' | 'md' | 'html' | 'json',
+    config?: {
+      embedBehavior?: PrefValue[PrefKey.SuperNoteExportEmbedBehavior]
+      getFileItem?: (id: string) => FileItem | undefined
+      getFileBase64?: (id: string) => Promise<string | undefined>
+    },
+  ): Promise<string> {
     if (superString.length === 0) {
       return superString
     }
 
-    if (toFormat === 'html') {
-      this.htmlExportEditor.setEditorState(this.htmlExportEditor.parseEditorState(superString))
+    const { embedBehavior, getFileItem, getFileBase64 } = config ?? { embedBehavior: 'reference' }
 
-      let content: string | undefined
-
-      this.htmlExportEditor.update(
-        () => {
-          content = $generateHtmlFromNodes(this.htmlExportEditor)
-        },
-        { discrete: true },
-      )
-
-      if (typeof content !== 'string') {
-        throw new Error('Could not export note')
-      }
-
-      return content
+    if (embedBehavior === 'separate' && !getFileItem) {
+      throw new Error('getFileItem must be provided when embedBehavior is "separate"')
+    }
+    if (embedBehavior === 'inline' && !getFileItem && !getFileBase64) {
+      throw new Error('getFileItem and getFileBase64 must be provided when embedBehavior is "inline"')
     }
 
     this.editor.setEditorState(this.editor.parseEditorState(superString))
 
     let content: string | undefined
+
+    await new Promise<void>((resolve) => {
+      this.editor.update(
+        () => {
+          if (embedBehavior === 'reference') {
+            resolve()
+            return
+          }
+          if (!getFileItem) {
+            resolve()
+            return
+          }
+          const fileNodes = $nodesOfType(FileNode)
+          Promise.all(
+            fileNodes.map(async (fileNode) => {
+              const fileItem = getFileItem(fileNode.getId())
+              if (!fileItem) {
+                return
+              }
+              if (embedBehavior === 'inline' && getFileBase64) {
+                const fileBase64 = await getFileBase64(fileNode.getId())
+                if (!fileBase64) {
+                  return
+                }
+                this.editor.update(
+                  () => {
+                    const inlineFileNode = $createInlineFileNode(fileBase64, fileItem.mimeType, fileItem.name)
+                    fileNode.replace(inlineFileNode)
+                  },
+                  { discrete: true },
+                )
+              } else {
+                this.editor.update(
+                  () => {
+                    const fileExportNode = $createFileExportNode(fileItem.name, fileItem.mimeType)
+                    fileNode.replace(fileExportNode)
+                  },
+                  { discrete: true },
+                )
+              }
+            }),
+          )
+            .then(() => resolve())
+            .catch(console.error)
+        },
+        { discrete: true },
+      )
+    })
 
     this.editor.update(
       () => {
@@ -87,6 +127,9 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
             content = $convertToMarkdownString(MarkdownTransformers)
             break
           }
+          case 'html':
+            content = $generateHtmlFromNodes(this.editor)
+            break
           case 'json':
           default:
             content = superString
@@ -182,5 +225,24 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
     }
 
     return JSON.stringify(this.editor.getEditorState())
+  }
+
+  getEmbeddedFileIDsFromSuperString(superString: string): string[] {
+    if (superString.length === 0) {
+      return []
+    }
+
+    this.editor.setEditorState(this.editor.parseEditorState(superString))
+
+    const ids: string[] = []
+
+    this.editor.getEditorState().read(() => {
+      const fileNodes = $nodesOfType(FileNode)
+      fileNodes.forEach((fileNode) => {
+        ids.push(fileNode.getId())
+      })
+    })
+
+    return ids
   }
 }

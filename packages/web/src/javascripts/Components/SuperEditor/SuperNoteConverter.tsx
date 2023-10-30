@@ -6,7 +6,7 @@ import {
   isUIFeatureAnIframeFeature,
   spaceSeparatedStrings,
 } from '@standardnotes/snjs'
-import { useCallback, useEffect, useMemo } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useApplication } from '../ApplicationProvider'
 import IframeFeatureView from '../ComponentView/IframeFeatureView'
 import Icon from '../Icon/Icon'
@@ -52,18 +52,23 @@ const SuperNoteConverter = ({
     return 'json'
   }, [uiFeature])
 
-  const convertedContent = useMemo(() => {
-    if (note.text.length === 0) {
+  const [convertedContent, setConvertedContent] = useState<string>('')
+
+  useEffect(() => {
+    const convertContent = async () => {
+      if (note.text.length === 0) {
+        return note.text
+      }
+
+      try {
+        return new HeadlessSuperConverter().convertSuperStringToOtherFormat(note.text, format)
+      } catch (error) {
+        console.error(error)
+      }
+
       return note.text
     }
-
-    try {
-      return new HeadlessSuperConverter().convertSuperStringToOtherFormat(note.text, format)
-    } catch (error) {
-      console.error(error)
-    }
-
-    return note.text
+    convertContent().then(setConvertedContent).catch(console.error)
   }, [format, note])
 
   const componentViewer = useMemo(() => {
