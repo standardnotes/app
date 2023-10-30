@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.180.8](https://github.com/standardnotes/app/compare/@standardnotes/web@3.180.7...@standardnotes/web@3.180.8) (2023-10-30)
+
+**Note:** Version bump only for package @standardnotes/web
+
 ## [3.180.7](https://github.com/standardnotes/app/compare/@standardnotes/web@3.180.6...@standardnotes/web@3.180.7) (2023-10-29)
 
 ### Bug Fixes
