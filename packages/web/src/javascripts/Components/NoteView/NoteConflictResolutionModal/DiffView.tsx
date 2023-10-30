@@ -27,25 +27,29 @@ export const DiffView = ({
   const [textDiff, setTextDiff] = useState<fastdiff.Diff[]>([])
 
   useEffect(() => {
-    const firstNote = selectedNotes[0]
-    const firstTitle = firstNote.title
-    const firstText =
-      firstNote.noteType === NoteType.Super && convertSuperToMarkdown
-        ? new HeadlessSuperConverter().convertSuperStringToOtherFormat(firstNote.text, 'md')
-        : firstNote.text
+    const setDiffs = async () => {
+      const firstNote = selectedNotes[0]
+      const firstTitle = firstNote.title
+      const firstText =
+        firstNote.noteType === NoteType.Super && convertSuperToMarkdown
+          ? await new HeadlessSuperConverter().convertSuperStringToOtherFormat(firstNote.text, 'md')
+          : firstNote.text
 
-    const secondNote = selectedNotes[1]
-    const secondTitle = secondNote.title
-    const secondText =
-      secondNote.noteType === NoteType.Super && convertSuperToMarkdown
-        ? new HeadlessSuperConverter().convertSuperStringToOtherFormat(secondNote.text, 'md')
-        : secondNote.text
+      const secondNote = selectedNotes[1]
+      const secondTitle = secondNote.title
+      const secondText =
+        secondNote.noteType === NoteType.Super && convertSuperToMarkdown
+          ? await new HeadlessSuperConverter().convertSuperStringToOtherFormat(secondNote.text, 'md')
+          : secondNote.text
 
-    const titleDiff = fastdiff(firstTitle, secondTitle, undefined, true)
-    const textDiff = fastdiff(firstText, secondText, undefined, true)
+      const titleDiff = fastdiff(firstTitle, secondTitle, undefined, true)
+      const textDiff = fastdiff(firstText, secondText, undefined, true)
 
-    setTitleDiff(titleDiff)
-    setTextDiff(textDiff)
+      setTitleDiff(titleDiff)
+      setTextDiff(textDiff)
+    }
+
+    setDiffs().catch(console.error)
   }, [convertSuperToMarkdown, selectedNotes])
 
   const [preElement, setPreElement] = useState<HTMLPreElement | null>(null)
