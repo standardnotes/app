@@ -1,6 +1,6 @@
 import { WebApplication } from '@/Application/WebApplication'
 import { HeadlessSuperConverter } from '@/Components/SuperEditor/Tools/HeadlessSuperConverter'
-import { NoteType, PrefKey, SNNote, PrefDefaults, FileItem, PrefValue } from '@standardnotes/snjs'
+import { NoteType, PrefKey, SNNote, PrefDefaults, FileItem, PrefValue, pluralize } from '@standardnotes/snjs'
 import { WebApplicationInterface, sanitizeFileName } from '@standardnotes/ui-services'
 import { ZipDirectoryEntry } from '@zip.js/zip.js'
 
@@ -32,6 +32,7 @@ import snColorsCSS from '!css-loader!sass-loader!@standardnotes/styles/src/Style
 // @ts-expect-error Using inline loaders to load CSS as string
 import exportOverridesCSS from '!css-loader!sass-loader!../Components/SuperEditor/Lexical/Theme/export-overrides.scss'
 import { getBase64FromBlob } from './Utils'
+import { ToastType, addToast, dismissToast } from '@standardnotes/toast'
 
 const superHTML = (note: SNNote, content: string) => `<!DOCTYPE html>
 <html>
@@ -165,6 +166,11 @@ export const exportNotes = async (application: WebApplication, notes: SNNote[]) 
     return
   }
 
+  const toast = addToast({
+    type: ToastType.Progress,
+    message: `Exporting ${notes.length} ${pluralize(notes.length, 'note', 'notes')}...`,
+  })
+
   const superExportFormatPref = application.getPreference(
     PrefKey.SuperNoteExportFormat,
     PrefDefaults[PrefKey.SuperNoteExportFormat],
@@ -178,6 +184,7 @@ export const exportNotes = async (application: WebApplication, notes: SNNote[]) 
     const blob = await getNoteBlob(application, notes[0], superEmbedBehaviorPref)
     const fileName = getNoteFileName(application, notes[0])
     application.archiveService.downloadData(blob, fileName)
+    dismissToast(toast)
     return
   }
 
@@ -194,6 +201,7 @@ export const exportNotes = async (application: WebApplication, notes: SNNote[]) 
 
     const zippedBlob = await zipFS.exportBlob()
     application.archiveService.downloadData(zippedBlob, `${sanitizeFileName(fileName)}.zip`)
+    dismissToast(toast)
     return
   }
 
@@ -216,4 +224,6 @@ export const exportNotes = async (application: WebApplication, notes: SNNote[]) 
     zippedBlob,
     `Standard Notes Export - ${application.archiveService.formattedDateForExports()}.zip`,
   )
+
+  dismissToast(toast)
 }
