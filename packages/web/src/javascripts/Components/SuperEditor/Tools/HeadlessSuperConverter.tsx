@@ -69,9 +69,11 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
       this.editor.update(
         () => {
           if (embedBehavior === 'reference') {
+            resolve()
             return
           }
           if (!getFileItem) {
+            resolve()
             return
           }
           const fileNodes = $nodesOfType(FileNode)
