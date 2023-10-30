@@ -4,6 +4,7 @@ import Modal from '../Modal/Modal'
 import usePreference from '@/Hooks/usePreference'
 import RadioButtonGroup from '../RadioButtonGroup/RadioButtonGroup'
 import { useEffect } from 'react'
+import Switch from '../Switch/Switch'
 
 type Props = {
   exportNotes: () => void
@@ -14,6 +15,7 @@ const SuperExportModal = ({ exportNotes, close }: Props) => {
   const application = useApplication()
   const superNoteExportFormat = usePreference(PrefKey.SuperNoteExportFormat)
   const superNoteExportEmbedBehavior = usePreference(PrefKey.SuperNoteExportEmbedBehavior)
+  const superNoteExportUseMDFrontmatter = usePreference(PrefKey.SuperNoteExportUseMDFrontmatter)
 
   useEffect(() => {
     if (superNoteExportFormat === 'json' && superNoteExportEmbedBehavior === 'separate') {
@@ -47,7 +49,7 @@ const SuperExportModal = ({ exportNotes, close }: Props) => {
         },
       ]}
     >
-      <div className="mb-4">
+      <div>
         <div className="mb-3 text-base">We detected your selection includes Super notes.</div>
         <div className="mb-1">What format do you want to export them in?</div>
         <RadioButtonGroup
@@ -71,7 +73,23 @@ const SuperExportModal = ({ exportNotes, close }: Props) => {
           </div>
         )}
       </div>
-      <div className="mb-2">
+      {superNoteExportFormat === 'md' && (
+        <div className="mt-4">
+          <Switch
+            checked={superNoteExportUseMDFrontmatter}
+            onChange={(checked) => {
+              void application.setPreference(
+                PrefKey.SuperNoteExportUseMDFrontmatter,
+                checked as PrefValue[PrefKey.SuperNoteExportUseMDFrontmatter],
+              )
+            }}
+            className="!flex items-center"
+          >
+            <span className="ml-2">Export with frontmatter</span>
+          </Switch>
+        </div>
+      )}
+      <div className="mb-2 mt-4">
         <div className="mb-1">How do you want embedded files to be handled?</div>
         <RadioButtonGroup
           items={[{ label: 'Inline', value: 'inline' }].concat(

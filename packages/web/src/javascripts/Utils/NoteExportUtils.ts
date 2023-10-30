@@ -25,6 +25,40 @@ export const getNoteFileName = (application: WebApplicationInterface, note: SNNo
 
 const headlessSuperConverter = new HeadlessSuperConverter()
 
+// @ts-expect-error Using inline loaders to load CSS as string
+import superEditorCSS from '!css-loader!sass-loader!../Components/SuperEditor/Lexical/Theme/editor.scss'
+// @ts-expect-error Using inline loaders to load CSS as string
+import snColorsCSS from '!css-loader!sass-loader!@standardnotes/styles/src/Styles/_colors.scss'
+// @ts-expect-error Using inline loaders to load CSS as string
+import exportOverridesCSS from '!css-loader!sass-loader!../Components/SuperEditor/Lexical/Theme/export-overrides.scss'
+
+const superHTML = (note: SNNote, content: string) => `<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>${note.title}</title>
+    <style>
+      ${snColorsCSS.toString()}
+      ${superEditorCSS.toString()}
+      ${exportOverridesCSS.toString()}
+    </style>
+  </head>
+  <body>
+    ${content}
+  </body>
+</html>
+`
+
+const superMarkdown = (note: SNNote, content: string) => `---
+title: ${note.title}
+created_at: ${note.created_at.toISOString()}
+updated_at: ${note.serverUpdatedAt.toISOString()}
+uuid: ${note.uuid}
+---
+
+${content}
+`
+
 export const getNoteBlob = (
   application: WebApplicationInterface,
   note: SNNote,
@@ -46,15 +80,25 @@ export const getNoteBlob = (
       type = 'text/plain'
       break
   }
-  const content =
-    note.noteType === NoteType.Super
-      ? headlessSuperConverter.convertSuperStringToOtherFormat(note.text, format, {
-          title: note.title,
-          embedBehavior: superEmbedBehavior,
-          getFileItem: (id) => application.items.findItem<FileItem>(id),
-        })
-      : note.text
-  const blob = new Blob([content], {
+  if (note.noteType === NoteType.Super) {
+    const content = headlessSuperConverter.convertSuperStringToOtherFormat(note.text, format, {
+      embedBehavior: superEmbedBehavior,
+      getFileItem: (id) => application.items.findItem<FileItem>(id),
+    })
+    const useMDFrontmatter =
+      format === 'md' &&
+      application.getPreference(
+        PrefKey.SuperNoteExportUseMDFrontmatter,
+        PrefDefaults[PrefKey.SuperNoteExportUseMDFrontmatter],
+      )
+    const result =
+      format === 'html' ? superHTML(note, content) : useMDFrontmatter ? superMarkdown(note, content) : content
+    const blob = new Blob([result], {
+      type,
+    })
+    return blob
+  }
+  const blob = new Blob([note.text], {
     type,
   })
   return blob

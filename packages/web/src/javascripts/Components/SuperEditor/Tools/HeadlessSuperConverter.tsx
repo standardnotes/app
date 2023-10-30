@@ -16,33 +16,7 @@ import { SuperExportNodes } from '../Lexical/Nodes/AllNodes'
 import { MarkdownTransformers } from '../MarkdownTransformers'
 import { $generateHtmlFromNodes, $generateNodesFromDOM } from '@lexical/html'
 import { FileNode } from '../Plugins/EncryptedFilePlugin/Nodes/FileNode'
-
-// @ts-expect-error Using inline loaders to load CSS as string
-import superEditorCSS from '!css-loader!sass-loader!../Lexical/Theme/editor.scss'
-// @ts-expect-error Using inline loaders to load CSS as string
-import snColorsCSS from '!css-loader!sass-loader!@standardnotes/styles/src/Styles/_colors.scss'
-// @ts-expect-error Using inline loaders to load CSS as string
-import exportOverridesCSS from '!css-loader!sass-loader!../Lexical/Theme/export-overrides.scss'
 import { sanitizeFileName } from '@standardnotes/ui-services'
-
-const html = (content: string, title?: string) => `
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8" />
-    ${title ? `<title>${title}</title>` : ''}
-    <style>
-      ${snColorsCSS.toString()}
-      ${superEditorCSS.toString()}
-      ${exportOverridesCSS.toString()}
-    </style>
-  </head>
-  <body>
-    ${content}
-  </body>
-</html>
-`
-
 export class HeadlessSuperConverter implements SuperConverterServiceInterface {
   private editor: LexicalEditor
 
@@ -69,7 +43,6 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
     superString: string,
     toFormat: 'txt' | 'md' | 'html' | 'json',
     config?: {
-      title?: string
       embedBehavior?: PrefValue[PrefKey.SuperNoteExportEmbedBehavior]
       getFileItem?: (id: string) => FileItem | undefined
     },
@@ -78,7 +51,7 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
       return superString
     }
 
-    const { title, embedBehavior, getFileItem } = config ?? { embedBehavior: 'reference' }
+    const { embedBehavior, getFileItem } = config ?? { embedBehavior: 'reference' }
 
     if (embedBehavior === 'separate' && !getFileItem) {
       throw new Error('getFileItem must be provided when embedBehavior is "separate"')
@@ -128,7 +101,7 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
             break
           }
           case 'html':
-            content = html($generateHtmlFromNodes(this.editor), title)
+            content = $generateHtmlFromNodes(this.editor)
             break
           case 'json':
           default:

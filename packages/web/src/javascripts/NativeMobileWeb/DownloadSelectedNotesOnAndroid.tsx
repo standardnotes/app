@@ -1,7 +1,7 @@
 import { WebApplication } from '@/Application/WebApplication'
-import { getNoteBlob, getNoteFileName } from '@/Utils/NoteExportUtils'
+import { getNoteFileName, getNoteBlob } from '@/Utils/NoteExportUtils'
 import { parseFileName } from '@standardnotes/filepicker'
-import { Platform, SNNote } from '@standardnotes/snjs'
+import { Platform, PrefDefaults, PrefKey, SNNote } from '@standardnotes/snjs'
 import { sanitizeFileName } from '@standardnotes/ui-services'
 import { downloadBlobOnAndroid } from './DownloadBlobOnAndroid'
 
@@ -9,9 +9,13 @@ export const downloadSelectedNotesOnAndroid = async (application: WebApplication
   if (!application.isNativeMobileWeb() || application.platform !== Platform.Android) {
     throw new Error('Function being used on non-android platform')
   }
+  const superEmbedBehaviorPref = application.getPreference(
+    PrefKey.SuperNoteExportEmbedBehavior,
+    PrefDefaults[PrefKey.SuperNoteExportEmbedBehavior],
+  )
   if (notes.length === 1) {
     const note = notes[0]
-    const blob = getNoteBlob(application, note)
+    const blob = getNoteBlob(application, note, superEmbedBehaviorPref)
     const { name, ext } = parseFileName(getNoteFileName(application, note))
     const filename = `${sanitizeFileName(name)}.${ext}`
     await downloadBlobOnAndroid(application.mobileDevice, blob, filename)
@@ -22,7 +26,7 @@ export const downloadSelectedNotesOnAndroid = async (application: WebApplication
       notes.map((note) => {
         return {
           name: getNoteFileName(application, note),
-          content: getNoteBlob(application, note),
+          content: getNoteBlob(application, note, superEmbedBehaviorPref),
         }
       }),
     )

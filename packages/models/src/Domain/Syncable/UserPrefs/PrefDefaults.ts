@@ -41,6 +41,7 @@ export const PrefDefaults = {
   [PrefKey.DefaultEditorIdentifier]: NativeFeatureIdentifier.TYPES.PlainEditor,
   [PrefKey.SuperNoteExportFormat]: 'json',
   [PrefKey.SuperNoteExportEmbedBehavior]: 'reference',
+  [PrefKey.SuperNoteExportUseMDFrontmatter]: true,
   [PrefKey.SystemViewPreferences]: {},
   [PrefKey.AuthenticatorNames]: '',
   [PrefKey.ComponentPreferences]: {},

@@ -42,6 +42,7 @@ export enum PrefKey {
   SystemViewPreferences = 'systemViewPreferences',
   SuperNoteExportFormat = 'superNoteExportFormat',
   SuperNoteExportEmbedBehavior = 'superNoteExportEmbedBehavior',
+  SuperNoteExportUseMDFrontmatter = 'superNoteExportUseMDFrontmatter',
   AuthenticatorNames = 'authenticatorNames',
   PaneGesturesEnabled = 'paneGesturesEnabled',
   ComponentPreferences = 'componentPreferences',
@@ -85,6 +86,7 @@ export type PrefValue = {
   [PrefKey.SystemViewPreferences]: Partial<Record<SystemViewId, TagPreferences>>
   [PrefKey.SuperNoteExportFormat]: 'json' | 'md' | 'html'
   [PrefKey.SuperNoteExportEmbedBehavior]: 'reference' | 'inline' | 'separate'
+  [PrefKey.SuperNoteExportUseMDFrontmatter]: boolean
   [PrefKey.AuthenticatorNames]: string
   [PrefKey.PaneGesturesEnabled]: boolean
   [PrefKey.ComponentPreferences]: AllComponentPreferences
