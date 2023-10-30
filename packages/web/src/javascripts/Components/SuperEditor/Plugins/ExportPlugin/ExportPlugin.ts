@@ -3,40 +3,10 @@ import { downloadBlobOnAndroid } from '@/NativeMobileWeb/DownloadBlobOnAndroid'
 import { shareBlobOnMobile } from '@/NativeMobileWeb/ShareBlobOnMobile'
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
 import { Platform } from '@standardnotes/snjs'
-import {
-  sanitizeFileName,
-  SUPER_EXPORT_HTML,
-  SUPER_EXPORT_JSON,
-  SUPER_EXPORT_MARKDOWN,
-} from '@standardnotes/ui-services'
+import { sanitizeFileName, SUPER_EXPORT_JSON, SUPER_EXPORT_MARKDOWN } from '@standardnotes/ui-services'
 import { useCallback, useEffect, useRef } from 'react'
 import { useCommandService } from '@/Components/CommandProvider'
 import { HeadlessSuperConverter } from '../../Tools/HeadlessSuperConverter'
-
-// @ts-expect-error Using inline loaders to load CSS as string
-import superEditorCSS from '!css-loader!sass-loader!../../Lexical/Theme/editor.scss'
-// @ts-expect-error Using inline loaders to load CSS as string
-import snColorsCSS from '!css-loader!sass-loader!@standardnotes/styles/src/Styles/_colors.scss'
-// @ts-expect-error Using inline loaders to load CSS as string
-import exportOverridesCSS from '!css-loader!sass-loader!../../Lexical/Theme/export-overrides.scss'
-
-const html = (title: string, content: string) => `
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <title>${title}</title>
-    <style>
-      ${snColorsCSS.toString()}
-      ${superEditorCSS.toString()}
-      ${exportOverridesCSS.toString()}
-    </style>
-  </head>
-  <body>
-    ${content}
-  </body>
-</html>
-`
 
 export const ExportPlugin = () => {
   const application = useApplication()
@@ -81,18 +51,6 @@ export const ExportPlugin = () => {
     [downloadData, editor],
   )
 
-  const exportHtml = useCallback(
-    (title: string) => {
-      const content = html(
-        title,
-        converter.current.convertSuperStringToOtherFormat(JSON.stringify(editor.getEditorState()), 'html'),
-      )
-      const blob = new Blob([content], { type: 'text/html' })
-      downloadData(blob, `${sanitizeFileName(title)}.html`)
-    },
-    [downloadData, editor],
-  )
-
   useEffect(() => {
     return commandService.addCommandHandler({
       command: SUPER_EXPORT_JSON,
@@ -120,20 +78,6 @@ export const ExportPlugin = () => {
       },
     })
   }, [commandService, exportMarkdown])
-
-  useEffect(() => {
-    return commandService.addCommandHandler({
-      command: SUPER_EXPORT_HTML,
-      onKeyDown: (_, data) => {
-        if (!data) {
-          throw new Error('No data provided for export command')
-        }
-
-        const title = data as string
-        exportHtml(title)
-      },
-    })
-  }, [commandService, exportHtml])
 
   return null
 }

@@ -1,6 +1,6 @@
 import { createHeadlessEditor } from '@lexical/headless'
 import { $convertToMarkdownString, $convertFromMarkdownString } from '@lexical/markdown'
-import { SuperConverterServiceInterface } from '@standardnotes/snjs'
+import { PrefKey, PrefValue, SuperConverterServiceInterface } from '@standardnotes/snjs'
 import {
   $createParagraphNode,
   $getRoot,
@@ -15,6 +15,31 @@ import { BlockEditorNodes, HTMLExportNodes } from '../Lexical/Nodes/AllNodes'
 import { MarkdownTransformers } from '../MarkdownTransformers'
 import { $generateHtmlFromNodes, $generateNodesFromDOM } from '@lexical/html'
 import { FileNode } from '../Plugins/EncryptedFilePlugin/Nodes/FileNode'
+
+// @ts-expect-error Using inline loaders to load CSS as string
+import superEditorCSS from '!css-loader!sass-loader!../Lexical/Theme/editor.scss'
+// @ts-expect-error Using inline loaders to load CSS as string
+import snColorsCSS from '!css-loader!sass-loader!@standardnotes/styles/src/Styles/_colors.scss'
+// @ts-expect-error Using inline loaders to load CSS as string
+import exportOverridesCSS from '!css-loader!sass-loader!../Lexical/Theme/export-overrides.scss'
+
+const html = (content: string, title?: string) => `
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    ${title ? `<title>${title}</title>` : ''}
+    <style>
+      ${snColorsCSS.toString()}
+      ${superEditorCSS.toString()}
+      ${exportOverridesCSS.toString()}
+    </style>
+  </head>
+  <body>
+    ${content}
+  </body>
+</html>
+`
 
 export class HeadlessSuperConverter implements SuperConverterServiceInterface {
   private editor: LexicalEditor
@@ -46,10 +71,19 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
     }
   }
 
-  convertSuperStringToOtherFormat(superString: string, toFormat: 'txt' | 'md' | 'html' | 'json'): string {
+  convertSuperStringToOtherFormat(
+    superString: string,
+    toFormat: 'txt' | 'md' | 'html' | 'json',
+    config?: {
+      title?: string
+      embedBehavior: PrefValue[PrefKey.SuperNoteExportEmbedBehavior]
+    },
+  ): string {
     if (superString.length === 0) {
       return superString
     }
+
+    const { title } = config ?? { embedBehavior: 'reference' }
 
     if (toFormat === 'html') {
       this.htmlExportEditor.setEditorState(this.htmlExportEditor.parseEditorState(superString))
@@ -58,7 +92,7 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
 
       this.htmlExportEditor.update(
         () => {
-          content = $generateHtmlFromNodes(this.htmlExportEditor)
+          content = html($generateHtmlFromNodes(this.htmlExportEditor), title)
         },
         { discrete: true },
       )
