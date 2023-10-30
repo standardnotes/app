@@ -107,7 +107,7 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
       const { blob, fileName } = result
       void downloadOrShareBlobBasedOnPlatform({
         archiveService: application.archiveService,
-        platform: Platform.Ios,
+        platform: application.platform,
         mobileDevice: application.mobileDevice,
         blob: blob,
         filename: fileName,
