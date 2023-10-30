@@ -21,7 +21,7 @@ const SuperExportModal = ({ exportNotes, close }: Props) => {
     if (superNoteExportFormat === 'json' && superNoteExportEmbedBehavior === 'separate') {
       void application.setPreference(PrefKey.SuperNoteExportEmbedBehavior, 'reference')
     }
-    if (superNoteExportFormat !== 'json' && superNoteExportEmbedBehavior === 'reference') {
+    if (superNoteExportFormat === 'md' && superNoteExportEmbedBehavior === 'reference') {
       void application.setPreference(PrefKey.SuperNoteExportEmbedBehavior, 'separate')
     }
   }, [application, superNoteExportEmbedBehavior, superNoteExportFormat])
@@ -49,7 +49,7 @@ const SuperExportModal = ({ exportNotes, close }: Props) => {
         },
       ]}
     >
-      <div>
+      <div className="mb-2">
         <div className="mb-3 text-base">We detected your selection includes Super notes.</div>
         <div className="mb-1">What format do you want to export them in?</div>
         <RadioButtonGroup
@@ -89,23 +89,24 @@ const SuperExportModal = ({ exportNotes, close }: Props) => {
           </Switch>
         </div>
       )}
-      <div className="mb-2 mt-4">
-        <div className="mb-1">How do you want embedded files to be handled?</div>
-        <RadioButtonGroup
-          items={[{ label: 'Inline', value: 'inline' }].concat(
-            superNoteExportFormat === 'json'
-              ? [{ label: 'Keep as reference', value: 'reference' }]
-              : [{ label: 'Export separately', value: 'separate' }],
-          )}
-          value={superNoteExportEmbedBehavior}
-          onChange={(value) => {
-            void application.setPreference(
-              PrefKey.SuperNoteExportEmbedBehavior,
-              value as PrefValue[PrefKey.SuperNoteExportEmbedBehavior],
-            )
-          }}
-        />
-      </div>
+      {superNoteExportFormat !== 'json' && (
+        <div className="mb-2 mt-4">
+          <div className="mb-1">How do you want embedded files to be handled?</div>
+          <RadioButtonGroup
+            items={[
+              { label: 'Inline', value: 'inline' },
+              { label: 'Export separately', value: 'separate' },
+            ].concat(superNoteExportFormat !== 'md' ? [{ label: 'Keep as reference', value: 'reference' }] : [])}
+            value={superNoteExportEmbedBehavior}
+            onChange={(value) => {
+              void application.setPreference(
+                PrefKey.SuperNoteExportEmbedBehavior,
+                value as PrefValue[PrefKey.SuperNoteExportEmbedBehavior],
+              )
+            }}
+          />
+        </div>
+      )}
     </Modal>
   )
 }
