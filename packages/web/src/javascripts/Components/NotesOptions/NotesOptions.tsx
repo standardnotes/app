@@ -17,9 +17,7 @@ import { addToast, dismissToast, ToastType } from '@standardnotes/toast'
 import { NotesOptionsProps } from './NotesOptionsProps'
 import { useResponsiveAppPane } from '../Panes/ResponsivePaneProvider'
 import { AppPaneId } from '../Panes/AppPaneMetadata'
-import { exportNotes } from '@/Utils/NoteExportUtils'
-import { shareSelectedNotes } from '@/NativeMobileWeb/ShareSelectedNotes'
-import { downloadSelectedNotesOnAndroid } from '@/NativeMobileWeb/DownloadSelectedNotesOnAndroid'
+import { createNoteExport } from '@/Utils/NoteExportUtils'
 import ProtectedUnauthorizedLabel from '../ProtectedItemOverlay/ProtectedUnauthorizedLabel'
 import { MenuItemIconSize } from '@/Constants/TailwindClassNames'
 import { KeyboardShortcutIndicator } from '../KeyboardShortcutIndicator/KeyboardShortcutIndicator'
@@ -37,6 +35,8 @@ import { useApplication } from '../ApplicationProvider'
 import { MutuallyExclusiveMediaQueryBreakpoints } from '@/Hooks/useMediaQuery'
 import AddToVaultMenuOption from '../Vaults/AddToVaultMenuOption'
 import MenuSection from '../Menu/MenuSection'
+import { downloadOrShareBlobBasedOnPlatform } from '@/Utils/DownloadOrShareBasedOnPlatform'
+import { shareBlobOnMobile } from '@/NativeMobileWeb/ShareBlobOnMobile'
 
 const iconSize = MenuItemIconSize
 const iconClassDanger = `text-danger mr-2 ${iconSize}`
@@ -99,7 +99,27 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
   }, [])
 
   const downloadSelectedItems = useCallback(async () => {
-    exportNotes(application, notes).catch(console.error)
+    try {
+      const result = await createNoteExport(application, notes)
+      if (!result) {
+        return
+      }
+      const { blob, fileName } = result
+      void downloadOrShareBlobBasedOnPlatform({
+        archiveService: application.archiveService,
+        platform: Platform.Ios,
+        mobileDevice: application.mobileDevice,
+        blob: blob,
+        filename: fileName,
+        isNativeMobileWeb: application.isNativeMobileWeb(),
+      })
+    } catch (error) {
+      console.error(error)
+      addToast({
+        type: ToastType.Error,
+        message: 'Could not export notes',
+      })
+    }
   }, [application, notes])
 
   const closeMenuAndToggleNotesList = useCallback(() => {
@@ -310,7 +330,19 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
         <MenuItem
           onClick={() => {
             if (application.isNativeMobileWeb()) {
-              void shareSelectedNotes(application, notes)
+              createNoteExport(application, notes)
+                .then((result) => {
+                  if (!result) {
+                    return
+                  }
+
+                  const { blob, fileName } = result
+
+                  shareBlobOnMobile(application.mobileDevice, application.isNativeMobileWeb(), blob, fileName).catch(
+                    console.error,
+                  )
+                })
+                .catch(console.error)
             } else {
               const hasSuperNote = notes.some((note) => note.noteType === NoteType.Super)
 
@@ -327,7 +359,7 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
           {application.platform === Platform.Android ? 'Share' : 'Export'}
         </MenuItem>
         {application.platform === Platform.Android && (
-          <MenuItem onClick={() => downloadSelectedNotesOnAndroid(application, notes)}>
+          <MenuItem onClick={downloadSelectedItems}>
             <Icon type="download" className={iconClass} />
             Export
           </MenuItem>

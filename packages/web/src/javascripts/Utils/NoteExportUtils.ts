@@ -161,7 +161,16 @@ const addEmbeddedFilesToFolder = async (application: WebApplication, note: SNNot
   }
 }
 
-export const exportNotes = async (application: WebApplication, notes: SNNote[]) => {
+export const createNoteExport = async (
+  application: WebApplication,
+  notes: SNNote[],
+): Promise<
+  | {
+      blob: Blob
+      fileName: string
+    }
+  | undefined
+> => {
   if (notes.length === 0) {
     return
   }
@@ -183,9 +192,11 @@ export const exportNotes = async (application: WebApplication, notes: SNNote[]) 
   if (notes.length === 1 && !noteRequiresFolder(notes[0], superExportFormatPref, superEmbedBehaviorPref)) {
     const blob = await getNoteBlob(application, notes[0], superEmbedBehaviorPref)
     const fileName = getNoteFileName(application, notes[0])
-    application.archiveService.downloadData(blob, fileName)
     dismissToast(toast)
-    return
+    return {
+      blob,
+      fileName,
+    }
   }
 
   const zip = await import('@zip.js/zip.js')
@@ -194,15 +205,17 @@ export const exportNotes = async (application: WebApplication, notes: SNNote[]) 
 
   if (notes.length === 1 && noteRequiresFolder(notes[0], superExportFormatPref, superEmbedBehaviorPref)) {
     const blob = await getNoteBlob(application, notes[0], superEmbedBehaviorPref)
-    const fileName = getNoteFileName(application, notes[0])
+    const fileName = sanitizeFileName(getNoteFileName(application, notes[0]))
     root.addBlob(fileName, blob)
 
     await addEmbeddedFilesToFolder(application, notes[0], root)
 
     const zippedBlob = await zipFS.exportBlob()
-    application.archiveService.downloadData(zippedBlob, `${sanitizeFileName(fileName)}.zip`)
     dismissToast(toast)
-    return
+    return {
+      blob: zippedBlob,
+      fileName,
+    }
   }
 
   for (const note of notes) {
@@ -220,10 +233,11 @@ export const exportNotes = async (application: WebApplication, notes: SNNote[]) 
   }
 
   const zippedBlob = await zipFS.exportBlob()
-  application.archiveService.downloadData(
-    zippedBlob,
-    `Standard Notes Export - ${application.archiveService.formattedDateForExports()}.zip`,
-  )
 
   dismissToast(toast)
+
+  return {
+    blob: zippedBlob,
+    fileName: `Standard Notes Export - ${application.archiveService.formattedDateForExports()}.zip`,
+  }
 }
