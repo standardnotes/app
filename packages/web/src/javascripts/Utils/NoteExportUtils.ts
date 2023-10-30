@@ -154,7 +154,7 @@ const addEmbeddedFilesToFolder = async (application: WebApplication, note: SNNot
       if (!embeddedFileBlob) {
         continue
       }
-      folder.addBlob(sanitizeFileName(fileItem.title), embeddedFileBlob)
+      folder.addBlob(parseAndCreateZippableFileName(fileItem.title), embeddedFileBlob)
     }
   } catch (error) {
     console.error(error)
@@ -214,7 +214,7 @@ export const createNoteExport = async (
     dismissToast(toast)
     return {
       blob: zippedBlob,
-      fileName,
+      fileName: fileName + '.zip',
     }
   }
 

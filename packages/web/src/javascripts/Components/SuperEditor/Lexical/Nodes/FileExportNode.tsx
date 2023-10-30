@@ -1,5 +1,5 @@
 import { DecoratorBlockNode, SerializedDecoratorBlockNode } from '@lexical/react/LexicalDecoratorBlockNode'
-import { sanitizeFileName } from '@standardnotes/ui-services'
+import { parseAndCreateZippableFileName } from '@standardnotes/ui-services'
 import { DOMExportOutput, Spread } from 'lexical'
 
 type SerializedFileExportNode = Spread<
@@ -45,16 +45,16 @@ export class FileExportNode extends DecoratorBlockNode {
     }
   }
 
-  getSanitizedFileName(): string {
-    return sanitizeFileName(this.__name)
+  getZippableFileName(): string {
+    return parseAndCreateZippableFileName(this.__name)
   }
 
   getTextContent(): string {
-    return `${this.__mimeType.startsWith('image/') ? '!' : ''}[${this.__name}](./${this.getSanitizedFileName()})`
+    return `${this.__mimeType.startsWith('image/') ? '!' : ''}[${this.__name}](./${this.getZippableFileName()})`
   }
 
   exportDOM(): DOMExportOutput {
-    const src = `./${this.getSanitizedFileName()}`
+    const src = `./${this.getZippableFileName()}`
     if (this.__mimeType.startsWith('image/')) {
       const img = document.createElement('img')
       img.setAttribute('src', src)
