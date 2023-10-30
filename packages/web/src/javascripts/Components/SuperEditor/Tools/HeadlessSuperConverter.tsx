@@ -1,8 +1,9 @@
 import { createHeadlessEditor } from '@lexical/headless'
 import { $convertToMarkdownString, $convertFromMarkdownString } from '@lexical/markdown'
-import { PrefKey, PrefValue, SuperConverterServiceInterface } from '@standardnotes/snjs'
+import { FileItem, PrefKey, PrefValue, SuperConverterServiceInterface } from '@standardnotes/snjs'
 import {
   $createParagraphNode,
+  $createTextNode,
   $getRoot,
   $insertNodes,
   $nodesOfType,
@@ -11,7 +12,7 @@ import {
   ParagraphNode,
 } from 'lexical'
 import BlocksEditorTheme from '../Lexical/Theme/Theme'
-import { BlockEditorNodes, HTMLExportNodes } from '../Lexical/Nodes/AllNodes'
+import { SuperExportNodes } from '../Lexical/Nodes/AllNodes'
 import { MarkdownTransformers } from '../MarkdownTransformers'
 import { $generateHtmlFromNodes, $generateNodesFromDOM } from '@lexical/html'
 import { FileNode } from '../Plugins/EncryptedFilePlugin/Nodes/FileNode'
@@ -22,6 +23,7 @@ import superEditorCSS from '!css-loader!sass-loader!../Lexical/Theme/editor.scss
 import snColorsCSS from '!css-loader!sass-loader!@standardnotes/styles/src/Styles/_colors.scss'
 // @ts-expect-error Using inline loaders to load CSS as string
 import exportOverridesCSS from '!css-loader!sass-loader!../Lexical/Theme/export-overrides.scss'
+import { sanitizeFileName } from '@standardnotes/ui-services'
 
 const html = (content: string, title?: string) => `
 <!DOCTYPE html>
@@ -43,7 +45,6 @@ const html = (content: string, title?: string) => `
 
 export class HeadlessSuperConverter implements SuperConverterServiceInterface {
   private editor: LexicalEditor
-  private htmlExportEditor: LexicalEditor
 
   constructor() {
     this.editor = createHeadlessEditor({
@@ -51,14 +52,7 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
       theme: BlocksEditorTheme,
       editable: false,
       onError: (error: Error) => console.error(error),
-      nodes: [...BlockEditorNodes],
-    })
-    this.htmlExportEditor = createHeadlessEditor({
-      namespace: 'BlocksEditor',
-      theme: BlocksEditorTheme,
-      editable: false,
-      onError: (error: Error) => console.error(error),
-      nodes: HTMLExportNodes,
+      nodes: SuperExportNodes,
     })
   }
 
@@ -76,37 +70,48 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
     toFormat: 'txt' | 'md' | 'html' | 'json',
     config?: {
       title?: string
-      embedBehavior: PrefValue[PrefKey.SuperNoteExportEmbedBehavior]
+      embedBehavior?: PrefValue[PrefKey.SuperNoteExportEmbedBehavior]
+      getFileItem?: (id: string) => FileItem | undefined
     },
   ): string {
     if (superString.length === 0) {
       return superString
     }
 
-    const { title } = config ?? { embedBehavior: 'reference' }
+    const { title, embedBehavior, getFileItem } = config ?? { embedBehavior: 'reference' }
 
-    if (toFormat === 'html') {
-      this.htmlExportEditor.setEditorState(this.htmlExportEditor.parseEditorState(superString))
-
-      let content: string | undefined
-
-      this.htmlExportEditor.update(
-        () => {
-          content = html($generateHtmlFromNodes(this.htmlExportEditor), title)
-        },
-        { discrete: true },
-      )
-
-      if (typeof content !== 'string') {
-        throw new Error('Could not export note')
-      }
-
-      return content
+    if (embedBehavior === 'separate' && !getFileItem) {
+      throw new Error('getFileItem must be provided when embedBehavior is "separate"')
     }
 
     this.editor.setEditorState(this.editor.parseEditorState(superString))
 
     let content: string | undefined
+
+    this.editor.update(
+      () => {
+        if (embedBehavior === 'separate' && getFileItem) {
+          const fileNodes = $nodesOfType(FileNode)
+          fileNodes.forEach((fileNode) => {
+            const fileItem = getFileItem(fileNode.getId())
+            if (!fileItem) {
+              return
+            }
+            if (toFormat === 'md') {
+              const paragraphNode = $createParagraphNode()
+              const textNode = $createTextNode(
+                `${fileItem.mimeType.startsWith('image/') ? '!' : ''}[${fileItem.name}](./${sanitizeFileName(
+                  fileItem.name,
+                )})`,
+              )
+              paragraphNode.append(textNode)
+              fileNode.replace(paragraphNode)
+            }
+          })
+        }
+      },
+      { discrete: true },
+    )
 
     this.editor.update(
       () => {
@@ -122,6 +127,9 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
             content = $convertToMarkdownString(MarkdownTransformers)
             break
           }
+          case 'html':
+            content = html($generateHtmlFromNodes(this.editor), title)
+            break
           case 'json':
           default:
             content = superString

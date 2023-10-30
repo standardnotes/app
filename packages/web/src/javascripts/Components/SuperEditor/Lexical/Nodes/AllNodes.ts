@@ -46,7 +46,8 @@ const CommonNodes = [
 ]
 
 export const BlockEditorNodes = [...CommonNodes, ListNode]
-export const HTMLExportNodes: CreateEditorArgs['nodes'] = [
+
+export const SuperExportNodes: CreateEditorArgs['nodes'] = [
   ...CommonNodes,
   ListHTMLExportNode,
   {
