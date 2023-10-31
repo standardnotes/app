@@ -210,7 +210,14 @@ export const SuperEditor: FunctionComponent<Props> = ({
   }, [])
 
   return (
-    <div className="font-editor relative flex h-full w-full flex-col" ref={ref}>
+    <div
+      className={classNames(
+        'font-editor relative flex h-full w-full flex-col',
+        lineHeight && `leading-${lineHeight.toLowerCase()}`,
+        responsiveFontSize,
+      )}
+      ref={ref}
+    >
       {featureStatus !== FeatureStatus.Entitled && (
         <NotEntitledBanner featureStatus={featureStatus} feature={GetSuperNoteFeature()} />
       )}
