@@ -1,7 +1,7 @@
 import Icon from '@/Components/Icon/Icon'
 import { observer } from 'mobx-react-lite'
 import { useState, useEffect, useMemo, useCallback } from 'react'
-import { NoteType, Platform, SNNote } from '@standardnotes/snjs'
+import { NoteType, Platform, SNNote, pluralize } from '@standardnotes/snjs'
 import {
   CHANGE_EDITOR_WIDTH_COMMAND,
   OPEN_NOTE_HISTORY_COMMAND,
@@ -99,6 +99,13 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
   }, [])
 
   const downloadSelectedItems = useCallback(async () => {
+    if (notes.length === 0) {
+      return
+    }
+    const toast = addToast({
+      type: ToastType.Progress,
+      message: `Exporting ${notes.length} ${pluralize(notes.length, 'note', 'notes')}...`,
+    })
     try {
       const result = await createNoteExport(application, notes)
       if (!result) {
@@ -113,12 +120,14 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
         filename: fileName,
         isNativeMobileWeb: application.isNativeMobileWeb(),
       })
+      dismissToast(toast)
     } catch (error) {
       console.error(error)
       addToast({
         type: ToastType.Error,
         message: 'Could not export notes',
       })
+      dismissToast(toast)
     }
   }, [application, notes])
 

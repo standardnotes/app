@@ -1,8 +1,16 @@
 import { WebApplication } from '@/Application/WebApplication'
 import { HeadlessSuperConverter } from '@/Components/SuperEditor/Tools/HeadlessSuperConverter'
-import { NoteType, PrefKey, SNNote, PrefDefaults, FileItem, PrefValue, pluralize } from '@standardnotes/snjs'
-import { WebApplicationInterface, parseAndCreateZippableFileName, sanitizeFileName } from '@standardnotes/ui-services'
+import { NoteType, PrefKey, SNNote, PrefDefaults, FileItem, PrefValue } from '@standardnotes/snjs'
+import { WebApplicationInterface, parseAndCreateZippableFileName } from '@standardnotes/ui-services'
 import { ZipDirectoryEntry } from '@zip.js/zip.js'
+// @ts-expect-error Using inline loaders to load CSS as string
+import superEditorCSS from '!css-loader!sass-loader!../Components/SuperEditor/Lexical/Theme/editor.scss'
+// @ts-expect-error Using inline loaders to load CSS as string
+import snColorsCSS from '!css-loader!sass-loader!@standardnotes/styles/src/Styles/_colors.scss'
+// @ts-expect-error Using inline loaders to load CSS as string
+import exportOverridesCSS from '!css-loader!sass-loader!../Components/SuperEditor/Lexical/Theme/export-overrides.scss'
+import { getBase64FromBlob } from './Utils'
+import { parseFileName } from '@standardnotes/filepicker'
 
 export const getNoteFormat = (application: WebApplicationInterface, note: SNNote) => {
   if (note.noteType === NoteType.Super) {
@@ -24,15 +32,6 @@ export const getNoteFileName = (application: WebApplicationInterface, note: SNNo
 }
 
 const headlessSuperConverter = new HeadlessSuperConverter()
-
-// @ts-expect-error Using inline loaders to load CSS as string
-import superEditorCSS from '!css-loader!sass-loader!../Components/SuperEditor/Lexical/Theme/editor.scss'
-// @ts-expect-error Using inline loaders to load CSS as string
-import snColorsCSS from '!css-loader!sass-loader!@standardnotes/styles/src/Styles/_colors.scss'
-// @ts-expect-error Using inline loaders to load CSS as string
-import exportOverridesCSS from '!css-loader!sass-loader!../Components/SuperEditor/Lexical/Theme/export-overrides.scss'
-import { getBase64FromBlob } from './Utils'
-import { ToastType, addToast, dismissToast } from '@standardnotes/toast'
 
 const superHTML = (note: SNNote, content: string) => `<!DOCTYPE html>
 <html>
@@ -175,11 +174,6 @@ export const createNoteExport = async (
     return
   }
 
-  const toast = addToast({
-    type: ToastType.Progress,
-    message: `Exporting ${notes.length} ${pluralize(notes.length, 'note', 'notes')}...`,
-  })
-
   const superExportFormatPref = application.getPreference(
     PrefKey.SuperNoteExportFormat,
     PrefDefaults[PrefKey.SuperNoteExportFormat],
@@ -192,7 +186,6 @@ export const createNoteExport = async (
   if (notes.length === 1 && !noteRequiresFolder(notes[0], superExportFormatPref, superEmbedBehaviorPref)) {
     const blob = await getNoteBlob(application, notes[0], superEmbedBehaviorPref)
     const fileName = getNoteFileName(application, notes[0])
-    dismissToast(toast)
     return {
       blob,
       fileName,
@@ -211,30 +204,36 @@ export const createNoteExport = async (
     await addEmbeddedFilesToFolder(application, notes[0], root)
 
     const zippedBlob = await zipFS.exportBlob()
-    dismissToast(toast)
     return {
       blob: zippedBlob,
       fileName: fileName + '.zip',
     }
   }
 
+  const filenameCounts: Record<string, number> = {}
+
   for (const note of notes) {
     const blob = await getNoteBlob(application, note, superEmbedBehaviorPref)
-    const fileName = parseAndCreateZippableFileName(getNoteFileName(application, note))
+    const _name = getNoteFileName(application, note)
+
+    filenameCounts[_name] = filenameCounts[_name] == undefined ? 0 : filenameCounts[_name] + 1
+
+    const currentFileNameIndex = filenameCounts[_name]
+
+    const fileName = parseAndCreateZippableFileName(_name, currentFileNameIndex > 0 ? ` - ${currentFileNameIndex}` : '')
 
     if (!noteRequiresFolder(note, superExportFormatPref, superEmbedBehaviorPref)) {
       root.addBlob(fileName, blob)
       continue
     }
 
-    const folder = root.addDirectory(sanitizeFileName(note.title))
+    const { name } = parseFileName(fileName)
+    const folder = root.addDirectory(name)
     folder.addBlob(fileName, blob)
     await addEmbeddedFilesToFolder(application, note, folder)
   }
 
   const zippedBlob = await zipFS.exportBlob()
-
-  dismissToast(toast)
 
   return {
     blob: zippedBlob,
