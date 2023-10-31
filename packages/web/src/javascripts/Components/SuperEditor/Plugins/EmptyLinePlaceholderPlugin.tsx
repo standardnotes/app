@@ -11,7 +11,7 @@ import { useCallback, useEffect, useRef } from 'react'
 import { getSelectedNode } from '../Lexical/Utils/getSelectedNode'
 import { mergeRegister } from '@lexical/utils'
 
-export const LinePlaceholderPlugin = () => {
+export const EmptyLinePlaceholderPlugin = () => {
   const [editor] = useLexicalComposerContext()
 
   const placeholderElementRef = useRef<HTMLDivElement>(null)
@@ -82,8 +82,11 @@ export const LinePlaceholderPlugin = () => {
   }, [cursorUpdate, editor])
 
   return (
-    <div className="pointer-events-none fixed text-passive-1 opacity-0" ref={placeholderElementRef}>
-      Type <span className="rounded border border-border bg-passive-4-opacity-variant px-[3px] py-0.5">/</span> for
+    <div
+      className="super-empty-line-placeholder pointer-events-none fixed text-passive-1 opacity-0"
+      ref={placeholderElementRef}
+    >
+      Type <span className="rounded border border-border bg-passive-4-opacity-variant px-1 py-0.5">/</span> for
       commands...
     </div>
   )
