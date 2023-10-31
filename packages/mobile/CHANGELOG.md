@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.56.214](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.56.213...@standardnotes/mobile@3.56.214) (2023-10-31)
+
+### Bug Fixes
+
+* Fixed issue where a brief flash of white would appear when starting the app on mobile ([572c9b7](https://github.com/standardnotes/app/commit/572c9b7dfaa42773c050772940e383df2940a79f))
+
 ## [3.56.213](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.181.2...@standardnotes/mobile@3.56.213) (2023-10-31)
 
 **Note:** Version bump only for package @standardnotes/mobile
