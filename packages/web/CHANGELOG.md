@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.181.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.181.3...@standardnotes/web@3.181.4) (2023-10-31)
+
+### Bug Fixes
+
+* Fixed issue where exporting multiple files with the same name would error ([f408950](https://github.com/standardnotes/app/commit/f408950aa4e59389db81a4ca2b9db5ea49147aaf))
+
 ## [3.181.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.181.2...@standardnotes/web@3.181.3) (2023-10-31)
 
 ### Bug Fixes
