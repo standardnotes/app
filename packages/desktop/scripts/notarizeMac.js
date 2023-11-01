@@ -21,6 +21,7 @@ module.exports = async function (params) {
   try {
     electronNotarize
       .notarize({
+        teamId: process.env.APPLE_TEAM_ID,
         appBundleId: appId,
         appPath: appPath,
         appleId: process.env.NOTARIZE_APPLE_ID,
