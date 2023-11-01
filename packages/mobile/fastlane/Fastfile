@@ -64,6 +64,7 @@ platform :ios do
         skip_metadata: true,
         skip_screenshots: true,
         skip_binary_upload: true,
+        skip_app_version_update: true,
         run_precheck_before_submit: false,
         submission_information: { add_id_info_uses_idfa: false },
         release_notes: {
