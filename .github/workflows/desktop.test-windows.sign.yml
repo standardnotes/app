@@ -27,6 +27,8 @@ jobs:
       - run: yarn build:desktop
       - run: yarn run webpack --config desktop.webpack.prod.js
       - run: echo APP_VERSION=$(node -p "require('./../web/package.json').version") >> $GITHUB_ENV
+      - run: echo $APP_VERSION
+      - run: echo ${{ env.APP_VERSION }}
       - run: yarn run electron-builder --windows --x64 --ia32 --publish=never --c.extraMetadata.version=${{ env.APP_VERSION }}
 
       - name: Upload
