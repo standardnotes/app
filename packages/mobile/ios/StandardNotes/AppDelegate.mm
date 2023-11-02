@@ -24,14 +24,14 @@
   
   [self clearWebEditorCache];
   
-  NSString *CFBundleIdentifier = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleIdentifier"];
-  
-  NSDictionary * initialProperties = @{@"env" : [CFBundleIdentifier isEqualToString:@"com.standardnotes.standardnotes.dev"] ? @"dev" : @"prod"};
-  
   self.moduleName = @"StandardNotes";
   self.initialProps = @{};
   
-  return [super application:application didFinishLaunchingWithOptions:launchOptions];
+  BOOL success = [super application:application didFinishLaunchingWithOptions:launchOptions];
+  if (success) {
+    self.window.rootViewController.view.backgroundColor = [UIColor colorWithWhite:0.0 alpha:1.0];
+  }
+  return success;
 }
 
 - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
