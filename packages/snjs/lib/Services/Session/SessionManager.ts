@@ -197,7 +197,9 @@ export class SessionManager
 
     this.apiService.setSession(session, persist)
 
-    void this.webSocketsService.startWebSocketConnection()
+    if (this.isSignedIntoFirstPartyServer()) {
+      void this.webSocketsService.startWebSocketConnection()
+    }
   }
 
   public online() {
