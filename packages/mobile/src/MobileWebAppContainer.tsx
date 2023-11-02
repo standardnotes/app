@@ -350,41 +350,54 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
   }
 
   return (
-    <WebView
-      ref={webViewRef}
-      source={{ uri: sourceUri }}
-      style={{ backgroundColor: 'black' }}
-      originWhitelist={['*']}
-      onError={(err) => console.error('An error has occurred', err)}
-      onHttpError={() => console.error('An HTTP error occurred')}
-      onMessage={onMessage}
-      onContentProcessDidTerminate={() => {
-        webViewRef.current?.reload()
+    <View
+      style={{
+        flex: 1,
+        backgroundColor: '#000000',
       }}
-      onRenderProcessGone={() => {
-        webViewRef.current?.reload()
-      }}
-      hideKeyboardAccessoryView={true}
-      onShouldStartLoadWithRequest={onShouldStartLoadWithRequest}
-      allowFileAccess={true}
-      allowUniversalAccessFromFileURLs={true}
-      injectedJavaScriptBeforeContentLoaded={injectedJS}
-      bounces={false}
-      keyboardDisplayRequiresUserAction={false}
-      allowsInlineMediaPlayback={requireInlineMediaPlaybackForMomentsFeature}
-      mediaPlaybackRequiresUserAction={requireMediaUserInteractionForMomentsFeature}
-      scalesPageToFit={true}
-      /**
-       * This disables the global window scroll but keeps scroll within div elements like lists and textareas.
-       * This is needed to prevent the keyboard from pushing the webview up and down when it appears and disappears.
-       */
-      scrollEnabled={false}
-      overScrollMode="never"
-      nativeConfig={Platform.select({
-        android: {
-          component: CustomAndroidWebView,
-        } as WebViewNativeConfig,
-      })}
-    />
+    >
+      <WebView
+        ref={webViewRef}
+        source={{ uri: sourceUri }}
+        style={{
+          backgroundColor: Platform.select({
+            android: '#000000',
+            ios: 'transparent',
+          }),
+        }}
+        originWhitelist={['*']}
+        onError={(err) => console.error('An error has occurred', err)}
+        onHttpError={() => console.error('An HTTP error occurred')}
+        onMessage={onMessage}
+        onContentProcessDidTerminate={() => {
+          webViewRef.current?.reload()
+        }}
+        onRenderProcessGone={() => {
+          webViewRef.current?.reload()
+        }}
+        hideKeyboardAccessoryView={true}
+        onShouldStartLoadWithRequest={onShouldStartLoadWithRequest}
+        allowFileAccess={true}
+        allowUniversalAccessFromFileURLs={true}
+        injectedJavaScriptBeforeContentLoaded={injectedJS}
+        bounces={false}
+        keyboardDisplayRequiresUserAction={false}
+        allowsInlineMediaPlayback={requireInlineMediaPlaybackForMomentsFeature}
+        mediaPlaybackRequiresUserAction={requireMediaUserInteractionForMomentsFeature}
+        scalesPageToFit={true}
+        /**
+         * This disables the global window scroll but keeps scroll within div elements like lists and textareas.
+         * This is needed to prevent the keyboard from pushing the webview up and down when it appears and disappears.
+         */
+        scrollEnabled={false}
+        overScrollMode="never"
+        nativeConfig={Platform.select({
+          android: {
+            component: CustomAndroidWebView,
+          } as WebViewNativeConfig,
+        })}
+        webviewDebuggingEnabled
+      />
+    </View>
   )
 }
