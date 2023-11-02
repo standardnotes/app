@@ -308,6 +308,8 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
     })
   }, [device])
 
+  const [didLoadEnd, setDidLoadEnd] = useState(false)
+
   if (showAndroidWebviewUpdatePrompt) {
     return (
       <View
@@ -355,6 +357,7 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
       source={{ uri: sourceUri }}
       style={{
         backgroundColor: '#000000',
+        opacity: didLoadEnd ? 1 : 0,
       }}
       originWhitelist={['*']}
       onError={(err) => console.error('An error has occurred', err)}
@@ -365,6 +368,9 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
       }}
       onRenderProcessGone={() => {
         webViewRef.current?.reload()
+      }}
+      onLoadEnd={() => {
+        setDidLoadEnd(true)
       }}
       hideKeyboardAccessoryView={true}
       onShouldStartLoadWithRequest={onShouldStartLoadWithRequest}
