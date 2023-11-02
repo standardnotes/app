@@ -43,7 +43,7 @@ export const EmptyLinePlaceholderPlugin = () => {
       if (!text && editor.isEditable()) {
         placeholder.style.top = `${rect.y}px`
         placeholder.style.left = `${rect.x - parentRect.x + rootRect.x}px`
-        placeholder.style.opacity = '1'
+        placeholder.style.opacity = '0.65'
       } else {
         placeholder.style.opacity = '0'
       }
@@ -86,8 +86,7 @@ export const EmptyLinePlaceholderPlugin = () => {
       className="super-empty-line-placeholder pointer-events-none fixed text-passive-1 opacity-0"
       ref={placeholderElementRef}
     >
-      Type <span className="rounded border border-border bg-passive-4-opacity-variant px-1 py-0.5">/</span> for
-      commands...
+      Type <span className="rounded bg-passive-4-opacity-variant p-0.5">/</span> for commands...
     </div>
   )
 }
