@@ -11,17 +11,25 @@ import {
   ParagraphNode,
 } from 'lexical'
 import BlocksEditorTheme from '../Lexical/Theme/Theme'
-import { SuperExportNodes } from '../Lexical/Nodes/AllNodes'
+import { BlockEditorNodes, SuperExportNodes } from '../Lexical/Nodes/AllNodes'
 import { MarkdownTransformers } from '../MarkdownTransformers'
 import { $generateHtmlFromNodes, $generateNodesFromDOM } from '@lexical/html'
 import { FileNode } from '../Plugins/EncryptedFilePlugin/Nodes/FileNode'
 import { $createFileExportNode } from '../Lexical/Nodes/FileExportNode'
 import { $createInlineFileNode } from '../Plugins/InlineFilePlugin/InlineFileNode'
 export class HeadlessSuperConverter implements SuperConverterServiceInterface {
-  private editor: LexicalEditor
+  private importEditor: LexicalEditor
+  private exportEditor: LexicalEditor
 
   constructor() {
-    this.editor = createHeadlessEditor({
+    this.importEditor = createHeadlessEditor({
+      namespace: 'BlocksEditor',
+      theme: BlocksEditorTheme,
+      editable: false,
+      onError: (error: Error) => console.error(error),
+      nodes: BlockEditorNodes,
+    })
+    this.exportEditor = createHeadlessEditor({
       namespace: 'BlocksEditor',
       theme: BlocksEditorTheme,
       editable: false,
@@ -32,7 +40,7 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
 
   isValidSuperString(superString: string): boolean {
     try {
-      this.editor.parseEditorState(superString)
+      this.importEditor.parseEditorState(superString)
       return true
     } catch (error) {
       return false
@@ -61,12 +69,12 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
       throw new Error('getFileItem and getFileBase64 must be provided when embedBehavior is "inline"')
     }
 
-    this.editor.setEditorState(this.editor.parseEditorState(superString))
+    this.exportEditor.setEditorState(this.exportEditor.parseEditorState(superString))
 
     let content: string | undefined
 
     await new Promise<void>((resolve) => {
-      this.editor.update(
+      this.exportEditor.update(
         () => {
           if (embedBehavior === 'reference') {
             resolve()
@@ -88,7 +96,7 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
                 if (!fileBase64) {
                   return
                 }
-                this.editor.update(
+                this.exportEditor.update(
                   () => {
                     const inlineFileNode = $createInlineFileNode(fileBase64, fileItem.mimeType, fileItem.name)
                     fileNode.replace(inlineFileNode)
@@ -96,7 +104,7 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
                   { discrete: true },
                 )
               } else {
-                this.editor.update(
+                this.exportEditor.update(
                   () => {
                     const fileExportNode = $createFileExportNode(fileItem.name, fileItem.mimeType)
                     fileNode.replace(fileExportNode)
@@ -113,7 +121,7 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
       )
     })
 
-    this.editor.update(
+    this.exportEditor.update(
       () => {
         switch (toFormat) {
           case 'txt':
@@ -128,7 +136,7 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
             break
           }
           case 'html':
-            content = $generateHtmlFromNodes(this.editor)
+            content = $generateHtmlFromNodes(this.exportEditor)
             break
           case 'json':
           default:
@@ -155,7 +163,7 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
       return otherFormatString
     }
 
-    this.editor.update(
+    this.importEditor.update(
       () => {
         $getRoot().clear()
       },
@@ -166,12 +174,12 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
 
     let didThrow = false
     if (fromFormat === 'html') {
-      this.editor.update(
+      this.importEditor.update(
         () => {
           try {
             const parser = new DOMParser()
             const dom = parser.parseFromString(otherFormatString, 'text/html')
-            const generatedNodes = $generateNodesFromDOM(this.editor, dom)
+            const generatedNodes = $generateNodesFromDOM(this.importEditor, dom)
             const nodesToInsert: LexicalNode[] = []
             generatedNodes.forEach((node) => {
               const type = node.getType()
@@ -181,9 +189,9 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
               if (
                 type === 'text' ||
                 type === 'link' ||
+                type === 'linebreak' ||
                 type === 'unencrypted-image' ||
-                type === 'inline-file' ||
-                node.isParentRequired()
+                type === 'inline-file'
               ) {
                 const paragraphNode = $createParagraphNode()
                 paragraphNode.append(node)
@@ -205,7 +213,7 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
         { discrete: true },
       )
     } else {
-      this.editor.update(
+      this.importEditor.update(
         () => {
           try {
             $convertFromMarkdownString(otherFormatString, MarkdownTransformers)
@@ -224,7 +232,7 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
       throw new Error('Could not import note')
     }
 
-    return JSON.stringify(this.editor.getEditorState())
+    return JSON.stringify(this.importEditor.getEditorState())
   }
 
   getEmbeddedFileIDsFromSuperString(superString: string): string[] {
@@ -232,11 +240,11 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
       return []
     }
 
-    this.editor.setEditorState(this.editor.parseEditorState(superString))
+    this.exportEditor.setEditorState(this.exportEditor.parseEditorState(superString))
 
     const ids: string[] = []
 
-    this.editor.getEditorState().read(() => {
+    this.exportEditor.getEditorState().read(() => {
       const fileNodes = $nodesOfType(FileNode)
       fileNodes.forEach((fileNode) => {
         ids.push(fileNode.getId())
