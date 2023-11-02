@@ -30,6 +30,7 @@
   BOOL success = [super application:application didFinishLaunchingWithOptions:launchOptions];
   if (success) {
     self.window.rootViewController.view.backgroundColor = [UIColor colorWithWhite:0.0 alpha:1.0];
+    self.window.backgroundColor = [UIColor colorWithWhite:0.0 alpha:1.0];
   }
   return success;
 }
