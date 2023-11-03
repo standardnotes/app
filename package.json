@@ -26,6 +26,7 @@
     "build:snjs": "yarn workspaces foreach -p --topological-dev --verbose -R --from @standardnotes/snjs run build",
     "build:services": "yarn workspaces foreach -pt --topological-dev --verbose -R --from @standardnotes/services run build",
     "build:api": "yarn workspaces foreach -pt --topological-dev --verbose -R --from @standardnotes/api run build",
+    "start:web": "yarn workspace @standardnotes/web start",
     "e2e": "lerna run start:test-server --scope=@standardnotes/snjs",
     "e2e:test": "yarn dlx mocha-headless-chrome --timeout 3600000 -f http://localhost:9001/mocha/test.html",
     "reset": "find . -type dir -name node_modules | xargs rm -rf && rm -rf yarn.lock && yarn install",

@@ -3,7 +3,7 @@ import { ComponentInterface, DecryptedItemInterface } from '@standardnotes/model
 import { FeatureStatus } from './FeatureStatus'
 import { SetOfflineFeaturesFunctionResponse } from './SetOfflineFeaturesFunctionResponse'
 import { NativeFeatureIdentifier } from '@standardnotes/features'
-import { Uuid } from '@standardnotes/domain-core'
+import { RoleName, Uuid } from '@standardnotes/domain-core'
 
 export interface FeaturesClientInterface {
   getFeatureStatus(
@@ -11,7 +11,7 @@ export interface FeaturesClientInterface {
     options?: { inContextOfItem?: DecryptedItemInterface },
   ): FeatureStatus
   hasMinimumRole(role: string): boolean
-
+  hasRole(roleName: RoleName): boolean
   hasFirstPartyOfflineSubscription(): boolean
   setOfflineFeaturesCode(code: string): Promise<SetOfflineFeaturesFunctionResponse>
   hasOfflineRepo(): boolean
