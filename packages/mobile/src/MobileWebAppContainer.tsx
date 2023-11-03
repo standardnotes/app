@@ -242,6 +242,10 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
       setShowAndroidWebviewUpdatePrompt(true)
       return
     }
+    if (message === 'appLoaded') {
+      setDidLoadEnd(true)
+      return
+    }
     try {
       const functionData = JSON.parse(message)
       void onFunctionMessage(functionData.functionName, functionData.messageId, functionData.args)
@@ -368,9 +372,6 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
       }}
       onRenderProcessGone={() => {
         webViewRef.current?.reload()
-      }}
-      onLoadEnd={() => {
-        setDidLoadEnd(true)
       }}
       hideKeyboardAccessoryView={true}
       onShouldStartLoadWithRequest={onShouldStartLoadWithRequest}

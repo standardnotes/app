@@ -16,6 +16,9 @@ declare global {
     webClient?: DesktopManagerInterface
     electronRemoteBridge?: unknown
     reactNativeDevice?: WebDevice
+    ReactNativeWebView?: {
+      postMessage: (message: string) => void
+    }
     platform?: Platform
     isClipper?: boolean
 
@@ -91,6 +94,10 @@ const startApplication: StartApplication = async function startApplication(
         onDestroy={onDestroy}
       />,
     )
+
+    if (window.ReactNativeWebView) {
+      window.ReactNativeWebView.postMessage('appLoaded')
+    }
   }
 
   const domReady = document.readyState === 'complete' || document.readyState === 'interactive'
