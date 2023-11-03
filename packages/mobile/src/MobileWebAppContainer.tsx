@@ -242,6 +242,10 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
       setShowAndroidWebviewUpdatePrompt(true)
       return
     }
+    if (message === 'appLoaded') {
+      setDidLoadEnd(true)
+      return
+    }
     try {
       const functionData = JSON.parse(message)
       void onFunctionMessage(functionData.functionName, functionData.messageId, functionData.args)
@@ -308,6 +312,8 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
     })
   }, [device])
 
+  const [didLoadEnd, setDidLoadEnd] = useState(false)
+
   if (showAndroidWebviewUpdatePrompt) {
     return (
       <View
@@ -353,7 +359,10 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
     <WebView
       ref={webViewRef}
       source={{ uri: sourceUri }}
-      style={{ backgroundColor: 'black' }}
+      style={{
+        backgroundColor: '#000000',
+        opacity: didLoadEnd ? 1 : 0,
+      }}
       originWhitelist={['*']}
       onError={(err) => console.error('An error has occurred', err)}
       onHttpError={() => console.error('An HTTP error occurred')}
@@ -385,6 +394,7 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
           component: CustomAndroidWebView,
         } as WebViewNativeConfig,
       })}
+      webviewDebuggingEnabled
     />
   )
 }
