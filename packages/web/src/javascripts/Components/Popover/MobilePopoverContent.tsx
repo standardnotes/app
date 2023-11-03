@@ -72,6 +72,7 @@ const MobilePopoverContent = ({
 
     let elementY = 0
     let startY = 0
+    let startTimestamp = Date.now()
     let closestScrollContainerScrollTop = 0
     let isClosestScrollContainerScrolledAtStart = false
     let containerScrollChangedAfterTouchStart = false
@@ -79,6 +80,7 @@ const MobilePopoverContent = ({
     const touchStartHandler = (e: TouchEvent) => {
       startY = e.touches[0].clientY
       elementY = element.getBoundingClientRect().y
+      startTimestamp = Date.now()
       closestScrollContainerScrollTop = closestScrollContainer?.scrollTop || 0
       isClosestScrollContainerScrolledAtStart = !!closestScrollContainer && closestScrollContainerScrollTop > 0
       containerScrollChangedAfterTouchStart = false
@@ -117,11 +119,17 @@ const MobilePopoverContent = ({
         },
       )
     }
-    const touchEndHandler = () => {
+    const touchEndHandler = (event: TouchEvent) => {
       const y = element.getBoundingClientRect().y
       const threshold = window.innerHeight * 0.75
 
-      if (y > threshold && !isClosestScrollContainerScrolledAtStart) {
+      const endTimestamp = Date.now()
+      const deltaY = event.changedTouches[0].clientY - startY
+      const velocity = deltaY / (endTimestamp - startTimestamp)
+
+      if (y < threshold && velocity > 2) {
+        requestClose()
+      } else if (y > threshold && !isClosestScrollContainerScrolledAtStart) {
         requestClose()
       } else {
         element.animate(
