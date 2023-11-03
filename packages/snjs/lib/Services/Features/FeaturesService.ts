@@ -412,6 +412,10 @@ export class FeaturesService
     return Object.values(RoleName.NAMES).filter((role) => roles.includes(role))
   }
 
+  hasRole(roleName: RoleName): boolean {
+    return this.onlineRoles.includes(roleName.value) || this.offlineRoles.includes(roleName.value)
+  }
+
   public hasMinimumRole(role: string): boolean {
     const sortedAllRoles = Object.values(RoleName.NAMES)
 
