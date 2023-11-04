@@ -4,7 +4,7 @@ import ImportModalFileItem from './ImportModalFileItem'
 import ImportModalInitialPage from './InitialPage'
 import Modal, { ModalAction } from '../Modal/Modal'
 import ModalOverlay from '../Modal/ModalOverlay'
-import { ImportModalController } from '@/Controllers/ImportModalController'
+import { ImportModalController } from '@/Components/ImportModal/ImportModalController'
 import { useApplication } from '../ApplicationProvider'
 import Switch from '../Switch/Switch'
 
@@ -66,7 +66,7 @@ const ImportModal = ({ importModalController }: { importModalController: ImportM
           )}
         </div>
         {files.length > 0 && (
-          <label className="py-2 px-4 flex items-center gap-2 border-t border-border">
+          <label className="flex items-center gap-2 border-t border-border px-4 py-2">
             <Switch checked={shouldCreateTag} onChange={setShouldCreateTag} />
             <span className="text-sm">Create tag with all imported notes</span>
           </label>

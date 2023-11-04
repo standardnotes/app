@@ -34,7 +34,7 @@ import { SubscriptionController } from '@/Controllers/Subscription/SubscriptionC
 import { PurchaseFlowController } from '@/Controllers/PurchaseFlow/PurchaseFlowController'
 import { FilesController } from '@/Controllers/FilesController'
 import { HistoryModalController } from '@/Controllers/NoteHistory/HistoryModalController'
-import { ImportModalController } from '@/Controllers/ImportModalController'
+import { ImportModalController } from '@/Components/ImportModal/ImportModalController'
 import { ApplicationEventObserver } from '@/Event/ApplicationEventObserver'
 import { SearchOptionsController } from '@/Controllers/SearchOptionsController'
 import { LinkingController } from '@/Controllers/LinkingController'
@@ -64,6 +64,8 @@ export class WebDependencies extends DependencyContainer {
         application.mutator,
         application.items,
         this.get<HeadlessSuperConverter>(Web_TYPES.SuperConverter),
+        this.get<FilesController>(Web_TYPES.FilesController),
+        this.get<LinkingController>(Web_TYPES.LinkingController),
         application.generateUuid,
       )
     })
