@@ -174,7 +174,7 @@ export class Importer {
       try {
         const text = await this.superConverterService.uploadAndReplaceInlineFilesInSuperString(
           item.text,
-          async (file) => await this.filesController.uploadNewFile(file, { showToast: false, note: item }),
+          async (file) => await this.filesController.uploadNewFile(file, { showToast: true, note: item }),
           async (file) => await this.linkingController.linkItems(item, file),
           this._generateUuid,
         )
