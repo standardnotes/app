@@ -8,7 +8,7 @@ import {
 } from '@standardnotes/snjs'
 import { Importer, NoteImportType } from '@standardnotes/ui-services'
 import { action, makeObservable, observable } from 'mobx'
-import { NavigationController } from './Navigation/NavigationController'
+import { NavigationController } from '../../Controllers/Navigation/NavigationController'
 
 type ImportModalFileCommon = {
   id: string

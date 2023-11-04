@@ -1,6 +1,6 @@
 import { createHeadlessEditor } from '@lexical/headless'
 import { $convertToMarkdownString, $convertFromMarkdownString } from '@lexical/markdown'
-import { FileItem, PrefKey, PrefValue, SuperConverterServiceInterface } from '@standardnotes/snjs'
+import { FileItem, GenerateUuid, PrefKey, PrefValue, SuperConverterServiceInterface } from '@standardnotes/snjs'
 import {
   $createParagraphNode,
   $getRoot,
@@ -16,7 +16,8 @@ import { MarkdownTransformers } from '../MarkdownTransformers'
 import { $generateHtmlFromNodes, $generateNodesFromDOM } from '@lexical/html'
 import { FileNode } from '../Plugins/EncryptedFilePlugin/Nodes/FileNode'
 import { $createFileExportNode } from '../Lexical/Nodes/FileExportNode'
-import { $createInlineFileNode } from '../Plugins/InlineFilePlugin/InlineFileNode'
+import { $createInlineFileNode, InlineFileNode } from '../Plugins/InlineFilePlugin/InlineFileNode'
+import { $createFileNode } from '../Plugins/EncryptedFilePlugin/Nodes/FileUtils'
 export class HeadlessSuperConverter implements SuperConverterServiceInterface {
   private importEditor: LexicalEditor
   private exportEditor: LexicalEditor
@@ -252,5 +253,59 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
     })
 
     return ids
+  }
+
+  async uploadAndReplaceInlineFilesInSuperString(
+    superString: string,
+    uploadFile: (file: File) => Promise<FileItem | undefined>,
+    linkFile: (file: FileItem) => Promise<void>,
+    generateUuid: GenerateUuid,
+  ): Promise<string> {
+    if (superString.length === 0) {
+      return superString
+    }
+
+    this.importEditor.setEditorState(this.importEditor.parseEditorState(superString))
+
+    await new Promise<void>((resolve) => {
+      this.importEditor.update(
+        () => {
+          const inlineFileNodes = $nodesOfType(InlineFileNode)
+          if (inlineFileNodes.length === 0) {
+            resolve()
+            return
+          }
+          Promise.all(
+            inlineFileNodes.map(async (node) => {
+              const blob = await fetch(node.__src).then((response) => response.blob())
+              const file = new File([blob], node.__fileName || generateUuid.execute().getValue(), {
+                type: node.__mimeType,
+              })
+
+              const uploadedFile = await uploadFile(file)
+
+              if (!uploadedFile) {
+                return
+              }
+
+              this.importEditor.update(
+                () => {
+                  const fileNode = $createFileNode(uploadedFile.uuid)
+                  node.replace(fileNode)
+                },
+                { discrete: true },
+              )
+
+              await linkFile(uploadedFile)
+            }),
+          )
+            .then(() => resolve())
+            .catch(console.error)
+        },
+        { discrete: true },
+      )
+    })
+
+    return JSON.stringify(this.importEditor.getEditorState())
   }
 }

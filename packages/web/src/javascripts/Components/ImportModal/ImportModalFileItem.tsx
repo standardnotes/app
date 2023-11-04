@@ -1,4 +1,4 @@
-import { ImportModalController, ImportModalFile } from '@/Controllers/ImportModalController'
+import { ImportModalController, ImportModalFile } from '@/Components/ImportModal/ImportModalController'
 import { classNames, ContentType, DecryptedTransferPayload, pluralize } from '@standardnotes/snjs'
 import { Importer, NoteImportType } from '@standardnotes/ui-services'
 import { observer } from 'mobx-react-lite'

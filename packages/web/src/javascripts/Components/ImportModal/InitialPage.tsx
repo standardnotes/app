@@ -1,4 +1,4 @@
-import { ImportModalController } from '@/Controllers/ImportModalController'
+import { ImportModalController } from '@/Components/ImportModal/ImportModalController'
 import { ClassicFileReader } from '@standardnotes/filepicker'
 import { NoteImportType } from '@standardnotes/ui-services'
 import { observer } from 'mobx-react-lite'
@@ -41,30 +41,30 @@ const ImportModalInitialPage = ({ setFiles }: Props) => {
         <div className="text-lg font-semibold">Drag and drop files to auto-detect and import</div>
         <div className="text-sm">Or click to open file picker</div>
       </button>
-      <div className="text-center my-4 w-full">or import from:</div>
+      <div className="my-4 w-full text-center">or import from:</div>
       <div className="flex flex-wrap items-center justify-center gap-4">
         <Button className="flex items-center !py-2" onClick={() => selectFiles('evernote')}>
-          <Icon type="evernote" className="text-[#14cc45] mr-2" />
+          <Icon type="evernote" className="mr-2 text-[#14cc45]" />
           Evernote
         </Button>
         <Button className="flex items-center !py-2" onClick={() => selectFiles('google-keep')}>
-          <Icon type="gkeep" className="text-[#fbbd00] mr-2" />
+          <Icon type="gkeep" className="mr-2 text-[#fbbd00]" />
           Google Keep
         </Button>
         <Button className="flex items-center !py-2" onClick={() => selectFiles('simplenote')}>
-          <Icon type="simplenote" className="text-[#3360cc] mr-2" />
+          <Icon type="simplenote" className="mr-2 text-[#3360cc]" />
           Simplenote
         </Button>
         <Button className="flex items-center !py-2" onClick={() => selectFiles('aegis')}>
-          <Icon type="aegis" className="bg-[#0d47a1] text-[#fff] rounded mr-2 p-1" size="normal" />
+          <Icon type="aegis" className="mr-2 rounded bg-[#0d47a1] p-1 text-[#fff]" size="normal" />
           Aegis
         </Button>
         <Button className="flex items-center !py-2" onClick={() => selectFiles('plaintext')}>
-          <Icon type="plain-text" className="text-info mr-2" />
+          <Icon type="plain-text" className="mr-2 text-info" />
           Plaintext / Markdown
         </Button>
         <Button className="flex items-center !py-2" onClick={() => selectFiles('html')}>
-          <Icon type="rich-text" className="text-accessory-tint-2 mr-2" />
+          <Icon type="rich-text" className="mr-2 text-accessory-tint-2" />
           HTML
         </Button>
         <Button
@@ -81,7 +81,7 @@ const ImportModalInitialPage = ({ setFiles }: Props) => {
             selectFiles('super').catch(console.error)
           }}
         >
-          <Icon type="file-doc" className="text-accessory-tint-1 mr-2" />
+          <Icon type="file-doc" className="mr-2 text-accessory-tint-1" />
           Super (JSON)
         </Button>
       </div>

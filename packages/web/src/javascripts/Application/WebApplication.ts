@@ -65,7 +65,7 @@ import { PurchaseFlowController } from '@/Controllers/PurchaseFlow/PurchaseFlowC
 import { AccountMenuController } from '@/Controllers/AccountMenu/AccountMenuController'
 import { PreferencesController } from '@/Controllers/PreferencesController'
 import { NotesController } from '@/Controllers/NotesController/NotesController'
-import { ImportModalController } from '@/Controllers/ImportModalController'
+import { ImportModalController } from '@/Components/ImportModal/ImportModalController'
 import { SyncStatusController } from '@/Controllers/SyncStatusController'
 import { HistoryModalController } from '@/Controllers/NoteHistory/HistoryModalController'
 import { NavigationController } from '@/Controllers/Navigation/NavigationController'

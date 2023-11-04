@@ -6,14 +6,23 @@ import {
   ItemManagerInterface,
   MutatorClientInterface,
 } from '@standardnotes/services'
-import { NativeFeatureIdentifier } from '@standardnotes/features'
+import { NativeFeatureIdentifier, NoteType } from '@standardnotes/features'
 import { AegisToAuthenticatorConverter } from './AegisConverter/AegisToAuthenticatorConverter'
 import { EvernoteConverter } from './EvernoteConverter/EvernoteConverter'
 import { GoogleKeepConverter } from './GoogleKeepConverter/GoogleKeepConverter'
 import { PlaintextConverter } from './PlaintextConverter/PlaintextConverter'
 import { SimplenoteConverter } from './SimplenoteConverter/SimplenoteConverter'
 import { readFileAsText } from './Utils'
-import { DecryptedTransferPayload, NoteContent } from '@standardnotes/models'
+import {
+  DecryptedItemInterface,
+  DecryptedTransferPayload,
+  FileItem,
+  ItemContent,
+  NoteContent,
+  NoteMutator,
+  SNNote,
+  isNote,
+} from '@standardnotes/models'
 import { HTMLConverter } from './HTMLConverter/HTMLConverter'
 import { SuperConverterServiceInterface } from '@standardnotes/snjs/dist/@types'
 import { SuperConverter } from './SuperConverter/SuperConverter'
@@ -34,7 +43,22 @@ export class Importer {
     private mutator: MutatorClientInterface,
     private items: ItemManagerInterface,
     private superConverterService: SuperConverterServiceInterface,
-    _generateUuid: GenerateUuid,
+    private filesController: {
+      uploadNewFile(
+        fileOrHandle: File | FileSystemFileHandle,
+        options?: {
+          showToast?: boolean
+          note?: SNNote
+        },
+      ): Promise<FileItem | undefined>
+    },
+    private linkingController: {
+      linkItems(
+        item: DecryptedItemInterface<ItemContent>,
+        itemToLink: DecryptedItemInterface<ItemContent>,
+      ): Promise<void>
+    },
+    private _generateUuid: GenerateUuid,
   ) {
     this.aegisConverter = new AegisToAuthenticatorConverter(_generateUuid)
     this.googleKeepConverter = new GoogleKeepConverter(this.superConverterService, _generateUuid)
@@ -140,6 +164,27 @@ export class Importer {
         return this.mutator.insertItem(note)
       }),
     )
+    for (const item of insertedItems) {
+      if (!isNote(item)) {
+        continue
+      }
+      if (item.noteType !== NoteType.Super) {
+        continue
+      }
+      try {
+        const text = await this.superConverterService.uploadAndReplaceInlineFilesInSuperString(
+          item.text,
+          async (file) => await this.filesController.uploadNewFile(file, { showToast: false, note: item }),
+          async (file) => await this.linkingController.linkItems(item, file),
+          this._generateUuid,
+        )
+        await this.mutator.changeItem<NoteMutator>(item, (mutator) => {
+          mutator.text = text
+        })
+      } catch (error) {
+        console.error(error)
+      }
+    }
     return insertedItems
   }
 }
