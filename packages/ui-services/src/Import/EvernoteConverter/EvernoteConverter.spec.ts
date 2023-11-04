@@ -3,7 +3,7 @@
  */
 
 import { ContentType } from '@standardnotes/domain-core'
-import { DecryptedTransferPayload, NoteContent, TagContent } from '@standardnotes/models'
+import { DecryptedTransferPayload, FileItem, NoteContent, TagContent } from '@standardnotes/models'
 import { EvernoteConverter, EvernoteResource } from './EvernoteConverter'
 import { createTestResourceElement, enex, enexWithNoNoteOrTag } from './testData'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
@@ -33,6 +33,12 @@ describe('EvernoteConverter', () => {
     convertOtherFormatToSuperString: (data: string) => data,
     convertSuperStringToOtherFormat: async (data: string) => data,
     getEmbeddedFileIDsFromSuperString: () => [],
+    uploadAndReplaceInlineFilesInSuperString: async (
+      superString: string,
+      _uploadFile: (file: File) => Promise<FileItem | undefined>,
+      _linkFile: (file: FileItem) => Promise<void>,
+      _generateUuid: GenerateUuid,
+    ) => superString,
   }
 
   const generateUuid = new GenerateUuid(crypto)
