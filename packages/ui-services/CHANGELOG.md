@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.34.0](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.33.3...@standardnotes/ui-services@1.34.0) (2023-11-06)
+
+### Features
+
+* Importing markdown files from the Import dialog will now automatically use Super notes ([3bf670e](https://github.com/standardnotes/app/commit/3bf670ece754df3f452a3ae305830c772687d36a))
+
 ## [1.33.3](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.33.2...@standardnotes/ui-services@1.33.3) (2023-11-04)
 
 **Note:** Version bump only for package @standardnotes/ui-services
