@@ -63,7 +63,7 @@ export class Importer {
     this.aegisConverter = new AegisToAuthenticatorConverter(_generateUuid)
     this.googleKeepConverter = new GoogleKeepConverter(this.superConverterService, _generateUuid)
     this.simplenoteConverter = new SimplenoteConverter(_generateUuid)
-    this.plaintextConverter = new PlaintextConverter(_generateUuid)
+    this.plaintextConverter = new PlaintextConverter(this.superConverterService, _generateUuid)
     this.evernoteConverter = new EvernoteConverter(this.superConverterService, _generateUuid)
     this.htmlConverter = new HTMLConverter(this.superConverterService, _generateUuid)
     this.superConverter = new SuperConverter(this.superConverterService, _generateUuid)
@@ -134,7 +134,7 @@ export class Importer {
     } else if (type === 'evernote') {
       return await this.evernoteConverter.convertENEXFileToNotesAndTags(file, isEntitledToSuper)
     } else if (type === 'plaintext') {
-      return [await this.plaintextConverter.convertPlaintextFileToNote(file)]
+      return [await this.plaintextConverter.convertPlaintextFileToNote(file, isEntitledToSuper)]
     } else if (type === 'html') {
       return [await this.htmlConverter.convertHTMLFileToNote(file, isEntitledToSuper)]
     }
