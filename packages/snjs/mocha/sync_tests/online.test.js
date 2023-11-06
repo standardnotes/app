@@ -572,6 +572,39 @@ describe('online syncing', function () {
     expect(rawPayloads.length).to.equal(expectedItemCount)
   }).timeout(Factory.SixtySecondTimeout)
 
+  it('should sync all items including ones that are breaching transfer limit', async function () {
+    const response = await fetch('/mocha/assets/small_file.md')
+    const buffer = new Uint8Array(await response.arrayBuffer())
+    const numberOfNotesToExceedThe1MBTransferLimit = 80
+
+    const testContext = await Factory.createAppContextWithFakeCrypto()
+    await testContext.launch()
+    await testContext.register()
+    const email = testContext.email
+    const password = testContext.password
+
+    for (let i = 0; i < numberOfNotesToExceedThe1MBTransferLimit; i++) {
+      await testContext.createSyncedNote(`note ${i}`, buffer.toString())
+      await testContext.sync()
+    }
+    await testContext.deinit()
+
+    const secondContext = await Factory.createAppContextWithFakeCrypto(Math.random(), email, password)
+    await secondContext.launch()
+    const firstSyncPromise = secondContext.awaitNextSyncEvent(SyncEvent.PaginatedSyncRequestCompleted)
+    await secondContext.signIn()
+
+    const firstSyncResult = await firstSyncPromise
+
+    expect(firstSyncResult.retrievedPayloads.length > 0).to.be.true
+    expect(firstSyncResult.retrievedPayloads.length < numberOfNotesToExceedThe1MBTransferLimit).to.be.true
+    expect(firstSyncResult.successResponseData.cursor_token).not.to.be.undefined
+
+    expect(secondContext.noteCount).to.equal(numberOfNotesToExceedThe1MBTransferLimit)
+
+    await secondContext.deinit()
+  }).timeout(Factory.SixtySecondTimeout)
+
   it('syncing an item should storage it encrypted', async function () {
     const note = await Factory.createMappedNote(application)
     await application.mutator.setItemDirty(note)

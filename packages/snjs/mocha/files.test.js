@@ -112,7 +112,7 @@ describe('files', function () {
   it('should encrypt and upload small file', async function () {
     await setup({ fakeCrypto: false, subscription: true })
 
-    const response = await fetch('/packages/snjs/mocha/assets/small_file.md')
+    const response = await fetch('/mocha/assets/small_file.md')
     const buffer = new Uint8Array(await response.arrayBuffer())
 
     const file = await Files.uploadFile(fileService, buffer, 'my-file', 'md', 1000)
@@ -125,7 +125,7 @@ describe('files', function () {
   it('should encrypt and upload big file', async function () {
     await setup({ fakeCrypto: false, subscription: true })
 
-    const response = await fetch('/packages/snjs/mocha/assets/two_mb_file.md')
+    const response = await fetch('/mocha/assets/two_mb_file.md')
     const buffer = new Uint8Array(await response.arrayBuffer())
 
     const file = await Files.uploadFile(fileService, buffer, 'my-file', 'md', 100000)
@@ -138,7 +138,7 @@ describe('files', function () {
   it('should delete file', async function () {
     await setup({ fakeCrypto: false, subscription: true })
 
-    const response = await fetch('/packages/snjs/mocha/assets/small_file.md')
+    const response = await fetch('/mocha/assets/small_file.md')
     const buffer = new Uint8Array(await response.arrayBuffer())
 
     const file = await Files.uploadFile(fileService, buffer, 'my-file', 'md', 1000)
