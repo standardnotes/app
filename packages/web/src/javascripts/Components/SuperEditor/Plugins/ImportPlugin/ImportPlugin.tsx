@@ -22,7 +22,7 @@ export default function ImportPlugin({
   const [editor] = useLexicalComposerContext()
 
   useEffect(() => {
-    const dontAllowConversionOfEmptyStringWhichWouldResultInError = text.length === 0
+    const dontAllowConversionOfEmptyStringWhichWouldResultInError = text.trim().length === 0
     if (dontAllowConversionOfEmptyStringWhichWouldResultInError) {
       return
     }
