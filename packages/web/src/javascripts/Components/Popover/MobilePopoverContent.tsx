@@ -1,6 +1,6 @@
 import { useDisableBodyScrollOnMobile } from '@/Hooks/useDisableBodyScrollOnMobile'
 import { classNames } from '@standardnotes/snjs'
-import { ReactNode, useCallback, useEffect, useRef } from 'react'
+import { ReactNode, useCallback, useEffect } from 'react'
 import Portal from '../Portal/Portal'
 import MobileModalAction from '../Modal/MobileModalAction'
 import { MobileModalAnimationOptions, useModalAnimation } from '../Modal/useModalAnimation'
@@ -10,6 +10,7 @@ import { DialogWithClose } from '@/Utils/CloseOpenModalsAndPopovers'
 import { useMediaQuery, MutuallyExclusiveMediaQueryBreakpoints } from '@/Hooks/useMediaQuery'
 import { SupportsPassiveListeners } from '@/Constants/Constants'
 import { useLifecycleAnimation } from '@/Hooks/useLifecycleAnimation'
+import { getScrollParent } from '@/Utils'
 
 const DisableScroll = () => {
   useDisableBodyScrollOnMobile()
@@ -61,15 +62,13 @@ const MobilePopoverContent = ({
       options: MobileModalAnimationOptions,
     },
   })
-  const scrollContainerRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
-    const closestScrollContainer = scrollContainerRef.current
-
-    if (!element || !closestScrollContainer) {
+    if (!element) {
       return
     }
 
+    let closestScrollContainer: HTMLElement | null = null
     let elementY = 0
     let startY = 0
     let startTimestamp = Date.now()
@@ -81,6 +80,7 @@ const MobilePopoverContent = ({
       startY = e.touches[0].clientY
       elementY = element.getBoundingClientRect().y
       startTimestamp = Date.now()
+      closestScrollContainer = getScrollParent(e.target as HTMLElement)
       closestScrollContainerScrollTop = closestScrollContainer?.scrollTop || 0
       isClosestScrollContainerScrolledAtStart = !!closestScrollContainer && closestScrollContainerScrollTop > 0
       containerScrollChangedAfterTouchStart = false
@@ -105,7 +105,7 @@ const MobilePopoverContent = ({
       }
 
       const y = element.getBoundingClientRect().y
-      if (y > elementY) {
+      if (y > elementY && closestScrollContainer) {
         closestScrollContainer.style.overflowY = 'hidden'
       }
 
@@ -144,7 +144,9 @@ const MobilePopoverContent = ({
       }
 
       startY = 0
-      closestScrollContainer.style.overflowY = ''
+      if (closestScrollContainer) {
+        closestScrollContainer.style.overflowY = ''
+      }
     }
 
     element.addEventListener('touchstart', touchStartHandler, SupportsPassiveListeners ? { passive: true } : false)
@@ -199,12 +201,7 @@ const MobilePopoverContent = ({
               Done
             </MobileModalAction>
           </MobileModalHeader>
-          <div
-            className={classNames('h-full overflow-y-auto overscroll-none bg-passive-5', className)}
-            ref={scrollContainerRef}
-          >
-            {children}
-          </div>
+          <div className={classNames('h-full overflow-y-auto overscroll-none bg-passive-5', className)}>{children}</div>
         </div>
       </div>
     </Portal>
