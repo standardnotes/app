@@ -5,6 +5,8 @@ import { DeviceInterface } from './DeviceInterface'
 import { AppleIAPReceipt } from '../Subscription/AppleIAPReceipt'
 import { ApplicationEvent } from '../Event/ApplicationEvent'
 
+import type { Notification } from '../../../../mobile/node_modules/@notifee/react-native/dist/index'
+
 export interface MobileDeviceInterface extends DeviceInterface {
   environment: Environment.Mobile
   platform: Platform.Ios | Platform.Android
@@ -34,4 +36,8 @@ export interface MobileDeviceInterface extends DeviceInterface {
   purchaseSubscriptionIAP(plan: AppleIAPProductId): Promise<AppleIAPReceipt | undefined>
   authenticateWithU2F(authenticationOptionsJSONString: string): Promise<Record<string, unknown> | null>
   notifyApplicationEvent(event: ApplicationEvent): void
+
+  canDisplayNotifications(): Promise<boolean>
+  displayNotification(options: Notification): Promise<string>
+  cancelNotification(notificationId: string): Promise<void>
 }

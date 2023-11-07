@@ -50,6 +50,7 @@ import { Database } from './Database/Database'
 import { isLegacyIdentifier } from './Database/LegacyIdentifier'
 import { LegacyKeyValueStore } from './Database/LegacyKeyValueStore'
 import Keychain from './Keychain'
+import notifee, { AuthorizationStatus, Notification } from '@notifee/react-native'
 
 export type BiometricsType = 'Fingerprint' | 'Face ID' | 'Biometrics' | 'Touch ID'
 
@@ -71,11 +72,45 @@ export class MobileDevice implements MobileDeviceInterface {
   private keyValueStore = new LegacyKeyValueStore()
   private databases = new Map<string, Database>()
 
+  androidNotificationChannelId = ''
+
   constructor(
     private stateObserverService?: AppStateObserverService,
     private androidBackHandlerService?: AndroidBackHandlerService,
     private colorSchemeService?: ColorSchemeObserverService,
-  ) {}
+  ) {
+    this.initializeNotifications().catch(console.error)
+  }
+
+  async initializeNotifications() {
+    // Required for iOS
+    await notifee.requestPermission()
+
+    this.androidNotificationChannelId = await notifee.createChannel({
+      id: 'default',
+      name: 'Default',
+    })
+  }
+
+  async canDisplayNotifications(): Promise<boolean> {
+    const settings = Platform.OS === 'ios' ? await notifee.requestPermission() : await notifee.getNotificationSettings()
+
+    return settings.authorizationStatus >= AuthorizationStatus.AUTHORIZED
+  }
+
+  async displayNotification(options: Notification): Promise<string> {
+    return await notifee.displayNotification({
+      ...options,
+      android: {
+        ...options.android,
+        channelId: this.androidNotificationChannelId,
+      },
+    })
+  }
+
+  async cancelNotification(notificationId: string): Promise<void> {
+    await notifee.cancelNotification(notificationId)
+  }
 
   async removeRawStorageValuesForIdentifier(identifier: string): Promise<void> {
     await this.removeRawStorageValue(namespacedKey(identifier, RawStorageKey.SnjsVersion))

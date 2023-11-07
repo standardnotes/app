@@ -412,6 +412,11 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
     const { showToast = true, note } = options
 
     let toastId: string | undefined
+    let canShowProgressNotification = false
+
+    if (showToast && this.mobileDevice && this.platform === Platform.Android) {
+      canShowProgressNotification = await this.mobileDevice.canDisplayNotifications()
+    }
 
     try {
       const minimumChunkSize = this.files.minimumChunkSize()
@@ -449,11 +454,21 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
       const initialProgress = operation.getProgress().percentComplete
 
       if (showToast) {
-        toastId = addToast({
-          type: ToastType.Progress,
-          message: `Uploading file "${fileToUpload.name}" (${initialProgress}%)`,
-          progress: initialProgress,
-        })
+        if (this.mobileDevice && canShowProgressNotification) {
+          toastId = await this.mobileDevice.displayNotification({
+            title: `Uploading file "${fileToUpload.name}"`,
+            android: {
+              progress: { max: 100, current: initialProgress, indeterminate: true },
+              onlyAlertOnce: true,
+            },
+          })
+        } else {
+          toastId = addToast({
+            type: ToastType.Progress,
+            message: `Uploading file "${fileToUpload.name}" (${initialProgress}%)`,
+            progress: initialProgress,
+          })
+        }
       }
 
       const onChunk: OnChunkCallbackNoProgress = async ({ data, index, isLast }) => {
@@ -461,10 +476,21 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
 
         const percentComplete = Math.round(operation.getProgress().percentComplete)
         if (toastId) {
-          updateToast(toastId, {
-            message: `Uploading file "${fileToUpload.name}" (${percentComplete}%)`,
-            progress: percentComplete,
-          })
+          if (this.mobileDevice && canShowProgressNotification) {
+            await this.mobileDevice.displayNotification({
+              id: toastId,
+              title: `Uploading file "${fileToUpload.name}"`,
+              android: {
+                progress: { max: 100, current: percentComplete, indeterminate: false },
+                onlyAlertOnce: true,
+              },
+            })
+          } else {
+            updateToast(toastId, {
+              message: `Uploading file "${fileToUpload.name}" (${percentComplete}%)`,
+              progress: percentComplete,
+            })
+          }
         }
       }
 
@@ -480,32 +506,43 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
       if (uploadedFile instanceof ClientDisplayableError) {
         addToast({
           type: ToastType.Error,
-          message: 'Unable to close upload session',
+          message: uploadedFile.text,
         })
-        throw new Error('Unable to close upload session')
+        throw new Error(uploadedFile.text)
       }
 
       if (toastId) {
+        if (this.mobileDevice && canShowProgressNotification) {
+          this.mobileDevice.cancelNotification(toastId).catch(console.error)
+        }
         dismissToast(toastId)
       }
       if (showToast) {
-        addToast({
-          type: ToastType.Success,
-          message: `Uploaded file "${uploadedFile.name}"`,
-          actions: [
-            {
-              label: 'Open',
-              handler: (toastId) => {
-                void this.handleFileAction({
-                  type: FileItemActionType.PreviewFile,
-                  payload: { file: uploadedFile },
-                })
-                dismissToast(toastId)
+        if (this.mobileDevice && canShowProgressNotification) {
+          this.mobileDevice
+            .displayNotification({
+              title: `Uploaded file "${uploadedFile.name}"`,
+            })
+            .catch(console.error)
+        } else {
+          addToast({
+            type: ToastType.Success,
+            message: `Uploaded file "${uploadedFile.name}"`,
+            actions: [
+              {
+                label: 'Open',
+                handler: (toastId) => {
+                  void this.handleFileAction({
+                    type: FileItemActionType.PreviewFile,
+                    payload: { file: uploadedFile },
+                  })
+                  dismissToast(toastId)
+                },
               },
-            },
-          ],
-          autoClose: true,
-        })
+            ],
+            autoClose: true,
+          })
+        }
       }
 
       return uploadedFile
@@ -513,12 +550,23 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
       console.error(error)
 
       if (toastId) {
+        if (this.mobileDevice && canShowProgressNotification) {
+          this.mobileDevice.cancelNotification(toastId).catch(console.error)
+        }
         dismissToast(toastId)
       }
-      addToast({
-        type: ToastType.Error,
-        message: 'There was an error while uploading the file',
-      })
+      if (this.mobileDevice && canShowProgressNotification) {
+        this.mobileDevice
+          .displayNotification({
+            title: 'There was an error while uploading the file',
+          })
+          .catch(console.error)
+      } else {
+        addToast({
+          type: ToastType.Error,
+          message: 'There was an error while uploading the file',
+        })
+      }
     }
 
     return undefined
