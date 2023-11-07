@@ -83,7 +83,10 @@ export class MobileDevice implements MobileDeviceInterface {
   }
 
   async initializeNotifications() {
-    // Required for iOS
+    if (Platform.OS !== 'android') {
+      return
+    }
+
     await notifee.requestPermission()
 
     this.androidNotificationChannelId = await notifee.createChannel({
@@ -93,7 +96,7 @@ export class MobileDevice implements MobileDeviceInterface {
   }
 
   async canDisplayNotifications(): Promise<boolean> {
-    const settings = Platform.OS === 'ios' ? await notifee.requestPermission() : await notifee.getNotificationSettings()
+    const settings = await notifee.requestPermission()
 
     return settings.authorizationStatus >= AuthorizationStatus.AUTHORIZED
   }
