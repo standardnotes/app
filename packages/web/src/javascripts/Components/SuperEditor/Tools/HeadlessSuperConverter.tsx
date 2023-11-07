@@ -16,8 +16,9 @@ import { MarkdownTransformers } from '../MarkdownTransformers'
 import { $generateHtmlFromNodes, $generateNodesFromDOM } from '@lexical/html'
 import { FileNode } from '../Plugins/EncryptedFilePlugin/Nodes/FileNode'
 import { $createFileExportNode } from '../Lexical/Nodes/FileExportNode'
-import { $createInlineFileNode, InlineFileNode } from '../Plugins/InlineFilePlugin/InlineFileNode'
+import { $createInlineFileNode, $isInlineFileNode, InlineFileNode } from '../Plugins/InlineFilePlugin/InlineFileNode'
 import { $createFileNode } from '../Plugins/EncryptedFilePlugin/Nodes/FileUtils'
+import { RemoteImageNode } from '../Plugins/RemoteImagePlugin/RemoteImageNode'
 export class HeadlessSuperConverter implements SuperConverterServiceInterface {
   private importEditor: LexicalEditor
   private exportEditor: LexicalEditor
@@ -271,15 +272,19 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
       this.importEditor.update(
         () => {
           const inlineFileNodes = $nodesOfType(InlineFileNode)
-          if (inlineFileNodes.length === 0) {
+          const remoteImageNodes = $nodesOfType(RemoteImageNode).filter((node) => node.__src.startsWith('data:'))
+          const concatenatedNodes = [...inlineFileNodes, ...remoteImageNodes]
+          if (concatenatedNodes.length === 0) {
             resolve()
             return
           }
           Promise.all(
-            inlineFileNodes.map(async (node) => {
+            concatenatedNodes.map(async (node) => {
               const blob = await fetch(node.__src).then((response) => response.blob())
-              const file = new File([blob], node.__fileName || generateUuid.execute().getValue(), {
-                type: node.__mimeType,
+              const name = $isInlineFileNode(node) ? node.__fileName : node.__alt
+              const mimeType = $isInlineFileNode(node) ? node.__mimeType : node.__src.split(';')[0].split(':')[1]
+              const file = new File([blob], name || generateUuid.execute().getValue(), {
+                type: mimeType,
               })
 
               const uploadedFile = await uploadFile(file)

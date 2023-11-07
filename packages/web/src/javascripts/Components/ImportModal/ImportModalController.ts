@@ -21,6 +21,7 @@ export type ImportModalFile = (
   | { status: 'ready'; payloads?: DecryptedTransferPayload[] }
   | { status: 'parsing' }
   | { status: 'importing' }
+  | { status: 'uploading-files' }
   | { status: 'success'; successMessage: string }
   | { status: 'error'; error: Error }
 ) &
@@ -105,7 +106,14 @@ export class ImportModalController {
     })
 
     try {
-      await this.importer.importFromTransferPayloads(payloads)
+      const insertedItems = await this.importer.importFromTransferPayloads(payloads)
+
+      this.updateFile({
+        ...file,
+        status: 'uploading-files',
+      })
+
+      await this.importer.uploadAndReplaceInlineFilesInInsertedItems(insertedItems)
 
       const notesImported = payloads.filter((payload) => payload.content_type === ContentType.TYPES.Note)
       const tagsImported = payloads.filter((payload) => payload.content_type === ContentType.TYPES.Tag)

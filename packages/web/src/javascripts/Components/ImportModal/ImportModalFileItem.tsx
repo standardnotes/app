@@ -103,6 +103,7 @@ const ImportModalFileItem = ({
             {file.status === 'pending' && 'Could not auto-detect service. Please select manually.'}
             {file.status === 'parsing' && 'Parsing...'}
             {file.status === 'importing' && 'Importing...'}
+            {file.status === 'uploading-files' && 'Uploading and embedding files...'}
             {file.status === 'error' && JSON.stringify(file.error)}
             {file.status === 'success' && file.successMessage}
           </div>

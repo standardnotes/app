@@ -31,6 +31,7 @@ import {
   $isRemoteImageNode,
   RemoteImageNode,
 } from './Plugins/RemoteImagePlugin/RemoteImageNode'
+import { $createInlineFileNode, $isInlineFileNode, InlineFileNode } from './Plugins/InlineFilePlugin/InlineFileNode'
 
 const HorizontalRule: ElementTransformer = {
   dependencies: [HorizontalRuleNode],
@@ -67,6 +68,26 @@ const IMAGE: TextMatchTransformer = {
     const [, alt, src] = match
     const imageNode = $createRemoteImageNode(src, alt)
     textNode.replace(imageNode)
+  },
+  trigger: ')',
+  type: 'text-match',
+}
+
+const INLINE_FILE: TextMatchTransformer = {
+  dependencies: [InlineFileNode],
+  export: (node) => {
+    if (!$isInlineFileNode(node)) {
+      return null
+    }
+
+    return node.getTextContent()
+  },
+  importRegExp: /(?:\[([^[]*)\])(?:\((data:(.*);[^(]+)\))/,
+  regExp: /(?:\[([^[]*)\])(?:\((data:(.*);[^(]+)\))$/,
+  replace: (textNode, match) => {
+    const [, name, src, mimeType] = match
+    const inlineFileNode = $createInlineFileNode(src, mimeType, name)
+    textNode.replace(inlineFileNode)
   },
   trigger: ')',
   type: 'text-match',
@@ -224,6 +245,7 @@ export const MarkdownTransformers = [
   TABLE,
   CHECK_LIST,
   IMAGE,
+  INLINE_FILE,
   ...ELEMENT_TRANSFORMERS,
   ...TEXT_FORMAT_TRANSFORMERS,
   ...TEXT_MATCH_TRANSFORMERS,

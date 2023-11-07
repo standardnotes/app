@@ -164,6 +164,10 @@ export class Importer {
         return this.mutator.insertItem(note)
       }),
     )
+    return insertedItems
+  }
+
+  async uploadAndReplaceInlineFilesInInsertedItems(insertedItems: DecryptedItemInterface<ItemContent>[]) {
     for (const item of insertedItems) {
       if (!isNote(item)) {
         continue
@@ -185,6 +189,5 @@ export class Importer {
         console.error(error)
       }
     }
-    return insertedItems
   }
 }
