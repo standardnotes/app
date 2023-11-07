@@ -1,6 +1,20 @@
 {
   "versions": [
     {
+      "version": "3.181.19",
+      "title": "[3.181.19](https://github.com/standardnotes/app/compare/@standardnotes/web@3.181.18...@standardnotes/web@3.181.19) (2023-11-07)",
+      "date": null,
+      "body": "### Bug Fixes\n\n* Fixed issue where non-image inlined files would not correctly be imported from a Markdown file ([8941675](https://github.com/standardnotes/app/commit/894167520dc829b72f721bdf63acc6038ff8816f))",
+      "parsed": {
+        "_": [
+          "Fixed issue where non-image inlined files would not correctly be imported from a Markdown file (8941675)"
+        ],
+        "Bug Fixes": [
+          "Fixed issue where non-image inlined files would not correctly be imported from a Markdown file (8941675)"
+        ]
+      }
+    },
+    {
       "version": "3.181.18",
       "title": "[3.181.18](https://github.com/standardnotes/app/compare/@standardnotes/web@3.181.17...@standardnotes/web@3.181.18) (2023-11-06)",
       "date": null,

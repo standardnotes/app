@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.34.1](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.34.0...@standardnotes/ui-services@1.34.1) (2023-11-07)
+
+### Bug Fixes
+
+* Fixed issue where non-image inlined files would not correctly be imported from a Markdown file ([8941675](https://github.com/standardnotes/app/commit/894167520dc829b72f721bdf63acc6038ff8816f))
+
 # [1.34.0](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.33.3...@standardnotes/ui-services@1.34.0) (2023-11-06)
 
 ### Features
