@@ -12,4 +12,5 @@ export enum ReactNativeToWebEvent {
   ReceivedFile = 'ReceivedFile',
   ReceivedLink = 'ReceivedLink',
   ReceivedText = 'ReceivedText',
+  OpenFilePreview = 'OpenFilePreview',
 }

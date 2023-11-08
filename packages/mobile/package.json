@@ -72,6 +72,7 @@
     "node": ">=16"
   },
   "dependencies": {
+    "@notifee/react-native": "^7.8.0",
     "react-native-store-review": "^0.4.1"
   }
 }

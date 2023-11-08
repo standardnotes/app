@@ -22,6 +22,7 @@ import {
   NoteContent,
   SNNote,
   DesktopManagerInterface,
+  FileItem,
 } from '@standardnotes/snjs'
 import { action, computed, makeObservable, observable } from 'mobx'
 import { startAuthentication, startRegistration } from '@simplewebauthn/browser'
@@ -76,6 +77,7 @@ import { NoAccountWarningController } from '@/Controllers/NoAccountWarningContro
 import { SearchOptionsController } from '@/Controllers/SearchOptionsController'
 import { PersistenceService } from '@/Controllers/Abstract/PersistenceService'
 import { removeFromArray } from '@standardnotes/utils'
+import { FileItemActionType } from '@/Components/AttachedFilesPopover/PopoverFileItemAction'
 
 export type WebEventObserver = (event: WebAppEvent, data?: unknown) => void
 
@@ -351,6 +353,21 @@ export class WebApplication extends SNApplication implements WebApplicationInter
 
   handleMobileKeyboardDidChangeFrameEvent(frame: { height: number; contentHeight: number }): void {
     this.notifyWebEvent(WebAppEvent.MobileKeyboardDidChangeFrame, frame)
+  }
+
+  handleOpenFilePreviewEvent({ id }: { id: string }): void {
+    const file = this.items.findItem<FileItem>(id)
+    if (!file) {
+      return
+    }
+    this.filesController
+      .handleFileAction({
+        type: FileItemActionType.PreviewFile,
+        payload: {
+          file,
+        },
+      })
+      .catch(console.error)
   }
 
   handleReceivedFileEvent(file: { name: string; mimeType: string; data: string }): void {

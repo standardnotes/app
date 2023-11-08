@@ -24,6 +24,7 @@ export interface WebApplicationInterface extends ApplicationInterface {
   handleReceivedFileEvent(file: { name: string; mimeType: string; data: string }): void
   handleReceivedTextEvent(item: { text: string; title?: string }): Promise<void>
   handleReceivedLinkEvent(item: { link: string; title: string }): Promise<void>
+  handleOpenFilePreviewEvent(item: { id: string }): void
   isNativeMobileWeb(): boolean
   handleAndroidBackButtonPressed(): void
   addAndroidBackHandlerEventListener(listener: () => boolean): (() => void) | undefined

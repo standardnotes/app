@@ -50,6 +50,7 @@ import { Database } from './Database/Database'
 import { isLegacyIdentifier } from './Database/LegacyIdentifier'
 import { LegacyKeyValueStore } from './Database/LegacyKeyValueStore'
 import Keychain from './Keychain'
+import notifee, { AuthorizationStatus, Notification } from '@notifee/react-native'
 
 export type BiometricsType = 'Fingerprint' | 'Face ID' | 'Biometrics' | 'Touch ID'
 
@@ -75,7 +76,40 @@ export class MobileDevice implements MobileDeviceInterface {
     private stateObserverService?: AppStateObserverService,
     private androidBackHandlerService?: AndroidBackHandlerService,
     private colorSchemeService?: ColorSchemeObserverService,
-  ) {}
+  ) {
+    this.initializeNotifications().catch(console.error)
+  }
+
+  async initializeNotifications() {
+    if (Platform.OS !== 'android') {
+      return
+    }
+
+    await notifee.createChannel({
+      id: 'files',
+      name: 'File Upload/Download',
+    })
+  }
+
+  async canDisplayNotifications(): Promise<boolean> {
+    const settings = await notifee.requestPermission()
+
+    return settings.authorizationStatus >= AuthorizationStatus.AUTHORIZED
+  }
+
+  async displayNotification(options: Notification): Promise<string> {
+    return await notifee.displayNotification({
+      ...options,
+      android: {
+        ...options.android,
+        channelId: 'files',
+      },
+    })
+  }
+
+  async cancelNotification(notificationId: string): Promise<void> {
+    await notifee.cancelNotification(notificationId)
+  }
 
   async removeRawStorageValuesForIdentifier(identifier: string): Promise<void> {
     await this.removeRawStorageValue(namespacedKey(identifier, RawStorageKey.SnjsVersion))
