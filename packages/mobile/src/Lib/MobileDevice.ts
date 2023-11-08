@@ -72,8 +72,6 @@ export class MobileDevice implements MobileDeviceInterface {
   private keyValueStore = new LegacyKeyValueStore()
   private databases = new Map<string, Database>()
 
-  androidNotificationChannelId = ''
-
   constructor(
     private stateObserverService?: AppStateObserverService,
     private androidBackHandlerService?: AndroidBackHandlerService,
@@ -87,9 +85,9 @@ export class MobileDevice implements MobileDeviceInterface {
       return
     }
 
-    this.androidNotificationChannelId = await notifee.createChannel({
-      id: 'default',
-      name: 'Default',
+    await notifee.createChannel({
+      id: 'files',
+      name: 'File Upload/Download',
     })
   }
 
@@ -104,7 +102,7 @@ export class MobileDevice implements MobileDeviceInterface {
       ...options,
       android: {
         ...options.android,
-        channelId: this.androidNotificationChannelId,
+        channelId: 'files',
       },
     })
   }
