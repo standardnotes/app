@@ -507,6 +507,11 @@ PODS:
     - React-Core
   - RNKeychain (8.1.2):
     - React-Core
+  - RNNotifee (7.8.0):
+    - React-Core
+    - RNNotifee/NotifeeCore (= 7.8.0)
+  - RNNotifee/NotifeeCore (7.8.0):
+    - React-Core
   - RNPrivacySnapshot (1.0.0):
     - React-Core
   - RNShare (9.4.1):
@@ -593,6 +598,7 @@ DEPENDENCIES:
   - RNFS (from `../node_modules/react-native-fs`)
   - RNIap (from `../node_modules/react-native-iap`)
   - RNKeychain (from `../node_modules/react-native-keychain`)
+  - "RNNotifee (from `../node_modules/@notifee/react-native`)"
   - RNPrivacySnapshot (from `../node_modules/react-native-privacy-snapshot`)
   - RNShare (from `../node_modules/react-native-share`)
   - RNStoreReview (from `../node_modules/react-native-store-review`)
@@ -716,6 +722,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-iap"
   RNKeychain:
     :path: "../node_modules/react-native-keychain"
+  RNNotifee:
+    :path: "../node_modules/@notifee/react-native"
   RNPrivacySnapshot:
     :path: "../node_modules/react-native-privacy-snapshot"
   RNShare:
@@ -789,6 +797,7 @@ SPEC CHECKSUMS:
   RNFS: 4ac0f0ea233904cb798630b3c077808c06931688
   RNIap: c397f49db45af3b10dca64b2325f21bb8078ad21
   RNKeychain: a65256b6ca6ba6976132cc4124b238a5b13b3d9c
+  RNNotifee: f3c01b391dd8e98e67f539f9a35a9cbcd3bae744
   RNPrivacySnapshot: 8eaf571478a353f2e5184f5c803164f22428b023
   RNShare: 32e97adc8d8c97d4a26bcdd3c45516882184f8b6
   RNStoreReview: 923b1c888c13469925bf0256dc2c046eab557ce5

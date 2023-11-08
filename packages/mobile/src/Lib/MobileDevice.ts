@@ -87,8 +87,6 @@ export class MobileDevice implements MobileDeviceInterface {
       return
     }
 
-    await notifee.requestPermission()
-
     this.androidNotificationChannelId = await notifee.createChannel({
       id: 'default',
       name: 'Default',

@@ -291,6 +291,11 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
 
   private async downloadFile(file: FileItem): Promise<void> {
     let downloadingToastId = ''
+    let canShowProgressNotification = false
+
+    if (this.mobileDevice && this.platform === Platform.Android) {
+      canShowProgressNotification = await this.mobileDevice.canDisplayNotifications()
+    }
 
     try {
       const saver = StreamingFileSaver.available() ? new StreamingFileSaver(file.name) : new ClassicFileSaver()
@@ -301,11 +306,21 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
         await saver.selectFileToSaveTo()
       }
 
-      downloadingToastId = addToast({
-        type: ToastType.Progress,
-        message: `Downloading file "${file.name}" (0%)`,
-        progress: 0,
-      })
+      if (this.mobileDevice && canShowProgressNotification) {
+        downloadingToastId = await this.mobileDevice.displayNotification({
+          title: `Downloading file "${file.name}"`,
+          android: {
+            progress: { max: 100, current: 0, indeterminate: true },
+            onlyAlertOnce: true,
+          },
+        })
+      } else {
+        downloadingToastId = addToast({
+          type: ToastType.Progress,
+          message: `Downloading file "${file.name}" (0%)`,
+          progress: 0,
+        })
+      }
 
       const decryptedBytesArray: Uint8Array[] = []
 
@@ -320,10 +335,23 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
 
         const progressPercent = Math.floor(progress.percentComplete)
 
-        updateToast(downloadingToastId, {
-          message: fileProgressToHumanReadableString(progress, file.name, { showPercent: true }),
-          progress: progressPercent,
-        })
+        if (this.mobileDevice && canShowProgressNotification) {
+          this.mobileDevice
+            .displayNotification({
+              id: downloadingToastId,
+              title: `Downloading file "${file.name}"`,
+              android: {
+                progress: { max: 100, current: progressPercent, indeterminate: false },
+                onlyAlertOnce: true,
+              },
+            })
+            .catch(console.error)
+        } else {
+          updateToast(downloadingToastId, {
+            message: fileProgressToHumanReadableString(progress, file.name, { showPercent: true }),
+            progress: progressPercent,
+          })
+        }
 
         lastProgress = progress
       })
@@ -339,7 +367,6 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
         const blob = new Blob([finalBytes], {
           type: file.mimeType,
         })
-        // await downloadOrShareBlobBasedOnPlatform(this, blob, file.name, false)
         await downloadOrShareBlobBasedOnPlatform({
           archiveService: this.archiveService,
           platform: this.platform,
@@ -351,12 +378,18 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
         })
       }
 
-      addToast({
-        type: ToastType.Success,
-        message: `Successfully downloaded file${
-          lastProgress && lastProgress.source === 'local' ? ' from local backup' : ''
-        }`,
-      })
+      if (this.mobileDevice && canShowProgressNotification) {
+        await this.mobileDevice.displayNotification({
+          title: `Successfully downloaded file "${file.name}"`,
+        })
+      } else {
+        addToast({
+          type: ToastType.Success,
+          message: `Successfully downloaded file${
+            lastProgress && lastProgress.source === 'local' ? ' from local backup' : ''
+          }`,
+        })
+      }
     } catch (error) {
       console.error(error)
 
@@ -366,8 +399,12 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
       })
     }
 
-    if (downloadingToastId.length > 0) {
-      dismissToast(downloadingToastId)
+    if (downloadingToastId) {
+      if (this.mobileDevice && canShowProgressNotification) {
+        this.mobileDevice.cancelNotification(downloadingToastId).catch(console.error)
+      } else {
+        dismissToast(downloadingToastId)
+      }
     }
   }
 
