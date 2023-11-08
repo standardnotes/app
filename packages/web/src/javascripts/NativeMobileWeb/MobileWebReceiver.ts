@@ -98,7 +98,9 @@ export class MobileWebReceiver {
       case ReactNativeToWebEvent.ReceivedLink:
         void this.application.handleReceivedLinkEvent(messageData as { link: string; title: string })
         break
-
+      case ReactNativeToWebEvent.OpenFilePreview:
+        void this.application.handleOpenFilePreviewEvent(messageData as { id: string })
+        break
       default:
         break
     }

@@ -14,6 +14,7 @@ import { MobileDevice, MobileDeviceEvent } from './Lib/MobileDevice'
 import { IsDev } from './Lib/Utils'
 import { ReceivedSharedItemsHandler } from './ReceivedSharedItemsHandler'
 import { ReviewService } from './ReviewService'
+import notifee, { EventType } from '@notifee/react-native'
 
 const LoggingEnabled = IsDev
 
@@ -116,6 +117,34 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
       keyboardWillHideListener.remove()
     }
   }, [webViewRef, stateService, device, androidBackHandlerService, colorSchemeService])
+
+  useEffect(() => {
+    return notifee.onForegroundEvent(({ type, detail }) => {
+      if (type !== EventType.ACTION_PRESS) {
+        return
+      }
+
+      const { notification, pressAction } = detail
+
+      if (!notification || !pressAction) {
+        return
+      }
+
+      if (pressAction.id !== 'open-file') {
+        return
+      }
+
+      webViewRef.current?.postMessage(
+        JSON.stringify({
+          reactNativeEvent: ReactNativeToWebEvent.OpenFilePreview,
+          messageType: 'event',
+          messageData: {
+            id: notification.id,
+          },
+        }),
+      )
+    })
+  }, [])
 
   useEffect(() => {
     const observer = device.addMobileDeviceEventReceiver((event) => {

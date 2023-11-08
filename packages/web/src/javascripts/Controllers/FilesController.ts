@@ -558,7 +558,18 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
         if (this.mobileDevice && canShowProgressNotification) {
           this.mobileDevice
             .displayNotification({
+              id: uploadedFile.uuid,
               title: `Uploaded file "${uploadedFile.name}"`,
+              android: {
+                actions: [
+                  {
+                    title: 'Open',
+                    pressAction: {
+                      id: 'open-file',
+                    },
+                  },
+                ],
+              },
             })
             .catch(console.error)
         } else {
