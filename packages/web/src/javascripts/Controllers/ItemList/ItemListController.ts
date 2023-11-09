@@ -1185,7 +1185,7 @@ export class ItemListController
     const hasMoreThanOneSelected = this.selectedItemsCount > 1
     const isAuthorizedForAccess = await this.protections.authorizeItemAccess(item)
 
-    if (userTriggered && hasShift) {
+    if (userTriggered && hasShift && !isMobileScreen()) {
       await this.selectItemsRange({ selectedItem: item })
     } else if (userTriggered && this.isMultipleSelectionMode) {
       if (this.selectedUuids.has(uuid) && hasMoreThanOneSelected) {
