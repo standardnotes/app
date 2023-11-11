@@ -1,17 +1,19 @@
-import { PrefKey, PrefValue } from '@standardnotes/snjs'
+import { PrefKey, PrefValue, SNNote } from '@standardnotes/snjs'
 import { useApplication } from '../ApplicationProvider'
 import Modal from '../Modal/Modal'
 import usePreference from '@/Hooks/usePreference'
 import RadioButtonGroup from '../RadioButtonGroup/RadioButtonGroup'
 import { useEffect } from 'react'
 import Switch from '../Switch/Switch'
+import { noteHasEmbeddedFiles } from '@/Utils/NoteExportUtils'
 
 type Props = {
+  notes: SNNote[]
   exportNotes: () => void
   close: () => void
 }
 
-const SuperExportModal = ({ exportNotes, close }: Props) => {
+const SuperExportModal = ({ notes, exportNotes, close }: Props) => {
   const application = useApplication()
   const superNoteExportFormat = usePreference(PrefKey.SuperNoteExportFormat)
   const superNoteExportEmbedBehavior = usePreference(PrefKey.SuperNoteExportEmbedBehavior)
@@ -25,6 +27,8 @@ const SuperExportModal = ({ exportNotes, close }: Props) => {
       void application.setPreference(PrefKey.SuperNoteExportEmbedBehavior, 'separate')
     }
   }, [application, superNoteExportEmbedBehavior, superNoteExportFormat])
+
+  const someNotesHaveEmbeddedFiles = notes.some(noteHasEmbeddedFiles)
 
   return (
     <Modal
@@ -89,7 +93,7 @@ const SuperExportModal = ({ exportNotes, close }: Props) => {
           </Switch>
         </div>
       )}
-      {superNoteExportFormat !== 'json' && (
+      {superNoteExportFormat !== 'json' && someNotesHaveEmbeddedFiles && (
         <div className="mb-2 mt-4">
           <div className="mb-1">How do you want embedded files to be handled?</div>
           <RadioButtonGroup

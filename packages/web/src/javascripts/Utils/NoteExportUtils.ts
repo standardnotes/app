@@ -120,7 +120,7 @@ const isSuperNote = (note: SNNote) => {
   return note.noteType === NoteType.Super
 }
 
-const noteHasEmbeddedFiles = (note: SNNote) => {
+export const noteHasEmbeddedFiles = (note: SNNote) => {
   return note.text.includes('"type":"snfile"')
 }
 
