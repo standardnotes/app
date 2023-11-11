@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.56.237](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.56.236...@standardnotes/mobile@3.56.237) (2023-11-11)
+
+### Bug Fixes
+
+* Fixed issue on Android where only one selected file would be uploaded instead of all ([e0d48af](https://github.com/standardnotes/app/commit/e0d48afbe22987624214b18ed613b0c31e6eb901))
+
 ## [3.56.236](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.56.235...@standardnotes/mobile@3.56.236) (2023-11-09)
 
 **Note:** Version bump only for package @standardnotes/mobile
