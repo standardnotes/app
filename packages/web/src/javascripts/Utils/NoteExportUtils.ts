@@ -4,11 +4,11 @@ import { NoteType, PrefKey, SNNote, PrefDefaults, FileItem, PrefValue } from '@s
 import { WebApplicationInterface, parseAndCreateZippableFileName } from '@standardnotes/ui-services'
 import { ZipDirectoryEntry } from '@zip.js/zip.js'
 // @ts-expect-error Using inline loaders to load CSS as string
-import superEditorCSS from '!css-loader!sass-loader!../Components/SuperEditor/Lexical/Theme/editor.scss'
+import superEditorCSS from '!css-loader?{"sourceMap":false}!sass-loader!../Components/SuperEditor/Lexical/Theme/editor.scss'
 // @ts-expect-error Using inline loaders to load CSS as string
-import snColorsCSS from '!css-loader!sass-loader!@standardnotes/styles/src/Styles/_colors.scss'
+import snColorsCSS from '!css-loader?{"sourceMap":false}!sass-loader!@standardnotes/styles/src/Styles/_colors.scss'
 // @ts-expect-error Using inline loaders to load CSS as string
-import exportOverridesCSS from '!css-loader!sass-loader!../Components/SuperEditor/Lexical/Theme/export-overrides.scss'
+import exportOverridesCSS from '!css-loader?{"sourceMap":false}!sass-loader!../Components/SuperEditor/Lexical/Theme/export-overrides.scss'
 import { getBase64FromBlob } from './Utils'
 import { parseFileName } from '@standardnotes/filepicker'
 
@@ -39,9 +39,9 @@ const superHTML = (note: SNNote, content: string) => `<!DOCTYPE html>
     <meta charset="utf-8" />
     <title>${note.title}</title>
     <style>
-      ${snColorsCSS.toString()}
-      ${superEditorCSS.toString()}
-      ${exportOverridesCSS.toString()}
+${snColorsCSS.toString()}
+${superEditorCSS.toString()}
+${exportOverridesCSS.toString()}
     </style>
   </head>
   <body>
