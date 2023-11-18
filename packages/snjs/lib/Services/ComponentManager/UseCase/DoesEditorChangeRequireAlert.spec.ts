@@ -20,7 +20,7 @@ describe('editor change alert', () => {
 
   it('should not require alert switching from plain editor', () => {
     const component = nativeFeatureAsUIFeature<IframeComponentFeatureDescription>(
-      NativeFeatureIdentifier.TYPES.MarkdownProEditor,
+      NativeFeatureIdentifier.TYPES.DeprecatedMarkdownProEditor,
     )!
     const requiresAlert = usecase.execute(undefined, component)
     expect(requiresAlert).toBe(false)
@@ -28,7 +28,7 @@ describe('editor change alert', () => {
 
   it('should not require alert switching to plain editor', () => {
     const component = nativeFeatureAsUIFeature<IframeComponentFeatureDescription>(
-      NativeFeatureIdentifier.TYPES.MarkdownProEditor,
+      NativeFeatureIdentifier.TYPES.DeprecatedMarkdownProEditor,
     )!
     const requiresAlert = usecase.execute(component, undefined)
     expect(requiresAlert).toBe(false)
@@ -36,10 +36,10 @@ describe('editor change alert', () => {
 
   it('should not require alert switching from a markdown editor', () => {
     const htmlEditor = nativeFeatureAsUIFeature<IframeComponentFeatureDescription>(
-      NativeFeatureIdentifier.TYPES.PlusEditor,
+      NativeFeatureIdentifier.TYPES.DeprecatedPlusEditor,
     )!
     const markdownEditor = nativeFeatureAsUIFeature<IframeComponentFeatureDescription>(
-      NativeFeatureIdentifier.TYPES.MarkdownProEditor,
+      NativeFeatureIdentifier.TYPES.DeprecatedMarkdownProEditor,
     )
     const requiresAlert = usecase.execute(markdownEditor, htmlEditor)
     expect(requiresAlert).toBe(false)
@@ -47,10 +47,10 @@ describe('editor change alert', () => {
 
   it('should not require alert switching to a markdown editor', () => {
     const htmlEditor = nativeFeatureAsUIFeature<IframeComponentFeatureDescription>(
-      NativeFeatureIdentifier.TYPES.PlusEditor,
+      NativeFeatureIdentifier.TYPES.DeprecatedPlusEditor,
     )!
     const markdownEditor = nativeFeatureAsUIFeature<IframeComponentFeatureDescription>(
-      NativeFeatureIdentifier.TYPES.MarkdownProEditor,
+      NativeFeatureIdentifier.TYPES.DeprecatedMarkdownProEditor,
     )
     const requiresAlert = usecase.execute(htmlEditor, markdownEditor)
     expect(requiresAlert).toBe(false)
@@ -58,7 +58,7 @@ describe('editor change alert', () => {
 
   it('should not require alert switching from & to a html editor', () => {
     const htmlEditor = nativeFeatureAsUIFeature<IframeComponentFeatureDescription>(
-      NativeFeatureIdentifier.TYPES.PlusEditor,
+      NativeFeatureIdentifier.TYPES.DeprecatedPlusEditor,
     )!
     const requiresAlert = usecase.execute(htmlEditor, htmlEditor)
     expect(requiresAlert).toBe(false)
@@ -66,7 +66,7 @@ describe('editor change alert', () => {
 
   it('should require alert switching from a html editor to custom editor', () => {
     const htmlEditor = nativeFeatureAsUIFeature<IframeComponentFeatureDescription>(
-      NativeFeatureIdentifier.TYPES.PlusEditor,
+      NativeFeatureIdentifier.TYPES.DeprecatedPlusEditor,
     )!
     const customEditor = nativeFeatureAsUIFeature<IframeComponentFeatureDescription>(
       NativeFeatureIdentifier.TYPES.TokenVaultEditor,
@@ -77,7 +77,7 @@ describe('editor change alert', () => {
 
   it('should require alert switching from a custom editor to html editor', () => {
     const htmlEditor = nativeFeatureAsUIFeature<IframeComponentFeatureDescription>(
-      NativeFeatureIdentifier.TYPES.PlusEditor,
+      NativeFeatureIdentifier.TYPES.DeprecatedPlusEditor,
     )!
     const customEditor = nativeFeatureAsUIFeature<IframeComponentFeatureDescription>(
       NativeFeatureIdentifier.TYPES.TokenVaultEditor,

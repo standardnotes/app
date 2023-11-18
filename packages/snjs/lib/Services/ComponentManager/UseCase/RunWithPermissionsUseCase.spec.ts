@@ -43,7 +43,7 @@ describe('RunWithPermissionsUseCase', () => {
 
       expect(
         usecase.areRequestedPermissionsValid(
-          nativeFeatureAsUIFeature(NativeFeatureIdentifier.TYPES.MarkdownProEditor),
+          nativeFeatureAsUIFeature(NativeFeatureIdentifier.TYPES.DeprecatedMarkdownProEditor),
           permissions,
         ),
       ).toEqual(true)
@@ -59,7 +59,7 @@ describe('RunWithPermissionsUseCase', () => {
 
       expect(
         usecase.areRequestedPermissionsValid(
-          nativeFeatureAsUIFeature(NativeFeatureIdentifier.TYPES.MarkdownProEditor),
+          nativeFeatureAsUIFeature(NativeFeatureIdentifier.TYPES.DeprecatedMarkdownProEditor),
           permissions,
         ),
       ).toEqual(false)
@@ -75,7 +75,7 @@ describe('RunWithPermissionsUseCase', () => {
 
       expect(
         usecase.areRequestedPermissionsValid(
-          nativeFeatureAsUIFeature(NativeFeatureIdentifier.TYPES.MarkdownProEditor),
+          nativeFeatureAsUIFeature(NativeFeatureIdentifier.TYPES.DeprecatedMarkdownProEditor),
           permissions,
         ),
       ).toEqual(false)
@@ -91,7 +91,7 @@ describe('RunWithPermissionsUseCase', () => {
 
       expect(
         usecase.areRequestedPermissionsValid(
-          nativeFeatureAsUIFeature(NativeFeatureIdentifier.TYPES.MarkdownProEditor),
+          nativeFeatureAsUIFeature(NativeFeatureIdentifier.TYPES.DeprecatedMarkdownProEditor),
           permissions,
         ),
       ).toEqual(false)
@@ -167,7 +167,7 @@ describe('RunWithPermissionsUseCase', () => {
 
       expect(
         usecase.areRequestedPermissionsValid(
-          nativeFeatureAsUIFeature(NativeFeatureIdentifier.TYPES.PlusEditor),
+          nativeFeatureAsUIFeature(NativeFeatureIdentifier.TYPES.DeprecatedPlusEditor),
           permissions,
         ),
       ).toEqual(false)

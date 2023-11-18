@@ -47,7 +47,7 @@ describe('getDefaultEditorIdentifier', () => {
   it('should return legacy editor identifier', () => {
     const editor = {
       legacyIsDefaultEditor: jest.fn().mockReturnValue(true),
-      identifier: NativeFeatureIdentifier.TYPES.MarkdownProEditor,
+      identifier: NativeFeatureIdentifier.TYPES.DeprecatedMarkdownProEditor,
       area: ComponentArea.Editor,
     } as unknown as jest.Mocked<ComponentItem>
 
@@ -55,6 +55,6 @@ describe('getDefaultEditorIdentifier', () => {
 
     const editorIdentifier = usecase.execute().getValue()
 
-    expect(editorIdentifier).toEqual(NativeFeatureIdentifier.TYPES.MarkdownProEditor)
+    expect(editorIdentifier).toEqual(NativeFeatureIdentifier.TYPES.DeprecatedMarkdownProEditor)
   })
 })

@@ -133,16 +133,16 @@ describe('FeaturesService', () => {
     it('enables/disables an experimental feature', async () => {
       storageService.getValue = jest.fn().mockReturnValue(GetFeatures())
 
-      featureService.getExperimentalFeatures = jest.fn().mockReturnValue([NativeFeatureIdentifier.TYPES.PlusEditor])
+      featureService.getExperimentalFeatures = jest.fn().mockReturnValue([NativeFeatureIdentifier.TYPES.DeprecatedPlusEditor])
       featureService.initializeFromDisk()
 
-      featureService.enableExperimentalFeature(NativeFeatureIdentifier.TYPES.PlusEditor)
+      featureService.enableExperimentalFeature(NativeFeatureIdentifier.TYPES.DeprecatedPlusEditor)
 
-      expect(featureService.isExperimentalFeatureEnabled(NativeFeatureIdentifier.TYPES.PlusEditor)).toEqual(true)
+      expect(featureService.isExperimentalFeatureEnabled(NativeFeatureIdentifier.TYPES.DeprecatedPlusEditor)).toEqual(true)
 
-      featureService.disableExperimentalFeature(NativeFeatureIdentifier.TYPES.PlusEditor)
+      featureService.disableExperimentalFeature(NativeFeatureIdentifier.TYPES.DeprecatedPlusEditor)
 
-      expect(featureService.isExperimentalFeatureEnabled(NativeFeatureIdentifier.TYPES.PlusEditor)).toEqual(false)
+      expect(featureService.isExperimentalFeatureEnabled(NativeFeatureIdentifier.TYPES.DeprecatedPlusEditor)).toEqual(false)
     })
   })
 
@@ -324,7 +324,7 @@ describe('FeaturesService', () => {
       ).toBe(FeatureStatus.NoUserSubscription)
       expect(
         featureService.getFeatureStatus(
-          NativeFeatureIdentifier.create(NativeFeatureIdentifier.TYPES.PlusEditor).getValue(),
+          NativeFeatureIdentifier.create(NativeFeatureIdentifier.TYPES.DeprecatedPlusEditor).getValue(),
         ),
       ).toBe(FeatureStatus.NoUserSubscription)
       expect(
