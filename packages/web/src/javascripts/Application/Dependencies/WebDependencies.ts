@@ -147,7 +147,14 @@ export class WebDependencies extends DependencyContainer {
     })
 
     this.bind(Web_TYPES.PluginsService, () => {
-      return new PluginsService()
+      return new PluginsService(
+        application.items,
+        application.mutator,
+        application.sync,
+        application.legacyApi,
+        application.alerts,
+        application.options.crypto,
+      )
     })
 
     this.bind(Web_TYPES.IsMobileDevice, () => {

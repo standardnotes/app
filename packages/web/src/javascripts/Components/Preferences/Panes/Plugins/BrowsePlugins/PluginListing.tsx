@@ -1,6 +1,6 @@
 import { useApplication } from '@/Components/ApplicationProvider'
 import Button from '@/Components/Button/Button'
-import { Text } from '@/Components/Preferences/PreferencesComponents/Content'
+import { Subtitle, Text } from '@/Components/Preferences/PreferencesComponents/Content'
 import { PluginListing } from '@standardnotes/ui-services'
 import { FunctionComponent, useCallback } from 'react'
 
@@ -11,17 +11,21 @@ type Props = {
 const PluginListing: FunctionComponent<Props> = ({ plugin }) => {
   const application = useApplication()
 
-  const install = useCallback(() => {
-    const result = application.pluginsService.installPlugin(plugin)
+  const install = useCallback(async () => {
+    const result = await application.pluginsService.installPlugin(plugin)
     if (!result) {
       void application.alerts.alertV2({ text: 'Failed to install plugin' })
+    } else {
+      void application.alerts.alertV2({ text: `${result.name} has been successfully installed.` })
     }
   }, [application, plugin])
 
   return (
-    <div className="flex flex-row flex-wrap items-center gap-3">
-      <Text className="wrap mb-2">{plugin.name}</Text>
-      <Text className="wrap mb-2">{plugin.description}</Text>
+    <div className="align-center my-2.5 flex items-center justify-between md:items-center">
+      <div>
+        <Subtitle className="mr-auto overflow-hidden text-ellipsis text-sm">{plugin.name}</Subtitle>
+        <Text className="text-success">{plugin.publisher}</Text>
+      </div>
 
       <Button small className="cursor-pointer" onClick={install}>
         Install

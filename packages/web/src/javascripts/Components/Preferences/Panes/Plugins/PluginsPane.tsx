@@ -7,6 +7,7 @@ import { PackageProvider } from './PackageProvider'
 import BrowsePlugins from './BrowsePlugins/BrowsePlugins'
 import PreferencesPane from '../../PreferencesComponents/PreferencesPane'
 import { Title } from '../../PreferencesComponents/Content'
+import ManagePlugins from './ManagePlugins/ManagePlugins'
 
 type Props = {
   pluginsLatestVersions: PackageProvider
@@ -25,7 +26,14 @@ const PluginsPane: FunctionComponent<Props> = ({ pluginsLatestVersions }) => {
       <PreferencesGroup>
         <PreferencesSegment>
           <Title>Manage Plugins</Title>
-          <InstallCustomPlugin className={'mt-3'} pluginsLatestVersions={pluginsLatestVersions} />
+          <ManagePlugins className={'mt-3'} pluginsLatestVersions={pluginsLatestVersions} />
+        </PreferencesSegment>
+      </PreferencesGroup>
+
+      <PreferencesGroup>
+        <PreferencesSegment>
+          <Title>Install Custom Plugin</Title>
+          <InstallCustomPlugin className={'mt-3'} />
         </PreferencesSegment>
       </PreferencesGroup>
     </PreferencesPane>

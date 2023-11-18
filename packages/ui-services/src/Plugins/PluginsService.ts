@@ -12,6 +12,8 @@ import {
   AlertService,
   ItemManagerInterface,
   LegacyApiServiceInterface,
+  MutatorClientInterface,
+  SyncServiceInterface,
 } from '@standardnotes/services'
 import { PluginsServiceInterface } from './PluginsServiceInterface'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
@@ -24,10 +26,12 @@ type DownloadedPackages = {
 }
 
 export class PluginsService implements PluginsServiceInterface {
-  private plugins?: PluginsList
+  private originalPlugins?: PluginsList
 
   constructor(
     private items: ItemManagerInterface,
+    private mutator: MutatorClientInterface,
+    private sync: SyncServiceInterface,
     private api: LegacyApiServiceInterface,
     private alerts: AlertService,
     private crypto: PureCryptoInterface,
@@ -41,17 +45,34 @@ export class PluginsService implements PluginsServiceInterface {
     return Object.values(parsedData)
   }
 
-  public async getPlugins(): Promise<PluginsList> {
-    if (this.plugins) {
-      return this.plugins
+  public async getInstallablePlugins(): Promise<PluginsList> {
+    if (this.originalPlugins) {
+      return this.filterOutAlreadyInstalledPlugins(this.originalPlugins)
     }
 
-    this.plugins = await this.performDownloadPlugins()
+    this.originalPlugins = await this.performDownloadPlugins()
 
-    return this.plugins
+    return this.filterOutAlreadyInstalledPlugins(this.originalPlugins)
   }
 
-  public installPlugin(plugin: PluginListing | ThirdPartyFeatureDescription): ComponentInterface | undefined {
+  private filterOutAlreadyInstalledPlugins(plugins: PluginsList): PluginsList {
+    return plugins.filter((plugin) => {
+      const isNativeFeature = !!FindNativeFeature(plugin.identifier)
+      if (isNativeFeature) {
+        return false
+      }
+
+      const existingInstalled = this.items.getDisplayableComponents().find((component) => {
+        return component.identifier === plugin.identifier
+      })
+
+      return !existingInstalled
+    })
+  }
+
+  public async installPlugin(
+    plugin: PluginListing | ThirdPartyFeatureDescription,
+  ): Promise<ComponentInterface | undefined> {
     const isValidContentType = [
       ContentType.TYPES.Component,
       ContentType.TYPES.Theme,
@@ -87,6 +108,9 @@ export class PluginsService implements PluginsServiceInterface {
     })
 
     const component = this.items.createTemplateItem<ComponentContent, ComponentInterface>(plugin.content_type, content)
+
+    await this.mutator.insertItem(component)
+    void this.sync.sync()
 
     return component
   }
