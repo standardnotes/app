@@ -18,6 +18,7 @@ export function GetDeprecatedFeatures(): AnyFeatureDescription[] {
     note_type: NoteType.Code,
     file_type: 'txt',
     interchangeable: true,
+    deprecated: true,
     index_path: 'index.html',
     description:
       'Syntax highlighting and convenient keyboard shortcuts for over 120 programming' +
@@ -33,6 +34,7 @@ export function GetDeprecatedFeatures(): AnyFeatureDescription[] {
     identifier: NativeFeatureIdentifier.TYPES.DeprecatedPlusEditor,
     permission_name: PermissionName.DeprecatedPlusEditor,
     spellcheckControl: true,
+    deprecated: true,
     description:
       'From highlighting to custom font sizes and colors, to tables and lists, this editor is perfect for crafting any document.',
     thumbnail_url: 'https://assets.standardnotes.com/screenshots/models/editors/plus-editor.jpg',
@@ -46,6 +48,7 @@ export function GetDeprecatedFeatures(): AnyFeatureDescription[] {
     file_type: 'md',
     permission_name: PermissionName.DeprecatedMarkdownProEditor,
     spellcheckControl: true,
+    deprecated: true,
     description:
       'A fully featured Markdown editor that supports live preview, a styling toolbar, and split pane support.',
     thumbnail_url: 'https://assets.standardnotes.com/screenshots/models/editors/adv-markdown.jpg',
@@ -59,6 +62,7 @@ export function GetDeprecatedFeatures(): AnyFeatureDescription[] {
     spellcheckControl: true,
     file_type: 'md',
     interchangeable: false,
+    deprecated: true,
     permission_name: PermissionName.DeprecatedTaskEditor,
     description:
       'A great way to manage short-term and long-term to-do"s. You can mark tasks as completed, change their order, and edit the text naturally in place.',

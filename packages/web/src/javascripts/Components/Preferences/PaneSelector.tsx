@@ -12,6 +12,7 @@ import { PreferencesProps } from './PreferencesProps'
 import WhatsNew from './Panes/WhatsNew/WhatsNew'
 import HomeServer from './Panes/HomeServer/HomeServer'
 import Vaults from './Panes/Vaults/Vaults'
+import PluginsPane from './Panes/Plugins/PluginsPane'
 
 const PaneSelector: FunctionComponent<PreferencesProps & { menu: PreferencesSessionController }> = ({
   menu,
@@ -19,7 +20,7 @@ const PaneSelector: FunctionComponent<PreferencesProps & { menu: PreferencesSess
 }) => {
   switch (menu.selectedPaneId) {
     case 'general':
-      return <General application={application} extensionsLatestVersions={menu.extensionsLatestVersions} />
+      return <General />
     case 'account':
       return <AccountPreferences application={application} />
     case 'appearance':
@@ -36,6 +37,8 @@ const PaneSelector: FunctionComponent<PreferencesProps & { menu: PreferencesSess
       return <Listed application={application} />
     case 'shortcuts':
       return null
+    case 'plugins':
+      return <PluginsPane pluginsLatestVersions={menu.extensionsLatestVersions} />
     case 'accessibility':
       return null
     case 'get-free-month':
@@ -45,7 +48,7 @@ const PaneSelector: FunctionComponent<PreferencesProps & { menu: PreferencesSess
     case 'whats-new':
       return <WhatsNew application={application} />
     default:
-      return <General application={application} extensionsLatestVersions={menu.extensionsLatestVersions} />
+      return <General />
   }
 }
 

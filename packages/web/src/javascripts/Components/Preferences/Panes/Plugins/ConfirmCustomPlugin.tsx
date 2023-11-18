@@ -3,10 +3,10 @@ import { ContentType } from '@standardnotes/snjs'
 import Button from '@/Components/Button/Button'
 import { Fragment, FunctionComponent } from 'react'
 import { Title, Text, Subtitle } from '@/Components/Preferences/PreferencesComponents/Content'
-import { AnyPackageType } from './Types/AnyPackageType'
-import PreferencesSegment from '../../../../PreferencesComponents/PreferencesSegment'
+import { AnyPackageType } from './AnyPackageType'
+import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 
-const ConfirmCustomPackage: FunctionComponent<{
+const ConfirmCustomPlugin: FunctionComponent<{
   component: AnyPackageType
   callback: (confirmed: boolean) => void
 }> = ({ component, callback }) => {
@@ -70,4 +70,4 @@ const ConfirmCustomPackage: FunctionComponent<{
   )
 }
 
-export default ConfirmCustomPackage
+export default ConfirmCustomPlugin

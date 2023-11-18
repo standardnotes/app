@@ -1,6 +1,6 @@
 import { GetFeatures } from '@standardnotes/snjs'
 import { makeAutoObservable, observable } from 'mobx'
-import { AnyPackageType } from '../Types/AnyPackageType'
+import { AnyPackageType } from './AnyPackageType'
 
 export class PackageProvider {
   static async load(): Promise<PackageProvider | undefined> {

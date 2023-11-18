@@ -5,11 +5,12 @@ import { WebApplication } from '@/Application/WebApplication'
 import { FunctionComponent, useEffect, useRef, useState } from 'react'
 import { Subtitle } from '@/Components/Preferences/PreferencesComponents/Content'
 import { observer } from 'mobx-react-lite'
-import { PackageProvider } from './Provider/PackageProvider'
+import { PackageProvider } from './PackageProvider'
 import PackageEntry from './PackageEntry'
-import ConfirmCustomPackage from './ConfirmCustomPackage'
-import { AnyPackageType } from './Types/AnyPackageType'
-import PreferencesSegment from '../../../../PreferencesComponents/PreferencesSegment'
+import ConfirmCustomPlugin from './ConfirmCustomPlugin'
+import { AnyPackageType } from './AnyPackageType'
+import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
+import { useApplication } from '@/Components/ApplicationProvider'
 
 const loadExtensions = (application: WebApplication) =>
   application.items.getItems([
@@ -19,16 +20,13 @@ const loadExtensions = (application: WebApplication) =>
   ]) as AnyPackageType[]
 
 type Props = {
-  application: WebApplication
-  extensionsLatestVersions: PackageProvider
+  pluginsLatestVersions: PackageProvider
   className?: string
 }
 
-const PackagesPreferencesSection: FunctionComponent<Props> = ({
-  application,
-  extensionsLatestVersions,
-  className = '',
-}) => {
+const InstallCustomPlugin: FunctionComponent<Props> = ({ pluginsLatestVersions, className = '' }) => {
+  const application = useApplication()
+
   const [customUrl, setCustomUrl] = useState('')
   const [confirmableExtension, setConfirmableExtension] = useState<AnyPackageType | undefined>(undefined)
   const [extensions, setExtensions] = useState(loadExtensions(application))
@@ -104,7 +102,7 @@ const PackagesPreferencesSection: FunctionComponent<Props> = ({
                 key={extension.uuid}
                 application={application}
                 extension={extension}
-                latestVersion={extensionsLatestVersions.getVersion(extension)}
+                latestVersion={pluginsLatestVersions.getVersion(extension)}
                 first={i === 0}
                 uninstall={uninstallExtension}
               />
@@ -136,7 +134,7 @@ const PackagesPreferencesSection: FunctionComponent<Props> = ({
         )}
         {confirmableExtension && (
           <PreferencesSegment>
-            <ConfirmCustomPackage component={confirmableExtension} callback={handleConfirmExtensionSubmit} />
+            <ConfirmCustomPlugin component={confirmableExtension} callback={handleConfirmExtensionSubmit} />
             <div ref={confirmableEnd} />
           </PreferencesSegment>
         )}
@@ -145,4 +143,4 @@ const PackagesPreferencesSection: FunctionComponent<Props> = ({
   )
 }
 
-export default observer(PackagesPreferencesSection)
+export default observer(InstallCustomPlugin)

@@ -624,7 +624,6 @@ export class LegacyApiService
 
   public async downloadOfflineFeaturesFromRepo(dto: {
     repo: SNFeatureRepo
-    trustedFeatureHosts: string[]
   }): Promise<{ features: AnyFeatureDescription[]; roles: string[] } | ClientDisplayableError> {
     try {
       const featuresUrl = dto.repo.offlineFeaturesUrl
@@ -633,9 +632,11 @@ export class LegacyApiService
         throw Error('Cannot download offline repo without url and offlineKEy')
       }
 
+      const TRUSTED_FEATURE_HOSTS = ['api.standardnotes.com', 'localhost']
+
       const { hostname } = new URL(featuresUrl)
 
-      if (!dto.trustedFeatureHosts.includes(hostname)) {
+      if (!TRUSTED_FEATURE_HOSTS.includes(hostname)) {
         return new ClientDisplayableError(`The offline features host ${hostname} is not in the trusted allowlist.`)
       }
 

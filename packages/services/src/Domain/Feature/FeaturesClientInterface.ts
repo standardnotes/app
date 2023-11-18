@@ -1,5 +1,4 @@
-import { ComponentInterface, DecryptedItemInterface } from '@standardnotes/models'
-
+import { DecryptedItemInterface } from '@standardnotes/models'
 import { FeatureStatus } from './FeatureStatus'
 import { SetOfflineFeaturesFunctionResponse } from './SetOfflineFeaturesFunctionResponse'
 import { NativeFeatureIdentifier } from '@standardnotes/features'
@@ -26,6 +25,4 @@ export interface FeaturesClientInterface {
   disableExperimentalFeature(identifier: string): void
   isExperimentalFeatureEnabled(identifier: string): boolean
   isExperimentalFeature(identifier: string): boolean
-
-  downloadRemoteThirdPartyFeature(urlOrCode: string): Promise<ComponentInterface | undefined>
 }

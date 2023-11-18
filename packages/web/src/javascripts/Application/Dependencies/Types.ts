@@ -15,6 +15,7 @@ export const Web_TYPES = {
   RouteService: Symbol.for('RouteService'),
   ThemeManager: Symbol.for('ThemeManager'),
   VaultDisplayService: Symbol.for('VaultDisplayService'),
+  PluginsService: Symbol.for('PluginsService'),
 
   // Controllers
   AccountMenuController: Symbol.for('AccountMenuController'),
