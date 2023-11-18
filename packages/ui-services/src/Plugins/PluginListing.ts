@@ -4,6 +4,7 @@ export type PluginListing = ThirdPartyFeatureDescription & {
   publisher: string
   base64Hash: string
   binaryHash: string
+  showInGallery: boolean
 }
 
 export type PluginsList = PluginListing[]

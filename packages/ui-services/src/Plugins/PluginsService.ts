@@ -47,18 +47,22 @@ export class PluginsService implements PluginsServiceInterface {
 
   public async getInstallablePlugins(): Promise<PluginsList> {
     if (this.originalPlugins) {
-      return this.filterOutAlreadyInstalledPlugins(this.originalPlugins)
+      return this.filterInstallablePlugins(this.originalPlugins)
     }
 
     this.originalPlugins = await this.performDownloadPlugins()
 
-    return this.filterOutAlreadyInstalledPlugins(this.originalPlugins)
+    return this.filterInstallablePlugins(this.originalPlugins)
   }
 
-  private filterOutAlreadyInstalledPlugins(plugins: PluginsList): PluginsList {
-    return plugins.filter((plugin) => {
-      const isNativeFeature = !!FindNativeFeature(plugin.identifier)
-      if (isNativeFeature) {
+  private filterInstallablePlugins(plugins: PluginsList): PluginsList {
+    const filtered = plugins.filter((plugin) => {
+      if (!plugin.showInGallery) {
+        return false
+      }
+
+      const nativeFeature = FindNativeFeature(plugin.identifier)
+      if (nativeFeature && !nativeFeature.deprecated) {
         return false
       }
 
@@ -67,6 +71,14 @@ export class PluginsService implements PluginsServiceInterface {
       })
 
       return !existingInstalled
+    })
+
+    return filtered.sort((a, b) => {
+      if (a.name === b.name) {
+        return 0
+      }
+
+      return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1
     })
   }
 
