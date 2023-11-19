@@ -48,7 +48,7 @@ const PluginEntrySubInfo: FunctionComponent<Props> = ({ plugin, changeName }) =>
   const uninstall = async () => {
     application.alerts
       .confirm(
-        'Are you sure you want to uninstall this plugin? Note that plugins managed by your subscription will automatically be re-installed on application restart.',
+        'Are you sure you want to uninstall this plugin?',
         'Uninstall Plugin?',
         'Uninstall',
         ButtonType.Danger,
@@ -66,12 +66,12 @@ const PluginEntrySubInfo: FunctionComponent<Props> = ({ plugin, changeName }) =>
   }
 
   return (
-    <div className="align-center flex items-center justify-between md:items-center my-2.5">
+    <div className="align-center my-2.5 flex items-center justify-between md:items-center">
       <input
         ref={inputRef}
         disabled={!isRenaming || !renameable}
         autoComplete="off"
-        className="no-border flex-grow bg-default px-0 text-sm font-bold text-text mr-2 rounded-sm py-1"
+        className="no-border mr-2 flex-grow rounded-sm bg-default px-0 py-1 text-sm font-bold text-text"
         type="text"
         value={newPluginName}
         onChange={({ target: input }) => setNewPluginName((input as HTMLInputElement)?.value)}

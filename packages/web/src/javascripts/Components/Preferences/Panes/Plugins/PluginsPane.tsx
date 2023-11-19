@@ -18,7 +18,6 @@ const PluginsPane: FunctionComponent<Props> = ({ pluginsLatestVersions }) => {
     <PreferencesPane>
       <PreferencesGroup>
         <PreferencesSegment>
-          <Title>Browse Plugins</Title>
           <BrowsePlugins />
         </PreferencesSegment>
       </PreferencesGroup>

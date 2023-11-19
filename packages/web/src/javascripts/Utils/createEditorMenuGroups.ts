@@ -74,12 +74,6 @@ const createGroupsFromMap = (map: NoteTypeToEditorRowsMap): EditorMenuGroup[] =>
       featured: true,
     },
     {
-      icon: 'plain-text',
-      iconClassName: 'text-accessory-tint-1',
-      title: 'Plain text',
-      items: map[NoteType.Plain],
-    },
-    {
       icon: 'rich-text',
       iconClassName: 'text-accessory-tint-1',
       title: 'Rich text',
@@ -114,6 +108,12 @@ const createGroupsFromMap = (map: NoteTypeToEditorRowsMap): EditorMenuGroup[] =>
       iconClassName: 'text-accessory-tint-6',
       title: 'Authentication',
       items: map[NoteType.Authentication],
+    },
+    {
+      icon: 'plain-text',
+      iconClassName: 'text-accessory-tint-1',
+      title: 'Plain text',
+      items: map[NoteType.Plain],
     },
     {
       icon: 'editor',

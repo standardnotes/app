@@ -62,9 +62,7 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
         }
       }
 
-      if (!didFindEditor) {
-        setUnableToFindEditor(true)
-      }
+      setUnableToFindEditor(!didFindEditor)
     }
   }, [application, note])
 
@@ -255,12 +253,12 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
             <div className="px-3">
               <h2 className="text-base font-bold">Choose a note type</h2>
               {unableToFindEditor && (
-                <p className="text-xs text-warning mr-2">
+                <p className="mr-2 text-xs text-warning">
                   Unable to find system editor for this note. Select Manage Plugins to reinstall this editor.
                 </p>
               )}
             </div>
-            <button className="cursor-pointer text-right text-xs text-info whitespace-nowrap" onClick={managePlugins}>
+            <button className="cursor-pointer whitespace-nowrap text-right text-xs text-info" onClick={managePlugins}>
               Manage Plugins
             </button>
           </div>

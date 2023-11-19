@@ -9,33 +9,42 @@ export const UpgradePrompt = ({
   application,
   hasSubscription,
   onClose,
+  onClick,
+  inline,
 }: {
   featureName?: string
   ctaRef: React.RefObject<HTMLButtonElement>
   application: WebApplication
   hasSubscription: boolean
   onClose: () => void
+  onClick?: () => void
+  inline?: boolean
 }) => {
   const handleClick = useCallback(() => {
+    if (onClick) {
+      onClick()
+    }
     if (hasSubscription && !application.isNativeIOS()) {
       void application.openSubscriptionDashboard.execute()
     } else {
       void application.openPurchaseFlow()
     }
     onClose()
-  }, [application, hasSubscription, onClose])
+  }, [application, hasSubscription, onClose, onClick])
 
   return (
     <>
       <div>
         <div className="flex justify-end p-1">
-          <button
-            className="flex cursor-pointer border-0 bg-transparent p-0"
-            onClick={onClose}
-            aria-label="Close modal"
-          >
-            <Icon className="text-neutral" type="close" />
-          </button>
+          {!inline && (
+            <button
+              className="flex cursor-pointer border-0 bg-transparent p-0"
+              onClick={onClose}
+              aria-label="Close modal"
+            >
+              <Icon className="text-neutral" type="close" />
+            </button>
+          )}
         </div>
         <div
           className="mx-auto mb-5 flex h-24 w-24 items-center justify-center rounded-[50%] bg-contrast"

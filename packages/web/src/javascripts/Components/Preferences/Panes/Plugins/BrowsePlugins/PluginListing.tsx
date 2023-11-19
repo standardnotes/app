@@ -26,10 +26,10 @@ const PluginListing: FunctionComponent<Props> = ({ plugin }) => {
   return (
     <div className="align-center my-2.5 flex items-center justify-between md:items-center">
       <div className="mr-5">
-        <h4 className="text-info m-0 mr-auto overflow-hidden text-ellipsis text-base text-sm font-bold lg:text-sm">
+        <h4 className="m-0 mr-auto overflow-hidden text-ellipsis text-base text-sm font-bold lg:text-sm">
           {plugin.name}
         </h4>
-        <Text className="mb-2">
+        <Text className="mb-1">
           A <strong>{pluginType}</strong> by {plugin.publisher}
         </Text>
         {plugin.description && <Text className="text-neutral">{plugin.description}</Text>}
