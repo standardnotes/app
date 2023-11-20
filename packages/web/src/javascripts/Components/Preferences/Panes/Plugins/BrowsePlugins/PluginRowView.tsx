@@ -9,7 +9,7 @@ type Props = {
   plugin: PluginListing
 }
 
-const PluginListing: FunctionComponent<Props> = ({ plugin }) => {
+const PluginRowView: FunctionComponent<Props> = ({ plugin }) => {
   const application = useApplication()
 
   const install = useCallback(async () => {
@@ -42,4 +42,4 @@ const PluginListing: FunctionComponent<Props> = ({ plugin }) => {
   )
 }
 
-export default PluginListing
+export default PluginRowView

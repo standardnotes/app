@@ -3,7 +3,7 @@ import { observer } from 'mobx-react-lite'
 import PreferencesSegment from '../../../PreferencesComponents/PreferencesSegment'
 import { useApplication } from '@/Components/ApplicationProvider'
 import { PluginsList } from '@standardnotes/ui-services'
-import PluginListing from './PluginListing'
+import PluginRowView from './PluginRowView'
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import { ContentType } from '@standardnotes/snjs'
 import { Text, Title } from '@/Components/Preferences/PreferencesComponents/Content'
@@ -48,7 +48,7 @@ const BrowsePlugins: FunctionComponent = () => {
           {plugins?.map((plugin, index) => {
             return (
               <div key={plugin.name}>
-                <PluginListing plugin={plugin} />
+                <PluginRowView plugin={plugin} />
                 {index < plugins.length - 1 && <HorizontalSeparator />}
               </div>
             )
