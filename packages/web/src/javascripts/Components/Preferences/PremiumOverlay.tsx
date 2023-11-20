@@ -15,7 +15,7 @@ export const PreferencesPremiumOverlay: FunctionComponent = () => {
   }
 
   return (
-    <div className="align-center absolute bottom-0 left-0 right-0 top-0 flex flex-col justify-center">
+    <div className="absolute bottom-0 left-0 right-0 top-0 flex flex-col items-center justify-center">
       <div className="absolute h-full w-full bg-default opacity-[86%]"></div>
       <div className="border-1 z-10 rounded border border-border bg-default p-5">
         <UpgradePrompt
@@ -25,7 +25,6 @@ export const PreferencesPremiumOverlay: FunctionComponent = () => {
           hasSubscription={hasSubscription}
           inline={true}
           onClick={onClick}
-          onClose={() => {}}
         />
       </div>
     </div>
