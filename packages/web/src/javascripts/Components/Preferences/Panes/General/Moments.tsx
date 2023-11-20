@@ -114,13 +114,9 @@ const Moments: FunctionComponent<Props> = ({ application }: Props) => {
           <PreferencesSegment>
             <Text>
               Moments lets you capture photos of yourself throughout the day, creating a visual record of your life, one
-              photo at a time.
-            </Text>
-
-            <Text className="mt-3">
-              Using your webcam or mobile selfie-cam, Moments takes a photo of you every half hour, keeping a complete
-              record of your day. All photos are end-to-end encrypted and stored in your private account. Enable Moments
-              on a per-device basis to get started.
+              photo at a time. Using your webcam or mobile selfie-cam, Moments takes a photo of you every half hour. All
+              photos are end-to-end encrypted and stored in your files. Enable Moments on a per-device basis to get
+              started.
             </Text>
 
             <div className="mt-5 flex flex-row flex-wrap gap-3">

@@ -253,7 +253,7 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
             <div className="px-3">
               <h2 className="text-base font-bold">Choose a note type</h2>
               {unableToFindEditor && (
-                <p className="mr-2 pb-2 pt-1 text-xs text-warning md:pb-1">
+                <p className="mr-2 pt-1 text-xs text-warning">
                   Unable to find system editor for this note. Select Manage Plugins to reinstall this editor.
                 </p>
               )}
