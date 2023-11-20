@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.181.29](https://github.com/standardnotes/app/compare/@standardnotes/web@3.181.28...@standardnotes/web@3.181.29) (2023-11-20)
+
+### Bug Fixes
+
+* Fixed issue where search options weren't selectable on macOS ([b377f9c](https://github.com/standardnotes/app/commit/b377f9cba719d5d43af22dfadd6448dee3d2ef16))
+
 ## [3.181.28](https://github.com/standardnotes/app/compare/@standardnotes/web@3.181.27...@standardnotes/web@3.181.28) (2023-11-20)
 
 **Note:** Version bump only for package @standardnotes/web
