@@ -247,7 +247,7 @@ const ToolbarPlugin = () => {
     }
 
     if (selection.getTextContent() === '') {
-      containerElement.style.removeProperty('opacity')
+      containerElement.style.removeProperty('display')
       return
     }
 
@@ -276,7 +276,7 @@ const ToolbarPlugin = () => {
           }
           containerElement.style.setProperty(key, value)
         })
-        containerElement.style.setProperty('opacity', '1')
+        containerElement.style.setProperty('display', 'block')
       }
     }
   }, [activeEditor, isMobile, isToolbarFixedRef])
@@ -583,7 +583,7 @@ const ToolbarPlugin = () => {
           !isMobile && 'border-b border-border bg-default',
           !isMobile
             ? !isToolbarFixedToTop
-              ? 'fixed left-0 top-0 z-tooltip translate-x-[--translate-x] translate-y-[--translate-y] rounded border py-0.5 opacity-0 translucent-ui:border-[--popover-border-color] translucent-ui:bg-[--popover-background-color] translucent-ui:[backdrop-filter:var(--popover-backdrop-filter)]'
+              ? 'fixed left-0 top-0 z-tooltip hidden translate-x-[--translate-x] translate-y-[--translate-y] rounded border py-0.5 translucent-ui:border-[--popover-border-color] translucent-ui:bg-[--popover-background-color] translucent-ui:[backdrop-filter:var(--popover-backdrop-filter)]'
               : 'w-full px-1 py-1'
             : '',
         )}
