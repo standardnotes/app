@@ -1,3 +1,4 @@
+import { classNames } from '@standardnotes/snjs'
 import { FunctionComponent } from 'react'
 
 type Props = {
@@ -13,9 +14,14 @@ const styles = {
 }
 
 const Bubble: FunctionComponent<Props> = ({ label, selected, onSelect }) => (
-  <span role="tab" className={`${styles.base} ${selected ? styles.selected : styles.unselected}`} onClick={onSelect}>
+  <button
+    role="checkbox"
+    aria-checked={selected}
+    className={classNames(styles.base, selected ? styles.selected : styles.unselected)}
+    onClick={onSelect}
+  >
     {label}
-  </span>
+  </button>
 )
 
 export default Bubble
