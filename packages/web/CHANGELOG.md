@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.181.26](https://github.com/standardnotes/app/compare/@standardnotes/web@3.181.25...@standardnotes/web@3.181.26) (2023-11-20)
+
+### Bug Fixes
+
+* Fixed issue with floating toolbar in Super notes where it would persist even after unselecting text ([69a9e16](https://github.com/standardnotes/app/commit/69a9e16ed2543dce835ee2f440e35bae87275a68))
+
 ## [3.181.25](https://github.com/standardnotes/app/compare/@standardnotes/web@3.181.24...@standardnotes/web@3.181.25) (2023-11-19)
 
 **Note:** Version bump only for package @standardnotes/web
