@@ -34,10 +34,17 @@ const BrowsePlugins: FunctionComponent = () => {
         <Title>Browse Plugins</Title>
         <Text className="text-neutral">
           Plugins run in a secure sandbox and can only access data you allow it. Note types allow specialized editing
-          experiences, but in most cases, the built-in Super note type can encapsulate any of the functionality found in
-          plugins.
+          experiences, but in most cases, the <strong>built-in Super note type</strong> can encapsulate any
+          functionality found in plugins.
         </Text>
-        <div className="">
+
+        {!plugins && (
+          <div className="mb-3 mt-5 flex h-full w-full items-center">
+            <span className="w-full font-bold">Loading...</span>
+          </div>
+        )}
+
+        <div className="mt-2">
           {plugins?.map((plugin, index) => {
             return (
               <div key={plugin.name}>

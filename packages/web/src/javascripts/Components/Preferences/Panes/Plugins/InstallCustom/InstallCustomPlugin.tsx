@@ -3,9 +3,9 @@ import DecoratedInput from '@/Components/Input/DecoratedInput'
 import { FunctionComponent, useEffect, useRef, useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import ConfirmCustomPlugin from './ConfirmCustomPlugin'
-import { AnyPackageType } from './AnyPackageType'
-import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
+import PreferencesSegment from '../../../PreferencesComponents/PreferencesSegment'
 import { useApplication } from '@/Components/ApplicationProvider'
+import { ThirdPartyFeatureDescription } from '@standardnotes/snjs'
 
 type Props = {
   className?: string
@@ -15,40 +15,35 @@ const InstallCustomPlugin: FunctionComponent<Props> = ({ className = '' }) => {
   const application = useApplication()
 
   const [customUrl, setCustomUrl] = useState('')
-  const [confirmableExtension, setConfirmableExtension] = useState<AnyPackageType | undefined>(undefined)
+  const [confirmablePlugin, setConfirmablePlugin] = useState<ThirdPartyFeatureDescription | undefined>(undefined)
 
   const confirmableEnd = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (confirmableExtension) {
+    if (confirmablePlugin) {
       confirmableEnd.current?.scrollIntoView({ behavior: 'smooth' })
     }
-  }, [confirmableExtension, confirmableEnd])
+  }, [confirmablePlugin, confirmableEnd])
 
-  const submitExtensionUrl = async (url: string) => {
-    const component = await application.pluginsService.installPluginFromUrl(url)
-    if (component) {
-      setConfirmableExtension(component)
+  const submitPluginUrl = async (url: string) => {
+    const plugin = await application.pluginsService.getPluginDetailsFromUrl(url)
+    if (plugin) {
+      setConfirmablePlugin(plugin)
     }
   }
 
-  const handleConfirmExtensionSubmit = async (confirm: boolean) => {
-    if (confirm) {
-      confirmExtension().catch(console.error)
+  const confirmPlugin = async (confirm: boolean) => {
+    if (confirm && confirmablePlugin) {
+      await application.pluginsService.installExternalPlugin(confirmablePlugin)
     }
-    setConfirmableExtension(undefined)
+    setConfirmablePlugin(undefined)
     setCustomUrl('')
-  }
-
-  const confirmExtension = async () => {
-    await application.mutator.insertItem(confirmableExtension as AnyPackageType)
-    application.sync.sync().catch(console.error)
   }
 
   return (
     <div className={className}>
       <div>
-        {!confirmableExtension && (
+        {!confirmablePlugin && (
           <PreferencesSegment>
             <div>
               <DecoratedInput
@@ -65,13 +60,13 @@ const InstallCustomPlugin: FunctionComponent<Props> = ({ className = '' }) => {
               className="mt-4 min-w-20"
               primary
               label="Install"
-              onClick={() => submitExtensionUrl(customUrl)}
+              onClick={() => submitPluginUrl(customUrl)}
             />
           </PreferencesSegment>
         )}
-        {confirmableExtension && (
+        {confirmablePlugin && (
           <PreferencesSegment>
-            <ConfirmCustomPlugin component={confirmableExtension} callback={handleConfirmExtensionSubmit} />
+            <ConfirmCustomPlugin plugin={confirmablePlugin} callback={confirmPlugin} />
             <div ref={confirmableEnd} />
           </PreferencesSegment>
         )}

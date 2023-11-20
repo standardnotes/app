@@ -249,11 +249,11 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
     <>
       <Menu className="pb-1 pt-0.5" a11yLabel="Change note type menu">
         <MenuSection>
-          <div className="flex items-center justify-between pr-4">
+          <div className="flex items-center justify-between pr-4 py-3 md:pt-0 md:pb-1">
             <div className="px-3">
               <h2 className="text-base font-bold">Choose a note type</h2>
               {unableToFindEditor && (
-                <p className="mr-2 text-xs text-warning">
+                <p className="mr-2 pb-2 pt-1 text-xs text-warning md:pb-1">
                   Unable to find system editor for this note. Select Manage Plugins to reinstall this editor.
                 </p>
               )}

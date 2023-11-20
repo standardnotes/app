@@ -17,7 +17,7 @@ export const PreferencesPremiumOverlay: FunctionComponent = () => {
   return (
     <div className="align-center absolute bottom-0 left-0 right-0 top-0 flex flex-col justify-center">
       <div className="absolute h-full w-full bg-default opacity-[86%]"></div>
-      <div className="border-2 z-10 rounded border border-border bg-default p-5">
+      <div className="border-1 z-10 rounded border border-border bg-default p-5">
         <UpgradePrompt
           featureName={'Plugin Gallery'}
           ctaRef={ctaButtonRef}

@@ -127,7 +127,7 @@ export class PluginsService implements PluginsServiceInterface {
     return component
   }
 
-  public async installPluginFromUrl(urlOrCode: string): Promise<ComponentInterface | undefined> {
+  public async getPluginDetailsFromUrl(urlOrCode: string): Promise<ThirdPartyFeatureDescription | undefined> {
     let url = urlOrCode
     try {
       url = this.crypto.base64Decode(urlOrCode)
@@ -151,24 +151,30 @@ export class PluginsService implements PluginsServiceInterface {
     }
 
     if (!rawFeature.content_type) {
-      return
+      return undefined
     }
 
-    const nativeFeature = FindNativeFeature(rawFeature.identifier)
+    return rawFeature
+  }
+
+  public async installExternalPlugin(
+    plugin: PluginListing | ThirdPartyFeatureDescription,
+  ): Promise<ComponentInterface | undefined> {
+    const nativeFeature = FindNativeFeature(plugin.identifier)
     if (nativeFeature) {
       await this.alerts.alert('Unable to install external plugin due to a conflict with a native feature.')
       return
     }
 
-    if (rawFeature.url) {
+    if (plugin.url) {
       for (const nativeFeature of GetFeatures()) {
-        if (rawFeature.url.includes(nativeFeature.identifier)) {
+        if (plugin.url.includes(nativeFeature.identifier)) {
           await this.alerts.alert('Unable to install external plugin due to a conflict with a native feature.')
           return
         }
       }
     }
 
-    return this.installPlugin(rawFeature)
+    return this.installPlugin(plugin)
   }
 }

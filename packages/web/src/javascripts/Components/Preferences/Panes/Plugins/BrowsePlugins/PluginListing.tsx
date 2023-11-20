@@ -1,6 +1,6 @@
 import { useApplication } from '@/Components/ApplicationProvider'
 import Button from '@/Components/Button/Button'
-import { Text } from '@/Components/Preferences/PreferencesComponents/Content'
+import { SmallText, Subtitle } from '@/Components/Preferences/PreferencesComponents/Content'
 import { ContentType } from '@standardnotes/snjs'
 import { PluginListing } from '@standardnotes/ui-services'
 import { FunctionComponent, useCallback } from 'react'
@@ -23,19 +23,19 @@ const PluginListing: FunctionComponent<Props> = ({ plugin }) => {
 
   const pluginType = plugin.content_type === ContentType.TYPES.Theme ? 'theme' : 'note type'
 
+  const hasSubscription = application.hasValidFirstPartySubscription()
+
   return (
     <div className="align-center my-2.5 flex items-center justify-between md:items-center">
       <div className="mr-5">
-        <h4 className="m-0 mr-auto overflow-hidden text-ellipsis text-base text-sm font-bold lg:text-sm">
-          {plugin.name}
-        </h4>
-        <Text className="mb-1">
+        <Subtitle className="mb-0 text-info">{plugin.name}</Subtitle>
+        <SmallText className="mb-1">
           A <strong>{pluginType}</strong> by {plugin.publisher}
-        </Text>
-        {plugin.description && <Text className="text-neutral">{plugin.description}</Text>}
+        </SmallText>
+        {plugin.description && <SmallText className="text-neutral">{plugin.description}</SmallText>}
       </div>
 
-      <Button small className="cursor-pointer" onClick={install}>
+      <Button disabled={!hasSubscription} small className="cursor-pointer" onClick={install}>
         Install
       </Button>
     </div>

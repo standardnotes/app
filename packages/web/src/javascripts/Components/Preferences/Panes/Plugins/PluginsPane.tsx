@@ -1,6 +1,6 @@
 import { FunctionComponent } from 'react'
 import { observer } from 'mobx-react-lite'
-import InstallCustomPlugin from '@/Components/Preferences/Panes/Plugins/InstallCustomPlugin'
+import InstallCustomPlugin from '@/Components/Preferences/Panes/Plugins/InstallCustom/InstallCustomPlugin'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 import { PackageProvider } from './PackageProvider'

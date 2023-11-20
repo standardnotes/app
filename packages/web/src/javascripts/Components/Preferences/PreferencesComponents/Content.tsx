@@ -23,6 +23,10 @@ export const Text: FunctionComponent<Props> = ({ children, className }) => (
   <p className={classNames('text-base lg:text-xs', className)}>{children}</p>
 )
 
+export const SmallText: FunctionComponent<Props> = ({ children, className }) => (
+  <p className={classNames('text-sm lg:text-xs', className)}>{children}</p>
+)
+
 export const LinkButton: FunctionComponent<{
   label: string
   link: string

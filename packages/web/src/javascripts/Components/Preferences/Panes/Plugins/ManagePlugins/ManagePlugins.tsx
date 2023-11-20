@@ -53,6 +53,7 @@ const ManagePlugins: FunctionComponent<Props> = ({ pluginsLatestVersions, classN
 
   return (
     <div className={className}>
+      {visiblePlugins.length === 0 && <div className="text-neutral">No plugins installed.</div>}
       {visiblePlugins.length > 0 && (
         <div>
           {visiblePlugins
