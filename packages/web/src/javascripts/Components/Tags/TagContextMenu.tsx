@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite'
-import { useCallback, useMemo, useRef } from 'react'
+import { useCallback, useEffect, useMemo, useRef } from 'react'
 import Icon from '@/Components/Icon/Icon'
 import Menu from '@/Components/Menu/Menu'
 import MenuItem from '@/Components/Menu/MenuItem'
@@ -61,6 +61,13 @@ const TagContextMenu = ({ navigationController, isEntitledToFolders, selectedTag
   const tagCreatedAt = useMemo(() => formatDateForContextMenu(selectedTag.created_at), [selectedTag.created_at])
 
   const titleInputRef = useRef<HTMLInputElement>(null)
+  useEffect(() => {
+    if (contextMenuOpen) {
+      setTimeout(() => {
+        titleInputRef.current?.focus()
+      })
+    }
+  }, [contextMenuOpen])
 
   const saveTitle = useCallback(
     (closeMenu = false) => {
@@ -125,6 +132,7 @@ const TagContextMenu = ({ navigationController, isEntitledToFolders, selectedTag
           className={'py-1.5 md:px-3'}
           useIconGrid={true}
           iconGridClassName="max-h-30"
+          autoFocus={false}
         />
         <MenuSection>
           {application.featuresController.isVaultsEnabled() && (

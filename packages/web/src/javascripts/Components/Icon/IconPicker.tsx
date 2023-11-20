@@ -16,6 +16,7 @@ type Props = {
   useIconGrid?: boolean
   iconGridClassName?: string
   className?: string
+  autoFocus?: boolean
 }
 
 const TabButton = forwardRef(
@@ -51,7 +52,15 @@ const TabButton = forwardRef(
   },
 )
 
-const IconPicker = ({ selectedValue, onIconChange, platform, className, useIconGrid, iconGridClassName }: Props) => {
+const IconPicker = ({
+  selectedValue,
+  onIconChange,
+  platform,
+  className,
+  useIconGrid,
+  iconGridClassName,
+  autoFocus,
+}: Props) => {
   const iconKeys = useMemo(() => Object.keys(IconNameToSvgMapping), [])
 
   const iconOptions = useMemo(
@@ -156,7 +165,7 @@ const IconPicker = ({ selectedValue, onIconChange, platform, className, useIconG
             <DecoratedInput
               ref={emojiInputRef}
               autocomplete={false}
-              autofocus={emojiInputFocused}
+              autofocus={autoFocus ?? emojiInputFocused}
               type="text"
               value={emojiInputValue as string}
               onChange={(value) => handleEmojiChange(value)}
