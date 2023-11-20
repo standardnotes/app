@@ -89,7 +89,7 @@ const PluginEntrySubInfo: FunctionComponent<Props> = ({ plugin, changeName }) =>
       )}
 
       {!isRenaming && (
-        <div className="flex flex-row gap-1">
+        <div className="flex flex-row gap-2">
           {renameable && !isRenaming && (
             <Button small className="cursor-pointer" onClick={startRenaming}>
               Rename

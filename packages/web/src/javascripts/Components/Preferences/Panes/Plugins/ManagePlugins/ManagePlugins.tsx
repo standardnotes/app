@@ -6,7 +6,6 @@ import { PackageProvider } from '../PackageProvider'
 import PackageEntry from './PackageEntry'
 import { AnyPackageType } from '../AnyPackageType'
 import { useApplication } from '@/Components/ApplicationProvider'
-import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 
 const loadPlugins = (application: WebApplication) =>
   application.items.getItems([
@@ -55,20 +54,17 @@ const ManagePlugins: FunctionComponent<Props> = ({ pluginsLatestVersions, classN
     <div className={className}>
       {visiblePlugins.length === 0 && <div className="text-neutral">No plugins installed.</div>}
       {visiblePlugins.length > 0 && (
-        <div>
+        <div className="divide-y divide-border">
           {visiblePlugins
             .sort((e1, e2) => e1.displayName?.toLowerCase().localeCompare(e2.displayName?.toLowerCase()))
-            .map((extension, i) => {
+            .map((extension) => {
               return (
-                <div key={extension.uuid}>
-                  <PackageEntry
-                    application={application}
-                    plugin={extension}
-                    latestVersion={pluginsLatestVersions.getVersion(extension)}
-                    first={i === 0}
-                  />
-                  {i < visiblePlugins.length - 1 && <HorizontalSeparator />}
-                </div>
+                <PackageEntry
+                  application={application}
+                  plugin={extension}
+                  latestVersion={pluginsLatestVersions.getVersion(extension)}
+                  key={extension.uuid}
+                />
               )
             })}
         </div>
