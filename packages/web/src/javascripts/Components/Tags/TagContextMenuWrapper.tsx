@@ -10,7 +10,7 @@ type Props = {
 }
 
 const TagContextMenuWrapper = ({ navigationController, featuresController }: Props) => {
-  const selectedTag = navigationController.selected
+  const selectedTag = navigationController.contextMenuTag
 
   if (!selectedTag || !(selectedTag instanceof SNTag)) {
     return null

@@ -7,7 +7,7 @@ import {
   VaultDisplayServiceEvent,
 } from '@standardnotes/ui-services'
 import { STRING_DELETE_TAG } from '@/Constants/Strings'
-import { MAX_MENU_SIZE_MULTIPLIER, MENU_MARGIN_FROM_APP_BORDER, SMART_TAGS_FEATURE_NAME } from '@/Constants/Constants'
+import { SMART_TAGS_FEATURE_NAME } from '@/Constants/Constants'
 import {
   ContentType,
   SmartView,
@@ -61,12 +61,9 @@ export class NavigationController
   addingSubtagTo: SNTag | undefined = undefined
 
   contextMenuOpen = false
-  contextMenuPosition: { top?: number; left: number; bottom?: number } = {
-    top: 0,
-    left: 0,
-  }
   contextMenuClickLocation: { x: number; y: number } = { x: 0, y: 0 }
-  contextMenuMaxHeight: number | 'auto' = 'auto'
+  contextMenuTag: SNTag | undefined = undefined
+  contextMenuTagSection: TagListSectionType | undefined = undefined
 
   private readonly tagsCountsState: TagsCountsState
 
@@ -124,13 +121,11 @@ export class NavigationController
       remove: action,
 
       contextMenuOpen: observable,
-      contextMenuPosition: observable,
-      contextMenuMaxHeight: observable,
       contextMenuClickLocation: observable,
       setContextMenuOpen: action,
       setContextMenuClickLocation: action,
-      setContextMenuPosition: action,
-      setContextMenuMaxHeight: action,
+      contextMenuTag: observable,
+      setContextMenuTag: action,
 
       isInFilesView: computed,
 
@@ -356,58 +351,9 @@ export class NavigationController
     this.contextMenuClickLocation = location
   }
 
-  setContextMenuPosition(position: { top?: number; left: number; bottom?: number }): void {
-    this.contextMenuPosition = position
-  }
-
-  setContextMenuMaxHeight(maxHeight: number | 'auto'): void {
-    this.contextMenuMaxHeight = maxHeight
-  }
-
-  reloadContextMenuLayout(): void {
-    const { clientHeight } = document.documentElement
-    const defaultFontSize = window.getComputedStyle(document.documentElement).fontSize
-    const maxContextMenuHeight = parseFloat(defaultFontSize) * MAX_MENU_SIZE_MULTIPLIER
-    const footerElementRect = document.getElementById('footer-bar')?.getBoundingClientRect()
-    const footerHeightInPx = footerElementRect?.height
-
-    let openUpBottom = true
-
-    if (footerHeightInPx) {
-      const bottomSpace = clientHeight - footerHeightInPx - this.contextMenuClickLocation.y
-      const upSpace = this.contextMenuClickLocation.y
-
-      const notEnoughSpaceToOpenUpBottom = maxContextMenuHeight > bottomSpace
-      if (notEnoughSpaceToOpenUpBottom) {
-        const enoughSpaceToOpenBottomUp = upSpace > maxContextMenuHeight
-        if (enoughSpaceToOpenBottomUp) {
-          openUpBottom = false
-          this.setContextMenuMaxHeight('auto')
-        } else {
-          const hasMoreUpSpace = upSpace > bottomSpace
-          if (hasMoreUpSpace) {
-            this.setContextMenuMaxHeight(upSpace - MENU_MARGIN_FROM_APP_BORDER)
-            openUpBottom = false
-          } else {
-            this.setContextMenuMaxHeight(bottomSpace - MENU_MARGIN_FROM_APP_BORDER)
-          }
-        }
-      } else {
-        this.setContextMenuMaxHeight('auto')
-      }
-    }
-
-    if (openUpBottom) {
-      this.setContextMenuPosition({
-        top: this.contextMenuClickLocation.y,
-        left: this.contextMenuClickLocation.x,
-      })
-    } else {
-      this.setContextMenuPosition({
-        bottom: clientHeight - this.contextMenuClickLocation.y,
-        left: this.contextMenuClickLocation.x,
-      })
-    }
+  setContextMenuTag(tag: SNTag | undefined, section: TagListSectionType = 'all'): void {
+    this.contextMenuTag = tag
+    this.contextMenuTagSection = section
   }
 
   public get allLocalRootTags(): SNTag[] {
@@ -640,6 +586,7 @@ export class NavigationController
     let shouldDelete = !userTriggered
     if (userTriggered) {
       shouldDelete = await confirmDialog({
+        title: `Delete tag "${tag.title}"?`,
         text: STRING_DELETE_TAG,
         confirmButtonStyle: 'danger',
       })
@@ -654,11 +601,13 @@ export class NavigationController
   }
 
   public async save(tag: SNTag | SmartView, newTitle: string) {
-    const hasEmptyTitle = newTitle.length === 0
-    const hasNotChangedTitle = newTitle === tag.title
-    const isTemplateChange = this.items.isTemplateItem(tag)
+    const latestVersion = this.items.findSureItem(tag.uuid)
 
-    const siblings = tag instanceof SNTag ? tagSiblings(this.items, tag) : []
+    const hasEmptyTitle = newTitle.length === 0
+    const hasNotChangedTitle = newTitle === latestVersion.title
+    const isTemplateChange = this.items.isTemplateItem(latestVersion)
+
+    const siblings = latestVersion instanceof SNTag ? tagSiblings(this.items, latestVersion) : []
     const hasDuplicatedTitle = siblings.some((other) => other.title.toLowerCase() === newTitle.toLowerCase())
 
     runInAction(() => {
@@ -699,7 +648,7 @@ export class NavigationController
         void this.setSelectedTag(insertedTag, this.selectedLocation || 'views')
       })
     } else {
-      await this._changeAndSaveItem.execute<TagMutator>(tag, (mutator) => {
+      await this._changeAndSaveItem.execute<TagMutator>(latestVersion, (mutator) => {
         mutator.title = newTitle
       })
     }

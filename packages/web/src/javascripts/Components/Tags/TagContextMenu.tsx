@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite'
-import { useCallback, useMemo } from 'react'
+import { useCallback, useMemo, useRef } from 'react'
 import Icon from '@/Components/Icon/Icon'
 import Menu from '@/Components/Menu/Menu'
 import MenuItem from '@/Components/Menu/MenuItem'
@@ -14,6 +14,8 @@ import IconPicker from '../Icon/IconPicker'
 import AddToVaultMenuOption from '../Vaults/AddToVaultMenuOption'
 import { useApplication } from '../ApplicationProvider'
 import MenuSection from '../Menu/MenuSection'
+import DecoratedInput from '../Input/DecoratedInput'
+import { KeyboardKey } from '@standardnotes/ui-services'
 
 type ContextMenuProps = {
   navigationController: NavigationController
@@ -38,11 +40,6 @@ const TagContextMenu = ({ navigationController, isEntitledToFolders, selectedTag
     navigationController.setAddingSubtagTo(selectedTag)
   }, [isEntitledToFolders, navigationController, selectedTag, premiumModal])
 
-  const onClickRename = useCallback(() => {
-    navigationController.setContextMenuOpen(false)
-    navigationController.setEditingTag(selectedTag)
-  }, [navigationController, selectedTag])
-
   const onClickDelete = useCallback(() => {
     navigationController.remove(selectedTag, true).catch(console.error)
   }, [navigationController, selectedTag])
@@ -63,6 +60,26 @@ const TagContextMenu = ({ navigationController, isEntitledToFolders, selectedTag
 
   const tagCreatedAt = useMemo(() => formatDateForContextMenu(selectedTag.created_at), [selectedTag.created_at])
 
+  const titleInputRef = useRef<HTMLInputElement>(null)
+
+  const saveTitle = useCallback(
+    (closeMenu = false) => {
+      if (!titleInputRef.current) {
+        return
+      }
+      const value = titleInputRef.current.value.trim()
+      navigationController
+        .save(selectedTag, value)
+        .catch(console.error)
+        .finally(() => {
+          if (closeMenu) {
+            navigationController.setContextMenuOpen(false)
+          }
+        })
+    },
+    [navigationController, selectedTag],
+  )
+
   return (
     <Popover
       title="Tag options"
@@ -71,13 +88,41 @@ const TagContextMenu = ({ navigationController, isEntitledToFolders, selectedTag
       togglePopover={() => navigationController.setContextMenuOpen(!contextMenuOpen)}
       className="py-2"
     >
+      <div className="flex flex-col gap-1 px-4 py-0.5 text-mobile-menu-item md:px-3 md:text-tablet-menu-item lg:text-menu-item">
+        <div className="font-semibold">Name</div>
+        <div className="flex gap-2.5">
+          <DecoratedInput
+            ref={titleInputRef}
+            className={{
+              container: 'flex-grow',
+              input: 'text-mobile-menu-item md:text-tablet-menu-item lg:text-menu-item',
+            }}
+            defaultValue={selectedTag.title}
+            key={selectedTag.uuid}
+            onBlur={() => saveTitle()}
+            onKeyDown={(event) => {
+              if (event.key === KeyboardKey.Enter) {
+                saveTitle(true)
+              }
+            }}
+          />
+          <button
+            aria-label="Save tag name"
+            className="rounded border border-border bg-transparent px-1.5 active:bg-default translucent-ui:border-[--popover-border-color] md:hidden"
+            onClick={() => saveTitle(true)}
+          >
+            <Icon type="check" />
+          </button>
+        </div>
+      </div>
+      <HorizontalSeparator classes="my-2" />
       <Menu a11yLabel="Tag context menu">
         <IconPicker
-          key={'icon-picker'}
+          key={selectedTag.uuid}
           onIconChange={handleIconChange}
           selectedValue={selectedTag.iconString}
           platform={application.platform}
-          className={'px-3 py-1.5'}
+          className={'py-1.5 md:px-3'}
           useIconGrid={true}
           iconGridClassName="max-h-30"
         />
@@ -98,10 +143,6 @@ const TagContextMenu = ({ navigationController, isEntitledToFolders, selectedTag
             </div>
             {!isEntitledToFolders && <Icon type={PremiumFeatureIconName} className={PremiumFeatureIconClass} />}
           </MenuItem>
-          <MenuItem className={'py-1.5'} onClick={onClickRename}>
-            <Icon type="pencil-filled" className="mr-2 text-neutral" />
-            Rename
-          </MenuItem>
           <MenuItem className={'py-1.5'} onClick={onClickDelete}>
             <Icon type="trash" className="mr-2 text-danger" />
             <span className="text-danger">Delete</span>
@@ -109,7 +150,7 @@ const TagContextMenu = ({ navigationController, isEntitledToFolders, selectedTag
         </MenuSection>
       </Menu>
       <HorizontalSeparator classes="my-2" />
-      <div className="px-3 pb-1.5 pt-1 text-sm font-medium text-neutral lg:text-xs">
+      <div className="px-4 pb-1.5 pt-1 text-sm font-medium text-neutral md:px-3 lg:text-xs">
         <div className="mb-1">
           <span className="font-semibold">Last modified:</span> {tagLastModified}
         </div>

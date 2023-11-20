@@ -7,6 +7,7 @@ import { getEmojiLength } from './EmojiLength'
 import Icon, { isIconEmoji } from './Icon'
 import { IconNameToSvgMapping } from './IconNameToSvgMapping'
 import { IconPickerType } from './IconPickerType'
+import DecoratedInput from '../Input/DecoratedInput'
 
 type Props = {
   selectedValue: VectorIconNameOrEmoji
@@ -114,13 +115,13 @@ const IconPicker = ({ selectedValue, onIconChange, platform, className, useIconG
   }, [])
 
   return (
-    <div className={`flex h-full flex-grow flex-col overflow-auto ${className}`}>
+    <div className={`flex h-full flex-grow flex-col ${className}`}>
       <div className="flex">
         <TabButton label="Icon" type={'icon'} currentType={currentType} selectTab={selectTab} />
         <TabButton label="Emoji" type={'emoji'} currentType={currentType} selectTab={selectTab} />
         <TabButton label="Reset" type={'reset'} currentType={currentType} selectTab={selectTab} />
       </div>
-      <div className={'mt-2 h-full min-h-0 overflow-auto'}>
+      <div className={classNames('mt-1 h-full min-h-0', currentType === 'icon' && 'overflow-auto')}>
         {currentType === 'icon' &&
           (useIconGrid ? (
             <div
@@ -152,17 +153,14 @@ const IconPicker = ({ selectedValue, onIconChange, platform, className, useIconG
           ))}
         {currentType === 'emoji' && (
           <>
-            <div>
-              <input
-                ref={emojiInputRef}
-                autoComplete="off"
-                autoFocus={emojiInputFocused}
-                className="w-full flex-grow rounded border border-solid border-passive-3 bg-default px-2 py-1 text-base font-bold text-text focus:shadow-none focus:outline-none"
-                type="text"
-                value={emojiInputValue as string}
-                onChange={({ target: input }) => handleEmojiChange((input as HTMLInputElement)?.value)}
-              />
-            </div>
+            <DecoratedInput
+              ref={emojiInputRef}
+              autocomplete={false}
+              autofocus={emojiInputFocused}
+              type="text"
+              value={emojiInputValue as string}
+              onChange={(value) => handleEmojiChange(value)}
+            />
             <div className="mt-2 text-sm text-passive-0 lg:text-xs">
               Use your keyboard to enter or paste in an emoji character.
             </div>
