@@ -9,101 +9,141 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
+    allow:
+      - dependency-type: "direct"
 
   - package-ecosystem: "npm"
     directory: "/packages/api"
     schedule:
       interval: "daily"
+    allow:
+      - dependency-type: "direct"
 
   - package-ecosystem: "npm"
     directory: "/packages/desktop"
     schedule:
       interval: "daily"
+    allow:
+      - dependency-type: "direct"
 
   - package-ecosystem: "npm"
     directory: "/packages/encryption"
     schedule:
       interval: "daily"
+    allow:
+      - dependency-type: "direct"
 
   - package-ecosystem: "npm"
     directory: "/packages/features"
     schedule:
       interval: "daily"
+    allow:
+      - dependency-type: "direct"
 
   - package-ecosystem: "npm"
     directory: "/packages/filepicker"
     schedule:
       interval: "daily"
+    allow:
+      - dependency-type: "direct"
 
   - package-ecosystem: "npm"
     directory: "/packages/files"
     schedule:
       interval: "daily"
+    allow:
+      - dependency-type: "direct"
 
   - package-ecosystem: "npm"
     directory: "/packages/icons"
     schedule:
       interval: "daily"
+    allow:
+      - dependency-type: "direct"
 
   - package-ecosystem: "npm"
     directory: "/packages/mobile"
     schedule:
       interval: "daily"
+    allow:
+      - dependency-type: "direct"
 
   - package-ecosystem: "npm"
     directory: "/packages/models"
     schedule:
       interval: "daily"
+    allow:
+      - dependency-type: "direct"
 
   - package-ecosystem: "npm"
     directory: "/packages/releases"
     schedule:
       interval: "daily"
+    allow:
+      - dependency-type: "direct"
 
   - package-ecosystem: "npm"
     directory: "/packages/responses"
     schedule:
       interval: "daily"
+    allow:
+      - dependency-type: "direct"
 
   - package-ecosystem: "npm"
     directory: "/packages/services"
     schedule:
       interval: "daily"
+    allow:
+      - dependency-type: "direct"
 
   - package-ecosystem: "npm"
     directory: "/packages/sncrypto-common"
     schedule:
       interval: "daily"
+    allow:
+      - dependency-type: "direct"
 
   - package-ecosystem: "npm"
     directory: "/packages/sncrypto-web"
     schedule:
       interval: "daily"
+    allow:
+      - dependency-type: "direct"
 
   - package-ecosystem: "npm"
     directory: "/packages/snjs"
     schedule:
       interval: "daily"
+    allow:
+      - dependency-type: "direct"
 
   - package-ecosystem: "npm"
     directory: "/packages/styles"
     schedule:
       interval: "daily"
+    allow:
+      - dependency-type: "direct"
 
   - package-ecosystem: "npm"
     directory: "/packages/toast"
     schedule:
       interval: "daily"
+    allow:
+      - dependency-type: "direct"
 
   - package-ecosystem: "npm"
     directory: "/packages/utils"
     schedule:
       interval: "daily"
+    allow:
+      - dependency-type: "direct"
 
   - package-ecosystem: "npm"
     directory: "/packages/web"
     schedule:
       interval: "daily"
+    allow:
+      - dependency-type: "direct"
 
   - package-ecosystem: "github-actions"
     directory: "/"
