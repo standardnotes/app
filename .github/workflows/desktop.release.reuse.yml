@@ -123,25 +123,68 @@ jobs:
             packages/desktop/dist/*.yaml
 
   Windows:
-    runs-on: self-hosted
-    env:
-      WINDOWS_TOKEN_ALIAS: ${{ secrets.WINDOWS_TOKEN_ALIAS }}
-      WINDOWS_TOKEN_PASSWORD: ${{ secrets.WINDOWS_TOKEN_PASSWORD }}
+    runs-on: windows-latest
+
     defaults:
       run:
         working-directory: packages/desktop
+
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
         with:
           registry-url: 'https://registry.npmjs.org'
           node-version-file: '.nvmrc'
           cache: 'yarn'
-      - run: yarn install --immutable
-      - run: yarn build:desktop
-      - run: yarn run webpack --config desktop.webpack.prod.js
-      - run: echo APP_VERSION=$(node -p "require('./../web/package.json').version") >> $GITHUB_ENV
-      - run: yarn run electron-builder --windows --x64 --ia32 --publish=never --c.extraMetadata.version=${{ env.APP_VERSION }}
+
+      - name: Install Dependencies
+        run: yarn install --immutable
+
+      - name: Build
+        run: yarn build:desktop
+
+      - name: Webpack
+        run: yarn run webpack --config desktop.webpack.prod.js
+
+      - name: Set up certificate
+        run: |
+          echo "${{ secrets.SM_CLIENT_CERT_FILE_B64 }}" | base64 --decode > /d/Certificate_pkcs12.p12
+        shell: bash
+
+      - name: Set variables
+        id: variables
+        run: |
+          echo "version=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+          echo "KEYPAIR_NAME=snkeypair" >> $GITHUB_OUTPUT
+          echo "CERTIFICATE_NAME=sncertificate" >> $GITHUB_OUTPUT
+          echo "SM_HOST=${{ secrets.SM_HOST }}" >> "$GITHUB_ENV"
+          echo "SM_API_KEY=${{ secrets.SM_API_KEY }}" >> "$GITHUB_ENV"
+          echo "SM_CLIENT_CERT_FILE=D:\\Certificate_pkcs12.p12" >> "$GITHUB_ENV"
+          echo "SM_CLIENT_CERT_PASSWORD=${{ secrets.SM_CLIENT_CERT_PASSWORD }}" >> "$GITHUB_ENV"
+          echo "C:\Program Files (x86)\Windows Kits\10\App Certification Kit" >> $GITHUB_PATH
+          echo "C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.8 Tools" >> $GITHUB_PATH
+          echo "C:\Program Files\DigiCert\DigiCert Keylocker Tools" >> $GITHUB_PATH
+        shell: bash
+
+      - name: Setup Keylocker KSP on windows
+        run: |
+          curl -X GET  https://one.digicert.com/signingmanager/api-ui/v1/releases/Keylockertools-windows-x64.msi/download -H "x-api-key:%SM_API_KEY%" -o Keylockertools-windows-x64.msi
+          msiexec /i Keylockertools-windows-x64.msi /quiet /qn
+          smksp_registrar.exe list
+          smctl.exe keypair ls
+          C:\Windows\System32\certutil.exe -csp "DigiCert Signing Manager KSP" -key -user
+        shell: cmd
+
+      - name: Certificates Sync
+        run: |
+           smctl windows certsync
+        shell: cmd
+
+      - name: Build & Sign With Electron Builder
+        run: yarn run electron-builder --windows --x64 --ia32 --publish=never --c.extraMetadata.version=$(node -p "require('./../web/package.json').version")
 
       - name: Upload
         uses: actions/upload-artifact@v3.0.0
