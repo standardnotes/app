@@ -56,7 +56,7 @@ const MenuSwitchButtonItem = forwardRef(
             {shortcut && <KeyboardShortcutIndicator className="mr-2" shortcut={shortcut} />}
             <Switch
               disabled={disabled}
-              className="pointer-events-none px-0"
+              className="pointer-events-none flex px-0"
               checked={checked}
               onChange={onChange}
               tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
