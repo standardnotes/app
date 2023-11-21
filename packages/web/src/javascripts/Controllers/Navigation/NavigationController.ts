@@ -601,11 +601,12 @@ export class NavigationController
   }
 
   public async save(tag: SNTag | SmartView, newTitle: string) {
-    const latestVersion = this.items.findSureItem(tag.uuid)
+    const isTemplateChange = this.items.isTemplateItem(tag)
+
+    const latestVersion = isTemplateChange ? tag : this.items.findSureItem(tag.uuid)
 
     const hasEmptyTitle = newTitle.length === 0
     const hasNotChangedTitle = newTitle === latestVersion.title
-    const isTemplateChange = this.items.isTemplateItem(latestVersion)
 
     const siblings = latestVersion instanceof SNTag ? tagSiblings(this.items, latestVersion) : []
     const hasDuplicatedTitle = siblings.some((other) => other.title.toLowerCase() === newTitle.toLowerCase())
