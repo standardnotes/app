@@ -39,8 +39,8 @@ jobs:
         run: |
           dir
           echo "::set-output name=version::${GITHUB_REF#refs/tags/v}"
-          echo "::set-output name=KEYPAIR_NAME::sn-keypair"
-          echo "::set-output name=CERTIFICATE_NAME::sn-certificate"
+          echo "::set-output name=KEYPAIR_NAME::snkeypair"
+          echo "::set-output name=CERTIFICATE_NAME::sncertificate"
           echo "SM_HOST=${{ secrets.SM_HOST }}" >> "$GITHUB_ENV"
           echo "SM_API_KEY=${{ secrets.SM_API_KEY }}" >> "$GITHUB_ENV"
           echo "SM_CLIENT_CERT_FILE=D:\\Certificate_pkcs12.p12" >> "$GITHUB_ENV"
