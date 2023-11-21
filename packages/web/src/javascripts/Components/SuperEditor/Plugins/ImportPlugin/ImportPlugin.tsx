@@ -1,11 +1,11 @@
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
 import { useEffect } from 'react'
-import { $convertFromMarkdownString } from '@lexical/markdown'
 import { $createParagraphNode, $createRangeSelection, LexicalEditor } from 'lexical'
 import { handleEditorChange } from '../../Utils'
 import { SuperNotePreviewCharLimit } from '../../SuperEditor'
 import { $generateNodesFromDOM } from '@lexical/html'
 import { MarkdownTransformers } from '../../MarkdownTransformers'
+import { $convertFromMarkdownString } from '../../Lexical/Utils/MarkdownImport'
 
 /** Note that markdown conversion does not insert new lines. See: https://github.com/facebook/lexical/issues/2815 */
 export default function ImportPlugin({
@@ -34,7 +34,7 @@ export default function ImportPlugin({
 
     editor.update(() => {
       if (format === 'md') {
-        $convertFromMarkdownString(text, MarkdownTransformers)
+        $convertFromMarkdownString(text, MarkdownTransformers, undefined, true)
       } else {
         const parser = new DOMParser()
         const dom = parser.parseFromString(text, 'text/html')
