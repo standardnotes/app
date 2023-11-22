@@ -1,25 +1,16 @@
 import path from 'path'
+import os from 'os'
 
 import {
   HomeServerManagerInterface,
   HomeServerEnvironmentConfiguration,
-  Result,
 } from '@web/Application/Device/DesktopSnjsExports'
+import { HomeServer, HomeServerInterface } from '@standardnotes/home-server'
 
 import { WebContents } from 'electron'
 import { MessageToWebApp } from '../../Shared/IpcMessages'
 import { FilesManagerInterface } from '../File/FilesManagerInterface'
 import { HomeServerConfigurationFile } from './HomeServerConfigurationFile'
-import { isWindows } from '../Types/Platforms'
-
-const os = require('os')
-
-interface TempHomeServerInterface {
-  start(configuration?: unknown): Promise<Result<string>>
-  activatePremiumFeatures(username: string): Promise<Result<string>>
-  stop(): Promise<Result<string>>
-  isRunning(): Promise<boolean>
-}
 
 export class HomeServerManager implements HomeServerManagerInterface {
   private readonly HOME_SERVER_CONFIGURATION_FILE_NAME = 'config.json'
@@ -31,7 +22,7 @@ export class HomeServerManager implements HomeServerManagerInterface {
 
   private readonly LOGS_BUFFER_SIZE = 1000
 
-  private homeServer?: TempHomeServerInterface
+  private homeServer?: HomeServerInterface
 
   constructor(
     private webContents: WebContents,
@@ -55,12 +46,15 @@ export class HomeServerManager implements HomeServerManagerInterface {
     return this.lastErrorMessage
   }
 
-  async activatePremiumFeatures(username: string): Promise<string | undefined> {
+  async activatePremiumFeatures(username: string, subscriptionId: number): Promise<string | undefined> {
     if (!this.homeServer) {
       return
     }
 
-    const result = await this.homeServer.activatePremiumFeatures(username)
+    const result = await this.homeServer.activatePremiumFeatures({
+      username,
+      subscriptionId,
+    })
 
     if (result.isFailed()) {
       return result.getError()
@@ -137,11 +131,7 @@ export class HomeServerManager implements HomeServerManagerInterface {
   }
 
   async startHomeServer(): Promise<string | undefined> {
-    await this.lazyLoadHomeServerOnApplicablePlatforms()
-
-    if (!this.homeServer) {
-      return
-    }
+    this.homeServer = new HomeServer()
 
     try {
       this.lastErrorMessage = undefined
@@ -232,6 +222,9 @@ export class HomeServerManager implements HomeServerManagerInterface {
     const interfaces = os.networkInterfaces()
     for (const interfaceName in interfaces) {
       const addresses = interfaces[interfaceName]
+      if (!addresses) {
+        continue
+      }
       for (const address of addresses) {
         if (address.family === 'IPv4' && !address.internal) {
           return address.address
@@ -273,15 +266,5 @@ export class HomeServerManager implements HomeServerManagerInterface {
     }
 
     return configuration
-  }
-
-  private async lazyLoadHomeServerOnApplicablePlatforms(): Promise<void> {
-    if (isWindows()) {
-      return
-    }
-
-    if (this.homeServer) {
-      return
-    }
   }
 }
