@@ -283,8 +283,8 @@ export class RemoteBridge implements CrossProcessBridge {
     return this.homeServerManager.setHomeServerDataLocation(location)
   }
 
-  async activatePremiumFeatures(username: string): Promise<string | undefined> {
-    return this.homeServerManager.activatePremiumFeatures(username)
+  async activatePremiumFeatures(username: string, subscriptionId: number): Promise<string | undefined> {
+    return this.homeServerManager.activatePremiumFeatures(username, subscriptionId)
   }
 
   async isHomeServerRunning(): Promise<boolean> {

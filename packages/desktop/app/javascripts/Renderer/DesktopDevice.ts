@@ -37,8 +37,8 @@ export class DesktopDevice extends WebOrDesktopDevice implements DesktopDeviceIn
     return this.remoteBridge.isHomeServerRunning()
   }
 
-  async activatePremiumFeatures(username: string): Promise<string | undefined> {
-    return this.remoteBridge.activatePremiumFeatures(username)
+  async activatePremiumFeatures(username: string, subscriptionId: number): Promise<string | undefined> {
+    return this.remoteBridge.activatePremiumFeatures(username, subscriptionId)
   }
 
   async setHomeServerConfiguration(configurationJSONString: string): Promise<void> {
