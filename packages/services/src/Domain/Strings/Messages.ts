@@ -48,7 +48,7 @@ export const API_MESSAGE_UNTRUSTED_EXTENSIONS_WARNING = `The extension you are a
 export const API_MESSAGE_FAILED_DOWNLOADING_EXTENSION = `Error downloading package details. Please check the
   extension link and try again.`
 export const API_MESSAGE_FAILED_OFFLINE_ACTIVATION =
-  'An unknown issue occurred during offline activation. Please try again.'
+  'An unknown issue occurred during offline activation. Please download your activation code again and try once more.'
 
 export const INVALID_EXTENSION_URL = 'Invalid extension URL.'
 

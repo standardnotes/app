@@ -1,8 +1,11 @@
 import { DecryptedItemInterface } from '@standardnotes/models'
-import { FeatureStatus } from './FeatureStatus'
-import { SetOfflineFeaturesFunctionResponse } from './SetOfflineFeaturesFunctionResponse'
 import { NativeFeatureIdentifier } from '@standardnotes/features'
 import { RoleName, Uuid } from '@standardnotes/domain-core'
+import { ClientDisplayableError } from '@standardnotes/responses'
+
+import { FeatureStatus } from './FeatureStatus'
+import { SetOfflineFeaturesFunctionResponse } from './SetOfflineFeaturesFunctionResponse'
+import { OfflineSubscriptionEntitlements } from './OfflineSubscriptionEntitlements'
 
 export interface FeaturesClientInterface {
   getFeatureStatus(
@@ -12,6 +15,7 @@ export interface FeaturesClientInterface {
   hasMinimumRole(role: string): boolean
   hasRole(roleName: RoleName): boolean
   hasFirstPartyOfflineSubscription(): boolean
+  parseOfflineEntitlementsCode(code: string): OfflineSubscriptionEntitlements | ClientDisplayableError
   setOfflineFeaturesCode(code: string): Promise<SetOfflineFeaturesFunctionResponse>
   hasOfflineRepo(): boolean
   deleteOfflineFeatureRepo(): Promise<void>

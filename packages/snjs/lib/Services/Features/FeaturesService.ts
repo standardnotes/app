@@ -50,8 +50,6 @@ import { MigrateFeatureRepoToOfflineEntitlementsUseCase } from './UseCase/Migrat
 import { GetFeatureStatusUseCase } from './UseCase/GetFeatureStatus'
 import { SettingsClientInterface } from '../Settings/SettingsClientInterface'
 
-type GetOfflineSubscriptionDetailsResponse = OfflineSubscriptionEntitlements | ClientDisplayableError
-
 export class FeaturesService
   extends AbstractService<FeaturesEvent>
   implements FeaturesClientInterface, InternalEventHandlerInterface
@@ -231,9 +229,7 @@ export class FeaturesService
 
   public async setOfflineFeaturesCode(code: string): Promise<SetOfflineFeaturesFunctionResponse> {
     try {
-      const activationCodeWithoutSpaces = code.replace(/\s/g, '')
-      const decodedData = this.crypto.base64Decode(activationCodeWithoutSpaces)
-      const result = this.parseOfflineEntitlementsCode(decodedData)
+      const result = this.parseOfflineEntitlementsCode(code)
 
       if (result instanceof ClientDisplayableError) {
         return result
@@ -275,12 +271,16 @@ export class FeaturesService
     }
   }
 
-  private parseOfflineEntitlementsCode(code: string): GetOfflineSubscriptionDetailsResponse | ClientDisplayableError {
+  parseOfflineEntitlementsCode(code: string): OfflineSubscriptionEntitlements | ClientDisplayableError {
     try {
-      const { featuresUrl, extensionKey } = JSON.parse(code)
+      const activationCodeWithoutSpaces = code.replace(/\s/g, '')
+      const decodedData = this.crypto.base64Decode(activationCodeWithoutSpaces)
+
+      const { featuresUrl, extensionKey, subscriptionId } = JSON.parse(decodedData)
       return {
         featuresUrl,
         extensionKey,
+        subscriptionId,
       }
     } catch (error) {
       return new ClientDisplayableError(API_MESSAGE_FAILED_OFFLINE_ACTIVATION)
