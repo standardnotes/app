@@ -167,7 +167,6 @@ export const SuperEditor: FunctionComponent<Props> = ({
     application.getPreference(PrefKey.EditorFontSize, PrefDefaults[PrefKey.EditorFontSize]),
   )
   const responsiveFontSize = useResponsiveEditorFontSize(fontSize, false)
-  console.log(responsiveFontSize)
 
   const reloadPreferences = useCallback(() => {
     const lineHeight = application.getPreference(PrefKey.EditorLineHeight, PrefDefaults[PrefKey.EditorLineHeight])
