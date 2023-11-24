@@ -4,7 +4,6 @@ import { PackageProvider } from '../Panes/Plugins/PackageProvider'
 import { securityPrefsHasBubble } from '../Panes/Security/securityPrefsHasBubble'
 import { PreferencePaneId, StatusServiceEvent } from '@standardnotes/services'
 import { isDesktopApplication } from '@/Utils'
-import { featureTrunkHomeServerEnabled } from '@/FeatureTrunk'
 import { PreferencesMenuItem } from './PreferencesMenuItem'
 import { SelectableMenuItem } from './SelectableMenuItem'
 import { PREFERENCES_MENU_ITEMS, READY_PREFERENCES_MENU_ITEMS } from './MenuItems'
@@ -30,7 +29,7 @@ export class PreferencesSessionController {
       menuItems.push({ id: 'vaults', label: 'Vaults', icon: 'safe-square', order: 5 })
     }
 
-    if (featureTrunkHomeServerEnabled() && isDesktopApplication()) {
+    if (isDesktopApplication()) {
       menuItems.push({ id: 'home-server', label: 'Home Server', icon: 'server', order: 5 })
     }
 

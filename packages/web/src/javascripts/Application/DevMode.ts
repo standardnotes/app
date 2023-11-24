@@ -4,7 +4,6 @@ import { WebApplicationInterface } from '@standardnotes/ui-services'
 export class DevMode {
   constructor(private application: WebApplicationInterface) {
     InternalFeatureService.get().enableFeature(InternalFeature.Vaults)
-    InternalFeatureService.get().enableFeature(InternalFeature.HomeServer)
   }
 
   /** Valid only when running a mock event publisher on port 3124 */
