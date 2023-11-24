@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.49.2](https://github.com/standardnotes/app/compare/@standardnotes/models@1.49.1...@standardnotes/models@1.49.2) (2023-11-24)
+
+### Reverts
+
+* Revert "fix: Fixed issue with checklist alignment in Super notes" ([305647a](https://github.com/standardnotes/app/commit/305647a4da62bd962c5d77989cdc6dcc9be40f78))
+
 ## [1.49.1](https://github.com/standardnotes/app/compare/@standardnotes/models@1.49.0...@standardnotes/models@1.49.1) (2023-11-24)
 
 ### Bug Fixes
