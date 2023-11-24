@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.181.34](https://github.com/standardnotes/app/compare/@standardnotes/web@3.181.33...@standardnotes/web@3.181.34) (2023-11-24)
+
+### Bug Fixes
+
+* Fixed issue with checklist alignment in Super notes ([f6c2991](https://github.com/standardnotes/app/commit/f6c2991f460bf234b304f17929b0413282ff5fd5))
+
 ## [3.181.33](https://github.com/standardnotes/app/compare/@standardnotes/web@3.181.32...@standardnotes/web@3.181.33) (2023-11-24)
 
 ### Bug Fixes
