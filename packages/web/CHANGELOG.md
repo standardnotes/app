@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.181.33](https://github.com/standardnotes/app/compare/@standardnotes/web@3.181.32...@standardnotes/web@3.181.33) (2023-11-24)
+
+### Bug Fixes
+
+* Fixed issue when importing plaintext file ([1f81cad](https://github.com/standardnotes/app/commit/1f81cadcfc65f70b4e054fe3807c0e93a8e3e4f6))
+
 ## [3.181.32](https://github.com/standardnotes/app/compare/@standardnotes/web@3.181.31...@standardnotes/web@3.181.32) (2023-11-23)
 
 **Note:** Version bump only for package @standardnotes/web
