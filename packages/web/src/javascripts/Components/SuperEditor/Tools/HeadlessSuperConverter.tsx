@@ -1,5 +1,5 @@
 import { createHeadlessEditor } from '@lexical/headless'
-import { $convertToMarkdownString, $convertFromMarkdownString } from '@lexical/markdown'
+import { $convertToMarkdownString } from '@lexical/markdown'
 import { FileItem, GenerateUuid, PrefKey, PrefValue, SuperConverterServiceInterface } from '@standardnotes/snjs'
 import {
   $createParagraphNode,
@@ -19,6 +19,7 @@ import { $createFileExportNode } from '../Lexical/Nodes/FileExportNode'
 import { $createInlineFileNode, $isInlineFileNode, InlineFileNode } from '../Plugins/InlineFilePlugin/InlineFileNode'
 import { $createFileNode } from '../Plugins/EncryptedFilePlugin/Nodes/FileUtils'
 import { RemoteImageNode } from '../Plugins/RemoteImagePlugin/RemoteImageNode'
+import { $convertFromMarkdownString } from '../Lexical/Utils/MarkdownImport'
 export class HeadlessSuperConverter implements SuperConverterServiceInterface {
   private importEditor: LexicalEditor
   private exportEditor: LexicalEditor
@@ -218,7 +219,7 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
       this.importEditor.update(
         () => {
           try {
-            $convertFromMarkdownString(otherFormatString, MarkdownTransformers)
+            $convertFromMarkdownString(otherFormatString, MarkdownTransformers, undefined, true)
           } catch (error) {
             console.error(error)
             didThrow = true
