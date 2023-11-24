@@ -52,8 +52,8 @@
 .Lexical__listItemChecked,
 .Lexical__listItemUnchecked {
   position: relative;
-  padding-left: calc(var(--font-size) + 0.5rem);
-  padding-right: calc(var(--font-size) + 0.5rem);
+  padding-left: 24px;
+  padding-right: 24px;
   list-style-type: none;
   outline: none;
   vertical-align: middle;
@@ -65,12 +65,10 @@
 .Lexical__listItemUnchecked:before,
 .Lexical__listItemChecked:before {
   content: '';
-  --size: 16px;
-  width: var(--size);
-  height: var(--size);
+  width: 16px;
+  height: 16px;
   left: 0;
-  top: calc(var(--line-height, 1) * var(--font-size) / 2);
-  transform: translateY(-50%);
+  top: 7px;
   cursor: pointer;
   background-size: cover;
   position: absolute;
@@ -102,12 +100,11 @@
   border-style: solid;
   position: absolute;
   display: block;
+  top: 9px;
   width: 5px;
-  height: 11px;
-  --top: calc(var(--line-height, 1) * var(--font-size) / 2);
-  top: calc(var(--top) - 1px);
-  left: 5px;
-  transform: translateY(-50%) rotate(45deg);
+  left: 6px;
+  height: 10px;
+  transform: rotate(45deg);
   border-width: 0 2px 2px 0;
 }
 .Lexical__nestedListItem {

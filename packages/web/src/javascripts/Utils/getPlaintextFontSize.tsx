@@ -1,29 +1,29 @@
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 import { EditorFontSize } from '@standardnotes/snjs'
 
-export const useResponsiveEditorFontSize = (key: EditorFontSize, useTailwindClasses = true): string => {
+export const useResponsiveEditorFontSize = (key: EditorFontSize): string => {
   const desktopMapping: Record<EditorFontSize, string> = {
-    ExtraSmall: useTailwindClasses ? 'text-xs' : '0.75rem',
-    Small: useTailwindClasses ? 'text-sm' : '0.875rem',
-    Normal: useTailwindClasses ? 'text-editor' : 'var(--sn-stylekit-font-size-editor)',
-    Medium: useTailwindClasses ? 'text-lg' : '1.125rem',
-    Large: useTailwindClasses ? 'text-xl' : '1.25rem',
+    ExtraSmall: 'text-xs',
+    Small: 'text-sm',
+    Normal: 'text-editor',
+    Medium: 'text-lg',
+    Large: 'text-xl',
   }
 
   const mobileMapping: Record<EditorFontSize, string> = {
-    ExtraSmall: useTailwindClasses ? 'text-sm' : '0.875rem',
-    Small: useTailwindClasses ? 'text-editor' : 'var(--sn-stylekit-font-size-editor)',
-    Normal: useTailwindClasses ? 'text-lg' : '1.125rem',
-    Medium: useTailwindClasses ? 'text-xl' : '1.25rem',
-    Large: useTailwindClasses ? 'text-2xl' : '1.5rem',
+    ExtraSmall: 'text-sm',
+    Small: 'text-editor',
+    Normal: 'text-lg',
+    Medium: 'text-xl',
+    Large: 'text-2xl',
   }
 
   const tabletMapping: Record<EditorFontSize, string> = {
-    ExtraSmall: useTailwindClasses ? 'text-sm' : '0.875rem',
-    Small: useTailwindClasses ? 'text-editor' : 'var(--sn-stylekit-font-size-editor)',
-    Normal: useTailwindClasses ? 'text-base' : '',
-    Medium: useTailwindClasses ? 'text-xl' : '1.25rem',
-    Large: useTailwindClasses ? 'text-2xl' : '1.5rem',
+    ExtraSmall: 'text-sm',
+    Small: 'text-editor',
+    Normal: 'text-base',
+    Medium: 'text-xl',
+    Large: 'text-2xl',
   }
 
   const isTabletScreen = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.md)

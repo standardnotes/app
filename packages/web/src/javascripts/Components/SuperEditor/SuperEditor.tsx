@@ -10,9 +10,8 @@ import {
   NativeFeatureIdentifier,
   FeatureStatus,
   GetSuperNoteFeature,
-  EditorLineHeightValues,
 } from '@standardnotes/snjs'
-import { CSSProperties, FunctionComponent, useCallback, useEffect, useRef, useState } from 'react'
+import { FunctionComponent, useCallback, useEffect, useRef, useState } from 'react'
 import { BlocksEditor } from './BlocksEditor'
 import { BlocksEditorComposer } from './BlocksEditorComposer'
 import { ItemSelectionPlugin } from './Plugins/ItemSelectionPlugin/ItemSelectionPlugin'
@@ -166,7 +165,7 @@ export const SuperEditor: FunctionComponent<Props> = ({
   const [fontSize, setFontSize] = useState<EditorFontSize>(() =>
     application.getPreference(PrefKey.EditorFontSize, PrefDefaults[PrefKey.EditorFontSize]),
   )
-  const responsiveFontSize = useResponsiveEditorFontSize(fontSize, false)
+  const responsiveFontSize = useResponsiveEditorFontSize(fontSize)
 
   const reloadPreferences = useCallback(() => {
     const lineHeight = application.getPreference(PrefKey.EditorLineHeight, PrefDefaults[PrefKey.EditorLineHeight])
@@ -212,13 +211,11 @@ export const SuperEditor: FunctionComponent<Props> = ({
 
   return (
     <div
-      className="font-editor relative flex h-full w-full flex-col"
-      style={
-        {
-          '--line-height': EditorLineHeightValues[lineHeight],
-          '--font-size': responsiveFontSize,
-        } as CSSProperties
-      }
+      className={classNames(
+        'font-editor relative flex h-full w-full flex-col',
+        lineHeight && `leading-${lineHeight.toLowerCase()}`,
+        responsiveFontSize,
+      )}
       ref={ref}
     >
       {featureStatus !== FeatureStatus.Entitled && (
@@ -231,8 +228,9 @@ export const SuperEditor: FunctionComponent<Props> = ({
               <BlocksEditor
                 onChange={handleChange}
                 className={classNames(
-                  'blocks-editor relative h-full resize-none px-4 py-4 text-[length:--font-size] focus:shadow-none focus:outline-none',
-                  lineHeight && 'leading-[--line-height]',
+                  'blocks-editor relative h-full resize-none px-4 py-4 focus:shadow-none focus:outline-none',
+                  lineHeight && `leading-${lineHeight.toLowerCase()}`,
+                  responsiveFontSize,
                 )}
                 previewLength={SuperNotePreviewCharLimit}
                 spellcheck={spellcheck}
