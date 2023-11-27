@@ -1,6 +1,20 @@
 {
   "versions": [
     {
+      "version": "3.181.37",
+      "title": "[3.181.37](https://github.com/standardnotes/app/compare/@standardnotes/web@3.181.36...@standardnotes/web@3.181.37) (2023-11-27)",
+      "date": null,
+      "body": "### Bug Fixes\n\n* Fixed issue where multiple trashed items on mobile could not be deleted permanently ([5660df5](https://github.com/standardnotes/app/commit/5660df577da4e803d3ff25f257c0572dfe30db73))",
+      "parsed": {
+        "_": [
+          "Fixed issue where multiple trashed items on mobile could not be deleted permanently (5660df5)"
+        ],
+        "Bug Fixes": [
+          "Fixed issue where multiple trashed items on mobile could not be deleted permanently (5660df5)"
+        ]
+      }
+    },
+    {
       "version": "3.181.36",
       "title": "[3.181.36](https://github.com/standardnotes/app/compare/@standardnotes/web@3.181.35...@standardnotes/web@3.181.36) (2023-11-27)",
       "date": null,

@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.181.37](https://github.com/standardnotes/app/compare/@standardnotes/web@3.181.36...@standardnotes/web@3.181.37) (2023-11-27)
+
+### Bug Fixes
+
+* Fixed issue where multiple trashed items on mobile could not be deleted permanently ([5660df5](https://github.com/standardnotes/app/commit/5660df577da4e803d3ff25f257c0572dfe30db73))
+
 ## [3.181.36](https://github.com/standardnotes/app/compare/@standardnotes/web@3.181.35...@standardnotes/web@3.181.36) (2023-11-27)
 
 ### Bug Fixes
