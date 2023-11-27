@@ -382,7 +382,7 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
           )
         ) : null}
         {isMobileScreen && itemListController.isMultipleSelectionMode && (
-          <MobileMultiSelectionToolbar notesController={notesController} />
+          <MobileMultiSelectionToolbar notesController={notesController} navigationController={navigationController} />
         )}
         <div className="absolute bottom-0 h-safe-bottom w-full" />
         {children}

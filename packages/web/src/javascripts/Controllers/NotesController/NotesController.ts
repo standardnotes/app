@@ -213,7 +213,7 @@ export class NotesController
       return false
     }
 
-    const title = Strings.trashItemsTitle
+    const title = permanently ? Strings.deleteItemsPermanentlyTitle : Strings.trashItemsTitle
     let noteTitle = undefined
     if (this.selectedNotesCount === 1) {
       const selectedNote = this.getSelectedNotesList()[0]
