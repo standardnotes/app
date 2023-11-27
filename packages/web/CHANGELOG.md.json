@@ -1,19 +1,17 @@
 {
   "versions": [
     {
-      "version": "3.181.35",
-      "title": "[3.181.35](https://github.com/standardnotes/app/compare/@standardnotes/web@3.181.34...@standardnotes/web@3.181.35) (2023-11-24)",
+      "version": "3.181.36",
+      "title": "[3.181.36](https://github.com/standardnotes/app/compare/@standardnotes/web@3.181.35...@standardnotes/web@3.181.36) (2023-11-27)",
       "date": null,
-      "body": "### Reverts\n\n* Revert \"fix: Fixed issue with checklist alignment in Super notes\" ([305647a](https://github.com/standardnotes/app/commit/305647a4da62bd962c5d77989cdc6dcc9be40f78))",
+      "body": "### Bug Fixes\n\n* Fixed issue where checklist item text in Super notes wasn't aligned correctly ([#2656](https://github.com/standardnotes/app/issues/2656)) ([8ff0d20](https://github.com/standardnotes/app/commit/8ff0d208583fd0625682d481f8a065c6ccbd8b8e))",
       "parsed": {
-      }
-    },
-    {
-      "version": "3.181.34",
-      "title": "[3.181.34](https://github.com/standardnotes/app/compare/@standardnotes/web@3.181.33...@standardnotes/web@3.181.34) (2023-11-24)",
-      "date": null,
-      "body": "### Bug Fixes\n\n* Fixed issue with checklist alignment in Super notes ([f6c2991](https://github.com/standardnotes/app/commit/f6c2991f460bf234b304f17929b0413282ff5fd5))",
-      "parsed": {
+        "_": [
+          "Fixed issue where checklist item text in Super notes wasn't aligned correctly (#2656) (8ff0d20)"
+        ],
+        "Bug Fixes": [
+          "Fixed issue where checklist item text in Super notes wasn't aligned correctly (#2656) (8ff0d20)"
+        ]
       }
     },
     {
