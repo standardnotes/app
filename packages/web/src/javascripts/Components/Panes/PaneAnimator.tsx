@@ -29,8 +29,6 @@ export async function animatePaneEntranceTransitionFromOffscreenToTheRight(eleme
   await animation.finished
 
   performSafariAnimationFix(element)
-
-  animation.finish()
 }
 
 export async function animatePaneExitTransitionOffscreenToTheRight(elementId: string): Promise<void> {
@@ -54,8 +52,6 @@ export async function animatePaneExitTransitionOffscreenToTheRight(elementId: st
   )
 
   await animation.finished
-
-  animation.finish()
 }
 
 /**
