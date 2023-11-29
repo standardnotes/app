@@ -1,12 +1,22 @@
+import { ItemInterface } from '@standardnotes/models'
 import { PluginsService } from './PluginsService'
-import { AlertService, ItemManagerInterface, LegacyApiServiceInterface } from '@standardnotes/services'
+import {
+  AlertService,
+  ItemManagerInterface,
+  LegacyApiServiceInterface,
+  MutatorClientInterface,
+  SyncServiceInterface,
+} from '@standardnotes/services'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
+import { ThirdPartyFeatureDescription } from '@standardnotes/features'
 
 describe('Plugins Service', () => {
   let itemManager: ItemManagerInterface
   let apiService: LegacyApiServiceInterface
   let pluginsService: PluginsService
   let crypto: PureCryptoInterface
+  let mutator: MutatorClientInterface
+  let syncService: SyncServiceInterface
 
   beforeEach(() => {
     apiService = {} as jest.Mocked<LegacyApiServiceInterface>
@@ -24,7 +34,17 @@ describe('Plugins Service', () => {
     alertService.confirm = jest.fn().mockReturnValue(true)
     alertService.alert = jest.fn()
 
-    pluginsService = new PluginsService(itemManager, apiService, alertService, crypto)
+    mutator = {} as jest.Mocked<MutatorClientInterface>
+    mutator.createItem = jest.fn()
+    mutator.changeComponent = jest.fn().mockReturnValue({} as jest.Mocked<ItemInterface>)
+    mutator.setItemsToBeDeleted = jest.fn()
+    mutator.changeItem = jest.fn()
+    mutator.changeFeatureRepo = jest.fn()
+
+    syncService = {} as jest.Mocked<SyncServiceInterface>
+    syncService.sync = jest.fn()
+
+    pluginsService = new PluginsService(itemManager, mutator, syncService, apiService, alertService, crypto)
   })
 
   describe('downloadRemoteThirdPartyFeature', () => {
@@ -43,7 +63,10 @@ describe('Plugins Service', () => {
       const installUrl = 'http://example.com'
       crypto.base64Decode = jest.fn().mockReturnValue(installUrl)
 
-      const result = await pluginsService.installPluginFromUrl(installUrl)
+      const plugin = await pluginsService.getPluginDetailsFromUrl('some-url')
+      expect(plugin).toBeDefined()
+
+      const result = await pluginsService.installExternalPlugin(plugin as ThirdPartyFeatureDescription)
       expect(result).toBeUndefined()
     })
 
@@ -62,7 +85,10 @@ describe('Plugins Service', () => {
       const installUrl = 'http://example.com'
       crypto.base64Decode = jest.fn().mockReturnValue(installUrl)
 
-      const result = await pluginsService.installPluginFromUrl(installUrl)
+      const plugin = await pluginsService.getPluginDetailsFromUrl('some-url')
+      expect(plugin).toBeDefined()
+
+      const result = await pluginsService.installExternalPlugin(plugin as ThirdPartyFeatureDescription)
       expect(result).toBeUndefined()
     })
   })
