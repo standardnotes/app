@@ -39,7 +39,7 @@
     "@standardnotes/snjs": "workspace:*",
     "@standardnotes/web": "workspace:*",
     "@tsconfig/react-native": "^3.0.2",
-    "@types/react": "^18.2.28",
+    "@types/react": "^18.2.39",
     "@types/react-native": "^0.72.3",
     "@typescript-eslint/eslint-plugin": "*",
     "@typescript-eslint/parser": "*",

@@ -6931,7 +6931,7 @@ __metadata:
     "@standardnotes/snjs": "workspace:*"
     "@standardnotes/web": "workspace:*"
     "@tsconfig/react-native": ^3.0.2
-    "@types/react": ^18.2.28
+    "@types/react": ^18.2.39
     "@types/react-native": ^0.72.3
     "@typescript-eslint/eslint-plugin": "*"
     "@typescript-eslint/parser": "*"
@@ -7398,14 +7398,14 @@ __metadata:
   dependencies:
     "@nanostores/react": ^0.7.1
     "@standardnotes/icons": "workspace:*"
-    "@types/react": "link:../web/node_modules/@types/react"
-    "@types/react-dom": "link:../web/node_modules/@types/react-dom"
+    "@types/react": ^18.2.39
+    "@types/react-dom": ^18.2.17
     eslint: "*"
     nanoid: ^4.0.0
     nanostores: ^0.9.3
     prettier: "*"
-    react: "link:../web/node_modules/react"
-    react-dom: "link:../web/node_modules/react-dom"
+    react: ^18.2.0
+    react-dom: ^18.2.0
     typescript: "*"
   languageName: unknown
   linkType: soft
@@ -7500,8 +7500,8 @@ __metadata:
     "@standardnotes/toast": "workspace:*"
     "@standardnotes/ui-services": "workspace:^"
     "@types/jest": ^29.2.4
-    "@types/react": ^18.0.26
-    "@types/react-dom": ^18.0.9
+    "@types/react": ^18.2.39
+    "@types/react-dom": ^18.2.17
     "@types/wicg-file-system-access": ^2020.9.5
     "@zip.js/zip.js": ^2.6.60
     autoprefixer: ^10.4.13
@@ -8275,13 +8275,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-dom@link:../web/node_modules/@types/react-dom::locator=%40standardnotes%2Ftoast%40workspace%3Apackages%2Ftoast":
-  version: 0.0.0-use.local
-  resolution: "@types/react-dom@link:../web/node_modules/@types/react-dom::locator=%40standardnotes%2Ftoast%40workspace%3Apackages%2Ftoast"
-  languageName: node
-  linkType: soft
-
-"@types/react-dom@npm:^18.0.9":
+"@types/react-dom@npm:^18.2.17":
   version: 18.2.17
   resolution: "@types/react-dom@npm:18.2.17"
   dependencies:
@@ -8300,13 +8294,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@link:../web/node_modules/@types/react::locator=%40standardnotes%2Ftoast%40workspace%3Apackages%2Ftoast":
-  version: 0.0.0-use.local
-  resolution: "@types/react@link:../web/node_modules/@types/react::locator=%40standardnotes%2Ftoast%40workspace%3Apackages%2Ftoast"
-  languageName: node
-  linkType: soft
-
-"@types/react@npm:*, @types/react@npm:^18.0.26":
+"@types/react@npm:*, @types/react@npm:^18.2.39":
   version: 18.2.39
   resolution: "@types/react@npm:18.2.39"
   dependencies:
@@ -8327,17 +8315,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:^18.2.28":
-  version: 18.2.28
-  resolution: "@types/react@npm:18.2.28"
-  dependencies:
-    "@types/prop-types": "*"
-    "@types/scheduler": "*"
-    csstype: ^3.0.2
-  checksum: 81381bedeba83278f4c9febb0b83e0bd3f42a25897a50b9cb36ef53651d34b3d50f87ebf11211ea57ea575131f85d31e93e496ce46478a00b0f9bf7b26b5917a
-  languageName: node
-  linkType: hard
-
 "@types/responselike@npm:^1.0.0":
   version: 1.0.0
   resolution: "@types/responselike@npm:1.0.0"
@@ -8355,9 +8332,9 @@ __metadata:
   linkType: hard
 
 "@types/scheduler@npm:*":
-  version: 0.16.3
-  resolution: "@types/scheduler@npm:0.16.3"
-  checksum: 2b0aec39c24268e3ce938c5db2f2e77f5c3dd280e05c262d9c2fe7d890929e4632a6b8e94334017b66b45e4f92a5aa42ba3356640c2a1175fa37bef2f5200767
+  version: 0.16.8
+  resolution: "@types/scheduler@npm:0.16.8"
+  checksum: 6c091b096daa490093bf30dd7947cd28e5b2cd612ec93448432b33f724b162587fed9309a0acc104d97b69b1d49a0f3fc755a62282054d62975d53d7fd13472d
   languageName: node
   linkType: hard
 
@@ -22785,12 +22762,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dom@link:../web/node_modules/react-dom::locator=%40standardnotes%2Ftoast%40workspace%3Apackages%2Ftoast":
-  version: 0.0.0-use.local
-  resolution: "react-dom@link:../web/node_modules/react-dom::locator=%40standardnotes%2Ftoast%40workspace%3Apackages%2Ftoast"
-  languageName: node
-  linkType: soft
-
 "react-dom@npm:^18.2.0":
   version: 18.2.0
   resolution: "react-dom@npm:18.2.0"
@@ -23024,12 +22995,6 @@ __metadata:
   checksum: 6052c7e3e9627485120ebd8257f128aad8f56386fe8d42374b7743eac1be457c33506d153c7886b4e32923c0c352d402ab805ef9ca02dbcd8393b2bdeb6e5af8
   languageName: node
   linkType: hard
-
-"react@link:../web/node_modules/react::locator=%40standardnotes%2Ftoast%40workspace%3Apackages%2Ftoast":
-  version: 0.0.0-use.local
-  resolution: "react@link:../web/node_modules/react::locator=%40standardnotes%2Ftoast%40workspace%3Apackages%2Ftoast"
-  languageName: node
-  linkType: soft
 
 "react@npm:18.2.0, react@npm:^18.2.0":
   version: 18.2.0
