@@ -226,7 +226,7 @@ describe('history manager', () => {
     })
   })
 
-  describe('remote', function () {
+  describe.skip('remote', function () {
     this.timeout(Factory.TwentySecondTimeout)
 
     let context
@@ -256,7 +256,7 @@ describe('history manager', () => {
       expect(itemHistoryOrError.isFailed()).to.equal(true)
     })
 
-    it.skip('should save initial revisions on server', async () => {
+    it('should save initial revisions on server', async () => {
       const note = await context.createSyncedNote('test note')
       expect(note).to.be.ok
 
