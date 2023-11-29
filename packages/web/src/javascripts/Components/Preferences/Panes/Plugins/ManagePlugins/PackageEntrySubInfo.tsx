@@ -2,14 +2,13 @@ import { useApplication } from '@/Components/ApplicationProvider'
 import Button from '@/Components/Button/Button'
 import { FunctionComponent, useState, useRef, useEffect } from 'react'
 import { AnyPackageType } from '../AnyPackageType'
-import { ButtonType } from '@standardnotes/snjs'
+import { ButtonType, ComponentInterface, ComponentMutator } from '@standardnotes/snjs'
 
 type Props = {
   plugin: AnyPackageType
-  changeName: (newName: string) => void
 }
 
-const PluginEntrySubInfo: FunctionComponent<Props> = ({ plugin, changeName }) => {
+const PluginEntrySubInfo: FunctionComponent<Props> = ({ plugin }) => {
   const application = useApplication()
 
   const isThirdParty = 'identifier' in plugin && application.features.isThirdPartyFeature(plugin.identifier)
@@ -43,6 +42,21 @@ const PluginEntrySubInfo: FunctionComponent<Props> = ({ plugin, changeName }) =>
     }
     changeName(newPluginName)
     setIsRenaming(false)
+  }
+
+  const [_, setPluginName] = useState(plugin.displayName)
+
+  const changeName = (newName: string) => {
+    setPluginName(newName)
+    application.changeAndSaveItem
+      .execute<ComponentMutator>(plugin, (mutator) => {
+        mutator.name = newName
+      })
+      .then((result) => {
+        const component = result.getValue() as ComponentInterface
+        setPluginName(component.name)
+      })
+      .catch(console.error)
   }
 
   const uninstall = async () => {

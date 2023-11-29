@@ -62,7 +62,6 @@ const ManagePlugins: FunctionComponent<Props> = ({ pluginsLatestVersions, classN
               return (
                 <div key={extension.uuid}>
                   <PackageEntry
-                    application={application}
                     plugin={extension}
                     latestVersion={pluginsLatestVersions.getVersion(extension)}
                     first={i === 0}
