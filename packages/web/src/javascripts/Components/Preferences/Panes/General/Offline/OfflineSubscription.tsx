@@ -6,7 +6,6 @@ import { WebApplication } from '@/Application/WebApplication'
 import { observer } from 'mobx-react-lite'
 import { STRING_REMOVE_OFFLINE_KEY_CONFIRMATION } from '@/Constants/Strings'
 import { ButtonType, ClientDisplayableError } from '@standardnotes/snjs'
-import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 
 type Props = {
   application: WebApplication
@@ -111,7 +110,17 @@ const OfflineSubscription: FunctionComponent<Props> = ({ application, onSuccess 
     <>
       <div className="flex items-center justify-between">
         <div className="mt-3 flex w-full flex-col">
-          <Subtitle>{!hasUserPreviouslyStoredCode && 'Activate'} Offline Subscription</Subtitle>
+          <div className="flex flex-row items-center justify-between">
+            <Subtitle>{!hasUserPreviouslyStoredCode && 'Activate'} Offline Subscription</Subtitle>
+            <a
+              href="https://standardnotes.com/help/59/can-i-use-standard-notes-totally-offline"
+              target="_blank"
+              rel="noreferrer"
+              className="text-info"
+            >
+              Learn more
+            </a>
+          </div>
           <form onSubmit={handleSubscriptionCodeSubmit}>
             <div className={'mt-2'}>
               {!hasUserPreviouslyStoredCode && (
@@ -141,6 +150,7 @@ const OfflineSubscription: FunctionComponent<Props> = ({ application, onSuccess 
             )}
             {!hasUserPreviouslyStoredCode && !isSuccessfullyActivated && (
               <Button
+                hidden={activationCode.length === 0}
                 label={'Submit'}
                 primary
                 disabled={activationCode === ''}
@@ -150,7 +160,6 @@ const OfflineSubscription: FunctionComponent<Props> = ({ application, onSuccess 
           </form>
         </div>
       </div>
-      <HorizontalSeparator classes="mt-5 mb-3" />
     </>
   )
 }

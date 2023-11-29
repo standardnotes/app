@@ -33,7 +33,10 @@ export function getDropdownItemsForAllEditors(application: WebApplicationInterfa
   options.push(
     ...application.componentManager
       .thirdPartyComponentsForArea(ComponentArea.Editor)
-      .filter((component) => FindNativeFeature(component.identifier) === undefined)
+      .filter((component) => {
+        const nativeFeature = FindNativeFeature(component.identifier)
+        return !nativeFeature || nativeFeature.deprecated
+      })
       .map((editor): EditorOption => {
         const [iconType, tint] = getIconAndTintForNoteType(editor.noteType)
 

@@ -67,12 +67,6 @@ const createGroupsFromMap = (map: NoteTypeToEditorRowsMap): EditorMenuGroup[] =>
   const superNote = GetSuperNoteFeature()
   const groups: EditorMenuGroup[] = [
     {
-      icon: 'plain-text',
-      iconClassName: 'text-accessory-tint-1',
-      title: 'Plain text',
-      items: map[NoteType.Plain],
-    },
-    {
       icon: SuperEditorMetadata.icon,
       iconClassName: SuperEditorMetadata.iconClassName,
       title: superNote.name,
@@ -114,6 +108,12 @@ const createGroupsFromMap = (map: NoteTypeToEditorRowsMap): EditorMenuGroup[] =>
       iconClassName: 'text-accessory-tint-6',
       title: 'Authentication',
       items: map[NoteType.Authentication],
+    },
+    {
+      icon: 'plain-text',
+      iconClassName: 'text-accessory-tint-1',
+      title: 'Plain text',
+      items: map[NoteType.Plain],
     },
     {
       icon: 'editor',

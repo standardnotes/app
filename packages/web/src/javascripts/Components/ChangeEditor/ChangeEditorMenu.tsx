@@ -12,8 +12,9 @@ import {
   NoteType,
   PrefKey,
   SNNote,
+  ContentType,
 } from '@standardnotes/snjs'
-import { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react'
+import { FunctionComponent, useCallback, useEffect, useState } from 'react'
 import { EditorMenuGroup } from '@/Components/NotesOptions/EditorMenuGroup'
 import { EditorMenuItem } from '@/Components/NotesOptions/EditorMenuItem'
 import { createEditorMenuGroups } from '../../Utils/createEditorMenuGroups'
@@ -43,7 +44,36 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
   onSelect,
   setDisableClickOutside,
 }) => {
-  const groups = useMemo(() => createEditorMenuGroups(application), [application])
+  const [groups, setGroups] = useState<EditorMenuGroup[]>([])
+  const [unableToFindEditor, setUnableToFindEditor] = useState(false)
+
+  const reloadGroups = useCallback(() => {
+    const groups = createEditorMenuGroups(application)
+    setGroups(groups)
+
+    if (note && note.editorIdentifier) {
+      let didFindEditor = false
+      for (const group of groups) {
+        for (const item of group.items) {
+          if (item.uiFeature.featureIdentifier === note.editorIdentifier) {
+            didFindEditor = true
+            break
+          }
+        }
+      }
+
+      setUnableToFindEditor(!didFindEditor)
+    }
+  }, [application, note])
+
+  useEffect(() => {
+    application.items.streamItems([ContentType.TYPES.Component], reloadGroups)
+  }, [application, reloadGroups])
+
+  useEffect(() => {
+    reloadGroups()
+  }, [reloadGroups])
+
   const [currentFeature, setCurrentFeature] =
     useState<UIFeature<EditorFeatureDescription | IframeComponentFeatureDescription>>()
   const [pendingConversionItem, setPendingConversionItem] = useState<EditorMenuItem | null>(null)
@@ -195,6 +225,13 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
     ],
   )
 
+  const recommendSuper =
+    !note ||
+    (note.noteType &&
+      [NoteType.Plain, NoteType.Markdown, NoteType.RichText, NoteType.Task, NoteType.Code, NoteType.Unknown].includes(
+        note.noteType,
+      ))
+
   const closeSuperNoteImporter = () => {
     setPendingConversionItem(null)
     setDisableClickOutside?.(false)
@@ -204,9 +241,29 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
     setDisableClickOutside?.(false)
   }
 
+  const managePlugins = useCallback(() => {
+    application.openPreferences('plugins')
+  }, [application])
+
   return (
     <>
       <Menu className="pb-1 pt-0.5" a11yLabel="Change note type menu">
+        <MenuSection>
+          <div className="flex items-center justify-between pr-4 py-3 md:pt-0 md:pb-1">
+            <div className="px-3">
+              <h2 className="text-base font-bold">Choose a note type</h2>
+              {unableToFindEditor && (
+                <p className="mr-2 pt-1 text-xs text-warning">
+                  Unable to find system editor for this note. Select Manage Plugins to reinstall this editor.
+                </p>
+              )}
+            </div>
+            <button className="cursor-pointer whitespace-nowrap text-right text-xs text-info" onClick={managePlugins}>
+              Manage Plugins
+            </button>
+          </div>
+        </MenuSection>
+
         {groups
           .filter((group) => group.items && group.items.length)
           .map((group) => {
@@ -236,6 +293,13 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
                               Labs
                             </Pill>
                           )}
+                          {menuItem.uiFeature.featureIdentifier === NativeFeatureIdentifier.TYPES.SuperEditor &&
+                            !isSelected(menuItem) &&
+                            recommendSuper && (
+                              <Pill className="px-1.5 py-0.5 text-[9px]" style="info">
+                                Recommended
+                              </Pill>
+                            )}
                         </div>
                         {!menuItem.isEntitled && (
                           <Icon type={PremiumFeatureIconName} className={PremiumFeatureIconClass} />

@@ -7,6 +7,7 @@ const PREFERENCE_PANE_IDS = [
   'appearance',
   'backups',
   'listed',
+  'plugins',
   'shortcuts',
   'accessibility',
   'get-free-month',

@@ -67,13 +67,13 @@ describe('note view controller', () => {
   it('should create notes with markdown note type', async () => {
     application.items.getDisplayableComponents = jest.fn().mockReturnValue([
       {
-        identifier: NativeFeatureIdentifier.TYPES.MarkdownProEditor,
+        identifier: NativeFeatureIdentifier.TYPES.DeprecatedMarkdownProEditor,
       } as ComponentItem,
     ])
 
     application.componentManager.getDefaultEditorIdentifier = jest
       .fn()
-      .mockReturnValue(NativeFeatureIdentifier.TYPES.MarkdownProEditor)
+      .mockReturnValue(NativeFeatureIdentifier.TYPES.DeprecatedMarkdownProEditor)
 
     const controller = new NoteViewController(
       undefined,

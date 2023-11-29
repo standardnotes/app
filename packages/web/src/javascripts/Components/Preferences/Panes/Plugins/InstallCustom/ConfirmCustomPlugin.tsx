@@ -1,17 +1,15 @@
-import { ContentType } from '@standardnotes/snjs'
-
+import { ContentType, ThirdPartyFeatureDescription } from '@standardnotes/snjs'
 import Button from '@/Components/Button/Button'
 import { Fragment, FunctionComponent } from 'react'
 import { Title, Text, Subtitle } from '@/Components/Preferences/PreferencesComponents/Content'
-import { AnyPackageType } from './Types/AnyPackageType'
-import PreferencesSegment from '../../../../PreferencesComponents/PreferencesSegment'
+import PreferencesSegment from '../../../PreferencesComponents/PreferencesSegment'
 
-const ConfirmCustomPackage: FunctionComponent<{
-  component: AnyPackageType
+const ConfirmCustomPlugin: FunctionComponent<{
+  plugin: ThirdPartyFeatureDescription
   callback: (confirmed: boolean) => void
-}> = ({ component, callback }) => {
+}> = ({ plugin, callback }) => {
   let contentTypeDisplayName = null
-  const contentTypeOrError = ContentType.create(component.content_type)
+  const contentTypeOrError = ContentType.create(plugin.content_type)
   if (!contentTypeOrError.isFailed()) {
     contentTypeDisplayName = contentTypeOrError.getValue().getDisplayName()
   }
@@ -19,23 +17,23 @@ const ConfirmCustomPackage: FunctionComponent<{
   const fields = [
     {
       label: 'Name',
-      value: component.package_info.name,
+      value: plugin.name,
     },
     {
       label: 'Description',
-      value: component.package_info.description,
+      value: plugin.description,
     },
     {
       label: 'Version',
-      value: component.package_info.version,
+      value: plugin.version,
     },
     {
       label: 'Hosted URL',
-      value: component.thirdPartyPackageInfo.url,
+      value: plugin.url,
     },
     {
       label: 'Download URL',
-      value: component.package_info.download_url,
+      value: plugin.download_url,
     },
     {
       label: 'Extension Type',
@@ -70,4 +68,4 @@ const ConfirmCustomPackage: FunctionComponent<{
   )
 }
 
-export default ConfirmCustomPackage
+export default ConfirmCustomPlugin

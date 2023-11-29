@@ -14,7 +14,6 @@ export interface LegacyApiServiceInterface
 
   downloadOfflineFeaturesFromRepo(dto: {
     repo: SNFeatureRepo
-    trustedFeatureHosts: string[]
   }): Promise<{ features: AnyFeatureDescription[]; roles: string[] } | ClientDisplayableError>
 
   downloadFeatureUrl(url: string): Promise<HttpResponse>

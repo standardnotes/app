@@ -6,62 +6,6 @@ import { RoleName } from '@standardnotes/domain-core'
 import { IframeComponentFeatureDescription } from '../Feature/IframeComponentFeatureDescription'
 
 export function IframeEditors(): IframeComponentFeatureDescription[] {
-  const code = FillIframeEditorDefaults({
-    name: 'Code',
-    spellcheckControl: true,
-    identifier: NativeFeatureIdentifier.TYPES.CodeEditor,
-    permission_name: PermissionName.CodeEditor,
-    note_type: NoteType.Code,
-    file_type: 'txt',
-    interchangeable: true,
-    index_path: 'index.html',
-    description:
-      'Syntax highlighting and convenient keyboard shortcuts for over 120 programming' +
-      ' languages. Ideal for code snippets and procedures.',
-    thumbnail_url: 'https://assets.standardnotes.com/screenshots/models/editors/code.jpg',
-    availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
-  })
-
-  const plus = FillIframeEditorDefaults({
-    name: 'Rich Text',
-    note_type: NoteType.RichText,
-    file_type: 'html',
-    identifier: NativeFeatureIdentifier.TYPES.PlusEditor,
-    permission_name: PermissionName.PlusEditor,
-    spellcheckControl: true,
-    description:
-      'From highlighting to custom font sizes and colors, to tables and lists, this editor is perfect for crafting any document.',
-    thumbnail_url: 'https://assets.standardnotes.com/screenshots/models/editors/plus-editor.jpg',
-    availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
-  })
-
-  const markdown = FillIframeEditorDefaults({
-    name: 'Markdown',
-    identifier: NativeFeatureIdentifier.TYPES.MarkdownProEditor,
-    note_type: NoteType.Markdown,
-    file_type: 'md',
-    permission_name: PermissionName.MarkdownProEditor,
-    spellcheckControl: true,
-    description:
-      'A fully featured Markdown editor that supports live preview, a styling toolbar, and split pane support.',
-    thumbnail_url: 'https://assets.standardnotes.com/screenshots/models/editors/adv-markdown.jpg',
-    availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
-  })
-
-  const task = FillIframeEditorDefaults({
-    name: 'Checklist',
-    identifier: NativeFeatureIdentifier.TYPES.TaskEditor,
-    note_type: NoteType.Task,
-    spellcheckControl: true,
-    file_type: 'md',
-    interchangeable: false,
-    permission_name: PermissionName.TaskEditor,
-    description:
-      'A great way to manage short-term and long-term to-do"s. You can mark tasks as completed, change their order, and edit the text naturally in place.',
-    thumbnail_url: 'https://assets.standardnotes.com/screenshots/models/editors/task-editor.jpg',
-    availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
-  })
-
   const tokenvault = FillIframeEditorDefaults({
     name: 'Authenticator',
     note_type: NoteType.Authentication,
@@ -88,5 +32,5 @@ export function IframeEditors(): IframeComponentFeatureDescription[] {
     availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
   })
 
-  return [code, plus, markdown, task, tokenvault, spreadsheets]
+  return [tokenvault, spreadsheets]
 }
