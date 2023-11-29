@@ -28,7 +28,8 @@
     "release:mac": "node scripts/build.mjs mac",
     "start": "electron ./app --enable-logging --icon _icon/icon.png",
     "ava": "rimraf test/data/tmp && ava --serial",
-    "rebuild:keytar": "yarn app/node_modules/keytar build "
+    "rebuild:keytar": "yarn app/node_modules/keytar build ",
+    "rebuild:home-server": "electron-rebuild -f -w @standardnotes/home-server"
   },
   "installConfig": {
     "hoistingLimits": "workspaces"
@@ -64,6 +65,7 @@
     "babel-loader": "^9.1.0",
     "copy-webpack-plugin": "^11.0.0",
     "electron-builder": "23.6.0",
+    "electron-rebuild": "^3.2.9",
     "eslint": "*",
     "eslint-config-prettier": "^8.9.0",
     "eslint-plugin-import": "^2.26.0",
