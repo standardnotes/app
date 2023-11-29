@@ -24,6 +24,7 @@ jobs:
           node-version-file: '.nvmrc'
           cache: 'yarn'
       - run: yarn install --immutable
+      - run: yarn workspace @standardnotes/desktop rebuild:home-server
       - run: yarn build:desktop
       - run: echo APP_VERSION=$(node -p "require('./../web/package.json').version") >> $GITHUB_ENV
 
@@ -65,6 +66,7 @@ jobs:
         run: sudo gem install fpm -f
 
       - run: yarn install --immutable
+      - run: yarn workspace @standardnotes/desktop rebuild:home-server
       - run: yarn build:desktop
 
       - run: echo APP_VERSION=$(node -p "require('./../web/package.json').version") >> $GITHUB_ENV
@@ -139,6 +141,9 @@ jobs:
 
       - name: Install Dependencies
         run: yarn install --immutable
+
+      - name: Rebuild Native Modules
+        run: yarn workspace @standardnotes/desktop rebuild:home-server
 
       - name: Build
         run: yarn build:desktop
