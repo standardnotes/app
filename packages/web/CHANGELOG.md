@@ -3,6 +3,66 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.181.38](https://github.com/standardnotes/app/compare/@standardnotes/web@3.181.37...@standardnotes/web@3.181.38) (2023-11-27)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.181.37](https://github.com/standardnotes/app/compare/@standardnotes/web@3.181.36...@standardnotes/web@3.181.37) (2023-11-27)
+
+### Bug Fixes
+
+* Fixed issue where multiple trashed items on mobile could not be deleted permanently ([5660df5](https://github.com/standardnotes/app/commit/5660df577da4e803d3ff25f257c0572dfe30db73))
+
+## [3.181.36](https://github.com/standardnotes/app/compare/@standardnotes/web@3.181.35...@standardnotes/web@3.181.36) (2023-11-27)
+
+### Bug Fixes
+
+* Fixed issue where checklist item text in Super notes wasn't aligned correctly ([#2656](https://github.com/standardnotes/app/issues/2656)) ([8ff0d20](https://github.com/standardnotes/app/commit/8ff0d208583fd0625682d481f8a065c6ccbd8b8e))
+
+## [3.181.33](https://github.com/standardnotes/app/compare/@standardnotes/web@3.181.32...@standardnotes/web@3.181.33) (2023-11-24)
+
+### Bug Fixes
+
+* Fixed issue when importing plaintext file ([1f81cad](https://github.com/standardnotes/app/commit/1f81cadcfc65f70b4e054fe3807c0e93a8e3e4f6))
+
+## [3.181.32](https://github.com/standardnotes/app/compare/@standardnotes/web@3.181.31...@standardnotes/web@3.181.32) (2023-11-23)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.181.31](https://github.com/standardnotes/app/compare/@standardnotes/web@3.181.30...@standardnotes/web@3.181.31) (2023-11-21)
+
+### Bug Fixes
+
+* Fixed issue with creating new tags and subtags ([a73c7a4](https://github.com/standardnotes/app/commit/a73c7a41ef2d713668255ca88548e4f89f2e9bfa))
+
+## [3.181.30](https://github.com/standardnotes/app/compare/@standardnotes/web@3.181.29...@standardnotes/web@3.181.30) (2023-11-21)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.181.29](https://github.com/standardnotes/app/compare/@standardnotes/web@3.181.28...@standardnotes/web@3.181.29) (2023-11-20)
+
+### Bug Fixes
+
+* Fixed issue where search options weren't selectable on macOS ([b377f9c](https://github.com/standardnotes/app/commit/b377f9cba719d5d43af22dfadd6448dee3d2ef16))
+
+## [3.181.28](https://github.com/standardnotes/app/compare/@standardnotes/web@3.181.27...@standardnotes/web@3.181.28) (2023-11-20)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.181.27](https://github.com/standardnotes/app/compare/@standardnotes/web@3.181.26...@standardnotes/web@3.181.27) (2023-11-20)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.181.26](https://github.com/standardnotes/app/compare/@standardnotes/web@3.181.25...@standardnotes/web@3.181.26) (2023-11-20)
+
+### Bug Fixes
+
+* Fixed issue with floating toolbar in Super notes where it would persist even after unselecting text ([69a9e16](https://github.com/standardnotes/app/commit/69a9e16ed2543dce835ee2f440e35bae87275a68))
+
+## [3.181.25](https://github.com/standardnotes/app/compare/@standardnotes/web@3.181.24...@standardnotes/web@3.181.25) (2023-11-19)
+
+**Note:** Version bump only for package @standardnotes/web
+
 ## [3.181.24](https://github.com/standardnotes/app/compare/@standardnotes/web@3.181.23...@standardnotes/web@3.181.24) (2023-11-11)
 
 **Note:** Version bump only for package @standardnotes/web

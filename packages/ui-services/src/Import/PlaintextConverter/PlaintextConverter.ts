@@ -27,8 +27,6 @@ export class PlaintextConverter {
     const createdAtDate = file.lastModified ? new Date(file.lastModified) : new Date()
     const updatedAtDate = file.lastModified ? new Date(file.lastModified) : new Date()
 
-    const shouldConvertToSuper = file.type === 'text/markdown' && isEntitledToSuper
-
     return {
       created_at: createdAtDate,
       created_at_timestamp: createdAtDate.getTime(),
@@ -38,9 +36,7 @@ export class PlaintextConverter {
       content_type: ContentType.TYPES.Note,
       content: {
         title: name,
-        text: shouldConvertToSuper
-          ? this.superConverterService.convertOtherFormatToSuperString(content, 'md')
-          : content,
+        text: isEntitledToSuper ? this.superConverterService.convertOtherFormatToSuperString(content, 'md') : content,
         references: [],
         ...(isEntitledToSuper
           ? {

@@ -3,7 +3,7 @@
     "skipLibCheck": true,
     "lib": ["ES2022"],
     "target": "ES2019",
-    "module": "commonjs",
+    "module": "ES2020",
     "moduleResolution": "node",
     "allowJs": true,
     "noEmit": true,

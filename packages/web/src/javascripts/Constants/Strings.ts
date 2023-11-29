@@ -109,6 +109,7 @@ export const Strings = {
   protectingNoteWithoutProtectionSources:
     'Access to this note will not be restricted until you set up a passcode or account.',
   trashItemsTitle: 'Move to Trash',
+  deleteItemsPermanentlyTitle: 'Delete Permanently',
   trashNotesText: 'Are you sure you want to move these notes to the trash?',
   trashFilesText: 'Are you sure you want to move these files to the trash?',
   enterPasscode: 'Please enter a passcode.',

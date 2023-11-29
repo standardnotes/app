@@ -1,6 +1,156 @@
 {
   "versions": [
     {
+      "version": "3.181.38",
+      "title": "[3.181.38](https://github.com/standardnotes/app/compare/@standardnotes/web@3.181.37...@standardnotes/web@3.181.38) (2023-11-27)",
+      "date": null,
+      "body": "**Note:** Version bump only for package @standardnotes/web",
+      "parsed": {
+        "_": [
+          "Note: Version bump only for package @standardnotes/web"
+        ]
+      }
+    },
+    {
+      "version": "3.181.37",
+      "title": "[3.181.37](https://github.com/standardnotes/app/compare/@standardnotes/web@3.181.36...@standardnotes/web@3.181.37) (2023-11-27)",
+      "date": null,
+      "body": "### Bug Fixes\n\n* Fixed issue where multiple trashed items on mobile could not be deleted permanently ([5660df5](https://github.com/standardnotes/app/commit/5660df577da4e803d3ff25f257c0572dfe30db73))",
+      "parsed": {
+        "_": [
+          "Fixed issue where multiple trashed items on mobile could not be deleted permanently (5660df5)"
+        ],
+        "Bug Fixes": [
+          "Fixed issue where multiple trashed items on mobile could not be deleted permanently (5660df5)"
+        ]
+      }
+    },
+    {
+      "version": "3.181.36",
+      "title": "[3.181.36](https://github.com/standardnotes/app/compare/@standardnotes/web@3.181.35...@standardnotes/web@3.181.36) (2023-11-27)",
+      "date": null,
+      "body": "### Bug Fixes\n\n* Fixed issue where checklist item text in Super notes wasn't aligned correctly ([#2656](https://github.com/standardnotes/app/issues/2656)) ([8ff0d20](https://github.com/standardnotes/app/commit/8ff0d208583fd0625682d481f8a065c6ccbd8b8e))",
+      "parsed": {
+        "_": [
+          "Fixed issue where checklist item text in Super notes wasn't aligned correctly (#2656) (8ff0d20)"
+        ],
+        "Bug Fixes": [
+          "Fixed issue where checklist item text in Super notes wasn't aligned correctly (#2656) (8ff0d20)"
+        ]
+      }
+    },
+    {
+      "version": "3.181.33",
+      "title": "[3.181.33](https://github.com/standardnotes/app/compare/@standardnotes/web@3.181.32...@standardnotes/web@3.181.33) (2023-11-24)",
+      "date": null,
+      "body": "### Bug Fixes\n\n* Fixed issue when importing plaintext file ([1f81cad](https://github.com/standardnotes/app/commit/1f81cadcfc65f70b4e054fe3807c0e93a8e3e4f6))",
+      "parsed": {
+        "_": [
+          "Fixed issue when importing plaintext file (1f81cad)"
+        ],
+        "Bug Fixes": [
+          "Fixed issue when importing plaintext file (1f81cad)"
+        ]
+      }
+    },
+    {
+      "version": "3.181.32",
+      "title": "[3.181.32](https://github.com/standardnotes/app/compare/@standardnotes/web@3.181.31...@standardnotes/web@3.181.32) (2023-11-23)",
+      "date": null,
+      "body": "**Note:** Version bump only for package @standardnotes/web",
+      "parsed": {
+        "_": [
+          "Note: Version bump only for package @standardnotes/web"
+        ]
+      }
+    },
+    {
+      "version": "3.181.31",
+      "title": "[3.181.31](https://github.com/standardnotes/app/compare/@standardnotes/web@3.181.30...@standardnotes/web@3.181.31) (2023-11-21)",
+      "date": null,
+      "body": "### Bug Fixes\n\n* Fixed issue with creating new tags and subtags ([a73c7a4](https://github.com/standardnotes/app/commit/a73c7a41ef2d713668255ca88548e4f89f2e9bfa))",
+      "parsed": {
+        "_": [
+          "Fixed issue with creating new tags and subtags (a73c7a4)"
+        ],
+        "Bug Fixes": [
+          "Fixed issue with creating new tags and subtags (a73c7a4)"
+        ]
+      }
+    },
+    {
+      "version": "3.181.30",
+      "title": "[3.181.30](https://github.com/standardnotes/app/compare/@standardnotes/web@3.181.29...@standardnotes/web@3.181.30) (2023-11-21)",
+      "date": null,
+      "body": "**Note:** Version bump only for package @standardnotes/web",
+      "parsed": {
+        "_": [
+          "Note: Version bump only for package @standardnotes/web"
+        ]
+      }
+    },
+    {
+      "version": "3.181.29",
+      "title": "[3.181.29](https://github.com/standardnotes/app/compare/@standardnotes/web@3.181.28...@standardnotes/web@3.181.29) (2023-11-20)",
+      "date": null,
+      "body": "### Bug Fixes\n\n* Fixed issue where search options weren't selectable on macOS ([b377f9c](https://github.com/standardnotes/app/commit/b377f9cba719d5d43af22dfadd6448dee3d2ef16))",
+      "parsed": {
+        "_": [
+          "Fixed issue where search options weren't selectable on macOS (b377f9c)"
+        ],
+        "Bug Fixes": [
+          "Fixed issue where search options weren't selectable on macOS (b377f9c)"
+        ]
+      }
+    },
+    {
+      "version": "3.181.28",
+      "title": "[3.181.28](https://github.com/standardnotes/app/compare/@standardnotes/web@3.181.27...@standardnotes/web@3.181.28) (2023-11-20)",
+      "date": null,
+      "body": "**Note:** Version bump only for package @standardnotes/web",
+      "parsed": {
+        "_": [
+          "Note: Version bump only for package @standardnotes/web"
+        ]
+      }
+    },
+    {
+      "version": "3.181.27",
+      "title": "[3.181.27](https://github.com/standardnotes/app/compare/@standardnotes/web@3.181.26...@standardnotes/web@3.181.27) (2023-11-20)",
+      "date": null,
+      "body": "**Note:** Version bump only for package @standardnotes/web",
+      "parsed": {
+        "_": [
+          "Note: Version bump only for package @standardnotes/web"
+        ]
+      }
+    },
+    {
+      "version": "3.181.26",
+      "title": "[3.181.26](https://github.com/standardnotes/app/compare/@standardnotes/web@3.181.25...@standardnotes/web@3.181.26) (2023-11-20)",
+      "date": null,
+      "body": "### Bug Fixes\n\n* Fixed issue with floating toolbar in Super notes where it would persist even after unselecting text ([69a9e16](https://github.com/standardnotes/app/commit/69a9e16ed2543dce835ee2f440e35bae87275a68))",
+      "parsed": {
+        "_": [
+          "Fixed issue with floating toolbar in Super notes where it would persist even after unselecting text (69a9e16)"
+        ],
+        "Bug Fixes": [
+          "Fixed issue with floating toolbar in Super notes where it would persist even after unselecting text (69a9e16)"
+        ]
+      }
+    },
+    {
+      "version": "3.181.25",
+      "title": "[3.181.25](https://github.com/standardnotes/app/compare/@standardnotes/web@3.181.24...@standardnotes/web@3.181.25) (2023-11-19)",
+      "date": null,
+      "body": "**Note:** Version bump only for package @standardnotes/web",
+      "parsed": {
+        "_": [
+          "Note: Version bump only for package @standardnotes/web"
+        ]
+      }
+    },
+    {
       "version": "3.181.24",
       "title": "[3.181.24](https://github.com/standardnotes/app/compare/@standardnotes/web@3.181.23...@standardnotes/web@3.181.24) (2023-11-11)",
       "date": null,

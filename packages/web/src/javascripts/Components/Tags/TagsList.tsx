@@ -17,25 +17,19 @@ const TagsList: FunctionComponent<Props> = ({ type }: Props) => {
     type === 'all' ? application.navigationController.allLocalRootTags : application.navigationController.starredTags
 
   const openTagContextMenu = useCallback(
-    (posX: number, posY: number) => {
-      application.navigationController.setContextMenuClickLocation({
-        x: posX,
-        y: posY,
-      })
-      application.navigationController.reloadContextMenuLayout()
+    (x: number, y: number) => {
+      application.navigationController.setContextMenuClickLocation({ x, y })
       application.navigationController.setContextMenuOpen(true)
     },
     [application],
   )
 
   const onContextMenu = useCallback(
-    (tag: SNTag, posX: number, posY: number) => {
-      if (application.navigationController.selected !== tag) {
-        void application.navigationController.setSelectedTag(tag, type)
-      }
+    (tag: SNTag, section: TagListSectionType, posX: number, posY: number) => {
+      application.navigationController.setContextMenuTag(tag, section)
       openTagContextMenu(posX, posY)
     },
-    [application, openTagContextMenu, type],
+    [application, openTagContextMenu],
   )
 
   return (

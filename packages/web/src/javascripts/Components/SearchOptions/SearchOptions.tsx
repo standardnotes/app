@@ -15,7 +15,7 @@ const SearchOptions = ({ searchOptions }: Props) => {
   }, [searchOptions])
 
   return (
-    <div role="tablist" className="mt-3 flex flex-wrap gap-2" onMouseDown={(e) => e.preventDefault()}>
+    <div className="mt-3 flex flex-wrap gap-2" onMouseDown={(e) => e.preventDefault()}>
       <Bubble
         label="Protected Contents"
         selected={includeProtectedContents}

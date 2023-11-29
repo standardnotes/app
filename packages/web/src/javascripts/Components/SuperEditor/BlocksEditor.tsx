@@ -28,7 +28,6 @@ import TableActionMenuPlugin from './Plugins/TableCellActionMenuPlugin'
 import ToolbarPlugin from './Plugins/ToolbarPlugin/ToolbarPlugin'
 import { useMediaQuery, MutuallyExclusiveMediaQueryBreakpoints } from '@/Hooks/useMediaQuery'
 import { CheckListPlugin } from './Plugins/List/CheckListPlugin'
-import { EmptyLinePlaceholderPlugin } from './Plugins/EmptyLinePlaceholderPlugin'
 
 type BlocksEditorProps = {
   onChange?: (value: string, preview: string) => void
@@ -114,7 +113,6 @@ export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
       <CollapsiblePlugin />
       <TabIndentationPlugin />
       <RemoveBrokenTablesPlugin />
-      <EmptyLinePlaceholderPlugin />
       {!readonly && floatingAnchorElem && (
         <>
           <DraggableBlockPlugin anchorElem={floatingAnchorElem} />

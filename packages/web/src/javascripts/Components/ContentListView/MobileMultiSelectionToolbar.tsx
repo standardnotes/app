@@ -1,12 +1,17 @@
 import { NotesController } from '@/Controllers/NotesController/NotesController'
 import Icon from '../Icon/Icon'
+import { NavigationController } from '@/Controllers/Navigation/NavigationController'
+import { observer } from 'mobx-react-lite'
+import { SystemViewId, isSmartView } from '@standardnotes/snjs'
 
 type Props = {
   notesController: NotesController
+  navigationController: NavigationController
 }
 
-const MobileMultiSelectionToolbar = ({ notesController }: Props) => {
+const MobileMultiSelectionToolbar = ({ notesController, navigationController }: Props) => {
   const { selectedNotes } = notesController
+  const { selected } = navigationController
 
   const archived = selectedNotes.some((note) => note.archived)
 
@@ -26,7 +31,16 @@ const MobileMultiSelectionToolbar = ({ notesController }: Props) => {
       </button>
       <button
         className="flex-grow px-2 py-3 active:bg-passive-3"
-        onClick={() => notesController.setTrashSelectedNotes(true).catch(console.error)}
+        onClick={() => {
+          const isInTrashView = selected && isSmartView(selected) && selected.uuid === SystemViewId.TrashedNotes
+          const allSelectedNotesAreTrashed = selectedNotes.every((note) => note.trashed)
+          const shouldDeletePermanently = isInTrashView || allSelectedNotesAreTrashed
+          if (shouldDeletePermanently) {
+            notesController.deleteNotesPermanently().catch(console.error)
+          } else {
+            notesController.setTrashSelectedNotes(true).catch(console.error)
+          }
+        }}
       >
         <Icon type="trash" className="mx-auto text-info" size="large" />
       </button>
@@ -40,4 +54,4 @@ const MobileMultiSelectionToolbar = ({ notesController }: Props) => {
   )
 }
 
-export default MobileMultiSelectionToolbar
+export default observer(MobileMultiSelectionToolbar)

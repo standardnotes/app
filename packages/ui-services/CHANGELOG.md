@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.34.6](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.34.5...@standardnotes/ui-services@1.34.6) (2023-11-27)
+
+**Note:** Version bump only for package @standardnotes/ui-services
+
+## [1.34.5](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.34.4...@standardnotes/ui-services@1.34.5) (2023-11-24)
+
+**Note:** Version bump only for package @standardnotes/ui-services
+
+## [1.34.4](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.34.3...@standardnotes/ui-services@1.34.4) (2023-11-24)
+
+**Note:** Version bump only for package @standardnotes/ui-services
+
+## [1.34.3](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.34.2...@standardnotes/ui-services@1.34.3) (2023-11-24)
+
+### Bug Fixes
+
+* Fixed issue when importing plaintext file ([1f81cad](https://github.com/standardnotes/app/commit/1f81cadcfc65f70b4e054fe3807c0e93a8e3e4f6))
+
 ## [1.34.2](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.34.1...@standardnotes/ui-services@1.34.2) (2023-11-08)
 
 **Note:** Version bump only for package @standardnotes/ui-services
