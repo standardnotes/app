@@ -379,6 +379,9 @@ export class WebDependencies extends DependencyContainer {
         this.get<NavigationController>(Web_TYPES.NavigationController),
         application.items,
         application.mutator,
+        this.get<LinkingController>(Web_TYPES.LinkingController),
+        application.preferences,
+        application.events,
       )
     })
 

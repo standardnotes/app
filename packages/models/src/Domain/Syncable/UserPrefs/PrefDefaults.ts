@@ -48,6 +48,9 @@ export const PrefDefaults = {
   [PrefKey.ActiveThemes]: [],
   [PrefKey.ActiveComponents]: [],
   [PrefKey.AlwaysShowSuperToolbar]: true,
+  [PrefKey.AddImportsToTag]: true,
+  [PrefKey.AlwaysCreateNewTagForImports]: true,
+  [PrefKey.ExistingTagForImports]: undefined,
 } satisfies {
   [key in PrefKey]: PrefValue[key]
 }
