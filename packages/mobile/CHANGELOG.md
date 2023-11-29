@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.57.0](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.56.251...@standardnotes/mobile@3.57.0) (2023-11-29)
+
+### Features
+
+* Markdown, Rich text, Code, and Checklist note types have been moved to the new Plugins preferences pane. Previous notes created using these types will not experience any disruption. To create new notes using these types, you can reinstall them from the Plugins preferences screen. It is recommended to use the Super note type in place of these replaced note types. ([#2630](https://github.com/standardnotes/app/issues/2630)) ([c43b593](https://github.com/standardnotes/app/commit/c43b593c6098a1293d6e6f25fda184e592897f7c))
+
 ## [3.56.251](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.56.250...@standardnotes/mobile@3.56.251) (2023-11-27)
 
 **Note:** Version bump only for package @standardnotes/mobile

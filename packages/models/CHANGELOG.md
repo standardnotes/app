@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.50.0](https://github.com/standardnotes/app/compare/@standardnotes/models@1.49.3...@standardnotes/models@1.50.0) (2023-11-29)
+
+### Features
+
+* Markdown, Rich text, Code, and Checklist note types have been moved to the new Plugins preferences pane. Previous notes created using these types will not experience any disruption. To create new notes using these types, you can reinstall them from the Plugins preferences screen. It is recommended to use the Super note type in place of these replaced note types. ([#2630](https://github.com/standardnotes/app/issues/2630)) ([c43b593](https://github.com/standardnotes/app/commit/c43b593c6098a1293d6e6f25fda184e592897f7c))
+* You can now select an existing tag to automatically add imported notes to ([#2663](https://github.com/standardnotes/app/issues/2663)) ([eb75329](https://github.com/standardnotes/app/commit/eb75329fb43b3a00291983590c7a860e4352dd3e))
+
 ## [1.49.3](https://github.com/standardnotes/app/compare/@standardnotes/models@1.49.2...@standardnotes/models@1.49.3) (2023-11-27)
 
 ### Bug Fixes

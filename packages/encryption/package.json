@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/encryption",
-  "version": "1.21.94",
+  "version": "1.21.95",
   "engines": {
     "node": ">=16.0.0 <17.0.0"
   },

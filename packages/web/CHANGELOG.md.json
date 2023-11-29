@@ -1,6 +1,22 @@
 {
   "versions": [
     {
+      "version": "3.182.0",
+      "title": "[3.182.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.181.38...@standardnotes/web@3.182.0) (2023-11-29)",
+      "date": null,
+      "body": "### Features\n\n* Markdown, Rich text, Code, and Checklist note types have been moved to the new Plugins preferences pane. Previous notes created using these types will not experience any disruption. To create new notes using these types, you can reinstall them from the Plugins preferences screen. It is recommended to use the Super note type in place of these replaced note types. ([#2630](https://github.com/standardnotes/app/issues/2630)) ([c43b593](https://github.com/standardnotes/app/commit/c43b593c6098a1293d6e6f25fda184e592897f7c))\n* You can now select an existing tag to automatically add imported notes to ([#2663](https://github.com/standardnotes/app/issues/2663)) ([eb75329](https://github.com/standardnotes/app/commit/eb75329fb43b3a00291983590c7a860e4352dd3e))",
+      "parsed": {
+        "_": [
+          "Markdown, Rich text, Code, and Checklist note types have been moved to the new Plugins preferences pane. Previous notes created using these types will not experience any disruption. To create new notes using these types, you can reinstall them from the Plugins preferences screen. It is recommended to use the Super note type in place of these replaced note types. (#2630) (c43b593)",
+          "You can now select an existing tag to automatically add imported notes to (#2663) (eb75329)"
+        ],
+        "Features": [
+          "Markdown, Rich text, Code, and Checklist note types have been moved to the new Plugins preferences pane. Previous notes created using these types will not experience any disruption. To create new notes using these types, you can reinstall them from the Plugins preferences screen. It is recommended to use the Super note type in place of these replaced note types. (#2630) (c43b593)",
+          "You can now select an existing tag to automatically add imported notes to (#2663) (eb75329)"
+        ]
+      }
+    },
+    {
       "version": "3.181.38",
       "title": "[3.181.38](https://github.com/standardnotes/app/compare/@standardnotes/web@3.181.37...@standardnotes/web@3.181.38) (2023-11-27)",
       "date": null,
