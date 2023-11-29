@@ -52,7 +52,7 @@ const ModalOverlay = forwardRef(
       const id = 'portal/' + portalId
       const existing = document.getElementById(id)
       if (existing) {
-        return existing
+        existing.remove()
       }
       const div = document.createElement('div')
       div.id = id
@@ -79,15 +79,15 @@ const ModalOverlay = forwardRef(
       <Dialog
         tabIndex={0}
         className={classNames(
-          'z-[1] pointer-events-auto m-0 flex h-full w-full flex-col border-[--popover-border-color] bg-default md:bg-[--popover-background-color] md:[backdrop-filter:var(--popover-backdrop-filter)] p-0 md:h-auto md:max-h-[85vh] md:w-160 md:rounded md:border md:shadow-main',
+          'pointer-events-auto z-[1] m-0 flex h-full w-full flex-col border-[--popover-border-color] bg-default p-0 md:h-auto md:max-h-[85vh] md:w-160 md:rounded md:border md:bg-[--popover-background-color] md:shadow-main md:[backdrop-filter:var(--popover-backdrop-filter)]',
           'focus-visible:shadow-none focus-visible:outline-none',
           className,
         )}
         backdrop={
           <div
             className={classNames(
-              'absolute z-0 h-full w-full bg-passive-5 opacity-0 pointer-events-auto',
-              'md:transition-opacity md:duration-75 md:opacity-50 [&[data-enter]]:md:opacity-75',
+              'pointer-events-auto absolute z-0 h-full w-full bg-passive-5 opacity-0',
+              'md:opacity-50 md:transition-opacity md:duration-75 [&[data-enter]]:md:opacity-75',
               backdropClassName,
             )}
             onClick={close}
