@@ -3,39 +3,59 @@ import { WebApplication } from '@/Application/WebApplication'
 import Icon from '@/Components/Icon/Icon'
 import { PremiumFeatureIconClass, PremiumFeatureIconName } from '@/Components/Icon/PremiumFeatureIcon'
 
+type Props = {
+  featureName?: string
+  ctaRef: React.RefObject<HTMLButtonElement>
+  application: WebApplication
+  hasSubscription: boolean
+  onClick?: () => void
+} & (
+  | {
+      inline: true
+      onClose?: never
+    }
+  | {
+      inline?: false
+      onClose: () => void
+    }
+)
+
 export const UpgradePrompt = ({
   featureName,
   ctaRef,
   application,
   hasSubscription,
   onClose,
-}: {
-  featureName?: string
-  ctaRef: React.RefObject<HTMLButtonElement>
-  application: WebApplication
-  hasSubscription: boolean
-  onClose: () => void
-}) => {
+  onClick,
+  inline,
+}: Props) => {
   const handleClick = useCallback(() => {
+    if (onClick) {
+      onClick()
+    }
     if (hasSubscription && !application.isNativeIOS()) {
       void application.openSubscriptionDashboard.execute()
     } else {
       void application.openPurchaseFlow()
     }
-    onClose()
-  }, [application, hasSubscription, onClose])
+    if (onClose) {
+      onClose()
+    }
+  }, [application, hasSubscription, onClose, onClick])
 
   return (
     <>
       <div>
         <div className="flex justify-end p-1">
-          <button
-            className="flex cursor-pointer border-0 bg-transparent p-0"
-            onClick={onClose}
-            aria-label="Close modal"
-          >
-            <Icon className="text-neutral" type="close" />
-          </button>
+          {!inline && (
+            <button
+              className="flex cursor-pointer border-0 bg-transparent p-0"
+              onClick={onClose}
+              aria-label="Close modal"
+            >
+              <Icon className="text-neutral" type="close" />
+            </button>
+          )}
         </div>
         <div
           className="mx-auto mb-5 flex h-24 w-24 items-center justify-center rounded-[50%] bg-contrast"

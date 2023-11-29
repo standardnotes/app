@@ -28,6 +28,10 @@ export * from './Route/RouteServiceEvent'
 export * from './Security/AutolockService'
 export * from './Storage/LocalStorage'
 
+export * from './Plugins/PluginListing'
+export * from './Plugins/PluginsService'
+export * from './Plugins/PluginsServiceInterface'
+
 export * from './UseCase/IsGlobalSpellcheckEnabled'
 export * from './UseCase/IsNativeMobileWeb'
 export * from './UseCase/IsMobileDevice'

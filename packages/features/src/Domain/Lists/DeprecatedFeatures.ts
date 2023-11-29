@@ -10,6 +10,66 @@ import { ComponentAction } from '../Component/ComponentAction'
 import { ComponentArea } from '../Component/ComponentArea'
 
 export function GetDeprecatedFeatures(): AnyFeatureDescription[] {
+  const code = FillIframeEditorDefaults({
+    name: 'Code',
+    spellcheckControl: true,
+    identifier: NativeFeatureIdentifier.TYPES.DeprecatedCodeEditor,
+    permission_name: PermissionName.DeprecatedCodeEditor,
+    note_type: NoteType.Code,
+    file_type: 'txt',
+    interchangeable: true,
+    deprecated: true,
+    index_path: 'index.html',
+    description:
+      'Syntax highlighting and convenient keyboard shortcuts for over 120 programming' +
+      ' languages. Ideal for code snippets and procedures.',
+    thumbnail_url: 'https://assets.standardnotes.com/screenshots/models/editors/code.jpg',
+    availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
+  })
+
+  const plus = FillIframeEditorDefaults({
+    name: 'Rich Text',
+    note_type: NoteType.RichText,
+    file_type: 'html',
+    identifier: NativeFeatureIdentifier.TYPES.DeprecatedPlusEditor,
+    permission_name: PermissionName.DeprecatedPlusEditor,
+    spellcheckControl: true,
+    deprecated: true,
+    description:
+      'From highlighting to custom font sizes and colors, to tables and lists, this editor is perfect for crafting any document.',
+    thumbnail_url: 'https://assets.standardnotes.com/screenshots/models/editors/plus-editor.jpg',
+    availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
+  })
+
+  const markdown = FillIframeEditorDefaults({
+    name: 'Markdown',
+    identifier: NativeFeatureIdentifier.TYPES.DeprecatedMarkdownProEditor,
+    note_type: NoteType.Markdown,
+    file_type: 'md',
+    permission_name: PermissionName.DeprecatedMarkdownProEditor,
+    spellcheckControl: true,
+    deprecated: true,
+    description:
+      'A fully featured Markdown editor that supports live preview, a styling toolbar, and split pane support.',
+    thumbnail_url: 'https://assets.standardnotes.com/screenshots/models/editors/adv-markdown.jpg',
+    availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
+  })
+
+  const task = FillIframeEditorDefaults({
+    name: 'Checklist',
+    identifier: NativeFeatureIdentifier.TYPES.DeprecatedTaskEditor,
+    note_type: NoteType.Task,
+    spellcheckControl: true,
+    file_type: 'md',
+    interchangeable: false,
+    deprecated: true,
+    permission_name: PermissionName.DeprecatedTaskEditor,
+    description:
+      'A great way to manage short-term and long-term to-do"s. You can mark tasks as completed, change their order, and edit the text naturally in place.',
+    thumbnail_url: 'https://assets.standardnotes.com/screenshots/models/editors/task-editor.jpg',
+    availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
+  })
+
   const bold: EditorFeatureDescription = FillIframeEditorDefaults({
     name: 'Alternative Rich Text',
     identifier: NativeFeatureIdentifier.TYPES.DeprecatedBoldEditor,
@@ -118,5 +178,5 @@ export function GetDeprecatedFeatures(): AnyFeatureDescription[] {
     availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
   })
 
-  return [bold, markdownBasic, markdownMinimist, markdownMath, markdownAlt, filesafe]
+  return [code, plus, markdown, task, bold, markdownBasic, markdownMinimist, markdownMath, markdownAlt, filesafe]
 }

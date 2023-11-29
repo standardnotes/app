@@ -32,11 +32,7 @@ export class NativeFeatureIdentifier extends ValueObject<NativeFeatureIdentifier
     PlainEditor: 'com.standardnotes.plain-text',
     SuperEditor: 'com.standardnotes.super-editor',
 
-    CodeEditor: 'org.standardnotes.code-editor',
-    MarkdownProEditor: 'org.standardnotes.advanced-markdown-editor',
-    PlusEditor: 'org.standardnotes.plus-editor',
     SheetsEditor: 'org.standardnotes.standard-sheets',
-    TaskEditor: 'org.standardnotes.simple-task-editor',
     TokenVaultEditor: 'org.standardnotes.token-vault',
 
     Clipper: 'org.standardnotes.clipper',
@@ -44,6 +40,10 @@ export class NativeFeatureIdentifier extends ValueObject<NativeFeatureIdentifier
     Vaults: 'org.standardnotes.vaults',
     SharedVaults: 'org.standardnotes.shared-vaults',
 
+    DeprecatedCodeEditor: 'org.standardnotes.code-editor',
+    DeprecatedMarkdownProEditor: 'org.standardnotes.advanced-markdown-editor',
+    DeprecatedPlusEditor: 'org.standardnotes.plus-editor',
+    DeprecatedTaskEditor: 'org.standardnotes.simple-task-editor',
     DeprecatedMarkdownVisualEditor: 'org.standardnotes.markdown-visual-editor',
     DeprecatedBoldEditor: 'org.standardnotes.bold-editor',
     DeprecatedMarkdownBasicEditor: 'org.standardnotes.simple-markdown-editor',

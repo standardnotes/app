@@ -16,9 +16,9 @@ describe('note mutator', () => {
   it('sets componentIdentifier', () => {
     const note = createNote({})
     const mutator = new NoteMutator(note, MutationType.NoUpdateUserTimestamps)
-    mutator.editorIdentifier = NativeFeatureIdentifier.TYPES.MarkdownProEditor
+    mutator.editorIdentifier = NativeFeatureIdentifier.TYPES.DeprecatedMarkdownProEditor
     const result = mutator.getResult()
 
-    expect(result.content.editorIdentifier).toEqual(NativeFeatureIdentifier.TYPES.MarkdownProEditor)
+    expect(result.content.editorIdentifier).toEqual(NativeFeatureIdentifier.TYPES.DeprecatedMarkdownProEditor)
   })
 })

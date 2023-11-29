@@ -76,7 +76,7 @@ describe('GetFeatureUrl', () => {
 
     it('returns native path for native component', () => {
       const feature = nativeFeatureAsUIFeature<IframeComponentFeatureDescription>(
-        NativeFeatureIdentifier.TYPES.MarkdownProEditor,
+        NativeFeatureIdentifier.TYPES.DeprecatedMarkdownProEditor,
       )!
       const url = usecase.execute(feature)
       expect(url).toEqual(
@@ -125,7 +125,7 @@ describe('GetFeatureUrl', () => {
 
     it('returns native path for native feature', () => {
       const feature = nativeFeatureAsUIFeature<IframeComponentFeatureDescription>(
-        NativeFeatureIdentifier.TYPES.MarkdownProEditor,
+        NativeFeatureIdentifier.TYPES.DeprecatedMarkdownProEditor,
       )
       const url = usecase.execute(feature)
       expect(url).toEqual(

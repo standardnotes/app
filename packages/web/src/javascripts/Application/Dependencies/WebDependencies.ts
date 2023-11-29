@@ -9,6 +9,7 @@ import {
   IsNativeIOS,
   IsNativeMobileWeb,
   KeyboardService,
+  PluginsService,
   RouteService,
   ThemeManager,
   ToastService,
@@ -143,6 +144,17 @@ export class WebDependencies extends DependencyContainer {
 
     this.bind(Web_TYPES.ChangelogService, () => {
       return new ChangelogService(application.environment, application.storage)
+    })
+
+    this.bind(Web_TYPES.PluginsService, () => {
+      return new PluginsService(
+        application.items,
+        application.mutator,
+        application.sync,
+        application.legacyApi,
+        application.alerts,
+        application.options.crypto,
+      )
     })
 
     this.bind(Web_TYPES.IsMobileDevice, () => {

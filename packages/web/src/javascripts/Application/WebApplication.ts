@@ -38,6 +38,7 @@ import {
   IsNativeIOS,
   IsNativeMobileWeb,
   KeyboardService,
+  PluginsServiceInterface,
   RouteServiceInterface,
   ThemeManager,
   VaultDisplayServiceInterface,
@@ -573,6 +574,10 @@ export class WebApplication extends SNApplication implements WebApplicationInter
 
   get changelogService(): ChangelogService {
     return this.deps.get<ChangelogService>(Web_TYPES.ChangelogService)
+  }
+
+  get pluginsService(): PluginsServiceInterface {
+    return this.deps.get<PluginsServiceInterface>(Web_TYPES.PluginsService)
   }
 
   get momentsService(): MomentsService {
