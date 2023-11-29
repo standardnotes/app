@@ -5,7 +5,6 @@ import { AnyPackageType } from '../AnyPackageType'
 
 interface PackageEntryProps {
   plugin: AnyPackageType
-  first: boolean
   latestVersion: string | undefined
   toggleActivate?: (extension: AnyPackageType) => void
 }

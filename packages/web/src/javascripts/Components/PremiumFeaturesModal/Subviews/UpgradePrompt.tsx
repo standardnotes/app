@@ -3,6 +3,23 @@ import { WebApplication } from '@/Application/WebApplication'
 import Icon from '@/Components/Icon/Icon'
 import { PremiumFeatureIconClass, PremiumFeatureIconName } from '@/Components/Icon/PremiumFeatureIcon'
 
+type Props = {
+  featureName?: string
+  ctaRef: React.RefObject<HTMLButtonElement>
+  application: WebApplication
+  hasSubscription: boolean
+  onClick?: () => void
+} & (
+  | {
+      inline: true
+      onClose?: never
+    }
+  | {
+      inline?: false
+      onClose: () => void
+    }
+)
+
 export const UpgradePrompt = ({
   featureName,
   ctaRef,
@@ -11,15 +28,7 @@ export const UpgradePrompt = ({
   onClose,
   onClick,
   inline,
-}: {
-  featureName?: string
-  ctaRef: React.RefObject<HTMLButtonElement>
-  application: WebApplication
-  hasSubscription: boolean
-  onClose: () => void
-  onClick?: () => void
-  inline?: boolean
-}) => {
+}: Props) => {
   const handleClick = useCallback(() => {
     if (onClick) {
       onClick()
@@ -29,7 +38,9 @@ export const UpgradePrompt = ({
     } else {
       void application.openPurchaseFlow()
     }
-    onClose()
+    if (onClose) {
+      onClose()
+    }
   }, [application, hasSubscription, onClose, onClick])
 
   return (
