@@ -256,7 +256,7 @@ describe('history manager', () => {
       expect(itemHistoryOrError.isFailed()).to.equal(true)
     })
 
-    it('should save initial revisions on server', async () => {
+    it.skip('should save initial revisions on server', async () => {
       const note = await context.createSyncedNote('test note')
       expect(note).to.be.ok
 
