@@ -1,14 +1,19 @@
-import { DecryptedTransferPayload, SNTag, TagContent } from '@standardnotes/models'
+import { DecryptedTransferPayload, PrefDefaults, PrefKey, SNNote, SNTag, TagContent } from '@standardnotes/models'
 import {
   ContentType,
+  InternalEventBusInterface,
   ItemManagerInterface,
   MutatorClientInterface,
   pluralize,
+  PreferenceServiceInterface,
+  PreferencesServiceEvent,
   UuidGenerator,
 } from '@standardnotes/snjs'
 import { Importer, NoteImportType } from '@standardnotes/ui-services'
-import { action, makeObservable, observable } from 'mobx'
+import { action, makeObservable, observable, runInAction } from 'mobx'
 import { NavigationController } from '../../Controllers/Navigation/NavigationController'
+import { LinkingController } from '@/Controllers/LinkingController'
+import { AbstractViewController } from '@/Controllers/Abstract/AbstractViewController'
 
 type ImportModalFileCommon = {
   id: string
@@ -27,9 +32,11 @@ export type ImportModalFile = (
 ) &
   ImportModalFileCommon
 
-export class ImportModalController {
+export class ImportModalController extends AbstractViewController {
   isVisible = false
-  shouldCreateTag = false
+  addImportsToTag = false
+  shouldCreateTag = true
+  existingTagForImports: SNTag | undefined = undefined
   files: ImportModalFile[] = []
   importTag: SNTag | undefined = undefined
 
@@ -38,13 +45,24 @@ export class ImportModalController {
     private navigationController: NavigationController,
     private items: ItemManagerInterface,
     private mutator: MutatorClientInterface,
+    private linkingController: LinkingController,
+    private preferences: PreferenceServiceInterface,
+    eventBus: InternalEventBusInterface,
   ) {
+    super(eventBus)
+
     makeObservable(this, {
       isVisible: observable,
       setIsVisible: action,
 
+      addImportsToTag: observable,
+      setAddImportsToTag: action,
+
       shouldCreateTag: observable,
       setShouldCreateTag: action,
+
+      existingTagForImports: observable,
+      setExistingTagForImports: action,
 
       files: observable,
       setFiles: action,
@@ -54,14 +72,38 @@ export class ImportModalController {
       importTag: observable,
       setImportTag: action,
     })
+
+    this.disposers.push(
+      preferences.addEventObserver((event) => {
+        if (event === PreferencesServiceEvent.PreferencesChanged) {
+          runInAction(() => {
+            this.addImportsToTag = preferences.getValue(PrefKey.AddImportsToTag, PrefDefaults[PrefKey.AddImportsToTag])
+            this.shouldCreateTag = preferences.getValue(
+              PrefKey.AlwaysCreateNewTagForImports,
+              PrefDefaults[PrefKey.AlwaysCreateNewTagForImports],
+            )
+            const existingTagUuid = preferences.getValue(PrefKey.ExistingTagForImports)
+            this.existingTagForImports = existingTagUuid ? this.items.findItem(existingTagUuid) : undefined
+          })
+        }
+      }),
+    )
   }
 
   setIsVisible = (isVisible: boolean) => {
     this.isVisible = isVisible
   }
 
+  setAddImportsToTag = (addImportsToTag: boolean) => {
+    this.preferences.setValue(PrefKey.AddImportsToTag, addImportsToTag).catch(console.error)
+  }
+
   setShouldCreateTag = (shouldCreateTag: boolean) => {
-    this.shouldCreateTag = shouldCreateTag
+    this.preferences.setValue(PrefKey.AlwaysCreateNewTagForImports, shouldCreateTag).catch(console.error)
+  }
+
+  setExistingTagForImports = (tag: SNTag | undefined) => {
+    this.preferences.setValue(PrefKey.ExistingTagForImports, tag?.uuid).catch(console.error)
   }
 
   setFiles = (files: File[], service?: NoteImportType) => {
@@ -87,7 +129,6 @@ export class ImportModalController {
 
   close = () => {
     this.setIsVisible(false)
-    this.setShouldCreateTag(false)
     if (this.importTag) {
       this.navigationController
         .setSelectedTag(this.importTag, 'all', {
@@ -175,20 +216,38 @@ export class ImportModalController {
     if (!importedPayloads.length) {
       return
     }
-    if (this.shouldCreateTag) {
+    if (this.addImportsToTag) {
       const currentDate = new Date()
-      const importTagItem = this.items.createTemplateItem<TagContent, SNTag>(ContentType.TYPES.Tag, {
-        title: `Imported on ${currentDate.toLocaleString()}`,
-        expanded: false,
-        iconString: '',
-        references: importedPayloads
-          .filter((payload) => payload.content_type === ContentType.TYPES.Note)
-          .map((payload) => ({
-            content_type: ContentType.TYPES.Note,
-            uuid: payload.uuid,
-          })),
-      })
-      const importTag = await this.mutator.insertItem(importTagItem)
+      let importTag: SNTag | undefined
+      if (this.shouldCreateTag) {
+        const importTagItem = this.items.createTemplateItem<TagContent, SNTag>(ContentType.TYPES.Tag, {
+          title: `Imported on ${currentDate.toLocaleString()}`,
+          expanded: false,
+          iconString: '',
+          references: importedPayloads
+            .filter((payload) => payload.content_type === ContentType.TYPES.Note)
+            .map((payload) => ({
+              content_type: ContentType.TYPES.Note,
+              uuid: payload.uuid,
+            })),
+        })
+        importTag = await this.mutator.insertItem<SNTag>(importTagItem)
+      } else if (this.existingTagForImports) {
+        try {
+          const latestExistingTag = this.items.findSureItem<SNTag>(this.existingTagForImports.uuid)
+          await Promise.all(
+            importedPayloads
+              .filter((payload) => payload.content_type === ContentType.TYPES.Note)
+              .map(async (payload) => {
+                const note = this.items.findSureItem<SNNote>(payload.uuid)
+                await this.linkingController.addTagToItem(latestExistingTag, note)
+              }),
+          )
+          importTag = this.items.findSureItem<SNTag>(this.existingTagForImports.uuid)
+        } catch (error) {
+          console.error(error)
+        }
+      }
       if (importTag) {
         this.setImportTag(importTag as SNTag)
       }

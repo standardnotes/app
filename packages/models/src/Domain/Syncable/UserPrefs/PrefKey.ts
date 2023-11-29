@@ -49,6 +49,9 @@ export enum PrefKey {
   ActiveThemes = 'activeThemes',
   ActiveComponents = 'activeComponents',
   AlwaysShowSuperToolbar = 'alwaysShowSuperToolbar',
+  AddImportsToTag = 'addImportsToTag',
+  AlwaysCreateNewTagForImports = 'alwaysCreateNewTagForImports',
+  ExistingTagForImports = 'existingTagForImports',
 }
 
 export type PrefValue = {
@@ -93,4 +96,7 @@ export type PrefValue = {
   [PrefKey.ActiveThemes]: string[]
   [PrefKey.ActiveComponents]: string[]
   [PrefKey.AlwaysShowSuperToolbar]: boolean
+  [PrefKey.AddImportsToTag]: boolean
+  [PrefKey.AlwaysCreateNewTagForImports]: boolean
+  [PrefKey.ExistingTagForImports]: string | undefined
 }
