@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.4.0](https://github.com/standardnotes/app/compare/@standardnotes/toast@1.3.41...@standardnotes/toast@1.4.0) (2023-11-30)
+
+### Features
+
+* New one-click Home Server, now in Labs. Launch your own self-hosted server instance with just 1 click from the Preferences window. ([#2645](https://github.com/standardnotes/app/issues/2645)) ([17039cb](https://github.com/standardnotes/app/commit/17039cbb80416b84f7fca3b8388f073dd24c6227))
+
 ## [1.3.41](https://github.com/standardnotes/app/compare/@standardnotes/toast@1.3.40...@standardnotes/toast@1.3.41) (2023-10-25)
 
 **Note:** Version bump only for package @standardnotes/toast

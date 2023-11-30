@@ -1,6 +1,20 @@
 {
   "versions": [
     {
+      "version": "3.183.0",
+      "title": "[3.183.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.182.4...@standardnotes/web@3.183.0) (2023-11-30)",
+      "date": null,
+      "body": "### Features\n\n* New one-click Home Server, now in Labs. Launch your own self-hosted server instance with just 1 click from the Preferences window. ([#2645](https://github.com/standardnotes/app/issues/2645)) ([17039cb](https://github.com/standardnotes/app/commit/17039cbb80416b84f7fca3b8388f073dd24c6227))",
+      "parsed": {
+        "_": [
+          "New one-click Home Server, now in Labs. Launch your own self-hosted server instance with just 1 click from the Preferences window. (#2645) (17039cb)"
+        ],
+        "Features": [
+          "New one-click Home Server, now in Labs. Launch your own self-hosted server instance with just 1 click from the Preferences window. (#2645) (17039cb)"
+        ]
+      }
+    },
+    {
       "version": "3.182.4",
       "title": "[3.182.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.182.3...@standardnotes/web@3.182.4) (2023-11-30)",
       "date": null,

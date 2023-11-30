@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.58.0](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.57.4...@standardnotes/mobile@3.58.0) (2023-11-30)
+
+### Features
+
+* New one-click Home Server, now in Labs. Launch your own self-hosted server instance with just 1 click from the Preferences window. ([#2645](https://github.com/standardnotes/app/issues/2645)) ([17039cb](https://github.com/standardnotes/app/commit/17039cbb80416b84f7fca3b8388f073dd24c6227))
+
 ## [3.57.4](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.57.3...@standardnotes/mobile@3.57.4) (2023-11-30)
 
 **Note:** Version bump only for package @standardnotes/mobile
