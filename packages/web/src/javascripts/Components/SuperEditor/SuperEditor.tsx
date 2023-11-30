@@ -1,12 +1,8 @@
 import { WebApplication } from '@/Application/WebApplication'
 import {
-  ApplicationEvent,
   classNames,
-  EditorFontSize,
-  EditorLineHeight,
   isPayloadSourceRetrieved,
   PrefKey,
-  PrefDefaults,
   NativeFeatureIdentifier,
   FeatureStatus,
   GetSuperNoteFeature,
@@ -48,6 +44,7 @@ import CodeOptionsPlugin from './Plugins/CodeOptionsPlugin/CodeOptions'
 import RemoteImagePlugin from './Plugins/RemoteImagePlugin/RemoteImagePlugin'
 import NotEntitledBanner from '../ComponentView/NotEntitledBanner'
 import AutoFocusPlugin from './Plugins/AutoFocusPlugin'
+import usePreference from '@/Hooks/usePreference'
 
 export const SuperNotePreviewCharLimit = 160
 
@@ -160,29 +157,9 @@ export const SuperEditor: FunctionComponent<Props> = ({
     return disposer
   }, [controller, controller.item.uuid])
 
-  const [lineHeight, setLineHeight] = useState<EditorLineHeight>(() =>
-    application.getPreference(PrefKey.EditorLineHeight, PrefDefaults[PrefKey.EditorLineHeight]),
-  )
-  const [fontSize, setFontSize] = useState<EditorFontSize>(() =>
-    application.getPreference(PrefKey.EditorFontSize, PrefDefaults[PrefKey.EditorFontSize]),
-  )
+  const lineHeight = usePreference(PrefKey.EditorLineHeight)
+  const fontSize = usePreference(PrefKey.EditorFontSize)
   const responsiveFontSize = useResponsiveEditorFontSize(fontSize, false)
-
-  const reloadPreferences = useCallback(() => {
-    const lineHeight = application.getPreference(PrefKey.EditorLineHeight, PrefDefaults[PrefKey.EditorLineHeight])
-    const fontSize = application.getPreference(PrefKey.EditorFontSize, PrefDefaults[PrefKey.EditorFontSize])
-
-    setLineHeight(lineHeight)
-    setFontSize(fontSize)
-  }, [application])
-
-  useEffect(() => {
-    reloadPreferences()
-
-    return application.addSingleEventObserver(ApplicationEvent.PreferencesChanged, async () => {
-      reloadPreferences()
-    })
-  }, [reloadPreferences, application])
 
   const ref = useRef<HTMLDivElement>(null)
 

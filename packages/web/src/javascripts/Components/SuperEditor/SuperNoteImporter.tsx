@@ -1,6 +1,6 @@
 import { WebApplication } from '@/Application/WebApplication'
-import { NoteType, SNNote } from '@standardnotes/snjs'
-import { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react'
+import { EditorLineHeightValues, NoteType, PrefKey, SNNote } from '@standardnotes/snjs'
+import { CSSProperties, FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react'
 import { ErrorBoundary } from '@/Utils/ErrorBoundary'
 import ImportPlugin from './Plugins/ImportPlugin/ImportPlugin'
 import { NoteViewController } from '../NoteView/Controller/NoteViewController'
@@ -8,6 +8,8 @@ import { spaceSeparatedStrings } from '@standardnotes/utils'
 import Modal, { ModalAction } from '@/Components/Modal/Modal'
 import { BlocksEditor } from './BlocksEditor'
 import { BlocksEditorComposer } from './BlocksEditorComposer'
+import usePreference from '@/Hooks/usePreference'
+import { useResponsiveEditorFontSize } from '@/Utils/getPlaintextFontSize'
 
 const NotePreviewCharLimit = 160
 
@@ -123,6 +125,10 @@ export const SuperNoteImporter: FunctionComponent<Props> = ({ note, application,
     [canBeConvertedAsIs, closeDialog, confirmConvert, convertAsIs],
   )
 
+  const lineHeight = usePreference(PrefKey.EditorLineHeight)
+  const fontSize = usePreference(PrefKey.EditorFontSize)
+  const responsiveFontSize = useResponsiveEditorFontSize(fontSize, false)
+
   if (isSeamlessConvert) {
     return null
   }
@@ -133,7 +139,15 @@ export const SuperNoteImporter: FunctionComponent<Props> = ({ note, application,
         The following is a preview of how your note will look when converted to Super. Super notes use a custom format
         under the hood. Converting your note will transition it from plaintext to the custom Super format.
       </div>
-      <div className="relative w-full px-4 py-4">
+      <div
+        className="relative w-full px-4 py-4"
+        style={
+          {
+            '--line-height': EditorLineHeightValues[lineHeight],
+            '--font-size': responsiveFontSize,
+          } as CSSProperties
+        }
+      >
         <ErrorBoundary>
           <BlocksEditorComposer readonly initialValue={undefined}>
             <BlocksEditor

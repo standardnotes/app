@@ -1,5 +1,14 @@
-import { ContentType, NoteContent, NoteType, SNNote, classNames, isUIFeatureAnIframeFeature } from '@standardnotes/snjs'
-import { UIEventHandler, useEffect, useMemo, useRef } from 'react'
+import {
+  ContentType,
+  EditorLineHeightValues,
+  NoteContent,
+  NoteType,
+  PrefKey,
+  SNNote,
+  classNames,
+  isUIFeatureAnIframeFeature,
+} from '@standardnotes/snjs'
+import { CSSProperties, UIEventHandler, useEffect, useMemo, useRef } from 'react'
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 import { useApplication } from '../ApplicationProvider'
 import IframeFeatureView from '../ComponentView/IframeFeatureView'
@@ -8,6 +17,8 @@ import { BlocksEditor } from '../SuperEditor/BlocksEditor'
 import { BlocksEditorComposer } from '../SuperEditor/BlocksEditorComposer'
 import { useLinkingController } from '@/Controllers/LinkingControllerProvider'
 import LinkedItemBubblesContainer from '../LinkedItems/LinkedItemBubblesContainer'
+import usePreference from '@/Hooks/usePreference'
+import { useResponsiveEditorFontSize } from '@/Utils/getPlaintextFontSize'
 
 export const ReadonlyNoteContent = ({
   note,
@@ -74,6 +85,10 @@ export const ReadonlyNoteContent = ({
     })
   }, [scrollPos, shouldSyncScroll])
 
+  const lineHeight = usePreference(PrefKey.EditorLineHeight)
+  const fontSize = usePreference(PrefKey.EditorFontSize)
+  const responsiveFontSize = useResponsiveEditorFontSize(fontSize, false)
+
   return (
     <div className="flex h-full flex-grow flex-col overflow-hidden" ref={containerRef}>
       <div className={classNames('w-full px-4 pt-4 text-base font-bold', componentViewer && 'pb-4')}>
@@ -94,7 +109,15 @@ export const ReadonlyNoteContent = ({
         </div>
       ) : content.noteType === NoteType.Super ? (
         <ErrorBoundary>
-          <div className="w-full flex-grow overflow-hidden overflow-y-auto">
+          <div
+            className="w-full flex-grow overflow-hidden overflow-y-auto"
+            style={
+              {
+                '--line-height': EditorLineHeightValues[lineHeight],
+                '--font-size': responsiveFontSize,
+              } as CSSProperties
+            }
+          >
             <BlocksEditorComposer readonly initialValue={content.text} key={content.text}>
               <BlocksEditor
                 readonly
