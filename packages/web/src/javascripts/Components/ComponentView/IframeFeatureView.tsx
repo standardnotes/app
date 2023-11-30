@@ -21,6 +21,7 @@ interface Props {
   requestReload?: (viewer: ComponentViewerInterface, force?: boolean) => void
   onLoad?: () => void
   readonly?: boolean
+  usedInModal?: boolean
 }
 
 /**
@@ -31,7 +32,13 @@ const MaxLoadThreshold = 4000
 const VisibilityChangeKey = 'visibilitychange'
 const MSToWaitAfterIframeLoadToAvoidFlicker = 35
 
-const IframeFeatureView: FunctionComponent<Props> = ({ onLoad, componentViewer, requestReload, readonly = false }) => {
+const IframeFeatureView: FunctionComponent<Props> = ({
+  onLoad,
+  componentViewer,
+  requestReload,
+  readonly = false,
+  usedInModal = false,
+}) => {
   const application = useApplication()
 
   const iframeRef = useRef<HTMLIFrameElement | null>(null)
@@ -241,6 +248,7 @@ const IframeFeatureView: FunctionComponent<Props> = ({ onLoad, componentViewer, 
           frameBorder={0}
           src={componentViewer.url || ''}
           sandbox={sandboxAttributes.join(' ')}
+          {...(usedInModal && { 'data-used-in-modal': true })}
         >
           Loading
         </iframe>

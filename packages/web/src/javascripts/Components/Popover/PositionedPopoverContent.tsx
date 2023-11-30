@@ -134,7 +134,11 @@ const PositionedPopoverContent = ({
         }}
         onBlur={() => {
           setTimeout(() => {
-            if (document.activeElement && document.activeElement.tagName === 'IFRAME') {
+            if (
+              document.activeElement &&
+              document.activeElement.tagName === 'IFRAME' &&
+              !document.activeElement.getAttribute('data-used-in-modal')
+            ) {
               togglePopover?.()
             }
           })

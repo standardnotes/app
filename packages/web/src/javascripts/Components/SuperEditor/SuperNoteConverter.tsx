@@ -191,7 +191,12 @@ const SuperNoteConverter = ({
       ) : null}
       {componentViewer ? (
         <div className="component-view min-h-0">
-          <IframeFeatureView key={componentViewer.identifier} componentViewer={componentViewer} />
+          <IframeFeatureView
+            usedInModal
+            readonly={true}
+            key={componentViewer.identifier}
+            componentViewer={componentViewer}
+          />
         </div>
       ) : (
         <div className="h-full min-h-0 overflow-hidden">
