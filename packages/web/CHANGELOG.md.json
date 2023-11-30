@@ -1,6 +1,20 @@
 {
   "versions": [
     {
+      "version": "3.182.1",
+      "title": "[3.182.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.182.0...@standardnotes/web@3.182.1) (2023-11-30)",
+      "date": null,
+      "body": "### Bug Fixes\n\n* Fixed issue on mobile where modals would should up behind the current menu ([b85f040](https://github.com/standardnotes/app/commit/b85f04059c4a7eb50378a52b56e61878e2bd95e1))",
+      "parsed": {
+        "_": [
+          "Fixed issue on mobile where modals would should up behind the current menu (b85f040)"
+        ],
+        "Bug Fixes": [
+          "Fixed issue on mobile where modals would should up behind the current menu (b85f040)"
+        ]
+      }
+    },
+    {
       "version": "3.182.0",
       "title": "[3.182.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.181.38...@standardnotes/web@3.182.0) (2023-11-29)",
       "date": null,
