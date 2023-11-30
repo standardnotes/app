@@ -10,6 +10,7 @@ import { IframeEditors } from '../Lists/IframeEditors'
 import { themes } from '../Lists/Themes'
 import { nativeEditors } from '../Lists/NativeEditors'
 import { IframeComponentFeatureDescription } from './IframeComponentFeatureDescription'
+import { ComponentArea } from '../Component/ComponentArea'
 
 export function GetFeatures(): AnyFeatureDescription[] {
   return [
@@ -53,4 +54,8 @@ export function GetNativeThemes(): ThemeFeatureDescription[] {
 
 export function GetDarkThemeFeature(): ThemeFeatureDescription {
   return themes().find((t) => t.identifier === NativeFeatureIdentifier.TYPES.DarkTheme) as ThemeFeatureDescription
+}
+
+export function GetDeprecatedEditors(): IframeComponentFeatureDescription[] {
+  return (GetDeprecatedFeatures() as IframeComponentFeatureDescription[]).filter((f) => f.area === ComponentArea.Editor)
 }
