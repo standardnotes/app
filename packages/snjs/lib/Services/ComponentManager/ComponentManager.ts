@@ -28,6 +28,7 @@ import {
   GetIframeEditors,
   GetNativeThemes,
   NativeFeatureIdentifier,
+  GetDeprecatedEditors,
 } from '@standardnotes/features'
 import { Copy, removeFromArray, sleep, isNotUndefined, LoggerInterface } from '@standardnotes/utils'
 import { ComponentViewer } from '@Lib/Services/ComponentManager/ComponentViewer'
@@ -106,6 +107,7 @@ export class ComponentManager
 
     this.addSyncedComponentItemObserver()
     this.registerMobileNativeComponentUrls()
+    this.registerDeprecatedEditorUrlsForAndroid()
 
     this.eventDisposers.push(
       preferences.addEventObserver((event) => {
@@ -283,6 +285,23 @@ export class ComponentManager
     const nativeComponents = [...GetIframeEditors(), ...GetNativeThemes()]
 
     for (const component of nativeComponents) {
+      const feature = new UIFeature<ComponentFeatureDescription>(component)
+      const url = this.urlForFeature(feature)
+
+      if (url) {
+        this.device.registerComponentUrl(feature.uniqueIdentifier.value, url)
+      }
+    }
+  }
+
+  private registerDeprecatedEditorUrlsForAndroid(): void {
+    if (!isMobileDevice(this.device)) {
+      return
+    }
+
+    const deprecatedEditors = [...GetDeprecatedEditors()]
+
+    for (const component of deprecatedEditors) {
       const feature = new UIFeature<ComponentFeatureDescription>(component)
       const url = this.urlForFeature(feature)
 
