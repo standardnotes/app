@@ -24,8 +24,7 @@ const insertNativeEditorsInMap = (map: NoteTypeToEditorRowsMap, application: Web
       continue
     }
 
-    const isDeprecated = editorFeature.deprecated
-    if (isDeprecated) {
+    if (editorFeature.deprecated) {
       continue
     }
 
@@ -47,8 +46,16 @@ const insertInstalledComponentsInMap = (map: NoteTypeToEditorRowsMap, applicatio
     })
 
   for (const editor of thirdPartyOrInstalledEditors) {
-    const nativeFeature = FindNativeFeature(editor.identifier)
-    if (nativeFeature && !nativeFeature.deprecated) {
+    const nativeFeature = FindNativeFeature(editor.identifier) as IframeComponentFeatureDescription
+
+    if (nativeFeature) {
+      map[nativeFeature.note_type].push({
+        isEntitled:
+          application.features.getFeatureStatus(NativeFeatureIdentifier.create(nativeFeature.identifier).getValue()) ===
+          FeatureStatus.Entitled,
+        uiFeature: new UIFeature(nativeFeature),
+      })
+
       continue
     }
 
