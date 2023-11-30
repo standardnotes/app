@@ -4,7 +4,7 @@ import { HomeServerEnvironmentConfiguration } from './HomeServerEnvironmentConfi
 import { HomeServerStatus } from './HomeServerStatus'
 
 export interface HomeServerServiceInterface {
-  activatePremiumFeatures(username: string): Promise<Result<string>>
+  activatePremiumFeatures(username: string, subscriptionId: number): Promise<Result<string>>
   isHomeServerRunning(): Promise<boolean>
   isHomeServerEnabled(): Promise<boolean>
   getHomeServerDataLocation(): Promise<string | undefined>

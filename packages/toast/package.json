@@ -13,12 +13,12 @@
     "@standardnotes/icons": "workspace:*",
     "nanoid": "^4.0.0",
     "nanostores": "^0.9.3",
-    "react": "link:../web/node_modules/react",
-    "react-dom": "link:../web/node_modules/react-dom"
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@types/react": "link:../web/node_modules/@types/react",
-    "@types/react-dom": "link:../web/node_modules/@types/react-dom",
+    "@types/react": "^18.2.39",
+    "@types/react-dom": "^18.2.17",
     "eslint": "*",
     "prettier": "*",
     "typescript": "*"

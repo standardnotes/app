@@ -82,8 +82,8 @@ export class HomeServerService
     return this.desktopDevice.isHomeServerRunning()
   }
 
-  async activatePremiumFeatures(username: string): Promise<Result<string>> {
-    const result = await this.desktopDevice.activatePremiumFeatures(username)
+  async activatePremiumFeatures(username: string, subscriptionId: number): Promise<Result<string>> {
+    const result = await this.desktopDevice.activatePremiumFeatures(username, subscriptionId)
 
     if (result !== undefined) {
       return Result.fail(result)

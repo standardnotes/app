@@ -44,7 +44,7 @@ const StatusIndicator = ({ status, className, homeServerService }: Props) => {
         const isUsingHomeServer = await application.isUsingHomeServer()
         if (isUsingHomeServer) {
           setSignInStatusMessage(`You are currently signed into your home server under ${signedInUser.email}`)
-          setSignInStatusClassName('bg-success')
+          setSignInStatusClassName('bg-success text-success-contrast')
           setSignInStatusIcon('check')
         } else {
           setSignInStatusMessage(
@@ -52,14 +52,14 @@ const StatusIndicator = ({ status, className, homeServerService }: Props) => {
               signedInUser.email
             }, then sign in or register using ${await homeServerService.getHomeServerUrl()}.`,
           )
-          setSignInStatusClassName('bg-warning')
+          setSignInStatusClassName('bg-warning text-warning-contrast')
           setSignInStatusIcon('warning')
         }
       } else {
         setSignInStatusMessage(
           `You are not currently signed into your home server. To use your home server, sign in or register using ${await homeServerService.getHomeServerUrl()}`,
         )
-        setSignInStatusClassName('bg-warning')
+        setSignInStatusClassName('bg-warning text-warning-contrast')
         setSignInStatusIcon('warning')
       }
     }
