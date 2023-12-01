@@ -11,10 +11,10 @@ export interface Converter {
 
   convert(
     file: File,
-    {
-      createNote,
-    }: {
+    dependencies: {
       createNote: CreateNoteFn
+      convertHTMLToSuper: (html: string) => string
+      convertMarkdownToSuper: (markdown: string) => string
     },
   ): Promise<DecryptedTransferPayload<NoteContent>[]>
 }

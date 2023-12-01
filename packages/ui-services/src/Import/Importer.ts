@@ -67,7 +67,7 @@ export class Importer {
     this.simplenoteConverter = new SimplenoteConverter(_generateUuid)
     this.plaintextConverter = new PlaintextConverter(this.superConverterService, _generateUuid)
     this.evernoteConverter = new EvernoteConverter(this.superConverterService, _generateUuid)
-    this.htmlConverter = new HTMLConverter(this.superConverterService, _generateUuid)
+    this.htmlConverter = new HTMLConverter()
     this.superConverter = new SuperConverter(this.superConverterService)
 
     this.registerNativeConverters()
@@ -105,6 +105,10 @@ export class Importer {
   }
 
   createNote: CreateNoteFn = ({ createdAt, updatedAt, title, text, noteType }) => {
+    if (noteType === NoteType.Super && !this.isEntitledToSuper()) {
+      noteType = undefined
+    }
+
     return {
       created_at: createdAt,
       created_at_timestamp: createdAt.getTime(),
@@ -119,6 +123,30 @@ export class Importer {
         noteType,
       },
     }
+  }
+
+  isEntitledToSuper = (): boolean => {
+    return (
+      this.features.getFeatureStatus(
+        NativeFeatureIdentifier.create(NativeFeatureIdentifier.TYPES.SuperEditor).getValue(),
+      ) === FeatureStatus.Entitled
+    )
+  }
+
+  convertHTMLToSuper = (html: string): string => {
+    if (!this.isEntitledToSuper()) {
+      return html
+    }
+
+    return this.superConverterService.convertOtherFormatToSuperString(html, 'html')
+  }
+
+  convertMarkdownToSuper = (markdown: string): string => {
+    if (!this.isEntitledToSuper()) {
+      return markdown
+    }
+
+    return this.superConverterService.convertOtherFormatToSuperString(markdown, 'md')
   }
 
   async getPayloadsFromFile(file: File, type: string): Promise<DecryptedTransferPayload[]> {
@@ -140,6 +168,8 @@ export class Importer {
 
       return await converter.convert(file, {
         createNote: this.createNote,
+        convertHTMLToSuper: this.convertHTMLToSuper,
+        convertMarkdownToSuper: this.convertMarkdownToSuper,
       })
     }
 
