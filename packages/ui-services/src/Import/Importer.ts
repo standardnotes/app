@@ -62,10 +62,10 @@ export class Importer {
     },
     private _generateUuid: GenerateUuid,
   ) {
-    this.aegisConverter = new AegisToAuthenticatorConverter(_generateUuid)
+    this.aegisConverter = new AegisToAuthenticatorConverter()
     this.googleKeepConverter = new GoogleKeepConverter(this.superConverterService, _generateUuid)
-    this.simplenoteConverter = new SimplenoteConverter(_generateUuid)
-    this.plaintextConverter = new PlaintextConverter(this.superConverterService, _generateUuid)
+    this.simplenoteConverter = new SimplenoteConverter()
+    this.plaintextConverter = new PlaintextConverter()
     this.evernoteConverter = new EvernoteConverter(this.superConverterService, _generateUuid)
     this.htmlConverter = new HTMLConverter()
     this.superConverter = new SuperConverter(this.superConverterService)
@@ -104,9 +104,17 @@ export class Importer {
     return null
   }
 
-  createNote: CreateNoteFn = ({ createdAt, updatedAt, title, text, noteType }) => {
+  createNote: CreateNoteFn = ({ createdAt, updatedAt, title, text, noteType, editorIdentifier, trashed }) => {
     if (noteType === NoteType.Super && !this.isEntitledToSuper()) {
       noteType = undefined
+    }
+
+    if (
+      editorIdentifier &&
+      this.features.getFeatureStatus(NativeFeatureIdentifier.create(editorIdentifier).getValue()) !==
+        FeatureStatus.Entitled
+    ) {
+      editorIdentifier = undefined
     }
 
     return {
@@ -121,6 +129,7 @@ export class Importer {
         text,
         references: [],
         noteType,
+        trashed,
       },
     }
   }

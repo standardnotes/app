@@ -25,4 +25,6 @@ export type CreateNoteFn = (options: {
   title: string
   text: string
   noteType?: NoteType
+  trashed?: boolean
+  editorIdentifier?: NoteContent['editorIdentifier']
 }) => DecryptedTransferPayload<NoteContent>
