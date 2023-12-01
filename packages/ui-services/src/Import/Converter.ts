@@ -13,6 +13,7 @@ export interface Converter {
     file: File,
     dependencies: {
       createNote: CreateNoteFn
+      canUseSuper: boolean
       convertHTMLToSuper: (html: string) => string
       convertMarkdownToSuper: (markdown: string) => string
     },
@@ -25,6 +26,8 @@ export type CreateNoteFn = (options: {
   title: string
   text: string
   noteType?: NoteType
+  archived?: boolean
+  pinned?: boolean
   trashed?: boolean
   editorIdentifier?: NoteContent['editorIdentifier']
 }) => DecryptedTransferPayload<NoteContent>

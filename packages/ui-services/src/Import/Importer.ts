@@ -63,7 +63,7 @@ export class Importer {
     private _generateUuid: GenerateUuid,
   ) {
     this.aegisConverter = new AegisToAuthenticatorConverter()
-    this.googleKeepConverter = new GoogleKeepConverter(this.superConverterService, _generateUuid)
+    this.googleKeepConverter = new GoogleKeepConverter()
     this.simplenoteConverter = new SimplenoteConverter()
     this.plaintextConverter = new PlaintextConverter()
     this.evernoteConverter = new EvernoteConverter(this.superConverterService, _generateUuid)
@@ -104,7 +104,17 @@ export class Importer {
     return null
   }
 
-  createNote: CreateNoteFn = ({ createdAt, updatedAt, title, text, noteType, editorIdentifier, trashed }) => {
+  createNote: CreateNoteFn = ({
+    createdAt,
+    updatedAt,
+    title,
+    text,
+    noteType,
+    editorIdentifier,
+    trashed,
+    archived,
+    pinned,
+  }) => {
     if (noteType === NoteType.Super && !this.isEntitledToSuper()) {
       noteType = undefined
     }
@@ -130,6 +140,9 @@ export class Importer {
         references: [],
         noteType,
         trashed,
+        archived,
+        pinned,
+        editorIdentifier,
       },
     }
   }
@@ -177,6 +190,7 @@ export class Importer {
 
       return await converter.convert(file, {
         createNote: this.createNote,
+        canUseSuper: isEntitledToSuper,
         convertHTMLToSuper: this.convertHTMLToSuper,
         convertMarkdownToSuper: this.convertMarkdownToSuper,
       })
