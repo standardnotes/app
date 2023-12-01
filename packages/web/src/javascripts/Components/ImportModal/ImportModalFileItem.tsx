@@ -158,7 +158,7 @@ const ImportModalFileItem = ({
                 setChangingService(true)
               }}
             >
-              <Icon type="pencil" size="medium" />
+              <Icon type="settings" size="medium" />
             </button>
           )}
           <button
