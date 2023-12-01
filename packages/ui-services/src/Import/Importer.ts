@@ -24,9 +24,10 @@ import {
   isNote,
 } from '@standardnotes/models'
 import { HTMLConverter } from './HTMLConverter/HTMLConverter'
-import { SuperConverterServiceInterface } from '@standardnotes/snjs/dist/@types'
 import { SuperConverter } from './SuperConverter/SuperConverter'
-import { Converter } from './Converter'
+import { Converter, CreateNoteFn } from './Converter'
+import { SuperConverterServiceInterface } from '@standardnotes/files'
+import { ContentType } from '@standardnotes/domain-core'
 
 export class Importer {
   aegisConverter: AegisToAuthenticatorConverter
@@ -67,7 +68,7 @@ export class Importer {
     this.plaintextConverter = new PlaintextConverter(this.superConverterService, _generateUuid)
     this.evernoteConverter = new EvernoteConverter(this.superConverterService, _generateUuid)
     this.htmlConverter = new HTMLConverter(this.superConverterService, _generateUuid)
-    this.superConverter = new SuperConverter(this.superConverterService, _generateUuid)
+    this.superConverter = new SuperConverter(this.superConverterService)
 
     this.registerNativeConverters()
   }
@@ -103,32 +104,43 @@ export class Importer {
     return null
   }
 
+  createNote: CreateNoteFn = ({ createdAt, updatedAt, title, text, noteType }) => {
+    return {
+      created_at: createdAt,
+      created_at_timestamp: createdAt.getTime(),
+      updated_at: updatedAt,
+      updated_at_timestamp: updatedAt.getTime(),
+      uuid: this._generateUuid.execute().getValue(),
+      content_type: ContentType.TYPES.Note,
+      content: {
+        title,
+        text,
+        references: [],
+        noteType,
+      },
+    }
+  }
+
   async getPayloadsFromFile(file: File, type: string): Promise<DecryptedTransferPayload[]> {
     const isEntitledToSuper =
       this.features.getFeatureStatus(
         NativeFeatureIdentifier.create(NativeFeatureIdentifier.TYPES.SuperEditor).getValue(),
       ) === FeatureStatus.Entitled
-    if (type === 'super') {
-      if (!isEntitledToSuper) {
-        throw new Error('Importing Super notes requires a subscription.')
+
+    if (type === 'super' && !isEntitledToSuper) {
+      throw new Error('Importing Super notes requires a subscription')
+    }
+
+    for (const converter of this.converters) {
+      const isCorrectType = converter.getImportType() === type
+
+      if (!isCorrectType) {
+        continue
       }
-      return [await this.superConverter.convertSuperFileToNote(file)]
-    } else if (type === 'aegis') {
-      const isEntitledToAuthenticator =
-        this.features.getFeatureStatus(
-          NativeFeatureIdentifier.create(NativeFeatureIdentifier.TYPES.TokenVaultEditor).getValue(),
-        ) === FeatureStatus.Entitled
-      return [await this.aegisConverter.convertAegisBackupFileToNote(file, isEntitledToAuthenticator)]
-    } else if (type === 'google-keep') {
-      return [await this.googleKeepConverter.convertGoogleKeepBackupFileToNote(file, isEntitledToSuper)]
-    } else if (type === 'simplenote') {
-      return await this.simplenoteConverter.convertSimplenoteBackupFileToNotes(file)
-    } else if (type === 'evernote') {
-      return await this.evernoteConverter.convertENEXFileToNotesAndTags(file, isEntitledToSuper)
-    } else if (type === 'plaintext') {
-      return [await this.plaintextConverter.convertPlaintextFileToNote(file, isEntitledToSuper)]
-    } else if (type === 'html') {
-      return [await this.htmlConverter.convertHTMLFileToNote(file, isEntitledToSuper)]
+
+      return await converter.convert(file, {
+        createNote: this.createNote,
+      })
     }
 
     return []
