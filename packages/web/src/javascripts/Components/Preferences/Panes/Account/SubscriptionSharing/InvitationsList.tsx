@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { observer } from 'mobx-react-lite'
-import { InvitationStatus } from '@standardnotes/snjs'
+import { ButtonType, InvitationStatus } from '@standardnotes/snjs'
 
 import { SubtitleLight, Text } from '@/Components/Preferences/PreferencesComponents/Content'
 import { SubscriptionController } from '@/Controllers/Subscription/SubscriptionController'
@@ -26,6 +26,16 @@ const InvitationsList = ({ subscriptionState, application }: Props) => {
     if (lockContinue) {
       application.alerts.alert('Cancelation already in progress.').catch(console.error)
 
+      return
+    }
+
+    const confirmed = await application.alerts.confirm(
+      'All uploaded files of this user will be removed. This action cannot be undone.',
+      'Are you sure you want to cancel this invitation?',
+      'Cancel Invitation',
+      ButtonType.Danger,
+    )
+    if (!confirmed) {
       return
     }
 
