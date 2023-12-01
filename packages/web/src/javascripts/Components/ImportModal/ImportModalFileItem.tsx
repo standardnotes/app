@@ -94,7 +94,7 @@ const ImportModalFileItem = ({
         )}
         <div className="flex flex-col">
           <div>{file.file.name}</div>
-          <div className="text-xs opacity-75">
+          <div className="line-clamp-3 text-xs opacity-75">
             {file.status === 'ready'
               ? notePayloads.length > 1 || tagPayloads.length
                 ? payloadsImportMessage
@@ -104,7 +104,7 @@ const ImportModalFileItem = ({
             {file.status === 'parsing' && 'Parsing...'}
             {file.status === 'importing' && 'Importing...'}
             {file.status === 'uploading-files' && 'Uploading and embedding files...'}
-            {file.status === 'error' && JSON.stringify(file.error)}
+            {file.status === 'error' && file.error.message}
             {file.status === 'success' && file.successMessage}
           </div>
         </div>
@@ -141,8 +141,8 @@ const ImportModalFileItem = ({
           </button>
         </div>
       )}
-      {file.status === 'success' && <Icon type="check-circle-filled" className="text-success" />}
-      {file.status === 'error' && <Icon type="warning" className="text-danger" />}
+      {file.status === 'success' && <Icon type="check-circle-filled" className="flex-shrink-0 text-success" />}
+      {file.status === 'error' && <Icon type="warning" className="flex-shrink-0 text-danger" />}
     </div>
   )
 }
