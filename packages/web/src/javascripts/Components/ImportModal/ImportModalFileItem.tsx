@@ -1,8 +1,8 @@
 import { ImportModalController, ImportModalFile } from '@/Components/ImportModal/ImportModalController'
-import { classNames, ContentType, DecryptedTransferPayload, pluralize } from '@standardnotes/snjs'
+import { classNames, ContentType, pluralize } from '@standardnotes/snjs'
 import { Importer, NoteImportType } from '@standardnotes/ui-services'
 import { observer } from 'mobx-react-lite'
-import { useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import Icon from '../Icon/Icon'
 
 const NoteImportTypeColors: Record<NoteImportType, string> = {
@@ -36,23 +36,20 @@ const ImportModalFileItem = ({
   removeFile: ImportModalController['removeFile']
   importer: Importer
 }) => {
+  const [changingService, setChangingService] = useState(false)
+
   const setFileService = useCallback(
     async (service: NoteImportType | null) => {
-      let payloads: DecryptedTransferPayload[] | undefined
-      try {
-        payloads = service ? await importer.getPayloadsFromFile(file.file, service) : undefined
-      } catch (error) {
-        console.error(error)
+      if (!service) {
+        setChangingService(true)
       }
-
       updateFile({
         ...file,
         service,
         status: service ? 'ready' : 'pending',
-        payloads,
       })
     },
-    [file, importer, updateFile],
+    [file, updateFile],
   )
 
   useEffect(() => {
@@ -82,7 +79,7 @@ const ImportModalFileItem = ({
   return (
     <div
       className={classNames(
-        'flex gap-2 px-2 py-2',
+        'flex gap-2 px-2 py-2.5',
         file.service == null ? 'flex-col items-start md:flex-row md:items-center' : 'items-center',
       )}
     >
@@ -100,7 +97,7 @@ const ImportModalFileItem = ({
                 ? payloadsImportMessage
                 : 'Ready to import'
               : null}
-            {file.status === 'pending' && 'Could not auto-detect service. Please select manually.'}
+            {file.status === 'pending' && !file.service && 'Could not auto-detect service. Please select manually.'}
             {file.status === 'parsing' && 'Parsing...'}
             {file.status === 'importing' && 'Importing...'}
             {file.status === 'uploading-files' && 'Uploading and embedding files...'}
@@ -109,35 +106,69 @@ const ImportModalFileItem = ({
           </div>
         </div>
       </div>
-      {file.service == null && (
+      {(file.status === 'ready' || file.status === 'pending') && (
         <div className="flex items-center">
-          <form
-            className="flex items-center"
-            onSubmit={(event) => {
-              event.preventDefault()
-              const form = event.target as HTMLFormElement
-              const service = form.elements[0] as HTMLSelectElement
-              void setFileService(service.value as NoteImportType)
-            }}
-          >
-            <select className="mr-2 rounded border border-border bg-default px-2 py-1 text-sm">
-              <option value="evernote">Evernote</option>
-              <option value="simplenote">Simplenote</option>
-              <option value="google-keep">Google Keep</option>
-              <option value="aegis">Aegis</option>
-              <option value="plaintext">Plaintext</option>
-            </select>
-            <button type="submit" className="rounded border border-border bg-default p-1.5 hover:bg-contrast">
-              <Icon type="check" size="medium" />
+          {changingService ? (
+            <>
+              <form
+                className="flex items-center"
+                onSubmit={(event) => {
+                  event.preventDefault()
+                  const form = event.target as HTMLFormElement
+                  const service = form.elements[0] as HTMLSelectElement
+                  void setFileService(service.value as NoteImportType)
+                  setChangingService(false)
+                }}
+              >
+                <select
+                  className="mr-2 rounded border border-border bg-default px-2 py-1 text-sm"
+                  defaultValue={file.service ? file.service : undefined}
+                >
+                  <option value="evernote">Evernote</option>
+                  <option value="simplenote">Simplenote</option>
+                  <option value="google-keep">Google Keep</option>
+                  <option value="aegis">Aegis</option>
+                  <option value="plaintext">Plaintext</option>
+                  <option value="html">HTML</option>
+                  <option value="super">Super</option>
+                </select>
+                <button
+                  aria-label="Choose service"
+                  type="submit"
+                  className="rounded border border-border bg-default p-1.5 hover:bg-contrast"
+                >
+                  <Icon type="check" size="medium" />
+                </button>
+              </form>
+              <button
+                aria-label="Cancel"
+                className="ml-2 rounded border border-border bg-default p-1.5 hover:bg-contrast"
+                onClick={() => {
+                  setChangingService(false)
+                }}
+              >
+                <Icon type="close" size="medium" />
+              </button>
+            </>
+          ) : (
+            <button
+              aria-label="Change service"
+              className="rounded border border-border bg-default p-1.5 hover:bg-contrast"
+              onClick={() => {
+                setChangingService(true)
+              }}
+            >
+              <Icon type="settings" size="medium" />
             </button>
-          </form>
+          )}
           <button
+            aria-label="Remove"
             className="ml-2 rounded border border-border bg-default p-1.5 hover:bg-contrast"
             onClick={() => {
               removeFile(file.id)
             }}
           >
-            <Icon type="close" size="medium" />
+            <Icon type="trash" size="medium" />
           </button>
         </div>
       )}

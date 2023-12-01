@@ -66,6 +66,7 @@ export class ImportModalController extends AbstractViewController {
 
       files: observable,
       setFiles: action,
+      addFiles: action,
       updateFile: action,
       removeFile: action,
 
@@ -106,13 +107,21 @@ export class ImportModalController extends AbstractViewController {
     this.preferences.setValue(PrefKey.ExistingTagForImports, tag?.uuid).catch(console.error)
   }
 
-  setFiles = (files: File[], service?: NoteImportType) => {
-    this.files = files.map((file) => ({
+  getImportFromFile = (file: File, service?: NoteImportType) => {
+    return {
       id: UuidGenerator.GenerateUuid(),
       file,
       service,
       status: service ? 'ready' : 'pending',
-    }))
+    } as ImportModalFile
+  }
+
+  setFiles = (files: File[], service?: NoteImportType) => {
+    this.files = files.map((file) => this.getImportFromFile(file, service))
+  }
+
+  addFiles = (files: File[], service?: NoteImportType) => {
+    this.files = [...this.files, ...files.map((file) => this.getImportFromFile(file, service))]
   }
 
   updateFile = (file: ImportModalFile) => {

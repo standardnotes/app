@@ -1,29 +1,19 @@
 import { ImportModalController } from '@/Components/ImportModal/ImportModalController'
-import { ClassicFileReader } from '@standardnotes/filepicker'
-import { NoteImportType } from '@standardnotes/ui-services'
 import { observer } from 'mobx-react-lite'
-import { useCallback } from 'react'
 import Button from '../Button/Button'
 import Icon from '../Icon/Icon'
 import { useApplication } from '../ApplicationProvider'
-import { FeatureStatus, NativeFeatureIdentifier } from '@standardnotes/snjs'
 import { FeatureName } from '@/Controllers/FeatureName'
+import { NativeFeatureIdentifier, FeatureStatus } from '@standardnotes/snjs'
+import { NoteImportType } from '@standardnotes/ui-services'
 
 type Props = {
   setFiles: ImportModalController['setFiles']
+  selectFiles: (service?: NoteImportType) => Promise<void>
 }
 
-const ImportModalInitialPage = ({ setFiles }: Props) => {
+const ImportModalInitialPage = ({ setFiles, selectFiles }: Props) => {
   const application = useApplication()
-
-  const selectFiles = useCallback(
-    async (service?: NoteImportType) => {
-      const files = await ClassicFileReader.selectFiles()
-
-      setFiles(files, service)
-    },
-    [setFiles],
-  )
 
   return (
     <>

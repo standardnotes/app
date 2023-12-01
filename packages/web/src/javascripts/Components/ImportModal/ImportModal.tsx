@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite'
-import { useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 import ImportModalFileItem from './ImportModalFileItem'
 import ImportModalInitialPage from './InitialPage'
 import Modal, { ModalAction } from '../Modal/Modal'
@@ -11,6 +11,9 @@ import LinkedItemBubble from '../LinkedItems/LinkedItemBubble'
 import { createLinkFromItem } from '@/Utils/Items/Search/createLinkFromItem'
 import ItemSelectionDropdown from '../ItemSelectionDropdown/ItemSelectionDropdown'
 import { ContentType, SNTag } from '@standardnotes/snjs'
+import Button from '../Button/Button'
+import { ClassicFileReader } from '@standardnotes/filepicker'
+import { NoteImportType } from '@standardnotes/ui-services'
 
 const ImportModal = ({ importModalController }: { importModalController: ImportModalController }) => {
   const application = useApplication()
@@ -18,6 +21,7 @@ const ImportModal = ({ importModalController }: { importModalController: ImportM
   const {
     files,
     setFiles,
+    addFiles,
     addImportsToTag,
     setAddImportsToTag,
     shouldCreateTag,
@@ -55,23 +59,45 @@ const ImportModal = ({ importModalController }: { importModalController: ImportM
     [close, existingTagForImports, importSuccessOrError, isReadyToImport, parseAndImport, shouldCreateTag],
   )
 
+  const selectFiles = useCallback(
+    async (service?: NoteImportType) => {
+      const files = await ClassicFileReader.selectFiles()
+
+      addFiles(files, service)
+    },
+    [addFiles],
+  )
+
   return (
     <ModalOverlay isOpen={isVisible} close={close}>
       <Modal title="Import" close={close} actions={modalActions} className="flex flex-col">
         <div className="min-h-0 flex-grow px-4 py-4">
-          {!files.length && <ImportModalInitialPage setFiles={setFiles} />}
+          {!files.length && <ImportModalInitialPage setFiles={setFiles} selectFiles={selectFiles} />}
           {files.length > 0 && (
-            <div className="divide-y divide-border">
-              {files.map((file) => (
-                <ImportModalFileItem
-                  file={file}
-                  key={file.id}
-                  updateFile={updateFile}
-                  removeFile={removeFile}
-                  importer={application.importer}
-                />
-              ))}
-            </div>
+            <>
+              <div className="divide-y divide-border">
+                {files.map((file) => (
+                  <ImportModalFileItem
+                    file={file}
+                    key={file.id}
+                    updateFile={updateFile}
+                    removeFile={removeFile}
+                    importer={application.importer}
+                  />
+                ))}
+              </div>
+              {!importSuccessOrError && (
+                <Button
+                  className="mt-4"
+                  onClick={() => {
+                    selectFiles().catch(console.error)
+                  }}
+                  small
+                >
+                  Add files
+                </Button>
+              )}
+            </>
           )}
         </div>
         {files.length > 0 && (
