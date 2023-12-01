@@ -5,12 +5,25 @@ import { SuperConverterServiceInterface } from '@standardnotes/files'
 import { DecryptedTransferPayload, NoteContent } from '@standardnotes/models'
 import { GenerateUuid } from '@standardnotes/services'
 import { readFileAsText } from '../Utils'
+import { Converter } from '../Converter'
 
-export class HTMLConverter {
+export class HTMLConverter implements Converter {
   constructor(
     private superConverterService: SuperConverterServiceInterface,
     private _generateUuid: GenerateUuid,
   ) {}
+
+  getImportType(): string {
+    return 'html'
+  }
+
+  getSupportedFileTypes(): string[] {
+    return ['text/html']
+  }
+
+  isContentValid(_content: string): boolean {
+    return true
+  }
 
   static isHTMLFile(file: File): boolean {
     return file.type === 'text/html'

@@ -5,12 +5,25 @@ import { readFileAsText } from '../Utils'
 import { GenerateUuid } from '@standardnotes/services'
 import { SuperConverterServiceInterface } from '@standardnotes/files'
 import { NativeFeatureIdentifier, NoteType } from '@standardnotes/features'
+import { Converter } from '../Converter'
 
-export class PlaintextConverter {
+export class PlaintextConverter implements Converter {
   constructor(
     private superConverterService: SuperConverterServiceInterface,
     private _generateUuid: GenerateUuid,
   ) {}
+
+  getImportType(): string {
+    return 'plaintext'
+  }
+
+  getSupportedFileTypes(): string[] {
+    return ['text/plain', 'text/markdown']
+  }
+
+  isContentValid(_content: string): boolean {
+    return true
+  }
 
   static isValidPlaintextFile(file: File): boolean {
     return file.type === 'text/plain' || file.type === 'text/markdown'

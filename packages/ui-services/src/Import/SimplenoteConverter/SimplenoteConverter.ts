@@ -2,6 +2,7 @@ import { DecryptedTransferPayload, NoteContent } from '@standardnotes/models'
 import { ContentType } from '@standardnotes/domain-core'
 import { readFileAsText } from '../Utils'
 import { GenerateUuid } from '@standardnotes/services'
+import { Converter } from '../Converter'
 
 type SimplenoteItem = {
   creationDate: string
@@ -17,8 +18,18 @@ type SimplenoteData = {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const isSimplenoteEntry = (entry: any): boolean => entry.id && entry.content && entry.creationDate && entry.lastModified
 
-export class SimplenoteConverter {
+export class SimplenoteConverter implements Converter {
   constructor(private _generateUuid: GenerateUuid) {}
+
+  getImportType(): string {
+    return 'simplenote'
+  }
+
+  getSupportedFileTypes(): string[] {
+    return ['application/json']
+  }
+
+  isContentValid: (content: string) => boolean = SimplenoteConverter.isValidSimplenoteJson
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   static isValidSimplenoteJson(json: any): boolean {

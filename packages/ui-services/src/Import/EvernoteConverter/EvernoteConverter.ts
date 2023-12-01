@@ -9,6 +9,7 @@ import { SuperConverterServiceInterface } from '@standardnotes/files'
 import { NativeFeatureIdentifier, NoteType } from '@standardnotes/features'
 import MD5 from 'crypto-js/md5'
 import Base64 from 'crypto-js/enc-base64'
+import { Converter } from '../Converter'
 dayjs.extend(customParseFormat)
 dayjs.extend(utc)
 
@@ -21,11 +22,23 @@ export type EvernoteResource = {
   mimeType: string
 }
 
-export class EvernoteConverter {
+export class EvernoteConverter implements Converter {
   constructor(
     private superConverterService: SuperConverterServiceInterface,
     private _generateUuid: GenerateUuid,
   ) {}
+
+  getImportType(): string {
+    return 'evernote'
+  }
+
+  getFileExtension(): string {
+    return 'enex'
+  }
+
+  isContentValid(content: string): boolean {
+    return content.includes('<en-export') && content.includes('</en-export>')
+  }
 
   async convertENEXFileToNotesAndTags(file: File, isEntitledToSuper: boolean): Promise<DecryptedTransferPayload[]> {
     const content = await readFileAsText(file)

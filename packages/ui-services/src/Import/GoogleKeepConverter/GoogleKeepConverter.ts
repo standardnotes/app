@@ -4,6 +4,7 @@ import { readFileAsText } from '../Utils'
 import { GenerateUuid } from '@standardnotes/services'
 import { SuperConverterServiceInterface } from '@standardnotes/files'
 import { NativeFeatureIdentifier, NoteType } from '@standardnotes/features'
+import { Converter } from '../Converter'
 
 type Content =
   | {
@@ -25,11 +26,21 @@ type GoogleKeepJsonNote = {
   userEditedTimestampUsec: number
 } & Content
 
-export class GoogleKeepConverter {
+export class GoogleKeepConverter implements Converter {
   constructor(
     private superConverterService: SuperConverterServiceInterface,
     private _generateUuid: GenerateUuid,
   ) {}
+
+  getImportType(): string {
+    return 'google-keep'
+  }
+
+  getSupportedFileTypes(): string[] {
+    return ['text/html', 'application/json']
+  }
+
+  isContentValid: (content: string) => boolean = GoogleKeepConverter.isValidGoogleKeepJson
 
   async convertGoogleKeepBackupFileToNote(
     file: File,

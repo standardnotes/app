@@ -5,12 +5,25 @@ import { readFileAsText } from '../Utils'
 import { parseFileName } from '@standardnotes/filepicker'
 import { ContentType } from '@standardnotes/domain-core'
 import { NativeFeatureIdentifier, NoteType } from '@standardnotes/features'
+import { Converter } from '../Converter'
 
-export class SuperConverter {
+export class SuperConverter implements Converter {
   constructor(
     private converterService: SuperConverterServiceInterface,
     private _generateUuid: GenerateUuid,
   ) {}
+
+  getImportType(): string {
+    return 'super'
+  }
+
+  getSupportedFileTypes(): string[] {
+    return ['application/json']
+  }
+
+  isContentValid(content: string): boolean {
+    return this.converterService.isValidSuperString(content)
+  }
 
   async convertSuperFileToNote(file: File): Promise<DecryptedTransferPayload<NoteContent>> {
     const content = await readFileAsText(file)

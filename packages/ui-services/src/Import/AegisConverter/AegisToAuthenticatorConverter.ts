@@ -3,6 +3,7 @@ import { readFileAsText } from '../Utils'
 import { NativeFeatureIdentifier, NoteType } from '@standardnotes/features'
 import { ContentType } from '@standardnotes/domain-core'
 import { GenerateUuid } from '@standardnotes/services'
+import { Converter } from '../Converter'
 
 type AegisData = {
   db: {
@@ -26,8 +27,18 @@ type AuthenticatorEntry = {
   notes: string
 }
 
-export class AegisToAuthenticatorConverter {
+export class AegisToAuthenticatorConverter implements Converter {
   constructor(private _generateUuid: GenerateUuid) {}
+
+  getImportType(): string {
+    return 'aegis'
+  }
+
+  getSupportedFileTypes(): string[] {
+    return ['application/json']
+  }
+
+  isContentValid: (content: string) => boolean = AegisToAuthenticatorConverter.isValidAegisJson
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   static isValidAegisJson(json: any): boolean {

@@ -26,8 +26,7 @@ import {
 import { HTMLConverter } from './HTMLConverter/HTMLConverter'
 import { SuperConverterServiceInterface } from '@standardnotes/snjs/dist/@types'
 import { SuperConverter } from './SuperConverter/SuperConverter'
-
-export type NoteImportType = 'plaintext' | 'evernote' | 'google-keep' | 'simplenote' | 'aegis' | 'html' | 'super'
+import { Converter } from './Converter'
 
 export class Importer {
   aegisConverter: AegisToAuthenticatorConverter
@@ -37,6 +36,8 @@ export class Importer {
   evernoteConverter: EvernoteConverter
   htmlConverter: HTMLConverter
   superConverter: SuperConverter
+
+  converters: Set<Converter> = new Set()
 
   constructor(
     private features: FeaturesClientInterface,
@@ -67,51 +68,42 @@ export class Importer {
     this.evernoteConverter = new EvernoteConverter(this.superConverterService, _generateUuid)
     this.htmlConverter = new HTMLConverter(this.superConverterService, _generateUuid)
     this.superConverter = new SuperConverter(this.superConverterService, _generateUuid)
+
+    this.registerNativeConverters()
   }
 
-  detectService = async (file: File): Promise<NoteImportType | null> => {
+  registerNativeConverters() {
+    this.converters.add(this.aegisConverter)
+    this.converters.add(this.googleKeepConverter)
+    this.converters.add(this.simplenoteConverter)
+    this.converters.add(this.plaintextConverter)
+    this.converters.add(this.evernoteConverter)
+    this.converters.add(this.htmlConverter)
+    this.converters.add(this.superConverter)
+  }
+
+  detectService = async (file: File): Promise<string | null> => {
     const content = await readFileAsText(file)
 
     const { ext } = parseFileName(file.name)
 
-    if (ext === 'enex') {
-      return 'evernote'
-    }
+    for (const converter of this.converters) {
+      const isCorrectType = converter.getSupportedFileTypes && converter.getSupportedFileTypes().includes(file.type)
+      const isCorrectExtension = converter.getFileExtension && converter.getFileExtension() === ext
 
-    try {
-      const json = JSON.parse(content)
-
-      if (AegisToAuthenticatorConverter.isValidAegisJson(json)) {
-        return 'aegis'
+      if (!isCorrectType && !isCorrectExtension) {
+        continue
       }
 
-      if (GoogleKeepConverter.isValidGoogleKeepJson(json)) {
-        return 'google-keep'
+      if (converter.isContentValid(content)) {
+        return converter.getImportType()
       }
-
-      if (SimplenoteConverter.isValidSimplenoteJson(json)) {
-        return 'simplenote'
-      }
-    } catch {
-      /* empty */
-    }
-
-    if (file.type === 'application/json' && this.superConverterService.isValidSuperString(content)) {
-      return 'super'
-    }
-
-    if (PlaintextConverter.isValidPlaintextFile(file)) {
-      return 'plaintext'
-    }
-
-    if (HTMLConverter.isHTMLFile(file)) {
-      return 'html'
     }
 
     return null
   }
 
-  async getPayloadsFromFile(file: File, type: NoteImportType): Promise<DecryptedTransferPayload[]> {
+  async getPayloadsFromFile(file: File, type: string): Promise<DecryptedTransferPayload[]> {
     const isEntitledToSuper =
       this.features.getFeatureStatus(
         NativeFeatureIdentifier.create(NativeFeatureIdentifier.TYPES.SuperEditor).getValue(),

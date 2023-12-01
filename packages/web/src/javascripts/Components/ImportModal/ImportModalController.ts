@@ -9,7 +9,7 @@ import {
   PreferencesServiceEvent,
   UuidGenerator,
 } from '@standardnotes/snjs'
-import { Importer, NoteImportType } from '@standardnotes/ui-services'
+import { Importer } from '@standardnotes/ui-services'
 import { action, makeObservable, observable, runInAction } from 'mobx'
 import { NavigationController } from '../../Controllers/Navigation/NavigationController'
 import { LinkingController } from '@/Controllers/LinkingController'
@@ -18,7 +18,7 @@ import { AbstractViewController } from '@/Controllers/Abstract/AbstractViewContr
 type ImportModalFileCommon = {
   id: string
   file: File
-  service: NoteImportType | null | undefined
+  service: string | null | undefined
 }
 
 export type ImportModalFile = (
@@ -107,7 +107,7 @@ export class ImportModalController extends AbstractViewController {
     this.preferences.setValue(PrefKey.ExistingTagForImports, tag?.uuid).catch(console.error)
   }
 
-  getImportFromFile = (file: File, service?: NoteImportType) => {
+  getImportFromFile = (file: File, service?: string) => {
     return {
       id: UuidGenerator.GenerateUuid(),
       file,
@@ -116,11 +116,11 @@ export class ImportModalController extends AbstractViewController {
     } as ImportModalFile
   }
 
-  setFiles = (files: File[], service?: NoteImportType) => {
+  setFiles = (files: File[], service?: string) => {
     this.files = files.map((file) => this.getImportFromFile(file, service))
   }
 
-  addFiles = (files: File[], service?: NoteImportType) => {
+  addFiles = (files: File[], service?: string) => {
     this.files = [...this.files, ...files.map((file) => this.getImportFromFile(file, service))]
   }
 
