@@ -84,6 +84,7 @@ import {
   SyncEventReceivedAsymmetricMessagesData,
   SyncOpStatus,
   ApplicationSyncOptions,
+  WebSocketsServiceEvent,
 } from '@standardnotes/services'
 import { OfflineSyncResponse } from './Offline/Response'
 import {
@@ -1400,9 +1401,20 @@ export class SyncService
   }
 
   async handleEvent(event: InternalEventInterface): Promise<void> {
-    if (event.type === IntegrityEvent.IntegrityCheckCompleted) {
-      await this.handleIntegrityCheckEventResponse(event.payload as IntegrityEventPayload)
+    switch (event.type) {
+      case IntegrityEvent.IntegrityCheckCompleted:
+        await this.handleIntegrityCheckEventResponse(event.payload as IntegrityEventPayload)
+        break
+      case WebSocketsServiceEvent.ItemsChangedOnServer:
+        this.handleItemsChangedOnServerEvent()
+        break
+      default:
+        break
     }
+  }
+
+  private handleItemsChangedOnServerEvent() {
+    void this.sync({ sourceDescription: 'WebSockets Event - Items Changed On Server' })
   }
 
   private async handleIntegrityCheckEventResponse(eventPayload: IntegrityEventPayload) {

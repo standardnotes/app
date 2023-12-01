@@ -3,4 +3,5 @@ export enum WebSocketsServiceEvent {
   NotificationAddedForUser = 'NotificationAddedForUser',
   MessageSentToUser = 'MessageSentToUser',
   UserInvitedToSharedVault = 'UserInvitedToSharedVault',
+  ItemsChangedOnServer = 'ItemsChangedOnServer',
 }

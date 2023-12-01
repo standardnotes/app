@@ -506,6 +506,12 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   private beginAutoSyncTimer() {
     this.autoSyncInterval = setInterval(() => {
       const logger = this.dependencies.get<LoggerInterface>(TYPES.Logger)
+      if (this.sockets.isWebSocketConnectionOpen()) {
+        logger.debug('WebSocket connection is open, skipping autosync')
+
+        return
+      }
+
       logger.info('Syncing from autosync')
       void this.sync.sync({ sourceDescription: 'Auto Sync' })
     }, DEFAULT_AUTO_SYNC_INTERVAL)
