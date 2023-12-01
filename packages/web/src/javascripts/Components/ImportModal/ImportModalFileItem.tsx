@@ -120,7 +120,10 @@ const ImportModalFileItem = ({
                   setChangingService(false)
                 }}
               >
-                <select className="mr-2 rounded border border-border bg-default px-2 py-1 text-sm">
+                <select
+                  className="mr-2 rounded border border-border bg-default px-2 py-1 text-sm"
+                  defaultValue={file.service ? file.service : undefined}
+                >
                   <option value="evernote">Evernote</option>
                   <option value="simplenote">Simplenote</option>
                   <option value="google-keep">Google Keep</option>
