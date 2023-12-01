@@ -126,6 +126,8 @@ const ImportModalFileItem = ({
                   <option value="google-keep">Google Keep</option>
                   <option value="aegis">Aegis</option>
                   <option value="plaintext">Plaintext</option>
+                  <option value="html">HTML</option>
+                  <option value="super">Super</option>
                 </select>
                 <button
                   aria-label="Choose service"
