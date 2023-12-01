@@ -6279,16 +6279,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/api-gateway@npm:^1.87.1":
-  version: 1.87.1
-  resolution: "@standardnotes/api-gateway@npm:1.87.1"
+"@standardnotes/api-gateway@npm:^1.87.4":
+  version: 1.87.4
+  resolution: "@standardnotes/api-gateway@npm:1.87.4"
   dependencies:
     "@grpc/grpc-js": ^1.9.11
     "@standardnotes/domain-core": ^1.41.1
-    "@standardnotes/domain-events": 2.137.1
-    "@standardnotes/domain-events-infra": 1.22.1
+    "@standardnotes/domain-events": 2.138.1
+    "@standardnotes/domain-events-infra": 1.22.3
     "@standardnotes/grpc": ^1.3.1
-    "@standardnotes/security": 1.17.1
+    "@standardnotes/security": 1.17.2
     "@standardnotes/time": 1.18.1
     agentkeepalive: ^4.5.0
     axios: ^1.6.1
@@ -6304,7 +6304,7 @@ __metadata:
     prettyjson: ^1.2.5
     reflect-metadata: 0.1.13
     winston: ^3.8.1
-  checksum: adff9edf709a2b0c225354044b5f627eb56fc7b875439f7a8afdfb7b4a372d16dfdeaa1647d128ab468435d62001b1ba22a0f928bdaeb0b5841bbb1c6a9dc40e
+  checksum: 5089199e2a79beff9c264e11429973b47b73fb9a3283ace2019b2eff3b238dd5e674e0b82303dfb89cccb295fd419e00a80baaeb342f5ccb3b9457d2792adf56
   languageName: node
   linkType: hard
 
@@ -6359,9 +6359,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/auth-server@npm:^1.174.1":
-  version: 1.174.1
-  resolution: "@standardnotes/auth-server@npm:1.174.1"
+"@standardnotes/auth-server@npm:^1.174.3":
+  version: 1.174.3
+  resolution: "@standardnotes/auth-server@npm:1.174.3"
   dependencies:
     "@aws-sdk/client-s3": ^3.445.0
     "@aws-sdk/client-sns": ^3.427.0
@@ -6374,13 +6374,13 @@ __metadata:
     "@standardnotes/api": ^1.26.26
     "@standardnotes/common": 1.52.1
     "@standardnotes/domain-core": ^1.41.1
-    "@standardnotes/domain-events": 2.137.1
-    "@standardnotes/domain-events-infra": 1.22.1
+    "@standardnotes/domain-events": 2.138.1
+    "@standardnotes/domain-events-infra": 1.22.3
     "@standardnotes/features": ^1.59.7
     "@standardnotes/grpc": ^1.3.1
     "@standardnotes/predicates": 1.8.1
     "@standardnotes/responses": ^1.13.27
-    "@standardnotes/security": 1.17.1
+    "@standardnotes/security": 1.17.2
     "@standardnotes/settings": 1.23.1
     "@standardnotes/sncrypto-common": ^1.13.4
     "@standardnotes/sncrypto-node": 1.16.1
@@ -6402,7 +6402,7 @@ __metadata:
     ua-parser-js: ^1.0.35
     uuid: ^9.0.0
     winston: ^3.8.1
-  checksum: 39a67f4be31740bfd80c7b568f4578f495848c93f0a80f74fc5d67c171f861ef6032dbd0446c0e0c20b0888533f4108ce3eeb49a9f5020d1bc2c4f4b2f7a531c
+  checksum: 1b33f24e22d63e3aeeab6739aba5c23460c960a8982f77f0db49a30696742be80f71c519b2f9b28ceda9769fbb8dea07f6ffdc7f3127312a67a1484be5db3e81
   languageName: node
   linkType: hard
 
@@ -6582,9 +6582,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/domain-events-infra@npm:1.22.1, @standardnotes/domain-events-infra@npm:^1.22.1":
-  version: 1.22.1
-  resolution: "@standardnotes/domain-events-infra@npm:1.22.1"
+"@standardnotes/domain-events-infra@npm:1.22.3, @standardnotes/domain-events-infra@npm:^1.22.3":
+  version: 1.22.3
+  resolution: "@standardnotes/domain-events-infra@npm:1.22.3"
   dependencies:
     "@aws-sdk/client-sns": ^3.427.0
     "@aws-sdk/client-sqs": ^3.427.0
@@ -6601,23 +6601,23 @@ __metadata:
     "@opentelemetry/resource-detector-aws": ^1.3.2
     "@opentelemetry/sdk-node": ^0.44.0
     "@opentelemetry/semantic-conventions": ^1.17.1
-    "@standardnotes/domain-events": 2.137.1
+    "@standardnotes/domain-events": 2.138.1
     ioredis: ^5.2.4
     opentelemetry-instrumentation-typeorm: ^0.39.1
     reflect-metadata: ^0.1.13
     sqs-consumer: 7.4.0-canary.0
     winston: ^3.8.1
-  checksum: dc8781aaa9729286f9f29680c759cf73403f7f4b6148e5893de364a16ffd8d3770cd88d2da3429a11e9a4cb6a4a4cca95a614c06848b95b96d4f198cb24064a6
+  checksum: 78485e16e7e76ab74edd506907afbb23c7b9b85fc0f089f8178e24aadfd82d4e23aca9e973ceccd817936cd7f4a1b3de225965686cea477c52abb357c2ca7ac4
   languageName: node
   linkType: hard
 
-"@standardnotes/domain-events@npm:2.137.1":
-  version: 2.137.1
-  resolution: "@standardnotes/domain-events@npm:2.137.1"
+"@standardnotes/domain-events@npm:2.138.1":
+  version: 2.138.1
+  resolution: "@standardnotes/domain-events@npm:2.138.1"
   dependencies:
     "@standardnotes/predicates": 1.8.1
-    "@standardnotes/security": 1.17.1
-  checksum: 2cf7690cdd3091bf26d60f00d5bcf46b2c89534e148c77568c308bbfbba9f3dd1f6fa0c73f7bb3f54bd7f5aabe0d241ee062bc91cdb6bb2ac1bee24e2856a0b4
+    "@standardnotes/security": 1.17.2
+  checksum: ae581b7e03b83a777a340a72f0f7e37c84e3256afb5d8b11870d816264aee4b6ca1cbc19350c0d16f551edf24aa2693cc24490754df83ae0db3f85f90d63a113
   languageName: node
   linkType: hard
 
@@ -6731,17 +6731,17 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/files-server@npm:^1.36.1":
-  version: 1.36.1
-  resolution: "@standardnotes/files-server@npm:1.36.1"
+"@standardnotes/files-server@npm:^1.36.3":
+  version: 1.36.3
+  resolution: "@standardnotes/files-server@npm:1.36.3"
   dependencies:
     "@aws-sdk/client-s3": ^3.427.0
     "@aws-sdk/client-sns": ^3.427.0
     "@aws-sdk/client-sqs": ^3.427.0
     "@standardnotes/domain-core": ^1.41.1
-    "@standardnotes/domain-events": 2.137.1
-    "@standardnotes/domain-events-infra": 1.22.1
-    "@standardnotes/security": 1.17.1
+    "@standardnotes/domain-events": 2.138.1
+    "@standardnotes/domain-events-infra": 1.22.3
+    "@standardnotes/security": 1.17.2
     "@standardnotes/sncrypto-common": ^1.13.4
     "@standardnotes/sncrypto-node": 1.16.1
     "@standardnotes/time": 1.18.1
@@ -6760,7 +6760,7 @@ __metadata:
     prettyjson: ^1.2.5
     reflect-metadata: ^0.1.13
     winston: ^3.8.1
-  checksum: fd1958946dc500105f369886f9d80cd3a59804fed8f45ae9e7e796c8602e887000d06e2bc85aed2ccf5a3edf8d2c313e06fba0ef2bb3fea9a52ea6e45296250c
+  checksum: 54772636c63eb60dbd2f1cf1e2cc53fc398d49c9bb862835b51f4a6db56440720aed1ce6f8c1a5d848ad7f1d6ba022fc020aac468fad166fc3fe8f1995f602e3
   languageName: node
   linkType: hard
 
@@ -6809,17 +6809,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/home-server@npm:^1.22.1":
-  version: 1.22.1
-  resolution: "@standardnotes/home-server@npm:1.22.1"
+"@standardnotes/home-server@npm:^1.22.7":
+  version: 1.22.7
+  resolution: "@standardnotes/home-server@npm:1.22.7"
   dependencies:
-    "@standardnotes/api-gateway": ^1.87.1
-    "@standardnotes/auth-server": ^1.174.1
+    "@standardnotes/api-gateway": ^1.87.4
+    "@standardnotes/auth-server": ^1.174.3
     "@standardnotes/domain-core": ^1.41.1
-    "@standardnotes/domain-events-infra": ^1.22.1
-    "@standardnotes/files-server": ^1.36.1
-    "@standardnotes/revisions-server": ^1.51.1
-    "@standardnotes/syncing-server": ^1.126.1
+    "@standardnotes/domain-events-infra": ^1.22.3
+    "@standardnotes/files-server": ^1.36.3
+    "@standardnotes/revisions-server": ^1.51.3
+    "@standardnotes/syncing-server": ^1.127.5
     cors: 2.8.5
     dotenv: ^16.0.1
     express: ^4.18.2
@@ -6829,7 +6829,7 @@ __metadata:
     inversify-express-utils: ^6.4.3
     reflect-metadata: 0.1.13
     winston: ^3.8.1
-  checksum: 94d999defcba39e9177847ef1bf95977b22c8f08920f19dcb12bb6bfc85845efe69d92fb2d5eba878f42a91fb08c2452d2cf10e158b700b49605ae4afeeeb974
+  checksum: 319a9b01b6319e7a44da1960b2aef895d25d6858b6d2d310b0ca5ff1742a86f07fbe32a18b49d18ebaf62a79809f514c5912ad29610f5c4d3f250da1e59fccfd
   languageName: node
   linkType: hard
 
@@ -6863,7 +6863,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@standardnotes/inner-desktop@workspace:packages/desktop/app"
   dependencies:
-    "@standardnotes/home-server": ^1.22.1
+    "@standardnotes/home-server": ^1.22.7
     keytar: ^7.9.0
   languageName: unknown
   linkType: soft
@@ -7043,9 +7043,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/revisions-server@npm:^1.51.1":
-  version: 1.51.1
-  resolution: "@standardnotes/revisions-server@npm:1.51.1"
+"@standardnotes/revisions-server@npm:^1.51.3":
+  version: 1.51.3
+  resolution: "@standardnotes/revisions-server@npm:1.51.3"
   dependencies:
     "@aws-sdk/client-s3": ^3.427.0
     "@aws-sdk/client-sns": ^3.427.0
@@ -7053,10 +7053,10 @@ __metadata:
     "@standardnotes/api": ^1.26.26
     "@standardnotes/common": ^1.52.1
     "@standardnotes/domain-core": ^1.41.1
-    "@standardnotes/domain-events": 2.137.1
-    "@standardnotes/domain-events-infra": 1.22.1
+    "@standardnotes/domain-events": 2.138.1
+    "@standardnotes/domain-events-infra": 1.22.3
     "@standardnotes/responses": ^1.13.27
-    "@standardnotes/security": ^1.17.1
+    "@standardnotes/security": ^1.17.2
     "@standardnotes/time": ^1.18.1
     cors: 2.8.5
     dotenv: ^16.0.1
@@ -7069,7 +7069,7 @@ __metadata:
     sqlite3: ^5.1.6
     typeorm: ^0.3.17
     winston: ^3.8.1
-  checksum: 01d5884447fb4ff5faa72f1b6718636853ef4e11828688b476774a1127bb5d4cf32841350c87df11fa523dc2e87e166abf622c79744092db093fcff96f713f6f
+  checksum: 0f0eab6f012f477e142a82245eddd208269e493aa2af0e3fda1fa1d2ac08bd581f4f917b9e73d3f048259b61dd86e76cc8ffaab853454919dcc8bd9dccb8e2ca
   languageName: node
   linkType: hard
 
@@ -7092,13 +7092,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/security@npm:1.17.1, @standardnotes/security@npm:^1.17.1":
-  version: 1.17.1
-  resolution: "@standardnotes/security@npm:1.17.1"
+"@standardnotes/security@npm:1.17.2, @standardnotes/security@npm:^1.17.2":
+  version: 1.17.2
+  resolution: "@standardnotes/security@npm:1.17.2"
   dependencies:
     jsonwebtoken: ^9.0.0
     reflect-metadata: ^0.1.13
-  checksum: dea307d8bc8f02485bee2d397ca80d1d85e02fce793127593227d4863a6caa537d7f06f1c8d52409479f94d8a7e9719ec9d42b81c48e018fd11c89ef6da94c53
+  checksum: 9adb462912367b10402ebf6d378f0ce74348b7385e5e48e619116e241971f3324aec2e0ec8c98a07b30918240c716be62f68fa0a0082c823b3ceb296ac068c2e
   languageName: node
   linkType: hard
 
@@ -7334,9 +7334,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/syncing-server@npm:^1.126.1":
-  version: 1.126.1
-  resolution: "@standardnotes/syncing-server@npm:1.126.1"
+"@standardnotes/syncing-server@npm:^1.127.5":
+  version: 1.127.5
+  resolution: "@standardnotes/syncing-server@npm:1.127.5"
   dependencies:
     "@aws-sdk/client-s3": ^3.427.0
     "@aws-sdk/client-sns": ^3.427.0
@@ -7345,11 +7345,11 @@ __metadata:
     "@standardnotes/api": ^1.26.26
     "@standardnotes/common": 1.52.1
     "@standardnotes/domain-core": ^1.41.1
-    "@standardnotes/domain-events": 2.137.1
-    "@standardnotes/domain-events-infra": 1.22.1
+    "@standardnotes/domain-events": 2.138.1
+    "@standardnotes/domain-events-infra": 1.22.3
     "@standardnotes/grpc": ^1.3.1
     "@standardnotes/responses": ^1.13.27
-    "@standardnotes/security": 1.17.1
+    "@standardnotes/security": 1.17.2
     "@standardnotes/settings": 1.23.1
     "@standardnotes/sncrypto-node": 1.16.1
     "@standardnotes/time": 1.18.1
@@ -7370,7 +7370,7 @@ __metadata:
     ua-parser-js: ^1.0.35
     uuid: ^9.0.0
     winston: ^3.8.1
-  checksum: f11215264b7e851733374ae032442ea1fe5fc5e33f360936593e9440ae3b5203c943b37509d549d2e988401fba9c669f5bc18c61979ac938c7cfaa966b42aec3
+  checksum: d8b33ed5027f955f587f0a38295ec66abda49a2437e0436b96daa6768fa5e2e168fbd43622810bc7cfd15f96696d6044be3de98992eb73213f6753608c7e3ccb
   languageName: node
   linkType: hard
 
