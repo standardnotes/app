@@ -25,7 +25,7 @@ import {
 } from '@standardnotes/models'
 import { HTMLConverter } from './HTMLConverter/HTMLConverter'
 import { SuperConverter } from './SuperConverter/SuperConverter'
-import { Converter, CreateNoteFn } from './Converter'
+import { Converter, CreateNoteFn, CreateTagFn } from './Converter'
 import { SuperConverterServiceInterface } from '@standardnotes/files'
 import { ContentType } from '@standardnotes/domain-core'
 
@@ -66,7 +66,7 @@ export class Importer {
     this.googleKeepConverter = new GoogleKeepConverter()
     this.simplenoteConverter = new SimplenoteConverter()
     this.plaintextConverter = new PlaintextConverter()
-    this.evernoteConverter = new EvernoteConverter(this.superConverterService, _generateUuid)
+    this.evernoteConverter = new EvernoteConverter(_generateUuid)
     this.htmlConverter = new HTMLConverter()
     this.superConverter = new SuperConverter(this.superConverterService)
 
@@ -147,6 +147,23 @@ export class Importer {
     }
   }
 
+  createTag: CreateTagFn = ({ createdAt, updatedAt, title }) => {
+    return {
+      uuid: this._generateUuid.execute().getValue(),
+      content_type: ContentType.TYPES.Tag,
+      created_at: createdAt,
+      created_at_timestamp: createdAt.getTime(),
+      updated_at: updatedAt,
+      updated_at_timestamp: updatedAt.getTime(),
+      content: {
+        title: title,
+        expanded: false,
+        iconString: '',
+        references: [],
+      },
+    }
+  }
+
   isEntitledToSuper = (): boolean => {
     return (
       this.features.getFeatureStatus(
@@ -190,6 +207,7 @@ export class Importer {
 
       return await converter.convert(file, {
         createNote: this.createNote,
+        createTag: this.createTag,
         canUseSuper: isEntitledToSuper,
         convertHTMLToSuper: this.convertHTMLToSuper,
         convertMarkdownToSuper: this.convertMarkdownToSuper,

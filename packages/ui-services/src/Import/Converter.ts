@@ -1,5 +1,5 @@
 import { NoteType } from '@standardnotes/features'
-import { DecryptedTransferPayload, NoteContent } from '@standardnotes/models'
+import { DecryptedTransferPayload, ItemContent, NoteContent, TagContent } from '@standardnotes/models'
 
 export interface Converter {
   getImportType(): string
@@ -13,11 +13,12 @@ export interface Converter {
     file: File,
     dependencies: {
       createNote: CreateNoteFn
+      createTag: CreateTagFn
       canUseSuper: boolean
       convertHTMLToSuper: (html: string) => string
       convertMarkdownToSuper: (markdown: string) => string
     },
-  ): Promise<DecryptedTransferPayload<NoteContent>[]>
+  ): Promise<DecryptedTransferPayload<ItemContent>[]>
 }
 
 export type CreateNoteFn = (options: {
@@ -31,3 +32,9 @@ export type CreateNoteFn = (options: {
   trashed?: boolean
   editorIdentifier?: NoteContent['editorIdentifier']
 }) => DecryptedTransferPayload<NoteContent>
+
+export type CreateTagFn = (options: {
+  createdAt: Date
+  updatedAt: Date
+  title: string
+}) => DecryptedTransferPayload<TagContent>
