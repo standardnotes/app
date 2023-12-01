@@ -1,6 +1,7 @@
 import { parseFileName } from '@standardnotes/filepicker'
 import { readFileAsText } from '../Utils'
 import { Converter } from '../Converter'
+import { NoteType } from '@standardnotes/features'
 
 export class PlaintextConverter implements Converter {
   constructor() {}
@@ -35,6 +36,7 @@ export class PlaintextConverter implements Converter {
         updatedAt: updatedAtDate,
         title: name,
         text: convertMarkdownToSuper(content),
+        noteType: NoteType.Super,
       }),
     ]
   }
