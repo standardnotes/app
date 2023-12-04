@@ -13,7 +13,6 @@ import ItemSelectionDropdown from '../ItemSelectionDropdown/ItemSelectionDropdow
 import { ContentType, SNTag } from '@standardnotes/snjs'
 import Button from '../Button/Button'
 import { ClassicFileReader } from '@standardnotes/filepicker'
-import { NoteImportType } from '@standardnotes/ui-services'
 
 const ImportModal = ({ importModalController }: { importModalController: ImportModalController }) => {
   const application = useApplication()
@@ -60,7 +59,7 @@ const ImportModal = ({ importModalController }: { importModalController: ImportM
   )
 
   const selectFiles = useCallback(
-    async (service?: NoteImportType) => {
+    async (service?: string) => {
       const files = await ClassicFileReader.selectFiles()
 
       addFiles(files, service)

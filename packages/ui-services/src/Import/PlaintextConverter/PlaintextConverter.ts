@@ -1,25 +1,27 @@
-import { ContentType } from '@standardnotes/domain-core'
 import { parseFileName } from '@standardnotes/filepicker'
-import { DecryptedTransferPayload, NoteContent } from '@standardnotes/models'
-import { readFileAsText } from '../Utils'
-import { GenerateUuid } from '@standardnotes/services'
-import { SuperConverterServiceInterface } from '@standardnotes/files'
-import { NativeFeatureIdentifier, NoteType } from '@standardnotes/features'
+import { Converter } from '../Converter'
+import { NoteType } from '@standardnotes/features'
 
-export class PlaintextConverter {
-  constructor(
-    private superConverterService: SuperConverterServiceInterface,
-    private _generateUuid: GenerateUuid,
-  ) {}
+export class PlaintextConverter implements Converter {
+  constructor() {}
+
+  getImportType(): string {
+    return 'plaintext'
+  }
+
+  getSupportedFileTypes(): string[] {
+    return ['text/plain', 'text/markdown']
+  }
+
+  isContentValid(_content: string): boolean {
+    return true
+  }
 
   static isValidPlaintextFile(file: File): boolean {
     return file.type === 'text/plain' || file.type === 'text/markdown'
   }
 
-  async convertPlaintextFileToNote(
-    file: File,
-    isEntitledToSuper: boolean,
-  ): Promise<DecryptedTransferPayload<NoteContent>> {
+  convert: Converter['convert'] = async (file, { createNote, convertMarkdownToSuper, readFileAsText }) => {
     const content = await readFileAsText(file)
 
     const { name } = parseFileName(file.name)
@@ -27,24 +29,14 @@ export class PlaintextConverter {
     const createdAtDate = file.lastModified ? new Date(file.lastModified) : new Date()
     const updatedAtDate = file.lastModified ? new Date(file.lastModified) : new Date()
 
-    return {
-      created_at: createdAtDate,
-      created_at_timestamp: createdAtDate.getTime(),
-      updated_at: updatedAtDate,
-      updated_at_timestamp: updatedAtDate.getTime(),
-      uuid: this._generateUuid.execute().getValue(),
-      content_type: ContentType.TYPES.Note,
-      content: {
+    return [
+      createNote({
+        createdAt: createdAtDate,
+        updatedAt: updatedAtDate,
         title: name,
-        text: isEntitledToSuper ? this.superConverterService.convertOtherFormatToSuperString(content, 'md') : content,
-        references: [],
-        ...(isEntitledToSuper
-          ? {
-              noteType: NoteType.Super,
-              editorIdentifier: NativeFeatureIdentifier.TYPES.SuperEditor,
-            }
-          : {}),
-      },
-    }
+        text: convertMarkdownToSuper(content),
+        noteType: NoteType.Super,
+      }),
+    ]
   }
 }

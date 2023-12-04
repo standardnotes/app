@@ -1,19 +1,28 @@
-import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
+import { DecryptedTransferPayload, NoteContent } from '@standardnotes/models'
 import { SimplenoteConverter } from './SimplenoteConverter'
 import data from './testData'
-import { GenerateUuid } from '@standardnotes/services'
+import { ContentType } from '@standardnotes/domain-core'
+import { CreateNoteFn } from '../Converter'
 
 describe('SimplenoteConverter', () => {
-  const crypto = {
-    generateUUID: () => String(Math.random()),
-  } as unknown as PureCryptoInterface
-
-  const generateUuid = new GenerateUuid(crypto)
+  const createNote: CreateNoteFn = ({ title, text, trashed, createdAt, updatedAt }) =>
+    ({
+      uuid: Math.random().toString(),
+      created_at: createdAt,
+      updated_at: updatedAt,
+      content_type: ContentType.TYPES.Note,
+      content: {
+        title,
+        text,
+        trashed,
+        references: [],
+      },
+    }) as unknown as DecryptedTransferPayload<NoteContent>
 
   it('should parse', () => {
-    const converter = new SimplenoteConverter(generateUuid)
+    const converter = new SimplenoteConverter()
 
-    const result = converter.parse(data)
+    const result = converter.parse(data, createNote)
 
     expect(result).not.toBeNull()
     expect(result?.length).toBe(3)

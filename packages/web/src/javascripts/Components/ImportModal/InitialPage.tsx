@@ -5,11 +5,10 @@ import Icon from '../Icon/Icon'
 import { useApplication } from '../ApplicationProvider'
 import { FeatureName } from '@/Controllers/FeatureName'
 import { NativeFeatureIdentifier, FeatureStatus } from '@standardnotes/snjs'
-import { NoteImportType } from '@standardnotes/ui-services'
 
 type Props = {
   setFiles: ImportModalController['setFiles']
-  selectFiles: (service?: NoteImportType) => Promise<void>
+  selectFiles: (service?: string) => Promise<void>
 }
 
 const ImportModalInitialPage = ({ setFiles, selectFiles }: Props) => {

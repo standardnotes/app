@@ -1,7 +1,4 @@
-import { DecryptedTransferPayload, NoteContent } from '@standardnotes/models'
-import { ContentType } from '@standardnotes/domain-core'
-import { readFileAsText } from '../Utils'
-import { GenerateUuid } from '@standardnotes/services'
+import { Converter, CreateNoteFn } from '../Converter'
 
 type SimplenoteItem = {
   creationDate: string
@@ -17,21 +14,34 @@ type SimplenoteData = {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const isSimplenoteEntry = (entry: any): boolean => entry.id && entry.content && entry.creationDate && entry.lastModified
 
-export class SimplenoteConverter {
-  constructor(private _generateUuid: GenerateUuid) {}
+export class SimplenoteConverter implements Converter {
+  constructor() {}
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  static isValidSimplenoteJson(json: any): boolean {
-    return (
-      (json.activeNotes && json.activeNotes.every(isSimplenoteEntry)) ||
-      (json.trashedNotes && json.trashedNotes.every(isSimplenoteEntry))
-    )
+  getImportType(): string {
+    return 'simplenote'
   }
 
-  async convertSimplenoteBackupFileToNotes(file: File): Promise<DecryptedTransferPayload<NoteContent>[]> {
+  getSupportedFileTypes(): string[] {
+    return ['application/json']
+  }
+
+  isContentValid(content: string): boolean {
+    try {
+      const json = JSON.parse(content)
+      return (
+        (json.activeNotes && json.activeNotes.every(isSimplenoteEntry)) ||
+        (json.trashedNotes && json.trashedNotes.every(isSimplenoteEntry))
+      )
+    } catch (error) {
+      console.error(error)
+    }
+    return false
+  }
+
+  convert: Converter['convert'] = async (file, { createNote, readFileAsText }) => {
     const content = await readFileAsText(file)
 
-    const notes = this.parse(content)
+    const notes = this.parse(content, createNote)
 
     if (!notes) {
       throw new Error('Could not parse notes')
@@ -40,7 +50,7 @@ export class SimplenoteConverter {
     return notes
   }
 
-  createNoteFromItem(item: SimplenoteItem, trashed: boolean): DecryptedTransferPayload<NoteContent> {
+  createNoteFromItem(item: SimplenoteItem, trashed: boolean, createNote: CreateNoteFn): ReturnType<CreateNoteFn> {
     const createdAtDate = new Date(item.creationDate)
     const updatedAtDate = new Date(item.lastModified)
 
@@ -50,32 +60,20 @@ export class SimplenoteConverter {
       hasTitleAndContent && splitItemContent[0].length ? splitItemContent[0] : createdAtDate.toLocaleString()
     const content = hasTitleAndContent && splitItemContent[1].length ? splitItemContent[1] : item.content
 
-    return {
-      created_at: createdAtDate,
-      created_at_timestamp: createdAtDate.getTime(),
-      updated_at: updatedAtDate,
-      updated_at_timestamp: updatedAtDate.getTime(),
-      uuid: this._generateUuid.execute().getValue(),
-      content_type: ContentType.TYPES.Note,
-      content: {
-        title,
-        text: content,
-        references: [],
-        trashed,
-        appData: {
-          'org.standardnotes.sn': {
-            client_updated_at: updatedAtDate,
-          },
-        },
-      },
-    }
+    return createNote({
+      createdAt: createdAtDate,
+      updatedAt: updatedAtDate,
+      title,
+      text: content,
+      trashed,
+    })
   }
 
-  parse(data: string) {
+  parse(data: string, createNote: CreateNoteFn) {
     try {
       const parsed = JSON.parse(data) as SimplenoteData
-      const activeNotes = parsed.activeNotes.reverse().map((item) => this.createNoteFromItem(item, false))
-      const trashedNotes = parsed.trashedNotes.reverse().map((item) => this.createNoteFromItem(item, true))
+      const activeNotes = parsed.activeNotes.reverse().map((item) => this.createNoteFromItem(item, false, createNote))
+      const trashedNotes = parsed.trashedNotes.reverse().map((item) => this.createNoteFromItem(item, true, createNote))
 
       return [...activeNotes, ...trashedNotes]
     } catch (error) {

@@ -24,19 +24,13 @@ import {
   isNote,
 } from '@standardnotes/models'
 import { HTMLConverter } from './HTMLConverter/HTMLConverter'
-import { SuperConverterServiceInterface } from '@standardnotes/snjs/dist/@types'
 import { SuperConverter } from './SuperConverter/SuperConverter'
-
-export type NoteImportType = 'plaintext' | 'evernote' | 'google-keep' | 'simplenote' | 'aegis' | 'html' | 'super'
+import { Converter, CreateNoteFn, CreateTagFn } from './Converter'
+import { SuperConverterServiceInterface } from '@standardnotes/files'
+import { ContentType } from '@standardnotes/domain-core'
 
 export class Importer {
-  aegisConverter: AegisToAuthenticatorConverter
-  googleKeepConverter: GoogleKeepConverter
-  simplenoteConverter: SimplenoteConverter
-  plaintextConverter: PlaintextConverter
-  evernoteConverter: EvernoteConverter
-  htmlConverter: HTMLConverter
-  superConverter: SuperConverter
+  converters: Set<Converter> = new Set()
 
   constructor(
     private features: FeaturesClientInterface,
@@ -60,83 +54,155 @@ export class Importer {
     },
     private _generateUuid: GenerateUuid,
   ) {
-    this.aegisConverter = new AegisToAuthenticatorConverter(_generateUuid)
-    this.googleKeepConverter = new GoogleKeepConverter(this.superConverterService, _generateUuid)
-    this.simplenoteConverter = new SimplenoteConverter(_generateUuid)
-    this.plaintextConverter = new PlaintextConverter(this.superConverterService, _generateUuid)
-    this.evernoteConverter = new EvernoteConverter(this.superConverterService, _generateUuid)
-    this.htmlConverter = new HTMLConverter(this.superConverterService, _generateUuid)
-    this.superConverter = new SuperConverter(this.superConverterService, _generateUuid)
+    this.registerNativeConverters()
   }
 
-  detectService = async (file: File): Promise<NoteImportType | null> => {
+  registerNativeConverters() {
+    this.converters.add(new AegisToAuthenticatorConverter())
+    this.converters.add(new GoogleKeepConverter())
+    this.converters.add(new SimplenoteConverter())
+    this.converters.add(new PlaintextConverter())
+    this.converters.add(new EvernoteConverter(this._generateUuid))
+    this.converters.add(new HTMLConverter())
+    this.converters.add(new SuperConverter(this.superConverterService))
+  }
+
+  detectService = async (file: File): Promise<string | null> => {
     const content = await readFileAsText(file)
 
     const { ext } = parseFileName(file.name)
 
-    if (ext === 'enex') {
-      return 'evernote'
-    }
+    for (const converter of this.converters) {
+      const isCorrectType = converter.getSupportedFileTypes && converter.getSupportedFileTypes().includes(file.type)
+      const isCorrectExtension = converter.getFileExtension && converter.getFileExtension() === ext
 
-    try {
-      const json = JSON.parse(content)
-
-      if (AegisToAuthenticatorConverter.isValidAegisJson(json)) {
-        return 'aegis'
+      if (!isCorrectType && !isCorrectExtension) {
+        continue
       }
 
-      if (GoogleKeepConverter.isValidGoogleKeepJson(json)) {
-        return 'google-keep'
+      if (converter.isContentValid(content)) {
+        return converter.getImportType()
       }
-
-      if (SimplenoteConverter.isValidSimplenoteJson(json)) {
-        return 'simplenote'
-      }
-    } catch {
-      /* empty */
-    }
-
-    if (file.type === 'application/json' && this.superConverterService.isValidSuperString(content)) {
-      return 'super'
-    }
-
-    if (PlaintextConverter.isValidPlaintextFile(file)) {
-      return 'plaintext'
-    }
-
-    if (HTMLConverter.isHTMLFile(file)) {
-      return 'html'
     }
 
     return null
   }
 
-  async getPayloadsFromFile(file: File, type: NoteImportType): Promise<DecryptedTransferPayload[]> {
+  createNote: CreateNoteFn = ({
+    createdAt,
+    updatedAt,
+    title,
+    text,
+    noteType,
+    editorIdentifier,
+    trashed,
+    archived,
+    pinned,
+  }) => {
+    if (noteType === NoteType.Super && !this.isEntitledToSuper()) {
+      noteType = undefined
+    }
+
+    if (
+      editorIdentifier &&
+      this.features.getFeatureStatus(NativeFeatureIdentifier.create(editorIdentifier).getValue()) !==
+        FeatureStatus.Entitled
+    ) {
+      editorIdentifier = undefined
+    }
+
+    return {
+      created_at: createdAt,
+      created_at_timestamp: createdAt.getTime(),
+      updated_at: updatedAt,
+      updated_at_timestamp: updatedAt.getTime(),
+      uuid: this._generateUuid.execute().getValue(),
+      content_type: ContentType.TYPES.Note,
+      content: {
+        title,
+        text,
+        references: [],
+        noteType,
+        trashed,
+        archived,
+        pinned,
+        editorIdentifier,
+      },
+    }
+  }
+
+  createTag: CreateTagFn = ({ createdAt, updatedAt, title }) => {
+    return {
+      uuid: this._generateUuid.execute().getValue(),
+      content_type: ContentType.TYPES.Tag,
+      created_at: createdAt,
+      created_at_timestamp: createdAt.getTime(),
+      updated_at: updatedAt,
+      updated_at_timestamp: updatedAt.getTime(),
+      content: {
+        title: title,
+        expanded: false,
+        iconString: '',
+        references: [],
+      },
+    }
+  }
+
+  isEntitledToSuper = (): boolean => {
+    return (
+      this.features.getFeatureStatus(
+        NativeFeatureIdentifier.create(NativeFeatureIdentifier.TYPES.SuperEditor).getValue(),
+      ) === FeatureStatus.Entitled
+    )
+  }
+
+  convertHTMLToSuper = (html: string): string => {
+    if (!this.isEntitledToSuper()) {
+      return html
+    }
+
+    return this.superConverterService.convertOtherFormatToSuperString(html, 'html')
+  }
+
+  convertMarkdownToSuper = (markdown: string): string => {
+    if (!this.isEntitledToSuper()) {
+      return markdown
+    }
+
+    return this.superConverterService.convertOtherFormatToSuperString(markdown, 'md')
+  }
+
+  async getPayloadsFromFile(file: File, type: string): Promise<DecryptedTransferPayload[]> {
     const isEntitledToSuper =
       this.features.getFeatureStatus(
         NativeFeatureIdentifier.create(NativeFeatureIdentifier.TYPES.SuperEditor).getValue(),
       ) === FeatureStatus.Entitled
-    if (type === 'super') {
-      if (!isEntitledToSuper) {
-        throw new Error('Importing Super notes requires a subscription.')
+
+    if (type === 'super' && !isEntitledToSuper) {
+      throw new Error('Importing Super notes requires a subscription')
+    }
+
+    for (const converter of this.converters) {
+      const isCorrectType = converter.getImportType() === type
+
+      if (!isCorrectType) {
+        continue
       }
-      return [await this.superConverter.convertSuperFileToNote(file)]
-    } else if (type === 'aegis') {
-      const isEntitledToAuthenticator =
-        this.features.getFeatureStatus(
-          NativeFeatureIdentifier.create(NativeFeatureIdentifier.TYPES.TokenVaultEditor).getValue(),
-        ) === FeatureStatus.Entitled
-      return [await this.aegisConverter.convertAegisBackupFileToNote(file, isEntitledToAuthenticator)]
-    } else if (type === 'google-keep') {
-      return [await this.googleKeepConverter.convertGoogleKeepBackupFileToNote(file, isEntitledToSuper)]
-    } else if (type === 'simplenote') {
-      return await this.simplenoteConverter.convertSimplenoteBackupFileToNotes(file)
-    } else if (type === 'evernote') {
-      return await this.evernoteConverter.convertENEXFileToNotesAndTags(file, isEntitledToSuper)
-    } else if (type === 'plaintext') {
-      return [await this.plaintextConverter.convertPlaintextFileToNote(file, isEntitledToSuper)]
-    } else if (type === 'html') {
-      return [await this.htmlConverter.convertHTMLFileToNote(file, isEntitledToSuper)]
+
+      const content = await readFileAsText(file)
+
+      if (!converter.isContentValid(content)) {
+        throw new Error('Content is not valid')
+      }
+
+      return await converter.convert(file, {
+        createNote: this.createNote,
+        createTag: this.createTag,
+        canUseSuper: isEntitledToSuper,
+        convertHTMLToSuper: this.convertHTMLToSuper,
+        convertMarkdownToSuper: this.convertMarkdownToSuper,
+        readFileAsText,
+      })
     }
 
     return []

@@ -1,8 +1,5 @@
-import { DecryptedTransferPayload, NoteContent } from '@standardnotes/models'
-import { readFileAsText } from '../Utils'
 import { NativeFeatureIdentifier, NoteType } from '@standardnotes/features'
-import { ContentType } from '@standardnotes/domain-core'
-import { GenerateUuid } from '@standardnotes/services'
+import { Converter } from '../Converter'
 
 type AegisData = {
   db: {
@@ -26,19 +23,29 @@ type AuthenticatorEntry = {
   notes: string
 }
 
-export class AegisToAuthenticatorConverter {
-  constructor(private _generateUuid: GenerateUuid) {}
+export class AegisToAuthenticatorConverter implements Converter {
+  constructor() {}
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  static isValidAegisJson(json: any): boolean {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return json.db && json.db.entries && json.db.entries.every((entry: any) => AegisEntryTypes.includes(entry.type))
+  getImportType(): string {
+    return 'aegis'
   }
 
-  async convertAegisBackupFileToNote(
-    file: File,
-    addEditorInfo: boolean,
-  ): Promise<DecryptedTransferPayload<NoteContent>> {
+  getSupportedFileTypes(): string[] {
+    return ['application/json']
+  }
+
+  isContentValid(content: string): boolean {
+    try {
+      const json = JSON.parse(content)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return json.db && json.db.entries && json.db.entries.every((entry: any) => AegisEntryTypes.includes(entry.type))
+    } catch (error) {
+      console.error(error)
+    }
+    return false
+  }
+
+  convert: Converter['convert'] = async (file, { createNote, readFileAsText }) => {
     const content = await readFileAsText(file)
 
     const entries = this.parseEntries(content)
@@ -47,34 +54,21 @@ export class AegisToAuthenticatorConverter {
       throw new Error('Could not parse entries')
     }
 
-    return this.createNoteFromEntries(entries, file, addEditorInfo)
-  }
+    const createdAt = file.lastModified ? new Date(file.lastModified) : new Date()
+    const updatedAt = file.lastModified ? new Date(file.lastModified) : new Date()
+    const title = file.name.split('.')[0]
+    const text = JSON.stringify(entries)
 
-  createNoteFromEntries(
-    entries: AuthenticatorEntry[],
-    file: {
-      lastModified: number
-      name: string
-    },
-    addEditorInfo: boolean,
-  ): DecryptedTransferPayload<NoteContent> {
-    return {
-      created_at: new Date(file.lastModified),
-      created_at_timestamp: file.lastModified,
-      updated_at: new Date(file.lastModified),
-      updated_at_timestamp: file.lastModified,
-      uuid: this._generateUuid.execute().getValue(),
-      content_type: ContentType.TYPES.Note,
-      content: {
-        title: file.name.split('.')[0],
-        text: JSON.stringify(entries),
-        references: [],
-        ...(addEditorInfo && {
-          noteType: NoteType.Authentication,
-          editorIdentifier: NativeFeatureIdentifier.TYPES.TokenVaultEditor,
-        }),
-      },
-    }
+    return [
+      createNote({
+        createdAt,
+        updatedAt,
+        title,
+        text,
+        noteType: NoteType.Authentication,
+        editorIdentifier: NativeFeatureIdentifier.TYPES.TokenVaultEditor,
+      }),
+    ]
   }
 
   parseEntries(data: string): AuthenticatorEntry[] | null {

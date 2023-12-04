@@ -1,14 +1,12 @@
 import { DecryptedTransferPayload, NoteContent, TagContent } from '@standardnotes/models'
-import { readFileAsText } from '../Utils'
 import dayjs from 'dayjs'
 import customParseFormat from 'dayjs/plugin/customParseFormat'
 import utc from 'dayjs/plugin/utc'
-import { ContentType } from '@standardnotes/domain-core'
 import { GenerateUuid } from '@standardnotes/services'
-import { SuperConverterServiceInterface } from '@standardnotes/files'
-import { NativeFeatureIdentifier, NoteType } from '@standardnotes/features'
+import { NoteType } from '@standardnotes/features'
 import MD5 from 'crypto-js/md5'
 import Base64 from 'crypto-js/enc-base64'
+import { Converter } from '../Converter'
 dayjs.extend(customParseFormat)
 dayjs.extend(utc)
 
@@ -21,22 +19,28 @@ export type EvernoteResource = {
   mimeType: string
 }
 
-export class EvernoteConverter {
-  constructor(
-    private superConverterService: SuperConverterServiceInterface,
-    private _generateUuid: GenerateUuid,
-  ) {}
+export class EvernoteConverter implements Converter {
+  constructor(private _generateUuid: GenerateUuid) {}
 
-  async convertENEXFileToNotesAndTags(file: File, isEntitledToSuper: boolean): Promise<DecryptedTransferPayload[]> {
-    const content = await readFileAsText(file)
-
-    const notesAndTags = this.parseENEXData(content, isEntitledToSuper)
-
-    return notesAndTags
+  getImportType(): string {
+    return 'evernote'
   }
 
-  parseENEXData(data: string, isEntitledToSuper = false) {
-    const xmlDoc = this.loadXMLString(data, 'xml')
+  getFileExtension(): string {
+    return 'enex'
+  }
+
+  isContentValid(content: string): boolean {
+    return content.includes('<en-export') && content.includes('</en-export>')
+  }
+
+  convert: Converter['convert'] = async (
+    file,
+    { createNote, createTag, canUseSuper, convertHTMLToSuper, readFileAsText },
+  ) => {
+    const content = await readFileAsText(file)
+
+    const xmlDoc = this.loadXMLString(content, 'xml')
     const xmlNotes = xmlDoc.getElementsByTagName('note')
     const notes: DecryptedTransferPayload<NoteContent>[] = []
     const tags: DecryptedTransferPayload<TagContent>[] = []
@@ -45,10 +49,6 @@ export class EvernoteConverter {
       return tags.filter(function (tag) {
         return tag.content.title == title
       })[0]
-    }
-
-    function addTag(tag: DecryptedTransferPayload<TagContent>) {
-      tags.push(tag)
     }
 
     for (const [index, xmlNote] of Array.from(xmlNotes).entries()) {
@@ -70,7 +70,7 @@ export class EvernoteConverter {
       const noteElement = contentXml.getElementsByTagName('en-note')[0]
 
       const unorderedLists = Array.from(noteElement.getElementsByTagName('ul'))
-      if (isEntitledToSuper) {
+      if (canUseSuper) {
         this.convertListsToSuperFormatIfApplicable(unorderedLists)
       }
 
@@ -105,37 +105,23 @@ export class EvernoteConverter {
       }
 
       let contentHTML = noteElement.innerHTML
-      if (!isEntitledToSuper) {
+      if (!canUseSuper) {
         contentHTML = contentHTML.replace(/<\/div>/g, '</div>\n')
         contentHTML = contentHTML.replace(/<li[^>]*>/g, '\n')
         contentHTML = contentHTML.trim()
       }
-      const text = !isEntitledToSuper
-        ? this.stripHTML(contentHTML)
-        : this.superConverterService.convertOtherFormatToSuperString(contentHTML, 'html')
+      const text = !canUseSuper ? this.stripHTML(contentHTML) : convertHTMLToSuper(contentHTML)
 
       const createdAtDate = created ? dayjs.utc(created, dateFormat).toDate() : new Date()
       const updatedAtDate = updated ? dayjs.utc(updated, dateFormat).toDate() : createdAtDate
 
-      const note: DecryptedTransferPayload<NoteContent> = {
-        created_at: createdAtDate,
-        created_at_timestamp: createdAtDate.getTime(),
-        updated_at: updatedAtDate,
-        updated_at_timestamp: updatedAtDate.getTime(),
-        uuid: this._generateUuid.execute().getValue(),
-        content_type: ContentType.TYPES.Note,
-        content: {
-          title: !title ? `Imported note ${index + 1} from Evernote` : title,
-          text,
-          references: [],
-          ...(isEntitledToSuper
-            ? {
-                noteType: NoteType.Super,
-                editorIdentifier: NativeFeatureIdentifier.TYPES.SuperEditor,
-              }
-            : {}),
-        },
-      }
+      const note = createNote({
+        createdAt: createdAtDate,
+        updatedAt: updatedAtDate,
+        title: !title ? `Imported note ${index + 1} from Evernote` : title,
+        text,
+        noteType: NoteType.Super,
+      })
 
       const xmlTags = xmlNote.getElementsByTagName('tag')
       for (const tagXml of Array.from(xmlTags)) {
@@ -143,21 +129,12 @@ export class EvernoteConverter {
         let tag = findTag(tagName)
         if (!tag) {
           const now = new Date()
-          tag = {
-            uuid: this._generateUuid.execute().getValue(),
-            content_type: ContentType.TYPES.Tag,
-            created_at: now,
-            created_at_timestamp: now.getTime(),
-            updated_at: now,
-            updated_at_timestamp: now.getTime(),
-            content: {
-              title: tagName || `Imported tag ${index + 1} from Evernote`,
-              expanded: false,
-              iconString: '',
-              references: [],
-            },
-          }
-          addTag(tag)
+          tag = createTag({
+            createdAt: now,
+            updatedAt: now,
+            title: tagName || `Imported tag ${index + 1} from Evernote`,
+          })
+          tags.push(tag)
         }
 
         note.content.references.push({ content_type: tag.content_type, uuid: tag.uuid })
@@ -291,13 +268,8 @@ export class EvernoteConverter {
   }
 
   loadXMLString(string: string, type: 'html' | 'xml') {
-    let xmlDoc
-    if (window.DOMParser) {
-      const parser = new DOMParser()
-      xmlDoc = parser.parseFromString(string, `text/${type}`)
-    } else {
-      throw new Error('Could not parse XML string')
-    }
+    const parser = new DOMParser()
+    const xmlDoc = parser.parseFromString(string, `text/${type}`)
     return xmlDoc
   }
 

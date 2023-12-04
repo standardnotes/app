@@ -1,11 +1,11 @@
 import { ImportModalController, ImportModalFile } from '@/Components/ImportModal/ImportModalController'
 import { classNames, ContentType, pluralize } from '@standardnotes/snjs'
-import { Importer, NoteImportType } from '@standardnotes/ui-services'
+import { Importer } from '@standardnotes/ui-services'
 import { observer } from 'mobx-react-lite'
 import { useCallback, useEffect, useState } from 'react'
 import Icon from '../Icon/Icon'
 
-const NoteImportTypeColors: Record<NoteImportType, string> = {
+const NoteImportTypeColors: Record<string, string> = {
   evernote: 'bg-[#14cc45] text-[#000]',
   simplenote: 'bg-[#3360cc] text-default',
   'google-keep': 'bg-[#fbbd00] text-[#000]',
@@ -15,7 +15,7 @@ const NoteImportTypeColors: Record<NoteImportType, string> = {
   super: 'bg-accessory-tint-1 text-accessory-tint-1',
 }
 
-const NoteImportTypeIcons: Record<NoteImportType, string> = {
+const NoteImportTypeIcons: Record<string, string> = {
   evernote: 'evernote',
   simplenote: 'simplenote',
   'google-keep': 'gkeep',
@@ -39,7 +39,7 @@ const ImportModalFileItem = ({
   const [changingService, setChangingService] = useState(false)
 
   const setFileService = useCallback(
-    async (service: NoteImportType | null) => {
+    async (service: string | null) => {
       if (!service) {
         setChangingService(true)
       }
@@ -116,7 +116,7 @@ const ImportModalFileItem = ({
                   event.preventDefault()
                   const form = event.target as HTMLFormElement
                   const service = form.elements[0] as HTMLSelectElement
-                  void setFileService(service.value as NoteImportType)
+                  void setFileService(service.value)
                   setChangingService(false)
                 }}
               >
