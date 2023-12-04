@@ -1,4 +1,3 @@
-import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { AegisToAuthenticatorConverter } from './AegisToAuthenticatorConverter'
 import data from './testData'
 

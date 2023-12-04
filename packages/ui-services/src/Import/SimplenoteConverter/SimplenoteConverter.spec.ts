@@ -2,13 +2,19 @@ import { DecryptedTransferPayload, NoteContent } from '@standardnotes/models'
 import { SimplenoteConverter } from './SimplenoteConverter'
 import data from './testData'
 import { ContentType } from '@standardnotes/domain-core'
+import { CreateNoteFn } from '../Converter'
 
 describe('SimplenoteConverter', () => {
-  const createNote = ({ text }: { text: string }) =>
+  const createNote: CreateNoteFn = ({ title, text, trashed, createdAt, updatedAt }) =>
     ({
+      uuid: Math.random().toString(),
+      created_at: createdAt,
+      updated_at: updatedAt,
       content_type: ContentType.TYPES.Note,
       content: {
+        title,
         text,
+        trashed,
         references: [],
       },
     }) as unknown as DecryptedTransferPayload<NoteContent>
