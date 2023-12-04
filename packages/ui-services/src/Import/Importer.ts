@@ -30,14 +30,6 @@ import { SuperConverterServiceInterface } from '@standardnotes/files'
 import { ContentType } from '@standardnotes/domain-core'
 
 export class Importer {
-  aegisConverter: AegisToAuthenticatorConverter
-  googleKeepConverter: GoogleKeepConverter
-  simplenoteConverter: SimplenoteConverter
-  plaintextConverter: PlaintextConverter
-  evernoteConverter: EvernoteConverter
-  htmlConverter: HTMLConverter
-  superConverter: SuperConverter
-
   converters: Set<Converter> = new Set()
 
   constructor(
@@ -62,25 +54,17 @@ export class Importer {
     },
     private _generateUuid: GenerateUuid,
   ) {
-    this.aegisConverter = new AegisToAuthenticatorConverter()
-    this.googleKeepConverter = new GoogleKeepConverter()
-    this.simplenoteConverter = new SimplenoteConverter()
-    this.plaintextConverter = new PlaintextConverter()
-    this.evernoteConverter = new EvernoteConverter(_generateUuid)
-    this.htmlConverter = new HTMLConverter()
-    this.superConverter = new SuperConverter(this.superConverterService)
-
     this.registerNativeConverters()
   }
 
   registerNativeConverters() {
-    this.converters.add(this.aegisConverter)
-    this.converters.add(this.googleKeepConverter)
-    this.converters.add(this.simplenoteConverter)
-    this.converters.add(this.plaintextConverter)
-    this.converters.add(this.evernoteConverter)
-    this.converters.add(this.htmlConverter)
-    this.converters.add(this.superConverter)
+    this.converters.add(new AegisToAuthenticatorConverter())
+    this.converters.add(new GoogleKeepConverter())
+    this.converters.add(new SimplenoteConverter())
+    this.converters.add(new PlaintextConverter())
+    this.converters.add(new EvernoteConverter(this._generateUuid))
+    this.converters.add(new HTMLConverter())
+    this.converters.add(new SuperConverter(this.superConverterService))
   }
 
   detectService = async (file: File): Promise<string | null> => {
