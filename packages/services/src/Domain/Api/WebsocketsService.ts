@@ -55,6 +55,10 @@ export class WebSocketsService extends AbstractService<WebSocketsServiceEvent, D
     }
   }
 
+  isWebSocketConnectionOpen(): boolean {
+    return this.webSocket?.readyState === WebSocket.OPEN
+  }
+
   public closeWebSocketConnection(): void {
     this.webSocket?.close()
   }
@@ -62,6 +66,9 @@ export class WebSocketsService extends AbstractService<WebSocketsServiceEvent, D
   private onWebSocketMessage(messageEvent: MessageEvent) {
     const eventData = JSON.parse(messageEvent.data)
     switch (eventData.type) {
+      case 'ITEMS_CHANGED_ON_SERVER':
+        void this.notifyEvent(WebSocketsServiceEvent.ItemsChangedOnServer, eventData)
+        break
       case 'USER_ROLES_CHANGED':
         void this.notifyEvent(WebSocketsServiceEvent.UserRoleMessageReceived, eventData)
         break

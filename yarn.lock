@@ -6610,23 +6610,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/domain-events@npm:2.138.1":
+"@standardnotes/domain-events@npm:2.138.1, @standardnotes/domain-events@npm:^2.138.1":
   version: 2.138.1
   resolution: "@standardnotes/domain-events@npm:2.138.1"
   dependencies:
     "@standardnotes/predicates": 1.8.1
     "@standardnotes/security": 1.17.2
   checksum: ae581b7e03b83a777a340a72f0f7e37c84e3256afb5d8b11870d816264aee4b6ca1cbc19350c0d16f551edf24aa2693cc24490754df83ae0db3f85f90d63a113
-  languageName: node
-  linkType: hard
-
-"@standardnotes/domain-events@npm:^2.122.0":
-  version: 2.122.0
-  resolution: "@standardnotes/domain-events@npm:2.122.0"
-  dependencies:
-    "@standardnotes/predicates": 1.6.9
-    "@standardnotes/security": 1.12.0
-  checksum: 9dd2f02f1c9c91b3380d0db88dba3e504aaa14b7e58dcb519611dd8b15edb27c111805eb0e34f1612751fb59428296a216e39b5711892f6c8f1fc1f057e61c50
   languageName: node
   linkType: hard
 
@@ -6992,13 +6982,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/predicates@npm:1.6.9":
-  version: 1.6.9
-  resolution: "@standardnotes/predicates@npm:1.6.9"
-  checksum: 3b931aaccd763c98d043487e90624507265a350d5656ef55a3355b69fbdae2f718ecd2bde1e402d8fc49355404f91220df99b0a80c081e8da0d515eea1def9e7
-  languageName: node
-  linkType: hard
-
 "@standardnotes/predicates@npm:1.8.1":
   version: 1.8.1
   resolution: "@standardnotes/predicates@npm:1.8.1"
@@ -7078,16 +7061,6 @@ __metadata:
   dependencies:
     "@standardnotes/component-relay": "github:standardnotes/component-relay#839ff5db9bc92db9d42cad8d202ddc4df729597d"
   checksum: 81286625b5d28628f0e962d59868d85dec051ca176fbe66a051e06f8a124a1648ec4b3d986203b0b83eb99fe2a088ac8fe49a11bb635d7ff009a96070ea44951
-  languageName: node
-  linkType: hard
-
-"@standardnotes/security@npm:1.12.0":
-  version: 1.12.0
-  resolution: "@standardnotes/security@npm:1.12.0"
-  dependencies:
-    jsonwebtoken: ^9.0.0
-    reflect-metadata: ^0.1.13
-  checksum: 96d42255e79fc2cf4c52f3d370c04ae00296673993e1c0cea2356ca4a6c934d22d6100ba95f9ad602ffb72ee686367ef4a263dc6a6c51795d9b61dc835e635cd
   languageName: node
   linkType: hard
 
@@ -7239,7 +7212,7 @@ __metadata:
     "@standardnotes/api": "workspace:*"
     "@standardnotes/common": ^1.50.0
     "@standardnotes/domain-core": ^1.40.0
-    "@standardnotes/domain-events": ^2.122.0
+    "@standardnotes/domain-events": ^2.138.1
     "@standardnotes/encryption": "workspace:*"
     "@standardnotes/features": "workspace:*"
     "@standardnotes/files": "workspace:*"

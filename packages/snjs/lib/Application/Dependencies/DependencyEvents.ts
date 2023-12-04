@@ -40,6 +40,7 @@ export function RegisterApplicationServicesEvents(container: Dependencies, event
   events.addEventHandler(container.get(TYPES.SubscriptionManager), ApplicationEvent.UserRolesChanged)
   events.addEventHandler(container.get(TYPES.SubscriptionManager), SessionEvent.Restored)
   events.addEventHandler(container.get(TYPES.SyncService), IntegrityEvent.IntegrityCheckCompleted)
+  events.addEventHandler(container.get(TYPES.SyncService), WebSocketsServiceEvent.ItemsChangedOnServer)
   events.addEventHandler(container.get(TYPES.UserService), AccountEvent.SignedInOrRegistered)
   events.addEventHandler(container.get(TYPES.VaultInviteService), ApplicationEvent.Launched)
   events.addEventHandler(container.get(TYPES.VaultInviteService), SyncEvent.ReceivedSharedVaultInvites)

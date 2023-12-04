@@ -84,6 +84,8 @@ import {
   SyncEventReceivedAsymmetricMessagesData,
   SyncOpStatus,
   ApplicationSyncOptions,
+  WebSocketsServiceEvent,
+  WebSocketsService,
 } from '@standardnotes/services'
 import { OfflineSyncResponse } from './Offline/Response'
 import {
@@ -98,6 +100,7 @@ import { ContentType } from '@standardnotes/domain-core'
 
 const DEFAULT_MAJOR_CHANGE_THRESHOLD = 15
 const INVALID_SESSION_RESPONSE_STATUS = 401
+const DEFAULT_AUTO_SYNC_INTERVAL = 30_000
 
 /** Content types appearing first are always mapped first */
 const ContentTypeLocalLoadPriorty = [
@@ -149,6 +152,9 @@ export class SyncService
   public lastSyncInvokationPromise?: Promise<unknown>
   public currentSyncRequestPromise?: Promise<void>
 
+  private autoSyncInterval?: NodeJS.Timer
+  private wasNotifiedOfItemsChangeOnServer = false
+
   constructor(
     private itemManager: ItemManager,
     private sessionManager: SessionManager,
@@ -161,6 +167,7 @@ export class SyncService
     private identifier: string,
     private readonly options: ApplicationSyncOptions,
     private logger: LoggerInterface,
+    private sockets: WebSocketsService,
     protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)
@@ -187,6 +194,10 @@ export class SyncService
 
   public override deinit(): void {
     this.dealloced = true
+    if (this.autoSyncInterval) {
+      clearInterval(this.autoSyncInterval)
+    }
+    ;(this.autoSyncInterval as unknown) = undefined
     ;(this.sessionManager as unknown) = undefined
     ;(this.itemManager as unknown) = undefined
     ;(this.encryptionService as unknown) = undefined
@@ -347,6 +358,28 @@ export class SyncService
 
     this.databaseLoaded = true
     this.opStatus.setDatabaseLoadStatus(0, 0, true)
+  }
+
+  beginAutoSyncTimer(): void {
+    this.autoSyncInterval = setInterval(this.autoSync.bind(this), DEFAULT_AUTO_SYNC_INTERVAL)
+  }
+
+  private autoSync(): void {
+    if (!this.sockets.isWebSocketConnectionOpen()) {
+      this.logger.debug('WebSocket connection is closed, doing autosync')
+
+      void this.sync({ sourceDescription: 'Auto Sync' })
+
+      return
+    }
+
+    if (this.wasNotifiedOfItemsChangeOnServer) {
+      this.logger.debug('Was notified of items changed on server, doing autosync')
+
+      this.wasNotifiedOfItemsChangeOnServer = false
+
+      void this.sync({ sourceDescription: 'WebSockets Event - Items Changed On Server' })
+    }
   }
 
   private async processPayloadBatch(
@@ -1400,8 +1433,15 @@ export class SyncService
   }
 
   async handleEvent(event: InternalEventInterface): Promise<void> {
-    if (event.type === IntegrityEvent.IntegrityCheckCompleted) {
-      await this.handleIntegrityCheckEventResponse(event.payload as IntegrityEventPayload)
+    switch (event.type) {
+      case IntegrityEvent.IntegrityCheckCompleted:
+        await this.handleIntegrityCheckEventResponse(event.payload as IntegrityEventPayload)
+        break
+      case WebSocketsServiceEvent.ItemsChangedOnServer:
+        this.wasNotifiedOfItemsChangeOnServer = true
+        break
+      default:
+        break
     }
   }
 
