@@ -4,33 +4,22 @@
 
 import { jsonTextContentData, htmlTestData, jsonListContentData } from './testData'
 import { GoogleKeepConverter } from './GoogleKeepConverter'
-import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
-import { GenerateUuid } from '@standardnotes/services'
-import { FileItem, SuperConverterServiceInterface } from '@standardnotes/snjs'
+import { ContentType, DecryptedTransferPayload, NoteContent } from '@standardnotes/snjs'
 
 describe('GoogleKeepConverter', () => {
-  const crypto = {
-    generateUUID: () => String(Math.random()),
-  } as unknown as PureCryptoInterface
-
-  const superConverterService: SuperConverterServiceInterface = {
-    isValidSuperString: () => true,
-    convertOtherFormatToSuperString: (data: string) => data,
-    convertSuperStringToOtherFormat: async (data: string) => data,
-    getEmbeddedFileIDsFromSuperString: () => [],
-    uploadAndReplaceInlineFilesInSuperString: async (
-      superString: string,
-      _uploadFile: (file: File) => Promise<FileItem | undefined>,
-      _linkFile: (file: FileItem) => Promise<void>,
-      _generateUuid: GenerateUuid,
-    ) => superString,
-  }
-  const generateUuid = new GenerateUuid(crypto)
+  const createNote = ({ text }) =>
+    ({
+      content_type: ContentType.TYPES.Note,
+      content: {
+        text,
+        references: [],
+      },
+    }) as unknown as DecryptedTransferPayload<NoteContent>
 
   it('should parse json data', () => {
-    const converter = new GoogleKeepConverter(superConverterService, generateUuid)
+    const converter = new GoogleKeepConverter()
 
-    const textContent = converter.tryParseAsJson(jsonTextContentData, false)
+    const textContent = converter.tryParseAsJson(jsonTextContentData, createNote, (md) => md)
 
     expect(textContent).not.toBeNull()
     expect(textContent?.created_at).toBeInstanceOf(Date)
@@ -43,7 +32,7 @@ describe('GoogleKeepConverter', () => {
     expect(textContent?.content.archived).toBe(false)
     expect(textContent?.content.pinned).toBe(false)
 
-    const listContent = converter.tryParseAsJson(jsonListContentData, false)
+    const listContent = converter.tryParseAsJson(jsonListContentData, createNote, (md) => md)
 
     expect(listContent).not.toBeNull()
     expect(listContent?.created_at).toBeInstanceOf(Date)
@@ -58,13 +47,15 @@ describe('GoogleKeepConverter', () => {
   })
 
   it('should parse html data', () => {
-    const converter = new GoogleKeepConverter(superConverterService, generateUuid)
+    const converter = new GoogleKeepConverter()
 
     const result = converter.tryParseAsHtml(
       htmlTestData,
       {
         name: 'note-2.html',
       },
+      createNote,
+      (html) => html,
       false,
     )
 
