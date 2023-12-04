@@ -1,5 +1,4 @@
 import { SuperConverterServiceInterface } from '@standardnotes/files'
-import { readFileAsText } from '../Utils'
 import { parseFileName } from '@standardnotes/filepicker'
 import { NoteType } from '@standardnotes/features'
 import { Converter } from '../Converter'
@@ -19,7 +18,7 @@ export class SuperConverter implements Converter {
     return this.converterService.isValidSuperString(content)
   }
 
-  convert: Converter['convert'] = async (file, { createNote }) => {
+  convert: Converter['convert'] = async (file, { createNote, readFileAsText }) => {
     const content = await readFileAsText(file)
 
     if (!this.converterService.isValidSuperString(content)) {

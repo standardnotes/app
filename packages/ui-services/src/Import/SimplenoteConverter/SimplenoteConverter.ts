@@ -1,4 +1,3 @@
-import { readFileAsText } from '../Utils'
 import { Converter, CreateNoteFn } from '../Converter'
 
 type SimplenoteItem = {
@@ -39,7 +38,7 @@ export class SimplenoteConverter implements Converter {
     return false
   }
 
-  convert: Converter['convert'] = async (file, { createNote }) => {
+  convert: Converter['convert'] = async (file, { createNote, readFileAsText }) => {
     const content = await readFileAsText(file)
 
     const notes = this.parse(content, createNote)

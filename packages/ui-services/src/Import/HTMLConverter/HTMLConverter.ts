@@ -1,6 +1,5 @@
 import { NoteType } from '@standardnotes/features'
 import { parseFileName } from '@standardnotes/filepicker'
-import { readFileAsText } from '../Utils'
 import { Converter } from '../Converter'
 
 export class HTMLConverter implements Converter {
@@ -18,7 +17,7 @@ export class HTMLConverter implements Converter {
     return true
   }
 
-  convert: Converter['convert'] = async (file, { createNote, convertHTMLToSuper }) => {
+  convert: Converter['convert'] = async (file, { createNote, convertHTMLToSuper, readFileAsText }) => {
     const content = await readFileAsText(file)
 
     const { name } = parseFileName(file.name)

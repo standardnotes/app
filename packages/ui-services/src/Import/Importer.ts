@@ -201,6 +201,7 @@ export class Importer {
         canUseSuper: isEntitledToSuper,
         convertHTMLToSuper: this.convertHTMLToSuper,
         convertMarkdownToSuper: this.convertMarkdownToSuper,
+        readFileAsText,
       })
     }
 

@@ -1,4 +1,3 @@
-import { readFileAsText } from '../Utils'
 import { NativeFeatureIdentifier, NoteType } from '@standardnotes/features'
 import { Converter } from '../Converter'
 
@@ -46,7 +45,7 @@ export class AegisToAuthenticatorConverter implements Converter {
     return false
   }
 
-  convert: Converter['convert'] = async (file, { createNote }) => {
+  convert: Converter['convert'] = async (file, { createNote, readFileAsText }) => {
     const content = await readFileAsText(file)
 
     const entries = this.parseEntries(content)

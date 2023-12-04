@@ -1,5 +1,4 @@
 import { DecryptedTransferPayload, NoteContent } from '@standardnotes/models'
-import { readFileAsText } from '../Utils'
 import { NoteType } from '@standardnotes/features'
 import { Converter, CreateNoteFn } from '../Converter'
 
@@ -47,7 +46,7 @@ export class GoogleKeepConverter implements Converter {
 
   convert: Converter['convert'] = async (
     file,
-    { createNote, canUseSuper, convertHTMLToSuper, convertMarkdownToSuper },
+    { createNote, canUseSuper, convertHTMLToSuper, convertMarkdownToSuper, readFileAsText },
   ) => {
     const content = await readFileAsText(file)
 

@@ -1,5 +1,4 @@
 import { DecryptedTransferPayload, NoteContent, TagContent } from '@standardnotes/models'
-import { readFileAsText } from '../Utils'
 import dayjs from 'dayjs'
 import customParseFormat from 'dayjs/plugin/customParseFormat'
 import utc from 'dayjs/plugin/utc'
@@ -35,7 +34,10 @@ export class EvernoteConverter implements Converter {
     return content.includes('<en-export') && content.includes('</en-export>')
   }
 
-  convert: Converter['convert'] = async (file, { createNote, createTag, canUseSuper, convertHTMLToSuper }) => {
+  convert: Converter['convert'] = async (
+    file,
+    { createNote, createTag, canUseSuper, convertHTMLToSuper, readFileAsText },
+  ) => {
     const content = await readFileAsText(file)
 
     const xmlDoc = this.loadXMLString(content, 'xml')
@@ -266,13 +268,8 @@ export class EvernoteConverter implements Converter {
   }
 
   loadXMLString(string: string, type: 'html' | 'xml') {
-    let xmlDoc
-    if (window.DOMParser) {
-      const parser = new DOMParser()
-      xmlDoc = parser.parseFromString(string, `text/${type}`)
-    } else {
-      throw new Error('Could not parse XML string')
-    }
+    const parser = new DOMParser()
+    const xmlDoc = parser.parseFromString(string, `text/${type}`)
     return xmlDoc
   }
 

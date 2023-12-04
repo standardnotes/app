@@ -17,6 +17,7 @@ export interface Converter {
       canUseSuper: boolean
       convertHTMLToSuper: (html: string) => string
       convertMarkdownToSuper: (markdown: string) => string
+      readFileAsText: (file: File) => Promise<string>
     },
   ): Promise<DecryptedTransferPayload<ItemContent>[]>
 }

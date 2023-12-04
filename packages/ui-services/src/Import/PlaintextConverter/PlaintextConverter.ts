@@ -1,5 +1,4 @@
 import { parseFileName } from '@standardnotes/filepicker'
-import { readFileAsText } from '../Utils'
 import { Converter } from '../Converter'
 import { NoteType } from '@standardnotes/features'
 
@@ -22,7 +21,7 @@ export class PlaintextConverter implements Converter {
     return file.type === 'text/plain' || file.type === 'text/markdown'
   }
 
-  convert: Converter['convert'] = async (file, { createNote, convertMarkdownToSuper }) => {
+  convert: Converter['convert'] = async (file, { createNote, convertMarkdownToSuper, readFileAsText }) => {
     const content = await readFileAsText(file)
 
     const { name } = parseFileName(file.name)

@@ -3,12 +3,12 @@
  */
 
 import { ContentType } from '@standardnotes/domain-core'
-import { DecryptedTransferPayload, FileItem, NoteContent, TagContent } from '@standardnotes/models'
+import { DecryptedTransferPayload, NoteContent, TagContent } from '@standardnotes/models'
 import { EvernoteConverter, EvernoteResource } from './EvernoteConverter'
 import { createTestResourceElement, enex, enexWithNoNoteOrTag } from './testData'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { GenerateUuid } from '@standardnotes/services'
-import { SuperConverterServiceInterface } from '@standardnotes/files'
+import { Converter } from '../Converter'
 
 // Mock dayjs so dayjs.extend() doesn't throw an error in EvernoteConverter.ts
 jest.mock('dayjs', () => {
@@ -28,43 +28,43 @@ describe('EvernoteConverter', () => {
     generateUUID: () => String(Math.random()),
   } as unknown as PureCryptoInterface
 
-  const superConverterService: SuperConverterServiceInterface = {
-    isValidSuperString: () => true,
-    convertOtherFormatToSuperString: (data: string) => data,
-    convertSuperStringToOtherFormat: async (data: string) => data,
-    getEmbeddedFileIDsFromSuperString: () => [],
-    uploadAndReplaceInlineFilesInSuperString: async (
-      superString: string,
-      _uploadFile: (file: File) => Promise<FileItem | undefined>,
-      _linkFile: (file: FileItem) => Promise<void>,
-      _generateUuid: GenerateUuid,
-    ) => superString,
-  }
-
   const generateUuid = new GenerateUuid(crypto)
 
-  it('should throw error if DOMParser is not available', () => {
-    const converter = new EvernoteConverter(superConverterService, generateUuid)
+  const readFileAsText = async (file: File) => file as unknown as string
 
-    const originalDOMParser = window.DOMParser
-    // @ts-ignore
-    window.DOMParser = undefined
-
-    expect(() => converter.parseENEXData(enex)).toThrowError()
-
-    window.DOMParser = originalDOMParser
-  })
+  const dependencies: Parameters<Converter['convert']>[1] = {
+    createNote: ({ text }) =>
+      ({
+        content_type: ContentType.TYPES.Note,
+        content: {
+          text,
+          references: [],
+        },
+      }) as unknown as DecryptedTransferPayload<NoteContent>,
+    createTag: ({ title }) =>
+      ({
+        content_type: ContentType.TYPES.Tag,
+        content: {
+          title,
+          references: [],
+        },
+      }) as unknown as DecryptedTransferPayload<TagContent>,
+    convertHTMLToSuper: (data) => data,
+    convertMarkdownToSuper: jest.fn(),
+    readFileAsText,
+    canUseSuper: false,
+  }
 
   it('should throw error if no note or tag in enex', () => {
-    const converter = new EvernoteConverter(superConverterService, generateUuid)
+    const converter = new EvernoteConverter(generateUuid)
 
-    expect(() => converter.parseENEXData(enexWithNoNoteOrTag)).toThrowError()
+    expect(converter.convert(enexWithNoNoteOrTag as unknown as File, dependencies)).rejects.toThrowError()
   })
 
-  it('should parse and strip html', () => {
-    const converter = new EvernoteConverter(superConverterService, generateUuid)
+  it('should parse and strip html', async () => {
+    const converter = new EvernoteConverter(generateUuid)
 
-    const result = converter.parseENEXData(enex, false)
+    const result = await converter.convert(enex as unknown as File, dependencies)
 
     expect(result).not.toBeNull()
     expect(result?.length).toBe(3)
@@ -81,10 +81,13 @@ describe('EvernoteConverter', () => {
     expect((result?.[2] as DecryptedTransferPayload<TagContent>).content.references[1].uuid).toBe(result?.[1].uuid)
   })
 
-  it('should parse and not strip html', () => {
-    const converter = new EvernoteConverter(superConverterService, generateUuid)
+  it('should parse and not strip html', async () => {
+    const converter = new EvernoteConverter(generateUuid)
 
-    const result = converter.parseENEXData(enex, true)
+    const result = await converter.convert(enex as unknown as File, {
+      ...dependencies,
+      canUseSuper: true,
+    })
 
     expect(result).not.toBeNull()
     expect(result?.length).toBe(3)
@@ -117,7 +120,7 @@ describe('EvernoteConverter', () => {
 
     const array = [unorderedList1, unorderedList2]
 
-    const converter = new EvernoteConverter(superConverterService, generateUuid)
+    const converter = new EvernoteConverter(generateUuid)
     converter.convertListsToSuperFormatIfApplicable(array)
 
     expect(unorderedList1.getAttribute('__lexicallisttype')).toBe('check')
@@ -148,14 +151,14 @@ describe('EvernoteConverter', () => {
 
     const array = [mediaElement1, mediaElement2, mediaElement3]
 
-    const converter = new EvernoteConverter(superConverterService, generateUuid)
+    const converter = new EvernoteConverter(generateUuid)
     const replacedCount = converter.replaceMediaElementsWithResources(array, resources)
 
     expect(replacedCount).toBe(1)
   })
 
   describe('getResourceFromElement', () => {
-    const converter = new EvernoteConverter(superConverterService, generateUuid)
+    const converter = new EvernoteConverter(generateUuid)
 
     it('should return undefined if no mime type is present', () => {
       const resourceElementWithoutMimeType = createTestResourceElement(false)
