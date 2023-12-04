@@ -189,6 +189,12 @@ export class Importer {
         continue
       }
 
+      const content = await readFileAsText(file)
+
+      if (!converter.isContentValid(content)) {
+        throw new Error('Content is not valid')
+      }
+
       return await converter.convert(file, {
         createNote: this.createNote,
         createTag: this.createTag,
