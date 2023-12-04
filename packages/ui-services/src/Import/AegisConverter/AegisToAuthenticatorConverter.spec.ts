@@ -3,10 +3,6 @@ import { AegisToAuthenticatorConverter } from './AegisToAuthenticatorConverter'
 import data from './testData'
 
 describe('AegisConverter', () => {
-  const crypto = {
-    generateUUID: () => String(Math.random()),
-  } as unknown as PureCryptoInterface
-
   it('should parse entries', () => {
     const converter = new AegisToAuthenticatorConverter()
 

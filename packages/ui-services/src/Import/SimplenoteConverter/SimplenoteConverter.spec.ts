@@ -4,7 +4,7 @@ import data from './testData'
 import { ContentType } from '@standardnotes/snjs'
 
 describe('SimplenoteConverter', () => {
-  const createNote = ({ text }) =>
+  const createNote = ({ text }: { text: string }) =>
     ({
       content_type: ContentType.TYPES.Note,
       content: {

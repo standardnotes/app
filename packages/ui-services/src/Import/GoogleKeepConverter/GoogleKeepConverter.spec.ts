@@ -7,7 +7,7 @@ import { GoogleKeepConverter } from './GoogleKeepConverter'
 import { ContentType, DecryptedTransferPayload, NoteContent } from '@standardnotes/snjs'
 
 describe('GoogleKeepConverter', () => {
-  const createNote = ({ text }) =>
+  const createNote = ({ text }: { text: string }) =>
     ({
       content_type: ContentType.TYPES.Note,
       content: {
