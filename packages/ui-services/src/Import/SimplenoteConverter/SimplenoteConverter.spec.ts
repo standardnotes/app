@@ -1,7 +1,7 @@
 import { DecryptedTransferPayload, NoteContent } from '@standardnotes/models'
 import { SimplenoteConverter } from './SimplenoteConverter'
 import data from './testData'
-import { ContentType } from '@standardnotes/snjs'
+import { ContentType } from '@standardnotes/domain-core'
 
 describe('SimplenoteConverter', () => {
   const createNote = ({ text }: { text: string }) =>

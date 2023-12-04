@@ -5,13 +5,21 @@
 import { jsonTextContentData, htmlTestData, jsonListContentData } from './testData'
 import { GoogleKeepConverter } from './GoogleKeepConverter'
 import { ContentType, DecryptedTransferPayload, NoteContent } from '@standardnotes/snjs'
+import { CreateNoteFn } from '../Converter'
 
 describe('GoogleKeepConverter', () => {
-  const createNote = ({ text }: { text: string }) =>
+  const createNote: CreateNoteFn = ({ title, text, createdAt, updatedAt, trashed, archived, pinned }) =>
     ({
+      uuid: Math.random().toString(),
+      created_at: createdAt,
+      updated_at: updatedAt,
       content_type: ContentType.TYPES.Note,
       content: {
+        title,
         text,
+        trashed,
+        archived,
+        pinned,
         references: [],
       },
     }) as unknown as DecryptedTransferPayload<NoteContent>
