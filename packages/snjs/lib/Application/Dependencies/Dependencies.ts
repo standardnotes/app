@@ -1331,6 +1331,15 @@ export class Dependencies {
       )
     })
 
+    this.factory.set(TYPES.WebSocketsService, () => {
+      return new WebSocketsService(
+        this.get<DiskStorageService>(TYPES.DiskStorageService),
+        this.options.webSocketUrl,
+        this.get<WebSocketApiService>(TYPES.WebSocketApiService),
+        this.get<InternalEventBus>(TYPES.InternalEventBus),
+      )
+    })
+
     this.factory.set(TYPES.SyncService, () => {
       return new SyncService(
         this.get<ItemManager>(TYPES.ItemManager),
@@ -1347,6 +1356,7 @@ export class Dependencies {
           sleepBetweenBatches: this.options.sleepBetweenBatches,
         },
         this.get<Logger>(TYPES.Logger),
+        this.get<WebSocketsService>(TYPES.WebSocketsService),
         this.get<InternalEventBus>(TYPES.InternalEventBus),
       )
     })
@@ -1386,15 +1396,6 @@ export class Dependencies {
         this.options.identifier,
         this.get<GetKeyPairs>(TYPES.GetKeyPairs),
         this.get<IsApplicationUsingThirdPartyHost>(TYPES.IsApplicationUsingThirdPartyHost),
-        this.get<InternalEventBus>(TYPES.InternalEventBus),
-      )
-    })
-
-    this.factory.set(TYPES.WebSocketsService, () => {
-      return new WebSocketsService(
-        this.get<DiskStorageService>(TYPES.DiskStorageService),
-        this.options.webSocketUrl,
-        this.get<WebSocketApiService>(TYPES.WebSocketApiService),
         this.get<InternalEventBus>(TYPES.InternalEventBus),
       )
     })

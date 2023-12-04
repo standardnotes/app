@@ -137,9 +137,6 @@ import { TYPES } from './Dependencies/Types'
 import { RegisterApplicationServicesEvents } from './Dependencies/DependencyEvents'
 import { Result } from '@standardnotes/domain-core'
 
-/** How often to automatically sync, in milliseconds */
-const DEFAULT_AUTO_SYNC_INTERVAL = 30_000
-
 type LaunchCallback = {
   receiveChallenge: (challenge: Challenge) => void
 }
@@ -165,7 +162,6 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
 
   private serviceObservers: ObserverRemover[] = []
   private managedSubscribers: ObserverRemover[] = []
-  private autoSyncInterval!: ReturnType<typeof setInterval>
 
   /** True if the result of deviceInterface.openDatabase yields a new database being created */
   private createdNewDatabase = false
@@ -463,7 +459,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
           throw 'Application has been destroyed.'
         }
         await this.handleStage(ApplicationStage.LoadedDatabase_12)
-        this.beginAutoSyncTimer()
+        this.sync.beginAutoSyncTimer()
         await this.sync.sync({
           mode: SyncMode.DownloadFirst,
           source: SyncSource.External,
@@ -501,20 +497,6 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       }
       await this.encryption.unwrapRootKey(wrappingKey)
     }
-  }
-
-  private beginAutoSyncTimer() {
-    this.autoSyncInterval = setInterval(() => {
-      const logger = this.dependencies.get<LoggerInterface>(TYPES.Logger)
-      if (this.sockets.isWebSocketConnectionOpen()) {
-        logger.debug('WebSocket connection is open, skipping autosync')
-
-        return
-      }
-
-      logger.info('Syncing from autosync')
-      void this.sync.sync({ sourceDescription: 'Auto Sync' })
-    }, DEFAULT_AUTO_SYNC_INTERVAL)
   }
 
   private async handleStage(stage: ApplicationStage) {
@@ -748,9 +730,6 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
    */
   public deinit(mode: DeinitMode, source: DeinitSource): void {
     this.dealloced = true
-
-    clearInterval(this.autoSyncInterval)
-    ;(this.autoSyncInterval as unknown) = undefined
 
     for (const uninstallObserver of this.serviceObservers) {
       uninstallObserver()
