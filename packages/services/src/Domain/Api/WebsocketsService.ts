@@ -9,6 +9,7 @@ import { StorageKey } from '../Storage/StorageKeys'
 import { Result } from '@standardnotes/domain-core'
 
 export class WebSocketsService extends AbstractService<WebSocketsServiceEvent, DomainEventInterface> {
+  private CLOSE_CONNECTION_CODE = 3123
   private webSocket?: WebSocket
 
   constructor(
@@ -63,7 +64,7 @@ export class WebSocketsService extends AbstractService<WebSocketsServiceEvent, D
   }
 
   public closeWebSocketConnection(): void {
-    this.webSocket?.close()
+    this.webSocket?.close(this.CLOSE_CONNECTION_CODE, 'Closing application')
   }
 
   private onWebSocketMessage(messageEvent: MessageEvent) {
@@ -89,7 +90,14 @@ export class WebSocketsService extends AbstractService<WebSocketsServiceEvent, D
     }
   }
 
-  private onWebSocketClose() {
+  private onWebSocketClose(event: CloseEvent) {
+    const closedByApplication = event.code === this.CLOSE_CONNECTION_CODE
+    if (closedByApplication) {
+      this.webSocket = undefined
+
+      return
+    }
+
     if (this.webSocket?.readyState === WebSocket.CLOSED) {
       void this.startWebSocketConnection()
     }
