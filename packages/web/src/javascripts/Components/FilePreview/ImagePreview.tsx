@@ -49,7 +49,7 @@ const ImagePreview: FunctionComponent<Props> = ({
   const widthIfEmbedded = imageWidth * (imageZoomPercent / PercentageDivisor)
 
   return (
-    <div className="group flex h-full min-h-0 w-full items-center justify-center">
+    <div className="group relative flex h-full min-h-0 w-full items-center justify-center">
       <div
         className="relative flex h-full w-full items-center justify-center overflow-auto"
         style={{
@@ -103,7 +103,7 @@ const ImagePreview: FunctionComponent<Props> = ({
           <div className="mx-2">
             <input
               type="number"
-              className="w-10 text-center bg-default"
+              className="w-10 bg-default text-center"
               defaultValue={imageZoomPercent}
               onKeyDown={(event) => {
                 event.stopPropagation()
