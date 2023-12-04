@@ -1,6 +1,61 @@
 {
   "versions": [
     {
+      "version": "3.183.7",
+      "title": "[3.183.7](https://github.com/standardnotes/app/compare/@standardnotes/web@3.183.6...@standardnotes/web@3.183.7) (2023-12-04)",
+      "date": null,
+      "body": "**Note:** Version bump only for package @standardnotes/web",
+      "parsed": {
+        "_": [
+          "Note: Version bump only for package @standardnotes/web"
+        ]
+      }
+    },
+    {
+      "version": "3.183.6",
+      "title": "[3.183.6](https://github.com/standardnotes/app/compare/@standardnotes/web@3.183.5...@standardnotes/web@3.183.6) (2023-12-04)",
+      "date": null,
+      "body": "**Note:** Version bump only for package @standardnotes/web",
+      "parsed": {
+        "_": [
+          "Note: Version bump only for package @standardnotes/web"
+        ]
+      }
+    },
+    {
+      "version": "3.183.5",
+      "title": "[3.183.5](https://github.com/standardnotes/app/compare/@standardnotes/web@3.183.4...@standardnotes/web@3.183.5) (2023-12-04)",
+      "date": null,
+      "body": "**Note:** Version bump only for package @standardnotes/web",
+      "parsed": {
+        "_": [
+          "Note: Version bump only for package @standardnotes/web"
+        ]
+      }
+    },
+    {
+      "version": "3.183.4",
+      "title": "[3.183.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.183.3...@standardnotes/web@3.183.4) (2023-12-01)",
+      "date": null,
+      "body": "**Note:** Version bump only for package @standardnotes/web",
+      "parsed": {
+        "_": [
+          "Note: Version bump only for package @standardnotes/web"
+        ]
+      }
+    },
+    {
+      "version": "3.183.3",
+      "title": "[3.183.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.183.2...@standardnotes/web@3.183.3) (2023-12-01)",
+      "date": null,
+      "body": "**Note:** Version bump only for package @standardnotes/web",
+      "parsed": {
+        "_": [
+          "Note: Version bump only for package @standardnotes/web"
+        ]
+      }
+    },
+    {
       "version": "3.183.2",
       "title": "[3.183.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.183.1...@standardnotes/web@3.183.2) (2023-12-01)",
       "date": null,

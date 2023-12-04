@@ -16,7 +16,7 @@ export interface SyncServiceInterface extends AbstractService<SyncEvent> {
   isDatabaseLoaded(): boolean
   onNewDatabaseCreated(): Promise<void>
   loadDatabasePayloads(): Promise<void>
-
+  beginAutoSyncTimer(): void
   resetSyncState(): void
   markAllItemsAsNeedingSyncAndPersist(): Promise<void>
   downloadFirstSync(waitTimeOnFailureMs: number, otherSyncOptions?: Partial<SyncOptions>): Promise<void>

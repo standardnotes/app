@@ -6,6 +6,7 @@ import { StorageServiceInterface } from '../Storage/StorageServiceInterface'
 import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
 import { AbstractService } from '../Service/AbstractService'
 import { StorageKey } from '../Storage/StorageKeys'
+import { Result } from '@standardnotes/domain-core'
 
 export class WebSocketsService extends AbstractService<WebSocketsServiceEvent, DomainEventInterface> {
   private webSocket?: WebSocket
@@ -36,23 +37,29 @@ export class WebSocketsService extends AbstractService<WebSocketsServiceEvent, D
       )._websocket_url
   }
 
-  async startWebSocketConnection(): Promise<void> {
+  async startWebSocketConnection(): Promise<Result<void>> {
     if (!this.webSocketUrl) {
-      return
+      return Result.fail('WebSocket URL is not set')
     }
 
     const webSocketConectionToken = await this.createWebSocketConnectionToken()
     if (webSocketConectionToken === undefined) {
-      return
+      return Result.fail('Failed to create WebSocket connection token')
     }
 
     try {
       this.webSocket = new WebSocket(`${this.webSocketUrl}?authToken=${webSocketConectionToken}`)
       this.webSocket.onmessage = this.onWebSocketMessage.bind(this)
       this.webSocket.onclose = this.onWebSocketClose.bind(this)
-    } catch (e) {
-      console.error('Error starting WebSocket connection', e)
+
+      return Result.ok()
+    } catch (error) {
+      return Result.fail(`Error starting WebSocket connection: ${(error as Error).message}`)
     }
+  }
+
+  isWebSocketConnectionOpen(): boolean {
+    return this.webSocket?.readyState === WebSocket.OPEN
   }
 
   public closeWebSocketConnection(): void {
@@ -62,6 +69,9 @@ export class WebSocketsService extends AbstractService<WebSocketsServiceEvent, D
   private onWebSocketMessage(messageEvent: MessageEvent) {
     const eventData = JSON.parse(messageEvent.data)
     switch (eventData.type) {
+      case 'ITEMS_CHANGED_ON_SERVER':
+        void this.notifyEvent(WebSocketsServiceEvent.ItemsChangedOnServer, eventData)
+        break
       case 'USER_ROLES_CHANGED':
         void this.notifyEvent(WebSocketsServiceEvent.UserRoleMessageReceived, eventData)
         break
@@ -80,7 +90,9 @@ export class WebSocketsService extends AbstractService<WebSocketsServiceEvent, D
   }
 
   private onWebSocketClose() {
-    this.webSocket = undefined
+    if (this.webSocket?.readyState === WebSocket.CLOSED) {
+      void this.startWebSocketConnection()
+    }
   }
 
   private async createWebSocketConnectionToken(): Promise<string | undefined> {
