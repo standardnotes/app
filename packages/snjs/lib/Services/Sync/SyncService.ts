@@ -152,7 +152,7 @@ export class SyncService
   public lastSyncInvokationPromise?: Promise<unknown>
   public currentSyncRequestPromise?: Promise<void>
 
-  private declare autoSyncInterval: ReturnType<typeof setInterval>
+  private autoSyncInterval?: NodeJS.Timer
   private wasNotifiedOfItemsChangeOnServer = false
 
   constructor(
@@ -194,7 +194,9 @@ export class SyncService
 
   public override deinit(): void {
     this.dealloced = true
-    clearInterval(this.autoSyncInterval)
+    if (this.autoSyncInterval) {
+      clearInterval(this.autoSyncInterval)
+    }
     ;(this.autoSyncInterval as unknown) = undefined
     ;(this.sessionManager as unknown) = undefined
     ;(this.itemManager as unknown) = undefined
