@@ -226,7 +226,7 @@ describe('history manager', () => {
     })
   })
 
-  describe.skip('remote', function () {
+  describe('remote', function () {
     this.timeout(Factory.TwentySecondTimeout)
 
     let context
