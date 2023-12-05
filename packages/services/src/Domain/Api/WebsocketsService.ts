@@ -10,7 +10,10 @@ import { Result } from '@standardnotes/domain-core'
 
 export class WebSocketsService extends AbstractService<WebSocketsServiceEvent, DomainEventInterface> {
   private CLOSE_CONNECTION_CODE = 3123
+  private HEARTBEAT_DELAY = 360_000
+
   private webSocket?: WebSocket
+  private webSocketHeartbeatInterval?: NodeJS.Timer
 
   constructor(
     private storageService: StorageServiceInterface,
@@ -52,6 +55,7 @@ export class WebSocketsService extends AbstractService<WebSocketsServiceEvent, D
       this.webSocket = new WebSocket(`${this.webSocketUrl}?authToken=${webSocketConectionToken}`)
       this.webSocket.onmessage = this.onWebSocketMessage.bind(this)
       this.webSocket.onclose = this.onWebSocketClose.bind(this)
+      this.webSocket.onopen = this.beginWebSocketHeartbeat.bind(this)
 
       return Result.ok()
     } catch (error) {
@@ -65,6 +69,16 @@ export class WebSocketsService extends AbstractService<WebSocketsServiceEvent, D
 
   public closeWebSocketConnection(): void {
     this.webSocket?.close(this.CLOSE_CONNECTION_CODE, 'Closing application')
+  }
+
+  private beginWebSocketHeartbeat(): void {
+    this.webSocketHeartbeatInterval = setInterval(this.websocketHeartbeat.bind(this), this.HEARTBEAT_DELAY)
+  }
+
+  private websocketHeartbeat(): void {
+    if (this.webSocket?.readyState === WebSocket.OPEN) {
+      this.webSocket.send('ping')
+    }
   }
 
   private onWebSocketMessage(messageEvent: MessageEvent) {
@@ -91,6 +105,11 @@ export class WebSocketsService extends AbstractService<WebSocketsServiceEvent, D
   }
 
   private onWebSocketClose(event: CloseEvent) {
+    if (this.webSocketHeartbeatInterval) {
+      clearInterval(this.webSocketHeartbeatInterval)
+    }
+    this.webSocketHeartbeatInterval = undefined
+
     const closedByApplication = event.code === this.CLOSE_CONNECTION_CODE
     if (closedByApplication) {
       this.webSocket = undefined
