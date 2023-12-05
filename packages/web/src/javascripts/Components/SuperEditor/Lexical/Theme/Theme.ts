@@ -1,6 +1,7 @@
 import type { EditorThemeClasses } from 'lexical'
 
 const BlocksEditorTheme: EditorThemeClasses = {
+  blockCursor: 'Lexical__blockCursor',
   characterLimit: 'Lexical__characterLimit',
   code: 'Lexical__code',
   codeHighlight: {
