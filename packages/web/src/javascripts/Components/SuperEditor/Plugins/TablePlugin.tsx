@@ -7,7 +7,7 @@
  */
 
 import { INSERT_TABLE_COMMAND, TableNode, TableRowNode } from '@lexical/table'
-import { LexicalEditor } from 'lexical'
+import { $createParagraphNode, LexicalEditor } from 'lexical'
 import { useEffect, useState } from 'react'
 import Button from '../Lexical/UI/Button'
 import { DialogActions } from '../Lexical/UI/Dialog'
@@ -61,6 +61,13 @@ export function RemoveBrokenTablesPlugin() {
       editor.registerNodeTransform(TableNode, (node) => {
         if (!node.getFirstChild()) {
           node.remove()
+        }
+        const hasNextSibling = !!node.getNextSibling()
+        const hasPreviousSibling = !!node.getPreviousSibling()
+        if (!hasNextSibling) {
+          node.insertAfter($createParagraphNode())
+        } else if (!hasPreviousSibling) {
+          node.insertBefore($createParagraphNode())
         }
       }),
     )
