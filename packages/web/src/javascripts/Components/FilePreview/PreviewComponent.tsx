@@ -10,6 +10,7 @@ import { PreviewableTextFileTypes, RequiresNativeFilePreview } from './isFilePre
 import TextPreview from './TextPreview'
 import { parseFileName } from '@standardnotes/filepicker'
 import { sanitizeFileName } from '@standardnotes/ui-services'
+import VideoPreview from './VideoPreview'
 
 type Props = {
   application: WebApplication
@@ -89,11 +90,7 @@ const PreviewComponent: FunctionComponent<Props> = ({
   }
 
   if (file.mimeType.startsWith('video/')) {
-    return (
-      <video className="h-full w-full" controls autoPlay>
-        <source src={objectUrl} type={file.mimeType} />
-      </video>
-    )
+    return <VideoPreview file={file} filesController={application.filesController} objectUrl={objectUrl} />
   }
 
   if (file.mimeType.startsWith('audio/')) {
