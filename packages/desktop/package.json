@@ -64,7 +64,7 @@
     "ava": "^5.1.0",
     "babel-loader": "^9.1.0",
     "copy-webpack-plugin": "^11.0.0",
-    "electron-builder": "23.6.0",
+    "electron-builder": "^24.9.1",
     "electron-rebuild": "^3.2.9",
     "eslint": "*",
     "eslint-config-prettier": "^8.9.0",
@@ -145,7 +145,10 @@
       "base": "core22",
       "plugs": [
         "default",
-        "password-manager-service"
+        "password-manager-service",
+        "home",
+        "network",
+        "network-bind"
       ]
     }
   },
