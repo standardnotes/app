@@ -1,7 +1,7 @@
 {
   "name": "@standardnotes/desktop",
   "main": "./app/dist/index.js",
-  "version": "3.108.289",
+  "version": "3.108.290",
   "license": "AGPL-3.0",
   "author": "Standard Notes.",
   "private": true,
