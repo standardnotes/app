@@ -142,9 +142,6 @@
       ]
     },
     "snap": {
-      "buildPackages": [
-        "python3"
-      ],
       "plugs": [
         "default",
         "password-manager-service"
