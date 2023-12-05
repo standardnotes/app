@@ -119,6 +119,7 @@ jobs:
         run: |
           sudo snap install snapcraft --classic
           yarn run webpack --config desktop.webpack.prod.js --env snap
+          yarn workspace @standardnotes/desktop rebuild:home-server
           yarn run electron-builder --linux --x64 -c.linux.target=snap --publish=never --c.extraMetadata.version=${{ env.APP_VERSION }}
 
       - name: Upload
