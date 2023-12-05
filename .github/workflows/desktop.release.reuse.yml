@@ -252,7 +252,6 @@ jobs:
         with:
           package: web desktop
         id: release-notes
-        continue-on-error: true
 
       - name: Release
         uses: softprops/action-gh-release@v1
@@ -266,7 +265,6 @@ jobs:
           files: packages/desktop/dist/*
 
       - name: Publish Snap
-        continue-on-error: true
         run: |
           sudo snap install snapcraft --classic
           snapcraft upload dist/standard-notes-${{ env.APP_VERSION }}-linux-amd64.snap --release stable,candidate,beta,edge
