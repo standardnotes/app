@@ -150,8 +150,6 @@
       "plugs": [
         "default",
         "password-manager-service",
-        "home",
-        "network",
         "network-bind"
       ]
     }
