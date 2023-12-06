@@ -143,8 +143,13 @@
     },
     "snap": {
       "base": "core22",
+      "buildPackages": [
+        "python3",
+        "libpython3.10"
+      ],
       "stagePackages": [
         "default",
+        "python3",
         "libpython3.10"
       ],
       "plugs": [
