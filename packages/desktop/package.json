@@ -142,7 +142,7 @@
       ]
     },
     "snap": {
-      "base": "core22",
+      "base": "core20",
       "stagePackages": [
         "default",
         "python3"
