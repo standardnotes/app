@@ -38,8 +38,6 @@ jobs:
       - name: Install Snapcraft
         run: |
           sudo snap install snapcraft --classic
-          sudo usermod --append --groups lxd $(whoami)
-          sudo chown root:root /
           sudo lxd waitready
           sudo lxd init --auto
 
@@ -47,7 +45,7 @@ jobs:
         run: |
           sudo snap install review-tools
           yarn run webpack --config desktop.webpack.prod.js --env snap
-          yarn run electron-builder --linux --x64 -c.linux.target=snap --publish=never --c.extraMetadata.version=${{ env.APP_VERSION }}
+          sudo yarn run electron-builder --linux --x64 -c.linux.target=snap --publish=never --c.extraMetadata.version=${{ env.APP_VERSION }}
           review-tools.snap-review dist/standard-notes-${{ env.APP_VERSION }}-linux-amd64.snap
 
       - name: Upload
