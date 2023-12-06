@@ -142,6 +142,7 @@
       ]
     },
     "snap": {
+      "base": "core22",
       "plugs": [
         "default",
         "password-manager-service",
