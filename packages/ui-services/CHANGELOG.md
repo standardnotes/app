@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.35.7](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.35.6...@standardnotes/ui-services@1.35.7) (2023-12-06)
+
+### Bug Fixes
+
+* Fixed issues with lists and indents when importing from Evernote ([d16ca33](https://github.com/standardnotes/app/commit/d16ca3305d8457045a1760849058109354f29667))
+
 ## [1.35.6](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.35.5...@standardnotes/ui-services@1.35.6) (2023-12-05)
 
 **Note:** Version bump only for package @standardnotes/ui-services
