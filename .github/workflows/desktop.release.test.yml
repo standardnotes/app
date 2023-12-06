@@ -38,7 +38,7 @@ jobs:
       - name: Install Snapcraft
         run: |
           sudo snap install snapcraft --classic
-          sudo usermod --append --groups lxd ${process.env.USER}
+          sudo usermod --append --groups lxd $(whoami)
           sudo chown root:root /
           sudo lxd waitready
           sudo lxd init --auto
