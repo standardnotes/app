@@ -42,12 +42,16 @@ jobs:
       - name: Setup LXD
         uses: canonical/setup-lxd
 
-      - name: Snap
+      - name: Install Review Tools
+        run: sudo snap install review-tools
+
+      - name: Package Snap
         run: |
-          sudo snap install review-tools
           yarn run webpack --config desktop.webpack.prod.js --env snap
           sudo yarn run electron-builder --linux --x64 -c.linux.target=snap --publish=never --c.extraMetadata.version=${{ env.APP_VERSION }}
-          review-tools.snap-review dist/standard-notes-${{ env.APP_VERSION }}-linux-amd64.snap
+
+      - name: Review Snap
+        run: review-tools.snap-review dist/standard-notes-${{ env.APP_VERSION }}-linux-amd64.snap
 
       - name: Upload
         uses: actions/upload-artifact@v3.0.0
