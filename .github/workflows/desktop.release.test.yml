@@ -35,11 +35,11 @@ jobs:
 
       - run: echo APP_VERSION=$(node -p "require('./../web/package.json').version") >> $GITHUB_ENV
 
+      - name: Install Snapcraft
+        uses: samuelmeuli/action-snapcraft@v2
+
       - name: Snap
         run: |
-          sudo snap install snapcraft --classic
-          sudo snap install lxd
-          sudo lxd init
           sudo snap install review-tools
           yarn run webpack --config desktop.webpack.prod.js --env snap
           yarn run electron-builder --linux --x64 -c.linux.target=snap --publish=never --c.extraMetadata.version=${{ env.APP_VERSION }}
