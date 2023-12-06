@@ -145,7 +145,7 @@
       "base": "core22",
       "stagePackages": [
         "default",
-        "python3"
+        "libpython3.10"
       ],
       "plugs": [
         "default",

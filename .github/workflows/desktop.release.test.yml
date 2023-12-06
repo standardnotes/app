@@ -48,7 +48,7 @@ jobs:
       - name: Package Snap
         run: |
           yarn run webpack --config desktop.webpack.prod.js --env snap
-          sudo yarn run electron-builder --linux --x64 -c.linux.target=snap --publish=never --c.extraMetadata.version=${{ env.APP_VERSION }}
+          yarn run electron-builder --linux --x64 -c.linux.target=snap --publish=never --c.extraMetadata.version=${{ env.APP_VERSION }}
 
       - name: Review Snap
         run: review-tools.snap-review dist/standard-notes-${{ env.APP_VERSION }}-linux-amd64.snap
