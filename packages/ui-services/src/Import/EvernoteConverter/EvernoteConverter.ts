@@ -67,29 +67,18 @@ export class EvernoteConverter implements Converter {
       }
       const contentXml = this.loadXMLString(contentXmlString, 'html')
 
-      const noteElement = contentXml.getElementsByTagName('en-note')[0]
+      const noteElement = contentXml.getElementsByTagName('en-note')[0] as HTMLElement
 
       const unorderedLists = Array.from(noteElement.getElementsByTagName('ul'))
+
       if (canUseSuper) {
+        this.convertTopLevelDivsToParagraphs(noteElement)
         this.convertListsToSuperFormatIfApplicable(unorderedLists)
+        this.convertLeftPaddingToSuperIndent(noteElement)
       }
 
-      // Remove empty lists and orphan list items
-      Array.from(noteElement.getElementsByTagName('ul')).forEach((ul) => {
-        if (ul.children.length === 0) {
-          ul.remove()
-        }
-      })
-      Array.from(noteElement.getElementsByTagName('ol')).forEach((ol) => {
-        if (ol.children.length === 0) {
-          ol.remove()
-        }
-      })
-      Array.from(noteElement.getElementsByTagName('li')).forEach((li) => {
-        if (li.children.length === 0 || li.closest('ul, ol') === null) {
-          li.remove()
-        }
-      })
+      this.removeEmptyAndOrphanListElements(noteElement)
+      this.removeUnnecessaryTopLevelBreaks(noteElement)
 
       const mediaElements = Array.from(noteElement.getElementsByTagName('en-media'))
       this.replaceMediaElementsWithResources(mediaElements, resources)
@@ -212,6 +201,14 @@ export class EvernoteConverter implements Converter {
     } as EvernoteResource
   }
 
+  convertTopLevelDivsToParagraphs(noteElement: HTMLElement) {
+    noteElement.querySelectorAll('div').forEach((div) => {
+      if (div.parentElement === noteElement) {
+        changeElementTag(div, 'p')
+      }
+    })
+  }
+
   convertListsToSuperFormatIfApplicable(unorderedLists: HTMLUListElement[]) {
     for (const unorderedList of unorderedLists) {
       if (unorderedList.style.getPropertyValue('--en-todo') !== 'true') {
@@ -225,6 +222,42 @@ export class EvernoteConverter implements Converter {
         listItem.setAttribute('aria-checked', listItem.style.getPropertyValue('--en-checked'))
       }
     }
+  }
+
+  convertLeftPaddingToSuperIndent(noteElement: HTMLElement) {
+    noteElement.querySelectorAll('p').forEach((element) => {
+      const paddingLeft = element.style.paddingLeft
+      if (paddingLeft) {
+        // Lexical uses multiples of 20px for indent while Evernote uses multiples of 40px
+        const indent = parseInt(paddingLeft) / 2
+        element.style.textIndent = `${indent}px`
+        element.style.paddingLeft = ''
+      }
+    })
+  }
+
+  removeEmptyAndOrphanListElements(noteElement: HTMLElement) {
+    Array.from(noteElement.getElementsByTagName('ul, ol')).forEach((list) => {
+      if (list.children.length === 0) {
+        list.remove()
+      }
+    })
+    Array.from(noteElement.getElementsByTagName('li')).forEach((li) => {
+      const isEmpty = li.textContent === null || li.textContent.trim() === ''
+      const isOrphan = !li.closest('ul, ol')
+      if (isEmpty || isOrphan) {
+        li.remove()
+      }
+    })
+  }
+
+  removeUnnecessaryTopLevelBreaks(noteElement: HTMLElement) {
+    Array.from(noteElement.querySelectorAll('* > p > br')).forEach((br) => {
+      const parent = br.parentElement!
+      if (parent.children.length === 1) {
+        parent.remove()
+      }
+    })
   }
 
   replaceMediaElementsWithResources(mediaElements: Element[], resources: EvernoteResource[]): number {
@@ -278,4 +311,11 @@ export class EvernoteConverter implements Converter {
     tmp.innerHTML = html
     return tmp.textContent || tmp.innerText || ''
   }
+}
+
+function changeElementTag(element: HTMLElement, newTag: string) {
+  const attributes = Array.prototype.slice.call(element.attributes)
+  element.outerHTML = `<${newTag} ${attributes.map((attr) => attr.name + '="' + attr.value + '"').join(' ')}>${
+    element.innerHTML
+  }</${newTag}>`
 }
