@@ -79,9 +79,6 @@ jobs:
 
       - run: yarn install --immutable
 
-      - name: Rebuild Electron Native Modules
-        run: yarn workspace @standardnotes/desktop rebuild:home-server
-
       - run: yarn build:desktop
 
       - run: echo APP_VERSION=$(node -p "require('./../web/package.json').version") >> $GITHUB_ENV
@@ -118,13 +115,23 @@ jobs:
         env:
           npm_config_target_arch: 'arm64'
 
-      - name: Snap
+      - name: Install Snapcraft
         run: |
           sudo snap install snapcraft --classic
-          sudo snap install review-tools
+
+      - name: Setup LXD
+        uses: canonical/setup-lxd@v0.1.1
+
+      - name: Install Review Tools
+        run: sudo snap install review-tools
+
+      - name: Package Snap
+        run: |
           yarn run webpack --config desktop.webpack.prod.js --env snap
           yarn run electron-builder --linux --x64 -c.linux.target=snap --publish=never --c.extraMetadata.version=${{ env.APP_VERSION }}
-          review-tools.snap-review dist/standard-notes-${{ env.APP_VERSION }}-linux-amd64.snap
+
+      - name: Review Snap
+        run: review-tools.snap-review dist/standard-notes-${{ env.APP_VERSION }}-linux-amd64.snap
 
       - name: Upload
         uses: actions/upload-artifact@v3.0.0
