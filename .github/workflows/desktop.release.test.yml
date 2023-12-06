@@ -38,8 +38,9 @@ jobs:
       - name: Install Snapcraft
         run: |
           sudo snap install snapcraft --classic
-          sudo lxd waitready
-          sudo lxd init --auto
+
+      - name: Setup LXD
+        uses: canonical/setup-lxd
 
       - name: Snap
         run: |
