@@ -3,21 +3,12 @@ import { log, LoggingDomain } from '@/Logging'
 const ENTRANCE_DURATION = 200
 const EXIT_DURATION = 200
 
-function cancelExistingAnimations(element: HTMLElement): void {
-  element.getAnimations().forEach((animation) => {
-    animation.commitStyles()
-    animation.cancel()
-  })
-}
-
 export async function animatePaneEntranceTransitionFromOffscreenToTheRight(elementId: string): Promise<void> {
   log(LoggingDomain.Panes, 'Animating pane entrance transition from offscreen to the right', elementId)
   const element = document.getElementById(elementId)
   if (!element) {
     return
   }
-
-  cancelExistingAnimations(element)
 
   const animation = element.animate(
     [
@@ -36,8 +27,6 @@ export async function animatePaneEntranceTransitionFromOffscreenToTheRight(eleme
   )
 
   await animation.finished
-  animation.commitStyles()
-  animation.cancel()
 
   performSafariAnimationFix(element)
 }
@@ -48,8 +37,6 @@ export async function animatePaneExitTransitionOffscreenToTheRight(elementId: st
   if (!element) {
     return
   }
-
-  cancelExistingAnimations(element)
 
   const animation = element.animate(
     [
@@ -65,10 +52,6 @@ export async function animatePaneExitTransitionOffscreenToTheRight(elementId: st
   )
 
   await animation.finished
-  animation.commitStyles()
-  animation.cancel()
-
-  performSafariAnimationFix(element)
 }
 
 /**
