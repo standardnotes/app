@@ -93,11 +93,11 @@ describe('EvernoteConverter', () => {
     expect(result?.length).toBe(3)
     expect(result?.[0].content_type).toBe(ContentType.TYPES.Note)
     expect((result?.[0] as DecryptedTransferPayload<NoteContent>).content.text).toBe(
-      '<div>This is a test.</div><font><span>h </span><span>e </span></font>',
+      '<p>This is a test.</p><ul></ul><ol></ol><font><span>h </span><span>e </span></font>',
     )
     expect(result?.[1].content_type).toBe(ContentType.TYPES.Note)
     expect((result?.[1] as DecryptedTransferPayload<NoteContent>).content.text).toBe(
-      '<div>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div>',
+      '<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>',
     )
     expect(result?.[2].content_type).toBe(ContentType.TYPES.Tag)
     expect((result?.[2] as DecryptedTransferPayload<TagContent>).content.title).toBe('distant reading')
