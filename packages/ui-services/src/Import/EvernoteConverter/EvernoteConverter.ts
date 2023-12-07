@@ -3,7 +3,6 @@ import dayjs from 'dayjs'
 import customParseFormat from 'dayjs/plugin/customParseFormat'
 import utc from 'dayjs/plugin/utc'
 import { GenerateUuid } from '@standardnotes/services'
-import { NoteType } from '@standardnotes/features'
 import MD5 from 'crypto-js/md5'
 import Base64 from 'crypto-js/enc-base64'
 import { Converter } from '../Converter'
@@ -109,7 +108,7 @@ export class EvernoteConverter implements Converter {
         updatedAt: updatedAtDate,
         title: !title ? `Imported note ${index + 1} from Evernote` : title,
         text,
-        noteType: NoteType.Super,
+        useSuperIfPossible: canUseSuper,
       })
 
       const xmlTags = xmlNote.getElementsByTagName('tag')

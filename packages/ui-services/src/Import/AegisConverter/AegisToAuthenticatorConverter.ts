@@ -67,6 +67,7 @@ export class AegisToAuthenticatorConverter implements Converter {
         text,
         noteType: NoteType.Authentication,
         editorIdentifier: NativeFeatureIdentifier.TYPES.TokenVaultEditor,
+        useSuperIfPossible: false,
       }),
     ]
   }

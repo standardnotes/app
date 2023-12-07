@@ -1,5 +1,4 @@
 import { DecryptedTransferPayload, NoteContent } from '@standardnotes/models'
-import { NoteType } from '@standardnotes/features'
 import { Converter, CreateNoteFn } from '../Converter'
 
 type Content =
@@ -125,7 +124,7 @@ export class GoogleKeepConverter implements Converter {
       updatedAt: date,
       title: title,
       text: content,
-      noteType: NoteType.Super,
+      useSuperIfPossible: true,
     })
   }
 
@@ -181,7 +180,7 @@ export class GoogleKeepConverter implements Converter {
         archived: Boolean(parsed.isArchived),
         trashed: Boolean(parsed.isTrashed),
         pinned: Boolean(parsed.isPinned),
-        noteType: NoteType.Super,
+        useSuperIfPossible: true,
       })
     } catch (e) {
       console.error(e)

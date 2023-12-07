@@ -1,6 +1,5 @@
 import { SuperConverterServiceInterface } from '@standardnotes/files'
 import { parseFileName } from '@standardnotes/filepicker'
-import { NoteType } from '@standardnotes/features'
 import { Converter } from '../Converter'
 
 export class SuperConverter implements Converter {
@@ -36,7 +35,7 @@ export class SuperConverter implements Converter {
         updatedAt: updatedAtDate,
         title: name,
         text: content,
-        noteType: NoteType.Super,
+        useSuperIfPossible: true,
       }),
     ]
   }

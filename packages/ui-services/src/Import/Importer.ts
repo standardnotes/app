@@ -98,6 +98,7 @@ export class Importer {
     trashed,
     archived,
     pinned,
+    useSuperIfPossible,
   }) => {
     if (noteType === NoteType.Super && !this.isEntitledToSuper()) {
       noteType = undefined
@@ -111,6 +112,8 @@ export class Importer {
       editorIdentifier = undefined
     }
 
+    const shouldUseSuper = useSuperIfPossible && this.isEntitledToSuper()
+
     return {
       created_at: createdAt,
       created_at_timestamp: createdAt.getTime(),
@@ -122,11 +125,11 @@ export class Importer {
         title,
         text,
         references: [],
-        noteType,
+        noteType: shouldUseSuper ? NoteType.Super : noteType,
         trashed,
         archived,
         pinned,
-        editorIdentifier,
+        editorIdentifier: shouldUseSuper ? NativeFeatureIdentifier.TYPES.SuperEditor : editorIdentifier,
       },
     }
   }

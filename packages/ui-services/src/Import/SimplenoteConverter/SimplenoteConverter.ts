@@ -66,6 +66,7 @@ export class SimplenoteConverter implements Converter {
       title,
       text: content,
       trashed,
+      useSuperIfPossible: true,
     })
   }
 

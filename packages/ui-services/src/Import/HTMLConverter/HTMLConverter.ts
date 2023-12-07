@@ -1,4 +1,3 @@
-import { NoteType } from '@standardnotes/features'
 import { parseFileName } from '@standardnotes/filepicker'
 import { Converter } from '../Converter'
 
@@ -33,7 +32,7 @@ export class HTMLConverter implements Converter {
         updatedAt: updatedAtDate,
         title: name,
         text,
-        noteType: NoteType.Super,
+        useSuperIfPossible: true,
       }),
     ]
   }

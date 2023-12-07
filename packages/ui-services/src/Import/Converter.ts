@@ -32,6 +32,7 @@ export type CreateNoteFn = (options: {
   pinned?: boolean
   trashed?: boolean
   editorIdentifier?: NoteContent['editorIdentifier']
+  useSuperIfPossible: boolean
 }) => DecryptedTransferPayload<NoteContent>
 
 export type CreateTagFn = (options: {
