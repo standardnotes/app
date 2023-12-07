@@ -176,10 +176,7 @@ export class Importer {
   }
 
   async getPayloadsFromFile(file: File, type: string): Promise<DecryptedTransferPayload[]> {
-    const isEntitledToSuper =
-      this.features.getFeatureStatus(
-        NativeFeatureIdentifier.create(NativeFeatureIdentifier.TYPES.SuperEditor).getValue(),
-      ) === FeatureStatus.Entitled
+    const isEntitledToSuper = this.isEntitledToSuper()
 
     if (type === 'super' && !isEntitledToSuper) {
       throw new Error('Importing Super notes requires a subscription')

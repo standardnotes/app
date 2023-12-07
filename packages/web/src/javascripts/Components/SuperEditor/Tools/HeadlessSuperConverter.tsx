@@ -279,8 +279,8 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
             resolve()
             return
           }
-          Promise.all(
-            concatenatedNodes.map(async (node) => {
+          ;(async () => {
+            for (const node of concatenatedNodes) {
               const blob = await fetch(node.__src).then((response) => response.blob())
               const name = $isInlineFileNode(node) ? node.__fileName : node.__alt
               const mimeType = $isInlineFileNode(node) ? node.__mimeType : node.__src.split(';')[0].split(':')[1]
@@ -303,8 +303,8 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
               )
 
               await linkFile(uploadedFile)
-            }),
-          )
+            }
+          })()
             .then(() => resolve())
             .catch(console.error)
         },
