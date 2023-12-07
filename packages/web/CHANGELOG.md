@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.183.16](https://github.com/standardnotes/app/compare/@standardnotes/web@3.183.15...@standardnotes/web@3.183.16) (2023-12-07)
+
+### Reverts
+
+* Revert "chore: pane animation fixes" ([2cc2ddd](https://github.com/standardnotes/app/commit/2cc2dddb9b0c6c274136ac4d0fa2e0090c704eb5))
+
 ## [3.183.15](https://github.com/standardnotes/app/compare/@standardnotes/web@3.183.14...@standardnotes/web@3.183.15) (2023-12-07)
 
 **Note:** Version bump only for package @standardnotes/web
