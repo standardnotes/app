@@ -5,7 +5,7 @@ import utc from 'dayjs/plugin/utc'
 import { GenerateUuid } from '@standardnotes/services'
 import MD5 from 'crypto-js/md5'
 import Base64 from 'crypto-js/enc-base64'
-import { Converter } from '../Converter'
+import { Converter, UploadFileFn } from '../Converter'
 dayjs.extend(customParseFormat)
 dayjs.extend(utc)
 
@@ -35,7 +35,7 @@ export class EvernoteConverter implements Converter {
 
   convert: Converter['convert'] = async (
     file,
-    { insertNote, insertTag, linkItems, canUseSuper, convertHTMLToSuper, readFileAsText },
+    { insertNote, insertTag, linkItems, canUploadFiles, canUseSuper, convertHTMLToSuper, readFileAsText, uploadFile },
   ) => {
     const content = await readFileAsText(file)
 
@@ -50,83 +50,88 @@ export class EvernoteConverter implements Converter {
     }
 
     for (const [index, xmlNote] of Array.from(xmlNotes).entries()) {
-      const title = xmlNote.getElementsByTagName('title')[0].textContent
-      const created = xmlNote.getElementsByTagName('created')[0]?.textContent
-      const updatedNodes = xmlNote.getElementsByTagName('updated')
-      const updated = updatedNodes.length ? updatedNodes[0].textContent : null
-      const resources = Array.from(xmlNote.getElementsByTagName('resource'))
-        .map(this.getResourceFromElement)
-        .filter(Boolean) as EvernoteResource[]
+      try {
+        const title = xmlNote.getElementsByTagName('title')[0].textContent
+        const created = xmlNote.getElementsByTagName('created')[0]?.textContent
+        const updatedNodes = xmlNote.getElementsByTagName('updated')
+        const updated = updatedNodes.length ? updatedNodes[0].textContent : null
+        const resources = Array.from(xmlNote.getElementsByTagName('resource'))
+          .map(this.getResourceFromElement)
+          .filter(Boolean) as EvernoteResource[]
 
-      const contentNode = xmlNote.getElementsByTagName('content')[0]
-      const contentXmlString = this.getXmlStringFromContentElement(contentNode)
-      if (!contentXmlString) {
-        continue
-      }
-      const contentXml = this.loadXMLString(contentXmlString, 'html')
+        const contentNode = xmlNote.getElementsByTagName('content')[0]
+        const contentXmlString = this.getXmlStringFromContentElement(contentNode)
+        if (!contentXmlString) {
+          continue
+        }
+        const contentXml = this.loadXMLString(contentXmlString, 'html')
 
-      const noteElement = contentXml.getElementsByTagName('en-note')[0] as HTMLElement
+        const noteElement = contentXml.getElementsByTagName('en-note')[0] as HTMLElement
 
-      const unorderedLists = Array.from(noteElement.getElementsByTagName('ul'))
+        const unorderedLists = Array.from(noteElement.getElementsByTagName('ul'))
 
-      if (canUseSuper) {
-        this.convertTopLevelDivsToParagraphs(noteElement)
-        this.convertListsToSuperFormatIfApplicable(unorderedLists)
-        this.convertLeftPaddingToSuperIndent(noteElement)
-      }
-
-      this.removeEmptyAndOrphanListElements(noteElement)
-      this.removeUnnecessaryTopLevelBreaks(noteElement)
-
-      const mediaElements = Array.from(noteElement.getElementsByTagName('en-media'))
-      this.replaceMediaElementsWithResources(mediaElements, resources)
-
-      // Some notes have <font> tags that contain separate <span> tags with text
-      // which causes broken paragraphs in the note.
-      const fontElements = Array.from(noteElement.getElementsByTagName('font'))
-      for (const fontElement of fontElements) {
-        fontElement.childNodes.forEach((childNode) => {
-          childNode.textContent += ' '
-        })
-        fontElement.innerText = fontElement.textContent || ''
-      }
-
-      let contentHTML = noteElement.innerHTML
-      if (!canUseSuper) {
-        contentHTML = contentHTML.replace(/<\/div>/g, '</div>\n')
-        contentHTML = contentHTML.replace(/<li[^>]*>/g, '\n')
-        contentHTML = contentHTML.trim()
-      }
-      const text = !canUseSuper ? this.stripHTML(contentHTML) : convertHTMLToSuper(contentHTML)
-
-      const createdAtDate = created ? dayjs.utc(created, dateFormat).toDate() : new Date()
-      const updatedAtDate = updated ? dayjs.utc(updated, dateFormat).toDate() : createdAtDate
-
-      const note = await insertNote({
-        createdAt: createdAtDate,
-        updatedAt: updatedAtDate,
-        title: !title ? `Imported note ${index + 1} from Evernote` : title,
-        text,
-        useSuperIfPossible: canUseSuper,
-      })
-
-      const xmlTags = xmlNote.getElementsByTagName('tag')
-      for (const tagXml of Array.from(xmlTags)) {
-        const tagName = tagXml.childNodes[0].nodeValue
-        let tag = findTag(tagName)
-
-        if (!tag) {
-          const now = new Date()
-          tag = await insertTag({
-            createdAt: now,
-            updatedAt: now,
-            title: tagName || `Imported tag ${index + 1} from Evernote`,
-            references: [],
-          })
-          tags.push(tag)
+        if (canUseSuper) {
+          this.convertTopLevelDivsToParagraphs(noteElement)
+          this.convertListsToSuperFormatIfApplicable(unorderedLists)
+          this.convertLeftPaddingToSuperIndent(noteElement)
         }
 
-        await linkItems(note, tag)
+        this.removeEmptyAndOrphanListElements(noteElement)
+        this.removeUnnecessaryTopLevelBreaks(noteElement)
+
+        const mediaElements = Array.from(noteElement.getElementsByTagName('en-media'))
+        await this.replaceMediaElementsWithResources(mediaElements, resources, canUploadFiles, uploadFile)
+
+        // Some notes have <font> tags that contain separate <span> tags with text
+        // which causes broken paragraphs in the note.
+        const fontElements = Array.from(noteElement.getElementsByTagName('font'))
+        for (const fontElement of fontElements) {
+          fontElement.childNodes.forEach((childNode) => {
+            childNode.textContent += ' '
+          })
+          fontElement.innerText = fontElement.textContent || ''
+        }
+
+        let contentHTML = noteElement.innerHTML
+        if (!canUseSuper) {
+          contentHTML = contentHTML.replace(/<\/div>/g, '</div>\n')
+          contentHTML = contentHTML.replace(/<li[^>]*>/g, '\n')
+          contentHTML = contentHTML.trim()
+        }
+        const text = !canUseSuper ? this.stripHTML(contentHTML) : convertHTMLToSuper(contentHTML)
+
+        const createdAtDate = created ? dayjs.utc(created, dateFormat).toDate() : new Date()
+        const updatedAtDate = updated ? dayjs.utc(updated, dateFormat).toDate() : createdAtDate
+
+        const note = await insertNote({
+          createdAt: createdAtDate,
+          updatedAt: updatedAtDate,
+          title: !title ? `Imported note ${index + 1} from Evernote` : title,
+          text,
+          useSuperIfPossible: canUseSuper,
+        })
+
+        const xmlTags = xmlNote.getElementsByTagName('tag')
+        for (const tagXml of Array.from(xmlTags)) {
+          const tagName = tagXml.childNodes[0].nodeValue
+          let tag = findTag(tagName)
+
+          if (!tag) {
+            const now = new Date()
+            tag = await insertTag({
+              createdAt: now,
+              updatedAt: now,
+              title: tagName || `Imported tag ${index + 1} from Evernote`,
+              references: [],
+            })
+            tags.push(tag)
+          }
+
+          await linkItems(note, tag)
+        }
+      } catch (error) {
+        console.error(error)
+        continue
       }
     }
   }
@@ -250,7 +255,45 @@ export class EvernoteConverter implements Converter {
     })
   }
 
-  replaceMediaElementsWithResources(mediaElements: Element[], resources: EvernoteResource[]): number {
+  getHTMLElementFromResource(resource: EvernoteResource) {
+    let resourceElement: HTMLElement = document.createElement('object')
+    resourceElement.setAttribute('type', resource.mimeType)
+    resourceElement.setAttribute('data', resource.data)
+    if (resource.mimeType.startsWith('image/')) {
+      resourceElement = document.createElement('img')
+      resourceElement.setAttribute('src', resource.data)
+      resourceElement.setAttribute('data-mime-type', resource.mimeType)
+    } else if (resource.mimeType.startsWith('audio/')) {
+      resourceElement = document.createElement('audio')
+      resourceElement.setAttribute('controls', 'controls')
+      const sourceElement = document.createElement('source')
+      sourceElement.setAttribute('src', resource.data)
+      sourceElement.setAttribute('type', resource.mimeType)
+      resourceElement.appendChild(sourceElement)
+    } else if (resource.mimeType.startsWith('video/')) {
+      resourceElement = document.createElement('video')
+      resourceElement.setAttribute('controls', 'controls')
+      const sourceElement = document.createElement('source')
+      sourceElement.setAttribute('src', resource.data)
+      sourceElement.setAttribute('type', resource.mimeType)
+      resourceElement.appendChild(sourceElement)
+    }
+    resourceElement.setAttribute('data-filename', resource.fileName)
+    return resourceElement
+  }
+
+  async getFileFromResource(resource: EvernoteResource): Promise<File> {
+    const response = await fetch(resource.data)
+    const blob = await response.blob()
+    return new File([blob], resource.fileName, { type: resource.mimeType })
+  }
+
+  async replaceMediaElementsWithResources(
+    mediaElements: Element[],
+    resources: EvernoteResource[],
+    canUploadFiles: boolean,
+    uploadFile: UploadFileFn,
+  ): Promise<number> {
     let replacedElements = 0
     for (const mediaElement of mediaElements) {
       const hash = mediaElement.getAttribute('hash')
@@ -258,33 +301,19 @@ export class EvernoteConverter implements Converter {
       if (!resource) {
         continue
       }
-      let resourceElement: HTMLElement = document.createElement('object')
-      resourceElement.setAttribute('type', resource.mimeType)
-      resourceElement.setAttribute('data', resource.data)
-      if (resource.mimeType.startsWith('image/')) {
-        resourceElement = document.createElement('img')
-        resourceElement.setAttribute('src', resource.data)
-        resourceElement.setAttribute('data-mime-type', resource.mimeType)
-      } else if (resource.mimeType.startsWith('audio/')) {
-        resourceElement = document.createElement('audio')
-        resourceElement.setAttribute('controls', 'controls')
-        const sourceElement = document.createElement('source')
-        sourceElement.setAttribute('src', resource.data)
-        sourceElement.setAttribute('type', resource.mimeType)
-        resourceElement.appendChild(sourceElement)
-      } else if (resource.mimeType.startsWith('video/')) {
-        resourceElement = document.createElement('video')
-        resourceElement.setAttribute('controls', 'controls')
-        const sourceElement = document.createElement('source')
-        sourceElement.setAttribute('src', resource.data)
-        sourceElement.setAttribute('type', resource.mimeType)
-        resourceElement.appendChild(sourceElement)
-      }
-      resourceElement.setAttribute('data-filename', resource.fileName)
       if (!mediaElement.parentNode) {
         continue
       }
-      mediaElement.parentNode.replaceChild(resourceElement, mediaElement)
+      const fileToUpload = canUploadFiles ? await this.getFileFromResource(resource) : undefined
+      const fileItem = fileToUpload ? await uploadFile(fileToUpload) : undefined
+      if (fileItem) {
+        const fileElement = document.createElement('span')
+        fileElement.setAttribute('data-lexical-file-uuid', fileItem.uuid)
+        mediaElement.parentNode.replaceChild(fileElement, mediaElement)
+      } else {
+        const resourceElement = this.getHTMLElementFromResource(resource)
+        mediaElement.parentNode.replaceChild(resourceElement, mediaElement)
+      }
       replacedElements++
     }
     return replacedElements

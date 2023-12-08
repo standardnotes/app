@@ -27,9 +27,12 @@ import {
 } from '@standardnotes/models'
 import { HTMLConverter } from './HTMLConverter/HTMLConverter'
 import { SuperConverter } from './SuperConverter/SuperConverter'
-import { Converter, InsertNoteFn, InsertTagFn, LinkItemsFn } from './Converter'
+import { Converter, InsertNoteFn, InsertTagFn, LinkItemsFn, UploadFileFn } from './Converter'
 import { SuperConverterServiceInterface } from '@standardnotes/files'
 import { ContentType } from '@standardnotes/domain-core'
+
+export const BYTES_IN_ONE_MEGABYTE = 1_000_000
+const NoteSizeThreshold = 3 * BYTES_IN_ONE_MEGABYTE
 
 export class Importer {
   converters: Set<Converter> = new Set()
@@ -103,7 +106,7 @@ export class Importer {
     pinned = false,
     useSuperIfPossible,
   }) => {
-    if (noteType === NoteType.Super && !this.isEntitledToSuper()) {
+    if (noteType === NoteType.Super && !this.canUseSuper()) {
       noteType = undefined
     }
 
@@ -115,7 +118,13 @@ export class Importer {
       editorIdentifier = undefined
     }
 
-    const shouldUseSuper = useSuperIfPossible && this.isEntitledToSuper()
+    const shouldUseSuper = useSuperIfPossible && this.canUseSuper()
+
+    const noteSize = new Blob([text]).size
+
+    if (noteSize > NoteSizeThreshold) {
+      throw new Error('Note is too large to import')
+    }
 
     const note = this.items.createTemplateItem<NoteContent, SNNote>(
       ContentType.TYPES.Note,
@@ -156,11 +165,32 @@ export class Importer {
     return await this.mutator.insertItem(tag)
   }
 
+  canUploadFiles = (): boolean => {
+    const status = this.features.getFeatureStatus(
+      NativeFeatureIdentifier.create(NativeFeatureIdentifier.TYPES.Files).getValue(),
+    )
+
+    return status === FeatureStatus.Entitled
+  }
+
+  uploadFile: UploadFileFn = async (file) => {
+    if (!this.canUploadFiles()) {
+      return undefined
+    }
+
+    try {
+      return await this.filesController.uploadNewFile(file, { showToast: true })
+    } catch (error) {
+      console.error(error)
+      return undefined
+    }
+  }
+
   linkItems: LinkItemsFn = async (item, itemToLink) => {
     await this.linkingController.linkItems(item, itemToLink, false)
   }
 
-  isEntitledToSuper = (): boolean => {
+  canUseSuper = (): boolean => {
     return (
       this.features.getFeatureStatus(
         NativeFeatureIdentifier.create(NativeFeatureIdentifier.TYPES.SuperEditor).getValue(),
@@ -169,7 +199,7 @@ export class Importer {
   }
 
   convertHTMLToSuper = (html: string): string => {
-    if (!this.isEntitledToSuper()) {
+    if (!this.canUseSuper()) {
       return html
     }
 
@@ -177,7 +207,7 @@ export class Importer {
   }
 
   convertMarkdownToSuper = (markdown: string): string => {
-    if (!this.isEntitledToSuper()) {
+    if (!this.canUseSuper()) {
       return markdown
     }
 
@@ -185,9 +215,9 @@ export class Importer {
   }
 
   async importFromFile(file: File, type: string): Promise<DecryptedTransferPayload[]> {
-    const isEntitledToSuper = this.isEntitledToSuper()
+    const canUseSuper = this.canUseSuper()
 
-    if (type === 'super' && !isEntitledToSuper) {
+    if (type === 'super' && !canUseSuper) {
       throw new Error('Importing Super notes requires a subscription')
     }
 
@@ -207,7 +237,9 @@ export class Importer {
       await converter.convert(file, {
         insertNote: this.insertNote,
         insertTag: this.insertTag,
-        canUseSuper: isEntitledToSuper,
+        canUploadFiles: this.canUploadFiles(),
+        uploadFile: this.uploadFile,
+        canUseSuper,
         convertHTMLToSuper: this.convertHTMLToSuper,
         convertMarkdownToSuper: this.convertMarkdownToSuper,
         readFileAsText,

@@ -1,5 +1,5 @@
 import { NoteType } from '@standardnotes/features'
-import { DecryptedItemInterface, ItemContent, NoteContent, SNNote, SNTag } from '@standardnotes/models'
+import { DecryptedItemInterface, FileItem, ItemContent, NoteContent, SNNote, SNTag } from '@standardnotes/models'
 
 export interface Converter {
   getImportType(): string
@@ -14,6 +14,8 @@ export interface Converter {
     dependencies: {
       insertNote: InsertNoteFn
       insertTag: InsertTagFn
+      canUploadFiles: boolean
+      uploadFile: UploadFileFn
       canUseSuper: boolean
       convertHTMLToSuper: (html: string) => string
       convertMarkdownToSuper: (markdown: string) => string
@@ -45,6 +47,8 @@ export type InsertTagFn = (options: {
   title: string
   references: SNTag['references']
 }) => Promise<SNTag>
+
+export type UploadFileFn = (file: File) => Promise<FileItem | undefined>
 
 export type LinkItemsFn = (
   item: DecryptedItemInterface<ItemContent>,
