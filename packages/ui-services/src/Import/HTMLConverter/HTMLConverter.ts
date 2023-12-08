@@ -16,7 +16,7 @@ export class HTMLConverter implements Converter {
     return true
   }
 
-  convert: Converter['convert'] = async (file, { createNote, convertHTMLToSuper, readFileAsText }) => {
+  convert: Converter['convert'] = async (file, { insertNote: createNote, convertHTMLToSuper, readFileAsText }) => {
     const content = await readFileAsText(file)
 
     const { name } = parseFileName(file.name)

@@ -45,7 +45,7 @@ export class AegisToAuthenticatorConverter implements Converter {
     return false
   }
 
-  convert: Converter['convert'] = async (file, { createNote, readFileAsText }) => {
+  convert: Converter['convert'] = async (file, { insertNote: createNote, readFileAsText }) => {
     const content = await readFileAsText(file)
 
     const entries = this.parseEntries(content)

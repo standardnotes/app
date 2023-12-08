@@ -4,7 +4,6 @@ import {
   InternalEventBusInterface,
   ItemManagerInterface,
   MutatorClientInterface,
-  pluralize,
   PreferenceServiceInterface,
   PreferencesServiceEvent,
   UuidGenerator,
@@ -23,7 +22,6 @@ type ImportModalFileCommon = {
 
 export type ImportModalFile = (
   | { status: 'pending' }
-  | { status: 'ready'; payloads?: DecryptedTransferPayload[] }
   | { status: 'parsing' }
   | { status: 'importing' }
   | { status: 'uploading-files' }
@@ -149,45 +147,6 @@ export class ImportModalController extends AbstractViewController {
     this.setImportTag(undefined)
   }
 
-  importFromPayloads = async (file: ImportModalFile, payloads: DecryptedTransferPayload[]) => {
-    this.updateFile({
-      ...file,
-      status: 'importing',
-    })
-
-    try {
-      const insertedItems = await this.importer.importFromTransferPayloads(payloads)
-
-      this.updateFile({
-        ...file,
-        status: 'uploading-files',
-      })
-
-      await this.importer.uploadAndReplaceInlineFilesInInsertedItems(insertedItems)
-
-      const notesImported = payloads.filter((payload) => payload.content_type === ContentType.TYPES.Note)
-      const tagsImported = payloads.filter((payload) => payload.content_type === ContentType.TYPES.Tag)
-
-      const successMessage =
-        `Successfully imported ${notesImported.length} ` +
-        pluralize(notesImported.length, 'note', 'notes') +
-        (tagsImported.length > 0 ? ` and ${tagsImported.length} ${pluralize(tagsImported.length, 'tag', 'tags')}` : '')
-
-      this.updateFile({
-        ...file,
-        status: 'success',
-        successMessage,
-      })
-    } catch (error) {
-      this.updateFile({
-        ...file,
-        status: 'error',
-        error: error instanceof Error ? error : new Error('Could not import file'),
-      })
-      console.error(error)
-    }
-  }
-
   parseAndImport = async () => {
     if (this.files.length === 0) {
       return
@@ -198,21 +157,19 @@ export class ImportModalController extends AbstractViewController {
         return
       }
 
-      if (file.status === 'ready' && file.payloads) {
-        await this.importFromPayloads(file, file.payloads)
-        importedPayloads.push(...file.payloads)
-        continue
-      }
-
       this.updateFile({
         ...file,
         status: 'parsing',
       })
 
       try {
-        const payloads = await this.importer.getPayloadsFromFile(file.file, file.service)
-        await this.importFromPayloads(file, payloads)
+        const payloads = await this.importer.importFromFile(file.file, file.service)
         importedPayloads.push(...payloads)
+        this.updateFile({
+          ...file,
+          status: 'success',
+          successMessage: `Imported ${payloads.length} items`,
+        })
       } catch (error) {
         this.updateFile({
           ...file,

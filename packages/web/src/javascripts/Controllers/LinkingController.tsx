@@ -204,7 +204,7 @@ export class LinkingController extends AbstractViewController implements Interna
     }
   }
 
-  linkItems = async (item: LinkableItem, itemToLink: LinkableItem) => {
+  linkItems = async (item: LinkableItem, itemToLink: LinkableItem, sync = true) => {
     const linkNoteAndFile = async (note: SNNote, file: FileItem) => {
       const updatedFile = await this.mutator.associateFileWithNote(file, note)
 
@@ -231,11 +231,11 @@ export class LinkingController extends AbstractViewController implements Interna
     }
 
     const linkTagToNote = async (tag: SNTag, note: SNNote) => {
-      await this.addTagToItem(tag, note)
+      await this.addTagToItem(tag, note, sync)
     }
 
     const linkTagToFile = async (tag: SNTag, file: FileItem) => {
-      await this.addTagToItem(tag, file)
+      await this.addTagToItem(tag, file, sync)
     }
 
     if (isNote(item)) {
@@ -273,7 +273,9 @@ export class LinkingController extends AbstractViewController implements Interna
       throw new Error('First item must be a note or file')
     }
 
-    void this.sync.sync()
+    if (sync) {
+      void this.sync.sync()
+    }
   }
 
   linkItemToSelectedItem = async (itemToLink: LinkableItem): Promise<boolean> => {
@@ -323,13 +325,15 @@ export class LinkingController extends AbstractViewController implements Interna
     return newTag
   }
 
-  addTagToItem = async (tag: SNTag, item: FileItem | SNNote) => {
+  addTagToItem = async (tag: SNTag, item: FileItem | SNNote, sync = true) => {
     if (item instanceof SNNote) {
       await this.mutator.addTagToNote(item, tag, this.shouldLinkToParentFolders)
     } else if (item instanceof FileItem) {
       await this.mutator.addTagToFile(item, tag, this.shouldLinkToParentFolders)
     }
 
-    this.sync.sync().catch(console.error)
+    if (sync) {
+      this.sync.sync().catch(console.error)
+    }
   }
 }

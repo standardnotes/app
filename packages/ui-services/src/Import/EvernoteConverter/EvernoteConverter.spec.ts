@@ -41,7 +41,7 @@ describe('EvernoteConverter', () => {
           references: [],
         },
       }) as unknown as DecryptedTransferPayload<NoteContent>,
-    createTag: ({ title }) =>
+    insertTag: ({ title }) =>
       ({
         content_type: ContentType.TYPES.Tag,
         content: {

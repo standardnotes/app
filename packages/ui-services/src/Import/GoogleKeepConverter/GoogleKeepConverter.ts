@@ -1,5 +1,5 @@
 import { DecryptedTransferPayload, NoteContent } from '@standardnotes/models'
-import { Converter, CreateNoteFn } from '../Converter'
+import { Converter, InsertNoteFn } from '../Converter'
 
 type Content =
   | {
@@ -45,7 +45,7 @@ export class GoogleKeepConverter implements Converter {
 
   convert: Converter['convert'] = async (
     file,
-    { createNote, canUseSuper, convertHTMLToSuper, convertMarkdownToSuper, readFileAsText },
+    { insertNote: createNote, canUseSuper, convertHTMLToSuper, convertMarkdownToSuper, readFileAsText },
   ) => {
     const content = await readFileAsText(file)
 
@@ -67,7 +67,7 @@ export class GoogleKeepConverter implements Converter {
   tryParseAsHtml(
     data: string,
     file: { name: string },
-    createNote: CreateNoteFn,
+    createNote: InsertNoteFn,
     convertHTMLToSuper: (html: string) => string,
     canUseSuper: boolean,
   ): DecryptedTransferPayload<NoteContent> {
@@ -152,7 +152,7 @@ export class GoogleKeepConverter implements Converter {
 
   tryParseAsJson(
     data: string,
-    createNote: CreateNoteFn,
+    createNote: InsertNoteFn,
     convertMarkdownToSuper: (md: string) => string,
   ): DecryptedTransferPayload<NoteContent> | null {
     try {

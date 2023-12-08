@@ -17,7 +17,7 @@ export class SuperConverter implements Converter {
     return this.converterService.isValidSuperString(content)
   }
 
-  convert: Converter['convert'] = async (file, { createNote, readFileAsText }) => {
+  convert: Converter['convert'] = async (file, { insertNote, readFileAsText }) => {
     const content = await readFileAsText(file)
 
     if (!this.converterService.isValidSuperString(content)) {
@@ -29,14 +29,14 @@ export class SuperConverter implements Converter {
     const createdAtDate = file.lastModified ? new Date(file.lastModified) : new Date()
     const updatedAtDate = file.lastModified ? new Date(file.lastModified) : new Date()
 
-    return [
-      createNote({
-        createdAt: createdAtDate,
-        updatedAt: updatedAtDate,
-        title: name,
-        text: content,
-        useSuperIfPossible: true,
-      }),
-    ]
+    await insertNote({
+      createdAt: createdAtDate,
+      updatedAt: updatedAtDate,
+      title: name,
+      text: content,
+      useSuperIfPossible: true,
+    })
+
+    return []
   }
 }

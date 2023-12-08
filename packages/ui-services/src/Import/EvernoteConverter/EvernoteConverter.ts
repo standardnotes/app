@@ -1,4 +1,4 @@
-import { DecryptedTransferPayload, NoteContent, TagContent } from '@standardnotes/models'
+import { SNTag } from '@standardnotes/models'
 import dayjs from 'dayjs'
 import customParseFormat from 'dayjs/plugin/customParseFormat'
 import utc from 'dayjs/plugin/utc'
@@ -35,14 +35,13 @@ export class EvernoteConverter implements Converter {
 
   convert: Converter['convert'] = async (
     file,
-    { createNote, createTag, canUseSuper, convertHTMLToSuper, readFileAsText },
+    { insertNote, insertTag, linkItems, canUseSuper, convertHTMLToSuper, readFileAsText },
   ) => {
     const content = await readFileAsText(file)
 
     const xmlDoc = this.loadXMLString(content, 'xml')
     const xmlNotes = xmlDoc.getElementsByTagName('note')
-    const notes: DecryptedTransferPayload<NoteContent>[] = []
-    const tags: DecryptedTransferPayload<TagContent>[] = []
+    const tags: SNTag[] = []
 
     function findTag(title: string | null) {
       return tags.filter(function (tag) {
@@ -103,7 +102,7 @@ export class EvernoteConverter implements Converter {
       const createdAtDate = created ? dayjs.utc(created, dateFormat).toDate() : new Date()
       const updatedAtDate = updated ? dayjs.utc(updated, dateFormat).toDate() : createdAtDate
 
-      const note = createNote({
+      const note = await insertNote({
         createdAt: createdAtDate,
         updatedAt: updatedAtDate,
         title: !title ? `Imported note ${index + 1} from Evernote` : title,
@@ -115,29 +114,21 @@ export class EvernoteConverter implements Converter {
       for (const tagXml of Array.from(xmlTags)) {
         const tagName = tagXml.childNodes[0].nodeValue
         let tag = findTag(tagName)
+
         if (!tag) {
           const now = new Date()
-          tag = createTag({
+          tag = await insertTag({
             createdAt: now,
             updatedAt: now,
             title: tagName || `Imported tag ${index + 1} from Evernote`,
+            references: [],
           })
           tags.push(tag)
         }
 
-        note.content.references.push({ content_type: tag.content_type, uuid: tag.uuid })
-        tag.content.references.push({ content_type: note.content_type, uuid: note.uuid })
+        await linkItems(note, tag)
       }
-
-      notes.push(note)
     }
-
-    const allItems: DecryptedTransferPayload[] = [...notes, ...tags]
-    if (allItems.length === 0) {
-      throw new Error('Could not parse any notes or tags from Evernote file.')
-    }
-
-    return allItems
   }
 
   getXmlStringFromContentElement(contentElement: Element) {

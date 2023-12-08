@@ -21,11 +21,13 @@ import {
   NoteContent,
   NoteMutator,
   SNNote,
+  SNTag,
+  TagContent,
   isNote,
 } from '@standardnotes/models'
 import { HTMLConverter } from './HTMLConverter/HTMLConverter'
 import { SuperConverter } from './SuperConverter/SuperConverter'
-import { Converter, CreateNoteFn, CreateTagFn } from './Converter'
+import { Converter, InsertNoteFn, InsertTagFn, LinkItemsFn } from './Converter'
 import { SuperConverterServiceInterface } from '@standardnotes/files'
 import { ContentType } from '@standardnotes/domain-core'
 
@@ -50,6 +52,7 @@ export class Importer {
       linkItems(
         item: DecryptedItemInterface<ItemContent>,
         itemToLink: DecryptedItemInterface<ItemContent>,
+        sync: boolean,
       ): Promise<void>
     },
     private _generateUuid: GenerateUuid,
@@ -88,16 +91,16 @@ export class Importer {
     return null
   }
 
-  createNote: CreateNoteFn = ({
+  insertNote: InsertNoteFn = async ({
     createdAt,
     updatedAt,
     title,
     text,
     noteType,
     editorIdentifier,
-    trashed,
-    archived,
-    pinned,
+    trashed = false,
+    archived = false,
+    pinned = false,
     useSuperIfPossible,
   }) => {
     if (noteType === NoteType.Super && !this.isEntitledToSuper()) {
@@ -114,14 +117,9 @@ export class Importer {
 
     const shouldUseSuper = useSuperIfPossible && this.isEntitledToSuper()
 
-    return {
-      created_at: createdAt,
-      created_at_timestamp: createdAt.getTime(),
-      updated_at: updatedAt,
-      updated_at_timestamp: updatedAt.getTime(),
-      uuid: this._generateUuid.execute().getValue(),
-      content_type: ContentType.TYPES.Note,
-      content: {
+    const note = this.items.createTemplateItem<NoteContent, SNNote>(
+      ContentType.TYPES.Note,
+      {
         title,
         text,
         references: [],
@@ -131,24 +129,35 @@ export class Importer {
         pinned,
         editorIdentifier: shouldUseSuper ? NativeFeatureIdentifier.TYPES.SuperEditor : editorIdentifier,
       },
-    }
+      {
+        created_at: createdAt,
+        updated_at: updatedAt,
+      },
+    )
+
+    return await this.mutator.insertItem(note)
   }
 
-  createTag: CreateTagFn = ({ createdAt, updatedAt, title }) => {
-    return {
-      uuid: this._generateUuid.execute().getValue(),
-      content_type: ContentType.TYPES.Tag,
-      created_at: createdAt,
-      created_at_timestamp: createdAt.getTime(),
-      updated_at: updatedAt,
-      updated_at_timestamp: updatedAt.getTime(),
-      content: {
-        title: title,
+  insertTag: InsertTagFn = async ({ createdAt, updatedAt, title, references }) => {
+    const tag = this.items.createTemplateItem<TagContent, SNTag>(
+      ContentType.TYPES.Tag,
+      {
+        title,
         expanded: false,
         iconString: '',
-        references: [],
+        references,
       },
-    }
+      {
+        created_at: createdAt,
+        updated_at: updatedAt,
+      },
+    )
+
+    return await this.mutator.insertItem(tag)
+  }
+
+  linkItems: LinkItemsFn = async (item, itemToLink) => {
+    await this.linkingController.linkItems(item, itemToLink, false)
   }
 
   isEntitledToSuper = (): boolean => {
@@ -175,7 +184,7 @@ export class Importer {
     return this.superConverterService.convertOtherFormatToSuperString(markdown, 'md')
   }
 
-  async getPayloadsFromFile(file: File, type: string): Promise<DecryptedTransferPayload[]> {
+  async importFromFile(file: File, type: string): Promise<DecryptedTransferPayload[]> {
     const isEntitledToSuper = this.isEntitledToSuper()
 
     if (type === 'super' && !isEntitledToSuper) {
@@ -195,42 +204,18 @@ export class Importer {
         throw new Error('Content is not valid')
       }
 
-      return await converter.convert(file, {
-        createNote: this.createNote,
-        createTag: this.createTag,
+      await converter.convert(file, {
+        insertNote: this.insertNote,
+        insertTag: this.insertTag,
         canUseSuper: isEntitledToSuper,
         convertHTMLToSuper: this.convertHTMLToSuper,
         convertMarkdownToSuper: this.convertMarkdownToSuper,
         readFileAsText,
+        linkItems: this.linkItems,
       })
     }
 
     return []
-  }
-
-  async importFromTransferPayloads(payloads: DecryptedTransferPayload[]) {
-    const insertedItems = await Promise.all(
-      payloads.map(async (payload) => {
-        const content = payload.content as NoteContent
-        const note = this.items.createTemplateItem(
-          payload.content_type,
-          {
-            text: content.text,
-            title: content.title,
-            noteType: content.noteType,
-            editorIdentifier: content.editorIdentifier,
-            references: content.references,
-          },
-          {
-            created_at: payload.created_at,
-            updated_at: payload.updated_at,
-            uuid: payload.uuid,
-          },
-        )
-        return this.mutator.insertItem(note)
-      }),
-    )
-    return insertedItems
   }
 
   async uploadAndReplaceInlineFilesInInsertedItems(insertedItems: DecryptedItemInterface<ItemContent>[]) {
@@ -245,7 +230,7 @@ export class Importer {
         const text = await this.superConverterService.uploadAndReplaceInlineFilesInSuperString(
           item.text,
           async (file) => await this.filesController.uploadNewFile(file, { showToast: true, note: item }),
-          async (file) => await this.linkingController.linkItems(item, file),
+          async (file) => await this.linkingController.linkItems(item, file, false),
           this._generateUuid,
         )
         await this.mutator.changeItem<NoteMutator>(item, (mutator) => {

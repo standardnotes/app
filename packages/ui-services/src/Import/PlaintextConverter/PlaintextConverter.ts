@@ -20,7 +20,7 @@ export class PlaintextConverter implements Converter {
     return file.type === 'text/plain' || file.type === 'text/markdown'
   }
 
-  convert: Converter['convert'] = async (file, { createNote, convertMarkdownToSuper, readFileAsText }) => {
+  convert: Converter['convert'] = async (file, { insertNote, convertMarkdownToSuper, readFileAsText }) => {
     const content = await readFileAsText(file)
 
     const { name } = parseFileName(file.name)
@@ -28,14 +28,14 @@ export class PlaintextConverter implements Converter {
     const createdAtDate = file.lastModified ? new Date(file.lastModified) : new Date()
     const updatedAtDate = file.lastModified ? new Date(file.lastModified) : new Date()
 
-    return [
-      createNote({
-        createdAt: createdAtDate,
-        updatedAt: updatedAtDate,
-        title: name,
-        text: convertMarkdownToSuper(content),
-        useSuperIfPossible: true,
-      }),
-    ]
+    await insertNote({
+      createdAt: createdAtDate,
+      updatedAt: updatedAtDate,
+      title: name,
+      text: convertMarkdownToSuper(content),
+      useSuperIfPossible: true,
+    })
+
+    return []
   }
 }
