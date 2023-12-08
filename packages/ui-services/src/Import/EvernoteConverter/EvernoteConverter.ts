@@ -1,4 +1,4 @@
-import { SNTag } from '@standardnotes/models'
+import { FileItem, SNTag } from '@standardnotes/models'
 import dayjs from 'dayjs'
 import customParseFormat from 'dayjs/plugin/customParseFormat'
 import utc from 'dayjs/plugin/utc'
@@ -80,7 +80,12 @@ export class EvernoteConverter implements Converter {
         this.removeUnnecessaryTopLevelBreaks(noteElement)
 
         const mediaElements = Array.from(noteElement.getElementsByTagName('en-media'))
-        await this.replaceMediaElementsWithResources(mediaElements, resources, canUploadFiles, uploadFile)
+        const { uploadedFiles } = await this.replaceMediaElementsWithResources(
+          mediaElements,
+          resources,
+          canUploadFiles,
+          uploadFile,
+        )
 
         // Some notes have <font> tags that contain separate <span> tags with text
         // which causes broken paragraphs in the note.
@@ -110,6 +115,10 @@ export class EvernoteConverter implements Converter {
           text,
           useSuperIfPossible: canUseSuper,
         })
+
+        for (const uploadedFile of uploadedFiles) {
+          await linkItems(note, uploadedFile)
+        }
 
         const xmlTags = xmlNote.getElementsByTagName('tag')
         for (const tagXml of Array.from(xmlTags)) {
@@ -293,8 +302,12 @@ export class EvernoteConverter implements Converter {
     resources: EvernoteResource[],
     canUploadFiles: boolean,
     uploadFile: UploadFileFn,
-  ): Promise<number> {
-    let replacedElements = 0
+  ): Promise<{
+    replacedElements: HTMLElement[]
+    uploadedFiles: FileItem[]
+  }> {
+    const replacedElements: HTMLElement[] = []
+    const uploadedFiles: FileItem[] = []
     for (const mediaElement of mediaElements) {
       const hash = mediaElement.getAttribute('hash')
       const resource = resources.find((resource) => resource && resource.hash === hash)
@@ -307,16 +320,21 @@ export class EvernoteConverter implements Converter {
       const fileToUpload = canUploadFiles ? await this.getFileFromResource(resource) : undefined
       const fileItem = fileToUpload ? await uploadFile(fileToUpload) : undefined
       if (fileItem) {
-        const fileElement = document.createElement('span')
+        const fileElement = document.createElement('div')
         fileElement.setAttribute('data-lexical-file-uuid', fileItem.uuid)
         mediaElement.parentNode.replaceChild(fileElement, mediaElement)
-      } else {
-        const resourceElement = this.getHTMLElementFromResource(resource)
-        mediaElement.parentNode.replaceChild(resourceElement, mediaElement)
+        replacedElements.push(fileElement)
+        uploadedFiles.push(fileItem)
+        continue
       }
-      replacedElements++
+      const resourceElement = this.getHTMLElementFromResource(resource)
+      mediaElement.parentNode.replaceChild(resourceElement, mediaElement)
+      replacedElements.push(resourceElement)
     }
-    return replacedElements
+    return {
+      replacedElements,
+      uploadedFiles,
+    }
   }
 
   loadXMLString(string: string, type: 'html' | 'xml') {
