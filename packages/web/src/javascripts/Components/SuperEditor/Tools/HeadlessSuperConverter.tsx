@@ -194,7 +194,8 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
                 type === 'link' ||
                 type === 'linebreak' ||
                 type === 'unencrypted-image' ||
-                type === 'inline-file'
+                type === 'inline-file' ||
+                type === 'snfile'
               ) {
                 const paragraphNode = $createParagraphNode()
                 paragraphNode.append(node)
