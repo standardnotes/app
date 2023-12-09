@@ -307,7 +307,7 @@ export class EvernoteConverter implements Converter {
     uploadedFiles: FileItem[]
   }> {
     const replacedElements: HTMLElement[] = []
-    const uploadedFiles: FileItem[] = []
+    const uploadedFiles = new Map<EvernoteResource['hash'], FileItem>()
     for (const mediaElement of mediaElements) {
       const hash = mediaElement.getAttribute('hash')
       const resource = resources.find((resource) => resource && resource.hash === hash)
@@ -317,14 +317,20 @@ export class EvernoteConverter implements Converter {
       if (!mediaElement.parentNode) {
         continue
       }
-      const fileToUpload = canUploadFiles ? await this.getFileFromResource(resource) : undefined
-      const fileItem = fileToUpload ? await uploadFile(fileToUpload) : undefined
+      const existingFile = uploadedFiles.get(resource.hash)
+      const fileItem = canUploadFiles
+        ? existingFile
+          ? existingFile
+          : await uploadFile(await this.getFileFromResource(resource))
+        : undefined
       if (fileItem) {
         const fileElement = document.createElement('div')
         fileElement.setAttribute('data-lexical-file-uuid', fileItem.uuid)
         mediaElement.parentNode.replaceChild(fileElement, mediaElement)
         replacedElements.push(fileElement)
-        uploadedFiles.push(fileItem)
+        if (!existingFile) {
+          uploadedFiles.set(resource.hash, fileItem)
+        }
         continue
       }
       const resourceElement = this.getHTMLElementFromResource(resource)
@@ -333,7 +339,7 @@ export class EvernoteConverter implements Converter {
     }
     return {
       replacedElements,
-      uploadedFiles,
+      uploadedFiles: Array.from(uploadedFiles.values()),
     }
   }
 
