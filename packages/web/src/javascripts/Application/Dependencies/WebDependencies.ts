@@ -68,6 +68,7 @@ export class WebDependencies extends DependencyContainer {
         this.get<FilesController>(Web_TYPES.FilesController),
         this.get<LinkingController>(Web_TYPES.LinkingController),
         application.generateUuid,
+        application.files,
       )
     })
 

@@ -24,6 +24,7 @@ export interface Converter {
         item: DecryptedItemInterface<ItemContent>,
         itemToLink: DecryptedItemInterface<ItemContent>,
       ): Promise<void>
+      cleanupItems(items: DecryptedItemInterface<ItemContent>[]): Promise<void>
     },
   ): Promise<void>
 }
@@ -54,3 +55,5 @@ export type LinkItemsFn = (
   item: DecryptedItemInterface<ItemContent>,
   itemToLink: DecryptedItemInterface<ItemContent>,
 ) => Promise<void>
+
+export type CleanupItemsFn = (items: DecryptedItemInterface<ItemContent>[]) => Promise<void>

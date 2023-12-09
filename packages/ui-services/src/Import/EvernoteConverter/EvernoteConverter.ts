@@ -35,7 +35,17 @@ export class EvernoteConverter implements Converter {
 
   convert: Converter['convert'] = async (
     file,
-    { insertNote, insertTag, linkItems, canUploadFiles, canUseSuper, convertHTMLToSuper, readFileAsText, uploadFile },
+    {
+      insertNote,
+      insertTag,
+      linkItems,
+      canUploadFiles,
+      canUseSuper,
+      convertHTMLToSuper,
+      readFileAsText,
+      uploadFile,
+      cleanupItems,
+    },
   ) => {
     const content = await readFileAsText(file)
 
@@ -50,6 +60,7 @@ export class EvernoteConverter implements Converter {
     }
 
     for (const [index, xmlNote] of Array.from(xmlNotes).entries()) {
+      const filesToPotentiallyCleanup: FileItem[] = []
       try {
         const title = xmlNote.getElementsByTagName('title')[0].textContent
         const created = xmlNote.getElementsByTagName('created')[0]?.textContent
@@ -86,6 +97,7 @@ export class EvernoteConverter implements Converter {
           canUploadFiles,
           uploadFile,
         )
+        filesToPotentiallyCleanup.push(...uploadedFiles)
 
         // Some notes have <font> tags that contain separate <span> tags with text
         // which causes broken paragraphs in the note.
@@ -140,6 +152,7 @@ export class EvernoteConverter implements Converter {
         }
       } catch (error) {
         console.error(error)
+        cleanupItems(filesToPotentiallyCleanup).catch(console.error)
         continue
       }
     }

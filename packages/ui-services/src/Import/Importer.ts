@@ -23,12 +23,13 @@ import {
   SNNote,
   SNTag,
   TagContent,
+  isFile,
   isNote,
 } from '@standardnotes/models'
 import { HTMLConverter } from './HTMLConverter/HTMLConverter'
 import { SuperConverter } from './SuperConverter/SuperConverter'
-import { Converter, InsertNoteFn, InsertTagFn, LinkItemsFn, UploadFileFn } from './Converter'
-import { SuperConverterServiceInterface } from '@standardnotes/files'
+import { CleanupItemsFn, Converter, InsertNoteFn, InsertTagFn, LinkItemsFn, UploadFileFn } from './Converter'
+import { FilesClientInterface, SuperConverterServiceInterface } from '@standardnotes/files'
 import { ContentType } from '@standardnotes/domain-core'
 
 export const BYTES_IN_ONE_MEGABYTE = 1_000_000
@@ -59,6 +60,7 @@ export class Importer {
       ): Promise<void>
     },
     private _generateUuid: GenerateUuid,
+    private files: FilesClientInterface,
   ) {
     this.registerNativeConverters()
   }
@@ -190,6 +192,15 @@ export class Importer {
     await this.linkingController.linkItems(item, itemToLink, false)
   }
 
+  cleanupItems: CleanupItemsFn = async (items) => {
+    for (const item of items) {
+      if (isFile(item)) {
+        await this.files.deleteFile(item)
+      }
+      await this.mutator.deleteItems([item])
+    }
+  }
+
   canUseSuper = (): boolean => {
     return (
       this.features.getFeatureStatus(
@@ -244,6 +255,7 @@ export class Importer {
         convertMarkdownToSuper: this.convertMarkdownToSuper,
         readFileAsText,
         linkItems: this.linkItems,
+        cleanupItems: this.cleanupItems,
       })
     }
 
