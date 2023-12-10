@@ -26,14 +26,17 @@ export class HTMLConverter implements Converter {
 
     const text = convertHTMLToSuper(content)
 
-    return [
-      createNote({
-        createdAt: createdAtDate,
-        updatedAt: updatedAtDate,
-        title: name,
-        text,
-        useSuperIfPossible: true,
-      }),
-    ]
+    const note = await createNote({
+      createdAt: createdAtDate,
+      updatedAt: updatedAtDate,
+      title: name,
+      text,
+      useSuperIfPossible: true,
+    })
+
+    return {
+      successful: [note],
+      errored: [],
+    }
   }
 }

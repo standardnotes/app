@@ -1,6 +1,14 @@
 import { NoteType } from '@standardnotes/features'
 import { DecryptedItemInterface, FileItem, ItemContent, NoteContent, SNNote, SNTag } from '@standardnotes/models'
 
+export type ConversionResult = {
+  successful: DecryptedItemInterface[]
+  errored: {
+    name: string
+    error: Error
+  }[]
+}
+
 export interface Converter {
   getImportType(): string
 
@@ -26,7 +34,7 @@ export interface Converter {
       ): Promise<void>
       cleanupItems(items: DecryptedItemInterface<ItemContent>[]): Promise<void>
     },
-  ): Promise<void>
+  ): Promise<ConversionResult>
 }
 
 export type InsertNoteFn = (options: {

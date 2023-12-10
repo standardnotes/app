@@ -28,7 +28,7 @@ export class PlaintextConverter implements Converter {
     const createdAtDate = file.lastModified ? new Date(file.lastModified) : new Date()
     const updatedAtDate = file.lastModified ? new Date(file.lastModified) : new Date()
 
-    await insertNote({
+    const note = await insertNote({
       createdAt: createdAtDate,
       updatedAt: updatedAtDate,
       title: name,
@@ -36,6 +36,9 @@ export class PlaintextConverter implements Converter {
       useSuperIfPossible: true,
     })
 
-    return []
+    return {
+      successful: [note],
+      errored: [],
+    }
   }
 }

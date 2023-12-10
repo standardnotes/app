@@ -15,7 +15,6 @@ import { SimplenoteConverter } from './SimplenoteConverter/SimplenoteConverter'
 import { readFileAsText } from './Utils'
 import {
   DecryptedItemInterface,
-  DecryptedTransferPayload,
   FileItem,
   ItemContent,
   NoteContent,
@@ -28,12 +27,20 @@ import {
 } from '@standardnotes/models'
 import { HTMLConverter } from './HTMLConverter/HTMLConverter'
 import { SuperConverter } from './SuperConverter/SuperConverter'
-import { CleanupItemsFn, Converter, InsertNoteFn, InsertTagFn, LinkItemsFn, UploadFileFn } from './Converter'
+import {
+  CleanupItemsFn,
+  ConversionResult,
+  Converter,
+  InsertNoteFn,
+  InsertTagFn,
+  LinkItemsFn,
+  UploadFileFn,
+} from './Converter'
 import { FilesClientInterface, SuperConverterServiceInterface } from '@standardnotes/files'
 import { ContentType } from '@standardnotes/domain-core'
 
-export const BYTES_IN_ONE_MEGABYTE = 1_000_000
-const NoteSizeThreshold = 3 * BYTES_IN_ONE_MEGABYTE
+const BytesInOneMegabyte = 1_000_000
+const NoteSizeThreshold = 3 * BytesInOneMegabyte
 
 export class Importer {
   converters: Set<Converter> = new Set()
@@ -225,12 +232,15 @@ export class Importer {
     return this.superConverterService.convertOtherFormatToSuperString(markdown, 'md')
   }
 
-  async importFromFile(file: File, type: string): Promise<DecryptedTransferPayload[]> {
+  async importFromFile(file: File, type: string): Promise<ConversionResult> {
     const canUseSuper = this.canUseSuper()
 
     if (type === 'super' && !canUseSuper) {
       throw new Error('Importing Super notes requires a subscription')
     }
+
+    const successful: ConversionResult['successful'] = []
+    const errored: ConversionResult['errored'] = []
 
     for (const converter of this.converters) {
       const isCorrectType = converter.getImportType() === type
@@ -257,9 +267,14 @@ export class Importer {
         linkItems: this.linkItems,
         cleanupItems: this.cleanupItems,
       })
+
+      break
     }
 
-    return []
+    return {
+      successful,
+      errored,
+    }
   }
 
   async uploadAndReplaceInlineFilesInInsertedItems(insertedItems: DecryptedItemInterface<ItemContent>[]) {

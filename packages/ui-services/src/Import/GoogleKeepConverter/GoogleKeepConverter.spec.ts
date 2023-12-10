@@ -4,11 +4,11 @@
 
 import { jsonTextContentData, htmlTestData, jsonListContentData } from './testData'
 import { GoogleKeepConverter } from './GoogleKeepConverter'
-import { ContentType, DecryptedTransferPayload, NoteContent } from '@standardnotes/snjs'
-import { CreateNoteFn } from '../Converter'
+import { ContentType, SNNote } from '@standardnotes/snjs'
+import { InsertNoteFn } from '../Converter'
 
 describe('GoogleKeepConverter', () => {
-  const createNote: CreateNoteFn = ({ title, text, createdAt, updatedAt, trashed, archived, pinned }) =>
+  const insertNote: InsertNoteFn = async ({ title, text, createdAt, updatedAt, trashed, archived, pinned }) =>
     ({
       uuid: Math.random().toString(),
       created_at: createdAt,
@@ -22,12 +22,12 @@ describe('GoogleKeepConverter', () => {
         pinned,
         references: [],
       },
-    }) as unknown as DecryptedTransferPayload<NoteContent>
+    }) as unknown as SNNote
 
-  it('should parse json data', () => {
+  it('should parse json data', async () => {
     const converter = new GoogleKeepConverter()
 
-    const textContent = converter.tryParseAsJson(jsonTextContentData, createNote, (md) => md)
+    const textContent = await converter.tryParseAsJson(jsonTextContentData, insertNote, (md) => md)
 
     expect(textContent).not.toBeNull()
     expect(textContent?.created_at).toBeInstanceOf(Date)
@@ -40,7 +40,7 @@ describe('GoogleKeepConverter', () => {
     expect(textContent?.content.archived).toBe(false)
     expect(textContent?.content.pinned).toBe(false)
 
-    const listContent = converter.tryParseAsJson(jsonListContentData, createNote, (md) => md)
+    const listContent = await converter.tryParseAsJson(jsonListContentData, insertNote, (md) => md)
 
     expect(listContent).not.toBeNull()
     expect(listContent?.created_at).toBeInstanceOf(Date)
@@ -54,15 +54,15 @@ describe('GoogleKeepConverter', () => {
     expect(textContent?.content.pinned).toBe(false)
   })
 
-  it('should parse html data', () => {
+  it('should parse html data', async () => {
     const converter = new GoogleKeepConverter()
 
-    const result = converter.tryParseAsHtml(
+    const result = await converter.tryParseAsHtml(
       htmlTestData,
       {
         name: 'note-2.html',
       },
-      createNote,
+      insertNote,
       (html) => html,
       false,
     )

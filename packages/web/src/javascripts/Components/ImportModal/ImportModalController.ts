@@ -1,4 +1,4 @@
-import { DecryptedTransferPayload, PrefDefaults, PrefKey, SNNote, SNTag, TagContent } from '@standardnotes/models'
+import { DecryptedItemInterface, PrefDefaults, PrefKey, SNNote, SNTag, TagContent } from '@standardnotes/models'
 import {
   ContentType,
   InternalEventBusInterface,
@@ -8,7 +8,7 @@ import {
   PreferencesServiceEvent,
   UuidGenerator,
 } from '@standardnotes/snjs'
-import { Importer } from '@standardnotes/ui-services'
+import { ConversionResult, Importer } from '@standardnotes/ui-services'
 import { action, makeObservable, observable, runInAction } from 'mobx'
 import { NavigationController } from '../../Controllers/Navigation/NavigationController'
 import { LinkingController } from '@/Controllers/LinkingController'
@@ -25,7 +25,7 @@ export type ImportModalFile = (
   | { status: 'parsing' }
   | { status: 'importing' }
   | { status: 'uploading-files' }
-  | { status: 'success'; successMessage: string }
+  | ({ status: 'finished' } & ConversionResult)
   | { status: 'error'; error: Error }
 ) &
   ImportModalFileCommon
@@ -151,7 +151,7 @@ export class ImportModalController extends AbstractViewController {
     if (this.files.length === 0) {
       return
     }
-    const importedPayloads: DecryptedTransferPayload[] = []
+    const importedItems: DecryptedItemInterface[] = []
     for (const file of this.files) {
       if (!file.service) {
         return
@@ -163,12 +163,13 @@ export class ImportModalController extends AbstractViewController {
       })
 
       try {
-        const payloads = await this.importer.importFromFile(file.file, file.service)
-        importedPayloads.push(...payloads)
+        const { successful, errored } = await this.importer.importFromFile(file.file, file.service)
+        importedItems.push(...successful)
         this.updateFile({
           ...file,
-          status: 'success',
-          successMessage: `Imported ${payloads.length} items`,
+          status: 'finished',
+          successful,
+          errored,
         })
       } catch (error) {
         this.updateFile({
@@ -179,7 +180,7 @@ export class ImportModalController extends AbstractViewController {
         console.error(error)
       }
     }
-    if (!importedPayloads.length) {
+    if (!importedItems.length) {
       return
     }
     if (this.addImportsToTag) {
@@ -190,7 +191,7 @@ export class ImportModalController extends AbstractViewController {
           title: `Imported on ${currentDate.toLocaleString()}`,
           expanded: false,
           iconString: '',
-          references: importedPayloads
+          references: importedItems
             .filter((payload) => payload.content_type === ContentType.TYPES.Note)
             .map((payload) => ({
               content_type: ContentType.TYPES.Note,
@@ -202,11 +203,11 @@ export class ImportModalController extends AbstractViewController {
         try {
           const latestExistingTag = this.items.findSureItem<SNTag>(this.existingTagForImports.uuid)
           await Promise.all(
-            importedPayloads
+            importedItems
               .filter((payload) => payload.content_type === ContentType.TYPES.Note)
               .map(async (payload) => {
                 const note = this.items.findSureItem<SNNote>(payload.uuid)
-                await this.linkingController.addTagToItem(latestExistingTag, note)
+                await this.linkingController.addTagToItem(latestExistingTag, note, false)
               }),
           )
           importTag = this.items.findSureItem<SNTag>(this.existingTagForImports.uuid)

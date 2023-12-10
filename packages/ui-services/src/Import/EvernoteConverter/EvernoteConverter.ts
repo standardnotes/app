@@ -5,7 +5,7 @@ import utc from 'dayjs/plugin/utc'
 import { GenerateUuid } from '@standardnotes/services'
 import MD5 from 'crypto-js/md5'
 import Base64 from 'crypto-js/enc-base64'
-import { Converter, UploadFileFn } from '../Converter'
+import { ConversionResult, Converter, UploadFileFn } from '../Converter'
 dayjs.extend(customParseFormat)
 dayjs.extend(utc)
 
@@ -58,6 +58,9 @@ export class EvernoteConverter implements Converter {
         return tag.content.title == title
       })[0]
     }
+
+    const successful: ConversionResult['successful'] = []
+    const errored: ConversionResult['errored'] = []
 
     for (const [index, xmlNote] of Array.from(xmlNotes).entries()) {
       const filesToPotentiallyCleanup: FileItem[] = []
@@ -128,8 +131,11 @@ export class EvernoteConverter implements Converter {
           useSuperIfPossible: canUseSuper,
         })
 
+        successful.push(note)
+
         for (const uploadedFile of uploadedFiles) {
           await linkItems(note, uploadedFile)
+          successful.push(uploadedFile)
         }
 
         const xmlTags = xmlNote.getElementsByTagName('tag')
@@ -152,9 +158,18 @@ export class EvernoteConverter implements Converter {
         }
       } catch (error) {
         console.error(error)
+        errored.push({
+          name: xmlNote.getElementsByTagName('title')?.[0]?.textContent || `${file.name} - Note #${index}`,
+          error: error as Error,
+        })
         cleanupItems(filesToPotentiallyCleanup).catch(console.error)
         continue
       }
+    }
+
+    return {
+      successful,
+      errored,
     }
   }
 
