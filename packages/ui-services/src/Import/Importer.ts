@@ -202,6 +202,7 @@ export class Importer {
   }
 
   canUseSuper = (): boolean => {
+    return true
     return (
       this.features.getFeatureStatus(
         NativeFeatureIdentifier.create(NativeFeatureIdentifier.TYPES.SuperEditor).getValue(),

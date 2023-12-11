@@ -4,6 +4,7 @@ import { ConversionResult, Importer } from '@standardnotes/ui-services'
 import { observer } from 'mobx-react-lite'
 import { useCallback, useEffect, useState } from 'react'
 import Icon from '../Icon/Icon'
+import { Disclosure, DisclosureContent, DisclosureProvider } from '@ariakit/react'
 
 const NoteImportTypeColors: Record<string, string> = {
   evernote: 'bg-[#14cc45] text-[#000]',
@@ -47,6 +48,28 @@ const countSuccessfulItemsByGroup = (successful: ConversionResult['successful'])
   }
 }
 
+const ImportErroredAccordion = ({ errored }: { errored: ConversionResult['errored'] }) => {
+  return (
+    <DisclosureProvider>
+      <Disclosure>
+        <div className="flex items-center gap-1">
+          <Icon type="warning" className="flex-shrink-0 text-danger" size="small" />
+          Could not import {errored.length} {pluralize(errored.length, 'item', 'items')} (click for details)
+        </div>
+      </Disclosure>
+      <DisclosureContent className="w-full overflow-hidden pl-5">
+        {errored.map((item, index) => (
+          <div className="flex w-full items-center gap-1 overflow-hidden" key={index}>
+            <span>{index + 1}.</span>
+            <span className="overflow-hidden text-ellipsis whitespace-nowrap font-semibold">{item.name}:</span>
+            <span className="overflow-hidden text-ellipsis whitespace-nowrap">{item.error.message}</span>
+          </div>
+        ))}
+      </DisclosureContent>
+    </DisclosureProvider>
+  )
+}
+
 const ImportFinishedStatus = ({ file }: { file: ImportModalFile }) => {
   if (file.status !== 'finished') {
     return null
@@ -67,7 +90,7 @@ const ImportFinishedStatus = ({ file }: { file: ImportModalFile }) => {
           <span>{status} imported</span>
         </div>
       )}
-      {file.errored.length > 0 && <></>}
+      {file.errored.length > 0 && <ImportErroredAccordion errored={file.errored} />}
     </>
   )
 }
@@ -115,22 +138,22 @@ const ImportModalFileItem = ({
   return (
     <div
       className={classNames(
-        'flex gap-2 px-2 py-2.5',
+        'flex gap-2 overflow-hidden px-2 py-2.5',
         file.service == null ? 'flex-col items-start md:flex-row md:items-center' : 'items-center',
       )}
     >
-      <div className="mr-auto flex items-center">
+      <div className="mr-auto flex w-full items-center">
         {file.service && (
           <div className={classNames('mr-4 rounded p-2', NoteImportTypeColors[file.service])}>
             <Icon type={NoteImportTypeIcons[file.service]} size="medium" />
           </div>
         )}
-        <div className="flex flex-col">
+        <div className="flex w-full flex-col overflow-hidden">
           <div>{file.file.name}</div>
           {isDetectingService ? (
             <div className="text-xs opacity-75">Detecting service...</div>
           ) : (
-            <div className="line-clamp-3 text-xs opacity-75">
+            <div className={classNames(file.status !== 'finished' && 'line-clamp-3', 'w-full text-xs opacity-75')}>
               {file.status === 'pending' && file.service && 'Ready to import'}
               {file.status === 'pending' && !file.service && 'Could not auto-detect service. Please select manually.'}
               {file.status === 'parsing' && 'Parsing...'}
