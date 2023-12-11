@@ -152,6 +152,7 @@ export class EvernoteConverter implements Converter {
               references: [],
             })
             tags.push(tag)
+            successful.push(tag)
           }
 
           await linkItems(note, tag)

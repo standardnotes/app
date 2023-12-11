@@ -36,11 +36,6 @@ export const enex = `<?xml version="1.0" encoding="UTF-8"?>
   </note>
 </en-export>`
 
-export const enexWithNoNoteOrTag = `<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE en-export SYSTEM "http://xml.evernote.com/pub/evernote-export3.dtd">
-<en-export export-date="20210408T052957Z" application="Evernote" version="10.8.5">
-</en-export>`
-
 export function createTestResourceElement(
   shouldHaveMimeType = true,
   shouldHaveSourceUrl = false,
