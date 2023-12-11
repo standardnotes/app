@@ -3,9 +3,9 @@
  */
 
 import { ContentType } from '@standardnotes/domain-core'
-import { DecryptedTransferPayload, NoteContent, TagContent } from '@standardnotes/models'
+import { SNNote, SNTag } from '@standardnotes/models'
 import { EvernoteConverter, EvernoteResource } from './EvernoteConverter'
-import { createTestResourceElement, enex, enexWithNoNoteOrTag } from './testData'
+import { createTestResourceElement, enex } from './testData'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { GenerateUuid } from '@standardnotes/services'
 import { Converter } from '../Converter'
@@ -33,77 +33,80 @@ describe('EvernoteConverter', () => {
   const readFileAsText = async (file: File) => file as unknown as string
 
   const dependencies: Parameters<Converter['convert']>[1] = {
-    createNote: ({ text }) =>
+    insertNote: async ({ text }) =>
       ({
         content_type: ContentType.TYPES.Note,
         content: {
           text,
           references: [],
         },
-      }) as unknown as DecryptedTransferPayload<NoteContent>,
-    createTag: ({ title }) =>
+        uuid: generateUuid.execute().getValue(),
+      }) as unknown as SNNote,
+    insertTag: async ({ title }) =>
       ({
         content_type: ContentType.TYPES.Tag,
         content: {
           title,
           references: [],
         },
-      }) as unknown as DecryptedTransferPayload<TagContent>,
+        uuid: generateUuid.execute().getValue(),
+      }) as unknown as SNTag,
     convertHTMLToSuper: (data) => data,
     convertMarkdownToSuper: jest.fn(),
     readFileAsText,
     canUseSuper: false,
+    canUploadFiles: false,
+    uploadFile: async () => void 0,
+    linkItems: async (item, itemToLink) => {
+      itemToLink.content.references.push({
+        content_type: item.content_type,
+        uuid: item.uuid,
+      })
+    },
+    cleanupItems: async () => void 0,
   }
-
-  it('should throw error if no note or tag in enex', () => {
-    const converter = new EvernoteConverter(generateUuid)
-
-    expect(converter.convert(enexWithNoNoteOrTag as unknown as File, dependencies)).rejects.toThrowError()
-  })
 
   it('should parse and strip html', async () => {
     const converter = new EvernoteConverter(generateUuid)
 
-    const result = await converter.convert(enex as unknown as File, dependencies)
+    const { successful } = await converter.convert(enex as unknown as File, dependencies)
 
-    expect(result).not.toBeNull()
-    expect(result?.length).toBe(3)
-    expect(result?.[0].content_type).toBe(ContentType.TYPES.Note)
-    expect((result?.[0] as DecryptedTransferPayload<NoteContent>).content.text).toBe('This is a test.\nh e ')
-    expect(result?.[1].content_type).toBe(ContentType.TYPES.Note)
-    expect((result?.[1] as DecryptedTransferPayload<NoteContent>).content.text).toBe(
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    )
-    expect(result?.[2].content_type).toBe(ContentType.TYPES.Tag)
-    expect((result?.[2] as DecryptedTransferPayload<TagContent>).content.title).toBe('distant reading')
-    expect((result?.[2] as DecryptedTransferPayload<TagContent>).content.references.length).toBe(2)
-    expect((result?.[2] as DecryptedTransferPayload<TagContent>).content.references[0].uuid).toBe(result?.[0].uuid)
-    expect((result?.[2] as DecryptedTransferPayload<TagContent>).content.references[1].uuid).toBe(result?.[1].uuid)
+    expect(successful).not.toBeNull()
+    expect(successful?.length).toBe(3)
+    expect(successful?.[0].content_type).toBe(ContentType.TYPES.Note)
+    expect((successful?.[0] as SNNote).content.text).toBe('This is a test.\nh e ')
+    expect(successful?.[1].content_type).toBe(ContentType.TYPES.Tag)
+    expect((successful?.[1] as SNTag).content.title).toBe('distant reading')
+    expect((successful?.[1] as SNTag).content.references.length).toBe(2)
+    expect((successful?.[1] as SNTag).content.references[0].uuid).toBe(successful?.[0].uuid)
+    expect((successful?.[1] as SNTag).content.references[1].uuid).toBe(successful?.[2].uuid)
+    expect(successful?.[2].content_type).toBe(ContentType.TYPES.Note)
+    expect((successful?.[2] as SNNote).content.text).toBe('Lorem ipsum dolor sit amet, consectetur adipiscing elit.')
   })
 
   it('should parse and not strip html', async () => {
     const converter = new EvernoteConverter(generateUuid)
 
-    const result = await converter.convert(enex as unknown as File, {
+    const { successful } = await converter.convert(enex as unknown as File, {
       ...dependencies,
       canUseSuper: true,
     })
 
-    expect(result).not.toBeNull()
-    expect(result?.length).toBe(3)
-    expect(result?.[0].content_type).toBe(ContentType.TYPES.Note)
-    expect((result?.[0] as DecryptedTransferPayload<NoteContent>).content.text).toBe(
+    expect(successful).not.toBeNull()
+    expect(successful?.length).toBe(3)
+    expect(successful?.[0].content_type).toBe(ContentType.TYPES.Note)
+    expect((successful?.[0] as SNNote).content.text).toBe(
       '<p>This is a test.</p><ul></ul><ol></ol><font><span>h </span><span>e </span></font>',
     )
-    expect(result?.[1].content_type).toBe(ContentType.TYPES.Note)
-    expect((result?.[1] as DecryptedTransferPayload<NoteContent>).content.text).toBe(
+    expect(successful?.[1].content_type).toBe(ContentType.TYPES.Tag)
+    expect((successful?.[1] as SNTag).content.title).toBe('distant reading')
+    expect((successful?.[1] as SNTag).content.references.length).toBe(2)
+    expect((successful?.[1] as SNTag).content.references[0].uuid).toBe(successful?.[0].uuid)
+    expect((successful?.[1] as SNTag).content.references[1].uuid).toBe(successful?.[2].uuid)
+    expect(successful?.[2].content_type).toBe(ContentType.TYPES.Note)
+    expect((successful?.[2] as SNNote).content.text).toBe(
       '<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>',
     )
-    expect(result?.[2].content_type).toBe(ContentType.TYPES.Tag)
-    expect((result?.[2] as DecryptedTransferPayload<TagContent>).content.title).toBe('distant reading')
-    expect((result?.[2] as DecryptedTransferPayload<TagContent>).content.references.length).toBe(2)
-    expect((result?.[2] as DecryptedTransferPayload<TagContent>).content.references[0].uuid).toBe(result?.[0].uuid)
-    expect((result?.[2] as DecryptedTransferPayload<TagContent>).content.references[1].uuid).toBe(result?.[1].uuid)
   })
 
   it('should convert lists to super format if applicable', () => {
@@ -129,7 +132,7 @@ describe('EvernoteConverter', () => {
     expect(unorderedList2.getAttribute('__lexicallisttype')).toBeFalsy()
   })
 
-  it('should replace media elements with resources', () => {
+  it('should replace media elements with resources', async () => {
     const resources: EvernoteResource[] = [
       {
         hash: 'hash1',
@@ -152,9 +155,14 @@ describe('EvernoteConverter', () => {
     const array = [mediaElement1, mediaElement2, mediaElement3]
 
     const converter = new EvernoteConverter(generateUuid)
-    const replacedCount = converter.replaceMediaElementsWithResources(array, resources)
+    const { replacedElements } = await converter.replaceMediaElementsWithResources(
+      array,
+      resources,
+      false,
+      dependencies.uploadFile,
+    )
 
-    expect(replacedCount).toBe(1)
+    expect(replacedElements.length).toBe(1)
   })
 
   describe('getResourceFromElement', () => {

@@ -15,19 +15,23 @@ import { SimplenoteConverter } from './SimplenoteConverter/SimplenoteConverter'
 import { readFileAsText } from './Utils'
 import {
   DecryptedItemInterface,
-  DecryptedTransferPayload,
   FileItem,
   ItemContent,
   NoteContent,
-  NoteMutator,
   SNNote,
-  isNote,
+  SNTag,
+  TagContent,
+  isFile,
 } from '@standardnotes/models'
 import { HTMLConverter } from './HTMLConverter/HTMLConverter'
 import { SuperConverter } from './SuperConverter/SuperConverter'
-import { Converter, CreateNoteFn, CreateTagFn } from './Converter'
-import { SuperConverterServiceInterface } from '@standardnotes/files'
+import { CleanupItemsFn, Converter, InsertNoteFn, InsertTagFn, LinkItemsFn, UploadFileFn } from './Converter'
+import { ConversionResult } from './ConversionResult'
+import { FilesClientInterface, SuperConverterServiceInterface } from '@standardnotes/files'
 import { ContentType } from '@standardnotes/domain-core'
+
+const BytesInOneMegabyte = 1_000_000
+const NoteSizeThreshold = 3 * BytesInOneMegabyte
 
 export class Importer {
   converters: Set<Converter> = new Set()
@@ -50,9 +54,11 @@ export class Importer {
       linkItems(
         item: DecryptedItemInterface<ItemContent>,
         itemToLink: DecryptedItemInterface<ItemContent>,
+        sync: boolean,
       ): Promise<void>
     },
     private _generateUuid: GenerateUuid,
+    private files: FilesClientInterface,
   ) {
     this.registerNativeConverters()
   }
@@ -88,19 +94,19 @@ export class Importer {
     return null
   }
 
-  createNote: CreateNoteFn = ({
+  insertNote: InsertNoteFn = async ({
     createdAt,
     updatedAt,
     title,
     text,
     noteType,
     editorIdentifier,
-    trashed,
-    archived,
-    pinned,
+    trashed = false,
+    archived = false,
+    pinned = false,
     useSuperIfPossible,
   }) => {
-    if (noteType === NoteType.Super && !this.isEntitledToSuper()) {
+    if (noteType === NoteType.Super && !this.canUseSuper()) {
       noteType = undefined
     }
 
@@ -112,16 +118,17 @@ export class Importer {
       editorIdentifier = undefined
     }
 
-    const shouldUseSuper = useSuperIfPossible && this.isEntitledToSuper()
+    const shouldUseSuper = useSuperIfPossible && this.canUseSuper()
 
-    return {
-      created_at: createdAt,
-      created_at_timestamp: createdAt.getTime(),
-      updated_at: updatedAt,
-      updated_at_timestamp: updatedAt.getTime(),
-      uuid: this._generateUuid.execute().getValue(),
-      content_type: ContentType.TYPES.Note,
-      content: {
+    const noteSize = new Blob([text]).size
+
+    if (noteSize > NoteSizeThreshold) {
+      throw new Error('Note is too large to import')
+    }
+
+    const note = this.items.createTemplateItem<NoteContent, SNNote>(
+      ContentType.TYPES.Note,
+      {
         title,
         text,
         references: [],
@@ -131,27 +138,68 @@ export class Importer {
         pinned,
         editorIdentifier: shouldUseSuper ? NativeFeatureIdentifier.TYPES.SuperEditor : editorIdentifier,
       },
-    }
+      {
+        created_at: createdAt,
+        updated_at: updatedAt,
+      },
+    )
+
+    return await this.mutator.insertItem(note)
   }
 
-  createTag: CreateTagFn = ({ createdAt, updatedAt, title }) => {
-    return {
-      uuid: this._generateUuid.execute().getValue(),
-      content_type: ContentType.TYPES.Tag,
-      created_at: createdAt,
-      created_at_timestamp: createdAt.getTime(),
-      updated_at: updatedAt,
-      updated_at_timestamp: updatedAt.getTime(),
-      content: {
-        title: title,
+  insertTag: InsertTagFn = async ({ createdAt, updatedAt, title, references }) => {
+    const tag = this.items.createTemplateItem<TagContent, SNTag>(
+      ContentType.TYPES.Tag,
+      {
+        title,
         expanded: false,
         iconString: '',
-        references: [],
+        references,
       },
+      {
+        created_at: createdAt,
+        updated_at: updatedAt,
+      },
+    )
+
+    return await this.mutator.insertItem(tag)
+  }
+
+  canUploadFiles = (): boolean => {
+    const status = this.features.getFeatureStatus(
+      NativeFeatureIdentifier.create(NativeFeatureIdentifier.TYPES.Files).getValue(),
+    )
+
+    return status === FeatureStatus.Entitled
+  }
+
+  uploadFile: UploadFileFn = async (file) => {
+    if (!this.canUploadFiles()) {
+      return undefined
+    }
+
+    try {
+      return await this.filesController.uploadNewFile(file, { showToast: true })
+    } catch (error) {
+      console.error(error)
+      return undefined
     }
   }
 
-  isEntitledToSuper = (): boolean => {
+  linkItems: LinkItemsFn = async (item, itemToLink) => {
+    await this.linkingController.linkItems(item, itemToLink, false)
+  }
+
+  cleanupItems: CleanupItemsFn = async (items) => {
+    for (const item of items) {
+      if (isFile(item)) {
+        await this.files.deleteFile(item)
+      }
+      await this.mutator.deleteItems([item])
+    }
+  }
+
+  canUseSuper = (): boolean => {
     return (
       this.features.getFeatureStatus(
         NativeFeatureIdentifier.create(NativeFeatureIdentifier.TYPES.SuperEditor).getValue(),
@@ -160,7 +208,7 @@ export class Importer {
   }
 
   convertHTMLToSuper = (html: string): string => {
-    if (!this.isEntitledToSuper()) {
+    if (!this.canUseSuper()) {
       return html
     }
 
@@ -168,19 +216,22 @@ export class Importer {
   }
 
   convertMarkdownToSuper = (markdown: string): string => {
-    if (!this.isEntitledToSuper()) {
+    if (!this.canUseSuper()) {
       return markdown
     }
 
     return this.superConverterService.convertOtherFormatToSuperString(markdown, 'md')
   }
 
-  async getPayloadsFromFile(file: File, type: string): Promise<DecryptedTransferPayload[]> {
-    const isEntitledToSuper = this.isEntitledToSuper()
+  async importFromFile(file: File, type: string): Promise<ConversionResult> {
+    const canUseSuper = this.canUseSuper()
 
-    if (type === 'super' && !isEntitledToSuper) {
+    if (type === 'super' && !canUseSuper) {
       throw new Error('Importing Super notes requires a subscription')
     }
+
+    const successful: ConversionResult['successful'] = []
+    const errored: ConversionResult['errored'] = []
 
     for (const converter of this.converters) {
       const isCorrectType = converter.getImportType() === type
@@ -195,65 +246,28 @@ export class Importer {
         throw new Error('Content is not valid')
       }
 
-      return await converter.convert(file, {
-        createNote: this.createNote,
-        createTag: this.createTag,
-        canUseSuper: isEntitledToSuper,
+      const result = await converter.convert(file, {
+        insertNote: this.insertNote,
+        insertTag: this.insertTag,
+        canUploadFiles: this.canUploadFiles(),
+        uploadFile: this.uploadFile,
+        canUseSuper,
         convertHTMLToSuper: this.convertHTMLToSuper,
         convertMarkdownToSuper: this.convertMarkdownToSuper,
         readFileAsText,
+        linkItems: this.linkItems,
+        cleanupItems: this.cleanupItems,
       })
+
+      successful.push(...result.successful)
+      errored.push(...result.errored)
+
+      break
     }
 
-    return []
-  }
-
-  async importFromTransferPayloads(payloads: DecryptedTransferPayload[]) {
-    const insertedItems = await Promise.all(
-      payloads.map(async (payload) => {
-        const content = payload.content as NoteContent
-        const note = this.items.createTemplateItem(
-          payload.content_type,
-          {
-            text: content.text,
-            title: content.title,
-            noteType: content.noteType,
-            editorIdentifier: content.editorIdentifier,
-            references: content.references,
-          },
-          {
-            created_at: payload.created_at,
-            updated_at: payload.updated_at,
-            uuid: payload.uuid,
-          },
-        )
-        return this.mutator.insertItem(note)
-      }),
-    )
-    return insertedItems
-  }
-
-  async uploadAndReplaceInlineFilesInInsertedItems(insertedItems: DecryptedItemInterface<ItemContent>[]) {
-    for (const item of insertedItems) {
-      if (!isNote(item)) {
-        continue
-      }
-      if (item.noteType !== NoteType.Super) {
-        continue
-      }
-      try {
-        const text = await this.superConverterService.uploadAndReplaceInlineFilesInSuperString(
-          item.text,
-          async (file) => await this.filesController.uploadNewFile(file, { showToast: true, note: item }),
-          async (file) => await this.linkingController.linkItems(item, file),
-          this._generateUuid,
-        )
-        await this.mutator.changeItem<NoteMutator>(item, (mutator) => {
-          mutator.text = text
-        })
-      } catch (error) {
-        console.error(error)
-      }
+    return {
+      successful,
+      errored,
     }
   }
 }

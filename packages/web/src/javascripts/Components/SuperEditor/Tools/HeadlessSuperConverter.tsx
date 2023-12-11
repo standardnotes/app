@@ -1,6 +1,6 @@
 import { createHeadlessEditor } from '@lexical/headless'
 import { $convertToMarkdownString } from '@lexical/markdown'
-import { FileItem, GenerateUuid, PrefKey, PrefValue, SuperConverterServiceInterface } from '@standardnotes/snjs'
+import { FileItem, PrefKey, PrefValue, SuperConverterServiceInterface } from '@standardnotes/snjs'
 import {
   $createParagraphNode,
   $getRoot,
@@ -16,9 +16,7 @@ import { MarkdownTransformers } from '../MarkdownTransformers'
 import { $generateHtmlFromNodes, $generateNodesFromDOM } from '@lexical/html'
 import { FileNode } from '../Plugins/EncryptedFilePlugin/Nodes/FileNode'
 import { $createFileExportNode } from '../Lexical/Nodes/FileExportNode'
-import { $createInlineFileNode, $isInlineFileNode, InlineFileNode } from '../Plugins/InlineFilePlugin/InlineFileNode'
-import { $createFileNode } from '../Plugins/EncryptedFilePlugin/Nodes/FileUtils'
-import { RemoteImageNode } from '../Plugins/RemoteImagePlugin/RemoteImageNode'
+import { $createInlineFileNode } from '../Plugins/InlineFilePlugin/InlineFileNode'
 import { $convertFromMarkdownString } from '../Lexical/Utils/MarkdownImport'
 export class HeadlessSuperConverter implements SuperConverterServiceInterface {
   private importEditor: LexicalEditor
@@ -194,7 +192,8 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
                 type === 'link' ||
                 type === 'linebreak' ||
                 type === 'unencrypted-image' ||
-                type === 'inline-file'
+                type === 'inline-file' ||
+                type === 'snfile'
               ) {
                 const paragraphNode = $createParagraphNode()
                 paragraphNode.append(node)
@@ -232,7 +231,7 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
     }
 
     if (didThrow) {
-      throw new Error('Could not import note')
+      throw new Error('Could not import note. Check error console for details.')
     }
 
     return JSON.stringify(this.importEditor.getEditorState())
@@ -255,63 +254,5 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
     })
 
     return ids
-  }
-
-  async uploadAndReplaceInlineFilesInSuperString(
-    superString: string,
-    uploadFile: (file: File) => Promise<FileItem | undefined>,
-    linkFile: (file: FileItem) => Promise<void>,
-    generateUuid: GenerateUuid,
-  ): Promise<string> {
-    if (superString.length === 0) {
-      return superString
-    }
-
-    this.importEditor.setEditorState(this.importEditor.parseEditorState(superString))
-
-    await new Promise<void>((resolve) => {
-      this.importEditor.update(
-        () => {
-          const inlineFileNodes = $nodesOfType(InlineFileNode)
-          const remoteImageNodes = $nodesOfType(RemoteImageNode).filter((node) => node.__src.startsWith('data:'))
-          const concatenatedNodes = [...inlineFileNodes, ...remoteImageNodes]
-          if (concatenatedNodes.length === 0) {
-            resolve()
-            return
-          }
-          ;(async () => {
-            for (const node of concatenatedNodes) {
-              const blob = await fetch(node.__src).then((response) => response.blob())
-              const name = $isInlineFileNode(node) ? node.__fileName : node.__alt
-              const mimeType = $isInlineFileNode(node) ? node.__mimeType : node.__src.split(';')[0].split(':')[1]
-              const file = new File([blob], name || generateUuid.execute().getValue(), {
-                type: mimeType,
-              })
-
-              const uploadedFile = await uploadFile(file)
-
-              if (!uploadedFile) {
-                return
-              }
-
-              this.importEditor.update(
-                () => {
-                  const fileNode = $createFileNode(uploadedFile.uuid)
-                  node.replace(fileNode)
-                },
-                { discrete: true },
-              )
-
-              await linkFile(uploadedFile)
-            }
-          })()
-            .then(() => resolve())
-            .catch(console.error)
-        },
-        { discrete: true },
-      )
-    })
-
-    return JSON.stringify(this.importEditor.getEditorState())
   }
 }

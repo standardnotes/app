@@ -1,5 +1,6 @@
 import { NoteType } from '@standardnotes/features'
-import { DecryptedTransferPayload, ItemContent, NoteContent, TagContent } from '@standardnotes/models'
+import { DecryptedItemInterface, FileItem, ItemContent, NoteContent, SNNote, SNTag } from '@standardnotes/models'
+import { ConversionResult } from './ConversionResult'
 
 export interface Converter {
   getImportType(): string
@@ -12,17 +13,24 @@ export interface Converter {
   convert(
     file: File,
     dependencies: {
-      createNote: CreateNoteFn
-      createTag: CreateTagFn
+      insertNote: InsertNoteFn
+      insertTag: InsertTagFn
+      canUploadFiles: boolean
+      uploadFile: UploadFileFn
       canUseSuper: boolean
       convertHTMLToSuper: (html: string) => string
       convertMarkdownToSuper: (markdown: string) => string
       readFileAsText: (file: File) => Promise<string>
+      linkItems(
+        item: DecryptedItemInterface<ItemContent>,
+        itemToLink: DecryptedItemInterface<ItemContent>,
+      ): Promise<void>
+      cleanupItems(items: DecryptedItemInterface<ItemContent>[]): Promise<void>
     },
-  ): Promise<DecryptedTransferPayload<ItemContent>[]>
+  ): Promise<ConversionResult>
 }
 
-export type CreateNoteFn = (options: {
+export type InsertNoteFn = (options: {
   createdAt: Date
   updatedAt: Date
   title: string
@@ -33,10 +41,20 @@ export type CreateNoteFn = (options: {
   trashed?: boolean
   editorIdentifier?: NoteContent['editorIdentifier']
   useSuperIfPossible: boolean
-}) => DecryptedTransferPayload<NoteContent>
+}) => Promise<SNNote>
 
-export type CreateTagFn = (options: {
+export type InsertTagFn = (options: {
   createdAt: Date
   updatedAt: Date
   title: string
-}) => DecryptedTransferPayload<TagContent>
+  references: SNTag['references']
+}) => Promise<SNTag>
+
+export type UploadFileFn = (file: File) => Promise<FileItem | undefined>
+
+export type LinkItemsFn = (
+  item: DecryptedItemInterface<ItemContent>,
+  itemToLink: DecryptedItemInterface<ItemContent>,
+) => Promise<void>
+
+export type CleanupItemsFn = (items: DecryptedItemInterface<ItemContent>[]) => Promise<void>

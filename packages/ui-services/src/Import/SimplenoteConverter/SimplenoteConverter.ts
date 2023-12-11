@@ -1,4 +1,4 @@
-import { Converter, CreateNoteFn } from '../Converter'
+import { Converter, InsertNoteFn } from '../Converter'
 
 type SimplenoteItem = {
   creationDate: string
@@ -38,19 +38,22 @@ export class SimplenoteConverter implements Converter {
     return false
   }
 
-  convert: Converter['convert'] = async (file, { createNote, readFileAsText }) => {
+  convert: Converter['convert'] = async (file, { insertNote: createNote, readFileAsText }) => {
     const content = await readFileAsText(file)
 
-    const notes = this.parse(content, createNote)
+    const notes = await this.parse(content, createNote)
 
     if (!notes) {
       throw new Error('Could not parse notes')
     }
 
-    return notes
+    return {
+      successful: notes,
+      errored: [],
+    }
   }
 
-  createNoteFromItem(item: SimplenoteItem, trashed: boolean, createNote: CreateNoteFn): ReturnType<CreateNoteFn> {
+  createNoteFromItem(item: SimplenoteItem, trashed: boolean, createNote: InsertNoteFn): ReturnType<InsertNoteFn> {
     const createdAtDate = new Date(item.creationDate)
     const updatedAtDate = new Date(item.lastModified)
 
@@ -70,11 +73,15 @@ export class SimplenoteConverter implements Converter {
     })
   }
 
-  parse(data: string, createNote: CreateNoteFn) {
+  async parse(data: string, createNote: InsertNoteFn) {
     try {
       const parsed = JSON.parse(data) as SimplenoteData
-      const activeNotes = parsed.activeNotes.reverse().map((item) => this.createNoteFromItem(item, false, createNote))
-      const trashedNotes = parsed.trashedNotes.reverse().map((item) => this.createNoteFromItem(item, true, createNote))
+      const activeNotes = await Promise.all(
+        parsed.activeNotes.reverse().map((item) => this.createNoteFromItem(item, false, createNote)),
+      )
+      const trashedNotes = await Promise.all(
+        parsed.trashedNotes.reverse().map((item) => this.createNoteFromItem(item, true, createNote)),
+      )
 
       return [...activeNotes, ...trashedNotes]
     } catch (error) {

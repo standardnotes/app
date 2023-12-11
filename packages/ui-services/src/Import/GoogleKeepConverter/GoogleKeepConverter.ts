@@ -1,5 +1,5 @@
-import { DecryptedTransferPayload, NoteContent } from '@standardnotes/models'
-import { Converter, CreateNoteFn } from '../Converter'
+import { SNNote } from '@standardnotes/models'
+import { Converter, InsertNoteFn } from '../Converter'
 
 type Content =
   | {
@@ -45,32 +45,31 @@ export class GoogleKeepConverter implements Converter {
 
   convert: Converter['convert'] = async (
     file,
-    { createNote, canUseSuper, convertHTMLToSuper, convertMarkdownToSuper, readFileAsText },
+    { insertNote: createNote, canUseSuper, convertHTMLToSuper, convertMarkdownToSuper, readFileAsText },
   ) => {
     const content = await readFileAsText(file)
 
-    const possiblePayloadFromJson = this.tryParseAsJson(content, createNote, convertMarkdownToSuper)
+    const note =
+      (await this.tryParseAsJson(content, createNote, convertMarkdownToSuper)) ||
+      (await this.tryParseAsHtml(content, file, createNote, convertHTMLToSuper, canUseSuper))
 
-    if (possiblePayloadFromJson) {
-      return [possiblePayloadFromJson]
-    }
-
-    const possiblePayloadFromHtml = this.tryParseAsHtml(content, file, createNote, convertHTMLToSuper, canUseSuper)
-
-    if (possiblePayloadFromHtml) {
-      return [possiblePayloadFromHtml]
+    if (note) {
+      return {
+        successful: [note],
+        errored: [],
+      }
     }
 
     throw new Error('Could not parse Google Keep backup file')
   }
 
-  tryParseAsHtml(
+  async tryParseAsHtml(
     data: string,
     file: { name: string },
-    createNote: CreateNoteFn,
+    insertNote: InsertNoteFn,
     convertHTMLToSuper: (html: string) => string,
     canUseSuper: boolean,
-  ): DecryptedTransferPayload<NoteContent> {
+  ): Promise<SNNote> {
     const rootElement = document.createElement('html')
     rootElement.innerHTML = data
 
@@ -119,7 +118,7 @@ export class GoogleKeepConverter implements Converter {
 
     const title = rootElement.getElementsByClassName('title')[0]?.textContent || file.name
 
-    return createNote({
+    return await insertNote({
       createdAt: date,
       updatedAt: date,
       title: title,
@@ -150,11 +149,11 @@ export class GoogleKeepConverter implements Converter {
     )
   }
 
-  tryParseAsJson(
+  async tryParseAsJson(
     data: string,
-    createNote: CreateNoteFn,
+    createNote: InsertNoteFn,
     convertMarkdownToSuper: (md: string) => string,
-  ): DecryptedTransferPayload<NoteContent> | null {
+  ): Promise<SNNote | null> {
     try {
       const parsed = JSON.parse(data) as GoogleKeepJsonNote
       if (!GoogleKeepConverter.isValidGoogleKeepJson(parsed)) {
@@ -172,7 +171,7 @@ export class GoogleKeepConverter implements Converter {
           .join('\n')
       }
       text = convertMarkdownToSuper(text)
-      return createNote({
+      return await createNote({
         createdAt: date,
         updatedAt: date,
         title: parsed.title,

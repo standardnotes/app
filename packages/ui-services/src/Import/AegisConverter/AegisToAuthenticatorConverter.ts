@@ -1,5 +1,6 @@
 import { NativeFeatureIdentifier, NoteType } from '@standardnotes/features'
 import { Converter } from '../Converter'
+import { ConversionResult } from '../ConversionResult'
 
 type AegisData = {
   db: {
@@ -45,7 +46,7 @@ export class AegisToAuthenticatorConverter implements Converter {
     return false
   }
 
-  convert: Converter['convert'] = async (file, { createNote, readFileAsText }) => {
+  convert: Converter['convert'] = async (file, { insertNote, readFileAsText }) => {
     const content = await readFileAsText(file)
 
     const entries = this.parseEntries(content)
@@ -59,17 +60,22 @@ export class AegisToAuthenticatorConverter implements Converter {
     const title = file.name.split('.')[0]
     const text = JSON.stringify(entries)
 
-    return [
-      createNote({
-        createdAt,
-        updatedAt,
-        title,
-        text,
-        noteType: NoteType.Authentication,
-        editorIdentifier: NativeFeatureIdentifier.TYPES.TokenVaultEditor,
-        useSuperIfPossible: false,
-      }),
-    ]
+    const note = await insertNote({
+      createdAt,
+      updatedAt,
+      title,
+      text,
+      noteType: NoteType.Authentication,
+      editorIdentifier: NativeFeatureIdentifier.TYPES.TokenVaultEditor,
+      useSuperIfPossible: false,
+    })
+
+    const successful: ConversionResult['successful'] = [note]
+
+    return {
+      successful,
+      errored: [],
+    }
   }
 
   parseEntries(data: string): AuthenticatorEntry[] | null {

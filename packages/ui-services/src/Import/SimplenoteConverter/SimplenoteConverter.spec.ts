@@ -1,11 +1,11 @@
-import { DecryptedTransferPayload, NoteContent } from '@standardnotes/models'
+import { SNNote } from '@standardnotes/models'
 import { SimplenoteConverter } from './SimplenoteConverter'
 import data from './testData'
 import { ContentType } from '@standardnotes/domain-core'
-import { CreateNoteFn } from '../Converter'
+import { InsertNoteFn } from '../Converter'
 
 describe('SimplenoteConverter', () => {
-  const createNote: CreateNoteFn = ({ title, text, trashed, createdAt, updatedAt }) =>
+  const createNote: InsertNoteFn = async ({ title, text, trashed, createdAt, updatedAt }) =>
     ({
       uuid: Math.random().toString(),
       created_at: createdAt,
@@ -17,12 +17,12 @@ describe('SimplenoteConverter', () => {
         trashed,
         references: [],
       },
-    }) as unknown as DecryptedTransferPayload<NoteContent>
+    }) as unknown as SNNote
 
-  it('should parse', () => {
+  it('should parse', async () => {
     const converter = new SimplenoteConverter()
 
-    const result = converter.parse(data, createNote)
+    const result = await converter.parse(data, createNote)
 
     expect(result).not.toBeNull()
     expect(result?.length).toBe(3)

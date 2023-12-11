@@ -16,7 +16,7 @@ export class HTMLConverter implements Converter {
     return true
   }
 
-  convert: Converter['convert'] = async (file, { createNote, convertHTMLToSuper, readFileAsText }) => {
+  convert: Converter['convert'] = async (file, { insertNote: createNote, convertHTMLToSuper, readFileAsText }) => {
     const content = await readFileAsText(file)
 
     const { name } = parseFileName(file.name)
@@ -26,14 +26,17 @@ export class HTMLConverter implements Converter {
 
     const text = convertHTMLToSuper(content)
 
-    return [
-      createNote({
-        createdAt: createdAtDate,
-        updatedAt: updatedAtDate,
-        title: name,
-        text,
-        useSuperIfPossible: true,
-      }),
-    ]
+    const note = await createNote({
+      createdAt: createdAtDate,
+      updatedAt: updatedAtDate,
+      title: name,
+      text,
+      useSuperIfPossible: true,
+    })
+
+    return {
+      successful: [note],
+      errored: [],
+    }
   }
 }
