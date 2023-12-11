@@ -1,13 +1,6 @@
 import { NoteType } from '@standardnotes/features'
 import { DecryptedItemInterface, FileItem, ItemContent, NoteContent, SNNote, SNTag } from '@standardnotes/models'
-
-export type ConversionResult = {
-  successful: DecryptedItemInterface[]
-  errored: {
-    name: string
-    error: Error
-  }[]
-}
+import { ConversionResult } from './ConversionResult'
 
 export interface Converter {
   getImportType(): string

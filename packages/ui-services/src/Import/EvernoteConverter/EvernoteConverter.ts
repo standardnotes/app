@@ -5,7 +5,8 @@ import utc from 'dayjs/plugin/utc'
 import { GenerateUuid } from '@standardnotes/services'
 import MD5 from 'crypto-js/md5'
 import Base64 from 'crypto-js/enc-base64'
-import { ConversionResult, Converter, UploadFileFn } from '../Converter'
+import { Converter, UploadFileFn } from '../Converter'
+import { ConversionResult } from '../ConversionResult'
 dayjs.extend(customParseFormat)
 dayjs.extend(utc)
 

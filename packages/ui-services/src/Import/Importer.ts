@@ -27,15 +27,8 @@ import {
 } from '@standardnotes/models'
 import { HTMLConverter } from './HTMLConverter/HTMLConverter'
 import { SuperConverter } from './SuperConverter/SuperConverter'
-import {
-  CleanupItemsFn,
-  ConversionResult,
-  Converter,
-  InsertNoteFn,
-  InsertTagFn,
-  LinkItemsFn,
-  UploadFileFn,
-} from './Converter'
+import { CleanupItemsFn, Converter, InsertNoteFn, InsertTagFn, LinkItemsFn, UploadFileFn } from './Converter'
+import { ConversionResult } from './ConversionResult'
 import { FilesClientInterface, SuperConverterServiceInterface } from '@standardnotes/files'
 import { ContentType } from '@standardnotes/domain-core'
 
@@ -255,7 +248,7 @@ export class Importer {
         throw new Error('Content is not valid')
       }
 
-      await converter.convert(file, {
+      const result = await converter.convert(file, {
         insertNote: this.insertNote,
         insertTag: this.insertTag,
         canUploadFiles: this.canUploadFiles(),
@@ -267,6 +260,9 @@ export class Importer {
         linkItems: this.linkItems,
         cleanupItems: this.cleanupItems,
       })
+
+      successful.push(...result.successful)
+      errored.push(...result.errored)
 
       break
     }

@@ -1,5 +1,6 @@
 import { NativeFeatureIdentifier, NoteType } from '@standardnotes/features'
-import { ConversionResult, Converter } from '../Converter'
+import { Converter } from '../Converter'
+import { ConversionResult } from '../ConversionResult'
 
 type AegisData = {
   db: {

@@ -1,6 +1,7 @@
 import { SuperConverterServiceInterface } from '@standardnotes/files'
 import { parseFileName } from '@standardnotes/filepicker'
-import { ConversionResult, Converter } from '../Converter'
+import { Converter } from '../Converter'
+import { ConversionResult } from '../ConversionResult'
 
 export class SuperConverter implements Converter {
   constructor(private converterService: SuperConverterServiceInterface) {}

@@ -110,7 +110,7 @@ export class ImportModalController extends AbstractViewController {
       id: UuidGenerator.GenerateUuid(),
       file,
       service,
-      status: service ? 'ready' : 'pending',
+      status: 'pending',
     } as ImportModalFile
   }
 

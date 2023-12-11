@@ -34,9 +34,9 @@ const ImportModal = ({ importModalController }: { importModalController: ImportM
     close,
   } = importModalController
 
-  const isReadyToImport = files.length > 0 && files.every((file) => file.status === 'ready')
+  const isReadyToImport = files.length > 0 && files.every((file) => file.status === 'pending' && file.service)
   const importSuccessOrError =
-    files.length > 0 && files.every((file) => file.status === 'success' || file.status === 'error')
+    files.length > 0 && files.every((file) => file.status === 'finished' || file.status === 'error')
 
   const modalActions: ModalAction[] = useMemo(
     () => [

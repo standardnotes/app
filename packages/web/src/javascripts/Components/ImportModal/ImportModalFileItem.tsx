@@ -1,6 +1,6 @@
 import { ImportModalController, ImportModalFile } from '@/Components/ImportModal/ImportModalController'
 import { classNames, ContentType, pluralize } from '@standardnotes/snjs'
-import { Importer } from '@standardnotes/ui-services'
+import { ConversionResult, Importer } from '@standardnotes/ui-services'
 import { observer } from 'mobx-react-lite'
 import { useCallback, useEffect, useState } from 'react'
 import Icon from '../Icon/Icon'
@@ -25,6 +25,53 @@ const NoteImportTypeIcons: Record<string, string> = {
   super: 'file-doc',
 }
 
+const countSuccessfulItemsByGroup = (successful: ConversionResult['successful']) => {
+  let notes = 0
+  let tags = 0
+  let files = 0
+
+  for (const item of successful) {
+    if (item.content_type === ContentType.TYPES.Note) {
+      notes++
+    } else if (item.content_type === ContentType.TYPES.Tag) {
+      tags++
+    } else if (item.content_type === ContentType.TYPES.File) {
+      files++
+    }
+  }
+
+  return {
+    notes,
+    tags,
+    files,
+  }
+}
+
+const ImportFinishedStatus = ({ file }: { file: ImportModalFile }) => {
+  if (file.status !== 'finished') {
+    return null
+  }
+
+  const { notes, tags, files } = countSuccessfulItemsByGroup(file.successful)
+
+  const notesStatus = notes > 0 ? `${notes} ${pluralize(notes, 'note', 'notes')}` : ''
+  const tagsStatus = tags > 0 ? `${tags} ${pluralize(tags, 'tag', 'tags')}` : ''
+  const filesStatus = files > 0 ? `${files} ${pluralize(files, 'file', 'files')}` : ''
+  const status = [notesStatus, tagsStatus, filesStatus].filter(Boolean).join(', ')
+
+  return (
+    <>
+      {file.successful.length > 0 && (
+        <div className="flex items-center gap-1">
+          <Icon type="check-circle-filled" className="flex-shrink-0 text-success" size="small" />
+          <span>{status} imported</span>
+        </div>
+      )}
+      {file.errored.length > 0 && <></>}
+    </>
+  )
+}
+
 const ImportModalFileItem = ({
   file,
   updateFile,
@@ -36,6 +83,7 @@ const ImportModalFileItem = ({
   removeFile: ImportModalController['removeFile']
   importer: Importer
 }) => {
+  const [isDetectingService, setIsDetectingService] = useState(false)
   const [changingService, setChangingService] = useState(false)
 
   const setFileService = useCallback(
@@ -46,7 +94,7 @@ const ImportModalFileItem = ({
       updateFile({
         ...file,
         service,
-        status: service ? 'ready' : 'pending',
+        status: 'pending',
       })
     },
     [file, updateFile],
@@ -54,27 +102,15 @@ const ImportModalFileItem = ({
 
   useEffect(() => {
     const detect = async () => {
+      setIsDetectingService(true)
       const detectedService = await importer.detectService(file.file)
       void setFileService(detectedService)
+      setIsDetectingService(false)
     }
     if (file.service === undefined) {
       void detect()
     }
   }, [file, importer, setFileService])
-
-  const notePayloads =
-    file.status === 'ready' && file.payloads
-      ? file.payloads.filter((payload) => payload.content_type === ContentType.TYPES.Note)
-      : []
-  const tagPayloads =
-    file.status === 'ready' && file.payloads
-      ? file.payloads.filter((payload) => payload.content_type === ContentType.TYPES.Tag)
-      : []
-
-  const payloadsImportMessage =
-    `Ready to import ${notePayloads.length} ` +
-    pluralize(notePayloads.length, 'note', 'notes') +
-    (tagPayloads.length > 0 ? ` and ${tagPayloads.length} ${pluralize(tagPayloads.length, 'tag', 'tags')}` : '')
 
   return (
     <div
@@ -91,22 +127,22 @@ const ImportModalFileItem = ({
         )}
         <div className="flex flex-col">
           <div>{file.file.name}</div>
-          <div className="line-clamp-3 text-xs opacity-75">
-            {file.status === 'ready'
-              ? notePayloads.length > 1 || tagPayloads.length
-                ? payloadsImportMessage
-                : 'Ready to import'
-              : null}
-            {file.status === 'pending' && !file.service && 'Could not auto-detect service. Please select manually.'}
-            {file.status === 'parsing' && 'Parsing...'}
-            {file.status === 'importing' && 'Importing...'}
-            {file.status === 'uploading-files' && 'Uploading and embedding files...'}
-            {file.status === 'error' && file.error.message}
-            {file.status === 'success' && file.successMessage}
-          </div>
+          {isDetectingService ? (
+            <div className="text-xs opacity-75">Detecting service...</div>
+          ) : (
+            <div className="line-clamp-3 text-xs opacity-75">
+              {file.status === 'pending' && file.service && 'Ready to import'}
+              {file.status === 'pending' && !file.service && 'Could not auto-detect service. Please select manually.'}
+              {file.status === 'parsing' && 'Parsing...'}
+              {file.status === 'importing' && 'Importing...'}
+              {file.status === 'uploading-files' && 'Uploading and embedding files...'}
+              {file.status === 'error' && file.error.message}
+              <ImportFinishedStatus file={file} />
+            </div>
+          )}
         </div>
       </div>
-      {(file.status === 'ready' || file.status === 'pending') && (
+      {file.status === 'pending' && (
         <div className="flex items-center">
           {changingService ? (
             <>
@@ -172,7 +208,9 @@ const ImportModalFileItem = ({
           </button>
         </div>
       )}
-      {file.status === 'success' && <Icon type="check-circle-filled" className="flex-shrink-0 text-success" />}
+      {file.status === 'finished' && file.successful.length > 0 && file.errored.length === 0 && (
+        <Icon type="check-circle-filled" className="flex-shrink-0 text-success" />
+      )}
       {file.status === 'error' && <Icon type="warning" className="flex-shrink-0 text-danger" />}
     </div>
   )
