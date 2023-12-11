@@ -233,7 +233,7 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
     }
 
     if (didThrow) {
-      throw new Error('Could not import note')
+      throw new Error('Could not import note. Check error console for details.')
     }
 
     return JSON.stringify(this.importEditor.getEditorState())
