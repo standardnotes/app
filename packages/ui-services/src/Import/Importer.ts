@@ -18,12 +18,10 @@ import {
   FileItem,
   ItemContent,
   NoteContent,
-  NoteMutator,
   SNNote,
   SNTag,
   TagContent,
   isFile,
-  isNote,
 } from '@standardnotes/models'
 import { HTMLConverter } from './HTMLConverter/HTMLConverter'
 import { SuperConverter } from './SuperConverter/SuperConverter'
@@ -270,30 +268,6 @@ export class Importer {
     return {
       successful,
       errored,
-    }
-  }
-
-  async uploadAndReplaceInlineFilesInInsertedItems(insertedItems: DecryptedItemInterface<ItemContent>[]) {
-    for (const item of insertedItems) {
-      if (!isNote(item)) {
-        continue
-      }
-      if (item.noteType !== NoteType.Super) {
-        continue
-      }
-      try {
-        const text = await this.superConverterService.uploadAndReplaceInlineFilesInSuperString(
-          item.text,
-          async (file) => await this.filesController.uploadNewFile(file, { showToast: true, note: item }),
-          async (file) => await this.linkingController.linkItems(item, file, false),
-          this._generateUuid,
-        )
-        await this.mutator.changeItem<NoteMutator>(item, (mutator) => {
-          mutator.text = text
-        })
-      } catch (error) {
-        console.error(error)
-      }
     }
   }
 }
