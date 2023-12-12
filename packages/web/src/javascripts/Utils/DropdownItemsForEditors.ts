@@ -3,10 +3,12 @@ import {
   FindNativeFeature,
   GetIframeAndNativeEditors,
   NativeFeatureIdentifier,
+  NoteType,
 } from '@standardnotes/features'
 import { getIconAndTintForNoteType } from './Items/Icons/getIconAndTintForNoteType'
 import { DropdownItem } from '@/Components/Dropdown/DropdownItem'
 import { WebApplicationInterface } from '@standardnotes/ui-services'
+import { classNames } from '@standardnotes/snjs'
 
 export type EditorOption = DropdownItem & {
   value: string
@@ -25,7 +27,14 @@ export function getDropdownItemsForAllEditors(application: WebApplicationInterfa
         value: editor.identifier,
         id: NativeFeatureIdentifier.create(editor.identifier).getValue(),
         ...(iconType ? { icon: iconType } : null),
-        ...(tint ? { iconClassName: `text-accessory-tint-${tint}` } : null),
+        ...(tint
+          ? {
+              iconClassName: classNames(
+                `text-accessory-tint-${tint}`,
+                editor.note_type === NoteType.Plain && 'group-hover:text-info-contrast',
+              ),
+            }
+          : null),
       }
     }),
   )

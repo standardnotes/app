@@ -84,7 +84,7 @@ const Dropdown = ({
       >
         {items.map((item) => (
           <SelectItem
-            className="flex cursor-pointer items-center bg-transparent px-3 py-1.5 text-sm text-text hover:bg-contrast hover:text-foreground [&[data-active-item]]:bg-info [&[data-active-item]]:text-info-contrast"
+            className="group flex cursor-pointer items-center bg-transparent px-3 py-1.5 text-sm text-text hover:bg-contrast hover:text-foreground [&[data-active-item]]:bg-info [&[data-active-item]]:text-info-contrast"
             key={item.value}
             value={item.value}
             disabled={item.disabled}
