@@ -17,6 +17,12 @@ describe('shared vault revisions', function () {
 
     await context.launch()
     await context.register()
+
+    /**
+     * Free user revisions are limited to 1 per day. This is to ensure that
+     * we don't hit that limit during testing.
+     */
+    await context.activatePaidSubscriptionForUser()
   })
 
   afterEach(async function () {
@@ -34,6 +40,8 @@ describe('shared vault revisions', function () {
     const { note, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithAcceptedInviteAndNote(context)
     deinitContactContextFunction = deinitContactContext
+
+    await contactContext.activatePaidSubscriptionForUser()
 
     await Factory.sleep(Factory.ServerRevisionFrequency)
 
@@ -77,6 +85,8 @@ describe('shared vault revisions', function () {
       await Collaboration.createSharedVaultWithAcceptedInviteAndNote(context)
     deinitContactContextFunction = deinitContactContext
 
+    await contactContext.activatePaidSubscriptionForUser()
+
     await Factory.sleep(Factory.ServerRevisionFrequency)
 
     const contactNote = contactContext.items.findItem(note.uuid)
@@ -102,6 +112,8 @@ describe('shared vault revisions', function () {
     const { note, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithAcceptedInviteAndNote(context)
     deinitContactContextFunction = deinitContactContext
+
+    await contactContext.activatePaidSubscriptionForUser()
 
     await Factory.sleep(Factory.ServerRevisionFrequency)
     await context.changeNoteTitleAndSync(note, 'new title 1')
@@ -135,6 +147,8 @@ describe('shared vault revisions', function () {
       await Collaboration.createSharedVaultWithAcceptedInviteAndNote(context)
     deinitContactContextFunction = deinitContactContext
 
+    await contactContext.activatePaidSubscriptionForUser()
+
     await Factory.sleep(Factory.ServerRevisionFrequency)
 
     await context.changeNoteTitleAndSync(note, 'new title 1')
@@ -163,6 +177,8 @@ describe('shared vault revisions', function () {
     const { note, sharedVault, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithAcceptedInviteAndNote(context)
     deinitContactContextFunction = deinitContactContext
+
+    await contactContext.activatePaidSubscriptionForUser()
 
     await Factory.sleep(Factory.ServerRevisionFrequency)
 
