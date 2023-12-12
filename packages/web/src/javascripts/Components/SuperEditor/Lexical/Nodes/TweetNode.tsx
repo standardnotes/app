@@ -22,7 +22,7 @@ import { BlockWithAlignableContents } from '@lexical/react/LexicalBlockWithAlign
 import { DecoratorBlockNode, SerializedDecoratorBlockNode } from '@lexical/react/LexicalDecoratorBlockNode'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-const WIDGET_SCRIPT_URL = 'https://platform.twitter.com/widgets.js'
+const WIDGET_SCRIPT_URL = '/dist/twitter-widgets.js'
 
 type TweetComponentProps = Readonly<{
   className: Readonly<{
