@@ -9,7 +9,6 @@ import { BlockPickerMenuItem } from './BlockPickerMenuItem'
 import { GetDynamicPasswordBlocks, GetPasswordBlockOption } from '../Blocks/Password'
 import { GetDynamicTableBlocks, GetTableBlockOption } from '../Blocks/Table'
 import Popover from '@/Components/Popover/Popover'
-import { PopoverClassNames } from '../ClassNames'
 import { GetDatetimeBlockOptions } from '../Blocks/DateTime'
 import { isMobileScreen } from '@/Utils'
 import { useApplication } from '@/Components/ApplicationProvider'
@@ -132,25 +131,23 @@ export default function BlockPickerMenuPlugin(): JSX.Element {
               side={isMobileScreen() ? 'top' : 'bottom'}
               maxHeight={(mh) => mh / 2}
             >
-              <div className={PopoverClassNames}>
-                <ul>
-                  {options.map((option, i: number) => (
-                    <BlockPickerMenuItem
-                      index={i}
-                      isSelected={selectedIndex === i}
-                      onClick={() => {
-                        setHighlightedIndex(i)
-                        selectOptionAndCleanUp(option)
-                      }}
-                      onMouseEnter={() => {
-                        setHighlightedIndex(i)
-                      }}
-                      key={option.key}
-                      option={option}
-                    />
-                  ))}
-                </ul>
-              </div>
+              <ul>
+                {options.map((option, i: number) => (
+                  <BlockPickerMenuItem
+                    index={i}
+                    isSelected={selectedIndex === i}
+                    onClick={() => {
+                      setHighlightedIndex(i)
+                      selectOptionAndCleanUp(option)
+                    }}
+                    onMouseEnter={() => {
+                      setHighlightedIndex(i)
+                    }}
+                    key={option.key}
+                    option={option}
+                  />
+                ))}
+              </ul>
             </Popover>
           )
         }}

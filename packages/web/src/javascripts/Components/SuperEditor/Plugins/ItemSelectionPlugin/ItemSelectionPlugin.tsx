@@ -10,7 +10,6 @@ import { getLinkingSearchResults } from '@/Utils/Items/Search/getSearchResults'
 import Popover from '@/Components/Popover/Popover'
 import { INSERT_BUBBLE_COMMAND, INSERT_FILE_COMMAND } from '../Commands'
 import { useLinkingController } from '../../../../Controllers/LinkingControllerProvider'
-import { PopoverClassNames } from '../ClassNames'
 import { isMobileScreen } from '@/Utils'
 import { useTypeaheadAllowingSpacesAndPunctuation } from './useTypeaheadAllowingSpacesAndPunctuation'
 
@@ -104,26 +103,24 @@ export const ItemSelectionPlugin: FunctionComponent<Props> = ({ currentNote }) =
             side={isMobileScreen() ? 'top' : 'bottom'}
             maxHeight={(mh) => mh / 2}
           >
-            <div className={PopoverClassNames}>
-              <ul>
-                {options.map((option, i: number) => (
-                  <ItemSelectionItemComponent
-                    searchQuery={queryString || ''}
-                    index={i}
-                    isSelected={selectedIndex === i}
-                    onClick={() => {
-                      setHighlightedIndex(i)
-                      selectOptionAndCleanUp(option)
-                    }}
-                    onMouseEnter={() => {
-                      setHighlightedIndex(i)
-                    }}
-                    key={option.key}
-                    option={option}
-                  />
-                ))}
-              </ul>
-            </div>
+            <ul>
+              {options.map((option, i: number) => (
+                <ItemSelectionItemComponent
+                  searchQuery={queryString || ''}
+                  index={i}
+                  isSelected={selectedIndex === i}
+                  onClick={() => {
+                    setHighlightedIndex(i)
+                    selectOptionAndCleanUp(option)
+                  }}
+                  onMouseEnter={() => {
+                    setHighlightedIndex(i)
+                  }}
+                  key={option.key}
+                  option={option}
+                />
+              ))}
+            </ul>
           </Popover>
         )
       }}
