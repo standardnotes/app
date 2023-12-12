@@ -225,7 +225,6 @@ const ChallengeModal: FunctionComponent<Props> = ({ application, mainApplication
 
   const isMobileScreen = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
   const isFullScreenBlocker = challenge.reason === ChallengeReason.ApplicationUnlock
-  const isMobileOverlay = isMobileScreen && !isFullScreenBlocker
 
   const [modalElement, setModalElement] = useState<HTMLDivElement | null>(null)
   const modalElementRect = useAutoElementRect(modalElement, {
@@ -243,7 +242,6 @@ const ChallengeModal: FunctionComponent<Props> = ({ application, mainApplication
       className={classNames(
         'sn-component challenge-modal relative m-0 flex h-full w-full flex-col items-center rounded border-solid border-border bg-default p-0 md:h-auto md:!w-max',
         !isMobileScreen && 'shadow-overlay-light',
-        isMobileOverlay && 'shadow-overlay-light border border-solid border-border',
       )}
     >
       <Modal
