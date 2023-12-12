@@ -78,23 +78,29 @@ export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
   return (
     <>
       {!isMobile && <ToolbarPlugin />}
-      <RichTextPlugin
-        contentEditable={
-          <div id="blocks-editor" className="editor-scroller h-full min-h-0">
-            <div className="editor z-0 overflow-hidden" ref={onRef}>
-              <ContentEditable
-                id={SuperEditorContentId}
-                className={classNames('ContentEditable__root overflow-y-auto', className)}
-                spellCheck={spellcheck}
-                onScroll={onScroll}
-              />
-              <div className="search-highlight-container pointer-events-none absolute left-0 top-0 h-full w-full" />
+      <div className="relative min-h-0 flex-grow">
+        <RichTextPlugin
+          contentEditable={
+            <div id="blocks-editor" className="editor-scroller h-full min-h-0">
+              <div className="editor z-0 overflow-hidden" ref={onRef}>
+                <ContentEditable
+                  id={SuperEditorContentId}
+                  className={classNames('ContentEditable__root overflow-y-auto', className)}
+                  spellCheck={spellcheck}
+                  onScroll={onScroll}
+                />
+                <div className="search-highlight-container pointer-events-none absolute left-0 top-0 h-full w-full" />
+              </div>
             </div>
-          </div>
-        }
-        placeholder={null}
-        ErrorBoundary={LexicalErrorBoundary}
-      />
+          }
+          placeholder={
+            <div className="pointer-events-none absolute left-4 top-4 text-passive-1">
+              Type <span className="rounded bg-passive-4-opacity-variant p-0.5">/</span> for commands...
+            </div>
+          }
+          ErrorBoundary={LexicalErrorBoundary}
+        />
+      </div>
       {isMobile && <ToolbarPlugin />}
       <ListPlugin />
       <MarkdownShortcutPlugin transformers={MarkdownTransformers} />
