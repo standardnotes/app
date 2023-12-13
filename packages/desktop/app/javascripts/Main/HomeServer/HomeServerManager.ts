@@ -220,17 +220,25 @@ export class HomeServerManager implements HomeServerManagerInterface {
 
   private getLocalIP() {
     const interfaces = os.networkInterfaces()
+    let internalAddress = undefined
     for (const interfaceName in interfaces) {
       const addresses = interfaces[interfaceName]
       if (!addresses) {
         continue
       }
+
       for (const address of addresses) {
-        if (address.family === 'IPv4' && !address.internal) {
-          return address.address
+        if (address.family === 'IPv4') {
+          if (!address.internal) {
+            return address.address
+          }
+
+          internalAddress = address.address
         }
       }
     }
+
+    return internalAddress
   }
 
   private async getHomeServerConfigurationObject(): Promise<HomeServerEnvironmentConfiguration | undefined> {
