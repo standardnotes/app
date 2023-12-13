@@ -134,11 +134,8 @@ export const getPositionedPopoverStyles = ({
   const preferredSideRectCollisions = checkCollisions(rectForPreferredSide, documentRect)
 
   const oppositeSide = OppositeSide[side]
-  const rectForOppositeSide = getPositionedPopoverRect(popoverRect, anchorRect, oppositeSide, align)
-  const oppositeSideRectCollisions = checkCollisions(rectForOppositeSide, documentRect)
 
-  const sideWithLessOverflows =
-    preferredSideRectCollisions[side] < oppositeSideRectCollisions[oppositeSide] ? side : oppositeSide
+  const sideWithLessOverflows = preferredSideRectCollisions[side] ? oppositeSide : side
 
   const finalAlignment = getNonCollidingAlignment({
     finalSide: disableFlip ? side : sideWithLessOverflows,
