@@ -70,7 +70,7 @@ const ImportModal = ({ importModalController }: { importModalController: ImportM
   return (
     <ModalOverlay isOpen={isVisible} close={close}>
       <Modal title="Import" close={close} actions={modalActions} className="flex flex-col">
-        <div className="min-h-0 flex-grow px-4 py-4">
+        <div className="min-h-0 flex-grow overflow-y-auto px-4 py-4">
           {!files.length && <ImportModalInitialPage setFiles={setFiles} selectFiles={selectFiles} />}
           {files.length > 0 && (
             <>
