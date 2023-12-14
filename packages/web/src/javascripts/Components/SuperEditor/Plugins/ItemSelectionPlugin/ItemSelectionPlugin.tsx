@@ -7,11 +7,11 @@ import { ItemOption } from './ItemOption'
 import { useApplication } from '@/Components/ApplicationProvider'
 import { ContentType, SNNote } from '@standardnotes/snjs'
 import { getLinkingSearchResults } from '@/Utils/Items/Search/getSearchResults'
+import Popover from '@/Components/Popover/Popover'
 import { INSERT_BUBBLE_COMMAND, INSERT_FILE_COMMAND } from '../Commands'
 import { useLinkingController } from '../../../../Controllers/LinkingControllerProvider'
+import { isMobileScreen } from '@/Utils'
 import { useTypeaheadAllowingSpacesAndPunctuation } from './useTypeaheadAllowingSpacesAndPunctuation'
-import { Popover, PopoverProvider } from '@ariakit/react'
-import { PopoverClassNames } from '../ClassNames'
 
 type Props = {
   currentNote: SNNote
@@ -83,47 +83,47 @@ export const ItemSelectionPlugin: FunctionComponent<Props> = ({ currentNote }) =
   }, [application, editor, currentNote, queryString, linkingController])
 
   return (
-    <PopoverProvider>
-      <LexicalTypeaheadMenuPlugin<ItemOption>
-        onQueryChange={setQueryString}
-        onSelectOption={onSelectOption}
-        triggerFn={checkForTriggerMatch}
-        options={options}
-        menuRenderFn={(anchorElementRef, { selectedIndex, selectOptionAndCleanUp, setHighlightedIndex }) => {
-          if (!anchorElementRef.current || !options.length) {
-            return null
-          }
-          return (
-            <Popover
-              open
-              getAnchorRect={() => anchorElementRef.current!.getBoundingClientRect()}
-              autoFocus={false}
-              autoFocusOnShow={false}
-              className={PopoverClassNames}
-              fitViewport
-            >
-              <ul className="divide-y divide-border">
-                {options.map((option, i: number) => (
-                  <ItemSelectionItemComponent
-                    searchQuery={queryString || ''}
-                    index={i}
-                    isSelected={selectedIndex === i}
-                    onClick={() => {
-                      setHighlightedIndex(i)
-                      selectOptionAndCleanUp(option)
-                    }}
-                    onMouseEnter={() => {
-                      setHighlightedIndex(i)
-                    }}
-                    key={option.key}
-                    option={option}
-                  />
-                ))}
-              </ul>
-            </Popover>
-          )
-        }}
-      />
-    </PopoverProvider>
+    <LexicalTypeaheadMenuPlugin<ItemOption>
+      onQueryChange={setQueryString}
+      onSelectOption={onSelectOption}
+      triggerFn={checkForTriggerMatch}
+      options={options}
+      menuRenderFn={(anchorElementRef, { selectedIndex, selectOptionAndCleanUp, setHighlightedIndex }) => {
+        if (!anchorElementRef.current || !options.length) {
+          return null
+        }
+
+        return (
+          <Popover
+            title="Select item"
+            align="start"
+            anchorElement={anchorElementRef}
+            open={true}
+            disableMobileFullscreenTakeover={true}
+            side={isMobileScreen() ? 'top' : 'bottom'}
+            maxHeight={(mh) => mh / 2}
+          >
+            <ul>
+              {options.map((option, i: number) => (
+                <ItemSelectionItemComponent
+                  searchQuery={queryString || ''}
+                  index={i}
+                  isSelected={selectedIndex === i}
+                  onClick={() => {
+                    setHighlightedIndex(i)
+                    selectOptionAndCleanUp(option)
+                  }}
+                  onMouseEnter={() => {
+                    setHighlightedIndex(i)
+                  }}
+                  key={option.key}
+                  option={option}
+                />
+              ))}
+            </ul>
+          </Popover>
+        )
+      }}
+    />
   )
 }

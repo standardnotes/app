@@ -8,7 +8,9 @@ import { BlockPickerOption } from './BlockPickerOption'
 import { BlockPickerMenuItem } from './BlockPickerMenuItem'
 import { GetDynamicPasswordBlocks, GetPasswordBlockOption } from '../Blocks/Password'
 import { GetDynamicTableBlocks, GetTableBlockOption } from '../Blocks/Table'
+import Popover from '@/Components/Popover/Popover'
 import { GetDatetimeBlockOptions } from '../Blocks/DateTime'
+import { isMobileScreen } from '@/Utils'
 import { useApplication } from '@/Components/ApplicationProvider'
 import { GetRemoteImageBlockOption } from '../Blocks/RemoteImage'
 import { InsertRemoteImageDialog } from '../RemoteImagePlugin/RemoteImagePlugin'
@@ -27,8 +29,6 @@ import { GetQuoteBlockOption } from '../Blocks/Quote'
 import { GetDividerBlockOption } from '../Blocks/Divider'
 import { GetCollapsibleBlockOption } from '../Blocks/Collapsible'
 import { GetEmbedsBlockOptions } from '../Blocks/Embeds'
-import { Popover, PopoverProvider } from '@ariakit/react'
-import { PopoverClassNames } from '../ClassNames'
 
 export default function BlockPickerMenuPlugin(): JSX.Element {
   const [editor] = useLexicalComposerContext()
@@ -111,47 +111,47 @@ export default function BlockPickerMenuPlugin(): JSX.Element {
   return (
     <>
       {modal}
-      <PopoverProvider>
-        <LexicalTypeaheadMenuPlugin<BlockPickerOption>
-          onQueryChange={setQueryString}
-          onSelectOption={onSelectOption}
-          triggerFn={checkForTriggerMatch}
-          options={options}
-          menuRenderFn={(anchorElementRef, { selectedIndex, selectOptionAndCleanUp, setHighlightedIndex }) => {
-            if (!anchorElementRef.current || !options.length) {
-              return null
-            }
-            return (
-              <Popover
-                open
-                getAnchorRect={() => anchorElementRef.current!.getBoundingClientRect()}
-                autoFocus={false}
-                autoFocusOnShow={false}
-                className={PopoverClassNames}
-                fitViewport
-              >
-                <ul className="divide-y divide-border">
-                  {options.map((option, i: number) => (
-                    <BlockPickerMenuItem
-                      index={i}
-                      isSelected={selectedIndex === i}
-                      onClick={() => {
-                        setHighlightedIndex(i)
-                        selectOptionAndCleanUp(option)
-                      }}
-                      onMouseEnter={() => {
-                        setHighlightedIndex(i)
-                      }}
-                      key={option.key}
-                      option={option}
-                    />
-                  ))}
-                </ul>
-              </Popover>
-            )
-          }}
-        />
-      </PopoverProvider>
+      <LexicalTypeaheadMenuPlugin<BlockPickerOption>
+        onQueryChange={setQueryString}
+        onSelectOption={onSelectOption}
+        triggerFn={checkForTriggerMatch}
+        options={options}
+        menuRenderFn={(anchorElementRef, { selectedIndex, selectOptionAndCleanUp, setHighlightedIndex }) => {
+          if (!anchorElementRef.current || !options.length) {
+            return null
+          }
+
+          return (
+            <Popover
+              title="Block picker"
+              align="start"
+              anchorElement={anchorElementRef.current}
+              open={true}
+              disableMobileFullscreenTakeover={true}
+              side={isMobileScreen() ? 'top' : 'bottom'}
+              maxHeight={(mh) => mh / 2}
+            >
+              <ul>
+                {options.map((option, i: number) => (
+                  <BlockPickerMenuItem
+                    index={i}
+                    isSelected={selectedIndex === i}
+                    onClick={() => {
+                      setHighlightedIndex(i)
+                      selectOptionAndCleanUp(option)
+                    }}
+                    onMouseEnter={() => {
+                      setHighlightedIndex(i)
+                    }}
+                    key={option.key}
+                    option={option}
+                  />
+                ))}
+              </ul>
+            </Popover>
+          )
+        }}
+      />
     </>
   )
 }
