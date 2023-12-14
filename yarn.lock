@@ -36,36 +36,36 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ariakit/core@npm:0.3.4":
-  version: 0.3.4
-  resolution: "@ariakit/core@npm:0.3.4"
-  checksum: c815ce7443a9a1398bf2dffe12a0f51b1efbd63e76c21423e874c13afb08ce0884739b80805b3f4d54a15ea8147434e47d863173fd4d65f006b9f6cfdbabb056
+"@ariakit/core@npm:0.3.8":
+  version: 0.3.8
+  resolution: "@ariakit/core@npm:0.3.8"
+  checksum: e416596efe7783cba033efcf212119e228b3707006f294745d8beedb09388f4ceebe70d7e936362979d2ff98ec50a16ecc24c988b0825abd68d3a2367e96c1e0
   languageName: node
   linkType: hard
 
-"@ariakit/react-core@npm:0.3.5":
-  version: 0.3.5
-  resolution: "@ariakit/react-core@npm:0.3.5"
+"@ariakit/react-core@npm:0.3.9":
+  version: 0.3.9
+  resolution: "@ariakit/react-core@npm:0.3.9"
   dependencies:
-    "@ariakit/core": 0.3.4
+    "@ariakit/core": 0.3.8
     "@floating-ui/dom": ^1.0.0
     use-sync-external-store: ^1.2.0
   peerDependencies:
     react: ^17.0.0 || ^18.0.0
     react-dom: ^17.0.0 || ^18.0.0
-  checksum: 519dd1c7d5bfb52f881b8a78769372e2d54d3252a38226539f1aaed732c3b83947c0328d8eabc5e30d809ffec8bd575e7df6775cdc2b3d13e797d0721c794d25
+  checksum: ef44543aecf10d69ea63cb4c68d340f88a8f17a4e0b0dc25a508665a7591126a42731522f97a984268c1d0927738ad2002d702f6bfd40f272090174d56a5ffb4
   languageName: node
   linkType: hard
 
-"@ariakit/react@npm:^0.3.5":
-  version: 0.3.5
-  resolution: "@ariakit/react@npm:0.3.5"
+"@ariakit/react@npm:^0.3.9":
+  version: 0.3.9
+  resolution: "@ariakit/react@npm:0.3.9"
   dependencies:
-    "@ariakit/react-core": 0.3.5
+    "@ariakit/react-core": 0.3.9
   peerDependencies:
     react: ^17.0.0 || ^18.0.0
     react-dom: ^17.0.0 || ^18.0.0
-  checksum: b888f8464f382f2ad24473f408252e5d6599673b8ee326243082457c5debecc5d96f88d93ee6cbf71508a918cf596b607ae6188580b1360ce8effb49bb2ffded
+  checksum: 901424a4e47d36c97a35cab016249b22bfe20519cc87ffa0420c14b3547751ca282cfaa9e770937af413c96776106f1f3d2c4b08434f15abca08abd2ab94d73e
   languageName: node
   linkType: hard
 
@@ -7465,7 +7465,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@standardnotes/web@workspace:packages/web"
   dependencies:
-    "@ariakit/react": ^0.3.5
+    "@ariakit/react": ^0.3.9
     "@babel/core": "*"
     "@babel/plugin-proposal-class-properties": ^7.18.6
     "@babel/plugin-transform-react-jsx": ^7.19.0
