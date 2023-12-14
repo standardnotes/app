@@ -1,6 +1,20 @@
 {
   "versions": [
     {
+      "version": "3.183.24",
+      "title": "[3.183.24](https://github.com/standardnotes/app/compare/@standardnotes/web@3.183.23...@standardnotes/web@3.183.24) (2023-12-14)",
+      "date": null,
+      "body": "### Reverts\n\n* Revert \"refactor: use ariakit for super note popovers\" ([ba11551](https://github.com/standardnotes/app/commit/ba11551dfa3bbc2ab4c05cbe6d9cb15adc7bfe95))",
+      "parsed": {
+        "_": [
+          "Revert \"refactor: use ariakit for super note popovers\" (ba11551)"
+        ],
+        "Reverts": [
+          "Revert \"refactor: use ariakit for super note popovers\" (ba11551)"
+        ]
+      }
+    },
+    {
       "version": "3.183.23",
       "title": "[3.183.23](https://github.com/standardnotes/app/compare/@standardnotes/web@3.183.22...@standardnotes/web@3.183.23) (2023-12-14)",
       "date": null,
