@@ -19,9 +19,7 @@ export function BlockPickerMenuItem({
     <li
       key={option.key}
       tabIndex={-1}
-      className={`border-bottom gap-3 border-[0.5px] border-border ${PopoverItemClassNames} ${
-        isSelected ? PopoverItemSelectedClassNames : ''
-      }`}
+      className={`gap-3 ${PopoverItemClassNames} ${isSelected ? PopoverItemSelectedClassNames : ''}`}
       ref={option.setRefElement}
       role="option"
       aria-selected={isSelected}
