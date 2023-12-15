@@ -6,16 +6,13 @@
  *
  */
 
+/**
+ * Taken from https://github.com/facebook/lexical/blob/main/packages/lexical-markdown/src/MarkdownImport.ts
+ * but modified to allow keeping new lines when importing markdown.
+ */
+
 import { CodeNode, $createCodeNode } from '@lexical/code'
-import {
-  ElementTransformer,
-  TextFormatTransformer,
-  TextMatchTransformer,
-  Transformer,
-  ELEMENT_TRANSFORMERS,
-  TEXT_FORMAT_TRANSFORMERS,
-  TEXT_MATCH_TRANSFORMERS,
-} from '@lexical/markdown'
+import { ElementTransformer, TextFormatTransformer, TextMatchTransformer, Transformer } from '@lexical/markdown'
 
 import { $isListItemNode, $isListNode } from '@lexical/list'
 import { $isQuoteNode } from '@lexical/rich-text'
@@ -33,38 +30,9 @@ import {
   ElementNode,
 } from 'lexical'
 import { IS_APPLE_WEBKIT, IS_IOS, IS_SAFARI } from '../Shared/environment'
+import { TRANSFORMERS, transformersByType } from './MarkdownImportExportUtils'
 
 const PUNCTUATION_OR_SPACE = /[!-/:-@[-`{-~\s]/
-
-function indexBy<T>(list: Array<T>, callback: (arg0: T) => string): Readonly<Record<string, Array<T>>> {
-  const index: Record<string, Array<T>> = {}
-
-  for (const item of list) {
-    const key = callback(item)
-
-    if (index[key]) {
-      index[key].push(item)
-    } else {
-      index[key] = [item]
-    }
-  }
-
-  return index
-}
-
-function transformersByType(transformers: Array<Transformer>): Readonly<{
-  element: Array<ElementTransformer>
-  textFormat: Array<TextFormatTransformer>
-  textMatch: Array<TextMatchTransformer>
-}> {
-  const byType = indexBy(transformers, (t) => t.type)
-
-  return {
-    element: (byType.element || []) as Array<ElementTransformer>,
-    textFormat: (byType['text-format'] || []) as Array<TextFormatTransformer>,
-    textMatch: (byType['text-match'] || []) as Array<TextMatchTransformer>,
-  }
-}
 
 const MARKDOWN_EMPTY_LINE_REG_EXP = /^\s{0,3}$/
 const CODE_BLOCK_REG_EXP = /^```(\w{1,10})?\s?$/
@@ -391,12 +359,6 @@ function createTextFormatTransformersIndex(
     transformersByTag,
   }
 }
-
-const TRANSFORMERS: Array<Transformer> = [
-  ...ELEMENT_TRANSFORMERS,
-  ...TEXT_FORMAT_TRANSFORMERS,
-  ...TEXT_MATCH_TRANSFORMERS,
-]
 
 export function $convertFromMarkdownString(
   markdown: string,

@@ -1,5 +1,4 @@
 import { createHeadlessEditor } from '@lexical/headless'
-import { $convertToMarkdownString } from '@lexical/markdown'
 import { FileItem, PrefKey, PrefValue, SuperConverterServiceInterface } from '@standardnotes/snjs'
 import {
   $createParagraphNode,
@@ -18,6 +17,7 @@ import { FileNode } from '../Plugins/EncryptedFilePlugin/Nodes/FileNode'
 import { $createFileExportNode } from '../Lexical/Nodes/FileExportNode'
 import { $createInlineFileNode } from '../Plugins/InlineFilePlugin/InlineFileNode'
 import { $convertFromMarkdownString } from '../Lexical/Utils/MarkdownImport'
+import { $convertToMarkdownString } from '../Lexical/Utils/MarkdownExport'
 export class HeadlessSuperConverter implements SuperConverterServiceInterface {
   private importEditor: LexicalEditor
   private exportEditor: LexicalEditor
