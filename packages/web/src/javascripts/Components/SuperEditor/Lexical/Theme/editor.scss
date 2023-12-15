@@ -100,6 +100,10 @@
   overflow-x: auto;
   position: relative;
   border-radius: 0.25rem;
+
+  .Collapsible__container & {
+    background-color: var(--sn-stylekit-background-color);
+  }
 }
 .Lexical__table {
   border-collapse: collapse;
