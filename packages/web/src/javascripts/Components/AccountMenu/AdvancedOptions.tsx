@@ -1,9 +1,11 @@
 import { observer } from 'mobx-react-lite'
-import { ChangeEventHandler, FunctionComponent, ReactNode, useCallback, useEffect, useState } from 'react'
+// import { ChangeEventHandler, FunctionComponent, ReactNode, useCallback, useEffect, useState } from 'react'
+import { FunctionComponent, ReactNode, useCallback, useEffect, useState } from 'react'
 import Checkbox from '@/Components/Checkbox/Checkbox'
 import DecoratedInput from '@/Components/Input/DecoratedInput'
 import Icon from '@/Components/Icon/Icon'
 import { useApplication } from '../ApplicationProvider'
+import ServerPicker from './ServerPicker/ServerPicker'
 
 type Props = {
   disabled?: boolean
@@ -22,7 +24,7 @@ const AdvancedOptions: FunctionComponent<Props> = ({
 }) => {
   const application = useApplication()
 
-  const { server, setServer, enableServerOption, setEnableServerOption } = application.accountMenuController
+  const { server, setServer } = application.accountMenuController
   const [showAdvanced, setShowAdvanced] = useState(false)
 
   const [isPrivateUsername, setIsPrivateUsername] = useState(false)
@@ -71,9 +73,9 @@ const AdvancedOptions: FunctionComponent<Props> = ({
     if (!isRecoveryCodes) {
       setIsPrivateUsername(false)
       setIsStrictSignin(false)
-      setEnableServerOption(false)
+      // setEnableServerOption(false)
     }
-  }, [isRecoveryCodes, setIsPrivateUsername, setIsStrictSignin, setEnableServerOption, onRecoveryCodesChange])
+  }, [isRecoveryCodes, setIsPrivateUsername, setIsStrictSignin, onRecoveryCodesChange])
 
   const handleRecoveryCodesChange = useCallback(
     (recoveryCodes: string) => {
@@ -85,14 +87,14 @@ const AdvancedOptions: FunctionComponent<Props> = ({
     [onRecoveryCodesChange],
   )
 
-  const handleServerOptionChange: ChangeEventHandler<HTMLInputElement> = useCallback(
-    (e) => {
-      if (e.target instanceof HTMLInputElement) {
-        setEnableServerOption(e.target.checked)
-      }
-    },
-    [setEnableServerOption],
-  )
+  // const handleServerOptionChange: ChangeEventHandler<HTMLInputElement> = useCallback(
+  //   (e) => {
+  //     if (e.target instanceof HTMLInputElement) {
+  //       setEnableServerOption(e.target.checked)
+  //     }
+  //   },
+  //   [setEnableServerOption],
+  // )
 
   const handleSyncServerChange = useCallback(
     (server: string) => {
@@ -202,7 +204,7 @@ const AdvancedOptions: FunctionComponent<Props> = ({
             </>
           )}
 
-          <Checkbox
+          {/* <Checkbox
             name="custom-sync-server"
             label="Custom sync server"
             checked={enableServerOption}
@@ -216,7 +218,9 @@ const AdvancedOptions: FunctionComponent<Props> = ({
             value={server}
             onChange={handleSyncServerChange}
             disabled={!enableServerOption && !disabled && !isRecoveryCodes}
-          />
+          /> */}
+
+          <ServerPicker customServerAddress={server} handleCustomServerAddressChange={handleSyncServerChange} />
         </div>
       ) : null}
     </>
