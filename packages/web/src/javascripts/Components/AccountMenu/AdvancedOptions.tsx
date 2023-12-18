@@ -1,5 +1,4 @@
 import { observer } from 'mobx-react-lite'
-// import { ChangeEventHandler, FunctionComponent, ReactNode, useCallback, useEffect, useState } from 'react'
 import { FunctionComponent, ReactNode, useCallback, useEffect, useState } from 'react'
 import Checkbox from '@/Components/Checkbox/Checkbox'
 import DecoratedInput from '@/Components/Input/DecoratedInput'
@@ -73,7 +72,6 @@ const AdvancedOptions: FunctionComponent<Props> = ({
     if (!isRecoveryCodes) {
       setIsPrivateUsername(false)
       setIsStrictSignin(false)
-      // setEnableServerOption(false)
     }
   }, [isRecoveryCodes, setIsPrivateUsername, setIsStrictSignin, onRecoveryCodesChange])
 
@@ -86,15 +84,6 @@ const AdvancedOptions: FunctionComponent<Props> = ({
     },
     [onRecoveryCodesChange],
   )
-
-  // const handleServerOptionChange: ChangeEventHandler<HTMLInputElement> = useCallback(
-  //   (e) => {
-  //     if (e.target instanceof HTMLInputElement) {
-  //       setEnableServerOption(e.target.checked)
-  //     }
-  //   },
-  //   [setEnableServerOption],
-  // )
 
   const handleSyncServerChange = useCallback(
     (server: string) => {
@@ -203,22 +192,6 @@ const AdvancedOptions: FunctionComponent<Props> = ({
               />
             </>
           )}
-
-          {/* <Checkbox
-            name="custom-sync-server"
-            label="Custom sync server"
-            checked={enableServerOption}
-            onChange={handleServerOptionChange}
-            disabled={disabled || isRecoveryCodes}
-          />
-          <DecoratedInput
-            type="text"
-            left={[<Icon type="server" className="text-neutral" />]}
-            placeholder="https://api.standardnotes.com"
-            value={server}
-            onChange={handleSyncServerChange}
-            disabled={!enableServerOption && !disabled && !isRecoveryCodes}
-          /> */}
 
           <ServerPicker customServerAddress={server} handleCustomServerAddressChange={handleSyncServerChange} />
         </div>

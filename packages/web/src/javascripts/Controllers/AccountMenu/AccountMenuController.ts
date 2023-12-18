@@ -19,7 +19,6 @@ export class AccountMenuController extends AbstractViewController implements Int
   signingOut = false
   otherSessionsSignOut = false
   server: string | undefined = undefined
-  enableServerOption = false
   notesAndTags: (SNNote | SNTag)[] = []
   isEncryptionEnabled = false
   encryptionStatusString = ''
@@ -48,7 +47,6 @@ export class AccountMenuController extends AbstractViewController implements Int
       signingOut: observable,
       otherSessionsSignOut: observable,
       server: observable,
-      enableServerOption: observable,
       notesAndTags: observable,
       isEncryptionEnabled: observable,
       encryptionStatusString: observable,
@@ -66,7 +64,6 @@ export class AccountMenuController extends AbstractViewController implements Int
       setIsBackupEncrypted: action,
       setOtherSessionsSignOut: action,
       setCurrentPane: action,
-      setEnableServerOption: action,
       setServer: action,
       setDeletingAccount: action,
 
@@ -111,10 +108,6 @@ export class AccountMenuController extends AbstractViewController implements Int
 
   setServer = (server: string | undefined): void => {
     this.server = server
-  }
-
-  setEnableServerOption = (enableServerOption: boolean): void => {
-    this.enableServerOption = enableServerOption
   }
 
   setIsEncryptionEnabled = (isEncryptionEnabled: boolean): void => {
