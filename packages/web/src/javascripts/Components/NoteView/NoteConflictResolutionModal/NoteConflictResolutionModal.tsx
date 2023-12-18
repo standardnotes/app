@@ -161,6 +161,9 @@ const NoteConflictResolutionModal = ({
 
   const [comparisonScrollPos, setComparisonScrollPos] = useState(0)
   const [shouldSyncComparisonScroll, setShouldSyncComparisonScroll] = useState(true)
+  const onScroll = useCallback(({ target }: { target: EventTarget | null }) => {
+    setComparisonScrollPos((target as HTMLElement).scrollTop)
+  }, [])
 
   return (
     <Modal
@@ -319,7 +322,7 @@ const NoteConflictResolutionModal = ({
                 key={note.uuid}
                 scrollPos={comparisonScrollPos}
                 shouldSyncScroll={shouldSyncComparisonScroll}
-                onScroll={(event) => setComparisonScrollPos((event.target as HTMLElement).scrollTop)}
+                onScroll={onScroll}
               />
             ))}
           </div>

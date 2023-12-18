@@ -1,4 +1,4 @@
-import { FunctionComponent, UIEventHandler, useCallback, useState } from 'react'
+import { FunctionComponent, useCallback, useState } from 'react'
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin'
 import { ContentEditable } from '@lexical/react/LexicalContentEditable'
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin'
@@ -37,7 +37,6 @@ type BlocksEditorProps = {
   spellcheck?: boolean
   ignoreFirstChange?: boolean
   readonly?: boolean
-  onScroll?: UIEventHandler
 }
 
 export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
@@ -48,7 +47,6 @@ export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
   spellcheck,
   ignoreFirstChange = false,
   readonly,
-  onScroll,
 }) => {
   const [didIgnoreFirstChange, setDidIgnoreFirstChange] = useState(false)
   const handleChange = useCallback(
@@ -87,7 +85,6 @@ export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
                   id={SuperEditorContentId}
                   className={classNames('ContentEditable__root overflow-y-auto', className)}
                   spellCheck={spellcheck}
-                  onScroll={onScroll}
                 />
                 <div className="search-highlight-container pointer-events-none absolute left-0 top-0 h-full w-full" />
               </div>

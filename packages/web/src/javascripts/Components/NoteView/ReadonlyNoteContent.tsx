@@ -8,7 +8,7 @@ import {
   classNames,
   isUIFeatureAnIframeFeature,
 } from '@standardnotes/snjs'
-import { CSSProperties, UIEventHandler, useEffect, useMemo, useRef } from 'react'
+import { CSSProperties, useCallback, useEffect, useMemo, useRef } from 'react'
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 import { useApplication } from '../ApplicationProvider'
 import IframeFeatureView from '../ComponentView/IframeFeatureView'
@@ -19,6 +19,7 @@ import { useLinkingController } from '@/Controllers/LinkingControllerProvider'
 import LinkedItemBubblesContainer from '../LinkedItems/LinkedItemBubblesContainer'
 import usePreference from '@/Hooks/usePreference'
 import { useResponsiveEditorFontSize } from '@/Utils/getPlaintextFontSize'
+import { getScrollParent } from '@/Utils'
 
 export const ReadonlyNoteContent = ({
   note,
@@ -33,7 +34,7 @@ export const ReadonlyNoteContent = ({
   showLinkedItems?: boolean
   scrollPos?: number
   shouldSyncScroll?: boolean
-  onScroll?: UIEventHandler
+  onScroll?: ({ target }: { target: EventTarget | null }) => void
 }) => {
   const application = useApplication()
   const linkingController = useLinkingController()
@@ -64,6 +65,27 @@ export const ReadonlyNoteContent = ({
   }, [application, componentViewer])
 
   const containerRef = useRef<HTMLDivElement>(null)
+  const scrollerRef = useRef<HTMLElement | null>()
+
+  const setScroller = useCallback(() => {
+    if (scrollerRef.current) {
+      return
+    }
+
+    scrollerRef.current = containerRef.current?.querySelector<HTMLElement>('textarea, .ContentEditable__root')
+
+    if (!scrollerRef.current) {
+      return
+    }
+
+    const isScrollerOverflowing = scrollerRef.current.scrollHeight > scrollerRef.current.clientHeight
+    if (!isScrollerOverflowing) {
+      const closestScrollParent = getScrollParent(scrollerRef.current)
+      if (closestScrollParent) {
+        scrollerRef.current = closestScrollParent
+      }
+    }
+  }, [])
 
   useEffect(() => {
     if (!shouldSyncScroll) {
@@ -74,16 +96,41 @@ export const ReadonlyNoteContent = ({
       return
     }
 
-    const scroller = containerRef.current.querySelector('textarea, .ContentEditable__root')
-
-    if (!scroller) {
-      return
+    if (!scrollerRef.current) {
+      setScroller()
     }
 
-    scroller.scrollTo({
+    scrollerRef.current?.scrollTo({
       top: scrollPos,
     })
-  }, [scrollPos, shouldSyncScroll])
+  }, [scrollPos, setScroller, shouldSyncScroll])
+
+  useEffect(
+    function setupOnScrollForSuper() {
+      if (note.noteType !== NoteType.Super) {
+        return
+      }
+
+      setScroller()
+
+      const scroller = scrollerRef.current
+
+      if (!scroller) {
+        return
+      }
+
+      const scrollHandler = (event: Event) => {
+        onScroll?.(event)
+      }
+
+      scroller.addEventListener('scroll', scrollHandler)
+
+      return () => {
+        scroller.removeEventListener('scroll', scrollHandler)
+      }
+    },
+    [note.noteType, onScroll, setScroller],
+  )
 
   const lineHeight = usePreference(PrefKey.EditorLineHeight)
   const fontSize = usePreference(PrefKey.EditorFontSize)
@@ -123,7 +170,6 @@ export const ReadonlyNoteContent = ({
                 readonly
                 className="blocks-editor relative h-full resize-none p-4 text-base focus:shadow-none focus:outline-none"
                 spellcheck={content.spellcheck}
-                onScroll={onScroll}
               ></BlocksEditor>
             </BlocksEditorComposer>
           </div>
