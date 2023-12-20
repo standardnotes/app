@@ -1,10 +1,10 @@
-import { TabButton } from './TabButton'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { ServerType } from './ServerType'
 import DecoratedInput from '@/Components/Input/DecoratedInput'
 import Icon from '@/Components/Icon/Icon'
 import { useApplication } from '@/Components/ApplicationProvider'
 import { isDesktopApplication } from '@/Utils'
+import RadioButtonGroup from '@/Components/RadioButtonGroup/RadioButtonGroup'
 
 type Props = {
   customServerAddress?: string
@@ -46,18 +46,27 @@ const ServerPicker = ({ className, customServerAddress, handleCustomServerAddres
     }
   }
 
+  const options = useMemo(
+    () =>
+      [
+        { label: 'Standard', value: 'standard' },
+        { label: 'Custom', value: 'custom' },
+      ].concat(isDesktopApplication() ? [{ label: 'Home Server', value: 'home server' }] : []) as {
+        label: string
+        value: ServerType
+      }[],
+    [],
+  )
+
   return (
     <div className={`flex h-full flex-grow flex-col ${className}`}>
-      <div className="flex">Sync Server:</div>
-      <div className="flex">
-        <TabButton label="Standard" type={'standard'} currentType={currentType} selectTab={selectTab} />
-        <TabButton label="Custom" type={'custom'} currentType={currentType} selectTab={selectTab} />
-        {isDesktopApplication() && (
-          <TabButton label="Home Server" type={'home server'} currentType={currentType} selectTab={selectTab} />
-        )}
-      </div>
+      <div className="mb-0.5 flex">Sync Server:</div>
+      <RadioButtonGroup value={currentType} items={options} onChange={selectTab} />
       {currentType === 'custom' && (
         <DecoratedInput
+          className={{
+            container: 'mt-1',
+          }}
           type="text"
           left={[<Icon type="server" className="text-neutral" />]}
           placeholder={DEFAULT_API_HOST}
