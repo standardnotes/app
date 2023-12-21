@@ -59,7 +59,7 @@ const ServerPicker = ({ className, customServerAddress, handleCustomServerAddres
 
   return (
     <div className={`flex h-full flex-grow flex-col ${className}`}>
-      <div className="mb-0.5 flex">Sync Server:</div>
+      <div className="my-1 flex font-bold uppercase">Sync Server</div>
       <RadioButtonGroup value={currentType} items={options} onChange={selectTab} />
       {currentType === 'custom' && (
         <DecoratedInput
