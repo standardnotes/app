@@ -6,6 +6,7 @@ import { SuccessPrompt } from './Subviews/SuccessPrompt'
 import { UpgradePrompt } from './Subviews/UpgradePrompt'
 import Modal from '../Modal/Modal'
 import SuperDemo from './Subviews/SuperDemo'
+import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 
 type Props = {
   application: WebApplication
@@ -26,12 +27,27 @@ const PremiumFeaturesModal: FunctionComponent<Props> = ({
 
   const isShowingSuperDemo = type === PremiumFeatureModalType.SuperDemo
 
+  const isMobileScreen = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
+
   return (
     <Modal
       close={onClose}
       title={isShowingSuperDemo ? 'Try out Super' : 'Upgrade'}
       className={isShowingSuperDemo ? '' : 'px-6 py-5'}
       customHeader={isShowingSuperDemo ? undefined : <></>}
+      actions={
+        isShowingSuperDemo
+          ? [
+              {
+                label: 'Done',
+                type: 'primary',
+                onClick: onClose,
+                hidden: !isMobileScreen,
+                mobileSlot: 'right',
+              },
+            ]
+          : undefined
+      }
     >
       {type === PremiumFeatureModalType.UpgradePrompt && (
         <UpgradePrompt

@@ -48,7 +48,7 @@ export const UpgradePrompt = ({
   }, [application, hasSubscription, onClose, onClick])
 
   return (
-    <div className={preferHorizontalLayout ? 'flex items-center gap-4' : ''}>
+    <div className={preferHorizontalLayout ? 'flex flex-wrap items-center gap-4 md:flex-nowrap' : ''}>
       {!inline && (
         <div className="flex justify-end p-1">
           <button
@@ -112,7 +112,7 @@ export const UpgradePrompt = ({
         onClick={handleClick}
         className={classNames(
           'no-border cursor-pointer rounded bg-info py-2 font-bold text-info-contrast hover:brightness-125 focus:brightness-125',
-          preferHorizontalLayout ? 'ml-auto px-4' : 'my-2 w-full',
+          preferHorizontalLayout ? 'w-full px-4 md:ml-auto md:w-auto' : 'my-2 w-full',
         )}
         ref={ctaRef}
       >
