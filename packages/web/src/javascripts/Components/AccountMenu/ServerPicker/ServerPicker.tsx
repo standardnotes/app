@@ -5,16 +5,15 @@ import Icon from '@/Components/Icon/Icon'
 import { useApplication } from '@/Components/ApplicationProvider'
 import { isDesktopApplication } from '@/Utils'
 import RadioButtonGroup from '@/Components/RadioButtonGroup/RadioButtonGroup'
+import { DefaultHost } from '@standardnotes/snjs'
 
 type Props = {
   customServerAddress?: string
-  handleCustomServerAddressChange: (value: string) => void
+  handleCustomServerAddressChange: (value: string, websocketUrl?: string) => void
   className?: string
 }
 
 const ServerPicker = ({ className, customServerAddress, handleCustomServerAddressChange }: Props) => {
-  const DEFAULT_API_HOST = 'https://api.standardnotes.com'
-
   const application = useApplication()
 
   const [currentType, setCurrentType] = useState<ServerType>('standard')
@@ -22,7 +21,7 @@ const ServerPicker = ({ className, customServerAddress, handleCustomServerAddres
   const selectTab = async (type: ServerType) => {
     setCurrentType(type)
     if (type === 'standard') {
-      handleCustomServerAddressChange(DEFAULT_API_HOST)
+      handleCustomServerAddressChange(DefaultHost.Api, DefaultHost.WebSocket)
     }
     if (type === 'home server') {
       if (!application.homeServer) {
@@ -69,7 +68,7 @@ const ServerPicker = ({ className, customServerAddress, handleCustomServerAddres
           }}
           type="text"
           left={[<Icon type="server" className="text-neutral" />]}
-          placeholder={DEFAULT_API_HOST}
+          placeholder={DefaultHost.Api}
           value={customServerAddress}
           onChange={handleCustomServerAddressChange}
         />

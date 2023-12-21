@@ -86,9 +86,9 @@ const AdvancedOptions: FunctionComponent<Props> = ({
   )
 
   const handleSyncServerChange = useCallback(
-    (server: string) => {
+    (server: string, websocketUrl?: string) => {
       setServer(server)
-      application.setCustomHost(server).catch(console.error)
+      application.setCustomHost(server, websocketUrl).catch(console.error)
     },
     [application, setServer],
   )

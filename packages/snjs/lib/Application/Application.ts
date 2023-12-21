@@ -576,10 +576,10 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return compareVersions(userVersion, ProtocolVersion.V004) >= 0
   }
 
-  public async setCustomHost(host: string): Promise<void> {
+  public async setCustomHost(host: string, websocketUrl?: string): Promise<void> {
     await this.setHost.execute(host)
 
-    this.sockets.setWebSocketUrl(undefined)
+    this.sockets.setWebSocketUrl(websocketUrl)
   }
 
   public getUserPasswordCreationDate(): Date | undefined {

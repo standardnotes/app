@@ -169,7 +169,7 @@ export class SessionManager
       }
     }
 
-    const serverHost = this.storage.getValue<string>(StorageKey.ServerHost)
+    const serverHost = this.storage.getValue<string | undefined>(`${StorageKey.ServerHost}:${this.workspaceIdentifier}`)
     if (serverHost) {
       void this.apiService.setHost(serverHost)
       this.httpService.setHost(serverHost)
