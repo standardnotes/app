@@ -1,11 +1,14 @@
 import { WebApplication } from '@/Application/WebApplication'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent, createContext, useCallback, useContext, ReactNode } from 'react'
+import { FunctionComponent, createContext, useCallback, useContext, ReactNode, useMemo } from 'react'
 import PremiumFeaturesModal from '@/Components/PremiumFeaturesModal/PremiumFeaturesModal'
 import ModalOverlay from '@/Components/Modal/ModalOverlay'
+import { classNames } from '@standardnotes/snjs'
+import { PremiumFeatureModalType } from '@/Components/PremiumFeaturesModal/PremiumFeatureModalType'
 
 type PremiumModalContextData = {
   activate: (featureName: string) => void
+  showSuperDemo: () => void
 }
 
 const PremiumModalContext = createContext<PremiumModalContextData | null>(null)
@@ -43,12 +46,23 @@ const PremiumModalProvider: FunctionComponent<Props> = observer(({ application, 
     application.featuresController.closePremiumAlert()
   }, [application.featuresController])
 
+  const showSuperDemo = useCallback(() => {
+    application.featuresController.showSuperDemoModal()
+  }, [application.featuresController])
+
+  const value: PremiumModalContextData = useMemo(() => ({ activate, showSuperDemo }), [activate, showSuperDemo])
+
   return (
     <>
       <ModalOverlay
         isOpen={application.featuresController.premiumAlertType != undefined}
         close={close}
-        className="w-full max-w-[90vw] !h-auto md:max-w-89"
+        className={classNames(
+          '!h-auto w-full max-w-[90vw]',
+          application.featuresController.premiumAlertType === PremiumFeatureModalType.SuperDemo
+            ? 'md:!h-full md:w-full md:max-w-[70vw]'
+            : 'md:max-w-89',
+        )}
         backdropClassName="!opacity-50"
       >
         <PremiumFeaturesModal
@@ -59,7 +73,7 @@ const PremiumModalProvider: FunctionComponent<Props> = observer(({ application, 
           type={application.featuresController.premiumAlertType!}
         />
       </ModalOverlay>
-      <PremiumModalProvider_ value={{ activate }}>{children}</PremiumModalProvider_>
+      <PremiumModalProvider_ value={value}>{children}</PremiumModalProvider_>
     </>
   )
 })

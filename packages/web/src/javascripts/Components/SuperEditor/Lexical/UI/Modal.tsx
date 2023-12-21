@@ -6,9 +6,10 @@
  *
  */
 
+import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
 import './Modal.css'
 
-import { ReactNode, useEffect, useRef } from 'react'
+import { ReactNode, useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 
 function PortalImpl({
@@ -83,11 +84,22 @@ export default function Modal({
   closeOnClickOutside?: boolean
   onClose: () => void
   title: string
-}): JSX.Element {
+}): ReactNode {
+  const [containerElement, setContainerElement] = useState<HTMLElement | undefined>()
+  const [editor] = useLexicalComposerContext()
+
+  useEffect(() => {
+    setContainerElement(editor.getRootElement()?.parentElement ?? document.body)
+  }, [editor])
+
+  if (!containerElement) {
+    return null
+  }
+
   return createPortal(
     <PortalImpl onClose={onClose} title={title} closeOnClickOutside={closeOnClickOutside}>
       {children}
     </PortalImpl>,
-    document.body,
+    containerElement,
   )
 }

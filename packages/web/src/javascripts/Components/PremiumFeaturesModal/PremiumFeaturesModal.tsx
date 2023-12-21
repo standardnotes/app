@@ -5,6 +5,7 @@ import { FeatureName } from '@/Controllers/FeatureName'
 import { SuccessPrompt } from './Subviews/SuccessPrompt'
 import { UpgradePrompt } from './Subviews/UpgradePrompt'
 import Modal from '../Modal/Modal'
+import SuperDemo from './Subviews/SuperDemo'
 
 type Props = {
   application: WebApplication
@@ -23,23 +24,26 @@ const PremiumFeaturesModal: FunctionComponent<Props> = ({
 }) => {
   const ctaButtonRef = useRef<HTMLButtonElement>(null)
 
-  return (
-    <Modal close={onClose} title="Upgrade" className="px-6 py-5" customHeader={<></>}>
-      <div tabIndex={-1} className="sn-component">
-        <div tabIndex={0}>
-          {type === PremiumFeatureModalType.UpgradePrompt && (
-            <UpgradePrompt
-              featureName={featureName}
-              ctaRef={ctaButtonRef}
-              application={application}
-              hasSubscription={hasSubscription}
-              onClose={onClose}
-            />
-          )}
+  const isShowingSuperDemo = type === PremiumFeatureModalType.SuperDemo
 
-          {type === PremiumFeatureModalType.UpgradeSuccess && <SuccessPrompt ctaRef={ctaButtonRef} onClose={onClose} />}
-        </div>
-      </div>
+  return (
+    <Modal
+      close={onClose}
+      title={isShowingSuperDemo ? 'Try out Super' : 'Upgrade'}
+      className={isShowingSuperDemo ? '' : 'px-6 py-5'}
+      customHeader={isShowingSuperDemo ? undefined : <></>}
+    >
+      {type === PremiumFeatureModalType.UpgradePrompt && (
+        <UpgradePrompt
+          featureName={featureName}
+          ctaRef={ctaButtonRef}
+          application={application}
+          hasSubscription={hasSubscription}
+          onClose={onClose}
+        />
+      )}
+      {type === PremiumFeatureModalType.UpgradeSuccess && <SuccessPrompt ctaRef={ctaButtonRef} onClose={onClose} />}
+      {type === PremiumFeatureModalType.SuperDemo && <SuperDemo />}
     </Modal>
   )
 }

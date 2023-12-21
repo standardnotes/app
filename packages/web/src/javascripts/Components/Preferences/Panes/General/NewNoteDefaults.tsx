@@ -77,6 +77,11 @@ const NewNoteDefaults = () => {
       }
 
       if (application.features.getFeatureStatus(identifier) !== FeatureStatus.Entitled) {
+        if (feature.getValue().value === NativeFeatureIdentifier.TYPES.SuperEditor) {
+          premiumModal.showSuperDemo()
+          return
+        }
+
         const editorItem = editorItems.find((item) => item.value === value)
         if (editorItem) {
           premiumModal.activate(editorItem.label)

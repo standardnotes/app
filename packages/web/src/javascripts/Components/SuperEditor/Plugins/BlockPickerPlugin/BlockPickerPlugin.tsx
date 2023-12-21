@@ -30,7 +30,7 @@ import { GetDividerBlockOption } from '../Blocks/Divider'
 import { GetCollapsibleBlockOption } from '../Blocks/Collapsible'
 import { GetEmbedsBlockOptions } from '../Blocks/Embeds'
 
-export default function BlockPickerMenuPlugin(): JSX.Element {
+export default function BlockPickerMenuPlugin({ popoverZIndex }: { popoverZIndex?: string }): JSX.Element {
   const [editor] = useLexicalComposerContext()
   const application = useApplication()
   const [modal, showModal] = useModal()
@@ -130,6 +130,7 @@ export default function BlockPickerMenuPlugin(): JSX.Element {
               disableMobileFullscreenTakeover={true}
               side={isMobileScreen() ? 'top' : 'bottom'}
               maxHeight={(mh) => mh / 2}
+              overrideZIndex={popoverZIndex}
             >
               <ul>
                 {options.map((option, i: number) => (
