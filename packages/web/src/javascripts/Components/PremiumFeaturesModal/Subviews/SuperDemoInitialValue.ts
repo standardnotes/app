@@ -84,6 +84,15 @@ const InitialHTML = `<div>
     </div>
   </details>
 	<p><br></p>
+	<h2><span>Code blocks</span></h2>
+  <p><br></p>
+  <p><span>Type </span><code spellcheck="false"><span >\`\`\`</span></code><span> followed by a space to create a code
+      block. You can choose the language when your
+      cursor is within the code block.</span></p>
+  <p><br></p>
+  <pre spellcheck="false"
+    data-highlight-language="js"><span >function</span><span> </span><span >main</span><span >(</span><span >)</span><span> </span><span >{</span><br><span>	</span><span >const</span><span> variable </span><span >=</span><span> </span><span >"string"</span><span >;</span><br><span>	</span><span >return</span><span> </span><span >TEST</span><span >;</span><br><span >}</span></pre>
+	<p><br></p>
   <h2><span>Tables</span></h2>
   <table>
     <colgroup>
