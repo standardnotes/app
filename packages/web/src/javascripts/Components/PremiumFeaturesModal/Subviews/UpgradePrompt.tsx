@@ -112,7 +112,7 @@ export const UpgradePrompt = ({
         onClick={handleClick}
         className={classNames(
           'no-border cursor-pointer rounded bg-info py-2 font-bold text-info-contrast hover:brightness-125 focus:brightness-125',
-          preferHorizontalLayout ? 'ml-auto px-4' : 'w-full',
+          preferHorizontalLayout ? 'ml-auto px-4' : 'my-2 w-full',
         )}
         ref={ctaRef}
       >
