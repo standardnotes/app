@@ -58,10 +58,10 @@ const PremiumModalProvider: FunctionComponent<Props> = observer(({ application, 
         isOpen={application.featuresController.premiumAlertType != undefined}
         close={close}
         className={classNames(
-          '!h-auto w-full max-w-[90vw]',
+          'w-full',
           application.featuresController.premiumAlertType === PremiumFeatureModalType.SuperDemo
             ? 'md:!h-full md:w-full md:max-w-[70vw]'
-            : 'md:max-w-89',
+            : '!h-auto max-w-[90vw] md:max-w-89',
         )}
         backdropClassName="!opacity-50"
       >

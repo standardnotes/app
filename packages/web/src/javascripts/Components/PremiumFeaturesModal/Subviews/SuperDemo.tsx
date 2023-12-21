@@ -4,28 +4,47 @@ import BlockPickerMenuPlugin from '@/Components/SuperEditor/Plugins/BlockPickerP
 import usePreference from '@/Hooks/usePreference'
 import { useResponsiveEditorFontSize } from '@/Utils/getPlaintextFontSize'
 import { EditorLineHeightValues, PrefKey } from '@standardnotes/snjs'
-import { CSSProperties } from 'react'
+import { CSSProperties, useRef } from 'react'
+import { SuperDemoInitialValue } from './SuperDemoInitialValue'
+import { UpgradePrompt } from './UpgradePrompt'
+import { useApplication } from '@/Components/ApplicationProvider'
 
-const SuperDemo = () => {
+const SuperDemo = ({ hasSubscription }: { hasSubscription: boolean }) => {
+  const application = useApplication()
+
   const lineHeight = usePreference(PrefKey.EditorLineHeight)
   const fontSize = usePreference(PrefKey.EditorFontSize)
   const responsiveFontSize = useResponsiveEditorFontSize(fontSize, false)
 
+  const ctaRef = useRef<HTMLButtonElement>(null)
+
   return (
-    <div
-      className="relative flex h-full flex-col"
-      style={
-        {
-          '--line-height': EditorLineHeightValues[lineHeight],
-          '--font-size': responsiveFontSize,
-        } as CSSProperties
-      }
-    >
-      <BlocksEditorComposer initialValue={undefined}>
-        <BlocksEditor className="blocks-editor h-full bg-default">
-          <BlockPickerMenuPlugin popoverZIndex="z-modal" />
-        </BlocksEditor>
-      </BlocksEditorComposer>
+    <div className="flex h-full flex-col">
+      <div className="flex-shrink-0 border-b border-border p-4">
+        <UpgradePrompt
+          featureName="Super notes"
+          ctaRef={ctaRef}
+          application={application}
+          hasSubscription={hasSubscription}
+          inline
+          preferHorizontalLayout
+        />
+      </div>
+      <div
+        className="relative flex h-full min-h-0 flex-col"
+        style={
+          {
+            '--line-height': EditorLineHeightValues[lineHeight],
+            '--font-size': responsiveFontSize,
+          } as CSSProperties
+        }
+      >
+        <BlocksEditorComposer initialValue={SuperDemoInitialValue()}>
+          <BlocksEditor className="blocks-editor h-full bg-default">
+            <BlockPickerMenuPlugin popoverZIndex="z-modal" />
+          </BlocksEditor>
+        </BlocksEditorComposer>
+      </div>
     </div>
   )
 }
