@@ -155,7 +155,11 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
     return content
   }
 
-  convertOtherFormatToSuperString(otherFormatString: string, fromFormat: 'txt' | 'md' | 'html' | 'json'): string {
+  convertOtherFormatToSuperString: SuperConverterServiceInterface['convertOtherFormatToSuperString'] = (
+    otherFormatString,
+    fromFormat,
+    options,
+  ) => {
     if (otherFormatString.length === 0) {
       return otherFormatString
     }
@@ -175,6 +179,10 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
 
     let didThrow = false
     if (fromFormat === 'html') {
+      const htmlOptions = options?.html || {
+        addLineBreaks: true,
+      }
+
       this.importEditor.update(
         () => {
           try {
@@ -203,7 +211,9 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
                 nodesToInsert.push(node)
               }
 
-              nodesToInsert.push($createParagraphNode())
+              if (htmlOptions.addLineBreaks) {
+                nodesToInsert.push($createParagraphNode())
+              }
             })
             $getRoot().selectEnd()
             $insertNodes(nodesToInsert.concat($createParagraphNode()))
