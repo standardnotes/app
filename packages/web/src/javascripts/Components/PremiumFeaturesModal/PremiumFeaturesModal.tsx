@@ -59,7 +59,7 @@ const PremiumFeaturesModal: FunctionComponent<Props> = ({
         />
       )}
       {type === PremiumFeatureModalType.UpgradeSuccess && <SuccessPrompt ctaRef={ctaButtonRef} onClose={onClose} />}
-      {type === PremiumFeatureModalType.SuperDemo && <SuperDemo hasSubscription={hasSubscription} />}
+      {type === PremiumFeatureModalType.SuperDemo && <SuperDemo hasSubscription={hasSubscription} onClose={onClose} />}
     </Modal>
   )
 }

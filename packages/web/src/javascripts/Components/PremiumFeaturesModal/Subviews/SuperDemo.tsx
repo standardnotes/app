@@ -10,7 +10,7 @@ import { UpgradePrompt } from './UpgradePrompt'
 import { useApplication } from '@/Components/ApplicationProvider'
 import { useAutoElementRect } from '@/Hooks/useElementRect'
 
-const SuperDemo = ({ hasSubscription }: { hasSubscription: boolean }) => {
+const SuperDemo = ({ hasSubscription, onClose }: { hasSubscription: boolean; onClose: () => void }) => {
   const application = useApplication()
 
   const lineHeight = usePreference(PrefKey.EditorLineHeight)
@@ -39,6 +39,7 @@ const SuperDemo = ({ hasSubscription }: { hasSubscription: boolean }) => {
           hasSubscription={hasSubscription}
           inline
           preferHorizontalLayout
+          onClick={onClose}
         />
       </div>
       <div

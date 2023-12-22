@@ -3,6 +3,7 @@ import { WebApplication } from '@/Application/WebApplication'
 import Icon from '@/Components/Icon/Icon'
 import { PremiumFeatureIconClass, PremiumFeatureIconName } from '@/Components/Icon/PremiumFeatureIcon'
 import { classNames } from '@standardnotes/snjs'
+import { requestCloseAllOpenModalsAndPopovers } from '@/Utils/CloseOpenModalsAndPopovers'
 
 type Props = {
   featureName?: string
@@ -37,6 +38,7 @@ export const UpgradePrompt = ({
     if (onClick) {
       onClick()
     }
+    requestCloseAllOpenModalsAndPopovers()
     if (hasSubscription && !application.isNativeIOS()) {
       void application.openSubscriptionDashboard.execute()
     } else {
