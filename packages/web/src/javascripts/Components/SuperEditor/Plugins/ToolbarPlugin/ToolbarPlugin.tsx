@@ -32,6 +32,7 @@ import {
   forwardRef,
   useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from 'react'
@@ -113,8 +114,18 @@ const ToolbarButton = forwardRef(
   ) => {
     const [editor] = useLexicalComposerContext()
 
+    const parentElement = useMemo(() => editor.getRootElement()?.parentElement ?? document.body, [editor])
+
     return (
-      <StyledTooltip showOnMobile showOnHover label={name} side="top">
+      <StyledTooltip
+        showOnMobile
+        showOnHover
+        label={name}
+        side="top"
+        portal={false}
+        portalElement={parentElement}
+        documentElement={parentElement}
+      >
         <ToolbarItem
           className={classNames(
             'flex select-none items-center justify-center rounded p-0.5 focus:shadow-none focus:outline-none enabled:hover:bg-default enabled:focus-visible:bg-default disabled:opacity-50 md:border md:border-transparent enabled:hover:md:translucent-ui:border-[--popover-border-color]',
