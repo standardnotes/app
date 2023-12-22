@@ -28,6 +28,13 @@ import TableActionMenuPlugin from './Plugins/TableCellActionMenuPlugin'
 import ToolbarPlugin from './Plugins/ToolbarPlugin/ToolbarPlugin'
 import { useMediaQuery, MutuallyExclusiveMediaQueryBreakpoints } from '@/Hooks/useMediaQuery'
 import { CheckListPlugin } from './Plugins/List/CheckListPlugin'
+import RemoteImagePlugin from './Plugins/RemoteImagePlugin/RemoteImagePlugin'
+import CodeOptionsPlugin from './Plugins/CodeOptionsPlugin/CodeOptions'
+import { SuperSearchContextProvider } from './Plugins/SearchPlugin/Context'
+import { SearchPlugin } from './Plugins/SearchPlugin/SearchPlugin'
+import AutoLinkPlugin from './Plugins/AutoLinkPlugin/AutoLinkPlugin'
+import DatetimePlugin from './Plugins/DateTimePlugin/DateTimePlugin'
+import PasswordPlugin from './Plugins/PasswordPlugin/PasswordPlugin'
 
 type BlocksEditorProps = {
   onChange?: (value: string, preview: string) => void
@@ -83,7 +90,10 @@ export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
               <div className="editor z-0 overflow-hidden" ref={onRef}>
                 <ContentEditable
                   id={SuperEditorContentId}
-                  className={classNames('ContentEditable__root overflow-y-auto', className)}
+                  className={classNames(
+                    'ContentEditable__root relative overflow-y-auto p-4 text-[length:--font-size] leading-[--line-height] focus:shadow-none focus:outline-none',
+                    className,
+                  )}
                   spellCheck={spellcheck}
                 />
                 <div className="search-highlight-container pointer-events-none absolute left-0 top-0 h-full w-full" />
@@ -116,6 +126,14 @@ export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
       <CollapsiblePlugin />
       <TabIndentationPlugin />
       <RemoveBrokenTablesPlugin />
+      <RemoteImagePlugin />
+      <CodeOptionsPlugin />
+      <SuperSearchContextProvider>
+        <SearchPlugin />
+      </SuperSearchContextProvider>
+      <DatetimePlugin />
+      <PasswordPlugin />
+      <AutoLinkPlugin />
       {!readonly && floatingAnchorElem && (
         <>
           <DraggableBlockPlugin anchorElem={floatingAnchorElem} />

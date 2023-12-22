@@ -1,11 +1,11 @@
 import { FunctionComponent } from 'react'
-import { LexicalComposer } from '@lexical/react/LexicalComposer'
+import { LexicalComposer, InitialEditorStateType } from '@lexical/react/LexicalComposer'
 import BlocksEditorTheme from './Lexical/Theme/Theme'
 import { BlockEditorNodes } from './Lexical/Nodes/AllNodes'
 import { Klass, LexicalNode } from 'lexical'
 
 type BlocksEditorComposerProps = {
-  initialValue: string | undefined
+  initialValue: InitialEditorStateType | undefined
   children: React.ReactNode
   nodes?: Array<Klass<LexicalNode>>
   readonly?: boolean
@@ -24,7 +24,7 @@ export const BlocksEditorComposer: FunctionComponent<BlocksEditorComposerProps> 
         theme: BlocksEditorTheme,
         editable: !readonly,
         onError: (error: Error) => console.error(error),
-        editorState: initialValue && initialValue.length > 0 ? initialValue : undefined,
+        editorState: initialValue,
         nodes: [...nodes, ...BlockEditorNodes],
       }}
     >

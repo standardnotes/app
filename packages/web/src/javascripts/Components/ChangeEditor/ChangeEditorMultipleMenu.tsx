@@ -9,6 +9,7 @@ import {
   NoteMutator,
   NoteType,
   SNNote,
+  NativeFeatureIdentifier,
 } from '@standardnotes/snjs'
 import { useCallback, useMemo, useState } from 'react'
 import Icon from '../Icon/Icon'
@@ -60,6 +61,11 @@ const ChangeEditorMultipleMenu = ({ application, notes, setDisableClickOutside }
   const handleMenuSelection = useCallback(
     async (itemToBeSelected: EditorMenuItem) => {
       if (!itemToBeSelected.isEntitled) {
+        if (itemToBeSelected.uiFeature.featureIdentifier === NativeFeatureIdentifier.TYPES.SuperEditor) {
+          premiumModal.showSuperDemo()
+          return
+        }
+
         premiumModal.activate(itemToBeSelected.uiFeature.displayName)
         return
       }

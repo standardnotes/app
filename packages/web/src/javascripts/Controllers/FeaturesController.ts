@@ -103,6 +103,10 @@ export class FeaturesController extends AbstractViewController implements Intern
     this.premiumAlertType = PremiumFeatureModalType.UpgradeSuccess
   }
 
+  showSuperDemoModal = () => {
+    this.premiumAlertType = PremiumFeatureModalType.SuperDemo
+  }
+
   public closePremiumAlert() {
     this.premiumAlertType = undefined
   }

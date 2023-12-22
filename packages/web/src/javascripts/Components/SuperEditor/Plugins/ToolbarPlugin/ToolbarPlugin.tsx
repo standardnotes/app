@@ -113,8 +113,19 @@ const ToolbarButton = forwardRef(
   ) => {
     const [editor] = useLexicalComposerContext()
 
+    const isMobile = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
+    const parentElement = editor.getRootElement()?.parentElement ?? document.body
+
     return (
-      <StyledTooltip showOnMobile showOnHover label={name} side="top">
+      <StyledTooltip
+        showOnMobile
+        showOnHover
+        label={name}
+        side="top"
+        portal={false}
+        portalElement={isMobile ? parentElement : undefined}
+        documentElement={parentElement}
+      >
         <ToolbarItem
           className={classNames(
             'flex select-none items-center justify-center rounded p-0.5 focus:shadow-none focus:outline-none enabled:hover:bg-default enabled:focus-visible:bg-default disabled:opacity-50 md:border md:border-transparent enabled:hover:md:translucent-ui:border-[--popover-border-color]',
@@ -572,6 +583,8 @@ const ToolbarPlugin = () => {
     toolbarStore,
   ])
 
+  const popoverDocumentElement = editor.getRootElement()?.parentElement ?? document.body
+
   return (
     <>
       {modal}
@@ -746,6 +759,8 @@ const ToolbarPlugin = () => {
         className="py-1"
         disableMobileFullscreenTakeover
         disableFlip
+        portal={false}
+        documentElement={isMobile ? popoverDocumentElement : undefined}
       >
         <div className="mb-1.5 mt-1 px-3 text-sm font-semibold uppercase text-text">Table of Contents</div>
         <LexicalTableOfContents>
@@ -800,6 +815,8 @@ const ToolbarPlugin = () => {
         disableMobileFullscreenTakeover
         disableFlip
         containerClassName="md:!min-w-60 md:!w-auto"
+        portal={false}
+        documentElement={isMobile ? popoverDocumentElement : undefined}
       >
         <Menu a11yLabel="Text formatting options" className="!px-0" onClick={() => setIsTextFormatMenuOpen(false)}>
           <ToolbarMenuItem
@@ -839,6 +856,8 @@ const ToolbarPlugin = () => {
         disableMobileFullscreenTakeover
         disableFlip
         containerClassName="md:!min-w-60 md:!w-auto"
+        portal={false}
+        documentElement={isMobile ? popoverDocumentElement : undefined}
       >
         <Menu a11yLabel="Text style" className="!px-0" onClick={() => setIsTextStyleMenuOpen(false)}>
           <ToolbarMenuItem
@@ -910,6 +929,8 @@ const ToolbarPlugin = () => {
         disableMobileFullscreenTakeover
         disableFlip
         containerClassName="md:!min-w-60 md:!w-auto"
+        portal={false}
+        documentElement={isMobile ? popoverDocumentElement : undefined}
       >
         <Menu a11yLabel="Alignment" className="!px-0" onClick={() => setIsAlignmentMenuOpen(false)}>
           <ToolbarMenuItem
@@ -949,6 +970,8 @@ const ToolbarPlugin = () => {
         disableMobileFullscreenTakeover
         disableFlip
         containerClassName="md:!min-w-60 md:!w-auto"
+        portal={false}
+        documentElement={isMobile ? popoverDocumentElement : undefined}
       >
         <Menu a11yLabel="Insert" className="!px-0" onClick={() => setIsInsertMenuOpen(false)}>
           <ToolbarMenuItem

@@ -154,6 +154,11 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
   const handleMenuSelection = useCallback(
     async (menuItem: EditorMenuItem) => {
       if (!menuItem.isEntitled) {
+        if (menuItem.uiFeature.featureIdentifier === NativeFeatureIdentifier.TYPES.SuperEditor) {
+          premiumModal.showSuperDemo()
+          return
+        }
+
         premiumModal.activate(menuItem.uiFeature.displayName)
         return
       }
@@ -249,7 +254,7 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
     <>
       <Menu className="pb-1 pt-0.5" a11yLabel="Change note type menu">
         <MenuSection>
-          <div className="flex items-center justify-between pr-4 py-3 md:pt-0 md:pb-1">
+          <div className="flex items-center justify-between py-3 pr-4 md:pb-1 md:pt-0">
             <div className="px-3">
               <h2 className="text-base font-bold">Choose a note type</h2>
               {unableToFindEditor && (

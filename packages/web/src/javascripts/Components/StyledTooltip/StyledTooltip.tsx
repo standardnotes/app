@@ -18,6 +18,7 @@ const StyledTooltip = ({
   interactive = false,
   type = 'label',
   side,
+  documentElement,
   ...props
 }: {
   children: ReactNode
@@ -28,6 +29,7 @@ const StyledTooltip = ({
   interactive?: boolean
   type?: TooltipStoreProps['type']
   side?: PopoverSide
+  documentElement?: HTMLElement
 } & Partial<TooltipOptions>) => {
   const [forceOpen, setForceOpen] = useState<boolean | undefined>()
 
@@ -123,15 +125,15 @@ const StyledTooltip = ({
             popoverElement.style.pointerEvents = 'none'
           }
 
-          const documentElement = document.querySelector('.main-ui-view')
+          const documentElementForPopover = documentElement || document.querySelector('.main-ui-view')
 
-          if (!popoverElement || !anchorElement || !documentElement || !open) {
+          if (!popoverElement || !anchorElement || !documentElementForPopover || !open) {
             return
           }
 
           const anchorRect = anchorElement.getBoundingClientRect()
           const popoverRect = popoverElement.getBoundingClientRect()
-          const documentRect = documentElement.getBoundingClientRect()
+          const documentRect = documentElementForPopover.getBoundingClientRect()
 
           const styles = getPositionedPopoverStyles({
             align: 'center',
@@ -151,7 +153,11 @@ const StyledTooltip = ({
           Object.assign(popoverElement.style, styles)
 
           if (!props.portal) {
-            const adjustedStyles = getAdjustedStylesForNonPortalPopover(popoverElement, styles)
+            const adjustedStyles = getAdjustedStylesForNonPortalPopover(
+              popoverElement,
+              styles,
+              props.portalElement instanceof HTMLElement ? props.portalElement : undefined,
+            )
             popoverElement.style.setProperty('--translate-x', adjustedStyles['--translate-x'])
             popoverElement.style.setProperty('--translate-y', adjustedStyles['--translate-y'])
           }

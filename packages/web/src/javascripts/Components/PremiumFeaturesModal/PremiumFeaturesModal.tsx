@@ -5,6 +5,8 @@ import { FeatureName } from '@/Controllers/FeatureName'
 import { SuccessPrompt } from './Subviews/SuccessPrompt'
 import { UpgradePrompt } from './Subviews/UpgradePrompt'
 import Modal from '../Modal/Modal'
+import SuperDemo from './Subviews/SuperDemo'
+import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 
 type Props = {
   application: WebApplication
@@ -23,23 +25,41 @@ const PremiumFeaturesModal: FunctionComponent<Props> = ({
 }) => {
   const ctaButtonRef = useRef<HTMLButtonElement>(null)
 
-  return (
-    <Modal close={onClose} title="Upgrade" className="px-6 py-5" customHeader={<></>}>
-      <div tabIndex={-1} className="sn-component">
-        <div tabIndex={0}>
-          {type === PremiumFeatureModalType.UpgradePrompt && (
-            <UpgradePrompt
-              featureName={featureName}
-              ctaRef={ctaButtonRef}
-              application={application}
-              hasSubscription={hasSubscription}
-              onClose={onClose}
-            />
-          )}
+  const isShowingSuperDemo = type === PremiumFeatureModalType.SuperDemo
 
-          {type === PremiumFeatureModalType.UpgradeSuccess && <SuccessPrompt ctaRef={ctaButtonRef} onClose={onClose} />}
-        </div>
-      </div>
+  const isMobileScreen = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
+
+  return (
+    <Modal
+      close={onClose}
+      title={isShowingSuperDemo ? 'Try out Super' : 'Upgrade'}
+      className={isShowingSuperDemo ? '' : 'px-6 py-5'}
+      customHeader={isShowingSuperDemo ? undefined : <></>}
+      actions={
+        isShowingSuperDemo
+          ? [
+              {
+                label: 'Done',
+                type: 'primary',
+                onClick: onClose,
+                hidden: !isMobileScreen,
+                mobileSlot: 'right',
+              },
+            ]
+          : undefined
+      }
+    >
+      {type === PremiumFeatureModalType.UpgradePrompt && (
+        <UpgradePrompt
+          featureName={featureName}
+          ctaRef={ctaButtonRef}
+          application={application}
+          hasSubscription={hasSubscription}
+          onClose={onClose}
+        />
+      )}
+      {type === PremiumFeatureModalType.UpgradeSuccess && <SuccessPrompt ctaRef={ctaButtonRef} onClose={onClose} />}
+      {type === PremiumFeatureModalType.SuperDemo && <SuperDemo hasSubscription={hasSubscription} onClose={onClose} />}
     </Modal>
   )
 }

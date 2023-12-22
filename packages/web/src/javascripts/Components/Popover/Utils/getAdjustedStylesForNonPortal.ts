@@ -6,7 +6,7 @@ export const getAdjustedStylesForNonPortalPopover = (
   styles: PopoverCSSProperties,
   parent?: HTMLElement,
 ) => {
-  const absoluteParent = parent || getAbsolutePositionedParent(popoverElement)
+  const absoluteParent = parent || getAbsolutePositionedParent(popoverElement) || popoverElement.parentElement
   const translateXProperty = styles?.['--translate-x']
   const translateYProperty = styles?.['--translate-y']
 
