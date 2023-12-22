@@ -48,7 +48,7 @@ const ServerPicker = ({ className, customServerAddress, handleCustomServerAddres
   const options = useMemo(
     () =>
       [
-        { label: 'Standard', value: 'standard' },
+        { label: 'Default', value: 'standard' },
         { label: 'Custom', value: 'custom' },
       ].concat(isDesktopApplication() ? [{ label: 'Home Server', value: 'home server' }] : []) as {
         label: string
