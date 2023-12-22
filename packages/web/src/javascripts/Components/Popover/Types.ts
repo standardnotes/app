@@ -50,6 +50,7 @@ type CommonPopoverProps = {
   offset?: number
   hideOnClickInModal?: boolean
   open: boolean
+  documentElement?: HTMLElement
 }
 
 export type PopoverContentProps = CommonPopoverProps & {

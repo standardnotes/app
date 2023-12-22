@@ -583,6 +583,8 @@ const ToolbarPlugin = () => {
     toolbarStore,
   ])
 
+  const popoverDocumentElement = editor.getRootElement()?.parentElement ?? document.body
+
   return (
     <>
       {modal}
@@ -758,6 +760,7 @@ const ToolbarPlugin = () => {
         disableMobileFullscreenTakeover
         disableFlip
         portal={false}
+        documentElement={isMobile ? popoverDocumentElement : undefined}
       >
         <div className="mb-1.5 mt-1 px-3 text-sm font-semibold uppercase text-text">Table of Contents</div>
         <LexicalTableOfContents>
@@ -813,6 +816,7 @@ const ToolbarPlugin = () => {
         disableFlip
         containerClassName="md:!min-w-60 md:!w-auto"
         portal={false}
+        documentElement={isMobile ? popoverDocumentElement : undefined}
       >
         <Menu a11yLabel="Text formatting options" className="!px-0" onClick={() => setIsTextFormatMenuOpen(false)}>
           <ToolbarMenuItem
@@ -853,6 +857,7 @@ const ToolbarPlugin = () => {
         disableFlip
         containerClassName="md:!min-w-60 md:!w-auto"
         portal={false}
+        documentElement={isMobile ? popoverDocumentElement : undefined}
       >
         <Menu a11yLabel="Text style" className="!px-0" onClick={() => setIsTextStyleMenuOpen(false)}>
           <ToolbarMenuItem
@@ -925,6 +930,7 @@ const ToolbarPlugin = () => {
         disableFlip
         containerClassName="md:!min-w-60 md:!w-auto"
         portal={false}
+        documentElement={isMobile ? popoverDocumentElement : undefined}
       >
         <Menu a11yLabel="Alignment" className="!px-0" onClick={() => setIsAlignmentMenuOpen(false)}>
           <ToolbarMenuItem
@@ -965,6 +971,7 @@ const ToolbarPlugin = () => {
         disableFlip
         containerClassName="md:!min-w-60 md:!w-auto"
         portal={false}
+        documentElement={isMobile ? popoverDocumentElement : undefined}
       >
         <Menu a11yLabel="Insert" className="!px-0" onClick={() => setIsInsertMenuOpen(false)}>
           <ToolbarMenuItem
