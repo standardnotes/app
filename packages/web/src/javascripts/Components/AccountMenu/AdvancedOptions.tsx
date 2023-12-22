@@ -5,7 +5,6 @@ import DecoratedInput from '@/Components/Input/DecoratedInput'
 import Icon from '@/Components/Icon/Icon'
 import { useApplication } from '../ApplicationProvider'
 import ServerPicker from './ServerPicker/ServerPicker'
-import HorizontalSeparator from '../Shared/HorizontalSeparator'
 
 type Props = {
   disabled?: boolean
@@ -195,7 +194,6 @@ const AdvancedOptions: FunctionComponent<Props> = ({
               </>
             )}
           </div>
-          <HorizontalSeparator classes="my-2" />
           <ServerPicker customServerAddress={server} handleCustomServerAddressChange={handleSyncServerChange} />
         </>
       ) : null}
