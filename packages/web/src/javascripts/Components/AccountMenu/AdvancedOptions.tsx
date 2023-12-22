@@ -5,6 +5,7 @@ import DecoratedInput from '@/Components/Input/DecoratedInput'
 import Icon from '@/Components/Icon/Icon'
 import { useApplication } from '../ApplicationProvider'
 import ServerPicker from './ServerPicker/ServerPicker'
+import HorizontalSeparator from '../Shared/HorizontalSeparator'
 
 type Props = {
   disabled?: boolean
@@ -115,86 +116,88 @@ const AdvancedOptions: FunctionComponent<Props> = ({
         </div>
       </button>
       {showAdvanced ? (
-        <div className="my-2 px-3">
-          {children}
+        <>
+          <div className="my-2 px-3">
+            {children}
 
-          <div className="mb-1 flex items-center justify-between">
-            <Checkbox
-              name="private-workspace"
-              label="Private username mode"
-              checked={isPrivateUsername}
-              disabled={disabled || isRecoveryCodes}
-              onChange={handleIsPrivateUsernameChange}
-            />
-            <a href="https://standardnotes.com/help/80" target="_blank" rel="noopener noreferrer" title="Learn more">
-              <Icon type="info" className="text-neutral" />
-            </a>
-          </div>
-
-          {isPrivateUsername && (
-            <>
-              <DecoratedInput
-                className={{ container: 'mb-2' }}
-                left={[<Icon type="account-circle" className="text-neutral" />]}
-                type="text"
-                placeholder="Username"
-                value={privateUsername}
-                onChange={handlePrivateUsernameNameChange}
-                disabled={disabled || isRecoveryCodes}
-                spellcheck={false}
-                autocomplete={false}
-              />
-            </>
-          )}
-
-          {onStrictSignInChange && (
             <div className="mb-1 flex items-center justify-between">
               <Checkbox
-                name="use-strict-signin"
-                label="Use strict sign-in"
-                checked={isStrictSignin}
+                name="private-workspace"
+                label="Private username mode"
+                checked={isPrivateUsername}
                 disabled={disabled || isRecoveryCodes}
-                onChange={handleStrictSigninChange}
+                onChange={handleIsPrivateUsernameChange}
               />
-              <a
-                href="https://standardnotes.com/help/security"
-                target="_blank"
-                rel="noopener noreferrer"
-                title="Learn more"
-              >
+              <a href="https://standardnotes.com/help/80" target="_blank" rel="noopener noreferrer" title="Learn more">
                 <Icon type="info" className="text-neutral" />
               </a>
             </div>
-          )}
 
-          <div className="mb-1 flex items-center justify-between">
-            <Checkbox
-              name="recovery-codes"
-              label="Use recovery code"
-              checked={isRecoveryCodes}
-              disabled={disabled}
-              onChange={handleIsRecoveryCodesChange}
-            />
-          </div>
+            {isPrivateUsername && (
+              <>
+                <DecoratedInput
+                  className={{ container: 'mb-2' }}
+                  left={[<Icon type="account-circle" className="text-neutral" />]}
+                  type="text"
+                  placeholder="Username"
+                  value={privateUsername}
+                  onChange={handlePrivateUsernameNameChange}
+                  disabled={disabled || isRecoveryCodes}
+                  spellcheck={false}
+                  autocomplete={false}
+                />
+              </>
+            )}
 
-          {isRecoveryCodes && (
-            <>
-              <DecoratedInput
-                className={{ container: 'mb-2' }}
-                left={[<Icon type="security" className="text-neutral" />]}
-                type="text"
-                placeholder="Recovery code"
-                value={recoveryCodes}
-                onChange={handleRecoveryCodesChange}
+            {onStrictSignInChange && (
+              <div className="mb-1 flex items-center justify-between">
+                <Checkbox
+                  name="use-strict-signin"
+                  label="Use strict sign-in"
+                  checked={isStrictSignin}
+                  disabled={disabled || isRecoveryCodes}
+                  onChange={handleStrictSigninChange}
+                />
+                <a
+                  href="https://standardnotes.com/help/security"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title="Learn more"
+                >
+                  <Icon type="info" className="text-neutral" />
+                </a>
+              </div>
+            )}
+
+            <div className="mb-1 flex items-center justify-between">
+              <Checkbox
+                name="recovery-codes"
+                label="Use recovery code"
+                checked={isRecoveryCodes}
                 disabled={disabled}
-                spellcheck={false}
-                autocomplete={false}
+                onChange={handleIsRecoveryCodesChange}
               />
-            </>
-          )}
+            </div>
 
+            {isRecoveryCodes && (
+              <>
+                <DecoratedInput
+                  className={{ container: 'mb-2' }}
+                  left={[<Icon type="security" className="text-neutral" />]}
+                  type="text"
+                  placeholder="Recovery code"
+                  value={recoveryCodes}
+                  onChange={handleRecoveryCodesChange}
+                  disabled={disabled}
+                  spellcheck={false}
+                  autocomplete={false}
+                />
+              </>
+            )}
+          </div>
+          <HorizontalSeparator classes="my-2" />
           <ServerPicker customServerAddress={server} handleCustomServerAddressChange={handleSyncServerChange} />
-        </div>
+        </>
       ) : null}
     </>
   )
