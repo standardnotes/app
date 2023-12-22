@@ -3,11 +3,12 @@ import { BlocksEditorComposer } from '@/Components/SuperEditor/BlocksEditorCompo
 import BlockPickerMenuPlugin from '@/Components/SuperEditor/Plugins/BlockPickerPlugin/BlockPickerPlugin'
 import usePreference from '@/Hooks/usePreference'
 import { useResponsiveEditorFontSize } from '@/Utils/getPlaintextFontSize'
-import { EditorLineHeightValues, PrefKey } from '@standardnotes/snjs'
-import { CSSProperties, useRef } from 'react'
+import { EditorLineHeightValues, PrefKey, classNames } from '@standardnotes/snjs'
+import { CSSProperties, useRef, useState } from 'react'
 import { SuperDemoInitialValue } from './SuperDemoInitialValue'
 import { UpgradePrompt } from './UpgradePrompt'
 import { useApplication } from '@/Components/ApplicationProvider'
+import { useAutoElementRect } from '@/Hooks/useElementRect'
 
 const SuperDemo = ({ hasSubscription }: { hasSubscription: boolean }) => {
   const application = useApplication()
@@ -18,9 +19,19 @@ const SuperDemo = ({ hasSubscription }: { hasSubscription: boolean }) => {
 
   const ctaRef = useRef<HTMLButtonElement>(null)
 
+  const [demoContainer, setDemoContainer] = useState<HTMLDivElement | null>(null)
+  const demoContainerRect = useAutoElementRect(demoContainer, {
+    updateOnWindowResize: true,
+  })
+
   return (
-    <div className="flex h-full flex-col">
-      <div className="flex-shrink-0 border-b border-border p-4">
+    <div className="flex h-full flex-col" ref={setDemoContainer}>
+      <div
+        className={classNames(
+          'flex-shrink-0 border-b border-border p-4',
+          demoContainerRect && demoContainerRect.height < 500 ? 'hidden md:block' : '',
+        )}
+      >
         <UpgradePrompt
           featureName="Super notes"
           ctaRef={ctaRef}
