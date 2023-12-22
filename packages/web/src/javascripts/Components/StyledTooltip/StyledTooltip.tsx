@@ -153,7 +153,11 @@ const StyledTooltip = ({
           Object.assign(popoverElement.style, styles)
 
           if (!props.portal) {
-            const adjustedStyles = getAdjustedStylesForNonPortalPopover(popoverElement, styles)
+            const adjustedStyles = getAdjustedStylesForNonPortalPopover(
+              popoverElement,
+              styles,
+              props.portalElement instanceof HTMLElement ? props.portalElement : undefined,
+            )
             popoverElement.style.setProperty('--translate-x', adjustedStyles['--translate-x'])
             popoverElement.style.setProperty('--translate-y', adjustedStyles['--translate-y'])
           }

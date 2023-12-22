@@ -32,7 +32,6 @@ import {
   forwardRef,
   useCallback,
   useEffect,
-  useMemo,
   useRef,
   useState,
 } from 'react'
@@ -114,7 +113,8 @@ const ToolbarButton = forwardRef(
   ) => {
     const [editor] = useLexicalComposerContext()
 
-    const parentElement = useMemo(() => editor.getRootElement()?.parentElement ?? document.body, [editor])
+    const isMobile = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
+    const parentElement = editor.getRootElement()?.parentElement ?? document.body
 
     return (
       <StyledTooltip
@@ -123,7 +123,7 @@ const ToolbarButton = forwardRef(
         label={name}
         side="top"
         portal={false}
-        portalElement={parentElement}
+        portalElement={isMobile ? parentElement : undefined}
         documentElement={parentElement}
       >
         <ToolbarItem
