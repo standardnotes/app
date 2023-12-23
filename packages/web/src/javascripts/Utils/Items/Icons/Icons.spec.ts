@@ -1,4 +1,4 @@
-import { getIconForFileType } from "./getIconForFileType"
+import { getIconForFileType } from './getIconForFileType'
 
 describe('icons utils', () => {
   describe('getIconForFileType', () => {

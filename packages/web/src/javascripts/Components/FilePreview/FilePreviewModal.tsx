@@ -156,7 +156,7 @@ const FilePreviewModal = observer(({ application }: Props) => {
         onKeyDown={keyDownHandler}
         ref={focusElementOnMount}
       >
-        <div className="min-h-6 hidden flex-shrink-0 flex-wrap items-center justify-between gap-2 border-0 border-b border-solid border-border px-4 py-3 focus:shadow-none md:flex">
+        <div className="hidden min-h-6 flex-shrink-0 flex-wrap items-center justify-between gap-2 border-0 border-b border-solid border-border px-4 py-3 focus:shadow-none md:flex">
           <div className="flex items-center">
             <div className="h-6 w-6">{IconComponent}</div>
             {isRenaming ? (

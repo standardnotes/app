@@ -36,7 +36,7 @@ const MultipleSelectedNotes = ({ application }: Props) => {
       <div className="flex min-h-full w-full max-w-md flex-grow flex-col items-center justify-center md:min-h-0">
         <IlNotesIcon className="block" />
         <h2 className="m-0 mt-4 text-center text-lg font-bold">{count} selected notes</h2>
-        <p className="max-w-60 mt-2 text-center text-sm">Actions will be performed on all selected notes.</p>
+        <p className="mt-2 max-w-60 text-center text-sm">Actions will be performed on all selected notes.</p>
         <Button className="mt-2.5" onClick={cancelMultipleSelection}>
           Cancel multiple selection
         </Button>

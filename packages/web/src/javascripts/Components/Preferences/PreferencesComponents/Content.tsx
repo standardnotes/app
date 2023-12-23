@@ -36,7 +36,7 @@ export const LinkButton: FunctionComponent<{
   <a
     target="_blank"
     className={classNames(
-      'block bg-normal-button text-text rounded border-solid border px-4 py-1.5 font-bold text-base lg:text-sm w-fit focus:bg-contrast hover:bg-contrast border-border',
+      'block w-fit rounded border border-solid border-border bg-normal-button px-4 py-1.5 text-base font-bold text-text hover:bg-contrast focus:bg-contrast lg:text-sm',
       className,
     )}
     href={link}

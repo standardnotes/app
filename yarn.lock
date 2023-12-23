@@ -7533,14 +7533,14 @@ __metadata:
     postcss: ^8.4.19
     postcss-loader: ^7.0.2
     prettier: "*"
-    prettier-plugin-tailwindcss: ^0.5.3
+    prettier-plugin-tailwindcss: ^0.5.9
     qrcode.react: ^3.1.0
     react: ^18.2.0
     react-dom: ^18.2.0
     react-refresh: ^0.14.0
     sass-loader: "*"
     svg-jest: ^1.0.1
-    tailwindcss: ^3.3.3
+    tailwindcss: ^3.4.0
     ts-jest: ^29.0.3
     ts-loader: ^9.4.2
     typescript: "*"
@@ -14345,7 +14345,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fast-glob@npm:^3.2.11, fast-glob@npm:^3.2.12, fast-glob@npm:^3.2.9, fast-glob@npm:^3.3.0":
+"fast-glob@npm:^3.2.11, fast-glob@npm:^3.2.9, fast-glob@npm:^3.3.0":
   version: 3.3.1
   resolution: "fast-glob@npm:3.3.1"
   dependencies:
@@ -17778,6 +17778,15 @@ __metadata:
   bin:
     jiti: bin/jiti.js
   checksum: fdf55e315f9e81c04ae902416642062851d92c6cdcc17a59d5d1d35e1a0842e4e79be38da86613c5776fa18c579954542a441b93d1c347a50137dee2e558cbd0
+  languageName: node
+  linkType: hard
+
+"jiti@npm:^1.19.1":
+  version: 1.21.0
+  resolution: "jiti@npm:1.21.0"
+  bin:
+    jiti: bin/jiti.js
+  checksum: a7bd5d63921c170eaec91eecd686388181c7828e1fa0657ab374b9372bfc1f383cf4b039e6b272383d5cb25607509880af814a39abdff967322459cca41f2961
   languageName: node
   linkType: hard
 
@@ -22142,20 +22151,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier-plugin-tailwindcss@npm:^0.5.3":
-  version: 0.5.3
-  resolution: "prettier-plugin-tailwindcss@npm:0.5.3"
+"prettier-plugin-tailwindcss@npm:^0.5.9":
+  version: 0.5.9
+  resolution: "prettier-plugin-tailwindcss@npm:0.5.9"
   peerDependencies:
     "@ianvs/prettier-plugin-sort-imports": "*"
     "@prettier/plugin-pug": "*"
     "@shopify/prettier-plugin-liquid": "*"
-    "@shufo/prettier-plugin-blade": "*"
     "@trivago/prettier-plugin-sort-imports": "*"
     prettier: ^3.0
     prettier-plugin-astro: "*"
     prettier-plugin-css-order: "*"
     prettier-plugin-import-sort: "*"
     prettier-plugin-jsdoc: "*"
+    prettier-plugin-marko: "*"
     prettier-plugin-organize-attributes: "*"
     prettier-plugin-organize-imports: "*"
     prettier-plugin-style-order: "*"
@@ -22166,8 +22175,6 @@ __metadata:
     "@prettier/plugin-pug":
       optional: true
     "@shopify/prettier-plugin-liquid":
-      optional: true
-    "@shufo/prettier-plugin-blade":
       optional: true
     "@trivago/prettier-plugin-sort-imports":
       optional: true
@@ -22191,7 +22198,7 @@ __metadata:
       optional: true
     prettier-plugin-twig-melody:
       optional: true
-  checksum: c20843d9739bf8ac4608166841484276dc73040ba02fef5dfee2f78f6e10957ad09c161fefb01e120fec24c0f982a34339212ad1fa70ec2b75472f6f853667d9
+  checksum: ceb7d26d4191221736983c26f213f3fac660c289dd902cbce9003dba375e9d21066906d762530c52363049ef529a1e4a9d5926387cbb44e0ef154c0d2619fe72
   languageName: node
   linkType: hard
 
@@ -25248,19 +25255,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tailwindcss@npm:^3.3.3":
-  version: 3.3.3
-  resolution: "tailwindcss@npm:3.3.3"
+"tailwindcss@npm:^3.4.0":
+  version: 3.4.0
+  resolution: "tailwindcss@npm:3.4.0"
   dependencies:
     "@alloc/quick-lru": ^5.2.0
     arg: ^5.0.2
     chokidar: ^3.5.3
     didyoumean: ^1.2.2
     dlv: ^1.1.3
-    fast-glob: ^3.2.12
+    fast-glob: ^3.3.0
     glob-parent: ^6.0.2
     is-glob: ^4.0.3
-    jiti: ^1.18.2
+    jiti: ^1.19.1
     lilconfig: ^2.1.0
     micromatch: ^4.0.5
     normalize-path: ^3.0.0
@@ -25277,7 +25284,7 @@ __metadata:
   bin:
     tailwind: lib/cli.js
     tailwindcss: lib/cli.js
-  checksum: 0195c7a3ebb0de5e391d2a883d777c78a4749f0c532d204ee8aea9129f2ed8e701d8c0c276aa5f7338d07176a3c2a7682c1d0ab9c8a6c2abe6d9325c2954eb50
+  checksum: d7f05beb1cf98d169b9b65ef674a82dd16c97757194f9bacee4c536cf74f3852e0008a74f7af8578f4a1e9639fac262fd8ef89efe3e6e06667243640422f9462
   languageName: node
   linkType: hard
 

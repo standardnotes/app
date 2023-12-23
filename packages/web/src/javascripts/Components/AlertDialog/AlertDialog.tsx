@@ -27,7 +27,7 @@ const AlertDialog = ({
     <Dialog
       store={dialog}
       role="alertdialog"
-      className="fixed left-0 top-0 z-modal h-full w-full flex items-center justify-center pointer-events-auto"
+      className="pointer-events-auto fixed left-0 top-0 z-modal flex h-full w-full items-center justify-center"
       modal={false}
       portal={true}
       preventBodyScroll={true}
@@ -40,7 +40,7 @@ const AlertDialog = ({
       />
       <div
         className={classNames(
-          'z-[1] w-[95vw] rounded border border-[--popover-border-color] bg-[--popover-background-color] [backdrop-filter:var(--popover-backdrop-filter)] px-6 py-5 shadow-xl md:w-auto',
+          'z-[1] w-[95vw] rounded border border-[--popover-border-color] bg-[--popover-background-color] px-6 py-5 shadow-xl [backdrop-filter:var(--popover-backdrop-filter)] md:w-auto',
           !className?.includes('max-w-') && 'max-w-[600px]',
           className,
         )}

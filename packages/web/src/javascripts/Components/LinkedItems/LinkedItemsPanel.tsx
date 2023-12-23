@@ -50,7 +50,7 @@ const LinkedItemsPanel = ({ item }: { item: DecryptedItem }) => {
     <div>
       <form
         className={classNames(
-          'sticky top-0 z-10 bg-default md:translucent-ui:bg-transparent px-2.5 pt-2.5',
+          'sticky top-0 z-10 bg-default px-2.5 pt-2.5 md:translucent-ui:bg-transparent',
           linkedResults.length || unlinkedItems.length || notesLinkingToItem.length
             ? 'border-b border-border pb-2.5'
             : 'pb-1',
