@@ -1,0 +1,85 @@
+diff --git a/LexicalClipboard.dev.js b/LexicalClipboard.dev.js
+index 7f30124aa6bd71a27b171275c1bf7d366f6c1c95..f96c13e8e8c965e9cd485d0d2069f1ea096d92c4 100644
+--- a/LexicalClipboard.dev.js
++++ b/LexicalClipboard.dev.js
+@@ -102,7 +102,7 @@ function $insertDataTransferForPlainText(dataTransfer, selection) {
+  * @param selection the selection to use as the insertion point for the content in the DataTransfer object
+  * @param editor the LexicalEditor the content is being inserted into.
+  */
+-function $insertDataTransferForRichText(dataTransfer, selection, editor) {
++function $insertDataTransferForRichText(dataTransfer, selection, editor, event) {
+   const lexicalString = dataTransfer.getData('application/x-lexical-editor');
+   if (lexicalString) {
+     try {
+@@ -115,15 +115,18 @@ function $insertDataTransferForRichText(dataTransfer, selection, editor) {
+       // Fail silently.
+     }
+   }
+-  const htmlString = dataTransfer.getData('text/html');
+-  if (htmlString) {
+-    try {
+-      const parser = new DOMParser();
+-      const dom = parser.parseFromString(htmlString, 'text/html');
+-      const nodes = html.$generateNodesFromDOM(editor, dom);
+-      return $insertGeneratedNodes(editor, nodes, selection);
+-    } catch (_unused2) {
+-      // Fail silently.
++  const shouldIgnoreHTML = event && event.inputType === 'insertReplacementText' && dataTransfer.types.includes('text/plain');
++  if (!shouldIgnoreHTML) {
++    const htmlString = dataTransfer.getData('text/html');
++    if (htmlString) {
++      try {
++        const parser = new DOMParser();
++        const dom = parser.parseFromString(htmlString, 'text/html');
++        const nodes = html.$generateNodesFromDOM(editor, dom);
++        return $insertGeneratedNodes(editor, nodes, selection);
++      } catch (_unused2) {
++        // Fail silently.
++      }
+     }
+   }
+ 
+diff --git a/LexicalClipboard.prod.js b/LexicalClipboard.prod.js
+index e4d91576b7802dd4c53276049ff4116c97b697a1..ca25d060e213c89663b656ee0a72716ebd4b343b 100644
+--- a/LexicalClipboard.prod.js
++++ b/LexicalClipboard.prod.js
+@@ -7,15 +7,15 @@
+ 'use strict';var d=require("@lexical/html"),q=require("@lexical/selection"),r=require("@lexical/utils"),u=require("lexical");function z(a){let b=new URLSearchParams;b.append("code",a);for(let c=1;c<arguments.length;c++)b.append("v",arguments[c]);throw Error(`Minified Lexical error #${a}; visit https://lexical.dev/docs/error?${b} for the full message or `+"use the non-minified dev environment for full errors and additional helpful warnings.");}
+ let A="undefined"!==typeof window&&"undefined"!==typeof window.document&&"undefined"!==typeof window.document.createElement;function B(a){let b=u.$getSelection();if(null==b)throw Error("Expected valid LexicalSelection");return u.$isRangeSelection(b)&&b.isCollapsed()||0===b.getNodes().length?"":d.$generateHtmlFromNodes(a,b)}
+ function C(a){let b=u.$getSelection();if(null==b)throw Error("Expected valid LexicalSelection");return u.$isRangeSelection(b)&&b.isCollapsed()||0===b.getNodes().length?null:JSON.stringify(D(a,b))}
+-function E(a,b,c){let g=u.DEPRECATED_$isGridSelection(c),e=u.$isRangeSelection(c);(g||e&&null!==r.$findMatchingParent(c.anchor.getNode(),h=>u.DEPRECATED_$isGridCellNode(h))&&null!==r.$findMatchingParent(c.focus.getNode(),h=>u.DEPRECATED_$isGridCellNode(h)))&&1===b.length&&u.DEPRECATED_$isGridNode(b[0])?F(b,c,!1,a):c.insertNodes(b)}
+-function F(a,b,c,g){1===a.length&&u.DEPRECATED_$isGridNode(a[0])||z(42);var e=a[0];a=e.getChildren();c=e.getFirstChildOrThrow().getChildrenSize();var h=e.getChildrenSize(),f=r.$findMatchingParent(b.anchor.getNode(),l=>u.DEPRECATED_$isGridCellNode(l));b=(e=f&&r.$findMatchingParent(f,l=>u.DEPRECATED_$isGridRowNode(l)))&&r.$findMatchingParent(e,l=>u.DEPRECATED_$isGridNode(l));u.DEPRECATED_$isGridCellNode(f)&&u.DEPRECATED_$isGridRowNode(e)&&u.DEPRECATED_$isGridNode(b)||z(43);var k=e.getIndexWithinParent(),
+-m=Math.min(b.getChildrenSize()-1,k+h-1);h=f.getIndexWithinParent();f=Math.min(e.getChildrenSize()-1,h+c-1);c=Math.min(h,f);e=Math.min(k,m);h=Math.max(h,f);k=Math.max(k,m);m=b.getChildren();f=0;let n,p;for(let l=e;l<=k;l++){var t=m[l];u.DEPRECATED_$isGridRowNode(t)||z(24);var y=a[f];u.DEPRECATED_$isGridRowNode(y)||z(24);t=t.getChildren();y=y.getChildren();let G=0;for(let v=c;v<=h;v++){let w=t[v];u.DEPRECATED_$isGridCellNode(w)||z(25);let H=y[G];u.DEPRECATED_$isGridCellNode(H)||z(25);l===e&&v===c?n=
+-w.getKey():l===k&&v===h&&(p=w.getKey());let M=w.getChildren();H.getChildren().forEach(x=>{u.$isTextNode(x)&&u.$createParagraphNode().append(x);w.append(x)});M.forEach(x=>x.remove());G++}f++}n&&p&&(a=u.DEPRECATED_$createGridSelection(),a.set(b.getKey(),n,p),u.$setSelection(a),g.dispatchCommand(u.SELECTION_CHANGE_COMMAND,void 0))}
+-function I(a,b,c,g=[]){let e=null!=b?c.isSelected(b):!0,h=u.$isElementNode(c)&&c.excludeFromCopy("html");var f=c;if(null!==b){var k=q.$cloneWithProperties(c);f=k=u.$isTextNode(k)&&null!=b?q.$sliceSelectedTextNodeContent(b,k):k}let m=u.$isElementNode(f)?f.getChildren():[];var n=f;k=n.exportJSON();var p=n.constructor;k.type!==p.getType()&&z(58,p.name);let t=k.children;u.$isElementNode(n)&&(Array.isArray(t)||z(59,p.name));u.$isTextNode(f)&&(f=f.__text,0<f.length?k.text=f:e=!1);for(f=0;f<m.length;f++)n=
+-m[f],p=I(a,b,n,k.children),!e&&u.$isElementNode(c)&&p&&c.extractWithChild(n,b,"clone")&&(e=!0);if(e&&!h)g.push(k);else if(Array.isArray(k.children))for(a=0;a<k.children.length;a++)g.push(k.children[a]);return e}function D(a,b){let c=[],g=u.$getRoot().getChildren();for(let e=0;e<g.length;e++)I(a,b,g[e],c);return{namespace:a._config.namespace,nodes:c}}function J(a){let b=[];for(let c=0;c<a.length;c++){let g=u.$parseSerializedNode(a[c]);u.$isTextNode(g)&&q.$addNodeStyle(g);b.push(g)}return b}let K=null;
+-function L(a,b){var c=A?(a._window||window).getSelection():null;if(!c)return!1;var g=c.anchorNode;c=c.focusNode;if(null!==g&&null!==c&&!u.isSelectionWithinEditor(a,g,c))return!1;b.preventDefault();b=b.clipboardData;g=u.$getSelection();if(null===b||null===g)return!1;c=B(a);a=C(a);let e="";null!==g&&(e=g.getTextContent());null!==c&&b.setData("text/html",c);null!==a&&b.setData("application/x-lexical-editor",a);b.setData("text/plain",e);return!0}exports.$generateJSONFromSelectedNodes=D;
++function E(a,b,c){let g=u.DEPRECATED_$isGridSelection(c),f=u.$isRangeSelection(c);(g||f&&null!==r.$findMatchingParent(c.anchor.getNode(),h=>u.DEPRECATED_$isGridCellNode(h))&&null!==r.$findMatchingParent(c.focus.getNode(),h=>u.DEPRECATED_$isGridCellNode(h)))&&1===b.length&&u.DEPRECATED_$isGridNode(b[0])?F(b,c,!1,a):c.insertNodes(b)}
++function F(a,b,c,g){1===a.length&&u.DEPRECATED_$isGridNode(a[0])||z(42);var f=a[0];a=f.getChildren();c=f.getFirstChildOrThrow().getChildrenSize();var h=f.getChildrenSize(),e=r.$findMatchingParent(b.anchor.getNode(),l=>u.DEPRECATED_$isGridCellNode(l));b=(f=e&&r.$findMatchingParent(e,l=>u.DEPRECATED_$isGridRowNode(l)))&&r.$findMatchingParent(f,l=>u.DEPRECATED_$isGridNode(l));u.DEPRECATED_$isGridCellNode(e)&&u.DEPRECATED_$isGridRowNode(f)&&u.DEPRECATED_$isGridNode(b)||z(43);var k=f.getIndexWithinParent(),
++m=Math.min(b.getChildrenSize()-1,k+h-1);h=e.getIndexWithinParent();e=Math.min(f.getChildrenSize()-1,h+c-1);c=Math.min(h,e);f=Math.min(k,m);h=Math.max(h,e);k=Math.max(k,m);m=b.getChildren();e=0;let n,p;for(let l=f;l<=k;l++){var t=m[l];u.DEPRECATED_$isGridRowNode(t)||z(24);var y=a[e];u.DEPRECATED_$isGridRowNode(y)||z(24);t=t.getChildren();y=y.getChildren();let G=0;for(let v=c;v<=h;v++){let w=t[v];u.DEPRECATED_$isGridCellNode(w)||z(25);let H=y[G];u.DEPRECATED_$isGridCellNode(H)||z(25);l===f&&v===c?n=
++w.getKey():l===k&&v===h&&(p=w.getKey());let M=w.getChildren();H.getChildren().forEach(x=>{u.$isTextNode(x)&&u.$createParagraphNode().append(x);w.append(x)});M.forEach(x=>x.remove());G++}e++}n&&p&&(a=u.DEPRECATED_$createGridSelection(),a.set(b.getKey(),n,p),u.$setSelection(a),g.dispatchCommand(u.SELECTION_CHANGE_COMMAND,void 0))}
++function I(a,b,c,g=[]){let f=null!=b?c.isSelected(b):!0,h=u.$isElementNode(c)&&c.excludeFromCopy("html");var e=c;if(null!==b){var k=q.$cloneWithProperties(c);e=k=u.$isTextNode(k)&&null!=b?q.$sliceSelectedTextNodeContent(b,k):k}let m=u.$isElementNode(e)?e.getChildren():[];var n=e;k=n.exportJSON();var p=n.constructor;k.type!==p.getType()&&z(58,p.name);let t=k.children;u.$isElementNode(n)&&(Array.isArray(t)||z(59,p.name));u.$isTextNode(e)&&(e=e.__text,0<e.length?k.text=e:f=!1);for(e=0;e<m.length;e++)n=
++m[e],p=I(a,b,n,k.children),!f&&u.$isElementNode(c)&&p&&c.extractWithChild(n,b,"clone")&&(f=!0);if(f&&!h)g.push(k);else if(Array.isArray(k.children))for(a=0;a<k.children.length;a++)g.push(k.children[a]);return f}function D(a,b){let c=[],g=u.$getRoot().getChildren();for(let f=0;f<g.length;f++)I(a,b,g[f],c);return{namespace:a._config.namespace,nodes:c}}function J(a){let b=[];for(let c=0;c<a.length;c++){let g=u.$parseSerializedNode(a[c]);u.$isTextNode(g)&&q.$addNodeStyle(g);b.push(g)}return b}let K=null;
++function L(a,b){var c=A?(a._window||window).getSelection():null;if(!c)return!1;var g=c.anchorNode;c=c.focusNode;if(null!==g&&null!==c&&!u.isSelectionWithinEditor(a,g,c))return!1;b.preventDefault();b=b.clipboardData;g=u.$getSelection();if(null===b||null===g)return!1;c=B(a);a=C(a);let f="";null!==g&&(f=g.getTextContent());null!==c&&b.setData("text/html",c);null!==a&&b.setData("application/x-lexical-editor",a);b.setData("text/plain",f);return!0}exports.$generateJSONFromSelectedNodes=D;
+ exports.$generateNodesFromSerializedNodes=J;exports.$getHtmlContent=B;exports.$getLexicalContent=C;exports.$insertDataTransferForPlainText=function(a,b){a=a.getData("text/plain")||a.getData("text/uri-list");null!=a&&b.insertRawText(a)};
+-exports.$insertDataTransferForRichText=function(a,b,c){var g=a.getData("application/x-lexical-editor");if(g)try{let h=JSON.parse(g);if(h.namespace===c._config.namespace&&Array.isArray(h.nodes)){let f=J(h.nodes);return E(c,f,b)}}catch(h){}if(g=a.getData("text/html"))try{var e=(new DOMParser).parseFromString(g,"text/html");let h=d.$generateNodesFromDOM(c,e);return E(c,h,b)}catch(h){}a=a.getData("text/plain")||a.getData("text/uri-list");if(null!=a)if(u.$isRangeSelection(b))for(a=a.split(/(\r?\n|\t)/),
+-""===a[a.length-1]&&a.pop(),c=0;c<a.length;c++)e=a[c],"\n"===e||"\r\n"===e?b.insertParagraph():"\t"===e?b.insertNodes([u.$createTabNode()]):b.insertText(e);else b.insertRawText(a)};exports.$insertGeneratedNodes=E;
+-exports.copyToClipboard=async function(a,b){if(null!==K)return!1;if(null!==b)return new Promise(f=>{a.update(()=>{f(L(a,b))})});var c=a.getRootElement();let g=null==a._window?window.document:a._window.document,e=A?(a._window||window).getSelection():null;if(null===c||null===e)return!1;let h=g.createElement("span");h.style.cssText="position: fixed; top: -1000px;";h.append(g.createTextNode("#"));c.append(h);c=new Range;c.setStart(h,0);c.setEnd(h,1);e.removeAllRanges();e.addRange(c);return new Promise(f=>
+-{let k=a.registerCommand(u.COPY_COMMAND,m=>{r.objectKlassEquals(m,ClipboardEvent)&&(k(),null!==K&&(window.clearTimeout(K),K=null),f(L(a,m)));return!0},u.COMMAND_PRIORITY_CRITICAL);K=window.setTimeout(()=>{k();K=null;f(!1)},50);g.execCommand("copy");h.remove()})}
++exports.$insertDataTransferForRichText=function(a,b,c,g){let f=a.getData("application/x-lexical-editor");if(f)try{let e=JSON.parse(f);if(e.namespace===c._config.namespace&&Array.isArray(e.nodes)){let k=J(e.nodes);return E(c,k,b)}}catch(e){}if(!g||"insertReplacementText"!==g.inputType||!a.types.includes("text/plain"))if(g=a.getData("text/html"))try{var h=(new DOMParser).parseFromString(g,"text/html");let e=d.$generateNodesFromDOM(c,h);return E(c,e,b)}catch(e){}a=a.getData("text/plain")||a.getData("text/uri-list");
++if(null!=a)if(u.$isRangeSelection(b))for(a=a.split(/(\r?\n|\t)/),""===a[a.length-1]&&a.pop(),c=0;c<a.length;c++)h=a[c],"\n"===h||"\r\n"===h?b.insertParagraph():"\t"===h?b.insertNodes([u.$createTabNode()]):b.insertText(h);else b.insertRawText(a)};exports.$insertGeneratedNodes=E;
++exports.copyToClipboard=async function(a,b){if(null!==K)return!1;if(null!==b)return new Promise(e=>{a.update(()=>{e(L(a,b))})});var c=a.getRootElement();let g=null==a._window?window.document:a._window.document,f=A?(a._window||window).getSelection():null;if(null===c||null===f)return!1;let h=g.createElement("span");h.style.cssText="position: fixed; top: -1000px;";h.append(g.createTextNode("#"));c.append(h);c=new Range;c.setStart(h,0);c.setEnd(h,1);f.removeAllRanges();f.addRange(c);return new Promise(e=>
++{let k=a.registerCommand(u.COPY_COMMAND,m=>{r.objectKlassEquals(m,ClipboardEvent)&&(k(),null!==K&&(window.clearTimeout(K),K=null),e(L(a,m)));return!0},u.COMMAND_PRIORITY_CRITICAL);K=window.setTimeout(()=>{k();K=null;e(!1)},50);g.execCommand("copy");h.remove()})}
+diff --git a/clipboard.d.ts b/clipboard.d.ts
+index 99e2138389b64d298a1330d7b354ba87d2e6f24e..83250a4c2049f94e08bfdfc757e03e8a85a08dd4 100644
+--- a/clipboard.d.ts
++++ b/clipboard.d.ts
+@@ -44,7 +44,7 @@ export declare function $insertDataTransferForPlainText(dataTransfer: DataTransf
+  * @param selection the selection to use as the insertion point for the content in the DataTransfer object
+  * @param editor the LexicalEditor the content is being inserted into.
+  */
+-export declare function $insertDataTransferForRichText(dataTransfer: DataTransfer, selection: BaseSelection, editor: LexicalEditor): void;
++export declare function $insertDataTransferForRichText(dataTransfer: DataTransfer, selection: BaseSelection, editor: LexicalEditor, event?: InputEvent): void;
+ /**
+  * Inserts Lexical nodes into the editor using different strategies depending on
+  * some simple selection-based heuristics. If you're looking for a generic way to

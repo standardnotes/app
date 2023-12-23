@@ -3779,6 +3779,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@lexical/clipboard@patch:@lexical/clipboard@npm:0.12.5#.yarn/patches/@lexical-clipboard-npm-0.12.5-e1ca4ff56d.patch::locator=%40standardnotes%2Fapp-monorepo%40workspace%3A.":
+  version: 0.12.5
+  resolution: "@lexical/clipboard@patch:@lexical/clipboard@npm%3A0.12.5#.yarn/patches/@lexical-clipboard-npm-0.12.5-e1ca4ff56d.patch::version=0.12.5&hash=4258b5&locator=%40standardnotes%2Fapp-monorepo%40workspace%3A."
+  dependencies:
+    "@lexical/html": 0.12.5
+    "@lexical/list": 0.12.5
+    "@lexical/selection": 0.12.5
+    "@lexical/utils": 0.12.5
+  peerDependencies:
+    lexical: 0.12.5
+  checksum: e424534aa19a8b99d4cb101613d7a70caa7ddb475c793d02303f34fc8ec02f8d97a4dd65f50c1b035c8dfda24c1402a295127030cba13e4b3975c1a02fe6eaf1
+  languageName: node
+  linkType: hard
+
 "@lexical/code@npm:0.12.5":
   version: 0.12.5
   resolution: "@lexical/code@npm:0.12.5"
