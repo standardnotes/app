@@ -24,7 +24,7 @@ export const BlocksEditorComposer: FunctionComponent<BlocksEditorComposerProps> 
         theme: BlocksEditorTheme,
         editable: !readonly,
         onError: (error: Error) => console.error(error),
-        editorState: initialValue,
+        editorState: typeof initialValue === 'string' && initialValue.length === 0 ? undefined : initialValue,
         nodes: [...nodes, ...BlockEditorNodes],
       }}
     >
