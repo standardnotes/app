@@ -1528,6 +1528,7 @@ export class Dependencies {
         this.get<HttpService>(TYPES.HttpService),
         this.get<DiskStorageService>(TYPES.DiskStorageService),
         this.options.defaultHost,
+        this.options.identifier,
         this.get<InMemoryStore>(TYPES.InMemoryStore),
         this.get<PureCryptoInterface>(TYPES.Crypto),
         this.get<SessionStorageMapper>(TYPES.SessionStorageMapper),

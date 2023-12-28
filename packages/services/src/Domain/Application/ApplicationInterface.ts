@@ -64,7 +64,7 @@ export interface ApplicationInterface {
   setPreference<K extends PrefKey>(key: K, value: PrefValue[K]): Promise<void>
 
   hasAccount(): boolean
-  setCustomHost(host: string): Promise<void>
+  setCustomHost(host: string, websocketUrl?: string): Promise<void>
   isUsingHomeServer(): Promise<boolean>
 
   importData(data: BackupFile, awaitSync?: boolean): Promise<Result<ImportDataResult>>
