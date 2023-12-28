@@ -286,6 +286,7 @@ const FilePreviewModalWrapper: FunctionComponent<Props> = ({ application }) => {
       isOpen={application.filePreviewModalController.isOpen}
       close={application.filePreviewModalController.dismiss}
       className="md:!h-full md:max-h-[90%] md:!w-full md:max-w-[90%]"
+      autoFocusOnShow={false}
     >
       <FilePreviewModal application={application} />
     </ModalOverlay>
