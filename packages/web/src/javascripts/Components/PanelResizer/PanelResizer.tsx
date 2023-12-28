@@ -180,6 +180,10 @@ class PanelResizer extends Component<Props, State> {
       }
     }
 
+    if (this.props.widthEventCallback) {
+      this.props.widthEventCallback(width)
+    }
+
     return width
   }
 

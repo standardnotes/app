@@ -23,8 +23,8 @@ import EditorPane from '../NoteGroupView/EditorPane'
 
 const NAVIGATION_PANEL_MIN_WIDTH = 48
 const ITEMS_PANEL_MIN_WIDTH = 200
-const PLACEHOLDER_NAVIGATION_PANEL_WIDTH = 220
-const PLACEHOLDER_NOTES_PANEL_WIDTH = 400
+const NAVIGATION_PANEL_DEFAULT_WIDTH = 220
+const ITEMS_PANEL_DEFAULT_WIDTH = 400
 
 const PanesSystemComponent = () => {
   const application = useApplication()
@@ -39,12 +39,12 @@ const PanesSystemComponent = () => {
   const [panesPendingExit, setPanesPendingExit] = useState<AppPaneId[]>([])
 
   const [navigationPanelWidth, setNavigationPanelWidth] = useState<number>(
-    application.getPreference(PrefKey.TagsPanelWidth, PLACEHOLDER_NAVIGATION_PANEL_WIDTH),
+    application.getPreference(PrefKey.TagsPanelWidth, NAVIGATION_PANEL_DEFAULT_WIDTH),
   )
   const [navigationRef, setNavigationRef] = useState<HTMLDivElement | null>(null)
 
   const [itemsPanelWidth, setItemsPanelWidth] = useState<number>(
-    application.getPreference(PrefKey.NotesPanelWidth, PLACEHOLDER_NOTES_PANEL_WIDTH),
+    application.getPreference(PrefKey.NotesPanelWidth, ITEMS_PANEL_DEFAULT_WIDTH),
   )
   const [listRef, setListRef] = useState<HTMLDivElement | null>(null)
 
@@ -127,7 +127,7 @@ const PanesSystemComponent = () => {
 
   useEffect(() => {
     const removeObserver = application.addEventObserver(async () => {
-      const width = application.getPreference(PrefKey.TagsPanelWidth, PLACEHOLDER_NAVIGATION_PANEL_WIDTH)
+      const width = application.getPreference(PrefKey.TagsPanelWidth, NAVIGATION_PANEL_DEFAULT_WIDTH)
       setNavigationPanelWidth(width)
     }, ApplicationEvent.PreferencesChanged)
 
@@ -298,7 +298,7 @@ const PanesSystemComponent = () => {
               {showPanelResizers && listRef && (
                 <PanelResizer
                   collapsable={true}
-                  defaultWidth={itemsPanelWidth}
+                  defaultWidth={ITEMS_PANEL_DEFAULT_WIDTH}
                   hoverable={true}
                   left={0}
                   minWidth={ITEMS_PANEL_MIN_WIDTH}
