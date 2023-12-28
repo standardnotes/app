@@ -1,9 +1,9 @@
 import { ApplicationStage, StorageKey } from '@standardnotes/services'
 import { Migration } from '@Lib/Migrations/Migration'
 
-export class Migration2_204_7 extends Migration {
+export class Migration2_204_8 extends Migration {
   static override version(): string {
-    return '2.204.7'
+    return '2.204.8'
   }
 
   protected registerStageHandlers(): void {
