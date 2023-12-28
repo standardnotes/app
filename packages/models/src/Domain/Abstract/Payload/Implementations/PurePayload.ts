@@ -62,11 +62,21 @@ export abstract class PurePayload<T extends TransferPayload<C>, C extends ItemCo
     this.dirty = rawPayload.dirty
     this.duplicate_of = rawPayload.duplicate_of
 
-    this.created_at = new Date(rawPayload.created_at || new Date())
     this.updated_at = new Date(rawPayload.updated_at || 0)
-
-    this.created_at_timestamp = rawPayload.created_at_timestamp || 0
     this.updated_at_timestamp = rawPayload.updated_at_timestamp || 0
+
+    if (this.updated_at_timestamp < 0) {
+      this.updated_at_timestamp = 0
+      this.updated_at = new Date(0)
+    }
+
+    this.created_at = new Date(rawPayload.created_at || new Date())
+    this.created_at_timestamp = rawPayload.created_at_timestamp || 0
+
+    if (this.created_at_timestamp < 0) {
+      this.created_at_timestamp = this.updated_at_timestamp
+      this.created_at = this.updated_at
+    }
 
     this.lastSyncBegan = rawPayload.lastSyncBegan ? new Date(rawPayload.lastSyncBegan) : undefined
     this.lastSyncEnd = rawPayload.lastSyncEnd ? new Date(rawPayload.lastSyncEnd) : undefined
