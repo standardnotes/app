@@ -9,9 +9,10 @@ import {
   COMMAND_PRIORITY_EDITOR,
   COMMAND_PRIORITY_NORMAL,
   PASTE_COMMAND,
+  $isRootOrShadowRoot,
 } from 'lexical'
 import { $createFileNode } from './Nodes/FileUtils'
-import { mergeRegister } from '@lexical/utils'
+import { mergeRegister, $wrapNodeInElement } from '@lexical/utils'
 import { useFilesController } from '@/Controllers/FilesControllerProvider'
 import { FilesControllerEvent } from '@/Controllers/FilesController'
 import { useLinkingController } from '@/Controllers/LinkingControllerProvider'
@@ -52,8 +53,11 @@ export default function FilePlugin({ currentNote }: { currentNote: SNNote }): JS
         (payload) => {
           const fileNode = $createFileNode(payload)
           $insertNodes([fileNode])
+          if ($isRootOrShadowRoot(fileNode.getParentOrThrow())) {
+            $wrapNodeInElement(fileNode, $createParagraphNode).selectEnd()
+          }
           const newLineNode = $createParagraphNode()
-          fileNode.insertAfter(newLineNode)
+          fileNode.getParentOrThrow().insertAfter(newLineNode)
 
           return true
         },
@@ -71,21 +75,6 @@ export default function FilePlugin({ currentNote }: { currentNote: SNNote }): JS
         },
         COMMAND_PRIORITY_NORMAL,
       ),
-      editor.registerNodeTransform(FileNode, (node) => {
-        /**
-         * Before this was added, we used to wrap the file node in a paragraph node,
-         * which caused issues with selection. We no longer do that, but for existing
-         * notes that have this, we use this transform to remove the wrapper node.
-         */
-        const parent = node.getParent()
-        if (!parent) {
-          return
-        }
-        if (parent.getChildrenSize() === 1) {
-          parent.insertBefore(node)
-          parent.remove()
-        }
-      }),
     )
   }, [application, currentNote.protected, editor, filesController, linkingController])
 
