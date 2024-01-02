@@ -1187,6 +1187,7 @@ export class Dependencies {
 
       return new HomeServerService(
         this.get<DesktopDeviceInterface>(TYPES.DeviceInterface),
+        this.options.platform,
         this.get<InternalEventBus>(TYPES.InternalEventBus),
       )
     })
