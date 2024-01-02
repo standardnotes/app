@@ -13,6 +13,7 @@ import { RawStorageKey } from '../Storage/StorageKeys'
 import { HomeServerServiceInterface } from './HomeServerServiceInterface'
 import { HomeServerEnvironmentConfiguration } from './HomeServerEnvironmentConfiguration'
 import { HomeServerStatus } from './HomeServerStatus'
+import { Platform } from '@standardnotes/models'
 
 export class HomeServerService
   extends AbstractService
@@ -22,6 +23,7 @@ export class HomeServerService
 
   constructor(
     private desktopDevice: DesktopDeviceInterface,
+    private platform: Platform,
     protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)
@@ -173,7 +175,8 @@ export class HomeServerService
       if (!documentsDirectory) {
         return
       }
-      location = `${documentsDirectory}/${this.HOME_SERVER_DATA_DIRECTORY_NAME}`
+      const separator = this.platform === Platform.WindowsDesktop ? '\\' : '/'
+      location = `${documentsDirectory}${separator}${this.HOME_SERVER_DATA_DIRECTORY_NAME}`
     }
 
     await this.desktopDevice.setRawStorageValue(RawStorageKey.HomeServerDataLocation, location)
