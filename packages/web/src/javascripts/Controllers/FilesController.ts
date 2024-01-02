@@ -391,6 +391,10 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
         })
       }
     } catch (error) {
+      if (error instanceof DOMException && error.name === 'AbortError') {
+        return
+      }
+
       console.error(error)
 
       addToast({
@@ -658,7 +662,9 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
   }
 
   downloadFiles = async (files: FileItem[]) => {
-    if (this.platform === Platform.MacDesktop) {
+    // macOS doesn't allow multiple calls to the filepicker at the
+    // same time, so we need to iterate one by one
+    if (this.platform === Platform.MacDesktop || this.platform === Platform.MacWeb) {
       for (const file of files) {
         await this.handleFileAction({
           type: FileItemActionType.DownloadFile,
