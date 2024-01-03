@@ -1,4 +1,3 @@
-import { dismissToast, ToastType, addTimedToast } from '@standardnotes/toast'
 import {
   UIFeature,
   CreateDecryptedLocalStorageContextPayload,
@@ -25,7 +24,6 @@ import { ActiveThemeList } from './ActiveThemeList'
 import { Color } from './Color'
 
 const CachedThemesKey = 'cachedThemes'
-const TimeBeforeApplyingColorScheme = 5
 const DefaultThemeIdentifier = 'Default'
 
 export class ThemeManager extends AbstractUIService {
@@ -227,34 +225,6 @@ export class ThemeManager extends AbstractUIService {
     }
   }
 
-  private showColorSchemeToast(setThemeCallback: () => void) {
-    const [toastId, intervalId] = addTimedToast(
-      {
-        type: ToastType.Regular,
-        message: (timeRemaining) => `Applying system color scheme in ${timeRemaining}s...`,
-        actions: [
-          {
-            label: 'Keep current theme',
-            handler: () => {
-              dismissToast(toastId)
-              clearInterval(intervalId)
-            },
-          },
-          {
-            label: 'Apply now',
-            handler: () => {
-              dismissToast(toastId)
-              clearInterval(intervalId)
-              setThemeCallback()
-            },
-          },
-        ],
-      },
-      setThemeCallback,
-      TimeBeforeApplyingColorScheme,
-    )
-  }
-
   private setThemeAsPerColorScheme(prefersDarkColorScheme: boolean) {
     const preference = prefersDarkColorScheme ? PrefKey.AutoDarkThemeIdentifier : PrefKey.AutoLightThemeIdentifier
 
@@ -267,8 +237,6 @@ export class ThemeManager extends AbstractUIService {
 
     const activeTheme = themes.find((theme) => this.components.isThemeActive(theme) && !theme.layerable)
 
-    const activeThemeIdentifier = activeTheme ? activeTheme.featureIdentifier : DefaultThemeIdentifier
-
     const themeIdentifier = this.preferences.getValue(preference, preferenceDefault)
 
     const toggleActiveTheme = () => {
@@ -277,21 +245,13 @@ export class ThemeManager extends AbstractUIService {
       }
     }
 
-    const setTheme = () => {
-      if (themeIdentifier === DefaultThemeIdentifier) {
-        toggleActiveTheme()
-      } else {
-        const theme = themes.find((theme) => theme.featureIdentifier === themeIdentifier)
-        if (theme && !this.components.isThemeActive(theme)) {
-          this.components.toggleTheme(theme).catch(console.error)
-        }
+    if (themeIdentifier === DefaultThemeIdentifier) {
+      toggleActiveTheme()
+    } else {
+      const theme = themes.find((theme) => theme.featureIdentifier === themeIdentifier)
+      if (theme && !this.components.isThemeActive(theme)) {
+        this.components.toggleTheme(theme).catch(console.error)
       }
-    }
-
-    const isPreferredThemeNotActive = activeThemeIdentifier !== themeIdentifier
-
-    if (isPreferredThemeNotActive) {
-      this.showColorSchemeToast(setTheme)
     }
   }
 
