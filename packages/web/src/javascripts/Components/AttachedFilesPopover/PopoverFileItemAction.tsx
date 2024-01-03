@@ -18,6 +18,7 @@ export type FileItemAction =
       >
       payload: {
         file: FileItem
+        directoryHandle?: FileSystemDirectoryHandle
       }
     }
   | {

@@ -67,8 +67,8 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
   showProtectedOverlay = false
   fileContextMenuLocation: FileContextMenuLocation = { x: 0, y: 0 }
 
-  shouldUseStreamingReader = StreamingFileSaver.available()
-  reader = this.shouldUseStreamingReader ? StreamingFileReader : ClassicFileReader
+  shouldUseStreamingAPI = StreamingFileSaver.available()
+  reader = this.shouldUseStreamingAPI ? StreamingFileReader : ClassicFileReader
   maxFileSize = this.reader.maximumFileSize()
 
   override deinit(): void {
@@ -251,7 +251,7 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
         await this.deleteFile(file)
         break
       case FileItemActionType.DownloadFile:
-        await this.downloadFile(file)
+        await this.downloadFile(file, action.payload.directoryHandle)
         break
       case FileItemActionType.ToggleFileProtection: {
         const isProtected = await this.toggleFileProtection(file)
@@ -289,7 +289,7 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
     })
   }
 
-  private async downloadFile(file: FileItem): Promise<void> {
+  private async downloadFile(file: FileItem, directoryHandle?: FileSystemDirectoryHandle): Promise<void> {
     let downloadingToastId = ''
     let canShowProgressNotification = false
 
@@ -298,12 +298,15 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
     }
 
     try {
-      const saver = StreamingFileSaver.available() ? new StreamingFileSaver(file.name) : new ClassicFileSaver()
+      const saver = this.shouldUseStreamingAPI ? new StreamingFileSaver(file.name) : new ClassicFileSaver()
 
       const isUsingStreamingSaver = saver instanceof StreamingFileSaver
 
       if (isUsingStreamingSaver) {
-        await saver.selectFileToSaveTo()
+        const fileHandle = directoryHandle
+          ? await directoryHandle.getFileHandle(file.name, { create: true })
+          : undefined
+        await saver.selectFileToSaveTo(fileHandle)
       }
 
       if (this.mobileDevice && canShowProgressNotification) {
@@ -413,7 +416,7 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
   }
 
   alertIfFileExceedsSizeLimit = (file: File): boolean => {
-    if (!this.shouldUseStreamingReader && this.maxFileSize && file.size >= this.maxFileSize) {
+    if (!this.shouldUseStreamingAPI && this.maxFileSize && file.size >= this.maxFileSize) {
       this.alerts
         .alert(
           `This file exceeds the limits supported in this browser. To upload files greater than ${
@@ -465,7 +468,7 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
       const fileToUpload =
         fileOrHandle instanceof File
           ? fileOrHandle
-          : fileOrHandle instanceof FileSystemFileHandle && this.shouldUseStreamingReader
+          : fileOrHandle instanceof FileSystemFileHandle && this.shouldUseStreamingAPI
           ? await fileOrHandle.getFile()
           : undefined
 
@@ -661,15 +664,41 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
     void this.sync.sync()
   }
 
+  getDirectoryHandleForDownloads = async () => {
+    if (!this.shouldUseStreamingAPI) {
+      return
+    }
+
+    const directoryHandle = await window.showDirectoryPicker({
+      startIn: 'downloads',
+    })
+
+    return directoryHandle
+  }
+
   downloadFiles = async (files: FileItem[]) => {
     // macOS doesn't allow multiple calls to the filepicker at the
     // same time, so we need to iterate one by one
     if (this.platform === Platform.MacDesktop || this.platform === Platform.MacWeb) {
+      let directoryHandle: FileSystemDirectoryHandle | undefined
+
+      if (files.length > 1) {
+        try {
+          directoryHandle = await this.getDirectoryHandleForDownloads()
+        } catch (error) {
+          if (error instanceof DOMException && error.name === 'AbortError') {
+            return
+          }
+          console.error(error)
+        }
+      }
+
       for (const file of files) {
         await this.handleFileAction({
           type: FileItemActionType.DownloadFile,
           payload: {
             file,
+            directoryHandle,
           },
         })
       }

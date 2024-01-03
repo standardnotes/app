@@ -6753,7 +6753,7 @@ __metadata:
     "@standardnotes/files": "workspace:*"
     "@standardnotes/utils": "workspace:*"
     "@types/jest": ^29.2.3
-    "@types/wicg-file-system-access": ^2020.9.5
+    "@types/wicg-file-system-access": ^2023.10.4
     "@typescript-eslint/eslint-plugin": "*"
     eslint: "*"
     eslint-plugin-prettier: "*"
@@ -7519,7 +7519,7 @@ __metadata:
     "@types/jest": ^29.2.4
     "@types/react": ^18.2.39
     "@types/react-dom": ^18.2.17
-    "@types/wicg-file-system-access": ^2020.9.5
+    "@types/wicg-file-system-access": ^2023.10.4
     "@zip.js/zip.js": ^2.6.60
     autoprefixer: ^10.4.13
     babel-loader: ^9.1.2
@@ -8457,10 +8457,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/wicg-file-system-access@npm:^2020.9.5":
-  version: 2020.9.6
-  resolution: "@types/wicg-file-system-access@npm:2020.9.6"
-  checksum: 2dbf33ee55684d4ed0607ae4b470e0147806b15ec047563c59d94e6ac13be7bed904cc7eece5e4be7c0d58a4de0b0635089f7cd5b7738372e436c760b0719241
+"@types/wicg-file-system-access@npm:^2023.10.4":
+  version: 2023.10.4
+  resolution: "@types/wicg-file-system-access@npm:2023.10.4"
+  checksum: bfbadfbddcdf04f600e0bb1b3dfe8dd79661c987ded487c2ac03670932e4ab9cd277c8b98d6229d10a910cb149c1bf956f43f189c4349f1c1a97cff310154aeb
   languageName: node
   linkType: hard
 
