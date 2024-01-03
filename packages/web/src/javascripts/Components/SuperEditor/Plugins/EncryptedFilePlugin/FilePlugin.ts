@@ -75,6 +75,21 @@ export default function FilePlugin({ currentNote }: { currentNote: SNNote }): JS
         },
         COMMAND_PRIORITY_NORMAL,
       ),
+      editor.registerNodeTransform(FileNode, (node) => {
+        /**
+         * Before this was added, we used to wrap the file node in a paragraph node,
+         * which caused issues with selection. We no longer do that, but for existing
+         * notes that have this, we use this transform to remove the wrapper node.
+         */
+        const parent = node.getParent()
+        if (!parent) {
+          return
+        }
+        if (parent.getChildrenSize() === 1) {
+          parent.insertBefore(node)
+          parent.remove()
+        }
+      }),
     )
   }, [application, currentNote.protected, editor, filesController, linkingController])
 
