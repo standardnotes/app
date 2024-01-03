@@ -35,6 +35,13 @@
   margin-left: 16px;
   list-style-position: outside;
 
+  // Fix indentation for checklists
+  // Lexical doesn't support setting a class specifically for checklists at the moment
+  // so we use the has selector to see if the items are check list items
+  &:has(> [aria-checked]) {
+    margin-left: 0;
+  }
+
   &.Lexical__rtl {
     margin-left: 0;
     margin-right: 16px;
