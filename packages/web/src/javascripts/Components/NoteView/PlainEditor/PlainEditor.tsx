@@ -55,6 +55,8 @@ export const PlainEditor = forwardRef<PlainEditorInterface, Props>(
     const isAdjustingMobileCursor = useRef(false)
     const note = useRef(controller.item)
 
+    const [isPendingLocalPropagation, setIsPendingLocalPropagation] = useState(false)
+
     const tabObserverDisposer = useRef<Disposer>()
     const mutationObserver = useRef<MutationObserver | null>(null)
 
@@ -79,27 +81,40 @@ export const PlainEditor = forwardRef<PlainEditorInterface, Props>(
           throw Error('Editor received changes for non-current note')
         }
 
-        if (
-          isPayloadSourceRetrieved(source) ||
-          editorText == undefined ||
-          updatedNote.editorIdentifier !== note.current.editorIdentifier ||
-          updatedNote.noteType !== note.current.noteType
-        ) {
-          setEditorText(updatedNote.text)
+        if (!isPendingLocalPropagation) {
+          if (
+            isPayloadSourceRetrieved(source) ||
+            editorText == undefined ||
+            updatedNote.editorIdentifier !== note.current.editorIdentifier ||
+            updatedNote.noteType !== note.current.noteType
+          ) {
+            setEditorText(updatedNote.text)
+          }
         }
 
         note.current = updatedNote
       })
 
       return disposer
-    }, [controller, editorText, controller.item.uuid, controller.item.editorIdentifier, controller.item.noteType])
+    }, [
+      controller,
+      editorText,
+      controller.item.uuid,
+      controller.item.editorIdentifier,
+      controller.item.noteType,
+      isPendingLocalPropagation,
+    ])
 
     const onTextAreaChange: ChangeEventHandler<HTMLTextAreaElement> = ({ currentTarget }) => {
       const text = currentTarget.value
 
       setEditorText(text)
 
-      void controller.saveAndAwaitLocalPropagation({ text: text, isUserModified: true })
+      setIsPendingLocalPropagation(true)
+
+      void controller.saveAndAwaitLocalPropagation({ text: text, isUserModified: true }).then(() => {
+        setIsPendingLocalPropagation(false)
+      })
     }
 
     const onContentFocus = useCallback(() => {
