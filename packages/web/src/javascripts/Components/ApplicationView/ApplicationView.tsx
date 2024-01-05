@@ -13,7 +13,7 @@ import { FunctionComponent, useCallback, useEffect, useMemo, useState, lazy, use
 import RevisionHistoryModal from '@/Components/RevisionHistoryModal/RevisionHistoryModal'
 import PremiumModalProvider from '@/Hooks/usePremiumModal'
 import ConfirmSignoutContainer from '@/Components/ConfirmSignoutModal/ConfirmSignoutModal'
-import { ToastContainer } from '@standardnotes/toast'
+import { addToast, ToastContainer, ToastType } from '@standardnotes/toast'
 import FilePreviewModalWrapper from '@/Components/FilePreview/FilePreviewModal'
 import FileContextMenuWrapper from '@/Components/FileContextMenu/FileContextMenu'
 import PermissionsModalWrapper from '@/Components/PermissionsModal/PermissionsModalWrapper'
@@ -141,6 +141,11 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
             })
             .catch(console.error)
         }
+      } else if (eventName === ApplicationEvent.SyncTooManyRequests) {
+        addToast({
+          type: ToastType.Error,
+          message: 'Too many requests. Please try again later.',
+        })
       }
     })
 

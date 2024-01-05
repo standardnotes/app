@@ -100,6 +100,7 @@ import { ContentType } from '@standardnotes/domain-core'
 
 const DEFAULT_MAJOR_CHANGE_THRESHOLD = 15
 const INVALID_SESSION_RESPONSE_STATUS = 401
+const TOO_MANY_REQUESTS_RESPONSE_STATUS = 429
 const DEFAULT_AUTO_SYNC_INTERVAL = 30_000
 
 /** Content types appearing first are always mapped first */
@@ -998,6 +999,10 @@ export class SyncService
 
     if (response.status === INVALID_SESSION_RESPONSE_STATUS) {
       void this.notifyEvent(SyncEvent.InvalidSession)
+    }
+
+    if (response.status === TOO_MANY_REQUESTS_RESPONSE_STATUS) {
+      void this.notifyEvent(SyncEvent.TooManyRequests)
     }
 
     this.opStatus?.setError(response.error)
