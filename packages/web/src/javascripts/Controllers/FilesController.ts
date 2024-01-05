@@ -766,7 +766,7 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
 
       await this.files
         .downloadFile(file, async (bytesChunk) => {
-          writer.ready.then(() => writer.write(bytesChunk)).catch(console.error)
+          await writer.write(bytesChunk)
         })
         .catch(console.error)
 
