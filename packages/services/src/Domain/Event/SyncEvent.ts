@@ -33,6 +33,7 @@ export enum SyncEvent {
   ReceivedSharedVaultInvites = 'received-shared-vault-invites',
   ReceivedNotifications = 'received-user-events',
   ReceivedAsymmetricMessages = 'received-asymmetric-messages',
+  TooManyRequests = 'too-many-requests',
 }
 
 export type SyncEventReceivedRemoteSharedVaultsData = SharedVaultServerHash[]

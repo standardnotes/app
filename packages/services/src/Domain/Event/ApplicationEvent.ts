@@ -56,4 +56,5 @@ export enum ApplicationEvent {
   /** Called when the app first launches and after first sync request made after sign in */
   CompletedInitialSync = 'Application:CompletedInitialSync',
   DidPurchaseSubscription = 'Application:DidPurchaseSubscription',
+  SyncTooManyRequests = 'Application:SyncTooManyRequests',
 }
