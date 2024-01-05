@@ -35,11 +35,12 @@ const FileMenuOptions: FunctionComponent<Props> = ({
 }) => {
   const application = useApplication()
 
-  const { handleFileAction } = application.filesController
+  const { shouldUseStreamingAPI, handleFileAction } = application.filesController
   const { toggleAppPane } = useResponsiveAppPane()
 
   const hasProtectedFiles = useMemo(() => selectedFiles.some((file) => file.protected), [selectedFiles])
   const hasSelectedMultipleFiles = useMemo(() => selectedFiles.length > 1, [selectedFiles.length])
+  const canShowZipDownloadOption = shouldUseStreamingAPI && hasSelectedMultipleFiles
 
   const totalFileSize = useMemo(
     () => selectedFiles.map((file) => file.decryptedSize).reduce((prev, next) => prev + next, 0),
@@ -136,8 +137,19 @@ const FileMenuOptions: FunctionComponent<Props> = ({
           }}
         >
           <Icon type="download" className={`mr-2 text-neutral ${MenuItemIconSize}`} />
-          Download
+          Download {canShowZipDownloadOption ? 'separately' : ''}
         </MenuItem>
+        {canShowZipDownloadOption && (
+          <MenuItem
+            onClick={() => {
+              void application.filesController.downloadFilesAsZip(selectedFiles)
+              closeMenu()
+            }}
+          >
+            <Icon type="download" className={`mr-2 text-neutral ${MenuItemIconSize}`} />
+            Download as ZIP
+          </MenuItem>
+        )}
         {shouldShowRenameOption && (
           <MenuItem
             onClick={() => {

@@ -11,6 +11,7 @@ import {
   ArchiveManager,
   confirmDialog,
   IsNativeMobileWeb,
+  parseAndCreateZippableFileName,
   VaultDisplayServiceInterface,
 } from '@standardnotes/ui-services'
 import { Strings, StringUtils } from '@/Constants/Strings'
@@ -715,5 +716,63 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
         }),
       ),
     )
+  }
+
+  downloadFilesAsZip = async (files: FileItem[]) => {
+    if (!this.shouldUseStreamingAPI) {
+      throw new Error('Device does not support streaming API')
+    }
+
+    if (files.some((file) => file.protected)) {
+      await this.protections.authorizeProtectedActionForItems(
+        files.filter((file) => file.protected),
+        ChallengeReason.AccessProtectedFile,
+      )
+    }
+
+    const zipFileHandle = await window.showSaveFilePicker({
+      types: [
+        {
+          description: 'ZIP file',
+          accept: { 'application/zip': ['.zip'] },
+        },
+      ],
+    })
+
+    const zip = await import('@zip.js/zip.js')
+
+    const zipStream = await zipFileHandle.createWritable()
+
+    const zipWriter = new zip.ZipWriter(zipStream, {
+      level: 0,
+    })
+
+    const addedFilenames: string[] = []
+
+    for (const file of files) {
+      const fileStream = new TransformStream()
+
+      let name = parseAndCreateZippableFileName(file.name)
+
+      if (addedFilenames.includes(name)) {
+        name = `${Date.now()} ${name}`
+      }
+
+      zipWriter.add(name, fileStream.readable).catch(console.error)
+
+      addedFilenames.push(name)
+
+      const writer = fileStream.writable.getWriter()
+
+      await this.files
+        .downloadFile(file, async (bytesChunk) => {
+          writer.ready.then(() => writer.write(bytesChunk)).catch(console.error)
+        })
+        .catch(console.error)
+
+      await writer.close()
+    }
+
+    await zipWriter.close()
   }
 }
