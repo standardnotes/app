@@ -5,6 +5,7 @@ import DecoratedInput from '@/Components/Input/DecoratedInput'
 import Icon from '@/Components/Icon/Icon'
 import { useApplication } from '../ApplicationProvider'
 import ServerPicker from './ServerPicker/ServerPicker'
+import { DefaultHost } from '@standardnotes/snjs'
 
 type Props = {
   disabled?: boolean
@@ -23,8 +24,9 @@ const AdvancedOptions: FunctionComponent<Props> = ({
 }) => {
   const application = useApplication()
 
-  const { server, setServer } = application.accountMenuController
-  const [showAdvanced, setShowAdvanced] = useState(false)
+  const { server } = application.accountMenuController
+
+  const [showAdvanced, setShowAdvanced] = useState(server !== DefaultHost.Api)
 
   const [isPrivateUsername, setIsPrivateUsername] = useState(false)
   const [privateUsername, setPrivateUsername] = useState('')
@@ -33,6 +35,14 @@ const AdvancedOptions: FunctionComponent<Props> = ({
   const [recoveryCodes, setRecoveryCodes] = useState('')
 
   const [isStrictSignin, setIsStrictSignin] = useState(false)
+
+  useEffect(() => {
+    void application.homeServer?.isHomeServerRunning().then((isRunning) => {
+      if (isRunning) {
+        setShowAdvanced(true)
+      }
+    })
+  }, [application.homeServer])
 
   useEffect(() => {
     const recomputePrivateUsername = async () => {
@@ -83,14 +93,6 @@ const AdvancedOptions: FunctionComponent<Props> = ({
       }
     },
     [onRecoveryCodesChange],
-  )
-
-  const handleSyncServerChange = useCallback(
-    (server: string, websocketUrl?: string) => {
-      setServer(server)
-      application.setCustomHost(server, websocketUrl).catch(console.error)
-    },
-    [application, setServer],
   )
 
   const handleStrictSigninChange = useCallback(() => {
@@ -194,7 +196,7 @@ const AdvancedOptions: FunctionComponent<Props> = ({
               </>
             )}
           </div>
-          <ServerPicker customServerAddress={server} handleCustomServerAddressChange={handleSyncServerChange} />
+          <ServerPicker />
         </>
       ) : null}
     </>
