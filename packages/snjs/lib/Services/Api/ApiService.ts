@@ -106,7 +106,6 @@ export class LegacyApiService
     private httpService: HttpServiceInterface,
     private storageService: DiskStorageService,
     private host: string,
-    private workspaceIdentifier: string,
     private inMemoryStore: KeyValueStoreInterface<string>,
     private crypto: PureCryptoInterface,
     private sessionStorageMapper: MapperInterface<Session, Record<string, unknown>>,
@@ -143,16 +142,14 @@ export class LegacyApiService
   }
 
   public loadHost(): string {
-    const storedValue = this.storageService.getValue<string | undefined>(
-      `${StorageKey.ServerHost}:${this.workspaceIdentifier}`,
-    )
+    const storedValue = this.storageService.getValue<string | undefined>(StorageKey.ServerHost)
     this.host = storedValue || this.host
     return this.host
   }
 
   public async setHost(host: string): Promise<void> {
     this.host = host
-    this.storageService.setValue(`${StorageKey.ServerHost}:${this.workspaceIdentifier}`, host)
+    this.storageService.setValue(StorageKey.ServerHost, host)
   }
 
   public getHost(): string {
