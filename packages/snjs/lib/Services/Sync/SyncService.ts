@@ -940,7 +940,7 @@ export class SyncService
       return
     }
 
-    if (options.checkIntegrity) {
+    if (options.checkIntegrity && online) {
       await this.notifyEventSync(SyncEvent.SyncRequestsIntegrityCheck, {
         source: options.source as SyncSource,
       })

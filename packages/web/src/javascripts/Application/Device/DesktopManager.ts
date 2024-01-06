@@ -50,12 +50,7 @@ export class DesktopManager
     void this.backups.importWatchedDirectoryChanges(changes)
   }
 
-  async handleHomeServerStarted(serverUrl: string): Promise<void> {
-    const userIsSignedIn = this.application.sessions.isSignedIn()
-    if (!userIsSignedIn) {
-      await this.application.setCustomHost(serverUrl)
-    }
-  }
+  async handleHomeServerStarted(_serverUrl: string): Promise<void> {}
 
   beginTextBackupsTimer() {
     if (this.textBackupsInterval) {

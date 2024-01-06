@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { ServerType } from './ServerType'
 import DecoratedInput from '@/Components/Input/DecoratedInput'
 import Icon from '@/Components/Icon/Icon'
@@ -8,22 +8,45 @@ import RadioButtonGroup from '@/Components/RadioButtonGroup/RadioButtonGroup'
 import { DefaultHost } from '@standardnotes/snjs'
 
 type Props = {
-  customServerAddress?: string
-  handleCustomServerAddressChange: (value: string, websocketUrl?: string) => void
   className?: string
 }
 
-const ServerPicker = ({ className, customServerAddress, handleCustomServerAddressChange }: Props) => {
+const ServerPicker = ({ className }: Props) => {
   const application = useApplication()
 
   const [currentType, setCurrentType] = useState<ServerType>('standard')
 
+  const { server, setServer } = application.accountMenuController
+
+  const determineServerType = useCallback(async () => {
+    const homeServerUrl = await application.homeServer?.getHomeServerUrl()
+    if (homeServerUrl && server === homeServerUrl) {
+      setCurrentType('home server')
+    } else if (server === DefaultHost.Api) {
+      setCurrentType('standard')
+    } else {
+      setCurrentType('custom')
+    }
+  }, [application.homeServer, server])
+
+  const handleSyncServerChange = useCallback(
+    (server: string, websocketUrl?: string) => {
+      setServer(server)
+      void determineServerType()
+      application.setCustomHost(server, websocketUrl).catch(console.error)
+    },
+    [application, setServer, determineServerType],
+  )
+
+  useEffect(() => {
+    void determineServerType()
+  }, [application, server, determineServerType])
+
   const selectTab = async (type: ServerType) => {
     setCurrentType(type)
     if (type === 'standard') {
-      handleCustomServerAddressChange(DefaultHost.Api, DefaultHost.WebSocket)
-    }
-    if (type === 'home server') {
+      handleSyncServerChange(DefaultHost.Api, DefaultHost.WebSocket)
+    } else if (type === 'home server') {
       if (!application.homeServer) {
         application.alerts
           .alert('Home server is not running. Please open the prefences and home server tab to start it.')
@@ -41,7 +64,7 @@ const ServerPicker = ({ className, customServerAddress, handleCustomServerAddres
         return
       }
 
-      handleCustomServerAddressChange(homeServerUrl)
+      handleSyncServerChange(homeServerUrl)
     }
   }
 
@@ -69,8 +92,8 @@ const ServerPicker = ({ className, customServerAddress, handleCustomServerAddres
           type="text"
           left={[<Icon type="server" className="text-neutral" />]}
           placeholder={DefaultHost.Api}
-          value={customServerAddress}
-          onChange={handleCustomServerAddressChange}
+          value={server}
+          onChange={handleSyncServerChange}
         />
       )}
     </div>
