@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.204.13](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.204.12...@standardnotes/snjs@2.204.13) (2024-01-06)
+
+### Bug Fixes
+
+* Fixes issue where self-hosted accounts may not have loaded correct server ([acd20dc](https://github.com/standardnotes/app/commit/acd20dcc70f4f84f07fbbd75fedcea459c22681c))
+
 ## [2.204.12](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.204.11...@standardnotes/snjs@2.204.12) (2024-01-05)
 
 **Note:** Version bump only for package @standardnotes/snjs
