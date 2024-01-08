@@ -1,5 +1,5 @@
 import type { Toast as ToastPropType } from './types'
-import { CheckCircleFilledIcon, ClearCircleFilledIcon } from '@standardnotes/icons'
+import { CheckCircleFilledIcon, ClearCircleFilledIcon, InfoIcon } from '@standardnotes/icons'
 import { dismissToast } from './toastStore'
 import { ToastType } from './enums'
 import { ForwardedRef, forwardRef, RefObject, useEffect } from 'react'
@@ -30,7 +30,7 @@ const iconForToastType = (type: ToastType) => {
     case ToastType.Loading:
       return <div className="border-info h-4 w-4 animate-spin rounded-full border border-solid border-r-transparent" />
     default:
-      return null
+      return <InfoIcon className="fill-text h-5 w-5" />
   }
 }
 
@@ -90,15 +90,12 @@ export const Toast = forwardRef(({ toast, index }: Props, ref: ForwardedRef<HTML
       }}
       ref={ref}
     >
-      <div
-        className={`flex w-full flex-wrap items-center gap-2 ${
-          hasActions ? 'p-2 pl-3' : hasProgress ? 'px-3 py-2.5' : 'p-3'
-        }`}
-      >
+      <div className="grid gap-x-2.5 gap-y-1 overflow-hidden grid-cols-[1fr,auto] pl-3 pr-3.5 py-2.5">
         {icon ? <div className="sn-icon flex flex-shrink-0 items-center justify-center">{icon}</div> : null}
-        <div className="text-text text-sm [word-wrap:anywhere]">{toast.message}</div>
+        {toast.title && <div className="text-text text-sm font-semibold col-start-2">{toast.title}</div>}
+        <div className="text-text text-sm [word-wrap:anywhere] col-start-2">{toast.message}</div>
         {hasActions && (
-          <>
+          <div className="col-start-2 -mx-1.5 -mb-0.5">
             {toast.actions?.map((action, index) => (
               <button
                 className={`hover:bg-passive-3 cursor-pointer rounded border-0 px-[0.45rem] py-1 text-sm font-semibold md:bg-transparent ${colorForToastType(
@@ -114,7 +111,7 @@ export const Toast = forwardRef(({ toast, index }: Props, ref: ForwardedRef<HTML
                 {action.label}
               </button>
             ))}
-          </>
+          </div>
         )}
       </div>
       {hasProgress && (
