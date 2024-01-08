@@ -15,6 +15,7 @@ import AddToVaultMenuOption from '../Vaults/AddToVaultMenuOption'
 import { iconClass } from '../NotesOptions/ClassNames'
 import { useApplication } from '../ApplicationProvider'
 import MenuSection from '../Menu/MenuSection'
+import { ToastType, addToast } from '@standardnotes/toast'
 
 type Props = {
   closeMenu: () => void
@@ -142,12 +143,21 @@ const FileMenuOptions: FunctionComponent<Props> = ({
         {canShowZipDownloadOption && (
           <MenuItem
             onClick={() => {
-              void application.filesController.downloadFilesAsZip(selectedFiles)
+              application.filesController.downloadFilesAsZip(selectedFiles).catch((error) => {
+                if (error instanceof DOMException && error.name === 'AbortError') {
+                  return
+                }
+                console.error(error)
+                addToast({
+                  type: ToastType.Error,
+                  message: error.message || 'Failed to download files as archive',
+                })
+              })
               closeMenu()
             }}
           >
             <Icon type="download" className={`mr-2 text-neutral ${MenuItemIconSize}`} />
-            Download as ZIP
+            Download as archive
           </MenuItem>
         )}
         {shouldShowRenameOption && (
