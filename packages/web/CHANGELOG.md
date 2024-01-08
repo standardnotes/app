@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.184.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.183.44...@standardnotes/web@3.184.0) (2024-01-08)
+
+### Features
+
+* Added option to download multiple files as a zip when using the desktop app or a supported browser ([#2748](https://github.com/standardnotes/app/issues/2748)) ([130b63b](https://github.com/standardnotes/app/commit/130b63b1a51a52c547cc40cfc8352946920c5af3))
+
 ## [3.183.44](https://github.com/standardnotes/app/compare/@standardnotes/web@3.183.43...@standardnotes/web@3.183.44) (2024-01-08)
 
 **Note:** Version bump only for package @standardnotes/web
